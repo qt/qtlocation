@@ -62,7 +62,6 @@ private Q_SLOTS:
     void boundingCircleTest();
     void boundingBoxTest();
     void searchAreaTest();
-    void maximumCorrectionsTest();
     void visibilityScopeTest();
     void relevanceHintTest();
     void operatorsTest();
@@ -165,16 +164,6 @@ void tst_QPlaceSearchRequest::searchAreaTest()
     QVERIFY2(query->searchArea() == box, "New search area not assigned");
 }
 
-void tst_QPlaceSearchRequest::maximumCorrectionsTest()
-{
-    QPlaceSearchRequest testObj;
-    QVERIFY2(testObj.maximumCorrections() == 0, "Wrong default value");
-    testObj.setMaximumCorrections(10);
-    QVERIFY2(testObj.maximumCorrections() == 10, "Wrong value returned");
-    testObj.clear();
-    QVERIFY2(testObj.maximumCorrections() == 0, "Wrong cleared value returned");
-}
-
 void tst_QPlaceSearchRequest::visibilityScopeTest()
 {
     QPlaceSearchRequest query;
@@ -202,13 +191,13 @@ void tst_QPlaceSearchRequest::relevanceHintTest()
 void tst_QPlaceSearchRequest::operatorsTest()
 {
     QPlaceSearchRequest testObj;
-    testObj.setSearchTerm("testValue");
+    testObj.setSearchTerm(QLatin1String("testValue"));
     QPlaceSearchRequest testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setMaximumCorrections(-5);
+    testObj2.setSearchTerm(QLatin1String("abc"));
     QVERIFY2(testObj != testObj2, "Object should be different");
-    testObj2.setMaximumCorrections(0);
+    testObj2.setSearchTerm(QLatin1String("testValue"));
     QVERIFY(testObj == testObj2);
 
     QGeoBoundingBox b1(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
@@ -264,7 +253,6 @@ void tst_QPlaceSearchRequest::clearTest()
     QPlaceCategory category;
     category.setName("Fast Food");
     req.setCategory(category);
-    req.setMaximumCorrections(5);
     req.setLimit(100);
     req.setOffset(5);
 
@@ -272,7 +260,6 @@ void tst_QPlaceSearchRequest::clearTest()
     QVERIFY(req.searchTerm().isEmpty());
     QVERIFY(req.searchArea() == QGeoBoundingArea());
     QVERIFY(req.categories().isEmpty());
-    QVERIFY(req.maximumCorrections() == 0);
     QVERIFY(req.limit() == -1);
     QVERIFY(req.offset() == 0);
 }

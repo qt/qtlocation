@@ -143,7 +143,6 @@ public:
         RemoveCategoryFeature           = QGeoServiceProvider::RemoveCategoryFeature,
         PlaceRecommendationsFeature     = QGeoServiceProvider::PlaceRecommendationsFeature,
         SearchSuggestionsFeature        = QGeoServiceProvider::SearchSuggestionsFeature,
-        CorrectionsFeature              = QGeoServiceProvider::CorrectionsFeature,
         LocalizedPlacesFeature          = QGeoServiceProvider::LocalizedPlacesFeature,
         NotificationsFeature            = QGeoServiceProvider::NotificationsFeature,
         PlaceMatchingFeature            = QGeoServiceProvider::PlaceMatchingFeature,

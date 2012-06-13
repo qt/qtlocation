@@ -313,24 +313,6 @@ void QPlaceSearchRequest::setSearchArea(const QGeoBoundingArea &area)
 }
 
 /*!
-    Returns the maximum number of search term corrections that may be returned.
-*/
-int QPlaceSearchRequest::maximumCorrections() const
-{
-    Q_D(const QPlaceSearchRequest);
-    return d->dymNumber;
-}
-
-/*!
-    Sets maximum \a number of search term corrections that may be returned.
-*/
-void QPlaceSearchRequest::setMaximumCorrections(int number)
-{
-    Q_D(QPlaceSearchRequest);
-    d->dymNumber = number;
-}
-
-/*!
     Returns the visibility scope used when searching for places.  The default value is
     QtLocation::UnspecifiedVisibility meaning that no explicit scope has been assigned.
     Places of any scope may be returned during the search.

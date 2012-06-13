@@ -267,9 +267,6 @@ bool QDeclarativeGeoServiceProvider::supportsRouting(const RoutingFeatures &feat
             \li Plugin.SearchSuggestionsFeature
             \li Supports suggestions to user query
         \row
-            \li Plugin.CorrectionsFeature
-            \li User can edit saved place data.
-        \row
             \li Plugin.LocalizedPlacesFeature
             \li Local places
         \row

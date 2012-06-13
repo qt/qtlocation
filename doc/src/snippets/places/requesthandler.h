@@ -104,24 +104,6 @@ public:
         //! [Search paging]
     }
 
-    void didYouMean()
-    {
-        QPlaceSearchRequest searchRequest;
-        //! [Corrections]
-        searchRequest.setMaximumCorrections(2);
-        //! [Corrections]
-
-
-        //! [Corrections handling pt1]
-        QPlaceSearchResult result;
-        //! [Corrections handling pt1]
-
-        //! [Corrections handling pt2]
-        if (result.type() == QPlaceSearchResult::CorrectionResult)
-            qDebug() << result.correction();
-        //! [Corrections handling pt2]
-    }
-
     void details()
     {
         QPlace place;

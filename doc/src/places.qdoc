@@ -67,9 +67,6 @@
 
     \snippet declarative/places.qml Search MapItemView
 
-    The search model may also be used to specify whether corrections are returned.
-    See the documentation for \l PlaceSearchModel for details.
-
     \section2 Fetching Details
     In order to save bandwidth, sometimes a backend will only return places which
     are partially populated with details.  This can be checked with the
@@ -150,16 +147,6 @@
     \section3 Paging
     If the plugin supports paging, limit and offset parameters may be provided to the search request.
     \snippet places/requesthandler.h Search paging
-
-    \section3 Corrections
-    Suggested search term corrections to user input may also be returned with the search results if desired.
-    A maximum number can be set in the search request.
-    \snippet places/requesthandler.h Corrections
-    \dots
-    \dots
-    \snippet places/requesthandler.h Corrections handling pt1
-    \dots
-    \snippet places/requesthandler.h Corrections handling pt2
 
     \section2 Fetching Place Details
     A place that has been returned from a search request may have more details

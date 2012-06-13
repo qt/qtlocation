@@ -60,28 +60,25 @@ void tst_QPlaceSearchResult::test()
     QCOMPARE(result.type(), QPlaceSearchResult::UnknownSearchResult);
     QVERIFY(qIsNaN(result.distance()));
     QCOMPARE(result.place(), QPlace());
-    QVERIFY(result.correction().isEmpty());
     QVERIFY(!result.isSponsored());
 
     result.setType(QPlaceSearchResult::PlaceResult);
     result.setDistance(2.0);
     result.setPlace(QPlace());
-    result.setCorrection(QLatin1String("suggestion"));
     result.setSponsored(true);
 
     QCOMPARE(result.type(), QPlaceSearchResult::PlaceResult);
     QCOMPARE(result.distance(), 2.0);
     QCOMPARE(result.place(), QPlace());
-    QCOMPARE(result.correction(), QLatin1String("suggestion"));
     QVERIFY(result.isSponsored());
 
     QPlaceSearchResult result2(result);
 
     QCOMPARE(result2, result);
 
-    result2.setType(QPlaceSearchResult::CorrectionResult);
+    result2.setType(QPlaceSearchResult::UnknownSearchResult);
 
-    QCOMPARE(result2.type(), QPlaceSearchResult::CorrectionResult);
+    QCOMPARE(result2.type(), QPlaceSearchResult::UnknownSearchResult);
 
     QVERIFY(result2 != result);
 

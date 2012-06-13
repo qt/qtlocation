@@ -61,7 +61,6 @@ public:
     qreal distance;
     QPlaceSearchResult::SearchResultType type;
     QPlace place;
-    QString correction;
     bool sponsored;
 };
 

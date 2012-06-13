@@ -360,7 +360,6 @@ Item {
         id: placeSearchModel
 
         plugin: placesPlugin
-        maximumCorrections: 5
         searchArea: searchRegion
 
         function searchForCategory(category) {

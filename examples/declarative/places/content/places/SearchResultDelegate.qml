@@ -52,115 +52,63 @@ Item {
     height: childrenRect.height
 
     //! [PlaceSearchModel place delegate]
-    Component {
-        id: placeComponent
+    Rectangle {
+        anchors.fill: parent
+        color: "#dbffde"
+        visible: model.sponsored !== undefined ? model.sponsored : false
+    }
 
-        Item {
-            id: placeRoot
+    Column {
+        width: parent.width
 
-            height: childrenRect.height
+        Row {
+            Image {
+                visible: (place.favorite != null)
+                source: "../../resources/star.png"
+                height: placeName.height
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
+        }
+        Text { id: distanceText; text: PlacesUtils.prettyDistance(distance); font.italic: true }
+        Text {
+            text: qsTr("Sponsored result")
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 8
             width: parent.width
-
-            Rectangle {
-                anchors.fill: parent
-                color: "#dbffde"
-                visible: model.sponsored !== undefined ? model.sponsored : false
-            }
-
-            Column {
-                width: parent.width
-
-                Row {
-                    Image {
-                        visible: (place.favorite != null)
-                        source: "../../resources/star.png"
-                        height: placeName.height
-                        fillMode: Image.PreserveAspectFit
-                    }
-
-                    Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
-                }
-                Text { id: distanceText; text: PlacesUtils.prettyDistance(distance); font.italic: true }
-                Text {
-                    text: qsTr("Sponsored result")
-                    horizontalAlignment: Text.AlignRight
-                    font.pixelSize: 8
-                    width: parent.width
-                    visible: model.sponsored !== undefined ? model.sponsored : false
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-
-                onPressed: placeRoot.state = "Pressed"
-                onReleased: placeRoot.state = ""
-                onCanceled: placeRoot.state = ""
-
-                onClicked: {
-                    if (model.type === undefined || type === PlaceSearchModel.PlaceResult) {
-                        if (!place.detailsFetched)
-                            place.getDetails();
-
-                        root.displayPlaceDetails({
-                                                 distance: model.distance,
-                                                 place: model.place,
-                    });
-                    }
-                }
-            }
-
-            states: [
-                State {
-                    name: ""
-                },
-                State {
-                    name: "Pressed"
-                    PropertyChanges { target: placeName; color: "#1C94FC"}
-                    PropertyChanges { target: distanceText; color: "#1C94FC"}
-                }
-            ]
+            visible: model.sponsored !== undefined ? model.sponsored : false
         }
     }
+
+    MouseArea {
+        anchors.fill: parent
+
+        onPressed: root.state = "Pressed"
+        onReleased: root.state = ""
+        onCanceled: root.state = ""
+
+        onClicked: {
+            if (model.type === undefined || type === PlaceSearchModel.PlaceResult) {
+                if (!place.detailsFetched)
+                    place.getDetails();
+                root.displayPlaceDetails({
+                                             distance: model.distance,
+                                             place: model.place,
+                                         });
+            }
+        }
+    }
+
+    states: [
+        State {
+            name: ""
+        },
+        State {
+            name: "Pressed"
+            PropertyChanges { target: placeName; color: "#1C94FC"}
+            PropertyChanges { target: distanceText; color: "#1C94FC"}
+        }
+    ]
     //! [PlaceSearchModel place delegate]
-
-    Component {
-        id: correctionComponent
-        Item {
-            id: correctionRoot
-
-            Text {
-                id: correctionText
-                width: parent.width
-                text: "Did you mean " + correction + "?"
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onPressed: correctionRoot.state = "Pressed"
-                    onReleased: correctionRoot.state = ""
-                    onCanceled: correctionRoot.state = ""
-
-                    onClicked: root.searchFor(correction);
-                }
-            }
-
-            states: [
-                State {
-                    name: ""
-                },
-                State {
-                    name: "Pressed"
-                    PropertyChanges { target: correctionText; color: "#1C94FC"}
-                }
-            ]
-        }
-    }
-
-    Loader {
-        anchors.left: parent.left
-        anchors.right: parent.right
-
-        sourceComponent: (model.type === undefined || model.type === PlaceSearchModel.PlaceResult) ? placeComponent : correctionComponent
-    }
 }

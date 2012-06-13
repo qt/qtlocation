@@ -86,9 +86,6 @@ public:
     QGeoBoundingArea searchArea() const;
     void setSearchArea(const QGeoBoundingArea &area);
 
-    int maximumCorrections() const;
-    void setMaximumCorrections(int number);
-
     QtLocation::VisibilityScope visibilityScope() const;
     void setVisibilityScope(QtLocation::VisibilityScope visibilityScopes);
 

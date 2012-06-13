@@ -161,9 +161,7 @@
     \snippet declarative/places/places.qml PlaceSearchModel model
 
     First some of the model's properties are set, which will be used to form the search request.
-    In this example we want a maximum of five search term corrections to be returned in the result
-    set, so the \l {PlaceSearchModel::maximumCorrections}{maximumCorrections} property is set
-    accordingly.  The \l {PlaceSearchModel::searchArea}{searchArea} property is set to the
+    The \l {PlaceSearchModel::searchArea}{searchArea} property is set to the
     \e searchRegion object which is a \l BoundingCircle with a center that is linked to the current
     location displayed on the \l Map.
 

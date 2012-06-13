@@ -56,7 +56,6 @@ class QDeclarativeSearchResultModel : public QDeclarativeResultModelBase
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
-    Q_PROPERTY(int maximumCorrections READ maximumCorrections WRITE setMaximumCorrections NOTIFY maximumCorrectionsChanged)
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
     Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
 
@@ -65,8 +64,7 @@ class QDeclarativeSearchResultModel : public QDeclarativeResultModelBase
 public:
     enum SearchResultType {
         UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult,
-        PlaceResult = QPlaceSearchResult::PlaceResult,
-        CorrectionResult = QPlaceSearchResult::CorrectionResult
+        PlaceResult = QPlaceSearchResult::PlaceResult
     };
 
     enum RelevanceHint {
@@ -91,9 +89,6 @@ public:
     QDeclarativeSearchResultModel::RelevanceHint relevanceHint() const;
     void setRelevanceHint(QDeclarativeSearchResultModel::RelevanceHint hint);
 
-    int maximumCorrections() const;
-    void setMaximumCorrections(int corrections);
-
     QDeclarativePlace::Visibility visibilityScope() const;
     void setVisibilityScope(QDeclarativePlace::Visibility visibilityScope);
 
@@ -103,7 +98,6 @@ public:
 Q_SIGNALS:
     void searchTermChanged();
     void categoriesChanged();
-    void maximumCorrectionsChanged();
     void relevanceHintChanged();
     void visibilityScopeChanged();
 
@@ -118,7 +112,6 @@ private Q_SLOTS:
 private:
     enum Roles {
         SearchResultTypeRole = QDeclarativeResultModelBase::PlaceRole + 1,
-        CorrectionRole,
         SponsoredRole
     };
 

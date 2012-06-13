@@ -14,7 +14,6 @@
         "ReverseGeocodingFeature",
         "PlaceRecommendationsFeature",
         "SearchSuggestionsFeature",
-        "CorrectionsFeature",
         "LocalizedPlacesFeature"
     ]
 }

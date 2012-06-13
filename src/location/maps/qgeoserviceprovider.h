@@ -116,10 +116,9 @@ public:
         RemoveCategoryFeature           = (1<<5),
         PlaceRecommendationsFeature     = (1<<6),
         SearchSuggestionsFeature        = (1<<7),
-        CorrectionsFeature              = (1<<8),
-        LocalizedPlacesFeature          = (1<<9),
-        NotificationsFeature            = (1<<10),
-        PlaceMatchingFeature            = (1<<11),
+        LocalizedPlacesFeature          = (1<<8),
+        NotificationsFeature            = (1<<9),
+        PlaceMatchingFeature            = (1<<10),
         AnyPlacesFeatures               = ~(0)
     };
 

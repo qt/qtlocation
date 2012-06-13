@@ -141,7 +141,6 @@ QT_BEGIN_NAMESPACE
     \value RemoveCategoryFeature The manager can be used to remove categories.
     \value RecommendationsFeature The manager can be used to provide recommendations.
     \value SearchSuggestionsFeature The manager can be used to provide search term suggestions.
-    \value CorrectionsFeature The manager can be used to provide search term corrections
     \value LocaleFeature The manager can be used to provide place data localized
                           according to locale
     \value NotificationsFeature The manager has signal notifications for when

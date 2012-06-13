@@ -75,7 +75,6 @@ TestCase {
             { tag: "limit", property: "limit", signal: "limitChanged", value: 10, reset: -1 },
 
             { tag: "searchTerm", property: "searchTerm", signal: "searchTermChanged", value: "Test term", reset: "" },
-            { tag: "maximumCorrections", property: "maximumCorrections", signal: "maximumCorrectionsChanged", value: 5, reset: 0 },
             { tag: "relevanceHint", property: "relevanceHint", signal: "relevanceHintChanged", value: PlaceSearchModel.DistanceHint, reset: PlaceSearchModel.UnspecifiedHint },
             { tag: "visibilityScope", property: "visibilityScope", signal: "visibilityScopeChanged", value: Place.DeviceVisibility, reset: Place.UnspecifiedVisibility },
         ];

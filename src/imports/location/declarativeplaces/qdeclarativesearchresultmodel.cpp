@@ -97,11 +97,6 @@ QT_USE_NAMESPACE
             \li bool
             \li Valid only when the \c type role is \c PlaceResult, true if the search result is a
                sponsored result.
-        \row
-            \li correction
-            \li string
-            \li Valid only when the \c type role is \c CorrectionResult, a suggested correction to
-               the search term.
     \endtable
 
     \section2 Search Result Types
@@ -112,9 +107,6 @@ QT_USE_NAMESPACE
         \row
             \li PlaceSearchModel.PlaceResult
             \li The search result contains a place.
-        \row
-            \li PlaceSearchModel.CorrectionResult
-            \li The search result contains a search term correction.
         \row
             \li PlaceSearchModel.UnknownSearchResult
             \li The contents of the search result are unknown.
@@ -158,13 +150,6 @@ QT_USE_NAMESPACE
     support a means to retrieve the total number of items available from the
     backed. Also note that support for \l offset and \l limit can vary
     according to the \l plugin.
-
-    \section1 Corrections
-    The PlaceSearchModel can return correction results if supported by the \l plugin.
-    Correction results consist of a string which can be used as a search term for another query and
-    are often used in the context of "Did you mean" corrections. The \l maximumCorrections property
-    can be used to limit the maximum number of search term correction results that may be returned.
-    Setting \l maximumCorrections to 0 will prevent any search term correction results from being returned.
 */
 
 /*!
@@ -447,25 +432,6 @@ void QDeclarativeSearchResultModel::setRelevanceHint(QDeclarativeSearchResultMod
 }
 
 /*!
-    \qmlproperty int PlaceSearchModel::maximumCorrections
-
-    This property holds the maximum number of search term corrections that may be returned.
-*/
-int QDeclarativeSearchResultModel::maximumCorrections() const
-{
-    return m_request.maximumCorrections();
-}
-
-void QDeclarativeSearchResultModel::setMaximumCorrections(int corrections)
-{
-    if (m_request.maximumCorrections() == corrections)
-        return;
-
-    m_request.setMaximumCorrections(corrections);
-    emit maximumCorrectionsChanged();
-}
-
-/*!
     \qmlproperty enum PlaceSearchModel::visibilityScope
 
     This property holds the visibility scope of the places to search.  Only places with the
@@ -513,8 +479,6 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
     switch (role) {
     case SearchResultTypeRole:
         return m_results.at(index.row()).type();
-    case CorrectionRole:
-        return m_results.at(index.row()).correction();
     case SponsoredRole:
         return m_results.at(index.row()).isSponsored();
     default:
@@ -526,7 +490,6 @@ QHash<int, QByteArray> QDeclarativeSearchResultModel::roleNames() const
 {
     QHash<int, QByteArray> roles = QDeclarativeResultModelBase::roleNames();
     roles.insert(SearchResultTypeRole, "type");
-    roles.insert(CorrectionRole, "correction");
     roles.insert(SponsoredRole, "sponsored");
     return roles;
 }

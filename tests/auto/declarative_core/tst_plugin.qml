@@ -134,7 +134,6 @@ Item {
             verify(testPlugin.supportsPlaces(Plugin.SavePlaceFeature))
             verify(testPlugin.supportsPlaces(Plugin.SaveCategoryFeature))
             verify(testPlugin.supportsPlaces(Plugin.SearchSuggestionsFeature))
-            verify(!testPlugin.supportsPlaces(Plugin.CorrectionsFeature))
             verify(!testPlugin.supportsPlaces(Plugin.RemovePlaceFeature))
         }
 

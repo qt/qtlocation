@@ -9,83 +9,97 @@ Module {
         prototype: "QObject"
         Signal {
             name: "dataChanged"
+            type: "void"
             Parameter { name: "topLeft"; type: "QModelIndex" }
             Parameter { name: "bottomRight"; type: "QModelIndex" }
             Parameter { name: "roles"; type: "QSet<int>" }
         }
         Signal {
             name: "dataChanged"
+            type: "void"
             Parameter { name: "topLeft"; type: "QModelIndex" }
             Parameter { name: "bottomRight"; type: "QModelIndex" }
         }
         Signal {
             name: "headerDataChanged"
+            type: "void"
             Parameter { name: "orientation"; type: "Qt::Orientation" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
         Signal {
             name: "layoutChanged"
+            type: "void"
             Parameter { name: "parents"; type: "QList<QPersistentModelIndex>" }
         }
-        Signal { name: "layoutChanged" }
+        Signal { name: "layoutChanged"; type: "void" }
         Signal {
             name: "layoutAboutToBeChanged"
+            type: "void"
             Parameter { name: "parents"; type: "QList<QPersistentModelIndex>" }
         }
-        Signal { name: "layoutAboutToBeChanged" }
+        Signal { name: "layoutAboutToBeChanged"; type: "void" }
         Signal {
             name: "rowsAboutToBeInserted"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
         Signal {
             name: "rowsInserted"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
         Signal {
             name: "rowsAboutToBeRemoved"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
         Signal {
             name: "rowsRemoved"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
         Signal {
             name: "columnsAboutToBeInserted"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
         Signal {
             name: "columnsInserted"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
         Signal {
             name: "columnsAboutToBeRemoved"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
         Signal {
             name: "columnsRemoved"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "first"; type: "int" }
             Parameter { name: "last"; type: "int" }
         }
-        Signal { name: "modelAboutToBeReset" }
-        Signal { name: "modelReset" }
+        Signal { name: "modelAboutToBeReset"; type: "void" }
+        Signal { name: "modelReset"; type: "void" }
         Signal {
             name: "rowsAboutToBeMoved"
+            type: "void"
             Parameter { name: "sourceParent"; type: "QModelIndex" }
             Parameter { name: "sourceStart"; type: "int" }
             Parameter { name: "sourceEnd"; type: "int" }
@@ -94,6 +108,7 @@ Module {
         }
         Signal {
             name: "rowsMoved"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "start"; type: "int" }
             Parameter { name: "end"; type: "int" }
@@ -102,6 +117,7 @@ Module {
         }
         Signal {
             name: "columnsAboutToBeMoved"
+            type: "void"
             Parameter { name: "sourceParent"; type: "QModelIndex" }
             Parameter { name: "sourceStart"; type: "int" }
             Parameter { name: "sourceEnd"; type: "int" }
@@ -110,6 +126,7 @@ Module {
         }
         Signal {
             name: "columnsMoved"
+            type: "void"
             Parameter { name: "parent"; type: "QModelIndex" }
             Parameter { name: "start"; type: "int" }
             Parameter { name: "end"; type: "int" }
@@ -117,7 +134,7 @@ Module {
             Parameter { name: "column"; type: "int" }
         }
         Method { name: "submit"; type: "bool" }
-        Method { name: "revert" }
+        Method { name: "revert"; type: "void" }
     }
     Component { name: "QAbstractListModel"; prototype: "QAbstractItemModel" }
     Component {
@@ -149,13 +166,20 @@ Module {
         Property { name: "visibility"; type: "Visibility" }
         Property { name: "icon"; type: "QDeclarativePlaceIcon"; isPointer: true }
         Property { name: "status"; type: "Status"; isReadonly: true }
+        Signal { name: "pluginChanged"; type: "void" }
+        Signal { name: "categoryIdChanged"; type: "void" }
+        Signal { name: "nameChanged"; type: "void" }
+        Signal { name: "visibilityChanged"; type: "void" }
+        Signal { name: "iconChanged"; type: "void" }
+        Signal { name: "statusChanged"; type: "void" }
         Method { name: "errorString"; type: "string" }
         Method {
             name: "save"
+            type: "void"
             Parameter { name: "parentId"; type: "string" }
         }
-        Method { name: "save" }
-        Method { name: "remove" }
+        Method { name: "save"; type: "void" }
+        Method { name: "remove"; type: "void" }
     }
     Component {
         name: "QDeclarativeCircleMapItem"
@@ -163,7 +187,7 @@ Module {
         prototype: "QDeclarativeGeoMapItemBase"
         exports: ["MapCircle 5.0"]
         Property { name: "center"; type: "QDeclarativeCoordinate"; isPointer: true }
-        Property { name: "radius"; type: "qreal" }
+        Property { name: "radius"; type: "double" }
         Property { name: "color"; type: "QColor" }
         Property {
             name: "border"
@@ -173,14 +197,17 @@ Module {
         }
         Signal {
             name: "centerChanged"
+            type: "void"
             Parameter { name: "center"; type: "const QDeclarativeCoordinate"; isPointer: true }
         }
         Signal {
             name: "radiusChanged"
-            Parameter { name: "radius"; type: "qreal" }
+            type: "void"
+            Parameter { name: "radius"; type: "double" }
         }
         Signal {
             name: "colorChanged"
+            type: "void"
             Parameter { name: "color"; type: "QColor" }
         }
     }
@@ -191,6 +218,8 @@ Module {
         Property { name: "contactDetail"; type: "QPlaceContactDetail" }
         Property { name: "label"; type: "string" }
         Property { name: "value"; type: "string" }
+        Signal { name: "labelChanged"; type: "void" }
+        Signal { name: "valueChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeCoordinate"
@@ -203,39 +232,44 @@ Module {
         Property { name: "isValid"; type: "bool"; isReadonly: true }
         Signal {
             name: "latitudeChanged"
+            type: "void"
             Parameter { name: "latitude"; type: "double" }
         }
         Signal {
             name: "longitudeChanged"
+            type: "void"
             Parameter { name: "longitude"; type: "double" }
         }
         Signal {
             name: "altitudeChanged"
+            type: "void"
             Parameter { name: "altitude"; type: "double" }
         }
         Signal {
             name: "validityChanged"
+            type: "void"
             Parameter { name: "valid"; type: "bool" }
         }
         Signal {
             name: "coordinateChanged"
+            type: "void"
             Parameter { name: "coord"; type: "QGeoCoordinate" }
         }
         Method {
             name: "distanceTo"
-            type: "qreal"
+            type: "double"
             Parameter { name: "coordinate"; type: "QObject"; isPointer: true }
         }
         Method {
             name: "azimuthTo"
-            type: "qreal"
+            type: "double"
             Parameter { name: "coordinate"; type: "QObject"; isPointer: true }
         }
         Method {
             name: "atDistanceAndAzimuth"
             type: "QDeclarativeCoordinate*"
-            Parameter { name: "distance"; type: "qreal" }
-            Parameter { name: "azimuth"; type: "qreal" }
+            Parameter { name: "distance"; type: "double" }
+            Parameter { name: "azimuth"; type: "double" }
         }
     }
     Component {
@@ -252,6 +286,17 @@ Module {
         Property { name: "district"; type: "string" }
         Property { name: "street"; type: "string" }
         Property { name: "postalCode"; type: "string" }
+        Property { name: "isTextGenerated"; type: "bool"; isReadonly: true }
+        Signal { name: "textChanged"; type: "void" }
+        Signal { name: "countryChanged"; type: "void" }
+        Signal { name: "countryCodeChanged"; type: "void" }
+        Signal { name: "stateChanged"; type: "void" }
+        Signal { name: "countyChanged"; type: "void" }
+        Signal { name: "cityChanged"; type: "void" }
+        Signal { name: "districtChanged"; type: "void" }
+        Signal { name: "streetChanged"; type: "void" }
+        Signal { name: "postalCodeChanged"; type: "void" }
+        Signal { name: "isTextGeneratedChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoBoundingArea"
@@ -270,6 +315,13 @@ Module {
         Property { name: "center"; type: "QDeclarativeCoordinate"; isPointer: true }
         Property { name: "height"; type: "double" }
         Property { name: "width"; type: "double" }
+        Signal { name: "bottomLeftChanged"; type: "void" }
+        Signal { name: "bottomRightChanged"; type: "void" }
+        Signal { name: "topLeftChanged"; type: "void" }
+        Signal { name: "topRightChanged"; type: "void" }
+        Signal { name: "centerChanged"; type: "void" }
+        Signal { name: "heightChanged"; type: "void" }
+        Signal { name: "widthChanged"; type: "void" }
         Method {
             name: "contains"
             type: "bool"
@@ -282,7 +334,9 @@ Module {
         exports: ["BoundingCircle 5.0"]
         Property { name: "circle"; type: "QGeoBoundingCircle" }
         Property { name: "center"; type: "QDeclarativeCoordinate"; isPointer: true }
-        Property { name: "radius"; type: "qreal" }
+        Property { name: "radius"; type: "double" }
+        Signal { name: "centerChanged"; type: "void" }
+        Signal { name: "radiusChanged"; type: "void" }
         Method {
             name: "contains"
             type: "bool"
@@ -297,6 +351,9 @@ Module {
         Property { name: "address"; type: "QDeclarativeGeoAddress"; isPointer: true }
         Property { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
         Property { name: "boundingBox"; type: "QDeclarativeGeoBoundingBox"; isPointer: true }
+        Signal { name: "addressChanged"; type: "void" }
+        Signal { name: "coordinateChanged"; type: "void" }
+        Signal { name: "boundingBoxChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoManeuver"
@@ -324,7 +381,7 @@ Module {
         Property { name: "instructionText"; type: "string"; isReadonly: true }
         Property { name: "direction"; type: "Direction"; isReadonly: true }
         Property { name: "timeToNextInstruction"; type: "int"; isReadonly: true }
-        Property { name: "distanceToNextInstruction"; type: "qreal"; isReadonly: true }
+        Property { name: "distanceToNextInstruction"; type: "double"; isReadonly: true }
         Property { name: "waypoint"; type: "QDeclarativeCoordinate"; isReadonly: true; isPointer: true }
         Property { name: "waypointValid"; type: "bool"; isReadonly: true }
     }
@@ -333,12 +390,18 @@ Module {
         defaultProperty: "data"
         prototype: "QQuickItem"
         exports: ["Map 5.0"]
+        Property {
+            name: "gesture"
+            type: "QDeclarativeGeoMapGestureArea"
+            isReadonly: true
+            isPointer: true
+        }
         Property { name: "pinch"; type: "QDeclarativeGeoMapPinchArea"; isReadonly: true; isPointer: true }
         Property { name: "flick"; type: "QDeclarativeGeoMapFlickable"; isReadonly: true; isPointer: true }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
-        Property { name: "minimumZoomLevel"; type: "qreal"; isReadonly: true }
-        Property { name: "maximumZoomLevel"; type: "qreal"; isReadonly: true }
-        Property { name: "zoomLevel"; type: "qreal" }
+        Property { name: "minimumZoomLevel"; type: "double"; isReadonly: true }
+        Property { name: "maximumZoomLevel"; type: "double"; isReadonly: true }
+        Property { name: "zoomLevel"; type: "double" }
         Property { name: "activeMapType"; type: "QDeclarativeGeoMapType"; isPointer: true }
         Property {
             name: "supportedMapTypes"
@@ -348,49 +411,61 @@ Module {
         }
         Property { name: "center"; type: "QDeclarativeCoordinate"; isPointer: true }
         Property { name: "mapItems"; type: "QList<QObject*>"; isReadonly: true }
-        Property { name: "tilt"; type: "qreal" }
-        Property { name: "bearing"; type: "qreal" }
+        Property { name: "tilt"; type: "double" }
+        Property { name: "bearing"; type: "double" }
         Signal {
             name: "wheel"
-            Parameter { name: "delta"; type: "qreal" }
+            type: "void"
+            Parameter { name: "delta"; type: "double" }
         }
         Signal {
             name: "pluginChanged"
+            type: "void"
             Parameter { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
         }
         Signal {
             name: "zoomLevelChanged"
-            Parameter { name: "zoomLevel"; type: "qreal" }
+            type: "void"
+            Parameter { name: "zoomLevel"; type: "double" }
         }
         Signal {
             name: "bearingChanged"
-            Parameter { name: "bearing"; type: "qreal" }
+            type: "void"
+            Parameter { name: "bearing"; type: "double" }
         }
         Signal {
             name: "tiltChanged"
-            Parameter { name: "tilt"; type: "qreal" }
+            type: "void"
+            Parameter { name: "tilt"; type: "double" }
         }
         Signal {
             name: "centerChanged"
+            type: "void"
             Parameter { name: "coordinate"; type: "const QDeclarativeCoordinate"; isPointer: true }
         }
-        Method {
-            name: "cameraStopped"
-        }
+        Signal { name: "activeMapTypeChanged"; type: "void" }
+        Signal { name: "supportedMapTypesChanged"; type: "void" }
+        Signal { name: "minimumZoomLevelChanged"; type: "void" }
+        Signal { name: "maximumZoomLevelChanged"; type: "void" }
+        Signal { name: "mapItemsChanged"; type: "void" }
         Method {
             name: "pan"
+            type: "void"
             Parameter { name: "dx"; type: "int" }
             Parameter { name: "dy"; type: "int" }
         }
+        Method { name: "cameraStopped"; type: "void" }
         Method {
             name: "removeMapItem"
+            type: "void"
             Parameter { name: "item"; type: "QDeclarativeGeoMapItemBase"; isPointer: true }
         }
         Method {
             name: "addMapItem"
+            type: "void"
             Parameter { name: "item"; type: "QDeclarativeGeoMapItemBase"; isPointer: true }
         }
-        Method { name: "clearMapItems" }
+        Method { name: "clearMapItems"; type: "void" }
         Method {
             name: "toCoordinate"
             type: "QDeclarativeCoordinate*"
@@ -401,17 +476,84 @@ Module {
             type: "QPointF"
             Parameter { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
         }
+        Method { name: "fitViewportToMapItems"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoMapFlickable"
         prototype: "QObject"
         exports: ["MapFlickable 5.0"]
-        Property { name: "deceleration"; type: "qreal" }
+        Property { name: "deceleration"; type: "double" }
         Property { name: "enabled"; type: "bool" }
-        Signal { name: "movementStarted" }
-        Signal { name: "movementEnded" }
-        Signal { name: "flickStarted" }
-        Signal { name: "flickEnded" }
+        Signal { name: "decelerationChanged"; type: "void" }
+        Signal { name: "enabledChanged"; type: "void" }
+        Signal { name: "movementStarted"; type: "void" }
+        Signal { name: "movementEnded"; type: "void" }
+        Signal { name: "flickStarted"; type: "void" }
+        Signal { name: "flickEnded"; type: "void" }
+    }
+    Component {
+        name: "QDeclarativeGeoMapGestureArea"
+        prototype: "QObject"
+        exports: ["MapGestureArea 5.0"]
+        Enum {
+            name: "ActiveGesture"
+            values: {
+                "NoGesture": 0,
+                "ZoomGesture": 1,
+                "RotationGesture": 2,
+                "TiltGesture": 4,
+                "PanGesture": 8,
+                "FlickGesture": 16
+            }
+        }
+        Enum {
+            name: "ActiveGestures"
+            values: {
+                "NoGesture": 0,
+                "ZoomGesture": 1,
+                "RotationGesture": 2,
+                "TiltGesture": 4,
+                "PanGesture": 8,
+                "FlickGesture": 16
+            }
+        }
+        Property { name: "enabled"; type: "bool" }
+        Property { name: "pinchEnabled"; type: "bool" }
+        Property { name: "panEnabled"; type: "bool" }
+        Property { name: "isPinchActive"; type: "bool" }
+        Property { name: "isPanActive"; type: "bool"; isReadonly: true }
+        Property { name: "activeGestures"; type: "ActiveGestures" }
+        Property { name: "maximumZoomLevelChange"; type: "double" }
+        Property { name: "rotationFactor"; type: "double" }
+        Property { name: "flickDeceleration"; type: "double" }
+        Signal { name: "pinchActiveChanged"; type: "void" }
+        Signal { name: "enabledChanged"; type: "void" }
+        Signal { name: "maximumZoomLevelChangeChanged"; type: "void" }
+        Signal { name: "rotationFactorChanged"; type: "void" }
+        Signal { name: "activeGesturesChanged"; type: "void" }
+        Signal { name: "flickDecelerationChanged"; type: "void" }
+        Signal { name: "pinchEnabledChanged"; type: "void" }
+        Signal { name: "panEnabledChanged"; type: "void" }
+        Signal {
+            name: "pinchStarted"
+            type: "void"
+            Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
+        }
+        Signal {
+            name: "pinchUpdated"
+            type: "void"
+            Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
+        }
+        Signal {
+            name: "pinchFinished"
+            type: "void"
+            Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
+        }
+        Signal { name: "panStarted"; type: "void" }
+        Signal { name: "panFinished"; type: "void" }
+        Signal { name: "flickStarted"; type: "void" }
+        Signal { name: "flickFinished"; type: "void" }
+        Signal { name: "movementStopped"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoMapItemBase"
@@ -425,8 +567,8 @@ Module {
         exports: ["MapItemView 5.0"]
         Property { name: "model"; type: "QVariant" }
         Property { name: "delegate"; type: "QQmlComponent"; isPointer: true }
-        Property { name: "visible"; type: "bool" }
-        Property { name: "z"; type: "qreal" }
+        Signal { name: "modelChanged"; type: "void" }
+        Signal { name: "delegateChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoMapMouseArea"
@@ -477,25 +619,28 @@ Module {
         Property { name: "enabled"; type: "bool" }
         Property { name: "active"; type: "bool"; isReadonly: true }
         Property { name: "activeGestures"; type: "ActiveGestures" }
-        Property { name: "maximumZoomLevelChange"; type: "qreal" }
-        Property { name: "rotationFactor"; type: "qreal" }
-        Signal { name: "minimumZoomLevelChanged" }
-        Signal { name: "maximumZoomLevelChanged" }
-        Signal { name: "minimumRotationChanged" }
-        Signal { name: "maximumRotationChanged" }
-        Signal { name: "minimumTiltChanged" }
-        Signal { name: "maximumTiltChanged" }
-        Signal { name: "maximumTiltChangeChanged" }
+        Property { name: "maximumZoomLevelChange"; type: "double" }
+        Property { name: "rotationFactor"; type: "double" }
+        Property { name: "flickDeceleration"; type: "double" }
+        Signal { name: "activeChanged"; type: "void" }
+        Signal { name: "enabledChanged"; type: "void" }
+        Signal { name: "maximumZoomLevelChangeChanged"; type: "void" }
+        Signal { name: "rotationFactorChanged"; type: "void" }
+        Signal { name: "activeGesturesChanged"; type: "void" }
+        Signal { name: "flickDecelerationChanged"; type: "void" }
         Signal {
             name: "pinchStarted"
+            type: "void"
             Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
         }
         Signal {
             name: "pinchUpdated"
+            type: "void"
             Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
         }
         Signal {
             name: "pinchFinished"
+            type: "void"
             Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
         }
     }
@@ -504,7 +649,7 @@ Module {
         prototype: "QObject"
         exports: ["MapPinchEvent 5.0"]
         Property { name: "center"; type: "QPointF"; isReadonly: true }
-        Property { name: "angle"; type: "qreal"; isReadonly: true }
+        Property { name: "angle"; type: "double"; isReadonly: true }
         Property { name: "point1"; type: "QPointF"; isReadonly: true }
         Property { name: "point2"; type: "QPointF"; isReadonly: true }
         Property { name: "pointCount"; type: "int"; isReadonly: true }
@@ -517,8 +662,12 @@ Module {
         exports: ["MapQuickItem 5.0"]
         Property { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
         Property { name: "anchorPoint"; type: "QPointF" }
-        Property { name: "zoomLevel"; type: "qreal" }
+        Property { name: "zoomLevel"; type: "double" }
         Property { name: "sourceItem"; type: "QQuickItem"; isPointer: true }
+        Signal { name: "coordinateChanged"; type: "void" }
+        Signal { name: "sourceItemChanged"; type: "void" }
+        Signal { name: "anchorPointChanged"; type: "void" }
+        Signal { name: "zoomLevelChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoMapType"
@@ -549,7 +698,7 @@ Module {
         exports: ["Route 5.0"]
         Property { name: "bounds"; type: "QDeclarativeGeoBoundingBox"; isReadonly: true; isPointer: true }
         Property { name: "travelTime"; type: "int"; isReadonly: true }
-        Property { name: "distance"; type: "qreal"; isReadonly: true }
+        Property { name: "distance"; type: "double"; isReadonly: true }
         Property { name: "path"; type: "QDeclarativeCoordinate"; isList: true; isReadonly: true }
         Property { name: "segments"; type: "QDeclarativeGeoRouteSegment"; isList: true; isReadonly: true }
     }
@@ -584,15 +733,22 @@ Module {
         Property { name: "status"; type: "Status"; isReadonly: true }
         Property { name: "errorString"; type: "string"; isReadonly: true }
         Property { name: "error"; type: "RouteError"; isReadonly: true }
-        Signal { name: "routesChanged" }
-        Method { name: "update" }
+        Signal { name: "countChanged"; type: "void" }
+        Signal { name: "pluginChanged"; type: "void" }
+        Signal { name: "queryChanged"; type: "void" }
+        Signal { name: "autoUpdateChanged"; type: "void" }
+        Signal { name: "statusChanged"; type: "void" }
+        Signal { name: "errorStringChanged"; type: "void" }
+        Signal { name: "errorChanged"; type: "void" }
+        Signal { name: "routesChanged"; type: "void" }
+        Method { name: "update"; type: "void" }
         Method {
             name: "get"
             type: "QDeclarativeGeoRoute*"
             Parameter { name: "index"; type: "int" }
         }
-        Method { name: "clear" }
-        Method { name: "reset" }
+        Method { name: "reset"; type: "void" }
+        Method { name: "cancel"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoRouteQuery"
@@ -701,27 +857,40 @@ Module {
             isReadonly: true
         }
         Property { name: "featureTypes"; type: "QList<int>"; isReadonly: true }
-        Signal { name: "queryDetailsChanged" }
+        Signal { name: "numberAlternativeRoutesChanged"; type: "void" }
+        Signal { name: "travelModesChanged"; type: "void" }
+        Signal { name: "routeOptimizationsChanged"; type: "void" }
+        Signal { name: "waypointsChanged"; type: "void" }
+        Signal { name: "excludedAreasChanged"; type: "void" }
+        Signal { name: "featureTypesChanged"; type: "void" }
+        Signal { name: "maneuverDetailChanged"; type: "void" }
+        Signal { name: "segmentDetailChanged"; type: "void" }
+        Signal { name: "queryDetailsChanged"; type: "void" }
         Method {
             name: "addWaypoint"
+            type: "void"
             Parameter { name: "waypoint"; type: "QDeclarativeCoordinate"; isPointer: true }
         }
         Method {
             name: "removeWaypoint"
+            type: "void"
             Parameter { name: "waypoint"; type: "QDeclarativeCoordinate"; isPointer: true }
         }
-        Method { name: "clearWaypoints" }
+        Method { name: "clearWaypoints"; type: "void" }
         Method {
             name: "addExcludedArea"
+            type: "void"
             Parameter { name: "area"; type: "QDeclarativeGeoBoundingBox"; isPointer: true }
         }
         Method {
             name: "removeExcludedArea"
+            type: "void"
             Parameter { name: "area"; type: "QDeclarativeGeoBoundingBox"; isPointer: true }
         }
-        Method { name: "clearExcludedAreas" }
+        Method { name: "clearExcludedAreas"; type: "void" }
         Method {
             name: "setFeatureWeight"
+            type: "void"
             Parameter { name: "featureType"; type: "FeatureType" }
             Parameter { name: "featureWeight"; type: "FeatureWeight" }
         }
@@ -730,14 +899,14 @@ Module {
             type: "int"
             Parameter { name: "featureType"; type: "FeatureType" }
         }
-        Method { name: "resetFeatureWeights" }
+        Method { name: "resetFeatureWeights"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoRouteSegment"
         prototype: "QObject"
         exports: ["RouteSegment 5.0"]
         Property { name: "travelTime"; type: "int"; isReadonly: true }
-        Property { name: "distance"; type: "qreal"; isReadonly: true }
+        Property { name: "distance"; type: "double"; isReadonly: true }
         Property { name: "path"; type: "QDeclarativeCoordinate"; isList: true; isReadonly: true }
         Property { name: "maneuver"; type: "QDeclarativeGeoManeuver"; isReadonly: true; isPointer: true }
     }
@@ -826,10 +995,9 @@ Module {
                 "RemoveCategoryFeature": 32,
                 "PlaceRecommendationsFeature": 64,
                 "SearchSuggestionsFeature": 128,
-                "CorrectionsFeature": 256,
-                "LocalizedPlacesFeature": 512,
-                "NotificationsFeature": 1024,
-                "PlaceMatchingFeature": 2048,
+                "LocalizedPlacesFeature": 256,
+                "NotificationsFeature": 512,
+                "PlaceMatchingFeature": 1024,
                 "AnyPlacesFeatures": -1
             }
         }
@@ -845,10 +1013,9 @@ Module {
                 "RemoveCategoryFeature": 32,
                 "PlaceRecommendationsFeature": 64,
                 "SearchSuggestionsFeature": 128,
-                "CorrectionsFeature": 256,
-                "LocalizedPlacesFeature": 512,
-                "NotificationsFeature": 1024,
-                "PlaceMatchingFeature": 2048,
+                "LocalizedPlacesFeature": 256,
+                "NotificationsFeature": 512,
+                "PlaceMatchingFeature": 1024,
                 "AnyPlacesFeatures": -1
             }
         }
@@ -872,15 +1039,19 @@ Module {
         Property { name: "isAttached"; type: "bool"; isReadonly: true }
         Signal {
             name: "nameChanged"
+            type: "void"
             Parameter { name: "name"; type: "string" }
         }
-        Signal { name: "attached" }
+        Signal { name: "localesChanged"; type: "void" }
+        Signal { name: "attached"; type: "void" }
         Signal {
             name: "preferredChanged"
+            type: "void"
             Parameter { name: "preferences"; type: "QStringList" }
         }
         Signal {
             name: "allowExperimentalChanged"
+            type: "void"
             Parameter { name: "allow"; type: "bool" }
         }
         Method {
@@ -916,10 +1087,12 @@ Module {
         Property { name: "value"; type: "QVariant" }
         Signal {
             name: "nameChanged"
+            type: "void"
             Parameter { name: "name"; type: "string" }
         }
         Signal {
             name: "valueChanged"
+            type: "void"
             Parameter { name: "value"; type: "QVariant" }
         }
     }
@@ -933,21 +1106,25 @@ Module {
         Property { name: "places"; type: "QDeclarativeGeoServiceProvider::PlacesFeatures" }
         Signal {
             name: "mappingRequirementsChanged"
+            type: "void"
             Parameter { name: "features"; type: "QDeclarativeGeoServiceProvider::MappingFeatures" }
         }
         Signal {
             name: "routingRequirementsChanged"
+            type: "void"
             Parameter { name: "features"; type: "QDeclarativeGeoServiceProvider::RoutingFeatures" }
         }
         Signal {
             name: "geocodingRequirementsChanged"
+            type: "void"
             Parameter { name: "features"; type: "QDeclarativeGeoServiceProvider::GeocodingFeatures" }
         }
         Signal {
             name: "placesRequirementsChanged"
+            type: "void"
             Parameter { name: "features"; type: "QDeclarativeGeoServiceProvider::PlacesFeatures" }
         }
-        Signal { name: "requirementsChanged" }
+        Signal { name: "requirementsChanged"; type: "void" }
         Method {
             name: "matches"
             type: "bool"
@@ -989,27 +1166,39 @@ Module {
         Property { name: "query"; type: "QVariant" }
         Property { name: "bounds"; type: "QObject"; isPointer: true }
         Property { name: "error"; type: "GeocodeError"; isReadonly: true }
-        Signal { name: "locationsChanged" }
-        Method { name: "update" }
+        Signal { name: "countChanged"; type: "void" }
+        Signal { name: "pluginChanged"; type: "void" }
+        Signal { name: "statusChanged"; type: "void" }
+        Signal { name: "errorStringChanged"; type: "void" }
+        Signal { name: "errorChanged"; type: "void" }
+        Signal { name: "locationsChanged"; type: "void" }
+        Signal { name: "autoUpdateChanged"; type: "void" }
+        Signal { name: "boundsChanged"; type: "void" }
+        Signal { name: "queryChanged"; type: "void" }
+        Signal { name: "limitChanged"; type: "void" }
+        Signal { name: "offsetChanged"; type: "void" }
+        Method { name: "update"; type: "void" }
         Method {
             name: "get"
             type: "QDeclarativeGeoLocation*"
             Parameter { name: "index"; type: "int" }
         }
-        Method { name: "clear" }
-        Method { name: "reset" }
+        Method { name: "reset"; type: "void" }
+        Method { name: "cancel"; type: "void" }
     }
     Component {
         name: "QDeclarativeMapLineProperties"
         prototype: "QObject"
-        Property { name: "width"; type: "qreal" }
+        Property { name: "width"; type: "double" }
         Property { name: "color"; type: "QColor" }
         Signal {
             name: "widthChanged"
-            Parameter { name: "width"; type: "qreal" }
+            type: "void"
+            Parameter { name: "width"; type: "double" }
         }
         Signal {
             name: "colorChanged"
+            type: "void"
             Parameter { name: "color"; type: "QColor" }
         }
     }
@@ -1074,16 +1263,40 @@ Module {
         Property { name: "primaryWebsite"; type: "QUrl"; isReadonly: true }
         Property { name: "visibility"; type: "Visibility" }
         Property { name: "favorite"; type: "QDeclarativePlace"; isPointer: true }
-        Method { name: "getDetails" }
-        Method { name: "save" }
-        Method { name: "remove" }
+        Signal { name: "pluginChanged"; type: "void" }
+        Signal { name: "categoriesChanged"; type: "void" }
+        Signal { name: "locationChanged"; type: "void" }
+        Signal { name: "ratingsChanged"; type: "void" }
+        Signal { name: "supplierChanged"; type: "void" }
+        Signal { name: "iconChanged"; type: "void" }
+        Signal { name: "nameChanged"; type: "void" }
+        Signal { name: "placeIdChanged"; type: "void" }
+        Signal { name: "attributionChanged"; type: "void" }
+        Signal { name: "detailsFetchedChanged"; type: "void" }
+        Signal { name: "reviewModelChanged"; type: "void" }
+        Signal { name: "imageModelChanged"; type: "void" }
+        Signal { name: "editorialModelChanged"; type: "void" }
+        Signal { name: "primaryPhoneChanged"; type: "void" }
+        Signal { name: "primaryFaxChanged"; type: "void" }
+        Signal { name: "primaryEmailChanged"; type: "void" }
+        Signal { name: "primaryWebsiteChanged"; type: "void" }
+        Signal { name: "extendedAttributesChanged"; type: "void" }
+        Signal { name: "contactDetailsChanged"; type: "void" }
+        Signal { name: "statusChanged"; type: "void" }
+        Signal { name: "visibilityChanged"; type: "void" }
+        Signal { name: "favoriteChanged"; type: "void" }
+        Method { name: "getDetails"; type: "void" }
+        Method { name: "save"; type: "void" }
+        Method { name: "remove"; type: "void" }
         Method { name: "errorString"; type: "string" }
         Method {
             name: "copyFrom"
+            type: "void"
             Parameter { name: "original"; type: "QDeclarativePlace"; isPointer: true }
         }
         Method {
             name: "initializeFavorite"
+            type: "void"
             Parameter { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
         }
     }
@@ -1094,6 +1307,8 @@ Module {
         Property { name: "attribute"; type: "QPlaceAttribute" }
         Property { name: "label"; type: "string" }
         Property { name: "text"; type: "string" }
+        Signal { name: "labelChanged"; type: "void" }
+        Signal { name: "textChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativePlaceContentModel"
@@ -1101,6 +1316,9 @@ Module {
         Property { name: "place"; type: "QDeclarativePlace"; isPointer: true }
         Property { name: "batchSize"; type: "int" }
         Property { name: "totalCount"; type: "int"; isReadonly: true }
+        Signal { name: "placeChanged"; type: "void" }
+        Signal { name: "batchSizeChanged"; type: "void" }
+        Signal { name: "totalCountChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativePlaceEditorialModel"
@@ -1114,6 +1332,8 @@ Module {
         Property { name: "icon"; type: "QPlaceIcon" }
         Property { name: "parameters"; type: "QObject"; isReadonly: true; isPointer: true }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
+        Signal { name: "pluginChanged"; type: "void" }
+        Signal { name: "parametersChanged"; type: "void" }
         Method {
             name: "url"
             type: "QUrl"
@@ -1133,6 +1353,8 @@ Module {
         Property { name: "user"; type: "QPlaceUser" }
         Property { name: "userId"; type: "string" }
         Property { name: "name"; type: "string" }
+        Signal { name: "userIdChanged"; type: "void" }
+        Signal { name: "nameChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativePolygonMapItem"
@@ -1147,16 +1369,20 @@ Module {
             isReadonly: true
             isPointer: true
         }
+        Signal { name: "pathChanged"; type: "void" }
         Signal {
             name: "colorChanged"
+            type: "void"
             Parameter { name: "color"; type: "QColor" }
         }
         Method {
             name: "addCoordinate"
+            type: "void"
             Parameter { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
         }
         Method {
             name: "removeCoordinate"
+            type: "void"
             Parameter { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
         }
     }
@@ -1172,12 +1398,15 @@ Module {
             isReadonly: true
             isPointer: true
         }
+        Signal { name: "pathChanged"; type: "void" }
         Method {
             name: "addCoordinate"
+            type: "void"
             Parameter { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
         }
         Method {
             name: "removeCoordinate"
+            type: "void"
             Parameter { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
         }
     }
@@ -1192,10 +1421,21 @@ Module {
         Property { name: "timestamp"; type: "QDateTime"; isReadonly: true }
         Property { name: "speed"; type: "double"; isReadonly: true }
         Property { name: "speedValid"; type: "bool"; isReadonly: true }
-        Property { name: "horizontalAccuracy"; type: "qreal" }
-        Property { name: "verticalAccuracy"; type: "qreal" }
+        Property { name: "horizontalAccuracy"; type: "double" }
+        Property { name: "verticalAccuracy"; type: "double" }
         Property { name: "horizontalAccuracyValid"; type: "bool"; isReadonly: true }
         Property { name: "verticalAccuracyValid"; type: "bool"; isReadonly: true }
+        Signal { name: "latitudeValidChanged"; type: "void" }
+        Signal { name: "longitudeValidChanged"; type: "void" }
+        Signal { name: "altitudeValidChanged"; type: "void" }
+        Signal { name: "timestampChanged"; type: "void" }
+        Signal { name: "speedChanged"; type: "void" }
+        Signal { name: "speedValidChanged"; type: "void" }
+        Signal { name: "coordinateChanged"; type: "void" }
+        Signal { name: "horizontalAccuracyChanged"; type: "void" }
+        Signal { name: "horizontalAccuracyValidChanged"; type: "void" }
+        Signal { name: "verticalAccuracyChanged"; type: "void" }
+        Signal { name: "verticalAccuracyValidChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativePositionSource"
@@ -1229,29 +1469,44 @@ Module {
         }
         Property { name: "position"; type: "QDeclarativePosition"; isReadonly: true; isPointer: true }
         Property { name: "active"; type: "bool" }
+        Property { name: "valid"; type: "bool"; isReadonly: true }
         Property { name: "nmeaSource"; type: "QUrl" }
         Property { name: "updateInterval"; type: "int" }
         Property { name: "supportedPositioningMethods"; type: "PositioningMethods"; isReadonly: true }
         Property { name: "preferredPositioningMethods"; type: "PositioningMethods" }
         Property { name: "sourceError"; type: "SourceError"; isReadonly: true }
-        Method { name: "update" }
-        Method { name: "start" }
-        Method { name: "stop" }
+        Property { name: "name"; type: "string" }
+        Signal { name: "positionChanged"; type: "void" }
+        Signal { name: "activeChanged"; type: "void" }
+        Signal { name: "nmeaSourceChanged"; type: "void" }
+        Signal { name: "updateIntervalChanged"; type: "void" }
+        Signal { name: "supportedPositioningMethodsChanged"; type: "void" }
+        Signal { name: "preferredPositioningMethodsChanged"; type: "void" }
+        Signal { name: "sourceErrorChanged"; type: "void" }
+        Signal { name: "nameChanged"; type: "void" }
+        Signal { name: "validityChanged"; type: "void" }
+        Method { name: "update"; type: "void" }
+        Method { name: "start"; type: "void" }
+        Method { name: "stop"; type: "void" }
     }
     Component {
         name: "QDeclarativeRatings"
         prototype: "QObject"
         exports: ["Ratings 5.0"]
         Property { name: "ratings"; type: "QPlaceRatings" }
-        Property { name: "average"; type: "qreal" }
-        Property { name: "maximum"; type: "qreal" }
+        Property { name: "average"; type: "double" }
+        Property { name: "maximum"; type: "double" }
         Property { name: "count"; type: "int" }
+        Signal { name: "averageChanged"; type: "void" }
+        Signal { name: "maximumChanged"; type: "void" }
+        Signal { name: "countChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeRecommendationModel"
         prototype: "QDeclarativeResultModelBase"
         exports: ["PlaceRecommendationModel 5.0"]
         Property { name: "placeId"; type: "string" }
+        Signal { name: "placeIdChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeRectangleMapItem"
@@ -1269,14 +1524,17 @@ Module {
         }
         Signal {
             name: "topLeftChanged"
+            type: "void"
             Parameter { name: "topLeft"; type: "const QDeclarativeCoordinate"; isPointer: true }
         }
         Signal {
             name: "bottomRightChanged"
+            type: "void"
             Parameter { name: "bottomRight"; type: "const QDeclarativeCoordinate"; isPointer: true }
         }
         Signal {
             name: "colorChanged"
+            type: "void"
             Parameter { name: "color"; type: "QColor" }
         }
     }
@@ -1286,7 +1544,10 @@ Module {
         Property { name: "count"; type: "int"; isReadonly: true }
         Property { name: "favoritesPlugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
         Property { name: "favoritesMatchParameters"; type: "QVariantMap" }
-        Signal { name: "rowCountChanged" }
+        Signal { name: "rowCountChanged"; type: "void" }
+        Signal { name: "favoritesPluginChanged"; type: "void" }
+        Signal { name: "favoritesMatchParametersChanged"; type: "void" }
+        Signal { name: "dataChanged"; type: "void" }
         Method {
             name: "data"
             type: "QVariant"
@@ -1313,6 +1574,7 @@ Module {
         }
         Signal {
             name: "routeChanged"
+            type: "void"
             Parameter { name: "route"; type: "const QDeclarativeGeoRoute"; isPointer: true }
         }
     }
@@ -1322,9 +1584,10 @@ Module {
         Enum {
             name: "Status"
             values: {
-                "Ready": 0,
-                "Executing": 1,
-                "Error": 2
+                "Null": 0,
+                "Ready": 1,
+                "Loading": 2,
+                "Error": 3
             }
         }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
@@ -1332,9 +1595,14 @@ Module {
         Property { name: "offset"; type: "int" }
         Property { name: "limit"; type: "int" }
         Property { name: "status"; type: "Status"; isReadonly: true }
-        Method { name: "execute" }
-        Method { name: "cancel" }
-        Method { name: "clear" }
+        Signal { name: "pluginChanged"; type: "void" }
+        Signal { name: "searchAreaChanged"; type: "void" }
+        Signal { name: "offsetChanged"; type: "void" }
+        Signal { name: "limitChanged"; type: "void" }
+        Signal { name: "statusChanged"; type: "void" }
+        Method { name: "update"; type: "void" }
+        Method { name: "cancel"; type: "void" }
+        Method { name: "reset"; type: "void" }
         Method { name: "errorString"; type: "string" }
     }
     Component {
@@ -1344,9 +1612,8 @@ Module {
         Enum {
             name: "SearchResultType"
             values: {
-                "PlaceResult": 0,
-                "CorrectionResult": 1,
-                "UnknownSearchResult": 2
+                "UnknownSearchResult": 0,
+                "PlaceResult": 1
             }
         }
         Enum {
@@ -1359,9 +1626,12 @@ Module {
         }
         Property { name: "searchTerm"; type: "string" }
         Property { name: "categories"; type: "QDeclarativeCategory"; isList: true; isReadonly: true }
-        Property { name: "maximumCorrections"; type: "int" }
         Property { name: "relevanceHint"; type: "RelevanceHint" }
         Property { name: "visibilityScope"; type: "QDeclarativePlace::Visibility" }
+        Signal { name: "searchTermChanged"; type: "void" }
+        Signal { name: "categoriesChanged"; type: "void" }
+        Signal { name: "relevanceHintChanged"; type: "void" }
+        Signal { name: "visibilityScopeChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeSearchSuggestionModel"
@@ -1369,6 +1639,8 @@ Module {
         exports: ["PlaceSearchSuggestionModel 5.0"]
         Property { name: "searchTerm"; type: "string" }
         Property { name: "suggestions"; type: "QStringList"; isReadonly: true }
+        Signal { name: "searchTermChanged"; type: "void" }
+        Signal { name: "suggestionsChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeSupplier"
@@ -1379,6 +1651,10 @@ Module {
         Property { name: "supplierId"; type: "string" }
         Property { name: "url"; type: "QUrl" }
         Property { name: "icon"; type: "QDeclarativePlaceIcon"; isPointer: true }
+        Signal { name: "nameChanged"; type: "void" }
+        Signal { name: "supplierIdChanged"; type: "void" }
+        Signal { name: "urlChanged"; type: "void" }
+        Signal { name: "iconChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeSupportedCategoriesModel"
@@ -1387,7 +1663,8 @@ Module {
         Enum {
             name: "Roles"
             values: {
-                "CategoryRole": 256
+                "CategoryRole": 256,
+                "ParentCategoryRole": 257
             }
         }
         Enum {
@@ -1401,7 +1678,11 @@ Module {
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
         Property { name: "hierarchical"; type: "bool" }
         Property { name: "status"; type: "Status"; isReadonly: true }
-        Method { name: "update" }
+        Signal { name: "pluginChanged"; type: "void" }
+        Signal { name: "hierarchicalChanged"; type: "void" }
+        Signal { name: "statusChanged"; type: "void" }
+        Signal { name: "dataChanged"; type: "void" }
+        Method { name: "update"; type: "void" }
         Method {
             name: "data"
             type: "QVariant"
@@ -1415,6 +1696,7 @@ Module {
         prototype: "QObject"
         Signal {
             name: "valueChanged"
+            type: "void"
             Parameter { name: "key"; type: "string" }
             Parameter { name: "value"; type: "QVariant" }
         }

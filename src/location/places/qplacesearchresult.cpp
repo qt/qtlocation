@@ -57,7 +57,6 @@ QPlaceSearchResultPrivate::QPlaceSearchResultPrivate(const QPlaceSearchResultPri
     distance = other.distance;
     type = other.type;
     place = other.place;
-    correction = other.correction;
     sponsored = other.sponsored;
 }
 
@@ -70,7 +69,6 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
     return distance == other.distance &&
            type == other.type &&
            place == other.place &&
-           correction == other.correction &&
            sponsored == other.sponsored;
 }
 
@@ -83,23 +81,20 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
 
     \brief The QPlaceSearchResult class represents a search result.
 
-    There are two types of search results.  The first is a
-    \l {QPlaceSearchResult::PlaceResult} {place result}, which contains
-    a place that matched the search request, but also metadata about the place
-    such as the distance from the search center of a search request and whether the result is a
-    sponsored or \l {http://en.wikipedia.org/wiki/Organic_search}{organic} search result.
-
-    The other type is a \l {QPlaceSearchResult::CorrectionResult}{correction}, which
-    contains an alternative search term that may better reflect the
-    user's intended query.
-
+    Currently the only useful search result type is the
+    \l {QPlaceSearchResult::PlaceResult} {place result}.
+    For search results of this type, the \l {QPlaceSearchResult::distance()} {distance},
+    \l {QPlaceSearchResult::place()}{place} and {QPlaceSearchResult::isSponsored} isSponsored
+    fields of the search result is filled in.  Thus the result contains the distance
+    from the place from the search center of the search request, the place data containing
+    coordinates, address and so on, and finally an indication of whether the
+    result is sponsored or \l {http://en.wikipedia.org/wiki/Organic_search}{organic}.
 */
 
 /*!
     \enum QPlaceSearchResult::SearchResultType
     Defines the type of search result
     \value PlaceResult The search result contains a place.
-    \value CorrectionResult The search result contains a search term correction.
     \value UnknownSearchResult The contents of the search result are unknown.
 */
 
@@ -205,23 +200,6 @@ QPlace QPlaceSearchResult::place() const
 void QPlaceSearchResult::setPlace(const QPlace &place)
 {
     d->place = place;
-}
-
-/*!
-    Returns the correction term that this particular search result represents.
-    This field is only valid when the search result type is QPlaceSearchResult::CorrectionResult.
-*/
-QString QPlaceSearchResult::correction() const
-{
-    return d->correction;
-}
-
-/*!
-    Sets the \a correction term of the search result.
-*/
-void QPlaceSearchResult::setCorrection(const QString &correction)
-{
-    d->correction = correction;
 }
 
 /*!

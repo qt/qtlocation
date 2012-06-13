@@ -107,9 +107,6 @@ capabilities are outlined below:
         \li Lexical name relevance hint
         \li yes
     \row
-        \li Search term corrections
-        \li no
-    \row
         \li Extended Attributes
         \li no
     \row

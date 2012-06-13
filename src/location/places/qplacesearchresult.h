@@ -72,8 +72,7 @@ public:
 
     enum SearchResultType {
         UnknownSearchResult = 0,
-        PlaceResult,
-        CorrectionResult
+        PlaceResult
     };
 
     qreal distance() const;
@@ -84,9 +83,6 @@ public:
 
     QPlace place() const;
     void setPlace(const QPlace &place);
-
-    QString correction() const;
-    void setCorrection(const QString &correction);
 
     bool isSponsored() const;
     void setSponsored(bool sponsored);
