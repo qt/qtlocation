@@ -44,10 +44,12 @@
 #include "macro.h"
 #include "qplacemanagerengine_jsondb.h"
 
-#include <qplacesearchreply.h>
+
 
 #include <QtCore/QObject>
 #include <QtJsonDb/QJsonDbRequest>
+#include <QtLocation/QPlaceResult>
+#include <QtLocation/QPlaceSearchReply>
 
 QT_BEGIN_NAMESPACE
 
@@ -58,7 +60,8 @@ class SearchReply : public QPlaceSearchReply
 public:
     SearchReply(QPlaceManagerEngineJsonDb *engine);
     virtual ~SearchReply();
-    void setResults(const QList<QPlaceSearchResult> &results);
+    void setResults(const QList<QPlaceResult> &results);
+    using QPlaceSearchReply::setResults;
     void setRequest(const QPlaceSearchRequest &request);
 
     DECLARE_TRIGGER_DONE_FN

@@ -56,6 +56,7 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
 #include <QtLocation/QPlaceIcon>
+#include <QtLocation/QPlaceResult>
 
 #include <QtCore/QDebug>
 
@@ -113,9 +114,7 @@ void QPlaceSearchReplyImpl::replyFinished()
     for (int i = 0; i < items.count(); ++i) {
         QJsonObject item = items.at(i).toObject();
 
-        QPlaceSearchResult result;
-
-        result.setType(QPlaceSearchResult::PlaceResult);
+        QPlaceResult result;
 
         if (item.contains(QLatin1String("distance")))
             result.setDistance(item.value(QLatin1String("distance")).toDouble());
@@ -145,9 +144,13 @@ void QPlaceSearchReplyImpl::replyFinished()
         ratings.setMaximum(5.0);
         place.setRatings(ratings);
 
-        place.setName(item.value(QLatin1String("title")).toString());
+        const QString title = item.value(QLatin1String("title")).toString();
+        place.setName(title);
+        result.setTitle(title);
 
-        place.setIcon(m_engine->icon(item.value(QLatin1String("icon")).toString()));
+        QPlaceIcon icon = m_engine->icon(item.value(QLatin1String("icon")).toString());
+        place.setIcon(icon);
+        result.setIcon(icon);
 
         place.setCategory(parseCategory(item.value(QLatin1String("category")).toObject(),
                                         m_engine));

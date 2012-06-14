@@ -44,6 +44,7 @@
 
 #include <QtLocation/QPlaceSearchReply>
 #include <QtLocation/QGeoBoundingCircle>
+#include <QtLocation/QPlaceResult>
 
 QT_USE_NAMESPACE
 
@@ -126,11 +127,11 @@ void tst_QPlaceSearchReply::resultsTest()
     QPlace stormsEnd;
     stormsEnd.setName("Storm's end");
 
-    QPlaceSearchResult result1;
+    QPlaceResult result1;
     result1.setPlace(winterfell);
-    QPlaceSearchResult result2;
+    QPlaceResult result2;
     result2.setPlace(casterlyRock);
-    QPlaceSearchResult result3;
+    QPlaceResult result3;
     result3.setPlace(stormsEnd);
     results << result1 << result2 << result3;
 

@@ -45,6 +45,7 @@
 #include <QPlaceIdReply>
 #include <QPlaceManager>
 #include <QPlaceSearchReply>
+#include <QPlaceResult>
 #include <QPlaceImage>
 #include <QtCore/QMetaObject>
 
@@ -282,10 +283,10 @@ public:
     }
 
     void saveBetweenManagers()  {
-        QPlaceSearchResult result;
+        QPlaceResult result;
         QPlaceIdReply *saveReply;
         //! [ Save to different manager]
-        //result retrieved from a different manager
+        //result retrieved from a different manager)
         QPlace place = manager->compatiblePlace(result.place());
         saveReply = manager->savePlace(place);
         //! [ Save to different manager]
@@ -318,7 +319,7 @@ public slots:
         if (searchReply->error() == QPlaceReply::NoError) {
             foreach (const QPlaceSearchResult &result, searchReply->results()) {
                 if (result.type() == QPlaceSearchResult::PlaceResult)
-                    qDebug() << "Name:" << result.place().name();
+                    qDebug() << "Title:" << result.title();
             }
         }
 
@@ -333,10 +334,11 @@ public slots:
         if (searchReply->error() == QPlaceReply::NoError) {
             foreach (const QPlaceSearchResult &result, searchReply->results()) {
                 if (result.type() == QPlaceSearchResult::PlaceResult) {
-                    qDebug() << "Name: " << result.place().name();
-                    qDebug() << "Coordinate " << result.place().location().coordinate().toString();
-                    qDebug() << "Street: " << result.place().location().address().street();
-                    qDebug() << "Distance: " << result.distance();
+                    QPlaceResult placeResult = result;
+                    qDebug() << "Name: " << placeResult.place().name();
+                    qDebug() << "Coordinate " << placeResult.place().location().coordinate().toString();
+                    qDebug() << "Street: " << placeResult.place().location().address().street();
+                    qDebug() << "Distance: " << placeResult.distance();
                 }
             }
         }
@@ -402,8 +404,11 @@ public slots:
     void handleRecommendationReply() {
         if (recommendationReply->error() ==  QPlaceReply::NoError) {
             foreach (const QPlaceSearchResult &result, searchReply->results()) {
-                if (result.type() == QPlaceSearchResult::PlaceResult)
-                    qDebug() << result.place().name();
+                if (result.type() == QPlaceSearchResult::PlaceResult) {
+                    QPlaceResult placeResult = result;
+                    qDebug() << "Name: " << placeResult.place().name();
+                    qDebug() << "Coordinates" << placeResult.place().location().coordinate().toString();
+                }
             }
         }
         recommendationReply->deleteLater(); //discard reply

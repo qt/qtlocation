@@ -44,6 +44,7 @@
 
 #include "qdeclarativesearchmodelbase.h"
 #include "qdeclarativeplace_p.h"
+#include "qdeclarativeplaceicon_p.h"
 
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceSearchReply>
@@ -90,12 +91,16 @@ private Q_SLOTS:
 protected:
     enum Roles {
         DistanceRole = Qt::UserRole,
-        PlaceRole
+        TitleRole,
+        IconRole,
+        PlaceRole,
+        UserRole
     };
 
     QList<QPlaceSearchResult> m_results;
     QList<QPlaceSearchResult> m_resultsBuffer;
     QList<QDeclarativePlace *> m_places;
+    QList<QDeclarativePlaceIcon*> m_icons;
 
     QDeclarativeGeoServiceProvider *m_favoritesPlugin;
     QVariantMap m_matchParameters;

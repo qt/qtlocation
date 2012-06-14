@@ -45,6 +45,7 @@
 #include <QtLocation/QPlace>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceResult>
 #include <QtTest/QSignalSpy>
 #include <QtTest/QTest>
 
@@ -128,8 +129,12 @@ bool PlaceManagerUtils::doSearch(QPlaceManager *manager,
     results->clear();
     QList<QPlaceSearchResult> searchResults;
     success = doSearch(manager, request, &searchResults, expectedError);
-    foreach (const QPlaceSearchResult &searchResult, searchResults)
-        results->append(searchResult.place());
+    foreach (const QPlaceSearchResult &searchResult, searchResults) {
+        if (searchResult.type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = searchResult;
+            results->append(placeResult.place());
+        }
+    }
     return success;
 }
 

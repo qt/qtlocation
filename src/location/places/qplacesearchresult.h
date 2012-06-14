@@ -51,7 +51,13 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+#define Q_DECLARE_SEARCHRESULT_D_FUNC(Class) \
+    inline Class##Private *d_func(); \
+    inline const Class##Private *d_func() const;\
+    friend class Class##Private;
 
+#define Q_DECLARE_SEARCHRESULT_COPY_CTOR(Class) \
+    Class(const QPlaceSearchResult &other);
 
 class QPlaceSearchResultPrivate;
 
@@ -75,23 +81,29 @@ public:
         PlaceResult
     };
 
-    qreal distance() const;
-    void setDistance(qreal distance);
-
     SearchResultType type() const;
-    void setType(SearchResultType type);
 
-    QPlace place() const;
-    void setPlace(const QPlace &place);
+    QString title() const;
+    void setTitle(const QString &title);
 
-    bool isSponsored() const;
-    void setSponsored(bool sponsored);
+    QPlaceIcon icon() const;
+    void setIcon(const QPlaceIcon &icon);
+
+protected:
+    explicit QPlaceSearchResult(QPlaceSearchResultPrivate *d);
+    QSharedDataPointer<QPlaceSearchResultPrivate> d_ptr;
 
 private:
-    QSharedDataPointer<QPlaceSearchResultPrivate> d;
+    inline QPlaceSearchResultPrivate *d_func();
+    inline const QPlaceSearchResultPrivate *d_func() const;
+
+    friend class QPlaceSearchResultPrivate;
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QPlaceSearchResult)
+Q_DECLARE_METATYPE(QPlaceSearchResult::SearchResultType)
 
 QT_END_HEADER
 

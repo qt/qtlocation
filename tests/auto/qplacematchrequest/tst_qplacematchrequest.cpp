@@ -42,8 +42,8 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qplacematchrequest.h>
-
+#include <QtLocation/QPlaceMatchRequest>
+#include <QtLocation/QPlaceResult>
 
 QT_USE_NAMESPACE
 
@@ -118,12 +118,12 @@ void tst_QPlaceMatchRequest::resultsTest()
 
     QPlace place1;
     place1.setName(QLatin1String("place1"));
-    QPlaceSearchResult result1;
+    QPlaceResult result1;
     result1.setPlace(place1);
 
     QPlace place2;
     place2.setName(QLatin1String("place2"));
-    QPlaceSearchResult result2;
+    QPlaceResult result2;
     result2.setPlace(place2);
 
     QList<QPlaceSearchResult> results;

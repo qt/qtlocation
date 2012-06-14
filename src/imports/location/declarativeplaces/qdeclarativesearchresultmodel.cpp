@@ -50,6 +50,7 @@
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceMatchRequest>
 #include <QtLocation/QPlaceMatchReply>
+#include <QtLocation/QPlaceResult>
 
 QT_USE_NAMESPACE
 
@@ -81,6 +82,14 @@ QT_USE_NAMESPACE
             \li type
             \li enum
             \li The type of search result.
+        \row
+            \li title
+            \li string
+            \li A string describing the search result.
+        \row
+            \li icon
+            \li PlaceIcon
+            \li Icon representing the search result.
         \row
             \li distance
             \li real
@@ -480,7 +489,13 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
     case SearchResultTypeRole:
         return m_results.at(index.row()).type();
     case SponsoredRole:
-        return m_results.at(index.row()).isSponsored();
+        if (m_results.at(index.row()).type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = m_results.at(index.row());
+            return placeResult.isSponsored();
+        } else {
+            return false;
+        }
+        break;
     default:
         return QDeclarativeResultModelBase::data(index, role);
     }

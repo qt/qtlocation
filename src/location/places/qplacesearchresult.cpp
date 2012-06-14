@@ -41,35 +41,33 @@
 
 #include "qplacesearchresult.h"
 #include "qplacesearchresult_p.h"
+#include "qplaceresult.h"
 #include <QtCore/qnumeric.h>
+
+#if !defined(Q_CC_MWERKS)
+template<> QT_PREPEND_NAMESPACE(QPlaceSearchResultPrivate) *
+            QSharedDataPointer<QT_PREPEND_NAMESPACE(QPlaceSearchResultPrivate)>::clone()
+{
+    return d->clone();
+}
+#endif
 
 QT_USE_NAMESPACE
 
-QPlaceSearchResultPrivate::QPlaceSearchResultPrivate()
-:   QSharedData(), distance(qQNaN()), type(QPlaceSearchResult::UnknownSearchResult),
-    sponsored(false)
+inline QPlaceSearchResultPrivate *QPlaceSearchResult::d_func()
 {
+    return static_cast<QPlaceSearchResultPrivate *>(d_ptr.data());
 }
 
-QPlaceSearchResultPrivate::QPlaceSearchResultPrivate(const QPlaceSearchResultPrivate &other)
-    : QSharedData()
+inline const QPlaceSearchResultPrivate *QPlaceSearchResult::d_func() const
 {
-    distance = other.distance;
-    type = other.type;
-    place = other.place;
-    sponsored = other.sponsored;
+    return static_cast<const QPlaceSearchResultPrivate *>(d_ptr.constData());
 }
 
-QPlaceSearchResultPrivate::~QPlaceSearchResultPrivate()
+bool QPlaceSearchResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
 {
-}
-
-bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &other) const
-{
-    return distance == other.distance &&
-           type == other.type &&
-           place == other.place &&
-           sponsored == other.sponsored;
+    return title == other->title
+            && icon == other->icon;
 }
 
 /*!
@@ -102,7 +100,7 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
     Constructs a new search result.
 */
 QPlaceSearchResult::QPlaceSearchResult()
-    : d(new QPlaceSearchResultPrivate)
+    : d_ptr(new QPlaceSearchResultPrivate)
 {
 }
 
@@ -110,7 +108,7 @@ QPlaceSearchResult::QPlaceSearchResult()
     Constructs a copy of \a other
 */
 QPlaceSearchResult::QPlaceSearchResult(const QPlaceSearchResult &other)
-    :d(other.d)
+    :d_ptr(other.d_ptr)
 {
 }
 
@@ -130,7 +128,7 @@ QPlaceSearchResult &QPlaceSearchResult::operator =(const QPlaceSearchResult &oth
     if (this == &other)
         return *this;
 
-    d = other.d;
+    d_ptr = other.d_ptr;
     return *this;
 }
 
@@ -140,7 +138,14 @@ QPlaceSearchResult &QPlaceSearchResult::operator =(const QPlaceSearchResult &oth
 */
 bool QPlaceSearchResult::operator==(const QPlaceSearchResult &other) const
 {
-    return (*(d.constData()) == *(other.d.constData()));
+    // An unknown object is only equal to another unknown search result
+    if (!d_ptr)
+        return !other.d_ptr;
+
+    if (type() != other.type())
+        return false;
+
+    return d_ptr->compare(other.d_ptr);
 }
 
 /*!
@@ -150,74 +155,57 @@ bool QPlaceSearchResult::operator==(const QPlaceSearchResult &other) const
 */
 
 /*!
-    Returns the distance of the place to the search center.  This field
-    is only valid when the search result type is QPlaceSearchResult::PlaceResult,
-    and where the search request contained a search center.  Otherwise,
-    the distance is NaN indicating an undefined distance.  The default value
-    for distance is NaN.
-*/
-qreal QPlaceSearchResult::distance() const
-{
-    return d->distance;
-}
-
-/*!
-    Set the \a distance of the search result's place from a search center.
-*/
-void QPlaceSearchResult::setDistance(qreal distance)
-{
-    d->distance = distance;
-}
-
-/*!
-    Returns the type of the search result.
+    Returns the result type.
 */
 QPlaceSearchResult::SearchResultType QPlaceSearchResult::type() const
 {
-    return d->type;
+    if (!d_ptr)
+        return UnknownSearchResult;
+    return d_ptr->type();
 }
 
 /*!
-    Sets the \a type of the search result.
+    Returns the title of the search result.  This string can be used to display the search result
+    to the user.
 */
-void QPlaceSearchResult::setType(QPlaceSearchResult::SearchResultType type)
+QString QPlaceSearchResult::title() const
 {
-    d->type = type;
+    Q_D(const QPlaceSearchResult);
+    return d->title;
 }
 
 /*!
-    Returns the place of the search result.  This field is only valid when the search result
-    type is QPlaceSearchResult::PlaceResult.
+    Sets the title of the search result to \a title.
 */
-QPlace QPlaceSearchResult::place() const
+void QPlaceSearchResult::setTitle(const QString &title)
 {
-    return d->place;
+    Q_D(QPlaceSearchResult);
+    d->title = title;
 }
 
 /*!
-    Sets the \a place that this search result refers to.
+    Returns an icon that can be used to represent the search result.
 */
-void QPlaceSearchResult::setPlace(const QPlace &place)
+QPlaceIcon QPlaceSearchResult::icon() const
 {
-    d->place = place;
+    Q_D(const QPlaceSearchResult);
+    return d->icon;
 }
 
 /*!
-    Returns true if the search result represents a sponsored result.
-
-    \sa setSponsored()
+    Sets the icon of the search result to \a icon.
 */
-bool QPlaceSearchResult::isSponsored() const
+void QPlaceSearchResult::setIcon(const QPlaceIcon &icon)
 {
-    return d->sponsored;
+    Q_D(QPlaceSearchResult);
+    d->icon = icon;
 }
 
 /*!
-    Sets whether the search result represents a \a sponsored result or not.
-
-    \sa isSponsored()
+    \internal
+    Constructs a new search result from the given pointer \a d.
 */
-void QPlaceSearchResult::setSponsored(bool sponsored)
+QPlaceSearchResult::QPlaceSearchResult(QPlaceSearchResultPrivate *d)
+    :d_ptr(d)
 {
-    d->sponsored = sponsored;
 }

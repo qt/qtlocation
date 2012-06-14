@@ -39,53 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACESEARCHRESULT_P_H
-#define QPLACESEARCHRESULT_P_H
+#ifndef QPLACERESULT_H
+#define QPLACERESULT_H
 
-#include "qplacesearchresult.h"
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceSearchResult>
 
-#include <QSharedData>
-#include <QtLocation/QPlaceIcon>
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-#define Q_IMPLEMENT_SEARCHRESULT_D_FUNC(Class) \
-    Class##Private *Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
-    const Class##Private *Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
+class QPlaceResultPrivate;
 
-#define Q_IMPLEMENT_SEARCHRESULT_COPY_CTOR(Class) \
-    Class::Class(const QPlaceSearchResult &other) : QPlaceSearchResult() { Class##Private::copyIfPossible(d_ptr, other); }
-
-#define Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(Class, ResultType) \
-    QPlaceSearchResultPrivate *clone() const { return new Class##Private(*this); } \
-    virtual QPlaceSearchResult::SearchResultType type() const {return ResultType;} \
-    static void copyIfPossible(QSharedDataPointer<QPlaceSearchResultPrivate> &d_ptr, const QPlaceSearchResult &other) \
-    { \
-        if (other.type() == ResultType) \
-            d_ptr = extract_d(other); \
-        else \
-            d_ptr = new Class##Private; \
-    }
-
-class QPlaceSearchResultPrivate : public QSharedData
+class Q_LOCATION_EXPORT QPlaceResult : public QPlaceSearchResult
 {
 public:
-    QPlaceSearchResultPrivate() {}
-    virtual ~QPlaceSearchResultPrivate() {}
+    QPlaceResult();
 
-    virtual bool compare(const QPlaceSearchResultPrivate *other) const;
+#ifdef Q_QDOC
+    QPlaceResult::QPlaceResult(const QPlaceSearchResult &other);
+#else
+     Q_DECLARE_SEARCHRESULT_COPY_CTOR(QPlaceResult);
+#endif
 
-    static const QSharedDataPointer<QPlaceSearchResultPrivate>
-            &extract_d(const QPlaceSearchResult &other) { return other.d_ptr; }
+    virtual ~QPlaceResult();
 
-    Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(QPlaceSearchResult, QPlaceSearchResult::UnknownSearchResult)
+    qreal distance() const;
+    void setDistance(qreal distance);
 
-    QString title;
-    QPlaceIcon icon;
+    QPlace place() const;
+    void setPlace(const QPlace &place);
+
+    bool isSponsored() const;
+    void setSponsored(bool sponsored);
+
+private:
+    Q_DECLARE_SEARCHRESULT_D_FUNC(QPlaceResult);
 };
-
-template<> QPlaceSearchResultPrivate *QSharedDataPointer<QPlaceSearchResultPrivate>::clone();
 
 QT_END_NAMESPACE
 
-#endif // QPLACESEARCHRESULT_P_H
+QT_END_HEADER
+
+#endif

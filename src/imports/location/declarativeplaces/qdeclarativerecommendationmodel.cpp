@@ -72,6 +72,14 @@ QT_USE_NAMESPACE
             \li Type
             \li Description
         \row
+            \li title
+            \li string
+            \li A string describing the search result.
+        \row
+            \li icon
+            \li PlaceIcon
+            \li Icon representing the search result.
+        \row
             \li distance
             \li real
             \li If a search area has been specified and is supported by the \l plugin,

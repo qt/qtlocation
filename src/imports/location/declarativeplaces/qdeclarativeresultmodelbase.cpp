@@ -42,6 +42,7 @@
 #include "qdeclarativeresultmodelbase_p.h"
 
 #include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceResult>
 
 QDeclarativeResultModelBase::QDeclarativeResultModelBase(QObject *parent)
 :   QDeclarativeSearchModelBase(parent), m_favoritesPlugin(0)
@@ -112,6 +113,8 @@ void QDeclarativeResultModelBase::clearData()
 
     qDeleteAll(m_places);
     m_places.clear();
+    qDeleteAll(m_icons);
+    m_icons.clear();
     m_results.clear();
 }
 
@@ -137,6 +140,8 @@ QVariant QDeclarativeResultModelBase::data(int index, const QString &role) const
 QHash<int, QByteArray> QDeclarativeResultModelBase::roleNames() const
 {
     QHash<int, QByteArray> roles = QDeclarativeSearchModelBase::roleNames();
+    roles.insert(TitleRole, "title");
+    roles.insert(IconRole, "icon");
     roles.insert(DistanceRole, "distance");
     roles.insert(PlaceRole, "place");
     return roles;
@@ -154,12 +159,17 @@ QVariant QDeclarativeResultModelBase::data(const QModelIndex &index, int role) c
 
     switch (role) {
     case Qt::DisplayRole:
-        if (result.type() == QPlaceSearchResult::PlaceResult)
-            return m_places.at(index.row())->name();
-        else
-            return QVariant();
+    case TitleRole:
+        return m_results.at(index.row()).title();
+    case IconRole:
+        return QVariant::fromValue(static_cast<QObject *>(m_icons.at(index.row())));
     case DistanceRole:
-        return result.distance();
+        if (result.type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = result;
+            return placeResult.distance();
+        } else {
+            return QVariant();
+        }
     case PlaceRole:
         return QVariant::fromValue(static_cast<QObject *>(m_places.at(index.row())));
     default:
@@ -278,11 +288,19 @@ void QDeclarativeResultModelBase::updateLayout(const QList<QPlace> &favoritePlac
     m_resultsBuffer.clear();
 
     for (int i = 0; i < m_results.count(); ++i) {
-        QDeclarativePlace *place = new QDeclarativePlace(m_results.at(i).place(),plugin(), this);
-        m_places.append(place);
+        if (m_results.at(i).type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = m_results.at(i);
+            QDeclarativePlace *place = new QDeclarativePlace(placeResult.place(),plugin(), this);
+            m_places.append(place);
 
-        if ((favoritePlaces.count() == m_results.count()) && favoritePlaces.at(i) != QPlace())
-            m_places[i]->setFavorite(new QDeclarativePlace(favoritePlaces.at(i), m_favoritesPlugin, m_places[i]));
+            QDeclarativePlaceIcon *icon = 0;
+            if (!m_results.at(i).icon().isEmpty())
+                    icon = new QDeclarativePlaceIcon(m_results.at(i).icon(), plugin(), this);
+            m_icons.append(icon);
+
+            if ((favoritePlaces.count() == m_results.count()) && favoritePlaces.at(i) != QPlace())
+                m_places[i]->setFavorite(new QDeclarativePlace(favoritePlaces.at(i), m_favoritesPlugin, m_places[i]));
+        }
     }
 
     endResetModel();

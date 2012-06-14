@@ -89,8 +89,6 @@ Item {
 
                     anchors.fill: parent
 
-                    spacing: 20
-
                     model: placeSearchModel
                     delegate: SearchResultDelegate {
                         onDisplayPlaceDetails: showPlaceDetails(data)

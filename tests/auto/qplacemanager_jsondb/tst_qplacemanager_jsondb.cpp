@@ -52,6 +52,7 @@
 #include <qplacecategory.h>
 #include <qplacecontentreply.h>
 #include <qplacematchreply.h>
+#include <qplaceresult.h>
 #include <qplacesearchsuggestionreply.h>
 #include <qplacesearchrequest.h>
 #include <qplacesearchresult.h>
@@ -2118,7 +2119,7 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
     place1Saved.setPlaceId(placeId);
     place1Saved.setVisibility(QtLocation::DeviceVisibility);
 
-    QPlaceSearchResult result1;
+    QPlaceResult result1;
     result1.setPlace(place1);
 
     QList<QPlaceSearchResult> results;
@@ -2144,7 +2145,7 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
     QPlaceAttribute originNonMatch;
     originNonMatch.setText(QLatin1String("nokia"));
     nonMatchingPlace.setExtendedAttribute(QLatin1String("x_provider"),originNonMatch);
-    QPlaceSearchResult nonMatchingResult;
+    QPlaceResult nonMatchingResult;
     nonMatchingResult.setPlace(nonMatchingPlace);
     results.insert(1, nonMatchingResult);
 
@@ -2165,7 +2166,7 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
     place2Saved.setPlaceId(placeId);
     place2Saved.setVisibility(QtLocation::DeviceVisibility);
 
-    QPlaceSearchResult result2;
+    QPlaceResult result2;
     result2.setPlace(place2);
     results.clear();
     results << result1 << nonMatchingResult << result2;

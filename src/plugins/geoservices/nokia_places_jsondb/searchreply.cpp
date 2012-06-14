@@ -45,6 +45,7 @@
 #include <QtCore/QDebug>
 #include <QtLocation/QGeoBoundingCircle>
 #include <QtJsonDb/QJsonDbReadRequest>
+#include <QtLocation/QPlaceResult>
 
 SearchReply::SearchReply(QPlaceManagerEngineJsonDb *engine)
     : QPlaceSearchReply(engine), m_engine(engine)
@@ -55,9 +56,14 @@ SearchReply::~SearchReply()
 {
 }
 
-void SearchReply::setResults(const QList<QPlaceSearchResult> &results)
+void SearchReply::setResults(const QList<QPlaceResult> &results)
 {
-    QPlaceSearchReply::setResults(results);
+    QList<QPlaceSearchResult> searchResults;
+    foreach (const QPlaceResult &placeResult, results) {
+        searchResults << placeResult;
+    }
+
+    QPlaceSearchReply::setResults(searchResults);
 }
 
 void SearchReply::setRequest(const QPlaceSearchRequest &request)
@@ -93,12 +99,17 @@ void SearchReply::start()
 
 static bool lessThanDistance(const QPlaceSearchResult &p0, const QPlaceSearchResult &p1)
 {
-    return p0.distance() < p1.distance();
+    Q_ASSERT(p0.type() == QPlaceSearchResult::PlaceResult);
+    Q_ASSERT(p1.type() == QPlaceSearchResult::PlaceResult);
+    QPlaceResult r0 = p0;
+    QPlaceResult r1 = p1;
+
+    return r0.distance() < r1.distance();
 }
 
 static bool lessThanName(const QPlaceSearchResult &p0, const QPlaceSearchResult &p1)
 {
-    return p0.place().name() <  p1.place().name();
+    return p0.title() <  p1.title();
 }
 
 void SearchReply::searchFinished()
@@ -108,9 +119,8 @@ void SearchReply::searchFinished()
     QList<QJsonObject> jsonResults = jsonDbRequest->takeResults();
 
     QList<QPlace> places = JsonDb::convertJsonObjectsToPlaces(jsonResults, m_engine);
-    QList<QPlaceSearchResult> results;
-    QPlaceSearchResult result;
-    result.setType(QPlaceSearchResult::PlaceResult);
+    QList<QPlaceResult> results;
+    QPlaceResult result;
 
     const QGeoBoundingArea &area = request().searchArea();
     const QGeoBoundingArea::AreaType &type = area.type();
@@ -149,7 +159,7 @@ void SearchReply::searchFinished()
 
     //See if we have to fetch any category data
     QStringList categoryUuids;
-    foreach (const QPlaceSearchResult &result, results) {
+    foreach (const QPlaceResult &result, results) {
         if (!result.place().categories().isEmpty()) {
             foreach (const QPlaceCategory &category, result.place().categories())
                 categoryUuids.append(category.categoryId());
@@ -186,13 +196,13 @@ void SearchReply::getCategoriesForPlacesFinished()
     QPlace place;
     for (int i=0; i < resultList.count(); ++i) {
         categories.clear();
-        place = resultList.at(i).place();
+        place = static_cast<QPlaceResult>(resultList.at(i)).place();
         foreach (const QPlaceCategory &cat, place.categories()) {
             if (!cat.categoryId().isEmpty() && categoriesCollection.contains(cat.categoryId()))
                 categories.append(categoriesCollection.value(cat.categoryId()));
         }
         place.setCategories(categories);
-        resultList[i].setPlace(place);
+        static_cast<QPlaceResult>(resultList[i]).setPlace(place);
     }
     setResults(resultList);
     triggerDone();

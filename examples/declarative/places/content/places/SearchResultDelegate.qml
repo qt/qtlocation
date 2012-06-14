@@ -49,66 +49,92 @@ Item {
     signal searchFor(string query)
 
     width: parent.width
-    height: childrenRect.height
+    height: childrenRect.height + 20
 
     //! [PlaceSearchModel place delegate]
-    Rectangle {
-        anchors.fill: parent
-        color: "#dbffde"
-        visible: model.sponsored !== undefined ? model.sponsored : false
-    }
+    Component {
+        id: placeComponent
 
-    Column {
-        width: parent.width
+        Item {
+            id: placeRoot
 
-        Row {
-            Image {
-                visible: (place.favorite != null)
-                source: "../../resources/star.png"
-                height: placeName.height
-                fillMode: Image.PreserveAspectFit
-            }
-
-            Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
-        }
-        Text { id: distanceText; text: PlacesUtils.prettyDistance(distance); font.italic: true }
-        Text {
-            text: qsTr("Sponsored result")
-            horizontalAlignment: Text.AlignRight
-            font.pixelSize: 8
+            height: childrenRect.height
             width: parent.width
-            visible: model.sponsored !== undefined ? model.sponsored : false
+
+            Rectangle {
+                anchors.fill: parent
+                color: "#dbffde"
+                visible: model.sponsored !== undefined ? model.sponsored : false
+            }
+
+            Column {
+                width: parent.width
+
+                Row {
+                    Image {
+                        visible: (place.favorite != null)
+                        source: "../../resources/star.png"
+                        height: placeName.height
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+                    Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
+                }
+                Text { id: distanceText; text: PlacesUtils.prettyDistance(distance); font.italic: true }
+                Text {
+                    text: qsTr("Sponsored result")
+                    horizontalAlignment: Text.AlignRight
+                    font.pixelSize: 8
+                    width: parent.width
+                    visible: model.sponsored !== undefined ? model.sponsored : false
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+
+                onPressed: placeRoot.state = "Pressed"
+                onReleased: placeRoot.state = ""
+                onCanceled: placeRoot.state = ""
+
+                onClicked: {
+                    if (model.type === undefined || type === PlaceSearchModel.PlaceResult) {
+                        if (!place.detailsFetched)
+                            place.getDetails();
+
+                        root.displayPlaceDetails({
+                                                 distance: model.distance,
+                                                 place: model.place,
+                    });
+                    }
+                }
+            }
+
+            states: [
+                State {
+                    name: ""
+                },
+                State {
+                    name: "Pressed"
+                    PropertyChanges { target: placeName; color: "#1C94FC"}
+                    PropertyChanges { target: distanceText; color: "#1C94FC"}
+                }
+            ]
         }
     }
+    //! [PlaceSearchModel place delegate]
 
-    MouseArea {
-        anchors.fill: parent
+    Loader {
+        anchors.left: parent.left
+        anchors.right: parent.right
 
-        onPressed: root.state = "Pressed"
-        onReleased: root.state = ""
-        onCanceled: root.state = ""
-
-        onClicked: {
-            if (model.type === undefined || type === PlaceSearchModel.PlaceResult) {
-                if (!place.detailsFetched)
-                    place.getDetails();
-                root.displayPlaceDetails({
-                                             distance: model.distance,
-                                             place: model.place,
-                                         });
+        sourceComponent: {
+            switch (model.type) {
+            case PlaceSearchModel.PlaceResult:
+                return placeComponent;
+            default:
+                //do nothing, don't assign component if result type not recognized
             }
         }
     }
-
-    states: [
-        State {
-            name: ""
-        },
-        State {
-            name: "Pressed"
-            PropertyChanges { target: placeName; color: "#1C94FC"}
-            PropertyChanges { target: distanceText; color: "#1C94FC"}
-        }
-    ]
-    //! [PlaceSearchModel place delegate]
 }

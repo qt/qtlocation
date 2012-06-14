@@ -43,6 +43,7 @@
 
 #include <QtCore/QSharedData>
 #include <QtCore/QList>
+#include <QtLocation/QPlaceResult>
 
 QT_BEGIN_NAMESPACE
 
@@ -213,8 +214,12 @@ void QPlaceMatchRequest::setResults(const QList<QPlaceSearchResult> &results)
 {
     Q_D(QPlaceMatchRequest);
     QList<QPlace> places;
-    foreach (const QPlaceSearchResult &result, results)
-        places.append(result.place());
+    foreach (const QPlaceSearchResult &result, results) {
+        if (result.type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = result;
+            places.append(placeResult.place());
+        }
+    }
 
     d->places = places;
 }

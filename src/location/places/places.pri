@@ -18,6 +18,7 @@ PUBLIC_HEADERS += \
     places/qplaceuser.h \
 #result
     places/qplacesearchresult.h \
+    places/qplaceresult.h \
 #request classes
     places/qplacecontentrequest.h \
     places/qplacematchrequest.h \
@@ -44,6 +45,7 @@ PRIVATE_HEADERS += \
     places/qplaceicon_p.h \
     places/qplaceimage_p.h \
     places/qplaceratings_p.h \
+    places/qplaceresult_p.h \
     places/qplacereview_p.h \
     places/qplacesupplier_p.h \
     places/qplacesearchresult_p.h \
@@ -71,6 +73,7 @@ SOURCES += \
     places/qplacesupplier.cpp \
 #result
     places/qplacesearchresult.cpp \
+    places/qplaceresult.cpp \
 #request classes
     places/qplacecontentrequest.cpp \
     places/qplacematchrequest.cpp \

@@ -42,6 +42,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 #include <QtLocation/QPlaceSearchResult>
+#include <QtLocation/QPlaceIcon>
 
 QT_USE_NAMESPACE
 
@@ -50,46 +51,73 @@ class tst_QPlaceSearchResult : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
-    void test();
+    void constructorTest();
+    void title();
+    void icon();
+    void operators();
 };
 
-void tst_QPlaceSearchResult::test()
+void tst_QPlaceSearchResult::constructorTest()
 {
     QPlaceSearchResult result;
 
     QCOMPARE(result.type(), QPlaceSearchResult::UnknownSearchResult);
-    QVERIFY(qIsNaN(result.distance()));
-    QCOMPARE(result.place(), QPlace());
-    QVERIFY(!result.isSponsored());
+    QVERIFY(result.title().isEmpty());
+    QVERIFY(result.icon().isEmpty());
 
-    result.setType(QPlaceSearchResult::PlaceResult);
-    result.setDistance(2.0);
-    result.setPlace(QPlace());
-    result.setSponsored(true);
-
-    QCOMPARE(result.type(), QPlaceSearchResult::PlaceResult);
-    QCOMPARE(result.distance(), 2.0);
-    QCOMPARE(result.place(), QPlace());
-    QVERIFY(result.isSponsored());
+    result.setTitle(QLatin1String("title"));
+    QPlaceIcon icon;
+    QVariantMap parameters;
+    parameters.insert(QLatin1String("paramKey"), QLatin1String("paramValue"));
+    icon.setParameters(parameters);
+    result.setIcon(icon);
 
     QPlaceSearchResult result2(result);
+    QCOMPARE(result2.title(), QLatin1String("title"));
+    QCOMPARE(result2.icon().parameters().value(QLatin1String("paramKey")).toString(),
+             QLatin1String("paramValue"));
 
     QCOMPARE(result2, result);
+}
 
-    result2.setType(QPlaceSearchResult::UnknownSearchResult);
+void tst_QPlaceSearchResult::title()
+{
+    QPlaceSearchResult result;
+    QVERIFY(result.title().isEmpty());
+    result.setTitle(QLatin1String("title"));
+    QCOMPARE(result.title(), QLatin1String("title"));
+    result.setTitle(QString());
+    QVERIFY(result.title().isEmpty());
+}
 
-    QCOMPARE(result2.type(), QPlaceSearchResult::UnknownSearchResult);
+void tst_QPlaceSearchResult::icon()
+{
+    QPlaceSearchResult result;
+    QVERIFY(result.icon().isEmpty());
+    QPlaceIcon icon;
+    QVariantMap iconParams;
+    iconParams.insert(QLatin1String("paramKey"), QLatin1String("paramValue"));
+    result.setIcon(icon);
+    QCOMPARE(result.icon(), icon);
+    result.setIcon(QPlaceIcon());
+    QVERIFY(result.icon().isEmpty());
+}
 
-    QVERIFY(result2 != result);
+void tst_QPlaceSearchResult::operators()
+{
+    QPlaceSearchResult result1;
+    QPlaceSearchResult result2;
 
-    QPlaceSearchResult result3;
+    QVERIFY(result1 == result2);
+    QVERIFY(!(result1 != result2));
 
-    QCOMPARE(result3.type(), QPlaceSearchResult::UnknownSearchResult);
+    result1.setTitle(QLatin1String("title"));
+    QVERIFY(!(result1 == result2));
+    QVERIFY(result1 != result2);
 
-    result3 = result;
-
-    QCOMPARE(result3, result);
-    QCOMPARE(result3.type(), QPlaceSearchResult::PlaceResult);
+    result2.setTitle(QLatin1String("title"));
+    QVERIFY(result1 == result2);
+    QVERIFY(!(result1 != result2));
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceSearchResult)

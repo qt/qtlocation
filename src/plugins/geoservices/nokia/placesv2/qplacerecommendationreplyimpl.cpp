@@ -56,6 +56,7 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
 #include <QtLocation/QPlaceIcon>
+#include <QtLocation/QPlaceResult>
 
 QT_BEGIN_NAMESPACE
 
@@ -111,9 +112,7 @@ void QPlaceRecommendationReplyImpl::replyFinished()
     for (int i = 0; i < items.count(); ++i) {
         QJsonObject item = items.at(i).toObject();
 
-        QPlaceSearchResult result;
-
-        result.setType(QPlaceSearchResult::PlaceResult);
+        QPlaceResult result;
 
         result.setDistance(item.value(QLatin1String("distance")).toDouble());
 
@@ -135,13 +134,18 @@ void QPlaceRecommendationReplyImpl::replyFinished()
         ratings.setMaximum(5.0);
         place.setRatings(ratings);
 
-        place.setName(item.value(QLatin1String("title")).toString());
+        const QString title = item.value(QLatin1String("title")).toString();
+        place.setName(title);
+        result.setTitle(title);
+
 
         place.setCategories(parseCategories(item.value(QLatin1String("categories")).toArray(),
                                                    m_engine));
 
-        place.setIcon(m_engine->icon(item.value(QLatin1String("icon")).toString(),
-                                     place.categories()));
+        QPlaceIcon icon = m_engine->icon(item.value(QLatin1String("icon")).toString(),
+                                     place.categories());
+        place.setIcon(icon);
+        result.setIcon(icon);
 
         //QJsonArray having = item.value(QLatin1String("having")).toArray();
 

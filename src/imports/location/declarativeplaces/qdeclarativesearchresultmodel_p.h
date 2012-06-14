@@ -111,7 +111,7 @@ private Q_SLOTS:
 
 private:
     enum Roles {
-        SearchResultTypeRole = QDeclarativeResultModelBase::PlaceRole + 1,
+        SearchResultTypeRole = QDeclarativeResultModelBase::UserRole,
         SponsoredRole
     };
 
