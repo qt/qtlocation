@@ -2,8 +2,6 @@ INCLUDEPATH *= $$PWD
 SOURCES += \
 #models
     declarativeplaces/qdeclarativeplacecontentmodel.cpp \
-    declarativeplaces/qdeclarativerecommendationmodel.cpp \
-    declarativeplaces/qdeclarativeresultmodelbase.cpp \
     declarativeplaces/qdeclarativesupportedcategoriesmodel.cpp \
     declarativeplaces/qdeclarativesearchsuggestionmodel.cpp \
     declarativeplaces/qdeclarativesearchresultmodel.cpp \
@@ -24,8 +22,6 @@ SOURCES += \
 HEADERS += \
 #models
     declarativeplaces/qdeclarativeplacecontentmodel.h \
-    declarativeplaces/qdeclarativerecommendationmodel_p.h \
-    declarativeplaces/qdeclarativeresultmodelbase_p.h \
     declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h \
     declarativeplaces/qdeclarativesearchsuggestionmodel_p.h \
     declarativeplaces/qdeclarativesearchresultmodel_p.h \

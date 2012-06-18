@@ -82,8 +82,6 @@ public:
 
     QPlaceSearchReply *search(const QPlaceSearchRequest &query) const;
 
-    QPlaceSearchReply *recommendations(const QString &placeId, const QPlaceSearchRequest &request = QPlaceSearchRequest()) const;
-
     QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &request) const;
 
     QPlaceIdReply *savePlace(const QPlace &place);

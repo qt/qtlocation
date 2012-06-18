@@ -62,11 +62,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(QNetworkReply *reply,
+QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(const QPlaceSearchRequest &request,
+                                             QNetworkReply *reply,
                                              QPlaceManagerEngineNokiaV2 *parent)
     :   QPlaceSearchReply(parent), m_reply(reply), m_engine(parent)
 {
     Q_ASSERT(parent);
+
+    setRequest(request);
 
     if (!m_reply)
         return;
@@ -106,9 +109,13 @@ void QPlaceSearchReplyImpl::replyFinished()
     QJsonObject object = document.object();
 
     //QJsonObject searchObject = object.value(QLatin1String("search")).toObject();
-
-    QJsonObject resultsObject = object.value(QLatin1String("results")).toObject();
-    QJsonArray items = resultsObject.value(QLatin1String("items")).toArray();
+    QJsonArray items;
+    if (request().recommendationId().isEmpty()) {
+        QJsonObject resultsObject = object.value(QLatin1String("results")).toObject();
+        items = resultsObject.value(QLatin1String("items")).toArray();
+    } else {
+        items = object.value(QLatin1String("items")).toArray();
+    }
 
     QList<QPlaceSearchResult> results;
     for (int i = 0; i < items.count(); ++i) {

@@ -142,17 +142,6 @@ public:
         //! [Suggestion request]
     }
 
-    void recommendation()
-    {
-        //! [Recommendation]
-        QPlaceSearchRequest request;
-        request.setSearchArea(QGeoCircle(QGeoCoordinate(12.34, 56.78)));
-
-        /* QPlaceSearchReply * */ recommendationReply = manager->recommendations(place.placeId(), request);
-        connect(recommendationReply, SIGNAL(finished()), this, SLOT(handleRecommendationReply()));
-        //! [Recommendation]
-    }
-
     void savePlace()
     {
         //! [Save place pt1]
@@ -400,24 +389,6 @@ public slots:
 
     //! [Suggestion handler]
 
-    //! [Recommendation handler]
-    void handleRecommendationReply() {
-        if (recommendationReply->error() ==  QPlaceReply::NoError) {
-            foreach (const QPlaceSearchResult &result, searchReply->results()) {
-                if (result.type() == QPlaceSearchResult::PlaceResult) {
-                    QPlaceResult placeResult = result;
-                    qDebug() << "Name: " << placeResult.place().name();
-                    qDebug() << "Coordinates" << placeResult.place().location().coordinate().toString();
-                }
-            }
-        }
-        recommendationReply->deleteLater(); //discard reply
-        recommendationReply = 0;
-    }
-
-
-    //! [Recommendation handler]
-
     //! [Save place handler]
     void handleSavePlaceReply() {
         if (savePlaceReply->error() == QPlaceReply::NoError)
@@ -529,7 +500,6 @@ public slots:
     //! [Match places handler]
 
 QPlaceSearchReply *searchReply;
-QPlaceSearchReply *recommendationReply;
 QPlaceManager *manager;
 QPlaceDetailsReply *detailsReply;
 QPlaceContentReply *contentReply;

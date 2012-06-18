@@ -61,7 +61,8 @@ class QPlaceSearchReplyImpl : public QPlaceSearchReply
     Q_OBJECT
 
 public:
-    explicit QPlaceSearchReplyImpl(QNetworkReply *reply,
+    explicit QPlaceSearchReplyImpl(const QPlaceSearchRequest &request,
+                                   QNetworkReply *reply,
                                    QPlaceManagerEngineNokiaV2 *parent);
     ~QPlaceSearchReplyImpl();
 

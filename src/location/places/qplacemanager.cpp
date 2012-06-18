@@ -229,17 +229,6 @@ QPlaceSearchReply *QPlaceManager::search(const QPlaceSearchRequest &request) con
 }
 
 /*!
-    Provides recommendations for places that are similar to the place identified by \a placeId,
-    and using the parameters as specified in \a request.
-
-    See \l {Recommendations} for an example of usage.
-*/
-QPlaceSearchReply *QPlaceManager::recommendations(const QString &placeId, const QPlaceSearchRequest &request) const
-{
-    return d->recommendations(placeId, request);
-}
-
-/*!
     Requests a set of search term suggestions  according to the parameters specified in \a request.
     The \a request can hold the incomplete search term, along with other data such
     as a search area to narrow down relevant results.

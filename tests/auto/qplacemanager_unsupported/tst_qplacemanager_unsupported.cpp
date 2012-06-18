@@ -65,7 +65,6 @@ private Q_SLOTS:
     void testGetPlaceDetails();
     void testGetPlaceContent();
     void testSearch();
-    void testRecommendations();
     void testSearchSuggestions();
 
     void testSavePlace();
@@ -152,13 +151,6 @@ void tst_QPlaceManagerUnsupported::testGetPlaceContent()
 void tst_QPlaceManagerUnsupported::testSearch()
 {
     QPlaceSearchReply *reply = m_manager->search(QPlaceSearchRequest());
-    if (!checkSignals(reply, QPlaceReply::UnsupportedError))
-        return;
-}
-
-void tst_QPlaceManagerUnsupported::testRecommendations()
-{
-    QPlaceSearchReply *reply = m_manager->recommendations(QString());
     if (!checkSignals(reply, QPlaceReply::UnsupportedError))
         return;
 }

@@ -319,7 +319,7 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
-:   QDeclarativeResultModelBase(parent)
+    :   QDeclarativeSearchModelBase(parent), m_favoritesPlugin(0)
 {
 }
 
@@ -407,6 +407,26 @@ void QDeclarativeSearchResultModel::categories_clear(QQmlListProperty<QDeclarati
 }
 
 /*!
+    \qmlproperty string PlaceSearchModel::recommendationId
+
+    This property holds the placeId to be used in order to find recommendations
+    for similar places.
+*/
+QString QDeclarativeSearchResultModel::recommendationId() const
+{
+    return m_request.recommendationId();
+}
+
+void QDeclarativeSearchResultModel::setRecommendationId(const QString &placeId)
+{
+    if (m_request.recommendationId() == placeId)
+        return;
+
+    m_request.setRecommendationId(placeId);
+    emit recommendationIdChanged();
+}
+
+/*!
     \qmlproperty enumeration PlaceSearchModel::relevanceHint
 
     This property holds a relevance hint used in the search query.  The hint is given to the
@@ -481,32 +501,135 @@ void QDeclarativeSearchResultModel::setVisibilityScope(QDeclarativePlace::Visibi
     emit visibilityScopeChanged();
 }
 
+/*!
+    \internal
+*/
+QDeclarativeGeoServiceProvider *QDeclarativeSearchResultModel::favoritesPlugin() const
+{
+    return m_favoritesPlugin;
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeSearchResultModel::setFavoritesPlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+
+    if (m_favoritesPlugin == plugin)
+        return;
+
+    m_favoritesPlugin = plugin;
+
+    if (m_favoritesPlugin) {
+        QGeoServiceProvider *serviceProvider = m_favoritesPlugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QPlaceManager *placeManager = serviceProvider->placeManager();
+            if (placeManager) {
+                if (placeManager->childCategoryIds().isEmpty()) {
+                    QPlaceReply *reply = placeManager->initializeCategories();
+                    connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
+                }
+            }
+        }
+    }
+
+    emit favoritesPluginChanged();
+}
+
+/*!
+    \internal
+*/
+QVariantMap QDeclarativeSearchResultModel::favoritesMatchParameters() const
+{
+    return m_matchParameters;
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeSearchResultModel::setFavoritesMatchParameters(const QVariantMap &parameters)
+{
+    if (m_matchParameters == parameters)
+        return;
+
+    m_matchParameters = parameters;
+    emit favoritesMatchParametersChanged();
+}
+
+/*!
+    \internal
+*/
+int QDeclarativeSearchResultModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+
+    return m_results.count();
+}
+
+void QDeclarativeSearchResultModel::clearData()
+{
+    QDeclarativeSearchModelBase::clearData();
+
+    qDeleteAll(m_places);
+    m_places.clear();
+    qDeleteAll(m_icons);
+    m_icons.clear();
+    m_results.clear();
+}
+
 QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role) const
 {
     if (index.row() > m_results.count())
         return QVariant();
 
+    const QPlaceSearchResult &result = m_results.at(index.row());
+
     switch (role) {
     case SearchResultTypeRole:
-        return m_results.at(index.row()).type();
-    case SponsoredRole:
-        if (m_results.at(index.row()).type() == QPlaceSearchResult::PlaceResult) {
-            QPlaceResult placeResult = m_results.at(index.row());
-            return placeResult.isSponsored();
-        } else {
-            return false;
+        return result.type();
+    case Qt::DisplayRole:
+    case TitleRole:
+        return result.title();
+    case IconRole:
+        return QVariant::fromValue(static_cast<QObject *>(m_icons.at(index.row())));
+    case DistanceRole:
+        if (result.type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = result;
+            return placeResult.distance();
         }
         break;
-    default:
-        return QDeclarativeResultModelBase::data(index, role);
+    case PlaceRole:
+        if (result.type() == QPlaceSearchResult::PlaceResult)
+            return QVariant::fromValue(static_cast<QObject *>(m_places.at(index.row())));
+    case SponsoredRole:
+        if (result.type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = result;
+            return placeResult.isSponsored();
+        }
+        break;
     }
+    return QVariant();
+}
+
+/*!
+    \internal
+*/
+QVariant QDeclarativeSearchResultModel::data(int index, const QString &role) const
+{
+    QModelIndex modelIndex = createIndex(index, 0);
+    return data(modelIndex, roleNames().key(role.toLatin1()));
 }
 
 QHash<int, QByteArray> QDeclarativeSearchResultModel::roleNames() const
 {
-    QHash<int, QByteArray> roles = QDeclarativeResultModelBase::roleNames();
+    QHash<int, QByteArray> roles = QDeclarativeSearchModelBase::roleNames();
     roles.insert(SearchResultTypeRole, "type");
+    roles.insert(TitleRole, "title");
+    roles.insert(IconRole, "icon");
+    roles.insert(DistanceRole, "distance");
+    roles.insert(PlaceRole, "place");
     roles.insert(SponsoredRole, "sponsored");
+
     return roles;
 }
 
@@ -530,6 +653,7 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
             if (placeManager) {
                 disconnect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(placeUpdated(QString)));
                 disconnect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(placeRemoved(QString)));
+                connect(placeManager, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
             }
         }
     }
@@ -542,10 +666,83 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
             if (placeManager) {
                 connect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(placeUpdated(QString)));
                 connect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(placeRemoved(QString)));
+                disconnect(placeManager, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
             }
         }
     }
-    QDeclarativeResultModelBase::initializePlugin(plugin);
+    QDeclarativeSearchModelBase::initializePlugin(plugin);
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeSearchResultModel::queryFinished()
+{
+    if (!m_reply)
+        return;
+    QPlaceReply *reply = m_reply;
+    m_reply = 0;
+    if (reply->error() != QPlaceReply::NoError) {
+        m_resultsBuffer.clear();
+        updateLayout();
+        setStatus(Error, reply->errorString());
+        reply->deleteLater();
+    }
+
+    if (reply->type() == QPlaceReply::SearchReply) {
+        QPlaceSearchReply *searchReply = qobject_cast<QPlaceSearchReply *>(reply);
+        Q_ASSERT(searchReply);
+
+        m_resultsBuffer = searchReply->results();
+        reply->deleteLater();
+
+        if (!m_favoritesPlugin) {
+            updateLayout();
+            setStatus(Ready);
+        } else {
+            QGeoServiceProvider *serviceProvider = m_favoritesPlugin->sharedGeoServiceProvider();
+            if (!serviceProvider) {
+                updateLayout();
+                setStatus(Error, QLatin1String("Favorites plugin returns a null QGeoServiceProvider instance"));
+                return;
+            }
+
+            QPlaceManager *favoritesManager = serviceProvider->placeManager();
+            if (!favoritesManager) {
+                updateLayout();
+                setStatus(Error, QLatin1String("Favorites plugin returns a null QPlaceManager"));
+                return;
+            }
+
+            QPlaceMatchRequest request;
+            if (m_matchParameters.isEmpty()) {
+                if (!m_plugin) {
+                    reply->deleteLater();
+                    setStatus(Error, QLatin1String("Plugin not assigned"));
+                    return;
+                }
+
+                QVariantMap params;
+                params.insert(QPlaceMatchRequest::AlternativeId, QString::fromLatin1("x_id_") + m_plugin->name());
+                request.setParameters(params);
+            } else {
+                request.setParameters(m_matchParameters);
+            }
+
+            request.setResults(m_resultsBuffer);
+            m_reply = favoritesManager->matchingPlaces(request);
+            connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
+        }
+    } else if (reply->type() == QPlaceReply::MatchReply) {
+        QPlaceMatchReply *matchReply = qobject_cast<QPlaceMatchReply *>(reply);
+        Q_ASSERT(matchReply);
+        updateLayout(matchReply->places());
+        setStatus(Ready);
+        reply->deleteLater();
+    } else {
+        setStatus(Error, QLatin1String("Unknown reply type"));
+        reply->deleteLater();
+    }
 }
 
 /*!
@@ -563,6 +760,41 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
     available in the backend.  The total number of search results
     is not currently supported by the API.
 */
+
+/*!
+    \internal
+    Note: m_results buffer should be correctly populated before
+    calling this function
+*/
+void QDeclarativeSearchResultModel::updateLayout(const QList<QPlace> &favoritePlaces)
+{
+    int oldRowCount = rowCount();
+
+    beginResetModel();
+    clearData();
+    m_results = m_resultsBuffer;
+    m_resultsBuffer.clear();
+
+    for (int i = 0; i < m_results.count(); ++i) {
+        if (m_results.at(i).type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = m_results.at(i);
+            QDeclarativePlace *place = new QDeclarativePlace(placeResult.place(),plugin(), this);
+            m_places.append(place);
+
+            QDeclarativePlaceIcon *icon = 0;
+            if (!m_results.at(i).icon().isEmpty())
+                icon = new QDeclarativePlaceIcon(m_results.at(i).icon(), plugin(), this);
+            m_icons.append(icon);
+
+            if ((favoritePlaces.count() == m_results.count()) && favoritePlaces.at(i) != QPlace())
+                m_places[i]->setFavorite(new QDeclarativePlace(favoritePlaces.at(i), m_favoritesPlugin, m_places[i]));
+        }
+    }
+
+    endResetModel();
+    if (m_results.count() != oldRowCount)
+        emit rowCountChanged();
+}
 
 /*!
     \internal

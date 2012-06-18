@@ -80,7 +80,6 @@
 #include "qdeclarativeplaceuser_p.h"
 #include "qdeclarativecontactdetail_p.h"
 
-#include "qdeclarativerecommendationmodel_p.h"
 #include "qdeclarativesupportedcategoriesmodel_p.h"
 #include "qdeclarativesearchresultmodel_p.h"
 #include "qdeclarativesearchsuggestionmodel_p.h"
@@ -157,7 +156,6 @@ public:
             qmlRegisterType<QDeclarativePolygonMapItem>(uri, 5, 0, "MapPolygon");
             qmlRegisterType<QDeclarativeRouteMapItem>(uri, 5, 0, "MapRoute");
 
-            qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "PlaceRecommendationModel");
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "PlaceSearchModel");
             qmlRegisterType<QDeclarativeSearchSuggestionModel>(uri, 5, 0, "PlaceSearchSuggestionModel");

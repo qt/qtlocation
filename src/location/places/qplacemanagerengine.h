@@ -68,8 +68,6 @@ public:
 
     virtual QPlaceSearchReply *search(const QPlaceSearchRequest &request);
 
-    virtual QPlaceSearchReply *recommendations(const QString &placeId,
-                                               const QPlaceSearchRequest &request);
     virtual QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &request);
 
     virtual QPlaceIdReply *savePlace(const QPlace &place);

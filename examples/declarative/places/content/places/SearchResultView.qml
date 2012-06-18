@@ -78,10 +78,6 @@ Item {
                     target: placeSearchModel
                     onStatusChanged: searchView.visible = true
                 }
-                Connections {
-                    target: recommendationModel
-                    onStatusChanged: searchView.visible = false
-                }
 
                 //! [PlaceSearchModel place list]
                 ListView {
@@ -122,22 +118,6 @@ Item {
                     }
                 }
                 //! [PlaceSearchModel place list]
-
-                //! [PlaceRecommendationModel place list]
-                ListView {
-                    id: similarView
-
-                    anchors.fill: parent
-
-                    spacing: 5
-
-                    visible: !searchView.visible
-                    model: recommendationModel
-                    delegate: SearchResultDelegate {
-                        onDisplayPlaceDetails: showPlaceDetails(data)
-                    }
-                }
-                //! [PlaceRecommendationModel place list]
             }
             Item {
                 // place details (page 1)
@@ -186,9 +166,7 @@ Item {
                     //! [PlaceRecommendationModel search]
                     onSearchForSimilar: {
                         placeContentList.source = "";
-                        recommendationModel.placeId = place.placeId;
-                        recommendationModel.update();
-                        view.currentIndex = 0;
+                        placeSearchModel.searchForRecommendations(place.placeId);
                     }
                     //! [PlaceRecommendationModel search]
 

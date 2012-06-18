@@ -52,7 +52,6 @@
 #include "placesv2/qplacecontentreplyimpl.h"
 #include "placesv2/qplacesearchsuggestionreplyimpl.h"
 #include "placesv2/qplacesearchreplyimpl.h"
-#include "placesv2/qplacerecommendationreplyimpl.h"
 #include "placesv2/qplacedetailsreplyimpl.h"
 #include "placesv2/qplaceidreplyimpl.h"
 #include "qgeonetworkaccessmanager.h"
@@ -382,8 +381,12 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
     // Both a search term and search categories are not supported.
     unsupported |= !query.searchTerm().isEmpty() && !query.categories().isEmpty();
 
+    unsupported |= !query.searchTerm().isEmpty() && !query.recommendationId().isEmpty();
+
+    unsupported |= !query.categories().isEmpty() && !query.recommendationId().isEmpty();
+
     if (unsupported) {
-        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(0, this);
+        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, 0, this);
         QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, QPlaceReply::BadArgumentError),
                                   Q_ARG(QString, "Unsupported search request options specified."));
@@ -413,7 +416,25 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         QNetworkReply *networkReply = sendRequest(requestUrl);
 
-        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(networkReply, this);
+        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, networkReply, this);
+        connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+        connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+                this, SLOT(replyError(QPlaceReply::Error,QString)));
+
+        return reply;
+    } else if (!query.recommendationId().isEmpty()) {
+        QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                        QLatin1String("/places/v1/places/") + query.recommendationId() +
+                        QLatin1String("/related/recommended"));
+
+        QUrlQuery queryItems;
+        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+
+        requestUrl.setQuery(queryItems);
+
+        QNetworkReply *networkReply = sendRequest(requestUrl);
+
+        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, networkReply, this);
         connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
         connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
                 this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -455,44 +476,13 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         QNetworkReply *networkReply = sendRequest(requestUrl);
 
-        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(networkReply, this);
+        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, networkReply, this);
         connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
         connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
                 this, SLOT(replyError(QPlaceReply::Error,QString)));
 
         return reply;
     }
-}
-
-QPlaceSearchReply *QPlaceManagerEngineNokiaV2::recommendations(const QString &placeId, const QPlaceSearchRequest &query)
-{
-    QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                    QLatin1String("/places/v1/places/") + placeId +
-                    QLatin1String("/related/recommended"));
-
-    QUrlQuery queryItems;
-
-    queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
-
-    if (query.limit() > 0) {
-        queryItems.addQueryItem(QLatin1String("size"),
-                                QString::number(query.limit()));
-    }
-    if (query.offset() > -1) {
-        queryItems.addQueryItem(QLatin1String("offset"),
-                                QString::number(query.offset()));
-    }
-
-    requestUrl.setQuery(queryItems);
-
-    QNetworkReply *networkReply = sendRequest(requestUrl);
-
-    QPlaceRecommendationReplyImpl *reply = new QPlaceRecommendationReplyImpl(networkReply, this);
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
-            this, SLOT(replyError(QPlaceReply::Error,QString)));
-
-    return reply;
 }
 
 QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const QPlaceSearchRequest &query)

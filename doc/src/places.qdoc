@@ -88,8 +88,7 @@
 
     \section2 Learn More
     The above quickstart tutorial only exhibits a subset of Places functionality.
-    Refer to the \l {Places Elements} shown below for richer content such as \l {PlaceRecommendationModel} {recommendations},
-    \l {ImageModel} {images}, \l {ReviewModel} {reviews} etc, as well as more indepth descriptions and explanations.
+    Refer to the \l {Places Elements} shown below for richer content such as \l {ImageModel} {images}, \l {ReviewModel} {reviews} etc, as well as more indepth descriptions and explanations.
 
     See also the \l {Places (QML)}{QML Places Example} for a more comprehensive demonstration on how
     to use the API.
@@ -144,6 +143,10 @@
     which have further details that can be fetched on a place by place basis.  To fetch these other details
     see \l {Fetching Place Details}.
 
+    \section3 Recommendations
+    Recommendations can be retrieved by supplying a place id via QPlaceSearchRequest::setRecommendationId().
+    Any places similar to the given place are retrieved.
+
     \section3 Paging
     If the plugin supports paging, limit and offset parameters may be provided to the search request.
     \snippet snippets/places/requesthandler.h Search paging
@@ -184,16 +187,6 @@
     \snippet snippets/places/requesthandler.h Suggestion request
     And when the request is done, we can use the reply to show the suggestions.
     \snippet snippets/places/requesthandler.h Suggestion handler
-
-    \section2 Recommendations
-    Recommendations are suggestions for places that are similar to a specified place.
-    The retrieval of recommendations is very similar to retrieving search term suggestions or
-    performing a place search.
-
-    \snippet snippets/places/requesthandler.h Recommendation
-    \dots
-    \dots
-    \snippet snippets/places/requesthandler.h Recommendation handler
 
     \target Saving a place cpp
     \section2 Saving a Place

@@ -179,28 +179,6 @@
 
     \snippet declarative/places/content/places/SearchResultDelegate.qml PlaceSearchModel place delegate
 
-
-    \section1 Recommending Similar Places
-
-    The \l PlaceRecommendationModel is used to find similar places to a given place.  The model
-    should be set up similarly to the \l PlaceSearchModel.  Here we use a \l GeoCircle with a
-    center that is linked to the current location displayed on the \l Map.  The search area may be
-    different if the map is panned between when the place search and the place recommendation
-    search are performed.
-
-    \snippet declarative/places/places.qml PlaceRecommendationModel model
-
-    The place recommendation search is performed by setting the
-    \l {PlaceRecommendationModel::placeId}{placeId} property of the model and invoking the
-    \l {PlaceRecommendationModel::execute()}{execute()} method.  The search results are displayed
-    in a \l ListView.
-
-    \snippet declarative/places/content/places/SearchResultView.qml PlaceRecommendationModel place list
-
-    We reuse the same delegate that was used for displaying the results of the
-    \l {Searching for places}{place search}.
-
-
     \section1 Displaying Place Content
 
     Places can have additional rich content, including editorials, reviews and images.  Rich

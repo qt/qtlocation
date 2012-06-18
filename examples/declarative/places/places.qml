@@ -333,10 +333,8 @@ Item {
                     favoritesPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { name: "nokia_places_jsondb" }', page);
                 favoritesPlugin.parameters = pluginParametersFromMap(pluginParameters);
                 placeSearchModel.favoritesPlugin = favoritesPlugin;
-                recommendationModel.favoritesPlugin = favoritesPlugin;
             } else {
                 placeSearchModel.favoritesPlugin = null;
-                recommendationModel.favoritesPlugin = null;
             }
 
             placeSearchModel.relevanceHint = orderByDistance ? PlaceSearchModel.DistanceHint :
@@ -368,6 +366,7 @@ Item {
         function searchForCategory(category) {
             searchTerm = "";
             categories = category;
+            recommendationId = "";
             limit = -1;
             offset = 0;
             update();
@@ -376,6 +375,16 @@ Item {
         function searchForText(text) {
             searchTerm = text;
             categories = null;
+            recommendationId = "";
+            limit = -1;
+            offset = 0;
+            update();
+        }
+
+        function searchForRecommendations(placeId) {
+            searchTerm = "";
+            categories = null;
+            recommendationId = placeId;
             limit = -1;
             offset = 0;
             update();
@@ -401,15 +410,6 @@ Item {
         }
     }
     //! [PlaceSearchModel model]
-
-    //! [PlaceRecommendationModel model]
-    PlaceRecommendationModel {
-        id: recommendationModel
-        plugin: placesPlugin
-
-        searchArea: searchRegion
-    }
-    //! [PlaceRecommendationModel model]
 
     //! [CategoryModel model]
     CategoryModel {
@@ -488,17 +488,17 @@ Item {
         states: [
             State {
                 name: ""
-                when: placeSearchModel.count == 0 && recommendationModel.count == 0
+                when: placeSearchModel.count == 0
                 PropertyChanges { target: searchResultTab; open: false }
             },
             State {
                 name: "Close"
-                when: (placeSearchModel.count > 0 || recommendationModel.count > 0) && !searchResultTab.open
+                when: (placeSearchModel.count > 0) && !searchResultTab.open
                 PropertyChanges { target: searchResultTab; opacity: 1 }
             },
             State {
                 name: "Open"
-                when: (placeSearchModel.count > 0 || recommendationModel.count > 0) && searchResultTab.open
+                when: (placeSearchModel.count > 0) && searchResultTab.open
                 PropertyChanges { target: searchResultTab; y: mainMenu.height; opacity: 1 }
             }
         ]

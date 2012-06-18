@@ -1502,13 +1502,6 @@ Module {
         Signal { name: "countChanged"; type: "void" }
     }
     Component {
-        name: "QDeclarativeRecommendationModel"
-        prototype: "QDeclarativeResultModelBase"
-        exports: ["PlaceRecommendationModel 5.0"]
-        Property { name: "placeId"; type: "string" }
-        Signal { name: "placeIdChanged"; type: "void" }
-    }
-    Component {
         name: "QDeclarativeRectangleMapItem"
         defaultProperty: "data"
         prototype: "QDeclarativeGeoMapItemBase"
@@ -1536,23 +1529,6 @@ Module {
             name: "colorChanged"
             type: "void"
             Parameter { name: "color"; type: "QColor" }
-        }
-    }
-    Component {
-        name: "QDeclarativeResultModelBase"
-        prototype: "QDeclarativeSearchModelBase"
-        Property { name: "count"; type: "int"; isReadonly: true }
-        Property { name: "favoritesPlugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
-        Property { name: "favoritesMatchParameters"; type: "QVariantMap" }
-        Signal { name: "rowCountChanged"; type: "void" }
-        Signal { name: "favoritesPluginChanged"; type: "void" }
-        Signal { name: "favoritesMatchParametersChanged"; type: "void" }
-        Signal { name: "dataChanged"; type: "void" }
-        Method {
-            name: "data"
-            type: "QVariant"
-            Parameter { name: "index"; type: "int" }
-            Parameter { name: "roleName"; type: "string" }
         }
     }
     Component {
@@ -1607,7 +1583,7 @@ Module {
     }
     Component {
         name: "QDeclarativeSearchResultModel"
-        prototype: "QDeclarativeResultModelBase"
+        prototype: "QDeclarativeSearchModelBase"
         exports: ["PlaceSearchModel 5.0"]
         Enum {
             name: "SearchResultType"
@@ -1626,12 +1602,27 @@ Module {
         }
         Property { name: "searchTerm"; type: "string" }
         Property { name: "categories"; type: "QDeclarativeCategory"; isList: true; isReadonly: true }
+        Property { name: "recommendationId"; type: "string" }
         Property { name: "relevanceHint"; type: "RelevanceHint" }
         Property { name: "visibilityScope"; type: "QDeclarativePlace::Visibility" }
+        Property { name: "count"; type: "int"; isReadonly: true }
+        Property { name: "favoritesPlugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
+        Property { name: "favoritesMatchParameters"; type: "QVariantMap" }
         Signal { name: "searchTermChanged"; type: "void" }
         Signal { name: "categoriesChanged"; type: "void" }
+        Signal { name: "recommendationIdChanged"; type: "void" }
         Signal { name: "relevanceHintChanged"; type: "void" }
         Signal { name: "visibilityScopeChanged"; type: "void" }
+        Signal { name: "rowCountChanged"; type: "void" }
+        Signal { name: "favoritesPluginChanged"; type: "void" }
+        Signal { name: "favoritesMatchParametersChanged"; type: "void" }
+        Signal { name: "dataChanged"; type: "void" }
+        Method {
+            name: "data"
+            type: "QVariant"
+            Parameter { name: "index"; type: "int" }
+            Parameter { name: "roleName"; type: "string" }
+        }
     }
     Component {
         name: "QDeclarativeSearchSuggestionModel"

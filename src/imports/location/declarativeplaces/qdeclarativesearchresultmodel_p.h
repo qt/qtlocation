@@ -42,22 +42,28 @@
 #ifndef QDECLARATIVESEARCHRESULTMODEL_P_H
 #define QDECLARATIVESEARCHRESULTMODEL_P_H
 
-#include "qdeclarativeresultmodelbase_p.h"
+#include "qdeclarativesearchmodelbase.h"
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativeplace_p.h"
+#include "qdeclarativeplaceicon_p.h"
 
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoServiceProvider;
 
-class QDeclarativeSearchResultModel : public QDeclarativeResultModelBase
+class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
 {
     Q_OBJECT
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
+    Q_PROPERTY(QString recommendationId READ recommendationId WRITE setRecommendationId NOTIFY recommendationIdChanged)
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
     Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
+
+    Q_PROPERTY(int count READ rowCount NOTIFY rowCountChanged)
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *favoritesPlugin READ favoritesPlugin WRITE setFavoritesPlugin NOTIFY favoritesPluginChanged)
+    Q_PROPERTY(QVariantMap favoritesMatchParameters READ favoritesMatchParameters WRITE setFavoritesMatchParameters NOTIFY favoritesMatchParametersChanged)
 
     Q_ENUMS(SearchResultType RelevanceHint)
 
@@ -86,38 +92,74 @@ public:
     static QDeclarativeCategory *category_at(QQmlListProperty<QDeclarativeCategory> *list, int index);
     static void categories_clear(QQmlListProperty<QDeclarativeCategory> *list);
 
+    QString recommendationId() const;
+    void setRecommendationId(const QString &recommendationId);
+
     QDeclarativeSearchResultModel::RelevanceHint relevanceHint() const;
     void setRelevanceHint(QDeclarativeSearchResultModel::RelevanceHint hint);
 
     QDeclarativePlace::Visibility visibilityScope() const;
     void setVisibilityScope(QDeclarativePlace::Visibility visibilityScope);
 
-    QVariant data(const QModelIndex &index, int role) const;
+    QDeclarativeGeoServiceProvider *favoritesPlugin() const;
+    void setFavoritesPlugin(QDeclarativeGeoServiceProvider *plugin);
+
+    QVariantMap favoritesMatchParameters() const;
+    void setFavoritesMatchParameters(const QVariantMap &parameters);
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+
+    virtual void clearData();
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
     QHash<int, QByteArray> roleNames() const;
 
 Q_SIGNALS:
     void searchTermChanged();
     void categoriesChanged();
+    void recommendationIdChanged();
     void relevanceHintChanged();
     void visibilityScopeChanged();
+
+    void rowCountChanged();
+    void favoritesPluginChanged();
+    void favoritesMatchParametersChanged();
+    void dataChanged();
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
     virtual void initializePlugin(QDeclarativeGeoServiceProvider *plugin);
 
+protected Q_SLOTS:
+    virtual void queryFinished();
+
 private Q_SLOTS:
+    void updateLayout(const QList<QPlace> &favoritePlaces = QList<QPlace>());
+
     void placeUpdated(const QString &placeId);
     void placeRemoved(const QString &placeId);
 
 private:
     enum Roles {
-        SearchResultTypeRole = QDeclarativeResultModelBase::UserRole,
+        SearchResultTypeRole = Qt::UserRole,
+        TitleRole,
+        IconRole,
+        DistanceRole,
+        PlaceRole,
         SponsoredRole
     };
 
     int getRow(const QString &placeId) const;
     QList<QDeclarativeCategory *> m_categories;
     QtLocation::VisibilityScope m_visibilityScope;
+
+    QList<QPlaceSearchResult> m_results;
+    QList<QPlaceSearchResult> m_resultsBuffer;
+    QList<QDeclarativePlace *> m_places;
+    QList<QDeclarativePlaceIcon *> m_icons;
+
+    QDeclarativeGeoServiceProvider *m_favoritesPlugin;
+    QVariantMap m_matchParameters;
 };
 
 QT_END_NAMESPACE

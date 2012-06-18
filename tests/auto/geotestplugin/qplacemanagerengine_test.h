@@ -188,14 +188,6 @@ public:
         return 0;
     }
 
-    QPlaceSearchReply *recommendations(const QString &placeId, const QPlaceSearchRequest &query)
-    {
-        Q_UNUSED(placeId)
-        Q_UNUSED(query)
-
-        return 0;
-    }
-
     QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query)
     {
         Q_UNUSED(query)

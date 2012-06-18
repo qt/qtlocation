@@ -64,6 +64,7 @@ public:
     QList<QPlaceCategory> categories;
     QGeoShape searchArea;
     int dymNumber;
+    QString recommendationId;
     QtLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
     int limit;
@@ -82,6 +83,7 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
       searchTerm(other.searchTerm),
       categories(other.categories),
       searchArea(other.searchArea),
+      recommendationId(other.recommendationId),
       dymNumber(other.dymNumber),
       visibilityScope(other.visibilityScope),
       relevanceHint(other.relevanceHint),
@@ -100,6 +102,7 @@ QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSe
         searchTerm = other.searchTerm;
         categories = other.categories;
         searchArea = other.searchArea;
+        recommendationId = other.recommendationId;
         dymNumber = other.dymNumber;
         visibilityScope = other.visibilityScope;
         relevanceHint = other.relevanceHint;
@@ -115,6 +118,7 @@ bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &ot
     return searchTerm == other.searchTerm &&
            categories == other.categories &&
            searchArea == other.searchArea &&
+           recommendationId == other.recommendationId &&
            dymNumber == other.dymNumber &&
            visibilityScope == other.visibilityScope &&
            relevanceHint == other.relevanceHint &&
@@ -129,6 +133,7 @@ void QPlaceSearchRequestPrivate::clear()
     searchTerm.clear();
     categories.clear();
     searchArea = QGeoShape();
+    recommendationId.clear();
     dymNumber = 0;
     visibilityScope = QtLocation::UnspecifiedVisibility;
     relevanceHint = QPlaceSearchRequest::UnspecifiedHint;
@@ -152,11 +157,10 @@ void QPlaceSearchRequestPrivate::clear()
 
     The QPlaceSearchRequest is primarily used with the QPlaceManager to
     \l {QPlaceManager::search()} {search for places}, however it is also
-    used to provide parameters for \l {QPlaceManager::searchSuggestions()}{generating search term suggestions}
-    and \l {QPlaceManager::recommendations()} {retreiving recommendations}.  Note that depending on usage,
-    some parameters may not be relevant, for example the relevance hint is not important for search term suggestions.  However
-    in general, most of the parameters are useful for each of these operations, for example for a recommendation, a search area
-    and categories can be useful in narrowing down recommendation candidates.
+    used to provide parameters for \l {QPlaceManager::searchSuggestions()}{generating search term suggestions}.
+    Note that in this context only some of the parameters may be relevant. For example, the search area
+    is useful in narrowing down relevant search suggestions, while other parameters such as relevance hint
+    are not so applicable.
 
     Also be aware that providers may vary by which parameters they support for example some providers may not support
     paging while others do, some providers may honor relevance hints while others may completely ignore them,
@@ -307,6 +311,25 @@ void QPlaceSearchRequest::setSearchArea(const QGeoShape &area)
 {
     Q_D(QPlaceSearchRequest);
     d->searchArea = area;
+}
+
+/*!
+    Returns the place id which will be used to search for recommendations
+    for similar places.
+*/
+QString QPlaceSearchRequest::recommendationId() const
+{
+    Q_D(const QPlaceSearchRequest);
+    return d->recommendationId;
+}
+
+/*!
+    Sets the \a placeId which will be used to search for recommendations.
+*/
+void QPlaceSearchRequest::setRecommendationId(const QString &placeId)
+{
+    Q_D(QPlaceSearchRequest);
+    d->recommendationId = placeId;
 }
 
 /*!

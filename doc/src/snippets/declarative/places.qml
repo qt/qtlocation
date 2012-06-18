@@ -140,23 +140,6 @@ Item {
     }
     //! [PlaceSearchModel]
 
-    //! [RecommendationModel]
-    PlaceRecommendationModel {
-        id: recommendationModel
-
-        plugin: myPlugin
-
-        placeId: place.placeId
-
-        Component.onCompleted: update()
-    }
-
-    ListView {
-        model: recommendationModel
-        delegate: Text { text: 'Name: ' + place.name }
-    }
-    //! [RecommendationModel]
-
     //! [SearchSuggestionModel]
     PlaceSearchSuggestionModel {
         id: suggestionModel

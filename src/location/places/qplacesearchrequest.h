@@ -86,6 +86,9 @@ public:
     QGeoShape searchArea() const;
     void setSearchArea(const QGeoShape &area);
 
+    QString recommendationId() const;
+    void setRecommendationId(const QString &recommendationId);
+
     QtLocation::VisibilityScope visibilityScope() const;
     void setVisibilityScope(QtLocation::VisibilityScope visibilityScopes);
 

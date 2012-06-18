@@ -175,20 +175,6 @@ QPlaceSearchReply *QPlaceManagerEngine::search(const QPlaceSearchRequest &reques
 }
 
 /*!
-    Provides recommendations for places that are similar to the place identified by \a placeId,
-    and using the parameters as specified in \a request.
-*/
-QPlaceSearchReply *QPlaceManagerEngine::recommendations(const QString &placeId,
-                                                        const QPlaceSearchRequest &request)
-{
-    Q_UNUSED(placeId)
-    Q_UNUSED(request)
-
-    return new QPlaceSearchReplyUnsupported(
-                QStringLiteral("Place recommendations are not supported."), this);
-}
-
-/*!
     Requests a set of search term suggestions according to the parameters specified in \a request.
 */
 QPlaceSearchSuggestionReply *QPlaceManagerEngine::searchSuggestions(

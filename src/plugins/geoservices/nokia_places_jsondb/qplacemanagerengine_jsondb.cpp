@@ -143,15 +143,6 @@ QPlaceSearchReply *QPlaceManagerEngineJsonDb::search(const QPlaceSearchRequest &
     return searchReply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineJsonDb::recommendations(const QString &placeId, const QPlaceSearchRequest &request)
-{
-    Q_UNUSED(placeId);
-    SearchReply *searchReply = new SearchReply(this);
-    searchReply->setRequest(request);
-    searchReply->triggerDone(QPlaceReply::UnsupportedError, QString::fromLatin1("Recommendations are unsupported"));
-    return searchReply;
-}
-
 QPlaceSearchSuggestionReply *QPlaceManagerEngineJsonDb::searchSuggestions(const QPlaceSearchRequest &request)
 {
     Q_UNUSED(request)
