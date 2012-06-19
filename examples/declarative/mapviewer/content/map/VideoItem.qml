@@ -39,7 +39,7 @@
 ****************************************************************************/
 import QtQuick 2.0;
 import QtLocation 5.0
-import QtMultimedia 4.0
+import QtMultimedia 5.0
 
 // NOTE: If the creation of this compoment fails, make sure you have the latest
 // qtmultimedia and relevant gstreamer etc packages installed.
@@ -65,8 +65,8 @@ MapQuickItem {  //to be used inside MapComponent only
         height: 144;
         MediaPlayer {
             id: player
-            source: Qt.resolvedUrl("../../demo.ogv")
-            playing: true
+            source: "file://" + appDirPath + "/demo.ogv"
+            autoPlay: true
 
             onError: {
                 if (MediaPlayer.NoError != error) {

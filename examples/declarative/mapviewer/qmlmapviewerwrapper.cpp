@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
 
     view.engine()->addImportPath(QLatin1String(":/imports"));
 
+    view.rootContext()->setContextProperty("appDirPath", QCoreApplication::applicationDirPath());
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
 
