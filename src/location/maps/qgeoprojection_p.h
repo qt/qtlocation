@@ -52,6 +52,10 @@
 // We mean it.
 //
 
+#ifndef M_PI
+#define M_PI (3.14159265358979323846)
+#endif
+
 #include "qglobal.h"
 #include "QtLocation/qlocationglobal.h"
 

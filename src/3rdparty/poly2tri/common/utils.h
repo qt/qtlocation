@@ -38,6 +38,10 @@
 #include <exception>
 #include <math.h>
 
+#ifndef M_PI
+#define M_PI (3.14159265358979323846)
+#endif
+
 namespace p2t {
 
 const float PI_3div4 = 3 * M_PI / 4;

@@ -70,7 +70,7 @@ QDoubleVector2D QDoubleVector2D::normalized() const
     if (qFuzzyIsNull(len - 1.0))
         return *this;
     else if (!qFuzzyIsNull(len))
-        return *this / qSqrt(len);
+        return *this / (double)qSqrt(len);
     else
         return QDoubleVector2D();
 }
