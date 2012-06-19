@@ -48,15 +48,15 @@ Item {
     Plugin { id: invalidPlugin; name: "invalid"}
     Coordinate{ id: coordinate1; latitude: 51; longitude: 0}
     Coordinate{ id: coordinate2; latitude: 52; longitude: 0}
-    BoundingBox{ id: boundingBox1; topLeft: coordinate2; bottomLeft: coordinate1; width:  1000}
-    BoundingBox{ id: boundingBox2; topLeft: coordinate2; bottomLeft: coordinate1; width:  1000}
+    GeoRectangle { id: boundingBox1; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
+    GeoRectangle { id: boundingBox2; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
 
     Coordinate{ id: bottomLeft; latitude: 0; longitude: 0}
     Coordinate{ id: topLeft; latitude: 1; longitude: 0}
     Coordinate{ id: topRight; latitude: 1; longitude: 1}
     Coordinate{ id: bottomRight; latitude: 0; longitude: 1}
     Coordinate{ id: newTopRight; latitude: 3; longitude: 3}
-    BoundingBox {
+    GeoRectangle {
         id: unitBox;
         bottomLeft: bottomLeft;
         topLeft: topLeft;
@@ -72,7 +72,7 @@ Item {
         // TODO enable when we have map route
         //MapRoute {id: emptyMapRoute}
 
-        BoundingBox {id: emptyBox}
+        GeoRectangle {id: emptyBox}
         Coordinate {id: emptyCoordinate}
 
         // TODO enable when we have map route

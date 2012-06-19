@@ -55,7 +55,7 @@
 
 #include "qgeocodereply.h"
 
-#include "qgeoboundingarea.h"
+#include "qgeoshape.h"
 
 #include <QList>
 
@@ -74,7 +74,7 @@ public:
     QString errorString;
     bool isFinished;
 
-    QGeoBoundingArea viewport;
+    QGeoShape viewport;
     QList<QGeoLocation> locations;
 
     int limit;

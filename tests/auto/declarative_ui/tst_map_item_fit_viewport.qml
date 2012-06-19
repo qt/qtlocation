@@ -110,7 +110,7 @@ Item {
     Coordinate{ id: mapRouteTopLeft; latitude: 0; longitude: 0}
     Coordinate{ id: mapRouteBottomRight; latitude: 0; longitude: 0}
 
-    BoundingBox {
+    GeoRectangle {
         id: boundingBox
         topLeft: Coordinate {
             latitude: 0

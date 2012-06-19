@@ -37,60 +37,47 @@
 **
 ** $QT_END_LICENSE$
 **
-***************************************************************************/
+****************************************************************************/
 
-#ifndef QDECLARATIVEGEOBOUNDINGCIRCLE_P_H
-#define QDECLARATIVEGEOBOUNDINGCIRCLE_P_H
+#ifndef QGEORECTANGLE_P_H
+#define QGEORECTANGLE_P_H
 
-#include "qdeclarativegeoboundingarea_p.h"
-#include "qdeclarativecoordinate_p.h"
-#include <qgeoboundingcircle.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QtCore>
-#include <QPointer>
-#include <QtQml/qqml.h>
+#include "qgeoshape_p.h"
+#include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoBoundingCircle : public QDeclarativeGeoBoundingArea
+class QGeoRectanglePrivate : public QGeoShapePrivate
 {
-    Q_OBJECT
-
-    Q_PROPERTY(QGeoBoundingCircle circle READ circle WRITE setCircle)
-    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
-
 public:
-    explicit QDeclarativeGeoBoundingCircle(QObject *parent = 0);
-    explicit QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle &circle, QObject *parent = 0);
-    void setCircle(const QGeoBoundingCircle &circle);
-    QGeoBoundingCircle circle() const;
-    QGeoBoundingArea area() const;
+    QGeoRectanglePrivate();
+    QGeoRectanglePrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+    QGeoRectanglePrivate(const QGeoRectanglePrivate &other);
+    ~QGeoRectanglePrivate();
 
-    Q_INVOKABLE bool contains(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *center();
-    void setCenter(QDeclarativeCoordinate *coordinate);
-    qreal radius() const;
-    void setRadius(qreal radius);
+    bool isValid() const;
+    bool isEmpty() const;
+    bool contains(const QGeoCoordinate &coordinate) const;
 
-Q_SIGNALS:
-    void centerChanged();
-    void radiusChanged();
+    QGeoShapePrivate *clone() const;
 
-private Q_SLOTS:
-    void coordinateChanged();
+    bool operator==(const QGeoShapePrivate &other) const;
 
-private:
-    void synchronizeDeclarative(const QGeoBoundingCircle &old, bool skipCenter);
-
-private:
-    QDeclarativeCoordinate *m_center;
-    QGeoBoundingCircle m_circle;
-    qreal m_radius;
+    QGeoCoordinate topLeft;
+    QGeoCoordinate bottomRight;
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QDeclarativeGeoBoundingCircle)
 
 #endif

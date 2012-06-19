@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,51 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOBOUNDINGAREA_P_H
-#define QGEOBOUNDINGAREA_P_H
+import QtLocation 5.0
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtCore/QSharedData>
-
-#include "qgeoboundingarea.h"
-
-QT_BEGIN_NAMESPACE
-
-class QGeoBoundingAreaPrivate : public QSharedData
-{
-public:
-    explicit QGeoBoundingAreaPrivate(QGeoBoundingArea::AreaType type);
-    virtual ~QGeoBoundingAreaPrivate();
-
-    virtual bool isValid() const = 0;
-    virtual bool isEmpty() const = 0;
-    virtual bool contains(const QGeoCoordinate &coordinate) const = 0;
-
-    virtual QGeoBoundingAreaPrivate *clone() const = 0;
-
-    virtual bool operator==(const QGeoBoundingAreaPrivate &other) const;
-
-    QGeoBoundingArea::AreaType type;
-};
-
-// don't use the copy constructor when detaching from a QSharedDataPointer, use virtual clone()
-// call instead.
-template <>
-Q_INLINE_TEMPLATE QGeoBoundingAreaPrivate *QSharedDataPointer<QGeoBoundingAreaPrivate>::clone()
-{
-    return d->clone();
+GeoRectangle {
+    center: TestCoordinate { }
+    height: 30.0
+    width: 40.0
 }
-
-QT_END_NAMESPACE
-
-#endif // QGEOBOUNDINGAREA_P_H

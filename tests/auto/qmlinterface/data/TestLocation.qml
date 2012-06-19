@@ -43,6 +43,6 @@ import QtLocation 5.0
 
 Location {
     address: TestAddress { }
-    boundingBox: TestBoundingBox { }
+    boundingBox: TestGeoRectangle { }
     coordinate: TestCoordinate { }
 }

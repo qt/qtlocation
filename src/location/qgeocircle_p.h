@@ -39,56 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOBOUNDINGAREA_H
-#define QGEOBOUNDINGAREA_H
+#ifndef QGEOCIRCLE_P_H
+#define QGEOCIRCLE_P_H
 
-#include <QtCore/QSharedDataPointer>
-#include <QtLocation/QGeoCoordinate>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QT_BEGIN_HEADER
+#include "qgeoshape_p.h"
+#include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoBoundingAreaPrivate;
-
-class Q_LOCATION_EXPORT QGeoBoundingArea
+class QGeoCirclePrivate : public QGeoShapePrivate
 {
 public:
-    QGeoBoundingArea();
-    QGeoBoundingArea(const QGeoBoundingArea &other);
-    ~QGeoBoundingArea();
-
-    enum AreaType {
-        UnknownType,
-        BoxType,
-        CircleType
-    };
-
-    AreaType type() const;
+    QGeoCirclePrivate();
+    QGeoCirclePrivate(const QGeoCoordinate &center, qreal radius);
+    QGeoCirclePrivate(const QGeoCirclePrivate &other);
+    ~QGeoCirclePrivate();
 
     bool isValid() const;
     bool isEmpty() const;
     bool contains(const QGeoCoordinate &coordinate) const;
 
-    bool operator==(const QGeoBoundingArea &other) const;
-    bool operator!=(const QGeoBoundingArea &other) const;
+    QGeoShapePrivate *clone() const;
 
-    QGeoBoundingArea &operator=(const QGeoBoundingArea &other);
+    bool operator==(const QGeoShapePrivate &other) const;
 
-protected:
-    QGeoBoundingArea(QGeoBoundingAreaPrivate *d);
-
-    QSharedDataPointer<QGeoBoundingAreaPrivate> d_ptr;
-
-private:
-    inline QGeoBoundingAreaPrivate *d_func();
-    inline const QGeoBoundingAreaPrivate *d_func() const;
+    QGeoCoordinate center;
+    qreal radius;
 };
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoBoundingArea)
-
-QT_END_HEADER
-
-#endif // QGEOBOUNDINGAREA_H
+#endif

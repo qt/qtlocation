@@ -52,12 +52,12 @@ QT_USE_NAMESPACE
     \brief The Location element holds location data.
 
     Location elements represent a geographic "location", in a human sense. This
-    consists of a specific Coordinate, as well as an Address and a
-    BoundingBox. The BoundingBox delineates the limits of what geographic area
+    consists of a specific \l {coordinate}, an \l {address} and a \l {boundingBox}{bounding box}
+    The GeoRectangle delineates the limits of what geographic area
     is considered "part of" the location. For example, a Location representing
-    a house would have the Coordinate set to the center of the house's block
-    of land, the Address to its street address, and the BoundingBox would show
-    roughly the limits of the block itself.
+    a house would have the \l {coordinate} set to the center of the house's block
+    of land, the \l {address} to its street address, and the l {boundingBox}{bounding box} would
+    show roughly the limits of the block itself.
 
     The Location element is most commonly seen as the contents of a search
     model such as the GeocodeModel. When a GeocodeModel returns the list of
@@ -84,7 +84,6 @@ QT_USE_NAMESPACE
         address: houseAddress
     }
     \endcode
-
 */
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject *parent)
@@ -127,9 +126,9 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
     }
 
     if (m_boundingBox && m_boundingBox->parent() == this) {
-        m_boundingBox->setBox(src.boundingBox());
+        m_boundingBox->setRectangle(src.boundingBox());
     } else if (!m_boundingBox || m_boundingBox->parent() != this) {
-        m_boundingBox = new QDeclarativeGeoBoundingBox(src.boundingBox(), this);
+        m_boundingBox = new QDeclarativeGeoRectangle(src.boundingBox(), this);
         emit boundingBoxChanged();
     }
 }
@@ -139,7 +138,7 @@ QGeoLocation QDeclarativeGeoLocation::location()
     QGeoLocation retValue;
     retValue.setAddress(m_address ? m_address->address() : QGeoAddress());
     retValue.setCoordinate(m_coordinate ? m_coordinate->coordinate() : QGeoCoordinate());
-    retValue.setBoundingBox(m_boundingBox ? m_boundingBox->box() : QGeoBoundingBox());
+    retValue.setBoundingBox(m_boundingBox ? m_boundingBox->rectangle() : QGeoRectangle());
     return retValue;
 }
 
@@ -191,14 +190,14 @@ QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
 }
 
 /*!
-    \qmlproperty BoundingBox QtLocation5::Location::boundingBox
+    \qmlproperty GeoRectangle QtLocation5::Location::boundingBox
 
     This property holds bounding box of area on map occupied by location.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-void QDeclarativeGeoLocation::setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox)
+void QDeclarativeGeoLocation::setBoundingBox(QDeclarativeGeoRectangle *boundingBox)
 {
     if (m_boundingBox == boundingBox)
         return;
@@ -210,7 +209,7 @@ void QDeclarativeGeoLocation::setBoundingBox(QDeclarativeGeoBoundingBox *boundin
     emit boundingBoxChanged();
 }
 
-QDeclarativeGeoBoundingBox *QDeclarativeGeoLocation::boundingBox()
+QDeclarativeGeoRectangle *QDeclarativeGeoLocation::boundingBox()
 {
     return m_boundingBox;
 }

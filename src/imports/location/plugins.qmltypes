@@ -12,7 +12,7 @@ Module {
             type: "void"
             Parameter { name: "topLeft"; type: "QModelIndex" }
             Parameter { name: "bottomRight"; type: "QModelIndex" }
-            Parameter { name: "roles"; type: "QSet<int>" }
+            Parameter { name: "roles"; type: "QVector<int>" }
         }
         Signal {
             name: "dataChanged"
@@ -299,40 +299,10 @@ Module {
         Signal { name: "isTextGeneratedChanged"; type: "void" }
     }
     Component {
-        name: "QDeclarativeGeoBoundingArea"
-        prototype: "QObject"
-        exports: ["BoundingArea 5.0"]
-    }
-    Component {
-        name: "QDeclarativeGeoBoundingBox"
-        prototype: "QDeclarativeGeoBoundingArea"
-        exports: ["BoundingBox 5.0"]
-        Property { name: "box"; type: "QGeoBoundingBox" }
-        Property { name: "bottomLeft"; type: "QDeclarativeCoordinate"; isPointer: true }
-        Property { name: "bottomRight"; type: "QDeclarativeCoordinate"; isPointer: true }
-        Property { name: "topLeft"; type: "QDeclarativeCoordinate"; isPointer: true }
-        Property { name: "topRight"; type: "QDeclarativeCoordinate"; isPointer: true }
-        Property { name: "center"; type: "QDeclarativeCoordinate"; isPointer: true }
-        Property { name: "height"; type: "double" }
-        Property { name: "width"; type: "double" }
-        Signal { name: "bottomLeftChanged"; type: "void" }
-        Signal { name: "bottomRightChanged"; type: "void" }
-        Signal { name: "topLeftChanged"; type: "void" }
-        Signal { name: "topRightChanged"; type: "void" }
-        Signal { name: "centerChanged"; type: "void" }
-        Signal { name: "heightChanged"; type: "void" }
-        Signal { name: "widthChanged"; type: "void" }
-        Method {
-            name: "contains"
-            type: "bool"
-            Parameter { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
-        }
-    }
-    Component {
-        name: "QDeclarativeGeoBoundingCircle"
-        prototype: "QDeclarativeGeoBoundingArea"
-        exports: ["BoundingCircle 5.0"]
-        Property { name: "circle"; type: "QGeoBoundingCircle" }
+        name: "QDeclarativeGeoCircle"
+        prototype: "QDeclarativeGeoShape"
+        exports: ["GeoCircle 5.0"]
+        Property { name: "circle"; type: "QGeoCircle" }
         Property { name: "center"; type: "QDeclarativeCoordinate"; isPointer: true }
         Property { name: "radius"; type: "double" }
         Signal { name: "centerChanged"; type: "void" }
@@ -350,7 +320,7 @@ Module {
         Property { name: "location"; type: "QGeoLocation" }
         Property { name: "address"; type: "QDeclarativeGeoAddress"; isPointer: true }
         Property { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
-        Property { name: "boundingBox"; type: "QDeclarativeGeoBoundingBox"; isPointer: true }
+        Property { name: "boundingBox"; type: "QDeclarativeGeoRectangle"; isPointer: true }
         Signal { name: "addressChanged"; type: "void" }
         Signal { name: "coordinateChanged"; type: "void" }
         Signal { name: "boundingBoxChanged"; type: "void" }
@@ -693,10 +663,35 @@ Module {
         Property { name: "mobile"; type: "bool"; isReadonly: true }
     }
     Component {
+        name: "QDeclarativeGeoRectangle"
+        prototype: "QDeclarativeGeoShape"
+        exports: ["GeoRectangle 5.0"]
+        Property { name: "rectangle"; type: "QGeoRectangle" }
+        Property { name: "bottomLeft"; type: "QDeclarativeCoordinate"; isPointer: true }
+        Property { name: "bottomRight"; type: "QDeclarativeCoordinate"; isPointer: true }
+        Property { name: "topLeft"; type: "QDeclarativeCoordinate"; isPointer: true }
+        Property { name: "topRight"; type: "QDeclarativeCoordinate"; isPointer: true }
+        Property { name: "center"; type: "QDeclarativeCoordinate"; isPointer: true }
+        Property { name: "height"; type: "double" }
+        Property { name: "width"; type: "double" }
+        Signal { name: "bottomLeftChanged"; type: "void" }
+        Signal { name: "bottomRightChanged"; type: "void" }
+        Signal { name: "topLeftChanged"; type: "void" }
+        Signal { name: "topRightChanged"; type: "void" }
+        Signal { name: "centerChanged"; type: "void" }
+        Signal { name: "heightChanged"; type: "void" }
+        Signal { name: "widthChanged"; type: "void" }
+        Method {
+            name: "contains"
+            type: "bool"
+            Parameter { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
+        }
+    }
+    Component {
         name: "QDeclarativeGeoRoute"
         prototype: "QObject"
         exports: ["Route 5.0"]
-        Property { name: "bounds"; type: "QDeclarativeGeoBoundingBox"; isReadonly: true; isPointer: true }
+        Property { name: "bounds"; type: "QDeclarativeGeoRectangle"; isReadonly: true; isPointer: true }
         Property { name: "travelTime"; type: "int"; isReadonly: true }
         Property { name: "distance"; type: "double"; isReadonly: true }
         Property { name: "path"; type: "QDeclarativeCoordinate"; isList: true; isReadonly: true }
@@ -852,7 +847,7 @@ Module {
         Property { name: "waypoints"; type: "QDeclarativeCoordinate"; isList: true; isReadonly: true }
         Property {
             name: "excludedAreas"
-            type: "QDeclarativeGeoBoundingBox"
+            type: "QDeclarativeGeoRectangle"
             isList: true
             isReadonly: true
         }
@@ -880,12 +875,12 @@ Module {
         Method {
             name: "addExcludedArea"
             type: "void"
-            Parameter { name: "area"; type: "QDeclarativeGeoBoundingBox"; isPointer: true }
+            Parameter { name: "area"; type: "QDeclarativeGeoRectangle"; isPointer: true }
         }
         Method {
             name: "removeExcludedArea"
             type: "void"
-            Parameter { name: "area"; type: "QDeclarativeGeoBoundingBox"; isPointer: true }
+            Parameter { name: "area"; type: "QDeclarativeGeoRectangle"; isPointer: true }
         }
         Method { name: "clearExcludedAreas"; type: "void" }
         Method {
@@ -1130,6 +1125,11 @@ Module {
             type: "bool"
             Parameter { name: "provider"; type: "const QGeoServiceProvider"; isPointer: true }
         }
+    }
+    Component {
+        name: "QDeclarativeGeoShape"
+        prototype: "QObject"
+        exports: ["GeoShape 5.0"]
     }
     Component {
         name: "QDeclarativeGeocodeModel"
@@ -1591,7 +1591,7 @@ Module {
             }
         }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
-        Property { name: "searchArea"; type: "QDeclarativeGeoBoundingArea"; isPointer: true }
+        Property { name: "searchArea"; type: "QDeclarativeGeoShape"; isPointer: true }
         Property { name: "offset"; type: "int" }
         Property { name: "limit"; type: "int" }
         Property { name: "status"; type: "Status"; isReadonly: true }

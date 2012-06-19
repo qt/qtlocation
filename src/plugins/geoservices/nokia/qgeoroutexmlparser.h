@@ -62,7 +62,7 @@ class QIODevice;
 class QXmlStreamReader;
 class QGeoRoute;
 class QGeoCoordinate;
-class QGeoBoundingBox;
+class QGeoRectangle;
 
 class QGeoManeuverContainer
 {
@@ -115,7 +115,7 @@ private:
     bool parseLink();
     bool postProcessRoute(QGeoRoute *route);
 
-    bool parseBoundingBox(QGeoBoundingBox &bounds);
+    bool parseBoundingBox(QGeoRectangle &bounds);
     bool parseDynamicSpeedInfo(QGeoDynamicSpeedInfoContainer &speedInfo);
 
     QGeoRouteRequest m_request;

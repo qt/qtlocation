@@ -768,7 +768,7 @@ void QDeclarativeGeoRouteQuery::waypoints_clear(QQmlListProperty<QDeclarativeCoo
 }
 
 /*!
-    \qmlproperty QQmlListProperty<BoundingBox> RouteQuery::excludedAreas
+    \qmlproperty QQmlListProperty<GeoRectangle> RouteQuery::excludedAreas
 
     Areas that the route must not cross.
 
@@ -778,9 +778,9 @@ void QDeclarativeGeoRouteQuery::waypoints_clear(QQmlListProperty<QDeclarativeCoo
     \sa addExcludedArea, removeExcludedArea, clearExcludedAreas
 */
 
-QQmlListProperty<QDeclarativeGeoBoundingBox> QDeclarativeGeoRouteQuery::excludedAreas()
+QQmlListProperty<QDeclarativeGeoRectangle> QDeclarativeGeoRouteQuery::excludedAreas()
 {
-    return QQmlListProperty<QDeclarativeGeoBoundingBox>(this, 0, exclusions_append,
+    return QQmlListProperty<QDeclarativeGeoRectangle>(this, 0, exclusions_append,
                                                         exclusions_count, exclusions_at,
                                                         exclusions_clear);
 }
@@ -788,7 +788,7 @@ QQmlListProperty<QDeclarativeGeoBoundingBox> QDeclarativeGeoRouteQuery::excluded
 /*!
     \internal
 */
-void QDeclarativeGeoRouteQuery::exclusions_append(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, QDeclarativeGeoBoundingBox *area)
+void QDeclarativeGeoRouteQuery::exclusions_append(QQmlListProperty<QDeclarativeGeoRectangle> *prop, QDeclarativeGeoRectangle *area)
 {
     QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery *>(prop->object);
     model->addExcludedArea(area);
@@ -797,7 +797,7 @@ void QDeclarativeGeoRouteQuery::exclusions_append(QQmlListProperty<QDeclarativeG
 /*!
     \internal
 */
-int QDeclarativeGeoRouteQuery::exclusions_count(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop)
+int QDeclarativeGeoRouteQuery::exclusions_count(QQmlListProperty<QDeclarativeGeoRectangle> *prop)
 {
     QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery *>(prop->object);
     return model->exclusions_.count();
@@ -806,7 +806,7 @@ int QDeclarativeGeoRouteQuery::exclusions_count(QQmlListProperty<QDeclarativeGeo
 /*!
     \internal
 */
-QDeclarativeGeoBoundingBox *QDeclarativeGeoRouteQuery::exclusions_at(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, int index)
+QDeclarativeGeoRectangle *QDeclarativeGeoRouteQuery::exclusions_at(QQmlListProperty<QDeclarativeGeoRectangle> *prop, int index)
 {
     QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery *>(prop->object);
     Q_ASSERT(index < model->exclusions_.count());
@@ -816,14 +816,14 @@ QDeclarativeGeoBoundingBox *QDeclarativeGeoRouteQuery::exclusions_at(QQmlListPro
 /*!
     \internal
 */
-void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop)
+void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGeoRectangle> *prop)
 {
     QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery *>(prop->object);
     model->clearExcludedAreas();
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::addExcludedArea(BoundingBox)
+    \qmlmethod QtLocation5::RouteQuery::addExcludedArea(GeoRectangle)
 
     Adds the given area to excluded areas (areas that the route must not cross).
     Same area can only be added once.
@@ -832,7 +832,7 @@ void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGe
 */
 
 
-void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoBoundingBox *area)
+void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoRectangle *area)
 {
     if (!area)
         return;
@@ -853,14 +853,14 @@ void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoBoundingBox *area
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::removeExcludedArea(BoundingBox)
+    \qmlmethod QtLocation5::RouteQuery::removeExcludedArea(GeoRectangle)
 
     Removes the given area to excluded areas (areas that the route must not cross).
 
     \sa addExcludedArea, clearExcludedAreas
 */
 
-void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoBoundingBox *area)
+void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoRectangle *area)
 {
     if (!area)
         return;
@@ -1243,9 +1243,9 @@ QGeoRouteRequest &QDeclarativeGeoRouteQuery::routeRequest()
     QList<QGeoCoordinate> waypoints;
     for (int i = 0; i < waypoints_.count(); ++i)
         waypoints.append(waypoints_.at(i)->coordinate());
-    QList<QGeoBoundingBox> exclusions;
+    QList<QGeoRectangle> exclusions;
     for (int i = 0; i < exclusions_.count(); ++i)
-        exclusions.append(exclusions_.at(i)->box());
+        exclusions.append(exclusions_.at(i)->rectangle());
 
     request_.setWaypoints(waypoints);
     request_.setExcludeAreas(exclusions);

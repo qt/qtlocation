@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
 
 
-class QGeoBoundingBox;
+class QGeoRectangle;
 class QGeoRouteSegment;
 
 class QGeoRoutePrivate;
@@ -78,8 +78,8 @@ public:
     void setRequest(const QGeoRouteRequest &request);
     QGeoRouteRequest request() const;
 
-    void setBounds(const QGeoBoundingBox &bounds);
-    QGeoBoundingBox bounds() const;
+    void setBounds(const QGeoRectangle &bounds);
+    QGeoRectangle bounds() const;
 
     void setFirstRouteSegment(const QGeoRouteSegment &routeSegment);
     QGeoRouteSegment firstRouteSegment() const;

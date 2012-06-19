@@ -43,8 +43,8 @@
 #include <QtTest/QtTest>
 
 #include <QtLocation/QPlaceSearchReply>
-#include <QtLocation/QGeoBoundingCircle>
 #include <QtLocation/QPlaceResult>
+#include <QtLocation/QGeoCircle>
 
 QT_USE_NAMESPACE
 
@@ -103,7 +103,7 @@ void tst_QPlaceSearchReply::requestTest()
     request.setLimit(10);
     request.setOffset(50);
 
-    QGeoBoundingCircle circle;
+    QGeoCircle circle;
     circle.setCenter(QGeoCoordinate(10,20));
     request.setSearchArea(circle);
 

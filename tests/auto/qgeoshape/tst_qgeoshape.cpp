@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -37,29 +37,41 @@
 **
 ** $QT_END_LICENSE$
 **
-***************************************************************************/
+****************************************************************************/
 
-#ifndef QDECLARATIVEGEOBOUNDINGAREA_P_H
-#define QDECLARATIVEGEOBOUNDINGAREA_P_H
+#include <QtTest/QtTest>
+#include <QtLocation/QGeoShape>
 
-#include <qgeoboundingarea.h>
-
-#include <QtCore>
-#include <QPointer>
-#include <QtQml/qqml.h>
-
-QT_BEGIN_NAMESPACE
-
-class QDeclarativeGeoBoundingArea : public QObject
+class tst_qgeoshape : public QObject
 {
     Q_OBJECT
 
-public:
-    explicit QDeclarativeGeoBoundingArea(QObject *parent) :QObject(parent){}
-    virtual QGeoBoundingArea area() const = 0;
+private slots:
+    void testArea();
 };
 
-QT_END_NAMESPACE
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoBoundingArea));
+void tst_qgeoshape::testArea()
+{
+    QGeoShape area;
+    QVERIFY(!area.isValid());
+    QVERIFY(area.isEmpty());
+    QCOMPARE(area.type(), QGeoShape::UnknownType);
+    QVERIFY(!area.contains(QGeoCoordinate()));
 
-#endif
+    // QGeoShape never constructs a QGeoShapePrivate.  Hence d_ptr is always 0.
+
+    QGeoShape area2;
+
+    QCOMPARE(area, area2);
+
+    area = area2;
+
+    QCOMPARE(area, area2);
+
+    QGeoShape area3(area2);
+
+    QCOMPARE(area2, area3);
+}
+
+QTEST_MAIN(tst_qgeoshape)
+#include "tst_qgeoshape.moc"

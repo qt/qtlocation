@@ -54,7 +54,7 @@
 #include <qgeolocation.h>
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
+#include <QtLocation/QGeoRectangle>
 
 QT_USE_NAMESPACE
 class SubGeocodeReply : public QGeocodeReply
@@ -69,7 +69,7 @@ public:
     void  callSetLimit ( int limit ) {setLimit(limit);}
     void  callSetOffset ( int offset ) {setOffset(offset);}
     void  callSetLocations ( const QList<QGeoLocation> & locations ) {setLocations(locations);}
-    void  callSetViewport ( const QGeoBoundingArea &viewport ) {setViewport(viewport);}
+    void  callSetViewport ( const QGeoShape &viewport ) {setViewport(viewport);}
 
 };
 
@@ -108,7 +108,7 @@ private:
     QSignalSpy *signalfinished;
     SubGeocodeReply* reply;
     QGeoLocation *qgeolocation;
-    QGeoBoundingBox *qgeoboundingbox;
+    QGeoRectangle *qgeoboundingbox;
 };
 
 Q_DECLARE_METATYPE( QList<double>);

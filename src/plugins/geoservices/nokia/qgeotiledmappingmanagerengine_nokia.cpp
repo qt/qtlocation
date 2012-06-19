@@ -181,7 +181,7 @@ void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const
                 qreal left   = box[1].toDouble();
                 qreal bottom = box[2].toDouble();
                 qreal right  = box[3].toDouble();
-                QGeoBoundingBox boundingBox(QGeoCoordinate(top > bottom? top : bottom,
+                QGeoRectangle boundingBox(QGeoCoordinate(top > bottom? top : bottom,
                                                            left),
                                             QGeoCoordinate(top > bottom? bottom : top,
                                                            right));
@@ -198,7 +198,7 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
                                                                    const QSet<QGeoTileSpec> &tiles)
 {
     typedef QSet<QGeoTileSpec>::const_iterator tile_iter;
-    QGeoBoundingBox viewport;
+    QGeoRectangle viewport;
     double viewX0, viewY0, viewX1, viewY1;
 
     tile_iter tile = tiles.constBegin();
@@ -247,7 +247,7 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
         if (descriptorList[descIndex].minLevel <= zoomLevel && zoomLevel <= descriptorList[descIndex].maxLevel) {
             descriptor = &descriptorList[descIndex];
             for (boxIndex = 0; boxIndex < descriptor->boxes.count(); boxIndex++) {
-                QGeoBoundingBox box = descriptor->boxes[boxIndex];
+                QGeoRectangle box = descriptor->boxes[boxIndex];
                 QGeoCoordinate topRight = box.topRight();
                 QGeoCoordinate bottomLeft = box.bottomLeft();
 

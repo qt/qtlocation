@@ -46,7 +46,7 @@
 #include <QtQml/QQmlListProperty>
 #include <QtLocation/QGeoLocation>
 #include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeoboundingbox_p.h"
+#include "qdeclarativegeorectangle.h"
 #include "qdeclarativegeoaddress_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -58,7 +58,7 @@ class QDeclarativeGeoLocation : public QObject
     Q_PROPERTY(QGeoLocation location READ location WRITE setLocation)
     Q_PROPERTY(QDeclarativeGeoAddress *address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(QDeclarativeCoordinate *coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QDeclarativeGeoBoundingBox *boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
+    Q_PROPERTY(QDeclarativeGeoRectangle *boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
 
 public:
     explicit QDeclarativeGeoLocation(QObject *parent = 0);
@@ -73,8 +73,8 @@ public:
     QDeclarativeCoordinate *coordinate();
     void setCoordinate(QDeclarativeCoordinate *coordinate);
 
-    QDeclarativeGeoBoundingBox *boundingBox();
-    void setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox);
+    QDeclarativeGeoRectangle *boundingBox();
+    void setBoundingBox(QDeclarativeGeoRectangle *boundingBox);
 
 Q_SIGNALS:
     void addressChanged();
@@ -84,7 +84,7 @@ Q_SIGNALS:
 private:
     QDeclarativeGeoAddress *m_address;
     QDeclarativeCoordinate *m_coordinate;
-    QDeclarativeGeoBoundingBox *m_boundingBox;
+    QDeclarativeGeoRectangle *m_boundingBox;
 };
 
 QT_END_NAMESPACE

@@ -21,9 +21,9 @@ include(places/places.pri)
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
-                    qgeoboundingarea.h \
-                    qgeoboundingbox.h \
-                    qgeoboundingcircle.h \
+                    qgeoshape.h \
+                    qgeorectangle.h \
+                    qgeocircle.h \
                     qgeocoordinate.h \
                     qgeolocation.h \
                     qgeopositioninfo.h \
@@ -37,9 +37,9 @@ PUBLIC_HEADERS += \
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
-                    qgeoboundingarea_p.h \
-                    qgeoboundingbox_p.h \
-                    qgeoboundingcircle_p.h \
+                    qgeoshape_p.h \
+                    qgeorectangle_p.h \
+                    qgeocircle_p.h \
                     qgeolocation_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h \
@@ -52,9 +52,9 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES += \
             qgeoaddress.cpp \
             qgeoareamonitor.cpp \
-            qgeoboundingarea.cpp \
-            qgeoboundingbox.cpp \
-            qgeoboundingcircle.cpp \
+            qgeoshape.cpp \
+            qgeorectangle.cpp \
+            qgeocircle.cpp \
             qgeocoordinate.cpp \
             qgeolocation.cpp \
             qgeopositioninfo.cpp \
@@ -65,5 +65,4 @@ SOURCES += \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
             qgeopositioninfosourcefactory.cpp \
-            qtlocation.cpp
-
+            qtlocation.cpp \

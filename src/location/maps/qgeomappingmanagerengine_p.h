@@ -73,7 +73,7 @@ QT_BEGIN_NAMESPACE
 
 class QLocale;
 
-class QGeoBoundingBox;
+class QGeoRectangle;
 class QGeoCoordinate;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;

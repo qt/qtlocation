@@ -186,7 +186,7 @@ QString QGeocodeReply::errorString() const
 /*!
     Sets the viewport which contains the results to \a viewport.
 */
-void QGeocodeReply::setViewport(const QGeoBoundingArea &viewport)
+void QGeocodeReply::setViewport(const QGeoShape &viewport)
 {
     d_ptr->viewport = viewport;
 }
@@ -197,7 +197,7 @@ void QGeocodeReply::setViewport(const QGeoBoundingArea &viewport)
     This function will return 0 if no viewport bias
     was specified in the QGeocodingManager function which created this reply.
 */
-QGeoBoundingArea QGeocodeReply::viewport() const
+QGeoShape QGeocodeReply::viewport() const
 {
     return d_ptr->viewport;
 }

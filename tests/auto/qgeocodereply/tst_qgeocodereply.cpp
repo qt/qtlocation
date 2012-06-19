@@ -275,11 +275,11 @@ void tst_QGeocodeReply::viewport()
 {
     QGeoCoordinate *qgeocoordinate = new QGeoCoordinate (12.12 , 54.43);
 
-    qgeoboundingbox = new QGeoBoundingBox (*qgeocoordinate, 0.5 , 0.5);
+    qgeoboundingbox = new QGeoRectangle (*qgeocoordinate, 0.5 , 0.5);
 
     reply->callSetViewport(*qgeoboundingbox);
 
-    QCOMPARE (reply->viewport(), static_cast<const QGeoBoundingArea &>(*qgeoboundingbox));
+    QCOMPARE (reply->viewport(), static_cast<const QGeoShape &>(*qgeoboundingbox));
 
     delete qgeocoordinate;
     delete qgeoboundingbox;

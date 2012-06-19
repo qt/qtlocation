@@ -39,50 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOBOUNDINGBOX_H
-#define QGEOBOUNDINGBOX_H
+#ifndef QGEORECTANGLE_H
+#define QGEORECTANGLE_H
 
-#include <QtLocation/QGeoBoundingArea>
+#include <QtLocation/QGeoShape>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoBoundingBoxPrivate;
+class QGeoRectanglePrivate;
 
-class Q_LOCATION_EXPORT QGeoBoundingBox : public QGeoBoundingArea
+class Q_LOCATION_EXPORT QGeoRectangle : public QGeoShape
 {
 public:
-    QGeoBoundingBox();
-    QGeoBoundingBox(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
-    QGeoBoundingBox(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    QGeoBoundingBox(const QGeoBoundingBox &other);
-    QGeoBoundingBox(const QGeoBoundingArea &other);
+    QGeoRectangle();
+    QGeoRectangle(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
+    QGeoRectangle(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+    QGeoRectangle(const QGeoRectangle &other);
+    QGeoRectangle(const QGeoShape &other);
 
-    ~QGeoBoundingBox();
+    ~QGeoRectangle();
 
-    QGeoBoundingBox &operator = (const QGeoBoundingBox &other);
-
-#ifdef Q_NO_USING_KEYWORD
-    bool operator==(const QGeoBoundingArea &other) const
-    {
-        return QGeoBoundingArea::operator==(other);
-    }
-#else
-    using QGeoBoundingArea::operator==;
-#endif
-    bool operator==(const QGeoBoundingBox &other) const;
+    QGeoRectangle &operator=(const QGeoRectangle &other);
 
 #ifdef Q_NO_USING_KEYWORD
-    bool operator!=(const QGeoBoundingArea &other) const
+    bool operator==(const QGeoShape &other) const
     {
-        return QGeoBoundingArea::operator!=(other);
+        return QGeoShape::operator==(other);
     }
 #else
-    using QGeoBoundingArea::operator!=;
+    using QGeoShape::operator==;
 #endif
-    bool operator!=(const QGeoBoundingBox &other) const;
+    bool operator==(const QGeoRectangle &other) const;
+
+#ifdef Q_NO_USING_KEYWORD
+    bool operator!=(const QGeoShape &other) const
+    {
+        return QGeoShape::operator!=(other);
+    }
+#else
+    using QGeoShape::operator!=;
+#endif
+    bool operator!=(const QGeoRectangle &other) const;
 
     void setTopLeft(const QGeoCoordinate &topLeft);
     QGeoCoordinate topLeft() const;
@@ -108,34 +108,34 @@ public:
 #ifdef Q_NO_USING_KEYWORD
     bool contains(const QGeoCoordinate &coordinate) const
     {
-        return QGeoBoundingArea::contains(coordinate);
+        return QGeoShape::contains(coordinate);
     }
 #else
-    using QGeoBoundingArea::contains;
+    using QGeoShape::contains;
 #endif
-    bool contains(const QGeoBoundingBox &boundingBox) const;
-    bool intersects(const QGeoBoundingBox &boundingBox) const;
+    bool contains(const QGeoRectangle &rectangle) const;
+    bool intersects(const QGeoRectangle &rectangle) const;
 
     void translate(double degreesLatitude, double degreesLongitude);
-    QGeoBoundingBox translated(double degreesLatitude, double degreesLongitude) const;
+    QGeoRectangle translated(double degreesLatitude, double degreesLongitude) const;
 
-    QGeoBoundingBox united(const QGeoBoundingBox &boundingBox) const;
-    QGeoBoundingBox operator | (const QGeoBoundingBox &boundingBox) const;
-    QGeoBoundingBox &operator |= (const QGeoBoundingBox &boundingBox);
+    QGeoRectangle united(const QGeoRectangle &rectangle) const;
+    QGeoRectangle operator|(const QGeoRectangle &rectangle) const;
+    QGeoRectangle &operator|=(const QGeoRectangle &rectangle);
 
 private:
-    inline QGeoBoundingBoxPrivate *d_func();
-    inline const QGeoBoundingBoxPrivate *d_func() const;
+    inline QGeoRectanglePrivate *d_func();
+    inline const QGeoRectanglePrivate *d_func() const;
 };
 
-inline QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
+inline QGeoRectangle QGeoRectangle::operator|(const QGeoRectangle &rectangle) const
 {
-    return united(boundingBox);
+    return united(rectangle);
 }
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoBoundingBox)
+Q_DECLARE_METATYPE(QGeoRectangle)
 
 QT_END_HEADER
 

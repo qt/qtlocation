@@ -55,7 +55,7 @@
 
 #include "qgeoroute.h"
 #include "qgeorouterequest.h"
-#include "qgeoboundingbox.h"
+#include "qgeorectangle.h"
 #include "qgeoroutesegment.h"
 
 #include <QSharedData>
@@ -76,7 +76,7 @@ public:
     QString id;
     QGeoRouteRequest request;
 
-    QGeoBoundingBox bounds;
+    QGeoRectangle bounds;
 //    QList<QGeoRouteSegment> routeSegments;
 
     int travelTime;

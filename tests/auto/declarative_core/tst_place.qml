@@ -85,7 +85,7 @@ TestCase {
                 altitude: 100
             }
 
-            boundingBox: BoundingBox {
+            boundingBox: GeoRectangle {
                 center: Coordinate {
                     latitude: 10
                     longitude: 10

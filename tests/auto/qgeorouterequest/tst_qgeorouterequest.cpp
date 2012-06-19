@@ -41,6 +41,8 @@
 
 #include "tst_qgeorouterequest.h"
 
+#include <QtLocation/QGeoRectangle>
+
 QT_USE_NAMESPACE
 
 tst_QGeoRouteRequest::tst_QGeoRouteRequest()
@@ -58,7 +60,7 @@ void tst_QGeoRouteRequest::cleanupTestCase()
 void tst_QGeoRouteRequest::init()
 {
     qgeocoordinate = new QGeoCoordinate();
-    qgeoboundingbox = new QGeoBoundingBox();
+    qgeoboundingbox = new QGeoRectangle();
     qgeorouterequest = new QGeoRouteRequest();
 }
 
@@ -143,9 +145,9 @@ void tst_QGeoRouteRequest::excludeAreas()
 
     QGeoCoordinate *qgeocoordinatecopy = new QGeoCoordinate(34.324 , -110.32);
 
-    QGeoBoundingBox *qgeoboundingboxcopy = new QGeoBoundingBox(*qgeocoordinate, 0.4, 0.4);
-    QGeoBoundingBox *qgeoboundingboxcopy2 = new QGeoBoundingBox(*qgeocoordinatecopy, 1.2, 0.9);
-    QList<QGeoBoundingBox> areas;
+    QGeoRectangle *qgeoboundingboxcopy = new QGeoRectangle(*qgeocoordinate, 0.4, 0.4);
+    QGeoRectangle *qgeoboundingboxcopy2 = new QGeoRectangle(*qgeocoordinatecopy, 1.2, 0.9);
+    QList<QGeoRectangle> areas;
     areas.append(*qgeoboundingboxcopy);
     areas.append(*qgeoboundingboxcopy2);
 

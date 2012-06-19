@@ -55,7 +55,7 @@
 #include <QStringList>
 #include <QUrl>
 #include <QLocale>
-#include <qgeoboundingbox.h>
+#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
@@ -371,10 +371,10 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 {
     QString requestString;
 
-    const QList<QGeoBoundingBox> excludeAreas = request.excludeAreas();
-    QList<QGeoBoundingBox>::const_iterator beg = excludeAreas.begin();
-    QList<QGeoBoundingBox>::const_iterator end = excludeAreas.begin();
-    for (QList<QGeoBoundingBox>::const_iterator it = beg; it != end; ++it) {
+    const QList<QGeoRectangle> excludeAreas = request.excludeAreas();
+    QList<QGeoRectangle>::const_iterator beg = excludeAreas.begin();
+    QList<QGeoRectangle>::const_iterator end = excludeAreas.begin();
+    for (QList<QGeoRectangle>::const_iterator it = beg; it != end; ++it) {
         requestString += QLatin1String("&avoidareas=");
         requestString += trimDouble(it->topLeft().latitude());
         requestString += QLatin1String(",");

@@ -58,7 +58,7 @@
 
 #include "qplace.h"
 #include "qgeoaddress.h"
-#include "qgeoboundingbox.h"
+#include "qgeorectangle.h"
 #include "qgeocoordinate.h"
 #include "qplacesupplier.h"
 #include <QtLocation/QPlaceIcon>

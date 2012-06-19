@@ -54,7 +54,7 @@
 #include <QString>
 
 #include <qgeoroute.h>
-#include <qgeoboundingbox.h>
+#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
@@ -173,7 +173,7 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
                     return false;
                 route->setPath(path);
             } else if (m_reader->name() == "BoundingBox") {
-                QGeoBoundingBox bounds;
+                QGeoRectangle bounds;
                 if (!parseBoundingBox(bounds))
                     return false;
                 route->setBounds(bounds);
@@ -556,7 +556,7 @@ bool QGeoRouteXmlParser::parseGeoPoints(const QString &strPoints, QList<QGeoCoor
     return true;
 }
 
-bool QGeoRouteXmlParser::parseBoundingBox(QGeoBoundingBox &bounds)
+bool QGeoRouteXmlParser::parseBoundingBox(QGeoRectangle &bounds)
 {
     Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "BoundingBox");
 
@@ -586,7 +586,7 @@ bool QGeoRouteXmlParser::parseBoundingBox(QGeoBoundingBox &bounds)
         return false;
 
     if (tl.isValid() && br.isValid()) {
-        bounds = QGeoBoundingBox(tl, br);
+        bounds = QGeoRectangle(tl, br);
         return true;
     }
 

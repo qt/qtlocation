@@ -49,12 +49,12 @@ Item {
 
     Coordinate{ id: coordinate1; latitude: 51; longitude: 41}
     Coordinate{ id: coordinate2; latitude: 52; longitude: 42}
-    BoundingBox{ id: boundingBox1; topLeft: coordinate2; bottomLeft: coordinate1; width:  1000}
-    BoundingBox{ id: boundingBox2; topLeft: coordinate2; bottomLeft: coordinate1; width:  1000}
-    BoundingCircle { id: boundingCircle1; center: coordinate1; radius: 100}
-    BoundingCircle { id: boundingCircle2; center: coordinate2; radius: 100}
+    GeoRectangle { id: boundingBox1; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
+    GeoRectangle { id: boundingBox2; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
+    GeoCircle { id: boundingCircle1; center: coordinate1; radius: 100 }
+    GeoCircle { id: boundingCircle2; center: coordinate2; radius: 100 }
 
-    BoundingBox {id: emptyBox}
+    GeoRectangle {id: emptyBox}
     Coordinate {id: emptyCoordinate}
     GeocodeModel {id: emptyModel}
 
@@ -121,7 +121,7 @@ Item {
             compare(boundsSpy.count, 2)
             compare(emptyModel.bounds.topLeft.latitude, boundingBox2.topLeft.latitude)
             compare(emptyModel.bounds.bottomRight.longitude, boundingBox2.bottomRight.longitude)
-            var dynamicBox = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; BoundingBox { id: dynBox}", testCase1)
+            var dynamicBox = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; GeoRectangle { id: dynBox }", testCase1)
             emptyModel.bounds = dynamicBox
             compare(boundsSpy.count, 3)
 
@@ -137,7 +137,7 @@ Item {
             emptyModel.bounds = boundingCircle2
             compare(boundsSpy.count, 2)
             compare(emptyModel.bounds.center.latitude, coordinate2.latitude)
-            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; BoundingCircle { id: dynCircle; center: Coordinate {id: dynCoord; latitude: 8; longitude: 9}}", testCase1)
+            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; GeoCircle { id: dynCircle; center: Coordinate { id: dynCoord; latitude: 8; longitude: 9 } }", testCase1)
             emptyModel.bounds = dynamicCircle
             compare(boundsSpy.count, 3)
             compare(emptyModel.bounds.center.latitude, dynamicCircle.center.latitude)

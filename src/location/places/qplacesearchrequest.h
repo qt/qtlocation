@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
 
 
 
-class QGeoBoundingArea;
+class QGeoShape;
 class QPlaceSearchRequestPrivate;
 
 class Q_LOCATION_EXPORT QPlaceSearchRequest
@@ -83,8 +83,8 @@ public:
     void setCategory(const QPlaceCategory &category);
     void setCategories(const QList<QPlaceCategory> &categories);
 
-    QGeoBoundingArea searchArea() const;
-    void setSearchArea(const QGeoBoundingArea &area);
+    QGeoShape searchArea() const;
+    void setSearchArea(const QGeoShape &area);
 
     QtLocation::VisibilityScope visibilityScope() const;
     void setVisibilityScope(QtLocation::VisibilityScope visibilityScopes);

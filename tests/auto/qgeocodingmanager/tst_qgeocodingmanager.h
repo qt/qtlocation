@@ -51,7 +51,7 @@
 #include <qgeoserviceprovider.h>
 #include <qgeocodingmanager.h>
 #include <qgeocodereply.h>
-#include <qgeoboundingbox.h>
+#include <QtLocation/QGeoRectangle>
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
 

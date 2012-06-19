@@ -44,7 +44,7 @@
 
 #include "qdeclarativegeoserviceprovider_p.h"
 
-#include "qdeclarativegeoboundingcircle_p.h"
+#include "qdeclarativegeocircle.h"
 #include <qgeocodereply.h>
 
 #include <QtQml/qqml.h>
@@ -171,14 +171,14 @@ protected:
 
 private:
     void setLocations(const QList<QGeoLocation> &locations);
-    QGeoBoundingArea boundingArea();
+    QGeoShape boundingArea();
     void abortRequest();
     QGeocodeReply *reply_;
 
     QDeclarativeGeoServiceProvider *plugin_;
     QPointer<QObject> boundingArea_;
-    QGeoBoundingBox boundingBox_;
-    QGeoBoundingCircle boundingCircle_;
+    QGeoRectangle boundingBox_;
+    QGeoCircle boundingCircle_;
 
     QList<QDeclarativeGeoLocation *> declarativeLocations_;
 

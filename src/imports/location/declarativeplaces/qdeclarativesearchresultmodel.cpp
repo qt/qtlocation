@@ -197,17 +197,18 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty BoundingArea PlaceSearchModel::searchArea
+    \qmlproperty GeoShape PlaceSearchModel::searchArea
 
     This property holds the search area.  The search result returned by the model will be within
     the search area.
 
-    If this property is set to a \l BoundingCircle its \l {BoundingCircle::radius}{radius} property
+    If this property is set to a \l GeoCircle its \l {GeoCircle::radius}{radius} property
     may be left unset, in which case the \l Plugin will choose an appropriate radius for the
     search.
 
-    Support for specifying a search area can vary according to the \l plugin backend implementation.
-    For example, some may support a search center only while others may only support bounding boxes.
+    Support for specifying a search area can vary according to the \l plugin backend
+    implementation.  For example, some may support a search center only while others may only
+    support geo rectangles.
 */
 
 /*!
@@ -262,7 +263,7 @@ QT_USE_NAMESPACE
     \c PlaceSearchModel.Error and the model cleared.
 
     \code
-    BoundingCircle {
+    GeoCircle {
         id: searchLocation
         center: Coordinate {
             latitude: 10

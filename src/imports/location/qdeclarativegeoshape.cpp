@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,10 +39,22 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.0
+#include "qdeclarativegeoshape.h"
 
-BoundingBox {
-    center: TestCoordinate { }
-    height: 30.0
-    width: 40.0
-}
+QT_BEGIN_NAMESPACE
+
+/*!
+    \qmlclass GeoShape QDeclarativeGeoShape
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-positioning
+    \since Qt Location 5.0
+
+    \brief The GeoShape type represents an abstract geographic area.
+
+    The GeoShape element is not intended to be instantiated by the developer.  Use GeoRectangle
+    or GeoCircle instead.
+
+    \sa GeoRectangle, GeoCircle
+*/
+
+QT_END_NAMESPACE

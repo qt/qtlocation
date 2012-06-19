@@ -126,7 +126,7 @@ void tst_QGeoLocation::viewport()
     m_coordinate.setLatitude(13.3851);
     m_coordinate.setLongitude(52.5312);
 
-    QGeoBoundingBox qgeoboundingboxcopy(m_coordinate, 0.4, 0.4);
+    QGeoRectangle qgeoboundingboxcopy(m_coordinate, 0.4, 0.4);
     m_location.setBoundingBox(qgeoboundingboxcopy);
 
     QCOMPARE(m_location.boundingBox(),qgeoboundingboxcopy);
@@ -192,7 +192,7 @@ void tst_QGeoLocation::comparison()
     location.setCoordinate(QGeoCoordinate(5,10));
 
     //set viewport
-    location.setBoundingBox(QGeoBoundingBox(QGeoCoordinate(5,5),0.4,0.4));
+    location.setBoundingBox(QGeoRectangle(QGeoCoordinate(5,5),0.4,0.4));
 
     QGeoLocation otherLocation(location);
 
@@ -207,7 +207,7 @@ void tst_QGeoLocation::comparison()
         } else if (dataField == "coordinate") {
             otherLocation.setCoordinate(QGeoCoordinate(12,13));
         } else if (dataField == "viewport"){
-            otherLocation.setBoundingBox(QGeoBoundingBox(QGeoCoordinate(1,2), 0.5,0.5));
+            otherLocation.setBoundingBox(QGeoRectangle(QGeoCoordinate(1,2), 0.5,0.5));
         } else {
             qFatal("Unknown data field to test");
         }
@@ -230,7 +230,7 @@ void tst_QGeoLocation::isEmpty()
     address.setCity(QLatin1String("Braunschweig"));
     QVERIFY(!address.isEmpty());
 
-    QGeoBoundingBox boundingBox;
+    QGeoRectangle boundingBox;
     boundingBox.setTopLeft(QGeoCoordinate(1, -1));
     boundingBox.setBottomRight(QGeoCoordinate(-1, 1));
     QVERIFY(!boundingBox.isEmpty());
@@ -254,7 +254,7 @@ void tst_QGeoLocation::isEmpty()
     // bounding box
     location.setBoundingBox(boundingBox);
     QVERIFY(!location.isEmpty());
-    location.setBoundingBox(QGeoBoundingBox());
+    location.setBoundingBox(QGeoRectangle());
     QVERIFY(location.isEmpty());
 }
 

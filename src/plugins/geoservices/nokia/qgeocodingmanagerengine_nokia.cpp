@@ -107,7 +107,7 @@ QString QGeocodingManagerEngineNokia::getAuthenticationString() const
 
 
 QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
-        const QGeoBoundingArea &bounds)
+        const QGeoShape &bounds)
 {
     QString requestString = "http://";
     requestString += m_uriProvider->getCurrentHost();
@@ -176,7 +176,7 @@ QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
 }
 
 QGeocodeReply *QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
-        const QGeoBoundingArea &bounds)
+        const QGeoShape &bounds)
 {
     QString requestString = "http://";
     requestString += m_uriProvider->getCurrentHost();
@@ -198,7 +198,7 @@ QGeocodeReply *QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate
 QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QString &address,
         int limit,
         int offset,
-        const QGeoBoundingArea &bounds)
+        const QGeoShape &bounds)
 {
     QString requestString = "http://";
     requestString += m_uriProvider->getCurrentHost();
@@ -226,7 +226,7 @@ QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QString &address,
 }
 
 QGeocodeReply *QGeocodingManagerEngineNokia::geocode(QString requestString,
-        const QGeoBoundingArea &bounds,
+        const QGeoShape &bounds,
         int limit,
         int offset)
 {

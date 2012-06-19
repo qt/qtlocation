@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
 class QIODevice;
 class QGeoLocation;
 class QGeoAddress;
-class QGeoBoundingBox;
+class QGeoRectangle;
 class QGeoCoordinate;
 class QXmlStreamReader;
 
@@ -78,7 +78,7 @@ private:
     bool parsePlace(QGeoLocation *location);
     bool parseLocation(QGeoLocation *location);
     bool parseAddress(QGeoAddress *address);
-    bool parseBoundingBox(QGeoBoundingBox *bounds);
+    bool parseBoundingBox(QGeoRectangle *bounds);
     bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 
     QScopedPointer<QXmlStreamReader> m_reader;

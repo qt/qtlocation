@@ -56,14 +56,14 @@ class QPlaceManager;
 class QPlaceSearchRequest;
 class QPlaceSearchReply;
 class QDeclarativePlace;
-class QDeclarativeGeoBoundingArea;
+class QDeclarativeGeoShape;
 
 class QDeclarativeSearchModelBase : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(QDeclarativeGeoBoundingArea *searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged)
+    Q_PROPERTY(QDeclarativeGeoShape *searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
@@ -86,8 +86,8 @@ public:
     QDeclarativeGeoServiceProvider *plugin() const;
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
 
-    QDeclarativeGeoBoundingArea *searchArea() const;
-    void setSearchArea(QDeclarativeGeoBoundingArea *searchArea);
+    QDeclarativeGeoShape *searchArea() const;
+    void setSearchArea(QDeclarativeGeoShape *searchArea);
 
     int offset() const;
     void setOffset(int offset);
@@ -136,7 +136,7 @@ protected:
     QPlaceReply *m_reply;
 
 private:
-    QDeclarativeGeoBoundingArea *m_searchArea;
+    QDeclarativeGeoShape *m_searchArea;
 
     bool m_complete;
     Status m_status;

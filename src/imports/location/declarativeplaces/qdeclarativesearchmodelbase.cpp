@@ -84,7 +84,7 @@ void QDeclarativeSearchModelBase::setPlugin(QDeclarativeGeoServiceProvider *plug
 /*!
     \internal
 */
-QDeclarativeGeoBoundingArea *QDeclarativeSearchModelBase::searchArea() const
+QDeclarativeGeoShape *QDeclarativeSearchModelBase::searchArea() const
 {
     return m_searchArea;
 }
@@ -92,7 +92,7 @@ QDeclarativeGeoBoundingArea *QDeclarativeSearchModelBase::searchArea() const
 /*!
     \internal
 */
-void QDeclarativeSearchModelBase::setSearchArea(QDeclarativeGeoBoundingArea *searchArea)
+void QDeclarativeSearchModelBase::setSearchArea(QDeclarativeGeoShape *searchArea)
 {
     if (m_searchArea == searchArea)
         return;
@@ -248,7 +248,7 @@ void QDeclarativeSearchModelBase::clearData()
 void QDeclarativeSearchModelBase::updateSearchRequest()
 {
     if (m_searchArea)
-        m_request.setSearchArea(m_searchArea->area());
+        m_request.setSearchArea(m_searchArea->shape());
 }
 
 /*!

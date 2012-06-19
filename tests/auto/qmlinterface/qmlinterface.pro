@@ -22,8 +22,6 @@ OTHER_FILES += \
     data/TestCategory.qml \
     data/TestCoordinate.qml \
     data/TestAddress.qml \
-    data/TestBoundingBox.qml \
-    data/TestBoundingCircle.qml \
     data/TestLocation.qml \
     data/TestPlace.qml \
     data/TestIcon.qml \
@@ -31,5 +29,7 @@ OTHER_FILES += \
     data/TestSupplier.qml \
     data/TestUser.qml \
     data/TestPlaceAttribute.qml \
-    data/TestContactDetail.qml
+    data/TestContactDetail.qml \
+    data/TestGeoRectangle.qml \
+    data/TestGeoCircle.qml
 

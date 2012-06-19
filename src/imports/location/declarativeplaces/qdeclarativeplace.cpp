@@ -441,7 +441,8 @@ QPlace QDeclarativePlace::place()
 /*!
     \qmlproperty QtLocation5::Location Place::location
 
-    This property holds the location of the place which can be used to retrieve the coordinate, address and the BoundingBox.
+    This property holds the location of the place which can be used to retrieve the coordinate,
+    address and the bounding box.
 */
 void QDeclarativePlace::setLocation(QDeclarativeGeoLocation *location)
 {

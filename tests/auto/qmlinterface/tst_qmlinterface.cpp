@@ -45,8 +45,8 @@
 #include <QtQml/QQmlListReference>
 #include <QtLocation/QGeoCoordinate>
 #include <QtLocation/QGeoAddress>
-#include <QtLocation/QGeoBoundingBox>
-#include <QtLocation/QGeoBoundingCircle>
+#include <QtLocation/QGeoRectangle>
+#include <QtLocation/QGeoCircle>
 #include <QtLocation/QGeoLocation>
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlace>
@@ -67,8 +67,8 @@ public:
 private Q_SLOTS:
     void testCoordinate();
     void testAddress();
-    void testBoundingBox();
-    void testBoundingCircle();
+    void testGeoRectangle();
+    void testGeoCircle();
     void testLocation();
     void testCategory();
     void testIcon();
@@ -82,8 +82,8 @@ private Q_SLOTS:
 private:
     QGeoCoordinate m_coordinate;
     QGeoAddress m_address;
-    QGeoBoundingBox m_boundingBox;
-    QGeoBoundingCircle m_boundingCircle;
+    QGeoRectangle m_rectangle;
+    QGeoCircle m_boundingCircle;
     QGeoLocation m_location;
     QPlaceCategory m_category;
     QPlaceIcon m_icon;
@@ -109,15 +109,15 @@ tst_qmlinterface::tst_qmlinterface()
     m_address.setState(QLatin1String("Queensland"));
     m_address.setStreet(QLatin1String("123 Fake Street"));
 
-    m_boundingBox.setCenter(m_coordinate);
-    m_boundingBox.setHeight(30.0);
-    m_boundingBox.setWidth(40.0);
+    m_rectangle.setCenter(m_coordinate);
+    m_rectangle.setHeight(30.0);
+    m_rectangle.setWidth(40.0);
 
     m_boundingCircle.setCenter(m_coordinate);
     m_boundingCircle.setRadius(30.0);
 
     m_location.setAddress(m_address);
-    m_location.setBoundingBox(m_boundingBox);
+    m_location.setBoundingBox(m_rectangle);
     m_location.setCoordinate(m_coordinate);
 
     m_category.setName(QLatin1String("Test category"));
@@ -207,18 +207,18 @@ void tst_qmlinterface::testAddress()
     delete qmlObject;
 }
 
-void tst_qmlinterface::testBoundingBox()
+void tst_qmlinterface::testGeoRectangle()
 {
     QQmlEngine engine;
-    QQmlComponent component(&engine, SRCDIR "data/TestBoundingBox.qml");
+    QQmlComponent component(&engine, SRCDIR "data/TestGeoRectangle.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
-    QGeoBoundingBox boundingBox = qmlObject->property("box").value<QGeoBoundingBox>();
+    QGeoRectangle rectangle = qmlObject->property("rectangle").value<QGeoRectangle>();
 
-    QCOMPARE(boundingBox, m_boundingBox);
+    QCOMPARE(rectangle, m_rectangle);
 
-    qmlObject->setProperty("box", QVariant::fromValue(QGeoBoundingBox()));
+    qmlObject->setProperty("rectangle", QVariant::fromValue(QGeoRectangle()));
 
     QCOMPARE(qmlObject->property("center").value<QGeoCoordinate>(), QGeoCoordinate());
     QVERIFY(qIsNaN(qmlObject->property("height").toDouble()));
@@ -227,18 +227,18 @@ void tst_qmlinterface::testBoundingBox()
     delete qmlObject;
 }
 
-void tst_qmlinterface::testBoundingCircle()
+void tst_qmlinterface::testGeoCircle()
 {
     QQmlEngine engine;
-    QQmlComponent component(&engine, SRCDIR "data/TestBoundingCircle.qml");
+    QQmlComponent component(&engine, SRCDIR "data/TestGeoCircle.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
-    QGeoBoundingCircle boundingCircle = qmlObject->property("circle").value<QGeoBoundingCircle>();
+    QGeoCircle boundingCircle = qmlObject->property("circle").value<QGeoCircle>();
 
     QCOMPARE(boundingCircle, m_boundingCircle);
 
-    qmlObject->setProperty("circle", QVariant::fromValue(QGeoBoundingCircle()));
+    qmlObject->setProperty("circle", QVariant::fromValue(QGeoCircle()));
 
     QCOMPARE(qmlObject->property("center").value<QGeoCoordinate>(), QGeoCoordinate());
     QCOMPARE(qmlObject->property("radius").toDouble(), -1.0);
@@ -260,7 +260,7 @@ void tst_qmlinterface::testLocation()
     qmlObject->setProperty("location", QVariant::fromValue(QGeoLocation()));
 
     QCOMPARE(qmlObject->property("address").value<QGeoAddress>(), QGeoAddress());
-    QCOMPARE(qmlObject->property("boundingBox").value<QGeoBoundingBox>(), QGeoBoundingBox());
+    QCOMPARE(qmlObject->property("boundingBox").value<QGeoRectangle>(), QGeoRectangle());
     QCOMPARE(qmlObject->property("coordinate").value<QGeoCoordinate>(), QGeoCoordinate());
 
     delete qmlObject;

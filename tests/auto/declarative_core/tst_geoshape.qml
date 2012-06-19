@@ -48,8 +48,8 @@ Item {
     Coordinate{ id: coordinate2; latitude: 2; longitude: 2}
     Coordinate{ id: coordinate3; latitude: 80; longitude: 80}
 
-    BoundingCircle{ id: emptyCircle}
-    BoundingCircle{ id: circle1; center: coordinate1; radius: 200000}
+    GeoCircle { id: emptyCircle }
+    GeoCircle { id: circle1; center: coordinate1; radius: 200000 }
 
     SignalSpy {id: radiusSpy; target: emptyCircle; signalName: "radiusChanged"}
     SignalSpy {id: centerSpy; target: emptyCircle; signalName: "centerChanged"}
@@ -91,7 +91,7 @@ Item {
     Coordinate{ id: inside; latitude: 0.5; longitude: 0.5}
     Coordinate{ id: outside; latitude: 2; longitude: 2}
 
-    BoundingBox {
+    GeoRectangle {
         id: box;
         bottomLeft: bottomLeft;
         topLeft: topLeft;

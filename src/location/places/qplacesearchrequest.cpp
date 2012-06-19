@@ -41,7 +41,7 @@
 
 #include "qplacesearchrequest.h"
 #include "qgeocoordinate.h"
-#include "qgeoboundingarea.h"
+#include "qgeoshape.h"
 
 #include <QtCore/QSharedData>
 #include <QtCore/QList>
@@ -62,7 +62,7 @@ public:
 
     QString searchTerm;
     QList<QPlaceCategory> categories;
-    QGeoBoundingArea searchArea;
+    QGeoShape searchArea;
     int dymNumber;
     QtLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
@@ -128,7 +128,7 @@ void QPlaceSearchRequestPrivate::clear()
     offset = 0;
     searchTerm.clear();
     categories.clear();
-    searchArea = QGeoBoundingArea();
+    searchArea = QGeoShape();
     dymNumber = 0;
     visibilityScope = QtLocation::UnspecifiedVisibility;
     relevanceHint = QPlaceSearchRequest::UnspecifiedHint;
@@ -149,9 +149,6 @@ void QPlaceSearchRequestPrivate::clear()
     Note that specifying a search center can be done by setting a circular search area that has
     a center but no radius.    The default radius is set to -1, which indicates an undefined radius.  The provider will
     interpret this as being free to choose its own default radius.
-
-    The QPlaceSearchRequest will assume ownership of the bounding area and will be responsible
-    for its destruction.
 
     The QPlaceSearchRequest is primarily used with the QPlaceManager to
     \l {QPlaceManager::search()} {search for places}, however it is also
@@ -176,7 +173,7 @@ void QPlaceSearchRequestPrivate::clear()
     \value DistanceHint
         Distance to a search center is relevant for the user.  Closer places
         are more highly weighted.  This hint is only useful
-        if a circular bounding area is used in the query.
+        if a circular search area is used in the query.
     \value LexicalPlaceNameHint
         Alphabetic ordering of places according to name is relevant to the user.
 */
@@ -295,9 +292,9 @@ void QPlaceSearchRequest::setCategories(const QList<QPlaceCategory> &categories)
 
 /*!
     Returns the search area which will be used to limit search results.  The default search area is
-    an invalid QGeoBoundingArea, indicating that no specific search area is defined.
+    an invalid QGeoShape, indicating that no specific search area is defined.
 */
-QGeoBoundingArea QPlaceSearchRequest::searchArea() const
+QGeoShape QPlaceSearchRequest::searchArea() const
 {
     Q_D(const QPlaceSearchRequest);
     return d->searchArea;
@@ -306,7 +303,7 @@ QGeoBoundingArea QPlaceSearchRequest::searchArea() const
 /*!
     Sets the search request to search within the given \a area.
 */
-void QPlaceSearchRequest::setSearchArea(const QGeoBoundingArea &area)
+void QPlaceSearchRequest::setSearchArea(const QGeoShape &area)
 {
     Q_D(QPlaceSearchRequest);
     d->searchArea = area;

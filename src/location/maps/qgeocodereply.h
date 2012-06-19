@@ -42,17 +42,15 @@
 #ifndef QGEOCODEREPLY_H
 #define QGEOCODEREPLY_H
 
-#include "qgeolocation.h"
-
-#include <QObject>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QList>
+#include <QtLocation/QGeoLocation>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
+class QGeoShape;
 class QGeocodeReplyPrivate;
 
 class Q_LOCATION_EXPORT QGeocodeReply : public QObject
@@ -77,8 +75,8 @@ public:
     Error error() const;
     QString errorString() const;
 
-    QGeoBoundingArea viewport() const;
-    QList<QGeoLocation>locations() const;
+    QGeoShape viewport() const;
+    QList<QGeoLocation> locations() const;
 
     int limit() const;
     int offset() const;
@@ -95,7 +93,7 @@ protected:
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
 
-    void setViewport(const QGeoBoundingArea &viewport);
+    void setViewport(const QGeoShape &viewport);
     void addLocation(const QGeoLocation &location);
     void setLocations(const QList<QGeoLocation> &locations);
 

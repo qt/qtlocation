@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,39 +39,52 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
-#include <QtLocation/QGeoBoundingArea>
+#ifndef QGEOSHAPE_P_H
+#define QGEOSHAPE_P_H
 
-class tst_qgeoboundingarea : public QObject
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtCore/QSharedData>
+
+#include "qgeoshape.h"
+
+QT_BEGIN_NAMESPACE
+
+class QGeoShapePrivate : public QSharedData
 {
-    Q_OBJECT
+public:
+    explicit QGeoShapePrivate(QGeoShape::ShapeType type);
+    virtual ~QGeoShapePrivate();
 
-private slots:
-    void testArea();
+    virtual bool isValid() const = 0;
+    virtual bool isEmpty() const = 0;
+    virtual bool contains(const QGeoCoordinate &coordinate) const = 0;
+
+    virtual QGeoShapePrivate *clone() const = 0;
+
+    virtual bool operator==(const QGeoShapePrivate &other) const;
+
+    QGeoShape::ShapeType type;
 };
 
-void tst_qgeoboundingarea::testArea()
+// don't use the copy constructor when detaching from a QSharedDataPointer, use virtual clone()
+// call instead.
+template <>
+Q_INLINE_TEMPLATE QGeoShapePrivate *QSharedDataPointer<QGeoShapePrivate>::clone()
 {
-    QGeoBoundingArea area;
-    QVERIFY(!area.isValid());
-    QVERIFY(area.isEmpty());
-    QCOMPARE(area.type(), QGeoBoundingArea::UnknownType);
-    QVERIFY(!area.contains(QGeoCoordinate()));
-
-    // QGeoBoundingArea never constructs a QGeoBoundingAreaPrivate.  Hence d_ptr is always 0.
-
-    QGeoBoundingArea area2;
-
-    QCOMPARE(area, area2);
-
-    area = area2;
-
-    QCOMPARE(area, area2);
-
-    QGeoBoundingArea area3(area2);
-
-    QCOMPARE(area2, area3);
+    return d->clone();
 }
 
-QTEST_MAIN(tst_qgeoboundingarea)
-#include "tst_qgeoboundingarea.moc"
+QT_END_NAMESPACE
+
+#endif
+

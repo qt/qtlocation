@@ -39,32 +39,32 @@
 **
 ****************************************************************************/
 
-#include "qgeoboundingarea.h"
-#include "qgeoboundingarea_p.h"
+#include "qgeoshape.h"
+#include "qgeoshape_p.h"
 
 QT_BEGIN_NAMESPACE
 
-QGeoBoundingAreaPrivate::QGeoBoundingAreaPrivate(QGeoBoundingArea::AreaType type)
+QGeoShapePrivate::QGeoShapePrivate(QGeoShape::ShapeType type)
 :   type(type)
 {
 }
 
-QGeoBoundingAreaPrivate::~QGeoBoundingAreaPrivate()
+QGeoShapePrivate::~QGeoShapePrivate()
 {
 }
 
-bool QGeoBoundingAreaPrivate::operator==(const QGeoBoundingAreaPrivate &other) const
+bool QGeoShapePrivate::operator==(const QGeoShapePrivate &other) const
 {
     return type == other.type;
 }
 
 /*!
-    \class QGeoBoundingArea
+    \class QGeoShape
     \inmodule QtLocation
     \ingroup QtLocation-positioning
     \since Qt Location 5.0
 
-    \brief The QGeoBoundingArea class defines a geographic area.
+    \brief The QGeoShape class defines a geographic area.
 
     This class is the base class for classes which specify a geographic
     area.
@@ -75,36 +75,36 @@ bool QGeoBoundingAreaPrivate::operator==(const QGeoBoundingAreaPrivate &other) c
 */
 
 /*!
-    \enum QGeoBoundingArea::AreaType
+    \enum QGeoShape::ShapeType
 
-    Describes the type of a bounding area.
+    Describes the type of the shape.
 
-    \value UnknownType  A bounding area of unknown type.
-    \value BoxType      A box shaped bounding area.
-    \value CircleType   A circular bounding area.
+    \value UnknownType      A shape of unknown type.
+    \value RectangleType    A rectangular shape.
+    \value CircleType       A circular shape.
 */
 
-inline QGeoBoundingAreaPrivate *QGeoBoundingArea::d_func()
+inline QGeoShapePrivate *QGeoShape::d_func()
 {
-    return static_cast<QGeoBoundingAreaPrivate *>(d_ptr.data());
+    return static_cast<QGeoShapePrivate *>(d_ptr.data());
 }
 
-inline const QGeoBoundingAreaPrivate *QGeoBoundingArea::d_func() const
+inline const QGeoShapePrivate *QGeoShape::d_func() const
 {
-    return static_cast<const QGeoBoundingAreaPrivate *>(d_ptr.constData());
-}
-
-/*!
-    Constructs a new invalid bounding area of \l UnknownType.
-*/
-QGeoBoundingArea::QGeoBoundingArea()
-{
+    return static_cast<const QGeoShapePrivate *>(d_ptr.constData());
 }
 
 /*!
-    Constructs a new bounding area which is a copy of \a other.
+    Constructs a new invalid geo shape of \l UnknownType.
 */
-QGeoBoundingArea::QGeoBoundingArea(const QGeoBoundingArea &other)
+QGeoShape::QGeoShape()
+{
+}
+
+/*!
+    Constructs a new geo shape which is a copy of \a other.
+*/
+QGeoShape::QGeoShape(const QGeoShape &other)
 :   d_ptr(other.d_ptr)
 {
 }
@@ -112,24 +112,24 @@ QGeoBoundingArea::QGeoBoundingArea(const QGeoBoundingArea &other)
 /*!
     \internal
 */
-QGeoBoundingArea::QGeoBoundingArea(QGeoBoundingAreaPrivate *d)
+QGeoShape::QGeoShape(QGeoShapePrivate *d)
 :   d_ptr(d)
 {
 }
 
 /*!
-    Destroys this bounding area.
+    Destroys this geo shape.
 */
-QGeoBoundingArea::~QGeoBoundingArea()
+QGeoShape::~QGeoShape()
 {
 }
 
 /*!
-    Returns the type of this area.
+    Returns the type of this geo shape.
 */
-QGeoBoundingArea::AreaType QGeoBoundingArea::type() const
+QGeoShape::ShapeType QGeoShape::type() const
 {
-    Q_D(const QGeoBoundingArea);
+    Q_D(const QGeoShape);
 
     if (d)
         return d->type;
@@ -138,15 +138,15 @@ QGeoBoundingArea::AreaType QGeoBoundingArea::type() const
 }
 
 /*!
-    Returns whether this bounding area is valid.
+    Returns whether this geo shape is valid.
 
-    An area is considered to be invalid if some of the data that is required to
-    unambiguously describe the area has not been set or has been set to an
+    An geo shape is considered to be invalid if some of the data that is required to
+    unambiguously describe the geo shape has not been set or has been set to an
     unsuitable value.
 */
-bool QGeoBoundingArea::isValid() const
+bool QGeoShape::isValid() const
 {
-    Q_D(const QGeoBoundingArea);
+    Q_D(const QGeoShape);
 
     if (d)
         return d->isValid();
@@ -155,13 +155,13 @@ bool QGeoBoundingArea::isValid() const
 }
 
 /*!
-    Returns whether this bounding area is empty.
+    Returns whether this geo shape is empty.
 
-    An empty area is a region which has a geometrical area of 0.
+    An empty geo shape is a region which has a geometrical area of 0.
 */
-bool QGeoBoundingArea::isEmpty() const
+bool QGeoShape::isEmpty() const
 {
-    Q_D(const QGeoBoundingArea);
+    Q_D(const QGeoShape);
 
     if (d)
         return d->isEmpty();
@@ -170,11 +170,11 @@ bool QGeoBoundingArea::isEmpty() const
 }
 
 /*!
-    Returns whether the coordinate \a coordinate is contained within this area.
+    Returns whether the coordinate \a coordinate is contained within this geo shape.
 */
-bool QGeoBoundingArea::contains(const QGeoCoordinate &coordinate) const
+bool QGeoShape::contains(const QGeoCoordinate &coordinate) const
 {
-    Q_D(const QGeoBoundingArea);
+    Q_D(const QGeoShape);
 
     if (d)
         return d->contains(coordinate);
@@ -184,12 +184,12 @@ bool QGeoBoundingArea::contains(const QGeoCoordinate &coordinate) const
 
 
 /*!
-    Returns true if the \a other bounding area is equivalent to this bounding area, otherwise
-    returns false
+    Returns true if the \a other geo shape is equivalent to this geo shape, otherwise returns
+    false.
 */
-bool QGeoBoundingArea::operator==(const QGeoBoundingArea &other) const
+bool QGeoShape::operator==(const QGeoShape &other) const
 {
-    Q_D(const QGeoBoundingArea);
+    Q_D(const QGeoShape);
 
     if (d == other.d_func())
         return true;
@@ -201,18 +201,18 @@ bool QGeoBoundingArea::operator==(const QGeoBoundingArea &other) const
 }
 
 /*!
-    Returns true if the \a other bounding area is not equivalent to this bounding area, otherwise
-    returns false.
+    Returns true if the \a other geo shape is not equivalent to this geo shape, otherwise returns
+    false.
 */
-bool QGeoBoundingArea::operator!=(const QGeoBoundingArea &other) const
+bool QGeoShape::operator!=(const QGeoShape &other) const
 {
     return !(*this == other);
 }
 
 /*!
-    Assigns \a other to this bounding area and returns a reference to this bounding area.
+    Assigns \a other to this geo shape and returns a reference to this geo shape.
 */
-QGeoBoundingArea &QGeoBoundingArea::operator=(const QGeoBoundingArea &other)
+QGeoShape &QGeoShape::operator=(const QGeoShape &other)
 {
     if (this == &other)
         return *this;

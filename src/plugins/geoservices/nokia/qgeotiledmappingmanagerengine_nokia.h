@@ -50,7 +50,7 @@
 #define QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
 
 #include "qgeotiledmappingmanagerengine_p.h"
-#include "qgeoboundingbox.h"
+#include <QtLocation/QGeoRectangle>
 #include "qgeomaptype_p.h"
 
 #include <QGeoServiceProvider>
@@ -94,7 +94,7 @@ private:
 
         qreal maxLevel;
         qreal minLevel;
-        QList<QGeoBoundingBox> boxes;
+        QList<QGeoRectangle> boxes;
         QString alt;
         QString label;
     };

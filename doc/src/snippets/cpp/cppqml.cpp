@@ -50,8 +50,8 @@
 #include <QtLocation/QPlaceSupplier>
 #include <QtLocation/QGeoCoordinate>
 #include <QtLocation/QGeoAddress>
-#include <QtLocation/QGeoBoundingBox>
-#include <QtLocation/QGeoBoundingCircle>
+#include <QtLocation/QGeoRectangle>
+#include <QtLocation/QGeoCircle>
 #include <QtLocation/QGeoLocation>
 
 void cppQmlInterface(QObject *qmlObject)
@@ -136,21 +136,21 @@ void cppQmlInterface(QObject *qmlObject)
     qmlObject->setProperty("address", QVariant::fromValue(geoAddress));
     //! [Address set]
 
-    //! [BoundingBox get]
-    QGeoBoundingBox geoBoundingBox = qmlObject->property("box").value<QGeoBoundingBox>();
-    //! [BoundingBox get]
+    //! [GeoRectangle get]
+    QGeoRectangle geoRectangle = qmlObject->property("rectangle").value<QGeoRectangle>();
+    //! [GeoRectangle get]
 
-    //! [BoundingBox set]
-    qmlObject->setProperty("box", QVariant::fromValue(geoBoundingBox));
-    //! [BoundingBox set]
+    //! [GeoRectangle set]
+    qmlObject->setProperty("rectangle", QVariant::fromValue(geoRectangle));
+    //! [GeoRectangle set]
 
-    //! [BoundingCircle get]
-    QGeoBoundingCircle geoBoundingCircle = qmlObject->property("circle").value<QGeoBoundingCircle>();
-    //! [BoundingCircle get]
+    //! [GeoCircle get]
+    QGeoCircle geoCircle = qmlObject->property("circle").value<QGeoCircle>();
+    //! [GeoCircle get]
 
-    //! [BoundingCircle set]
-    qmlObject->setProperty("circle", QVariant::fromValue(geoBoundingCircle));
-    //! [BoundingCircle set]
+    //! [GeoCircle set]
+    qmlObject->setProperty("circle", QVariant::fromValue(geoCircle));
+    //! [GeoCircle set]
 
     //! [Location get]
     QGeoLocation geoLocation = qmlObject->property("location").value<QGeoLocation>();

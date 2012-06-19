@@ -208,7 +208,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
     if (locationObject.contains(QLatin1String("bbox"))) {
         QJsonArray bbox = locationObject.value(QLatin1String("bbox")).toArray();
-        QGeoBoundingBox box(QGeoCoordinate(bbox.at(3).toDouble(), bbox.at(0).toDouble()),
+        QGeoRectangle box(QGeoCoordinate(bbox.at(3).toDouble(), bbox.at(0).toDouble()),
                             QGeoCoordinate(bbox.at(1).toDouble(), bbox.at(2).toDouble()));
         location.setBoundingBox(box);
     }

@@ -240,7 +240,7 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            var newRegion = Qt.createQmlObject('import QtLocation 5.0; BoundingBox {}', page, "BoundingCircle");
+            var newRegion = Qt.createQmlObject('import QtLocation 5.0; GeoRectangle {}', page, "GeoCircle");
             newRegion.center.latitude = dialogModel.get(0).inputText;
             newRegion.center.longitude = dialogModel.get(1).inputText;
             newRegion.width = dialogModel.get(2).inputText;
@@ -285,7 +285,7 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            var newRegion = Qt.createQmlObject('import QtLocation 5.0; BoundingCircle {}', page, "BoundingCircle");
+            var newRegion = Qt.createQmlObject('import QtLocation 5.0; GeoCircle {}', page, "GeoCircle");
             newRegion.center.latitude = dialogModel.get(0).inputText;
             newRegion.center.longitude = dialogModel.get(1).inputText;
             newRegion.radius = dialogModel.get(2).inputText;
@@ -348,7 +348,7 @@ Item {
         }
     }
 
-    BoundingCircle {
+    GeoCircle {
         id: startLocation
     }
 

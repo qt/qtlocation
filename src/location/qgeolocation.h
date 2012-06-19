@@ -42,20 +42,17 @@
 #ifndef QGEOLOCATION_H
 #define QGEOLOCATION_H
 
-#include <QSharedDataPointer>
-#include <QString>
-#include <QVariant>
-#include <QList>
-#include "qgeoaddress.h"
-#include "qgeocoordinate.h"
-#include "qgeoboundingbox.h"
+#include <QtCore/QSharedDataPointer>
+#include <QtCore/QMetaType>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
+class QGeoAddress;
+class QGeoCoordinate;
+class QGeoRectangle;
 class QGeoLocationPrivate;
 
 class Q_LOCATION_EXPORT QGeoLocation
@@ -77,8 +74,8 @@ public:
     void setAddress(const QGeoAddress &address);
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &position);
-    QGeoBoundingBox boundingBox() const;
-    void setBoundingBox(const QGeoBoundingBox &box);
+    QGeoRectangle boundingBox() const;
+    void setBoundingBox(const QGeoRectangle &box);
 
     bool isEmpty() const;
 

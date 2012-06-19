@@ -42,7 +42,10 @@
 #ifndef QGEOLOCATION_P_H
 #define QGEOLOCATION_P_H
 
-#include <QSharedData>
+#include <QtCore/QSharedData>
+#include <QtLocation/QGeoAddress>
+#include <QtLocation/QGeoCoordinate>
+#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,7 +63,7 @@ public:
 
     QGeoAddress address;
     QGeoCoordinate coordinate;
-    QGeoBoundingBox viewport;
+    QGeoRectangle viewport;
 };
 
 QT_END_NAMESPACE

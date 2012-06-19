@@ -262,7 +262,7 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     QGeoCoordinate coord = original.location().coordinate();
     coord.setAltitude(qQNaN());
     location.setCoordinate(coord);
-    location.setBoundingBox(QGeoBoundingBox());
+    location.setBoundingBox(QGeoRectangle());
     place.setLocation(location);
 
     QList<QPlaceContactDetail> details;

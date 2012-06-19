@@ -39,53 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOBOUNDINGCIRCLE_H
-#define QGEOBOUNDINGCIRCLE_H
+#ifndef QGEOCIRCLE_H
+#define QGEOCIRCLE_H
 
-#include "qgeoboundingarea.h"
-
-#include <QSharedDataPointer>
+#include <QtLocation/QGeoShape>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
 class QGeoCoordinate;
-class QGeoBoundingCirclePrivate;
+class QGeoCirclePrivate;
 
-class Q_LOCATION_EXPORT QGeoBoundingCircle : public QGeoBoundingArea
+class Q_LOCATION_EXPORT QGeoCircle : public QGeoShape
 {
 public:
-    QGeoBoundingCircle();
-    QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius = -1.0);
-    QGeoBoundingCircle(const QGeoBoundingCircle &other);
-    QGeoBoundingCircle(const QGeoBoundingArea &other);
+    QGeoCircle();
+    QGeoCircle(const QGeoCoordinate &center, qreal radius = -1.0);
+    QGeoCircle(const QGeoCircle &other);
+    QGeoCircle(const QGeoShape &other);
 
-    ~QGeoBoundingCircle();
+    ~QGeoCircle();
 
-    QGeoBoundingCircle &operator = (const QGeoBoundingCircle &other);
-
-#ifdef Q_NO_USING_KEYWORD
-    bool operator==(const QGeoBoundingArea &other) const
-    {
-        return QGeoBoundingArea::operator==(other);
-    }
-#else
-    using QGeoBoundingArea::operator==;
-#endif
-    bool operator==(const QGeoBoundingCircle &other) const;
+    QGeoCircle &operator=(const QGeoCircle &other);
 
 #ifdef Q_NO_USING_KEYWORD
-    bool operator!=(const QGeoBoundingArea &other) const
+    bool operator==(const QGeoShape &other) const
     {
-        return QGeoBoundingArea::operator!=(other);
+        return QGeoShape::operator==(other);
     }
 #else
-    using QGeoBoundingArea::operator!=;
+    using QGeoShape::operator==;
 #endif
-    bool operator!=(const QGeoBoundingCircle &other) const;
+    bool operator==(const QGeoCircle &other) const;
+
+#ifdef Q_NO_USING_KEYWORD
+    bool operator!=(const QGeoShape &other) const
+    {
+        return QGeoShape::operator!=(other);
+    }
+#else
+    using QGeoShape::operator!=;
+#endif
+    bool operator!=(const QGeoCircle &other) const;
 
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
@@ -94,16 +90,16 @@ public:
     qreal radius() const;
 
     void translate(double degreesLatitude, double degreesLongitude);
-    QGeoBoundingCircle translated(double degreesLatitude, double degreesLongitude) const;
+    QGeoCircle translated(double degreesLatitude, double degreesLongitude) const;
 
 private:
-    inline QGeoBoundingCirclePrivate *d_func();
-    inline const QGeoBoundingCirclePrivate *d_func() const;
+    inline QGeoCirclePrivate *d_func();
+    inline const QGeoCirclePrivate *d_func() const;
 };
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoBoundingCircle)
+Q_DECLARE_METATYPE(QGeoCircle)
 
 QT_END_HEADER
 

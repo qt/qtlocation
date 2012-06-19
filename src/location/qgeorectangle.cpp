@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeoboundingbox.h"
-#include "qgeoboundingbox_p.h"
+#include "qgeorectangle.h"
+#include "qgeorectangle_p.h"
 
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
@@ -48,161 +48,158 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoBoundingBox
+    \class QGeoRectangle
     \inmodule QtLocation
     \ingroup QtLocation-positioning
     \since Qt Location 5.0
 
-    \brief The QGeoBoundingBox class defines a rectangular geographic area.
+    \brief The QGeoRectangle class defines a rectangular geographic area.
 
     The rectangle is defined in terms of a QGeoCoordinate which specifies the
     top left coordinate of the rectangle and a QGeoCoordinate which specifies
     the bottom right coordinate of the rectangle.
 
-    A bounding box is considered invalid if the top left or bottom right
+    A geo rectangle is considered invalid if the top left or bottom right
     coordinates are invalid or if the top left coordinate is south of the
     bottom right coordinate.
 
-    Bounding boxes can never cross the poles.
+    Geo rectangles can never cross the poles.
 
-    Several methods behave as though the bounding box is defined in terms of a
-    center coordinate, the width of the bounding box in degrees and the height
-    of the bounding box in degrees.
+    Several methods behave as though the geo rectangle is defined in terms of a
+    center coordinate, the width of the geo rectangle in degrees and the height
+    of the geo rectangle in degrees.
 
-    If the height or center of a bounding box is adjusted such that it would
-    cross one of the poles the height is modified such that the bounding box
+    If the height or center of a geo rectangle is adjusted such that it would
+    cross one of the poles the height is modified such that the geo rectangle
     touches but does not cross the pole and that the center coordinate is still
-    in the center of the bounding box.
+    in the center of the geo rectangle.
 */
 
 #ifdef Q_NO_USING_KEYWORD
 /*!
-    \fn bool QGeoBoundingBox::operator==(const QGeoBoundingArea &other) const
+    \fn bool QGeoRectangle::operator==(const QGeoShape &other) const
 
-    Returns true if \a other is equivalent to this bounding box; otherwise returns false.
+    Returns true if \a other is equivalent to this geo rectangle; otherwise returns false.
 */
 
 /*!
-    \fn bool QGeoBoundingBox::operator!=(const QGeoBoundingArea &other) const
+    \fn bool QGeoRectangle::operator!=(const QGeoShape &other) const
 
-    Returns true if \a other is not equivalent to this bounding box; otherwise returns false.
+    Returns true if \a other is not equivalent to this geo rectangle; otherwise returns false.
 */
 
 /*!
-    \fn bool QGeoBoundingBox::contains(const QGeoCoordinate &coordinate) const
+    \fn bool QGeoRectangle::contains(const QGeoCoordinate &coordinate) const
 
-    Returns true if \a coordinate is within this bounding box; otherwise returns false.
+    Returns true if \a coordinate is within this geo rectangle; otherwise returns false.
 */
 #endif
 
-inline QGeoBoundingBoxPrivate *QGeoBoundingBox::d_func()
+inline QGeoRectanglePrivate *QGeoRectangle::d_func()
 {
-    return static_cast<QGeoBoundingBoxPrivate *>(d_ptr.data());
+    return static_cast<QGeoRectanglePrivate *>(d_ptr.data());
 }
 
-inline const QGeoBoundingBoxPrivate *QGeoBoundingBox::d_func() const
+inline const QGeoRectanglePrivate *QGeoRectangle::d_func() const
 {
-    return static_cast<const QGeoBoundingBoxPrivate *>(d_ptr.constData());
+    return static_cast<const QGeoRectanglePrivate *>(d_ptr.constData());
 }
 
 /*!
-    Constructs a new, invalid bounding box.
+    Constructs a new, invalid geo rectangle.
 */
-QGeoBoundingBox::QGeoBoundingBox()
-:   QGeoBoundingArea(new QGeoBoundingBoxPrivate)
+QGeoRectangle::QGeoRectangle()
+:   QGeoShape(new QGeoRectanglePrivate)
 {
 }
 
 /*!
-    Constructs a new bounding box centered at \a center with a
+    Constructs a new geo rectangle centered at \a center with a
     width in degrees of \a degreesWidth and a height in degrees of \a degreesHeight.
 
-    If \a degreesHeight would take the bounding box beyond one of the poles,
-    the height of the bounding box will be truncated such that the bounding box
-    only extends up to the pole. The center of the bounding box will be
+    If \a degreesHeight would take the geo rectangle beyond one of the poles,
+    the height of the geo rectangle will be truncated such that the geo rectangle
+    only extends up to the pole. The center of the geo rectangle will be
     unchanged, and the height will be adjusted such that the center point is at
-    the center of the truncated bounding box.
+    the center of the truncated geo rectangle.
 */
-QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
+QGeoRectangle::QGeoRectangle(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
 {
-    d_ptr = new QGeoBoundingBoxPrivate(center, center);
+    d_ptr = new QGeoRectanglePrivate(center, center);
     setWidth(degreesWidth);
     setHeight(degreesHeight);
 }
 
 /*!
-    Constructs a new bounding box with a top left coordinate \a
-    topLeft and a bottom right coordinate \a bottomRight.
+    Constructs a new geo rectangle with a top left coordinate \a topLeft and a bottom right
+    coordinate \a bottomRight.
 */
-QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
+QGeoRectangle::QGeoRectangle(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
 {
-    d_ptr = new QGeoBoundingBoxPrivate(topLeft, bottomRight);
+    d_ptr = new QGeoRectanglePrivate(topLeft, bottomRight);
 }
 
 /*!
-    Constructs a bounding box from the contents of \a other.
+    Constructs a geo rectangle from the contents of \a other.
 */
-QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
-:   QGeoBoundingArea(other)
+QGeoRectangle::QGeoRectangle(const QGeoRectangle &other)
+:   QGeoShape(other)
 {
 }
 
 /*!
-    Constructs a bounding box from the contents of \a other.
+    Constructs a geo rectangle from the contents of \a other.
 */
-QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingArea &other)
-:   QGeoBoundingArea(other)
+QGeoRectangle::QGeoRectangle(const QGeoShape &other)
+:   QGeoShape(other)
 {
-    if (type() != QGeoBoundingArea::BoxType)
-        d_ptr = new QGeoBoundingBoxPrivate;
+    if (type() != QGeoShape::RectangleType)
+        d_ptr = new QGeoRectanglePrivate;
 }
 
 /*!
-    Destroys this bounding box.
+    Destroys this geo rectangle.
 */
-QGeoBoundingBox::~QGeoBoundingBox() {}
+QGeoRectangle::~QGeoRectangle()
+{
+}
 
 /*!
-    Assigns \a other to this bounding box and returns a reference to this
-    bounding box.
+    Assigns \a other to this geo rectangle and returns a reference to this geo rectangle.
 */
-QGeoBoundingBox &QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
+QGeoRectangle &QGeoRectangle::operator=(const QGeoRectangle &other)
 {
-    if (this == &other)
-        return *this;
-
-    QGeoBoundingArea::operator=(other);
-    d_ptr = other.d_ptr;
+    QGeoShape::operator=(other);
     return *this;
 }
 
 /*!
-    Returns whether this bounding box is equal to \a other.
+    Returns whether this geo rectangle is equal to \a other.
 */
-bool QGeoBoundingBox::operator == (const QGeoBoundingBox &other) const
+bool QGeoRectangle::operator==(const QGeoRectangle &other) const
 {
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     return *d == *other.d_func();
 }
 
 /*!
-    Returns whether this bounding box is not equal to \a other.
+    Returns whether this geo rectangle is not equal to \a other.
 */
-bool QGeoBoundingBox::operator != (const QGeoBoundingBox &other) const
+bool QGeoRectangle::operator!=(const QGeoRectangle &other) const
 {
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     return !(*d == *other.d_func());
 }
 
-bool QGeoBoundingBoxPrivate::isValid() const
+bool QGeoRectanglePrivate::isValid() const
 {
     return topLeft.isValid() && bottomRight.isValid() &&
            topLeft.latitude() >= bottomRight.latitude();
 }
 
-bool QGeoBoundingBoxPrivate::isEmpty() const
+bool QGeoRectanglePrivate::isEmpty() const
 {
     if (!isValid())
         return true;
@@ -212,108 +209,108 @@ bool QGeoBoundingBoxPrivate::isEmpty() const
 }
 
 /*!
-    Sets the top left coordinate of this bounding box to \a topLeft.
+    Sets the top left coordinate of this geo rectangle to \a topLeft.
 */
-void QGeoBoundingBox::setTopLeft(const QGeoCoordinate &topLeft)
+void QGeoRectangle::setTopLeft(const QGeoCoordinate &topLeft)
 {
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     d->topLeft = topLeft;
 }
 
 /*!
-    Returns the top left coordinate of this bounding box.
+    Returns the top left coordinate of this geo rectangle.
 */
-QGeoCoordinate QGeoBoundingBox::topLeft() const
+QGeoCoordinate QGeoRectangle::topLeft() const
 {
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     return d->topLeft;
 }
 
 /*!
-    Sets the top right coordinate of this bounding box to \a topRight.
+    Sets the top right coordinate of this geo rectangle to \a topRight.
 */
-void QGeoBoundingBox::setTopRight(const QGeoCoordinate &topRight)
+void QGeoRectangle::setTopRight(const QGeoCoordinate &topRight)
 {
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     d->topLeft.setLatitude(topRight.latitude());
     d->bottomRight.setLongitude(topRight.longitude());
 }
 
 /*!
-    Returns the top right coordinate of this bounding box.
+    Returns the top right coordinate of this geo rectangle.
 */
-QGeoCoordinate QGeoBoundingBox::topRight() const
+QGeoCoordinate QGeoRectangle::topRight() const
 {
     // TODO remove?
     if (!isValid())
         return QGeoCoordinate();
 
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     return QGeoCoordinate(d->topLeft.latitude(), d->bottomRight.longitude());
 }
 
 /*!
-    Sets the bottom left coordinate of this bounding box to \a bottomLeft.
+    Sets the bottom left coordinate of this geo rectangle to \a bottomLeft.
 */
-void QGeoBoundingBox::setBottomLeft(const QGeoCoordinate &bottomLeft)
+void QGeoRectangle::setBottomLeft(const QGeoCoordinate &bottomLeft)
 {
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     d->bottomRight.setLatitude(bottomLeft.latitude());
     d->topLeft.setLongitude(bottomLeft.longitude());
 }
 
 /*!
-    Returns the bottom left coordinate of this bounding box.
+    Returns the bottom left coordinate of this geo rectangle.
 */
-QGeoCoordinate QGeoBoundingBox::bottomLeft() const
+QGeoCoordinate QGeoRectangle::bottomLeft() const
 {
     // TODO remove?
     if (!isValid())
         return QGeoCoordinate();
 
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     return QGeoCoordinate(d->bottomRight.latitude(), d->topLeft.longitude());
 }
 
 /*!
-    Sets the bottom right coordinate of this bounding box to \a bottomRight.
+    Sets the bottom right coordinate of this geo rectangle to \a bottomRight.
 */
-void QGeoBoundingBox::setBottomRight(const QGeoCoordinate &bottomRight)
+void QGeoRectangle::setBottomRight(const QGeoCoordinate &bottomRight)
 {
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     d->bottomRight = bottomRight;
 }
 
 /*!
-    Returns the bottom right coordinate of this bounding box.
+    Returns the bottom right coordinate of this geo rectangle.
 */
-QGeoCoordinate QGeoBoundingBox::bottomRight() const
+QGeoCoordinate QGeoRectangle::bottomRight() const
 {
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     return d->bottomRight;
 }
 
 /*!
-    Sets the center of this bounding box to \a center.
+    Sets the center of this geo rectangle to \a center.
 
-    If this causes the bounding box to cross on of the poles the height of the
-    bounding box will be truncated such that the bounding box only extends up
-    to the pole. The center of the bounding box will be unchanged, and the
+    If this causes the geo rectangle to cross on of the poles the height of the
+    geo rectangle will be truncated such that the geo rectangle only extends up
+    to the pole. The center of the geo rectangle will be unchanged, and the
     height will be adjusted such that the center point is at the center of the
-    truncated bounding box.
+    truncated geo rectangle.
 
 */
-void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
+void QGeoRectangle::setCenter(const QGeoCoordinate &center)
 {
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     if (!isValid()) {
         d->topLeft = center;
@@ -368,14 +365,14 @@ void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
 }
 
 /*!
-    Returns the center of this bounding box.
+    Returns the center of this geo rectangle.
 */
-QGeoCoordinate QGeoBoundingBox::center() const
+QGeoCoordinate QGeoRectangle::center() const
 {
     if (!isValid())
         return QGeoCoordinate();
 
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     double cLat = (d->topLeft.latitude() + d->bottomRight.latitude()) / 2.0;
 
@@ -393,18 +390,18 @@ QGeoCoordinate QGeoBoundingBox::center() const
 }
 
 /*!
-    Sets the width of this bounding box in degrees to \a degreesWidth.
+    Sets the width of this geo rectangle in degrees to \a degreesWidth.
 
-    If \a degreesWidth is less than 0.0 or if this bounding box is invalid this
+    If \a degreesWidth is less than 0.0 or if this geo rectangle is invalid this
     function does nothing.  To set up the values of an invalid
-    QGeoBoundingBox based on the center, width and height you should use
-    setCenter() first in order to make the QGeoBoundingBox valid.
+    geo rectangle based on the center, width and height you should use
+    setCenter() first in order to make the geo rectangle valid.
 
     If \a degreesWidth is greater than 360.0 then 360.0 is used as the width,
-    the leftmost longitude of the bounding box is set to -180.0 degrees and the
-    rightmost longitude of the bounding box is set to 180.0 degrees.
+    the leftmost longitude of the geo rectangle is set to -180.0 degrees and the
+    rightmost longitude of the geo rectangle is set to 180.0 degrees.
 */
-void QGeoBoundingBox::setWidth(double degreesWidth)
+void QGeoRectangle::setWidth(double degreesWidth)
 {
     if (!isValid())
         return;
@@ -412,7 +409,7 @@ void QGeoBoundingBox::setWidth(double degreesWidth)
     if (degreesWidth < 0.0)
         return;
 
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     if (degreesWidth >= 360.0) {
         d->topLeft.setLongitude(-180.0);
@@ -444,16 +441,16 @@ void QGeoBoundingBox::setWidth(double degreesWidth)
 }
 
 /*!
-    Returns the width of this bounding box in degrees.
+    Returns the width of this geo rectangle in degrees.
 
-    The return value is undefined if this bounding box is invalid.
+    The return value is undefined if this geo rectangle is invalid.
 */
-double QGeoBoundingBox::width() const
+double QGeoRectangle::width() const
 {
     if (!isValid())
         return qQNaN();
 
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     double result = d->bottomRight.longitude() - d->topLeft.longitude();
     if (result < 0.0)
@@ -465,23 +462,23 @@ double QGeoBoundingBox::width() const
 }
 
 /*!
-    Sets the height of this bounding box in degrees to \a degreesHeight.
+    Sets the height of this geo rectangle in degrees to \a degreesHeight.
 
-    If \a degreesHeight is less than 0.0 or if this bounding box is invalid
+    If \a degreesHeight is less than 0.0 or if this geo rectangle is invalid
     this function does nothing. To set up the values of an invalid
-    QGeoBoundingBox based on the center, width and height you should use
-    setCenter() first in order to make the QGeoBoundingBox valid.
+    geo rectangle based on the center, width and height you should use
+    setCenter() first in order to make the geo rectangle valid.
 
-    If the change in height would cause the bounding box to cross a pole
-    the height is adjusted such that the bounding box only touches the pole.
+    If the change in height would cause the geo rectangle to cross a pole
+    the height is adjusted such that the geo rectangle only touches the pole.
 
     This change is done such that the center coordinate is still at the
-    center of the bounding box, which may result in a bounding box with
+    center of the geo rectangle, which may result in a geo rectangle with
     a smaller height than might otherwise be expected.
 
     If \a degreesHeight is greater than 180.0 then 180.0 is used as the height.
 */
-void QGeoBoundingBox::setHeight(double degreesHeight)
+void QGeoRectangle::setHeight(double degreesHeight)
 {
     if (!isValid())
         return;
@@ -493,7 +490,7 @@ void QGeoBoundingBox::setHeight(double degreesHeight)
         degreesHeight = 180.0;
     }
 
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     double tlLon = d->topLeft.longitude();
     double brLon = d->bottomRight.longitude();
@@ -528,16 +525,16 @@ void QGeoBoundingBox::setHeight(double degreesHeight)
 }
 
 /*!
-    Returns the height of this bounding box in degrees.
+    Returns the height of this geo rectangle in degrees.
 
-    The return value is undefined if this bounding box is invalid.
+    The return value is undefined if this geo rectangle is invalid.
 */
-double QGeoBoundingBox::height() const
+double QGeoRectangle::height() const
 {
     if (!isValid())
         return qQNaN();
 
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     double result = d->topLeft.latitude() - d->bottomRight.latitude();
     if (result < 0.0)
@@ -545,7 +542,7 @@ double QGeoBoundingBox::height() const
     return result;
 }
 
-bool QGeoBoundingBoxPrivate::contains(const QGeoCoordinate &coordinate) const
+bool QGeoRectanglePrivate::contains(const QGeoCoordinate &coordinate) const
 {
     if (!isValid() || !coordinate.isValid())
         return false;
@@ -581,40 +578,39 @@ bool QGeoBoundingBoxPrivate::contains(const QGeoCoordinate &coordinate) const
 }
 
 /*!
-    Returns whether the bounding box \a boundingBox is contained within this
-    bounding box.
+    Returns whether the geo rectangle \a rectangle is contained within this
+    geo rectangle.
 */
-bool QGeoBoundingBox::contains(const QGeoBoundingBox &boundingBox) const
+bool QGeoRectangle::contains(const QGeoRectangle &rectangle) const
 {
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
-    return (d->contains(boundingBox.topLeft())
-            && d->contains(boundingBox.topRight())
-            && d->contains(boundingBox.bottomLeft())
-            && d->contains(boundingBox.bottomRight()));
+    return (d->contains(rectangle.topLeft())
+            && d->contains(rectangle.topRight())
+            && d->contains(rectangle.bottomLeft())
+            && d->contains(rectangle.bottomRight()));
 }
 
 /*!
-    Returns whether the bounding box \a boundingBox intersects this bounding
-    box.
+    Returns whether the geo rectangle \a rectangle intersects this geo rectangle.
 
-    If the top or bottom edges of both bounding boxes are at one of the poles
-    the bounding boxes are considered to be intersecting, since the longitude
+    If the top or bottom edges of both geo rectangles are at one of the poles
+    the geo rectangles are considered to be intersecting, since the longitude
     is irrelevant when the edges are at the pole.
 */
-bool QGeoBoundingBox::intersects(const QGeoBoundingBox &boundingBox) const
+bool QGeoRectangle::intersects(const QGeoRectangle &rectangle) const
 {
-    Q_D(const QGeoBoundingBox);
+    Q_D(const QGeoRectangle);
 
     double left1 = d->topLeft.longitude();
     double right1 = d->bottomRight.longitude();
     double top1 = d->topLeft.latitude();
     double bottom1 = d->bottomRight.latitude();
 
-    double left2 = boundingBox.d_func()->topLeft.longitude();
-    double right2 = boundingBox.d_func()->bottomRight.longitude();
-    double top2 = boundingBox.d_func()->topLeft.latitude();
-    double bottom2 = boundingBox.d_func()->bottomRight.latitude();
+    double left2 = rectangle.d_func()->topLeft.longitude();
+    double right2 = rectangle.d_func()->bottomRight.longitude();
+    double top2 = rectangle.d_func()->topLeft.latitude();
+    double bottom2 = rectangle.d_func()->bottomRight.latitude();
 
     if (top1 < bottom2)
         return false;
@@ -649,21 +645,21 @@ bool QGeoBoundingBox::intersects(const QGeoBoundingBox &boundingBox) const
 }
 
 /*!
-    Translates this bounding box by \a degreesLatitude northwards and \a
+    Translates this geo rectangle by \a degreesLatitude northwards and \a
     degreesLongitude eastwards.
 
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
     southward and westward translation respectively.
 
-    If the translation would have caused the bounding box to cross a pole the
-    bounding box will be translated until the top or bottom edge of bounding
-    box touches the pole but not further.
+    If the translation would have caused the geo rectangle to cross a pole the
+    geo rectangle will be translated until the top or bottom edge of the geo rectangle
+    touches the pole but not further.
 */
-void QGeoBoundingBox::translate(double degreesLatitude, double degreesLongitude)
+void QGeoRectangle::translate(double degreesLatitude, double degreesLongitude)
 {
     // TODO handle dlat, dlon larger than 360 degrees
 
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     double tlLat = d->topLeft.latitude();
     double tlLon = d->topLeft.longitude();
@@ -707,7 +703,7 @@ void QGeoBoundingBox::translate(double degreesLatitude, double degreesLongitude)
 }
 
 /*!
-    Returns a copy of this bounding box translated by \a degreesLatitude northwards and \a
+    Returns a copy of this geo rectangle translated by \a degreesLatitude northwards and \a
     degreesLongitude eastwards.
 
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
@@ -715,35 +711,35 @@ void QGeoBoundingBox::translate(double degreesLatitude, double degreesLongitude)
 
     \sa translate()
 */
-QGeoBoundingBox QGeoBoundingBox::translated(double degreesLatitude, double degreesLongitude) const
+QGeoRectangle QGeoRectangle::translated(double degreesLatitude, double degreesLongitude) const
 {
-    QGeoBoundingBox result(*this);
+    QGeoRectangle result(*this);
     result.translate(degreesLatitude, degreesLongitude);
     return result;
 }
 
 /*!
-    Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+    Returns the smallest geo rectangle which contains both this geo rectangle and \a rectangle.
 
-    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the
+    If the centers of the two geo rectangles are separated by exactly 180.0 degrees then the
     width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
     rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is
     independent of the order of the operands.
 
 */
-QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) const
+QGeoRectangle QGeoRectangle::united(const QGeoRectangle &rectangle) const
 {
-    QGeoBoundingBox result(*this);
-    result |= boundingBox;
+    QGeoRectangle result(*this);
+    result |= rectangle;
     return result;
 }
 
 /*!
-    \fn QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
+    \fn QGeoRectangle QGeoRectangle::operator|(const QGeoRectangle &rectangle) const
 
-    Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+    Returns the smallest geo rectangle which contains both this geo rectangle and \a rectangle.
 
-    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the
+    If the centers of the two geo rectangles are separated by exactly 180.0 degrees then the
     width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
     rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is
     independent of the order of the operands.
@@ -751,29 +747,29 @@ QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) cons
 */
 
 /*!
-    Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+    Returns the smallest geo rectangle which contains both this geo rectangle and \a rectangle.
 
-    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the
+    If the centers of the two geo rectangles are separated by exactly 180.0 degrees then the
     width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
     rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is
     independent of the order of the operands.
 
 */
-QGeoBoundingBox &QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingBox)
+QGeoRectangle &QGeoRectangle::operator|=(const QGeoRectangle &rectangle)
 {
     // If non-intersecting goes for most narrow box
 
-    Q_D(QGeoBoundingBox);
+    Q_D(QGeoRectangle);
 
     double left1 = d->topLeft.longitude();
     double right1 = d->bottomRight.longitude();
     double top1 = d->topLeft.latitude();
     double bottom1 = d->bottomRight.latitude();
 
-    double left2 = boundingBox.d_func()->topLeft.longitude();
-    double right2 = boundingBox.d_func()->bottomRight.longitude();
-    double top2 = boundingBox.d_func()->topLeft.latitude();
-    double bottom2 = boundingBox.d_func()->bottomRight.latitude();
+    double left2 = rectangle.d_func()->topLeft.longitude();
+    double right2 = rectangle.d_func()->bottomRight.longitude();
+    double top2 = rectangle.d_func()->topLeft.latitude();
+    double bottom2 = rectangle.d_func()->bottomRight.latitude();
 
     double top = qMax(top1, top2);
     double bottom = qMin(bottom1, bottom2);
@@ -865,36 +861,36 @@ QGeoBoundingBox &QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingB
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate()
-:   QGeoBoundingAreaPrivate(QGeoBoundingArea::BoxType)
+QGeoRectanglePrivate::QGeoRectanglePrivate()
+:   QGeoShapePrivate(QGeoShape::RectangleType)
 {
 }
 
-QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft,
+QGeoRectanglePrivate::QGeoRectanglePrivate(const QGeoCoordinate &topLeft,
                                                const QGeoCoordinate &bottomRight)
-:   QGeoBoundingAreaPrivate(QGeoBoundingArea::BoxType), topLeft(topLeft), bottomRight(bottomRight)
+:   QGeoShapePrivate(QGeoShape::RectangleType), topLeft(topLeft), bottomRight(bottomRight)
 {
 }
 
-QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other)
-:   QGeoBoundingAreaPrivate(QGeoBoundingArea::BoxType), topLeft(other.topLeft),
+QGeoRectanglePrivate::QGeoRectanglePrivate(const QGeoRectanglePrivate &other)
+:   QGeoShapePrivate(QGeoShape::RectangleType), topLeft(other.topLeft),
     bottomRight(other.bottomRight)
 {
 }
 
-QGeoBoundingBoxPrivate::~QGeoBoundingBoxPrivate() {}
+QGeoRectanglePrivate::~QGeoRectanglePrivate() {}
 
-QGeoBoundingAreaPrivate *QGeoBoundingBoxPrivate::clone() const
+QGeoShapePrivate *QGeoRectanglePrivate::clone() const
 {
-    return new QGeoBoundingBoxPrivate(*this);
+    return new QGeoRectanglePrivate(*this);
 }
 
-bool QGeoBoundingBoxPrivate::operator==(const QGeoBoundingAreaPrivate &other) const
+bool QGeoRectanglePrivate::operator==(const QGeoShapePrivate &other) const
 {
-    if (!QGeoBoundingAreaPrivate::operator==(other))
+    if (!QGeoShapePrivate::operator==(other))
         return false;
 
-    const QGeoBoundingBoxPrivate &otherBox = static_cast<const QGeoBoundingBoxPrivate &>(other);
+    const QGeoRectanglePrivate &otherBox = static_cast<const QGeoRectanglePrivate &>(other);
 
     return topLeft == otherBox.topLeft && bottomRight == otherBox.bottomRight;
 }

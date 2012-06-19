@@ -57,7 +57,7 @@ TestCase {
         name: "qmlgeo.test.plugin"
     }
 
-    BoundingCircle {
+    GeoCircle {
         id: testSearchArea
         center: Coordinate {
             latitude: 10

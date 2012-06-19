@@ -72,14 +72,14 @@ public:
     ~QGeocodingManagerEngineNokia();
 
     QGeocodeReply *geocode(const QGeoAddress &address,
-                             const QGeoBoundingArea &bounds);
+                             const QGeoShape &bounds);
     QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
-                                    const QGeoBoundingArea &bounds);
+                                    const QGeoShape &bounds);
 
     QGeocodeReply *geocode(const QString &searchString,
                             int limit,
                             int offset,
-                            const QGeoBoundingArea &bounds);
+                            const QGeoShape &bounds);
 
 private Q_SLOTS:
     void placesFinished();
@@ -87,7 +87,7 @@ private Q_SLOTS:
 
 private:
     static QString trimDouble(double degree, int decimalDigits = 10);
-    QGeocodeReply *geocode(QString requestString, const QGeoBoundingArea &bounds, int limit = -1, int offset = 0);
+    QGeocodeReply *geocode(QString requestString, const QGeoShape &bounds, int limit = -1, int offset = 0);
     QString languageToMarc(QLocale::Language language);
     QString getAuthenticationString() const;
 

@@ -47,7 +47,7 @@
 #include <QMetaType>
 
 #include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
+#include <QtLocation/QGeoRectangle>
 #include <qgeorouterequest.h>
 
 
@@ -89,7 +89,7 @@ private Q_SLOTS:
 
 private:
     QGeoCoordinate *qgeocoordinate;
-    QGeoBoundingBox *qgeoboundingbox;
+    QGeoRectangle *qgeoboundingbox;
     QGeoRouteRequest *qgeorouterequest;
 
 };

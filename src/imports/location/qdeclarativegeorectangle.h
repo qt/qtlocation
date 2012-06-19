@@ -39,23 +39,22 @@
 **
 ***************************************************************************/
 
-#ifndef QDECLARATIVEGEOBOUNDINGBOX_P_H
-#define QDECLARATIVEGEOBOUNDINGBOX_P_H
+#ifndef QDECLARATIVEGEORECTANGLE_H
+#define QDECLARATIVEGEORECTANGLE_H
 
-#include "qdeclarativegeoboundingarea_p.h"
+#include "qdeclarativegeoshape.h"
 #include "qdeclarativecoordinate_p.h"
-#include <qgeoboundingbox.h>
 
-#include <QtCore>
 #include <QtQml/qqml.h>
+#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoBoundingBox : public QDeclarativeGeoBoundingArea
+class QDeclarativeGeoRectangle : public QDeclarativeGeoShape
 {
     Q_OBJECT
 
-    Q_PROPERTY(QGeoBoundingBox box READ box WRITE setBox)
+    Q_PROPERTY(QGeoRectangle rectangle READ rectangle WRITE setRectangle)
     Q_PROPERTY(QDeclarativeCoordinate *bottomLeft READ bottomLeft WRITE setBottomLeft NOTIFY bottomLeftChanged)
     Q_PROPERTY(QDeclarativeCoordinate *bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QDeclarativeCoordinate *topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
@@ -65,11 +64,11 @@ class QDeclarativeGeoBoundingBox : public QDeclarativeGeoBoundingArea
     Q_PROPERTY(double width READ width WRITE setWidth NOTIFY widthChanged)
 
 public:
-    explicit QDeclarativeGeoBoundingBox(QObject *parent = 0);
-    explicit QDeclarativeGeoBoundingBox(const QGeoBoundingBox &box, QObject *parent = 0);
-    void setBox(const QGeoBoundingBox &box);
-    QGeoBoundingBox box();
-    QGeoBoundingArea area() const;
+    explicit QDeclarativeGeoRectangle(QObject *parent = 0);
+    explicit QDeclarativeGeoRectangle(const QGeoRectangle &rectangle, QObject *parent = 0);
+    void setRectangle(const QGeoRectangle &rectangle);
+    QGeoRectangle rectangle() const;
+    QGeoShape shape() const;
 
     Q_INVOKABLE bool contains(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate *bottomLeft();
@@ -108,7 +107,7 @@ private:
         SkipTopRight,
         SkipCenter
     };
-    void synchronizeDeclarative(const QGeoBoundingBox &old, SkipProp skip);
+    void synchronizeDeclarative(const QGeoRectangle &old, SkipProp skip);
 
 private:
     QDeclarativeCoordinate *m_bottomLeft;
@@ -116,13 +115,13 @@ private:
     QDeclarativeCoordinate *m_topLeft;
     QDeclarativeCoordinate *m_topRight;
     QDeclarativeCoordinate *m_center;
-    QGeoBoundingBox m_box;
+    QGeoRectangle m_box;
     double m_width;
     double m_height;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QDeclarativeGeoBoundingBox)
+QML_DECLARE_TYPE(QDeclarativeGeoRectangle)
 
-#endif // QDECLARATIVEGEOBOUNDINGBOX_P_H
+#endif

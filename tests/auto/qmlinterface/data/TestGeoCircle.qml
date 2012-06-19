@@ -41,7 +41,7 @@
 
 import QtLocation 5.0
 
-BoundingCircle {
+GeoCircle {
     center: TestCoordinate { }
     radius: 30.0
 }

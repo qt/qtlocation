@@ -43,7 +43,7 @@
 
 #include <QtCore/qnumeric.h>
 #include <QtCore/QDebug>
-#include <QtLocation/QGeoBoundingCircle>
+#include <QtLocation/QGeoCircle>
 #include <QtJsonDb/QJsonDbReadRequest>
 #include <QtLocation/QPlaceResult>
 
@@ -73,15 +73,15 @@ void SearchReply::setRequest(const QPlaceSearchRequest &request)
 
 void SearchReply::start()
 {
-    if (request().searchArea().type() == QGeoBoundingArea::BoxType) {
-        QGeoBoundingBox box(request().searchArea());
+    if (request().searchArea().type() == QGeoShape::RectangleType) {
+        QGeoRectangle box(request().searchArea());
         if (!box.isValid()) {
             triggerDone(QPlaceReply::BadArgumentError,
                         QString::fromLatin1("Bounding box search area is invalid"));
             return;
         }
-    } else if (request().searchArea().type() == QGeoBoundingArea::CircleType) {
-        QGeoBoundingCircle circle(request().searchArea());
+    } else if (request().searchArea().type() == QGeoShape::CircleType) {
+        QGeoCircle circle(request().searchArea());
         if (!circle.center().isValid() || qIsNaN(circle.center().latitude()) || qIsNaN(circle.center().longitude())) {
             triggerDone(QPlaceReply::BadArgumentError,
                         QString::fromLatin1("The center of the search area is an invalid coordinate"));
@@ -122,13 +122,13 @@ void SearchReply::searchFinished()
     QList<QPlaceResult> results;
     QPlaceResult result;
 
-    const QGeoBoundingArea &area = request().searchArea();
-    const QGeoBoundingArea::AreaType &type = area.type();
-    const QGeoCoordinate &center = type == QGeoBoundingArea::CircleType ? static_cast<QGeoBoundingCircle>(area).center() :
-                                   type == QGeoBoundingArea::BoxType ? static_cast<QGeoBoundingBox>(area).center() :
+    const QGeoShape &area = request().searchArea();
+    const QGeoShape::ShapeType &type = area.type();
+    const QGeoCoordinate &center = type == QGeoShape::CircleType ? static_cast<QGeoCircle>(area).center() :
+                                   type == QGeoShape::RectangleType ? static_cast<QGeoRectangle>(area).center() :
                                                                        QGeoCoordinate();
-    const bool noDistanceFilter = type == QGeoBoundingArea::CircleType
-                                  && static_cast<QGeoBoundingCircle>(area).radius() < 0.0;
+    const bool noDistanceFilter = type == QGeoShape::CircleType
+                                  && static_cast<QGeoCircle>(area).radius() < 0.0;
 
     // First filter the results
     foreach (const QPlace &place, places) {

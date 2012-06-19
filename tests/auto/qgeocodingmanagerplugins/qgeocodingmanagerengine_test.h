@@ -48,10 +48,9 @@
 #include <qgeoaddress.h>
 #include <qgeolocation.h>
 #include <qgeocodereply.h>
-
+#include <QtLocation/QGeoCoordinate>
 
 QT_USE_NAMESPACE
-
 
 class GeocodeReplyTest :public QGeocodeReply
 {
@@ -65,7 +64,7 @@ public:
     void  callSetLimit ( int limit ) {setLimit(limit);}
     void  callSetOffset ( int offset ) {setOffset(offset);}
     void  callSetLocations ( const QList<QGeoLocation> & locations ) {setLocations(locations);}
-    void  callSetViewport ( const QGeoBoundingArea &viewport ) {setViewport(viewport);}
+    void  callSetViewport ( const QGeoShape &viewport ) {setViewport(viewport);}
 
 };
 
@@ -83,7 +82,7 @@ public:
         setLocale(QLocale(QLocale::German, QLocale::Germany));
     }
 
-    QGeocodeReply*  geocode ( const QString & searchString, int limit, int offset, const QGeoBoundingArea &bounds )
+    QGeocodeReply*  geocode ( const QString & searchString, int limit, int offset, const QGeoShape &bounds )
     {
         GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
         geocodereply->callSetLimit(limit);
@@ -96,7 +95,7 @@ public:
         return static_cast<QGeocodeReply*>(geocodereply);
     }
 
-    QGeocodeReply*  geocode ( const QGeoAddress & address, const QGeoBoundingArea &bounds )
+    QGeocodeReply*  geocode ( const QGeoAddress & address, const QGeoShape &bounds )
     {
         GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
         geocodereply->callSetViewport(bounds);
@@ -107,7 +106,7 @@ public:
         return static_cast<QGeocodeReply*>(geocodereply);
     }
 
-    QGeocodeReply*  reverseGeocode ( const QGeoCoordinate & coordinate, const QGeoBoundingArea &bounds )
+    QGeocodeReply*  reverseGeocode ( const QGeoCoordinate & coordinate, const QGeoShape &bounds )
     {
         GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
         geocodereply->callSetViewport(bounds);

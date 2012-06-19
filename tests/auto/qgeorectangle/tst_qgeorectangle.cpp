@@ -42,13 +42,13 @@
 //TESTED_COMPONENT=src/location
 
 #include <QtTest/QtTest>
-#include <qgeoboundingbox.h>
-#include <qgeoboundingcircle.h>
-#include <qgeocoordinate.h>
+#include <QtLocation/QGeoCoordinate>
+#include <QtLocation/QGeoCircle>
+#include <QtLocation/QGeoRectangle>
 
 QT_USE_NAMESPACE
 
-class tst_QGeoBoundingBox : public QObject
+class tst_QGeoRectangle : public QObject
 {
     Q_OBJECT
 
@@ -102,35 +102,35 @@ private slots:
     void circleComparison_data();
 };
 
-void tst_QGeoBoundingBox::default_constructor()
+void tst_QGeoRectangle::default_constructor()
 {
-    QGeoBoundingBox box;
+    QGeoRectangle box;
     QCOMPARE(box.topLeft().isValid(), false);
     QCOMPARE(box.bottomRight().isValid(), false);
 }
 
-void tst_QGeoBoundingBox::center_constructor()
+void tst_QGeoRectangle::center_constructor()
 {
-    QGeoBoundingBox b1 = QGeoBoundingBox(QGeoCoordinate(5.0, 5.0), 10.0, 10.0);
+    QGeoRectangle b1 = QGeoRectangle(QGeoCoordinate(5.0, 5.0), 10.0, 10.0);
 
     QCOMPARE(b1.topLeft(), QGeoCoordinate(10.0, 0.0));
     QCOMPARE(b1.bottomRight(), QGeoCoordinate(0.0, 10.0));
 }
 
-void tst_QGeoBoundingBox::corner_constructor()
+void tst_QGeoRectangle::corner_constructor()
 {
-    QGeoBoundingBox b1 = QGeoBoundingBox(QGeoCoordinate(10.0, 0.0),
+    QGeoRectangle b1 = QGeoRectangle(QGeoCoordinate(10.0, 0.0),
                                          QGeoCoordinate(0.0, 10.0));
 
     QCOMPARE(b1.topLeft(), QGeoCoordinate(10.0, 0.0));
     QCOMPARE(b1.bottomRight(), QGeoCoordinate(0.0, 10.0));
 }
 
-void tst_QGeoBoundingBox::copy_constructor()
+void tst_QGeoRectangle::copy_constructor()
 {
-    QGeoBoundingBox b1 = QGeoBoundingBox(QGeoCoordinate(10.0, 0.0),
+    QGeoRectangle b1 = QGeoRectangle(QGeoCoordinate(10.0, 0.0),
                                          QGeoCoordinate(0.0, 10.0));
-    QGeoBoundingBox b2 = QGeoBoundingBox(b1);
+    QGeoRectangle b2 = QGeoRectangle(b1);
 
     QCOMPARE(b2.topLeft(), QGeoCoordinate(10.0, 0.0));
     QCOMPARE(b2.bottomRight(), QGeoCoordinate(0.0, 10.0));
@@ -140,29 +140,29 @@ void tst_QGeoBoundingBox::copy_constructor()
     QCOMPARE(b1.topLeft(), QGeoCoordinate(10.0, 0.0));
     QCOMPARE(b1.bottomRight(), QGeoCoordinate(0.0, 10.0));
 
-    QGeoBoundingArea area;
-    QGeoBoundingBox areaBox(area);
+    QGeoShape area;
+    QGeoRectangle areaBox(area);
     QVERIFY(!areaBox.isValid());
     QVERIFY(areaBox.isEmpty());
 
-    QGeoBoundingCircle circle;
-    QGeoBoundingBox circleBox(circle);
+    QGeoCircle circle;
+    QGeoRectangle circleBox(circle);
     QVERIFY(!circleBox.isValid());
     QVERIFY(circleBox.isEmpty());
 }
 
-void tst_QGeoBoundingBox::destructor()
+void tst_QGeoRectangle::destructor()
 {
-    QGeoBoundingBox *box = new QGeoBoundingBox();
+    QGeoRectangle *box = new QGeoRectangle();
     delete box;
     // checking for a crash
 }
 
-void tst_QGeoBoundingBox::assignment()
+void tst_QGeoRectangle::assignment()
 {
-    QGeoBoundingBox b1 = QGeoBoundingBox(QGeoCoordinate(10.0, 0.0),
+    QGeoRectangle b1 = QGeoRectangle(QGeoCoordinate(10.0, 0.0),
                                          QGeoCoordinate(0.0, 10.0));
-    QGeoBoundingBox b2 = QGeoBoundingBox(QGeoCoordinate(20.0, 0.0),
+    QGeoRectangle b2 = QGeoRectangle(QGeoCoordinate(20.0, 0.0),
                                          QGeoCoordinate(0.0, 20.0));
 
     QVERIFY(b1 != b2);
@@ -178,12 +178,12 @@ void tst_QGeoBoundingBox::assignment()
     QCOMPARE(b1.bottomRight(), QGeoCoordinate(0.0, 10.0));
 
     // Assign b1 to an area
-    QGeoBoundingArea area = b1;
+    QGeoShape area = b1;
     QCOMPARE(area.type(), b1.type());
     QVERIFY(area == b1);
 
     // Assign the area back to a bounding box
-    QGeoBoundingBox ba = area;
+    QGeoRectangle ba = area;
     QCOMPARE(ba.topLeft(), b1.topLeft());
     QCOMPARE(ba.bottomRight(), b1.bottomRight());
 
@@ -193,12 +193,12 @@ void tst_QGeoBoundingBox::assignment()
     QVERIFY(ba != b1);
 }
 
-void tst_QGeoBoundingBox::equality()
+void tst_QGeoRectangle::equality()
 {
-    QFETCH(QGeoBoundingBox, box1);
-    QFETCH(QGeoBoundingBox, box2);
-    QFETCH(QGeoBoundingArea, area1);
-    QFETCH(QGeoBoundingArea, area2);
+    QFETCH(QGeoRectangle, box1);
+    QFETCH(QGeoRectangle, box2);
+    QFETCH(QGeoShape, area1);
+    QFETCH(QGeoShape, area2);
     QFETCH(bool, equal);
 
     // compare boxes
@@ -218,12 +218,12 @@ void tst_QGeoBoundingBox::equality()
     QCOMPARE((box1 != area2), !equal);
 }
 
-void tst_QGeoBoundingBox::equality_data()
+void tst_QGeoRectangle::equality_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box1");
-    QTest::addColumn<QGeoBoundingBox>("box2");
-    QTest::addColumn<QGeoBoundingArea>("area1");
-    QTest::addColumn<QGeoBoundingArea>("area2");
+    QTest::addColumn<QGeoRectangle>("box1");
+    QTest::addColumn<QGeoRectangle>("box2");
+    QTest::addColumn<QGeoShape>("area1");
+    QTest::addColumn<QGeoShape>("area2");
     QTest::addColumn<bool>("equal");
 
     QGeoCoordinate c1(10, 5);
@@ -231,17 +231,17 @@ void tst_QGeoBoundingBox::equality_data()
     QGeoCoordinate c3(20, 15);
     QGeoCoordinate c4(15, 20);
 
-    QGeoBoundingBox b1(c1, c2);
-    QGeoBoundingBox b2(c3, c4);
-    QGeoBoundingBox b3(c3, c2);
-    QGeoBoundingBox b4(c1, c3);
-    QGeoBoundingBox b5(c1, c2);
+    QGeoRectangle b1(c1, c2);
+    QGeoRectangle b2(c3, c4);
+    QGeoRectangle b3(c3, c2);
+    QGeoRectangle b4(c1, c3);
+    QGeoRectangle b5(c1, c2);
 
-    QGeoBoundingArea a1(b1);
-    QGeoBoundingArea a2(b2);
-    QGeoBoundingArea a3(b3);
-    QGeoBoundingArea a4(b4);
-    QGeoBoundingArea a5(b5);
+    QGeoShape a1(b1);
+    QGeoShape a2(b2);
+    QGeoShape a3(b3);
+    QGeoShape a4(b4);
+    QGeoShape a5(b5);
 
     QTest::newRow("all unequal")
             << b1 << b2 << a1 << a2 << false;
@@ -253,20 +253,20 @@ void tst_QGeoBoundingBox::equality_data()
             << b1 << b5 << a1 << a5 << true;
 }
 
-void tst_QGeoBoundingBox::isValid()
+void tst_QGeoRectangle::isValid()
 {
-    QFETCH(QGeoBoundingBox, input);
+    QFETCH(QGeoRectangle, input);
     QFETCH(bool, valid);
 
     QCOMPARE(input.isValid(), valid);
 
-    QGeoBoundingArea area = input;
+    QGeoShape area = input;
     QCOMPARE(area.isValid(), valid);
 }
 
-void tst_QGeoBoundingBox::isValid_data()
+void tst_QGeoRectangle::isValid_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("input");
+    QTest::addColumn<QGeoRectangle>("input");
     QTest::addColumn<bool>("valid");
 
     QGeoCoordinate c0;
@@ -274,31 +274,31 @@ void tst_QGeoBoundingBox::isValid_data()
     QGeoCoordinate c2(5, 10);
 
     QTest::newRow("both corners invalid")
-        << QGeoBoundingBox(c0, c0) << false;
+        << QGeoRectangle(c0, c0) << false;
     QTest::newRow("top left corner invalid")
-        << QGeoBoundingBox(c0, c2) << false;
+        << QGeoRectangle(c0, c2) << false;
     QTest::newRow("bottom right corner invalid")
-        << QGeoBoundingBox(c1, c0) << false;
+        << QGeoRectangle(c1, c0) << false;
     QTest::newRow("height in wrong order")
-        << QGeoBoundingBox(c2, c1) << false;
+        << QGeoRectangle(c2, c1) << false;
     QTest::newRow("both corners valid")
-        << QGeoBoundingBox(c1, c2) << true;
+        << QGeoRectangle(c1, c2) << true;
 }
 
-void tst_QGeoBoundingBox::isEmpty()
+void tst_QGeoRectangle::isEmpty()
 {
-    QFETCH(QGeoBoundingBox, input);
+    QFETCH(QGeoRectangle, input);
     QFETCH(bool, empty);
 
     QCOMPARE(input.isEmpty(), empty);
 
-    QGeoBoundingArea area = input;
+    QGeoShape area = input;
     QCOMPARE(area.isEmpty(), empty);
 }
 
-void tst_QGeoBoundingBox::isEmpty_data()
+void tst_QGeoRectangle::isEmpty_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("input");
+    QTest::addColumn<QGeoRectangle>("input");
     QTest::addColumn<bool>("empty");
 
     QGeoCoordinate c0;
@@ -307,24 +307,24 @@ void tst_QGeoBoundingBox::isEmpty_data()
     QGeoCoordinate c3(10, 10);
 
     QTest::newRow("both corners invalid")
-        << QGeoBoundingBox(c0, c0) << true;
+        << QGeoRectangle(c0, c0) << true;
     QTest::newRow("top left corner invalid")
-        << QGeoBoundingBox(c0, c2) << true;
+        << QGeoRectangle(c0, c2) << true;
     QTest::newRow("bottom right corner invalid")
-        << QGeoBoundingBox(c1, c0) << true;
+        << QGeoRectangle(c1, c0) << true;
     QTest::newRow("zero width")
-            << QGeoBoundingBox(c1, c3) << true;
+            << QGeoRectangle(c1, c3) << true;
     QTest::newRow("zero height")
-            << QGeoBoundingBox(c3, c2) << true;
+            << QGeoRectangle(c3, c2) << true;
     QTest::newRow("zero width and height")
-            << QGeoBoundingBox(c1, c1) << true;
+            << QGeoRectangle(c1, c1) << true;
     QTest::newRow("non-zero width and height")
-            << QGeoBoundingBox(c1, c2) << false;
+            << QGeoRectangle(c1, c2) << false;
 }
 
-void tst_QGeoBoundingBox::corners()
+void tst_QGeoRectangle::corners()
 {
-    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoRectangle, box);
     QFETCH(QGeoCoordinate, topLeft);
     QFETCH(QGeoCoordinate, topRight);
     QFETCH(QGeoCoordinate, bottomLeft);
@@ -336,9 +336,9 @@ void tst_QGeoBoundingBox::corners()
     QCOMPARE(box.bottomRight(), bottomRight);
 }
 
-void tst_QGeoBoundingBox::corners_data()
+void tst_QGeoRectangle::corners_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<QGeoCoordinate>("topLeft");
     QTest::addColumn<QGeoCoordinate>("topRight");
     QTest::addColumn<QGeoCoordinate>("bottomLeft");
@@ -351,34 +351,34 @@ void tst_QGeoBoundingBox::corners_data()
     QGeoCoordinate bl(5, 5);
 
     QTest::newRow("both invalid")
-            << QGeoBoundingBox(c0, c0)
+            << QGeoRectangle(c0, c0)
             << c0
             << c0
             << c0
             << c0;
     QTest::newRow("top left invalid")
-            << QGeoBoundingBox(c0, br)
+            << QGeoRectangle(c0, br)
             << c0
             << c0
             << c0
             << br;
     QTest::newRow("bottom right invalid")
-            << QGeoBoundingBox(tl, c0)
+            << QGeoRectangle(tl, c0)
             << tl
             << c0
             << c0
             << c0;
     QTest::newRow("both valid")
-            << QGeoBoundingBox(tl, br)
+            << QGeoRectangle(tl, br)
             << tl
             << tr
             << bl
             << br;
 }
 
-void tst_QGeoBoundingBox::setCorners()
+void tst_QGeoRectangle::setCorners()
 {
-    QGeoBoundingBox box(QGeoCoordinate(10.0, 0.0),
+    QGeoRectangle box(QGeoCoordinate(10.0, 0.0),
                         QGeoCoordinate(0.0, 10.0));
 
     box.setTopLeft(QGeoCoordinate(20.0, -10.0));
@@ -412,12 +412,12 @@ void tst_QGeoBoundingBox::setCorners()
 
 }
 
-void tst_QGeoBoundingBox::width()
+void tst_QGeoRectangle::width()
 {
-    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoRectangle, box);
     QFETCH(double, oldWidth);
     QFETCH(double, newWidth);
-    QFETCH(QGeoBoundingBox, newBox);
+    QFETCH(QGeoRectangle, newBox);
 
     if (qIsNaN(oldWidth))
         QVERIFY(qIsNaN(box.width()));
@@ -429,186 +429,186 @@ void tst_QGeoBoundingBox::width()
     QCOMPARE(box, newBox);
 }
 
-void tst_QGeoBoundingBox::width_data()
+void tst_QGeoRectangle::width_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<double>("oldWidth");
     QTest::addColumn<double>("newWidth");
-    QTest::addColumn<QGeoBoundingBox>("newBox");
+    QTest::addColumn<QGeoRectangle>("newBox");
 
     QTest::newRow("invalid box")
-            << QGeoBoundingBox()
+            << QGeoRectangle()
             << qQNaN()
             << 100.0
-            << QGeoBoundingBox();
+            << QGeoRectangle();
 
      QTest::newRow("0 width -> negative width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0))
              << 0.0
              << -1.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0));
 
      QTest::newRow("0 width -> 0 width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0))
              << 0.0
              << 0.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0));
 
      QTest::newRow("0 width -> non wrapping width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0))
              << 0.0
              << 10.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 85.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 85.0),
                                 QGeoCoordinate(5.0, 95.0));
 
      QTest::newRow("0 width -> wrapping width positive")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0))
              << 0.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -5.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -5.0),
                                 QGeoCoordinate(5.0, -175.0));
 
      QTest::newRow("0 width -> wrapping width negative")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -90.0),
                                 QGeoCoordinate(5.0, -90.0))
              << 0.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, 5.0));
 
      QTest::newRow("0 width -> 360 width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0))
              << 0.0
              << 360.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -180.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -180.0),
                                 QGeoCoordinate(5.0, 180.0));
 
      QTest::newRow("0 width -> 360+ width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0))
              << 0.0
              << 370.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -180.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -180.0),
                                 QGeoCoordinate(5.0, 180.0));
 
      QTest::newRow("non wrapping width -> negative width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 85.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 85.0),
                                 QGeoCoordinate(5.0, 95.0))
              << 10.0
              << -1.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 85.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 85.0),
                                 QGeoCoordinate(5.0, 95.0));
 
      QTest::newRow("non wrapping width -> 0 width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 85.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 85.0),
                                 QGeoCoordinate(5.0, 95.0))
              << 10.0
              << 0.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 90.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 90.0),
                                 QGeoCoordinate(5.0, 90.0));
 
      QTest::newRow("non wrapping width -> non wrapping width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 85.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 85.0),
                                 QGeoCoordinate(5.0, 95.0))
              << 10.0
              << 20.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 80.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 80.0),
                                 QGeoCoordinate(5.0, 100.0));
 
      QTest::newRow("non wrapping width -> wrapping width positive")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 85.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 85.0),
                                 QGeoCoordinate(5.0, 95.0))
              << 10.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -5.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -5.0),
                                 QGeoCoordinate(5.0, -175.0));
 
      QTest::newRow("non wrapping width -> wrapping width negative")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -95.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -95.0),
                                 QGeoCoordinate(5.0, -85.0))
              << 10.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, 5.0));
 
      QTest::newRow("non wrapping width -> 360 width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 85.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 85.0),
                                 QGeoCoordinate(5.0, 95.0))
              << 10.0
              << 360.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -180.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -180.0),
                                 QGeoCoordinate(5.0, 180.0));
 
      QTest::newRow("non wrapping width width -> 360+ width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 85.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 85.0),
                                 QGeoCoordinate(5.0, 95.0))
              << 10.0
              << 370.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -180.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -180.0),
                                 QGeoCoordinate(5.0, 180.0));
 
      QTest::newRow("wrapping width -> negative width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, -85.0))
              << 100.0
              << -1.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, -85.0));
 
      QTest::newRow("wrapping width -> 0 width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, -85.0))
              << 100.0
              << 0.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -135.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -135.0),
                                 QGeoCoordinate(5.0, -135.0));
 
      QTest::newRow("wrapping width -> non wrapping width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, -85.0))
              << 100.0
              << 80.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -175.0),
                                 QGeoCoordinate(5.0, -95.0));
 
      QTest::newRow("wrapping width -> wrapping width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, -85.0))
              << 100.0
              << 120.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 165.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 165.0),
                                 QGeoCoordinate(5.0, -75.0));
 
      QTest::newRow("wrapping width -> 360 width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, -85.0))
              << 100.0
              << 360.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -180.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -180.0),
                                 QGeoCoordinate(5.0, 180.0));
 
      QTest::newRow("wrapping width width -> 360+ width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 175.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 175.0),
                                 QGeoCoordinate(5.0, -85.0))
              << 100.0
              << 370.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -180.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -180.0),
                                 QGeoCoordinate(5.0, 180.0));
 }
 
-void tst_QGeoBoundingBox::height()
+void tst_QGeoRectangle::height()
 {
-    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoRectangle, box);
     QFETCH(double, oldHeight);
     QFETCH(double, newHeight);
-    QFETCH(QGeoBoundingBox, newBox);
+    QFETCH(QGeoRectangle, newBox);
 
     if (qIsNaN(oldHeight))
         QVERIFY(qIsNaN(box.height()));
@@ -619,354 +619,354 @@ void tst_QGeoBoundingBox::height()
     QCOMPARE(box, newBox);
 }
 
-void tst_QGeoBoundingBox::height_data()
+void tst_QGeoRectangle::height_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<double>("oldHeight");
     QTest::addColumn<double>("newHeight");
-    QTest::addColumn<QGeoBoundingBox>("newBox");
+    QTest::addColumn<QGeoRectangle>("newBox");
 
     QTest::newRow("invalid box")
-            << QGeoBoundingBox()
+            << QGeoRectangle()
             << qQNaN()
             << 100.0
-            << QGeoBoundingBox();
+            << QGeoRectangle();
 
      QTest::newRow("0 height -> negative height")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 5.0),
                                 QGeoCoordinate(10.0, 10.0))
              << 0.0
              << -1.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 5.0),
                                 QGeoCoordinate(10.0, 10.0));
 
      QTest::newRow("0 height -> 0 height")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 5.0),
                                 QGeoCoordinate(10.0, 10.0))
              << 0.0
              << 0.0
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 5.0),
                                 QGeoCoordinate(10.0, 10.0));
 
      QTest::newRow("0 height -> non zero height")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 5.0),
                                 QGeoCoordinate(10.0, 10.0))
              << 0.0
              << 20.0
-             << QGeoBoundingBox(QGeoCoordinate(20.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(20.0, 5.0),
                                 QGeoCoordinate(0.0, 10.0));
 
      QTest::newRow("0 height -> squash top")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(70.0, 70.0))
              << 0.0
              << 60.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 30.0),
                                 QGeoCoordinate(50.0, 70.0));
 
      QTest::newRow("0 height -> squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(-70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-70.0, 30.0),
                                 QGeoCoordinate(-70.0, 70.0))
              << 0.0
              << 60.0
-             << QGeoBoundingBox(QGeoCoordinate(-50.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-50.0, 30.0),
                                 QGeoCoordinate(-90.0, 70.0));
 
      QTest::newRow("0 height -> 180")
-             << QGeoBoundingBox(QGeoCoordinate(0.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(0.0, 5.0),
                                 QGeoCoordinate(0.0, 10.0))
              << 0.0
              << 180.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 5.0),
                                 QGeoCoordinate(-90.0, 10.0));
 
      QTest::newRow("0 height -> 180 squash top")
-             << QGeoBoundingBox(QGeoCoordinate(20.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(20.0, 5.0),
                                 QGeoCoordinate(20.0, 10.0))
              << 0.0
              << 180.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 5.0),
                                 QGeoCoordinate(-50.0, 10.0));
 
      QTest::newRow("0 height -> 180 squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(-20.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(-20.0, 5.0),
                                 QGeoCoordinate(-20.0, 10.0))
              << 0.0
              << 180.0
-             << QGeoBoundingBox(QGeoCoordinate(50.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(50.0, 5.0),
                                 QGeoCoordinate(-90.0, 10.0));
 
      QTest::newRow("0 height -> 180+")
-             << QGeoBoundingBox(QGeoCoordinate(0.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(0.0, 5.0),
                                 QGeoCoordinate(0.0, 10.0))
              << 0.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 5.0),
                                 QGeoCoordinate(-90.0, 10.0));
 
      QTest::newRow("0 height -> 180+ squash top")
-             << QGeoBoundingBox(QGeoCoordinate(20.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(20.0, 5.0),
                                 QGeoCoordinate(20.0, 10.0))
              << 0.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 5.0),
                                 QGeoCoordinate(-50.0, 10.0));
 
      QTest::newRow("0 height -> 180+ squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(-20.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(-20.0, 5.0),
                                 QGeoCoordinate(-20.0, 10.0))
              << 0.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(50.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(50.0, 5.0),
                                 QGeoCoordinate(-90.0, 10.0));
 
      QTest::newRow("non zero height -> negative height")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << 40.0
              << -1.0
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0));
 
      QTest::newRow("non zero height -> 0 height")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << 40.0
              << 0.0
-             << QGeoBoundingBox(QGeoCoordinate(50.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(50.0, 30.0),
                                 QGeoCoordinate(50.0, 70.0));
 
      QTest::newRow("non zero height -> non zero height")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << 40.0
              << 20.0
-             << QGeoBoundingBox(QGeoCoordinate(60.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(60.0, 30.0),
                                 QGeoCoordinate(40.0, 70.0));
 
      QTest::newRow("non zero height -> squash top")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << 40.0
              << 100.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 30.0),
                                 QGeoCoordinate(10.0, 70.0));
 
      QTest::newRow("non zero height -> squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(-30.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-30.0, 30.0),
                                 QGeoCoordinate(-70.0, 70.0))
              << 40.0
              << 100.0
-             << QGeoBoundingBox(QGeoCoordinate(-10.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-10.0, 30.0),
                                 QGeoCoordinate(-90.0, 70.0));
 
      QTest::newRow("non zero height -> 180")
-             << QGeoBoundingBox(QGeoCoordinate(20.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(20.0, 30.0),
                                 QGeoCoordinate(-20.0, 70.0))
              << 40.0
              << 180.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 30.0),
                                 QGeoCoordinate(-90.0, 70.0));
 
      QTest::newRow("non zero height -> 180 squash top")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << 40.0
              << 180.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 30.0),
                                 QGeoCoordinate(10.0, 70.0));
 
      QTest::newRow("non zero height -> 180 squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(-30.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-30.0, 30.0),
                                 QGeoCoordinate(-70.0, 70.0))
              << 40.0
              << 180.0
-             << QGeoBoundingBox(QGeoCoordinate(-10.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-10.0, 30.0),
                                 QGeoCoordinate(-90.0, 70.0));
 
      QTest::newRow("non zero height -> 180+")
-             << QGeoBoundingBox(QGeoCoordinate(20.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(20.0, 30.0),
                                 QGeoCoordinate(-20.0, 70.0))
              << 40.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 30.0),
                                 QGeoCoordinate(-90.0, 70.0));
 
      QTest::newRow("non zero height -> 180+ squash top")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << 40.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 30.0),
                                 QGeoCoordinate(10.0, 70.0));
 
      QTest::newRow("non zero height -> 180+ squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(-30.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-30.0, 30.0),
                                 QGeoCoordinate(-70.0, 70.0))
              << 40.0
              << 190.0
-             << QGeoBoundingBox(QGeoCoordinate(-10.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-10.0, 30.0),
                                 QGeoCoordinate(-90.0, 70.0));
 }
 
-void tst_QGeoBoundingBox::center()
+void tst_QGeoRectangle::center()
 {
-    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoRectangle, box);
     QFETCH(QGeoCoordinate, oldCenter);
     QFETCH(QGeoCoordinate, newCenter);
-    QFETCH(QGeoBoundingBox, newBox);
+    QFETCH(QGeoRectangle, newBox);
 
     QCOMPARE(box.center(), oldCenter);
     box.setCenter(newCenter);
     QCOMPARE(box, newBox);
 }
 
-void tst_QGeoBoundingBox::center_data()
+void tst_QGeoRectangle::center_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<QGeoCoordinate>("oldCenter");
     QTest::addColumn<QGeoCoordinate>("newCenter");
-    QTest::addColumn<QGeoBoundingBox>("newBox");
+    QTest::addColumn<QGeoRectangle>("newBox");
 
      QTest::newRow("invalid")
-          << QGeoBoundingBox()
+          << QGeoRectangle()
           << QGeoCoordinate()
           << QGeoCoordinate(0.0, 0.0)
-          << QGeoBoundingBox(QGeoCoordinate(0.0, 0.0), 0.0, 0.0);
+          << QGeoRectangle(QGeoCoordinate(0.0, 0.0), 0.0, 0.0);
 
      QTest::newRow("zero width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, 5.0),
                                 QGeoCoordinate(5.0, 5.0))
           << QGeoCoordinate(7.5, 5.0)
           << QGeoCoordinate(20.0, 20.0)
-          << QGeoBoundingBox(QGeoCoordinate(22.5, 20.0),
+          << QGeoRectangle(QGeoCoordinate(22.5, 20.0),
                              QGeoCoordinate(17.5, 20.0));
 
      QTest::newRow("360 width")
-             << QGeoBoundingBox(QGeoCoordinate(10.0, -180.0),
+             << QGeoRectangle(QGeoCoordinate(10.0, -180.0),
                                 QGeoCoordinate(5.0, 180.0))
           << QGeoCoordinate(7.5, 0.0)
           << QGeoCoordinate(20.0, 20.0)
-          << QGeoBoundingBox(QGeoCoordinate(22.5, -180.0),
+          << QGeoRectangle(QGeoCoordinate(22.5, -180.0),
                              QGeoCoordinate(17.5, 180.0));
 
      QTest::newRow("zero height")
-             << QGeoBoundingBox(QGeoCoordinate(5.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(5.0, 5.0),
                                 QGeoCoordinate(5.0, 10.0))
           << QGeoCoordinate(5.0, 7.5)
           << QGeoCoordinate(20.0, 20.0)
-          << QGeoBoundingBox(QGeoCoordinate(20.0, 17.5),
+          << QGeoRectangle(QGeoCoordinate(20.0, 17.5),
                              QGeoCoordinate(20.0, 22.5));
 
      QTest::newRow("180 height -> move")
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 5.0),
                                 QGeoCoordinate(-90.0, 10.0))
           << QGeoCoordinate(0.0, 7.5)
           << QGeoCoordinate(0.0, 20.0)
-          << QGeoBoundingBox(QGeoCoordinate(90.0, 17.5),
+          << QGeoRectangle(QGeoCoordinate(90.0, 17.5),
                              QGeoCoordinate(-90.0, 22.5));
 
      QTest::newRow("180 height -> squash top")
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 5.0),
                                 QGeoCoordinate(-90.0, 10.0))
           << QGeoCoordinate(0.0, 7.5)
           << QGeoCoordinate(-20.0, 20.0)
-          << QGeoBoundingBox(QGeoCoordinate(50.0, 17.5),
+          << QGeoRectangle(QGeoCoordinate(50.0, 17.5),
                              QGeoCoordinate(-90.0, 22.5));
 
      QTest::newRow("180 height -> squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 5.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 5.0),
                                 QGeoCoordinate(-90.0, 10.0))
           << QGeoCoordinate(0.0, 7.5)
           << QGeoCoordinate(20.0, 20.0)
-          << QGeoBoundingBox(QGeoCoordinate(90.0, 17.5),
+          << QGeoRectangle(QGeoCoordinate(90.0, 17.5),
                              QGeoCoordinate(-50.0, 22.5));
 
      QTest::newRow("non wrapping -> non wrapping")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << QGeoCoordinate(50.0, 50.0)
              << QGeoCoordinate(10.0, 10.0)
-             << QGeoBoundingBox(QGeoCoordinate(30.0, -10.0),
+             << QGeoRectangle(QGeoCoordinate(30.0, -10.0),
                                 QGeoCoordinate(-10.0, 30.0));
 
      QTest::newRow("non wrapping -> wrapping")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << QGeoCoordinate(50.0, 50.0)
              << QGeoCoordinate(10.0, 170.0)
-             << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+             << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                 QGeoCoordinate(-10.0, -170.0));
 
      QTest::newRow("non wrapping -> squash top")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << QGeoCoordinate(50.0, 50.0)
              << QGeoCoordinate(80.0, 50.0)
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 30.0),
                                 QGeoCoordinate(70.0, 70.0));
 
      QTest::newRow("non wrapping -> squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0))
              << QGeoCoordinate(50.0, 50.0)
              << QGeoCoordinate(-80.0, 50.0)
-             << QGeoBoundingBox(QGeoCoordinate(-70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(-70.0, 30.0),
                                 QGeoCoordinate(-90.0, 70.0));
 
      QTest::newRow("wrapping -> non wrapping")
-             << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+             << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                 QGeoCoordinate(-10.0, -170.0))
              << QGeoCoordinate(10.0, 170.0)
              << QGeoCoordinate(50.0, 50.0)
-             << QGeoBoundingBox(QGeoCoordinate(70.0, 30.0),
+             << QGeoRectangle(QGeoCoordinate(70.0, 30.0),
                                 QGeoCoordinate(30.0, 70.0));
 
      QTest::newRow("wrapping -> wrapping")
-             << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+             << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                 QGeoCoordinate(-10.0, -170.0))
              << QGeoCoordinate(10.0, 170.0)
              << QGeoCoordinate(10.0, -170.0)
-             << QGeoBoundingBox(QGeoCoordinate(30.0, 170.0),
+             << QGeoRectangle(QGeoCoordinate(30.0, 170.0),
                                 QGeoCoordinate(-10.0, -150.0));
 
      QTest::newRow("wrapping -> squash top")
-             << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+             << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                 QGeoCoordinate(-10.0, -170.0))
              << QGeoCoordinate(10.0, 170.0)
              << QGeoCoordinate(80.0, 170.0)
-             << QGeoBoundingBox(QGeoCoordinate(90.0, 150.0),
+             << QGeoRectangle(QGeoCoordinate(90.0, 150.0),
                                 QGeoCoordinate(70.0, -170.0));
 
      QTest::newRow("wrapping -> squash bottom")
-             << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+             << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                 QGeoCoordinate(-10.0, -170.0))
              << QGeoCoordinate(10.0, 170.0)
              << QGeoCoordinate(-80.0, 170.0)
-             << QGeoBoundingBox(QGeoCoordinate(-70.0, 150.0),
+             << QGeoRectangle(QGeoCoordinate(-70.0, 150.0),
                                 QGeoCoordinate(-90.0, -170.0));
 }
 
 
-void tst_QGeoBoundingBox::containsCoord()
+void tst_QGeoRectangle::containsCoord()
 {
-    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoRectangle, box);
     QFETCH(QGeoCoordinate, coord);
     QFETCH(bool, contains);
 
     QCOMPARE(box.contains(coord), contains);
 
-    QGeoBoundingArea area = box;
+    QGeoShape area = box;
     QCOMPARE(area.contains(coord), contains);
 }
 
-void tst_QGeoBoundingBox::containsCoord_data()
+void tst_QGeoRectangle::containsCoord_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<QGeoCoordinate>("coord");
     QTest::addColumn<bool>("contains");
 
-    QGeoBoundingBox b1(QGeoCoordinate(70, 30), QGeoCoordinate(30, 70));
+    QGeoRectangle b1(QGeoCoordinate(70, 30), QGeoCoordinate(30, 70));
 
     double lonLO1 = 20.0;
     double lonL1 = 30.0;
@@ -1035,7 +1035,7 @@ void tst_QGeoBoundingBox::containsCoord_data()
     QTest::newRow("non wrapped - bottom right - outside")
             << b1 << QGeoCoordinate(latBO1, lonRO1) << false;
 
-    QGeoBoundingBox b2(QGeoCoordinate(70, 150), QGeoCoordinate(30, -170));
+    QGeoRectangle b2(QGeoCoordinate(70, 150), QGeoCoordinate(30, -170));
 
     double lonLO2 = 140.0;
     double lonL2 = 150.0;
@@ -1104,7 +1104,7 @@ void tst_QGeoBoundingBox::containsCoord_data()
     QTest::newRow("wrapped - bottom right - outside")
             << b2 << QGeoCoordinate(latBO2, lonRO2) << false;
 
-    QGeoBoundingBox b3(QGeoCoordinate(90, 30), QGeoCoordinate(50, 70));
+    QGeoRectangle b3(QGeoCoordinate(90, 30), QGeoCoordinate(50, 70));
 
     double lonLO3 = 20.0;
     double lonL3 = 30.0;
@@ -1154,7 +1154,7 @@ void tst_QGeoBoundingBox::containsCoord_data()
     QTest::newRow("north pole - top right - outside")
             << b3 << QGeoCoordinate(latT3, lonRO3) << true;
 
-    QGeoBoundingBox b4(QGeoCoordinate(-50, 30), QGeoCoordinate(-90, 70));
+    QGeoRectangle b4(QGeoCoordinate(-50, 30), QGeoCoordinate(-90, 70));
 
     double lonLO4 = 20.0;
     double lonL4 = 30.0;
@@ -1205,10 +1205,10 @@ void tst_QGeoBoundingBox::containsCoord_data()
             << b4 << QGeoCoordinate(latB4, lonRO4) << true;
 }
 
-void tst_QGeoBoundingBox::containsBoxAndIntersects()
+void tst_QGeoRectangle::containsBoxAndIntersects()
 {
-    QFETCH(QGeoBoundingBox, box1);
-    QFETCH(QGeoBoundingBox, box2);
+    QFETCH(QGeoRectangle, box1);
+    QFETCH(QGeoRectangle, box2);
     QFETCH(bool, contains);
     QFETCH(bool, intersects);
 
@@ -1216,597 +1216,597 @@ void tst_QGeoBoundingBox::containsBoxAndIntersects()
     QCOMPARE(box1.intersects(box2), intersects);
 }
 
-void tst_QGeoBoundingBox::containsBoxAndIntersects_data()
+void tst_QGeoRectangle::containsBoxAndIntersects_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box1");
-    QTest::addColumn<QGeoBoundingBox>("box2");
+    QTest::addColumn<QGeoRectangle>("box1");
+    QTest::addColumn<QGeoRectangle>("box2");
     QTest::addColumn<bool>("contains");
     QTest::addColumn<bool>("intersects");
 
-    QGeoBoundingBox b1(QGeoCoordinate(30.0, -30.0),
+    QGeoRectangle b1(QGeoCoordinate(30.0, -30.0),
                        QGeoCoordinate(-30.0, 30.0));
 
     QTest::newRow("non wrapped same")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
             << true << true;
 
     QTest::newRow("non wrapped smaller")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(20.0, -20.0),
+            << QGeoRectangle(QGeoCoordinate(20.0, -20.0),
                                QGeoCoordinate(-20.0, 20.0))
             << true << true;
 
     QTest::newRow("non wrapped larger")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(40.0, -40.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, -40.0),
                                QGeoCoordinate(-40.0, 40.0))
             << false << true;
 
     QTest::newRow("non wrapped outside top")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(80.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(80.0, -30.0),
                                QGeoCoordinate(50.0, 30.0))
             << false << false;
 
     QTest::newRow("non wrapped outside bottom")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-50.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(-50.0, -30.0),
                                QGeoCoordinate(-80.0, 30.0))
             << false << false;
 
     QTest::newRow("non wrapped outside left")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -80.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -80.0),
                                QGeoCoordinate(-30.0, -50.0))
             << false << false;
 
     QTest::newRow("non wrapped outside wrapped")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
             << false << false;
 
     QTest::newRow("non wrapped outside right")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 50.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 50.0),
                                QGeoCoordinate(-30.0, 80.0))
             << false << false;
 
     QTest::newRow("non wrapped top left cross")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(40.0, -40.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, -40.0),
                                QGeoCoordinate(20.0, -20.0))
             << false << true;
 
     QTest::newRow("non wrapped top cross")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(40.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, -10.0),
                                QGeoCoordinate(20.0, 10.0))
             << false << true;
 
     QTest::newRow("non wrapped top right cross")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(40.0, 20.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, 20.0),
                                QGeoCoordinate(20.0, 40.0))
             << false << true;
 
     QTest::newRow("non wrapped left cross")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(10.0, -40.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, -40.0),
                                QGeoCoordinate(-10.0, -20.0))
             << false << true;
 
     QTest::newRow("non wrapped right cross")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(10.0, 20.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, 20.0),
                                QGeoCoordinate(-10.0, 40.0))
             << false << true;
 
     QTest::newRow("non wrapped bottom left cross")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, -40.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, -40.0),
                                QGeoCoordinate(-40.0, -20.0))
             << false << true;
 
     QTest::newRow("non wrapped bottom cross")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, -10.0),
                                QGeoCoordinate(-40.0, 10.0))
             << false << true;
 
     QTest::newRow("non wrapped bottom right cross")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, 20.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, 20.0),
                                QGeoCoordinate(-40.0, 40.0))
             << false << true;
 
     QTest::newRow("non wrapped top left touch outside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(50.0, -50.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, -50.0),
                                QGeoCoordinate(30.0, -30.0))
             << false << true;
 
     QTest::newRow("non wrapped top touch outside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(50.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, -10.0),
                                QGeoCoordinate(30.0, 10.0))
             << false << true;
 
     QTest::newRow("non wrapped top right touch outside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(50.0, 30.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, 30.0),
                                QGeoCoordinate(30.0, 50.0))
             << false << true;
 
     QTest::newRow("non wrapped left touch outside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(10.0, -50.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, -50.0),
                                QGeoCoordinate(-10.0, -30.0))
             << false << true;
 
     QTest::newRow("non wrapped right touch outside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(10.0, 30.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, 30.0),
                                QGeoCoordinate(-10.0, 50.0))
             << false << true;
 
     QTest::newRow("non wrapped bottom left touch outside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, -30.0),
                                QGeoCoordinate(-50.0, -50.0))
             << false << true;
 
     QTest::newRow("non wrapped bottom touch outside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-30.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, -10.0),
                                QGeoCoordinate(-50.0, 10.0))
             << false << true;
 
     QTest::newRow("non wrapped bottom right touch outside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-30.0, 30.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, 30.0),
                                QGeoCoordinate(-50.0, 50.0))
             << false << true;
 
     QTest::newRow("non wrapped top left touch inside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(10.0, -10.0))
             << true << true;
 
     QTest::newRow("non wrapped top touch inside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -10.0),
                                QGeoCoordinate(10.0, 10.0))
             << true << true;
 
     QTest::newRow("non wrapped top right touch inside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 10.0),
                                QGeoCoordinate(10.0, 30.0))
             << true << true;
 
     QTest::newRow("non wrapped left touch inside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(10.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, -30.0),
                                QGeoCoordinate(-10.0, -10.0))
             << true << true;
 
     QTest::newRow("non wrapped right touch inside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(10.0, 10.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, 10.0),
                                QGeoCoordinate(-10.0, 30.0))
             << true << true;
 
     QTest::newRow("non wrapped bottom left touch inside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-10.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(-10.0, -30.0),
                                QGeoCoordinate(-30.0, -10.0))
             << true << true;
 
     QTest::newRow("non wrapped bottom touch inside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-10.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(-10.0, -10.0),
                                QGeoCoordinate(-30.0, 10.0))
             << true << true;
 
     QTest::newRow("non wrapped bottom right touch inside")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-10.0, 10.0),
+            << QGeoRectangle(QGeoCoordinate(-10.0, 10.0),
                                QGeoCoordinate(-30.0, 30.0))
             << true << true;
 
     QTest::newRow("non wrapped top lon strip")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(40.0, -40.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, -40.0),
                                QGeoCoordinate(20.0, 40.0))
             << false << true;
 
     QTest::newRow("non wrapped center lon strip")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(10.0, -40.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, -40.0),
                                QGeoCoordinate(-10.0, 40.0))
             << false << true;
 
     QTest::newRow("non wrapped bottom lon strip")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, -40.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, -40.0),
                                QGeoCoordinate(-40.0, 40.0))
             << false << true;
 
     QTest::newRow("non wrapped left lat strip")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(40.0, -40.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, -40.0),
                                QGeoCoordinate(-40.0, -20.0))
             << false << true;
 
     QTest::newRow("non wrapped center lat strip")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(40.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, -10.0),
                                QGeoCoordinate(-40.0, 10.0))
             << false << true;
 
     QTest::newRow("non wrapped right lat strip")
             << b1
-            << QGeoBoundingBox(QGeoCoordinate(40.0, 20.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, 20.0),
                                QGeoCoordinate(-40.0, 40.0))
             << false << true;
 
-    QGeoBoundingBox b2(QGeoCoordinate(30.0, 150.0),
+    QGeoRectangle b2(QGeoCoordinate(30.0, 150.0),
                        QGeoCoordinate(-30.0, -150.0));
 
     QTest::newRow("wrapped same")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
             << true << true;
 
     QTest::newRow("wrapped smaller")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(20.0, 160.0),
+            << QGeoRectangle(QGeoCoordinate(20.0, 160.0),
                                QGeoCoordinate(-20.0, -160.0))
             << true << true;
 
     QTest::newRow("wrapped larger")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(40.0, 140.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, 140.0),
                                QGeoCoordinate(-40.0, -140.0))
             << false << true;
 
     QTest::newRow("wrapped outside top")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(80.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(80.0, 150.0),
                                QGeoCoordinate(50.0, -150.0))
             << false << false;
 
     QTest::newRow("wrapped outside bottom")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-50.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(-50.0, 150.0),
                                QGeoCoordinate(-80.0, -150.0))
             << false << false;
 
     QTest::newRow("wrapped outside left")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 70.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 70.0),
                                QGeoCoordinate(-30.0, 130.0))
             << false << false;
 
     QTest::newRow("wrapped outside right")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -130.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -130.0),
                                QGeoCoordinate(-30.0, -70.0))
             << false << false;
 
     QTest::newRow("wrapped top left cross")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(40.0, 140.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, 140.0),
                                QGeoCoordinate(20.0, 160.0))
             << false << true;
 
     QTest::newRow("wrapped top cross")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(40.0, 170.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, 170.0),
                                QGeoCoordinate(20.0, -170.0))
             << false << true;
 
     QTest::newRow("wrapped top right cross")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(40.0, -160.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, -160.0),
                                QGeoCoordinate(20.0, -140.0))
             << false << true;
 
     QTest::newRow("wrapped left cross")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(10.0, 140.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, 140.0),
                                QGeoCoordinate(-10.0, 160.0))
             << false << true;
 
     QTest::newRow("wrapped right cross")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(10.0, -160.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, -160.0),
                                QGeoCoordinate(-10.0, -140.0))
             << false << true;
 
     QTest::newRow("wrapped bottom left cross")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, 140.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, 140.0),
                                QGeoCoordinate(-40.0, 160.0))
             << false << true;
 
     QTest::newRow("wrapped bottom cross")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, 170.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, 170.0),
                                QGeoCoordinate(-40.0, -170.0))
             << false << true;
 
     QTest::newRow("wrapped bottom right cross")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, -160.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, -160.0),
                                QGeoCoordinate(-40.0, -140.0))
             << false << true;
 
     QTest::newRow("wrapped top left touch outside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(50.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, 130.0),
                                QGeoCoordinate(30.0, 150.0))
             << false << true;
 
     QTest::newRow("wrapped top touch outside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(50.0, 170.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, 170.0),
                                QGeoCoordinate(30.0, -170.0))
             << false << true;
 
     QTest::newRow("wrapped top right touch outside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(50.0, -150.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, -150.0),
                                QGeoCoordinate(30.0, -130.0))
             << false << true;
 
     QTest::newRow("wrapped left touch outside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(10.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, 130.0),
                                QGeoCoordinate(-10.0, 150.0))
             << false << true;
 
     QTest::newRow("wrapped right touch outside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(10.0, -150.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, -150.0),
                                QGeoCoordinate(-10.0, -130.0))
             << false << true;
 
     QTest::newRow("wrapped bottom left touch outside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, 150.0),
                                QGeoCoordinate(-50.0, 130.0))
             << false << true;
 
     QTest::newRow("wrapped bottom touch outside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-30.0, 170.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, 170.0),
                                QGeoCoordinate(-50.0, -170.0))
             << false << true;
 
     QTest::newRow("wrapped bottom right touch outside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-30.0, -150.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, -150.0),
                                QGeoCoordinate(-50.0, -130.0))
             << false << true;
 
     QTest::newRow("wrapped top left touch inside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(10.0, 170.0))
             << true << true;
 
     QTest::newRow("wrapped top touch inside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 170.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 170.0),
                                QGeoCoordinate(10.0, -170.0))
             << true << true;
 
     QTest::newRow("wrapped top right touch inside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -170.0),
                                QGeoCoordinate(10.0, -150.0))
             << true << true;
 
     QTest::newRow("wrapped left touch inside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(10.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, 150.0),
                                QGeoCoordinate(-10.0, 170.0))
             << true << true;
 
     QTest::newRow("wrapped right touch inside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(10.0, -170.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, -170.0),
                                QGeoCoordinate(-10.0, -150.0))
             << true << true;
 
     QTest::newRow("wrapped bottom left touch inside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-10.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(-10.0, 150.0),
                                QGeoCoordinate(-30.0, 170.0))
             << true << true;
 
     QTest::newRow("wrapped bottom touch inside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-10.0, 170.0),
+            << QGeoRectangle(QGeoCoordinate(-10.0, 170.0),
                                QGeoCoordinate(-30.0, -170.0))
             << true << true;
 
     QTest::newRow("wrapped bottom right touch inside")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-10.0, -170.0),
+            << QGeoRectangle(QGeoCoordinate(-10.0, -170.0),
                                QGeoCoordinate(-30.0, -150.0))
             << true << true;
 
     QTest::newRow("wrapped top lon strip")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(40.0, 140.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, 140.0),
                                QGeoCoordinate(20.0, -140.0))
             << false << true;
 
     QTest::newRow("wrapped center lon strip")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(10.0, 140.0),
+            << QGeoRectangle(QGeoCoordinate(10.0, 140.0),
                                QGeoCoordinate(-10.0, -140.0))
             << false << true;
 
     QTest::newRow("wrapped bottom lon strip")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, 140.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, 140.0),
                                QGeoCoordinate(-40.0, -140.0))
             << false << true;
 
     QTest::newRow("wrapped left lat strip")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(40.0, 140.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, 140.0),
                                QGeoCoordinate(-40.0, 160.0))
             << false << true;
 
     QTest::newRow("wrapped center lat strip")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(40.0, 170.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, 170.0),
                                QGeoCoordinate(-40.0, -170.0))
             << false << true;
 
     QTest::newRow("wrapped right lat strip")
             << b2
-            << QGeoBoundingBox(QGeoCoordinate(40.0, -160.0),
+            << QGeoRectangle(QGeoCoordinate(40.0, -160.0),
                                QGeoCoordinate(-40.0, -140.0))
             << false << true;
 
     QTest::newRow("north pole touching")
-      << QGeoBoundingBox(QGeoCoordinate(90.0, 20.0),
+      << QGeoRectangle(QGeoCoordinate(90.0, 20.0),
                          QGeoCoordinate(40.0, 40.0))
-      << QGeoBoundingBox(QGeoCoordinate(90.0, 60.0),
+      << QGeoRectangle(QGeoCoordinate(90.0, 60.0),
                          QGeoCoordinate(30.0, 80.0))
       << false << true;
 
     QTest::newRow("south pole touching")
-      << QGeoBoundingBox(QGeoCoordinate(40.0, 20.0),
+      << QGeoRectangle(QGeoCoordinate(40.0, 20.0),
                          QGeoCoordinate(-90.0, 40.0))
-      << QGeoBoundingBox(QGeoCoordinate(30.0, 60.0),
+      << QGeoRectangle(QGeoCoordinate(30.0, 60.0),
                          QGeoCoordinate(-90.0, 80.0))
       << false << true;
 }
 
-void tst_QGeoBoundingBox::translate()
+void tst_QGeoRectangle::translate()
 {
-    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoRectangle, box);
     QFETCH(double, degreesLatitude);
     QFETCH(double, degreesLongitude);
-    QFETCH(QGeoBoundingBox, newBox);
+    QFETCH(QGeoRectangle, newBox);
 
-    QGeoBoundingBox test = box.translated(degreesLatitude, degreesLongitude);
+    QGeoRectangle test = box.translated(degreesLatitude, degreesLongitude);
     QCOMPARE(test, newBox);
     box.translate(degreesLatitude, degreesLongitude);
     QCOMPARE(box, newBox);
 
 }
 
-void tst_QGeoBoundingBox::translate_data()
+void tst_QGeoRectangle::translate_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<double>("degreesLatitude");
     QTest::addColumn<double>("degreesLongitude");
-    QTest::addColumn<QGeoBoundingBox>("newBox");
+    QTest::addColumn<QGeoRectangle>("newBox");
 
     QTest::newRow("invalid")
-            << QGeoBoundingBox()
+            << QGeoRectangle()
             << 20.0
             << 20.0
-            << QGeoBoundingBox();
+            << QGeoRectangle();
 
     QTest::newRow("360 width")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0))
             << 20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(50.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, -180.0),
                                QGeoCoordinate(-10.0, 180.0));
 
     QTest::newRow("180 height")
-            << QGeoBoundingBox(QGeoCoordinate(90.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(90.0, -30.0),
                                QGeoCoordinate(-90.0, 30.0))
             << 20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(90.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(90.0, -10.0),
                                QGeoCoordinate(-90.0, 50.0));
 
     QTest::newRow("non wrapping -> non wrapping")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
             << 20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(50.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, -10.0),
                                QGeoCoordinate(-10.0, 50.0));
 
     QTest::newRow("non wrapping -> wrapping")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 110.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 110.0),
                                QGeoCoordinate(-30.0, 170.0))
             << 20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(50.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, 130.0),
                                QGeoCoordinate(-10.0, -170.0));
 
     QTest::newRow("non wrapping -> north clip")
-            << QGeoBoundingBox(QGeoCoordinate(80.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(80.0, -30.0),
                                QGeoCoordinate(20.0, 30.0))
             << 20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(90.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(90.0, -10.0),
                                QGeoCoordinate(40.0, 50.0));
 
     QTest::newRow("non wrapping -> south clip")
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, -30.0),
                                QGeoCoordinate(-80.0, 30.0))
             << -20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(-40.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(-40.0, -10.0),
                                QGeoCoordinate(-90.0, 50.0));
 
     QTest::newRow("wrapping -> non wrapping")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 130.0),
                                QGeoCoordinate(-30.0, -170.0))
             << 20.0
             << -20.0
-            << QGeoBoundingBox(QGeoCoordinate(50.0, 110.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, 110.0),
                                QGeoCoordinate(-10.0, 170.0));
 
     QTest::newRow("wrapping -> wrapping")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 130.0),
                                QGeoCoordinate(-30.0, -170.0))
             << 20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(50.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, 150.0),
                                QGeoCoordinate(-10.0, -150.0));
 
     QTest::newRow("wrapping -> north clip")
-            << QGeoBoundingBox(QGeoCoordinate(80.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(80.0, 130.0),
                                QGeoCoordinate(20.0, -170.0))
             << 20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(90.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(90.0, 150.0),
                                QGeoCoordinate(40.0, -150.0));
 
     QTest::newRow("wrapping -> south clip")
-            << QGeoBoundingBox(QGeoCoordinate(-20.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(-20.0, 130.0),
                                QGeoCoordinate(-80.0, -170.0))
             << -20.0
             << 20.0
-            << QGeoBoundingBox(QGeoCoordinate(-40.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(-40.0, 150.0),
                                QGeoCoordinate(-90.0, -150.0));
 }
 
-void tst_QGeoBoundingBox::unite()
+void tst_QGeoRectangle::unite()
 {
-    QFETCH(QGeoBoundingBox, in1);
-    QFETCH(QGeoBoundingBox, in2);
-    QFETCH(QGeoBoundingBox, out);
+    QFETCH(QGeoRectangle, in1);
+    QFETCH(QGeoRectangle, in2);
+    QFETCH(QGeoRectangle, out);
 
     QCOMPARE(in1.united(in2), out);
     QCOMPARE(in2.united(in1), out);
@@ -1814,404 +1814,404 @@ void tst_QGeoBoundingBox::unite()
     QCOMPARE(in1 | in2, out);
     QCOMPARE(in2 | in1, out);
 
-    QGeoBoundingBox united1 = QGeoBoundingBox(in1);
+    QGeoRectangle united1 = QGeoRectangle(in1);
     united1 |= in2;
     QCOMPARE(united1, out);
 
-    QGeoBoundingBox united2 = QGeoBoundingBox(in2);
+    QGeoRectangle united2 = QGeoRectangle(in2);
     united2 |= in1;
     QCOMPARE(united2, out);
 }
 
-void tst_QGeoBoundingBox::unite_data()
+void tst_QGeoRectangle::unite_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("in1");
-    QTest::addColumn<QGeoBoundingBox>("in2");
-    QTest::addColumn<QGeoBoundingBox>("out");
+    QTest::addColumn<QGeoRectangle>("in1");
+    QTest::addColumn<QGeoRectangle>("in2");
+    QTest::addColumn<QGeoRectangle>("out");
 
     QTest::newRow("central and taller")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(50.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, -30.0),
                                QGeoCoordinate(-50.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(50.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(50.0, -30.0),
                                QGeoCoordinate(-50.0, 30.0));
 
     QTest::newRow("central and 180 high")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(90.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(90.0, -30.0),
                                QGeoCoordinate(-90.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(90.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(90.0, -30.0),
                                QGeoCoordinate(-90.0, 30.0));
 
     QTest::newRow("central and non overlapping higher")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(60.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(60.0, -30.0),
                                QGeoCoordinate(50.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(60.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(60.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0));
 
     QTest::newRow("central and overlapping higher")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(60.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(60.0, -30.0),
                                QGeoCoordinate(0.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(60.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(60.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0));
 
     QTest::newRow("central and touching higher")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(60.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(60.0, -30.0),
                                QGeoCoordinate(30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(60.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(60.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0));
 
     QTest::newRow("central and non overlapping lower")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(-50.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(-50.0, -30.0),
                                QGeoCoordinate(-60.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-60.0, 30.0));
 
     QTest::newRow("central and overlapping lower")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(0.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(0.0, -30.0),
                                QGeoCoordinate(-60.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-60.0, 30.0));
 
     QTest::newRow("central and touching lower")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(-30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, -30.0),
                                QGeoCoordinate(-60.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-60.0, 30.0));
 
     QTest::newRow("non wrapping central and wider")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -50.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -50.0),
                                QGeoCoordinate(-30.0, 50.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -50.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -50.0),
                                QGeoCoordinate(-30.0, 50.0));
 
     QTest::newRow("non wrapping central and 360 width")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0));
 
     QTest::newRow("non wrapping central and non overlapping non wrapping left")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -110.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -110.0),
                                QGeoCoordinate(-30.0, -50.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -110.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -110.0),
                                QGeoCoordinate(-30.0, 30.0));
 
     QTest::newRow("non wrapping central and overlapping non wrapping left")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -80.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -80.0),
                                QGeoCoordinate(-30.0, -20.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -80.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -80.0),
                                QGeoCoordinate(-30.0, 30.0));
 
     QTest::newRow("non wrapping central and touching non wrapping left")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -90.0),
                                QGeoCoordinate(-30.0, -30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -90.0),
                                QGeoCoordinate(-30.0, 30.0));
 
     QTest::newRow("non wrapping central and non overlapping non wrapping right")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 50.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 50.0),
                                QGeoCoordinate(-30.0, 110.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 110.0));
 
     QTest::newRow("non wrapping central and overlapping non wrapping right")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 20.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 20.0),
                                QGeoCoordinate(-30.0, 80.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 80.0));
 
     QTest::newRow("non wrapping central and touching non wrapping right")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 30.0),
                                QGeoCoordinate(-30.0, 90.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 90.0));
 
     QTest::newRow("wrapping and wider")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 130.0),
                                QGeoCoordinate(-30.0, -130.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 130.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 130.0),
                                QGeoCoordinate(-30.0, -130.0));
 
     QTest::newRow("wrapping and 360 width")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0));
 
     QTest::newRow("wrapping and non overlapping right")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -130.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -130.0),
                                QGeoCoordinate(-30.0, -70.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -70.0));
 
     QTest::newRow("wrapping and overlapping right")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -160.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -160.0),
                                QGeoCoordinate(-30.0, -70.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -70.0));
 
     QTest::newRow("wrapping and touching right")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -150.0),
                                QGeoCoordinate(-30.0, -90.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -90.0));
 
     QTest::newRow("wrapping and non overlapping left")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 70.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 70.0),
                                QGeoCoordinate(-30.0, 130.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 70.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 70.0),
                                QGeoCoordinate(-30.0, -150.0));
 
     QTest::newRow("wrapping and overlapping left")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 100.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 100.0),
                                QGeoCoordinate(-30.0, 160.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 100.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 100.0),
                                QGeoCoordinate(-30.0, -150.0));
 
     QTest::newRow("wrapping and touching left")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 90.0),
                                QGeoCoordinate(-30.0, 150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 90.0),
                                QGeoCoordinate(-30.0, -150.0));
 
     QTest::newRow("wrapping and non overlapping center")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -30.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -30.0),
                                QGeoCoordinate(-30.0, 30.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0));
 
     QTest::newRow("wrapping and overlapping center")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -160.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -160.0),
                                QGeoCoordinate(-30.0, 160.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0));
 
     QTest::newRow("wrapping and touching center")
-            << QGeoBoundingBox(QGeoCoordinate(30.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, 150.0),
                                QGeoCoordinate(-30.0, -150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -150.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -150.0),
                                QGeoCoordinate(-30.0, 150.0))
-            << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            << QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0));
 
     QTest::newRow("small gap over zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -20.0),
                                 QGeoCoordinate(-30.0, -10.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 10.0),
                                 QGeoCoordinate(-30.0, 20.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -20.0),
                                 QGeoCoordinate(-30.0, 20.0));
 
     QTest::newRow("small gap before zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -40.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -40.0),
                                 QGeoCoordinate(-30.0, -30.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -20.0),
                                 QGeoCoordinate(-30.0, -10.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -40.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -40.0),
                                 QGeoCoordinate(-30.0, -10.0));
 
     QTest::newRow("small gap after zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 10.0),
                                 QGeoCoordinate(-30.0, 20.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 30.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 30.0),
                                 QGeoCoordinate(-30.0, 40.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 10.0),
                                 QGeoCoordinate(-30.0, 40.0));
 
     QTest::newRow("small gap over dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 160.0),
                                 QGeoCoordinate(-30.0, 170.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -170.0),
                                 QGeoCoordinate(-30.0, -160.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 160.0),
                                 QGeoCoordinate(-30.0, -160.0));
 
     QTest::newRow("small gap before dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 140.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 140.0),
                                 QGeoCoordinate(-30.0, 150.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 160.0),
                                 QGeoCoordinate(-30.0, 170.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 140.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 140.0),
                                 QGeoCoordinate(-30.0, 170.0));
 
     QTest::newRow("small gap after dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -170.0),
                                 QGeoCoordinate(-30.0, -160.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -150.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -150.0),
                                 QGeoCoordinate(-30.0, -140.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -170.0),
                                 QGeoCoordinate(-30.0, -140.0));
 
     QTest::newRow("90-degree inner gap over zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -55.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -55.0),
                                 QGeoCoordinate(-30.0, -45.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 45.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 45.0),
                                 QGeoCoordinate(-30.0, 55.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -55.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -55.0),
                                 QGeoCoordinate(-30.0, 55.0));
 
     QTest::newRow("90-degree inner gap before zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -20.0),
                                 QGeoCoordinate(-30.0, -10.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -65.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -65.0),
                                 QGeoCoordinate(-30.0, -55.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -65.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -65.0),
                                 QGeoCoordinate(-30.0, -10.0));
 
     QTest::newRow("90-degree inner gap after zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 65.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 65.0),
                                 QGeoCoordinate(-30.0, 75.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 10.0),
                                 QGeoCoordinate(-30.0, 20.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 10.0),
                                 QGeoCoordinate(-30.0, 75.0));
 
     QTest::newRow("90-degree inner gap over dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 125.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 125.0),
                                 QGeoCoordinate(-30.0, 135.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -135.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -135.0),
                                 QGeoCoordinate(-30.0, -125.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 125.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 125.0),
                                 QGeoCoordinate(-30.0, -125.0));
 
     QTest::newRow("90-degree inner gap before dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 160.0),
                                 QGeoCoordinate(-30.0, 170.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 50.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 50.0),
                                 QGeoCoordinate(-30.0, 60.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 50.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 50.0),
                                 QGeoCoordinate(-30.0, 170.0));
 
     QTest::newRow("90-degree inner gap after dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -170.0),
                                 QGeoCoordinate(-30.0, -160.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -60.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -60.0),
                                 QGeoCoordinate(-30.0, -50.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -170.0),
                                 QGeoCoordinate(-30.0, -50.0));
 
     QTest::newRow("180-degree inner gap centered on zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -100.0),
                                 QGeoCoordinate(-30.0, -90.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 90.0),
                                 QGeoCoordinate(-30.0, 100.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 90.0),
                                 QGeoCoordinate(-30.0, -90.0));
 
     QTest::newRow("180-degree outer gap cenetered on zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -90.0),
                                 QGeoCoordinate(-30.0, -80.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 80.0),
                                 QGeoCoordinate(-30.0, 90.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -90.0),
                                 QGeoCoordinate(-30.0, 90.0));
 
     QTest::newRow("180-degree shift centered on zero line")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -100.0),
                                 QGeoCoordinate(-30.0, -80.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 80.0),
                                 QGeoCoordinate(-30.0, 100.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -180.0),
                                 QGeoCoordinate(-30.0, 180.0));
 
     QTest::newRow("180-degree inner gap centered on dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 80.0),
                                 QGeoCoordinate(-30.0, 90.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -90.0),
                                 QGeoCoordinate(-30.0, -80.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0,  -90.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0,  -90.0),
                                 QGeoCoordinate(-30.0, 90.0));
 
     QTest::newRow("180-degree outer gap centered on dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 90.0),
                                 QGeoCoordinate(-30.0, 100.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -100.0),
                                 QGeoCoordinate(-30.0, -90.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 90.0),
                                 QGeoCoordinate(-30.0, -90.0));
 
     QTest::newRow("180-degree shift centered on dateline")
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, 80.0),
                                 QGeoCoordinate(-30.0, 100.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0, -100.0),
                                 QGeoCoordinate(-30.0, -80.0))
-            <<  QGeoBoundingBox(QGeoCoordinate(30.0,  -180.0),
+            <<  QGeoRectangle(QGeoCoordinate(30.0,  -180.0),
                                 QGeoCoordinate(-30.0, 180.0));
 }
 
-void tst_QGeoBoundingBox::areaComparison_data()
+void tst_QGeoRectangle::areaComparison_data()
 {
-    QTest::addColumn<QGeoBoundingArea>("area");
-    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoShape>("area");
+    QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<bool>("equal");
 
-    QGeoBoundingBox b1(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
-    QGeoBoundingBox b2(QGeoCoordinate(20.0, 0.0), QGeoCoordinate(0.0, 20.0));
-    QGeoBoundingCircle c(QGeoCoordinate(0.0, 0.0), 10);
+    QGeoRectangle b1(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+    QGeoRectangle b2(QGeoCoordinate(20.0, 0.0), QGeoCoordinate(0.0, 20.0));
+    QGeoCircle c(QGeoCoordinate(0.0, 0.0), 10);
 
-    QTest::newRow("default constructed") << QGeoBoundingArea() << QGeoBoundingBox() << false;
-    QTest::newRow("b1 b1") << QGeoBoundingArea(b1) << b1 << true;
-    QTest::newRow("b1 b2") << QGeoBoundingArea(b1) << b2 << false;
-    QTest::newRow("b2 b1") << QGeoBoundingArea(b2) << b1 << false;
-    QTest::newRow("b2 b2") << QGeoBoundingArea(b2) << b2 << true;
-    QTest::newRow("c b1") << QGeoBoundingArea(c) << b1 << false;
+    QTest::newRow("default constructed") << QGeoShape() << QGeoRectangle() << false;
+    QTest::newRow("b1 b1") << QGeoShape(b1) << b1 << true;
+    QTest::newRow("b1 b2") << QGeoShape(b1) << b2 << false;
+    QTest::newRow("b2 b1") << QGeoShape(b2) << b1 << false;
+    QTest::newRow("b2 b2") << QGeoShape(b2) << b2 << true;
+    QTest::newRow("c b1") << QGeoShape(c) << b1 << false;
 }
 
-void tst_QGeoBoundingBox::areaComparison()
+void tst_QGeoRectangle::areaComparison()
 {
-    QFETCH(QGeoBoundingArea, area);
-    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoShape, area);
+    QFETCH(QGeoRectangle, box);
     QFETCH(bool, equal);
 
     QCOMPARE((area == box), equal);
@@ -2221,23 +2221,23 @@ void tst_QGeoBoundingBox::areaComparison()
     QCOMPARE((box != area), !equal);
 }
 
-void tst_QGeoBoundingBox::circleComparison_data()
+void tst_QGeoRectangle::circleComparison_data()
 {
-    QTest::addColumn<QGeoBoundingCircle>("circle");
-    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoCircle>("circle");
+    QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<bool>("equal");
 
-    QGeoBoundingBox b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
-    QGeoBoundingCircle c(QGeoCoordinate(0.0, 0.0), 10);
+    QGeoRectangle b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+    QGeoCircle c(QGeoCoordinate(0.0, 0.0), 10);
 
-    QTest::newRow("default constructed") << QGeoBoundingCircle() << QGeoBoundingBox() << false;
+    QTest::newRow("default constructed") << QGeoCircle() << QGeoRectangle() << false;
     QTest::newRow("c b") << c << b << false;
 }
 
-void tst_QGeoBoundingBox::circleComparison()
+void tst_QGeoRectangle::circleComparison()
 {
-    QFETCH(QGeoBoundingCircle, circle);
-    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoCircle, circle);
+    QFETCH(QGeoRectangle, box);
     QFETCH(bool, equal);
 
     QCOMPARE((circle == box), equal);
@@ -2247,6 +2247,6 @@ void tst_QGeoBoundingBox::circleComparison()
     QCOMPARE((box != circle), !equal);
 }
 
-QTEST_MAIN(tst_QGeoBoundingBox)
-#include "tst_qgeoboundingbox.moc"
+QTEST_MAIN(tst_QGeoRectangle)
+#include "tst_qgeorectangle.moc"
 

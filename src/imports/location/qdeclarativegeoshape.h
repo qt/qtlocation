@@ -37,24 +37,28 @@
 **
 ** $QT_END_LICENSE$
 **
-****************************************************************************/
+***************************************************************************/
 
-#include "qdeclarativegeoboundingarea_p.h"
+#ifndef QDECLARATIVEGEOSHAPE_H
+#define QDECLARATIVEGEOSHAPE_H
+
+#include <QtCore/QObject>
+#include <QtQml/qqml.h>
+#include <QtLocation/QGeoShape>
 
 QT_BEGIN_NAMESPACE
 
-/*!
-    \qmlclass BoundingArea QDeclarativeGeoBoundingArea
-    \inqmlmodule QtLocation 5
-    \ingroup qml-QtLocation5-positioning
-    \since Qt Location 5.0
+class QDeclarativeGeoShape : public QObject
+{
+    Q_OBJECT
 
-    \brief The BoundingArea element represents an abstract geographic area.
-
-    The BoundingArea element is not intended to be instantiated by the developer.  Use BoundingBox
-    or BoundingCircle instead.
-
-    \sa BoundingBox, BoundingCircle
-*/
+public:
+    explicit QDeclarativeGeoShape(QObject *parent) :QObject(parent){}
+    virtual QGeoShape shape() const = 0;
+};
 
 QT_END_NAMESPACE
+
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoShape))
+
+#endif

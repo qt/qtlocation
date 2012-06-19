@@ -49,10 +49,12 @@
 #include "qgeocodereply_nokia.h"
 #include "qgeocodexmlparser.h"
 
+#include <QtLocation/QGeoShape>
+
 QT_BEGIN_NAMESPACE
 
 QGeocodeReplyNokia::QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset,
-                                       const QGeoBoundingArea &viewport, QObject *parent)
+                                       const QGeoShape &viewport, QObject *parent)
         : QGeocodeReply(parent),
         m_reply(reply)
 {
@@ -103,7 +105,7 @@ void QGeocodeReplyNokia::networkFinished()
     QGeoCodeXmlParser parser;
     if (parser.parse(m_reply)) {
         QList<QGeoLocation> locations = parser.results();
-        QGeoBoundingArea bounds = viewport();
+        QGeoShape bounds = viewport();
         if (bounds.isValid()) {
             for (int i = locations.size() - 1; i >= 0; --i) {
                 if (!bounds.contains(locations[i].coordinate()))

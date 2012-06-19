@@ -48,7 +48,7 @@
 #include <QtLocation/QGeoRouteReply>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QGeoRoutingManager>
-#include <QtLocation/QGeoBoundingBox>
+#include <QtLocation/QGeoRectangle>
 #include <QtLocation/QGeoManeuver>
 #include <QtLocation/QGeoRouteSegment>
 
@@ -266,7 +266,7 @@ void tst_nokia_routing::verifySaneRoute(const QGeoRoute& route)
     QVERIFY(route.travelTime() > 0);
     QVERIFY(route.travelMode() != 0);
 
-    const QGeoBoundingBox bounds = route.bounds();
+    const QGeoRectangle bounds = route.bounds();
     QVERIFY(bounds.width() > 0);
     QVERIFY(bounds.height() > 0);
 

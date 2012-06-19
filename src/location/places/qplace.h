@@ -46,7 +46,7 @@
 #include <QtLocation/qtlocation.h>
 
 #include "qgeoaddress.h"
-#include "qgeoboundingbox.h"
+#include "qgeorectangle.h"
 #include "qgeocoordinate.h"
 #include "qgeolocation.h"
 #include "qplacecategory.h"

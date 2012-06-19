@@ -71,7 +71,7 @@
 #include <QtNetwork/QNetworkProxyFactory>
 
 #include <QtLocation/QPlaceContentRequest>
-#include <QtLocation/QGeoBoundingCircle>
+#include <QtLocation/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 
@@ -346,18 +346,18 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
     return reply;
 }
 
-static void addAtForBoundingArea(const QGeoBoundingArea &area,
+static void addAtForBoundingArea(const QGeoShape &area,
                                  QUrlQuery *queryItems)
 {
     QGeoCoordinate center;
     switch (area.type()) {
-    case QGeoBoundingArea::BoxType:
-        center = QGeoBoundingBox(area).center();
+    case QGeoShape::RectangleType:
+        center = QGeoRectangle(area).center();
         break;
-    case QGeoBoundingArea::CircleType:
-        center = QGeoBoundingCircle(area).center();
+    case QGeoShape::CircleType:
+        center = QGeoCircle(area).center();
         break;
-    case QGeoBoundingArea::UnknownType:
+    case QGeoShape::UnknownType:
         break;
     }
 

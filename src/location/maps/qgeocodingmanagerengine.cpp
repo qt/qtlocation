@@ -45,6 +45,8 @@
 #include "qgeoaddress.h"
 #include "qgeocoordinate.h"
 
+#include <QtLocation/QGeoShape>
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -164,7 +166,7 @@ int QGeocodingManagerEngine::managerVersion() const
     This will usually occur if the geocoding service backend uses a different
     canonical form of addresses or if \a address was only partially filled out.
 
-    If \a bounds is non-null and a valid QGeoBoundingArea it will be used to
+    If \a bounds is non-null and a valid QGeoShape it will be used to
     limit the results to those that are contained by \a bounds. This is
     particularly useful if \a address is only partially filled out, as the
     service will attempt to geocode all matches for the specified data.
@@ -175,7 +177,7 @@ int QGeocodingManagerEngine::managerVersion() const
     QGeocodeReply::error() with deleteLater().
 */
 QGeocodeReply *QGeocodingManagerEngine::geocode(const QGeoAddress &address,
-        const QGeoBoundingArea &bounds)
+        const QGeoShape &bounds)
 {
     Q_UNUSED(address)
     Q_UNUSED(bounds)
@@ -211,7 +213,7 @@ QGeocodeReply *QGeocodingManagerEngine::geocode(const QGeoAddress &address,
     As an example, some services will return address and coordinate pairs for
     the street address, the city, the state and the country.
 
-    If \a bounds is non-null and a valid QGeoBoundingArea it will be used to
+    If \a bounds is non-null and a valid QGeoShape it will be used to
     limit the results to those that are contained by \a bounds.
 
     The user is responsible for deleting the returned reply object, although
@@ -220,7 +222,7 @@ QGeocodeReply *QGeocodingManagerEngine::geocode(const QGeoAddress &address,
     QGeocodeReply::error() with deleteLater().
 */
 QGeocodeReply *QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coordinate,
-        const QGeoBoundingArea &bounds)
+        const QGeoShape &bounds)
 {
     Q_UNUSED(coordinate)
     Q_UNUSED(bounds)
@@ -249,7 +251,7 @@ QGeocodeReply *QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coo
 
     The \a limit and \a offset results are used together to implement paging.
 
-    If \a bounds is non-null and a valid QGeoBoundingArea it will be used to
+    If \a bounds is non-null and a valid QGeoShape it will be used to
     limit the results to those that are contained by \a bounds.
 
     The user is responsible for deleting the returned reply object, although
@@ -260,7 +262,7 @@ QGeocodeReply *QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coo
 QGeocodeReply *QGeocodingManagerEngine::geocode(const QString &address,
         int limit,
         int offset,
-        const QGeoBoundingArea &bounds)
+        const QGeoShape &bounds)
 {
     Q_UNUSED(address)
     Q_UNUSED(limit)

@@ -52,6 +52,9 @@
 #include <QIODevice>
 
 #include <qgeolocation.h>
+#include <QtLocation/QGeoAddress>
+#include <QtLocation/QGeoCoordinate>
+#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
@@ -303,7 +306,7 @@ bool QGeoCodeXmlParser::parseLocation(QGeoLocation *location)
                 return false;
             }
 
-            QGeoBoundingBox bounds;
+            QGeoRectangle bounds;
 
             if (!parseBoundingBox(&bounds))
                 return false;
@@ -441,7 +444,7 @@ bool QGeoCodeXmlParser::parseAddress(QGeoAddress *address)
     return false;
 }
 
-bool QGeoCodeXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
+bool QGeoCodeXmlParser::parseBoundingBox(QGeoRectangle *bounds)
 {
     /*
     <xsd:complexType name="GeoBox">
@@ -489,7 +492,7 @@ bool QGeoCodeXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
         return false;
     }
 
-    *bounds = QGeoBoundingBox(nw, se);
+    *bounds = QGeoRectangle(nw, se);
 
     return true;
 }

@@ -43,8 +43,8 @@
 #include "qgeocodingmanager_p.h"
 #include "qgeocodingmanagerengine.h"
 
-#include "qgeoboundingbox.h"
-#include "qgeoboundingcircle.h"
+#include "qgeorectangle.h"
+#include "qgeocircle.h"
 
 #include <QLocale>
 
@@ -163,7 +163,7 @@ int QGeocodingManager::managerVersion() const
     This will usually occur if the geocoding service backend uses a different
     canonical form of addresses or if \a address was only partially filled out.
 
-    If \a bounds is non-null and valid QGeoBoundingArea it will be used to
+    If \a bounds is non-null and is a valid QGeoShape it will be used to
     limit the results to those that are contained within \a bounds. This is
     particularly useful if \a address is only partially filled out, as the
     service will attempt to geocode all matches for the specified data.
@@ -173,7 +173,7 @@ int QGeocodingManager::managerVersion() const
     QGeocodingManager::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply *QGeocodingManager::geocode(const QGeoAddress &address, const QGeoBoundingArea &bounds)
+QGeocodeReply *QGeocodingManager::geocode(const QGeoAddress &address, const QGeoShape &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
@@ -210,7 +210,7 @@ QGeocodeReply *QGeocodingManager::geocode(const QGeoAddress &address, const QGeo
     As an example, some services will return address and coordinate pairs for
     the street address, the city, the state and the country.
 
-    If \a bounds is non-null and a valid QGeoBoundingBox it will be used to
+    If \a bounds is non-null and a valid QGeoRectangle it will be used to
     limit the results to those that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
@@ -218,7 +218,7 @@ QGeocodeReply *QGeocodingManager::geocode(const QGeoAddress &address, const QGeo
     QGeocodingManager::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply *QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingArea &bounds)
+QGeocodeReply *QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoShape &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
@@ -247,7 +247,7 @@ QGeocodeReply *QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinat
 
     The \a limit and \a offset results are used together to implement paging.
 
-    If \a bounds is non-null and a valid QGeoBoundingArea it will be used to
+    If \a bounds is non-null and a valid QGeoShape it will be used to
     limit the results to those that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
@@ -258,7 +258,7 @@ QGeocodeReply *QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinat
 QGeocodeReply *QGeocodingManager::geocode(const QString &address,
         int limit,
         int offset,
-        const QGeoBoundingArea &bounds)
+        const QGeoShape &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);

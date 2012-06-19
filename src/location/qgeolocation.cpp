@@ -177,7 +177,7 @@ void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
     Returns a bounding box which represents the recommended region
     to display when viewing this location.
 */
-QGeoBoundingBox QGeoLocation::boundingBox() const
+QGeoRectangle QGeoLocation::boundingBox() const
 {
     return d->viewport;
 }
@@ -185,7 +185,7 @@ QGeoBoundingBox QGeoLocation::boundingBox() const
 /*!
     Sets the \a boundingBox of the location.
 */
-void QGeoLocation::setBoundingBox(const QGeoBoundingBox &boundingBox)
+void QGeoLocation::setBoundingBox(const QGeoRectangle &boundingBox)
 {
     d->viewport = boundingBox;
 }

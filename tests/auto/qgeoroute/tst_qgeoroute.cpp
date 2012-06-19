@@ -69,7 +69,7 @@ void tst_QGeoRoute::cleanup()
 void tst_QGeoRoute::constructor()
 {
     QString empty = "";
-    QGeoBoundingBox *boundingbox = new QGeoBoundingBox();
+    QGeoRectangle *boundingbox = new QGeoRectangle();
 
     QCOMPARE(qgeoroute->bounds(), *boundingbox);
     QCOMPARE(qgeoroute->distance(), qreal(0.0));
@@ -103,7 +103,7 @@ void tst_QGeoRoute::bounds()
     qgeocoordinate->setLatitude(13.3851);
     qgeocoordinate->setLongitude(52.5312);
 
-    QGeoBoundingBox *qgeoboundingbox = new QGeoBoundingBox(*qgeocoordinate,0.4,0.4);
+    QGeoRectangle *qgeoboundingbox = new QGeoRectangle(*qgeocoordinate,0.4,0.4);
 
     qgeoroute->setBounds(*qgeoboundingbox);
 

@@ -40,13 +40,13 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-#include <qgeoboundingcircle.h>
-#include <qgeoboundingbox.h>
-#include <qgeocoordinate.h>
+#include <QtLocation/QGeoCoordinate>
+#include <QtLocation/QGeoCircle>
+#include <QtLocation/QGeoRectangle>
 
 QT_USE_NAMESPACE
 
-class tst_QGeoBoundingCircle : public QObject
+class tst_QGeoCircle : public QObject
 {
     Q_OBJECT
 
@@ -80,24 +80,24 @@ private slots:
     void boxComparison_data();
 };
 
-void tst_QGeoBoundingCircle::defaultConstructor()
+void tst_QGeoCircle::defaultConstructor()
 {
-    QGeoBoundingCircle c;
+    QGeoCircle c;
     QVERIFY(!c.center().isValid());
     QCOMPARE(c.radius(), qreal(-1.0));
 }
 
-void tst_QGeoBoundingCircle::centerRadiusConstructor()
+void tst_QGeoCircle::centerRadiusConstructor()
 {
-    QGeoBoundingCircle c(QGeoCoordinate(1,1), qreal(50.0));
+    QGeoCircle c(QGeoCoordinate(1,1), qreal(50.0));
     QCOMPARE(c.center(), QGeoCoordinate(1,1));
     QCOMPARE(c.radius(), qreal(50.0));
 }
 
-void tst_QGeoBoundingCircle::assignment()
+void tst_QGeoCircle::assignment()
 {
-    QGeoBoundingCircle c1 = QGeoBoundingCircle(QGeoCoordinate(10.0, 0.0), 20.0);
-    QGeoBoundingCircle c2 = QGeoBoundingCircle(QGeoCoordinate(20.0, 0.0), 30.0);
+    QGeoCircle c1 = QGeoCircle(QGeoCoordinate(10.0, 0.0), 20.0);
+    QGeoCircle c2 = QGeoCircle(QGeoCoordinate(20.0, 0.0), 30.0);
 
     QVERIFY(c1 != c2);
 
@@ -112,12 +112,12 @@ void tst_QGeoBoundingCircle::assignment()
     QCOMPARE(c1.radius(), 20.0);
 
     // Assign c1 to an area
-    QGeoBoundingArea area = c1;
+    QGeoShape area = c1;
     QCOMPARE(area.type(), c1.type());
     QVERIFY(area == c1);
 
     // Assign the area back to a bounding circle
-    QGeoBoundingCircle ca = area;
+    QGeoCircle ca = area;
     QCOMPARE(ca.center(), c1.center());
     QCOMPARE(ca.radius(), c1.radius());
 
@@ -127,12 +127,12 @@ void tst_QGeoBoundingCircle::assignment()
     QVERIFY(ca != c1);
 }
 
-void tst_QGeoBoundingCircle::comparison()
+void tst_QGeoCircle::comparison()
 {
-    QGeoBoundingCircle c1(QGeoCoordinate(1,1), qreal(50.0));
-    QGeoBoundingCircle c2(QGeoCoordinate(1,1), qreal(50.0));
-    QGeoBoundingCircle c3(QGeoCoordinate(1,1), qreal(35.0));
-    QGeoBoundingCircle c4(QGeoCoordinate(1,2), qreal(50.0));
+    QGeoCircle c1(QGeoCoordinate(1,1), qreal(50.0));
+    QGeoCircle c2(QGeoCoordinate(1,1), qreal(50.0));
+    QGeoCircle c3(QGeoCoordinate(1,1), qreal(35.0));
+    QGeoCircle c4(QGeoCoordinate(1,2), qreal(50.0));
 
     QVERIFY(c1 == c2);
     QVERIFY(!(c1 != c2));
@@ -146,44 +146,44 @@ void tst_QGeoBoundingCircle::comparison()
     QVERIFY(!(c2 == c3));
     QVERIFY(c2 != c3);
 
-    QGeoBoundingBox b1(QGeoCoordinate(20,20),QGeoCoordinate(10,30));
+    QGeoRectangle b1(QGeoCoordinate(20,20),QGeoCoordinate(10,30));
     QVERIFY(!(c1 == b1));
     QVERIFY(c1 != b1);
 
-    QGeoBoundingArea *c2Ptr = &c2;
+    QGeoShape *c2Ptr = &c2;
     QVERIFY(c1 == *c2Ptr);
     QVERIFY(!(c1 != *c2Ptr));
 
-    QGeoBoundingArea *c3Ptr = &c3;
+    QGeoShape *c3Ptr = &c3;
     QVERIFY(!(c1 == *c3Ptr));
     QVERIFY(c1 != *c3Ptr);
 }
 
-void tst_QGeoBoundingCircle::type()
+void tst_QGeoCircle::type()
 {
-    QGeoBoundingCircle c;
-    QCOMPARE(c.type(), QGeoBoundingArea::CircleType);
+    QGeoCircle c;
+    QCOMPARE(c.type(), QGeoShape::CircleType);
 }
 
-void tst_QGeoBoundingCircle::radius()
+void tst_QGeoCircle::radius()
 {
-    QGeoBoundingCircle c;
+    QGeoCircle c;
     c.setRadius(1.0);
     QCOMPARE(c.radius(), qreal(1.0));
     c.setRadius(5.0);
     QCOMPARE(c.radius(), qreal(5.0));
 }
 
-void tst_QGeoBoundingCircle::center()
+void tst_QGeoCircle::center()
 {
-    QGeoBoundingCircle c;
+    QGeoCircle c;
     c.setCenter(QGeoCoordinate(1,1));
     QCOMPARE(c.center(), QGeoCoordinate(1,1));
     c.setCenter(QGeoCoordinate(5,10));
     QCOMPARE(c.center(), QGeoCoordinate(5,10));
 }
 
-void tst_QGeoBoundingCircle::translate_data()
+void tst_QGeoCircle::translate_data()
 {
     QTest::addColumn<QGeoCoordinate>("center");
     QTest::addColumn<qreal>("radius");
@@ -200,7 +200,7 @@ void tst_QGeoBoundingCircle::translate_data()
                                               << QGeoCoordinate(-8.0, 10.0);
 }
 
-void tst_QGeoBoundingCircle::translate()
+void tst_QGeoCircle::translate()
 {
     QFETCH(QGeoCoordinate, center);
     QFETCH(qreal, radius);
@@ -208,8 +208,8 @@ void tst_QGeoBoundingCircle::translate()
     QFETCH(double, lon);
     QFETCH(QGeoCoordinate, newCenter);
 
-    QGeoBoundingCircle c(center, radius);
-    QGeoBoundingCircle d = c;
+    QGeoCircle c(center, radius);
+    QGeoCircle d = c;
 
     c.translate(lat, lon);
 
@@ -224,7 +224,7 @@ void tst_QGeoBoundingCircle::translate()
     QCOMPARE(c.center(), newCenter);
 }
 
-void tst_QGeoBoundingCircle::valid_data()
+void tst_QGeoCircle::valid_data()
 {
     QTest::addColumn<QGeoCoordinate>("center");
     QTest::addColumn<qreal>("radius");
@@ -239,20 +239,20 @@ void tst_QGeoBoundingCircle::valid_data()
     QTest::newRow("good") << QGeoCoordinate(10, 10) << qreal(5.0) << true;
 }
 
-void tst_QGeoBoundingCircle::valid()
+void tst_QGeoCircle::valid()
 {
     QFETCH(QGeoCoordinate, center);
     QFETCH(qreal, radius);
     QFETCH(bool, valid);
 
-    QGeoBoundingCircle c(center, radius);
+    QGeoCircle c(center, radius);
     QCOMPARE(c.isValid(), valid);
 
-    QGeoBoundingArea area = c;
+    QGeoShape area = c;
     QCOMPARE(c.isValid(), valid);
 }
 
-void tst_QGeoBoundingCircle::empty_data()
+void tst_QGeoCircle::empty_data()
 {
     QTest::addColumn<QGeoCoordinate>("center");
     QTest::addColumn<qreal>("radius");
@@ -267,20 +267,20 @@ void tst_QGeoBoundingCircle::empty_data()
     QTest::newRow("good") << QGeoCoordinate(10, 10) << qreal(5.0) << false;
 }
 
-void tst_QGeoBoundingCircle::empty()
+void tst_QGeoCircle::empty()
 {
     QFETCH(QGeoCoordinate, center);
     QFETCH(qreal, radius);
     QFETCH(bool, empty);
 
-    QGeoBoundingCircle c(center, radius);
+    QGeoCircle c(center, radius);
     QCOMPARE(c.isEmpty(), empty);
 
-    QGeoBoundingArea area = c;
+    QGeoShape area = c;
     QCOMPARE(area.isEmpty(), empty);
 }
 
-void tst_QGeoBoundingCircle::contains_data()
+void tst_QGeoCircle::contains_data()
 {
     QTest::addColumn<QGeoCoordinate>("center");
     QTest::addColumn<qreal>("radius");
@@ -299,42 +299,42 @@ void tst_QGeoBoundingCircle::contains_data()
                                        QGeoCoordinate(1.00071413, 0.99943423) << false;
 }
 
-void tst_QGeoBoundingCircle::contains()
+void tst_QGeoCircle::contains()
 {
     QFETCH(QGeoCoordinate, center);
     QFETCH(qreal, radius);
     QFETCH(QGeoCoordinate, probe);
     QFETCH(bool, result);
 
-    QGeoBoundingCircle c(center, radius);
+    QGeoCircle c(center, radius);
     QCOMPARE(c.contains(probe), result);
 
-    QGeoBoundingArea area = c;
+    QGeoShape area = c;
     QCOMPARE(area.contains(probe), result);
 }
 
-void tst_QGeoBoundingCircle::areaComparison_data()
+void tst_QGeoCircle::areaComparison_data()
 {
-    QTest::addColumn<QGeoBoundingArea>("area");
-    QTest::addColumn<QGeoBoundingCircle>("circle");
+    QTest::addColumn<QGeoShape>("area");
+    QTest::addColumn<QGeoCircle>("circle");
     QTest::addColumn<bool>("equal");
 
-    QGeoBoundingCircle c1(QGeoCoordinate(10.0, 0.0), 10.0);
-    QGeoBoundingCircle c2(QGeoCoordinate(20.0, 10.0), 20.0);
-    QGeoBoundingBox b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+    QGeoCircle c1(QGeoCoordinate(10.0, 0.0), 10.0);
+    QGeoCircle c2(QGeoCoordinate(20.0, 10.0), 20.0);
+    QGeoRectangle b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
 
-    QTest::newRow("default constructed") << QGeoBoundingArea() << QGeoBoundingCircle() << false;
-    QTest::newRow("c1 c1") << QGeoBoundingArea(c1) << c1 << true;
-    QTest::newRow("c1 c2") << QGeoBoundingArea(c1) << c2 << false;
-    QTest::newRow("c2 c1") << QGeoBoundingArea(c2) << c1 << false;
-    QTest::newRow("c2 c2") << QGeoBoundingArea(c2) << c2 << true;
-    QTest::newRow("b c1") << QGeoBoundingArea(b) << c1 << false;
+    QTest::newRow("default constructed") << QGeoShape() << QGeoCircle() << false;
+    QTest::newRow("c1 c1") << QGeoShape(c1) << c1 << true;
+    QTest::newRow("c1 c2") << QGeoShape(c1) << c2 << false;
+    QTest::newRow("c2 c1") << QGeoShape(c2) << c1 << false;
+    QTest::newRow("c2 c2") << QGeoShape(c2) << c2 << true;
+    QTest::newRow("b c1") << QGeoShape(b) << c1 << false;
 }
 
-void tst_QGeoBoundingCircle::areaComparison()
+void tst_QGeoCircle::areaComparison()
 {
-    QFETCH(QGeoBoundingArea, area);
-    QFETCH(QGeoBoundingCircle, circle);
+    QFETCH(QGeoShape, area);
+    QFETCH(QGeoCircle, circle);
     QFETCH(bool, equal);
 
     QCOMPARE((area == circle), equal);
@@ -344,23 +344,23 @@ void tst_QGeoBoundingCircle::areaComparison()
     QCOMPARE((circle != area), !equal);
 }
 
-void tst_QGeoBoundingCircle::boxComparison_data()
+void tst_QGeoCircle::boxComparison_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("box");
-    QTest::addColumn<QGeoBoundingCircle>("circle");
+    QTest::addColumn<QGeoRectangle>("box");
+    QTest::addColumn<QGeoCircle>("circle");
     QTest::addColumn<bool>("equal");
 
-    QGeoBoundingCircle c(QGeoCoordinate(10.0, 0.0), 10.0);
-    QGeoBoundingBox b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+    QGeoCircle c(QGeoCoordinate(10.0, 0.0), 10.0);
+    QGeoRectangle b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
 
-    QTest::newRow("default constructed") << QGeoBoundingBox() << QGeoBoundingCircle() << false;
+    QTest::newRow("default constructed") << QGeoRectangle() << QGeoCircle() << false;
     QTest::newRow("b c") << b << c << false;
 }
 
-void tst_QGeoBoundingCircle::boxComparison()
+void tst_QGeoCircle::boxComparison()
 {
-    QFETCH(QGeoBoundingBox, box);
-    QFETCH(QGeoBoundingCircle, circle);
+    QFETCH(QGeoRectangle, box);
+    QFETCH(QGeoCircle, circle);
     QFETCH(bool, equal);
 
     QCOMPARE((box == circle), equal);
@@ -370,5 +370,5 @@ void tst_QGeoBoundingCircle::boxComparison()
     QCOMPARE((circle != box), !equal);
 }
 
-QTEST_MAIN(tst_QGeoBoundingCircle)
-#include "tst_qgeoboundingcircle.moc"
+QTEST_MAIN(tst_QGeoCircle)
+#include "tst_qgeocircle.moc"

@@ -72,7 +72,7 @@ public:
     bool operator ==(const QGeoRouteRequestPrivate &other) const;
 
     QList<QGeoCoordinate> waypoints;
-    QList<QGeoBoundingBox> excludeAreas;
+    QList<QGeoRectangle> excludeAreas;
     int numberAlternativeRoutes;
     QGeoRouteRequest::TravelModes travelModes;
     QMap < QGeoRouteRequest::FeatureType,

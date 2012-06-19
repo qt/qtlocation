@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
 
 class QGeoCoordinate;
-class QGeoBoundingBox;
+class QGeoRectangle;
 class QGeoRouteRequestPrivate;
 
 class Q_LOCATION_EXPORT QGeoRouteRequest
@@ -127,8 +127,8 @@ public:
     void setWaypoints(const QList<QGeoCoordinate> &waypoints);
     QList<QGeoCoordinate> waypoints() const;
 
-    void setExcludeAreas(const QList<QGeoBoundingBox> &areas);
-    QList<QGeoBoundingBox> excludeAreas() const;
+    void setExcludeAreas(const QList<QGeoRectangle> &areas);
+    QList<QGeoRectangle> excludeAreas() const;
 
     // defaults to 0
     void setNumberAlternativeRoutes(int alternatives);

@@ -88,7 +88,7 @@ QDeclarativeGeoRoute::~QDeclarativeGeoRoute() {}
 
 void QDeclarativeGeoRoute::init()
 {
-    bounds_ = new QDeclarativeGeoBoundingBox(route_.bounds(), this);
+    bounds_ = new QDeclarativeGeoRectangle(route_.bounds(), this);
 
     for (int i = 0; i < route_.path().size(); ++i)
         path_.append(new QDeclarativeCoordinate(route_.path().at(i), this));
@@ -119,13 +119,13 @@ QList<QGeoCoordinate> QDeclarativeGeoRoute::routePath()
 }
 
 /*!
-    \qmlproperty BoundingBox QtLocation5::Route::bounds
+    \qmlproperty GeoRectangle QtLocation5::Route::bounds
 
     Read-only property which holds a bounding box which encompasses the entire route.
 
 */
 
-QDeclarativeGeoBoundingBox *QDeclarativeGeoRoute::bounds() const
+QDeclarativeGeoRectangle *QDeclarativeGeoRoute::bounds() const
 {
     return bounds_;
 }

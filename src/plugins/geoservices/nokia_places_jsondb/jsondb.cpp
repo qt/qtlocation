@@ -41,7 +41,6 @@
 
 #include "icon.h"
 #include "jsondb.h"
-#include "qgeoboundingcircle.h"
 #include "qplacemanagerengine_jsondb.h"
 
 #include <QtCore/QDebug>
@@ -53,6 +52,7 @@
 #include <QtJsonDb/QJsonDbWriteRequest>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceCategory>
+#include <QtLocation/QGeoCircle>
 
 const QLatin1String JsonDb::Uuid("_uuid");
 const QLatin1String JsonDb::Type("_type");
@@ -847,9 +847,9 @@ void JsonDb::searchForPlaces(const QPlaceSearchRequest &request, QObject *parent
         queryString += QString::fromLatin1("]");
     }
 
-    if (request.searchArea().type() == QGeoBoundingArea::BoxType) {
+    if (request.searchArea().type() == QGeoShape::RectangleType) {
         const double epsilon = 0.0001;
-        QGeoBoundingBox box(request.searchArea());
+        QGeoRectangle box(request.searchArea());
         double tly = box.topLeft().latitude();
         double bry = box.bottomRight().latitude();
         double tlx = box.topLeft().longitude();

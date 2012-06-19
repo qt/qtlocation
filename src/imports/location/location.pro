@@ -36,14 +36,14 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomapmousearea_p.h \
            qdeclarativegeoserviceprovider_p.h \
            qdeclarativegeoaddress_p.h \
-           qdeclarativegeoboundingarea_p.h \
-           qdeclarativegeoboundingbox_p.h \
+           qdeclarativegeoshape.h \
+           qdeclarativegeorectangle.h \
+           qdeclarativegeocircle.h \
            qdeclarativegeocodemodel_p.h \
            qdeclarativegeoroutemodel_p.h \
            qdeclarativegeoroute_p.h \
            qdeclarativegeoroutesegment_p.h \
            qdeclarativegeomaneuver_p.h \
-           qdeclarativegeoboundingcircle_p.h \
            qdeclarativegeomap_p.h \
            qdeclarativegeomapflickable_p.h \
            qdeclarativegeomappincharea_p.h \
@@ -71,14 +71,14 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomapmousearea.cpp \
            qdeclarativegeoserviceprovider.cpp \
            qdeclarativegeoaddress.cpp \
-           qdeclarativegeoboundingarea.cpp \
-           qdeclarativegeoboundingbox.cpp \
+           qdeclarativegeoshape.cpp \
+           qdeclarativegeorectangle.cpp \
+           qdeclarativegeocircle.cpp \
            qdeclarativegeocodemodel.cpp \
            qdeclarativegeoroutemodel.cpp \
            qdeclarativegeoroute.cpp \
            qdeclarativegeoroutesegment.cpp \
            qdeclarativegeomaneuver.cpp \
-           qdeclarativegeoboundingcircle.cpp \
            qdeclarativegeomap.cpp \
            qdeclarativegeomapflickable.cpp \
            qdeclarativegeomappincharea.cpp \

@@ -51,7 +51,7 @@
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
 #include <qgeolocation.h>
-#include <qgeoboundingbox.h>
+#include <QtLocation/QGeoRectangle>
 
 QT_USE_NAMESPACE
 
@@ -86,7 +86,7 @@ private:
 
     QGeoAddress m_address;
     QGeoCoordinate m_coordinate;
-    QGeoBoundingBox m_viewport;
+    QGeoRectangle m_viewport;
 };
 
 Q_DECLARE_METATYPE( QGeoCoordinate::CoordinateFormat);

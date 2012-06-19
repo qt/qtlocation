@@ -144,14 +144,14 @@ void QDeclarativeGeocodeModel::componentComplete()
 /*!
     \internal
 */
-QGeoBoundingArea QDeclarativeGeocodeModel::boundingArea()
+QGeoShape QDeclarativeGeocodeModel::boundingArea()
 {
-    if (qobject_cast<QDeclarativeGeoBoundingBox *>(boundingArea_) && boundingBox_.isValid()) {
+    if (qobject_cast<QDeclarativeGeoRectangle *>(boundingArea_) && boundingBox_.isValid()) {
         return boundingBox_;
-    } else if (qobject_cast<QDeclarativeGeoBoundingCircle *>(boundingArea_) && boundingCircle_.isValid()) {
+    } else if (qobject_cast<QDeclarativeGeoCircle *>(boundingArea_) && boundingCircle_.isValid()) {
         return boundingCircle_;
     }
-    return QGeoBoundingArea();
+    return QGeoShape();
 }
 
 /*!
@@ -338,10 +338,10 @@ void QDeclarativeGeocodeModel::setBounds(QObject *bounds)
 {
     if (boundingArea_ == bounds)
             return;
-    if (qobject_cast<QDeclarativeGeoBoundingBox *>(bounds)) {
-        boundingBox_ = qobject_cast<QDeclarativeGeoBoundingBox *>(bounds)->box();
-    } else if (qobject_cast<QDeclarativeGeoBoundingCircle *>(bounds)) {
-        boundingCircle_ = qobject_cast<QDeclarativeGeoBoundingCircle *>(bounds)->circle();
+    if (qobject_cast<QDeclarativeGeoRectangle *>(bounds)) {
+        boundingBox_ = qobject_cast<QDeclarativeGeoRectangle *>(bounds)->rectangle();
+    } else if (qobject_cast<QDeclarativeGeoCircle *>(bounds)) {
+        boundingCircle_ = qobject_cast<QDeclarativeGeoCircle *>(bounds)->circle();
     } else {
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, UNSUPPORTED_BOUND_TYPE);
         return;
@@ -351,13 +351,13 @@ void QDeclarativeGeocodeModel::setBounds(QObject *bounds)
 }
 
 /*!
-    \qmlproperty bounding area QtLocation5::GeocodeModel::bounds
+    \qmlproperty GeoShape QtLocation5::GeocodeModel::bounds
 
     This property holds the bounding area used to limit the results to those
     within the area. his is particularly useful if query is only partially filled out,
     as the service will attempt to (reverse) geocode all matches for the specified data.
 
-    Accepted element types are \l BoundingBox and \l BoundingCircle.
+    Accepted element types are \l GeoRectangle and \l GeoCircle.
 
 */
 

@@ -42,7 +42,7 @@
 #include "qgeoroute.h"
 #include "qgeoroute_p.h"
 
-#include "qgeoboundingbox.h"
+#include "qgeorectangle.h"
 #include "qgeoroutesegment.h"
 
 #include <QDateTime>
@@ -165,7 +165,7 @@ QGeoRouteRequest QGeoRoute::request() const
 /*!
     Sets the bounding box which encompasses the entire route to \a bounds.
 */
-void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
+void QGeoRoute::setBounds(const QGeoRectangle &bounds)
 {
     d_ptr->bounds = bounds;
 }
@@ -173,7 +173,7 @@ void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
 /*!
     Returns a bounding box which encompasses the entire route.
 */
-QGeoBoundingBox QGeoRoute::bounds() const
+QGeoRectangle QGeoRoute::bounds() const
 {
     return d_ptr->bounds;
 }

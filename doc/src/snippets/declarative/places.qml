@@ -123,7 +123,7 @@ Item {
         plugin: myPlugin
 
         searchTerm: "Pizza"
-        searchArea: BoundingCircle {
+        searchArea: GeoCircle {
             center: Coordinate {
                 // Brisbane
                 longitude: 153.02778
@@ -163,7 +163,7 @@ Item {
 
         plugin: myPlugin
 
-        searchArea: BoundingCircle {
+        searchArea: GeoCircle {
             center: Coordinate {
                 // Brisbane
                 longitude: 153.02778

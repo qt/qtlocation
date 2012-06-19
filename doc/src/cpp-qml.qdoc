@@ -144,27 +144,27 @@ The following sets the properties of this object based on a QGeoAddress object f
 \snippet snippets/cpp/cppqml.cpp Address set
 
 
-\section2  BoundingBox - QGeoBoundingBox
+\section2  GeoRectangle - QGeoRectangle
 \target boundingbox
-The \l {BoundingBox::box} {BoundingBox.box} property is used to provide an interface between C++ and QML code.  First a pointer to a
-BoundingBox object must be obtained from C++, then use the \l {QObject::property()}{property()}
+The \l {GeoRectangle::box} {GeoRectangle.box} property is used to provide an interface between C++ and QML code.  First a pointer to a
+GeoRectangle object must be obtained from C++, then use the \l {QObject::property()}{property()}
 and \l {QObject::setProperty()}{setProperty()} functions to get and set the \c box property.
-The following gets the QGeoBoundingBox representing this object from C++:
-\snippet snippets/cpp/cppqml.cpp BoundingBox get
-The following sets the properties of this object based on a QGeoBoundingBox object from C++:
-\snippet snippets/cpp/cppqml.cpp BoundingBox set
+The following gets the QGeoRectangle representing this object from C++:
+\snippet snippets/cpp/cppqml.cpp GeoRectangle get
+The following sets the properties of this object based on a QGeoRectangle object from C++:
+\snippet snippets/cpp/cppqml.cpp GeoRectangle set
 
 
-\section2 BoundingCircle - QGeoBoundingCircle
+\section2 GeoCircle - QGeoCircle
 \target boundingcircle
-The \l {BoundingCircle::circle} {BoundingCircle.circle} property is used to provide an interface between C++ and QML code.  First a pointer to a
-BoundingCircle object must be obtained from C++, then use the
+The \l {GeoCircle::circle} {GeoCircle.circle} property is used to provide an interface between C++ and QML code.  First a pointer to a
+GeoCircle object must be obtained from C++, then use the
 \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
 to get and set the \c circle property.
-The following gets the QGeoBoundingCircle representing this object from C++:
-\snippet snippets/cpp/cppqml.cpp BoundingCircle get
-The following sets the properties of this object based on a QGeoBoundingCircle object from C++:
-\snippet snippets/cpp/cppqml.cpp BoundingCircle set
+The following gets the QGeoCircle representing this object from C++:
+\snippet snippets/cpp/cppqml.cpp GeoCircle get
+The following sets the properties of this object based on a QGeoCircle object from C++:
+\snippet snippets/cpp/cppqml.cpp GeoCircle set
 
 \section2 Location - QGeoLocation
 \target location

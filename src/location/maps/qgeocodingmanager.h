@@ -43,7 +43,7 @@
 #define QGEOCODINGMANAGER_H
 
 #include "qgeocodereply.h"
-#include "qgeoboundingbox.h"
+#include "qgeorectangle.h"
 
 #include <QObject>
 #include <QList>
@@ -70,14 +70,14 @@ public:
     int managerVersion() const;
 
     QGeocodeReply *geocode(const QGeoAddress &address,
-                           const QGeoBoundingArea &bounds = QGeoBoundingArea());
+                           const QGeoShape &bounds = QGeoShape());
     QGeocodeReply *geocode(const QString &searchString,
                             int limit = -1,
                             int offset = 0,
-                           const QGeoBoundingArea &bounds = QGeoBoundingArea());
+                           const QGeoShape &bounds = QGeoShape());
 
     QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
-                                  const QGeoBoundingArea &bounds = QGeoBoundingArea());
+                                  const QGeoShape &bounds = QGeoShape());
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;

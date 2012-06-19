@@ -42,19 +42,16 @@
 #ifndef QGEOCODINGMANAGERENGINE_H
 #define QGEOCODINGMANAGERENGINE_H
 
-#include "qgeocodingmanager.h"
-#include "qgeocodereply.h"
-#include "qgeoboundingbox.h"
-
-#include <QObject>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/QGeocodeReply>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
+class QGeoAddress;
+class QGeoShape;
 class QGeocodingManagerEnginePrivate;
 
 class Q_LOCATION_EXPORT QGeocodingManagerEngine : public QObject
@@ -67,14 +64,13 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    virtual QGeocodeReply *geocode(const QGeoAddress &address,
-                                     const QGeoBoundingArea &bounds);
+    virtual QGeocodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds);
     virtual QGeocodeReply *geocode(const QString &address,
-                                    int limit,
-                                    int offset,
-                                    const QGeoBoundingArea &bounds);
+                                   int limit,
+                                   int offset,
+                                   const QGeoShape &bounds);
     virtual QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
-                                          const QGeoBoundingArea &bounds);
+                                          const QGeoShape &bounds);
 
 
     void setLocale(const QLocale &locale);
