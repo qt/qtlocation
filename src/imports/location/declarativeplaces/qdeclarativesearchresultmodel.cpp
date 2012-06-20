@@ -192,8 +192,8 @@ QT_USE_NAMESPACE
     an application developer will not need to set this property.
 
     In cases where the favorites plugin does not support matching by alternative identifiers,
-    then the \l {Information about plugins} {backend plugin documentation} should be consulted
-    to see precisely what key-value parameters to set.
+    then the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation} should
+    be consulted to see precisely what key-value parameters to set.
 */
 
 /*!

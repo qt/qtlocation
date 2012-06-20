@@ -164,8 +164,8 @@ void QPlaceSearchRequestPrivate::clear()
 
     Also be aware that providers may vary by which parameters they support for example some providers may not support
     paging while others do, some providers may honor relevance hints while others may completely ignore them,
-    see \l {Information about plugins}.
-
+    see the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation} for more
+    details.
 */
 
 /*!

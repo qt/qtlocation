@@ -14,7 +14,8 @@
     \endlist
 
     It is possible that providers may only support a subset of these.
-    See the \l {Information about plugins} {provider plugins} for more details.
+    See the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation} for more
+    details.
 
     Saving of properties such as the rating, extended attributes,
     images, reviews, editorials and supplier is explicitly not supported by the Places API.

@@ -98,7 +98,7 @@ bool QPlaceIconPrivate::operator == (const QPlaceIconPrivate &other) const
     closely matches those parameters is returned.
 
     The icon class also has a key-value set of parameters.  The precise key one
-    needs to use depends on the \l {Information about plugins} {plugin backend}
+    needs to use depends on the \l {Qt Location Module#Plugin References and Parameters}{plugin}
     being used.  These parameters influence which icon URL is returned by
     the manager and may also be used to specify icon URL locations when
     saving icons.
@@ -196,7 +196,7 @@ QUrl QPlaceIcon::url(const QSize &size) const
     URL when url() is called and to specify locations to save to
     when saving icons.
 
-    Consult the \l {Information about plugins} {plugin documentation}
+    Consult the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation}
     for what parameters are supported and how they should be used.
 */
 QVariantMap QPlaceIcon::parameters() const

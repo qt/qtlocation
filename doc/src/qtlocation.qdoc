@@ -238,6 +238,6 @@ Qt Location available for a new platform.
         \li Information about the Qt Location GeoServices plugins
     \row
         \li \l {Places Backend} {Places}
-        \li Information for \l {Places Backend} Implementors
+        \li Information for places backend implementors
 \endtable
 */
