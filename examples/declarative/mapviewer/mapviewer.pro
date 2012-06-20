@@ -1,9 +1,38 @@
-TEMPLATE = subdirs
+TARGET = qml_location_mapviewer
+TEMPLATE = app
 
-mapviewer.file = qml.pro
-!no_qmlwrapper:mapviewer.CONFIG += no_default_install no_default_target
+QT += qml network quick
+SOURCES += qmlmapviewerwrapper.cpp
 
-mapviewerwrapper.file = mapviewerwrapper.pro
-no_qmlwrapper:mapviewerwrapper.CONFIG += no_default_install no_default_target
+RESOURCES += \
+    mapviewerwrapper.qrc
 
-SUBDIRS += mapviewerwrapper mapviewer
+qmlcontent.files += \
+    mapviewer.qml \
+    demo.ogv
+OTHER_FILES += $$qmlcontent.files
+
+qmlcontentmap.files += \
+    content/map/MapComponent.qml \
+    content/map/Marker.qml \
+    content/map/CircleItem.qml \
+    content/map/RectangleItem.qml \
+    content/map/PolylineItem.qml \
+    content/map/PolygonItem.qml \
+    content/map/ImageItem.qml \
+    content/map/VideoItem.qml \
+    content/map/3dItem.qml \
+    content/map/MiniMap.qml
+OTHER_FILES += $$qmlcontentmap.files
+
+qmlcontentdialogs.files += \
+    content/dialogs/Message.qml \
+    content/dialogs/RouteDialog.qml
+OTHER_FILES += $$qmlcontentdialogs.files
+
+include(../common/common.pri)
+
+target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/mapviewer
+
+INSTALLS += target
+
