@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlclass MapFlickable QDeclarativeGeoMapFlickable
 
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
 
     \brief The MapFlickable element provides basic flicking of the Map.
 

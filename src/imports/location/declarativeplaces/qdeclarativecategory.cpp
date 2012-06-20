@@ -53,7 +53,7 @@ QT_USE_NAMESPACE
 
 /*!
     \qmlclass Category QDeclarativeCategory
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
 

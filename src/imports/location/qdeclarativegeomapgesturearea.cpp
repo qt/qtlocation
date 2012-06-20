@@ -147,7 +147,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlclass MapGestureArea QDeclarativeGeoMapGestureArea
 
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
 
     \brief The MapGestureArea element provides Map gesture interaction.
 

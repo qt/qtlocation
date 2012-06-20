@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass EditorialModel QDeclarativePlaceEditorialModel
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0

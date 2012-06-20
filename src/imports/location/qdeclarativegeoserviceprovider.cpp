@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Plugin QDeclarativeGeoServiceProvider
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-common
     \since Qt Location 5.0
 
@@ -654,7 +654,7 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
 
 /*!
     \qmlclass PluginParameter QDeclarativeGeoServiceProviderParameter
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-common
     \since Qt Location 5.0
 

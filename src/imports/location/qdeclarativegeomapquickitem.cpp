@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass MapQuickItem QDeclarativeGeoMapQuickItem
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 

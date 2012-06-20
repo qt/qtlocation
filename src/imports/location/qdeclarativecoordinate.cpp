@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Coordinate QDeclarativeCoordinate
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 

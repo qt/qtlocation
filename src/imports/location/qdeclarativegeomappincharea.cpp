@@ -130,7 +130,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlclass MapPinchArea QDeclarativeGeoMapPinchArea
 
-    \inqmlmodule QtLocation 5
+    \inqmlmodule QtLocation 5.0
 
     \brief The MapPinchArea element provides basic Map pinch interaction.
 
