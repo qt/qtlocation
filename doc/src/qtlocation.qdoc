@@ -182,9 +182,9 @@ directions).
 
 \section1 New Since Qt4
 
-In Qt4 QtMobility provided some location functionality for positioning and Maps
-with landmarks support. The new Qt Location API has had an extensive reworking
-of \l {Map}s and \l Places (formerly Landmarks).
+In Qt4 QtMobility provided some location functionality for positioning and Maps.
+The new Qt Location API has had an extensive reworking of \l {Map}s and
+now provides \l Places.
 
 New features of Qt Location includes
 \list
@@ -196,11 +196,11 @@ New features of Qt Location includes
     \li Full QML API now available for routing and geocoding -- compatible with standard QML model-view design
     \li Service provider feature detection without having to open all the available plugins
     \li Unified "Plugin" QML element used by routing/geocoding/maps etc with easy-to-set PluginParameters
-    \li Two plugins are supplied with Qt. The Nokia plugin for GeoServices and the JsonDb plugin for storing locally created places. The JsonDb plugin can also be used to save Favorite places linked to another plugin.
-    \li Landmarks API is replaced by the Places API
-    \li Both C++ and QML APIs have been reworked to be simpler to use.
-    \li Supports viewing of richer content such as reviews, images, and editorials
-    \li Supports locale handling, sponsored search results, and supplier attribution
+    \li A GeoServices plugin backend provided by Nokia which provides mapping, geocoding, routing, and place
+        search functionality.
+    \li A Places API which facilitates searching for places such as restaurants and businesses.
+    \li The Places API supports viewing of rich content such as images, reviews, and editorials.
+        It also supports locale handling, sponsored search results and supplier attributions
 \endlist
 
 \section1 API References and Examples
