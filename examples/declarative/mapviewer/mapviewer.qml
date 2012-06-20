@@ -342,8 +342,8 @@ Item {
             page.state = ""
         }
 
-        function calculateRoute() {
 //! [routerequest0]
+        function calculateRoute() {
             // clear away any old data in the query
             map.routeQuery.clearWaypoints();
 
@@ -353,6 +353,8 @@ Item {
             map.routeQuery.travelModes = routeDialog.travelMode
             map.routeQuery.routeOptimizations = routeDialog.routeOptimization
 //! [routerequest0]
+
+//! [routerequest0 feature weight]
             for (var i=0; i<9; i++) {
                 map.routeQuery.setFeatureWeight(i, 0)
             }
@@ -360,6 +362,7 @@ Item {
             for (var i=0; i<routeDialog.features.length; i++) {
                 map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
             }
+//! [routerequest0 feature weight]
 
 //! [routerequest1]
             map.routeModel.update();
@@ -387,7 +390,6 @@ Item {
         }
 
 //! [geocode1]
-
         Address {
             id: geocodeAddress
         }

@@ -54,7 +54,6 @@ Map {
     // And flicking gestures for quick panning
     flick.enabled: true
     flick.deceleration: 3000
-
 //! [top]
 
     property variant markers
@@ -240,19 +239,18 @@ Map {
                     routeInfoModel.update()
                     break
                 }
-            }
-//! [routemodel1]
-            else if (status == RouteModel.Error) {
+            } else if (status == RouteModel.Error) {
                 clearAll()
                 map.routeError()
             }
-//! [routemodel2]
         }
-//! [routemodel2]
+//! [routemodel1]
 
+//! [routemodel2]
         function clearAll() {
             routeInfoModel.update()
         }
+//! [routemodel2]
 //! [routemodel3]
     }
 //! [routemodel3]
@@ -260,9 +258,11 @@ Map {
 //! [geocodemodel0]
     property GeocodeModel geocodeModel: GeocodeModel {
 //! [geocodemodel0]
-        plugin : map.plugin;
-        onStatusChanged:{
-            if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
+//! [geocodemodel0 body]
+        plugin: map.plugin
+        onStatusChanged: {
+            if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
+                map.geocodeFinished()
         }
         onLocationsChanged:
         {
@@ -270,8 +270,8 @@ Map {
                 map.center.latitude = get(0).coordinate.latitude
                 map.center.longitude = get(0).coordinate.longitude
             }
-
         }
+//! [geocodemodel0 body]
 //! [geocodemodel1]
     }
 //! [geocodemodel1]
@@ -479,7 +479,6 @@ Map {
 //! [routeinfomodel]
 
 //! [routeview]
-
     MapItemView {
         model: routeModel
         delegate: routeDelegate

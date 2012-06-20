@@ -171,10 +171,8 @@ public:
     QDeclarativeGeoMapGestureArea *gesture();
 
     Q_INVOKABLE void fitViewportToMapItems();
-
-public Q_SLOTS:
-    void pan(int dx, int dy);
-    void cameraStopped(); // optional hint for prefetch
+    Q_INVOKABLE void pan(int dx, int dy);
+    Q_INVOKABLE void cameraStopped(); // optional hint for prefetch
 
 protected:
     void mousePressEvent(QMouseEvent *event);

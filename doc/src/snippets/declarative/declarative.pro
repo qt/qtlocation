@@ -10,3 +10,4 @@ content.files = \
 # but scoped with false as we don't actually want to install them.  They are documentation
 # snippets.
 false:INSTALLS += content
+

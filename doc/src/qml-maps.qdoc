@@ -77,64 +77,18 @@ In the snippet we see that the \c geocodeModel property contains the plugin
 and two signal handlers. One for changes in status (\c onStatusChanged ) and
 the other to update the centering of the Map element (\c onLocationsChanged ).
 
-\qml
-    property GeocodeModel geocodeModel: GeocodeModel {
-        plugin : map.plugin;
-        onStatusChanged:{
-            if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
-        }
-        onLocationsChanged:
-        {
-            if (count == 1) {
-                map.center.latitude = get(0).coordinate.latitude
-                map.center.longitude = get(0).coordinate.longitude
-            }
-
-        }
-    }
-\endqml
-
-
-\qml
-    MapItemView {
-        model: geocodeModel
-        delegate: pointDelegate
-    }
-\endqml
-
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml geocodemodel0
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml geocodemodel0 body
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml geocodemodel1
+\codeline
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml geocodeview
 
 These geocoding features are called from a higher level piece of code. In this
 snippet we see an \c onGoButtonClicked signal handler that extracts the address
 from the user interface and then creates a query for the \l GeocodeModel to
 process and determine the geographical coordinates.
 
-
-\qml
-        Address {
-            id: geocodeAddress
-        }
-
-        onGoButtonClicked: {
-            // manage the UI state transitions
-            page.state = ""
-            messageDialog.state = ""
-
-            // fill out the Address element
-            geocodeAddress.street = dialogModel.get(0).inputText
-            geocodeAddress.district = dialogModel.get(1).inputText
-            geocodeAddress.city = dialogModel.get(2).inputText
-            geocodeAddress.county = dialogModel.get(3).inputText
-            geocodeAddress.state = dialogModel.get(4).inputText
-            geocodeAddress.countryCode = dialogModel.get(5).inputText
-            geocodeAddress.country = dialogModel.get(6).inputText
-            geocodeAddress.postalCode = dialogModel.get(7).inputText
-
-            // send the geocode request
-            map.geocodeModel.clear()
-            map.geocodeModel.query = geocodeAddress
-            map.geocodeModel.update()
-        }
-\endqml
+\snippet examples/declarative/mapviewer/mapviewer.qml geocode1
 
 
 \section2 Navigation
@@ -167,10 +121,10 @@ The \l RouteQuery properties can include
         \li \l {RouteQuery::}{routeOptimizations}
         \li Required route optimizations
     \row
-        \li \l {RouteQuery::}{segmentDetails}
+        \li \l {RouteQuery::}{segmentDetail}
         \li Level of detail in segments
     \row
-        \li \l {RouteQuery::}{maneuverDetails}
+        \li \l {RouteQuery::}{maneuverDetail}
         \li Level of detail in maneuvers between segments
     \row
         \li \l {RouteQuery::}{waypoints}
@@ -189,26 +143,12 @@ by some user input, and used in \c routeModel as the query. The \c routeInfoMode
 is a \l ListModel that can be updated using an \c update() function that we will
 look at later.
 
-\qml
-    property RouteQuery routeQuery: RouteQuery {}
-    property RouteModel routeModel: RouteModel {
-        plugin : map.plugin
-        query: routeQuery
-        onStatusChanged:{
-            if (status == RouteModel.Ready){
-                if (count == 1) { routeInfoModel.update()}
-            }
-            else if (status == RouteModel.Error){
-                clearAll()
-                map.routeError()
-            }
-        }
-        function clearAll(){
-            clear()
-            routeInfoModel.update()
-        }
-    }
-\endqml
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml routemodel0
+\codeline
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml routemodel1
+\codeline
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml routemodel2
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml routemodel3
 
 The user enters, via a dialog, some information such as the starting point
 of the route, some waypoints and the destination. All of these locations are
@@ -216,28 +156,12 @@ waypoints so the locations from start to finish will be entered as a sequence
 of waypoints. Then other query properties can be set that may be specific to
 this trip.
 
-\qml
-    function calculateRoute(){
-        map.routeQuery.clearWaypoints();
-        map.center = startCoordinate
-        map.routeQuery.addWaypoint(startCoordinate)
-        map.routeQuery.addWaypoint(endCoordinate)
-        map.routeQuery.travelModes = routeDialog.travelMode
-        map.routeQuery.routeOptimizations = routeDialog.routeOptimization
-
-        for (var i=0; i<9; i++) {
-            map.routeQuery.setFeatureWeight(i, 0)
-        }
-
-        for (var i=0; i<routeDialog.features.length; i++) {
-            map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
-        }
-
-        map.routeModel.update();
-    }
-\endqml
-
-
+\snippet examples/declarative/mapviewer/mapviewer.qml routerequest0
+\codeline
+\snippet examples/declarative/mapviewer/mapviewer.qml routerequest0 feature weight
+\codeline
+\snippet examples/declarative/mapviewer/mapviewer.qml routerequest1
+\snippet examples/declarative/mapviewer/mapviewer.qml routedialog1
 
 The \c routeInfoModel \l ListModel is used to grab the results of the query and construct
 a suitable list for display. The ListModel \c routeInfoModel contains an
@@ -245,29 +169,9 @@ a suitable list for display. The ListModel \c routeInfoModel contains an
 length, instruction text and distance to the next instruction. The extracted
 data is formatted for display as it is retrieved.
 
-\qml
-    ListModel{
-        id: routeInfoModel
-        property string travelTime
-        property string distance
-
-        function update() {
-            clear()
-            if (routeModel.count > 0){
-                for (var i=0; i< routeModel.get(0).segments.length; i++){
-                    append({"instruction": routeModel.get(0).segments[i].maneuver.instructionText, "distance": formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)})
-                }
-            }
-            travelTime = routeModel.count == 0 ? "" : formatTime(routeModel.get(0).travelTime)
-            distance = routeModel.count == 0 ? "" : formatDistance(routeModel.get(0).distance)
-        }
-    }
-
-    MapItemView {
-        model: routeModel
-        delegate: routeDelegate
-    }
-\endqml
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml routeinfomodel
+\codeline
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml routeview
 
 For more information on the example see the \l {Declarative Map Viewer Example}.
 
@@ -280,26 +184,12 @@ pinching to zoom.
 
 Enabling and configuring pinch and flickable is easy within the \l Map element.
 
-\qml
-    zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
-
-
-    // Enable pinch gestures to zoom in and out
-    pinch.activeGestures: MapPinch.ZoomGesture
-    pinch.enabled: true
-
-    // And flicking gestures for quick panning
-    flick.enabled: true
-    flick.deceleration: 3000
-\endqml
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml top
+\snippet examples/declarative/mapviewer/content/map/MapComponent.qml end
 
 Zoom can also be controlled by other elements like sliders, as shown in the
 example, by implementing the \c onValueChanged handler to update the Map
 \l {QtLocation5::Map::}{zoomLevel}.
-
-
-
-
 
 \section1 Elements
 

@@ -962,7 +962,7 @@ QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate *coordinate)
 }
 
 /*!
-    \qmlslot QtLocation5::Map::pan(int dx, int dy)
+    \qmlmethod void QtLocation5::Map::pan(int dx, int dy)
 
     Starts panning the map by \a dx pixels along the x-axis and
     by \a dy pixels along the y-axis.
@@ -981,7 +981,7 @@ void QDeclarativeGeoMap::pan(int dx, int dy)
 
 
 /*!
-    \qmlslot QtLocation5::Map::cameraStopped()
+    \qmlmethod void QtLocation5::Map::cameraStopped()
 
     Optional hint that allows the map to prefetch during this idle period
 */

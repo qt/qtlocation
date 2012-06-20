@@ -54,8 +54,8 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass PlaceRecommendationModel QDeclarativeRecommenadationModel
-    \inqmlmodule QtLocation 5
+    \qmlclass PlaceRecommendationModel QDeclarativeRecommendationModel
+    \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0

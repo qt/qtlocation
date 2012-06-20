@@ -189,6 +189,4 @@
     calls the \c{update()} function we defined on the model:
 
     \snippet examples/declarative/mapviewer/content/map/MapComponent.qml routemodel1
-    \snippet examples/declarative/mapviewer/content/map/MapComponent.qml routemodel2
-
 */

@@ -508,7 +508,7 @@ QString QGeoServiceProvider::errorString() const
     Sets whether experimental plugins are considered when locating the
     correct plugin library for this service provider to \a allow.
 
-    \bold{Important:} this will destroy any existing managers held by this
+    \b {Important:} this will destroy any existing managers held by this
     service provider instance. You should be sure not to attempt to use any
     pointers that you have previously retrieved after calling this method.
 */
@@ -523,7 +523,7 @@ void QGeoServiceProvider::setAllowExperimental(bool allow)
     Sets the parameters used to construct individual manager classes for
     this service provider to \a parameters.
 
-    \bold{Important:} this will destroy any existing managers held by this
+    \b {Important:} this will destroy any existing managers held by this
     service provider instance. You should be sure not to attempt to use any
     pointers that you have previously retrieved after calling this method.
 */

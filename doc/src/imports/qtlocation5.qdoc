@@ -26,14 +26,19 @@
 ****************************************************************************/
 
 /*!
-\qmlmodule QtLocation 5
+\qmlmodule QtLocation 5.0
 \title Qt Location 5.x
 \brief The QML import for QtLocation
 
 \section1 Overview
 
-The identifying string for this component is \e QtLocation. Use this in the QML \e import statement.
-The following table provides links to more detailed information on sections of the Qt Lcoation QML API.
+The identifying string for this module is \e QtLocation. To use include the following import
+statement in the QML file.
+
+\snippet snippets/declarative/plugin.qml Plugin import
+
+The following table provides links to more detailed information on sections of the Qt Location QML
+API.
 
 \table
     \row
@@ -73,4 +78,3 @@ The following table provides links to more detailed information on sections of t
 
 \section1 Alphabetical Listing of all QML Elements
 */
-

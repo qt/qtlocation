@@ -141,7 +141,7 @@ QT_BEGIN_NAMESPACE
 
     \section2 Limitations
 
-    \bold{Note:} Due to an implementation detail, items placed inside a
+    \note Due to an implementation detail, items placed inside a
     MapQuickItem will have a \c{parent} item which is not the MapQuickItem.
     Refer to the MapQuickItem by its \c{id}, and avoid the use of \c{anchor}
     in the \c{sourceItem}.

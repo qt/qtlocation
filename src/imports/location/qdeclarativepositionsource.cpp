@@ -459,29 +459,6 @@ void QDeclarativePositionSource::stop()
 }
 
 /*!
-    \qmlsignal PositionSource::positionChanged()
-
-    This signal is sent when a position update has been received
-    from the location source. Upon receiving this signal, at least
-    position::latitude, position::longitude, and position::timestamp
-    members of the \l position have been updated.
-
-    \sa updateInterval, onPositionChanged
-
-*/
-
-/*!
-    \qmlslot PositionSource::onPositionChanged()
-
-    An implementation for this signal handler may be provided in
-    order to perform custom behavior when a position update has
-    been received.
-
-    \sa updateInterval, positionChanged
-
-*/
-
-/*!
     \qmlproperty bool PositionSource::active
 
     This property indicates whether the position source is active.
@@ -489,9 +466,7 @@ void QDeclarativePositionSource::stop()
     setting this property true equals calling \l start.
 
     \sa start, stop, update
-
 */
-
 void QDeclarativePositionSource::setActive(bool active)
 {
     if (active == m_active)

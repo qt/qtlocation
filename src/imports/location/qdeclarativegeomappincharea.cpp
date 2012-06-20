@@ -51,13 +51,11 @@
 #include "math.h"
 #include "qgeomap_p.h"
 
-
 QT_BEGIN_NAMESPACE
 
-
 /*!
-    \qmlclass MapPinchEvent
-    \inqmlmodule QtLocation 5
+    \qmlclass MapPinchEvent QDeclarativeGeoMapPinchEvent
+    \inqmlmodule QtLocation 5.0
 
     \brief MapPinchEvent element provides basic information about pinch event.
 
@@ -171,14 +169,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty bool QtLocation5::MapPinchArea::enabled
-
-    This property holds whether the pinch gestures are enabled.
-    Note: disabling pinch during active pinch does not have effect on
-    the potentially active current pinch.
-*/
-
-/*!
     \qmlproperty bool QtLocation5::MapPinchArea::active
 
     This read-only property holds whether a pinch gesture is active.
@@ -255,10 +245,10 @@ QT_BEGIN_NAMESPACE
     \qmlproperty bool QtLocation5::MapPinchArea::enabled
 
     This property holds whether the pinch gestures are enabled.
-    Note: disabling pinch during active pinch does not have effect on
+
+    \note disabling pinch during active pinch does not have effect on
     the potentially active current pinch.
 */
-
 
 QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QObject *parent,
                                                          QDeclarativeGeoMapGestureArea *gestureArea)

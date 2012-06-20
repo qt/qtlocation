@@ -124,18 +124,6 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty enumeration QtLocation5::CategoryModel::status
-
-    This read-only property holds the current status of the model.
-
-    \list
-    \li CategoryModel.Ready - Category request(s) have finished successfully.
-    \li CategoryModel.Updating - Category request has been issued but not yet finished
-    \li CategoryModel.Error - An error has occurred, details are in \l errorString
-    \endlist
-*/
-
-/*!
     \internal
     \enum QDeclarativeSupportedCategoriesModel::Roles
 */
