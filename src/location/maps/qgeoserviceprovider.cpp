@@ -130,6 +130,76 @@ The plugin could not connect to its backend service or database.
 */
 
 /*!
+    \enum QGeoServiceProvider::RoutingFeature
+
+    Describes the routing features supported by the geo service provider.
+
+    \value NoRoutingFeatures            No routing features are supported.
+    \value OnlineRoutingFeature         Online routing is supported.
+    \value OfflineRoutingFeature        Offline routing is supported.
+    \value LocalizedRoutingFeature      Supports returning routes with localized addresses and
+                                        instructions.
+    \value RouteUpdatesFeature          Updating an existing route based on the current position is
+                                        supported.
+    \value AlternativeRoutesFeature     Supports returning alternative routes.
+    \value ExcludeAreasRoutingFeature   Supports specifying a areas which the returned route must
+                                        not cross.
+    \value AnyRoutingFeatures           Matches a geo service provider that provides any routing
+                                        features.
+*/
+
+/*!
+    \enum QGeoServiceProvider::GeocodingFeature
+
+    Describes the geocoding features supported by the geo service provider.
+
+    \value NoGeocodingFeatures          No geocoding features are supported.
+    \value OnlineGeocodingFeature       Online geocoding is supported.
+    \value OfflineGeocodingFeature      Offline geocoding is supported.
+    \value ReverseGeocodingFeature      Reverse geocoding is supported.
+    \value LocalizedGeocodingFeature    Supports returning geocoding results with localized
+                                        addresses.
+    \value AnyGeocodingFeatures         Matches a geo service provider that provides any geocoding
+                                        features.
+*/
+
+/*!
+    \enum QGeoServiceProvider::MappingFeature
+
+    Describes the mapping features supported by the geo service provider.
+
+    \value NoMappingFeatures        No mapping features are supported.
+    \value OnlineMappingFeature     Online mapping is supported.
+    \value OfflineMappingFeature    Offline mapping is supported.
+    \value LocalizedMappingFeature  Supports returning localized map data.
+    \value AnyMappingFeatures       Matches a geo service provider that provides any mapping
+                                    features.
+*/
+
+/*!
+    \enum QGeoServiceProvider::PlacesFeature
+
+    Describes the places features supported by the geo service provider.
+
+    \value NoPlacesFeatures             No places features are supported.
+    \value OnlinePlacesFeature          Online places is supported.
+    \value OfflinePlacesFeature         Offline places is supported.
+    \value SavePlaceFeature             Saving places is supported.
+    \value RemovePlaceFeature           Removing or deleting places is supported.
+    \value SaveCategoryFeature          Saving categories is supported.
+    \value RemoveCategoryFeature        Removing or deleting categories is supported.
+    \value PlaceRecommendationsFeature  Searching for recommended places similar to another place
+                                        is supported.
+    \value SearchSuggestionsFeature     Search suggestions is supported.
+    \value LocalizedPlacesFeature       Supports returning localized place data.
+    \value NotificationsFeature         Notifications of place and category changes is supported.
+    \value PlaceMatchingFeature         Supports matching places from two different geo service
+                                        providers.
+    \value AnyPlacesFeatures            Matches a geo service provider that provides any places
+                                        features.
+*/
+
+/*!
     Returns a list of names of the available service providers, for use with
     the QGeoServiceProvider constructors.
 */
@@ -145,13 +215,18 @@ QStringList QGeoServiceProvider::availableServiceProviders()
     If multiple plugins have the same \a providerName, the plugin with the
     highest reported providerVersion() will be used.
 
+    If \a allowExperimental is true then plugins marked as experimental may be used.  By default
+    experimental plugins are not considered.
+
     If no plugin matching \a providerName was able to be loaded then error()
     and errorString() will provide details about why this is the case.
 */
-QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QVariant> &parameters, bool experimental)
+QGeoServiceProvider::QGeoServiceProvider(const QString &providerName,
+                                         const QVariantMap &parameters,
+                                         bool allowExperimental)
     : d_ptr(new QGeoServiceProviderPrivate())
 {
-    d_ptr->experimental = experimental;
+    d_ptr->experimental = allowExperimental;
     d_ptr->parameterMap = parameters;
     d_ptr->providerName = providerName;
     d_ptr->loadMeta();
@@ -192,21 +267,33 @@ Flags QGeoServiceProviderPrivate::features(const char *enumName)
     return ret;
 }
 
+/*!
+    Returns the routing features supported by the geo service provider.
+*/
 QGeoServiceProvider::RoutingFeatures QGeoServiceProvider::routingFeatures() const
 {
     return d_ptr->features<RoutingFeatures>("RoutingFeatures");
 }
 
+/*!
+    Returns the geocoding features supported by the geo service provider.
+*/
 QGeoServiceProvider::GeocodingFeatures QGeoServiceProvider::geocodingFeatures() const
 {
     return d_ptr->features<GeocodingFeatures>("GeocodingFeatures");
 }
 
+/*!
+    Returns the mapping features supported by the geo service provider.
+*/
 QGeoServiceProvider::MappingFeatures QGeoServiceProvider::mappingFeatures() const
 {
     return d_ptr->features<MappingFeatures>("MappingFeatures");
 }
 
+/*!
+    Returns the places features supported by the geo service provider.
+*/
 QGeoServiceProvider::PlacesFeatures QGeoServiceProvider::placesFeatures() const
 {
     return d_ptr->features<PlacesFeatures>("PlacesFeatures");
@@ -419,7 +506,7 @@ QString QGeoServiceProvider::errorString() const
 
 /*!
     Sets whether experimental plugins are considered when locating the
-    correct plugin library for this service provider.
+    correct plugin library for this service provider to \a allow.
 
     \bold{Important:} this will destroy any existing managers held by this
     service provider instance. You should be sure not to attempt to use any
@@ -434,13 +521,13 @@ void QGeoServiceProvider::setAllowExperimental(bool allow)
 
 /*!
     Sets the parameters used to construct individual manager classes for
-    this service provider.
+    this service provider to \a parameters.
 
     \bold{Important:} this will destroy any existing managers held by this
     service provider instance. You should be sure not to attempt to use any
     pointers that you have previously retrieved after calling this method.
 */
-void QGeoServiceProvider::setParameters(const QMap<QString, QVariant> &parameters)
+void QGeoServiceProvider::setParameters(const QVariantMap &parameters)
 {
     d_ptr->parameterMap = parameters;
     d_ptr->unload();
@@ -448,7 +535,7 @@ void QGeoServiceProvider::setParameters(const QMap<QString, QVariant> &parameter
 }
 
 /*!
-    Sets the locale used by this service provider. If the relevant features
+    Sets the locale used by this service provider to \a locale. If the relevant features
     (see LocalizedMappingFeature etc), this will change the languages, units
     and other locale-specific attributes of the provider's data.
 */

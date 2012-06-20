@@ -42,11 +42,9 @@
 #ifndef QGEOSERVICEPROVIDER_H
 #define QGEOSERVICEPROVIDER_H
 
-#include <QMap>
-#include <QVariant>
-#include <QString>
-#include <QObject>
-
+#include <QtCore/QVariant>
+#include <QtCore/QString>
+#include <QtCore/QObject>
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
@@ -136,7 +134,7 @@ public:
 
     static QStringList availableServiceProviders();
     QGeoServiceProvider(const QString &providerName,
-                        const QMap<QString,QVariant> &parameters = (QMap<QString,QVariant>()),
+                        const QVariantMap &parameters = QVariantMap(),
                         bool allowExperimental = false);
 
     ~QGeoServiceProvider();
@@ -154,7 +152,7 @@ public:
     Error error() const;
     QString errorString() const;
 
-    void setParameters(const QMap<QString, QVariant> &parameters);
+    void setParameters(const QVariantMap &parameters);
     void setLocale(const QLocale &locale);
     void setAllowExperimental(bool allow);
 

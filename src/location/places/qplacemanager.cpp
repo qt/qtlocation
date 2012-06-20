@@ -132,23 +132,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QPlaceManager::ManagerFeature
-    Defines the possible features that the place manager can have.
-    \value NoFeatures No features specified/supported
-    \value SavePlaceFeature The manager can be used to save places
-    \value RemovePlaceFeature The manager can be used to remove places
-    \value SaveCategoryFeature The manager can be used to save categories.
-    \value RemoveCategoryFeature The manager can be used to remove categories.
-    \value RecommendationsFeature The manager can be used to provide recommendations.
-    \value SearchSuggestionsFeature The manager can be used to provide search term suggestions.
-    \value LocaleFeature The manager can be used to provide place data localized
-                          according to locale
-    \value NotificationsFeature The manager has signal notifications for when
-                                places or categories are added, modified or removed.
-    \value MatchingFeature The manager support matching places from other managers.
-*/
-
-/*!
     Constructs a new manager with the specified \a parent and with the
     implementation provided by \a engine.
 
