@@ -51,7 +51,6 @@
 #include "qgeocodingmanagerengine_nokia.h"
 #include "qgeoroutingmanagerengine_nokia.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
-#include "qplacemanagerengine_nokiav1.h"
 #include "qplacemanagerengine_nokiav2.h"
 #include "qgeointrinsicnetworkaccessmanager.h"
 #include "qgeoerror_messages.h"
