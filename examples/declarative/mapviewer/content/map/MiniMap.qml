@@ -58,10 +58,9 @@ Rectangle{
         anchors.leftMargin: 1
         width: 150
         height: 150
-        plugin: Plugin {name: "nokia"}
         zoomLevel: (map.zoomLevel > minimumZoomLevel + 3) ? minimumZoomLevel + 3 : 2.5
         center: map.center
-
+        plugin: map.plugin
         pinch.enabled: false
         flick.enabled: false
         MapMouseArea{
