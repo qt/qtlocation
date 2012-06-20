@@ -176,6 +176,10 @@ void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 /*!
     Returns a bounding box which represents the recommended region
     to display when viewing this location.
+
+    For example, a building's location may have a region centered around the building,
+    but the region is large enough to show it's immediate surrounding geographical
+    context.
 */
 QGeoRectangle QGeoLocation::boundingBox() const
 {

@@ -52,12 +52,9 @@ QT_USE_NAMESPACE
     \brief The Location element holds location data.
 
     Location elements represent a geographic "location", in a human sense. This
-    consists of a specific \l {coordinate}, an \l {address} and a \l {boundingBox}{bounding box}
-    The GeoRectangle delineates the limits of what geographic area
-    is considered "part of" the location. For example, a Location representing
-    a house would have the \l {coordinate} set to the center of the house's block
-    of land, the \l {address} to its street address, and the l {boundingBox}{bounding box} would
-    show roughly the limits of the block itself.
+    consists of a specific \l {coordinate}, an \l {address} and a \l {boundingBox}{bounding box}.
+    The \l {boundingBox}{bounding box} represents the recommended region
+    to display when viewing this location.
 
     The Location element is most commonly seen as the contents of a search
     model such as the GeocodeModel. When a GeocodeModel returns the list of
@@ -192,7 +189,10 @@ QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
 /*!
     \qmlproperty GeoRectangle QtLocation5::Location::boundingBox
 
-    This property holds bounding box of area on map occupied by location.
+    This property holds the recommended region to use when displaying the location.
+    For example, a building's location may have a region centered around the building,
+    but the region is large enough to show it's immediate surrounding geographical
+    context.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
