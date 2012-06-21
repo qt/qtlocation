@@ -194,7 +194,8 @@ QT_USE_NAMESPACE
     }
     \endcode
 
-    A more detailed example can be found in the in \l {Places (QML) Example#Presenting-Search-Suggestions}{places example}.
+    A more detailed example can be found in the in
+    \l {Places (QML)#Presenting-Search-Suggestions}{Places (QML)} example.
 
     \sa cancel(), status
 */
@@ -204,7 +205,7 @@ QT_USE_NAMESPACE
 
     Cancels an ongoing search suggestion operation.
 
-    \sa execute(), status
+    \sa update(), status
 */
 
 /*!

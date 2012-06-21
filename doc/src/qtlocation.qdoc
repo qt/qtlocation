@@ -85,10 +85,10 @@ Now that the device has a position, with regular updates the API can determine
 the speed and heading of the device. It can define a box or a circle that can
 produce a notification when the device either leaves or enters that region.
 
-If we introduce the idea of a \l {QtLocation5::Map}{Map} with positions of interest, \l {QtLocation5::Places}{Places}, then
-the device can be made aware of nearby features and related information, displayed
-graphically. Features on the \l Map may be places of business, entertainment and so on.
-They may include paths, roads, or forms of transport leading to the idea that
+If we introduce the idea of a \l {QtLocation5::Map}{Map} with positions of interest,
+\l {QtLocation5::Place}{Places}, then the device can be made aware of nearby features and related
+information, displayed graphically. Features on the \l Map may be places of business, entertainment
+and so on.  They may include paths, roads, or forms of transport leading to the idea that
 navigation optimization and assistance are possible.
 
 To enable navigation we need \l {Route}s from start to destination. These routes

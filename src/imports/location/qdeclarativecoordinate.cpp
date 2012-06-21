@@ -95,12 +95,11 @@ QT_BEGIN_NAMESPACE
     As an example, the value of \c{coord1.distanceTo(coord2)} would now be
     approximately 34790 (34.8 km).
 
-    \b{NOTE:} if another element has a Coordinate property, a change notification
+    \note if another element has a Coordinate property, a change notification
     signal for that property will only be emitted if that property is assigned
     a new Coordinate, and \b{not} if the position data of the existing Coordinate
     assigned to the property changes.  The only exception to this rule is that
-    the \l{QDeclarativePosition}{Position} element does emit change signals if
-    its coordinate property's values change.
+    the \l{Position} element does emit change signals if its coordinate property's values change.
 */
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(QObject *parent)

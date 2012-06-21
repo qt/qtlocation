@@ -190,6 +190,9 @@ QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
         : d(other.d)
 {}
 
+/*!
+    Assigns \a other to this coordinate and returns a reference to this coordinate.
+*/
 QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
 {
     if (this == &other)

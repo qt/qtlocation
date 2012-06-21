@@ -205,7 +205,7 @@ QVariantMap QPlaceIcon::parameters() const
 }
 
 /*!
-    Sets the parameters of the icon.
+    Sets the parameters of the icon to \a parameters.
 */
 void QPlaceIcon::setParameters(const QVariantMap &parameters)
 {

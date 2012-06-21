@@ -912,9 +912,9 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
 }
 
 /*!
-\qmlproperty list<MapType> QtLocation5::Map::supportedMapTypes
+    \qmlproperty list<MapType> QtLocation5::Map::supportedMapTypes
 
-    This read-only property holds the set of \l{MapTye}{map types} supported by this map.
+    This read-only property holds the set of \l{MapType}{map types} supported by this map.
 
     \sa activeMapType
 */
@@ -1031,7 +1031,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 
     \note MapItemViews cannot be added with this method.
 
-    \sa mapitems, removeMapItem, clearMapItems
+    \sa mapItems, removeMapItem, clearMapItems
 */
 
 void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
@@ -1076,7 +1076,7 @@ QList<QObject *> QDeclarativeGeoMap::mapItems()
     the MapItem does not exist or was not previously added to the map, the
     method does nothing.
 
-    \sa mapitems, addMapItem, clearMapItems
+    \sa mapItems, addMapItem, clearMapItems
 */
 void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 {
@@ -1100,7 +1100,7 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 
     Removes all items from the map.
 
-    \sa mapitems, addMapItem, clearMapItems
+    \sa mapItems, addMapItem, removeMapItem
 */
 void QDeclarativeGeoMap::clearMapItems()
 {

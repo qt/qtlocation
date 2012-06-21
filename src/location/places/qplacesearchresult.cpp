@@ -77,16 +77,12 @@ bool QPlaceSearchResultPrivate::compare(const QPlaceSearchResultPrivate *other) 
     \ingroup QtLocation-places-data
     \since Qt Location 5.0
 
-    \brief The QPlaceSearchResult class represents a search result.
+    \brief The QPlaceSearchResult class is the base class for all place search results.
 
-    Currently the only useful search result type is the
-    \l {QPlaceSearchResult::PlaceResult} {place result}.
-    For search results of this type, the \l {QPlaceSearchResult::distance()} {distance},
-    \l {QPlaceSearchResult::place()}{place} and {QPlaceSearchResult::isSponsored} isSponsored
-    fields of the search result is filled in.  Thus the result contains the distance
-    from the place from the search center of the search request, the place data containing
-    coordinates, address and so on, and finally an indication of whether the
-    result is sponsored or \l {http://en.wikipedia.org/wiki/Organic_search}{organic}.
+    A list of place search results can be retrieved from the QPlaceSearchReply after it has
+    successfully completed the request.  All place search results contain a \l {type()} which
+    describes the type of search result.  A \l {title()} and an \l {icon()} which can be used to
+    present the search result to the user.
 */
 
 /*!

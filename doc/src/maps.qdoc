@@ -40,8 +40,7 @@ interaction with map overlay objects and the display itself. It also
 contains utilities for geocoding (finding a geographic coordinate from a
 street address) and navigation (including driving and walking directions).
 
-It builds upon the API concepts and elements in the
-\l{qtlocation-positioning-qml.html}{QML Positioning API}.
+It builds upon the API concepts and elements in the \l{Positioning (QML)}{QML Positioning API}.
 
 \section1 Maps
 

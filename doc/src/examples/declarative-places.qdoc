@@ -27,7 +27,7 @@
 
 /*!
     \example declarative/places
-    \title Places (QML) Example
+    \title Places (QML)
     \ingroup qtlocation-examples
 
     \brief The Places example demonstrates how to search for Places and access
@@ -168,7 +168,7 @@
     Finally, we define two helper functions \b searchForCategory() and \b {searchForText()},
     which set either the \l {PlaceSearchModel::categories}{categories} or
     \l {PlaceSearchModel::searchTerm}{searchTerm} properties and invokes the
-    \l {PlaceSearchModel::execute()}{execute()} method to start the place search.  The search
+    \l {PlaceSearchModel::update()}{update()} method to start the place search.  The search
     results are displayed in a \l ListView.
 
     \snippet declarative/places/content/places/SearchResultView.qml PlaceSearchModel place list
@@ -193,8 +193,7 @@
     \section1 Place and Category Creation
 
     Some backends may support creation and saving of new places and categories.  Plugin support can
-    be checked an run-time by testing the \l Plugin::supportedPlacesFeatures property for the
-    \e Plugin::SavePlaceFeature and \e Plugin::SaveCategoryFeature flags.
+    be checked an run-time with the \l Plugin::supportsPlaces() method.
 
     To save a new place, first create a new \l Place object, using the
     \l {Qt::createQmlObject()}{Qt.createQmlObject()} method.  Assign the appropriate plugin and
@@ -219,9 +218,9 @@
     The example detects which plugins are available and has an option to show them in the via
     the Provider button.
 
-    The \l {Qt Location JsonDb plugin} {JsonDb plugin} in particular acts as a data store for
-    user defined favorites which can be saved and removed.  In order to use the JsonDb plugin however
-    the JsonDb daemon must be running in the background.
+    The \l {Qt Location JsonDb plugin (technical preview only)}{JsonDb plugin} in particular acts
+    as a data store for user defined favorites which can be saved and removed.  In order to use the
+    JsonDb plugin however the JsonDb daemon must be running in the background.
 
     \code
     jsondb & //run jsondb daemon in the background

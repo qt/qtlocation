@@ -82,7 +82,7 @@ bool QPlaceResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
     an instance of the place and an indication of whether the result is
     sponsored or \l {http://en.wikipedia.org/wiki/Organic_search}{organic}.
 
-    \sa QPlaceSearchResults
+    \sa QPlaceSearchResult
 */
 
 /*!

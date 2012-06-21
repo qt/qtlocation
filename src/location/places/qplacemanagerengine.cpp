@@ -252,8 +252,8 @@ QString QPlaceManagerEngine::parentCategoryId(const QString &categoryId) const
 }
 
 /*!
-    Returns the child category identifiers of the category corresponding to \a parentId.  If \a parentId is
-    empty then all top level category identifiers are returned.
+    Returns the child category identifiers of the category corresponding to \a categoryId.  If
+    \a categoryId is empty then all top level category identifiers are returned.
 */
 QStringList QPlaceManagerEngine::childCategoryIds(const QString &categoryId) const
 {

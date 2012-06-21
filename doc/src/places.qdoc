@@ -28,7 +28,7 @@
 /*!
     \page location-places-qml.html
     \title QML Places API
-    \previouspage {qtlocation-qml.html}{Qt Location}
+    \previouspage {Qt Location 5.x}
 
     \section1 Overview
 
@@ -90,8 +90,8 @@
     The above quickstart tutorial only exhibits a subset of Places functionality.
     Refer to the \l {Places Elements} shown below for richer content such as \l {ImageModel} {images}, \l {ReviewModel} {reviews} etc, as well as more indepth descriptions and explanations.
 
-    See also the \l {Places (QML)}{QML Places Example} for a more comprehensive demonstration on how
-    to use the API.
+    See also the \l {Places (QML)}{Places (QML)} example for a more comprehensive demonstration on
+    how to use the API.
 
     \section1 Places Elements
     \section2 Data Elements

@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 
 #include "qdeclarativegeomapgesturearea_p.h"
 #include "qdeclarativegeomap_p.h"
@@ -231,19 +229,19 @@ QT_BEGIN_NAMESPACE
     the zoom, pan and flick gestures are enabled.
 
     \list
-    \li GestureArea.NoGesture - Don't support any additional gestures (value: 0x0000).
-    \li GestureArea.ZoomGesture - Support the map zoom gesture (value: 0x0001).
-    \li GestureArea.RotationGesture - Support the map rotation gesture (value: 0x0002).
-    \li GestureArea.TiltGesture - Support the map tilt gesture (value: 0x0004).
-    \li GestureArea.PanGesture  - Support the map pan gesture (value: 0x0008).
-    \li GestureArea.FlickGesture  - Support the map flick gesture (value: 0x0010).
+    \li MapGestureArea.NoGesture - Don't support any additional gestures (value: 0x0000).
+    \li MapGestureArea.ZoomGesture - Support the map zoom gesture (value: 0x0001).
+    \li MapGestureArea.RotationGesture - Support the map rotation gesture (value: 0x0002).
+    \li MapGestureArea.TiltGesture - Support the map tilt gesture (value: 0x0004).
+    \li MapGestureArea.PanGesture  - Support the map pan gesture (value: 0x0008).
+    \li MapGestureArea.FlickGesture  - Support the map flick gesture (value: 0x0010).
     \endlist
 
     For the extremist, one may OR flag the RotationGesture or TiltGesture
     but these come with absolutely no warranty or guarantees at the moment
     (may be removed, changed, moved around)
 
-    \note For the time being, only \l GestureArea.ZoomGesture is supported.
+    \note For the time being, only MapGestureArea.ZoomGesture is supported.
 */
 
 /*!
@@ -265,6 +263,14 @@ QT_BEGIN_NAMESPACE
 
     It is an indicative measure; the default value 1.0 means the map roughly follows the fingers,
     whereas 2.0 means rotating twice as fast. Maximum value is 5.0.
+*/
+
+/*!
+    \qmlproperty real MapGestureArea::flickDeceleration
+
+    This property holds the rate at which a flick will decelerate.
+
+    The default value is 2500.
 */
 
 /*!

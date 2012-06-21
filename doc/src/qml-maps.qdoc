@@ -46,11 +46,13 @@ Various points of interest can be defined and added to the map for display.
 Also the \l Map has features to control how the map is displayed. With the
 Map item you can center the map, zoom, pinch and make the item flickable.
 
-The places to be added to the map are \l {MapItem}s. The item's position is defined
-by a \l {Coordinate::}{coordinate} which includes latitude, longitude and elevation. The item
-is then displayed automatically after it is added to the Map. Interaction with
-the added items, and the \l Map itself, is handled by \l MapMouseArea when items are
-added as children of the \l {MapItem}s or \l Map.
+The places to be added to the map are
+\l {Maps and Navigation (QML)#Putting Objects on a Map (Map Overlay Objects)}{MapItems}. The item's
+position is defined by a \l {Coordinate}{coordinate} which includes latitude, longitude and
+elevation.  The item is then displayed automatically after it is added to the Map.  Interaction
+with the added items, and the \l Map itself, is handled by \l MapMouseArea when items are added as
+children of the
+\l {Maps and Navigation (QML)#Putting Objects on a Map (Map Overlay Objects)}{MapItems} or \l Map.
 
 \section2 Position
 
@@ -70,7 +72,7 @@ a street address being used to determine a geographical coordinate. Geocoding
 is performed by using the \l GeoCodeModel element.
 
 The following code examples are a small part of the \c map component in the
-\l {Declarative Map Viewer Example}{MapViewer QML example}. The snippets
+\l {Map Viewer (QML)}{Map Viewer (QML)} example. The snippets
 demonstrate the declaration of the \l GeocodeModel component.
 
 In the snippet we see that the \c geocodeModel property contains the plugin
@@ -173,7 +175,7 @@ data is formatted for display as it is retrieved.
 \codeline
 \snippet examples/declarative/mapviewer/content/map/MapComponent.qml routeview
 
-For more information on the example see the \l {Declarative Map Viewer Example}.
+For more information on the example see the \l {Map Viewer (QML)}{Map Viewer (QML)} example.
 
 
 \section2  Zoom, Pinch and Flickable
@@ -209,7 +211,7 @@ example, by implementing the \c onValueChanged handler to update the Map
 
 \section1 Example
 
-The above snippets are taken from the \l {Declarative Map Viewer Example}.
+The above snippets are taken from the \l {Map Viewer (QML)}{Map Viewer (QML)} example.
 
 */
 

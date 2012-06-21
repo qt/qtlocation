@@ -66,13 +66,6 @@ QT_BEGIN_NAMESPACE
 
     \snippet declarative/places/content/places/PlaceReviews.qml  ReviewModel delegate
 
-    The various roles listed below can be selectively displayed, in the \l {Places (QML) Example}
-    the \l {ReviewModel::rating}{rating} is used with the code in \e ReviewPage.qml
-    to provide the format of the displayed data by using the roles from the passed \c data
-    object.
-
-
-
     The model returns data for the following roles:
 
     \table

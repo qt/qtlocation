@@ -52,9 +52,8 @@ QT_BEGIN_NAMESPACE
 
     \brief The GeoCircle element represents a circular geographic area.
 
-    The circle is defined in terms of a \l{QDeclarativeCoordinate}{Coordinate}
-    which specifies the center of the circle and a qreal which specifies the
-    radius of the circle in meters.
+    The circle is defined in terms of a \l {Coordinate} which specifies the center of the circle
+    and a qreal which specifies the radius of the circle in meters.
 
     The circle is considered invalid if the center coordinate is invalid
     or if the radius is less than zero.

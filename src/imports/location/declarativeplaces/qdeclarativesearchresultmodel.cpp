@@ -133,8 +133,8 @@ QT_USE_NAMESPACE
 
     The following example shows how to use the PlaceSearchModel to search for Pizza restaurants in
     close proximity of a given position.  A \l searchTerm and \l searchArea are provided to the model
-    and \l execute() is used to perform a lookup query.  Note that the model does not incrementally
-    fetch search results, but rather performs a single fetch when \l execute() is run.  The \l count
+    and \l update() is used to perform a lookup query.  Note that the model does not incrementally
+    fetch search results, but rather performs a single fetch when \l update() is run.  The \l count
     is set to the number of search results returned during the fetch.
 
     \snippet snippets/declarative/places.qml QtQuick import
@@ -298,7 +298,7 @@ QT_USE_NAMESPACE
 
     Cancels an ongoing search query.
 
-    \sa execute(), status
+    \sa update(), status
 */
 
 /*!

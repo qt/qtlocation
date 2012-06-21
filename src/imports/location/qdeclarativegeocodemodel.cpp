@@ -534,12 +534,12 @@ QDeclarativeGeoLocation *QDeclarativeGeocodeModel::get(int index)
 /*!
     \qmlproperty int QtLocation5::GeocodeModel::limit
 
-    This property holds the maximum number of results. The \l limit and \l offset values are only
+    This property holds the maximum number of results. The limit and \l offset values are only
     applicable with free string geocoding (that is they are not considered when using addresses
     or coordinates in the search query).
 
-    If limit is -1 the entire result set will be returned, otherwise at most limit results will be returned.
-    The limit and \l offset results can be used together to implement paging.
+    If limit is -1 the entire result set will be returned, otherwise at most limit results will be
+    returned.  The limit and \l offset results can be used together to implement paging.
 */
 
 int QDeclarativeGeocodeModel::limit() const
@@ -561,8 +561,8 @@ void QDeclarativeGeocodeModel::setLimit(int limit)
 /*!
     \qmlproperty int QtLocation5::GeocodeModel::offset
 
-    This property tells not to return the first 'offset' number of the results. The \l limit
-    and \l offset values are only applicable with free string geocoding (that is they are not considered
+    This property tells not to return the first 'offset' number of the results. The \l limit and
+    offset values are only applicable with free string geocoding (that is they are not considered
     when using addresses or coordinates in the search query).
 
     The \l limit and offset results can be used together to implement paging.

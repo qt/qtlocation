@@ -605,6 +605,9 @@ int QNmeaPositionInfoSource::minimumUpdateInterval() const
     return 100;
 }
 
+/*!
+    \reimp
+*/
 QGeoPositionInfoSource::Error QNmeaPositionInfoSource::error() const
 {
     return d->m_positionError;
