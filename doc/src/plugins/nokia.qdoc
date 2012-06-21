@@ -185,7 +185,7 @@ and behaviours are outlined below:
         \li no
     \row
         \li Extended Attributes
-        \li no
+        \li yes
     \row
         \li Notifications for added/removed places/categories
         \li no
@@ -280,4 +280,13 @@ variants supported for those themes:
         \endlist
         (Note: the default base urls reference a map type icons)
 \endtable
+
+\section3 Extended Attributes and Content restrictions of usage
+The extended attributes  and rich content of places are not permitted
+to be saved.  For QML this is related to \l Place::extendedAttributes, \l ImageModel,
+\l ReviewModel, and \l EditorialModel.  For C++ this relates to QPlace::extendedAttribute(),
+QPlace::content() and QPlaceManager::getPlaceContent().
+
+(Note that the \c nokia plugin is a read-only source of places and
+does not support saving functionality at all.)
 */
