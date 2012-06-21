@@ -196,14 +196,6 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate &coordina
 
     QPointF topLeft = map_->coordinateToScreenPosition(coordinate, false) - offset;
 
-    if ((topLeft.x() > quickMap()->width())
-            || (topLeft.x() + width() < 0)
-            || (topLeft.y() + height() < 0)
-            || (topLeft.y() > quickMap()->height())) {
-        setVisible(false);
-    } else {
-        setVisible(true);
-    }
     setPos(topLeft);
 }
 
