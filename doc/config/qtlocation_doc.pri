@@ -7,7 +7,7 @@ win32:!win32-g++ {
     unixstyle = true
 }
 
-QDOC = $$QT.core.bins/qdoc3
+QDOC = $$QT.core.bins/qdoc
 
 ONLINE_CONF = $$PWD/qtlocation.qdocconf
 DITA_CONF = $$PWD/qtlocation-dita.qdocconf
@@ -15,7 +15,7 @@ QCH_CONF = #nothing yet
 
 $$unixstyle {
 } else {
-    QDOC = $$replace(QDOC, "qdoc", "qdoc3.exe")
+    QDOC = $$replace(QDOC, "qdoc", "qdoc.exe")
     ONLINE_CONF = $$replace(ONLINE_CONF, "/", "\\")
     DITA_DOCS = $$replace(ONLINE_CONF, "/", "\\")
 }
