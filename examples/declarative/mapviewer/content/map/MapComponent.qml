@@ -482,6 +482,7 @@ Map {
     MapItemView {
         model: routeModel
         delegate: routeDelegate
+        autoFitViewport: true
     }
 //! [routeview]
 

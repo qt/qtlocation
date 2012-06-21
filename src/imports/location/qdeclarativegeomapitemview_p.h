@@ -63,6 +63,7 @@ class QDeclarativeGeoMapItemView : public QObject, public QQmlParserStatus
 
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(QQmlComponent *delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
+    Q_PROPERTY(bool autoFitViewport READ autoFitViewport WRITE setAutoFitViewport NOTIFY autoFitViewportChanged)
 
 public:
     explicit QDeclarativeGeoMapItemView(QQuickItem *parent = 0);
@@ -73,6 +74,9 @@ public:
 
     QQmlComponent *delegate() const;
     void setDelegate(QQmlComponent *);
+
+    bool autoFitViewport() const;
+    void setAutoFitViewport(const bool &);
 
     void setMapData(QDeclarativeGeoMap *);
     void repopulate();
@@ -91,10 +95,13 @@ public:
 Q_SIGNALS:
     void modelChanged();
     void delegateChanged();
+    void autoFitViewportChanged();
 
 private:
     QDeclarativeGeoMapItemBase *createItemFromItemModel(int modelRow);
     QDeclarativeGeoMapItemBase *createItemFromListModel(int modelRow);
+
+    void fitViewport();
 
 private Q_SLOTS:
     void itemModelReset();
@@ -115,6 +122,7 @@ private:
     QListModelInterface *listModel_;
     QDeclarativeGeoMap *map_;
     QList<QDeclarativeGeoMapItemBase *> mapItemList_;
+    bool fitViewport_;
 };
 
 QT_END_NAMESPACE

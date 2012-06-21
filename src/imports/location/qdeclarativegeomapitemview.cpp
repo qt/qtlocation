@@ -78,7 +78,7 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
     : QObject(parent), componentCompleted_(false), delegate_(0),
-      itemModel_(0), listModel_(0), map_(0)
+      itemModel_(0), listModel_(0), map_(0), fitViewport_(false)
 {
 }
 
@@ -174,6 +174,8 @@ void QDeclarativeGeoMapItemView::itemModelRowsInserted(QModelIndex, int start, i
         mapItemList_.append(mapItem);
         map_->addMapItem(mapItem);
     }
+    if (fitViewport_)
+        fitViewport();
 }
 
 /*!
@@ -192,6 +194,8 @@ void QDeclarativeGeoMapItemView::itemModelRowsRemoved(QModelIndex, int start, in
         map_->removeMapItem(mapItem);
         delete mapItem;
     }
+    if (fitViewport_)
+        fitViewport();
 }
 
 void QDeclarativeGeoMapItemView::listModelItemsChanged(int index, int count, const QList<int> &)
@@ -213,6 +217,8 @@ void QDeclarativeGeoMapItemView::listModelItemsChanged(int index, int count, con
         mapItemList_.append(mapItem);
         map_->addMapItem(mapItem);
     }
+    if (fitViewport_)
+        fitViewport();
 }
 
 void QDeclarativeGeoMapItemView::listModelItemsInserted(int index, int count)
@@ -228,6 +234,8 @@ void QDeclarativeGeoMapItemView::listModelItemsInserted(int index, int count)
         mapItemList_.append(mapItem);
         map_->addMapItem(mapItem);
     }
+    if (fitViewport_)
+        fitViewport();
 }
 
 void QDeclarativeGeoMapItemView::listModelItemsMoved(int from, int to, int count)
@@ -258,6 +266,8 @@ void QDeclarativeGeoMapItemView::listModelItemsRemoved(int index, int count)
         map_->removeMapItem(mapItem);
         delete mapItem;
     }
+    if (fitViewport_)
+        fitViewport();
 }
 
 /*!
@@ -281,6 +291,40 @@ void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 
     repopulate();
     emit delegateChanged();
+}
+
+/*!
+    \qmlproperty Component QtLocation5::MapItemView::autoFitViewport
+
+    This property controls whether to automatically pan and zoom the viewport
+    to display all map items when items are added or removed.
+
+    Defaults to false.
+
+*/
+bool QDeclarativeGeoMapItemView::autoFitViewport() const
+{
+    return fitViewport_;
+}
+
+void QDeclarativeGeoMapItemView::setAutoFitViewport(const bool &fitViewport)
+{
+    if (fitViewport == fitViewport_)
+        return;
+    fitViewport_ = fitViewport;
+    emit autoFitViewportChanged();
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoMapItemView::fitViewport()
+{
+    if (!map_ || !fitViewport_)
+        return;
+
+    if (map_->mapItems().size() > 0)
+        map_->fitViewportToMapItems();
 }
 
 /*!
@@ -340,6 +384,8 @@ void QDeclarativeGeoMapItemView::repopulate()
             map_->addMapItem(mapItem);
         }
     }
+    if (fitViewport_)
+        fitViewport();
 }
 
 QDeclarativeGeoMapItemBase *QDeclarativeGeoMapItemView::createItem(int modelRow)
