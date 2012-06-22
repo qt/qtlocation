@@ -552,5 +552,12 @@ QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(
     return info;
 }
 
+
+QGeoPositionInfoSource::Error QGeoPositionInfoSourceGeoclueMaster::error() const
+{
+    return UnknownSourceError;
+}
+
 #include "moc_qgeopositioninfosource_geocluemaster_p.cpp"
+
 QT_END_NAMESPACE

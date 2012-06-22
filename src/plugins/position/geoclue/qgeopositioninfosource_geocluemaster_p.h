@@ -101,6 +101,8 @@ public:
     void velocityUpdateFailed();
     void velocityUpdateSucceeded(double speed);
 
+    Error error() const;
+
 public slots:
     virtual void startUpdates();
     virtual void stopUpdates();

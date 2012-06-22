@@ -1,5 +1,6 @@
 load(configure)
 qtCompileTest(locationd)
+qtCompileTest(geoclue)
 
 TEMPLATE = subdirs
 
