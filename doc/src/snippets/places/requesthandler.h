@@ -499,6 +499,18 @@ public slots:
     }
     //! [Match places handler]
 
+    void convertSearchResult() {
+        QPlaceSearchResult result;
+        //! [Convert search result]
+        if (result.type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = result;
+            qDebug() << placeResult.place().name();
+            qDebug() << placeResult.place().location().coordinate();
+            qDebug() << placeResult.distance();
+        }
+        //! [Convert search result]
+    }
+
 QPlaceSearchReply *searchReply;
 QPlaceManager *manager;
 QPlaceDetailsReply *detailsReply;

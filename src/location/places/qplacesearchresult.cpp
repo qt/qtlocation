@@ -77,12 +77,24 @@ bool QPlaceSearchResultPrivate::compare(const QPlaceSearchResultPrivate *other) 
     \ingroup QtLocation-places-data
     \since Qt Location 5.0
 
-    \brief The QPlaceSearchResult class is the base class for all place search results.
+    \brief The QPlaceSearchResult class is the base class for search results.
 
-    A list of place search results can be retrieved from the QPlaceSearchReply after it has
-    successfully completed the request.  All place search results contain a \l {type()} which
-    describes the type of search result.  A \l {title()} and an \l {icon()} which can be used to
-    present the search result to the user.
+    A list of search results can be retrieved from the QPlaceSearchReply after it has
+    successfully completed the request.  Common to all search results are the
+    \l {QPlaceSearchResult::title()} {title} and \l {QPlaceSearchResult::icon()}{icon},
+    which can be used to present the search result to the user.
+
+    The intended usage is that depending  on the \l {QPlaceSearchResult::type()} {type},
+    the search result can be converted to a more detailed subclass like so:
+
+    \snippet snippets/places/requesthandler.h Convert search result
+
+    The implmentation is handled in such a way that object slicing is not an issue.
+    It is not expected that client applications or backend plugins instantiate
+    a QPlaceSearchResult directly, but rather client applications simply convert
+    to search result subclasses and backend plugins only instantiate subclasses.
+
+    \sa QPlaceResult
 */
 
 /*!

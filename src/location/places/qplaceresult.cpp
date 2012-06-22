@@ -82,6 +82,13 @@ bool QPlaceResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
     an instance of the place and an indication of whether the result is
     sponsored or \l {http://en.wikipedia.org/wiki/Organic_search}{organic}.
 
+    The intended usage is that a QPlaceSearchResult can be converted into a QPlaceResult
+    like so:
+
+    \snippet snippets/places/requesthandler.h Convert search result
+
+    The implmentation is handled in such a way that object slicing is not an issue.
+
     \sa QPlaceSearchResult
 */
 
