@@ -71,7 +71,6 @@ public:
 private slots:
     void setError(QPlaceReply::Error error_, const QString &errorString);
     void replyFinished();
-    void replyError(QNetworkReply::NetworkError error);
 
 private:
     QNetworkReply *m_reply;

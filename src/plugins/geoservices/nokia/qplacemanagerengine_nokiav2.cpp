@@ -387,10 +387,12 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
     if (unsupported) {
         QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, 0, this);
+        connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+        connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+                this, SLOT(replyError(QPlaceReply::Error,QString)));
         QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, QPlaceReply::BadArgumentError),
                                   Q_ARG(QString, "Unsupported search request options specified."));
-
         return reply;
     }
 
