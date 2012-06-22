@@ -63,8 +63,8 @@ public:
     QString searchTerm;
     QList<QPlaceCategory> categories;
     QGeoShape searchArea;
-    int dymNumber;
     QString recommendationId;
+    int dymNumber;
     QtLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
     int limit;
