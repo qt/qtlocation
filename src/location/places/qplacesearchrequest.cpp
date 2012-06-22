@@ -64,7 +64,6 @@ public:
     QList<QPlaceCategory> categories;
     QGeoShape searchArea;
     QString recommendationId;
-    int dymNumber;
     QtLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
     int limit;
@@ -72,8 +71,9 @@ public:
 };
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-:   QSharedData(), dymNumber(0),
-    visibilityScope(QtLocation::UnspecifiedVisibility), relevanceHint(QPlaceSearchRequest::UnspecifiedHint),
+:   QSharedData(),
+    visibilityScope(QtLocation::UnspecifiedVisibility),
+    relevanceHint(QPlaceSearchRequest::UnspecifiedHint),
     limit(-1), offset(0)
 {
 }
@@ -84,7 +84,6 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
       categories(other.categories),
       searchArea(other.searchArea),
       recommendationId(other.recommendationId),
-      dymNumber(other.dymNumber),
       visibilityScope(other.visibilityScope),
       relevanceHint(other.relevanceHint),
       limit(other.limit),
@@ -103,7 +102,6 @@ QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSe
         categories = other.categories;
         searchArea = other.searchArea;
         recommendationId = other.recommendationId;
-        dymNumber = other.dymNumber;
         visibilityScope = other.visibilityScope;
         relevanceHint = other.relevanceHint;
         limit = other.limit;
@@ -119,7 +117,6 @@ bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &ot
            categories == other.categories &&
            searchArea == other.searchArea &&
            recommendationId == other.recommendationId &&
-           dymNumber == other.dymNumber &&
            visibilityScope == other.visibilityScope &&
            relevanceHint == other.relevanceHint &&
            limit == other.limit &&
@@ -134,7 +131,6 @@ void QPlaceSearchRequestPrivate::clear()
     categories.clear();
     searchArea = QGeoShape();
     recommendationId.clear();
-    dymNumber = 0;
     visibilityScope = QtLocation::UnspecifiedVisibility;
     relevanceHint = QPlaceSearchRequest::UnspecifiedHint;
 }
