@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
 
 class IconHandler;
 
-class Icon : public QObject
+class JsonDbIcon : public QObject
 {
     Q_OBJECT
 public:
@@ -88,8 +88,8 @@ public:
 
     static const QLatin1String DefaultIcon;
 
-    Icon(IconHandler *parent);
-    ~Icon();
+    JsonDbIcon(IconHandler *parent);
+    ~JsonDbIcon();
 
     void initialize();
 

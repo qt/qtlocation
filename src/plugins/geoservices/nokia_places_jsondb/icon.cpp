@@ -49,38 +49,38 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
-const QSize Icon::SmallSize(QSize(20,20));
-const QSize Icon::MediumSize(QSize(30,30));
-const QSize Icon::LargeSize(QSize(50,50));
-const QSize Icon::FullscreenSize(QSize(320,480));
+const QSize JsonDbIcon::SmallSize(QSize(20,20));
+const QSize JsonDbIcon::MediumSize(QSize(30,30));
+const QSize JsonDbIcon::LargeSize(QSize(50,50));
+const QSize JsonDbIcon::FullscreenSize(QSize(320,480));
 
-const QLatin1String Icon::SmallSource("smallSourceUrl");
-const QLatin1String Icon::MediumSource("mediumSourceUrl");
-const QLatin1String Icon::LargeSource("largeSourceUrl");
-const QLatin1String Icon::FullscreenSource("fullscreenSourceUrl");
+const QLatin1String JsonDbIcon::SmallSource("smallSourceUrl");
+const QLatin1String JsonDbIcon::MediumSource("mediumSourceUrl");
+const QLatin1String JsonDbIcon::LargeSource("largeSourceUrl");
+const QLatin1String JsonDbIcon::FullscreenSource("fullscreenSourceUrl");
 
-const QLatin1String Icon::SmallDestination("smallUrl");
-const QLatin1String Icon::MediumDestination("mediumUrl");
-const QLatin1String Icon::LargeDestination("largeUrl");
-const QLatin1String Icon::FullscreenDestination("fullscreenUrl");
+const QLatin1String JsonDbIcon::SmallDestination("smallUrl");
+const QLatin1String JsonDbIcon::MediumDestination("mediumUrl");
+const QLatin1String JsonDbIcon::LargeDestination("largeUrl");
+const QLatin1String JsonDbIcon::FullscreenDestination("fullscreenUrl");
 
-const QLatin1String Icon::SmallDestinationSize("smallSize");
-const QLatin1String Icon::MediumDestinationSize("mediumSize");
-const QLatin1String Icon::LargeDestinationSize("largeSize");
-const QLatin1String Icon::FullscreenDestinationSize("fullscreenSize");
+const QLatin1String JsonDbIcon::SmallDestinationSize("smallSize");
+const QLatin1String JsonDbIcon::MediumDestinationSize("mediumSize");
+const QLatin1String JsonDbIcon::LargeDestinationSize("largeSize");
+const QLatin1String JsonDbIcon::FullscreenDestinationSize("fullscreenSize");
 
-const QLatin1String Icon::NokiaIcon("nokiaIcon");
-const QLatin1String Icon::NokiaIconGenerated("nokiaIconGenerated");
+const QLatin1String JsonDbIcon::NokiaIcon("nokiaIcon");
+const QLatin1String JsonDbIcon::NokiaIconGenerated("nokiaIconGenerated");
 
-const QLatin1String Icon::DefaultIcon("/icons/categories/06.icon");
+const QLatin1String JsonDbIcon::DefaultIcon("/icons/categories/06.icon");
 
-Icon::Icon(IconHandler *parent)
+JsonDbIcon::JsonDbIcon(IconHandler *parent)
     : QObject(parent), m_iconHandler(parent), m_error(QPlaceReply::NoError)
 {
     Q_ASSERT(parent);
 }
 
-Icon::~Icon()
+JsonDbIcon::~JsonDbIcon()
 {
 }
 
@@ -89,7 +89,7 @@ Icon::~Icon()
 //initialization in the case of having a destination icon url only involves _attempting_
 //to fetch it in order to calculate its size.  If this cannot be done, the
 //user specified size is used.
-void Icon::initialize()
+void JsonDbIcon::initialize()
 {
     QNetworkAccessManager *netManager = m_iconHandler->networkAccessManager();
     QNetworkRequest request;
@@ -102,7 +102,7 @@ void Icon::initialize()
     connect(reply, SIGNAL(finished()), this, SLOT(iconFetchFinished()));
 }
 
-bool Icon::copy() const
+bool JsonDbIcon::copy() const
 {
     QFile file(m_destinationUrl.toLocalFile());
     if (!file.open(QIODevice::WriteOnly)) {
@@ -126,68 +126,68 @@ bool Icon::copy() const
     return true;
 }
 
-QSize Icon::size() const
+QSize JsonDbIcon::size() const
 {
     return m_size;
 }
 
-QSize Icon::specifiedSize() const
+QSize JsonDbIcon::specifiedSize() const
 {
     return m_specifiedSize;
 }
 
-void Icon::setSpecifiedSize(const QSize &size)
+void JsonDbIcon::setSpecifiedSize(const QSize &size)
 {
     m_specifiedSize = size;
 }
 
-QUrl Icon::sourceUrl() const
+QUrl JsonDbIcon::sourceUrl() const
 {
     return m_sourceUrl;
 }
 
-void Icon::setSourceUrl(const QUrl &url)
+void JsonDbIcon::setSourceUrl(const QUrl &url)
 {
     m_sourceUrl = url;
 }
 
-QUrl Icon::destinationUrl() const
+QUrl JsonDbIcon::destinationUrl() const
 {
     return m_destinationUrl;
 }
 
-void Icon::setDestinationUrl(const QUrl &url)
+void JsonDbIcon::setDestinationUrl(const QUrl &url)
 {
     m_destinationUrl = url;
 }
 
-void Icon::setDestinationDataUrl()
+void JsonDbIcon::setDestinationDataUrl()
 {
     QString mimeType = imageFormatToMimeType(m_inputFormat);
     m_destinationUrl = QUrl(QString::fromLatin1("data:") + mimeType + QLatin1String(";base64,") + m_payload.toBase64());
 }
 
-QString Icon::destination() const
+QString JsonDbIcon::destination() const
 {
     return m_destination;
 }
 
-void Icon::setDestination(const QString &destination)
+void JsonDbIcon::setDestination(const QString &destination)
 {
     m_destination = destination;
 }
 
-QPlaceReply::Error Icon::error() const
+QPlaceReply::Error JsonDbIcon::error() const
 {
     return m_error;
 }
 
-QString Icon::errorString() const
+QString JsonDbIcon::errorString() const
 {
     return m_errorString;
 }
 
-void Icon::iconFetchFinished()
+void JsonDbIcon::iconFetchFinished()
 {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
 
@@ -227,7 +227,7 @@ void Icon::iconFetchFinished()
     emit initializationFinished();
 }
 
-QString Icon::imageFormatToMimeType(const QByteArray &format)
+QString JsonDbIcon::imageFormatToMimeType(const QByteArray &format)
 {
     if (format == "bmp")
         return QLatin1String("image/bmp");

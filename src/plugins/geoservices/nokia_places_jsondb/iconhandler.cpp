@@ -81,7 +81,7 @@ IconHandler::IconHandler(const QPlaceIcon &inputIcon, const QJsonObject &thumbna
         if (!destinationUrl.isEmpty())
             destination = prefix + QLatin1String("Url");
 
-        Icon *icon = new Icon(this);
+        JsonDbIcon *icon = new JsonDbIcon(this);
         icon->setSourceUrl(sourceUrl);
         icon->setDestinationUrl(destinationUrl);
         icon->setDestination(destination);
@@ -116,7 +116,7 @@ QNetworkAccessManager *IconHandler::networkAccessManager()
 
 void IconHandler::processIcons()
 {
-    if (Icon *senderIcon = qobject_cast<Icon *>(sender())) {
+    if (JsonDbIcon *senderIcon = qobject_cast<JsonDbIcon *>(sender())) {
         if (senderIcon->error() != QPlaceReply::NoError) {
             triggerDone(senderIcon->error(), senderIcon->errorString());
             return;
@@ -124,7 +124,7 @@ void IconHandler::processIcons()
     }
 
     if (m_currIconIndex < m_icons.count()) {
-        Icon *icon = m_icons.at(m_currIconIndex);
+        JsonDbIcon *icon = m_icons.at(m_currIconIndex);
         connect(icon, SIGNAL(initializationFinished()), this, SLOT(processIcons()), Qt::QueuedConnection);
         icon->initialize();
         m_currIconIndex++;
@@ -134,21 +134,21 @@ void IconHandler::processIcons()
 
         //try to set destinations for icons which were not already set
         QStringList specifiedDestinations;
-        foreach (Icon *icon, m_icons) {
+        foreach (JsonDbIcon *icon, m_icons) {
             if (!icon->destination().isEmpty())
                 specifiedDestinations.append(icon->destination());
         }
 
         //try to set small,medium and large destinations if they haven't already been explicitly specified
         //and there are icons with unspecified destinations. (essentially we are creating data urls if necessary)
-        if (!specifiedDestinations.contains(Icon::SmallDestination))
-            trySetDestination(Icon::SmallDestination);
+        if (!specifiedDestinations.contains(JsonDbIcon::SmallDestination))
+            trySetDestination(JsonDbIcon::SmallDestination);
 
-        if (!specifiedDestinations.contains(Icon::MediumDestination))
-            trySetDestination(Icon::MediumDestination);
+        if (!specifiedDestinations.contains(JsonDbIcon::MediumDestination))
+            trySetDestination(JsonDbIcon::MediumDestination);
 
-        if (!specifiedDestinations.contains(Icon::LargeDestination))
-            trySetDestination(Icon::LargeDestination);
+        if (!specifiedDestinations.contains(JsonDbIcon::LargeDestination))
+            trySetDestination(JsonDbIcon::LargeDestination);
 
         //Note that we don't try and set the destination for full screen thumbnails
         //since data urls are meant to be just for small images
@@ -162,7 +162,7 @@ void IconHandler::processIcons()
         m_thumbnailsJson.remove(JsonDb::Fullscreen);
         m_thumbnailsJson.remove(JsonDb::NokiaIcon);
 
-        foreach (Icon *icon, m_icons) {
+        foreach (JsonDbIcon *icon, m_icons) {
             QJsonObject thumbnailJson;
             if (icon->error() != QPlaceReply::NoError) {
                 triggerDone(icon->error(), icon->errorString());
@@ -194,19 +194,19 @@ void IconHandler::processIcons()
                 thumbnailJson.insert(JsonDb::Width, icon->specifiedSize().width());
             }
 
-            if (icon->destination() == Icon::SmallDestination)
+            if (icon->destination() == JsonDbIcon::SmallDestination)
                 m_thumbnailsJson.insert(JsonDb::Small, thumbnailJson);
-            else if (icon->destination() == Icon::MediumDestination)
+            else if (icon->destination() == JsonDbIcon::MediumDestination)
                 m_thumbnailsJson.insert(JsonDb::Medium, thumbnailJson);
-            else if (icon->destination() == Icon::LargeDestination)
+            else if (icon->destination() == JsonDbIcon::LargeDestination)
                 m_thumbnailsJson.insert(JsonDb::Large, thumbnailJson);
             else
                 m_thumbnailsJson.insert(JsonDb::Fullscreen, thumbnailJson);
         }
 
-        QString nokiaIcon = m_inputIcon.parameters().value(Icon::NokiaIcon).toString();
+        QString nokiaIcon = m_inputIcon.parameters().value(JsonDbIcon::NokiaIcon).toString();
         bool nokiaIconGenerated = m_inputIcon.parameters()
-                                        .value(Icon::NokiaIconGenerated).toBool();
+                                        .value(JsonDbIcon::NokiaIconGenerated).toBool();
         if (!nokiaIcon.isEmpty() && !nokiaIconGenerated) {
             QString localIconPath = m_reply->engine()->localDataPath() + nokiaIcon;
             if (QFile::exists(localIconPath))
@@ -231,19 +231,19 @@ void IconHandler::trySetDestination(const QString &destination)
     //assumption is that icons are squarish
     //so we can rely on height as a means to detect which size bucket
     //the icon belongs to
-    if (destination == Icon::SmallDestination) {
-        threshold = (Icon::SmallSize.height() + Icon::MediumSize.height()) / 2;
-        height = Icon::SmallSize.height();
-    } else if (destination == Icon::MediumDestination) {
-        threshold = (Icon::MediumSize.height() + Icon::LargeSize.height()) / 2;
-        height = Icon::MediumSize.height();
-    } else if (destination == Icon::LargeDestination) {
-        threshold = Icon::LargeSize.height() * 2;
-        height = Icon::LargeSize.height();
+    if (destination == JsonDbIcon::SmallDestination) {
+        threshold = (JsonDbIcon::SmallSize.height() + JsonDbIcon::MediumSize.height()) / 2;
+        height = JsonDbIcon::SmallSize.height();
+    } else if (destination == JsonDbIcon::MediumDestination) {
+        threshold = (JsonDbIcon::MediumSize.height() + JsonDbIcon::LargeSize.height()) / 2;
+        height = JsonDbIcon::MediumSize.height();
+    } else if (destination == JsonDbIcon::LargeDestination) {
+        threshold = JsonDbIcon::LargeSize.height() * 2;
+        height = JsonDbIcon::LargeSize.height();
     } //note fullscreen thumbnails should not be set as data urls.
 
-    Icon *currIcon = 0;
-    foreach (Icon *icon, m_icons) {
+    JsonDbIcon *currIcon = 0;
+    foreach (JsonDbIcon *icon, m_icons) {
         if (icon->destination().isEmpty()
                 && icon->size().height() < threshold
                 && (currIcon == 0 ||  qAbs(icon->size().height() - height) < qAbs(currIcon->size().height() - height))) {

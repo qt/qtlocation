@@ -88,7 +88,7 @@ private:
     QPlaceReply::Error m_error;
     QString m_errorString;
 
-    QList<Icon *> m_icons;
+    QList<JsonDbIcon *> m_icons;
     int m_currIconIndex;
 
     IdReply *m_reply;

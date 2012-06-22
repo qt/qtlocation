@@ -292,29 +292,29 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     QPlaceIcon originalIcon = original.icon();
     if (!originalIcon.isEmpty()) {
         if (originalIcon.parameters().contains(QPlaceIcon::SingleUrl)) {
-                parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
+                parameters.insert(JsonDbIcon::MediumSource, originalIcon.url(JsonDbIcon::MediumSize));
         } else if (originalIcon.manager()) {
             if (originalIcon.manager()->managerName() == QLatin1String("nokia") ||
                  originalIcon.manager()->managerName() == QLatin1String("nokia_mos")) {
                 QString nokiaIcon = originalIcon.parameters()
-                                    .value(Icon::NokiaIcon).toString();
+                                    .value(JsonDbIcon::NokiaIcon).toString();
                 if (!nokiaIcon.isEmpty())
-                    parameters.insert(Icon::NokiaIcon, nokiaIcon);
+                    parameters.insert(JsonDbIcon::NokiaIcon, nokiaIcon);
 
                 bool nokiaIconGenerated = originalIcon.parameters()
-                        .value(Icon::NokiaIconGenerated).toBool() == true;
+                        .value(JsonDbIcon::NokiaIconGenerated).toBool() == true;
                 if (nokiaIconGenerated)
-                     parameters.insert(Icon::NokiaIconGenerated, nokiaIconGenerated);
+                     parameters.insert(JsonDbIcon::NokiaIconGenerated, nokiaIconGenerated);
             } else if (originalIcon.manager()->managerName()
                             == QLatin1String("nokia_places_jsondb")) {
                 parameters = originalIcon.parameters();
             } else {
-                if (!originalIcon.url(Icon::SmallSize).isEmpty())
-                    parameters.insert(Icon::SmallSource, originalIcon.url(Icon::SmallSize));
-                if (!originalIcon.url(Icon::MediumSize).isEmpty())
-                    parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
-                if (!originalIcon.url(Icon::LargeSize).isEmpty())
-                    parameters.insert(Icon::LargeSource, originalIcon.url(Icon::LargeSize));
+                if (!originalIcon.url(JsonDbIcon::SmallSize).isEmpty())
+                    parameters.insert(JsonDbIcon::SmallSource, originalIcon.url(JsonDbIcon::SmallSize));
+                if (!originalIcon.url(JsonDbIcon::MediumSize).isEmpty())
+                    parameters.insert(JsonDbIcon::MediumSource, originalIcon.url(JsonDbIcon::MediumSize));
+                if (!originalIcon.url(JsonDbIcon::LargeSize).isEmpty())
+                    parameters.insert(JsonDbIcon::LargeSource, originalIcon.url(JsonDbIcon::LargeSize));
             }
         }
     }
@@ -336,11 +336,11 @@ QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const Q
         QList<QPair<int, QUrl> > candidates;
         //TODO: possible optimizations
         QMap<QString, QSize> sizeDictionary;
-        sizeDictionary.insert(Icon::SmallDestination, Icon::SmallSize);
+        sizeDictionary.insert(JsonDbIcon::SmallDestination, JsonDbIcon::SmallSize);
 
-        sizeDictionary.insert(Icon::MediumDestination, Icon::MediumSize);
-        sizeDictionary.insert(Icon::LargeDestination, Icon::LargeSize);
-        sizeDictionary.insert(Icon::FullscreenDestination, Icon::FullscreenSize);
+        sizeDictionary.insert(JsonDbIcon::MediumDestination, JsonDbIcon::MediumSize);
+        sizeDictionary.insert(JsonDbIcon::LargeDestination, JsonDbIcon::LargeSize);
+        sizeDictionary.insert(JsonDbIcon::FullscreenDestination, JsonDbIcon::FullscreenSize);
 
         QStringList sizeKeys;
         sizeKeys << "small" <<  "medium" << "large"
@@ -376,7 +376,7 @@ QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const Q
             iconUrl = candidates.last().second;
         }
     } else {
-        QString nokiaIcon = icon.parameters().value(Icon::NokiaIcon).toString();
+        QString nokiaIcon = icon.parameters().value(JsonDbIcon::NokiaIcon).toString();
         if (!nokiaIcon.isEmpty()) {
             QString nokiaIconPath = m_localDataPath + nokiaIcon;
             if (QFile::exists(nokiaIconPath)) {

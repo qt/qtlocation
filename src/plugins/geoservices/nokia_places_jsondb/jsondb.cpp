@@ -619,7 +619,7 @@ QPlaceIcon JsonDb::convertJsonObjectToIcon(const QJsonObject &thumbnailsJson,
 
     QString nokiaIcon = thumbnailsJson.value(JsonDb::NokiaIcon).toString();
     if (!nokiaIcon.isEmpty())
-        iconParameters.insert(Icon::NokiaIcon, nokiaIcon);
+        iconParameters.insert(JsonDbIcon::NokiaIcon, nokiaIcon);
 
     if (nokiaIcon.isEmpty() && !engine->useCustomIcons()) {
         const JsonDb *db = engine->db();
@@ -636,11 +636,11 @@ QPlaceIcon JsonDb::convertJsonObjectToIcon(const QJsonObject &thumbnailsJson,
         }
 
         if (nokiaIcon.isEmpty())
-            nokiaIcon = Icon::DefaultIcon;
+            nokiaIcon = JsonDbIcon::DefaultIcon;
 
         if (QFile::exists(iconPrefix + nokiaIcon)) {
-            iconParameters.insert(Icon::NokiaIcon, nokiaIcon);
-            iconParameters.insert(Icon::NokiaIconGenerated, true);
+            iconParameters.insert(JsonDbIcon::NokiaIcon, nokiaIcon);
+            iconParameters.insert(JsonDbIcon::NokiaIconGenerated, true);
         }
     }
 
