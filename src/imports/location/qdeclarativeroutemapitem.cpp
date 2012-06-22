@@ -121,7 +121,8 @@ void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map
 /*!
     \qmlproperty Route MapRoute::route
 
-    Holds the route to be drawn which can be used to represents one geographical route.
+    This property holds the route to be drawn which can be used
+    to represent one geographical route.
 */
 QDeclarativeGeoRoute *QDeclarativeRouteMapItem::route() const
 {

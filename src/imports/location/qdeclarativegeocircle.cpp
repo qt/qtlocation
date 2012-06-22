@@ -176,7 +176,7 @@ void QDeclarativeGeoCircle::setCenter(QDeclarativeCoordinate *coordinate)
 }
 
 /*!
-    \qmlproperty qreal GeoCircle::radius
+    \qmlproperty real GeoCircle::radius
 
     This property holds the radius of the bounding circle in meters.
 

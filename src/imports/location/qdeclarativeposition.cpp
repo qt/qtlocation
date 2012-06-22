@@ -242,7 +242,7 @@ double QDeclarativePosition::speed() const
 }
 
 /*!
-    \qmlproperty qreal Position::horizontalAccuracy
+    \qmlproperty real Position::horizontalAccuracy
 
     This property holds the horizontal accuracy of the coordinate (in meters).
 
@@ -283,7 +283,7 @@ bool QDeclarativePosition::isHorizontalAccuracyValid() const
 }
 
 /*!
-    \qmlproperty qreal Position::verticalAccuracy
+    \qmlproperty real Position::verticalAccuracy
 
     This property holds the vertical accuracy of the coordinate (in meters).
 

@@ -97,7 +97,7 @@ QPlaceRatings QDeclarativeRatings::ratings() const
 }
 
 /*!
-    \qmlproperty qreal Ratings::average
+    \qmlproperty real Ratings::average
 
     This property holds the average of the individual ratings.
 
@@ -117,7 +117,7 @@ qreal QDeclarativeRatings::average() const
 }
 
 /*!
-    \qmlproperty qreal Ratings::maximum
+    \qmlproperty real Ratings::maximum
 
     This property holds the maximum rating value.
 */

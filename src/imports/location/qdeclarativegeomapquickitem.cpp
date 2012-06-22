@@ -319,7 +319,7 @@ QPointF QDeclarativeGeoMapQuickItem::anchorPoint() const
 }
 
 /*!
-    \qmlproperty qreal MapQuickItem::zoomLevel
+    \qmlproperty real MapQuickItem::zoomLevel
 
     This property controls the scaling behaviour of the contents of the
     MapQuickItem. In particular, by setting this property it is possible

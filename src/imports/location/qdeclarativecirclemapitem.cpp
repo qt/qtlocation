@@ -287,7 +287,7 @@ QColor QDeclarativeCircleMapItem::color() const
 }
 
 /*!
-    \qmlproperty qreal MapCircle::radius
+    \qmlproperty real MapCircle::radius
 
     This property holds the radius of the circle, in meters on the ground.
 

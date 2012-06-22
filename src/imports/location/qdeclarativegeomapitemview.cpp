@@ -99,8 +99,8 @@ void QDeclarativeGeoMapItemView::componentComplete()
 /*!
     \qmlproperty model QtLocation5::MapItemView::model
 
-    This property holds the model that provides data for
-    populating data with delegates.
+    This property holds the model that provides data used for
+    creating the map item defined by the delegate.
 */
 QVariant QDeclarativeGeoMapItemView::model() const
 {

@@ -219,7 +219,8 @@ QDeclarativeMapLineProperties *QDeclarativeRectangleMapItem::border()
 /*!
     \qmlproperty Coordinate MapRectangle::topLeft
 
-    Holds the top-left coordinate of the MapRectangle which can be used to retrieve longitude, latitude and altitude of the coordination.
+    This property holds the top-left coordinate of the MapRectangle which
+    can be used to retrieve its longitude, latitude and altitude.
 */
 void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
 {
@@ -257,7 +258,8 @@ void QDeclarativeRectangleMapItem::updateMapItemAssumeDirty()
 /*!
     \qmlproperty Coordinate MapRectangle::bottomRight
 
-    Holds the bottom-right coordinate of the MapRectangle which can be used to retrieve longitude, latitude and altitude of the coordination.
+    This property holds the bottom-right coordinate of the MapRectangle which
+    can be used to retrieve its longitude, latitude and altitude.
 */
 void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottomRight)
 {
