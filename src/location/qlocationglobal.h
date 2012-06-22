@@ -43,30 +43,14 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(Q_OS_WIN)
-#  if defined(QT_NODLL)
-#    undef QT_MAKEDLL
-#    undef QT_DLL
-#  elif defined(QT_MAKEDLL)
-#    if defined(QT_DLL)
-#      undef QT_DLL
-#    endif
+#ifndef QT_STATIC
 #    if defined(QT_BUILD_LOCATION_LIB)
 #      define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #    else
 #      define Q_LOCATION_EXPORT Q_DECL_IMPORT
 #    endif
-#  elif defined(QT_DLL)
-#    define Q_LOCATION_EXPORT Q_DECL_IMPORT
-#  endif
-#endif
-
-#if !defined(Q_LOCATION_EXPORT)
-#  if defined(QT_SHARED)
-#    define Q_LOCATION_EXPORT Q_DECL_EXPORT
-#  else
+#else
 #    define Q_LOCATION_EXPORT
-#  endif
 #endif
 
 #endif // QLOCATIONGLOBAL_H
