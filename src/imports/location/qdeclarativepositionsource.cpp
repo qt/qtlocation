@@ -85,7 +85,7 @@ QT_BEGIN_NAMESPACE
     When the PositionSource is active, position updates can be retrieved
     either by simply using the \l{position} property in a binding (as the
     value of another item's property), or by providing an implementation of
-    the \l{onPositionChanged} signal-handler.
+    the \c {onPositionChanged} signal-handler.
 
     \section2 Example Usage
 
@@ -143,7 +143,7 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
 
 
 /*!
-    \qmlproperty string PositionSource::plugin
+    \qmlproperty string PositionSource::name
 
     This property holds the unique internal name for the plugin currently
     providing position information.
@@ -493,7 +493,7 @@ bool QDeclarativePositionSource::isActive() const
     whose validity can be checked with appropriate validity functions
     (for example sometimes an update does not have speed or altitude data).
 
-    However, whenever a \l positionChanged signal has been received, at least
+    However, whenever a \c {positionChanged} signal has been received, at least
     position::coordinate::latitude, position::coordinate::longitude, and position::timestamp can
     be assumed to be valid.
 

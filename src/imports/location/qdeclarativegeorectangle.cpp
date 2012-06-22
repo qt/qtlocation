@@ -52,21 +52,19 @@ QT_BEGIN_NAMESPACE
 
     \brief The GeoRectangle element represents a rectangular geographic area.
 
-    A GeoRectangle is described by a \l{QDeclarativeCoordinate}{Coordinate} which
-    represents the top-left of the GeoRectangle and a second
-    \l{QDeclarativeCoordinate}{Coordinate} which represents the bottom-right of
-    GeoRectangle.
+    A GeoRectangle is described by a \l {Coordinate} which represents the top-left of the
+    GeoRectangle and a second \l {Coordinate} which represents the bottom-right of GeoRectangle.
 
     A GeoRectangle is considered invalid if the top-left or bottom-right
     coordinates are invalid or if the top-left coordinate is South of the
     bottom-right coordinate.
 
-    Bounding boxes can never cross the poles.
+    GeoRectangles can never cross the poles.
 
-    If the height or center of a bounding box is adjusted such that it would
-    cross one of the poles the height is modified such that the bounding box
+    If the height or center of a geo rectangle is adjusted such that it would
+    cross one of the poles the height is modified such that the geo rectangle
     touches but does not cross the pole and that the center coordinate is still
-    in the center of the bounding box.
+    in the center of the geo rectangle.
 
     \section2 Example Usage
 
@@ -85,10 +83,9 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    This could then be used, for example, as a region to scan for landmarks,
-    or refining searches.
+    This could then be used, for example, as a region to search for places.
 
-    \sa QGeoRectangle.
+    \sa QGeoRectangle
 */
 
 QDeclarativeGeoRectangle::QDeclarativeGeoRectangle(QObject *parent)
@@ -105,10 +102,10 @@ QDeclarativeGeoRectangle::QDeclarativeGeoRectangle(const QGeoRectangle &box, QOb
 }
 
 /*!
-    \qmlproperty QGeoRectangle GeoRectangle::box
+    \qmlproperty QGeoRectangle GeoRectangle::rectangle
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#georectangle} {Interfaces between C++ and QML Code}".
+    "\l {location-cpp-qml.html#georectangle}{Interfaces between C++ and QML Code}".
 */
 void QDeclarativeGeoRectangle::setRectangle(const QGeoRectangle &box)
 {
@@ -130,7 +127,7 @@ QGeoShape QDeclarativeGeoRectangle::shape() const
 /*!
     \qmlmethod bool QDeclarativeGeoRectangle::contains(Coordinate coordinate)
 
-    Returns the true if \a coordinate is within the bounding box; otherwise returns false.
+    Returns the true if \a coordinate is within the geo rectangle; otherwise returns false.
 */
 bool QDeclarativeGeoRectangle::contains(QDeclarativeCoordinate *coordinate)
 {
@@ -154,7 +151,7 @@ QDeclarativeCoordinate *QDeclarativeGeoRectangle::bottomLeft()
 /*!
   \qmlproperty Coordinate GeoRectangle::bottomLeft
 
-  This property holds the bottom left coordinate of this bounding box.
+  This property holds the bottom left coordinate of this geo rectangle.
 
   Note: this property's changed() signal is currently emitted only if the
   whole element changes, not if only the contents of the element change.

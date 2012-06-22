@@ -94,7 +94,7 @@ QDeclarativeGeoCircle::QDeclarativeGeoCircle(const QGeoCircle &circle,
     \qmlproperty QGeoCircle GeoCircle::circle
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#boundingcircle} {Interfaces between C++ and QML Code}".
+    "\l {location-cpp-qml.html#geocircle}{Interfaces between C++ and QML Code}".
 */
 void QDeclarativeGeoCircle::setCircle(const QGeoCircle &circle)
 {

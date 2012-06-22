@@ -70,7 +70,7 @@ QT_BEGIN_NAMESPACE
     this must be set before the RouteModel can do any useful work.
 
     Once the plugin is set, create a \l RouteQuery with the appropriate
-    waypoints and other settings, and set the \l{RouteModel}'s \l{query}
+    waypoints and other settings, and set the RouteModel's \l{query}
     property. If \l autoUpdate is enabled, the update will being automatically.
     Otherwise, the \l{update} method may be used. By default, autoUpdate is
     disabled.
@@ -881,7 +881,7 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoRectangle *are
 
     Clears all excluded areas (areas that the route must not cross).
 
-    \sa addExcludedArea, removeExcludedAreas
+    \sa addExcludedArea, removeExcludedArea
 */
 
 void QDeclarativeGeoRouteQuery::clearExcludedAreas()
@@ -962,7 +962,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinate *waypoint)
 
     Clears all waypoints.
 
-    \sa removeWaypoint, addWaypoints
+    \sa removeWaypoint, addWaypoint
 */
 
 void QDeclarativeGeoRouteQuery::clearWaypoints()
@@ -1023,7 +1023,7 @@ void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, Featur
 
     Resets all feature weights to their default state (NeutralFeatureWeight).
 
-    \sa featureTypes, setFeatureWeights, featureWeight
+    \sa featureTypes, setFeatureWeight, featureWeight
 */
 void QDeclarativeGeoRouteQuery::resetFeatureWeights()
 {

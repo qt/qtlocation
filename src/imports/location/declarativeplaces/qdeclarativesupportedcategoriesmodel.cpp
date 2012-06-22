@@ -114,7 +114,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty string QtLocation5::CategoryModel::errorString
+    \qmlmethod string QtLocation5::CategoryModel::errorString() const
 
     This read-only property holds the textual presentation of latest category model error.
     If no error has occurred, an empty string is returned.

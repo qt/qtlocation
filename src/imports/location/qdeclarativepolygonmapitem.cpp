@@ -97,9 +97,8 @@ QT_BEGIN_NAMESPACE
     or removing points.
 
     Like the other map objects, MapPolygon is normally drawn without a smooth
-    appearance. Setting the \l opacity property will force the object to be
-    blended, which decreases performance considerably depending on the hardware
-    in use.
+    appearance. Setting the \l {QtQuick2::Item::opacity}{opacity} property will force the object to
+    be blended, which decreases performance considerably depending on the hardware in use.
 
     \section2 Example Usage
 

@@ -178,21 +178,21 @@ QT_BEGIN_NAMESPACE
     \qmlproperty enumeration QtLocation5::MapPinchArea::activeGestures
 
     This property holds the gestures that the pinch should control. By default
-    the ZoomGesture is enabled.
+    the MapPinchArea.ZoomGesture is enabled.
 
     \list
-    \li PinchArea.NoGesture - Don't support any additional gestures (value: 0x0000).
-    \li PinchArea.ZoomGesture - Support the map zoom gesture (value: 0x0001).
-    \li PinchArea.RotationGesture - Support the map rotation gesture (value: 0x0002).
-    \li PinchArea.TiltGesture - Support the map tilt gesture (value: 0x0004).
-    \li PinchArea.PanGesture  - Support the map pan gesture while pinching (value: 0x0008).
+    \li MapPinchArea.NoGesture - Don't support any additional gestures (value: 0x0000).
+    \li MapPinchArea.ZoomGesture - Support the map zoom gesture (value: 0x0001).
+    \li MapPinchArea.RotationGesture - Support the map rotation gesture (value: 0x0002).
+    \li MapPinchArea.TiltGesture - Support the map tilt gesture (value: 0x0004).
+    \li MapPinchArea.PanGesture  - Support the map pan gesture while pinching (value: 0x0008).
     \endlist
 
     For the extremist, one may OR flag the RotationGesture or TiltGesture
     but these come with absolutely no warranty or guarantees at the moment
     (may be removed, changed, moved around)
 
-    \note For the time being, only \l PinchArea.ZoomGesture is supported.
+    \note For the time being, only MapPinchArea.ZoomGesture is supported.
 */
 
 /*!
@@ -217,7 +217,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal void QtLocation5::MapPinchArea::pinchStarted(PinchEvent event)
+    \qmlsignal QtLocation5::MapPinchArea::pinchStarted(PinchEvent event)
 
     Raised when a pinch gesture is started.
 
@@ -225,7 +225,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal void QtLocation5::MapPinchArea::pinchUpdated(PinchEvent event)
+    \qmlsignal QtLocation5::MapPinchArea::pinchUpdated(PinchEvent event)
 
     Once a pinch has begun this event gets raised as the user moves her fingers
     across the map.
@@ -234,11 +234,11 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal void QtLocation5::MapPinchArea::pinchUpdated(PinchEvent event)
+    \qmlsignal QtLocation5::MapPinchArea::pinchFinished(PinchEvent event)
 
     The end of a pinch gesture is signaled by this event.
 
-    \sa pinchUpdated, pinchFinished
+    \sa pinchStarted, pinchUpdated
 */
 
 /*!

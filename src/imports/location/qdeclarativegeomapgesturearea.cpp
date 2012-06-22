@@ -274,7 +274,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal void QtLocation5::MapGestureArea::pinchStarted(PinchEvent event)
+    \qmlsignal QtLocation5::MapGestureArea::pinchStarted(PinchEvent event)
 
     Raised when a pinch gesture is started.
 
@@ -282,7 +282,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal void QtLocation5::MapGestureArea::pinchUpdated(PinchEvent event)
+    \qmlsignal QtLocation5::MapGestureArea::pinchUpdated(PinchEvent event)
 
     Once a pinch has begun this event gets raised as the user moves her fingers
     across the map.
@@ -291,11 +291,11 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal void QtLocation5::MapGestureArea::pinchUpdated(PinchEvent event)
+    \qmlsignal QtLocation5::MapGestureArea::pinchFinished(PinchEvent event)
 
     The end of a pinch gesture is signaled by this event.
 
-    \sa pinchUpdated, pinchFinished
+    \sa pinchStarted, pinchUpdated
 */
 
 /*!

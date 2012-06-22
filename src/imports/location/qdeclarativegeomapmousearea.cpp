@@ -458,7 +458,7 @@ QQuickItem *QDeclarativeGeoMapMouseArea::parentMapItem()
     The onEntered handler is only called while a button is
     pressed.
 
-    \sa onExited()
+    \sa onExited
 */
 
 /*!
@@ -491,7 +491,7 @@ QQuickItem *QDeclarativeGeoMapMouseArea::parentMapItem()
 
     The onExited handler is only called while a button is pressed.
 
-    \sa onEntered()
+    \sa onEntered
 */
 
 #include "moc_qdeclarativegeomapmousearea_p.cpp"

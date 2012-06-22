@@ -53,8 +53,8 @@ class QDeclarativePlaceUser : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QPlaceUser user READ user WRITE setUser)
-    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged())
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged())
+    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
 public:
     explicit QDeclarativePlaceUser(QObject *parent = 0);
@@ -80,6 +80,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePlaceUser));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePlaceUser))
 
 #endif

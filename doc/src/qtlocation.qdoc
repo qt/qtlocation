@@ -182,9 +182,8 @@ directions).
 
 \section1 New Since Qt4
 
-In Qt4 QtMobility provided some location functionality for positioning and Maps.
-The new Qt Location API has had an extensive reworking of \l {Map}s and
-now provides \l Places.
+In Qt4 QtMobility provided some location functionality for positioning and Maps.  The new
+Qt Location API has had an extensive reworking of Maps and now provides the Places API.
 
 New features of Qt Location includes
 \list

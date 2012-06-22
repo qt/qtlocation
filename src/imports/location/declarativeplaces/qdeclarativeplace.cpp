@@ -176,12 +176,12 @@ QT_USE_NAMESPACE
     \dots
     \snippet snippets/declarative/places.qml Place removeFavorite 2
 
-    The PlaceSearchModel and PlaceRecommendationModel have a favoritesPlugin property.
-    If the property is set, any places found during a search are checked against the favoritesPlugin
-    to see if there is a matching/corresponding favorite place.  If so, the favorite property of the Place
-    is set, otherwise the favorite property is remains null.
+    The PlaceSearchModel has a favoritesPlugin property.  If the property is set, any places found
+    during a search are checked against the favoritesPlugin to see if there is a corresponding
+    favorite place.  If so, the favorite property of the Place is set, otherwise the favorite
+    property is remains null.
 
-    \sa PlaceSearchModel, PlaceRecommendationModel
+    \sa PlaceSearchModel
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject *parent)

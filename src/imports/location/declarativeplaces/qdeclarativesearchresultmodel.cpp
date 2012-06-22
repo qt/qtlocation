@@ -142,7 +142,7 @@ QT_USE_NAMESPACE
     \codeline
     \snippet snippets/declarative/places.qml PlaceSearchModel
 
-    \sa PlaceRecommendationModel, CategoryModel, {QPlaceManager}
+    \sa CategoryModel, {QPlaceManager}
 
     \section1 Paging
     The PlaceSearchModel API has some limited support
@@ -309,7 +309,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty string QtLocation5::PlaceSearchModel::errorString
+    \qmlmethod string PlaceSearchModel::errorString() const
 
     This read-only property holds the textual presentation of latest place search model error.
     If no error has occurred or if the model was cleared an empty string is returned.

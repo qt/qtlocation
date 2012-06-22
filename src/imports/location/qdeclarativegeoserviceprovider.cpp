@@ -60,8 +60,9 @@ QT_BEGIN_NAMESPACE
 
     Plugins recognized by the system have a \l name property, a simple string
     normally indicating the name of the service that the Plugin retrieves
-    data from. They also have a variety of features, which can be enumerated
-    using the \l supported property.
+    data from. They also have a variety of features, which can be test for using the
+    \l {supportsRouting()}, \l {supportsGeocoding()}, \l {supportsMapping()} and
+    \l {supportsPlaces()} methods.
 
     When a Plugin element is created, it is "detached" and not associated with
     any actual service plugin. Once it has received information via setting
@@ -80,7 +81,7 @@ QT_BEGIN_NAMESPACE
     Plugin {
         id: plugin
         preferred: ["nokia", "foo"]
-        required: Plugin.MappingFeature | Plugin.GeocodingFeature
+        required: Plugin.AnyMappingFeatures | Plugin.AnyGeocodingFeatures
     }
     \endcode
 */
@@ -190,7 +191,36 @@ void QDeclarativeGeoServiceProvider::componentComplete()
 }
 
 /*!
-    \internal
+    \qmlmethod bool Plugin::supportsGeocoding(GeocodingFeatures features)
+
+    This method returns a boolean indicating whether the specified set of \a features are supported
+    by the geo service provider plugin.  True is returned if all specified \a features are
+    supported; otherwise false is returned.
+
+    The \a features parameter can be any flag combination of:
+    \table
+        \header
+            \li Feature
+            \li Description
+        \row
+            \li Plugin.NoGeocodingFeatures
+            \li No geocoding features are supported.
+        \row
+            \li Plugin.OnlineGeocodingFeature
+            \li Online geocoding is supported.
+        \row
+            \li Plugin.OfflineGeocodingFeature
+            \li Offline geocoding is supported.
+        \row
+            \li Plugin.ReverseGeocodingFeature
+            \li Reverse geocoding is supported.
+        \row
+            \li Plugin.LocalizedGeocodingFeature
+            \li Supports returning geocoding results with localized addresses.
+        \row
+            \li Plugin.AnyGeocodingFeatures
+            \li Matches a geo service provider that provides any geocoding features.
+    \endtable
 */
 bool QDeclarativeGeoServiceProvider::supportsGeocoding(const GeocodingFeatures &feature) const
 {
@@ -204,7 +234,33 @@ bool QDeclarativeGeoServiceProvider::supportsGeocoding(const GeocodingFeatures &
 }
 
 /*!
-    \internal
+    \qmlmethod bool Plugin::supportsMapping(MappingFeatures features)
+
+    This method returns a boolean indicating whether the specified set of \a features are supported
+    by the geo service provider plugin.  True is returned if all specified \a features are
+    supported; otherwise false is returned.
+
+    The \a features parameter can be any flag combination of:
+    \table
+        \header
+            \li Feature
+            \li Description
+        \row
+            \li Plugin.NoMappingFeatures
+            \li No mapping features are supported.
+        \row
+            \li Plugin.OnlineMappingFeature
+            \li Online mapping is supported.
+        \row
+            \li Plugin.OfflineMappingFeature
+            \li Offline mapping is supported.
+        \row
+            \li Plugin.LocalizedMappingFeature
+            \li Supports returning localized map data.
+        \row
+            \li Plugin.AnyMappingFeatures
+            \li Matches a geo service provider that provides any mapping features.
+    \endtable
 */
 bool QDeclarativeGeoServiceProvider::supportsMapping(const MappingFeatures &feature) const
 {
@@ -218,7 +274,42 @@ bool QDeclarativeGeoServiceProvider::supportsMapping(const MappingFeatures &feat
 }
 
 /*!
-    \internal
+    \qmlmethod bool Plugin::supportsRouting(RoutingFeatures features)
+
+    This method returns a boolean indicating whether the specified set of \a features are supported
+    by the geo service provider plugin.  True is returned if all specified \a features are
+    supported; otherwise false is returned.
+
+    The \a features parameter can be any flag combination of:
+    \table
+        \header
+            \li Feature
+            \li Description
+        \row
+            \li Plugin.NoRoutingFeatures
+            \li No routing features are supported.
+        \row
+            \li Plugin.OnlineRoutingFeature
+            \li Online routing is supported.
+        \row
+            \li Plugin.OfflineRoutingFeature
+            \li Offline routing is supported.
+        \row
+            \li Plugin.LocalizedRoutingFeature
+            \li Supports returning routes with localized addresses and instructions.
+        \row
+            \li Plugin.RouteUpdatesFeature
+            \li Updating an existing route based on the current position is supported.
+        \row
+            \li Plugin.AlternativeRoutesFeature
+            \li Supports returning alternative routes.
+        \row
+            \li Plugin.ExcludeAreasRoutingFeature
+            \li Supports specifying a areas which the returned route must not cross.
+        \row
+            \li Plugin.AnyRoutingFeatures
+            \li Matches a geo service provider that provides any routing features.
+    \endtable
 */
 bool QDeclarativeGeoServiceProvider::supportsRouting(const RoutingFeatures &feature) const
 {
@@ -232,55 +323,52 @@ bool QDeclarativeGeoServiceProvider::supportsRouting(const RoutingFeatures &feat
 }
 
 /*!
+    \qmlmethod bool Plugin::supportsPlaces(PlacesFeatures features)
 
-  \qmlmethod Plugin::supportsPlaces(PlacesFeatures features)
+    This method returns a boolean indicating whether the specified set of \a features are supported
+    by the geo service provider plugin.  True is returned if all specified \a features are
+    supported; otherwise false is returned.
 
-  This method returns a boolean indicating whether the specified set of
-  \a features flags is supported or not.  True is returned if it is supported,
-  otherwise false is returned.
-
-  \target PluginPlacesFeatures
-  The \a features parameter can be any flag combination of:
+    The \a features parameter can be any flag combination of:
     \table
         \header
             \li Feature
             \li Description
         \row
             \li Plugin.NoPlacesFeatures
-            \li No features supported
+            \li No places features are supported.
         \row
             \li Plugin.OnlinePlacesFeature
-            \li Place data online
+            \li Online places is supported.
         \row
             \li Plugin.OfflinePlacesFeature
-            \li Supports offline data for places
+            \li Offline places is supported.
         \row
             \li Plugin.SavePlaceFeature
-            \li Can save place data
+            \li Saving categories is supported.
         \row
             \li Plugin.RemovePlaceFeature
-            \li Supports removal of a place
+            \li Removing or deleting places is supported.
         \row
             \li Plugin.PlaceRecommendationsFeature
-            \li Supports user recommendations
+            \li Searching for recommended places similar to another place is supported.
         \row
             \li Plugin.SearchSuggestionsFeature
-            \li Supports suggestions to user query
+            \li Search suggestions is supported.
         \row
             \li Plugin.LocalizedPlacesFeature
-            \li Local places
+            \li Supports returning localized place data.
         \row
             \li Plugin.NotificationsFeature
-            \li Notify user of place event
+            \li Notifications of place and category changes is supported.
         \row
             \li Plugin.PlaceMatchingFeature
-            \li Find places
+            \li Supports matching places from two different geo service providers.
         \row
             \li Plugin.AnyPlacesFeatures
-            \li Are any features supported
+            \li Matches a geo service provider that provides any places features.
     \endtable
-
-    */
+*/
 bool QDeclarativeGeoServiceProvider::supportsPlaces(const PlacesFeatures &features) const
 {
     QGeoServiceProvider *sp = sharedGeoServiceProvider();
@@ -666,19 +754,19 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
 
     To set such a parameter, declare a PluginParameter inside a \l Plugin
     element, and give it \l{name} and \l{value} properties. A list of valid
-    parameter names for each plugin is available from the plugin reference
-    page (linked from \l{qtlocation-module}{the QtLocation module page}).
+    parameter names for each plugin is available from the
+    \l {Qt Location Module#Plugin References and Parameters}{plugin reference pages}.
 
     \section2 Example Usage
 
-    The following example shows an instantiation of the
-    \l{location-plugin-nokia}{Nokia} plugin with a mapping API token specific
-    to the application.
+    The following example shows an instantiation of the \l {Qt Location Nokia Plugin}{Nokia} plugin
+    with a mapping API \e app_id and \e token pair specific to the application.
 
     \code
     Plugin {
         name: "nokia"
-        PluginParameter { name: "token"; value: "SOMETOKEN123" }
+        PluginParameter { name: "app_id"; value: "EXAMPLE_API_ID" }
+        PluginParameter { name: "token"; value: "EXAMPLE_TOKEN_123" }
     }
     \endcode
 */
