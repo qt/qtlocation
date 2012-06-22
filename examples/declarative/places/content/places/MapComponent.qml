@@ -88,12 +88,6 @@ Map {
         }
         width: parent.width - anchors.rightMargin - anchors.leftMargin
         value: map.zoomLevel
-        onReleasedChanged: {
-            if (released == true){
-                map.cameraStopped()
-                released = false
-            }
-        }
         onValueChanged: {
             map.zoomLevel = value
         }
