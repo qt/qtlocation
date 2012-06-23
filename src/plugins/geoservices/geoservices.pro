@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
-SUBDIRS = nokia
+SUBDIRS = nokia osm
 
 qtHaveModule(jsondb): SUBDIRS += places_jsondb
