@@ -39,44 +39,32 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderpluginosm.h"
-#include "qgeotiledmappingmanagerengineosm.h"
-#include "qgeocodingmanagerengineosm.h"
+#ifndef QGEOCODEREPLYOSM_H
+#define QGEOCODEREPLYOSM_H
 
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/QGeocodeReply>
 
 QT_BEGIN_NAMESPACE
 
-QGeocodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+class QGeocodeReplyOsm : public QGeocodeReply
 {
-    return new QGeocodingManagerEngineOsm(parameters, error, errorString);
-}
+    Q_OBJECT
 
-QGeoMappingManagerEngine *QGeoServiceProviderFactoryOsm::createMappingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoTiledMappingManagerEngineOsm(parameters, error, errorString);
-}
+public:
+    explicit QGeocodeReplyOsm(QNetworkReply *reply, QObject *parent = 0);
+    ~QGeocodeReplyOsm();
 
-QGeoRoutingManagerEngine *QGeoServiceProviderFactoryOsm::createRoutingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
+    void abort();
 
-    return 0;
-}
+private Q_SLOTS:
+    void networkReplyFinished();
+    void networkReplyError(QNetworkReply::NetworkError error);
 
-QPlaceManagerEngine *QGeoServiceProviderFactoryOsm::createPlaceManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
-
-    return 0;
-}
+private:
+    QNetworkReply *m_reply;
+};
 
 QT_END_NAMESPACE
+
+#endif // QGEOCODEREPLYOSM_H

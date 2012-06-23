@@ -39,44 +39,40 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderpluginosm.h"
-#include "qgeotiledmappingmanagerengineosm.h"
-#include "qgeocodingmanagerengineosm.h"
+#ifndef QGEOCODINGMANAGERENGINEOSM_H
+#define QGEOCODINGMANAGERENGINEOSM_H
 
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
+#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QGeocodingManagerEngine>
+#include <QtLocation/QGeocodeReply>
 
 QT_BEGIN_NAMESPACE
 
-QGeocodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+class QNetworkAccessManager;
+
+class QGeocodingManagerEngineOsm : public QGeocodingManagerEngine
 {
-    return new QGeocodingManagerEngineOsm(parameters, error, errorString);
-}
+    Q_OBJECT
 
-QGeoMappingManagerEngine *QGeoServiceProviderFactoryOsm::createMappingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoTiledMappingManagerEngineOsm(parameters, error, errorString);
-}
+public:
+    QGeocodingManagerEngineOsm(const QVariantMap &parameters, QGeoServiceProvider::Error *error,
+                               QString *errorString);
+    ~QGeocodingManagerEngineOsm();
 
-QGeoRoutingManagerEngine *QGeoServiceProviderFactoryOsm::createRoutingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
+    QGeocodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds);
+    QGeocodeReply *geocode(const QGeoAddress &address, int limit, int offset,
+                           const QGeoShape &bounds);
+    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate, const QGeoShape &bounds);
 
-    return 0;
-}
+private Q_SLOTS:
+    void replyFinished();
+    void replyError(QGeocodeReply::Error errorCode, const QString &errorString);
 
-QPlaceManagerEngine *QGeoServiceProviderFactoryOsm::createPlaceManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
-
-    return 0;
-}
+private:
+    QNetworkAccessManager *m_networkManager;
+    QByteArray m_userAgent;
+};
 
 QT_END_NAMESPACE
+
+#endif // QGEOCODINGMANAGERENGINEOSM_H
