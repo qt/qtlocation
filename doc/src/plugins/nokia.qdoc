@@ -241,6 +241,10 @@ of the box are not honored.
 
 A search center \e {must} be provided for all searches.
 
+\section4 Relevancy Hints
+The \c nokia plugin does not support relevancy hints.  Any relevancy hints supplied to
+a search request are consequently ignored.
+
 \section3 Search Term suggestions
 Only a partial \e {search term} and \e {search center} is supported when retrieving suggestions.
 This limitation applies when using the \c nokia plugin with the \l PlaceSearchSuggestionModel and QPlaceManager::searchSuggestions().
