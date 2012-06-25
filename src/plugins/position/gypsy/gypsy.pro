@@ -6,7 +6,6 @@ QT += location gui
 load(qt_plugin)
 
 DESTDIR = $$QT.location.plugins/position
-#QTDIR_build:REQUIRES += "contains(QT_CONFIG, location)"
 
 HEADERS += \
     qgeosatelliteinfosource_gypsy_p.h \
@@ -18,9 +17,8 @@ SOURCES += \
 
 INCLUDEPATH += $$QT.location.includes
 
-CONFIG += qdbus link_pkgconfig
-DEFINES += GYPSY_AVAILABLE=1
-PKGCONFIG += gypsy
+CONFIG += link_pkgconfig
+PKGCONFIG += gypsy gconf-2.0
 
 target.path += $$[QT_INSTALL_PLUGINS]/position
 INSTALLS += target

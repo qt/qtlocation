@@ -178,8 +178,8 @@ void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite *satellite,
     // If a single updateRequest was active, send signals right away.
     // If a periodic timer was running (meaning that the client wishes
     // to have updates at defined intervals), store the data for later sending.
-    QList<QtMobility::QGeoSatelliteInfo> lastSatellitesInView;
-    QList<QtMobility::QGeoSatelliteInfo> lastSatellitesInUse;
+    QList<QGeoSatelliteInfo> lastSatellitesInView;
+    QList<QGeoSatelliteInfo> lastSatellitesInUse;
 
     unsigned int i;
     for (i = 0; i < satellites->len; i++) {
@@ -281,6 +281,16 @@ int QGeoSatelliteInfoSourceGypsy::init()
         return -1;
     }
     return 0;
+}
+
+int QGeoSatelliteInfoSourceGypsy::minimumUpdateInterval() const
+{
+    return 1;
+}
+
+QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSourceGypsy::error() const
+{
+    return UnknownSourceError;
 }
 
 void QGeoSatelliteInfoSourceGypsy::startUpdates()

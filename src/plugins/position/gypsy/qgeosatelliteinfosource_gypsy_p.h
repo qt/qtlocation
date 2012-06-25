@@ -107,6 +107,9 @@ public:
       ~QGeoSatelliteInfoSourceGypsy();
       int init();
 
+      int minimumUpdateInterval() const;
+      Error error() const;
+
 public slots:
       virtual void startUpdates();
       void stopUpdates();
