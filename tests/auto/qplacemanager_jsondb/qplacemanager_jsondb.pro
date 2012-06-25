@@ -2,11 +2,11 @@
 TARGET = tst_qplacemanager_jsondb
 
 HEADERS += jsondbutils.h \
-           ..\placemanager_utils\placemanager_utils.h
+           ../placemanager_utils/placemanager_utils.h
 
 SOURCES += tst_qplacemanager_jsondb.cpp \
            jsondbutils.cpp \
-           ..\placemanager_utils\placemanager_utils.cpp
+           ../placemanager_utils/placemanager_utils.cpp
 
 QT += location testlib
 
