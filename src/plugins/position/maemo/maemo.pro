@@ -1,7 +1,7 @@
 load(qt_build_config)
 
 TARGET = qtposition_maemo
-QT += location gui
+QT += location gui dbus
 
 load(qt_plugin)
 
@@ -10,7 +10,6 @@ DESTDIR = $$QT.location.plugins/position
 
 INCLUDEPATH += $$QT.location.includes
 
-CONFIG += qdbus link_pkgconfig
 SOURCES += qgeopositioninfosource_maemo.cpp \
             qgeosatelliteinfosource_maemo.cpp \
             dbuscomm_maemo.cpp \

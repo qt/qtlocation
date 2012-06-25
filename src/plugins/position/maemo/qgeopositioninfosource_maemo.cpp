@@ -144,6 +144,10 @@ int QGeoPositionInfoSourceMaemo::minimumUpdateInterval() const
     return dbusComm->minimumInterval();
 }
 
+QGeoPositionInfoSource::Error QGeoPositionInfoSourceMaemo::error() const
+{
+    return UnknownSourceError;
+}
 
 void QGeoPositionInfoSourceMaemo::startUpdates()
 {

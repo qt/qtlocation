@@ -85,6 +85,7 @@ public:
     virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     virtual PositioningMethods supportedPositioningMethods() const;
     virtual int minimumUpdateInterval() const;
+    Error error() const;
 
 public Q_SLOTS:
     void startUpdates();

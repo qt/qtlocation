@@ -65,6 +65,8 @@ class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
 public:
     explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
     int init();
+    int minimumUpdateInterval() const;
+    Error error() const;
 
 public Q_SLOTS:
     void startUpdates();

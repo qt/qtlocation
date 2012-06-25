@@ -70,6 +70,15 @@ int QGeoSatelliteInfoSourceMaemo::init()
     return status;
 }
 
+int QGeoSatelliteInfoSourceMaemo::minimumUpdateInterval() const
+{
+    return 1;
+}
+
+QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSourceMaemo::error() const
+{
+    return UnknownSourceError;
+}
 
 void QGeoSatelliteInfoSourceMaemo::startUpdates()
 {
