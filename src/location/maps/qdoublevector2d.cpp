@@ -41,6 +41,7 @@
 
 #include "qdoublevector2d_p.h"
 #include "qdoublevector3d_p.h"
+#include <QtCore/qdatastream.h>
 #include <QtCore/qdebug.h>
 #include <QtCore/qmath.h>
 
