@@ -167,6 +167,18 @@ bool PlaceManagerUtils::doFetchDetails(QPlaceManager *manager,
     return success;
 }
 
+bool PlaceManagerUtils::doInitializeCategories(QPlaceManager *manager,
+                                               QPlaceReply::Error expectedError)
+{
+    QPlaceReply *reply = manager->initializeCategories();
+    bool success = checkSignals(reply, expectedError, manager);
+
+    if (!success)
+        qDebug() << "Error string = " << reply->errorString();
+
+    return success;
+}
+
 bool PlaceManagerUtils::doSaveCategory(QPlaceManager *manager,
                                        const QPlaceCategory &category,
                                        const QString &parentId,

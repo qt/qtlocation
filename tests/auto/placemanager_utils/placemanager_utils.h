@@ -103,6 +103,9 @@ public:
                         QPlace *place,
                         QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
+    static bool doInitializeCategories(QPlaceManager *manager,
+                                QPlaceReply::Error expectedError = QPlaceReply::NoError);
+
     static bool doSaveCategory(QPlaceManager *manager,
                         const QPlaceCategory &category,
                         const QString &parentId,
@@ -163,6 +166,10 @@ protected:
                         QPlace *place,
                         QPlaceReply::Error expectedError = QPlaceReply::NoError) {
         return doFetchDetails(placeManager, placeId, place, expectedError);
+    }
+
+    bool doInitializeCategories(QPlaceReply::Error expectedError = QPlaceReply::NoError) {
+        return doInitializeCategories(placeManager, expectedError);
     }
 
     bool doSaveCategory(const QPlaceCategory &category,
