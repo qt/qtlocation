@@ -681,6 +681,10 @@ QPlaceIcon QPlaceManagerEngineNokiaV2::icon(const QString &remotePath,
     }
 
     icon.setParameters(params);
+
+    if (!icon.isEmpty())
+        icon.setManager(manager());
+
     return icon;
 }
 
