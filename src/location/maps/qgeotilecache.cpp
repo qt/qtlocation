@@ -150,9 +150,8 @@ void QGeoTileCache::loadTiles()
         QList<QGeoTileSpec> specs;
         QList<int> costs;
         while (!file.atEnd()) {
-            QByteArray line = file.readLine();
-            QString filename(line);
-            filename.remove('\n');
+            QByteArray line = file.readLine().trimmed();
+            QString filename = QString::fromLatin1(line.constData(), line.length());
             if (dir.exists(filename)){
                 files.removeOne(filename);
                 QGeoTileSpec spec = filenameToTileSpec(filename);
@@ -200,11 +199,10 @@ QGeoTileCache::~QGeoTileCache()
         diskCache_.serializeQueue(i, queue);
         int queueLength = queue.size();
         for (int j = 0; j<queueLength; j++) {
-            QString nameLine = queue[j]->filename + "\n";
             // we just want the filename here, not the full path
-            QStringList parts = nameLine.split('/');
-            QString name = parts.at(parts.length()-1);
-            file.write(name.toAscii());
+            int index = queue[j]->filename.lastIndexOf(QLatin1Char('/'));
+            QByteArray filename = queue[j]->filename.mid(index + 1).toLatin1() + '\n';
+            file.write(filename);
         }
         file.close();
     }

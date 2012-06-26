@@ -90,7 +90,7 @@ QGeoUriProvider::QGeoUriProvider(
 QString QGeoUriProvider::getCurrentHost() const
 {
     if (m_maxSubdomains) {
-        QString result(m_firstSubdomain.toAscii() + qrand() % m_maxSubdomains);
+        QString result(m_firstSubdomain.toLatin1() + qrand() % m_maxSubdomains);
         result += "." + m_currentHost;
         return result;
     }
@@ -102,7 +102,7 @@ void QGeoUriProvider::setCurrentHost(const QString &host)
     if (host.length() > 4 && host.at(1) == QChar('-') && host.at(3) == QChar('.')) {
         QString realHost = host.right(host.length() - 4);
         m_firstSubdomain = host.at(0);
-        m_maxSubdomains = host.at(2).toAscii() - host.at(0).toAscii() + 1;
+        m_maxSubdomains = host.at(2).toLatin1() - host.at(0).toLatin1() + 1;
         m_currentHost = realHost;
     } else {
         m_currentHost = host;

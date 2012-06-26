@@ -302,7 +302,7 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     if (!m_client) {
         qCritical ("QGeoPositionInfoSourceGeoclueMaster error creating GeoclueMasterClient.");
         if (error) {
-            qCritical (error->message);
+            qCritical ("Geoclue error: %s", error->message);
             g_error_free (error);
         }
         return -1;
@@ -316,7 +316,7 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
                                                  &error)){
         qCritical ("QGeoPositionInfoSourceGeoclueMaster geoclue set_requirements failed.");
         if (error) {
-            qCritical (error->message);
+            qCritical ("Geoclue error: %s", error->message);
             g_error_free (error);
         }
         g_object_unref (m_client);
