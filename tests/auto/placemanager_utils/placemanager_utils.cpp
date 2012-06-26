@@ -138,6 +138,21 @@ bool PlaceManagerUtils::doSearch(QPlaceManager *manager,
     return success;
 }
 
+bool PlaceManagerUtils::doSearchSuggestions(QPlaceManager *manager,
+                                            const QPlaceSearchRequest &request,
+                                            QStringList *results,
+                                            QPlaceReply::Error expectedError)
+{
+    QPlaceSearchSuggestionReply *reply = manager->searchSuggestions(request);
+    bool success = checkSignals(reply, expectedError, manager);
+    *results = reply->suggestions();
+
+    if (!success)
+        qDebug() << "Error string = " << reply->errorString();
+
+    return success;
+}
+
 bool PlaceManagerUtils::doRemovePlace(QPlaceManager *manager,
                                       const QPlace &place,
                                       QPlaceReply::Error expectedError)

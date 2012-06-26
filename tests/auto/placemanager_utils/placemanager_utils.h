@@ -95,6 +95,11 @@ public:
                   QList<QPlace> *results,
              QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
+    static bool doSearchSuggestions(QPlaceManager *manager,
+                                    const QPlaceSearchRequest &request,
+                                    QStringList *results,
+                                    QPlaceReply::Error expectedError = QPlaceReply::NoError);
+
     static bool doRemovePlace(QPlaceManager *manager, const QPlace &place,
                        QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
@@ -160,6 +165,12 @@ protected:
                   QList<QPlace> *results,
                   QPlaceReply::Error expectedError = QPlaceReply::NoError) {
         return doSearch(placeManager, request, results,expectedError);
+    }
+
+    bool doSearchSuggestions(const QPlaceSearchRequest &request,
+                             QStringList *results,
+                             QPlaceReply::Error expectedError) {
+        return doSearchSuggestions(placeManager, request, results, expectedError);
     }
 
     bool doFetchDetails(QString placeId,
