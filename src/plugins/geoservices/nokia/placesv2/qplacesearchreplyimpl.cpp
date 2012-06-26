@@ -101,10 +101,10 @@ void QPlaceSearchReplyImpl::replyFinished()
     if (m_reply->error() != QNetworkReply::NoError) {
         switch (m_reply->error()) {
         case QNetworkReply::OperationCanceledError:
-            setError(CancelError, "Request canceled.");
+            setError(CancelError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, CANCEL_ERROR));
             break;
         default:
-            setError(CommunicationError, "Network error.");
+            setError(CommunicationError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, NETWORK_ERROR));
         }
         return;
     }
@@ -112,7 +112,6 @@ void QPlaceSearchReplyImpl::replyFinished()
     QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
     if (!document.isObject()) {
         setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
-        emit error(error(), errorString());
         return;
     }
 

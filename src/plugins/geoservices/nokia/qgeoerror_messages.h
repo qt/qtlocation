@@ -62,6 +62,7 @@ extern const char SAVING_CATEGORY_NOT_SUPPORTED[];
 extern const char REMOVING_CATEGORY_NOT_SUPPORTED[];
 extern const char PARSE_ERROR[];
 extern const char NETWORK_ERROR[];
+extern const char CANCEL_ERROR[];
 
 QT_END_NAMESPACE
 
