@@ -547,7 +547,8 @@ Item {
         if (placesPlugin.supportsMapping()) {
             mapPlugin = placesPlugin;
         } else {
-            mapPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { required.mapping: Plugin.AnyMappingFeatures }', page);
+            mapPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { required.mapping: Plugin.AnyMappingFeatures;' +
+                                                                           'parameters: pluginParametersFromMap(pluginParameters) }', page);
         }
 
         if (map)
