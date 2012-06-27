@@ -42,7 +42,7 @@
 #ifndef QGEOTILEDMAPDATA_TEST_H
 #define QGEOTILEDMAPDATA_TEST_H
 
-#include <qgeotiledmapdata_p.h>
+#include <QtLocation/private/qgeotiledmapdata_p.h>
 
 QT_USE_NAMESPACE
 

@@ -574,7 +574,10 @@ void QDeclarativeSearchResultModel::clearData()
     m_places.clear();
     qDeleteAll(m_icons);
     m_icons.clear();
-    m_results.clear();
+    if (!m_results.isEmpty()) {
+        m_results.clear();
+        emit rowCountChanged();
+    }
 }
 
 QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role) const

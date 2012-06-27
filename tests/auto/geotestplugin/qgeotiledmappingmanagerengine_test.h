@@ -42,19 +42,15 @@
 #ifndef QGEOTILEDMAPPINGMANAGERENGINE_TEST_H
 #define QGEOTILEDMAPPINGMANAGERENGINE_TEST_H
 
-#include <qgeoserviceprovider.h>
-#include "qgeotiledmappingmanagerengine_p.h"
-#include <QLocale>
-#include "qgeotiledmapreply_p.h"
-#include "qgeomaptype_p.h"
-#include "qgeocameracapabilities_p.h"
+#include <QtCore/QLocale>
+#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
+#include <QtLocation/private/qgeotiledmapreply_p.h>
+#include <QtLocation/private/qgeomaptype_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 
 #include "qgeotiledmapdata_test.h"
 #include "qgeotilefetcher_test.h"
-
-#include <QTimer>
-#include <QDebug>
-#include <QTimerEvent>
 
 QT_USE_NAMESPACE
 

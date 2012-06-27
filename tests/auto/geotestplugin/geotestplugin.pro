@@ -1,9 +1,7 @@
 load(qt_plugin)
 
 TARGET = qtgeoservices_qmltestplugin
-QT += location
-
-INCLUDEPATH += ../../../src/location/maps
+QT += location-private testlib
 
 DESTDIR = $$QT.location.plugins/geoservices
 
@@ -21,4 +19,5 @@ target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target
 
 OTHER_FILES += \
-    geotestplugin.json
+    geotestplugin.json \
+    place_data.json

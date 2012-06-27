@@ -42,15 +42,33 @@
 #ifndef QPLACEMANAGERENGINE_TEST_H
 #define QPLACEMANAGERENGINE_TEST_H
 
+#include <QtCore/QFile>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonArray>
 #include <QtCore/QUuid>
+#include <QtLocation/QGeoCoordinate>
+#include <QtLocation/QGeoLocation>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceManagerEngine>
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceDetailsReply>
 #include <QtLocation/QPlaceIdReply>
 #include <QtLocation/QPlaceSearchSuggestionReply>
+#include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceResult>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlace>
+#include <QtTest/QTest>
 
-#include <QtCore/QDebug>
+QT_BEGIN_NAMESPACE
+
+inline uint qHash(const QPlaceCategory &category)
+{
+    return qHash(QUuid(category.categoryId().toLatin1()));
+}
+
+QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
@@ -115,6 +133,28 @@ public:
     }
 };
 
+class PlaceSearchReply : public QPlaceSearchReply
+{
+    Q_OBJECT
+
+public:
+    PlaceSearchReply(const QList<QPlaceSearchResult> &results, QObject *parent = 0)
+    :   QPlaceSearchReply(parent)
+    {
+        setResults(results);
+    }
+
+    Q_INVOKABLE void emitError()
+    {
+        emit error(error(), errorString());
+    }
+
+    Q_INVOKABLE void emitFinished()
+    {
+        emit finished();
+    }
+};
+
 class SuggestionReply : public QPlaceSearchSuggestionReply
 {
     Q_OBJECT
@@ -146,36 +186,67 @@ public:
     {
         m_locales << QLocale();
 
-        if (parameters.value(QLatin1String("initializeCategories"), false).toBool()) {
-            QPlaceCategory accommodation;
-            accommodation.setName(QLatin1String("Accommodation"));
-            accommodation.setCategoryId(QUuid::createUuid().toString());
-            m_categories.insert(accommodation.categoryId(), accommodation);
-            m_childCategories[QString()].append(accommodation.categoryId());
+        if (parameters.value(QStringLiteral("initializePlaceData"), false).toBool()) {
+            QFile placeData(QFINDTESTDATA("place_data.json"));
+            if (placeData.open(QIODevice::ReadOnly)) {
+                QJsonDocument document = QJsonDocument::fromJson(placeData.readAll());
 
-            QPlaceCategory hotel;
-            hotel.setName(QLatin1String("Hotel"));
-            hotel.setCategoryId(QUuid::createUuid().toString());
-            m_categories.insert(hotel.categoryId(), hotel);
-            m_childCategories[accommodation.categoryId()].append(hotel.categoryId());
+                if (document.isObject()) {
+                    QJsonObject o = document.object();
 
-            QPlaceCategory motel;
-            motel.setName(QLatin1String("Motel"));
-            motel.setCategoryId(QUuid::createUuid().toString());
-            m_categories.insert(motel.categoryId(), motel);
-            m_childCategories[accommodation.categoryId()].append(motel.categoryId());
+                    if (o.contains(QStringLiteral("categories"))) {
+                        QJsonArray categories = o.value(QStringLiteral("categories")).toArray();
 
-            QPlaceCategory camping;
-            camping.setName(QLatin1String("Camping"));
-            camping.setCategoryId(QUuid::createUuid().toString());
-            m_categories.insert(camping.categoryId(), camping);
-            m_childCategories[accommodation.categoryId()].append(camping.categoryId());
+                        for (int i = 0; i < categories.count(); ++i) {
+                            QJsonObject c = categories.at(i).toObject();
 
-            QPlaceCategory park;
-            park.setName(QLatin1String("Park"));
-            park.setCategoryId(QUuid::createUuid().toString());
-            m_categories.insert(park.categoryId(), park);
-            m_childCategories[QString()].append(park.categoryId());
+                            QPlaceCategory category;
+
+                            category.setName(c.value(QStringLiteral("name")).toString());
+                            category.setCategoryId(c.value(QStringLiteral("id")).toString());
+
+                            m_categories.insert(category.categoryId(), category);
+
+                            const QString parentId = c.value(QStringLiteral("parentId")).toString();
+                            m_childCategories[parentId].append(category.categoryId());
+                        }
+                    }
+
+                    if (o.contains(QStringLiteral("places"))) {
+                        QJsonArray places = o.value(QStringLiteral("places")).toArray();
+
+                        for (int i = 0; i < places.count(); ++i) {
+                            QJsonObject p = places.at(i).toObject();
+
+                            QPlace place;
+
+                            place.setName(p.value(QStringLiteral("name")).toString());
+                            place.setPlaceId(p.value(QStringLiteral("id")).toString());
+
+                            QList<QPlaceCategory> categories;
+                            QJsonArray ca = p.value(QStringLiteral("categories")).toArray();
+                            for (int j = 0; j < ca.count(); ++j) {
+                                QPlaceCategory c = m_categories.value(ca.at(j).toString());
+                                if (!c.isEmpty())
+                                    categories.append(c);
+                            }
+                            place.setCategories(categories);
+
+                            QGeoCoordinate coordinate;
+                            QJsonObject lo = p.value(QStringLiteral("location")).toObject();
+                            coordinate.setLatitude(lo.value(QStringLiteral("latitude")).toDouble());
+                            coordinate.setLongitude(lo.value(QStringLiteral("longitude")).toDouble());
+
+                            QGeoLocation location;
+                            location.setCoordinate(coordinate);
+
+                            place.setLocation(location);
+
+                            m_places.insert(place.placeId(), place);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -205,9 +276,38 @@ public:
 
     QPlaceSearchReply *search(const QPlaceSearchRequest &query)
     {
-        Q_UNUSED(query)
+        QList<QPlaceSearchResult> results;
 
-        return 0;
+        if (!query.searchTerm().isEmpty()) {
+            foreach (const QPlace &place, m_places) {
+                if (!place.name().contains(query.searchTerm(), Qt::CaseInsensitive))
+                    continue;
+
+                QPlaceResult r;
+                r.setPlace(place);
+                r.setTitle(place.name());
+
+                results.append(r);
+            }
+        } else if (!query.categories().isEmpty()) {
+            QSet<QPlaceCategory> categories = query.categories().toSet();
+            foreach (const QPlace &place, m_places) {
+                if (place.categories().toSet().intersect(categories).isEmpty())
+                    continue;
+
+                QPlaceResult r;
+                r.setPlace(place);
+                r.setTitle(place.name());
+
+                results.append(r);
+            }
+        }
+
+        PlaceSearchReply *reply = new PlaceSearchReply(results, this);
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+
+        return reply;
     }
 
     QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query)

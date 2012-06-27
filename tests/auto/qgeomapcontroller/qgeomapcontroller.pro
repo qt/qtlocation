@@ -2,7 +2,6 @@ TEMPLATE = app
 CONFIG += testcase
 TARGET = tst_qgeomapcontroller
 
-INCLUDEPATH += ../../../src/location/maps
 HEADERS += ../geotestplugin/qgeoserviceproviderplugin_test.h \
            ../geotestplugin/qgeotiledmapdata_test.h \
            ../geotestplugin/qgeotiledmappingmanagerengine_test.h \
@@ -14,4 +13,4 @@ HEADERS += ../geotestplugin/qgeoserviceproviderplugin_test.h \
 SOURCES += tst_qgeomapcontroller.cpp
 SOURCES += ../geotestplugin/qgeoserviceproviderplugin_test.cpp
 
-QT += location testlib
+QT += location-private testlib

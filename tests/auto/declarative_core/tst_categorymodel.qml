@@ -58,7 +58,7 @@ TestCase {
         allowExperimental: true
         parameters: [
             PluginParameter {
-                name: "initializeCategories"
+                name: "initializePlaceData"
                 value: true
             }
         ]

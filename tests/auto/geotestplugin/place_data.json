@@ -1,0 +1,57 @@
+{
+    "categories": [
+        {
+            "name": "Accommodation",
+            "id": "4b79794f-e146-4adc-9bdf-68c06e7209fd"
+        },
+        {
+            "name": "Hotel",
+            "id": "70ab5807-26d2-46be-a860-dc48f17133f0",
+            "parentId": "4b79794f-e146-4adc-9bdf-68c06e7209fd"
+        },
+        {
+            "name": "Motel",
+            "id": "e0478f8a-fe8f-4bf9-8392-c1910e49223f",
+            "parentId": "4b79794f-e146-4adc-9bdf-68c06e7209fd"
+        },
+        {
+            "name": "Camping",
+            "id": "b0434495-9429-4c9f-96e5-75f52f0b8dc8",
+            "parentId": "4b79794f-e146-4adc-9bdf-68c06e7209fd"
+        },
+        {
+            "name": "Park",
+            "id": "c2e1252c-b997-44fc-8165-e53dd00f66a7"
+        }
+    ],
+
+    "places": [
+        {
+            "name": "Park View Hotel",
+            "id": "4dcc74ce-fdeb-443e-827c-367438017cf1",
+            "categories": [ "70ab5807-26d2-46be-a860-dc48f17133f0" ],
+            "location": {
+                "latitude": 0.1001,
+                "longitude": 0.1001
+            }
+        },
+        {
+            "name": "Sea View Hotel",
+            "id": "8f72057a-54b2-4e95-a7bb-97b4d2b5721e",
+            "categories": [ "70ab5807-26d2-46be-a860-dc48f17133f0" ],
+            "location": {
+                "latitude": 0.1002,
+                "longitude": 0.1002
+            }
+        },
+        {
+            "name": "Country Gardens",
+            "id": "dacb2181-3f67-4e6a-bd4d-635e99ad5b03",
+            "categories": [ "c2e1252c-b997-44fc-8165-e53dd00f66a7" ],
+            "location": {
+                "latitude": 0.1001,
+                "longitude": 0.1002
+            }
+        }
+    ]
+}
