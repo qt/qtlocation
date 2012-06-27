@@ -345,7 +345,7 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
     return reply;
 }
 
-static void addAtForBoundingArea(const QGeoShape &area,
+static bool addAtForBoundingArea(const QGeoShape &area,
                                  QUrlQuery *queryItems)
 {
     QGeoCoordinate center;
@@ -360,13 +360,15 @@ static void addAtForBoundingArea(const QGeoShape &area,
         break;
     }
 
-    if (!center.isValid())
-        return;
-
-    queryItems->addQueryItem(QLatin1String("at"),
-                             QString::number(center.latitude()) +
-                             QLatin1Char(',') +
-                             QString::number(center.longitude()));
+    if (!center.isValid()) {
+        return false;
+    } else {
+        queryItems->addQueryItem(QLatin1String("at"),
+                                 QString::number(center.latitude()) +
+                                 QLatin1Char(',') +
+                                 QString::number(center.longitude()));
+        return true;
+    }
 }
 
 QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest &query)
@@ -397,17 +399,29 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         return reply;
     }
 
+    QUrlQuery queryItems;
+
+    //check the search area is valid for all searches except recommendation searches
+    //which do not need search centers.
+    if (query.recommendationId().isEmpty()) {
+        if (!addAtForBoundingArea(query.searchArea(), &queryItems)) {
+            QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, 0, this);
+            connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+            connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+                    this, SLOT(replyError(QPlaceReply::Error,QString)));
+            QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
+                                      Q_ARG(QPlaceReply::Error, QPlaceReply::BadArgumentError),
+                                      Q_ARG(QString, "Invalid search area provided"));
+            return reply;
+        }
+    }
+
     if (!query.searchTerm().isEmpty()) {
         // search term query
         QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
                         QLatin1String("/places/v1/discover/search"));
 
-        QUrlQuery queryItems;
-
         queryItems.addQueryItem(QLatin1String("q"), query.searchTerm());
-
-        addAtForBoundingArea(query.searchArea(), &queryItems);
-
         queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
         if (query.limit() > 0) {
@@ -430,7 +444,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
                         QLatin1String("/places/v1/places/") + query.recommendationId() +
                         QLatin1String("/related/recommended"));
 
-        QUrlQuery queryItems;
         queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
         requestUrl.setQuery(queryItems);
@@ -451,8 +464,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
                         QLatin1String("/places/v1/discover/explore/places"));
 
-        QUrlQuery queryItems;
-
         QStringList ids;
         foreach (const QPlaceCategory &category, query.categories())
             ids.append(category.categoryId());
@@ -461,8 +472,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
             queryItems.addQueryItem(QLatin1String("cat"),
                                     ids.join(QLatin1String(",")));
         }
-
-        addAtForBoundingArea(query.searchArea(), &queryItems);
 
         queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
@@ -517,7 +526,16 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
 
     queryItems.addQueryItem(QLatin1String("q"), query.searchTerm());
 
-    addAtForBoundingArea(query.searchArea(), &queryItems);
+    if (!addAtForBoundingArea(query.searchArea(), &queryItems)) {
+        QPlaceSearchSuggestionReplyImpl *reply = new QPlaceSearchSuggestionReplyImpl(0, this);
+        connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+        connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+                this, SLOT(replyError(QPlaceReply::Error,QString)));
+        QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, QPlaceReply::BadArgumentError),
+                                  Q_ARG(QString, "Invalid search area provided"));
+        return reply;
+    }
 
     requestUrl.setQuery(queryItems);
 
