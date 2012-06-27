@@ -10,6 +10,8 @@ HEADERS += qgeopositioninfosource_p.h
 include(maps/maps.pri)
 include(places/places.pri)
 
+QMAKE_DOCS = $$PWD/../../doc/config/qtlocation.qdocconf
+
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
