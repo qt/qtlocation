@@ -49,7 +49,25 @@ TestCase {
     name: "PositionSource"
 
     PositionSource { id: defaultSource }
+    PositionSource
+    {
+        id: activeDefaultSource
+        active: true
+    }
+
     SignalSpy { id: defaultSourceSpy; target: defaultSource; signalName: "positionChanged" }
+
+    function test_activeDefaultSource() {
+        wait(0);
+        verify(activeDefaultSource.name !== "");
+        compare(activeDefaultSource.active, true);
+    }
+
+    function test_invalidSource() {
+        activeDefaultSource.name = "invalid_positioning_source";
+        verify(!activeDefaultSource.active);
+        verify(!activeDefaultSource.valid);
+    }
 
     function test_defaults() {
         // at least the test.source plugin should be available
@@ -70,15 +88,25 @@ TestCase {
     function test_setplugin() {
         testingSourcePluginSpy.clear();
 
-        testSetSource.name = "test.source";
-        compare(testingSourcePluginSpy.count, 1);
+        // On construction, if the provided source name is invalid, the default source will be
+        // used. Test that the source is valid as expected.
         compare(testSetSource.name, "test.source");
+        verify(testSetSource.valid);
+
+        // Test that setting name to "" will still use the default.
+        testSetSource.name = "";
+        compare(testingSourcePluginSpy.count, 0);
+        compare(testSetSource.name, "test.source");
+        verify(testSetSource.valid);
 
         testSetSource.name = "test.source";
-        compare(testingSourcePluginSpy.count, 1);
+        compare(testingSourcePluginSpy.count, 0);
+        compare(testSetSource.name, "test.source");
+        verify(testSetSource.valid);
 
         testSetSource.name = "bogus";
-        compare(testingSourcePluginSpy.count, 2);
+        compare(testingSourcePluginSpy.count, 1);
+        verify(!testSetSource.valid);
     }
 
     PositionSource { id: testingSource; name: "test.source"; updateInterval: 1000 }

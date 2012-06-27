@@ -115,7 +115,7 @@ void QGeoPositionInfoSourceNpeBackend::setPreferredPositioningMethods(Positionin
 {
     QGeoPositionInfoSource::setPreferredPositioningMethods(sources);
     LocationdStrings::PositionInfo::PositioningMethods positioningMethod;
-    switch (sources){
+    switch (preferredPositioningMethods()){
     case QGeoPositionInfoSource::SatellitePositioningMethods:
         positioningMethod = LocationdStrings::PositionInfo::Satellite;
         break;

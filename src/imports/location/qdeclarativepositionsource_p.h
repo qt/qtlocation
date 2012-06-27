@@ -42,18 +42,17 @@
 #ifndef QDECLARATIVEPOSITIONSOURCE_H
 #define QDECLARATIVEPOSITIONSOURCE_H
 
-#include <QtCore>
-#include <QDateTime>
-#include <qgeopositioninfosource.h>
-#include <qgeopositioninfo.h>
-#include <QtQml/qqml.h>
 #include "qdeclarativeposition_p.h"
+
+#include <QtCore/QObject>
+#include <QtQml/QQmlParserStatus>
+#include <QtLocation/QGeoPositionInfoSource>
 
 QT_BEGIN_NAMESPACE
 
 class QFile;
 
-class QDeclarativePositionSource : public QObject
+class QDeclarativePositionSource : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -67,6 +66,8 @@ class QDeclarativePositionSource : public QObject
     Q_PROPERTY(SourceError sourceError READ sourceError NOTIFY sourceErrorChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_ENUMS(PositioningMethod)
+
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     enum PositioningMethod {
@@ -86,13 +87,12 @@ public:
     };
     Q_ENUMS(SourceError)
 
-
     QDeclarativePositionSource();
     ~QDeclarativePositionSource();
     void setNmeaSource(const QUrl &nmeaSource);
     void setUpdateInterval(int updateInterval);
     void setActive(bool active);
-    void setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods);
+    void setPreferredPositioningMethods(PositioningMethods methods);
 
     QString name() const;
     void setName(const QString &name);
@@ -105,6 +105,10 @@ public:
     PositioningMethods supportedPositioningMethods() const;
     PositioningMethods preferredPositioningMethods() const;
     SourceError sourceError() const;
+
+    // Virtuals from QQmlParserStatus
+    void classBegin() { }
+    void componentComplete();
 
 public Q_SLOTS:
     void update();
@@ -128,8 +132,8 @@ private Q_SLOTS:
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
 private:
     QGeoPositionInfoSource *m_positionSource;
-    PositioningMethods m_positioningMethod;
     QDeclarativePosition m_position;
+    PositioningMethods m_preferredPositioningMethods;
     QFile *m_nmeaFile;
     QString m_nmeaFileName;
     QUrl m_nmeaSource;

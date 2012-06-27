@@ -116,24 +116,9 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-    : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-      m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0),
-      m_sourceError(UnknownSourceError)
+:   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethod), m_nmeaFile(0),
+    m_active(false), m_singleUpdate(false), m_updateInterval(0), m_sourceError(UnknownSourceError)
 {
-    m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
-    if (m_positionSource) {
-        connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
-        connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
-                this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
-        m_positioningMethod = supportedPositioningMethods();
-    }
-#ifdef QDECLARATIVE_POSITION_DEBUG
-    if (m_positionSource)
-        qDebug("QDeclarativePositionSource QGeoPositionInfoSource::createDefaultSource SUCCESS");
-    else
-        qDebug("QDeclarativePositionSource QGeoPositionInfoSource::createDefaultSource FAILURE");
-#endif
 }
 
 QDeclarativePositionSource::~QDeclarativePositionSource()
@@ -149,9 +134,13 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
     This property holds the unique internal name for the plugin currently
     providing position information.
 
-    Setting the property causes the PositionSource to use a particular backend
-    plugin. If the PositionSource is active at the time that the plugin property
-    is changed, it will become inactive.
+    Setting the property causes the PositionSource to use a particular positioning provider.  If
+    the PositionSource is active at the time that the name property is changed, it will become
+    inactive.  If the specified positioning provider cannot be loaded the position source will
+    become invalid.
+
+    Changing the name property may cause the \l {updateInterval}, \l {supportedPositioningMethods}
+    and \l {preferredPositioningMethods} properties to change as well.
 */
 
 
@@ -163,23 +152,51 @@ QString QDeclarativePositionSource::name() const
         return QString();
 }
 
-void QDeclarativePositionSource::setName(const QString &name)
+void QDeclarativePositionSource::setName(const QString &newName)
 {
-    if (m_positionSource && m_positionSource->sourceName() == name)
+    if (m_positionSource && m_positionSource->sourceName() == newName)
         return;
 
+    const QString previousName = name();
+    int previousUpdateInterval = updateInterval();
+    PositioningMethods previousPositioningMethods = supportedPositioningMethods();
+    PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
+
     delete m_positionSource;
-    m_positionSource = QGeoPositionInfoSource::createSource(name, this);
+    if (newName.isEmpty())
+        m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+    else
+        m_positionSource = QGeoPositionInfoSource::createSource(newName, this);
+
     if (m_positionSource) {
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
         connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
                 this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
-        m_positioningMethod = supportedPositioningMethods();
+
+        m_positionSource->setUpdateInterval(m_updateInterval);
+        m_positionSource->setPreferredPositioningMethods(
+            static_cast<QGeoPositionInfoSource::PositioningMethods>(int(m_preferredPositioningMethods)));
     }
+
+    if (previousUpdateInterval != updateInterval())
+        emit updateIntervalChanged();
+
+    if (previousPreferredPositioningMethods != preferredPositioningMethods())
+        emit preferredPositioningMethodsChanged();
+
+    if (previousPositioningMethods != supportedPositioningMethods())
+        emit supportedPositioningMethodsChanged();
+
     emit validityChanged();
-    m_active = false;
-    emit this->nameChanged();
+
+    if (m_active) {
+        m_active = false;
+        emit activeChanged();
+    }
+
+    if (previousName != name())
+        emit nameChanged();
 }
 
 /*!
@@ -219,6 +236,9 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
         return;
     m_nmeaFileName = localFileName;
     m_nmeaSource = nmeaSource;
+
+    PositioningMethods previousPositioningMethods = supportedPositioningMethods();
+
     // The current position source needs to be deleted
     // because QNmeaPositionInfoSource can be bound only to a one file.
     delete m_positionSource;
@@ -255,11 +275,11 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
             emit activeChanged();
         }
     }
-    if (m_positioningMethod != supportedPositioningMethods()) {
-        m_positioningMethod = supportedPositioningMethods();
+
+    if (previousPositioningMethods != supportedPositioningMethods())
         emit supportedPositioningMethodsChanged();
-    }
-    emit this->nmeaSourceChanged();
+
+    emit nmeaSourceChanged();
 }
 
 /*!
@@ -267,14 +287,22 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
 */
 void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
 {
-    if (m_updateInterval == updateInterval)
-        return;
-
-    m_updateInterval = updateInterval;
     if (m_positionSource) {
-        m_positionSource->setUpdateInterval(updateInterval);
+        int previousUpdateInterval = m_positionSource->updateInterval();
+
+        m_updateInterval = updateInterval;
+
+        if (previousUpdateInterval != updateInterval) {
+            m_positionSource->setUpdateInterval(updateInterval);
+            if (previousUpdateInterval != m_positionSource->updateInterval())
+                emit updateIntervalChanged();
+        }
+    } else {
+        if (m_updateInterval != updateInterval) {
+            m_updateInterval = updateInterval;
+            emit updateIntervalChanged();
+        }
     }
-    emit updateIntervalChanged();
 }
 
 /*!
@@ -299,27 +327,19 @@ QUrl QDeclarativePositionSource::nmeaSource() const
 }
 
 /*!
-    \qmlproperty bool PositionSource::updateInterval
+    \qmlproperty int PositionSource::updateInterval
 
     This property holds the desired interval between updates (milliseconds).
 
     \sa {QGeoPositionInfoSource::updateInterval()}
-
 */
 
 int QDeclarativePositionSource::updateInterval() const
 {
-    if (m_positionSource) {
-        int ival = m_positionSource->updateInterval();
-        if (m_updateInterval != ival) {
-            QDeclarativePositionSource *me = const_cast<QDeclarativePositionSource *>(this);
-            me->m_updateInterval = ival;
-            emit me->updateIntervalChanged();
-        }
-        return ival;
-    } else {
+    if (!m_positionSource)
         return m_updateInterval;
-    }
+
+    return m_positionSource->updateInterval();
 }
 
 /*!
@@ -366,16 +386,32 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::suppo
 
 */
 
-void QDeclarativePositionSource::setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
+void QDeclarativePositionSource::setPreferredPositioningMethods(PositioningMethods methods)
 {
-    m_positionSource->setPreferredPositioningMethods(methods);
-    emit preferredPositioningMethodsChanged();
+    if (m_positionSource) {
+        PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
+
+        m_preferredPositioningMethods = methods;
+
+        if (previousPreferredPositioningMethods != methods) {
+            m_positionSource->setPreferredPositioningMethods(
+                static_cast<QGeoPositionInfoSource::PositioningMethods>(int(methods)));
+            if (previousPreferredPositioningMethods != m_positionSource->preferredPositioningMethods())
+                emit preferredPositioningMethodsChanged();
+        }
+    } else {
+        if (m_preferredPositioningMethods != methods) {
+            m_preferredPositioningMethods = methods;
+            emit preferredPositioningMethodsChanged();
+        }
+    }
 }
 
 QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::preferredPositioningMethods() const
 {
     if (m_positionSource) {
-        QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->preferredPositioningMethods();
+        QGeoPositionInfoSource::PositioningMethods methods =
+            m_positionSource->preferredPositioningMethods();
         if ( (methods & QGeoPositionInfoSource::AllPositioningMethods) == methods) {
             return QDeclarativePositionSource::AllPositioningMethods;
         } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
@@ -384,7 +420,7 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::prefe
             return QDeclarativePositionSource::NonSatellitePositioningMethod;
         }
     }
-    return QDeclarativePositionSource::NoPositioningMethod;
+    return m_preferredPositioningMethods;
 }
 
 /*!
@@ -399,14 +435,13 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::prefe
 
 void QDeclarativePositionSource::start()
 {
-    if (m_positionSource) {
-        // Safe to set, setting zero means using default value
-        m_positionSource->setUpdateInterval(m_updateInterval);
-        m_positionSource->startUpdates();
-        if (!m_active) {
-            m_active = true;
-            emit activeChanged();
-        }
+    if (!m_positionSource)
+        return;
+
+    m_positionSource->startUpdates();
+    if (!m_active) {
+        m_active = true;
+        emit activeChanged();
     }
 }
 
@@ -551,6 +586,45 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
 QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError() const
 {
     return m_sourceError;
+}
+
+void QDeclarativePositionSource::componentComplete()
+{
+    if (!m_positionSource) {
+        int previousUpdateInterval = updateInterval();
+        PositioningMethods previousPositioningMethods = supportedPositioningMethods();
+        PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
+
+        m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+        if (m_positionSource) {
+            connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                    this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
+            connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
+                    this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
+
+            m_positionSource->setUpdateInterval(m_updateInterval);
+            m_positionSource->setPreferredPositioningMethods(
+                static_cast<QGeoPositionInfoSource::PositioningMethods>(int(m_preferredPositioningMethods)));
+        }
+
+        if (previousUpdateInterval != updateInterval())
+            emit updateIntervalChanged();
+
+        if (previousPreferredPositioningMethods != preferredPositioningMethods())
+            emit preferredPositioningMethodsChanged();
+
+        if (previousPositioningMethods != supportedPositioningMethods())
+            emit supportedPositioningMethodsChanged();
+
+        emit validityChanged();
+
+        if (m_active) {
+            m_active = false;
+            emit activeChanged();
+        }
+
+        emit nameChanged();
+    }
 }
 
 /*!

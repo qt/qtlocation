@@ -354,11 +354,12 @@ void QGeoPositionInfoSourceGeoclueMaster::setUpdateInterval(int msec)
 
 void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(PositioningMethods methods)
 {
-    if (methods == m_methods)
+    PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
+    QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
+    if (previousPreferredPositioningMethods == preferredPositioningMethods())
         return;
-    m_methods = methods;
 
-    switch (methods) {
+    switch (preferredPositioningMethods()) {
     case SatellitePositioningMethods:
         m_preferredResources = GEOCLUE_RESOURCE_GPS;
         m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_DETAILED;
@@ -375,10 +376,11 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
         qWarning("GeoPositionInfoSourceGeoClueMaster unknown preferred method.");
         return;
     }
-    QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
+
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
     qDebug() << "QGeoPositionInfoSourceGeoclueMaster requested to set methods to, and set them to: " << methods << m_preferredResources;
 #endif
+
     m_lastPositionIsFresh = false;
     m_lastVelocityIsFresh = false;
     int status = configurePositionSource();

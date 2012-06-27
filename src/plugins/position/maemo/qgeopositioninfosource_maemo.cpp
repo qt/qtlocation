@@ -135,7 +135,7 @@ void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMethods sources)
 {
     QGeoPositionInfoSource::setPreferredPositioningMethods(sources);
-    dbusComm->sendConfigRequest(dbusComm->CommandSetMethods, sources, 0);
+    dbusComm->sendConfigRequest(dbusComm->CommandSetMethods, preferredPositioningMethods(), 0);
 }
 
 
