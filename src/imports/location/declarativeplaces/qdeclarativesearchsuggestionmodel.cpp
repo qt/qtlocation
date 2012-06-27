@@ -271,7 +271,10 @@ void QDeclarativeSearchSuggestionModel::clearData()
 {
     QDeclarativeSearchModelBase::clearData();
 
-    m_suggestions.clear();
+    if (!m_suggestions.isEmpty()) {
+        m_suggestions.clear();
+        emit suggestionsChanged();
+    }
 }
 
 /*!

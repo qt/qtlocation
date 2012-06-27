@@ -55,6 +55,7 @@ TestCase {
     Plugin {
         id: testPlugin
         name: "qmlgeo.test.plugin"
+        allowExperimental: true
     }
 
     GeoCircle {
@@ -104,5 +105,53 @@ TestCase {
         compare(signalSpy.count, 2);
 
         signalSpy.destroy();
+    }
+
+    function test_suggestions() {
+        testModel.plugin = testPlugin;
+
+        var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        statusChangedSpy.target = testModel;
+        statusChangedSpy.signalName = "statusChanged";
+
+        var suggestionsChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        suggestionsChangedSpy.target = testModel;
+        suggestionsChangedSpy.signalName = "suggestionsChanged";
+
+        compare(testModel.status, PlaceSearchSuggestionModel.Null);
+
+        testModel.searchTerm = "test";
+        testModel.update();
+
+        compare(testModel.status, PlaceSearchSuggestionModel.Loading);
+        compare(statusChangedSpy.count, 1);
+
+        tryCompare(testModel, "status", PlaceSearchSuggestionModel.Ready);
+        compare(statusChangedSpy.count, 2);
+
+        var expectedSuggestions = [ "test1", "test2", "test3" ];
+
+        compare(suggestionsChangedSpy.count, 1);
+        compare(testModel.suggestions, expectedSuggestions);
+
+        testModel.reset();
+
+        compare(statusChangedSpy.count, 3);
+        compare(testModel.status, PlaceSearchSuggestionModel.Null);
+        compare(suggestionsChangedSpy.count, 2);
+        compare(testModel.suggestions, []);
+
+        testModel.update();
+
+        compare(statusChangedSpy.count, 4);
+        compare(testModel.status, PlaceSearchSuggestionModel.Loading);
+
+        testModel.cancel();
+
+        compare(statusChangedSpy.count, 5);
+        compare(testModel.status, PlaceSearchSuggestionModel.Null);
+
+        suggestionsChangedSpy.destroy();
+        statusChangedSpy.destroy();
     }
 }

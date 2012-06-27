@@ -43,12 +43,12 @@
 #define QPLACEMANAGERENGINE_TEST_H
 
 #include <QtCore/QUuid>
-
-#include <qplacemanager.h>
-#include <qplacemanagerengine.h>
-#include <qplacereply.h>
+#include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceManagerEngine>
+#include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceDetailsReply>
 #include <QtLocation/QPlaceIdReply>
+#include <QtLocation/QPlaceSearchSuggestionReply>
 
 #include <QtCore/QDebug>
 
@@ -103,6 +103,28 @@ public:
     IdReply(QPlaceIdReply::OperationType type, QObject *parent = 0)
     :   QPlaceIdReply(type, parent)
     { }
+
+    Q_INVOKABLE void emitError()
+    {
+        emit error(error(), errorString());
+    }
+
+    Q_INVOKABLE void emitFinished()
+    {
+        emit finished();
+    }
+};
+
+class SuggestionReply : public QPlaceSearchSuggestionReply
+{
+    Q_OBJECT
+
+public:
+    SuggestionReply(const QStringList &suggestions, QObject *parent = 0)
+    :   QPlaceSearchSuggestionReply(parent)
+    {
+        setSuggestions(suggestions);
+    }
 
     Q_INVOKABLE void emitError()
     {
@@ -190,9 +212,18 @@ public:
 
     QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query)
     {
-        Q_UNUSED(query)
+        QStringList suggestions;
+        if (query.searchTerm() == QLatin1String("test")) {
+            suggestions << QStringLiteral("test1");
+            suggestions << QStringLiteral("test2");
+            suggestions << QStringLiteral("test3");
+        }
 
-        return 0;
+        SuggestionReply *reply = new SuggestionReply(suggestions, this);
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+
+        return reply;
     }
 
     QPlaceIdReply *savePlace(const QPlace &place)
