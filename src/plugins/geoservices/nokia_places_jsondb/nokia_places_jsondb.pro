@@ -1,7 +1,7 @@
 load(qt_build_config)
 
 TARGET = qtgeoservices_nokia_places_jsondb
-QT += location gui
+QT += location gui network
 
 load(qt_plugin)
 
