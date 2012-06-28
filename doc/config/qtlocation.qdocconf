@@ -22,16 +22,14 @@ exampledirs += ../src/examples \
                ../../src/3rdparty
 
 headerdirs += ../src \
-              ../../src \
-              ../../../qtdeclarative/src
+              ../../src
 
 imagedirs += ./images \
              ../src/images
 
 sourcedirs += ../src \
               ../../src \
-              ../../examples \
-              ../../../qtdeclarative/src
+              ../../examples
 
 excludedirs +=
 
