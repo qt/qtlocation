@@ -8,9 +8,7 @@ SOURCES += tst_qplacemanager_jsondb.cpp \
            jsondbutils.cpp \
            ../placemanager_utils/placemanager_utils.cpp
 
-QT += location testlib
-
-QT += jsondb
+QT += location testlib network jsondb
 
 DEFINES += JSONDB_DAEMON_BASE=\\\"$$QT.jsondb.bins\\\"
 
