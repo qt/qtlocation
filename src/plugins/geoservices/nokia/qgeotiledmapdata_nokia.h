@@ -73,6 +73,7 @@ private:
     QImage logo;
     QImage copyrightsSlab;
     QString lastCopyrightsString;
+    QPoint lastCopyrightsPos;
 };
 
 QT_END_NAMESPACE

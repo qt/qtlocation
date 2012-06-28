@@ -139,9 +139,16 @@ void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visible
                                              logo.height() + textBoundingRect.height());
 
         QPoint copyrightsPos(copyrightsMargin, height() - (copyrightsSlab.height() + copyrightsMargin));
+        lastCopyrightsPos = copyrightsPos;
         emit copyrightsChanged(copyrightsSlab, copyrightsPos);
 
         lastCopyrightsString = copyrightsString;
+    }
+
+    QPoint copyrightsPos(copyrightsMargin, height() - (copyrightsSlab.height() + copyrightsMargin));
+    if (copyrightsPos != lastCopyrightsPos) {
+        lastCopyrightsPos = copyrightsPos;
+        emit copyrightsChanged(copyrightsSlab, copyrightsPos);
     }
 }
 
