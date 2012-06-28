@@ -68,7 +68,6 @@ TestCase {
     }
 
     function test_setAndGet_data() {
-        var myNull = null;
         return [
             { tag: "plugin", property: "plugin", signal: "pluginChanged", value: testPlugin },
             { tag: "searchArea", property: "searchArea", signal: "searchAreaChanged", value: testSearchArea },
