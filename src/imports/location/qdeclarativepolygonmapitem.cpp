@@ -82,10 +82,11 @@ QT_BEGIN_NAMESPACE
     \l border.width properties.
 
     \note Since MapPolygons are geographic items, dragging a MapPolygon
-    (through the use of \l MapMouseArea) causes in its vertices to be
+    (through the use of \l MapMouseArea) causes its vertices to be
     recalculated in the geographic coordinate space. The edges retain the
-    same geographic length but remain straight. Apparent stretching of the item
-    occurs when dragged to a different latitude.
+    same geographic lengths (latitude and longitude differences between the
+    vertices), but they remain straight. Apparent stretching of the item occurs
+    when dragged to a different latitude.
 
     \section2 Performance
 
@@ -185,6 +186,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
             }
         }
     }
+
     srcPath_.closeSubpath();
 
     if (!assumeSimple_)
@@ -702,10 +704,10 @@ void MapPolygonNode::update(const QColor &fillColor, const QColor &borderColor,
     if (fillShape->size() == 0) {
         if (borderShape->size() == 0) {
             blocked_ = true;
+            return;
         } else {
             blocked_ = false;
         }
-        return;
     } else {
         blocked_ = false;
     }

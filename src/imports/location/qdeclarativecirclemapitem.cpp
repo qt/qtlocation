@@ -77,6 +77,12 @@ QT_BEGIN_NAMESPACE
     accuracy of the circle's shape, depending on position and map
     projection.
 
+    \note Dragging a MapCircle (through the use of \l MapMouseArea)
+    causes new points to be generated at the same distance (in meters)
+    from the center. This is in contrast to other map items which store
+    their dimensions in terms of latitude and longitude differences between
+    vertices.
+
     \section2 Performance
 
     MapCircle performance is almost equivalent to that of a MapPolygon with
@@ -128,10 +134,34 @@ inline static qreal qgeocoordinate_radToDeg(qreal rad)
     return rad * 180 / M_PI;
 }
 
+static bool preserveCircleGeometry (QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
+                                    qreal distance, QGeoCoordinate &leftBoundCoord)
+{
+
+    // if circle crosses north/south pole, then don't preserve circular shape
+    // approximate using great circle distance
+    qreal poleLat = 90;
+    if (center.distanceTo(QGeoCoordinate(poleLat, center.longitude())) < distance
+     || center.distanceTo(QGeoCoordinate(-poleLat, center.longitude())) < distance) {
+        return false;
+    }
+    // find left bound
+    for (int i = 1; i < path.count(); ++i) {
+        int iNext = (i + 1) % path.count();
+        if (path.at(iNext).longitude() > path.at(i).longitude()
+             && path.at(i-1).longitude() > path.at(i).longitude()) {
+            if (qAbs(path.at(iNext).longitude() - path.at(i-1).longitude()) < 180)
+                leftBoundCoord = path.at(i);
+        }
+    }
+    return true;
+
+}
+
 static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoordinate &center, qreal distance, int steps)
 {
     // get angular distance in radians
-    distance = distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
+    qreal angularDistance = distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 
     // We are using horizontal system, we have radius (distance)
     // projected onto Celestial sphere.
@@ -146,8 +176,8 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoo
     qreal lon = qgeocoordinate_degToRad(center.longitude());
 
     // precalculate
-    qreal cos_h = sin(distance);
-    qreal sin_h = cos(distance);
+    qreal cos_h = sin(angularDistance);
+    qreal sin_h = cos(angularDistance);
     qreal cos_phi = cos(lat), sin_phi = sin(lat);
     qreal sin_phi_x_sin_h = sin_phi * sin_h;
     qreal cos_phi_x_cos_h = cos_phi * cos_h;
@@ -155,7 +185,6 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoo
     qreal cos_phi_x_sin_h = cos_phi * sin_h;
 
     for (int i = 0; i < steps; ++i) {
-
         qreal a = 2 * M_PI * i / steps;
         qreal sin_delta = sin_phi_x_sin_h - cos_phi_x_cos_h * cos(a);
         qreal cos_delta_x_cos_tau = cos_phi_x_sin_h + sin_phi_x_cos_h * cos(a);
@@ -169,8 +198,10 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoo
         qreal delta = atan2(sin_delta, cos_delta);
         // get right ascension from tau , use a greenwich star time of 0
         qreal alpha = lon - tau;
+
         qreal lat2 = qgeocoordinate_radToDeg(delta);
         qreal lon2 = qgeocoordinate_radToDeg(alpha);
+
         if (lon2 < -180.0) {
             lon2 += 360.0;
         } else if (lon2 > 180.0) {
@@ -195,7 +226,10 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
 
     // assume that circles are not self-intersecting
     // to speed up processing
-    geometry_.setAssumeSimple(true);
+    // FIXME: unfortunately they self-intersect at the poles due to current drawing method
+    // so the line is commented out until fixed
+    //geometry_.setAssumeSimple(true);
+
 }
 
 QDeclarativeCircleMapItem::~QDeclarativeCircleMapItem()
@@ -357,24 +391,17 @@ void QDeclarativeCircleMapItem::updateMapItem()
         calculatePeripheralPoints(circlePath_, center_->coordinate(),
                                   radius_, 125);
     }
-
-    QGeoCoordinate leftBoundCoord = map()->screenPositionToCoordinate(QPointF(0,0), false);
-    for (int i = 1; i < circlePath_.count()-1; ++i) {
-        if (circlePath_.at(i+1).longitude() > circlePath_.at(i).longitude()
-             && circlePath_.at(i-1).longitude() > circlePath_.at(i).longitude()) {
-            qreal diff = circlePath_.at(i+1).longitude() - circlePath_.at(i-1).longitude();
-            if (qAbs(diff) < 180)
-                leftBoundCoord = circlePath_.at(i);
-        }
-    }
-    geometry_.setPreserveGeometry(true, leftBoundCoord);
+    QGeoCoordinate leftBoundCoord;
+    bool preserve = preserveCircleGeometry(circlePath_, center_->coordinate(),
+                                           radius_, leftBoundCoord);
+    geometry_.setPreserveGeometry(preserve, leftBoundCoord);
     geometry_.updateSourcePoints(*map(), circlePath_);
     geometry_.updateScreenPoints(*map());
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
         QList<QGeoCoordinate> closedPath = circlePath_;
         closedPath << closedPath.first();
-        borderGeometry_.setPreserveGeometry(true, leftBoundCoord);
+        borderGeometry_.setPreserveGeometry(preserve, leftBoundCoord);
         borderGeometry_.updateSourcePoints(*map(), closedPath);
         borderGeometry_.updateScreenPoints(*map(), border_.width());
 
@@ -386,7 +413,6 @@ void QDeclarativeCircleMapItem::updateMapItem()
         setHeight(combined.height());
     } else {
         borderGeometry_.clear();
-
         setWidth(geometry_.screenBoundingBox().width());
         setHeight(geometry_.screenBoundingBox().height());
     }
