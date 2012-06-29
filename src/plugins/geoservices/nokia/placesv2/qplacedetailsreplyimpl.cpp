@@ -267,7 +267,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
         QPlaceRatings ratings;
         ratings.setAverage(ratingsObject.value(QLatin1String("average")).toDouble());
-        ratings.setCount(ratingsObject.value(QLatin1String("count")).toString().toInt());
+        ratings.setCount(ratingsObject.value(QLatin1String("count")).toDouble());
         ratings.setMaximum(5.0);
 
         place.setRatings(ratings);
