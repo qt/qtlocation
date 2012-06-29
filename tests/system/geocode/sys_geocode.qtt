@@ -114,7 +114,7 @@ testcase = {
     },
 
     qml_geocode_not_unique_location_data: {
-        request:["Moscow", "Idaho","USA", "4", "46.7323", "-117.0005"]
+        request:["Moscow", "Idaho","USA", "3", "46.7323", "-117.0005"]
     },
 
     qml_geocode_not_unique_location: function(city, state, country, places, latitude, longitude)

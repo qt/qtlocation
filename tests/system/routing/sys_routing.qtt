@@ -80,7 +80,7 @@ testcase = {
 
     qml_route_for_two_points_data: {
         close_points:["-27.575", "153.088", "-27.465", "153.023", "15.9km", "8"],
-        distant_points:["-27.4709", "153.0235", "-33.8689", "151.2071", "930km", "36"],
+        distant_points:["-27.4709", "153.0235", "-33.8689", "151.2071", "929km", "34"],
         loop_test_points:["51.5", "-0.11", "51.2207", "0.1", "50.9km", "19"]      //test for QTBUG-20869
     },
 
@@ -156,7 +156,7 @@ testcase = {
     },
 
     qml_route_for_three_points_data:{
-        points:["-27.575", "153.088", "-27.465", "153.023", "-27.3614", "153.0043", "29.4km", "19"]
+        points:["-27.575", "153.088", "-27.465", "153.023", "-27.3614", "153.0043", "29.5km", "19"]
     },
 
     qml_route_for_three_points: function(lat1, long1, lat2, long2, lat3, long3, distance, steps)
@@ -283,7 +283,7 @@ testcase = {
     },
 
     qml_route_optimization_data: {
-        fastest:["-27.5374", "153.084", "-27.4391", "153.0488", "Fastest", "16.4km", "10"],
+        fastest:["-27.5374", "153.084", "-27.4391", "153.0488", "Fastest", "16.4km", "11"],
         shortest:["-27.5374", "153.084", "-27.4391", "153.0488", "Shortest", "14.4km", "15"]
     },
 
