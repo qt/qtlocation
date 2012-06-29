@@ -12,7 +12,6 @@ contains(QT_CONFIG, location-china-support) {
 load(qt_plugin)
 
 DESTDIR = $$QT.location.plugins/geoservices
-#QTDIR_build:REQUIRES += "contains(QT_CONFIG, location)"
 
 HEADERS += \
             qgeocodereply_nokia.h \

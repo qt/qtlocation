@@ -6,8 +6,6 @@ QT += location gui network
 load(qt_plugin)
 
 DESTDIR = $$QT.location.plugins/geoservices
-#QTDIR_build:REQUIRES += "contains(QT_CONFIG, location)"
-
 
 HEADERS += \
             qgeoserviceproviderplugin_jsondb.h \

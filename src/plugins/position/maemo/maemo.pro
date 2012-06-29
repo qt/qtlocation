@@ -6,7 +6,6 @@ QT += location gui dbus
 load(qt_plugin)
 
 DESTDIR = $$QT.location.plugins/position
-#QTDIR_build:REQUIRES += "contains(QT_CONFIG, location)"
 
 INCLUDEPATH += $$QT.location.includes
 
