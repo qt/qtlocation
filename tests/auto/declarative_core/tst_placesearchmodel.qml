@@ -78,6 +78,30 @@ TestCase {
         radius: 5000
     }
 
+    Category {
+        id: testCategory1
+        categoryId: "da3606c1-3448-43b3-a4a3-ca24b12dd94a"
+        name: "Test Category 1"
+    }
+
+    Category {
+        id: testCategory2
+        categoryId: "bb8ead84-ec2a-48a9-9c8f-d4ffd3134b21"
+        name: "Test Category 2"
+    }
+
+    function compareArray(a, b) {
+        if (a.length !== b.length)
+            return false;
+
+        for (var i = 0; i < a.length; ++i) {
+            if (b.indexOf(a[i]) < 0)
+                return false;
+        }
+
+        return true;
+    }
+
     function test_setAndGet_data() {
         return [
             { tag: "plugin", property: "plugin", signal: "pluginChanged", value: testPlugin },
@@ -90,6 +114,8 @@ TestCase {
             { tag: "relevanceHint", property: "relevanceHint", signal: "relevanceHintChanged", value: PlaceSearchModel.DistanceHint, reset: PlaceSearchModel.UnspecifiedHint },
             { tag: "visibilityScope", property: "visibilityScope", signal: "visibilityScopeChanged", value: Place.DeviceVisibility, reset: Place.UnspecifiedVisibility },
             { tag: "favoritesPlugin", property: "favoritesPlugin", signal: "favoritesPluginChanged", value: favoritePlugin },
+            { tag: "category", property: "categories", signal: "categoriesChanged", value: testCategory1, expectedValue: [ testCategory1 ], reset: [], array: true },
+            { tag: "categories", property: "categories", signal: "categoriesChanged", value: [ testCategory1, testCategory2 ], reset: [], array: true },
         ];
     }
 
@@ -100,13 +126,39 @@ TestCase {
 
         // set property to something new
         testModel[data.property] = data.value;
-        compare(testModel[data.property], data.value);
-        compare(signalSpy.count, 1);
+        if (data.array) {
+            if (data.expectedValue) {
+                verify(compareArray(testModel[data.property], data.expectedValue));
+                compare(signalSpy.count, 1 + data.expectedValue.length);
+            } else {
+                verify(compareArray(testModel[data.property], data.value));
+                compare(signalSpy.count, 1 + data.value.length);
+            }
+
+        } else {
+            compare(testModel[data.property], data.value);
+            compare(signalSpy.count, 1);
+        }
+
+        signalSpy.clear();
 
         // set property to the same value (signal spy should not increase)
         testModel[data.property] = data.value;
-        compare(testModel[data.property], data.value);
-        compare(signalSpy.count, 1);
+        if (data.array) {
+            if (data.expectedValue) {
+                verify(compareArray(testModel[data.property], data.expectedValue));
+                compare(signalSpy.count, 1 + data.expectedValue.length);
+            } else {
+                verify(compareArray(testModel[data.property], data.value));
+                compare(signalSpy.count, 1 + data.value.length);
+            }
+
+        } else {
+            compare(testModel[data.property], data.value);
+            compare(signalSpy.count, 0);
+        }
+
+        signalSpy.clear();
 
         // reset property
         if (data.reset === undefined) {
@@ -114,9 +166,12 @@ TestCase {
             compare(testModel[data.property], null);
         } else {
             testModel[data.property] = data.reset;
-            compare(testModel[data.property], data.reset);
+            if (data.array)
+                verify(compareArray(testModel[data.property], data.reset));
+            else
+                compare(testModel[data.property], data.reset);
         }
-        compare(signalSpy.count, 2);
+        compare(signalSpy.count, 1);
 
         signalSpy.destroy();
     }
