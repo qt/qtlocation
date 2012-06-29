@@ -206,6 +206,23 @@ TestCase {
                     "dacb2181-3f67-4e6a-bd4d-635e99ad5b03"
                 ]
             },
+            {
+                tag: "recommendations",
+                property: "recommendationId",
+                value: "4dcc74ce-fdeb-443e-827c-367438017cf1",
+                reset: "",
+                places: [
+                    "8f72057a-54b2-4e95-a7bb-97b4d2b5721e",
+                    "dacb2181-3f67-4e6a-bd4d-635e99ad5b03"
+                ]
+            },
+            {
+                tag: "no recommendations",
+                property: "recommendationId",
+                value: "8f72057a-54b2-4e95-a7bb-97b4d2b5721e",
+                reset: "",
+                places: [ ]
+            }
         ];
     }
 
@@ -231,7 +248,10 @@ TestCase {
         tryCompare(testModel, "status", PlaceSearchModel.Ready);
         compare(statusChangedSpy.count, 2);
 
-        compare(countChangedSpy.count, 1);
+        if (data.places.length > 0)
+            compare(countChangedSpy.count, 1);
+        else
+            compare(countChangedSpy.count, 0);
 
         for (var i = 0; i < testModel.count; ++i) {
             compare(testModel.data(i, "type"), PlaceSearchModel.PlaceResult);
@@ -245,7 +265,10 @@ TestCase {
 
         compare(statusChangedSpy.count, 3);
         compare(testModel.status, PlaceSearchModel.Null);
-        compare(countChangedSpy.count, 2);
+        if (data.places.length > 0)
+            compare(countChangedSpy.count, 2);
+        else
+            compare(countChangedSpy.count, 0);
         compare(testModel.count, 0);
 
         testModel.update();

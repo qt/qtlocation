@@ -243,6 +243,12 @@ public:
                             place.setLocation(location);
 
                             m_places.insert(place.placeId(), place);
+
+                            QStringList recommendations;
+                            QJsonArray ra = p.value(QStringLiteral("recommendations")).toArray();
+                            for (int j = 0; j < ra.count(); ++j)
+                                recommendations.append(ra.at(j).toString());
+                            m_placeRecommendations.insert(place.placeId(), recommendations);
                         }
                     }
                 }
@@ -298,6 +304,15 @@ public:
                 QPlaceResult r;
                 r.setPlace(place);
                 r.setTitle(place.name());
+
+                results.append(r);
+            }
+        } else if (!query.recommendationId().isEmpty()) {
+            QStringList recommendations = m_placeRecommendations.value(query.recommendationId());
+            foreach (const QString &id, recommendations) {
+                QPlaceResult r;
+                r.setPlace(m_places.value(id));
+                r.setTitle(r.place().name());
 
                 results.append(r);
             }
@@ -528,6 +543,7 @@ private:
     QHash<QString, QPlace> m_places;
     QHash<QString, QPlaceCategory> m_categories;
     QHash<QString, QStringList> m_childCategories;
+    QHash<QString, QStringList> m_placeRecommendations;
 };
 
 #endif

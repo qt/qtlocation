@@ -33,7 +33,11 @@
             "location": {
                 "latitude": 0.1001,
                 "longitude": 0.1001
-            }
+            },
+            "recommendations": [
+                "8f72057a-54b2-4e95-a7bb-97b4d2b5721e",
+                "dacb2181-3f67-4e6a-bd4d-635e99ad5b03"
+            ]
         },
         {
             "name": "Sea View Hotel",
