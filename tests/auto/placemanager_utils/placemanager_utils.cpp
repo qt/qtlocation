@@ -242,6 +242,24 @@ bool PlaceManagerUtils::doFetchCategory(QPlaceManager *manager,
     return isSuccessful;
 }
 
+bool PlaceManagerUtils::doFetchContent(QPlaceManager *manager,
+                                       const QString &placeId,
+                                       const QPlaceContentRequest &request,
+                                       QPlaceContent::Collection *results,
+                                       QPlaceReply::Error expectedError)
+{
+    Q_ASSERT(results);
+    QPlaceContentReply *reply = manager->getPlaceContent(placeId, request);
+    bool isSuccessful = checkSignals(reply, expectedError, manager);
+    *results = reply->content();
+
+    if (!isSuccessful)
+        qDebug() << "Error during content fetch, error string = "
+                 << reply->errorString();
+
+    return isSuccessful;
+}
+
 bool PlaceManagerUtils::doMatch(QPlaceManager *manager,
                                 const QPlaceMatchRequest &request,
                                 QList<QPlace> *places,

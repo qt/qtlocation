@@ -45,6 +45,7 @@
 #include <QtCore/QString>
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/qtlocation.h>
+#include <QtLocation/QPlaceContent>
 
 #ifndef WAIT_UNTIL
 #define WAIT_UNTIL(__expr) \
@@ -67,6 +68,7 @@ class QPlace;
 class QPlaceSearchResult;
 class QPlaceSearchRequest;
 class QPlaceCategory;
+class QPlaceContentRequest;
 class QPlaceMatchRequest;
 
 QT_END_NAMESPACE
@@ -124,6 +126,12 @@ public:
                          const QString &categoryId,
                          QPlaceCategory *category,
                          QPlaceReply::Error expectedError = QPlaceReply::NoError);
+
+    static bool doFetchContent(QPlaceManager *manager,
+                               const QString &placeId,
+                               const QPlaceContentRequest &request,
+                               QPlaceContent::Collection *results,
+                               QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     static bool doMatch(QPlaceManager *manager,
                  const QPlaceMatchRequest &request,
@@ -209,6 +217,15 @@ protected:
                          QPlaceReply::Error expectedError = QPlaceReply::NoError) {
         return doFetchCategory(placeManager, categoryId,
                                              category, expectedError);
+    }
+
+    bool doFetchContent(const QString &placeId,
+                        const QPlaceContentRequest &request,
+                        QPlaceContent::Collection *results,
+                        QPlaceReply::Error expectedError = QPlaceReply::NoError)
+    {
+        return doFetchContent(placeManager, placeId,
+                              request, results, expectedError);
     }
 
     bool doMatch(const QPlaceMatchRequest &request,
