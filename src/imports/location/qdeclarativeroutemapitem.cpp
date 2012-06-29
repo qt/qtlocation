@@ -228,6 +228,7 @@ void QDeclarativeRouteMapItem::afterViewportChanged(const QGeoMapViewportChangeE
         geometry_.markSourceDirty();
     }
 
+    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
     geometry_.markScreenDirty();
     updateMapItem();
 }
