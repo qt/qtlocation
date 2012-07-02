@@ -52,33 +52,12 @@
 #include <QtCore/QPoint>
 #include <QDebug>
 
-// how many concurrent "swipes" should we have
-// bit overkill here first I thought support random about of swipes (1..x)
-// but thats for later
 #define SWIPES_REQUIRED 2
 
 typedef struct {
-    int totalDuration; // not sure if needed
-    QList<QTouchEvent::TouchPoint> touchPoints;
-    QList<int> touchPointDurations;
+    QList<QPoint> touchPoints;
+    QList<int> durations;
 } Swipe;
-
-// total overkill fixme
-class TouchPoint: public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(double targetX READ targetX CONSTANT)
-    Q_PROPERTY(double targetY READ targetY CONSTANT)
-    Q_PROPERTY(int touchState READ touchState CONSTANT)
-public:
-    TouchPoint(double x, double y, int state): targetX_(x), targetY_(y),touchState_(state) {}
-    double targetX() {return targetX_;}
-    double targetY() {return targetY_;}
-    double touchState() {return touchState_;}
-    double targetX_;
-    double targetY_;
-    int touchState_;
-};
 
 class QDeclarativePinchGenerator : public QQuickItem
 {
@@ -86,11 +65,8 @@ class QDeclarativePinchGenerator : public QQuickItem
 
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(QString state READ state NOTIFY stateChanged)
-    Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(qreal replaySpeedFactor READ replaySpeedFactor WRITE setReplaySpeedFactor NOTIFY replaySpeedFactorChanged)
     Q_PROPERTY(QQuickItem* target READ target WRITE setTarget NOTIFY targetChanged)
-    Q_PROPERTY(QList<QObject*> swipe1 READ swipe1 NOTIFY swipesChanged)
-    Q_PROPERTY(QList<QObject*> swipe2 READ swipe2 NOTIFY swipesChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -98,16 +74,12 @@ public:
     ~QDeclarativePinchGenerator();
 
     QString state() const;
-    int count() const;
     QQuickItem* target() const;
     void setTarget(QQuickItem* target);
     qreal replaySpeedFactor() const;
     void setReplaySpeedFactor(qreal factor);
     bool enabled() const;
     void setEnabled(bool enabled);
-
-    QList<QObject*> swipe1();
-    QList<QObject*> swipe2();
 
     Q_INVOKABLE void replay();
     Q_INVOKABLE void clear();
@@ -122,11 +94,14 @@ public:
                            int interval2 = 20,
                            int samples1 = 10,
                            int samples2 = 10);
+
+    Q_INVOKABLE void pinchPress(QPoint point1From, QPoint point2From);
+    Q_INVOKABLE void pinchMoveTo(QPoint point1To, QPoint point2To);
+    Q_INVOKABLE void pinchRelease(QPoint point1To, QPoint point2To);
+
 signals:
     void stateChanged();
-    void countChanged();
     void targetChanged();
-    void swipesChanged();
     void replaySpeedFactorChanged();
     void enabledChanged();
 
@@ -153,9 +128,6 @@ protected:
 
 private:
     void setState(GeneratorState state);
-    QTouchEvent::TouchPoint mouseEventToTouchPoint(QMouseEvent* event);
-    QTouchEvent::TouchPoint createTouchPoint(QEvent::Type type, QPoint pos);
-    void generateSwipe(QPoint from, QPoint to, int duration, int samples);
 
 private:
     QQuickItem* target_;
@@ -167,11 +139,9 @@ private:
     int replayTimer_;
     int replayBookmark_;
     int masterSwipe_;
-    int touchPointId_;
     qreal replaySpeedFactor_;
-    QList<QObject*> swipeList1_;
-    QList<QObject*> swipeList2_;
     bool enabled_;
+    QTouchDevice* device_;
 };
 
 #endif

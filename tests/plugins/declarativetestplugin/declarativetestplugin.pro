@@ -3,7 +3,7 @@ TARGETPATH = QtLocation/test
 
 include(../../../src/imports/location/qlocationimport.pri)
 
-QT += qml quick location
+QT += qml quick location testlib
 
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
