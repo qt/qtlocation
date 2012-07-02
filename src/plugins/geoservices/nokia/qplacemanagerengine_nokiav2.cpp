@@ -381,9 +381,10 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
     // Both a search term and search categories are not supported.
     unsupported |= !query.searchTerm().isEmpty() && !query.categories().isEmpty();
 
-    unsupported |= !query.searchTerm().isEmpty() && !query.recommendationId().isEmpty();
-
-    unsupported |= !query.categories().isEmpty() && !query.recommendationId().isEmpty();
+    //only a recommendation id by itself is supported.
+    unsupported |= !query.recommendationId().isEmpty()
+                   && (!query.searchTerm().isEmpty() || !query.categories().isEmpty()
+                       || query.searchArea().type() != QGeoShape::UnknownType);
 
     if (unsupported) {
         QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, 0, this);
