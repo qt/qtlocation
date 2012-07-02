@@ -59,6 +59,9 @@ Qt Location C++ API.
     \row
         \li \l {Places (C++)} {Places}
         \li Searching for and managing points of interest.
+    \row
+        \li \l {Qt Location GeoServices}{Geoservices and Positioning Plugin Implementation}
+        \li Implement new geoservices and positioning plugins.
 \endtable
 
 
@@ -67,22 +70,28 @@ Qt Location C++ API.
     \annotatedlist QtLocation-positioning
 
 
-\section1 Maps and Navigation Classes
+\section1 Geoservice Provider Classes
 
     \annotatedlist QtLocation-common
 
-    \annotatedlist QtLocation-maps
 
-    \annotatedlist QtLocation-impl
+\section1 Maps and Navigation Classes
+
+    \annotatedlist QtLocation-maps
 
     \annotatedlist QtLocation-routing
 
     \annotatedlist QtLocation-geocoding
 
 
-
 \section1 Places Classes
 
     \annotatedlist QtLocation-places
+
+
+\section1 Geoservices and Positioning Plugin Classes
+
+    \annotatedlist QtLocation-impl
+
 */
 
