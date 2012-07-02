@@ -11,3 +11,4 @@ QT += location quick
 OTHER_FILES = *.qml
 TESTDATA = $$OTHER_FILES
 
+win32:CONFIG += insignificant_test
