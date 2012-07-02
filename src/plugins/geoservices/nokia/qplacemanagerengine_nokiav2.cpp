@@ -490,6 +490,26 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
 QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const QPlaceSearchRequest &query)
 {
+    bool unsupported = false;
+
+    unsupported |= query.visibilityScope() != QtLocation::UnspecifiedVisibility &&
+                   query.visibilityScope() != QtLocation::PublicVisibility;
+
+    unsupported |= query.offset() > 0;
+    unsupported |= !query.categories().isEmpty();
+    unsupported |= !query.recommendationId().isEmpty();
+
+    if (unsupported) {
+        QPlaceSearchSuggestionReplyImpl *reply = new QPlaceSearchSuggestionReplyImpl(0, this);
+        connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+        connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+                this, SLOT(replyError(QPlaceReply::Error,QString)));
+        QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, QPlaceReply::BadArgumentError),
+                                  Q_ARG(QString, "Unsupported search request options specified."));
+        return reply;
+    }
+
     QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
                     QLatin1String("/places/v1/suggest"));
 
