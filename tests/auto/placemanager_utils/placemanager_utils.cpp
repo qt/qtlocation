@@ -191,6 +191,7 @@ bool PlaceManagerUtils::doInitializeCategories(QPlaceManager *manager,
     if (!success)
         qDebug() << "Error string = " << reply->errorString();
 
+    delete reply;
     return success;
 }
 

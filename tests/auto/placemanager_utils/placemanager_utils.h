@@ -51,7 +51,7 @@
 #define WAIT_UNTIL(__expr) \
         do { \
         const int __step = 50; \
-        const int __timeout = 10000; \
+        const int __timeout = 25000; \
         if (!(__expr)) { \
             QTest::qWait(0); \
         } \

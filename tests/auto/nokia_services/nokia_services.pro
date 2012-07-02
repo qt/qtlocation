@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += routing
+SUBDIRS += routing places_semiauto
