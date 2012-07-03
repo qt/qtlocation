@@ -62,8 +62,8 @@ QT_BEGIN_NAMESPACE
     geographic routes from a backend provider. Routes include data about driving
     directions between two points, walking directions with multiple waypoints,
     and various other similar concepts. It functions much like other Model
-    elements in QML (see for example \l ListModel and \l XmlListModel), and interacts
-    with views such as \l MapItemView, and \l{ListView}.
+    elements in QML (see for example \l {Models and Views in Qt Quick#ListModel}{ListModel} and
+    \l XmlListModel), and interacts with views such as \l MapItemView, and \l{ListView}.
 
     Like \l Map and \l GeocodeModel, all the data for a RouteModel to work comes
     from a services plugin. This is contained in the \l{plugin} property, and

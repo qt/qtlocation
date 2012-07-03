@@ -178,8 +178,9 @@
     also useful to be able to retrieve the written directions and explanation
     of the travel route. In the example, these are displayed in the pull-out
     on the left-hand side of the map. To create this pull-out's contents, we
-    use a standard \l{ListModel} / \l{ListView} pair. The data in the
-    ListModel is built from the routeModel's output:
+    use a standard \l {Models and Views in Qt Quick#ListModel}{ListModel} and
+    \l {ListView} pair. The data in the \l {Models and Views in Qt Quick#ListModel}{ListModel} is
+    built from the routeModel's output:
 
     \snippet examples/declarative/mapviewer/content/map/MapComponent.qml routeinfomodel
 

@@ -99,7 +99,7 @@
     \qmlsignal void ExtendedAttributes::onValueChanged(string key, variant value)
 
     This signal is raised when the set of attributes changes. \a key is the key
-    corresponding to the \l value that was changed.
+    corresponding to the \a value that was changed.
 */
 
 /*!

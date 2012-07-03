@@ -142,8 +142,8 @@ The \l RouteQuery properties can include
 
 In the following example a default RouteQuery is declared, later to be defined
 by some user input, and used in \c routeModel as the query. The \c routeInfoModel
-is a \l ListModel that can be updated using an \c update() function that we will
-look at later.
+is a \l {Models and Views in Qt Quick#ListModel}{ListModel} that can be updated using an
+\c update() function that we will look at later.
 
 \snippet examples/declarative/mapviewer/content/map/MapComponent.qml routemodel0
 \codeline
@@ -165,11 +165,11 @@ this trip.
 \snippet examples/declarative/mapviewer/mapviewer.qml routerequest1
 \snippet examples/declarative/mapviewer/mapviewer.qml routedialog1
 
-The \c routeInfoModel \l ListModel is used to grab the results of the query and construct
-a suitable list for display. The ListModel \c routeInfoModel contains an
-\c update() function that loops through the segments extracting the segment
-length, instruction text and distance to the next instruction. The extracted
-data is formatted for display as it is retrieved.
+The \c routeInfoModel \l {Models and Views in Qt Quick#ListModel}{ListModel} is used to grab the
+results of the query and construct a suitable list for display.  The
+\l {Models and Views in Qt Quick#ListModel}{ListModel} \c routeInfoModel contains an \c update()
+function that loops through the segments extracting the segment length, instruction text and
+distance to the next instruction.  The extracted data is formatted for display as it is retrieved.
 
 \snippet examples/declarative/mapviewer/content/map/MapComponent.qml routeinfomodel
 \codeline

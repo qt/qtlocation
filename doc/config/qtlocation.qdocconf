@@ -6,6 +6,8 @@ include(qt-defines.qdocconf)
 project = Qt Location
 description = Qt Location Documentation
 
+depends += qtcore qtnetwork qtquick qtqml
+
 # Directories in which to search for files to document and images.
 # By default set to the root directory of the project for sources
 # and headers and qdoc will therefore generate output for each file.
