@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import "utils.js" as Utils
 
 TestCase {
     id: testCase
@@ -120,60 +121,7 @@ TestCase {
     }
 
     function test_setAndGet(data) {
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = testModel;
-        signalSpy.signalName = data.signal;
-
-        // set property to something new
-        testModel[data.property] = data.value;
-        if (data.array) {
-            if (data.expectedValue) {
-                verify(compareArray(testModel[data.property], data.expectedValue));
-                compare(signalSpy.count, 1 + data.expectedValue.length);
-            } else {
-                verify(compareArray(testModel[data.property], data.value));
-                compare(signalSpy.count, 1 + data.value.length);
-            }
-
-        } else {
-            compare(testModel[data.property], data.value);
-            compare(signalSpy.count, 1);
-        }
-
-        signalSpy.clear();
-
-        // set property to the same value (signal spy should not increase)
-        testModel[data.property] = data.value;
-        if (data.array) {
-            if (data.expectedValue) {
-                verify(compareArray(testModel[data.property], data.expectedValue));
-                compare(signalSpy.count, 1 + data.expectedValue.length);
-            } else {
-                verify(compareArray(testModel[data.property], data.value));
-                compare(signalSpy.count, 1 + data.value.length);
-            }
-
-        } else {
-            compare(testModel[data.property], data.value);
-            compare(signalSpy.count, 0);
-        }
-
-        signalSpy.clear();
-
-        // reset property
-        if (data.reset === undefined) {
-            testModel[data.property] = null;
-            compare(testModel[data.property], null);
-        } else {
-            testModel[data.property] = data.reset;
-            if (data.array)
-                verify(compareArray(testModel[data.property], data.reset));
-            else
-                compare(testModel[data.property], data.reset);
-        }
-        compare(signalSpy.count, 1);
-
-        signalSpy.destroy();
+        Utils.testObjectProperties(testCase, testModel, data);
     }
 
     function test_search_data() {

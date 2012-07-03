@@ -47,25 +47,20 @@ import "utils.js" as Utils
 TestCase {
     id: testCase
 
-    name: "ImageModel"
+    name: "PlaceAttribute"
 
-    ImageModel {
-        id: testModel
-    }
-
-    Place {
-        id: testPlace
-        name: "Test Place"
+    PlaceAttribute {
+        id: testAttribute
     }
 
     function test_setAndGet_data() {
         return [
-            { tag: "place", property: "place", signal: "placeChanged", value: testPlace },
-            { tag: "batchSize", property: "batchSize", signal: "batchSizeChanged", value: 10, reset: 1 },
+            { tag: "label", property: "label", signal: "labelChanged", value: "Test Label", reset: "" },
+            { tag: "text", property: "text", signal: "textChanged", value: "Test Text", reset: "" },
         ];
     }
 
     function test_setAndGet(data) {
-        Utils.testObjectProperties(testCase, testModel, data);
+        Utils.testObjectProperties(testCase, testAttribute, data);
     }
 }

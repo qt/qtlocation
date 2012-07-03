@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import "utils.js" as Utils
 
 TestCase {
     id: testCase
@@ -132,31 +133,7 @@ TestCase {
     }
 
     function test_setAndGet(data) {
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = testCategory;
-        signalSpy.signalName = data.signal;
-
-        // set property to something new
-        testCategory[data.property] = data.value;
-        compare(testCategory[data.property], data.value);
-        compare(signalSpy.count, 1);
-
-        // set property to the same value (signal spy should not increase)
-        testCategory[data.property] = data.value;
-        compare(testCategory[data.property], data.value);
-        compare(signalSpy.count, 1);
-
-        // reset property
-        if (data.reset === undefined) {
-            testCategory[data.property] = null;
-            compare(testCategory[data.property], null);
-        } else {
-            testCategory[data.property] = data.reset;
-            compare(testCategory[data.property], data.reset);
-        }
-        compare(signalSpy.count, 2);
-
-        signalSpy.destroy();
+        Utils.testObjectProperties(testCase, testCategory, data);
     }
 
     function test_save() {

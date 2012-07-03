@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import "utils.js" as Utils
 
 TestCase {
     id: testCase
@@ -52,6 +53,11 @@ TestCase {
         id: testPlugin
         name: "qmlgeo.test.plugin"
         allowExperimental: true
+    }
+
+    Place {
+        id: favoritePlace
+        name: "Favorite Place"
     }
 
     Place { id: emptyPlace }
@@ -343,36 +349,18 @@ TestCase {
         verify(compare_place(emptyPlace, emptyPlace2));
     }
 
-    function test_basicProperties_data() {
+    function test_setAndGet_data() {
         return [
             { tag: "name", property: "name", signal: "nameChanged", value: "Test Place", reset: "" },
             { tag: "placeId", property: "placeId", signal: "placeIdChanged", value: "test-place-id-1", reset: "" },
             { tag: "visibility", property: "visibility", signal: "visibilityChanged", value: Place.PublicVisibility, reset: Place.UnspecifiedVisibility },
-            { tag: "attribution", property: "attribution", signal: "attributionChanged", value: "Place data from...", reset: "" }
+            { tag: "attribution", property: "attribution", signal: "attributionChanged", value: "Place data from...", reset: "" },
+            { tag: "favorite", property: "favorite", signal: "favoriteChanged", value: favoritePlace }
         ];
     }
 
-    function test_basicProperties(data) {
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = testPlace;
-        signalSpy.signalName = data.signal;
-
-        // set it property to something new
-        testPlace[data.property] = data.value;
-        compare(testPlace[data.property], data.value);
-        compare(signalSpy.count, 1);
-
-        // set it to the same (signal spy should not increase)
-        testPlace[data.property] = data.value;
-        compare(testPlace[data.property], data.value);
-        compare(signalSpy.count, 1);
-
-        // reset it
-        testPlace[data.property] = data.reset;
-        compare(testPlace[data.property], data.reset);
-        compare(signalSpy.count, 2);
-
-        signalSpy.destroy();
+    function test_setAndGet(data) {
+        Utils.testObjectProperties(testCase, testPlace, data);
     }
 
     function test_categories() {
