@@ -115,7 +115,7 @@
     categories, allowing users to save and remove them.
 
     \section1 Place Definition
-    \input place-definition.qdocinc
+    \include place-definition.qdocinc
 
     \section1 Common Operations
 
@@ -209,7 +209,7 @@
     from a web service will typically not emit these signals while managers accessing places locally stored generally will.
 
     \section3 Caveats
-    \input place-caveats.qdocinc
+    \include place-caveats.qdocinc
 
     \section3 Saving Between Managers
     When saving places between managers, there are a few things to be aware of.
@@ -302,7 +302,7 @@
     as part of the saving process an alternative identifier attribute, x_id_nokia, is set for the place saved into the destination manager
     (when QPlaceManager::compatiblePlace() is called)
 
-    \input place-crossref.qdocinc
+    \include place-crossref.qdocinc
 
     In order to perform the matching, we create a QPlaceMatchRequest and assign it the search results from the origin manager.
     The QPlaceMatchRequest will be used on the destination manager to return corresponding places.  We also specify

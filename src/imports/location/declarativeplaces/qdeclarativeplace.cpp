@@ -126,7 +126,7 @@ QT_USE_NAMESPACE
     saved place.
 
     \section3 Caveats
-    \input place-caveats.qdocinc
+    \include place-caveats.qdocinc
 
     \section3 Saving Between Plugins
     When saving places between plugins, there are a few things to be aware of.

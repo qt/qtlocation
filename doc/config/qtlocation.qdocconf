@@ -1,4 +1,3 @@
-include(compat.qdocconf)
 include(macros.qdocconf)
 include(qt-cpp-ignore.qdocconf)
 include(qt-defines.qdocconf)

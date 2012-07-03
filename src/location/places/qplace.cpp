@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The QPlace class represents a set of data about a place.
 
-    \input place-definition.qdocinc
+    \include place-definition.qdocinc
 
     \section2 Contact Information
     The contact information of a place is based around a common set of
@@ -114,7 +114,7 @@ QT_BEGIN_NAMESPACE
     the category to be created).
 
     \section2 Saving Caveats
-    \input place-caveats.qdocinc
+    \include place-caveats.qdocinc
 */
 
 /*!
