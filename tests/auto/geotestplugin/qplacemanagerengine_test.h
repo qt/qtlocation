@@ -42,6 +42,7 @@
 #ifndef QPLACEMANAGERENGINE_TEST_H
 #define QPLACEMANAGERENGINE_TEST_H
 
+#include <QtCore/QDateTime>
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -49,6 +50,7 @@
 #include <QtCore/QUuid>
 #include <QtLocation/QGeoCoordinate>
 #include <QtLocation/QGeoLocation>
+#include <QtLocation/QPlaceContentReply>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceManagerEngine>
 #include <QtLocation/QPlaceReply>
@@ -59,6 +61,7 @@
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlace>
+#include <QtLocation/QPlaceReview>
 #include <QtTest/QTest>
 
 QT_BEGIN_NAMESPACE
@@ -82,6 +85,28 @@ public:
     PlaceReply(QObject *parent = 0)
     :   QPlaceReply(parent)
     { }
+
+    Q_INVOKABLE void emitFinished()
+    {
+        emit finished();
+    }
+};
+
+class ContentReply : public QPlaceContentReply
+{
+    Q_OBJECT
+
+    friend class QPlaceManagerEngineTest;
+
+public:
+    ContentReply(QObject *parent = 0)
+    : QPlaceContentReply(parent)
+    {}
+
+    Q_INVOKABLE void emitError()
+    {
+        emit error(error(), errorString());
+    }
 
     Q_INVOKABLE void emitFinished()
     {
@@ -185,7 +210,6 @@ public:
         : QPlaceManagerEngine(parameters)
     {
         m_locales << QLocale();
-
         if (parameters.value(QStringLiteral("initializePlaceData"), false).toBool()) {
             QFile placeData(QFINDTESTDATA("place_data.json"));
             if (placeData.open(QIODevice::ReadOnly)) {
@@ -249,6 +273,33 @@ public:
                             for (int j = 0; j < ra.count(); ++j)
                                 recommendations.append(ra.at(j).toString());
                             m_placeRecommendations.insert(place.placeId(), recommendations);
+
+                            QJsonArray revArray = p.value(QStringLiteral("reviews")).toArray();
+                            QList<QPlaceReview> reviews;
+                            for (int j = 0; j < revArray.count(); ++j) {
+                                QJsonObject ro = revArray.at(j).toObject();
+                                QPlaceReview review;
+                                if (ro.contains(QStringLiteral("title")))
+                                    review.setTitle(ro.value(QStringLiteral("title")).toString());
+                                if (ro.contains(QStringLiteral("text")))
+                                    review.setText(ro.value(QStringLiteral("text")).toString());
+
+                                if (ro.contains(QStringLiteral("language")))
+                                    review.setLanguage(ro.value("language").toString());
+
+                                if (ro.contains(QStringLiteral("rating")))
+                                    review.setRating(ro.value("rating").toDouble());
+
+                                if (ro.contains(QStringLiteral("dateTime")))
+                                    review.setDateTime(QDateTime::fromString(
+                                                           ro.value(QStringLiteral("dateTime")).toString(),
+                                                           QLatin1String("hh:mm dd-MM-yyyy")));
+                                if (ro.contains(QStringLiteral("reviewId")))
+                                    review.setReviewId(ro.value("reviewId").toString());
+
+                                reviews << review;
+                            }
+                            m_placeReviews.insert(place.placeId(), reviews);
                         }
                     }
                 }
@@ -274,10 +325,28 @@ public:
 
     QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &query)
     {
-        Q_UNUSED(placeId)
-        Q_UNUSED(query)
+        ContentReply *reply = new ContentReply(this);
+        if (placeId.isEmpty() || !m_places.contains(placeId)) {
+            reply->setError(QPlaceReply::PlaceDoesNotExistError, tr("Place does not exist"));
+            QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
 
-        return 0;
+        } else {
+            if (query.contentType() == QPlaceContent::ReviewType) {
+                QPlaceContent::Collection collection;
+                int totalCount = m_placeReviews.value(placeId).count();
+                int offset = qMax(query.offset(), 0);
+                int max = (query.limit() == -1) ? totalCount
+                                                : qMin(offset + query.limit(), totalCount);
+                for (int i = offset; i < max; ++i)
+                    collection.insert(i, m_placeReviews.value(placeId).at(i));
+
+                reply->setContent(collection);
+                reply->setTotalCount(totalCount);
+            }
+        }
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+        return reply;
     }
 
     QPlaceSearchReply *search(const QPlaceSearchRequest &query)
@@ -544,6 +613,7 @@ private:
     QHash<QString, QPlaceCategory> m_categories;
     QHash<QString, QStringList> m_childCategories;
     QHash<QString, QStringList> m_placeRecommendations;
+    QHash<QString, QList<QPlaceReview> > m_placeReviews;
 };
 
 #endif
