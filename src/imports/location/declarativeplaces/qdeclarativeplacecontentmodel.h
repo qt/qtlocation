@@ -77,7 +77,6 @@ public:
 
     int totalCount() const;
 
-    void clear();
     void clearData();
 
     void initializeCollection(int totalCount, const QPlaceContent::Collection &collection);

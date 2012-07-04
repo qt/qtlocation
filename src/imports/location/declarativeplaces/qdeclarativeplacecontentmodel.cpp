@@ -78,23 +78,15 @@ void QDeclarativePlaceContentModel::setPlace(QDeclarativePlace *place)
 {
     if (m_place != place) {
         beginResetModel();
-        if (m_reply) {
-            m_reply->abort();
-            m_reply->deleteLater();
-            m_reply = 0;
-        }
 
+        int initialCount = m_contentCount;
         clearData();
-
-        if (m_contentCount != -1) {
-            m_contentCount = -1;
-            emit totalCountChanged();
-        }
-
         m_place = place;
-        emit placeChanged();
-
         endResetModel();
+
+        emit placeChanged();
+        if (initialCount != -1)
+            emit totalCountChanged();
 
         fetchMore(QModelIndex());
     }
@@ -149,16 +141,7 @@ static QPair<int, int> findMissingKey(const QMap<int, QPlaceContent> &map)
 
 /*!
     \internal
-*/
-void QDeclarativePlaceContentModel::clear()
-{
-    beginResetModel();
-    clearData();
-    endResetModel();
-}
-
-/*!
-    \internal
+    Clears the model data but does not reset it.
 */
 void QDeclarativePlaceContentModel::clearData()
 {
@@ -168,11 +151,15 @@ void QDeclarativePlaceContentModel::clearData()
     qDeleteAll(m_suppliers);
     m_suppliers.clear();
 
-    m_contentCount = -1;
     m_content.clear();
 
-    delete m_reply;
-    m_reply = 0;
+    m_contentCount = -1;
+
+    if (m_reply) {
+        m_reply->abort();
+        m_reply->deleteLater();
+        m_reply = 0;
+    }
 }
 
 /*!
@@ -182,12 +169,8 @@ void QDeclarativePlaceContentModel::initializeCollection(int totalCount, const Q
 {
     beginResetModel();
 
+    int initialCount = m_contentCount;
     clearData();
-
-    if (m_contentCount != totalCount) {
-        m_contentCount = totalCount;
-        emit totalCountChanged();
-    }
 
     QMapIterator<int, QPlaceContent> i(collection);
     while (i.hasNext()) {
@@ -207,6 +190,11 @@ void QDeclarativePlaceContentModel::initializeCollection(int totalCount, const Q
                                new QDeclarativePlaceUser(content.user(), this));
         }
     }
+
+    m_contentCount = totalCount;
+
+    if (initialCount != totalCount)
+        emit totalCountChanged();
 
     endResetModel();
 }
