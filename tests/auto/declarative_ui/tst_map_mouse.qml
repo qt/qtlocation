@@ -298,6 +298,7 @@ Item {
         }
 
         function test_wheel() {
+            skip("Test currently broken, see QTBUG-26431");
             clear_data()
             wait(500);
             // on map but without mouse area
