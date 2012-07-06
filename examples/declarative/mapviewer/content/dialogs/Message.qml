@@ -53,6 +53,7 @@ Item {
     signal okButtonClicked
     signal cancelButtonClicked
     opacity: 0
+    enabled: opacity > 0 ? true : false
 
     Fader {}
 

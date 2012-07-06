@@ -56,6 +56,7 @@ Item {
 
     opacity: 0
     anchors.fill: parent
+    enabled: opacity > 0 ? true : false
 
     Fader {}
 
