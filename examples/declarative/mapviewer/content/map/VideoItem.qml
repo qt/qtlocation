@@ -82,7 +82,7 @@ MapQuickItem {  //to be used inside MapComponent only
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                if (player.playing)
+                if (player.playbackState == MediaPlayer.PlayingState)
                     player.stop()
                 else
                     player.play()
