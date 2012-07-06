@@ -194,8 +194,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         activeMapType_(0),
         componentCompleted_(false),
         mappingManagerInitialized_(false),
-        flickable_(0),
-        pinchArea_(0),
         canvas_(0),
         touchTimer_(-1),
         map_(0)
@@ -209,8 +207,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
     // Create internal flickable and pinch area.
     gestureArea_ = new QDeclarativeGeoMapGestureArea(this, this);
-    flickable_ = new QDeclarativeGeoMapFlickable(this, gestureArea_);
-    pinchArea_ = new QDeclarativeGeoMapPinchArea(this, gestureArea_);
 }
 
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
@@ -372,32 +368,6 @@ QDeclarativeGeoMapGestureArea *QDeclarativeGeoMap::gesture()
 }
 
 /*!
-    \qmlproperty MapPinchArea QtLocation5::Map::pinch
-
-    Contains the MapPinchArea created with the Map.  Use \c{pinch.enabled: true}
-    to enable basic pinch gestures, or see \l{MapPinchArea} for further details.
-    This object will be deprecated, use the gesture object instead.
-*/
-
-QDeclarativeGeoMapPinchArea *QDeclarativeGeoMap::pinch()
-{
-    return pinchArea_;
-}
-
-/*!
-    \qmlproperty MapFlickable QtLocation5::Map::flick
-
-    Contains the MapFlickable created with the Map. Use \c{flick.enabled: true}
-    to enable basic flick gestures, or see \l{MapFlickable} for further details.
-    This object will be deprecated, use the gesture object instead.
-*/
-
-QDeclarativeGeoMapFlickable *QDeclarativeGeoMap::flick()
-{
-    return flickable_;
-}
-
-/*!
     \internal
 */
 void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData & data)
@@ -500,21 +470,17 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     mappingManagerInitialized_ = true;
 
     map_ = mappingManager_->createMap(this);
-    flickable_->setMap(map_);
-    pinchArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(), mappingManager_->cameraCapabilities().maximumZoomLevel());
+    gestureArea_->setMap(map_);
+    gestureArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(),
+                                  mappingManager_->cameraCapabilities().maximumZoomLevel());
 
     map_->setActiveMapType(QGeoMapType());
-    flickable_->setMap(map_);
-    pinchArea_->setMap(map_);
 
     copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
     connect(map_,
             SIGNAL(copyrightsChanged(const QImage &, const QPoint &)),
             copyrightsWPtr_.data(),
             SLOT(copyrightsChanged(const QImage &, const QPoint &)));
-
-    pinchArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(),
-                                mappingManager_->cameraCapabilities().maximumZoomLevel());
 
     QGeoCameraCapabilities capabilities = mappingManager_->cameraCapabilities();
     if (zoomLevel_ < capabilities.minimumZoomLevel())

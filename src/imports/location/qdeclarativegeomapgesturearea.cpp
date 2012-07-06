@@ -391,7 +391,6 @@ void QDeclarativeGeoMapGestureArea::setActiveGestures(ActiveGestures activeGestu
     if (activeGestures_ & TiltGesture)
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PINCH_TILT_GESTURE_ACTIVATED);
     emit activeGesturesChanged();
-    emit pinchDep_->activeGesturesChanged();
 }
 
 /*!
@@ -447,7 +446,6 @@ void QDeclarativeGeoMapGestureArea::setPinchEnabled(bool enabled)
         return;
     pinch_.enabled = enabled;
     emit pinchEnabledChanged();
-    emit pinchDep_->enabledChanged();
 }
 
 /*!
@@ -467,7 +465,6 @@ void QDeclarativeGeoMapGestureArea::setPanEnabled(bool enabled)
         return;
     pan_.enabled_ = enabled;
     emit panEnabledChanged();
-    emit flickableDep_->enabledChanged();
 
     // unlike the pinch, the pan existing functionality is to stop immediately
     if (!enabled)
@@ -505,7 +502,6 @@ void QDeclarativeGeoMapGestureArea::setMaximumZoomLevelChange(qreal maxChange)
         return;
     pinch_.zoom.maximumChange = maxChange;
     emit maximumZoomLevelChangeChanged();
-    emit pinchDep_->maximumZoomLevelChangeChanged();
 }
 
 /*!
@@ -525,7 +521,6 @@ void QDeclarativeGeoMapGestureArea::setRotationFactor(qreal factor)
         return;
     pinch_.rotation.factor = factor;
     emit rotationFactorChanged();
-    emit pinchDep_->rotationFactorChanged();
 }
 
 /*!
@@ -549,7 +544,6 @@ void QDeclarativeGeoMapGestureArea::setFlickDeceleration(qreal deceleration)
         return;
     pan_.deceleration_ = deceleration;
     emit flickDecelerationChanged();
-    emit flickableDep_->decelerationChanged();
 }
 
 /*!
@@ -825,7 +819,6 @@ void QDeclarativeGeoMapGestureArea::setPinchActive(bool active)
     if ((active && pinchState_ == pinchActive) || (!active && pinchState_ != pinchActive))
         return;
     pinchState_ = active ? pinchActive : pinchInactive;
-    emit pinchDep_->activeChanged();
     emit pinchActiveChanged();
 }
 
@@ -886,7 +879,6 @@ bool QDeclarativeGeoMapGestureArea::canStartPinch()
             pinch_.event.setPointCount(touchPoints_.count());
             pinch_.event.setAccepted(true);
             emit pinchStarted(&pinch_.event);
-            emit pinchDep_->pinchStarted(&pinch_.event);
             return pinch_.event.accepted();
         }
     }
@@ -946,7 +938,6 @@ void QDeclarativeGeoMapGestureArea::updatePinch()
 
     pinch_.lastAngle = twoTouchAngle_;
     emit pinchUpdated(&pinch_.event);
-    emit pinchDep_->pinchUpdated(&pinch_.event);
 
     if (activeGestures_ & ZoomGesture) {
         // Take maximum and minimumzoomlevel into account
@@ -1001,7 +992,6 @@ void QDeclarativeGeoMapGestureArea::endPinch()
     pinch_.event.setAccepted(true);
     pinch_.event.setPointCount(0);
     emit pinchFinished(&pinch_.event);
-    emit pinchDep_->pinchFinished(&pinch_.event);
     pinch_.startDist = 0;
 }
 
@@ -1044,10 +1034,8 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
     case panActive:
         updatePan();
         // this ensures 'panStarted' occurs after the pan has actually started
-        if (lastState != panActive) {
+        if (lastState != panActive)
             emit panStarted();
-            emit flickableDep_->movementStarted();
-        }
         break;
     case panFlick:
         break;
@@ -1155,7 +1143,6 @@ void QDeclarativeGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
     pan_.animation_->setEndValue(QVariant::fromValue(animationEndCoordinate));
     pan_.animation_->start();
     emit flickStarted();
-    emit flickableDep_->flickStarted();
 }
 
 void QDeclarativeGeoMapGestureArea::stopPan()
@@ -1167,7 +1154,6 @@ void QDeclarativeGeoMapGestureArea::stopPan()
     } else if (panState_ == panActive) {
         emit panFinished();
         emit movementStopped();
-        flickableDep_->movementEnded();
     }
     panState_ = panInactive;
 }
@@ -1178,11 +1164,9 @@ void QDeclarativeGeoMapGestureArea::stopPan()
 void QDeclarativeGeoMapGestureArea::endFlick()
 {
     emit panFinished();
-    emit flickableDep_->movementEnded();
     if (pan_.animation_->state() == QPropertyAnimation::Running)
         pan_.animation_->stop();
     emit flickFinished();
-    emit flickableDep_->flickEnded();
     panState_ = panInactive;
     emit movementStopped();
 }

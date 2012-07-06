@@ -58,8 +58,6 @@
 #include "qdeclarativegeoroutemodel_p.h"
 #include "qdeclarativegeocodemodel_p.h"
 #include "qdeclarativegeomaneuver_p.h"
-#include "qdeclarativegeomapflickable_p.h"
-#include "qdeclarativegeomappincharea_p.h"
 #include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomaptype_p.h"
@@ -134,8 +132,6 @@ public:
             qmlRegisterType<QDeclarativeGeoRoute>(uri, 5, 0, "Route"); // data type
             qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
-            qmlRegisterUncreatableType<QDeclarativeGeoMapFlickable>(uri, 5, 0, "MapFlickable", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Map)Flickable"));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchArea>(uri, 5, 0, "MapPinchArea", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Map)PinchArea"));
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent>(uri, 5, 0, "MapPinchEvent", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Map)PinchEvent"));
             qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea>(uri, 5, 0, "MapGestureArea", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Map)GestureArea"));
             qmlRegisterUncreatableType<QDeclarativeGeoMapType>(uri, 5, 0, "MapType", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("MapType"));

@@ -33,8 +33,6 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeoroutesegment_p.h \
            qdeclarativegeomaneuver_p.h \
            qdeclarativegeomap_p.h \
-           qdeclarativegeomapflickable_p.h \
-           qdeclarativegeomappincharea_p.h \
            qdeclarativegeomaptype_p.h \
            qdeclarativegeomapitembase_p.h \
            qdeclarativegeomapquickitem_p.h \
@@ -68,8 +66,6 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeoroutesegment.cpp \
            qdeclarativegeomaneuver.cpp \
            qdeclarativegeomap.cpp \
-           qdeclarativegeomapflickable.cpp \
-           qdeclarativegeomappincharea.cpp \
            qdeclarativegeomaptype.cpp \
            qdeclarativegeomapitembase.cpp \
            qdeclarativegeomapquickitem.cpp \

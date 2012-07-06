@@ -56,8 +56,6 @@ class QDeclarativeGeoMap;
 class QTouchEvent;
 class QGeoMap;
 class QPropertyAnimation;
-class QDeclarativeGeoMapFlickable;
-class QDeclarativeGeoMapPinchArea;
 
 class QDeclarativeGeoMapPinchEvent : public QObject
 {
@@ -171,17 +169,6 @@ public:
     void zoomLevelLimits(qreal min, qreal max);
     void setMap(QGeoMap *map);
 
-    // will be removed
-    void registerFlickDeprecated(QDeclarativeGeoMapFlickable *flickable)
-    {
-        flickableDep_ = flickable;
-    }
-
-    void registerPinchDeprecated(QDeclarativeGeoMapPinchArea *pinchArea)
-    {
-        pinchDep_ = pinchArea;
-    }
-
 Q_SIGNALS:
     void pinchActiveChanged();
     void enabledChanged();
@@ -204,9 +191,6 @@ Q_SIGNALS:
     void movementStopped();
 
 private:
-    class QDeclarativeGeoMapFlickable *flickableDep_;
-    class QDeclarativeGeoMapPinchArea *pinchDep_;
-
     void update();
 
     // Create general data relating to the touch points
@@ -334,9 +318,6 @@ private:
         panActive,
         panFlick
     } panState_;
-
-    friend class QDeclarativeGeoMapPinchArea;
-    friend class QDeclarativeGeoMapFlickable;
 };
 
 QT_END_NAMESPACE
