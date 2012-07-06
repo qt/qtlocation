@@ -359,7 +359,7 @@ bool QDeclarativeGeoMap::mouseEvent(QMouseEvent *event)
 
 
 /*!
-    \qmlproperty MapPinchArea QtLocation5::Map::gesture
+    \qmlproperty MapGestureArea QtLocation5::Map::gesture
 
     Contains the MapGestureArea created with the Map. This covers pan, flick and pinch gestures.
     Use \c{gesture.enabled: true} to enable basic gestures, or see \l{MapGestureArea} for

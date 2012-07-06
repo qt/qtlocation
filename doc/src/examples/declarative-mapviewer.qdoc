@@ -56,8 +56,7 @@
     \li Displaying a map
         \list
         \li \l{QtLocation5::Map}{Map}
-        \li \l{QtLocation5::MapFlickable}{MapFlickable}
-        \li \l{QtLocation5::MapPinchArea}{MapPinchArea}
+        \li \l{QtLocation5::MapGestureArea}{MapGestureArea}
         \li \l{QtLocation5::Coordinate}{Coordinate}
         \endlist
     \li Finding an address

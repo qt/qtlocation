@@ -48,14 +48,10 @@ Map {
     center: nokiaCoordinate
 
     // Enable pinch gestures to zoom in and out
-    pinch.activeGestures: MapPinchArea.ZoomGesture
-    pinch.enabled: true
+    gesture.flickDeceleration: 3000
+    gesture.enabled: true
 
-    // And flicking gestures for quick panning
-    flick.enabled: true
-    flick.deceleration: 3000
 //! [top]
-
     property variant markers
     property variant mapItems
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0

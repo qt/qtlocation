@@ -46,12 +46,10 @@ It builds upon the API concepts and elements in the \l{Positioning (QML)}{QML Po
 
 \section2 Displaying Maps
 
-Displaying a map is done using the \l{QtLocation5::Map}{Map} QML element.
-The Map element supports user interaction through the
-\l{QtLocation5::MapFlickable}{MapFlickable} and
-\l{QtLocation5::MapPinchArea}{MapPinchArea} QML elements. The Map element
-draws the map on-screen using OpenGL (ES), allowing for hardware-accelerated
-rendering where available.
+Displaying a map is done using the \l{QtLocation5::Map}{Map} QML element.  The Map element supports
+user interaction through the \l{QtLocation5::MapGestureArea}{MapGestureArea} QML element. The Map
+element draws the map on-screen using OpenGL (ES), allowing for hardware-accelerated rendering
+where available.
 
 \b{Key Elements}
 \table
@@ -62,11 +60,8 @@ rendering where available.
         \li \l{QtLocation5::Map}{Map}
         \li QtQuick item to display a map on-screen.
     \row
-        \li \l{QtLocation5::MapFlickable}{MapFlickable}
-        \li Interaction helper for the "flick" panning gesture on a Map.
-    \row
-        \li \l{QtLocation5::MapPinchArea}{MapPinchArea}
-        \li Interaction helper for the "pinch to zoom" gesture on a Map.
+        \li \l{QtLocation5::MapGestureArea}{MapGestureArea}
+        \li Interaction helper for panning, flicking and pinch-to-zoom gesture on a Map.
 \endtable
 
 Note that the client must create a \l{QtLocation5::Plugin}{Plugin} element

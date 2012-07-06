@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
 
 
 /*!
-    \qmlclass MapPinchEvent QDeclarativeGeoMapPinchArea
+    \qmlclass MapPinchEvent QDeclarativeGeoMapPinchEvent
     \inqmlmodule QtLocation 5.0
 
     \brief MapPinchEvent element provides basic information about pinch event.
@@ -299,7 +299,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapFlickable::panStarted()
+    \qmlsignal QtLocation5::MapGestureArea::panStarted()
 
     This handler is called when the view begins moving due to user
     interaction. Typically this means that the user is dragging a finger -
@@ -307,7 +307,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapFlickable::panFinished()
+    \qmlsignal QtLocation5::MapGestureArea::panFinished()
 
     This handler is called when the view stops moving due to user
     interaction.  If a flick was generated, this handler will
@@ -318,7 +318,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapFlickable::flickStarted()
+    \qmlsignal QtLocation5::MapGestureArea::flickStarted()
 
     This handler is called when the view is flicked.  A flick
     starts from the point that the mouse or touch is released,
@@ -326,7 +326,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapFlickable::flickFinished()
+    \qmlsignal QtLocation5::MapGestureArea::flickFinished()
 
     This handler is called when the view stops moving due to a flick.
     The order of panFinished() and flickFinished() is not specified.
@@ -1166,6 +1166,7 @@ void QDeclarativeGeoMapGestureArea::stopPan()
         endFlick();
     } else if (panState_ == panActive) {
         emit panFinished();
+        emit movementStopped();
         flickableDep_->movementEnded();
     }
     panState_ = panInactive;
