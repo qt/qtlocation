@@ -1013,7 +1013,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 {
     QLOC_TRACE0;
     event->accept();
-    emit wheel(event->delta());
+    emit wheelAngleChanged(event->angleDelta());
 }
 
 /*!

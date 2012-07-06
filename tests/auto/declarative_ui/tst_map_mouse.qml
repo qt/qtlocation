@@ -106,8 +106,12 @@ Item {
         center: mapDefaultCenter
         plugin: testPlugin;
 
-        property real lastWheelDelta: 0
-        onWheel: lastWheelDelta = delta
+        property real lastWheelAngleDeltaX: 0
+        property real lastWheelAngleDeltaY: 0
+        onWheelAngleChanged: {
+            lastWheelAngleDeltaX = angleDelta.x;
+            lastWheelAngleDeltaY = angleDelta.y;
+        }
 
         MapMouseArea {
             id: mouseUpper
@@ -205,10 +209,11 @@ Item {
 
         SignalSpy {id: mouseOverlapperEnabledChangedSpy; target: mouseOverlapper; signalName: "enabledChanged"}
 
-        SignalSpy {id: mapWheelSpy; target: map; signalName: "wheel"}
+        SignalSpy {id: mapWheelSpy; target: map; signalName: "wheelAngleChanged"}
 
         function clear_data() {
-            map.lastWheelDelta = 0
+            map.lastWheelAngleDeltaX = 0
+            map.lastWheelAngleDeltaY = 0
             mouseUpperClickedSpy.clear()
             mouseLowerClickedSpy.clear()
             mouseOverlapperClickedSpy.clear()
@@ -298,24 +303,27 @@ Item {
         }
 
         function test_wheel() {
-            skip("Test currently broken, see QTBUG-26431");
             clear_data()
             wait(500);
             // on map but without mouse area
-            mouseWheel(map, 5, 5, 15, Qt.LeftButton, Qt.NoModifiers)
+            mouseWheel(map, 5, 5, 15, 5, Qt.LeftButton, Qt.NoModifiers)
             compare(mapWheelSpy.count, 1)
-            compare(map.lastWheelDelta, 15)
-            mouseWheel(map, 5, 5, -15, Qt.LeftButton, Qt.NoModifiers)
+            compare(map.lastWheelAngleDeltaX, 15)
+            compare(map.lastWheelAngleDeltaY, 5)
+            mouseWheel(map, 5, 5, -15, -5, Qt.LeftButton, Qt.NoModifiers)
             compare(mapWheelSpy.count, 2)
-            compare(map.lastWheelDelta, -15)
+            compare(map.lastWheelAngleDeltaX, -15)
+            compare(map.lastWheelAngleDeltaY, -5)
             // on map on top of mouse area
-            mouseWheel(map, 55, 75, -30, Qt.LeftButton, Qt.NoModifiers)
+            mouseWheel(map, 55, 75, -30, -2, Qt.LeftButton, Qt.NoModifiers)
             compare(mapWheelSpy.count, 3)
-            compare(map.lastWheelDelta, -30)
+            compare(map.lastWheelAngleDeltaX, -30)
+            compare(map.lastWheelAngleDeltaY, -2)
             // outside of map
-            mouseWheel(map, -100, -100, 30, Qt.LeftButton, Qt.NoModifiers)
+            mouseWheel(map, -100, -100, 40, 4, Qt.LeftButton, Qt.NoModifiers)
             compare(mapWheelSpy.count, 3)
-            compare(map.lastWheelDelta, -30)
+            compare(map.lastWheelAngleDeltaX, -30)
+            compare(map.lastWheelAngleDeltaY, -2)
         }
 
         function test_aaa_basic_properties() // _aaa_ to ensure execution first

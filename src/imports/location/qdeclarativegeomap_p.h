@@ -183,7 +183,7 @@ protected:
     void wheelEvent(QWheelEvent *event);
 
 Q_SIGNALS:
-    void wheel(qreal delta);
+    void wheelAngleChanged(QPoint angleDelta);
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void zoomLevelChanged(qreal zoomLevel);
     void bearingChanged(qreal bearing);
