@@ -51,7 +51,7 @@
 #include <qnumeric.h>
 
 #include <QtGui/private/qvectorpath_p.h>
-#include <QtGui/private/qopengltriangulatingstroker_p.h>
+#include <QtGui/private/qtriangulatingstroker_p.h>
 #include <QtGui/private/qtriangulator_p.h>
 
 QT_BEGIN_NAMESPACE
