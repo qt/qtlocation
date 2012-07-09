@@ -66,7 +66,7 @@ public:
 
     void updateScreenPoints(const QGeoMap &map);
 
-private:
+protected:
     QPainterPath srcPath_;
     bool assumeSimple_;
 };

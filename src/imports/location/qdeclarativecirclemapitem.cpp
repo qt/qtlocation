@@ -48,6 +48,10 @@
 #include <QPen>
 #include <QPainter>
 
+/* poly2tri triangulator includes */
+#include "../../3rdparty/poly2tri/common/shapes.h"
+#include "../../3rdparty/poly2tri/sweep/cdt.h"
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -123,6 +127,114 @@ struct Vertex
     QVector2D position;
 };
 
+QGeoMapCircleGeometry::QGeoMapCircleGeometry(QObject *parent) :
+    QGeoMapPolygonGeometry(parent)
+{
+}
+
+/*!
+    \internal
+*/
+void QGeoMapCircleGeometry::updateScreenPointsInvert(const QGeoMap &map)
+{
+    if (!screenDirty_)
+        return;
+
+    if (map.width() == 0 || map.height() == 0) {
+        clear();
+        return;
+    }
+
+    QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
+
+    QPainterPath ppi = srcPath_;
+
+    clear();
+
+    // a circle requires at least 3 points;
+    if (ppi.elementCount() < 3)
+        return;
+
+    // translate the path into top-left-centric coordinates
+    QRectF bb = ppi.boundingRect();
+    ppi.translate(-bb.left(), -bb.top());
+    firstPointOffset_ = -1 * bb.topLeft();
+
+    ppi.closeSubpath();
+
+    // calculate actual width of map on screen in pixels
+    QGeoCoordinate mapCenter(0, map.cameraData().center().longitude());
+    QPointF midPoint = map.coordinateToScreenPosition(mapCenter, false);
+    QPointF midPointPlusOne = QPoint(midPoint.x() + 1.0, midPoint.y());
+    QGeoCoordinate coord1 = map.screenPositionToCoordinate(midPointPlusOne, false);
+    qreal geoDistance = coord1.longitude() - map.cameraData().center().longitude();
+    if ( geoDistance < 0 )
+        geoDistance += 360.0;
+    double mapWidth = 360.0 / geoDistance;
+
+    qreal leftOffset = origin.x() - (map.width()/2.0 - mapWidth/2.0) - firstPointOffset_.x();
+    qreal topOffset = origin.y() - (midPoint.y() - mapWidth/2.0) - firstPointOffset_.y();
+    QPainterPath ppiBorder;
+    ppiBorder.moveTo(QPointF(-leftOffset, -topOffset));
+    ppiBorder.lineTo(QPointF(mapWidth - leftOffset, -topOffset));
+    ppiBorder.lineTo(QPointF(mapWidth - leftOffset, mapWidth - topOffset));
+    ppiBorder.lineTo(QPointF(-leftOffset, mapWidth - topOffset));
+
+    screenOutline_ = ppiBorder;
+
+    std::vector<p2t::Point*> borderPts;
+    borderPts.reserve(4);
+
+    std::vector<p2t::Point*> curPts;
+    curPts.reserve(ppi.elementCount());
+    for (int i = 0; i < ppi.elementCount(); ++i) {
+        const QPainterPath::Element e = ppi.elementAt(i);
+        if (e.isMoveTo() || i == ppi.elementCount() - 1
+                || (qAbs(e.x - curPts.front()->x) < 0.1
+                    && qAbs(e.y - curPts.front()->y) < 0.1)) {
+            if (curPts.size() > 2) {
+                for (int j = 0; j < 4; ++j) {
+                    const QPainterPath::Element e2 = ppiBorder.elementAt(j);
+                    borderPts.push_back(new p2t::Point(e2.x, e2.y));
+                }
+                p2t::CDT *cdt = new p2t::CDT(borderPts);
+                cdt->AddHole(curPts);
+                cdt->Triangulate();
+                std::vector<p2t::Triangle*> tris = cdt->GetTriangles();
+                screenVertices_.reserve(screenVertices_.size() + tris.size());
+                for (size_t i = 0; i < tris.size(); ++i) {
+                    p2t::Triangle *t = tris.at(i);
+                    for (int j = 0; j < 3; ++j) {
+                        p2t::Point *p = t->GetPoint(j);
+                        screenVertices_ << Point(p->x, p->y);
+                    }
+                }
+                delete cdt;
+            }
+            curPts.clear();
+            curPts.reserve(ppi.elementCount() - i);
+            curPts.push_back(new p2t::Point(e.x, e.y));
+        } else if (e.isLineTo()) {
+            curPts.push_back(new p2t::Point(e.x, e.y));
+        } else {
+            qWarning("Unhandled element type in circle painterpath");
+        }
+    }
+
+    if (curPts.size() > 0) {
+        qDeleteAll(curPts.begin(), curPts.end());
+        curPts.clear();
+    }
+
+    if (borderPts.size() > 0) {
+        qDeleteAll(borderPts.begin(), borderPts.end());
+        borderPts.clear();
+    }
+
+    screenBounds_ = ppiBorder.boundingRect();
+
+}
+
 static const qreal qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
 inline static qreal qgeocoordinate_degToRad(qreal deg)
@@ -134,74 +246,44 @@ inline static qreal qgeocoordinate_radToDeg(qreal rad)
     return rad * 180 / M_PI;
 }
 
-static bool preserveCircleGeometry (QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
-                                    qreal distance, QGeoCoordinate &leftBoundCoord)
+static bool crossEarthPole(const QGeoCoordinate &center, qreal distance)
 {
-
-    // if circle crosses north/south pole, then don't preserve circular shape
-    // approximate using great circle distance
     qreal poleLat = 90;
-    if (center.distanceTo(QGeoCoordinate(poleLat, center.longitude())) < distance
-     || center.distanceTo(QGeoCoordinate(-poleLat, center.longitude())) < distance) {
-        return false;
-    }
-    // find left bound
-    for (int i = 1; i < path.count(); ++i) {
-        int iNext = (i + 1) % path.count();
-        if (path.at(iNext).longitude() > path.at(i).longitude()
-             && path.at(i-1).longitude() > path.at(i).longitude()) {
-            if (qAbs(path.at(iNext).longitude() - path.at(i-1).longitude()) < 180)
-                leftBoundCoord = path.at(i);
-        }
-    }
-    return true;
-
+    QGeoCoordinate northPole = QGeoCoordinate(poleLat, center.longitude());
+    QGeoCoordinate southPole = QGeoCoordinate(-poleLat, center.longitude());
+    // approximate using great circle distance
+    qreal distanceToNorthPole = center.distanceTo(northPole);
+    qreal distanceToSouthPole = center.distanceTo(southPole);
+    if (distanceToNorthPole < distance || distanceToSouthPole < distance)
+        return true;
+    return false;
 }
 
 static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoordinate &center, qreal distance, int steps)
 {
-    // get angular distance in radians
-    qreal angularDistance = distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
+    // Calculate points based on great-circle distance
+    // Calculation is the same as GeoCoordinate's atDistanceAndAzimuth function
+    // but tweaked here for computing multiple points
 
-    // We are using horizontal system, we have radius (distance)
-    // projected onto Celestial sphere.
-    // This way we know the altitude in horizontal system => h = 90 - r;
-    // We can now "spin" around with azimuth as a step to get all the points from
-    // peripheral of the given circle.
-    // To get geographical position we need to change from horizontal system
-    // to equatorial system.
-
-    // get location
-    qreal lat = qgeocoordinate_degToRad(center.latitude());
-    qreal lon = qgeocoordinate_degToRad(center.longitude());
-
-    // precalculate
-    qreal cos_h = sin(angularDistance);
-    qreal sin_h = cos(angularDistance);
-    qreal cos_phi = cos(lat), sin_phi = sin(lat);
-    qreal sin_phi_x_sin_h = sin_phi * sin_h;
-    qreal cos_phi_x_cos_h = cos_phi * cos_h;
-    qreal sin_phi_x_cos_h = sin_phi * cos_h;
-    qreal cos_phi_x_sin_h = cos_phi * sin_h;
+    // pre-calculate
+    qreal latRad = qgeocoordinate_degToRad(center.latitude());
+    qreal lonRad = qgeocoordinate_degToRad(center.longitude());
+    qreal cosLatRad = cos(latRad);
+    qreal sinLatRad = sin(latRad);
+    qreal ratio = (distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000.0));
+    qreal cosRatio = cos(ratio);
+    qreal sinRatio = sin(ratio);
+    qreal sinLatRad_x_cosRatio = sinLatRad * cosRatio;
+    qreal cosLatRad_x_sinRatio = cosLatRad * sinRatio;
 
     for (int i = 0; i < steps; ++i) {
-        qreal a = 2 * M_PI * i / steps;
-        qreal sin_delta = sin_phi_x_sin_h - cos_phi_x_cos_h * cos(a);
-        qreal cos_delta_x_cos_tau = cos_phi_x_sin_h + sin_phi_x_cos_h * cos(a);
-        qreal cos_delta_x_sin_tau = -sin(a) * cos_h;
-        // get the hour angle (use Cartesian to polar conversion)
-        qreal tau = atan2(cos_delta_x_sin_tau, cos_delta_x_cos_tau);
-        qreal cos_delta = sqrt(cos_delta_x_sin_tau
-                               * cos_delta_x_sin_tau + cos_delta_x_cos_tau
-                               * cos_delta_x_cos_tau);
-        // get declination ( use Cartesian to polar conversion )
-        qreal delta = atan2(sin_delta, cos_delta);
-        // get right ascension from tau , use a greenwich star time of 0
-        qreal alpha = lon - tau;
-
-        qreal lat2 = qgeocoordinate_radToDeg(delta);
-        qreal lon2 = qgeocoordinate_radToDeg(alpha);
-
+        qreal azimuthRad = 2 * M_PI * i / steps;
+        qreal resultLatRad = asin(sinLatRad_x_cosRatio
+                                   + cosLatRad_x_sinRatio * cos(azimuthRad));
+        qreal resultLonRad = lonRad + atan2(sin(azimuthRad) * cosLatRad_x_sinRatio,
+                                       cosRatio - sinLatRad * sin(resultLatRad));
+        qreal lat2 = qgeocoordinate_radToDeg(resultLatRad);
+        qreal lon2 = qgeocoordinate_radToDeg(resultLonRad);
         if (lon2 < -180.0) {
             lon2 += 360.0;
         } else if (lon2 > 180.0) {
@@ -391,12 +473,16 @@ void QDeclarativeCircleMapItem::updateMapItem()
         calculatePeripheralPoints(circlePath_, center_->coordinate(),
                                   radius_, 125);
     }
+
     QGeoCoordinate leftBoundCoord;
+    int pathCount = circlePath_.size();
     bool preserve = preserveCircleGeometry(circlePath_, center_->coordinate(),
                                            radius_, leftBoundCoord);
     geometry_.setPreserveGeometry(preserve, leftBoundCoord);
     geometry_.updateSourcePoints(*map(), circlePath_);
-    geometry_.updateScreenPoints(*map());
+    if (crossEarthPole(center_->coordinate(), radius_) && circlePath_.size() == pathCount)
+        geometry_.updateScreenPointsInvert(*map()); // invert fill area for really huge circles
+    else geometry_.updateScreenPoints(*map());
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
         QList<QGeoCoordinate> closedPath = circlePath_;
@@ -450,8 +536,12 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
-    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
-    borderGeometry_.setPreserveGeometry(true, borderGeometry_.geoLeftBound());
+
+    if (event.centerChanged && crossEarthPole(center_->coordinate(), radius_)) {
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
+    }
+
     geometry_.markScreenDirty();
     borderGeometry_.markScreenDirty();
     updateMapItem();
@@ -487,6 +577,90 @@ void QDeclarativeCircleMapItem::dragEnded()
 bool QDeclarativeCircleMapItem::contains(const QPointF &point) const
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
+}
+
+
+bool QDeclarativeCircleMapItem::preserveCircleGeometry (QList<QGeoCoordinate> &path,
+                                    const QGeoCoordinate &center, qreal distance,
+                                    QGeoCoordinate &leftBoundCoord)
+{
+    // if circle crosses north/south pole, then don't preserve circular shape,
+    if ( crossEarthPole(center, distance)) {
+        updateCirclePathForRendering(path, center, distance);
+        return false;
+    }
+    // else find and set its left bound
+    for (int i = 1; i < path.count(); ++i) {
+        int iNext = (i + 1) % path.count();
+        if (path.at(iNext).longitude() > path.at(i).longitude()
+             && path.at(i-1).longitude() > path.at(i).longitude()) {
+            if (qAbs(path.at(iNext).longitude() - path.at(i-1).longitude()) < 180)
+                leftBoundCoord = path.at(i);
+        }
+    }
+    return true;
+
+}
+
+
+// A workaround for circle path to be drawn correctly using a polygon geometry
+void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QGeoCoordinate> &path,
+                                                             const QGeoCoordinate &center,
+                                                             qreal distance)
+{
+
+    qreal poleLat = 90;
+    qreal distanceToNorthPole = center.distanceTo(QGeoCoordinate(poleLat, 0));
+    qreal distanceToSouthPole = center.distanceTo(QGeoCoordinate(-poleLat, 0));
+    bool crossNorthPole = distanceToNorthPole < distance;
+    bool crossSouthPole = distanceToSouthPole < distance;
+    if (!crossNorthPole && !crossSouthPole)
+        return;
+    QList<int> wrapPathIndex;
+    // calculate actual width of map on screen in pixels
+    QPointF midPoint = map()->coordinateToScreenPosition(map()->cameraData().center(), false);
+    QPointF midPointPlusOne = QPoint(midPoint.x() + 1.0, midPoint.y());
+    QGeoCoordinate coord1 = map()->screenPositionToCoordinate(midPointPlusOne, false);
+    qreal geoDistance = coord1.longitude() - map()->cameraData().center().longitude();
+    if ( geoDistance < 0 )
+        geoDistance += 360;
+    qreal mapWidth = 360.0 / geoDistance;
+    QPointF prev = map()->coordinateToScreenPosition(path.at(0), false);
+    // find the points in path where wrapping occurs
+    for (int i = 1; i <= path.count(); ++i) {
+        int index = i % path.count();
+        QPointF point = map()->coordinateToScreenPosition(path.at(index), false);
+        if ( (qAbs(point.x() - prev.x())) >= mapWidth/2.0 ) {
+            wrapPathIndex << index;
+            if (wrapPathIndex.size() == 2 || !(crossNorthPole && crossSouthPole))
+                break;
+        }
+        prev = point;
+    }
+    // insert two additional coords at top/bottom map corners of the map for shape
+    // to be drawn correctly
+    if (wrapPathIndex.size() > 0) {
+        qreal newPoleLat = 90;
+        QGeoCoordinate wrapCoord = path.at(wrapPathIndex[0]);
+        if (wrapPathIndex.size() == 2) {
+            QGeoCoordinate wrapCoord2 = path.at(wrapPathIndex[1]);
+            if (wrapCoord2.latitude() > wrapCoord.latitude())
+                newPoleLat = -90;
+        } else if (center.latitude() < 0) {
+            newPoleLat = -90;
+        }
+        for (int i = 0; i < wrapPathIndex.size(); ++i) {
+            int index = wrapPathIndex[i] == 0 ? 0 : wrapPathIndex[i] + i*2;
+            int prevIndex = (index - 1) < 0 ? (path.count() - 1): index - 1;
+            QGeoCoordinate coord0 = path.at(prevIndex);
+            QGeoCoordinate coord1 = path.at(index);
+            coord0.setLatitude(newPoleLat);
+            coord1.setLatitude(newPoleLat);
+            path.insert(index ,coord1);
+            path.insert(index, coord0);
+            newPoleLat = -newPoleLat;
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////

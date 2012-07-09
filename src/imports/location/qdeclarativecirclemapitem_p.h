@@ -52,6 +52,18 @@ QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMapQuickItem;
 
+class QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
+{
+    Q_OBJECT
+
+public:
+    explicit QGeoMapCircleGeometry(QObject *parent = 0);
+
+    void updateScreenPointsInvert(const QGeoMap &map);
+
+
+};
+
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
@@ -93,6 +105,12 @@ protected Q_SLOTS:
     void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
+    bool preserveCircleGeometry(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
+                                qreal distance, QGeoCoordinate &leftBoundCoord);
+    void updateCirclePathForRendering(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
+                                      qreal distance);
+
+private:
     //TODO: pimpl
     //TODO: this should be in base class done in
     QDeclarativeCoordinate internalCoordinate_;
@@ -102,7 +120,7 @@ private:
     qreal radius_;
     QList<QGeoCoordinate> circlePath_;
     bool dirtyMaterial_;
-    QGeoMapPolygonGeometry geometry_;
+    QGeoMapCircleGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;
 };
 

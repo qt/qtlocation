@@ -226,9 +226,34 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
     clear();
 
-    // Nothing on the screen
-    if (ppi.elementCount() == 0)
+    // a polygon requires at least 3 points;
+    if (ppi.elementCount() < 3)
         return;
+
+    // Intersection between the viewport and a concave polygon can create multiple polygons
+    // joined by a line at the viewport border, and poly2tri does not triangulate this very well
+    // so use the full src path if the resulting polygon is concave.
+    if (clipToViewport_) {
+        int changeInX = 0;
+        int changeInY = 0;
+        QPainterPath::Element e1 = ppi.elementAt(1);
+        QPainterPath::Element e = ppi.elementAt(0);
+        QVector2D edgeA(e1.x - e.x ,e1.y - e.y);
+        for (int i = 2; i <= ppi.elementCount(); ++i) {
+            e = ppi.elementAt(i % ppi.elementCount());
+            if (e.x == e1.x && e.y == e1.y)
+                continue;
+            QVector2D edgeB(e.x - e1.x, e.y - e1.y);
+            if ((edgeA.x() < 0) == (edgeB.x() >= 0))
+                changeInX++;
+            if ((edgeA.y() < 0) == (edgeB.y() >= 0))
+                changeInY++;
+            edgeA = edgeB;
+            e1 = e;
+        }
+        if (changeInX > 2 || changeInY > 2) // polygon is concave
+            ppi = srcPath_;
+    }
 
     // translate the path into top-left-centric coordinates
     QRectF bb = ppi.boundingRect();
@@ -241,7 +266,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
     std::vector<p2t::Point*> curPts;
     curPts.reserve(ppi.elementCount());
-
     for (int i = 0; i < ppi.elementCount(); ++i) {
         const QPainterPath::Element e = ppi.elementAt(i);
         if (e.isMoveTo() || i == ppi.elementCount() - 1
@@ -251,18 +275,14 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
                 p2t::CDT *cdt = new p2t::CDT(curPts);
                 cdt->Triangulate();
                 std::vector<p2t::Triangle*> tris = cdt->GetTriangles();
-
                 screenVertices_.reserve(screenVertices_.size() + tris.size());
-
                 for (size_t i = 0; i < tris.size(); ++i) {
                     p2t::Triangle *t = tris.at(i);
-
                     for (int j = 0; j < 3; ++j) {
                         p2t::Point *p = t->GetPoint(j);
                         screenVertices_ << Point(p->x, p->y);
                     }
                 }
-
                 delete cdt;
             }
             curPts.clear();
