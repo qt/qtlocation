@@ -1,12 +1,4 @@
-TARGET  = declarative_location
-TARGETPATH = QtLocation
-
-include(qlocationimport.pri)
-
 QT += quick-private network location-private qml-private 3d core-private gui-private
-
-DESTDIR = $$QT.location.imports/$$TARGETPATH
-target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INCLUDEPATH += ../../location
 INCLUDEPATH += ../../location/maps
@@ -22,10 +14,6 @@ win32 {
         LIBS += -L../../3rdparty/poly2tri/release
     }
 }
-
-# On some platforms, build both versions because debug and release
-# versions are incompatible
-#win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
 
 HEADERS += qdeclarativeposition_p.h \
            qdeclarativepositionsource_p.h \
@@ -98,33 +86,7 @@ SOURCES += qdeclarativeposition.cpp \
 
 include(declarativeplaces/declarativeplaces.pri)
 
-# plugin.qmltypes is used by Qt Creator for syntax highlighting and the QML code model.  It needs
-# to be regenerated whenever the QML elements exported by the plugin change.  This cannot be done
-# automatically at compile time because qmlplugindump does not support some QML features and it may
-# not be possible when cross-compiling.
-#
-# To regenerate run 'make qmltypes' which will update the plugins.qmltypes file in the source
-# directory.  Then review and commit the changes made to plugins.qmltypes.
-#
-# This will run the following command:
-#     qmlplugindump <import name> <import version> <path to import plugin> > plugins.qmltypes
-# e.g.:
-#     qmlplugindump QtLocation 5.0 imports/QtLocation/libdeclarative_location.so > plugins.qmltypes
-
-load(resolve_target)
-qmltypes.target = qmltypes
-qmltypes.commands = $$[QT_INSTALL_BINS]/qmlplugindump QtLocation 5.0 $$QMAKE_RESOLVED_TARGET > $$PWD/plugins.qmltypes
-qmltypes.depends = $$QMAKE_RESOLVED_TARGET
-QMAKE_EXTRA_TARGETS += qmltypes
-
-# Tell qmake to create such makefile that qmldir, plugins.qmltypes and target
-# (i.e. declarative_location) are all copied to $$[QT_INSTALL_IMPORTS]/QtLocation directory,
-
-qmldir.files += $$PWD/qmldir $$PWD/plugins.qmltypes
-qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
-
-INSTALLS += target qmldir
+load(qml_plugin)
 
 OTHER_FILES += \
     plugin.json
-
