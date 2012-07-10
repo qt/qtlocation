@@ -36,3 +36,14 @@ target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/mapviewer
 
 INSTALLS += target
 
+!equals($${_PRO_FILE_PWD_}, $${OUT_PWD}) {
+    MEDIAFILE = $${_PRO_FILE_PWD_}/demo.ogv
+    copy2build.input = MEDIAFILE
+    copy2build.output = $${OUT_PWD}/demo.ogv
+    !contains(TEMPLATE_PREFIX, vc):copy2build.variable_out = PRE_TARGETDEPS
+    copy2build.commands = $$QMAKE_COPY ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+    copy2build.name = COPY ${QMAKE_FILE_IN}
+    copy2build.CONFIG += no_link
+    copy2build.CONFIG += no_clean
+    QMAKE_EXTRA_COMPILERS += copy2build
+}
