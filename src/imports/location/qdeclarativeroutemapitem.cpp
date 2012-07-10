@@ -163,6 +163,7 @@ QSGNode *QDeclarativeRouteMapItem::updateMapItemPaintNode(QSGNode *oldNode, Upda
 
     //TODO: update only material
     if (geometry_.isScreenDirty() || dirtyMaterial_) {
+        geometry_.setPreserveGeometry(false);
         node->update(line_.color(), &geometry_);
         geometry_.markClean();
         dirtyMaterial_ = false;

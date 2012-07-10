@@ -211,7 +211,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
             return;
 
         // unwrap x to preserve geometry if moved to border of map
-        if (point.x() < unwrapBelowX && !qFuzzyCompare(point.x(), unwrapBelowX))
+        if (preserveGeometry_ && point.x() < unwrapBelowX && !qFuzzyCompare(point.x(), unwrapBelowX))
             point.setX(unwrapBelowX + geoDistanceToScreenWidth(map, geoLeftBound_, coord));
 
         if (!foundValid) {
