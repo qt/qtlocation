@@ -110,6 +110,8 @@ private:
 
 QT_END_NAMESPACE
 
+Q_DECLARE_METATYPE(QPlaceSearchRequest::RelevanceHint)
+
 QT_END_HEADER
 
 #endif // QPLACESEARCHQUERY_H
