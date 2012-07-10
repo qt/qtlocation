@@ -73,6 +73,30 @@
                     "rating": 2.3,
                     "reviewId": "0005"
                 }
+            ],
+            "images": [
+                {
+                    "url": "http://somewhere.com/image1.png",
+                    "imageId": "0001",
+                    "mimeType": "image/png"
+                },
+                {
+                    "url": "http://somewhere.com/image2.png",
+                    "imageId": "0002",
+                    "mimeType": "image/png"
+                },
+                {
+                    "url": "http://somewhere.com/image3.png",
+                    "imageId": "0003",
+                    "mimeType": "image/png"
+                },
+                {
+                },
+                {
+                    "url": "http://somewhere.com/image5.png",
+                    "imageId": "0005",
+                    "mimeType": "image/png"
+                }
             ]
         },
         {

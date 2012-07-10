@@ -56,6 +56,7 @@
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceDetailsReply>
 #include <QtLocation/QPlaceIdReply>
+#include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceSearchSuggestionReply>
 #include <QtLocation/QPlaceSearchReply>
 #include <QtLocation/QPlaceResult>
@@ -300,6 +301,25 @@ public:
                                 reviews << review;
                             }
                             m_placeReviews.insert(place.placeId(), reviews);
+
+                            QJsonArray imgArray = p.value(QStringLiteral("images")).toArray();
+                            QList<QPlaceImage> images;
+                            for (int j = 0; j < imgArray.count(); ++j) {
+                                QJsonObject imgo = imgArray.at(j).toObject();
+                                QPlaceImage image;
+                                if (imgo.contains(QStringLiteral("url")))
+                                    image.setUrl(imgo.value(QStringLiteral("url")).toString());
+
+                                if (imgo.contains("imageId"))
+                                    image.setImageId(imgo.value(QStringLiteral("imageId")).toString());
+
+                                if (imgo.contains("mimeType"))
+                                    image.setMimeType(imgo.value(QStringLiteral("mimeType")).toString());
+
+                                images << image;
+                            }
+
+                            m_placeImages.insert(place.placeId(), images);
                         }
                     }
                 }
@@ -331,18 +351,39 @@ public:
             QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
 
         } else {
-            if (query.contentType() == QPlaceContent::ReviewType) {
                 QPlaceContent::Collection collection;
-                int totalCount = m_placeReviews.value(placeId).count();
+                int totalCount;
+                switch (query.contentType()) {
+                case QPlaceContent::ReviewType:
+                    totalCount = m_placeReviews.value(placeId).count();
+                    break;
+                case QPlaceContent::ImageType:
+                    totalCount = m_placeImages.value(placeId).count();
+                    break;
+                default:
+                    //do nothing
+                    break;
+                }
+
                 int offset = qMax(query.offset(), 0);
                 int max = (query.limit() == -1) ? totalCount
                                                 : qMin(offset + query.limit(), totalCount);
-                for (int i = offset; i < max; ++i)
-                    collection.insert(i, m_placeReviews.value(placeId).at(i));
+                for (int i = offset; i < max; ++i) {
+                    switch (query.contentType()) {
+                    case QPlaceContent::ReviewType:
+                        collection.insert(i, m_placeReviews.value(placeId).at(i));
+                        break;
+                    case QPlaceContent::ImageType:
+                        collection.insert(i, m_placeImages.value(placeId).at(i));
+                        break;
+                    default:
+                        //do nothing
+                        break;
+                    }
+                }
 
                 reply->setContent(collection);
                 reply->setTotalCount(totalCount);
-            }
         }
 
         QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
@@ -614,6 +655,7 @@ private:
     QHash<QString, QStringList> m_childCategories;
     QHash<QString, QStringList> m_placeRecommendations;
     QHash<QString, QList<QPlaceReview> > m_placeReviews;
+    QHash<QString, QList<QPlaceImage> > m_placeImages;
 };
 
 #endif
