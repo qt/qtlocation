@@ -15,5 +15,6 @@
     "qtxmlpatterns" => "refs/heads/master",
     "qtdeclarative" => "refs/heads/master",
     "qtjsbackend" => "refs/heads/master",
-    "qt3d" => "refs/heads/master"
+    "qt3d" => "refs/heads/master",
+    "qtmultimedia" => "refs/heads/master"
 );

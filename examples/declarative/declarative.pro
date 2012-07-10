@@ -1,4 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS +=  flickr \
-            mapviewer \
-            places
+SUBDIRS += flickr places
+!isEmpty(QT.multimedia.name):SUBDIRS += mapviewer
