@@ -81,10 +81,10 @@ function testObjectProperties(testCase, testObject, data) {
 }
 
 function compareObj(testCase, obj1, obj2) {
-    for (var propertyName in obj1) {
+    for (var propertyName in obj2) {
         if (obj1[propertyName] !== undefined) {
-            if (propertyName === "dateTime" && isNaN(obj1["dateTime"].getTime()))
-                testCase.verify(isNaN(obj2["dateTime"].getTime()));
+            if (propertyName === "dateTime" && isNaN(obj2["dateTime"].getTime()))
+                testCase.verify(isNaN(obj1["dateTime"].getTime()));
             else
                 testCase.compare(obj1[propertyName], obj2[propertyName])
         }
@@ -116,7 +116,7 @@ function testConsecutiveFetch(testCase, model, place, expectedValues)
     testCase.compare(totalCount, 5);
     testCase.compare(visDataModel.items.count, 1);
 
-    compareObj(testCase, expectedValues[0], visDataModel.items.get(0).model);
+    compareObj(testCase, visDataModel.items.get(0).model, expectedValues[0]);
 
     //set a non-default batch size and fetch the next batch
     model.batchSize = 2;
@@ -125,8 +125,8 @@ function testConsecutiveFetch(testCase, model, place, expectedValues)
     testCase.compare(signalSpy.count, 0);
     testCase.compare(model.totalCount, totalCount);
 
-    compareObj(testCase, expectedValues[1], visDataModel.items.get(1).model);
-    compareObj(testCase, expectedValues[2], visDataModel.items.get(2).model);
+    compareObj(testCase, visDataModel.items.get(1).model, expectedValues[1]);
+    compareObj(testCase, visDataModel.items.get(2).model, expectedValues[2]);
 
     //set a batch size greater than the number of remaining items and fetch that batch
     model.batchSize = 10;
@@ -135,8 +135,8 @@ function testConsecutiveFetch(testCase, model, place, expectedValues)
     testCase.compare(signalSpy.count, 0);
     testCase.compare(model.totalCount, totalCount);
 
-    compareObj(testCase, expectedValues[3], visDataModel.items.get(3).model);
-    compareObj(testCase, expectedValues[4], visDataModel.items.get(4).model);
+    compareObj(testCase, visDataModel.items.get(3).model, expectedValues[3]);
+    compareObj(testCase, visDataModel.items.get(4).model, expectedValues[4]);
 
     visDataModel.destroy();
     signalSpy.destroy();
