@@ -97,6 +97,30 @@
                     "imageId": "0005",
                     "mimeType": "image/png"
                 }
+            ],
+            "editorials": [
+                {
+                    "title": "Editorial 1",
+                    "text": "Editorial 1 Text",
+                    "language": "en"
+                },
+               {
+                    "title": "Editorial 2",
+                    "text": "Editorial 2 Text",
+                    "language": "en"
+                },
+                {
+                     "title": "Editorial 3",
+                     "text": "Editorial 3 Text",
+                     "language": "en"
+                 },
+                {
+                },
+                {
+                    "title": "Editorial 5",
+                    "text": "Editorial 5 Text",
+                    "language": "en"
+                }
             ]
         },
         {

@@ -55,6 +55,7 @@
 #include <QtLocation/QPlaceManagerEngine>
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceDetailsReply>
+#include <QtLocation/QPlaceEditorial>
 #include <QtLocation/QPlaceIdReply>
 #include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceSearchSuggestionReply>
@@ -320,6 +321,25 @@ public:
                             }
 
                             m_placeImages.insert(place.placeId(), images);
+
+                            QJsonArray edArray = p.value(QStringLiteral("editorials")).toArray();
+                            QList<QPlaceEditorial> editorials;
+                            for (int j = 0; j < edArray.count(); ++j) {
+                                QJsonObject edo = edArray.at(j).toObject();
+                                QPlaceEditorial editorial;
+                                if (edo.contains(QStringLiteral("title")))
+                                    editorial.setTitle(edo.value(QStringLiteral("title")).toString());
+
+                                if (edo.contains(QStringLiteral("text")))
+                                    editorial.setText(edo.value(QStringLiteral("text")).toString());
+
+                                if (edo.contains(QStringLiteral("language")))
+                                    editorial.setLanguage(edo.value(QStringLiteral("language")).toString());
+
+                                editorials << editorial;
+                            }
+
+                            m_placeEditorials.insert(place.placeId(), editorials);
                         }
                     }
                 }
@@ -352,7 +372,7 @@ public:
 
         } else {
                 QPlaceContent::Collection collection;
-                int totalCount;
+                int totalCount = 0;
                 switch (query.contentType()) {
                 case QPlaceContent::ReviewType:
                     totalCount = m_placeReviews.value(placeId).count();
@@ -360,6 +380,8 @@ public:
                 case QPlaceContent::ImageType:
                     totalCount = m_placeImages.value(placeId).count();
                     break;
+                case QPlaceContent::EditorialType:
+                    totalCount = m_placeEditorials.value(placeId).count();
                 default:
                     //do nothing
                     break;
@@ -376,6 +398,8 @@ public:
                     case QPlaceContent::ImageType:
                         collection.insert(i, m_placeImages.value(placeId).at(i));
                         break;
+                    case QPlaceContent::EditorialType:
+                        collection.insert(i, m_placeEditorials.value(placeId).at(i));
                     default:
                         //do nothing
                         break;
@@ -656,6 +680,7 @@ private:
     QHash<QString, QStringList> m_placeRecommendations;
     QHash<QString, QList<QPlaceReview> > m_placeReviews;
     QHash<QString, QList<QPlaceImage> > m_placeImages;
+    QHash<QString, QList<QPlaceEditorial> > m_placeEditorials;
 };
 
 #endif
