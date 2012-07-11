@@ -367,6 +367,7 @@ Item {
             searchTerm = "";
             categories = category;
             recommendationId = "";
+            searchArea = searchRegion
             limit = -1;
             offset = 0;
             update();
@@ -376,6 +377,7 @@ Item {
             searchTerm = text;
             categories = null;
             recommendationId = "";
+            searchArea = searchRegion
             limit = -1;
             offset = 0;
             update();
@@ -385,6 +387,7 @@ Item {
             searchTerm = "";
             categories = null;
             recommendationId = placeId;
+            searchArea = null;
             limit = -1;
             offset = 0;
             update();

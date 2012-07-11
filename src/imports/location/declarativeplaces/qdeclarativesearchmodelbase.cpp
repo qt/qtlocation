@@ -249,6 +249,8 @@ void QDeclarativeSearchModelBase::updateSearchRequest()
 {
     if (m_searchArea)
         m_request.setSearchArea(m_searchArea->shape());
+    else
+        m_request.setSearchArea(QGeoShape());
 }
 
 /*!
