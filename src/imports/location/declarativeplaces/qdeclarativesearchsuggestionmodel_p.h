@@ -67,7 +67,7 @@ public:
 
     QStringList suggestions() const;
 
-    void clearData();
+    void clearData(bool suppressSignal = false);
     void updateSearchRequest();
 
     // From QAbstractListModel

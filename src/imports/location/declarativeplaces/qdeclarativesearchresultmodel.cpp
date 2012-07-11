@@ -566,9 +566,9 @@ int QDeclarativeSearchResultModel::rowCount(const QModelIndex &parent) const
     return m_results.count();
 }
 
-void QDeclarativeSearchResultModel::clearData()
+void QDeclarativeSearchResultModel::clearData(bool suppressSignal)
 {
-    QDeclarativeSearchModelBase::clearData();
+    QDeclarativeSearchModelBase::clearData(suppressSignal);
 
     qDeleteAll(m_places);
     m_places.clear();
@@ -576,7 +576,9 @@ void QDeclarativeSearchResultModel::clearData()
     m_icons.clear();
     if (!m_results.isEmpty()) {
         m_results.clear();
-        emit rowCountChanged();
+
+        if (!suppressSignal)
+            emit rowCountChanged();
     }
 }
 
@@ -774,7 +776,7 @@ void QDeclarativeSearchResultModel::updateLayout(const QList<QPlace> &favoritePl
     int oldRowCount = rowCount();
 
     beginResetModel();
-    clearData();
+    clearData(true);
     m_results = m_resultsBuffer;
     m_resultsBuffer.clear();
 

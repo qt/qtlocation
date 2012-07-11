@@ -267,13 +267,15 @@ QStringList QDeclarativeSearchSuggestionModel::suggestions() const
 /*!
     \internal
 */
-void QDeclarativeSearchSuggestionModel::clearData()
+void QDeclarativeSearchSuggestionModel::clearData(bool suppressSignal)
 {
-    QDeclarativeSearchModelBase::clearData();
+    QDeclarativeSearchModelBase::clearData(suppressSignal);
 
     if (!m_suggestions.isEmpty()) {
         m_suggestions.clear();
-        emit suggestionsChanged();
+
+        if (!suppressSignal)
+            emit suggestionsChanged();
     }
 }
 
@@ -333,13 +335,16 @@ void QDeclarativeSearchSuggestionModel::queryFinished()
     QPlaceReply *reply = m_reply;
     m_reply = 0;
 
+    int initialCount = m_suggestions.count();
     beginResetModel();
 
-    clearData();
+    clearData(true);
 
     QPlaceSearchSuggestionReply *suggestionReply = qobject_cast<QPlaceSearchSuggestionReply *>(reply);
     m_suggestions = suggestionReply->suggestions();
-    emit suggestionsChanged();
+
+    if (initialCount != m_suggestions.count())
+        emit suggestionsChanged();
 
     endResetModel();
 

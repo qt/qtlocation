@@ -105,7 +105,7 @@ public:
 
     Q_INVOKABLE QString errorString() const;
 
-    virtual void clearData();
+    virtual void clearData(bool suppressSignal = false);
     virtual void updateSearchRequest();
 
     // From QQmlParserStatus

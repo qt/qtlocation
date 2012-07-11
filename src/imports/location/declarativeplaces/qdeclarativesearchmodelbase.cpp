@@ -238,7 +238,7 @@ QString QDeclarativeSearchModelBase::errorString() const
 /*!
     \internal
 */
-void QDeclarativeSearchModelBase::clearData()
+void QDeclarativeSearchModelBase::clearData(bool suppressSignal)
 {
 }
 
