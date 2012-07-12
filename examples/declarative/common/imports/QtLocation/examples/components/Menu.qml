@@ -42,6 +42,7 @@ import QtQuick 2.0
 
 Grid {
     id: menu
+    enabled: opacity > 0 ? true : false
 
     property bool horizontalOrientation: true
     property list <Button> buttons
