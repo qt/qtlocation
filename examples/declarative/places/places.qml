@@ -171,7 +171,6 @@ Item {
             onStatusChanged: {
                 switch (editCategoryDialog.category.status) {
                 case Category.Saving: {
-                    console.log("Saving...");
                     break;
                 }
                 case Category.Ready: {

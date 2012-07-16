@@ -91,7 +91,6 @@ Dialog {
         if (processStatus.prevStatus == Place.Saving) {
             switch (locationPlace.status) {
             case Place.Ready:
-                console.log("Save complete");
                 if (__createdPlace) {
                     locationPlace.destroy();
                     __createdPlace  = false;

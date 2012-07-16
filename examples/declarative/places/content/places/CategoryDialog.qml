@@ -60,7 +60,6 @@ InputDialog {
 
     //! [Category save]
     onGoButtonClicked: {
-        console.log("Go clicked!");
         var modifiedCategory = category ? category : Qt.createQmlObject('import QtLocation 5.0; Category { }', page);
         modifiedCategory.plugin = placesPlugin;
 
