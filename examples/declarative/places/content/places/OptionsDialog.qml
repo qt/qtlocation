@@ -72,10 +72,10 @@ Dialog {
             id: enableFavoritesButton
 
             function resetVisibility() {
-                if (placesPlugin.name !== "nokia_places_jsondb") {
+                if (placesPlugin.name !== "places_jsondb") {
                     var pluginNames = placesPlugin.availableServiceProviders;
                     for (var i = 0; i < pluginNames.length; ++i) {
-                        if (pluginNames[i] === "nokia_places_jsondb") {
+                        if (pluginNames[i] === "places_jsondb") {
                             enableFavoritesButton.visible = true;
                             return;
                         }

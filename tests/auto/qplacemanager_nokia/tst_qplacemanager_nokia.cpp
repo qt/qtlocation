@@ -90,7 +90,7 @@ void tst_QPlaceManagerNokia::initTestCase()
     qRegisterMetaType<QPlaceIdReply *>();
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    providers.contains("nokia_places_jsondb");
+    providers.contains("places_jsondb");
 
     QMap<QString, QVariant> params;
     params.insert("app_id", "stub");

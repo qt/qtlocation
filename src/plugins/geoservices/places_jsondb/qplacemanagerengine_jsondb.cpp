@@ -306,7 +306,7 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
                 if (nokiaIconGenerated)
                      parameters.insert(JsonDbIcon::NokiaIconGenerated, nokiaIconGenerated);
             } else if (originalIcon.manager()->managerName()
-                            == QLatin1String("nokia_places_jsondb")) {
+                            == QLatin1String("places_jsondb")) {
                 parameters = originalIcon.parameters();
             } else {
                 if (!originalIcon.url(JsonDbIcon::SmallSize).isEmpty())

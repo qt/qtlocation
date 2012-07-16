@@ -223,7 +223,7 @@ void tst_QPlaceManagerJsonDb::initTestCase()
     qRegisterMetaType<QJsonObject>();
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    QVERIFY(providers.contains(QLatin1String("nokia_places_jsondb")));
+    QVERIFY(providers.contains(QLatin1String("places_jsondb")));
 
     //create dummy icon file
     QString catIconPath = tempDir.path() + "/icons/categories/";
@@ -245,7 +245,7 @@ void tst_QPlaceManagerJsonDb::initTestCase()
     QFile mappingFile(QStringLiteral(":/resources/offline-mapping.json"));
     mappingFile.copy(offlinePath + QStringLiteral("offline-mapping.json"));
 
-    provider = new QGeoServiceProvider(QLatin1String("nokia_places_jsondb"));
+    provider = new QGeoServiceProvider(QLatin1String("places_jsondb"));
 
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
@@ -3041,7 +3041,7 @@ void tst_QPlaceManagerJsonDb::providerIcons()
     providerParams.insert(CustomIcons, false);
     providerParams.insert(QLatin1String("places.local_data_path"), tempDir.path());
 
-    provider = new QGeoServiceProvider(QLatin1String("nokia_places_jsondb"), providerParams);
+    provider = new QGeoServiceProvider(QLatin1String("places_jsondb"), providerParams);
     placeManager = provider->placeManager();
 
     QPlaceReply * catInitReply = placeManager->initializeCategories();
@@ -3224,7 +3224,7 @@ void tst_QPlaceManagerJsonDb::specifiedPartition()
 
     QVariantMap parameters;
     parameters.insert(QLatin1String("partition"), ArbitraryPartition);
-    provider = new QGeoServiceProvider(QLatin1String("nokia_places_jsondb"), parameters);
+    provider = new QGeoServiceProvider(QLatin1String("places_jsondb"), parameters);
     placeManager = provider->placeManager();
 
     QSignalSpy createPlaceSpy(placeManager, SIGNAL(placeAdded(QString)));

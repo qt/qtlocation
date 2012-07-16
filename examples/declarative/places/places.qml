@@ -329,7 +329,7 @@ Item {
         onGoButtonClicked: {
             if (isFavoritesEnabled) {
                 if (favoritesPlugin == null)
-                    favoritesPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { name: "nokia_places_jsondb" }', page);
+                    favoritesPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { name: "places_jsondb" }', page);
                 favoritesPlugin.parameters = pluginParametersFromMap(pluginParameters);
                 placeSearchModel.favoritesPlugin = favoritesPlugin;
             } else {

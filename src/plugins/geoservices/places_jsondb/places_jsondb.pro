@@ -1,6 +1,6 @@
 load(qt_build_config)
 
-TARGET = qtgeoservices_nokia_places_jsondb
+TARGET = qtgeoservices_places_jsondb
 QT += location gui network
 
 load(qt_plugin)
@@ -41,4 +41,4 @@ target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target
 
 OTHER_FILES += \
-    nokia_plugin_jsondb.json
+    places_jsondb_plugin.json

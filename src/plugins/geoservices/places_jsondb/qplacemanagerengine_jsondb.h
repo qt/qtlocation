@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEMANAGERENGINE_NOKIA_JSONDB_H
-#define QPLACEMANAGERENGINE_NOKIA_JSONDB_H
+#ifndef QPLACEMANAGERENGINE_JSONDB_H
+#define QPLACEMANAGERENGINE_JSONDB_H
 
 #include "jsondb.h"
 

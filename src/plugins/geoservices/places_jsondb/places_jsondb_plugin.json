@@ -1,6 +1,6 @@
 {
-    "Keys": ["nokia_places_jsondb"],
-    "Provider": "nokia_places_jsondb",
+    "Keys": ["places_jsondb"],
+    "Provider": "places_jsondb",
     "Version": 100,
     "Experimental": false,
     "Features": [

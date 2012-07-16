@@ -247,7 +247,7 @@ Item {
 
                         function reset()
                         {
-                            saveButton.visible = (placesPlugin.name !== "nokia_places_jsondb")
+                            saveButton.visible = (placesPlugin.name !== "places_jsondb")
                                                 && (placeSearchModel.favoritesPlugin !== null);
                             saveStatus.visible = false;
                         }

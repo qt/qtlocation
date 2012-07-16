@@ -464,7 +464,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch [" + testBinary + "] | App launches normally |
         | Select [Provider] button | |
-        | Select [nokia_places_jsondb] | |
+        | Select [places_jsondb] | |
         | Select Category icon | Verify that there are no categories |
         | Select Category icon | |
         | Select [New] button | |
@@ -505,7 +505,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch [" + testBinary + "] | App launches normally |
         | Select [Provider] button | |
-        | Select [nokia_places_jsondb] | |
+        | Select [places_jsondb] | |
         | Select [New] button | |
         | Select [Place] button | |
         | Fill in [" + name + "] in Name field | |
@@ -572,7 +572,7 @@ testcase = {
         | Select back button | Verify that [" + place + "] has a star |
         | Hide search results | |
         | Select [Provider] | |
-        | Select [nokia_places_jsondb] | |
+        | Select [places_jsondb] | |
         | Fill in [" + search_string + "] in Search field | |
         | Select Loupe icon | |
         | Expand panel with results | Verify that list contains [" + place + "] |
@@ -665,7 +665,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch [" + testBinary + "] | App launches normally |
         | Select [Provider] button | |
-        | Select [nokia_places_jsondb] | |
+        | Select [places_jsondb] | |
         | Select [New] button | |
         | Select [Category] button | |
         | Fill in [" + category1 + "] in Name field | |
@@ -740,7 +740,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch [" + testBinary + "] | App launches normally |
         | Select [Provider] button | |
-        | Select [nokia_places_jsondb] | |
+        | Select [places_jsondb] | |
         | Select [New] button | |
         | Select [Category] button | |
         | Fill in [" + category1 + "] in Name field | |
@@ -846,7 +846,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch [" + testBinary + "] | App launches normally |
         | Select [Provider] button | |
-        | Select [nokia_places_jsondb] | |
+        | Select [places_jsondb] | |
         | Select [New] button | |
         | Select [Place] button | |
         | Fill in [" + name1 + "] in Name field | |
@@ -897,7 +897,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch [" + testBinary + "] | App launches normally |
         | Select [Provider] button | |
-        | Select [nokia_places_jsondb] | |
+        | Select [places_jsondb] | |
         | Select [New] button | |
         | Select [Place] button | |
         | Fill in [" + name1 + "] in Name field | |

@@ -1,5 +1,5 @@
     \code
-    origin R/O manager(nokia)       destination R/W manager (nokia_places_jsondb)
+    origin R/O manager(nokia)       destination R/W manager (places_jsondb)
                             Save
     Place id: ae246         --->    Place id: 0001
     Attribute type: x_provider      Attribute type: x_id_nokia

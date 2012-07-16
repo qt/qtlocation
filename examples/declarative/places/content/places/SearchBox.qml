@@ -206,7 +206,7 @@ Rectangle {
     PlaceSearchSuggestionModel {
         id: suggestionModel
         plugin: placesPlugin
-        searchArea: plugin.name === "nokia_places_jsondb" ? null : placeSearchModel.searchArea
+        searchArea: plugin.name === "places_jsondb" ? null : placeSearchModel.searchArea
 
         onStatusChanged: {
             if (status == PlaceSearchSuggestionModel.Ready)
