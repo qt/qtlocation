@@ -72,7 +72,7 @@ QT_BEGIN_NAMESPACE
     Class::Class(const QPlaceContent &other) : QPlaceContent() { Class##Private::copyIfPossible(d_ptr, other); }
 
 #define Q_DEFINE_CONTENT_PRIVATE_HELPER(Class, ContentType) \
-    QPlaceContentPrivate *clone() const { return new Class##Private(*this); } \
+    virtual QPlaceContentPrivate *clone() const { return new Class##Private(*this); } \
     virtual QPlaceContent::Type type() const {return ContentType;} \
     static void copyIfPossible(QSharedDataPointer<QPlaceContentPrivate> &d_ptr, const QPlaceContent &other) \
     { \
