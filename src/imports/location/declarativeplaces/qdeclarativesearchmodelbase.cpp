@@ -241,6 +241,7 @@ QString QDeclarativeSearchModelBase::errorString() const
 */
 void QDeclarativeSearchModelBase::clearData(bool suppressSignal)
 {
+    Q_UNUSED(suppressSignal)
 }
 
 /*!
