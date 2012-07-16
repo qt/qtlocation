@@ -48,6 +48,7 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QString>
+#include <QtCore/QTimer>
 #include <QtJsonDb/QJsonDbReadRequest>
 #include <QtJsonDb/QJsonDbWriteRequest>
 #include <QtLocation/QPlaceSearchRequest>
@@ -126,6 +127,7 @@ JsonDb::JsonDb(const QString &partition)
       m_partition(partition)
 {
     m_connection->connectToServer();
+    QTimer::singleShot(5000, this, SLOT(connectionWarning())); //5000 is an arbitrarily chosen timeframe
 
     m_placeWatcher->setQuery(QString::fromLatin1("[?%1 = \"%2\"]").arg(JsonDb::Type).arg(JsonDb::PlaceType));
     m_placeWatcher->setPartition(m_partition);
@@ -896,4 +898,11 @@ void JsonDb::processPlaceNotifications()
 void JsonDb::processCategoryNotifications()
 {
     emit categoryNotifications(m_categoryWatcher->takeNotifications());
+}
+
+void JsonDb::connectionWarning()
+{
+    if (m_connection->status() == QJsonDbConnection::Connecting)
+        qWarning() << "places_jsondb plugin: could not connect to jsondb daemon, "
+                      "ensure jsondb daemon is running and restart";
 }

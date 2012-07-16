@@ -176,6 +176,7 @@ signals:
 private slots:
     void processPlaceNotifications();
     void processCategoryNotifications();
+    void connectionWarning();
 
 private:
     QtJsonDb::QJsonDbConnection *m_connection;
