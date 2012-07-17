@@ -127,8 +127,9 @@ void SearchReply::searchFinished()
     const QGeoCoordinate &center = type == QGeoShape::CircleType ? static_cast<QGeoCircle>(area).center() :
                                    type == QGeoShape::RectangleType ? static_cast<QGeoRectangle>(area).center() :
                                                                        QGeoCoordinate();
-    const bool noDistanceFilter = type == QGeoShape::CircleType
-                                  && static_cast<QGeoCircle>(area).radius() < 0.0;
+    const bool noDistanceFilter = type == QGeoShape::UnknownType
+                                  || (type == QGeoShape::CircleType
+                                      && static_cast<QGeoCircle>(area).radius() < 0.0);
 
     // First filter the results
     foreach (const QPlace &place, places) {
@@ -136,13 +137,13 @@ void SearchReply::searchFinished()
         if (noDistanceFilter || area.contains(coord)) {
             // distance is invalid if center is invalid/not set
             qreal distance = center.distanceTo(coord);
+            result.setTitle(place.name());
+            result.setIcon(place.icon());
             result.setPlace(place);
             result.setDistance(distance);
             results.append(result);
         }
     }
-
-    setResults(results);
 
     // Now sort the result set
     switch (request().relevanceHint() ) {
@@ -156,6 +157,7 @@ void SearchReply::searchFinished()
         break;
     }
 
+    setResults(results);
 
     //See if we have to fetch any category data
     QStringList categoryUuids;
@@ -202,7 +204,7 @@ void SearchReply::getCategoriesForPlacesFinished()
                 categories.append(categoriesCollection.value(cat.categoryId()));
         }
         place.setCategories(categories);
-        static_cast<QPlaceResult>(resultList[i]).setPlace(place);
+        static_cast<QPlaceResult &>(resultList[i]).setPlace(place);
     }
     setResults(resultList);
     triggerDone();
