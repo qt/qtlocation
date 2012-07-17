@@ -104,6 +104,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapQuickItem));
+QML_DECLARE_TYPE(QDeclarativeGeoMapQuickItem)
 
 #endif

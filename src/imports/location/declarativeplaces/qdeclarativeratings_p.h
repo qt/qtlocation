@@ -86,6 +86,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeRatings));
+QML_DECLARE_TYPE(QDeclarativeRatings)
 
 #endif // QDECLARATIVERATING_P_H

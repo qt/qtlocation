@@ -122,6 +122,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeRectangleMapItem));
+QML_DECLARE_TYPE(QDeclarativeRectangleMapItem)
 
 #endif /* QDECLARATIVERECTANGLEMAPITEM_H_ */

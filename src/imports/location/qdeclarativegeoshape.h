@@ -59,6 +59,6 @@ public:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoShape))
+QML_DECLARE_TYPE(QDeclarativeGeoShape)
 
 #endif

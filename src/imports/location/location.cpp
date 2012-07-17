@@ -171,7 +171,6 @@ public:
             qRegisterMetaType<QPlaceUser>("QPlaceUser");
             qRegisterMetaType<QPlaceAttribute>("QPlaceAttribute");
             qRegisterMetaType<QPlaceContactDetail>("QPlaceContactDetail");
-
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

@@ -99,6 +99,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeSupplier));
+QML_DECLARE_TYPE(QDeclarativeSupplier)
 
 #endif // QDECLARATIVESUPPLIER_P_H

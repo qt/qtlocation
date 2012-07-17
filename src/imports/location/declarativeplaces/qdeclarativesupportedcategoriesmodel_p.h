@@ -156,6 +156,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeSupportedCategoriesModel));
+QML_DECLARE_TYPE(QDeclarativeSupportedCategoriesModel)
 
 #endif // QDECLARATIVESUPPORTEDCATEGORIESMODEL_H

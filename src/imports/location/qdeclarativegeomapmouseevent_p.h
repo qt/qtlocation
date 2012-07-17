@@ -102,6 +102,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapMouseEvent));
+QML_DECLARE_TYPE(QDeclarativeGeoMapMouseEvent)
 
 #endif

@@ -94,6 +94,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeRouteMapItem));
+QML_DECLARE_TYPE(QDeclarativeRouteMapItem)
 
 #endif /* QDECLARATIVEROUTEMAPITEM_H_ */

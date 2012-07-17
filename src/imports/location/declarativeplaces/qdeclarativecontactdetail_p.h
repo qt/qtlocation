@@ -81,6 +81,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeContactDetail));
+QML_DECLARE_TYPE(QDeclarativeContactDetail)
 
 #endif

@@ -269,8 +269,8 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProviderParameter));
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProviderRequirements));
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider));
+QML_DECLARE_TYPE(QDeclarativeGeoServiceProviderParameter)
+QML_DECLARE_TYPE(QDeclarativeGeoServiceProviderRequirements)
+QML_DECLARE_TYPE(QDeclarativeGeoServiceProvider)
 
 #endif

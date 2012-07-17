@@ -170,7 +170,7 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeMapLineProperties));
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePolylineMapItem));
+QML_DECLARE_TYPE(QDeclarativeMapLineProperties)
+QML_DECLARE_TYPE(QDeclarativePolylineMapItem)
 
 #endif /* QDECLARATIVEPOLYLINEMAPITEM_H_ */

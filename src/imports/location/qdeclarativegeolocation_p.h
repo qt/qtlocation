@@ -89,6 +89,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoLocation));
+QML_DECLARE_TYPE(QDeclarativeGeoLocation)
 
 #endif // QDECLARATIVELOCATION_P_H

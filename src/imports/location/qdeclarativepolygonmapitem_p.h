@@ -156,6 +156,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePolygonMapItem));
+QML_DECLARE_TYPE(QDeclarativePolygonMapItem)
 
 #endif /* QDECLARATIVEPOLYGONMAPITEM_H_ */

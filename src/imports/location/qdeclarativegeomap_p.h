@@ -246,6 +246,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMap))
+QML_DECLARE_TYPE(QDeclarativeGeoMap)
 
 #endif

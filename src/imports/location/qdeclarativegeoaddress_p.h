@@ -108,6 +108,6 @@ private:
 };
 
 QT_END_NAMESPACE
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoAddress));
+QML_DECLARE_TYPE(QDeclarativeGeoAddress)
 
 #endif // QDECLARATIVEGEOADDRESS_P_H

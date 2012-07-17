@@ -128,6 +128,6 @@ private:
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeCircleMapItem));
+QML_DECLARE_TYPE(QDeclarativeCircleMapItem)
 
 #endif /* QDECLARATIVECIRCLEMAPITEM_H */
