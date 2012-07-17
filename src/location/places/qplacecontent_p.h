@@ -100,17 +100,7 @@ public:
     QString attribution;
 };
 
-#if defined(Q_CC_MWERKS)
-// This results in multiple symbol definition errors on all other compilers
-// but not having a definition here results in an attempt to use the unspecialized
-// clone (which fails because of the pure virtuals above)
-template<> QPlaceContentPrivate *QSharedDataPointer<QPlaceContentPrivate>::clone()
-{
-    return d->clone();
-}
-#else
 template<> QPlaceContentPrivate *QSharedDataPointer<QPlaceContentPrivate>::clone();
-#endif
 
 QT_END_NAMESPACE
 

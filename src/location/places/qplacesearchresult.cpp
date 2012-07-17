@@ -44,15 +44,12 @@
 #include "qplaceresult.h"
 #include <QtCore/qnumeric.h>
 
-#if !defined(Q_CC_MWERKS)
-template<> QT_PREPEND_NAMESPACE(QPlaceSearchResultPrivate) *
-            QSharedDataPointer<QT_PREPEND_NAMESPACE(QPlaceSearchResultPrivate)>::clone()
+QT_USE_NAMESPACE
+
+template<> QPlaceSearchResultPrivate *QSharedDataPointer<QPlaceSearchResultPrivate>::clone()
 {
     return d->clone();
 }
-#endif
-
-QT_USE_NAMESPACE
 
 inline QPlaceSearchResultPrivate *QPlaceSearchResult::d_func()
 {

@@ -42,15 +42,12 @@
 #include "qplaceattribute_p.h"
 #include "qplaceattribute.h"
 
-#if !defined(Q_CC_MWERKS)
-template<> QT_PREPEND_NAMESPACE(QPlaceAttributePrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QPlaceAttributePrivate)>::clone()
+QT_USE_NAMESPACE
+
+template<> QPlaceAttributePrivate *QSharedDataPointer<QPlaceAttributePrivate>::clone()
 {
     return d->clone();
 }
-#endif
-
-QT_USE_NAMESPACE
-
 
 QPlaceAttributePrivate::QPlaceAttributePrivate(const QPlaceAttributePrivate &other)
     : QSharedData(other),

@@ -44,14 +44,12 @@
 
 #include <QtCore/QUrl>
 
-#if !defined(Q_CC_MWERKS)
-template<> QT_PREPEND_NAMESPACE(QPlaceContentPrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QPlaceContentPrivate)>::clone()
+QT_USE_NAMESPACE
+
+template<> QPlaceContentPrivate *QSharedDataPointer<QPlaceContentPrivate>::clone()
 {
     return d->clone();
 }
-#endif
-
-QT_USE_NAMESPACE
 
 inline QPlaceContentPrivate *QPlaceContent::d_func()
 {
