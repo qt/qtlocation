@@ -194,7 +194,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         activeMapType_(0),
         componentCompleted_(false),
         mappingManagerInitialized_(false),
-        canvas_(0),
+        window_(0),
         touchTimer_(-1),
         map_(0)
 {
@@ -374,7 +374,7 @@ void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData & da
 {
     QLOC_TRACE0;
     if (change == ItemSceneChange)
-        canvas_ = data.canvas;
+        window_ = data.window;
 }
 
 /*!

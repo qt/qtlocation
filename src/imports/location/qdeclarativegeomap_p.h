@@ -228,7 +228,7 @@ private:
     void earlyDraw(QGLPainter *painter);
     void restoreDefaults(QGLPainter *painter);
 
-    QQuickCanvas *canvas_;
+    QQuickWindow *window_;
     int touchTimer_;
 
     QGeoMap *map_;

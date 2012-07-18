@@ -46,7 +46,7 @@
 QDeclarativePinchGenerator::QDeclarativePinchGenerator():
     target_(0),
     state_(Invalid),
-    canvas_(0),
+    window_(0),
     activeSwipe_(0),
     replayTimer_(-1),
     replayBookmark_(-1),
@@ -117,7 +117,7 @@ void QDeclarativePinchGenerator::mouseReleaseEvent(QMouseEvent *event)
     swipes_ << activeSwipe_;
     activeSwipe_ = 0;
     swipeTimer_.invalidate();
-    if (canvas_ && target_) setState(Idle); else setState(Invalid);
+    if (window_ && target_) setState(Idle); else setState(Invalid);
 }
 
 void QDeclarativePinchGenerator::mouseDoubleClickEvent(QMouseEvent *event)
@@ -129,7 +129,7 @@ void QDeclarativePinchGenerator::mouseDoubleClickEvent(QMouseEvent *event)
     }
     stop();
     clear();
-    if (canvas_ && target_) setState(Idle); else setState(Invalid);
+    if (window_ && target_) setState(Idle); else setState(Invalid);
 }
 
 void QDeclarativePinchGenerator::keyPressEvent(QKeyEvent *e)
@@ -217,7 +217,7 @@ void QDeclarativePinchGenerator::setState(GeneratorState state)
 void QDeclarativePinchGenerator::itemChange(ItemChange change, const ItemChangeData & data)
 {
     if (change == ItemSceneChange) {
-        canvas_ = data.canvas;
+        window_ = data.window;
         if (target_)
             setState(Idle);
     }
@@ -234,25 +234,25 @@ void QDeclarativePinchGenerator::timerEvent(QTimerEvent *event)
     int slaveCount = swipes_.at(slaveSwipe)->touchPoints.count();
 
     if (replayBookmark_ == 0) {
-        QTest::touchEvent(canvas_, device_)
+        QTest::touchEvent(window_, device_)
                 .press(0, swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_))
                 .press(1, swipes_.at(slaveSwipe)->touchPoints.at(replayBookmark_));
     } else if (replayBookmark_ == (slaveCount - 1)) {
         if (masterCount != slaveCount) {
-            QTest::touchEvent(canvas_, device_)
+            QTest::touchEvent(window_, device_)
                     .move(0, swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_))
                     .release(1, swipes_.at(slaveSwipe)->touchPoints.at(replayBookmark_));
         } else {
-            QTest::touchEvent(canvas_, device_)
+            QTest::touchEvent(window_, device_)
                     .release(0, swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_))
                     .release(1, swipes_.at(slaveSwipe)->touchPoints.at(replayBookmark_));
         }
     } else if (replayBookmark_ == (masterCount - 1)) {
-            QTest::touchEvent(canvas_, device_)
+            QTest::touchEvent(window_, device_)
                     .release(0, swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_));
     }
     else {
-        QTest::touchEvent(canvas_, device_)
+        QTest::touchEvent(window_, device_)
                 .move(0, swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_))
                 .move(1, swipes_.at(slaveSwipe)->touchPoints.at(replayBookmark_));
     }
@@ -278,7 +278,7 @@ void QDeclarativePinchGenerator::setTarget(QQuickItem* target)
     target_ = target;
     stop();
     clear();
-    if (canvas_)
+    if (window_)
         setState(Idle);
     else
         setState(Invalid);
@@ -324,17 +324,17 @@ void QDeclarativePinchGenerator::pinch(QPoint point1From,
 
 void QDeclarativePinchGenerator::pinchPress(QPoint point1From, QPoint point2From)
 {
-    QTest::touchEvent(canvas_, device_).press(0, point1From).press(1, point2From);
+    QTest::touchEvent(window_, device_).press(0, point1From).press(1, point2From);
 }
 
 void QDeclarativePinchGenerator::pinchMoveTo(QPoint point1To, QPoint point2To)
 {
-    QTest::touchEvent(canvas_, device_).move(0, point1To).move(1, point2To);
+    QTest::touchEvent(window_, device_).move(0, point1To).move(1, point2To);
 }
 
 void QDeclarativePinchGenerator::pinchRelease(QPoint point1To, QPoint point2To)
 {
-    QTest::touchEvent(canvas_, device_).release(0, point1To).release(1, point2To);
+    QTest::touchEvent(window_, device_).release(0, point1To).release(1, point2To);
 }
 
 Q_INVOKABLE void QDeclarativePinchGenerator::replay()

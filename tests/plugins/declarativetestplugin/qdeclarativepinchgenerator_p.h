@@ -43,7 +43,7 @@
 #define QDECLARATIVEPINCHGENERATOR_H
 
 #include <QtQuick/QQuickItem>
-#include <QtQuick/QQuickCanvas>
+#include <QtQuick/QQuickWindow>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QTouchEvent>
 #include <QtGui/QKeyEvent>
@@ -132,7 +132,7 @@ private:
 private:
     QQuickItem* target_;
     GeneratorState state_;
-    QQuickCanvas* canvas_;
+    QQuickWindow* window_;
     QList<Swipe*> swipes_;
     Swipe* activeSwipe_;
     QElapsedTimer swipeTimer_;
