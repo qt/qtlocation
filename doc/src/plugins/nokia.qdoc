@@ -43,10 +43,6 @@ Note that accepting the terms and conditions only applies those terms and condit
 the Nokia geo services plugin and does not limit the use of the other geo services plugins that may
 be included with Qt.
 
-The Nokia geo services plugin requires an application id and token pair to authenticate the
-application with the Nokia services.  To obtain an application id and token pair visit
-\l {https://api.developer.nokia.com/}
-
 The Nokia geo services plugin can be loaded by using the plugin key "nokia".
 
 The online plugin uses the tiled map classes, which caches tile data in heap memory and texture
@@ -54,7 +50,8 @@ memory.
 
 \section1 Parameters
 
-The following table lists optional parameters that can be passed to the Nokia plugin.
+\section2 Mandatory parameters
+The following table lists mandatory parameters that \e must be passed to the Nokia plugin.
 \table
 \header
     \li Parameter
@@ -65,6 +62,18 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \li token
     \li Client \e token part of the app_id/token pair for the service used for authentication by all managers.
+\endtable
+
+The Nokia geo services plugin requires an application id and token pair to authenticate the
+application with the Nokia services.  To obtain an application id and token pair visit
+\l {https://api.developer.nokia.com/}
+
+\section2 Optional parameters
+The following table lists optional parameters that can be passed to the Nokia plugin.
+\table
+\header
+    \li Parameter
+    \li Description
 \row
     \li proxy
     \li Proxy server URL used by all managers. For usage of the system proxy just pass "system" as value.
@@ -112,15 +121,15 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \section1 Parameter Usage Example
 
 The following two examples show how to create a Nokia plugin instance with
-a proxy server set for use with routing, and a routing token unique to the
-application.
+parameters supplied for an application id and token, which is required for
+authentication.
 
 \section2 QML
 
 \code
 Plugin {
     name: "nokia"
-    PluginParameter { name: "proxy"; value: "system" }
+    PluginParameter { name: "app_id"; value: "myapp" }
     PluginParameter { name: "token"; value: "abcdefg12345" }
 }
 \endcode
@@ -129,7 +138,7 @@ Plugin {
 
 \code
 QMap<QString,QVariant> params;
-params["proxy"] = "system";
+params["app_id"] = "myapp";
 params["token"] = "abcdefg12345";
 
 QGeoServiceProvider *gsp = new QGeoServiceProvider("nokia", params);

@@ -50,6 +50,10 @@ Item {
     Plugin {
         id: myPlugin
         name: "nokia"
+        //specify plugin parameters if necessary
+        //PluginParameter {...}
+        //PluginParameter {...}
+        //...
     }
     //! [Initialize Plugin]
 

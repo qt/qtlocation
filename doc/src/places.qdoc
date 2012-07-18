@@ -41,16 +41,20 @@
     \section1 Quickstart Tutorial
 
     \section2 Plugin Initialization
-    A \l Plugin is an abstraction for a backend.  One \l Plugin might access places from a REST server
-    while another may access places from a local database.  The following instantiates a Plugin element
-    by providing a name of "nokia".  The Plugin name identifies which backend to choose from.
-    Note that different Plugin backends may have different nuances and behaviours, refer to
-    the \l {Plugin references and parameters}{Plugin References} for these details.
+    A \l Plugin is an abstraction for a backend. One \l Plugin might access places from a
+    REST server while another may access places from a local database. The following
+    instantiates a \l Plugin element by providing a name of "nokia". The \l Plugin name
+    identifies which backend to choose from. Plugins may also be provided with a set of
+    \l {PluginParameter} {parameters}, which essentially takes the form of a set of
+    key-value pairs. The \l {PluginParameter} {parameters} that can be specified vary
+    among the different \l Plugin backends. For documentation on the possible \l
+    {PluginParameter} {parameters} and nuances of each \l Plugin, see the \l {Plugin
+    references and parameters}{Plugin References}.
 
     \snippet snippets/declarative/places.qml Initialize Plugin
 
-    See also the \l {Places (C++)}{overview for the C++ API} which
-    introduces aspects of the API in greater detail.
+    \note The Nokia plugin must be supplied with some mandatory parameters as outlined
+    in the \l {Mandatory Parameters} {Nokia Plugin} documentation.
 
     \section2 Searching
     Searching is accomplished via the \l PlaceSearchModel.  To instantiate a \l PlaceSearchModel we
