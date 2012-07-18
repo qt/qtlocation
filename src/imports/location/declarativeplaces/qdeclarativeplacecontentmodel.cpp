@@ -285,10 +285,8 @@ void QDeclarativePlaceContentModel::fetchMore(const QModelIndex &parent)
         return;
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(plugin->name());
+    if (!placeManager)
         return;
-    }
 
     QPlaceContentRequest request;
     request.setContentType(m_type);

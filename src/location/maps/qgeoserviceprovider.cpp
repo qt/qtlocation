@@ -463,9 +463,6 @@ QGeoRoutingManager *QGeoServiceProvider::routingManager() const
 /*!
     Returns the QPlaceManager made available by the service provider.
 
-    This function will return 0 if the service provider does not provide
-    any place searching services.
-
     This function will attempt to construct a QPlaceManager instance
     when it is called for the first time.  If the attempt is successful the
     QPlaceManager will be cached, otherwise each call of this function

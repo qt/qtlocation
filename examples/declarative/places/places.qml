@@ -407,8 +407,13 @@ Item {
         }
 
         onStatusChanged: {
-            if (status === PlaceSearchModel.Ready)
+            switch (status) {
+            case PlaceSearchModel.Ready:
                 searchResultView.showSearchResults();
+                break;
+            case PlaceSearchModel.Error:
+                console.log(errorString());
+            }
         }
     }
     //! [PlaceSearchModel model]

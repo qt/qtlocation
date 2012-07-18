@@ -249,7 +249,8 @@ void QDeclarativePlace::pluginReady()
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES).arg(serviceProvider->errorString());
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
+                         .arg(m_plugin->name()).arg(serviceProvider->errorString()));
         return;
     }
 }
@@ -644,12 +645,14 @@ bool QDeclarativePlace::detailsFetched() const
     \snippet snippets/declarative/places.qml Place checkStatus handler
 
 */
-void QDeclarativePlace::setStatus(Status status)
+void QDeclarativePlace::setStatus(Status status, const QString &errorString)
 {
-    if (m_status != status) {
-        m_status = status;
+    Status originalStatus = m_status;
+    m_status = status;
+    m_errorString = errorString;
+
+    if (originalStatus != m_status)
         emit statusChanged();
-    }
 }
 
 QDeclarativePlace::Status QDeclarativePlace::status() const
@@ -699,12 +702,12 @@ void QDeclarativePlace::finished()
 
         setStatus(QDeclarativePlace::Ready);
     } else {
-        m_errorString = m_reply->errorString();
+        QString errorString = m_reply->errorString();
 
         m_reply->deleteLater();
         m_reply = 0;
 
-        setStatus(QDeclarativePlace::Error);
+        setStatus(QDeclarativePlace::Error, errorString);
     }
 }
 
@@ -1207,7 +1210,8 @@ QPlaceManager *QDeclarativePlace::manager()
     QPlaceManager *placeManager = serviceProvider->placeManager();
 
     if (!placeManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
+                         .arg(m_plugin->name()).arg(serviceProvider->errorString()));
         return 0;
     }
 

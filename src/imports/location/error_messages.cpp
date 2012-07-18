@@ -47,11 +47,10 @@ const char CONTEXT_NAME[] = "QtLocationQML";
 const char PLUGIN_DOESNOT_SUPPORT_ROUTING[] = QT_TRANSLATE_NOOP("QtLocationQML", "Error: Plugin does not support routing.\nError message: %1");
 const char PLUGIN_DOESNOT_SUPPORT_MAPPING[] = QT_TRANSLATE_NOOP("QtLocationQML", "Error: Plugin does not support mapping.\nError message: %1");
 const char PLUGIN_DOESNOT_SUPPORT_GEOCODING[] = QT_TRANSLATE_NOOP("QtLocationQML", "Error: Plugin does not support (reverse) geocoding.\nError message: %1");
-const char PLUGIN_DOESNOT_SUPPORT_PLACES[] = QT_TRANSLATE_NOOP("QtLocationQML", "Error: Plugin does not support places.\nError message: %1");
-const char PLUGIN_DOESNOT_SUPPORT_PLACES2[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin %1 does not support places.");
 
 const char NOT_SUPPORTED_BY[] = QT_TRANSLATE_NOOP("QtLocationQML", "%1 not supported by %2 plugin.");
 const char PLUGIN_PROPERTY_NOT_SET[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin property is not set.");
+const char PLUGIN_ERROR[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin Error (%1): %2");
 const char PLUGIN_NOT_VALID[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin is not valid");
 const char PLUGIN_NOT_ASSIGNED_TO_PLACE[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin is not assigned to place.");
 const char PLUGIN_NOT_ASSIGNED_TO_PLACE_ICON[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin is not assigned to place icon.");
@@ -86,5 +85,6 @@ const char CANNOT_ADD_INVALID_WAYPOINT[] = QT_TRANSLATE_NOOP("QtLocationQML", "N
 const char CANNOT_REMOVE_WAYPOINT[] = QT_TRANSLATE_NOOP("QtLocationQML", "Cannot remove nonexistent waypoint.");
 const char COORD_NOT_BELONG_TO[] = QT_TRANSLATE_NOOP("QtLocationQML", "Coordinate does not belong to %1");
 const char MISSED_NMEA_FILE[] = QT_TRANSLATE_NOOP("QtLocationQML", "Nmea file not found.");
+const char UNABLE_TO_MAKE_REQUEST[]= QT_TRANSLATE_NOOP("QtLocationQML", "Unable to create request");
 
 QT_END_NAMESPACE

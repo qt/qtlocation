@@ -150,8 +150,8 @@ void QDeclarativeCategory::pluginReady()
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        m_errorString = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
-        setStatus(Error);
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
+                         .arg(m_plugin->name()).arg(serviceProvider->errorString()));
         return;
     }
 }
@@ -303,6 +303,16 @@ QString QDeclarativeCategory::errorString() const
     return m_errorString;
 }
 
+void QDeclarativeCategory::setStatus(Status status, const QString &errorString)
+{
+    Status originalStatus = m_status;
+    m_status = status;
+    m_errorString = errorString;
+
+    if (originalStatus != m_status)
+        emit statusChanged();
+}
+
 /*!
     \qmlproperty enumeration Category::status
 
@@ -327,17 +337,6 @@ QString QDeclarativeCategory::errorString() const
                performed on the category.
     \endtable
 */
-void QDeclarativeCategory::setStatus(Status status)
-{
-    if (status != Error)
-        m_errorString.clear();
-
-    if (m_status != status) {
-        m_status = status;
-        emit statusChanged();
-    }
-}
-
 QDeclarativeCategory::Status QDeclarativeCategory::status() const
 {
     return m_status;
@@ -413,12 +412,12 @@ void QDeclarativeCategory::replyFinished()
 
         setStatus(QDeclarativeCategory::Ready);
     } else {
-        m_errorString = m_reply->errorString();
+        QString errorString = m_reply->errorString();
 
         m_reply->deleteLater();
         m_reply = 0;
 
-        setStatus(QDeclarativeCategory::Error);
+        setStatus(QDeclarativeCategory::Error, errorString);
     }
 }
 
@@ -440,21 +439,19 @@ QPlaceManager *QDeclarativeCategory::manager()
     }
 
     if (!m_plugin) {
-        m_errorString = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_PROPERTY_NOT_SET);
-        setStatus(Error);
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_PROPERTY_NOT_SET));
         return 0;
     }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     if (!serviceProvider) {
-        m_errorString = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_NOT_VALID);
-        setStatus(Error);
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_NOT_VALID));
         return 0;
     }
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        m_errorString = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
-        setStatus(Error);
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
+                         .arg(m_plugin->name()).arg(serviceProvider->errorString()));
         return 0;
     }
 

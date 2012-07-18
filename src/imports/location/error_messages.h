@@ -51,10 +51,9 @@ extern const char CONTEXT_NAME[];
 extern const char PLUGIN_DOESNOT_SUPPORT_MAPPING[];
 extern const char PLUGIN_DOESNOT_SUPPORT_ROUTING[];
 extern const char PLUGIN_DOESNOT_SUPPORT_GEOCODING[];
-extern const char PLUGIN_DOESNOT_SUPPORT_PLACES[];
-extern const char PLUGIN_DOESNOT_SUPPORT_PLACES2[];
 
 extern const char PLUGIN_PROPERTY_NOT_SET[];
+extern const char PLUGIN_ERROR[];
 extern const char PLUGIN_NOT_VALID[];
 extern const char PLUGIN_NOT_ASSIGNED_TO_PLACE[];
 extern const char PLUGIN_NOT_ASSIGNED_TO_PLACE_ICON[];
@@ -88,6 +87,7 @@ extern const char CANNOT_ADD_INVALID_WAYPOINT[];
 extern const char CANNOT_REMOVE_WAYPOINT[];
 extern const char COORD_NOT_BELONG_TO[];
 extern const char MISSED_NMEA_FILE[];
+extern const char UNABLE_TO_MAKE_REQUEST[];
 
 QT_END_NAMESPACE
 

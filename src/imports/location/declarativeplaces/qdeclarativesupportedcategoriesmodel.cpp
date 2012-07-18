@@ -476,10 +476,8 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
         return;
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
+    if (!placeManager)
         return;
-    }
 
     // listen for any category notifications so that we can reupdate the categories
     // model.
@@ -512,7 +510,8 @@ void QDeclarativeSupportedCategoriesModel::update()
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
+                         .arg(m_plugin->name()).arg(serviceProvider->errorString()));
         return;
     }
 
@@ -522,8 +521,8 @@ void QDeclarativeSupportedCategoriesModel::update()
             connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
             setStatus(QDeclarativeSupportedCategoriesModel::Loading);
         } else {
-            setStatus(QDeclarativeSupportedCategoriesModel::Error);
-            m_errorString = QCoreApplication::translate(CONTEXT_NAME, CATEGORIES_NOT_INITIALIZED);
+            setStatus(Error, QCoreApplication::translate(CONTEXT_NAME,
+                                                         CATEGORIES_NOT_INITIALIZED));
         }
     }
 }
@@ -541,10 +540,8 @@ void QDeclarativeSupportedCategoriesModel::updateLayout()
         return;
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
+    if (!placeManager)
         return;
-    }
 
     beginResetModel();
     qDeleteAll(m_categoriesTree);
@@ -584,12 +581,14 @@ QString QDeclarativeSupportedCategoriesModel::errorString() const
                performed on the model.
     \endtable
 */
-void QDeclarativeSupportedCategoriesModel::setStatus(Status status)
+void QDeclarativeSupportedCategoriesModel::setStatus(Status status, const QString &errorString)
 {
-    if (m_status != status) {
-        m_status = status;
+    Status originalStatus = m_status;
+    m_status = status;
+    m_errorString = errorString;
+
+    if (originalStatus != m_status)
         emit statusChanged();
-    }
 }
 
 QDeclarativeSupportedCategoriesModel::Status QDeclarativeSupportedCategoriesModel::status() const
@@ -697,10 +696,8 @@ QPlaceManager *QDeclarativeSupportedCategoriesModel::manager(bool checkState)
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
 
-    if (!placeManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
+    if (!placeManager)
         return 0;
-    }
 
     return placeManager;
 }

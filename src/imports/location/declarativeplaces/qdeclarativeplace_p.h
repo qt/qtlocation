@@ -151,7 +151,7 @@ public:
     bool detailsFetched() const;
 
     Status status() const;
-    void setStatus(Status status);
+    void setStatus(Status status, const QString &errorString = QString());
 
     Q_INVOKABLE void getDetails();
     Q_INVOKABLE void save();

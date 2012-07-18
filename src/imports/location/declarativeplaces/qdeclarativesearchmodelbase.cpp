@@ -154,12 +154,12 @@ QDeclarativeSearchModelBase::Status QDeclarativeSearchModelBase::status() const
 */
 void QDeclarativeSearchModelBase::setStatus(Status status, const QString &errorString)
 {
-    if (m_status == status)
-        return;
-
+    Status originalStatus = m_status;
     m_status = status;
     m_errorString = errorString;
-    emit statusChanged();
+
+    if (originalStatus != m_status)
+        emit statusChanged();
 }
 
 /*!
@@ -168,7 +168,7 @@ void QDeclarativeSearchModelBase::setStatus(Status status, const QString &errorS
 void QDeclarativeSearchModelBase::update()
 {
     if (!m_plugin) {
-        qmlInfo(this) << "plugin not set.";
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_PROPERTY_NOT_SET));
         return;
     }
 
@@ -178,7 +178,8 @@ void QDeclarativeSearchModelBase::update()
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
+                         .arg(m_plugin->name()).arg(serviceProvider->errorString()));
         return;
     }
 
@@ -187,7 +188,7 @@ void QDeclarativeSearchModelBase::update()
     updateSearchRequest();
     m_reply = sendQuery(placeManager, m_request);
     if (!m_reply) {
-        setStatus(Error);
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, UNABLE_TO_MAKE_REQUEST));
         return;
     }
 

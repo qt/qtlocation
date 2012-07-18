@@ -110,7 +110,7 @@ public:
     Q_INVOKABLE QString errorString() const;
 
     Status status() const;
-    void setStatus(Status status);
+    void setStatus(Status status, const QString &errorString = QString());
 
     Q_INVOKABLE void save(const QString &parentId = QString());
     Q_INVOKABLE void remove();
