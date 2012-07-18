@@ -63,7 +63,7 @@ QPlaceResultPrivate::~QPlaceResultPrivate()
 bool QPlaceResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
 {
     const QPlaceResultPrivate *od = static_cast<const QPlaceResultPrivate *>(other);
-    return QPlaceResultPrivate::compare(other)
+    return QPlaceSearchResultPrivate::compare(other)
            && distance == od->distance
            && place == od->place
            && sponsored == od->sponsored;
