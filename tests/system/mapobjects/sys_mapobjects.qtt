@@ -181,7 +181,10 @@ testcase = {
         | Select Go! button | |
         | Press and Hold on the first marker | |
         | Select Draw... button | |
-        | Select Polygon button | Verify that polgon is drawn correctly. |"
+        | Select Polygon button | Verify that polgon is drawn correctly. |
+        | Press and hold on the map | |
+        | Select 'Delete all markers' | |
+        | Drag the polygon | Verify that polygon can be dragged |"
         ));
     },
 
@@ -344,7 +347,10 @@ testcase = {
         | Press and Hold on the marker | |
         | Select Draw... button | |
         | Select '3D QML Item' button | Verify that rotating cube is on the map. |
-        | Wait for a minute | Verify that cube is rotating. |"
+        | Wait for a minute | Verify that cube is rotating. |
+        | Press and hold on the map | |
+        | Select 'Delete all items' | |
+        | Pan the map | Verify that map can be panned correctly |"
         ));
     },
 
