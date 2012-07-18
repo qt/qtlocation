@@ -124,11 +124,10 @@ QT_BEGIN_NAMESPACE
     \section2 Interaction
 
     The Map element includes support for pinch and flick gestures to control
-    zooming and panning. These are disabled by default, but available at any
-    time by using the \l flick and \l pinch objects. These properties themselves
-    are read-only: the actual Flickable and PinchArea are constructed specially
-    at startup and cannot be replaced or destroyed. Their properties can be
-    altered, however, to control their behavior.
+    zooming and panning. These are enabled by default, and available at any
+    time by using the \l gesture object. The actual GestureArea is constructed
+    specially at startup and cannot be replaced or destroyed. Its properties
+    can be altered, however, to control its behavior.
 
     Mouse and touch interaction with Maps and map objects is slightly different
     to ordinary QML elements. In a Map or Map object, you will need to make use
@@ -159,7 +158,7 @@ QT_BEGIN_NAMESPACE
 
     The following snippet shows a simple Map and the necessary Plugin element
     to use it. The map is centered near Brisbane, Australia, zoomed out to the
-    minimum zoom level, with Flickable panning enabled.
+    minimum zoom level, with gesture interaction enabled.
 
     \code
     Plugin {
@@ -175,7 +174,7 @@ QT_BEGIN_NAMESPACE
         center: Coordinate { latitude: -27; longitude: 153 }
         zoomLevel: map.minimumZoomLevel
 
-        flick.enabled: true
+        gesture.enabled: true
     }
     \endcode
 

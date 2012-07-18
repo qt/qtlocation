@@ -61,8 +61,7 @@ Rectangle{
         zoomLevel: (map.zoomLevel > minimumZoomLevel + 3) ? minimumZoomLevel + 3 : 2.5
         center: map.center
         plugin: map.plugin
-        pinch.enabled: false
-        flick.enabled: false
+        gesture.enabled: false
         MapMouseArea{
             anchors.fill: parent
         }
