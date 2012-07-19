@@ -49,10 +49,6 @@ TestCase {
 
     name: "PlaceSearchModel"
 
-    PlaceSearchModel {
-        id: testModel
-    }
-
     Plugin {
         id: testPlugin
         name: "qmlgeo.test.plugin"
@@ -121,7 +117,9 @@ TestCase {
     }
 
     function test_setAndGet(data) {
+        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchModel {}', testCase, "PlaceSearchModel");
         Utils.testObjectProperties(testCase, testModel, data);
+        delete testModel;
     }
 
     function test_search_data() {
@@ -175,6 +173,7 @@ TestCase {
     }
 
     function test_search(data) {
+        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchModel {}', testCase, "PlaceSearchModel");
         testModel.plugin = testPlugin;
 
         var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
@@ -219,16 +218,6 @@ TestCase {
             compare(countChangedSpy.count, 0);
         compare(testModel.count, 0);
 
-        testModel.update();
-
-        compare(testModel.status, PlaceSearchModel.Loading);
-        compare(statusChangedSpy.count, 4);
-
-        testModel.cancel();
-
-        compare(statusChangedSpy.count, 5);
-        compare(testModel.status, PlaceSearchModel.Null);
-
         countChangedSpy.destroy();
         statusChangedSpy.destroy();
 
@@ -238,6 +227,45 @@ TestCase {
             testModel[data.property] = data.reset;
         }
 
-        testModel.plugin = null;
+        delete testModel;
+        delete statusChangedSpy;
+        delete countChangedSpy;
+    }
+
+    function test_cancel() {
+        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchModel {}', testCase, "PlaceSearchModel");
+        testModel.plugin = testPlugin;
+
+        var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        statusChangedSpy.target = testModel;
+        statusChangedSpy.signalName = "statusChanged";
+
+        //try cancelling from an initially null state
+        compare(testModel.status, PlaceSearchModel.Null);
+        testModel.searchTerm = "view";
+        testModel.update();
+        tryCompare(testModel, "status", PlaceSearchModel.Loading);
+        testModel.cancel();
+        tryCompare(testModel, "status", PlaceSearchModel.Ready);
+        compare(statusChangedSpy.count, 2);
+
+        testModel.update();
+        tryCompare(testModel, "status", PlaceSearchModel.Loading);
+        tryCompare(testModel, "status", PlaceSearchModel.Ready);
+        compare(statusChangedSpy.count, 4);
+
+        var numResults = testModel.count;
+        verify(numResults > 0);
+
+        //try cancelling from an initially ready state
+        testModel.update();
+        tryCompare(testModel.status, PlaceSearchModel.Loading);
+        testModel.cancel();
+        tryCompare(testModel, "status", PlaceSearchModel.Ready);
+        compare(testModel.count, numResults);
+        compare(statusChangedSpy.count, 6);
+
+        delete testModel;
+        delete statusChangedSpy;
     }
 }

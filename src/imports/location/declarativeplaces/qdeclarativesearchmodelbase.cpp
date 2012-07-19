@@ -154,11 +154,12 @@ QDeclarativeSearchModelBase::Status QDeclarativeSearchModelBase::status() const
 */
 void QDeclarativeSearchModelBase::setStatus(Status status, const QString &errorString)
 {
-    Status originalStatus = m_status;
+    Status prevStatus = m_status;
+
     m_status = status;
     m_errorString = errorString;
 
-    if (originalStatus != m_status)
+    if (prevStatus != m_status)
         emit statusChanged();
 }
 
@@ -214,7 +215,7 @@ void QDeclarativeSearchModelBase::cancel()
         m_reply = 0;
     }
 
-    setStatus(Null);
+    setStatus(Ready);
 }
 
 /*!

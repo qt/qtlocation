@@ -125,7 +125,7 @@ TestCase {
         testModel.cancel();
 
         compare(statusChangedSpy.count, 5);
-        compare(testModel.status, PlaceSearchSuggestionModel.Null);
+        compare(testModel.status, PlaceSearchSuggestionModel.Ready);
 
         suggestionsChangedSpy.destroy();
         statusChangedSpy.destroy();

@@ -203,7 +203,11 @@ QT_USE_NAMESPACE
 /*!
     \qmlmethod PlaceSearchSuggestionModel::cancel()
 
-    Cancels an ongoing search suggestion operation.
+    Cancels an ongoing search suggestion operation immediately and sets the model
+    status to PlaceSearchSuggestionModel.Ready.  The model retains any search
+    suggestions it had before the operation was started.
+
+    If an operation is not ongoing, invoking cancel() has no effect.
 
     \sa update(), status
 */
