@@ -2,6 +2,8 @@ import QtQuick.tooling 1.1
 
 // This file describes the plugin-supplied types contained in the library.
 // It is used for QML tooling purposes only.
+//
+// This file was auto-generated with the command 'qmlplugindump QtLocation 5.0 /home/devel/depot/qt/qt5/qtlocation/src/imports/'.
 
 Module {
     Component {
@@ -366,8 +368,6 @@ Module {
             isReadonly: true
             isPointer: true
         }
-        Property { name: "pinch"; type: "QDeclarativeGeoMapPinchArea"; isReadonly: true; isPointer: true }
-        Property { name: "flick"; type: "QDeclarativeGeoMapFlickable"; isReadonly: true; isPointer: true }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
         Property { name: "minimumZoomLevel"; type: "double"; isReadonly: true }
         Property { name: "maximumZoomLevel"; type: "double"; isReadonly: true }
@@ -384,9 +384,9 @@ Module {
         Property { name: "tilt"; type: "double" }
         Property { name: "bearing"; type: "double" }
         Signal {
-            name: "wheel"
+            name: "wheelAngleChanged"
             type: "void"
-            Parameter { name: "delta"; type: "double" }
+            Parameter { name: "angleDelta"; type: "QPoint" }
         }
         Signal {
             name: "pluginChanged"
@@ -419,13 +419,6 @@ Module {
         Signal { name: "maximumZoomLevelChanged"; type: "void" }
         Signal { name: "mapItemsChanged"; type: "void" }
         Method {
-            name: "pan"
-            type: "void"
-            Parameter { name: "dx"; type: "int" }
-            Parameter { name: "dy"; type: "int" }
-        }
-        Method { name: "cameraStopped"; type: "void" }
-        Method {
             name: "removeMapItem"
             type: "void"
             Parameter { name: "item"; type: "QDeclarativeGeoMapItemBase"; isPointer: true }
@@ -447,19 +440,13 @@ Module {
             Parameter { name: "coordinate"; type: "QDeclarativeCoordinate"; isPointer: true }
         }
         Method { name: "fitViewportToMapItems"; type: "void" }
-    }
-    Component {
-        name: "QDeclarativeGeoMapFlickable"
-        prototype: "QObject"
-        exports: ["MapFlickable 5.0"]
-        Property { name: "deceleration"; type: "double" }
-        Property { name: "enabled"; type: "bool" }
-        Signal { name: "decelerationChanged"; type: "void" }
-        Signal { name: "enabledChanged"; type: "void" }
-        Signal { name: "movementStarted"; type: "void" }
-        Signal { name: "movementEnded"; type: "void" }
-        Signal { name: "flickStarted"; type: "void" }
-        Signal { name: "flickEnded"; type: "void" }
+        Method {
+            name: "pan"
+            type: "void"
+            Parameter { name: "dx"; type: "int" }
+            Parameter { name: "dy"; type: "int" }
+        }
+        Method { name: "cameraStopped"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoMapGestureArea"
@@ -537,8 +524,10 @@ Module {
         exports: ["MapItemView 5.0"]
         Property { name: "model"; type: "QVariant" }
         Property { name: "delegate"; type: "QQmlComponent"; isPointer: true }
+        Property { name: "autoFitViewport"; type: "bool" }
         Signal { name: "modelChanged"; type: "void" }
         Signal { name: "delegateChanged"; type: "void" }
+        Signal { name: "autoFitViewportChanged"; type: "void" }
     }
     Component {
         name: "QDeclarativeGeoMapMouseArea"
@@ -563,56 +552,6 @@ Module {
         Property { name: "x"; type: "int"; isReadonly: true }
         Property { name: "y"; type: "int"; isReadonly: true }
         Property { name: "coordinate"; type: "QDeclarativeCoordinate"; isReadonly: true; isPointer: true }
-    }
-    Component {
-        name: "QDeclarativeGeoMapPinchArea"
-        prototype: "QObject"
-        exports: ["MapPinchArea 5.0"]
-        Enum {
-            name: "ActiveGesture"
-            values: {
-                "NoGesture": 0,
-                "ZoomGesture": 1,
-                "RotationGesture": 2,
-                "TiltGesture": 4
-            }
-        }
-        Enum {
-            name: "ActiveGestures"
-            values: {
-                "NoGesture": 0,
-                "ZoomGesture": 1,
-                "RotationGesture": 2,
-                "TiltGesture": 4
-            }
-        }
-        Property { name: "enabled"; type: "bool" }
-        Property { name: "active"; type: "bool"; isReadonly: true }
-        Property { name: "activeGestures"; type: "ActiveGestures" }
-        Property { name: "maximumZoomLevelChange"; type: "double" }
-        Property { name: "rotationFactor"; type: "double" }
-        Property { name: "flickDeceleration"; type: "double" }
-        Signal { name: "activeChanged"; type: "void" }
-        Signal { name: "enabledChanged"; type: "void" }
-        Signal { name: "maximumZoomLevelChangeChanged"; type: "void" }
-        Signal { name: "rotationFactorChanged"; type: "void" }
-        Signal { name: "activeGesturesChanged"; type: "void" }
-        Signal { name: "flickDecelerationChanged"; type: "void" }
-        Signal {
-            name: "pinchStarted"
-            type: "void"
-            Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
-        }
-        Signal {
-            name: "pinchUpdated"
-            type: "void"
-            Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
-        }
-        Signal {
-            name: "pinchFinished"
-            type: "void"
-            Parameter { name: "pinch"; type: "QDeclarativeGeoMapPinchEvent"; isPointer: true }
-        }
     }
     Component {
         name: "QDeclarativeGeoMapPinchEvent"
@@ -1661,9 +1600,10 @@ Module {
         Enum {
             name: "Status"
             values: {
-                "Ready": 0,
-                "Updating": 1,
-                "Error": 2
+                "Null": 0,
+                "Ready": 1,
+                "Loading": 2,
+                "Error": 3
             }
         }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }

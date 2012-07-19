@@ -173,7 +173,7 @@ TestCase {
 
         // Verify that the category was added to the model
         categoryModel.model.update();
-        compare(categoryModel.model.status, CategoryModel.Updating);
+        compare(categoryModel.model.status, CategoryModel.Loading);
 
         tryCompare(categoryModel.model, "status", CategoryModel.Ready);
 
@@ -195,7 +195,7 @@ TestCase {
 
         // Verify that the category was removed from the model
         categoryModel.model.update();
-        compare(categoryModel.model.status, CategoryModel.Updating);
+        compare(categoryModel.model.status, CategoryModel.Loading);
 
         tryCompare(categoryModel.model, "status", CategoryModel.Ready);
 

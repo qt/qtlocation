@@ -105,7 +105,7 @@ public:
         ParentCategoryRole
     };  //for internal usage only
 
-    enum Status {Ready, Updating, Error};
+    enum Status {Null, Ready, Loading, Error};
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;

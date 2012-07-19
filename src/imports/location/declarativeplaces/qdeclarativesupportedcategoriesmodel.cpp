@@ -129,7 +129,8 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
-:   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false)
+:   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false),
+    m_status(Null)
 {
 }
 
@@ -519,7 +520,7 @@ void QDeclarativeSupportedCategoriesModel::update()
         m_response = placeManager->initializeCategories();
         if (m_response) {
             connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
-            setStatus(QDeclarativeSupportedCategoriesModel::Updating);
+            setStatus(QDeclarativeSupportedCategoriesModel::Loading);
         } else {
             setStatus(QDeclarativeSupportedCategoriesModel::Error);
             m_errorString = QCoreApplication::translate(CONTEXT_NAME, CATEGORIES_NOT_INITIALIZED);
@@ -568,11 +569,14 @@ QString QDeclarativeSupportedCategoriesModel::errorString() const
 
     \table
         \row
+            \li CategoryModel.Null
+            \li No category fetch query has been executed.  The model is empty.
+        \row
             \li CategoryModel.Ready
             \li No error occurred during the last operation, further operations may be performed on
                the model.
         \row
-            \li CategoryModel.Updating
+            \li CategoryModel.Loading
             \li The model is being updated, no other operations may be performed until complete.
         \row
             \li CategoryModel.Error

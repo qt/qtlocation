@@ -76,26 +76,23 @@ TestCase {
         Utils.testObjectProperties(testCase, testModel, data);
     }
 
-    VisualDataModel {
-        id: categoryModel
-
-        model: CategoryModel { }
-        delegate: Item { }
-    }
-
     function test_hierarchicalModel() {
         var modelSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        var categoryModel = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0;'
+                                + 'VisualDataModel { model: CategoryModel {} delegate: Item {} }',
+                                testCase, "VisualDataModel");
+
         modelSpy.target = categoryModel.model;
         modelSpy.signalName = "statusChanged";
 
-        compare(categoryModel.model.status, CategoryModel.Ready);
+        compare(categoryModel.model.status, CategoryModel.Null);
         compare(categoryModel.count, 0);
 
 
         // set the plugin
         categoryModel.model.plugin = testPlugin;
 
-        tryCompare(categoryModel.model, "status", CategoryModel.Updating);
+        tryCompare(categoryModel.model, "status", CategoryModel.Loading);
         compare(modelSpy.count, 1);
 
         tryCompare(categoryModel.model, "status", CategoryModel.Ready);
@@ -152,10 +149,14 @@ TestCase {
 
     function test_flatModel() {
         var modelSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        var categoryModel = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0;'
+                                + 'VisualDataModel { model: CategoryModel {} delegate: Item {} }',
+                                testCase, "VisualDataModel");
+
         modelSpy.target = categoryModel.model;
         modelSpy.signalName = "statusChanged";
 
-        compare(categoryModel.model.status, CategoryModel.Ready);
+        compare(categoryModel.model.status, CategoryModel.Null);
         compare(categoryModel.count, 0);
 
 
@@ -163,7 +164,7 @@ TestCase {
         categoryModel.model.hierarchical = false;
         categoryModel.model.plugin = testPlugin;
 
-        tryCompare(categoryModel.model, "status", CategoryModel.Updating);
+        tryCompare(categoryModel.model, "status", CategoryModel.Loading);
         compare(modelSpy.count, 1);
 
         tryCompare(categoryModel.model, "status", CategoryModel.Ready);

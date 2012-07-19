@@ -224,7 +224,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: busy
-                visible: categoryModel.status === CategoryModel.Updating
+                visible: categoryModel.status === CategoryModel.Loading
             }
             PropertyChanges {
                 target: noCategories
