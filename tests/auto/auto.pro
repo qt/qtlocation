@@ -23,7 +23,8 @@ SUBDIRS += qplace \
            qplacesearchreply \
            qplacesearchsuggestionreply \
            qplaceuser \
-           qmlinterface
+           qmlinterface \
+           cmake
 
 SUBDIRS += geotestplugin \
            placesplugin_unsupported \
