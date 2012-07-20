@@ -109,8 +109,7 @@ function testConsecutiveFetch(testCase, model, place, expectedValues)
 
     //perform an initial fetch with the default batch size
     model.place = place;
-    testCase.wait(1);
-    testCase.compare(signalSpy.count, 1);
+    testCase.tryCompare(signalSpy, "count", 1);
     signalSpy.clear();
 
     var totalCount = model.totalCount;
@@ -122,10 +121,9 @@ function testConsecutiveFetch(testCase, model, place, expectedValues)
     //set a non-default batch size and fetch the next batch
     model.batchSize = 2;
     visDataModel.items.create(0); //'creating' the last item will trigger a fetch
-    testCase.wait(1);
+    testCase.tryCompare(visDataModel.items, "count", 3);
     testCase.compare(signalSpy.count, 0);
     testCase.compare(model.totalCount, totalCount);
-    testCase.compare(visDataModel.items.count, 3);
 
     compareObj(testCase, expectedValues[1], visDataModel.items.get(1).model);
     compareObj(testCase, expectedValues[2], visDataModel.items.get(2).model);
@@ -133,10 +131,9 @@ function testConsecutiveFetch(testCase, model, place, expectedValues)
     //set a batch size greater than the number of remaining items and fetch that batch
     model.batchSize = 10;
     visDataModel.items.create(2);
-    testCase.wait(1);
+    testCase.tryCompare(visDataModel.items, "count", totalCount);
     testCase.compare(signalSpy.count, 0);
     testCase.compare(model.totalCount, totalCount);
-    testCase.compare(visDataModel.items.count, totalCount);
 
     compareObj(testCase, expectedValues[3], visDataModel.items.get(3).model);
     compareObj(testCase, expectedValues[4], visDataModel.items.get(4).model);
@@ -158,9 +155,7 @@ function testReset(testCase, model, place)
     testCase.verify(dataModel.items.count > 0);
 
     model.place = null;
-    testCase.wait(1);
-
-    testCase.compare(model.totalCount, -1);
+    testCase.tryCompare(model, "totalCount", -1);
     testCase.compare(dataModel.items.count, 0);
 
     dataModel.destroy();
@@ -181,8 +176,7 @@ function testFetch(testCase, data)
 
     model.batchSize = data.batchSize;
     model.place = data.place;
-    testCase.wait(1);
-    testCase.compare(signalSpy.count, 1);
+    testCase.tryCompare(signalSpy, "count", 1);
     signalSpy.clear();
     testCase.compare(model.totalCount, data.expectedTotalCount);
     testCase.compare(visDataModel.items.count, data.expectedCount);
