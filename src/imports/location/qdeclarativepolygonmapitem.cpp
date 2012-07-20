@@ -341,6 +341,21 @@ void QDeclarativePolygonMapItem::updateAfterCoordinateChanged()
     }
 }
 
+/*!
+    \internal
+*/
+void QDeclarativePolygonMapItem::coordinateDestroyed(QDeclarativeCoordinate *coord)
+{
+    // tmp workaround for handling null pointers caused by external deletion of
+    // the declarative coordinate. This slot and its calls can be safely removed
+    // once QTBUG-25636 is fixed
+    if (coord) {
+        int idx = this->coordPath_.indexOf(coord);
+        if ( idx >= 0 )
+            coordPath_.replace(idx, new QDeclarativeCoordinate(coord->coordinate(), this));
+    }
+}
+
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
 {
 }
@@ -400,6 +415,8 @@ void QDeclarativePolygonMapItem::path_append(
 
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      item, SLOT(updateAfterCoordinateChanged()));
+    QObject::connect(coordinate, SIGNAL(destroyed(QDeclarativeCoordinate *)),
+                     item, SLOT(coordinateDestroyed(QDeclarativeCoordinate *)));
     item->geometry_.markSourceDirty();
     item->borderGeometry_.markSourceDirty();
     item->updateMapItem();
@@ -456,6 +473,8 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate *coordinat
 
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      this, SLOT(updateAfterCoordinateChanged()));
+    QObject::connect(coordinate, SIGNAL(destroyed(QDeclarativeCoordinate *)),
+                     this, SLOT(coordinateDestroyed(QDeclarativeCoordinate *)));
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     updateMapItem();

@@ -89,6 +89,7 @@ Q_SIGNALS:
     void altitudeChanged(double altitude);
     void validityChanged(bool valid);
     void coordinateChanged(const QGeoCoordinate &coord);
+    void destroyed(QDeclarativeCoordinate *coord);
 
 private:
     QGeoCoordinate m_coordinate;

@@ -480,6 +480,21 @@ void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
 /*!
     \internal
 */
+void QDeclarativePolylineMapItem::coordinateDestroyed(QDeclarativeCoordinate *coord)
+{
+    // tmp workaround for handling null pointers caused by external deletion of
+    // the declarative coordinate. This slot and its calls can be safely removed
+    // once QTBUG-25636 is fixed
+    if (coord) {
+        int idx = this->coordPath_.indexOf(coord);
+        if ( idx >= 0 )
+            coordPath_.replace(idx, new QDeclarativeCoordinate(coord->coordinate(), this));
+    }
+}
+
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
@@ -513,7 +528,8 @@ void QDeclarativePolylineMapItem::path_append(QQmlListProperty<QDeclarativeCoord
 
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      item, SLOT(updateAfterCoordinateChanged()));
-
+    QObject::connect(coordinate, SIGNAL(destroyed(QDeclarativeCoordinate *)),
+                     item, SLOT(coordinateDestroyed(QDeclarativeCoordinate *)));
     item->coordPath_.append(coordinate);
     item->path_.append(coordinate->coordinate());
     item->geometry_.markSourceDirty();
@@ -570,6 +586,9 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate *coordina
 
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      this, SLOT(updateAfterCoordinateChanged()));
+
+    QObject::connect(coordinate, SIGNAL(destroyed(QDeclarativeCoordinate *)),
+                     this, SLOT(coordinateDestroyed(QDeclarativeCoordinate *)));
 
     geometry_.markSourceDirty();
     updateMapItem();
@@ -741,6 +760,7 @@ void QDeclarativePolylineMapItem::dragEnded()
                                + newCoordinate.longitude() - firstLongitude));
             coord.setLatitude(coord.latitude()
                               + newCoordinate.latitude() - firstLatitude - offsetLatitude);
+
             // temporarily disconnect signals to avoid unecessary screen updates for each coordinate
             QObject::disconnect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
                                 this, SLOT(updateAfterCoordinateChanged()));

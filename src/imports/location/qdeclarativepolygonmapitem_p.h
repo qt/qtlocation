@@ -113,6 +113,7 @@ protected Q_SLOTS:
 private Q_SLOTS:
     // map size changed
     void updateAfterCoordinateChanged();
+    void coordinateDestroyed(QDeclarativeCoordinate *coord);
 
 private:
     static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);

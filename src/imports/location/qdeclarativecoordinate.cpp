@@ -110,7 +110,10 @@ QDeclarativeCoordinate::QDeclarativeCoordinate(const QGeoCoordinate &coordinate,
         : QObject(parent),
         m_coordinate(coordinate) {}
 
-QDeclarativeCoordinate::~QDeclarativeCoordinate() {}
+QDeclarativeCoordinate::~QDeclarativeCoordinate()
+{
+    emit destroyed(this);
+}
 
 /*!
     \qmlproperty QGeoCoordinate Coordinate::coordinate

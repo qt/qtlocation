@@ -131,6 +131,7 @@ protected Q_SLOTS:
     virtual void updateMapItem();
     void updateAfterLinePropertiesChanged();
     void updateAfterCoordinateChanged();
+    void coordinateDestroyed(QDeclarativeCoordinate *coord);
     void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
