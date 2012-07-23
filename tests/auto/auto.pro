@@ -15,6 +15,7 @@ SUBDIRS += qplace \
            qplacematchrequest \
            qplaceimage \
            qplaceratings \
+           qplaceresult \
            qplacereply \
            qplacereview \
            qplacesearchrequest \
