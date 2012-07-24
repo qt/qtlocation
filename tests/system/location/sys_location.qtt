@@ -338,7 +338,8 @@ testcase = {
         | Select Go! button | |
         | Pan map to the right so the map center crosses dateline | Verify that there are 2 markers on the screen |
         | Zoom out the map to zoom level 0 | |
-        | Pan map to make round-the-world trip | Verify that map looks and behaves as unfolded cylinder. Verify that all markers visible and drawn correctly. |
+        | Pan map to make round-the-world trip | Verify that map looks and behaves as unfolded cylinder. Verify that there are no markers. |
+        | Flick map from right to left to make round-the-world trip | Verify that map doesn't bounce to the right.|
         | Pan map from North pole to the South pole | Verify that all markers visible and drawn correctly. |"
         ));
     },

@@ -44,7 +44,7 @@
 testcase = {
 
     qml_searching_for_places_by_category_for_given_position_data: {
-        data:["48.9", "2.4", "Shopping", "Shakespeare & Co. 6.6km"]
+        data:["48.9", "2.4", "Shopping", "Pain de Sucre 5.5km"]
     },
 
     qml_searching_for_places_by_category_for_given_position: function(latitude, longitude, category, place)
@@ -114,42 +114,6 @@ testcase = {
         | Fill in [" + search_string + "] in Search field | |
         | Select Loupe icon | |
         | Expand panel with results | Verify that [" + place + "] is the first item in the list. |"
-        ));
-    },
-
-    qml_searching_for_places_by_text_string_with_typo_data: {
-        search_string_with_typo:["48.9", "2.4", "pizzs"]
-    },
-
-    qml_searching_for_places_by_text_string_with_typo: function(latitude, longitude, search_string, place)
-    {
-        // Test meta data
-        testTitle = "QML: Places - Searching by text string with typo";
-        testBinary = "qml_location_places";
-        testSource = "$QTDIR/qtlocation/examples/declarative/places"
-        testGoal = "Verify that no places found.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
-        testGroups = "BAT,5.0";
-        testRequirements = "MTMW-190: Place Discovery";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch [" + testBinary + "] | App launches normally |
-        | Select [Provider] button | |
-        | Select [nokia] | |
-        | Select [Search] button | |
-        | Select [Search Center] button | |
-        | Fill in [" + latitude + "] in Latitude field | |
-        | Fill in [" + longitude + "] in Longitude field | |
-        | Select [Go!] button | |
-        | Fill in [" + search_string + "] in Search field | |
-        | Select Loupe icon | Verify that no results were found |"
         ));
     },
 
@@ -229,7 +193,7 @@ testcase = {
     },
 
     qml_place_editorials_data: {
-        prime_editorial:["48.9", "2.4", "le pouilly reuilly", "Le Pouilly Reuilly 1.7km", "2", "Untitled editorial", "prime", "Une institution bustronomique...", "Business Owner"],
+        prime_editorial:["48.9", "2.4", "le pouilly reuilly", "Le Pouilly Reuilly 1.7km", "1", "Untitled editorial", "prime", "Une institution bustronomique...", "Business Owner"],
         not_prime_editorial:["48.9", "2.4", "marche ou crepe", "Marche ou Crepe 4.2km", "1", "Untitled editorial", "not prime", "This little outlet near...", "Lonely planet"]
     },
 
@@ -312,7 +276,7 @@ testcase = {
     },
 
     qml_place_reviews_data: {
-        tripadviser:["48.9", "2.4", "sushi", "Nakagawa 2.8km", "5", "Ottimo sushi", "Ottima cucina con ottimo rapporto...", "4", "TripAdvisor"],
+        tripadviser:["48.9", "2.4", "sushi", "Tamako(sushi/coreen) 2.2km", "1", "Nous y allons...", "Nous avons decouvert ce...", "4", "TripAdvisor"],
         nokiauser:["48.9", "2.4", "marfil", "marfil (le) 8.3km", "1", "empty", "Nice place, good food", "3", "Nokia User"]
     },
 
@@ -356,8 +320,8 @@ testcase = {
     },
 
     qml_place_retrieval_data: {
-        not_prime_place:["48.9", "2.4", "marfil", "Marfil (Le) 8.3km", "not prime", "4", "4 Rue Auguste Vacqueri 75116 Paris",
-                         "Restaurant, Fair & Convention Facility, Theatre, Music & Culture", "+33147206252"],
+        not_prime_place:["48.9", "2.4", "marfil", "Marfil (Le) 8.3km", "not prime", "4", "4 Auguste Vacqueri 75116 Paris France",
+                         "Restaurant", "+33147206252"],
         prime_place:["48.9", "2.4", "La Romantica", "La Romantica 7.0km", "prime", "4", "73 Boulevard Jean Jaures 92110 Clichy France",
                          "Hospital or health Care Facility, Restaurant", "+33147372971"]
 
