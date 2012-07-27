@@ -44,6 +44,9 @@
 
 #include "qdeclarativegeomapitembase_p.h"
 #include "qgeomapitemgeometry_p.h"
+
+#include <QtQml/private/qv8engine_p.h>
+
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
@@ -100,7 +103,7 @@ class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(QQmlListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
+    Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
 
 public:
@@ -111,16 +114,16 @@ public:
        //from QuickItem
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate *coordinate);
-    Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate *coordinate);
+    Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
 
-    QQmlListProperty<QDeclarativeCoordinate> declarativePath();
+    QJSValue path() const;
+    void setPath(const QJSValue &value);
 
     bool contains(const QPointF &point) const;
 
     QDeclarativeMapLineProperties *line();
 
-    inline QList<QDeclarativeCoordinate *> &path() { return coordPath_; }
     void dragStarted();
     void dragEnded();
 
@@ -130,20 +133,12 @@ Q_SIGNALS:
 protected Q_SLOTS:
     virtual void updateMapItem();
     void updateAfterLinePropertiesChanged();
-    void updateAfterCoordinateChanged();
-    void coordinateDestroyed(QDeclarativeCoordinate *coord);
     void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
-    static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
-    static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate *path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
-    static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
     void pathPropertyChanged();
 
-private:
     QDeclarativeMapLineProperties line_;
-    QList<QDeclarativeCoordinate *> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
     bool dirtyMaterial_;

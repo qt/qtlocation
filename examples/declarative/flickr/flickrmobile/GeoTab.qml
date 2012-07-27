@@ -41,16 +41,18 @@
 import QtQuick 2.0
 import QtLocation 5.0
 
-
 Rectangle {
     id: container
     property int maxX: parent.width; property int maxY: parent.height
 //! [props]
-    property double latitude
-    property double longitude
-    latitude: positionSource.position.coordinate.latitude
-    longitude: positionSource.position.coordinate.longitude
+    property variant coordinate
 //! [props]
+
+    Binding {
+        target: container
+        property: "coordinate"
+        value: positionSource.position.coordinate
+    }
 
     width: 300; height: 130
     color: "blue"

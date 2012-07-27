@@ -64,7 +64,7 @@ class QDeclarativePosition : public QObject
     Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged)
     Q_PROPERTY(bool longitudeValid READ isLongitudeValid NOTIFY longitudeValidChanged)
     Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged)
-    Q_PROPERTY(QDeclarativeCoordinate *coordinate READ coordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate NOTIFY coordinateChanged)
     Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
     Q_PROPERTY(double speed READ speed NOTIFY speedChanged)
     Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged)
@@ -86,8 +86,7 @@ public:
     double speed() const;
     void setSpeed(double speed);
     bool isSpeedValid() const;
-    void setCoordinate(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *coordinate();
+    QGeoCoordinate coordinate();
     bool isHorizontalAccuracyValid() const;
     qreal horizontalAccuracy() const;
     void setHorizontalAccuracy(qreal horizontalAccuracy);
@@ -123,7 +122,7 @@ private:
     bool m_verticalAccuracyValid;
     qreal m_horizontalAccuracy;
     qreal m_verticalAccuracy;
-    QDeclarativeCoordinate m_coordinate;
+    QGeoCoordinate m_coordinate;
 };
 
 QT_END_NAMESPACE

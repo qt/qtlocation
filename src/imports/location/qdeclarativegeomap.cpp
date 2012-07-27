@@ -100,11 +100,11 @@ QT_BEGIN_NAMESPACE
 
     The geographic region displayed in the Map item is referred to as its
     viewport, and this is defined by the properties \l center, and
-    \l zoomLevel. The \l center property contains a \l Coordinate specifying
-    the center of the viewport, while \l zoomLevel controls the scale of the
+    \l zoomLevel. The \l center property contains a \l {QtLocation5::coordinate}{coordinate}
+    specifying the center of the viewport, while \l zoomLevel controls the scale of the
     map. See each of these properties for further details about their values.
 
-    When the map is displayed, each possible geographic Coordinate that is
+    When the map is displayed, each possible geographic coordinate that is
     visible will map to some pixel X and Y coordinate on the screen. To perform
     conversions between these two, Map provides the \l toCoordinate and
     \l toScreenPosition functions, which are of general utility.
@@ -172,7 +172,10 @@ QT_BEGIN_NAMESPACE
 
         plugin: somePlugin
 
-        center: Coordinate { latitude: -27; longitude: 153 }
+        center {
+            latitude: -27
+            longitude: 153
+        }
         zoomLevel: map.minimumZoomLevel
 
         gesture.enabled: true
@@ -190,7 +193,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         zoomLevel_(8.0),
         bearing_(0.0),
         tilt_(0.0),
-        center_(0),
         activeMapType_(0),
         componentCompleted_(false),
         mappingManagerInitialized_(false),
@@ -509,7 +511,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             SLOT(mapZoomLevelChanged(qreal)));
 
     AnimatableCoordinate acenter = map_->mapController()->center();
-    acenter.setCoordinate(center()->coordinate());
+    acenter.setCoordinate(center_);
     map_->mapController()->setCenter(acenter);
     map_->mapController()->setZoom(zoomLevel_);
     map_->mapController()->setBearing(bearing_);
@@ -709,64 +711,36 @@ qreal QDeclarativeGeoMap::zoomLevel() const
 }
 
 /*!
-\qmlproperty Coordinate QtLocation5::Map::center
+\qmlproperty coordinate QtLocation5::Map::center
 
     This property holds the coordinate which occupies the center of the
     mapping viewport.
 
     The default value is an arbitrary valid coordinate.
 */
-void QDeclarativeGeoMap::setCenter(QDeclarativeCoordinate *center)
+void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
 {
     if (center == center_)
         return;
-    if (center_)
-        center_->disconnect(this);
+
     center_ = center;
-    if (center_) {
-        connect(center_,
-                SIGNAL(latitudeChanged(double)),
-                this,
-                SLOT(centerLatitudeChanged(double)));
-        connect(center_,
-                SIGNAL(longitudeChanged(double)),
-                this,
-                SLOT(centerLongitudeChanged(double)));
-        connect(center_,
-                SIGNAL(altitudeChanged(double)),
-                this,
-                SLOT(centerAltitudeChanged(double)));
-        if (center_->coordinate().isValid() && mappingManagerInitialized_) {
-            AnimatableCoordinate acoord = map_->mapController()->center();
-            acoord.setCoordinate(center_->coordinate());
-            map_->mapController()->setCenter(acoord);
-            update();
-        }
+
+    if (center_.isValid() && mappingManagerInitialized_) {
+        AnimatableCoordinate acoord = map_->mapController()->center();
+        acoord.setCoordinate(center_);
+        map_->mapController()->setCenter(acoord);
+        update();
+    } else {
+        emit centerChanged(center_);
     }
-    emit centerChanged(center_);
 }
 
-QDeclarativeCoordinate *QDeclarativeGeoMap::center()
+QGeoCoordinate QDeclarativeGeoMap::center() const
 {
-    if (!center_) {
-        if (mappingManagerInitialized_)
-            center_ = new QDeclarativeCoordinate(map_->mapController()->center().coordinate());
-        else
-            center_ = new QDeclarativeCoordinate(QGeoCoordinate(0, 0, 0));
-        connect(center_,
-                SIGNAL(latitudeChanged(double)),
-                this,
-                SLOT(centerLatitudeChanged(double)));
-        connect(center_,
-                SIGNAL(longitudeChanged(double)),
-                this,
-                SLOT(centerLongitudeChanged(double)));
-        connect(center_,
-                SIGNAL(altitudeChanged(double)),
-                this,
-                SLOT(centerAltitudeChanged(double)));
-    }
-    return center_;
+    if (mappingManagerInitialized_)
+        return map_->mapController()->center().coordinate();
+    else
+        return center_;
 }
 
 /*!
@@ -807,74 +781,7 @@ void QDeclarativeGeoMap::mapBearingChanged(qreal bearing)
 */
 void QDeclarativeGeoMap::mapCenterChanged(AnimatableCoordinate center)
 {
-    if (center.coordinate() != this->center()->coordinate()) {
-        QDeclarativeCoordinate *currentCenter = this->center();
-        currentCenter->setLatitude(center.coordinate().latitude());
-        currentCenter->setLongitude(center.coordinate().longitude());
-        currentCenter->setAltitude(center.coordinate().altitude());
-        emit centerChanged(currentCenter);
-    }
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::centerLatitudeChanged(double latitude)
-{
-    if (qIsNaN(latitude))
-        return;
-    if (mappingManagerInitialized_) {
-        AnimatableCoordinate acoord = map_->mapController()->center();
-        QGeoCoordinate coord = acoord.coordinate();
-
-        // if the change originated from app, emit (other changes via mapctrl signals)
-        if (latitude != coord.latitude())
-            emit centerChanged(center_);
-        map_->mapController()->setLatitude(latitude);
-        update();
-    } else {
-        emit centerChanged(center_);
-    }
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::centerLongitudeChanged(double longitude)
-{
-    if (qIsNaN(longitude))
-        return;
-    if (mappingManagerInitialized_) {
-        AnimatableCoordinate acoord = map_->mapController()->center();
-        QGeoCoordinate coord = acoord.coordinate();
-        // if the change originated from app, emit (other changes via mapctrl signals)
-        if (longitude != coord.longitude())
-            emit centerChanged(center_);
-        map_->mapController()->setLongitude(longitude);
-        update();
-    } else {
-        emit centerChanged(center_);
-    }
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
-{
-    if (qIsNaN(altitude))
-        return;
-    if (mappingManagerInitialized_) {
-        AnimatableCoordinate acoord = map_->mapController()->center();
-        QGeoCoordinate coord = acoord.coordinate();
-        // if the change originated from app, emit (other changes via mapctrl signals)
-        if (altitude != coord.altitude())
-            emit centerChanged(center_);
-        map_->mapController()->setAltitude(altitude);
-        update();
-    } else {
-        emit centerChanged(center_);
-    }
+    emit centerChanged(center.coordinate());
 }
 
 /*!
@@ -899,18 +806,16 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
     the current viewport.
 */
 
-QDeclarativeCoordinate *QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) const
+QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) const
 {
-    QGeoCoordinate coordinate;
     if (map_)
-        coordinate = map_->screenPositionToCoordinate(screenPosition);
-    // by default objects returned from method call get javascript ownership,
-    // so we don't need to worry about this as long as we don't set the parent
-    return new QDeclarativeCoordinate(coordinate);
+        return map_->screenPositionToCoordinate(screenPosition);
+    else
+        return QGeoCoordinate();
 }
 
 /*!
-\qmlmethod QtLocation5::Map::toScreenPosition(Coordinate coordinate)
+\qmlmethod QtLocation5::Map::toScreenPosition(coordinate coordinate)
 
     Returns the screen position which corresponds to the coordinate
     \a coordinate.
@@ -919,12 +824,12 @@ QDeclarativeCoordinate *QDeclarativeGeoMap::toCoordinate(const QPointF &screenPo
     current viewport.
 */
 
-QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate *coordinate) const
+QPointF QDeclarativeGeoMap::toScreenPosition(const QGeoCoordinate &coordinate) const
 {
-    QPointF point(qQNaN(), qQNaN());
-    if (coordinate && map_)
-        point = map_->coordinateToScreenPosition(coordinate->coordinate());
-    return point;
+    if (map_)
+        return map_->coordinateToScreenPosition(coordinate);
+    else
+        return QPointF(qQNaN(), qQNaN());
 }
 
 /*!
@@ -1172,11 +1077,10 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
         QDeclarativeCircleMapItem *circleItem =
                 qobject_cast<QDeclarativeCircleMapItem *>(item);
 
-        if ((!circleItem || !circleItem->center()) && !item)
+        if ((!circleItem || !circleItem->center().isValid()) && !item)
             continue;
-        if (circleItem && circleItem->center()) {
-            geoCenter = QGeoCoordinate(circleItem->center()->latitude(),
-                                       circleItem->center()->longitude());
+        if (circleItem) {
+            geoCenter = circleItem->center();
             centerPt = map_->coordinateToScreenPosition(geoCenter, false);
             topLeftX = centerPt.x() - circleItem->width() / 2.0;
             topLeftY = centerPt.y() - circleItem->height() / 2.0;
@@ -1216,7 +1120,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     coordinate = map_->screenPositionToCoordinate(QPointF(bboxCenterX, bboxCenterY), false);
     AnimatableCoordinate acenter = map_->mapController()->center();
     acenter.setCoordinate(coordinate);
-    setCenter(new QDeclarativeCoordinate(coordinate));
+    setCenter(coordinate);
 
     // adjust zoom
     double bboxWidthRatio = bboxWidth / (bboxWidth + bboxHeight);

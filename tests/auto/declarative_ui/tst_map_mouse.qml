@@ -82,7 +82,6 @@ Item {
     height: 120
     // General-purpose elements for the test:
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin";}
-    Coordinate{ id: mapDefaultCenter; latitude: 20; longitude: 20}
 
     MapMouseEvent{
         id: mapMouseEvent
@@ -103,7 +102,11 @@ Item {
     Map {
         id: map;
         x: 0; y: 0; width: 100; height: 100
-        center: mapDefaultCenter
+        center {
+            latitude: 20
+            longitude: 20
+        }
+
         plugin: testPlugin;
 
         property real lastWheelAngleDeltaX: 0

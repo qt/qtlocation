@@ -72,7 +72,7 @@ TestCase {
 
     GeoCircle {
         id: testSearchArea
-        center: Coordinate {
+        center {
             latitude: 10
             longitude: 20
         }

@@ -83,7 +83,6 @@ extern const char ROUTE_QUERY_NOT_SET[];
 extern const char ROUTE_WAYPOINTS_NOT_SET[];
 
 extern const char CANNOT_REMOVE_AREA[];
-extern const char CANNOT_ADD_NULL_WAYPOINT[];
 extern const char CANNOT_ADD_INVALID_WAYPOINT[];
 extern const char CANNOT_REMOVE_WAYPOINT[];
 extern const char COORD_NOT_BELONG_TO[];

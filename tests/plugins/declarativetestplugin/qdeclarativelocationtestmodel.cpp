@@ -181,8 +181,7 @@ void QDeclarativeLocationTestModel::repopulate()
 
     for (int i = 0; i < datacount; ++i) {
         DataObject* dataobject = new DataObject;
-        QDeclarativeCoordinate* coordinate = new QDeclarativeCoordinate(QGeoCoordinate(latitude,longitude));
-        dataobject->coordinate_ = coordinate;
+        dataobject->coordinate_ = QGeoCoordinate(latitude, longitude);
         dataobjects_.append(dataobject);
         longitude -= 0.2;
         latitude += 0.2;

@@ -85,14 +85,14 @@ TestCase {
                 postalCode: "1234"
             }
 
-            coordinate: Coordinate {
+            coordinate {
                 latitude: 10
                 longitude: 10
                 altitude: 100
             }
 
             boundingBox: GeoRectangle {
-                center: Coordinate {
+                center {
                     latitude: 10
                     longitude: 10
                     altitude: 100
@@ -436,7 +436,7 @@ TestCase {
     }
 
     function test_location() {
-        var location = Qt.createQmlObject('import QtLocation 5.0; Location { coordinate: Coordinate{ latitude:10.0 } }', testCase, "Location1");
+        var location = Qt.createQmlObject('import QtLocation 5.0; Location { coordinate: QtLocation.coordinate(10.0, 20.0) }', testCase, "Location1");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;

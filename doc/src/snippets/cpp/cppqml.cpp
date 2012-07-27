@@ -48,7 +48,6 @@
 #include <QtLocation/QPlaceUser>
 #include <QtLocation/QPlaceRatings>
 #include <QtLocation/QPlaceSupplier>
-#include <QtLocation/QGeoCoordinate>
 #include <QtLocation/QGeoAddress>
 #include <QtLocation/QGeoRectangle>
 #include <QtLocation/QGeoCircle>
@@ -119,14 +118,6 @@ void cppQmlInterface(QObject *qmlObject)
     //! [Supplier set]
     qmlObject->setProperty("supplier", QVariant::fromValue(placeSupplier));
     //! [Supplier set]
-
-    //! [Coordinate get]
-    QGeoCoordinate geoCoordinate = qmlObject->property("coordinate").value<QGeoCoordinate>();
-    //! [Coordinate get]
-
-    //! [Coordinate set]
-    qmlObject->setProperty("coordinate", QVariant::fromValue(geoCoordinate));
-    //! [Coordinate set]
 
     //! [Address get]
     QGeoAddress geoAddress = qmlObject->property("address").value<QGeoAddress>();

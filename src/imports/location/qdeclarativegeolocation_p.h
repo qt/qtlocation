@@ -57,7 +57,7 @@ class QDeclarativeGeoLocation : public QObject
 
     Q_PROPERTY(QGeoLocation location READ location WRITE setLocation)
     Q_PROPERTY(QDeclarativeGeoAddress *address READ address WRITE setAddress NOTIFY addressChanged)
-    Q_PROPERTY(QDeclarativeCoordinate *coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
     Q_PROPERTY(QDeclarativeGeoRectangle *boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
 
 public:
@@ -70,8 +70,8 @@ public:
 
     QDeclarativeGeoAddress *address();
     void setAddress(QDeclarativeGeoAddress *address);
-    QDeclarativeCoordinate *coordinate();
-    void setCoordinate(QDeclarativeCoordinate *coordinate);
+    QGeoCoordinate coordinate();
+    void setCoordinate(const QGeoCoordinate coordinate);
 
     QDeclarativeGeoRectangle *boundingBox();
     void setBoundingBox(QDeclarativeGeoRectangle *boundingBox);
@@ -83,8 +83,8 @@ Q_SIGNALS:
 
 private:
     QDeclarativeGeoAddress *m_address;
-    QDeclarativeCoordinate *m_coordinate;
     QDeclarativeGeoRectangle *m_boundingBox;
+    QGeoCoordinate m_coordinate;
 };
 
 QT_END_NAMESPACE

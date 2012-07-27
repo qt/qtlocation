@@ -65,7 +65,6 @@ public:
     tst_qmlinterface();
 
 private Q_SLOTS:
-    void testCoordinate();
     void testAddress();
     void testGeoRectangle();
     void testGeoCircle();
@@ -162,26 +161,6 @@ tst_qmlinterface::tst_qmlinterface()
     m_place.setIcon(m_icon);
     m_place.setSupplier(m_supplier);
     m_place.setVisibility(QtLocation::PrivateVisibility);
-}
-
-void tst_qmlinterface::testCoordinate()
-{
-    QQmlEngine engine;
-    QQmlComponent component(&engine, SRCDIR "data/TestCoordinate.qml");
-    QVERIFY(component.isReady());
-    QObject *qmlObject = component.create();
-
-    QGeoCoordinate coordinate = qmlObject->property("coordinate").value<QGeoCoordinate>();
-
-    QCOMPARE(coordinate, m_coordinate);
-
-    qmlObject->setProperty("coordinate", QVariant::fromValue(QGeoCoordinate()));
-
-    QVERIFY(qIsNaN(qmlObject->property("longitude").toDouble()));
-    QVERIFY(qIsNaN(qmlObject->property("latitude").toDouble()));
-    QVERIFY(qIsNaN(qmlObject->property("altitude").toDouble()));
-
-    delete qmlObject;
 }
 
 void tst_qmlinterface::testAddress()

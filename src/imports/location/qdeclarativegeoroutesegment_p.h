@@ -44,18 +44,19 @@
 
 #include "qdeclarativegeomaneuver_p.h"
 
-#include <qgeoroutesegment.h>
-
-#include <QObject>
+#include <QtCore/QObject>
+#include <QtQml/private/qv8engine_p.h>
+#include <QtLocation/QGeoRouteSegment>
 
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoRouteSegment : public QObject
 {
     Q_OBJECT
+
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
-    Q_PROPERTY(QQmlListProperty<QDeclarativeCoordinate> path READ path)
+    Q_PROPERTY(QJSValue path READ path CONSTANT)
     Q_PROPERTY(QDeclarativeGeoManeuver *maneuver READ maneuver CONSTANT)
 
 public:
@@ -65,18 +66,12 @@ public:
 
     int travelTime() const;
     qreal distance() const;
-    QQmlListProperty<QDeclarativeCoordinate> path();
+    QJSValue path() const;
     QDeclarativeGeoManeuver *maneuver() const;
 
 private:
-    static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
-    static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate *path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
-    static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
-
     QGeoRouteSegment segment_;
     QDeclarativeGeoManeuver *maneuver_;
-    QList<QDeclarativeCoordinate *> path_;
 };
 
 QT_END_NAMESPACE

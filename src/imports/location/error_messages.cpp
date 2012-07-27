@@ -59,7 +59,7 @@ const char CATEGORIES_NOT_INITIALIZED[] = QT_TRANSLATE_NOOP("QtLocationQML", "Un
 const char NOT_INSTANTIABLE_BY_DEVELOPER[] = QT_TRANSLATE_NOOP("QtLocationQML", "%1 is not intended instantiable by developer.");
 
 const char UNSUPPORTED_BOUND_TYPE[] = QT_TRANSLATE_NOOP("QtLocationQML", "Unsupported bound type (Box and Circle supported)");
-const char UNSUPPORTED_QUERY_TYPE[] = QT_TRANSLATE_NOOP("QtLocationQML", "Unsupported query type for geocode model (Coordinate, string and Address supported).");
+const char UNSUPPORTED_QUERY_TYPE[] = QT_TRANSLATE_NOOP("QtLocationQML", "Unsupported query type for geocode model (coordinate, string and Address supported).");
 const char PLUGIN_SET_ONCE[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin is a write-once property, and cannot be set again.");
 
 const char PINCH_ROTATE_GESTURE_ACTIVATED[] = QT_TRANSLATE_NOOP("QtLocationQML", "Pinchrotation gesture activated. Note that it is experimental feature.");
@@ -81,7 +81,6 @@ const char ROUTE_QUERY_NOT_SET[] = QT_TRANSLATE_NOOP("QtLocationQML", "Cannot ro
 const char ROUTE_WAYPOINTS_NOT_SET[] = QT_TRANSLATE_NOOP("QtLocationQML", "Not enough waypoints for routing.");
 
 const char CANNOT_REMOVE_AREA[] = QT_TRANSLATE_NOOP("QtLocationQML", "Cannot remove nonexistent area.");
-const char CANNOT_ADD_NULL_WAYPOINT[] = QT_TRANSLATE_NOOP("QtLocationQML", "Not adding null waypoint.");
 const char CANNOT_ADD_INVALID_WAYPOINT[] = QT_TRANSLATE_NOOP("QtLocationQML", "Not adding invalid waypoint.");
 const char CANNOT_REMOVE_WAYPOINT[] = QT_TRANSLATE_NOOP("QtLocationQML", "Cannot remove nonexistent waypoint.");
 const char COORD_NOT_BELONG_TO[] = QT_TRANSLATE_NOOP("QtLocationQML", "Coordinate does not belong to %1");

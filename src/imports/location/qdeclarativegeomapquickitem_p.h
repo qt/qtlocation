@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 class QDeclarativeGeoMapQuickItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate *coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
     Q_PROPERTY(QPointF anchorPoint READ anchorPoint WRITE setAnchorPoint NOTIFY anchorPointChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(QQuickItem *sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
@@ -65,8 +65,8 @@ public:
 
     virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
 
-    void setCoordinate(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *coordinate();
+    void setCoordinate(const QGeoCoordinate &coordinate);
+    QGeoCoordinate coordinate();
 
     void setSourceItem(QQuickItem *sourceItem);
     QQuickItem *sourceItem();
@@ -92,8 +92,7 @@ protected Q_SLOTS:
 
 private:
     qreal scaleFactor();
-    QDeclarativeCoordinate *coordinate_;
-    QDeclarativeCoordinate internalCoordinate_;
+    QGeoCoordinate coordinate_;
     QPointer<QQuickItem> sourceItem_;
     QQuickItem *opacityContainer_;
     QPointF anchorPoint_;

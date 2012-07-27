@@ -46,9 +46,9 @@
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoroutesegment_p.h"
 
-#include <qgeoroute.h>
-
-#include <QObject>
+#include <QtCore/QObject>
+#include <QtQml/private/qv8engine_p.h>
+#include <QtLocation/QGeoRoute>
 
 QT_BEGIN_NAMESPACE
 
@@ -59,7 +59,7 @@ class QDeclarativeGeoRoute : public QObject
     Q_PROPERTY(QDeclarativeGeoRectangle *bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
-    Q_PROPERTY(QQmlListProperty<QDeclarativeCoordinate> path READ path CONSTANT)
+    Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoRouteSegment> segments READ segments CONSTANT)
 
 public:
@@ -70,21 +70,19 @@ public:
     QDeclarativeGeoRectangle *bounds() const;
     int travelTime() const;
     qreal distance() const;
-    QQmlListProperty<QDeclarativeCoordinate> path();
-    QQmlListProperty<QDeclarativeGeoRouteSegment> segments();
 
-    void appendPath(QDeclarativeCoordinate *coordinate);
-    void clearPath();
+    QJSValue path() const;
+    void setPath(const QJSValue &value);
+
+    QQmlListProperty<QDeclarativeGeoRouteSegment> segments();
 
     void appendSegment(QDeclarativeGeoRouteSegment *segment);
     void clearSegments();
 
-private:
-    static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
-    static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate *path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
-    static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
+Q_SIGNALS:
+    void pathChanged();
 
+private:
     static void segments_append(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, QDeclarativeGeoRouteSegment *segment);
     static int segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
     static QDeclarativeGeoRouteSegment *segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, int index);
@@ -95,7 +93,6 @@ private:
 
     QGeoRoute route_;
     QDeclarativeGeoRectangle *bounds_;
-    QList<QDeclarativeCoordinate *> path_;
     QList<QDeclarativeGeoRouteSegment *> segments_;
     friend class QDeclarativeRouteMapItem;
 };

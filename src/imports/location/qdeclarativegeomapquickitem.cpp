@@ -162,11 +162,8 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
-    : QDeclarativeGeoMapItemBase(parent),
-      coordinate_(&internalCoordinate_),
-      zoomLevel_(0.0),
-      inUpdate_(false),
-      mapAndSourceItemSet_(false)
+:   QDeclarativeGeoMapItemBase(parent), zoomLevel_(0.0), inUpdate_(false),
+    mapAndSourceItemSet_(false)
 {
     setFlag(ItemHasContents, true);
     opacityContainer_ = new QQuickItem(this);
@@ -177,7 +174,7 @@ QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
 QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
 
 /*!
-    \qmlproperty Coordinate MapQuickItem::coordinate
+    \qmlproperty coordinate MapQuickItem::coordinate
 
     This property holds the anchor coordinate of the MapQuickItem. The point
     on the sourceItem that is specified by anchorPoint is kept aligned with
@@ -189,28 +186,12 @@ QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
 
     \image ../../../doc/src/images/api-mapquickitem-anchor.png
 */
-void QDeclarativeGeoMapQuickItem::setCoordinate(QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoMapQuickItem::setCoordinate(const QGeoCoordinate &coordinate)
 {
     if (coordinate_ == coordinate)
         return;
-    if (coordinate_)
-        coordinate_->disconnect(this);
-    coordinate_ = coordinate;
 
-    if (coordinate_) {
-        connect(coordinate_,
-                SIGNAL(latitudeChanged(double)),
-                this,
-                SLOT(updateMapItem()));
-        connect(coordinate_,
-                SIGNAL(longitudeChanged(double)),
-                this,
-                SLOT(updateMapItem()));
-        connect(coordinate_,
-                SIGNAL(altitudeChanged(double)),
-                this,
-                SLOT(updateMapItem()));
-    }
+    coordinate_ = coordinate;
 
     updateMapItem();
 
@@ -239,16 +220,14 @@ void QDeclarativeGeoMapQuickItem::dragEnded()
     if (!mapAndSourceItemSet_)
         return;
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(QPointF(x(), y()) + (scaleFactor() * anchorPoint_), false);
-    if (newCoordinate.isValid()) {
-        internalCoordinate_.setCoordinate(newCoordinate);
-        setCoordinate(&internalCoordinate_);
-    }
+    if (newCoordinate.isValid())
+        setCoordinate(newCoordinate);
 }
 
 /*!
     \internal
 */
-QDeclarativeCoordinate *QDeclarativeGeoMapQuickItem::coordinate()
+QGeoCoordinate QDeclarativeGeoMapQuickItem::coordinate()
 {
     return coordinate_;
 }
@@ -387,7 +366,7 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
     sourceItem_.data()->setPos(QPointF(0,0));
     setWidth(sourceItem_.data()->width());
     setHeight(sourceItem_.data()->height());
-    setPositionOnMap(coordinate()->coordinate(), scaleFactor() * anchorPoint_);
+    setPositionOnMap(coordinate(), scaleFactor() * anchorPoint_);
     update();
 }
 

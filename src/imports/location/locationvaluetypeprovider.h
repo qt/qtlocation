@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,10 +39,39 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.0
+#ifndef LOCATIONVALUETYPEPROVIDER_H
+#define LOCATIONVALUETYPEPROVIDER_H
 
-Coordinate {
-    longitude: 10.0
-    latitude: 20.0
-    altitude: 30.0
-}
+#include <QtQml/private/qqmlglobal_p.h>
+
+QT_BEGIN_NAMESPACE
+
+QVariant stringToCoordinate(const QString &s);
+
+class LocationValueTypeProvider : public QQmlValueTypeProvider
+{
+public:
+    LocationValueTypeProvider();
+
+private:
+    Q_DECL_OVERRIDE bool create(int type, QQmlValueType *&v);
+
+    Q_DECL_OVERRIDE bool init(int type, void *data, size_t n);
+    Q_DECL_OVERRIDE bool destroy(int type, void *data, size_t n);
+    Q_DECL_OVERRIDE bool copy(int type, const void *src, void *dst, size_t n);
+
+    Q_DECL_OVERRIDE bool create(int type, int argc, const void *argv[], QVariant *v);
+    Q_DECL_OVERRIDE bool createFromString(int type, const QString &s, void *data, size_t n);
+    Q_DECL_OVERRIDE bool createStringFrom(int type, const void *data, QString *s);
+
+    Q_DECL_OVERRIDE bool variantFromJsObject(int type, QQmlV8Handle h, QV8Engine *e, QVariant *v);
+
+    Q_DECL_OVERRIDE bool equal(int type, const void *lhs, const void *rhs, size_t n);
+    Q_DECL_OVERRIDE bool store(int type, const void *src, void *dst, size_t n);
+    Q_DECL_OVERRIDE bool read(int srcType, const void *src, size_t n, int dstType, void *dst);
+    Q_DECL_OVERRIDE bool write(int type, const void *src, void *dst, size_t n);
+};
+
+QT_END_NAMESPACE
+
+#endif // LOCATIONVALUETYPEPROVIDER_H

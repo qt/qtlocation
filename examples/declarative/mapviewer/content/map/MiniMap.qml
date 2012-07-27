@@ -70,8 +70,14 @@ Rectangle{
             color: "#44ff0000"
             border.width: 1
             border.color: "red"
-            topLeft: Coordinate{latitude: miniMap.center.latitude + 5; longitude:  miniMap.center.longitude - 5}
-            bottomRight: Coordinate{latitude: miniMap.center.latitude - 5; longitude:  miniMap.center.longitude + 5}
+            topLeft {
+                latitude: miniMap.center.latitude + 5
+                longitude: miniMap.center.longitude - 5
+            }
+            bottomRight {
+                latitude: miniMap.center.latitude - 5
+                longitude: miniMap.center.longitude + 5
+            }
         }
     }
 }

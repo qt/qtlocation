@@ -68,8 +68,8 @@ class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeCoordinate *topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
-    Q_PROPERTY(QDeclarativeCoordinate *bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
+    Q_PROPERTY(QGeoCoordinate topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
+    Q_PROPERTY(QGeoCoordinate bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border)
 
@@ -81,11 +81,11 @@ public:
     //from QuickItem
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    QDeclarativeCoordinate *topLeft();
-    void setTopLeft(QDeclarativeCoordinate *center);
+    QGeoCoordinate topLeft();
+    void setTopLeft(const QGeoCoordinate &center);
 
-    QDeclarativeCoordinate *bottomRight();
-    void setBottomRight(QDeclarativeCoordinate *center);
+    QGeoCoordinate bottomRight();
+    void setBottomRight(const QGeoCoordinate &center);
 
     QColor color() const;
     void setColor(const QColor &color);
@@ -97,8 +97,8 @@ public:
     bool contains(const QPointF &point) const;
 
 Q_SIGNALS:
-    void topLeftChanged(const QDeclarativeCoordinate *topLeft);
-    void bottomRightChanged(const QDeclarativeCoordinate *bottomRight);
+    void topLeftChanged(const QGeoCoordinate &topLeft);
+    void bottomRightChanged(const QGeoCoordinate &bottomRight);
     void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
@@ -107,10 +107,8 @@ protected Q_SLOTS:
     void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
-    QDeclarativeCoordinate *topLeft_;
-    QDeclarativeCoordinate *bottomRight_;
-    QDeclarativeCoordinate internalTopLeft_;
-    QDeclarativeCoordinate internalBottomRight_;
+    QGeoCoordinate topLeft_;
+    QGeoCoordinate bottomRight_;
     QDeclarativeMapLineProperties border_;
     QColor color_;
     bool dirtyMaterial_;

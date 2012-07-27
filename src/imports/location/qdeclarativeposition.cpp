@@ -79,7 +79,7 @@ QT_BEGIN_NAMESPACE
     See the example given for the \l{PositionSource} type, or the
     \l{declarative/flickr}{Flickr} example application.
 
-    \sa PositionSource, Coordinate
+    \sa PositionSource, QtLocation5::coordinate
 
 */
 
@@ -95,25 +95,21 @@ QDeclarativePosition::~QDeclarativePosition()
 }
 
 /*!
-    \qmlproperty Coordinate Position::coordinate
+    \qmlproperty coordinate Position::coordinate
 
-    This property holds the latitude, longitude, and altitude
-    value of the Position.
+    This property holds the latitude, longitude, and altitude value of the Position.
 
     It is a read-only property.
 
-    Note: due to its inherent changing nature, the coordinateChanged()
-    signal is emitted also when the values of the coordinate change,
-    which enables easier data binding to Coordinate objects instead of
-    directly connecting to for example its latitude and longitude.
-
     \sa longitudeValid, latitudeValid, altitudeValid
-
 */
 
 void QDeclarativePosition::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    m_coordinate.setCoordinate(coordinate);
+    if (m_coordinate == coordinate)
+        return;
+
+    m_coordinate = coordinate;
 
     if (coordinate.type() == QGeoCoordinate::Coordinate3D && !m_altitudeValid) {
         m_altitudeValid = true;
@@ -144,9 +140,9 @@ void QDeclarativePosition::setCoordinate(const QGeoCoordinate &coordinate)
     emit coordinateChanged();
 }
 
-QDeclarativeCoordinate *QDeclarativePosition::coordinate()
+QGeoCoordinate QDeclarativePosition::coordinate()
 {
-    return &m_coordinate;
+    return m_coordinate;
 }
 
 /*!

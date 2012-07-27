@@ -43,9 +43,12 @@
 #include "qgeocameracapabilities_p.h"
 #include "qlocationutils_p.h"
 #include "error_messages.h"
+#include "locationvaluetypeprovider.h"
 
 #include <QtGui/private/qtriangulator_p.h>
 #include <QtQml/QQmlInfo>
+#include <QtQml/QQmlContext>
+#include <QtQml/private/qqmlengine_p.h>
 #include <QPainter>
 #include <QPainterPath>
 #include <qnumeric.h>
@@ -65,14 +68,22 @@ QT_BEGIN_NAMESPACE
 
     \brief The MapPolygon type displays a polygon on a Map
 
-    The MapPolygon type displays a polygon on a Map, specified in terms of
-    an ordered list of \l Coordinate objects. For best appearance and results,
-    polygons should be simple (not self-intersecting).
+    The MapPolygon type displays a polygon on a Map, specified in terms of an ordered list of
+    \l {QtLocation5::coordinate}{coordinates}. For best appearance and results, polygons should be
+    simple (not self-intersecting).
 
-    The Coordinate objects on the path can be changed after being added to
-    the Polygon, and these changes will be reflected in the next frame on the
-    display. Coordinates can also be added and removed at any time using
-    the \l addCoordinate and \l removeCoordinate methods.
+    The \l {QtLocation5::coordinate}{coordinates} on the path cannot be directly changed after
+    being added to the Polygon.  Instead, copy the \l path into a var, modify the copy and reassign
+    the copy back to the \l path.
+
+    \code
+    var path = mapPolygon.path;
+    path[0].latitude = 5;
+    mapPolygon.path = path;
+    \endcode
+
+    Coordinates can also be added and removed at any time using the \l addCoordinate and
+    \l removeCoordinate methods.
 
     For drawing rectangles with "straight" edges (same latitude across one
     edge, same latitude across the other), the \l MapRectangle type provides
@@ -113,9 +124,9 @@ QT_BEGIN_NAMESPACE
         MapPolygon {
             color: 'green'
             path: [
-                Coordinate { latitude: -27; longitude: 153.0 },
-                Coordinate { latitude: -27; longitude: 154.1 },
-                Coordinate { latitude: -28; longitude: 153.5 }
+                { latitude: -27, longitude: 153.0 },
+                { latitude: -27, longitude: 154.1 },
+                { latitude: -28, longitude: 153.5 }
             ]
         }
     }
@@ -326,37 +337,6 @@ void QDeclarativePolygonMapItem::handleBorderUpdated()
     updateMapItem();
 }
 
-/*!
-    \internal
-*/
-void QDeclarativePolygonMapItem::updateAfterCoordinateChanged()
-{
-    QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate *>(QObject::sender());
-    if (coord) {
-        // TODO: maybe use a QHash instead of indexOf here?
-        int idx = this->coordPath_.indexOf(coord);
-        this->path_.replace(idx, coord->coordinate());
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-        this->updateMapItem();
-    }
-}
-
-/*!
-    \internal
-*/
-void QDeclarativePolygonMapItem::coordinateDestroyed(QDeclarativeCoordinate *coord)
-{
-    // tmp workaround for handling null pointers caused by external deletion of
-    // the declarative coordinate. This slot and its calls can be safely removed
-    // once QTBUG-25636 is fixed
-    if (coord) {
-        int idx = this->coordPath_.indexOf(coord);
-        if ( idx >= 0 )
-            coordPath_.replace(idx, new QDeclarativeCoordinate(coord->coordinate(), this));
-    }
-}
-
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
 {
 }
@@ -391,91 +371,69 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
 }
 
 /*!
-    \qmlproperty list<Coordinate> MapPolygon::path
+    \qmlproperty list<coordinate> MapPolygon::path
 
     This property holds the ordered list of coordinates which
     define the polygon.
 
     \sa addCoordinate, removeCoordinate
 */
-QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
+QJSValue QDeclarativePolygonMapItem::path() const
 {
-    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
-                                                    path_at, path_clear);
+    QQmlContext *context = QQmlEngine::contextForObject(parent());
+    QQmlEngine *engine = context->engine();
+    QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
+    QV8ValueTypeWrapper *valueTypeWrapper = v8Engine->valueTypeWrapper();
+
+    v8::Local<v8::Array> pathArray = v8::Array::New(path_.length());
+    for (int i = 0; i < path_.length(); ++i) {
+        const QGeoCoordinate &c = path_.at(i);
+
+        QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
+        v8::Local<v8::Object> cv = valueTypeWrapper->newValueType(QVariant::fromValue(c), vt);
+
+        pathArray->Set(i, cv);
+    }
+
+    return v8Engine->scriptValueFromInternal(pathArray);
 }
 
-/*!
-    \internal
-*/
-void QDeclarativePolygonMapItem::path_append(
-        QQmlListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
+void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 {
-    QDeclarativePolygonMapItem *item = qobject_cast<QDeclarativePolygonMapItem *>(property->object);
-    item->coordPath_.append(coordinate);
-    item->path_.append(coordinate->coordinate());
+    if (!value.isArray())
+        return;
 
-    QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                     item, SLOT(updateAfterCoordinateChanged()));
-    QObject::connect(coordinate, SIGNAL(destroyed(QDeclarativeCoordinate *)),
-                     item, SLOT(coordinateDestroyed(QDeclarativeCoordinate *)));
-    item->geometry_.markSourceDirty();
-    item->borderGeometry_.markSourceDirty();
-    item->updateMapItem();
-    emit item->pathChanged();
-}
+    QList<QGeoCoordinate> pathList;
+    quint32 length = value.property(QStringLiteral("length")).toUInt();
+    for (quint32 i = 0; i < length; ++i) {
+        QJSValue v = value.property(i);
 
-/*!
-    \internal
-*/
-int QDeclarativePolygonMapItem::path_count(
-        QQmlListProperty<QDeclarativeCoordinate> *property)
-{
-    return qobject_cast<QDeclarativePolygonMapItem *>(property->object)->coordPath_.count();
-}
+        QGeoCoordinate c;
 
-/*!
-    \internal
-*/
-QDeclarativeCoordinate *QDeclarativePolygonMapItem::path_at(
-        QQmlListProperty<QDeclarativeCoordinate> *property, int index)
-{
-    return qobject_cast<QDeclarativePolygonMapItem *>(property->object)->coordPath_.at(index);
-}
+        if (v.isObject()) {
+            if (v.hasProperty(QStringLiteral("latitude")))
+                c.setLatitude(v.property(QStringLiteral("latitude")).toNumber());
+            if (v.hasProperty(QStringLiteral("longitude")))
+                c.setLongitude(v.property(QStringLiteral("longitude")).toNumber());
+            if (v.hasProperty(QStringLiteral("altitude")))
+                c.setAltitude(v.property(QStringLiteral("altitude")).toNumber());
+        } else if (v.isString()) {
+            c = stringToCoordinate(v.toString()).value<QGeoCoordinate>();
+        }
 
-/*!
-    \internal
-*/
-void QDeclarativePolygonMapItem::path_clear(
-        QQmlListProperty<QDeclarativeCoordinate> *property)
-{
-    QDeclarativePolygonMapItem *item = qobject_cast<QDeclarativePolygonMapItem *>(
-                property->object);
-    qDeleteAll(item->coordPath_);
-    item->coordPath_.clear();
-    item->path_.clear();
-    item->geometry_.markSourceDirty();
-    item->borderGeometry_.markSourceDirty();
-    item->updateMapItem();
-    emit item->pathChanged();
-}
+        if (!c.isValid()) {
+            qmlInfo(this) << "Unsupported path type";
+            return;
+        }
 
-/*!
-    \qmlmethod MapPolygon::addCoordinate(Coordinate)
+        pathList.append(c);
+    }
 
-    Adds a coordinate to the path.
+    if (path_ == pathList)
+        return;
 
-    \sa removeCoordinate, path
-*/
+    path_ = pathList;
 
-void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate *coordinate)
-{
-    coordPath_.append(coordinate);
-    path_.append(coordinate->coordinate());
-
-    QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                     this, SLOT(updateAfterCoordinateChanged()));
-    QObject::connect(coordinate, SIGNAL(destroyed(QDeclarativeCoordinate *)),
-                     this, SLOT(coordinateDestroyed(QDeclarativeCoordinate *)));
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     updateMapItem();
@@ -483,7 +441,25 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate *coordinat
 }
 
 /*!
-    \qmlmethod MapPolygon::removeCoordinate(Coordinate)
+    \qmlmethod MapPolygon::addCoordinate(coordinate)
+
+    Adds a coordinate to the path.
+
+    \sa removeCoordinate, path
+*/
+
+void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
+{
+    path_.append(coordinate);
+
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
+    updateMapItem();
+    emit pathChanged();
+}
+
+/*!
+    \qmlmethod MapPolygon::removeCoordinate(coordinate)
 
     Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
@@ -492,9 +468,9 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate *coordinat
 
 */
 
-void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate *coordinate)
+void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordinate)
 {
-    int index = coordPath_.lastIndexOf(coordinate);
+    int index = path_.lastIndexOf(coordinate);
 
     if (index == -1) {
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolygonMapItem");
@@ -505,11 +481,8 @@ void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate *coordi
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolygonMapItem");
         return;
     }
-    coordPath_.removeAt(index);
     path_.removeAt(index);
 
-    QObject::disconnect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                        this, SLOT(updateAfterCoordinateChanged()));
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     updateMapItem();
@@ -680,13 +653,7 @@ void QDeclarativePolygonMapItem::dragEnded()
             coord.setLatitude(coord.latitude()
                               + newCoordinate.latitude() - firstLatitude - offsetLatitude);
 
-            // temporarily disconnect signals to avoid unecessary screen updates for each coordinate
-            QObject::disconnect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
-                                this, SLOT(updateAfterCoordinateChanged()));
-            this->coordPath_.at(i)->setCoordinate(coord);
-            this->path_.replace(i, coordPath_.at(i)->coordinate());
-            QObject::connect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
-                                this, SLOT(updateAfterCoordinateChanged()));
+            path_.replace(i, coord);
         }
 
         QGeoCoordinate leftBoundCoord = geometry_.geoLeftBound();

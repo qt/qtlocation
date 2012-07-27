@@ -44,9 +44,9 @@ import QtTest 1.0
 import QtLocation 5.0
 
 Item {
-    Coordinate{ id: coordinate1; latitude: 1; longitude: 1}
-    Coordinate{ id: coordinate2; latitude: 2; longitude: 2}
-    Coordinate{ id: coordinate3; latitude: 80; longitude: 80}
+    property variant coordinate1: QtLocation.coordinate(1, 1)
+    property variant coordinate2: QtLocation.coordinate(2, 2)
+    property variant coordinate3: QtLocation.coordinate(80, 80)
 
     GeoCircle { id: emptyCircle }
     GeoCircle { id: circle1; center: coordinate1; radius: 200000 }
@@ -82,32 +82,33 @@ Item {
     }
 
     // coordinate unit square
-    Coordinate{ id: bottomLeft; latitude: 0; longitude: 0}
-    Coordinate{ id: topLeft; latitude: 1; longitude: 0}
-    Coordinate{ id: topRight; latitude: 1; longitude: 1}
-    Coordinate{ id: bottomRight; latitude: 0; longitude: 1}
-    Coordinate{ id: newTopRight; latitude: 3; longitude: 3}
+    property variant bl: QtLocation.coordinate(0, 0)
+    property variant tl: QtLocation.coordinate(1, 0)
+    property variant tr: QtLocation.coordinate(1, 1)
+    property variant br: QtLocation.coordinate(0, 1)
+    property variant ntr: QtLocation.coordinate(3, 3)
 
-    Coordinate{ id: inside; latitude: 0.5; longitude: 0.5}
-    Coordinate{ id: outside; latitude: 2; longitude: 2}
+    property variant inside: QtLocation.coordinate(0.5, 0.5)
+    property variant outside: QtLocation.coordinate(2, 2)
 
     GeoRectangle {
         id: box;
-        bottomLeft: bottomLeft;
-        topLeft: topLeft;
-        topRight: topRight;
-        bottomRight: bottomRight}
+        bottomLeft: bl
+        topLeft: tl
+        topRight: tr
+        bottomRight: br
+    }
 
     // C++ auto test exists for basics of bounding box, testing here
     // only added functionality
     TestCase {
         name: "Bounding box"
         function test_box_defaults_and_setters() {
-            compare (box.bottomRight.longitude, bottomRight.longitude) // sanity
-            compare (box.contains(bottomLeft), true)
+            compare (box.bottomRight.longitude, br.longitude) // sanity
+            compare (box.contains(bl), true)
             compare (box.contains(inside), true)
             compare (box.contains(outside), false)
-            box.topRight = newTopRight
+            box.topRight = ntr
             compare (box.contains(outside), true)
         }
     }

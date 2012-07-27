@@ -117,7 +117,6 @@ QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject *parent)
       boundingArea_(0),
       status_(QDeclarativeGeocodeModel::Null),
       error_(QDeclarativeGeocodeModel::NoError),
-      coordinate_(0),
       address_(0),
       limit_(-1),
       offset_(0)
@@ -181,9 +180,8 @@ void QDeclarativeGeocodeModel::update()
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, GEOCODE_MGR_NOT_SET);
         return;
     }
-    if ((!coordinate_ || !coordinate_->coordinate().isValid()) &&
-            (!address_ || address_->address().isEmpty()) &&
-            (searchString_.isEmpty())) {
+    if (!coordinate_.isValid() && (!address_ || address_->address().isEmpty()) &&
+        (searchString_.isEmpty())) {
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, GEOCODE_QUERY_NOT_SET);
         return;
     }
@@ -191,9 +189,9 @@ void QDeclarativeGeocodeModel::update()
     setErrorString("");   // clear previous error string
     setError(NoError);
 
-    if (coordinate_) {
+    if (coordinate_.isValid()) {
         setStatus(QDeclarativeGeocodeModel::Loading);
-        reply_ = geocodingManager->reverseGeocode(coordinate_->coordinate(), boundingArea());
+        reply_ = geocodingManager->reverseGeocode(coordinate_, boundingArea());
         if (reply_->isFinished()) {
             if (reply_->error() == QGeocodeReply::NoError) {
                 geocodeFinished(reply_);
@@ -631,7 +629,7 @@ void QDeclarativeGeocodeModel::cancel()
 
     \list
     \li Address - Geocoding (address to coordinate)
-    \li Coordinate - Reverse geocoding (coordinate to address)
+    \li \l {QtLocation5::coordinate}{coordinate} - Reverse geocoding (coordinate to address)
     \li string - Geocoding (address to coordinate)
     \endlist
 */
@@ -645,46 +643,47 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
 {
     if (query == queryVariant_)
         return;
-    QObject *object = qvariant_cast<QObject *>(query);
-    if (qobject_cast<QDeclarativeCoordinate *>(object)) {
-        if (coordinate_)
-            coordinate_->disconnect(this);
-        if (address_)
+
+    if (query.userType() == qMetaTypeId<QGeoCoordinate>()) {
+        if (address_) {
             address_->disconnect(this);
-        coordinate_ = qobject_cast<QDeclarativeCoordinate *>(object);
-        connect(coordinate_, SIGNAL(latitudeChanged(double)), this, SLOT(queryContentChanged()));
-        connect(coordinate_, SIGNAL(longitudeChanged(double)), this, SLOT(queryContentChanged()));
-        connect(coordinate_, SIGNAL(altitudeChanged(double)), this, SLOT(queryContentChanged()));
-        address_ = 0;
+            address_ = 0;
+        }
         searchString_.clear();
-    } else if (qobject_cast<QDeclarativeGeoAddress *>(object)) {
-        if (address_)
-            address_->disconnect(this);
-        if (coordinate_)
-            coordinate_->disconnect(this);
-        address_ = qobject_cast<QDeclarativeGeoAddress *>(object);
-        connect(address_, SIGNAL(countryChanged()), this, SLOT(queryContentChanged()));
-        connect(address_, SIGNAL(countryCodeChanged()), this, SLOT(queryContentChanged()));
-        connect(address_, SIGNAL(stateChanged()), this, SLOT(queryContentChanged()));
-        connect(address_, SIGNAL(countyChanged()), this, SLOT(queryContentChanged()));
-        connect(address_, SIGNAL(cityChanged()), this, SLOT(queryContentChanged()));
-        connect(address_, SIGNAL(districtChanged()), this, SLOT(queryContentChanged()));
-        connect(address_, SIGNAL(streetChanged()), this, SLOT(queryContentChanged()));
-        connect(address_, SIGNAL(postalCodeChanged()), this, SLOT(queryContentChanged()));
-        coordinate_ = 0;
-        searchString_.clear();
+
+        coordinate_ = query.value<QGeoCoordinate>();
     } else if (query.type() == QVariant::String) {
         searchString_ = query.toString();
-        if (address_)
+        if (address_) {
             address_->disconnect(this);
-        if (coordinate_)
-            coordinate_->disconnect(this);
-        address_ = 0;
-        coordinate_ = 0;
+            address_ = 0;
+        }
+        coordinate_ = QGeoCoordinate();
+    } else if (QObject *object = query.value<QObject *>()) {
+        if (QDeclarativeGeoAddress *address = qobject_cast<QDeclarativeGeoAddress *>(object)) {
+            if (address_)
+                address_->disconnect(this);
+            coordinate_ = QGeoCoordinate();
+            searchString_.clear();
+
+            address_ = address;
+            connect(address_, SIGNAL(countryChanged()), this, SLOT(queryContentChanged()));
+            connect(address_, SIGNAL(countryCodeChanged()), this, SLOT(queryContentChanged()));
+            connect(address_, SIGNAL(stateChanged()), this, SLOT(queryContentChanged()));
+            connect(address_, SIGNAL(countyChanged()), this, SLOT(queryContentChanged()));
+            connect(address_, SIGNAL(cityChanged()), this, SLOT(queryContentChanged()));
+            connect(address_, SIGNAL(districtChanged()), this, SLOT(queryContentChanged()));
+            connect(address_, SIGNAL(streetChanged()), this, SLOT(queryContentChanged()));
+            connect(address_, SIGNAL(postalCodeChanged()), this, SLOT(queryContentChanged()));
+        } else {
+            qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, UNSUPPORTED_QUERY_TYPE);
+            return;
+        }
     } else {
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, UNSUPPORTED_QUERY_TYPE);
         return;
     }
+
     queryVariant_ = query;
     emit queryChanged();
     if (autoUpdate_)
@@ -698,11 +697,11 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
     to changes in its attached query. The default value of this property
     is false.
 
-    If setting this value to 'true' and using an Address or Coordinate type
-    as the query, note that any change at all in the object's properties will
-    trigger a new request to be sent. If you are adjusting many properties of
-    the object whilst autoUpdate is enabled, this can generate large numbers
-    of useless (and later discarded) requests.
+    If setting this value to 'true' and using an Address or
+    \l {QtLocation5::coordinate}{coordinate} as the query, note that any change at all in the
+    object's properties will trigger a new request to be sent. If you are adjusting many
+    properties of the object whilst autoUpdate is enabled, this can generate large numbers of
+    useless (and later discarded) requests.
 */
 
 bool QDeclarativeGeocodeModel::autoUpdate() const

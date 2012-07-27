@@ -45,19 +45,17 @@ import QtLocation.examples 5.0
 Map {
     id: map
     zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
-    center: brisbaneCoordinate
+    center {
+        // Brisbane
+        latitude: -27.5
+        longitude: 153
+    }
 
     gesture.flickDeceleration: 3000
     gesture.enabled: true
 
     property bool followme: false
     property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
-
-    Coordinate {
-        id: brisbaneCoordinate
-        latitude: -27.5
-        longitude: 153
-    }
 
     PositionSource{
         id: positionSource

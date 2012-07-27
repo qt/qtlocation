@@ -41,6 +41,10 @@
 
 #include "qdeclarativegeoroutesegment_p.h"
 
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlContext>
+#include <QtQml/private/qqmlengine_p.h>
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -86,9 +90,6 @@ QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(const QGeoRouteSegment 
       segment_(segment)
 {
     maneuver_ = new QDeclarativeGeoManeuver(segment_.maneuver(), this);
-
-    for (int i = 0; i < segment_.path().size(); ++i)
-        path_.append(new QDeclarativeCoordinate(segment_.path().at(i), this));
 }
 
 QDeclarativeGeoRouteSegment::~QDeclarativeGeoRouteSegment() {}
@@ -133,7 +134,7 @@ QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
 }
 
 /*!
-    \qmlproperty QQmlListProperty<Coordinate> QtLocation5::RouteSegment::path
+    \qmlproperty QJSValue QtLocation5::RouteSegment::path
 
     Read-only property which holds the geographical coordinates of this segment.
     Coordinates are listed in the order in which they would be traversed by someone
@@ -143,34 +144,27 @@ QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
     indicates the number of objects and 'path[index starting from zero]' gives
     the actual object.
 
-    \sa Coordinate
+    \sa QtLocation5::coordinate
 */
 
-QQmlListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteSegment::path()
+QJSValue QDeclarativeGeoRouteSegment::path() const
 {
-    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
-                                                    path_at, path_clear);
-}
+    QQmlContext *context = QQmlEngine::contextForObject(parent());
+    QQmlEngine *engine = context->engine();
+    QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
+    QV8ValueTypeWrapper *valueTypeWrapper = v8Engine->valueTypeWrapper();
 
-void QDeclarativeGeoRouteSegment::path_append(QQmlListProperty<QDeclarativeCoordinate> *prop,
-                                              QDeclarativeCoordinate *coordinate)
-{
-    static_cast<QDeclarativeGeoRouteSegment *>(prop->object)->path_.append(coordinate);
-}
+    v8::Local<v8::Array> pathArray = v8::Array::New(segment_.path().length());
+    for (int i = 0; i < segment_.path().length(); ++i) {
+        const QGeoCoordinate &c = segment_.path().at(i);
 
-int QDeclarativeGeoRouteSegment::path_count(QQmlListProperty<QDeclarativeCoordinate> *prop)
-{
-    return static_cast<QDeclarativeGeoRouteSegment *>(prop->object)->path_.count();
-}
+        QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
+        v8::Local<v8::Object> cv = valueTypeWrapper->newValueType(QVariant::fromValue(c), vt);
 
-QDeclarativeCoordinate *QDeclarativeGeoRouteSegment::path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index)
-{
-    return static_cast<QDeclarativeGeoRouteSegment *>(prop->object)->path_.at(index);
-}
+        pathArray->Set(i, cv);
+    }
 
-void QDeclarativeGeoRouteSegment::path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop)
-{
-    static_cast<QDeclarativeGeoRouteSegment *>(prop->object)->path_.clear();
+    return v8Engine->scriptValueFromInternal(pathArray);
 }
 
 #include "moc_qdeclarativegeoroutesegment_p.cpp"

@@ -50,18 +50,19 @@ Item {
     width: 240
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
-    Coordinate{ id: mapDefaultCenter; latitude: 20; longitude: 20}
 
-    Coordinate{ id: datelineCoordinate; latitude: 20; longitude: 180}
-    Coordinate{ id: datelineCoordinateLeft; latitude: 20; longitude: 170}
-    Coordinate{ id: datelineCoordinateRight; latitude: 20; longitude: -170}
+    property variant mapDefaultCenter: QtLocation.coordinate(20, 20)
+
+    property variant datelineCoordinate: QtLocation.coordinate(20, 180)
+    property variant datelineCoordinateLeft: QtLocation.coordinate(20, 170)
+    property variant datelineCoordinateRight: QtLocation.coordinate(20, -170)
 
     MapPolygon {
         id: extMapPolygon
         color: 'darkgrey'
         path: [
-            Coordinate { latitude: 25; longitude: 5},
-            Coordinate { latitude: 20; longitude: 10}
+            { latitude: 25, longitude: 5 },
+            { latitude: 20, longitude: 10 }
         ]
         MapMouseArea {
             anchors.fill: parent
@@ -73,7 +74,8 @@ Item {
         SignalSpy {id: extMapPolygonBorderWidthChanged; target: parent.border; signalName: "widthChanged"}
         SignalSpy {id: extMapPolygonBorderColorChanged; target: parent.border; signalName: "colorChanged"}
     }
-    Coordinate { id: polyCoordinate; latitude: 15; longitude: 6}
+
+    property variant polyCoordinate: QtLocation.coordinate(15, 6)
 
     MapPolygon {
         id: extMapPolygon0
@@ -87,8 +89,8 @@ Item {
     MapPolyline {
         id: extMapPolyline
         path: [
-            Coordinate { latitude: 25; longitude: 5},
-            Coordinate { latitude: 20; longitude: 10}
+            { latitude: 25, longitude: 5 },
+            { latitude: 20, longitude: 10 }
         ]
         SignalSpy {id: extMapPolylineColorChanged; target: parent.line; signalName: "colorChanged"}
         SignalSpy {id: extMapPolylineWidthChanged; target: parent.line; signalName: "widthChanged"}
@@ -98,8 +100,14 @@ Item {
     MapRectangle {
         id: extMapRectDateline
         color: 'darkcyan'
-        topLeft: Coordinate { latitude: 20; longitude: 175}
-        bottomRight: Coordinate { latitude: 10; longitude: -175}
+        topLeft {
+            latitude: 20
+            longitude: 175
+        }
+        bottomRight {
+            latitude: 10
+            longitude: -175
+        }
         MapMouseArea {
             anchors.fill: parent
             drag.target: parent
@@ -109,7 +117,10 @@ Item {
     MapCircle {
         id: extMapCircleDateline
         color: 'darkmagenta'
-        center: Coordinate { latitude: 20; longitude: 180}
+        center {
+            latitude: 20
+            longitude: 180
+        }
         radius: 400000
         MapMouseArea {
             anchors.fill: parent
@@ -123,7 +134,10 @@ Item {
             anchors.fill: parent
             drag.target: parent
         }
-        coordinate: Coordinate { latitude: 20; longitude: 175}
+        coordinate {
+            latitude: 20
+            longitude: 175
+        }
         sourceItem: Rectangle {
             color: 'darkgreen'
             width: 20
@@ -135,10 +149,10 @@ Item {
         id: extMapPolygonDateline
         color: 'darkmagenta'
         path: [
-            Coordinate { latitude: 20; longitude: 175},
-            Coordinate { latitude: 20; longitude: -175},
-            Coordinate { latitude: 10; longitude: -175},
-            Coordinate { latitude: 10; longitude: 175}
+            { latitude: 20, longitude: 175 },
+            { latitude: 20, longitude: -175 },
+            { latitude: 10, longitude: -175 },
+            { latitude: 10, longitude: 175 }
         ]
         MapMouseArea {
             anchors.fill: parent
@@ -150,8 +164,8 @@ Item {
         id: extMapPolylineDateline
         line.width : 3
         path: [
-            Coordinate { latitude: 20; longitude: 175},
-            Coordinate { latitude: 25; longitude: -175}
+            { latitude: 20, longitude: 175 },
+            { latitude: 25, longitude: -175 }
         ]
         MapMouseArea {
             anchors.fill: parent
@@ -164,8 +178,8 @@ Item {
         line.color: 'yellow'
         route: Route {
             path: [
-                Coordinate { latitude: 25; longitude: 175},
-                Coordinate { latitude: 20; longitude: -175}
+                { latitude: 25, longitude: 175 },
+                { latitude: 20, longitude: -175 }
             ]
         }
     }
@@ -173,8 +187,14 @@ Item {
     MapRectangle {
         id: extMapRectEdge
         color: 'darkcyan'
-        topLeft: Coordinate { latitude: 20; longitude: -15}
-        bottomRight: Coordinate { latitude: 10; longitude: -5}
+        topLeft {
+            latitude: 20
+            longitude: -15
+        }
+        bottomRight {
+            latitude: 10
+            longitude: -5
+        }
         MapMouseArea {
             anchors.fill: parent
             drag.target: parent
@@ -184,7 +204,10 @@ Item {
     MapCircle {
         id: extMapCircleEdge
         color: 'darkmagenta'
-        center: Coordinate { latitude: 20; longitude: -15}
+        center {
+            latitude: 20
+            longitude: -15
+        }
         radius: 400000
         MapMouseArea {
             anchors.fill: parent
@@ -198,7 +221,10 @@ Item {
             anchors.fill: parent
             drag.target: parent
         }
-        coordinate: Coordinate { latitude: 20; longitude: -15}
+        coordinate {
+            latitude: 20
+            longitude: -15
+        }
         sourceItem: Rectangle {
             color: 'darkgreen'
             width: 20
@@ -210,10 +236,10 @@ Item {
         id: extMapPolygonEdge
         color: 'darkmagenta'
         path: [
-            Coordinate { latitude: 20; longitude: -15},
-            Coordinate { latitude: 20; longitude: -5},
-            Coordinate { latitude: 10; longitude: -5},
-            Coordinate { latitude: 10; longitude: -15}
+            { latitude: 20, longitude: -15 },
+            { latitude: 20, longitude: -5 },
+            { latitude: 10, longitude: -5 },
+            { latitude: 10, longitude: -15 }
         ]
         MapMouseArea {
             anchors.fill: parent
@@ -225,8 +251,8 @@ Item {
         id: extMapPolylineEdge
         line.width : 3
         path: [
-            Coordinate { latitude: 20; longitude: -15},
-            Coordinate { latitude: 25; longitude: -5}
+            { latitude: 20, longitude: -15 },
+            { latitude: 25, longitude: -5 }
         ]
         MapMouseArea {
             anchors.fill: parent
@@ -239,8 +265,8 @@ Item {
         line.color: 'yellow'
         route: Route {
             path: [
-                Coordinate { latitude: 25; longitude: -15},
-                Coordinate { latitude: 20; longitude: -5}
+                { latitude: 25, longitude: -15 },
+                { latitude: 20, longitude: -5 }
             ]
         }
     }
@@ -475,14 +501,18 @@ Item {
             extMapPolygonDateline.path[2].longitude = datelineCoordinateRight.longitude
             point = map.toScreenPosition(extMapPolygonDateline.path[2])
             verify(point.x > map.width / 2.0)
-            extMapPolygonDateline.path[0].longitude = datelineCoordinate.longitude
+            var path = extMapPolygonDateline.path;
+            path[0].longitude = datelineCoordinate.longitude;
+            extMapPolygonDateline.path = path;
             point = map.toScreenPosition(extMapPolygonDateline.path[0])
             verify(point.x == map.width / 2.0)
-            extMapPolygonDateline.path[3].longitude = datelineCoordinate.longitude
+            path = extMapPolygonDateline.path;
+            path[3].longitude = datelineCoordinate.longitude;
+            extMapPolygonDateline.path = path;
             point = map.toScreenPosition(extMapPolygonDateline.path[3])
             verify(point.x == map.width / 2.0)
             mousePress(map, point.x + 5, point.y - 5)
-            for (i=0; i < 20; i += 2) {
+            for (i=0; i < 16; i += 2) {
                 wait(1)
                 mouseMove(map, point.x + 5 - i, point.y - 5 )
             }
@@ -508,7 +538,9 @@ Item {
             extMapPolylineDateline.path[1].longitude = datelineCoordinateRight.longitude
             point = map.toScreenPosition(extMapPolylineDateline.path[1])
             verify(point.x > map.width / 2.0)
-            extMapPolylineDateline.path[0].longitude = datelineCoordinate.longitude
+            var path = extMapPolygonDateline.path;
+            path[0].longitude = datelineCoordinate.longitude;
+            extMapPolylineDateline.path = path;
             point = map.toScreenPosition(extMapPolylineDateline.path[0])
             verify(point.x == map.width / 2.0)
             map.removeMapItem(extMapPolylineDateline)

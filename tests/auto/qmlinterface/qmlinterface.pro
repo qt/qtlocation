@@ -20,7 +20,6 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 OTHER_FILES += \
     data/TestCategory.qml \
-    data/TestCoordinate.qml \
     data/TestAddress.qml \
     data/TestLocation.qml \
     data/TestPlace.qml \

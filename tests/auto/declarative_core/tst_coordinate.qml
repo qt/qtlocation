@@ -44,44 +44,44 @@ import QtTest 1.0
 import QtLocation 5.0
 
 Item {
-    Coordinate { id: empty }
-    Coordinate { id: base; longitude: 1.0; latitude: 1.0; altitude: 5.0 }
-    Coordinate { id: zero; longitude: 0; latitude: 0 }
-    Coordinate { id: plusone; longitude: 1; latitude: 0 }
-    Coordinate { id: minusone; longitude: -1; latitude: 0 }
-    Coordinate { id: north; longitude: 0; latitude: 3 }
+    id: item
 
-    SignalSpy { id: validitySpy; target: empty; signalName: "validityChanged" }
-    SignalSpy { id: longSpy; target: base; signalName: "longitudeChanged" }
-    SignalSpy { id: latSpy; target: base; signalName: "latitudeChanged" }
-    SignalSpy { id: coordSpy; target: base; signalName: "coordinateChanged" }
-    SignalSpy { id: altSpy; target: base; signalName: "altitudeChanged" }
+    property variant empty: QtLocation.coordinate()
+    property variant base: QtLocation.coordinate(1.0, 1.0, 5.0)
+    property variant zero: QtLocation.coordinate(0, 0)
+    property variant plusone: QtLocation.coordinate(0, 1)
+    property variant minusone: QtLocation.coordinate(0, -1)
+    property variant north: QtLocation.coordinate(3, 0)
+
+    SignalSpy { id: coordSpy; target: item; signalName: "baseChanged" }
 
     TestCase {
         name: "Coordinate"
 
         function test_validity() {
             compare(empty.isValid, false)
-            empty.longitude = 0.0
-            empty.latitude = 0.0
+
+            empty.longitude = 0.0;
+            empty.latitude = 0.0;
+
             compare(empty.isValid, true)
-            compare(validitySpy.count, 1)
         }
 
         function test_accessors() {
             compare(base.longitude, 1.0)
             compare(base.latitude, 1.0)
             compare(base.altitude, 5.0)
-            base.longitude = 2.0
-            base.latitude = 3.0
-            base.altitude = 5.0
+
+            coordSpy.clear();
+
+            base.longitude = 2.0;
+            base.latitude = 3.0;
+            base.altitude = 6.0;
+
             compare(base.longitude, 2.0)
             compare(base.latitude, 3.0)
-            compare(base.altitude, 5.0)
-            compare(longSpy.count, 1)
-            compare(latSpy.count, 1)
-            compare(altSpy.count, 0)
-            compare(coordSpy.count, 2)
+            compare(base.altitude, 6.0)
+            compare(coordSpy.count, 3)
         }
 
         function test_distance() {

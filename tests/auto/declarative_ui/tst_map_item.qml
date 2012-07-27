@@ -74,21 +74,26 @@ Item {
     width: 240
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
-    Coordinate{ id: mapDefaultCenter; latitude: 20; longitude: 20}
-    Coordinate{ id: someCoordinate1; latitude: 15; longitude: 15}
-    Coordinate{ id: someCoordinate2; latitude: 16; longitude: 16}
+
+    property variant mapDefaultCenter: QtLocation.coordinate(20, 20)
+    property variant someCoordinate1: QtLocation.coordinate(15, 15)
+    property variant someCoordinate2: QtLocation.coordinate(16, 16)
+
     Route { id: someRoute;
         path: [
-            Coordinate { latitude: 22; longitude: 15},
-            Coordinate { latitude: 21; longitude: 16},
-            Coordinate { latitude: 23; longitude: 17}
+            { latitude: 22, longitude: 15 },
+            { latitude: 21, longitude: 16 },
+            { latitude: 23, longitude: 17 }
         ]
     }
     Item { id: someItem }
 
     MapCircle {
         id: extMapCircle
-        center: Coordinate { latitude: 35; longitude: 15}
+        center {
+            latitude: 35
+            longitude: 15
+        }
         color: 'firebrick'
         radius: 600000
         MapMouseArea {
@@ -104,7 +109,10 @@ Item {
             anchors.fill: parent
             SignalSpy { id: extMapQuickItemClicked; target: parent; signalName: "clicked" }
         }
-        coordinate: Coordinate { latitude: 35; longitude: 33}
+        coordinate {
+            latitude: 35
+            longitude: 33
+        }
         sourceItem: Rectangle {
             color: 'darkblue'
             width: 40
@@ -123,8 +131,14 @@ Item {
             id: preMapRect
             color: 'darkcyan'
             border.width: 0
-            topLeft: Coordinate { latitude: 20; longitude: 20}
-            bottomRight: Coordinate { latitude: 10; longitude: 30}
+            topLeft {
+                latitude: 20
+                longitude: 20
+            }
+            bottomRight {
+                latitude: 10
+                longitude: 30
+            }
             MapMouseArea {
                 id: preMapRectMa
                 anchors.fill: parent
@@ -140,7 +154,10 @@ Item {
             id: preMapCircle
             color: 'darkmagenta'
             border.width: 0
-            center: Coordinate { latitude: 10; longitude: 30}
+            center {
+                latitude: 10
+                longitude: 30
+            }
             radius: 400000
             MapMouseArea {
                 id: preMapCircleMa
@@ -163,7 +180,10 @@ Item {
                 SignalSpy { id: preMapQuickItemClicked; target: parent; signalName: "clicked" }
                 SignalSpy { id: preMapQuickItemActiveChanged; target: parent.drag; signalName: "activeChanged" }
             }
-            coordinate: Coordinate { latitude: 35; longitude: 3}
+            coordinate {
+                latitude: 35
+                longitude: 3
+            }
             sourceItem: Rectangle {
                 color: 'darkgreen'
                 width: 20
@@ -179,9 +199,9 @@ Item {
             color: 'darkgrey'
             border.width: 0
             path: [
-                Coordinate { latitude: 25; longitude: 5},
-                Coordinate { latitude: 20; longitude: 10},
-                Coordinate { latitude: 15; longitude: 6}
+                { latitude: 25, longitude: 5 },
+                { latitude: 20, longitude: 10 },
+                { latitude: 15, longitude: 6 }
             ]
             MapMouseArea {
                 anchors.fill: parent
@@ -197,9 +217,9 @@ Item {
             id: preMapPolyline
             line.color: 'darkred'
             path: [
-                Coordinate { latitude: 25; longitude: 15},
-                Coordinate { latitude: 20; longitude: 19},
-                Coordinate { latitude: 15; longitude: 16}
+                { latitude: 25, longitude: 15 },
+                { latitude: 20, longitude: 19 },
+                { latitude: 15, longitude: 16 }
             ]
             SignalSpy {id: preMapPolylineColorChanged; target: parent.line; signalName: "colorChanged"}
             SignalSpy {id: preMapPolylineWidthChanged; target: parent.line; signalName: "widthChanged"}
@@ -211,9 +231,9 @@ Item {
             // don't try this at home - route is not user instantiable
             route: Route {
                 path: [
-                    Coordinate { latitude: 25; longitude: 14},
-                    Coordinate { latitude: 20; longitude: 18},
-                    Coordinate { latitude: 15; longitude: 15}
+                    { latitude: 25, longitude: 14 },
+                    { latitude: 20, longitude: 18 },
+                    { latitude: 15, longitude: 15 }
                 ]
             }
             SignalSpy {id: preMapRouteRouteChanged; target: parent; signalName: "routeChanged"}
@@ -221,7 +241,6 @@ Item {
             SignalSpy {id: preMapRouteLineColorChanged; target: parent.line; signalName: "colorChanged"}
         }
     }
-
     TestCase {
         name: "Map Items"
         when: windowShown

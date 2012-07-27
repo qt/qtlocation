@@ -61,19 +61,18 @@ Item {
                        }
                    ]
     }
-    Coordinate{ id: coordinate1; latitude: 10; longitude: 11}
-    Coordinate{ id: coordinate2; latitude: 12; longitude: 13}
-    Coordinate{ id: coordinate3; latitude: 50; longitude: 50; altitude: 0}
-    Coordinate{ id: coordinate4; latitude: 80; longitude: 80; altitude: 0}
-    Coordinate{ id: invalidCoordinate; altitude: 0}
-    Coordinate{ id: altitudelessCoordinate; latitude: 50; longitude: 50}
+
+    property variant coordinate1: QtLocation.coordinate(10, 11)
+    property variant coordinate2: QtLocation.coordinate(12, 13)
+    property variant coordinate3: QtLocation.coordinate(50, 50, 0)
+    property variant coordinate4: QtLocation.coordinate(80, 80, 0)
+    property variant invalidCoordinate: QtLocation.coordinate()
+    property variant altitudelessCoordinate: QtLocation.coordinate(50, 50)
+
     Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
     Map {id: coordinateMap; plugin: nokiaPlugin; center: coordinate3; width: 1000; height: 1000; zoomLevel: 15}
 
     SignalSpy {id: mapCenterSpy; target: map; signalName: 'centerChanged'}
-    SignalSpy {id: coordinate2LatitudeSpy; target: coordinate2; signalName: 'latitudeChanged'}
-    SignalSpy {id: coordinate2LongitudeSpy; target: coordinate2; signalName: 'longitudeChanged'}
-    SignalSpy {id: coordinate2AltitudeSpy; target: coordinate2; signalName: 'altitudeChanged'}
 
     TestCase {
         when: windowShown
@@ -87,15 +86,9 @@ Item {
             return false;
         }
 
-        function clear_data() {
-            mapCenterSpy.clear()
-            coordinate2AltitudeSpy.clear()
-            coordinate2LatitudeSpy.clear()
-            coordinate2LongitudeSpy.clear()
-        }
-
         function test_map_center() {
-            clear_data()
+            mapCenterSpy.clear();
+
             // coordinate is set at map element declaration
             compare(map.center.latitude, 10)
             compare(map.center.longitude, 11)
@@ -107,36 +100,17 @@ Item {
             compare(mapCenterSpy.count, 1)
             map.center = coordinate2
             compare(mapCenterSpy.count, 1)
-            compare(coordinate2LatitudeSpy.count, 0)
-            compare(coordinate2LongitudeSpy.count, 0)
-            compare(coordinate2AltitudeSpy.count, 0)
-            coordinate2.latitude = 21
-            compare(coordinate2LatitudeSpy.count, 1)
-            compare(mapCenterSpy.count, 2)
-            compare(coordinate2LongitudeSpy.count, 0)
-            compare(coordinate2AltitudeSpy.count, 0)
-            compare(map.center.latitude, 21)
-            coordinate2.longitude = 31
-            compare(coordinate2LatitudeSpy.count, 1)
-            compare(mapCenterSpy.count, 3)
-            compare(coordinate2LongitudeSpy.count, 1)
-            compare(coordinate2AltitudeSpy.count, 0)
-            compare(map.center.longitude, 31)
-            coordinate2.altitude = 41
-            compare(coordinate2LatitudeSpy.count, 1)
-            compare(mapCenterSpy.count, 4)
-            compare(coordinate2LongitudeSpy.count, 1)
-            compare(coordinate2AltitudeSpy.count, 1)
-            compare(map.center.altitude, 41)
-            compare(map.center.longitude, 31)
-            compare(map.center.latitude, 21)
+
+            verify(isNaN(map.center.altitude));
+            compare(map.center.longitude, 13)
+            compare(map.center.latitude, 12)
         }
 
         function test_pan() {
             map.center.latitude = 30
             map.center.longitude = 60
             map.zoomLevel = 4
-            clear_data()
+            mapCenterSpy.clear();
 
             // up left
             tryCompare(mapCenterSpy, "count", 0)
@@ -216,7 +190,7 @@ Item {
 
         function test_coordinate_conversion() {
             wait(1000)
-            clear_data()
+            mapCenterSpy.clear();
             compare(coordinateMap.center.latitude, 50)
             compare(coordinateMap.center.longitude, 50)
             // valid to screen position

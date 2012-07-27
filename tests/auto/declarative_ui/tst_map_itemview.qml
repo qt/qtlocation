@@ -50,7 +50,8 @@ Item {
     height: 350
     // General-purpose elements for the test:
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
-    Coordinate{ id: mapDefaultCenter; latitude: 10; longitude: 30}
+
+    property variant mapDefaultCenter: QtLocation.coordinate(10, 30)
 
     Map {
         id: map
@@ -82,9 +83,9 @@ Item {
             delegate: Component {
                 MapCircle {
                     radius: 1500000
-                    center: Coordinate {
-                        latitude: modeldata.coordinate.latitude;
-                        longitude: modeldata.coordinate.longitude;
+                    center {
+                        latitude: modeldata.coordinate.latitude
+                        longitude: modeldata.coordinate.longitude
                     }
                 }
             }
@@ -170,11 +171,11 @@ Item {
     }
     RouteQuery {id: routeQuery;
         waypoints: [
-            Coordinate {id: fcoordinate1; latitude: 60; longitude: 60},
-            Coordinate {id: fcoordinate2; latitude: 61; longitude: 62},
-            Coordinate {id: fcoordinate3; latitude: 63; longitude: 64},
-            Coordinate {id: fcoordinate4; latitude: 65; longitude: 66},
-            Coordinate {id: fcoordinate5; latitude: 67; longitude: 68}
+            { latitude: 60, longitude: 60 },
+            { latitude: 61, longitude: 62 },
+            { latitude: 63, longitude: 64 },
+            { latitude: 65, longitude: 66 },
+            { latitude: 67, longitude: 68 }
         ]
     }
 
@@ -199,9 +200,9 @@ Item {
                 id: theItemViewsComponent
                 MapCircle {
                     radius: 1500000
-                    center: Coordinate {
-                        latitude: modeldata.coordinate.latitude;
-                        longitude: modeldata.coordinate.longitude;
+                    center {
+                        latitude: modeldata.coordinate.latitude
+                        longitude: modeldata.coordinate.longitude
                     }
                 }
             }
@@ -214,16 +215,9 @@ Item {
         plugin: testPlugin;
         anchors.fill: parent;
         zoomLevel: 2
-        Coordinate {
-            id: firstItemCoord
-            latitude: 11
-            longitude: 31
-        }
-        Coordinate {
-            id: secondItemCoord
-            latitude: 12
-            longitude: 32
-        }
+
+        property variant firstItemCoord: QtLocation.coordinate(11, 31)
+        property variant secondItemCoord: QtLocation.coordinate(12, 32)
 
         MapItemView {
             id: listModelItemView
@@ -236,9 +230,9 @@ Item {
             delegate: Component {
                 MapCircle {
                     radius: 1500000
-                    center: Coordinate {
-                        latitude: lat;
-                        longitude: lon;
+                    center {
+                        latitude: lat
+                        longitude: lon
                     }
                 }
             }
@@ -344,7 +338,7 @@ Item {
             compare(dynamicMap2.mapItems.length, 0)
 
             // create and destroy a dynamic item that is in the map
-            var dynamicCircle = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; MapCircle { objectName: \'dynamic circle 1\'; center: Coordinate { latitude: 5; longitude: 5 } radius: 15 } ', masterItem, "dynamicCreationErrors" );
+            var dynamicCircle = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; MapCircle { objectName: \'dynamic circle 1\'; center { latitude: 5; longitude: 5 } radius: 15 } ', masterItem, "dynamicCreationErrors" );
             verify (dynamicCircle !== null)
             compare(map.mapItems.length, 0)
             map.addMapItem(dynamicCircle)
@@ -403,12 +397,16 @@ Item {
 
         function test_listmodel() {
             compare(mapForTestingListModel.mapItems.length, 3);
-            compare(mapForTestingListModel.mapItems[0].center.longitude, firstItemCoord.longitude);
-            compare(mapForTestingListModel.mapItems[0].center.latitude, firstItemCoord.latitude);
+            compare(mapForTestingListModel.mapItems[0].center.longitude,
+                    mapForTestingListModel.firstItemCoord.longitude);
+            compare(mapForTestingListModel.mapItems[0].center.latitude,
+                    mapForTestingListModel.firstItemCoord.latitude);
             testingListModel.remove(0);
             compare(mapForTestingListModel.mapItems.length, 2);
-            compare(mapForTestingListModel.mapItems[0].center.longitude, secondItemCoord.longitude);
-            compare(mapForTestingListModel.mapItems[0].center.latitude, secondItemCoord.latitude);
+            compare(mapForTestingListModel.mapItems[0].center.longitude,
+                    mapForTestingListModel.secondItemCoord.longitude);
+            compare(mapForTestingListModel.mapItems[0].center.latitude,
+                    mapForTestingListModel.secondItemCoord.latitude);
             testingListModel.append({ lat: 1, lon: 1 });
             compare(mapForTestingListModel.mapItems.length, 3);
             compare(mapForTestingListModel.mapItems[2].center.latitude, 1);

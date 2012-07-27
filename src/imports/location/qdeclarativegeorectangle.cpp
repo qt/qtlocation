@@ -53,8 +53,9 @@ QT_BEGIN_NAMESPACE
 
     \brief The GeoRectangle type represents a rectangular geographic area.
 
-    A GeoRectangle is described by a \l {Coordinate} which represents the top-left of the
-    GeoRectangle and a second \l {Coordinate} which represents the bottom-right of GeoRectangle.
+    A GeoRectangle is described by a \l {QtLocation5::coordinate}{coordinate} which represents the
+    top-left of the GeoRectangle and a second \l {QtLocation5::coordinate}{coordinate} which
+    represents the bottom-right of GeoRectangle.
 
     A GeoRectangle is considered invalid if the top-left or bottom-right
     coordinates are invalid or if the top-left coordinate is South of the
@@ -73,11 +74,11 @@ QT_BEGIN_NAMESPACE
 
     \code
     GeoRectangle {
-        topLeft: Coordinate {
+        topLeft {
             latitude: 23.34
             longitude: 44.4
         }
-        bottomRight: Coordinate {
+        bottomRight {
             latitude: 22.25
             longitude: 42.88
         }
@@ -90,16 +91,14 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoRectangle::QDeclarativeGeoRectangle(QObject *parent)
-:   QDeclarativeGeoShape(parent), m_bottomLeft(0), m_bottomRight(0),
-    m_topLeft(0), m_topRight(0), m_center(0), m_width(qQNaN()), m_height(qQNaN())
+:   QDeclarativeGeoShape(parent), m_width(qQNaN()), m_height(qQNaN())
 {
 }
 
 QDeclarativeGeoRectangle::QDeclarativeGeoRectangle(const QGeoRectangle &box, QObject *parent)
-:   QDeclarativeGeoShape(parent), m_bottomLeft(0), m_bottomRight(0), m_topLeft(0),
-    m_topRight(0), m_center(0), m_box(box), m_width(qQNaN()), m_height(qQNaN())
+:   QDeclarativeGeoShape(parent), m_box(box), m_width(qQNaN()), m_height(qQNaN())
 {
-    synchronizeDeclarative(box, SkipNone);
+    emitChanged(box);
 }
 
 /*!
@@ -112,7 +111,7 @@ void QDeclarativeGeoRectangle::setRectangle(const QGeoRectangle &box)
 {
     QGeoRectangle oldBox = m_box;
     m_box = box;
-    synchronizeDeclarative(oldBox, SkipNone);
+    emitChanged(oldBox);
 }
 
 QGeoRectangle QDeclarativeGeoRectangle::rectangle() const
@@ -126,178 +125,88 @@ QGeoShape QDeclarativeGeoRectangle::shape() const
 }
 
 /*!
-    \qmlmethod bool QDeclarativeGeoRectangle::contains(Coordinate coordinate)
+    \qmlmethod bool QDeclarativeGeoRectangle::contains(coordinate coordinate)
 
     Returns the true if \a coordinate is within the geo rectangle; otherwise returns false.
 */
-bool QDeclarativeGeoRectangle::contains(QDeclarativeCoordinate *coordinate)
+bool QDeclarativeGeoRectangle::contains(const QGeoCoordinate &coordinate)
 {
-    if (!coordinate)
-        return false;
-
-    return m_box.contains(coordinate->coordinate());
+    return m_box.contains(coordinate);
 }
 
-QDeclarativeCoordinate *QDeclarativeGeoRectangle::bottomLeft()
+QGeoCoordinate QDeclarativeGeoRectangle::bottomLeft()
 {
-    if (!m_bottomLeft) {
-        m_bottomLeft = new QDeclarativeCoordinate(m_box.bottomLeft(), this);
-        connect(m_bottomLeft, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    return m_bottomLeft;
+    return m_box.bottomLeft();
 }
 
 /*!
-  \qmlproperty Coordinate GeoRectangle::bottomLeft
+    \qmlproperty coordinate GeoRectangle::bottomLeft
 
-  This property holds the bottom left coordinate of this geo rectangle.
+    This property holds the bottom left coordinate of this geo rectangle.
 
-  \note this property's changed() signal is currently emitted only if the
-  whole object changes, not if only the contents of the object change.
-
-  \sa {QGeoRectangle}
-  */
-
-void QDeclarativeGeoRectangle::setBottomLeft(QDeclarativeCoordinate *coordinate)
+    \sa {QGeoRectangle}
+*/
+void QDeclarativeGeoRectangle::setBottomLeft(const QGeoCoordinate &coordinate)
 {
-    if (m_bottomLeft == coordinate)
+    if (m_box.bottomLeft() == coordinate)
         return;
 
-    if (m_bottomLeft) {
-        disconnect(m_bottomLeft, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                   this, SLOT(coordinateChanged()));
-
-        if (m_bottomLeft->parent() == this)
-            delete m_bottomLeft;
-    }
-
-    m_bottomLeft = coordinate;
-
-    if (m_bottomLeft) {
-        connect(m_bottomLeft, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    QGeoRectangle oldBox = m_box;
-    m_box.setBottomLeft(coordinate ? coordinate->coordinate() : QGeoCoordinate());
-    synchronizeDeclarative(oldBox, SkipBottomLeft);
-
-    emit bottomLeftChanged();
+    QGeoRectangle old = m_box;
+    m_box.setBottomLeft(coordinate);
+    emitChanged(old);
 }
 
-QDeclarativeCoordinate *QDeclarativeGeoRectangle::bottomRight()
+QGeoCoordinate QDeclarativeGeoRectangle::bottomRight()
 {
-    if (!m_bottomRight) {
-        m_bottomRight = new QDeclarativeCoordinate(m_box.bottomRight(), this);
-        connect(m_bottomRight, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    return m_bottomRight;
+    return m_box.bottomRight();
 }
 
 /*!
-  \qmlproperty Coordinate GeoRectangle::bottomRight
+    \qmlproperty coordinate GeoRectangle::bottomRight
 
-  This property holds the bottom right coordinate of this geo rectangle.
+    This property holds the bottom right coordinate of this geo rectangle.
 
-  \note this property's changed() signal is currently emitted only if the
-  whole object changes, not if only the contents of the object change.
-
-  \sa {QGeoRectangle}
-  */
-
-void QDeclarativeGeoRectangle::setBottomRight(QDeclarativeCoordinate *coordinate)
+    \sa {QGeoRectangle}
+*/
+void QDeclarativeGeoRectangle::setBottomRight(const QGeoCoordinate &coordinate)
 {
-    if (m_bottomRight == coordinate)
+    if (m_box.bottomRight() == coordinate)
         return;
 
-    if (m_bottomRight) {
-        disconnect(m_bottomRight, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                   this, SLOT(coordinateChanged()));
-
-        if (m_bottomRight->parent() == this)
-            delete m_bottomRight;
-    }
-
-    m_bottomRight = coordinate;
-
-    if (m_bottomRight) {
-        connect(m_bottomRight, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    QGeoRectangle oldBox = m_box;
-    m_box.setBottomRight(coordinate ? coordinate->coordinate() : QGeoCoordinate());
-    synchronizeDeclarative(oldBox, SkipBottomRight);
-
-    emit bottomRightChanged();
+    QGeoRectangle old = m_box;
+    m_box.setBottomRight(coordinate);
+    emitChanged(old);
 }
 
-QDeclarativeCoordinate *QDeclarativeGeoRectangle::topLeft()
+QGeoCoordinate QDeclarativeGeoRectangle::topLeft()
 {
-    if (!m_topLeft) {
-        m_topLeft = new QDeclarativeCoordinate(m_box.topLeft(), this);
-        connect(m_topLeft, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    return m_topLeft;
+    return m_box.topLeft();
 }
 
 /*!
-  \qmlproperty Coordinate GeoRectangle::topLeft
+    \qmlproperty coordinate GeoRectangle::topLeft
 
-  This property holds the top left coordinate of this geo rectangle.
+    This property holds the top left coordinate of this geo rectangle.
 
-  \note this property's changed() signal is currently emitted only if the
-  whole object changes, not if only the contents of the object change.
-
-  \sa {QGeoRectangle}
-  */
-
-void QDeclarativeGeoRectangle::setTopLeft(QDeclarativeCoordinate *coordinate)
+    \sa {QGeoRectangle}
+*/
+void QDeclarativeGeoRectangle::setTopLeft(const QGeoCoordinate &coordinate)
 {
-    if (m_topLeft == coordinate)
+    if (m_box.topLeft() == coordinate)
         return;
 
-    if (m_topLeft) {
-        disconnect(m_topLeft, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                   this, SLOT(coordinateChanged()));
-
-        if (m_topLeft->parent() == this)
-            delete m_topLeft;
-    }
-
-    m_topLeft = coordinate;
-
-    if (m_topLeft) {
-        connect(m_topLeft, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    QGeoRectangle oldBox = m_box;
-    m_box.setTopLeft(coordinate ? coordinate->coordinate() : QGeoCoordinate());
-    synchronizeDeclarative(oldBox, SkipTopLeft);
-
-    emit topLeftChanged();
+    QGeoRectangle old = m_box;
+    m_box.setTopLeft(coordinate);
+    emitChanged(old);
 }
 
-QDeclarativeCoordinate *QDeclarativeGeoRectangle::topRight()
+QGeoCoordinate QDeclarativeGeoRectangle::topRight()
 {
-    if (!m_topRight) {
-        m_topRight = new QDeclarativeCoordinate(m_box.topRight(), this);
-        connect(m_topRight, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    return m_topRight;
+    return m_box.topRight();
 }
 
 /*!
-  \qmlproperty Coordinate GeoRectangle::topRight
+  \qmlproperty coordinate GeoRectangle::topRight
 
   This property holds the top right coordinate of this geo rectangle.
 
@@ -307,46 +216,23 @@ QDeclarativeCoordinate *QDeclarativeGeoRectangle::topRight()
   \sa {QGeoRectangle}
   */
 
-void QDeclarativeGeoRectangle::setTopRight(QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoRectangle::setTopRight(QGeoCoordinate &coordinate)
 {
-    if (m_topRight == coordinate)
+    if (m_box.topRight() == coordinate)
         return;
 
-    if (m_topRight) {
-        disconnect(m_topRight, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                   this, SLOT(coordinateChanged()));
-
-        if (m_topRight->parent() == this)
-            delete m_topRight;
-    }
-
-    m_topRight = coordinate;
-
-    if (m_topRight) {
-        connect(m_topRight, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    QGeoRectangle oldBox = m_box;
-    m_box.setTopRight(coordinate ? coordinate->coordinate() : QGeoCoordinate());
-    synchronizeDeclarative(oldBox, SkipTopRight);
-
-    emit topRightChanged();
+    QGeoRectangle old = m_box;
+    m_box.setTopRight(coordinate);
+    emitChanged(old);
 }
 
-QDeclarativeCoordinate *QDeclarativeGeoRectangle::center()
+QGeoCoordinate QDeclarativeGeoRectangle::center()
 {
-    if (!m_center) {
-        m_center = new QDeclarativeCoordinate(m_box.center(), this);
-        connect(m_center, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    return m_center;
+    return m_box.center();
 }
 
 /*!
-  \qmlproperty Coordinate GeoRectangle::center
+  \qmlproperty coordinate GeoRectangle::center
 
   This property holds the center coordinate of this geo rectangle.
 
@@ -357,31 +243,14 @@ QDeclarativeCoordinate *QDeclarativeGeoRectangle::center()
 
   */
 
-void QDeclarativeGeoRectangle::setCenter(QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoRectangle::setCenter(const QGeoCoordinate &coordinate)
 {
-    if (m_center == coordinate)
+    if (m_box.center() == coordinate)
         return;
 
-    if (m_center) {
-        disconnect(m_center, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                   this, SLOT(coordinateChanged()));
-
-        if (m_center->parent() == this)
-            delete m_center;
-    }
-
-    m_center = coordinate;
-
-    if (m_center) {
-        connect(m_center, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    QGeoRectangle oldBox = m_box;
-    m_box.setCenter(coordinate ? coordinate->coordinate() : QGeoCoordinate());
-    synchronizeDeclarative(oldBox, SkipCenter);
-
-    emit centerChanged();
+    QGeoRectangle old = m_box;
+    m_box.setCenter(coordinate);
+    emitChanged(old);
 }
 
 double QDeclarativeGeoRectangle::height()
@@ -403,7 +272,7 @@ void QDeclarativeGeoRectangle::setHeight(double height)
     if (!m_box.isValid())
         m_box.setCenter(QGeoCoordinate(0.0, 0.0));
     m_box.setHeight(height);
-    synchronizeDeclarative(oldBox, SkipNone);
+    emitChanged(oldBox);
 }
 
 double QDeclarativeGeoRectangle::width()
@@ -426,51 +295,25 @@ void QDeclarativeGeoRectangle::setWidth(double width)
     if (!m_box.isValid())
         m_box.setCenter(QGeoCoordinate(0.0, 0.0));
     m_box.setWidth(width);
-    synchronizeDeclarative(oldBox, SkipNone);
+    emitChanged(oldBox);
 }
 
-void QDeclarativeGeoRectangle::coordinateChanged()
+void QDeclarativeGeoRectangle::emitChanged(const QGeoRectangle &old)
 {
-    QDeclarativeCoordinate *c = qobject_cast<QDeclarativeCoordinate *>(sender());
-    if (!c)
-        return;
+    if (old.bottomLeft() != m_box.bottomLeft())
+        emit bottomLeftChanged();
 
-    QGeoRectangle oldBox = m_box;
+    if (old.bottomRight() != m_box.bottomRight())
+        emit bottomRightChanged();
 
-    if (c == m_bottomLeft) {
-        m_box.setBottomLeft(c->coordinate());
-        synchronizeDeclarative(oldBox, SkipBottomLeft);
-    } else if (c == m_bottomRight) {
-        m_box.setBottomRight(c->coordinate());
-        synchronizeDeclarative(oldBox, SkipBottomRight);
-    } else if (c == m_topLeft) {
-        m_box.setTopLeft(c->coordinate());
-        synchronizeDeclarative(oldBox, SkipTopLeft);
-    } else if (c == m_topRight) {
-        m_box.setTopRight(c->coordinate());
-        synchronizeDeclarative(oldBox, SkipTopRight);
-    } else if (c == m_center) {
-        m_box.setCenter(c->coordinate());
-        synchronizeDeclarative(oldBox, SkipCenter);
-    }
-}
+    if (old.topLeft() != m_box.topLeft())
+        emit topLeftChanged();
 
-void QDeclarativeGeoRectangle::synchronizeDeclarative(const QGeoRectangle &old, SkipProp skip)
-{
-    if (skip != SkipBottomLeft && m_bottomLeft && old.bottomLeft() != m_box.bottomLeft())
-        m_bottomLeft->setCoordinate(m_box.bottomLeft());
+    if (old.topRight() != m_box.topRight())
+        emit topRightChanged();
 
-    if (skip != SkipBottomRight && m_bottomRight && old.bottomRight() != m_box.bottomRight())
-        m_bottomRight->setCoordinate(m_box.bottomRight());
-
-    if (skip != SkipTopLeft && m_topLeft && old.topLeft() != m_box.topLeft())
-        m_topLeft->setCoordinate(m_box.topLeft());
-
-    if (skip != SkipTopRight && m_topRight && old.topRight() != m_box.topRight())
-        m_topRight->setCoordinate(m_box.topRight());
-
-    if (skip != SkipCenter && m_center && old.center() != m_box.center())
-        m_center->setCoordinate(m_box.center());
+    if (old.center() != m_box.center())
+        emit centerChanged();
 
     // Check not to compare two Not a Numbers, which by definition is 'false'.
     if ((!qIsNaN(old.width()) || !qIsNaN(m_box.width())) && old.width() != m_box.width()) {

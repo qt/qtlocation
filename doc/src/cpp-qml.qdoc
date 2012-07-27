@@ -121,18 +121,6 @@ The following sets the properties of this object based on a QPlaceSupplier objec
 \snippet snippets/cpp/cppqml.cpp Supplier set
 
 
-\section2 Coordinate - QGeoCoordinate
-\target geocoordinate
-The \l {Coordinate::coordinate} {Coordinate.coordinate} property is used to provide an interface between C++ and QML code.  First a pointer to a
-Coordinate object must be obtained from C++, then use the \l {QObject::property()}{property()}
-and \l {QObject::setProperty()}{setProperty()} functions to get and set the \c coordinate
-property.
-The following gets the QGeoCoordinate representing this object from C++:
-\snippet snippets/cpp/cppqml.cpp Coordinate get
-The following sets the properties of this object based on a QGeoCoordinate object from C++:
-\snippet snippets/cpp/cppqml.cpp Coordinate set
-
-
 \section2 Address - QGeoAddress
 \target geoaddress
 The \l {Address::address} {Address.address} property is used to provide an interface between C++ and QML code.  First a pointer to a

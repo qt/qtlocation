@@ -50,7 +50,7 @@ Item {
     height: parent ? parent.height : 640
     property variant map
     property variant minimap
-    property list<PluginParameter> parameters
+    property variant parameters
 
     Rectangle {
         id: backgroundRect
@@ -94,10 +94,6 @@ Item {
         z: backgroundRect.z + 2
         y: page.height
         horizontalOrientation: false
-
-        Component.onCompleted: {
-            update()
-        }
 
         onClicked: {
             switch (button) {
@@ -155,10 +151,6 @@ Item {
         horizontalOrientation: false
         exclusive: true
 
-        Component.onCompleted: {
-            update()
-        }
-
         onClicked: {
             page.state = ""
         }
@@ -193,16 +185,13 @@ Item {
             var plugins = getPlugins()
             for (var i = 0; i<plugins.length; i++)
                 addItem(plugins[i])
-            if (plugins.length > 0) exclusiveButton = plugins[0]
         }
 
         onClicked: {
             page.state = ""
         }
 
-        onExclusiveButtonChanged: {
-            createMap(exclusiveButton)
-        }
+        onExclusiveButtonChanged: createMap(exclusiveButton)
     }
 
     //=====================Dialogs=====================
@@ -258,8 +247,9 @@ Item {
     RouteDialog {
         id: routeDialog
 
-        Coordinate { id: endCoordinate }
-        Coordinate { id: startCoordinate }
+        property variant startCoordinate
+        property variant endCoordinate
+
 //! [routedialog0]
         Address { id: startAddress }
         Address { id: endAddress }
@@ -269,7 +259,6 @@ Item {
         GeocodeModel {
             id: tempGeocodeModel
 
-            plugin : map.plugin
             property int success: 0
 
             onCountChanged: {
@@ -316,10 +305,10 @@ Item {
             tempGeocodeModel.reset()
             messageDialog.state = ""
             if (routeDialog.byCoordinates) {
-                startCoordinate.latitude = routeDialog.startLatitude
-                startCoordinate.longitude = routeDialog.startLongitude
-                endCoordinate.latitude = routeDialog.endLatitude
-                endCoordinate.longitude = routeDialog.endLongitude
+                startCoordinate = QtLocation.coordinate(parseFloat(routeDialog.startLatitude),
+                                                        parseFloat(routeDialog.startLongitude));
+                endCoordinate = QtLocation.coordinate(parseFloat(routeDialog.endLatitude),
+                                                      parseFloat(routeDialog.endLongitude));
 
                 calculateRoute()
             }
@@ -368,8 +357,7 @@ Item {
             map.routeModel.update();
 
             // center the map on the start coord
-            map.center.latitude = startCoordinate.latitude
-            map.center.longitude = startCoordinate.longitude
+            map.center = startCoordinate;
 //! [routerequest1]
         }
 //! [routedialog1]
@@ -430,16 +418,11 @@ Item {
             setModel(obj)
         }
 
-        Coordinate {
-            id: reverseGeocodeCoordinate
-        }
-
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-            reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
-            reverseGeocodeCoordinate.longitude = dialogModel.get(1).inputText
-            map.geocodeModel.query = reverseGeocodeCoordinate
+            map.geocodeModel.query = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
+                                                           parseFloat(dialogModel.get(1).inputText));
             map.geocodeModel.update();
         }
 
@@ -462,20 +445,14 @@ Item {
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-            var latitude = parseFloat(dialogModel.get(0).inputText)
-            var longitude = parseFloat(dialogModel.get(1).inputText)
+            var newLat = parseFloat(dialogModel.get(0).inputText)
+            var newLong = parseFloat(dialogModel.get(1).inputText)
 
-            if (latitude !== "NaN" && longitude !== "NaN") {
-
-                var coordinate = Qt.createQmlObject('import QtLocation 5.0; Coordinate {}', map)
-                coordinate.latitude = latitude
-                coordinate.longitude = longitude
-
-                if (coordinate.isValid) {
-                    map.markers[map.currentMarker].coordinate.latitude = latitude
-                    map.markers[map.currentMarker].coordinate.longitude = longitude
-                    map.center.latitude = latitude
-                    map.center.longitude = longitude
+            if (newLat !== "NaN" && newLong !== "NaN") {
+                var c = QtLocation.coordinate(newLat, newLong);
+                if (c.isValid) {
+                    map.markers[map.currentMarker].coordinate = c;
+                    map.center = c;
                 }
             }
         }
@@ -625,7 +602,10 @@ Item {
                                                page.state = "";\
                                            }\
                                        }',page)
-            map.plugin = plugin
+            map.plugin = plugin;
+            tempGeocodeModel.plugin = plugin;
+            mapTypeMenu.update();
+            toolsMenu.update();
         }
     }
 
@@ -653,7 +633,10 @@ Item {
             parameters.push(parameter)
         }
         page.parameters=parameters
-        createMap(map.plugin.name)
+        if (providerMenu.exclusiveButton !== "")
+            createMap(providerMenu.exclusiveButton);
+        else if (providerMenu.children.length > 0)
+            createMap(providerMenu.children[0].text);
     }
 
     //=====================States of page=====================

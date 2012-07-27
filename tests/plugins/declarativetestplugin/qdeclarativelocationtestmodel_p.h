@@ -47,19 +47,19 @@
 #include <QTimer>
 #include <QDebug>
 #include <QList>
-#include <qdeclarativecoordinate_p.h>
+#include <QtLocation/QGeoCoordinate>
 
 class DataObject: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate CONSTANT)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate CONSTANT)
 
 public:
-    DataObject() : coordinate_(0) {}
-    ~DataObject() {delete coordinate_;}
+    DataObject() {}
+    ~DataObject() {}
 
-    QDeclarativeCoordinate* coordinate_;
-    QDeclarativeCoordinate* coordinate() const {return coordinate_;}
+    QGeoCoordinate coordinate_;
+    QGeoCoordinate coordinate() const {return coordinate_;}
 };
 
 class QDeclarativeLocationTestModel : public QAbstractListModel, public QQmlParserStatus

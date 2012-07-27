@@ -69,9 +69,9 @@ QT_USE_NAMESPACE
     \brief The Place type represents a location that is a position of interest.
 
     The Place type represents a physical location with additional metadata describing that
-    location. Contrasted with \l Location, \l Address, and \l Coordinate types which are used
-    to describe where a location is. The basic properties of a Place are its \l name and
-    \l location.
+    location.  Contrasted with \l Location, \l Address, and
+    \l {QtLocation5::coordinate}{coordinate} type which are used to describe where a location is.
+    The basic properties of a Place are its \l name and \l location.
 
     Place objects are typically obtained from a search model and will generally only have their
     basic properties set. The \l detailsFetched property can be used to test if further property

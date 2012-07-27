@@ -47,15 +47,16 @@ Item {
     Plugin { id: nokiaPlugin; name: "qmlgeo.test.plugin"}
     Plugin { id: invalidPlugin; name: "invalid"}
 
-    Coordinate{ id: coordinate1; latitude: 51; longitude: 41}
-    Coordinate{ id: coordinate2; latitude: 52; longitude: 42}
+    property variant coordinate1: QtLocation.coordinate(51, 41)
+    property variant coordinate2: QtLocation.coordinate(52, 42)
+    property variant emptyCoordinate: QtLocation.coordinate()
+
     GeoRectangle { id: boundingBox1; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
     GeoRectangle { id: boundingBox2; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
     GeoCircle { id: boundingCircle1; center: coordinate1; radius: 100 }
     GeoCircle { id: boundingCircle2; center: coordinate2; radius: 100 }
 
     GeoRectangle {id: emptyBox}
-    Coordinate {id: emptyCoordinate}
     GeocodeModel {id: emptyModel}
 
     Address {id: emptyAddress}
@@ -137,7 +138,7 @@ Item {
             emptyModel.bounds = boundingCircle2
             compare(boundsSpy.count, 2)
             compare(emptyModel.bounds.center.latitude, coordinate2.latitude)
-            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; GeoCircle { id: dynCircle; center: Coordinate { id: dynCoord; latitude: 8; longitude: 9 } }", testCase1)
+            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; GeoCircle { id: dynCircle; center { latitude: 8; longitude: 9 } }", testCase1)
             emptyModel.bounds = dynamicCircle
             compare(boundsSpy.count, 3)
             compare(emptyModel.bounds.center.latitude, dynamicCircle.center.latitude)
@@ -191,12 +192,13 @@ Item {
     }
     Address {id: address1; street: "wellknown street"; city: "expected city"; county: "2"}
     Address {id: errorAddress1; street: "error"; county: "2"} // street is the error reason
-    Coordinate{ id: rcoordinate1; latitude: 51; longitude: 2}
-    Coordinate{ id: errorCoordinate1; latitude: 73; longitude: 2} // (latiude mod 70) is the error code
-    Coordinate{ id: slackCoordinate1; latitude: 60; longitude: 3}
+
+    property variant rcoordinate1: QtLocation.coordinate(51, 2)
+    property variant errorCoordinate1: QtLocation.coordinate(73, 2)  // (latiude mod 70) is the error code
+    property variant slackCoordinate1: QtLocation.coordinate(60, 3)
     Address {id: slackAddress1; street: "Slacker st"; city: "Lazy town"; county: "4"}
 
-    Coordinate{ id: automaticCoordinate1; latitude: 60; longitude: 3}
+    property variant automaticCoordinate1: QtLocation.coordinate(60, 3)
     Address {id: automaticAddress1; street: "Auto st"; city: "Detroit"; county: "4"}
 
     Plugin {
@@ -536,10 +538,6 @@ Item {
             wait (300)
             compare (automaticLocationsSpy.count, 4)
             compare (automaticModel.count, 3)
-            automaticCoordinate1.longitude = 7
-            wait (300)
-            compare (automaticLocationsSpy.count, 5)
-            compare (automaticModel.count, 7)
         }
 
         function test_delayed_geocode() {

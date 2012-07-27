@@ -228,7 +228,7 @@ int QDeclarativeGeoMapMouseEvent::y() const
 }
 
 /*!
-    \qmlproperty Coordinate QtLocation5::MapMouseEvent::coordinate
+    \qmlproperty coordinate QtLocation5::MapMouseEvent::coordinate
 
     This property holds the coordinate corresponding to the latitude
     and longitude of the position on the map at which the mouse event
@@ -237,12 +237,12 @@ int QDeclarativeGeoMapMouseEvent::y() const
 
 void QDeclarativeGeoMapMouseEvent::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    coordinate_.setCoordinate(coordinate);
+    coordinate_ = coordinate;
 }
 
-QDeclarativeCoordinate *QDeclarativeGeoMapMouseEvent::coordinate()
+QGeoCoordinate QDeclarativeGeoMapMouseEvent::coordinate()
 {
-    return &coordinate_;
+    return coordinate_;
 }
 
 #include "moc_qdeclarativegeomapmouseevent_p.cpp"

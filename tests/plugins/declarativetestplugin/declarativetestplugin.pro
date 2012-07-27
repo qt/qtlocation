@@ -8,14 +8,12 @@ INCLUDEPATH += ../../../src/imports/location
 INCLUDEPATH += ../../../src/location
 
 HEADERS += qdeclarativepinchgenerator_p.h \
-           qdeclarativelocationtestmodel_p.h \
-           ../../../src/imports/location/qdeclarativecoordinate_p.h
+           qdeclarativelocationtestmodel_p.h
 
 
 SOURCES += locationtest.cpp \
            qdeclarativepinchgenerator.cpp \
-           qdeclarativelocationtestmodel.cpp \
-           ../../../src/imports/location/qdeclarativecoordinate.cpp
+           qdeclarativelocationtestmodel.cpp
 
 load(qml_plugin)
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

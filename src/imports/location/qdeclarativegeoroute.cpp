@@ -40,6 +40,12 @@
 ****************************************************************************/
 
 #include "qdeclarativegeoroute_p.h"
+#include "locationvaluetypeprovider.h"
+
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlContext>
+#include <QtQml/qqmlinfo.h>
+#include <QtQml/private/qqmlengine_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -91,9 +97,6 @@ void QDeclarativeGeoRoute::init()
 {
     bounds_ = new QDeclarativeGeoRectangle(route_.bounds(), this);
 
-    for (int i = 0; i < route_.path().size(); ++i)
-        path_.append(new QDeclarativeCoordinate(route_.path().at(i), this));
-
     QGeoRouteSegment segment = route_.firstRouteSegment();
     while (segment.isValid()) {
         segments_.append(new QDeclarativeGeoRouteSegment(segment, this));
@@ -106,17 +109,7 @@ void QDeclarativeGeoRoute::init()
 */
 QList<QGeoCoordinate> QDeclarativeGeoRoute::routePath()
 {
-    if (!route_.path().isEmpty()) {
-        return route_.path();
-    } else if (!path_.isEmpty()) {
-        // this is for testing. Route types are not meant to be
-        // user instantiable but for testing it makes sense
-        QList<QGeoCoordinate> list;
-        for (int i = 0; i < path_.count(); ++i)
-            list.append(path_.at(i)->coordinate());
-        return list;
-    }
-    return QList<QGeoCoordinate>();
+    return route_.path();
 }
 
 /*!
@@ -156,7 +149,7 @@ qreal QDeclarativeGeoRoute::distance() const
 }
 
 /*!
-    \qmlproperty QQmlListProperty<Coordinate> QtLocation5::Route::path
+    \qmlproperty QJSValue QtLocation5::Route::path
 
     Read-only property which holds the geographical coordinates of this route.
     Coordinates are listed in the order in which they would be traversed by someone
@@ -166,62 +159,66 @@ qreal QDeclarativeGeoRoute::distance() const
     indicates the number of objects and 'path[index starting from zero]' gives
     the actual object.
 
-    \sa Coordinate
+    \sa QtLocation5::coordinate
 */
 
-QQmlListProperty<QDeclarativeCoordinate> QDeclarativeGeoRoute::path()
+QJSValue QDeclarativeGeoRoute::path() const
 {
-    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
-                                                    path_at, path_clear);
+    QQmlContext *context = QQmlEngine::contextForObject(parent());
+    QQmlEngine *engine = context->engine();
+    QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
+    QV8ValueTypeWrapper *valueTypeWrapper = v8Engine->valueTypeWrapper();
+
+    v8::Local<v8::Array> pathArray = v8::Array::New(route_.path().length());
+    for (int i = 0; i < route_.path().length(); ++i) {
+        const QGeoCoordinate &c = route_.path().at(i);
+
+        QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
+        v8::Local<v8::Object> cv = valueTypeWrapper->newValueType(QVariant::fromValue(c), vt);
+
+        pathArray->Set(i, cv);
+    }
+
+    return v8Engine->scriptValueFromInternal(pathArray);
 }
 
-/*!
-    \internal
-*/
-void QDeclarativeGeoRoute::path_append(QQmlListProperty<QDeclarativeCoordinate> *prop,
-                                       QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoRoute::setPath(const QJSValue &value)
 {
-    static_cast<QDeclarativeGeoRoute *>(prop->object)->appendPath(coordinate);
-}
+    if (!value.isArray())
+        return;
 
-/*!
-    \internal
-*/
-int QDeclarativeGeoRoute::path_count(QQmlListProperty<QDeclarativeCoordinate> *prop)
-{
-    return static_cast<QDeclarativeGeoRoute *>(prop->object)->path_.count();
-}
+    QList<QGeoCoordinate> pathList;
+    quint32 length = value.property(QStringLiteral("length")).toUInt();
+    for (quint32 i = 0; i < length; ++i) {
+        QJSValue v = value.property(i);
 
-/*!
-    \internal
-*/
-QDeclarativeCoordinate *QDeclarativeGeoRoute::path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index)
-{
-    return static_cast<QDeclarativeGeoRoute *>(prop->object)->path_.at(index);
-}
+        QGeoCoordinate c;
 
-/*!
-    \internal
-*/
-void QDeclarativeGeoRoute::path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop)
-{
-    static_cast<QDeclarativeGeoRoute *>(prop->object)->clearPath();
-}
+        if (v.isObject()) {
+            if (v.hasProperty(QStringLiteral("latitude")))
+                c.setLatitude(v.property(QStringLiteral("latitude")).toNumber());
+            if (v.hasProperty(QStringLiteral("longitude")))
+                c.setLongitude(v.property(QStringLiteral("longitude")).toNumber());
+            if (v.hasProperty(QStringLiteral("altitude")))
+                c.setAltitude(v.property(QStringLiteral("altitude")).toNumber());
+        } else if (v.isString()) {
+            c = stringToCoordinate(v.toString()).value<QGeoCoordinate>();
+        }
 
-/*!
-    \internal
-*/
-void QDeclarativeGeoRoute::appendPath(QDeclarativeCoordinate *coordinate)
-{
-    path_.append(coordinate);
-}
+        if (!c.isValid()) {
+            qmlInfo(this) << "Unsupported path type";
+            return;
+        }
 
-/*!
-    \internal
-*/
-void QDeclarativeGeoRoute::clearPath()
-{
-    path_.clear();
+        pathList.append(c);
+    }
+
+    if (route_.path() == pathList)
+        return;
+
+    route_.setPath(pathList);
+
+    emit pathChanged();
 }
 
 /*!

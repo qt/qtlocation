@@ -93,7 +93,10 @@ QT_BEGIN_NAMESPACE
     \code
     Map {
         MapCircle {
-            center: Coordinate { ... }
+            center {
+                latitude: -27.5
+                longitude: 153
+            }
             radius: 100
 
             MapMouseArea {
@@ -136,17 +139,17 @@ QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 }
 
 /*!
-    \qmlmethod Coordinate QtLocation5::MapMouseArea::mouseToCoordinate(MouseEvent event)
+    \qmlmethod coordinate QtLocation5::MapMouseArea::mouseToCoordinate(MouseEvent event)
 
     Converts the \a event's coordinates to geo coordinates.
  */
-QDeclarativeCoordinate *QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMouseEvent *event)
+QGeoCoordinate QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMouseEvent *event)
 {
     // figure out the map association for this mouse area and use it to resolve geocoordinate
     QDeclarativeGeoMap *quickmap = map();
     if (quickmap)
         return quickmap->toCoordinate(quickmap->mapFromItem(this, QPointF(event->x(), event->y())));
-    return new QDeclarativeCoordinate; // return invalid coordinate
+    return QGeoCoordinate(); // return invalid coordinate
 }
 
 /*!

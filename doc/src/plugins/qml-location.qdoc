@@ -48,17 +48,30 @@
 
     \section2 Coordinate
 
-    The \l Coordinate is a basic unit of geographical information. The \l Coordinate type includes properties to hold the coordinate values for \l {Coordinate::latitude}{latitude}, \l {Coordinate::longitude}{longitude} and \l {Coordinate::altitude}{altitude}.
+    The \l {QtLocation5::coordinate}{coordinate} is a basic unit of geographical information. The
+    \l {QtLocation5::coordinate}{coordinate} type has attributes to hold the \c {latitude},
+    \c longitude and \a altitude.
 
     \section2 Position
 
-    The three dimensional position of an object such as a mobile device can be specified by giving the latitude, longitude and altitude. That is the values held in the Coordinate type. Additionally for computation of future positions we would like to know if the object is moving, what \l {Position::speed}{speed} it is doing and what is the \l {Position::timestamp}{timestamp} of the last position data. Position therefore includes values for \l {Coordinate::latitude}{latitude}, \l {Coordinate::longitude}{longitude}, \l {Coordinate::altitude}{altitude}, \l {Position::speed}{speed} and a \l {Position::timestamp}{timestamp}. \l Position also takes responsibility for validation of sensible values for these properties: just as there is a \l {Coordinate::latitude}{latitude} there is a property \l {Position::latitudeValid}{latitudeValid}. Similarly for the other properties with the exception of the timestamp.
+    The three dimensional position of an object such as a mobile device can be specified by giving
+    the latitude, longitude and altitude.  That is the values held in the
+    l\ {QtLocation5::coordinate}{coordinate} type.  Additionally for computation of future
+    positions we would like to know if the object is moving, what \l {Position::speed}{speed} it is
+    doing and what is the \l {Position::timestamp}{timestamp} of the last position data.  Position
+    therefore includes values for the \l {Position::coordinate}{coordinate},
+    \l {Position::speed}{speed} and a \l {Position::timestamp}{timestamp}.  \l Position also takes
+    responsibility for validation of sensible values for these properties.  These are exposed as
+    the \l {Position::latitudeValid}{latitudeValid}, \l {Position::longitudeValid}{longitudeValid},
+    \l {Position::altitudeValid}{altitudeValid}, \l {Position::speedValid}{speedValid},
+    \l {Position::horizontalAccuracyValid}{horizontalAccuracyValid}, and
+    \l {Position::verticalAccuracyValid}{verticalAccuracyValid} properties.
 
 
     \section2 PositionSource
 
-    We have a Position type, a Coordinate type but where do we get the
-    data from? It is a good idea to be able to indicate alternative sources.
+    We have a Position type, a \l {QtLocation5::coordinate}{coordinate} type but where do we get
+    the data from? It is a good idea to be able to indicate alternative sources.
     Perhaps instead of directly picking up GPS satellites you want to do
     some testing using a datafile. We may also need to manage our
     interaction with the source.

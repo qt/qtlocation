@@ -41,13 +41,11 @@ import QtQuick 2.0
 import QtLocation 5.0
 
 MapRectangle {
-
     id: mapRectangle
+
     color: mousearea.containsMouse ? "lime" : "red"
     opacity: 0.5
     border.width: 2.0
-    bottomRight: Coordinate{}
-    topLeft: Coordinate{}
 
     function setGeometry(markers, index){
         topLeft.latitude = Math.max(markers[index].coordinate.latitude, markers[index + 1].coordinate.latitude)

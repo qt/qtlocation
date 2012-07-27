@@ -54,9 +54,9 @@ Item {
         Image { source: "flickrmobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
 
         Common.RestModel {
-            id: restModel;
-            latitude: geoTab.latitude
-            longitude: geoTab.longitude}
+            id: restModel
+            coordinate: geoTab.coordinate
+        }
 
         Item {
             id: views

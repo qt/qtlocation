@@ -171,7 +171,7 @@ QT_USE_NAMESPACE
     \code
     GeoCircle {
         id: searchLocation
-        center: Coordinate {
+        center {
             latitude: 10
             longitude: 10
         }

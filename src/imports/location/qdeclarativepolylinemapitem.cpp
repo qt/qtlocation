@@ -43,8 +43,11 @@
 #include "qgeocameracapabilities_p.h"
 #include "qlocationutils_p.h"
 #include "error_messages.h"
+#include "locationvaluetypeprovider.h"
 
 #include <QtQml/QQmlInfo>
+#include <QtQml/QQmlContext>
+#include <QtQml/private/qqmlengine_p.h>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
@@ -65,11 +68,18 @@ QT_BEGIN_NAMESPACE
 
     \brief The MapPolyline type displays a polyline on a map.
 
-    The MapPolyline type displays a polyline on a map, specified in terms
-    of an ordered list of \l Coordinate objects. The Coordinate objects
-    on the path can be changed after being added to the Polyline, and these
-    changes will be reflected in the next frame on the display. Coordinates can
-    also be added and removed at any time using the \l addCoordinate and
+    The MapPolyline type displays a polyline on a map, specified in terms of an ordered list of
+    \l {QtLocation5::coordinate}{coordinates}.  The \l {QtLocation5::coordinate}{coordinates} on
+    the path cannot be directly changed after being added to the Polyline.  Instead, copy the
+    \l path into a var, modify the copy and reassign the copy back to the \l path.
+
+    \code
+    var path = mapPolyline.path;
+    path[0].latitude = 5;
+    mapPolyline.path = path;
+    \endcode
+
+    Coordinates can also be added and removed at any time using the \l addCoordinate and
     \l removeCoordinate methods.
 
     By default, the polyline is displayed as a 1-pixel thick black line. This
@@ -102,10 +112,10 @@ QT_BEGIN_NAMESPACE
             line.width: 3
             line.color: 'green'
             path: [
-                Coordinate { latitude: -27; longitude: 153.0 },
-                Coordinate { latitude: -27; longitude: 154.1 },
-                Coordinate { latitude: -28; longitude: 153.5 },
-                Coordinate { latitude: -29; longitude: 153.5 }
+                { latitude: -27, longitude: 153.0 },
+                { latitude: -27, longitude: 154.1 },
+                { latitude: -28, longitude: 153.5 },
+                { latitude: -29, longitude: 153.5 }
             ]
         }
     }
@@ -466,36 +476,6 @@ void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
 /*!
     \internal
 */
-void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
-{
-    QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate *>(QObject::sender());
-    if (coord) {
-        // TODO: maybe use a QHash instead of indexOf here?
-        int idx = this->coordPath_.indexOf(coord);
-        path_.replace(idx, coord->coordinate());
-        geometry_.markSourceDirty();
-        updateMapItem();
-    }
-}
-
-/*!
-    \internal
-*/
-void QDeclarativePolylineMapItem::coordinateDestroyed(QDeclarativeCoordinate *coord)
-{
-    // tmp workaround for handling null pointers caused by external deletion of
-    // the declarative coordinate. This slot and its calls can be safely removed
-    // once QTBUG-25636 is fixed
-    if (coord) {
-        int idx = this->coordPath_.indexOf(coord);
-        if ( idx >= 0 )
-            coordPath_.replace(idx, new QDeclarativeCoordinate(coord->coordinate(), this));
-    }
-}
-
-/*!
-    \internal
-*/
 void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
@@ -506,90 +486,67 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
 }
 
 /*!
-    \qmlproperty list<Coordinate> MapPolyline::path
+    \qmlproperty list<coordinate> MapPolyline::path
 
     This property holds the ordered list of coordinates which
     define the polyline.
 */
 
-QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativePath()
+QJSValue QDeclarativePolylineMapItem::path() const
 {
-    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
-                                                    path_at, path_clear);
+    QQmlContext *context = QQmlEngine::contextForObject(parent());
+    QQmlEngine *engine = context->engine();
+    QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
+    QV8ValueTypeWrapper *valueTypeWrapper = v8Engine->valueTypeWrapper();
+
+    v8::Local<v8::Array> pathArray = v8::Array::New(path_.length());
+    for (int i = 0; i < path_.length(); ++i) {
+        const QGeoCoordinate &c = path_.at(i);
+
+        QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
+        v8::Local<v8::Object> cv = valueTypeWrapper->newValueType(QVariant::fromValue(c), vt);
+
+        pathArray->Set(i, cv);
+    }
+
+    return v8Engine->scriptValueFromInternal(pathArray);
 }
 
-/*!
-    \internal
-*/
-void QDeclarativePolylineMapItem::path_append(QQmlListProperty<QDeclarativeCoordinate> *property,
-                                              QDeclarativeCoordinate *coordinate)
+void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
 {
-    QDeclarativePolylineMapItem *item = qobject_cast<QDeclarativePolylineMapItem *>(
-                property->object);
+    if (!value.isArray())
+        return;
 
-    QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                     item, SLOT(updateAfterCoordinateChanged()));
-    QObject::connect(coordinate, SIGNAL(destroyed(QDeclarativeCoordinate *)),
-                     item, SLOT(coordinateDestroyed(QDeclarativeCoordinate *)));
-    item->coordPath_.append(coordinate);
-    item->path_.append(coordinate->coordinate());
-    item->geometry_.markSourceDirty();
-    item->updateMapItem();
-    emit item->pathChanged();
-}
+    QList<QGeoCoordinate> pathList;
+    quint32 length = value.property(QStringLiteral("length")).toUInt();
+    for (quint32 i = 0; i < length; ++i) {
+        QJSValue v = value.property(i);
 
-/*!
-    \internal
-*/
-int QDeclarativePolylineMapItem::path_count(
-        QQmlListProperty<QDeclarativeCoordinate> *property)
-{
-    return qobject_cast<QDeclarativePolylineMapItem *>(property->object)->coordPath_.count();
-}
+        QGeoCoordinate c;
 
-/*!
-    \internal
-*/
-QDeclarativeCoordinate *QDeclarativePolylineMapItem::path_at(
-        QQmlListProperty<QDeclarativeCoordinate> *property, int index)
-{
-    return qobject_cast<QDeclarativePolylineMapItem *>(property->object)->coordPath_.at(index);
-}
+        if (v.isObject()) {
+            if (v.hasProperty(QStringLiteral("latitude")))
+                c.setLatitude(v.property(QStringLiteral("latitude")).toNumber());
+            if (v.hasProperty(QStringLiteral("longitude")))
+                c.setLongitude(v.property(QStringLiteral("longitude")).toNumber());
+            if (v.hasProperty(QStringLiteral("altitude")))
+                c.setAltitude(v.property(QStringLiteral("altitude")).toNumber());
+        } else if (v.isString()) {
+            c = stringToCoordinate(v.toString()).value<QGeoCoordinate>();
+        }
 
-/*!
-    \internal
-*/
-void QDeclarativePolylineMapItem::path_clear(
-        QQmlListProperty<QDeclarativeCoordinate> *property)
-{
-    QDeclarativePolylineMapItem *item = qobject_cast<QDeclarativePolylineMapItem *>(
-                property->object);
-    qDeleteAll(item->coordPath_);
-    item->coordPath_.clear();
-    item->path_.clear();
-    item->geometry_.markSourceDirty();
-    item->updateMapItem();
-    emit item->pathChanged();
-}
+        if (!c.isValid()) {
+            qmlInfo(this) << "Unsupported path type";
+            return;
+        }
 
-/*!
-    \qmlmethod MapPolyline::addCoordinate(Coordinate)
+        pathList.append(c);
+    }
 
-    Adds a coordinate to the path.
+    if (path_ == pathList)
+        return;
 
-    \sa removeCoordinate, path
-*/
-
-void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate *coordinate)
-{
-    coordPath_.append(coordinate);
-    path_.append(coordinate->coordinate());
-
-    QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                     this, SLOT(updateAfterCoordinateChanged()));
-
-    QObject::connect(coordinate, SIGNAL(destroyed(QDeclarativeCoordinate *)),
-                     this, SLOT(coordinateDestroyed(QDeclarativeCoordinate *)));
+    path_ = pathList;
 
     geometry_.markSourceDirty();
     updateMapItem();
@@ -597,7 +554,24 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate *coordina
 }
 
 /*!
-    \qmlmethod MapPolyline::removeCoordinate(Coordinate)
+    \qmlmethod MapPolyline::addCoordinate(coordinate)
+
+    Adds a coordinate to the path.
+
+    \sa removeCoordinate, path
+*/
+
+void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate)
+{
+    path_.append(coordinate);
+
+    geometry_.markSourceDirty();
+    updateMapItem();
+    emit pathChanged();
+}
+
+/*!
+    \qmlmethod MapPolyline::removeCoordinate(coordinate)
 
     Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
@@ -605,9 +579,9 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate *coordina
     \sa addCoordinate, path
 */
 
-void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate *coordinate)
+void QDeclarativePolylineMapItem::removeCoordinate(const QGeoCoordinate &coordinate)
 {
-    int index = coordPath_.lastIndexOf(coordinate);
+    int index = path_.lastIndexOf(coordinate);
 
     if (index == -1) {
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolylineMapItem");
@@ -618,11 +592,7 @@ void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate *coord
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolylineMapItem");
         return;
     }
-    coordPath_.removeAt(index);
     path_.removeAt(index);
-
-    QObject::disconnect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                        this, SLOT(updateAfterCoordinateChanged()));
 
     geometry_.markSourceDirty();
     updateMapItem();
@@ -761,14 +731,7 @@ void QDeclarativePolylineMapItem::dragEnded()
                                + newCoordinate.longitude() - firstLongitude));
             coord.setLatitude(coord.latitude()
                               + newCoordinate.latitude() - firstLatitude - offsetLatitude);
-
-            // temporarily disconnect signals to avoid unecessary screen updates for each coordinate
-            QObject::disconnect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
-                                this, SLOT(updateAfterCoordinateChanged()));
-            this->coordPath_.at(i)->setCoordinate(coord);
-            this->path_.replace(i, coordPath_.at(i)->coordinate());
-            QObject::connect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
-                                this, SLOT(updateAfterCoordinateChanged()));
+            path_.replace(i, coord);
         }
 
         QGeoCoordinate leftBoundCoord = geometry_.geoLeftBound();

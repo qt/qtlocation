@@ -55,11 +55,11 @@ class QDeclarativeGeoRectangle : public QDeclarativeGeoShape
     Q_OBJECT
 
     Q_PROPERTY(QGeoRectangle rectangle READ rectangle WRITE setRectangle)
-    Q_PROPERTY(QDeclarativeCoordinate *bottomLeft READ bottomLeft WRITE setBottomLeft NOTIFY bottomLeftChanged)
-    Q_PROPERTY(QDeclarativeCoordinate *bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
-    Q_PROPERTY(QDeclarativeCoordinate *topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
-    Q_PROPERTY(QDeclarativeCoordinate *topRight READ topRight WRITE setTopRight NOTIFY topRightChanged)
-    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QGeoCoordinate bottomLeft READ bottomLeft WRITE setBottomLeft NOTIFY bottomLeftChanged)
+    Q_PROPERTY(QGeoCoordinate bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
+    Q_PROPERTY(QGeoCoordinate topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
+    Q_PROPERTY(QGeoCoordinate topRight READ topRight WRITE setTopRight NOTIFY topRightChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(double height READ height WRITE setHeight NOTIFY heightChanged)
     Q_PROPERTY(double width READ width WRITE setWidth NOTIFY widthChanged)
 
@@ -70,17 +70,17 @@ public:
     QGeoRectangle rectangle() const;
     QGeoShape shape() const;
 
-    Q_INVOKABLE bool contains(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *bottomLeft();
-    void setBottomLeft(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *bottomRight();
-    void setBottomRight(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *topLeft();
-    void setTopLeft(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *topRight();
-    void setTopRight(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *center();
-    void setCenter(QDeclarativeCoordinate *coordinate);
+    Q_INVOKABLE bool contains(const QGeoCoordinate &coordinate);
+    QGeoCoordinate bottomLeft();
+    void setBottomLeft(const QGeoCoordinate &coordinate);
+    QGeoCoordinate bottomRight();
+    void setBottomRight(const QGeoCoordinate &coordinate);
+    QGeoCoordinate topLeft();
+    void setTopLeft(const QGeoCoordinate &coordinate);
+    QGeoCoordinate topRight();
+    void setTopRight(QGeoCoordinate &coordinate);
+    QGeoCoordinate center();
+    void setCenter(const QGeoCoordinate &coordinate);
     double height();
     void setHeight(double height);
     double width();
@@ -95,26 +95,9 @@ Q_SIGNALS:
     void heightChanged();
     void widthChanged();
 
-private Q_SLOTS:
-    void coordinateChanged();
-
 private:
-    enum SkipProp {
-        SkipNone,
-        SkipBottomLeft,
-        SkipBottomRight,
-        SkipTopLeft,
-        SkipTopRight,
-        SkipCenter
-    };
-    void synchronizeDeclarative(const QGeoRectangle &old, SkipProp skip);
+    void emitChanged(const QGeoRectangle &old);
 
-private:
-    QDeclarativeCoordinate *m_bottomLeft;
-    QDeclarativeCoordinate *m_bottomRight;
-    QDeclarativeCoordinate *m_topLeft;
-    QDeclarativeCoordinate *m_topRight;
-    QDeclarativeCoordinate *m_center;
     QGeoRectangle m_box;
     double m_width;
     double m_height;

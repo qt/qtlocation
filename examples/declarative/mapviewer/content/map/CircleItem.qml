@@ -49,7 +49,6 @@ MapCircle {
     border.width: 5
     smooth: true
     opacity: 0.5
-    center: Coordinate{}
 
     function setGeometry(markers, index){
         center.latitude = markers[index].coordinate.latitude

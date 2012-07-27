@@ -43,8 +43,7 @@ import QtQuick.XmlListModel 2.0
 
 //! [restmodel]
 XmlListModel {
-    property double latitude: 0
-    property double longitude: 0
+    property variant coordinate
 
     source: "http://api.flickr.com/services/rest/?" +
             "min_taken_date=2000-01-01+0:00:00&" +
@@ -53,7 +52,7 @@ XmlListModel {
             "per_page=30&" +
             "sort=date-taken-desc&" +
             "api_key=e36784df8a03fea04c22ed93318b291c&" +
-            "lat=" + latitude + "&lon=" + longitude;
+            "lat=" + coordinate.latitude + "&lon=" + coordinate.longitude;
     query: "/rsp/photos/photo"
 
     XmlRole { name: "title"; query: "@title/string()" }
@@ -64,48 +63,3 @@ XmlListModel {
     XmlRole { name: "secret"; query: "@secret/string()" }
 }
 //! [restmodel]
-
-/*
-
-QString url = "http://farm";
-            url.append(child.attribute("farm"));
-            url.append(".static.flickr.com/");
-            url.append(child.attribute("server"));
-            url.append("/");
-            url.append(child.attribute("id"));
-            url.append("_");
-            url.append(child.attribute("secret"));
-
-
-XmlListModel {
-    property string tags : ""
-
-    function commasep(x)
-    {
-        return x.replace(' ',',');
-    }
-
-    //m_latitude = 61.4500;
-    //m_longitude = 23.8502;
-    //urlstring.append("&lat=");
-    //urlstring.append(QString::number(m_latitude));
-    //urlstring.append("&lon=");
-
-    source: "http://api.flickr.com/services/rest/photos_public.gne?"+(tags ? "tags="+commasep(tags)+"&" : "")+"format=rss2"
-    // +"&lat=61"+"&lon=23"
-    // original source: "http://api.flickr.com/services/feeds/photos_public.gne?"+(tags ? "tags="+commasep(tags)+"&" : "")+"format=rss2"
-    query: "/rss/channel/item"
-    namespaceDeclarations: "declare namespace media=\"http://search.yahoo.com/mrss/\";"
-
-    XmlRole { name: "title"; query: "title/string()" }
-    XmlRole { name: "imagePath"; query: "media:thumbnail/@url/string()" }
-    XmlRole { name: "url"; query: "media:content/@url/string()" }
-    XmlRole { name: "description"; query: "description/string()" }
-    XmlRole { name: "tags"; query: "media:category/string()" }
-    XmlRole { name: "photoWidth"; query: "media:content/@width/string()" }
-    XmlRole { name: "photoHeight"; query: "media:content/@height/string()" }
-    XmlRole { name: "photoType"; query: "media:content/@type/string()" }
-    XmlRole { name: "photoAuthor"; query: "author/string()" }
-    XmlRole { name: "photoDate"; query: "pubDate/string()" }
-}
-*/

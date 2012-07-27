@@ -186,7 +186,7 @@ private:
     QString errorString_;
     GeocodeError error_;
     QVariant queryVariant_;
-    QDeclarativeCoordinate *coordinate_;
+    QGeoCoordinate coordinate_;
     QDeclarativeGeoAddress *address_;
     QString searchString_;
 

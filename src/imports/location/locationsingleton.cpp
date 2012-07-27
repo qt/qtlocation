@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,14 +39,53 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.0
+#include "locationsingleton.h"
 
-GeoRectangle {
-    center {
-        longitude: 10.0
-        latitude: 20.0
-        altitude: 30.0
+/*!
+    \qmltype QtLocation
+    \instantiates LocationSingleton
+    \inqmlmodule QtLocation 5.0
+    \ingroup qml-QtLocation5-common
+
+    \brief The QtLocation global object provides useful functions for working with Qt Location
+           types in QML.
+
+    \qml
+    import QtLocation 5.0
+
+    Item {
+        property variant coordinate: QtLocation.coordinate(-27.5, 153.1)
     }
-    height: 30.0
-    width: 40.0
+    \endqml
+*/
+
+LocationSingleton::LocationSingleton(QObject *parent)
+:   QObject(parent)
+{
 }
+
+/*!
+    \qmlmethod coordinate QtLocation5::QtLocation::coordinate()
+
+    Constructs an invalid coordinate.
+
+    \sa {QtLocation5::coordinate}{coordinate}
+*/
+QGeoCoordinate LocationSingleton::coordinate() const
+{
+    return QGeoCoordinate();
+}
+
+/*!
+    \qmlmethod coordinate QtLocation5::QtLocation::coordinate(real latitude, real longitue, real altitude) const
+
+    Constructs a coordinate with the specified \a latitude, \a longitude and optional \a altitude.
+    Both \a latitude and \a longitude must be valid, otherwise an invalid coordinate is returned.
+
+    \sa {QtLocation5::coordinate}{coordinate}
+*/
+QGeoCoordinate LocationSingleton::coordinate(double latitude, double longitude, double altitude) const
+{
+    return QGeoCoordinate(latitude, longitude, altitude);
+}
+

@@ -56,12 +56,12 @@ class QDeclarativeGeoManeuver : public QObject
     Q_ENUMS(Direction)
 
     Q_PROPERTY(bool valid READ valid CONSTANT)
-    Q_PROPERTY(QDeclarativeCoordinate *position READ position CONSTANT)
+    Q_PROPERTY(QGeoCoordinate position READ position CONSTANT)
     Q_PROPERTY(QString instructionText READ instructionText CONSTANT)
     Q_PROPERTY(Direction direction READ direction CONSTANT)
     Q_PROPERTY(int timeToNextInstruction READ timeToNextInstruction CONSTANT)
     Q_PROPERTY(qreal distanceToNextInstruction READ distanceToNextInstruction CONSTANT)
-    Q_PROPERTY(QDeclarativeCoordinate *waypoint READ waypoint CONSTANT)
+    Q_PROPERTY(QGeoCoordinate waypoint READ waypoint CONSTANT)
     Q_PROPERTY(bool waypointValid READ waypointValid CONSTANT)
 
 public:
@@ -87,17 +87,15 @@ public:
     bool valid() const;
     bool waypointValid() const;
 
-    QDeclarativeCoordinate *position() const;
+    QGeoCoordinate position() const;
     QString instructionText() const;
     Direction direction() const;
     int timeToNextInstruction() const;
     qreal distanceToNextInstruction() const;
-    QDeclarativeCoordinate *waypoint() const;
+    QGeoCoordinate waypoint() const;
 
 private:
     QGeoManeuver maneuver_;
-    QDeclarativeCoordinate *position_;
-    QDeclarativeCoordinate *waypoint_;
 };
 
 QT_END_NAMESPACE

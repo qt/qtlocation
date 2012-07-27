@@ -88,7 +88,6 @@ class QGeoCoordinate;
 class QGeoMapObject;
 class QGeoMapData;
 class QGeoServiceProvider;
-class QDeclarativeCoordinate;
 class QDeclarativeGeoServiceProvider;
 class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItem;
@@ -106,7 +105,7 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(QDeclarativeGeoMapType *activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
-    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(QList<QObject *> mapItems READ mapItems NOTIFY mapItemsChanged)
     // Tilt and bearing are not part of supported API
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
@@ -145,8 +144,8 @@ public:
     void setTilt(qreal tilt);
     qreal tilt() const;
 
-    void setCenter(QDeclarativeCoordinate *center);
-    QDeclarativeCoordinate *center();
+    void setCenter(const QGeoCoordinate &center);
+    QGeoCoordinate center() const;
 
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
@@ -155,8 +154,8 @@ public:
     Q_INVOKABLE void clearMapItems();
     QList<QObject *> mapItems();
 
-    Q_INVOKABLE QDeclarativeCoordinate *toCoordinate(const QPointF &screenPosition) const;
-    Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate *coordinate) const;
+    Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &screenPosition) const;
+    Q_INVOKABLE QPointF toScreenPosition(const QGeoCoordinate &coordinate) const;
 
     // callback for map mouse areas
     bool mouseEvent(QMouseEvent *event);
@@ -181,7 +180,7 @@ Q_SIGNALS:
     void zoomLevelChanged(qreal zoomLevel);
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);
-    void centerChanged(const QDeclarativeCoordinate *coordinate);
+    void centerChanged(const QGeoCoordinate &coordinate);
     void activeMapTypeChanged();
     void supportedMapTypesChanged();
     void minimumZoomLevelChanged();
@@ -190,9 +189,6 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF &target);
-    void centerLatitudeChanged(double latitude);
-    void centerLongitudeChanged(double longitude);
-    void centerAltitudeChanged(double altitude);
     void mappingManagerInitialized();
     void mapZoomLevelChanged(qreal zoom);
     void mapTiltChanged(qreal tilt);
@@ -203,7 +199,6 @@ private Q_SLOTS:
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
-    void updateAspectRatio();
     void populateMap();
     void fitViewportToMapItemsRefine(bool refine);
 
@@ -214,7 +209,7 @@ private:
     qreal zoomLevel_;
     qreal bearing_;
     qreal tilt_;
-    QPointer<QDeclarativeCoordinate> center_;
+    QGeoCoordinate center_;
 
     QDeclarativeGeoMapType *activeMapType_;
     QList<QDeclarativeGeoMapType *> supportedMapTypes_;

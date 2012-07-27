@@ -59,4 +59,4 @@ SOURCES += \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
             qgeopositioninfosourcefactory.cpp \
-            qtlocation.cpp \
+            qtlocation.cpp

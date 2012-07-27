@@ -57,7 +57,7 @@
         \list
         \li \l{QtLocation5::Map}{Map}
         \li \l{QtLocation5::MapGestureArea}{MapGestureArea}
-        \li \l{QtLocation5::Coordinate}{Coordinate}
+        \li \l{QtLocation5::coordinate}{coordinate}
         \endlist
     \li Finding an address
         \list
@@ -83,9 +83,9 @@
     \snippet examples/declarative/mapviewer/content/map/MapComponent.qml coord
     \snippet examples/declarative/mapviewer/content/map/MapComponent.qml end
 
-    In this example, we give the map an initial center coordinate from a
-    contained Coordinate object, with a set latitude and longitude. We also
-    set the initial zoom level to 50% (halfway between the maximum and minimum).
+    In this example, we give the map an initial center \l {QtLocation5::coordinate}{coordinate}
+    with a set latitude and longitude. We also set the initial zoom level to 50% (halfway between
+    the maximum and minimum).
 
     The calls to "pinch" and "flick" are used to enable gestures on the map.
     The flick gesture is also sometimes known as "kinetic panning", and provides
@@ -162,7 +162,8 @@
     With the model, view and delegate now complete, the only missing component
     is some kind of control over the model to begin the Route request process.
     In the simplest case, we can fill out a Route request using two already
-    available Coordinates, which we store inside the RouteDialog component:
+    available \l {QtLocation5::coordinate}{coordinates}, which we store inside the RouteDialog
+    component:
 
     \snippet examples/declarative/mapviewer/mapviewer.qml routedialog0
     \snippet examples/declarative/mapviewer/mapviewer.qml routedialog1

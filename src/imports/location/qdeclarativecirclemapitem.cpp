@@ -77,7 +77,7 @@ QT_BEGIN_NAMESPACE
 
     Internally, a MapCircle is implemented as a many-sided polygon. To
     calculate the radius points it uses a spherical model of the Earth,
-    similar to the atDistanceAndAzimuth method of the QML Coordinate
+    similar to the atDistanceAndAzimuth method of the \l {QtLocation5::coordinate}{coordinate}
     type. These two things can occasionally have implications for the
     accuracy of the circle's shape, depending on position and map
     projection.
@@ -108,7 +108,10 @@ QT_BEGIN_NAMESPACE
     \code
     Map {
         MapCircle {
-            center: Coordinate { latitude: -27; longitude: 153.0 }
+            center {
+                latitude: -27.5
+                longitude: 153.0
+            }
             radius: 5000.0
             color: 'green'
             border.width: 3
@@ -294,12 +297,8 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoo
     }
 }
 
-QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
-    QDeclarativeGeoMapItemBase(parent),
-    center_(0),
-    color_(Qt::transparent),
-    radius_(0),
-    dirtyMaterial_(true)
+QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
+:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), radius_(0), dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
@@ -352,24 +351,18 @@ void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *ma
 }
 
 /*!
-    \qmlproperty Coordinate MapCircle::center
+    \qmlproperty coordinate MapCircle::center
 
     This property holds the central point about which the circle is defined.
 
     \sa radius
 */
-void QDeclarativeCircleMapItem::setCenter(QDeclarativeCoordinate *center)
+void QDeclarativeCircleMapItem::setCenter(const QGeoCoordinate &center)
 {
     if (center_ == center)
         return;
-    if (center_)
-        center_->disconnect(this);
-    center_ = center;
 
-    if (center_) {
-        connect(center_, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(updateMapItemAssumeDirty()));
-    }
+    center_ = center;
 
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
@@ -377,7 +370,7 @@ void QDeclarativeCircleMapItem::setCenter(QDeclarativeCoordinate *center)
     emit centerChanged(center_);
 }
 
-QDeclarativeCoordinate *QDeclarativeCircleMapItem::center()
+QGeoCoordinate QDeclarativeCircleMapItem::center()
 {
     return center_;
 }
@@ -466,22 +459,20 @@ QSGNode *QDeclarativeCircleMapItem::updateMapItemPaintNode(QSGNode *oldNode, Upd
 */
 void QDeclarativeCircleMapItem::updateMapItem()
 {
-    if (!map() || !center() || !center()->coordinate().isValid())
+    if (!map() || !center().isValid())
         return;
 
     if (geometry_.isSourceDirty()) {
         circlePath_.clear();
-        calculatePeripheralPoints(circlePath_, center_->coordinate(),
-                                  radius_, 125);
+        calculatePeripheralPoints(circlePath_, center_, radius_, 125);
     }
 
     QGeoCoordinate leftBoundCoord;
     int pathCount = circlePath_.size();
-    bool preserve = preserveCircleGeometry(circlePath_, center_->coordinate(),
-                                           radius_, leftBoundCoord);
+    bool preserve = preserveCircleGeometry(circlePath_, center_, radius_, leftBoundCoord);
     geometry_.setPreserveGeometry(preserve, leftBoundCoord);
     geometry_.updateSourcePoints(*map(), circlePath_);
-    if (crossEarthPole(center_->coordinate(), radius_) && circlePath_.size() == pathCount)
+    if (crossEarthPole(center_, radius_) && circlePath_.size() == pathCount)
         geometry_.updateScreenPointsInvert(*map()); // invert fill area for really huge circles
     else geometry_.updateScreenPoints(*map());
 
@@ -538,7 +529,7 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
         borderGeometry_.markSourceDirty();
     }
 
-    if (event.centerChanged && crossEarthPole(center_->coordinate(), radius_)) {
+    if (event.centerChanged && crossEarthPole(center_, radius_)) {
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
@@ -566,10 +557,8 @@ void QDeclarativeCircleMapItem::dragEnded()
 {
     QPointF newPoint = QPointF(x(),y()) + QPointF(width(), height()) / 2;
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
-    if (newCoordinate.isValid()) {
-        internalCoordinate_.setCoordinate(newCoordinate);
-        setCenter(&internalCoordinate_);
-    }
+    if (newCoordinate.isValid())
+        setCenter(newCoordinate);
 }
 
 /*!

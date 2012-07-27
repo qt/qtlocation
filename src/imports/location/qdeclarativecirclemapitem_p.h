@@ -67,7 +67,7 @@ public:
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
@@ -79,8 +79,8 @@ public:
     virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    QDeclarativeCoordinate *center();
-    void setCenter(QDeclarativeCoordinate *center);
+    QGeoCoordinate center();
+    void setCenter(const QGeoCoordinate &center);
 
     qreal radius() const;
     void setRadius(qreal radius);
@@ -95,7 +95,7 @@ public:
     bool contains(const QPointF &point) const;
 
 Q_SIGNALS:
-    void centerChanged(const QDeclarativeCoordinate *center);
+    void centerChanged(const QGeoCoordinate &center);
     void radiusChanged(qreal radius);
     void colorChanged(const QColor &color);
 
@@ -111,10 +111,7 @@ private:
                                       qreal distance);
 
 private:
-    //TODO: pimpl
-    //TODO: this should be in base class done in
-    QDeclarativeCoordinate internalCoordinate_;
-    QDeclarativeCoordinate *center_;
+    QGeoCoordinate center_;
     QDeclarativeMapLineProperties border_;
     QColor color_;
     qreal radius_;

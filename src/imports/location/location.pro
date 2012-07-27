@@ -1,4 +1,4 @@
-QT += quick-private network location-private qml-private 3d core-private gui-private
+QT += quick-private network location-private qml-private 3d core-private gui-private v8-private
 
 INCLUDEPATH += ../../location
 INCLUDEPATH += ../../location/maps
@@ -45,7 +45,9 @@ HEADERS += qdeclarativeposition_p.h \
            qgeomapitemgeometry_p.h \
            qdeclarativegeomapcopyrightsnotice_p.h \
            qdeclarativegeomapgesturearea_p.h \
-           error_messages.h
+           error_messages.h \
+           locationvaluetypeprovider.h \
+           locationsingleton.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -78,7 +80,9 @@ SOURCES += qdeclarativeposition.cpp \
            qgeomapitemgeometry.cpp \
            qdeclarativegeomapcopyrightsnotice.cpp \
            qdeclarativegeomapgesturearea.cpp \
-           error_messages.cpp
+           error_messages.cpp \
+           locationvaluetypeprovider.cpp \
+           locationsingleton.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 

@@ -42,35 +42,28 @@
 #ifndef QDECLARATIVECOORDINATE_H
 #define QDECLARATIVECOORDINATE_H
 
-#include <qgeocoordinate.h>
-#include <QtQml/qqml.h>
-
-#include <QObject>
+#include <QtQml/private/qqmlvaluetype_p.h>
+#include <QtLocation/QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeCoordinate : public QObject
+class CoordinateValueType : public QQmlValueTypeBase<QGeoCoordinate>
 {
     Q_OBJECT
 
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
-    Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY longitudeChanged)
-    Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
-    Q_PROPERTY(bool isValid READ isValid NOTIFY validityChanged)
+    Q_PROPERTY(double latitude READ latitude WRITE setLatitude)
+    Q_PROPERTY(double longitude READ longitude WRITE setLongitude)
+    Q_PROPERTY(double altitude READ altitude WRITE setAltitude)
+    Q_PROPERTY(bool isValid READ isValid)
 
 public:
-    explicit QDeclarativeCoordinate(QObject *parent = 0);
-    QDeclarativeCoordinate(const QGeoCoordinate &coordinate, QObject *parent = 0);
-    ~QDeclarativeCoordinate();
+    explicit CoordinateValueType(QObject *parent = 0);
+    ~CoordinateValueType();
 
-    Q_INVOKABLE qreal distanceTo(QObject *coordinate);
-    Q_INVOKABLE qreal azimuthTo(QObject *coordinate);
+    Q_INVOKABLE qreal distanceTo(const QGeoCoordinate &coordinate) const;
+    Q_INVOKABLE qreal azimuthTo(const QGeoCoordinate &coordinate) const;
 
-    Q_INVOKABLE QDeclarativeCoordinate *atDistanceAndAzimuth(qreal distance, qreal azimuth);
-
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
+    Q_INVOKABLE QGeoCoordinate atDistanceAndAzimuth(qreal distance, qreal azimuth) const;
 
     double latitude() const;
     void setLatitude(double latitude);
@@ -83,20 +76,9 @@ public:
 
     bool isValid() const;
 
-Q_SIGNALS:
-    void latitudeChanged(double latitude);
-    void longitudeChanged(double longitude);
-    void altitudeChanged(double altitude);
-    void validityChanged(bool valid);
-    void coordinateChanged(const QGeoCoordinate &coord);
-    void destroyed(QDeclarativeCoordinate *coord);
-
-private:
-    QGeoCoordinate m_coordinate;
+    Q_DECL_OVERRIDE QString toString() const;
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QDeclarativeCoordinate)
 
 #endif

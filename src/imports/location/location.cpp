@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include "locationvaluetypeprovider.h"
+
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
 
@@ -83,16 +85,36 @@
 #include "qdeclarativesearchsuggestionmodel_p.h"
 #include "error_messages.h"
 
+#include "locationsingleton.h"
+
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
-#include <qqmlpropertymap.h>
-#include <QDebug>
+#include <QtQml/private/qqmlvaluetype_p.h>
+#include <QtQml/private/qqmlglobal_p.h>
+#include <QtQml/private/qqmlmetatype_p.h>
+
+#include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
+
+static QObject *singleton_type_factory(QQmlEngine *engine, QJSEngine *jsEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(jsEngine)
+
+    return new LocationSingleton;
+}
+
+static LocationValueTypeProvider *getValueTypeProvider()
+{
+    static LocationValueTypeProvider provider;
+    return &provider;
+}
 
 class QLocationDeclarativeModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
+
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface/1.0"
                       FILE "plugin.json")
 
@@ -107,9 +129,13 @@ public:
 
             // @uri QtLocation 5.0
 
+            qmlRegisterSingletonType<LocationSingleton>(uri, 5, 0, "QtLocation", singleton_type_factory);
+
+            QQml_addValueTypeProvider(getValueTypeProvider());
+            QQmlMetaType::registerCustomStringConverter(qMetaTypeId<QGeoCoordinate>(), stringToCoordinate);
+
             qmlRegisterType<QDeclarativePosition>(uri, 5, 0, "Position");
             qmlRegisterType<QDeclarativePositionSource>(uri, 5, 0, "PositionSource");
-            qmlRegisterType<QDeclarativeCoordinate>(uri, 5, 0, "Coordinate");
             qmlRegisterUncreatableType<QDeclarativeGeoShape>(uri, 5, 0, "GeoShape", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Positioning)GeoShape"));
             qmlRegisterType<QDeclarativeGeoRectangle>(uri, 5, 0, "GeoRectangle");
             qmlRegisterType<QDeclarativeGeoCircle>(uri, 5, 0, "GeoCircle");

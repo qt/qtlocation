@@ -42,6 +42,10 @@
 import QtLocation 5.0
 
 GeoCircle {
-    center: TestCoordinate { }
+    center {
+        longitude: 10.0
+        latitude: 20.0
+        altitude: 30.0
+    }
     radius: 30.0
 }

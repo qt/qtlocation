@@ -116,7 +116,7 @@ Item {
         plugin: myPlugin
 
         searchArea: GeoCircle {
-            center: Coordinate {
+            center {
                 // Brisbane
                 longitude: 153.02778
                 latitude: -27.46778
@@ -303,7 +303,7 @@ Item {
                 postalCode: "4113"
                 country: "Australia"
             }
-            coordinate: Coordinate {
+            coordinate {
                 latitude: -27.579646
                 longitude: 153.100308
             }

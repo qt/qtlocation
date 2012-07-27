@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,14 +39,23 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.0
+#ifndef LOCATIONSINGLETON_H
+#define LOCATIONSINGLETON_H
 
-GeoRectangle {
-    center {
-        longitude: 10.0
-        latitude: 20.0
-        altitude: 30.0
-    }
-    height: 30.0
-    width: 40.0
-}
+#include <QtCore/QObject>
+#include <QtCore/qnumeric.h>
+#include <QtLocation/QGeoCoordinate>
+
+class LocationSingleton : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit LocationSingleton(QObject *parent = 0);
+
+    Q_INVOKABLE QGeoCoordinate coordinate() const;
+    Q_INVOKABLE QGeoCoordinate coordinate(double latitude, double longitude,
+                                          double altitude = qQNaN()) const;
+};
+
+#endif // LOCATIONSINGLETON_H

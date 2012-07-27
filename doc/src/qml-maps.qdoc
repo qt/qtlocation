@@ -48,20 +48,20 @@ Map item you can center the map, zoom, pinch and make the item flickable.
 
 The places to be added to the map are
 \l {Maps and Navigation (QML)#Putting Objects on a Map (Map Overlay Objects)}{MapItems}. The item's
-position is defined by a \l {Coordinate}{coordinate} which includes latitude, longitude and
-elevation.  The item is then displayed automatically after it is added to the Map.  Interaction
-with the added items, and the \l Map itself, is handled by \l MapMouseArea when items are added as
-children of the
+position is defined by a \l {QtLocation5::coordinate}{coordinate} which includes latitude,
+longitude and altitude.  The item is then displayed automatically after it is added to the Map.
+Interaction with the added items, and the \l Map itself, is handled by \l MapMouseArea when items
+are added as children of the
 \l {Maps and Navigation (QML)#Putting Objects on a Map (Map Overlay Objects)}{MapItems} or \l Map.
 
 \section2 Position
 
-The basic type of position information is the \l Coordinate. A coordinate
-encapsulates data for the latitude, longitude and altitude of the location.
-Altitude is in meters. It also has a method to determine distance to another
-Coordinate. The \l Coordinate object may also be held within a \l {QtLocation5::Location}{Location}
-object, this will also have information on a bounding box size to determine
-sufficient proximity to the location and a location address.
+The basic piece of position information is the \l {QtLocation5::coordinate}{coordinate}.  A
+coordinate encapsulates data for the latitude, longitude and altitude of the location.  Altitude is
+in meters. It also has a method to determine distance to another
+\l {QtLocation5::coordinate}{coordinate}.  The \l {QtLocation5::coordinate}{coordinate} type may
+also be held within a \l {QtLocation5::Location}{Location} element, this will also have information
+on a bounding box size to determine sufficient proximity to the location and a location address.
 
 \section2 Geocoding
 

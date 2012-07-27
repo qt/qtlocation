@@ -74,49 +74,49 @@ Item {
     width: 240
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
-    Coordinate{ id: mapDefaultCenter; latitude: 20; longitude: 20}
-    Coordinate{ id: preMapRectangleDefaultTopLeft; latitude: 20; longitude: 20}
-    Coordinate{ id: preMapRectangleDefaultBottomRight; latitude: 10; longitude: 30}
-    Coordinate{ id: preMapCircleDefaultCenter; latitude: 10; longitude: 30}
-    Coordinate{ id: preMapQuickItemDefaultCoordinate; latitude: 35; longitude: 3}
 
+    property variant mapDefaultCenter: QtLocation.coordinate(20, 20)
+    property variant preMapRectangleDefaultTopLeft: QtLocation.coordinate(20, 20)
+    property variant preMapRectangleDefaultBottomRight: QtLocation.coordinate(10, 30)
+    property variant preMapCircleDefaultCenter: QtLocation.coordinate(10, 30)
+    property variant preMapQuickItemDefaultCoordinate: QtLocation.coordinate(35, 3)
 
-    property list<Coordinate> preMapPolygonDefaultPath:[
-        Coordinate { latitude: 25; longitude: 5},
-        Coordinate { latitude: 20; longitude: 10},
-        Coordinate { latitude: 15; longitude: 6}
+    property variant preMapPolygonDefaultPath: [
+        { latitude: 25, longitude: 5 },
+        { latitude: 20, longitude: 10 },
+        { latitude: 15, longitude: 6 }
     ]
 
-    property list<Coordinate> preMapPolylineDefaultPath:[
-        Coordinate { latitude: 25; longitude: 15},
-        Coordinate { latitude: 20; longitude: 19},
-        Coordinate { latitude: 15; longitude: 16}
+    property variant preMapPolylineDefaultPath: [
+        { latitude: 25, longitude: 15 },
+        { latitude: 20, longitude: 19 },
+        { latitude: 15, longitude: 16 }
     ]
 
-    property list<Coordinate> preMapRouteDefaultPath:[
-        Coordinate { latitude: 25; longitude: 14},
-        Coordinate { latitude: 20; longitude: 18},
-        Coordinate { latitude: 15; longitude: 15}
+    property variant preMapRouteDefaultPath: [
+        { latitude: 25, longitude: 14 },
+        { latitude: 20, longitude: 18 },
+        { latitude: 15, longitude: 15 }
     ]
 
-    Coordinate{ id: mapCircleTopLeft; latitude: 0; longitude: 0}
-    Coordinate{ id: mapCircleBottomRight; latitude: 0; longitude: 0}
-    Coordinate{ id: mapQuickItemTopLeft; latitude: 0; longitude: 0}
-    Coordinate{ id: mapQuickItemBottomRight; latitude: 0; longitude: 0}
-    Coordinate{ id: mapPolygonTopLeft; latitude: 0; longitude: 0}
-    Coordinate{ id: mapPolygonBottomRight; latitude: 0; longitude: 0}
-    Coordinate{ id: mapPolylineTopLeft; latitude: 0; longitude: 0}
-    Coordinate{ id: mapPolylineBottomRight; latitude: 0; longitude: 0}
-    Coordinate{ id: mapRouteTopLeft; latitude: 0; longitude: 0}
-    Coordinate{ id: mapRouteBottomRight; latitude: 0; longitude: 0}
+    property variant mapCircleTopLeft: QtLocation.coordinate(0, 0)
+    property variant mapCircleBottomRight: QtLocation.coordinate(0, 0)
+    property variant mapQuickItemTopLeft: QtLocation.coordinate(0, 0)
+    property variant mapQuickItemBottomRight: QtLocation.coordinate(0, 0)
+    property variant mapPolygonTopLeft: QtLocation.coordinate(0, 0)
+    property variant mapPolygonBottomRight: QtLocation.coordinate(0, 0)
+    property variant mapPolylineTopLeft: QtLocation.coordinate(0, 0)
+    property variant mapPolylineBottomRight: QtLocation.coordinate(0, 0)
+    property variant mapRouteTopLeft: QtLocation.coordinate(0, 0)
+    property variant mapRouteBottomRight: QtLocation.coordinate(0, 0)
 
     GeoRectangle {
         id: boundingBox
-        topLeft: Coordinate {
+        topLeft {
             latitude: 0
             longitude: 0
         }
-        bottomRight: Coordinate {
+        bottomRight {
             latitude: 0
             longitude: 0
         }
@@ -189,9 +189,9 @@ Item {
             color: 'darkgrey'
             border.width: 0
             path: [
-                Coordinate { latitude: 25; longitude: 5},
-                Coordinate { latitude: 20; longitude: 10},
-                Coordinate { latitude: 15; longitude: 6}
+                { latitude: 25, longitude: 5 },
+                { latitude: 20, longitude: 10 },
+                { latitude: 15, longitude: 6 }
             ]
             MapMouseArea {
                 anchors.fill: parent
@@ -207,9 +207,9 @@ Item {
             id: preMapPolyline
             line.color: 'darkred'
             path: [
-                Coordinate { latitude: 25; longitude: 15},
-                Coordinate { latitude: 20; longitude: 19},
-                Coordinate { latitude: 15; longitude: 16}
+                { latitude: 25, longitude: 15 },
+                { latitude: 20, longitude: 19 },
+                { latitude: 15, longitude: 16 }
             ]
             SignalSpy {id: preMapPolylineColorChanged; target: parent.line; signalName: "colorChanged"}
             SignalSpy {id: preMapPolylineWidthChanged; target: parent.line; signalName: "widthChanged"}
@@ -221,9 +221,9 @@ Item {
             // don't try this at home - route is not user instantiable
             route: Route {
                 path: [
-                    Coordinate { latitude: 25; longitude: 14},
-                    Coordinate { latitude: 20; longitude: 18},
-                    Coordinate { latitude: 15; longitude: 15}
+                    { latitude: 25, longitude: 14 },
+                    { latitude: 20, longitude: 18 },
+                    { latitude: 15, longitude: 15 }
                 ]
             }
             SignalSpy {id: preMapRouteRouteChanged; target: parent; signalName: "routeChanged"}
@@ -426,10 +426,8 @@ Item {
             var itemTopLeft = preMapCircle.center.atDistanceAndAzimuth(circleDiagonal,-45)
             var itemBottomRight = preMapCircle.center.atDistanceAndAzimuth(circleDiagonal,135)
 
-            mapCircleTopLeft.latitude = itemTopLeft.latitude
-            mapCircleTopLeft.longitude = itemTopLeft.longitude
-            mapCircleBottomRight.latitude = itemBottomRight.latitude
-            mapCircleBottomRight.longitude = itemBottomRight.longitude
+            mapCircleTopLeft = itemTopLeft;
+            mapCircleBottomRight = itemBottomRight;
 
             itemTopLeft = preMapQuickItem.coordinate
             var preMapQuickItemScreenPosition = map.toScreenPosition(preMapQuickItem.coordinate)
@@ -437,28 +435,20 @@ Item {
             preMapQuickItemScreenPosition.y += preMapQuickItem.sourceItem.height
             itemBottomRight = map.toCoordinate(preMapQuickItemScreenPosition)
 
-            mapQuickItemTopLeft.latitude = itemTopLeft.latitude
-            mapQuickItemTopLeft.longitude = itemTopLeft.longitude
-            mapQuickItemBottomRight.latitude = itemBottomRight.latitude
-            mapQuickItemBottomRight.longitude = itemBottomRight.longitude
+            mapQuickItemTopLeft = itemTopLeft;
+            mapQuickItemBottomRight = itemBottomRight;
 
              var bounds = min_max_bounds_from_list(preMapPolygon.path)
-             mapPolygonTopLeft.latitude = bounds.topLeft.latitude
-             mapPolygonTopLeft.longitude = bounds.topLeft.longitude
-             mapPolygonBottomRight.latitude = bounds.bottomRight.latitude
-             mapPolygonBottomRight.longitude = bounds.bottomRight.longitude
+             mapPolygonTopLeft = bounds.topLeft;
+             mapPolygonBottomRight = bounds.bottomRight;
 
              bounds = min_max_bounds_from_list(preMapPolyline.path)
-             mapPolylineTopLeft.latitude = bounds.topLeft.latitude
-             mapPolylineTopLeft.longitude = bounds.topLeft.longitude
-             mapPolylineBottomRight.latitude = bounds.bottomRight.latitude
-             mapPolylineBottomRight.longitude = bounds.bottomRight.longitude
+             mapPolylineTopLeft = bounds.topLeft;
+             mapPolylineBottomRight = bounds.bottomRight;
 
              bounds = min_max_bounds_from_list(preMapRoute.route.path)
-             mapRouteTopLeft.latitude = bounds.topLeft.latitude
-             mapRouteTopLeft.longitude = bounds.topLeft.longitude
-             mapRouteBottomRight.latitude = bounds.bottomRight.latitude
-             mapRouteBottomRight.longitude = bounds.bottomRight.longitude
+             mapRouteTopLeft = bounds.topLeft;
+             mapRouteBottomRight = bounds.bottomRight;
         }
 
         function min_max_bounds_from_list(coorindates){
@@ -487,10 +477,8 @@ Item {
             point.y = maxY
             var itemBottomRight = map.toCoordinate(point)
 
-            boundingBox.topLeft.latitude = itemTopLeft.latitude
-            boundingBox.topLeft.longitude = itemTopLeft.longitude
-            boundingBox.bottomRight.latitude = itemBottomRight.latitude
-            boundingBox.bottomRight.longitude = itemBottomRight.longitude
+            boundingBox.topLeft = itemTopLeft;
+            boundingBox.bottomRight = itemBottomRight;
             return boundingBox
         }
 

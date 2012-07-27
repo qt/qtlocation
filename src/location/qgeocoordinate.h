@@ -113,6 +113,8 @@ private:
     friend class QGeoCoordinatePrivate;
 };
 
+Q_DECLARE_TYPEINFO(QGeoCoordinate, Q_MOVABLE_TYPE);
+
 #ifndef QT_NO_DEBUG_STREAM
 Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoCoordinate &);
 #endif

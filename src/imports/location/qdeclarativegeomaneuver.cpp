@@ -75,16 +75,12 @@ QT_BEGIN_NAMESPACE
 QDeclarativeGeoManeuver::QDeclarativeGeoManeuver(QObject *parent)
     : QObject(parent)
 {
-    position_ = new QDeclarativeCoordinate(this);
-    waypoint_ = new QDeclarativeCoordinate(this);
 }
 
 QDeclarativeGeoManeuver::QDeclarativeGeoManeuver(const QGeoManeuver &maneuver, QObject *parent)
     : QObject(parent),
       maneuver_(maneuver)
 {
-    position_ = new QDeclarativeCoordinate(maneuver_.position(), this);
-    waypoint_ = new QDeclarativeCoordinate(maneuver_.waypoint(), this);
 }
 
 QDeclarativeGeoManeuver::~QDeclarativeGeoManeuver() {}
@@ -104,15 +100,15 @@ bool QDeclarativeGeoManeuver::valid() const
 }
 
 /*!
-    \qmlproperty Coordinate RouteManeuver::position
+    \qmlproperty coordinate RouteManeuver::position
 
     This read-only property holds where the \l instructionText should be displayed.
 
 */
 
-QDeclarativeCoordinate *QDeclarativeGeoManeuver::position() const
+QGeoCoordinate QDeclarativeGeoManeuver::position() const
 {
-    return position_;
+    return maneuver_.position();
 }
 
 /*!
@@ -180,7 +176,7 @@ qreal QDeclarativeGeoManeuver::distanceToNextInstruction() const
 }
 
 /*!
-    \qmlproperty Coordinate RouteManeuver::waypoint
+    \qmlproperty coordinate RouteManeuver::waypoint
 
     This property holds the waypoint associated with this maneuver.
     All maneuvers do not have a waypoint associated with them, this
@@ -188,9 +184,9 @@ qreal QDeclarativeGeoManeuver::distanceToNextInstruction() const
 
 */
 
-QDeclarativeCoordinate *QDeclarativeGeoManeuver::waypoint() const
+QGeoCoordinate QDeclarativeGeoManeuver::waypoint() const
 {
-    return waypoint_;
+    return maneuver_.waypoint();
 }
 
 /*!
@@ -202,7 +198,7 @@ QDeclarativeCoordinate *QDeclarativeGeoManeuver::waypoint() const
 
 bool QDeclarativeGeoManeuver::waypointValid() const
 {
-    return waypoint_->coordinate().isValid();
+    return maneuver_.waypoint().isValid();
 }
 
 #include "moc_qdeclarativegeomaneuver_p.cpp"

@@ -50,8 +50,9 @@ Item {
     width: 100
     height: 100
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
-    Coordinate{ id: coordinate1; latitude: 10; longitude: 11}
-    Coordinate{ id: coordinate2; latitude: 12; longitude: 13}
+
+    property variant coordinate1: QtLocation.coordinate(10, 11)
+
     Map {
         id: map
         plugin: testPlugin
@@ -90,9 +91,6 @@ Item {
         }
     }
     SignalSpy {id: centerSpy; target: map; signalName: 'centerChanged'}
-    SignalSpy {id: coordinate2LatitudeSpy; target: coordinate2; signalName: 'latitudeChanged'}
-    SignalSpy {id: coordinate2LongitudeSpy; target: coordinate2; signalName: 'longitudeChanged'}
-    SignalSpy {id: coordinate2AltitudeSpy; target: coordinate2; signalName: 'altitudeChanged'}
     SignalSpy {id: pinchStartedSpy; target: map.gesture; signalName: 'pinchStarted'}
     SignalSpy {id: pinchUpdatedSpy; target: map.gesture; signalName: 'pinchUpdated'}
     SignalSpy {id: pinchFinishedSpy; target: map.gesture; signalName: 'pinchFinished'}
@@ -126,9 +124,6 @@ Item {
 
         function clear_data() {
             centerSpy.clear()
-            coordinate2AltitudeSpy.clear()
-            coordinate2LatitudeSpy.clear()
-            coordinate2LongitudeSpy.clear()
             pinchStartedSpy.clear()
             pinchUpdatedSpy.clear()
             pinchFinishedSpy.clear()

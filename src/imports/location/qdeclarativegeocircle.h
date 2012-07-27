@@ -55,7 +55,7 @@ class QDeclarativeGeoCircle : public QDeclarativeGeoShape
     Q_OBJECT
 
     Q_PROPERTY(QGeoCircle circle READ circle WRITE setCircle)
-    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
 
 public:
@@ -65,9 +65,11 @@ public:
     QGeoCircle circle() const;
     QGeoShape shape() const;
 
-    Q_INVOKABLE bool contains(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate *center();
-    void setCenter(QDeclarativeCoordinate *coordinate);
+    Q_INVOKABLE bool contains(const QGeoCoordinate &coordinate);
+
+    QGeoCoordinate center();
+    void setCenter(const QGeoCoordinate &coordinate);
+
     qreal radius() const;
     void setRadius(qreal radius);
 
@@ -75,16 +77,8 @@ Q_SIGNALS:
     void centerChanged();
     void radiusChanged();
 
-private Q_SLOTS:
-    void coordinateChanged();
-
 private:
-    void synchronizeDeclarative(const QGeoCircle &old, bool skipCenter);
-
-private:
-    QDeclarativeCoordinate *m_center;
     QGeoCircle m_circle;
-    qreal m_radius;
 };
 
 QT_END_NAMESPACE

@@ -44,5 +44,9 @@ import QtLocation 5.0
 Location {
     address: TestAddress { }
     boundingBox: TestGeoRectangle { }
-    coordinate: TestCoordinate { }
+    coordinate {
+        longitude: 10.0
+        latitude: 20.0
+        altitude: 30.0
+    }
 }

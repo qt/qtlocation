@@ -47,7 +47,6 @@ import QtMultimedia 5.0
 MapQuickItem {  //to be used inside MapComponent only
     id: testVideoItem
 
-    coordinate: Coordinate { latitude : 0; longitude : 0 }
     //    zoomLevel: 8 // set this if you want the video to follow zoom level changes
 
     function setGeometry(markers, index) {

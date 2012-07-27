@@ -49,7 +49,6 @@ import Qt3D.Shapes 2.0
 MapQuickItem {  //to be used inside MapComponent only
     id: mapItem
 
-    coordinate: Coordinate { latitude : 0; longitude : 0 }
     //    zoomLevel: 8 // set this if you want the item to follow zoom level changes
 
     function setGeometry(markers, index) {

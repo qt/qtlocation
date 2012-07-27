@@ -45,7 +45,13 @@ import QtLocation.examples 5.0
 Map {
     id: map
     zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
-    center: nokiaCoordinate
+
+    //! [coord]
+    center {
+        latitude: -27.5796
+        longitude: 153.1003
+    }
+    //! [coord]
 
     // Enable pinch gestures to zoom in and out
     gesture.flickDeceleration: 3000
@@ -68,14 +74,6 @@ Map {
     signal showDistance(string distance);
     signal requestLocale()
 
-//! [coord]
-    Coordinate {
-        id: nokiaCoordinate
-        latitude: -27.5796
-        longitude: 153.1003
-    }
-//! [coord]
-
     /* @todo
     Binding {
         target: map
@@ -95,7 +93,11 @@ Map {
 
     MapCircle {
             id: poiEightMilePlains
-            center: Coordinate { latitude: -27.5758; longitude: 153.0881 }
+            center {
+                latitude: -27.5758
+                longitude: 153.0881
+            }
+
             radius: 1800
             color: "green"
             border.width: 2
@@ -111,7 +113,10 @@ Map {
             styleColor: "#ECECEC"
             style: Text.Outline
         }
-        coordinate: Coordinate { latitude: -27.59; longitude: 153.084 }
+        coordinate {
+            latitude: -27.59
+            longitude: 153.084
+        }
         anchorPoint.x: 0
         anchorPoint.y: 0
     }
@@ -119,7 +124,10 @@ Map {
     MapQuickItem {
         id: poiNokia
         sourceItem: Rectangle { width: 14; height: 14; color: "#1c94fc"; border.width: 2; border.color: "#242424"; smooth: true; radius: 7 }
-        coordinate: Coordinate { latitude: -27.5796; longitude: 153.1003 }
+        coordinate {
+           latitude: -27.5796
+           longitude: 153.1003
+        }
         opacity:0.7
         anchorPoint.x: sourceItem.width/2
         anchorPoint.y: sourceItem.height/2
@@ -837,7 +845,7 @@ Map {
 
     MapMouseArea {
         id: mouseArea
-        property Coordinate lastCoordinate: Coordinate { latitude : 0; longitude : 0}
+        property variant lastCoordinate
         anchors.fill: parent
 
         onPressed : {

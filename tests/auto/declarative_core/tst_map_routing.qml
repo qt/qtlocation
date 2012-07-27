@@ -46,22 +46,26 @@ import QtLocation 5.0
 Item {
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: invalidPlugin; name: "invalid"}
-    Coordinate{ id: coordinate1; latitude: 51; longitude: 0}
-    Coordinate{ id: coordinate2; latitude: 52; longitude: 0}
+
+    property variant coordinate1: QtLocation.coordinate(51, 0)
+    property variant coordinate2: QtLocation.coordinate(52, 0)
+
     GeoRectangle { id: boundingBox1; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
     GeoRectangle { id: boundingBox2; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
 
-    Coordinate{ id: bottomLeft; latitude: 0; longitude: 0}
-    Coordinate{ id: topLeft; latitude: 1; longitude: 0}
-    Coordinate{ id: topRight; latitude: 1; longitude: 1}
-    Coordinate{ id: bottomRight; latitude: 0; longitude: 1}
-    Coordinate{ id: newTopRight; latitude: 3; longitude: 3}
+    property variant bl: QtLocation.coordinate(0, 0)
+    property variant tl: QtLocation.coordinate(1, 0)
+    property variant tr: QtLocation.coordinate(1, 1)
+    property variant br: QtLocation.coordinate(0, 1)
+    property variant ntr: QtLocation.coordinate(3, 3)
+
     GeoRectangle {
         id: unitBox;
-        bottomLeft: bottomLeft;
-        topLeft: topLeft;
-        topRight: topRight;
-        bottomRight: bottomRight}
+        bottomLeft: bl
+        topLeft: tl
+        topRight: tr
+        bottomRight: br
+    }
 
     Route {id: emptyRoute}
     TestCase {
@@ -73,7 +77,8 @@ Item {
         //MapRoute {id: emptyMapRoute}
 
         GeoRectangle {id: emptyBox}
-        Coordinate {id: emptyCoordinate}
+
+        property variant emptyCoordinate: QtLocation.coordinate()
 
         // TODO enable when we have map route
         /*
@@ -245,38 +250,31 @@ Item {
 
             // Altering the waypoint contents should trigger signal
             emptyQuery.clearWaypoints()
+            queryDetailsChangedSpy.clear();
             emptyQuery.addWaypoint(coordinate1)
-            queryDetailsChangedSpy.clear()
-            coordinate1.latitude = 41
-            compare (queryDetailsChangedSpy.count, 1)
-            coordinate1.longitude = 1
-            compare (queryDetailsChangedSpy.count, 2)
-            coordinate1.altitude = 1
-            compare (queryDetailsChangedSpy.count, 3)
+            compare(queryDetailsChangedSpy.count, 1);
+
             // verify coordinate is disconnected
             emptyQuery.removeWaypoint(coordinate1)
-            compare (queryDetailsChangedSpy.count, 4)
-            coordinate1.latitude = 46
-            compare (queryDetailsChangedSpy.count, 4)
-            // verify that same coordinate instance only produces one set of changes
+            compare (queryDetailsChangedSpy.count, 2)
+
+            // verify that the same coordinate can be added to the waypoints
             emptyQuery.addWaypoint(coordinate1)
+            compare(queryDetailsChangedSpy.count, 3);
             emptyQuery.addWaypoint(coordinate1)
+            compare(queryDetailsChangedSpy.count, 4);
             compare (emptyQuery.waypoints.length, 2)
             queryDetailsChangedSpy.clear()
-            coordinate1.latitude = 61
-            compare (queryDetailsChangedSpy.count, 1)
-            // verify that removing duplicat coordinate leaves remaining ones correctly connected
+
+            // verify that removing duplicate coordinate leaves remaining ones
             emptyQuery.removeWaypoint(coordinate1)
-            compare (queryDetailsChangedSpy.count, 2)
+            compare (queryDetailsChangedSpy.count, 1)
             compare (emptyQuery.waypoints.length, 1)
-            coordinate1.latitude = 69
-            compare (queryDetailsChangedSpy.count, 3)
+
             // verify that clearing works
             emptyQuery.clearWaypoints()
-            compare (queryDetailsChangedSpy.count, 4)
+            compare(queryDetailsChangedSpy.count, 2);
             compare (emptyQuery.waypoints.length, 0)
-            coordinate1.latitude = 62
-            compare (queryDetailsChangedSpy.count, 4)
 
             // Excluded areas
             queryDetailsChangedSpy.clear()
@@ -321,16 +319,18 @@ Item {
             queryDetailsChangedSpy.clear()
             compare (emptyQuery.excludedAreas.length, 1)
             unitBox.width = 200
-            compare(queryDetailsChangedSpy.count, 1)
+            tryCompare(queryDetailsChangedSpy, "count", 1);
             unitBox.height = 200
-            compare(queryDetailsChangedSpy.count, 2)
-            unitBox.topRight = newTopRight
-            compare(queryDetailsChangedSpy.count, 5)
+            tryCompare(queryDetailsChangedSpy , "count", 2);
+            unitBox.topRight = ntr
+            tryCompare(queryDetailsChangedSpy, "count", 3);
+
             // verify box is disconnected
             emptyQuery.removeExcludedArea(unitBox)
-            compare (queryDetailsChangedSpy.count, 6)
+            compare(queryDetailsChangedSpy.count, 4);
             unitBox.height = 400
-            compare (queryDetailsChangedSpy.count, 6)
+            tryCompare(queryDetailsChangedSpy, "count", 4);
+
             // verify that same box instance only produces one set of changes
             compare (emptyQuery.excludedAreas.length, 0)
             emptyQuery.addExcludedArea(unitBox)
@@ -338,16 +338,17 @@ Item {
             compare (emptyQuery.excludedAreas.length, 1)
             queryDetailsChangedSpy.clear()
             unitBox.width = 777
-            compare (queryDetailsChangedSpy.count, 1)
+            tryCompare(queryDetailsChangedSpy, "count", 1);
             compare (emptyQuery.excludedAreas.length, 1)
             unitBox.width = 200
-            compare (queryDetailsChangedSpy.count, 2)
+            tryCompare(queryDetailsChangedSpy, "count", 2);
+
             // verify that clearing works
             emptyQuery.clearExcludedAreas()
             compare (queryDetailsChangedSpy.count, 3)
             compare (emptyQuery.excludedAreas.length, 0)
             unitBox.width = 717
-            compare (queryDetailsChangedSpy.count, 3)
+            tryCompare(queryDetailsChangedSpy, "count", 3);
 
             // Feature types and weights
             queryDetailsChangedSpy.clear()
@@ -511,28 +512,40 @@ Item {
         ]
     }
 
-    Coordinate {id: rcoordinate1; latitude: 50; longitude: 50}
-    Coordinate {id: rcoordinate2; latitude: 51; longitude: 52}
-    Coordinate {id: rcoordinate3; latitude: 53; longitude: 54}
-    Coordinate {id: rcoordinate4; latitude: 55; longitude: 56}
-    Coordinate {id: rcoordinate5; latitude: 57; longitude: 58}
+    property variant rcoordinate1: QtLocation.coordinate(50, 50)
+    property variant rcoordinate2: QtLocation.coordinate(51, 52)
+    property variant rcoordinate3: QtLocation.coordinate(53, 54)
+    property variant rcoordinate4: QtLocation.coordinate(55, 56)
+    property variant rcoordinate5: QtLocation.coordinate(57, 58)
+
+    property variant fcoordinate1: QtLocation.coordinate(60, 60)
+    property variant fcoordinate2: QtLocation.coordinate(61, 62)
+    property variant fcoordinate3: QtLocation.coordinate(63, 64)
+    property variant fcoordinate4: QtLocation.coordinate(65, 66)
+    property variant fcoordinate5: QtLocation.coordinate(67, 68)
+
+    property variant f2coordinate1: QtLocation.coordinate(60, 60)
+    property variant f2coordinate2: QtLocation.coordinate(61, 62)
+    property variant f2coordinate3: QtLocation.coordinate(63, 64)
 
     RouteQuery {id: routeQuery}
-    RouteQuery {id: filledRouteQuery;
-        numberAlternativeRoutes: 1
+    RouteQuery {
+        id: filledRouteQuery
+        numberAlternativeRoutes: 0
         waypoints: [
-            Coordinate {id: fcoordinate1; latitude: 60; longitude: 60},
-            Coordinate {id: fcoordinate2; latitude: 61; longitude: 62},
-            Coordinate {id: fcoordinate3; latitude: 63; longitude: 64},
-            Coordinate {id: fcoordinate4; latitude: 65; longitude: 66},
-            Coordinate {id: fcoordinate5; latitude: 67; longitude: 68}
+            { latitude: 60, longitude: 60 },
+            { latitude: 61, longitude: 62 },
+            { latitude: 63, longitude: 64 },
+            { latitude: 65, longitude: 66 },
+            { latitude: 67, longitude: 68 }
         ]
     }
-    RouteQuery {id: filledRouteQuery2;
+    RouteQuery {
+        id: filledRouteQuery2
         waypoints: [
-            Coordinate {id: f2coordinate1; latitude: 60; longitude: 60},
-            Coordinate {id: f2coordinate2; latitude: 61; longitude: 62},
-            Coordinate {id: f2coordinate3; latitude: 63; longitude: 64}
+            f2coordinate1,
+            f2coordinate2,
+            f2coordinate3
         ]
     }
     RouteModel {
@@ -731,9 +744,10 @@ Item {
             compare(routeModelSlack.count, 1)
 
             // Autoupdate
+            automaticRoutesSpy.clear();
             filledRouteQuery.numberAlternativeRoutes = 1 // 'altroutes - 70' is the echoed errorcode
             wait (300)
-            automaticRoutesSpy.clear()
+            compare(automaticRoutesSpy.count, 1);
             compare(routeModelAutomatic.count, 1) // There should be a route already
             compare (routeModelAutomatic.get(0).path.length, 5)
             compare (routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
@@ -741,31 +755,53 @@ Item {
             // Remove a waypoint and check that autoupdate works
             filledRouteQuery.removeWaypoint(fcoordinate2)
             wait(300)
+            compare(automaticRoutesSpy.count, 2);
             compare (routeModelAutomatic.get(0).path.length, 4)
             compare (routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude)
-            compare (automaticRoutesSpy.count, 1)
+
+            // Add a waypoint and check that autoupdate works
+            filledRouteQuery.addWaypoint(fcoordinate2);
+            wait(300);
+            compare(automaticRoutesSpy.count, 3);
+            compare(routeModelAutomatic.count, 1);
+            compare(routeModelAutomatic.get(0).path.length, 5);
+            compare(routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude);
 
             // Change contents of a coordinate and check that autoupdate works
-            fcoordinate1.latitude++
+            filledRouteQuery.waypoints = [
+                { latitude: fcoordinate1.latitude + 1, longitude: fcoordinate1.longitude },
+                { latitude: 61, longitude: 62 },
+                { latitude: 63, longitude: 64 },
+                { latitude: 65, longitude: 66 },
+                { latitude: 67, longitude: 68 }
+            ];
             wait(300)
-            compare (routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude) // new value should be echoed
-            compare (automaticRoutesSpy.count, 2)
+            compare(automaticRoutesSpy.count, 4);
+            compare(routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
+
             // Change query
             routeModelAutomatic.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
             wait(300)
+            compare(automaticRoutesSpy.count, 5);
             compare (routeModelAutomatic.get(0).path.length, 3)
-            compare (automaticRoutesSpy.count, 3)
+
             // Verify that the old query is disconnected internally ie. does not trigger update
-            fcoordinate1.latitude++
+            filledRouteQuery.waypoints = [
+                { latitude: fcoordinate1.latitude + 2, longitude: fcoordinate1.longitude },
+                { latitude: 61, longitude: 62 },
+                { latitude: 63, longitude: 64 },
+                { latitude: 65, longitude: 66 },
+                { latitude: 67, longitude: 68 }
+            ];
             wait(300)
-            compare (automaticRoutesSpy.count, 3)
+            compare(automaticRoutesSpy.count, 5);
+            compare(routeModelAutomatic.get(0).path.length, 3);
         }
 
         function test_route_query_handles_destroyed_qml_objects() {
-            var coordinate = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Coordinate { latitude : 11; longitude : 52 }', this);
+            var coordinate = QtLocation.coordinate(11, 52);
             routeQuery.addWaypoint(coordinate);
-            coordinate.destroy();
             wait(300);
             routeQuery.clearWaypoints();
         }

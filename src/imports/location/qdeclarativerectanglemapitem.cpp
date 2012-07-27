@@ -68,7 +68,7 @@ QT_BEGIN_NAMESPACE
     right side have the same longitude.
 
     To specify the rectangle, it requires a \l topLeft and \l bottomRight point,
-    both given by \l Coordinate types.
+    both given by a \l {QtLocation5::coordinate}{coordinate}.
 
     By default, the rectangle is displayed with transparent fill and a 1-pixel
     thick black border. This can be changed using the \l color, \l border.color
@@ -101,8 +101,14 @@ QT_BEGIN_NAMESPACE
         MapRectangle {
             color: 'green'
             border.width: 2
-            topLeft: Coordinate { latitude: -27; longitude: 153 }
-            bottomRight: Coordinate { latitude: -28; longitude: 153.5 }
+            topLeft {
+                latitude: -27
+                longitude: 153
+            }
+            bottomRight {
+                latitude: -28
+                longitude: 153.5
+            }
         }
     }
     \endcode
@@ -171,12 +177,8 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
     geoLeftBound_ = topLeft;
 }
 
-QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent):
-    QDeclarativeGeoMapItemBase(parent),
-    topLeft_(0),
-    bottomRight_(0),
-    color_(Qt::transparent),
-    dirtyMaterial_(true)
+QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
+:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
@@ -218,30 +220,25 @@ QDeclarativeMapLineProperties *QDeclarativeRectangleMapItem::border()
 }
 
 /*!
-    \qmlproperty Coordinate MapRectangle::topLeft
+    \qmlproperty coordinate MapRectangle::topLeft
 
     This property holds the top-left coordinate of the MapRectangle which
     can be used to retrieve its longitude, latitude and altitude.
 */
-void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
+void QDeclarativeRectangleMapItem::setTopLeft(const QGeoCoordinate &topLeft)
 {
     if (topLeft_ == topLeft)
         return;
-    if (topLeft_)
-        topLeft_->disconnect(this);
+
     topLeft_ = topLeft;
 
-    if (topLeft_) {
-        connect(topLeft_, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(updateMapItemAssumeDirty()));
-    }
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     updateMapItem();
     emit topLeftChanged(topLeft_);
 }
 
-QDeclarativeCoordinate *QDeclarativeRectangleMapItem::topLeft()
+QGeoCoordinate QDeclarativeRectangleMapItem::topLeft()
 {
     return topLeft_;
 }
@@ -257,29 +254,25 @@ void QDeclarativeRectangleMapItem::updateMapItemAssumeDirty()
 }
 
 /*!
-    \qmlproperty Coordinate MapRectangle::bottomRight
+    \qmlproperty coordinate MapRectangle::bottomRight
 
     This property holds the bottom-right coordinate of the MapRectangle which
     can be used to retrieve its longitude, latitude and altitude.
 */
-void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottomRight)
+void QDeclarativeRectangleMapItem::setBottomRight(const QGeoCoordinate &bottomRight)
 {
     if (bottomRight_ == bottomRight)
         return;
-    if (bottomRight_)
-        bottomRight_->disconnect(this);
+
     bottomRight_ = bottomRight;
-    if (bottomRight_) {
-        connect(bottomRight_, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(updateMapItemAssumeDirty()));
-    }
+
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     updateMapItem();
     emit bottomRightChanged(bottomRight_);
 }
 
-QDeclarativeCoordinate *QDeclarativeRectangleMapItem::bottomRight()
+QGeoCoordinate QDeclarativeRectangleMapItem::bottomRight()
 {
     return bottomRight_;
 }
@@ -345,20 +338,16 @@ QSGNode *QDeclarativeRectangleMapItem::updateMapItemPaintNode(QSGNode *oldNode, 
 */
 void QDeclarativeRectangleMapItem::updateMapItem()
 {
-    if (!map() || !topLeft() || !topLeft()->coordinate().isValid()
-            || !bottomRight() || !bottomRight()->coordinate().isValid())
+    if (!map() || !topLeft().isValid() || !bottomRight().isValid())
         return;
 
-    geometry_.updatePoints(*map(), topLeft_->coordinate(),
-                           bottomRight_->coordinate());
+    geometry_.updatePoints(*map(), topLeft_, bottomRight_);
 
     QList<QGeoCoordinate> pathClosed;
-    pathClosed << topLeft_->coordinate();
-    pathClosed << QGeoCoordinate(topLeft_->latitude(),
-                                 bottomRight_->longitude());
-    pathClosed << bottomRight_->coordinate();
-    pathClosed << QGeoCoordinate(bottomRight_->latitude(),
-                                 topLeft_->longitude());
+    pathClosed << topLeft_;
+    pathClosed << QGeoCoordinate(topLeft_.latitude(), bottomRight_.longitude());
+    pathClosed << bottomRight_;
+    pathClosed << QGeoCoordinate(bottomRight_.latitude(), topLeft_.longitude());
     pathClosed << pathClosed.first();
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
@@ -444,10 +433,10 @@ void QDeclarativeRectangleMapItem::dragEnded()
     QGeoCoordinate newTopLeft = map()->screenPositionToCoordinate(newTopLeftPoint, false);
     if (newTopLeft.isValid()) {
         // calculate new geo width while checking for dateline crossing
-        const double lonW = bottomRight_->longitude() > topLeft_->longitude() ?
-                    bottomRight_->longitude() - topLeft_->longitude() :
-                    bottomRight_->longitude() + 360 - topLeft_->longitude();
-        const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
+        const double lonW = bottomRight_.longitude() > topLeft_.longitude() ?
+                    bottomRight_.longitude() - topLeft_.longitude() :
+                    bottomRight_.longitude() + 360 - topLeft_.longitude();
+        const double latH = qAbs(bottomRight_.latitude() - topLeft_.latitude());
         QGeoCoordinate newBottomRight;
         // prevent dragging over valid min and max latitudes
         if (QLocationUtils::isValidLat(newTopLeft.latitude() - latH)) {
@@ -459,10 +448,8 @@ void QDeclarativeRectangleMapItem::dragEnded()
         // handle dateline crossing
         newBottomRight.setLongitude(QLocationUtils::wrapLong(newTopLeft.longitude() + lonW));
         newBottomRight.setAltitude(newTopLeft.altitude());
-        internalTopLeft_.setCoordinate(newTopLeft);
-        internalBottomRight_.setCoordinate(newBottomRight);
-        topLeft_ = &internalTopLeft_;
-        bottomRight_ = &internalBottomRight_;
+        topLeft_ = newTopLeft;
+        bottomRight_ = newBottomRight;
         geometry_.setPreserveGeometry(true, newTopLeft);
         borderGeometry_.setPreserveGeometry(true, newTopLeft);
         geometry_.markSourceDirty();
@@ -472,7 +459,5 @@ void QDeclarativeRectangleMapItem::dragEnded()
         emit bottomRightChanged(bottomRight_);
     }
 }
-
-//////////////////////////////////////////////////////////////////////
 
 QT_END_NAMESPACE

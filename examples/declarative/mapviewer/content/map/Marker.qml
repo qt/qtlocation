@@ -53,8 +53,6 @@ MapQuickItem {
     anchorPoint.x: image.width/4
     anchorPoint.y: image.height
 
-    coordinate: Coordinate { latitude : 0; longitude : 0 }
-
     sourceItem: Image {
         id: image
 //! [mqi-anchor]
@@ -110,10 +108,7 @@ MapQuickItem {
     }
 //! [mqi-closeimage]
 
-    Component.onCompleted: {
-        coordinate.longitude = mouseArea.lastCoordinate.longitude
-        coordinate.latitude = mouseArea.lastCoordinate.latitude
-    }
+    Component.onCompleted: coordinate = mouseArea.lastCoordinate
 //! [mqi-close]
 }
 //! [mqi-close]

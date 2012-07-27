@@ -59,7 +59,7 @@ public:
     explicit QDeclarativeGeoMapMouseArea(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapMouseArea();
 
-    Q_INVOKABLE QDeclarativeCoordinate *mouseToCoordinate(QQuickMouseEvent *event);
+    Q_INVOKABLE QGeoCoordinate mouseToCoordinate(QQuickMouseEvent *event);
 
     // From QQmlParserStatus
     virtual void componentComplete();

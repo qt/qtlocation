@@ -63,36 +63,30 @@ QT_USE_NAMESPACE
 
     \section2 Example Usage
 
-    The following example shows a simple Location object being declared with
-    a set \l{coordinate} and \l{address}.
+    The following example shows a simple Location object being declared:
 
     \code
-    Address {
-        id: houseAddress
-        ...
-    }
-
-    Coordinate {
-        id: coord
-        latitude: -27.3; longitude: 153.1
-    }
-
     Location {
-        coordinate: coord
-        address: houseAddress
+        coordinate {
+            latitude: -27.3
+            longitude: 153.1
+        }
+        address: Address {
+            ...
+        }
     }
     \endcode
 */
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject *parent)
-    : QObject(parent), m_address(0), m_coordinate(0), m_boundingBox(0)
+:   QObject(parent), m_address(0), m_boundingBox(0)
 
 {
     setLocation(QGeoLocation());
 }
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src, QObject *parent)
-    : QObject(parent), m_address(0), m_coordinate(0), m_boundingBox(0)
+:   QObject(parent), m_address(0), m_boundingBox(0)
 {
     setLocation(src);
 }
@@ -116,10 +110,8 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
         emit addressChanged();
     }
 
-    if (m_coordinate && m_coordinate->parent() == this) {
-        m_coordinate->setCoordinate(src.coordinate());
-    } else if (!m_coordinate || m_coordinate->parent() != this) {
-        m_coordinate = new QDeclarativeCoordinate(src.coordinate(), this);
+    if (m_coordinate != src.coordinate()) {
+        m_coordinate = src.coordinate();
         emit coordinateChanged();
     }
 
@@ -135,7 +127,7 @@ QGeoLocation QDeclarativeGeoLocation::location()
 {
     QGeoLocation retValue;
     retValue.setAddress(m_address ? m_address->address() : QGeoAddress());
-    retValue.setCoordinate(m_coordinate ? m_coordinate->coordinate() : QGeoCoordinate());
+    retValue.setCoordinate(m_coordinate);
     retValue.setBoundingBox(m_boundingBox ? m_boundingBox->rectangle() : QGeoRectangle());
     return retValue;
 }
@@ -163,26 +155,23 @@ QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
 }
 
 /*!
-    \qmlproperty Coordinate QtLocation5::Location::coordinate
+    \qmlproperty coordinate QtLocation5::Location::coordinate
 
     This property holds the exact geographical coordinate of the location which can be used to retrieve the latitude, longitude and altitude of the location.
 
     \note this property's changed() signal is currently emitted only if the
     whole object changes, not if only the contents of the object change.
 */
-void QDeclarativeGeoLocation::setCoordinate(QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoLocation::setCoordinate(const QGeoCoordinate coordinate)
 {
     if (m_coordinate == coordinate)
         return;
-
-    if (m_coordinate && m_coordinate->parent() == this)
-        delete m_coordinate;
 
     m_coordinate = coordinate;
     emit coordinateChanged();
 }
 
-QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
+QGeoCoordinate QDeclarativeGeoLocation::coordinate()
 {
     return m_coordinate;
 }

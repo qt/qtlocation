@@ -66,8 +66,7 @@ TestCase {
     Map {
         id: map;
         plugin: nokiaPlugin
-        center: Coordinate {
-            id: coordinate1
+        center {
             latitude: 62.240501
             longitude: 25.757014
         }

@@ -205,9 +205,11 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            startLocation.center.latitude = dialogModel.get(0).inputText;
-            startLocation.center.longitude = dialogModel.get(1).inputText;
+            var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
+                                          parseFloat(dialogModel.get(1).inputText));
             searchRegion = startLocation;
+
+            map.center = c;
 
             if (searchRegionItem) {
                 map.removeMapItem(searchRegionItem);
@@ -240,13 +242,13 @@ Item {
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
             var newRegion = Qt.createQmlObject('import QtLocation 5.0; GeoRectangle {}', page, "GeoCircle");
-            newRegion.center.latitude = dialogModel.get(0).inputText;
-            newRegion.center.longitude = dialogModel.get(1).inputText;
+            var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
+                                          parseFloat(dialogModel.get(1).inputText));
+            newRegion.center = c;
             newRegion.width = dialogModel.get(2).inputText;
             newRegion.height = dialogModel.get(3).inputText;
 
-            startLocation.center.latitude = dialogModel.get(0).inputText;
-            startLocation.center.longitude = dialogModel.get(1).inputText;
+            map.center = c;
 
             searchRegion = newRegion;
 
@@ -285,12 +287,12 @@ Item {
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
             var newRegion = Qt.createQmlObject('import QtLocation 5.0; GeoCircle {}', page, "GeoCircle");
-            newRegion.center.latitude = dialogModel.get(0).inputText;
-            newRegion.center.longitude = dialogModel.get(1).inputText;
+            var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
+                                          parseFloat(dialogModel.get(1).inputText));
+            newRegion.center = c;
             newRegion.radius = dialogModel.get(2).inputText;
 
-            startLocation.center.latitude = dialogModel.get(0).inputText;
-            startLocation.center.longitude = dialogModel.get(1).inputText;
+            map.center = c;
 
             searchRegion = newRegion;
 
@@ -352,7 +354,7 @@ Item {
     Binding {
         target: startLocation
         property: "center"
-        value: map ? map.center : null
+        value: map ? map.center : QtLocation.coordinate()
     }
 
     //! [PlaceSearchModel model]

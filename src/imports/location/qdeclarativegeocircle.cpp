@@ -53,8 +53,8 @@ QT_BEGIN_NAMESPACE
 
     \brief The GeoCircle type represents a circular geographic area.
 
-    The circle is defined in terms of a \l {Coordinate} which specifies the center of the circle
-    and a qreal which specifies the radius of the circle in meters.
+    The circle is defined in terms of a \l {QtLocation5::coordinate}{coordinate} which specifies
+    the center of the circle and a qreal which specifies the radius of the circle in meters.
 
     The circle is considered invalid if the center coordinate is invalid
     or if the radius is less than zero.
@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
     \code
     GeoCircle {
         radius: 25.0
-        center: Coordinate {
+        center {
             latitude: 23.34
             longitude: 44.4
         }
@@ -80,15 +80,13 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoCircle::QDeclarativeGeoCircle(QObject *parent)
-:   QDeclarativeGeoShape(parent), m_center(0), m_radius(-1.0)
+:   QDeclarativeGeoShape(parent)
 {
 }
 
-QDeclarativeGeoCircle::QDeclarativeGeoCircle(const QGeoCircle &circle,
-                                                             QObject *parent)
-:   QDeclarativeGeoShape(parent), m_center(0), m_circle(circle), m_radius(qQNaN())
+QDeclarativeGeoCircle::QDeclarativeGeoCircle(const QGeoCircle &circle, QObject *parent)
+:   QDeclarativeGeoShape(parent), m_circle(circle)
 {
-    synchronizeDeclarative(circle, false);
 }
 
 /*!
@@ -99,9 +97,16 @@ QDeclarativeGeoCircle::QDeclarativeGeoCircle(const QGeoCircle &circle,
 */
 void QDeclarativeGeoCircle::setCircle(const QGeoCircle &circle)
 {
+    if (m_circle == circle)
+        return;
+
     QGeoCircle oldCircle = m_circle;
     m_circle = circle;
-    synchronizeDeclarative(oldCircle, false);
+
+    if (oldCircle.center() != m_circle.center())
+        emit centerChanged();
+    if (oldCircle.radius() != m_circle.radius())
+        emit radiusChanged();
 }
 
 QGeoCircle QDeclarativeGeoCircle::circle() const
@@ -118,61 +123,34 @@ QGeoShape QDeclarativeGeoCircle::shape() const
 }
 
 /*!
-    \qmlmethod bool QDeclarativeGeoCircle::contains(Coordinate coordinate)
+    \qmlmethod bool QDeclarativeGeoCircle::contains(coordinate coordinate)
 
     Returns the true if \a coordinate is within the bounding circle; otherwise returns false.
 */
-bool QDeclarativeGeoCircle::contains(QDeclarativeCoordinate *coordinate)
+bool QDeclarativeGeoCircle::contains(const QGeoCoordinate &coordinate)
 {
-    if (!coordinate)
-        return false;
-
-    return m_circle.contains(coordinate->coordinate());
+    return m_circle.contains(coordinate);
 }
 
 /*!
-    \qmlproperty Coordinate GeoCircle::center
+    \qmlproperty coordinate GeoCircle::center
 
     This property holds the coordinate of the center of the bounding circle.
 
     \note this property's changed() signal is currently emitted only if the
     whole object changes, not if only the contents of the object change.
 */
-QDeclarativeCoordinate *QDeclarativeGeoCircle::center()
+QGeoCoordinate QDeclarativeGeoCircle::center()
 {
-    if (!m_center) {
-        m_center = new QDeclarativeCoordinate(m_circle.center(), this);
-        connect(m_center, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    return m_center;
+    return m_circle.center();
 }
 
-void QDeclarativeGeoCircle::setCenter(QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoCircle::setCenter(const QGeoCoordinate &coordinate)
 {
-    if (m_center == coordinate)
+    if (m_circle.center() == coordinate)
         return;
 
-    if (m_center) {
-        disconnect(m_center, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                   this, SLOT(coordinateChanged()));
-
-        if (m_center->parent() == this)
-            delete m_center;
-    }
-
-    m_center = coordinate;
-
-    if (m_center) {
-        connect(m_center, SIGNAL(coordinateChanged(QGeoCoordinate)),
-                this, SLOT(coordinateChanged()));
-    }
-
-    QGeoCircle oldCircle = m_circle;
-    m_circle.setCenter(coordinate ? coordinate->coordinate() : QGeoCoordinate());
-    synchronizeDeclarative(oldCircle, true);
-
+    m_circle.setCenter(coordinate);
     emit centerChanged();
 }
 
@@ -185,46 +163,16 @@ void QDeclarativeGeoCircle::setCenter(QDeclarativeCoordinate *coordinate)
 */
 qreal QDeclarativeGeoCircle::radius() const
 {
-    return m_radius;
+    return m_circle.radius();
 }
 
 void QDeclarativeGeoCircle::setRadius(qreal radius)
 {
-    QGeoCircle oldCircle = m_circle;
-    m_circle.setRadius(radius);
-    synchronizeDeclarative(oldCircle, false);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoCircle::coordinateChanged()
-{
-    QDeclarativeCoordinate *c = qobject_cast<QDeclarativeCoordinate *>(sender());
-    if (!c)
+    if (m_circle.radius() == radius)
         return;
 
-    QGeoCircle oldCircle = m_circle;
-
-    if (c == m_center) {
-        m_circle.setCenter(c->coordinate());
-        synchronizeDeclarative(oldCircle, true);
-    }
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoCircle::synchronizeDeclarative(const QGeoCircle &old, bool skipCenter)
-{
-    if (!skipCenter && m_center && old.center() != m_circle.center())
-        m_center->setCoordinate(m_circle.center());
-
-    // Check not to compare two Not a Numbers, which by definition is 'false'.
-    if ((!qIsNaN(old.radius()) || !qIsNaN(m_circle.radius())) && old.radius() != m_circle.radius()) {
-        m_radius = m_circle.radius();
-        emit radiusChanged();
-    }
+    m_circle.setRadius(radius);
+    emit radiusChanged();
 }
 
 #include "moc_qdeclarativegeocircle.cpp"

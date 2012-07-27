@@ -40,203 +40,168 @@
 ****************************************************************************/
 
 #include "qdeclarativecoordinate_p.h"
-#include <qnumeric.h>
-#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmltype Coordinate
-    \instantiates QDeclarativeCoordinate
+    \qmlbasictype coordinate
     \inqmlmodule QtLocation 5.0
-    \ingroup qml-QtLocation5-positioning
+    \ingroup qml-QtLocation5-basictypes
     \since Qt Location 5.0
 
-    \brief The Coordinate type represents and stores a geographic position.
+    \brief The coordinate type represents and stores a geographic position.
 
-    Coordinate objects represent a geographic location in the form of numbers:
-    in particular, \l latitude, \l longitude and \l altitude. These, together,
-    specify a 3-dimensional position anywhere on or near the Earth's surface.
+    The \c coordinate type represents a geographic position in the form of \c {latitude},
+    \c longitude and \c altitude attributes.  The \c latitude attribute specifies the number of
+    decimal degrees above and below the equator.  A positive latitude indicates the Northern
+    Hemisphere and a negative latitude indicates the Southern Hemisphere.  The \c longitude
+    attribute specifies the number of decimal degrees east and west.  A positive longitude
+    indicates the Eastern Hemisphere and a negative longitude indicates the Western Hemisphere.
+    The \c altitude attribute specifies the number of meters above sea level.  Together, these
+    attributes specify a 3-dimensional position anywhere on or near the Earth's surface.
 
-    Coordinates are used by many other types in the Qt Location module, for
-    specifying the position of an object on a Map, the current position of
-    a device and many other tasks. They also feature a number of important
-    utility methods that make otherwise complex calculations simple to use,
-    such as atDistanceAndAzimuth.
+    The \c isValid attribute can be used to test if a coordinate is valid.  A coordinate is
+    considered valid if it has a valid latitude and longitude.  A valid altitude is not required.
+    The latitude must be between -90 and 90 inclusive and the longitude must be between -180 and
+    180 inclusive.
+
+    The coordinate type is used by many other types in the Qt Location module, for specifying
+    the position of an object on a Map, the current position of a device and many other tasks.
+    They also feature a number of important utility methods that make otherwise complex
+    calculations simple to use, such as \l atDistanceAndAzimuth().
 
     \section2 Accuracy
 
-    The latitude, longitude and altitude numbers stored in a Coordinate are
-    represented as doubles, giving them approximately 16 decimal digits of
-    precision -- enough to specify micrometers. The calculations performed
-    in Coordinate's methods such as azimuthTo and distanceTo also use doubles
-    for all intermediate values, but the inherent inaccuracies in their
-    spherical Earth model dominate the amount of error in their output.
+    The latitude, longitude and altitude attributes stored in the coordinate type are represented
+    as doubles, giving them approximately 16 decimal digits of precision -- enough to specify
+    micrometers.  The calculations performed in coordinate's methods such as \l azimuthTo() and
+    \l distanceTo() also use doubles for all intermediate values, but the inherent inaccuracies in
+    their spherical Earth model dominate the amount of error in their output.
 
     \section2 Example Usage
 
-    The following snippet defines two coordinates near Brisbane, Australia.
+    Use properties of type \l variant to store a \c {coordinate}.  To create a \c coordinate use
+    one of the methods described below.  In all cases, specifying the \c altitude attribute is
+    optional.
+
+    To create a \c coordinate value, use the \l{QtLocation5::QtLocation}{QtLocation.coordinate()}
+    function:
+
+    \qml
+    import QtLocation 5.0
+
+    Location { coordinate: QtLocation.coordinate(-27.5, 153.1) }
+    \endqml
+
+    or as separate \c {latitude}, \c longitude and \c altitude components:
+
+    \qml
+    Location {
+        coordinate {
+            latitude: -27.5
+            longitude: 153.1
+        }
+    }
+    \endqml
+
+    When integrating with C++, note that any QGeoCoordinate value passed into QML from C++ is
+    automatically converted into a \c coordinate value, and vice-versa.
+
+    \section2 Methods
+
+    \section3 distanceTo()
 
     \code
-    Coordinate {
-        id: coord1
-        latitude: -27.2
-        longitude: 153.1
-        altitude: 1.0
-    }
-
-    Coordinate {
-        id: coord2
-        latitude: -27.5
-        longitude: 153.2
-        altitude: 5.0
-    }
+    real distanceTo(coordinate other)
     \endcode
 
-    As an example, the value of \c{coord1.distanceTo(coord2)} would now be
-    approximately 34790 (34.8 km).
+    Returns the distance (in meters) from this coordinate to the coordinate specified by \a other.
+    Altitude is not used in the calculation.
 
-    \note if another object has a Coordinate property, a change notification
-    signal for that property will only be emitted if that property is assigned
-    a new Coordinate, and \b{not} if the position data of the existing Coordinate
-    assigned to the property changes.  The only exception to this rule is that
-    the \l{Position} type does emit change signals if its coordinate property's values change.
+    This calculation returns the great-circle distance between the two coordinates, with an
+    assumption that the Earth is spherical for the purpose of this calculation.
+
+    \section3 azimuthTo()
+
+    \code
+    real azimuth(coordinate other)
+    \endcode
+
+    Returns the azimuth (or bearing) in degrees from this coordinate to the coordinate specified by
+    \a other.  Altitude is not used in the calculation.
+
+    There is an assumption that the Earth is spherical for the purpose of this calculation.
+
+    \section3 atDistanceAndAzimuth()
+
+    \code
+    coordinate atDistanceAndAzimuth(real distance, real azimuth)
+    \endcode
+
+    Returns the coordinate that is reached by traveling \a distance metres from this coordinate at
+    \a azimuth degrees along a great-circle.
+
+    There is an assumption that the Earth is spherical for the purpose of this calculation.
 */
 
-QDeclarativeCoordinate::QDeclarativeCoordinate(QObject *parent)
-        : QObject(parent) {}
 
-QDeclarativeCoordinate::QDeclarativeCoordinate(const QGeoCoordinate &coordinate,
-        QObject *parent)
-        : QObject(parent),
-        m_coordinate(coordinate) {}
-
-QDeclarativeCoordinate::~QDeclarativeCoordinate()
+CoordinateValueType::CoordinateValueType(QObject *parent)
+:   QQmlValueTypeBase<QGeoCoordinate>(qMetaTypeId<QGeoCoordinate>(), parent)
 {
-    emit destroyed(this);
 }
 
-/*!
-    \qmlproperty QGeoCoordinate Coordinate::coordinate
-
-    For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#geocoordinate} {Interfaces between C++ and QML Code}".
-*/
-void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
+CoordinateValueType::~CoordinateValueType()
 {
-    bool changed = false;
-    QGeoCoordinate previousCoordinate = m_coordinate;
-    m_coordinate = coordinate;
-
-    // Comparing two NotANumbers is false which is not wanted here
-    if (coordinate.altitude() != previousCoordinate.altitude() &&
-        !(qIsNaN(coordinate.altitude()) && qIsNaN(previousCoordinate.altitude()))) {
-        emit altitudeChanged(m_coordinate.altitude());
-        changed = true;
-    }
-    if (coordinate.latitude() != previousCoordinate.latitude() &&
-        !(qIsNaN(coordinate.latitude()) && qIsNaN(previousCoordinate.latitude()))) {
-        emit latitudeChanged(m_coordinate.latitude());
-        changed = true;
-    }
-    if (coordinate.longitude() != previousCoordinate.longitude() &&
-        !(qIsNaN(coordinate.longitude()) && qIsNaN(previousCoordinate.longitude()))) {
-        emit longitudeChanged(m_coordinate.longitude());
-        changed = true;
-    }
-
-    if (changed)
-        emit coordinateChanged(m_coordinate);
 }
 
-QGeoCoordinate QDeclarativeCoordinate::coordinate() const
-{
-    return m_coordinate;
-}
-
-/*!
-    \qmlproperty double Coordinate::altitude
-
+/*
     This property holds the value of altitude (meters above sea level).
-    If the property has not been set, its default value is zero.
+    If the property has not been set, its default value is NaN.
 
 */
-
-void QDeclarativeCoordinate::setAltitude(double altitude)
+void CoordinateValueType::setAltitude(double altitude)
 {
-    bool wasValid = m_coordinate.isValid();
-    if (m_coordinate.altitude() != altitude) {
-        m_coordinate.setAltitude(altitude);
-        emit altitudeChanged(m_coordinate.altitude());
-        emit coordinateChanged(m_coordinate);
-
-        if (wasValid != m_coordinate.isValid())
-            emit validityChanged(m_coordinate.isValid());
-    }
+    v.setAltitude(altitude);
 }
 
-double QDeclarativeCoordinate::altitude() const
+double CoordinateValueType::altitude() const
 {
-    return m_coordinate.altitude();
+    return v.altitude();
 }
 
-/*!
-    \qmlproperty double Coordinate::longitude
-
+/*
     This property holds the longitude value of the geographical position
     (decimal degrees). A positive longitude indicates the Eastern Hemisphere,
     and a negative longitude indicates the Western Hemisphere
-    If the property has not been set, its default value is zero.
+    If the property has not been set, its default value is NaN.
 */
-
-void QDeclarativeCoordinate::setLongitude(double longitude)
+void CoordinateValueType::setLongitude(double longitude)
 {
-    bool wasValid = m_coordinate.isValid();
-    if (m_coordinate.longitude() != longitude) {
-        m_coordinate.setLongitude(longitude);
-        emit longitudeChanged(m_coordinate.longitude());
-        emit coordinateChanged(m_coordinate);
-
-        if (wasValid != m_coordinate.isValid())
-            emit validityChanged(m_coordinate.isValid());
-    }
+    v.setLongitude(longitude);
 }
 
-double QDeclarativeCoordinate::longitude() const
+double CoordinateValueType::longitude() const
 {
-    return m_coordinate.longitude();
+    return v.longitude();
 }
 
-/*!
-    \qmlproperty double Coordinate::latitude
-
+/*
     This property holds latitude value of the geographical position
     (decimal degrees). A positive latitude indicates the Northern Hemisphere,
     and a negative latitude indicates the Southern Hemisphere.
-    If the property has not been set, its default value is zero.
+    If the property has not been set, its default value is NaN.
 */
-
-void QDeclarativeCoordinate::setLatitude(double latitude)
+void CoordinateValueType::setLatitude(double latitude)
 {
-    bool wasValid = m_coordinate.isValid();
-    if (m_coordinate.latitude() != latitude) {
-        m_coordinate.setLatitude(latitude);
-        emit latitudeChanged(latitude);
-        emit coordinateChanged(m_coordinate);
-
-        if (wasValid != m_coordinate.isValid())
-            emit validityChanged(m_coordinate.isValid());
-    }
+    v.setLatitude(latitude);
 }
 
-double QDeclarativeCoordinate::latitude() const
+double CoordinateValueType::latitude() const
 {
-    return m_coordinate.latitude();
+    return v.latitude();
 }
 
-/*!
-    \qmlproperty bool Coordinate::isValid
-
+/*
     This property holds the current validity of the coordinate. Coordinates
     are considered valid if they have been set with a valid latitude and
     longitude (altitude is not required).
@@ -245,15 +210,18 @@ double QDeclarativeCoordinate::latitude() const
     and the longitude must be between -180 to 180 inclusive to be considered
     valid.
 */
-
-bool QDeclarativeCoordinate::isValid() const
+bool CoordinateValueType::isValid() const
 {
-    return m_coordinate.isValid();
+    return v.isValid();
 }
 
-/*!
-    \qmlmethod Coordinate::distanceTo(Coordinate)
+QString CoordinateValueType::toString() const
+{
+    return QStringLiteral("QGeoCoordinate(%1,%2,%3)")
+        .arg(v.latitude()).arg(v.longitude()).arg(v.altitude());
+}
 
+/*
     Returns the distance (in meters) from this coordinate to the
     coordinate specified by other. Altitude is not used in the calculation.
 
@@ -261,44 +229,35 @@ bool QDeclarativeCoordinate::isValid() const
     coordinates, with an assumption that the Earth is spherical for the
     purpose of this calculation.
 */
-
-qreal QDeclarativeCoordinate::distanceTo(QObject *coordinate)
+qreal CoordinateValueType::distanceTo(const QGeoCoordinate &coordinate) const
 {
-    QDeclarativeCoordinate *coord = static_cast<QDeclarativeCoordinate *>(coordinate);
-    return m_coordinate.distanceTo(coord->coordinate());
+    return v.distanceTo(coordinate);
 }
 
-/*!
-    \qmlmethod Coordinate::azimuthTo(Coordinate)
-
+/*
     Returns the azimuth (or bearing) in degrees from this coordinate to the
     coordinate specified by other. Altitude is not used in the calculation.
 
     There is an assumption that the Earth is spherical for the purpose of
     this calculation.
 */
-qreal QDeclarativeCoordinate::azimuthTo(QObject *coordinate)
+qreal CoordinateValueType::azimuthTo(const QGeoCoordinate &coordinate) const
 {
-    QDeclarativeCoordinate *coord = static_cast<QDeclarativeCoordinate *>(coordinate);
-    return m_coordinate.azimuthTo(coord->coordinate());
+    return v.azimuthTo(coordinate);
 }
 
-/*!
-    \qmlmethod Coordinate::atDistanceAndAzimuth(qreal, qreal)
-
+/*
     Returns the coordinate that is reached by traveling distance metres
     from the current coordinate at azimuth degrees along a great-circle.
 
     There is an assumption that the Earth is spherical for the purpose
     of this calculation.
 */
-QDeclarativeCoordinate *QDeclarativeCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimuth)
+QGeoCoordinate CoordinateValueType::atDistanceAndAzimuth(qreal distance, qreal azimuth) const
 {
-    QGeoCoordinate coord = m_coordinate.atDistanceAndAzimuth(distance, azimuth);
-    return new QDeclarativeCoordinate(coord);
+    return v.atDistanceAndAzimuth(distance, azimuth);
 }
 
 #include "moc_qdeclarativecoordinate_p.cpp"
 
 QT_END_NAMESPACE
-
