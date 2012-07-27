@@ -41,7 +41,7 @@
 
 //TESTED_COMPONENT=src/location
 
-#include "qlocationtestutils_p.h"
+#include "../utils/qlocationtestutils_p.h"
 
 #include <qgeocoordinate.h>
 #include <qtest.h>

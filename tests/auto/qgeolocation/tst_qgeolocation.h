@@ -47,7 +47,7 @@
 #include <QtCore/QCoreApplication>
 #include <QMetaType>
 
-#include "../qgeocoordinate/qlocationtestutils_p.h"
+#include "../utils/qlocationtestutils_p.h"
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
 #include <qgeolocation.h>

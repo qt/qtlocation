@@ -51,7 +51,7 @@
 #include <qgeosatelliteinfo.h>
 
 #include "testqgeosatelliteinfosource_p.h"
-#include "../qgeocoordinate/qlocationtestutils_p.h"
+#include "../utils/qlocationtestutils_p.h"
 
 Q_DECLARE_METATYPE(QList<QGeoSatelliteInfo>)
 

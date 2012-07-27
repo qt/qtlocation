@@ -44,7 +44,7 @@
 #include <QtLocation/QPlaceIcon>
 #include <QtTest/QtTest>
 
-#include "../qgeocoordinate/qlocationtestutils_p.h"
+#include "../utils/qlocationtestutils_p.h"
 
 QT_USE_NAMESPACE
 

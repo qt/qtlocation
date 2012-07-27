@@ -1,9 +1,9 @@
 CONFIG += testcase
 TARGET = tst_qgeolocation
 
-HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
+HEADERS += ../utils/qlocationtestutils_p.h \
            tst_qgeolocation.h
 SOURCES += tst_qgeolocation.cpp \
-           ../qgeocoordinate/qlocationtestutils.cpp
+           ../utils/qlocationtestutils.cpp
 
 QT += location testlib

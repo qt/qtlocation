@@ -5,12 +5,12 @@ TARGET = tst_qnmeapositioninfosource_realtime
 
 INCLUDEPATH += ..
 
-HEADERS += ../../qgeocoordinate/qlocationtestutils_p.h \
+HEADERS += ../../utils/qlocationtestutils_p.h \
            ../../qgeopositioninfosource/testqgeopositioninfosource_p.h \
            ../qnmeapositioninfosourceproxyfactory.h \
            ../tst_qnmeapositioninfosource.h
 
-SOURCES += ../../qgeocoordinate/qlocationtestutils.cpp \
+SOURCES += ../../utils/qlocationtestutils.cpp \
            ../../qgeopositioninfosource/testqgeopositioninfosource.cpp \
            ../qnmeapositioninfosourceproxyfactory.cpp \
            ../tst_qnmeapositioninfosource.cpp \

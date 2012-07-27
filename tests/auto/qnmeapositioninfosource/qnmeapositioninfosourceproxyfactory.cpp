@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qnmeapositioninfosourceproxyfactory.h"
-#include "../qgeocoordinate/qlocationtestutils_p.h"
+#include "../utils/qlocationtestutils_p.h"
 
 #include <QIODevice>
 #include <QTcpServer>
