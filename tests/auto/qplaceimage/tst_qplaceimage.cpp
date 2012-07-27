@@ -40,9 +40,11 @@
 ****************************************************************************/
 
 #include <QtCore/QString>
+#include <QtLocation/QPlaceImage>
+#include <QtLocation/QPlaceUser>
 #include <QtTest/QtTest>
 
-#include <qplaceimage.h>
+#include "../utils/qlocationtestutils_p.h"
 
 QT_USE_NAMESPACE
 
@@ -53,6 +55,12 @@ class tst_QPlaceImage : public QObject
 public:
     tst_QPlaceImage();
 
+    //needed for QLocationTestUtils::testConversion
+    QPlaceImage initialSubObject();
+    bool checkType(const QPlaceContent &);
+    void detach(QPlaceContent *);
+    void setSubClassProperty(QPlaceImage *);
+
 private Q_SLOTS:
     void constructorTest();
     void supplierTest();
@@ -60,10 +68,47 @@ private Q_SLOTS:
     void mimeTypeTest();
     void attributionTest();
     void operatorsTest();
+    void conversionTest();
 };
 
 tst_QPlaceImage::tst_QPlaceImage()
 {
+}
+
+QPlaceImage tst_QPlaceImage::initialSubObject()
+{
+    QPlaceUser user;
+    user.setName("user 1");
+    user.setUserId("0001");
+
+    QPlaceSupplier supplier;
+    supplier.setName("supplier");
+    supplier.setSupplierId("1");
+
+    QPlaceImage image;
+    image.setUrl(QUrl(QStringLiteral("file:///opt/icon/img.png")));
+    image.setImageId("0001");
+    image.setMimeType("image/png");
+    image.setUser(user);
+    image.setSupplier(supplier);
+    image.setAttribution("attribution");
+
+    return image;
+}
+
+bool tst_QPlaceImage::checkType(const QPlaceContent &content)
+{
+    return content.type() == QPlaceContent::ImageType;
+}
+
+void tst_QPlaceImage::detach(QPlaceContent *content)
+{
+    content->setAttribution("attribution");
+}
+
+void tst_QPlaceImage::setSubClassProperty(QPlaceImage *image)
+{
+    image->setImageId("0002");
 }
 
 void tst_QPlaceImage::constructorTest()
@@ -122,6 +167,13 @@ void tst_QPlaceImage::operatorsTest()
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setImageId("testValue2");
     QVERIFY2(testObj != testObj2, "Object should be different");
+}
+
+void tst_QPlaceImage::conversionTest()
+{
+    QLocationTestUtils::testConversion<tst_QPlaceImage,
+                                       QPlaceContent,
+                                       QPlaceImage>(this);
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceImage);
