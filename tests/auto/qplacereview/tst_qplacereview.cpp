@@ -46,6 +46,8 @@
 #include <QtLocation/QPlaceSupplier>
 #include <QtLocation/QPlaceUser>
 
+#include "../utils/qlocationtestutils_p.h"
+
 QT_USE_NAMESPACE
 
 class tst_QPlaceReview : public QObject
@@ -54,6 +56,12 @@ class tst_QPlaceReview : public QObject
 
 public:
     tst_QPlaceReview();
+
+    //needed for QLocationTestUtils::testConversion
+    QPlaceReview initialSubObject();
+    bool checkType(const QPlaceContent &);
+    void detach(QPlaceContent *);
+    void setSubClassProperty(QPlaceReview *);
 
 private Q_SLOTS:
     void constructorTest();
@@ -66,10 +74,50 @@ private Q_SLOTS:
     void titleTest();
     void userTest();
     void operatorsTest();
+    void conversionTest();
 };
 
 tst_QPlaceReview::tst_QPlaceReview()
 {
+}
+
+QPlaceReview tst_QPlaceReview::initialSubObject()
+{
+    QPlaceUser user;
+    user.setName("user 1");
+    user.setUserId("0001");
+
+    QPlaceSupplier supplier;
+    supplier.setName("supplier");
+    supplier.setSupplierId("1");
+
+    QPlaceReview review;
+    review.setTitle("title");
+    review.setText("text");
+    review.setRating(4.5);
+    review.setLanguage("en");
+    review.setDateTime(QDateTime::fromString("01:02 03/04/2000",
+                                             "hh:mm dd/MM/yyyy"));
+    review.setUser(user);
+    review.setSupplier(supplier);
+    review.setAttribution("attribution");
+
+    return review;
+}
+
+bool tst_QPlaceReview::checkType(const QPlaceContent &content)
+{
+    return content.type() == QPlaceContent::ReviewType;
+}
+
+void tst_QPlaceReview::detach(QPlaceContent *content)
+{
+    content->setAttribution("attribution");
+}
+
+void tst_QPlaceReview::setSubClassProperty(QPlaceReview *review)
+{
+    review->setTitle("new title");
 }
 
 void tst_QPlaceReview::constructorTest()
@@ -171,6 +219,13 @@ void tst_QPlaceReview::userTest()
     review.setUser(QPlaceUser());
     QVERIFY(review.user().userId().isEmpty());
     QVERIFY(review.user().name().isEmpty());
+}
+
+void tst_QPlaceReview::conversionTest()
+{
+    QLocationTestUtils::testConversion<tst_QPlaceReview,
+                                       QPlaceContent,
+                                       QPlaceReview>(this);
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceReview)
