@@ -50,7 +50,8 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Icon QDeclarativePlaceIcon
+    \qmltype Icon
+    \instantiates QDeclarativePlaceIcon
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data

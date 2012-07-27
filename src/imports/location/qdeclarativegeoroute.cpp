@@ -44,7 +44,8 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Route QDeclarativeGeoRoute
+    \qmltype Route
+    \instantiates QDeclarativeGeoRoute
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0

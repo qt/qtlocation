@@ -69,7 +69,8 @@ QT_BEGIN_NAMESPACE
 
 
 /*!
-    \qmlclass MapPinchEvent QDeclarativeGeoMapPinchEvent
+    \qmltype MapPinchEvent
+    \instantiates QDeclarativeGeoMapPinchEvent
     \inqmlmodule QtLocation 5.0
 
     \brief MapPinchEvent element provides basic information about pinch event.
@@ -143,7 +144,8 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlclass MapGestureArea QDeclarativeGeoMapGestureArea
+    \qmltype MapGestureArea
+    \instantiates QDeclarativeGeoMapGestureArea
 
     \inqmlmodule QtLocation 5.0
 

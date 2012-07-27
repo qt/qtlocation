@@ -42,7 +42,8 @@
 #include "qdeclarativeplaceattribute_p.h"
 
 /*!
-    \qmlclass ExtendedAttributes QQmlPropertyMap
+    \qmltype ExtendedAttributes
+    \instantiates QQmlPropertyMap
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
@@ -103,7 +104,8 @@
 */
 
 /*!
-    \qmlclass PlaceAttribute QDeclarativePlaceAttribute
+    \qmltype PlaceAttribute
+    \instantiates QDeclarativePlaceAttribute
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data

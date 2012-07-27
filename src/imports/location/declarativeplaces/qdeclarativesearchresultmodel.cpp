@@ -55,7 +55,8 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass PlaceSearchModel QDeclarativeSearchResultModel
+    \qmltype PlaceSearchModel
+    \instantiates QDeclarativeSearchResultModel
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models

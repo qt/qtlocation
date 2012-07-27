@@ -44,7 +44,8 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GeoShape QDeclarativeGeoShape
+    \qmltype GeoShape
+    \instantiates QDeclarativeGeoShape
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0

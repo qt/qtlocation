@@ -48,7 +48,8 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass ImageModel QDeclarativePlaceImageModel
+    \qmltype ImageModel
+    \instantiates QDeclarativePlaceImageModel
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models

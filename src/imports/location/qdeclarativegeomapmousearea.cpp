@@ -51,7 +51,8 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass MapMouseArea  QDeclarativeGeoMapMouseArea
+    \qmltype MapMouseArea
+    \instantiates QDeclarativeGeoMapMouseArea
 
     \brief The MapMouseArea item enables simple mouse handling.
 

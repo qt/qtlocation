@@ -59,7 +59,8 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Place QDeclarativePlace
+    \qmltype Place
+    \instantiates QDeclarativePlace
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data

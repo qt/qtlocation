@@ -48,7 +48,8 @@
 #include <QtGui/QPainter>
 
 /*!
-    \qmlclass MapRoute QDeclarativeRouteMapItem
+    \qmltype MapRoute
+    \instantiates QDeclarativeRouteMapItem
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0

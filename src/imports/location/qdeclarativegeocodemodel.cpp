@@ -51,7 +51,8 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GeocodeModel QDeclarativeGeocodeModel
+    \qmltype GeocodeModel
+    \instantiates QDeclarativeGeocodeModel
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-geocoding
     \since Qt Location 5.0

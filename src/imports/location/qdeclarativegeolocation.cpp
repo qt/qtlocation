@@ -44,7 +44,8 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Location QDeclarativeGeoLocation
+    \qmltype Location
+    \instantiates QDeclarativeGeoLocation
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
