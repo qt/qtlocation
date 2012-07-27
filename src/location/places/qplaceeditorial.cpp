@@ -50,7 +50,7 @@ QPlaceEditorialPrivate::QPlaceEditorialPrivate()
 }
 
 QPlaceEditorialPrivate::QPlaceEditorialPrivate(const QPlaceEditorialPrivate &other)
-:   QPlaceContentPrivate(), text(other.text), contentTitle(other.contentTitle),
+:   QPlaceContentPrivate(other), text(other.text), contentTitle(other.contentTitle),
     language(other.language)
 {
 }
