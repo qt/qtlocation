@@ -136,6 +136,11 @@ void QPlaceDetailsReplyImpl::replyFinished()
         case QNetworkReply::OperationCanceledError:
             setError(CancelError, "Request canceled.");
             break;
+        case QNetworkReply::ContentNotFoundError:
+            setError(PlaceDoesNotExistError,
+                     QString::fromLatin1("The id, %1, does not reference an existing place")
+                     .arg(m_placeId));
+            break;
         default:
             setError(CommunicationError, "Network error.");
         }

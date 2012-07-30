@@ -419,7 +419,7 @@ void tst_QPlaceManagerNokia::details()
 
     //fetch the details of a non-existent place
     QVERIFY(doFetchDetails(QStringLiteral("does_not_exist"), &place,
-                           QPlaceReply::CommunicationError));
+                           QPlaceReply::PlaceDoesNotExistError));
 }
 
 void tst_QPlaceManagerNokia::categories()

@@ -66,6 +66,7 @@ public:
     ~QPlaceDetailsReplyImpl();
 
     void abort();
+    void setPlaceId(const QString &placeId) { m_placeId = placeId; }
 
 private slots:
     void setError(QPlaceReply::Error error_, const QString &errorString);
@@ -74,6 +75,7 @@ private slots:
 private:
     QNetworkReply *m_reply;
     QPlaceManagerEngineNokiaV2 *m_engine;
+    QString m_placeId;
 };
 
 QT_END_NAMESPACE

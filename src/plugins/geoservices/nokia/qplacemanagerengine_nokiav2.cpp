@@ -253,6 +253,7 @@ QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &p
     QNetworkReply *networkReply = sendRequest(requestUrl);
 
     QPlaceDetailsReplyImpl *reply = new QPlaceDetailsReplyImpl(networkReply, this);
+    reply->setPlaceId(placeId);
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
