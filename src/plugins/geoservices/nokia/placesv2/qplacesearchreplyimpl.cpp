@@ -103,6 +103,11 @@ void QPlaceSearchReplyImpl::replyFinished()
         case QNetworkReply::OperationCanceledError:
             setError(CancelError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, CANCEL_ERROR));
             break;
+        case QNetworkReply::ContentNotFoundError:
+            setError(PlaceDoesNotExistError,
+                     QString::fromLatin1("The id, %1, does not reference an existing place")
+                     .arg(request().recommendationId()));
+            break;
         default:
             setError(CommunicationError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, NETWORK_ERROR));
         }

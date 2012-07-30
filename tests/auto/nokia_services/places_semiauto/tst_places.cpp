@@ -346,7 +346,7 @@ void tst_QPlaceManagerNokia::recommendations_data()
             << QString()
             << QGeoShape()
             << QList<QPlaceCategory>()
-            << QPlaceReply::CommunicationError;
+            << QPlaceReply::PlaceDoesNotExistError;
 
     QTest::newRow("search for recommendations with id and search term")
             << QString(AuvergneEmbassyId)
