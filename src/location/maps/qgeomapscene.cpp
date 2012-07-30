@@ -55,6 +55,8 @@
 #include <Qt3D/qgeometrydata.h>
 #include <Qt3D/qglcamera.h>
 #include <Qt3D/qglpainter.h>
+#include <Qt3D/QGLLightParameters>
+
 
 #include <QHash>
 
@@ -77,6 +79,7 @@ public:
 
     QGLCamera *camera_;
     QGLSceneNode *sceneNode_;
+    QGLLightParameters* light_;
 
     // scales up the tile geometry and the camera altitude, resulting in no visible effect
     // other than to control the accuracy of the render by keeping the values in a sensible range
@@ -245,6 +248,7 @@ QGeoMapScenePrivate::QGeoMapScenePrivate(QGeoMapScene *scene)
     : tileSize_(0),
       camera_(new QGLCamera()),
       sceneNode_(new QGLSceneNode()),
+      light_(new QGLLightParameters()),
       scaleFactor_(10.0),
       intZoomLevel_(0),
       sideLength_(0),
@@ -271,6 +275,7 @@ QGeoMapScenePrivate::~QGeoMapScenePrivate()
 {
     delete sceneNode_;
     delete camera_;
+    delete light_;
 }
 
 QDoubleVector2D QGeoMapScenePrivate::screenPositionToMercator(const QPointF &pos) const
@@ -747,6 +752,9 @@ void QGeoMapScenePrivate::paintGL(QGLPainter *painter)
     painter->setScissor(QRect(screenOffsetX_, screenOffsetY_, screenWidth_, screenHeight_));
 
     painter->setCamera(camera_);
+
+    painter->setMainLight(light_);
+
     sceneNode_->draw(painter);
 
     QGLCamera *camera = camera_;
