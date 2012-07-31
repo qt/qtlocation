@@ -609,7 +609,6 @@ void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QGeoCoordinat
                                                              const QGeoCoordinate &center,
                                                              qreal distance)
 {
-
     qreal poleLat = 90;
     qreal distanceToNorthPole = center.distanceTo(QGeoCoordinate(poleLat, 0));
     qreal distanceToSouthPole = center.distanceTo(QGeoCoordinate(-poleLat, 0));
@@ -620,12 +619,13 @@ void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QGeoCoordinat
     QList<int> wrapPathIndex;
     // calculate actual width of map on screen in pixels
     QPointF midPoint = map()->coordinateToScreenPosition(map()->cameraData().center(), false);
-    QPointF midPointPlusOne = QPoint(midPoint.x() + 1.0, midPoint.y());
+    QPointF midPointPlusOne(midPoint.x() + 1.0, midPoint.y());
     QGeoCoordinate coord1 = map()->screenPositionToCoordinate(midPointPlusOne, false);
     qreal geoDistance = coord1.longitude() - map()->cameraData().center().longitude();
     if ( geoDistance < 0 )
         geoDistance += 360;
     qreal mapWidth = 360.0 / geoDistance;
+    mapWidth = qMin(static_cast<int>(mapWidth), map()->width());
     QPointF prev = map()->coordinateToScreenPosition(path.at(0), false);
     // find the points in path where wrapping occurs
     for (int i = 1; i <= path.count(); ++i) {
