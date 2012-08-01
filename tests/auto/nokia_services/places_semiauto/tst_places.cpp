@@ -98,6 +98,8 @@ private:
     QGeoServiceProvider *provider;
 };
 
+Q_DECLARE_METATYPE(tst_QPlaceManagerNokia::ExpectedResults)
+
 const QLatin1String tst_QPlaceManagerNokia::AuvergneEmbassyId("250u09tv-be16478e55314b338c551aab2651c9d3");
 
 const QLatin1String tst_QPlaceManagerNokia::ProxyEnv("NOKIA_PLUGIN_PROXY");
@@ -758,8 +760,6 @@ void tst_QPlaceManagerNokia::commonAreas(QList<QByteArray> *dataTags,
     errors->append(QPlaceReply::BadArgumentError);
     results->append(NoResults);
 }
-
-Q_DECLARE_METATYPE(tst_QPlaceManagerNokia::ExpectedResults);
 
 QTEST_GUILESS_MAIN(tst_QPlaceManagerNokia)
 
