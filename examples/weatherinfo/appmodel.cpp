@@ -51,6 +51,7 @@
 #include <QXmlStreamReader>
 #include <QRegExp>
 #include <QStringList>
+#include <QUrlQuery>
 
 WeatherData::WeatherData(QObject *parent) :
         QObject(parent)
@@ -240,8 +241,10 @@ void AppModel::positionUpdated(QGeoPositionInfo gpsPos)
     latitude.setNum(d->coord.latitude());
 //! [3]
     QUrl url("http://maps.google.com/maps/geo");
-    url.addEncodedQueryItem("q", QUrl::toPercentEncoding(latitude + "," + longitude));
-    url.addEncodedQueryItem("output", QUrl::toPercentEncoding("xml"));
+    QUrlQuery query;
+    query.addQueryItem("q", latitude + "," + longitude);
+    query.addQueryItem("output", "xml");
+    url.setQuery(query);
 
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
     // connect up the signal right away
@@ -278,8 +281,10 @@ void AppModel::handleGeoNetworkData(QObject *replyObj)
 void AppModel::refreshWeather()
 {
     QUrl url("http://www.google.com/ig/api");
-    url.addEncodedQueryItem("hl", "en");
-    url.addEncodedQueryItem("weather", QUrl::toPercentEncoding(d->city));
+    QUrlQuery query;
+    query.addQueryItem("hl", "en");
+    query.addQueryItem("weather", d->city);
+    url.setQuery(query);
 
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
     // connect up the signal right away
