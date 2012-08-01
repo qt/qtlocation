@@ -15,3 +15,4 @@ INSTALLS += target
 
 OTHER_FILES += \
     routing_plugin.json
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

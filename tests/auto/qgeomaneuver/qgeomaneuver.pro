@@ -9,3 +9,4 @@ SOURCES += tst_qgeomaneuver.cpp \
            ../utils/qlocationtestutils.cpp
 
 QT += location testlib
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

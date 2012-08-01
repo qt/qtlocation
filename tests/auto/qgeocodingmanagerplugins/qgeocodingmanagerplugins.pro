@@ -15,3 +15,4 @@ INSTALLS += target
 
 OTHER_FILES += \
     geocoding_plugin.json
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

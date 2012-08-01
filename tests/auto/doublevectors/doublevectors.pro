@@ -8,3 +8,4 @@ SOURCES += tst_doublevectors.cpp \
     ../../../src/location/maps/qdoublevector2d.cpp
 
 QT += location testlib
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

@@ -16,3 +16,4 @@ INSTALLS += target sources
 
 OTHER_FILES += \
     map3d.qml
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

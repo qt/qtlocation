@@ -14,3 +14,4 @@ INSTALLS += target
 
 OTHER_FILES += \
     placesplugin.json
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

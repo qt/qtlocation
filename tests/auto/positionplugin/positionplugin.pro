@@ -12,3 +12,4 @@ INSTALLS += target
 
 OTHER_FILES += \
     plugin.json
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

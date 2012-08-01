@@ -13,3 +13,4 @@ SOURCES += ../../utils/qlocationtestutils.cpp \
            ../../qgeopositioninfosource/testqgeopositioninfosource.cpp \
            ../qnmeapositioninfosourceproxyfactory.cpp \
            tst_dummynmeapositioninfosource.cpp
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

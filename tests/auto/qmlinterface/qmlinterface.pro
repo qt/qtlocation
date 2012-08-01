@@ -33,3 +33,4 @@ OTHER_FILES += \
     data/TestGeoRectangle.qml \
     data/TestGeoCircle.qml
 
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

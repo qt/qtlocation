@@ -18,3 +18,4 @@ DEFINES += JSONFILE=\\\"$$PWD/../../../src/plugins/geoservices/places_jsondb/10-
 
 #Mark test as insignificant until jsondb is supported
 CONFIG+=insignificant_test
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

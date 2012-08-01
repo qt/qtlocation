@@ -18,3 +18,4 @@ SOURCES += locationtest.cpp \
            ../../../src/imports/location/qdeclarativecoordinate.cpp
 
 load(qml_plugin)
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

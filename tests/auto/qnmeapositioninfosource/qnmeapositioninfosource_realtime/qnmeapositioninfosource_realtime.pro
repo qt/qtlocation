@@ -15,3 +15,4 @@ SOURCES += ../../utils/qlocationtestutils.cpp \
            ../qnmeapositioninfosourceproxyfactory.cpp \
            ../tst_qnmeapositioninfosource.cpp \
            tst_qnmeapositioninfosource_realtime.cpp
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
