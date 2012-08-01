@@ -55,6 +55,9 @@
 #include <QSignalSpy>
 #include <QUuid>
 
+#include <sys/types.h>
+#include <unistd.h>
+
 #ifndef WAIT_UNTIL
 #define WAIT_UNTIL(__expr) \
         do { \
