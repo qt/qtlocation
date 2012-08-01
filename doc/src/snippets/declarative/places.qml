@@ -46,17 +46,6 @@ import QtLocation 5.0
 //! [QtLocation import]
 
 Item {
-    //! [Initialize Plugin]
-    Plugin {
-        id: myPlugin
-        name: "nokia"
-        //specify plugin parameters if necessary
-        //PluginParameter {...}
-        //PluginParameter {...}
-        //...
-    }
-    //! [Initialize Plugin]
-
     Place {
         id: place
     }
@@ -119,30 +108,6 @@ Item {
     source: icon.url()
     //! [Icon default]
     }
-
-    //! [PlaceSearchModel]
-    PlaceSearchModel {
-        id: searchModel
-
-        plugin: myPlugin
-
-        searchTerm: "Pizza"
-        searchArea: GeoCircle {
-            center: Coordinate {
-                // Brisbane
-                longitude: 153.02778
-                latitude: -27.46778
-            }
-        }
-
-        Component.onCompleted: update()
-    }
-
-    ListView {
-        model: searchModel
-        delegate: Text { text: 'Name: ' + place.name }
-    }
-    //! [PlaceSearchModel]
 
     //! [SearchSuggestionModel]
     PlaceSearchSuggestionModel {

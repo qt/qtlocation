@@ -72,6 +72,7 @@ QT_USE_NAMESPACE
     \l {http://en.wikipedia.org/wiki/Organic_search}{organic search results}.  Sponsored search
     results will have the \c sponsored role set to true.
 
+    \target PlaceSearchModel Roles
     The model returns data for the following roles:
 
     \table

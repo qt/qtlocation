@@ -38,9 +38,9 @@
     The Places API also facilitates management of places and
     categories, allowing users to save and remove them.
 
-    \section1 Quickstart Tutorial
+    \section1 Introductory concepts
 
-    \section2 Plugin Initialization
+    \section2 Plugin
     A \l Plugin is an abstraction for a backend. One \l Plugin might access places from a
     REST server while another may access places from a local database. The following
     instantiates a \l Plugin element by providing a name of "nokia". The \l Plugin name
@@ -51,47 +51,145 @@
     {PluginParameter} {parameters} and nuances of each \l Plugin, see the \l {Plugin
     references and parameters}{Plugin References}.
 
-    \snippet snippets/declarative/places.qml Initialize Plugin
+    \snippet examples/declarative/places_list/places_list.qml Initialize Plugin
 
     \note The Nokia plugin must be supplied with some mandatory parameters as outlined
     in the \l {Mandatory Parameters} {Nokia Plugin} documentation.
 
-    \section2 Searching
-    Searching is accomplished via the \l PlaceSearchModel.  To instantiate a \l PlaceSearchModel we
-    provide a \l Plugin and some search parameters such as a search center and search text.  The model
-    can be used with a \l ListView and delegate to display the results.  A search operation
-    is started by invoking the PlaceSearchModel::execute() method.
+    \section2 Models, Views and Delegates
+    The QML Places API is built around the notion of models, views and delegates.
 
-    \snippet snippets/declarative/places.qml PlaceSearchModel
+    \table
+    \row
+        \li \b Model
+        \li A model holds data items and maintains their structure.
+            The model is also responsible for retrieving the items from a data source.
+    \row
+        \li \b View
+        \li A view is a visual container that displays the data and manages how visual
+            items are shown such as in a list or a grid.  The view may also
+            be responsible for navigating the data, for example, scrolling through
+            the visual items during a flicking motion.
+    \row
+        \li \b Delegate
+        \li A delegate defines how individual data elements should appear
+            as visual items in the view.  The models expose a set of data roles
+            and the delegate uses them to construct  a visual item.  The delegate
+            may also define behaviour such as an operation to invoke when a visual
+            item is clicked.
+    \endtable
 
-    The \l PlaceSearchModel can also be used in conjuction with a MapItemView to display
-    markers on a map.  The MapItemView's model is set to the search model, and for the delegate
-    we use a MapQuickItem to display and position a given marker image.  A marker is shown
-    for every place that was found by the search model.
+    The Common Use Cases section below demonstrates concrete examples of how
+    these concepts fit together.
 
-    \snippet snippets/declarative/places.qml Search MapItemView
+    \section1 Common Use Cases
 
-    \section2 Fetching Details
+    \section2 Searching for Places
+    Searching is accomplished via the \l PlaceSearchModel.  The \l
+    {PlaceSearchModel::plugin} {plugin} property specifies which backend to
+    perform search operations against.  Search parameters may be provided
+    through properties such as the \l {PlaceSearchModel::searchTerm}
+    {searchTerm} and \l {PlaceSearchModel::searchArea} {searchArea}.  A search
+    operation can then be started by invoking the \l {PlaceSearchModel::update}
+    {update()} method.  For simplicity, the snippet below invokes \l
+    {PlaceSearchModel::update} {update()} once construction of the model as
+    been completed, typically \l {PlaceSearchModel::update} {update()} would be
+    invoked in response to a user action such as a button click.  While the
+    search operation is underway the \l {PlaceSearchModel::status} property
+    transitions into the \c Loading state and when successfully completed moves
+    into the \c Ready state.
+
+    \snippet examples/declarative/places_list/places_list.qml PlaceSearchModel
+
+    \section2 Display Search Results using a ListView
+    A \l ListView can be used to show the search results found by the model.
+    It defines the visual region for where the results are shown, and in the
+    case below fills the entirety of its parent.  The \l ListView has built in
+    behavior that enables the region to respond to flicking events and to
+    scroll appropriately.
+
+    In the snippet below, the search model has been assigned to the ListView's
+    \l {ListView::model} {model} property.  When the model is updated with new
+    results, the \l ListView is automatically updated to reflect the model's new
+    data items.
+
+    A simple delegate has been bound to the \l {ListView}'s \l
+    {ListView::delegate} {delegate} property.  The \l PlaceSearchModel exposes
+    a set of \l {PlaceSearchModel Roles} {roles} of which the \e title and \e
+    place roles have been used below, these are of type string and \l Place
+    respectively.  Essentially for each data item that should be visible in the
+    view, the view invokes the delegate to create a visual representation of
+    the item.
+
+    \table
+        \row
+            \li
+                \snippet examples/declarative/places_list/places_list.qml Places ListView
+            \li
+                \inlineimage places-list.png
+    \endtable
+
+    \note For simplicty's sake we have assumed that every search result is of
+    \l {Search Result Types} {type} \c PlaceSearchResult and so always have
+    access to the \e place role, other search result types may not have a
+    \e place role.
+
+    See the \l {Places List(QML)} {Places List} example for full source code.
+
+    \section2 Display Search Results using a MapItemView
+    Instead of a \l ListView, the \l PlaceSearchModel can be used in
+    conjunction with a \l MapItemView to display markers on a map.  Firstly a
+    \l Map is used to define the visual region occupied by the map, in this
+    case it fills the entirety of its parent.  Other properties are specified
+    such as the \l {Map::plugin} {plugin} providing the maps, and the map's \l
+    {Map::center} {center} and \l {Map::zoomLevel} {zoomLevel}.
+
+    Inside the \l Map, a \l MapItemView is declared, where the \l
+    {MapItemView::model} {model} property has been set to the search model and
+    a \l {MapItemView::delegate} {delegate} consisting of a \l MapQuickItem is
+    used to display a marker image.  A marker is shown for every place that
+    was found by the search model.  The delegate uses the \e place role
+    to position the marker.
+
+    \table
+        \row
+            \li
+                \snippet examples/declarative/places_map/places_map.qml Places MapItemView
+            \li
+                \inlineimage places-map.jpg
+    \endtable
+
+    \note For simplicty's sake we have assumed that every search result is of
+    \l {Search Result Types} {type} \c PlaceSearchResult and so always have
+    access to the \e place role, other search result types may not have a
+    \e place role.
+
+    See the \l {Places Map(QML)} {Places Map} example for full source code.
+
+    \section2 Fetching Place Details
     In order to save bandwidth, sometimes a backend will only return places which
     are partially populated with details.  This can be checked with the
     Place::detailsFetched property which indicates whether all availalable details
     have been fetched or not.  If not, the Place::getDetails() method can be invoked
-    to fetch the missing details.
+    to fetch the remaining details.
 
     \snippet snippets/declarative/places.qml Place fetchDetails
 
     \section2 Saving and Removing Places
     Some backends may support saving and removing places.  This can be done by
-    calling the Place::save() and Place::remove() functions, respectively.  Note
+    calling the Place::save() and Place::remove() methods respectively.  Note
     that in order to save a \l Place, a \l Plugin must be assigned to specify
-    which backend we are saving to.
+    which backend we are saving to.  The \l {Place::status} {status} property will
+    transition into the \c Saving state while the save operation is happening and on
+    successful completion will move to the \c Ready state.  The following
+    snippet shows how to save and remove a place using javascript.
 
     \snippet snippets/declarative/places.qml Place createAndSavePlace
     \codeline
     \snippet snippets/declarative/places.qml Place removePlace
 
     \section2 Learn More
-    The above quickstart tutorial only exhibits a subset of Places functionality.
+    The above snippets only exhibit a small subset of Places functionality.
     Refer to the \l {Places Elements} shown below for richer content such as \l {ImageModel} {images}, \l {ReviewModel} {reviews} etc, as well as more indepth descriptions and explanations.
 
     See also the \l {Places (QML)}{Places (QML)} example for a more comprehensive demonstration on
