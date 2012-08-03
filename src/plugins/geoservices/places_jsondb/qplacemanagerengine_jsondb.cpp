@@ -190,8 +190,7 @@ QPlaceReply *QPlaceManagerEngineJsonDb::initializeCategories()
 {
     QString mappingFile = m_localDataPath + QLatin1String("/offline/offline-mapping.json");
 
-    if (!m_jsonDb->parseIconMapping(mappingFile))
-        qWarning() << QLatin1String("Could not parse nokia icon mapping file:") << mappingFile;
+    m_jsonDb->parseIconMapping(mappingFile);
 
     CategoryInitReply *reply = new CategoryInitReply(this);
     reply->start();
