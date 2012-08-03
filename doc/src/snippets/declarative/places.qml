@@ -460,7 +460,8 @@ Item {
         //! [Place removeFavorite 1]
 
         //! [Place removeFavorite 2]
-        //after detecting successful favorite removal by checking its status
+        //check successful removal of the favorite by monitoring its status.
+        //once that is done we can assign null to the favorite
         place.favorite = null;
         //! [Place removeFavorite 2]
     }
