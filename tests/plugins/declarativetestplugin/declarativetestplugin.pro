@@ -2,7 +2,7 @@ CXX_MODULE = location
 TARGET  = declarative_location_test
 TARGETPATH = QtLocation/test
 
-QT += qml quick location testlib
+QT += gui-private qml quick location testlib
 
 INCLUDEPATH += ../../../src/imports/location
 INCLUDEPATH += ../../../src/location

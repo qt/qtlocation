@@ -39,9 +39,11 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
 #include "qdeclarativepinchgenerator_p.h"
+
+#include <QtTest/QtTest>
 #include <QtGui/QGuiApplication>
+#include <QtGui/qpa/qwindowsysteminterface.h>
 
 QDeclarativePinchGenerator::QDeclarativePinchGenerator():
     target_(0),
