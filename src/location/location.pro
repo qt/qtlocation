@@ -3,7 +3,7 @@ load(qt_build_config)
 TARGET = QtLocation
 QT = core-private gui
 
-load(qt_module_config)
+load(qt_module)
 
 HEADERS += qgeopositioninfosource_p.h
 
