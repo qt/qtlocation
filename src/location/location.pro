@@ -3,12 +3,12 @@ load(qt_build_config)
 TARGET = QtLocation
 QT = core-private gui
 
-load(qt_module)
-
 HEADERS += qgeopositioninfosource_p.h
 
 include(maps/maps.pri)
 include(places/places.pri)
+
+load(qt_module)
 
 QMAKE_DOCS = $$PWD/../../doc/config/qtlocation.qdocconf
 
