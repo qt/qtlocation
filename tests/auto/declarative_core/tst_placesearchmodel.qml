@@ -66,6 +66,10 @@ TestCase {
         name: "foo"
     }
 
+   Plugin {
+       id: uninitializedPlugin
+   }
+
     GeoCircle {
         id: testSearchArea
         center: Coordinate {
@@ -265,7 +269,45 @@ TestCase {
         compare(testModel.count, numResults);
         compare(statusChangedSpy.count, 6);
 
+        //chack that an encountering an error will cause the model
+        //to clear its data
+        testModel.plugin = null;
+        testModel.update();
+        tryCompare(testModel, "count", 0);
+        compare(testModel.status, PlaceSearchModel.Error);
+
         delete testModel;
         delete statusChangedSpy;
+    }
+
+    function test_error() {
+        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchModel {}', testCase, "PlaceSearchModel");
+
+        var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        statusChangedSpy.target = testModel;
+        statusChangedSpy.signalName = "statusChanged";
+
+        //try searching without a plugin instance
+        testModel.update();
+        tryCompare(statusChangedSpy, "count", 2);
+        compare(testModel.status, PlaceSearchModel.Error);
+        statusChangedSpy.clear();
+        //Aside: there is some difficulty in checking the transition to the Loading state
+        //since the model transitions from Loading to Error before the next event loop
+        //iteration.
+
+        //try searching with an uninitialized plugin instance.
+        testModel.plugin = uninitializedPlugin;
+        testModel.update();
+        tryCompare(statusChangedSpy, "count", 2);
+        compare(testModel.status, PlaceSearchModel.Error);
+        statusChangedSpy.clear();
+
+        //try searching with plugin a instance
+        //that has been provided a non-existent name
+        testModel.plugin = favoritePlugin;
+        testModel.update();
+        tryCompare(statusChangedSpy, "count", 2);
+        compare(testModel.status, PlaceSearchModel.Error);
     }
 }

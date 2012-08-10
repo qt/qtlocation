@@ -51,6 +51,7 @@ const char PLUGIN_DOESNOT_SUPPORT_GEOCODING[] = QT_TRANSLATE_NOOP("QtLocationQML
 const char NOT_SUPPORTED_BY[] = QT_TRANSLATE_NOOP("QtLocationQML", "%1 not supported by %2 plugin.");
 const char PLUGIN_PROPERTY_NOT_SET[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin property is not set.");
 const char PLUGIN_ERROR[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin Error (%1): %2");
+const char PLUGIN_PROVIDER_ERROR[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin Error (%1): Could not instantiate provider %1");
 const char PLUGIN_NOT_VALID[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin is not valid");
 const char PLUGIN_NOT_ASSIGNED_TO_PLACE[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin is not assigned to place.");
 const char PLUGIN_NOT_ASSIGNED_TO_PLACE_ICON[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin is not assigned to place icon.");

@@ -168,35 +168,43 @@ void QDeclarativeSearchModelBase::setStatus(Status status, const QString &errorS
 */
 void QDeclarativeSearchModelBase::update()
 {
+    if (m_reply)
+        return;
+
+    setStatus(Loading);
+
     if (!m_plugin) {
+        clearData();
         setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_PROPERTY_NOT_SET));
         return;
     }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
+    if (!serviceProvider) {
+        clearData();
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_PROVIDER_ERROR)
+                         .arg(m_plugin->name()));
         return;
+    }
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
+        clearData();
         setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
                          .arg(m_plugin->name()).arg(serviceProvider->errorString()));
         return;
     }
 
-    cancel();
-
     updateSearchRequest();
     m_reply = sendQuery(placeManager, m_request);
     if (!m_reply) {
+        clearData();
         setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, UNABLE_TO_MAKE_REQUEST));
         return;
     }
 
     m_reply->setParent(this);
     connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
-
-    setStatus(Loading);
 }
 
 /*!

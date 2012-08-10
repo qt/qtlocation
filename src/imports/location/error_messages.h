@@ -54,6 +54,7 @@ extern const char PLUGIN_DOESNOT_SUPPORT_GEOCODING[];
 
 extern const char PLUGIN_PROPERTY_NOT_SET[];
 extern const char PLUGIN_ERROR[];
+extern const char PLUGIN_PROVIDER_ERROR[];
 extern const char PLUGIN_NOT_VALID[];
 extern const char PLUGIN_NOT_ASSIGNED_TO_PLACE[];
 extern const char PLUGIN_NOT_ASSIGNED_TO_PLACE_ICON[];
