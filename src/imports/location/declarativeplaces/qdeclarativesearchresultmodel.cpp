@@ -122,6 +122,12 @@ QT_USE_NAMESPACE
             \li The contents of the search result are unknown.
     \endtable
 
+
+    It can often be helpful to use a \l Loader to create a delegate
+    that will choose different \l {Component}s based on the search result type.
+
+    \snippet snippets/declarative/places_loader.qml Handle Result Types
+
     \section1 Detection of Updated and Removed Places
 
     The PlaceSearchModel listens for places that have been updated or removed from its plugin's backend.

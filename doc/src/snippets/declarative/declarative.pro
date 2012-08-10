@@ -4,7 +4,8 @@ content.files = \
     maps.qml \
     places.qml \
     plugin.qml \
-    routing.qml
+    routing.qml \
+    places_loader.qml
 
 # Put content in INSTALLS so that content.files become part of the project tree in Qt Creator,
 # but scoped with false as we don't actually want to install them.  They are documentation
