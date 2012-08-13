@@ -141,8 +141,6 @@ private:
     int rowToAddChild(PlaceCategoryNode *, const QPlaceCategory &category);
     void updateLayout();
 
-    QPlaceManager *manager(bool stateCheck = true);
-
     QPlaceReply *m_response;
 
     QDeclarativeGeoServiceProvider *m_plugin;

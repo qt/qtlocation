@@ -670,43 +670,6 @@ int QDeclarativeSupportedCategoriesModel::rowToAddChild(PlaceCategoryNode *node,
 }
 
 /*!
-    \internal
-    Helper function to return the manager, this manager is intended to be used
-    to perform the next operation.  If the checkState parameter is true,
-    the model is checked to see if an operation is underway and if so
-    a null pointer is returned.
-*/
-QPlaceManager *QDeclarativeSupportedCategoriesModel::manager(bool checkState)
-{
-    if (checkState) {
-        if (m_status != QDeclarativeSupportedCategoriesModel::Ready && m_status != QDeclarativeSupportedCategoriesModel::Error)
-            return 0;
-    }
-
-    if (m_response) {
-        m_response->abort();
-        m_response->deleteLater();
-        m_response = 0;
-    }
-
-    if (!m_plugin) {
-           qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_NOT_ASSIGNED_TO_PLACE);
-           return 0;
-    }
-
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return 0;
-
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-
-    if (!placeManager)
-        return 0;
-
-    return placeManager;
-}
-
-/*!
     \qmlsignal CategoryModel::dataChanged()
 
    Indicates that significant changes have been made to the underlying datastore.
