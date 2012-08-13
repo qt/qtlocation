@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
 
     Like a standard Qt Quick \l{MouseArea}, the MapMouseArea provides mouse
     handling for an item. Creating a normal Qt Quick MouseArea inside a
-    map object element (for example MapPolygon) will result in undefined behaviour
+    map object type (for example MapPolygon) will result in undefined behavior
     due to the way in which Map objects are rendered, so MapMouseArea exists to
     provide this functionality instead.
 

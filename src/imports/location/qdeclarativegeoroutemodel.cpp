@@ -76,7 +76,7 @@ QT_BEGIN_NAMESPACE
     Otherwise, the \l{update} method may be used. By default, autoUpdate is
     disabled.
 
-    The data stored and returned in the RouteModel consists of \l Route elements,
+    The data stored and returned in the RouteModel consists of \l Route objects,
     as a list with the role name "routeData". See the documentation for \l Route
     for further details on its structure and contents.
 
@@ -91,6 +91,7 @@ QT_BEGIN_NAMESPACE
     \code
     Plugin {
         id: aPlugin
+        name: "nokia"
     }
 
     RouteQuery {
@@ -604,14 +605,14 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     as detailed preferences on how to optimize the route and what features
     to prefer or avoid along the path (such as toll roads, highways, etc).
 
-    RouteQuery elements are used exclusively to fill out the value of a
+    RouteQuery objects are used exclusively to fill out the value of a
     RouteModel's \l{RouteModel::query}{query} property, which can then begin
     the retrieval process to populate the model.
 
     \section2 Example Usage
 
     The following snipped shows an incomplete example of creating a RouteQuery
-    element and setting it as the value of a RouteModel's \l{RouteModel::query}{query}
+    object and setting it as the value of a RouteModel's \l{RouteModel::query}{query}
     property.
 
     \code

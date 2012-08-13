@@ -718,9 +718,9 @@ void QDeclarativePlace::finished()
 void QDeclarativePlace::contactsModified(const QString &key, const QVariant &value)
 {
     //TODO: This is a workaround to allow an assignment of a single contact detail
-    //      to be treated as an asignment of a list with a single element.
+    //      to be treated as an assignment of a list with a single object.
     //      A proper solution is to inherit off QQmlPropertyMap
-    //      and override the write behaviour but this can only be done
+    //      and override the write behavior but this can only be done
     //      when QTBUG-23183 is complete.
     if (value.userType() == QMetaType::QObjectStar) {
         QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(value.value<QObject *>());

@@ -110,8 +110,7 @@ QString QDeclarativeGeoMapType::description() const
 /*!
     \qmlproperty bool MapType::mobile
 
-    \brief This read-only property indicates whether the map type is optimized
-    for the use on a mobile device.
+    \brief Whether the map type is optimized for the use on a mobile device.
 
     Map types for mobile devices usually have higher constrast to counteract the
     effects of sunlight and a reduced color for improved readability.

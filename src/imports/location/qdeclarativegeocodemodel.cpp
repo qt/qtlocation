@@ -75,13 +75,13 @@ QT_BEGIN_NAMESPACE
     be used. By default, autoUpdate is disabled.
 
     The data stored and returned in the GeocodeModel consists of \l{Location}
-    elements, as a list with the role name "locationData". See the documentation
+    objects, as a list with the role name "locationData". See the documentation
     for \l{Location} for further details on its structure and contents.
 
     \section2 Example Usage
 
     The following snippet is two-part, showing firstly the declaration of
-    elements, and secondly a short piece of procedural code using it. We set
+    objects, and secondly a short piece of procedural code using it. We set
     the geocodeModel's \l{autoUpdate} property to false, and call \l{update} once
     the query is set up. In this case, as we use a string value in \l{query},
     only one update would occur, even with autoUpdate enabled. However, if we
@@ -358,7 +358,7 @@ void QDeclarativeGeocodeModel::setBounds(QObject *bounds)
     within the area. his is particularly useful if query is only partially filled out,
     as the service will attempt to (reverse) geocode all matches for the specified data.
 
-    Accepted element types are \l GeoRectangle and \l GeoCircle.
+    Accepted types are \l BoundingBox and \l BoundingCircle.
 
 */
 
@@ -698,10 +698,10 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
     to changes in its attached query. The default value of this property
     is false.
 
-    If setting this value to 'true' and using an Address or Coordinate element
-    as the query, note that any change at all in the element's properties will
+    If setting this value to 'true' and using an Address or Coordinate type
+    as the query, note that any change at all in the object's properties will
     trigger a new request to be sent. If you are adjusting many properties of
-    the element whilst autoUpdate is enabled, this can generate large numbers
+    the object whilst autoUpdate is enabled, this can generate large numbers
     of useless (and later discarded) requests.
 */
 

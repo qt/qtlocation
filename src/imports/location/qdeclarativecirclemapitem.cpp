@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
     may not always be a perfect circle on the screen: for instance, in
     the Mercator projection, circles become ovoid in shape as they near
     the poles. To display a perfect screen circle around a point, use a
-    MapQuickItem containing a relevant QML element instead.
+    MapQuickItem containing a relevant Qt Quick type instead.
 
     By default, the circle is displayed as a 1 pixel black border with
     no fill. To change its appearance, use the color, border.color

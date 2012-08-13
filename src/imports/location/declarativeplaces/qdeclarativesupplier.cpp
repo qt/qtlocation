@@ -53,8 +53,7 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The Supplier element holds data regarding the supplier of a place,
-    a place's image, review, or editorial.
+    \brief Holds data regarding the supplier of a place, a place's image, review, or editorial.
 
     Each instance represents a set of data about a supplier, which can include
     supplier's name, url and icon.  The supplier is typically a business or organization.

@@ -111,7 +111,7 @@ QT_BEGIN_NAMESPACE
 
     \section2 Map Objects
 
-    Map objects can be declared within the body of a Map element in QML and will
+    Map related objects can be declared within the body of a Map object in Qt Quick and will
     automatically appear on the Map. To add objects programmatically, first be
     sure they are created with the Map as their parent (for example in an argument to
     Component::createObject), and then call the \l addMapItem method on the Map.

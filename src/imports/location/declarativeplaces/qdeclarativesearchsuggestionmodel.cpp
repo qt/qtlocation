@@ -58,7 +58,7 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
 
-    \brief The PlaceSearchSuggestionModel element provides access to search term suggestions.
+    \brief Provides access to search term suggestions.
 
     The PlaceSearchSuggestionModel can be used to provide search term suggestions as the user enters their
     search term.  The properties of this model should match that of the \l PlaceSearchModel, which

@@ -25,9 +25,44 @@
 **
 ****************************************************************************/
 
+
+
+
+/*!
+    \module QtLocation
+    \title Qt Location Module
+    \ingroup modules
+
+    \brief Location module provides positioning, mapping, navigation, and place search
+       via QML and C++ interfaces.
+
+    To load the Qt Location module, add the following statement to your .qml files
+
+    \code
+        import QtLocation 5.0
+    \endcode
+
+    For C++ projects include the header appropriate for the current use case,
+    for example applications using routes may use
+
+    \code #include <QGeoRoute> \endcode
+
+    The .pro file should have the \e location keyword added
+
+    \code
+        QT += location
+    \endcode
+
+
+    See more in the \l{Qt Location}{Qt Location Overview}.
+
+*/
+
+
+
 /*!
 \page index-qtlocation-module.html
-\title Qt Location Module
+\title Qt Location
 \brief The Qt Location API provides positioning, mapping, navigation, and place search
        via QML and C++ interfaces.
 \ingroup technology-apis
@@ -66,32 +101,30 @@ The .pro file should have the \e location keyword added
     QT += location
 \endcode
 
-\section2 Concepts (in a QML Context)
-
-What follows assumes that we are using the Qt Location QML API.
+\section2 Location QML Concepts
 
 Position information can come from a variety of sources including satellites,
-wifi, text files and so on.
-
-The position is described by the usual latitude, longitude, and the altitude
-in meters. For more information see \l {http://en.wikipedia.org/wiki/Geographic_coordinate}{Geographic Coordinate}.
+wifi, text files and so on. The position is described by the usual latitude,
+longitude, and the altitude in meters. For more information see
+\l {http://en.wikipedia.org/wiki/Geographic_coordinate}{Geographic Coordinate}.
 
 The QML position is stored in a \l {QtLocation5::Coordinate}{Coordinate} which
-contains the latitude, longitude and
-altitude of the device. The \l {QtLocation5::Location}{Location} contains this Coordinate and adds an address,
-it also has a bounding box which defines the recommended viewing region when displaying the location.
+contains the latitude, longitude and altitude of the device. The
+\l {QtLocation5::Location}{Location} contains this Coordinate and adds an
+address, it also has a bounding box which defines the recommended viewing
+region when displaying the location.
 
 Now that the device has a position, with regular updates the API can determine
-the speed and heading of the device. It can define a box or a circle that can
+the speed and heading of the device. It can also define a box or a circle that can
 produce a notification when the device either leaves or enters that region.
 
-If we introduce the idea of a \l {QtLocation5::Map}{Map} with positions of interest,
+Adding a \l {QtLocation5::Map}{Map} with positions of interest and
 \l {QtLocation5::Place}{Places}, then the device can be made aware of nearby features and related
 information, displayed graphically. Features on the \l Map may be places of business, entertainment
-and so on.  They may include paths, roads, or forms of transport leading to the idea that
+and so on.  They may include paths, roads, or forms of transport leading so that
 navigation optimization and assistance are possible.
 
-To enable navigation we need \l {Route}s from start to destination. These routes
+To perform navigation we need \l {Route}s from start to destination. These routes
 are made up of segments. Each \l {QtLocation5::RouteSegment}{RouteSegment}
 can be considered a navigation sub-task: drive 100 meters, turn left. The beginning and
 end of each segment is a \e waypoint, that is, one part of our journey.
@@ -120,7 +153,7 @@ with some plugins providing more than one service. One QML \l Plugin should be c
 for each required GeoService plugin. Plugins are required for maps, routing and geocoding,
 however the default plugin handles all three of these services. A plugin may
 require online access or may support on-board maps and data. The default "nokia"
-plugin only supports online use which would be managed by QNetworkInfo and
+plugin only supports online use. The connection would be managed by QNetworkInfo and
 QNetworkConfigurationManager.
 
 \note: Plugins may not provide various features such as paging or relevance hints.
@@ -180,28 +213,6 @@ directions).
     \li \l{Maps and Navigation (C++)}{for C++}
 \endtable
 
-\section1 New Since Qt4
-
-In Qt4 QtMobility provided some location functionality for positioning and Maps.  The new
-Qt Location API has had an extensive reworking of Maps and now provides the Places API.
-
-New features of Qt Location includes
-\list
-    \li Maps are now part of the QML2 scenegraph, and rendered using hardware- accelerated OpenGL
-    \li Arbitrary QML2 items on the map are supported using \l MapQuickItem
-    \li Model-view support for creating map objects from a QML model
-    \li Built-in support for pinch-to-zoom gestures, flicking and "kinetic" panning
-    \li Vast performance improvements over Mobility 1.2, especially for large map polylines and objects in general
-    \li Full QML API now available for routing and geocoding -- compatible with standard QML model-view design
-    \li Service provider feature detection without having to open all the available plugins
-    \li Unified "Plugin" QML element used by routing/geocoding/maps etc with easy-to-set PluginParameters
-    \li A GeoServices plugin backend provided by Nokia which provides mapping, geocoding, routing, and place
-        search functionality.
-    \li A Places API which facilitates searching for places such as restaurants and businesses.
-    \li The Places API supports viewing of rich content such as images, reviews, and editorials.
-        It also supports locale handling, sponsored search results and supplier attributions
-\endlist
-
 \section1 API References and Examples
 
 Alphabetized lists of all classes and user interface components in the API, as well as detailed
@@ -239,4 +250,28 @@ Qt Location available for a new platform.
         \li \l {Places Backend} {Places}
         \li Information for places backend implementors
 \endtable
+
+\section1 New Since Qt 4
+
+In Qt 4 Qt Mobility provided some location functionality for Positioning and Maps
+with Landmarks support. The new Qt Location API has had an extensive reworking
+of \l {Map}s and \l Places (formerly Landmarks). Also both C++ and QML APIs have
+been reworked to be simpler to use.
+
+New features of Qt Location includes
+\list
+    \li Maps are now part of the Qt Quick scenegraph, and rendered using hardware-accelerated OpenGL
+    \li Arbitrary Qt Quick items on the map are supported using \l MapQuickItem
+    \li Now possible to create map overlays with a model
+    \li Built-in support for pinch-to-zoom gestures (\l MapPinchArea), flicking (\l MapFlickable), and panning
+    \li Vast performance improvements over Qt Mobility 1.2, especially for large map polylines and objects in general
+    \li Full QML API now available for routing and geocoding -- compatible with standard QML model-view design
+    \li Service provider feature detection without having to open all the available plugins
+    \li Unified "Plugin" QML type used by routing/geocoding/maps etc with easy-to-set PluginParameters
+    \li Two plugins are supplied with Qt. The Nokia plugin for GeoServices and the JsonDb plugin for storing locally created places. The JsonDb plugin can also be used to save Favorite places linked to another plugin.
+    \li Landmarks API is replaced by the Places API
+    \li \l Places supports viewing of richer content such as reviews, images, and editorials
+    \li \l Places supports locale handling, sponsored search results, and supplier attribution
+\endlist
+
 */

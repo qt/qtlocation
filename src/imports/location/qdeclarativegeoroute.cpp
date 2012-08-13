@@ -56,10 +56,10 @@ QT_BEGIN_NAMESPACE
     as the length the route, the estimated travel time for the route,
     and enough information to render a basic image of the route on a map.
 
-    The QGeoRoute object also contains a list of \l RouteSegment elements which
+    The QGeoRoute object also contains a list of \l RouteSegment objects which
     describe subsections of the route in greater detail.
 
-    The primary means of acquiring Route elements is \l RouteModel.
+    The primary means of acquiring Route objects is \l RouteModel.
 
     \section1 Example
 
@@ -109,7 +109,7 @@ QList<QGeoCoordinate> QDeclarativeGeoRoute::routePath()
     if (!route_.path().isEmpty()) {
         return route_.path();
     } else if (!path_.isEmpty()) {
-        // this is for testing. Route elements are not meant
+        // this is for testing. Route types are not meant to be
         // user instantiable but for testing it makes sense
         QList<QGeoCoordinate> list;
         for (int i = 0; i < path_.count(); ++i)
@@ -163,8 +163,8 @@ qreal QDeclarativeGeoRoute::distance() const
     traveling along this segment of the route.
 
     To access individual segments you can use standard list accessors: 'path.length'
-    indicates the number of elements and 'path[index starting from zero]' gives
-    the actual element.
+    indicates the number of objects and 'path[index starting from zero]' gives
+    the actual object.
 
     \sa Coordinate
 */
@@ -227,11 +227,11 @@ void QDeclarativeGeoRoute::clearPath()
 /*!
     \qmlproperty QQmlListProperty<RouteSegment> QtLocation5::Route::segments
 
-    Read-only property which holds the list of \l RouteSegment elements of this route.
+    Read-only property which holds the list of \l RouteSegment objects of this route.
 
     To access individual segments you can use standard list accessors: 'segments.length'
-    indicates the number of elements and 'segments[index starting from zero]' gives
-    the actual element.
+    indicates the number of objects and 'segments[index starting from zero]' gives
+    the actual objects.
 
     \sa RouteSegment
 */

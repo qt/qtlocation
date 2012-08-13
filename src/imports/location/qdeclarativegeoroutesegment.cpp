@@ -61,11 +61,11 @@ QT_BEGIN_NAMESPACE
     graph, with RouteManeuver instances as optional labels attached to the
     vertices of the graph.
 
-    The primary means of acquiring Route elements is via Routes via \l RouteModel.
+    The primary means of acquiring Route objects is via Routes via \l RouteModel.
 
     \section1 Example
 
-    The following QML snipplet demonstrates how to print information about a
+    The following QML snippet demonstrates how to print information about a
     route segment:
 
     \snippet snippets/declarative/routing.qml QtQuick import
@@ -140,8 +140,8 @@ QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
     traveling along this segment of the route.
 
     To access individual segments you can use standard list accessors: 'path.length'
-    indicates the number of elements and 'path[index starting from zero]' gives
-    the actual element.
+    indicates the number of objects and 'path[index starting from zero]' gives
+    the actual object.
 
     \sa Coordinate
 */

@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
 
-    \brief The ReviewModel element provides access to reviews of a \l Place.
+    \brief Provides access to reviews of a \l Place.
 
     The ReviewModel is a read-only model used to fetch reviews about a \l Place.  The model
     incrementally fetches. The number of reviews which are fetched at a time is specified

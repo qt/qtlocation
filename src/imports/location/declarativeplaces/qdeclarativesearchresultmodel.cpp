@@ -62,7 +62,7 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
 
-    \brief The PlaceSearchModel element provides access to place search results.
+    \brief Provides access to place search results.
 
     PlaceSearchModel provides a model of place search results within the \l searchArea.  The
     \l searchTerm and \l categories properties can be set to restrict the search results to
@@ -403,7 +403,7 @@ void QDeclarativeSearchResultModel::categories_clear(QQmlListProperty<QDeclarati
 {
     QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel) {
-        //note: we do not need to delete each of the elements in m_categories since the search model
+        //note: we do not need to delete each of the objects in m_categories since the search model
         //should never be the parent of the categories anyway.
         searchModel->m_categories.clear();
         searchModel->m_request.setCategories(QList<QPlaceCategory>());

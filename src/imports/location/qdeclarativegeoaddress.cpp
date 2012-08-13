@@ -66,12 +66,12 @@ QT_BEGIN_NAMESPACE
     is the recommended way to display an address to the user and typically
     takes the format of an address as found on an envelope, but this is not always
     the case.  The \l text may be automatically generated from constituent
-    address elements such as \l street, \l city and and so on, but can also
+    address properties such as \l street, \l city and and so on, but can also
     be explicitly assigned.  See \l text for details.
 
     \section2 Example Usage
 
-    The following code snippet shows the declaration of an Address element.
+    The following code snippet shows the declaration of an Address object.
 
     \code
     Address {
@@ -138,13 +138,13 @@ void QDeclarativeGeoAddress::setAddress(const QGeoAddress &address)
 
     If an empty string is assigned to \c text, then \l isTextGenerated will be set
     to true and \c text will return a string which is locally formatted according to
-    \l countryCode and based on the elements of the address. Modifying the address
-    elements such as \l street, \l city and so on may cause the contents of \c text to
+    \l countryCode and based on the properties of the address. Modifying the address
+    properties such as \l street, \l city and so on may cause the contents of \c text to
     change.
 
     If a non-empty string is assigned to \c text, then \l isTextGenerated will be
     set to false and \c text will always return the explicitly assigned string.
-    Modifying address elements will not affect the \c text property.
+    Modifying address properties will not affect the \c text property.
 */
 QString QDeclarativeGeoAddress::text() const
 {
@@ -346,7 +346,7 @@ void QDeclarativeGeoAddress::setPostalCode(const QString &postalCode)
   \qmlproperty bool QtLocation5::Address::isTextGenerated
 
   This property holds a boolean that if true, indicates that \l text is automatically
-  generated from address elements.  If false, it indicates that the \l text has been
+  generated from address properties.  If false, it indicates that the \l text has been
   explicitly assigned.
 
 */

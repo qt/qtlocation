@@ -59,11 +59,11 @@ QT_USE_NAMESPACE
 
     The Location element is most commonly seen as the contents of a search
     model such as the GeocodeModel. When a GeocodeModel returns the list of
-    locations found for a given query, it represents these as Location elements.
+    locations found for a given query, it represents these as Location objects.
 
     \section2 Example Usage
 
-    The following example shows a simple Location element being declared with
+    The following example shows a simple Location object being declared with
     a set \l{coordinate} and \l{address}.
 
     \code
