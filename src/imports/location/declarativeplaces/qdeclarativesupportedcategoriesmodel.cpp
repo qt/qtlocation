@@ -130,8 +130,8 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
-:   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false),
-    m_status(Null)
+:   QAbstractItemModel(parent), m_response(0), m_plugin(0), m_hierarchical(true),
+    m_complete(false), m_status(Null)
 {
 }
 
@@ -287,8 +287,6 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
 
     if (m_complete)
         emit pluginChanged();
-
-    update();
 }
 
 /*!
@@ -497,34 +495,40 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
 */
 void QDeclarativeSupportedCategoriesModel::update()
 {
-    beginResetModel();
-    qDeleteAll(m_categoriesTree);
-    m_categoriesTree.clear();
-    endResetModel();
-
-    if (!m_plugin)
+    if (m_response)
         return;
+
+    setStatus(Loading);
+
+    if (!m_plugin) {
+        updateLayout();
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_PROPERTY_NOT_SET));
+        return;
+    }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider || serviceProvider->error() != QGeoServiceProvider::NoError)
+    if (!serviceProvider || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        updateLayout();
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_PROVIDER_ERROR)
+                         .arg(m_plugin->name()));
         return;
+    }
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
+        updateLayout();
         setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
                          .arg(m_plugin->name()).arg(serviceProvider->errorString()));
         return;
     }
 
-    if (placeManager) {
-        m_response = placeManager->initializeCategories();
-        if (m_response) {
-            connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
-            setStatus(QDeclarativeSupportedCategoriesModel::Loading);
-        } else {
-            setStatus(Error, QCoreApplication::translate(CONTEXT_NAME,
-                                                         CATEGORIES_NOT_INITIALIZED));
-        }
+    m_response = placeManager->initializeCategories();
+    if (m_response) {
+        connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
+    } else {
+        updateLayout();
+        setStatus(Error, QCoreApplication::translate(CONTEXT_NAME,
+                    CATEGORIES_NOT_INITIALIZED));
     }
 }
 
@@ -533,25 +537,24 @@ void QDeclarativeSupportedCategoriesModel::update()
 */
 void QDeclarativeSupportedCategoriesModel::updateLayout()
 {
-    if (!m_plugin)
-        return;
-
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider || serviceProvider->error() != QGeoServiceProvider::NoError)
-        return;
-
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager)
-        return;
-
     beginResetModel();
     qDeleteAll(m_categoriesTree);
     m_categoriesTree.clear();
-    PlaceCategoryNode *node = new PlaceCategoryNode;
-    node->childIds = populateCategories(placeManager, QPlaceCategory());
-    m_categoriesTree.insert(QString(), node);
-    node->declCategory = QSharedPointer<QDeclarativeCategory>
-                            (new QDeclarativeCategory(QPlaceCategory(), m_plugin, this));
+
+    if (m_plugin) {
+        QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+        if (serviceProvider && serviceProvider->error() == QGeoServiceProvider::NoError) {
+            QPlaceManager *placeManager = serviceProvider->placeManager();
+            if (placeManager) {
+                PlaceCategoryNode *node = new PlaceCategoryNode;
+                node->childIds = populateCategories(placeManager, QPlaceCategory());
+                m_categoriesTree.insert(QString(), node);
+                node->declCategory = QSharedPointer<QDeclarativeCategory>
+                    (new QDeclarativeCategory(QPlaceCategory(), m_plugin, this));
+            }
+        }
+    }
+
     endResetModel();
 }
 

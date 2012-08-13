@@ -141,6 +141,7 @@ TestCase {
         modelSpy.target = categoryModel.model;
         modelSpy.signalName = "statusChanged"
 
+        categoryModel.model.update();
         tryCompare(categoryModel.model, "status", CategoryModel.Ready);
         compare(categoryModel.count, 0);
 

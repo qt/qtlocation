@@ -65,6 +65,15 @@ TestCase {
         ]
     }
 
+    Plugin {
+        id: uninitializedPlugin
+    }
+
+    Plugin {
+        id: nonExistantPlugin
+        name: "nonExistentName"
+    }
+
     function test_setAndGet_data() {
         return [
             { tag: "plugin", property: "plugin", signal: "pluginChanged", value: testPlugin },
@@ -91,12 +100,13 @@ TestCase {
 
         // set the plugin
         categoryModel.model.plugin = testPlugin;
-
+        categoryModel.model.update();
         tryCompare(categoryModel.model, "status", CategoryModel.Loading);
         compare(modelSpy.count, 1);
 
         tryCompare(categoryModel.model, "status", CategoryModel.Ready);
         compare(modelSpy.count, 2);
+        compare(categoryModel.model.errorString(), "");
 
         var expectedNames = [ "Accommodation", "Park" ];
 
@@ -141,10 +151,11 @@ TestCase {
 
         // clean up
         categoryModel.model.plugin = null;
+        categoryModel.model.update();
 
-
-        // check that model is empty
-        compare(categoryModel.count, 0);
+        // check that the model is empty when an error is encountered
+        tryCompare(categoryModel, "count", 0);
+        compare(categoryModel.model.status, CategoryModel.Error);
     }
 
     function test_flatModel() {
@@ -164,6 +175,7 @@ TestCase {
         categoryModel.model.hierarchical = false;
         categoryModel.model.plugin = testPlugin;
 
+        categoryModel.model.update();
         tryCompare(categoryModel.model, "status", CategoryModel.Loading);
         compare(modelSpy.count, 1);
 
@@ -199,7 +211,40 @@ TestCase {
         categoryModel.model.plugin = null;
 
 
-        // check that model is empty
-        compare(categoryModel.count, 0);
+        // check that the model is empty when an error is encountered
+        categoryModel.model.update();
+        tryCompare(categoryModel, "count", 0);
+        compare(categoryModel.model.status, CategoryModel.Error);
+    }
+
+    function test_error() {
+        var testModel = Qt.createQmlObject('import QtLocation 5.0; CategoryModel {}', testCase, "CategoryModel");
+
+        var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        statusChangedSpy.target = testModel;
+        statusChangedSpy.signalName = "statusChanged";
+
+        //try updating without a plugin instance
+        testModel.update();
+        tryCompare(statusChangedSpy, "count", 2);
+        compare(testModel.status, CategoryModel.Error);
+        statusChangedSpy.clear();
+        //Aside: there is some difficulty in checking the transition to the Loading state
+        //since the model transitions from Loading to Error before the next event loop
+        //iteration.
+
+        //try updating with an uninitialized plugin instance.
+        testModel.plugin = uninitializedPlugin;
+        testModel.update();
+        tryCompare(statusChangedSpy, "count", 2);
+        compare(testModel.status, CategoryModel.Error);
+        statusChangedSpy.clear();
+
+        //try searching with plugin a instance
+        //that has been provided a non-existent name
+        testModel.plugin = nonExistantPlugin;
+        testModel.update();
+        tryCompare(statusChangedSpy, "count", 2);
+        compare(testModel.status, CategoryModel.Error);
     }
 }
