@@ -57,10 +57,10 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-geocoding
     \since Qt Location 5.0
 
-    \brief The GeocodeModel element provides support for searching operations
+    \brief The GeocodeModel type provides support for searching operations
            related to geographic information.
 
-    The GeocodeModel element is used as part of a model/view grouping to
+    The GeocodeModel type is used as part of a model/view grouping to
     match addresses or search strings with geographic locations. How the
     geographic locations generated are used or displayed is decided by any
     Views attached to the GeocodeModel (for example a \l MapItemView or \l{ListView}).

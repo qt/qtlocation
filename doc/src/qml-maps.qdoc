@@ -41,7 +41,7 @@
 
 \section1 Overview
 
-The \l Map element allows the display of a map and placing objects within the map.
+The \l Map type allows the display of a map and placing objects within the map.
 Various points of interest can be defined and added to the map for display.
 Also the \l Map has features to control how the map is displayed. With the
 Map item you can center the map, zoom, pinch and make the item flickable.
@@ -56,11 +56,11 @@ children of the
 
 \section2 Position
 
-The basic element of position information is the \l Coordinate. A coordinate
+The basic type of position information is the \l Coordinate. A coordinate
 encapsulates data for the latitude, longitude and altitude of the location.
 Altitude is in meters. It also has a method to determine distance to another
-Coordinate. The \l Coordinate element may also be held within a \l {QtLocation5::Location}{Location}
-element, this will also have information on a bounding box size to determine
+Coordinate. The \l Coordinate object may also be held within a \l {QtLocation5::Location}{Location}
+object, this will also have information on a bounding box size to determine
 sufficient proximity to the location and a location address.
 
 \section2 Geocoding
@@ -69,7 +69,7 @@ sufficient proximity to the location and a location address.
 geographical coordinates (latitude and longitude) from other geographical references
 to the locations. For example, this can be a street address. Reverse geocoding is also possible with
 a street address being used to determine a geographical coordinate. Geocoding
-is performed by using the \l GeoCodeModel element.
+is performed by using the \l GeoCodeModel type.
 
 The following code examples are a small part of the \c map component in the
 \l {Map Viewer (QML)}{Map Viewer (QML)} example. The snippets
@@ -77,7 +77,7 @@ demonstrate the declaration of the \l GeocodeModel component.
 
 In the snippet we see that the \c geocodeModel property contains the plugin
 and two signal handlers. One for changes in status (\c onStatusChanged ) and
-the other to update the centering of the Map element (\c onLocationsChanged ).
+the other to update the centering of the Map object (\c onLocationsChanged ).
 
 \snippet examples/declarative/mapviewer/content/map/MapComponent.qml geocodemodel0
 \snippet examples/declarative/mapviewer/content/map/MapComponent.qml geocodemodel0 body
@@ -95,7 +95,7 @@ process and determine the geographical coordinates.
 
 \section2 Navigation
 
-A very important function of the \l Map element is navigation
+A very important function of the \l Map type is navigation
 from one place to a destination with possible waypoints along the route. The
 route will be divided up into a series of segments. At the end of each segment
 is a vertex called a \e maneuver. The \e segments contain information about
@@ -184,16 +184,16 @@ The \l Map item also supports user interface interactions with the map using
 tactile and mouse gestures. That is features such as swiping to pan,
 pinching to zoom.
 
-Enabling and configuring pinch and flickable is easy within the \l Map element.
+Enabling and configuring pinch and flickable is easy within the \l Map type.
 
 \snippet examples/declarative/mapviewer/content/map/MapComponent.qml top
 \snippet examples/declarative/mapviewer/content/map/MapComponent.qml end
 
-Zoom can also be controlled by other elements like sliders, as shown in the
+Zoom can also be controlled by other objects like sliders, as shown in the
 example, by implementing the \c onValueChanged handler to update the Map
 \l {QtLocation5::Map::}{zoomLevel}.
 
-\section1 Elements
+\section1 Types
 
 \section3 Positioning
 \annotatedlist qml-QtLocation5-positioning

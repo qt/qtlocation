@@ -48,45 +48,45 @@
 
     \section2 Coordinate
 
-    The \l Coordinate is a basic unit of geographical information. The \l Coordinate element includes properties to hold the coordinate values for \l {Coordinate::latitude}{latitude}, \l {Coordinate::longitude}{longitude} and \l {Coordinate::altitude}{altitude}.
+    The \l Coordinate is a basic unit of geographical information. The \l Coordinate type includes properties to hold the coordinate values for \l {Coordinate::latitude}{latitude}, \l {Coordinate::longitude}{longitude} and \l {Coordinate::altitude}{altitude}.
 
     \section2 Position
 
-    The three dimensional position of an object such as a mobile device can be specified by giving the latitude, longitude and altitude. That is the values held in the Coordinate element. Additionally for computation of future positions we would like to know if the object is moving, what \l {Position::speed}{speed} it is doing and what is the \l {Position::timestamp}{timestamp} of the last position data. Position therefore includes values for \l {Coordinate::latitude}{latitude}, \l {Coordinate::longitude}{longitude}, \l {Coordinate::altitude}{altitude}, \l {Position::speed}{speed} and a \l {Position::timestamp}{timestamp}. \l Position also takes responsibility for validation of sensible values for these properties: just as there is a \l {Coordinate::latitude}{latitude} there is a property \l {Position::latitudeValid}{latitudeValid}. Similarly for the other properties with the exception of the timestamp.
+    The three dimensional position of an object such as a mobile device can be specified by giving the latitude, longitude and altitude. That is the values held in the Coordinate type. Additionally for computation of future positions we would like to know if the object is moving, what \l {Position::speed}{speed} it is doing and what is the \l {Position::timestamp}{timestamp} of the last position data. Position therefore includes values for \l {Coordinate::latitude}{latitude}, \l {Coordinate::longitude}{longitude}, \l {Coordinate::altitude}{altitude}, \l {Position::speed}{speed} and a \l {Position::timestamp}{timestamp}. \l Position also takes responsibility for validation of sensible values for these properties: just as there is a \l {Coordinate::latitude}{latitude} there is a property \l {Position::latitudeValid}{latitudeValid}. Similarly for the other properties with the exception of the timestamp.
 
 
     \section2 PositionSource
 
-    We have a Position element, a Coordinate element but where do we get the
+    We have a Position type, a Coordinate type but where do we get the
     data from? It is a good idea to be able to indicate alternative sources.
     Perhaps instead of directly picking up GPS satellites you want to do
     some testing using a datafile. We may also need to manage our
     interaction with the source.
 
-    The \l PositionSource element provides the developer with control,
+    The \l PositionSource type provides the developer with control,
     within the limits allowed by the platform, of the source of the
     geographical data. The positional data can be sourced from a logfile
     which is in NMEA format.
 
     \l {http://en.wikipedia.org/wiki/NMEA}{NMEA} is a common text-based protocol for specifying navigational data. For convenience, the \l {PositionSource::nmeaSource}{nmeaSource} property is provided to enable QML applications to read NMEA data from a log file, the source will emit updates according to the time stamp of each NMEA sentence to produce a "replay" of the recorded data.
 
-    \section2 Positioning Elements
+    \section2 Positioning Types
 
 
     \annotatedlist qml-location
 
     \section1 Maps
 
-    The Map element can be used be used to display a map of the world.  The
+    The Map type can be used be used to display a map of the world.  The
     bulk of the functionality is provided by a mapping plugin described
-    by the plugin element associated with the Map.
+    by the plugin type associated with the Map.
 
     Various map objects can be added to the map.  These map objects are
     specified in terms of coordinates and meters.
 
     Interaction with the map objects is done via the MapMouseArea item.
 
-    \section2 Map Elements
+    \section2 Map Types
 
     \annotatedlist qml-location-maps
 

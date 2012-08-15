@@ -50,14 +50,14 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The Location element holds location data.
+    \brief The Location type holds location data.
 
-    Location elements represent a geographic "location", in a human sense. This
+    Location types represent a geographic "location", in a human sense. This
     consists of a specific \l {coordinate}, an \l {address} and a \l {boundingBox}{bounding box}.
     The \l {boundingBox}{bounding box} represents the recommended region
     to display when viewing this location.
 
-    The Location element is most commonly seen as the contents of a search
+    The Location type is most commonly seen as the contents of a search
     model such as the GeocodeModel. When a GeocodeModel returns the list of
     locations found for a given query, it represents these as Location objects.
 
@@ -167,8 +167,8 @@ QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
 
     This property holds the exact geographical coordinate of the location which can be used to retrieve the latitude, longitude and altitude of the location.
 
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
+    \note this property's changed() signal is currently emitted only if the
+    whole object changes, not if only the contents of the object change.
 */
 void QDeclarativeGeoLocation::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
@@ -196,7 +196,7 @@ QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
     context.
 
     Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
+    whole object changes, not if only the contents of the object change.
 */
 void QDeclarativeGeoLocation::setBoundingBox(QDeclarativeGeoRectangle *boundingBox)
 {

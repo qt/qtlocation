@@ -60,7 +60,7 @@ QT_USE_NAMESPACE
 
     \since Qt Location 5.0
 
-    \brief The Category element represents a category that a \l Place can be associated with.
+    \brief The Category type represents a category that a \l Place can be associated with.
 
     Categories are used to search for places based on the categories they are associated with.  The
     list of available categories can be obtained from the \l CategoryModel.  The
@@ -274,7 +274,8 @@ void QDeclarativeCategory::setVisibility(Visibility visibility)
 /*!
     \qmlproperty PlaceIcon Category::icon
 
-    This property holds the image source associated with the category. To display the icon you can use the \l Image element.
+    This property holds the image source associated with the category. To display the icon you can use 
+    the \l Image type.
 */
 QDeclarativePlaceIcon *QDeclarativeCategory::icon() const
 {

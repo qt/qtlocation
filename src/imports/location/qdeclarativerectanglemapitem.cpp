@@ -57,9 +57,9 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
-    \brief The MapRectangle element displays a rectangle on a Map.
+    \brief The MapRectangle type displays a rectangle on a Map.
 
-    The MapRectangle element displays a rectangle on a Map. Rectangles are a
+    The MapRectangle type displays a rectangle on a Map. Rectangles are a
     special case of Polygon with exactly 4 vertices and 4 "straight" edges. In
     this case, "straight" means that the top-left point has the same latitude
     as the top-right point (the top edge), and the bottom-left point has the
@@ -68,13 +68,13 @@ QT_BEGIN_NAMESPACE
     right side have the same longitude.
 
     To specify the rectangle, it requires a \l topLeft and \l bottomRight point,
-    both given by \l Coordinate elements.
+    both given by \l Coordinate types.
 
     By default, the rectangle is displayed with transparent fill and a 1-pixel
     thick black border. This can be changed using the \l color, \l border.color
     and \l border.width properties.
 
-    \note Similar to the \l MapPolygon element, MapRectangles are geographic
+    \note Similar to the \l MapPolygon type, MapRectangles are geographic
     items, thus dragging a MapRectangle causes its vertices to be recalculated
     in the geographic coordinate space. Apparent stretching of the item
     occurs when dragged to the a different latitude, however, its edges

@@ -77,9 +77,9 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
-    \brief The Map element displays a map.
+    \brief The Map type displays a map.
 
-    The Map element is used to display a map or image of the Earth, with
+    The Map type is used to display a map or image of the Earth, with
     the capability to also display interactive objects tied to the map's
     surface.
 
@@ -89,13 +89,13 @@ QT_BEGIN_NAMESPACE
     and altitude) and 2D coordinates (X and Y in pixels) on the screen.
 
     Different sources of map data can use different projections, and from the
-    point of view of the Map element, we treat these as one replaceable unit:
+    point of view of the Map type, we treat these as one replaceable unit:
     the Map plugin. A Map plugin consists of a data source, as well as all other
     details needed to display its data on-screen.
 
     The current Map plugin in use is contained in the \l plugin property of
     the Map item. In order to display any image in a Map item, you will need
-    to set this property. See the \l Plugin element for a description of how
+    to set this property. See the \l Plugin type for a description of how
     to retrieve an appropriate plugin for use.
 
     The geographic region displayed in the Map item is referred to as its
@@ -124,17 +124,17 @@ QT_BEGIN_NAMESPACE
 
     \section2 Interaction
 
-    The Map element includes support for pinch and flick gestures to control
+    The Map type includes support for pinch and flick gestures to control
     zooming and panning. These are enabled by default, and available at any
     time by using the \l gesture object. The actual GestureArea is constructed
     specially at startup and cannot be replaced or destroyed. Its properties
     can be altered, however, to control its behavior.
 
     Mouse and touch interaction with Maps and map objects is slightly different
-    to ordinary QML elements. In a Map or Map object, you will need to make use
-    of the \l MapMouseArea element instead of the normal Qt Quick MouseArea.
+    to ordinary QML types. In a Map or Map object, you will need to make use
+    of the \l MapMouseArea type instead of the normal Qt Quick MouseArea.
     MapMouseArea is, in almost all respects, a drop-in replacement for
-    MouseArea, but the documentation for that element should be referred to for
+    MouseArea, but the documentation for that type should be referred to for
     further details.
 
     \section2 Performance
@@ -153,11 +153,11 @@ QT_BEGIN_NAMESPACE
     In general, large and complex Map items such as polygons and polylines with
     large numbers of vertices can have an adverse effect on UI performance.
     Further, more detailed notes on this are in the documentation for each
-    map item element.
+    map item type.
 
     \section2 Example Usage
 
-    The following snippet shows a simple Map and the necessary Plugin element
+    The following snippet shows a simple Map and the necessary Plugin type
     to use it. The map is centered near Brisbane, Australia, zoomed out to the
     minimum zoom level, with gesture interaction enabled.
 
@@ -1019,7 +1019,7 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 
     Returns the list of all map items in no particular order.
     These items include items that were declared statically as part of
-    the element declaration, as well as dynamical items (\l addMapItem,
+    the type declaration, as well as dynamical items (\l addMapItem,
     \l MapItemView).
 
     \sa addMapItem, removeMapItem, clearMapItems

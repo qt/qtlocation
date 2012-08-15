@@ -260,7 +260,7 @@ QT_USE_NAMESPACE
     \qmlmethod PlaceSearchModel::update()
 
     Updates the model based on the provided query parameters.  The model will be populated with a
-    list of places matching the search parameters specified by the element's properties.  Search
+    list of places matching the search parameters specified by the type's properties.  Search
     criteria is specified by setting properties such as the \l searchTerm, \l categories, \l limit
     and \l offset.  Support for these properties may vary according to \l plugin.  \c update() then
     submits the set of criteria to the \l plugin to process.

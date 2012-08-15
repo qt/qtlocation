@@ -54,9 +54,9 @@
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
-    \brief The MapRoute element displays a Route on a Map.
+    \brief The MapRoute type displays a Route on a Map.
 
-    The MapRoute element displays a Route obtained through a RouteModel or
+    The MapRoute type displays a Route obtained through a RouteModel or
     other means, on the Map as a Polyline following the path of the Route.
 
     MapRoute is really a \l MapPolyline, but with the path specified using the

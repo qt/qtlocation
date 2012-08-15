@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The GeoRectangle element represents a rectangular geographic area.
+    \brief The GeoRectangle type represents a rectangular geographic area.
 
     A GeoRectangle is described by a \l {Coordinate} which represents the top-left of the
     GeoRectangle and a second \l {Coordinate} which represents the bottom-right of GeoRectangle.
@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
 
     \section2 Example Usage
 
-    The following code snippet shows the declaration of a GeoRectangle element.
+    The following code snippet shows the declaration of a GeoRectangle object.
 
     \code
     GeoRectangle {
@@ -154,8 +154,8 @@ QDeclarativeCoordinate *QDeclarativeGeoRectangle::bottomLeft()
 
   This property holds the bottom left coordinate of this geo rectangle.
 
-  Note: this property's changed() signal is currently emitted only if the
-  whole element changes, not if only the contents of the element change.
+  \note this property's changed() signal is currently emitted only if the
+  whole object changes, not if only the contents of the object change.
 
   \sa {QGeoRectangle}
   */
@@ -203,8 +203,8 @@ QDeclarativeCoordinate *QDeclarativeGeoRectangle::bottomRight()
 
   This property holds the bottom right coordinate of this geo rectangle.
 
-  Note: this property's changed() signal is currently emitted only if the
-  whole element changes, not if only the contents of the element change.
+  \note this property's changed() signal is currently emitted only if the
+  whole object changes, not if only the contents of the object change.
 
   \sa {QGeoRectangle}
   */
@@ -252,8 +252,8 @@ QDeclarativeCoordinate *QDeclarativeGeoRectangle::topLeft()
 
   This property holds the top left coordinate of this geo rectangle.
 
-  Note: this property's changed() signal is currently emitted only if the
-  whole element changes, not if only the contents of the element change.
+  \note this property's changed() signal is currently emitted only if the
+  whole object changes, not if only the contents of the object change.
 
   \sa {QGeoRectangle}
   */
@@ -301,8 +301,8 @@ QDeclarativeCoordinate *QDeclarativeGeoRectangle::topRight()
 
   This property holds the top right coordinate of this geo rectangle.
 
-  Note: this property's changed() signal is currently emitted only if the
-  whole element changes, not if only the contents of the element change.
+  \note this property's changed() signal is currently emitted only if the
+  whole type changes, not if only the contents of the type change.
 
   \sa {QGeoRectangle}
   */
@@ -350,8 +350,8 @@ QDeclarativeCoordinate *QDeclarativeGeoRectangle::center()
 
   This property holds the center coordinate of this geo rectangle.
 
-  Note: this property's changed() signal is currently emitted only if the
-  whole element changes, not if only the contents of the element change.
+  \note this property's changed() signal is currently emitted only if the
+  whole object changes, not if only the contents of the object change.
 
   \sa {QGeoRectangle}
 

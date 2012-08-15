@@ -43,7 +43,7 @@
     \section2 Plugin
     A \l Plugin is an abstraction for a backend. One \l Plugin might access places from a
     REST server while another may access places from a local database. The following
-    instantiates a \l Plugin element by providing a name of "nokia". The \l Plugin name
+    instantiates a \l Plugin object by providing a name of "nokia". The \l Plugin name
     identifies which backend to choose from. Plugins may also be provided with a set of
     \l {PluginParameter} {parameters}, which essentially takes the form of a set of
     key-value pairs. The \l {PluginParameter} {parameters} that can be specified vary
@@ -190,13 +190,13 @@
 
     \section2 Learn More
     The above snippets only exhibit a small subset of Places functionality.
-    Refer to the \l {Places Elements} shown below for richer content such as \l {ImageModel} {images}, \l {ReviewModel} {reviews} etc, as well as more indepth descriptions and explanations.
+    Refer to the \l {Places Types} shown below for richer content such as \l {ImageModel} {images}, \l {ReviewModel} {reviews} etc, as well as more indepth descriptions and explanations.
 
     See also the \l {Places (QML)}{Places (QML)} example for a more comprehensive demonstration on
     how to use the API.
 
-    \section1 Places Elements
-    \section2 Data Elements
+    \section1 Places Types
+    \section2 Data Types
     \annotatedlist qml-QtLocation5-places-data
 
     \section2 Models

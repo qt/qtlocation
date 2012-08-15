@@ -57,13 +57,13 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The Icon element represents an icon image source which can have multiple sizes.
+    \brief The Icon type represents an icon image source which can have multiple sizes.
 
-    The Icon element can be used in conjunction with an \l Image element to display an icon.
+    The Icon type can be used in conjunction with an \l Image type to display an icon.
     The \l url() function is used to construct an icon URL of a requested size,
     the icon which most closely matches the requested size is returned.
 
-    The Icon element also has a parameters map which is a set of key value pairs.  The precise
+    The Icon type also has a parameters map which is a set of key value pairs.  The precise
     keys to use depend on the
     \l {Qt Location Module#Plugin References and Parameters}{plugin} being used.
     The parameters map is used by the \l Plugin to determine which URL to return.

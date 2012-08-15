@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
-    \brief The MapType element holds information about a map type.
+    \brief The MapType type holds information about a map type.
 
     This includes the map type's \l name and \l description, the \l style and
     a flag to indicate if the map type is optimized for mobile devices (\l mobile).

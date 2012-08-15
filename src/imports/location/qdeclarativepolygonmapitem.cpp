@@ -63,19 +63,19 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
-    \brief The MapPolygon element displays a polygon on a Map
+    \brief The MapPolygon type displays a polygon on a Map
 
-    The MapPolygon element displays a polygon on a Map, specified in terms of
-    an ordered list of \l Coordinate elements. For best appearance and results,
+    The MapPolygon type displays a polygon on a Map, specified in terms of
+    an ordered list of \l Coordinate objects. For best appearance and results,
     polygons should be simple (not self-intersecting).
 
-    The Coordinate elements on the path can be changed after being added to
+    The Coordinate objects on the path can be changed after being added to
     the Polygon, and these changes will be reflected in the next frame on the
     display. Coordinates can also be added and removed at any time using
     the \l addCoordinate and \l removeCoordinate methods.
 
     For drawing rectangles with "straight" edges (same latitude across one
-    edge, same latitude across the other), the \l MapRectangle element provides
+    edge, same latitude across the other), the \l MapRectangle type provides
     a simpler, two-point API.
 
     By default, the polygon is displayed as a 1 pixel black border with no

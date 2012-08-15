@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The GeoShape type represents an abstract geographic area.
 
-    The GeoShape element is not intended to be instantiated by the developer.  Use GeoRectangle
+    The GeoShape type is not intended to be instantiated by the developer.  Use GeoRectangle
     or GeoCircle instead.
 
     \sa GeoRectangle, GeoCircle

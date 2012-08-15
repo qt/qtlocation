@@ -51,9 +51,9 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The User element identifies a user who contributed a particular \l Place content item.
+    \brief The User type identifies a user who contributed a particular \l Place content item.
 
-    Each \l Place content item has an associated user who contributed the content.  This element
+    Each \l Place content item has an associated user who contributed the content.  This type
     provides information about that user.
 
     \sa ImageModel, ReviewModel, EditorialModel

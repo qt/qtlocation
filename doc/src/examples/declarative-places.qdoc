@@ -80,7 +80,7 @@
 
     \snippet declarative/places/places.qml CategoryModel model
 
-    The \l CategoryModel element provides a model of the available categories.  It can provide
+    The \l CategoryModel type provides a model of the available categories.  It can provide
     either a flat list or a hierarchical tree model.  In this example, we use a hierarchical tree
     model, by setting the \l {CategoryModel::hierarchical}{hierarchical} property to \e true.  The
     \l {CategoryModel::plugin}{plugin} property is set to \e placesPlugin which is the \e identifier of the
@@ -125,7 +125,7 @@
     \target Presenting-Search-Suggestions
     \section1 Presenting Search Suggestions
 
-    The \l PlaceSearchSuggestionModel element is used to fetch suggested search terms based on a
+    The \l PlaceSearchSuggestionModel type is used to fetch suggested search terms based on a
     partially entered search term.
 
     A new suggestion search is triggered whenever the entered search term is changed.
@@ -142,21 +142,21 @@
 
     \snippet declarative/places/content/places/SearchBox.qml PlaceSearchSuggestionModel model
 
-    The main element in the "SuggestionsShown" state is the \l ListView showing the search
+    The main object in the "SuggestionsShown" state is the \l ListView showing the search
     suggestions.
 
     \snippet declarative/places/content/places/SearchBox.qml PlaceSearchSuggestionModel view 1
     \codeline
     \snippet declarative/places/content/places/SearchBox.qml PlaceSearchSuggestionModel view 2
 
-    A \l Text element is used as the delegate to display the suggestion text.  Clicking on the
+    A \l Text object is used as the delegate to display the suggestion text.  Clicking on the
     suggested search term updates the search term and triggers a place search using the search
     suggestion.
 
 
     \section1 Searching for Places
 
-    The \l PlaceSearchModel element is used to search for places.
+    The \l PlaceSearchModel type is used to search for places.
 
     \snippet declarative/places/places.qml PlaceSearchModel model
 
@@ -174,7 +174,7 @@
     \snippet declarative/places/content/places/SearchResultView.qml PlaceSearchModel place list
 
     The delegate used in the \l ListView, \e SearchResultDelegate, is designed to handle multiple
-    search result types via a \l Loader element.  For results of type \e PlaceResult the delegate
+    search result types via a \l Loader object.  For results of type \e PlaceResult the delegate
     is:
 
     \snippet declarative/places/content/places/SearchResultDelegate.qml PlaceSearchModel place delegate
@@ -185,7 +185,7 @@
     content is accessed via a set of models.  Content models are generally not created directly by
     the application developer, instead models are obtained from the
     \l {Place::editorialModel}{editorialModel}, \l {Place::reviewModel}{reviewModel} and
-    \l {Place::imageModel}{imageModel} properties of the \l Place element.
+    \l {Place::imageModel}{imageModel} properties of the \l Place type.
 
     \snippet declarative/places/content/places/PlaceEditorials.qml PlaceEditorialModel view
 

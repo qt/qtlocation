@@ -50,7 +50,7 @@
     parameters they support.  The Nokia services plugin supplied with Qt requires an \e app_id and
     \e token pair.  See "\l {Qt Location Nokia Plugin}" for details.
 
-    QML elements shown in this example:
+    QML types shown in this example:
 
     \list
     \li Displaying a map
@@ -76,7 +76,7 @@
 
     \section2 Displaying a Map
 
-    Drawing a map on-screen is accomplished using the Map element, as shown
+    Drawing a map on-screen is accomplished using the Map type, as shown
     below.
 
     \snippet examples/declarative/mapviewer/content/map/MapComponent.qml top
@@ -84,7 +84,7 @@
     \snippet examples/declarative/mapviewer/content/map/MapComponent.qml end
 
     In this example, we give the map an initial center coordinate from a
-    contained Coordinate element, with a set latitude and longitude. We also
+    contained Coordinate object, with a set latitude and longitude. We also
     set the initial zoom level to 50% (halfway between the maximum and minimum).
 
     The calls to "pinch" and "flick" are used to enable gestures on the map.
@@ -101,7 +101,7 @@
 
     To locate a certain address or place on the map uses a process called
     geocoding. In order to perform a geocode operation, we first need to adjust
-    our Map element to be able to receive the result.
+    our Map object to be able to receive the result.
 
     Receiving results of geocoding is done through a GeocodeModel, which is
     typically instantiated as a property of the Map component:
@@ -120,7 +120,7 @@
     \snippet examples/declarative/mapviewer/content/map/MapComponent.qml pointdel0
     \snippet examples/declarative/mapviewer/content/map/MapComponent.qml pointdel1
 
-    With these three elements, we have enough to receive Geocode responses and
+    With these three objects, we have enough to receive Geocode responses and
     display them on our Map. The final piece is to send the actual Geocode
     request.
 
@@ -129,7 +129,7 @@
     create a similar component yourself using Dialog.qml in this example
     as a reference, or drive the process using any other UI you wish.
 
-    To send a geocode request, first we create an Address element, and fill it
+    To send a geocode request, first we create an Address object, and fill it
     in with the desired parameters. Then we set "map.geocodeModel.query" to
     the filled in Address, and call update() on the GeocodeModel.
 
@@ -139,7 +139,7 @@
 
     \section2 Directions and Travel Routes
 
-    Similar to the GeocodeModel, Qt Location also features the RouteModel element,
+    Similar to the GeocodeModel, Qt Location also features the RouteModel type,
     which allows information about routes (for example driving directions) between two
     or more points, to be received and used with a Map.
 

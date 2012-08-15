@@ -49,9 +49,9 @@
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The ExtendedAttributes element holds additional data about a \l Place.
+    \brief The ExtendedAttributes type holds additional data about a \l Place.
 
-    The ExtendedAttributes element is a map of \l {PlaceAttribute}{PlaceAttributes}.  To access
+    The ExtendedAttributes type is a map of \l {PlaceAttribute}{PlaceAttributes}.  To access
     attributes in the map use the \l keys() method to get the list of keys stored in the map and
     use the \c {[]} operator to access the \l PlaceAttribute items.
 
@@ -111,10 +111,10 @@
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The PlaceAttribute element holds generic place attribute information.
+    \brief The PlaceAttribute type holds generic place attribute information.
 
     A place attribute stores an additional piece of information about a \l Place that is not
-    otherwise exposed through the \l Place element.  A PlaceAttribute is a textural piece of data,
+    otherwise exposed through the \l Place type.  A PlaceAttribute is a textural piece of data,
     accessible through the \l text property, and a \l label.  Both the \l text and \l label
     properties are intended to be displayed to the user.  PlaceAttributes are stored in an
     \l ExtendedAttributes map with a unique key.

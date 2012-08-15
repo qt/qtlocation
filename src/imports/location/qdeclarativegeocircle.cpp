@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The GeoCircle element represents a circular geographic area.
+    \brief The GeoCircle type represents a circular geographic area.
 
     The circle is defined in terms of a \l {Coordinate} which specifies the center of the circle
     and a qreal which specifies the radius of the circle in meters.
@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
 
     \section2 Example Usage
 
-    The following code snippet shows the declaration of a GeoCircle element.
+    The following code snippet shows the declaration of a GeoCircle object.
 
     \code
     GeoCircle {
@@ -135,8 +135,8 @@ bool QDeclarativeGeoCircle::contains(QDeclarativeCoordinate *coordinate)
 
     This property holds the coordinate of the center of the bounding circle.
 
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
+    \note this property's changed() signal is currently emitted only if the
+    whole object changes, not if only the contents of the object change.
 */
 QDeclarativeCoordinate *QDeclarativeGeoCircle::center()
 {

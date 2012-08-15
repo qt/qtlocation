@@ -66,10 +66,10 @@ QT_BEGIN_NAMESPACE
     provide this functionality instead.
 
     The only exception to this is the MapQuickItem, which can have normal
-    MouseArea elements defined within the sourceItem. See the documentation
+    MouseArea objects defined within the sourceItem. See the documentation
     for \l{MapQuickItem} for more details.
 
-    MapMouseArea elements should only ever be used within a map object, such as
+    MapMouseArea objects should only ever be used within a map object, such as
     a MapPolygon or MapQuickItem, and never within another Qt Quick component.
 
     The \l enabled property of the MapMouseArea is used to enable and disable
@@ -196,7 +196,7 @@ void QDeclarativeGeoMapMouseArea::componentComplete()
 */
 void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 {
-    // map element's flickable may use the event
+    // map object's flickable may use the event
     QQuickItem *pmi = parentMapItem();
     if (pmi && qobject_cast<QDeclarativeGeoMap *>(pmi))
         qobject_cast<QDeclarativeGeoMap *>(pmi)->mouseEvent(event);
@@ -217,7 +217,7 @@ void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMapMouseArea::mouseReleaseEvent(QMouseEvent *event)
 {
-    // map element's flickable may use the event
+    // map object's flickable may use the event
     QQuickItem *pmi = parentMapItem();
 
     if (pmi && qobject_cast<QDeclarativeGeoMap *>(pmi)) {
@@ -245,7 +245,7 @@ void QDeclarativeGeoMapMouseArea::mouseDoubleClickEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMapMouseArea::mouseMoveEvent(QMouseEvent *event)
 {
-    // map element's flickable may use the event
+    // map object's flickable may use the event
     QQuickItem *pmi = parentMapItem();
     if (pmi && qobject_cast<QDeclarativeGeoMap *>(pmi))
         qobject_cast<QDeclarativeGeoMap *>(pmi)->mouseEvent(event);

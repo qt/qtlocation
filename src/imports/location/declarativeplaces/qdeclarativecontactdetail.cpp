@@ -49,9 +49,9 @@
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The ContactDetails element holds contact details for a \l Place.
+    \brief The ContactDetails type holds contact details for a \l Place.
 
-    The ContactDetails element is a map of \l {QtLocation5::ContactDetail}{ContactDetail} objects.
+    The ContactDetails type is a map of \l {QtLocation5::ContactDetail}{ContactDetail} objects.
     To access contact details in the map use the \l keys() method to get the list of keys stored in
     the map and then use the \c {[]} operator to access the
     \l {QtLocation5::ContactDetail}{ContactDetail} items.
@@ -108,7 +108,7 @@
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The ContactDetail element holds a contact detail such as a phone number or a website
+    \brief The ContactDetail type holds a contact detail such as a phone number or a website
            address.
 
     The ContactDetail provides a single detail on how one could contact a \l Place.  The

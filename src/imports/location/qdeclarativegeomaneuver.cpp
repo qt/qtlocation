@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0
 
-    \brief The RouteManeuver element represents the information relevant to the
+    \brief The RouteManeuver type represents the information relevant to the
     point at which two RouteSegments meet.
 
     RouteSegment instances can be thought of as edges on a routing

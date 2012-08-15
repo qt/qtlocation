@@ -51,7 +51,7 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The Ratings element holds place rating information.
+    \brief The Ratings type holds place rating information.
 
     Rating information is used to describe how \e good a place is conceived to be.  Typically this
     information is visualized as a number of stars.  The \l average property gives an aggregated

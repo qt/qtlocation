@@ -62,12 +62,12 @@ QT_BEGIN_NAMESPACE
     \brief The MapItemView is used to populate Map from a model.
 
     The MapItemView is used to populate Map with MapItems from a model.
-    The MapItemView element only makes sense when contained in a Map,
+    The MapItemView type only makes sense when contained in a Map,
     meaning that it has no standalone presentation.
 
     \section2 Example Usage
 
-    This example demonstrates how to use the MapViewItem element to display
+    This example demonstrates how to use the MapViewItem object to display
     a \l{Route}{route} on a \l{Map}{map}:
 
     \snippet snippets/declarative/maps.qml QtQuick import
@@ -184,7 +184,7 @@ void QDeclarativeGeoMapItemView::itemModelRowsRemoved(QModelIndex, int start, in
 
     This property holds the delegate which defines how each item in the
     model should be displayed. The Component must contain exactly one
-    MapItem -derived element as the root element.
+    MapItem -derived object as the root object.
 
 */
 QQmlComponent *QDeclarativeGeoMapItemView::delegate() const

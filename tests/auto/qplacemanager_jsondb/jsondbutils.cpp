@@ -88,7 +88,7 @@ const QLatin1String JsonDbUtils::AllCategoryUuids("allCategoryUuids");
 const QLatin1String JsonDbUtils::CategoryType("com.nokia.mt.location.PlaceCategory");
 
 //includes all ancestor category ids and also the current category id
-//as the last element.   The first category is a top level category id.
+//as the last object.   The first category is a top level category id.
 const QLatin1String JsonDbUtils::Lineage("lineageUuids");
 
 const QLatin1String JsonDbUtils::CategoryParentId("parentUuid");

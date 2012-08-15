@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
 
-    \brief The ImageModel element provides a model of place images.
+    \brief The ImageModel type provides a model of place images.
 
     The ImageModel is a read-only model used to fetch images related to a \l Place.
     Binding a \l Place via \l ImageModel::place initiates an initial fetch of images.

@@ -53,10 +53,10 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The Position element holds positional data at a particular point in time,
+    \brief The Position type holds positional data at a particular point in time,
     such as coordinate (longitude, latitude, altitude) and speed.
 
-    The Position element holds values related to geographic location such as
+    The Position type holds values related to geographic location such as
     a \l coordinate (longitude, latitude, and altitude), the \l timestamp when
     the Position was obtained, the \l speed at that time, and the accuracy of
     the data.
@@ -72,11 +72,11 @@ QT_BEGIN_NAMESPACE
     etc) to discern whether the data is available and valid in this position
     update.
 
-    Position elements are read-only and can only be produced by a PositionSource.
+    Position objects are read-only and can only be produced by a PositionSource.
 
     \section2 Example Usage
 
-    See the example given for the \l{PositionSource} element, or the
+    See the example given for the \l{PositionSource} type, or the
     \l{declarative/flickr}{Flickr} example application.
 
     \sa PositionSource, Coordinate
@@ -104,7 +104,7 @@ QDeclarativePosition::~QDeclarativePosition()
 
     Note: due to its inherent changing nature, the coordinateChanged()
     signal is emitted also when the values of the coordinate change,
-    which enables easier data binding to Coordinate element instead of
+    which enables easier data binding to Coordinate objects instead of
     directly connecting to for example its latitude and longitude.
 
     \sa longitudeValid, latitudeValid, altitudeValid

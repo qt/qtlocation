@@ -73,9 +73,9 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeoMapPinchEvent
     \inqmlmodule QtLocation 5.0
 
-    \brief MapPinchEvent element provides basic information about pinch event.
+    \brief MapPinchEvent type provides basic information about pinch event.
 
-    MapPinchEvent element provides basic information about pinch event. They are
+    MapPinchEvent type provides basic information about pinch event. They are
     present in handlers of MapPinch (for example pinchStarted/pinchUpdated). Events are only
     guaranteed to be valid for the duration of the handler.
 
@@ -149,9 +149,9 @@ QT_BEGIN_NAMESPACE
 
     \inqmlmodule QtLocation 5.0
 
-    \brief The MapGestureArea element provides Map gesture interaction.
+    \brief The MapGestureArea type provides Map gesture interaction.
 
-    MapGestureArea elements are used as part of a Map, to provide for panning,
+    MapGestureArea objects are used as part of a Map, to provide for panning,
     flicking and pinch-to-zoom gesture used on touch displays.
 
     A MapGestureArea is automatically created with a new Map and available with

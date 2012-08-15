@@ -152,7 +152,7 @@ void MapNode::updateFBO()
     // No stereo rendering, set the eye as neutral
     painter.setEye(QGL::NoEye);
     // TODO this needs to be figured out (or confirmed as invalid thing).
-    // Currently applied transforms for this Map3D element - how to get/apply current transforms?
+    // Currently applied transforms for this Map3D object - how to get/apply current transforms?
     // QTransform transform = painter->combinedTransform();
     // Then we get the rectangle that is gotten by applying the QTransform on the rect
     // --> this is the viewport for Map3D

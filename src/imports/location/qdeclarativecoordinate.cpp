@@ -52,13 +52,13 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The Coordinate element represents and stores a geographic position.
+    \brief The Coordinate type represents and stores a geographic position.
 
-    Coordinate elements represent a geographic location in the form of numbers:
+    Coordinate objects represent a geographic location in the form of numbers:
     in particular, \l latitude, \l longitude and \l altitude. These, together,
     specify a 3-dimensional position anywhere on or near the Earth's surface.
 
-    Coordinates are used by many other elements in the Qt Location module, for
+    Coordinates are used by many other types in the Qt Location module, for
     specifying the position of an object on a Map, the current position of
     a device and many other tasks. They also feature a number of important
     utility methods that make otherwise complex calculations simple to use,
@@ -96,11 +96,11 @@ QT_BEGIN_NAMESPACE
     As an example, the value of \c{coord1.distanceTo(coord2)} would now be
     approximately 34790 (34.8 km).
 
-    \note if another element has a Coordinate property, a change notification
+    \note if another object has a Coordinate property, a change notification
     signal for that property will only be emitted if that property is assigned
     a new Coordinate, and \b{not} if the position data of the existing Coordinate
     assigned to the property changes.  The only exception to this rule is that
-    the \l{Position} element does emit change signals if its coordinate property's values change.
+    the \l{Position} type does emit change signals if its coordinate property's values change.
 */
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(QObject *parent)

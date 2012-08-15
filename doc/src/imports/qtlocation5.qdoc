@@ -52,29 +52,29 @@ API.
         \li Searching for and managing points of interest.
 \endtable
 
-\section1 Common QML Elements
+\section1 Common QML Types
 
 \annotatedlist qml-QtLocation5-common
 
-\section1 Positioning QML Elements
+\section1 Positioning QML Types
 
 \annotatedlist qml-QtLocation5-positioning
 
-\section1 Maps QML Elements
+\section1 Maps QML Types
 
 \annotatedlist qml-QtLocation5-maps
 
-\section1 Navigation and Routing QML Elements
+\section1 Navigation and Routing QML Types
 
 \annotatedlist qml-QtLocation5-routing
 
-\section1 Geocoding QML Elements
+\section1 Geocoding QML Types
 
 \annotatedlist qml-QtLocation5-geocoding
 
-\section1 Places QML Elements
+\section1 Places QML Types
 
 \annotatedlist qml-QtLocation5-places
 
-\section1 Alphabetical Listing of all QML Elements
+\section1 Alphabetical Listing of all QML Types
 */

@@ -66,26 +66,26 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
-    \brief The Place element represents a place.
+    \brief The Place type represents a location that is a position of interest.
 
-    The Place element represents a physical location with additional metadata describing that
-    location.  Contrasted with \l Location, \l Address, and \l Coordinate elements which are used
-    to describe where a location is.  The basic properties of a Place are its \l name and
+    The Place type represents a physical location with additional metadata describing that
+    location. Contrasted with \l Location, \l Address, and \l Coordinate types which are used
+    to describe where a location is. The basic properties of a Place are its \l name and
     \l location.
 
     Place objects are typically obtained from a search model and will generally only have their
-    basic properties set.  The \l detailsFetched property can be used to test if further property
-    values need to be fetched from the \l Plugin.  This can be done by invoking the \l getDetails()
+    basic properties set. The \l detailsFetched property can be used to test if further property
+    values need to be fetched from the \l Plugin. This can be done by invoking the \l getDetails()
     method.  Progress of the fetching operation can be monitored with the \l status property, which
     will be set to Place.Fetching when the details are being fetched.
 
-    The Place element has many properties holding information about the place.  Details on how to
+    The Place type has many properties holding information about the location. Details on how to
     contact the place are available from the \l contactDetails property.  Convenience properties
     for obtaining the primary \l {primaryPhone}{phone}, \l {primaryFax}{fax},
     \l {primaryEmail}{email} and \l {primaryWebsite}{website} are also available.
 
     Each place is assigned zero or more \l categories.  Categories are typically used when
-    searching for a particular type of place, such as a restaurant or hotel.  Some places have a
+    searching for a particular kind of place, such as a restaurant or hotel.  Some places have a
     \l ratings object, which gives an indication of the quality of the place.
 
     Place metadata is provided by a \l supplier who may require that an \l attribution message be
@@ -110,7 +110,7 @@ QT_USE_NAMESPACE
 
     \section2 Saving a Place
 
-    If the \l Plugin supports it, the Place element can be used to save a place.  First create a new
+    If the \l Plugin supports it, the Place type can be used to save a place.  First create a new
     Place and set its properties:
 
     \snippet snippets/declarative/places.qml Place savePlace def
@@ -752,7 +752,7 @@ void QDeclarativePlace::cleanupDeletedCategories()
     This method starts fetching place details.
 
     The \l status property will change to Place.Fetching while the fetch is in progress.  On
-    success the element properties will be updated, \l status will be set to Place.Ready and
+    success the object's properties will be updated, \l status will be set to Place.Ready and
     \l detailsFetched will be set to true.  On error \l status will be set to Place.Error.  The
     \l errorString() method can be used to get the details of the error.
 */

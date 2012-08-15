@@ -50,9 +50,9 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0
 
-    \brief The Route element represents one geographical route.
+    \brief The Route type represents one geographical route.
 
-    A Route element contains high level information about a route, such
+    A Route type contains high level information about a route, such
     as the length the route, the estimated travel time for the route,
     and enough information to render a basic image of the route on a map.
 

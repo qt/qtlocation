@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
 
-    \brief The EditorialModel element provides a model of place editorials.
+    \brief The EditorialModel type provides a model of place editorials.
 
     The EditorialModel is a read-only model used to fetch editorials related to a \l Place.
     Binding a \l Place via \l EditorialModel::place initiates an initial fetch of editorials.

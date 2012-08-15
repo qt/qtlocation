@@ -52,12 +52,12 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-common
     \since Qt Location 5.0
 
-    \brief The Plugin element describes a Location based services plugin.
+    \brief The Plugin type describes a Location based services plugin.
 
-    The Plugin element is used to declaratively specify which available
+    The Plugin type is used to declaratively specify which available
     GeoServices plugin should be used for various tasks in the Location API.
     Plugins are used by \l Map, \l RouteModel, and \l GeocodeModel
-    elements, as well as a variety of others.
+    types, as well as a variety of others.
 
     Plugins recognized by the system have a \l name property, a simple string
     normally indicating the name of the service that the Plugin retrieves
@@ -65,15 +65,15 @@ QT_BEGIN_NAMESPACE
     \l {supportsRouting()}, \l {supportsGeocoding()}, \l {supportsMapping()} and
     \l {supportsPlaces()} methods.
 
-    When a Plugin element is created, it is "detached" and not associated with
+    When a Plugin object is created, it is "detached" and not associated with
     any actual service plugin. Once it has received information via setting
     its \l name, \l preferred, or \l required properties, it will choose an
-    appropriate service plugin to attach to. Plugin elements can only be
-    attached once; to use multiple plugins, create multiple Plugin elements.
+    appropriate service plugin to attach to. Plugin objects can only be
+    attached once; to use multiple plugins, create multiple Plugin objects.
 
     \section2 Example Usage
 
-    The following snippet shows a Plugin element being created with the
+    The following snippet shows a Plugin object being created with the
     \l required and \l preferred properties set. This Plugin will attach to the
     first plugin found plugin that supports both mapping and geocoding, and will
     prefer plugins named "nokia" or "foo" to any others.
@@ -385,7 +385,7 @@ bool QDeclarativeGeoServiceProvider::supportsPlaces(const PlacesFeatures &featur
     \qmlproperty enumeration Plugin::required
 
     This property contains the set of features that will be required by the
-    Plugin element when choosing which service plugin to attach to. If the
+    Plugin object when choosing which service plugin to attach to. If the
     \l name property is set, this has no effect.
 
     Any of the following values or a bitwise combination of multiple values
@@ -748,14 +748,14 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
     \ingroup qml-QtLocation5-common
     \since Qt Location 5.0
 
-    \brief The PluginParameter element describes a parameter to a \l Plugin.
+    \brief The PluginParameter type describes a parameter to a \l Plugin.
 
-    The PluginParameter element is used to provide a parameter of some kind
+    The PluginParameter object is used to provide a parameter of some kind
     to a Plugin. Typically these parameters contain details like an application
     token for access to a service, or a proxy server to use for network access.
 
     To set such a parameter, declare a PluginParameter inside a \l Plugin
-    element, and give it \l{name} and \l{value} properties. A list of valid
+    object, and give it \l{name} and \l{value} properties. A list of valid
     parameter names for each plugin is available from the
     \l {Qt Location Module#Plugin References and Parameters}{plugin reference pages}.
 

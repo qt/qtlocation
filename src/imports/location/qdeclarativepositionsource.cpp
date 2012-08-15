@@ -58,10 +58,10 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The PositionSource element provides the device's current position.
+    \brief The PositionSource type provides the device's current position.
 
-    The PositionSource element provides information about the user device's
-    current position. The position is available as a \l{Position} element, which
+    The PositionSource type provides information about the user device's
+    current position. The position is available as a \l{Position} type, which
     contains all the standard parameters typically available from GPS and other
     similar systems, including longitude, latitude, speed and accuracy details.
 
@@ -185,7 +185,7 @@ void QDeclarativePositionSource::setName(const QString &name)
 /*!
     \qmlproperty bool PositionSource::valid
 
-    This property is true if the PositionSource element has acquired a valid
+    This property is true if the PositionSource object has acquired a valid
     backend plugin to provide data. If false, other methods on the PositionSource
     will have no effect.
 
@@ -289,7 +289,7 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
     meaning that the data and time information in the NMEA source data is used to provide
     positional updates at the rate at which the data was originally recorded.
 
-    If nmeaSource has been set for a PositionSource element, there is no way to revert
+    If nmeaSource has been set for a PositionSource object, there is no way to revert
     back to non-file sources.
 */
 
@@ -490,7 +490,7 @@ bool QDeclarativePositionSource::isActive() const
     This property holds the last known positional data.
     It is a read-only property.
 
-    The Position element has different positional member variables,
+    The Position type has different positional member variables,
     whose validity can be checked with appropriate validity functions
     (for example sometimes an update does not have speed or altitude data).
 

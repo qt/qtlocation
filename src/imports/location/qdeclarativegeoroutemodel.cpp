@@ -57,13 +57,13 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0
 
-    \brief The RouteModel element provides access to routes.
+    \brief The RouteModel type provides access to routes.
 
-    The RouteModel element is used as part of a model/view grouping to retrieve
+    The RouteModel type is used as part of a model/view grouping to retrieve
     geographic routes from a backend provider. Routes include data about driving
     directions between two points, walking directions with multiple waypoints,
     and various other similar concepts. It functions much like other Model
-    elements in QML (see for example \l {Models and Views in Qt Quick#ListModel}{ListModel} and
+    types in QML (see for example \l {Models and Views in Qt Quick#ListModel}{ListModel} and
     \l XmlListModel), and interacts with views such as \l MapItemView, and \l{ListView}.
 
     Like \l Map and \l GeocodeModel, all the data for a RouteModel to work comes
@@ -83,7 +83,7 @@ QT_BEGIN_NAMESPACE
     \section2 Example Usage
 
     The following snippet is two-part, showing firstly the declaration of
-    elements, and secondly a short piece of procedural code using it. We set
+    objects, and secondly a short piece of procedural code using it. We set
     the routeModel's \l{autoUpdate} property to false, and call \l{update} once
     the query is set up, to avoid useless extra requests halfway through the
     set up of the query.
@@ -594,7 +594,7 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0
 
-    \brief The RouteQuery element is used to provide query parameters to a
+    \brief The RouteQuery type is used to provide query parameters to a
            RouteModel.
 
     A RouteQuery contains all the parameters necessary to make a request
@@ -627,7 +627,7 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     \endcode
 
     For a more complete example, see the documentation for the \l{RouteModel}
-    element, and the Mapviewer example.
+    type, and the Mapviewer example.
 
     \sa RouteModel
 
@@ -720,7 +720,7 @@ void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternative
     The waypoints should be given in order from origin to destination.
     Two or more coordinates are needed.
 
-    Waypoints can be set as part of the RouteQuery element declaration or
+    Waypoints can be set as part of the RouteQuery type declaration or
     dynamically with the functions provided.
 
     \sa addWaypoint, removeWaypoint, clearWaypoints
@@ -775,7 +775,7 @@ void QDeclarativeGeoRouteQuery::waypoints_clear(QQmlListProperty<QDeclarativeCoo
 
     Areas that the route must not cross.
 
-    Excluded areas can be set as part of the RouteQuery element declaration or
+    Excluded areas can be set as part of the \l RouteQuery type declaration or
     dynamically with the functions provided.
 
     \sa addExcludedArea, removeExcludedArea, clearExcludedAreas

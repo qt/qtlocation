@@ -57,16 +57,16 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
-    \brief The MapQuickItem element displays an arbitrary Qt Quick element
+    \brief The MapQuickItem type displays an arbitrary Qt Quick object
            on a Map.
 
-    The MapQuickItem element is used to place an arbitrary Qt Quick element
+    The MapQuickItem type is used to place an arbitrary Qt Quick object
     on a Map at a specified location and size. Compared to floating an item
     above the Map, a MapQuickItem will follow the panning (and optionally, the
     zooming) of the Map as if it is on the Map surface.
 
     The \l{sourceItem} property contains the Qt Quick item to be drawn, which
-    can be any kind of visible element.
+    can be any kind of visible type.
 
     \section2 Positioning and Sizing
 
@@ -91,8 +91,8 @@ QT_BEGIN_NAMESPACE
 
     \section2 Interaction
 
-    MapQuickItem is different to the other map object elements in that it can
-    accept "normal" QtQuick mouse and touch interaction elements as well as
+    MapQuickItem is different to the other map objects in that it can
+    accept "normal" QtQuick mouse and touch interaction types as well as
     the MapMouseArea and friends. For example, for a MapQuickItem, the following
     two situations are equivalent:
 
@@ -125,7 +125,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     Note, however, that using a MapMouseArea inside the sourceItem (in this
-    case, inside the Rectangle element), is unsupported, and may not work as
+    case, inside the Rectangle object), is unsupported, and may not work as
     desired.
 
     MouseAreas used inside a complex \l{sourceItem} can be used to create, for
@@ -149,7 +149,7 @@ QT_BEGIN_NAMESPACE
 
     \section2 Example Usage
 
-    The following snippet shows a MapQuickItem containing an Image element,
+    The following snippet shows a MapQuickItem containing an Image object,
     to display a Marker on the Map. This strategy is used to show the map
     markers in the MapViewer example.
 

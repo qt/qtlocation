@@ -29,7 +29,7 @@
 \page location-cpp-qml.html
 \title Interfaces between C++ and QML Code
 
-\brief Some of the location QML elements providing interfaces to access and modify properties in C++.
+\brief Some of the location QML types providing interfaces to access and modify properties in C++.
 
 \section2 Category - QPlaceCategory
 \target category

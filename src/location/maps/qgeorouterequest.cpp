@@ -221,7 +221,7 @@ QT_BEGIN_NAMESPACE
 /*!
     Constructs a request to calculate a route through the coordinates \a waypoints.
 
-    The route will traverse the elements of \a waypoints in order.
+    The route will traverse the objects of \a waypoints in order.
 */
 QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
     : d_ptr(new QGeoRouteRequestPrivate())

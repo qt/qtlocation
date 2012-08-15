@@ -59,9 +59,9 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
 
-    \brief The CategoryModel element provides a model of the categories supported by a \l Plugin.
+    \brief The CategoryModel type provides a model of the categories supported by a \l Plugin.
 
-    The CategoryModel element provides a model of the categories that are available from the
+    The CategoryModel type provides a model of the categories that are available from the
     current \l Plugin.  The model supports both a flat list of categories and a hierarchical tree
     representing category groupings.  This can be controlled by the \l hierarchical property.
 

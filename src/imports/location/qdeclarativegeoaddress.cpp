@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The Address QML element represents a specific location as a street address.
+    \brief The Address QML type represents a specific location as a street address.
 
     An Address is used as a unit of data for queries such as (Reverse) Geocoding
     or Places searches -- many of these operations either accept an Address

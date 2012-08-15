@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0
 
-    \brief The RouteSegment element represents a segment of a Route.
+    \brief The RouteSegment type represents a segment of a Route.
 
     A RouteSegment instance has information about the physical layout
     of the route segment, the length of the route and estimated time required

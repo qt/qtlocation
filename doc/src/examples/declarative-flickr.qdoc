@@ -37,7 +37,7 @@
     Qt Location API: the ability to retrieve and use the user's current
     geographic location.
 
-    Key QML elements shown in this example:
+    Key QML types shown in this example:
     \list
         \li \l{QtLocation5::PositionSource}{PositionSource}
         \li \l{XmlListModel}{XmlListModel}
@@ -48,7 +48,7 @@
     \section2 Retrieving the Current Location
 
     Retrieving the user's current location is achieved using the PositionSource
-    element. In this example, we instantiate the PositionSource as part of the
+    type. In this example, we instantiate the PositionSource as part of the
     GeoTab component (the floating "window" describing current location and
     status).
 

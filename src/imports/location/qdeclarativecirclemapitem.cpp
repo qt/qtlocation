@@ -61,9 +61,9 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
-    \brief The MapCircle element displays a geographic circle on a Map.
+    \brief The MapCircle type displays a geographic circle on a Map.
 
-    The MapCircle element displays a geographic circle on a Map, which
+    The MapCircle type displays a geographic circle on a Map, which
     consists of all points that are within a set distance from one
     central point. Depending on map projection, a geographic circle
     may not always be a perfect circle on the screen: for instance, in
@@ -78,7 +78,7 @@ QT_BEGIN_NAMESPACE
     Internally, a MapCircle is implemented as a many-sided polygon. To
     calculate the radius points it uses a spherical model of the Earth,
     similar to the atDistanceAndAzimuth method of the QML Coordinate
-    element. These two things can occasionally have implications for the
+    type. These two things can occasionally have implications for the
     accuracy of the circle's shape, depending on position and map
     projection.
 

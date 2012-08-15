@@ -63,10 +63,10 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
-    \brief The MapPolyline element displays a polyline on a map.
+    \brief The MapPolyline type displays a polyline on a map.
 
-    The MapPolyline element displays a polyline on a map, specified in terms
-    of an ordered list of \l Coordinate elements. The Coordinate elements
+    The MapPolyline type displays a polyline on a map, specified in terms
+    of an ordered list of \l Coordinate objects. The Coordinate objects
     on the path can be changed after being added to the Polyline, and these
     changes will be reflected in the next frame on the display. Coordinates can
     also be added and removed at any time using the \l addCoordinate and
