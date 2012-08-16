@@ -128,13 +128,8 @@ Item {
 
         plugin: myPlugin
 
-        searchArea: GeoCircle {
-            center {
-                // Brisbane
-                longitude: 153.02778
-                latitude: -27.46778
-            }
-        }
+        // Brisbane
+        searchArea: QtLocation.circle(QtLocation.coordinate(-27.46778, 153.02778))
 
         onSearchTermChanged: update()
     }

@@ -221,6 +221,14 @@ QString CoordinateValueType::toString() const
         .arg(v.latitude()).arg(v.longitude()).arg(v.altitude());
 }
 
+bool CoordinateValueType::isEqual(const QVariant &other) const
+{
+    if (other.userType() != qMetaTypeId<QGeoCoordinate>())
+        return false;
+
+    return v == other.value<QGeoCoordinate>();
+}
+
 /*
     Returns the distance (in meters) from this coordinate to the
     coordinate specified by other. Altitude is not used in the calculation.

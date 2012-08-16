@@ -77,6 +77,7 @@ public:
     bool isValid() const;
 
     QString toString() const Q_DECL_OVERRIDE;
+    bool isEqual(const QVariant &other) const Q_DECL_OVERRIDE;
 };
 
 QT_END_NAMESPACE

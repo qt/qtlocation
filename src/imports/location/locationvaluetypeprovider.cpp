@@ -41,23 +41,91 @@
 
 #include "locationvaluetypeprovider.h"
 #include "qdeclarativecoordinate_p.h"
+#include "qdeclarativegeoshape.h"
+#include "qdeclarativegeorectangle.h"
+#include "qdeclarativegeocircle.h"
+#include <QtLocation/QGeoRectangle>
+#include <QtLocation/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 
-QVariant stringToCoordinate(const QString &s)
+QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 {
     QGeoCoordinate c;
-    QStringList fields = s.split(QLatin1Char(','));
-    switch (fields.length()) {
-    case 2:
-        c = QGeoCoordinate(fields.at(0).toDouble(), fields.at(1).toDouble());
-        break;
-    case 3:
-        c = QGeoCoordinate(fields.at(0).toDouble(), fields.at(1).toDouble(), fields.at(2).toDouble());
-        break;
+
+    if (value.isObject()) {
+        if (value.hasProperty(QStringLiteral("latitude")))
+            c.setLatitude(value.property(QStringLiteral("latitude")).toNumber());
+        if (value.hasProperty(QStringLiteral("longitude")))
+            c.setLongitude(value.property(QStringLiteral("longitude")).toNumber());
+        if (value.hasProperty(QStringLiteral("altitude")))
+            c.setAltitude(value.property(QStringLiteral("altitude")).toNumber());
+
+        if (ok)
+            *ok = true;
     }
 
-    return QVariant::fromValue(c);
+    return c;
+}
+
+QGeoRectangle parseRectangle(const QJSValue &value, bool *ok)
+{
+    QGeoRectangle r;
+
+    *ok = false;
+
+    if (value.isObject()) {
+        if (value.hasProperty(QStringLiteral("bottomLeft"))) {
+            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("bottomLeft")), ok);
+            if (*ok)
+                r.setBottomLeft(c);
+        }
+        if (value.hasProperty(QStringLiteral("bottomRight"))) {
+            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("bottomRight")), ok);
+            if (*ok)
+                r.setBottomRight(c);
+        }
+        if (value.hasProperty(QStringLiteral("topLeft"))) {
+            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("topLeft")), ok);
+            if (*ok)
+                r.setTopLeft(c);
+        }
+        if (value.hasProperty(QStringLiteral("topRight"))) {
+            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("topRight")), ok);
+            if (*ok)
+                r.setTopRight(c);
+        }
+        if (value.hasProperty(QStringLiteral("center"))) {
+            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("center")), ok);
+            if (*ok)
+                r.setCenter(c);
+        }
+        if (value.hasProperty(QStringLiteral("height")))
+            r.setHeight(value.property(QStringLiteral("height")).toNumber());
+        if (value.hasProperty(QStringLiteral("width")))
+            r.setWidth(value.property(QStringLiteral("width")).toNumber());
+    }
+
+    return r;
+}
+
+QGeoCircle parseCircle(const QJSValue &value, bool *ok)
+{
+    QGeoCircle c;
+
+    *ok = false;
+
+    if (value.isObject()) {
+        if (value.hasProperty(QStringLiteral("center"))) {
+            QGeoCoordinate coord = parseCoordinate(value.property(QStringLiteral("center")), ok);
+            if (*ok)
+                c.setCenter(coord);
+        }
+        if (value.hasProperty(QStringLiteral("radius")))
+            c.setRadius(value.property(QStringLiteral("radius")).toNumber());
+    }
+
+    return c;
 }
 
 LocationValueTypeProvider::LocationValueTypeProvider()
@@ -67,47 +135,56 @@ LocationValueTypeProvider::LocationValueTypeProvider()
 
 bool LocationValueTypeProvider::create(int type, QQmlValueType *&v)
 {
-    if (type == qMetaTypeId<QGeoCoordinate>()) {
-        v = new CoordinateValueType;
-        return true;
-    }
+    if (type == qMetaTypeId<QGeoCoordinate>())
+        return typedCreate<CoordinateValueType>(v);
+    else if (type == qMetaTypeId<QGeoShape>())
+        return typedCreate<GeoShapeValueType>(v);
+    else if (type == qMetaTypeId<QGeoRectangle>())
+        return typedCreate<GeoRectangleValueType>(v);
+    else if (type == qMetaTypeId<QGeoCircle>())
+        return typedCreate<GeoCircleValueType>(v);
 
     return false;
 }
 
-bool LocationValueTypeProvider::init(int type, void *data, size_t n)
+bool LocationValueTypeProvider::init(int type, void *data, size_t dataSize)
 {
-    if (type == qMetaTypeId<QGeoCoordinate>()) {
-        Q_ASSERT(n >= sizeof(QGeoCoordinate));
-        QGeoCoordinate *c = reinterpret_cast<QGeoCoordinate *>(data);
-        new (c) QGeoCoordinate();
-        return true;
-    }
+    if (type == qMetaTypeId<QGeoCoordinate>())
+        return typedInit<QGeoCoordinate>(data, dataSize);
+    else if (type == qMetaTypeId<QGeoShape>())
+        return typedInit<QGeoShape>(data, dataSize);
+    else if (type == qMetaTypeId<QGeoRectangle>())
+        return typedInit<QGeoRectangle>(data, dataSize);
+    else if (type == qMetaTypeId<QGeoCircle>())
+        return typedInit<QGeoCircle>(data, dataSize);
 
     return false;
 }
 
-bool LocationValueTypeProvider::destroy(int type, void *data, size_t n)
+bool LocationValueTypeProvider::destroy(int type, void *data, size_t dataSize)
 {
-    if (type == qMetaTypeId<QGeoCoordinate>()) {
-        Q_ASSERT(n >= sizeof(QGeoCoordinate));
-        QGeoCoordinate *c = reinterpret_cast<QGeoCoordinate *>(data);
-        c->~QGeoCoordinate();
-        return true;
-    }
+    if (type == qMetaTypeId<QGeoCoordinate>())
+        return typedDestroy<QGeoCoordinate>(data, dataSize);
+    else if (type == qMetaTypeId<QGeoShape>())
+        return typedDestroy<QGeoShape>(data, dataSize);
+    else if (type == qMetaTypeId<QGeoRectangle>())
+        return typedDestroy<QGeoRectangle>(data, dataSize);
+    else if (type == qMetaTypeId<QGeoCircle>())
+        return typedDestroy<QGeoCircle>(data, dataSize);
 
     return false;
 }
 
-bool LocationValueTypeProvider::copy(int type, const void *src, void *dst, size_t n)
+bool LocationValueTypeProvider::copy(int type, const void *src, void *dst, size_t dstSize)
 {
-    if (type == qMetaTypeId<QGeoCoordinate>()) {
-        Q_ASSERT(n >= sizeof(QGeoCoordinate));
-        const QGeoCoordinate *srcC = reinterpret_cast<const QGeoCoordinate *>(src);
-        QGeoCoordinate *dstC = reinterpret_cast<QGeoCoordinate *>(dst);
-        new (dstC) QGeoCoordinate(*srcC);
-        return true;
-    }
+    if (type == qMetaTypeId<QGeoCoordinate>())
+        return typedCopyConstruct<QGeoCoordinate>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoShape>())
+        return typedCopyConstruct<QGeoShape>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoRectangle>())
+        return typedCopyConstruct<QGeoRectangle>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoCircle>())
+        return typedCopyConstruct<QGeoCircle>(src, dst, dstSize);
 
     return false;
 }
@@ -132,65 +209,100 @@ bool LocationValueTypeProvider::create(int type, int argc, const void *argv[], Q
     return false;
 }
 
-bool LocationValueTypeProvider::createFromString(int, const QString &, void *, size_t)
+bool LocationValueTypeProvider::createFromString(int type, const QString &s, void *data, size_t dataSize)
 {
-    return false;
-}
+    Q_UNUSED(data)
+    Q_UNUSED(dataSize)
 
-bool LocationValueTypeProvider::createStringFrom(int, const void *, QString *)
-{
-    return false;
-}
-
-bool LocationValueTypeProvider::variantFromJsObject(int, QQmlV8Handle, QV8Engine *, QVariant *)
-{
-    return false;
-}
-
-bool LocationValueTypeProvider::equal(int type, const void *lhs, const void *rhs, size_t n)
-{
-    if (type == qMetaTypeId<QGeoCoordinate>()) {
-        Q_ASSERT(n >= sizeof(QGeoCoordinate));
-        const QGeoCoordinate *lhsC = reinterpret_cast<const QGeoCoordinate *>(lhs);
-        const QGeoCoordinate *rhsC = reinterpret_cast<const QGeoCoordinate *>(rhs);
-        return *lhsC == *rhsC;
+    if (type == qMetaTypeId<QGeoCoordinate>() || type == qMetaTypeId<QGeoShape>() ||
+        type == qMetaTypeId<QGeoRectangle>() || type == qMetaTypeId<QGeoCircle>()) {
+        qWarning("Cannot create value type %d from string '%s'", type, qPrintable(s));
     }
 
     return false;
 }
 
-bool LocationValueTypeProvider::store(int type, const void *src, void *dst, size_t n)
+bool LocationValueTypeProvider::createStringFrom(int type, const void *data, QString *s)
+{
+    Q_UNUSED(data)
+    Q_UNUSED(s)
+
+    if (type == qMetaTypeId<QGeoCoordinate>() || type == qMetaTypeId<QGeoShape>() ||
+        type == qMetaTypeId<QGeoRectangle>() || type == qMetaTypeId<QGeoCircle>()) {
+        qWarning("Cannot create string from value type %d", type);
+    }
+
+    return false;
+}
+
+bool LocationValueTypeProvider::variantFromJsObject(int type, QQmlV8Handle h, QV8Engine *e, QVariant *v)
+{
+    Q_UNUSED(h)
+    Q_UNUSED(e)
+    Q_UNUSED(v)
+
+    if (type == qMetaTypeId<QGeoCoordinate>() || type == qMetaTypeId<QGeoShape>() ||
+        type == qMetaTypeId<QGeoRectangle>() || type == qMetaTypeId<QGeoCircle>()) {
+        qWarning("Cannot create variant from js object for type %d", type);
+    }
+
+    return false;
+}
+
+bool LocationValueTypeProvider::equal(int type, const void *lhs, const void *rhs, size_t rhsSize)
+{
+    Q_UNUSED(rhsSize)
+
+    if (type == qMetaTypeId<QGeoCoordinate>())
+        return typedEqual<QGeoCoordinate>(lhs, rhs);
+    else if (type == qMetaTypeId<QGeoShape>())
+        return typedEqual<QGeoShape>(lhs, rhs);
+    else if (type == qMetaTypeId<QGeoRectangle>())
+        return typedEqual<QGeoRectangle>(lhs, rhs);
+    else if (type == qMetaTypeId<QGeoCircle>())
+        return typedEqual<QGeoCircle>(lhs, rhs);
+
+    return false;
+}
+
+bool LocationValueTypeProvider::store(int type, const void *src, void *dst, size_t dstSize)
 {
     if (type == qMetaTypeId<QGeoCoordinate>())
-        return copy(type, src, dst, n);
+        return typedStore<QGeoCoordinate>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoShape>())
+        return typedStore<QGeoShape>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoRectangle>())
+        return typedStore<QGeoRectangle>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoCircle>())
+        return typedStore<QGeoCircle>(src, dst, dstSize);
 
     return false;
 }
 
-bool LocationValueTypeProvider::read(int srcType, const void *src, size_t n, int dstType, void *dst)
+bool LocationValueTypeProvider::read(int srcType, const void *src, size_t srcSize, int dstType, void *dst)
 {
-    if (dstType == qMetaTypeId<QGeoCoordinate>()) {
-        QGeoCoordinate *dstC = reinterpret_cast<QGeoCoordinate *>(dst);
-        if (srcType == qMetaTypeId<QGeoCoordinate>())
-            return copy(srcType, src, dst, n);
-        *dstC = QGeoCoordinate();
-        return true;
-    }
+    if (srcType == qMetaTypeId<QGeoCoordinate>())
+        return typedRead<QGeoCoordinate>(srcType, src, srcSize, dstType, dst);
+    else if (srcType == qMetaTypeId<QGeoShape>())
+        return typedRead<QGeoShape>(srcType, src, srcSize, dstType, dst);
+    else if (srcType == qMetaTypeId<QGeoRectangle>())
+        return typedRead<QGeoRectangle>(srcType, src, srcSize, dstType, dst);
+    else if (srcType == qMetaTypeId<QGeoCircle>())
+        return typedRead<QGeoCircle>(srcType, src, srcSize, dstType, dst);
 
     return false;
 }
 
-bool LocationValueTypeProvider::write(int type, const void *src, void *dst, size_t n)
+bool LocationValueTypeProvider::write(int type, const void *src, void *dst, size_t dstSize)
 {
-    if (type == qMetaTypeId<QGeoCoordinate>()) {
-        Q_ASSERT(n >= sizeof(QGeoCoordinate));
-        const QGeoCoordinate *srcC = reinterpret_cast<const QGeoCoordinate *>(src);
-        QGeoCoordinate *dstC = reinterpret_cast<QGeoCoordinate *>(dst);
-        if (*dstC != *srcC) {
-            *dstC = *srcC;
-            return true;
-        }
-    }
+    if (type == qMetaTypeId<QGeoCoordinate>())
+        return typedWrite<QGeoCoordinate>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoShape>())
+        return typedWrite<QGeoShape>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoRectangle>())
+        return typedWrite<QGeoRectangle>(src, dst, dstSize);
+    else if (type == qMetaTypeId<QGeoCircle>())
+        return typedWrite<QGeoCircle>(src, dst, dstSize);
 
     return false;
 }

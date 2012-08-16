@@ -42,23 +42,45 @@
 #ifndef QDECLARATIVEGEOSHAPE_H
 #define QDECLARATIVEGEOSHAPE_H
 
-#include <QtCore/QObject>
-#include <QtQml/qqml.h>
+#include <QtQml/private/qqmlvaluetype_p.h>
 #include <QtLocation/QGeoShape>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoShape : public QObject
+class GeoShapeValueType : public QQmlValueTypeBase<QGeoShape>
 {
     Q_OBJECT
 
+    Q_PROPERTY(ShapeType type READ type)
+    Q_PROPERTY(bool isValid READ isValid)
+    Q_PROPERTY(bool isEmpty READ isEmpty)
+
+    Q_ENUMS(ShapeType)
+
 public:
-    explicit QDeclarativeGeoShape(QObject *parent) :QObject(parent){}
-    virtual QGeoShape shape() const = 0;
+    explicit GeoShapeValueType(QObject *parent = 0);
+    ~GeoShapeValueType();
+
+    enum ShapeType {
+        UnknownType = QGeoShape::UnknownType,
+        RectangleType = QGeoShape::RectangleType,
+        CircleType = QGeoShape::CircleType
+    };
+
+    ShapeType type() const;
+    bool isValid() const;
+    bool isEmpty() const;
+
+    Q_INVOKABLE bool contains(const QGeoCoordinate &coordinate) const;
+
+    QString toString() const Q_DECL_OVERRIDE;
+    void setValue(const QVariant &value) Q_DECL_OVERRIDE;
+    bool isEqual(const QVariant &other) const Q_DECL_OVERRIDE;
+
+protected:
+    explicit GeoShapeValueType(int userType, QObject *parent = 0);
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QDeclarativeGeoShape)
 
 #endif

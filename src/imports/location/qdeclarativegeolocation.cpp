@@ -79,14 +79,14 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject *parent)
-:   QObject(parent), m_address(0), m_boundingBox(0)
+:   QObject(parent), m_address(0)
 
 {
     setLocation(QGeoLocation());
 }
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src, QObject *parent)
-:   QObject(parent), m_address(0), m_boundingBox(0)
+:   QObject(parent), m_address(0)
 {
     setLocation(src);
 }
@@ -110,25 +110,16 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
         emit addressChanged();
     }
 
-    if (m_coordinate != src.coordinate()) {
-        m_coordinate = src.coordinate();
-        emit coordinateChanged();
-    }
-
-    if (m_boundingBox && m_boundingBox->parent() == this) {
-        m_boundingBox->setRectangle(src.boundingBox());
-    } else if (!m_boundingBox || m_boundingBox->parent() != this) {
-        m_boundingBox = new QDeclarativeGeoRectangle(src.boundingBox(), this);
-        emit boundingBoxChanged();
-    }
+    setCoordinate(src.coordinate());
+    setBoundingBox(src.boundingBox());
 }
 
-QGeoLocation QDeclarativeGeoLocation::location()
+QGeoLocation QDeclarativeGeoLocation::location() const
 {
     QGeoLocation retValue;
     retValue.setAddress(m_address ? m_address->address() : QGeoAddress());
     retValue.setCoordinate(m_coordinate);
-    retValue.setBoundingBox(m_boundingBox ? m_boundingBox->rectangle() : QGeoRectangle());
+    retValue.setBoundingBox(m_boundingBox);
     return retValue;
 }
 
@@ -149,7 +140,7 @@ void QDeclarativeGeoLocation::setAddress(QDeclarativeGeoAddress *address)
     emit addressChanged();
 }
 
-QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
+QDeclarativeGeoAddress *QDeclarativeGeoLocation::address() const
 {
     return m_address;
 }
@@ -171,7 +162,7 @@ void QDeclarativeGeoLocation::setCoordinate(const QGeoCoordinate coordinate)
     emit coordinateChanged();
 }
 
-QGeoCoordinate QDeclarativeGeoLocation::coordinate()
+QGeoCoordinate QDeclarativeGeoLocation::coordinate() const
 {
     return m_coordinate;
 }
@@ -187,19 +178,16 @@ QGeoCoordinate QDeclarativeGeoLocation::coordinate()
     Note: this property's changed() signal is currently emitted only if the
     whole object changes, not if only the contents of the object change.
 */
-void QDeclarativeGeoLocation::setBoundingBox(QDeclarativeGeoRectangle *boundingBox)
+void QDeclarativeGeoLocation::setBoundingBox(const QGeoRectangle &boundingBox)
 {
     if (m_boundingBox == boundingBox)
         return;
-
-    if (m_boundingBox && m_boundingBox->parent() == this)
-        delete m_boundingBox;
 
     m_boundingBox = boundingBox;
     emit boundingBoxChanged();
 }
 
-QDeclarativeGeoRectangle *QDeclarativeGeoLocation::boundingBox()
+QGeoRectangle QDeclarativeGeoLocation::boundingBox() const
 {
     return m_boundingBox;
 }

@@ -68,7 +68,6 @@ public:
     QStringList suggestions() const;
 
     void clearData(bool suppressSignal = false);
-    void updateSearchRequest();
 
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;

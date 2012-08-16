@@ -190,7 +190,7 @@ class QDeclarativeGeoRouteQuery : public QObject, public QQmlParserStatus
     Q_PROPERTY(SegmentDetail segmentDetail READ segmentDetail WRITE setSegmentDetail NOTIFY segmentDetailChanged)
     Q_PROPERTY(ManeuverDetail maneuverDetail READ maneuverDetail WRITE setManeuverDetail NOTIFY maneuverDetailChanged)
     Q_PROPERTY(QJSValue waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
-    Q_PROPERTY(QQmlListProperty<QDeclarativeGeoRectangle> excludedAreas READ excludedAreas NOTIFY excludedAreasChanged)
+    Q_PROPERTY(QJSValue excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
     Q_INTERFACES(QQmlParserStatus)
 
@@ -203,7 +203,7 @@ public:
     void classBegin() {}
     void componentComplete();
 
-    QGeoRouteRequest &routeRequest();
+    QGeoRouteRequest routeRequest() const;
 
     enum TravelMode {
         CarTravel = QGeoRouteRequest::CarTravel,
@@ -267,14 +267,15 @@ public:
     void setWaypoints(const QJSValue &value);
 
     // READ functions for list properties
-    QQmlListProperty<QDeclarativeGeoRectangle> excludedAreas();
+    QJSValue excludedAreas() const;
+    void setExcludedAreas(const QJSValue &value);
 
     Q_INVOKABLE void addWaypoint(const QGeoCoordinate &waypoint);
     Q_INVOKABLE void removeWaypoint(const QGeoCoordinate &waypoint);
     Q_INVOKABLE void clearWaypoints();
 
-    Q_INVOKABLE void addExcludedArea(QDeclarativeGeoRectangle *area);
-    Q_INVOKABLE void removeExcludedArea(QDeclarativeGeoRectangle *area);
+    Q_INVOKABLE void addExcludedArea(const QGeoRectangle &area);
+    Q_INVOKABLE void removeExcludedArea(const QGeoRectangle &area);
     Q_INVOKABLE void clearExcludedAreas();
 
     Q_INVOKABLE void setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight);
@@ -316,13 +317,6 @@ private Q_SLOTS:
 
 private:
     Q_INVOKABLE void doCoordinateChanged();
-
-    static void exclusions_append(QQmlListProperty<QDeclarativeGeoRectangle> *prop, QDeclarativeGeoRectangle *area);
-    static int exclusions_count(QQmlListProperty<QDeclarativeGeoRectangle> *prop);
-    static QDeclarativeGeoRectangle *exclusions_at(QQmlListProperty<QDeclarativeGeoRectangle> *prop, int index);
-    static void exclusions_clear(QQmlListProperty<QDeclarativeGeoRectangle> *prop);
-
-    QList<QDeclarativeGeoRectangle *> exclusions_;
 
     QGeoRouteRequest request_;
     bool complete_;

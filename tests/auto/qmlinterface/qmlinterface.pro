@@ -28,8 +28,6 @@ OTHER_FILES += \
     data/TestSupplier.qml \
     data/TestUser.qml \
     data/TestPlaceAttribute.qml \
-    data/TestContactDetail.qml \
-    data/TestGeoRectangle.qml \
-    data/TestGeoCircle.qml
+    data/TestContactDetail.qml
 
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

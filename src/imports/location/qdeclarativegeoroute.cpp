@@ -46,6 +46,7 @@
 #include <QtQml/QQmlContext>
 #include <QtQml/qqmlinfo.h>
 #include <QtQml/private/qqmlengine_p.h>
+#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
@@ -95,8 +96,6 @@ QDeclarativeGeoRoute::~QDeclarativeGeoRoute() {}
 
 void QDeclarativeGeoRoute::init()
 {
-    bounds_ = new QDeclarativeGeoRectangle(route_.bounds(), this);
-
     QGeoRouteSegment segment = route_.firstRouteSegment();
     while (segment.isValid()) {
         segments_.append(new QDeclarativeGeoRouteSegment(segment, this));
@@ -119,9 +118,9 @@ QList<QGeoCoordinate> QDeclarativeGeoRoute::routePath()
 
 */
 
-QDeclarativeGeoRectangle *QDeclarativeGeoRoute::bounds() const
+QGeoRectangle QDeclarativeGeoRoute::bounds() const
 {
-    return bounds_;
+    return route_.bounds();
 }
 
 /*!
@@ -190,22 +189,10 @@ void QDeclarativeGeoRoute::setPath(const QJSValue &value)
     QList<QGeoCoordinate> pathList;
     quint32 length = value.property(QStringLiteral("length")).toUInt();
     for (quint32 i = 0; i < length; ++i) {
-        QJSValue v = value.property(i);
+        bool ok;
+        QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
 
-        QGeoCoordinate c;
-
-        if (v.isObject()) {
-            if (v.hasProperty(QStringLiteral("latitude")))
-                c.setLatitude(v.property(QStringLiteral("latitude")).toNumber());
-            if (v.hasProperty(QStringLiteral("longitude")))
-                c.setLongitude(v.property(QStringLiteral("longitude")).toNumber());
-            if (v.hasProperty(QStringLiteral("altitude")))
-                c.setAltitude(v.property(QStringLiteral("altitude")).toNumber());
-        } else if (v.isString()) {
-            c = stringToCoordinate(v.toString()).value<QGeoCoordinate>();
-        }
-
-        if (!c.isValid()) {
+        if (!ok || !c.isValid()) {
             qmlInfo(this) << "Unsupported path type";
             return;
         }

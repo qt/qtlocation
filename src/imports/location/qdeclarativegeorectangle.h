@@ -43,34 +43,25 @@
 #define QDECLARATIVEGEORECTANGLE_H
 
 #include "qdeclarativegeoshape.h"
-#include "qdeclarativecoordinate_p.h"
-
-#include <QtQml/qqml.h>
-#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoRectangle : public QDeclarativeGeoShape
+class GeoRectangleValueType : public GeoShapeValueType
 {
     Q_OBJECT
 
-    Q_PROPERTY(QGeoRectangle rectangle READ rectangle WRITE setRectangle)
-    Q_PROPERTY(QGeoCoordinate bottomLeft READ bottomLeft WRITE setBottomLeft NOTIFY bottomLeftChanged)
-    Q_PROPERTY(QGeoCoordinate bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
-    Q_PROPERTY(QGeoCoordinate topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
-    Q_PROPERTY(QGeoCoordinate topRight READ topRight WRITE setTopRight NOTIFY topRightChanged)
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(double height READ height WRITE setHeight NOTIFY heightChanged)
-    Q_PROPERTY(double width READ width WRITE setWidth NOTIFY widthChanged)
+    Q_PROPERTY(QGeoCoordinate bottomLeft READ bottomLeft WRITE setBottomLeft)
+    Q_PROPERTY(QGeoCoordinate bottomRight READ bottomRight WRITE setBottomRight)
+    Q_PROPERTY(QGeoCoordinate topLeft READ topLeft WRITE setTopLeft)
+    Q_PROPERTY(QGeoCoordinate topRight READ topRight WRITE setTopRight)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
+    Q_PROPERTY(double height READ height WRITE setHeight)
+    Q_PROPERTY(double width READ width WRITE setWidth)
 
 public:
-    explicit QDeclarativeGeoRectangle(QObject *parent = 0);
-    explicit QDeclarativeGeoRectangle(const QGeoRectangle &rectangle, QObject *parent = 0);
-    void setRectangle(const QGeoRectangle &rectangle);
-    QGeoRectangle rectangle() const;
-    QGeoShape shape() const;
+    explicit GeoRectangleValueType(QObject *parent = 0);
+    ~GeoRectangleValueType();
 
-    Q_INVOKABLE bool contains(const QGeoCoordinate &coordinate);
     QGeoCoordinate bottomLeft();
     void setBottomLeft(const QGeoCoordinate &coordinate);
     QGeoCoordinate bottomRight();
@@ -86,25 +77,13 @@ public:
     double width();
     void setWidth(double width);
 
-Q_SIGNALS:
-    void bottomLeftChanged();
-    void bottomRightChanged();
-    void topLeftChanged();
-    void topRightChanged();
-    void centerChanged();
-    void heightChanged();
-    void widthChanged();
-
-private:
-    void emitChanged(const QGeoRectangle &old);
-
-    QGeoRectangle m_box;
-    double m_width;
-    double m_height;
+    QString toString() const Q_DECL_OVERRIDE;
+    void setValue(const QVariant &value) Q_DECL_OVERRIDE;
+    QVariant value() Q_DECL_OVERRIDE;
+    void write(QObject *obj, int idx, QQmlPropertyPrivate::WriteFlags flags) Q_DECL_OVERRIDE;
+    void writeVariantValue(QObject *obj, int idx, QQmlPropertyPrivate::WriteFlags flags, QVariant *from) Q_DECL_OVERRIDE;
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QDeclarativeGeoRectangle)
 
 #endif

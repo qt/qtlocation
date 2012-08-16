@@ -43,29 +43,19 @@
 #define QDECLARATIVEGEOCIRCLE_H
 
 #include "qdeclarativegeoshape.h"
-#include "qdeclarativecoordinate_p.h"
-
-#include <QtQml/qqml.h>
-#include <QtLocation/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoCircle : public QDeclarativeGeoShape
+class GeoCircleValueType : public GeoShapeValueType
 {
     Q_OBJECT
 
-    Q_PROPERTY(QGeoCircle circle READ circle WRITE setCircle)
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
 
 public:
-    explicit QDeclarativeGeoCircle(QObject *parent = 0);
-    explicit QDeclarativeGeoCircle(const QGeoCircle &circle, QObject *parent = 0);
-    void setCircle(const QGeoCircle &circle);
-    QGeoCircle circle() const;
-    QGeoShape shape() const;
-
-    Q_INVOKABLE bool contains(const QGeoCoordinate &coordinate);
+    explicit GeoCircleValueType(QObject *parent = 0);
+    ~GeoCircleValueType();
 
     QGeoCoordinate center();
     void setCenter(const QGeoCoordinate &coordinate);
@@ -73,16 +63,13 @@ public:
     qreal radius() const;
     void setRadius(qreal radius);
 
-Q_SIGNALS:
-    void centerChanged();
-    void radiusChanged();
-
-private:
-    QGeoCircle m_circle;
+    QString toString() const Q_DECL_OVERRIDE;
+    void setValue(const QVariant &value) Q_DECL_OVERRIDE;
+    QVariant value() Q_DECL_OVERRIDE;
+    void write(QObject *obj, int idx, QQmlPropertyPrivate::WriteFlags flags) Q_DECL_OVERRIDE;
+    void writeVariantValue(QObject *obj, int idx, QQmlPropertyPrivate::WriteFlags, QVariant *from) Q_DECL_OVERRIDE;
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QDeclarativeGeoCircle)
 
 #endif

@@ -111,9 +111,9 @@ QT_USE_NAMESPACE
     This property holds the search area.  Search suggestion results returned by the model will be
     relevant to the given search area.
 
-    If this property is set to a \l GeoCircle its \l {GeoCircle::radius}{radius} property
-    may be left unset, in which case the \l Plugin will choose an appropriate radius for the
-    search.
+    If this property is set to a \l {QtLocation5::geocircle}{geocircle} its
+    \l {QtLocation5::geocircle}{radius} property may be left unset, in which case the \l Plugin
+    will choose an appropriate radius for the search.
 */
 
 /*!
@@ -169,18 +169,10 @@ QT_USE_NAMESPACE
 
     This example shows use of the model
     \code
-    GeoCircle {
-        id: searchLocation
-        center {
-            latitude: 10
-            longitude: 10
-        }
-    }
-
     PlaceSeachSuggestionModel {
         id: model
         plugin: backendPlugin
-        searchArea: searchLocation
+        searchArea: QtLocation.circle(QtLocation.coordinate(10, 10))
         ...
     }
 
@@ -188,8 +180,8 @@ QT_USE_NAMESPACE
         ...
         onClicked: {
             model.searchTerm = "piz"
-            searchLocation.center.latitude = -27.5
-            searchLocation.cetner.longitude = 153
+            model.searchArea.center.latitude = -27.5;
+            model.searchArea.cetner.longitude = 153;
             model.update();
         }
     }
@@ -282,14 +274,6 @@ void QDeclarativeSearchSuggestionModel::clearData(bool suppressSignal)
         if (!suppressSignal)
             emit suggestionsChanged();
     }
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeSearchSuggestionModel::updateSearchRequest()
-{
-    QDeclarativeSearchModelBase::updateSearchRequest();
 }
 
 /*!

@@ -64,23 +64,15 @@ TestCase {
         name: "nonExistantName"
     }
 
-   Plugin {
-       id: uninitializedPlugin
-   }
-
-    GeoCircle {
-        id: testSearchArea
-        center {
-            latitude: 10
-            longitude: 20
-        }
-        radius: 5000
+    Plugin {
+        id: uninitializedPlugin
     }
 
     function test_setAndGet_data() {
+        var testSearchArea = QtLocation.circle(QtLocation.coordinate(10, 20), 5000);
         return [
             { tag: "plugin", property: "plugin", signal: "pluginChanged", value: testPlugin },
-            { tag: "searchArea", property: "searchArea", signal: "searchAreaChanged", value: testSearchArea },
+            { tag: "searchArea", property: "searchArea", signal: "searchAreaChanged", value: testSearchArea, reset: QtLocation.shape() },
             { tag: "offset", property: "offset", signal: "offsetChanged", value: 10, reset: 0 },
             { tag: "limit", property: "limit", signal: "limitChanged", value: 10, reset: -1 },
 

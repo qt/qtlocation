@@ -49,6 +49,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+class QDebug;
 class QGeoShapePrivate;
 
 class Q_LOCATION_EXPORT QGeoShape
@@ -84,6 +85,17 @@ private:
     inline QGeoShapePrivate *d_func();
     inline const QGeoShapePrivate *d_func() const;
 };
+
+Q_DECLARE_TYPEINFO(QGeoShape, Q_MOVABLE_TYPE);
+
+#ifndef QT_NO_DEBUG_STREAM
+Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoShape &);
+#endif
+
+#ifndef QT_NO_DATASTREAM
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoShape &shape);
+#endif
 
 QT_END_NAMESPACE
 

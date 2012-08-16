@@ -41,6 +41,16 @@
 
 #include "qgeoshape.h"
 #include "qgeoshape_p.h"
+#include "qgeorectangle.h"
+#include "qgeocircle.h"
+
+#ifndef QT_NO_DEBUG_STREAM
+#include <QtCore/QDebug>
+#endif
+
+#ifndef QT_NO_DATASTREAM
+#include <QtCore/QDataStream>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -220,5 +230,78 @@ QGeoShape &QGeoShape::operator=(const QGeoShape &other)
     d_ptr = other.d_ptr;
     return *this;
 }
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QGeoShape &shape)
+{
+    //dbg << *shape.d_func();
+    dbg.nospace() << "QGeoShape(";
+    switch (shape.type()) {
+    case QGeoShape::UnknownType:
+        dbg.nospace() << "Unknown";
+        break;
+    case QGeoShape::RectangleType:
+        dbg.nospace() << "Rectangle";
+        break;
+    case QGeoShape::CircleType:
+        dbg.nospace() << "Circle";
+    }
+
+    dbg.nospace() << ')';
+
+    return dbg;
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape)
+{
+    stream << quint32(shape.type());
+    switch (shape.type()) {
+    case QGeoShape::UnknownType:
+        break;
+    case QGeoShape::RectangleType: {
+        QGeoRectangle r = shape;
+        stream << r.topLeft() << r.bottomRight();
+        break;
+    }
+    case QGeoShape::CircleType: {
+        QGeoCircle c = shape;
+        stream << c.center() << c.radius();
+        break;
+    }
+    }
+
+    return stream;
+}
+
+QDataStream &operator>>(QDataStream &stream, QGeoShape &shape)
+{
+    quint32 type;
+    stream >> type;
+
+    switch (type) {
+    case QGeoShape::UnknownType:
+        shape = QGeoShape();
+        break;
+    case QGeoShape::RectangleType: {
+        QGeoCoordinate tl;
+        QGeoCoordinate br;
+        stream >> tl >> br;
+        shape = QGeoRectangle(tl, br);
+        break;
+    }
+    case QGeoShape::CircleType: {
+        QGeoCoordinate c;
+        qreal r;
+        stream >> c >> r;
+        shape = QGeoCircle(c, r);
+        break;
+    }
+    }
+
+    return stream;
+}
+#endif
 
 QT_END_NAMESPACE

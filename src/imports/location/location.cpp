@@ -93,6 +93,9 @@
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQml/private/qqmlmetatype_p.h>
 
+#include <QtLocation/QGeoRectangle>
+#include <QtLocation/QGeoCircle>
+
 #include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -132,13 +135,10 @@ public:
             qmlRegisterSingletonType<LocationSingleton>(uri, 5, 0, "QtLocation", singleton_type_factory);
 
             QQml_addValueTypeProvider(getValueTypeProvider());
-            QQmlMetaType::registerCustomStringConverter(qMetaTypeId<QGeoCoordinate>(), stringToCoordinate);
+            qmlRegisterValueTypeEnums<GeoShapeValueType>("QtLocation", 5, 0, "GeoShape");
 
             qmlRegisterType<QDeclarativePosition>(uri, 5, 0, "Position");
             qmlRegisterType<QDeclarativePositionSource>(uri, 5, 0, "PositionSource");
-            qmlRegisterUncreatableType<QDeclarativeGeoShape>(uri, 5, 0, "GeoShape", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Positioning)GeoShape"));
-            qmlRegisterType<QDeclarativeGeoRectangle>(uri, 5, 0, "GeoRectangle");
-            qmlRegisterType<QDeclarativeGeoCircle>(uri, 5, 0, "GeoCircle");
             qmlRegisterType<QDeclarativeGeoAddress>(uri, 5, 0, "Address");
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");

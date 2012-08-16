@@ -44,9 +44,9 @@
 #include "qdeclarativegeolocation_p.h"
 
 #include <QtQml/qqmlinfo.h>
-
-#include <qgeoserviceprovider.h>
-#include <qgeocodingmanager.h>
+#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QGeocodingManager>
+#include <QtLocation/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 
@@ -109,17 +109,9 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject *parent)
-    : QAbstractListModel(parent),
-      autoUpdate_(false),
-      complete_(false),
-      reply_(0),
-      plugin_(0),
-      boundingArea_(0),
-      status_(QDeclarativeGeocodeModel::Null),
-      error_(QDeclarativeGeocodeModel::NoError),
-      address_(0),
-      limit_(-1),
-      offset_(0)
+:   QAbstractListModel(parent), autoUpdate_(false), complete_(false), reply_(0), plugin_(0),
+    status_(QDeclarativeGeocodeModel::Null), error_(QDeclarativeGeocodeModel::NoError),
+    address_(0), limit_(-1), offset_(0)
 {
 }
 
@@ -139,19 +131,6 @@ void QDeclarativeGeocodeModel::componentComplete()
     complete_ = true;
     if (autoUpdate_)
         update();
-}
-
-/*!
-    \internal
-*/
-QGeoShape QDeclarativeGeocodeModel::boundingArea()
-{
-    if (qobject_cast<QDeclarativeGeoRectangle *>(boundingArea_) && boundingBox_.isValid()) {
-        return boundingBox_;
-    } else if (qobject_cast<QDeclarativeGeoCircle *>(boundingArea_) && boundingCircle_.isValid()) {
-        return boundingCircle_;
-    }
-    return QGeoShape();
 }
 
 /*!
@@ -191,7 +170,7 @@ void QDeclarativeGeocodeModel::update()
 
     if (coordinate_.isValid()) {
         setStatus(QDeclarativeGeocodeModel::Loading);
-        reply_ = geocodingManager->reverseGeocode(coordinate_, boundingArea());
+        reply_ = geocodingManager->reverseGeocode(coordinate_, boundingArea_);
         if (reply_->isFinished()) {
             if (reply_->error() == QGeocodeReply::NoError) {
                 geocodeFinished(reply_);
@@ -201,7 +180,7 @@ void QDeclarativeGeocodeModel::update()
         }
     } else if (address_) {
         setStatus(QDeclarativeGeocodeModel::Loading);
-        reply_ = geocodingManager->geocode(address_->address(), boundingArea());
+        reply_ = geocodingManager->geocode(address_->address(), boundingArea_);
         if (reply_->isFinished()) {
             if (reply_->error() == QGeocodeReply::NoError) {
                 geocodeFinished(reply_);
@@ -211,7 +190,7 @@ void QDeclarativeGeocodeModel::update()
         }
     } else if (!searchString_.isEmpty()) {
         setStatus(QDeclarativeGeocodeModel::Loading);
-        reply_ = geocodingManager->geocode(searchString_, limit_, offset_, boundingArea());
+        reply_ = geocodingManager->geocode(searchString_, limit_, offset_, boundingArea_);
         if (reply_->isFinished()) {
             if (reply_->error() == QGeocodeReply::NoError) {
                 geocodeFinished(reply_);
@@ -333,19 +312,22 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeocodeModel::plugin() const
     return plugin_;
 }
 
-void QDeclarativeGeocodeModel::setBounds(QObject *bounds)
+void QDeclarativeGeocodeModel::setBounds(const QVariant &boundingArea)
 {
-    if (boundingArea_ == bounds)
-            return;
-    if (qobject_cast<QDeclarativeGeoRectangle *>(bounds)) {
-        boundingBox_ = qobject_cast<QDeclarativeGeoRectangle *>(bounds)->rectangle();
-    } else if (qobject_cast<QDeclarativeGeoCircle *>(bounds)) {
-        boundingCircle_ = qobject_cast<QDeclarativeGeoCircle *>(bounds)->circle();
-    } else {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, UNSUPPORTED_BOUND_TYPE);
+    QGeoShape s;
+
+    if (boundingArea.userType() == qMetaTypeId<QGeoRectangle>())
+        s = boundingArea.value<QGeoRectangle>();
+    else if (boundingArea.userType() == qMetaTypeId<QGeoCircle>())
+        s = boundingArea.value<QGeoCircle>();
+    else if (boundingArea.userType() == qMetaTypeId<QGeoShape>())
+        s = boundingArea.value<QGeoShape>();
+
+
+    if (boundingArea_ == s)
         return;
-    }
-    boundingArea_ = bounds;
+
+    boundingArea_ = s;
     emit boundsChanged();
 }
 
@@ -356,13 +338,17 @@ void QDeclarativeGeocodeModel::setBounds(QObject *bounds)
     within the area. his is particularly useful if query is only partially filled out,
     as the service will attempt to (reverse) geocode all matches for the specified data.
 
-    Accepted types are \l BoundingBox and \l BoundingCircle.
-
+    Accepted types are \l {QtLocation5::georectangle}{georectangle} and
+    \l {QtLocation5::geocircle}{geocircle}.
 */
-
-QObject *QDeclarativeGeocodeModel::bounds() const
+QVariant QDeclarativeGeocodeModel::bounds() const
 {
-    return boundingArea_;
+    if (boundingArea_.type() == QGeoShape::RectangleType)
+        return QVariant::fromValue(QGeoRectangle(boundingArea_));
+    else if (boundingArea_.type() == QGeoShape::CircleType)
+        return QVariant::fromValue(QGeoCircle(boundingArea_));
+    else
+        return QVariant::fromValue(boundingArea_);
 }
 
 void QDeclarativeGeocodeModel::geocodeFinished(QGeocodeReply *reply)

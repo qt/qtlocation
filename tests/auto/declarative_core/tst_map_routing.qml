@@ -50,8 +50,18 @@ Item {
     property variant coordinate1: QtLocation.coordinate(51, 0)
     property variant coordinate2: QtLocation.coordinate(52, 0)
 
-    GeoRectangle { id: boundingBox1; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
-    GeoRectangle { id: boundingBox2; topLeft: coordinate2; bottomLeft: coordinate1; width: 1000 }
+    property variant boundingBox1: QtLocation.rectangle()
+    property variant boundingBox2: QtLocation.rectangle()
+
+    Component.onCompleted: {
+        boundingBox1.topLeft = coordinate1;
+        boundingBox1.bottomRight = coordinate2;
+        boundingBox1.width = 10;
+
+        boundingBox2.topLeft = coordinate2;
+        boundingBox2.bottomLeft = coordinate1;
+        boundingBox2.width = 20;
+    }
 
     property variant bl: QtLocation.coordinate(0, 0)
     property variant tl: QtLocation.coordinate(1, 0)
@@ -59,13 +69,7 @@ Item {
     property variant br: QtLocation.coordinate(0, 1)
     property variant ntr: QtLocation.coordinate(3, 3)
 
-    GeoRectangle {
-        id: unitBox;
-        bottomLeft: bl
-        topLeft: tl
-        topRight: tr
-        bottomRight: br
-    }
+    property variant unitBox: QtLocation.rectangle(tl, br)
 
     Route {id: emptyRoute}
     TestCase {
@@ -76,7 +80,7 @@ Item {
         // TODO enable when we have map route
         //MapRoute {id: emptyMapRoute}
 
-        GeoRectangle {id: emptyBox}
+        property variant emptyBox: QtLocation.rectangle()
 
         property variant emptyCoordinate: QtLocation.coordinate()
 
@@ -313,42 +317,13 @@ Item {
             compare(emptyQuery.excludedAreas.length, 0)
             compare(exclusionSpy.count, 1)
 
-            // Altering exclusion area details should trigger signals
-            emptyQuery.clearExcludedAreas()
-            emptyQuery.addExcludedArea(unitBox)
-            queryDetailsChangedSpy.clear()
-            compare (emptyQuery.excludedAreas.length, 1)
-            unitBox.width = 200
-            tryCompare(queryDetailsChangedSpy, "count", 1);
-            unitBox.height = 200
-            tryCompare(queryDetailsChangedSpy , "count", 2);
-            unitBox.topRight = ntr
-            tryCompare(queryDetailsChangedSpy, "count", 3);
-
-            // verify box is disconnected
-            emptyQuery.removeExcludedArea(unitBox)
-            compare(queryDetailsChangedSpy.count, 4);
-            unitBox.height = 400
-            tryCompare(queryDetailsChangedSpy, "count", 4);
-
-            // verify that same box instance only produces one set of changes
-            compare (emptyQuery.excludedAreas.length, 0)
-            emptyQuery.addExcludedArea(unitBox)
-            emptyQuery.addExcludedArea(unitBox)
-            compare (emptyQuery.excludedAreas.length, 1)
-            queryDetailsChangedSpy.clear()
-            unitBox.width = 777
-            tryCompare(queryDetailsChangedSpy, "count", 1);
-            compare (emptyQuery.excludedAreas.length, 1)
-            unitBox.width = 200
-            tryCompare(queryDetailsChangedSpy, "count", 2);
-
             // verify that clearing works
-            emptyQuery.clearExcludedAreas()
-            compare (queryDetailsChangedSpy.count, 3)
-            compare (emptyQuery.excludedAreas.length, 0)
-            unitBox.width = 717
-            tryCompare(queryDetailsChangedSpy, "count", 3);
+            emptyQuery.addExcludedArea(unitBox);
+            compare(emptyQuery.excludedAreas.length, 1);
+            queryDetailsChangedSpy.clear();
+            emptyQuery.clearExcludedAreas();
+            compare(queryDetailsChangedSpy.count, 1);
+            compare(emptyQuery.excludedAreas.length, 0)
 
             // Feature types and weights
             queryDetailsChangedSpy.clear()

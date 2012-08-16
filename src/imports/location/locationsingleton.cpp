@@ -89,3 +89,77 @@ QGeoCoordinate LocationSingleton::coordinate(double latitude, double longitude, 
     return QGeoCoordinate(latitude, longitude, altitude);
 }
 
+/*!
+    \qmlmethod geoshape QtLocation5::QtLocation::shape() const
+
+    Constructs an invalid geoshape.
+
+    \sa {QtLocation5::geoshape}{geoshape}
+*/
+QGeoShape LocationSingleton::shape() const
+{
+    return QGeoShape();
+}
+
+/*!
+    \qmlmethod georectangle QtLocation5::QtLocation::rectangle() const
+
+    Constructs an invalid georectangle.
+
+    \sa {QtLocation5::georectangle}{georectangle}
+*/
+QGeoRectangle LocationSingleton::rectangle() const
+{
+    return QGeoRectangle();
+}
+
+/*!
+    \qmlmethod georectangle QtLocation5::QtLocation::rectangle(coordinate center, real width, real height) const
+
+    Constructs a georectangle centered at \a center with a width of \a width degrees and a hight of
+    \a height degrees.
+
+    \sa {QtLocation5::georectangle}{georectangle}
+*/
+QGeoRectangle LocationSingleton::rectangle(const QGeoCoordinate &center,
+                                           double width, double height) const
+{
+    return QGeoRectangle(center, width, height);
+}
+
+/*!
+    \qmlmethod georectangle QtLocation5::QtLocation::rectangle(coordinate topLeft, coordinate bottomRight) const
+
+    Constructs a georectangle with its top left corner positioned at \a topLeft and its bottom
+    right corner positioned at \a {bottomLeft}.
+
+    \sa {QtLocation5::georectangle}{georectangle}
+*/
+QGeoRectangle LocationSingleton::rectangle(const QGeoCoordinate &topLeft,
+                                           const QGeoCoordinate &bottomRight) const
+{
+    return QGeoRectangle(topLeft, bottomRight);
+}
+
+/*!
+    \qmlmethod geocircle QtLocation5::QtLocation::circle() const
+
+    Constructs an invalid geocircle.
+
+    \sa {QtLocation5::geocircle}{geocircle}
+*/
+QGeoCircle LocationSingleton::circle() const
+{
+    return QGeoCircle();
+}
+
+/*!
+    \qmlmethod geocircle QtLocation5::QtLocation::circle(coordinate center, real radius) const
+
+    Constructs a geocircle centered at \a center with a radius of \a radius meters.
+*/
+QGeoCircle LocationSingleton::circle(const QGeoCoordinate &center, qreal radius) const
+{
+    return QGeoCircle(center, radius);
+}
+

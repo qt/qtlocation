@@ -42,12 +42,12 @@
 #ifndef QDECLARATIVEGEOLOCATION_P_H
 #define QDECLARATIVEGEOLOCATION_P_H
 
+#include "qdeclarativegeoaddress_p.h"
+
 #include <QtCore/QObject>
 #include <QtQml/QQmlListProperty>
 #include <QtLocation/QGeoLocation>
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeorectangle.h"
-#include "qdeclarativegeoaddress_p.h"
+#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
@@ -58,23 +58,23 @@ class QDeclarativeGeoLocation : public QObject
     Q_PROPERTY(QGeoLocation location READ location WRITE setLocation)
     Q_PROPERTY(QDeclarativeGeoAddress *address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QDeclarativeGeoRectangle *boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
+    Q_PROPERTY(QGeoRectangle boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
 
 public:
     explicit QDeclarativeGeoLocation(QObject *parent = 0);
     explicit QDeclarativeGeoLocation(const QGeoLocation &src, QObject *parent = 0);
     ~QDeclarativeGeoLocation();
 
-    QGeoLocation location() ;
+    QGeoLocation location() const;
     void setLocation(const QGeoLocation &src);
 
-    QDeclarativeGeoAddress *address();
+    QDeclarativeGeoAddress *address() const;
     void setAddress(QDeclarativeGeoAddress *address);
-    QGeoCoordinate coordinate();
+    QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate coordinate);
 
-    QDeclarativeGeoRectangle *boundingBox();
-    void setBoundingBox(QDeclarativeGeoRectangle *boundingBox);
+    QGeoRectangle boundingBox() const;
+    void setBoundingBox(const QGeoRectangle &boundingBox);
 
 Q_SIGNALS:
     void addressChanged();
@@ -83,7 +83,7 @@ Q_SIGNALS:
 
 private:
     QDeclarativeGeoAddress *m_address;
-    QDeclarativeGeoRectangle *m_boundingBox;
+    QGeoRectangle m_boundingBox;
     QGeoCoordinate m_coordinate;
 };
 

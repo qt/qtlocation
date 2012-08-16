@@ -73,7 +73,7 @@ class QDeclarativeGeocodeModel : public QAbstractListModel, public QQmlParserSta
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(QVariant query READ query WRITE setQuery NOTIFY queryChanged)
-    Q_PROPERTY(QObject *bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
+    Q_PROPERTY(QVariant bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
     Q_PROPERTY(GeocodeError error READ error NOTIFY errorChanged)
     Q_INTERFACES(QQmlParserStatus)
 
@@ -114,8 +114,8 @@ public:
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
 
-    void setBounds(QObject *bounds);
-    QObject *bounds() const;
+    void setBounds(const QVariant &boundingArea);
+    QVariant bounds() const;
 
     Status status() const;
     QString errorString() const;
@@ -171,14 +171,11 @@ protected:
 
 private:
     void setLocations(const QList<QGeoLocation> &locations);
-    QGeoShape boundingArea();
     void abortRequest();
     QGeocodeReply *reply_;
 
     QDeclarativeGeoServiceProvider *plugin_;
-    QPointer<QObject> boundingArea_;
-    QGeoRectangle boundingBox_;
-    QGeoCircle boundingCircle_;
+    QGeoShape boundingArea_;
 
     QList<QDeclarativeGeoLocation *> declarativeLocations_;
 

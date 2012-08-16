@@ -49,8 +49,8 @@
 #include <QtQml/QQmlContext>
 #include <QtQml/qqmlinfo.h>
 #include <QtQml/private/qqmlengine_p.h>
-#include <qgeoserviceprovider.h>
-#include <qgeoroutingmanager.h>
+#include <QtLocation/QGeoRoutingManager>
+#include <QtLocation/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 
@@ -645,8 +645,6 @@ QDeclarativeGeoRouteQuery::QDeclarativeGeoRouteQuery(QObject *parent)
 
 QDeclarativeGeoRouteQuery::~QDeclarativeGeoRouteQuery()
 {
-    if (!exclusions_.isEmpty())
-        exclusions_.clear();
 }
 
 /*!
@@ -756,22 +754,10 @@ void QDeclarativeGeoRouteQuery::setWaypoints(const QJSValue &value)
     QList<QGeoCoordinate> waypointList;
     quint32 length = value.property(QStringLiteral("length")).toUInt();
     for (quint32 i = 0; i < length; ++i) {
-        QJSValue v = value.property(i);
+        bool ok;
+        QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
 
-        QGeoCoordinate c;
-
-        if (v.isObject()) {
-            if (v.hasProperty(QStringLiteral("latitude")))
-                c.setLatitude(v.property(QStringLiteral("latitude")).toNumber());
-            if (v.hasProperty(QStringLiteral("longitude")))
-                c.setLongitude(v.property(QStringLiteral("longitude")).toNumber());
-            if (v.hasProperty(QStringLiteral("altitude")))
-                c.setAltitude(v.property(QStringLiteral("altitude")).toNumber());
-        } else if (v.isString()) {
-            c = stringToCoordinate(v.toString()).value<QGeoCoordinate>();
-        }
-
-        if (!c.isValid()) {
+        if (!ok || !c.isValid()) {
             qmlInfo(this) << "Unsupported waypoint type";
             return;
         }
@@ -798,48 +784,52 @@ void QDeclarativeGeoRouteQuery::setWaypoints(const QJSValue &value)
 
     \sa addExcludedArea, removeExcludedArea, clearExcludedAreas
 */
-QQmlListProperty<QDeclarativeGeoRectangle> QDeclarativeGeoRouteQuery::excludedAreas()
+QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
 {
-    return QQmlListProperty<QDeclarativeGeoRectangle>(this, 0, exclusions_append,
-                                                        exclusions_count, exclusions_at,
-                                                        exclusions_clear);
+    QQmlContext *context = QQmlEngine::contextForObject(parent());
+    QQmlEngine *engine = context->engine();
+    QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
+    QV8ValueTypeWrapper *valueTypeWrapper = v8Engine->valueTypeWrapper();
+
+    v8::Local<v8::Array> excludedAreasArray = v8::Array::New(request_.excludeAreas().length());
+    for (int i = 0; i < request_.excludeAreas().length(); ++i) {
+        const QGeoRectangle &r = request_.excludeAreas().at(i);
+
+        QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoRectangle>());
+        v8::Local<v8::Object> cv = valueTypeWrapper->newValueType(QVariant::fromValue(r), vt);
+
+        excludedAreasArray->Set(i, cv);
+    }
+
+    return v8Engine->scriptValueFromInternal(excludedAreasArray);
 }
 
-/*!
-    \internal
-*/
-void QDeclarativeGeoRouteQuery::exclusions_append(QQmlListProperty<QDeclarativeGeoRectangle> *prop, QDeclarativeGeoRectangle *area)
+void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
 {
-    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery *>(prop->object);
-    model->addExcludedArea(area);
-}
+    if (!value.isArray())
+        return;
 
-/*!
-    \internal
-*/
-int QDeclarativeGeoRouteQuery::exclusions_count(QQmlListProperty<QDeclarativeGeoRectangle> *prop)
-{
-    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery *>(prop->object);
-    return model->exclusions_.count();
-}
+    QList<QGeoRectangle> excludedAreasList;
+    quint32 length = value.property(QStringLiteral("length")).toUInt();
+    for (quint32 i = 0; i < length; ++i) {
+        bool ok;
+        QGeoRectangle r = parseRectangle(value.property(i), &ok);
 
-/*!
-    \internal
-*/
-QDeclarativeGeoRectangle *QDeclarativeGeoRouteQuery::exclusions_at(QQmlListProperty<QDeclarativeGeoRectangle> *prop, int index)
-{
-    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery *>(prop->object);
-    Q_ASSERT(index < model->exclusions_.count());
-    return model->exclusions_.at(index);
-}
+        if (!ok || !r.isValid()) {
+            qmlInfo(this) << "Unsupported waypoint type";
+            return;
+        }
 
-/*!
-    \internal
-*/
-void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGeoRectangle> *prop)
-{
-    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery *>(prop->object);
-    model->clearExcludedAreas();
+        excludedAreasList.append(r);
+    }
+
+    if (request_.excludeAreas() == excludedAreasList)
+        return;
+
+    request_.setExcludeAreas(excludedAreasList);
+
+    emit excludedAreasChanged();
+    emit queryDetailsChanged();
 }
 
 /*!
@@ -852,22 +842,20 @@ void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGe
 */
 
 
-void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoRectangle *area)
+void QDeclarativeGeoRouteQuery::addExcludedArea(const QGeoRectangle &area)
 {
-    if (!area)
-        return;
-    if (exclusions_.contains(area))
+    if (!area.isValid())
         return;
 
-    connect(area, SIGNAL(bottomLeftChanged()), this, SLOT(excludedAreaCoordinateChanged()));
-    connect(area, SIGNAL(bottomRightChanged()), this, SLOT(excludedAreaCoordinateChanged()));
-    connect(area, SIGNAL(topLeftChanged()), this, SLOT(excludedAreaCoordinateChanged()));
-    connect(area, SIGNAL(topRightChanged()), this, SLOT(excludedAreaCoordinateChanged()));
-    connect(area, SIGNAL(centerChanged()), this, SLOT(excludedAreaCoordinateChanged()));
-    connect(area, SIGNAL(widthChanged()), this, SLOT(excludedAreaCoordinateChanged()));
-    connect(area, SIGNAL(heightChanged()), this, SLOT(excludedAreaCoordinateChanged()));
+    QList<QGeoRectangle> excludedAreas = request_.excludeAreas();
 
-    exclusions_.append(area);
+    if (excludedAreas.contains(area))
+        return;
+
+    excludedAreas.append(area);
+
+    request_.setExcludeAreas(excludedAreas);
+
     if (complete_) {
         emit excludedAreasChanged();
         emit queryDetailsChanged();
@@ -882,18 +870,21 @@ void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoRectangle *area)
     \sa addExcludedArea, clearExcludedAreas
 */
 
-void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoRectangle *area)
+void QDeclarativeGeoRouteQuery::removeExcludedArea(const QGeoRectangle &area)
 {
-    if (!area)
+    if (!area.isValid())
         return;
 
-    int index = exclusions_.lastIndexOf(area);
+    QList<QGeoRectangle> excludedAreas = request_.excludeAreas();
+
+    int index = excludedAreas.lastIndexOf(area);
     if (index == -1) {
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, CANNOT_REMOVE_AREA);
         return;
     }
-    exclusions_.removeAt(index);
-    area->disconnect(this);
+    excludedAreas.removeAt(index);
+    request_.setExcludeAreas(excludedAreas);
+
     emit excludedAreasChanged();
     emit queryDetailsChanged();
 }
@@ -908,11 +899,11 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoRectangle *are
 
 void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 {
-    if (!exclusions_.count())
+    if (request_.excludeAreas().isEmpty())
         return;
-    for (int i = 0; i < exclusions_.count(); ++i)
-        exclusions_.at(i)->disconnect(this);
-    exclusions_.clear();
+
+    request_.setExcludeAreas(QList<QGeoRectangle>());
+
     emit excludedAreasChanged();
     emit queryDetailsChanged();
 }
@@ -1248,14 +1239,8 @@ void QDeclarativeGeoRouteQuery::setRouteOptimizations(QDeclarativeGeoRouteQuery:
 /*!
     \internal
 */
-QGeoRouteRequest &QDeclarativeGeoRouteQuery::routeRequest()
+QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest() const
 {
-    // Bit inefficient, but excludearea count is not big
-    QList<QGeoRectangle> exclusions;
-    for (int i = 0; i < exclusions_.count(); ++i)
-        exclusions.append(exclusions_.at(i)->rectangle());
-
-    request_.setExcludeAreas(exclusions);
     return request_;
 }
 

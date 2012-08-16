@@ -45,6 +45,9 @@
 #include <QtCore/QObject>
 #include <QtCore/qnumeric.h>
 #include <QtLocation/QGeoCoordinate>
+#include <QtLocation/QGeoShape>
+#include <QtLocation/QGeoRectangle>
+#include <QtLocation/QGeoCircle>
 
 class LocationSingleton : public QObject
 {
@@ -56,6 +59,17 @@ public:
     Q_INVOKABLE QGeoCoordinate coordinate() const;
     Q_INVOKABLE QGeoCoordinate coordinate(double latitude, double longitude,
                                           double altitude = qQNaN()) const;
+
+    Q_INVOKABLE QGeoShape shape() const;
+
+    Q_INVOKABLE QGeoRectangle rectangle() const;
+    Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &center,
+                                        double width, double height) const;
+    Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &topLeft,
+                                        const QGeoCoordinate &bottomRight) const;
+
+    Q_INVOKABLE QGeoCircle circle() const;
+    Q_INVOKABLE QGeoCircle circle(const QGeoCoordinate &center, qreal radius = -1.0) const;
 };
 
 #endif // LOCATIONSINGLETON_H

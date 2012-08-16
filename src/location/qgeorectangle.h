@@ -128,6 +128,8 @@ private:
     inline const QGeoRectanglePrivate *d_func() const;
 };
 
+Q_DECLARE_TYPEINFO(QGeoRectangle, Q_MOVABLE_TYPE);
+
 inline QGeoRectangle QGeoRectangle::operator|(const QGeoRectangle &rectangle) const
 {
     return united(rectangle);

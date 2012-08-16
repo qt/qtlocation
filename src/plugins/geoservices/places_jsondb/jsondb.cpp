@@ -53,7 +53,6 @@
 #include <QtJsonDb/QJsonDbWriteRequest>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceCategory>
-#include <QtLocation/QGeoCircle>
 
 const QLatin1String JsonDb::Uuid("_uuid");
 const QLatin1String JsonDb::Type("_type");

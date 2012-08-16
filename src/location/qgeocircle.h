@@ -97,6 +97,8 @@ private:
     inline const QGeoCirclePrivate *d_func() const;
 };
 
+Q_DECLARE_TYPEINFO(QGeoCircle, Q_MOVABLE_TYPE);
+
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoCircle)

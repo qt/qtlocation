@@ -127,22 +127,6 @@ void cppQmlInterface(QObject *qmlObject)
     qmlObject->setProperty("address", QVariant::fromValue(geoAddress));
     //! [Address set]
 
-    //! [GeoRectangle get]
-    QGeoRectangle geoRectangle = qmlObject->property("rectangle").value<QGeoRectangle>();
-    //! [GeoRectangle get]
-
-    //! [GeoRectangle set]
-    qmlObject->setProperty("rectangle", QVariant::fromValue(geoRectangle));
-    //! [GeoRectangle set]
-
-    //! [GeoCircle get]
-    QGeoCircle geoCircle = qmlObject->property("circle").value<QGeoCircle>();
-    //! [GeoCircle get]
-
-    //! [GeoCircle set]
-    qmlObject->setProperty("circle", QVariant::fromValue(geoCircle));
-    //! [GeoCircle set]
-
     //! [Location get]
     QGeoLocation geoLocation = qmlObject->property("location").value<QGeoLocation>();
     //! [Location get]

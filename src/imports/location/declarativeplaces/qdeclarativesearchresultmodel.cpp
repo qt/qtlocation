@@ -205,14 +205,14 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty GeoShape PlaceSearchModel::searchArea
+    \qmlproperty variant PlaceSearchModel::searchArea
 
     This property holds the search area.  The search result returned by the model will be within
     the search area.
 
-    If this property is set to a \l GeoCircle its \l {GeoCircle::radius}{radius} property
-    may be left unset, in which case the \l Plugin will choose an appropriate radius for the
-    search.
+    If this property is set to a \l {QtLocation5::geocircle}{geocircle} its
+    \l {QtLocation5::geocircle}{radius} property may be left unset, in which case the \l Plugin
+    will choose an appropriate radius for the search.
 
     Support for specifying a search area can vary according to the \l plugin backend
     implementation.  For example, some may support a search center only while others may only
@@ -271,18 +271,10 @@ QT_USE_NAMESPACE
     \c PlaceSearchModel.Error and the model cleared.
 
     \code
-    GeoCircle {
-        id: searchLocation
-        center {
-            latitude: 10
-            longitude: 10
-        }
-    }
-
     PlaceSearchModel {
         id: model
         plugin: backendPlugin
-        searchArea : searchLocation
+        searchArea: QtLocation.circle(QtLocation.coordinate(10, 10))
         ...
     }
 
@@ -291,8 +283,8 @@ QT_USE_NAMESPACE
         onClicked: {
             model.searchTerm = "pizza";
             model.categories = null;  //not searching by any category
-            searchLocation.center.latitude = -27.5
-            searchLocation.center.longitude = 153
+            model.searchArea.center.latitude = -27.5;
+            model.searchArea.center.longitude = 153;
             model.update();
         }
     }

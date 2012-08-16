@@ -39,140 +39,146 @@
 **
 ***************************************************************************/
 
-#include <qnumeric.h>
 #include "qdeclarativegeocircle.h"
+
+#include <QtCore/qnumeric.h>
+#include <QtLocation/QGeoCircle>
+
+#include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmltype GeoCircle
-    \instantiates QDeclarativeGeoCircle
+    \qmlbasictype geocircle
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The GeoCircle type represents a circular geographic area.
+    \brief The geocircle type represents a circular geographic area.
 
-    The circle is defined in terms of a \l {QtLocation5::coordinate}{coordinate} which specifies
-    the center of the circle and a qreal which specifies the radius of the circle in meters.
+    The \c geocircle type is a \l {QtLocation5::geoshape}{geoshape} that represents a circular
+    geographic area.  It is defined in terms of a \l {QtLocation5::coordinate}{coordinate} which
+    specifies the \c center of the circle and a qreal which specifies the \c radius of the circle
+    in meters.
 
-    The circle is considered invalid if the center coordinate is invalid
-    or if the radius is less than zero.
+    The circle is considered invalid if the center coordinate is invalid or if the radius is less
+    than zero.
 
     \section2 Example Usage
 
-    The following code snippet shows the declaration of a GeoCircle object.
+    Use properties of type \l variant to store a \c {geocircle}.  To create a \c geocircle value,
+    use the \l {QtLocation5::QtLocation}{QtLocation.circle()} function:
 
-    \code
-    GeoCircle {
-        radius: 25.0
-        center {
-            latitude: 23.34
-            longitude: 44.4
-        }
+    \qml
+    import QtLocation 5.0
+
+    Item {
+        property variant region: QtLocation.circle(QtLocation.coordinate(-27.5, 153.1), 1000)
     }
-    \endcode
+    \endqml
 
-    This could then be used, for example, as a region to scan for landmarks,
-    or refining searches.
-
-    \sa QGeoCircle
+    When integrating with C++, note that any QGeoCircle value passed into QML from C++ is
+    automatically converted into a \c geocircle value, and vise-versa.
 */
 
-QDeclarativeGeoCircle::QDeclarativeGeoCircle(QObject *parent)
-:   QDeclarativeGeoShape(parent)
+GeoCircleValueType::GeoCircleValueType(QObject *parent)
+:   GeoShapeValueType(qMetaTypeId<QGeoCircle>(), parent)
 {
 }
 
-QDeclarativeGeoCircle::QDeclarativeGeoCircle(const QGeoCircle &circle, QObject *parent)
-:   QDeclarativeGeoShape(parent), m_circle(circle)
+GeoCircleValueType::~GeoCircleValueType()
 {
 }
 
-/*!
-    \qmlproperty QGeoCircle GeoCircle::circle
-
-    For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#geocircle}{Interfaces between C++ and QML Code}".
+/*
+    This property holds the coordinate of the center of the geocircle.
 */
-void QDeclarativeGeoCircle::setCircle(const QGeoCircle &circle)
+QGeoCoordinate GeoCircleValueType::center()
 {
-    if (m_circle == circle)
+    return QGeoCircle(v).center();
+}
+
+void GeoCircleValueType::setCenter(const QGeoCoordinate &coordinate)
+{
+    QGeoCircle c = v;
+
+    if (c.center() == coordinate)
         return;
 
-    QGeoCircle oldCircle = m_circle;
-    m_circle = circle;
-
-    if (oldCircle.center() != m_circle.center())
-        emit centerChanged();
-    if (oldCircle.radius() != m_circle.radius())
-        emit radiusChanged();
-}
-
-QGeoCircle QDeclarativeGeoCircle::circle() const
-{
-    return m_circle;
+    c.setCenter(coordinate);
+    v = c;
 }
 
 /*!
-    \internal
+    This property holds the radius of the geocircle in meters.
+
+    The default value for the radius is -1 indicating an invalid geocircle area.
 */
-QGeoShape QDeclarativeGeoCircle::shape() const
+qreal GeoCircleValueType::radius() const
 {
-    return circle();
+    return QGeoCircle(v).radius();
 }
 
-/*!
-    \qmlmethod bool QDeclarativeGeoCircle::contains(coordinate coordinate)
-
-    Returns the true if \a coordinate is within the bounding circle; otherwise returns false.
-*/
-bool QDeclarativeGeoCircle::contains(const QGeoCoordinate &coordinate)
+void GeoCircleValueType::setRadius(qreal radius)
 {
-    return m_circle.contains(coordinate);
-}
+    QGeoCircle c = v;
 
-/*!
-    \qmlproperty coordinate GeoCircle::center
-
-    This property holds the coordinate of the center of the bounding circle.
-
-    \note this property's changed() signal is currently emitted only if the
-    whole object changes, not if only the contents of the object change.
-*/
-QGeoCoordinate QDeclarativeGeoCircle::center()
-{
-    return m_circle.center();
-}
-
-void QDeclarativeGeoCircle::setCenter(const QGeoCoordinate &coordinate)
-{
-    if (m_circle.center() == coordinate)
+    if (c.radius() == radius)
         return;
 
-    m_circle.setCenter(coordinate);
-    emit centerChanged();
+    c.setRadius(radius);
+    v = c;
 }
 
-/*!
-    \qmlproperty real GeoCircle::radius
-
-    This property holds the radius of the bounding circle in meters.
-
-    The default value for the radius is -1 indicating an invalid bounding circle area.
-*/
-qreal QDeclarativeGeoCircle::radius() const
+QString GeoCircleValueType::toString() const
 {
-    return m_circle.radius();
+    if (v.type() != QGeoShape::CircleType) {
+        qWarning("Not a circle");
+        return QStringLiteral("QGeoCircle(not a circle)");
+    }
+
+    QGeoCircle c = v;
+    return QStringLiteral("QGeoCircle({%1, %2}, %3)")
+        .arg(c.center().latitude())
+        .arg(c.center().longitude())
+        .arg(c.radius());
 }
 
-void QDeclarativeGeoCircle::setRadius(qreal radius)
+void GeoCircleValueType::setValue(const QVariant &value)
 {
-    if (m_circle.radius() == radius)
-        return;
+    if (value.userType() == qMetaTypeId<QGeoCircle>())
+        v = value.value<QGeoCircle>();
+    else if (value.userType() == qMetaTypeId<QGeoShape>())
+        v = value.value<QGeoShape>();
+    else
+        v = QGeoCircle();
 
-    m_circle.setRadius(radius);
-    emit radiusChanged();
+    onLoad();
+}
+
+QVariant GeoCircleValueType::value()
+{
+    return QVariant::fromValue(QGeoCircle(v));
+}
+
+void GeoCircleValueType::write(QObject *obj, int idx, QQmlPropertyPrivate::WriteFlags flags)
+{
+    QGeoCircle c = v;
+    writeProperty(obj, idx, flags, &c);
+}
+
+void GeoCircleValueType::writeVariantValue(QObject *obj, int idx, QQmlPropertyPrivate::WriteFlags flags, QVariant *from)
+{
+    if (from->userType() == qMetaTypeId<QGeoCircle>()) {
+        writeProperty(obj, idx, flags, from);
+    } else if (from->userType() == qMetaTypeId<QGeoShape>()) {
+        QGeoCircle c = from->value<QGeoShape>();
+        QVariant v = QVariant::fromValue(c);
+        writeProperty(obj, idx, flags, &v);
+    } else {
+        QVariant v = QVariant::fromValue(QGeoCircle());
+        writeProperty(obj, idx, flags, &v);
+    }
 }
 
 #include "moc_qdeclarativegeocircle.cpp"

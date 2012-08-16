@@ -46,7 +46,6 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QDebug>
 #include <QtJsonDb/QJsonDbReadRequest>
-#include <QtLocation/QGeoCircle>
 
 MatchReply::MatchReply(QPlaceManagerEngineJsonDb *engine)
     : QPlaceMatchReply(engine), m_engine(engine)

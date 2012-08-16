@@ -48,11 +48,18 @@ Item {
     width: (parent && parent.width > 0) ? parent.width : 360
     height: (parent && parent.height > 0) ? parent.height : 640
     property variant map
-    property variant searchRegion : startLocation
+    property variant startLocation
+    property variant searchRegion: QtLocation.circle(startLocation)
     property variant searchRegionItem
     property Plugin favoritesPlugin
 
     onMapChanged: editPlaceDialog.prepareDialog()
+
+    Binding {
+        target: page
+        property: "startLocation"
+        value: map ? map.center : QtLocation.coordinate()
+    }
 
     Rectangle {
         id: backgroundRect
@@ -207,9 +214,10 @@ Item {
         onGoButtonClicked: {
             var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
                                           parseFloat(dialogModel.get(1).inputText));
-            searchRegion = startLocation;
 
             map.center = c;
+
+            searchRegion = Qt.binding(function() { return QtLocation.circle(startLocation) });
 
             if (searchRegionItem) {
                 map.removeMapItem(searchRegionItem);
@@ -241,16 +249,14 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            var newRegion = Qt.createQmlObject('import QtLocation 5.0; GeoRectangle {}', page, "GeoCircle");
             var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
                                           parseFloat(dialogModel.get(1).inputText));
-            newRegion.center = c;
-            newRegion.width = dialogModel.get(2).inputText;
-            newRegion.height = dialogModel.get(3).inputText;
+            var r = QtLocation.rectangle(c, parseFloat(dialogModel.get(2).inputText),
+                                         parseFloat(dialogModel.get(3).inputText));
 
             map.center = c;
 
-            searchRegion = newRegion;
+            searchRegion = r;
 
             if (searchRegionItem) {
                 map.removeMapItem(searchRegionItem);
@@ -258,8 +264,8 @@ Item {
             }
 
             searchRegionItem = Qt.createQmlObject('import QtLocation 5.0; MapRectangle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
-            searchRegionItem.topLeft = newRegion.topLeft;
-            searchRegionItem.bottomRight = newRegion.bottomRight;
+            searchRegionItem.topLeft = r.topLeft;
+            searchRegionItem.bottomRight = r.bottomRight;
             map.addMapItem(searchRegionItem);
 
             page.state = "";
@@ -286,15 +292,13 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            var newRegion = Qt.createQmlObject('import QtLocation 5.0; GeoCircle {}', page, "GeoCircle");
             var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
                                           parseFloat(dialogModel.get(1).inputText));
-            newRegion.center = c;
-            newRegion.radius = dialogModel.get(2).inputText;
+            var circle = QtLocation.circle(c, parseFloat(dialogModel.get(2).inputText));
 
             map.center = c;
 
-            searchRegion = newRegion;
+            searchRegion = circle;
 
             if (searchRegionItem) {
                 map.removeMapItem(searchRegionItem);
@@ -302,8 +306,8 @@ Item {
             }
 
             searchRegionItem = Qt.createQmlObject('import QtLocation 5.0; MapCircle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
-            searchRegionItem.center = newRegion.center;
-            searchRegionItem.radius = newRegion.radius;
+            searchRegionItem.center = circle.center;
+            searchRegionItem.radius = circle.radius;
             map.addMapItem(searchRegionItem);
 
             page.state = "";
@@ -345,16 +349,6 @@ Item {
             categoryModel.update();
             page.state = "";
         }
-    }
-
-    GeoCircle {
-        id: startLocation
-    }
-
-    Binding {
-        target: startLocation
-        property: "center"
-        value: map ? map.center : QtLocation.coordinate()
     }
 
     //! [PlaceSearchModel model]

@@ -44,40 +44,42 @@ import QtTest 1.0
 import QtLocation 5.0
 
 Item {
+    id: testCase
+
     property variant coordinate1: QtLocation.coordinate(1, 1)
     property variant coordinate2: QtLocation.coordinate(2, 2)
     property variant coordinate3: QtLocation.coordinate(80, 80)
 
-    GeoCircle { id: emptyCircle }
-    GeoCircle { id: circle1; center: coordinate1; radius: 200000 }
+    property variant emptyCircle: QtLocation.circle()
+    property variant circle1: QtLocation.circle(coordinate1, 200000)
 
-    SignalSpy {id: radiusSpy; target: emptyCircle; signalName: "radiusChanged"}
-    SignalSpy {id: centerSpy; target: emptyCircle; signalName: "centerChanged"}
+    SignalSpy { id: circleChangedSpy; target: testCase; signalName: "emptyCircleChanged" }
 
     TestCase {
         name: "Bounding circle"
         function test_circle_defaults_and_setters() {
+            circleChangedSpy.clear();
             compare (emptyCircle.radius, -1)
             compare (circle1.radius, 200000)
 
             emptyCircle.radius = 200
-            compare (radiusSpy.count, 1)
-            emptyCircle.radius = 200
-            compare (radiusSpy.count, 1)
+            compare(circleChangedSpy.count, 1);
+            emptyCircle.radius = 200;
+            compare(circleChangedSpy.count, 1);
 
+            emptyCircle.center = coordinate1;
+            compare(circleChangedSpy.count, 2);
             emptyCircle.center = coordinate1
-            compare (centerSpy.count, 1)
-            emptyCircle.center = coordinate1
-            compare (centerSpy.count, 1)
+            compare(circleChangedSpy.count, 2);
             emptyCircle.center = coordinate2
-            compare (centerSpy.count, 2)
+            compare(circleChangedSpy.count, 3);
 
             emptyCircle.center = coordinate1
             emptyCircle.radius = 200000
-            // TODO
-            //compare(emptyCircle.contains(coordinate1), true)
-            //compare(emptyCircle.contains(coordinate2), true)
-            //compare(emptyCircle.contains(coordinate3), false)
+
+            compare(emptyCircle.contains(coordinate1), true);
+            compare(emptyCircle.contains(coordinate2), true);
+            compare(emptyCircle.contains(coordinate3), false);
         }
     }
 
@@ -91,13 +93,7 @@ Item {
     property variant inside: QtLocation.coordinate(0.5, 0.5)
     property variant outside: QtLocation.coordinate(2, 2)
 
-    GeoRectangle {
-        id: box;
-        bottomLeft: bl
-        topLeft: tl
-        topRight: tr
-        bottomRight: br
-    }
+    property variant box: QtLocation.rectangle(tl, br)
 
     // C++ auto test exists for basics of bounding box, testing here
     // only added functionality

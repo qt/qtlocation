@@ -42,8 +42,6 @@
 #ifndef QDECLARATIVEGEOROUTE_H
 #define QDECLARATIVEGEOROUTE_H
 
-#include "qdeclarativegeorectangle.h"
-#include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoroutesegment_p.h"
 
 #include <QtCore/QObject>
@@ -56,7 +54,7 @@ class QDeclarativeGeoRoute : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeGeoRectangle *bounds READ bounds CONSTANT)
+    Q_PROPERTY(QGeoRectangle bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
     Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
@@ -67,7 +65,7 @@ public:
     QDeclarativeGeoRoute(const QGeoRoute &route, QObject *parent = 0);
     ~QDeclarativeGeoRoute();
 
-    QDeclarativeGeoRectangle *bounds() const;
+    QGeoRectangle bounds() const;
     int travelTime() const;
     qreal distance() const;
 
@@ -92,7 +90,6 @@ private:
     QList<QGeoCoordinate> routePath();
 
     QGeoRoute route_;
-    QDeclarativeGeoRectangle *bounds_;
     QList<QDeclarativeGeoRouteSegment *> segments_;
     friend class QDeclarativeRouteMapItem;
 };

@@ -110,17 +110,8 @@ Item {
     property variant mapRouteTopLeft: QtLocation.coordinate(0, 0)
     property variant mapRouteBottomRight: QtLocation.coordinate(0, 0)
 
-    GeoRectangle {
-        id: boundingBox
-        topLeft {
-            latitude: 0
-            longitude: 0
-        }
-        bottomRight {
-            latitude: 0
-            longitude: 0
-        }
-    }
+    property variant boundingBox: QtLocation.rectangle(QtLocation.coordinate(0, 0),
+                                                       QtLocation.coordinate(0, 0))
 
     Map {
         id: map;
@@ -477,9 +468,7 @@ Item {
             point.y = maxY
             var itemBottomRight = map.toCoordinate(point)
 
-            boundingBox.topLeft = itemTopLeft;
-            boundingBox.bottomRight = itemBottomRight;
-            return boundingBox
+            return QtLocation.rectangle(itemTopLeft, itemBottomRight);
         }
 
         function verify_visibility_all_items(){

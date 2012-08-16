@@ -39,290 +39,255 @@
 **
 ***************************************************************************/
 
-#include <qnumeric.h>
 #include "qdeclarativegeorectangle.h"
+
+#include <QtCore/qnumeric.h>
+#include <QtLocation/QGeoRectangle>
+
+#include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmltype GeoRectangle
-    \instantiates QDeclarativeGeoRectangle
+    \qmlbasictype georectangle
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-positioning
     \since Qt Location 5.0
 
-    \brief The GeoRectangle type represents a rectangular geographic area.
+    \brief The georectangle type represents a rectangular geographic area.
 
-    A GeoRectangle is described by a \l {QtLocation5::coordinate}{coordinate} which represents the
-    top-left of the GeoRectangle and a second \l {QtLocation5::coordinate}{coordinate} which
-    represents the bottom-right of GeoRectangle.
+    The \c georectangle type is a \l {QtLocation5::geoshape}{geoshape} that represents a
+    rectangular geographic area.  It is defined by a pair of
+    \l {QtLocation5::coordinate}{coordinates} which represent the top-left and bottom-right corners
+    of the \c {georectangle}.  The coordinates are accessible from the \c topLeft and
+    \c bottomRight attributes.
 
-    A GeoRectangle is considered invalid if the top-left or bottom-right
-    coordinates are invalid or if the top-left coordinate is South of the
-    bottom-right coordinate.
+    A \c georectangle is considered invalid if the top-left or bottom-right coordinates are invalid
+    or if the top-left coordinate is South of the bottom-right coordinate.
 
-    GeoRectangles can never cross the poles.
+    The coordinates of the four corners of the \c georectangle can be accessed with the
+    \c {topLeft}, \c {topRight}, \c {bottomLeft} and \c {bottomRight} attributes.  The \c center
+    attribute can be used to get the coordinate of the center of the \c georectangle.  The \c width
+    and \c height attributes can be used to get the width and height of the \c georectangle in
+    degrees.  Setting one of these attributes will cause the other attributes to be adjusted
+    accordingly.
 
-    If the height or center of a geo rectangle is adjusted such that it would
-    cross one of the poles the height is modified such that the geo rectangle
-    touches but does not cross the pole and that the center coordinate is still
-    in the center of the geo rectangle.
+    \section2 Limitations
+
+    A \c georectangle can never cross the poles.
+
+    If the height or center of a \c georectangle is adjusted such that it would cross one of the
+    poles the height is modified such that the \c georectangle touches but does not cross the pole
+    and that the center coordinate is still in the center of the \c georectangle.
 
     \section2 Example Usage
 
-    The following code snippet shows the declaration of a GeoRectangle object.
+    Use properties of type \l variant to store a \c {georectangle}.  To create a \c georectangle
+    value, use the \l {QtLocation5::QtLocation}{QtLocation.rectangle()} function:
 
-    \code
-    GeoRectangle {
-        topLeft {
-            latitude: 23.34
-            longitude: 44.4
-        }
-        bottomRight {
-            latitude: 22.25
-            longitude: 42.88
-        }
+    \qml
+    import QtLocation 5.0
+
+    Item {
+        property variant region: QtLocation.rectangle(QtLocation.coordinate(-27.5, 153.1), QtLocation.coordinate(-27.6, 153.2))
     }
-    \endcode
+    \endqml
 
-    This could then be used, for example, as a region to search for places.
-
-    \sa QGeoRectangle
+    When integrating with C++, note that any QGeoRectangle value passed into QML from C++ is
+    automatically converted into a \c georectangle value, and vice-versa.
 */
 
-QDeclarativeGeoRectangle::QDeclarativeGeoRectangle(QObject *parent)
-:   QDeclarativeGeoShape(parent), m_width(qQNaN()), m_height(qQNaN())
+GeoRectangleValueType::GeoRectangleValueType(QObject *parent)
+:   GeoShapeValueType(qMetaTypeId<QGeoRectangle>(), parent)
 {
 }
 
-QDeclarativeGeoRectangle::QDeclarativeGeoRectangle(const QGeoRectangle &box, QObject *parent)
-:   QDeclarativeGeoShape(parent), m_box(box), m_width(qQNaN()), m_height(qQNaN())
+GeoRectangleValueType::~GeoRectangleValueType()
 {
-    emitChanged(box);
 }
 
-/*!
-    \qmlproperty QGeoRectangle GeoRectangle::rectangle
+QGeoCoordinate GeoRectangleValueType::bottomLeft()
+{
+    return QGeoRectangle(v).bottomLeft();
+}
 
-    For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#georectangle}{Interfaces between C++ and QML Code}".
+/*
+    This property holds the bottom left coordinate of this georectangle.
 */
-void QDeclarativeGeoRectangle::setRectangle(const QGeoRectangle &box)
+void GeoRectangleValueType::setBottomLeft(const QGeoCoordinate &coordinate)
 {
-    QGeoRectangle oldBox = m_box;
-    m_box = box;
-    emitChanged(oldBox);
-}
+    QGeoRectangle r = v;
 
-QGeoRectangle QDeclarativeGeoRectangle::rectangle() const
-{
-    return m_box;
-}
-
-QGeoShape QDeclarativeGeoRectangle::shape() const
-{
-    return m_box;
-}
-
-/*!
-    \qmlmethod bool QDeclarativeGeoRectangle::contains(coordinate coordinate)
-
-    Returns the true if \a coordinate is within the geo rectangle; otherwise returns false.
-*/
-bool QDeclarativeGeoRectangle::contains(const QGeoCoordinate &coordinate)
-{
-    return m_box.contains(coordinate);
-}
-
-QGeoCoordinate QDeclarativeGeoRectangle::bottomLeft()
-{
-    return m_box.bottomLeft();
-}
-
-/*!
-    \qmlproperty coordinate GeoRectangle::bottomLeft
-
-    This property holds the bottom left coordinate of this geo rectangle.
-
-    \sa {QGeoRectangle}
-*/
-void QDeclarativeGeoRectangle::setBottomLeft(const QGeoCoordinate &coordinate)
-{
-    if (m_box.bottomLeft() == coordinate)
+    if (r.bottomLeft() == coordinate)
         return;
 
-    QGeoRectangle old = m_box;
-    m_box.setBottomLeft(coordinate);
-    emitChanged(old);
+    r.setBottomLeft(coordinate);
+    v = r;
 }
 
-QGeoCoordinate QDeclarativeGeoRectangle::bottomRight()
+QGeoCoordinate GeoRectangleValueType::bottomRight()
 {
-    return m_box.bottomRight();
+    return QGeoRectangle(v).bottomRight();
 }
 
-/*!
-    \qmlproperty coordinate GeoRectangle::bottomRight
-
-    This property holds the bottom right coordinate of this geo rectangle.
-
-    \sa {QGeoRectangle}
+/*
+    This property holds the bottom right coordinate of this georectangle.
 */
-void QDeclarativeGeoRectangle::setBottomRight(const QGeoCoordinate &coordinate)
+void GeoRectangleValueType::setBottomRight(const QGeoCoordinate &coordinate)
 {
-    if (m_box.bottomRight() == coordinate)
+    QGeoRectangle r = v;
+
+    if (r.bottomRight() == coordinate)
         return;
 
-    QGeoRectangle old = m_box;
-    m_box.setBottomRight(coordinate);
-    emitChanged(old);
+    r.setBottomRight(coordinate);
+    v = r;
 }
 
-QGeoCoordinate QDeclarativeGeoRectangle::topLeft()
+QGeoCoordinate GeoRectangleValueType::topLeft()
 {
-    return m_box.topLeft();
+    return QGeoRectangle(v).topLeft();
 }
 
-/*!
-    \qmlproperty coordinate GeoRectangle::topLeft
-
-    This property holds the top left coordinate of this geo rectangle.
-
-    \sa {QGeoRectangle}
+/*
+    This property holds the top left coordinate of this georectangle.
 */
-void QDeclarativeGeoRectangle::setTopLeft(const QGeoCoordinate &coordinate)
+void GeoRectangleValueType::setTopLeft(const QGeoCoordinate &coordinate)
 {
-    if (m_box.topLeft() == coordinate)
+    QGeoRectangle r = v;
+
+    if (r.topLeft() == coordinate)
         return;
 
-    QGeoRectangle old = m_box;
-    m_box.setTopLeft(coordinate);
-    emitChanged(old);
+    r.setTopLeft(coordinate);
+    v = r;
 }
 
-QGeoCoordinate QDeclarativeGeoRectangle::topRight()
+QGeoCoordinate GeoRectangleValueType::topRight()
 {
-    return m_box.topRight();
+    return QGeoRectangle(v).topRight();
 }
 
-/*!
-  \qmlproperty coordinate GeoRectangle::topRight
-
-  This property holds the top right coordinate of this geo rectangle.
-
-  \note this property's changed() signal is currently emitted only if the
-  whole type changes, not if only the contents of the type change.
-
-  \sa {QGeoRectangle}
-  */
-
-void QDeclarativeGeoRectangle::setTopRight(QGeoCoordinate &coordinate)
+/*
+    This property holds the top right coordinate of this georectangle.
+*/
+void GeoRectangleValueType::setTopRight(QGeoCoordinate &coordinate)
 {
-    if (m_box.topRight() == coordinate)
+    QGeoRectangle r = v;
+
+    if (r.topRight() == coordinate)
         return;
 
-    QGeoRectangle old = m_box;
-    m_box.setTopRight(coordinate);
-    emitChanged(old);
+    r.setTopRight(coordinate);
+    v = r;
 }
 
-QGeoCoordinate QDeclarativeGeoRectangle::center()
+QGeoCoordinate GeoRectangleValueType::center()
 {
-    return m_box.center();
+    return QGeoRectangle(v).center();
 }
 
-/*!
-  \qmlproperty coordinate GeoRectangle::center
-
-  This property holds the center coordinate of this geo rectangle.
-
-  \note this property's changed() signal is currently emitted only if the
-  whole object changes, not if only the contents of the object change.
-
-  \sa {QGeoRectangle}
-
-  */
-
-void QDeclarativeGeoRectangle::setCenter(const QGeoCoordinate &coordinate)
+/*
+    This property holds the center coordinate of this georectangle.
+*/
+void GeoRectangleValueType::setCenter(const QGeoCoordinate &coordinate)
 {
-    if (m_box.center() == coordinate)
+    QGeoRectangle r = v;
+
+    if (r.center() == coordinate)
         return;
 
-    QGeoRectangle old = m_box;
-    m_box.setCenter(coordinate);
-    emitChanged(old);
+    r.setCenter(coordinate);
+    v = r;
 }
 
-double QDeclarativeGeoRectangle::height()
+double GeoRectangleValueType::height()
 {
-    return m_height;
+    return QGeoRectangle(v).height();
 }
 
-/*!
-  \qmlproperty double GeoRectangle::height
-
-  This property holds the height of this geo rectangle (in degrees).
-
-  \sa {QGeoRectangle}
-  */
-
-void QDeclarativeGeoRectangle::setHeight(double height)
+/*
+    This property holds the height of this georectangle (in degrees).
+*/
+void GeoRectangleValueType::setHeight(double height)
 {
-    QGeoRectangle oldBox = m_box;
-    if (!m_box.isValid())
-        m_box.setCenter(QGeoCoordinate(0.0, 0.0));
-    m_box.setHeight(height);
-    emitChanged(oldBox);
+    QGeoRectangle r = v;
+
+    if (!r.isValid())
+        r.setCenter(QGeoCoordinate(0.0, 0.0));
+
+    r.setHeight(height);
+    v = r;
 }
 
-double QDeclarativeGeoRectangle::width()
+double GeoRectangleValueType::width()
 {
-    return m_width;
+    return QGeoRectangle(v).width();
 }
 
-/*!
-  \qmlproperty double GeoRectangle::width
-
-  This property holds the width of this geo rectangle (in degrees).
-
-  \sa {QGeoRectangle}
-
-  */
-
-void QDeclarativeGeoRectangle::setWidth(double width)
+/*
+    This property holds the width of this georectangle (in degrees).
+*/
+void GeoRectangleValueType::setWidth(double width)
 {
-    QGeoRectangle oldBox = m_box;
-    if (!m_box.isValid())
-        m_box.setCenter(QGeoCoordinate(0.0, 0.0));
-    m_box.setWidth(width);
-    emitChanged(oldBox);
+    QGeoRectangle r = v;
+
+    if (!r.isValid())
+        r.setCenter(QGeoCoordinate(0.0, 0.0));
+
+    r.setWidth(width);
+    v = r;
 }
 
-void QDeclarativeGeoRectangle::emitChanged(const QGeoRectangle &old)
+QString GeoRectangleValueType::toString() const
 {
-    if (old.bottomLeft() != m_box.bottomLeft())
-        emit bottomLeftChanged();
-
-    if (old.bottomRight() != m_box.bottomRight())
-        emit bottomRightChanged();
-
-    if (old.topLeft() != m_box.topLeft())
-        emit topLeftChanged();
-
-    if (old.topRight() != m_box.topRight())
-        emit topRightChanged();
-
-    if (old.center() != m_box.center())
-        emit centerChanged();
-
-    // Check not to compare two Not a Numbers, which by definition is 'false'.
-    if ((!qIsNaN(old.width()) || !qIsNaN(m_box.width())) && old.width() != m_box.width()) {
-        m_width = m_box.width();
-        emit widthChanged();
+    if (v.type() != QGeoShape::RectangleType) {
+        qWarning("Not a rectangle a %d\n", v.type());
+        return QStringLiteral("QGeoRectangle(not a rectangle)");
     }
-    if ((!qIsNaN(old.height()) || !qIsNaN(m_box.height())) && old.height() != m_box.height()) {
-        m_height = m_box.height();
-        emit heightChanged();
+
+    QGeoRectangle r = v;
+    return QStringLiteral("QGeoRectangle({%1, %2}, {%3, %4})")
+        .arg(r.topLeft().latitude())
+        .arg(r.topLeft().longitude())
+        .arg(r.bottomRight().latitude())
+        .arg(r.bottomRight().longitude());
+}
+
+void GeoRectangleValueType::setValue(const QVariant &value)
+{
+    if (value.userType() == qMetaTypeId<QGeoRectangle>())
+        v = value.value<QGeoRectangle>();
+    else if (value.userType() == qMetaTypeId<QGeoShape>())
+        v = value.value<QGeoShape>();
+    else
+        v = QGeoRectangle();
+
+    onLoad();
+}
+
+QVariant GeoRectangleValueType::value()
+{
+    return QVariant::fromValue(QGeoRectangle(v));
+}
+
+void GeoRectangleValueType::write(QObject *obj, int idx, QQmlPropertyPrivate::WriteFlags flags)
+{
+    QGeoRectangle r = v;
+    writeProperty(obj, idx, flags, &r);
+}
+
+void GeoRectangleValueType::writeVariantValue(QObject *obj, int idx, QQmlPropertyPrivate::WriteFlags flags, QVariant *from)
+{
+    if (from->userType() == qMetaTypeId<QGeoRectangle>()) {
+        writeProperty(obj, idx, flags, from);
+    } else if (from->userType() == qMetaTypeId<QGeoShape>()) {
+        QGeoRectangle r = from->value<QGeoShape>();
+        QVariant v = QVariant::fromValue(r);
+        writeProperty(obj, idx, flags, &v);
+    } else {
+        QVariant v = QVariant::fromValue(QGeoRectangle());
+        writeProperty(obj, idx, flags, &v);
     }
 }
 

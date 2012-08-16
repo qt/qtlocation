@@ -48,10 +48,10 @@
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QGeoCircle>
 
 QDeclarativeSearchModelBase::QDeclarativeSearchModelBase(QObject *parent)
-:   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_searchArea(0), m_complete(false),
-    m_status(Null)
+:   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_complete(false), m_status(Null)
 {
 }
 
@@ -84,20 +84,35 @@ void QDeclarativeSearchModelBase::setPlugin(QDeclarativeGeoServiceProvider *plug
 /*!
     \internal
 */
-QDeclarativeGeoShape *QDeclarativeSearchModelBase::searchArea() const
+QVariant QDeclarativeSearchModelBase::searchArea() const
 {
-    return m_searchArea;
+    QGeoShape s = m_request.searchArea();
+    if (s.type() == QGeoShape::RectangleType)
+        return QVariant::fromValue(QGeoRectangle(s));
+    else if (s.type() == QGeoShape::CircleType)
+        return QVariant::fromValue(QGeoCircle(s));
+    else
+        return QVariant::fromValue(s);
 }
 
 /*!
     \internal
 */
-void QDeclarativeSearchModelBase::setSearchArea(QDeclarativeGeoShape *searchArea)
+void QDeclarativeSearchModelBase::setSearchArea(const QVariant &searchArea)
 {
-    if (m_searchArea == searchArea)
+    QGeoShape s;
+
+    if (searchArea.userType() == qMetaTypeId<QGeoRectangle>())
+        s = searchArea.value<QGeoRectangle>();
+    else if (searchArea.userType() == qMetaTypeId<QGeoCircle>())
+        s = searchArea.value<QGeoCircle>();
+    else if (searchArea.userType() == qMetaTypeId<QGeoShape>())
+        s = searchArea.value<QGeoShape>();
+
+    if (m_request.searchArea() == s)
         return;
 
-    m_searchArea = searchArea;
+    m_request.setSearchArea(s);
     emit searchAreaChanged();
 }
 
@@ -195,7 +210,6 @@ void QDeclarativeSearchModelBase::update()
         return;
     }
 
-    updateSearchRequest();
     m_reply = sendQuery(placeManager, m_request);
     if (!m_reply) {
         clearData();
@@ -251,17 +265,6 @@ QString QDeclarativeSearchModelBase::errorString() const
 void QDeclarativeSearchModelBase::clearData(bool suppressSignal)
 {
     Q_UNUSED(suppressSignal)
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeSearchModelBase::updateSearchRequest()
-{
-    if (m_searchArea)
-        m_request.setSearchArea(m_searchArea->shape());
-    else
-        m_request.setSearchArea(QGeoShape());
 }
 
 /*!

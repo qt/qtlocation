@@ -91,12 +91,8 @@ TestCase {
                 altitude: 100
             }
 
-            boundingBox: GeoRectangle {
-                center {
-                    latitude: 10
-                    longitude: 10
-                    altitude: 100
-                }
+            boundingBox {
+                center: QtLocation.coordinate(10, 10, 100)
                 width: 100
                 height: 100
             }
@@ -145,13 +141,6 @@ TestCase {
          name: "dummyPlace"
          visibility: Place.PublicVisibility
      }
-
-    // compares two coordinates property by property
-    function compare_coordinate(coord1, coord2) {
-        return coord1.latitude === coord2.latitude &&
-               coord1.longitude === coord2.longitude &&
-               coord1.altitude === coord2.altitude;
-    }
 
     // compares two places property by property
     function compare_place(place1, place2) {
@@ -244,33 +233,10 @@ TestCase {
             if (place1.location.address.postalCode !== place2.location.address.postalCode)
                 return false;
 
-            /*
-            if (!compare_coordinate(place1.location.coordinate, place2.location.coordinate))
+            if (place1.location.coordinate !== place2.location.coordinate)
                 return false;
-            console.log("location.coordinate is equal");
-            if (!compare_coordinate(place1.location.boundingBox.bottomLeft, place2.location.boundingBox.bottomLeft))
+            if (place1.location.boundingBox !== place2.location.boundingBox)
                 return false;
-            console.log("location.boundingBox.bottomLeft is equal");
-            if (!compare_coordinate(place1.location.boundingBox.bottomRight, place2.location.boundingBox.bottomRight))
-                return false;
-            console.log("location.boundingBox.bottomRight is equal");
-            if (!compare_coordinate(place1.location.boundingBox.topLeft, place2.location.boundingBox.topLeft))
-                return false;
-            console.log("location.boundingBox.topLeft is equal");
-            if (!compare_coordinate(place1.location.boundingBox.topRight, place2.location.boundingBox.topRight))
-                return false;
-            console.log("location.boundingBox.topRight is equal");
-            if (!compare_coordinate(place1.location.boundingBox.center, place2.location.boundingBox.center))
-                return false;
-            console.log("location.boundingBox.center is equal");
-            console.log(place1.location.boundingBox.height + " eq " + place2.location.boundingBox.height);
-            if (place1.location.boundingBox.height !== place2.location.boundingBox.height)
-                return false;
-            console.log(place1.location.boundingBox.width + " eq " + place2.location.boundingBox.width);
-            if (place1.location.boundingBox.width !== place2.location.boundingBox.width)
-                return false;
-            console.log("location.boundingBox is equal");
-            */
         }
 
         // check icon
