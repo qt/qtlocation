@@ -186,7 +186,9 @@ public:
                                                                    "Only Place types have ExtendedAttributes and they cannot be re-assigned "
                                                                    "(but can be modified).");
             qmlRegisterType<QDeclarativeContactDetail>(uri, 5, 0, "ContactDetail");
-
+            qmlRegisterUncreatableType<QDeclarativeContactDetails>(uri, 5, 0, "ContactDetails", "ContactDetails instances cannot be instantiated.  "
+                                                                                                "Only Place types have ContactDetails and they cannot "
+                                                                                                "be re-assigned (but can be modified).");
             qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
             qRegisterMetaType<QGeoAddress>("QGeoAddress");
             qRegisterMetaType<QGeoRectangle>("QGeoRectangle");

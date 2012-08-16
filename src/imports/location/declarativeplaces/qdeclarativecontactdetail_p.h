@@ -44,9 +44,19 @@
 
 #include <QtCore/QObject>
 #include <QtLocation/QPlaceContactDetail>
+#include <QtQml/QQmlPropertyMap>
 #include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
+
+class QDeclarativeContactDetails : public QQmlPropertyMap
+{
+    Q_OBJECT
+
+public:
+    explicit QDeclarativeContactDetails(QObject *parent = 0);
+    virtual QVariant updateValue(const QString &key, const QVariant &input);
+};
 
 class QDeclarativeContactDetail : public QObject
 {

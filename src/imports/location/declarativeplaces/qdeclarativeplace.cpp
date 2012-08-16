@@ -189,7 +189,7 @@ QDeclarativePlace::QDeclarativePlace(QObject *parent)
 :   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QQmlPropertyMap(this)),
-    m_contactDetails(new QQmlPropertyMap(this)), m_reply(0), m_plugin(0),
+    m_contactDetails(new QDeclarativeContactDetails(this)), m_reply(0), m_plugin(0),
     m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
 {
     connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)),
@@ -202,7 +202,7 @@ QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServicePr
 :   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QQmlPropertyMap(this)),
-    m_contactDetails(new QQmlPropertyMap(this)), m_reply(0), m_plugin(plugin),
+    m_contactDetails(new QDeclarativeContactDetails(this)), m_reply(0), m_plugin(plugin),
     m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
 {
     Q_ASSERT(plugin);
@@ -717,20 +717,6 @@ void QDeclarativePlace::finished()
 */
 void QDeclarativePlace::contactsModified(const QString &key, const QVariant &value)
 {
-    //TODO: This is a workaround to allow an assignment of a single contact detail
-    //      to be treated as an assignment of a list with a single object.
-    //      A proper solution is to inherit off QQmlPropertyMap
-    //      and override the write behavior but this can only be done
-    //      when QTBUG-23183 is complete.
-    if (value.userType() == QMetaType::QObjectStar) {
-        QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(value.value<QObject *>());
-        if (detail) {
-            QVariantList varList;
-            varList.append(value);
-            m_contactDetails->insert(key, varList);
-        }
-    }
-
     primarySignalsEmission(key);
 }
 
@@ -898,7 +884,7 @@ QQmlPropertyMap *QDeclarativePlace::extendedAttributes() const
     This property holds the contact information for this place, for example a phone number or
     a website URL.  This property is a map of \l ContactDetail objects.
 */
-QQmlPropertyMap *QDeclarativePlace::contactDetails() const
+QDeclarativeContactDetails *QDeclarativePlace::contactDetails() const
 {
     return m_contactDetails;
 }

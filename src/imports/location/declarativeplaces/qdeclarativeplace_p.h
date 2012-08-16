@@ -165,7 +165,7 @@ public:
 
     QQmlPropertyMap *extendedAttributes() const;
 
-    QQmlPropertyMap *contactDetails() const;
+    QDeclarativeContactDetails *contactDetails() const;
 
     Visibility visibility() const;
     void setVisibility(Visibility visibility);
@@ -226,7 +226,7 @@ private:
     QDeclarativePlaceImageModel *m_imageModel;
     QDeclarativePlaceEditorialModel *m_editorialModel;
     QQmlPropertyMap *m_extendedAttributes;
-    QQmlPropertyMap *m_contactDetails;
+    QDeclarativeContactDetails *m_contactDetails;
 
     QPlace m_src;
 

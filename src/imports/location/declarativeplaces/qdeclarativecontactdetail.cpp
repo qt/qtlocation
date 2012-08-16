@@ -43,7 +43,7 @@
 
 /*!
     \qmltype ContactDetails
-    \instantiates QQmlPropertyMap
+    \instantiates QDeclarativeContactDetails
     \inqmlmodule QtLocation 5.0
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
@@ -65,6 +65,10 @@
         \li email
         \li website
     \endlist
+
+    ContactDetails instances are only ever used in the context of \l {Places}.  It is not possible
+    to create a ContactDetails instance directly or re-assign ContactDetails instances to \l {Places}.
+    Modification of ContactDetails can only be accomplished via Javascript.
 
     \section1 Examples
 
@@ -88,10 +92,6 @@
 
     The following demonstrates how to assign multiple phone numbers to a place in JavaScript:
     \snippet snippets/declarative/places.qml  ContactDetails write multiple
-
-    Note, due to limitations of the QQmlPropertyMap, it is not possible
-    to declaratively specify the contact details in QML, it can only be accomplished
-    via JavaScript.
 */
 
 /*!
@@ -99,6 +99,25 @@
 
     Returns an array of contact detail keys currently stored in the map.
 */
+QDeclarativeContactDetails::QDeclarativeContactDetails(QObject *parent)
+    : QQmlPropertyMap(parent)
+{
+}
+
+QVariant QDeclarativeContactDetails::updateValue(const QString &key, const QVariant &input)
+{
+    if (input.userType() == QMetaType::QObjectStar) {
+        QDeclarativeContactDetail *detail =
+                        qobject_cast<QDeclarativeContactDetail *>(input.value<QObject *>());
+        if (detail) {
+            QVariantList varList;
+            varList.append(input);
+            return varList;
+        }
+    }
+
+    return input;
+}
 
 /*!
     \qmltype ContactDetail
