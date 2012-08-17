@@ -80,6 +80,11 @@
     Some attributes may not be intended to be readable by end users, the label field
     of such attributes is empty to indicate this fact.
 
+    \note ExtendedAttributes instances are only ever used in the context of \l {Place}s.  It is not
+    possible to create an ExtendedAttributes instance directly or re-assign a \l {Place}'s
+    ExtendedAttributes property.  Modification of ExtendedAttributes can only be accomplished
+    via Javascript.
+
     The following example shows how to access all \l {PlaceAttribute}{PlaceAttributes} and print
     them to the console:
 

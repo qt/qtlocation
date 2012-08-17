@@ -182,6 +182,9 @@ public:
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "PlaceSearchModel");
             qmlRegisterType<QDeclarativeSearchSuggestionModel>(uri, 5, 0, "PlaceSearchSuggestionModel");
             qmlRegisterType<QDeclarativePlaceAttribute>(uri, 5,0, "PlaceAttribute");
+            qmlRegisterUncreatableType<QQmlPropertyMap>(uri, 5, 0, "ExtendedAttributes", "ExtendedAttributes instances cannot be instantiated.  "
+                                                                   "Only Place types have ExtendedAttributes and they cannot be re-assigned "
+                                                                   "(but can be modified).");
             qmlRegisterType<QDeclarativeContactDetail>(uri, 5, 0, "ContactDetail");
 
             qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
