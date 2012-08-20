@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 #ifndef QT_NO_LIBRARY
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
         ("org.qt-project.qt.position.sourcefactory/5.0",
-         QStringLiteral("/position")))
+         QLatin1String("/position")))
 #endif
 
 /*!
