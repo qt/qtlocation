@@ -137,6 +137,8 @@ private:
     inline const QPlacePrivate *d_func() const;
 };
 
+Q_DECLARE_TYPEINFO(QPlace, Q_MOVABLE_TYPE);
+
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlace)

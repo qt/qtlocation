@@ -91,6 +91,8 @@ private:
     QSharedDataPointer<QPlaceCategoryPrivate> d;
 };
 
+Q_DECLARE_TYPEINFO(QPlaceCategory, Q_MOVABLE_TYPE);
+
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceCategory)

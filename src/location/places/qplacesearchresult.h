@@ -100,6 +100,8 @@ private:
     friend class QPlaceSearchResultPrivate;
 };
 
+Q_DECLARE_TYPEINFO(QPlaceSearchResult, Q_MOVABLE_TYPE);
+
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceSearchResult)

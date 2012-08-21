@@ -83,6 +83,8 @@ private:
     QSharedDataPointer<QGeoLocationPrivate> d;
 };
 
+Q_DECLARE_TYPEINFO(QGeoLocation, Q_MOVABLE_TYPE);
+
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoLocation)
