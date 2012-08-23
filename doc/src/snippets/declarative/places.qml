@@ -97,6 +97,19 @@ Item {
     }
     //! [ExtendedAttributes read]
 
+    function writeExtendedAttributes() {
+    //! [ExtendedAttributes write]
+        //assign a new attribute to a place
+        var smokingAttrib = Qt.createQmlObject('import QtLocation 5.0; PlaceAttribute {}', place);
+        smokingAttrib.label = "Smoking Allowed"
+        smokingAttrib.text = "No"
+        place.extendedAttributes.smoking = smokingAttrib;
+
+        //modify an existing attribute
+        place.extendedAttributes.smoking.text = "Yes"
+    //! [ExtendedAttributes write]
+    }
+
     //! [Icon]
     Image {
         source: icon.url(Qt.size(64, 64))

@@ -92,6 +92,9 @@
     \codeline
     \snippet snippets/declarative/places.qml ExtendedAttributes read
 
+    The following example shows how to assign and modify an attribute:
+    \snippet snippets/declarative/places.qml
+
     \sa PlaceAttribute, QQmlPropertyMap
 */
 
@@ -130,6 +133,9 @@
     \snippet snippets/declarative/places.qml QtLocation import
     \codeline
     \snippet snippets/declarative/places.qml ExtendedAttributes
+
+    The following example shows how to assign and modify an attribute:
+    \snippet snippets/declarative/places.qml ExtendedAttributes write
 */
 
 QDeclarativePlaceAttribute::QDeclarativePlaceAttribute(QObject *parent)
