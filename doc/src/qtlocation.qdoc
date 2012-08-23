@@ -163,9 +163,6 @@ dependent on the provider's implementation.
 
 
 \section2 API Sub-Modules
-
-[ sub-module relationships diagram ]
-
 The API is split into three core sub-modules, which each have QML and C++
 APIs.
 
@@ -196,9 +193,6 @@ reviews and other rich content related to the place.
 \endtable
 
 \section3 Maps and Navigation
-
-[ Image showing Mapviewer containing place, map and navigation details ]
-
 Maps and Navigation provides Qt Quick user
 interface components for displaying geographic information on a map, as
 well as allowing user interaction with map objects and the display itself.
