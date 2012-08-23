@@ -95,7 +95,7 @@ Rectangle {
     Connections {
         target: searchModel
         onStatusChanged: {
-            if (searchModel.status == PlaceSerchModel.Error)
+            if (searchModel.status == PlaceSearchModel.Error)
                 console.log(searchModel.errorString());
         }
     }
