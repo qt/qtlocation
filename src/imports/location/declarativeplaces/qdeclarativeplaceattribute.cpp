@@ -77,6 +77,14 @@
                perspective of the specified provider.
     \endtable
 
+    Some plugins may not support attributes at all, others may only support a
+    certain set, others still may support a dynamically changing set of attributes
+    over time or even allow attributes to be arbitrarily defined by the client
+    application.  The attributes could also vary on a place by place basis,
+    for example one place may have opening hours while another does not.
+    Consult the \l {Plugin References and Parameters}{plugin
+    references} for details.
+
     Some attributes may not be intended to be readable by end users, the label field
     of such attributes is empty to indicate this fact.
 

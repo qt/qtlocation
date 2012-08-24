@@ -83,6 +83,14 @@ bool QPlaceAttributePrivate::isEmpty() const
     localized label which describes the attribute and rich text string representing the attribute's value.
     Generally, both are intended to be displayed to the end-user as is.
 
+    Some plugins may not support attributes at all, others may only support a
+    certain set, others still may support a dynamically changing set of attributes
+    over time or even allow attributes to be arbitrarily defined by the client
+    application.  The attributes could also vary on a place by place basis,
+    for example one place may have opening hours while another does not.
+    Consult the \l {Plugin References and Parameters}{plugin
+    references} for details.
+
     \section2 Attribute Types
     The QPlaceAttribute class defines some constant strings which characterize standard \e {attribute types}.
     \list
