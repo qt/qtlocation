@@ -294,7 +294,17 @@ variants supported for those themes:
         (Note: the default base urls reference a map type icons)
 \endtable
 
-\section3 Extended Attributes and Content restrictions of usage
+\section3 Extended Attributes
+The supported set of attributes provided by \c nokia plugin are not fixed and
+may grow over time.  Also the attributes provided may vary according to a place
+by place basis, e.g one place may provide opening hours while another does not.
+At the time of writing, it is known that some places provide \c openingHours
+(QPlaceAttribute::OpeningHours) and \c payment (QPlaceAttribute::Payment)
+methods but other attributes may be made available by the backend server.  All
+places provided by the plugin will have the \c x_provider
+(QPlaceAttribute::Provider)  attribute set to \c nokia.
+
+\section3 Restrictions of Usage - ExtendedAttributes and Content
 The extended attributes  and rich content of places are not permitted
 to be saved.  For QML this is related to \l Place::extendedAttributes, \l ImageModel,
 \l ReviewModel, and \l EditorialModel.  For C++ this relates to QPlace::extendedAttribute(),
