@@ -122,7 +122,7 @@
     \brief The PlaceAttribute type holds generic place attribute information.
 
     A place attribute stores an additional piece of information about a \l Place that is not
-    otherwise exposed through the \l Place type.  A PlaceAttribute is a textural piece of data,
+    otherwise exposed through the \l Place type.  A PlaceAttribute is a textual piece of data,
     accessible through the \l text property, and a \l label.  Both the \l text and \l label
     properties are intended to be displayed to the user.  PlaceAttributes are stored in an
     \l ExtendedAttributes map with a unique key.
