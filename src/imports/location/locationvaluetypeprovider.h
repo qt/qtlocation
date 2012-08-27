@@ -54,22 +54,22 @@ public:
     LocationValueTypeProvider();
 
 private:
-    Q_DECL_OVERRIDE bool create(int type, QQmlValueType *&v);
+    bool create(int type, QQmlValueType *&v) Q_DECL_OVERRIDE;
 
-    Q_DECL_OVERRIDE bool init(int type, void *data, size_t n);
-    Q_DECL_OVERRIDE bool destroy(int type, void *data, size_t n);
-    Q_DECL_OVERRIDE bool copy(int type, const void *src, void *dst, size_t n);
+    bool init(int type, void *data, size_t n) Q_DECL_OVERRIDE;
+    bool destroy(int type, void *data, size_t n) Q_DECL_OVERRIDE;
+    bool copy(int type, const void *src, void *dst, size_t n) Q_DECL_OVERRIDE;
 
-    Q_DECL_OVERRIDE bool create(int type, int argc, const void *argv[], QVariant *v);
-    Q_DECL_OVERRIDE bool createFromString(int type, const QString &s, void *data, size_t n);
-    Q_DECL_OVERRIDE bool createStringFrom(int type, const void *data, QString *s);
+    bool create(int type, int argc, const void *argv[], QVariant *v) Q_DECL_OVERRIDE;
+    bool createFromString(int type, const QString &s, void *data, size_t n) Q_DECL_OVERRIDE;
+    bool createStringFrom(int type, const void *data, QString *s) Q_DECL_OVERRIDE;
 
-    Q_DECL_OVERRIDE bool variantFromJsObject(int type, QQmlV8Handle h, QV8Engine *e, QVariant *v);
+    bool variantFromJsObject(int type, QQmlV8Handle h, QV8Engine *e, QVariant *v) Q_DECL_OVERRIDE;
 
-    Q_DECL_OVERRIDE bool equal(int type, const void *lhs, const void *rhs, size_t n);
-    Q_DECL_OVERRIDE bool store(int type, const void *src, void *dst, size_t n);
-    Q_DECL_OVERRIDE bool read(int srcType, const void *src, size_t n, int dstType, void *dst);
-    Q_DECL_OVERRIDE bool write(int type, const void *src, void *dst, size_t n);
+    bool equal(int type, const void *lhs, const void *rhs, size_t n) Q_DECL_OVERRIDE;
+    bool store(int type, const void *src, void *dst, size_t n) Q_DECL_OVERRIDE;
+    bool read(int srcType, const void *src, size_t n, int dstType, void *dst) Q_DECL_OVERRIDE;
+    bool write(int type, const void *src, void *dst, size_t n) Q_DECL_OVERRIDE;
 };
 
 QT_END_NAMESPACE
