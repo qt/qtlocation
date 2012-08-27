@@ -59,7 +59,7 @@ QDoubleVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord)
     double lon = coord.longitude() / 360.0 + 0.5;
 
     double lat = coord.latitude();
-    lat = 0.5 - (log(tan((pi / 4.0) + (pi / 2.0) * lat / 180.0)) / pi) / 2.0;
+    lat = 0.5 - (std::log(std::tan((pi / 4.0) + (pi / 2.0) * lat / 180.0)) / pi) / 2.0;
     lat = qMax(0.0, lat);
     lat = qMin(1.0, lat);
 
@@ -91,7 +91,7 @@ QGeoCoordinate QGeoProjection::mercatorToCoord(const QDoubleVector2D &mercator)
     else if (fy == 1.0)
         lat = -90.0;
     else
-        lat = (180.0 / pi) * (2.0 * atan(exp(pi * (1.0 - 2.0 * fy))) - (pi / 2.0));
+        lat = (180.0 / pi) * (2.0 * std::atan(std::exp(pi * (1.0 - 2.0 * fy))) - (pi / 2.0));
 
     double lng;
     if (fx >= 0) {

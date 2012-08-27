@@ -145,7 +145,7 @@ void QGeoCameraTiles::findPrefetchTiles()
     d->tiles_.clear();
 
     // qDebug() << "prefetch called";
-    int zoom = static_cast<int>(floor(d->camera_.zoomLevel()));
+    int zoom = static_cast<int>(std::floor(d->camera_.zoomLevel()));
     d->intZoomLevel_ = zoom;
     d->sideLength_ = 1 << d->intZoomLevel_;
     d->updateGeometry(PREFETCH_FRUSTUM_SCALE);
@@ -205,7 +205,7 @@ void QGeoCameraTiles::setCamera(const QGeoCameraData &camera)
         return;
     d->camera_ = camera;
 
-    d->intZoomLevel_ = static_cast<int>(floor(d->camera_.zoomLevel()));
+    d->intZoomLevel_ = static_cast<int>(std::floor(d->camera_.zoomLevel()));
     d->sideLength_ = 1 << d->intZoomLevel_;
 
     d->tiles_.clear();
@@ -337,7 +337,7 @@ Frustum QGeoCameraTilesPrivate::frustum(double fieldOfViewGradient) const
 
     double f = qMin(screenSize_.width(), screenSize_.height()) / (1.0 * tileSize_);
 
-    double z = pow(2.0, camera_.zoomLevel() - intZoomLevel_);
+    double z = std::pow(2.0, camera_.zoomLevel() - intZoomLevel_);
 
     double altitude = f / (2.0 * z);
     QDoubleVector3D eye = center;
@@ -772,7 +772,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
         double x2 = polygon.at(i2).get(0);
 
         bool xFixed = qFuzzyCompare(x1, x2);
-        bool xIntegral = qFuzzyCompare(x1, floor(x1)) || qFuzzyCompare(x1 + 1.0, floor(x1 + 1.0));
+        bool xIntegral = qFuzzyCompare(x1, std::floor(x1)) || qFuzzyCompare(x1 + 1.0, std::floor(x1 + 1.0));
 
         QList<QPair<double, int> > xIntersects
                 = tileIntersections(x1,
@@ -784,7 +784,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
         double y2 = polygon.at(i2).get(1);
 
         bool yFixed = qFuzzyCompare(y1, y2);
-        bool yIntegral = qFuzzyCompare(y1, floor(y1)) || qFuzzyCompare(y1 + 1.0, floor(y1 + 1.0));
+        bool yIntegral = qFuzzyCompare(y1, std::floor(y1)) || qFuzzyCompare(y1 + 1.0, std::floor(y1 + 1.0));
 
         QList<QPair<double, int> > yIntersects
                 = tileIntersections(y1,

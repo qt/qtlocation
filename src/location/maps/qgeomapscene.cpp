@@ -174,7 +174,7 @@ void QGeoMapScene::setCameraData(const QGeoCameraData &cameraData)
 {
     Q_D(QGeoMapScene);
     d->cameraData_ = cameraData;
-    d->intZoomLevel_ = static_cast<int>(floor(d->cameraData_.zoomLevel()));
+    d->intZoomLevel_ = static_cast<int>(std::floor(d->cameraData_.zoomLevel()));
     float delta = cameraData.zoomLevel() - d->intZoomLevel_;
     if (qAbs(delta) < 0.05) {
         d->linearScaling_ = false;
@@ -619,7 +619,7 @@ void QGeoMapScenePrivate::setupCamera()
     double f = 1.0 * qMin(screenSize_.width(), screenSize_.height());
 
     // fraction of zoom level
-    double z = pow(2.0, cameraData_.zoomLevel() - intZoomLevel_);
+    double z = std::pow(2.0, cameraData_.zoomLevel() - intZoomLevel_);
 
     // calculate altitdue that allows the visible map tiles
     // to fit in the screen correctly (note that a larger f will cause

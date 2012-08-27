@@ -236,7 +236,7 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoT
       mapScene_(new QGeoMapScene()),
       tileRequests_(new QGeoTileRequestManager(parent))
 {
-    cameraTiles_->setMaximumZoomLevel(static_cast<int>(ceil(engine->cameraCapabilities().maximumZoomLevel())));
+    cameraTiles_->setMaximumZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().maximumZoomLevel())));
     cameraTiles_->setTileSize(engine->tileSize().width());
     cameraTiles_->setPluginString(map_->pluginString());
 
@@ -292,7 +292,7 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
     // This is so that when we turn off bilinear scaling, we're
     // snapped to the exact pixel size of the tiles
     QGeoCameraData cam = map_->cameraData();
-    int izl = static_cast<int>(floor(cam.zoomLevel()));
+    int izl = static_cast<int>(std::floor(cam.zoomLevel()));
     float delta = cam.zoomLevel() - izl;
     if (delta > 0.5) {
         izl++;
