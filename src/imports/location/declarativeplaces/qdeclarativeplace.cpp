@@ -715,7 +715,7 @@ void QDeclarativePlace::finished()
 /*!
     \internal
 */
-void QDeclarativePlace::contactsModified(const QString &key, const QVariant &value)
+void QDeclarativePlace::contactsModified(const QString &key, const QVariant &)
 {
     primarySignalsEmission(key);
 }

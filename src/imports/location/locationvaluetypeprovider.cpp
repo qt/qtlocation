@@ -132,17 +132,17 @@ bool LocationValueTypeProvider::create(int type, int argc, const void *argv[], Q
     return false;
 }
 
-bool LocationValueTypeProvider::createFromString(int type, const QString &s, void *data, size_t n)
+bool LocationValueTypeProvider::createFromString(int, const QString &, void *, size_t)
 {
     return false;
 }
 
-bool LocationValueTypeProvider::createStringFrom(int type, const void *data, QString *s)
+bool LocationValueTypeProvider::createStringFrom(int, const void *, QString *)
 {
     return false;
 }
 
-bool LocationValueTypeProvider::variantFromJsObject(int type, QQmlV8Handle h, QV8Engine *e, QVariant *v)
+bool LocationValueTypeProvider::variantFromJsObject(int, QQmlV8Handle, QV8Engine *, QVariant *)
 {
     return false;
 }

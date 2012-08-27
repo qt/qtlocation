@@ -205,7 +205,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QGeoMap &map)
                 cdt->AddHole(curPts);
                 cdt->Triangulate();
                 std::vector<p2t::Triangle*> tris = cdt->GetTriangles();
-                screenVertices_.reserve(screenVertices_.size() + tris.size());
+                screenVertices_.reserve(screenVertices_.size() + int(tris.size()));
                 for (size_t i = 0; i < tris.size(); ++i) {
                     p2t::Triangle *t = tris.at(i);
                     for (int j = 0; j < 3; ++j) {

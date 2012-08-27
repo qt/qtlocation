@@ -104,7 +104,7 @@ QDeclarativeContactDetails::QDeclarativeContactDetails(QObject *parent)
 {
 }
 
-QVariant QDeclarativeContactDetails::updateValue(const QString &key, const QVariant &input)
+QVariant QDeclarativeContactDetails::updateValue(const QString &, const QVariant &input)
 {
     if (input.userType() == QMetaType::QObjectStar) {
         QDeclarativeContactDetail *detail =

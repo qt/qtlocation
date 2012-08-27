@@ -600,7 +600,7 @@ bool QDeclarativeGeoMapGestureArea::mouseMoveEvent(QMouseEvent *event)
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::mouseReleaseEvent(QMouseEvent */*event*/)
+bool QDeclarativeGeoMapGestureArea::mouseReleaseEvent(QMouseEvent *)
 {
 #if defined(TOUCH_EVENT_WORKAROUND)
     if (!mouseBeingUsed_)

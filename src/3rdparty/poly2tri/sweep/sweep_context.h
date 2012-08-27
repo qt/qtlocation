@@ -40,7 +40,7 @@ namespace p2t {
 
 // Inital triangle factor, seed triangle will extend 30% of
 // PointSet width to both left and right.
-const float kAlpha = 0.3;
+const float kAlpha = float(0.3);
 
 struct Point;
 class Triangle;
@@ -158,7 +158,7 @@ inline AdvancingFront* SweepContext::front()
 
 inline int SweepContext::point_count()
 {
-  return points_.size();
+  return int(points_.size());
 }
 
 inline void SweepContext::set_head(Point* p1)

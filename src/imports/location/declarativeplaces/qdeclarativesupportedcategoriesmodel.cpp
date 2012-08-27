@@ -427,7 +427,6 @@ void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory 
             return;
         QModelIndex oldParentIndex = index(categoryNode->parentId);
         QModelIndex newParentIndex = index(parentId);
-        QModelIndex removedIndex = index(categoryId);
 
         int rowToBeAdded = rowToAddChild(newParentNode, category);
         beginMoveRows(oldParentIndex, oldParentNode->childIds.indexOf(categoryId),
