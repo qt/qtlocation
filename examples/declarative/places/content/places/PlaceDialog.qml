@@ -69,8 +69,8 @@ Dialog {
             ["Country code", locationPlace ? locationPlace.location.address.countryCode : ""],
             ["Country", locationPlace ? locationPlace.location.address.country : ""],
             ["Postal code", locationPlace ? locationPlace.location.address.postalCode : ""],
-            ["Latitude", locationPlace ? locationPlace.location.latitude : ""],
-            ["Longitude", locationPlace ? locationPlace.location.longitude : ""],
+            ["Latitude", locationPlace ? locationPlace.location.coordinate.latitude.toString() : ""],
+            ["Longitude", locationPlace ? locationPlace.location.coordinate.longitude.toString() : ""],
             ["Phone", locationPlace ? locationPlace.primaryPhone : ""],
             ["Fax", locationPlace ? locationPlace.primaryFax : ""],
             ["Email", locationPlace ? locationPlace.primaryEmail : ""],
@@ -132,9 +132,9 @@ Dialog {
         locationPlace.location.address.country = dataFieldsModel.get(7).inputText;
         locationPlace.location.address.postalCode = dataFieldsModel.get(8).inputText;
 
-        locationPlace.location.coordinate.latitude = parseFloat(dataFieldsModel.get(9).inputText);
-        locationPlace.location.coordinate.longitude = parseFloat(dataFieldsModel.get(10).inputText);
-
+        var c = QtLocation.coordinate(parseFloat(dataFieldsModel.get(9).inputText),
+                                      parseFloat(dataFieldsModel.get(10).inputText));
+        locationPlace.location.coordinate = c;
         var phone = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
         phone.label = "Phone";
         phone.value = dataFieldsModel.get(11).inputText;
