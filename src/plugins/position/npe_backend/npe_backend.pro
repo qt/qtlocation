@@ -1,5 +1,3 @@
-load(qt_build_config)
-
 TARGET = qtposition_npe_backend
 QT += location gui
 

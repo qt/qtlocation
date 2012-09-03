@@ -1,5 +1,3 @@
-load(qt_build_config)
-
 TARGET = qtgeoservices_nokia
 QT += location-private network
 

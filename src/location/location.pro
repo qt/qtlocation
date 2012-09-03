@@ -1,5 +1,3 @@
-load(qt_build_config)
-
 TARGET = QtLocation
 QT = core-private gui
 

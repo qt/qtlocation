@@ -1,5 +1,3 @@
-load(qt_build_config)
-
 TARGET = qtgeoservices_places_jsondb
 QT += location gui network
 

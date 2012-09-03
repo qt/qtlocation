@@ -1,5 +1,3 @@
-load(qt_build_config)
-
 TARGET = qtposition_gypsy
 QT += location gui
 
