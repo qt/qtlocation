@@ -78,7 +78,7 @@ TestCase {
     SignalSpy {id: activeMapTypeChangedSpy; target: map; signalName: "activeMapTypeChanged"}
 
     function initTestCase() {
-        if (supportedSetSpy.count == 0) {
+        if (map.supportedMapTypes.length == 0 && supportedSetSpy.count == 0) {
             wait(1000)
             if (supportedSetSpy.count == 0)
                 wait(2000)
