@@ -68,11 +68,11 @@ static const QChar DEGREES_SYMB(0x00B0);
 
 QByteArray tst_qgeocoordinate_debug;
 
-void tst_qgeocoordinate_messageHandler(QtMsgType type, const char *msg)
+void tst_qgeocoordinate_messageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
     switch (type) {
         case QtDebugMsg :
-            tst_qgeocoordinate_debug = QByteArray(msg);
+            tst_qgeocoordinate_debug = msg.toLocal8Bit();
             break;
         default:
             break;
@@ -855,9 +855,9 @@ private slots:
         QFETCH(QGeoCoordinate, c);
         QFETCH(QByteArray, debugString);
 
-        qInstallMsgHandler(tst_qgeocoordinate_messageHandler);
+        qInstallMessageHandler(tst_qgeocoordinate_messageHandler);
         qDebug() << c;
-        qInstallMsgHandler(0);
+        qInstallMessageHandler(0);
         QCOMPARE(tst_qgeocoordinate_debug, debugString);
     }
 

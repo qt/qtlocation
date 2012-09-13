@@ -57,11 +57,11 @@ Q_DECLARE_METATYPE(QGeoSatelliteInfo::Attribute)
 
 QByteArray tst_qgeosatelliteinfo_debug;
 
-void tst_qgeosatelliteinfo_messageHandler(QtMsgType type, const char *msg)
+void tst_qgeosatelliteinfo_messageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
     switch (type) {
         case QtDebugMsg :
-            tst_qgeosatelliteinfo_debug = QByteArray(msg);
+            tst_qgeosatelliteinfo_debug = msg.toLocal8Bit();
             break;
         default:
             break;
@@ -369,9 +369,9 @@ private slots:
         QFETCH(QGeoSatelliteInfo, info);
         QFETCH(QByteArray, debugString);
 
-        qInstallMsgHandler(tst_qgeosatelliteinfo_messageHandler);
+        qInstallMessageHandler(tst_qgeosatelliteinfo_messageHandler);
         qDebug() << info;
-        qInstallMsgHandler(0);
+        qInstallMessageHandler(0);
         QCOMPARE(QString(tst_qgeosatelliteinfo_debug), QString(debugString));
     }
 

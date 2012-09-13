@@ -57,11 +57,11 @@ Q_DECLARE_METATYPE(QGeoPositionInfo::Attribute)
 
 QByteArray tst_qgeopositioninfo_debug;
 
-void tst_qgeopositioninfo_messageHandler(QtMsgType type, const char *msg)
+void tst_qgeopositioninfo_messageHandler(QtMsgType type, const QMessageLogContext&, const QString &msg)
 {
     switch (type) {
         case QtDebugMsg :
-            tst_qgeopositioninfo_debug = QByteArray(msg);
+            tst_qgeopositioninfo_debug = msg.toLocal8Bit();
             break;
         default:
             break;
@@ -362,9 +362,9 @@ private slots:
         QFETCH(QGeoPositionInfo, info);
         QFETCH(QByteArray, debugStringEnd);
 
-        qInstallMsgHandler(tst_qgeopositioninfo_messageHandler);
+        qInstallMessageHandler(tst_qgeopositioninfo_messageHandler);
         qDebug() << info;
-        qInstallMsgHandler(0);
+        qInstallMessageHandler(0);
 
         // use endsWith() so we don't depend on QDateTime's debug() implementation
         QVERIFY2(tst_qgeopositioninfo_debug.endsWith(debugStringEnd),
