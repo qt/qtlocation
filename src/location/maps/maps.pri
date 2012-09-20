@@ -1,7 +1,7 @@
 
 INCLUDEPATH += maps
 
-QT += 3d
+QT_PRIVATE += 3d
 
 PUBLIC_HEADERS += \
                     maps/qgeocodereply.h \
