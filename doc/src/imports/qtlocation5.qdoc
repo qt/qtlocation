@@ -26,9 +26,10 @@
 ****************************************************************************/
 
 /*!
-\qmlmodule QtLocation 5.0
-\title Qt Location 5.x
-\brief The QML import for QtLocation
+    \qmlmodule QtLocation 5.0
+    \title Qt Location QML Types
+    \ingroup qmlmodules
+    \brief Provides QML types for mapping and location information
 
 \section1 Overview
 
