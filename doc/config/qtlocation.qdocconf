@@ -1,3 +1,6 @@
+include($QT_INSTALL_DOCS/global/qt-html-templates-offline.qdocconf)
+include($QT_INSTALL_DOCS/global/qt-module-defaults.qdocconf)
+
 include(macros.qdocconf)
 include(qt-cpp-ignore.qdocconf)
 include(qt-defines.qdocconf)
@@ -73,7 +76,6 @@ qhp.qtlocation.subprojects.classes.sortPages = true
 
 # Do NOT change the variables after this line unless you know what you are doing.
 
-outputdir = ../qtlocation
 outputformats = HTML
 
 examples.fileextensions = "*.cpp *.h *.js *.svg *.xml *.ui *.qml"
