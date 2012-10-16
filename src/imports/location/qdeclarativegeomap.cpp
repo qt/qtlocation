@@ -64,7 +64,7 @@
 #include <QtQml/QQmlContext>
 #include <QtQml/qqmlinfo.h>
 #include <QModelIndex>
-#include <QtQuick/QQuickCanvas>
+#include <QtQuick/QQuickWindow>
 #include <QtGui/QGuiApplication>
 #include <QCoreApplication>
 
