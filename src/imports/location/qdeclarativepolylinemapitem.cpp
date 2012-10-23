@@ -414,7 +414,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
     QVectorPath vp(points.data(), types.size(), types.data());
     QTriangulatingStroker ts;
-    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), viewport);
+    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), viewport, QPainter::Qt4CompatiblePainting);
 
     clear();
 
