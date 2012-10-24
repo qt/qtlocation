@@ -167,6 +167,11 @@ static int forecastCount(QQmlListProperty<WeatherData> *prop)
     return d->forecast.size();
 }
 
+static void forecastClear(QQmlListProperty<WeatherData> *prop)
+{
+    static_cast<AppModelPrivate*>(prop->data)->forecast.clear();
+}
+
 //! [0]
 AppModel::AppModel(QObject *parent) :
         QObject(parent),
@@ -176,7 +181,8 @@ AppModel::AppModel(QObject *parent) :
     d->fcProp = new QQmlListProperty<WeatherData>(this, d,
                                                           forecastAppend,
                                                           forecastCount,
-                                                          forecastAt);
+                                                          forecastAt,
+                                                          forecastClear);
 
     d->geoReplyMapper = new QSignalMapper(this);
     d->weatherReplyMapper = new QSignalMapper(this);
