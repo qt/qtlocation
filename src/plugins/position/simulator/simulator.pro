@@ -1,9 +1,8 @@
 TARGET = qtposition_simulator
 QT += location gui
 
+PLUGIN_TYPE = position
 load(qt_plugin)
-
-DESTDIR = $$QT.location.plugins/position
 
 INCLUDEPATH += $$QT.location.includes
 
@@ -19,9 +18,6 @@ HEADERS += qgeopositioninfosource_simulator_p.h \
             qgeosatelliteinfosource_simulator_p.h \
             qlocationconnection_simulator_p.h \
     qgeopositioninfosourcefactory_simulator.h
-
-target.path += $$[QT_INSTALL_PLUGINS]/position
-INSTALLS += target
 
 OTHER_FILES += \
     plugin.json

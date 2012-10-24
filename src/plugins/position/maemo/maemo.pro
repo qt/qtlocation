@@ -1,9 +1,8 @@
 TARGET = qtposition_maemo
 QT += location gui dbus
 
+PLUGIN_TYPE = position
 load(qt_plugin)
-
-DESTDIR = $$QT.location.plugins/position
 
 INCLUDEPATH += $$QT.location.includes
 
@@ -17,9 +16,6 @@ HEADERS += qgeopositioninfosource_maemo_p.h \
             dbuscomm_maemo_p.h \
             dbusserver_maemo_p.h \
     qgeopositioninfosourcefactory_maemo.h
-
-target.path += $$[QT_INSTALL_PLUGINS]/position
-INSTALLS += target
 
 OTHER_FILES += \
     plugin.json

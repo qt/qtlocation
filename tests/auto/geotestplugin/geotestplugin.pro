@@ -1,9 +1,8 @@
-load(qt_plugin)
-
 TARGET = qtgeoservices_qmltestplugin
 QT += location-private testlib
 
-DESTDIR = $$QT.location.plugins/geoservices
+PLUGIN_TYPE = geoservices
+load(qt_plugin)
 
 HEADERS += qgeocodingmanagerengine_test.h \
            qgeoserviceproviderplugin_test.h \
@@ -14,9 +13,6 @@ HEADERS += qgeocodingmanagerengine_test.h \
            qgeotilefetcher_test.h
 
 SOURCES += qgeoserviceproviderplugin_test.cpp
-
-target.path += $$[QT_INSTALL_PLUGINS]/geoservices
-INSTALLS += target
 
 OTHER_FILES += \
     geotestplugin.json \

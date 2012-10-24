@@ -1,14 +1,10 @@
-load(qt_plugin)
-
 TARGET = qtposition_testplugin
 QT += location
 
-DESTDIR = $$QT.location.plugins/position
+PLUGIN_TYPE = position
+load(qt_plugin)
 
 SOURCES += plugin.cpp
-
-target.path += $$[QT_INSTALL_PLUGINS]/position
-INSTALLS += target
 
 OTHER_FILES += \
     plugin.json

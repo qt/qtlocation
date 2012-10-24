@@ -1,9 +1,8 @@
 TARGET = qtgeoservices_places_jsondb
 QT += location gui network
 
+PLUGIN_TYPE = geoservices
 load(qt_plugin)
-
-DESTDIR = $$QT.location.plugins/geoservices
 
 HEADERS += \
             qgeoserviceproviderplugin_jsondb.h \
@@ -36,9 +35,6 @@ SOURCES += \
 INCLUDEPATH += $$QT.location.includes
 
 QT += jsondb
-
-target.path += $$[QT_INSTALL_PLUGINS]/geoservices
-INSTALLS += target
 
 OTHER_FILES += \
     places_jsondb_plugin.json

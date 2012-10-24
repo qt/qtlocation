@@ -7,9 +7,8 @@ contains(QT_CONFIG, location-china-support) {
     QT += systeminfo
 }
 
+PLUGIN_TYPE = geoservices
 load(qt_plugin)
-
-DESTDIR = $$QT.location.plugins/geoservices
 
 HEADERS += \
             qgeocodereply_nokia.h \
@@ -54,9 +53,6 @@ RESOURCES += resource.qrc
 
 INCLUDEPATH += $$QT.location.includes
 INCLUDEPATH += ../../../location/maps
-
-target.path += $$[QT_INSTALL_PLUGINS]/geoservices
-INSTALLS += target
 
 OTHER_FILES += \
     nokia_plugin.json
