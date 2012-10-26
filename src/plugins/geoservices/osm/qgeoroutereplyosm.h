@@ -39,41 +39,34 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderpluginosm.h"
-#include "qgeotiledmappingmanagerengineosm.h"
-#include "qgeocodingmanagerengineosm.h"
-#include "qgeoroutingmanagerengineosm.h"
+#ifndef QGEOROUTEREPLYOSM_H
+#define QGEOROUTEREPLYOSM_H
 
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/QGeoRouteReply>
 
 QT_BEGIN_NAMESPACE
 
-QGeocodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+class QGeoRouteReplyOsm : public QGeoRouteReply
 {
-    return new QGeocodingManagerEngineOsm(parameters, error, errorString);
-}
+    Q_OBJECT
 
-QGeoMappingManagerEngine *QGeoServiceProviderFactoryOsm::createMappingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoTiledMappingManagerEngineOsm(parameters, error, errorString);
-}
+public:
+    explicit QGeoRouteReplyOsm(QObject *parent = 0);
+    QGeoRouteReplyOsm(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = 0);
+    ~QGeoRouteReplyOsm();
 
-QGeoRoutingManagerEngine *QGeoServiceProviderFactoryOsm::createRoutingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoRoutingManagerEngineOsm(parameters, error, errorString);
-}
+    void abort() Q_DECL_OVERRIDE;
 
-QPlaceManagerEngine *QGeoServiceProviderFactoryOsm::createPlaceManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
+private Q_SLOTS:
+    void networkReplyFinished();
+    void networkReplyError(QNetworkReply::NetworkError error);
 
-    return 0;
-}
+private:
+    QNetworkReply *m_reply;
+};
 
 QT_END_NAMESPACE
+
+#endif // QGEOROUTEREPLYOSM_H
+

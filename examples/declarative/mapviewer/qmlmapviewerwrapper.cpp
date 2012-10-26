@@ -104,7 +104,8 @@ int main(int argc, char *argv[])
     view.setResizeMode(QQuickView::SizeRootObjectToView);
 
     QQuickItem *object = view.rootObject();
-    if (parameters.size() > 0) QMetaObject::invokeMethod(object, "setPluginParameters", Q_ARG(QVariant, QVariant::fromValue(parameters)));
+    QMetaObject::invokeMethod(object, "setPluginParameters",
+                              Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     view.setGeometry(QRect(100, 100, 360, 640));

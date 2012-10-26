@@ -39,41 +39,38 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderpluginosm.h"
-#include "qgeotiledmappingmanagerengineosm.h"
-#include "qgeocodingmanagerengineosm.h"
-#include "qgeoroutingmanagerengineosm.h"
+#ifndef QGEOROUTINGMANAGERENGINEOSM_H
+#define QGEOROUTINGMANAGERENGINEOSM_H
 
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
+#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QGeoRoutingManagerEngine>
 
 QT_BEGIN_NAMESPACE
 
-QGeocodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeocodingManagerEngineOsm(parameters, error, errorString);
-}
+class QNetworkAccessManager;
 
-QGeoMappingManagerEngine *QGeoServiceProviderFactoryOsm::createMappingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+class QGeoRoutingManagerEngineOsm : public QGeoRoutingManagerEngine
 {
-    return new QGeoTiledMappingManagerEngineOsm(parameters, error, errorString);
-}
+    Q_OBJECT
 
-QGeoRoutingManagerEngine *QGeoServiceProviderFactoryOsm::createRoutingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoRoutingManagerEngineOsm(parameters, error, errorString);
-}
+public:
+    QGeoRoutingManagerEngineOsm(const QMap<QString, QVariant> &parameters,
+                                QGeoServiceProvider::Error *error,
+                                QString *errorString);
+    ~QGeoRoutingManagerEngineOsm();
 
-QPlaceManagerEngine *QGeoServiceProviderFactoryOsm::createPlaceManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
+    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request);
 
-    return 0;
-}
+private Q_SLOTS:
+    void replyFinished();
+    void replyError(QGeoRouteReply::Error errorCode, const QString &errorString);
+
+private:
+    QNetworkAccessManager *m_networkManager;
+    QByteArray m_userAgent;
+};
 
 QT_END_NAMESPACE
+
+#endif // QGEOROUTINGMANAGERENGINEOSM_H
+

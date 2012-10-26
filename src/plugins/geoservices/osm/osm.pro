@@ -10,7 +10,10 @@ HEADERS += \
     qgeotilefetcherosm.h \
     qgeomapreplyosm.h \
     qgeocodingmanagerengineosm.h \
-    qgeocodereplyosm.h
+    qgeocodereplyosm.h \
+    qgeoroutingmanagerengineosm.h \
+    qgeoroutereplyosm.h
+
 
 SOURCES += \
     qgeoserviceproviderpluginosm.cpp \
@@ -18,7 +21,9 @@ SOURCES += \
     qgeotilefetcherosm.cpp \
     qgeomapreplyosm.cpp \
     qgeocodingmanagerengineosm.cpp \
-    qgeocodereplyosm.cpp
+    qgeocodereplyosm.cpp \
+    qgeoroutingmanagerengineosm.cpp \
+    qgeoroutereplyosm.cpp
 
 OTHER_FILES += \
     osm_plugin.json
