@@ -56,16 +56,14 @@ QNmeaRealTimeReader::QNmeaRealTimeReader(QNmeaPositionInfoSourcePrivate *sourceP
 
 void QNmeaRealTimeReader::readAvailableData()
 {
-    QGeoPositionInfo update;
-    bool hasFix = false;
+    while (m_proxy->m_device->canReadLine()){
+        QGeoPositionInfo update;
+        bool hasFix = false;
 
-    char buf[1024];
-    qint64 size = m_proxy->m_device->readLine(buf, sizeof(buf));
-    while (size > 0) {
+        char buf[1024];
+        qint64 size = m_proxy->m_device->readLine(buf, sizeof(buf));
         if (m_proxy->parsePosInfoFromNmeaData(buf, size, &update, &hasFix))
             m_proxy->notifyNewUpdate(&update, hasFix);
-        memset(buf, 0, size);
-        size = m_proxy->m_device->readLine(buf, sizeof(buf));
     }
 }
 
