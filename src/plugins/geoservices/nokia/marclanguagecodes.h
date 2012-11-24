@@ -59,7 +59,7 @@ static const unsigned char marc_language_code_list[] =
     "\0\0\0" // Unused
     "\0\0\0" // C
     "abk" // Abkhazian
-    "\0\0\0" // Afan
+    "\0\0\0" // Oromo
     "aar" // Afar
     "afr" // Afrikaans
     "alb" // Albanian
@@ -72,14 +72,14 @@ static const unsigned char marc_language_code_list[] =
     "bak" // Bashkir
     "baq" // Basque
     "ben" // Bengali
-    "\0\0\0" // Bhutani
+    "\0\0\0" // Dzongkha
     "bih" // Bihari
     "bis" // Bislama
     "bre" // Breton
     "bul" // Bulgarian
     "bur" // Burmese
-    "bel" // Byelorussian
-    "khm" // Cambodian
+    "bel" // Belarusian
+    "khm" // Khmer
     "cat" // Catalan
     "chi" // Chinese
     "cos" // Corsican
@@ -91,10 +91,10 @@ static const unsigned char marc_language_code_list[] =
     "epo" // Esperanto
     "est" // Estonian
     "fao" // Faroese
-    "fij" // FijiLanguage
+    "fij" // Fijian
     "fin" // Finnish
     "fre" // French
-    "fry" // Frisian
+    "fry" // WesternFrisian
     "gla" // Gaelic
     "glg" // Galician
     "geo" // Georgian
@@ -124,8 +124,8 @@ static const unsigned char marc_language_code_list[] =
     "kir" // Kirghiz
     "kor" // Korean
     "kur" // Kurdish
-    "\0\0\0" // Kurundi
-    "lao" // Laothian
+    "\0\0\0" // Rundi
+    "lao" // Lao
     "lat" // Latin
     "lav" // Latvian
     "lin" // Lingala
@@ -137,11 +137,11 @@ static const unsigned char marc_language_code_list[] =
     "mlt" // Maltese
     "mao" // Maori
     "mar" // Marathi
-    "mol" // Moldavian
+    "mah" // Marshallese
     "mon" // Mongolian
     "nau" // NauruLanguage
     "nep" // Nepali
-    "nor" // Norwegian
+    "nor" // NorwegianBokmal
     "oci" // Occitan
     "ori" // Oriya
     "\0\0\0" // Pashto
@@ -150,20 +150,20 @@ static const unsigned char marc_language_code_list[] =
     "por" // Portuguese
     "pan" // Punjabi
     "que" // Quechua
-    "roh" // RhaetoRomance
+    "roh" // Romansh
     "rum" // Romanian
     "rus" // Russian
     "smo" // Samoan
-    "sag" // Sangho
+    "sag" // Sango
     "san" // Sanskrit
     "srp" // Serbian
-    "\0\0\0" // SerboCroatian
-    "\0\0\0" // Sesotho
-    "\0\0\0" // Setswana
+    "oss" // Ossetic
+    "\0\0\0" // SouthernSotho
+    "\0\0\0" // Tswana
     "sna" // Shona
     "snd" // Sindhi
-    "\0\0\0" // Singhalese
-    "\0\0\0" // Siswati
+    "\0\0\0" // Sinhala
+    "\0\0\0" // Swati
     "slo" // Slovak
     "slv" // Slovenian
     "som" // Somali
@@ -171,7 +171,7 @@ static const unsigned char marc_language_code_list[] =
     "sun" // Sundanese
     "swa" // Swahili
     "swe" // Swedish
-    "tgl" // Tagalog
+    "srd" // Sardinian
     "tgk" // Tajik
     "tam" // Tamil
     "tat" // Tatar
@@ -179,11 +179,11 @@ static const unsigned char marc_language_code_list[] =
     "tha" // Thai
     "tib" // Tibetan
     "tir" // Tigrinya
-    "tog" // TongaLanguage
+    "tog" // Tongan
     "tso" // Tsonga
     "tur" // Turkish
     "tuk" // Turkmen
-    "twi" // Twi
+    "tah" // Tahitian
     "uig" // Uigur
     "ukr" // Ukrainian
     "urd" // Urdu
@@ -221,7 +221,7 @@ static const unsigned char marc_language_code_list[] =
     "\0\0\0" // Walamo
     "haw" // Hawaiian
     "\0\0\0" // Tyap
-    "\0\0\0" // Chewa
+    "\0\0\0" // Nyanja
     "fil" // Filipino
     "gsw" // SwissGerman
     "iii" // SichuanYi
@@ -271,6 +271,52 @@ static const unsigned char marc_language_code_list[] =
     "\0\0\0" // CentralMoroccoTamazight
     "\0\0\0" // KoyraboroSenni
     "\0\0\0" // Shambala
+    "\0\0\0" // Bodo
+    "ava" // Avaric
+    "cha" // Chamorro
+    "che" // Chechen
+    "chu" // Church
+    "chv" // Chuvash
+    "cre" // Cree
+    "hat" // Haitian
+    "her" // Herero
+    "hmo" // HiriMotu
+    "kau" // Kanuri
+    "kom" // Komi
+    "kon" // Kongo
+    "\0\0\0" // Kwanyama
+    "lim" // Limburgish
+    "lub" // LubaKatanga
+    "ltz" // Luxembourgish
+    "\0\0\0" // Navaho
+    "ndo" // Ndonga
+    "oji" // Ojibwa
+    "pli" // Pali
+    "wln" // Walloon
+    "\0\0\0" // Aghem
+    "bas" // Basaa
+    "\0\0\0" // Zarma
+    "dua" // Duala
+    "\0\0\0" // JolaFonyi
+    "ewo" // Ewondo
+    "\0\0\0" // Bafia
+    "\0\0\0" // MakhuwaMeetto
+    "\0\0\0" // Mundang
+    "\0\0\0" // Kwasio
+    "\0\0\0" // Nuer
+    "\0\0\0" // Sakha
+    "\0\0\0" // Sangu
+    "\0\0\0" // CongoSwahili
+    "\0\0\0" // Tasawaq
+    "vai" // Vai
+    "\0\0\0" // Walser
+    "\0\0\0" // Yangben
+    "ave" // Avestan
+    "\0\0\0" // Asturian
+    "\0\0\0" // Ngomba
+    "\0\0\0" // Kako
+    "\0\0\0" // Meta
+    "\0\0\0" // Ngiemboon
     ;
 
 QT_END_NAMESPACE
