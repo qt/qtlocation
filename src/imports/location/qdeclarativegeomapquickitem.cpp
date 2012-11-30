@@ -363,7 +363,7 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
     opacityContainer_->setOpacity(zoomLevelOpacity());
 
     sourceItem_.data()->setScale(scaleFactor());
-    sourceItem_.data()->setPos(QPointF(0,0));
+    sourceItem_.data()->setPosition(QPointF(0,0));
     setWidth(sourceItem_.data()->width());
     setHeight(sourceItem_.data()->height());
     setPositionOnMap(coordinate(), scaleFactor() * anchorPoint_);

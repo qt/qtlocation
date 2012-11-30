@@ -196,7 +196,7 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate &coordina
 
     QPointF topLeft = map_->coordinateToScreenPosition(coordinate, false) - offset;
 
-    setPos(topLeft);
+    setPosition(topLeft);
 }
 
 /*!

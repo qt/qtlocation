@@ -1087,8 +1087,8 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
             bottomRightX = centerPt.x() + circleItem->width() / 2.0;
             bottomRightY = centerPt.y() + circleItem->height() / 2.0;
         } else if (item) {
-            topLeftX = item->pos().x();
-            topLeftY = item->pos().y();
+            topLeftX = item->position().x();
+            topLeftY = item->position().y();
             bottomRightX = topLeftX + item->width();
             bottomRightY = topLeftY + item->height();
             ++itemCount;
