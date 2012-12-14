@@ -3,7 +3,7 @@
 
 TEMPLATE = app
 TARGET = tst_declarative_core
-CONFIG += warn_on qmltestcase
+CONFIG += qmltestcase
 SOURCES += main.cpp
 
 QT += location quick

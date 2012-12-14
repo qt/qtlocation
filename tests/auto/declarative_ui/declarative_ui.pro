@@ -3,7 +3,7 @@
 
 TEMPLATE = app
 TARGET = tst_declarative_ui
-!no_ui_tests:CONFIG += warn_on qmltestcase
+!no_ui_tests:CONFIG += qmltestcase
 SOURCES += main.cpp
 
 QT += location quick
