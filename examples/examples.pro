@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
-!isEmpty(QT.quick.name): SUBDIRS += declarative weatherinfo
-!contains(QT_CONFIG, no-widgets): SUBDIRS += logfilepositionsource
+qtHaveModule(quick): SUBDIRS += declarative weatherinfo
+qtHaveModule(widgets): SUBDIRS += logfilepositionsource

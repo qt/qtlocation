@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
 # Doc snippets use widgets
-!isEmpty(QT.widgets.name): SUBDIRS += src/snippets
+qtHaveModule(widgets): SUBDIRS += src/snippets
