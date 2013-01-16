@@ -57,7 +57,7 @@
 #endif
 
 #include "qglobal.h"
-#include "QtLocation/qlocationglobal.h"
+#include <QtLocation/QLocationGlobal>
 
 QT_BEGIN_NAMESPACE
 

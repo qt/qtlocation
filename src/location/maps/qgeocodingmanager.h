@@ -42,8 +42,8 @@
 #ifndef QGEOCODINGMANAGER_H
 #define QGEOCODINGMANAGER_H
 
-#include "qgeocodereply.h"
-#include "qgeorectangle.h"
+#include <QtLocation/QGeocodeReply>
+#include <QtLocation/QGeoRectangle>
 
 #include <QObject>
 #include <QList>

@@ -42,8 +42,8 @@
 #ifndef QGEOPOSITIONINFOSOURCEFACTORY_H
 #define QGEOPOSITIONINFOSOURCEFACTORY_H
 
-#include "qgeopositioninfosource.h"
-#include "qgeosatelliteinfosource.h"
+#include <QtLocation/QGeoPositionInfoSource>
+#include <QtLocation/QGeoSatelliteInfoSource>
 #include <QList>
 
 QT_BEGIN_HEADER

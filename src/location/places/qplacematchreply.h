@@ -42,8 +42,8 @@
 #ifndef QPLACEMATCHREPLY_H
 #define QPLACEMATCHREPLY_H
 
-#include "qplacereply.h"
-#include  "qplacematchrequest.h"
+#include <QtLocation/QPlaceReply>
+#include <QtLocation/QPlaceMatchRequest>
 
 QT_BEGIN_HEADER
 

@@ -42,13 +42,18 @@
 #ifndef QPLACEMANAGERENGINE_H
 #define QPLACEMANAGERENGINE_H
 
-#include "qplacemanager.h"
+#include <QtLocation/QPlaceManager>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
 class QPlaceManagerEnginePrivate;
+class QPlaceMatchReply;
+class QPlaceMatchRequest;
+class QPlaceSearchReply;
+class QPlaceSearchRequest;
+class QPlaceSearchSuggestionReply;
 
 class Q_LOCATION_EXPORT QPlaceManagerEngine : public QObject
 {

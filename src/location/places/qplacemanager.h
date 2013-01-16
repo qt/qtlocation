@@ -42,16 +42,16 @@
 #ifndef QPLACEMANAGER_H
 #define QPLACEMANAGER_H
 
-#include "qplacecontentreply.h"
-#include "qplacecontentrequest.h"
-#include "qplaceidreply.h"
-#include "qplacereply.h"
-#include "qplacedetailsreply.h"
-#include "qplacematchreply.h"
-#include "qplacematchrequest.h"
-#include "qplacesearchsuggestionreply.h"
-#include "qplacesearchrequest.h"
-#include "qplacesearchresult.h"
+#include <QtLocation/QPlaceContentReply>
+#include <QtLocation/QPlaceContentRequest>
+#include <QtLocation/QPlaceIdReply>
+#include <QtLocation/QPlaceReply>
+#include <QtLocation/QPlaceDetailsReply>
+#include <QtLocation/QPlaceMatchReply>
+#include <QtLocation/QPlaceMatchRequest>
+#include <QtLocation/QPlaceSearchSuggestionReply>
+#include <QtLocation/QPlaceSearchRequest>
+#include <QtLocation/QPlaceSearchResult>
 
 #include <QLocale>
 #include <QVector>

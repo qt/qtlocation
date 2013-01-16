@@ -44,8 +44,8 @@
 
 #include <QSharedDataPointer>
 #include <QString>
-#include "qplacesupplier.h"
-#include "qplacecontent.h"
+#include <QtLocation/QPlaceSupplier>
+#include <QtLocation/QPlaceContent>
 
 QT_BEGIN_HEADER
 

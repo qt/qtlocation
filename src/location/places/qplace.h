@@ -43,18 +43,16 @@
 #define QPLACE_H
 
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/qtlocation.h>
-
-#include "qgeoaddress.h"
-#include "qgeorectangle.h"
-#include "qgeocoordinate.h"
-#include "qgeolocation.h"
-#include "qplacecategory.h"
-#include "qplacecontent.h"
-#include "qplaceratings.h"
-#include "qplacereview.h"
-#include "qplaceattribute.h"
-#include "qplacecontactdetail.h"
+#include <QtLocation/QGeoAddress>
+#include <QtLocation/QGeoRectangle>
+#include <QtLocation/QGeoCoordinate>
+#include <QtLocation/QGeoLocation>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceContent>
+#include <QtLocation/QPlaceRatings>
+#include <QtLocation/QPlaceReview>
+#include <QtLocation/QPlaceAttribute>
+#include <QtLocation/QPlaceContactDetail>
 
 QT_BEGIN_HEADER
 

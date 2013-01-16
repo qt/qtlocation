@@ -42,9 +42,9 @@
 #ifndef QPLACECONTENTREPLY_H
 #define QPLACECONTENTREPLY_H
 
-#include "qplacereply.h"
-#include "qplacecontent.h"
-#include "qplacecontentrequest.h"
+#include <QtLocation/QPlaceReply>
+#include <QtLocation/QPlaceContent>
+#include <QtLocation/QPlaceContentRequest>
 
 QT_BEGIN_HEADER
 

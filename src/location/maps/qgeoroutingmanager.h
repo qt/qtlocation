@@ -42,8 +42,8 @@
 #ifndef QGEOROUTINGMANAGER_H
 #define QGEOROUTINGMANAGER_H
 
-#include "qgeorouterequest.h"
-#include "qgeoroutereply.h"
+#include <QtLocation/QGeoRouteRequest>
+#include <QtLocation/QGeoRouteReply>
 
 #include <QObject>
 #include <QMap>

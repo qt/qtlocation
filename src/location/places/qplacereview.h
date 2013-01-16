@@ -42,7 +42,7 @@
 #ifndef QPLACEREVIEW_H
 #define QPLACEREVIEW_H
 
-#include "qplacecontent.h"
+#include <QtLocation/QPlaceContent>
 
 QT_BEGIN_HEADER
 

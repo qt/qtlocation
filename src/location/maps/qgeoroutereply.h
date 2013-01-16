@@ -42,7 +42,7 @@
 #ifndef QGEOROUTEREPLY_H
 #define QGEOROUTEREPLY_H
 
-#include "qgeoroute.h"
+#include <QtLocation/QGeoRoute>
 
 #include <QList>
 #include <QObject>

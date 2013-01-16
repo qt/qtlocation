@@ -41,7 +41,7 @@
 #ifndef QGEOPOSITIONINFOSOURCE_H
 #define QGEOPOSITIONINFOSOURCE_H
 
-#include "qgeopositioninfo.h"
+#include <QtLocation/QGeoPositionInfo>
 
 #include <QObject>
 

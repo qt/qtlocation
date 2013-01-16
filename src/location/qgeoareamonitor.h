@@ -41,7 +41,7 @@
 #ifndef QGEOAREAMONITOR_H
 #define QGEOAREAMONITOR_H
 
-#include "qgeocoordinate.h"
+#include <QtLocation/QGeoCoordinate>
 
 #include <QObject>
 

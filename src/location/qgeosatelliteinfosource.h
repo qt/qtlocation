@@ -41,7 +41,7 @@
 #ifndef QGEOSATELLITEINFOSOURCE_H
 #define QGEOSATELLITEINFOSOURCE_H
 
-#include "qgeosatelliteinfo.h"
+#include <QtLocation/QGeoSatelliteInfo>
 
 #include <QObject>
 #include <QList>

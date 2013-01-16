@@ -42,7 +42,7 @@
 #ifndef QGEOSERVICEPROVIDERFACTORY_H
 #define QGEOSERVICEPROVIDERFACTORY_H
 
-#include "qgeoserviceprovider.h"
+#include <QtLocation/QGeoServiceProvider>
 
 #include <QtPlugin>
 #include <QMap>

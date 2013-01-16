@@ -43,9 +43,7 @@
 #define QPLACEMATCHREQUEST_H
 
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/qtlocation.h>
-
-#include "qplacesearchresult.h"
+#include <QtLocation/QPlaceSearchResult>
 
 QT_BEGIN_HEADER
 

@@ -42,7 +42,7 @@
 #ifndef QPLACESEARCHSUGGESTIONREPLY_H
 #define QPLACESEARCHSUGGESTIONREPLY_H
 
-#include "qplacereply.h"
+#include <QtLocation/QPlaceReply>
 
 #include <QStringList>
 

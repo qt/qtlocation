@@ -42,9 +42,9 @@
 #ifndef QPLACESEARCHREPLY_H
 #define QPLACESEARCHREPLY_H
 
-#include "qplacereply.h"
-#include "qplacesearchresult.h"
-#include "qplacesearchrequest.h"
+#include <QtLocation/QPlaceReply>
+#include <QtLocation/QPlaceSearchResult>
+#include <QtLocation/QPlaceSearchRequest>
 
 QT_BEGIN_HEADER
 

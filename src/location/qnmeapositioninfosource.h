@@ -41,7 +41,7 @@
 #ifndef QNMEAPOSITIONINFOSOURCE_H
 #define QNMEAPOSITIONINFOSOURCE_H
 
-#include "qgeopositioninfosource.h"
+#include <QtLocation/QGeoPositionInfoSource>
 
 QT_BEGIN_HEADER
 
