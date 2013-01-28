@@ -92,7 +92,7 @@ public:
     QMap<QString, QPlaceAttribute> extendedAttributes;
     QMap<QString, QList<QPlaceContactDetail> > contacts;
 
-    QtLocation::Visibility visibility;
+    QLocation::Visibility visibility;
     QPlaceIcon icon;
     bool detailsFetched;
 };

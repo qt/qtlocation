@@ -496,7 +496,7 @@ QDeclarativePlace::Visibility QDeclarativeSearchResultModel::visibilityScope() c
 
 void QDeclarativeSearchResultModel::setVisibilityScope(QDeclarativePlace::Visibility visibilityScope)
 {
-    QtLocation::VisibilityScope scope = QtLocation::VisibilityScope(visibilityScope);
+    QLocation::VisibilityScope scope = QLocation::VisibilityScope(visibilityScope);
 
     if (m_visibilityScope == scope)
         return;

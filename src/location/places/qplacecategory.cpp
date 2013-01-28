@@ -45,7 +45,7 @@
 QT_BEGIN_NAMESPACE
 
 QPlaceCategoryPrivate::QPlaceCategoryPrivate()
-:   visibility(QtLocation::UnspecifiedVisibility)
+:   visibility(QLocation::UnspecifiedVisibility)
 {
 }
 
@@ -75,7 +75,7 @@ bool QPlaceCategoryPrivate::isEmpty() const
     return  categoryId.isEmpty()
             && name.isEmpty()
             && icon.isEmpty()
-            && QtLocation::UnspecifiedVisibility == visibility;
+            && QLocation::UnspecifiedVisibility == visibility;
 }
 
 /*!
@@ -185,7 +185,7 @@ void QPlaceCategory::setName(const QString &name)
 /*!
     Sets the \a visibility of the category.
 */
-void QPlaceCategory::setVisibility(QtLocation::Visibility visibility)
+void QPlaceCategory::setVisibility(QLocation::Visibility visibility)
 {
     d->visibility = visibility;
 }
@@ -193,7 +193,7 @@ void QPlaceCategory::setVisibility(QtLocation::Visibility visibility)
 /*!
     Returns the visibility of the category.
 */
-QtLocation::Visibility QPlaceCategory::visibility() const
+QLocation::Visibility QPlaceCategory::visibility() const
 {
     return d->visibility;
 }

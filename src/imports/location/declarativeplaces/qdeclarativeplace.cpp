@@ -1018,7 +1018,7 @@ void QDeclarativePlace::setVisibility(Visibility visibility)
     if (static_cast<QDeclarativePlace::Visibility>(m_src.visibility()) == visibility)
         return;
 
-    m_src.setVisibility(static_cast<QtLocation::Visibility>(visibility));
+    m_src.setVisibility(static_cast<QLocation::Visibility>(visibility));
     emit visibilityChanged();
 }
 

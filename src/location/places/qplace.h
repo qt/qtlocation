@@ -119,8 +119,8 @@ public:
     void appendContactDetail(const QString &contactType, const QPlaceContactDetail &detail);
     void removeContactDetails(const QString &contactType);
 
-    QtLocation::Visibility visibility() const;
-    void setVisibility(QtLocation::Visibility visibility);
+    QLocation::Visibility visibility() const;
+    void setVisibility(QLocation::Visibility visibility);
 
     bool isEmpty() const;
 

@@ -344,7 +344,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
     provider.setText(QLatin1String("nokia"));
     place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
 
-    place.setVisibility(QtLocation::PublicVisibility);
+    place.setVisibility(QLocation::PublicVisibility);
     place.setDetailsFetched(true);
     setPlace(place);
 

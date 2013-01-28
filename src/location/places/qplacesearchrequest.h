@@ -85,8 +85,8 @@ public:
     QString recommendationId() const;
     void setRecommendationId(const QString &recommendationId);
 
-    QtLocation::VisibilityScope visibilityScope() const;
-    void setVisibilityScope(QtLocation::VisibilityScope visibilityScopes);
+    QLocation::VisibilityScope visibilityScope() const;
+    void setVisibilityScope(QLocation::VisibilityScope visibilityScopes);
 
     RelevanceHint relevanceHint() const;
     void setRelevanceHint(RelevanceHint hint);

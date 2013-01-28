@@ -292,7 +292,7 @@ void tst_QPlaceManagerJsonDb::saveAndRemovePlace()
     QString placeId;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
     place.setPlaceId(placeId);
-    place.setVisibility(QtLocation::DeviceVisibility);
+    place.setVisibility(QLocation::DeviceVisibility);
 
     //ensure we can retrieve it's details
     QPlace retrievedPlace;
@@ -309,10 +309,10 @@ void tst_QPlaceManagerJsonDb::saveAndRemovePlace()
     //try removing a place that does not exist;
     QVERIFY(doRemovePlace(place, QPlaceReply::PlaceDoesNotExistError));
 
-    place.setVisibility(QtLocation::PublicVisibility);
+    place.setVisibility(QLocation::PublicVisibility);
     QVERIFY(doSavePlace(place, QPlaceReply::UnsupportedError, 0));
 
-    place.setVisibility(QtLocation::PrivateVisibility);
+    place.setVisibility(QLocation::PrivateVisibility);
     QVERIFY(doSavePlace(place, QPlaceReply::UnsupportedError, 0));
 }
 
@@ -435,7 +435,7 @@ void tst_QPlaceManagerJsonDb::updatePlace()
     iconParameters.insert(QLatin1String("fullscreenUrl"), QUrl("file://opt/icon.png"));
     iconParameters.insert(QLatin1String("fullscreenSize"), QSize(320, 480));
 
-    place.setVisibility(QtLocation::DeviceVisibility);
+    place.setVisibility(QLocation::DeviceVisibility);
     QString placeId;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
     place.setPlaceId(placeId);
@@ -1066,7 +1066,7 @@ void tst_QPlaceManagerJsonDb::searchByName()
 
     QList<QPlace *> places;
     places << &adelaide << &adel << &ad << &brisbane << &bradel;
-    setVisibility(places, QtLocation::DeviceVisibility);
+    setVisibility(places, QLocation::DeviceVisibility);
     doSavePlaces(places);
 
     //test that search has exhibits substring behaviour
@@ -1514,7 +1514,7 @@ void tst_QPlaceManagerJsonDb::searchWithLexicalPlaceNameHint()
     QList<QPlace *> places;
     places << &melbourne << &sydney << &adelaide << &brisbane;
     doSavePlaces(places);
-    setVisibility(places, QtLocation::DeviceVisibility);
+    setVisibility(places, QLocation::DeviceVisibility);
 
     QPlaceSearchRequest searchRequest;
     searchRequest.setRelevanceHint(QPlaceSearchRequest::LexicalPlaceNameHint);
@@ -1569,7 +1569,7 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
     places << &place6;
 
     doSavePlaces(places);
-    setVisibility(places, QtLocation::DeviceVisibility);
+    setVisibility(places, QLocation::DeviceVisibility);
 
     QPlaceSearchRequest searchRequest;
     QGeoCircle circle(QGeoCoordinate(20,20));
@@ -1632,7 +1632,7 @@ void tst_QPlaceManagerJsonDb::searchByCategory()
     krustyBurger.setCategories(categories);
     QVERIFY(doSavePlace(krustyBurger, QPlaceReply::NoError, &placeId));
     krustyBurger.setPlaceId(placeId);
-    krustyBurger.setVisibility(QtLocation::DeviceVisibility);
+    krustyBurger.setVisibility(QLocation::DeviceVisibility);
 
     QList<QPlace> places;
     QPlaceSearchRequest request;
@@ -1843,7 +1843,7 @@ void tst_QPlaceManagerJsonDb::mulipleDetailTypes()
     //Save a place
     QString placeId;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
-    place.setVisibility(QtLocation::DeviceVisibility);
+    place.setVisibility(QLocation::DeviceVisibility);
 
     //ensure we can retrieve it's details
     QPlace retrievedPlace;
@@ -2026,7 +2026,7 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
 
     place.setExtendedAttribute(QLatin1String("Smoking"), attribute);
 
-    place.setVisibility(QtLocation::PublicVisibility);
+    place.setVisibility(QLocation::PublicVisibility);
 
     QPlace compatPlace = placeManager->compatiblePlace(place);
 
@@ -2058,7 +2058,7 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
     QVERIFY(compatPlace.extendedAttributeTypes().contains(QLatin1String("Smoking")));
     QCOMPARE(compatPlace.extendedAttribute(QLatin1String("Smoking")), attribute);
 
-    QCOMPARE(compatPlace.visibility(), QtLocation::UnspecifiedVisibility);
+    QCOMPARE(compatPlace.visibility(), QLocation::UnspecifiedVisibility);
 }
 
 void tst_QPlaceManagerJsonDb::extendedAttribute()
@@ -2116,7 +2116,7 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
     QString placeId;
     QVERIFY(doSavePlace(place1Saved, QPlaceReply::NoError, &placeId));
     place1Saved.setPlaceId(placeId);
-    place1Saved.setVisibility(QtLocation::DeviceVisibility);
+    place1Saved.setVisibility(QLocation::DeviceVisibility);
 
     QPlaceResult result1;
     result1.setPlace(place1);
@@ -2163,7 +2163,7 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
     QPlace place2Saved = placeManager->compatiblePlace(place2);
     QVERIFY(doSavePlace(place2Saved, QPlaceReply::NoError, &placeId));
     place2Saved.setPlaceId(placeId);
-    place2Saved.setVisibility(QtLocation::DeviceVisibility);
+    place2Saved.setVisibility(QLocation::DeviceVisibility);
 
     QPlaceResult result2;
     result2.setPlace(place2);
@@ -3245,7 +3245,7 @@ void tst_QPlaceManagerJsonDb::specifiedPartition()
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
     QCOMPARE(createPlaceSpy.count(), 1);
     place.setPlaceId(placeId);
-    place.setVisibility(QtLocation::DeviceVisibility);
+    place.setVisibility(QLocation::DeviceVisibility);
 
     QPlace retrievedPlace;
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));

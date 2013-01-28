@@ -383,7 +383,7 @@ bool PlaceManagerUtils::compare(const QList<QPlace> &actualResults,
     return isMatch;
 }
 
-void PlaceManagerUtils::setVisibility(QList<QPlace *> places, QtLocation::Visibility visibility)
+void PlaceManagerUtils::setVisibility(QList<QPlace *> places, QLocation::Visibility visibility)
 {
     foreach (QPlace *place, places)
         place->setVisibility(visibility);

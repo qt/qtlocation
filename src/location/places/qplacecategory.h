@@ -75,8 +75,8 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    QtLocation::Visibility visibility() const;
-    void setVisibility(QtLocation::Visibility visibility);
+    QLocation::Visibility visibility() const;
+    void setVisibility(QLocation::Visibility visibility);
 
     QPlaceIcon icon() const;
     void setIcon(const QPlaceIcon &icon);

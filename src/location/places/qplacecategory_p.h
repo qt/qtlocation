@@ -63,7 +63,7 @@ public:
 
     QString categoryId;
     QString name;
-    QtLocation::Visibility visibility;
+    QLocation::Visibility visibility;
     QPlaceIcon icon;
 };
 

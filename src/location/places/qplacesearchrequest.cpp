@@ -64,7 +64,7 @@ public:
     QList<QPlaceCategory> categories;
     QGeoShape searchArea;
     QString recommendationId;
-    QtLocation::VisibilityScope visibilityScope;
+    QLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
     int limit;
     int offset;
@@ -72,7 +72,7 @@ public:
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
 :   QSharedData(),
-    visibilityScope(QtLocation::UnspecifiedVisibility),
+    visibilityScope(QLocation::UnspecifiedVisibility),
     relevanceHint(QPlaceSearchRequest::UnspecifiedHint),
     limit(-1), offset(0)
 {
@@ -131,7 +131,7 @@ void QPlaceSearchRequestPrivate::clear()
     categories.clear();
     searchArea = QGeoShape();
     recommendationId.clear();
-    visibilityScope = QtLocation::UnspecifiedVisibility;
+    visibilityScope = QLocation::UnspecifiedVisibility;
     relevanceHint = QPlaceSearchRequest::UnspecifiedHint;
 }
 
@@ -330,10 +330,10 @@ void QPlaceSearchRequest::setRecommendationId(const QString &placeId)
 
 /*!
     Returns the visibility scope used when searching for places.  The default value is
-    QtLocation::UnspecifiedVisibility meaning that no explicit scope has been assigned.
+    QLocation::UnspecifiedVisibility meaning that no explicit scope has been assigned.
     Places of any scope may be returned during the search.
 */
-QtLocation::VisibilityScope QPlaceSearchRequest::visibilityScope() const
+QLocation::VisibilityScope QPlaceSearchRequest::visibilityScope() const
 {
     Q_D(const QPlaceSearchRequest);
     return d->visibilityScope;
@@ -342,7 +342,7 @@ QtLocation::VisibilityScope QPlaceSearchRequest::visibilityScope() const
 /*!
     Sets the visibility \a scope used when searching for places.
 */
-void QPlaceSearchRequest::setVisibilityScope(QtLocation::VisibilityScope scope)
+void QPlaceSearchRequest::setVisibilityScope(QLocation::VisibilityScope scope)
 {
     Q_D(QPlaceSearchRequest);
     d->visibilityScope = scope;

@@ -79,10 +79,10 @@ public:
     ~QDeclarativeCategory();
 
     enum Visibility {
-        UnspecifiedVisibility = QtLocation::UnspecifiedVisibility,
-        DeviceVisibility = QtLocation::DeviceVisibility,
-        PrivateVisibility = QtLocation::PrivateVisibility,
-        PublicVisibility = QtLocation::PublicVisibility
+        UnspecifiedVisibility = QLocation::UnspecifiedVisibility,
+        DeviceVisibility = QLocation::DeviceVisibility,
+        PrivateVisibility = QLocation::PrivateVisibility,
+        PublicVisibility = QLocation::PublicVisibility
     };
     enum Status {Ready, Saving, Removing, Error};
 

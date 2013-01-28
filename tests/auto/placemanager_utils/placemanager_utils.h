@@ -144,7 +144,7 @@ public:
     static bool compare(const QList<QPlace> &actualResults,
                         const QList<QPlace> &expectedResults);
 
-    static void setVisibility(QList<QPlace *>places, QtLocation::Visibility visibility);
+    static void setVisibility(QList<QPlace *>places, QLocation::Visibility visibility);
 
     static const int Timeout;
 

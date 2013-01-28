@@ -590,7 +590,7 @@ void QPlace::removeContactDetails(const QString &contactType)
 /*!
     Sets the visibility of the place to \a visibility.
 */
-void QPlace::setVisibility(QtLocation::Visibility visibility)
+void QPlace::setVisibility(QLocation::Visibility visibility)
 {
     Q_D(QPlace);
     d->visibility = visibility;
@@ -603,7 +603,7 @@ void QPlace::setVisibility(QtLocation::Visibility visibility)
     If a place is saved with unspecified visibility the backend chooses an appropriate
     default visibility to use when saving.
 */
-QtLocation::Visibility QPlace::visibility() const
+QLocation::Visibility QPlace::visibility() const
 {
     Q_D(const QPlace);
     return d->visibility;
@@ -622,7 +622,7 @@ bool QPlace::isEmpty() const
 *******************************************************************************/
 
 QPlacePrivate::QPlacePrivate()
-:   QSharedData(), visibility(QtLocation::UnspecifiedVisibility), detailsFetched(false)
+:   QSharedData(), visibility(QLocation::UnspecifiedVisibility), detailsFetched(false)
 {
 }
 
@@ -718,7 +718,7 @@ bool QPlacePrivate::isEmpty() const
             && attribution.isEmpty()
             && contacts.isEmpty()
             && extendedAttributes.isEmpty()
-            && QtLocation::UnspecifiedVisibility == visibility
+            && QLocation::UnspecifiedVisibility == visibility
             && icon.isEmpty()
             );
 }

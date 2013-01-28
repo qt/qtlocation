@@ -99,11 +99,11 @@ void tst_QPlaceCategory::visibilityTest()
 {
     QPlaceCategory category;
 
-    QCOMPARE(category.visibility(), QtLocation::UnspecifiedVisibility);
+    QCOMPARE(category.visibility(), QLocation::UnspecifiedVisibility);
 
-    category.setVisibility(QtLocation::DeviceVisibility);
+    category.setVisibility(QLocation::DeviceVisibility);
 
-    QCOMPARE(category.visibility(), QtLocation::DeviceVisibility);
+    QCOMPARE(category.visibility(), QLocation::DeviceVisibility);
 }
 
 void tst_QPlaceCategory::operatorsTest()
@@ -139,9 +139,9 @@ void tst_QPlaceCategory::isEmptyTest()
     category.setCategoryId(QString());
     QVERIFY(category.isEmpty());
 
-    category.setVisibility(QtLocation::PublicVisibility);
+    category.setVisibility(QLocation::PublicVisibility);
     QVERIFY(!category.isEmpty());
-    category.setVisibility(QtLocation::UnspecifiedVisibility);
+    category.setVisibility(QLocation::UnspecifiedVisibility);
     QVERIFY(category.isEmpty());
 
     category.setIcon(icon);

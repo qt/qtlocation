@@ -188,7 +188,7 @@ void QPlaceSearchReplyImpl::replyFinished()
         QPlaceAttribute provider;
         provider.setText(QLatin1String("nokia"));
         place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
-        place.setVisibility(QtLocation::PublicVisibility);
+        place.setVisibility(QLocation::PublicVisibility);
 
         result.setPlace(place);
 

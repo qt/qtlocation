@@ -260,7 +260,7 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     foreach (const QString &contactType, original.contactTypes())
         place.setContactDetails(contactType, original.contactDetails(contactType));
 
-    place.setVisibility(QtLocation::UnspecifiedVisibility);
+    place.setVisibility(QLocation::UnspecifiedVisibility);
 
     QStringList attributeTypes = original.extendedAttributeTypes();
     foreach (const QString &attributeType, attributeTypes)

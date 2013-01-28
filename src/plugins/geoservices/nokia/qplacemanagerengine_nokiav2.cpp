@@ -376,8 +376,8 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 {
     bool unsupported = false;
 
-    unsupported |= query.visibilityScope() != QtLocation::UnspecifiedVisibility &&
-                   query.visibilityScope() != QtLocation::PublicVisibility;
+    unsupported |= query.visibilityScope() != QLocation::UnspecifiedVisibility &&
+                   query.visibilityScope() != QLocation::PublicVisibility;
 
     unsupported |= !query.searchTerm().isEmpty() && query.offset() > 0;
 
@@ -502,8 +502,8 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
 {
     bool unsupported = false;
 
-    unsupported |= query.visibilityScope() != QtLocation::UnspecifiedVisibility &&
-                   query.visibilityScope() != QtLocation::PublicVisibility;
+    unsupported |= query.visibilityScope() != QLocation::UnspecifiedVisibility &&
+                   query.visibilityScope() != QLocation::PublicVisibility;
 
     unsupported |= query.offset() > 0;
     unsupported |= !query.categories().isEmpty();

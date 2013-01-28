@@ -206,7 +206,7 @@ void tst_QPlaceManagerUnsupported::compatiblePlace()
     QPlace place;
     place.setPlaceId(QLatin1String("4-8-15-16-23-42"));
     place.setName(QLatin1String("Island"));
-    place.setVisibility(QtLocation::PublicVisibility);
+    place.setVisibility(QLocation::PublicVisibility);
 
     QPlace compatPlace = m_manager->compatiblePlace(place);
     QCOMPARE(compatPlace, QPlace());

@@ -274,9 +274,9 @@ The fullscreen icon is never retrieved and converted into a data URL because dat
 for small icon images.
 
 \section3 Visibility Scope
-The JsonDb plugin only supports places of the QtLocation::PrivateVisibility scope.
-Specifying the QtLocation::UnspecifiedVisibility when saving a place will default
-to the QtLocation::PrivateVisibility scope.
+The JsonDb plugin only supports places of the QLocation::PrivateVisibility scope.
+Specifying the QLocation::UnspecifiedVisibility when saving a place will default
+to the QLocation::PrivateVisibility scope.
 
 \section3 Favorites Matching Parameters
 The JsonDb plugin can be used as a favorites store and thus supports the following

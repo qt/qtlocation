@@ -569,11 +569,11 @@ void tst_Place::visibilityTest()
 {
     QPlace place;
 
-    QCOMPARE(place.visibility(), QtLocation::UnspecifiedVisibility);
+    QCOMPARE(place.visibility(), QLocation::UnspecifiedVisibility);
 
-    place.setVisibility(QtLocation::DeviceVisibility);
+    place.setVisibility(QLocation::DeviceVisibility);
 
-    QCOMPARE(place.visibility(), QtLocation::DeviceVisibility);
+    QCOMPARE(place.visibility(), QLocation::DeviceVisibility);
 }
 
 void tst_Place::isEmptyTest()
@@ -683,9 +683,9 @@ void tst_Place::isEmptyTest()
     QVERIFY(place.isEmpty());
 
     // visiblity
-    place.setVisibility(QtLocation::DeviceVisibility);
+    place.setVisibility(QLocation::DeviceVisibility);
     QVERIFY(!place.isEmpty());
-    place.setVisibility(QtLocation::UnspecifiedVisibility);
+    place.setVisibility(QLocation::UnspecifiedVisibility);
     QVERIFY(place.isEmpty());
 }
 

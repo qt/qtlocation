@@ -575,7 +575,7 @@ QPlace JsonDb::convertJsonObjectToPlace(const QJsonObject &placeJson,
                                                     .text().split(QLatin1String(",")));
     place.setIcon(icon);
 
-    place.setVisibility(QtLocation::DeviceVisibility);
+    place.setVisibility(QLocation::DeviceVisibility);
 
     return place;
 }

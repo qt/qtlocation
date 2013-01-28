@@ -136,12 +136,12 @@ void tst_QPlaceManager::compatiblePlace()
     QPlace place;
     place.setPlaceId(QLatin1String("4-8-15-16-23-42"));
     place.setName(QLatin1String("Island"));
-    place.setVisibility(QtLocation::PublicVisibility);
+    place.setVisibility(QLocation::PublicVisibility);
 
     QPlace compatPlace = placeManager->compatiblePlace(place);
     QVERIFY(compatPlace.placeId().isEmpty());
     QCOMPARE(compatPlace.name(), QLatin1String("Island"));
-    QCOMPARE(compatPlace.visibility(), QtLocation::UnspecifiedVisibility);
+    QCOMPARE(compatPlace.visibility(), QLocation::UnspecifiedVisibility);
 }
 
 void tst_QPlaceManager::cleanupTestCase()

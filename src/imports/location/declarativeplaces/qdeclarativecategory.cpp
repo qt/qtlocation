@@ -267,7 +267,7 @@ void QDeclarativeCategory::setVisibility(Visibility visibility)
     if (static_cast<QDeclarativeCategory::Visibility>(m_category.visibility()) == visibility)
         return;
 
-    m_category.setVisibility(static_cast<QtLocation::Visibility>(visibility));
+    m_category.setVisibility(static_cast<QLocation::Visibility>(visibility));
     emit visibilityChanged();
 }
 

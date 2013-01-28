@@ -151,7 +151,7 @@ private:
 
     int getRow(const QString &placeId) const;
     QList<QDeclarativeCategory *> m_categories;
-    QtLocation::VisibilityScope m_visibilityScope;
+    QLocation::VisibilityScope m_visibilityScope;
 
     QList<QPlaceSearchResult> m_results;
     QList<QPlaceSearchResult> m_resultsBuffer;

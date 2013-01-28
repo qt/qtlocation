@@ -46,7 +46,7 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace QtLocation {
+namespace QLocation {
 
 enum Visibility {
     UnspecifiedVisibility = 0x00,
@@ -59,7 +59,7 @@ Q_DECLARE_FLAGS(VisibilityScope, Visibility)
 
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QtLocation::VisibilityScope)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QLocation::VisibilityScope)
 
 QT_END_NAMESPACE
 

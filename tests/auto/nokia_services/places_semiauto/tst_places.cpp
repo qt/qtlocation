@@ -412,7 +412,7 @@ void tst_QPlaceManagerNokia::details()
     }
 
     QVERIFY(!place.extendedAttributeTypes().isEmpty());
-    QVERIFY(place.visibility() == QtLocation::PublicVisibility);
+    QVERIFY(place.visibility() == QLocation::PublicVisibility);
     QVERIFY(place.detailsFetched());
 
     //attributions are optional and thus have not been explicitly tested.

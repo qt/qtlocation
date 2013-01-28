@@ -106,7 +106,7 @@ void SavePlaceReply::setPlace(const QPlace &place)
 
 void SavePlaceReply::start()
 {
-    if (m_place.visibility() & ~QtLocation::DeviceVisibility) {
+    if (m_place.visibility() & ~QLocation::DeviceVisibility) {
         triggerDone(QPlaceReply::UnsupportedError, QString::fromLatin1("Only saving to device (or unspecified) scope is supported"));
         return;
     } else {

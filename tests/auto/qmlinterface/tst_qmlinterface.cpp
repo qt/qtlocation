@@ -154,7 +154,7 @@ tst_qmlinterface::tst_qmlinterface()
     m_place.setRatings(m_ratings);
     m_place.setIcon(m_icon);
     m_place.setSupplier(m_supplier);
-    m_place.setVisibility(QtLocation::PrivateVisibility);
+    m_place.setVisibility(QLocation::PrivateVisibility);
 }
 
 void tst_qmlinterface::testAddress()

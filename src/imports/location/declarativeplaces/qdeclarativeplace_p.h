@@ -107,10 +107,10 @@ public:
 
     enum Status {Ready, Saving, Fetching, Removing, Error};
     enum Visibility {
-        UnspecifiedVisibility = QtLocation::UnspecifiedVisibility,
-        DeviceVisibility = QtLocation::DeviceVisibility,
-        PrivateVisibility = QtLocation::PrivateVisibility,
-        PublicVisibility = QtLocation::PublicVisibility
+        UnspecifiedVisibility = QLocation::UnspecifiedVisibility,
+        DeviceVisibility = QLocation::DeviceVisibility,
+        PrivateVisibility = QLocation::PrivateVisibility,
+        PublicVisibility = QLocation::PublicVisibility
     };
 
     //From QQmlParserStatus
