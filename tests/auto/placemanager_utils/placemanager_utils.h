@@ -44,7 +44,7 @@
 
 #include <QtCore/QString>
 #include <QtLocation/QPlaceReply>
-#include <QtLocation/qtlocation.h>
+#include <QtLocation/QLocation>
 #include <QtLocation/QPlaceContent>
 
 #ifndef WAIT_UNTIL

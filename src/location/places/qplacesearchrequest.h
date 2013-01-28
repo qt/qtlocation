@@ -45,7 +45,7 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/placemacro.h>
 #include <QtLocation/QPlaceCategory>
-#include <QtLocation/qtlocation.h>
+#include <QtLocation/QLocation>
 
 QT_BEGIN_NAMESPACE
 

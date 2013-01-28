@@ -47,7 +47,7 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QString>
 #include <QtCore/QMetaType>
-#include <QtLocation/qtlocation.h>
+#include <QtLocation/QLocation>
 
 QT_BEGIN_NAMESPACE
 

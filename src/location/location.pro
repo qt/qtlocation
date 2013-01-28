@@ -24,7 +24,7 @@ PUBLIC_HEADERS += \
                     qgeosatelliteinfosource.h \
                     qnmeapositioninfosource.h \
                     qgeopositioninfosourcefactory.h \
-                    qtlocation.h \
+                    qlocation.h \
                     qlocationglobal.h
 
 PRIVATE_HEADERS += \
@@ -57,4 +57,4 @@ SOURCES += \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
             qgeopositioninfosourcefactory.cpp \
-            qtlocation.cpp
+            qlocation.cpp

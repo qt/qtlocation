@@ -44,7 +44,7 @@
 
 #include <QtCore/QSharedData>
 #include <QtCore/QString>
-#include <QtLocation/qtlocation.h>
+#include <QtLocation/QLocation>
 
 #include "qplaceicon.h"
 
