@@ -46,8 +46,6 @@
 #include <QtCore/QList>
 #include <QtLocation/QGeoLocation>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QGeoShape;
@@ -106,7 +104,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

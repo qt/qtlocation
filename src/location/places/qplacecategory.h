@@ -49,11 +49,7 @@
 #include <QtCore/QMetaType>
 #include <QtLocation/qtlocation.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceIcon;
 
@@ -96,7 +92,5 @@ Q_DECLARE_TYPEINFO(QPlaceCategory, Q_MOVABLE_TYPE);
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceCategory)
-
-QT_END_HEADER
 
 #endif // QPLACECATEGORY_H

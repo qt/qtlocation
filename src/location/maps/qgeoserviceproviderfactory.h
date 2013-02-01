@@ -48,8 +48,6 @@
 #include <QMap>
 #include <QString>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QGeoServiceProviderFactory
@@ -75,7 +73,5 @@ Q_DECLARE_INTERFACE(QGeoServiceProviderFactory,
                     "org.qt-project.qt.geoservice.serviceproviderfactory/5.0");
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

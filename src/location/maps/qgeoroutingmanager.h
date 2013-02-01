@@ -48,11 +48,7 @@
 #include <QObject>
 #include <QMap>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QLocale;
 
@@ -96,7 +92,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

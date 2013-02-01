@@ -46,11 +46,7 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QString;
 class QGeoAddressPrivate;
@@ -108,7 +104,5 @@ Q_DECLARE_TYPEINFO(QGeoAddress, Q_MOVABLE_TYPE);
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoAddress)
-
-QT_END_HEADER
 
 #endif

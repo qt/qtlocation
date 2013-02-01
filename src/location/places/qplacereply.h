@@ -46,8 +46,6 @@
 #include <QtCore/QObject>
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceReplyPrivate;
@@ -109,7 +107,5 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceReply::Error)
 Q_DECLARE_METATYPE(QPlaceReply *)
-
-QT_END_HEADER
 
 #endif // QPLACEREPLY_H

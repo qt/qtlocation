@@ -59,8 +59,6 @@
 
 #include <QSharedDataPointer>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QGeoTileSpecPrivate;
@@ -103,7 +101,5 @@ Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoTileSpec)
-
-QT_END_HEADER
 
 #endif // QGEOTILESPEC_H

@@ -47,11 +47,7 @@
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/qtlocation.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QGeoShape;
 class QPlaceSearchRequestPrivate;
@@ -111,7 +107,5 @@ private:
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceSearchRequest::RelevanceHint)
-
-QT_END_HEADER
 
 #endif // QPLACESEARCHQUERY_H

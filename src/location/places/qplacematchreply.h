@@ -45,8 +45,6 @@
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceMatchRequest>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceMatchReplyPrivate;
@@ -71,7 +69,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

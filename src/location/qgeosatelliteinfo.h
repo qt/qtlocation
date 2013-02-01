@@ -43,11 +43,7 @@
 
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QDebug;
 class QDataStream;
@@ -114,7 +110,5 @@ Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo
 #endif
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

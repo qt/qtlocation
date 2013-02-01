@@ -48,11 +48,7 @@
 
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceAttributePrivate;
 class Q_LOCATION_EXPORT QPlaceAttribute
@@ -84,8 +80,6 @@ protected:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 Q_DECLARE_METATYPE(QPlaceAttribute)
 

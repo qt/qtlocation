@@ -47,8 +47,6 @@
 #include <QtGui/QImage>
 #include <QtLocation/QPlaceReply>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class IconHandler;
@@ -136,7 +134,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

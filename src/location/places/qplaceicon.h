@@ -50,8 +50,6 @@
 #include <QtCore/QSize>
 #include <QtCore/QSharedDataPointer>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceManager;
@@ -90,7 +88,5 @@ private:
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceIcon)
-
-QT_END_HEADER
 
 #endif

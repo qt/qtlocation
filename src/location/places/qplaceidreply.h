@@ -45,11 +45,7 @@
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlace>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceIdReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceIdReply : public QPlaceReply
@@ -80,7 +76,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

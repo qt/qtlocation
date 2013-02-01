@@ -47,11 +47,7 @@
 #include <QMetaType>
 #include <QSharedDataPointer>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 #define Q_DECLARE_CONTENT_D_FUNC(Class) \
     inline Class##Private *d_func(); \
@@ -111,8 +107,6 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceContent)
 Q_DECLARE_METATYPE(QPlaceContent::Type)
-
-QT_END_HEADER
 
 #endif
 

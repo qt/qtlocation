@@ -44,8 +44,6 @@
 
 #include <QtLocation/QGeoShape>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -138,8 +136,6 @@ inline QGeoRectangle QGeoRectangle::operator|(const QGeoRectangle &rectangle) co
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoRectangle)
-
-QT_END_HEADER
 
 #endif
 

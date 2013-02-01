@@ -45,8 +45,6 @@
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlace>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceDetailsReplyPrivate;
@@ -70,7 +68,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif // QPLACEDETAILSREPLY_H

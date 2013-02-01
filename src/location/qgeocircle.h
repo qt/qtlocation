@@ -44,8 +44,6 @@
 
 #include <QtLocation/QGeoShape>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -102,8 +100,6 @@ Q_DECLARE_TYPEINFO(QGeoCircle, Q_MOVABLE_TYPE);
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoCircle)
-
-QT_END_HEADER
 
 #endif
 

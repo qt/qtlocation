@@ -57,7 +57,6 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QList>
 
-QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 struct QGeoPositionInfoData
@@ -118,7 +117,5 @@ QT_END_NAMESPACE
 Q_DECLARE_METATYPE(QGeoPositionInfoData)
 Q_DECLARE_METATYPE(QGeoSatelliteInfoData)
 Q_DECLARE_METATYPE(QGeoSatelliteInfoData::SatelliteInfo)
-
-QT_END_HEADER
 
 #endif // QGEOPOSITIONINFODATA_SIMULATOR_P_H

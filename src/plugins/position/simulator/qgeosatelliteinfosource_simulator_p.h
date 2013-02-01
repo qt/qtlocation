@@ -49,8 +49,6 @@
 #define MINIMUM_UPDATE_INTERVAL     1000
 #define DEFAULT_UPDATE_INTERVAL     5000
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QGeoSatelliteInfoSourceSimulator : public QGeoSatelliteInfoSource

@@ -47,8 +47,6 @@
 #include <QString>
 #include <QtLocation/QPlace>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 #define Q_DECLARE_SEARCHRESULT_D_FUNC(Class) \
@@ -106,7 +104,5 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceSearchResult)
 Q_DECLARE_METATYPE(QPlaceSearchResult::SearchResultType)
-
-QT_END_HEADER
 
 #endif // QPLACESEARCHRESULT_H

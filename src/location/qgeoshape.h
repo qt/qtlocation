@@ -45,8 +45,6 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/QGeoCoordinate>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QDebug;
@@ -100,8 +98,6 @@ Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoShape &shape)
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoShape)
-
-QT_END_HEADER
 
 #endif
 

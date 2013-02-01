@@ -59,8 +59,6 @@
 #include <QObject>
 #include <QtLocation/QPlaceIcon>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceManagerEngine;
@@ -130,7 +128,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif // QPLACEMANAGER_H

@@ -46,11 +46,7 @@
 #include <QtLocation/QPlaceSearchResult>
 #include <QtLocation/QPlaceSearchRequest>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceSearchReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceSearchReply : public QPlaceReply
@@ -74,7 +70,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

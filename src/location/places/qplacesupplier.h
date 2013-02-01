@@ -46,8 +46,6 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/QPlaceIcon>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QUrl;
@@ -88,7 +86,5 @@ private:
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceSupplier)
-
-QT_END_HEADER
 
 #endif // QPLACESUPPLIER_H

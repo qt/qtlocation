@@ -44,8 +44,6 @@
 
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 namespace QtLocation {
@@ -64,7 +62,5 @@ Q_DECLARE_FLAGS(VisibilityScope, Visibility)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QtLocation::VisibilityScope)
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif // QTLOCATION_H

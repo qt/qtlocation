@@ -49,11 +49,7 @@
 #include <QList>
 #include <QHash>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QGeoRectangle;
 class QGeoRouteSegment;
@@ -101,7 +97,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

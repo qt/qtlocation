@@ -46,8 +46,6 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceRatingsPrivate;
@@ -85,7 +83,5 @@ private:
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceRatings)
-
-QT_END_HEADER
 
 #endif

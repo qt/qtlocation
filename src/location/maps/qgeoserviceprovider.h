@@ -47,8 +47,6 @@
 #include <QtCore/QObject>
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QLocale;
@@ -166,7 +164,5 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::MappingFeatures)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::PlacesFeatures)
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

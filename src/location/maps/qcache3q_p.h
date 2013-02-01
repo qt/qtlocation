@@ -58,8 +58,6 @@
 #include <QtCore/qsharedpointer.h>
 #include <QDebug>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 template <class Key, class T>
@@ -474,7 +472,5 @@ inline QSharedPointer<T> QCache3Q<Key,T,EvPolicy>::operator[](const Key &key) co
 }
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif // QCACHE3Q_H

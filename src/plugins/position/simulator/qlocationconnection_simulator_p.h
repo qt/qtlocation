@@ -44,10 +44,7 @@
 
 #include "qlocationdata_simulator_p.h"
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
 
 namespace Simulator
 {

@@ -54,11 +54,7 @@
 #include <QtLocation/QPlaceAttribute>
 #include <QtLocation/QPlaceContactDetail>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QString;
 class QPlaceIcon;
@@ -140,7 +136,5 @@ Q_DECLARE_TYPEINFO(QPlace, Q_MOVABLE_TYPE);
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlace)
-
-QT_END_HEADER
 
 #endif

@@ -57,8 +57,6 @@
 
 #include <QtCore/qmetatype.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QDoubleVector2D;
@@ -288,7 +286,5 @@ QDataStream &operator>>(QDataStream &, QDoubleVector3D &);
 #endif
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

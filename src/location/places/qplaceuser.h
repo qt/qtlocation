@@ -46,8 +46,6 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceUserPrivate;
@@ -79,7 +77,5 @@ private:
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceUser)
-
-QT_END_HEADER
 
 #endif

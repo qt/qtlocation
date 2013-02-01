@@ -46,8 +46,6 @@
 #include <QtLocation/QGeoSatelliteInfoSource>
 #include <QList>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
@@ -64,7 +62,5 @@ Q_DECLARE_INTERFACE(QGeoPositionInfoSourceFactory,
                     "org.qt-project.qt.position.sourcefactory/5.0");
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif // QGEOPOSITIONINFOSOURCEFACTORY_H

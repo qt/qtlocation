@@ -47,11 +47,7 @@
 #include <QtLocation/QPlaceSupplier>
 #include <QtLocation/QPlaceContent>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceImagePrivate;
 class QUrl;
@@ -82,7 +78,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

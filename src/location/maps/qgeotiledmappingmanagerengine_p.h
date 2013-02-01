@@ -56,8 +56,6 @@
 #include "qgeomaptype_p.h"
 #include "qgeomappingmanagerengine_p.h"
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QGeoTiledMappingManagerEnginePrivate;
@@ -129,7 +127,5 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoTiledMappingManagerEngine::CacheAreas)
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

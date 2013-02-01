@@ -48,11 +48,7 @@
 
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QGeoCoordinate;
 class QGeoRectangle;
@@ -166,7 +162,5 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::SegmentDetails)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::ManeuverDetails)
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

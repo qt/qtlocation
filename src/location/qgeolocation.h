@@ -46,8 +46,6 @@
 #include <QtCore/QMetaType>
 #include <QtLocation/qlocationglobal.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QGeoAddress;
@@ -88,7 +86,5 @@ Q_DECLARE_TYPEINFO(QGeoLocation, Q_MOVABLE_TYPE);
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoLocation)
-
-QT_END_HEADER
 
 #endif

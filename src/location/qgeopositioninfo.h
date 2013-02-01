@@ -45,11 +45,7 @@
 
 #include <QDateTime>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-
 
 class QDebug;
 class QDataStream;
@@ -113,7 +109,5 @@ Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo 
 #endif
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

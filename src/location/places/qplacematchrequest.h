@@ -45,8 +45,6 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/QPlaceSearchResult>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceMatchRequestPrivate;
@@ -84,7 +82,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

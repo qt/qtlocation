@@ -51,8 +51,6 @@
 #include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceReply>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 class IdReply;
@@ -96,7 +94,5 @@ private:
 
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif
