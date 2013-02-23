@@ -59,7 +59,7 @@ public:
 
 #define QT_POSITION_SOURCE_INTERFACE
 Q_DECLARE_INTERFACE(QGeoPositionInfoSourceFactory,
-                    "org.qt-project.qt.position.sourcefactory/5.0");
+                    "org.qt-project.qt.position.sourcefactory/5.0")
 
 QT_END_NAMESPACE
 

@@ -70,7 +70,7 @@ public:
 };
 
 Q_DECLARE_INTERFACE(QGeoServiceProviderFactory,
-                    "org.qt-project.qt.geoservice.serviceproviderfactory/5.0");
+                    "org.qt-project.qt.geoservice.serviceproviderfactory/5.0")
 
 QT_END_NAMESPACE
 

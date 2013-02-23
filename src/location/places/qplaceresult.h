@@ -57,7 +57,7 @@ public:
 #ifdef Q_QDOC
     QPlaceResult::QPlaceResult(const QPlaceSearchResult &other);
 #else
-     Q_DECLARE_SEARCHRESULT_COPY_CTOR(QPlaceResult);
+     Q_DECLARE_SEARCHRESULT_COPY_CTOR(QPlaceResult)
 #endif
 
     virtual ~QPlaceResult();
@@ -72,7 +72,7 @@ public:
     void setSponsored(bool sponsored);
 
 private:
-    Q_DECLARE_SEARCHRESULT_D_FUNC(QPlaceResult);
+    Q_DECLARE_SEARCHRESULT_D_FUNC(QPlaceResult)
 };
 
 Q_DECLARE_TYPEINFO(QPlaceResult, Q_MOVABLE_TYPE);
