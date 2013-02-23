@@ -47,10 +47,10 @@
 #include <QDateTime>
 
 #include <QtLocation/qlocationglobal.h>
+#include <QtLocation/qgeocoordinate.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
 class QGeoRectangle;
 class QGeoRouteRequestPrivate;
 
