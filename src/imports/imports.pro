@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
-SUBDIRS += location
+qtHaveModule(3d): SUBDIRS += location
 

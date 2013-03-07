@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS +=  geoservices position
+SUBDIRS +=  position
+qtHaveModule(3d): SUBDIRS += geoservices
