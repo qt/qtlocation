@@ -135,7 +135,7 @@ public:
             qmlRegisterSingletonType<LocationSingleton>(uri, 5, 0, "QtLocation", singleton_type_factory);
 
             QQml_addValueTypeProvider(getValueTypeProvider());
-            qmlRegisterValueTypeEnums<GeoShapeValueType>("QtLocation", 5, 0, "GeoShape");
+            qmlRegisterValueTypeEnums<GeoShapeValueType>(uri, 5, 0, "GeoShape");
 
             qmlRegisterType<QDeclarativePosition>(uri, 5, 0, "Position");
             qmlRegisterType<QDeclarativePositionSource>(uri, 5, 0, "PositionSource");

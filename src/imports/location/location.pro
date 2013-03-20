@@ -89,4 +89,5 @@ include(declarativeplaces/declarativeplaces.pri)
 load(qml_plugin)
 
 OTHER_FILES += \
-    plugin.json
+    plugin.json \
+    qmldir

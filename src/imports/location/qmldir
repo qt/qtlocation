@@ -1,1 +1,2 @@
+module QtLocation
 plugin declarative_location
