@@ -294,9 +294,10 @@ bool QLocationUtils::hasValidNmeaChecksum(const char *data, int size)
         return ::strncmp(calc, &data[asteriskIndex+1], 2) == 0;
         */
 
-    QString s;
-    s.sprintf("%02x", result);
-    return (s.toLatin1() == QByteArray(&data[asteriskIndex + 1], 2));
+    QByteArray checkSumBytes(&data[asteriskIndex + 1], 2);
+    bool ok = false;
+    int checksum = checkSumBytes.toInt(&ok,16);
+    return ok && checksum == result;
 }
 
 bool QLocationUtils::getNmeaTime(const QByteArray &bytes, QTime *time)
