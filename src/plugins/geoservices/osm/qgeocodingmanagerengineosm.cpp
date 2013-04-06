@@ -92,10 +92,10 @@ QGeocodingManagerEngineOsm::~QGeocodingManagerEngineOsm()
 
 QGeocodeReply *QGeocodingManagerEngineOsm::geocode(const QGeoAddress &address, const QGeoShape &bounds)
 {
-    return geocode(address, -1, -1, bounds);
+    return geocode(addressToQuery(address), -1, -1, bounds);
 }
 
-QGeocodeReply *QGeocodingManagerEngineOsm::geocode(const QGeoAddress &address, int limit, int offset, const QGeoShape &bounds)
+QGeocodeReply *QGeocodingManagerEngineOsm::geocode(const QString &address, int limit, int offset, const QGeoShape &bounds)
 {
     Q_UNUSED(offset)
 
@@ -104,7 +104,7 @@ QGeocodeReply *QGeocodingManagerEngineOsm::geocode(const QGeoAddress &address, i
 
     QUrl url(QStringLiteral("http://nominatim.openstreetmap.org/search"));
     QUrlQuery query;
-    query.addQueryItem(QStringLiteral("q"), addressToQuery(address));
+    query.addQueryItem(QStringLiteral("q"), address);
     query.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
     query.addQueryItem(QStringLiteral("accept-language"), locale().name().left(2));
     //query.addQueryItem(QStringLiteral("countrycodes"), QStringLiteral("au,jp"));

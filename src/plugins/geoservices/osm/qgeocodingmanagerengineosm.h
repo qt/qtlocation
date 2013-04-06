@@ -59,10 +59,11 @@ public:
                                QString *errorString);
     ~QGeocodingManagerEngineOsm();
 
-    QGeocodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds);
-    QGeocodeReply *geocode(const QGeoAddress &address, int limit, int offset,
-                           const QGeoShape &bounds);
-    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate, const QGeoShape &bounds);
+    QGeocodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds) Q_DECL_OVERRIDE;
+    QGeocodeReply *geocode(const QString &address, int limit, int offset,
+                           const QGeoShape &bounds) Q_DECL_OVERRIDE;
+    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
+                                  const QGeoShape &bounds) Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
     void replyFinished();
