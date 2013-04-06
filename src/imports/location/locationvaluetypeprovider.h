@@ -73,6 +73,7 @@ private:
     bool typedInit(void *data, size_t dataSize)
     {
         Q_ASSERT(dataSize >= sizeof(T));
+        Q_UNUSED(dataSize);
         T *t = reinterpret_cast<T *>(data);
         new (t) T();
         return true;
@@ -84,6 +85,7 @@ private:
     bool typedDestroy(void *data, size_t dataSize)
     {
         Q_ASSERT(dataSize >= sizeof(T));
+        Q_UNUSED(dataSize);
         T *t = reinterpret_cast<T *>(data);
         t->~T();
         return true;
@@ -95,6 +97,7 @@ private:
     bool typedCopyConstruct(const void *src, void *dst, size_t dstSize)
     {
         Q_ASSERT(dstSize >= sizeof(T));
+        Q_UNUSED(dstSize);
         const T *srcT = reinterpret_cast<const T *>(src);
         T *dstT = reinterpret_cast<T *>(dst);
         new (dstT) T(*srcT);
@@ -121,6 +124,7 @@ private:
     bool typedStore(const void *src, void *dst, size_t dstSize)
     {
         Q_ASSERT(dstSize >= sizeof(T));
+        Q_UNUSED(dstSize);
         const T *srcT = reinterpret_cast<const T *>(src);
         T *dstT = reinterpret_cast<T *>(dst);
         new (dstT) T(*srcT);
@@ -135,6 +139,7 @@ private:
         T *dstT = reinterpret_cast<T *>(dst);
         if (srcType == dstType) {
             Q_ASSERT(srcSize >= sizeof(T));
+            Q_UNUSED(srcSize);
             const T *srcT = reinterpret_cast<const T *>(src);
             *dstT = *srcT;
         } else {
@@ -149,6 +154,7 @@ private:
     bool typedWrite(const void *src, void *dst, size_t dstSize)
     {
         Q_ASSERT(dstSize >= sizeof(T));
+        Q_UNUSED(dstSize);
         const T *srcT = reinterpret_cast<const T *>(src);
         T *dstT = reinterpret_cast<T *>(dst);
         if (*dstT != *srcT) {

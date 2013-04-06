@@ -581,7 +581,6 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
 
     double side = 1.0 * sideLength_;
 
-    typedef Polygon::iterator iter;
     typedef Polygon::const_iterator const_iter;
 
     const_iter i = footprint.constBegin();

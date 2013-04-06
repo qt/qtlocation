@@ -234,8 +234,6 @@ void QGeoTiledMappingManagerEngine::engineTileFinished(const QGeoTileSpec &spec,
 
     d->tileHash_.remove(spec);
 
-    typedef QSet<QGeoTileCache *>::const_iterator cache_iter;
-
     tileCache()->insert(spec, bytes, format, d->cacheHint_);
 
     map = maps.constBegin();
