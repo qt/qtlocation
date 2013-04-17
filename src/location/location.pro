@@ -1,5 +1,5 @@
 TARGET = QtLocation
-QT = core-private gui
+QT = core-private
 
 HEADERS += qgeopositioninfosource_p.h
 
