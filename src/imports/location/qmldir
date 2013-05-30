@@ -1,2 +1,3 @@
 module QtLocation
 plugin declarative_location
+typeinfo plugins.qmltypes
