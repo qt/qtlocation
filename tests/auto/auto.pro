@@ -8,9 +8,6 @@ SUBDIRS += qplace \
            qplacecontentrequest \
            qplacedetailsreply \
            qplaceeditorial \
-           qplacemanager \
-           qplacemanager_unsupported \
-           qplacemanager_nokia \
            qplacematchreply \
            qplacematchrequest \
            qplaceimage \
@@ -27,44 +24,54 @@ SUBDIRS += qplace \
            qmlinterface \
            cmake
 
-SUBDIRS += geotestplugin \
-           placesplugin_unsupported \
+qtHaveModule(3d) {
+    SUBDIRS += qplacemanager \
+            qplacemanager_nokia \
+            qplacemanager_unsupported
+}
+
+SUBDIRS += \
            positionplugin \
            positionplugintest \
-           qgeocodingmanagerplugins \
            qgeoaddress \
            qgeoareamonitor \
            qgeoshape \
            qgeorectangle \
            qgeocircle \
-           qgeocameradata \
-           qgeocameracapabilities \
-           qgeocameratiles \
-           qgeocodereply \
-           qgeocodingmanager \
            qgeocoordinate \
            qgeolocation \
-           qgeomaneuver \
-           qgeomapscene \
            qgeopositioninfo \
            qgeopositioninfosource \
+           qgeosatelliteinfo \
+           qgeosatelliteinfosource \
+           qnmeapositioninfosource \
+           declarative_core \
+           doublevectors
+
+!mac: SUBDIRS += declarative_ui
+
+qtHaveModule(3d) {
+    SUBDIRS += geotestplugin \
+           placesplugin_unsupported \
+           qgeocodingmanagerplugins \
+           qgeocameracapabilities\
+           qgeocameradata \
+           qgeocodereply \
+           qgeocodingmanager \
+           qgeomaneuver \
+           qgeomapscene \
            qgeoroute \
            qgeoroutereply \
            qgeorouterequest \
            qgeoroutesegment \
            qgeoroutingmanager \
            qgeoroutingmanagerplugins \
-           qgeosatelliteinfo \
-           qgeosatelliteinfosource \
            qgeotilespec \
-           qnmeapositioninfosource \
-           declarative_core \
            qgeoroutexmlparser \
            qgeomapcontroller \
            maptype \
            nokia_services \
-           doublevectors
-
-!mac: SUBDIRS += declarative_ui
+           qgeocameratiles
+}
 
 qtHaveModule(jsondb): SUBDIRS += qplacemanager_jsondb
