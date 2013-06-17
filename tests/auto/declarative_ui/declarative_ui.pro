@@ -11,5 +11,5 @@ QT += location quick
 OTHER_FILES = *.qml
 TESTDATA = $$OTHER_FILES
 
-linux:CONFIG+=insignificant_test # QTBUG-31797
+win32|linux:CONFIG+=insignificant_test # QTBUG-31797
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
