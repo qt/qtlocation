@@ -11,3 +11,5 @@ QT += location quick
 OTHER_FILES = *.qml *.js
 TESTDATA = $$OTHER_FILES
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+
+CONFIG+=insignificant_test # QTBUG-31798
