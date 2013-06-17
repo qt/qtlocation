@@ -247,8 +247,7 @@ Item {
 
                         function reset()
                         {
-                            saveButton.visible = (placesPlugin.name !== "places_jsondb")
-                                                && (placeSearchModel.favoritesPlugin !== null);
+                            saveButton.visible = (placeSearchModel.favoritesPlugin !== null);
                             saveStatus.visible = false;
                         }
 

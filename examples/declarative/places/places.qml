@@ -333,14 +333,15 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            if (isFavoritesEnabled) {
+            /*if (isFavoritesEnabled) {
                 if (favoritesPlugin == null)
                     favoritesPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { name: "places_jsondb" }', page);
                 favoritesPlugin.parameters = pluginParametersFromMap(pluginParameters);
                 placeSearchModel.favoritesPlugin = favoritesPlugin;
             } else {
                 placeSearchModel.favoritesPlugin = null;
-            }
+            }*/
+            placeSearchModel.favoritesPlugin = null;
 
             placeSearchModel.relevanceHint = orderByDistance ? PlaceSearchModel.DistanceHint :
                                                                orderByName ? PlaceSearchModel.LexicalPlaceNameHint :
