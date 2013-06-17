@@ -73,5 +73,3 @@ qtHaveModule(3d) {
            nokia_services \
            qgeocameratiles
 }
-
-qtHaveModule(jsondb): SUBDIRS += qplacemanager_jsondb
