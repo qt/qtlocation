@@ -77,7 +77,7 @@ QT_BEGIN_NAMESPACE
 
     Internally, a MapCircle is implemented as a many-sided polygon. To
     calculate the radius points it uses a spherical model of the Earth,
-    similar to the atDistanceAndAzimuth method of the \l {QtLocation5::coordinate}{coordinate}
+    similar to the atDistanceAndAzimuth method of the \l {coordinate}
     type. These two things can occasionally have implications for the
     accuracy of the circle's shape, depending on position and map
     projection.
@@ -119,7 +119,7 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    \image ../../../doc/src/images/api-mapcircle.png
+    \image api-mapcircle.png
 */
 
 #ifndef M_PI

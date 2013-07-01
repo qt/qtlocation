@@ -70,11 +70,11 @@ QT_USE_NAMESPACE
     If the \l Plugin supports it, categories can be created or removed.  To create a new category
     construct a new Category object and set its properties, then invoke the \l save() method.
 
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml Category
+    \snippet declarative/places.qml Category
     \dots 0
-    \snippet snippets/declarative/places.qml Category save
+    \snippet declarative/places.qml Category save
 
     To remove a category ensure that the \l plugin and categoryId properties are set and call the
     \l remove() method.

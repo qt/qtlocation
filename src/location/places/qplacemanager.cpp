@@ -106,10 +106,10 @@ QT_BEGIN_NAMESPACE
     contains the results of the request, along with any errors that occurred, if any.
 
     An asynchronous request is generally handled as follows:
-    \snippet snippets/places/requesthandler.h Simple search
+    \snippet places/requesthandler.h Simple search
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Simple search handler
+    \snippet places/requesthandler.h Simple search handler
 
     See \l {Common Operations} for a list of examples demonstrating how the QPlaceManger
     is used.
@@ -200,7 +200,7 @@ int QPlaceManager::managerVersion() const
 /*!
     Retrieves a details of place corresponding to the given \a placeId.
 
-    See \l {Fetching Place Details} for an example of usage.
+    See \l {QML Places API#Fetching Place Details}{Fetching Place Details} for an example of usage.
 */
 QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 {

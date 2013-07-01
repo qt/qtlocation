@@ -79,7 +79,7 @@ QT_BEGIN_NAMESPACE
     See the example given for the \l{PositionSource} type, or the
     \l{declarative/flickr}{Flickr} example application.
 
-    \sa PositionSource, QtLocation5::coordinate
+    \sa PositionSource, coordinate
 
 */
 

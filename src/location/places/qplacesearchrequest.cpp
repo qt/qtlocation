@@ -145,7 +145,7 @@ void QPlaceSearchRequestPrivate::clear()
     \brief The QPlaceSearchRequest class represents the set of parameters for a search request.
 
     A typical search request may look like the following:
-    \snippet snippets/places/requesthandler.h Search request
+    \snippet places/requesthandler.h Search request
 
     Note that specifying a search center can be done by setting a circular search area that has
     a center but no radius.    The default radius is set to -1, which indicates an undefined radius.  The provider will
@@ -160,7 +160,7 @@ void QPlaceSearchRequestPrivate::clear()
 
     Also be aware that providers may vary by which parameters they support for example some providers may not support
     paging while others do, some providers may honor relevance hints while others may completely ignore them,
-    see the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation} for more
+    see the \l {Qt Location#Plugin References and Parameters}{plugin documentation} for more
     details.
 */
 

@@ -338,8 +338,8 @@ void QDeclarativeGeocodeModel::setBounds(const QVariant &boundingArea)
     within the area. his is particularly useful if query is only partially filled out,
     as the service will attempt to (reverse) geocode all matches for the specified data.
 
-    Accepted types are \l {QtLocation5::georectangle}{georectangle} and
-    \l {QtLocation5::geocircle}{geocircle}.
+    Accepted types are \l {georectangle} and
+    \l {geocircle}.
 */
 QVariant QDeclarativeGeocodeModel::bounds() const
 {
@@ -489,7 +489,7 @@ void QDeclarativeGeocodeModel::setLocations(const QList<QGeoLocation> &locations
 
     This property holds how many locations the model currently has.
     Amongst other uses, you can use this value when accessing locations
-    via the QtLocation5::GeocodeModel::get -method.
+    via the GeocodeModel::get -method.
 */
 
 int QDeclarativeGeocodeModel::count() const
@@ -615,7 +615,7 @@ void QDeclarativeGeocodeModel::cancel()
 
     \list
     \li Address - Geocoding (address to coordinate)
-    \li \l {QtLocation5::coordinate}{coordinate} - Reverse geocoding (coordinate to address)
+    \li \l {coordinate} - Reverse geocoding (coordinate to address)
     \li string - Geocoding (address to coordinate)
     \endlist
 */
@@ -684,7 +684,7 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
     is false.
 
     If setting this value to 'true' and using an Address or
-    \l {QtLocation5::coordinate}{coordinate} as the query, note that any change at all in the
+    \l {coordinate} as the query, note that any change at all in the
     object's properties will trigger a new request to be sent. If you are adjusting many
     properties of the object whilst autoUpdate is enabled, this can generate large numbers of
     useless (and later discarded) requests.

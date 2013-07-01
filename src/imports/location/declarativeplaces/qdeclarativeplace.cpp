@@ -70,7 +70,7 @@ QT_USE_NAMESPACE
 
     The Place type represents a physical location with additional metadata describing that
     location.  Contrasted with \l Location, \l Address, and
-    \l {QtLocation5::coordinate}{coordinate} type which are used to describe where a location is.
+    \l {coordinate} type which are used to describe where a location is.
     The basic properties of a Place are its \l name and \l location.
 
     Place objects are typically obtained from a search model and will generally only have their
@@ -113,11 +113,11 @@ QT_USE_NAMESPACE
     If the \l Plugin supports it, the Place type can be used to save a place.  First create a new
     Place and set its properties:
 
-    \snippet snippets/declarative/places.qml Place savePlace def
+    \snippet declarative/places.qml Place savePlace def
 
     Then invoke the \l save() method:
 
-    \snippet snippets/declarative/places.qml Place savePlace
+    \snippet declarative/places.qml Place savePlace
 
     The \l status property will change to Place.Saving and then to Place.Ready if the save was
     successful or to Place.Error if an error occurs.
@@ -127,7 +127,7 @@ QT_USE_NAMESPACE
     saved place.
 
     \section3 Caveats
-    \include place-caveats.qdocinc
+    \input place-caveats.qdocinc
 
     \section3 Saving Between Plugins
     When saving places between plugins, there are a few things to be aware of.
@@ -145,7 +145,7 @@ QT_USE_NAMESPACE
     The following snippet provides an example of saving a place to a different plugin
     using the \l copyFrom method:
 
-    \snippet snippets/declarative/places.qml Place save to different plugin
+    \snippet declarative/places.qml Place save to different plugin
 
     \section2 Removing a Place
 
@@ -164,18 +164,18 @@ QT_USE_NAMESPACE
     properties to show to the user. For example the favorite may have a modified name which should
     be displayed rather than the original name.
 
-    \snippet snippets/declarative/places.qml Place favorite
+    \snippet declarative/places.qml Place favorite
 
     The following demonstrates how to save a new favorite instance.  A call is made
     to create/initialize the favorite instance and then the instance is saved.
 
-    \snippet snippets/declarative/places.qml Place saveFavorite
+    \snippet declarative/places.qml Place saveFavorite
 
     The following demonstrates favorite removal:
 
-    \snippet snippets/declarative/places.qml Place removeFavorite 1
+    \snippet declarative/places.qml Place removeFavorite 1
     \dots
-    \snippet snippets/declarative/places.qml Place removeFavorite 2
+    \snippet declarative/places.qml Place removeFavorite 2
 
     The PlaceSearchModel has a favoritesPlugin property.  If the property is set, any places found
     during a search are checked against the favoritesPlugin to see if there is a corresponding
@@ -559,7 +559,7 @@ QString QDeclarativePlace::name() const
 
     If only the place identifier is known, all other place data can fetched from the \l Plugin.
 
-    \snippet snippets/declarative/places.qml Place placeId
+    \snippet declarative/places.qml Place placeId
 */
 void QDeclarativePlace::setPlaceId(const QString &placeId)
 {
@@ -641,9 +641,9 @@ bool QDeclarativePlace::detailsFetched() const
     to a handler function, and then have the handler function process the change
     in status.
 
-    \snippet snippets/declarative/places.qml Place checkStatus
+    \snippet declarative/places.qml Place checkStatus
     \dots
-    \snippet snippets/declarative/places.qml Place checkStatus handler
+    \snippet declarative/places.qml Place checkStatus handler
 
 */
 void QDeclarativePlace::setStatus(Status status, const QString &errorString)
@@ -820,7 +820,7 @@ QString QDeclarativePlace::errorString() const
     defined for this place, this property will be an empty string.  It is equivalent to:
 
 
-    \snippet snippets/declarative/places.qml Place primaryPhone
+    \snippet declarative/places.qml Place primaryPhone
 */
 QString QDeclarativePlace::primaryPhone() const
 {
@@ -833,7 +833,7 @@ QString QDeclarativePlace::primaryPhone() const
     This property holds the primary fax number of the place.  If no "fax" contact detail is
     defined for this place this property will be an empty string.  It is equivalent to
 
-    \snippet snippets/declarative/places.qml Place primaryFax
+    \snippet declarative/places.qml Place primaryFax
 */
 QString QDeclarativePlace::primaryFax() const
 {
@@ -846,7 +846,7 @@ QString QDeclarativePlace::primaryFax() const
     This property holds the primary email address of the place.  If no "email" contact detail is
     defined for this place this property will be an empty string.  It is equivalent to
 
-    \snippet snippets/declarative/places.qml Place primaryEmail
+    \snippet declarative/places.qml Place primaryEmail
 */
 QString QDeclarativePlace::primaryEmail() const
 {
@@ -859,7 +859,7 @@ QString QDeclarativePlace::primaryEmail() const
     This property holds the primary website url of the place.  If no "website" contact detail is
     defined for this place this property will be an empty string.  It is equivalent to
 
-    \snippet snippets/declarative/places.qml Place primaryWebsite
+    \snippet declarative/places.qml Place primaryWebsite
 */
 
 QUrl QDeclarativePlace::primaryWebsite() const

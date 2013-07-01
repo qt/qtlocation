@@ -66,8 +66,8 @@
         \li website
     \endlist
 
-    ContactDetails instances are only ever used in the context of \l {Places}.  It is not possible
-    to create a ContactDetails instance directly or re-assign ContactDetails instances to \l {Places}.
+    ContactDetails instances are only ever used in the context of \l {Place}{Places}.  It is not possible
+    to create a ContactDetails instance directly or re-assign ContactDetails instances to \l {Place}{Places}.
     Modification of ContactDetails can only be accomplished via Javascript.
 
     \section1 Examples
@@ -75,23 +75,23 @@
     The following example shows how to access all \l {QtLocation5::ContactDetail}{ContactDetails}
     and print them to the console:
 
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml ContactDetails read
+    \snippet declarative/places.qml ContactDetails read
 
     The returned list of contact details is an \l {QObjectList-based model}{object list} and so can be used directly as a data model.  For example, the
     following demonstrates how to display a list of contact phone numbers in a list view:
 
-    \snippet snippets/declarative/places.qml QtQuick import
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml ContactDetails phoneList
+    \snippet declarative/places.qml ContactDetails phoneList
 
     The following example demonstrates how to assign a single phone number to a place in JavaScript:
-    \snippet snippets/declarative/places.qml  ContactDetails write single
+    \snippet declarative/places.qml  ContactDetails write single
 
     The following demonstrates how to assign multiple phone numbers to a place in JavaScript:
-    \snippet snippets/declarative/places.qml  ContactDetails write multiple
+    \snippet declarative/places.qml  ContactDetails write multiple
 */
 
 /*!
@@ -137,10 +137,10 @@ QVariant QDeclarativeContactDetails::updateValue(const QString &, const QVariant
     \section1 Examples
 
     The following example demonstrates how to assign a single phone number to a place in JavaScript:
-    \snippet snippets/declarative/places.qml  ContactDetails write single
+    \snippet declarative/places.qml  ContactDetails write single
 
     The following demonstrates how to assign multiple phone numbers to a place in JavaScript:
-    \snippet snippets/declarative/places.qml  ContactDetails write multiple
+    \snippet declarative/places.qml  ContactDetails write multiple
 
     Note, due to limitations of the QQmlPropertyMap, it is not possible
     to declaratively specify the contact details in QML, it can only be accomplished

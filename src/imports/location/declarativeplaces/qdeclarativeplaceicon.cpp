@@ -65,7 +65,7 @@ QT_USE_NAMESPACE
 
     The Icon type also has a parameters map which is a set of key value pairs.  The precise
     keys to use depend on the
-    \l {Qt Location Module#Plugin References and Parameters}{plugin} being used.
+    \l {Qt Location#Plugin References and Parameters}{plugin} being used.
     The parameters map is used by the \l Plugin to determine which URL to return.
 
     In the case where an icon can only possibly have one image URL, the
@@ -75,13 +75,13 @@ QT_USE_NAMESPACE
 
     The following code shows how to display a 64x64 pixel icon:
 
-    \snippet snippets/declarative/places.qml QtQuick import
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml Icon
+    \snippet declarative/places.qml Icon
 
     Alternatively, a default sized icon can be specified like so:
-    \snippet snippets/declarative/places.qml Icon default
+    \snippet declarative/places.qml Icon default
 */
 
 QDeclarativePlaceIcon::QDeclarativePlaceIcon(QObject *parent)
@@ -155,7 +155,7 @@ QUrl QDeclarativePlaceIcon::url(const QSize &size) const
     are used by the plugin to return the appropriate URL when url() is called and to
     specify locations to save to when saving icons.
 
-    Consult the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation}
+    Consult the \l {Qt Location#Plugin References and Parameters}{plugin documentation}
     for what parameters are supported and how they should be used.
 
     Note, due to limitations of the QQmlPropertyMap, it is not possible

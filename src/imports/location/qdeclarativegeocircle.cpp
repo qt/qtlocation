@@ -56,8 +56,8 @@ QT_BEGIN_NAMESPACE
 
     \brief The geocircle type represents a circular geographic area.
 
-    The \c geocircle type is a \l {QtLocation5::geoshape}{geoshape} that represents a circular
-    geographic area.  It is defined in terms of a \l {QtLocation5::coordinate}{coordinate} which
+    The \c geocircle type is a \l {geoshape} that represents a circular
+    geographic area.  It is defined in terms of a \l {coordinate} which
     specifies the \c center of the circle and a qreal which specifies the \c radius of the circle
     in meters.
 
@@ -67,7 +67,7 @@ QT_BEGIN_NAMESPACE
     \section2 Example Usage
 
     Use properties of type \l variant to store a \c {geocircle}.  To create a \c geocircle value,
-    use the \l {QtLocation5::QtLocation}{QtLocation.circle()} function:
+    use the \l {QtLocation::circle}{QtLocation.circle()} function:
 
     \qml
     import QtLocation 5.0

@@ -85,10 +85,10 @@ QT_USE_NAMESPACE
 
     The following example displays a flat list of all available categories:
 
-    \snippet snippets/declarative/places.qml QtQuick import
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml CategoryView
+    \snippet declarative/places.qml CategoryView
 
     To access the hierarchical category model it is necessary to use a \l VisualDataModel to access
     the child items.

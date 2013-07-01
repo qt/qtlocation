@@ -96,12 +96,12 @@
     The following example shows how to access all \l {PlaceAttribute}{PlaceAttributes} and print
     them to the console:
 
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml ExtendedAttributes read
+    \snippet declarative/places.qml ExtendedAttributes read
 
     The following example shows how to assign and modify an attribute:
-    \snippet snippets/declarative/places.qml
+    \snippet declarative/places.qml
 
     \sa PlaceAttribute, QQmlPropertyMap
 */
@@ -137,13 +137,13 @@
 
     The following example shows how to display all attributes in a list:
 
-    \snippet snippets/declarative/places.qml QtQuick import
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml ExtendedAttributes
+    \snippet declarative/places.qml ExtendedAttributes
 
     The following example shows how to assign and modify an attribute:
-    \snippet snippets/declarative/places.qml ExtendedAttributes write
+    \snippet declarative/places.qml ExtendedAttributes write
 */
 
 QDeclarativePlaceAttribute::QDeclarativePlaceAttribute(QObject *parent)

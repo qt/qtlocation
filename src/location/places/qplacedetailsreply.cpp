@@ -65,7 +65,7 @@ QT_USE_NAMESPACE
     \brief The QPlaceDetailsReply class manages a place details fetch operation started by an
     instance of QPlaceManager.
 
-    See \l {Fetching Place Details} for an example on how to use a details reply.
+    See \l {QML Places API#Fetching Place Details}{Fetching Place Details} for an example on how to use a details reply.
     \sa QPlaceManager
 */
 

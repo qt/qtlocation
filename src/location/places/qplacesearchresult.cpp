@@ -84,7 +84,7 @@ bool QPlaceSearchResultPrivate::compare(const QPlaceSearchResultPrivate *other) 
     The intended usage is that depending  on the \l {QPlaceSearchResult::type()} {type},
     the search result can be converted to a more detailed subclass like so:
 
-    \snippet snippets/places/requesthandler.h Convert search result
+    \snippet places/requesthandler.h Convert search result
 
     The implmentation is handled in such a way that object slicing is not an issue.
     It is not expected that client applications or backend plugins instantiate

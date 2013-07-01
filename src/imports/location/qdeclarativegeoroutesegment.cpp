@@ -72,10 +72,10 @@ QT_BEGIN_NAMESPACE
     The following QML snippet demonstrates how to print information about a
     route segment:
 
-    \snippet snippets/declarative/routing.qml QtQuick import
-    \snippet snippets/declarative/routing.qml QtLocation import
+    \snippet declarative/routing.qml QtQuick import
+    \snippet declarative/routing.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/routing.qml RouteSegment
+    \snippet declarative/routing.qml RouteSegment
 */
 
 QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(QObject *parent)
@@ -144,7 +144,7 @@ QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
     indicates the number of objects and 'path[index starting from zero]' gives
     the actual object.
 
-    \sa QtLocation5::coordinate
+    \sa QtLocation::coordinate
 */
 
 QJSValue QDeclarativeGeoRouteSegment::path() const

@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
     \brief The MapPolyline type displays a polyline on a map.
 
     The MapPolyline type displays a polyline on a map, specified in terms of an ordered list of
-    \l {QtLocation5::coordinate}{coordinates}.  The \l {QtLocation5::coordinate}{coordinates} on
+    \l {coordinate}{coordinates}.  The \l {coordinate}{coordinates} on
     the path cannot be directly changed after being added to the Polyline.  Instead, copy the
     \l path into a var, modify the copy and reassign the copy back to the \l path.
 
@@ -121,7 +121,7 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    \image ../../../doc/src/images/api-mappolyline.png
+    \image api-mappolyline.png
 */
 
 QDeclarativeMapLineProperties::QDeclarativeMapLineProperties(QObject *parent) :

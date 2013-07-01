@@ -491,7 +491,7 @@ QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider() 
     For \l {Plugin}'s that do not support locales, the locales list is always empty.
 
     The following code demonstrates how to set a single and multiple locales:
-    \snippet snippets/declarative/plugin.qml Plugin locale
+    \snippet declarative/plugin.qml Plugin locale
 */
 QStringList QDeclarativeGeoServiceProvider::locales() const
 {
@@ -757,7 +757,7 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
     To set such a parameter, declare a PluginParameter inside a \l Plugin
     object, and give it \l{name} and \l{value} properties. A list of valid
     parameter names for each plugin is available from the
-    \l {Qt Location Module#Plugin References and Parameters}{plugin reference pages}.
+    \l {Qt Location#Plugin References and Parameters}{plugin reference pages}.
 
     \section2 Example Usage
 

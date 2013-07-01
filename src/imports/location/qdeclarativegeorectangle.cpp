@@ -56,9 +56,9 @@ QT_BEGIN_NAMESPACE
 
     \brief The georectangle type represents a rectangular geographic area.
 
-    The \c georectangle type is a \l {QtLocation5::geoshape}{geoshape} that represents a
+    The \c georectangle type is a \l {geoshape} that represents a
     rectangular geographic area.  It is defined by a pair of
-    \l {QtLocation5::coordinate}{coordinates} which represent the top-left and bottom-right corners
+    \l {coordinate}{coordinates} which represent the top-left and bottom-right corners
     of the \c {georectangle}.  The coordinates are accessible from the \c topLeft and
     \c bottomRight attributes.
 
@@ -83,7 +83,7 @@ QT_BEGIN_NAMESPACE
     \section2 Example Usage
 
     Use properties of type \l variant to store a \c {georectangle}.  To create a \c georectangle
-    value, use the \l {QtLocation5::QtLocation}{QtLocation.rectangle()} function:
+    value, use the \l {QtLocation::rectangle}{QtLocation.rectangle()} function:
 
     \qml
     import QtLocation 5.0

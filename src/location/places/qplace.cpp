@@ -59,14 +59,14 @@ QT_BEGIN_NAMESPACE
 
     \brief The QPlace class represents a set of data about a place.
 
-    \include place-definition.qdocinc
+    \input place-definition.qdocinc
 
     \section2 Contact Information
     The contact information of a place is based around a common set of
     \l {Contact Types}{contact types}. To retrieve all the phone numbers
     of a place, one would do:
 
-    \snippet snippets/places/requesthandler.h Phone numbers
+    \snippet places/requesthandler.h Phone numbers
 
     The contact types are string values by design to allow for providers
     to introduce new contact types.
@@ -85,7 +85,7 @@ QT_BEGIN_NAMESPACE
     Similar to contacts attributes are based around a common set of
     \l {Attribute Types}{attribute types}.  To retrieve an extended attribute one
     would do:
-    \snippet snippets/places/requesthandler.h Opening hours
+    \snippet places/requesthandler.h Opening hours
 
     The attribute types are string values by design to allow providers
     to introduce new attribute types.
@@ -114,7 +114,7 @@ QT_BEGIN_NAMESPACE
     the category to be created).
 
     \section2 Saving Caveats
-    \include place-caveats.qdocinc
+    \input place-caveats.qdocinc
 */
 
 /*!

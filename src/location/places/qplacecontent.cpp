@@ -91,7 +91,7 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
     Conversion between QPlaceContent and it's subclasses can be easily performed without
     casting. Due to the way it has been implemented, object slicing is not an issue,
     the following code is valid:
-    \snippet snippets/places/requesthandler.h Content conversion
+    \snippet places/requesthandler.h Content conversion
 
     The rich content of a place is typically made available as paginated items.  The ability
     to convert between QPlaceContent and it's subclasses means that code which handles

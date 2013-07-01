@@ -70,10 +70,10 @@ QT_BEGIN_NAMESPACE
     This example demonstrates how to use the MapViewItem object to display
     a \l{Route}{route} on a \l{Map}{map}:
 
-    \snippet snippets/declarative/maps.qml QtQuick import
-    \snippet snippets/declarative/maps.qml QtLocation import
+    \snippet declarative/maps.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/maps.qml MapRoute
+    \snippet declarative/maps.qml MapRoute
 */
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)

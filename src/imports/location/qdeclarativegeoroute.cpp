@@ -72,10 +72,10 @@ QT_BEGIN_NAMESPACE
 
     This example shows how to display a route's maneuvers in a ListView:
 
-    \snippet snippets/declarative/routing.qml QtQuick import
-    \snippet snippets/declarative/routing.qml QtLocation import
+    \snippet declarative/routing.qml QtQuick import
+    \snippet declarative/routing.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/routing.qml Route Maneuver List
+    \snippet declarative/routing.qml Route Maneuver List
 
 */
 
@@ -158,7 +158,7 @@ qreal QDeclarativeGeoRoute::distance() const
     indicates the number of objects and 'path[index starting from zero]' gives
     the actual object.
 
-    \sa QtLocation5::coordinate
+    \sa QtLocation::coordinate
 */
 
 QJSValue QDeclarativeGeoRoute::path() const
@@ -209,7 +209,7 @@ void QDeclarativeGeoRoute::setPath(const QJSValue &value)
 }
 
 /*!
-    \qmlproperty QQmlListProperty<RouteSegment> QtLocation5::Route::segments
+    \qmlproperty list<RouteSegment> QtLocation5::Route::segments
 
     Read-only property which holds the list of \l RouteSegment objects of this route.
 

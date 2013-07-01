@@ -91,10 +91,10 @@ QT_USE_NAMESPACE
     from a partial search term.  The \l searchArea is set to match what would be used to perform the
     actual place search with \l PlaceSearchModel.
 
-    \snippet snippets/declarative/places.qml QtQuick import
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml SearchSuggestionModel
+    \snippet declarative/places.qml SearchSuggestionModel
 
     \sa PlaceSearchModel, {QPlaceManager}
 */
@@ -111,8 +111,8 @@ QT_USE_NAMESPACE
     This property holds the search area.  Search suggestion results returned by the model will be
     relevant to the given search area.
 
-    If this property is set to a \l {QtLocation5::geocircle}{geocircle} its
-    \l {QtLocation5::geocircle}{radius} property may be left unset, in which case the \l Plugin
+    If this property is set to a \l {geocircle} its
+    \l {geocircle}{radius} property may be left unset, in which case the \l Plugin
     will choose an appropriate radius for the search.
 */
 

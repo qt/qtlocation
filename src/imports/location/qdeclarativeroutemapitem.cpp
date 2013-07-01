@@ -60,7 +60,7 @@
     other means, on the Map as a Polyline following the path of the Route.
 
     MapRoute is really a \l MapPolyline, but with the path specified using the
-    \l route property instead of directly in \l {QtLocation5::coordinate}{coordinates}.
+    \l route property instead of directly in \l {coordinate}{coordinates}.
 
     By default, the route is displayed as a 1-pixel thick black line. This can
     be changed using the \l line.width and \l line.color properties.
@@ -74,10 +74,10 @@
 
     Here is how to draw a \l{Route}{route} on a \l{Map}{map}:
 
-    \snippet snippets/declarative/maps.qml QtQuick import
-    \snippet snippets/declarative/maps.qml QtLocation import
+    \snippet declarative/maps.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/maps.qml MapRoute
+    \snippet declarative/maps.qml MapRoute
 */
 
 

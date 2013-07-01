@@ -127,7 +127,7 @@ QT_USE_NAMESPACE
     It can often be helpful to use a \l Loader to create a delegate
     that will choose different \l {Component}s based on the search result type.
 
-    \snippet snippets/declarative/places_loader.qml Handle Result Types
+    \snippet declarative/places_loader.qml Handle Result Types
 
     \section1 Detection of Updated and Removed Places
 
@@ -145,10 +145,10 @@ QT_USE_NAMESPACE
     fetch search results, but rather performs a single fetch when \l update() is run.  The \l count
     is set to the number of search results returned during the fetch.
 
-    \snippet snippets/declarative/places.qml QtQuick import
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml PlaceSearchModel
+    \snippet declarative/places.qml PlaceSearchModel
 
     \sa CategoryModel, {QPlaceManager}
 
@@ -200,7 +200,7 @@ QT_USE_NAMESPACE
     an application developer will not need to set this property.
 
     In cases where the favorites plugin does not support matching by alternative identifiers,
-    then the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation} should
+    then the \l {Qt Location#Plugin References and Parameters}{plugin documentation} should
     be consulted to see precisely what key-value parameters to set.
 */
 
@@ -210,8 +210,8 @@ QT_USE_NAMESPACE
     This property holds the search area.  The search result returned by the model will be within
     the search area.
 
-    If this property is set to a \l {QtLocation5::geocircle}{geocircle} its
-    \l {QtLocation5::geocircle}{radius} property may be left unset, in which case the \l Plugin
+    If this property is set to a \l {geocircle} its
+    \l {geocircle}{radius} property may be left unset, in which case the \l Plugin
     will choose an appropriate radius for the search.
 
     Support for specifying a search area can vary according to the \l plugin backend

@@ -88,17 +88,16 @@ bool QPlaceIconPrivate::operator == (const QPlaceIconPrivate &other) const
 
     \brief The QPlaceIcon class represents an icon.
 
-    \section2 Usage
     The typical usage of an icon is to use the url() function to specify
     a preferred icon size.
 
-    \snippet snippets/places/requesthandler.h icon
+    \snippet places/requesthandler.h icon
 
     The icons are typically backend dependent, if a manager backend does not support a given size, the URL of the icon that most
     closely matches those parameters is returned.
 
     The icon class also has a key-value set of parameters.  The precise key one
-    needs to use depends on the \l {Qt Location Module#Plugin References and Parameters}{plugin}
+    needs to use depends on the \l {Qt Location#Plugin References and Parameters}{plugin}
     being used.  These parameters influence which icon URL is returned by
     the manager and may also be used to specify icon URL locations when
     saving icons.
@@ -196,7 +195,7 @@ QUrl QPlaceIcon::url(const QSize &size) const
     URL when url() is called and to specify locations to save to
     when saving icons.
 
-    Consult the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation}
+    Consult the \l {Qt Location#Plugin References and Parameters}{plugin documentation}
     for what parameters are supported and how they should be used.
 */
 QVariantMap QPlaceIcon::parameters() const

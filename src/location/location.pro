@@ -1,14 +1,9 @@
 TARGET = QtLocation
 QT = core-private
 
-HEADERS += qgeopositioninfosource_p.h
 
-qtHaveModule(3d): include(maps/maps.pri)
-include(places/places.pri)
-
-QMAKE_DOCS = $$PWD/../../doc/config/qtlocation.qdocconf
-
-load(qt_module)
+QMAKE_DOCS = $$PWD/doc/qtlocation.qdocconf
+OTHER_FILES += doc/src/*.qdoc   # show .qdoc files in Qt Creator
 
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
@@ -36,10 +31,8 @@ PRIVATE_HEADERS += \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h \
                     qgeoareamonitor_polling_p.h \
-                    qgeocoordinate_p.h
-
-
-HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+                    qgeocoordinate_p.h \
+                    qgeopositioninfosource_p.h
 
 SOURCES += \
             qgeoaddress.cpp \
@@ -58,3 +51,10 @@ SOURCES += \
             qgeoareamonitor_polling.cpp \
             qgeopositioninfosourcefactory.cpp \
             qlocation.cpp
+
+qtHaveModule(3d): include(maps/maps.pri)
+include(places/places.pri)
+
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+
+load(qt_module)

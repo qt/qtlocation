@@ -66,10 +66,10 @@ QT_BEGIN_NAMESPACE
     The following QML snippet demonstrates how to print information about a
     route maneuver:
 
-    \snippet snippets/declarative/routing.qml QtQuick import
-    \snippet snippets/declarative/routing.qml QtLocation import
+    \snippet declarative/routing.qml QtQuick import
+    \snippet declarative/routing.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/routing.qml RouteManeuver
+    \snippet declarative/routing.qml RouteManeuver
 */
 
 QDeclarativeGeoManeuver::QDeclarativeGeoManeuver(QObject *parent)

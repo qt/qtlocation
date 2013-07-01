@@ -82,7 +82,7 @@ bool QPlaceRatingsPrivate::isEmpty() const
     The average() function returns an aggregated ratings value out of a possible
     maximum as given by the maximum() function.
 
-    \snippet snippets/places/requesthandler.h Ratings
+    \snippet places/requesthandler.h Ratings
 */
 
 /*!

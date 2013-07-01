@@ -63,10 +63,10 @@ QT_USE_NAMESPACE
     The following example shows how to display information about the user who
     submitted an editorial:
 
-    \snippet snippets/declarative/places.qml QtQuick import
-    \snippet snippets/declarative/places.qml QtLocation import
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml EditorialModel
+    \snippet declarative/places.qml EditorialModel
 */
 
 QDeclarativePlaceUser::QDeclarativePlaceUser(QObject *parent)

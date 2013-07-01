@@ -86,7 +86,7 @@ bool QPlaceResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
     The intended usage is that a QPlaceSearchResult can be converted into a QPlaceResult
     like so:
 
-    \snippet snippets/places/requesthandler.h Convert search result
+    \snippet places/requesthandler.h Convert search result
 
     The implmentation is handled in such a way that object slicing is not an issue.
 

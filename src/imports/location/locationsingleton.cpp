@@ -69,7 +69,6 @@ LocationSingleton::LocationSingleton(QObject *parent)
 
     Constructs an invalid coordinate.
 
-    \sa {QtLocation5::coordinate}{coordinate}
 */
 QGeoCoordinate LocationSingleton::coordinate() const
 {
@@ -82,7 +81,7 @@ QGeoCoordinate LocationSingleton::coordinate() const
     Constructs a coordinate with the specified \a latitude, \a longitude and optional \a altitude.
     Both \a latitude and \a longitude must be valid, otherwise an invalid coordinate is returned.
 
-    \sa {QtLocation5::coordinate}{coordinate}
+    \sa {coordinate}
 */
 QGeoCoordinate LocationSingleton::coordinate(double latitude, double longitude, double altitude) const
 {
@@ -94,7 +93,7 @@ QGeoCoordinate LocationSingleton::coordinate(double latitude, double longitude, 
 
     Constructs an invalid geoshape.
 
-    \sa {QtLocation5::geoshape}{geoshape}
+    \sa {geoshape}
 */
 QGeoShape LocationSingleton::shape() const
 {
@@ -106,7 +105,7 @@ QGeoShape LocationSingleton::shape() const
 
     Constructs an invalid georectangle.
 
-    \sa {QtLocation5::georectangle}{georectangle}
+    \sa {georectangle}
 */
 QGeoRectangle LocationSingleton::rectangle() const
 {
@@ -119,7 +118,7 @@ QGeoRectangle LocationSingleton::rectangle() const
     Constructs a georectangle centered at \a center with a width of \a width degrees and a hight of
     \a height degrees.
 
-    \sa {QtLocation5::georectangle}{georectangle}
+    \sa {georectangle}
 */
 QGeoRectangle LocationSingleton::rectangle(const QGeoCoordinate &center,
                                            double width, double height) const
@@ -133,7 +132,7 @@ QGeoRectangle LocationSingleton::rectangle(const QGeoCoordinate &center,
     Constructs a georectangle with its top left corner positioned at \a topLeft and its bottom
     right corner positioned at \a {bottomLeft}.
 
-    \sa {QtLocation5::georectangle}{georectangle}
+    \sa {georectangle}
 */
 QGeoRectangle LocationSingleton::rectangle(const QGeoCoordinate &topLeft,
                                            const QGeoCoordinate &bottomRight) const
@@ -146,7 +145,7 @@ QGeoRectangle LocationSingleton::rectangle(const QGeoCoordinate &topLeft,
 
     Constructs an invalid geocircle.
 
-    \sa {QtLocation5::geocircle}{geocircle}
+    \sa {geocircle}
 */
 QGeoCircle LocationSingleton::circle() const
 {

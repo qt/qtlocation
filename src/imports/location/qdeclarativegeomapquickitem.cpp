@@ -153,12 +153,12 @@ QT_BEGIN_NAMESPACE
     to display a Marker on the Map. This strategy is used to show the map
     markers in the MapViewer example.
 
-    \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-top
-    \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-anchor
-    \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-closeimage
-    \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-close
+    \snippet mapviewer/content/map/Marker.qml mqi-top
+    \snippet mapviewer/content/map/Marker.qml mqi-anchor
+    \snippet mapviewer/content/map/Marker.qml mqi-closeimage
+    \snippet mapviewer/content/map/Marker.qml mqi-close
 
-    \image ../../../doc/src/images/api-mapquickitem.png
+    \image api-mapquickitem.png
 */
 
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
@@ -184,7 +184,7 @@ QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
     for the value of their anchorPoint properties. The values of anchorPoint
     for each are written on top of the item.
 
-    \image ../../../doc/src/images/api-mapquickitem-anchor.png
+    \image api-mapquickitem-anchor.png
 */
 void QDeclarativeGeoMapQuickItem::setCoordinate(const QGeoCoordinate &coordinate)
 {

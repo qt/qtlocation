@@ -100,7 +100,7 @@ QT_BEGIN_NAMESPACE
 
     The geographic region displayed in the Map item is referred to as its
     viewport, and this is defined by the properties \l center, and
-    \l zoomLevel. The \l center property contains a \l {QtLocation5::coordinate}{coordinate}
+    \l zoomLevel. The \l center property contains a \l {coordinate}
     specifying the center of the viewport, while \l zoomLevel controls the scale of the
     map. See each of these properties for further details about their values.
 
@@ -182,7 +182,7 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    \image ../../../doc/src/images/api-map.png
+    \image api-map.png
 */
 
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
@@ -895,10 +895,10 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 
     As an example, consider the case where you have a MapCircle representing your current position:
 
-    \snippet snippets/declarative/maps.qml QtQuick import
-    \snippet snippets/declarative/maps.qml QtLocation import
+    \snippet declarative/maps.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/maps.qml Map addMapItem MapCircle at current position
+    \snippet declarative/maps.qml Map addMapItem MapCircle at current position
 
     \note MapItemViews cannot be added with this method.
 

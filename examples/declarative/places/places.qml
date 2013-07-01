@@ -70,7 +70,7 @@ Item {
 
     //=====================Menu=====================
     Menu {
-        id:mainMenu
+:        id:mainMenu
         anchors.bottom: parent.bottom
         z: backgroundRect.z + 3
 

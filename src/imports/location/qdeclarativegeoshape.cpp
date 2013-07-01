@@ -56,8 +56,8 @@ QT_BEGIN_NAMESPACE
 
     The \c geoshape type represents an abstract geographic area.  It includes attributes and
     methods common to all geographic areas.  To create objects that represent a valid geographic
-    area use \l {QtLocation5::georectangle}{georectangle} or
-    \l {QtLocation5::geocircle}{geocircle}.
+    area use \l {georectangle}{georectangle} or
+    \l {geocircle}{geocircle}.
 
     The \c isValid attribute can be used to test if the geoshape represents a valid geographic
     area.
@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
     The \c isEmpty attribute can be used to test if the geoshape represents a region with a
     geomatrical area of 0.
 
-    The \l contains() method can be used to test if a \l {QtLocation5::coordinate}{coordinate} is
+    The \l contains() method can be used to test if a \l {QtLocation::coordinate}{coordinate} is
     within the geoshape.
 
     \section2 Example Usage
@@ -83,7 +83,7 @@ QT_BEGIN_NAMESPACE
     }
     \endqml
 
-    or with the \l {QtLocation5::QtLocation}{QtLocation.shape()} function:
+    or with the \l {QtLocation::QtLocation}{QtLocation.shape()} function:
 
     \qml
     import QtLocation 5.0
@@ -104,7 +104,7 @@ QT_BEGIN_NAMESPACE
     bool contains(coordinate coord)
     \endcode
 
-    Returns true if the \l {QtLocation5::coordinate}{coordinate} specified by \a coord is within
+    Returns true if the \l {QtLocation::coordinate}{coordinate} specified by \a coord is within
     this geoshape; Otherwise returns false.
 */
 
