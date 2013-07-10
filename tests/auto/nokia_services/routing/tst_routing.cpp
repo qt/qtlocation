@@ -227,7 +227,7 @@ tst_nokia_routing::tst_nokia_routing()
 
 void tst_nokia_routing::loadReply(const QString& filename)
 {
-    QFile* file = new QFile(filename);
+    QFile* file = new QFile(QFINDTESTDATA(filename));
     if (!file->open(QIODevice::ReadOnly)) {
         delete file;
         file = 0;

@@ -85,6 +85,11 @@ private:
 
 void tst_QPlaceManager::initTestCase()
 {
+    /*
+     * Set custom path since CI doesn't install test plugins
+     */
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
+                                     + QStringLiteral("/../../../plugins"));
     provider = 0;
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();

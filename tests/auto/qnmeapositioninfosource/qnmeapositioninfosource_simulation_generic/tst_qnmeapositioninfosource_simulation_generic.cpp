@@ -46,6 +46,15 @@
 class tst_QNmeaPositionInfoSource_Simulation_Generic : public TestQGeoPositionInfoSource
 {
     Q_OBJECT
+public:
+    tst_QNmeaPositionInfoSource_Simulation_Generic()
+    {
+        /*
+         * Set custom path since CI doesn't install test plugins
+         */
+        QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
+                                         + QStringLiteral("/../../../../plugins"));
+    }
 
 protected:
     QGeoPositionInfoSource *createTestSource()

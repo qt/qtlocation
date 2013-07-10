@@ -86,6 +86,11 @@ private:
 private slots:
     void initTestCase()
     {
+        /*
+         * Set custom path since CI doesn't install plugins
+         */
+        QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
+                                         + QStringLiteral("/../../../plugins"));
         qRegisterMetaType<QGeoPositionInfo>();
     }
 

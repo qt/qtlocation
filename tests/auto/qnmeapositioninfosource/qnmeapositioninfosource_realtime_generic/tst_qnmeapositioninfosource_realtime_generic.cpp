@@ -51,6 +51,11 @@ public:
     tst_QNmeaPositionInfoSource_RealTime_Generic()
     {
         m_factory = new QNmeaPositionInfoSourceProxyFactory;
+        /*
+         * Set custom path since CI doesn't install test plugins
+         */
+        QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
+                                         + QStringLiteral("/../../../../plugins"));
     }
 
     ~tst_QNmeaPositionInfoSource_RealTime_Generic()

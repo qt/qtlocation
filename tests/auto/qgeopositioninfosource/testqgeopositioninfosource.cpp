@@ -122,6 +122,11 @@ TestQGeoPositionInfoSource::TestQGeoPositionInfoSource(QObject *parent)
         : QObject(parent)
 {
     m_testingDefaultSource = false;
+    /*
+     * Set custom path since CI doesn't install test plugins
+     */
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
+                                     + QStringLiteral("/../../../plugins"));
 }
 
 TestQGeoPositionInfoSource *TestQGeoPositionInfoSource::createDefaultSourceTest()

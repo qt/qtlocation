@@ -48,6 +48,11 @@ QT_USE_NAMESPACE
 
 void tst_QGeoRoutingManager::initTestCase()
 {
+    /*
+     * Set custom path since CI doesn't install test plugins
+     */
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
+                                     + QStringLiteral("/../../../plugins"));
     tst_QGeoRoutingManager::loadRoutingManager();
 }
 
@@ -158,5 +163,5 @@ void tst_QGeoRoutingManager::update()
     delete reply;
 }
 
-QTEST_APPLESS_MAIN(tst_QGeoRoutingManager)
+QTEST_MAIN(tst_QGeoRoutingManager)
 
