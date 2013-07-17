@@ -51,6 +51,7 @@
 #include <QtLocation/QPlaceMatchRequest>
 #include <QtLocation/QPlaceMatchReply>
 #include <QtLocation/QPlaceResult>
+#include <QtLocation/QProposedSearchResult>
 
 QT_USE_NAMESPACE
 
@@ -116,11 +117,14 @@ QT_USE_NAMESPACE
 
     \table
         \row
+            \li PlaceSearchModel.UnknownSearchResult
+            \li The contents of the search result are unknown.
+        \row
             \li PlaceSearchModel.PlaceResult
             \li The search result contains a place.
         \row
-            \li PlaceSearchModel.UnknownSearchResult
-            \li The contents of the search result are unknown.
+            \li PlaceSearchModel.ProposedSearchResult
+            \li The search result contains a proposed search which may be relevant.
     \endtable
 
 
@@ -343,6 +347,8 @@ QString QDeclarativeSearchResultModel::searchTerm() const
 
 void QDeclarativeSearchResultModel::setSearchTerm(const QString &searchTerm)
 {
+    m_request.setSearchContext(QVariant());
+
     if (m_request.searchTerm() == searchTerm)
         return;
 
@@ -371,6 +377,7 @@ void QDeclarativeSearchResultModel::categories_append(QQmlListProperty<QDeclarat
 {
     QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel && declCategory) {
+        searchModel->m_request.setSearchContext(QVariant());
         searchModel->m_categories.append(declCategory);
         QList<QPlaceCategory> categories = searchModel->m_request.categories();
         categories.append(declCategory->category());
@@ -404,6 +411,7 @@ void QDeclarativeSearchResultModel::categories_clear(QQmlListProperty<QDeclarati
     if (searchModel) {
         //note: we do not need to delete each of the objects in m_categories since the search model
         //should never be the parent of the categories anyway.
+        searchModel->m_request.setSearchContext(QVariant());
         searchModel->m_categories.clear();
         searchModel->m_request.setCategories(QList<QPlaceCategory>());
         emit searchModel->categoriesChanged();
@@ -642,6 +650,26 @@ QHash<int, QByteArray> QDeclarativeSearchResultModel::roleNames() const
     return roles;
 }
 
+/*!
+    \qmlmethod PlaceSearchModel::updateWith(int proposedSearchIndex)
+
+    Updates the model based on the ProposedSearchResult at index \a proposedSearchIndex. The model
+    will be populated with a list of places matching the proposed search. Model status will be set
+    to PlaceSearchModel.Loading. If the model is updated successfully status will be set to
+    PlaceSearchModel.Ready. If an error occurs status will be set to PlaceSearchModel.Error and the
+    model cleared.
+
+    If \a proposedSearchIndex does not reference a ProposedSearchResult this method does nothing.
+*/
+void QDeclarativeSearchResultModel::updateWith(int proposedSearchIndex)
+{
+    if (m_results.at(proposedSearchIndex).type() != QPlaceSearchResult::ProposedSearchResult)
+        return;
+
+    m_request = QProposedSearchResult(m_results.at(proposedSearchIndex)).searchRequest();
+    update();
+}
+
 QPlaceReply *QDeclarativeSearchResultModel::sendQuery(QPlaceManager *manager,
                                                       const QPlaceSearchRequest &request)
 {
@@ -785,19 +813,24 @@ void QDeclarativeSearchResultModel::updateLayout(const QList<QPlace> &favoritePl
     m_resultsBuffer.clear();
 
     for (int i = 0; i < m_results.count(); ++i) {
-        if (m_results.at(i).type() == QPlaceSearchResult::PlaceResult) {
-            QPlaceResult placeResult = m_results.at(i);
-            QDeclarativePlace *place = new QDeclarativePlace(placeResult.place(),plugin(), this);
+        const QPlaceSearchResult &result = m_results.at(i);
+
+        if (result.type() == QPlaceSearchResult::PlaceResult) {
+            QPlaceResult placeResult = result;
+            QDeclarativePlace *place = new QDeclarativePlace(placeResult.place(), plugin(), this);
             m_places.append(place);
 
-            QDeclarativePlaceIcon *icon = 0;
-            if (!m_results.at(i).icon().isEmpty())
-                icon = new QDeclarativePlaceIcon(m_results.at(i).icon(), plugin(), this);
-            m_icons.append(icon);
-
             if ((favoritePlaces.count() == m_results.count()) && favoritePlaces.at(i) != QPlace())
-                m_places[i]->setFavorite(new QDeclarativePlace(favoritePlaces.at(i), m_favoritesPlugin, m_places[i]));
+                m_places[i]->setFavorite(new QDeclarativePlace(favoritePlaces.at(i),
+                                                               m_favoritesPlugin, m_places[i]));
+        } else if (result.type() == QPlaceSearchResult::ProposedSearchResult) {
+            m_places.append(0);
         }
+
+        QDeclarativePlaceIcon *icon = 0;
+        if (!result.icon().isEmpty())
+            icon = new QDeclarativePlaceIcon(result.icon(), plugin(), this);
+        m_icons.append(icon);
     }
 
     endResetModel();

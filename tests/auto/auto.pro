@@ -13,6 +13,7 @@ SUBDIRS += qplace \
            qplaceimage \
            qplaceratings \
            qplaceresult \
+           qproposedsearchresult \
            qplacereply \
            qplacereview \
            qplacesearchrequest \

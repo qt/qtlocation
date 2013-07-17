@@ -63,6 +63,7 @@ private Q_SLOTS:
     void searchAreaTest();
     void visibilityScopeTest();
     void relevanceHintTest();
+    void searchContextTest();
     void operatorsTest();
     void clearTest();
 };
@@ -187,6 +188,14 @@ void tst_QPlaceSearchRequest::relevanceHintTest()
     QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::UnspecifiedHint);
 }
 
+void tst_QPlaceSearchRequest::searchContextTest()
+{
+    QPlaceSearchRequest request;
+    QVERIFY(!request.searchContext().value<QUrl>().isValid());
+    request.setSearchContext(QUrl(QLatin1String("http://www.example.com/")));
+    QCOMPARE(request.searchContext().value<QUrl>(), QUrl(QLatin1String("http://www.example.com/")));
+}
+
 void tst_QPlaceSearchRequest::operatorsTest()
 {
     QPlaceSearchRequest testObj;
@@ -242,6 +251,12 @@ void tst_QPlaceSearchRequest::operatorsTest()
     //test that different scopes do not match
     testObj2.setVisibilityScope(QLocation::PrivateVisibility);
     QVERIFY2(testObj != testObj2, "Different scopes identified as matching");
+
+    //test that different search contexts do not match
+    testObj.clear();
+    testObj2.clear();
+    testObj2.setSearchContext(QUrl(QLatin1String("http://www.example.com/")));
+    QVERIFY(testObj != testObj2);
 }
 
 void tst_QPlaceSearchRequest::clearTest()

@@ -55,6 +55,8 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceManagerEngineNokiaV2;
+class QPlaceResult;
+class QProposedSearchResult;
 
 class QPlaceSearchReplyImpl : public QPlaceSearchReply
 {
@@ -73,6 +75,9 @@ private slots:
     void replyFinished();
 
 private:
+    QPlaceResult parsePlaceResult(const QJsonObject &item) const;
+    QProposedSearchResult parseSearchResult(const QJsonObject &item) const;
+
     QNetworkReply *m_reply;
     QPlaceManagerEngineNokiaV2 *m_engine;
 };

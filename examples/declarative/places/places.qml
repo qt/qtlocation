@@ -519,7 +519,9 @@ Item {
             MapItemView {
                 model: placeSearchModel
                 delegate: MapQuickItem {
-                    coordinate: place.location.coordinate
+                    coordinate: model.type === PlaceSearchModel.PlaceResult ? place.location.coordinate : QtLocation.coordinate()
+
+                    visible: model.type === PlaceSearchModel.PlaceResult
 
                     anchorPoint.x: image.width * 0.28
                     anchorPoint.y: image.height

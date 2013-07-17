@@ -45,6 +45,7 @@
 
 #include <QtCore/QSharedData>
 #include <QtCore/QList>
+#include <QtCore/QVariant>
 
 QT_BEGIN_NAMESPACE
 
@@ -68,6 +69,7 @@ public:
     QPlaceSearchRequest::RelevanceHint relevanceHint;
     int limit;
     int offset;
+    QVariant searchContext;
 };
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
@@ -87,7 +89,8 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
       visibilityScope(other.visibilityScope),
       relevanceHint(other.relevanceHint),
       limit(other.limit),
-      offset(other.offset)
+      offset(other.offset),
+      searchContext(other.searchContext)
 {
 }
 
@@ -106,6 +109,7 @@ QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSe
         relevanceHint = other.relevanceHint;
         limit = other.limit;
         offset = other.offset;
+        searchContext = other.searchContext;
     }
 
     return *this;
@@ -120,7 +124,8 @@ bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &ot
            visibilityScope == other.visibilityScope &&
            relevanceHint == other.relevanceHint &&
            limit == other.limit &&
-           offset == other.offset;
+           offset == other.offset &&
+           searchContext == other.searchContext;
 }
 
 void QPlaceSearchRequestPrivate::clear()
@@ -133,6 +138,7 @@ void QPlaceSearchRequestPrivate::clear()
     recommendationId.clear();
     visibilityScope = QLocation::UnspecifiedVisibility;
     relevanceHint = QPlaceSearchRequest::UnspecifiedHint;
+    searchContext.clear();
 }
 
 /*!
@@ -326,6 +332,38 @@ void QPlaceSearchRequest::setRecommendationId(const QString &placeId)
 {
     Q_D(QPlaceSearchRequest);
     d->recommendationId = placeId;
+}
+
+/*!
+    Returns backend specific additional search context associated with this place search request.
+    The search context is typically set as part of a
+    \l {QPlaceSearchResult::ProposedSearchResult}{proposed search results}.
+*/
+QVariant QPlaceSearchRequest::searchContext() const
+{
+    Q_D(const QPlaceSearchRequest);
+    return d->searchContext;
+}
+
+/*!
+    Sets the search context to \a context.
+
+    \note This method is intended to be used by geo service plugins when returning search results
+    of type \l QPlaceSearchResult::ProposedSearchResult.
+
+    The search context is used by backends to store additional search context related to the search
+    request. Other relevant fields should also be filled in. For example, if the search context
+    encodes a text search the search term should also be set with \l setSearchTerm(). The search
+    context allows additional search context to be kept which is not directly accessible via the
+    Qt Location API.
+
+    The search context can be of any type storable in a QVariant. The value of the search context
+    is not intended to be use directly by applications.
+*/
+void QPlaceSearchRequest::setSearchContext(const QVariant &context)
+{
+    Q_D(QPlaceSearchRequest);
+    d->searchContext = context;
 }
 
 /*!

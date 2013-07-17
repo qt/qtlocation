@@ -65,28 +65,34 @@ Item {
                 anchors.fill: parent
                 color: "#dbffde"
                 visible: model.sponsored !== undefined ? model.sponsored : false
-            }
 
-            Column {
-                width: parent.width
-
-                Row {
-                    Image {
-                        visible: (place.favorite != null)
-                        source: "../../resources/star.png"
-                        height: placeName.height
-                        fillMode: Image.PreserveAspectFit
-                    }
-
-                    Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
-                }
-                Text { id: distanceText; text: PlacesUtils.prettyDistance(distance); font.italic: true }
                 Text {
                     text: qsTr("Sponsored result")
                     horizontalAlignment: Text.AlignRight
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
                     font.pixelSize: 8
-                    width: parent.width
                     visible: model.sponsored !== undefined ? model.sponsored : false
+                }
+            }
+
+            Row {
+                Image {
+                    source: place.favorite ? "../../resources/star.png" : place.icon.url()
+                }
+
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        id: placeName
+                        text: place.favorite ? place.favorite.name : place.name
+                    }
+
+                    Text {
+                        id: distanceText
+                        font.italic: true
+                        text: PlacesUtils.prettyDistance(distance)
+                    }
                 }
             }
 
@@ -124,6 +130,49 @@ Item {
     }
     //! [PlaceSearchModel place delegate]
 
+    Component {
+        id: proposedSearchComponent
+
+        Item {
+            id: proposedSearchRoot
+
+            height: childrenRect.height
+            width: parent.width
+
+            Row {
+                Image {
+                    source: icon.url()
+                }
+
+                Text {
+                    id: proposedSearchTitle
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Search for " + title
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+
+                onPressed: proposedSearchRoot.state = "Pressed"
+                onReleased: proposedSearchRoot.state = ""
+                onCanceled: proposedSearchRoot.state = ""
+
+                onClicked: root.ListView.view.model.updateWith(index);
+            }
+
+            states: [
+                State {
+                    name: ""
+                },
+                State {
+                    name: "Pressed"
+                    PropertyChanges { target: proposedSearchTitle; color: "#1C94FC"}
+                }
+            ]
+        }
+    }
+
     Loader {
         anchors.left: parent.left
         anchors.right: parent.right
@@ -132,6 +181,8 @@ Item {
             switch (model.type) {
             case PlaceSearchModel.PlaceResult:
                 return placeComponent;
+            case PlaceSearchModel.ProposedSearchResult:
+                return proposedSearchComponent;
             default:
                 //do nothing, don't assign component if result type not recognized
             }

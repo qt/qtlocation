@@ -402,9 +402,9 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
     QUrlQuery queryItems;
 
-    //check the search area is valid for all searches except recommendation searches
-    //which do not need search centers.
-    if (query.recommendationId().isEmpty()) {
+    // Check that the search area is valid for all searches except recommendation and proposed
+    // searches, which do not need search centers.
+    if (query.recommendationId().isEmpty() && !query.searchContext().isValid()) {
         if (!addAtForBoundingArea(query.searchArea(), &queryItems)) {
             QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, 0, this);
             connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
@@ -417,7 +417,28 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         }
     }
 
-    if (!query.searchTerm().isEmpty()) {
+    QNetworkReply *networkReply = 0;
+
+    if (query.searchContext().userType() == qMetaTypeId<QUrl>()) {
+        // provided search context
+        QUrl u = query.searchContext().value<QUrl>();
+
+        typedef QPair<QString, QString> QueryItem;
+        QList<QueryItem> queryItemList = queryItems.queryItems(QUrl::FullyEncoded);
+        queryItems = QUrlQuery(u);
+        foreach (const QueryItem &item, queryItemList)
+            queryItems.addQueryItem(item.first, item.second);
+
+        if (query.limit() > 0)
+            queryItems.addQueryItem(QStringLiteral("size"), QString::number(query.limit()));
+
+        if (query.offset() > -1)
+            queryItems.addQueryItem(QStringLiteral("offset"), QString::number(query.offset()));
+
+        u.setQuery(queryItems);
+
+        networkReply = sendRequest(u);
+    } else if (!query.searchTerm().isEmpty()) {
         // search term query
         QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
                         QLatin1String("/places/v1/discover/search"));
@@ -449,30 +470,22 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         requestUrl.setQuery(queryItems);
 
-        QNetworkReply *networkReply = sendRequest(requestUrl);
-
-        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, networkReply, this);
-        connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-        connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
-                this, SLOT(replyError(QPlaceReply::Error,QString)));
-
-        return reply;
+        networkReply = sendRequest(requestUrl);
     } else {
         // category search
-        // The request URL should be "/places/v1/discover/explore" but that returns both places and
-        // clusters of places.  We don't support clusters so we use the undocumented
-        // "/places/v1/discover/explore/places" instead which only returns places.
-        QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                        QLatin1String("/places/v1/discover/explore/places"));
+        QUrl requestUrl(QStringLiteral("http://") + m_uriProvider->getCurrentHost() +
+             QStringLiteral("/places/v1/discover/explore"));
 
         QStringList ids;
         foreach (const QPlaceCategory &category, query.categories())
             ids.append(category.categoryId());
 
-        if (ids.count() > 0) {
-            queryItems.addQueryItem(QLatin1String("cat"),
-                                    ids.join(QLatin1String(",")));
-        }
+        QUrlQuery queryItems;
+
+        if (!ids.isEmpty())
+            queryItems.addQueryItem(QStringLiteral("cat"), ids.join(QStringLiteral(",")));
+
+        addAtForBoundingArea(query.searchArea(), &queryItems);
 
         queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
@@ -487,15 +500,15 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         requestUrl.setQuery(queryItems);
 
-        QNetworkReply *networkReply = sendRequest(requestUrl);
-
-        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, networkReply, this);
-        connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-        connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
-                this, SLOT(replyError(QPlaceReply::Error,QString)));
-
-        return reply;
+        networkReply = sendRequest(requestUrl);
     }
+
+    QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, networkReply, this);
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+            this, SLOT(replyError(QPlaceReply::Error,QString)));
+
+    return reply;
 }
 
 QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const QPlaceSearchRequest &query)

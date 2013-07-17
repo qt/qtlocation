@@ -43,6 +43,7 @@
 #define QPLACESEARCHRESULT_P_H
 
 #include "qplacesearchresult.h"
+#include "qplacesearchrequest.h"
 
 #include <QSharedData>
 #include <QtLocation/QPlaceIcon>

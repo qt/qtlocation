@@ -96,9 +96,12 @@ bool QPlaceSearchResultPrivate::compare(const QPlaceSearchResultPrivate *other) 
 
 /*!
     \enum QPlaceSearchResult::SearchResultType
+
     Defines the type of search result
-    \value PlaceResult The search result contains a place.
+
     \value UnknownSearchResult The contents of the search result are unknown.
+    \value PlaceResult The search result contains a place.
+    \value ProposedSearchResult The search result contains a proposed search which may be relevant.
 */
 
 /*!

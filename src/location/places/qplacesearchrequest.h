@@ -85,6 +85,9 @@ public:
     QString recommendationId() const;
     void setRecommendationId(const QString &recommendationId);
 
+    QVariant searchContext() const;
+    void setSearchContext(const QVariant &context);
+
     QLocation::VisibilityScope visibilityScope() const;
     void setVisibilityScope(QLocation::VisibilityScope visibilityScopes);
 

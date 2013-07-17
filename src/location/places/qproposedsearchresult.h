@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -39,73 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACESEARCHRESULT_H
-#define QPLACESEARCHRESULT_H
+#ifndef QPROPOSEDSEARCHRESULT_H
+#define QPROPOSEDSEARCHRESULT_H
 
-#include <QSharedDataPointer>
-#include <QVariant>
-#include <QString>
-#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceSearchResult>
 
 QT_BEGIN_NAMESPACE
 
-#define Q_DECLARE_SEARCHRESULT_D_FUNC(Class) \
-    inline Class##Private *d_func(); \
-    inline const Class##Private *d_func() const;\
-    friend class Class##Private;
+class QProposedSearchResultPrivate;
 
-#define Q_DECLARE_SEARCHRESULT_COPY_CTOR(Class) \
-    Class(const QPlaceSearchResult &other);
-
-class QPlaceSearchRequest;
-class QPlaceSearchResultPrivate;
-class QPlaceIcon;
-
-class Q_LOCATION_EXPORT QPlaceSearchResult
+class Q_LOCATION_EXPORT QProposedSearchResult : public QPlaceSearchResult
 {
 public:
-    QPlaceSearchResult();
-    QPlaceSearchResult(const QPlaceSearchResult &other);
+    QProposedSearchResult();
 
-    virtual ~QPlaceSearchResult();
+#ifdef Q_QDOC
+    QProposedSearchResult(const QPlaceSearchRequest &other);
+#else
+    Q_DECLARE_SEARCHRESULT_COPY_CTOR(QProposedSearchResult)
+#endif
 
-    QPlaceSearchResult &operator=(const QPlaceSearchResult &other);
+    ~QProposedSearchResult();
 
-    bool operator==(const QPlaceSearchResult &other) const;
-    bool operator!=(const QPlaceSearchResult &other) const {
-        return !(other == *this);
-    }
-
-    enum SearchResultType {
-        UnknownSearchResult = 0,
-        PlaceResult,
-        ProposedSearchResult
-    };
-
-    SearchResultType type() const;
-
-    QString title() const;
-    void setTitle(const QString &title);
-
-    QPlaceIcon icon() const;
-    void setIcon(const QPlaceIcon &icon);
-
-protected:
-    explicit QPlaceSearchResult(QPlaceSearchResultPrivate *d);
-    QSharedDataPointer<QPlaceSearchResultPrivate> d_ptr;
+    QPlaceSearchRequest searchRequest() const;
+    void setSearchRequest(const QPlaceSearchRequest &request);
 
 private:
-    inline QPlaceSearchResultPrivate *d_func();
-    inline const QPlaceSearchResultPrivate *d_func() const;
-
-    friend class QPlaceSearchResultPrivate;
+    Q_DECLARE_SEARCHRESULT_D_FUNC(QProposedSearchResult)
 };
 
-Q_DECLARE_TYPEINFO(QPlaceSearchResult, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QProposedSearchResult, Q_MOVABLE_TYPE);
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QPlaceSearchResult)
-Q_DECLARE_METATYPE(QPlaceSearchResult::SearchResultType)
-
-#endif // QPLACESEARCHRESULT_H
+#endif // QPROPOSEDSEARCHRESULT_H

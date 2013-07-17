@@ -54,7 +54,7 @@ public:
 
     ~QPlaceResultPrivate();
 
-    bool compare(const QPlaceSearchResultPrivate *other) const;
+    bool compare(const QPlaceSearchResultPrivate *other) const Q_DECL_OVERRIDE;
 
     Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(QPlaceResult, QPlaceSearchResult::PlaceResult)
 

@@ -57,6 +57,7 @@
 #include <QtCore/QJsonArray>
 #include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceResult>
+#include <QtLocation/QProposedSearchResult>
 
 #include <QtCore/QDebug>
 
@@ -123,76 +124,19 @@ void QPlaceSearchReplyImpl::replyFinished()
     QJsonObject object = document.object();
 
     //QJsonObject searchObject = object.value(QLatin1String("search")).toObject();
-    QJsonArray items;
-    if (request().recommendationId().isEmpty()) {
-        QJsonObject resultsObject = object.value(QLatin1String("results")).toObject();
-        items = resultsObject.value(QLatin1String("items")).toArray();
-    } else {
-        items = object.value(QLatin1String("items")).toArray();
-    }
+
+    QJsonObject resultsObject = object.value(QLatin1String("results")).toObject();
+    QJsonArray items = resultsObject.value(QLatin1String("items")).toArray();
 
     QList<QPlaceSearchResult> results;
     for (int i = 0; i < items.count(); ++i) {
         QJsonObject item = items.at(i).toObject();
 
-        QPlaceResult result;
-
-        if (item.contains(QLatin1String("distance")))
-            result.setDistance(item.value(QLatin1String("distance")).toDouble());
-
-        QPlace place;
-
-        QGeoLocation location;
-
-        location.setCoordinate(parseCoordinate(item.value(QLatin1String("position")).toArray()));
-
-        const QString vicinity = item.value(QLatin1String("vicinity")).toString();
-        QGeoAddress address;
-        address.setText(vicinity);
-        location.setAddress(address);
-
-        if (item.contains(QLatin1String("bbox"))) {
-            QJsonArray bbox = item.value(QLatin1String("bbox")).toArray();
-            QGeoRectangle box(QGeoCoordinate(bbox.at(3).toDouble(), bbox.at(0).toDouble()),
-                                QGeoCoordinate(bbox.at(1).toDouble(), bbox.at(2).toDouble()));
-            location.setBoundingBox(box);
-        }
-
-        place.setLocation(location);
-
-        QPlaceRatings ratings;
-        ratings.setAverage(item.value(QLatin1String("averageRating")).toDouble());
-        ratings.setMaximum(5.0);
-        place.setRatings(ratings);
-
-        const QString title = item.value(QLatin1String("title")).toString();
-        place.setName(title);
-        result.setTitle(title);
-
-        QPlaceIcon icon = m_engine->icon(item.value(QLatin1String("icon")).toString());
-        place.setIcon(icon);
-        result.setIcon(icon);
-
-        place.setCategory(parseCategory(item.value(QLatin1String("category")).toObject(),
-                                        m_engine));
-
-        //QJsonArray having = item.value(QLatin1String("having")).toArray();
-
-        result.setSponsored(item.value(QLatin1String("sponsored")).toBool());
-
-        QUrl href = item.value(QLatin1String("href")).toString();
-        //QUrl type = item.value(QLatin1String("type")).toString();
-
-        place.setPlaceId(href.path().mid(18, 41));
-
-        QPlaceAttribute provider;
-        provider.setText(QLatin1String("nokia"));
-        place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
-        place.setVisibility(QLocation::PublicVisibility);
-
-        result.setPlace(place);
-
-        results.append(result);
+        const QString type = item.value(QLatin1String("type")).toString();
+        if (type == QStringLiteral("urn:nlp-types:place"))
+            results.append(parsePlaceResult(item));
+        else if (type == QStringLiteral("urn:nlp-types:search"))
+            results.append(parseSearchResult(item));
     }
 
     setResults(results);
@@ -202,6 +146,85 @@ void QPlaceSearchReplyImpl::replyFinished()
 
     setFinished(true);
     emit finished();
+}
+
+QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) const
+{
+    QPlaceResult result;
+
+    if (item.contains(QLatin1String("distance")))
+        result.setDistance(item.value(QLatin1String("distance")).toDouble());
+
+    QPlace place;
+
+    QGeoLocation location;
+
+    location.setCoordinate(parseCoordinate(item.value(QLatin1String("position")).toArray()));
+
+    const QString vicinity = item.value(QLatin1String("vicinity")).toString();
+    QGeoAddress address;
+    address.setText(vicinity);
+    location.setAddress(address);
+
+    if (item.contains(QLatin1String("bbox"))) {
+        QJsonArray bbox = item.value(QLatin1String("bbox")).toArray();
+        QGeoRectangle box(QGeoCoordinate(bbox.at(3).toDouble(), bbox.at(0).toDouble()),
+                            QGeoCoordinate(bbox.at(1).toDouble(), bbox.at(2).toDouble()));
+        location.setBoundingBox(box);
+    }
+
+    place.setLocation(location);
+
+    QPlaceRatings ratings;
+    ratings.setAverage(item.value(QLatin1String("averageRating")).toDouble());
+    ratings.setMaximum(5.0);
+    place.setRatings(ratings);
+
+    const QString title = item.value(QLatin1String("title")).toString();
+    place.setName(title);
+    result.setTitle(title);
+
+    QPlaceIcon icon = m_engine->icon(item.value(QLatin1String("icon")).toString());
+    place.setIcon(icon);
+    result.setIcon(icon);
+
+    place.setCategory(parseCategory(item.value(QLatin1String("category")).toObject(),
+                                    m_engine));
+
+    //QJsonArray having = item.value(QLatin1String("having")).toArray();
+
+    result.setSponsored(item.value(QLatin1String("sponsored")).toBool());
+
+    QUrl href = item.value(QLatin1String("href")).toString();
+    //QUrl type = item.value(QLatin1String("type")).toString();
+
+    place.setPlaceId(href.path().mid(18, 41));
+
+    QPlaceAttribute provider;
+    provider.setText(QLatin1String("nokia"));
+    place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
+    place.setVisibility(QLocation::PublicVisibility);
+
+    result.setPlace(place);
+
+    return result;
+}
+
+QProposedSearchResult QPlaceSearchReplyImpl::parseSearchResult(const QJsonObject &item) const
+{
+    QProposedSearchResult result;
+
+    result.setTitle(item.value(QLatin1String("title")).toString());
+
+    QPlaceIcon icon = m_engine->icon(item.value(QStringLiteral("icon")).toString());
+    result.setIcon(icon);
+
+    QPlaceSearchRequest request;
+    request.setSearchContext(QUrl(item.value("href").toString()));
+
+    result.setSearchRequest(request);
+
+    return result;
 }
 
 QT_END_NAMESPACE

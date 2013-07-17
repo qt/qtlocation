@@ -70,7 +70,8 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
 public:
     enum SearchResultType {
         UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult,
-        PlaceResult = QPlaceSearchResult::PlaceResult
+        PlaceResult = QPlaceSearchResult::PlaceResult,
+        ProposedSearchResult = QPlaceSearchResult::ProposedSearchResult
     };
 
     enum RelevanceHint {
@@ -113,6 +114,10 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
     QHash<int, QByteArray> roleNames() const;
+
+    Q_INVOKABLE void updateWith(int proposedSearchIndex);
+
+    void updateSearchRequest();
 
 Q_SIGNALS:
     void searchTermChanged();
