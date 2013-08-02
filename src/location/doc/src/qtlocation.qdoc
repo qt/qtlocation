@@ -32,6 +32,7 @@
     \module QtLocation
     \title Qt Location C++ Classes
     \ingroup modules
+    \qtvariable location
 
     \brief Location module provides positioning, mapping, navigation, and place search
        via QML and C++ interfaces.
