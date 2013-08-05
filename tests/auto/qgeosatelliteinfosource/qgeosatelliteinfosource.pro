@@ -13,7 +13,5 @@ QT += location testlib
 
 # Define whether a satellite source is available.  This must match the logic in
 # src/location/location.pro or the test will fail on some platforms.
-maemo6|meego:DEFINES += SATELLITE_SOURCE_AVAILABLE
-config_locationd:!simulator:DEFINES += SATELLITE_SOURCE_AVAILABLE
 simulator:DEFINES += SATELLITE_SOURCE_AVAILABLE
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

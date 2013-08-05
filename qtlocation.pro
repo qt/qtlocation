@@ -1,5 +1,4 @@
 load(configure)
-qtCompileTest(locationd)
 qtCompileTest(geoclue)
 qtCompileTest(gypsy)
 
