@@ -273,24 +273,23 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
 */
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
-    QGeoPositionInfoSourcePrivate *d = new QGeoPositionInfoSourcePrivate;
-
     QList<QJsonObject> plugins = QGeoPositionInfoSourcePrivate::pluginsSorted();
     foreach (const QJsonObject &obj, plugins) {
         if (obj.value(QStringLiteral("Position")).isBool()
-                && obj.value(QStringLiteral("Position")).toBool()) {
-            d->metaData = obj;
-            d->loadPlugin();
-            QGeoPositionInfoSource *s = d->factory->positionInfoSource(parent);
+                && obj.value(QStringLiteral("Position")).toBool())
+        {
+            QGeoPositionInfoSourcePrivate d;
+            d.metaData = obj;
+            d.loadPlugin();
+            QGeoPositionInfoSource *s = 0;
+            if (d.factory)
+                s = d.factory->positionInfoSource(parent);
             if (s) {
-                s->d->metaData = d->metaData;
-                delete d;
+                s->d->metaData = d.metaData;
                 return s;
             }
         }
     }
-
-    delete d;
     return 0;
 }
 
@@ -303,20 +302,21 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 */
 QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sourceName, QObject *parent)
 {
-    QGeoPositionInfoSourcePrivate *d = new QGeoPositionInfoSourcePrivate;
     QHash<QString, QJsonObject> plugins = QGeoPositionInfoSourcePrivate::plugins();
-    if (plugins.contains(sourceName)) {
-        d->metaData = plugins.value(sourceName);
-        d->loadPlugin();
-        QGeoPositionInfoSource *src = d->factory->positionInfoSource(parent);
-        if (src) {
-            src->d->metaData = d->metaData;
-            delete d;
+    if (plugins.contains(sourceName))
+    {
+        QGeoPositionInfoSourcePrivate d;
+        d.metaData = plugins.value(sourceName);
+        d.loadPlugin();
+        QGeoPositionInfoSource *src = 0;
+        if (d.factory)
+            src = d.factory->positionInfoSource(parent);
+        if (src)
+        {
+            src->d->metaData = d.metaData;
             return src;
         }
     }
-
-    delete d;
     return 0;
 }
 

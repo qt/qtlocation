@@ -43,8 +43,7 @@
 #define QGEOPOSITIONINFOSOURCEFACTORY_GYPSY_H
 
 #include <QObject>
-#include "qgeopositioninfosource.h"
-#include "qgeopositioninfosourcefactory.h"
+#include <qgeopositioninfosourcefactory.h>
 
 class QGeoPositionInfoSourceFactoryGypsy : public QObject, public QGeoPositionInfoSourceFactory
 {
@@ -56,6 +55,7 @@ class QGeoPositionInfoSourceFactoryGypsy : public QObject, public QGeoPositionIn
 public:
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
+    QGeoAreaMonitor *areaMonitor(QObject *parent);
 };
 
 #endif

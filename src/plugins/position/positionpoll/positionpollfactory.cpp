@@ -39,52 +39,27 @@
 **
 ****************************************************************************/
 
-#include "qgeopositioninfosourcefactory.h"
+#include "positionpollfactory.h"
+#include "qgeoareamonitor_polling.h"
 
-QT_BEGIN_NAMESPACE
+QGeoPositionInfoSource *PositionPollFactory::positionInfoSource(QObject *parent)
+{
+    Q_UNUSED(parent);
+    return 0;
+}
 
-/*!
-  \class QGeoPositionInfoSourceFactory
-  \inmodule QtLocation
-  \ingroup QtLocation-impl
-  \since Qt Location 5.0
+QGeoSatelliteInfoSource *PositionPollFactory::satelliteInfoSource(QObject *parent)
+{
+    Q_UNUSED(parent);
+    return 0;
+}
 
-  \brief The QGeoPositionInfoSourceFactory class is a factory class used
-  as the plugin interface for external providers of positioning data.
-
-  The other functions must be overridden by all plugins, other than
-  sourcePriority() which defaults to returning 0. Higher values of
-  priority will be preferred to lower ones.
-*/
-
-/*!
-  \fn QGeoPositionInfoSource *QGeoPositionInfoSourceFactory::positionInfoSource(QObject *parent)
-
-  Returns a new QGeoPositionInfoSource associated with this plugin
-  with parent \a parent. Can also return 0, in which case the plugin
-  loader will use the factory with the next highest priority.
-  */
-
-/*!
-  \fn QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactory::satelliteInfoSource(QObject *parent)
-
-  Returns a new QGeoSatelliteInfoSource associated with this plugin
-  with parent \a parent. Can also return 0, in which case the plugin
-  loader will use the factory with the next highest priority.
-  */
-
-/*!
-  \fn QGeoAreaMonitor *QGeoPositionInfoSourceFactory::areaMonitor(QObject *parent);
-
-  Returns a new QGeoAreaMonitor associated with this plugin with parent \a parent.
-  Can also return 0, in which case the plugin loader will use the factory with the
-  next highest priority.
-  */
-
-/*!
-    Destroys the position info source factory.
-*/
-QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()
-{}
-
-QT_END_NAMESPACE
+QGeoAreaMonitor *PositionPollFactory::areaMonitor(QObject *parent)
+{
+    QGeoAreaMonitorPolling *ret = 0;
+    ret = new QGeoAreaMonitorPolling(parent);
+    if (ret && ret->isValid())
+        return ret;
+    delete ret;
+    return 0;
+}

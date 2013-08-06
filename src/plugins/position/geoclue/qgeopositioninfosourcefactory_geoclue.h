@@ -43,8 +43,7 @@
 #define QGEOPOSITIONINFOSOURCEFACTORY_GEOCLUE_H
 
 #include <QObject>
-#include "qgeopositioninfosource.h"
-#include "qgeopositioninfosourcefactory.h"
+#include <qgeopositioninfosourcefactory.h>
 
 class QGeoPositionInfoSourceFactoryGeoclue : public QObject, public QGeoPositionInfoSourceFactory
 {
@@ -56,6 +55,7 @@ class QGeoPositionInfoSourceFactoryGeoclue : public QObject, public QGeoPosition
 public:
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
+    QGeoAreaMonitor *areaMonitor(QObject *parent);
 };
 
 #endif

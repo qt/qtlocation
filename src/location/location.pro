@@ -30,7 +30,6 @@ PRIVATE_HEADERS += \
                     qgeolocation_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h \
-                    qgeoareamonitor_polling_p.h \
                     qgeocoordinate_p.h \
                     qgeopositioninfosource_p.h
 
@@ -48,7 +47,6 @@ SOURCES += \
             qgeosatelliteinfosource.cpp \
             qlocationutils.cpp \
             qnmeapositioninfosource.cpp \
-            qgeoareamonitor_polling.cpp \
             qgeopositioninfosourcefactory.cpp \
             qlocation.cpp
 

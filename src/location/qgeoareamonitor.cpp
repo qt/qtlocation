@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeoareamonitor.h"
-
-#include "qgeoareamonitor_polling_p.h"
+#include <qgeoareamonitor.h>
+#include "qgeopositioninfosourcefactory.h"
+#include "qgeopositioninfosource_p.h"
 
 /*!
     \class QGeoAreaMonitor
@@ -175,12 +175,65 @@ qreal QGeoAreaMonitor::radius() const
 */
 QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 {
-    QGeoAreaMonitorPolling *ret = NULL;
-    ret = new QGeoAreaMonitorPolling(parent);
-    if (ret && ret->isValid())
-        return ret;
+    QList<QJsonObject> plugins = QGeoPositionInfoSourcePrivate::pluginsSorted();
+    foreach (const QJsonObject &obj, plugins) {
+        if (obj.value(QStringLiteral("Monitor")).isBool()
+                && obj.value(QStringLiteral("Monitor")).toBool())
+        {
+            QGeoPositionInfoSourcePrivate d;
+            d.metaData = obj;
+            d.loadPlugin();
+            QGeoAreaMonitor *s = 0;
+            if (d.factory)
+                s = d.factory->areaMonitor(parent);
+            return s;
+        }
+    }
+
     return 0;
 }
+
+/*!
+    Creates and returns a monitor with the given \a parent,
+    by loading the plugin named \a sourceName.
+
+    Returns 0 if the plugin cannot be found.
+*/
+QGeoAreaMonitor *QGeoAreaMonitor::createMonitor(const QString &sourceName, QObject *parent)
+{
+    QHash<QString, QJsonObject> plugins = QGeoPositionInfoSourcePrivate::plugins();
+    if (plugins.contains(sourceName)) {
+        QGeoPositionInfoSourcePrivate d;
+        d.metaData = plugins.value(sourceName);
+        d.loadPlugin();
+        QGeoAreaMonitor *s = 0;
+        if (d.factory)
+            s = d.factory->areaMonitor(parent);
+        return s;
+    }
+
+    return 0;
+}
+
+/*!
+    Returns a list of available monitor plugins, including the default system
+    backend if one is available.
+*/
+QStringList QGeoAreaMonitor::availableMonitors()
+{
+    QStringList plugins;
+    QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
+    foreach (const QString &name, meta.keys()) {
+        if (meta.value(name).value(QStringLiteral("Monitor")).isBool()
+                && meta.value(name).value(QStringLiteral("Monitor")).toBool()) {
+            plugins << name;
+        }
+    }
+
+    return plugins;
+}
+
+
 
 /*!
     \fn void QGeoAreaMonitor::areaEntered(const QGeoPositionInfo &update);

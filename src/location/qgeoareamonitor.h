@@ -44,6 +44,7 @@
 #include <QtLocation/QGeoCoordinate>
 
 #include <QObject>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 
@@ -66,6 +67,8 @@ public:
     qreal radius() const;
 
     static QGeoAreaMonitor *createDefaultMonitor(QObject *parent);
+    static QGeoAreaMonitor *createMonitor(const QString& sourceName, QObject *parent);
+    static QStringList availableMonitors();
 
 Q_SIGNALS:
     void areaEntered(const QGeoPositionInfo &update);

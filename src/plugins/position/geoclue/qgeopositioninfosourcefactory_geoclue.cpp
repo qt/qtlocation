@@ -57,3 +57,9 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSour
     Q_UNUSED(parent);
     return 0;
 }
+
+QGeoAreaMonitor *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent)
+{
+    Q_UNUSED(parent);
+    return 0;
+}

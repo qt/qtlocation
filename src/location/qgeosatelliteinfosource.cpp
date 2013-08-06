@@ -157,23 +157,21 @@ int QGeoSatelliteInfoSource::updateInterval() const
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
-    QGeoPositionInfoSourcePrivate *d = new QGeoPositionInfoSourcePrivate;
-
     QList<QJsonObject> plugins = QGeoPositionInfoSourcePrivate::pluginsSorted();
     foreach (const QJsonObject &obj, plugins) {
         if (obj.value(QStringLiteral("Satellite")).isBool()
-                && obj.value(QStringLiteral("Satellite")).toBool()) {
-            d->metaData = obj;
-            d->loadPlugin();
-            QGeoSatelliteInfoSource *s = d->factory->satelliteInfoSource(parent);
-            if (s) {
-                delete d;
-                return s;
-            }
+                && obj.value(QStringLiteral("Satellite")).toBool())
+        {
+            QGeoPositionInfoSourcePrivate d;
+            d.metaData = obj;
+            d.loadPlugin();
+            QGeoSatelliteInfoSource *s = 0;
+            if (d.factory)
+                s = d.factory->satelliteInfoSource(parent);
+            return s;
         }
     }
 
-    delete d;
     return 0;
 }
 
@@ -185,19 +183,17 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &sourceName, QObject *parent)
 {
-    QGeoPositionInfoSourcePrivate *d = new QGeoPositionInfoSourcePrivate;
     QHash<QString, QJsonObject> plugins = QGeoPositionInfoSourcePrivate::plugins();
     if (plugins.contains(sourceName)) {
-        d->metaData = plugins.value(sourceName);
-        d->loadPlugin();
-        QGeoSatelliteInfoSource *src = d->factory->satelliteInfoSource(parent);
-        if (src) {
-            delete d;
-            return src;
-        }
+        QGeoPositionInfoSourcePrivate d;
+        d.metaData = plugins.value(sourceName);
+        d.loadPlugin();
+        QGeoSatelliteInfoSource *src = 0;
+        if (d.factory)
+            src = d.factory->satelliteInfoSource(parent);
+        return src;
     }
 
-    delete d;
     return 0;
 }
 

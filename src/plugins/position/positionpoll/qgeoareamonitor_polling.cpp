@@ -39,12 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qgeoareamonitor_polling_p.h"
-#include "qgeocoordinate.h"
+#include "qgeoareamonitor_polling.h"
+#include <qgeocoordinate.h>
 
 #include <QtCore/qmetaobject.h>
-
-QT_BEGIN_NAMESPACE
 
 #define UPDATE_INTERVAL_5S  5000
 
@@ -133,5 +131,4 @@ void QGeoAreaMonitorPolling::positionUpdated(const QGeoPositionInfo &info)
     }
 }
 
-#include "moc_qgeoareamonitor_polling_p.cpp"
-QT_END_NAMESPACE
+#include "moc_qgeoareamonitor_polling.cpp"

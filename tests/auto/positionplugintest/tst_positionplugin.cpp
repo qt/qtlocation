@@ -45,6 +45,7 @@
 #include <QSignalSpy>
 #include <qgeopositioninfosource.h>
 #include <qgeosatelliteinfosource.h>
+#include <qgeoareamonitor.h>
 #include <qgeocoordinate.h>
 
 QT_USE_NAMESPACE
@@ -77,6 +78,7 @@ void tst_PositionPlugin::availableSources()
 {
     QVERIFY(QGeoPositionInfoSource::availableSources().contains("test.source"));
     QVERIFY(!QGeoSatelliteInfoSource::availableSources().contains("test.source"));
+    QVERIFY(!QGeoAreaMonitor::availableMonitors().contains("test.source"));
 }
 
 void tst_PositionPlugin::create()

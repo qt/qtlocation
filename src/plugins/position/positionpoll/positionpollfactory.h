@@ -39,53 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOAREAMONITORPOLLING_H
-#define QGEOAREAMONITORPOLLING_H
+#ifndef POSITIONPOLLFACTORY_H
+#define POSITIONPOLLFACTORY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QObject>
+#include <QGeoPositionInfoSourceFactory>
 
-#include "qgeoareamonitor.h"
-#include "qgeopositioninfosource.h"
-
-QT_BEGIN_NAMESPACE
-
-/**
- *  QGeoAreaMonitorPolling
- *
- */
-class QGeoAreaMonitorPolling : public QGeoAreaMonitor
+class PositionPollFactory : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
-
-public :
-    explicit QGeoAreaMonitorPolling(QObject *parent = 0);
-    ~QGeoAreaMonitorPolling();
-    void setCenter(const QGeoCoordinate &coordinate);
-    void setRadius(qreal radius);
-
-    inline bool isValid() { return location; }
-
-private Q_SLOTS:
-    void positionUpdated(const QGeoPositionInfo &info);
-
-private:
-    bool insideArea;
-    QGeoPositionInfoSource *location;
-
-    void connectNotify(const QMetaMethod &signal);
-    void disconnectNotify(const QMetaMethod &signal);
-
-    void checkStartStop();
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/5.0"
+                      FILE "plugin.json")
+    Q_INTERFACES(QGeoPositionInfoSourceFactory)
+public:
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent);
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
+    QGeoAreaMonitor *areaMonitor(QObject *parent);
 };
 
-QT_END_NAMESPACE
-#endif // QGEOAREAMONITORPOLLING_H
+#endif // POSITIONPOLLFACTORY_H

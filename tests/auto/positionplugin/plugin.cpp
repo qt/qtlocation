@@ -190,6 +190,7 @@ class QGeoPositionInfoSourceFactoryTest : public QObject, public QGeoPositionInf
 public:
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
+    QGeoAreaMonitor *areaMonitor(QObject *parent);
 };
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryTest::positionInfoSource(QObject *parent)
@@ -201,6 +202,12 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryTest::satelliteInfoSource(
 {
     Q_UNUSED(parent)
     // not implemented
+    return 0;
+}
+
+QGeoAreaMonitor *QGeoPositionInfoSourceFactoryTest::areaMonitor(QObject* parent)
+{
+    Q_UNUSED(parent)
     return 0;
 }
 

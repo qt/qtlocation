@@ -140,6 +140,18 @@ private slots:
         QGeoAreaMonitor* obj = QGeoAreaMonitor::createDefaultMonitor(parent);
         QVERIFY(obj != 0);
         delete parent;
+
+        const QStringList monitors = QGeoAreaMonitor::availableMonitors();
+        QVERIFY(!monitors.isEmpty());
+        QVERIFY(monitors.contains(QStringLiteral("positionpoll")));
+
+        parent = new QObject;
+        obj = QGeoAreaMonitor::createMonitor(QStringLiteral("positionpoll"), parent);
+        QVERIFY(obj != 0);
+        delete parent;
+
+        obj = QGeoAreaMonitor::createMonitor(QStringLiteral("randomNonExistingName"), 0);
+        QVERIFY(obj == 0);
     }
 
     //TC_ID_4_x_1

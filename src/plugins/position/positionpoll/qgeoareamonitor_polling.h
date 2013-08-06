@@ -39,52 +39,40 @@
 **
 ****************************************************************************/
 
-#include "qgeopositioninfosourcefactory.h"
+#ifndef QGEOAREAMONITORPOLLING_H
+#define QGEOAREAMONITORPOLLING_H
 
-QT_BEGIN_NAMESPACE
+#include "qgeoareamonitor.h"
+#include "qgeopositioninfosource.h"
 
-/*!
-  \class QGeoPositionInfoSourceFactory
-  \inmodule QtLocation
-  \ingroup QtLocation-impl
-  \since Qt Location 5.0
 
-  \brief The QGeoPositionInfoSourceFactory class is a factory class used
-  as the plugin interface for external providers of positioning data.
+/**
+ *  QGeoAreaMonitorPolling
+ *
+ */
+class QGeoAreaMonitorPolling : public QGeoAreaMonitor
+{
+    Q_OBJECT
 
-  The other functions must be overridden by all plugins, other than
-  sourcePriority() which defaults to returning 0. Higher values of
-  priority will be preferred to lower ones.
-*/
+public :
+    explicit QGeoAreaMonitorPolling(QObject *parent = 0);
+    ~QGeoAreaMonitorPolling();
+    void setCenter(const QGeoCoordinate &coordinate);
+    void setRadius(qreal radius);
 
-/*!
-  \fn QGeoPositionInfoSource *QGeoPositionInfoSourceFactory::positionInfoSource(QObject *parent)
+    inline bool isValid() { return location; }
 
-  Returns a new QGeoPositionInfoSource associated with this plugin
-  with parent \a parent. Can also return 0, in which case the plugin
-  loader will use the factory with the next highest priority.
-  */
+private Q_SLOTS:
+    void positionUpdated(const QGeoPositionInfo &info);
 
-/*!
-  \fn QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactory::satelliteInfoSource(QObject *parent)
+private:
+    bool insideArea;
+    QGeoPositionInfoSource *location;
 
-  Returns a new QGeoSatelliteInfoSource associated with this plugin
-  with parent \a parent. Can also return 0, in which case the plugin
-  loader will use the factory with the next highest priority.
-  */
+    void connectNotify(const QMetaMethod &signal);
+    void disconnectNotify(const QMetaMethod &signal);
 
-/*!
-  \fn QGeoAreaMonitor *QGeoPositionInfoSourceFactory::areaMonitor(QObject *parent);
+    void checkStartStop();
+};
 
-  Returns a new QGeoAreaMonitor associated with this plugin with parent \a parent.
-  Can also return 0, in which case the plugin loader will use the factory with the
-  next highest priority.
-  */
-
-/*!
-    Destroys the position info source factory.
-*/
-QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()
-{}
-
-QT_END_NAMESPACE
+#endif // QGEOAREAMONITORPOLLING_H

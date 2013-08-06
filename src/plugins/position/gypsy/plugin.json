@@ -3,5 +3,6 @@
     "Provider": "gypsy",
     "Position": false,
     "Satellite": true,
+    "Monitor" : false,
     "Priority": 1000
 }
