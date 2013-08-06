@@ -195,6 +195,8 @@ void MapNode::updateFBO()
     m_texture->setTextureId(m_fbo->texture());
     m_opaqueMaterial.setTexture(m_texture);
     m_material.setTexture(m_texture);
+
+    markDirty(DirtyMaterial);
 }
 
 void MapNode::setSize(const QSize &size)
