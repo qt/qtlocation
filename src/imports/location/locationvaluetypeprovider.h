@@ -110,7 +110,7 @@ private:
     bool createFromString(int type, const QString &s, void *data, size_t dataSize) Q_DECL_OVERRIDE;
     bool createStringFrom(int type, const void *data, QString *s) Q_DECL_OVERRIDE;
 
-    bool variantFromJsObject(int type, QQmlV8Handle h, QV8Engine *e, QVariant *v) Q_DECL_OVERRIDE;
+    bool variantFromJsObject(int type, QQmlV4Handle h, QV8Engine *e, QVariant *v) Q_DECL_OVERRIDE;
 
     template<typename T>
     bool typedEqual(const void *lhs, const void *rhs)

@@ -235,7 +235,7 @@ bool LocationValueTypeProvider::createStringFrom(int type, const void *data, QSt
     return false;
 }
 
-bool LocationValueTypeProvider::variantFromJsObject(int type, QQmlV8Handle h, QV8Engine *e, QVariant *v)
+bool LocationValueTypeProvider::variantFromJsObject(int type, QQmlV4Handle h, QV8Engine *e, QVariant *v)
 {
     Q_UNUSED(h)
     Q_UNUSED(e)

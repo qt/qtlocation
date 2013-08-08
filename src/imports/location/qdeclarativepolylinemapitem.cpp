@@ -48,6 +48,8 @@
 #include <QtQml/QQmlInfo>
 #include <QtQml/QQmlContext>
 #include <QtQml/private/qqmlengine_p.h>
+#include <private/qqmlvaluetypewrapper_p.h>
+#include <private/qjsvalue_p.h>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
@@ -497,19 +499,19 @@ QJSValue QDeclarativePolylineMapItem::path() const
     QQmlContext *context = QQmlEngine::contextForObject(parent());
     QQmlEngine *engine = context->engine();
     QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
-    QV8ValueTypeWrapper *valueTypeWrapper = v8Engine->valueTypeWrapper();
+    QV4::ExecutionEngine *v4 = QV8Engine::getV4(v8Engine);
 
-    v8::Local<v8::Array> pathArray = v8::Array::New(path_.length());
+    QV4::ArrayObject *pathArray = v4->newArrayObject(path_.length());
     for (int i = 0; i < path_.length(); ++i) {
         const QGeoCoordinate &c = path_.at(i);
 
         QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
-        v8::Local<v8::Object> cv = valueTypeWrapper->newValueType(QVariant::fromValue(c), vt);
+        QV4::Value cv = QV4::QmlValueTypeWrapper::create(v8Engine, QVariant::fromValue(c), vt);
 
-        pathArray->Set(i, cv);
+        pathArray->putIndexed(i, cv);
     }
 
-    return v8Engine->scriptValueFromInternal(pathArray);
+    return new QJSValuePrivate(pathArray);
 }
 
 void QDeclarativePolylineMapItem::setPath(const QJSValue &value)

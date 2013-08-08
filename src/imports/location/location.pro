@@ -1,4 +1,4 @@
-QT += quick-private network location-private qml-private 3d core-private gui-private v8-private
+QT += quick-private network location-private qml-private 3d core-private gui-private
 
 INCLUDEPATH += ../../location
 INCLUDEPATH += ../../location/maps

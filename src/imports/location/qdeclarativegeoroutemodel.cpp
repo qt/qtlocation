@@ -43,6 +43,8 @@
 #include "qdeclarativegeoroute_p.h"
 #include "error_messages.h"
 #include "locationvaluetypeprovider.h"
+#include <private/qqmlvaluetypewrapper_p.h>
+#include <private/qjsvalue_p.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtQml/QQmlEngine>
@@ -731,19 +733,19 @@ QJSValue QDeclarativeGeoRouteQuery::waypoints()
     QQmlContext *context = QQmlEngine::contextForObject(parent());
     QQmlEngine *engine = context->engine();
     QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
-    QV8ValueTypeWrapper *valueTypeWrapper = v8Engine->valueTypeWrapper();
+    QV4::ExecutionEngine *v4 = QV8Engine::getV4(v8Engine);
 
-    v8::Local<v8::Array> waypointArray = v8::Array::New(request_.waypoints().length());
+    QV4::ArrayObject *waypointArray = v4->newArrayObject(request_.waypoints().length());
     for (int i = 0; i < request_.waypoints().length(); ++i) {
         const QGeoCoordinate &c = request_.waypoints().at(i);
 
         QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
-        v8::Local<v8::Object> cv = valueTypeWrapper->newValueType(QVariant::fromValue(c), vt);
+        QV4::Value cv = QV4::QmlValueTypeWrapper::create(v8Engine, QVariant::fromValue(c), vt);
 
-        waypointArray->Set(i, cv);
+        waypointArray->putIndexed(i, cv);
     }
 
-    return v8Engine->scriptValueFromInternal(waypointArray);
+    return new QJSValuePrivate(waypointArray);
 }
 
 void QDeclarativeGeoRouteQuery::setWaypoints(const QJSValue &value)
@@ -789,19 +791,19 @@ QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
     QQmlContext *context = QQmlEngine::contextForObject(parent());
     QQmlEngine *engine = context->engine();
     QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
-    QV8ValueTypeWrapper *valueTypeWrapper = v8Engine->valueTypeWrapper();
+    QV4::ExecutionEngine *v4 = QV8Engine::getV4(v8Engine);
 
-    v8::Local<v8::Array> excludedAreasArray = v8::Array::New(request_.excludeAreas().length());
+    QV4::ArrayObject *excludedAreasArray = v4->newArrayObject(request_.excludeAreas().length());
     for (int i = 0; i < request_.excludeAreas().length(); ++i) {
         const QGeoRectangle &r = request_.excludeAreas().at(i);
 
         QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoRectangle>());
-        v8::Local<v8::Object> cv = valueTypeWrapper->newValueType(QVariant::fromValue(r), vt);
+        QV4::Value cv = QV4::QmlValueTypeWrapper::create(v8Engine, QVariant::fromValue(r), vt);
 
-        excludedAreasArray->Set(i, cv);
+        excludedAreasArray->putIndexed(i, cv);
     }
 
-    return v8Engine->scriptValueFromInternal(excludedAreasArray);
+    return new QJSValuePrivate(excludedAreasArray);
 }
 
 void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
