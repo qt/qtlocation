@@ -45,7 +45,7 @@ Item {
 
     property string topText: "20*"
     property string bottomText: "Mostly cloudy"
-    property string weather: "showers"
+    property string weatherIcon: "01d"
     property real smallSide: (current.width < current.height ? current.width : current.height)
 
     Text {
@@ -60,7 +60,8 @@ Item {
     }
 
     WeatherIcon {
-        weather: current.weather
+        weatherIcon: current.weatherIcon
+        useServerIcon: false
         anchors.centerIn: parent
         width: current.smallSide
         height: current.smallSide

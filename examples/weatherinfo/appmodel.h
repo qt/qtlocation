@@ -54,31 +54,29 @@ class WeatherData : public QObject {
     Q_PROPERTY(QString dayOfWeek
                READ dayOfWeek WRITE setDayOfWeek
                NOTIFY dataChanged)
-    Q_PROPERTY(QString weather
-               READ weather WRITE setWeather
+    Q_PROPERTY(QString weatherIcon
+               READ weatherIcon WRITE setWeatherIcon
                NOTIFY dataChanged)
-    Q_PROPERTY(QString weatherDesc
-               READ weatherDesc WRITE setWeatherDesc
+    Q_PROPERTY(QString weatherDescription
+               READ weatherDescription WRITE setWeatherDescription
                NOTIFY dataChanged)
-    Q_PROPERTY(QString tempString
-               READ tempString WRITE setTempString
+    Q_PROPERTY(QString temperature
+               READ temperature WRITE setTemperature
                NOTIFY dataChanged)
 
 public:
     explicit WeatherData(QObject *parent = 0);
     WeatherData(const WeatherData &other);
 
-    const WeatherData &operator=(const WeatherData &other);
-
     QString dayOfWeek() const;
-    QString weather() const;
-    QString weatherDesc() const;
-    QString tempString() const;
+    QString weatherIcon() const;
+    QString weatherDescription() const;
+    QString temperature() const;
 
-    void setDayOfWeek(QString value);
-    void setWeather(QString value);
-    void setWeatherDesc(QString value);
-    void setTempString(QString value);
+    void setDayOfWeek(const QString &value);
+    void setWeatherIcon(const QString &value);
+    void setWeatherDescription(const QString &value);
+    void setTemperature(const QString &value);
 
 signals:
     void dataChanged();
@@ -86,8 +84,8 @@ signals:
 private:
     QString m_dayOfWeek;
     QString m_weather;
-    QString m_weatherDesc;
-    QString m_tempString;
+    QString m_weatherDescription;
+    QString m_temperature;
 //! [1]
 };
 //! [1]
@@ -151,6 +149,7 @@ private slots:
     // these would have QNetworkReply* params but for the signalmapper
     void handleGeoNetworkData(QObject *networkReply);
     void handleWeatherNetworkData(QObject *networkReply);
+    void handleForecastNetworkData(QObject *networkReply);
 
 //! [3]
 signals:

@@ -44,7 +44,7 @@ Item {
     id: top
 
     property string topText: "Mon"
-    property string weather: "showers"
+    property string weatherIcon: "01d"
     property string bottomText: "22*/23*"
 
     Text {
@@ -60,7 +60,7 @@ Item {
 
     WeatherIcon {
         id: icon
-        weather: top.weather
+        weatherIcon: top.weatherIcon
 
         property real side: {
             var h = 3 * top.height / 5

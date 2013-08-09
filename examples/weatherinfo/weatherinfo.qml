@@ -142,15 +142,15 @@ Item {
                 width: main.width - 3
                 height: 2 * (main.height - 25 - 12) / 3
 
-                weather: (model.hasValidWeather
-                          ? model.weather.weather
-                          : "sunny")
+                weatherIcon: (model.hasValidWeather
+                          ? model.weather.weatherIcon
+                          : "01d")
 //! [3]
                 topText: (model.hasValidWeather
-                          ? model.weather.tempString
+                          ? model.weather.temperature
                           : "??")
                 bottomText: (model.hasValidWeather
-                             ? model.weather.weatherDesc
+                             ? model.weather.weatherDescription
                              : "No weather data")
 
                 MouseArea {
@@ -181,9 +181,9 @@ Item {
                     topText: (model.hasValidWeather ?
                               model.forecast[0].dayOfWeek : "??")
                     bottomText: (model.hasValidWeather ?
-                                 model.forecast[0].tempString : "??/??")
-                    weather: (model.hasValidWeather ?
-                              model.forecast[0].weather : "showers")
+                                 model.forecast[0].temperature : "??/??")
+                    weatherIcon: (model.hasValidWeather ?
+                              model.forecast[0].weatherIcon : "01d")
                 }
                 ForecastIcon {
                     id: forecast2
@@ -193,9 +193,9 @@ Item {
                     topText: (model.hasValidWeather ?
                               model.forecast[1].dayOfWeek : "??")
                     bottomText: (model.hasValidWeather ?
-                                 model.forecast[1].tempString : "??/??")
-                    weather: (model.hasValidWeather ?
-                              model.forecast[1].weather : "showers")
+                                 model.forecast[1].temperature : "??/??")
+                    weatherIcon: (model.hasValidWeather ?
+                              model.forecast[1].weatherIcon : "01d")
                 }
                 ForecastIcon {
                     id: forecast3
@@ -205,9 +205,9 @@ Item {
                     topText: (model.hasValidWeather ?
                               model.forecast[2].dayOfWeek : "??")
                     bottomText: (model.hasValidWeather ?
-                                 model.forecast[2].tempString : "??/??")
-                    weather: (model.hasValidWeather ?
-                              model.forecast[2].weather : "showers")
+                                 model.forecast[2].temperature : "??/??")
+                    weatherIcon: (model.hasValidWeather ?
+                              model.forecast[2].weatherIcon : "01d")
                 }
                 ForecastIcon {
                     id: forecast4
@@ -217,9 +217,9 @@ Item {
                     topText: (model.hasValidWeather ?
                               model.forecast[3].dayOfWeek : "??")
                     bottomText: (model.hasValidWeather ?
-                                 model.forecast[3].tempString : "??/??")
-                    weather: (model.hasValidWeather ?
-                              model.forecast[3].weather : "showers")
+                                 model.forecast[3].temperature : "??/??")
+                    weatherIcon: (model.hasValidWeather ?
+                              model.forecast[3].weatherIcon : "01d")
                 }
 
             }
