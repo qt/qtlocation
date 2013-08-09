@@ -5,7 +5,6 @@
 qml_location_*
 
 callgrind.out.*
-pcviewer.cfg
 *~
 *.a
 *.la
@@ -29,30 +28,17 @@ core
 .qmake.cache
 .qmake.vars
 *.prl
-tags
 .DS_Store
 *.debug
 Makefile*
-!qmake/Makefile.win32*
-!qmake/Makefile.unix
 *.prl
 *.app
 *.pro.user
 *.qmlproject.user
 *.gcov
-bin/Qt*.dll
-configure.cache
-config.status
 config.log
-mkspecs/default
-mkspecs/qconfig.pri
 moc_*.cpp
-src/corelib/global/qconfig.cpp
-src/corelib/global/qconfig.h
-src/corelib/global/qconfig.h.qmake
 ui_*.h
-translations/*.qm
-translations/*_untranslated.ts
 qrc_*.cpp
 
 doc/src/snippets/cpp/cppsnippet
@@ -62,8 +48,12 @@ examples/declarative/places_map/places_map
 examples/logfilepositionsource/logfilepositionsource
 examples/weatherinfo/weatherinfo
 
+config.tests/geoclue/geoclue
+config.tests/gypsy/gypsy
+
+
 # Test generated files
-QObject.log
+
 tst_*
 !tst_*.*
 tst_*.log
@@ -105,21 +95,6 @@ tst_*~
 # Directories to ignore
 # ---------------------
 
-debug
-examples/tools/plugandpaint/plugins
-imports/*
-include/*
-include/*/*
-lib/*
-!lib/fonts
-!lib/README
-plugins/*/*
-release
-tmp
-doc-build
-doc/html/*
-doc/qch
-doc-build
 .rcc
 .pch
 .metadata
@@ -130,11 +105,6 @@ doc-build
 .cproject
 .make.cache
 *.d
-
-qtc-debugging-helper
-src/corelib/lib
-src/network/lib
-src/xml/lib/
 
 .pc/
 
