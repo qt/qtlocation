@@ -139,7 +139,7 @@ Item {
             BigForecastIcon {
                 id: current
 
-                width: main.width - 3
+                width: main.width -12
                 height: 2 * (main.height - 25 - 12) / 3
 
                 weatherIcon: (model.hasValidWeather
@@ -167,7 +167,7 @@ Item {
                 id: iconRow
                 spacing: 6
 
-                width: main.width - 3
+                width: main.width - 12
                 height: (main.height - 25 - 24) / 3
 
                 property real iconWidth: iconRow.width / 4 - 10

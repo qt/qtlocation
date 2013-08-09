@@ -63,6 +63,7 @@ Item {
         weatherIcon: current.weatherIcon
         useServerIcon: false
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: -15
         width: current.smallSide
         height: current.smallSide
     }
@@ -73,7 +74,6 @@ Item {
         anchors {
             bottom: current.bottom
             right: current.right
-            bottomMargin: 20
             rightMargin: 5
         }
     }
