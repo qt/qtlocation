@@ -15,7 +15,6 @@
     "qtsvg" => "",
     "qtxmlpatterns" => "",
     "qtdeclarative" => "",
-    "qtjsbackend" => "",
     "qt3d" => "refs/heads/master",
     "qtmultimedia" => ""
 );
