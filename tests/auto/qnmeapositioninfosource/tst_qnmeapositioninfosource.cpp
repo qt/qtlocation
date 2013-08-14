@@ -43,6 +43,34 @@
 
 #include "tst_qnmeapositioninfosource.h"
 
+#ifdef Q_OS_WIN
+
+// Windows seems to require longer timeouts and step length
+// We override the standard QTestCase related macros
+
+#ifdef QTRY_COMPARE_WITH_TIMEOUT
+#undef  QTRY_COMPARE_WITH_TIMEOUT
+#endif
+#define QTRY_COMPARE_WITH_TIMEOUT(__expr, __expected, __timeout) \
+do { \
+    const int __step = 100; \
+    const int __timeoutValue = __timeout; \
+    if ((__expr) != (__expected)) { \
+        QTest::qWait(0); \
+    } \
+    for (int __i = 0; __i < __timeoutValue && ((__expr) != (__expected)); __i+=__step) { \
+        QTest::qWait(__step); \
+    } \
+    QCOMPARE(__expr, __expected); \
+} while (0)
+
+#ifdef QTRY_COMPARE
+#undef  QTRY_COMPARE
+#endif
+#define QTRY_COMPARE(__expr, __expected) QTRY_COMPARE_WITH_TIMEOUT(__expr, __expected, 10000)
+
+#endif
+
 tst_QNmeaPositionInfoSource::tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent)
     : QObject(parent),
       m_mode(mode)
