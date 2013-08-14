@@ -80,10 +80,10 @@ Rectangle {
         y: 3; height: 32; width: parent.width - 10
 //! [locatebutton-clicked]
         onClicked: {
-            if (positionSource.supportedPositioningMethod ==
+            if (positionSource.supportedPositioningMethods ===
                     PositionSource.NoPositioningMethod) {
                 positionSource.nmeaSource = "nmealog.txt";
-                sourceText.text = "(filesource): " + printableMethod(positionSource.supportedPositioningMethod);
+                sourceText.text = "(filesource): " + printableMethod(positionSource.supportedPositioningMethods);
             }
             positionSource.update();
         }
@@ -96,13 +96,13 @@ Rectangle {
     }
 //! [possrc]
     function printableMethod(method) {
-        if (method == PositionSource.SatellitePositioningMethod)
+        if (method === PositionSource.SatellitePositioningMethod)
             return "Satellite";
-        else if (method == PositionSource.NoPositioningMethod)
+        else if (method === PositionSource.NoPositioningMethod)
             return "Not available"
-        else if (method == PositionSource.NonSatellitePositioningMethod)
+        else if (method === PositionSource.NonSatellitePositioningMethod)
             return "Non-satellite"
-        else if (method == PositionSource.AllPositioningMethods)
+        else if (method === PositionSource.AllPositioningMethods)
             return "Multiple"
         return "source error";
     }
@@ -133,6 +133,6 @@ Rectangle {
     }
     Text {id: sourceText; color: "white"; font.bold: true;
         anchors {left: planet.right; leftMargin: 5; verticalCenter: planet.verticalCenter}
-        text: "Source: " + printableMethod(positionSource.supportedPositioningMethod); style: Text.Raised; styleColor: "black";
+        text: "Source: " + printableMethod(positionSource.supportedPositioningMethods); style: Text.Raised; styleColor: "black";
     }
 }
