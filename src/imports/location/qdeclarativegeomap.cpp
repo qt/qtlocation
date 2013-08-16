@@ -204,6 +204,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
+    setFiltersChildMouseEvents(true);
 
     connect(this, SIGNAL(childrenChanged()), this, SLOT(onMapChildrenChanged()), Qt::QueuedConnection);
 
@@ -885,6 +886,26 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
     QLOC_TRACE0;
     event->accept();
     emit wheelAngleChanged(event->angleDelta());
+}
+
+/*!
+    \internal
+*/
+bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
+{
+    QLOC_TRACE0;
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseButtonRelease:
+    case QEvent::MouseMove:
+        return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
+    case QEvent::TouchBegin:
+    case QEvent::TouchUpdate:
+    case QEvent::TouchEnd:
+        return gestureArea_->filterMapChildTouchEvent(static_cast<QTouchEvent *>(event));
+    default:
+        return false;
+    }
 }
 
 /*!

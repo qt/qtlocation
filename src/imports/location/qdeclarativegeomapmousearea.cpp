@@ -199,12 +199,8 @@ void QDeclarativeGeoMapMouseArea::componentComplete()
 */
 void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 {
-    // map object's flickable may use the event
-    QQuickItem *pmi = parentMapItem();
-    if (pmi && qobject_cast<QDeclarativeGeoMap *>(pmi))
-        qobject_cast<QDeclarativeGeoMap *>(pmi)->mouseEvent(event);
-
     // ignore event if it misses non-rectangular geometry (e.g. circle, route)
+    QQuickItem *pmi = parentMapItem();
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase *>(pmi))
         contains = pmi->contains(event->pos());
@@ -220,12 +216,9 @@ void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMapMouseArea::mouseReleaseEvent(QMouseEvent *event)
 {
-    // map object's flickable may use the event
     QQuickItem *pmi = parentMapItem();
 
-    if (pmi && qobject_cast<QDeclarativeGeoMap *>(pmi)) {
-        qobject_cast<QDeclarativeGeoMap *>(pmi)->mouseEvent(event);
-    } else if (dragActive_ && pmi && qobject_cast<QDeclarativeGeoMapItemBase *>(pmi)) {
+    if (dragActive_ && pmi && qobject_cast<QDeclarativeGeoMapItemBase *>(pmi)) {
         // position of the item may have changed by the time the activeChanged
         // is received, hence update already on mouse release
         qobject_cast<QDeclarativeGeoMapItemBase *>(pmi)->dragEnded();
@@ -248,11 +241,6 @@ void QDeclarativeGeoMapMouseArea::mouseDoubleClickEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMapMouseArea::mouseMoveEvent(QMouseEvent *event)
 {
-    // map object's flickable may use the event
-    QQuickItem *pmi = parentMapItem();
-    if (pmi && qobject_cast<QDeclarativeGeoMap *>(pmi))
-        qobject_cast<QDeclarativeGeoMap *>(pmi)->mouseEvent(event);
-
     QQuickMouseArea::mouseMoveEvent(event);
 }
 

@@ -166,6 +166,9 @@ public:
     bool mouseMoveEvent(QMouseEvent *event);
     bool mouseReleaseEvent(QMouseEvent *event);
 
+    bool filterMapChildMouseEvent(QMouseEvent *event);
+    bool filterMapChildTouchEvent(QTouchEvent *event);
+
     void zoomLevelLimits(qreal min, qreal max);
     void setMap(QGeoMap *map);
 
@@ -295,9 +298,6 @@ private:
     qreal distanceBetweenTouchPoints_;
     QPointF sceneCenter_;
 
-#if defined(TOUCH_EVENT_WORKAROUND) // will be removed when review change 21896 goes into QML core
-    bool mouseBeingUsed_;
-#endif
     // prototype state machine...
     enum TouchPointState
     {

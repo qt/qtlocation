@@ -174,6 +174,8 @@ protected:
     void touchEvent(QTouchEvent *event);
     void wheelEvent(QWheelEvent *event);
 
+    bool childMouseEventFilter(QQuickItem *item, QEvent *event);
+
 Q_SIGNALS:
     void wheelAngleChanged(QPoint angleDelta);
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);

@@ -345,9 +345,6 @@ QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap 
     pan_.maxVelocity_ = QML_MAP_FLICK_DEFAULTMAXVELOCITY;
     pan_.deceleration_ = QML_MAP_FLICK_DEFAULTDECELERATION;
     pan_.animation_ = 0;
-#if defined(TOUCH_EVENT_WORKAROUND)
-    mouseBeingUsed_ = true;
-#endif
     touchPointState_ = touchPoints0;
     pinchState_ = pinchInactive;
     panState_ = panInactive;
@@ -569,10 +566,6 @@ QTouchEvent::TouchPoint makeTouchPointFromMouseEvent(QMouseEvent *event, Qt::Tou
 */
 bool QDeclarativeGeoMapGestureArea::mousePressEvent(QMouseEvent *event)
 {
-#if defined(TOUCH_EVENT_WORKAROUND)
-    if (!mouseBeingUsed_)
-        return true;
-#endif
     touchPoints_.clear();
     touchPoints_ << makeTouchPointFromMouseEvent(event, Qt::TouchPointPressed);
 
@@ -585,10 +578,6 @@ bool QDeclarativeGeoMapGestureArea::mousePressEvent(QMouseEvent *event)
 */
 bool QDeclarativeGeoMapGestureArea::mouseMoveEvent(QMouseEvent *event)
 {
-#if defined(TOUCH_EVENT_WORKAROUND)
-    if (!mouseBeingUsed_)
-        return true;
-#endif
     touchPoints_.clear();
 
     touchPoints_ << makeTouchPointFromMouseEvent(event, Qt::TouchPointMoved);
@@ -596,16 +585,11 @@ bool QDeclarativeGeoMapGestureArea::mouseMoveEvent(QMouseEvent *event)
     return true;
 }
 
-
 /*!
     \internal
 */
 bool QDeclarativeGeoMapGestureArea::mouseReleaseEvent(QMouseEvent *)
 {
-#if defined(TOUCH_EVENT_WORKAROUND)
-    if (!mouseBeingUsed_)
-        return true;
-#endif
     touchPoints_.clear();
     update();
     return true;
@@ -616,9 +600,6 @@ bool QDeclarativeGeoMapGestureArea::mouseReleaseEvent(QMouseEvent *)
 */
 void QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
 {
-#if defined(TOUCH_EVENT_WORKAROUND)
-    mouseBeingUsed_ = false;
-#endif
     switch (event->type()) {
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
@@ -638,6 +619,38 @@ void QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
         // no-op
         break;
     }
+}
+
+/*!
+    \internal
+*/
+bool QDeclarativeGeoMapGestureArea::filterMapChildMouseEvent(QMouseEvent *event)
+{
+    bool used = false;
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+        used = mousePressEvent(event);
+        break;
+    case QEvent::MouseButtonRelease:
+        used = mouseReleaseEvent(event);
+        break;
+    case QEvent::MouseMove:
+        used = mouseMoveEvent(event);
+        break;
+    default:
+        used = false;
+        break;
+    }
+    return used && (isPanActive() || isPinchActive());
+}
+
+/*!
+    \internal
+*/
+bool QDeclarativeGeoMapGestureArea::filterMapChildTouchEvent(QTouchEvent *event)
+{
+    touchEvent(event);
+    return isPanActive() || isPinchActive();
 }
 
 /*!

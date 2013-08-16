@@ -3,7 +3,6 @@ QT += quick-private network location-private qml-private 3d core-private gui-pri
 INCLUDEPATH += ../../location
 INCLUDEPATH += ../../location/maps
 INCLUDEPATH *= $$PWD
-DEFINES += TOUCH_EVENT_WORKAROUND
 
 LIBS += -L../../3rdparty/poly2tri -lpoly2tri
 
