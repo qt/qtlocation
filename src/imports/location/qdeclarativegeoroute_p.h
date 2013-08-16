@@ -45,6 +45,7 @@
 #include "qdeclarativegeoroutesegment_p.h"
 
 #include <QtCore/QObject>
+#include <QtQml/QQmlListProperty>
 #include <QtQml/private/qv8engine_p.h>
 #include <QtLocation/QGeoRoute>
 

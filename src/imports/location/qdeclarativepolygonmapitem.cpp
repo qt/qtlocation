@@ -43,7 +43,7 @@
 #include "qgeocameracapabilities_p.h"
 #include "qlocationutils_p.h"
 #include "error_messages.h"
-#include "locationvaluetypeprovider.h"
+#include "locationvaluetypehelper_p.h"
 
 #include <QtGui/private/qtriangulator_p.h>
 #include <QtQml/QQmlInfo>
@@ -71,10 +71,10 @@ QT_BEGIN_NAMESPACE
     \brief The MapPolygon type displays a polygon on a Map
 
     The MapPolygon type displays a polygon on a Map, specified in terms of an ordered list of
-    \l {QtLocation::coordinate}{coordinates}. For best appearance and results, polygons should be
+    \l {QtPositioning::coordinate}{coordinates}. For best appearance and results, polygons should be
     simple (not self-intersecting).
 
-    The \l {QtLocation::coordinate}{coordinates} on the path cannot be directly changed after
+    The \l {QtPositioning::coordinate}{coordinates} on the path cannot be directly changed after
     being added to the Polygon.  Instead, copy the \l path into a var, modify the copy and reassign
     the copy back to the \l path.
 
@@ -344,10 +344,13 @@ QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
 }
 
 /*!
+    \qmlpropertygroup Location::MapPolygon::border
     \qmlproperty int MapPolygon::border.width
     \qmlproperty color MapPolygon::border.color
 
-    These properties hold the width and color used to draw the border of the circle.
+    This property is part of the border property group. The border property
+    group holds the width and color used to draw the border of the circle.
+
     The width is in pixels and is independent of the zoom level of the map.
 
     The default values correspond to a black border with a width of 1 pixel.

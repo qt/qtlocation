@@ -45,7 +45,6 @@
 
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativegeomapquickitem_p.h"
-#include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include <QtCore/QCoreApplication>
 #include <QtCore/qnumeric.h>

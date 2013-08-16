@@ -47,7 +47,7 @@
 #include <QDateTime>
 
 #include <QtLocation/qlocationglobal.h>
-#include <QtLocation/qgeocoordinate.h>
+#include <QtPositioning/qgeocoordinate.h>
 
 QT_BEGIN_NAMESPACE
 

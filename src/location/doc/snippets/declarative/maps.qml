@@ -41,11 +41,18 @@
 //! [QtQuick import]
 import QtQuick 2.0
 //! [QtQuick import]
+import QtPositioning 5.0
 //! [QtLocation import]
 import QtLocation 5.0
 //! [QtLocation import]
 
 Item {
+    id: page
+
+    Plugin {
+        id: myPlugin
+    }
+
     //! [MapRoute]
     Map {
         RouteModel {
@@ -81,7 +88,7 @@ Item {
         property MapCircle circle
 
         Component.onCompleted: {
-            circle = Qt.createQmlObject('import QtLocation 5.0; MapCircle {}')
+            circle = Qt.createQmlObject('import QtLocation 5.0; MapCircle {}', page)
             circle.center = positionSource.position.coordinate
             circle.radius = 5000.0
             circle.color = 'green'

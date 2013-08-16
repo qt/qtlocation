@@ -1,6 +1,6 @@
 TEMPLATE = app
 CONFIG+=testcase
-QT += network location testlib
+QT += network positioning testlib
 TARGET = tst_dummynmeapositioninfosource
 
 INCLUDEPATH += ..

@@ -40,12 +40,14 @@
 
 //! [Imports]
 import QtQuick 2.0
+import QtPositioning 5.0
 import QtLocation 5.0
 //! [Imports]
 
 Rectangle {
     width: 360
     height: 360
+    property variant startCoordinate: QtPositioning.coordinate(-27.46778, 153.02778)
 
     //! [Initialize Plugin]
     Plugin {
@@ -65,13 +67,7 @@ Rectangle {
         plugin: myPlugin
 
         searchTerm: "pizza"
-        searchArea: GeoCircle {
-            center {
-                // Brisbane
-                longitude: 153.02778
-                latitude: -27.46778
-            }
-        }
+        searchArea: QtPositioning.circle(startCoordinate);
 
         Component.onCompleted: update()
 

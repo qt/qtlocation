@@ -36,6 +36,6 @@ src/plugins/geoservices/nokia/NOKIA_TERMS_AND_CONDITIONS.txt in the Qt Location 
 package.  The terms and conditions are reproduced below for convenience.
 
 \legalese
-\include plugins/geoservices/nokia/NOKIA_TERMS_AND_CONDITIONS.txt
+\include NOKIA_TERMS_AND_CONDITIONS.txt.qdocinc
 \endlegalese
 */

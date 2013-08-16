@@ -49,7 +49,7 @@
 #include "qgeocodereply_nokia.h"
 #include "qgeocodexmlparser.h"
 
-#include <QtLocation/QGeoShape>
+#include <QtPositioning/QGeoShape>
 
 QT_BEGIN_NAMESPACE
 

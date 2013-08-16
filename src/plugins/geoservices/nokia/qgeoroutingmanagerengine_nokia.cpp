@@ -55,7 +55,7 @@
 #include <QStringList>
 #include <QUrl>
 #include <QLocale>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 

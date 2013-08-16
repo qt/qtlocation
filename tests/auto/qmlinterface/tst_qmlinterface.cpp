@@ -43,11 +43,11 @@
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlComponent>
 #include <QtQml/QQmlListReference>
-#include <QtLocation/QGeoCoordinate>
-#include <QtLocation/QGeoAddress>
-#include <QtLocation/QGeoRectangle>
-#include <QtLocation/QGeoCircle>
-#include <QtLocation/QGeoLocation>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoAddress>
+#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoLocation>
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlace>
 #include <QtLocation/QPlaceIcon>

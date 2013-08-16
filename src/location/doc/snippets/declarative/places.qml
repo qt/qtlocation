@@ -42,10 +42,15 @@
 import QtQuick 2.0
 //! [QtQuick import]
 //! [QtLocation import]
+import QtPositioning 5.0
 import QtLocation 5.0
 //! [QtLocation import]
 
 Item {
+    Plugin {
+        id: myPlugin
+    }
+
     Place {
         id: place
     }
@@ -110,6 +115,9 @@ Item {
     //! [ExtendedAttributes write]
     }
 
+    Icon {
+        id: icon
+    }
     //! [Icon]
     Image {
         source: icon.url(Qt.size(64, 64))
@@ -118,7 +126,7 @@ Item {
 
     Image {
     //! [Icon default]
-    source: icon.url()
+        source: icon.url()
     //! [Icon default]
     }
 
@@ -207,7 +215,6 @@ Item {
 
     ListView {
         anchors.top: parent.top
-        anchors.bottom: position.top
         width: parent.width
         spacing: 10
 
@@ -303,7 +310,7 @@ Item {
         id: myPlace
         plugin: myPlugin
 
-        name: "Nokia Brisbane"
+        name: "Brisbane Technology Park"
         location: Location {
             address: Address {
                 street: "53 Brandl Street"

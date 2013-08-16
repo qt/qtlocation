@@ -1,5 +1,5 @@
 TARGET = qtposition_simulator
-QT += location gui
+QT += positioning gui
 
 PLUGIN_TYPE = position
 load(qt_plugin)

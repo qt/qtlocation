@@ -101,7 +101,7 @@
     \snippet declarative/places.qml ExtendedAttributes read
 
     The following example shows how to assign and modify an attribute:
-    \snippet declarative/places.qml
+    \snippet declarative/places.qml ExtendedAttributes write
 
     \sa PlaceAttribute, QQmlPropertyMap
 */

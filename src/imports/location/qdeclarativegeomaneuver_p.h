@@ -44,7 +44,7 @@
 
 #include <qgeomaneuver.h>
 
-#include "qdeclarativecoordinate_p.h"
+#include <QtPositioning/QGeoCoordinate>
 
 #include <QObject>
 

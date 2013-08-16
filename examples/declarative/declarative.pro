@@ -1,3 +1,8 @@
 TEMPLATE = subdirs
-SUBDIRS += flickr places places_list places_map
-qtHaveModule(multimedia): SUBDIRS += mapviewer
+
+qtHaveModule(positioning): SUBDIRS += flickr
+
+qtHaveModule(location) {
+    SUBDIRS += places places_list places_map
+    qtHaveModule(multimedia): SUBDIRS += mapviewer
+}

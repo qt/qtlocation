@@ -1,4 +1,5 @@
 TEMPLATE = subdirs
 
-qtHaveModule(3d): SUBDIRS += location
+qtHaveModule(positioning): SUBDIRS += positioning
+qtHaveModule(3d):qtHaveModule(location): SUBDIRS += location
 

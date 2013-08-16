@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import QtPositioning 5.0
 import QtLocation.test 5.0
 
 Item {
@@ -51,7 +52,7 @@ Item {
     // General-purpose elements for the test:
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
-    property variant mapDefaultCenter: QtLocation.coordinate(10, 30)
+    property variant mapDefaultCenter: QtPositioning.coordinate(10, 30)
 
     Map {
         id: map
@@ -216,8 +217,8 @@ Item {
         anchors.fill: parent;
         zoomLevel: 2
 
-        property variant firstItemCoord: QtLocation.coordinate(11, 31)
-        property variant secondItemCoord: QtLocation.coordinate(12, 32)
+        property variant firstItemCoord: QtPositioning.coordinate(11, 31)
+        property variant secondItemCoord: QtPositioning.coordinate(12, 32)
 
         MapItemView {
             id: listModelItemView

@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import QtPositioning 5.0
 import "utils.js" as Utils
 
 TestCase {
@@ -95,11 +96,11 @@ TestCase {
     }
 
     function test_setAndGet_data() {
-        var testSearchArea = QtLocation.circle(QtLocation.coordinate(10, 20), 5000);
+        var testSearchArea = QtPositioning.circle(QtPositioning.coordinate(10, 20), 5000);
 
         return [
             { tag: "plugin", property: "plugin", signal: "pluginChanged", value: testPlugin },
-            { tag: "searchArea", property: "searchArea", signal: "searchAreaChanged", value: testSearchArea, reset: QtLocation.shape() },
+            { tag: "searchArea", property: "searchArea", signal: "searchAreaChanged", value: testSearchArea, reset: QtPositioning.shape() },
             { tag: "offset", property: "offset", signal: "offsetChanged", value: 10, reset: 0 },
             { tag: "limit", property: "limit", signal: "limitChanged", value: 10, reset: -1 },
 

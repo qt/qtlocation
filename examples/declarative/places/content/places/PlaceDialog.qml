@@ -132,7 +132,7 @@ Dialog {
         locationPlace.location.address.country = dataFieldsModel.get(7).inputText;
         locationPlace.location.address.postalCode = dataFieldsModel.get(8).inputText;
 
-        var c = QtLocation.coordinate(parseFloat(dataFieldsModel.get(9).inputText),
+        var c = QtPositioning.coordinate(parseFloat(dataFieldsModel.get(9).inputText),
                                       parseFloat(dataFieldsModel.get(10).inputText));
         locationPlace.location.coordinate = c;
         var phone = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);

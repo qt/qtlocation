@@ -41,7 +41,7 @@
 
 #include "tst_qgeorouterequest.h"
 
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoRectangle>
 
 QT_USE_NAMESPACE
 

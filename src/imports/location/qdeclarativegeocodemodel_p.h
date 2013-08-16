@@ -44,12 +44,12 @@
 
 #include "qdeclarativegeoserviceprovider_p.h"
 
-#include "qdeclarativegeocircle.h"
 #include <qgeocodereply.h>
+#include <QtPositioning/private/qdeclarativegeoaddress_p.h>
+#include <QtPositioning/private/qdeclarativegeolocation_p.h>
 
 #include <QtQml/qqml.h>
 #include <QtQml/QQmlParserStatus>
-#include "qdeclarativegeolocation_p.h"
 #include <QAbstractListModel>
 #include <QPointer>
 

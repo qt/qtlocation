@@ -44,10 +44,10 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
-#include <QtLocation/QGeoCoordinate>
-#include <QtLocation/QGeoAddress>
-#include <QtLocation/QGeoLocation>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoAddress>
+#include <QtPositioning/QGeoLocation>
+#include <QtPositioning/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 

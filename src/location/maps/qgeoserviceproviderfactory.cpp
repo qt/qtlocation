@@ -101,6 +101,8 @@ QGeocodingManagerEngine *QGeoServiceProviderFactory::createGeocodingManagerEngin
 
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
+
+    \internal
 */
 QGeoMappingManagerEngine *QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,

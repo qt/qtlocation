@@ -205,10 +205,12 @@ void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap 
 }
 
 /*!
+    \qmlpropertygroup Location::MapRectangle::border
     \qmlproperty int MapRectangle::border.width
     \qmlproperty color MapRectangle::border.color
 
-    These properties hold the width and color used to draw the border of the rectangle.
+    This property is part of the border property group. The border property group
+    holds the width and color used to draw the border of the rectangle.
     The width is in pixels and is independent of the zoom level of the map.
 
     The default values correspond to a black border with a width of 1 pixel.

@@ -36,13 +36,14 @@ qhp.QtLocation.subprojects.examples.selectors = fake:example
 
 tagfile                 = ../../../doc/qtlocation/qtlocation.tags
 
-depends += qtcore qtdoc qtquick qtqml qtnetwork
+depends += qtcore qtdoc qtquick qtqml qtnetwork qtpositioning
 
 headerdirs  += .. \
                 ../../imports/location
 
 sourcedirs  += .. \
                 ../../imports/location \
+                ../../plugins/geoservices/nokia
 
 exampledirs += ../../../examples \
                ../../../examples/declarative \

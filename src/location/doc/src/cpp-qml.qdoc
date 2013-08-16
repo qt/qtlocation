@@ -27,7 +27,7 @@
 
 /*!
 \page location-cpp-qml.html
-\title Interfaces between C++ and QML Code
+\title Interfaces between C++ and QML Code in Qt Positioning
 
 \brief Some of the location QML types providing interfaces to access and modify properties in C++.
 
@@ -119,27 +119,5 @@ The following gets the QPlaceSupplier representing this object from C++:
 \snippet cpp/cppqml.cpp Supplier get
 The following sets the properties of this object based on a QPlaceSupplier object from C++:
 \snippet cpp/cppqml.cpp Supplier set
-
-
-\section2 Address - QGeoAddress
-\target geoaddress
-The \l {Address::address} {Address.address} property is used to provide an interface between C++ and QML code.  First a pointer to a
-Address object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-\l {QObject::setProperty()}{setProperty()} functions to get and set the \c address property.
-The following gets the QGeoAddress representing this object from C++:
-\snippet cpp/cppqml.cpp Address get
-The following sets the properties of this object based on a QGeoAddress object from C++:
-\snippet cpp/cppqml.cpp Address set
-
-
-\section2 Location - QGeoLocation
-\target location
-The \l {Location::location} {Location.location} property is used to provide an interface between C++ and QML code.  First a pointer to a
-Location object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-\l {QObject::setProperty()}{setProperty()} functions to get and set the \c location property.
-The following gets the QGeoLocation representing this object from C++:
-\snippet cpp/cppqml.cpp Location get
-The following sets the properties of this object based on a QGeoLocation object from C++:
-\snippet cpp/cppqml.cpp Location set
 
 */

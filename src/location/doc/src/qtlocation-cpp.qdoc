@@ -30,17 +30,16 @@
 \title Qt Location C++ API
 \brief Information about the Qt Location C++ API
 
-The Location API provides a library for location positioning, mapping and navigation.
+The Location API provides a library for mapping, navigation and place information.
 
 \tableofcontents
 
-The Qt Location API provides the developer with a set of functions for determining
-the current location and using that information with maps and places of interest.
+The Qt Location API provides the developer with a set of functions to interact
+with maps, navigational data and places of interest. This is particularly useful
+when associated with current position information which can be retrieved via the
+\l QtPositioning module.
 
-Positioning information can be sourced from GPS satellites or a stream of data using
-NMEA formatted text. Once a position is acquired we can monitor the updated
-position to see if it moves into or out of a given region. With the Maps API
-we can associate the position with a map in various formats supplied by a backend.
+With the Maps API we can associate a position with a map in various formats supplied by a backend.
 Then the Places API could be used to populate places on the Map or even
 specify the current position as a place of interest and associate it with
 an icon, contact details and other information.
@@ -50,23 +49,15 @@ Qt Location C++ API.
 
 \table
     \row
-        \li \l {Positioning (C++)}{Location Positioning}
-        \li Retrieving information about the current position.
-    \row
         \li \l {Maps and Navigation (C++)}{Maps and Navigation}
         \li Displaying maps and finding routes.
     \row
         \li \l {Places (C++)} {Places}
         \li Searching for and managing points of interest.
     \row
-        \li \l {Qt Location GeoServices}{Geoservices and Positioning Plugin Implementation}
+        \li \l {Qt Location GeoServices}{Geoservices Plugin Implementation}
         \li Implement new geoservices and positioning plugins.
 \endtable
-
-
-\section1 Positioning Classes
-
-    \annotatedlist QtLocation-positioning
 
 
 \section1 Geoservice Provider Classes
@@ -75,6 +66,8 @@ Qt Location C++ API.
 
 
 \section1 Maps and Navigation Classes
+
+Currently it is not possible to interact with maps data via C++. The only available interface is the \l {Maps and Navigation (QML)} API.
 
     \annotatedlist QtLocation-maps
 

@@ -43,7 +43,6 @@
 #define QDECLARATIVEROUTEMAPITEM_H_
 
 #include "qdeclarativegeomapitembase_p.h"
-#include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
 #include <QPen>

@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG+=testcase
 testcase.timeout = 400 # this test is slow
-QT += network location testlib
+QT += network positioning testlib
 TARGET = tst_qnmeapositioninfosource_simulation_generic
 
 INCLUDEPATH += ..

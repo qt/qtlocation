@@ -44,7 +44,7 @@
 
 #include <QtLocation/QPlaceSearchReply>
 #include <QtLocation/QPlaceResult>
-#include <QtLocation/QGeoCircle>
+#include <QtPositioning/QGeoCircle>
 
 QT_USE_NAMESPACE
 

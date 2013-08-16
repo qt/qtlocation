@@ -75,9 +75,9 @@ Item {
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
-    property variant mapDefaultCenter: QtLocation.coordinate(20, 20)
-    property variant someCoordinate1: QtLocation.coordinate(15, 15)
-    property variant someCoordinate2: QtLocation.coordinate(16, 16)
+    property variant mapDefaultCenter: QtPositioning.coordinate(20, 20)
+    property variant someCoordinate1: QtPositioning.coordinate(15, 15)
+    property variant someCoordinate2: QtPositioning.coordinate(16, 16)
 
     Route { id: someRoute;
         path: [

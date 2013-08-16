@@ -43,10 +43,10 @@
 #define QPLACE_H
 
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/QGeoAddress>
-#include <QtLocation/QGeoRectangle>
-#include <QtLocation/QGeoCoordinate>
-#include <QtLocation/QGeoLocation>
+#include <QtPositioning/QGeoAddress>
+#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoLocation>
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlaceContent>
 #include <QtLocation/QPlaceRatings>

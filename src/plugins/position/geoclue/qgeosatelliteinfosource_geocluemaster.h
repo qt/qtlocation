@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Jolla Ltd, author: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -48,7 +48,7 @@
 
 #include <QtCore/qcompilerdetection.h>
 #include <QtCore/QTimer>
-#include <QtLocation/QGeoSatelliteInfoSource>
+#include <QtPositioning/QGeoSatelliteInfoSource>
 
 QT_BEGIN_NAMESPACE
 

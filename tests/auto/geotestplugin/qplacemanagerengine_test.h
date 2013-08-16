@@ -48,8 +48,8 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
 #include <QtCore/QUuid>
-#include <QtLocation/QGeoCoordinate>
-#include <QtLocation/QGeoLocation>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoLocation>
 #include <QtLocation/QPlaceContentReply>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceManagerEngine>

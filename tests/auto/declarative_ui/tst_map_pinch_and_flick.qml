@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import QtPositioning 5.0
 import QtLocation.test 5.0
 
 Item {
@@ -51,7 +52,7 @@ Item {
     height: 100
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
 
-    property variant coordinate1: QtLocation.coordinate(10, 11)
+    property variant coordinate1: QtPositioning.coordinate(10, 11)
 
     Map {
         id: map

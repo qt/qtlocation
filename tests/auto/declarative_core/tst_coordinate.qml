@@ -41,19 +41,73 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.0
+import QtPositioning 5.0
 
 Item {
     id: item
 
-    property variant empty: QtLocation.coordinate()
-    property variant base: QtLocation.coordinate(1.0, 1.0, 5.0)
-    property variant zero: QtLocation.coordinate(0, 0)
-    property variant plusone: QtLocation.coordinate(0, 1)
-    property variant minusone: QtLocation.coordinate(0, -1)
-    property variant north: QtLocation.coordinate(3, 0)
+    property variant empty: QtPositioning.coordinate()
+    property variant base: QtPositioning.coordinate(1.0, 1.0, 5.0)
+    property variant zero: QtPositioning.coordinate(0, 0)
+    property variant plusone: QtPositioning.coordinate(0, 1)
+    property variant minusone: QtPositioning.coordinate(0, -1)
+    property variant north: QtPositioning.coordinate(3, 0)
 
     SignalSpy { id: coordSpy; target: item; signalName: "baseChanged" }
+
+    property variant inside: QtPositioning.coordinate(0.5, 0.5)
+    property variant outside: QtPositioning.coordinate(2, 2)
+    property variant tl: QtPositioning.coordinate(1, 0)
+    property variant br: QtPositioning.coordinate(0, 1)
+    property variant box: QtPositioning.rectangle(tl, br)
+
+
+    Address {
+        id: validTestAddress
+        street: "53 Brandl St"
+        city: "Eight Mile Plains"
+        country: "Australia"
+        countryCode: "AUS"
+    }
+
+    Location {
+        id: testLocation
+        coordinate: inside
+        boundingBox: box
+        address: validTestAddress
+    }
+
+    Location {
+        id: invalidLocation
+    }
+
+    TestCase {
+        name: "GeoLocation"
+
+        function test_Location_complete() {
+            compare (testLocation.coordinate.longitude, inside.longitude)
+            compare (testLocation.coordinate.latitude, inside.latitude)
+
+            compare (testLocation.boundingBox.contains(inside), true)
+            compare (testLocation.boundingBox.contains(outside), false)
+            compare (testLocation.boundingBox.bottomRight.longitude, br.longitude)
+            compare (testLocation.boundingBox.bottomRight.latitude, br.latitude)
+            compare (testLocation.boundingBox.topLeft.longitude, tl.longitude)
+            compare (testLocation.boundingBox.topLeft.latitude, tl.latitude)
+
+            compare (testLocation.address.country, "Australia")
+            compare (testLocation.address.countryCode, "AUS")
+            compare (testLocation.address.city, "Eight Mile Plains")
+            compare (testLocation.address.street, "53 Brandl St")
+        }
+
+        function test_Location_invalid() {
+            compare(invalidLocation.coordinate.isValid, false)
+            compare(invalidLocation.boundingBox.isEmpty, true)
+            compare(invalidLocation.boundingBox.isValid, false)
+            compare(invalidLocation.address.city, "")
+        }
+    }
 
     TestCase {
         name: "Coordinate"

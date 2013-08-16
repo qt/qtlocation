@@ -41,7 +41,6 @@
 
 #include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
-#include "qdeclarativecoordinate_p.h"
 #include <QtQml/qqmlinfo.h>
 #include <QtQuick/QSGOpacityNode>
 

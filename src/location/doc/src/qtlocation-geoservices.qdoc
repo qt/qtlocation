@@ -33,29 +33,59 @@
 The Qt Location provides the majority of its functionality through GeoService plugins. This
 document outlines how to develop a new GeoService plugin.
 
+\section1 Plugin description
+
+Each plugin is described by a json file. The json describes the plugins capabilities and
+version. Below is an example of a json file used by the OpenStreenMap plugin:
+
+
+\quotefile ../../../plugins/geoservices/osm/osm_plugin.json
+
+The entries have the following meaning:
+
+\table
+    \header
+        \li Key
+        \li Description
+    \row
+        \li Keys
+        \li The unique name/key of the plugin. Each GeoService plugin must have a unique name.
+    \row
+        \li Provider
+        \li The provider name of the services. Multiple plugins may have the same name.
+            In such cases the Version string will be used to further distinguish the plugins.
+    \row
+        \li Experimental
+        \li Marks the service plugin as experimental. API developers may choose to ignore
+            such plugins when instanciating \l QGeoServiceProvider::QGeoServiceProvider().
+    \row
+        \li Version
+        \li The plugin version. If multiple plugins have the same provider name, the plugin
+            with the higest version will be used.
+    \row
+        \li Features
+        \li List of features provided by the plugin/service. Each feature is a string
+        representation of the corresponding features in \l QGeoServiceProvider. For more
+        details see \l QGeoServiceProvider::routingFeatures(),
+        \l QGeoServiceProvider::geocodingFeatures() and \l QGeoServiceProvider::placesFeatures().
+
+\endtable
+
 \section1 Implementing Plugins
 
 A plugin implementer needs to subclass QGeoServiceProviderFactory and as
 many of the ManagerEngine classes as they want to provide implementations for.
 
-Subclassing QGeoServiceProviderFactory will only involve exposing a name and
-a version by overriding QGeoServiceProviderFactory::providerName() and
-QGeoServiceProviderFactory::providerVersion(), and overriding
-QGeoServiceProviderFactory::createSearchManagerEngine(),
-QGeoServiceProviderFactory::createMappingManagerEngine() and
-QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
+Subclassing QGeoServiceProviderFactory will only involves overriding of one of the following
+methods:
 
-\section3 Tile-Based Map Convenience Classes
+\list
+    \li \l QGeoServiceProviderFactory::createGeocodingManagerEngine()
+    \li \l QGeoServiceProviderFactory::createRoutingManagerEngine()
+    \li \l QGeoServiceProviderFactory::createPlaceManagerEngine()
+\endlist
 
-Most of the current tile based mapping APIs are very similar, and so we
-provide a number of classes intended to make writing tile based mapping
-plugins much simpler.
-
-If the Mercator projection and the most common tile addressing scheme is used this will mainly
-involve subclassing QGeoTiledMappingManagerEngine and providing an implementation of
-QGeoTiledMappingManagerEngine::getTileImage().
-
-\section1 GeoService Classes
+If a plugin does not provide an engine the relevant function should return 0.
 
 \annotatedlist QtLocation-impl
 

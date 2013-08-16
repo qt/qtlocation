@@ -41,12 +41,11 @@
 
 #include "qdeclarativegeocodemodel_p.h"
 #include "error_messages.h"
-#include "qdeclarativegeolocation_p.h"
 
 #include <QtQml/qqmlinfo.h>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QGeocodingManager>
-#include <QtLocation/QGeoCircle>
+#include <QtPositioning/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 
@@ -332,10 +331,10 @@ void QDeclarativeGeocodeModel::setBounds(const QVariant &boundingArea)
 }
 
 /*!
-    \qmlproperty GeoShape QtLocation5::GeocodeModel::bounds
+    \qmlproperty geoshape QtLocation5::GeocodeModel::bounds
 
     This property holds the bounding area used to limit the results to those
-    within the area. his is particularly useful if query is only partially filled out,
+    within the area. This is particularly useful if query is only partially filled out,
     as the service will attempt to (reverse) geocode all matches for the specified data.
 
     Accepted types are \l {georectangle} and
@@ -498,7 +497,7 @@ int QDeclarativeGeocodeModel::count() const
 }
 
 /*!
-    \qmlmethod QtLocation5::GeocodeModel::get(int)
+    \qmlmethod Location QtLocation5::GeocodeModel::get(int)
 
     Returns the Location at given index. Use \l count property to check the
     amount of locations available. The locations are indexed from zero, so the accessible range

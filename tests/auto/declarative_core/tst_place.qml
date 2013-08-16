@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import QtPositioning 5.0
 import "utils.js" as Utils
 
 TestCase {
@@ -92,7 +93,7 @@ TestCase {
             }
 
             boundingBox {
-                center: QtLocation.coordinate(10, 10, 100)
+                center: QtPositioning.coordinate(10, 10, 100)
                 width: 100
                 height: 100
             }
@@ -402,7 +403,7 @@ TestCase {
     }
 
     function test_location() {
-        var location = Qt.createQmlObject('import QtLocation 5.0; Location { coordinate: QtLocation.coordinate(10.0, 20.0) }', testCase, "Location1");
+        var location = Qt.createQmlObject('import QtPositioning 5.0; Location { coordinate: QtPositioning.coordinate(10.0, 20.0) }', testCase, "Location1");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;

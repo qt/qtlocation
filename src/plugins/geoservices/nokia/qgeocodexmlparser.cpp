@@ -52,9 +52,9 @@
 #include <QIODevice>
 
 #include <qgeolocation.h>
-#include <QtLocation/QGeoAddress>
-#include <QtLocation/QGeoCoordinate>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoAddress>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 

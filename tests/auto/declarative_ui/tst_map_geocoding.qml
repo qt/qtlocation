@@ -42,22 +42,23 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import QtPositioning 5.0
 
 Item {
     Plugin { id: nokiaPlugin; name: "qmlgeo.test.plugin"}
     Plugin { id: invalidPlugin; name: "invalid"}
 
-    property variant coordinate1: QtLocation.coordinate(51, 41)
-    property variant coordinate2: QtLocation.coordinate(52, 42)
-    property variant coordinate3: QtLocation.coordinate(53, 43)
-    property variant emptyCoordinate: QtLocation.coordinate()
+    property variant coordinate1: QtPositioning.coordinate(51, 41)
+    property variant coordinate2: QtPositioning.coordinate(52, 42)
+    property variant coordinate3: QtPositioning.coordinate(53, 43)
+    property variant emptyCoordinate: QtPositioning.coordinate()
 
-    property variant boundingBox1: QtLocation.rectangle(coordinate1, coordinate2)
-    property variant boundingBox2: QtLocation.rectangle(coordinate1, coordinate3)
-    property variant boundingCircle1: QtLocation.circle(coordinate1, 100)
-    property variant boundingCircle2: QtLocation.circle(coordinate2, 100)
+    property variant boundingBox1: QtPositioning.rectangle(coordinate1, coordinate2)
+    property variant boundingBox2: QtPositioning.rectangle(coordinate1, coordinate3)
+    property variant boundingCircle1: QtPositioning.circle(coordinate1, 100)
+    property variant boundingCircle2: QtPositioning.circle(coordinate2, 100)
 
-    property variant emptyBox: QtLocation.rectangle()
+    property variant emptyBox: QtPositioning.rectangle()
 
     GeocodeModel {id: emptyModel}
 
@@ -124,7 +125,7 @@ Item {
             compare(boundsSpy.count, 2)
             compare(emptyModel.bounds.topLeft.latitude, boundingBox2.topLeft.latitude)
             compare(emptyModel.bounds.bottomRight.longitude, boundingBox2.bottomRight.longitude)
-            emptyModel.bounds = QtLocation.rectangle();
+            emptyModel.bounds = QtPositioning.rectangle();
             compare(boundsSpy.count, 3)
 
 
@@ -139,7 +140,7 @@ Item {
             emptyModel.bounds = boundingCircle2
             compare(boundsSpy.count, 2)
             compare(emptyModel.bounds.center.latitude, coordinate2.latitude)
-            var dynamicCircle = QtLocation.circle(QtLocation.coordinate(8, 9));
+            var dynamicCircle = QtPositioning.circle(QtPositioning.coordinate(8, 9));
             emptyModel.bounds = dynamicCircle
             compare(boundsSpy.count, 3)
             compare(emptyModel.bounds.center.latitude, dynamicCircle.center.latitude)
@@ -194,12 +195,12 @@ Item {
     Address {id: address1; street: "wellknown street"; city: "expected city"; county: "2"}
     Address {id: errorAddress1; street: "error"; county: "2"} // street is the error reason
 
-    property variant rcoordinate1: QtLocation.coordinate(51, 2)
-    property variant errorCoordinate1: QtLocation.coordinate(73, 2)  // (latiude mod 70) is the error code
-    property variant slackCoordinate1: QtLocation.coordinate(60, 3)
+    property variant rcoordinate1: QtPositioning.coordinate(51, 2)
+    property variant errorCoordinate1: QtPositioning.coordinate(73, 2)  // (latiude mod 70) is the error code
+    property variant slackCoordinate1: QtPositioning.coordinate(60, 3)
     Address {id: slackAddress1; street: "Slacker st"; city: "Lazy town"; county: "4"}
 
-    property variant automaticCoordinate1: QtLocation.coordinate(60, 3)
+    property variant automaticCoordinate1: QtPositioning.coordinate(60, 3)
     Address {id: automaticAddress1; street: "Auto st"; city: "Detroit"; county: "4"}
 
     Plugin {

@@ -147,7 +147,7 @@ varying degrees of accuracy.
 A geocoding query in QML is performed using the
 \l{QtLocation5::GeocodeModel}{GeocodeModel} type. For an address-to-coordinate
 query, its \c{query} property may be set to either an
-\l{QtLocation5::Address}{Address} object or a string containing the textual
+\l{QtPositioning5::Address}{Address} object or a string containing the textual
 form of the address to search for. To perform the reverse, the same property
 can be set to a \l {coordinate} instead. Results are made available in the
 contents of the model.
@@ -161,7 +161,7 @@ contents of the model.
         \li \l{QtLocation5::GeocodeModel}{GeocodeModel}
         \li Queries the Plugin for geocoding translations and provides access to results via indexes in the model.
     \row
-        \li \l{QtLocation5::Address}{Address}
+        \li \l{QtPositioning5::Address}{Address}
         \li Structured address for use in queries and results of geocoding.
 \endtable
 
@@ -181,13 +181,13 @@ between the segments.
 \b{Key Types}
 \table
     \row
-        \li \l{QtLocation5::Route}{Routing}
+        \li \l{QtLocation5::Route}{Route}
         \li The entire path to be navigated.
     \row
-        \li \l{QtLocation5::RouteSegment}{Segments}
+        \li \l{QtLocation5::RouteSegment}{RouteSegment}
         \li The individual components of a route.
     \row
-        \li \l{QtLocation5::RouteManeuver}{Maneuvers}
+        \li \l{QtLocation5::RouteManeuver}{RouteManeuver}
         \li The navigation information that joins segments.
     \row
         \li \l{QtLocation5::RouteModel}{RouteModel}
@@ -213,6 +213,10 @@ between the segments.
 geographic coordinate from a street address) and navigation (including driving
 and walking directions).
 
+Currently it is not possible to interact with maps via C++. Mapping applications
+must use the \l {Maps and Navigation (QML)} API.
+
+
 \section1 Geocoding
 
 In C++, an address-to-coordinate query is performed using the
@@ -234,4 +238,28 @@ on the same class. Instances of QGeocodingManager are available via
         \li \l{QGeocodeReply}
         \li Contains the results of a geocoding query.
 \endtable
+
+\section1 Navigation
+
+In C++, a route query is performed using the \l{QGeoRoutingManager::calculateRoute()}{calculate()}
+method of the QGeoRoutingManager class. The returned route reply can contain
+multiple routes to the same destination.
+
+\b{Key Classes}
+\table
+    \row
+        \li \l{QGeoServiceProvider}
+        \li Provides a QGeocodingManager instance ready for use.
+    \row
+        \li \l{QGeoRoutingManager}
+        \li Accepts queries and produces QGeoRouteReply objects.
+    \row
+        \li \l{QGeoRouteReply}
+        \li Contains the results of a routing query.
+    \row
+        \li \l{QGeoRoute}
+        \li Contains information about a route.
+\endtable
+
+
 */

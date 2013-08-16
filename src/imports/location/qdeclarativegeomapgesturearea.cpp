@@ -41,7 +41,6 @@
 
 #include "qdeclarativegeomapgesturearea_p.h"
 #include "qdeclarativegeomap_p.h"
-#include "qdeclarativecoordinate_p.h"
 #include "error_messages.h"
 
 #include <QtGui/QGuiApplication>

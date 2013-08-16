@@ -42,7 +42,7 @@
 #ifndef QGEOROUTE_H
 #define QGEOROUTE_H
 
-#include <QtLocation/QGeoCoordinate>
+#include <QtPositioning/QGeoCoordinate>
 #include <QtLocation/QGeoRouteRequest>
 
 #include <QExplicitlySharedDataPointer>

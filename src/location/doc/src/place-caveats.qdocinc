@@ -14,7 +14,7 @@
     \endlist
 
     It is possible that providers may only support a subset of these.
-    See the \l {Qt Location Module#Plugin References and Parameters}{plugin documentation} for more
+    See the \l {Qt Location#Plugin References and Parameters}{plugin documentation} for more
     details.
 
     Saving of properties such as the rating, extended attributes,

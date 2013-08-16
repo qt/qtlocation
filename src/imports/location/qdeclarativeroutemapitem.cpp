@@ -173,10 +173,12 @@ QSGNode *QDeclarativeRouteMapItem::updateMapItemPaintNode(QSGNode *oldNode, Upda
 }
 
 /*!
+    \qmlpropertygroup Location::MapRoute::line
     \qmlproperty int MapRoute::line.width
     \qmlproperty color MapRoute::line.color
 
-    These properties hold the width and color used to draw the line.
+    This property is part of the line property group.
+    The line property group holds the width and color used to draw the line.
 
     The width is in pixels and is independent of the zoom level of the map.
     The default values correspond to a black border with a width of 1 pixel.

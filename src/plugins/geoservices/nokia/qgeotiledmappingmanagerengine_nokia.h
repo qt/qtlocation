@@ -50,7 +50,7 @@
 #define QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
 
 #include "qgeotiledmappingmanagerengine_p.h"
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoRectangle>
 #include "qgeomaptype_p.h"
 
 #include <QGeoServiceProvider>

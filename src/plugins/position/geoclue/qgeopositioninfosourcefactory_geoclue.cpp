@@ -5,7 +5,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -43,7 +43,9 @@
 
 #include "qgeopositioninfosourcefactory_geoclue.h"
 #include "qgeopositioninfosource_geocluemaster_p.h"
+#ifdef HAS_SATELLITE
 #include "qgeosatelliteinfosource_geocluemaster.h"
+#endif
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
 {

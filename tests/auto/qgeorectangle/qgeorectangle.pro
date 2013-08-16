@@ -5,5 +5,5 @@ TARGET = tst_qgeorectangle
 SOURCES += \
     tst_qgeorectangle.cpp
 
-QT += location testlib
+QT += positioning testlib
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

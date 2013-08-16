@@ -103,8 +103,13 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     Subclasses of QGeoServiceProvider guarantee that the different services
     that they provide are interoperable.
 
-    At this point only the Nokia Services plugin is packaged with Qt,
-    which is accessible using the provider name "nokia".
+    At this point there are two GeoServices plugins packaged with Qt. They are
+    accessible using their provider names:
+
+    \list
+        \li "osm" -> \l {Qt Location Open Street Map Plugin}{OpenStreetMap}
+        \li "nokia" -> \l {Qt Location Nokia Plugin}{Nokia Services}
+    \endlist
 */
 
 /*!

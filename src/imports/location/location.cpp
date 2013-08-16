@@ -39,17 +39,6 @@
 **
 ****************************************************************************/
 
-#include "locationvaluetypeprovider.h"
-
-#include "qdeclarativepositionsource_p.h"
-#include "qdeclarativeposition_p.h"
-
-#include "qdeclarativegeoshape.h"
-#include "qdeclarativegeorectangle.h"
-#include "qdeclarativegeocircle.h"
-#include "qdeclarativegeoaddress_p.h"
-#include "qdeclarativecoordinate_p.h"
-
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegeomap_p.h"
 
@@ -71,7 +60,6 @@
 
 //Place includes
 #include "qdeclarativecategory_p.h"
-#include "qdeclarativegeolocation_p.h"
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativeplaceicon_p.h"
@@ -85,34 +73,16 @@
 #include "qdeclarativesearchsuggestionmodel_p.h"
 #include "error_messages.h"
 
-#include "locationsingleton.h"
-
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
 #include <QtQml/private/qqmlvaluetype_p.h>
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQml/private/qqmlmetatype_p.h>
 
-#include <QtLocation/QGeoRectangle>
-#include <QtLocation/QGeoCircle>
-
 #include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
 
-static QObject *singleton_type_factory(QQmlEngine *engine, QJSEngine *jsEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(jsEngine)
-
-    return new LocationSingleton;
-}
-
-static LocationValueTypeProvider *getValueTypeProvider()
-{
-    static LocationValueTypeProvider provider;
-    return &provider;
-}
 
 class QLocationDeclarativeModule: public QQmlExtensionPlugin
 {
@@ -131,15 +101,6 @@ public:
         } else if (QLatin1String(uri) == QLatin1String("QtLocation")) {
 
             // @uri QtLocation 5.0
-
-            qmlRegisterSingletonType<LocationSingleton>(uri, 5, 0, "QtLocation", singleton_type_factory);
-
-            QQml_addValueTypeProvider(getValueTypeProvider());
-            qmlRegisterValueTypeEnums<GeoShapeValueType>(uri, 5, 0, "GeoShape");
-
-            qmlRegisterType<QDeclarativePosition>(uri, 5, 0, "Position");
-            qmlRegisterType<QDeclarativePositionSource>(uri, 5, 0, "PositionSource");
-            qmlRegisterType<QDeclarativeGeoAddress>(uri, 5, 0, "Address");
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
@@ -163,7 +124,6 @@ public:
             qmlRegisterUncreatableType<QDeclarativeGeoMapType>(uri, 5, 0, "MapType", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("MapType"));
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativePlaceEditorialModel>(uri, 5, 0, "EditorialModel");
-            qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");
             qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "ImageModel");
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativePlaceIcon>(uri, 5, 0, "Icon");
@@ -189,11 +149,6 @@ public:
             qmlRegisterUncreatableType<QDeclarativeContactDetails>(uri, 5, 0, "ContactDetails", "ContactDetails instances cannot be instantiated.  "
                                                                                                 "Only Place types have ContactDetails and they cannot "
                                                                                                 "be re-assigned (but can be modified).");
-            qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
-            qRegisterMetaType<QGeoAddress>("QGeoAddress");
-            qRegisterMetaType<QGeoRectangle>("QGeoRectangle");
-            qRegisterMetaType<QGeoCircle>("QGeoCircle");
-            qRegisterMetaType<QGeoLocation>("QGeoLocation");
             qRegisterMetaType<QPlaceCategory>("QPlaceCategory");
             qRegisterMetaType<QPlace>("QPlace");
             qRegisterMetaType<QPlaceIcon>("QPlaceIcon");

@@ -51,11 +51,11 @@ Item {
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
-    property variant mapDefaultCenter: QtLocation.coordinate(20, 20)
+    property variant mapDefaultCenter: QtPositioning.coordinate(20, 20)
 
-    property variant datelineCoordinate: QtLocation.coordinate(20, 180)
-    property variant datelineCoordinateLeft: QtLocation.coordinate(20, 170)
-    property variant datelineCoordinateRight: QtLocation.coordinate(20, -170)
+    property variant datelineCoordinate: QtPositioning.coordinate(20, 180)
+    property variant datelineCoordinateLeft: QtPositioning.coordinate(20, 170)
+    property variant datelineCoordinateRight: QtPositioning.coordinate(20, -170)
 
     MapPolygon {
         id: extMapPolygon
@@ -75,7 +75,7 @@ Item {
         SignalSpy {id: extMapPolygonBorderColorChanged; target: parent.border; signalName: "colorChanged"}
     }
 
-    property variant polyCoordinate: QtLocation.coordinate(15, 6)
+    property variant polyCoordinate: QtPositioning.coordinate(15, 6)
 
     MapPolygon {
         id: extMapPolygon0

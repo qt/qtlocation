@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPMOUSEEVENT_H
 #define QDECLARATIVEGEOMAPMOUSEEVENT_H
 
-#include "qdeclarativecoordinate_p.h"
+#include <QtPositioning/QGeoCoordinate>
 
 #include <QtQml/qqml.h>
 

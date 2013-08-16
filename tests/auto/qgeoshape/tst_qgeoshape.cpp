@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-#include <QtLocation/QGeoShape>
+#include <QtPositioning/QGeoShape>
 
 class tst_qgeoshape : public QObject
 {

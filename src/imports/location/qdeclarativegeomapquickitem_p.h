@@ -46,7 +46,6 @@
 #include <QtQuick/QSGNode>
 
 #include "qdeclarativegeomap_p.h"
-#include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomapitembase_p.h"
 
 QT_BEGIN_NAMESPACE

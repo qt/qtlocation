@@ -44,7 +44,7 @@
 #include <QtTest/QtTest>
 
 #include <QtCore/QProcessEnvironment>
-#include <QtLocation/QGeoCircle>
+#include <QtPositioning/QGeoCircle>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceEditorial>
 #include <QtLocation/QPlaceImage>

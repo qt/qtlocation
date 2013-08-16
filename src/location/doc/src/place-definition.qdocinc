@@ -17,7 +17,7 @@ QPlace::detailsFetched() function can be queried to see if all available
 details have been fetched, and if not, QPlaceManager::getPlaceDetails() can
 be used to retrieve them. Precisely which details are populated during a
 search and which need to be fetched individually may vary from provider to
-provider.  See \l {Qt Location Module#Plugin References and Parameters}{plugin documentation} for
+provider.  See \l {Qt Location#Plugin References and Parameters}{plugin documentation} for
 more details.
 
 The rich content of a place consists of items such as images, reviews and

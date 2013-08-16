@@ -41,17 +41,17 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.0
+import QtPositioning 5.0
 
 Item {
     id: testCase
 
-    property variant coordinate1: QtLocation.coordinate(1, 1)
-    property variant coordinate2: QtLocation.coordinate(2, 2)
-    property variant coordinate3: QtLocation.coordinate(80, 80)
+    property variant coordinate1: QtPositioning.coordinate(1, 1)
+    property variant coordinate2: QtPositioning.coordinate(2, 2)
+    property variant coordinate3: QtPositioning.coordinate(80, 80)
 
-    property variant emptyCircle: QtLocation.circle()
-    property variant circle1: QtLocation.circle(coordinate1, 200000)
+    property variant emptyCircle: QtPositioning.circle()
+    property variant circle1: QtPositioning.circle(coordinate1, 200000)
 
     SignalSpy { id: circleChangedSpy; target: testCase; signalName: "emptyCircleChanged" }
 
@@ -84,16 +84,16 @@ Item {
     }
 
     // coordinate unit square
-    property variant bl: QtLocation.coordinate(0, 0)
-    property variant tl: QtLocation.coordinate(1, 0)
-    property variant tr: QtLocation.coordinate(1, 1)
-    property variant br: QtLocation.coordinate(0, 1)
-    property variant ntr: QtLocation.coordinate(3, 3)
+    property variant bl: QtPositioning.coordinate(0, 0)
+    property variant tl: QtPositioning.coordinate(1, 0)
+    property variant tr: QtPositioning.coordinate(1, 1)
+    property variant br: QtPositioning.coordinate(0, 1)
+    property variant ntr: QtPositioning.coordinate(3, 3)
 
-    property variant inside: QtLocation.coordinate(0.5, 0.5)
-    property variant outside: QtLocation.coordinate(2, 2)
+    property variant inside: QtPositioning.coordinate(0.5, 0.5)
+    property variant outside: QtPositioning.coordinate(2, 2)
 
-    property variant box: QtLocation.rectangle(tl, br)
+    property variant box: QtPositioning.rectangle(tl, br)
 
     // C++ auto test exists for basics of bounding box, testing here
     // only added functionality

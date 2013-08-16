@@ -106,7 +106,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty GeoShape PlaceSearchSuggestionModel::searchArea
+    \qmlproperty geoshape PlaceSearchSuggestionModel::searchArea
 
     This property holds the search area.  Search suggestion results returned by the model will be
     relevant to the given search area.
@@ -172,7 +172,7 @@ QT_USE_NAMESPACE
     PlaceSeachSuggestionModel {
         id: model
         plugin: backendPlugin
-        searchArea: QtLocation.circle(QtLocation.coordinate(10, 10))
+        searchArea: QtPositioning.circle(QtPositioning.coordinate(10, 10))
         ...
     }
 

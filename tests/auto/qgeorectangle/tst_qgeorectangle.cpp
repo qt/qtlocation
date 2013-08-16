@@ -42,9 +42,9 @@
 //TESTED_COMPONENT=src/location
 
 #include <QtTest/QtTest>
-#include <QtLocation/QGeoCoordinate>
-#include <QtLocation/QGeoCircle>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoRectangle>
 
 QT_USE_NAMESPACE
 

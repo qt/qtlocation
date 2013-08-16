@@ -42,7 +42,6 @@
 #ifndef QDECLARATIVEGEOMAPMOUSEAREA_H
 #define QDECLARATIVEGEOMAPMOUSEAREA_H
 
-#include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 

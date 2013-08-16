@@ -47,7 +47,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QList>
-#include <QtLocation/QGeoCoordinate>
+#include <QtPositioning/QGeoCoordinate>
 
 class DataObject: public QObject
 {

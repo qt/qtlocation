@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
+import QtPositioning 5.0
 import QtLocation 5.0
 
 Rectangle {
@@ -60,13 +61,7 @@ Rectangle {
         plugin: myPlugin
 
         searchTerm: "pizza"
-        searchArea: GeoCircle {
-            center {
-                // Brisbane
-                longitude: 153.02778
-                latitude: -27.46778
-            }
-        }
+        searchArea: QtLocation.circle( -27.46778, 153.02778 )
 
         Component.onCompleted: update()
     }

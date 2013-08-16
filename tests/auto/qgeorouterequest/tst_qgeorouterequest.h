@@ -47,7 +47,7 @@
 #include <QMetaType>
 
 #include <qgeocoordinate.h>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoRectangle>
 #include <qgeorouterequest.h>
 
 

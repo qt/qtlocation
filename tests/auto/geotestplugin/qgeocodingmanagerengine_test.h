@@ -45,10 +45,10 @@
 #include <qgeoserviceprovider.h>
 #include <qgeocodingmanagerengine.h>
 #include <QLocale>
-#include <qgeoaddress.h>
-#include <qgeolocation.h>
+#include <QtPositioning/qgeoaddress.h>
+#include <QtPositioning/qgeolocation.h>
 #include <qgeocodereply.h>
-#include <QtLocation/QGeoShape>
+#include <QtPositioning/QGeoShape>
 
 #include <QTimer>
 #include <QDebug>

@@ -6,5 +6,5 @@ HEADERS += ../utils/qlocationtestutils_p.h \
 SOURCES += tst_qgeolocation.cpp \
            ../utils/qlocationtestutils.cpp
 
-QT += location testlib
+QT += positioning testlib
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

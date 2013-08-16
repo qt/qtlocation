@@ -45,7 +45,6 @@
 #include <QtQuick/QQuickItem>
 
 #include "qdeclarativegeomap_p.h"
-#include "qdeclarativecoordinate_p.h"
 
 QT_BEGIN_NAMESPACE
 

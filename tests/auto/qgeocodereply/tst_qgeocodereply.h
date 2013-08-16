@@ -54,7 +54,7 @@
 #include <qgeolocation.h>
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoRectangle>
 
 QT_USE_NAMESPACE
 class SubGeocodeReply : public QGeocodeReply

@@ -50,9 +50,7 @@
 
     The .pro file should have the \e location keyword added
 
-    \code
-        QT += location
-    \endcode
+    \code QT += location \endcode
 
 
     See more in the \l{Qt Location}{Qt Location Overview}.
@@ -98,25 +96,12 @@ for example applications using routes may use
 
 The .pro file should have the \e location keyword added
 
-\code
-    QT += location
-\endcode
+\code QT += location \endcode
 
 \section2 API Sub-Modules
-The API is split into three core sub-modules, which each have QML and C++
-APIs.
-
-\section3 Positioning
-Positioning includes all the functionality necessary to find and work with geographic
-coordinates. It can use a variety of external sources of information, including GPS. This
-provides us with a coordinate and altitude for the device with additional features
-such as speed and direction. This provides the fundamental location information used in the API.
-\table
-\row
-    \li Positioning introduction:
-    \li \l{Positioning (QML)}{for QML}
-    \li \l{Positioning (C++)}{for C++}
-\endtable
+The API is split into sub-modules, which each have QML and C++ APIs. It focuses on
+Map and Place information. The required position data can be retrieved via the
+\l {QtPositioning} module.
 
 \section3 Places
 Places is

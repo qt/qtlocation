@@ -53,14 +53,40 @@ Interaction with the added items, and the \l Map itself, is handled by \l MapMou
 are added as children of the
 \l {Maps and Navigation (QML)#Putting Objects on a Map (Map Overlay Objects)}{MapItems} or \l Map.
 
-\section2 Position
+\section2 Position on map
 
+All position APIs are part of the \l {QtPositioning} module.
 The basic piece of position information is the \l {coordinate}.  A
 coordinate encapsulates data for the latitude, longitude and altitude of the location.  Altitude is
 in meters. It also has a method to determine distance to another
 \l {coordinate}.  The \l {coordinate} type may
-also be held within a \l {QtLocation5::Location}{Location} element, this will also have information
+also be held within a \l {QtPositioning5::Location}{Location} element, this will also have information
 on a bounding box size to determine sufficient proximity to the location and a location address.
+
+
+Here is an example of a client that uses a \l{PositionSource}{position source}
+to center a \l{Map}{map} on the current position:
+
+\code
+    Rectangle {
+
+        import QtPositioning 5.0
+        import QtLocation 5.0
+        ...
+
+        map : Map {
+            // initialize map
+            ...
+        }
+
+        PositionSource {
+            onPositionChanged: {
+                // center the map on the current position
+                map.center = position.coordinate
+            }
+        }
+    }
+\endcode
 
 \section2 Geocoding
 
@@ -193,9 +219,6 @@ example, by implementing the \c onValueChanged handler to update the Map
 \l {QtLocation5::Map::}{zoomLevel}.
 
 \section1 Types
-
-\section3 Positioning
-\annotatedlist qml-QtLocation5-positioning
 
 \section3 Maps
 \annotatedlist qml-QtLocation5-maps

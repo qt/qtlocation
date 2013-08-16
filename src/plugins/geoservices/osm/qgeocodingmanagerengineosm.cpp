@@ -48,10 +48,10 @@
 #include <QtCore/QLocale>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
-#include <QtLocation/QGeoCoordinate>
-#include <QtLocation/QGeoAddress>
-#include <QtLocation/QGeoShape>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoAddress>
+#include <QtPositioning/QGeoShape>
+#include <QtPositioning/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 

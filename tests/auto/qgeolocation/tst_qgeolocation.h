@@ -48,10 +48,10 @@
 #include <QMetaType>
 
 #include "../utils/qlocationtestutils_p.h"
-#include <qgeoaddress.h>
-#include <qgeocoordinate.h>
-#include <qgeolocation.h>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/qgeoaddress.h>
+#include <QtPositioning/qgeocoordinate.h>
+#include <QtPositioning/qgeolocation.h>
+#include <QtPositioning/QGeoRectangle>
 
 QT_USE_NAMESPACE
 

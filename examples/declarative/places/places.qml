@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
+import QtPositioning 5.0
 import QtLocation 5.0
 import QtLocation.examples 5.0
 import "content/places"
@@ -49,7 +50,7 @@ Item {
     height: (parent && parent.height > 0) ? parent.height : 640
     property variant map
     property variant startLocation
-    property variant searchRegion: QtLocation.circle(startLocation)
+    property variant searchRegion: QtPositioning.circle(startLocation)
     property variant searchRegionItem
     property Plugin favoritesPlugin
 
@@ -58,7 +59,7 @@ Item {
     Binding {
         target: page
         property: "startLocation"
-        value: map ? map.center : QtLocation.coordinate()
+        value: map ? map.center : QtPositioning.coordinate()
     }
 
     Rectangle {
@@ -212,12 +213,12 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
+            var c = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
                                           parseFloat(dialogModel.get(1).inputText));
 
             map.center = c;
 
-            searchRegion = Qt.binding(function() { return QtLocation.circle(startLocation) });
+            searchRegion = Qt.binding(function() { return QtPositioning.circle(startLocation) });
 
             if (searchRegionItem) {
                 map.removeMapItem(searchRegionItem);
@@ -249,9 +250,9 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
+            var c = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
                                           parseFloat(dialogModel.get(1).inputText));
-            var r = QtLocation.rectangle(c, parseFloat(dialogModel.get(2).inputText),
+            var r = QtPositioning.rectangle(c, parseFloat(dialogModel.get(2).inputText),
                                          parseFloat(dialogModel.get(3).inputText));
 
             map.center = c;
@@ -292,9 +293,9 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            var c = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
+            var c = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
                                           parseFloat(dialogModel.get(1).inputText));
-            var circle = QtLocation.circle(c, parseFloat(dialogModel.get(2).inputText));
+            var circle = QtPositioning.circle(c, parseFloat(dialogModel.get(2).inputText));
 
             map.center = c;
 
@@ -519,7 +520,7 @@ Item {
             MapItemView {
                 model: placeSearchModel
                 delegate: MapQuickItem {
-                    coordinate: model.type === PlaceSearchModel.PlaceResult ? place.location.coordinate : QtLocation.coordinate()
+                    coordinate: model.type === PlaceSearchModel.PlaceResult ? place.location.coordinate : QtPositioning.coordinate()
 
                     visible: model.type === PlaceSearchModel.PlaceResult
 

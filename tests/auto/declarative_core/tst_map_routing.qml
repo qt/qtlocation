@@ -42,16 +42,17 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import QtPositioning 5.0
 
 Item {
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: invalidPlugin; name: "invalid"}
 
-    property variant coordinate1: QtLocation.coordinate(51, 0)
-    property variant coordinate2: QtLocation.coordinate(52, 0)
+    property variant coordinate1: QtPositioning.coordinate(51, 0)
+    property variant coordinate2: QtPositioning.coordinate(52, 0)
 
-    property variant boundingBox1: QtLocation.rectangle()
-    property variant boundingBox2: QtLocation.rectangle()
+    property variant boundingBox1: QtPositioning.rectangle()
+    property variant boundingBox2: QtPositioning.rectangle()
 
     Component.onCompleted: {
         boundingBox1.topLeft = coordinate1;
@@ -63,13 +64,13 @@ Item {
         boundingBox2.width = 20;
     }
 
-    property variant bl: QtLocation.coordinate(0, 0)
-    property variant tl: QtLocation.coordinate(1, 0)
-    property variant tr: QtLocation.coordinate(1, 1)
-    property variant br: QtLocation.coordinate(0, 1)
-    property variant ntr: QtLocation.coordinate(3, 3)
+    property variant bl: QtPositioning.coordinate(0, 0)
+    property variant tl: QtPositioning.coordinate(1, 0)
+    property variant tr: QtPositioning.coordinate(1, 1)
+    property variant br: QtPositioning.coordinate(0, 1)
+    property variant ntr: QtPositioning.coordinate(3, 3)
 
-    property variant unitBox: QtLocation.rectangle(tl, br)
+    property variant unitBox: QtPositioning.rectangle(tl, br)
 
     Route {id: emptyRoute}
     TestCase {
@@ -80,9 +81,9 @@ Item {
         // TODO enable when we have map route
         //MapRoute {id: emptyMapRoute}
 
-        property variant emptyBox: QtLocation.rectangle()
+        property variant emptyBox: QtPositioning.rectangle()
 
-        property variant emptyCoordinate: QtLocation.coordinate()
+        property variant emptyCoordinate: QtPositioning.coordinate()
 
         // TODO enable when we have map route
         /*
@@ -487,21 +488,21 @@ Item {
         ]
     }
 
-    property variant rcoordinate1: QtLocation.coordinate(50, 50)
-    property variant rcoordinate2: QtLocation.coordinate(51, 52)
-    property variant rcoordinate3: QtLocation.coordinate(53, 54)
-    property variant rcoordinate4: QtLocation.coordinate(55, 56)
-    property variant rcoordinate5: QtLocation.coordinate(57, 58)
+    property variant rcoordinate1: QtPositioning.coordinate(50, 50)
+    property variant rcoordinate2: QtPositioning.coordinate(51, 52)
+    property variant rcoordinate3: QtPositioning.coordinate(53, 54)
+    property variant rcoordinate4: QtPositioning.coordinate(55, 56)
+    property variant rcoordinate5: QtPositioning.coordinate(57, 58)
 
-    property variant fcoordinate1: QtLocation.coordinate(60, 60)
-    property variant fcoordinate2: QtLocation.coordinate(61, 62)
-    property variant fcoordinate3: QtLocation.coordinate(63, 64)
-    property variant fcoordinate4: QtLocation.coordinate(65, 66)
-    property variant fcoordinate5: QtLocation.coordinate(67, 68)
+    property variant fcoordinate1: QtPositioning.coordinate(60, 60)
+    property variant fcoordinate2: QtPositioning.coordinate(61, 62)
+    property variant fcoordinate3: QtPositioning.coordinate(63, 64)
+    property variant fcoordinate4: QtPositioning.coordinate(65, 66)
+    property variant fcoordinate5: QtPositioning.coordinate(67, 68)
 
-    property variant f2coordinate1: QtLocation.coordinate(60, 60)
-    property variant f2coordinate2: QtLocation.coordinate(61, 62)
-    property variant f2coordinate3: QtLocation.coordinate(63, 64)
+    property variant f2coordinate1: QtPositioning.coordinate(60, 60)
+    property variant f2coordinate2: QtPositioning.coordinate(61, 62)
+    property variant f2coordinate3: QtPositioning.coordinate(63, 64)
 
     RouteQuery {id: routeQuery}
     RouteQuery {
@@ -775,7 +776,7 @@ Item {
         }
 
         function test_route_query_handles_destroyed_qml_objects() {
-            var coordinate = QtLocation.coordinate(11, 52);
+            var coordinate = QtPositioning.coordinate(11, 52);
             routeQuery.addWaypoint(coordinate);
             wait(300);
             routeQuery.clearWaypoints();

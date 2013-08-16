@@ -1,5 +1,5 @@
 TARGET = qtposition_geoclue
-QT += location gui
+QT = core positioning
 
 PLUGIN_TYPE = position
 load(qt_plugin)

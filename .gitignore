@@ -44,6 +44,7 @@ qrc_*.cpp
 doc/src/snippets/cpp/cppsnippet
 doc/src/snippets/places/placescppsnippet
 examples/declarative/places_list/places_list
+examples/declarative/flickr/qml_position_flickr
 examples/declarative/places_map/places_map
 examples/logfilepositionsource/logfilepositionsource
 examples/weatherinfo/weatherinfo

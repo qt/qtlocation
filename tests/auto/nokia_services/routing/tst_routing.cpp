@@ -48,7 +48,7 @@
 #include <QtLocation/QGeoRouteReply>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QGeoRoutingManager>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoRectangle>
 #include <QtLocation/QGeoManeuver>
 #include <QtLocation/QGeoRouteSegment>
 

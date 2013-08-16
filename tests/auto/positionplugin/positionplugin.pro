@@ -1,5 +1,5 @@
 TARGET = qtposition_testplugin
-QT += location
+QT += positioning
 
 PLUGIN_TYPE = position
 load(qt_plugin)

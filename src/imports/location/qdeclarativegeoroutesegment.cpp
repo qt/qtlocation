@@ -146,7 +146,7 @@ QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
     indicates the number of objects and 'path[index starting from zero]' gives
     the actual object.
 
-    \sa QtLocation::coordinate
+    \sa QtPositioning::coordinate
 */
 
 QJSValue QDeclarativeGeoRouteSegment::path() const

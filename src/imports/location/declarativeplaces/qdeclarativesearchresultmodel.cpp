@@ -149,10 +149,9 @@ QT_USE_NAMESPACE
     fetch search results, but rather performs a single fetch when \l update() is run.  The \l count
     is set to the number of search results returned during the fetch.
 
-    \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet places_list/places_list.qml Imports
     \codeline
-    \snippet declarative/places.qml PlaceSearchModel
+    \snippet places_list/places_list.qml PlaceSearchModel
 
     \sa CategoryModel, {QPlaceManager}
 
@@ -278,7 +277,7 @@ QT_USE_NAMESPACE
     PlaceSearchModel {
         id: model
         plugin: backendPlugin
-        searchArea: QtLocation.circle(QtLocation.coordinate(10, 10))
+        searchArea: QtPositioning.circle(QtPositioning.coordinate(10, 10))
         ...
     }
 

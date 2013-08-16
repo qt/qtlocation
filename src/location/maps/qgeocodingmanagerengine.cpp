@@ -45,7 +45,7 @@
 #include "qgeoaddress.h"
 #include "qgeocoordinate.h"
 
-#include <QtLocation/QGeoShape>
+#include <QtPositioning/QGeoShape>
 
 QT_BEGIN_NAMESPACE
 

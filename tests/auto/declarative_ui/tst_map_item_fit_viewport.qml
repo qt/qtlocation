@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import QtPositioning 5.0
 import QtLocation.test 5.0
 
     /*
@@ -75,11 +76,11 @@ Item {
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
-    property variant mapDefaultCenter: QtLocation.coordinate(20, 20)
-    property variant preMapRectangleDefaultTopLeft: QtLocation.coordinate(20, 20)
-    property variant preMapRectangleDefaultBottomRight: QtLocation.coordinate(10, 30)
-    property variant preMapCircleDefaultCenter: QtLocation.coordinate(10, 30)
-    property variant preMapQuickItemDefaultCoordinate: QtLocation.coordinate(35, 3)
+    property variant mapDefaultCenter: QtPositioning.coordinate(20, 20)
+    property variant preMapRectangleDefaultTopLeft: QtPositioning.coordinate(20, 20)
+    property variant preMapRectangleDefaultBottomRight: QtPositioning.coordinate(10, 30)
+    property variant preMapCircleDefaultCenter: QtPositioning.coordinate(10, 30)
+    property variant preMapQuickItemDefaultCoordinate: QtPositioning.coordinate(35, 3)
 
     property variant preMapPolygonDefaultPath: [
         { latitude: 25, longitude: 5 },
@@ -99,19 +100,19 @@ Item {
         { latitude: 15, longitude: 15 }
     ]
 
-    property variant mapCircleTopLeft: QtLocation.coordinate(0, 0)
-    property variant mapCircleBottomRight: QtLocation.coordinate(0, 0)
-    property variant mapQuickItemTopLeft: QtLocation.coordinate(0, 0)
-    property variant mapQuickItemBottomRight: QtLocation.coordinate(0, 0)
-    property variant mapPolygonTopLeft: QtLocation.coordinate(0, 0)
-    property variant mapPolygonBottomRight: QtLocation.coordinate(0, 0)
-    property variant mapPolylineTopLeft: QtLocation.coordinate(0, 0)
-    property variant mapPolylineBottomRight: QtLocation.coordinate(0, 0)
-    property variant mapRouteTopLeft: QtLocation.coordinate(0, 0)
-    property variant mapRouteBottomRight: QtLocation.coordinate(0, 0)
+    property variant mapCircleTopLeft: QtPositioning.coordinate(0, 0)
+    property variant mapCircleBottomRight: QtPositioning.coordinate(0, 0)
+    property variant mapQuickItemTopLeft: QtPositioning.coordinate(0, 0)
+    property variant mapQuickItemBottomRight: QtPositioning.coordinate(0, 0)
+    property variant mapPolygonTopLeft: QtPositioning.coordinate(0, 0)
+    property variant mapPolygonBottomRight: QtPositioning.coordinate(0, 0)
+    property variant mapPolylineTopLeft: QtPositioning.coordinate(0, 0)
+    property variant mapPolylineBottomRight: QtPositioning.coordinate(0, 0)
+    property variant mapRouteTopLeft: QtPositioning.coordinate(0, 0)
+    property variant mapRouteBottomRight: QtPositioning.coordinate(0, 0)
 
-    property variant boundingBox: QtLocation.rectangle(QtLocation.coordinate(0, 0),
-                                                       QtLocation.coordinate(0, 0))
+    property variant boundingBox: QtPositioning.rectangle(QtPositioning.coordinate(0, 0),
+                                                       QtPositioning.coordinate(0, 0))
 
     Map {
         id: map;
@@ -468,7 +469,7 @@ Item {
             point.y = maxY
             var itemBottomRight = map.toCoordinate(point)
 
-            return QtLocation.rectangle(itemTopLeft, itemBottomRight);
+            return QtPositioning.rectangle(itemTopLeft, itemBottomRight);
         }
 
         function verify_visibility_all_items(){

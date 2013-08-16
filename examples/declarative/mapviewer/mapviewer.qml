@@ -40,6 +40,7 @@
 
 import QtQuick 2.0
 import QtLocation 5.0
+import QtPositioning 5.0
 import QtLocation.examples 5.0
 import "content/map"
 import "content/dialogs"
@@ -305,9 +306,9 @@ Item {
             tempGeocodeModel.reset()
             messageDialog.state = ""
             if (routeDialog.byCoordinates) {
-                startCoordinate = QtLocation.coordinate(parseFloat(routeDialog.startLatitude),
+                startCoordinate = QtPositioning.coordinate(parseFloat(routeDialog.startLatitude),
                                                         parseFloat(routeDialog.startLongitude));
-                endCoordinate = QtLocation.coordinate(parseFloat(routeDialog.endLatitude),
+                endCoordinate = QtPositioning.coordinate(parseFloat(routeDialog.endLatitude),
                                                       parseFloat(routeDialog.endLongitude));
 
                 calculateRoute()
@@ -421,7 +422,7 @@ Item {
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-            map.geocodeModel.query = QtLocation.coordinate(parseFloat(dialogModel.get(0).inputText),
+            map.geocodeModel.query = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
                                                            parseFloat(dialogModel.get(1).inputText));
             map.geocodeModel.update();
         }
@@ -449,7 +450,7 @@ Item {
             var newLong = parseFloat(dialogModel.get(1).inputText)
 
             if (newLat !== "NaN" && newLong !== "NaN") {
-                var c = QtLocation.coordinate(newLat, newLong);
+                var c = QtPositioning.coordinate(newLat, newLong);
                 if (c.isValid) {
                     map.markers[map.currentMarker].coordinate = c;
                     map.center = c;

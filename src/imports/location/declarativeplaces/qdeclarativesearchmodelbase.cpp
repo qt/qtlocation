@@ -48,7 +48,7 @@
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceSearchReply>
-#include <QtLocation/QGeoCircle>
+#include <QtPositioning/QGeoCircle>
 
 QDeclarativeSearchModelBase::QDeclarativeSearchModelBase(QObject *parent)
 :   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_complete(false), m_status(Null)

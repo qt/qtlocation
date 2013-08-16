@@ -5,5 +5,5 @@ TARGET = tst_qgeocircle
 SOURCES += \
     tst_qgeocircle.cpp
 
-QT += location testlib
+QT += positioning testlib
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

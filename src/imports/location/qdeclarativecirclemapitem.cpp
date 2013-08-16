@@ -319,10 +319,12 @@ QDeclarativeCircleMapItem::~QDeclarativeCircleMapItem()
 }
 
 /*!
+    \qmlpropertygroup Location::MapCircle::border
     \qmlproperty int MapCircle::border.width
     \qmlproperty color MapCircle::border.color
 
-    These properties hold the width and color used to draw the border of the circle.
+    This property is part of the border group property.
+    The border property holds the width and color used to draw the border of the circle.
     The width is in pixels and is independent of the zoom level of the map.
 
     The default values correspond to a black border with a width of 1 pixel.

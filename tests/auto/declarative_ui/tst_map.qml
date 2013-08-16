@@ -42,6 +42,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.0
+import QtPositioning 5.0
 
 Item {
     width:100
@@ -62,12 +63,12 @@ Item {
                    ]
     }
 
-    property variant coordinate1: QtLocation.coordinate(10, 11)
-    property variant coordinate2: QtLocation.coordinate(12, 13)
-    property variant coordinate3: QtLocation.coordinate(50, 50, 0)
-    property variant coordinate4: QtLocation.coordinate(80, 80, 0)
-    property variant invalidCoordinate: QtLocation.coordinate()
-    property variant altitudelessCoordinate: QtLocation.coordinate(50, 50)
+    property variant coordinate1: QtPositioning.coordinate(10, 11)
+    property variant coordinate2: QtPositioning.coordinate(12, 13)
+    property variant coordinate3: QtPositioning.coordinate(50, 50, 0)
+    property variant coordinate4: QtPositioning.coordinate(80, 80, 0)
+    property variant invalidCoordinate: QtPositioning.coordinate()
+    property variant altitudelessCoordinate: QtPositioning.coordinate(50, 50)
 
     Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
     Map {id: coordinateMap; plugin: nokiaPlugin; center: coordinate3; width: 1000; height: 1000; zoomLevel: 15}

@@ -54,7 +54,7 @@
 #include <QString>
 
 #include <qgeoroute.h>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 

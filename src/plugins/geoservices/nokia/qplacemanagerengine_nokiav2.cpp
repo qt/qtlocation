@@ -70,7 +70,7 @@
 #include <QtNetwork/QNetworkProxyFactory>
 
 #include <QtLocation/QPlaceContentRequest>
-#include <QtLocation/QGeoCircle>
+#include <QtPositioning/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 

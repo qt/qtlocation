@@ -44,8 +44,8 @@
 
 #include "qdeclarativegeoserviceprovider_p.h"
 
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeorectangle.h"
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoRectangle>
 
 #include <qgeorouterequest.h>
 #include <qgeoroutereply.h>

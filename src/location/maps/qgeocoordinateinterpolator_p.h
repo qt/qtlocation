@@ -52,7 +52,8 @@
 // We mean it.
 //
 
-#include "qgeocoordinate.h"
+#include <QtPositioning/QGeoCoordinate>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 

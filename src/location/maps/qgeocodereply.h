@@ -44,7 +44,9 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QtLocation/QGeoLocation>
+#include <QtPositioning/QGeoLocation>
+
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 

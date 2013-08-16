@@ -43,7 +43,7 @@
 #define QGEOCODINGMANAGER_H
 
 #include <QtLocation/QGeocodeReply>
-#include <QtLocation/QGeoRectangle>
+#include <QtPositioning/QGeoRectangle>
 
 #include <QObject>
 #include <QList>

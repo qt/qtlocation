@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = logfilepositionsource
-QT = location core widgets
+QT = positioning core widgets
 
 
 HEADERS = logfilepositionsource.h \
@@ -9,8 +9,8 @@ SOURCES = logfilepositionsource.cpp \
           clientapplication.cpp \
           main.cpp
 
-target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/logfilepositionsource
+target.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/logfilepositionsource
 sources.files = $$SOURCES $$HEADERS *.pro simplelog.txt
-sources.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/logfilepositionsource
+sources.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/logfilepositionsource
 
 INSTALLS += target sources
