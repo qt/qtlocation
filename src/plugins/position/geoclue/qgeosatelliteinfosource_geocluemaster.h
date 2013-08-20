@@ -1,8 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Jolla Ltd.
-** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2013 Jolla Ltd, author: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -41,38 +39,55 @@
 **
 ****************************************************************************/
 
-#include "qgeopositioninfosourcefactory_geoclue.h"
-#include "qgeopositioninfosource_geocluemaster_p.h"
-#include "qgeosatelliteinfosource_geocluemaster.h"
+#ifndef QGEOSATELLITEINFOSOURCE_GEOCLUEMASTER_H
+#define QGEOSATELLITEINFOSOURCE_GEOCLUEMASTER_H
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
+#include "qgeocluemaster.h"
+
+#include <geoclue/geoclue-satellite.h>
+
+#include <QtCore/qcompilerdetection.h>
+#include <QtCore/QTimer>
+#include <QtLocation/QGeoSatelliteInfoSource>
+
+QT_BEGIN_NAMESPACE
+
+class QGeoSatelliteInfoSourceGeoclueMaster : public QGeoSatelliteInfoSource, public QGeoclueMaster
 {
-    QGeoPositionInfoSourceGeoclueMaster *src = new QGeoPositionInfoSourceGeoclueMaster(parent);
-    if (!src->init()) {
-        delete src;
-        src = 0;
-    }
-    return src;
-}
+    Q_OBJECT
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSource(QObject *parent)
-{
-#ifdef HAS_SATELLITE
-    QGeoSatelliteInfoSourceGeoclueMaster *src = new QGeoSatelliteInfoSourceGeoclueMaster(parent);
-    if (!src->init() < 0) {
-        delete src;
-        src = 0;
-    }
-    return src;
-#else
-    Q_UNUSED(parent)
+public:
+    explicit QGeoSatelliteInfoSourceGeoclueMaster(QObject *parent = 0);
+    ~QGeoSatelliteInfoSourceGeoclueMaster();
 
-    return 0;
-#endif
-}
+    bool init();
 
-QGeoAreaMonitor *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
+    int minimumUpdateInterval() const Q_DECL_OVERRIDE;
+    Error error() const Q_DECL_OVERRIDE;
+
+    void startUpdates() Q_DECL_OVERRIDE;
+    void stopUpdates() Q_DECL_OVERRIDE;
+    void requestUpdate(int timeout = 0) Q_DECL_OVERRIDE;
+
+    void satelliteChanged(int timestamp, int satellitesUsed, int satellitesVisible,
+                          const QList<int> &usedPrn, const QList<QGeoSatelliteInfo> &satInfos);
+
+    void requestUpdateFinished(int timestamp, int satellitesUsed, int satellitesVisible,
+                               const QList<int> &usedPrn, const QList<QGeoSatelliteInfo> &satInfos);
+
+private slots:
+    void positionProviderChanged(const QByteArray &service, const QByteArray &path);
+
+private:
+    bool configureSatelliteSource();
+    void cleanupSatelliteSource();
+
+    GeoclueSatellite *m_sat;
+    QTimer m_requestTimer;
+    QList<QGeoSatelliteInfo> m_inView;
+    QList<QGeoSatelliteInfo> m_inUse;
+};
+
+QT_END_NAMESPACE
+
+#endif // QGEOSATELLITEINFOSOURCE_GEOCLUEMASTER_H

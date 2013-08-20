@@ -1,8 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Jolla Ltd.
-** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2013 Jolla Ltd, author: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -41,38 +39,11 @@
 **
 ****************************************************************************/
 
-#include "qgeopositioninfosourcefactory_geoclue.h"
-#include "qgeopositioninfosource_geocluemaster_p.h"
-#include "qgeosatelliteinfosource_geocluemaster.h"
+#include <geoclue/geoclue-satellite.h>
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
+int main()
 {
-    QGeoPositionInfoSourceGeoclueMaster *src = new QGeoPositionInfoSourceGeoclueMaster(parent);
-    if (!src->init()) {
-        delete src;
-        src = 0;
-    }
-    return src;
-}
+    GeoclueSatellite satellite;
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSource(QObject *parent)
-{
-#ifdef HAS_SATELLITE
-    QGeoSatelliteInfoSourceGeoclueMaster *src = new QGeoSatelliteInfoSourceGeoclueMaster(parent);
-    if (!src->init() < 0) {
-        delete src;
-        src = 0;
-    }
-    return src;
-#else
-    Q_UNUSED(parent)
-
-    return 0;
-#endif
-}
-
-QGeoAreaMonitor *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent)
-{
-    Q_UNUSED(parent);
     return 0;
 }

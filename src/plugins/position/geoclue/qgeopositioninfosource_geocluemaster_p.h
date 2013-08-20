@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2013 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -53,8 +55,9 @@
 // We mean it.
 //
 
+#include "qgeocluemaster.h"
+
 #include <qgeopositioninfosource.h>
-#include <geoclue/geoclue-master.h>
 #include <geoclue/geoclue-velocity.h>
 #include <QTimer>
 
@@ -62,7 +65,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoPositionInfoSourceGeoclueMaster : public QGeoPositionInfoSource
+class QGeoPositionInfoSourceGeoclueMaster : public QGeoPositionInfoSource, public QGeoclueMaster
 {
     Q_OBJECT
 public:
@@ -82,7 +85,7 @@ public:
     PositioningMethods supportedPositioningMethods() const;
     void setPreferredPositioningMethods(PositioningMethods methods);
     int minimumUpdateInterval() const;
-    int init();
+    bool init();
 
     void singleUpdateFailed();
     void singleUpdateSucceeded(GeocluePositionFields fields,
@@ -111,10 +114,11 @@ public slots:
 private slots:
     void requestUpdateTimeout();
     void startUpdatesTimeout();
+    void positionProviderChanged(const QByteArray &service, const QByteArray &path);
 
 private:
-    bool tryGPS();
-    int configurePositionSource();
+    bool configurePositionSource(GeoclueAccuracyLevel accuracy, GeoclueResourceFlags resourceFlags);
+    void cleanupPositionSource();
     QGeoPositionInfo geoclueToPositionInfo(GeocluePositionFields fields,
                                            int                   timestamp,
                                            double                latitude,
@@ -123,9 +127,6 @@ private:
                                            GeoclueAccuracy *     accuracy);
 private:
     int m_updateInterval;
-    GeoclueResourceFlags m_preferredResources;
-    GeoclueAccuracyLevel m_preferredAccuracy;
-    GeoclueMasterClient *m_client;
     GeocluePosition *m_pos;
     GeoclueVelocity *m_vel;
     QTimer m_updateTimer;

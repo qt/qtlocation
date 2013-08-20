@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2013 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -45,11 +47,19 @@
 #include <QObject>
 #include <qgeopositioninfosourcefactory.h>
 
+#ifdef HAS_SATELLITE
+#define PLUGIN_JSON "plugin-satellite.json"
+#else
+#define PLUGIN_JSON "plugin.json"
+#endif
+
 class QGeoPositionInfoSourceFactoryGeoclue : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
+
     Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/5.0"
-                      FILE "plugin.json")
+                      FILE PLUGIN_JSON)
+
     Q_INTERFACES(QGeoPositionInfoSourceFactory)
 
 public:

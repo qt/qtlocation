@@ -1,8 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Jolla Ltd.
-** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2013 Jolla Ltd, author: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -41,38 +39,31 @@
 **
 ****************************************************************************/
 
-#include "qgeopositioninfosourcefactory_geoclue.h"
-#include "qgeopositioninfosource_geocluemaster_p.h"
-#include "qgeosatelliteinfosource_geocluemaster.h"
+#ifndef QGEOCLUEMASTER_H
+#define QGEOCLUEMASTER_H
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
+#include <QtCore/QObject>
+
+#include <geoclue/geoclue-master.h>
+
+QT_BEGIN_NAMESPACE
+
+class QGeoclueMaster
 {
-    QGeoPositionInfoSourceGeoclueMaster *src = new QGeoPositionInfoSourceGeoclueMaster(parent);
-    if (!src->init()) {
-        delete src;
-        src = 0;
-    }
-    return src;
-}
+public:
+    QGeoclueMaster(QObject *handler);
+    virtual ~QGeoclueMaster();
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSource(QObject *parent)
-{
-#ifdef HAS_SATELLITE
-    QGeoSatelliteInfoSourceGeoclueMaster *src = new QGeoSatelliteInfoSourceGeoclueMaster(parent);
-    if (!src->init() < 0) {
-        delete src;
-        src = 0;
-    }
-    return src;
-#else
-    Q_UNUSED(parent)
+    bool createMasterClient(GeoclueAccuracyLevel accuracy, GeoclueResourceFlags resourceFlags);
+    void releaseMasterClient();
 
-    return 0;
-#endif
-}
+private:
+    GeoclueMasterClient *m_client;
+    GeocluePosition *m_masterPosition;
 
-QGeoAreaMonitor *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
+    QObject *m_handler;
+};
+
+QT_END_NAMESPACE
+
+#endif // QGEOCLUEMASTER_H

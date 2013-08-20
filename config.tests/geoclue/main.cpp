@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2013 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -40,13 +42,15 @@
 ****************************************************************************/
 
 #include <geoclue/geoclue-position.h>
-#include <gconf/gconf-client.h>
+#include <geoclue/geoclue-velocity.h>
 
 int main()
 {
     GType type = geoclue_position_get_type();
-    GConfClient *client = gconf_client_get_default();
-    g_object_unref(client);
+    GeocluePosition position;
+
+    type = geoclue_velocity_get_type();
+    GeoclueVelocity velocity;
 
     return 0;
 }
