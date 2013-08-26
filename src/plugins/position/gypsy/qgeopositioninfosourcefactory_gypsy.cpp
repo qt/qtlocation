@@ -58,7 +58,7 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGypsy::satelliteInfoSource
     return src;
 }
 
-QGeoAreaMonitor *QGeoPositionInfoSourceFactoryGypsy::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryGypsy::areaMonitor(QObject *parent)
 {
     Q_UNUSED(parent);
     return 0;

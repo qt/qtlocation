@@ -57,7 +57,7 @@ class Q_POSITIONING_EXPORT QGeoSatelliteInfoSource : public QObject
 
 public:
     enum Error {
-        AccessError,
+        AccessError = 0,
         ClosedError,              /* 1 */
         UnknownSourceError = -1
     };
@@ -69,6 +69,8 @@ public:
     static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
     static QGeoSatelliteInfoSource *createSource(const QString &sourceName, QObject *parent);
     static QStringList availableSources();
+
+    QString sourceName() const;
 
     virtual void setUpdateInterval(int msec);
     int updateInterval() const;

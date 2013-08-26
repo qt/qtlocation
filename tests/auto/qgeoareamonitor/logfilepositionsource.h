@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtPositioning module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -39,26 +39,41 @@
 **
 ****************************************************************************/
 
-#include "positionpollfactory.h"
-#include "qgeoareamonitor_polling.h"
+#ifndef LOGFILEPOSITIONSOURCE_H
+#define LOGFILEPOSITIONSOURCE_H
 
-QGeoPositionInfoSource *PositionPollFactory::positionInfoSource(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
+#include <qgeopositioninfosource.h>
 
-QGeoSatelliteInfoSource *PositionPollFactory::satelliteInfoSource(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
+QT_BEGIN_NAMESPACE
+class QFile;
+class QTimer;
+QT_END_NAMESPACE
 
-QGeoAreaMonitorSource *PositionPollFactory::areaMonitor(QObject *parent)
+class LogFilePositionSource : public QGeoPositionInfoSource
 {
-    QGeoAreaMonitorPolling *ret = new QGeoAreaMonitorPolling(parent);
-    if (ret && ret->isValid())
-        return ret;
-    delete ret;
-    return 0;
-}
+    Q_OBJECT
+public:
+    LogFilePositionSource(QObject *parent = 0);
+
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
+
+    PositioningMethods supportedPositioningMethods() const;
+    int minimumUpdateInterval() const;
+    Error error() const;
+
+public slots:
+    virtual void startUpdates();
+    virtual void stopUpdates();
+
+    virtual void requestUpdate(int timeout = 5000);
+
+private slots:
+    void readNextPosition();
+
+private:
+    QFile *logFile;
+    QTimer *timer;
+    QGeoPositionInfo lastPosition;
+};
+
+#endif

@@ -65,7 +65,7 @@ class QGeoPositionInfoSourceFactoryGeoclue : public QObject, public QGeoPosition
 public:
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitor *areaMonitor(QObject *parent);
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
 };
 
 #endif

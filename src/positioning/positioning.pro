@@ -8,7 +8,8 @@ OTHER_FILES += doc/src/*.qdoc   # show .qdoc files in Qt Creator
 
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
-                    qgeoareamonitor.h \
+                    qgeoareamonitorinfo.h \
+                    qgeoareamonitorsource.h \
                     qgeoshape.h \
                     qgeorectangle.h \
                     qgeocircle.h \
@@ -37,7 +38,8 @@ PRIVATE_HEADERS += \
 
 SOURCES += \
             qgeoaddress.cpp \
-            qgeoareamonitor.cpp \
+            qgeoareamonitorsource.cpp \
+            qgeoareamonitorinfo.cpp \
             qgeoshape.cpp \
             qgeorectangle.cpp \
             qgeocircle.cpp \

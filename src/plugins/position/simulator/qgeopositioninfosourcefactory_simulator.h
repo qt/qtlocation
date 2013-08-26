@@ -57,7 +57,7 @@ class QGeoPositionInfoSourceFactorySimulator : public QObject, public QGeoPositi
 public:
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitor *areaMonitor(QObject *parent);
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
 };
 
 #endif // QGEOPOSITIONINFOSOURCEFACTORY_SIMULATOR_H

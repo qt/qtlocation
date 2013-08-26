@@ -61,7 +61,7 @@ The entries have the following meaning:
         \li Set to \c true if the plugin implements a \l QGeoSatelliteInfoSource.
     \row
         \li Monitor
-        \li Set to \c true if the plugin implements a \l QGeoAreaMonitor.
+        \li Set to \c true if the plugin implements a \l QGeoAreaMonitorSource.
     \row
         \li Priority
         \li The plugin priority. If multiple plugins have the same provider name, the plugin

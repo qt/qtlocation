@@ -44,7 +44,7 @@
 
 #include <QtPositioning/QGeoPositionInfoSource>
 #include <QtPositioning/QGeoSatelliteInfoSource>
-#include <QtPositioning/QGeoAreaMonitor>
+#include <QtPositioning/QGeoAreaMonitorSource>
 #include <QList>
 
 QT_BEGIN_NAMESPACE
@@ -56,7 +56,7 @@ public:
 
     virtual QGeoPositionInfoSource *positionInfoSource(QObject *parent) = 0;
     virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
-    virtual QGeoAreaMonitor *areaMonitor(QObject *parent) = 0;
+    virtual QGeoAreaMonitorSource *areaMonitor(QObject *parent) = 0;
 };
 
 #define QT_POSITION_SOURCE_INTERFACE

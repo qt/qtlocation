@@ -54,7 +54,7 @@ class PositionPollFactory : public QObject, public QGeoPositionInfoSourceFactory
 public:
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitor *areaMonitor(QObject *parent);
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
 };
 
 #endif // POSITIONPOLLFACTORY_H

@@ -93,6 +93,7 @@ class QGeoSatelliteInfoSourcePrivate
 {
 public:
     int interval;
+    QString providerName;
 };
 
 /*!
@@ -112,6 +113,18 @@ QGeoSatelliteInfoSource::~QGeoSatelliteInfoSource()
 {
     delete d;
 }
+
+/*!
+    Returns the unique name of the satellite source implementation in use.
+
+    This is the same name that can be passed to createSource() in order to
+    create a new instance of a particular satellite source implementation.
+*/
+QString QGeoSatelliteInfoSource::sourceName() const
+{
+    return d->providerName;
+}
+
 
 /*!
     \property QGeoSatelliteInfoSource::updateInterval
@@ -168,6 +181,8 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
             QGeoSatelliteInfoSource *s = 0;
             if (d.factory)
                 s = d.factory->satelliteInfoSource(parent);
+            if (s)
+                s->d->providerName = d.metaData.value(QStringLiteral("Provider")).toString();
             return s;
         }
     }
@@ -191,6 +206,8 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
         QGeoSatelliteInfoSource *src = 0;
         if (d.factory)
             src = d.factory->satelliteInfoSource(parent);
+        if (src)
+            src->d->providerName = d.metaData.value(QStringLiteral("Provider")).toString();
         return src;
     }
 

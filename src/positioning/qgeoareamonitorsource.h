@@ -38,10 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOAREAMONITOR_H
-#define QGEOAREAMONITOR_H
+#ifndef QGEOAREAMONITORSOURCE_H
+#define QGEOAREAMONITORSOURCE_H
 
 #include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoAreaMonitorInfo>
+#include <QtPositioning/QGeoPositionInfoSource>
 
 #include <QObject>
 #include <QStringList>
@@ -49,34 +51,56 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoPositionInfo;
-class QGeoAreaMonitorPrivate;
-class Q_POSITIONING_EXPORT QGeoAreaMonitor : public QObject
+class QGeoAreaMonitorSourcePrivate;
+class Q_POSITIONING_EXPORT QGeoAreaMonitorSource : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
 
 public:
-    explicit QGeoAreaMonitor(QObject *parent);
-    virtual ~QGeoAreaMonitor() = 0;
+    enum Error {
+        AccessError = 0,
+        InsufficientPositionInfo,
+        UnknownSourceError
+    };
+    Q_ENUMS(Error)
 
-    virtual void setCenter(const QGeoCoordinate &coordinate);
-    QGeoCoordinate center() const;
+    enum AreaMonitorFeature {
+        PersistentAreaMonitorFeature = 0x00000001,
+        AnyAreaMonitorFeature = 0xffffffff
+    };
+    Q_DECLARE_FLAGS(AreaMonitorFeatures, AreaMonitorFeature)
 
-    virtual void setRadius(qreal radius);
-    qreal radius() const;
+    explicit QGeoAreaMonitorSource(QObject *parent);
+    virtual ~QGeoAreaMonitorSource();
 
-    static QGeoAreaMonitor *createDefaultMonitor(QObject *parent);
-    static QGeoAreaMonitor *createMonitor(const QString& sourceName, QObject *parent);
-    static QStringList availableMonitors();
+    static QGeoAreaMonitorSource *createDefaultSource(QObject *parent);
+    static QGeoAreaMonitorSource *createSource(const QString& sourceName, QObject *parent);
+    static QStringList availableSources();
+
+    virtual void setPositionInfoSource(QGeoPositionInfoSource *source);
+    virtual QGeoPositionInfoSource* positionInfoSource() const;
+
+    QString sourceName() const;
+
+    virtual Error error() const = 0;
+    virtual AreaMonitorFeatures supportedAreaMonitorFeatures() const = 0;
+
+    virtual bool startMonitoring(const QGeoAreaMonitorInfo &monitor) = 0;
+    virtual bool stopMonitoring(const QGeoAreaMonitorInfo &monitor) = 0;
+    virtual bool requestUpdate(const QGeoAreaMonitorInfo &monitor, const char *signal) = 0;
+
+    virtual QList<QGeoAreaMonitorInfo> activeMonitors() const = 0;
+    virtual QList<QGeoAreaMonitorInfo> activeMonitors(const QGeoShape &lookupArea) const = 0;
 
 Q_SIGNALS:
-    void areaEntered(const QGeoPositionInfo &update);
-    void areaExited(const QGeoPositionInfo &update);
+    void areaEntered(const QGeoAreaMonitorInfo &monitor, const QGeoPositionInfo &update);
+    void areaExited(const QGeoAreaMonitorInfo &monitor, const QGeoPositionInfo &update);
+    void monitorExpired(const QGeoAreaMonitorInfo &monitor);
+    void error(QGeoAreaMonitorSource::Error error);
 
 private:
-    Q_DISABLE_COPY(QGeoAreaMonitor)
-    QGeoAreaMonitorPrivate *d;
+    Q_DISABLE_COPY(QGeoAreaMonitorSource)
+    QGeoAreaMonitorSourcePrivate *d;
 };
 
 

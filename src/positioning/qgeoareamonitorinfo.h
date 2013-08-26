@@ -39,26 +39,67 @@
 **
 ****************************************************************************/
 
-#include "positionpollfactory.h"
-#include "qgeoareamonitor_polling.h"
+#ifndef QGEOAREAMONITORINFO_H
+#define QGEOAREAMONITORINFO_H
 
-QGeoPositionInfoSource *PositionPollFactory::positionInfoSource(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoShape>
+#include <QtCore/QSharedDataPointer>
+#include <QtCore/QVariantMap>
 
-QGeoSatelliteInfoSource *PositionPollFactory::satelliteInfoSource(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
+QT_BEGIN_NAMESPACE
 
-QGeoAreaMonitorSource *PositionPollFactory::areaMonitor(QObject *parent)
+class QDataStream;
+class QGeoAreaMonitorInfo;
+
+#ifndef QT_NO_DATASTREAM
+Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &, const QGeoAreaMonitorInfo &);
+Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &, QGeoAreaMonitorInfo &);
+#endif
+
+class QGeoAreaMonitorInfoPrivate;
+class Q_POSITIONING_EXPORT QGeoAreaMonitorInfo
 {
-    QGeoAreaMonitorPolling *ret = new QGeoAreaMonitorPolling(parent);
-    if (ret && ret->isValid())
-        return ret;
-    delete ret;
-    return 0;
-}
+public:
+    explicit QGeoAreaMonitorInfo(const QString &name = QString());
+    QGeoAreaMonitorInfo(const QGeoAreaMonitorInfo &other);
+    ~QGeoAreaMonitorInfo();
+
+    QGeoAreaMonitorInfo &operator=(const QGeoAreaMonitorInfo &other);
+
+    bool operator==(const QGeoAreaMonitorInfo &other) const;
+    bool operator!=(const QGeoAreaMonitorInfo &other) const;
+
+    QString name() const;
+    void setName(const QString &name);
+
+    QString identifier() const;
+    bool isValid() const;
+
+    QGeoShape area() const;
+    void setArea(const QGeoShape &newShape);
+
+    QDateTime expiration() const;
+    void setExpiration(const QDateTime &expiry);
+
+    bool isPersistent() const;
+    void setPersistent(bool isPersistent);
+
+    QVariantMap notificationParameters() const;
+    void setNotificationParameters(const QVariantMap &parameters);
+private:
+    QSharedDataPointer<QGeoAreaMonitorInfoPrivate> d;
+
+#ifndef QT_NO_DATASTREAM
+    friend Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &, const QGeoAreaMonitorInfo &);
+    friend Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &, QGeoAreaMonitorInfo &);
+#endif
+};
+
+#ifndef QT_NO_DEBUG_STREAM
+Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoAreaMonitorInfo &);
+#endif
+
+QT_END_NAMESPACE
+
+#endif // QGEOAREAMONITORINFO_H

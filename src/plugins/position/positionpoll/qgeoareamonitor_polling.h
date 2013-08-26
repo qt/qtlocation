@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
@@ -42,37 +42,55 @@
 #ifndef QGEOAREAMONITORPOLLING_H
 #define QGEOAREAMONITORPOLLING_H
 
-#include "qgeoareamonitor.h"
-#include "qgeopositioninfosource.h"
+#include <qgeoareamonitorsource.h>
+#include <qgeopositioninfosource.h>
 
 
 /**
  *  QGeoAreaMonitorPolling
  *
  */
-class QGeoAreaMonitorPolling : public QGeoAreaMonitor
+
+class QGeoAreaMonitorPollingPrivate;
+class QGeoAreaMonitorPolling : public QGeoAreaMonitorSource
 {
     Q_OBJECT
-
 public :
     explicit QGeoAreaMonitorPolling(QObject *parent = 0);
     ~QGeoAreaMonitorPolling();
-    void setCenter(const QGeoCoordinate &coordinate);
-    void setRadius(qreal radius);
 
-    inline bool isValid() { return location; }
+    void setPositionInfoSource(QGeoPositionInfoSource *source) Q_DECL_OVERRIDE;
+    QGeoPositionInfoSource* positionInfoSource() const Q_DECL_OVERRIDE;
+
+    Error error() const Q_DECL_OVERRIDE;
+
+    bool startMonitoring(const QGeoAreaMonitorInfo &monitor) Q_DECL_OVERRIDE;
+    bool requestUpdate(const QGeoAreaMonitorInfo &monitor,
+                       const char *signal) Q_DECL_OVERRIDE;
+    bool stopMonitoring(const QGeoAreaMonitorInfo &monitor) Q_DECL_OVERRIDE;
+
+    QList<QGeoAreaMonitorInfo> activeMonitors() const Q_DECL_OVERRIDE;
+    QList<QGeoAreaMonitorInfo> activeMonitors(const QGeoShape &region) const Q_DECL_OVERRIDE;
+
+    QGeoAreaMonitorSource::AreaMonitorFeatures supportedAreaMonitorFeatures() const Q_DECL_OVERRIDE;
+
+    inline bool isValid() { return positionInfoSource(); }
+
+    bool signalsAreConnected;
 
 private Q_SLOTS:
-    void positionUpdated(const QGeoPositionInfo &info);
+    void positionError(QGeoPositionInfoSource::Error error);
+    void timeout(const QGeoAreaMonitorInfo &monitor);
+    void processAreaEvent(const QGeoAreaMonitorInfo &minfo, const QGeoPositionInfo &pinfo, bool isEnteredEvent);
 
 private:
-    bool insideArea;
-    QGeoPositionInfoSource *location;
+    QGeoAreaMonitorPollingPrivate* d;
+    QGeoAreaMonitorSource::Error lastError;
 
     void connectNotify(const QMetaMethod &signal);
     void disconnectNotify(const QMetaMethod &signal);
 
-    void checkStartStop();
+    int idForSignal(const char *signal);
 };
 
 #endif // QGEOAREAMONITORPOLLING_H

@@ -39,9 +39,12 @@
 ****************************************************************************/
 
 #include <QtCore/QObject>
+#include <QtCore/QDebug>
 #include <QtCore/QVariant>
 #include <QtPositioning/QGeoAddress>
 #include <QtPositioning/QGeoLocation>
+#include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoAreaMonitorSource>
 
 void cppQmlInterface(QObject *qmlObject)
 {
@@ -62,3 +65,40 @@ void cppQmlInterface(QObject *qmlObject)
     //! [Location set]
 }
 
+class MyClass : public QObject
+{
+    Q_OBJECT
+//! [BigBen]
+public:
+    MyClass() : QObject()
+    {
+        QGeoAreaMonitorSource *monitor = QGeoAreaMonitorSource::createDefaultMonitorSource(this);
+        if (monitor) {
+            connect(monitor, SIGNAL(areaEntered(QGeoAreaMonitorInfo,QGeoPositionInfo)),
+                    this, SLOT(areaEntered(QGeoAreaMonitorInfo,QGeoPositionInfo));
+            connect(monitor, SIGNAL(areaExited(QGeoAreaMonitorInfo,QGeoPositionInfo)),
+                    this, SLOT(areaExited(QGeoAreaMonitorInfo,QGeoPositionInfo)));
+
+            QGeoAreaMonitorInfo bigBen("Big Ben");
+            QGeoCoordinate position(51.50104, -0.124632);
+            bigBen.setMonitoredArea(QGeoCircle(position, 100));
+
+            monitor->startMonitoring(bigBen);
+
+        } else {
+            qDebug() << "Could not create default area monitor";
+        }
+    }
+
+public Q_SLOTS:
+    void areaEntered(const QGeoAreaMonitorInfo &mon, const QGeoPositionInfo &update)
+    {
+        qDebug() << "Now within 100 meters, current position is" << update.coordinate();
+    }
+
+    void areaExited(const QGeoAreaMonitorInfo &mon, const QGeoPositionInfo &update)
+    {
+        qDebug() << "No longer within 100 meters, current position is" << update.coordinate();
+    }
+//! [BigBen]
+};

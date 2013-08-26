@@ -41,41 +41,18 @@
 
 #include "qgeoareamonitor_polling.h"
 #include <qgeocoordinate.h>
+#include <qgeorectangle.h>
+#include <qgeocircle.h>
 
 #include <QtCore/qmetaobject.h>
+#include <QtCore/qtimer.h>
+#include <QtCore/qdebug.h>
+#include <QtCore/qmutex.h>
 
 #define UPDATE_INTERVAL_5S  5000
 
-QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent) : QGeoAreaMonitor(parent)
-{
-    insideArea = false;
-    location = QGeoPositionInfoSource::createDefaultSource(this);
-    if (location) {
-        location->setUpdateInterval(UPDATE_INTERVAL_5S);
-        connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                this, SLOT(positionUpdated(QGeoPositionInfo)));
-    }
-}
+typedef QHash<QString, QGeoAreaMonitorInfo> MonitorTable;
 
-QGeoAreaMonitorPolling::~QGeoAreaMonitorPolling()
-{
-    if (location)
-        location->stopUpdates();
-}
-
-void QGeoAreaMonitorPolling::setCenter(const QGeoCoordinate &coordinate)
-{
-    if (coordinate.isValid()) {
-        QGeoAreaMonitor::setCenter(coordinate);
-        checkStartStop();
-    }
-}
-
-void QGeoAreaMonitorPolling::setRadius(qreal radius)
-{
-    QGeoAreaMonitor::setRadius(radius);
-    checkStartStop();
-}
 
 static QMetaMethod areaEnteredSignal()
 {
@@ -89,46 +66,451 @@ static QMetaMethod areaExitedSignal()
     return signal;
 }
 
-void QGeoAreaMonitorPolling::connectNotify(const QMetaMethod &signal)
+static QMetaMethod monitorExpiredSignal()
 {
-    if (signal == areaEnteredSignal() ||
-            signal == areaExitedSignal())
-        checkStartStop();
+    static QMetaMethod signal = QMetaMethod::fromSignal(&QGeoAreaMonitorPolling::monitorExpired);
+    return signal;
 }
 
-void QGeoAreaMonitorPolling::disconnectNotify(const QMetaMethod &signal)
+class QGeoAreaMonitorPollingPrivate : public QObject
 {
-    if (signal == areaEnteredSignal() ||
-            signal == areaExitedSignal())
+    Q_OBJECT
+public:
+    QGeoAreaMonitorPollingPrivate() : source(0), mutex(QMutex::Recursive)
+    {
+        nextExpiryTimer = new QTimer(this);
+        nextExpiryTimer->setSingleShot(true);
+        connect(nextExpiryTimer, SIGNAL(timeout()),
+                this, SLOT(timeout()));
+    }
+
+    void startMonitoring(const QGeoAreaMonitorInfo &monitor)
+    {
+        QMutexLocker locker(&mutex);
+
+        activeMonitorAreas.insert(monitor.identifier(), monitor);
+        singleShotTrigger.remove(monitor.identifier());
+
         checkStartStop();
+        setupNextExpiryTimeout();
+    }
+
+    void requestUpdate(const QGeoAreaMonitorInfo &monitor, int signalId)
+    {
+        QMutexLocker locker(&mutex);
+
+        activeMonitorAreas.insert(monitor.identifier(), monitor);
+        singleShotTrigger.insert(monitor.identifier(), signalId);
+
+        checkStartStop();
+        setupNextExpiryTimeout();
+    }
+
+    QGeoAreaMonitorInfo stopMonitoring(const QGeoAreaMonitorInfo &monitor)
+    {
+        QMutexLocker locker(&mutex);
+
+        QGeoAreaMonitorInfo mon = activeMonitorAreas.take(monitor.identifier());
+
+        checkStartStop();
+        setupNextExpiryTimeout();
+
+        return mon;
+    }
+
+    void registerClient(QGeoAreaMonitorPolling *client)
+    {
+        QMutexLocker locker(&mutex);
+
+        connect(this, SIGNAL(timeout(QGeoAreaMonitorInfo)),
+                client, SLOT(timeout(QGeoAreaMonitorInfo)));
+
+        connect(this, SIGNAL(positionError(QGeoPositionInfoSource::Error)),
+                client, SLOT(positionError(QGeoPositionInfoSource::Error)));
+
+        connect(this, SIGNAL(areaEventDetected(QGeoAreaMonitorInfo,QGeoPositionInfo,bool)),
+                client, SLOT(processAreaEvent(QGeoAreaMonitorInfo,QGeoPositionInfo,bool)));
+
+        registeredClients.append(client);
+    }
+
+    void deregisterClient(QGeoAreaMonitorPolling *client)
+    {
+        QMutexLocker locker(&mutex);
+
+        registeredClients.removeAll(client);
+        if (registeredClients.isEmpty())
+            checkStartStop();
+    }
+
+    void setPositionSource(QGeoPositionInfoSource *newSource)
+    {
+        QMutexLocker locker(&mutex);
+
+        if (newSource == source)
+            return;
+
+        if (source)
+            delete source;
+
+        source = newSource;
+
+        if (source) {
+            source->setParent(this);
+            source->moveToThread(this->thread());
+            if (source->updateInterval() == 0)
+                source->setUpdateInterval(UPDATE_INTERVAL_5S);
+            disconnect(source, 0, 0, 0); //disconnect all
+            connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                    this, SLOT(positionUpdated(QGeoPositionInfo)));
+            connect(source, SIGNAL(error(QGeoPositionInfoSource::Error)),
+                    this, SIGNAL(positionError(QGeoPositionInfoSource::Error)));
+            checkStartStop();
+        }
+    }
+
+    QGeoPositionInfoSource* positionSource() const
+    {
+        QMutexLocker locker(&mutex);
+        return source;
+    }
+
+    MonitorTable activeMonitors() const
+    {
+        QMutexLocker locker(&mutex);
+
+        return activeMonitorAreas;
+    }
+
+    void checkStartStop()
+    {
+        QMutexLocker locker(&mutex);
+
+        bool signalsConnected = false;
+        foreach (const QGeoAreaMonitorPolling *client, registeredClients) {
+            if (client->signalsAreConnected) {
+                signalsConnected = true;
+                break;
+            }
+        }
+
+        if (signalsConnected && !activeMonitorAreas.isEmpty()) {
+            if (source)
+                source->startUpdates();
+            else
+                //translated to InsufficientPositionInfo
+                emit positionError(QGeoPositionInfoSource::ClosedError);
+        } else {
+            if (source)
+                source->stopUpdates();
+        }
+    }
+
+private:
+    void setupNextExpiryTimeout()
+    {
+        nextExpiryTimer->stop();
+        activeExpiry.first = QDateTime();
+        activeExpiry.second = QString();
+
+        foreach (const QGeoAreaMonitorInfo &info, activeMonitors()) {
+            if (info.expiration().isValid()) {
+                if (!activeExpiry.first.isValid()) {
+                    activeExpiry.first = info.expiration();
+                    activeExpiry.second = info.identifier();
+                    continue;
+                }
+                if (info.expiration() < activeExpiry.first) {
+                    activeExpiry.first = info.expiration();
+                    activeExpiry.second = info.identifier();
+                }
+            }
+        }
+
+        if (activeExpiry.first.isValid())
+            nextExpiryTimer->start(QDateTime::currentDateTime().msecsTo(activeExpiry.first));
+    }
+
+
+    //returns true if areaEntered should be emitted
+    bool processInsideArea(const QString &monitorIdent)
+    {
+        if (!insideArea.contains(monitorIdent)) {
+            if (singleShotTrigger.value(monitorIdent, -1) == areaEnteredSignal().methodIndex()) {
+                //this is the finishing singleshot event
+                singleShotTrigger.remove(monitorIdent);
+                activeMonitorAreas.remove(monitorIdent);
+                setupNextExpiryTimeout();
+            } else {
+                insideArea.insert(monitorIdent);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    //returns true if areaExited should be emitted
+    bool processOutsideArea(const QString &monitorIdent)
+    {
+        if (insideArea.contains(monitorIdent)) {
+            if (singleShotTrigger.value(monitorIdent, -1) == areaExitedSignal().methodIndex()) {
+                //this is the finishing singleShot event
+                singleShotTrigger.remove(monitorIdent);
+                activeMonitorAreas.remove(monitorIdent);
+                setupNextExpiryTimeout();
+            } else {
+                insideArea.remove(monitorIdent);
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+
+Q_SIGNALS:
+    void timeout(const QGeoAreaMonitorInfo &info);
+    void positionError(const QGeoPositionInfoSource::Error error);
+    void areaEventDetected(const QGeoAreaMonitorInfo &minfo,
+                           const QGeoPositionInfo &pinfo, bool isEnteredEvent);
+private Q_SLOTS:
+    void timeout()
+    {
+        /*
+         * Don't block timer firing even if monitorExpiredSignal is not connected.
+         * This allows us to continue to remove the existing monitors as they expire.
+         **/
+        const QGeoAreaMonitorInfo info = activeMonitorAreas.take(activeExpiry.second);
+        setupNextExpiryTimeout();
+        emit timeout(info);
+
+    }
+
+    void positionUpdated(const QGeoPositionInfo &info)
+    {
+        foreach (const QGeoAreaMonitorInfo &monInfo, activeMonitors()) {
+            const QString identifier = monInfo.identifier();
+            if (monInfo.area().contains(info.coordinate())) {
+                if (processInsideArea(identifier))
+                    emit areaEventDetected(monInfo, info, true);
+            } else {
+                if (processOutsideArea(identifier))
+                    emit areaEventDetected(monInfo, info, false);
+            }
+        }
+    }
+
+private:
+    QPair<QDateTime, QString> activeExpiry;
+    QHash<QString, int> singleShotTrigger;
+    QTimer* nextExpiryTimer;
+    QSet<QString> insideArea;
+
+    MonitorTable activeMonitorAreas;
+
+    QGeoPositionInfoSource* source;
+    QList<QGeoAreaMonitorPolling*> registeredClients;
+    mutable QMutex mutex;
+};
+
+Q_GLOBAL_STATIC(QGeoAreaMonitorPollingPrivate, pollingPrivate)
+
+
+QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent)
+    : QGeoAreaMonitorSource(parent), signalsAreConnected(false)
+{
+    d = pollingPrivate();
+    lastError = QGeoAreaMonitorSource::UnknownSourceError;
+    d->registerClient(this);
+    //hookup to default source if existing
+    if (!positionInfoSource())
+        setPositionInfoSource(QGeoPositionInfoSource::createDefaultSource(this));
 }
 
-void QGeoAreaMonitorPolling::checkStartStop()
+QGeoAreaMonitorPolling::~QGeoAreaMonitorPolling()
 {
-    if (!location) return;
+    d->deregisterClient(this);
+}
 
-    if ((isSignalConnected(areaEnteredSignal()) ||
-            isSignalConnected(areaExitedSignal())) &&
-            QGeoAreaMonitor::center().isValid() &&
-            QGeoAreaMonitor::radius() > qreal(0.0)) {
-        location->startUpdates();
-    } else {
-        location->stopUpdates();
+QGeoPositionInfoSource* QGeoAreaMonitorPolling::positionInfoSource() const
+{
+    return d->positionSource();
+}
+
+void QGeoAreaMonitorPolling::setPositionInfoSource(QGeoPositionInfoSource *source)
+{
+    d->setPositionSource(source);
+}
+
+QGeoAreaMonitorSource::Error QGeoAreaMonitorPolling::error() const
+{
+    return lastError;
+}
+
+bool QGeoAreaMonitorPolling::startMonitoring(const QGeoAreaMonitorInfo &monitor)
+{
+    if (!monitor.isValid())
+        return false;
+
+    //reject an expiry in the past
+    if (monitor.expiration().isValid() &&
+            (monitor.expiration() < QDateTime::currentDateTime()))
+        return false;
+
+    //don't accept persistent monitor since we don't support it
+    if (monitor.isPersistent())
+        return false;
+
+    //update or insert
+    d->startMonitoring(monitor);
+
+    return true;
+}
+
+int QGeoAreaMonitorPolling::idForSignal(const char *signal)
+{
+    const QByteArray sig = QMetaObject::normalizedSignature(signal + 1);
+    const QMetaObject * const mo = metaObject();
+
+    return mo->indexOfSignal(sig.constData());
+}
+
+bool QGeoAreaMonitorPolling::requestUpdate(const QGeoAreaMonitorInfo &monitor, const char *signal)
+{
+    if (!monitor.isValid())
+        return false;
+    //reject an expiry in the past
+    if (monitor.expiration().isValid() &&
+            (monitor.expiration() < QDateTime::currentDateTime()))
+        return false;
+
+    //don't accept persistent monitor since we don't support it
+    if (monitor.isPersistent())
+        return false;
+
+    if (!signal)
+        return false;
+
+    const int signalId = idForSignal(signal);
+    if (signalId < 0)
+        return false;
+
+    //only accept area entered or exit signal
+    if (signalId != areaEnteredSignal().methodIndex() &&
+        signalId != areaExitedSignal().methodIndex())
+    {
+        return false;
+    }
+
+    d->requestUpdate(monitor, signalId);
+
+    return true;
+}
+
+bool QGeoAreaMonitorPolling::stopMonitoring(const QGeoAreaMonitorInfo &monitor)
+{
+    QGeoAreaMonitorInfo info = d->stopMonitoring(monitor);
+
+    return info.isValid();
+}
+
+QList<QGeoAreaMonitorInfo> QGeoAreaMonitorPolling::activeMonitors() const
+{
+    return d->activeMonitors().values();
+}
+
+QList<QGeoAreaMonitorInfo> QGeoAreaMonitorPolling::activeMonitors(const QGeoShape &region) const
+{
+    QList<QGeoAreaMonitorInfo> results;
+    if (region.isEmpty())
+        return results;
+
+    const MonitorTable list = d->activeMonitors();
+    foreach (const QGeoAreaMonitorInfo &monitor, list) {
+        QGeoCoordinate center;
+        switch (monitor.area().type()) {
+            case QGeoShape::CircleType:
+            {
+                QGeoCircle circle(monitor.area());
+                center = circle.center();
+                break;
+            }
+            case QGeoShape::RectangleType:
+            {
+                QGeoRectangle rectangle(monitor.area());
+                center = rectangle.center();
+                break;
+            }
+            case QGeoShape::UnknownType:
+            {
+                break;
+            }
+        }
+        if (region.contains(center))
+            results.append(monitor);
+    }
+
+    return results;
+}
+
+QGeoAreaMonitorSource::AreaMonitorFeatures QGeoAreaMonitorPolling::supportedAreaMonitorFeatures() const
+{
+    return 0;
+}
+
+void QGeoAreaMonitorPolling::connectNotify(const QMetaMethod &/*signal*/)
+{
+    if (!signalsAreConnected &&
+        (isSignalConnected(areaEnteredSignal()) ||
+         isSignalConnected(areaExitedSignal())) )
+    {
+        signalsAreConnected = true;
+        d->checkStartStop();
     }
 }
 
-void QGeoAreaMonitorPolling::positionUpdated(const QGeoPositionInfo &info)
+void QGeoAreaMonitorPolling::disconnectNotify(const QMetaMethod &/*signal*/)
 {
-    double distance = info.coordinate().distanceTo(QGeoAreaMonitor::center());
-
-    if (distance <= QGeoAreaMonitor::radius()) {
-        if (!insideArea)
-            emit areaEntered(info);
-        insideArea = true;
-    } else if (insideArea) {
-        emit areaExited(info);
-        insideArea = false;
+    if (!isSignalConnected(areaEnteredSignal()) &&
+        !isSignalConnected(areaExitedSignal()))
+    {
+        signalsAreConnected = false;
+        d->checkStartStop();
     }
 }
 
+void QGeoAreaMonitorPolling::positionError(const QGeoPositionInfoSource::Error error)
+{
+    switch (error) {
+    case QGeoPositionInfoSource::AccessError:
+        lastError = QGeoAreaMonitorSource::AccessError;
+        break;
+    case QGeoPositionInfoSource::UnknownSourceError:
+        lastError = QGeoAreaMonitorSource::UnknownSourceError;
+        break;
+    case QGeoPositionInfoSource::ClosedError:
+        lastError = QGeoAreaMonitorSource::InsufficientPositionInfo;
+        break;
+    }
+
+    emit QGeoAreaMonitorSource::error(lastError);
+}
+
+void QGeoAreaMonitorPolling::timeout(const QGeoAreaMonitorInfo& monitor)
+{
+    if (isSignalConnected(monitorExpiredSignal()))
+        emit monitorExpired(monitor);
+}
+
+void QGeoAreaMonitorPolling::processAreaEvent(const QGeoAreaMonitorInfo &minfo,
+                                              const QGeoPositionInfo &pinfo, bool isEnteredEvent)
+{
+    if (isEnteredEvent)
+        emit areaEntered(minfo, pinfo);
+    else
+        emit areaExited(minfo, pinfo);
+}
+
+#include "qgeoareamonitor_polling.moc"
 #include "moc_qgeoareamonitor_polling.cpp"

@@ -56,7 +56,7 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySimulator::satelliteInfoSo
     return src;
 }
 
-QGeoAreaMonitor *QGeoPositionInfoSourceFactorySimulator::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySimulator::areaMonitor(QObject *parent)
 {
     Q_UNUSED(parent);
     return 0;

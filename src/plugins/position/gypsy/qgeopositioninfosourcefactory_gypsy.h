@@ -55,7 +55,7 @@ class QGeoPositionInfoSourceFactoryGypsy : public QObject, public QGeoPositionIn
 public:
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitor *areaMonitor(QObject *parent);
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
 };
 
 #endif

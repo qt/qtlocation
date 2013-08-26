@@ -73,9 +73,9 @@ QT_BEGIN_NAMESPACE
   */
 
 /*!
-  \fn QGeoAreaMonitor *QGeoPositionInfoSourceFactory::areaMonitor(QObject *parent);
+  \fn QGeoAreaMonitorSource *QGeoPositionInfoSourceFactory::areaMonitor(QObject *parent);
 
-  Returns a new QGeoAreaMonitor associated with this plugin with parent \a parent.
+  Returns a new QGeoAreaMonitorSource associated with this plugin with parent \a parent.
   Can also return 0, in which case the plugin loader will use the factory with the
   next highest priority.
   */

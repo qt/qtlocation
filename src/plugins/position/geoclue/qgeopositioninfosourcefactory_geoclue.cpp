@@ -73,7 +73,7 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSour
 #endif
 }
 
-QGeoAreaMonitor *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent)
 {
     Q_UNUSED(parent);
     return 0;
