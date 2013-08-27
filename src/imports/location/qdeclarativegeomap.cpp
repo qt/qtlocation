@@ -875,7 +875,8 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
     }
     QLOC_TRACE0;
     event->accept();
-    gestureArea_->touchEvent(event);
+    if (!gestureArea_->touchEvent(event))
+        event->ignore();
 }
 
 /*!
@@ -893,6 +894,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 */
 bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
 {
+    Q_UNUSED(item);
     QLOC_TRACE0;
     switch (event->type()) {
     case QEvent::MouseButtonPress:

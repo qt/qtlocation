@@ -338,6 +338,7 @@ QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap 
     : QObject(parent),
       declarativeMap_(map),
       enabled_(true),
+      usingTouch_(false),
       activeGestures_(ZoomGesture | PanGesture | FlickGesture)
 {
     map_ = 0;
@@ -348,8 +349,8 @@ QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap 
     touchPointState_ = touchPoints0;
     pinchState_ = pinchInactive;
     panState_ = panInactive;
-
 }
+
 /*!
     \internal
 */
@@ -598,27 +599,51 @@ bool QDeclarativeGeoMapGestureArea::mouseReleaseEvent(QMouseEvent *)
 /*!
     \internal
 */
-void QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
+bool QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
 {
+    usingTouch_ = true;
+
+    if (!(enabled_ && activeGestures_))
+        return false;
+
     switch (event->type()) {
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
-        touchPoints_.clear();
-        for (int i = 0; i < event->touchPoints().count(); ++i) {
-            if (!(event->touchPoints().at(i).state() & Qt::TouchPointReleased)) {
-                touchPoints_ << event->touchPoints().at(i);
+        foreach (const QTouchEvent::TouchPoint &p, event->touchPoints()) {
+            QList<QTouchEvent::TouchPoint>::iterator i;
+            for (i = touchPoints_.begin(); i != touchPoints_.end(); ++i) {
+                if (i->id() == p.id()) {
+                    i = touchPoints_.erase(i);
+                    break;
+                }
+            }
+            switch (p.state()) {
+            case Qt::TouchPointPressed:
+            case Qt::TouchPointMoved:
+            case Qt::TouchPointStationary:
+                touchPoints_.insert(i, p);
+                break;
+            case Qt::TouchPointReleased:
+                // already removed
+                break;
+            default:
+                break;
             }
         }
         update();
         break;
+
     case QEvent::TouchEnd:
         touchPoints_.clear();
         update();
         break;
+
     default:
         // no-op
         break;
     }
+
+    return true;
 }
 
 /*!
@@ -626,22 +651,31 @@ void QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
 */
 bool QDeclarativeGeoMapGestureArea::filterMapChildMouseEvent(QMouseEvent *event)
 {
-    bool used = false;
+    if (usingTouch_)
+        return false;
+
+    if (!(enabled_ && activeGestures_))
+        return false;
+
+    if (isPanActive() || isPinchActive())
+        return true;
+
+    // Don't filter the event, but use it to see if we should start
+    // a gesture.
     switch (event->type()) {
     case QEvent::MouseButtonPress:
-        used = mousePressEvent(event);
+        mousePressEvent(event);
         break;
     case QEvent::MouseButtonRelease:
-        used = mouseReleaseEvent(event);
+        mouseReleaseEvent(event);
         break;
     case QEvent::MouseMove:
-        used = mouseMoveEvent(event);
+        mouseMoveEvent(event);
         break;
     default:
-        used = false;
         break;
     }
-    return used && (isPanActive() || isPinchActive());
+    return false;
 }
 
 /*!
@@ -649,8 +683,18 @@ bool QDeclarativeGeoMapGestureArea::filterMapChildMouseEvent(QMouseEvent *event)
 */
 bool QDeclarativeGeoMapGestureArea::filterMapChildTouchEvent(QTouchEvent *event)
 {
+    usingTouch_ = true;
+
+    if (!(enabled_ && activeGestures_))
+        return false;
+
+    if (event->touchPoints().count() > 1 || isPanActive() || isPinchActive())
+        return true;
+
+    // Don't filter the event, but use it to see if we should start
+    // a gesture.
     touchEvent(event);
-    return isPanActive() || isPinchActive();
+    return false;
 }
 
 /*!
@@ -725,7 +769,7 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
             clearTouchData();
             startOneTouchPoint();
             touchPointState_ = touchPoints1;
-        } else if (touchPoints_.count() == 2) {
+        } else if (touchPoints_.count() >= 2) {
             clearTouchData();
             startTwoTouchPoints();
             touchPointState_ = touchPoints2;
@@ -734,7 +778,7 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
     case touchPoints1:
         if (touchPoints_.count() == 0) {
             touchPointState_ = touchPoints0;
-        } else if (touchPoints_.count() == 2) {
+        } else if (touchPoints_.count() >= 2) {
             touchCenterCoord_ = map_->screenPositionToCoordinate(sceneCenter_, false);
             startTwoTouchPoints();
             touchPointState_ = touchPoints2;
