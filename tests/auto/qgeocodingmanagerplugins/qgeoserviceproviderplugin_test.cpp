@@ -52,8 +52,9 @@ QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
 {
 }
 
-QGeocodingManagerEngine* QGeoServiceProviderFactoryTest::createGeocodingManagerEngine(const QMap<
-    QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+QGeoCodingManagerEngine* QGeoServiceProviderFactoryTest::createGeocodingManagerEngine(
+                const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error,
+                QString *errorString) const
 {
-    return new QGeocodingManagerEngineTest(parameters, error, errorString);
+    return new QGeoCodingManagerEngineTest(parameters, error, errorString);
 }

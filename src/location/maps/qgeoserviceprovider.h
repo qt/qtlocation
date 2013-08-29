@@ -51,11 +51,11 @@ QT_BEGIN_NAMESPACE
 
 class QLocale;
 class QStringList;
-class QGeocodingManager;
+class QGeoCodingManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
 class QPlaceManager;
-class QGeocodingManagerEngine;
+class QGeoCodingManagerEngine;
 class QGeoMappingManagerEngine;
 class QGeoRoutingManagerEngine;
 class QPlaceManagerEngine;
@@ -142,7 +142,7 @@ public:
     MappingFeatures mappingFeatures() const;
     PlacesFeatures placesFeatures() const;
 
-    QGeocodingManager *geocodingManager() const;
+    QGeoCodingManager *geocodingManager() const;
     QGeoMappingManager *mappingManager() const;
     QGeoRoutingManager *routingManager() const;
     QPlaceManager *placeManager() const;

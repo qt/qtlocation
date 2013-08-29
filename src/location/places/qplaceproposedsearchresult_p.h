@@ -46,17 +46,17 @@
 
 QT_BEGIN_NAMESPACE
 
-class QProposedSearchResultPrivate : public QPlaceSearchResultPrivate
+class QPlaceProposedSearchResultPrivate : public QPlaceSearchResultPrivate
 {
 public:
-    QProposedSearchResultPrivate();
-    QProposedSearchResultPrivate(const QProposedSearchResultPrivate &other);
+    QPlaceProposedSearchResultPrivate();
+    QPlaceProposedSearchResultPrivate(const QPlaceProposedSearchResultPrivate &other);
 
-    ~QProposedSearchResultPrivate();
+    ~QPlaceProposedSearchResultPrivate();
 
     bool compare(const QPlaceSearchResultPrivate *other) const Q_DECL_OVERRIDE;
 
-    Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(QProposedSearchResult, QPlaceSearchResult::ProposedSearchResult)
+    Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(QPlaceProposedSearchResult, QPlaceSearchResult::ProposedSearchResult)
 
     QPlaceSearchRequest searchRequest;
 };

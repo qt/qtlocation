@@ -62,7 +62,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeocodingManager;
+class QGeoCodingManager;
 class QGeoRoutingManager;
 class QGeoMappingManager;
 
@@ -92,7 +92,7 @@ public:
 
     bool experimental;
 
-    QGeocodingManager *geocodingManager;
+    QGeoCodingManager *geocodingManager;
     QGeoRoutingManager *routingManager;
     QGeoMappingManager *mappingManager;
     QPlaceManager *placeManager;

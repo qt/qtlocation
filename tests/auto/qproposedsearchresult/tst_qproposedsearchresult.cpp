@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <QtCore/QString>
-#include <QtLocation/QProposedSearchResult>
+#include <QtLocation/QPlaceProposedSearchResult>
 #include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtTest/QtTest>
@@ -49,15 +49,15 @@
 
 QT_USE_NAMESPACE
 
-class tst_QProposedSearchResult : public QObject
+class tst_QPlaceProposedSearchResult : public QObject
 {
     Q_OBJECT
 
 public:
-    QProposedSearchResult initialSubObject();
+    QPlaceProposedSearchResult initialSubObject();
     bool checkType(const QPlaceSearchResult &result);
     void detach(QPlaceSearchResult *result);
-    void setSubClassProperty(QProposedSearchResult *result);
+    void setSubClassProperty(QPlaceProposedSearchResult *result);
 
 private Q_SLOTS:
     void constructorTest();
@@ -67,9 +67,9 @@ private Q_SLOTS:
     void conversion();
 };
 
-QProposedSearchResult tst_QProposedSearchResult::initialSubObject()
+QPlaceProposedSearchResult tst_QPlaceProposedSearchResult::initialSubObject()
 {
-    QProposedSearchResult proposedSearchResult;
+    QPlaceProposedSearchResult proposedSearchResult;
     proposedSearchResult.setTitle(QStringLiteral("title"));
 
     QPlaceIcon icon;
@@ -86,26 +86,26 @@ QProposedSearchResult tst_QProposedSearchResult::initialSubObject()
     return proposedSearchResult;
 }
 
-bool tst_QProposedSearchResult::checkType(const QPlaceSearchResult &result)
+bool tst_QPlaceProposedSearchResult::checkType(const QPlaceSearchResult &result)
 {
     return result.type() == QPlaceSearchResult::ProposedSearchResult;
 }
 
-void tst_QProposedSearchResult::detach(QPlaceSearchResult *result)
+void tst_QPlaceProposedSearchResult::detach(QPlaceSearchResult *result)
 {
     result->setTitle(QStringLiteral("title"));
 }
 
-void tst_QProposedSearchResult::setSubClassProperty(QProposedSearchResult *result)
+void tst_QPlaceProposedSearchResult::setSubClassProperty(QPlaceProposedSearchResult *result)
 {
     QPlaceSearchRequest request;
     request.setSearchContext(QUrl(QStringLiteral("http://www.example.com/place-search")));
     result->setSearchRequest(request);
 }
 
-void tst_QProposedSearchResult::constructorTest()
+void tst_QPlaceProposedSearchResult::constructorTest()
 {
-    QProposedSearchResult result;
+    QPlaceProposedSearchResult result;
     QCOMPARE(result.type(), QPlaceSearchResult::ProposedSearchResult);
 
     result.setTitle(QStringLiteral("title"));
@@ -121,7 +121,7 @@ void tst_QProposedSearchResult::constructorTest()
     result.setSearchRequest(searchRequest);
 
     //check copy constructor
-    QProposedSearchResult result2(result);
+    QPlaceProposedSearchResult result2(result);
     QCOMPARE(result2.title(), QStringLiteral("title"));
     QCOMPARE(result2.icon(), icon);
     QCOMPARE(result2.searchRequest(), searchRequest);
@@ -153,9 +153,9 @@ void tst_QProposedSearchResult::constructorTest()
     QVERIFY(QLocationTestUtils::compareEquality(result, result2));
 }
 
-void tst_QProposedSearchResult::title()
+void tst_QPlaceProposedSearchResult::title()
 {
-    QProposedSearchResult result;
+    QPlaceProposedSearchResult result;
     QVERIFY(result.title().isEmpty());
 
     result.setTitle(QStringLiteral("title"));
@@ -164,7 +164,7 @@ void tst_QProposedSearchResult::title()
     result.setTitle(QString());
     QVERIFY(result.title().isEmpty());
 
-    QProposedSearchResult result2;
+    QPlaceProposedSearchResult result2;
     QVERIFY(QLocationTestUtils::compareEquality(result, result2));
 
     result2.setTitle("title");
@@ -174,9 +174,9 @@ void tst_QProposedSearchResult::title()
     QVERIFY(QLocationTestUtils::compareEquality(result, result2));
 }
 
-void tst_QProposedSearchResult::icon()
+void tst_QPlaceProposedSearchResult::icon()
 {
-    QProposedSearchResult result;
+    QPlaceProposedSearchResult result;
     QVERIFY(result.icon().isEmpty());
 
     QPlaceIcon icon;
@@ -189,7 +189,7 @@ void tst_QProposedSearchResult::icon()
     result.setIcon(QPlaceIcon());
     QVERIFY(result.icon().isEmpty());
 
-    QProposedSearchResult result2;
+    QPlaceProposedSearchResult result2;
     QVERIFY(QLocationTestUtils::compareEquality(result, result2));
 
     result2.setIcon(icon);
@@ -199,9 +199,9 @@ void tst_QProposedSearchResult::icon()
     QVERIFY(QLocationTestUtils::compareEquality(result, result2));
 }
 
-void tst_QProposedSearchResult::searchRequest()
+void tst_QPlaceProposedSearchResult::searchRequest()
 {
-    QProposedSearchResult result;
+    QPlaceProposedSearchResult result;
     QCOMPARE(result.searchRequest(), QPlaceSearchRequest());
 
     QPlaceSearchRequest placeSearchRequest;
@@ -212,7 +212,7 @@ void tst_QProposedSearchResult::searchRequest()
     result.setSearchRequest(QPlaceSearchRequest());
     QCOMPARE(result.searchRequest(), QPlaceSearchRequest());
 
-    QProposedSearchResult result2;
+    QPlaceProposedSearchResult result2;
     QVERIFY(QLocationTestUtils::compareEquality(result, result2));
 
     result2.setSearchRequest(placeSearchRequest);
@@ -222,13 +222,13 @@ void tst_QProposedSearchResult::searchRequest()
     QVERIFY(QLocationTestUtils::compareEquality(result, result2));
 }
 
-void tst_QProposedSearchResult::conversion()
+void tst_QPlaceProposedSearchResult::conversion()
 {
-    QLocationTestUtils::testConversion<tst_QProposedSearchResult,
+    QLocationTestUtils::testConversion<tst_QPlaceProposedSearchResult,
                                        QPlaceSearchResult,
-                                       QProposedSearchResult>(this);
+                                       QPlaceProposedSearchResult>(this);
 }
 
-QTEST_APPLESS_MAIN(tst_QProposedSearchResult)
+QTEST_APPLESS_MAIN(tst_QPlaceProposedSearchResult)
 
 #include "tst_qproposedsearchresult.moc"

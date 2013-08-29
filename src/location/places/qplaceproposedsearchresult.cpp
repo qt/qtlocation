@@ -39,38 +39,38 @@
 **
 ****************************************************************************/
 
-#include "qproposedsearchresult.h"
-#include "qproposedsearchresult_p.h"
+#include "qplaceproposedsearchresult.h"
+#include "qplaceproposedsearchresult_p.h"
 
 QT_BEGIN_NAMESPACE
 
-QProposedSearchResultPrivate::QProposedSearchResultPrivate()
+QPlaceProposedSearchResultPrivate::QPlaceProposedSearchResultPrivate()
 {
 }
 
-QProposedSearchResultPrivate::QProposedSearchResultPrivate(const QProposedSearchResultPrivate &other)
+QPlaceProposedSearchResultPrivate::QPlaceProposedSearchResultPrivate(const QPlaceProposedSearchResultPrivate &other)
 :   QPlaceSearchResultPrivate(other), searchRequest(other.searchRequest)
 {
 }
 
-QProposedSearchResultPrivate::~QProposedSearchResultPrivate()
+QPlaceProposedSearchResultPrivate::~QPlaceProposedSearchResultPrivate()
 {
 }
 
-bool QProposedSearchResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
+bool QPlaceProposedSearchResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
 {
-    const QProposedSearchResultPrivate *od = static_cast<const QProposedSearchResultPrivate *>(other);
+    const QPlaceProposedSearchResultPrivate *od = static_cast<const QPlaceProposedSearchResultPrivate *>(other);
     return QPlaceSearchResultPrivate::compare(other) && searchRequest == od->searchRequest;
 }
 
 /*!
-    \class QProposedSearchResult
+    \class QPlaceProposedSearchResult
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
     \since Qt Location 5.2
 
-    \brief The QProposedSearchResult class represents a search result containing a proposed search.
+    \brief The QPlaceProposedSearchResult class represents a search result containing a proposed search.
 
     \sa QPlaceSearchResult
 */
@@ -78,43 +78,43 @@ bool QProposedSearchResultPrivate::compare(const QPlaceSearchResultPrivate *othe
 /*!
     Constructs a new proposed search result.
 */
-QProposedSearchResult::QProposedSearchResult()
-:   QPlaceSearchResult(new QProposedSearchResultPrivate)
+QPlaceProposedSearchResult::QPlaceProposedSearchResult()
+:   QPlaceSearchResult(new QPlaceProposedSearchResultPrivate)
 {
 }
 
 /*!
-    \fn QProposedSearchResult::QProposedSearchResult(const QPlaceSearchRequest &other)
+    \fn QPlaceProposedSearchResult::QPlaceProposedSearchResult(const QPlaceSearchRequest &other)
 
     Contructs a copy of \a other if possible, otherwise constructs a default proposed search
     result.
 */
-Q_IMPLEMENT_SEARCHRESULT_COPY_CTOR(QProposedSearchResult)
+Q_IMPLEMENT_SEARCHRESULT_COPY_CTOR(QPlaceProposedSearchResult)
 
-Q_IMPLEMENT_SEARCHRESULT_D_FUNC(QProposedSearchResult)
+Q_IMPLEMENT_SEARCHRESULT_D_FUNC(QPlaceProposedSearchResult)
 
 /*!
     Destroys the proposed search result.
 */
-QProposedSearchResult::~QProposedSearchResult()
+QPlaceProposedSearchResult::~QPlaceProposedSearchResult()
 {
 }
 
 /*!
     Returns a place search request that can be used to perform an additional proposed search.
 */
-QPlaceSearchRequest QProposedSearchResult::searchRequest() const
+QPlaceSearchRequest QPlaceProposedSearchResult::searchRequest() const
 {
-    Q_D(const QProposedSearchResult);
+    Q_D(const QPlaceProposedSearchResult);
     return d->searchRequest;
 }
 
 /*!
     Sets the proposed search request to \a request.
 */
-void QProposedSearchResult::setSearchRequest(const QPlaceSearchRequest &request)
+void QPlaceProposedSearchResult::setSearchRequest(const QPlaceSearchRequest &request)
 {
-    Q_D(QProposedSearchResult);
+    Q_D(QPlaceProposedSearchResult);
     d->searchRequest = request;
 }
 

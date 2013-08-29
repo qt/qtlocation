@@ -51,8 +51,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeocodeReplyOsm::QGeocodeReplyOsm(QNetworkReply *reply, QObject *parent)
-:   QGeocodeReply(parent), m_reply(reply)
+QGeoCodeReplyOsm::QGeoCodeReplyOsm(QNetworkReply *reply, QObject *parent)
+:   QGeoCodeReply(parent), m_reply(reply)
 {
     connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
     connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
@@ -62,13 +62,13 @@ QGeocodeReplyOsm::QGeocodeReplyOsm(QNetworkReply *reply, QObject *parent)
     setOffset(0);
 }
 
-QGeocodeReplyOsm::~QGeocodeReplyOsm()
+QGeoCodeReplyOsm::~QGeoCodeReplyOsm()
 {
     if (m_reply)
         m_reply->deleteLater();
 }
 
-void QGeocodeReplyOsm::abort()
+void QGeoCodeReplyOsm::abort()
 {
     if (!m_reply)
         return;
@@ -79,7 +79,7 @@ void QGeocodeReplyOsm::abort()
     m_reply = 0;
 }
 
-void QGeocodeReplyOsm::networkReplyFinished()
+void QGeoCodeReplyOsm::networkReplyFinished()
 {
     if (!m_reply)
         return;
@@ -173,14 +173,14 @@ void QGeocodeReplyOsm::networkReplyFinished()
     m_reply = 0;
 }
 
-void QGeocodeReplyOsm::networkReplyError(QNetworkReply::NetworkError error)
+void QGeoCodeReplyOsm::networkReplyError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
 
     if (!m_reply)
         return;
 
-    setError(QGeocodeReply::CommunicationError, m_reply->errorString());
+    setError(QGeoCodeReply::CommunicationError, m_reply->errorString());
 
     m_reply->deleteLater();
     m_reply = 0;

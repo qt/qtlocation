@@ -55,7 +55,7 @@ class QGeoServiceProviderFactoryOsm: public QObject, public QGeoServiceProviderF
                       FILE "osm_plugin.json")
 
 public:
-    QGeocodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
+    QGeoCodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
                                                           QGeoServiceProvider::Error *error,
                                                           QString *errorString) const;
     QGeoMappingManagerEngine *createMappingManagerEngine(const QVariantMap &parameters,

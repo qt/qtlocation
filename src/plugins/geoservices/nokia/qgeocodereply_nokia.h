@@ -54,12 +54,12 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeocodeReplyNokia : public QGeocodeReply
+class QGeoCodeReplyNokia : public QGeoCodeReply
 {
     Q_OBJECT
 public:
-    QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset, const QGeoShape &viewport, QObject *parent = 0);
-    ~QGeocodeReplyNokia();
+    QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offset, const QGeoShape &viewport, QObject *parent = 0);
+    ~QGeoCodeReplyNokia();
 
     void abort();
 

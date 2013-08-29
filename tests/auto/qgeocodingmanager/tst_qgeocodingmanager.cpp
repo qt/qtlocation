@@ -46,39 +46,39 @@
 QT_USE_NAMESPACE
 
 
-void tst_QGeocodingManager::initTestCase()
+void tst_QGeoCodingManager::initTestCase()
 {
     /*
      * Set custom path since CI doesn't install test plugins
      */
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
                                      + QStringLiteral("/../../../plugins"));
-    tst_QGeocodingManager::loadGeocodingManager();
+    tst_QGeoCodingManager::loadGeocodingManager();
 }
 
-void tst_QGeocodingManager::cleanupTestCase()
+void tst_QGeoCodingManager::cleanupTestCase()
 {
     delete qgeoserviceprovider;
 }
 
-void tst_QGeocodingManager::init()
+void tst_QGeoCodingManager::init()
 {
-    qRegisterMetaType<QGeocodeReply::Error>("Error");
-    qRegisterMetaType<QGeocodeReply*>();
+    qRegisterMetaType<QGeoCodeReply::Error>("Error");
+    qRegisterMetaType<QGeoCodeReply*>();
 
-    signalerror = new QSignalSpy(qgeocodingmanager, SIGNAL(error(QGeocodeReply*,QGeocodeReply::Error,QString)));
-    signalfinished = new QSignalSpy(qgeocodingmanager, SIGNAL(finished(QGeocodeReply*)));
+    signalerror = new QSignalSpy(qgeocodingmanager, SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
+    signalfinished = new QSignalSpy(qgeocodingmanager, SIGNAL(finished(QGeoCodeReply*)));
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
 }
 
-void tst_QGeocodingManager::cleanup()
+void tst_QGeoCodingManager::cleanup()
 {
     delete signalerror;
     delete signalfinished;
 }
 
-void tst_QGeocodingManager::loadGeocodingManager()
+void tst_QGeoCodingManager::loadGeocodingManager()
 {
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     QVERIFY(providers.contains("geocode.test.plugin"));
@@ -97,7 +97,7 @@ void tst_QGeocodingManager::loadGeocodingManager()
     QVERIFY(qgeocodingmanager);
 }
 
-void tst_QGeocodingManager::locale()
+void tst_QGeoCodingManager::locale()
 {
     QLocale *german = new QLocale (QLocale::German, QLocale::Germany);
     QLocale *english = new QLocale (QLocale::C, QLocale::AnyCountry);
@@ -115,20 +115,20 @@ void tst_QGeocodingManager::locale()
     delete english;
 }
 
-void tst_QGeocodingManager::name()
+void tst_QGeoCodingManager::name()
 {
     QString name = "geocode.test.plugin";
     QCOMPARE(qgeocodingmanager->managerName(),name);
 }
 
-void tst_QGeocodingManager::version()
+void tst_QGeoCodingManager::version()
 {
     int version=100;
     QCOMPARE(qgeocodingmanager->managerVersion(),version);
 
 }
 
-void tst_QGeocodingManager::search()
+void tst_QGeoCodingManager::search()
 {
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
@@ -137,7 +137,7 @@ void tst_QGeocodingManager::search()
     int limit = 10;
     int offset = 2;
 
-    QGeocodeReply * reply = qgeocodingmanager->geocode(search, limit,offset);
+    QGeoCodeReply * reply = qgeocodingmanager->geocode(search, limit,offset);
 
     QCOMPARE(reply->errorString(),search);
     QCOMPARE(signalfinished->count(),1);
@@ -146,7 +146,7 @@ void tst_QGeocodingManager::search()
     delete reply;
 }
 
-void tst_QGeocodingManager::geocode()
+void tst_QGeoCodingManager::geocode()
 {
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
@@ -155,7 +155,7 @@ void tst_QGeocodingManager::geocode()
     QString city = "Berlin";
     address->setCity(city);
 
-    QGeocodeReply *reply = qgeocodingmanager->geocode(*address);
+    QGeoCodeReply *reply = qgeocodingmanager->geocode(*address);
 
     QCOMPARE(reply->errorString(),city);
     QCOMPARE(signalfinished->count(),1);
@@ -165,18 +165,18 @@ void tst_QGeocodingManager::geocode()
     delete reply;
 }
 
-void tst_QGeocodingManager::reverseGeocode()
+void tst_QGeoCodingManager::reverseGeocode()
 {
-    QCOMPARE(signalerror->count(),0);
-    QCOMPARE(signalfinished->count(),0);
+    QCOMPARE(signalerror->count(), 0);
+    QCOMPARE(signalfinished->count(), 0);
 
-    QGeoCoordinate *coordinate = new QGeoCoordinate (34.34 , 56.65);
+    QGeoCoordinate *coordinate = new QGeoCoordinate(34.34, 56.65);
 
-    QGeocodeReply *reply = qgeocodingmanager->reverseGeocode(*coordinate);
+    QGeoCodeReply *reply = qgeocodingmanager->reverseGeocode(*coordinate);
 
-    QCOMPARE(reply->errorString(),coordinate->toString());
-    QCOMPARE(signalfinished->count(),1);
-    QCOMPARE(signalerror->count(),0);
+    QCOMPARE(reply->errorString(), coordinate->toString());
+    QCOMPARE(signalfinished->count(), 1);
+    QCOMPARE(signalerror->count(), 0);
 
     delete coordinate;
     delete reply;
@@ -185,5 +185,5 @@ void tst_QGeocodingManager::reverseGeocode()
 }
 
 
-QTEST_GUILESS_MAIN(tst_QGeocodingManager)
+QTEST_GUILESS_MAIN(tst_QGeoCodingManager)
 

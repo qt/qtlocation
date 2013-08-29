@@ -61,33 +61,33 @@ QT_BEGIN_NAMESPACE
 class QGeoNetworkAccessManager;
 class QGeoUriProvider;
 
-class QGeocodingManagerEngineNokia : public QGeocodingManagerEngine
+class QGeoCodingManagerEngineNokia : public QGeoCodingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeocodingManagerEngineNokia(QGeoNetworkAccessManager *networkManager,
+    QGeoCodingManagerEngineNokia(QGeoNetworkAccessManager *networkManager,
                                  const QMap<QString, QVariant> &parameters,
                                  QGeoServiceProvider::Error *error,
                                  QString *errorString);
-    ~QGeocodingManagerEngineNokia();
+    ~QGeoCodingManagerEngineNokia();
 
-    QGeocodeReply *geocode(const QGeoAddress &address,
+    QGeoCodeReply *geocode(const QGeoAddress &address,
                              const QGeoShape &bounds);
-    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
+    QGeoCodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
                                     const QGeoShape &bounds);
 
-    QGeocodeReply *geocode(const QString &searchString,
+    QGeoCodeReply *geocode(const QString &searchString,
                             int limit,
                             int offset,
                             const QGeoShape &bounds);
 
 private Q_SLOTS:
     void placesFinished();
-    void placesError(QGeocodeReply::Error error, const QString &errorString);
+    void placesError(QGeoCodeReply::Error error, const QString &errorString);
 
 private:
     static QString trimDouble(double degree, int decimalDigits = 10);
-    QGeocodeReply *geocode(QString requestString, const QGeoShape &bounds, int limit = -1, int offset = 0);
+    QGeoCodeReply *geocode(QString requestString, const QGeoShape &bounds, int limit = -1, int offset = 0);
     QString languageToMarc(QLocale::Language language);
     QString getAuthenticationString() const;
 

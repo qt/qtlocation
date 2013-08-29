@@ -48,10 +48,10 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeocodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
+QGeoCodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
     const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
-    return new QGeocodingManagerEngineOsm(parameters, error, errorString);
+    return new QGeoCodingManagerEngineOsm(parameters, error, errorString);
 }
 
 QGeoMappingManagerEngine *QGeoServiceProviderFactoryOsm::createMappingManagerEngine(

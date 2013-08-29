@@ -58,7 +58,7 @@
 
 QT_USE_NAMESPACE
 
-class tst_QGeocodingManager: public QObject
+class tst_QGeoCodingManager: public QObject
 {
     Q_OBJECT
 
@@ -76,14 +76,14 @@ private Q_SLOTS:
 
 private:
     QGeoServiceProvider *qgeoserviceprovider;
-    QGeocodingManager *qgeocodingmanager;
+    QGeoCodingManager *qgeocodingmanager;
     QSignalSpy *signalerror;
     QSignalSpy *signalfinished;
     void loadGeocodingManager();
 
 };
-Q_DECLARE_METATYPE( QGeocodeReply*);
-Q_DECLARE_METATYPE( QGeocodeReply::Error);
+Q_DECLARE_METATYPE(QGeoCodeReply*);
+Q_DECLARE_METATYPE(QGeoCodeReply::Error);
 
 #endif
 

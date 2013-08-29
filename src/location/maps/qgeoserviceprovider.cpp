@@ -312,7 +312,7 @@ Engine *createEngine(QGeoServiceProviderPrivate *d_ptr)
 {
     return 0;
 }
-template <> QGeocodingManagerEngine *createEngine<QGeocodingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
+template <> QGeoCodingManagerEngine *createEngine<QGeoCodingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
     return d_ptr->factory->createGeocodingManagerEngine(d_ptr->parameterMap, &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString));
 }
@@ -382,29 +382,29 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
 }
 
 /*!
-    Returns the QGeocodingManager made available by the service
+    Returns the QGeoCodingManager made available by the service
     provider.
 
     This function will return 0 if the service provider does not provide
     any geocoding services.
 
-    This function will attempt to construct a QGeocodingManager instance
+    This function will attempt to construct a QGeoCodingManager instance
     when it is called for the first time.  If the attempt is successful the
-    QGeocodingManager will be cached, otherwise each call of this function
-    will attempt to construct a QGeocodingManager instance until the
+    QGeoCodingManager will be cached, otherwise each call of this function
+    will attempt to construct a QGeoCodingManager instance until the
     construction is successful.
 
-    The QGeocodingManager is owned by this QGeoServiceProvider and should not
+    The QGeoCodingManager is owned by this QGeoServiceProvider and should not
     be deleted separately. Users should assume that deleting the
     QGeoServiceProvider renders the pointer returned by this method invalid.
 
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
-    QGeocodingManager.
+    QGeoCodingManager.
 */
-QGeocodingManager *QGeoServiceProvider::geocodingManager() const
+QGeoCodingManager *QGeoServiceProvider::geocodingManager() const
 {
-    return d_ptr->manager<QGeocodingManager, QGeocodingManagerEngine>(
+    return d_ptr->manager<QGeoCodingManager, QGeoCodingManagerEngine>(
                &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString),
                &(d_ptr->geocodingManager));
 }

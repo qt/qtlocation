@@ -61,12 +61,12 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(
+QGeoCodingManagerEngineNokia::QGeoCodingManagerEngineNokia(
         QGeoNetworkAccessManager *networkManager,
         const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)
-        : QGeocodingManagerEngine(parameters)
+        : QGeoCodingManagerEngine(parameters)
         , m_networkManager(networkManager)
         , m_uriProvider(new QGeoUriProvider(this, parameters, "geocoding.host", GEOCODING_HOST, GEOCODING_HOST_CN))
 {
@@ -88,9 +88,9 @@ QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(
         *errorString = "";
 }
 
-QGeocodingManagerEngineNokia::~QGeocodingManagerEngineNokia() {}
+QGeoCodingManagerEngineNokia::~QGeoCodingManagerEngineNokia() {}
 
-QString QGeocodingManagerEngineNokia::getAuthenticationString() const
+QString QGeoCodingManagerEngineNokia::getAuthenticationString() const
 {
     QString authenticationString;
 
@@ -106,8 +106,8 @@ QString QGeocodingManagerEngineNokia::getAuthenticationString() const
 }
 
 
-QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
-        const QGeoShape &bounds)
+QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(const QGeoAddress &address,
+                                                     const QGeoShape &bounds)
 {
     QString requestString = "http://";
     requestString += m_uriProvider->getCurrentHost();
@@ -175,8 +175,8 @@ QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
     return geocode(requestString, bounds);
 }
 
-QGeocodeReply *QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
-        const QGeoShape &bounds)
+QGeoCodeReply *QGeoCodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
+                                                            const QGeoShape &bounds)
 {
     QString requestString = "http://";
     requestString += m_uriProvider->getCurrentHost();
@@ -195,10 +195,10 @@ QGeocodeReply *QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate
     return geocode(requestString, bounds);
 }
 
-QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QString &address,
-        int limit,
-        int offset,
-        const QGeoShape &bounds)
+QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(const QString &address,
+                                                     int limit,
+                                                     int offset,
+                                                     const QGeoShape &bounds)
 {
     QString requestString = "http://";
     requestString += m_uriProvider->getCurrentHost();
@@ -225,13 +225,13 @@ QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QString &address,
     return geocode(requestString, bounds, limit, offset);
 }
 
-QGeocodeReply *QGeocodingManagerEngineNokia::geocode(QString requestString,
-        const QGeoShape &bounds,
-        int limit,
-        int offset)
+QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(QString requestString,
+                                                     const QGeoShape &bounds,
+                                                     int limit,
+                                                     int offset)
 {
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
-    QGeocodeReplyNokia *reply = new QGeocodeReplyNokia(networkReply, limit, offset, bounds, this);
+    QGeoCodeReplyNokia *reply = new QGeoCodeReplyNokia(networkReply, limit, offset, bounds, this);
 
     connect(reply,
             SIGNAL(finished()),
@@ -239,14 +239,14 @@ QGeocodeReply *QGeocodingManagerEngineNokia::geocode(QString requestString,
             SLOT(placesFinished()));
 
     connect(reply,
-            SIGNAL(error(QGeocodeReply::Error, QString)),
+            SIGNAL(error(QGeoCodeReply::Error, QString)),
             this,
-            SLOT(placesError(QGeocodeReply::Error, QString)));
+            SLOT(placesError(QGeoCodeReply::Error, QString)));
 
     return reply;
 }
 
-QString QGeocodingManagerEngineNokia::trimDouble(double degree, int decimalDigits)
+QString QGeoCodingManagerEngineNokia::trimDouble(double degree, int decimalDigits)
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 
@@ -258,14 +258,14 @@ QString QGeocodingManagerEngineNokia::trimDouble(double degree, int decimalDigit
         return QString::number(degree, 'g', decimalDigits + index);
 }
 
-void QGeocodingManagerEngineNokia::placesFinished()
+void QGeoCodingManagerEngineNokia::placesFinished()
 {
-    QGeocodeReply *reply = qobject_cast<QGeocodeReply *>(sender());
+    QGeoCodeReply *reply = qobject_cast<QGeoCodeReply *>(sender());
 
     if (!reply)
         return;
 
-    if (receivers(SIGNAL(finished(QGeocodeReply*))) == 0) {
+    if (receivers(SIGNAL(finished(QGeoCodeReply*))) == 0) {
         reply->deleteLater();
         return;
     }
@@ -273,14 +273,14 @@ void QGeocodingManagerEngineNokia::placesFinished()
     emit finished(reply);
 }
 
-void QGeocodingManagerEngineNokia::placesError(QGeocodeReply::Error error, const QString &errorString)
+void QGeoCodingManagerEngineNokia::placesError(QGeoCodeReply::Error error, const QString &errorString)
 {
-    QGeocodeReply *reply = qobject_cast<QGeocodeReply *>(sender());
+    QGeoCodeReply *reply = qobject_cast<QGeoCodeReply *>(sender());
 
     if (!reply)
         return;
 
-    if (receivers(SIGNAL(error(QGeocodeReply *, QGeocodeReply::Error, QString))) == 0) {
+    if (receivers(SIGNAL(error(QGeoCodeReply *, QGeoCodeReply::Error, QString))) == 0) {
         reply->deleteLater();
         return;
     }
@@ -288,7 +288,7 @@ void QGeocodingManagerEngineNokia::placesError(QGeocodeReply::Error error, const
     emit this->error(reply, error, errorString);
 }
 
-QString QGeocodingManagerEngineNokia::languageToMarc(QLocale::Language language)
+QString QGeoCodingManagerEngineNokia::languageToMarc(QLocale::Language language)
 {
     uint offset = 3 * (uint(language));
     if (language == QLocale::C || offset + 3 > sizeof(marc_language_code_list))

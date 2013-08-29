@@ -11,8 +11,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeocircle.h \
            locationvaluetypeprovider.h \
            locationsingleton.h \
-           error_messages.h \
-           locationvaluetypehelper_p.h
+           error_messages.h
 
 SOURCES += qdeclarativeposition.cpp \
            positioning.cpp \

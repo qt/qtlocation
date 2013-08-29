@@ -63,14 +63,14 @@ QT_BEGIN_NAMESPACE
 
 class QGeoLocation;
 
-class QGeocodeReplyPrivate
+class QGeoCodeReplyPrivate
 {
 public:
-    QGeocodeReplyPrivate();
-    QGeocodeReplyPrivate(QGeocodeReply::Error error, const QString &errorString);
-    ~QGeocodeReplyPrivate();
+    QGeoCodeReplyPrivate();
+    QGeoCodeReplyPrivate(QGeoCodeReply::Error error, const QString &errorString);
+    ~QGeoCodeReplyPrivate();
 
-    QGeocodeReply::Error error;
+    QGeoCodeReply::Error error;
     QString errorString;
     bool isFinished;
 
@@ -80,7 +80,7 @@ public:
     int limit;
     int offset;
 private:
-    Q_DISABLE_COPY(QGeocodeReplyPrivate)
+    Q_DISABLE_COPY(QGeoCodeReplyPrivate)
 };
 
 QT_END_NAMESPACE

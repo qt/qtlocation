@@ -44,30 +44,30 @@
 
 #include <QtCore/QObject>
 #include <QtLocation/qlocationglobal.h>
-#include <QtLocation/QGeocodeReply>
+#include <QtLocation/QGeoCodeReply>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoAddress;
 class QGeoShape;
-class QGeocodingManagerEnginePrivate;
+class QGeoCodingManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT QGeocodingManagerEngine : public QObject
+class Q_LOCATION_EXPORT QGeoCodingManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    QGeocodingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
-    virtual ~QGeocodingManagerEngine();
+    QGeoCodingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
+    virtual ~QGeoCodingManagerEngine();
 
     QString managerName() const;
     int managerVersion() const;
 
-    virtual QGeocodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds);
-    virtual QGeocodeReply *geocode(const QString &address,
+    virtual QGeoCodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds);
+    virtual QGeoCodeReply *geocode(const QString &address,
                                    int limit,
                                    int offset,
                                    const QGeoShape &bounds);
-    virtual QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
+    virtual QGeoCodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
                                           const QGeoShape &bounds);
 
 
@@ -75,15 +75,15 @@ public:
     QLocale locale() const;
 
 Q_SIGNALS:
-    void finished(QGeocodeReply *reply);
-    void error(QGeocodeReply *reply, QGeocodeReply::Error error, QString errorString = QString());
+    void finished(QGeoCodeReply *reply);
+    void error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString errorString = QString());
 
 private:
     void setManagerName(const QString &managerName);
     void setManagerVersion(int managerVersion);
 
-    QGeocodingManagerEnginePrivate *d_ptr;
-    Q_DISABLE_COPY(QGeocodingManagerEngine)
+    QGeoCodingManagerEnginePrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoCodingManagerEngine)
 
     friend class QGeoServiceProvider;
     friend class QGeoServiceProviderPrivate;

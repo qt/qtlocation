@@ -64,15 +64,15 @@ class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProvid
                       FILE "nokia_plugin.json")
 
 public:
-    QGeocodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
+    QGeoCodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
+                                                          QGeoServiceProvider::Error *error,
+                                                          QString *errorString) const;
     QGeoMappingManagerEngine *createMappingManagerEngine(const QVariantMap &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const;
     QGeoRoutingManagerEngine *createRoutingManagerEngine(const QVariantMap &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const;
     QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
                                                   QGeoServiceProvider::Error *error,
                                                   QString *errorString) const;

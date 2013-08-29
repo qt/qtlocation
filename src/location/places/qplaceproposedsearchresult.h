@@ -46,29 +46,29 @@
 
 QT_BEGIN_NAMESPACE
 
-class QProposedSearchResultPrivate;
+class QPlaceProposedSearchResultPrivate;
 
-class Q_LOCATION_EXPORT QProposedSearchResult : public QPlaceSearchResult
+class Q_LOCATION_EXPORT QPlaceProposedSearchResult : public QPlaceSearchResult
 {
 public:
-    QProposedSearchResult();
+    QPlaceProposedSearchResult();
 
 #ifdef Q_QDOC
-    QProposedSearchResult(const QPlaceSearchRequest &other);
+    QPlaceProposedSearchResult(const QPlaceSearchRequest &other);
 #else
-    Q_DECLARE_SEARCHRESULT_COPY_CTOR(QProposedSearchResult)
+    Q_DECLARE_SEARCHRESULT_COPY_CTOR(QPlaceProposedSearchResult)
 #endif
 
-    ~QProposedSearchResult();
+    ~QPlaceProposedSearchResult();
 
     QPlaceSearchRequest searchRequest() const;
     void setSearchRequest(const QPlaceSearchRequest &request);
 
 private:
-    Q_DECLARE_SEARCHRESULT_D_FUNC(QProposedSearchResult)
+    Q_DECLARE_SEARCHRESULT_D_FUNC(QPlaceProposedSearchResult)
 };
 
-Q_DECLARE_TYPEINFO(QProposedSearchResult, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QPlaceProposedSearchResult, Q_MOVABLE_TYPE);
 
 QT_END_NAMESPACE
 

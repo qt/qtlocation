@@ -57,11 +57,11 @@
 #include <QtPositioning/QGeoRectangle>
 
 QT_USE_NAMESPACE
-class SubGeocodeReply : public QGeocodeReply
+class SubGeocodeReply : public QGeoCodeReply
 {
     Q_OBJECT
 public:
-    SubGeocodeReply():QGeocodeReply() {}
+    SubGeocodeReply() : QGeoCodeReply() {}
 
     void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
@@ -73,7 +73,7 @@ public:
 
 };
 
-class tst_QGeocodeReply :public QObject
+class tst_QGeoCodeReply :public QObject
 {
     Q_OBJECT
 
@@ -111,8 +111,8 @@ private:
     QGeoRectangle *qgeoboundingbox;
 };
 
-Q_DECLARE_METATYPE( QList<double>);
-Q_DECLARE_METATYPE( QGeocodeReply::Error);
+Q_DECLARE_METATYPE(QList<double>);
+Q_DECLARE_METATYPE(QGeoCodeReply::Error);
 
 #endif // TST_QGEOCODEREPLY_H
 

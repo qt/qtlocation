@@ -43,31 +43,31 @@
 #define QGEOCODINGMANAGERENGINEOSM_H
 
 #include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/QGeocodingManagerEngine>
-#include <QtLocation/QGeocodeReply>
+#include <QtLocation/QGeoCodingManagerEngine>
+#include <QtLocation/QGeoCodeReply>
 
 QT_BEGIN_NAMESPACE
 
 class QNetworkAccessManager;
 
-class QGeocodingManagerEngineOsm : public QGeocodingManagerEngine
+class QGeoCodingManagerEngineOsm : public QGeoCodingManagerEngine
 {
     Q_OBJECT
 
 public:
-    QGeocodingManagerEngineOsm(const QVariantMap &parameters, QGeoServiceProvider::Error *error,
+    QGeoCodingManagerEngineOsm(const QVariantMap &parameters, QGeoServiceProvider::Error *error,
                                QString *errorString);
-    ~QGeocodingManagerEngineOsm();
+    ~QGeoCodingManagerEngineOsm();
 
-    QGeocodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds) Q_DECL_OVERRIDE;
-    QGeocodeReply *geocode(const QString &address, int limit, int offset,
+    QGeoCodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds) Q_DECL_OVERRIDE;
+    QGeoCodeReply *geocode(const QString &address, int limit, int offset,
                            const QGeoShape &bounds) Q_DECL_OVERRIDE;
-    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
+    QGeoCodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
                                   const QGeoShape &bounds) Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
     void replyFinished();
-    void replyError(QGeocodeReply::Error errorCode, const QString &errorString);
+    void replyError(QGeoCodeReply::Error errorCode, const QString &errorString);
 
 private:
     QNetworkAccessManager *m_networkManager;

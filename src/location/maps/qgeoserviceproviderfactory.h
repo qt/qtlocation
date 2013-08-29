@@ -55,7 +55,7 @@ class Q_LOCATION_EXPORT QGeoServiceProviderFactory
 public:
     virtual ~QGeoServiceProviderFactory() {}
 
-    virtual QGeocodingManagerEngine *createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
+    virtual QGeoCodingManagerEngine *createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
     virtual QGeoMappingManagerEngine *createMappingManagerEngine(const QMap<QString, QVariant> &parameters,

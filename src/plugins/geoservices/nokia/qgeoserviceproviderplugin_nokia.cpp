@@ -113,12 +113,12 @@ namespace
     }
 }
 
-QGeocodingManagerEngine *QGeoServiceProviderFactoryNokia::createGeocodingManagerEngine(
+QGeoCodingManagerEngine *QGeoServiceProviderFactoryNokia::createGeocodingManagerEngine(
         const QVariantMap &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    return CreateInstanceOf<QGeocodingManagerEngineNokia>(parameters, error, errorString);
+    return CreateInstanceOf<QGeoCodingManagerEngineNokia>(parameters, error, errorString);
 }
 
 QGeoMappingManagerEngine *QGeoServiceProviderFactoryNokia::createMappingManagerEngine(

@@ -72,10 +72,10 @@ static QString boundingBoxToLtrb(const QGeoRectangle &rect)
            QString::number(rect.bottomRight().latitude());
 }
 
-QGeocodingManagerEngineOsm::QGeocodingManagerEngineOsm(const QVariantMap &parameters,
+QGeoCodingManagerEngineOsm::QGeoCodingManagerEngineOsm(const QVariantMap &parameters,
                                                        QGeoServiceProvider::Error *error,
                                                        QString *errorString)
-:   QGeocodingManagerEngine(parameters), m_networkManager(new QNetworkAccessManager(this))
+:   QGeoCodingManagerEngine(parameters), m_networkManager(new QNetworkAccessManager(this))
 {
     if (parameters.contains(QStringLiteral("useragent")))
         m_userAgent = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
@@ -86,16 +86,16 @@ QGeocodingManagerEngineOsm::QGeocodingManagerEngineOsm(const QVariantMap &parame
     errorString->clear();
 }
 
-QGeocodingManagerEngineOsm::~QGeocodingManagerEngineOsm()
+QGeoCodingManagerEngineOsm::~QGeoCodingManagerEngineOsm()
 {
 }
 
-QGeocodeReply *QGeocodingManagerEngineOsm::geocode(const QGeoAddress &address, const QGeoShape &bounds)
+QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QGeoAddress &address, const QGeoShape &bounds)
 {
     return geocode(addressToQuery(address), -1, -1, bounds);
 }
 
-QGeocodeReply *QGeocodingManagerEngineOsm::geocode(const QString &address, int limit, int offset, const QGeoShape &bounds)
+QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int limit, int offset, const QGeoShape &bounds)
 {
     Q_UNUSED(offset)
 
@@ -122,16 +122,16 @@ QGeocodeReply *QGeocodingManagerEngineOsm::geocode(const QString &address, int l
 
     QNetworkReply *reply = m_networkManager->get(request);
 
-    QGeocodeReplyOsm *geocodeReply = new QGeocodeReplyOsm(reply, this);
+    QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, this);
 
     connect(geocodeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(geocodeReply, SIGNAL(error(QGeocodeReply::Error,QString)),
-            this, SLOT(replyError(QGeocodeReply::Error,QString)));
+    connect(geocodeReply, SIGNAL(error(QGeoCodeReply::Error,QString)),
+            this, SLOT(replyError(QGeoCodeReply::Error,QString)));
 
     return geocodeReply;
 }
 
-QGeocodeReply *QGeocodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &coordinate,
+QGeoCodeReply *QGeoCodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &coordinate,
                                                           const QGeoShape &bounds)
 {
     Q_UNUSED(bounds)
@@ -153,25 +153,25 @@ QGeocodeReply *QGeocodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &
 
     QNetworkReply *reply = m_networkManager->get(request);
 
-    QGeocodeReplyOsm *geocodeReply = new QGeocodeReplyOsm(reply, this);
+    QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, this);
 
     connect(geocodeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(geocodeReply, SIGNAL(error(QGeocodeReply::Error,QString)),
-            this, SLOT(replyError(QGeocodeReply::Error,QString)));
+    connect(geocodeReply, SIGNAL(error(QGeoCodeReply::Error,QString)),
+            this, SLOT(replyError(QGeoCodeReply::Error,QString)));
 
     return geocodeReply;
 }
 
-void QGeocodingManagerEngineOsm::replyFinished()
+void QGeoCodingManagerEngineOsm::replyFinished()
 {
-    QGeocodeReply *reply = qobject_cast<QGeocodeReply *>(sender());
+    QGeoCodeReply *reply = qobject_cast<QGeoCodeReply *>(sender());
     if (reply)
         emit finished(reply);
 }
 
-void QGeocodingManagerEngineOsm::replyError(QGeocodeReply::Error errorCode, const QString &errorString)
+void QGeoCodingManagerEngineOsm::replyError(QGeoCodeReply::Error errorCode, const QString &errorString)
 {
-    QGeocodeReply *reply = qobject_cast<QGeocodeReply *>(sender());
+    QGeoCodeReply *reply = qobject_cast<QGeoCodeReply *>(sender());
     if (reply)
         emit error(reply, errorCode, errorString);
 }

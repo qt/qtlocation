@@ -43,17 +43,17 @@
 #define QGEOCODEREPLYOSM_H
 
 #include <QtNetwork/QNetworkReply>
-#include <QtLocation/QGeocodeReply>
+#include <QtLocation/QGeoCodeReply>
 
 QT_BEGIN_NAMESPACE
 
-class QGeocodeReplyOsm : public QGeocodeReply
+class QGeoCodeReplyOsm : public QGeoCodeReply
 {
     Q_OBJECT
 
 public:
-    explicit QGeocodeReplyOsm(QNetworkReply *reply, QObject *parent = 0);
-    ~QGeocodeReplyOsm();
+    explicit QGeoCodeReplyOsm(QNetworkReply *reply, QObject *parent = 0);
+    ~QGeoCodeReplyOsm();
 
     void abort();
 

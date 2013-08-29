@@ -58,13 +58,13 @@ public:
     QGeoServiceProviderFactoryTest();
     ~QGeoServiceProviderFactoryTest();
 
-    QGeoMappingManagerEngine* createMappingManagerEngine (
-                const QMap<QString, QVariant> & parameters,
-                QGeoServiceProvider::Error * error, QString * errorString ) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine (
-                const QMap<QString, QVariant> & parameters,
-                QGeoServiceProvider::Error * error, QString * errorString ) const;
-    QGeocodingManagerEngine* createGeocodingManagerEngine(
+    QGeoMappingManagerEngine* createMappingManagerEngine(
+                const QMap<QString, QVariant> &parameters,
+                QGeoServiceProvider::Error *error, QString *errorString) const;
+    QGeoRoutingManagerEngine* createRoutingManagerEngine(
+                const QMap<QString, QVariant> &parameters,
+                QGeoServiceProvider::Error *error, QString *errorString ) const;
+    QGeoCodingManagerEngine* createGeocodingManagerEngine(
                 const QMap<QString, QVariant> &parameters,
                 QGeoServiceProvider::Error *error, QString *errorString) const;
     QPlaceManagerEngine* createPlaceManagerEngine(

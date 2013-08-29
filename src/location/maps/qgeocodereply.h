@@ -51,9 +51,9 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoShape;
-class QGeocodeReplyPrivate;
+class QGeoCodeReplyPrivate;
 
-class Q_LOCATION_EXPORT QGeocodeReply : public QObject
+class Q_LOCATION_EXPORT QGeoCodeReply : public QObject
 {
     Q_OBJECT
 
@@ -68,8 +68,8 @@ public:
         UnknownError
     };
 
-    QGeocodeReply(Error error, const QString &errorString, QObject *parent = 0);
-    virtual ~QGeocodeReply();
+    QGeoCodeReply(Error error, const QString &errorString, QObject *parent = 0);
+    virtual ~QGeoCodeReply();
 
     bool isFinished() const;
     Error error() const;
@@ -85,10 +85,10 @@ public:
 
 Q_SIGNALS:
     void finished();
-    void error(QGeocodeReply::Error error, const QString &errorString = QString());
+    void error(QGeoCodeReply::Error error, const QString &errorString = QString());
 
 protected:
-    QGeocodeReply(QObject *parent = 0);
+    QGeoCodeReply(QObject *parent = 0);
 
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
@@ -101,8 +101,8 @@ protected:
     void setOffset(int offset);
 
 private:
-    QGeocodeReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeocodeReply)
+    QGeoCodeReplyPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoCodeReply)
 };
 
 QT_END_NAMESPACE

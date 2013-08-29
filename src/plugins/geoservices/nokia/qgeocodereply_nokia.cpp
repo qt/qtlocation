@@ -53,9 +53,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeocodeReplyNokia::QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset,
+QGeoCodeReplyNokia::QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offset,
                                        const QGeoShape &viewport, QObject *parent)
-        : QGeocodeReply(parent),
+        : QGeoCodeReply(parent),
         m_reply(reply)
 {
     connect(m_reply,
@@ -73,12 +73,12 @@ QGeocodeReplyNokia::QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offs
     setViewport(viewport);
 }
 
-QGeocodeReplyNokia::~QGeocodeReplyNokia()
+QGeoCodeReplyNokia::~QGeoCodeReplyNokia()
 {
     //TODO: possible mem leak -> m_reply->deleteLater() ?
 }
 
-void QGeocodeReplyNokia::abort()
+void QGeoCodeReplyNokia::abort()
 {
     if (!m_reply)
         return;
@@ -89,7 +89,7 @@ void QGeocodeReplyNokia::abort()
     m_reply = 0;
 }
 
-void QGeocodeReplyNokia::networkFinished()
+void QGeoCodeReplyNokia::networkFinished()
 {
     if (!m_reply)
         return;
@@ -115,21 +115,21 @@ void QGeocodeReplyNokia::networkFinished()
         setLocations(locations);
         setFinished(true);
     } else {
-        setError(QGeocodeReply::ParseError, parser.errorString());
+        setError(QGeoCodeReply::ParseError, parser.errorString());
     }
 
     m_reply->deleteLater();
     m_reply = 0;
 }
 
-void QGeocodeReplyNokia::networkError(QNetworkReply::NetworkError error)
+void QGeoCodeReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
 
     if (!m_reply)
         return;
 
-    setError(QGeocodeReply::CommunicationError, m_reply->errorString());
+    setError(QGeoCodeReply::CommunicationError, m_reply->errorString());
 
     m_reply->deleteLater();
     m_reply = 0;

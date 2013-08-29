@@ -57,7 +57,7 @@
 #include <QtCore/QJsonArray>
 #include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceResult>
-#include <QtLocation/QProposedSearchResult>
+#include <QtLocation/QPlaceProposedSearchResult>
 
 #include <QtCore/QDebug>
 
@@ -210,9 +210,9 @@ QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) co
     return result;
 }
 
-QProposedSearchResult QPlaceSearchReplyImpl::parseSearchResult(const QJsonObject &item) const
+QPlaceProposedSearchResult QPlaceSearchReplyImpl::parseSearchResult(const QJsonObject &item) const
 {
-    QProposedSearchResult result;
+    QPlaceProposedSearchResult result;
 
     result.setTitle(item.value(QLatin1String("title")).toString());
 

@@ -42,7 +42,7 @@
 #ifndef QGEOCODINGMANAGER_H
 #define QGEOCODINGMANAGER_H
 
-#include <QtLocation/QGeocodeReply>
+#include <QtLocation/QGeoCodeReply>
 #include <QtPositioning/QGeoRectangle>
 
 #include <QObject>
@@ -53,40 +53,40 @@ QT_BEGIN_NAMESPACE
 
 class QLocale;
 
-class QGeocodingManagerEngine;
-class QGeocodingManagerPrivate;
+class QGeoCodingManagerEngine;
+class QGeoCodingManagerPrivate;
 
-class Q_LOCATION_EXPORT QGeocodingManager : public QObject
+class Q_LOCATION_EXPORT QGeoCodingManager : public QObject
 {
     Q_OBJECT
 public:
-    ~QGeocodingManager();
+    ~QGeoCodingManager();
 
     QString managerName() const;
     int managerVersion() const;
 
-    QGeocodeReply *geocode(const QGeoAddress &address,
+    QGeoCodeReply *geocode(const QGeoAddress &address,
                            const QGeoShape &bounds = QGeoShape());
-    QGeocodeReply *geocode(const QString &searchString,
+    QGeoCodeReply *geocode(const QString &searchString,
                             int limit = -1,
                             int offset = 0,
                            const QGeoShape &bounds = QGeoShape());
 
-    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
+    QGeoCodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
                                   const QGeoShape &bounds = QGeoShape());
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
 Q_SIGNALS:
-    void finished(QGeocodeReply *reply);
-    void error(QGeocodeReply *reply, QGeocodeReply::Error error, QString errorString = QString());
+    void finished(QGeoCodeReply *reply);
+    void error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString errorString = QString());
 
 private:
-    QGeocodingManager(QGeocodingManagerEngine *engine, QObject *parent = 0);
+    QGeoCodingManager(QGeoCodingManagerEngine *engine, QObject *parent = 0);
 
-    QGeocodingManagerPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeocodingManager)
+    QGeoCodingManagerPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoCodingManager)
 
     friend class QGeoServiceProvider;
     friend class QGeoServiceProviderPrivate;

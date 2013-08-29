@@ -51,7 +51,7 @@
 #include <QtLocation/QPlaceMatchRequest>
 #include <QtLocation/QPlaceMatchReply>
 #include <QtLocation/QPlaceResult>
-#include <QtLocation/QProposedSearchResult>
+#include <QtLocation/QPlaceProposedSearchResult>
 
 QT_USE_NAMESPACE
 
@@ -665,7 +665,7 @@ void QDeclarativeSearchResultModel::updateWith(int proposedSearchIndex)
     if (m_results.at(proposedSearchIndex).type() != QPlaceSearchResult::ProposedSearchResult)
         return;
 
-    m_request = QProposedSearchResult(m_results.at(proposedSearchIndex)).searchRequest();
+    m_request = QPlaceProposedSearchResult(m_results.at(proposedSearchIndex)).searchRequest();
     update();
 }
 

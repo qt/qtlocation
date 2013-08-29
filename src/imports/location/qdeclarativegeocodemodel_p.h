@@ -56,7 +56,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoServiceProvider;
-class QGeocodingManager;
+class QGeoCodingManager;
 class QDeclarativeGeoLocation;
 
 class QDeclarativeGeocodeModel : public QAbstractListModel, public QQmlParserStatus
@@ -86,13 +86,13 @@ public:
     };
 
     enum GeocodeError {
-        NoError = QGeocodeReply::NoError,
-        EngineNotSetError = QGeocodeReply::EngineNotSetError,
-        CommunicationError = QGeocodeReply::CommunicationError,
-        ParseError = QGeocodeReply::ParseError,
-        UnsupportedOptionError = QGeocodeReply::UnsupportedOptionError,
-        CombinationError = QGeocodeReply::CombinationError,
-        UnknownError = QGeocodeReply::UnknownError
+        NoError = QGeoCodeReply::NoError,
+        EngineNotSetError = QGeoCodeReply::EngineNotSetError,
+        CommunicationError = QGeoCodeReply::CommunicationError,
+        ParseError = QGeoCodeReply::ParseError,
+        UnsupportedOptionError = QGeoCodeReply::UnsupportedOptionError,
+        CombinationError = QGeoCodeReply::CombinationError,
+        UnknownError = QGeoCodeReply::UnknownError
     };
 
     enum Roles {
@@ -155,14 +155,14 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
     void queryContentChanged();
-    void geocodeFinished(QGeocodeReply *reply);
-    void geocodeError(QGeocodeReply *reply,
-                     QGeocodeReply::Error error,
+    void geocodeFinished(QGeoCodeReply *reply);
+    void geocodeError(QGeoCodeReply *reply,
+                     QGeoCodeReply::Error error,
                      const QString &errorString);
     void pluginReady();
 
 protected:
-    QGeocodingManager *searchManager();
+    QGeoCodingManager *searchManager();
     void setStatus(Status status);
     void setErrorString(const QString &error);
     void setError(GeocodeError error);
@@ -172,7 +172,7 @@ protected:
 private:
     void setLocations(const QList<QGeoLocation> &locations);
     void abortRequest();
-    QGeocodeReply *reply_;
+    QGeoCodeReply *reply_;
 
     QDeclarativeGeoServiceProvider *plugin_;
     QGeoShape boundingArea_;

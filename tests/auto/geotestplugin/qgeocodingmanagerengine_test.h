@@ -57,11 +57,11 @@
 QT_USE_NAMESPACE
 
 
-class GeocodeReplyTest :public QGeocodeReply
+class GeocodeReplyTest :public QGeoCodeReply
 {
     Q_OBJECT
 public:
-    GeocodeReplyTest(QObject *parent=0):QGeocodeReply (parent) {}
+    GeocodeReplyTest(QObject *parent = 0) : QGeoCodeReply (parent) {}
 
     void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
@@ -77,20 +77,20 @@ Q_SIGNALS:
     void aborted();
 };
 
-class QGeocodingManagerEngineTest: public QGeocodingManagerEngine
+class QGeoCodingManagerEngineTest: public QGeoCodingManagerEngine
 
 {
 Q_OBJECT
 public:
-    QGeocodingManagerEngineTest(const QMap<QString, QVariant> &parameters,
-        QGeoServiceProvider::Error *error, QString *errorString) :
-        QGeocodingManagerEngine(parameters),
-        validateWellKnownValues_(false),
-        finishRequestImmediately_(true),
-        supported_(true),
-        geocodeReply_(0),
-        timerId_(0),
-        errorCode_(QGeocodeReply::NoError)
+    QGeoCodingManagerEngineTest(const QMap<QString, QVariant> &parameters,
+                                QGeoServiceProvider::Error *error, QString *errorString) :
+                                QGeoCodingManagerEngine(parameters),
+                                validateWellKnownValues_(false),
+                                finishRequestImmediately_(true),
+                                supported_(true),
+                                geocodeReply_(0),
+                                timerId_(0),
+                                errorCode_(QGeoCodeReply::NoError)
     {
         Q_UNUSED(error)
         Q_UNUSED(errorString)
@@ -104,10 +104,10 @@ public:
         setLocale(QLocale (QLocale::German, QLocale::Germany));
     }
 
-    QGeocodeReply* geocode(const QString &searchString,
-                            int limit = -1,
-                            int offset = 0,
-                            const QGeoShape &bounds = QGeoShape())
+    QGeoCodeReply* geocode(const QString &searchString,
+                           int limit = -1,
+                           int offset = 0,
+                           const QGeoShape &bounds = QGeoShape())
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -115,13 +115,13 @@ public:
 
         if (searchString.length() == 1) {
             errorString_ = searchString;
-            errorCode_ = (QGeocodeReply::Error)searchString.toInt();
+            errorCode_ = (QGeoCodeReply::Error)searchString.toInt();
         } else {
             errorString_ = "";
-            errorCode_ = QGeocodeReply::NoError;
+            errorCode_ = QGeoCodeReply::NoError;
         }
 
-        if (errorCode_ == QGeocodeReply::NoError)
+        if (errorCode_ == QGeoCodeReply::NoError)
             setLocations(geocodeReply_, searchString, limit, offset);
 
         if (finishRequestImmediately_) {
@@ -136,10 +136,10 @@ public:
             Q_ASSERT(timerId_ == 0);
             timerId_ = startTimer(200);
         }
-        return static_cast<QGeocodeReply*>(geocodeReply_);
+        return static_cast<QGeoCodeReply*>(geocodeReply_);
     }
 
-    QGeocodeReply*  geocode ( const QGeoAddress & address, const QGeoShape &bounds )
+    QGeoCodeReply* geocode(const QGeoAddress & address, const QGeoShape &bounds)
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -147,17 +147,17 @@ public:
 
         if (address.street().startsWith("error")) {
             errorString_ = address.street();
-            errorCode_ = (QGeocodeReply::Error)address.county().toInt();
+            errorCode_ = (QGeoCodeReply::Error)address.county().toInt();
         } else {
             errorString_ = "";
-            errorCode_ = QGeocodeReply::NoError;
+            errorCode_ = QGeoCodeReply::NoError;
         }
         // 1. Check if we are to validate values
         if (validateWellKnownValues_) {
             if (address.street() != "wellknown street") {
-                 geocodeReply_->callSetError(QGeocodeReply::EngineNotSetError, address.street());
+                 geocodeReply_->callSetError(QGeoCodeReply::EngineNotSetError, address.street());
             } else {
-                geocodeReply_->callSetError(QGeocodeReply::NoError,address.street());
+                geocodeReply_->callSetError(QGeoCodeReply::NoError,address.street());
             }
         }
 
@@ -177,7 +177,7 @@ public:
             Q_ASSERT(timerId_ == 0);
             timerId_ = startTimer(200);
         }
-        return static_cast<QGeocodeReply*>(geocodeReply_);
+        return static_cast<QGeoCodeReply*>(geocodeReply_);
     }
 
 public Q_SLOTS:
@@ -188,7 +188,7 @@ public Q_SLOTS:
             timerId_ = 0;
         }
         errorString_ = "";
-        errorCode_ = QGeocodeReply::NoError;
+        errorCode_ = QGeoCodeReply::NoError;
     }
 
 public:
@@ -226,7 +226,7 @@ public:
         }
     }
 
-    QGeocodeReply*  reverseGeocode ( const QGeoCoordinate & coordinate, const QGeoShape &bounds )
+    QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coordinate, const QGeoShape &bounds)
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -236,16 +236,16 @@ public:
 
         if (coordinate.latitude() > 70) {
             errorString_ = "error";
-            errorCode_ = (QGeocodeReply::Error) (qRound(coordinate.latitude() - 70));
+            errorCode_ = (QGeoCodeReply::Error) (qRound(coordinate.latitude() - 70));
         } else {
             errorString_ = "";
-            errorCode_ = QGeocodeReply::NoError;
+            errorCode_ = QGeoCodeReply::NoError;
         }
         if (finishRequestImmediately_) {
             if (errorCode_) {
                 geocodeReply_->callSetError(errorCode_, errorString_);
             } else {
-                geocodeReply_->callSetError(QGeocodeReply::NoError,coordinate.toString());
+                geocodeReply_->callSetError(QGeoCodeReply::NoError,coordinate.toString());
                 geocodeReply_->callSetFinished(true);
             }
         } else {
@@ -253,7 +253,7 @@ public:
             Q_ASSERT(timerId_ == 0);
             timerId_ = startTimer(200);
         }
-        return static_cast<QGeocodeReply*>(geocodeReply_);
+        return static_cast<QGeoCodeReply*>(geocodeReply_);
     }
 
 protected:
@@ -267,7 +267,7 @@ protected:
              geocodeReply_->callSetError(errorCode_, errorString_);
              emit error(geocodeReply_, errorCode_, errorString_);
         } else {
-             geocodeReply_->callSetError(QGeocodeReply::NoError, "no error");
+             geocodeReply_->callSetError(QGeoCodeReply::NoError, "no error");
              geocodeReply_->callSetFinished(true);
          }
          emit finished(geocodeReply_);
@@ -279,7 +279,7 @@ private:
     bool supported_;
     GeocodeReplyTest* geocodeReply_;
     int timerId_;
-    QGeocodeReply::Error errorCode_;
+    QGeoCodeReply::Error errorCode_;
     QString errorString_;
 };
 
