@@ -45,12 +45,14 @@
 #include "qdeclarativeposition_p.h"
 
 #include <QtCore/QObject>
+#include <QtNetwork/QAbstractSocket>
 #include <QtQml/QQmlParserStatus>
 #include <QtPositioning/QGeoPositionInfoSource>
 
 QT_BEGIN_NAMESPACE
 
 class QFile;
+class QTcpSocket;
 
 class QDeclarativePositionSource : public QObject, public QQmlParserStatus
 {
@@ -83,7 +85,8 @@ public:
     enum SourceError {
         AccessError = QGeoPositionInfoSource::AccessError,
         ClosedError = QGeoPositionInfoSource::ClosedError,
-        UnknownSourceError = QGeoPositionInfoSource::UnknownSourceError
+        UnknownSourceError = QGeoPositionInfoSource::UnknownSourceError,
+        SocketError
     };
     Q_ENUMS(SourceError)
 
@@ -130,11 +133,14 @@ Q_SIGNALS:
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo &update);
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
+    void socketConnected();
+    void socketError(QAbstractSocket::SocketError error);
 private:
     QGeoPositionInfoSource *m_positionSource;
     QDeclarativePosition m_position;
     PositioningMethods m_preferredPositioningMethods;
     QFile *m_nmeaFile;
+    QTcpSocket *m_nmeaSocket;
     QString m_nmeaFileName;
     QUrl m_nmeaSource;
     bool m_active;

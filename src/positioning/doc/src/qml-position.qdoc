@@ -95,7 +95,19 @@ within the limits allowed by the platform, of the source of the
 geographical data. Apart from tradtional sources such as GPS and cell data the positional data can be
 sourced from a logfile which is in NMEA format.
 
-\l {http://en.wikipedia.org/wiki/NMEA}{NMEA} is a common text-based protocol for specifying navigational data. For convenience, the \l {PositionSource::nmeaSource}{nmeaSource} property is provided to enable QML applications to read NMEA data from a log file, the source will emit updates according to the time stamp of each NMEA sentence to produce a "replay" of the recorded data.
+\l {http://en.wikipedia.org/wiki/NMEA}{NMEA} is a common text-based
+protocol for specifying navigational data. For convenience, the \l
+{PositionSource::nmeaSource}{nmeaSource} property is provided to enable
+QML applications to read NMEA data from a log file or a TCP socket, the
+source will emit updates according to the time stamp of each NMEA sentence
+to produce a "replay" of the recorded data. To use a TCP socket set the
+"socket" uri scheme.
+
+\code
+PositionSource {
+    nmeaSource: "socket://127.0.0.1:12345"
+}
+\endcode
 
 
 
