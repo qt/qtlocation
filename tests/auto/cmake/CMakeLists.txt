@@ -9,4 +9,11 @@ find_package(Qt5Core REQUIRED)
 
 include("${_Qt5CTestMacros}")
 
-expect_pass(test_modules)
+set(qt_module_includes
+    Location QPlaceCategory
+    Positioning QGeoRectangle
+)
+
+test_module_includes(
+    ${qt_module_includes}
+)

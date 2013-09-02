@@ -2,6 +2,6 @@
 # Cause make to do nothing.
 TEMPLATE = subdirs
 
-CONFIG += ctest_testcase
+CMAKE_QT_MODULES_UNDER_TEST = location positioning
 
-CONFIG+=insignificant_test # QTBUG-33259
+CONFIG += ctest_testcase
