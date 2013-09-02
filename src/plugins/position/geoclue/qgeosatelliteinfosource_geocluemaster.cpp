@@ -243,8 +243,8 @@ bool QGeoSatelliteInfoSourceGeoclueMaster::configureSatelliteSource()
     if (!createMasterClient(GEOCLUE_ACCURACY_LEVEL_DETAILED, GEOCLUE_RESOURCE_GPS))
         return false;
 
-    // createMasterClient() will call positionProviderChanged() slot on success, which sets m_pos
-    // and possibly m_vel. Return true if m_pos is set.
+    // createMasterClient() will call positionProviderChanged() slot on success, which sets m_sat.
+    // Return true if m_sat is set.
     return m_sat;
 }
 
