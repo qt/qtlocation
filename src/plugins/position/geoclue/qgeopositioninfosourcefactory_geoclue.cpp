@@ -61,7 +61,7 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSour
 {
 #ifdef HAS_SATELLITE
     QGeoSatelliteInfoSourceGeoclueMaster *src = new QGeoSatelliteInfoSourceGeoclueMaster(parent);
-    if (!src->init() < 0) {
+    if (!src->init()) {
         delete src;
         src = 0;
     }
