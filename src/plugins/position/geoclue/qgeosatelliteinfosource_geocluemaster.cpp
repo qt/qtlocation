@@ -217,22 +217,14 @@ void QGeoSatelliteInfoSourceGeoclueMaster::requestUpdateFinished(int timestamp, 
 
 void QGeoSatelliteInfoSourceGeoclueMaster::positionProviderChanged(const QByteArray &service, const QByteArray &path)
 {
-    if (m_sat) {
-        if (service == dbus_g_proxy_get_bus_name(m_sat->provider.proxy) &&
-            path == dbus_g_proxy_get_path(m_sat->provider.proxy)) {
-            // Provider hasn't actually changed. This can happen when first connecting as
-            // createMasterClient() will emit a signal independent of the DBus signal.
-            return;
-        }
-
+    if (m_sat)
         cleanupSatelliteSource();
-    }
 
     m_sat = geoclue_satellite_new(service.constData(), path.constData());
-    if (!m_sat)
-        qCritical("QGeoSatelliteInfoSourceGeoclueMaster failed to get a satellite object");
-    else
-        g_signal_connect(G_OBJECT(m_sat), "satellite-changed", G_CALLBACK(satellite_changed), this);
+    if (m_sat) {
+        g_signal_connect(G_OBJECT(m_sat), "satellite-changed",
+                         G_CALLBACK(satellite_changed), this);
+    }
 }
 
 bool QGeoSatelliteInfoSourceGeoclueMaster::configureSatelliteSource()
@@ -240,12 +232,7 @@ bool QGeoSatelliteInfoSourceGeoclueMaster::configureSatelliteSource()
     cleanupSatelliteSource();
     releaseMasterClient();
 
-    if (!createMasterClient(GEOCLUE_ACCURACY_LEVEL_DETAILED, GEOCLUE_RESOURCE_GPS))
-        return false;
-
-    // createMasterClient() will call positionProviderChanged() slot on success, which sets m_sat.
-    // Return true if m_sat is set.
-    return m_sat;
+    return createMasterClient(GEOCLUE_ACCURACY_LEVEL_DETAILED, GEOCLUE_RESOURCE_GPS);
 }
 
 void QGeoSatelliteInfoSourceGeoclueMaster::cleanupSatelliteSource()

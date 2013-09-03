@@ -124,25 +124,6 @@ bool QGeoclueMaster::createMasterClient(GeoclueAccuracyLevel accuracy, GeoclueRe
         return false;
     }
 
-    char *service = 0;
-    char *path = 0;
-
-    if (!geoclue_master_client_get_position_provider(m_client, 0, 0, &service, &path, 0) ||
-            !qstrlen(service) || !qstrlen(path)) {
-        qCritical("QGeoclueMaster failed to get position provider service/path");
-        g_object_unref(m_masterPosition);
-        m_masterPosition = 0;
-        g_object_unref(m_client);
-        m_client = 0;
-        return false;
-    }
-
-    const QByteArray pService = QByteArray(service);
-    const QByteArray pPath = QByteArray(path);
-
-    QMetaObject::invokeMethod(m_handler, "positionProviderChanged", Q_ARG(QByteArray, pService),
-                              Q_ARG(QByteArray, pPath));
-
     return true;
 }
 
