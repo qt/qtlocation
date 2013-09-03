@@ -173,7 +173,7 @@ void QDeclarativeGeoMapItemView::itemModelRowsRemoved(QModelIndex, int start, in
         if (!mapItem) // bad
             break;
         map_->removeMapItem(mapItem);
-        delete mapItem;
+        mapItem->deleteLater();
     }
     if (fitViewport_)
         fitViewport();
@@ -253,10 +253,10 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems()
 {
     if (!map_)
         return;
-    for (int i = 0; i < mapItemList_.count(); ++ i) {
-        map_->removeMapItem(mapItemList_.at(i));
+    foreach (QDeclarativeGeoMapItemBase *mapItem, mapItemList_) {
+        mapItem->deleteLater();
+        map_->removeMapItem(mapItem);
     }
-    qDeleteAll(mapItemList_);
     mapItemList_.clear();
 }
 
