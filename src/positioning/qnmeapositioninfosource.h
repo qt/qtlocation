@@ -60,6 +60,9 @@ public:
     explicit QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent = 0);
     ~QNmeaPositionInfoSource();
 
+    void setUserEquivalentRangeError(double uere);
+    double userEquivalentRangeError() const;
+
     UpdateMode updateMode() const;
 
     void setDevice(QIODevice *source);

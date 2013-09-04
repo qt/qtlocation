@@ -93,3 +93,8 @@ QString QLocationTestUtils::createZdaSentence(const QDateTime &dt)
         .arg(time).arg(dt.toString("dd")).arg(dt.toString("MM")).arg(dt.toString("yyyy"));
     return addNmeaChecksumAndBreaks(nmea);
 }
+
+QString QLocationTestUtils::createGsaSentence()
+{
+    return addNmeaChecksumAndBreaks(QStringLiteral("$GPGSA,A,3,,,,,,,,,,,,,3.0,3.5,4.0*"));
+}

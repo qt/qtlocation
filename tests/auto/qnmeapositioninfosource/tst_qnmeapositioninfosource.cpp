@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2013 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -42,6 +44,8 @@
 //TESTED_COMPONENT=src/location
 
 #include "tst_qnmeapositioninfosource.h"
+
+#include <QtCore/QtNumeric>
 
 #ifdef Q_OS_WIN
 
@@ -101,6 +105,14 @@ void tst_QNmeaPositionInfoSource::minimumUpdateInterval()
 {
     QNmeaPositionInfoSource source(m_mode);
     QCOMPARE(source.minimumUpdateInterval(), 100);
+}
+
+void tst_QNmeaPositionInfoSource::userEquivalentRangeError()
+{
+    QNmeaPositionInfoSource source(m_mode);
+    QVERIFY(qIsNaN(source.userEquivalentRangeError()));
+    source.setUserEquivalentRangeError(5.1);
+    QVERIFY(qFuzzyCompare(source.userEquivalentRangeError(), 5.1));
 }
 
 void tst_QNmeaPositionInfoSource::setUpdateInterval_delayedUpdate()
@@ -348,8 +360,11 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
 
     QFETCH(QByteArray, bytes);
     QFETCH(QList<QDateTime>, dateTimes);
+    QFETCH(QList<bool>, expectHorizontalAccuracy);
+    QFETCH(QList<bool>, expectVerticalAccuracy);
 
     QNmeaPositionInfoSource source(m_mode);
+    source.setUserEquivalentRangeError(5.1);
     QNmeaPositionInfoSourceProxyFactory factory;
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
 
@@ -359,14 +374,33 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
     proxy->feedBytes(bytes);
     QTRY_COMPARE(spy.count(), dateTimes.count());
 
-    for (int i=0; i<spy.count(); i++)
-        QCOMPARE(spy[i][0].value<QGeoPositionInfo>().timestamp(), dateTimes[i]);
+    for (int i=0; i<spy.count(); i++) {
+        QGeoPositionInfo pInfo = spy[i][0].value<QGeoPositionInfo>();
+
+        QCOMPARE(pInfo.timestamp(), dateTimes[i]);
+
+        // Generated GGA/GSA sentences have hard coded HDOP of 3.5, which corrisponds to a
+        // horizontal accuracy of 35.7, for the user equivalent range error of 5.1 set above.
+        QCOMPARE(pInfo.hasAttribute(QGeoPositionInfo::HorizontalAccuracy),
+                 expectHorizontalAccuracy[i]);
+        if (pInfo.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
+            QVERIFY(qFuzzyCompare(pInfo.attribute(QGeoPositionInfo::HorizontalAccuracy), 35.7));
+
+        // Generate GSA sentences have hard coded VDOP of 4.0, which corrisponds to a vertical
+        // accuracy of 40.8, for the user equivalent range error of 5.1 set above.
+        QCOMPARE(pInfo.hasAttribute(QGeoPositionInfo::VerticalAccuracy),
+                 expectVerticalAccuracy[i]);
+        if (pInfo.hasAttribute(QGeoPositionInfo::VerticalAccuracy))
+            QVERIFY(qFuzzyCompare(pInfo.attribute(QGeoPositionInfo::VerticalAccuracy), 40.8));
+    }
 }
 
 void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime_data()
 {
     QTest::addColumn<QByteArray>("bytes");
     QTest::addColumn<QList<QDateTime> >("dateTimes");
+    QTest::addColumn<QList<bool> >("expectHorizontalAccuracy");
+    QTest::addColumn<QList<bool> >("expectVerticalAccuracy");
 
     QDateTime dt = QDateTime::currentDateTime().toUTC();
     QByteArray bytes;
@@ -376,7 +410,9 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime_data()
     bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1();
     bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
     QTest::newRow("Feed GGA,RMC,GGA; expect RMC, second GGA only")
-            << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3));
+            << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3))
+            << (QList<bool>() << true << true)
+            << (QList<bool>() << false << false);
 
     // should not receive ZDA (has no coordinates) but should get the GGA
     // sentence after it since it got the date/time from ZDA
@@ -385,7 +421,20 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime_data()
     bytes += QLocationTestUtils::createZdaSentence(dt.addSecs(2)).toLatin1();
     bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
     QTest::newRow("Feed GGA,ZDA,GGA; expect second GGA only")
-            << bytes << (QList<QDateTime>() << dt.addSecs(3));
+            << bytes << (QList<QDateTime>() << dt.addSecs(3))
+            << (QList<bool>() << true)
+            << (QList<bool>() << false);
+
+    // Feed ZDA,GGA,GSA,GGA; expect vertical accuracy from second GGA.
+    bytes.clear();
+    bytes += QLocationTestUtils::createZdaSentence(dt.addSecs(1)).toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(2).time()).toLatin1();
+    bytes += QLocationTestUtils::createGsaSentence().toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
+    QTest::newRow("Feed ZDA,GGA,GSA,GGA; expect vertical accuracy from second GGA")
+            << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3))
+            << (QList<bool>() << true << true)
+            << (QList<bool>() << false << true);
 
     if (m_mode == QNmeaPositionInfoSource::SimulationMode) {
         // In sim m_mode, should ignore sentence with a date/time before the known date/time
@@ -395,7 +444,9 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime_data()
         bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(-2)).toLatin1();
         bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1();
         QTest::newRow("Feed good RMC, RMC with bad date/time, good RMC; expect first and third RMC only")
-                << bytes << (QList<QDateTime>() << dt.addSecs(1) << dt.addSecs(2));
+                << bytes << (QList<QDateTime>() << dt.addSecs(1) << dt.addSecs(2))
+                << (QList<bool>() << false << false)
+                << (QList<bool>() << false << false);
     }
 }
 
