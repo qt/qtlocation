@@ -147,7 +147,7 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
         return;
 
     if ( preserveGeometry_ ) {
-        double unwrapBelowX = map.coordinateToScreenPosition(geoLeftBound_, false).x();
+        qreal unwrapBelowX = map.coordinateToScreenPosition(geoLeftBound_, false).x();
         if (br.x() < unwrapBelowX)
             br.setX(tl.x() + screenBounds_.width());
     }

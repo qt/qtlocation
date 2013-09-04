@@ -206,7 +206,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
 
     QPointF origin, lastPoint, lastAddedPoint;
 
-    double unwrapBelowX = 0;
+    qreal unwrapBelowX = 0;
     if (preserveGeometry_)
         unwrapBelowX = map.coordinateToScreenPosition(geoLeftBound_, false).x();
 
