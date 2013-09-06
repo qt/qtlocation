@@ -52,6 +52,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDBusMessage;
+
 class QGeoSatelliteInfoSourceGeoclueMaster : public QGeoSatelliteInfoSource, public QGeoclueMaster
 {
     Q_OBJECT
@@ -77,6 +79,7 @@ public:
 
 private slots:
     void positionProviderChanged(const QByteArray &service, const QByteArray &path);
+    void satellitesChanged(const QDBusMessage &message);
 
 private:
     bool configureSatelliteSource();
@@ -86,6 +89,8 @@ private:
     QTimer m_requestTimer;
     QList<QGeoSatelliteInfo> m_inView;
     QList<QGeoSatelliteInfo> m_inUse;
+    Error m_error;
+    bool m_satellitesChangedConnected;
 };
 
 QT_END_NAMESPACE
