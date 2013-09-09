@@ -43,6 +43,7 @@
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
+#include <QtCore/QtNumeric>
 
 QT_BEGIN_NAMESPACE
 
@@ -51,7 +52,7 @@ class QGeoPositionInfoPrivate
 public:
     QDateTime timestamp;
     QGeoCoordinate coord;
-    QHash<int, qreal> doubleAttribs;
+    QHash<QGeoPositionInfo::Attribute, qreal> doubleAttribs;
 };
 
 /*!
@@ -214,14 +215,13 @@ QGeoCoordinate QGeoPositionInfo::coordinate() const
 */
 void QGeoPositionInfo::setAttribute(Attribute attribute, qreal value)
 {
-    d->doubleAttribs[int(attribute)] = value;
+    d->doubleAttribs[attribute] = value;
 }
 
 /*!
     Returns the value of the specified \a attribute as a qreal value.
 
-    Returns -1 if the value has not been set, although this may also
-    be a legitimate value for some attributes.
+    Returns NaN if the value has not been set.
 
     The function hasAttribute() should be used to determine whether or
     not a value has been set for an attribute.
@@ -230,9 +230,9 @@ void QGeoPositionInfo::setAttribute(Attribute attribute, qreal value)
 */
 qreal QGeoPositionInfo::attribute(Attribute attribute) const
 {
-    if (d->doubleAttribs.contains(int(attribute)))
-        return d->doubleAttribs[int(attribute)];
-    return -1;
+    if (d->doubleAttribs.contains(attribute))
+        return d->doubleAttribs[attribute];
+    return qQNaN();
 }
 
 /*!
@@ -240,7 +240,7 @@ qreal QGeoPositionInfo::attribute(Attribute attribute) const
 */
 void QGeoPositionInfo::removeAttribute(Attribute attribute)
 {
-    d->doubleAttribs.remove(int(attribute));
+    d->doubleAttribs.remove(attribute);
 }
 
 /*!
@@ -249,7 +249,7 @@ void QGeoPositionInfo::removeAttribute(Attribute attribute)
 */
 bool QGeoPositionInfo::hasAttribute(Attribute attribute) const
 {
-    return d->doubleAttribs.contains(int(attribute));
+    return d->doubleAttribs.contains(attribute);
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -259,7 +259,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
     dbg.nospace() << ", ";
     dbg.nospace() << info.d->coord;
 
-    QList<int> attribs = info.d->doubleAttribs.keys();
+    QList<QGeoPositionInfo::Attribute> attribs = info.d->doubleAttribs.keys();
     qStableSort(attribs.begin(), attribs.end()); // Output a sorted list from an unsorted hash.
     for (int i = 0; i < attribs.count(); ++i) {
         dbg.nospace() << ", ";
@@ -290,7 +290,35 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
 }
 #endif
 
+
 #ifndef QT_NO_DATASTREAM
+/*!
+    \relates QGeoPositionInfo
+
+    Writes the given \a attr enumeration to the specified \a stream.
+
+    \sa {Serializing Qt Data Types}
+*/
+QDataStream &operator<<(QDataStream &stream, QGeoPositionInfo::Attribute attr)
+{
+    return stream << int(attr);
+}
+
+/*!
+    \relates QGeoPositionInfo
+
+    Reads an attribute enumeration from the specified \a stream info the given \a attr.
+
+    \sa {Serializing Qt Data Types}
+*/
+QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo::Attribute &attr)
+{
+    int a;
+    stream >> a;
+    attr = static_cast<QGeoPositionInfo::Attribute>(a);
+    return stream;
+}
+
 /*!
     \fn QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
     \relates QGeoPositionInfo
@@ -307,9 +335,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
     stream << info.d->doubleAttribs;
     return stream;
 }
-#endif
 
-#ifndef QT_NO_DATASTREAM
 /*!
     \fn QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
     \relates QGeoPositionInfo

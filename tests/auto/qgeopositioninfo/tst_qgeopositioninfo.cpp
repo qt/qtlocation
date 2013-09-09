@@ -47,6 +47,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QTest>
+#include <QtCore/QtNumeric>
 
 #include <float.h>
 
@@ -271,13 +272,13 @@ private slots:
         QFETCH(qreal, value);
 
         QGeoPositionInfo info;
-        QCOMPARE(info.attribute(attribute), qreal(-1.0));
+        QVERIFY(qIsNaN(info.attribute(attribute)));
 
         info.setAttribute(attribute, value);
         QCOMPARE(info.attribute(attribute), value);
 
         info.removeAttribute(attribute);
-        QCOMPARE(info.attribute(attribute), qreal(-1.0));
+        QVERIFY(qIsNaN(info.attribute(attribute)));
     }
 
     void attribute_data()
