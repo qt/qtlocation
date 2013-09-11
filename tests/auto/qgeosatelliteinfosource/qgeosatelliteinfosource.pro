@@ -9,7 +9,7 @@ SOURCES += tst_qgeosatelliteinfosource.cpp \
 HEADERS += testqgeosatelliteinfosource_p.h \
             ../utils/qlocationtestutils_p.h
 
-QT += location testlib
+QT += positioning testlib
 
 # Define whether a satellite source is available.  This must match the logic in
 # src/location/location.pro or the test will fail on some platforms.

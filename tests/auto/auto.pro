@@ -1,7 +1,9 @@
 TEMPLATE = subdirs
 
-#Place unit tests
-SUBDIRS += qplace \
+qtHaveModule(location) {
+
+    #Place unit tests
+    SUBDIRS += qplace \
            qplaceattribute \
            qplacecategory \
            qplacecontactdetail \
@@ -22,38 +24,18 @@ SUBDIRS += qplace \
            qplacesearchreply \
            qplacesearchsuggestionreply \
            qplaceuser \
-           qmlinterface \
-           cmake
+           qplacemanager \
+           qplacemanager_nokia \
+           qplacemanager_unsupported \
+           placesplugin_unsupported
 
-qtHaveModule(3d) {
-    SUBDIRS += qplacemanager \
-            qplacemanager_nokia \
-            qplacemanager_unsupported
-}
-
-SUBDIRS += \
-           positionplugin \
-           positionplugintest \
-           qgeoaddress \
-           qgeoareamonitor \
-           qgeoshape \
-           qgeorectangle \
-           qgeocircle \
-           qgeocoordinate \
-           qgeolocation \
-           qgeopositioninfo \
-           qgeopositioninfosource \
-           qgeosatelliteinfo \
-           qgeosatelliteinfosource \
-           qnmeapositioninfosource \
-           declarative_core \
+    #misc tests
+    SUBDIRS +=  qmlinterface \
+           cmake \
            doublevectors
 
-!mac: SUBDIRS += declarative_ui
-
-qtHaveModule(3d) {
+    #Map and Navigation tests
     SUBDIRS += geotestplugin \
-           placesplugin_unsupported \
            qgeocodingmanagerplugins \
            qgeocameracapabilities\
            qgeocameradata \
@@ -73,4 +55,27 @@ qtHaveModule(3d) {
            maptype \
            nokia_services \
            qgeocameratiles
+
+    qtHaveModule(quick) {
+        SUBDIRS += declarative_core
+
+        !mac: SUBDIRS += declarative_ui
+    }
 }
+
+
+SUBDIRS += \
+           positionplugin \
+           positionplugintest \
+           qgeoaddress \
+           qgeoareamonitor \
+           qgeoshape \
+           qgeorectangle \
+           qgeocircle \
+           qgeocoordinate \
+           qgeolocation \
+           qgeopositioninfo \
+           qgeopositioninfosource \
+           qgeosatelliteinfo \
+           qgeosatelliteinfosource \
+           qnmeapositioninfosource

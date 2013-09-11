@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS = auto plugins/declarativetestplugin
+SUBDIRS = auto
+qtHaveModule(location):qtHaveModule(quick): SUBDIRS += plugins/declarativetestplugin

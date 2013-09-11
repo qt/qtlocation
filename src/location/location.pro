@@ -12,7 +12,7 @@ PUBLIC_HEADERS += \
 SOURCES += \
            qlocation.cpp
 
-qtHaveModule(3d): include(maps/maps.pri)
+include(maps/maps.pri)
 include(places/places.pri)
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS

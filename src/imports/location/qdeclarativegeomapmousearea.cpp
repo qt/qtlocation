@@ -45,6 +45,7 @@
 #include <QtQuick/QQuickWindow>
 
 #include <QtQuick/private/qquickevents_p_p.h>
+#include <QtQuick/private/qquickdrag_p.h>
 
 #include <QDebug>
 

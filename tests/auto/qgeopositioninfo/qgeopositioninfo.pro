@@ -4,5 +4,5 @@ TARGET=tst_qgeopositioninfo
 
 SOURCES += tst_qgeopositioninfo.cpp
 
-QT += location testlib
+QT += positioning testlib
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
