@@ -32,7 +32,7 @@
     \module QtPositioning
     \title Qt Positioning C++ Classes
     \ingroup modules
-    \qtvariable location
+    \qtvariable positioning
 
     \brief The Positioning module provides positioning information via QML and C++ interfaces.
 
