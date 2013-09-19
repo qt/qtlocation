@@ -51,9 +51,10 @@
 #include "qgeotiledmapdata_nokia.h"
 #include "qgeotilefetcher_nokia.h"
 #include "qgeotilespec_p.h"
-#include "qgeoprojection_p.h"
-#include "qdoublevector2d_p.h"
 #include "qgeotilecache_p.h"
+
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qgeoprojection_p.h>
 
 #include <QDebug>
 #include <QDir>

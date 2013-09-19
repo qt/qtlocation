@@ -52,14 +52,13 @@
 // We mean it.
 //
 
+#include "qlocationglobal.h"
 #include "qgeocoordinate.h"
-#include "qgeoprojection_p.h"
 
-#include "qgeocoordinateinterpolator_p.h"
+#include <QtPositioning/private/qgeoprojection_p.h>
 
 #include <QMetaType>
 
-#include <QSharedPointer>
 #include <QSharedDataPointer>
 
 QT_BEGIN_NAMESPACE
@@ -92,9 +91,6 @@ public:
 
     void setZoomLevel(double zoomLevel);
     double zoomLevel() const;
-
-    void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator() const;
 
 private:
     QSharedDataPointer<QGeoCameraDataPrivate> d;

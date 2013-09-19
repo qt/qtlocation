@@ -1,5 +1,5 @@
 TARGET = QtLocation
-QT = core-private positioning
+QT = core-private positioning-private
 
 
 QMAKE_DOCS = $$PWD/doc/qtlocation.qdocconf

@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -42,7 +42,6 @@
 
 #include "qgeocoordinate.h"
 
-#include <QMatrix4x4>
 #include <qnumeric.h>
 
 #include <cmath>
@@ -103,6 +102,39 @@ QGeoCoordinate QGeoProjection::mercatorToCoord(const QDoubleVector2D &mercator)
     lng = lng * 360.0 - 180.0;
 
     return QGeoCoordinate(lat, lng, 0.0);
+}
+
+QGeoCoordinate QGeoProjection::coordinateInterpolation(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
+{
+    QDoubleVector2D s = QGeoProjection::coordToMercator(from);
+    QDoubleVector2D e = QGeoProjection::coordToMercator(to);
+
+    double x = s.x();
+
+    if (0.5 < qAbs(e.x() - s.x())) {
+        // handle dateline crossing
+        double ex = e.x();
+        double sx = s.x();
+        if (ex < sx)
+            sx -= 1.0;
+        else if (sx < ex)
+            ex -= 1.0;
+
+        x = (1.0 - progress) * sx + progress * ex;
+
+        if (!qFuzzyIsNull(x) && (x < 0.0))
+            x += 1.0;
+
+    } else {
+        x = (1.0 - progress) * s.x() + progress * e.x();
+    }
+
+    double y = (1.0 - progress) * s.y() + progress * e.y();
+
+    QGeoCoordinate result = QGeoProjection::mercatorToCoord(QDoubleVector2D(x, y));
+    result.setAltitude((1.0 - progress) * from.altitude() + progress * to.altitude());
+
+    return result;
 }
 
 QT_END_NAMESPACE

@@ -1,5 +1,5 @@
 TARGET = qtgeoservices_qmltestplugin
-QT += location-private testlib
+QT += location-private positioning-private testlib
 
 PLUGIN_TYPE = geoservices
 load(qt_plugin)

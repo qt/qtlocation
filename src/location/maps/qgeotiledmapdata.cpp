@@ -44,14 +44,10 @@
 #include "qgeotiledmappingmanagerengine_p.h"
 #include "qgeotilecache_p.h"
 #include "qgeotilespec_p.h"
-#include "qgeoprojection_p.h"
 
 #include "qgeocameratiles_p.h"
 #include "qgeotilerequestmanager_p.h"
 #include "qgeomapscene_p.h"
-#include "qgeocoordinateinterpolator_p.h"
-#include "qgeoprojection_p.h"
-#include "qdoublevector2d_p.h"
 #include "qgeocameracapabilities_p.h"
 
 #include <QMutex>
@@ -68,74 +64,19 @@
 #include <Qt3D/qglcamera.h>
 #include <Qt3D/qglsubsurface.h>
 
+#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinateInterpolator2D : public QGeoCoordinateInterpolator
-{
-public:
-    QGeoCoordinateInterpolator2D();
-    virtual ~QGeoCoordinateInterpolator2D();
-
-    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress);
-};
-
-QGeoCoordinateInterpolator2D::QGeoCoordinateInterpolator2D() {}
-
-QGeoCoordinateInterpolator2D::~QGeoCoordinateInterpolator2D() {}
-
-QGeoCoordinate QGeoCoordinateInterpolator2D::interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress)
-{
-    if (start == end) {
-        if (progress < 0.5) {
-            return start;
-        } else {
-            return end;
-        }
-    }
-
-    QGeoCoordinate s2 = start;
-    QGeoCoordinate e2 = end;
-    QDoubleVector2D s = QGeoProjection::coordToMercator(s2);
-    QDoubleVector2D e = QGeoProjection::coordToMercator(e2);
-
-    double x = s.x();
-
-    if (0.5 < qAbs(e.x() - s.x())) {
-        // handle dateline crossing
-        double ex = e.x();
-        double sx = s.x();
-        if (ex < sx)
-            sx -= 1.0;
-        else if (sx < ex)
-            ex -= 1.0;
-
-        x = (1.0 - progress) * sx + progress * ex;
-
-        if (!qFuzzyIsNull(x) && (x < 0.0))
-            x += 1.0;
-
-    } else {
-        x = (1.0 - progress) * s.x() + progress * e.x();
-    }
-
-    double y = (1.0 - progress) * s.y() + progress * e.y();
-
-    QGeoCoordinate result = QGeoProjection::mercatorToCoord(QDoubleVector2D(x, y));
-    result.setAltitude((1.0 - progress) * start.altitude() + progress * end.altitude());
-    return result;
-}
-
-//------------------------
-//------------------------
 
 QGeoTiledMapData::QGeoTiledMapData(QGeoTiledMappingManagerEngine *engine, QObject *parent)
     : QGeoMapData(engine, parent)
 {
     d_ptr = new QGeoTiledMapDataPrivate(this, engine);
     engine->registerMap(this);
-    setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator>(new QGeoCoordinateInterpolator2D()));
 }
 
 QGeoTiledMapData::~QGeoTiledMapData()

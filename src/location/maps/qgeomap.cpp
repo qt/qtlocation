@@ -44,11 +44,13 @@
 
 #include "qgeotilecache_p.h"
 #include "qgeotilespec_p.h"
-#include "qgeoprojection_p.h"
+
 #include "qgeocameracapabilities_p.h"
 #include "qgeomapcontroller_p.h"
-#include "qdoublevector2d_p.h"
-#include "qdoublevector3d_p.h"
+
+#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qdoublevector3d_p.h>
 
 #include "qgeocameratiles_p.h"
 #include "qgeotilerequestmanager_p.h"

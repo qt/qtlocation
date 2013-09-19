@@ -41,7 +41,7 @@
 #ifndef QGEOSATELLITEINFO_H
 #define QGEOSATELLITEINFO_H
 
-#include <QtPositioning/qpositioningglobal.h>
+#include "qpositioningglobal.h"
 
 QT_BEGIN_NAMESPACE
 

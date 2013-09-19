@@ -18,15 +18,12 @@ PUBLIC_HEADERS += \
                     maps/qgeoserviceprovider.h
 
 PRIVATE_HEADERS += \
-                    maps/qdoublevector2d_p.h \
-                    maps/qdoublevector3d_p.h \
                     maps/qgeocameracapabilities_p.h \
                     maps/qgeocameradata_p.h \
                     maps/qgeocameratiles_p.h \
                     maps/qgeocodereply_p.h \
                     maps/qgeocodingmanagerengine_p.h \
                     maps/qgeocodingmanager_p.h \
-                    maps/qgeocoordinateinterpolator_p.h \
                     maps/qgeomaneuver_p.h \
                     maps/qgeomapcontroller_p.h \
                     maps/qgeomapscene_p.h \
@@ -46,7 +43,6 @@ PRIVATE_HEADERS += \
                     maps/qgeotiledmappingmanagerengine_p_p.h \
                     maps/qgeomaptype_p.h \
                     maps/qgeomaptype_p_p.h \
-                    maps/qgeoprojection_p.h \
                     maps/qgeoroute_p.h \
                     maps/qgeoroutereply_p.h \
                     maps/qgeorouterequest_p.h \
@@ -62,15 +58,12 @@ PRIVATE_HEADERS += \
                     maps/qcache3q_p.h
 
 SOURCES += \
-            maps/qdoublevector2d.cpp \
-            maps/qdoublevector3d.cpp \
             maps/qgeocameracapabilities.cpp \
             maps/qgeocameradata.cpp \
             maps/qgeocameratiles.cpp \
             maps/qgeocodereply.cpp \
             maps/qgeocodingmanager.cpp \
             maps/qgeocodingmanagerengine.cpp \
-            maps/qgeocoordinateinterpolator.cpp \
             maps/qgeomaneuver.cpp \
             maps/qgeomapcontroller.cpp \
             maps/qgeomapscene.cpp \
@@ -83,7 +76,6 @@ SOURCES += \
             maps/qgeotiledmappingmanagerengine.cpp \
             maps/qgeotilefetcher.cpp \
             maps/qgeomaptype.cpp \
-            maps/qgeoprojection.cpp \
             maps/qgeoroute.cpp \
             maps/qgeoroutereply.cpp \
             maps/qgeorouterequest.cpp \

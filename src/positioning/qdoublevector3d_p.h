@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtGui module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -53,24 +53,29 @@
 // We mean it.
 //
 
+#ifdef QT_BUILD_LOCATION_LIB
 #include <QVector3D>
+#endif
 
+#include "qpositioningglobal.h"
 #include <QtCore/qmetatype.h>
 
 QT_BEGIN_NAMESPACE
 
 class QDoubleVector2D;
 
-class QDoubleVector3D
+class Q_POSITIONING_EXPORT_PRIVATE QDoubleVector3D
 {
 public:
     QDoubleVector3D();
     QDoubleVector3D(double xpos, double ypos, double zpos);
-    explicit QDoubleVector3D(const QVector3D &vector);
     QDoubleVector3D(const QDoubleVector2D &vector);
     QDoubleVector3D(const QDoubleVector2D &vector, double zpos);
 
-    operator QVector3D() const;
+#ifdef QT_BUILD_LOCATION_LIB
+    explicit QDoubleVector3D(const QVector3D &vector) : xp(vector.x()), yp(vector.y()), zp(vector.z()) {}
+    operator QVector3D() const { return QVector3D(xp, yp, zp); }
+#endif
 
     bool isNull() const;
 
@@ -131,14 +136,7 @@ Q_DECLARE_TYPEINFO(QDoubleVector3D, Q_MOVABLE_TYPE);
 
 inline QDoubleVector3D::QDoubleVector3D() : xp(0.0), yp(0.0), zp(0.0) {}
 
-inline QDoubleVector3D::QDoubleVector3D(const QVector3D &vector) : xp(vector.x()), yp(vector.y()), zp(vector.z()) {}
-
 inline QDoubleVector3D::QDoubleVector3D(double xpos, double ypos, double zpos) : xp(xpos), yp(ypos), zp(zpos) {}
-
-inline QDoubleVector3D::operator QVector3D() const
-{
-    return QVector3D(xp, yp, zp);
-}
 
 inline bool QDoubleVector3D::isNull() const
 {

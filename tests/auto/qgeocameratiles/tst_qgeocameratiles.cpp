@@ -44,10 +44,10 @@
 #include "qgeotilespec_p.h"
 #include "qgeocameratiles_p.h"
 #include "qgeocameradata_p.h"
-#include "qgeoprojection_p.h"
-#include "qdoublevector2d_p.h"
 #include "qgeomaptype_p.h"
 
+#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
 #include <qtest.h>
 
 #include <QList>

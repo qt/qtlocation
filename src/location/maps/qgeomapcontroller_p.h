@@ -56,46 +56,28 @@
 
 #include "qgeocoordinate.h"
 #include "qgeocameradata_p.h"
-#include "qgeocoordinateinterpolator_p.h"
 
 QT_BEGIN_NAMESPACE
 
 class QGeoMapData;
 
-class Q_LOCATION_EXPORT AnimatableCoordinate
-{
-public:
-    AnimatableCoordinate();
-    AnimatableCoordinate(const QGeoCoordinate &coordinate,
-                         QSharedPointer<QGeoCoordinateInterpolator> interpolator);
-
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
-
-    QSharedPointer<QGeoCoordinateInterpolator> interpolator() const;
-    void setInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
-
-private:
-    QGeoCoordinate coordinate_;
-    QSharedPointer<QGeoCoordinateInterpolator> interpolator_;
-};
 
 class Q_LOCATION_EXPORT QGeoMapController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(AnimatableCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
     Q_PROPERTY(qreal roll READ roll WRITE setRoll NOTIFY rollChanged)
     Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
 
 public:
-    QGeoMapController(QGeoMapData *map, QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator);
+    QGeoMapController(QGeoMapData *map);
     ~QGeoMapController();
 
-    AnimatableCoordinate center() const;
-    void setCenter(const AnimatableCoordinate &center);
+    QGeoCoordinate center() const;
+    void setCenter(const QGeoCoordinate &center);
 
     void setLatitude(qreal latitude);
     void setLongitude(qreal longitude);
@@ -119,7 +101,7 @@ private Q_SLOTS:
     void cameraDataChanged(const QGeoCameraData &cameraData);
 
 Q_SIGNALS:
-    void centerChanged(const AnimatableCoordinate &center);
+    void centerChanged(const QGeoCoordinate &center);
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);
     void rollChanged(qreal roll);
@@ -127,12 +109,9 @@ Q_SIGNALS:
 
 private:
     QGeoMapData *map_;
-    QSharedPointer<QGeoCoordinateInterpolator> interpolator_;
     QGeoCameraData oldCameraData_;
 };
 
 QT_END_NAMESPACE
-
-Q_DECLARE_METATYPE(AnimatableCoordinate)
 
 #endif // QGEOMAPCONTROLLER_P_H

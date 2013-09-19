@@ -72,7 +72,6 @@
 #include "qgeocameradata_p.h"
 #include "qgeomap_p.h"
 #include "qdeclarativegeomaptype_p.h"
-#include <QWeakPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -195,7 +194,6 @@ private Q_SLOTS:
     void mapZoomLevelChanged(qreal zoom);
     void mapTiltChanged(qreal tilt);
     void mapBearingChanged(qreal bearing);
-    void mapCenterChanged(AnimatableCoordinate center);
     void pluginReady();
     void onMapChildrenChanged();
 

@@ -60,13 +60,12 @@
 #include <QSizeF>
 #include <QMatrix4x4>
 #include <QString>
-#include <QSharedPointer>
 #include <QPointer>
+
+#include <QtPositioning/private/qdoublevector3d_p.h>
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
-
-#include "qdoublevector3d_p.h"
 
 QT_BEGIN_NAMESPACE
 

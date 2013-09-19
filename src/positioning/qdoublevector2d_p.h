@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtGui module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -53,23 +53,27 @@
 // We mean it.
 //
 
+#ifdef QT_BUILD_LOCATION_LIB
 #include <QVector2D>
+#endif
 
+#include "qpositioningglobal.h"
 #include <QtCore/qmetatype.h>
 
 QT_BEGIN_NAMESPACE
 
 class QDoubleVector3D;
 
-class QDoubleVector2D
+class Q_POSITIONING_EXPORT_PRIVATE QDoubleVector2D
 {
 public:
     QDoubleVector2D();
-    explicit QDoubleVector2D(const QVector2D &vector);
     QDoubleVector2D(double xpos, double ypos);
     explicit QDoubleVector2D(const QDoubleVector3D &vector);
-
-    operator QVector2D() const;
+#ifdef QT_BUILD_LOCATION_LIB
+    explicit QDoubleVector2D(const QVector2D &vector) : xp(vector.x()), yp(vector.y()) {}
+    operator QVector2D() const { return QVector2D(xp, yp); }
+#endif
 
     bool isNull() const;
 
@@ -117,14 +121,10 @@ Q_DECLARE_TYPEINFO(QDoubleVector2D, Q_MOVABLE_TYPE);
 
 inline QDoubleVector2D::QDoubleVector2D() : xp(0.0), yp(0.0) {}
 
-inline QDoubleVector2D::QDoubleVector2D(const QVector2D &vector) : xp(vector.x()), yp(vector.y()) {}
+
 
 inline QDoubleVector2D::QDoubleVector2D(double xpos, double ypos) : xp(xpos), yp(ypos) {}
 
-inline QDoubleVector2D::operator QVector2D() const
-{
-    return QVector2D(xp, yp);
-}
 
 inline bool QDoubleVector2D::isNull() const
 {

@@ -1139,8 +1139,7 @@ void QDeclarativeGeoMapGestureArea::updatePan()
     QPointF mapCenterPoint;
     mapCenterPoint.setY(map_->height() / 2.0  - dy);
     mapCenterPoint.setX(map_->width() / 2.0 - dx);
-    AnimatableCoordinate animationStartCoordinate;
-    animationStartCoordinate.setCoordinate(map_->screenPositionToCoordinate(mapCenterPoint, false));
+    QGeoCoordinate animationStartCoordinate = map_->screenPositionToCoordinate(mapCenterPoint, false);
     map_->mapController()->setCenter(animationStartCoordinate);
 
 }
@@ -1196,16 +1195,15 @@ void QDeclarativeGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
 {
     if (timeMs < 0)
         return;
-    AnimatableCoordinate animationStartCoordinate = map_->mapController()->center();
-    QGeoCoordinate coordinate = animationStartCoordinate.coordinate();
+
+    QGeoCoordinate animationStartCoordinate = map_->mapController()->center();
 
     if (pan_.animation_->state() == QPropertyAnimation::Running)
         pan_.animation_->stop();
-    AnimatableCoordinate animationEndCoordinate = map_->mapController()->center();
+    QGeoCoordinate animationEndCoordinate = map_->mapController()->center();
     pan_.animation_->setDuration(timeMs);
-    coordinate.setLongitude(coordinate.longitude() - (dx / pow(2.0, map_->mapController()->zoom())));
-    coordinate.setLatitude(coordinate.latitude() + (dy / pow(2.0, map_->mapController()->zoom())));
-    animationEndCoordinate.setCoordinate(coordinate);
+    animationEndCoordinate.setLongitude(animationStartCoordinate.longitude() - (dx / pow(2.0, map_->mapController()->zoom())));
+    animationEndCoordinate.setLatitude(animationStartCoordinate.latitude() + (dy / pow(2.0, map_->mapController()->zoom())));
     pan_.animation_->setStartValue(QVariant::fromValue(animationStartCoordinate));
     pan_.animation_->setEndValue(QVariant::fromValue(animationEndCoordinate));
     pan_.animation_->start();

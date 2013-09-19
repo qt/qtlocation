@@ -1,5 +1,5 @@
 TARGET = qtgeoservices_nokia
-QT += location-private network
+QT += location-private positioning-private network
 
 contains(QT_CONFIG, location-china-support) {
     # China support

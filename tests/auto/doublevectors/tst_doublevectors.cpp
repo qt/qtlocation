@@ -42,8 +42,8 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include "qdoublevector2d_p.h"
-#include "qdoublevector3d_p.h"
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qdoublevector3d_p.h>
 
 QT_USE_NAMESPACE
 

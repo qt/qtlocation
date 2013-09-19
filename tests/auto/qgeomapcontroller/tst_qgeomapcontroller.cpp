@@ -81,8 +81,6 @@ private Q_SLOTS:
     void rollTest();
     void panTest();
     void zoomTest();
-
-    void animatableCoordinateTest();
 };
 
 tst_QGeoMapController::tst_QGeoMapController()
@@ -102,7 +100,7 @@ tst_QGeoMapController::tst_QGeoMapController()
     map_->resize(100, 100);
 
 
-    signalCenterChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(centerChanged(AnimatableCoordinate)));
+    signalCenterChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(centerChanged(QGeoCoordinate)));
     signalBearingChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(bearingChanged(qreal)));
     signalTiltChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(tiltChanged(qreal)));
     signalRollChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(rollChanged(qreal)));
@@ -166,13 +164,12 @@ void tst_QGeoMapController::constructorTest()
     cameraData.setRoll(roll);
     cameraData.setZoomLevel(zoom);
     map_->setCameraData(cameraData);
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator;
-    QGeoMapController mapController(map_, coordinateInterpolator);
+    QGeoMapController mapController(map_);
 
     // make sure the values come out the same
     // also make sure the values match what they were actually set to
-    QCOMPARE(mapController.center().coordinate(), cameraData.center());
-    QCOMPARE(mapController.center().coordinate(), center);
+    QCOMPARE(mapController.center(), cameraData.center());
+    QCOMPARE(mapController.center(), center);
     QCOMPARE(mapController.zoom(), cameraData.zoomLevel());
     QCOMPARE(mapController.zoom(), zoom);
 
@@ -192,14 +189,13 @@ void tst_QGeoMapController::constructorTest()
 
 void tst_QGeoMapController::centerTest()
 {
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator;
     QGeoCameraData cameraData;
     cameraData.setCenter(QGeoCoordinate(10.0,-20.4,30.8));
     map_->setCameraData(cameraData);
-    QGeoMapController mapController(map_, coordinateInterpolator);
-    QCOMPARE(mapController.center().coordinate(),QGeoCoordinate(10.0,-20.4,30.8));
+    QGeoMapController mapController(map_);
+    QCOMPARE(mapController.center(),QGeoCoordinate(10.0,-20.4,30.8));
 
-    AnimatableCoordinate coord(QGeoCoordinate(10.0,20.4,30.8), coordinateInterpolator);
+    QGeoCoordinate coord(10.0,20.4,30.8);
     clearSignalSpies();
     mapController.setCenter(coord);
 
@@ -210,10 +206,10 @@ void tst_QGeoMapController::centerTest()
     QCOMPARE(signalRollChanged_->count(),0);
     QCOMPARE(signalZoomChanged_->count(),0);
 
-    QCOMPARE(mapController.center().coordinate(),QGeoCoordinate(10.0,20.4,30.8));
+    QCOMPARE(mapController.center(),QGeoCoordinate(10.0,20.4,30.8));
 
-    mapController.setCenter(AnimatableCoordinate(QGeoCoordinate(10.0,20.4,30.9), coordinateInterpolator));
-    QCOMPARE(mapController.center().coordinate(),QGeoCoordinate(10.0,20.4,30.9));
+    mapController.setCenter(QGeoCoordinate(10.0,20.4,30.9));
+    QCOMPARE(mapController.center(),QGeoCoordinate(10.0,20.4,30.9));
 }
 
 void tst_QGeoMapController::bearingTest()
@@ -224,8 +220,7 @@ void tst_QGeoMapController::bearingTest()
         QGeoCameraData cameraData;
         cameraData.setBearing(bearing);
         map_->setCameraData(cameraData);
-        QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator;
-        QGeoMapController mapController(map_, coordinateInterpolator);
+        QGeoMapController mapController(map_);
         QCOMPARE(mapController.bearing(),bearing);
 
         clearSignalSpies();
@@ -249,8 +244,7 @@ void tst_QGeoMapController::tiltTest()
         QGeoCameraData cameraData;
         cameraData.setTilt(tilt);
         map_->setCameraData(cameraData);
-        QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator;
-        QGeoMapController mapController(map_, coordinateInterpolator);
+        QGeoMapController mapController(map_);
         QCOMPARE(mapController.tilt(),tilt);
 
         tilt = map_->cameraCapabilities().minimumTilt();
@@ -275,8 +269,7 @@ void tst_QGeoMapController::rollTest()
         QGeoCameraData cameraData;
         cameraData.setRoll(roll);
         map_->setCameraData(cameraData);
-        QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator;
-        QGeoMapController mapController(map_, coordinateInterpolator);
+        QGeoMapController mapController(map_);
         QCOMPARE(mapController.roll(),roll);
 
         clearSignalSpies();
@@ -294,16 +287,15 @@ void tst_QGeoMapController::rollTest()
 
 void tst_QGeoMapController::panTest()
 {
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator;
-    QGeoMapController mapController(map_, coordinateInterpolator);
+    QGeoMapController mapController(map_);
 
-    mapController.setCenter(AnimatableCoordinate(QGeoCoordinate(-1.0,-2.4,3.8), coordinateInterpolator));
+    mapController.setCenter(QGeoCoordinate(-1.0,-2.4,3.8));
 
     // check that pan of zero leaves the camera centre unaltered
     mapController.pan(0, 0);
-    QCOMPARE(mapController.center().coordinate().altitude(), 3.8);
-    QCOMPARE(mapController.center().coordinate().latitude(), -1.0);
-    QCOMPARE(mapController.center().coordinate().longitude(), -2.4);
+    QCOMPARE(mapController.center().altitude(), 3.8);
+    QCOMPARE(mapController.center().latitude(), -1.0);
+    QCOMPARE(mapController.center().longitude(), -2.4);
 
     qreal dx = 13.1;
     qreal dy = -9.3;
@@ -312,9 +304,9 @@ void tst_QGeoMapController::panTest()
 
     // rather than verify the exact new position, we check that the position has changed and the altitude
     // is unaffected
-    QCOMPARE(mapController.center().coordinate().altitude(), 3.8);
-    QVERIFY(qFuzzyCompare(mapController.center().coordinate().latitude(), -1.0) == false);
-    QVERIFY(qFuzzyCompare(mapController.center().coordinate().longitude(), -2.4) == false);
+    QCOMPARE(mapController.center().altitude(), 3.8);
+    QVERIFY(qFuzzyCompare(mapController.center().latitude(), -1.0) == false);
+    QVERIFY(qFuzzyCompare(mapController.center().longitude(), -2.4) == false);
 
     // check correct signal is triggered
     QCOMPARE(signalCenterChanged_->count(),1);
@@ -329,8 +321,7 @@ void tst_QGeoMapController::zoomTest()
     QGeoCameraData cameraData;
     cameraData.setZoomLevel(1.4);
     map_->setCameraData(cameraData);
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator;
-    QGeoMapController mapController(map_, coordinateInterpolator);
+    QGeoMapController mapController(map_);
 
     QCOMPARE(mapController.zoom(),1.4);
     mapController.setZoom(1.4);
@@ -347,23 +338,6 @@ void tst_QGeoMapController::zoomTest()
     QCOMPARE(signalZoomChanged_->count(),1);
 }
 
-void tst_QGeoMapController::animatableCoordinateTest()
-{
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator;
-
-    // modifier tests
-    AnimatableCoordinate animCoordinate;
-    animCoordinate.setCoordinate(QGeoCoordinate(-1.0,-2.4,3.8));
-    QCOMPARE(animCoordinate.coordinate(), QGeoCoordinate(-1.0,-2.4,3.8));
-
-    animCoordinate.setInterpolator(coordinateInterpolator);
-    QCOMPARE(animCoordinate.interpolator(), coordinateInterpolator);
-
-    // constructor test
-    AnimatableCoordinate animCoordinateB(QGeoCoordinate(-1.0,-2.4,3.8), coordinateInterpolator);
-    QCOMPARE(animCoordinateB.coordinate(), QGeoCoordinate(-1.0,-2.4,3.8));
-    QCOMPARE(animCoordinateB.interpolator(), coordinateInterpolator);
-}
 
 QTEST_APPLESS_MAIN(tst_QGeoMapController)
 

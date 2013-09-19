@@ -57,18 +57,19 @@
 #endif
 
 #include <qglobal.h>
-#include <QtLocation/qlocationglobal.h>
+#include "qpositioningglobal.h"
 
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QDoubleVector2D;
 
-class Q_LOCATION_EXPORT QGeoProjection
+class Q_POSITIONING_EXPORT_PRIVATE QGeoProjection
 {
 public:
     static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
     static QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator);
+    static QGeoCoordinate coordinateInterpolation(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress);
 
 private:
     static double realmod(const double a, const double b);

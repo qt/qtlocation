@@ -1,5 +1,5 @@
 TARGET = qtgeoservices_osm
-QT += location-private network
+QT += location-private positioning-private network
 
 PLUGIN_TYPE = geoservices
 load(qt_plugin)

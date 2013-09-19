@@ -44,17 +44,19 @@
 
 #include "qgeotilecache_p.h"
 #include "qgeotilespec_p.h"
-#include "qgeoprojection_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomapcontroller_p.h"
-#include "qdoublevector2d_p.h"
-#include "qdoublevector3d_p.h"
 
 #include "qgeocameratiles_p.h"
 #include "qgeotilerequestmanager_p.h"
 #include "qgeomapscene_p.h"
 
 #include "qgeomappingmanager_p.h"
+
+
+#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qdoublevector3d_p.h>
 
 #include <QMutex>
 #include <QMap>
@@ -157,18 +159,6 @@ QString QGeoMapData::pluginString()
     return d->pluginString();
 }
 
-QSharedPointer<QGeoCoordinateInterpolator> QGeoMapData::coordinateInterpolator()
-{
-    Q_D(QGeoMapData);
-    return d->coordinateInterpolator();
-}
-
-void QGeoMapData::setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator)
-{
-    Q_D(QGeoMapData);
-    return d->setCoordinateInterpolator(interpolator);
-}
-
 QGeoCameraCapabilities QGeoMapData::cameraCapabilities()
 {
     Q_D(QGeoMapData);
@@ -216,20 +206,10 @@ QString QGeoMapDataPrivate::pluginString()
     return pluginString_;
 }
 
-QSharedPointer<QGeoCoordinateInterpolator> QGeoMapDataPrivate::coordinateInterpolator() const
-{
-    return coordinateInterpolator_;
-}
-
-void QGeoMapDataPrivate::setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator)
-{
-    coordinateInterpolator_ = interpolator;
-}
-
 QGeoMapController *QGeoMapDataPrivate::mapController()
 {
     if (!controller_)
-        controller_ = new QGeoMapController(map_, coordinateInterpolator_);
+        controller_ = new QGeoMapController(map_);
     return controller_;
 }
 
@@ -267,8 +247,6 @@ void QGeoMapDataPrivate::setCameraData(const QGeoCameraData &cameraData)
         if (!capabilities.supportsRolling())
             cameraData_.setRoll(0.0);
     }
-
-    cameraData_.setCoordinateInterpolator(coordinateInterpolator_.toWeakRef());
 
     // Do not call this expensive function if the width is 0, since it will get called
     // anyway when it is resized to a width > 0.

@@ -494,9 +494,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             this,
             SLOT(update()));
     connect(map_->mapController(),
-            SIGNAL(centerChanged(AnimatableCoordinate)),
+            SIGNAL(centerChanged(QGeoCoordinate)),
             this,
-            SLOT(mapCenterChanged(AnimatableCoordinate)));
+            SIGNAL(centerChanged(QGeoCoordinate)));
     connect(map_->mapController(),
             SIGNAL(bearingChanged(qreal)),
             this,
@@ -510,9 +510,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             this,
             SLOT(mapZoomLevelChanged(qreal)));
 
-    AnimatableCoordinate acenter = map_->mapController()->center();
-    acenter.setCoordinate(center_);
-    map_->mapController()->setCenter(acenter);
+    map_->mapController()->setCenter(center_);
     map_->mapController()->setZoom(zoomLevel_);
     map_->mapController()->setBearing(bearing_);
     map_->mapController()->setTilt(tilt_);
@@ -726,9 +724,7 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
     center_ = center;
 
     if (center_.isValid() && mappingManagerInitialized_) {
-        AnimatableCoordinate acoord = map_->mapController()->center();
-        acoord.setCoordinate(center_);
-        map_->mapController()->setCenter(acoord);
+        map_->mapController()->setCenter(center_);
         update();
     } else {
         emit centerChanged(center_);
@@ -738,7 +734,7 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
 QGeoCoordinate QDeclarativeGeoMap::center() const
 {
     if (mappingManagerInitialized_)
-        return map_->mapController()->center().coordinate();
+        return map_->mapController()->center();
     else
         return center_;
 }
@@ -774,14 +770,6 @@ void QDeclarativeGeoMap::mapBearingChanged(qreal bearing)
         return;
     bearing_ = bearing;
     emit bearingChanged(bearing_);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mapCenterChanged(AnimatableCoordinate center)
-{
-    emit centerChanged(center.coordinate());
 }
 
 /*!
@@ -1140,8 +1128,6 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     // position camera to the center of bounding box
     QGeoCoordinate coordinate;
     coordinate = map_->screenPositionToCoordinate(QPointF(bboxCenterX, bboxCenterY), false);
-    AnimatableCoordinate acenter = map_->mapController()->center();
-    acenter.setCoordinate(coordinate);
     setCenter(coordinate);
 
     // adjust zoom

@@ -39,13 +39,12 @@
 **
 ****************************************************************************/
 #include "qgeocameradata_p.h"
+#include <QtPositioning/private/qgeocoordinate_p.h>
 
 #include <QVariant>
 #include <QVariantAnimation>
 
 #include <QMetaType>
-
-#include <QWeakPointer>
 
 #include <cmath>
 
@@ -66,8 +65,6 @@ public:
     double tilt_;
     double roll_;
     double zoomLevel_;
-
-    QWeakPointer<QGeoCoordinateInterpolator> interpolator_;
 };
 
 QGeoCameraDataPrivate::QGeoCameraDataPrivate()
@@ -84,8 +81,7 @@ QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
       bearing_(rhs.bearing_),
       tilt_(rhs.tilt_),
       roll_(rhs.roll_),
-      zoomLevel_(rhs.zoomLevel_),
-      interpolator_(rhs.interpolator_) {}
+      zoomLevel_(rhs.zoomLevel_) {}
 
 QGeoCameraDataPrivate &QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
 {
@@ -97,11 +93,6 @@ QGeoCameraDataPrivate &QGeoCameraDataPrivate::operator = (const QGeoCameraDataPr
     tilt_ = rhs.tilt_;
     roll_ = rhs.roll_;
     zoomLevel_ = rhs.zoomLevel_;
-    QSharedPointer<QGeoCoordinateInterpolator> i = rhs.interpolator_.toStrongRef();
-    if (i)
-        interpolator_ = i.toWeakRef();
-    else
-        interpolator_.clear();
 
     return *this;
 }
@@ -120,16 +111,20 @@ QVariant cameraInterpolator(const QGeoCameraData &start,
                             qreal progress)
 {
     QGeoCameraData result = start;
+    QGeoCoordinate from = start.center();
+    QGeoCoordinate to = end.center();
 
-
-    QSharedPointer<QGeoCoordinateInterpolator> i = start.coordinateInterpolator();
-    if (!i)
-        i = end.coordinateInterpolator();
-
-    if (!i)
-        result.setCenter(start.center());
-    else
-        result.setCenter(i->interpolate(start.center(), end.center(), progress));
+    if (from == to) {
+        if (progress < 0.5) {
+            result.setCenter(from);
+        } else {
+            result.setCenter(to);
+        }
+    }
+    else {
+        QGeoCoordinate coordinateResult = QGeoProjection::coordinateInterpolation(from, to, progress);
+        result.setCenter(coordinateResult);
+    }
 
     double sf = 1.0 - progress;
     double ef = progress;
@@ -223,16 +218,6 @@ void QGeoCameraData::setZoomLevel(double zoomFactor)
 double QGeoCameraData::zoomLevel() const
 {
     return d->zoomLevel_;
-}
-
-void QGeoCameraData::setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator)
-{
-    d->interpolator_ = interpolator.toWeakRef();
-}
-
-QSharedPointer<QGeoCoordinateInterpolator> QGeoCameraData::coordinateInterpolator() const
-{
-    return d->interpolator_.toStrongRef();
 }
 
 QT_END_NAMESPACE

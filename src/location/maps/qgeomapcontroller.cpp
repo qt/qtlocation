@@ -42,74 +42,16 @@
 #include "qgeomapcontroller_p.h"
 
 #include "qgeomapdata_p.h"
-#include "qgeoprojection_p.h"
+#include <QtPositioning/private/qgeoprojection_p.h>
 
 #include <QPointF>
 
-#include <QVariant>
-#include <QVariantAnimation>
-
 QT_BEGIN_NAMESPACE
 
-QVariant coordinateInterpolator(const AnimatableCoordinate &start,
-                                const AnimatableCoordinate &end,
-                                qreal progress)
-{
-    AnimatableCoordinate result = start;
-
-    QSharedPointer<QGeoCoordinateInterpolator> i = start.interpolator();
-    if (!i)
-        i = end.interpolator();
-
-    if (!i)
-        result.setCoordinate(start.coordinate());
-    else
-        result.setCoordinate(i->interpolate(start.coordinate(),
-                                            end.coordinate(),
-                                            progress));
-
-    result.setInterpolator(i);
-
-    return QVariant::fromValue(result);
-}
-
-AnimatableCoordinate::AnimatableCoordinate() {}
-
-AnimatableCoordinate::AnimatableCoordinate(const QGeoCoordinate &coordinate,
-                     QSharedPointer<QGeoCoordinateInterpolator> interpolator)
-    : coordinate_(coordinate),
-      interpolator_(interpolator)
-{
-}
-
-QGeoCoordinate AnimatableCoordinate::coordinate() const
-{
-    return coordinate_;
-}
-
-void AnimatableCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
-{
-    coordinate_ = coordinate;
-}
-
-QSharedPointer<QGeoCoordinateInterpolator> AnimatableCoordinate::interpolator() const
-{
-    return interpolator_;
-}
-
-void AnimatableCoordinate::setInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator)
-{
-    interpolator_ = interpolator;
-}
-
-QGeoMapController::QGeoMapController(QGeoMapData *map, QSharedPointer<QGeoCoordinateInterpolator> interpolator)
+QGeoMapController::QGeoMapController(QGeoMapData *map)
     : QObject(map),
-      map_(map),
-      interpolator_(interpolator)
+      map_(map)
 {
-    qRegisterMetaType<AnimatableCoordinate>();
-    qRegisterAnimationInterpolator<AnimatableCoordinate>(coordinateInterpolator);
-
     oldCameraData_ = map_->cameraData();
 
     connect(map_,
@@ -123,7 +65,7 @@ QGeoMapController::~QGeoMapController() {}
 void QGeoMapController::cameraDataChanged(const QGeoCameraData &cameraData)
 {
     if (oldCameraData_.center() != cameraData.center())
-        emit centerChanged(AnimatableCoordinate(cameraData.center(), interpolator_));
+        emit centerChanged(cameraData.center());
 
     if (oldCameraData_.bearing() != cameraData.bearing())
         emit bearingChanged(cameraData.bearing());
@@ -140,19 +82,19 @@ void QGeoMapController::cameraDataChanged(const QGeoCameraData &cameraData)
     oldCameraData_ = cameraData;
 }
 
-AnimatableCoordinate QGeoMapController::center() const
+QGeoCoordinate QGeoMapController::center() const
 {
-    return AnimatableCoordinate(map_->cameraData().center(), interpolator_);
+    return map_->cameraData().center();
 }
 
-void QGeoMapController::setCenter(const AnimatableCoordinate &center)
+void QGeoMapController::setCenter(const QGeoCoordinate &center)
 {
     QGeoCameraData cd = map_->cameraData();
 
-    if (center.coordinate() == cd.center())
+    if (center == cd.center())
         return;
 
-    cd.setCenter(center.coordinate());
+    cd.setCenter(center);
     map_->setCameraData(cd);
 }
 

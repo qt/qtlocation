@@ -60,12 +60,12 @@
 #include <QSizeF>
 #include <QMatrix4x4>
 #include <QString>
-#include <QSharedPointer>
+
+#include <QtPositioning/private/qdoublevector3d_p.h>
+
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
-
-#include "qdoublevector3d_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -101,9 +101,6 @@ public:
     void setActiveMapType(const QGeoMapType &mapType);
     QString pluginString();
 
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator() const;
-    void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
-
 private:
     int width_;
     int height_;
@@ -117,8 +114,6 @@ private:
 
     QGeoCameraData cameraData_;
     QGeoMapType activeMapType_;
-
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator_;
 };
 
 QT_END_NAMESPACE

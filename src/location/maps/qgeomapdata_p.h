@@ -56,8 +56,6 @@
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
-#include "qgeocoordinateinterpolator_p.h"
-#include "qgeocoordinateinterpolator_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -98,8 +96,6 @@ public:
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
 
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator();
-
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const = 0;
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
 
@@ -109,8 +105,6 @@ public:
     virtual void prefetchData() {}
 
 protected:
-    void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
-
     virtual void mapResized(int width, int height) = 0;
     virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0;
     virtual void changeActiveMapType(const QGeoMapType mapType) = 0;

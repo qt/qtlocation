@@ -51,6 +51,7 @@
 #include "qdeclarativegeorectangle.h"
 #include "qdeclarativegeocircle.h"
 #include "qdeclarativecoordinate_p.h"
+#include "qdeclarativegeocoordinateanimation_p.h"
 
 #include "locationsingleton.h"
 
@@ -112,6 +113,9 @@ public:
             qRegisterMetaType<QGeoRectangle>("QGeoRectangle");
             qRegisterMetaType<QGeoCircle>("QGeoCircle");
             qRegisterMetaType<QGeoLocation>("QGeoLocation");
+
+            qRegisterAnimationInterpolator<QGeoCoordinate>(geoCoordinateInterpolator);
+            qmlRegisterType<QDeclarativeGeoCoordinateAnimation>(uri, 5, 3, "CoordinateAnimation");
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
         }

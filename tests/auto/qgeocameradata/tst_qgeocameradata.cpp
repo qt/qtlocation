@@ -46,21 +46,6 @@
 
 QT_USE_NAMESPACE
 
-// For testing the setters and getters of the QGeoCoordinateInterpolator shared pointer
-class QGeoCoordinateInterpolatorTest : public QGeoCoordinateInterpolator
-{
-public:
-    QGeoCoordinateInterpolatorTest(){}
-    ~QGeoCoordinateInterpolatorTest(){}
-    QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress){
-        Q_UNUSED(start);
-        Q_UNUSED(end);
-        Q_UNUSED(progress);
-        return QGeoCoordinate();
-    }
-};
-
-
 class tst_QGeoCameraData : public QObject
 {
     Q_OBJECT
@@ -79,7 +64,6 @@ private Q_SLOTS:
     void tiltTest();
     void rollTest();
     void zoomLevelTest();
-    void coordinateInterpolatorTest();
     void operatorsTest_data();
     void operatorsTest();
 };
@@ -196,14 +180,6 @@ void tst_QGeoCameraData::zoomLevelTest(){
     QCOMPARE(cameraData2.zoomLevel(),8.0);
     cameraData.setZoomLevel(9.0);
     QCOMPARE(cameraData2.zoomLevel(),8.0);
-}
-
-void tst_QGeoCameraData::coordinateInterpolatorTest(){
-    QGeoCameraData cameraData;
-    QVERIFY2(cameraData.coordinateInterpolator().isNull(), "Default coordinate interpolator shared point is not null");
-    QSharedPointer<QGeoCoordinateInterpolator> testPointer = QSharedPointer<QGeoCoordinateInterpolator>(new QGeoCoordinateInterpolatorTest());
-    cameraData.setCoordinateInterpolator(testPointer);
-    QVERIFY2(!cameraData.coordinateInterpolator().isNull(), "Coordinate interpolator shared point is null");
 }
 
 void tst_QGeoCameraData::operatorsTest_data(){

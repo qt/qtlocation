@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -38,34 +38,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOCOORDINATEINTERPOLATOR_P_H
-#define QGEOCOORDINATEINTERPOLATOR_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QDECLARATIVEGEOCOORDINATEANIMATION_P_H
+#define QDECLARATIVEGEOCOORDINATEANIMATION_P_H
 
-#include <QtPositioning/QGeoCoordinate>
-#include <QtLocation/qlocationglobal.h>
+#include <QtQuick/private/qquickanimation_p.h>
+#include "qdeclarativecoordinate_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeoCoordinateInterpolator
-{
-public:
-    QGeoCoordinateInterpolator();
-    virtual ~QGeoCoordinateInterpolator();
 
-    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress) = 0;
+QVariant geoCoordinateInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress);
+
+class QDeclarativeGeoCoordinateAnimation : public QQuickPropertyAnimation
+{
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QQuickPropertyAnimation)
+    Q_PROPERTY(QGeoCoordinate from READ from WRITE setFrom)
+    Q_PROPERTY(QGeoCoordinate to READ to WRITE setTo)
+
+public:
+    QDeclarativeGeoCoordinateAnimation(QObject *parent=0);
+    ~QDeclarativeGeoCoordinateAnimation();
+
+    QGeoCoordinate from() const;
+    void setFrom(const QGeoCoordinate &);
+
+    QGeoCoordinate to() const;
+    void setTo(const QGeoCoordinate &);
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOCOORDINATEINTERPOLATOR_P_H
+QML_DECLARE_TYPE(QDeclarativeGeoCoordinateAnimation)
+
+#endif // QDECLARATIVEGEOCOORDINATEANIMATION_P_H

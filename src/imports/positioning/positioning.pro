@@ -11,7 +11,8 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeocircle.h \
            locationvaluetypeprovider.h \
            locationsingleton.h \
-           error_messages.h
+           error_messages.h \
+           qdeclarativegeocoordinateanimation_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            positioning.cpp \
@@ -22,7 +23,8 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeocircle.cpp \
            locationvaluetypeprovider.cpp \
            locationsingleton.cpp \
-           error_messages.cpp
+           error_messages.cpp \
+           qdeclarativegeocoordinateanimation.cpp
 
 load(qml_plugin)
 
