@@ -74,6 +74,8 @@ Item {
         name: "Plugin properties"
         function test_plugin() {
             verify (invalidPlugin.availableServiceProviders.length > 0)
+            skip("Skipping remainder due to QTBUG-33542")
+            //next call fails: QTBUG-33542
             verify (invalidPlugin.availableServiceProviders.indexOf('qmlgeo.test.plugin') > -1) // at least test plugin must be present
 
             // invalid plugins should have no features

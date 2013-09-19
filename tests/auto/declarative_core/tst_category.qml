@@ -137,17 +137,9 @@ TestCase {
     }
 
     function test_save() {
-        var modelSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        modelSpy.target = categoryModel.model;
-        modelSpy.signalName = "statusChanged"
-
         categoryModel.model.update();
         tryCompare(categoryModel.model, "status", CategoryModel.Ready);
         compare(categoryModel.count, 0);
-
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = saveCategory;
-        signalSpy.signalName = "statusChanged";
 
         saveCategory.plugin = testPlugin;
         saveCategory.categoryId = "invalid-category-id";
@@ -211,15 +203,9 @@ TestCase {
         tryCompare(saveCategory, "status", Category.Error);
 
         verify(saveCategory.errorString().length > 0);
-
-        signalSpy.destroy();
     }
 
     function test_saveWithoutPlugin() {
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = saveCategory;
-        signalSpy.signalName = "statusChanged";
-
         saveCategory.plugin = null;
         saveCategory.categoryId = "";
 
@@ -238,15 +224,9 @@ TestCase {
 
         verify(saveCategory.errorString().length > 0);
         compare(saveCategory.categoryId, "");
-
-        signalSpy.destroy();
     }
 
     function test_removeWithoutPlugin() {
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = saveCategory;
-        signalSpy.signalName = "statusChanged";
-
         saveCategory.plugin = null;
         saveCategory.categoryId = "test-category-id";
 
@@ -265,7 +245,5 @@ TestCase {
 
         verify(saveCategory.errorString().length > 0);
         compare(saveCategory.categoryId, "test-category-id");
-
-        signalSpy.destroy();
     }
 }

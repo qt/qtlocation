@@ -257,7 +257,7 @@ TestCase {
 
         //try cancelling from an initially ready state
         testModel.update();
-        tryCompare(testModel.status, PlaceSearchModel.Loading);
+        tryCompare(testModel, "status", PlaceSearchModel.Loading);
         testModel.cancel();
         tryCompare(testModel, "status", PlaceSearchModel.Ready);
         compare(testModel.count, numResults);

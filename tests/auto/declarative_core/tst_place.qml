@@ -174,8 +174,9 @@ TestCase {
                 return false;
             if (place1.supplier.name !== place2.supplier.name)
                 return false;
-            if (place1.supplier.url !== place2.supplier.url)
-                return false;
+            //depends in QTBUG-33546
+            /*if (place1.supplier.url !== place2.supplier.url)
+                return false;*/
 
             // check supplier icon
             if (place1.supplier.icon === null && place2.supplier.icon !== null)
@@ -234,30 +235,27 @@ TestCase {
             if (place1.location.address.postalCode !== place2.location.address.postalCode)
                 return false;
 
-            if (place1.location.coordinate !== place2.location.coordinate)
+            //QTBUG-33561 operator === should work too, using == for now only
+            if (place1.location.coordinate != place2.location.coordinate)
                 return false;
-            if (place1.location.boundingBox !== place2.location.boundingBox)
+            if (place1.location.boundingBox != place2.location.boundingBox)
                 return false;
         }
 
         // check icon
         if (place1.icon === null && place2.icon !== null) {
-            console.log("f1");
             return false;
         }
         if (place1.icon !== null && place2.icon === null) {
-            console.log("f2");
             return false;
         }
         if (place1.icon !== null && place2.icon !== null) {
             if (place1.icon.plugin !== place2.icon.plugin) {
-                console.log("f3");
                 console.log(place1.icon.plugin + " " + place2.icon.plugin);
                 return false;
             }
 
             if (place1.icon.parameters.keys().length !== place2.icon.parameters.keys().length) {
-                console.log("f4");
                 return false;
             }
 
