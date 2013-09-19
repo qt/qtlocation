@@ -156,17 +156,18 @@ QJSValue QDeclarativeGeoRouteSegment::path() const
     QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
     QV4::ExecutionEngine *v4 = QV8Engine::getV4(v8Engine);
 
-    QV4::ArrayObject *pathArray = v4->newArrayObject(segment_.path().length());
+    QV4::Scope scope(v4);
+    QV4::Scoped<QV4::ArrayObject> pathArray(scope, v4->newArrayObject(segment_.path().length()));
     for (int i = 0; i < segment_.path().length(); ++i) {
         const QGeoCoordinate &c = segment_.path().at(i);
 
         QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
-        QV4::Value cv = QV4::QmlValueTypeWrapper::create(v8Engine, QVariant::fromValue(c), vt);
+        QV4::ScopedValue cv(scope, QV4::QmlValueTypeWrapper::create(v8Engine, QVariant::fromValue(c), vt));
 
         pathArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(pathArray);
+    return new QJSValuePrivate(v4, pathArray.asValue());
 }
 
 #include "moc_qdeclarativegeoroutesegment_p.cpp"
