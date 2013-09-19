@@ -45,6 +45,7 @@
 #include "qgeomappingmanager_p.h"
 
 #include <QDir>
+#include <QStandardPaths>
 #include <QMetaType>
 #include <QPixmap>
 #include <QDebug>
@@ -115,11 +116,9 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     // of course override them)
 
     if (directory_.isEmpty()) {
-        QString dirname = QLatin1String(".tilecache");
-        QDir home = QDir::home();
-        if (!home.exists(dirname))
-            home.mkdir(dirname);
-        directory_ = home.filePath(dirname);
+        directory_ = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+                + QLatin1String("/QtLocation");
+        QDir::root().mkpath(directory_);
     }
 
     // default values

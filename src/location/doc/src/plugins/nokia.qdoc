@@ -85,7 +85,7 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \li mapping.cache.directory
     \li Map tile cache directory used as network disk cache.
 
-    Default place for the cache is ".tilecache" directory in \l {QDir::home()}.
+    Default place for the cache is "QtLocation" directory in \l {QStandardPaths::writableLocation(QStandardPaths::CacheLocation)}.
 \row
     \li mapping.cache.disk.size
     \li Map tile disk cache size in bytes. Default size of the cache is 20MB.
