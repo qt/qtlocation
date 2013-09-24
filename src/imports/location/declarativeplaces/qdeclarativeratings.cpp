@@ -46,7 +46,7 @@ QT_USE_NAMESPACE
 /*!
     \qmltype Ratings
     \instantiates QDeclarativeRatings
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0

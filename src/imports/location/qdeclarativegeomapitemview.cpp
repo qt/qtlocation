@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype MapItemView
     \instantiates QDeclarativeGeoMapItemView
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
     \inherits QQuickItem

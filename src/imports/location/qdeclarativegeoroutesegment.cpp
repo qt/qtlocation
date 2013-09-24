@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype RouteSegment
     \instantiates QDeclarativeGeoRouteSegment
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0
 

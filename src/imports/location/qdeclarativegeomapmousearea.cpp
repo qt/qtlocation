@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The MapMouseArea item enables simple mouse handling.
 
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
 
     Like a standard Qt Quick \l{MouseArea}, the MapMouseArea provides mouse

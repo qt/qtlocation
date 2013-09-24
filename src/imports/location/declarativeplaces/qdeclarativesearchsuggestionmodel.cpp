@@ -53,7 +53,7 @@ QT_USE_NAMESPACE
 /*!
     \qmltype PlaceSearchSuggestionModel
     \instantiates QDeclarativeSearchSuggestionModel
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0

@@ -44,7 +44,7 @@
 /*!
     \qmltype ContactDetails
     \instantiates QDeclarativeContactDetails
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
@@ -122,7 +122,7 @@ QVariant QDeclarativeContactDetails::updateValue(const QString &, const QVariant
 /*!
     \qmltype ContactDetail
     \instantiates QDeclarativeContactDetail
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
