@@ -44,7 +44,7 @@
 /*!
     \qmltype QtPositioning
     \instantiates LocationSingleton
-    \inqmlmodule QtPositioning 5.0
+    \inqmlmodule QtPositioning
 
     \brief The QtPositioning global object provides useful functions for working with location-based
            types in QML.

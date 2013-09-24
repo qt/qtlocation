@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlbasictype geocircle
-    \inqmlmodule QtPositioning 5.0
+    \inqmlmodule QtPositioning
     \ingroup qml-QtPositioning5-basictypes
     \since Qt Positioning 5.0
 

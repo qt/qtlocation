@@ -46,7 +46,7 @@ QT_USE_NAMESPACE
 /*!
     \qmltype Location
     \instantiates QDeclarativeGeoLocation
-    \inqmlmodule QtPositioning 5.0
+    \inqmlmodule QtPositioning
     \since Qt Positioning 5.0
 
     \brief The Location type holds location data.

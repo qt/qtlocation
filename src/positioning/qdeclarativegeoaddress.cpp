@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype Address
     \instantiates QDeclarativeGeoAddress
-    \inqmlmodule QtPositioning 5.0
+    \inqmlmodule QtPositioning
     \since Qt Positioning 5.0
 
     \brief The Address QML type represents a specific location as a street address.

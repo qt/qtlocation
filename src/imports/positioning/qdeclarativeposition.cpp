@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype Position
     \instantiates QDeclarativePosition
-    \inqmlmodule QtPositioning 5.0
+    \inqmlmodule QtPositioning
     \since Qt Positioning 5.0
 
     \brief The Position type holds positional data at a particular point in time,
