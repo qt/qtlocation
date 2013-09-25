@@ -46,7 +46,7 @@ the longitude, and the altitude in meters. For more information see
 \l {http://en.wikipedia.org/wiki/Geographic_coordinate}{Geographic Coordinate}.
 
 The QML position is stored in a \l {coordinate} which contains the
-latitude, longitude and altitude of the device.  The \l {QtPositioning5::Location}{Location} contains
+latitude, longitude and altitude of the device.  The \l {QtPositioning::Location}{Location} contains
 this \l {coordinate} and adds an address, it also has a bounding box which
 defines the recommended viewing region when displaying the location.
 

@@ -99,7 +99,7 @@ QDeclarativeGeoAddress::QDeclarativeGeoAddress(const QGeoAddress &address, QObje
 }
 
 /*!
-    \qmlproperty QGeoAddress QtPositioning5::Address::address
+    \qmlproperty QGeoAddress QtPositioning::Address::address
 
     For details on how to use this property to interface between C++ and QML see
     "\l {positioning-cpp-qml.html#geoaddress} {Interfaces between C++ and QML Code}".
@@ -125,7 +125,7 @@ void QDeclarativeGeoAddress::setAddress(const QGeoAddress &address)
 }
 
 /*!
-    \qmlproperty string QtPositioning5::Address::text
+    \qmlproperty string QtPositioning::Address::text
 
     This property holds the address as a single formatted string. It is the recommended
     string to use to display the address to the user. It typically takes the format of

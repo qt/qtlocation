@@ -111,7 +111,7 @@ QT_BEGIN_NAMESPACE
     a PositionSource in your application to retrieve local data for users
     from a REST web service.
 
-    \sa {QtPositioning5::Position}, {QGeoPositionInfoSource}
+    \sa {QtPositioning::Position}, {QGeoPositionInfoSource}
 
 */
 

@@ -147,7 +147,7 @@ varying degrees of accuracy.
 A geocoding query in QML is performed using the
 \l{QtLocation5::GeocodeModel}{GeocodeModel} type. For an address-to-coordinate
 query, its \c{query} property may be set to either an
-\l{QtPositioning5::Address}{Address} object or a string containing the textual
+\l{QtPositioning::Address}{Address} object or a string containing the textual
 form of the address to search for. To perform the reverse, the same property
 can be set to a \l {coordinate} instead. Results are made available in the
 contents of the model.
@@ -161,7 +161,7 @@ contents of the model.
         \li \l{QtLocation5::GeocodeModel}{GeocodeModel}
         \li Queries the Plugin for geocoding translations and provides access to results via indexes in the model.
     \row
-        \li \l{QtPositioning5::Address}{Address}
+        \li \l{QtPositioning::Address}{Address}
         \li Structured address for use in queries and results of geocoding.
 \endtable
 
