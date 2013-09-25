@@ -80,7 +80,7 @@ QDeclarativePlaceUser::QDeclarativePlaceUser(const QPlaceUser &user,
 QDeclarativePlaceUser::~QDeclarativePlaceUser() {}
 
 /*!
-    \qmlproperty QPlaceUser QtLocation5::User::user
+    \qmlproperty QPlaceUser QtLocation::User::user
 
     For details on how to use this property to interface between C++ and QML see
     "\l {location-cpp-qml.html#placeuser} {Interfaces between C++ and QML Code}".
@@ -103,7 +103,7 @@ QPlaceUser QDeclarativePlaceUser::user() const
 }
 
 /*!
-    \qmlproperty string QtLocation5::User::userId
+    \qmlproperty string QtLocation::User::userId
 
     This property holds the unique identifier of the user.
 */
@@ -123,7 +123,7 @@ QString QDeclarativePlaceUser::userId() const
 }
 
 /*!
-    \qmlproperty string QtLocation5::User::name
+    \qmlproperty string QtLocation::User::name
 
     This property holds the name of a user.
 */

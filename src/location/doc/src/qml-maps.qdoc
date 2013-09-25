@@ -216,7 +216,7 @@ Enabling and configuring pinch and flickable is easy within the \l Map type.
 
 Zoom can also be controlled by other objects like sliders, as shown in the
 example, by implementing the \c onValueChanged handler to update the Map
-\l {QtLocation5::Map::}{zoomLevel}.
+\l {QtLocation::Map::}{zoomLevel}.
 
 \section1 Types
 

@@ -357,7 +357,7 @@ bool QDeclarativeGeoMap::mouseEvent(QMouseEvent *event)
 
 
 /*!
-    \qmlproperty MapGestureArea QtLocation5::Map::gesture
+    \qmlproperty MapGestureArea QtLocation::Map::gesture
 
     Contains the MapGestureArea created with the Map. This covers pan, flick and pinch gestures.
     Use \c{gesture.enabled: true} to enable basic gestures, or see \l{MapGestureArea} for
@@ -438,7 +438,7 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 
 
 /*!
-    \qmlproperty Plugin QtLocation5::Map::plugin
+    \qmlproperty Plugin QtLocation::Map::plugin
 
     This property holds the plugin which provides the mapping functionality.
 
@@ -567,7 +567,7 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 }
 
 /*!
-    \qmlproperty real QtLocation5::Map::minimumZoomLevel
+    \qmlproperty real QtLocation::Map::minimumZoomLevel
 
     This property holds the minimum valid zoom level for the map.
 
@@ -584,7 +584,7 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
 }
 
 /*!
-\qmlproperty real QtLocation5::Map::maximumZoomLevel
+\qmlproperty real QtLocation::Map::maximumZoomLevel
 
     This property holds the maximum valid zoom level for the map.
 
@@ -676,7 +676,7 @@ void QDeclarativeGeoMap::setTilt(qreal tilt)
 }
 
 /*!
-    \qmlproperty real QtLocation5::Map::zoomLevel
+    \qmlproperty real QtLocation::Map::zoomLevel
 
     This property holds the zoom level for the map.
 
@@ -711,7 +711,7 @@ qreal QDeclarativeGeoMap::zoomLevel() const
 }
 
 /*!
-\qmlproperty coordinate QtLocation5::Map::center
+\qmlproperty coordinate QtLocation::Map::center
 
     This property holds the coordinate which occupies the center of the
     mapping viewport.
@@ -785,7 +785,7 @@ void QDeclarativeGeoMap::mapCenterChanged(AnimatableCoordinate center)
 }
 
 /*!
-    \qmlproperty list<MapType> QtLocation5::Map::supportedMapTypes
+    \qmlproperty list<MapType> QtLocation::Map::supportedMapTypes
 
     This read-only property holds the set of \l{MapType}{map types} supported by this map.
 
@@ -797,7 +797,7 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 }
 
 /*!
-    \qmlmethod QtLocation5::Map::toCoordinate(QPointF screenPosition)
+    \qmlmethod QtLocation::Map::toCoordinate(QPointF screenPosition)
 
     Returns the coordinate which corresponds to the screen position
     \a screenPosition.
@@ -815,7 +815,7 @@ QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) c
 }
 
 /*!
-\qmlmethod QtLocation5::Map::toScreenPosition(coordinate coordinate)
+\qmlmethod QtLocation::Map::toScreenPosition(coordinate coordinate)
 
     Returns the screen position which corresponds to the coordinate
     \a coordinate.
@@ -833,7 +833,7 @@ QPointF QDeclarativeGeoMap::toScreenPosition(const QGeoCoordinate &coordinate) c
 }
 
 /*!
-    \qmlmethod void QtLocation5::Map::pan(int dx, int dy)
+    \qmlmethod void QtLocation::Map::pan(int dx, int dy)
 
     Starts panning the map by \a dx pixels along the x-axis and
     by \a dy pixels along the y-axis.
@@ -852,7 +852,7 @@ void QDeclarativeGeoMap::pan(int dx, int dy)
 
 
 /*!
-    \qmlmethod void QtLocation5::Map::cameraStopped()
+    \qmlmethod void QtLocation::Map::cameraStopped()
 
     Optional hint that allows the map to prefetch during this idle period
 */
@@ -910,7 +910,7 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
 }
 
 /*!
-    \qmlmethod QtLocation5::Map::addMapItem(MapItem item)
+    \qmlmethod QtLocation::Map::addMapItem(MapItem item)
 
     Adds the given \a item to the Map (for example MapQuickItem, MapCircle). If the object
     already is on the Map, it will not be added again.
@@ -942,7 +942,7 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 }
 
 /*!
-    \qmlproperty list<MapItem> QtLocation5::Map::mapItems
+    \qmlproperty list<MapItem> QtLocation::Map::mapItems
 
     Returns the list of all map items in no particular order.
     These items include items that were declared statically as part of
@@ -963,7 +963,7 @@ QList<QObject *> QDeclarativeGeoMap::mapItems()
 }
 
 /*!
-    \qmlmethod void QtLocation5::Map::removeMapItem(MapItem item)
+    \qmlmethod void QtLocation::Map::removeMapItem(MapItem item)
 
     Removes the given \a item from the Map (for example MapQuickItem, MapCircle). If
     the MapItem does not exist or was not previously added to the map, the
@@ -989,7 +989,7 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 }
 
 /*!
-    \qmlmethod void QtLocation5::Map::clearMapItems()
+    \qmlmethod void QtLocation::Map::clearMapItems()
 
     Removes all items from the map.
 
@@ -1013,7 +1013,7 @@ void QDeclarativeGeoMap::clearMapItems()
 }
 
 /*!
-    \qmlproperty MapType QtLocation5::Map::activeMapType
+    \qmlproperty MapType QtLocation::Map::activeMapType
 
     \brief Access to the currently active \l{MapType}{map type}.
 
@@ -1047,7 +1047,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
 }
 
 /*!
-    \qmlmethod QtLocation5::Map::fitViewportToMapItems()
+    \qmlmethod QtLocation::Map::fitViewportToMapItems()
 
     Fits the current viewport to the boundary of all map items. The camera is positioned
     in the center of the map items, and at the largest integral zoom level possible which

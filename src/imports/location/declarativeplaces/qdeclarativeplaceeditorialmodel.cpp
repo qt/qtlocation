@@ -91,7 +91,7 @@ QT_BEGIN_NAMESPACE
             \li The supplier of the editorial.
         \row
             \li user
-            \li \l {QtLocation5::User}{User}
+            \li \l {QtLocation::User}{User}
             \li The user who contributed the editorial.
         \row
             \li attribution

@@ -108,14 +108,14 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod string QtLocation5::CategoryModel::data(ModelIndex index, int role)
+    \qmlmethod string QtLocation::CategoryModel::data(ModelIndex index, int role)
     \internal
 
     This method retrieves the the model's data per \a index and \a role.
 */
 
 /*!
-    \qmlmethod string QtLocation5::CategoryModel::errorString() const
+    \qmlmethod string QtLocation::CategoryModel::errorString() const
 
     This read-only property holds the textual presentation of latest category model error.
     If no error has occurred, an empty string is returned.

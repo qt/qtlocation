@@ -97,7 +97,7 @@ QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(const QGeoRouteSegment 
 QDeclarativeGeoRouteSegment::~QDeclarativeGeoRouteSegment() {}
 
 /*!
-    \qmlproperty int QtLocation5::RouteSegment::travelTime
+    \qmlproperty int QtLocation::RouteSegment::travelTime
 
     Read-only property which holds the estimated amount of time it will take to
     traverse this segment, in seconds.
@@ -110,7 +110,7 @@ int QDeclarativeGeoRouteSegment::travelTime() const
 }
 
 /*!
-    \qmlproperty real QtLocation5::RouteSegment::distance
+    \qmlproperty real QtLocation::RouteSegment::distance
 
     Read-only property which holds the distance covered by this segment of the route, in meters.
 
@@ -122,7 +122,7 @@ qreal QDeclarativeGeoRouteSegment::distance() const
 }
 
 /*!
-    \qmlproperty RouteManeuver QtLocation5::RouteSegment::maneuver
+    \qmlproperty RouteManeuver QtLocation::RouteSegment::maneuver
 
     Read-only property which holds the maneuver for this route segment.
 
@@ -136,7 +136,7 @@ QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
 }
 
 /*!
-    \qmlproperty QJSValue QtLocation5::RouteSegment::path
+    \qmlproperty QJSValue QtLocation::RouteSegment::path
 
     Read-only property which holds the geographical coordinates of this segment.
     Coordinates are listed in the order in which they would be traversed by someone

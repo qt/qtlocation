@@ -104,13 +104,13 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty QPoint QtLocation5::MapPinchEvent::center
+    \qmlproperty QPoint QtLocation::MapPinchEvent::center
 
     This read-only property holds the current center point.
 */
 
 /*!
-    \qmlproperty real QtLocation5::MapPinchEvent::angle
+    \qmlproperty real QtLocation::MapPinchEvent::angle
 
     This read-only property holds the current angle between the two points in
     the range -180 to 180. Positive values for the angles mean counter-clockwise
@@ -119,15 +119,15 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty QPoint QtLocation5::MapPinchEvent::point1
-    \qmlproperty QPoint QtLocation5::MapPinchEvent::point2
+    \qmlproperty QPoint QtLocation::MapPinchEvent::point1
+    \qmlproperty QPoint QtLocation::MapPinchEvent::point2
 
     These read-only properties hold the actual touch points generating the pinch.
     The points are not in any particular order.
 */
 
 /*!
-    \qmlproperty int QtLocation5::MapPinchEvent::pointCount
+    \qmlproperty int QtLocation::MapPinchEvent::pointCount
 
     This read-only property holds the number of points currently touched.
     The MapPinch will not react until two touch points have initiated a gesture,
@@ -135,7 +135,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty bool QtLocation5::MapPinchEvent::accepted
+    \qmlproperty bool QtLocation::MapPinchEvent::accepted
 
     Setting this property to false in the \c MapPinch::onPinchStarted handler
     will result in no further pinch events being generated, and the gesture
@@ -187,7 +187,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty bool QtLocation5::MapGestureArea::enabled
+    \qmlproperty bool QtLocation::MapGestureArea::enabled
 
     This property holds whether the gestures are enabled.
     Note: disabling gestures during an active gesture does not have effect on
@@ -196,7 +196,7 @@ QT_BEGIN_NAMESPACE
 
 
 /*!
-    \qmlproperty bool QtLocation5::MapGestureArea::panEnabled
+    \qmlproperty bool QtLocation::MapGestureArea::panEnabled
 
     This property holds whether the pan gestures are enabled.
     Note: disabling gestures during an active gesture does not have effect on
@@ -204,7 +204,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty bool QtLocation5::MapGestureArea::pinchEnabled
+    \qmlproperty bool QtLocation::MapGestureArea::pinchEnabled
 
     This property holds whether the pinch gestures are enabled.
     Note: disabling gestures during an active gesture does not have effect on
@@ -212,19 +212,19 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty bool QtLocation5::MapGestureArea::isPinchActive
+    \qmlproperty bool QtLocation::MapGestureArea::isPinchActive
 
     This read-only property holds whether any pinch gesture is active.
 */
 
 /*!
-    \qmlproperty bool QtLocation5::MapGestureArea::isPanActive
+    \qmlproperty bool QtLocation::MapGestureArea::isPanActive
 
     This read-only property holds whether any pan gesture (panning or flicking) is active.
 */
 
 /*!
-    \qmlproperty enumeration QtLocation5::MapGestureArea::activeGestures
+    \qmlproperty enumeration QtLocation::MapGestureArea::activeGestures
 
     This property holds the gestures that will be active. By default
     the zoom, pan and flick gestures are enabled.
@@ -246,7 +246,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty real QtLocation5::MapGestureArea::maximumZoomLevelChange
+    \qmlproperty real QtLocation::MapGestureArea::maximumZoomLevelChange
 
     This property holds the maximum zoom level change per pinch, essentially
     meant to be used for setting the zoom sensitivity.
@@ -275,7 +275,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapGestureArea::pinchStarted(PinchEvent event)
+    \qmlsignal QtLocation::MapGestureArea::pinchStarted(PinchEvent event)
 
     Raised when a pinch gesture is started.
 
@@ -283,7 +283,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapGestureArea::pinchUpdated(PinchEvent event)
+    \qmlsignal QtLocation::MapGestureArea::pinchUpdated(PinchEvent event)
 
     Once a pinch has begun this event gets raised as the user moves her fingers
     across the map.
@@ -292,7 +292,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapGestureArea::pinchFinished(PinchEvent event)
+    \qmlsignal QtLocation::MapGestureArea::pinchFinished(PinchEvent event)
 
     The end of a pinch gesture is signaled by this event.
 
@@ -300,7 +300,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapGestureArea::panStarted()
+    \qmlsignal QtLocation::MapGestureArea::panStarted()
 
     This handler is called when the view begins moving due to user
     interaction. Typically this means that the user is dragging a finger -
@@ -308,7 +308,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapGestureArea::panFinished()
+    \qmlsignal QtLocation::MapGestureArea::panFinished()
 
     This handler is called when the view stops moving due to user
     interaction.  If a flick was generated, this handler will
@@ -319,7 +319,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapGestureArea::flickStarted()
+    \qmlsignal QtLocation::MapGestureArea::flickStarted()
 
     This handler is called when the view is flicked.  A flick
     starts from the point that the mouse or touch is released,
@@ -327,7 +327,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal QtLocation5::MapGestureArea::flickFinished()
+    \qmlsignal QtLocation::MapGestureArea::flickFinished()
 
     This handler is called when the view stops moving due to a flick.
     The order of panFinished() and flickFinished() is not specified.
