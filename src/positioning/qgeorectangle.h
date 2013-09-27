@@ -55,6 +55,7 @@ public:
     QGeoRectangle();
     QGeoRectangle(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
     QGeoRectangle(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+    QGeoRectangle(const QList<QGeoCoordinate> &coordinates);
     QGeoRectangle(const QGeoRectangle &other);
     QGeoRectangle(const QGeoShape &other);
 

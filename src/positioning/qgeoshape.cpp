@@ -192,6 +192,17 @@ bool QGeoShape::contains(const QGeoCoordinate &coordinate) const
         return false;
 }
 
+/*!
+    Extends the geo shape to also cover the coordinate \a coordinate
+*/
+void QGeoShape::extendShape(const QGeoCoordinate &coordinate)
+{
+    Q_D(QGeoShape);
+
+    if (d)
+        d->extendShape(coordinate);
+}
+
 
 /*!
     Returns true if the \a other geo shape is equivalent to this geo shape, otherwise returns

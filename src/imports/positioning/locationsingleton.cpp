@@ -140,6 +140,24 @@ QGeoRectangle LocationSingleton::rectangle(const QGeoCoordinate &topLeft,
 }
 
 /*!
+    \qmlmethod georectangle QtLocation5::QtLocation::rectangle(list<coordinate> coordinates) const
+
+    Constructs a georectangle from the list of coordinates, the returned list is the smallest possible
+    containing all the coordinates.
+
+    \sa {georectangle}
+*/
+QGeoRectangle LocationSingleton::rectangle(const QVariantList &coordinates) const
+{
+    QList<QGeoCoordinate> internalCoordinates;
+    for (int i = 0; i < coordinates.size(); i++) {
+        if (coordinates.at(i).canConvert<QGeoCoordinate>())
+            internalCoordinates << coordinates.at(i).value<QGeoCoordinate>();
+    }
+    return QGeoRectangle(internalCoordinates);
+}
+
+/*!
     \qmlmethod geocircle QtPositioning::circle() const
 
     Constructs an invalid geocircle.

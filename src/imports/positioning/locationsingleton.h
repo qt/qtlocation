@@ -48,6 +48,7 @@
 #include <QtPositioning/QGeoShape>
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/QGeoCircle>
+#include <QVariant>
 
 class LocationSingleton : public QObject
 {
@@ -67,6 +68,7 @@ public:
                                         double width, double height) const;
     Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &topLeft,
                                         const QGeoCoordinate &bottomRight) const;
+    Q_INVOKABLE QGeoRectangle rectangle(const QVariantList &coordinates) const;
 
     Q_INVOKABLE QGeoCircle circle() const;
     Q_INVOKABLE QGeoCircle circle(const QGeoCoordinate &center, qreal radius = -1.0) const;

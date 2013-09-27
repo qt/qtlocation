@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtPositioning module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -39,47 +39,5 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOCIRCLE_P_H
-#define QGEOCIRCLE_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgeoshape_p.h"
-#include "qgeocoordinate.h"
-
-QT_BEGIN_NAMESPACE
-
-class QGeoCirclePrivate : public QGeoShapePrivate
-{
-public:
-    QGeoCirclePrivate();
-    QGeoCirclePrivate(const QGeoCoordinate &center, qreal radius);
-    QGeoCirclePrivate(const QGeoCirclePrivate &other);
-    ~QGeoCirclePrivate();
-
-    bool isValid() const;
-    bool isEmpty() const;
-    bool contains(const QGeoCoordinate &coordinate) const;
-
-    void extendShape(const QGeoCoordinate &coordinate);
-
-    QGeoShapePrivate *clone() const;
-
-    bool operator==(const QGeoShapePrivate &other) const;
-
-    QGeoCoordinate center;
-    qreal radius;
-};
-
-QT_END_NAMESPACE
-
-#endif
+#include <QtQuickTest/quicktest.h>
+QUICK_TEST_MAIN(declarative_geoshape)

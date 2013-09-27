@@ -57,7 +57,8 @@ qtHaveModule(location) {
            qgeocameratiles
 
     qtHaveModule(quick) {
-        SUBDIRS += declarative_core
+        SUBDIRS += declarative_core \
+                declarative_geoshape
 
         !mac: SUBDIRS += declarative_ui
     }

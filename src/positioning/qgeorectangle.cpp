@@ -44,7 +44,7 @@
 
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
-
+#include <QList>
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -137,6 +137,24 @@ QGeoRectangle::QGeoRectangle(const QGeoCoordinate &center, double degreesWidth, 
 QGeoRectangle::QGeoRectangle(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
 {
     d_ptr = new QGeoRectanglePrivate(topLeft, bottomRight);
+}
+
+/*!
+    Constructs a georectangle from the list of coordinates, the returned rectangle is the smallest possible
+    containing all the coordinates.
+ */
+QGeoRectangle::QGeoRectangle(const QList<QGeoCoordinate> &coordinates)
+{
+    if (coordinates.isEmpty()) {
+        d_ptr = new QGeoRectanglePrivate;
+    } else {
+        const QGeoCoordinate &startCoordinate = coordinates.first();
+        d_ptr = new QGeoRectanglePrivate(startCoordinate, startCoordinate);
+
+        foreach (const QGeoCoordinate &coordinate, coordinates) {
+            d_ptr->extendShape(coordinate);
+        }
+    }
 }
 
 /*!
@@ -732,6 +750,54 @@ QGeoRectangle QGeoRectangle::united(const QGeoRectangle &rectangle) const
     QGeoRectangle result(*this);
     result |= rectangle;
     return result;
+}
+
+/*!
+    Extends the rectangle in the smallest possible way to include \a coordinate in
+    the shape.
+
+    Both the rectangle and coordinate needs to be valid. If the rectangle already covers
+    the coordinate noting happens.
+
+*/
+void QGeoRectanglePrivate::extendShape(const QGeoCoordinate &coordinate)
+{
+    if (!isValid() || !coordinate.isValid() || contains(coordinate))
+        return;
+
+    double left = topLeft.longitude();
+    double right = bottomRight.longitude();
+    double top = topLeft.latitude();
+    double bottom = bottomRight.latitude();
+
+    double inputLat = coordinate.latitude();
+    double inputLon = coordinate.longitude();
+
+    top = qMax(top, inputLat);
+    bottom = qMin(bottom, inputLat);
+
+    bool wrap = left > right;
+
+    if (wrap && inputLon > right && inputLon < left) {
+        if (qAbs(left - inputLon) < qAbs(right - inputLon))
+            left = inputLon;
+        else
+            right = inputLon;
+    } else if (!wrap) {
+        if (inputLon < left) {
+            if (360 - (right - inputLon) < left - inputLon)
+                right = inputLon;
+            else
+                left = inputLon;
+        } else if (inputLon > right) {
+            if (360 - (inputLon - left) < inputLon - right)
+                left = inputLon;
+            else
+                right = inputLon;
+        }
+    }
+    topLeft = QGeoCoordinate(top, left);
+    bottomRight = QGeoCoordinate(bottom, right);
 }
 
 /*!

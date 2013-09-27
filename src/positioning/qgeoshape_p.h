@@ -69,6 +69,8 @@ public:
     virtual bool isEmpty() const = 0;
     virtual bool contains(const QGeoCoordinate &coordinate) const = 0;
 
+    virtual void extendShape(const QGeoCoordinate &coordinate) = 0;
+
     virtual QGeoShapePrivate *clone() const = 0;
 
     virtual bool operator==(const QGeoShapePrivate &other) const;

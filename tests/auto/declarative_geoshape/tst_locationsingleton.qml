@@ -90,10 +90,25 @@ Item {
     property variant br: QtPositioning.coordinate(0, 1)
     property variant ntr: QtPositioning.coordinate(3, 3)
 
+    property variant invalid: QtPositioning.coordinate(100, 190)
     property variant inside: QtPositioning.coordinate(0.5, 0.5)
     property variant outside: QtPositioning.coordinate(2, 2)
 
     property variant box: QtPositioning.rectangle(tl, br)
+
+    property variant coordinates: [bl, tl, tr, br]
+    property variant coordinates2: [bl, tl, tr, br, ntr]
+    property variant coordinates3: [tr]
+    property variant coordinates4: [invalid]
+    property variant coordinates5: []
+
+    property variant listBox: QtPositioning.rectangle(coordinates)
+    property variant listBox2: QtPositioning.rectangle(coordinates2)
+    property variant listBox3: QtPositioning.rectangle(coordinates3)
+    property variant listBox4: QtPositioning.rectangle(coordinates4)
+    property variant listBox5: QtPositioning.rectangle(coordinates5)
+
+    property variant widthBox: QtPositioning.rectangle(inside, 1, 1);
 
     // C++ auto test exists for basics of bounding box, testing here
     // only added functionality
@@ -106,6 +121,17 @@ Item {
             compare (box.contains(outside), false)
             box.topRight = ntr
             compare (box.contains(outside), true)
+
+            compare (listBox.isValid, true)
+            compare (listBox.contains(outside), false)
+            compare (listBox2.contains(outside), true)
+            compare (listBox3.isValid, true)
+            compare (listBox3.isEmpty, true)
+            compare (listBox4.isValid, false)
+            compare (listBox5.isValid, false)
+
+            compare (widthBox.contains(inside), true)
+            compare (widthBox.contains(outside), false)
         }
     }
 }

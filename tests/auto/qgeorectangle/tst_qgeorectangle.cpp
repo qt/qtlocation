@@ -56,6 +56,7 @@ private slots:
     void default_constructor();
     void center_constructor();
     void corner_constructor();
+    void list_constructor();
     void copy_constructor();
     void assignment();
     void destructor();
@@ -95,6 +96,9 @@ private slots:
     void unite();
     void unite_data();
 
+    void extendShape();
+    void extendShape_data();
+
     void areaComparison();
     void areaComparison_data();
 
@@ -123,6 +127,23 @@ void tst_QGeoRectangle::corner_constructor()
                                          QGeoCoordinate(0.0, 10.0));
 
     QCOMPARE(b1.topLeft(), QGeoCoordinate(10.0, 0.0));
+    QCOMPARE(b1.bottomRight(), QGeoCoordinate(0.0, 10.0));
+}
+
+void tst_QGeoRectangle::list_constructor()
+{
+    QList<QGeoCoordinate> coordinates;
+    QGeoRectangle b1 = QGeoRectangle(coordinates);
+    QCOMPARE(b1.isValid(), false);
+
+    coordinates << QGeoCoordinate(10.0, 0.0);
+    b1 = QGeoRectangle(coordinates);
+    QCOMPARE(b1.isValid(), true);
+    QCOMPARE(b1.isEmpty(), true);
+
+    coordinates << QGeoCoordinate(0.0, 10.0) << QGeoCoordinate(0.0, 5.0);
+    b1 = QGeoRectangle(coordinates);
+    QCOMPARE(b1.topLeft(), QGeoCoordinate(10.0,0.0));
     QCOMPARE(b1.bottomRight(), QGeoCoordinate(0.0, 10.0));
 }
 
@@ -2188,6 +2209,95 @@ void tst_QGeoRectangle::unite_data()
                                 QGeoCoordinate(-30.0, -80.0))
             <<  QGeoRectangle(QGeoCoordinate(30.0,  -180.0),
                                 QGeoCoordinate(-30.0, 180.0));
+}
+
+
+void tst_QGeoRectangle::extendShape()
+{
+    QFETCH(QGeoRectangle, box);
+    QFETCH(QGeoCoordinate, coord);
+    QFETCH(QGeoRectangle, out);
+
+    box.extendShape(coord);
+    QCOMPARE(box, out);
+}
+
+void tst_QGeoRectangle::extendShape_data()
+{
+    QTest::addColumn<QGeoRectangle>("box");
+    QTest::addColumn<QGeoCoordinate>("coord");
+    QTest::addColumn<QGeoRectangle>("out");
+
+    QTest::newRow("valid rect - invalid coordinate")
+            << QGeoRectangle(QGeoCoordinate(30.0, -20.0),
+                             QGeoCoordinate(-30.0, 20.0))
+            << QGeoCoordinate(100.0, 190.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, -20.0),
+                             QGeoCoordinate(-30.0, 20));
+    QTest::newRow("invalid rect - valid coordinate")
+            << QGeoRectangle()
+            << QGeoCoordinate(10.0, 10.0)
+            << QGeoRectangle();
+    QTest::newRow("inside rect - not wrapped")
+            << QGeoRectangle(QGeoCoordinate(30.0, -20.0),
+                             QGeoCoordinate(-30.0, 20.0))
+            << QGeoCoordinate(10.0, 10.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, -20.0),
+                             QGeoCoordinate(-30.0, 20));
+    QTest::newRow("lat outside rect - not wrapped")
+            << QGeoRectangle(QGeoCoordinate(30.0, -20.0),
+                             QGeoCoordinate(-30.0, 20.0))
+            << QGeoCoordinate(40.0, 10.0)
+            << QGeoRectangle(QGeoCoordinate(40.0, -20.0),
+                             QGeoCoordinate(-30.0, 20));
+    QTest::newRow("positive lon outside rect - not wrapped")
+            << QGeoRectangle(QGeoCoordinate(30.0, -20.0),
+                             QGeoCoordinate(-30.0, 20.0))
+            << QGeoCoordinate(10.0, 40.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, -20.0),
+                             QGeoCoordinate(-30.0, 40));
+    QTest::newRow("negative lon outside rect - not wrapped")
+            << QGeoRectangle(QGeoCoordinate(30.0, -20.0),
+                             QGeoCoordinate(-30.0, 20.0))
+            << QGeoCoordinate(10.0, -40.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, -40.0),
+                             QGeoCoordinate(-30.0, 20.0));
+    QTest::newRow("inside rect - wrapped")
+            << QGeoRectangle(QGeoCoordinate(30.0, 160.0),
+                             QGeoCoordinate(-30.0, -160.0))
+            << QGeoCoordinate(10.0, -170.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, 160.0),
+                             QGeoCoordinate(-30.0, -160.0));
+    QTest::newRow("lat outside rect - wrapped")
+            << QGeoRectangle(QGeoCoordinate(30.0, 160.0),
+                             QGeoCoordinate(-30.0, -160.0))
+            << QGeoCoordinate(-40.0, -170.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, 160.0),
+                             QGeoCoordinate(-40.0, -160.0));
+    QTest::newRow("positive lon outside rect - wrapped")
+            << QGeoRectangle(QGeoCoordinate(30.0, 160.0),
+                             QGeoCoordinate(-30.0, -160.0))
+            << QGeoCoordinate(10.0, 140.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, 140.0),
+                             QGeoCoordinate(-30.0, -160.0));
+    QTest::newRow("negative lon outside rect - wrapped")
+            << QGeoRectangle(QGeoCoordinate(30.0, 160.0),
+                             QGeoCoordinate(-30.0, -160.0))
+            << QGeoCoordinate(10.0, -140.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, 160.0),
+                             QGeoCoordinate(-30.0, -140.0));
+    QTest::newRow("extending over 180 degree line eastward")
+            << QGeoRectangle(QGeoCoordinate(30.0, 130.0),
+                             QGeoCoordinate(-30.0, 160.0))
+            << QGeoCoordinate(10.0, -170.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, 130.0),
+                             QGeoCoordinate(-30.0, -170));
+    QTest::newRow("extending over -180 degree line westward")
+            << QGeoRectangle(QGeoCoordinate(30.0, -160.0),
+                             QGeoCoordinate(-30.0, -130.0))
+            << QGeoCoordinate(10.0, 170.0)
+            << QGeoRectangle(QGeoCoordinate(30.0, 170.0),
+                             QGeoCoordinate(-30.0, -130));
 }
 
 void tst_QGeoRectangle::areaComparison_data()

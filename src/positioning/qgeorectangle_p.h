@@ -70,6 +70,8 @@ public:
     bool isEmpty() const;
     bool contains(const QGeoCoordinate &coordinate) const;
 
+    void extendShape(const QGeoCoordinate &coordinate);
+
     QGeoShapePrivate *clone() const;
 
     bool operator==(const QGeoShapePrivate &other) const;

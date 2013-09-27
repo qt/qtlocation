@@ -73,6 +73,9 @@ private slots:
     void contains_data();
     void contains();
 
+    void extendShape();
+    void extendShape_data();
+
     void areaComparison();
     void areaComparison_data();
 
@@ -311,6 +314,55 @@ void tst_QGeoCircle::contains()
 
     QGeoShape area = c;
     QCOMPARE(area.contains(probe), result);
+}
+
+void tst_QGeoCircle::extendShape()
+{
+    QFETCH(QGeoCircle, circle);
+    QFETCH(QGeoCoordinate, coord);
+    QFETCH(bool, containsFirst);
+    QFETCH(bool, containsExtended);
+
+    QCOMPARE(circle.contains(coord), containsFirst);
+    circle.extendShape(coord);
+    QCOMPARE(circle.contains(coord), containsExtended);
+
+}
+
+void tst_QGeoCircle::extendShape_data()
+{
+    QTest::addColumn<QGeoCircle>("circle");
+    QTest::addColumn<QGeoCoordinate>("coord");
+    QTest::addColumn<bool>("containsFirst");
+    QTest::addColumn<bool>("containsExtended");
+
+    QGeoCoordinate co1(20.0, 20.0);
+
+    QTest::newRow("own center")
+            << QGeoCircle(co1, 100)
+            << QGeoCoordinate(20.0, 20.0)
+            << true
+            << true;
+    QTest::newRow("inside")
+            << QGeoCircle(co1, 100)
+            << QGeoCoordinate(20.0001, 20.0001)
+            << true
+            << true;
+    QTest::newRow("far away")
+            << QGeoCircle(co1, 100)
+            << QGeoCoordinate(50.0001, 50.0001)
+            << false
+            << true;
+    QTest::newRow("invalid circle")
+            << QGeoCircle()
+            << QGeoCoordinate(20.0, 20.0)
+            << false
+            << false;
+    QTest::newRow("invalid coordinate")
+            << QGeoCircle(co1, 100)
+            << QGeoCoordinate(99.0, 190.0)
+            << false
+            << false;
 }
 
 void tst_QGeoCircle::areaComparison_data()

@@ -214,6 +214,17 @@ bool QGeoCirclePrivate::contains(const QGeoCoordinate &coordinate) const
 }
 
 /*!
+  Extends the circle to include \a coordinate
+*/
+void QGeoCirclePrivate::extendShape(const QGeoCoordinate &coordinate)
+{
+    if (!isValid() || !coordinate.isValid() || contains(coordinate))
+        return;
+
+    radius = center.distanceTo(coordinate);
+}
+
+/*!
     Translates this geo circle by \a degreesLatitude northwards and \a degreesLongitude eastwards.
 
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
