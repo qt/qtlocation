@@ -45,6 +45,8 @@
 #include <QDataStream>
 #include <QtCore/QtNumeric>
 
+#include <algorithm>
+
 QT_BEGIN_NAMESPACE
 
 class QGeoPositionInfoPrivate
@@ -260,7 +262,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
     dbg.nospace() << info.d->coord;
 
     QList<QGeoPositionInfo::Attribute> attribs = info.d->doubleAttribs.keys();
-    qStableSort(attribs.begin(), attribs.end()); // Output a sorted list from an unsorted hash.
+    std::stable_sort(attribs.begin(), attribs.end()); // Output a sorted list from an unsorted hash.
     for (int i = 0; i < attribs.count(); ++i) {
         dbg.nospace() << ", ";
         switch (attribs[i]) {

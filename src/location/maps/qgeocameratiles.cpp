@@ -55,6 +55,7 @@
 
 #include <QDebug>
 
+#include <algorithm>
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
@@ -459,7 +460,7 @@ Polygon QGeoCameraTilesPrivate::frustumFootprint(const Frustum &frustum) const
     for (i = points.begin(); i != points.end(); ++i) {
         sorter.base = *i;
         if (i + 1 != points.end())
-            qSort(i + 1, points.end(), sorter);
+            std::sort(i + 1, points.end(), sorter) ;
     }
 
     // - determine if what we have is right handed
