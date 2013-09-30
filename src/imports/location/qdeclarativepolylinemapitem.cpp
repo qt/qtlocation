@@ -512,7 +512,7 @@ QJSValue QDeclarativePolylineMapItem::path() const
         pathArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, pathArray.asValue());
+    return new QJSValuePrivate(v4, QV4::ValueRef(pathArray));
 }
 
 void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
