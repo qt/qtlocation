@@ -181,7 +181,7 @@ QJSValue QDeclarativeGeoRoute::path() const
         pathArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, pathArray.asValue());
+    return new QJSValuePrivate(v4, pathArray);
 }
 
 void QDeclarativeGeoRoute::setPath(const QJSValue &value)

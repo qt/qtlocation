@@ -746,7 +746,7 @@ QJSValue QDeclarativeGeoRouteQuery::waypoints()
         waypointArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, waypointArray.asValue());
+    return new QJSValuePrivate(v4, waypointArray);
 }
 
 void QDeclarativeGeoRouteQuery::setWaypoints(const QJSValue &value)
@@ -805,7 +805,7 @@ QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
         excludedAreasArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, excludedAreasArray.asValue());
+    return new QJSValuePrivate(v4, excludedAreasArray);
 }
 
 void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
