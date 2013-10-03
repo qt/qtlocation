@@ -371,21 +371,22 @@ QGeometryData QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)
 
     QDoubleVector3D n = QDoubleVector3D(0, 0, 1);
 
+    //Texture coordinate order for veritcal flip of texture
     g.appendVertex(QVector3D(x1, y1, 0.0));
-    g.appendNormal(n);
-    g.appendTexCoord(QVector2D(0.0, 1.0));
-
-    g.appendVertex(QVector3D(x1, y2, 0.0));
     g.appendNormal(n);
     g.appendTexCoord(QVector2D(0.0, 0.0));
 
+    g.appendVertex(QVector3D(x1, y2, 0.0));
+    g.appendNormal(n);
+    g.appendTexCoord(QVector2D(0.0, 1.0));
+
     g.appendVertex(QVector3D(x2, y2, 0.0));
     g.appendNormal(n);
-    g.appendTexCoord(QVector2D(1.0, 0.0));
+    g.appendTexCoord(QVector2D(1.0, 1.0));
 
     g.appendVertex(QVector3D(x2, y1, 0.0));
     g.appendNormal(n);
-    g.appendTexCoord(QVector2D(1.0, 1.0));
+    g.appendTexCoord(QVector2D(1.0, 0.0));
 
     return g;
 }
@@ -424,6 +425,18 @@ void QGeoMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoT
         texture->texture->setBindOptions(texture->texture->bindOptions() &
                                          (~QGLTexture2D::LinearFilteringBindOption));
     }
+
+    //Avoid expensive conversion of ARGB32_Premultiplied to ARGB32
+    if (texture->texture->image().format() == QImage::Format_ARGB32_Premultiplied) {
+        texture->texture->setBindOptions(texture->texture->bindOptions() |
+                                         (QGLTexture2D::PremultipliedAlphaBindOption));
+    }
+
+    //There are tiles for different zoom levels, no need for mipmaps
+    texture->texture->setBindOptions(texture->texture->bindOptions() & (~QGLTexture2D::MipmapBindOption));
+
+    //We flip the texture coordinates instead of the texture
+    texture->texture->setBindOptions(texture->texture->bindOptions() & (~QGLTexture2D::InvertedYBindOption));
 
     QGLSceneNode *node = nodes_.value(spec, 0);
     if (!node) {
