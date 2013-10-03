@@ -137,6 +137,7 @@ private:
     bool m_lastPositionFromSatellite;
     QGeoPositionInfo m_lastPosition;
     PositioningMethods m_methods;
+    bool m_running;
 };
 
 QT_END_NAMESPACE
