@@ -114,6 +114,14 @@ Item {
     property variant boundingBox: QtPositioning.rectangle(QtPositioning.coordinate(0, 0),
                                                        QtPositioning.coordinate(0, 0))
 
+    property variant fitRect: QtPositioning.rectangle(QtPositioning.coordinate(80, 80), QtPositioning.coordinate(78, 82))
+    property variant fitEmptyRect: QtPositioning.rectangle(QtPositioning.coordinate(79, 79),-1, -1)
+    property variant fitCircle: QtPositioning.circle(QtPositioning.coordinate(-50, -100), 1500)
+    property variant fitInvalidShape: QtPositioning.shape()
+
+    property variant fitCircleTopLeft: QtPositioning.coordinate(0, 0)
+    property variant fitCircleBottomRight: QtPositioning.coordinate(0, 0)
+
     Map {
         id: map;
         x: 20; y: 20; width: 200; height: 200
@@ -313,6 +321,53 @@ Item {
             }
         }
 
+        function test_ad_fit_to_geoshape() {
+            reset()
+            visualInspectionPoint()
+            calculate_fit_circle_bounds()
+            //None should be visible
+            verify(!is_coord_on_screen(fitCircleTopLeft))
+            verify(!is_coord_on_screen(fitCircleBottomRight))
+            verify(!is_coord_on_screen(fitRect.topLeft))
+            verify(!is_coord_on_screen(fitRect.bottomRight))
+
+            map.fitViewportToGeoShape(fitRect)
+            visualInspectionPoint()
+            calculate_fit_circle_bounds()
+            //Rectangle should be visible, not circle
+            verify(!is_coord_on_screen(fitCircleTopLeft))
+            verify(!is_coord_on_screen(fitCircleBottomRight))
+            verify(is_coord_on_screen(fitRect.topLeft))
+            verify(is_coord_on_screen(fitRect.bottomRight))
+
+            map.fitViewportToGeoShape(fitCircle)
+            visualInspectionPoint()
+            calculate_fit_circle_bounds()
+            //Circle should be visible, not rectangle
+            verify(is_coord_on_screen(fitCircleTopLeft))
+            verify(is_coord_on_screen(fitCircleBottomRight))
+            verify(!is_coord_on_screen(fitRect.topLeft))
+            verify(!is_coord_on_screen(fitRect.bottomRight))
+
+            map.fitViewportToGeoShape(fitInvalidShape)
+            visualInspectionPoint()
+            calculate_fit_circle_bounds()
+            //Invalid shape, map should be in the same position as before
+            verify(is_coord_on_screen(fitCircleTopLeft))
+            verify(is_coord_on_screen(fitCircleBottomRight))
+            verify(!is_coord_on_screen(fitRect.topLeft))
+            verify(!is_coord_on_screen(fitRect.bottomRight))
+
+            map.fitViewportToGeoShape(fitEmptyRect)
+            visualInspectionPoint()
+            calculate_fit_circle_bounds()
+            //Empty shape, map should change centerlocation, empty rect visible
+            verify(!is_coord_on_screen(fitCircleTopLeft))
+            verify(!is_coord_on_screen(fitCircleBottomRight))
+            verify(is_coord_on_screen(fitEmptyRect.topLeft))
+            verify(is_coord_on_screen(fitEmptyRect.bottomRight))
+        }
+
         /*function test_ad_visible_items_move() {
             // move different individual items out of screen
             // then fit viewport
@@ -411,6 +466,12 @@ Item {
             preMapQuickItemAnchorPointChanged.clear()
             preMapQuickItemZoomLevelChanged.clear()
             preMapQuickItemSourceItemChanged.clear()
+        }
+
+        function calculate_fit_circle_bounds() {
+            var circleDiagonal = Math.sqrt(2 * fitCircle.radius * fitCircle.radius)
+            fitCircleTopLeft = fitCircle.center.atDistanceAndAzimuth(circleDiagonal,-45)
+            fitCircleBottomRight = fitCircle.center.atDistanceAndAzimuth(circleDiagonal,135)
         }
 
         function calculate_bounds(){

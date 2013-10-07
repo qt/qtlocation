@@ -57,9 +57,13 @@
 #include "mapnode_p.h"
 #include <cmath>
 
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoRectangle>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/private/qgeomappingmanager_p.h>
 
+#include <QPointF>
 #include <QtQml/QQmlContext>
 #include <QtQml/qqmlinfo.h>
 #include <QModelIndex>
@@ -1032,6 +1036,85 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
 
     map_->resize(newGeometry.width(), newGeometry.height());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
+}
+
+/*!
+    \qmlmethod QtLocation5::Map::fitViewportToGeoShape(QGeoShape shape)
+
+    Fits the current viewport to the boundary of the shape. The camera is positioned
+    in the center of the shape, and at the largest integral zoom level possible which
+    allows the whole shape to be visible on screen
+
+*/
+void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
+{
+    if (!map_ || !mappingManagerInitialized_)
+        return;
+
+    QGeoShape shape;
+
+    if (variantShape.userType() == qMetaTypeId<QGeoRectangle>())
+        shape = variantShape.value<QGeoRectangle>();
+    else if (variantShape.userType() == qMetaTypeId<QGeoCircle>())
+        shape = variantShape.value<QGeoCircle>();
+    else if (variantShape.userType() == qMetaTypeId<QGeoShape>())
+        shape = variantShape.value<QGeoShape>();
+
+    if (!shape.isValid())
+        return;
+
+    qreal bboxWidth;
+    qreal bboxHeight;
+    QGeoCoordinate centerCoordinate;
+
+    switch (shape.type()) {
+    case QGeoShape::RectangleType:
+    {
+        QGeoRectangle rect = shape;
+        QPointF topLeftPoint = map_->coordinateToScreenPosition(rect.topLeft(), false);
+        QPointF botRightPoint = map_->coordinateToScreenPosition(rect.bottomRight(), false);
+        bboxWidth = qAbs(topLeftPoint.x() - botRightPoint.x());
+        bboxHeight = qAbs(topLeftPoint.y() - botRightPoint.y());
+        centerCoordinate = rect.center();
+        break;
+    }
+    case QGeoShape::CircleType:
+    {
+        QGeoCircle circle = shape;
+        centerCoordinate = circle.center();
+        QGeoCoordinate edge = centerCoordinate.atDistanceAndAzimuth(circle.radius(), 90);
+        QPointF centerPoint = map_->coordinateToScreenPosition(centerCoordinate, false);
+        QPointF edgePoint = map_->coordinateToScreenPosition(edge, false);
+        bboxWidth = qAbs(centerPoint.x() - edgePoint.x()) * 2;
+        bboxHeight = bboxWidth;
+        break;
+    }
+    case QGeoShape::UnknownType:
+        //Fallthrough to default
+    default:
+        return;
+    }
+
+    // position camera to the center of bounding box
+    setCenter(centerCoordinate);
+
+    //If the shape is empty we just change centerposition, not zoom
+    if (bboxHeight == 0 && bboxWidth == 0)
+        return;
+
+    // adjust zoom
+    double bboxWidthRatio = bboxWidth / (bboxWidth + bboxHeight);
+    double mapWidthRatio = width() / (width() + height());
+    double zoomRatio;
+
+    if (bboxWidthRatio > mapWidthRatio)
+        zoomRatio = bboxWidth / width();
+    else
+        zoomRatio = bboxHeight / height();
+
+    qreal newZoom = log10(zoomRatio) / log10(0.5);
+    newZoom = floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
+    setZoomLevel(newZoom);
 }
 
 /*!

@@ -161,6 +161,7 @@ public:
 
     QDeclarativeGeoMapGestureArea *gesture();
 
+    Q_INVOKABLE void fitViewportToGeoShape(const QVariant &shape);
     Q_INVOKABLE void fitViewportToMapItems();
     Q_INVOKABLE void pan(int dx, int dy);
     Q_INVOKABLE void cameraStopped(); // optional hint for prefetch
