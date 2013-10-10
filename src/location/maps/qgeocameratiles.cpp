@@ -416,6 +416,74 @@ void QGeoCameraTilesPrivate::appendZIntersects(const QDoubleVector3D &start,
     }
 }
 
+/***************************************************/
+/* Local copy of qSort & qSortHelper to suppress deprecation warnings
+ * following the deprecation of QtAlgorithms. The comparison has subtle
+ * differences which eluded detection so far. We just reuse old qSort for now.
+ **/
+
+template <typename RandomAccessIterator, typename LessThan>
+inline void localqSort(RandomAccessIterator start, RandomAccessIterator end, LessThan lessThan)
+{
+    if (start != end)
+        localqSortHelper(start, end, *start, lessThan);
+}
+
+template <typename RandomAccessIterator, typename T, typename LessThan>
+void localqSortHelper(RandomAccessIterator start, RandomAccessIterator end, const T &t, LessThan lessThan)
+{
+top:
+    int span = int(end - start);
+    if (span < 2)
+        return;
+
+    --end;
+    RandomAccessIterator low = start, high = end - 1;
+    RandomAccessIterator pivot = start + span / 2;
+
+    if (lessThan(*end, *start))
+        qSwap(*end, *start);
+    if (span == 2)
+        return;
+
+    if (lessThan(*pivot, *start))
+        qSwap(*pivot, *start);
+    if (lessThan(*end, *pivot))
+        qSwap(*end, *pivot);
+    if (span == 3)
+        return;
+
+    qSwap(*pivot, *end);
+
+    while (low < high) {
+        while (low < high && lessThan(*low, *end))
+            ++low;
+
+        while (high > low && lessThan(*end, *high))
+            --high;
+
+        if (low < high) {
+            qSwap(*low, *high);
+            ++low;
+            --high;
+        } else {
+            break;
+        }
+    }
+
+    if (lessThan(*low, *end))
+        ++low;
+
+    qSwap(*end, *low);
+    localqSortHelper(start, low, t, lessThan);
+
+    start = low + 1;
+    ++end;
+    goto top;
+}
+/***************************************************/
+
+
 // Returns the intersection of the plane of the map and the camera frustum as a right handed polygon
 Polygon QGeoCameraTilesPrivate::frustumFootprint(const Frustum &frustum) const
 {
@@ -446,7 +514,8 @@ Polygon QGeoCameraTilesPrivate::frustumFootprint(const Frustum &frustum) const
 
     // - initial sort to remove duplicates
     sorter.base = points.first();
-    qSort(points.begin(), points.end(), sorter);
+    localqSort(points.begin(), points.end(), sorter);
+    //std::sort(points.begin(), points.end(), sorter);
     for (int i = points.size() - 1; i > 0; --i) {
         if (points.at(i) == points.at(i - 1))
             points.remove(i);
