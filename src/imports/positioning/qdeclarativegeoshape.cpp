@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \qmlbasictype geoshape
     \inqmlmodule QtPositioning
     \ingroup qml-QtPositioning5-basictypes
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief A geoshape type represents an abstract geographic area.
 
@@ -85,7 +85,7 @@ QT_BEGIN_NAMESPACE
     or with the \l {QtPositioning::shape}{QtPositioning.shape()} function:
 
     \qml
-    import QtPositioning 5.0
+    import QtPositioning 5.2
 
     Item {
         property variant region: QtPositioning.shape()

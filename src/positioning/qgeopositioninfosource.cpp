@@ -64,7 +64,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     \class QGeoPositionInfoSource
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
 

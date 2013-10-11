@@ -72,7 +72,7 @@ bool QGeoShapePrivate::operator==(const QGeoShapePrivate &other) const
     \class QGeoShape
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QGeoShape class defines a geographic area.
 

@@ -26,7 +26,7 @@
 ****************************************************************************/
 
 /*!
-    \qmlmodule QtPositioning 5.0
+    \qmlmodule QtPositioning 5.2
     \title Qt Positioning QML Types
     \ingroup qmlmodules
     \brief Provides QML types for position information

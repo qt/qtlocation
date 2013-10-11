@@ -38,9 +38,7 @@
 
     To load the Qt Positioning module, add the following statement to your .qml files
 
-    \code
-        import QtPositioning 5.0
-    \endcode
+    \snippet doc_src_qtpositioning.qml import
 
     For C++ projects include the header appropriate for the current use case,
     for example applications using routes may use
@@ -78,9 +76,7 @@ can be performed.
 
 To load the Qt Positioning module, add the following statement to your .qml files
 
-\code
-    import QtPositioning 5.0
-\endcode
+\snippet doc_src_qtpositioning.qml import
 
 For C++ projects include the header appropriate for the current use case,
 for example applications using routes may use

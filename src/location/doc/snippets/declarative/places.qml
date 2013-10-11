@@ -42,7 +42,7 @@
 import QtQuick 2.0
 //! [QtQuick import]
 //! [QtLocation import]
-import QtPositioning 5.0
+import QtPositioning 5.2
 import QtLocation 5.0
 //! [QtLocation import]
 

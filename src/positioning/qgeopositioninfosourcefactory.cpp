@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 /*!
   \class QGeoPositionInfoSourceFactory
   \inmodule QtPositioning
-  \since Qt Positioning 5.0
+  \since 5.2
 
   \brief The QGeoPositionInfoSourceFactory class is a factory class used
   as the plugin interface for external providers of positioning data.

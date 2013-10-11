@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoSatelliteInfoSource
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
 

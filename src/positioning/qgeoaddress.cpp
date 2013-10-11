@@ -317,7 +317,7 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
     \ingroup QtPositioning-positioning
     \ingroup QtLocation-places-data
     \ingroup QtLocation-places
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QGeoAddress class represents an address of a \l QGeoLocation.
 

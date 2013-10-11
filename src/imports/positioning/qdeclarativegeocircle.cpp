@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
     \qmlbasictype geocircle
     \inqmlmodule QtPositioning
     \ingroup qml-QtPositioning5-basictypes
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The geocircle type represents a circular geographic area.
 
@@ -70,7 +70,7 @@ QT_BEGIN_NAMESPACE
     use the \l {QtPositioning::circle}{QtPositioning.circle()} function:
 
     \qml
-    import QtPositioning 5.0
+    import QtPositioning 5.2
 
     Item {
         property variant region: QtPositioning.circle(QtPositioning.coordinate(-27.5, 153.1), 1000)

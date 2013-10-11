@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \qmltype Position
     \instantiates QDeclarativePosition
     \inqmlmodule QtPositioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The Position type holds positional data at a particular point in time,
     such as coordinate (longitude, latitude, altitude) and speed.

@@ -429,7 +429,7 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
     \class QNmeaPositionInfoSource
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QNmeaPositionInfoSource class provides positional information using a NMEA data source.
 

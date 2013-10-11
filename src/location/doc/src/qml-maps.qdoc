@@ -70,7 +70,7 @@ to center a \l{Map}{map} on the current position:
 \code
     Rectangle {
 
-        import QtPositioning 5.0
+        import QtPositioning 5.2
         import QtLocation 5.0
         ...
 

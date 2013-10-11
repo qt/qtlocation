@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \qmlbasictype coordinate
     \inqmlmodule QtPositioning
     \ingroup qml-QtPositioning5-basictypes
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The coordinate type represents and stores a geographic position.
 
@@ -88,7 +88,7 @@ QT_BEGIN_NAMESPACE
     function:
 
     \qml
-    import QtPositioning 5.0
+    import QtPositioning 5.2
 
     Location { coordinate: QtPositioning.coordinate(-27.5, 153.1) }
     \endqml

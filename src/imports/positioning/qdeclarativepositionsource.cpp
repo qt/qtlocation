@@ -56,7 +56,7 @@ QT_BEGIN_NAMESPACE
     \qmltype PositionSource
     \instantiates QDeclarativePositionSource
     \inqmlmodule QtPositioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The PositionSource type provides the device's current position.
 

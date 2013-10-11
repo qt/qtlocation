@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
     \qmlbasictype georectangle
     \inqmlmodule QtPositioning
     \ingroup qml-QtPositioning5-basictypes
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The georectangle type represents a rectangular geographic area.
 
@@ -86,7 +86,7 @@ QT_BEGIN_NAMESPACE
     value, use the \l {QtPositioning::rectangle}{QtPositioning.rectangle()} function:
 
     \qml
-    import QtPositioning 5.0
+    import QtPositioning 5.2
 
     Item {
         property variant region: QtPositioning.rectangle(QtPositioning.coordinate(-27.5, 153.1), QtPositioning.coordinate(-27.6, 153.2))
