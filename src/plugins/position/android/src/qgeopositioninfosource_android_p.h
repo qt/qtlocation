@@ -39,26 +39,49 @@
 **
 ****************************************************************************/
 
-#include "positionpollfactory.h"
-#include "qgeoareamonitor_polling.h"
+#ifndef QGEOPOSITIONINFOSOURCE_ANDROID_P_H
+#define QGEOPOSITIONINFOSOURCE_ANDROID_P_H
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryAndroid::positionInfoSource(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
+#include <QGeoPositionInfoSource>
+#include <QTimer>
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryAndroid::satelliteInfoSource(QObject *parent)
+class QGeoPositionInfoSourceAndroid : public QGeoPositionInfoSource
 {
-    Q_UNUSED(parent);
-    return 0;
-}
+    Q_OBJECT
+public:
+    QGeoPositionInfoSourceAndroid(QObject *parent = 0);
+    ~QGeoPositionInfoSourceAndroid();
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryAndroid::areaMonitor(QObject *parent)
-{
-    QGeoAreaMonitorPolling *ret = new QGeoAreaMonitorPolling(parent);
-    if (ret && ret->isValid())
-        return ret;
-    delete ret;
-    return 0;
-}
+    // From QGeoPositionInfoSource
+    void setUpdateInterval(int msec);
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
+    PositioningMethods supportedPositioningMethods() const;
+    void setPreferredPositioningMethods(PositioningMethods methods);
+    int minimumUpdateInterval() const;
+    Error error() const;
+
+public Q_SLOTS:
+    virtual void startUpdates();
+    virtual void stopUpdates();
+
+    virtual void requestUpdate(int timeout = 0);
+
+    void processPositionUpdate(const QGeoPositionInfo& pInfo);
+    void processSinglePositionUpdate(const QGeoPositionInfo& pInfo);
+
+    void locationProviderDisabled();
+private Q_SLOTS:
+    void requestTimeout();
+
+private:
+    void reconfigureRunningSystem();
+
+    bool updatesRunning;
+    int androidClassKeyForUpdate;
+    int androidClassKeyForSingleRequest;
+    QList<QGeoPositionInfo> queuedSingleUpdates;
+    Error m_error;
+    QTimer m_requestTimer;
+};
+
+#endif // QGEOPOSITIONINFOSOURCE_ANDROID_P_H

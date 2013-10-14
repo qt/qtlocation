@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "positionpollfactory.h"
-#include "qgeoareamonitor_polling.h"
+#include "positionfactory_android.h"
+#include "qgeopositioninfosource_android_p.h"
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryAndroid::positionInfoSource(QObject *parent)
 {
-    Q_UNUSED(parent);
-    return 0;
+    QGeoPositionInfoSourceAndroid *src = new QGeoPositionInfoSourceAndroid(parent);
+    return src;
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryAndroid::satelliteInfoSource(QObject *parent)
@@ -56,9 +56,6 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryAndroid::satelliteInfoSour
 
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryAndroid::areaMonitor(QObject *parent)
 {
-    QGeoAreaMonitorPolling *ret = new QGeoAreaMonitorPolling(parent);
-    if (ret && ret->isValid())
-        return ret;
-    delete ret;
+    Q_UNUSED(parent);
     return 0;
 }

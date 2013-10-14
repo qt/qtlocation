@@ -39,26 +39,22 @@
 **
 ****************************************************************************/
 
-#include "positionpollfactory.h"
-#include "qgeoareamonitor_polling.h"
+#ifndef JNIPOSITIONING_H
+#define JNIPOSITIONING_H
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryAndroid::positionInfoSource(QObject *parent)
+#include <QGeoPositionInfoSource>
+
+namespace AndroidPositioning
 {
-    Q_UNUSED(parent);
-    return 0;
+    int registerPositionInfoSource(QGeoPositionInfoSourceAndroid *src);
+    void unregisterPositionInfoSource(int key);
+
+    QGeoPositionInfoSource::PositioningMethods availableProviders();
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly);
+
+    QGeoPositionInfoSource::Error startUpdates(int androidClassKey);
+    void stopUpdates(int androidClassKey);
+    QGeoPositionInfoSource::Error requestUpdate(int androidClassKey);
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryAndroid::satelliteInfoSource(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
-
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryAndroid::areaMonitor(QObject *parent)
-{
-    QGeoAreaMonitorPolling *ret = new QGeoAreaMonitorPolling(parent);
-    if (ret && ret->isValid())
-        return ret;
-    delete ret;
-    return 0;
-}
+#endif // JNIPOSITIONING_H

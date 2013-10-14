@@ -4,6 +4,17 @@ QT = core-private
 QMAKE_DOCS = $$PWD/doc/qtpositioning.qdocconf
 OTHER_FILES += doc/src/*.qdoc   # show .qdoc files in Qt Creator
 
+ANDROID_BUNDLED_JAR_DEPENDENCIES = \
+    jar/QtPositioning-bundled.jar:org.qtproject.qt5.android.positioning.QtPositioning
+ANDROID_JAR_DEPENDENCIES = \
+    jar/QtPositioning.jar:org.qtproject.qt5.android.positioning.QtPositioning
+ANDROID_PERMISSIONS = \
+    android.permission.ACCESS_FINE_LOCATION
+ANDROID_LIB_DEPENDENCIES = \
+    plugins/position/libqtposition_android.so
+MODULE_PLUGIN_TYPES = \
+    position
+
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitorinfo.h \
