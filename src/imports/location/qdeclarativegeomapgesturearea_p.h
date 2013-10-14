@@ -160,7 +160,7 @@ public:
     qreal flickDeceleration() const;
     void setFlickDeceleration(qreal deceleration);
 
-    bool touchEvent(QTouchEvent *event);
+    void touchEvent(QTouchEvent *event);
 
     bool mousePressEvent(QMouseEvent *event);
     bool mouseMoveEvent(QMouseEvent *event);
@@ -229,7 +229,6 @@ private:
     QGeoMap *map_;
     QDeclarativeGeoMap *declarativeMap_;
     bool enabled_;
-    bool usingTouch_;
 
     struct Pinch
     {
