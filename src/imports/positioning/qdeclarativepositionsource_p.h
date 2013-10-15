@@ -86,7 +86,8 @@ public:
         AccessError = QGeoPositionInfoSource::AccessError,
         ClosedError = QGeoPositionInfoSource::ClosedError,
         UnknownSourceError = QGeoPositionInfoSource::UnknownSourceError,
-        SocketError
+        //Leave a gap for future error enum values in QGeoPositionInfoSource::Error
+        SocketError = 100
     };
     Q_ENUMS(SourceError)
 
