@@ -77,8 +77,15 @@ QGeoclueMaster::~QGeoclueMaster()
     releaseMasterClient();
 }
 
+bool QGeoclueMaster::hasMasterClient() const
+{
+    return m_client && m_masterPosition;
+}
+
 bool QGeoclueMaster::createMasterClient(GeoclueAccuracyLevel accuracy, GeoclueResourceFlags resourceFlags)
 {
+    Q_ASSERT(!m_client && !m_masterPosition);
+
     GeoclueMaster *master = geoclue_master_get_default();
     if (!master) {
         qCritical("QGeoclueMaster error creating GeoclueMaster");

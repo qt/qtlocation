@@ -54,6 +54,7 @@ public:
     QGeoclueMaster(QObject *handler);
     virtual ~QGeoclueMaster();
 
+    bool hasMasterClient() const;
     bool createMasterClient(GeoclueAccuracyLevel accuracy, GeoclueResourceFlags resourceFlags);
     void releaseMasterClient();
 
