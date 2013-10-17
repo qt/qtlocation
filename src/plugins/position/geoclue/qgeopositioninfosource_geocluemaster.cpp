@@ -43,7 +43,10 @@
 
 #include "qgeopositioninfosource_geocluemaster_p.h"
 
-#include <QtCore>
+#include <QtCore/QDateTime>
+#include <QtCore/QFile>
+#include <QtCore/QSaveFile>
+#include <QtCore/QStandardPaths>
 
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
 #include <QDebug>
@@ -127,6 +130,16 @@ QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject
     m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false), m_lastVelocity(0),
     m_lastPositionFromSatellite(false), m_methods(AllPositioningMethods), m_running(false)
 {
+#ifndef QT_NO_DATASTREAM
+    // Load the last known location
+    QFile file(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
+               QStringLiteral("/qtposition-geoclue"));
+    if (file.open(QIODevice::ReadOnly)) {
+        QDataStream out(&file);
+        out >> m_lastPosition;
+    }
+#endif
+
     m_requestTimer.setSingleShot(true);
     QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(requestUpdateTimeout()));
     QObject::connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(startUpdatesTimeout()));
@@ -134,6 +147,19 @@ QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject
 
 QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
 {
+#ifndef QT_NO_DATASTREAM
+    if (m_lastPosition.isValid()) {
+        QSaveFile file(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
+                       QStringLiteral("/qtposition-geoclue"));
+        if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            QDataStream out(&file);
+            // Only save position and timestamp.
+            out << QGeoPositionInfo(m_lastPosition.coordinate(), m_lastPosition.timestamp());
+            file.commit();
+        }
+    }
+#endif
+
     if (m_pos)
         g_object_unref (m_pos);
     if (m_vel)
