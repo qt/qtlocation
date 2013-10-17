@@ -1096,7 +1096,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
     }
 
     // position camera to the center of bounding box
-    setCenter(centerCoordinate);
+    setProperty("center", QVariant::fromValue(centerCoordinate));
 
     //If the shape is empty we just change centerposition, not zoom
     if (bboxHeight == 0 && bboxWidth == 0)
@@ -1114,7 +1114,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
 
     qreal newZoom = log10(zoomRatio) / log10(0.5);
     newZoom = floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
-    setZoomLevel(newZoom);
+    setProperty("zoomLevel", QVariant::fromValue(newZoom));
 }
 
 /*!
@@ -1211,7 +1211,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     // position camera to the center of bounding box
     QGeoCoordinate coordinate;
     coordinate = map_->screenPositionToCoordinate(QPointF(bboxCenterX, bboxCenterY), false);
-    setCenter(coordinate);
+    setProperty("center", QVariant::fromValue(coordinate));
 
     // adjust zoom
     double bboxWidthRatio = bboxWidth / (bboxWidth + bboxHeight);
@@ -1225,7 +1225,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
 
     qreal newZoom = log10(zoomRatio) / log10(0.5);
     newZoom = floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
-    setZoomLevel(newZoom);
+    setProperty("zoomLevel", QVariant::fromValue(newZoom));
 
     // as map quick items retain the same screen size after the camera zooms in/out
     // we refine the viewport again to achieve better results
