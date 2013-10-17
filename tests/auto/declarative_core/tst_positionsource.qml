@@ -77,6 +77,7 @@ TestCase {
     }
 
     function test_inactive() {
+        defaultSourceSpy.clear();
         compare(defaultSourceSpy.count, 0);
         wait(1000);
         compare(defaultSourceSpy.count, 0);

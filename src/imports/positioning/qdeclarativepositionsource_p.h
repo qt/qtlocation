@@ -136,7 +136,10 @@ private Q_SLOTS:
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
     void socketConnected();
     void socketError(QAbstractSocket::SocketError error);
+
 private:
+    void setPosition(const QGeoPositionInfo &pi);
+
     QGeoPositionInfoSource *m_positionSource;
     QDeclarativePosition m_position;
     PositioningMethods m_preferredPositioningMethods;

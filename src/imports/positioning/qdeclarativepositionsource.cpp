@@ -179,6 +179,8 @@ void QDeclarativePositionSource::setName(const QString &newName)
         m_positionSource->setUpdateInterval(m_updateInterval);
         m_positionSource->setPreferredPositioningMethods(
             static_cast<QGeoPositionInfoSource::PositioningMethods>(int(m_preferredPositioningMethods)));
+
+        setPosition(m_positionSource->lastKnownPosition());
     }
 
     if (previousUpdateInterval != updateInterval())
@@ -263,6 +265,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
         m_nmeaSocket = 0;
         delete m_positionSource;
         m_positionSource = 0;
+        setPosition(QGeoPositionInfo());
         // Create the NMEA source based on the given data. QML has automatically set QUrl
         // type to point to correct path. If the file is not found, check if the file actually
         // was an embedded resource file.
@@ -280,6 +283,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
             (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setDevice(m_nmeaFile);
             connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                     this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
+            setPosition(m_positionSource->lastKnownPosition());
             if (m_active && !m_singleUpdate) {
                 // Keep on updating even though source changed
                 QTimer::singleShot(0, this, SLOT(start()));
@@ -326,6 +330,8 @@ void QDeclarativePositionSource::socketConnected()
     connect(m_positionSource, &QNmeaPositionInfoSource::positionUpdated,
             this, &QDeclarativePositionSource::positionUpdateReceived);
 
+    setPosition(m_positionSource->lastKnownPosition());
+
     if (m_active && !m_singleUpdate) {
         // Keep on updating even though source changed
         QTimer::singleShot(0, this, SLOT(start()));
@@ -360,6 +366,24 @@ void QDeclarativePositionSource::socketError(QAbstractSocket::SocketError error)
     }
 
     emit sourceErrorChanged();
+}
+
+void QDeclarativePositionSource::setPosition(const QGeoPositionInfo &pi)
+{
+    if (pi.isValid()) {
+        m_position.setTimestamp(pi.timestamp());
+        m_position.setCoordinate(pi.coordinate());
+        if (pi.hasAttribute(QGeoPositionInfo::GroundSpeed))
+            m_position.setSpeed(pi.attribute(QGeoPositionInfo::GroundSpeed));
+        if (pi.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
+            m_position.setHorizontalAccuracy(pi.attribute(QGeoPositionInfo::HorizontalAccuracy));
+        if (pi.hasAttribute(QGeoPositionInfo::VerticalAccuracy))
+            m_position.setVerticalAccuracy(pi.attribute(QGeoPositionInfo::VerticalAccuracy));
+    } else {
+        m_position.invalidate();
+    }
+
+    emit positionChanged();
 }
 
 /*!
@@ -623,22 +647,8 @@ QDeclarativePosition *QDeclarativePositionSource::position()
 
 void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &update)
 {
-    if (update.isValid()) {
-        m_position.setTimestamp(update.timestamp());
-        m_position.setCoordinate(update.coordinate());
-        if (update.hasAttribute(QGeoPositionInfo::GroundSpeed)) {
-            m_position.setSpeed(update.attribute(QGeoPositionInfo::GroundSpeed));
-        }
-        if (update.hasAttribute(QGeoPositionInfo::HorizontalAccuracy)) {
-            m_position.setHorizontalAccuracy(update.attribute(QGeoPositionInfo::HorizontalAccuracy));
-        }
-        if (update.hasAttribute(QGeoPositionInfo::VerticalAccuracy)) {
-            m_position.setVerticalAccuracy(update.attribute(QGeoPositionInfo::VerticalAccuracy));
-        }
-        emit positionChanged();
-    } else {
-        m_position.invalidate();
-    }
+    setPosition(update);
+
     if (m_singleUpdate && m_active) {
         m_active = false;
         m_singleUpdate = false;
@@ -686,6 +696,8 @@ void QDeclarativePositionSource::componentComplete()
             m_positionSource->setUpdateInterval(m_updateInterval);
             m_positionSource->setPreferredPositioningMethods(
                 static_cast<QGeoPositionInfoSource::PositioningMethods>(int(m_preferredPositioningMethods)));
+
+            setPosition(m_positionSource->lastKnownPosition());
         }
 
         if (previousUpdateInterval != updateInterval())
