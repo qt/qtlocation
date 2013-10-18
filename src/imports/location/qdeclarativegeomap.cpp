@@ -477,8 +477,15 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     map_ = mappingManager_->createMap(this);
     gestureArea_->setMap(map_);
-    gestureArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(),
-                                  mappingManager_->cameraCapabilities().maximumZoomLevel());
+
+    //The zoom level limits are only restricted by the plugins values, if the user has set a more
+    //strict zoom level limit before initialization nothing is done here.
+    if (mappingManager_->cameraCapabilities().minimumZoomLevel() > gestureArea_->minimumZoomLevel())
+        setMinimumZoomLevel(mappingManager_->cameraCapabilities().minimumZoomLevel());
+
+    if (gestureArea_->maximumZoomLevel() < 0
+            || mappingManager_->cameraCapabilities().maximumZoomLevel() < gestureArea_->maximumZoomLevel())
+        setMaximumZoomLevel(mappingManager_->cameraCapabilities().maximumZoomLevel());
 
     map_->setActiveMapType(QGeoMapType());
 
@@ -488,11 +495,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             copyrightsWPtr_.data(),
             SLOT(copyrightsChanged(const QImage &, const QPoint &)));
 
-    QGeoCameraCapabilities capabilities = mappingManager_->cameraCapabilities();
-    if (zoomLevel_ < capabilities.minimumZoomLevel())
-        setZoomLevel(capabilities.minimumZoomLevel());
-    else if (zoomLevel_ > capabilities.maximumZoomLevel())
-        setZoomLevel(capabilities.maximumZoomLevel());
     connect(map_,
             SIGNAL(updateRequired()),
             this,
@@ -569,6 +571,23 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 }
 
 /*!
+    \internal
+    Sets the gesture areas minimum zoom level. If the camera capabilities
+    has been set this method honors the boundaries set by it.
+*/
+void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
+{
+    if (gestureArea_ && minimumZoomLevel >= 0) {
+        if (mappingManagerInitialized_
+                && minimumZoomLevel < mappingManager_->cameraCapabilities().minimumZoomLevel()) {
+            minimumZoomLevel = mappingManager_->cameraCapabilities().minimumZoomLevel();
+        }
+        gestureArea_->setMinimumZoomLevel(minimumZoomLevel);
+        setZoomLevel(qBound<qreal>(minimumZoomLevel, zoomLevel(), maximumZoomLevel()));
+    }
+}
+
+/*!
     \qmlproperty real QtLocation::Map::minimumZoomLevel
 
     This property holds the minimum valid zoom level for the map.
@@ -579,14 +598,33 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 
 qreal QDeclarativeGeoMap::minimumZoomLevel() const
 {
-    if (mappingManager_ && mappingManagerInitialized_)
+    if (gestureArea_->minimumZoomLevel() != -1)
+        return gestureArea_->minimumZoomLevel();
+    else if (mappingManager_ && mappingManagerInitialized_)
         return mappingManager_->cameraCapabilities().minimumZoomLevel();
     else
         return -1.0;
 }
 
 /*!
-\qmlproperty real QtLocation::Map::maximumZoomLevel
+    \internal
+    Sets the gesture areas maximum zoom level. If the camera capabilities
+    has been set this method honors the boundaries set by it.
+*/
+void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel)
+{
+    if (gestureArea_ && maximumZoomLevel >= 0) {
+        if (mappingManagerInitialized_
+                && maximumZoomLevel > mappingManager_->cameraCapabilities().maximumZoomLevel()) {
+            maximumZoomLevel = mappingManager_->cameraCapabilities().maximumZoomLevel();
+        }
+        gestureArea_->setMaximumZoomLevel(maximumZoomLevel);
+        setZoomLevel(qBound<qreal>(minimumZoomLevel(), zoomLevel(), maximumZoomLevel));
+    }
+}
+
+/*!
+    \qmlproperty real QtLocation::Map::maximumZoomLevel
 
     This property holds the maximum valid zoom level for the map.
 
@@ -596,7 +634,9 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
 
 qreal QDeclarativeGeoMap::maximumZoomLevel() const
 {
-    if (mappingManager_ && mappingManagerInitialized_)
+    if (gestureArea_->maximumZoomLevel() != -1)
+        return gestureArea_->maximumZoomLevel();
+    else if (mappingManager_ && mappingManagerInitialized_)
         return mappingManager_->cameraCapabilities().maximumZoomLevel();
     else
         return -1.0;
@@ -690,13 +730,9 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
     if (zoomLevel_ == zoomLevel || zoomLevel < 0)
         return;
 
-    if (mappingManagerInitialized_) {
-        QGeoCameraCapabilities capabilities = mappingManager_->cameraCapabilities();
-            if ((zoomLevel < capabilities.minimumZoomLevel() ||
-                    zoomLevel > capabilities.maximumZoomLevel())) {
-                return;
-            }
-    }
+    if ((zoomLevel < minimumZoomLevel()
+         || (maximumZoomLevel() >= 0 && zoomLevel > maximumZoomLevel())))
+        return;
 
     zoomLevel_ = zoomLevel;
     if (mappingManagerInitialized_)

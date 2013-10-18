@@ -169,7 +169,12 @@ public:
     bool filterMapChildMouseEvent(QMouseEvent *event);
     bool filterMapChildTouchEvent(QTouchEvent *event);
 
-    void zoomLevelLimits(qreal min, qreal max);
+    void setMinimumZoomLevel(qreal min);
+    qreal minimumZoomLevel() const;
+
+    void setMaximumZoomLevel(qreal max);
+    qreal maximumZoomLevel() const;
+
     void setMap(QGeoMap *map);
 
 Q_SIGNALS:

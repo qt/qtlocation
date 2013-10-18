@@ -471,16 +471,42 @@ void QDeclarativeGeoMapGestureArea::setPanEnabled(bool enabled)
 
 /*!
     \internal
-    called internally when plugin's limits change. somewhat dodgy but
-    initialization order complicates the zoom limit settings a bit (for example when is
-    it possible to check against mapping plugins' limits)
-*/
-void QDeclarativeGeoMapGestureArea::zoomLevelLimits(qreal min, qreal max)
+    Used internally to set the minimum zoom level of the gesture area.
+    The caller is responsible to only send values that are valid
+    for the map plugin. Negative values are ignored.
+ */
+void QDeclarativeGeoMapGestureArea::setMinimumZoomLevel(qreal min)
 {
-    if (pinch_.zoom.minimum == -1.0 || min > pinch_.zoom.minimum)
+    if (min >= 0)
         pinch_.zoom.minimum = min;
-    if (pinch_.zoom.maximum == -1.0 || max < pinch_.zoom.maximum)
+}
+
+/*!
+   \internal
+ */
+qreal QDeclarativeGeoMapGestureArea::minimumZoomLevel() const
+{
+    return pinch_.zoom.minimum;
+}
+
+/*!
+    \internal
+    Used internally to set the maximum zoom level of the gesture area.
+    The caller is responsible to only send values that are valid
+    for the map plugin. Negative values are ignored.
+ */
+void QDeclarativeGeoMapGestureArea::setMaximumZoomLevel(qreal max)
+{
+    if (max >= 0)
         pinch_.zoom.maximum = max;
+}
+
+/*!
+   \internal
+ */
+qreal QDeclarativeGeoMapGestureArea::maximumZoomLevel() const
+{
+    return pinch_.zoom.maximum;
 }
 
 /*!

@@ -99,8 +99,8 @@ class QDeclarativeGeoMap : public QQuickItem
 
     Q_PROPERTY(QDeclarativeGeoMapGestureArea *gesture READ gesture CONSTANT)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel NOTIFY minimumZoomLevelChanged)
-    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel NOTIFY maximumZoomLevelChanged)
+    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
+    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(QDeclarativeGeoMapType *activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
@@ -131,7 +131,10 @@ public:
     void setActiveMapType(QDeclarativeGeoMapType *mapType);
     QDeclarativeGeoMapType *activeMapType() const;
 
+    void setMinimumZoomLevel(qreal minimumZoomLevel);
     qreal minimumZoomLevel() const;
+
+    void setMaximumZoomLevel(qreal maximumZoomLevel);
     qreal maximumZoomLevel() const;
 
     void setZoomLevel(qreal zoomLevel);

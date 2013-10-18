@@ -107,6 +107,45 @@ Item {
             compare(map.center.latitude, 12)
         }
 
+        function test_zoom_limits() {
+            map.center.latitude = 30
+            map.center.longitude = 60
+            map.zoomLevel = 4
+
+            //initial plugin values
+            compare(map.minimumZoomLevel, 0)
+            compare(map.maximumZoomLevel, 20)
+
+            //Higher min level than curr zoom, should change curr zoom
+            map.minimumZoomLevel = 5
+            map.maximumZoomLevel = 18
+            compare(map.zoomLevel, 5)
+            compare(map.minimumZoomLevel, 5)
+            compare(map.maximumZoomLevel, 18)
+
+            //Trying to set higher than max, max should be set.
+            map.maximumZoomLevel = 21
+            compare(map.minimumZoomLevel, 5)
+            compare(map.maximumZoomLevel, 20)
+
+            //Negative values should be ignored
+            map.minimumZoomLevel = -1
+            map.maximumZoomLevel = -2
+            compare(map.minimumZoomLevel, 5)
+            compare(map.maximumZoomLevel, 20)
+
+            //Max limit lower than curr zoom, should change curr zoom
+            map.zoomLevel = 18
+            map.maximumZoomLevel = 16
+            compare(map.zoomLevel, 16)
+
+            //reseting default
+            map.minimumZoomLevel = 0
+            map.maximumZoomLevel = 20
+            compare(map.minimumZoomLevel, 0)
+            compare(map.maximumZoomLevel, 20)
+        }
+
         function test_pan() {
             map.center.latitude = 30
             map.center.longitude = 60
