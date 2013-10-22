@@ -128,8 +128,9 @@ public:
             qmlRegisterType<QDeclarativeGeoLocation     >(uri, major, minor, "Location");
 
             // Register the 5.3 types
+            // Introduction of 5.3 version; existing 5.2 exports automatically become availabe under 5.3 as well
             minor = 3;
-            qmlRegisterType<QDeclarativeGeoCoordinateAnimation>(uri, 5, 3, "CoordinateAnimation");
+            qmlRegisterType<QDeclarativeGeoCoordinateAnimation  >(uri, major, minor, "CoordinateAnimation");
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
         }
