@@ -44,17 +44,17 @@
 /*!
     \qmltype ContactDetails
     \instantiates QDeclarativeContactDetails
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
 
     \brief The ContactDetails type holds contact details for a \l Place.
 
-    The ContactDetails type is a map of \l {QtLocation5::ContactDetail}{ContactDetail} objects.
+    The ContactDetails type is a map of \l {QtLocation::ContactDetail}{ContactDetail} objects.
     To access contact details in the map use the \l keys() method to get the list of keys stored in
     the map and then use the \c {[]} operator to access the
-    \l {QtLocation5::ContactDetail}{ContactDetail} items.
+    \l {QtLocation::ContactDetail}{ContactDetail} items.
 
     The following keys are defined in the API.  \l Plugin implementations are free to define
     additional keys.
@@ -72,7 +72,7 @@
 
     \section1 Examples
 
-    The following example shows how to access all \l {QtLocation5::ContactDetail}{ContactDetails}
+    The following example shows how to access all \l {QtLocation::ContactDetail}{ContactDetails}
     and print them to the console:
 
     \snippet declarative/places.qml QtLocation import
@@ -122,7 +122,7 @@ QVariant QDeclarativeContactDetails::updateValue(const QString &, const QVariant
 /*!
     \qmltype ContactDetail
     \instantiates QDeclarativeContactDetail
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
@@ -161,7 +161,7 @@ QDeclarativeContactDetail::~QDeclarativeContactDetail()
 }
 
 /*!
-    \qmlproperty QPlaceContactDetail QtLocation5::ContactDetail::contactDetail
+    \qmlproperty QPlaceContactDetail QtLocation::ContactDetail::contactDetail
 
     For details on how to use this property to interface between C++ and QML see
     "\l {location-cpp-qml.html#contact_detail} {Interfaces between C++ and QML Code}".
@@ -183,7 +183,7 @@ QPlaceContactDetail QDeclarativeContactDetail::contactDetail() const
 }
 
 /*!
-    \qmlproperty string QtLocation5::ContactDetail::label
+    \qmlproperty string QtLocation::ContactDetail::label
 
     This property holds a label describing the contact detail.
 
@@ -205,7 +205,7 @@ void QDeclarativeContactDetail::setLabel(const QString &label)
 }
 
 /*!
-    \qmlproperty string QtLocation5::ContactDetail::value
+    \qmlproperty string QtLocation::ContactDetail::value
 
     This property holds the value of the contact detail which may be a phone number, an email
     address, a website url and so on.

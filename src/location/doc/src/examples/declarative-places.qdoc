@@ -61,8 +61,8 @@
     from the "New" menu and fill in the fields.  Click "Go!" to save the category.
 
     The Places example can work with any of the available geo services plugins.  However, some
-    plugins may require additional \l {QtLocation5::PluginParameter}{plugin parameters} in order to
-    function correctly.  \l {QtLocation5::PluginParameter}{Plugin parameters} can be passed on the
+    plugins may require additional \l {QtLocation::PluginParameter}{plugin parameters} in order to
+    function correctly.  \l {QtLocation::PluginParameter}{Plugin parameters} can be passed on the
     command line using the \c {--plugin} argument, which takes the form:
 
     \code

@@ -50,6 +50,8 @@
 #include <QtCore/private/qfactoryloader_p.h>
 #include <QtCore/private/qlibrary_p.h>
 
+#include <algorithm>
+
 QT_BEGIN_NAMESPACE
 
 #ifndef QT_NO_LIBRARY
@@ -62,7 +64,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     \class QGeoPositionInfoSource
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
 
@@ -153,7 +155,7 @@ static bool pluginComparator(const QJsonObject &p1, const QJsonObject &p2)
 QList<QJsonObject> QGeoPositionInfoSourcePrivate::pluginsSorted()
 {
     QList<QJsonObject> list = plugins().values();
-    qStableSort(list.begin(), list.end(), pluginComparator);
+    std::stable_sort(list.begin(), list.end(), pluginComparator);
     return list;
 }
 

@@ -53,7 +53,7 @@ QT_USE_NAMESPACE
 /*!
     \qmltype PlaceSearchSuggestionModel
     \instantiates QDeclarativeSearchSuggestionModel
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
@@ -214,7 +214,7 @@ QT_USE_NAMESPACE
 
 
 /*!
-    \qmlmethod string QtLocation5::PlaceSearchSuggestionModel::errorString() const
+    \qmlmethod string QtLocation::PlaceSearchSuggestionModel::errorString() const
 
     This read-only property holds the textual presentation of latest search suggestion model error.
     If no error has occurred, or if the model was cleared, an empty string is returned.

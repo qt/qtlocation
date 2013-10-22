@@ -38,8 +38,8 @@
     covering each of these areas of functionality with snippets from the code.
 
     The Map Viewer example can work with any of the available geo services plugins.  However, some
-    plugins may require additional \l {QtLocation5::PluginParameter}{plugin parameters} in order to
-    function correctly.  \l {QtLocation5::PluginParameter}{Plugin parameters} can be passed on the
+    plugins may require additional \l {QtLocation::PluginParameter}{plugin parameters} in order to
+    function correctly.  \l {QtLocation::PluginParameter}{Plugin parameters} can be passed on the
     command line using the \c {--plugin} argument, which takes the form:
 
     \code
@@ -55,20 +55,20 @@
     \list
     \li Displaying a map
         \list
-        \li \l{QtLocation5::Map}{Map}
-        \li \l{QtLocation5::MapGestureArea}{MapGestureArea}
+        \li \l{QtLocation::Map}{Map}
+        \li \l{QtLocation::MapGestureArea}{MapGestureArea}
         \li \l{coordinate}
         \endlist
     \li Finding an address
         \list
-        \li \l{QtLocation5::GeocodeModel}{GeocodeModel}
-        \li \l{QtLocation5::MapItemView}{MapItemView}
-        \li \l{QtLocation5::MapCircle}{MapCircle}
+        \li \l{QtLocation::GeocodeModel}{GeocodeModel}
+        \li \l{QtLocation::MapItemView}{MapItemView}
+        \li \l{QtLocation::MapCircle}{MapCircle}
         \endlist
     \li Directions and travel routes
         \list
-        \li \l{QtLocation5::RouteModel}{RouteModel}
-        \li \l{QtLocation5::MapRoute}{MapRoute}
+        \li \l{QtLocation::RouteModel}{RouteModel}
+        \li \l{QtLocation::MapRoute}{MapRoute}
         \endlist
     \endlist
 
@@ -186,7 +186,7 @@
     \snippet mapviewer/content/map/MapComponent.qml routeinfomodel
 
     Inside the RouteModel, we add an
-    \l{QtLocation5::RouteModel::status}{onStatusChanged} handler, which
+    \l{QtLocation::RouteModel::status}{onStatusChanged} handler, which
     calls the \c{update()} function we defined on the model:
 
     \snippet mapviewer/content/map/MapComponent.qml routemodel1

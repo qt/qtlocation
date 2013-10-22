@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype RouteModel
     \instantiates QDeclarativeGeoRouteModel
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0
 
@@ -145,11 +145,11 @@ QDeclarativeGeoRouteModel::~QDeclarativeGeoRouteModel()
 }
 
 /*!
-    \qmlproperty int QtLocation5::RouteModel::count
+    \qmlproperty int QtLocation::RouteModel::count
 
     This property holds how many routes the model currently has.
     Amongst other uses, you can use this value when accessing routes
-    via the QtLocation5::RouteModel::get -method.
+    via the QtLocation::RouteModel::get -method.
 */
 
 int QDeclarativeGeoRouteModel::count() const
@@ -158,7 +158,7 @@ int QDeclarativeGeoRouteModel::count() const
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::reset()
+    \qmlmethod QtLocation::RouteModel::reset()
 
     Resets the model. All route data is cleared, any outstanding requests
     are aborted and possible errors are cleared. Model status will be set
@@ -183,7 +183,7 @@ void QDeclarativeGeoRouteModel::reset()
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::cancel()
+    \qmlmethod QtLocation::RouteModel::cancel()
 
     Cancels any outstanding requests and clears errors.  Model status will be set to either
     RouteModel.Null or RouteModel.Ready.
@@ -210,7 +210,7 @@ void QDeclarativeGeoRouteModel::abortRequest()
 
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::get(int)
+    \qmlmethod QtLocation::RouteModel::get(int)
 
     Returns the Route at given index. Use \l count property to check the
     amount of routes available. The routes are indexed from zero, so the accessible range
@@ -328,7 +328,7 @@ void QDeclarativeGeoRouteModel::queryDetailsChanged()
 }
 
 /*!
-    \qmlproperty Plugin QtLocation5::RouteModel::plugin
+    \qmlproperty Plugin QtLocation::RouteModel::plugin
 
     This property holds the plugin that providers the actual
     routing service. Note that all plugins do not necessarily
@@ -364,7 +364,7 @@ void QDeclarativeGeoRouteModel::setQuery(QDeclarativeGeoRouteQuery *query)
 }
 
 /*!
-    \qmlproperty RouteQuery QtLocation5::RouteModel::query
+    \qmlproperty RouteQuery QtLocation::RouteModel::query
 
     This property holds the data of the route request.
     The primary data are the waypoint coordinates and possible further
@@ -389,7 +389,7 @@ void QDeclarativeGeoRouteModel::setAutoUpdate(bool autoUpdate)
 }
 
 /*!
-    \qmlproperty bool QtLocation5::RouteModel::autoUpdate
+    \qmlproperty bool QtLocation::RouteModel::autoUpdate
 
     This property controls whether the Model automatically updates in response
     to changes in its attached RouteQuery. The default value of this property
@@ -422,7 +422,7 @@ void QDeclarativeGeoRouteModel::setStatus(QDeclarativeGeoRouteModel::Status stat
 }
 
 /*!
-    \qmlproperty enumeration QtLocation5::RouteModel::status
+    \qmlproperty enumeration QtLocation::RouteModel::status
 
     This read-only property holds the current status of the model.
 
@@ -454,7 +454,7 @@ void QDeclarativeGeoRouteModel::setErrorString(const QString &error)
 }
 
 /*!
-    \qmlproperty string QtLocation5::RouteModel::errorString
+    \qmlproperty string QtLocation::RouteModel::errorString
 
     This read-only property holds the textual presentation of latest routing error.
     If no error has occurred or the model has been reset, an empty string is returned.
@@ -469,7 +469,7 @@ QString QDeclarativeGeoRouteModel::errorString() const
 }
 
 /*!
-    \qmlproperty enumeration QtLocation5::RouteModel::error
+    \qmlproperty enumeration QtLocation::RouteModel::error
 
     This read-only property holds the latest error value of the routing request.
 
@@ -497,7 +497,7 @@ void QDeclarativeGeoRouteModel::setError(RouteError error)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::update()
+    \qmlmethod QtLocation::RouteModel::update()
 
     Instructs the RouteModel to update its data. This is most useful
     when \l autoUpdate is disabled, to force a refresh when the query
@@ -597,7 +597,7 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
 /*!
     \qmltype RouteQuery
     \instantiates QDeclarativeGeoRouteQuery
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
     \since Qt Location 5.0
 
@@ -746,7 +746,7 @@ QJSValue QDeclarativeGeoRouteQuery::waypoints()
         waypointArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, waypointArray);
+    return new QJSValuePrivate(v4, QV4::ValueRef(waypointArray));
 }
 
 void QDeclarativeGeoRouteQuery::setWaypoints(const QJSValue &value)
@@ -805,7 +805,7 @@ QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
         excludedAreasArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, excludedAreasArray);
+    return new QJSValuePrivate(v4, QV4::ValueRef(excludedAreasArray));
 }
 
 void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
@@ -837,7 +837,7 @@ void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::addExcludedArea(georectangle)
+    \qmlmethod QtLocation::RouteQuery::addExcludedArea(georectangle)
 
     Adds the given area to excluded areas (areas that the route must not cross).
     Same area can only be added once.
@@ -867,7 +867,7 @@ void QDeclarativeGeoRouteQuery::addExcludedArea(const QGeoRectangle &area)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::removeExcludedArea(georectangle)
+    \qmlmethod QtLocation::RouteQuery::removeExcludedArea(georectangle)
 
     Removes the given area to excluded areas (areas that the route must not cross).
 
@@ -894,7 +894,7 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(const QGeoRectangle &area)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::clearExcludedAreas()
+    \qmlmethod QtLocation::RouteQuery::clearExcludedAreas()
 
     Clears all excluded areas (areas that the route must not cross).
 
@@ -913,7 +913,7 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::addWaypoint(coordinate)
+    \qmlmethod QtLocation::RouteQuery::addWaypoint(coordinate)
 
     Appends a coordinate to the list of waypoints. Same coordinate
     can be set multiple times.
@@ -938,7 +938,7 @@ void QDeclarativeGeoRouteQuery::addWaypoint(const QGeoCoordinate &waypoint)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::removeWaypoint(coordinate)
+    \qmlmethod QtLocation::RouteQuery::removeWaypoint(coordinate)
 
     Removes the given from the list of waypoints. In case same coordinate
     appears multiple times, the most recently added coordinate instance is
@@ -965,7 +965,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(const QGeoCoordinate &waypoint)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::clearWaypoints()
+    \qmlmethod QtLocation::RouteQuery::clearWaypoints()
 
     Clears all waypoints.
 
@@ -983,7 +983,7 @@ void QDeclarativeGeoRouteQuery::clearWaypoints()
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::setFeatureWeight(FeatureType, FeatureWeight)
+    \qmlmethod QtLocation::RouteQuery::setFeatureWeight(FeatureType, FeatureWeight)
 
     Defines the weight to associate with a feature during the planning of a
     route.
@@ -1025,7 +1025,7 @@ void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, Featur
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::resetFeatureWeights()
+    \qmlmethod QtLocation::RouteQuery::resetFeatureWeights()
 
     Resets all feature weights to their default state (NeutralFeatureWeight).
 
@@ -1045,7 +1045,7 @@ void QDeclarativeGeoRouteQuery::resetFeatureWeights()
 }
 
 /*!
-    \qmlmethod FeatureWeight QtLocation5::RouteQuery::featureWeight(FeatureType featureType)
+    \qmlmethod FeatureWeight QtLocation::RouteQuery::featureWeight(FeatureType featureType)
 
     Gets the weight for the \a featureType.
 

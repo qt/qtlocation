@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype ReviewModel
     \instantiates QDeclarativeReviewModel
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
@@ -105,7 +105,7 @@ QT_BEGIN_NAMESPACE
             \li The supplier of the review.
         \row
             \li user
-            \li \l {QtLocation5::User}{User}
+            \li \l {QtLocation::User}{User}
             \li The user who contributed the review.
         \row
             \li attribution
@@ -115,19 +115,19 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty Place QtLocation5::ReviewModel::place
+    \qmlproperty Place QtLocation::ReviewModel::place
 
     This property holds the Place that the reviews are for.
 */
 
 /*!
-    \qmlproperty int QtLocation5::ReviewModel::batchSize
+    \qmlproperty int QtLocation::ReviewModel::batchSize
 
     This property holds the batch size to use when fetching more reviews.
 */
 
 /*!
-    \qmlproperty int QtLocation5::ReviewModel::totalCount
+    \qmlproperty int QtLocation::ReviewModel::totalCount
 
     This property holds the total number of reviews for the place.
 */

@@ -69,13 +69,6 @@ class QGeoPositionInfoSourceGeoclueMaster : public QGeoPositionInfoSource, publi
 {
     Q_OBJECT
 public:
-    void positionChanged(GeocluePosition      *position,
-                         GeocluePositionFields fields,
-                         int                   timestamp,
-                         double                latitude,
-                         double                longitude,
-                         double                altitude,
-                         GeoclueAccuracy      *accuracy);
     QGeoPositionInfoSourceGeoclueMaster(QObject *parent = 0);
     ~QGeoPositionInfoSourceGeoclueMaster();
 
@@ -117,7 +110,7 @@ private slots:
     void positionProviderChanged(const QByteArray &service, const QByteArray &path);
 
 private:
-    bool configurePositionSource(GeoclueAccuracyLevel accuracy, GeoclueResourceFlags resourceFlags);
+    bool configurePositionSource();
     void cleanupPositionSource();
     QGeoPositionInfo geoclueToPositionInfo(GeocluePositionFields fields,
                                            int                   timestamp,
@@ -137,6 +130,7 @@ private:
     bool m_lastPositionFromSatellite;
     QGeoPositionInfo m_lastPosition;
     PositioningMethods m_methods;
+    bool m_running;
 };
 
 QT_END_NAMESPACE

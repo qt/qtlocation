@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype MapItemView
     \instantiates QDeclarativeGeoMapItemView
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
     \inherits QQuickItem
@@ -97,7 +97,7 @@ void QDeclarativeGeoMapItemView::componentComplete()
 }
 
 /*!
-    \qmlproperty model QtLocation5::MapItemView::model
+    \qmlproperty model QtLocation::MapItemView::model
 
     This property holds the model that provides data used for
     creating the map item defined by the delegate.
@@ -180,7 +180,7 @@ void QDeclarativeGeoMapItemView::itemModelRowsRemoved(QModelIndex, int start, in
 }
 
 /*!
-    \qmlproperty Component QtLocation5::MapItemView::delegate
+    \qmlproperty Component QtLocation::MapItemView::delegate
 
     This property holds the delegate which defines how each item in the
     model should be displayed. The Component must contain exactly one
@@ -203,7 +203,7 @@ void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 }
 
 /*!
-    \qmlproperty Component QtLocation5::MapItemView::autoFitViewport
+    \qmlproperty Component QtLocation::MapItemView::autoFitViewport
 
     This property controls whether to automatically pan and zoom the viewport
     to display all map items when items are added or removed.

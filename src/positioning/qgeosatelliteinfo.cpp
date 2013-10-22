@@ -60,7 +60,7 @@ public:
     \class QGeoSatelliteInfo
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QGeoSatelliteInfo class contains basic information about a satellite.
 

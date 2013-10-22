@@ -45,6 +45,8 @@
 #include <QDataStream>
 #include <QtCore/QtNumeric>
 
+#include <algorithm>
+
 QT_BEGIN_NAMESPACE
 
 class QGeoPositionInfoPrivate
@@ -59,7 +61,7 @@ public:
     \class QGeoPositionInfo
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time.
 
@@ -260,7 +262,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
     dbg.nospace() << info.d->coord;
 
     QList<QGeoPositionInfo::Attribute> attribs = info.d->doubleAttribs.keys();
-    qStableSort(attribs.begin(), attribs.end()); // Output a sorted list from an unsorted hash.
+    std::stable_sort(attribs.begin(), attribs.end()); // Output a sorted list from an unsorted hash.
     for (int i = 0; i < attribs.count(); ++i) {
         dbg.nospace() << ", ";
         switch (attribs[i]) {

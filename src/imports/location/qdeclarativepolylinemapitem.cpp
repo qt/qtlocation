@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype MapPolyline
     \instantiates QDeclarativePolylineMapItem
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
@@ -512,7 +512,7 @@ QJSValue QDeclarativePolylineMapItem::path() const
         pathArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, pathArray);
+    return new QJSValuePrivate(v4, QV4::ValueRef(pathArray));
 }
 
 void QDeclarativePolylineMapItem::setPath(const QJSValue &value)

@@ -61,7 +61,7 @@ QT_USE_NAMESPACE
 /*!
     \qmltype Place
     \instantiates QDeclarativePlace
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
     \since Qt Location 5.0
@@ -441,7 +441,7 @@ QPlace QDeclarativePlace::place()
 }
 
 /*!
-    \qmlproperty QtPositioning5::Location Place::location
+    \qmlproperty QtPositioning::Location Place::location
 
     This property holds the location of the place which can be used to retrieve the coordinate,
     address and the bounding box.

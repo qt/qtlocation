@@ -86,7 +86,8 @@ public:
         AccessError = QGeoPositionInfoSource::AccessError,
         ClosedError = QGeoPositionInfoSource::ClosedError,
         UnknownSourceError = QGeoPositionInfoSource::UnknownSourceError,
-        SocketError
+        //Leave a gap for future error enum values in QGeoPositionInfoSource::Error
+        SocketError = 100
     };
     Q_ENUMS(SourceError)
 
@@ -135,7 +136,10 @@ private Q_SLOTS:
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
     void socketConnected();
     void socketError(QAbstractSocket::SocketError error);
+
 private:
+    void setPosition(const QGeoPositionInfo &pi);
+
     QGeoPositionInfoSource *m_positionSource;
     QDeclarativePosition m_position;
     PositioningMethods m_preferredPositioningMethods;

@@ -41,7 +41,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtPositioning 5.0
+import QtPositioning 5.2
 
 TestCase {
     id: testCase
@@ -77,6 +77,7 @@ TestCase {
     }
 
     function test_inactive() {
+        defaultSourceSpy.clear();
         compare(defaultSourceSpy.count, 0);
         wait(1000);
         compare(defaultSourceSpy.count, 0);

@@ -41,14 +41,14 @@ statement in the QML file.
 \section2 Location QML Concepts
 
 Provided that a position has been obtained this module can
-add a \l {QtLocation5::Map}{Map} with positions of interest and
-\l {QtLocation5::Place}{Places}. The user can be made aware of nearby features and related
+add a \l {QtLocation::Map}{Map} with positions of interest and
+\l {QtLocation::Place}{Places}. The user can be made aware of nearby features and related
 information, displayed graphically. Features on the \l Map may be places of business, entertainment
 and so on.  They may include paths, roads, or forms of transport leading so that
 navigation optimization and assistance are possible.
 
 To perform navigation we need \l {Route}s from start to destination. These routes
-are made up of segments. Each \l {QtLocation5::RouteSegment}{RouteSegment}
+are made up of segments. Each \l {QtLocation::RouteSegment}{RouteSegment}
 can be considered a navigation sub-task: drive 100 meters, turn left. The beginning and
 end of each segment is a \e waypoint, that is, one part of our journey.
 

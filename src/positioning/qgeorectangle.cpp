@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoRectangle
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
-    \since Qt Positioning 5.0
+    \since 5.2
 
     \brief The QGeoRectangle class defines a rectangular geographic area.
 

@@ -44,13 +44,14 @@
 /*!
     \qmltype QtPositioning
     \instantiates LocationSingleton
-    \inqmlmodule QtPositioning 5.0
+    \inqmlmodule QtPositioning
+    \since 5.2
 
     \brief The QtPositioning global object provides useful functions for working with location-based
            types in QML.
 
     \qml
-    import QtPositioning 5.0
+    import QtPositioning 5.2
 
     Item {
         property variant coordinate: QtPositioning.coordinate(-27.5, 153.1)

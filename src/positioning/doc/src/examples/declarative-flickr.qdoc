@@ -39,7 +39,7 @@
 
     Key QML types shown in this example:
     \list
-        \li \l{QtPositioning5::PositionSource}{PositionSource}
+        \li \l{QtPositioning::PositionSource}{PositionSource}
         \li \l{XmlListModel}{XmlListModel}
     \endlist
 

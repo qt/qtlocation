@@ -43,6 +43,7 @@
 #include <QDateTime>
 #include <QSharedData>
 #include <QUuid>
+#include <QDataStream>
 
 #ifndef QT_NO_DEBUG_STREAM
 #include <QDebug>

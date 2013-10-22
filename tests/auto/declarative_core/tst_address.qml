@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 import QtTest 1.0
-import QtPositioning 5.0
+import QtPositioning 5.2
 
 TestCase {
     id: testCase

@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype ImageModel
     \instantiates QDeclarativePlaceImageModel
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
     \since Qt Location 5.0
@@ -91,7 +91,7 @@ QT_BEGIN_NAMESPACE
             \li The supplier of the image.
         \row
             \li user
-            \li \l {QtLocation5::User}{User}
+            \li \l {QtLocation::User}{User}
             \li The user who contributed the image.
         \row
             \li attribution

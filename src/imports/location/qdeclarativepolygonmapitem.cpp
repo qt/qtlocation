@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype MapPolygon
     \instantiates QDeclarativePolygonMapItem
-    \inqmlmodule QtLocation 5.0
+    \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
 
@@ -401,7 +401,7 @@ QJSValue QDeclarativePolygonMapItem::path() const
         pathArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, pathArray);
+    return new QJSValuePrivate(v4, QV4::ValueRef(pathArray));
 }
 
 void QDeclarativePolygonMapItem::setPath(const QJSValue &value)

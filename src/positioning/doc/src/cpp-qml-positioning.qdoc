@@ -33,7 +33,7 @@
 
 \section2 Address - QGeoAddress
 \target geoaddress
-The \l {QtPositioning5::Address::address} {Address.address} property is used to provide an interface between C++ and QML code.  First a pointer to a
+The \l {QtPositioning::Address::address} {Address.address} property is used to provide an interface between C++ and QML code.  First a pointer to a
 Address object must be obtained from C++, then use the \l {QObject::property()}{property()} and
 \l {QObject::setProperty()}{setProperty()} functions to get and set the \c address property.
 The following gets the QGeoAddress representing this object from C++:
