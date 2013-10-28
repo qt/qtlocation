@@ -290,7 +290,7 @@ int QGeoSatelliteInfoSourceGypsy::minimumUpdateInterval() const
 
 QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSourceGypsy::error() const
 {
-    return UnknownSourceError;
+    return NoError;
 }
 
 void QGeoSatelliteInfoSourceGypsy::startUpdates()

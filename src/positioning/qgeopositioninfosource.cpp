@@ -462,6 +462,7 @@ QStringList QGeoPositionInfoSource::availableSources()
     \value ClosedError  The remote positioning backend closed the connection, which happens for example in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A call to createDefaultSource() can be used to create a new source later on.
+    \value NoError No error has occurred.
     \value UnknownSourceError An unidentified error occurred.
  */
 

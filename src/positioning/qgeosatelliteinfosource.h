@@ -58,7 +58,8 @@ class Q_POSITIONING_EXPORT QGeoSatelliteInfoSource : public QObject
 public:
     enum Error {
         AccessError = 0,
-        ClosedError,              /* 1 */
+        ClosedError = 1,
+        NoError = 2,
         UnknownSourceError = -1
     };
     Q_ENUMS(Error)

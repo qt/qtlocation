@@ -58,8 +58,9 @@ class Q_POSITIONING_EXPORT QGeoPositionInfoSource : public QObject
 public:
     enum Error {
         AccessError = 0,
-        ClosedError,
-        UnknownSourceError
+        ClosedError = 1,
+        UnknownSourceError = 2,
+        NoError = 3
     };
     Q_ENUMS(Error)
 

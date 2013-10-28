@@ -119,5 +119,5 @@ void LogFilePositionSource::readNextPosition()
 
 QGeoPositionInfoSource::Error LogFilePositionSource::error() const
 {
-    return QGeoPositionInfoSource::UnknownSourceError;
+    return QGeoPositionInfoSource::NoError;
 }

@@ -102,7 +102,7 @@ public:
 
     virtual void requestUpdate(int) {}
 
-    Error error() const { return QGeoPositionInfoSource::UnknownSourceError; }
+    Error error() const { return QGeoPositionInfoSource::NoError; }
 
 private:
     PositioningMethods m_methods;

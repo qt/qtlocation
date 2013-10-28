@@ -328,6 +328,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     \value ClosedError  The remote satellite backend closed the connection, which happens for example in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A new satellite source can be created by calling createDefaultSource() later on.
+    \value NoError No error has occurred.
     \value UnknownSourceError An unidentified error occurred.
  */
 

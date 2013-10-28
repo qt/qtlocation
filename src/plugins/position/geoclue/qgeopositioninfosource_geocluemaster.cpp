@@ -528,7 +528,7 @@ QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(
 
 QGeoPositionInfoSource::Error QGeoPositionInfoSourceGeoclueMaster::error() const
 {
-    return UnknownSourceError;
+    return NoError;
 }
 
 #include "moc_qgeopositioninfosource_geocluemaster_p.cpp"

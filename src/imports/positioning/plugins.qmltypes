@@ -155,6 +155,7 @@ Module {
                 "AccessError": 0,
                 "ClosedError": 1,
                 "UnknownSourceError": 2,
+                "NoError": 3,
                 "SocketError": 100
             }
         }

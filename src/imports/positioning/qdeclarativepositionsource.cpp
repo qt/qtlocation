@@ -118,7 +118,7 @@ QT_BEGIN_NAMESPACE
 QDeclarativePositionSource::QDeclarativePositionSource()
 :   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethod), m_nmeaFile(0),
     m_nmeaSocket(0), m_active(false), m_singleUpdate(false), m_updateInterval(0),
-    m_sourceError(UnknownSourceError)
+    m_sourceError(NoError)
 {
 }
 
@@ -668,6 +668,7 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
     \li PositionSource.ClosedError - The remote positioning backend closed the connection, which happens for example in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A new source can be declared later on to check whether the positioning backend is up again.
+    \li PositionSource.NoError - No error has occurred.
     \li PositionSource.UnknownSourceError - An unidentified error occurred.
     \li PositionSource.SocketError - An error occurred while connecting to an nmea source using a socket.
     \endlist
@@ -725,13 +726,15 @@ void QDeclarativePositionSource::componentComplete()
 */
 void QDeclarativePositionSource::sourceErrorReceived(const QGeoPositionInfoSource::Error error)
 {
-    if (error == QGeoPositionInfoSource::AccessError) {
+    if (error == QGeoPositionInfoSource::AccessError)
         m_sourceError = QDeclarativePositionSource::AccessError;
-    } else if (error == QGeoPositionInfoSource::ClosedError) {
+    else if (error == QGeoPositionInfoSource::ClosedError)
         m_sourceError = QDeclarativePositionSource::ClosedError;
-    } else {
-         m_sourceError = QDeclarativePositionSource::UnknownSourceError;
-    }
+    else if (error == QGeoPositionInfoSource::NoError)
+        return; //nothing to do
+    else
+        m_sourceError = QDeclarativePositionSource::UnknownSourceError;
+
     emit sourceErrorChanged();
 }
 
