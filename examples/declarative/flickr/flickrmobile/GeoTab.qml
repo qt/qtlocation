@@ -81,7 +81,7 @@ Rectangle {
 //! [locatebutton-clicked]
         onClicked: {
             if (positionSource.supportedPositioningMethods ===
-                    PositionSource.NoPositioningMethod) {
+                    PositionSource.NoPositioningMethods) {
                 positionSource.nmeaSource = "nmealog.txt";
                 sourceText.text = "(filesource): " + printableMethod(positionSource.supportedPositioningMethods);
             }
@@ -96,11 +96,11 @@ Rectangle {
     }
 //! [possrc]
     function printableMethod(method) {
-        if (method === PositionSource.SatellitePositioningMethod)
+        if (method === PositionSource.SatellitePositioningMethods)
             return "Satellite";
-        else if (method === PositionSource.NoPositioningMethod)
+        else if (method === PositionSource.NoPositioningMethods)
             return "Not available"
-        else if (method === PositionSource.NonSatellitePositioningMethod)
+        else if (method === PositionSource.NonSatellitePositioningMethods)
             return "Non-satellite"
         else if (method === PositionSource.AllPositioningMethods)
             return "Multiple"

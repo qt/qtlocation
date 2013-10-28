@@ -65,6 +65,7 @@ public:
     Q_ENUMS(Error)
 
     enum PositioningMethod {
+        NoPositioningMethods = 0x00000000,
         SatellitePositioningMethods = 0x000000ff,
         NonSatellitePositioningMethods = 0xffffff00,
         AllPositioningMethods = 0xffffffff

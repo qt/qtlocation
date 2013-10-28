@@ -116,7 +116,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-:   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethod), m_nmeaFile(0),
+:   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethods), m_nmeaFile(0),
     m_nmeaSocket(0), m_active(false), m_singleUpdate(false), m_updateInterval(0),
     m_sourceError(NoError)
 {
@@ -453,9 +453,9 @@ int QDeclarativePositionSource::updateInterval() const
     current source.
 
     \list
-    \li PositionSource.NoPositioningMethod - No positioning methods supported (no source).
-    \li PositionSource.SatellitePositioningMethod - Satellite-based positioning methods such as GPS are supported.
-    \li PositionSource.NonSatellitePositioningMethod - Non-satellite-based methods are supported.
+    \li PositionSource.NoPositioningMethods - No positioning methods supported (no source).
+    \li PositionSource.SatellitePositioningMethods - Satellite-based positioning methods such as GPS are supported.
+    \li PositionSource.NonSatellitePositioningMethods - Non-satellite-based methods are supported.
     \li PositionSource.AllPositioningMethods - Both satellite-based and non-satellite positioning methods are supported.
     \endlist
 
@@ -468,12 +468,12 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::suppo
         if ( (methods & QGeoPositionInfoSource::AllPositioningMethods) == methods ) {
             return QDeclarativePositionSource::AllPositioningMethods;
         } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
-            return QDeclarativePositionSource::SatellitePositioningMethod;
+            return QDeclarativePositionSource::SatellitePositioningMethods;
         } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
-            return QDeclarativePositionSource::NonSatellitePositioningMethod;
+            return QDeclarativePositionSource::NonSatellitePositioningMethods;
         }
     }
-    return QDeclarativePositionSource::NoPositioningMethod;
+    return QDeclarativePositionSource::NoPositioningMethods;
 }
 
 /*!
@@ -483,8 +483,9 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::suppo
     current source.
 
     \list
-    \li PositionSource.SatellitePositioningMethod - Satellite-based positioning methods such as GPS should be preferred.
-    \li PositionSource.NonSatellitePositioningMethod - Non-satellite-based methods should be preferred.
+    \li PositionSource.NoPositioningMethods - No positioning method is preferred.
+    \li PositionSource.SatellitePositioningMethods - Satellite-based positioning methods such as GPS should be preferred.
+    \li PositionSource.NonSatellitePositioningMethods - Non-satellite-based methods should be preferred.
     \li PositionSource.AllPositioningMethods - Any positioning methods are acceptable.
     \endlist
 
@@ -519,10 +520,11 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::prefe
         if ( (methods & QGeoPositionInfoSource::AllPositioningMethods) == methods) {
             return QDeclarativePositionSource::AllPositioningMethods;
         } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
-            return QDeclarativePositionSource::SatellitePositioningMethod;
+            return QDeclarativePositionSource::SatellitePositioningMethods;
         } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
-            return QDeclarativePositionSource::NonSatellitePositioningMethod;
-        }
+            return QDeclarativePositionSource::NonSatellitePositioningMethods;
+        } else if (methods == QGeoPositionInfoSource::NoPositioningMethods)
+            return QDeclarativePositionSource::NoPositioningMethods;
     }
     return m_preferredPositioningMethods;
 }

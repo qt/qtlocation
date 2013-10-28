@@ -105,6 +105,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     \enum QGeoPositionInfoSource::PositioningMethod
     Defines the types of positioning methods.
 
+    \value NoPositioningMethods None of the positioning methods.
     \value SatellitePositioningMethods Satellite-based positioning methods such as GPS or GLONASS.
     \value NonSatellitePositioningMethods Other positioning methods such as 3GPP cell identifier or WiFi based positioning.
     \value AllPositioningMethods Satellite-based positioning methods as soon as available. Otherwise non-satellite based methods.

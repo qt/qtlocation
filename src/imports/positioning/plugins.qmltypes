@@ -134,18 +134,18 @@ Module {
         Enum {
             name: "PositioningMethod"
             values: {
-                "NoPositioningMethod": 0,
-                "SatellitePositioningMethod": 255,
-                "NonSatellitePositioningMethod": -256,
+                "NoPositioningMethods": 0,
+                "SatellitePositioningMethods": 255,
+                "NonSatellitePositioningMethods": -256,
                 "AllPositioningMethods": -1
             }
         }
         Enum {
             name: "PositioningMethods"
             values: {
-                "NoPositioningMethod": 0,
-                "SatellitePositioningMethod": 255,
-                "NonSatellitePositioningMethod": -256,
+                "NoPositioningMethods": 0,
+                "SatellitePositioningMethods": 255,
+                "NonSatellitePositioningMethods": -256,
                 "AllPositioningMethods": -1
             }
         }

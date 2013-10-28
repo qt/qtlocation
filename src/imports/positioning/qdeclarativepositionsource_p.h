@@ -73,9 +73,9 @@ class QDeclarativePositionSource : public QObject, public QQmlParserStatus
 
 public:
     enum PositioningMethod {
-        NoPositioningMethod = 0,
-        SatellitePositioningMethod = QGeoPositionInfoSource::SatellitePositioningMethods,
-        NonSatellitePositioningMethod = QGeoPositionInfoSource::NonSatellitePositioningMethods,
+        NoPositioningMethods = QGeoPositionInfoSource::NoPositioningMethods,
+        SatellitePositioningMethods = QGeoPositionInfoSource::SatellitePositioningMethods,
+        NonSatellitePositioningMethods = QGeoPositionInfoSource::NonSatellitePositioningMethods,
         AllPositioningMethods = QGeoPositionInfoSource::AllPositioningMethods
     };
 
