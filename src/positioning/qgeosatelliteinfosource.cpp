@@ -165,7 +165,7 @@ int QGeoSatelliteInfoSource::updateInterval() const
     from the system's default source of satellite update information, or the
     highest priority available plugin.
 
-    Returns 0 if the system has no default position source, no valid plugins
+    Returns 0 if the system has no default satellite source, no valid plugins
     could be found or the user does not have the permission to access the satellite data.
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
@@ -284,7 +284,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     Attempts to get the current satellite information and emit
     satellitesInViewUpdated() and satellitesInUseUpdated() with this
-    information. If the current position cannot be found
+    information. If the current satellite information cannot be found
     within the given \a timeout (in milliseconds) or if \a timeout is less than the value returned by
     minimumUpdateInterval(), requestTimeout() is
     emitted.
@@ -323,9 +323,9 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     The Error enumeration represents the errors which can occur.
 
-    \value AccessError The connection setup to the remote positioning backend failed because the
+    \value AccessError The connection setup to the satellite backend failed because the
         application lacked the required privileges.
-    \value ClosedError  The remote satellite backend closed the connection, which happens for example in case
+    \value ClosedError  The satellite backend closed the connection, which happens for example in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A new satellite source can be created by calling createDefaultSource() later on.
     \value NoError No error has occurred.
