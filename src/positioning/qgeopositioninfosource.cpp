@@ -436,6 +436,10 @@ QStringList QGeoPositionInfoSource::availableSources()
     If startUpdates() has been called, this signal will be emitted if this QGeoPositionInfoSource
     subclass determines that it will not be able to provide further regular updates.  This signal
     will not be emitted again until after the regular updates resume.
+
+    While the triggering of this signal may be considered an error condition, it does not
+    imply the emission of the \c error() signal. Only the emission of \c updateTimeout() is required
+    to indicate a timeout.
 */
 
 /*!
@@ -443,6 +447,8 @@ QStringList QGeoPositionInfoSource::availableSources()
 
     This signal is emitted after an error occurred. The \a positioningError
     parameter describes the type of error that occurred.
+
+    This signal is not emitted when an updateTimeout() has occurred.
 
 */
 
