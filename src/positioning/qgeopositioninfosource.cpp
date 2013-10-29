@@ -378,10 +378,10 @@ QStringList QGeoPositionInfoSource::availableSources()
     If setUpdateInterval() has not been called, the source will emit updates
     as soon as they become available.
 
-    An updateTimout() signal will be emitted if this QGeoPositionInfoSource subclass determines
+    An updateTimeout() signal will be emitted if this QGeoPositionInfoSource subclass determines
     that it will not be able to provide regular updates.  This could happen if a satellite fix is
     lost or if a hardware error is detected.  Position updates will recommence if the data becomes
-    available later on.  The updateTimout() signal will not be emitted again until after the
+    available later on.  The updateTimeout() signal will not be emitted again until after the
     periodic updates resume.
 */
 
