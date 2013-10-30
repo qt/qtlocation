@@ -272,7 +272,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     If satellite information cannot be retrieved or some other
     form of timeout has occurred the satellitesInViewUpdated()
-    and satellitesInUseUpdated() signals may emitted with
+    and satellitesInUseUpdated() signals may be emitted with
     empty parameter lists.
 
     \sa satellitesInViewUpdated(), satellitesInUseUpdated()
