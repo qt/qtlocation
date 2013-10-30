@@ -667,9 +667,9 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
     \list
     \li PositionSource.AccessError - The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
-    \li PositionSource.ClosedError - The remote positioning backend closed the connection, which happens for example in case
-        the user is switching location services to off. This object becomes invalid and should be deleted.
-        A new source can be declared later on to check whether the positioning backend is up again.
+    \li PositionSource.ClosedError - The positioning backend closed the connection, which happens for example in case
+        the user is switching location services to off. As soon as the location service is re-enabled
+        regular updates will resume.
     \li PositionSource.NoError - No error has occurred.
     \li PositionSource.UnknownSourceError - An unidentified error occurred.
     \li PositionSource.SocketError - An error occurred while connecting to an nmea source using a socket.

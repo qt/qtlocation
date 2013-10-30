@@ -461,8 +461,8 @@ QStringList QGeoPositionInfoSource::availableSources()
     \value AccessError The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
     \value ClosedError  The remote positioning backend closed the connection, which happens for example in case
-        the user is switching location services to off. This object becomes invalid and should be deleted.
-        A call to createDefaultSource() can be used to create a new source later on.
+        the user is switching location services to off. As soon as the location service is re-enabled
+        regular updates will resume.
     \value NoError No error has occurred.
     \value UnknownSourceError An unidentified error occurred.
  */
