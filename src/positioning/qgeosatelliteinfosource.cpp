@@ -270,6 +270,11 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     Starts emitting updates at regular intervals. The updates will be
     provided whenever new satellite information becomes available.
 
+    If satellite information cannot be retrieved or some other
+    form of timeout has occurred the satellitesInViewUpdated()
+    and satellitesInUseUpdated() signals may emitted with
+    empty parameter lists.
+
     \sa satellitesInViewUpdated(), satellitesInUseUpdated()
 */
 
@@ -302,12 +307,18 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     Emitted if requestUpdate() was called and the current satellite
     information could not be retrieved within the specified timeout.
+
+    While the triggering of this signal may be considered an error condition,
+    it does not imply the emission of the \c error() signal. Only the emission of
+    \c requestTimeout() is required to indicate a timeout.
 */
 
 /*!
     \fn QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSource::error() const = 0
 
     Returns the last error that occurred.
+
+    This signal is not emitted when a requestTimeout() has occurred.
 */
 
 /*!
