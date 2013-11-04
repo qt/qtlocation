@@ -43,6 +43,7 @@
 #include "qdeclarativegeomapmousearea_p.h"
 #include <QtQml/qqmlinfo.h>
 #include <QtQuick/QSGOpacityNode>
+#include "qdoublevector2d_p.h"
 
 #include <QDebug>
 #include <cmath>
@@ -218,7 +219,7 @@ void QDeclarativeGeoMapQuickItem::dragEnded()
 {
     if (!mapAndSourceItemSet_)
         return;
-    QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(QPointF(x(), y()) + (scaleFactor() * anchorPoint_), false);
+    QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(QDoubleVector2D(x(), y()) + (scaleFactor() * QDoubleVector2D(anchorPoint_)), false);
     if (newCoordinate.isValid())
         setCoordinate(newCoordinate);
 }

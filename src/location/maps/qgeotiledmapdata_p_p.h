@@ -63,6 +63,7 @@
 #include <QPointer>
 
 #include <QtPositioning/private/qdoublevector3d_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
@@ -98,8 +99,8 @@ public:
     void changeActiveMapType(const QGeoMapType mapType);
     void resized(int width, int height);
 
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate screenPositionToCoordinate(const QDoubleVector2D &pos) const;
+    QDoubleVector2D coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
 
     void newTileFetched(const QGeoTileSpec &spec);
     QSet<QGeoTileSpec> visibleTiles();

@@ -53,7 +53,7 @@
 //
 
 #include <QObject>
-
+#include <QtPositioning/private/qdoublevector2d_p.h>
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
 
@@ -96,8 +96,8 @@ public:
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
 
-    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const = 0;
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
+    virtual QGeoCoordinate screenPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
+    virtual QDoubleVector2D coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
 
     QString pluginString();
     QGeoCameraCapabilities cameraCapabilities();

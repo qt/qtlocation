@@ -49,7 +49,6 @@
 #include "qgeomapcontroller_p.h"
 
 #include <QtPositioning/private/qgeoprojection_p.h>
-#include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qdoublevector3d_p.h>
 
 #include "qgeocameratiles_p.h"
@@ -141,12 +140,12 @@ QGeoCameraData QGeoMap::cameraData() const
     return mapData_->cameraData();
 }
 
-QGeoCoordinate QGeoMap::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
+QGeoCoordinate QGeoMap::screenPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
 {
     return mapData_->screenPositionToCoordinate(pos, clipToViewport);
 }
 
-QPointF QGeoMap::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
+QDoubleVector2D QGeoMap::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
     return mapData_->coordinateToScreenPosition(coordinate, clipToViewport);
 }

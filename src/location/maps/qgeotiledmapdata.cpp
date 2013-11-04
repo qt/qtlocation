@@ -139,7 +139,7 @@ void QGeoTiledMapData::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles
     Q_UNUSED(visibleTiles);
 }
 
-QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
+QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
 {
     Q_D(const QGeoTiledMapData);
     if (clipToViewport) {
@@ -153,17 +153,17 @@ QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &pos, 
     return d->screenPositionToCoordinate(pos);
 }
 
-QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
+QDoubleVector2D QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
     Q_D(const QGeoTiledMapData);
-    QPointF pos = d->coordinateToScreenPosition(coordinate);
+    QDoubleVector2D pos = d->coordinateToScreenPosition(coordinate);
 
     if (clipToViewport) {
         int w = width();
         int h = height();
 
         if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-            return QPointF(qQNaN(), qQNaN());
+            return QDoubleVector2D(qQNaN(), qQNaN());
     }
 
     return pos;
@@ -314,12 +314,12 @@ void QGeoTiledMapDataPrivate::paintGL(QGLPainter *painter)
     cache_->GLContextAvailable();
 }
 
-QGeoCoordinate QGeoTiledMapDataPrivate::screenPositionToCoordinate(const QPointF &pos) const
+QGeoCoordinate QGeoTiledMapDataPrivate::screenPositionToCoordinate(const QDoubleVector2D &pos) const
 {
     return QGeoProjection::mercatorToCoord(mapScene_->screenPositionToMercator(pos));
 }
 
-QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+QDoubleVector2D QGeoTiledMapDataPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
     return mapScene_->mercatorToScreenPosition(QGeoProjection::coordToMercator(coordinate));
 }

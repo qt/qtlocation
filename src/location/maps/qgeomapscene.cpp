@@ -125,8 +125,8 @@ public:
 
     void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
-    QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
-    QPointF mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
+    QDoubleVector2D screenPositionToMercator(const QDoubleVector2D &pos) const;
+    QDoubleVector2D mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
@@ -199,13 +199,13 @@ void QGeoMapScene::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileText
     d->addTile(spec, texture);
 }
 
-QDoubleVector2D QGeoMapScene::screenPositionToMercator(const QPointF &pos) const
+QDoubleVector2D QGeoMapScene::screenPositionToMercator(const QDoubleVector2D &pos) const
 {
     Q_D(const QGeoMapScene);
     return d->screenPositionToMercator(pos);
 }
 
-QPointF QGeoMapScene::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
+QDoubleVector2D QGeoMapScene::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
 {
     Q_D(const QGeoMapScene);
     return d->mercatorToScreenPosition(mercator);
@@ -279,7 +279,7 @@ QGeoMapScenePrivate::~QGeoMapScenePrivate()
     delete light_;
 }
 
-QDoubleVector2D QGeoMapScenePrivate::screenPositionToMercator(const QPointF &pos) const
+QDoubleVector2D QGeoMapScenePrivate::screenPositionToMercator(const QDoubleVector2D &pos) const
 {
     double x = mercatorWidth_ * (((pos.x() - screenOffsetX_) / screenWidth_) - 0.5);
     x += mercatorCenterX_;
@@ -298,7 +298,7 @@ QDoubleVector2D QGeoMapScenePrivate::screenPositionToMercator(const QPointF &pos
     return QDoubleVector2D(x, y);
 }
 
-QPointF QGeoMapScenePrivate::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
+QDoubleVector2D QGeoMapScenePrivate::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
 {
     double mx = sideLength_ * mercator.x();
 
@@ -337,7 +337,7 @@ QPointF QGeoMapScenePrivate::mercatorToScreenPosition(const QDoubleVector2D &mer
     double x = screenWidth_ * (0.5 + m);
     double y = screenHeight_ * (0.5 + (sideLength_ * mercator.y() - mercatorCenterY_) / mercatorHeight_);
 
-    return QPointF(x + screenOffsetX_, y + screenOffsetY_);
+    return QDoubleVector2D(x + screenOffsetX_, y + screenOffsetY_);
 }
 
 QGeometryData QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)

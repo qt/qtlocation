@@ -62,6 +62,7 @@
 #include <QtPositioning/QGeoRectangle>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/private/qgeomappingmanager_p.h>
+#include "qdoublevector2d_p.h"
 
 #include <QPointF>
 #include <QtQml/QQmlContext>
@@ -837,7 +838,7 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) const
 {
     if (map_)
-        return map_->screenPositionToCoordinate(screenPosition);
+        return map_->screenPositionToCoordinate(QDoubleVector2D(screenPosition));
     else
         return QGeoCoordinate();
 }
@@ -855,7 +856,7 @@ QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) c
 QPointF QDeclarativeGeoMap::toScreenPosition(const QGeoCoordinate &coordinate) const
 {
     if (map_)
-        return map_->coordinateToScreenPosition(coordinate);
+        return map_->coordinateToScreenPosition(coordinate).toPointF();
     else
         return QPointF(qQNaN(), qQNaN());
 }
@@ -1097,16 +1098,16 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
     if (!shape.isValid())
         return;
 
-    qreal bboxWidth;
-    qreal bboxHeight;
+    double bboxWidth;
+    double bboxHeight;
     QGeoCoordinate centerCoordinate;
 
     switch (shape.type()) {
     case QGeoShape::RectangleType:
     {
         QGeoRectangle rect = shape;
-        QPointF topLeftPoint = map_->coordinateToScreenPosition(rect.topLeft(), false);
-        QPointF botRightPoint = map_->coordinateToScreenPosition(rect.bottomRight(), false);
+        QDoubleVector2D topLeftPoint = map_->coordinateToScreenPosition(rect.topLeft(), false);
+        QDoubleVector2D botRightPoint = map_->coordinateToScreenPosition(rect.bottomRight(), false);
         bboxWidth = qAbs(topLeftPoint.x() - botRightPoint.x());
         bboxHeight = qAbs(topLeftPoint.y() - botRightPoint.y());
         centerCoordinate = rect.center();
@@ -1117,8 +1118,8 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
         QGeoCircle circle = shape;
         centerCoordinate = circle.center();
         QGeoCoordinate edge = centerCoordinate.atDistanceAndAzimuth(circle.radius(), 90);
-        QPointF centerPoint = map_->coordinateToScreenPosition(centerCoordinate, false);
-        QPointF edgePoint = map_->coordinateToScreenPosition(edge, false);
+        QDoubleVector2D centerPoint = map_->coordinateToScreenPosition(centerCoordinate, false);
+        QDoubleVector2D edgePoint = map_->coordinateToScreenPosition(edge, false);
         bboxWidth = qAbs(centerPoint.x() - edgePoint.x()) * 2;
         bboxHeight = bboxWidth;
         break;
@@ -1174,18 +1175,18 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     if (mapItems_.size() == 0)
         return;
 
-    qreal minX = 0;
-    qreal maxX = 0;
-    qreal minY = 0;
-    qreal maxY = 0;
-    qreal topLeftX = 0;
-    qreal topLeftY = 0;
-    qreal bottomRightX = 0;
-    qreal bottomRightY = 0;
+    double minX = 0;
+    double maxX = 0;
+    double minY = 0;
+    double maxY = 0;
+    double topLeftX = 0;
+    double topLeftY = 0;
+    double bottomRightX = 0;
+    double bottomRightY = 0;
 
     // find bounds of all map items
     QGeoCoordinate geoCenter;
-    QPointF centerPt;
+    QDoubleVector2D centerPt;
     int itemCount = 0;
     for (int i = 0; i < mapItems_.count(); ++i) {
         if (!mapItems_.at(i))
@@ -1237,14 +1238,14 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     if (itemCount == 0)
         return;
 
-    qreal bboxWidth = maxX - minX;
-    qreal bboxHeight = maxY - minY;
-    qreal bboxCenterX = minX + (bboxWidth / 2.0);
-    qreal bboxCenterY = minY + (bboxHeight / 2.0);
+    double bboxWidth = maxX - minX;
+    double bboxHeight = maxY - minY;
+    double bboxCenterX = minX + (bboxWidth / 2.0);
+    double bboxCenterY = minY + (bboxHeight / 2.0);
 
     // position camera to the center of bounding box
     QGeoCoordinate coordinate;
-    coordinate = map_->screenPositionToCoordinate(QPointF(bboxCenterX, bboxCenterY), false);
+    coordinate = map_->screenPositionToCoordinate(QDoubleVector2D(bboxCenterX, bboxCenterY), false);
     setProperty("center", QVariant::fromValue(coordinate));
 
     // adjust zoom

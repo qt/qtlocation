@@ -59,6 +59,7 @@
 
 #include "qpositioningglobal.h"
 #include <QtCore/qmetatype.h>
+#include <QPointF>
 
 QT_BEGIN_NAMESPACE
 
@@ -69,12 +70,14 @@ class Q_POSITIONING_EXPORT_PRIVATE QDoubleVector2D
 public:
     QDoubleVector2D();
     QDoubleVector2D(double xpos, double ypos);
+    QDoubleVector2D(const QPointF &p);
     explicit QDoubleVector2D(const QDoubleVector3D &vector);
 #ifdef QT_BUILD_LOCATION_LIB
     explicit QDoubleVector2D(const QVector2D &vector) : xp(vector.x()), yp(vector.y()) {}
     operator QVector2D() const { return QVector2D(xp, yp); }
 #endif
 
+    inline double manhattanLength() const;
     bool isNull() const;
 
     double x() const;
@@ -110,6 +113,7 @@ public:
     friend inline bool qFuzzyCompare(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
 
     QDoubleVector3D toVector3D() const;
+    QPointF toPointF() const;
 
 private:
     double xp, yp;
@@ -121,10 +125,14 @@ Q_DECLARE_TYPEINFO(QDoubleVector2D, Q_MOVABLE_TYPE);
 
 inline QDoubleVector2D::QDoubleVector2D() : xp(0.0), yp(0.0) {}
 
-
-
 inline QDoubleVector2D::QDoubleVector2D(double xpos, double ypos) : xp(xpos), yp(ypos) {}
 
+inline QDoubleVector2D::QDoubleVector2D(const QPointF &p) : xp(p.x()), yp(p.y()) { }
+
+inline double QDoubleVector2D::manhattanLength() const
+{
+    return qAbs(x())+qAbs(y());
+}
 
 inline bool QDoubleVector2D::isNull() const
 {

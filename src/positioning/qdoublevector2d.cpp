@@ -100,6 +100,11 @@ QDoubleVector3D QDoubleVector2D::toVector3D() const
     return QDoubleVector3D(xp, yp, 0.0);
 }
 
+QPointF QDoubleVector2D::toPointF() const
+{
+    return QPointF(qreal(xp), qreal(yp));
+}
+
 #ifndef QT_NO_DEBUG_STREAM
 
 QDebug operator<<(QDebug dbg, const QDoubleVector2D &vector)

@@ -55,6 +55,8 @@
 #include <QPainterPath>
 #include <qnumeric.h>
 
+#include "qdoublevector2d_p.h"
+
 /* poly2tri triangulator includes */
 #include "../../3rdparty/poly2tri/common/shapes.h"
 #include "../../3rdparty/poly2tri/sweep/cdt.h"
@@ -156,14 +158,14 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     if (!sourceDirty_)
         return;
 
-    qreal minX = -1.0;
+    double minX = -1.0;
 
     // build the actual path
-    QPointF origin;
-    QPointF lastPoint;
+    QDoubleVector2D origin;
+    QDoubleVector2D lastPoint;
     srcPath_ = QPainterPath();
 
-    qreal unwrapBelowX = 0;
+    double unwrapBelowX = 0;
     if (preserveGeometry_ )
         unwrapBelowX = map.coordinateToScreenPosition(geoLeftBound_, false).x();
 
@@ -173,7 +175,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         if (!coord.isValid())
             continue;
 
-        QPointF point = map.coordinateToScreenPosition(coord, false);
+        QDoubleVector2D point = map.coordinateToScreenPosition(coord, false);
 
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
@@ -188,14 +190,14 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
             origin = point;
             minX = point.x();
             srcOrigin_ = coord;
-            srcPath_.moveTo(point - origin);
+            srcPath_.moveTo(point.toPointF() - origin.toPointF());
             lastPoint = point;
         } else {
             if (point.x() <= minX)
                 minX = point.x();
-            const QPointF diff = (point - lastPoint);
+            const QDoubleVector2D diff = (point - lastPoint);
             if (diff.x() * diff.x() + diff.y() * diff.y() >= 3.0) {
-                srcPath_.lineTo(point - origin);
+                srcPath_.lineTo(point.toPointF() - origin.toPointF());
                 lastPoint = point;
             }
         }
@@ -207,7 +209,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         srcPath_ = srcPath_.simplified();
 
     sourceBounds_ = srcPath_.boundingRect();
-    geoLeftBound_ = map.screenPositionToCoordinate(QPointF(minX, 0), false);
+    geoLeftBound_ = map.screenPositionToCoordinate(QDoubleVector2D(minX, 0), false);
 }
 
 /*!
@@ -223,12 +225,12 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
         return;
     }
 
-    QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
+    QDoubleVector2D origin = map.coordinateToScreenPosition(srcOrigin_, false);
 
     // Create the viewport rect in the same coordinate system
     // as the actual points
     QRectF viewport(0, 0, map.width(), map.height());
-    viewport.translate(-1 * origin);
+    viewport.translate(-1 * origin.toPointF());
 
     QPainterPath vpPath;
     vpPath.addRect(viewport);
@@ -621,7 +623,7 @@ void QDeclarativePolygonMapItem::dragStarted()
 */
 void QDeclarativePolygonMapItem::dragEnded()
 {
-    QPointF newPoint = QPointF(x(),y()) + geometry_.firstPointOffset();
+    QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(geometry_.firstPointOffset());
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
         double firstLongitude = path_.at(0).longitude();

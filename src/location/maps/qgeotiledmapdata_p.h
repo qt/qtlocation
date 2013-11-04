@@ -59,6 +59,8 @@
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
 
+#include <QtPositioning/private/qdoublevector2d_p.h>
+
 QT_BEGIN_NAMESPACE
 
 class QGeoTileSpec;
@@ -84,8 +86,8 @@ public:
 
     void newTileFetched(const QGeoTileSpec &spec);
 
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
+    QGeoCoordinate screenPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const;
+    QDoubleVector2D coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
     void prefetchTiles();
 
     // Alternative to exposing this is to make tileFetched a slot, but then requestManager would

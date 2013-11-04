@@ -43,6 +43,7 @@
 #include "qdeclarativegeomap_p.h"
 #include "qlocationutils_p.h"
 #include <QtQuick/QSGGeometry>
+#include "qdoublevector2d_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -131,15 +132,15 @@ double QGeoMapItemGeometry::geoDistanceToScreenWidth(const QGeoMap &map,
                                                      const QGeoCoordinate &fromCoord,
                                                      const QGeoCoordinate &toCoord)
 {
-    QGeoCoordinate mapMid = map.screenPositionToCoordinate(QPointF(map.width()/2.0, 0));
+    QGeoCoordinate mapMid = map.screenPositionToCoordinate(QDoubleVector2D(map.width()/2.0, 0));
     double halfGeoDist = toCoord.longitude() - fromCoord.longitude();
     if (toCoord.longitude() < fromCoord.longitude())
         halfGeoDist += 360;
     halfGeoDist /= 2.0;
     QGeoCoordinate geoDelta =  QGeoCoordinate(0,
                     QLocationUtils::wrapLong(mapMid.longitude() + halfGeoDist));
-    QPointF halfScreenDist = map.coordinateToScreenPosition(geoDelta, false)
-                                - QPointF(map.width()/2.0, 0);
+    QDoubleVector2D halfScreenDist = map.coordinateToScreenPosition(geoDelta, false)
+                                - QDoubleVector2D(map.width()/2.0, 0);
     return halfScreenDist.x() * 2.0;
 }
 

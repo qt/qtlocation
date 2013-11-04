@@ -57,6 +57,7 @@
 #include <QSharedPointer>
 #include <QSize>
 #include <QtLocation/qlocationglobal.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -93,8 +94,8 @@ public:
 
     void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
-    QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
-    QPointF mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
+    QDoubleVector2D screenPositionToMercator(const QDoubleVector2D &pos) const;
+    QDoubleVector2D mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
 
     QGLCamera *camera() const;
     QGLSceneNode *sceneNode() const;
