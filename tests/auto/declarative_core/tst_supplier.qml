@@ -87,6 +87,7 @@ TestCase {
     Plugin {
         id: testPlugin
         name: "qmlgeo.test.plugin"
+        allowExperimental: true
     }
 
     Plugin {

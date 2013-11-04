@@ -82,7 +82,7 @@ Item {
     width: 120
     height: 120
     // General-purpose elements for the test:
-    Plugin { id: testPlugin; name : "qmlgeo.test.plugin";}
+    Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
     MapMouseEvent{
         id: mapMouseEvent

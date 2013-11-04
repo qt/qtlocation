@@ -45,7 +45,7 @@ import QtLocation 5.0
 import QtPositioning 5.2
 
 Item {
-    Plugin { id: nokiaPlugin; name: "qmlgeo.test.plugin"}
+    Plugin { id: nokiaPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true}
     Plugin { id: invalidPlugin; name: "invalid"}
 
     property variant coordinate1: QtPositioning.coordinate(51, 41)
