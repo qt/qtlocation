@@ -2,7 +2,7 @@ include($QT_INSTALL_DOCS/global/qt-module-defaults.qdocconf)
 
 project           = QtPositioning
 description    = Qt Positioning Reference Documentation
-url                 = http://qt-project.org/doc/qt-$QT_VER/qtpositioning
+url                 = http://qt-project.org/doc/qt-$QT_VER
 version          = $QT_VERSION
 
 
