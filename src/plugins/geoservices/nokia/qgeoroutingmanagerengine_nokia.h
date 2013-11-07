@@ -77,13 +77,14 @@ private Q_SLOTS:
     void routeError(QGeoRouteReply::Error error, const QString &errorString);
 
 private:
-    QString calculateRouteRequestString(const QGeoRouteRequest &request);
-    QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
+    QStringList calculateRouteRequestString(const QGeoRouteRequest &request);
+    QStringList updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
     QString routeRequestString(const QGeoRouteRequest &request) const;
     bool checkEngineSupport(const QGeoRouteRequest &request,
                             QGeoRouteRequest::TravelModes travelModes) const;
     QString modesRequestString(const QGeoRouteRequest &request,
-                               QGeoRouteRequest::TravelModes travelModes) const;
+                               QGeoRouteRequest::TravelModes travelModes,
+                               const QString &optimization) const;
     static QString trimDouble(double degree, int decimalDigits = 10);
 
     QGeoNetworkAccessManager *m_networkManager;

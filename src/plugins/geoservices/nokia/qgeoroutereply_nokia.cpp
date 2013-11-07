@@ -53,42 +53,47 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request, QNetworkReply *reply, QObject *parent)
+QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request, const QList<QNetworkReply*> &replies, QObject *parent)
         : QGeoRouteReply(request, parent),
-        m_reply(reply)
+        m_replies(replies)
 {
-    connect(m_reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(networkFinished()));
+    foreach (QNetworkReply *reply, m_replies) {
+        connect(reply,
+                SIGNAL(finished()),
+                this,
+                SLOT(networkFinished()));
 
-    connect(m_reply,
-            SIGNAL(error(QNetworkReply::NetworkError)),
-            this,
-            SLOT(networkError(QNetworkReply::NetworkError)));
+        connect(reply,
+                SIGNAL(error(QNetworkReply::NetworkError)),
+                this,
+                SLOT(networkError(QNetworkReply::NetworkError)));
+    }
 }
 
 QGeoRouteReplyNokia::~QGeoRouteReplyNokia()
 {
+    abort();
 }
 
 void QGeoRouteReplyNokia::abort()
 {
-    if (!m_reply)
+    if (m_replies.isEmpty())
         return;
 
-    m_reply->abort();
-
-    m_reply->deleteLater();
-    m_reply = 0;
+    foreach (QNetworkReply *reply, m_replies) {
+        reply->abort();
+        reply->deleteLater();
+    }
+    m_replies.clear();
 }
 
 void QGeoRouteReplyNokia::networkFinished()
 {
-    if (!m_reply)
+    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+    if (!reply)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError) {
+    if (reply->error() != QNetworkReply::NoError) {
         // Removed because this is already done in networkError, which previously caused _two_ errors to be raised for every error.
         //setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
         //m_reply->deleteLater();
@@ -97,42 +102,44 @@ void QGeoRouteReplyNokia::networkFinished()
     }
 
     QGeoRouteXmlParser parser(request());
-
-    if (parser.parse(m_reply)) {
-        setRoutes(parser.results());
-        setFinished(true);
+    if (parser.parse(reply)) {
+        addRoutes(parser.results());
+        reply->deleteLater();
+        m_replies.removeOne(reply);
+        if (m_replies.isEmpty())
+            setFinished(true);
     } else {
         // add a qWarning with the actual parser.errorString()
         setError(QGeoRouteReply::ParseError, "The response from the service was not in a recognisable format.");
+        abort();
     }
-
-    m_reply->deleteLater();
-    m_reply = 0;
 }
 
 void QGeoRouteReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
 
-    if (!m_reply)
+    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+    if (!reply)
         return;
 
     bool resolvedError = false;
-
     if (QNetworkReply::UnknownContentError == error) {
         QGeoRouteXmlParser parser(request());
-        if (parser.parse(m_reply)) {
-            setRoutes(parser.results());
-            setFinished(true);
+        if (parser.parse(reply)) {
+            addRoutes(parser.results());
+            reply->deleteLater();
+            m_replies.removeOne(reply);
             resolvedError = true;
+            if (m_replies.isEmpty())
+                setFinished(true);
         }
     }
 
-    if (!resolvedError)
-        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-
-    m_reply->deleteLater();
-    m_reply = 0;
+    if (!resolvedError) {
+        setError(QGeoRouteReply::CommunicationError, reply->errorString());
+        abort();
+    }
 }
 
 QT_END_NAMESPACE

@@ -410,11 +410,10 @@ void tst_nokia_routing::can_compute_route_for_all_supported_travel_modes_data()
 void tst_nokia_routing::can_compute_route_for_all_supported_optimizations()
 {
     QFETCH(int, optimization);
-    Q_UNUSED(optimization);
     QFETCH(QString, file);
     QFETCH(qreal, distance);
     QFETCH(int, duration);
-
+    m_dummyRequest.setRouteOptimization((QGeoRouteRequest::RouteOptimization)optimization);
     loadReply(file);
     calculateRoute();
     QList<QGeoRoute> routes = m_reply->routes();
@@ -434,10 +433,7 @@ void tst_nokia_routing::can_compute_route_for_all_supported_optimizations_data()
 
     QTest::newRow("Shortest") << (int)QGeoRouteRequest::ShortestRoute << QString("optim-shortest.xml") << qreal(1177.0) << 309;
     QTest::newRow("Fastest") << (int)QGeoRouteRequest::FastestRoute << QString("optim-fastest.xml") << qreal(1271.0) << 243;
-    QTest::newRow("Most Econonic") << (int)QGeoRouteRequest::MostEconomicRoute << QString("optim-economic.xml") << qreal(1177.0) << 309;
-    QTest::newRow("Most Scenic") << (int)QGeoRouteRequest::MostScenicRoute << QString("optim-scenic.xml") << qreal(1177.0) << 309;
 }
-
 
 void tst_nokia_routing::can_handle_multiple_routes_in_response()
 {

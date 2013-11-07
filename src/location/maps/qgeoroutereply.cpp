@@ -209,6 +209,14 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 }
 
 /*!
+    Appends the list of routes to the existing list.
+*/
+void QGeoRouteReply::addRoutes(const QList<QGeoRoute> &routes)
+{
+    d_ptr->routes.append(routes);
+}
+
+/*!
     Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
