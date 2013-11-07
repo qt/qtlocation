@@ -291,7 +291,6 @@ private:
     qreal velocityY_;
     QElapsedTimer lastPosTime_;
     QPointF lastPos_;
-    QElapsedTimer pressTime_;
     QList<QTouchEvent::TouchPoint> touchPoints_;
     QPointF sceneStartPoint1_;
 

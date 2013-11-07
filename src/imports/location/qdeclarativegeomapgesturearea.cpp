@@ -695,7 +695,6 @@ void QDeclarativeGeoMapGestureArea::clearTouchData()
 {
     velocityX_ = 0;
     velocityY_ = 0;
-    pressTime_.start();
     sceneCenter_.setX(0);
     sceneCenter_.setY(0);
     touchCenterCoord_.setLongitude(0);
@@ -1055,8 +1054,17 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
     // Transitions
     switch (panState_) {
     case panInactive:
-        if (canStartPan())
+        if (canStartPan()) {
+            if (touchPointState_ == touchPoints1) {
+                // Update startCoord_ to ensure smooth start for panning when going over startDragDistance
+                QGeoCoordinate newStartCoord = map_->screenPositionToCoordinate(lastPos_, false);
+                startCoord_.setLongitude(newStartCoord.longitude() -
+                                         touchCenterCoord_.longitude());
+                startCoord_.setLatitude(newStartCoord.latitude() -
+                                        touchCenterCoord_.latitude());
+            }
             panState_ = panActive;
+        }
         break;
     case panActive:
         if (touchPoints_.count() == 0) {
@@ -1105,8 +1113,7 @@ bool QDeclarativeGeoMapGestureArea::canStartPan()
     QPointF p1 = touchPoints_.at(0).scenePos();
     int dyFromPress = int(p1.y() - sceneStartPoint1_.y());
     int dxFromPress = int(p1.x() - sceneStartPoint1_.x());
-    if ((qAbs(dyFromPress) > startDragDistance || qAbs(dxFromPress) > startDragDistance
-         || pressTime_.elapsed() > 200))
+    if ((qAbs(dyFromPress) > startDragDistance || qAbs(dxFromPress) > startDragDistance))
         return true;
     return false;
 }
@@ -1124,7 +1131,6 @@ void QDeclarativeGeoMapGestureArea::updatePan()
     mapCenterPoint.setX(map_->width() / 2.0 - dx);
     QGeoCoordinate animationStartCoordinate = map_->screenPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
     map_->mapController()->setCenter(animationStartCoordinate);
-
 }
 
 /*!
