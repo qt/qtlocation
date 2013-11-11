@@ -95,7 +95,7 @@ DummySource::DummySource(QObject *parent) :
 
 QGeoPositionInfoSource::Error DummySource::error() const
 {
-    return QGeoPositionInfoSource::UnknownSourceError;
+    return QGeoPositionInfoSource::NoError;
 }
 
 

@@ -73,9 +73,9 @@ class QDeclarativePositionSource : public QObject, public QQmlParserStatus
 
 public:
     enum PositioningMethod {
-        NoPositioningMethod = 0,
-        SatellitePositioningMethod = QGeoPositionInfoSource::SatellitePositioningMethods,
-        NonSatellitePositioningMethod = QGeoPositionInfoSource::NonSatellitePositioningMethods,
+        NoPositioningMethods = QGeoPositionInfoSource::NoPositioningMethods,
+        SatellitePositioningMethods = QGeoPositionInfoSource::SatellitePositioningMethods,
+        NonSatellitePositioningMethods = QGeoPositionInfoSource::NonSatellitePositioningMethods,
         AllPositioningMethods = QGeoPositionInfoSource::AllPositioningMethods
     };
 
@@ -86,6 +86,8 @@ public:
         AccessError = QGeoPositionInfoSource::AccessError,
         ClosedError = QGeoPositionInfoSource::ClosedError,
         UnknownSourceError = QGeoPositionInfoSource::UnknownSourceError,
+        NoError = QGeoPositionInfoSource::NoError,
+
         //Leave a gap for future error enum values in QGeoPositionInfoSource::Error
         SocketError = 100
     };

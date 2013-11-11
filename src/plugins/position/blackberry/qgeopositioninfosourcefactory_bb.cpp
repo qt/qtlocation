@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2012 - 2013 BlackBerry Limited. All rights reserved.
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -38,63 +38,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOSATELLITEINFOSOURCE_H
-#define QGEOSATELLITEINFOSOURCE_H
 
-#include <QtPositioning/QGeoSatelliteInfo>
+#include "qgeopositioninfosourcefactory_bb.h"
+#include "qgeopositioninfosource_bb.h"
+#include "qgeosatelliteinfosource_bb.h"
 
-#include <QObject>
-#include <QList>
+#include <QGeoPositionInfoSource>
+#include <QGeoSatelliteInfoSource>
 
-QT_BEGIN_NAMESPACE
 
-class QGeoSatelliteInfoSourcePrivate;
-class Q_POSITIONING_EXPORT QGeoSatelliteInfoSource : public QObject
+///////////////////////////
+//
+// QGeoPositionInfoSourceFactoryBb
+//
+///////////////////////////
+
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryBb::positionInfoSource(QObject *parent)
 {
-    Q_OBJECT
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
-    Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
+    return new QGeoPositionInfoSourceBb(parent);
+}
 
-public:
-    enum Error {
-        AccessError = 0,
-        ClosedError = 1,
-        NoError = 2,
-        UnknownSourceError = -1
-    };
-    Q_ENUMS(Error)
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryBb::satelliteInfoSource(QObject *parent)
+{
+    return new QGeoSatelliteInfoSourceBb(parent);
+}
 
-    explicit QGeoSatelliteInfoSource(QObject *parent);
-    virtual ~QGeoSatelliteInfoSource();
-
-    static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
-    static QGeoSatelliteInfoSource *createSource(const QString &sourceName, QObject *parent);
-    static QStringList availableSources();
-
-    QString sourceName() const;
-
-    virtual void setUpdateInterval(int msec);
-    int updateInterval() const;
-    virtual int minimumUpdateInterval() const = 0;
-    virtual Error error() const = 0;
-
-public Q_SLOTS:
-    virtual void startUpdates() = 0;
-    virtual void stopUpdates() = 0;
-
-    virtual void requestUpdate(int timeout = 0) = 0;
-
-Q_SIGNALS:
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
-    void error(QGeoSatelliteInfoSource::Error);
-
-private:
-    Q_DISABLE_COPY(QGeoSatelliteInfoSource)
-    QGeoSatelliteInfoSourcePrivate *d;
-};
-
-QT_END_NAMESPACE
-
-#endif
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryBb::areaMonitor(QObject *parent)
+{
+    Q_UNUSED(parent);
+    return 0;
+}

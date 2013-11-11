@@ -82,7 +82,7 @@ public:
     virtual int minimumUpdateInterval() const {
         return 0;
     }
-    Error error() const { return QGeoSatelliteInfoSource::UnknownSourceError; }
+    Error error() const { return QGeoSatelliteInfoSource::NoError; }
 };
 
 

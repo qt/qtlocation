@@ -165,7 +165,7 @@ int QGeoSatelliteInfoSource::updateInterval() const
     from the system's default source of satellite update information, or the
     highest priority available plugin.
 
-    Returns 0 if the system has no default position source, no valid plugins
+    Returns 0 if the system has no default satellite source, no valid plugins
     could be found or the user does not have the permission to access the satellite data.
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
@@ -270,6 +270,11 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     Starts emitting updates at regular intervals. The updates will be
     provided whenever new satellite information becomes available.
 
+    If satellite information cannot be retrieved or some other
+    form of timeout has occurred the satellitesInViewUpdated()
+    and satellitesInUseUpdated() signals may be emitted with
+    empty parameter lists.
+
     \sa satellitesInViewUpdated(), satellitesInUseUpdated()
 */
 
@@ -284,7 +289,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     Attempts to get the current satellite information and emit
     satellitesInViewUpdated() and satellitesInUseUpdated() with this
-    information. If the current position cannot be found
+    information. If the current satellite information cannot be found
     within the given \a timeout (in milliseconds) or if \a timeout is less than the value returned by
     minimumUpdateInterval(), requestTimeout() is
     emitted.
@@ -302,12 +307,18 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     Emitted if requestUpdate() was called and the current satellite
     information could not be retrieved within the specified timeout.
+
+    While the triggering of this signal may be considered an error condition,
+    it does not imply the emission of the \c error() signal. Only the emission of
+    \c requestTimeout() is required to indicate a timeout.
 */
 
 /*!
     \fn QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSource::error() const = 0
 
     Returns the last error that occurred.
+
+    This signal is not emitted when a requestTimeout() has occurred.
 */
 
 /*!
@@ -323,11 +334,12 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     The Error enumeration represents the errors which can occur.
 
-    \value AccessError The connection setup to the remote positioning backend failed because the
+    \value AccessError The connection setup to the satellite backend failed because the
         application lacked the required privileges.
-    \value ClosedError  The remote satellite backend closed the connection, which happens for example in case
+    \value ClosedError  The satellite backend closed the connection, which happens for example in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A new satellite source can be created by calling createDefaultSource() later on.
+    \value NoError No error has occurred.
     \value UnknownSourceError An unidentified error occurred.
  */
 

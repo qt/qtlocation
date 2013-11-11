@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2012 - 2013 BlackBerry Limited. All rights reserved.
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -38,63 +38,61 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOSATELLITEINFOSOURCE_H
-#define QGEOSATELLITEINFOSOURCE_H
 
-#include <QtPositioning/QGeoSatelliteInfo>
+#ifndef BB_CORE_PPSOBJECT_HPP
+#define BB_CORE_PPSOBJECT_HPP
 
+#include <bb/Global>
+#include <bb/PpsAttribute>
+#include <bb/PpsOpenMode>
+
+#include <QMap>
 #include <QObject>
-#include <QList>
+#include <QVariantMap>
 
-QT_BEGIN_NAMESPACE
+namespace bb
+{
+class PpsObjectPrivate;
 
-class QGeoSatelliteInfoSourcePrivate;
-class Q_POSITIONING_EXPORT QGeoSatelliteInfoSource : public QObject
+class BB_CORE_EXPORT PpsObject : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
-    Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
 
 public:
-    enum Error {
-        AccessError = 0,
-        ClosedError = 1,
-        NoError = 2,
-        UnknownSourceError = -1
-    };
-    Q_ENUMS(Error)
+    explicit PpsObject(const QString &path, QObject *parent = 0);
+    virtual ~PpsObject();
 
-    explicit QGeoSatelliteInfoSource(QObject *parent);
-    virtual ~QGeoSatelliteInfoSource();
+    int error() const;
+    QString errorString() const;
 
-    static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
-    static QGeoSatelliteInfoSource *createSource(const QString &sourceName, QObject *parent);
-    static QStringList availableSources();
+    bool isReadyReadEnabled() const;
+    bool isBlocking() const;
+    bool setBlocking(bool enable);
+    bool isOpen() const;
+    bool open(PpsOpenMode::Types mode = PpsOpenMode::PublishSubscribe);
+    bool close();
+    QByteArray read(bool * ok = 0);
+    bool write(const QByteArray &byteArray);
+    bool remove();
 
-    QString sourceName() const;
-
-    virtual void setUpdateInterval(int msec);
-    int updateInterval() const;
-    virtual int minimumUpdateInterval() const = 0;
-    virtual Error error() const = 0;
+    static QVariantMap decode( const QByteArray &rawData, bool * ok = 0 );
+    static QMap<QString, PpsAttribute> decodeWithFlags( const QByteArray &rawData, bool * ok = 0 );
+    static QByteArray encode( const QVariantMap &ppsData, bool * ok = 0 );
 
 public Q_SLOTS:
-    virtual void startUpdates() = 0;
-    virtual void stopUpdates() = 0;
-
-    virtual void requestUpdate(int timeout = 0) = 0;
+    void setReadyReadEnabled(bool enable);
 
 Q_SIGNALS:
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
-    void error(QGeoSatelliteInfoSource::Error);
+    void readyRead();
 
 private:
-    Q_DISABLE_COPY(QGeoSatelliteInfoSource)
-    QGeoSatelliteInfoSourcePrivate *d;
+//!@cond PRIVATE
+    QScopedPointer<PpsObjectPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(PpsObject)
+    Q_DISABLE_COPY(PpsObject)
+//!@endcond PRIVATE
 };
 
-QT_END_NAMESPACE
+} // namespace bb
 
-#endif
+#endif // BB_CORE_PPSOBJECT_HPP

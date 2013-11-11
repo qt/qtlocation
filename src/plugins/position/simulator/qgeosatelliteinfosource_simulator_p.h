@@ -64,7 +64,7 @@ public:
     virtual int minimumUpdateInterval() const;
 
     // Default implementation for error()
-    Error error() const { return QGeoSatelliteInfoSource::UnknownSourceError; }
+    Error error() const { return QGeoSatelliteInfoSource::NoError; }
 public slots:
     virtual void startUpdates();
     virtual void stopUpdates();

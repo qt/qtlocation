@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2012 - 2013 BlackBerry Limited. All rights reserved.
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -38,63 +38,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOSATELLITEINFOSOURCE_H
-#define QGEOSATELLITEINFOSOURCE_H
 
-#include <QtPositioning/QGeoSatelliteInfo>
+#ifndef LOCATIONMANAGERUTIL_BB_H
+#define LOCATIONMANAGERUTIL_BB_H
 
-#include <QObject>
-#include <QList>
+#include <QtCore/QVariantMap>
 
-QT_BEGIN_NAMESPACE
-
-class QGeoSatelliteInfoSourcePrivate;
-class Q_POSITIONING_EXPORT QGeoSatelliteInfoSource : public QObject
+namespace bb
 {
-    Q_OBJECT
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
-    Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
+class PpsObject;
+}
 
-public:
-    enum Error {
-        AccessError = 0,
-        ClosedError = 1,
-        NoError = 2,
-        UnknownSourceError = -1
-    };
-    Q_ENUMS(Error)
+namespace global {
 
-    explicit QGeoSatelliteInfoSource(QObject *parent);
-    virtual ~QGeoSatelliteInfoSource();
+// the libQtLocation id for the server-mode accessed pps file id field
+extern const QString libQtLocationId;
 
-    static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
-    static QGeoSatelliteInfoSource *createSource(const QString &sourceName, QObject *parent);
-    static QStringList availableSources();
+// the path to the location manager pps file that is the gateway for positioning requests/replies
+extern const QString locationManagerPpsFile;
 
-    QString sourceName() const;
+// the minimum interval (in msec) that positional and satellite updates can be provided for
+extern const int minUpdateInterval;
 
-    virtual void setUpdateInterval(int msec);
-    int updateInterval() const;
-    virtual int minimumUpdateInterval() const = 0;
-    virtual Error error() const = 0;
+// a QVariantMap suitable for writing to a PpsObject specifying a cancel request to the Location
+// Manager. This cancels the current request
+extern const QVariantMap cancelRequest;
 
-public Q_SLOTS:
-    virtual void startUpdates() = 0;
-    virtual void stopUpdates() = 0;
+} // namespace global
 
-    virtual void requestUpdate(int timeout = 0) = 0;
+// send a generic server-mode request, wrapped in a @control map, to ppsObject
+bool sendRequest(bb::PpsObject &ppsObject, const QVariantMap &request);
 
-Q_SIGNALS:
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
-    void error(QGeoSatelliteInfoSource::Error);
-
-private:
-    Q_DISABLE_COPY(QGeoSatelliteInfoSource)
-    QGeoSatelliteInfoSourcePrivate *d;
-};
-
-QT_END_NAMESPACE
+// receive a generic server-mode reply from ppsObject, removing the @control map container
+bool receiveReply(QVariantMap *reply, bb::PpsObject &ppsObject);
 
 #endif

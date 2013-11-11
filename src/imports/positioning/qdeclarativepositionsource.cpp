@@ -116,9 +116,9 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-:   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethod), m_nmeaFile(0),
+:   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethods), m_nmeaFile(0),
     m_nmeaSocket(0), m_active(false), m_singleUpdate(false), m_updateInterval(0),
-    m_sourceError(UnknownSourceError)
+    m_sourceError(NoError)
 {
 }
 
@@ -453,9 +453,9 @@ int QDeclarativePositionSource::updateInterval() const
     current source.
 
     \list
-    \li PositionSource.NoPositioningMethod - No positioning methods supported (no source).
-    \li PositionSource.SatellitePositioningMethod - Satellite-based positioning methods such as GPS are supported.
-    \li PositionSource.NonSatellitePositioningMethod - Non-satellite-based methods are supported.
+    \li PositionSource.NoPositioningMethods - No positioning methods supported (no source).
+    \li PositionSource.SatellitePositioningMethods - Satellite-based positioning methods such as GPS are supported.
+    \li PositionSource.NonSatellitePositioningMethods - Non-satellite-based methods are supported.
     \li PositionSource.AllPositioningMethods - Both satellite-based and non-satellite positioning methods are supported.
     \endlist
 
@@ -468,12 +468,12 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::suppo
         if ( (methods & QGeoPositionInfoSource::AllPositioningMethods) == methods ) {
             return QDeclarativePositionSource::AllPositioningMethods;
         } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
-            return QDeclarativePositionSource::SatellitePositioningMethod;
+            return QDeclarativePositionSource::SatellitePositioningMethods;
         } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
-            return QDeclarativePositionSource::NonSatellitePositioningMethod;
+            return QDeclarativePositionSource::NonSatellitePositioningMethods;
         }
     }
-    return QDeclarativePositionSource::NoPositioningMethod;
+    return QDeclarativePositionSource::NoPositioningMethods;
 }
 
 /*!
@@ -483,8 +483,9 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::suppo
     current source.
 
     \list
-    \li PositionSource.SatellitePositioningMethod - Satellite-based positioning methods such as GPS should be preferred.
-    \li PositionSource.NonSatellitePositioningMethod - Non-satellite-based methods should be preferred.
+    \li PositionSource.NoPositioningMethods - No positioning method is preferred.
+    \li PositionSource.SatellitePositioningMethods - Satellite-based positioning methods such as GPS should be preferred.
+    \li PositionSource.NonSatellitePositioningMethods - Non-satellite-based methods should be preferred.
     \li PositionSource.AllPositioningMethods - Any positioning methods are acceptable.
     \endlist
 
@@ -519,10 +520,11 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::prefe
         if ( (methods & QGeoPositionInfoSource::AllPositioningMethods) == methods) {
             return QDeclarativePositionSource::AllPositioningMethods;
         } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
-            return QDeclarativePositionSource::SatellitePositioningMethod;
+            return QDeclarativePositionSource::SatellitePositioningMethods;
         } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
-            return QDeclarativePositionSource::NonSatellitePositioningMethod;
-        }
+            return QDeclarativePositionSource::NonSatellitePositioningMethods;
+        } else if (methods == QGeoPositionInfoSource::NoPositioningMethods)
+            return QDeclarativePositionSource::NoPositioningMethods;
     }
     return m_preferredPositioningMethods;
 }
@@ -665,9 +667,10 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
     \list
     \li PositionSource.AccessError - The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
-    \li PositionSource.ClosedError - The remote positioning backend closed the connection, which happens for example in case
-        the user is switching location services to off. This object becomes invalid and should be deleted.
-        A new source can be declared later on to check whether the positioning backend is up again.
+    \li PositionSource.ClosedError - The positioning backend closed the connection, which happens for example in case
+        the user is switching location services to off. As soon as the location service is re-enabled
+        regular updates will resume.
+    \li PositionSource.NoError - No error has occurred.
     \li PositionSource.UnknownSourceError - An unidentified error occurred.
     \li PositionSource.SocketError - An error occurred while connecting to an nmea source using a socket.
     \endlist
@@ -725,13 +728,15 @@ void QDeclarativePositionSource::componentComplete()
 */
 void QDeclarativePositionSource::sourceErrorReceived(const QGeoPositionInfoSource::Error error)
 {
-    if (error == QGeoPositionInfoSource::AccessError) {
+    if (error == QGeoPositionInfoSource::AccessError)
         m_sourceError = QDeclarativePositionSource::AccessError;
-    } else if (error == QGeoPositionInfoSource::ClosedError) {
+    else if (error == QGeoPositionInfoSource::ClosedError)
         m_sourceError = QDeclarativePositionSource::ClosedError;
-    } else {
-         m_sourceError = QDeclarativePositionSource::UnknownSourceError;
-    }
+    else if (error == QGeoPositionInfoSource::NoError)
+        return; //nothing to do
+    else
+        m_sourceError = QDeclarativePositionSource::UnknownSourceError;
+
     emit sourceErrorChanged();
 }
 
