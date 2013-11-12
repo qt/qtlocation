@@ -115,6 +115,7 @@ such as speed and direction. This provides the fundamental location information 
 \list
     \li \l {Flickr (QML)}
     \li \l {Log File Position Source (C++)}
+    \li \l {SatelliteInfo (C++/QML)}
     \li \l {Weather Info (C++/QML)}
 \endlist
 */
