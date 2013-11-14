@@ -70,7 +70,7 @@ class Q_POSITIONING_EXPORT_PRIVATE QDoubleVector2D
 public:
     QDoubleVector2D();
     QDoubleVector2D(double xpos, double ypos);
-    QDoubleVector2D(const QPointF &p);
+    explicit QDoubleVector2D(const QPointF &p);
     explicit QDoubleVector2D(const QDoubleVector3D &vector);
 #ifdef QT_BUILD_LOCATION_LIB
     explicit QDoubleVector2D(const QVector2D &vector) : xp(vector.x()), yp(vector.y()) {}

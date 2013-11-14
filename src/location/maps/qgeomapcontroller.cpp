@@ -205,7 +205,7 @@ void QGeoMapController::pan(qreal dx, qreal dy)
         return;
     QGeoCameraData cd = map_->cameraData();
     QGeoCoordinate coord = map_->screenPositionToCoordinate(
-                                QPointF(map_->width() / 2 + dx,
+                                QDoubleVector2D(map_->width() / 2 + dx,
                                         map_->height() / 2 + dy));
 
 

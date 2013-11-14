@@ -559,7 +559,7 @@ void QDeclarativeCircleMapItem::dragStarted()
 */
 void QDeclarativeCircleMapItem::dragEnded()
 {
-    QPointF newPoint = QPointF(x(),y()) + QPointF(width(), height()) / 2;
+    QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(width(), height()) / 2;
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid())
         setCenter(newCoordinate);
