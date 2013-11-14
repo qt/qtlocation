@@ -58,52 +58,51 @@
 #endif
 
 #include "qpositioningglobal.h"
+#include "qdoublevector2d_p.h"
 #include <QtCore/qmetatype.h>
 
 QT_BEGIN_NAMESPACE
 
-class QDoubleVector2D;
-
 class Q_POSITIONING_EXPORT_PRIVATE QDoubleVector3D
 {
 public:
-    QDoubleVector3D();
-    QDoubleVector3D(double xpos, double ypos, double zpos);
-    QDoubleVector3D(const QDoubleVector2D &vector);
-    QDoubleVector3D(const QDoubleVector2D &vector, double zpos);
+    Q_DECL_CONSTEXPR inline QDoubleVector3D();
+    Q_DECL_CONSTEXPR inline QDoubleVector3D(double xpos, double ypos, double zpos);
+    Q_DECL_CONSTEXPR inline QDoubleVector3D(const QDoubleVector2D &vector);
+    Q_DECL_CONSTEXPR inline QDoubleVector3D(const QDoubleVector2D &vector, double zpos);
 
 #ifdef QT_BUILD_LOCATION_LIB
-    explicit QDoubleVector3D(const QVector3D &vector) : xp(vector.x()), yp(vector.y()), zp(vector.z()) {}
-    operator QVector3D() const { return QVector3D(xp, yp, zp); }
+    Q_DECL_CONSTEXPR explicit inline QDoubleVector3D(const QVector3D &vector) : xp(vector.x()), yp(vector.y()), zp(vector.z()) {}
+    Q_DECL_CONSTEXPR inline operator QVector3D() const { return QVector3D(xp, yp, zp); }
 #endif
 
-    bool isNull() const;
+    inline bool isNull() const;
 
-    double x() const;
-    double y() const;
-    double z() const;
+    Q_DECL_CONSTEXPR inline double x() const;
+    Q_DECL_CONSTEXPR inline double y() const;
+    Q_DECL_CONSTEXPR inline double z() const;
 
-    void setX(double x);
-    void setY(double y);
-    void setZ(double z);
+    inline void setX(double x);
+    inline void setY(double y);
+    inline void setZ(double z);
 
-    double get(int i) const;
-    void set(int i, double value);
+    inline double get(int i) const;
+    inline void set(int i, double value);
 
     double length() const;
-    double lengthSquared() const;
+    Q_DECL_CONSTEXPR inline double lengthSquared() const;
 
     QDoubleVector3D normalized() const;
     void normalize();
 
-    QDoubleVector3D &operator+=(const QDoubleVector3D &vector);
-    QDoubleVector3D &operator-=(const QDoubleVector3D &vector);
-    QDoubleVector3D &operator*=(double factor);
-    QDoubleVector3D &operator*=(const QDoubleVector3D &vector);
-    QDoubleVector3D &operator/=(double divisor);
+    inline QDoubleVector3D &operator+=(const QDoubleVector3D &vector);
+    inline QDoubleVector3D &operator-=(const QDoubleVector3D &vector);
+    inline QDoubleVector3D &operator*=(double factor);
+    inline QDoubleVector3D &operator*=(const QDoubleVector3D &vector);
+    inline QDoubleVector3D &operator/=(double divisor);
 
-    static double dotProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
-    static QDoubleVector3D crossProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    Q_DECL_CONSTEXPR static inline double dotProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    Q_DECL_CONSTEXPR static inline QDoubleVector3D crossProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
     static QDoubleVector3D normal(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
     static QDoubleVector3D normal
         (const QDoubleVector3D &v1, const QDoubleVector3D &v2, const QDoubleVector3D &v3);
@@ -112,19 +111,19 @@ public:
     double distanceToPlane(const QDoubleVector3D &plane1, const QDoubleVector3D &plane2, const QDoubleVector3D &plane3) const;
     double distanceToLine(const QDoubleVector3D &point, const QDoubleVector3D &direction) const;
 
-    friend inline bool operator==(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
-    friend inline bool operator!=(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
-    friend inline const QDoubleVector3D operator+(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
-    friend inline const QDoubleVector3D operator-(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
-    friend inline const QDoubleVector3D operator*(double factor, const QDoubleVector3D &vector);
-    friend inline const QDoubleVector3D operator*(const QDoubleVector3D &vector, double factor);
-    friend const QDoubleVector3D operator*(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
-    friend inline const QDoubleVector3D operator-(const QDoubleVector3D &vector);
-    friend inline const QDoubleVector3D operator/(const QDoubleVector3D &vector, double divisor);
+    friend Q_DECL_CONSTEXPR inline bool operator==(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    friend Q_DECL_CONSTEXPR inline bool operator!=(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector3D operator+(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector3D operator-(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector3D operator*(double factor, const QDoubleVector3D &vector);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector3D operator*(const QDoubleVector3D &vector, double factor);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector3D operator*(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector3D operator-(const QDoubleVector3D &vector);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector3D operator/(const QDoubleVector3D &vector, double divisor);
 
-    friend inline bool qFuzzyCompare(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    friend Q_DECL_CONSTEXPR inline bool qFuzzyCompare(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
 
-    QDoubleVector2D toVector2D() const;
+    Q_DECL_CONSTEXPR inline QDoubleVector2D toVector2D() const;
 
 private:
     double xp, yp, zp;
@@ -134,18 +133,28 @@ private:
 
 Q_DECLARE_TYPEINFO(QDoubleVector3D, Q_MOVABLE_TYPE);
 
-inline QDoubleVector3D::QDoubleVector3D() : xp(0.0), yp(0.0), zp(0.0) {}
+Q_DECL_CONSTEXPR inline QDoubleVector3D::QDoubleVector3D() : xp(0.0), yp(0.0), zp(0.0) {}
 
-inline QDoubleVector3D::QDoubleVector3D(double xpos, double ypos, double zpos) : xp(xpos), yp(ypos), zp(zpos) {}
+Q_DECL_CONSTEXPR inline QDoubleVector3D::QDoubleVector3D(double xpos, double ypos, double zpos) : xp(xpos), yp(ypos), zp(zpos) {}
+
+Q_DECL_CONSTEXPR inline QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D &v)
+    : xp(v.xp), yp(v.yp), zp(0.0) {}
+
+Q_DECL_CONSTEXPR inline QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D &v, double zpos)
+    : xp(v.xp), yp(v.yp), zp(zpos) {}
 
 inline bool QDoubleVector3D::isNull() const
 {
     return qIsNull(xp) && qIsNull(yp) && qIsNull(zp);
 }
 
-inline double QDoubleVector3D::x() const { return xp; }
-inline double QDoubleVector3D::y() const { return yp; }
-inline double QDoubleVector3D::z() const { return zp; }
+Q_DECL_CONSTEXPR inline double QDoubleVector3D::x() const { return xp; }
+Q_DECL_CONSTEXPR inline double QDoubleVector3D::y() const { return yp; }
+Q_DECL_CONSTEXPR inline double QDoubleVector3D::z() const { return zp; }
+
+Q_DECL_CONSTEXPR inline double QDoubleVector3D::lengthSquared() const
+{ return xp * xp + yp * yp + zp * zp; }
+
 
 inline void QDoubleVector3D::setX(double aX) { xp = aX; }
 inline void QDoubleVector3D::setY(double aY) { yp = aY; }
@@ -222,57 +231,75 @@ inline QDoubleVector3D &QDoubleVector3D::operator/=(double divisor)
     return *this;
 }
 
-inline bool operator==(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+Q_DECL_CONSTEXPR inline double QDoubleVector3D::dotProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+{
+    return v1.xp * v2.xp + v1.yp * v2.yp + v1.zp * v2.zp;
+}
+
+Q_DECL_CONSTEXPR inline QDoubleVector3D QDoubleVector3D::crossProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+{
+    return QDoubleVector3D(v1.yp * v2.zp - v1.zp * v2.yp,
+                    v1.zp * v2.xp - v1.xp * v2.zp,
+                    v1.xp * v2.yp - v1.yp * v2.xp);
+}
+
+Q_DECL_CONSTEXPR inline bool operator==(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return v1.xp == v2.xp && v1.yp == v2.yp && v1.zp == v2.zp;
 }
 
-inline bool operator!=(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+Q_DECL_CONSTEXPR inline bool operator!=(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return v1.xp != v2.xp || v1.yp != v2.yp || v1.zp != v2.zp;
 }
 
-inline const QDoubleVector3D operator+(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+Q_DECL_CONSTEXPR inline const QDoubleVector3D operator+(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return QDoubleVector3D(v1.xp + v2.xp, v1.yp + v2.yp, v1.zp + v2.zp);
 }
 
-inline const QDoubleVector3D operator-(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+Q_DECL_CONSTEXPR inline const QDoubleVector3D operator-(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return QDoubleVector3D(v1.xp - v2.xp, v1.yp - v2.yp, v1.zp - v2.zp);
 }
 
-inline const QDoubleVector3D operator*(double factor, const QDoubleVector3D &vector)
+Q_DECL_CONSTEXPR inline const QDoubleVector3D operator*(double factor, const QDoubleVector3D &vector)
 {
     return QDoubleVector3D(vector.xp * factor, vector.yp * factor, vector.zp * factor);
 }
 
-inline const QDoubleVector3D operator*(const QDoubleVector3D &vector, double factor)
+Q_DECL_CONSTEXPR inline const QDoubleVector3D operator*(const QDoubleVector3D &vector, double factor)
 {
     return QDoubleVector3D(vector.xp * factor, vector.yp * factor, vector.zp * factor);
 }
 
-inline const QDoubleVector3D operator*(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+Q_DECL_CONSTEXPR inline const QDoubleVector3D operator*(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return QDoubleVector3D(v1.xp * v2.xp, v1.yp * v2.yp, v1.zp * v2.zp);
 }
 
-inline const QDoubleVector3D operator-(const QDoubleVector3D &vector)
+Q_DECL_CONSTEXPR inline const QDoubleVector3D operator-(const QDoubleVector3D &vector)
 {
     return QDoubleVector3D(-vector.xp, -vector.yp, -vector.zp);
 }
 
-inline const QDoubleVector3D operator/(const QDoubleVector3D &vector, double divisor)
+Q_DECL_CONSTEXPR inline const QDoubleVector3D operator/(const QDoubleVector3D &vector, double divisor)
 {
     return QDoubleVector3D(vector.xp / divisor, vector.yp / divisor, vector.zp / divisor);
 }
 
-inline bool qFuzzyCompare(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+Q_DECL_CONSTEXPR inline bool qFuzzyCompare(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return qFuzzyCompare(v1.xp, v2.xp) &&
            qFuzzyCompare(v1.yp, v2.yp) &&
            qFuzzyCompare(v1.zp, v2.zp);
 }
+
+Q_DECL_CONSTEXPR inline QDoubleVector2D QDoubleVector3D::toVector2D() const
+{
+    return QDoubleVector2D(xp, yp);
+}
+
 
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QDoubleVector3D &vector);

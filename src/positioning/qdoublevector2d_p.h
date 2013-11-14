@@ -68,52 +68,52 @@ class QDoubleVector3D;
 class Q_POSITIONING_EXPORT_PRIVATE QDoubleVector2D
 {
 public:
-    QDoubleVector2D();
-    QDoubleVector2D(double xpos, double ypos);
-    explicit QDoubleVector2D(const QPointF &p);
+    Q_DECL_CONSTEXPR inline QDoubleVector2D();
+    Q_DECL_CONSTEXPR inline QDoubleVector2D(double xpos, double ypos);
+    Q_DECL_CONSTEXPR explicit inline QDoubleVector2D(const QPointF &p);
     explicit QDoubleVector2D(const QDoubleVector3D &vector);
 #ifdef QT_BUILD_LOCATION_LIB
-    explicit QDoubleVector2D(const QVector2D &vector) : xp(vector.x()), yp(vector.y()) {}
-    operator QVector2D() const { return QVector2D(xp, yp); }
+    Q_DECL_CONSTEXPR explicit inline QDoubleVector2D(const QVector2D &vector) : xp(vector.x()), yp(vector.y()) {}
+    Q_DECL_CONSTEXPR inline operator QVector2D() const { return QVector2D(xp, yp); }
 #endif
 
-    inline double manhattanLength() const;
-    bool isNull() const;
+    Q_DECL_CONSTEXPR inline double manhattanLength() const;
+    inline bool isNull() const;
 
-    double x() const;
-    double y() const;
+    Q_DECL_CONSTEXPR inline double x() const;
+    Q_DECL_CONSTEXPR inline double y() const;
 
-    void setX(double x);
-    void setY(double y);
+    inline void setX(double x);
+    inline void setY(double y);
 
     double length() const;
-    double lengthSquared() const;
+    Q_DECL_CONSTEXPR inline double lengthSquared() const;
 
     QDoubleVector2D normalized() const;
     void normalize();
 
-    QDoubleVector2D &operator+=(const QDoubleVector2D &vector);
-    QDoubleVector2D &operator-=(const QDoubleVector2D &vector);
-    QDoubleVector2D &operator*=(double factor);
-    QDoubleVector2D &operator*=(const QDoubleVector2D &vector);
-    QDoubleVector2D &operator/=(double divisor);
+    inline QDoubleVector2D &operator+=(const QDoubleVector2D &vector);
+    inline QDoubleVector2D &operator-=(const QDoubleVector2D &vector);
+    inline QDoubleVector2D &operator*=(double factor);
+    inline QDoubleVector2D &operator*=(const QDoubleVector2D &vector);
+    inline QDoubleVector2D &operator/=(double divisor);
 
-    static double dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
+    Q_DECL_CONSTEXPR static inline double dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
 
-    friend inline bool operator==(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
-    friend inline bool operator!=(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
-    friend inline const QDoubleVector2D operator+(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
-    friend inline const QDoubleVector2D operator-(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
-    friend inline const QDoubleVector2D operator*(double factor, const QDoubleVector2D &vector);
-    friend inline const QDoubleVector2D operator*(const QDoubleVector2D &vector, double factor);
-    friend inline const QDoubleVector2D operator*(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
-    friend inline const QDoubleVector2D operator-(const QDoubleVector2D &vector);
-    friend inline const QDoubleVector2D operator/(const QDoubleVector2D &vector, double divisor);
+    friend Q_DECL_CONSTEXPR inline bool operator==(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
+    friend Q_DECL_CONSTEXPR inline bool operator!=(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector2D operator+(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector2D operator-(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector2D operator*(double factor, const QDoubleVector2D &vector);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector2D operator*(const QDoubleVector2D &vector, double factor);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector2D operator*(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector2D operator-(const QDoubleVector2D &vector);
+    friend Q_DECL_CONSTEXPR inline const QDoubleVector2D operator/(const QDoubleVector2D &vector, double divisor);
 
-    friend inline bool qFuzzyCompare(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
+    friend Q_DECL_CONSTEXPR inline bool qFuzzyCompare(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
 
     QDoubleVector3D toVector3D() const;
-    QPointF toPointF() const;
+    Q_DECL_CONSTEXPR inline QPointF toPointF() const;
 
 private:
     double xp, yp;
@@ -123,13 +123,13 @@ private:
 
 Q_DECLARE_TYPEINFO(QDoubleVector2D, Q_MOVABLE_TYPE);
 
-inline QDoubleVector2D::QDoubleVector2D() : xp(0.0), yp(0.0) {}
+Q_DECL_CONSTEXPR inline QDoubleVector2D::QDoubleVector2D() : xp(0.0), yp(0.0) {}
 
-inline QDoubleVector2D::QDoubleVector2D(double xpos, double ypos) : xp(xpos), yp(ypos) {}
+Q_DECL_CONSTEXPR inline QDoubleVector2D::QDoubleVector2D(double xpos, double ypos) : xp(xpos), yp(ypos) {}
 
-inline QDoubleVector2D::QDoubleVector2D(const QPointF &p) : xp(p.x()), yp(p.y()) { }
+Q_DECL_CONSTEXPR inline QDoubleVector2D::QDoubleVector2D(const QPointF &p) : xp(p.x()), yp(p.y()) { }
 
-inline double QDoubleVector2D::manhattanLength() const
+Q_DECL_CONSTEXPR inline double QDoubleVector2D::manhattanLength() const
 {
     return qAbs(x())+qAbs(y());
 }
@@ -139,11 +139,14 @@ inline bool QDoubleVector2D::isNull() const
     return qIsNull(xp) && qIsNull(yp);
 }
 
-inline double QDoubleVector2D::x() const { return double(xp); }
-inline double QDoubleVector2D::y() const { return double(yp); }
+Q_DECL_CONSTEXPR inline double QDoubleVector2D::x() const { return xp; }
+Q_DECL_CONSTEXPR inline double QDoubleVector2D::y() const { return yp; }
 
 inline void QDoubleVector2D::setX(double aX) { xp = aX; }
 inline void QDoubleVector2D::setY(double aY) { yp = aY; }
+
+Q_DECL_CONSTEXPR inline double QDoubleVector2D::lengthSquared() const
+{ return xp * xp + yp * yp; }
 
 inline QDoubleVector2D &QDoubleVector2D::operator+=(const QDoubleVector2D &vector)
 {
@@ -180,54 +183,64 @@ inline QDoubleVector2D &QDoubleVector2D::operator/=(double divisor)
     return *this;
 }
 
-inline bool operator==(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
+Q_DECL_CONSTEXPR inline double QDoubleVector2D::dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
+{
+    return v1.xp * v2.xp + v1.yp * v2.yp;
+}
+
+Q_DECL_CONSTEXPR inline bool operator==(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
 {
     return v1.xp == v2.xp && v1.yp == v2.yp;
 }
 
-inline bool operator!=(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
+Q_DECL_CONSTEXPR inline bool operator!=(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
 {
     return v1.xp != v2.xp || v1.yp != v2.yp;
 }
 
-inline const QDoubleVector2D operator+(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
+Q_DECL_CONSTEXPR inline const QDoubleVector2D operator+(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
 {
     return QDoubleVector2D(v1.xp + v2.xp, v1.yp + v2.yp);
 }
 
-inline const QDoubleVector2D operator-(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
+Q_DECL_CONSTEXPR inline const QDoubleVector2D operator-(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
 {
     return QDoubleVector2D(v1.xp - v2.xp, v1.yp - v2.yp);
 }
 
-inline const QDoubleVector2D operator*(double factor, const QDoubleVector2D &vector)
+Q_DECL_CONSTEXPR inline const QDoubleVector2D operator*(double factor, const QDoubleVector2D &vector)
 {
     return QDoubleVector2D(vector.xp * factor, vector.yp * factor);
 }
 
-inline const QDoubleVector2D operator*(const QDoubleVector2D &vector, double factor)
+Q_DECL_CONSTEXPR inline const QDoubleVector2D operator*(const QDoubleVector2D &vector, double factor)
 {
     return QDoubleVector2D(vector.xp * factor, vector.yp * factor);
 }
 
-inline const QDoubleVector2D operator*(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
+Q_DECL_CONSTEXPR inline const QDoubleVector2D operator*(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
 {
     return QDoubleVector2D(v1.xp * v2.xp, v1.yp * v2.yp);
 }
 
-inline const QDoubleVector2D operator-(const QDoubleVector2D &vector)
+Q_DECL_CONSTEXPR inline const QDoubleVector2D operator-(const QDoubleVector2D &vector)
 {
     return QDoubleVector2D(-vector.xp, -vector.yp);
 }
 
-inline const QDoubleVector2D operator/(const QDoubleVector2D &vector, double divisor)
+Q_DECL_CONSTEXPR inline const QDoubleVector2D operator/(const QDoubleVector2D &vector, double divisor)
 {
     return QDoubleVector2D(vector.xp / divisor, vector.yp / divisor);
 }
 
-inline bool qFuzzyCompare(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
+Q_DECL_CONSTEXPR inline bool qFuzzyCompare(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
 {
     return qFuzzyCompare(v1.xp, v2.xp) && qFuzzyCompare(v1.yp, v2.yp);
+}
+
+Q_DECL_CONSTEXPR inline QPointF QDoubleVector2D::toPointF() const
+{
+    return QPointF(qreal(xp), qreal(yp));
 }
 
 #ifndef QT_NO_DEBUG_STREAM

@@ -40,26 +40,11 @@
 ****************************************************************************/
 
 #include "qdoublevector3d_p.h"
-#include "qdoublevector2d_p.h"
 #include <QtCore/qdatastream.h>
 #include <QtCore/qmath.h>
 #include <QtCore/qdebug.h>
 
 QT_BEGIN_NAMESPACE
-
-QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D &vector)
-{
-    xp = vector.xp;
-    yp = vector.yp;
-    zp = 0.0;
-}
-
-QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D &vector, double zpos)
-{
-    xp = vector.xp;
-    yp = vector.yp;
-    zp = zpos;
-}
 
 QDoubleVector3D QDoubleVector3D::normalized() const
 {
@@ -91,18 +76,6 @@ void QDoubleVector3D::normalize()
     zp /= len;
 }
 
-double QDoubleVector3D::dotProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
-{
-    return v1.xp * v2.xp + v1.yp * v2.yp + v1.zp * v2.zp;
-}
-
-QDoubleVector3D QDoubleVector3D::crossProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
-{
-    return QDoubleVector3D(v1.yp * v2.zp - v1.zp * v2.yp,
-                    v1.zp * v2.xp - v1.xp * v2.zp,
-                    v1.xp * v2.yp - v1.yp * v2.xp);
-}
-
 QDoubleVector3D QDoubleVector3D::normal(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return crossProduct(v1, v2).normalized();
@@ -112,12 +85,6 @@ QDoubleVector3D QDoubleVector3D::normal
         (const QDoubleVector3D &v1, const QDoubleVector3D &v2, const QDoubleVector3D &v3)
 {
     return crossProduct((v2 - v1), (v3 - v1)).normalized();
-}
-
-double QDoubleVector3D::distanceToPlane
-        (const QDoubleVector3D &plane, const QDoubleVector3D &normal) const
-{
-    return dotProduct(*this - plane, normal);
 }
 
 double QDoubleVector3D::distanceToPlane
@@ -136,19 +103,9 @@ double QDoubleVector3D::distanceToLine
     return (*this - p).length();
 }
 
-QDoubleVector2D QDoubleVector3D::toVector2D() const
-{
-    return QDoubleVector2D(xp, yp);
-}
-
 double QDoubleVector3D::length() const
 {
     return qSqrt(xp * xp + yp * yp + zp * zp);
-}
-
-double QDoubleVector3D::lengthSquared() const
-{
-    return xp * xp + yp * yp + zp * zp;
 }
 
 #ifndef QT_NO_DEBUG_STREAM

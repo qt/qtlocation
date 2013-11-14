@@ -47,20 +47,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QDoubleVector2D::QDoubleVector2D(const QDoubleVector3D &vector)
+QDoubleVector2D::QDoubleVector2D(const QDoubleVector3D &vector) :
+    xp(vector.xp), yp(vector.yp)
 {
-    xp = vector.xp;
-    yp = vector.yp;
 }
 
 double QDoubleVector2D::length() const
 {
     return qSqrt(xp * xp + yp * yp);
-}
-
-double QDoubleVector2D::lengthSquared() const
-{
-    return xp * xp + yp * yp;
 }
 
 QDoubleVector2D QDoubleVector2D::normalized() const
@@ -90,19 +84,9 @@ void QDoubleVector2D::normalize()
     yp /= len;
 }
 
-double QDoubleVector2D::dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
-{
-    return v1.xp * v2.xp + v1.yp * v2.yp;
-}
-
 QDoubleVector3D QDoubleVector2D::toVector3D() const
 {
     return QDoubleVector3D(xp, yp, 0.0);
-}
-
-QPointF QDoubleVector2D::toPointF() const
-{
-    return QPointF(qreal(xp), qreal(yp));
 }
 
 #ifndef QT_NO_DEBUG_STREAM
