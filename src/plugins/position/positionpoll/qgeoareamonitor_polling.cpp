@@ -321,7 +321,7 @@ QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent)
     : QGeoAreaMonitorSource(parent), signalsAreConnected(false)
 {
     d = pollingPrivate();
-    lastError = QGeoAreaMonitorSource::UnknownSourceError;
+    lastError = QGeoAreaMonitorSource::NoError;
     d->registerClient(this);
     //hookup to default source if existing
     if (!positionInfoSource())
@@ -492,6 +492,8 @@ void QGeoAreaMonitorPolling::positionError(const QGeoPositionInfoSource::Error e
     case QGeoPositionInfoSource::ClosedError:
         lastError = QGeoAreaMonitorSource::InsufficientPositionInfo;
         break;
+    case QGeoPositionInfoSource::NoError:
+        return;
     }
 
     emit QGeoAreaMonitorSource::error(lastError);

@@ -59,8 +59,9 @@ class Q_POSITIONING_EXPORT QGeoAreaMonitorSource : public QObject
 public:
     enum Error {
         AccessError = 0,
-        InsufficientPositionInfo,
-        UnknownSourceError
+        InsufficientPositionInfo = 1,
+        UnknownSourceError = 2,
+        NoError = 3
     };
     Q_ENUMS(Error)
 

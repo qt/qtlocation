@@ -143,7 +143,7 @@ int QGeoSatelliteInfoSourceGeoclueMaster::minimumUpdateInterval() const
 
 QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSourceGeoclueMaster::error() const
 {
-    return UnknownSourceError;
+    return NoError;
 }
 
 void QGeoSatelliteInfoSourceGeoclueMaster::startUpdates()

@@ -95,6 +95,7 @@ public:
         application lacked the required privileges.
     \value InsufficientPositionInfo The area monitoring source could not retrieve a location fix or
         the accuracy of the fix is not high enough to provide an effective area monitoring.
+    \value NoError No error has occurred.
     \value UnknownSourceError An unidentified error occurred.
 */
 

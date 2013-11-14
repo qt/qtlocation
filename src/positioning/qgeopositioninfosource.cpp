@@ -105,6 +105,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     \enum QGeoPositionInfoSource::PositioningMethod
     Defines the types of positioning methods.
 
+    \value NoPositioningMethods None of the positioning methods.
     \value SatellitePositioningMethods Satellite-based positioning methods such as GPS or GLONASS.
     \value NonSatellitePositioningMethods Other positioning methods such as 3GPP cell identifier or WiFi based positioning.
     \value AllPositioningMethods Satellite-based positioning methods as soon as available. Otherwise non-satellite based methods.
@@ -378,10 +379,10 @@ QStringList QGeoPositionInfoSource::availableSources()
     If setUpdateInterval() has not been called, the source will emit updates
     as soon as they become available.
 
-    An updateTimout() signal will be emitted if this QGeoPositionInfoSource subclass determines
+    An updateTimeout() signal will be emitted if this QGeoPositionInfoSource subclass determines
     that it will not be able to provide regular updates.  This could happen if a satellite fix is
     lost or if a hardware error is detected.  Position updates will recommence if the data becomes
-    available later on.  The updateTimout() signal will not be emitted again until after the
+    available later on.  The updateTimeout() signal will not be emitted again until after the
     periodic updates resume.
 */
 
@@ -436,6 +437,10 @@ QStringList QGeoPositionInfoSource::availableSources()
     If startUpdates() has been called, this signal will be emitted if this QGeoPositionInfoSource
     subclass determines that it will not be able to provide further regular updates.  This signal
     will not be emitted again until after the regular updates resume.
+
+    While the triggering of this signal may be considered an error condition, it does not
+    imply the emission of the \c error() signal. Only the emission of \c updateTimeout() is required
+    to indicate a timeout.
 */
 
 /*!
@@ -443,6 +448,8 @@ QStringList QGeoPositionInfoSource::availableSources()
 
     This signal is emitted after an error occurred. The \a positioningError
     parameter describes the type of error that occurred.
+
+    This signal is not emitted when an updateTimeout() has occurred.
 
 */
 
@@ -454,8 +461,9 @@ QStringList QGeoPositionInfoSource::availableSources()
     \value AccessError The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
     \value ClosedError  The remote positioning backend closed the connection, which happens for example in case
-        the user is switching location services to off. This object becomes invalid and should be deleted.
-        A call to createDefaultSource() can be used to create a new source later on.
+        the user is switching location services to off. As soon as the location service is re-enabled
+        regular updates will resume.
+    \value NoError No error has occurred.
     \value UnknownSourceError An unidentified error occurred.
  */
 

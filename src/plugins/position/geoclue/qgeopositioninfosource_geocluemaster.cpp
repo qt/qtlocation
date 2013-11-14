@@ -455,6 +455,9 @@ void QGeoPositionInfoSourceGeoclueMaster::positionProviderChanged(const QByteArr
     if (m_pos)
         cleanupPositionSource();
 
+    if (service.isEmpty() || path.isEmpty())
+        return;
+
     m_pos = geoclue_position_new(service.constData(), path.constData());
     if (m_pos) {
         if (m_running) {
@@ -528,7 +531,7 @@ QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(
 
 QGeoPositionInfoSource::Error QGeoPositionInfoSourceGeoclueMaster::error() const
 {
-    return UnknownSourceError;
+    return NoError;
 }
 
 #include "moc_qgeopositioninfosource_geocluemaster_p.cpp"
