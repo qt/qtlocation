@@ -560,8 +560,11 @@ void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
     qDeleteAll(routes_);
     // Convert routes to declarative
     routes_.clear();
-    for (int i = 0; i < reply->routes().size(); ++i)
-        routes_.append(new QDeclarativeGeoRoute(reply->routes().at(i), this));
+    for (int i = 0; i < reply->routes().size(); ++i) {
+        QDeclarativeGeoRoute *route = new QDeclarativeGeoRoute(reply->routes().at(i), this);
+        QQmlEngine::setContextForObject(route, QQmlEngine::contextForObject(this));
+        routes_.append(route);
+    }
     endResetModel();
 
     setErrorString("");

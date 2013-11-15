@@ -100,7 +100,9 @@ void QDeclarativeGeoRoute::init()
 {
     QGeoRouteSegment segment = route_.firstRouteSegment();
     while (segment.isValid()) {
-        segments_.append(new QDeclarativeGeoRouteSegment(segment, this));
+        QDeclarativeGeoRouteSegment *routeSegment = new QDeclarativeGeoRouteSegment(segment, this);
+        QQmlEngine::setContextForObject(routeSegment, QQmlEngine::contextForObject(this));
+        segments_.append(routeSegment);
         segment = segment.nextRouteSegment();
     }
 }
