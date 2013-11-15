@@ -197,6 +197,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         zoomLevel_(8.0),
         bearing_(0.0),
         tilt_(0.0),
+        center_(0,0),
         activeMapType_(0),
         componentCompleted_(false),
         mappingManagerInitialized_(false),
