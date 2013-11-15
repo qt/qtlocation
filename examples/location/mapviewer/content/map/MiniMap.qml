@@ -62,9 +62,6 @@ Rectangle{
         center: map.center
         plugin: map.plugin
         gesture.enabled: false
-        MapMouseArea{
-            anchors.fill: parent
-        }
 
         MapRectangle {
             color: "#44ff0000"

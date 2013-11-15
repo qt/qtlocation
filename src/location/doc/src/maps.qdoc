@@ -113,25 +113,10 @@ only be created within a \l{QtLocation::Map}{Map}.
 
 \section2 Interaction with Map Overlay Objects
 
-Interaction with the pre-defined map overlay object types is done using the
-\l{QtLocation::MapMouseArea}{MapMouseArea} type, which behaves much like a
-normal QtQuick MouseArea. MapQuickItems can also contain MapMouseArea objects,
-but can additionally use normal QtQuick MouseAreas to provide interaction.
-
 Properties of map overlay objects that influence their appearance on the display can
 be changed at any time, and many can also be used in animations. Animating
 coordinate-based map overlay objects, such as MapPolygon and MapPolyline, is not yet
 available.
-
-\b{Key Types}
-\table
-    \row
-        \li \l{QtLocation::MapMouseArea}{MapMouseArea}
-        \li Accepts mouse events for a pre-defined map overlay object (for example MapCircle).
-    \row
-        \li \l{QtLocation::MapMouseEvent}{MapMouseEvent}
-        \li Provides additional information unique to mouse events on a Map.
-\endtable
 
 \section1 Geocoding -- Address to Coordinate and Vice Versa
 

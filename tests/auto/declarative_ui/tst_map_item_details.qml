@@ -65,7 +65,7 @@ Item {
             { latitude: 25, longitude: 5 },
             { latitude: 20, longitude: 10 }
         ]
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
             SignalSpy { id: extMapPolygonClicked; target: parent; signalName: "clicked" }
@@ -109,7 +109,7 @@ Item {
             latitude: 10
             longitude: -175
         }
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -123,7 +123,7 @@ Item {
             longitude: 180
         }
         radius: 400000
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -131,7 +131,7 @@ Item {
 
     MapQuickItem {
         id: extMapQuickItemDateline
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -155,7 +155,7 @@ Item {
             { latitude: 10, longitude: -175 },
             { latitude: 10, longitude: 175 }
         ]
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -168,7 +168,7 @@ Item {
             { latitude: 20, longitude: 175 },
             { latitude: 25, longitude: -175 }
         ]
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -196,7 +196,7 @@ Item {
             latitude: 10
             longitude: -5
         }
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -210,7 +210,7 @@ Item {
             longitude: -15
         }
         radius: 400000
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -218,7 +218,7 @@ Item {
 
     MapQuickItem {
         id: extMapQuickItemEdge
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -242,7 +242,7 @@ Item {
             { latitude: 10, longitude: -5 },
             { latitude: 10, longitude: -15 }
         ]
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }
@@ -255,7 +255,7 @@ Item {
             { latitude: 20, longitude: -15 },
             { latitude: 25, longitude: -5 }
         ]
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             drag.target: parent
         }

@@ -46,7 +46,7 @@ import QtPositioning 5.2
 import QtLocation.test 5.0
 
     /*
-     MapMouseArea setup for this test case.
+     MouseArea setup for this test case.
      Map dimensions are 100 * 100
      Item containing map is 120,120
 
@@ -117,7 +117,7 @@ Item {
             lastWheelAngleDeltaY = angleDelta.y;
         }
 
-        MapMouseArea {
+        MouseArea {
             id: mouseUpper
             objectName: "mouseUpper"
             x: 0; y: 20; width: 100; height: 29
@@ -137,7 +137,7 @@ Item {
             onPositionChanged: { page.setMouseData(mouseUpper, mouse); }
             onPressAndHold: { page.setMouseData(mouseUpper, mouse); }
         }
-        MapMouseArea {
+        MouseArea {
             id: mouseLower
             objectName: "mouseLower"
             x: 0; y: 50; width: 100; height: 50
@@ -156,7 +156,7 @@ Item {
             onPositionChanged: { page.setMouseData(mouseLower, mouse); }
             onPressAndHold: { page.setMouseData(mouseLower, mouse); }
         }
-        MapMouseArea {
+        MouseArea {
             id: mouseOverlapper
             objectName: "mouseOverlapper"
             x: 50; y: 0; width: 50; height: 100
@@ -178,7 +178,7 @@ Item {
     }
 
     TestCase {
-        name: "MapMouseArea"
+        name: "MouseArea"
         when: windowShown
         SignalSpy {id: mouseUpperClickedSpy; target: mouseUpper; signalName: "clicked"}
         SignalSpy {id: mouseLowerClickedSpy; target: mouseLower; signalName: "clicked"}

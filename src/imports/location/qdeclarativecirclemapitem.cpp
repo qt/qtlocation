@@ -84,7 +84,7 @@ QT_BEGIN_NAMESPACE
     accuracy of the circle's shape, depending on position and map
     projection.
 
-    \note Dragging a MapCircle (through the use of \l MapMouseArea)
+    \note Dragging a MapCircle (through the use of \l MouseArea)
     causes new points to be generated at the same distance (in meters)
     from the center. This is in contrast to other map items which store
     their dimensions in terms of latitude and longitude differences between

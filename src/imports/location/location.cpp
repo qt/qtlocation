@@ -42,7 +42,6 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegeomap_p.h"
 
-#include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
 #include "qdeclarativegeoroute_p.h"
@@ -110,8 +109,6 @@ public:
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase>(uri, 5, 0, "GeoMapItemBase", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("GeoMapItemBase"));
             qmlRegisterType<QDeclarativeGeoMapQuickItem>(uri, 5, 0, "MapQuickItem");
             qmlRegisterType<QDeclarativeGeoMapItemView>(uri, 5, 0, "MapItemView");
-            qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");
-            qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 5, 0, "MapMouseEvent");
 
             qmlRegisterType<QDeclarativeGeocodeModel>(uri, 5, 0, "GeocodeModel"); // geocoding and reverse geocoding
             qmlRegisterType<QDeclarativeGeoRouteModel>(uri, 5, 0, "RouteModel");

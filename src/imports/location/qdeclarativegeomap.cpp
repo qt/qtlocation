@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomap_p.h"
-#include "qdeclarativegeomapmousearea_p.h"
 #include "error_messages.h"
 
 #include "qdeclarativecirclemapitem_p.h"
@@ -133,13 +132,6 @@ QT_BEGIN_NAMESPACE
     time by using the \l gesture object. The actual GestureArea is constructed
     specially at startup and cannot be replaced or destroyed. Its properties
     can be altered, however, to control its behavior.
-
-    Mouse and touch interaction with Maps and map objects is slightly different
-    to ordinary QML types. In a Map or Map object, you will need to make use
-    of the \l MapMouseArea type instead of the normal Qt Quick MouseArea.
-    MapMouseArea is, in almost all respects, a drop-in replacement for
-    MouseArea, but the documentation for that type should be referred to for
-    further details.
 
     \section2 Performance
 

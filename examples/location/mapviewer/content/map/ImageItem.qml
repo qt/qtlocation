@@ -43,7 +43,7 @@ import QtLocation 5.0
 MapQuickItem {  //to be used inside MapComponent only
     id: imageItem
 
-    MapMouseArea {
+    MouseArea {
         anchors.fill: parent
         drag.target: parent
     }

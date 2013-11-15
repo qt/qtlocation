@@ -152,8 +152,7 @@ Item {
             border.width: 0
             center: preMapCircleDefaultCenter
             radius: 400000
-            MapMouseArea {
-                id: preMapCircleMa
+            MouseArea {
                 anchors.fill: parent
                 drag.target: parent
                 SignalSpy { id: preMapCircleClicked; target: parent; signalName: "clicked" }
@@ -167,7 +166,7 @@ Item {
         }
         MapQuickItem {
             id: preMapQuickItem
-            MapMouseArea {
+            MouseArea {
                 anchors.fill: parent
                 drag.target: parent
                 SignalSpy { id: preMapQuickItemClicked; target: parent; signalName: "clicked" }
@@ -193,7 +192,7 @@ Item {
                 { latitude: 20, longitude: 10 },
                 { latitude: 15, longitude: 6 }
             ]
-            MapMouseArea {
+            MouseArea {
                 anchors.fill: parent
                 drag.target: parent
                 SignalSpy { id: preMapPolygonClicked; target: parent; signalName: "clicked" }

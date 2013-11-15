@@ -97,7 +97,7 @@ Item {
         }
         color: 'firebrick'
         radius: 600000
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             onClicked: console.log('ext circle clicked')
             SignalSpy { id: extMapCircleClicked; target: parent; signalName: "clicked" }
@@ -106,7 +106,7 @@ Item {
 
     MapQuickItem {
         id: extMapQuickItem
-        MapMouseArea {
+        MouseArea {
             anchors.fill: parent
             SignalSpy { id: extMapQuickItemClicked; target: parent; signalName: "clicked" }
         }
@@ -160,7 +160,7 @@ Item {
                 longitude: 30
             }
             radius: 400000
-            MapMouseArea {
+            MouseArea {
                 id: preMapCircleMa
                 anchors.fill: parent
                 drag.target: parent
@@ -175,7 +175,7 @@ Item {
         }
         MapQuickItem {
             id: preMapQuickItem
-            MapMouseArea {
+            MouseArea {
                 anchors.fill: parent
                 drag.target: parent
                 SignalSpy { id: preMapQuickItemClicked; target: parent; signalName: "clicked" }
@@ -204,7 +204,7 @@ Item {
                 { latitude: 20, longitude: 10 },
                 { latitude: 15, longitude: 6 }
             ]
-            MapMouseArea {
+            MouseArea {
                 anchors.fill: parent
                 drag.target: parent
                 SignalSpy { id: preMapPolygonClicked; target: parent; signalName: "clicked" }

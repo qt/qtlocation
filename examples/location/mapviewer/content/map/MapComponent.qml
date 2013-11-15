@@ -298,7 +298,7 @@ Map {
             smooth: true
             opacity: 0.8
 //! [routedelegate0]
-            MapMouseArea {
+            MouseArea {
                 id: routeMouseArea
                 anchors.fill: parent
                 hoverEnabled: false
@@ -346,7 +346,7 @@ Map {
             opacity: 0.6
             center: locationData.coordinate
 //! [pointdel0]
-            MapMouseArea {
+            MouseArea {
                 anchors.fill:parent
                 id: circleMouseArea
                 hoverEnabled: false
@@ -365,7 +365,8 @@ Map {
                         Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
                         Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
                         map.state = ""
-                        if (pressed) parent.radius = parent.center.distanceTo(mouseToCoordinate(mouse))
+                        if (pressed) parent.radius = parent.center.distanceTo(
+                                         map.toCoordinate(Qt.point(mouse.x, mouse.y)))
                     }
                     if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
                         map.lastX = mouse.x + parent.x
@@ -844,7 +845,7 @@ Map {
         }
     }
 
-    MapMouseArea {
+    MouseArea {
         id: mouseArea
         property variant lastCoordinate
         anchors.fill: parent
@@ -856,7 +857,7 @@ Map {
             map.lastY = mouse.y
             map.pressX = mouse.x
             map.pressY = mouse.y
-            lastCoordinate = mouseArea.mouseToCoordinate(mouse)
+            lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
             //            if (mouse.button == Qt.MiddleButton)
             //                addMarker()
         }
@@ -879,7 +880,7 @@ Map {
         }
 
         onDoubleClicked: {
-            map.center = mouseArea.mouseToCoordinate(mouse)
+            map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
             if (mouse.button == Qt.LeftButton){
                 map.zoomLevel += 1
             } else if (mouse.button == Qt.RightButton) map.zoomLevel -= 1

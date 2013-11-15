@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapitemview_p.h"
-#include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapitembase_p.h"
 

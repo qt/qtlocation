@@ -17,8 +17,6 @@ win32 {
 
 HEADERS += \
            qdeclarativegeomapitemview_p.h \
-           qdeclarativegeomapmouseevent_p.h \
-           qdeclarativegeomapmousearea_p.h \
            qdeclarativegeoserviceprovider_p.h \
            qdeclarativegeocodemodel_p.h \
            qdeclarativegeoroutemodel_p.h \
@@ -44,8 +42,6 @@ HEADERS += \
 SOURCES += \
            location.cpp \
            qdeclarativegeomapitemview.cpp \
-           qdeclarativegeomapmouseevent.cpp \
-           qdeclarativegeomapmousearea.cpp \
            qdeclarativegeoserviceprovider.cpp \
            qdeclarativegeocodemodel.cpp \
            qdeclarativegeoroutemodel.cpp \

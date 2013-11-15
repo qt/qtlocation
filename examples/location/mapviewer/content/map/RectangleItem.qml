@@ -65,7 +65,7 @@ MapRectangle {
                (bottomRight.longitude == 153.3021))
     }
 
-    MapMouseArea {
+    MouseArea {
         anchors.fill:parent
         id: mousearea
         hoverEnabled: false

@@ -91,6 +91,7 @@ protected Q_SLOTS:
 
 protected:
     float zoomLevelOpacity() const;
+    bool childMouseEventFilter(QQuickItem *item, QEvent *event);
 
 private Q_SLOTS:
     void baseCameraDataChanged(const QGeoCameraData &camera);

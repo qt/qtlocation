@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapitembase_p.h"
-#include "qdeclarativegeomapmousearea_p.h"
 #include "qgeocameradata_p.h"
 #include <QtQml/QQmlInfo>
 #include <QtQuick/QSGOpacityNode>
+#include <QtQuick/private/qquickmousearea_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -84,6 +84,7 @@ QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
       map_(0),
       quickMap_(0)
 {
+    setFiltersChildMouseEvents(true);
     connect(this, SIGNAL(childrenChanged()),
             this, SLOT(afterChildrenChanged()));
 }
@@ -105,7 +106,7 @@ void QDeclarativeGeoMapItemBase::afterChildrenChanged()
         bool printedWarning = false;
         foreach (QQuickItem *i, kids) {
             if (i->flags() & QQuickItem::ItemHasContents
-                    && !qobject_cast<QDeclarativeGeoMapMouseArea *>(i)) {
+                    && !qobject_cast<QQuickMouseArea *>(i)) {
                 if (!printedWarning) {
                     qmlInfo(this) << "Geographic map items do not support child items";
                     printedWarning = true;
@@ -210,6 +211,23 @@ float QDeclarativeGeoMapItemBase::zoomLevelOpacity() const
         return quickMap_->zoomLevel() - 2.0;
     else
         return 0.0;
+}
+
+bool QDeclarativeGeoMapItemBase::childMouseEventFilter(QQuickItem *item, QEvent *event)
+{
+    Q_UNUSED(item)
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseButtonRelease:
+    case QEvent::MouseMove:
+        if (contains(static_cast<QMouseEvent*>(event)->pos())) {
+            return false;
+        } else {
+            return true;
+        }
+    default:
+        return false;
+    }
 }
 
 /*!

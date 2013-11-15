@@ -98,7 +98,7 @@ QT_BEGIN_NAMESPACE
     \l border.width properties.
 
     \note Since MapPolygons are geographic items, dragging a MapPolygon
-    (through the use of \l MapMouseArea) causes its vertices to be
+    (through the use of \l MouseArea) causes its vertices to be
     recalculated in the geographic coordinate space. The edges retain the
     same geographic lengths (latitude and longitude differences between the
     vertices), but they remain straight. Apparent stretching of the item occurs

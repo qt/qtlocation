@@ -57,7 +57,7 @@ MapQuickItem {
         id: image
 //! [mqi-anchor]
         source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "../../resources/marker_selected.png" :"../../resources/marker_hovered.png") : "../../resources/marker.png"
-        MapMouseArea  {
+        MouseArea  {
             id: markerMouseArea
             property int pressX : -1
             property int pressY : -1
@@ -108,7 +108,8 @@ MapQuickItem {
     }
 //! [mqi-closeimage]
 
-    Component.onCompleted: coordinate = mouseArea.lastCoordinate
+    Component.onCompleted: coordinate = map.toCoordinate(Qt.point(markerMouseArea.mouseX,
+                                                                  markerMouseArea.mouseY));
 //! [mqi-close]
 }
 //! [mqi-close]

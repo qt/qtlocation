@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapquickitem_p.h"
-#include "qdeclarativegeomapmousearea_p.h"
 #include <QtQml/qqmlinfo.h>
 #include <QtQuick/QSGOpacityNode>
 #include "qdoublevector2d_p.h"
+#include <QtQuick/private/qquickmousearea_p.h>
 
 #include <QDebug>
 #include <cmath>
@@ -88,50 +88,6 @@ QT_BEGIN_NAMESPACE
     default behaviour if \l zoomLevel is not set is for the item to be drawn
     "on the screen" rather than "on the map", so that its size remains the same
     regardless of the zoom level of the Map.
-
-    \section2 Interaction
-
-    MapQuickItem is different to the other map objects in that it can
-    accept "normal" QtQuick mouse and touch interaction types as well as
-    the MapMouseArea and friends. For example, for a MapQuickItem, the following
-    two situations are equivalent:
-
-    \code
-    MapQuickItem {
-        sourceItem: Rectangle {
-            width: 20; height: 20
-        }
-
-        MapMouseArea {
-            onClicked: {
-                console.log("clicked!");
-            }
-        }
-    }
-    \endcode
-
-    \code
-    MapQuickItem {
-        sourceItem: Rectangle {
-            width: 20; height: 20
-
-            MouseArea {
-                onClicked: {
-                    console.log("clicked!");
-                }
-            }
-        }
-    }
-    \endcode
-
-    Note, however, that using a MapMouseArea inside the sourceItem (in this
-    case, inside the Rectangle object), is unsupported, and may not work as
-    desired.
-
-    MouseAreas used inside a complex \l{sourceItem} can be used to create, for
-    example, a "close" button within a speech bubble that can be clicked
-    separately to the rest of the bubble, which would be impossible using
-    MapMouseArea alone.
 
     \section2 Performance
 
@@ -263,7 +219,7 @@ void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
         bool printedWarning = false;
         foreach (QQuickItem *i, kids) {
             if (i->flags() & QQuickItem::ItemHasContents
-                    && !qobject_cast<QDeclarativeGeoMapMouseArea *>(i)
+                    && !qobject_cast<QQuickMouseArea *>(i)
                     && sourceItem_.data() != i
                     && opacityContainer_ != i) {
                 if (!printedWarning) {
