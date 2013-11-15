@@ -928,11 +928,17 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
     case QEvent::MouseButtonPress:
     case QEvent::MouseButtonRelease:
     case QEvent::MouseMove:
-        return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
+        if (!item->keepMouseGrab())
+            return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
+        else
+            return false;
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
-        return gestureArea_->filterMapChildTouchEvent(static_cast<QTouchEvent *>(event));
+        if (!item->keepMouseGrab())
+            return gestureArea_->filterMapChildTouchEvent(static_cast<QTouchEvent *>(event));
+        else
+            return false;
     default:
         return false;
     }
