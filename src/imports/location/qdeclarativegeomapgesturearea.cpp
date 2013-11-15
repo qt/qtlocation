@@ -45,6 +45,7 @@
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/qevent.h>
+#include <QtGui/QWheelEvent>
 #include <QtGui/QStyleHints>
 #include <QtQml/qqmlinfo.h>
 #include <QPropertyAnimation>
@@ -654,6 +655,12 @@ void QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
         // no-op
         break;
     }
+}
+
+bool QDeclarativeGeoMapGestureArea::wheelEvent(QWheelEvent *event)
+{
+    declarativeMap_->setZoomLevel(qBound(minimumZoomLevel(), declarativeMap_->zoomLevel() + event->angleDelta().y() * qreal(0.001), maximumZoomLevel()));
+    return true;
 }
 
 /*!

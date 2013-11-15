@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 class QDeclarativeGeoMap;
 class QTouchEvent;
+class QWheelEvent;
 class QGeoMap;
 class QPropertyAnimation;
 
@@ -161,6 +162,8 @@ public:
     void setFlickDeceleration(qreal deceleration);
 
     void touchEvent(QTouchEvent *event);
+
+    bool wheelEvent(QWheelEvent *event);
 
     bool mousePressEvent(QMouseEvent *event);
     bool mouseMoveEvent(QMouseEvent *event);

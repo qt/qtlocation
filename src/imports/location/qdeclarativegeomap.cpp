@@ -914,6 +914,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 {
     QLOC_TRACE0;
     event->accept();
+    gestureArea_->wheelEvent(event);
     emit wheelAngleChanged(event->angleDelta());
 }
 
@@ -939,6 +940,8 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
             return gestureArea_->filterMapChildTouchEvent(static_cast<QTouchEvent *>(event));
         else
             return false;
+    case QEvent::Wheel:
+        return gestureArea_->wheelEvent(static_cast<QWheelEvent *>(event));
     default:
         return false;
     }
