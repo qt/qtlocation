@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
-qtHaveModule(quick) {
-    SUBDIRS += declarative
-    qtHaveModule(positioning): SUBDIRS += weatherinfo
+qtHaveModule(positioning) {
+    SUBDIRS += positioning
+
+    qtHaveModule(location): SUBDIRS += location
 }
-qtHaveModule(positioning): qtHaveModule(widgets): SUBDIRS += logfilepositionsource
