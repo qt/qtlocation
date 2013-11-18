@@ -26,7 +26,7 @@
 ****************************************************************************/
 
 /*!
-    \example declarative/flickr
+    \example flickr
     \title Flickr (QML)
     \ingroup qtpositioning-examples
 

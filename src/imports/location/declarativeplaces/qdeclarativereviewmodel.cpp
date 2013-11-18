@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
     To use the ReviewModel we need a view and a delegate. In this snippet we
     see the setting up of a ListView with a ReviewModel model and a delegate.
 
-    \snippet declarative/places/content/places/PlaceReviews.qml  ReviewModel delegate
+    \snippet places/content/places/PlaceReviews.qml  ReviewModel delegate
 
     The model returns data for the following roles:
 

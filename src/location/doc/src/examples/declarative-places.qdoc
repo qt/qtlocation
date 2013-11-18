@@ -26,7 +26,7 @@
 ****************************************************************************/
 
 /*!
-    \example declarative/places
+    \example places
     \title Places (QML)
     \ingroup qtlocation-examples
 
@@ -78,7 +78,7 @@
     Before search by category can be performed, the list of available categories needs to be
     retrieved.  This is achieved by creating a \l CategoryModel.
 
-    \snippet declarative/places/places.qml CategoryModel model
+    \snippet places/places.qml CategoryModel model
 
     The \l CategoryModel type provides a model of the available categories.  It can provide
     either a flat list or a hierarchical tree model.  In this example, we use a hierarchical tree
@@ -88,11 +88,11 @@
 
     Next we create a view to display the category model.
 
-    \snippet declarative/places/content/places/CategoryView.qml CategoryModel view 1
+    \snippet places/content/places/CategoryView.qml CategoryModel view 1
     \codeline
-    \snippet declarative/places/content/places/CategoryView.qml CategoryModel view 2
+    \snippet places/content/places/CategoryView.qml CategoryModel view 2
     \codeline
-    \snippet declarative/places/content/places/CategoryView.qml CategoryModel view 3
+    \snippet places/content/places/CategoryView.qml CategoryModel view 3
 
     Because a hierarchical model is being used, a \l VisualDataModel is needed to provide
     navigation functionality.  If flat list model was being used the view could use the
@@ -112,14 +112,14 @@
     The \e CategoryDelegate displays the category name and emits the \e clicked signal when
     the text is clicked:
 
-    \snippet declarative/places/content/places/CategoryDelegate.qml CategoryModel delegate text
+    \snippet places/content/places/CategoryDelegate.qml CategoryModel delegate text
 
     The \e CategoryDelegate also displays icons for editing, removing and displaying child
     categories.  These icons are shown as desired when the \e showSave and \e showRemove
     and \e showChildren properties are set and only then in cases where the function is
     supported.
 
-    \snippet declarative/places/content/places/CategoryDelegate.qml CategoryModel delegate icon
+    \snippet places/content/places/CategoryDelegate.qml CategoryModel delegate icon
 
 
     \target Presenting-Search-Suggestions
@@ -130,7 +130,7 @@
 
     A new suggestion search is triggered whenever the entered search term is changed.
 
-    \snippet declarative/places/content/places/SearchBox.qml PlaceSearchSuggestionModel search text changed
+    \snippet places/content/places/SearchBox.qml PlaceSearchSuggestionModel search text changed
 
     The \e suggestionsEnabled property is used to temporarily disable search suggestions when a
     suggestion is selected (selecting it updates the search term text).  Suggestions are only
@@ -140,14 +140,14 @@
     When the status of the \l PlaceSearchSuggestionModel changes, the state of the search box is
     changed to display the search suggestions.
 
-    \snippet declarative/places/content/places/SearchBox.qml PlaceSearchSuggestionModel model
+    \snippet places/content/places/SearchBox.qml PlaceSearchSuggestionModel model
 
     The main object in the "SuggestionsShown" state is the \l ListView showing the search
     suggestions.
 
-    \snippet declarative/places/content/places/SearchBox.qml PlaceSearchSuggestionModel view 1
+    \snippet places/content/places/SearchBox.qml PlaceSearchSuggestionModel view 1
     \codeline
-    \snippet declarative/places/content/places/SearchBox.qml PlaceSearchSuggestionModel view 2
+    \snippet places/content/places/SearchBox.qml PlaceSearchSuggestionModel view 2
 
     A \l Text object is used as the delegate to display the suggestion text.  Clicking on the
     suggested search term updates the search term and triggers a place search using the search
@@ -158,7 +158,7 @@
 
     The \l PlaceSearchModel type is used to search for places.
 
-    \snippet declarative/places/places.qml PlaceSearchModel model
+    \snippet places/places.qml PlaceSearchModel model
 
     First some of the model's properties are set, which will be used to form the search request.
     The \l {PlaceSearchModel::searchArea}{searchArea} property is set to the
@@ -171,13 +171,13 @@
     \l {PlaceSearchModel::update()}{update()} method to start the place search.  The search
     results are displayed in a \l ListView.
 
-    \snippet declarative/places/content/places/SearchResultView.qml PlaceSearchModel place list
+    \snippet places/content/places/SearchResultView.qml PlaceSearchModel place list
 
     The delegate used in the \l ListView, \e SearchResultDelegate, is designed to handle multiple
     search result types via a \l Loader object.  For results of type \e PlaceResult the delegate
     is:
 
-    \snippet declarative/places/content/places/SearchResultDelegate.qml PlaceSearchModel place delegate
+    \snippet places/content/places/SearchResultDelegate.qml PlaceSearchModel place delegate
 
     \section1 Displaying Place Content
 
@@ -187,7 +187,7 @@
     \l {Place::editorialModel}{editorialModel}, \l {Place::reviewModel}{reviewModel} and
     \l {Place::imageModel}{imageModel} properties of the \l Place type.
 
-    \snippet declarative/places/content/places/PlaceEditorials.qml PlaceEditorialModel view
+    \snippet places/content/places/PlaceEditorials.qml PlaceEditorialModel view
 
 
     \section1 Place and Category Creation
@@ -199,11 +199,11 @@
     \l {Qt::createQmlObject()}{Qt.createQmlObject()} method.  Assign the appropriate plugin and
     place properties and invoke the \l {Place::save()}{save()} method.
 
-    \snippet declarative/places/content/places/PlaceDialog.qml Place save
+    \snippet places/content/places/PlaceDialog.qml Place save
 
     Category creation is similar:
 
-    \snippet declarative/places/content/places/CategoryDialog.qml Category save
+    \snippet places/content/places/CategoryDialog.qml Category save
 
     Support for place and category removal can be checked at run-time by using the
     \l {Plugin::supportsPlaces} method, passing in a \l {Plugin::supportsPlaces}{Plugin::PlacesFeatures} flag and
