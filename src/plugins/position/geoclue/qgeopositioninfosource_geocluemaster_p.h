@@ -80,7 +80,6 @@ public:
     int minimumUpdateInterval() const;
     bool init();
 
-    void singleUpdateFailed();
     void singleUpdateSucceeded(GeocluePositionFields fields,
                                int                   timestamp,
                                double                latitude,
