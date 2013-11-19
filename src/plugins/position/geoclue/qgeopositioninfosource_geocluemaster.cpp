@@ -365,6 +365,12 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
         m_updateTimer.start(m_updateInterval);
     }
 
+    // Emit last known position on start.
+    if (m_lastPosition.isValid()) {
+        QMetaObject::invokeMethod(this, "positionUpdated", Qt::QueuedConnection,
+                                  Q_ARG(QGeoPositionInfo, m_lastPosition));
+    }
+
     // m_pos and m_vel are likely to be invalid until Geoclue master selects a position provider.
     if (!m_pos)
         return;
