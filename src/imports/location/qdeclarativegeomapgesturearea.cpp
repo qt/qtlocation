@@ -1055,14 +1055,10 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
     switch (panState_) {
     case panInactive:
         if (canStartPan()) {
-            if (touchPointState_ == touchPoints1) {
-                // Update startCoord_ to ensure smooth start for panning when going over startDragDistance
-                QGeoCoordinate newStartCoord = map_->screenPositionToCoordinate(QDoubleVector2D(lastPos_), false);
-                startCoord_.setLongitude(newStartCoord.longitude() -
-                                         touchCenterCoord_.longitude());
-                startCoord_.setLatitude(newStartCoord.latitude() -
-                                        touchCenterCoord_.latitude());
-            }
+            // Update startCoord_ to ensure smooth start for panning when going over startDragDistance
+            QGeoCoordinate newStartCoord = map_->screenPositionToCoordinate(QDoubleVector2D(lastPos_), false);
+            startCoord_.setLongitude(newStartCoord.longitude());
+            startCoord_.setLatitude(newStartCoord.latitude());
             panState_ = panActive;
         }
         break;
