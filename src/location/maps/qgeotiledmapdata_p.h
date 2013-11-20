@@ -82,8 +82,9 @@ public:
 
     QGeoTileCache *tileCache();
 
+#ifndef NO_QT3D_RENDERER
     void paintGL(QGLPainter *painter);
-
+#endif
     void newTileFetched(const QGeoTileSpec &spec);
 
     QGeoCoordinate screenPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const;

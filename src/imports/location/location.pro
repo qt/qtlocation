@@ -1,4 +1,4 @@
-QT += quick-private network positioning-private location-private qml-private 3d core-private gui-private
+QT += quick-private network positioning-private location-private qml-private core-private gui-private
 
 INCLUDEPATH += ../../location
 INCLUDEPATH += ../../location/maps
@@ -15,6 +15,21 @@ win32 {
     }
 }
 
+qtHaveModule(3d):!no_qt3d {
+    QT += 3d
+
+    SOURCES += mapnode_qt3d.cpp
+
+    HEADERS += mapnode_qt3d_p.h
+} else {
+    DEFINES += NO_QT3D_RENDERER
+    SOURCES += mapnode_sg.cpp
+
+    HEADERS += mapnode_sg_p.h
+}
+
+
+
 HEADERS += \
            qdeclarativegeomapitemview_p.h \
            qdeclarativegeomapmouseevent_p.h \
@@ -29,7 +44,6 @@ HEADERS += \
            qdeclarativegeomaptype_p.h \
            qdeclarativegeomapitembase_p.h \
            qdeclarativegeomapquickitem_p.h \
-           mapnode_p.h \
            qdeclarativecirclemapitem_p.h \
            qdeclarativerectanglemapitem_p.h \
            qdeclarativepolygonmapitem_p.h \
@@ -56,7 +70,6 @@ SOURCES += \
            qdeclarativegeomaptype.cpp \
            qdeclarativegeomapitembase.cpp \
            qdeclarativegeomapquickitem.cpp \
-           mapnode.cpp \
            qdeclarativecirclemapitem.cpp \
            qdeclarativerectanglemapitem.cpp \
            qdeclarativepolygonmapitem.cpp \

@@ -57,7 +57,12 @@ Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
 
 QT_BEGIN_NAMESPACE
 QMutex QGeoTileCache::cleanupMutex_;
+#ifndef NO_QT3D_RENDERER
 QList<QGLTexture2D*> QGeoTileCache::cleanupList_;
+#else
+QList<void*> QGeoTileCache::cleanupList_;
+#endif
+
 
 class QGeoCachedTileMemory
 {
@@ -272,6 +277,7 @@ int QGeoTileCache::textureUsage() const
     return textureCache_.totalCost();
 }
 
+#ifndef NO_QT3D_RENDERER
 void QGeoTileCache::GLContextAvailable()
 {
     QMutexLocker ml(&cleanupMutex_);
@@ -290,6 +296,7 @@ void QGeoTileCache::GLContextAvailable()
         cleanupList_.pop_front();
     }
 }
+#endif
 
 QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
 {
@@ -402,10 +409,12 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileS
 {
     QSharedPointer<QGeoTileTexture> tt(new QGeoTileTexture);
     tt->spec = spec;
+#ifndef NO_QT3D_RENDERER
     tt->texture = new QGLTexture2D();
     tt->texture->setPixmap(pixmap);
     tt->texture->setHorizontalWrap(QGL::ClampToEdge);
     tt->texture->setVerticalWrap(QGL::ClampToEdge);
+#endif
 
     /* Do not bind/cleanImage on the texture here -- it needs to be done
      * in the render thread (by qgeomapscene) */

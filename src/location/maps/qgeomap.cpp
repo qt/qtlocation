@@ -95,6 +95,7 @@ QGeoMapController *QGeoMap::mapController()
     return mapData_->mapController();
 }
 
+#ifndef NO_QT3D_RENDERER
 QGLCamera *QGeoMap::glCamera() const
 {
     return mapData_->glCamera();
@@ -104,6 +105,7 @@ void QGeoMap::paintGL(QGLPainter *painter)
 {
     mapData_->paintGL(painter);
 }
+#endif
 
 void QGeoMap::resize(int width, int height)
 {

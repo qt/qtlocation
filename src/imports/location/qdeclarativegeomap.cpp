@@ -54,7 +54,13 @@
 #include "qgeocameradata_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomapcontroller_p.h"
-#include "mapnode_p.h"
+
+#ifdef NO_QT3D_RENDERER
+#include "mapnode_sg_p.h"
+#else
+#include "mapnode_qt3d_p.h"
+#endif
+
 #include <cmath>
 
 #include <QtPositioning/QGeoCoordinate>

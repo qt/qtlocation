@@ -98,7 +98,11 @@ public:
     ~QGeoTileTexture();
 
     QGeoTileSpec spec;
+#ifndef NO_QT3D_RENDERER
     QGLTexture2D *texture;
+#else
+    void *texture; //need a custom texture class here
+#endif
     bool textureBound;
 };
 
@@ -132,7 +136,9 @@ public:
     int minTextureUsage() const;
     int textureUsage() const;
 
+#ifndef NO_QT3D_RENDERER
     void GLContextAvailable();
+#endif
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec);
 
@@ -169,7 +175,11 @@ private:
     int extraTextureUsage_;
 
     static QMutex cleanupMutex_;
+#ifndef NO_QT3D_RENDERER
     static QList<QGLTexture2D*> cleanupList_;
+#else
+    static QList<void*> cleanupList_;
+#endif
 };
 
 QT_END_NAMESPACE

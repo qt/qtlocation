@@ -93,7 +93,9 @@ public:
 
     QGeoTileCache *tileCache();
 
+#ifndef NO_QT3D_RENDERER
     void paintGL(QGLPainter *painter);
+#endif
 
     void changeCameraData(const QGeoCameraData &oldCameraData);
     void changeActiveMapType(const QGeoMapType mapType);

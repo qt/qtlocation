@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "mapnode_p.h"
+#include "mapnode_qt3d_p.h"
 #include "qgeomap_p.h"
 #include <Qt3D/qglpainter.h>
 #include <Qt3D/QGLFramebufferObjectSurface>

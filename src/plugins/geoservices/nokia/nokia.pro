@@ -49,6 +49,11 @@ SOURCES += \
 
 include(placesv2/placesv2.pri)
 
+qtHaveModule(3d):!no_qt3d {
+} else {
+    DEFINES += NO_QT3D_RENDERER
+}
+
 RESOURCES += resource.qrc
 
 INCLUDEPATH += $$QT.location.includes

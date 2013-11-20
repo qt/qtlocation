@@ -87,8 +87,10 @@ public:
 
     QGeoMapController *mapController();
 
+#ifndef NO_QT3D_RENDERER
     QGLCamera *glCamera() const;
     void paintGL(QGLPainter *painter);
+#endif
 
     void resize(int width, int height);
     int width() const;

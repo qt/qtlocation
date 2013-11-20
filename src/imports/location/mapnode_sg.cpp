@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 BlackBerry Limited and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -38,85 +38,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPDATA_P_P_H
-#define QGEOMAPDATA_P_P_H
+#include "mapnode_sg_p.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QList>
-#include <QSet>
-#include <QVector>
-#include <QPair>
-#include <QPolygonF>
-#include <QSizeF>
-#include <QMatrix4x4>
-#include <QString>
-
-#include <QtPositioning/private/qdoublevector3d_p.h>
-
-
-#include "qgeocameradata_p.h"
-#include "qgeomaptype_p.h"
-
-QT_BEGIN_NAMESPACE
-
-class QGeoMappingManagerEngine;
-
-class QGeoMapData;
-class QGeoMapController;
-
-class QGLCamera;
-class QGLPainter;
-
-class QGeoMapDataPrivate
+MapNode::MapNode(QGeoMap *map) :
+    m_map(map)
 {
-public:
-    QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapData *parent);
-    virtual ~QGeoMapDataPrivate();
+}
 
-    QGeoMappingManagerEngine *engine() const;
+MapNode::~MapNode()
+{
 
-    QGeoMapController *mapController();
+}
 
-#ifndef NO_QT3D_RENDERER
-    QGLCamera *glCamera() const;
-#endif
-    void setCameraData(const QGeoCameraData &cameraData);
-    QGeoCameraData cameraData() const;
+void MapNode::setSize(const QSize &size)
+{
+    if (size == m_size)
+        return;
+    m_size = size;
+    markDirty(DirtyGeometry);
+}
 
-    void resize(int width, int height);
-    int width() const;
-    int height() const;
-    double aspectRatio() const;
+void MapNode::update()
+{
 
-    const QGeoMapType activeMapType() const;
-    void setActiveMapType(const QGeoMapType &mapType);
-    QString pluginString();
-
-private:
-    int width_;
-    int height_;
-    double aspectRatio_;
-
-    QGLCamera *camera_;
-    QGeoMapData *map_;
-    QGeoMappingManagerEngine *engine_;
-    QString pluginString_;
-    QGeoMapController *controller_;
-
-    QGeoCameraData cameraData_;
-    QGeoMapType activeMapType_;
-};
-
-QT_END_NAMESPACE
-
-#endif // QGEOMAP_P_P_H
+}

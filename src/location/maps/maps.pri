@@ -1,7 +1,16 @@
 
 INCLUDEPATH += maps
 
-QT_PRIVATE += gui 3d
+QT_PRIVATE += gui
+
+qtHaveModule(3d):!no_qt3d {
+    QT_PRIVATE += 3d
+    SOURCES += maps/qgeomapsscene_qt3d.cpp
+} else {
+    QT_PRIVATE += quick
+    DEFINES += NO_QT3D_RENDERER
+    SOURCES += maps/qgeomapscene_sg.cpp
+}
 
 PUBLIC_HEADERS += \
                     maps/qgeocodereply.h \
@@ -55,7 +64,8 @@ PRIVATE_HEADERS += \
                     maps/qgeotiledmapreply_p_p.h \
                     maps/qgeotilespec_p.h \
                     maps/qgeotilespec_p_p.h \
-                    maps/qcache3q_p.h
+                    maps/qcache3q_p.h \
+                    maps/qgeomapscene_p_p.h
 
 SOURCES += \
             maps/qgeocameracapabilities.cpp \
@@ -87,5 +97,6 @@ SOURCES += \
             maps/qgeotilecache.cpp \
             maps/qgeotiledmapreply.cpp \
             maps/qgeotilespec.cpp
+
 
 

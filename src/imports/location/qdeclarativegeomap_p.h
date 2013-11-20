@@ -223,10 +223,6 @@ private:
 
     QDeclarativeGeoMapGestureArea *gestureArea_;
 
-    void paintGL(QGLPainter *painter);
-    void earlyDraw(QGLPainter *painter);
-    void restoreDefaults(QGLPainter *painter);
-
     QQuickWindow *window_;
     int touchTimer_;
 

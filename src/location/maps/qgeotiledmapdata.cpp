@@ -55,14 +55,7 @@
 
 #include <qnumeric.h>
 
-#include <Qt3D/qglscenenode.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglbuilder.h>
 #include <Qt3D/qglpainter.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qglcamera.h>
-#include <Qt3D/qglsubsurface.h>
 
 #include <QtPositioning/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
@@ -103,11 +96,13 @@ QGeoTileCache *QGeoTiledMapData::tileCache()
     return d->tileCache();
 }
 
+#ifndef NO_QT3D_RENDERER
 void QGeoTiledMapData::paintGL(QGLPainter *painter)
 {
     Q_D(QGeoTiledMapData);
     d->paintGL(painter);
 }
+#endif
 
 void QGeoTiledMapData::mapResized(int width, int height)
 {
@@ -308,11 +303,13 @@ QSet<QGeoTileSpec> QGeoTiledMapDataPrivate::visibleTiles()
     return cameraTiles_->tiles();
 }
 
+#ifndef NO_QT3D_RENDERER
 void QGeoTiledMapDataPrivate::paintGL(QGLPainter *painter)
 {
     mapScene_->paintGL(painter);
     cache_->GLContextAvailable();
 }
+#endif
 
 QGeoCoordinate QGeoTiledMapDataPrivate::screenPositionToCoordinate(const QDoubleVector2D &pos) const
 {
