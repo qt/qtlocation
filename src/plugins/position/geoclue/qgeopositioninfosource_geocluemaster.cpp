@@ -100,26 +100,17 @@ static void velocity_changed (GeoclueVelocity *velocity,
 }
 
 // Callback for single async update
-static void position_callback (GeocluePosition      *pos,
-                   GeocluePositionFields fields,
-                   int                   timestamp,
-                   double                latitude,
-                   double                longitude,
-                   double                altitude,
-                   GeoclueAccuracy      *accuracy,
-                   GError               *error,
-                   gpointer              userdata)
+static void position_callback (GeocluePosition *pos, GeocluePositionFields fields, int timestamp,
+                               double latitude, double longitude, double altitude,
+                               GeoclueAccuracy *accuracy, GError *error, gpointer userdata)
 {
     Q_UNUSED(pos);
     Q_UNUSED(accuracy);
 
     if (error)
-        g_error_free (error);
-    if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
-                   fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->singleUpdateFailed();
+        g_error_free(error);
 
-    } else {
+    if (fields & GEOCLUE_POSITION_FIELDS_LATITUDE && fields & GEOCLUE_POSITION_FIELDS_LONGITUDE) {
         static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->singleUpdateSucceeded(
                     fields, timestamp, latitude, longitude, altitude, accuracy);
     }
@@ -183,23 +174,6 @@ void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateSucceeded(double speed)
     // Store the velocity and mark it as fresh. Simple but hopefully adequate.
     m_lastVelocity = speed * 0.514444; // convert knots to m/s
     m_lastVelocityIsFresh = true;
-}
-
-void QGeoPositionInfoSourceGeoclueMaster::singleUpdateFailed()
-{
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-        qDebug() << "QGeoPositionInfoSourceGeoclueMaster single update failed (requestUpdate)";
-#endif
-    if (m_requestTimer.isActive())
-        m_requestTimer.stop();
-    // Send timeout even if time wasn't up yet, because we are not trying again
-    emit updateTimeout();
-
-    // Only stop positioning if regular updates not active.
-    if (!m_running) {
-        cleanupPositionSource();
-        releaseMasterClient();
-    }
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::singleUpdateSucceeded(GeocluePositionFields fields,
@@ -365,6 +339,12 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
         m_updateTimer.start(m_updateInterval);
     }
 
+    // Emit last known position on start.
+    if (m_lastPosition.isValid()) {
+        QMetaObject::invokeMethod(this, "positionUpdated", Qt::QueuedConnection,
+                                  Q_ARG(QGeoPositionInfo, m_lastPosition));
+    }
+
     // m_pos and m_vel are likely to be invalid until Geoclue master selects a position provider.
     if (!m_pos)
         return;
@@ -434,6 +414,12 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdateTimeout()
 #endif
     // If we end up here, there has not been valid position update.
     emit updateTimeout();
+
+    // Only stop positioning if regular updates not active.
+    if (!m_running) {
+        cleanupPositionSource();
+        releaseMasterClient();
+    }
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::startUpdatesTimeout()
