@@ -2,7 +2,7 @@
     "Keys": ["android"],
     "Provider": "android",
     "Position": true,
-    "Satellite": false,
+    "Satellite": true,
     "Monitor": false,
     "Priority": 1000
 }

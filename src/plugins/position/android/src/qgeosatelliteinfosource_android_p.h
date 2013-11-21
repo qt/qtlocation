@@ -39,24 +39,50 @@
 **
 ****************************************************************************/
 
-#include "positionfactory_android.h"
-#include "qgeopositioninfosource_android_p.h"
-#include "qgeosatelliteinfosource_android_p.h"
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryAndroid::positionInfoSource(QObject *parent)
-{
-    QGeoPositionInfoSourceAndroid *src = new QGeoPositionInfoSourceAndroid(parent);
-    return src;
-}
+#ifndef QGEOSATELLITEINFOSOURCEANDROID_H
+#define QGEOSATELLITEINFOSOURCEANDROID_H
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryAndroid::satelliteInfoSource(QObject *parent)
-{
-    QGeoSatelliteInfoSourceAndroid *src = new QGeoSatelliteInfoSourceAndroid(parent);
-    return src;
-}
+#include <QGeoSatelliteInfoSource>
+#include <QTimer>
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryAndroid::areaMonitor(QObject *parent)
+class QGeoSatelliteInfoSourceAndroid : public QGeoSatelliteInfoSource
 {
-    Q_UNUSED(parent);
-    return 0;
-}
+    Q_OBJECT
+public:
+    explicit QGeoSatelliteInfoSourceAndroid(QObject *parent = 0);
+    ~QGeoSatelliteInfoSourceAndroid();
+
+    //From QGeoSatelliteInfoSource
+    void setUpdateInterval(int msec);
+    int minimumUpdateInterval() const;
+
+    Error error() const;
+
+public Q_SLOTS:
+    void startUpdates();
+    void stopUpdates();
+    void requestUpdate(int timeout = 0);
+
+    void processSatelliteUpdateInView(const QList<QGeoSatelliteInfo> &satsInView, bool isSingleUpdate);
+    void processSatelliteUpdateInUse(const QList<QGeoSatelliteInfo> &satsInUse, bool isSingleUpdate);
+
+    void locationProviderDisabled();
+private Q_SLOTS:
+    void requestTimeout();
+
+private:
+    void reconfigureRunningSystem();
+
+    Error m_error;
+    int androidClassKeyForUpdate;
+    int androidClassKeyForSingleRequest;
+    bool updatesRunning;
+
+    QTimer requestTimer;
+    QList<QGeoSatelliteInfo> m_satsInUse;
+    QList<QGeoSatelliteInfo> m_satsInView;
+
+};
+
+#endif // QGEOSATELLITEINFOSOURCEANDROID_H

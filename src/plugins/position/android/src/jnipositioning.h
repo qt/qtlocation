@@ -43,10 +43,11 @@
 #define JNIPOSITIONING_H
 
 #include <QGeoPositionInfoSource>
+#include <QGeoSatelliteInfoSource>
 
 namespace AndroidPositioning
 {
-    int registerPositionInfoSource(QGeoPositionInfoSourceAndroid *src);
+    int registerPositionInfoSource(QObject *obj);
     void unregisterPositionInfoSource(int key);
 
     QGeoPositionInfoSource::PositioningMethods availableProviders();
@@ -55,6 +56,10 @@ namespace AndroidPositioning
     QGeoPositionInfoSource::Error startUpdates(int androidClassKey);
     void stopUpdates(int androidClassKey);
     QGeoPositionInfoSource::Error requestUpdate(int androidClassKey);
+
+    QGeoSatelliteInfoSource::Error startSatelliteUpdates(int androidClassKey,
+                                                         bool isSingleRequest,
+                                                         int updateRequestTimeout);
 }
 
 #endif // JNIPOSITIONING_H

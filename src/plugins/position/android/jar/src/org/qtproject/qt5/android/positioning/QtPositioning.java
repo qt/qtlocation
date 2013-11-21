@@ -43,13 +43,17 @@ package org.qtproject.qt5.android.positioning;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import android.util.Log;
@@ -66,7 +70,7 @@ public class QtPositioning implements LocationListener
         The positionInfo instance to which this
         QtPositioning instance is attached to.
     */
-    private int positionInfoSource = 0;
+    private int nativeClassReference = 0;
 
     /*
         The provider type requested by Qt:
@@ -85,6 +89,8 @@ public class QtPositioning implements LocationListener
     private Location lastGps = null;
     /* The last received network update */
     private Location lastNetwork = null;
+    /* If true this class acts as satellite signal monitor rather than location monitor */
+    private boolean isSatelliteUpdate = false;
 
     private PositioningLooper looperThread;
 
@@ -174,8 +180,9 @@ public class QtPositioning implements LocationListener
                 boolean exceptionOccurred = false;
                 QtPositioning positioningListener = new QtPositioning();
                 positioningListener.setActiveLooper(true);
-                positioningListener.positionInfoSource = androidClassKey;
+                positioningListener.nativeClassReference = androidClassKey;
                 positioningListener.expectedProviders = locationProvider;
+                positioningListener.isSatelliteUpdate = false;
 
                 if (updateInterval == 0)
                     updateInterval = 1000; //don't update more often than once per second
@@ -249,9 +256,10 @@ public class QtPositioning implements LocationListener
                 boolean exceptionOccurred = false;
                 QtPositioning positioningListener = new QtPositioning();
                 positioningListener.setActiveLooper(true);
-                positioningListener.positionInfoSource = androidClassKey;
+                positioningListener.nativeClassReference = androidClassKey;
                 positioningListener.isSingleUpdate = true;
                 positioningListener.expectedProviders = locationProvider;
+                positioningListener.isSatelliteUpdate = false;
 
                 if ((locationProvider & 1) > 0) {
                     Log.d(TAG, "Single update using GPS");
@@ -298,6 +306,57 @@ public class QtPositioning implements LocationListener
         }
     }
 
+    static public int startSatelliteUpdates(int androidClassKey, int updateInterval, boolean isSingleRequest)
+    {
+        synchronized (m_syncObject) {
+            try {
+                boolean exceptionOccurred = false;
+                QtPositioning positioningListener = new QtPositioning();
+                positioningListener.isSatelliteUpdate = true;
+                positioningListener.setActiveLooper(true);
+                positioningListener.nativeClassReference = androidClassKey;
+                positioningListener.expectedProviders = 1; //always satellite provider
+                positioningListener.isSingleUpdate = isSingleRequest;
+
+                if (updateInterval == 0)
+                    updateInterval = 1000; //don't update more often than once per second
+
+                if (isSingleRequest)
+                    Log.d(TAG, "Single update for Satellites " + updateInterval);
+                else
+                    Log.d(TAG, "Regular updates for Satellites " + updateInterval);
+                try {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                                               updateInterval, 0,
+                                               positioningListener,
+                                               positioningListener.looper());
+                } catch (SecurityException se) {
+                    se.printStackTrace();
+                    exceptionOccurred = true;
+                }
+
+                if (exceptionOccurred) {
+                    positioningListener.setActiveLooper(false);
+                    locationManager.removeUpdates(positioningListener);
+                    return 0; //QGeoSatelliteInfoSource::AccessError
+                }
+
+                if (!expectedProvidersAvailable(positioningListener.expectedProviders)) {
+                    //all location providers unavailable -> when they come back we resume automatically
+                    //in the mean time return ClosedError
+                    return 1; //QGeoSatelliteInfoSource::ClosedError
+                }
+
+                runningListeners.put(androidClassKey, positioningListener);
+            } catch(Exception e) {
+                e.printStackTrace();
+                return -1; //QGeoSatelliteInfoSource::UnknownSourceError
+            }
+
+            return 2; //QGeoSatelliteInfoSource::NoError
+        }
+    }
+
     public QtPositioning()
     {
         looperThread = new PositioningLooper();
@@ -315,6 +374,8 @@ public class QtPositioning implements LocationListener
                 if (looperThread.isAlive())
                     return;
 
+                looperThread.isSatelliteListener(true);
+
                 looperThread.start();
                 while (!looperThread.isReady());
                 Thread.sleep(1000);
@@ -326,9 +387,11 @@ public class QtPositioning implements LocationListener
         }
     }
 
-    private class PositioningLooper extends Thread {
+    private class PositioningLooper extends Thread implements GpsStatus.Listener{
         private boolean looperRunning;
         private Looper posLooper;
+        private boolean isSatelliteLooper = false;
+        private LocationManager locManager = null;
 
         private PositioningLooper()
         {
@@ -340,6 +403,15 @@ public class QtPositioning implements LocationListener
             Looper.prepare();
             Handler handler = new Handler();
             looperRunning = true;
+
+            if (isSatelliteLooper) {
+                try {
+                    locationManager.addGpsStatusListener(this);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
             posLooper = Looper.myLooper();
             Looper.loop();
             looperRunning = false;
@@ -347,6 +419,8 @@ public class QtPositioning implements LocationListener
 
         public void quitLooper()
         {
+            if (isSatelliteLooper)
+                locationManager.removeGpsStatusListener(this);
             looper().quit();
         }
 
@@ -355,9 +429,40 @@ public class QtPositioning implements LocationListener
             return looperRunning;
         }
 
+        public void isSatelliteListener(boolean isListener)
+        {
+            isSatelliteLooper = isListener;
+        }
+
         public Looper looper()
         {
             return posLooper;
+        }
+
+        @Override
+        public void onGpsStatusChanged(int event) {
+            switch (event) {
+                case GpsStatus.GPS_EVENT_FIRST_FIX:
+                    break;
+                case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
+                    GpsStatus status = locationManager.getGpsStatus(null);
+                    Iterable<GpsSatellite> iterable = status.getSatellites();
+                    Iterator<GpsSatellite> it = iterable.iterator();
+
+                    ArrayList<GpsSatellite> list = new ArrayList<GpsSatellite>();
+                    while (it.hasNext()) {
+                        GpsSatellite sat = (GpsSatellite) it.next();
+                        list.add(sat);
+                    }
+                    GpsSatellite[] sats = list.toArray(new GpsSatellite[list.size()]);
+                    satelliteUpdated(sats, nativeClassReference, isSingleUpdate);
+
+                    break;
+                case GpsStatus.GPS_EVENT_STARTED:
+                    break;
+                case GpsStatus.GPS_EVENT_STOPPED:
+                    break;
+            }
         }
     }
 
@@ -365,6 +470,7 @@ public class QtPositioning implements LocationListener
 
     public static native void positionUpdated(Location update, int androidClassKey, boolean isSingleUpdate);
     public static native void locationProvidersDisabled(int androidClassKey);
+    public static native void satelliteUpdated(GpsSatellite[] update, int androidClassKey, boolean isSingleUpdate);
 
     @Override
     public void onLocationChanged(Location location) {
@@ -372,8 +478,11 @@ public class QtPositioning implements LocationListener
         if (location == null)
             return;
 
+        if (isSatelliteUpdate) //we are a QGeoSatelliteInfoSource -> ignore
+            return;
+
         if (isSingleUpdate || expectedProviders < 3) {
-            positionUpdated(location, positionInfoSource, isSingleUpdate);
+            positionUpdated(location, nativeClassReference, isSingleUpdate);
             return;
         }
 
@@ -387,12 +496,12 @@ public class QtPositioning implements LocationListener
             lastGps = location;
 
             // assumption: GPS always better -> pass it on
-            positionUpdated(location, positionInfoSource, isSingleUpdate);
+            positionUpdated(location, nativeClassReference, isSingleUpdate);
         } else if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
             lastNetwork = location;
 
             if (lastGps == null) { //no GPS fix yet use network location
-                positionUpdated(location, positionInfoSource, isSingleUpdate);
+                positionUpdated(location, nativeClassReference, isSingleUpdate);
                 return;
             }
 
@@ -404,7 +513,7 @@ public class QtPositioning implements LocationListener
                 return;
 
             // Use network data -> GPS has timed out on updateInterval
-            positionUpdated(location, positionInfoSource, isSingleUpdate);
+            positionUpdated(location, nativeClassReference, isSingleUpdate);
         }
     }
 
@@ -420,6 +529,6 @@ public class QtPositioning implements LocationListener
     public void onProviderDisabled(String provider) {
         Log.d(TAG, "Disabled provider: " + provider);
         if (!expectedProvidersAvailable(expectedProviders))
-            locationProvidersDisabled(positionInfoSource);
-   }
+            locationProvidersDisabled(nativeClassReference);
+    }
 }
