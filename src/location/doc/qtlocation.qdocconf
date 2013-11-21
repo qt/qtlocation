@@ -45,8 +45,9 @@ sourcedirs  += .. \
                 ../../imports/location \
                 ../../plugins/geoservices/nokia
 
-exampledirs += ../../../examples \
-               ../../../examples/declarative \
+examplesinstallpath = location
+
+exampledirs += ../../../examples/location \
                snippets/
 
 

@@ -44,8 +44,9 @@ headerdirs  += .. \
 sourcedirs  += .. \
                 ../../imports/positioning
 
-exampledirs += ../../../examples \
-               ../../../examples/declarative \
+examplesinstallpath = positioning
+
+exampledirs += ../../../examples/positioning \
                snippets/
 
 
