@@ -23,52 +23,30 @@ QGeoMapScenePrivate::~QGeoMapScenePrivate()
     delete light_;
 }
 
-QGeometryData QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)
+QGeometryData QGeoMapScenePrivate::buildGeometryData(const QGeoTileSpec &spec)
 {
-    int x = spec.x();
-
-    if (x < tileXWrapsBelow_)
-        x += sideLength_;
-
-    if ((x < minTileX_)
-            || (maxTileX_ < x)
-            || (spec.y() < minTileY_)
-            || (maxTileY_ < spec.y())
-            || (spec.zoom() != tileZ_)) {
+    const QRectF &rect = buildGeometry(spec);
+    if (rect.isNull())
         return 0;
-    }
-
-    double edge = scaleFactor_ * tileSize_;
-
-    double x1 = (x - minTileX_);
-    double x2 = x1 + 1.0;
-
-    double y1 = (minTileY_ - spec.y());
-    double y2 = y1 - 1.0;
-
-    x1 *= edge;
-    x2 *= edge;
-    y1 *= edge;
-    y2 *= edge;
 
     QGeometryData g;
 
     QDoubleVector3D n = QDoubleVector3D(0, 0, 1);
 
     //Texture coordinate order for veritcal flip of texture
-    g.appendVertex(QVector3D(x1, y1, 0.0));
+    g.appendVertex(QVector3D(rect.x(), rect.y(), 0.0));
     g.appendNormal(n);
     g.appendTexCoord(QVector2D(0.0, 0.0));
 
-    g.appendVertex(QVector3D(x1, y2, 0.0));
+    g.appendVertex(QVector3D(rect.x(), rect.y() + rect.height(), 0.0));
     g.appendNormal(n);
     g.appendTexCoord(QVector2D(0.0, 1.0));
 
-    g.appendVertex(QVector3D(x2, y2, 0.0));
+    g.appendVertex(QVector3D(rect.x() + rect.width(), rect.y()+rect.height(), 0.0));
     g.appendNormal(n);
     g.appendTexCoord(QVector2D(1.0, 1.0));
 
-    g.appendVertex(QVector3D(x2, y1, 0.0));
+    g.appendVertex(QVector3D(rect.x() + rect.width(), rect.y(), 0.0));
     g.appendNormal(n);
     g.appendTexCoord(QVector2D(1.0, 0.0));
 
@@ -124,7 +102,7 @@ void QGeoMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoT
 
     QGLSceneNode *node = nodes_.value(spec, 0);
     if (!node) {
-        QGeometryData geom = buildGeometry(spec);
+        QGeometryData geom = buildGeometryData(spec);
         node = buildSceneNodeFromGeometry(geom);
         if (!node)
             return;
@@ -187,7 +165,7 @@ void QGeoMapScenePrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
         QGLSceneNode *node = nodes_.value(tile, 0);
 
         if (node) {
-            QGeometryData geom = buildGeometry(tile);
+            QGeometryData geom = buildGeometryData(tile);
             // if the new geometry (after wrapping) is the same as the old one,
             // it can be reused
             if ( node->children().size() > 0) {
@@ -211,6 +189,36 @@ void QGeoMapScenePrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
             delete node;
         }
     }
+}
+
+QRectF QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)
+{
+    int x = spec.x();
+
+    if (x < tileXWrapsBelow_)
+        x += sideLength_;
+
+    if ((x < minTileX_)
+            || (maxTileX_ < x)
+            || (spec.y() < minTileY_)
+            || (maxTileY_ < spec.y())
+            || (spec.zoom() != tileZ_)) {
+        return QRectF();
+    }
+
+    double edge = scaleFactor_ * tileSize_;
+
+    double x1 = (x - minTileX_);
+    double x2 = x1 + 1.0;
+
+    double y1 = (minTileY_ - spec.y());
+    double y2 = y1 - 1.0;
+
+    x1 *= edge;
+    x2 *= edge;
+    y1 *= edge;
+    y2 *= edge;
+    return QRectF(x1, y1, x2-x1, y2-y1);
 }
 
 void QGeoMapScenePrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)

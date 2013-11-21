@@ -71,7 +71,11 @@ class QGeoMappingManager;
 class QGeoTile;
 class QGeoCachedTileMemory;
 class QGeoTileCache;
+#ifndef NO_QT3D_RENDERER
 class QGLTexture2D;
+#else
+class QSGTexture;
+#endif
 
 class QPixmap;
 class QThread;
@@ -101,7 +105,7 @@ public:
 #ifndef NO_QT3D_RENDERER
     QGLTexture2D *texture;
 #else
-    void *texture; //need a custom texture class here
+    QSGTexture *texture; //need a custom texture class here
 #endif
     bool textureBound;
 };

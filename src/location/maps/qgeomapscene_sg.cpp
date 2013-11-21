@@ -41,6 +41,11 @@
 
 #include "qgeomapscene_p_p.h"
 
+#include "qgeotilespec_p.h"
+#include "qgeotilecache_p.h"
+
+#include <QSGSimpleTextureNode>
+
 QT_BEGIN_NAMESPACE
 
 
@@ -54,6 +59,27 @@ void QGeoMapScenePrivate::setScalingOnTextures()
 
 void QGeoMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
 {
+    if (!visibleTiles_.contains(spec)) // Don't add the geometry if it isn't visible
+        return;
+
+    const QRectF &rect = buildGeometry(spec);
+    if (rect.isNull())
+        return;
+
+    QSGSimpleTextureNode *node = new QSGSimpleTextureNode();
+
+    if (linearScaling_) {
+        node->setFiltering(QSGTexture::Linear);
+    } else {
+        node->setFiltering(QSGTexture::Nearest);
+    }
+
+    node->setRect(rect);
+    node->setTexture(texture->texture);
+
+    nodes_.insert(spec, node);
+    textures_.insert(spec, texture);
+    newUploads_ << texture;
 }
 
 // return true if new tiles introduced in [tiles]

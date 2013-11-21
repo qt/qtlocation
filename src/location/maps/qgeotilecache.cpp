@@ -50,6 +50,11 @@
 #include <QPixmap>
 #include <QDebug>
 
+#ifdef NO_QT3D_RENDERER
+#include <QSGTexture>
+#include <QQuickWindow>
+#endif
+
 #include <Qt3D/qgltexture2d.h>
 
 Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
@@ -414,6 +419,10 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileS
     tt->texture->setPixmap(pixmap);
     tt->texture->setHorizontalWrap(QGL::ClampToEdge);
     tt->texture->setVerticalWrap(QGL::ClampToEdge);
+#else
+    //tt->texture = QQuickWindow::createTextureFromImage(pixmap.toImage());
+    tt->texture->setHorizontalWrapMode(QSGTexture::ClampToEdge);
+    tt->texture->setVerticalWrapMode(QSGTexture::ClampToEdge);
 #endif
 
     /* Do not bind/cleanImage on the texture here -- it needs to be done

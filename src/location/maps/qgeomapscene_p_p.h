@@ -54,6 +54,8 @@
 
 #ifndef NO_QT3D_RENDERER
 class QGLLightParameters;
+#else
+class QSGSimpleTextureNode;
 #endif
 
 class QGeoMapScenePrivate
@@ -86,9 +88,9 @@ public:
     int sideLength_;
 
 #ifndef NO_QT3D_RENDERER
-    QHash<QGeoTileSpec, QGLSceneNode *> nodes_;
+    QHash<QGeoTileSpec, QGLSceneNode*> nodes_;
 #else
-    QHash<QGeoTileSpec, QSGNode *> nodes_;
+    QHash<QGeoTileSpec, QSGSimpleTextureNode*> nodes_;
 #endif
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > textures_;
     QList<QSharedPointer<QGeoTileTexture> > newUploads_;
@@ -126,8 +128,11 @@ public:
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
     void updateTiles(const QSet<QGeoTileSpec> &tiles);
+
+    QRectF buildGeometry(const QGeoTileSpec &spec); //The return value might be a problem
+                                                    //when qreal is float
 #ifndef NO_QT3D_RENDERER
-    QGeometryData buildGeometry(const QGeoTileSpec &spec);
+    QGeometryData buildGeometryData(const QGeoTileSpec &spec);
     QGLSceneNode *buildSceneNodeFromGeometry(const QGeometryData &geom);
     void paintGL(QGLPainter *painter);
 #endif
