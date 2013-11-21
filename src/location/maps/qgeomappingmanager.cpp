@@ -45,6 +45,10 @@
 #include "qgeotiledmapreply_p.h"
 #include "qgeocameracapabilities_p.h"
 
+#ifdef NO_QT3D_RENDERER
+#include "qgeotiledmapdata_p.h"
+#include "qgeotilecache_p.h"
+#endif
 
 #include "qgeomap_p.h"
 
@@ -135,9 +139,14 @@ QGeoCameraCapabilities QGeoMappingManager::cameraCapabilities() const
 /*!
     Returns a new QGeoMap instance which will be managed by this manager.
 */
-QGeoMap *QGeoMappingManager::createMap(QObject *parent)
+QGeoMap *QGeoMappingManager::createMap(QObject *parent, QQuickWindow *window)
 {
     QGeoMapData *mapData = d_ptr->engine->createMapData();
+#ifdef NO_QT3D_RENDERER
+    QGeoTiledMapData *tMapData = qobject_cast<QGeoTiledMapData*>(mapData);
+    qDebug() << "Setting window";
+    tMapData->tileCache()->setQQuickWindow(window);
+#endif
     QGeoMap *map = new QGeoMap(mapData, parent);
     return map;
 }

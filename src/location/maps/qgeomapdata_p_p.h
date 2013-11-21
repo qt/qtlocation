@@ -107,7 +107,9 @@ private:
     int height_;
     double aspectRatio_;
 
+#ifndef NO_QT3D_RENDERER
     QGLCamera *camera_;
+#endif
     QGeoMapData *map_;
     QGeoMappingManagerEngine *engine_;
     QString pluginString_;

@@ -75,6 +75,7 @@ class QGeoTileCache;
 class QGLTexture2D;
 #else
 class QSGTexture;
+class QQuickWindow;
 #endif
 
 class QPixmap;
@@ -142,6 +143,8 @@ public:
 
 #ifndef NO_QT3D_RENDERER
     void GLContextAvailable();
+#else
+    void setQQuickWindow(QQuickWindow *window);
 #endif
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec);
@@ -182,7 +185,8 @@ private:
 #ifndef NO_QT3D_RENDERER
     static QList<QGLTexture2D*> cleanupList_;
 #else
-    static QList<void*> cleanupList_;
+    static QList<QSGTexture*> cleanupList_;
+    QQuickWindow *m_containingWindow;
 #endif
 };
 

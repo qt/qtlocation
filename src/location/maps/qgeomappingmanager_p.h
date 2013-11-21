@@ -69,7 +69,7 @@ class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 class QGeoMappingManagerEngine;
 class QGeoCameraCapabilities;
-
+class QQuickWindow;
 
 class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
 {
@@ -81,7 +81,7 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    QGeoMap *createMap(QObject *parent);
+    QGeoMap *createMap(QObject *parent, QQuickWindow *window = 0);
 
     QList<QGeoMapType> supportedMapTypes() const;
 

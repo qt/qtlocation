@@ -65,7 +65,7 @@ QMutex QGeoTileCache::cleanupMutex_;
 #ifndef NO_QT3D_RENDERER
 QList<QGLTexture2D*> QGeoTileCache::cleanupList_;
 #else
-QList<void*> QGeoTileCache::cleanupList_;
+QList<QSGTexture*> QGeoTileCache::cleanupList_;
 #endif
 
 
@@ -116,6 +116,9 @@ QGeoTileTexture::~QGeoTileTexture()
 QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     : QObject(parent), directory_(directory),
       minTextureUsage_(0), extraTextureUsage_(0)
+#ifdef NO_QT3D_RENDERER
+    , m_containingWindow(0)
+#endif
 {
     qRegisterMetaType<QGeoTileSpec>();
     qRegisterMetaType<QList<QGeoTileSpec> >();
@@ -301,6 +304,11 @@ void QGeoTileCache::GLContextAvailable()
         cleanupList_.pop_front();
     }
 }
+#else
+void QGeoTileCache::setQQuickWindow(QQuickWindow *window)
+{
+    m_containingWindow = window;
+}
 #endif
 
 QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
@@ -420,7 +428,7 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileS
     tt->texture->setHorizontalWrap(QGL::ClampToEdge);
     tt->texture->setVerticalWrap(QGL::ClampToEdge);
 #else
-    //tt->texture = QQuickWindow::createTextureFromImage(pixmap.toImage());
+    tt->texture = m_containingWindow->createTextureFromImage(pixmap.toImage());
     tt->texture->setHorizontalWrapMode(QSGTexture::ClampToEdge);
     tt->texture->setVerticalWrapMode(QSGTexture::ClampToEdge);
 #endif

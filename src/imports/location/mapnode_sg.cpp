@@ -60,5 +60,4 @@ void MapNode::setSize(const QSize &size)
 
 void MapNode::update()
 {
-
 }

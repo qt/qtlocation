@@ -337,5 +337,35 @@ void QGeoMapScenePrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
     }
 }
 
+QRectF QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)
+{
+    int x = spec.x();
+
+    if (x < tileXWrapsBelow_)
+        x += sideLength_;
+
+    if ((x < minTileX_)
+            || (maxTileX_ < x)
+            || (spec.y() < minTileY_)
+            || (maxTileY_ < spec.y())
+            || (spec.zoom() != tileZ_)) {
+        return QRectF();
+    }
+
+    double edge = scaleFactor_ * tileSize_;
+
+    double x1 = (x - minTileX_);
+    double x2 = x1 + 1.0;
+
+    double y1 = (minTileY_ - spec.y());
+    double y2 = y1 - 1.0;
+
+    x1 *= edge;
+    x2 *= edge;
+    y1 *= edge;
+    y2 *= edge;
+    return QRectF(x1, y1, x2-x1, y2-y1);
+}
+
 
 QT_END_NAMESPACE

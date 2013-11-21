@@ -123,8 +123,6 @@ public:
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
     virtual void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
-    void itemChange(ItemChange change, const ItemChangeData & data);
-
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
 
@@ -193,6 +191,7 @@ Q_SIGNALS:
     void mapItemsChanged();
 
 private Q_SLOTS:
+    void windowWasChanged();
     void updateMapDisplay(const QRectF &target);
     void mappingManagerInitialized();
     void mapZoomLevelChanged(qreal zoom);

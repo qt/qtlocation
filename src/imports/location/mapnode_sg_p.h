@@ -43,6 +43,7 @@
 #define MAPNODE_SG_P_H
 
 #include <QSGNode>
+#include <QQuickWindow>
 
 QT_BEGIN_NAMESPACE
 

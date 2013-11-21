@@ -108,6 +108,8 @@ public:
 
     QString pluginString();
 
+    QGeoMapData *mapData() { return mapData_; }
+
 public Q_SLOTS:
     void update();
     void cameraStopped(); // optional hint for prefetch

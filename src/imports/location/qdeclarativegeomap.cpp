@@ -299,11 +299,15 @@ void QDeclarativeGeoMap::pluginReady()
         return;
     }
 
+#ifdef NO_QT3D_RENDERER
+    qDebug() << "Listening for window changed" << window();
+    connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(windowWasChanged()));
+#else
     if (!mappingManager_->isInitialized())
         connect(mappingManager_, SIGNAL(initialized()), this, SLOT(mappingManagerInitialized()));
     else
         mappingManagerInitialized();
-
+#endif
     // make sure this is only called once
     disconnect(this, SLOT(pluginReady()));
 }
@@ -384,16 +388,6 @@ QDeclarativeGeoMapGestureArea *QDeclarativeGeoMap::gesture()
 /*!
     \internal
 */
-void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData & data)
-{
-    QLOC_TRACE0;
-    if (change == ItemSceneChange)
-        window_ = data.window;
-}
-
-/*!
-    \internal
-*/
 void QDeclarativeGeoMap::populateMap()
 {
     QObjectList kids = children();
@@ -437,6 +431,9 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 
     if (!node) {
         node = new MapNode(map_);
+#ifdef NO_QT3D_RENDERER
+        qDebug() << "Setting window" << window();
+#endif
     }
 
     if (!mappingManagerInitialized_)
@@ -483,7 +480,8 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 {
     mappingManagerInitialized_ = true;
 
-    map_ = mappingManager_->createMap(this);
+    qDebug() << "Creating the map" << window();
+    map_ = mappingManager_->createMap(this, window());
     gestureArea_->setMap(map_);
 
     //The zoom level limits are only restricted by the plugins values, if the user has set a more
@@ -558,6 +556,12 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         if (item)
             item.data()->setMap(this, map_);
     }
+}
+
+void QDeclarativeGeoMap::windowWasChanged()
+{
+    if (window())
+        connect(window(), SIGNAL(sceneGraphInitialized()), this, SLOT(mappingManagerInitialized()));
 }
 
 /*!
