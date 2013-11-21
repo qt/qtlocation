@@ -14,8 +14,10 @@ SOURCES += \
     qgeopositioninfosourcefactory_geoclue.cpp \
     qgeocluemaster.cpp
 
-config_geoclue-satellite {
+qtHaveModule(dbus):config_geoclue-satellite {
     DEFINES += HAS_SATELLITE
+
+    QT *= dbus
 
     HEADERS += qgeosatelliteinfosource_geocluemaster.h
     SOURCES += qgeosatelliteinfosource_geocluemaster.cpp

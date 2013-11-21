@@ -26,7 +26,7 @@
 ****************************************************************************/
 
 /*!
-    \example declarative/mapviewer
+    \example mapviewer
     \title Map Viewer (QML)
     \ingroup qtlocation-examples
 

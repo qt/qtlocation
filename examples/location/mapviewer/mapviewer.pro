@@ -32,7 +32,7 @@ OTHER_FILES += $$qmlcontentdialogs.files
 
 include(../common/common.pri)
 
-target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/mapviewer
+target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/mapviewer
 
 INSTALLS += target
 

@@ -9,8 +9,8 @@ RESOURCES += \
 
 OTHER_FILES += flickr.qml
 
-target.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/declarative/flickr
+target.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/flickr
 sources.files = $$SOURCES $$HEADERS $$RESOURCES $$FORMS *.pro *.qml flickrcommon flickrmobile
-sources.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/declarative/flickr
+sources.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/flickr
 
 INSTALLS += target sources
