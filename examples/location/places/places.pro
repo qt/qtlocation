@@ -37,7 +37,7 @@ OTHER_FILES += $$qmlcontentplaces.files
 
 include(../common/common.pri)
 
-target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/places
+target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/places
 
 INSTALLS += target
 

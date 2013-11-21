@@ -76,7 +76,7 @@ QT_BEGIN_NAMESPACE
     \section2 Example Usage
 
     See the example given for the \l{PositionSource} type, or the
-    \l{declarative/flickr}{Flickr} example application.
+    \l{flickr}{Flickr} example application.
 
     \sa PositionSource, coordinate
 
