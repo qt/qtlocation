@@ -72,6 +72,8 @@ QGeoRouteReply* QGeoRoutingManagerEngineOsm::calculateRoute(const QGeoRouteReque
     QUrl url(QLatin1String("http://router.project-osrm.org/viaroute"));
     QUrlQuery query;
 
+    query.addQueryItem(QStringLiteral("instructions"), QStringLiteral("true"));
+
     foreach (const QGeoCoordinate &c, request.waypoints()) {
         query.addQueryItem(QLatin1String("loc"), QString::number(c.latitude()) + QLatin1Char(',') +
                                                  QString::number(c.longitude()));
