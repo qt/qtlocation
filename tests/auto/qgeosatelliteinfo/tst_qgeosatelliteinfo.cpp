@@ -52,7 +52,6 @@
 #include <limits.h>
 
 QT_USE_NAMESPACE
-Q_DECLARE_METATYPE(QGeoSatelliteInfo)
 Q_DECLARE_METATYPE(QGeoSatelliteInfo::Attribute)
 
 QByteArray tst_qgeosatelliteinfo_debug;

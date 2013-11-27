@@ -50,8 +50,6 @@
 
 QT_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoPositionInfo)
-
 class tst_PositionPlugin : public QObject
 {
     Q_OBJECT

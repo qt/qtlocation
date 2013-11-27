@@ -43,6 +43,8 @@
 
 #include <QtPositioning/qpositioningglobal.h>
 
+#include <QtCore/QMetaType>
+
 QT_BEGIN_NAMESPACE
 
 class QDebug;
@@ -110,5 +112,7 @@ Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteI
 #endif
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QGeoSatelliteInfo)
 
 #endif

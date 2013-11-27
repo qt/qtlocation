@@ -58,7 +58,6 @@
 
 QT_USE_NAMESPACE
 Q_DECLARE_METATYPE(QNmeaPositionInfoSource::UpdateMode)
-Q_DECLARE_METATYPE(QGeoPositionInfo)
 Q_DECLARE_METATYPE(QList<QDateTime>)
 
 class tst_QNmeaPositionInfoSource : public QObject
