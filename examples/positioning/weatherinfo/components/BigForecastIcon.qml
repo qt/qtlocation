@@ -70,7 +70,10 @@ Item {
 
     Text {
         text: current.bottomText
-        font.pointSize: 28
+        font.pointSize: 23
+        wrapMode: Text.WordWrap
+        width: parent.width
+        horizontalAlignment: Text.AlignRight
         anchors {
             bottom: current.bottom
             right: current.right
