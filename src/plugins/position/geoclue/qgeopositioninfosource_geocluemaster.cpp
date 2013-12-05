@@ -47,6 +47,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QSaveFile>
 #include <QtCore/QStandardPaths>
+#include <QtCore/QtNumeric>
 
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
 #include <QDebug>
@@ -134,6 +135,8 @@ QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject
     m_requestTimer.setSingleShot(true);
     QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(requestUpdateTimeout()));
     QObject::connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(startUpdatesTimeout()));
+
+    setPreferredPositioningMethods(AllPositioningMethods);
 }
 
 QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
@@ -495,21 +498,19 @@ QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(
     }
     QGeoPositionInfo info(coordinate, dateTime);
     if (accuracy) {
-        double horizontalAccuracy;
-        double verticalAccuracy;
-        GeoclueAccuracyLevel accuracyLevel;
+        double horizontalAccuracy = qQNaN();
+        double verticalAccuracy = qQNaN();
+        GeoclueAccuracyLevel accuracyLevel = GEOCLUE_ACCURACY_LEVEL_NONE;
         geoclue_accuracy_get_details(accuracy, &accuracyLevel, &horizontalAccuracy, &verticalAccuracy);
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster::accuracy horizontal vertical level: " << horizontalAccuracy << verticalAccuracy << accuracyLevel;
 #endif
-        if (accuracyLevel & GEOCLUE_ACCURACY_LEVEL_DETAILED)
-            m_lastPositionFromSatellite = true;
-        else
-            m_lastPositionFromSatellite = false;
-        if (accuracyLevel != GEOCLUE_ACCURACY_LEVEL_NONE) {
+        m_lastPositionFromSatellite = accuracyLevel & GEOCLUE_ACCURACY_LEVEL_DETAILED;
+
+        if (!qIsNaN(horizontalAccuracy))
             info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, horizontalAccuracy);
+        if (!qIsNaN(verticalAccuracy))
             info.setAttribute(QGeoPositionInfo::VerticalAccuracy, verticalAccuracy);
-        }
     }
     return info;
 }

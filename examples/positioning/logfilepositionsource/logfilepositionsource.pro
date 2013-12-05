@@ -9,7 +9,8 @@ SOURCES = logfilepositionsource.cpp \
           clientapplication.cpp \
           main.cpp
 
-EXAMPLE_FILES = simplelog.txt
 
 target.path = $$[QT_INSTALL_EXAMPLES]/positioning/logfilepositionsource
-INSTALLS += target
+log.files = simplelog.txt
+log.path = $$[QT_INSTALL_EXAMPLES]/positioning/logfilepositionsource
+INSTALLS += target log
