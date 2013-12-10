@@ -39,5 +39,16 @@
 **
 ****************************************************************************/
 
+#include <QtCore/QCoreApplication>
 #include <QtQuickTest/quicktest.h>
+
+static void initializeLibraryPath()
+{
+    // Set custom path since CI doesn't install test plugins
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
+                                     QStringLiteral("/../../../plugins"));
+}
+
+Q_COREAPP_STARTUP_FUNCTION(initializeLibraryPath)
+
 QUICK_TEST_MAIN(declarative_ui)

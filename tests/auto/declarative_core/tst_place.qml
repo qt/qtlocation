@@ -174,9 +174,8 @@ TestCase {
                 return false;
             if (place1.supplier.name !== place2.supplier.name)
                 return false;
-            //depends in QTBUG-33546
-            /*if (place1.supplier.url !== place2.supplier.url)
-                return false;*/
+            if (place1.supplier.url !== place2.supplier.url)
+                return false;
 
             // check supplier icon
             if (place1.supplier.icon === null && place2.supplier.icon !== null)
@@ -235,10 +234,9 @@ TestCase {
             if (place1.location.address.postalCode !== place2.location.address.postalCode)
                 return false;
 
-            //QTBUG-33561 operator === should work too, using == for now only
-            if (place1.location.coordinate != place2.location.coordinate)
+            if (place1.location.coordinate !== place2.location.coordinate)
                 return false;
-            if (place1.location.boundingBox != place2.location.boundingBox)
+            if (place1.location.boundingBox !== place2.location.boundingBox)
                 return false;
         }
 

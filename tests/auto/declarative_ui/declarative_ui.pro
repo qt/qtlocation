@@ -13,3 +13,6 @@ TESTDATA = $$OTHER_FILES
 
 win32|linux:CONFIG+=insignificant_test # QTBUG-31797
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+
+# Import path used by 'make check' since CI doesn't install test imports
+IMPORTPATH = $$OUT_PWD/../../../qml
