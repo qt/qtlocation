@@ -65,6 +65,7 @@
 QT_USE_NAMESPACE
 #define UPDATE_INTERVAL 200
 
+Q_DECLARE_METATYPE(QGeoPositionInfo)
 Q_DECLARE_METATYPE(QGeoAreaMonitorInfo)
 
 class tst_QGeoAreaMonitorSource : public QObject

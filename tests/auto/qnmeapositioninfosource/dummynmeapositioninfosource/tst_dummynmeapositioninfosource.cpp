@@ -50,6 +50,7 @@
 #include <QTest>
 
 Q_DECLARE_METATYPE(QNmeaPositionInfoSource::UpdateMode)
+Q_DECLARE_METATYPE(QGeoPositionInfo)
 
 class DummyNmeaPositionInfoSource : public QNmeaPositionInfoSource
 {

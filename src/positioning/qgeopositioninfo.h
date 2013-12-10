@@ -112,6 +112,4 @@ Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionIn
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoPositionInfo)
-
 #endif

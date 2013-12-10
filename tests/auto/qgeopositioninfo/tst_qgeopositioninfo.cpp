@@ -53,6 +53,7 @@
 
 QT_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QGeoPositionInfo)
 Q_DECLARE_METATYPE(QGeoPositionInfo::Attribute)
 
 QByteArray tst_qgeopositioninfo_debug;
