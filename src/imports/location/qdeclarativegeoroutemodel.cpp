@@ -920,7 +920,7 @@ void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
         QGeoRectangle r = parseRectangle(value.property(i), &ok);
 
         if (!ok || !r.isValid()) {
-            qmlInfo(this) << "Unsupported waypoint type";
+            qmlInfo(this) << "Unsupported area type";
             return;
         }
 
