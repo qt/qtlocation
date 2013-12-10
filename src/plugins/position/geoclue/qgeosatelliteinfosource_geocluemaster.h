@@ -62,8 +62,6 @@ public:
     explicit QGeoSatelliteInfoSourceGeoclueMaster(QObject *parent = 0);
     ~QGeoSatelliteInfoSourceGeoclueMaster();
 
-    bool init();
-
     int minimumUpdateInterval() const Q_DECL_OVERRIDE;
     Error error() const Q_DECL_OVERRIDE;
 

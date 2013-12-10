@@ -244,13 +244,6 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePosition
 #endif
 }
 
-bool QGeoPositionInfoSourceGeoclueMaster::init()
-{
-    g_type_init ();
-
-    return true;
-}
-
 void QGeoPositionInfoSourceGeoclueMaster::cleanupPositionSource()
 {
     if (m_pos) {

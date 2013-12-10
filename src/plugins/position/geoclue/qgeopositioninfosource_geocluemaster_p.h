@@ -78,7 +78,6 @@ public:
     PositioningMethods supportedPositioningMethods() const;
     void setPreferredPositioningMethods(PositioningMethods methods);
     int minimumUpdateInterval() const;
-    bool init();
 
     void singleUpdateSucceeded(GeocluePositionFields fields,
                                int                   timestamp,

@@ -70,6 +70,9 @@ void position_provider_changed(GeoclueMasterClient *client, char *name, char *de
 QGeoclueMaster::QGeoclueMaster(QObject *handler)
 :   m_client(0), m_masterPosition(0), m_handler(handler)
 {
+#if !defined(GLIB_VERSION_2_36)
+    g_type_init();
+#endif
 }
 
 QGeoclueMaster::~QGeoclueMaster()
