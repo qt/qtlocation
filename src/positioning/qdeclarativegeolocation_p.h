@@ -42,9 +42,7 @@
 #ifndef QDECLARATIVEGEOLOCATION_P_H
 #define QDECLARATIVEGEOLOCATION_P_H
 
-
 #include <QtCore/QObject>
-#include <QtQml/qqml.h>
 #include <QtPositioning/QGeoLocation>
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/private/qdeclarativegeoaddress_p.h>
@@ -88,7 +86,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QDeclarativeGeoLocation)
 
 #endif // QDECLARATIVELOCATION_P_H

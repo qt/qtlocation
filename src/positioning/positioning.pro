@@ -1,7 +1,5 @@
 TARGET = QtPositioning
 QT = core-private
-QT += qml # the dependecy should be removed, see QTBUG-22330
-
 
 QMAKE_DOCS = $$PWD/doc/qtpositioning.qdocconf
 OTHER_FILES += doc/src/*.qdoc   # show .qdoc files in Qt Creator

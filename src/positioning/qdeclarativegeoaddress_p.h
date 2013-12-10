@@ -42,9 +42,8 @@
 #ifndef QDECLARATIVEGEOADDRESS_P_H
 #define QDECLARATIVEGEOADDRESS_P_H
 
-#include <qgeoaddress.h>
-#include <QtCore>
-#include <QtQml/qqml.h>
+#include <QtCore/QObject>
+#include <QtPositioning/QGeoAddress>
 
 QT_BEGIN_NAMESPACE
 
@@ -108,6 +107,5 @@ private:
 };
 
 QT_END_NAMESPACE
-QML_DECLARE_TYPE(QDeclarativeGeoAddress)
 
 #endif // QDECLARATIVEGEOADDRESS_P_H

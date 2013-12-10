@@ -42,10 +42,11 @@
 #include "qdeclarativegeocodemodel_p.h"
 #include "error_messages.h"
 
-#include <QtQml/qqmlinfo.h>
+#include <QtCore/QCoreApplication>
+#include <QtQml/QQmlInfo>
+#include <QtPositioning/QGeoCircle>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QGeoCodingManager>
-#include <QtPositioning/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 
