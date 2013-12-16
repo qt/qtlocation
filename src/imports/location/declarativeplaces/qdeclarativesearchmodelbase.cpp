@@ -43,6 +43,7 @@
 #include "qdeclarativeplace_p.h"
 #include "error_messages.h"
 
+#include <QtCore/QCoreApplication>
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>

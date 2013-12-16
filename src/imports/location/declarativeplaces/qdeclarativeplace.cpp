@@ -46,6 +46,8 @@
 #include "qdeclarativeplaceicon_p.h"
 #include "error_messages.h"
 
+#include <QtCore/QCoreApplication>
+#include <QtCore/QMetaObject>
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
@@ -54,7 +56,6 @@
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceIdReply>
 #include <QtLocation/QPlaceContactDetail>
-#include <QCoreApplication>
 
 QT_USE_NAMESPACE
 
@@ -965,7 +966,7 @@ void QDeclarativePlace::category_clear(QQmlListProperty<QDeclarativeCategory> *p
     object->m_categories.clear();
     object->m_src.setCategories(QList<QPlaceCategory>());
     emit object->categoriesChanged();
-    QTimer::singleShot(0, object, SLOT(cleanupDeletedCategories()));
+    QMetaObject::invokeMethod(object, "cleanupDeletedCategories", Qt::QueuedConnection);
 }
 
 /*!
