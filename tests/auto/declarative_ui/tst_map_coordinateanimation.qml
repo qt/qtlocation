@@ -59,7 +59,13 @@ Item {
          plugin: testPlugin
          width: 100
          height: 100
-         Behavior on center { CoordinateAnimation { duration: animationDuration } }
+
+         Behavior on center {
+             id: centerBehavior
+
+             enabled: false
+             CoordinateAnimation { duration: animationDuration }
+         }
 
          onCenterChanged: {
              if (!coordinateList) {
@@ -101,8 +107,14 @@ Item {
 
             var delta = (toMerc.latitude - fromMerc.latitude) / (toMerc.longitude - fromMerc.longitude)
 
+            // Set from coordinate with animation disabled.
             map.center = QtPositioning.coordinate(from.latitude, from.longitude)
-            wait(animationDuration * 2)
+
+            // Expect only one update
+            compare(coordinateList.length, 1)
+
+            // Set to coordinate with animation enabled
+            centerBehavior.enabled = true
             map.center = QtPositioning.coordinate(to.latitude, to.longitude)
             wait(animationDuration * 2)
 
