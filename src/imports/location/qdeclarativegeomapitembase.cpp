@@ -207,6 +207,7 @@ bool QDeclarativeGeoMapItemBase::childMouseEventFilter(QQuickItem *item, QEvent 
         if (contains(static_cast<QMouseEvent*>(event)->pos())) {
             return false;
         } else {
+            event->setAccepted(false);
             return true;
         }
     default:

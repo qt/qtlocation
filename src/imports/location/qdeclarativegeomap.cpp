@@ -752,7 +752,7 @@ qreal QDeclarativeGeoMap::zoomLevel() const
 */
 void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
 {
-    if (center == center_)
+    if (!mappingManagerInitialized_ && center == center_)
         return;
 
     center_ = center;
@@ -925,6 +925,8 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
             return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
         else
             return false;
+    case QEvent::UngrabMouse:
+        return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:

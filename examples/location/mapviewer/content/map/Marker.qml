@@ -67,6 +67,7 @@ MapQuickItem {
             anchors.fill: parent
             hoverEnabled : false
             drag.target: marker
+            preventStealing: true
 
             onPressed : {
                 map.pressX = mouse.x

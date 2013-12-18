@@ -67,6 +67,7 @@ Item {
     property variant coordinate2: QtPositioning.coordinate(12, 13)
     property variant coordinate3: QtPositioning.coordinate(50, 50, 0)
     property variant coordinate4: QtPositioning.coordinate(80, 80, 0)
+    property variant coordinate5: QtPositioning.coordinate(20, 180)
     property variant invalidCoordinate: QtPositioning.coordinate()
     property variant altitudelessCoordinate: QtPositioning.coordinate(50, 50)
 
@@ -101,6 +102,15 @@ Item {
             compare(mapCenterSpy.count, 1)
             map.center = coordinate2
             compare(mapCenterSpy.count, 1)
+
+            // change center to dateline
+            mapCenterSpy.clear()
+            compare(mapCenterSpy.count, 0)
+            map.center = coordinate5
+            compare(mapCenterSpy.count, 1)
+            compare(map.center, coordinate5)
+
+            map.center = coordinate2
 
             verify(isNaN(map.center.altitude));
             compare(map.center.longitude, 13)

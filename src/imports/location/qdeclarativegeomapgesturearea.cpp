@@ -679,6 +679,10 @@ bool QDeclarativeGeoMapGestureArea::filterMapChildMouseEvent(QMouseEvent *event)
     case QEvent::MouseMove:
         used = mouseMoveEvent(event);
         break;
+    case QEvent::UngrabMouse:
+        touchPoints_.clear();
+        update();
+        break;
     default:
         used = false;
         break;

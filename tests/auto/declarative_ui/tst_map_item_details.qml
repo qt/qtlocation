@@ -112,6 +112,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             drag.target: parent
+            preventStealing: true
         }
     }
 
@@ -126,6 +127,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             drag.target: parent
+            preventStealing: true
         }
     }
 
@@ -134,6 +136,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             drag.target: parent
+            preventStealing: true
         }
         coordinate {
             latitude: 20
@@ -158,6 +161,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             drag.target: parent
+            preventStealing: true
         }
     }
 
@@ -322,6 +326,7 @@ Item {
             clear_data()
             compare (extMapPolygon.border.width, 1.0)
             compare (extMapPolygonClicked.count, 0)
+            map.center = extMapPolygon.path[1]
             var point = map.toScreenPosition(extMapPolygon.path[1])
             map.addMapItem(extMapPolygon)
             verify(extMapPolygon.path.length == 2)
@@ -429,6 +434,7 @@ Item {
             extMapRectDateline.bottomRight.longitude = datelineCoordinateRight.longitude
             point = map.toScreenPosition(extMapRectDateline.bottomRight)
             verify(point.x > map.width / 2.0)
+            // move item edge onto dateline
             extMapRectDateline.topLeft.longitude = datelineCoordinate.longitude
             point = map.toScreenPosition(extMapRectDateline.topLeft)
             verify(point.x == map.width / 2.0)
@@ -448,8 +454,9 @@ Item {
 
             // circle
             map.addMapItem(extMapCircleDateline)
-            verify(extMapCircleDateline.center.longitude == 180)
-            var point = map.toScreenPosition(extMapCircleDateline.center)
+            verify(extMapCircleDateline.center.longitude === 180)
+            map.center = datelineCoordinate
+            point = map.toScreenPosition(extMapCircleDateline.center)
             verify(point.x == map.width / 2.0)
             extMapCircleDateline.center.longitude = datelineCoordinateRight.longitude
             point = map.toScreenPosition(extMapCircleDateline.center)
@@ -466,7 +473,8 @@ Item {
 
             // quickitem
             map.addMapItem(extMapQuickItemDateline)
-            verify(extMapQuickItemDateline.coordinate.longitude == 175)
+            map.center = datelineCoordinate
+            verify(extMapQuickItemDateline.coordinate.longitude === 175)
             point = map.toScreenPosition(extMapQuickItemDateline.coordinate)
             verify(point.x < map.width / 2.0)
             extMapQuickItemDateline.coordinate.longitude = datelineCoordinateRight.longitude
@@ -484,6 +492,7 @@ Item {
 
             // polygon
             map.addMapItem(extMapPolygonDateline)
+            map.center = datelineCoordinate
             verify(extMapPolygonDateline.path[0].longitude == 175)
             verify(extMapPolygonDateline.path[1].longitude == -175)
             verify(extMapPolygonDateline.path[2].longitude == -175)
@@ -530,6 +539,7 @@ Item {
 
             // polyline
             map.addMapItem(extMapPolylineDateline)
+            map.center = datelineCoordinate
             verify(extMapPolylineDateline.path[0].longitude == 175)
             verify(extMapPolylineDateline.path[1].longitude == -175)
             point = map.toScreenPosition(extMapPolylineDateline.path[0])
@@ -626,6 +636,7 @@ Item {
 
             // circle
             map.addMapItem(extMapCircleEdge)
+            map.center = datelineCoordinate
             verify(extMapCircleEdge.center.longitude == -15)
             var point = map.toScreenPosition(extMapCircleEdge.center)
             verify(point.x < map.width)
@@ -647,6 +658,7 @@ Item {
 
             // quickitem
             map.addMapItem(extMapQuickItemEdge)
+            map.center = datelineCoordinate
             verify(extMapQuickItemEdge.coordinate.longitude == -15)
             point = map.toScreenPosition(extMapQuickItemEdge.coordinate)
             verify(point.x < map.width)
@@ -666,6 +678,7 @@ Item {
             map.removeMapItem(extMapQuickItemEdge)
 
             // polygon
+            map.center = datelineCoordinate
             map.addMapItem(extMapPolygonEdge)
             verify(extMapPolygonEdge.path[0].longitude == -15)
             verify(extMapPolygonEdge.path[1].longitude == -5)

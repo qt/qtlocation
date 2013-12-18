@@ -351,7 +351,7 @@ QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
     \qmlproperty color MapPolygon::border.color
 
     This property is part of the border property group. The border property
-    group holds the width and color used to draw the border of the circle.
+    group holds the width and color used to draw the border of the polygon.
 
     The width is in pixels and is independent of the zoom level of the map.
 
@@ -546,23 +546,21 @@ void QDeclarativePolygonMapItem::updateMapItem()
     geometry_.updateSourcePoints(*map(), path_);
     geometry_.updateScreenPoints(*map());
 
-    if (border_.color() != Qt::transparent && border_.width() > 0) {
-        QList<QGeoCoordinate> closedPath = path_;
-        closedPath << closedPath.first();
-        borderGeometry_.updateSourcePoints(*map(), closedPath);
+    QList<QGeoCoordinate> closedPath = path_;
+    closedPath << closedPath.first();
+    borderGeometry_.clear();
+    borderGeometry_.updateSourcePoints(*map(), closedPath);
+
+    if (border_.color() != Qt::transparent && border_.width() > 0)
         borderGeometry_.updateScreenPoints(*map(), border_.width());
 
-        QList<QGeoMapItemGeometry *> geoms;
-        geoms << &geometry_ << &borderGeometry_;
-        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
+    QList<QGeoMapItemGeometry *> geoms;
+    geoms << &geometry_ << &borderGeometry_;
+    QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
 
-        setWidth(combined.width());
-        setHeight(combined.height());
-    } else {
-        borderGeometry_.clear();
-        setWidth(geometry_.sourceBoundingBox().width());
-        setHeight(geometry_.sourceBoundingBox().height());
-    }
+    setWidth(combined.width());
+    setHeight(combined.height());
+
     setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
     update();
 }

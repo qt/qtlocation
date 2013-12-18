@@ -126,6 +126,8 @@ Item {
             property bool lastIsClick: false
             property bool lastAccepted: false;
 
+            preventStealing: true
+
             // The following signal handlers use arguments[0] instead of mouse due to QTBUG-36560
             onClicked: page.setMouseData(mouseUpper, arguments[0])
             onDoubleClicked: page.setMouseData(mouseUpper, arguments[0])
