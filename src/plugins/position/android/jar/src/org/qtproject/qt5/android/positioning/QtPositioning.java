@@ -382,7 +382,8 @@ public class QtPositioning implements LocationListener
                 if (looperThread.isAlive())
                     return;
 
-                looperThread.isSatelliteListener(true);
+                if (isSatelliteUpdate)
+                    looperThread.isSatelliteListener(true);
 
                 looperThread.start();
                 while (!looperThread.isReady());
