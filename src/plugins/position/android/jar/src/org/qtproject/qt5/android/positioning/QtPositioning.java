@@ -73,12 +73,20 @@ public class QtPositioning implements LocationListener
     private int nativeClassReference = 0;
 
     /*
-        The provider type requested by Qt:
-        0 -> none
-        1. bit -> GPS
-        2. bit -> Network
+        The provider type requested by Qt
     */
     private int expectedProviders = 0;
+
+    public static final int QT_GPS_PROVIDER = 1;
+    public static final int QT_NETWORK_PROVIDER = 2;
+
+    /* The following values must match the corresponding error enums in the Qt API*/
+    public static final int QT_ACCESS_ERROR = 0;
+    public static final int QT_CLOSED_ERROR = 1;
+    public static final int QT_POSITION_UNKNOWN_SOURCE_ERROR = 2;
+    public static final int QT_POSITION_NO_ERROR = 3;
+    public static final int QT_SATELLITE_NO_ERROR = 2;
+    public static final int QT_SATELLITE_UNKNOWN_SOURCE_ERROR = -1;
 
     /* True, if updates were caused by requestUpdate() */
     private boolean isSingleUpdate = false;
@@ -159,12 +167,12 @@ public class QtPositioning implements LocationListener
     static private boolean expectedProvidersAvailable(int desiredProviders)
     {
         List<String> enabledProviders = locationManager.getProviders(true);
-        if ((desiredProviders & 1) > 0) { //gps desired
+        if ((desiredProviders & QT_GPS_PROVIDER) > 0) { //gps desired
             if (enabledProviders.contains(LocationManager.GPS_PROVIDER)) {
                 return true;
             }
         }
-        if ((desiredProviders & 2) > 0) { //network desired
+        if ((desiredProviders & QT_NETWORK_PROVIDER) > 0) { //network desired
             if (enabledProviders.contains(LocationManager.NETWORK_PROVIDER)) {
                 return true;
             }
@@ -188,7 +196,7 @@ public class QtPositioning implements LocationListener
                     updateInterval = 1000; //don't update more often than once per second
 
                 positioningListener.updateIntervalTime = updateInterval;
-                if ((locationProvider & 1) > 0) {
+                if ((locationProvider & QT_GPS_PROVIDER) > 0) {
                     Log.d(TAG, "Regular updates using GPS");
                     try {
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
@@ -201,7 +209,7 @@ public class QtPositioning implements LocationListener
                     }
                 }
 
-                if ((locationProvider & 2) > 0) {
+                if ((locationProvider & QT_NETWORK_PROVIDER) > 0) {
                     Log.d(TAG, "Regular updates using network");
                     try {
                         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
@@ -216,21 +224,21 @@ public class QtPositioning implements LocationListener
                 if (exceptionOccurred) {
                     positioningListener.setActiveLooper(false);
                     locationManager.removeUpdates(positioningListener);
-                    return 0; //AccessError
+                    return QT_ACCESS_ERROR;
                 }
 
                 if (!expectedProvidersAvailable(locationProvider)) {
                     //all location providers unavailbe -> when they come back we resume automatically
-                    return 1; //ClosedError
+                    return QT_CLOSED_ERROR;
                 }
 
                 runningListeners.put(androidClassKey, positioningListener);
             } catch(Exception e) {
                 e.printStackTrace();
-                return 2; //UnknownSourceError
+                return QT_POSITION_UNKNOWN_SOURCE_ERROR;
             }
 
-            return 3; //NoError
+            return QT_POSITION_NO_ERROR;
         }
     }
 
@@ -261,7 +269,7 @@ public class QtPositioning implements LocationListener
                 positioningListener.expectedProviders = locationProvider;
                 positioningListener.isSatelliteUpdate = false;
 
-                if ((locationProvider & 1) > 0) {
+                if ((locationProvider & QT_GPS_PROVIDER) > 0) {
                     Log.d(TAG, "Single update using GPS");
                     try {
                         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
@@ -273,7 +281,7 @@ public class QtPositioning implements LocationListener
                     }
                 }
 
-                if ((locationProvider & 2) > 0) {
+                if ((locationProvider & QT_NETWORK_PROVIDER) > 0) {
                     Log.d(TAG, "Single update using network");
                     try {
                         locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,
@@ -287,22 +295,22 @@ public class QtPositioning implements LocationListener
                 if (exceptionOccurred) {
                     positioningListener.setActiveLooper(false);
                     locationManager.removeUpdates(positioningListener);
-                    return 0; //AccessError
+                    return QT_ACCESS_ERROR;
                 }
 
                 if (!expectedProvidersAvailable(locationProvider)) {
                     //all location providers unavailable -> when they come back we resume automatically
                     //in the mean time return ClosedError
-                    return 1; //ClosedError
+                    return QT_CLOSED_ERROR;
                 }
 
                 runningListeners.put(androidClassKey, positioningListener);
             } catch(Exception e) {
                 e.printStackTrace();
-                return 2; //UnknownSourceError
+                return QT_POSITION_UNKNOWN_SOURCE_ERROR;
             }
 
-            return 3; //NoError
+            return QT_POSITION_NO_ERROR;
         }
     }
 
@@ -338,22 +346,22 @@ public class QtPositioning implements LocationListener
                 if (exceptionOccurred) {
                     positioningListener.setActiveLooper(false);
                     locationManager.removeUpdates(positioningListener);
-                    return 0; //QGeoSatelliteInfoSource::AccessError
+                    return QT_ACCESS_ERROR;
                 }
 
                 if (!expectedProvidersAvailable(positioningListener.expectedProviders)) {
                     //all location providers unavailable -> when they come back we resume automatically
                     //in the mean time return ClosedError
-                    return 1; //QGeoSatelliteInfoSource::ClosedError
+                    return QT_CLOSED_ERROR;
                 }
 
                 runningListeners.put(androidClassKey, positioningListener);
             } catch(Exception e) {
                 e.printStackTrace();
-                return -1; //QGeoSatelliteInfoSource::UnknownSourceError
+                return QT_SATELLITE_UNKNOWN_SOURCE_ERROR;
             }
 
-            return 2; //QGeoSatelliteInfoSource::NoError
+            return QT_SATELLITE_NO_ERROR;
         }
     }
 
