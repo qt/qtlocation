@@ -172,6 +172,35 @@ namespace AndroidPositioning {
         return ret;
     }
 
+    //caching originally taken from corelib/kernel/qjni.cpp
+    typedef QHash<QString, jmethodID> JMethodIDHash;
+    Q_GLOBAL_STATIC(JMethodIDHash, cachedMethodID)
+
+    static jmethodID getCachedMethodID(JNIEnv *env,
+                                       jclass clazz,
+                                       const char *name,
+                                       const char *sig)
+    {
+        jmethodID id = 0;
+        const QString key = QStringLiteral("%1%2").arg(QLatin1String(name)).arg(QLatin1String(sig));
+        QHash<QString, jmethodID>::iterator it = cachedMethodID->find(key);
+        if (it == cachedMethodID->end()) {
+            id = env->GetMethodID(clazz, name, sig);
+            if (env->ExceptionCheck()) {
+                id = 0;
+    #ifdef QT_DEBUG
+                env->ExceptionDescribe();
+    #endif // QT_DEBUG
+                env->ExceptionClear();
+            }
+
+            cachedMethodID->insert(key, id);
+        } else {
+            id = it.value();
+        }
+        return id;
+    }
+
     QGeoPositionInfo positionInfoFromJavaLocation(JNIEnv * jniEnv, const jobject &location)
     {
         QGeoPositionInfo info;
@@ -179,17 +208,17 @@ namespace AndroidPositioning {
         if (!thisClass)
             return QGeoPositionInfo();
 
-        jmethodID mid = jniEnv->GetMethodID(thisClass, "getLatitude", "()D");
+        jmethodID mid = getCachedMethodID(jniEnv, thisClass, "getLatitude", "()D");
         jdouble latitude = jniEnv->CallDoubleMethod(location, mid);
-        mid = jniEnv->GetMethodID(thisClass, "getLongitude", "()D");
+        mid = getCachedMethodID(jniEnv, thisClass, "getLongitude", "()D");
         jdouble longitude = jniEnv->CallDoubleMethod(location, mid);
         QGeoCoordinate coordinate(latitude, longitude);
 
         //altitude
-        mid = jniEnv->GetMethodID(thisClass, "hasAltitude", "()Z");
+        mid = getCachedMethodID(jniEnv, thisClass, "hasAltitude", "()Z");
         jboolean attributeExists = jniEnv->CallBooleanMethod(location, mid);
         if (attributeExists) {
-            mid = jniEnv->GetMethodID(thisClass, "getAltitude", "()D");
+            mid = getCachedMethodID(jniEnv, thisClass, "getAltitude", "()D");
             jdouble value = jniEnv->CallDoubleMethod(location, mid);
             coordinate.setAltitude(value);
         }
@@ -197,33 +226,33 @@ namespace AndroidPositioning {
         info.setCoordinate(coordinate);
 
         //time stamp
-        mid = jniEnv->GetMethodID(thisClass, "getTime", "()J");
+        mid = getCachedMethodID(jniEnv, thisClass, "getTime", "()J");
         jlong timestamp = jniEnv->CallLongMethod(location, mid);
         info.setTimestamp(QDateTime::fromMSecsSinceEpoch(timestamp));
 
         //accuracy
-        mid = jniEnv->GetMethodID(thisClass, "hasAccuracy", "()Z");
+        mid = getCachedMethodID(jniEnv, thisClass, "hasAccuracy", "()Z");
         attributeExists = jniEnv->CallBooleanMethod(location, mid);
         if (attributeExists) {
-            mid = jniEnv->GetMethodID(thisClass, "getAccuracy", "()F");
+            mid = getCachedMethodID(jniEnv, thisClass, "getAccuracy", "()F");
             jfloat accuracy = jniEnv->CallFloatMethod(location, mid);
             info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, accuracy);
         }
 
         //ground speed
-        mid = jniEnv->GetMethodID(thisClass, "hasSpeed", "()Z");
+        mid = getCachedMethodID(jniEnv, thisClass, "hasSpeed", "()Z");
         attributeExists = jniEnv->CallBooleanMethod(location, mid);
         if (attributeExists) {
-            mid = jniEnv->GetMethodID(thisClass, "getSpeed", "()F");
+            mid = getCachedMethodID(jniEnv, thisClass, "getSpeed", "()F");
             jfloat speed = jniEnv->CallFloatMethod(location, mid);
             info.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
         }
 
         //bearing
-        mid = jniEnv->GetMethodID(thisClass, "hasBearing", "()Z");
+        mid = getCachedMethodID(jniEnv, thisClass, "hasBearing", "()Z");
         attributeExists = jniEnv->CallBooleanMethod(location, mid);
         if (attributeExists) {
-            mid = jniEnv->GetMethodID(thisClass, "getBearing", "()F");
+            mid = getCachedMethodID(jniEnv, thisClass, "getBearing", "()F");
             jfloat bearing = jniEnv->CallFloatMethod(location, mid);
             info.setAttribute(QGeoPositionInfo::Direction, bearing);
         }
@@ -251,7 +280,7 @@ namespace AndroidPositioning {
             QGeoSatelliteInfo info;
 
             //signal strength
-            jmethodID mid = jniEnv->GetMethodID(thisClass, "getSnr", "()F");
+            jmethodID mid = getCachedMethodID(jniEnv, thisClass, "getSnr", "()F");
             jfloat snr = jniEnv->CallFloatMethod(element, mid);
             info.setSignalStrength((int)snr);
 
@@ -260,7 +289,7 @@ namespace AndroidPositioning {
                 continue;
 
             //prn
-            mid = jniEnv->GetMethodID(thisClass, "getPrn", "()I");
+            mid = getCachedMethodID(jniEnv, thisClass, "getPrn", "()I");
             jint prn = jniEnv->CallIntMethod(element, mid);
             info.setSatelliteIdentifier(prn);
 
@@ -270,17 +299,17 @@ namespace AndroidPositioning {
                 info.setSatelliteSystem(QGeoSatelliteInfo::GLONASS);
 
             //azimuth
-            mid = jniEnv->GetMethodID(thisClass, "getAzimuth", "()F");
+            mid = getCachedMethodID(jniEnv, thisClass, "getAzimuth", "()F");
             jfloat azimuth = jniEnv->CallFloatMethod(element, mid);
             info.setAttribute(QGeoSatelliteInfo::Azimuth, azimuth);
 
             //elevation
-            mid = jniEnv->GetMethodID(thisClass, "getElevation", "()F");
+            mid = getCachedMethodID(jniEnv, thisClass, "getElevation", "()F");
             jfloat elevation = jniEnv->CallFloatMethod(element, mid);
             info.setAttribute(QGeoSatelliteInfo::Elevation, elevation);
 
             //used in a fix
-            mid = jniEnv->GetMethodID(thisClass, "usedInFix", "()Z");
+            mid = getCachedMethodID(jniEnv, thisClass, "usedInFix", "()Z");
             jboolean inFix = jniEnv->CallBooleanMethod(element, mid);
 
             sats.append(info);
