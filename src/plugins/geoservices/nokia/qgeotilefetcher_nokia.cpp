@@ -110,7 +110,7 @@ namespace
     }
 }
 QGeoTileFetcherNokia::QGeoTileFetcherNokia(
-        const QMap<QString, QVariant> &parameters,
+        const QVariantMap &parameters,
         QGeoNetworkAccessManager *networkManager,
         QGeoTiledMappingManagerEngine *engine,
         const QSize &tileSize)

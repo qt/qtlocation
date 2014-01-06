@@ -52,8 +52,9 @@ QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
 {
 }
 
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEngine(const QMap<
-    QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEngine(
+    const QVariantMap &parameters, QGeoServiceProvider::Error *error,
+    QString *errorString) const
 {
     return new QGeoRoutingManagerEngineTest(parameters, error, errorString);
 }

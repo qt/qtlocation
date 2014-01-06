@@ -59,16 +59,16 @@ public:
     ~QGeoServiceProviderFactoryTest();
 
     QGeoMappingManagerEngine* createMappingManagerEngine(
-                const QMap<QString, QVariant> &parameters,
+                const QVariantMap &parameters,
                 QGeoServiceProvider::Error *error, QString *errorString) const;
     QGeoRoutingManagerEngine* createRoutingManagerEngine(
-                const QMap<QString, QVariant> &parameters,
+                const QVariantMap &parameters,
                 QGeoServiceProvider::Error *error, QString *errorString ) const;
     QGeoCodingManagerEngine* createGeocodingManagerEngine(
-                const QMap<QString, QVariant> &parameters,
+                const QVariantMap &parameters,
                 QGeoServiceProvider::Error *error, QString *errorString) const;
     QPlaceManagerEngine* createPlaceManagerEngine(
-                const QMap<QString, QVariant> &parameters,
+                const QVariantMap &parameters,
                 QGeoServiceProvider::Error *error, QString *errorString) const;
 };
 

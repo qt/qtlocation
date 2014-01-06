@@ -91,7 +91,7 @@ tst_QGeoMapController::tst_QGeoMapController()
     QGeoServiceProviderFactoryTest serviceProviderTest; // empty constructor
 
     // TODO: check whether the default constructors of these objects allow the create to work
-    QMap<QString, QVariant> parameterMap;
+    QVariantMap parameterMap;
     QGeoServiceProvider::Error mappingError;
     QString mappingErrorString;
 

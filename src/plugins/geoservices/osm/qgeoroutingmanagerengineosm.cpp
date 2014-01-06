@@ -46,7 +46,7 @@
 
 #include <QtCore/QDebug>
 
-QGeoRoutingManagerEngineOsm::QGeoRoutingManagerEngineOsm(const QMap<QString, QVariant> &parameters,
+QGeoRoutingManagerEngineOsm::QGeoRoutingManagerEngineOsm(const QVariantMap &parameters,
                                                          QGeoServiceProvider::Error *error,
                                                          QString *errorString)
 :   QGeoRoutingManagerEngine(parameters), m_networkManager(new QNetworkAccessManager(this))

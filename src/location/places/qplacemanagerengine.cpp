@@ -74,7 +74,7 @@ QT_BEGIN_NAMESPACE
     Constructs a new engine with the specified \a parent, using \a parameters to pass any
     implementation specific data to the engine.
 */
-QPlaceManagerEngine::QPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+QPlaceManagerEngine::QPlaceManagerEngine(const QVariantMap &parameters,
                                          QObject *parent)
 :   QObject(parent), d_ptr(new QPlaceManagerEnginePrivate)
 {

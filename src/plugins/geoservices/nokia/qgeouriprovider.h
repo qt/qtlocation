@@ -62,7 +62,7 @@ class QGeoUriProvider : public QObject
 
 public:
     QGeoUriProvider(QObject *parent,
-                    const QMap<QString, QVariant> & parameters,
+                    const QVariantMap &parameters,
                     const QString &hostParameterName,
                     const QString &internationalHost,
                     const QString &localizedHost = QString());

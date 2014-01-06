@@ -56,7 +56,7 @@ class Q_LOCATION_EXPORT QGeoCodingManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    QGeoCodingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
+    QGeoCodingManagerEngine(const QVariantMap &parameters, QObject *parent = 0);
     virtual ~QGeoCodingManagerEngine();
 
     QString managerName() const;

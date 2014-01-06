@@ -78,7 +78,7 @@ class QPlaceManagerEngineNokiaV2 : public QPlaceManagerEngine
 
 public:
     QPlaceManagerEngineNokiaV2(QGeoNetworkAccessManager *networkManager,
-                               const QMap<QString, QVariant> &parameters,
+                               const QVariantMap &parameters,
                                QGeoServiceProvider::Error *error,
                                QString *errorString);
     ~QPlaceManagerEngineNokiaV2();

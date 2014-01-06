@@ -54,7 +54,7 @@ QGeoIntrinsicNetworkAccessManager::QGeoIntrinsicNetworkAccessManager(QObject *pa
 {
 }
 
-QGeoIntrinsicNetworkAccessManager::QGeoIntrinsicNetworkAccessManager(const QMap<QString, QVariant> &parameters, const QString &token, QObject *parent)
+QGeoIntrinsicNetworkAccessManager::QGeoIntrinsicNetworkAccessManager(const QVariantMap &parameters, const QString &token, QObject *parent)
 : QGeoNetworkAccessManager(parent)
 , m_customProxyToken(token)
 , m_networkManager(new QNetworkAccessManager(this))
@@ -62,7 +62,7 @@ QGeoIntrinsicNetworkAccessManager::QGeoIntrinsicNetworkAccessManager(const QMap<
     configure(parameters);
 }
 
-void QGeoIntrinsicNetworkAccessManager::configure(const QMap<QString, QVariant> &parameters)
+void QGeoIntrinsicNetworkAccessManager::configure(const QVariantMap &parameters)
 {
     QString proxy = parameters.value(QStringLiteral("proxy")).toString();
     if (proxy.isEmpty() && !m_customProxyToken.isEmpty())

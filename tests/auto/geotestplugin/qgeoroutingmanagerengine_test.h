@@ -83,7 +83,7 @@ class QGeoRoutingManagerEngineTest: public QGeoRoutingManagerEngine
     QString errorString_;
 
 public:
-    QGeoRoutingManagerEngineTest(const QMap<QString, QVariant> &parameters,
+    QGeoRoutingManagerEngineTest(const QVariantMap &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) :
         QGeoRoutingManagerEngine(parameters),
         routeReply_(0),

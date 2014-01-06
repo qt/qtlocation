@@ -641,7 +641,7 @@ void QGeoServiceProviderPrivate::loadMeta()
     }
 }
 
-void QGeoServiceProviderPrivate::loadPlugin(const QMap<QString, QVariant> &parameters)
+void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
 {
     Q_UNUSED(parameters)
 

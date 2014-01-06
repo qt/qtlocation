@@ -130,7 +130,7 @@ public:
         return mappingReply_;
     }
 
-    void setParams(const QMap<QString, QVariant> &parameters)
+    void setParams(const QVariantMap &parameters)
     {
         parameters_ = parameters;
     }
@@ -174,7 +174,7 @@ private:
     int timerId_;
     QGeoTiledMapReply::Error errorCode_;
     QString errorString_;
-    QMap<QString, QVariant> parameters_;
+    QVariantMap parameters_;
     QSize tileSize_;
 };
 

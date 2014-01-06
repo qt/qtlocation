@@ -54,7 +54,7 @@ class QGeoRoutingManagerEngineOsm : public QGeoRoutingManagerEngine
     Q_OBJECT
 
 public:
-    QGeoRoutingManagerEngineOsm(const QMap<QString, QVariant> &parameters,
+    QGeoRoutingManagerEngineOsm(const QVariantMap &parameters,
                                 QGeoServiceProvider::Error *error,
                                 QString *errorString);
     ~QGeoRoutingManagerEngineOsm();

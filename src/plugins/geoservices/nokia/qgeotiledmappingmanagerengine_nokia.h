@@ -71,7 +71,7 @@ class QGeoTiledMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 
 public:
     QGeoTiledMappingManagerEngineNokia(QGeoNetworkAccessManager *networkManager,
-                                       const QMap<QString, QVariant> &parameters,
+                                       const QVariantMap &parameters,
                                        QGeoServiceProvider::Error *error,
                                        QString *errorString);
     ~QGeoTiledMappingManagerEngineNokia();

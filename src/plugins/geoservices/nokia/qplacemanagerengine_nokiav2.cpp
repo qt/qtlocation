@@ -198,7 +198,7 @@ void CategoryParser::processCategory(int level, const QString &id, const QString
 
 QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
     QGeoNetworkAccessManager *networkManager,
-    const QMap<QString, QVariant> &parameters,
+    const QVariantMap &parameters,
     QGeoServiceProvider::Error *error,
     QString *errorString)
     : QPlaceManagerEngine(parameters)

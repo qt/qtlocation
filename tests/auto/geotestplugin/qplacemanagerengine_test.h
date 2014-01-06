@@ -208,7 +208,7 @@ class QPlaceManagerEngineTest : public QPlaceManagerEngine
 {
     Q_OBJECT
 public:
-    QPlaceManagerEngineTest(const QMap<QString, QVariant> &parameters)
+    QPlaceManagerEngineTest(const QVariantMap &parameters)
         : QPlaceManagerEngine(parameters)
     {
         m_locales << QLocale();

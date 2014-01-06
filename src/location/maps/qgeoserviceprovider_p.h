@@ -75,7 +75,7 @@ public:
     ~QGeoServiceProviderPrivate();
 
     void loadMeta();
-    void loadPlugin(const QMap<QString, QVariant> &parameters);
+    void loadPlugin(const QVariantMap &parameters);
     void unload();
 
     /* helper templates for generating the feature and manager accessors */
@@ -88,7 +88,7 @@ public:
     QGeoServiceProviderFactory *factory;
     QJsonObject metaData;
 
-    QMap<QString, QVariant> parameterMap;
+    QVariantMap parameterMap;
 
     bool experimental;
 

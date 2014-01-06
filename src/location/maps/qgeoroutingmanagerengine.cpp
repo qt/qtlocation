@@ -87,7 +87,7 @@ QT_BEGIN_NAMESPACE
     Constructs a new engine with the specified \a parent, using \a parameters
     to pass any implementation specific data to the engine.
 */
-QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
+QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QVariantMap &parameters, QObject *parent)
     : QObject(parent),
       d_ptr(new QGeoRoutingManagerEnginePrivate())
 {

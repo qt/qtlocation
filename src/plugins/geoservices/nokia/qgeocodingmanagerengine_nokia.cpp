@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
 
 QGeoCodingManagerEngineNokia::QGeoCodingManagerEngineNokia(
         QGeoNetworkAccessManager *networkManager,
-        const QMap<QString, QVariant> &parameters,
+        const QVariantMap &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)
         : QGeoCodingManagerEngine(parameters)

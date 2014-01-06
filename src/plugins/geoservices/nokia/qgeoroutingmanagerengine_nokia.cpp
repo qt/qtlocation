@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(
         QGeoNetworkAccessManager *networkManager,
-        const QMap<QString, QVariant> &parameters,
+        const QVariantMap &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)
         : QGeoRoutingManagerEngine(parameters)
