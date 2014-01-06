@@ -104,17 +104,21 @@ void tst_QGeoRoutingManager::supports()
 
 void tst_QGeoRoutingManager::locale()
 {
-    QLocale *german = new QLocale(QLocale::German, QLocale::Germany);
-    QLocale *english = new QLocale(QLocale::C, QLocale::AnyCountry);
+    QLocale german = QLocale(QLocale::German, QLocale::Germany);
+    QLocale english = QLocale(QLocale::C, QLocale::AnyCountry);
 
-    qgeoroutingmanager->setLocale(*german);
+    qgeoroutingmanager->setLocale(german);
 
-    QCOMPARE(qgeoroutingmanager->locale(), *german);
+    QCOMPARE(qgeoroutingmanager->locale(), german);
 
-    QVERIFY(qgeoroutingmanager->locale() != *english);
+    QVERIFY(qgeoroutingmanager->locale() != english);
 
-    delete german;
-    delete english;
+    QLocale en_UK = QLocale(QLocale::English, QLocale::UnitedKingdom);
+    qgeoroutingmanager->setLocale(en_UK);
+    QCOMPARE(qgeoroutingmanager->measurementSystem(), en_UK.measurementSystem());
+    qgeoroutingmanager->setMeasurementSystem(QLocale::MetricSystem);
+    QCOMPARE(qgeoroutingmanager->measurementSystem(), QLocale::MetricSystem);
+    QVERIFY(qgeoroutingmanager->locale().measurementSystem() != qgeoroutingmanager->measurementSystem());
 }
 
 void tst_QGeoRoutingManager::name()

@@ -347,6 +347,7 @@ QGeoRouteRequest::ManeuverDetails QGeoRoutingManagerEngine::supportedManeuverDet
 void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
 {
     d_ptr->locale = locale;
+    d_ptr->measurementSystem = locale.measurementSystem();
 }
 
 /*!
@@ -356,6 +357,33 @@ void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
 QLocale QGeoRoutingManagerEngine::locale() const
 {
     return d_ptr->locale;
+}
+
+/*!
+    Sets the measurement system used by this manager to \a system.
+
+    The measurement system can be set independently of the locale. Both setLocale() and this
+    function set the measurement system. The value set by the last function called will be used.
+
+    \sa measurementSystem(), locale(), setLocale()
+*/
+void QGeoRoutingManagerEngine::setMeasurementSystem(QLocale::MeasurementSystem system)
+{
+    d_ptr->measurementSystem = system;
+}
+
+/*!
+    Returns the measurement system used by this manager.
+
+    If setMeasurementSystem() has been called then the value returned by this function may be
+    different to that returned by locale().\l {QLocale::measurementSystem()}{measurementSystem()}.
+    In which case the value returned by this function is what will be used by the manager.
+
+    \sa setMeasurementSystem(), setLocale()
+*/
+QLocale::MeasurementSystem QGeoRoutingManagerEngine::measurementSystem() const
+{
+    return d_ptr->measurementSystem;
 }
 
 /*!
@@ -391,7 +419,7 @@ Use deleteLater() instead.
 *******************************************************************************/
 
 QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
-    : managerVersion(-1)
+:   managerVersion(-1), measurementSystem(locale.measurementSystem())
 {
 }
 

@@ -77,6 +77,9 @@ class QDeclarativeGeoRouteModel : public QAbstractListModel, public QQmlParserSt
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
     Q_PROPERTY(RouteError error READ error NOTIFY errorChanged)
+    Q_PROPERTY(QLocale locale READ locale WRITE setLocale NOTIFY localeChanged)
+    Q_PROPERTY(QLocale::MeasurementSystem measurementSystem READ measurementSystem WRITE setMeasurementSystem NOTIFY measurementSystemChanged)
+
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -121,6 +124,12 @@ public:
     void setAutoUpdate(bool autoUpdate);
     bool autoUpdate() const;
 
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
+
+    void setMeasurementSystem(QLocale::MeasurementSystem ms);
+    QLocale::MeasurementSystem measurementSystem() const;
+
     Status status() const;
     QString errorString() const;
     RouteError error() const;
@@ -139,6 +148,8 @@ Q_SIGNALS:
     void errorStringChanged();
     void errorChanged();
     void routesChanged();
+    void localeChanged();
+    void measurementSystemChanged();
 
 public Q_SLOTS:
     void update();
