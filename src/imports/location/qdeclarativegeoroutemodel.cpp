@@ -286,7 +286,14 @@ void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin
         return;
 
     reset(); // reset the model
+
+    if (plugin_)
+        disconnect(plugin_, SIGNAL(localesChanged()), this, SIGNAL(measurementSystemChanged()));
+    if (plugin)
+        connect(plugin, SIGNAL(localesChanged()), this, SIGNAL(measurementSystemChanged()));
+
     plugin_ = plugin;
+
     if (complete_)
         emit pluginChanged();
 
@@ -408,59 +415,14 @@ bool QDeclarativeGeoRouteModel::autoUpdate() const
 }
 
 /*!
-    \qmlproperty Locale QtLocation::RouteModel::locale
-
-    This property holds the locale which will be used when calculating the route. Setting this
-    property also sets the \l {QtLocation::RouteModel::measurementSystem}{measurementSystem}
-    property.
-*/
-void QDeclarativeGeoRouteModel::setLocale(const QLocale &locale)
-{
-    if (!plugin_) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_PLUGIN_NOT_SET);
-        return;
-    }
-
-    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return;
-
-    QGeoRoutingManager *routingManager = serviceProvider->routingManager();
-    if (!routingManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
-        return;
-    }
-
-    if (routingManager->locale() == locale)
-        return;
-
-    routingManager->setLocale(locale);
-    emit localeChanged();
-}
-
-QLocale QDeclarativeGeoRouteModel::locale() const
-{
-    if (!plugin_)
-        return QLocale();
-
-    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return QLocale();
-
-    QGeoRoutingManager *routingManager = serviceProvider->routingManager();
-    if (!routingManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
-        return QLocale();
-    }
-
-    return routingManager->locale();
-}
-
-/*!
     \qmlproperty Locale::MeasurementSystem QtLocation::RouteModel::measurementSystem
 
     This property holds the measurement system which will be used when calculating the route. This
-    property is changed when the \l {QtLocation::RouteModel::locale}{locale} property is changed.
+    property is changed when the \l {QtLocation::Plugin::locales}{Plugin::locales} property of
+    \l {QtLocation::RouteModel::plugin}{plugin} changes.
+
+    If setting this property it must be set after the \l {QtLocation::RouteModel::plugin}{plugin}
+    property is set.
 */
 void QDeclarativeGeoRouteModel::setMeasurementSystem(QLocale::MeasurementSystem ms)
 {
@@ -492,13 +454,20 @@ QLocale::MeasurementSystem QDeclarativeGeoRouteModel::measurementSystem() const
         return QLocale().measurementSystem();
 
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return QLocale().measurementSystem();
+    if (!serviceProvider) {
+        if (plugin_->locales().isEmpty())
+            return QLocale().measurementSystem();
+
+        return QLocale(plugin_->locales().first()).measurementSystem();
+    }
 
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager) {
         qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
-        return QLocale().measurementSystem();
+        if (plugin_->locales().isEmpty())
+            return QLocale().measurementSystem();
+
+        return QLocale(plugin_->locales().first()).measurementSystem();
     }
 
     return routingManager->measurementSystem();
