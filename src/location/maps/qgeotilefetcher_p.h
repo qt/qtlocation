@@ -74,7 +74,6 @@ class Q_LOCATION_EXPORT QGeoTileFetcher : public QObject
 public:
     QGeoTileFetcher(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
     virtual ~QGeoTileFetcher();
-    void stopTimer();
 
 public Q_SLOTS:
     void threadStarted();
@@ -91,6 +90,7 @@ Q_SIGNALS:
     void tileError(const QGeoTileSpec &spec, const QString &errorString);
 
 protected:
+    void timerEvent(QTimerEvent *event);
     virtual bool init();
     QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
 

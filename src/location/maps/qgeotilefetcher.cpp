@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include <QtCore/QTimerEvent>
+
 #include "qgeomappingmanagerengine_p.h"
 #include "qgeotilefetcher_p.h"
 #include "qgeotilefetcher_p_p.h"
@@ -66,21 +68,10 @@ void QGeoTileFetcher::threadStarted()
 {
     Q_D(QGeoTileFetcher);
 
-    if (d->stopped_)
-        return;
+    d->enabled_ = true;
 
-    d->timer_ = new QTimer(this);
-
-    d->timer_->setInterval(0);
-
-    connect(d->timer_,
-            SIGNAL(timeout()),
-            this,
-            SLOT(requestNextTile()));
-
-    d->started_ = true;
     if (!d->queue_.isEmpty())
-        d->timer_->start();
+        d->timer_.start(0, this);
 }
 
 bool QGeoTileFetcher::init()
@@ -88,19 +79,12 @@ bool QGeoTileFetcher::init()
     return false;
 }
 
-void QGeoTileFetcher::stopTimer()
-{
-    Q_D(QGeoTileFetcher);
-    d->stopped_ = true;
-    if (d->timer_) {
-        disconnect(d->timer_);
-        d->timer_->stop();
-    }
-}
-
 void QGeoTileFetcher::threadFinished()
 {
-    stopTimer();
+    Q_D(QGeoTileFetcher);
+
+    d->enabled_ = false;
+    d->timer_.stop();
     this->deleteLater();
 }
 
@@ -111,15 +95,12 @@ void QGeoTileFetcher::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded,
 
     QMutexLocker ml(&d->queueMutex_);
 
-    if (d->stopped_)
-        return;
-
     cancelTileRequests(tilesRemoved);
 
     d->queue_ += tilesAdded.toList();
 
-    if (!d->queue_.empty())
-        d->timer_->start();
+    if (d->enabled_ && !d->queue_.isEmpty() && !d->timer_.isActive())
+        d->timer_.start(0, this);
 }
 
 void QGeoTileFetcher::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
@@ -139,9 +120,6 @@ void QGeoTileFetcher::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
         }
         d->queue_.removeAll(*tile);
     }
-
-    if (d->queue_.isEmpty())
-        d->timer_->stop();
 }
 
 void QGeoTileFetcher::requestNextTile()
@@ -150,13 +128,11 @@ void QGeoTileFetcher::requestNextTile()
 
     QMutexLocker ml(&d->queueMutex_);
 
-    if (d->stopped_)
+    if (!d->enabled_)
         return;
 
-    if (d->queue_.isEmpty()) {
-        d->timer_->stop();
+    if (d->queue_.isEmpty())
         return;
-    }
 
     QGeoTileSpec ts = d->queue_.takeFirst();
 
@@ -175,7 +151,7 @@ void QGeoTileFetcher::requestNextTile()
     }
 
     if (d->queue_.isEmpty())
-        d->timer_->stop();
+        d->timer_.stop();
 }
 
 void QGeoTileFetcher::finished()
@@ -200,11 +176,27 @@ void QGeoTileFetcher::finished()
     handleReply(reply, spec);
 }
 
+void QGeoTileFetcher::timerEvent(QTimerEvent *event)
+{
+    Q_D(QGeoTileFetcher);
+    if (event->timerId() != d->timer_.timerId()) {
+        QObject::timerEvent(event);
+        return;
+    }
+
+    if (d->queue_.isEmpty()) {
+        d->timer_.stop();
+        return;
+    }
+
+    requestNextTile();
+}
+
 void QGeoTileFetcher::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec)
 {
     Q_D(QGeoTileFetcher);
 
-    if (d->stopped_) {
+    if (!d->enabled_) {
         reply->deleteLater();
         return;
     }
@@ -222,21 +214,12 @@ void QGeoTileFetcher::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &
 *******************************************************************************/
 
 QGeoTileFetcherPrivate::QGeoTileFetcherPrivate(QGeoTiledMappingManagerEngine *engine)
-    : engine_(engine),
-      started_(false),
-      stopped_(false),
-      timer_(0) {}
+:   engine_(engine), enabled_(false)
+{
+}
 
 QGeoTileFetcherPrivate::~QGeoTileFetcherPrivate()
 {
 }
 
 QT_END_NAMESPACE
-
-
-
-
-
-
-
-
