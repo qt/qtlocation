@@ -785,7 +785,7 @@ Item {
             // 16. moving center
             clear_data()
             pinchGenerator.pinch(Qt.point(0, 50), Qt.point(50,100), Qt.point(50,0), Qt.point(100, 50))
-            tryCompare(pinchStartedSpy.count, 1)
+            tryCompare(pinchStartedSpy, "count", 1)
             compare(map.lastPinchEvent.center.x, (map.lastPinchEvent.point1.x + map.lastPinchEvent.point2.x) /2)
             compare(map.lastPinchEvent.center.x, (map.lastPinchEvent.point1.y + map.lastPinchEvent.point2.y) /2)
             tryCompare(pinchFinishedSpy, "count", 1)
