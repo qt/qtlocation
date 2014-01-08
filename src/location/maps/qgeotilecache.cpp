@@ -116,7 +116,7 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     // of course override them)
 
     if (directory_.isEmpty()) {
-        directory_ = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+        directory_ = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                 + QLatin1String("/QtLocation");
         QDir::root().mkpath(directory_);
     }
