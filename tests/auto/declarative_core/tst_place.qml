@@ -242,22 +242,18 @@ TestCase {
 
         // check icon
         if (place1.icon === null && place2.icon !== null) {
-            console.log("f1");
             return false;
         }
         if (place1.icon !== null && place2.icon === null) {
-            console.log("f2");
             return false;
         }
         if (place1.icon !== null && place2.icon !== null) {
             if (place1.icon.plugin !== place2.icon.plugin) {
-                console.log("f3");
                 console.log(place1.icon.plugin + " " + place2.icon.plugin);
                 return false;
             }
 
             if (place1.icon.parameters.keys().length !== place2.icon.parameters.keys().length) {
-                console.log("f4");
                 return false;
             }
 

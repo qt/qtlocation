@@ -54,6 +54,10 @@ TestCase {
         id: testModel
     }
 
+    PlaceSearchSuggestionModel {
+        id: testModelError
+    }
+
     Plugin {
         id: testPlugin
         name: "qmlgeo.test.plugin"
@@ -82,19 +86,15 @@ TestCase {
     }
 
     function test_setAndGet(data) {
-        Utils.testObjectProperties(testCase, testModel, data);
+        //Utils.testObjectProperties(testCase, testModel, data);
     }
 
+    SignalSpy { id: statusChangedSpy; target: testModel; signalName: "statusChanged" }
+    SignalSpy { id: suggestionsChangedSpy; target: testModel; signalName: "suggestionsChanged" }
+
     function test_suggestions() {
+        compare(statusChangedSpy.count, 0);
         testModel.plugin = testPlugin;
-
-        var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        statusChangedSpy.target = testModel;
-        statusChangedSpy.signalName = "statusChanged";
-
-        var suggestionsChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        suggestionsChangedSpy.target = testModel;
-        suggestionsChangedSpy.signalName = "suggestionsChanged";
 
         compare(testModel.status, PlaceSearchSuggestionModel.Null);
 
@@ -129,45 +129,39 @@ TestCase {
         compare(statusChangedSpy.count, 5);
         compare(testModel.status, PlaceSearchSuggestionModel.Ready);
 
-        //chack that an encountering an error will cause the model
+        //check that an encountering an error will cause the model
         //to clear its data
         testModel.plugin = null;
         testModel.update();
         tryCompare(testModel.suggestions, "length", 0);
         compare(testModel.status, PlaceSearchSuggestionModel.Error);
-
-        suggestionsChangedSpy.destroy();
-        statusChangedSpy.destroy();
     }
 
+    SignalSpy { id: statusChangedSpyError; target: testModelError; signalName: "statusChanged" }
+
     function test_error() {
-        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchSuggestionModel {}', testCase, "PlaceSearchSuggestionModel");
-
-        var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        statusChangedSpy.target = testModel;
-        statusChangedSpy.signalName = "statusChanged";
-
+        compare(statusChangedSpyError.count, 0);
         //try searching without a plugin instance
-        testModel.update();
-        tryCompare(statusChangedSpy, "count", 2);
-        compare(testModel.status, PlaceSearchSuggestionModel.Error);
-        statusChangedSpy.clear();
+        testModelError.update();
+        tryCompare(statusChangedSpyError, "count", 2);
+        compare(testModelError.status, PlaceSearchSuggestionModel.Error);
+        statusChangedSpyError.clear();
         //Aside: there is some difficulty in checking the transition to the Loading state
         //since the model transitions from Loading to Error before the next event loop
         //iteration.
 
         //try searching with an uninitialized plugin instance.
-        testModel.plugin = uninitializedPlugin;
-        testModel.update();
-        tryCompare(statusChangedSpy, "count", 2);
-        compare(testModel.status, PlaceSearchSuggestionModel.Error);
-        statusChangedSpy.clear();
+        testModelError.plugin = uninitializedPlugin;
+        testModelError.update();
+        tryCompare(statusChangedSpyError, "count", 2);
+        compare(testModelError.status, PlaceSearchSuggestionModel.Error);
+        statusChangedSpyError.clear();
 
         //try searching with plugin a instance
         //that has been provided a non-existent name
-        testModel.plugin = nonExistantPlugin;
-        testModel.update();
-        tryCompare(statusChangedSpy, "count", 2);
-        compare(testModel.status, PlaceSearchSuggestionModel.Error);
+        testModelError.plugin = nonExistantPlugin;
+        testModelError.update();
+        tryCompare(statusChangedSpyError, "count", 2);
+        compare(testModelError.status, PlaceSearchSuggestionModel.Error);
     }
 }
