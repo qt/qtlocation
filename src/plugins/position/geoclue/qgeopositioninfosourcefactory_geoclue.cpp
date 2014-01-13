@@ -47,8 +47,11 @@
 #include "qgeosatelliteinfosource_geocluemaster.h"
 #endif
 
+Q_DECLARE_METATYPE(QGeoPositionInfo)
+
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
 {
+    qRegisterMetaType<QGeoPositionInfo>();
     QGeoPositionInfoSourceGeoclueMaster *src = new QGeoPositionInfoSourceGeoclueMaster(parent);
     if (!src->init()) {
         delete src;
