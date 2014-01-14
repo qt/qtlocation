@@ -173,7 +173,7 @@ namespace AndroidPositioning {
     }
 
     //caching originally taken from corelib/kernel/qjni.cpp
-    typedef QHash<QString, jmethodID> JMethodIDHash;
+    typedef QHash<QByteArray, jmethodID> JMethodIDHash;
     Q_GLOBAL_STATIC(JMethodIDHash, cachedMethodID)
 
     static jmethodID getCachedMethodID(JNIEnv *env,
@@ -182,8 +182,12 @@ namespace AndroidPositioning {
                                        const char *sig)
     {
         jmethodID id = 0;
-        const QString key = QStringLiteral("%1%2").arg(QLatin1String(name)).arg(QLatin1String(sig));
-        QHash<QString, jmethodID>::iterator it = cachedMethodID->find(key);
+        int offset_name = qstrlen(name);
+        int offset_signal = qstrlen(sig);
+        QByteArray key(offset_name + offset_signal, Qt::Uninitialized);
+        memcpy(key.data(), name, offset_name);
+        memcpy(key.data()+offset_name, sig, offset_signal);
+        QHash<QByteArray, jmethodID>::iterator it = cachedMethodID->find(key);
         if (it == cachedMethodID->end()) {
             id = env->GetMethodID(clazz, name, sig);
             if (env->ExceptionCheck()) {
