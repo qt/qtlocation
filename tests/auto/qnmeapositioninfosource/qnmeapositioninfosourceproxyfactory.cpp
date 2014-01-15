@@ -86,14 +86,21 @@ QNmeaPositionInfoSourceProxy *QNmeaPositionInfoSourceProxyFactory::createProxy(Q
 {
     QTcpSocket *client = new QTcpSocket;
     client->connectToHost(m_server->serverAddress(), m_server->serverPort());
-    //qDebug() << "listening on" << m_server->serverAddress() << m_server->serverPort();
-    bool b = m_server->waitForNewConnection(5000);
-    Q_ASSERT(b);
+    qDebug() << "listening on" << m_server->serverAddress() << m_server->serverPort();
+    bool b = m_server->waitForNewConnection(15000);
+    if (!b)
+        qWarning() << "Server didin't receive new connection";
     b = client->waitForConnected();
-    Q_ASSERT(b);
+    if (!b)
+        qWarning() << "Client could not connect to server";
 
     //QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(m_mode);
-    source->setDevice(m_server->nextPendingConnection());
+    QIODevice *device = m_server->nextPendingConnection();
+    if (!device)
+        qWarning() << "Missing pending connection. Test is going to fail.";
+    else
+        qWarning() << "Received pending connection:" << device << b;
+    source->setDevice(device);
     Q_ASSERT(source->device() != 0);
     QNmeaPositionInfoSourceProxy *proxy = new QNmeaPositionInfoSourceProxy(source, client);
     proxy->setParent(source);
