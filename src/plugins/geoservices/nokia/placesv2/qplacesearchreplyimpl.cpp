@@ -123,9 +123,12 @@ void QPlaceSearchReplyImpl::replyFinished()
 
     QJsonObject object = document.object();
 
-    //QJsonObject searchObject = object.value(QLatin1String("search")).toObject();
+    QJsonObject resultsObject;
+    if (!request().recommendationId().isEmpty())
+        resultsObject = object;
+    else
+        resultsObject = object.value(QLatin1String("results")).toObject();
 
-    QJsonObject resultsObject = object.value(QLatin1String("results")).toObject();
     QJsonArray items = resultsObject.value(QLatin1String("items")).toArray();
 
     QList<QPlaceSearchResult> results;
