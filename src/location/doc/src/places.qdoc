@@ -248,7 +248,7 @@
     Any places similar to the given place are retrieved.
 
     \section3 Paging
-    If the plugin supports paging, limit and offset parameters may be provided to the search request.
+    If the plugin supports paging, the limit parameter may be provided to the search request.
     \snippet places/requesthandler.h Search paging
 
     \section2 Fetching Place Details

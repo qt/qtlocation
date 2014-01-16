@@ -379,8 +379,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
     unsupported |= query.visibilityScope() != QLocation::UnspecifiedVisibility &&
                    query.visibilityScope() != QLocation::PublicVisibility;
 
-    unsupported |= !query.searchTerm().isEmpty() && query.offset() > 0;
-
     // Both a search term and search categories are not supported.
     unsupported |= !query.searchTerm().isEmpty() && !query.categories().isEmpty();
 
@@ -431,9 +429,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         if (query.limit() > 0)
             queryItems.addQueryItem(QStringLiteral("size"), QString::number(query.limit()));
-
-        if (query.offset() > -1)
-            queryItems.addQueryItem(QStringLiteral("offset"), QString::number(query.offset()));
 
         u.setQuery(queryItems);
 
@@ -493,10 +488,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
             queryItems.addQueryItem(QLatin1String("size"),
                                     QString::number(query.limit()));
         }
-        if (query.offset() > -1) {
-            queryItems.addQueryItem(QLatin1String("offset"),
-                                    QString::number(query.offset()));
-        }
 
         requestUrl.setQuery(queryItems);
 
@@ -518,7 +509,6 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
     unsupported |= query.visibilityScope() != QLocation::UnspecifiedVisibility &&
                    query.visibilityScope() != QLocation::PublicVisibility;
 
-    unsupported |= query.offset() > 0;
     unsupported |= !query.categories().isEmpty();
     unsupported |= !query.recommendationId().isEmpty();
 

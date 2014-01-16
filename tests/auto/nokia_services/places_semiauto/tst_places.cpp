@@ -518,17 +518,9 @@ void tst_QPlaceManagerNokia::suggestions_data()
 
 void tst_QPlaceManagerNokia::suggestionsMisc()
 {
-    //check providing an offset
+    //check providing a distance relevancy hint (should be ignored)
     QPlaceSearchRequest searchRequest;
-    searchRequest.setSearchArea(QGeoCircle(QGeoCoordinate(-27.5, 153)));
-    searchRequest.setSearchTerm(QStringLiteral("sus"));
-    searchRequest.setOffset(5);
     QStringList results;
-    QVERIFY(doSearchSuggestions(searchRequest, &results, QPlaceReply::BadArgumentError));
-    QCOMPARE(results.count(), 0);
-    searchRequest.clear();
-
-    //check porviding a distance relevancy hint (should be ignored)
     searchRequest.setSearchArea(QGeoCircle(QGeoCoordinate(-27.5, 153)));
     searchRequest.setSearchTerm(QStringLiteral("sus"));
     searchRequest.setRelevanceHint(QPlaceSearchRequest::DistanceHint);

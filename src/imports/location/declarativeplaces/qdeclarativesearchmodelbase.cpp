@@ -120,26 +120,6 @@ void QDeclarativeSearchModelBase::setSearchArea(const QVariant &searchArea)
 /*!
     \internal
 */
-int QDeclarativeSearchModelBase::offset() const
-{
-    return m_request.offset();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeSearchModelBase::setOffset(int offset)
-{
-    if (m_request.offset() == offset)
-        return;
-
-    m_request.setOffset(offset);
-    emit offsetChanged();
-}
-
-/*!
-    \internal
-*/
 int QDeclarativeSearchModelBase::limit() const
 {
     return m_request.limit();
@@ -155,6 +135,22 @@ void QDeclarativeSearchModelBase::setLimit(int limit)
 
     m_request.setLimit(limit);
     emit limitChanged();
+}
+
+/*!
+    \internal
+*/
+bool QDeclarativeSearchModelBase::previousPagesAvailable() const
+{
+    return m_previousPageRequest != QPlaceSearchRequest();
+}
+
+/*!
+    \internal
+*/
+bool QDeclarativeSearchModelBase::nextPagesAvailable() const
+{
+    return m_nextPageRequest != QPlaceSearchRequest();
 }
 
 /*!
@@ -263,6 +259,30 @@ QString QDeclarativeSearchModelBase::errorString() const
 /*!
     \internal
 */
+void QDeclarativeSearchModelBase::previousPage()
+{
+    if (m_previousPageRequest == QPlaceSearchRequest())
+        return;
+
+    m_request = m_previousPageRequest;
+    update();
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeSearchModelBase::nextPage()
+{
+    if (m_nextPageRequest == QPlaceSearchRequest())
+        return;
+
+    m_request = m_nextPageRequest;
+    update();
+}
+
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::clearData(bool suppressSignal)
 {
     Q_UNUSED(suppressSignal)
@@ -319,4 +339,25 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
 void QDeclarativeSearchModelBase::pluginNameChanged()
 {
     initializePlugin(m_plugin);
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeSearchModelBase::setPreviousPageRequest(const QPlaceSearchRequest &previous)
+{
+    if (m_previousPageRequest == previous)
+        return;
+
+    m_previousPageRequest = previous;
+    emit previousPagesAvailableChanged();
+}
+
+void QDeclarativeSearchModelBase::setNextPageRequest(const QPlaceSearchRequest &next)
+{
+    if (m_nextPageRequest == next)
+        return;
+
+    m_nextPageRequest = next;
+    emit nextPagesAvailableChanged();
 }

@@ -223,19 +223,25 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty int PlaceSearchModel::offset
-
-    This property holds the index of the first search result in the model.
-
-    \sa limit
-*/
-
-/*!
     \qmlproperty int PlaceSearchModel::limit
 
     This property holds the limit of the number of items that will be returned.
+*/
 
-    \sa offset
+/*!
+    \qmlproperty bool PlaceSearchModel::previousPagesAvailable
+
+    This property holds whether there is one or more previous pages of search results available.
+
+    \sa previousPage()
+*/
+
+/*!
+    \qmlproperty bool PlaceSearchModel::nextPagesAvailable
+
+    This property holds whether there is one or more additional pages of search results available.
+
+    \sa nextPage()
 */
 
 /*!
@@ -323,6 +329,20 @@ QT_USE_NAMESPACE
 
     An empty string may also be returned if an error occurred which has no associated
     textual representation.
+*/
+
+/*!
+    \qmlmethod PlaceSearchModel::previousPage()
+
+    Updates the model to display the previous page of search results. If there is no previous page
+    then this method does nothing.
+*/
+
+/*!
+    \qmlmethod PlaceSearchModel::nextPage()
+
+    Updates the model to display the next page of search results. If there is no next page then
+    this method does nothing.
 */
 
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
@@ -730,6 +750,9 @@ void QDeclarativeSearchResultModel::queryFinished()
         Q_ASSERT(searchReply);
 
         m_resultsBuffer = searchReply->results();
+        setPreviousPageRequest(searchReply->previousPageRequest());
+        setNextPageRequest(searchReply->nextPageRequest());
+
         reply->deleteLater();
 
         if (!m_favoritesPlugin) {

@@ -39,22 +39,22 @@
 **
 ****************************************************************************/
 
-#include "qplacesearchreply.h"
-#include "qplacereply_p.h"
-
+#include <QtLocation/QPlaceSearchRequest>
+#include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceProposedSearchResult>
+#include <QtLocation/private/qplacereply_p.h>
 
 QT_BEGIN_NAMESPACE
+
 class QPlaceSearchReplyPrivate : public QPlaceReplyPrivate
 {
 public:
     QPlaceSearchReplyPrivate(){}
     QList<QPlaceSearchResult> results;
     QPlaceSearchRequest searchRequest;
+    QPlaceSearchRequest previousPageRequest;
+    QPlaceSearchRequest nextPageRequest;
 };
-
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
 
 /*!
     \class QPlaceSearchReply
@@ -121,6 +121,30 @@ QPlaceSearchRequest QPlaceSearchReply::request() const
 }
 
 /*!
+    Returns a place search request which can be used to request the previous page of search
+    results. An empty place search request is returned if there is no previous page of results.
+
+    \sa nextPageRequest(), setPreviousPageRequest()
+*/
+QPlaceSearchRequest QPlaceSearchReply::previousPageRequest() const
+{
+    Q_D(const QPlaceSearchReply);
+    return d->previousPageRequest;
+}
+
+/*!
+    Returns a place search request which can be used to request the next page of search results. An
+    empty place search request is returned if there is no next page of results.
+
+    \sa previousPageRequest(), setNextPageRequest()
+*/
+QPlaceSearchRequest QPlaceSearchReply::nextPageRequest() const
+{
+    Q_D(const QPlaceSearchReply);
+    return d->nextPageRequest;
+}
+
+/*!
     Sets the search \a request used to generate this reply.
 */
 void QPlaceSearchReply::setRequest(const QPlaceSearchRequest &request)
@@ -128,3 +152,27 @@ void QPlaceSearchReply::setRequest(const QPlaceSearchRequest &request)
     Q_D(QPlaceSearchReply);
     d->searchRequest = request;
 }
+
+/*!
+    Sets the previous page of search results request to \a previous.
+
+    \sa previousPageRequest()
+*/
+void QPlaceSearchReply::setPreviousPageRequest(const QPlaceSearchRequest &previous)
+{
+    Q_D(QPlaceSearchReply);
+    d->previousPageRequest = previous;
+}
+
+/*!
+    Sets the next page of search results request to \a next.
+
+    \sa nextPageRequest()
+*/
+void QPlaceSearchReply::setNextPageRequest(const QPlaceSearchRequest &next)
+{
+    Q_D(QPlaceSearchReply);
+    d->nextPageRequest = next;
+}
+
+QT_END_NAMESPACE

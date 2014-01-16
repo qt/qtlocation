@@ -268,16 +268,14 @@ void tst_QPlaceSearchRequest::clearTest()
     category.setName("Fast Food");
     req.setCategory(category);
     req.setLimit(100);
-    req.setOffset(5);
 
     req.clear();
     QVERIFY(req.searchTerm().isEmpty());
     QVERIFY(req.searchArea() == QGeoShape());
     QVERIFY(req.categories().isEmpty());
     QVERIFY(req.limit() == -1);
-    QVERIFY(req.offset() == 0);
 }
 
-QTEST_APPLESS_MAIN(tst_QPlaceSearchRequest);
+QTEST_APPLESS_MAIN(tst_QPlaceSearchRequest)
 
 #include "tst_qplacesearchrequest.moc"

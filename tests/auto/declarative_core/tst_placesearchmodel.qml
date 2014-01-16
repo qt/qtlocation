@@ -101,7 +101,6 @@ TestCase {
         return [
             { tag: "plugin", property: "plugin", signal: "pluginChanged", value: testPlugin },
             { tag: "searchArea", property: "searchArea", signal: "searchAreaChanged", value: testSearchArea, reset: QtPositioning.shape() },
-            { tag: "offset", property: "offset", signal: "offsetChanged", value: 10, reset: 0 },
             { tag: "limit", property: "limit", signal: "limitChanged", value: 10, reset: -1 },
 
             { tag: "searchTerm", property: "searchTerm", signal: "searchTermChanged", value: "Test term", reset: "" },
