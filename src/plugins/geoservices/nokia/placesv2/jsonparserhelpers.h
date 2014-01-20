@@ -54,6 +54,7 @@ class QPlaceImage;
 class QPlaceReview;
 class QPlaceEditorial;
 class QPlaceCategory;
+class QPlaceContentRequest;
 class QPlaceManagerEngineNokiaV2;
 
 QGeoCoordinate parseCoordinate(const QJsonArray &coordinateArray);
@@ -74,6 +75,7 @@ QPlaceEditorial parseEditorial(const QJsonObject &editorialObject,
 
 void parseCollection(QPlaceContent::Type type, const QJsonObject &object,
                      QPlaceContent::Collection *collection, int *totalCount,
+                     QPlaceContentRequest *previous, QPlaceContentRequest *next,
                      const QPlaceManagerEngineNokiaV2 *engine);
 
 QT_END_NAMESPACE

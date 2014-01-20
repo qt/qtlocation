@@ -597,9 +597,9 @@ void tst_QPlaceManagerNokia::content()
     //check fetching of content
     QPlaceContentRequest request;
     request.setContentType(type);
+    request.setPlaceId(ValidKnownPlaceId);
     QPlaceContent::Collection results;
-    QVERIFY(doFetchContent(ValidKnownPlaceId,
-                            request, &results));
+    QVERIFY(doFetchContent(request, &results));
 
     QVERIFY(results.count() > 0);
 
@@ -633,39 +633,18 @@ void tst_QPlaceManagerNokia::content()
     }
 
     //check total count
-    QPlaceContentReply *contentReply =
-            placeManager->getPlaceContent(ValidKnownPlaceId,
-                                          request);
+    QPlaceContentReply *contentReply = placeManager->getPlaceContent(request);
     QSignalSpy contentSpy(contentReply, SIGNAL(finished()));
     QTRY_VERIFY_WITH_TIMEOUT(contentSpy.count() ==1, Timeout);
     QVERIFY(contentReply->totalCount() > 0);
 
     if (contentReply->totalCount() >= 2) {
-        //try testing with an offset
-        request.setOffset(1);
-        QPlaceContent::Collection newResults;
-        QVERIFY(doFetchContent(ValidKnownPlaceId,
-                                request, &newResults));
-        QVERIFY(!newResults.keys().contains(0));
-        QCOMPARE(newResults.value(1), results.value(1));
-
         //try testing with a limit
-        request.setOffset(0);
         request.setLimit(1);
-        QVERIFY(doFetchContent(ValidKnownPlaceId,
-                                request, &newResults));
+        QPlaceContent::Collection newResults;
+        QVERIFY(doFetchContent(request, &newResults));
         QCOMPARE(newResults.count(), 1);
         QCOMPARE(newResults.values().first(), results.value(0));
-
-        //try testing both limit and offset
-        if (contentReply->totalCount()  >= 3) {
-            request.setLimit(1);
-            request.setOffset(1);
-            QVERIFY(doFetchContent(ValidKnownPlaceId,
-                                    request, &newResults));
-            QCOMPARE(newResults.count(), 1);
-            QCOMPARE(newResults.values().first(), results.value(1));
-        }
     }
 }
 

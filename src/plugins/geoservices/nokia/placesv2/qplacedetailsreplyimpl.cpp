@@ -307,7 +307,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
             parseCollection(QPlaceContent::ImageType,
                             mediaObject.value(QLatin1String("images")).toObject(),
-                            &collection, &totalCount, m_engine);
+                            &collection, &totalCount, 0, 0, m_engine);
 
             place.setTotalContentCount(QPlaceContent::ImageType, totalCount);
             place.setContent(QPlaceContent::ImageType, collection);
@@ -318,7 +318,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
             parseCollection(QPlaceContent::EditorialType,
                             mediaObject.value(QLatin1String("editorials")).toObject(),
-                            &collection, &totalCount, m_engine);
+                            &collection, &totalCount, 0, 0, m_engine);
 
             place.setTotalContentCount(QPlaceContent::EditorialType, totalCount);
             place.setContent(QPlaceContent::EditorialType, collection);
@@ -329,7 +329,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
             parseCollection(QPlaceContent::ReviewType,
                             mediaObject.value(QLatin1String("reviews")).toObject(),
-                            &collection, &totalCount, m_engine);
+                            &collection, &totalCount, 0, 0, m_engine);
 
             place.setTotalContentCount(QPlaceContent::ReviewType, totalCount);
             place.setContent(QPlaceContent::ReviewType, collection);

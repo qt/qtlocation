@@ -43,7 +43,8 @@
 #define QPLACECONTENTREQUEST_P_H
 
 #include <QtCore/QSharedData>
-#include "qplacecontent.h"
+#include <QtCore/QVariant>
+#include <QtLocation/QPlaceContent>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,8 +61,9 @@ public:
     void clear();
 
     QPlaceContent::Type contentType;
+    QString placeId;
+    QVariant contentContext;
     int limit;
-    int offset;
 };
 
 QT_END_NAMESPACE

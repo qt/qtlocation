@@ -122,9 +122,9 @@ public:
         //! [Image request]
         QPlaceContentRequest request;
         request.setContentType(QPlaceContent::ImageType);
-        request.setOffset(0);
+        request.setPlaceId(place.placeId());
         request.setLimit(5);
-        /*QPlaceContentReply * */ contentReply = manager->getPlaceContent(place.placeId(), request);
+        /*QPlaceContentReply * */ contentReply = manager->getPlaceContent(request);
         connect(contentReply, SIGNAL(finished()), this, SLOT(handleImagesReply()));
         //! [Image request]
     }
@@ -235,10 +235,10 @@ public:
         //! [Content request]
         QPlaceContentRequest request;
         request.setContentType(QPlaceContent::ImageType);
-        request.setOffset(9);
+        request.setPlaceId(place.placeId());
         request.setLimit(5);
 
-        QPlaceContentReply *contentReply = manager->getPlaceContent(place.placeId(), request);
+        QPlaceContentReply *contentReply = manager->getPlaceContent(request);
         //..connect signals..//
 
         //! [Content request]

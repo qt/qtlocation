@@ -151,13 +151,10 @@ QPlaceDetailsReply *QPlaceManagerEngine::getPlaceDetails(const QString &placeId)
 }
 
 /*!
-    Retrieves content for the place corresponding to \a placeId, according to the parameters
-    specified in \a request.
+    Retrieves content for a place according to the parameters specified in \a request.
 */
-QPlaceContentReply *QPlaceManagerEngine::getPlaceContent(const QString &placeId,
-                                                         const QPlaceContentRequest &request)
+QPlaceContentReply *QPlaceManagerEngine::getPlaceContent(const QPlaceContentRequest &request)
 {
-    Q_UNUSED(placeId)
     Q_UNUSED(request)
 
     return new QPlaceContentReplyUnsupported(this);

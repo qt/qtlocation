@@ -65,8 +65,12 @@ public:
     QPlaceContent::Type contentType() const;
     void setContentType(QPlaceContent::Type type);
 
-    int offset() const;
-    void setOffset(int offset);
+    QString placeId() const;
+    void setPlaceId(const QString &identifier);
+
+    QVariant contentContext() const;
+    void setContentContext(const QVariant &context);
+
     int limit() const;
     void setLimit(int limit);
 

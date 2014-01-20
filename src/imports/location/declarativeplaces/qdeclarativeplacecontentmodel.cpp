@@ -121,26 +121,6 @@ int QDeclarativePlaceContentModel::totalCount() const
 
 /*!
     \internal
-*/
-static QPair<int, int> findMissingKey(const QMap<int, QPlaceContent> &map)
-{
-    int start = 0;
-    while (map.contains(start))
-        ++start;
-
-    QMap<int, QPlaceContent>::const_iterator it = map.lowerBound(start);
-    if (it == map.end())
-        return qMakePair(start, -1);
-
-    int end = start;
-    while (!map.contains(end))
-        ++end;
-
-    return qMakePair(start, end - 1);
-}
-
-/*!
-    \internal
     Clears the model data but does not reset it.
 */
 void QDeclarativePlaceContentModel::clearData()
@@ -160,6 +140,8 @@ void QDeclarativePlaceContentModel::clearData()
         m_reply->deleteLater();
         m_reply = 0;
     }
+
+    m_nextRequest.clear();
 }
 
 /*!
@@ -288,22 +270,17 @@ void QDeclarativePlaceContentModel::fetchMore(const QModelIndex &parent)
     if (!placeManager)
         return;
 
-    QPlaceContentRequest request;
-    request.setContentType(m_type);
-
-    if (m_contentCount == -1) {
-        request.setOffset(0);
+    if (m_nextRequest == QPlaceContentRequest()) {
+        QPlaceContentRequest request;
+        request.setContentType(m_type);
+        request.setPlaceId(m_place->place().placeId());
         request.setLimit(m_batchSize);
+
+        m_reply = placeManager->getPlaceContent(request);
     } else {
-        QPair<int, int> missing = findMissingKey(m_content);
-        request.setOffset(missing.first);
-        if (missing.second == -1)
-            request.setLimit(m_batchSize);
-        else
-            request.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
+        m_reply = placeManager->getPlaceContent(m_nextRequest);
     }
 
-    m_reply = placeManager->getPlaceContent(m_place->place().placeId(), request);
     connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
 }
 
@@ -333,6 +310,8 @@ void QDeclarativePlaceContentModel::fetchFinished()
 
     QPlaceContentReply *reply = m_reply;
     m_reply = 0;
+
+    m_nextRequest = reply->nextPageRequest();
 
     if (m_contentCount != reply->totalCount()) {
         m_contentCount = reply->totalCount();
@@ -409,6 +388,12 @@ void QDeclarativePlaceContentModel::fetchFinished()
                 startIndex = -1;
             }
         }
+
+        // The fetch didn't add any new content and we haven't fetched all content yet. This is
+        // likely due to the model being prepopulated by Place::getDetails(). Keep fetching more
+        // data until new content is available.
+        if (newIndexes.isEmpty() && m_content.count() != m_contentCount)
+            fetchMore(QModelIndex());
     }
 
     reply->deleteLater();

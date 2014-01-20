@@ -200,6 +200,7 @@ QPlaceEditorial parseEditorial(const QJsonObject &editorialObject,
 
 void parseCollection(QPlaceContent::Type type, const QJsonObject &object,
                      QPlaceContent::Collection *collection, int *totalCount,
+                     QPlaceContentRequest *previous, QPlaceContentRequest *next,
                      const QPlaceManagerEngineNokiaV2 *engine)
 {
     Q_ASSERT(engine);
@@ -210,6 +211,16 @@ void parseCollection(QPlaceContent::Type type, const QJsonObject &object,
     int offset = 0;
     if (object.contains(QLatin1String("offset")))
         offset = object.value(QLatin1String("offset")).toDouble();
+
+    if (previous && object.contains(QStringLiteral("previous"))) {
+        previous->setContentType(type);
+        previous->setContentContext(QUrl(object.value(QStringLiteral("previous")).toString()));
+    }
+
+    if (next && object.contains(QStringLiteral("next"))) {
+        next->setContentType(type);
+        next->setContentContext(QUrl(object.value(QStringLiteral("next")).toString()));
+    }
 
     if (collection) {
         QJsonArray items = object.value(QLatin1String("items")).toArray();

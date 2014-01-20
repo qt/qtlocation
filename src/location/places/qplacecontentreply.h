@@ -65,10 +65,15 @@ public:
 
     QPlaceContentRequest request() const;
 
+    QPlaceContentRequest previousPageRequest() const;
+    QPlaceContentRequest nextPageRequest() const;
+
 protected:
     void setContent(const QPlaceContent::Collection &content);
     void setTotalCount(int total);
     void setRequest(const QPlaceContentRequest &request);
+    void setPreviousPageRequest(const QPlaceContentRequest &previous);
+    void setNextPageRequest(const QPlaceContentRequest &next);
 
 private:
     Q_DISABLE_COPY(QPlaceContentReply)

@@ -85,7 +85,7 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &request);
+    QPlaceContentReply *getPlaceContent(const QPlaceContentRequest &request) Q_DECL_OVERRIDE;
 
     QPlaceSearchReply *search(const QPlaceSearchRequest &query);
 

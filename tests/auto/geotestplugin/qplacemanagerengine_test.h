@@ -363,10 +363,10 @@ public:
         return reply;
     }
 
-    QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &query)
+    QPlaceContentReply *getPlaceContent(const QPlaceContentRequest &query) Q_DECL_OVERRIDE
     {
         ContentReply *reply = new ContentReply(this);
-        if (placeId.isEmpty() || !m_places.contains(placeId)) {
+        if (query.placeId().isEmpty() || !m_places.contains(query.placeId())) {
             reply->setError(QPlaceReply::PlaceDoesNotExistError, tr("Place does not exist"));
             QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
 
@@ -375,31 +375,33 @@ public:
                 int totalCount = 0;
                 switch (query.contentType()) {
                 case QPlaceContent::ReviewType:
-                    totalCount = m_placeReviews.value(placeId).count();
+                    totalCount = m_placeReviews.value(query.placeId()).count();
                     break;
                 case QPlaceContent::ImageType:
-                    totalCount = m_placeImages.value(placeId).count();
+                    totalCount = m_placeImages.value(query.placeId()).count();
                     break;
                 case QPlaceContent::EditorialType:
-                    totalCount = m_placeEditorials.value(placeId).count();
+                    totalCount = m_placeEditorials.value(query.placeId()).count();
                 default:
                     //do nothing
                     break;
                 }
 
-                int offset = qMax(query.offset(), 0);
+                QVariantMap context = query.contentContext().toMap();
+
+                int offset = context.value(QStringLiteral("offset"), 0).toInt();
                 int max = (query.limit() == -1) ? totalCount
                                                 : qMin(offset + query.limit(), totalCount);
                 for (int i = offset; i < max; ++i) {
                     switch (query.contentType()) {
                     case QPlaceContent::ReviewType:
-                        collection.insert(i, m_placeReviews.value(placeId).at(i));
+                        collection.insert(i, m_placeReviews.value(query.placeId()).at(i));
                         break;
                     case QPlaceContent::ImageType:
-                        collection.insert(i, m_placeImages.value(placeId).at(i));
+                        collection.insert(i, m_placeImages.value(query.placeId()).at(i));
                         break;
                     case QPlaceContent::EditorialType:
-                        collection.insert(i, m_placeEditorials.value(placeId).at(i));
+                        collection.insert(i, m_placeEditorials.value(query.placeId()).at(i));
                     default:
                         //do nothing
                         break;
@@ -408,6 +410,21 @@ public:
 
                 reply->setContent(collection);
                 reply->setTotalCount(totalCount);
+
+                if (max != totalCount) {
+                    context.clear();
+                    context.insert(QStringLiteral("offset"), offset + query.limit());
+                    QPlaceContentRequest request = query;
+                    request.setContentContext(context);
+                    reply->setNextPageRequest(request);
+                }
+                if (offset > 0) {
+                    context.clear();
+                    context.insert(QStringLiteral("offset"), qMin(0, offset - query.limit()));
+                    QPlaceContentRequest request = query;
+                    request.setContentContext(context);
+                    reply->setPreviousPageRequest(request);
+                }
         }
 
         QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);

@@ -244,13 +244,12 @@ bool PlaceManagerUtils::doFetchCategory(QPlaceManager *manager,
 }
 
 bool PlaceManagerUtils::doFetchContent(QPlaceManager *manager,
-                                       const QString &placeId,
                                        const QPlaceContentRequest &request,
                                        QPlaceContent::Collection *results,
                                        QPlaceReply::Error expectedError)
 {
     Q_ASSERT(results);
-    QPlaceContentReply *reply = manager->getPlaceContent(placeId, request);
+    QPlaceContentReply *reply = manager->getPlaceContent(request);
     bool isSuccessful = checkSignals(reply, expectedError, manager);
     *results = reply->content();
 
