@@ -127,6 +127,15 @@ TestCase {
         compare(testingSource.updateInterval, 1000);
     }
 
+    function test_preferredPositioningMethods() {
+        testingSource.preferredPositioningMethods = PositionSource.AllPositioningMethods;
+        compare(testingSource.preferredPositioningMethods, PositionSource.AllPositioningMethods);
+        testingSource.preferredPositioningMethods = PositionSource.SatellitePositioningMethods;
+        compare(testingSource.preferredPositioningMethods, PositionSource.SatellitePositioningMethods);
+        testingSource.preferredPositioningMethods = PositionSource.NonSatellitePositioningMethods;
+        compare(testingSource.preferredPositioningMethods, PositionSource.NonSatellitePositioningMethods);
+    }
+
     function test_updates() {
         updateSpy.clear();
 
