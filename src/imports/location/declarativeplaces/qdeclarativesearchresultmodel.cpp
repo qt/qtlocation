@@ -157,18 +157,17 @@ QT_USE_NAMESPACE
 
     \section1 Paging
     The PlaceSearchModel API has some limited support
-    for paging. The \l offset and \l limit properties can be used to access
-    paged search results. When the \l offset and \l limit properties are set
-    the search results between \l offset and (\l offset + \l limit - 1) will be
-    returned. For example, if the backend has 5 search results in total
-    [a,b,c,d,e], an offset of 0 specifies that the first item returned in the
-    model will be 'a'. An offset of 1 secifies that the first item in the model
-    will be 'b' and so on. The limit specifies the maximum number of items to
-    be returned.  For example, assuming an offset of 0 and limit of 3 then a,b,c is
-    returned. If the offset exceeds (or equals) the total number of items, then
-    0 results are returned in the model. Note that the API currently does not
-    support a means to retrieve the total number of items available from the
-    backed. Also note that support for \l offset and \l limit can vary
+    for paging. The \l nextPage() and \l previousPage() functions as well as
+    the \l limit property can be used to access
+    paged search results. When the \l limit property is set
+    the search result page contains at most \l limit entries (of type place result).
+    For example, if the backend has 5 search results in total
+    [a,b,c,d,e], and assuming the first page is shown and limit of 3 has been set
+    then a,b,c is returned. The \l nextPage() would return d,e. The
+    \l nextPagesAvailable and \l previousPagesAvailable properties
+    can be used to check for further pages. At the moment the API does not
+    support the means to retrieve the total number of items available from the
+    backed. Note that support for \l nextPage(), previousPage() and \l limit can vary
     according to the \l plugin.
 */
 
@@ -270,8 +269,8 @@ QT_USE_NAMESPACE
 
     Updates the model based on the provided query parameters.  The model will be populated with a
     list of places matching the search parameters specified by the type's properties.  Search
-    criteria is specified by setting properties such as the \l searchTerm, \l categories, \l limit
-    and \l offset.  Support for these properties may vary according to \l plugin.  \c update() then
+    criteria is specified by setting properties such as the \l searchTerm, \l categories, \l searchArea and \l limit.
+    Support for these properties may vary according to \l plugin.  \c update() then
     submits the set of criteria to the \l plugin to process.
 
     While the model is updating the \l status of the model is set to
