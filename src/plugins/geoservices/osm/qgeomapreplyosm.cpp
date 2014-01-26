@@ -93,6 +93,9 @@ void QGeoMapReplyOsm::networkReplyFinished()
     case 1:
         setMapImageFormat("png");
         break;
+    case 2:
+        setMapImageFormat("png");
+        break;
     default:
         qWarning("Unknown map id %d", tileSpec().mapId());
     }

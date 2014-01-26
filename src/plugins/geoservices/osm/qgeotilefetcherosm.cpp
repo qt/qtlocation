@@ -67,7 +67,14 @@ QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
     switch (spec.mapId()) {
         case 1:
             // opensteetmap.org street map
-            request.setUrl(QUrl(QStringLiteral("http://a.tile.openstreetmap.org/") +
+            request.setUrl(QUrl(QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/map/") +
+                                QString::number(spec.zoom()) + QLatin1Char('/') +
+                                QString::number(spec.x()) + QLatin1Char('/') +
+                                QString::number(spec.y()) + QStringLiteral(".png")));
+            break;
+        case 2:
+            // opensteetmap.org satellite map
+            request.setUrl(QUrl(QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/sat/") +
                                 QString::number(spec.zoom()) + QLatin1Char('/') +
                                 QString::number(spec.x()) + QLatin1Char('/') +
                                 QString::number(spec.y()) + QStringLiteral(".png")));
