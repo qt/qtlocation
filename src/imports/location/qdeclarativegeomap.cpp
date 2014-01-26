@@ -187,8 +187,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         serviceProvider_(0),
         mappingManager_(0),
         zoomLevel_(8.0),
-        bearing_(0.0),
-        tilt_(0.0),
         center_(0,0),
         activeMapType_(0),
         componentCompleted_(false),
@@ -498,22 +496,12 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             this,
             SIGNAL(centerChanged(QGeoCoordinate)));
     connect(map_->mapController(),
-            SIGNAL(bearingChanged(qreal)),
-            this,
-            SLOT(mapBearingChanged(qreal)));
-    connect(map_->mapController(),
-            SIGNAL(tiltChanged(qreal)),
-            this,
-            SLOT(mapTiltChanged(qreal)));
-    connect(map_->mapController(),
             SIGNAL(zoomChanged(qreal)),
             this,
             SLOT(mapZoomLevelChanged(qreal)));
 
     map_->mapController()->setCenter(center_);
     map_->mapController()->setZoom(zoomLevel_);
-    map_->mapController()->setBearing(bearing_);
-    map_->mapController()->setTilt(tilt_);
 
     QList<QGeoMapType> types = mappingManager_->supportedMapTypes();
     for (int i = 0; i < types.size(); ++i) {
@@ -637,81 +625,6 @@ qreal QDeclarativeGeoMap::maximumZoomLevel() const
 }
 
 /*!
-    \internal
-*/
-void QDeclarativeGeoMap::setBearing(qreal bearing)
-{
-    if (bearing_ == bearing)
-        return;
-    bool clockwise = (bearing >= 0);
-    qreal fractions = bearing - int(bearing);
-    bearing = (int(qAbs(bearing))) % 359;
-    if (!clockwise)
-        bearing = (-1.0 * bearing) + 360;
-    bearing_ = bearing + fractions;
-    if (mappingManagerInitialized_)
-        map_->mapController()->setBearing(bearing_);
-    emit bearingChanged(bearing_);
-}
-
-/*!
-    \qmlproperty real Map::bearing
-
-    This property holds the current bearing (starting from 0 and increasing
-    clockwise to 359,9 degrees) pointing up.
-
-    For example setting bearing to 10 will set bearing 10 to point up, which
-    visually looks like rotating the map counter-clockwise.
-
-    You can also assign negative values, which will internally get
-    translated into positive bearing (for example -10 equals 350). This is primarily for
-    convenience (for example you can decrement bearing without worrying about it).
-    Assigning values greater than abs(360) will be mod'd (for example 365 will result
-    in 5).
-
-    The default value is 0 corresponding North pointing up.
-*/
-
-qreal QDeclarativeGeoMap::bearing() const
-{
-    if (mappingManagerInitialized_) {
-        if (map_->mapController()->bearing() >= 0)
-            return map_->mapController()->bearing();
-        else
-            return map_->mapController()->bearing() + 360;
-    } else {
-        return bearing_;
-    }
-}
-
-/*!
-    \qmlproperty real Map::tilt
-
-    This property holds the current tilt (starting from 0 and increasing to 85 degrees).
-
-    The tilt gives the map a 2.5D feel. Certain map objects may be rendered
-    in 3D if the tilt is different from 0.
-
-    The default value is 0 corresponding to no tilt.
-*/
-qreal QDeclarativeGeoMap::tilt() const
-{
-    if (!mappingManagerInitialized_)
-        return tilt_;
-    return map_->mapController()->tilt();
-}
-
-void QDeclarativeGeoMap::setTilt(qreal tilt)
-{
-    if (tilt_ == tilt || tilt > 85.0 || tilt < 0)
-        return;
-    tilt_ = tilt;
-    if (mappingManagerInitialized_)
-        map_->mapController()->setTilt(tilt);
-    emit tiltChanged(tilt);
-}
-
-/*!
     \qmlproperty real QtLocation::Map::zoomLevel
 
     This property holds the zoom level for the map.
@@ -785,28 +698,6 @@ void QDeclarativeGeoMap::mapZoomLevelChanged(qreal zoom)
 }
 
 /*!
-    \internal
-*/
-void QDeclarativeGeoMap::mapTiltChanged(qreal tilt)
-{
-    if (tilt == zoomLevel_)
-        return;
-    tilt_ = tilt;
-    emit tiltChanged(tilt_);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mapBearingChanged(qreal bearing)
-{
-    if (bearing == bearing_)
-        return;
-    bearing_ = bearing;
-    emit bearingChanged(bearing_);
-}
-
-/*!
     \qmlproperty list<MapType> QtLocation::Map::supportedMapTypes
 
     This read-only property holds the set of \l{MapType}{map types} supported by this map.
@@ -863,7 +754,7 @@ QPointF QDeclarativeGeoMap::toScreenPosition(const QGeoCoordinate &coordinate) c
     Positive values for \a dx move the map right, negative values left.
     Positive values for \a dy move the map down, negative values up.
 
-    During panning the \l center, \l tilt, \l bearing, and \l zoomLevel may change.
+    During panning the \l center, and \l zoomLevel may change.
 */
 void QDeclarativeGeoMap::pan(int dx, int dy)
 {

@@ -234,15 +234,9 @@ QT_BEGIN_NAMESPACE
     \list
     \li MapGestureArea.NoGesture - Don't support any additional gestures (value: 0x0000).
     \li MapGestureArea.ZoomGesture - Support the map zoom gesture (value: 0x0001).
-    \li MapGestureArea.RotationGesture - Support the map rotation gesture (value: 0x0002).
-    \li MapGestureArea.TiltGesture - Support the map tilt gesture (value: 0x0004).
-    \li MapGestureArea.PanGesture  - Support the map pan gesture (value: 0x0008).
-    \li MapGestureArea.FlickGesture  - Support the map flick gesture (value: 0x0010).
+    \li MapGestureArea.PanGesture  - Support the map pan gesture (value: 0x0002).
+    \li MapGestureArea.FlickGesture  - Support the map flick gesture (value: 0x0004).
     \endlist
-
-    For the extremist, one may OR flag the RotationGesture or TiltGesture
-    but these come with absolutely no warranty or guarantees at the moment
-    (may be removed, changed, moved around)
 
     \note For the time being, only MapGestureArea.ZoomGesture is supported.
 */
@@ -256,16 +250,6 @@ QT_BEGIN_NAMESPACE
     It is an indicative measure calculated from the dimensions of the
     map area, roughly corresponding how much zoom level could change with
     maximum pinch zoom. Default value is 2.0, maximum value is 10.0
-*/
-
-/*!
-    \qmlproperty real MapGestureArea::rotationFactor
-
-    This property holds the rotation factor for zoom, essentially meant to be used for setting
-    the rotation sensitivity.
-
-    It is an indicative measure; the default value 1.0 means the map roughly follows the fingers,
-    whereas 2.0 means rotating twice as fast. Maximum value is 5.0.
 */
 
 /*!
@@ -386,10 +370,6 @@ void QDeclarativeGeoMapGestureArea::setActiveGestures(ActiveGestures activeGestu
     if (activeGestures == activeGestures_)
         return;
     activeGestures_ = activeGestures;
-    if (activeGestures_ & RotationGesture)
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PINCH_ROTATE_GESTURE_ACTIVATED);
-    if (activeGestures_ & TiltGesture)
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PINCH_TILT_GESTURE_ACTIVATED);
     emit activeGesturesChanged();
 }
 
@@ -528,25 +508,6 @@ void QDeclarativeGeoMapGestureArea::setMaximumZoomLevelChange(qreal maxChange)
         return;
     pinch_.zoom.maximumChange = maxChange;
     emit maximumZoomLevelChangeChanged();
-}
-
-/*!
-    \internal
-*/
-qreal QDeclarativeGeoMapGestureArea::rotationFactor() const
-{
-    return pinch_.rotation.factor;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::setRotationFactor(qreal factor)
-{
-    if (pinch_.rotation.factor == factor ||  factor < 0 || factor > 5)
-        return;
-    pinch_.rotation.factor = factor;
-    emit rotationFactorChanged();
 }
 
 /*!
@@ -747,7 +708,7 @@ void QDeclarativeGeoMapGestureArea::update()
     touchPointStateMachine();
 
     // Parallel state machine for pinch
-    if (isPinchActive() || (enabled_ && pinch_.enabled && (activeGestures_ & (ZoomGesture | TiltGesture | RotationGesture))))
+    if (isPinchActive() || (enabled_ && pinch_.enabled && (activeGestures_ & (ZoomGesture))))
         pinchStateMachine();
 
     // Parallel state machine for pan (since you can pan at the same time as pinching)
@@ -952,16 +913,12 @@ void QDeclarativeGeoMapGestureArea::startPinch()
 {
     pinch_.startDist = distanceBetweenTouchPoints_;
     pinch_.zoom.previous = 1.0;
-    pinch_.tilt.previous = 0.0;
     pinch_.lastAngle = twoTouchAngle_;
-    pinch_.rotation.angle = 0.0;
 
     pinch_.lastPoint1 = touchPoints_.at(0).scenePos();
     pinch_.lastPoint2 = touchPoints_.at(1).scenePos();
 
     pinch_.zoom.start = declarativeMap_->zoomLevel();
-    pinch_.rotation.start = declarativeMap_->bearing();
-    pinch_.tilt.start = declarativeMap_->tilt();
 }
 
 /*!
@@ -985,7 +942,6 @@ void QDeclarativeGeoMapGestureArea::updatePinch()
         da -= 360;
     else if (da < -180)
         da += 360;
-    pinch_.rotation.angle -= da;
     pinch_.event.setCenter(declarativeMap_->mapFromScene(sceneCenter_));
     pinch_.event.setAngle(twoTouchAngle_);
 
@@ -1005,37 +961,6 @@ void QDeclarativeGeoMapGestureArea::updatePinch()
         qreal perPinchMaximumZoomLevel = qMin(pinch_.zoom.start + pinch_.zoom.maximumChange, pinch_.zoom.maximum);
         newZoomLevel = qMin(qMax(perPinchMinimumZoomLevel, newZoomLevel), perPinchMaximumZoomLevel);
         declarativeMap_->setZoomLevel(newZoomLevel);
-    }
-    if (activeGestures_ & TiltGesture && pinch_.zoom.minimum >= 0 && pinch_.zoom.maximum >= 0) {
-        // Note: tilt is not yet supported.
-        qreal newTilt = pinch_.tilt.previous;
-        if (distanceBetweenTouchPoints_) {
-            newTilt =
-                    // How much further/closer the current touchpoints are (in pixels) compared to pinch start
-                    ((distanceBetweenTouchPoints_ - pinch_.startDist)  *
-                     //  How much one pixel corresponds in units of tilt degrees (and multiply by above delta)
-                     (pinch_.tilt.maximumChange / ((declarativeMap_->width() + declarativeMap_->height()) / 2))) +
-                    // Add to starting tilt.
-                    pinch_.tilt.start;
-        }
-        qreal perPinchMinimumTilt = qMax(pinch_.tilt.start - pinch_.tilt.maximumChange, pinch_.tilt.minimum);
-        qreal perPinchMaximumTilt = qMin(pinch_.tilt.start + pinch_.tilt.maximumChange, pinch_.tilt.maximum);
-        newTilt = qMin(qMax(perPinchMinimumTilt, newTilt), perPinchMaximumTilt);
-        pinch_.tilt.previous = newTilt;
-        declarativeMap_->setTilt(newTilt);
-    }
-    if (activeGestures_ & RotationGesture) {
-        bool unlimitedRotation = (pinch_.rotation.minimum == 0.0 && pinch_.rotation.maximum == 0.0);
-        if ((pinch_.rotation.start >= pinch_.rotation.minimum && pinch_.rotation.start <= pinch_.rotation.maximum) || unlimitedRotation)  {
-            qreal r = pinch_.rotation.angle * pinch_.rotation.factor + pinch_.rotation.start;
-            if (!unlimitedRotation)
-                r = qMin(qMax(pinch_.rotation.minimum,r), pinch_.rotation.maximum);
-            if (r > 360.0)
-                r -= 360;
-            if (r < -360.0)
-                r += 360.0;
-            declarativeMap_->setBearing(r);
-        }
     }
 }
 

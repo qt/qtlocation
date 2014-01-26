@@ -106,9 +106,6 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(QList<QObject *> mapItems READ mapItems NOTIFY mapItemsChanged)
-    // Tilt and bearing are not part of supported API
-    Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
-    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -139,12 +136,6 @@ public:
 
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
-
-    void setBearing(qreal bearing);
-    qreal bearing() const;
-
-    void setTilt(qreal tilt);
-    qreal tilt() const;
 
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
@@ -183,8 +174,6 @@ Q_SIGNALS:
     void wheelAngleChanged(QPoint angleDelta);
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void zoomLevelChanged(qreal zoomLevel);
-    void bearingChanged(qreal bearing);
-    void tiltChanged(qreal tilt);
     void centerChanged(const QGeoCoordinate &coordinate);
     void activeMapTypeChanged();
     void supportedMapTypesChanged();
@@ -196,8 +185,6 @@ private Q_SLOTS:
     void updateMapDisplay(const QRectF &target);
     void mappingManagerInitialized();
     void mapZoomLevelChanged(qreal zoom);
-    void mapTiltChanged(qreal tilt);
-    void mapBearingChanged(qreal bearing);
     void pluginReady();
     void onMapChildrenChanged();
 

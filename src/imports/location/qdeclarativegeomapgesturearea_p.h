@@ -106,7 +106,7 @@ private:
 
 // tbd: should we have a 'active' / 'moving' boolean attribute when pinch is active?
 
-// class QDeclarativeGeoMapGestureArea: public QObject // supporting pinching, panning, flicking, tilting
+// class QDeclarativeGeoMapGestureArea: public QObject // supporting pinching, panning, flicking
 class QDeclarativeGeoMapGestureArea: public QObject
 {
     Q_OBJECT
@@ -120,7 +120,6 @@ class QDeclarativeGeoMapGestureArea: public QObject
     Q_PROPERTY(bool isPanActive READ isPanActive)
     Q_PROPERTY(ActiveGestures activeGestures READ activeGestures WRITE setActiveGestures NOTIFY activeGesturesChanged)
     Q_PROPERTY(qreal maximumZoomLevelChange READ maximumZoomLevelChange WRITE setMaximumZoomLevelChange NOTIFY maximumZoomLevelChangeChanged)
-    Q_PROPERTY(qreal rotationFactor READ rotationFactor WRITE setRotationFactor NOTIFY rotationFactorChanged)
     Q_PROPERTY(qreal flickDeceleration READ flickDeceleration WRITE setFlickDeceleration NOTIFY flickDecelerationChanged)
 public:
     QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent = 0);
@@ -129,10 +128,8 @@ public:
     enum ActiveGesture {
         NoGesture = 0x0000,
         ZoomGesture = 0x0001,
-        RotationGesture = 0x0002,
-        TiltGesture = 0x0004,
-        PanGesture = 0x0008,
-        FlickGesture = 0x0010
+        PanGesture = 0x0002,
+        FlickGesture = 0x004
     };
     Q_DECLARE_FLAGS(ActiveGestures, ActiveGesture)
 
@@ -154,9 +151,6 @@ public:
 
     qreal maximumZoomLevelChange() const;
     void setMaximumZoomLevelChange(qreal maxChange);
-
-    qreal rotationFactor() const;
-    void setRotationFactor(qreal factor);
 
     qreal flickDeceleration() const;
     void setFlickDeceleration(qreal deceleration);
@@ -184,7 +178,6 @@ Q_SIGNALS:
     void pinchActiveChanged();
     void enabledChanged();
     void maximumZoomLevelChangeChanged();
-    void rotationFactorChanged();
     void activeGesturesChanged();
     void flickDecelerationChanged();
 
@@ -211,7 +204,7 @@ private:
     void startTwoTouchPoints();
     void updateTwoTouchPoints();
 
-    // All pinch related code, which encompasses zoom, rotation and tilt
+    // All pinch related code, which encompasses zoom
     void pinchStateMachine();
     bool canStartPinch();
     void startPinch();
@@ -254,24 +247,6 @@ private:
             qreal previous;
             qreal maximumChange;
         } zoom;
-        struct Rotation
-        {
-            Rotation() : minimum(0.0), maximum(0.0), start(0.0), angle(0.0), factor(1.0) {}
-            qreal minimum;
-            qreal maximum;
-            qreal start;
-            qreal angle;
-            qreal factor;
-        } rotation;
-        struct Tilt
-        {
-            Tilt() : minimum(0.0), maximum(90.0), maximumChange(20.0), previous(0.0), start(0.0) {}
-            qreal minimum;
-            qreal maximum;
-            qreal maximumChange;
-            qreal previous;
-            qreal start;
-        } tilt;
 
         QPointF lastPoint1;
         QPointF lastPoint2;
