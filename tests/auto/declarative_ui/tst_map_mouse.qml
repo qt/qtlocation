@@ -84,10 +84,6 @@ Item {
     // General-purpose elements for the test:
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
-    MapMouseEvent{
-        id: mapMouseEvent
-    }
-
     function setMouseData(ma, me)
     {
         ma.lastX = me.x
@@ -351,15 +347,6 @@ Item {
             compare(mouseUpperAcceptedButtonsChangedSpy.count, 2)
             mouseClick(map, 5, 25)
             compare(mouseUpperClickedSpy.count, 1)
-        }
-
-        function test_aab_event_basic_properties() {
-            compare(mapMouseEvent.accepted, false)
-            compare(mapMouseEvent.button, Qt.NoButton)
-            compare(mapMouseEvent.modifiers, Qt.NoModifier)
-            compare(mapMouseEvent.wasHeld, false)
-            compare(mapMouseEvent.x, 0)
-            compare(mapMouseEvent.y, 0)
         }
 
         function test_basic_position_changed() {

@@ -42,8 +42,6 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegeomap_p.h"
 
-#include "qdeclarativegeomapmouseevent_p.h"
-
 #include "qdeclarativegeoroute_p.h"
 #include "qdeclarativegeoroutemodel_p.h"
 #include "qdeclarativegeocodemodel_p.h"

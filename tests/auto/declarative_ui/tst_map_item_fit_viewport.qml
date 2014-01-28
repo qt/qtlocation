@@ -135,7 +135,7 @@ Item {
             border.width: 0
             topLeft: preMapRectangleDefaultTopLeft
             bottomRight: preMapRectangleDefaultBottomRight
-            MapMouseArea {
+            MouseArea {
                 id: preMapRectMa
                 anchors.fill: parent
                 drag.target: parent

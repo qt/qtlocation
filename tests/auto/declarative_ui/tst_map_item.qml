@@ -140,7 +140,7 @@ Item {
                 latitude: 10
                 longitude: 30
             }
-            MapMouseArea {
+            MouseArea {
                 id: preMapRectMa
                 anchors.fill: parent
                 drag.target: parent
