@@ -78,14 +78,14 @@ class QPlaceManagerEngineNokiaV2 : public QPlaceManagerEngine
 
 public:
     QPlaceManagerEngineNokiaV2(QGeoNetworkAccessManager *networkManager,
-                               const QMap<QString, QVariant> &parameters,
+                               const QVariantMap &parameters,
                                QGeoServiceProvider::Error *error,
                                QString *errorString);
     ~QPlaceManagerEngineNokiaV2();
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &request);
+    QPlaceContentReply *getPlaceContent(const QPlaceContentRequest &request) Q_DECL_OVERRIDE;
 
     QPlaceSearchReply *search(const QPlaceSearchRequest &query);
 

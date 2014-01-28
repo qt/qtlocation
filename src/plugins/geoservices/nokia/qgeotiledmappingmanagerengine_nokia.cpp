@@ -68,7 +68,7 @@ QT_BEGIN_NAMESPACE
 
 QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     QGeoNetworkAccessManager *networkManager,
-    const QMap<QString, QVariant> &parameters,
+    const QVariantMap &parameters,
     QGeoServiceProvider::Error *error,
     QString *errorString)
     : QGeoTiledMappingManagerEngine()

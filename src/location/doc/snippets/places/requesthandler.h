@@ -100,7 +100,6 @@ public:
     {
         //! [Search paging]
         QPlaceSearchRequest searchRequest;
-        searchRequest.setOffset(10);  //specify the index of the first result
         searchRequest.setLimit(15); //specify how many results are to be retrieved.
         //! [Search paging]
     }
@@ -123,9 +122,9 @@ public:
         //! [Image request]
         QPlaceContentRequest request;
         request.setContentType(QPlaceContent::ImageType);
-        request.setOffset(0);
+        request.setPlaceId(place.placeId());
         request.setLimit(5);
-        /*QPlaceContentReply * */ contentReply = manager->getPlaceContent(place.placeId(), request);
+        /*QPlaceContentReply * */ contentReply = manager->getPlaceContent(request);
         connect(contentReply, SIGNAL(finished()), this, SLOT(handleImagesReply()));
         //! [Image request]
     }
@@ -220,9 +219,8 @@ public:
         //closer places have greater weighting in the ranking of results.
         searchRequest.setRelevanceHint(QPlaceSearchRequest::DistanceHint);
 
-        //use offset and limit to provide pagination.
-        //this retrieves the next 5 items from the 10th index
-        searchRequest.setOffset(9);
+        //use limit to adjust pagination.
+        //this limits the number of place results to 5 per page.
         searchRequest.setLimit(5);
 
         //provide some categories to narrow down search
@@ -237,10 +235,10 @@ public:
         //! [Content request]
         QPlaceContentRequest request;
         request.setContentType(QPlaceContent::ImageType);
-        request.setOffset(9);
+        request.setPlaceId(place.placeId());
         request.setLimit(5);
 
-        QPlaceContentReply *contentReply = manager->getPlaceContent(place.placeId(), request);
+        QPlaceContentReply *contentReply = manager->getPlaceContent(request);
         //..connect signals..//
 
         //! [Content request]

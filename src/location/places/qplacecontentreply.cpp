@@ -53,6 +53,8 @@ public:
     QPlaceContent::Collection contentCollection;
     int totalCount;
     QPlaceContentRequest contentRequest;
+    QPlaceContentRequest previousPageRequest;
+    QPlaceContentRequest nextPageRequest;
 };
 
 QT_END_NAMESPACE
@@ -145,10 +147,50 @@ QPlaceContentRequest QPlaceContentReply::request() const
 }
 
 /*!
+    Returns a place content request that can be used to request the previous batch of place content
+    results.
+*/
+QPlaceContentRequest QPlaceContentReply::previousPageRequest() const
+{
+    Q_D(const QPlaceContentReply);
+    return d->previousPageRequest;
+}
+
+/*!
+    Returns a place content request that can be used to request the next batch of place content
+    results.
+*/
+QPlaceContentRequest QPlaceContentReply::nextPageRequest() const
+{
+    Q_D(const QPlaceContentReply);
+    return d->nextPageRequest;
+}
+
+/*!
     Sets the content \a request used to generate this this reply.
 */
 void QPlaceContentReply::setRequest(const QPlaceContentRequest &request)
 {
     Q_D(QPlaceContentReply);
     d->contentRequest = request;
+}
+
+/*!
+    Sets the place content request that can be used to request the previous batch of place content
+    results to \a previous.
+*/
+void QPlaceContentReply::setPreviousPageRequest(const QPlaceContentRequest &previous)
+{
+    Q_D(QPlaceContentReply);
+    d->previousPageRequest = previous;
+}
+
+/*!
+    Sets the place content request that can be used to request the next batch of place content
+    results to \a next.
+*/
+void QPlaceContentReply::setNextPageRequest(const QPlaceContentRequest &next)
+{
+    Q_D(QPlaceContentReply);
+    d->nextPageRequest = next;
 }

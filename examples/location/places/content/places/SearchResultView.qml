@@ -97,6 +97,7 @@ Item {
 
                         Button {
                             text: qsTr("Previous")
+                            enabled: placeSearchModel.previousPagesAvailable
                             onClicked: placeSearchModel.previousPage()
 
                             anchors.left: parent.left
@@ -111,6 +112,7 @@ Item {
 
                         Button {
                             text: qsTr("Next")
+                            enabled: placeSearchModel.nextPagesAvailable
                             onClicked: placeSearchModel.nextPage()
 
                             anchors.right: parent.right

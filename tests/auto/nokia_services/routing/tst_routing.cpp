@@ -335,7 +335,7 @@ void tst_nokia_routing::initTestCase()
 
     m_networkManager = new MockGeoNetworkAccessManager();
 
-    QMap<QString, QVariant> parameters;
+    QVariantMap parameters;
     parameters.insert(QStringLiteral("nam"), QVariant::fromValue<void*>(m_networkManager));
     parameters.insert(QStringLiteral("app_id"), "stub");
     parameters.insert(QStringLiteral("token"), "stub");

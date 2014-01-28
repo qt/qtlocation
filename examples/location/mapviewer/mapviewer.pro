@@ -32,10 +32,12 @@ OTHER_FILES += $$qmlcontentdialogs.files
 
 include(../common/common.pri)
 
-target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/mapviewer
+target.path = $$[QT_INSTALL_EXAMPLES]/location/mapviewer
+additional.files = ../common
+additional.path = $$[QT_INSTALL_EXAMPLES]/location/common
+INSTALLS += target additional
 
-INSTALLS += target
-
+# ensure copying of media file while shadow building
 !equals($${_PRO_FILE_PWD_}, $${OUT_PWD}) {
     MEDIAFILE = $${_PRO_FILE_PWD_}/demo.ogv
     copy2build.input = MEDIAFILE

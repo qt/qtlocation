@@ -59,7 +59,7 @@ public:
     ~QGeoServiceProviderFactoryTest();
 
     QGeoCodingManagerEngine* createGeocodingManagerEngine(
-                const QMap<QString, QVariant> &parameters,
+                const QVariantMap &parameters,
                 QGeoServiceProvider::Error *error, QString *errorString) const;
 };
 

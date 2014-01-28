@@ -94,8 +94,6 @@ public:
     RelevanceHint relevanceHint() const;
     void setRelevanceHint(RelevanceHint hint);
 
-    int offset() const;
-    void setOffset(int offset);
     int limit() const;
     void setLimit(int limit);
 

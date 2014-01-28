@@ -57,7 +57,7 @@ public:
     QGeoServiceProviderFactoryTest();
     ~QGeoServiceProviderFactoryTest();
 
-    QPlaceManagerEngine *createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+    QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
                                                   QGeoServiceProvider::Error *error,
                                                   QString *errorString) const;
 };

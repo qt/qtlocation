@@ -7,10 +7,9 @@ SOURCES += qmllocationflickr.cpp
 RESOURCES += \
     flickr.qrc
 
-OTHER_FILES += flickr.qml
+OTHER_FILES += flickr.qml \
+               flickrcommon/* \
+               flickrmobile/*
 
-target.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/flickr
-sources.files = $$SOURCES $$HEADERS $$RESOURCES $$FORMS *.pro *.qml flickrcommon flickrmobile
-sources.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/flickr
-
-INSTALLS += target sources
+target.path = $$[QT_INSTALL_EXAMPLES]/positioning/flickr
+INSTALLS += target

@@ -366,7 +366,6 @@ Item {
             recommendationId = "";
             searchArea = searchRegion
             limit = -1;
-            offset = 0;
             update();
         }
 
@@ -376,7 +375,6 @@ Item {
             recommendationId = "";
             searchArea = searchRegion
             limit = -1;
-            offset = 0;
             update();
         }
 
@@ -386,21 +384,6 @@ Item {
             recommendationId = placeId;
             searchArea = null;
             limit = -1;
-            offset = 0;
-            update();
-        }
-
-        function previousPage() {
-            if (limit === -1)
-                limit = count;
-            offset = Math.max(0, offset - limit);
-            update();
-        }
-
-        function nextPage() {
-            if (limit === -1)
-                limit = count;
-            offset += limit;
             update();
         }
 

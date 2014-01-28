@@ -77,6 +77,7 @@ public:
     QGeoRouteRequest::ManeuverDetails supportedManeuverDetails;
 
     QLocale locale;
+    QLocale::MeasurementSystem measurementSystem;
 
 private:
     Q_DISABLE_COPY(QGeoRoutingManagerEnginePrivate)

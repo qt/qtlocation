@@ -78,7 +78,7 @@ Destroys this QGeoServiceProviderFactory instance.
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoCodingManagerEngine *QGeoServiceProviderFactory::createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
+QGeoCodingManagerEngine *QGeoServiceProviderFactory::createGeocodingManagerEngine(const QVariantMap &parameters,
                                                                                   QGeoServiceProvider::Error *error,
                                                                                   QString *errorString) const
 {
@@ -104,7 +104,7 @@ QGeoCodingManagerEngine *QGeoServiceProviderFactory::createGeocodingManagerEngin
 
     \internal
 */
-QGeoMappingManagerEngine *QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+QGeoMappingManagerEngine *QGeoServiceProviderFactory::createMappingManagerEngine(const QVariantMap &parameters,
                                                                                  QGeoServiceProvider::Error *error,
                                                                                  QString *errorString) const
 {
@@ -128,7 +128,7 @@ QGeoMappingManagerEngine *QGeoServiceProviderFactory::createMappingManagerEngine
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoRoutingManagerEngine *QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
+QGeoRoutingManagerEngine *QGeoServiceProviderFactory::createRoutingManagerEngine(const QVariantMap &parameters,
                                                                                  QGeoServiceProvider::Error *error,
                                                                                  QString *errorString) const
 
@@ -153,7 +153,7 @@ QGeoRoutingManagerEngine *QGeoServiceProviderFactory::createRoutingManagerEngine
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QPlaceManagerEngine *QGeoServiceProviderFactory::createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+QPlaceManagerEngine *QGeoServiceProviderFactory::createPlaceManagerEngine(const QVariantMap &parameters,
                                                                           QGeoServiceProvider::Error *error,
                                                                           QString *errorString) const
 

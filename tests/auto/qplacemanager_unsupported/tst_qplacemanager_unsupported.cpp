@@ -149,7 +149,7 @@ void tst_QPlaceManagerUnsupported::testGetPlaceDetails()
 
 void tst_QPlaceManagerUnsupported::testGetPlaceContent()
 {
-    QPlaceContentReply *reply = m_manager->getPlaceContent(QString(), QPlaceContentRequest());
+    QPlaceContentReply *reply = m_manager->getPlaceContent(QPlaceContentRequest());
     if (!checkSignals(reply, QPlaceReply::UnsupportedError))
         return;
 }

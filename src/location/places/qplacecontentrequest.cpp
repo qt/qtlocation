@@ -46,14 +46,13 @@
 QT_BEGIN_NAMESPACE
 
 QPlaceContentRequestPrivate::QPlaceContentRequestPrivate()
-    : QSharedData(), contentType(QPlaceContent::NoType),
-      limit(-1), offset(0)
+:   QSharedData(), contentType(QPlaceContent::NoType), limit(-1)
 {
 }
 
 QPlaceContentRequestPrivate::QPlaceContentRequestPrivate(const QPlaceContentRequestPrivate &other)
-    : QSharedData(other), contentType(other.contentType),
-      limit(other.limit), offset(other.offset)
+:   QSharedData(other), contentType(other.contentType), placeId(other.placeId),
+    contentContext(other.contentContext), limit(other.limit)
 {
 }
 
@@ -64,15 +63,13 @@ QPlaceContentRequestPrivate::~QPlaceContentRequestPrivate()
 bool QPlaceContentRequestPrivate::operator==(const QPlaceContentRequestPrivate &other) const
 {
     return contentType == other.contentType
-            && limit == other.limit
-            && offset == other.offset;
+            && limit == other.limit;
 }
 
 void QPlaceContentRequestPrivate::clear()
 {
     contentType = QPlaceContent::NoType;
     limit = -1;
-    offset = 0;
 }
 
 /*!
@@ -171,6 +168,54 @@ void QPlaceContentRequest::setContentType(QPlaceContent::Type type)
 }
 
 /*!
+    Returns the identifier of the place content is to be fetched for.
+*/
+QString QPlaceContentRequest::placeId() const
+{
+    Q_D(const QPlaceContentRequest);
+    return d->placeId;
+}
+
+/*!
+    Sets the identifier of the place to fetch content for to \a identifier.
+*/
+void QPlaceContentRequest::setPlaceId(const QString &identifier)
+{
+    Q_D(QPlaceContentRequest);
+    d->placeId = identifier;
+}
+
+/*!
+    Returns backend specific additional content context associated with this place content request.
+*/
+QVariant QPlaceContentRequest::contentContext() const
+{
+    Q_D(const QPlaceContentRequest);
+    return d->contentContext;
+}
+
+/*!
+    Sets the content context to \a context.
+
+    \note This method is intended to be used by geo service plugins when returning place content
+    results.
+
+    The content context is used by backends to store additional content context related to the
+    content request. Other relevant fields should also be filled in. For example, if the content
+    request is for image content the content type should also be set with \l setContentType(). The
+    content context allows additional context to be kept which is not directly accessible via the
+    Qt Location API.
+
+    The content context can be of any type storable in a QVariant. The value of the content context
+    is not intended to be used directly by applications.
+*/
+void QPlaceContentRequest::setContentContext(const QVariant &context)
+{
+    Q_D(QPlaceContentRequest);
+    d->contentContext = context;
+}
+
+/*!
     Returns the maximum number of content items to retrieve.
 
     A negative value for limit means that it is undefined.  It is left up to the backend
@@ -192,27 +237,6 @@ void QPlaceContentRequest::setLimit(int limit)
 {
     Q_D(QPlaceContentRequest);
     d->limit = limit;
-}
-
-/*!
-    Returns the offset index of the first item that is to be retrieved.
-
-    The default offset is 0.
-*/
-int QPlaceContentRequest::offset() const
-{
-    Q_D(const QPlaceContentRequest);
-    return d->offset;
-}
-
-/*!
-    Sets the starting index of the first item to be retrieved
-    to \a offset.
-*/
-void QPlaceContentRequest::setOffset(int offset)
-{
-    Q_D(QPlaceContentRequest);
-    d->offset = offset;
 }
 
 /*!

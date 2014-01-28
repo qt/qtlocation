@@ -58,7 +58,7 @@ class Q_LOCATION_EXPORT QPlaceManagerEngine : public QObject
     Q_OBJECT
 
 public:
-    QPlaceManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
+    QPlaceManagerEngine(const QVariantMap &parameters, QObject *parent = 0);
     virtual ~QPlaceManagerEngine();
 
     QString managerName() const;
@@ -66,8 +66,7 @@ public:
 
     virtual QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    virtual QPlaceContentReply *getPlaceContent(const QString &placeId,
-                                                const QPlaceContentRequest &request);
+    virtual QPlaceContentReply *getPlaceContent(const QPlaceContentRequest &request);
 
     virtual QPlaceSearchReply *search(const QPlaceSearchRequest &request);
 

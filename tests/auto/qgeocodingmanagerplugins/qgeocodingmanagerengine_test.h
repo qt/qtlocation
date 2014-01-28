@@ -73,7 +73,7 @@ class QGeoCodingManagerEngineTest: public QGeoCodingManagerEngine
 {
 Q_OBJECT
 public:
-    QGeoCodingManagerEngineTest(const QMap<QString, QVariant> &parameters,
+    QGeoCodingManagerEngineTest(const QVariantMap &parameters,
                                 QGeoServiceProvider::Error *error, QString *errorString) :
                                 QGeoCodingManagerEngine(parameters)
     {

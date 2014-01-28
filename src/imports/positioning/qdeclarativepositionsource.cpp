@@ -464,14 +464,8 @@ int QDeclarativePositionSource::updateInterval() const
 QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::supportedPositioningMethods() const
 {
     if (m_positionSource) {
-        QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->supportedPositioningMethods();
-        if ( (methods & QGeoPositionInfoSource::AllPositioningMethods) == methods ) {
-            return QDeclarativePositionSource::AllPositioningMethods;
-        } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
-            return QDeclarativePositionSource::SatellitePositioningMethods;
-        } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
-            return QDeclarativePositionSource::NonSatellitePositioningMethods;
-        }
+        return static_cast<QDeclarativePositionSource::PositioningMethods>(
+            int(m_positionSource->supportedPositioningMethods()));
     }
     return QDeclarativePositionSource::NoPositioningMethods;
 }
@@ -515,16 +509,8 @@ void QDeclarativePositionSource::setPreferredPositioningMethods(PositioningMetho
 QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::preferredPositioningMethods() const
 {
     if (m_positionSource) {
-        QGeoPositionInfoSource::PositioningMethods methods =
-            m_positionSource->preferredPositioningMethods();
-        if ( (methods & QGeoPositionInfoSource::AllPositioningMethods) == methods) {
-            return QDeclarativePositionSource::AllPositioningMethods;
-        } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
-            return QDeclarativePositionSource::SatellitePositioningMethods;
-        } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
-            return QDeclarativePositionSource::NonSatellitePositioningMethods;
-        } else if (methods == QGeoPositionInfoSource::NoPositioningMethods)
-            return QDeclarativePositionSource::NoPositioningMethods;
+        return static_cast<QDeclarativePositionSource::PositioningMethods>(
+            int(m_positionSource->preferredPositioningMethods()));
     }
     return m_preferredPositioningMethods;
 }

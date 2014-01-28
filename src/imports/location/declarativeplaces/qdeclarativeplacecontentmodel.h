@@ -120,6 +120,7 @@ private:
     int m_contentCount;
 
     QPlaceContentReply *m_reply;
+    QPlaceContentRequest m_nextRequest;
 
     bool m_complete;
 };

@@ -98,7 +98,9 @@ public:
     inline QDoubleVector2D &operator*=(const QDoubleVector2D &vector);
     inline QDoubleVector2D &operator/=(double divisor);
 
-    Q_DECL_CONSTEXPR static inline double dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
+    Q_DECL_CONSTEXPR static inline double dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
+    { return v1.xp * v2.xp + v1.yp * v2.yp; }
+
 
     friend Q_DECL_CONSTEXPR inline bool operator==(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
     friend Q_DECL_CONSTEXPR inline bool operator!=(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
@@ -181,11 +183,6 @@ inline QDoubleVector2D &QDoubleVector2D::operator/=(double divisor)
     xp /= divisor;
     yp /= divisor;
     return *this;
-}
-
-Q_DECL_CONSTEXPR inline double QDoubleVector2D::dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
-{
-    return v1.xp * v2.xp + v1.yp * v2.yp;
 }
 
 Q_DECL_CONSTEXPR inline bool operator==(const QDoubleVector2D &v1, const QDoubleVector2D &v2)

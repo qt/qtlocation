@@ -47,25 +47,18 @@
 #include "qgeosatelliteinfosource_geocluemaster.h"
 #endif
 
+Q_DECLARE_METATYPE(QGeoPositionInfo)
+
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
 {
-    QGeoPositionInfoSourceGeoclueMaster *src = new QGeoPositionInfoSourceGeoclueMaster(parent);
-    if (!src->init()) {
-        delete src;
-        src = 0;
-    }
-    return src;
+    qRegisterMetaType<QGeoPositionInfo>();
+    return new QGeoPositionInfoSourceGeoclueMaster(parent);
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSource(QObject *parent)
 {
 #ifdef HAS_SATELLITE
-    QGeoSatelliteInfoSourceGeoclueMaster *src = new QGeoSatelliteInfoSourceGeoclueMaster(parent);
-    if (!src->init()) {
-        delete src;
-        src = 0;
-    }
-    return src;
+    return new QGeoSatelliteInfoSourceGeoclueMaster(parent);
 #else
     Q_UNUSED(parent)
 

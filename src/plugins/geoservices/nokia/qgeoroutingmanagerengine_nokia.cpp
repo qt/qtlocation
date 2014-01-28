@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(
         QGeoNetworkAccessManager *networkManager,
-        const QMap<QString, QVariant> &parameters,
+        const QVariantMap &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)
         : QGeoRoutingManagerEngine(parameters)
@@ -442,13 +442,13 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 
     requestString += "&instructionformat=text";
 
-    const QLocale loc(locale());
-
     requestString += "&metricSystem=";
-    if (QLocale::MetricSystem == loc.measurementSystem())
+    if (QLocale::MetricSystem == measurementSystem())
         requestString  += "metric";
     else
         requestString += "imperial";
+
+    const QLocale loc(locale());
 
     if (QLocale::C != loc.language() && QLocale::AnyLanguage != loc.language()) {
         requestString += "&language=";

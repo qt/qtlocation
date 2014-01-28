@@ -68,7 +68,6 @@ public:
     QLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
     int limit;
-    int offset;
     QVariant searchContext;
 };
 
@@ -76,7 +75,7 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
 :   QSharedData(),
     visibilityScope(QLocation::UnspecifiedVisibility),
     relevanceHint(QPlaceSearchRequest::UnspecifiedHint),
-    limit(-1), offset(0)
+    limit(-1)
 {
 }
 
@@ -89,7 +88,6 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
       visibilityScope(other.visibilityScope),
       relevanceHint(other.relevanceHint),
       limit(other.limit),
-      offset(other.offset),
       searchContext(other.searchContext)
 {
 }
@@ -108,7 +106,6 @@ QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSe
         visibilityScope = other.visibilityScope;
         relevanceHint = other.relevanceHint;
         limit = other.limit;
-        offset = other.offset;
         searchContext = other.searchContext;
     }
 
@@ -124,14 +121,12 @@ bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &ot
            visibilityScope == other.visibilityScope &&
            relevanceHint == other.relevanceHint &&
            limit == other.limit &&
-           offset == other.offset &&
            searchContext == other.searchContext;
 }
 
 void QPlaceSearchRequestPrivate::clear()
 {
     limit = -1;
-    offset = 0;
     searchTerm.clear();
     categories.clear();
     searchArea = QGeoShape();
@@ -426,27 +421,6 @@ void QPlaceSearchRequest::setLimit(int limit)
 {
     Q_D(QPlaceSearchRequest);
     d->limit = limit;
-}
-
-/*!
-    Returns the offset index of the first item that is to be retrieved.
-
-    The default offset is 0.
-*/
-int QPlaceSearchRequest::offset() const
-{
-    Q_D(const QPlaceSearchRequest);
-    return d->offset;
-}
-
-/*!
-    Sets the starting index of the first item to be retrieved
-    to \a offset.
-*/
-void QPlaceSearchRequest::setOffset(int offset)
-{
-    Q_D(QPlaceSearchRequest);
-    d->offset = offset;
 }
 
 /*!

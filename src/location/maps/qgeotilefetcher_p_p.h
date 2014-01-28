@@ -78,9 +78,8 @@ public:
 
     QGeoTiledMappingManagerEngine *engine_;
 
-    bool started_;
-    bool stopped_;
-    QTimer *timer_;
+    bool enabled_;
+    QBasicTimer timer_;
     QMutex queueMutex_;
     QList<QGeoTileSpec> queue_;
     QHash<QGeoTileSpec, QGeoTiledMapReply *> invmap_;

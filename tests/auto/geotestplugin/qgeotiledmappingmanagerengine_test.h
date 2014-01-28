@@ -58,7 +58,7 @@ class QGeoTiledMappingManagerEngineTest: public QGeoTiledMappingManagerEngine
 {
 Q_OBJECT
 public:
-    QGeoTiledMappingManagerEngineTest(const QMap<QString, QVariant> &parameters,
+    QGeoTiledMappingManagerEngineTest(const QVariantMap &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) :
         QGeoTiledMappingManagerEngine()
     {

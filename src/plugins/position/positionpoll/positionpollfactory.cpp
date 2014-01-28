@@ -42,19 +42,19 @@
 #include "positionpollfactory.h"
 #include "qgeoareamonitor_polling.h"
 
-QGeoPositionInfoSource *PositionPollFactory::positionInfoSource(QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryAndroid::positionInfoSource(QObject *parent)
 {
     Q_UNUSED(parent);
     return 0;
 }
 
-QGeoSatelliteInfoSource *PositionPollFactory::satelliteInfoSource(QObject *parent)
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryAndroid::satelliteInfoSource(QObject *parent)
 {
     Q_UNUSED(parent);
     return 0;
 }
 
-QGeoAreaMonitorSource *PositionPollFactory::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryAndroid::areaMonitor(QObject *parent)
 {
     QGeoAreaMonitorPolling *ret = new QGeoAreaMonitorPolling(parent);
     if (ret && ret->isValid())

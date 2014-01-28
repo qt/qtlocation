@@ -53,7 +53,7 @@ QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
 }
 
 QPlaceManagerEngine *QGeoServiceProviderFactoryTest::createPlaceManagerEngine(
-        const QMap<QString, QVariant> &parameters,
+        const QVariantMap &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) const
 {
     Q_UNUSED(error);

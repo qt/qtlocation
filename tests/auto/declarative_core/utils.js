@@ -91,7 +91,7 @@ function compareObj(testCase, obj1, obj2) {
     }
 }
 
-function testConsecutiveFetch(testCase, model, place, expectedValues)
+function testConsecutiveFetch(testCase, model, place, expectedValues, data)
 {
     var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
     signalSpy.target = model;
@@ -108,35 +108,31 @@ function testConsecutiveFetch(testCase, model, place, expectedValues)
     testCase.compare(visDataModel.items.count, 0);
 
     //perform an initial fetch with the default batch size
+    model.batchSize = data.batchSize
     model.place = place;
     testCase.tryCompare(signalSpy, "count", 1);
     signalSpy.clear();
 
     var totalCount = model.totalCount;
     testCase.compare(totalCount, 5);
-    testCase.compare(visDataModel.items.count, 1);
+    testCase.compare(visDataModel.items.count, Math.min(data.batchSize, totalCount));
 
     compareObj(testCase, visDataModel.items.get(0).model, expectedValues[0]);
 
-    //set a non-default batch size and fetch the next batch
-    model.batchSize = 2;
-    visDataModel.items.create(0); //'creating' the last item will trigger a fetch
-    testCase.tryCompare(visDataModel.items, "count", 3);
-    testCase.compare(signalSpy.count, 0);
-    testCase.compare(model.totalCount, totalCount);
+    //fetch remaining items, in batchSize batches
+    while (visDataModel.items.count < totalCount) {
+        var startIndex = visDataModel.items.count
 
-    compareObj(testCase, visDataModel.items.get(1).model, expectedValues[1]);
-    compareObj(testCase, visDataModel.items.get(2).model, expectedValues[2]);
+        //'creating' the last item will trigger a fetch
+        visDataModel.items.create(visDataModel.items.count - 1);
 
-    //set a batch size greater than the number of remaining items and fetch that batch
-    model.batchSize = 10;
-    visDataModel.items.create(2);
-    testCase.tryCompare(visDataModel.items, "count", totalCount);
-    testCase.compare(signalSpy.count, 0);
-    testCase.compare(model.totalCount, totalCount);
+        testCase.tryCompare(visDataModel.items, "count", Math.min(totalCount, startIndex + data.batchSize));
+        testCase.compare(signalSpy.count, 0);
+        testCase.compare(model.totalCount, totalCount);
 
-    compareObj(testCase, visDataModel.items.get(3).model, expectedValues[3]);
-    compareObj(testCase, visDataModel.items.get(4).model, expectedValues[4]);
+        for (var i = startIndex; i < Math.min(totalCount, startIndex + data.batchSize); ++i)
+            compareObj(testCase, visDataModel.items.get(i).model, expectedValues[i]);
+    }
 
     visDataModel.destroy();
     signalSpy.destroy();

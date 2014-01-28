@@ -42,15 +42,13 @@
 #ifndef QGEOROUTINGMANAGERENGINE_H
 #define QGEOROUTINGMANAGERENGINE_H
 
+#include <QtCore/QObject>
+#include <QtCore/QMap>
+#include <QtCore/QLocale>
 #include <QtLocation/QGeoRouteRequest>
 #include <QtLocation/QGeoRouteReply>
 
-#include <QObject>
-#include <QMap>
-
 QT_BEGIN_NAMESPACE
-
-class QLocale;
 
 class QGeoRoutingManagerEnginePrivate;
 
@@ -58,7 +56,7 @@ class Q_LOCATION_EXPORT QGeoRoutingManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    QGeoRoutingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
+    QGeoRoutingManagerEngine(const QVariantMap &parameters, QObject *parent = 0);
     virtual ~QGeoRoutingManagerEngine();
 
     QString managerName() const;
@@ -76,6 +74,8 @@ public:
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
+    void setMeasurementSystem(QLocale::MeasurementSystem system);
+    QLocale::MeasurementSystem measurementSystem() const;
 
 Q_SIGNALS:
     void finished(QGeoRouteReply *reply);

@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2013 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -58,7 +60,8 @@ static double qlocationutils_nmeaDegreesToDecimal(double nmeaDegrees)
     return deg + (min / 60.0);
 }
 
-static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
+static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo *info, double uere,
+                                   bool *hasFix)
 {
     QByteArray sentence(data, size);
     QList<QByteArray> parts = sentence.split(',');
@@ -82,6 +85,13 @@ static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo 
         }
     }
 
+    if (parts.count() > 8 && !parts[8].isEmpty()) {
+        bool hasHdop = false;
+        double hdop = parts[8].toDouble(&hasHdop);
+        if (hasHdop)
+            info->setAttribute(QGeoPositionInfo::HorizontalAccuracy, 2 * hdop * uere);
+    }
+
     if (parts.count() > 9 && parts[9].count() > 0) {
         bool hasAlt = false;
         double alt = parts[9].toDouble(&hasAlt);
@@ -91,6 +101,29 @@ static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo 
 
     if (coord.type() != QGeoCoordinate::InvalidCoordinate)
         info->setCoordinate(coord);
+}
+
+static void qlocationutils_readGsa(const char *data, int size, QGeoPositionInfo *info, double uere,
+                                   bool *hasFix)
+{
+    QList<QByteArray> parts = QByteArray::fromRawData(data, size).split(',');
+
+    if (hasFix && parts.count() > 2 && !parts[2].isEmpty())
+        *hasFix = parts[2].toInt() > 0;
+
+    if (parts.count() > 16 && !parts[16].isEmpty()) {
+        bool hasHdop = false;
+        double hdop = parts[16].toDouble(&hasHdop);
+        if (hasHdop)
+            info->setAttribute(QGeoPositionInfo::HorizontalAccuracy, 2 * hdop * uere);
+    }
+
+    if (parts.count() > 17 && !parts[17].isEmpty()) {
+        bool hasVdop = false;
+        double vdop = parts[17].toDouble(&hasVdop);
+        if (hasVdop)
+            info->setAttribute(QGeoPositionInfo::VerticalAccuracy, 2 * vdop * uere);
+    }
 }
 
 static void qlocationutils_readGll(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
@@ -227,7 +260,8 @@ static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo 
     info->setTimestamp(QDateTime(date, time, Qt::UTC));
 }
 
-bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
+bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info,
+                                        double uere, bool *hasFix)
 {
     if (!info)
         return false;
@@ -237,9 +271,23 @@ bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPosition
     if (size < 6 || data[0] != '$' || !hasValidNmeaChecksum(data, size))
         return false;
 
+    // Adjust size so that * and following characters are not parsed by the following functions.
+    for (int i = 0; i < size; ++i) {
+        if (data[i] == '*') {
+            size = i;
+            break;
+        }
+    }
+
     if (data[3] == 'G' && data[4] == 'G' && data[5] == 'A') {
         // "$--GGA" sentence.
-        qlocationutils_readGga(data, size, info, hasFix);
+        qlocationutils_readGga(data, size, info, uere, hasFix);
+        return true;
+    }
+
+    if (data[3] == 'G' && data[4] == 'S' && data[5] == 'A') {
+        // "$--GSA" sentence.
+        qlocationutils_readGsa(data, size, info, uere, hasFix);
         return true;
     }
 

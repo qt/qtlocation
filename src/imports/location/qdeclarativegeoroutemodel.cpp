@@ -286,7 +286,14 @@ void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin
         return;
 
     reset(); // reset the model
+
+    if (plugin_)
+        disconnect(plugin_, SIGNAL(localesChanged()), this, SIGNAL(measurementSystemChanged()));
+    if (plugin)
+        connect(plugin, SIGNAL(localesChanged()), this, SIGNAL(measurementSystemChanged()));
+
     plugin_ = plugin;
+
     if (complete_)
         emit pluginChanged();
 
@@ -405,6 +412,65 @@ void QDeclarativeGeoRouteModel::setAutoUpdate(bool autoUpdate)
 bool QDeclarativeGeoRouteModel::autoUpdate() const
 {
     return autoUpdate_;
+}
+
+/*!
+    \qmlproperty Locale::MeasurementSystem QtLocation::RouteModel::measurementSystem
+
+    This property holds the measurement system which will be used when calculating the route. This
+    property is changed when the \l {QtLocation::Plugin::locales}{Plugin::locales} property of
+    \l {QtLocation::RouteModel::plugin}{plugin} changes.
+
+    If setting this property it must be set after the \l {QtLocation::RouteModel::plugin}{plugin}
+    property is set.
+*/
+void QDeclarativeGeoRouteModel::setMeasurementSystem(QLocale::MeasurementSystem ms)
+{
+    if (!plugin_) {
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_PLUGIN_NOT_SET);
+        return;
+    }
+
+    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QGeoRoutingManager *routingManager = serviceProvider->routingManager();
+    if (!routingManager) {
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
+        return;
+    }
+
+    if (routingManager->measurementSystem() == ms)
+        return;
+
+    routingManager->setMeasurementSystem(ms);
+    emit measurementSystemChanged();
+}
+
+QLocale::MeasurementSystem QDeclarativeGeoRouteModel::measurementSystem() const
+{
+    if (!plugin_)
+        return QLocale().measurementSystem();
+
+    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+    if (!serviceProvider) {
+        if (plugin_->locales().isEmpty())
+            return QLocale().measurementSystem();
+
+        return QLocale(plugin_->locales().first()).measurementSystem();
+    }
+
+    QGeoRoutingManager *routingManager = serviceProvider->routingManager();
+    if (!routingManager) {
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
+        if (plugin_->locales().isEmpty())
+            return QLocale().measurementSystem();
+
+        return QLocale(plugin_->locales().first()).measurementSystem();
+    }
+
+    return routingManager->measurementSystem();
 }
 
 /*!
@@ -823,7 +889,7 @@ void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
         QGeoRectangle r = parseRectangle(value.property(i), &ok);
 
         if (!ok || !r.isValid()) {
-            qmlInfo(this) << "Unsupported waypoint type";
+            qmlInfo(this) << "Unsupported area type";
             return;
         }
 

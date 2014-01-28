@@ -101,8 +101,14 @@ public:
     inline QDoubleVector3D &operator*=(const QDoubleVector3D &vector);
     inline QDoubleVector3D &operator/=(double divisor);
 
-    Q_DECL_CONSTEXPR static inline double dotProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
-    Q_DECL_CONSTEXPR static inline QDoubleVector3D crossProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
+    Q_DECL_CONSTEXPR static inline double dotProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+    { return v1.xp * v2.xp + v1.yp * v2.yp + v1.zp * v2.zp; }
+
+    Q_DECL_CONSTEXPR static inline QDoubleVector3D crossProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
+    { return QDoubleVector3D(v1.yp * v2.zp - v1.zp * v2.yp,
+                    v1.zp * v2.xp - v1.xp * v2.zp,
+                    v1.xp * v2.yp - v1.yp * v2.xp); }
+
     static QDoubleVector3D normal(const QDoubleVector3D &v1, const QDoubleVector3D &v2);
     static QDoubleVector3D normal
         (const QDoubleVector3D &v1, const QDoubleVector3D &v2, const QDoubleVector3D &v3);
@@ -229,18 +235,6 @@ inline QDoubleVector3D &QDoubleVector3D::operator/=(double divisor)
     yp /= divisor;
     zp /= divisor;
     return *this;
-}
-
-Q_DECL_CONSTEXPR inline double QDoubleVector3D::dotProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
-{
-    return v1.xp * v2.xp + v1.yp * v2.yp + v1.zp * v2.zp;
-}
-
-Q_DECL_CONSTEXPR inline QDoubleVector3D QDoubleVector3D::crossProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
-{
-    return QDoubleVector3D(v1.yp * v2.zp - v1.zp * v2.yp,
-                    v1.zp * v2.xp - v1.xp * v2.zp,
-                    v1.xp * v2.yp - v1.yp * v2.xp);
 }
 
 Q_DECL_CONSTEXPR inline bool operator==(const QDoubleVector3D &v1, const QDoubleVector3D &v2)

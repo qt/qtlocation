@@ -169,7 +169,7 @@ public:
     QString name() const;
 
     QQmlListProperty<QDeclarativeGeoServiceProviderParameter> parameters();
-    QMap<QString, QVariant> parameterMap() const;
+    QVariantMap parameterMap() const;
 
     QStringList availableServiceProviders();
 

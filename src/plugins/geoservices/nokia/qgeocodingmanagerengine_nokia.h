@@ -66,7 +66,7 @@ class QGeoCodingManagerEngineNokia : public QGeoCodingManagerEngine
     Q_OBJECT
 public:
     QGeoCodingManagerEngineNokia(QGeoNetworkAccessManager *networkManager,
-                                 const QMap<QString, QVariant> &parameters,
+                                 const QVariantMap &parameters,
                                  QGeoServiceProvider::Error *error,
                                  QString *errorString);
     ~QGeoCodingManagerEngineNokia();

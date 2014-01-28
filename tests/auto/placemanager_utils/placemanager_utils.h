@@ -128,7 +128,6 @@ public:
                          QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     static bool doFetchContent(QPlaceManager *manager,
-                               const QString &placeId,
                                const QPlaceContentRequest &request,
                                QPlaceContent::Collection *results,
                                QPlaceReply::Error expectedError = QPlaceReply::NoError);
@@ -219,13 +218,11 @@ protected:
                                              category, expectedError);
     }
 
-    bool doFetchContent(const QString &placeId,
-                        const QPlaceContentRequest &request,
+    bool doFetchContent(const QPlaceContentRequest &request,
                         QPlaceContent::Collection *results,
                         QPlaceReply::Error expectedError = QPlaceReply::NoError)
     {
-        return doFetchContent(placeManager, placeId,
-                              request, results, expectedError);
+        return doFetchContent(placeManager, request, results, expectedError);
     }
 
     bool doMatch(const QPlaceMatchRequest &request,

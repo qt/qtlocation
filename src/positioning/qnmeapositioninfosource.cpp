@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2013 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -45,6 +47,7 @@
 #include <QBasicTimer>
 #include <QTimerEvent>
 #include <QTimer>
+#include <QtCore/QtNumeric>
 
 
 QT_BEGIN_NAMESPACE
@@ -133,8 +136,7 @@ void QNmeaSimulatedReader::simulatePendingUpdate()
     if (m_pendingUpdates.size() > 0) {
         // will be dequeued in processNextSentence()
         QPendingGeoPositionInfo &pending = m_pendingUpdates.head();
-        if (pending.info.coordinate().type() != QGeoCoordinate::InvalidCoordinate)
-            m_proxy->notifyNewUpdate(&pending.info, pending.hasFix);
+        m_proxy->notifyNewUpdate(&pending.info, pending.hasFix);
     }
 
     processNextSentence();
@@ -173,6 +175,9 @@ void QNmeaSimulatedReader::processNextSentence()
                 timeToNextUpdate = prevTime.msecsTo(time);
                 if (timeToNextUpdate >= 0)
                     break;
+            } else {
+                timeToNextUpdate = 0;
+                break;
             }
         }
     }
@@ -199,10 +204,13 @@ QNmeaPositionInfoSourcePrivate::QNmeaPositionInfoSourcePrivate(QNmeaPositionInfo
         m_device(0),
         m_invokedStart(false),
         m_positionError(QGeoPositionInfoSource::UnknownSourceError),
+        m_userEquivalentRangeError(qQNaN()),
         m_source(parent),
         m_nmeaReader(0),
         m_updateTimer(0),
         m_requestTimer(0),
+        m_horizontalAccuracy(qQNaN()),
+        m_verticalAccuracy(qQNaN()),
         m_noUpdateLastInterval(false),
         m_updateTimeoutSent(false),
         m_connectedReadyRead(false)
@@ -375,6 +383,17 @@ void QNmeaPositionInfoSourcePrivate::notifyNewUpdate(QGeoPositionInfo *update, b
             update->setTimestamp(QDateTime(m_currentDate, time, Qt::UTC));
     }
 
+    // Some attributes are sent in separate NMEA sentences. Save and restore the accuracy
+    // measurements.
+    if (update->hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
+        m_horizontalAccuracy = update->attribute(QGeoPositionInfo::HorizontalAccuracy);
+    else if (!qIsNaN(m_horizontalAccuracy))
+        update->setAttribute(QGeoPositionInfo::HorizontalAccuracy, m_horizontalAccuracy);
+    if (update->hasAttribute(QGeoPositionInfo::VerticalAccuracy))
+        m_verticalAccuracy = update->attribute(QGeoPositionInfo::VerticalAccuracy);
+    else if (!qIsNaN(m_verticalAccuracy))
+        update->setAttribute(QGeoPositionInfo::VerticalAccuracy, m_verticalAccuracy);
+
     if (hasFix && update->isValid()) {
         if (m_requestTimer && m_requestTimer->isActive()) {
             m_requestTimer->stop();
@@ -451,6 +470,10 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
 
     In both cases the position information is received via the positionUpdated() signal and the
     last known position can be accessed with lastKnownPosition().
+
+    QNmeaPositionInfoSource supports reporting the accuracy of the horizontal and vertical position.
+    To enable position accuracy reporting an estimate of the User Equivalent Range Error associated
+    with the NMEA source must be set with setUserEquivalentRangeError().
 */
 
 
@@ -482,6 +505,41 @@ QNmeaPositionInfoSource::~QNmeaPositionInfoSource()
 }
 
 /*!
+    Sets the User Equivalent Range Error (UERE) to \a uere. The UERE is used in calculating an
+    estimate of the accuracy of the position information reported by the position info source. The
+    UERE should be set to a value appropriate for the GPS device which generated the NMEA stream.
+
+    The true UERE value is calculated from multiple error sources including errors introduced by
+    the satellites and signal propogation delays through the atmosphere as well as errors
+    introduced by the receiving GPS equipment. For details on GPS accuracy see
+    \l {http://edu-observatory.org/gps/gps_accuracy.html}.
+
+    A typical value for UERE is approximately 5.1.
+
+    \since 5.3
+
+    \sa userEquivalentRangeError()
+*/
+void QNmeaPositionInfoSource::setUserEquivalentRangeError(double uere)
+{
+    d->m_userEquivalentRangeError = uere;
+}
+
+/*!
+    Returns the current User Equivalent Range Error (UERE). The UERE is used in calculating an
+    estimate of the accuracy of the position information reported by the position info source. The
+    default value is NaN which means no accuracy information will be provided.
+
+    \since 5.3
+
+    \sa setUserEquivalentRangeError()
+*/
+double QNmeaPositionInfoSource::userEquivalentRangeError() const
+{
+    return d->m_userEquivalentRangeError;
+}
+
+/*!
     Parses an NMEA sentence string into a QGeoPositionInfo.
 
     The default implementation will parse standard NMEA sentences.
@@ -498,7 +556,8 @@ QNmeaPositionInfoSource::~QNmeaPositionInfoSource()
 bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int size,
         QGeoPositionInfo *posInfo, bool *hasFix)
 {
-    return QLocationUtils::getPosInfoFromNmea(data, size, posInfo, hasFix);
+    return QLocationUtils::getPosInfoFromNmea(data, size, posInfo, d->m_userEquivalentRangeError,
+                                              hasFix);
 }
 
 /*!

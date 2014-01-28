@@ -44,7 +44,7 @@
 
 #include <QtCore/QMetaType>
 #include <QtCore/QSharedDataPointer>
-#include "qpositioningglobal.h"
+#include <QtPositioning/qpositioningglobal.h>
 
 QT_BEGIN_NAMESPACE
 

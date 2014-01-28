@@ -9,14 +9,13 @@ SOURCES += main.cpp \
 OTHER_FILES += weatherinfo.qml \
     components/WeatherIcon.qml \
     components/ForecastIcon.qml \
-    components/BigForecastIcon.qml
+    components/BigForecastIcon.qml \
+    icons/*
+
 
 RESOURCES += weatherinfo.qrc
 
 HEADERS += appmodel.h
 
-#install
-target.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/weatherinfo
-sources.files = $$SOURCES $HEADERS $$RESOURCES $$FORMS *.pro
-sources.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/weatherinfo
-INSTALLS += target sources
+target.path = $$[QT_INSTALL_EXAMPLES]/positioning/weatherinfo
+INSTALLS += target

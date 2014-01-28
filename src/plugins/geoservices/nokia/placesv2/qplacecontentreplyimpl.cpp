@@ -94,21 +94,28 @@ void QPlaceContentReplyImpl::setError(QPlaceReply::Error error_, const QString &
 
 void QPlaceContentReplyImpl::replyFinished()
 {
-    QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
-    if (!document.isObject()) {
-        setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
-        return;
+    if (m_reply->isOpen()) {
+        QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
+        if (!document.isObject()) {
+            setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
+            return;
+        }
+
+        QJsonObject object = document.object();
+
+        QPlaceContent::Collection collection;
+        int totalCount;
+        QPlaceContentRequest previous;
+        QPlaceContentRequest next;
+
+        parseCollection(request().contentType(), object, &collection, &totalCount,
+                        &previous, &next, m_engine);
+
+        setTotalCount(totalCount);
+        setContent(collection);
+        setPreviousPageRequest(previous);
+        setNextPageRequest(next);
     }
-
-    QJsonObject object = document.object();
-
-    QPlaceContent::Collection collection;
-    int totalCount;
-
-    parseCollection(request().contentType(), object, &collection, &totalCount, m_engine);
-
-    setTotalCount(totalCount);
-    setContent(collection);
 
     m_reply->deleteLater();
     m_reply = 0;

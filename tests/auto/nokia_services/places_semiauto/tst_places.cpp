@@ -90,7 +90,7 @@ private:
                       QList<QPlaceReply::Error> *errors,
                       QList<ExpectedResults> *results);
 
-    static const QLatin1String AuvergneEmbassyId;
+    static const QLatin1String ValidKnownPlaceId;
     static const QLatin1String ProxyEnv;
     static const QLatin1String AppIdEnv;
     static const QLatin1String TokenEnv;
@@ -100,7 +100,10 @@ private:
 
 Q_DECLARE_METATYPE(tst_QPlaceManagerNokia::ExpectedResults)
 
-const QLatin1String tst_QPlaceManagerNokia::AuvergneEmbassyId("250u09tv-be16478e55314b338c551aab2651c9d3");
+// ValidKnownPlaceId is the id of a place with a full complement of place content. Editorials,
+// reviews, images, recommendations. If it disappears these tests will fail.
+// Currently it is set to an Eiffel Tower tourist office.
+const QLatin1String tst_QPlaceManagerNokia::ValidKnownPlaceId("250u09tu-4561b8da952f4fd79c4e1998c3fcf032");
 
 const QLatin1String tst_QPlaceManagerNokia::ProxyEnv("NOKIA_PLUGIN_PROXY");
 const QLatin1String tst_QPlaceManagerNokia::AppIdEnv("NOKIA_APP_ID");
@@ -335,7 +338,7 @@ void tst_QPlaceManagerNokia::recommendations_data()
     eatDrinkCat.setCategoryId(QStringLiteral("eat-drink"));
 
     QTest::newRow("search recommendations with valid id")
-            << QString(AuvergneEmbassyId)
+            << QString(ValidKnownPlaceId)
             << QString()
             << QGeoShape()
             << QList<QPlaceCategory>()
@@ -349,28 +352,28 @@ void tst_QPlaceManagerNokia::recommendations_data()
             << QPlaceReply::PlaceDoesNotExistError;
 
     QTest::newRow("search for recommendations with id and search term")
-            << QString(AuvergneEmbassyId)
+            << QString(ValidKnownPlaceId)
             << QStringLiteral("sushi")
             << QGeoShape()
             << QList<QPlaceCategory>()
             << QPlaceReply::BadArgumentError;
 
     QTest::newRow("search for recommendations with an id and category")
-            << QString(AuvergneEmbassyId)
+            << QString(ValidKnownPlaceId)
             << QString()
             << QGeoShape()
             << (QList<QPlaceCategory>() << eatDrinkCat)
             << QPlaceReply::BadArgumentError;
 
     QTest::newRow("search for recommendations with id, search term and category")
-            << QString(AuvergneEmbassyId)
+            << QString(ValidKnownPlaceId)
             << QStringLiteral("sushi")
             << QGeoShape()
             << (QList<QPlaceCategory>() << eatDrinkCat)
             << QPlaceReply::BadArgumentError;
 
     QTest::newRow("search for recommendations with an id and search area")
-            << QString(AuvergneEmbassyId)
+            << QString(ValidKnownPlaceId)
             << QString()
             << static_cast<QGeoShape>(QGeoCircle(QGeoCoordinate(-27.5, 153)))
             << QList<QPlaceCategory>()
@@ -381,7 +384,7 @@ void tst_QPlaceManagerNokia::details()
 {
     //fetch the details of a valid place
     QPlace place;
-    QVERIFY(doFetchDetails(AuvergneEmbassyId, &place));
+    QVERIFY(doFetchDetails(ValidKnownPlaceId, &place));
     QVERIFY(!place.name().isEmpty());
     QVERIFY(!place.icon().url().isEmpty());
     QStringList contactTypes = place.contactTypes();
@@ -515,17 +518,9 @@ void tst_QPlaceManagerNokia::suggestions_data()
 
 void tst_QPlaceManagerNokia::suggestionsMisc()
 {
-    //check providing an offset
+    //check providing a distance relevancy hint (should be ignored)
     QPlaceSearchRequest searchRequest;
-    searchRequest.setSearchArea(QGeoCircle(QGeoCoordinate(-27.5, 153)));
-    searchRequest.setSearchTerm(QStringLiteral("sus"));
-    searchRequest.setOffset(5);
     QStringList results;
-    QVERIFY(doSearchSuggestions(searchRequest, &results, QPlaceReply::BadArgumentError));
-    QCOMPARE(results.count(), 0);
-    searchRequest.clear();
-
-    //check porviding a distance relevancy hint (should be ignored)
     searchRequest.setSearchArea(QGeoCircle(QGeoCoordinate(-27.5, 153)));
     searchRequest.setSearchTerm(QStringLiteral("sus"));
     searchRequest.setRelevanceHint(QPlaceSearchRequest::DistanceHint);
@@ -586,11 +581,11 @@ void tst_QPlaceManagerNokia::locale()
     //check that setting a locale will affect place detail fetches.
     QPlace place;
     placeManager->setLocale(QLocale("en"));
-    QVERIFY(doFetchDetails(AuvergneEmbassyId,
+    QVERIFY(doFetchDetails(ValidKnownPlaceId,
                            &place));
     QString englishName = place.name();
     placeManager->setLocale(QLocale("fr"));
-    QVERIFY(doFetchDetails(AuvergneEmbassyId,
+    QVERIFY(doFetchDetails(ValidKnownPlaceId,
                            &place));
     QVERIFY(englishName != place.name());
 }
@@ -602,9 +597,9 @@ void tst_QPlaceManagerNokia::content()
     //check fetching of content
     QPlaceContentRequest request;
     request.setContentType(type);
+    request.setPlaceId(ValidKnownPlaceId);
     QPlaceContent::Collection results;
-    QVERIFY(doFetchContent(AuvergneEmbassyId,
-                            request, &results));
+    QVERIFY(doFetchContent(request, &results));
 
     QVERIFY(results.count() > 0);
 
@@ -638,39 +633,18 @@ void tst_QPlaceManagerNokia::content()
     }
 
     //check total count
-    QPlaceContentReply *contentReply =
-            placeManager->getPlaceContent(AuvergneEmbassyId,
-                                          request);
+    QPlaceContentReply *contentReply = placeManager->getPlaceContent(request);
     QSignalSpy contentSpy(contentReply, SIGNAL(finished()));
     QTRY_VERIFY_WITH_TIMEOUT(contentSpy.count() ==1, Timeout);
     QVERIFY(contentReply->totalCount() > 0);
 
     if (contentReply->totalCount() >= 2) {
-        //try testing with an offset
-        request.setOffset(1);
-        QPlaceContent::Collection newResults;
-        QVERIFY(doFetchContent(AuvergneEmbassyId,
-                                request, &newResults));
-        QVERIFY(!newResults.keys().contains(0));
-        QCOMPARE(newResults.value(1), results.value(1));
-
         //try testing with a limit
-        request.setOffset(0);
         request.setLimit(1);
-        QVERIFY(doFetchContent(AuvergneEmbassyId,
-                                request, &newResults));
+        QPlaceContent::Collection newResults;
+        QVERIFY(doFetchContent(request, &newResults));
         QCOMPARE(newResults.count(), 1);
         QCOMPARE(newResults.values().first(), results.value(0));
-
-        //try testing both limit and offset
-        if (contentReply->totalCount()  >= 3) {
-            request.setLimit(1);
-            request.setOffset(1);
-            QVERIFY(doFetchContent(AuvergneEmbassyId,
-                                    request, &newResults));
-            QCOMPARE(newResults.count(), 1);
-            QCOMPARE(newResults.values().first(), results.value(1));
-        }
     }
 }
 

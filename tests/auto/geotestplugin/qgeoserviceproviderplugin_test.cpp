@@ -56,15 +56,15 @@ QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
 }
 
 QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEngine(
-            const QMap<QString, QVariant> & parameters,
-            QGeoServiceProvider::Error * error, QString *errorString) const
+            const QVariantMap &parameters,
+            QGeoServiceProvider::Error *error, QString *errorString) const
 {
     return new QGeoRoutingManagerEngineTest(parameters, error, errorString);
 }
 
 
 QGeoCodingManagerEngine* QGeoServiceProviderFactoryTest::createGeocodingManagerEngine(
-                const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error,
+                const QVariantMap &parameters, QGeoServiceProvider::Error *error,
                 QString *errorString) const
 {
     return new QGeoCodingManagerEngineTest(parameters, error, errorString);
@@ -72,14 +72,14 @@ QGeoCodingManagerEngine* QGeoServiceProviderFactoryTest::createGeocodingManagerE
 
 
 QGeoMappingManagerEngine* QGeoServiceProviderFactoryTest::createMappingManagerEngine(
-            const QMap<QString, QVariant> &parameters,
+            const QVariantMap &parameters,
             QGeoServiceProvider::Error *error, QString *errorString) const
 {
     return new QGeoTiledMappingManagerEngineTest(parameters, error, errorString);
 }
 
 QPlaceManagerEngine* QGeoServiceProviderFactoryTest::createPlaceManagerEngine(
-        const QMap<QString, QVariant> &parameters,
+        const QVariantMap &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) const
 {
     Q_UNUSED(error);

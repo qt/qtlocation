@@ -128,46 +128,117 @@ static QGeoManeuver::InstructionDirection osrmInstructionDirection(const QString
 
 const QString osrmInstructionText(const QString &instructionCode, const QString &wayname)
 {
-    if (instructionCode == QLatin1String("0"))
+    if (instructionCode == QLatin1String("0")) {
         return QString();
-    else if (instructionCode == QLatin1String("1"))
-        return QGeoRouteReplyOsm::tr("Go straight.");
-    else if (instructionCode == QLatin1String("2"))
-        return QGeoRouteReplyOsm::tr("Turn slightly right onto %1.").arg(wayname);
-    else if (instructionCode == QLatin1String("3"))
-        return QGeoRouteReplyOsm::tr("Turn right onto %1.").arg(wayname);
-    else if (instructionCode == QLatin1String("4"))
-        return QGeoRouteReplyOsm::tr("Make a sharp right onto %1.").arg(wayname);
-    else if (instructionCode == QLatin1String("5"))
+    } else if (instructionCode == QLatin1String("1")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Go straight.");
+        else
+            return QGeoRouteReplyOsm::tr("Go straight onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("2")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Turn slightly right.");
+        else
+            return QGeoRouteReplyOsm::tr("Turn slightly right onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("3")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Turn right.");
+        else
+            return QGeoRouteReplyOsm::tr("Turn right onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("4")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Make a sharp right.");
+        else
+            return QGeoRouteReplyOsm::tr("Make a sharp right onto %1.").arg(wayname);
+    }
+    else if (instructionCode == QLatin1String("5")) {
         return QGeoRouteReplyOsm::tr("When it is safe to do so, perform a U-turn.");
-    else if (instructionCode == QLatin1String("6"))
-        return QGeoRouteReplyOsm::tr("Make a sharp left onto %1.").arg(wayname);
-    else if (instructionCode == QLatin1String("7"))
-        return QGeoRouteReplyOsm::tr("Turn left onto %1.").arg(wayname);
-    else if (instructionCode == QLatin1String("8"))
-        return QGeoRouteReplyOsm::tr("Turn slightly left onto %1.").arg(wayname);
-    else if (instructionCode == QLatin1String("9"))
+    } else if (instructionCode == QLatin1String("6")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Make a sharp left.");
+        else
+            return QGeoRouteReplyOsm::tr("Make a sharp left onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("7")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Turn left.");
+        else
+            return QGeoRouteReplyOsm::tr("Turn left onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("8")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Turn slightly left.");
+        else
+            return QGeoRouteReplyOsm::tr("Turn slightly left onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("9")) {
         return QGeoRouteReplyOsm::tr("Reached waypoint.");
-    else if (instructionCode == QLatin1String("10"))
-        return QGeoRouteReplyOsm::tr("Head onto %1.").arg(wayname);
-    else if (instructionCode == QLatin1String("11"))
-        return QGeoRouteReplyOsm::tr("Enter the round about.");
-    else if (instructionCode == QLatin1String("11-1"))
-        return QGeoRouteReplyOsm::tr("At the round about take the 1st exit.");
-    else if (instructionCode == QLatin1String("11-2"))
-        return QGeoRouteReplyOsm::tr("At the round about take the 2nd exit.");
-    else if (instructionCode == QLatin1String("11-3"))
-        return QGeoRouteReplyOsm::tr("At the round about take the 3rd exit.");
-    else if (instructionCode == QLatin1String("12"))
-        return QGeoRouteReplyOsm::tr("Leave the round about.");
-    else if (instructionCode == QLatin1String("13"))
-        return QGeoRouteReplyOsm::tr("Stay on the round about.");
-    else if (instructionCode == QLatin1String("14"))
-        return QGeoRouteReplyOsm::tr("Start at the end of the street.");
-    else if (instructionCode == QLatin1String("15"))
+    } else if (instructionCode == QLatin1String("10")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Head on.");
+        else
+            return QGeoRouteReplyOsm::tr("Head onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11")) {
+        return QGeoRouteReplyOsm::tr("Enter the roundabout.");
+    } else if (instructionCode == QLatin1String("11-1")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the first exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the first exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11-2")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the second exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the second exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11-3")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the third exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the third exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11-4")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the fourth exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the fourth exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11-5")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the fifth exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the fifth exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11-6")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the sixth exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the sixth exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11-7")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the seventh exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the seventh exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11-8")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the eighth exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the eighth exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("11-9")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("At the roundabout take the ninth exit.");
+        else
+            return QGeoRouteReplyOsm::tr("At the roundabout take the ninth exit onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("12")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Leave the roundabout.");
+        else
+            return QGeoRouteReplyOsm::tr("Leave the roundabout onto %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("13")) {
+        return QGeoRouteReplyOsm::tr("Stay on the roundabout.");
+    } else if (instructionCode == QLatin1String("14")) {
+        if (wayname.isEmpty())
+            return QGeoRouteReplyOsm::tr("Start at the end of the street.");
+        else
+            return QGeoRouteReplyOsm::tr("Start at the end of %1.").arg(wayname);
+    } else if (instructionCode == QLatin1String("15")) {
         return QGeoRouteReplyOsm::tr("You have reached your destination.");
-    else
+    } else {
         return QGeoRouteReplyOsm::tr("Don't know what to say for '%1'").arg(instructionCode);
+    }
 }
 
 QGeoRouteReplyOsm::QGeoRouteReplyOsm(QNetworkReply *reply, const QGeoRouteRequest &request,

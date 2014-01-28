@@ -347,6 +347,33 @@ QLocale QGeoRoutingManager::locale() const
 }
 
 /*!
+    Sets the measurement system used by this manager to \a system.
+
+    The measurement system can be set independently of the locale. Both setLocale() and this
+    function set the measurement system. The value set by the last function called will be used.
+
+    \sa measurementSystem(), locale(), setLocale()
+*/
+void QGeoRoutingManager::setMeasurementSystem(QLocale::MeasurementSystem system)
+{
+    d_ptr->engine->setMeasurementSystem(system);
+}
+
+/*!
+    Returns the measurement system used by this manager.
+
+    If setMeasurementSystem() has been called then the value returned by this function may be
+    different to that returned by locale().\l {QLocale::measurementSystem()}{measurementSystem()}.
+    In which case the value returned by this function is what will be used by the manager.
+
+    \sa setMeasurementSystem(), setLocale()
+*/
+QLocale::MeasurementSystem QGeoRoutingManager::measurementSystem() const
+{
+    return d_ptr->engine->measurementSystem();
+}
+
+/*!
 \fn void QGeoRoutingManager::finished(QGeoRouteReply *reply)
 
 This signal is emitted when \a reply has finished processing.

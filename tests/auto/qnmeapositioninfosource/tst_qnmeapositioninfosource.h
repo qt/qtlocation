@@ -96,6 +96,8 @@ private slots:
 
     void minimumUpdateInterval();
 
+    void userEquivalentRangeError();
+
     void setUpdateInterval_delayedUpdate();
 
     void lastKnownPosition();

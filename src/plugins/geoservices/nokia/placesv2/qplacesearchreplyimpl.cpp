@@ -121,11 +121,11 @@ void QPlaceSearchReplyImpl::replyFinished()
         return;
     }
 
-    QJsonObject object = document.object();
+    QJsonObject resultsObject = document.object();
 
-    //QJsonObject searchObject = object.value(QLatin1String("search")).toObject();
+    if (resultsObject.contains(QStringLiteral("results")))
+        resultsObject = resultsObject.value(QStringLiteral("results")).toObject();
 
-    QJsonObject resultsObject = object.value(QLatin1String("results")).toObject();
     QJsonArray items = resultsObject.value(QLatin1String("items")).toArray();
 
     QList<QPlaceSearchResult> results;
@@ -137,6 +137,18 @@ void QPlaceSearchReplyImpl::replyFinished()
             results.append(parsePlaceResult(item));
         else if (type == QStringLiteral("urn:nlp-types:search"))
             results.append(parseSearchResult(item));
+    }
+
+    if (resultsObject.contains(QStringLiteral("next"))) {
+        QPlaceSearchRequest request;
+        request.setSearchContext(QUrl(resultsObject.value(QStringLiteral("next")).toString()));
+        setNextPageRequest(request);
+    }
+
+    if (resultsObject.contains(QStringLiteral("previous"))) {
+        QPlaceSearchRequest request;
+        request.setSearchContext(QUrl(resultsObject.value(QStringLiteral("previous")).toString()));
+        setPreviousPageRequest(request);
     }
 
     setResults(results);

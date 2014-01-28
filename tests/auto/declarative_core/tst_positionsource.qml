@@ -91,19 +91,24 @@ TestCase {
 
         // On construction, if the provided source name is invalid, the default source will be
         // used. Test that the source is valid as expected.
-        compare(testSetSource.name, "test.source");
+        verify(testSetSource.name !== "");
+        //we don't really know what the default source is named.
+        //It may not be "test.source"
+        var defaultSourceName = testSetSource.name;
         verify(testSetSource.valid);
 
         // Test that setting name to "" will still use the default.
         testSetSource.name = "";
         compare(testingSourcePluginSpy.count, 0);
-        compare(testSetSource.name, "test.source");
+        compare(testSetSource.name, defaultSourceName);
         verify(testSetSource.valid);
 
         testSetSource.name = "test.source";
-        compare(testingSourcePluginSpy.count, 0);
+        if (defaultSourceName === "test.source")
+            compare(testingSourcePluginSpy.count, 0);
         compare(testSetSource.name, "test.source");
         verify(testSetSource.valid);
+        testingSourcePluginSpy.clear();
 
         testSetSource.name = "bogus";
         compare(testingSourcePluginSpy.count, 1);
@@ -120,6 +125,15 @@ TestCase {
         compare(testingSource.updateInterval, 1200);
         testingSource.updateInterval = 800;
         compare(testingSource.updateInterval, 1000);
+    }
+
+    function test_preferredPositioningMethods() {
+        testingSource.preferredPositioningMethods = PositionSource.AllPositioningMethods;
+        compare(testingSource.preferredPositioningMethods, PositionSource.AllPositioningMethods);
+        testingSource.preferredPositioningMethods = PositionSource.SatellitePositioningMethods;
+        compare(testingSource.preferredPositioningMethods, PositionSource.SatellitePositioningMethods);
+        testingSource.preferredPositioningMethods = PositionSource.NonSatellitePositioningMethods;
+        compare(testingSource.preferredPositioningMethods, PositionSource.NonSatellitePositioningMethods);
     }
 
     function test_updates() {

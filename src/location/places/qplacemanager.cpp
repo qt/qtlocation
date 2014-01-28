@@ -208,14 +208,13 @@ QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 }
 
 /*!
-    Retrieves content for the place corresponding to \a placeId, according to the parameters specified in
-    \a request.
+    Retrieves content for a place according to the parameters specified in \a request.
 
     See \l {Fetching Rich Content} for an example of usage.
 */
-QPlaceContentReply *QPlaceManager::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request) const
+QPlaceContentReply *QPlaceManager::getPlaceContent(const QPlaceContentRequest &request) const
 {
-    return d->getPlaceContent(placeId, request);
+    return d->getPlaceContent(request);
 }
 
 /*!

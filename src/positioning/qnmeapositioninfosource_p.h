@@ -96,6 +96,7 @@ public:
     QGeoPositionInfo m_lastUpdate;
     bool m_invokedStart;
     QGeoPositionInfoSource::Error m_positionError;
+    double m_userEquivalentRangeError;
 
 public Q_SLOTS:
     void readyRead();
@@ -120,6 +121,8 @@ private:
     QGeoPositionInfo m_pendingUpdate;
     QDate m_currentDate;
     QTimer *m_requestTimer;
+    qreal m_horizontalAccuracy;
+    qreal m_verticalAccuracy;
     bool m_noUpdateLastInterval;
     bool m_updateTimeoutSent;
     bool m_connectedReadyRead;

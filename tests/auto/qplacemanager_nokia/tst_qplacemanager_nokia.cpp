@@ -91,7 +91,7 @@ void tst_QPlaceManagerNokia::initTestCase()
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
 
-    QMap<QString, QVariant> params;
+    QVariantMap params;
     params.insert("app_id", "stub");
     params.insert("token", "stub");
     provider = new QGeoServiceProvider("nokia", params);

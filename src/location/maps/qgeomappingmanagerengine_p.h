@@ -87,7 +87,7 @@ public:
 
     virtual QGeoMapData *createMapData() = 0;
 
-    QMap<QString, QVariant> parameters() const;
+    QVariantMap parameters() const;
 
     QString managerName() const;
     int managerVersion() const;

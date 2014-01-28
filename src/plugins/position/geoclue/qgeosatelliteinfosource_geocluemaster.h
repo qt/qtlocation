@@ -62,8 +62,6 @@ public:
     explicit QGeoSatelliteInfoSourceGeoclueMaster(QObject *parent = 0);
     ~QGeoSatelliteInfoSourceGeoclueMaster();
 
-    bool init();
-
     int minimumUpdateInterval() const Q_DECL_OVERRIDE;
     Error error() const Q_DECL_OVERRIDE;
 
@@ -78,6 +76,7 @@ public:
                                const QList<int> &usedPrn, const QList<QGeoSatelliteInfo> &satInfos);
 
 private slots:
+    void requestUpdateTimeout();
     void positionProviderChanged(const QByteArray &service, const QByteArray &path);
     void satellitesChanged(const QDBusMessage &message);
 
@@ -91,6 +90,7 @@ private:
     QList<QGeoSatelliteInfo> m_inUse;
     Error m_error;
     bool m_satellitesChangedConnected;
+    bool m_running;
 };
 
 QT_END_NAMESPACE

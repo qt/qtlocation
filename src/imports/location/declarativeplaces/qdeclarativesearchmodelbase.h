@@ -63,8 +63,9 @@ class QDeclarativeSearchModelBase : public QAbstractListModel, public QQmlParser
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QVariant searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged)
-    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
+    Q_PROPERTY(bool previousPagesAvailable READ previousPagesAvailable NOTIFY previousPagesAvailableChanged)
+    Q_PROPERTY(bool nextPagesAvailable READ nextPagesAvailable NOTIFY nextPagesAvailableChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
     Q_ENUMS(Status)
@@ -88,11 +89,11 @@ public:
     QVariant searchArea() const;
     void setSearchArea(const QVariant &searchArea);
 
-    int offset() const;
-    void setOffset(int offset);
-
     int limit() const;
     void setLimit(int limit);
+
+    bool previousPagesAvailable() const;
+    bool nextPagesAvailable() const;
 
     Status status() const;
     void setStatus(Status status, const QString &errorString = QString());
@@ -104,6 +105,9 @@ public:
 
     Q_INVOKABLE QString errorString() const;
 
+    Q_INVOKABLE void previousPage();
+    Q_INVOKABLE void nextPage();
+
     virtual void clearData(bool suppressSignal = false);
 
     // From QQmlParserStatus
@@ -113,8 +117,9 @@ public:
 Q_SIGNALS:
     void pluginChanged();
     void searchAreaChanged();
-    void offsetChanged();
     void limitChanged();
+    void previousPagesAvailableChanged();
+    void nextPagesAvailableChanged();
     void statusChanged();
 
 protected:
@@ -128,6 +133,8 @@ private Q_SLOTS:
 
 protected:
     virtual QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request) = 0;
+    void setPreviousPageRequest(const QPlaceSearchRequest &previous);
+    void setNextPageRequest(const QPlaceSearchRequest &next);
 
     QPlaceSearchRequest m_request;
     QDeclarativeGeoServiceProvider *m_plugin;
@@ -137,6 +144,8 @@ private:
     bool m_complete;
     Status m_status;
     QString m_errorString;
+    QPlaceSearchRequest m_previousPageRequest;
+    QPlaceSearchRequest m_nextPageRequest;
 };
 
 QT_END_NAMESPACE

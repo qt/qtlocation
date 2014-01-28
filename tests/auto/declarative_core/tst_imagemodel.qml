@@ -93,7 +93,16 @@ TestCase {
         Utils.testObjectProperties(testCase, testModel, data);
     }
 
-    function test_consecutive_fetch() {
+    function test_consecutive_fetch_data() {
+        return [
+            { tag: "batchSize 1", batchSize: 1 },
+            { tag: "batchSize 2", batchSize: 2 },
+            { tag: "batchSize 5", batchSize: 5 },
+            { tag: "batchSize 10", batchSize: 10 },
+        ];
+    }
+
+    function test_consecutive_fetch(data) {
         var expectedImages = [
                     {
                         "url": "http://somewhere.com/image1.png",
@@ -123,7 +132,7 @@ TestCase {
                 ]
 
         var model = createModel();
-        Utils.testConsecutiveFetch(testCase, model, parkViewHotel, expectedImages);
+        Utils.testConsecutiveFetch(testCase, model, parkViewHotel, expectedImages, data);
         model.destroy();
     }
 

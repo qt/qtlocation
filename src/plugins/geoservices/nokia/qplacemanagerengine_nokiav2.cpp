@@ -198,7 +198,7 @@ void CategoryParser::processCategory(int level, const QString &id, const QString
 
 QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
     QGeoNetworkAccessManager *networkManager,
-    const QMap<QString, QVariant> &parameters,
+    const QVariantMap &parameters,
     QGeoServiceProvider::Error *error,
     QString *errorString)
     : QPlaceManagerEngine(parameters)
@@ -261,75 +261,63 @@ QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &p
     return reply;
 }
 
-QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &placeId,
-                                                              const QPlaceContentRequest &request)
+QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QPlaceContentRequest &request)
 {
-    QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                    QLatin1String("/places/v1/places/") + placeId + QLatin1String("/media/"));
-
     QNetworkReply *networkReply = 0;
 
-    QUrlQuery queryItems;
+    if (request.contentContext().userType() == qMetaTypeId<QUrl>()) {
+        QUrl u = request.contentContext().value<QUrl>();
 
-    switch (request.contentType()) {
-    case QPlaceContent::ImageType:
-        requestUrl.setPath(requestUrl.path() + QLatin1String("images"));
+       networkReply = sendRequest(u);
+    } else {
+        QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                        QLatin1String("/places/v1/places/") + request.placeId() +
+                        QLatin1String("/media/"));
 
-        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+        QUrlQuery queryItems;
 
-        if (request.limit() > 0) {
-            queryItems.addQueryItem(QLatin1String("size"),
-                                    QString::number(request.limit()));
+        switch (request.contentType()) {
+        case QPlaceContent::ImageType:
+            requestUrl.setPath(requestUrl.path() + QLatin1String("images"));
+
+            queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+
+            if (request.limit() > 0)
+                queryItems.addQueryItem(QLatin1String("size"), QString::number(request.limit()));
+
+            //queryItems.append(qMakePair<QString, QString>(QLatin1String("image_dimensions"), QLatin1String("w64-h64,w100")));
+
+            requestUrl.setQuery(queryItems);
+
+            networkReply = sendRequest(requestUrl);
+            break;
+        case QPlaceContent::ReviewType:
+            requestUrl.setPath(requestUrl.path() + QLatin1String("reviews"));
+
+            queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+
+            if (request.limit() > 0)
+                queryItems.addQueryItem(QLatin1String("size"), QString::number(request.limit()));
+
+            requestUrl.setQuery(queryItems);
+
+            networkReply = sendRequest(requestUrl);
+            break;
+        case QPlaceContent::EditorialType:
+            requestUrl.setPath(requestUrl.path() + QLatin1String("editorials"));
+
+            queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+
+            if (request.limit() > 0)
+                queryItems.addQueryItem(QLatin1String("size"), QString::number(request.limit()));
+
+            requestUrl.setQuery(queryItems);
+
+            networkReply = sendRequest(requestUrl);
+            break;
+        case QPlaceContent::NoType:
+            ;
         }
-        if (request.offset() > -1) {
-            queryItems.addQueryItem(QLatin1String("offset"),
-                                    QString::number(request.offset()));
-        }
-
-        //queryItems.append(qMakePair<QString, QString>(QLatin1String("image_dimensions"), QLatin1String("w64-h64,w100")));
-
-        requestUrl.setQuery(queryItems);
-
-        networkReply = sendRequest(requestUrl);
-        break;
-    case QPlaceContent::ReviewType:
-        requestUrl.setPath(requestUrl.path() + QLatin1String("reviews"));
-
-        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
-
-        if (request.limit() > 0) {
-            queryItems.addQueryItem(QLatin1String("size"),
-                                    QString::number(request.limit()));
-        }
-        if (request.offset() > -1) {
-            queryItems.addQueryItem(QLatin1String("offset"),
-                                    QString::number(request.offset()));
-        }
-
-        requestUrl.setQuery(queryItems);
-
-        networkReply = sendRequest(requestUrl);
-        break;
-    case QPlaceContent::EditorialType:
-        requestUrl.setPath(requestUrl.path() + QLatin1String("editorials"));
-
-        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
-
-        if (request.limit() > 0) {
-            queryItems.addQueryItem(QLatin1String("size"),
-                                    QString::number(request.limit()));
-        }
-        if (request.offset() > -1) {
-            queryItems.addQueryItem(QLatin1String("offset"),
-                                    QString::number(request.offset()));
-        }
-
-        requestUrl.setQuery(queryItems);
-
-        networkReply = sendRequest(requestUrl);
-        break;
-    case QPlaceContent::NoType:
-        ;
     }
 
     QPlaceContentReply *reply = new QPlaceContentReplyImpl(request, networkReply, this);
@@ -378,8 +366,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
     unsupported |= query.visibilityScope() != QLocation::UnspecifiedVisibility &&
                    query.visibilityScope() != QLocation::PublicVisibility;
-
-    unsupported |= !query.searchTerm().isEmpty() && query.offset() > 0;
 
     // Both a search term and search categories are not supported.
     unsupported |= !query.searchTerm().isEmpty() && !query.categories().isEmpty();
@@ -431,9 +417,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         if (query.limit() > 0)
             queryItems.addQueryItem(QStringLiteral("size"), QString::number(query.limit()));
-
-        if (query.offset() > -1)
-            queryItems.addQueryItem(QStringLiteral("offset"), QString::number(query.offset()));
 
         u.setQuery(queryItems);
 
@@ -493,10 +476,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
             queryItems.addQueryItem(QLatin1String("size"),
                                     QString::number(query.limit()));
         }
-        if (query.offset() > -1) {
-            queryItems.addQueryItem(QLatin1String("offset"),
-                                    QString::number(query.offset()));
-        }
 
         requestUrl.setQuery(queryItems);
 
@@ -518,7 +497,6 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
     unsupported |= query.visibilityScope() != QLocation::UnspecifiedVisibility &&
                    query.visibilityScope() != QLocation::PublicVisibility;
 
-    unsupported |= query.offset() > 0;
     unsupported |= !query.categories().isEmpty();
     unsupported |= !query.recommendationId().isEmpty();
 

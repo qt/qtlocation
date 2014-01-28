@@ -571,9 +571,9 @@ void QDeclarativeGeoServiceProvider::parameter_clear(QQmlListProperty<QDeclarati
 /*!
     \internal
 */
-QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
+QVariantMap QDeclarativeGeoServiceProvider::parameterMap() const
 {
-    QMap<QString, QVariant> map;
+    QVariantMap map;
 
     for (int i = 0; i < parameters_.size(); ++i) {
         QDeclarativeGeoServiceProviderParameter *parameter = parameters_.at(i);

@@ -116,7 +116,7 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     // of course override them)
 
     if (directory_.isEmpty()) {
-        directory_ = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+        directory_ = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                 + QLatin1String("/QtLocation");
         QDir::root().mkpath(directory_);
     }
@@ -318,8 +318,7 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
         file.close();
 
         QPixmap pixmap;
-        const char *format = (parts.size() == 2 ? parts.at(1).toLocal8Bit().constData() : 0);
-        if (!pixmap.loadFromData(bytes, format)) {
+        if (!pixmap.loadFromData(bytes, (parts.size() == 2 ? parts.at(1).toLocal8Bit().constData() : 0))) {
             handleError(spec, QLatin1String("Problem with tile image"));
             return QSharedPointer<QGeoTileTexture>(0);
         }
