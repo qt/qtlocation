@@ -92,14 +92,15 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    void dragStarted();
-    void dragEnded();
     bool contains(const QPointF &point) const;
 
 Q_SIGNALS:
     void topLeftChanged(const QGeoCoordinate &topLeft);
     void bottomRightChanged(const QGeoCoordinate &bottomRight);
     void colorChanged(const QColor &color);
+
+protected:
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
     virtual void updateMapItem();
@@ -114,6 +115,7 @@ private:
     bool dirtyMaterial_;
     QGeoMapRectangleGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;
+    bool updatingGeometry_;
 };
 
 //////////////////////////////////////////////////////////////////////

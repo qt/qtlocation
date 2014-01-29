@@ -47,6 +47,7 @@
 #include <qnumeric.h>
 #include <QRectF>
 #include <QPointF>
+#include <QtCore/QScopedValueRollback>
 
 QT_BEGIN_NAMESPACE
 
@@ -177,7 +178,8 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
 }
 
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), dirtyMaterial_(true)
+:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), dirtyMaterial_(true),
+    updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
@@ -342,6 +344,9 @@ void QDeclarativeRectangleMapItem::updateMapItem()
     if (!map() || !topLeft().isValid() || !bottomRight().isValid())
         return;
 
+    QScopedValueRollback<bool> rollback(updatingGeometry_);
+    updatingGeometry_ = true;
+
     geometry_.updatePoints(*map(), topLeft_, bottomRight_);
 
     QList<QGeoCoordinate> pathClosed;
@@ -419,17 +424,13 @@ bool QDeclarativeRectangleMapItem::contains(const QPointF &point) const
 /*!
     \internal
 */
-void QDeclarativeRectangleMapItem::dragStarted()
+void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    borderGeometry_.markFullScreenDirty();
-    updateMapItem();
-}
+    if (updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
+        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        return;
+    }
 
-/*!
-    \internal
-*/
-void QDeclarativeRectangleMapItem::dragEnded()
-{
     QDoubleVector2D newTopLeftPoint = QDoubleVector2D(x(),y());
     QGeoCoordinate newTopLeft = map()->screenPositionToCoordinate(newTopLeftPoint, false);
     if (newTopLeft.isValid()) {
@@ -459,6 +460,9 @@ void QDeclarativeRectangleMapItem::dragEnded()
         emit topLeftChanged(topLeft_);
         emit bottomRightChanged(bottomRight_);
     }
+
+    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // call to this function.
 }
 
 QT_END_NAMESPACE

@@ -46,6 +46,7 @@
 #include "locationvaluetypehelper_p.h"
 #include "qdoublevector2d_p.h"
 
+#include <QtCore/QScopedValueRollback>
 #include <QtQml/QQmlInfo>
 #include <QtQml/QQmlContext>
 #include <QtQml/private/qqmlengine_p.h>
@@ -449,9 +450,8 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     this->translate( -1 * sourceBounds_.topLeft());
 }
 
-QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
-    QDeclarativeGeoMapItemBase(parent),
-    dirtyMaterial_(true)
+QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
+:   QDeclarativeGeoMapItemBase(parent), dirtyMaterial_(true), updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&line_, SIGNAL(colorChanged(QColor)),
@@ -611,93 +611,13 @@ QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
 /*!
     \internal
 */
-void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
+void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
+    if (updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
+        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
-
-    // if the scene is tilted, we must regenerate our geometry every frame
-    if (map()->cameraCapabilities().supportsTilting()
-            && (event.cameraData.tilt() > 0.1
-                || event.cameraData.tilt() < -0.1)) {
-        geometry_.markSourceDirty();
     }
 
-    // if the scene is rolled, we must regen too
-    if (map()->cameraCapabilities().supportsRolling()
-            && (event.cameraData.roll() > 0.1
-                || event.cameraData.roll() < -0.1)) {
-        geometry_.markSourceDirty();
-    }
-
-    // otherwise, only regen on rotate, resize and zoom
-    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
-        geometry_.markSourceDirty();
-    }
-    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
-    geometry_.markScreenDirty();
-    updateMapItem();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativePolylineMapItem::updateMapItem()
-{
-    if (!map() || path_.count() == 0)
-        return;
-
-    geometry_.updateSourcePoints(*map(), path_);
-    geometry_.updateScreenPoints(*map(), line_.width());
-
-    setWidth(geometry_.sourceBoundingBox().width());
-    setHeight(geometry_.sourceBoundingBox().height());
-
-    setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
-    update();
-}
-
-/*!
-    \internal
-*/
-QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
-{
-    Q_UNUSED(data);
-
-    MapPolylineNode *node = static_cast<MapPolylineNode *>(oldNode);
-
-    if (!node) {
-        node = new MapPolylineNode();
-    }
-
-    //TODO: update only material
-    if (geometry_.isScreenDirty() || dirtyMaterial_) {
-        node->update(line_.color(), &geometry_);
-        geometry_.setPreserveGeometry(false);
-        geometry_.markClean();
-    }
-    return node;
-}
-
-bool QDeclarativePolylineMapItem::contains(const QPointF &point) const
-{
-    return geometry_.contains(point);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativePolylineMapItem::dragStarted()
-{
-    geometry_.markFullScreenDirty();
-    updateMapItem();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativePolylineMapItem::dragEnded()
-{
     QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(geometry_.firstPointOffset());
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
@@ -734,6 +654,88 @@ void QDeclarativePolylineMapItem::dragEnded()
         updateMapItem();
         emit pathChanged();
     }
+
+    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // call to this function.
+}
+
+/*!
+    \internal
+*/
+void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
+{
+    if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
+        return;
+
+    // if the scene is tilted, we must regenerate our geometry every frame
+    if (map()->cameraCapabilities().supportsTilting()
+            && (event.cameraData.tilt() > 0.1
+                || event.cameraData.tilt() < -0.1)) {
+        geometry_.markSourceDirty();
+    }
+
+    // if the scene is rolled, we must regen too
+    if (map()->cameraCapabilities().supportsRolling()
+            && (event.cameraData.roll() > 0.1
+                || event.cameraData.roll() < -0.1)) {
+        geometry_.markSourceDirty();
+    }
+
+    // otherwise, only regen on rotate, resize and zoom
+    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
+        geometry_.markSourceDirty();
+    }
+    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
+    geometry_.markScreenDirty();
+    updateMapItem();
+}
+
+/*!
+    \internal
+*/
+void QDeclarativePolylineMapItem::updateMapItem()
+{
+    if (!map() || path_.count() == 0)
+        return;
+
+    QScopedValueRollback<bool> rollback(updatingGeometry_);
+    updatingGeometry_ = true;
+
+    geometry_.updateSourcePoints(*map(), path_);
+    geometry_.updateScreenPoints(*map(), line_.width());
+
+    setWidth(geometry_.sourceBoundingBox().width());
+    setHeight(geometry_.sourceBoundingBox().height());
+
+    setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
+    update();
+}
+
+/*!
+    \internal
+*/
+QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
+{
+    Q_UNUSED(data);
+
+    MapPolylineNode *node = static_cast<MapPolylineNode *>(oldNode);
+
+    if (!node) {
+        node = new MapPolylineNode();
+    }
+
+    //TODO: update only material
+    if (geometry_.isScreenDirty() || dirtyMaterial_) {
+        node->update(line_.color(), &geometry_);
+        geometry_.setPreserveGeometry(false);
+        geometry_.markClean();
+    }
+    return node;
+}
+
+bool QDeclarativePolylineMapItem::contains(const QPointF &point) const
+{
+    return geometry_.contains(point);
 }
 
 //////////////////////////////////////////////////////////////////////

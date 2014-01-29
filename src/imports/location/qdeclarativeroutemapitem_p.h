@@ -87,7 +87,6 @@ private:
     QDeclarativeGeoRoute *route_;
     QList<QGeoCoordinate> path_;
     bool dirtyMaterial_;
-    bool dragActive_;
     QGeoMapPolylineGeometry geometry_;
 };
 

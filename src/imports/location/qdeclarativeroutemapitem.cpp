@@ -44,6 +44,7 @@
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qdeclarativegeoroute_p.h"
+
 #include <QtQml/QQmlInfo>
 #include <QtGui/QPainter>
 
@@ -81,9 +82,8 @@
 */
 
 
-QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent):
-    QDeclarativeGeoMapItemBase(parent),
-    route_(0)
+QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent)
+:   QDeclarativeGeoMapItemBase(parent), route_(0)
 {
     setFlag(ItemHasContents, true);
     line_.setWidth(3.0);

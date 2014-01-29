@@ -45,6 +45,7 @@
 #include "error_messages.h"
 #include "locationvaluetypehelper_p.h"
 
+#include <QtCore/QScopedValueRollback>
 #include <QtGui/private/qtriangulator_p.h>
 #include <QtQml/QQmlInfo>
 #include <QtQml/QQmlContext>
@@ -320,10 +321,9 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
 }
 
-QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
-    QDeclarativeGeoMapItemBase(parent),
-    color_(Qt::transparent),
-    dirtyMaterial_(true)
+QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
+:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), dirtyMaterial_(true),
+    updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
@@ -540,6 +540,9 @@ void QDeclarativePolygonMapItem::updateMapItem()
     if (!map() || path_.count() == 0)
         return;
 
+    QScopedValueRollback<bool> rollback(updatingGeometry_);
+    updatingGeometry_ = true;
+
     geometry_.updateSourcePoints(*map(), path_);
     geometry_.updateScreenPoints(*map());
 
@@ -611,18 +614,13 @@ bool QDeclarativePolygonMapItem::contains(const QPointF &point) const
 /*!
     \internal
 */
-void QDeclarativePolygonMapItem::dragStarted()
+void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    geometry_.markFullScreenDirty();
-    borderGeometry_.markFullScreenDirty();
-    updateMapItem();
-}
+    if (updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
+        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        return;
+    }
 
-/*!
-    \internal
-*/
-void QDeclarativePolygonMapItem::dragEnded()
-{
     QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(geometry_.firstPointOffset());
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
@@ -662,6 +660,9 @@ void QDeclarativePolygonMapItem::dragEnded()
         updateMapItem();
         emit pathChanged();
     }
+
+    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // call to this function.
 }
 
 //////////////////////////////////////////////////////////////////////

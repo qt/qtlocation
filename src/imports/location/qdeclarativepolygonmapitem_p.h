@@ -101,12 +101,13 @@ public:
     QDeclarativeMapLineProperties *border();
 
     bool contains(const QPointF &point) const;
-    void dragStarted();
-    void dragEnded();
 
 Q_SIGNALS:
     void pathChanged();
     void colorChanged(const QColor &color);
+
+protected:
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
     virtual void updateMapItem();
@@ -122,6 +123,7 @@ private:
     bool dirtyMaterial_;
     QGeoMapPolygonGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;
+    bool updatingGeometry_;
 };
 
 //////////////////////////////////////////////////////////////////////

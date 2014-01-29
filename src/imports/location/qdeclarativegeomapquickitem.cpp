@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapquickitem_p.h"
+
+#include <QtCore/QScopedValueRollback>
 #include <QtQml/qqmlinfo.h>
 #include <QtQuick/QSGOpacityNode>
 #include "qdoublevector2d_p.h"
@@ -119,7 +121,7 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), zoomLevel_(0.0), inUpdate_(false),
-    mapAndSourceItemSet_(false)
+    mapAndSourceItemSet_(false), updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);
     opacityContainer_ = new QQuickItem(this);
@@ -171,13 +173,20 @@ void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
 /*!
     \internal
 */
-void QDeclarativeGeoMapQuickItem::dragEnded()
+void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (!mapAndSourceItemSet_)
+    if (!mapAndSourceItemSet_ || updatingGeometry_ ||
+        newGeometry.topLeft() == oldGeometry.topLeft()) {
+        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
+    }
+
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(QDoubleVector2D(x(), y()) + (scaleFactor() * QDoubleVector2D(anchorPoint_)), false);
     if (newCoordinate.isValid())
         setCoordinate(newCoordinate);
+
+    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // call to this function.
 }
 
 /*!
@@ -315,6 +324,9 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
         connect(sourceItem_.data(), SIGNAL(heightChanged()),
                 this, SLOT(updateMapItem()));
     }
+
+    QScopedValueRollback<bool> rollback(updatingGeometry_);
+    updatingGeometry_ = true;
 
     opacityContainer_->setOpacity(zoomLevelOpacity());
 

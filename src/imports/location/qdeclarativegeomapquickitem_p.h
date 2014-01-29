@@ -76,13 +76,14 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
-    void dragEnded();
-
 Q_SIGNALS:
     void coordinateChanged();
     void sourceItemChanged();
     void anchorPointChanged();
     void zoomLevelChanged();
+
+protected:
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
     virtual void updateMapItem();
@@ -98,6 +99,7 @@ private:
     qreal zoomLevel_;
     bool inUpdate_;
     bool mapAndSourceItemSet_;
+    bool updatingGeometry_;
 };
 
 QT_END_NAMESPACE

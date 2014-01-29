@@ -124,11 +124,11 @@ public:
 
     QDeclarativeMapLineProperties *line();
 
-    void dragStarted();
-    void dragEnded();
-
 Q_SIGNALS:
     void pathChanged();
+
+protected:
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
     virtual void updateMapItem();
@@ -143,6 +143,7 @@ private:
     QColor color_;
     bool dirtyMaterial_;
     QGeoMapPolylineGeometry geometry_;
+    bool updatingGeometry_;
 };
 
 //////////////////////////////////////////////////////////////////////

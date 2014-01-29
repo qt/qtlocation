@@ -44,7 +44,10 @@
 #include "qdeclarativepolygonmapitem_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeoprojection_p.h"
+
 #include <cmath>
+
+#include <QtCore/QScopedValueRollback>
 #include <QPen>
 #include <QPainter>
 
@@ -300,7 +303,8 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoo
 }
 
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), radius_(0), dirtyMaterial_(true)
+:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), radius_(0), dirtyMaterial_(true),
+    updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
@@ -466,6 +470,9 @@ void QDeclarativeCircleMapItem::updateMapItem()
     if (!map() || !center().isValid())
         return;
 
+    QScopedValueRollback<bool> rollback(updatingGeometry_);
+    updatingGeometry_ = true;
+
     if (geometry_.isSourceDirty()) {
         circlePath_.clear();
         calculatePeripheralPoints(circlePath_, center_, radius_, 125);
@@ -543,28 +550,6 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
     updateMapItem();
 }
 
-
-/*!
-    \internal
-*/
-void QDeclarativeCircleMapItem::dragStarted()
-{
-    geometry_.markFullScreenDirty();
-    borderGeometry_.markFullScreenDirty();
-    updateMapItem();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeCircleMapItem::dragEnded()
-{
-    QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(width(), height()) / 2;
-    QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
-    if (newCoordinate.isValid())
-        setCenter(newCoordinate);
-}
-
 /*!
     \internal
 */
@@ -573,6 +558,24 @@ bool QDeclarativeCircleMapItem::contains(const QPointF &point) const
     return (geometry_.contains(point) || borderGeometry_.contains(point));
 }
 
+/*!
+    \internal
+*/
+void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+{
+    if (updatingGeometry_ || newGeometry == oldGeometry) {
+        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        return;
+    }
+
+    QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(width(), height()) / 2;
+    QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
+    if (newCoordinate.isValid())
+        setCenter(newCoordinate);
+
+    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // call to this function.
+}
 
 bool QDeclarativeCircleMapItem::preserveCircleGeometry (QList<QGeoCoordinate> &path,
                                     const QGeoCoordinate &center, qreal distance,
