@@ -37,6 +37,9 @@
 This geo services plugin allows applications to access
 \l {http://openstreetmap.org}{Open Street Map} location based services using the Qt Location API.
 
+Data, imagery and map information provided by \l {http://www.mapquest.com}{MapQuest}, OpenStreetMap and
+contributors. The data is available under the \l {http://www.opendatacommons.org/licenses/odbl}{Open Database License}.
+
 The Open Street Map geo services plugin can be loaded by using the plugin key "osm".
 
 \section1 Parameters
