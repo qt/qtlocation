@@ -196,35 +196,39 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
 
 QString QGeoTileFetcherNokia::getLanguageString() const
 {
-    const QLocale::Language lang = m_engineNokia.data()->locale().language();
+    if (!m_engineNokia)
+        return QStringLiteral("ENG");
+
+    QLocale locale = m_engineNokia.data()->locale();
+
     // English is the default, where no ln is specified. We hardcode the languages
     // here even though the entire list is updated automagically from the server.
     // The current languages are Arabic, Chinese, Simplified Chinese, English
     // French, German, Italian, Polish, Russian and Spanish. The default is English.
     // These are acually available from the same host under the URL: /maptiler/v2/info
 
-    switch (lang) {
+    switch (locale.language()) {
     case QLocale::Arabic:
-        return "ARA";
+        return QStringLiteral("ARA");
     case QLocale::Chinese:
-        if (QLocale::TraditionalChineseScript == m_engineNokia.data()->locale().script())
-            return "CHI";
+        if (locale.script() == QLocale::TraditionalChineseScript)
+            return QStringLiteral("CHI");
         else
-            return "CHT";
+            return QStringLiteral("CHT");
     case QLocale::French:
-        return "FRE";
+        return QStringLiteral("FRE");
     case QLocale::German:
-        return "GER";
+        return QStringLiteral("GER");
     case QLocale::Italian:
-        return "ITA";
+        return QStringLiteral("ITA");
     case QLocale::Polish:
-        return "POL";
+        return QStringLiteral("POL");
     case QLocale::Russian:
-        return "RUS";
+        return QStringLiteral("RUS");
     case QLocale::Spanish:
-        return "SPA";
+        return QStringLiteral("SPA");
     default:
-        return "ENG";
+        return QStringLiteral("ENG");
     }
     // No "lg" param means that we want English.
 }
