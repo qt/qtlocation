@@ -96,9 +96,9 @@ QGeoCodingManager::QGeoCodingManager(QGeoCodingManagerEngine *engine, QObject *p
                 SIGNAL(finished(QGeoCodeReply*)));
 
         connect(d_ptr->engine,
-                SIGNAL(error(QGeoCodeReply*, QGeoCodeReply::Error, QString)),
+                SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)),
                 this,
-                SIGNAL(error(QGeoCodeReply*, QGeoCodeReply::Error, QString)));
+                SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
     } else {
         qFatal("The geocoding manager engine that was set for this geocoding manager was NULL.");
     }

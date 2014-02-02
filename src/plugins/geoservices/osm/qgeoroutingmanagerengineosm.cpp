@@ -87,7 +87,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineOsm::calculateRoute(const QGeoRouteReque
     QGeoRouteReplyOsm *routeReply = new QGeoRouteReplyOsm(reply, request, this);
 
     connect(routeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(routeReply, SIGNAL(error(QGeoRouteReply::Error, QString)),
+    connect(routeReply, SIGNAL(error(QGeoRouteReply::Error,QString)),
             this, SLOT(replyError(QGeoRouteReply::Error,QString)));
 
     return routeReply;

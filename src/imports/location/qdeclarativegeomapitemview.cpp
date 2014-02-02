@@ -121,10 +121,10 @@ void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
     itemModel_ = itemModel;
     QObject::connect(itemModel_, SIGNAL(modelReset()),
                      this, SLOT(itemModelReset()));
-    QObject::connect(itemModel_, SIGNAL(rowsRemoved(QModelIndex, int, int)),
-                     this, SLOT(itemModelRowsRemoved(QModelIndex, int, int)));
-    QObject::connect(itemModel_, SIGNAL(rowsInserted(QModelIndex, int, int)),
-                     this, SLOT(itemModelRowsInserted(QModelIndex, int, int)));
+    QObject::connect(itemModel_, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                     this, SLOT(itemModelRowsRemoved(QModelIndex,int,int)));
+    QObject::connect(itemModel_, SIGNAL(rowsInserted(QModelIndex,int,int)),
+                     this, SLOT(itemModelRowsInserted(QModelIndex,int,int)));
     repopulate();
     emit modelChanged();
 }

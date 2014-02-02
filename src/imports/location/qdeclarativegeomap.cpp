@@ -256,9 +256,9 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
             copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
             copyrights = copyrightsWPtr_.data();
             connect(map_,
-                    SIGNAL(copyrightsChanged(const QImage &, const QPoint &)),
+                    SIGNAL(copyrightsChanged(QImage,QPoint)),
                     copyrights,
-                    SLOT(copyrightsChanged(const QImage &, const QPoint &)));
+                    SLOT(copyrightsChanged(QImage,QPoint)));
         } else {
             // just re-set its parent.
             copyrights->setParent(this);
@@ -483,9 +483,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
     connect(map_,
-            SIGNAL(copyrightsChanged(const QImage &, const QPoint &)),
+            SIGNAL(copyrightsChanged(QImage,QPoint)),
             copyrightsWPtr_.data(),
-            SLOT(copyrightsChanged(const QImage &, const QPoint &)));
+            SLOT(copyrightsChanged(QImage,QPoint)));
 
     connect(map_,
             SIGNAL(updateRequired()),

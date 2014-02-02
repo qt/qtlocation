@@ -184,9 +184,9 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoT
     mapScene_->setTileSize(engine->tileSize().width());
 
     QObject::connect(mapScene_,
-                     SIGNAL(newTilesVisible(const QSet<QGeoTileSpec>&)),
+                     SIGNAL(newTilesVisible(QSet<QGeoTileSpec>)),
                      map_,
-                     SLOT(evaluateCopyrights(const QSet<QGeoTileSpec>)));
+                     SLOT(evaluateCopyrights(QSet<QGeoTileSpec>)));
 }
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
