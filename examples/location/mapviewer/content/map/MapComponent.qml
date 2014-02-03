@@ -971,6 +971,7 @@ Map {
         var marker = Qt.createQmlObject ('Marker {}', map)
         map.addMapItem(marker)
         marker.z = map.z+1
+        marker.coordinate = mouseArea.lastCoordinate
 
         //update list of markers
         var myArray = new Array()
