@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <QtCore/QtNumeric>
 #include "qdeclarativeposition_p.h"
 #include <QtQml/qqml.h>
 #include <qnmeapositioninfosource.h>
@@ -83,9 +84,10 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativePosition::QDeclarativePosition(QObject *parent)
-        : QObject(parent), m_latitudeValid(false), m_longitudeValid(false),
-          m_altitudeValid(false), m_speed(-1), m_speedValid(false), m_horizontalAccuracyValid(false),
-          m_verticalAccuracyValid(false), m_horizontalAccuracy(-1), m_verticalAccuracy(-1)
+:   QObject(parent), m_latitudeValid(false), m_longitudeValid(false), m_altitudeValid(false),
+    m_speed(-1), m_speedValid(false), m_direction(qQNaN()), m_verticalSpeed(qQNaN()),
+    m_horizontalAccuracyValid(false), m_verticalAccuracyValid(false), m_horizontalAccuracy(-1),
+    m_verticalAccuracy(-1)
 {
 }
 
@@ -225,8 +227,11 @@ void QDeclarativePosition::setSpeed(double speed)
     if (speed == m_speed)
         return;
     m_speed = speed;
-    if (!m_speedValid) {
+    if (!m_speedValid && !qIsNaN(speed)) {
         m_speedValid = true;
+        emit speedValidChanged();
+    } else if (m_speedValid && qIsNaN(speed)) {
+        m_speedValid = false;
         emit speedValidChanged();
     }
     emit speedChanged();
@@ -250,8 +255,11 @@ void QDeclarativePosition::setHorizontalAccuracy(qreal horizontalAccuracy)
     if (horizontalAccuracy == m_horizontalAccuracy)
         return;
     m_horizontalAccuracy = horizontalAccuracy;
-    if (!m_horizontalAccuracyValid) {
+    if (!m_horizontalAccuracyValid && !qIsNaN(horizontalAccuracy)) {
         m_horizontalAccuracyValid = true;
+        emit horizontalAccuracyValidChanged();
+    } else if (m_horizontalAccuracyValid && qIsNaN(horizontalAccuracy)) {
+        m_horizontalAccuracyValid = false;
         emit horizontalAccuracyValidChanged();
     }
     emit horizontalAccuracyChanged();
@@ -291,8 +299,11 @@ void QDeclarativePosition::setVerticalAccuracy(qreal verticalAccuracy)
     if (verticalAccuracy == m_verticalAccuracy)
         return;
     m_verticalAccuracy = verticalAccuracy;
-    if (!m_verticalAccuracyValid) {
+    if (!m_verticalAccuracyValid && !qIsNaN(verticalAccuracy)) {
         m_verticalAccuracyValid = true;
+        emit verticalAccuracyValidChanged();
+    } else if (m_verticalAccuracyValid && qIsNaN(verticalAccuracy)) {
+        m_verticalAccuracyValid = false;
         emit verticalAccuracyValidChanged();
     }
     emit verticalAccuracyChanged();
@@ -341,6 +352,90 @@ QDateTime QDeclarativePosition::timestamp() const
     return m_timestamp;
 }
 
+/*!
+    \qmlproperty bool Position::directionValid
+    \since Qt Positioning 5.3
+
+    This property is true if \l direction has been set (to indicate whether that data has been
+    received or not, as every update does not necessarily contain all data).
+
+    \sa direction
+*/
+bool QDeclarativePosition::isDirectionValid() const
+{
+    return !qIsNaN(m_direction);
+}
+
+/*!
+    \qmlproperty double Position::direction
+    \since Qt Positioning 5.3
+
+    This property holds the value of the direction of travel in degrees from true north.
+
+    It is a read-only property.
+
+    \sa directionValid
+*/
+double QDeclarativePosition::direction() const
+{
+    return m_direction;
+}
+
+void QDeclarativePosition::setDirection(double direction)
+{
+    if (m_direction == direction || (qIsNaN(m_direction) && qIsNaN(direction)))
+        return;
+
+    bool validChanged = qIsNaN(m_direction) || qIsNaN(direction);
+
+    m_direction = direction;
+    emit directionChanged();
+    if (validChanged)
+        emit directionValidChanged();
+}
+
+/*!
+    \qmlproperty bool Position::verticalSpeedValid
+    \since Qt Positioning 5.3
+
+    This property is true if \l verticalSpeed has been set (to indicate whether that data has been
+    received or not, as every update does not necessarily contain all data).
+
+    \sa verticalSpeed
+*/
+bool QDeclarativePosition::isVerticalSpeedValid() const
+{
+    return !qIsNaN(m_verticalSpeed);
+}
+
+/*!
+    \qmlproperty double Position::verticalSpeed
+    \since Qt Positioning 5.3
+
+    This property holds the value of the vertical speed in meters per second.
+
+    It is a read-only property.
+
+    \sa verticalSpeedValid
+*/
+double QDeclarativePosition::verticalSpeed() const
+{
+    return m_verticalSpeed;
+}
+
+void QDeclarativePosition::setVerticalSpeed(double speed)
+{
+    if (m_verticalSpeed == speed || (qIsNaN(m_verticalSpeed) && qIsNaN(speed)))
+        return;
+
+    bool validChanged = qIsNaN(m_verticalSpeed) || qIsNaN(speed);
+
+    m_verticalSpeed = speed;
+    emit verticalSpeedChanged();
+    if (validChanged)
+        emit verticalSpeedValidChanged();
+}
+
 void QDeclarativePosition::invalidate()
 {
     // Invalidate all data
@@ -367,6 +462,14 @@ void QDeclarativePosition::invalidate()
      if (m_verticalAccuracyValid) {
          m_verticalAccuracyValid = false;
          emit verticalAccuracyValidChanged();
+     }
+     if (!qIsNaN(m_direction)) {
+         m_direction = qQNaN();
+         emit directionValidChanged();
+     }
+     if (!qIsNaN(m_verticalSpeed)) {
+         m_verticalSpeed = qQNaN();
+         emit verticalSpeedValidChanged();
      }
 }
 

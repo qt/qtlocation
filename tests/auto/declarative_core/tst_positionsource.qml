@@ -117,6 +117,8 @@ TestCase {
 
     PositionSource { id: testingSource; name: "test.source"; updateInterval: 1000 }
     SignalSpy { id: updateSpy; target: testingSource; signalName: "positionChanged" }
+    SignalSpy { id: directionValidSpy; target: testingSource.position; signalName: "directionValidChanged" }
+    SignalSpy { id: directionSpy; target: testingSource.position; signalName: "directionChanged" }
 
     function test_updateInterval() {
         testingSource.updateInterval = 1000;
@@ -139,20 +141,38 @@ TestCase {
     function test_updates() {
         updateSpy.clear();
 
+        compare(directionValidSpy.count, 0)
+        compare(directionSpy.count, 0)
+
         testingSource.active = true;
 
         tryCompare(updateSpy, "count", 1, 1500);
         compare(testingSource.position.coordinate.longitude, 0.1);
         compare(testingSource.position.coordinate.latitude, 0.1);
+        compare(directionValidSpy.count, 1)
+        compare(directionSpy.count, 1)
+        fuzzyCompare(testingSource.position.direction, 45, 0.1)
+        verify(!testingSource.position.speedValid)
+        verify(isNaN(testingSource.position.speed))
 
         tryCompare(updateSpy, "count", 2, 1500);
         compare(testingSource.position.coordinate.longitude, 0.2);
         compare(testingSource.position.coordinate.latitude, 0.2);
+        compare(directionValidSpy.count, 1)
+        compare(directionSpy.count, 2)
+        fuzzyCompare(testingSource.position.direction, 45, 0.1)
+        verify(testingSource.position.speedValid)
+        verify(testingSource.position.speed > 15000)
 
         testingSource.active = false;
         wait(2500);
         compare(updateSpy.count, 2);
         compare(testingSource.position.coordinate.longitude, 0.2);
         compare(testingSource.position.coordinate.latitude, 0.2);
+        compare(directionValidSpy.count, 1)
+        compare(directionSpy.count, 2)
+        fuzzyCompare(testingSource.position.direction, 45, 0.1)
+        verify(testingSource.position.speedValid)
+        verify(testingSource.position.speed > 15000)
     }
 }

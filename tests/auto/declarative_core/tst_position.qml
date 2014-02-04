@@ -41,7 +41,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtPositioning 5.2
+import QtPositioning 5.3
 
 TestCase {
     id: testCase
@@ -61,6 +61,8 @@ TestCase {
     SignalSpy { id: horizontalAccuracyValidSpy; target: defaultPosition; signalName: "horizontalAccuracyValidChanged" }
     SignalSpy { id: verticalAccuracySpy; target: defaultPosition; signalName: "verticalAccuracyChanged" }
     SignalSpy { id: verticalAccuracyValidSpy; target: defaultPosition; signalName: "verticalAccuracyValidChanged" }
+    SignalSpy { id: directionSpy; target: defaultPosition; signalName: "directionChanged" }
+    SignalSpy { id: verticalSpeedSpy; target: defaultPosition; signalName: "verticalSpeedChanged" }
 
     function test_defaults() {
         compare(defaultPosition.latitudeValid, false);
@@ -69,6 +71,10 @@ TestCase {
         compare(defaultPosition.speedValid, false);
         compare(defaultPosition.horizontalAccuracyValid, false);
         compare(defaultPosition.verticalAccuracyValid, false);
+        verify(!defaultPosition.directionValid);
+        verify(isNaN(defaultPosition.direction));
+        verify(!defaultPosition.verticalSpeedValid);
+        verify(isNaN(defaultPosition.verticalSpeed));
     }
 
     function test_modifiers() {
@@ -83,6 +89,8 @@ TestCase {
         horizontalAccuracyValidSpy.clear();
         verticalAccuracySpy.clear();
         verticalAccuracyValidSpy.clear();
+        directionSpy.clear();
+        verticalSpeedSpy.clear();
 
         defaultPosition.horizontalAccuracy = 10;
         compare(horizontalAccuracySpy.count, 1);

@@ -43,6 +43,7 @@
 #include "qdeclarativeposition_p.h"
 #include "error_messages.h"
 
+#include <QtCore/QCoreApplication>
 #include <QtQml/qqmlinfo.h>
 #include <QtQml/qqml.h>
 #include <qnmeapositioninfosource.h>
@@ -373,12 +374,11 @@ void QDeclarativePositionSource::setPosition(const QGeoPositionInfo &pi)
     if (pi.isValid()) {
         m_position.setTimestamp(pi.timestamp());
         m_position.setCoordinate(pi.coordinate());
-        if (pi.hasAttribute(QGeoPositionInfo::GroundSpeed))
-            m_position.setSpeed(pi.attribute(QGeoPositionInfo::GroundSpeed));
-        if (pi.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
-            m_position.setHorizontalAccuracy(pi.attribute(QGeoPositionInfo::HorizontalAccuracy));
-        if (pi.hasAttribute(QGeoPositionInfo::VerticalAccuracy))
-            m_position.setVerticalAccuracy(pi.attribute(QGeoPositionInfo::VerticalAccuracy));
+        m_position.setSpeed(pi.attribute(QGeoPositionInfo::GroundSpeed));
+        m_position.setDirection(pi.attribute(QGeoPositionInfo::Direction));
+        m_position.setVerticalSpeed(pi.attribute(QGeoPositionInfo::VerticalSpeed));
+        m_position.setHorizontalAccuracy(pi.attribute(QGeoPositionInfo::HorizontalAccuracy));
+        m_position.setVerticalAccuracy(pi.attribute(QGeoPositionInfo::VerticalAccuracy));
     } else {
         m_position.invalidate();
     }

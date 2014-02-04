@@ -55,6 +55,8 @@
 
 #include "locationsingleton.h"
 
+#include <QtCore/QVariantAnimation>
+
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
 #include <QtQml/private/qqmlvaluetype_p.h>
@@ -131,6 +133,7 @@ public:
             // Introduction of 5.3 version; existing 5.2 exports automatically become availabe under 5.3 as well
             minor = 3;
             qmlRegisterType<QDeclarativeGeoCoordinateAnimation  >(uri, major, minor, "CoordinateAnimation");
+            qmlRegisterType<QDeclarativePosition, 1             >(uri, major, minor, "Position");
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
         }

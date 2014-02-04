@@ -71,6 +71,7 @@ private:
     QTimer *timeoutTimer;
     QTimer *singleTimer;
     QGeoPositionInfo lastPosition;
+    QDateTime lastUpdateTime;
 
 private slots:
     void updatePosition();
@@ -165,9 +166,20 @@ void DummySource::updatePosition()
 {
     timeoutTimer->stop();
     singleTimer->stop();
+
+    const QDateTime now = QDateTime::currentDateTime();
+
     QGeoCoordinate coord(lastPosition.coordinate().latitude() + 0.1,
                          lastPosition.coordinate().longitude() + 0.1);
-    QGeoPositionInfo info(coord, QDateTime::currentDateTime());
+
+    QGeoPositionInfo info(coord, now);
+    info.setAttribute(QGeoPositionInfo::Direction, lastPosition.coordinate().azimuthTo(coord));
+    if (lastUpdateTime.isValid()) {
+        double speed = lastPosition.coordinate().distanceTo(coord) / lastUpdateTime.msecsTo(now);
+        info.setAttribute(QGeoPositionInfo::GroundSpeed, 1000 * speed);
+    }
+
+    lastUpdateTime = now;
     lastPosition = info;
     emit positionUpdated(info);
 }

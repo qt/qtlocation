@@ -42,12 +42,10 @@
 #ifndef QDECLARATIVEPOSITION_H
 #define QDECLARATIVEPOSITION_H
 
-#include <QtCore>
-#include <QDateTime>
-#include <qgeopositioninfosource.h>
-#include <qgeopositioninfo.h>
-#include "qdeclarativecoordinate_p.h"
+#include <QtCore/QObject>
+#include <QtCore/QDateTime>
 #include <QtQml/qqml.h>
+#include <QtPositioning/QGeoPositionInfo>
 
 // Define this to get qDebug messages
 // #define QDECLARATIVE_POSITION_DEBUG
@@ -73,6 +71,11 @@ class QDeclarativePosition : public QObject
     Q_PROPERTY(bool horizontalAccuracyValid READ isHorizontalAccuracyValid NOTIFY horizontalAccuracyValidChanged)
     Q_PROPERTY(bool verticalAccuracyValid READ isVerticalAccuracyValid NOTIFY verticalAccuracyValidChanged)
 
+    Q_PROPERTY(bool directionValid READ isDirectionValid NOTIFY directionValidChanged REVISION 1)
+    Q_PROPERTY(double direction READ direction NOTIFY directionChanged REVISION 1)
+    Q_PROPERTY(bool verticalSpeedValid READ isVerticalSpeedValid NOTIFY verticalSpeedValidChanged REVISION 1)
+    Q_PROPERTY(double verticalSpeed READ verticalSpeed NOTIFY verticalSpeedChanged REVISION 1)
+
 public:
 
     explicit QDeclarativePosition(QObject *parent = 0);
@@ -94,6 +97,14 @@ public:
     qreal verticalAccuracy() const;
     void setVerticalAccuracy(qreal verticalAccuracy);
 
+    bool isDirectionValid() const;
+    double direction() const;
+    void setDirection(double direction);
+
+    bool isVerticalSpeedValid() const;
+    double verticalSpeed() const;
+    void setVerticalSpeed(double speed);
+
     // C++
     void setCoordinate(const QGeoCoordinate &coordinate);
     void invalidate();
@@ -111,6 +122,11 @@ Q_SIGNALS:
     void verticalAccuracyChanged();
     void verticalAccuracyValidChanged();
 
+    Q_REVISION(1) void directionValidChanged();
+    Q_REVISION(1) void directionChanged();
+    Q_REVISION(1) void verticalSpeedValidChanged();
+    Q_REVISION(1) void verticalSpeedChanged();
+
 private:
     bool m_latitudeValid;
     bool m_longitudeValid;
@@ -118,6 +134,8 @@ private:
     QDateTime m_timestamp;
     double m_speed;
     bool m_speedValid;
+    double m_direction;
+    double m_verticalSpeed;
     bool m_horizontalAccuracyValid;
     bool m_verticalAccuracyValid;
     qreal m_horizontalAccuracy;
