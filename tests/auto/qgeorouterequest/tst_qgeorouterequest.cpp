@@ -170,7 +170,6 @@ void tst_QGeoRouteRequest::numberAlternativeRoutes()
 
     qgeorouterequest->setNumberAlternativeRoutes(-12);
 
-    QEXPECT_FAIL("", "numberAlternativeRoutes accepts -ve values", Continue);
     QCOMPARE(qgeorouterequest->numberAlternativeRoutes(), 0);
 }
 

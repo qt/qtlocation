@@ -318,13 +318,14 @@ QList<QGeoRectangle> QGeoRouteRequest::excludeAreas() const
 }
 
 /*!
-    Sets the number of alternative routes to request to \a alternatives.
+    Sets the number of alternative routes to request to \a alternatives. If \a alternatives is
+    negative the number of alternative routes is set to 0.
 
     The default value is 0.
 */
 void QGeoRouteRequest::setNumberAlternativeRoutes(int alternatives)
 {
-    d_ptr->numberAlternativeRoutes = alternatives;
+    d_ptr->numberAlternativeRoutes = qMax(0, alternatives);
 }
 
 /*!
