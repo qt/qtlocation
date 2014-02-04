@@ -96,7 +96,6 @@ private slots:
         QCOMPARE(first.instructionText(), QLatin1String("Head toward Logan Rd (95) on Padstow Rd (56). Go for 0.3 miles."));
         QCOMPARE(first.position(), QGeoCoordinate(-27.5752144, 153.0879669));
 
-        QEXPECT_FAIL("", "Maneuver timeToNextInstruction is not populated", Continue);
         QCOMPARE(first.timeToNextInstruction(), 24);
         QCOMPARE(first.distanceToNextInstruction(), 403.0);
 
@@ -105,7 +104,6 @@ private slots:
         QVERIFY(secondLast.instructionText().contains("Turn right onto Bartley St"));
         QCOMPARE(secondLast.position(), QGeoCoordinate(-27.4655991, 153.0231628));
         QCOMPARE(secondLast.distanceToNextInstruction(), 181.0);
-        QEXPECT_FAIL("", "Maneuver timeToNextInstruction is not populated", Continue);
         QCOMPARE(secondLast.timeToNextInstruction(), 41);
 
         QGeoManeuver last = segments.at(7).maneuver();

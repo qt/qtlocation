@@ -435,7 +435,7 @@ bool QGeoRouteXmlParser::parseManeuver()
             } else if (m_reader->name() == "ToLink") {
                 maneuverContainter.toId = m_reader->readElementText();
             } else if (m_reader->name() == "TravelTime") {
-                maneuverContainter.maneuver.setTimeToNextInstruction(m_reader->readElementText().toInt());
+                maneuverContainter.maneuver.setTimeToNextInstruction(qRound(m_reader->readElementText().toDouble()));
             } else if (m_reader->name() == "Length") {
                 maneuverContainter.maneuver.setDistanceToNextInstruction(m_reader->readElementText().toDouble());
             } else if (m_reader->name() == "Direction") {
