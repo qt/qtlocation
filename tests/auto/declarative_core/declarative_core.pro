@@ -11,3 +11,4 @@ QT += location quick
 OTHER_FILES = *.qml *.js
 TESTDATA = $$OTHER_FILES
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+win32-msvc2012:CONFIG+=insignificant_test # QTBUG-36519
