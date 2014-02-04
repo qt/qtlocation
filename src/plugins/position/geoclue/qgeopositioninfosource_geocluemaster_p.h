@@ -94,7 +94,8 @@ public:
                                 double                altitude,
                                 GeoclueAccuracy      *accuracy);
     void velocityUpdateFailed();
-    void velocityUpdateSucceeded(double speed);
+    void velocityUpdateSucceeded(GeoclueVelocityFields fields, int timestamp, double speed,
+                                 double direction, double climb);
 
     Error error() const;
 
@@ -126,6 +127,8 @@ private:
     bool m_lastPositionIsFresh;
     bool m_lastVelocityIsFresh;
     double m_lastVelocity;
+    double m_lastDirection;
+    double m_lastClimb;
     bool m_lastPositionFromSatellite;
     QGeoPositionInfo m_lastPosition;
     PositioningMethods m_methods;
