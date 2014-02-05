@@ -196,11 +196,13 @@ QGeoTileCache::~QGeoTileCache()
         }
         QList<QSharedPointer<QGeoCachedTileDisk> > queue;
         diskCache_.serializeQueue(i, queue);
-        int queueLength = queue.size();
-        for (int j = 0; j<queueLength; j++) {
+        foreach (const QSharedPointer<QGeoCachedTileDisk> &tile, queue) {
+            if (tile.isNull())
+                continue;
+
             // we just want the filename here, not the full path
-            int index = queue[j]->filename.lastIndexOf(QLatin1Char('/'));
-            QByteArray filename = queue[j]->filename.mid(index + 1).toLatin1() + '\n';
+            int index = tile->filename.lastIndexOf(QLatin1Char('/'));
+            QByteArray filename = tile->filename.mid(index + 1).toLatin1() + '\n';
             file.write(filename);
         }
         file.close();
