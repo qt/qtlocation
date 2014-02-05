@@ -117,6 +117,7 @@ Item {
             hoverEnabled: false
             anchors.fill: parent; drag.target: parent
             drag.axis: Drag.XAxis; drag.minimumX: 0; drag.maximumX: slider.length
+            preventStealing: true
             onPositionChanged: { slider.value = (slider.maximum - slider.minimum) * handle.x / slider.length + slider.minimum; }
         }
     }
