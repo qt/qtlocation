@@ -102,7 +102,8 @@ private:
     QNetworkReply *m_copyrightsReply;
 
     QString m_applicationId;
-    QGeoUriProvider *m_uriProvider;
+    QGeoUriProvider *m_baseUriProvider;
+    QGeoUriProvider *m_aerialUriProvider;
 };
 
 QT_END_NAMESPACE

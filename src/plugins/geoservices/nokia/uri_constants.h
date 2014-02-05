@@ -59,7 +59,7 @@ extern const QString GEOCODING_HOST_CN;
 extern const QString PLACES_HOST;
 extern const QString PLACES_HOST_CN;
 extern const QString MAP_TILES_HOST;
-extern const QString MAP_TILES_HOST_CN;
+extern const QString MAP_TILES_HOST_AERIAL;
 
 QT_END_NAMESPACE
 

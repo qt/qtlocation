@@ -53,9 +53,6 @@
 #include "qgeotilespec_p.h"
 #include "qgeotilecache_p.h"
 
-#include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtPositioning/private/qgeoprojection_p.h>
-
 #include <QDebug>
 #include <QDir>
 #include <QVariant>
@@ -86,17 +83,25 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     setTileSize(QSize(256, 256));
 
     QList<QGeoMapType> types;
-    types << QGeoMapType(QGeoMapType::StreetMap,tr("Street Map"),tr("Nokia Street Map"), false, 1);
-    types << QGeoMapType(QGeoMapType::SatelliteMapDay,tr("Satellite Map(day)"),tr("Nokia Satellite Map (day)"), false, 2);
-    types << QGeoMapType(QGeoMapType::TerrainMap,tr("Terrain Map"),tr("Nokia Terrain Map"), false, 3);
-    types << QGeoMapType(QGeoMapType::HybridMap,tr("Hybrid Map"),tr("Nokia Hybrid Map"), false, 4);
-    types << QGeoMapType(QGeoMapType::TransitMap,tr("Transit Map"),tr("Nokia Transit Map"), false, 5);
-    types << QGeoMapType(QGeoMapType::GrayStreetMap,tr("Gray Street Map"),tr("Nokia Gray Street Map"), false, 6);
-    types << QGeoMapType(QGeoMapType::StreetMap,tr("Mobile Street Map"),tr("Nokia Mobile Street Map"), true, 7);
-    types << QGeoMapType(QGeoMapType::TerrainMap,tr("Mobile Terrain Map"),tr("Nokia Mobile Terrain Map"), true, 8);
-    types << QGeoMapType(QGeoMapType::HybridMap,tr("Mobile Hybrid Map"),tr("Nokia Mobile Hybrid Map"), true, 9);
-    types << QGeoMapType(QGeoMapType::TransitMap,tr("Mobile Transit Map"),tr("Nokia Mobile Transit Map"), true, 10);
-    types << QGeoMapType(QGeoMapType::GrayStreetMap,tr("Mobile Gray Street Map"),tr("Nokia Mobile Gray Street Map"), true, 11);
+    types << QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Normal map view in daylight mode"), false, 1);
+    types << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, 2);
+    types << QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view in daylight mode"), false, 3);
+    types << QGeoMapType(QGeoMapType::HybridMap, tr("Hybrid Map"), tr("Satellite map view with streets in daylight mode"), false, 4);
+    types << QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Color-reduced map view with public transport scheme in daylight mode"), false, 5);
+    types << QGeoMapType(QGeoMapType::GrayStreetMap, tr("Gray Street Map"), tr("Color-reduced map view in daylight mode (especially used for background maps)"), false, 6);
+    types << QGeoMapType(QGeoMapType::StreetMap, tr("Mobile Street Map"), tr("Mobile normal map view in daylight mode"), true, 7);
+    types << QGeoMapType(QGeoMapType::TerrainMap, tr("Mobile Terrain Map"), tr("Mobile terrain map view in daylight mode"), true, 8);
+    types << QGeoMapType(QGeoMapType::HybridMap, tr("Mobile Hybrid Map"), tr("Mobile satellite map view with streets in daylight mode"), true, 9);
+    types << QGeoMapType(QGeoMapType::TransitMap, tr("Mobile Transit Map"), tr("Mobile color-reduced map view with public transport scheme in daylight mode"), true, 10);
+    types << QGeoMapType(QGeoMapType::GrayStreetMap, tr("Mobile Gray Street Map"), tr("Mobile color-reduced map view in daylight mode (especially used for background maps)"), true, 11);
+    types << QGeoMapType(QGeoMapType::StreetMap, tr("Custom Street Map"), tr("Normal map view in daylight mode"), false, 12);
+    types << QGeoMapType(QGeoMapType::StreetMap, tr("Night Street Map"), tr("Normal map view in night mode"), false, 13);
+    types << QGeoMapType(QGeoMapType::StreetMap, tr("Mobile Night Street Map"), tr("Mobile normal map view in night mode"), true, 14);
+    types << QGeoMapType(QGeoMapType::GrayStreetMap, tr("Gray Night Street Map"), tr("Color-reduced map view in night mode (especially used for background maps)"), false, 15);
+    types << QGeoMapType(QGeoMapType::GrayStreetMap, tr("Mobile Gray Night Street Map"), tr("Mobile color-reduced map view in night mode (especially used for background maps)"), true, 16);
+    types << QGeoMapType(QGeoMapType::PedestrianMap, tr("Pedestrian Street Map"), tr("Pedestrian map view in daylight mode for mobile usage"), true, 17);
+    types << QGeoMapType(QGeoMapType::PedestrianMap, tr("Pedestrian Night Street Map"), tr("Pedestrian map view in night mode for mobile usage"), true, 18);
+    types << QGeoMapType(QGeoMapType::CarNavigationMap, tr("Car Navigation Map"), tr("Normal map view in daylight mode for car navigation"), false, 19);
     setSupportedMapTypes(types);
 
     QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(parameters, networkManager, this, tileSize());
@@ -148,6 +153,8 @@ void QGeoTiledMappingManagerEngineNokia::populateMapTypesDb()
     m_mapTypeStrings[QGeoMapType::HybridMap]         = QLatin1String("hybrid");
     m_mapTypeStrings[QGeoMapType::TransitMap]        = QLatin1String("normal");
     m_mapTypeStrings[QGeoMapType::GrayStreetMap]     = QLatin1String("normal");
+    m_mapTypeStrings[QGeoMapType::PedestrianMap]     = QLatin1String("pedestrian");
+    m_mapTypeStrings[QGeoMapType::CarNavigationMap]  = QLatin1String("carnav");
 }
 
 void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData)
@@ -195,9 +202,10 @@ void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const
 }
 
 QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType::MapStyle mapStyle,
-                                                                   const int zoomLevel,
+                                                                   const qreal zoomLevel,
                                                                    const QSet<QGeoTileSpec> &tiles)
 {
+    static const QChar copyrightSymbol(0x00a9);
     typedef QSet<QGeoTileSpec>::const_iterator tile_iter;
     QGeoRectangle viewport;
     double viewX0, viewY0, viewX1, viewY1;
@@ -206,6 +214,7 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
     tile_iter lastTile = tiles.constEnd();
 
     if (tiles.count()) {
+        double divFactor = qPow(2.0, tile->zoom());
         viewX0 = viewX1 = tile->x();
         viewY0 = viewY1 = tile->y();
 
@@ -228,7 +237,6 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
         viewY1++;
 
         QDoubleVector2D pt;
-        double divFactor = qPow(2.0, zoomLevel);
 
         pt.setX(viewX0 / divFactor);
         pt.setY(viewY0 / divFactor);
@@ -242,32 +250,34 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
     QList<CopyrightDesc> descriptorList = m_copyrights[ m_mapTypeStrings[mapStyle] ];
     CopyrightDesc *descriptor;
     int descIndex, boxIndex;
-    QString copyrightsString("");
+    QString copyrightsText;
+    QSet<QString> copyrightStrings;
 
     for (descIndex = 0; descIndex < descriptorList.count(); descIndex++) {
         if (descriptorList[descIndex].minLevel <= zoomLevel && zoomLevel <= descriptorList[descIndex].maxLevel) {
             descriptor = &descriptorList[descIndex];
+
             for (boxIndex = 0; boxIndex < descriptor->boxes.count(); boxIndex++) {
                 QGeoRectangle box = descriptor->boxes[boxIndex];
-                QGeoCoordinate topRight = box.topRight();
-                QGeoCoordinate bottomLeft = box.bottomLeft();
 
-                if (descriptor->boxes[boxIndex].intersects(viewport)) {
-                    if (copyrightsString.length())
-                        copyrightsString += "\n";
-                    copyrightsString += descriptor->label;
+                if (box.intersects(viewport)) {
+                    copyrightStrings.insert(descriptor->label);
                     break;
                 }
             }
-            if (!descriptor->boxes.count()) {
-                if (copyrightsString.length())
-                    copyrightsString += "\n";
-                copyrightsString += descriptor->label;
-            }
+            if (!descriptor->boxes.count())
+                copyrightStrings.insert(descriptor->label);
         }
     }
 
-    return copyrightsString;
+    foreach (const QString &copyrightString, copyrightStrings) {
+        if (copyrightsText.length())
+            copyrightsText += QLatin1Char('\n');
+        copyrightsText += copyrightSymbol;
+        copyrightsText += copyrightString;
+    }
+
+    return copyrightsText;
 }
 
 QGeoMapData *QGeoTiledMappingManagerEngineNokia::createMapData()

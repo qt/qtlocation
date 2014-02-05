@@ -80,7 +80,10 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \note See the notes in \l{QNetworkProxyFactory::systemProxyForQuery()} for further information.
 \row
     \li mapping.host
-    \li Map tile service URL used by mapping manager.
+    \li Base map tile service URL used by mapping manager.
+\row
+    \li mapping.host.aerial
+    \li Aerial map tile service URL used by mapping manager. For all satellite, hybrid and terrain schemes.
 \row
     \li mapping.cache.directory
     \li Map tile cache directory used as network disk cache.

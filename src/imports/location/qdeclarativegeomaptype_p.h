@@ -68,6 +68,8 @@ public:
         HybridMap = QGeoMapType::HybridMap,
         TransitMap = QGeoMapType::TransitMap,
         GrayStreetMap = QGeoMapType::GrayStreetMap,
+        PedestrianMap = QGeoMapType::PedestrianMap,
+        CarNavigationMap = QGeoMapType::CarNavigationMap,
         CustomMap = 100
     };
 

@@ -77,8 +77,10 @@ QDeclarativeGeoMapType::~QDeclarativeGeoMapType() {}
     \li MapType.SatelliteMapDay - A map with day-time satellite imagery.
     \li MapType.SatelliteMapNight - A map with night-time satellite imagery.
     \li MapType.TerrainMap - A terrain map.
-    \li MapType.HybridMap - A map with satellite imagery and streen information.
+    \li MapType.HybridMap - A map with satellite imagery and street information.
     \li MapType.GrayStreetMap - A gray-shaded street map.
+    \li MapType::PedestrianMap - A street map suitable for pedestriants.
+    \li MapType::CarNavigationMap - A street map suitable for car navigation.
     \li MapType.CustomMap - A custom map type.
     \endlist
 */

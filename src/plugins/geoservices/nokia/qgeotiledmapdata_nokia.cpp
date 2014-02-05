@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
  */
 QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent /*= 0*/) :
     QGeoTiledMapData(engine, parent),
-    logo(":/images/logo.png"), // Nokia logo image
+    logo(":/images/logo.png"), // HERE logo image
     copyrightsSlab(1, 1, QImage::Format_ARGB32) {}
 
 QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia() {}
@@ -77,7 +77,7 @@ QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia() {}
 void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
     const int copyrightsMargin = 10;
-    const int shadowWidth = 2;
+    const int shadowWidth = 3;
     const int fontSize = 10;
 
     QGeoTiledMappingManagerEngineNokia *engineNokia = static_cast<QGeoTiledMappingManagerEngineNokia *>(engine());
@@ -90,9 +90,10 @@ void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visible
         copyrightsSlab.fill(Qt::transparent);
 
         QPainter painter(&copyrightsSlab);
-        painter.drawImage(QPoint(1, 1), logo);
+        painter.drawImage(QPoint(0, copyrightsSlab.height() - logo.height()), logo);
 
         QColor fontColor(Qt::black);
+        fontColor.setAlpha(64);
         QFont font("Sans Serif");
         font.setPixelSize(fontSize);
         font.setStyleHint(QFont::SansSerif);
@@ -100,21 +101,21 @@ void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visible
 
         painter.setFont(font);
         painter.setPen(fontColor);
-        QRect textLimitsRect(0,
-                             logo.height(),
-                             copyrightsSlab.width() - (copyrightsMargin * 2),
-                             copyrightsSlab.height() - logo.height());
+        QRect textLimitsRect(logo.width(),
+                             0,
+                             copyrightsSlab.width() - (logo.width() + copyrightsMargin * 2),
+                             copyrightsSlab.height());
 
         // Drawing the copyrights base shadow (watermark)
         QRect textBoundingRect;
         QRect wmRect(textLimitsRect);
         int x, y;
         for (x = 0; x < shadowWidth; x++) {
-            wmRect.setLeft(textLimitsRect.left() + x*shadowWidth);
+            wmRect.setLeft(textLimitsRect.left() + x);
             for (y = 0; y < shadowWidth; y++) {
-                wmRect.setTop(textLimitsRect.top() + y*shadowWidth);
+                wmRect.setBottom(textLimitsRect.bottom() - y);
                 painter.drawText(wmRect,
-                                 Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
+                                 Qt::AlignLeft | Qt::AlignBottom | Qt::TextWordWrap,
                                  copyrightsString,
                                  &textBoundingRect);
             }
@@ -126,17 +127,19 @@ void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visible
         painter.setFont(font);
         painter.setPen(fontColor);
         wmRect.setLeft(textLimitsRect.left() + 1);
-        wmRect.setTop(textLimitsRect.top() + 1);
+        wmRect.setBottom(textLimitsRect.bottom() - 1);
         painter.drawText(wmRect,
-                         Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
+                         Qt::AlignLeft | Qt::AlignBottom | Qt::TextWordWrap,
                          copyrightsString,
                          &textBoundingRect);
 
         painter.end();
 
-        copyrightsSlab = copyrightsSlab.copy(0, 0,
-                                             qMax(logo.width(), textBoundingRect.width()) + shadowWidth,
-                                             logo.height() + textBoundingRect.height());
+        int newHeight = qMax(logo.height(), textBoundingRect.height());
+
+        copyrightsSlab = copyrightsSlab.copy(0, copyrightsSlab.height() - newHeight,
+                                             logo.width() + textBoundingRect.width() + shadowWidth + copyrightsMargin * 2,
+                                             newHeight);
 
         QPoint copyrightsPos(copyrightsMargin, height() - (copyrightsSlab.height() + copyrightsMargin));
         lastCopyrightsPos = copyrightsPos;

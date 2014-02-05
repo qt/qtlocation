@@ -78,7 +78,7 @@ public:
 
     virtual QGeoMapData *createMapData();
     QString evaluateCopyrightsText(const QGeoMapType::MapStyle mapStyle,
-                                   const int zoomLevel,
+                                   const qreal zoomLevel,
                                    const QSet<QGeoTileSpec> &tiles);
 
 public Q_SLOTS:

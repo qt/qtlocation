@@ -74,6 +74,8 @@ public:
         HybridMap,
         TransitMap,
         GrayStreetMap,
+        PedestrianMap,
+        CarNavigationMap,
         CustomMap = 100
     };
 
