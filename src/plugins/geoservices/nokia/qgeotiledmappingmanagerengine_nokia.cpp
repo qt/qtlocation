@@ -137,31 +137,53 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
           tileCache->setExtraTextureUsage(cacheSize);
     }
 
-    populateMapTypesDb();
+    populateMapSchemes();
     QMetaObject::invokeMethod(fetcher, "fetchCopyrightsData", Qt::QueuedConnection);
 }
 
 QGeoTiledMappingManagerEngineNokia::~QGeoTiledMappingManagerEngineNokia() {}
 
-void QGeoTiledMappingManagerEngineNokia::populateMapTypesDb()
+void QGeoTiledMappingManagerEngineNokia::populateMapSchemes()
 {
-    m_mapTypeStrings[QGeoMapType::NoMap]             = QLatin1String("normal");
-    m_mapTypeStrings[QGeoMapType::TerrainMap]        = QLatin1String("terrain");
-    m_mapTypeStrings[QGeoMapType::StreetMap]         = QLatin1String("normal");
-    m_mapTypeStrings[QGeoMapType::SatelliteMapDay]   = QLatin1String("satellite");
-    m_mapTypeStrings[QGeoMapType::SatelliteMapNight] = QLatin1String("satellite");
-    m_mapTypeStrings[QGeoMapType::HybridMap]         = QLatin1String("hybrid");
-    m_mapTypeStrings[QGeoMapType::TransitMap]        = QLatin1String("normal");
-    m_mapTypeStrings[QGeoMapType::GrayStreetMap]     = QLatin1String("normal");
-    m_mapTypeStrings[QGeoMapType::PedestrianMap]     = QLatin1String("pedestrian");
-    m_mapTypeStrings[QGeoMapType::CarNavigationMap]  = QLatin1String("carnav");
+    m_mapSchemes[0] = QLatin1String("normal.day");
+    m_mapSchemes[1] = QLatin1String("normal.day");
+    m_mapSchemes[2] = QLatin1String("satellite.day");
+    m_mapSchemes[3] = QLatin1String("terrain.day");
+    m_mapSchemes[4] = QLatin1String("hybrid.day");
+    m_mapSchemes[5] = QLatin1String("normal.day.transit");
+    m_mapSchemes[6] = QLatin1String("normal.day.grey");
+    m_mapSchemes[7] = QLatin1String("normal.day.mobile");
+    m_mapSchemes[8] = QLatin1String("terrain.day.mobile");
+    m_mapSchemes[9] = QLatin1String("hybrid.day.mobile");
+    m_mapSchemes[10] = QLatin1String("normal.day.transit.mobile");
+    m_mapSchemes[11] = QLatin1String("normal.day.grey.mobile");
+    m_mapSchemes[12] = QLatin1String("normal.day.custom");
+    m_mapSchemes[13] = QLatin1String("normal.night");
+    m_mapSchemes[14] = QLatin1String("normal.night.mobile");
+    m_mapSchemes[15] = QLatin1String("normal.night.grey");
+    m_mapSchemes[16] = QLatin1String("normal.night.grey.mobile");
+    m_mapSchemes[17] = QLatin1String("pedestrian.day");
+    m_mapSchemes[18] = QLatin1String("pedestrian.night");
+    m_mapSchemes[19] = QLatin1String("carnav.day.grey");
+}
+
+QString QGeoTiledMappingManagerEngineNokia::getScheme(int mapId)
+{
+    return m_mapSchemes[mapId];
+}
+
+QString QGeoTiledMappingManagerEngineNokia::getBaseScheme(int mapId)
+{
+    QString fullScheme(m_mapSchemes[mapId]);
+
+    return fullScheme.section(QLatin1Char('.'), 0, 0);
 }
 
 void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData)
 {
     QJsonDocument doc = QJsonDocument::fromJson(QByteArray(jsonData));
     if (doc.isNull()) {
-        qDebug() << "QGeoCopyrightsCacheNokia::copyrightsFetche() Invalid JSon document";
+        qDebug() << "QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson() Invalid JSon document";
         return;
     }
 
@@ -201,7 +223,7 @@ void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const
     }
 }
 
-QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType::MapStyle mapStyle,
+QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType mapType,
                                                                    const qreal zoomLevel,
                                                                    const QSet<QGeoTileSpec> &tiles)
 {
@@ -247,7 +269,7 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
     }
 
     // TODO: the following invalidation detection algorithm may be improved later.
-    QList<CopyrightDesc> descriptorList = m_copyrights[ m_mapTypeStrings[mapStyle] ];
+    QList<CopyrightDesc> descriptorList = m_copyrights[ getBaseScheme(mapType.mapId()) ];
     CopyrightDesc *descriptor;
     int descIndex, boxIndex;
     QString copyrightsText;

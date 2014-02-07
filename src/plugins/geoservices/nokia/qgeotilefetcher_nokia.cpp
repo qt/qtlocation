@@ -81,45 +81,9 @@ namespace
             return s128;
     }
 
-    QString mapIdToStr(int mapId)
+    bool isAerialType(const QString mapScheme)
     {
-        typedef std::map<int, QString> MapTypeRegistry;
-        static MapTypeRegistry registeredTypes;
-        if (registeredTypes.empty()) {
-            registeredTypes[0] = "normal.day";
-            registeredTypes[1] = "normal.day";
-            registeredTypes[2] = "satellite.day";
-            registeredTypes[3] = "terrain.day";
-            registeredTypes[4] = "hybrid.day";
-            registeredTypes[5] = "normal.day.transit";
-            registeredTypes[6] = "normal.day.grey";
-            registeredTypes[7] = "normal.day.mobile";
-            registeredTypes[8] = "terrain.day.mobile";
-            registeredTypes[9] = "hybrid.day.mobile";
-            registeredTypes[10] = "normal.day.transit.mobile";
-            registeredTypes[11] = "normal.day.grey.mobile";
-            registeredTypes[12] = "normal.day.custom";
-            registeredTypes[13] = "normal.night";
-            registeredTypes[14] = "normal.night.mobile";
-            registeredTypes[15] = "normal.night.grey";
-            registeredTypes[16] = "normal.night.grey.mobile";
-            registeredTypes[17] = "pedestrian.day";
-            registeredTypes[18] = "pedestrian.night";
-            registeredTypes[19] = "carnav.day.grey";
-        }
-
-        MapTypeRegistry::const_iterator it = registeredTypes.find(mapId);
-        if (it != registeredTypes.end()) {
-            return it->second;
-        }
-
-        qWarning() << "Unknown mapId: " << mapId;
-        return "normal.day";
-    }
-
-    bool isAerialType(const QString mapType)
-    {
-        return mapType.startsWith("satellite") || mapType.startsWith("hybrid") || mapType.startsWith("terrain");
+        return mapScheme.startsWith("satellite") || mapScheme.startsWith("hybrid") || mapScheme.startsWith("terrain");
     }
 }
 QGeoTileFetcherNokia::QGeoTileFetcherNokia(
@@ -179,14 +143,14 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
 
     QString requestString = http;
 
-    QString mapType = mapIdToStr(spec.mapId());
-    if (isAerialType(mapType))
+    const QString mapScheme = m_engineNokia->getScheme(spec.mapId());
+    if (isAerialType(mapScheme))
         requestString += m_aerialUriProvider->getCurrentHost();
     else
         requestString += m_baseUriProvider->getCurrentHost();
 
     requestString += path;
-    requestString += mapType;
+    requestString += mapScheme;
     requestString += slash;
     requestString += QString::number(spec.zoom());
     requestString += slash;

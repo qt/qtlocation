@@ -81,7 +81,7 @@ void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visible
     const int fontSize = 10;
 
     QGeoTiledMappingManagerEngineNokia *engineNokia = static_cast<QGeoTiledMappingManagerEngineNokia *>(engine());
-    QString copyrightsString = engineNokia->evaluateCopyrightsText(activeMapType().style(), mapController()->zoom(), visibleTiles);
+    const QString copyrightsString = engineNokia->evaluateCopyrightsText(activeMapType(), mapController()->zoom(), visibleTiles);
 
     if (width() > 0 && height() > 0 && (lastCopyrightsString.isNull() || copyrightsString != lastCopyrightsString)) {
         copyrightsSlab = copyrightsSlab.copy(0, 0, width(), height());

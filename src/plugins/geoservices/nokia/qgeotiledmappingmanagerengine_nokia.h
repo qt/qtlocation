@@ -77,9 +77,11 @@ public:
     ~QGeoTiledMappingManagerEngineNokia();
 
     virtual QGeoMapData *createMapData();
-    QString evaluateCopyrightsText(const QGeoMapType::MapStyle mapStyle,
+    QString evaluateCopyrightsText(const QGeoMapType mapType,
                                    const qreal zoomLevel,
                                    const QSet<QGeoTileSpec> &tiles);
+    QString getScheme(int mapId);
+    QString getBaseScheme(int mapId);
 
 public Q_SLOTS:
     void loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData);
@@ -100,10 +102,10 @@ private:
     };
 
     void initialize();
-    void populateMapTypesDb();
+    void populateMapSchemes();
 
     QHash<QString, QList<CopyrightDesc> > m_copyrights;
-    QHash<QGeoMapType::MapStyle, QString> m_mapTypeStrings;
+    QHash<int, QString> m_mapSchemes;
 };
 
 QT_END_NAMESPACE
