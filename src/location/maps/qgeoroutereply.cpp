@@ -209,7 +209,7 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 }
 
 /*!
-    Appends the list of routes to the existing list.
+    Appends the list of \a routes to the existing list.
 */
 void QGeoRouteReply::addRoutes(const QList<QGeoRoute> &routes)
 {

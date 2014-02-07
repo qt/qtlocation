@@ -140,9 +140,8 @@ QGeoRectangle::QGeoRectangle(const QGeoCoordinate &topLeft, const QGeoCoordinate
 }
 
 /*!
-    Constructs a georectangle from the list of coordinates, the returned rectangle is the smallest possible
-    containing all the coordinates.
- */
+    Constructs a new geo rectangle, of minimum size, containing all of the \a coordinates.
+*/
 QGeoRectangle::QGeoRectangle(const QList<QGeoCoordinate> &coordinates)
 {
     if (coordinates.isEmpty()) {

@@ -96,7 +96,7 @@ QT_BEGIN_NAMESPACE
     the Map grows in direct proportion to the number of points in the polyline.
 
     Like the other map objects, MapPolyline is normally drawn without a smooth
-    appearance. Setting the \l {QtQuick2::Item::opacity}{opacity} property will force the object to
+    appearance. Setting the \l {QtQuick::Item::opacity}{opacity} property will force the object to
     be blended, which decreases performance considerably depending on the hardware in use.
 
     \note MapPolylines are implemented using the OpenGL GL_LINES
