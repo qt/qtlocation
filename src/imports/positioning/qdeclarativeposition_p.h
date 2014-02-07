@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2014 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -47,18 +49,12 @@
 #include <QtQml/qqml.h>
 #include <QtPositioning/QGeoPositionInfo>
 
-// Define this to get qDebug messages
-// #define QDECLARATIVE_POSITION_DEBUG
-
-#ifdef QDECLARATIVE_POSITION_DEBUG
-#include <QDebug>
-#endif
-
 QT_BEGIN_NAMESPACE
 
 class QDeclarativePosition : public QObject
 {
     Q_OBJECT
+
     Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged)
     Q_PROPERTY(bool longitudeValid READ isLongitudeValid NOTIFY longitudeValidChanged)
     Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged)
@@ -77,7 +73,6 @@ class QDeclarativePosition : public QObject
     Q_PROPERTY(double verticalSpeed READ verticalSpeed NOTIFY verticalSpeedChanged REVISION 1)
 
 public:
-
     explicit QDeclarativePosition(QObject *parent = 0);
     ~QDeclarativePosition();
 
@@ -85,9 +80,7 @@ public:
     bool isLongitudeValid() const;
     bool isAltitudeValid() const;
     QDateTime timestamp() const;
-    void setTimestamp(const QDateTime &timestamp);
     double speed() const;
-    void setSpeed(double speed);
     bool isSpeedValid() const;
     QGeoCoordinate coordinate();
     bool isHorizontalAccuracyValid() const;
@@ -105,9 +98,7 @@ public:
     double verticalSpeed() const;
     void setVerticalSpeed(double speed);
 
-    // C++
-    void setCoordinate(const QGeoCoordinate &coordinate);
-    void invalidate();
+    void setPosition(const QGeoPositionInfo &info);
 
 Q_SIGNALS:
     void latitudeValidChanged();
@@ -128,19 +119,7 @@ Q_SIGNALS:
     Q_REVISION(1) void verticalSpeedChanged();
 
 private:
-    bool m_latitudeValid;
-    bool m_longitudeValid;
-    bool m_altitudeValid;
-    QDateTime m_timestamp;
-    double m_speed;
-    bool m_speedValid;
-    double m_direction;
-    double m_verticalSpeed;
-    bool m_horizontalAccuracyValid;
-    bool m_verticalAccuracyValid;
-    qreal m_horizontalAccuracy;
-    qreal m_verticalAccuracy;
-    QGeoCoordinate m_coordinate;
+    QGeoPositionInfo m_info;
 };
 
 QT_END_NAMESPACE

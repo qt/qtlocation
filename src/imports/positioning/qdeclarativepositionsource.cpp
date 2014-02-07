@@ -371,18 +371,7 @@ void QDeclarativePositionSource::socketError(QAbstractSocket::SocketError error)
 
 void QDeclarativePositionSource::setPosition(const QGeoPositionInfo &pi)
 {
-    if (pi.isValid()) {
-        m_position.setTimestamp(pi.timestamp());
-        m_position.setCoordinate(pi.coordinate());
-        m_position.setSpeed(pi.attribute(QGeoPositionInfo::GroundSpeed));
-        m_position.setDirection(pi.attribute(QGeoPositionInfo::Direction));
-        m_position.setVerticalSpeed(pi.attribute(QGeoPositionInfo::VerticalSpeed));
-        m_position.setHorizontalAccuracy(pi.attribute(QGeoPositionInfo::HorizontalAccuracy));
-        m_position.setVerticalAccuracy(pi.attribute(QGeoPositionInfo::VerticalAccuracy));
-    } else {
-        m_position.invalidate();
-    }
-
+    m_position.setPosition(pi);
     emit positionChanged();
 }
 
