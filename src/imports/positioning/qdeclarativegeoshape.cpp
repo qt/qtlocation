@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
     The \l isEmpty attribute can be used to test if the geoshape represents a region with a
     geomatrical area of 0.
 
-    The \l contains() method can be used to test if a \l {coordinate} is
+    The \l {contains}{contains()} method can be used to test if a \l {coordinate} is
     within the geoshape.
 
     \section2 Example Usage
