@@ -49,11 +49,11 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmltype CoordinateAnimation
     \instantiates QDeclarativeGeoCoordinateAnimation
+    \inherits PropertyAnimation
+    \inqmlmodule QtPositioning
+    \since 5.3
 
     \brief A PropertyAnimation for geo coordinate properties.
-
-    \inqmlmodule QtLocation 5.0
-    \ingroup qml-QtLocation5-maps
 
     A specialized \l{PropertyAnimation} that defines an animation
     between two geo coordinates.
@@ -73,10 +73,9 @@ QDeclarativeGeoCoordinateAnimation::~QDeclarativeGeoCoordinateAnimation()
 }
 
 /*!
-    \qmlproperty bool QtLocation5::CoordinateAnimation::from
+    \qmlproperty coordinate CoordinateAnimation::from
     This property holds the coordinate where the animation should begin.
 */
-
 QGeoCoordinate QDeclarativeGeoCoordinateAnimation::from() const
 {
     Q_D(const QQuickPropertyAnimation);
@@ -89,10 +88,9 @@ void QDeclarativeGeoCoordinateAnimation::setFrom(const QGeoCoordinate &f)
 }
 
 /*!
-    \qmlproperty bool QtLocation5::CoordinateAnimation::to
+    \qmlproperty coordinate CoordinateAnimation::to
     This property holds the coordinate where the animation should end.
 */
-
 QGeoCoordinate QDeclarativeGeoCoordinateAnimation::to() const
 {
     Q_D(const QQuickPropertyAnimation);
