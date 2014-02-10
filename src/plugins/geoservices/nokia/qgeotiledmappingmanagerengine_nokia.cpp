@@ -141,7 +141,9 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     QMetaObject::invokeMethod(fetcher, "fetchCopyrightsData", Qt::QueuedConnection);
 }
 
-QGeoTiledMappingManagerEngineNokia::~QGeoTiledMappingManagerEngineNokia() {}
+QGeoTiledMappingManagerEngineNokia::~QGeoTiledMappingManagerEngineNokia()
+{
+}
 
 void QGeoTiledMappingManagerEngineNokia::populateMapSchemes()
 {

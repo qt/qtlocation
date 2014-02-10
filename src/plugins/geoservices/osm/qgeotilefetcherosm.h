@@ -54,7 +54,7 @@ class QGeoTileFetcherOsm : public QGeoTileFetcher
     Q_OBJECT
 
 public:
-    explicit QGeoTileFetcherOsm(QGeoTiledMappingManagerEngine *parent = 0);
+    QGeoTileFetcherOsm(QObject *parent = 0);
 
     void setUserAgent(const QByteArray &userAgent);
 

@@ -50,21 +50,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoTileFetcher::QGeoTileFetcher(QGeoTiledMappingManagerEngine *engine, QObject *parent)
-    : QObject(parent),
-      d_ptr(new QGeoTileFetcherPrivate(engine))
-{
-    Q_D(QGeoTileFetcher);
-    d->engine_ = engine;
-}
-
-QGeoTileFetcher::~QGeoTileFetcher()
-{
-    Q_D(QGeoTileFetcher);
-    delete d;
-}
-
-void QGeoTileFetcher::threadStarted()
+QGeoTileFetcher::QGeoTileFetcher(QObject *parent)
+:   QObject(parent), d_ptr(new QGeoTileFetcherPrivate)
 {
     Q_D(QGeoTileFetcher);
 
@@ -74,18 +61,10 @@ void QGeoTileFetcher::threadStarted()
         d->timer_.start(0, this);
 }
 
-bool QGeoTileFetcher::init()
+QGeoTileFetcher::~QGeoTileFetcher()
 {
-    return false;
-}
 
-void QGeoTileFetcher::threadFinished()
-{
-    Q_D(QGeoTileFetcher);
-
-    d->enabled_ = false;
-    d->timer_.stop();
-    this->deleteLater();
+    delete d_ptr;
 }
 
 void QGeoTileFetcher::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded,
@@ -213,8 +192,8 @@ void QGeoTileFetcher::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTileFetcherPrivate::QGeoTileFetcherPrivate(QGeoTiledMappingManagerEngine *engine)
-:   engine_(engine), enabled_(false)
+QGeoTileFetcherPrivate::QGeoTileFetcherPrivate()
+:   enabled_(false)
 {
 }
 

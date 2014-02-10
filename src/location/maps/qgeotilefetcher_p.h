@@ -72,12 +72,10 @@ class Q_LOCATION_EXPORT QGeoTileFetcher : public QObject
     Q_OBJECT
 
 public:
-    QGeoTileFetcher(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
+    QGeoTileFetcher(QObject *parent = 0);
     virtual ~QGeoTileFetcher();
 
 public Q_SLOTS:
-    void threadStarted();
-    void threadFinished();
     void updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved);
 
 private Q_SLOTS:
@@ -91,7 +89,6 @@ Q_SIGNALS:
 
 protected:
     void timerEvent(QTimerEvent *event);
-    virtual bool init();
     QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
 
 private:

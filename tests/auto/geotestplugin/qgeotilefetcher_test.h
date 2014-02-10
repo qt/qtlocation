@@ -78,16 +78,15 @@ class QGeoTileFetcherTest: public QGeoTileFetcher
 {
 Q_OBJECT
 public:
-    QGeoTileFetcherTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
-        : QGeoTileFetcher(engine, parent),
-          finishRequestImmediately_(false),
-          mappingReply_(0),
-          errorCode_(QGeoTiledMapReply::NoError) {}
+    QGeoTileFetcherTest(QObject *parent = 0)
+    :   QGeoTileFetcher(parent), finishRequestImmediately_(false), mappingReply_(0),
+        errorCode_(QGeoTiledMapReply::NoError)
+    {
+    }
 
     bool init()
     {
-        if (parameters_.contains("finishRequestImmediately"))
-            finishRequestImmediately_ = parameters_.value("finishRequestImmediately").toBool();
+
         return true;
     }
 
@@ -132,7 +131,8 @@ public:
 
     void setParams(const QVariantMap &parameters)
     {
-        parameters_ = parameters;
+        if (parameters.contains(QStringLiteral("finishRequestImmediately")))
+            finishRequestImmediately_ = parameters.value(QStringLiteral("finishRequestImmediately")).toBool();
     }
 
     void setTileSize(QSize tileSize)
@@ -173,7 +173,6 @@ private:
     QBasicTimer timer_;
     QGeoTiledMapReply::Error errorCode_;
     QString errorString_;
-    QVariantMap parameters_;
     QSize tileSize_;
 };
 

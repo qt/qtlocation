@@ -55,10 +55,8 @@
 //
 
 #include <QSize>
-#include <QList>
 #include <QHash>
 #include <QSet>
-#include <QThread>
 #include "qgeotiledmappingmanagerengine_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -74,7 +72,6 @@ public:
     QGeoTiledMappingManagerEnginePrivate();
     ~QGeoTiledMappingManagerEnginePrivate();
 
-    QThread *thread_;
     QSize tileSize_;
     QSet<QGeoTiledMapData *> tileMaps_;
     QHash<QGeoTiledMapData *, QSet<QGeoTileSpec> > mapHash_;

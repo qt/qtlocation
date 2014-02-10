@@ -48,7 +48,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoTileFetcherOsm::QGeoTileFetcherOsm(QGeoTiledMappingManagerEngine *parent)
+QGeoTileFetcherOsm::QGeoTileFetcherOsm(QObject *parent)
 :   QGeoTileFetcher(parent), m_networkManager(new QNetworkAccessManager(this)),
     m_userAgent("Qt Location based application")
 {

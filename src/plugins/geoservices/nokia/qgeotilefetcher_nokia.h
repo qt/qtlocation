@@ -68,15 +68,9 @@ class QGeoTileFetcherNokia : public QGeoTileFetcher
     Q_OBJECT
 
 public:
-    QGeoTileFetcherNokia(
-            const QVariantMap &parameters,
-            QGeoNetworkAccessManager *networkManager,
-            QGeoTiledMappingManagerEngine *engine,
-            const QSize &tileSize);
-
+    QGeoTileFetcherNokia(const QVariantMap &parameters, QGeoNetworkAccessManager *networkManager,
+                         QGeoTiledMappingManagerEngineNokia *engine, const QSize &tileSize);
     ~QGeoTileFetcherNokia();
-
-    bool init();
 
     QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
 
@@ -96,7 +90,6 @@ private:
 
     QPointer<QGeoTiledMappingManagerEngineNokia> m_engineNokia;
     QGeoNetworkAccessManager *m_networkManager;
-    QVariantMap m_parameters;
     QSize m_tileSize;
     QString m_token;
     QNetworkReply *m_copyrightsReply;

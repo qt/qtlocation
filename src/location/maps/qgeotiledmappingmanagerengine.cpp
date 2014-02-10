@@ -74,9 +74,6 @@ void QGeoTiledMappingManagerEngine::setTileFetcher(QGeoTileFetcher *fetcher)
     Q_D(QGeoTiledMappingManagerEngine);
 
     d->fetcher_ = fetcher;
-    d->fetcher_->init();
-
-    d->thread_ = new QThread;
 
     qRegisterMetaType<QGeoTileSpec>();
 
@@ -91,26 +88,7 @@ void QGeoTiledMappingManagerEngine::setTileFetcher(QGeoTileFetcher *fetcher)
             SLOT(engineTileError(QGeoTileSpec,QString)),
             Qt::QueuedConnection);
 
-    d->fetcher_->moveToThread(d_ptr->thread_);
-
-    connect(d->thread_,
-            SIGNAL(started()),
-            d->fetcher_,
-            SLOT(threadStarted()));
-
-    connect(d->thread_,
-            SIGNAL(finished()),
-            d->fetcher_,
-            SLOT(threadFinished()));
-
-    connect(d->fetcher_,
-            SIGNAL(destroyed()),
-            d->thread_,
-            SLOT(deleteLater()));
-
     engineInitialized();
-
-    QTimer::singleShot(0, d->thread_, SLOT(start()));
 }
 
 QGeoTileFetcher *QGeoTiledMappingManagerEngine::tileFetcher()
@@ -318,17 +296,13 @@ QSharedPointer<QGeoTileTexture> QGeoTiledMappingManagerEngine::getTileTexture(co
 *******************************************************************************/
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
-  : thread_(0),
-    cacheHint_(QGeoTiledMappingManagerEngine::AllCaches),
-    tileCache_(0),
-    fetcher_(0) {}
+:   cacheHint_(QGeoTiledMappingManagerEngine::AllCaches), tileCache_(0), fetcher_(0)
+{
+}
 
 QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate()
 {
     delete tileCache_;
-
-    // will delete fetcher and thread later
-    thread_->exit();
 }
 
 #include "moc_qgeotiledmappingmanagerengine_p.cpp"

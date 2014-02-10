@@ -73,10 +73,8 @@ class QGeoTiledMappingManagerEngine;
 class QGeoTileFetcherPrivate
 {
 public:
-    explicit QGeoTileFetcherPrivate(QGeoTiledMappingManagerEngine *engine);
+    QGeoTileFetcherPrivate();
     virtual ~QGeoTileFetcherPrivate();
-
-    QGeoTiledMappingManagerEngine *engine_;
 
     bool enabled_;
     QBasicTimer timer_;

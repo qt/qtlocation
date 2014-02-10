@@ -86,44 +86,34 @@ namespace
         return mapScheme.startsWith("satellite") || mapScheme.startsWith("hybrid") || mapScheme.startsWith("terrain");
     }
 }
-QGeoTileFetcherNokia::QGeoTileFetcherNokia(
-        const QVariantMap &parameters,
-        QGeoNetworkAccessManager *networkManager,
-        QGeoTiledMappingManagerEngine *engine,
-        const QSize &tileSize)
-        : QGeoTileFetcher(engine),
-          m_engineNokia(static_cast<QGeoTiledMappingManagerEngineNokia *>(engine)),
-          m_networkManager(networkManager),
-          m_parameters(parameters),
-          m_tileSize(tileSize),
-          m_copyrightsReply(0),
-          m_baseUriProvider(new QGeoUriProvider(this, parameters, "mapping.host", MAP_TILES_HOST)),
-          m_aerialUriProvider(new QGeoUriProvider(this, parameters, "mapping.host.aerial", MAP_TILES_HOST_AERIAL))
+QGeoTileFetcherNokia::QGeoTileFetcherNokia(const QVariantMap &parameters,
+                                           QGeoNetworkAccessManager *networkManager,
+                                           QGeoTiledMappingManagerEngineNokia *engine,
+                                           const QSize &tileSize)
+:   QGeoTileFetcher(engine), m_engineNokia(engine), m_networkManager(networkManager),
+    m_tileSize(tileSize), m_copyrightsReply(0),
+    m_baseUriProvider(new QGeoUriProvider(this, parameters, "mapping.host", MAP_TILES_HOST)),
+    m_aerialUriProvider(new QGeoUriProvider(this, parameters, "mapping.host.aerial", MAP_TILES_HOST_AERIAL))
 {
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
+
+    m_applicationId = parameters.value(QStringLiteral("app_id")).toString();
+    m_token = parameters.value(QStringLiteral("token")).toString();
 }
 
-QGeoTileFetcherNokia::~QGeoTileFetcherNokia() {}
-
-bool QGeoTileFetcherNokia::init()
+QGeoTileFetcherNokia::~QGeoTileFetcherNokia()
 {
-    qsrand((uint)QTime::currentTime().msec());
-
-    if (m_parameters.contains("app_id")) {
-        m_applicationId = m_parameters.value("app_id").toString();
-    }
-
-    if (m_parameters.contains("token")) {
-        m_token = m_parameters.value("token").toString();
-    }
-    return true;
 }
 
 QGeoTiledMapReply *QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
 {
     // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
     QString rawRequest = getRequestString(spec);
+    if (rawRequest.isEmpty()) {
+        return new QGeoTiledMapReply(QGeoTiledMapReply::UnknownError,
+                                     tr("Mapping manager no longer exists"), this);
+    }
 
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
     netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
@@ -137,6 +127,9 @@ QGeoTiledMapReply *QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
 
 QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
 {
+    if (!m_engineNokia)
+        return QString();
+
     static const QString http("http://");
     static const QString path("/maptile/2.1/maptile/newest/");
     static const QChar slash('/');
