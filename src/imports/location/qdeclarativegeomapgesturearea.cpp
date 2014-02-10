@@ -1076,8 +1076,10 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
             {
                 panState_ = panInactive;
                 // mark as inactive for use by camera
-                if (pinchState_ == pinchInactive)
+                if (pinchState_ == pinchInactive) {
+                    emit panFinished();
                     emit movementStopped();
+                }
             }
         }
         break;
