@@ -108,4 +108,31 @@ Item {
             compare (box.contains(outside), true)
         }
     }
+
+    TestCase {
+        name: "Shape"
+
+        function test_shape_comparison_data() {
+            return [
+                { tag: "invalid shape", shape1: QtPositioning.shape(), shape2: QtPositioning.shape(), result: true },
+                { tag: "box equal", shape1: box, shape2: QtPositioning.rectangle(tl, br), result: true },
+                { tag: "box not equal", shape1: box, shape2: QtPositioning.rectangle([inside, outside]), result: false },
+                { tag: "box invalid shape", rect1: box, shape2: QtPositioning.shape(), result: false },
+                { tag: "invalid rectangle", shape1: QtPositioning.rectangle(), shape2: QtPositioning.rectangle(), result: true },
+                { tag: "invalid rectangle2", shape1: QtPositioning.rectangle(), shape2: QtPositioning.shape(), result: false },
+                { tag: "circle1 equal", shape1: circle1, shape2: QtPositioning.circle(coordinate1, 200000), result: true },
+                { tag: "circle1 not equal", shape1: circle1, shape2: QtPositioning.circle(coordinate2, 2000), result: false },
+                { tag: "circle1 invalid shape", shape1: circle1, shape2: QtPositioning.shape(), result: false },
+                { tag: "invalid circle", shape1: QtPositioning.circle(), shape2: QtPositioning.circle(), result: true },
+                { tag: "invalid circle2", shape1: QtPositioning.circle(), shape2: QtPositioning.shape(), result: false }
+            ]
+        }
+
+        function test_shape_comparison(data) {
+            compare(data.shape1 === data.shape2, data.result)
+            compare(data.shape1 !== data.shape2, !data.result)
+            compare(data.shape1 == data.shape2, data.result)
+            compare(data.shape1 != data.shape2, !data.result)
+        }
+    }
 }

@@ -138,6 +138,26 @@ Item {
             compare(coordSpy.count, 3)
         }
 
+        function test_comparison_data() {
+            return [
+                { tag: "empty", coord1: empty, coord2: QtPositioning.coordinate(), result: true },
+                { tag: "zero", coord1: zero, coord2: QtPositioning.coordinate(0, 0), result: true },
+                { tag: "plusone", coord1: plusone, coord2: QtPositioning.coordinate(0, 1), result: true },
+                { tag: "minusone", coord1: minusone, coord2: QtPositioning.coordinate(0, -1), result: true },
+                { tag: "north", coord1: north, coord2: QtPositioning.coordinate(3, 0), result: true },
+                { tag: "lat,long.alt", coord1: QtPositioning.coordinate(1.1, 2.2, 3.3), coord2: QtPositioning.coordinate(1.1, 2.2, 3.3), result: true },
+                { tag: "not equal1", coord1: plusone, coord2: minusone, result: false },
+                { tag: "not equal2", coord1: plusone, coord2: north, result: false }
+            ]
+        }
+
+        function test_comparison(data) {
+            compare(data.coord1 === data.coord2, data.result)
+            compare(data.coord1 !== data.coord2, !data.result)
+            compare(data.coord1 == data.coord2, data.result)
+            compare(data.coord1 != data.coord2, !data.result)
+        }
+
         function test_distance() {
             compare(zero.distanceTo(plusone), zero.distanceTo(minusone))
             compare(2*plusone.distanceTo(zero), plusone.distanceTo(minusone))
@@ -178,8 +198,6 @@ Item {
 
             var coord_30d2 = coord_30d.atDistanceAndAzimuth(200, 30)
             compare(zero.distanceTo(coord_30d2), 20200)
-
         }
-
     }
 }
