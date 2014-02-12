@@ -138,7 +138,9 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     }
 
     populateMapSchemes();
+    loadMapVersion();
     QMetaObject::invokeMethod(fetcher, "fetchCopyrightsData", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(fetcher, "fetchVersionData", Qt::QueuedConnection);
 }
 
 QGeoTiledMappingManagerEngineNokia::~QGeoTiledMappingManagerEngineNokia()
@@ -179,6 +181,11 @@ QString QGeoTiledMappingManagerEngineNokia::getBaseScheme(int mapId)
     QString fullScheme(m_mapSchemes[mapId]);
 
     return fullScheme.section(QLatin1Char('.'), 0, 0);
+}
+
+int QGeoTiledMappingManagerEngineNokia::mapVersion()
+{
+    return m_mapVersion.version();
 }
 
 void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData)
@@ -223,6 +230,75 @@ void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const
         }
         m_copyrights[ keys[ keyIndex ] ] = copyrightDescList;
     }
+}
+
+void QGeoTiledMappingManagerEngineNokia::parseNewVersionInfo(const QByteArray &versionData)
+{
+    const QString versionString = QString::fromUtf8(versionData);
+
+    const QStringList versionLines =  versionString.split(QLatin1Char('\n'));
+    QJsonObject newVersionData;
+    foreach (const QString &line, versionLines) {
+        const QStringList versionInfo = line.split(':');
+        if (versionInfo.size() > 1) {
+            const QString versionKey = versionInfo[0].trimmed();
+            const QString versionValue = versionInfo[1].trimmed();
+            if (!versionKey.isEmpty() && !versionValue.isEmpty()) {
+                newVersionData[versionKey] = versionValue;
+            }
+        }
+    }
+
+    updateVersion(newVersionData);
+}
+
+void QGeoTiledMappingManagerEngineNokia::updateVersion(const QJsonObject &newVersionData) {
+
+    if (m_mapVersion.isNewVersion(newVersionData)) {
+
+        m_mapVersion.setVersionData(newVersionData);
+        m_mapVersion.setVersion(m_mapVersion.version() + 1);
+
+        saveMapVersion();
+
+        emit mapVersionChanged();
+    }
+}
+
+void QGeoTiledMappingManagerEngineNokia::saveMapVersion()
+{
+    QDir saveDir(tileCache()->directory());
+    QFile saveFile(saveDir.filePath(QLatin1String("nokia_version")));
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        qWarning("Failed to write nokia map version.");
+        return;
+    }
+
+    saveFile.write(m_mapVersion.toJson());
+    saveFile.close();
+}
+
+void QGeoTiledMappingManagerEngineNokia::loadMapVersion()
+{
+
+    QDir saveDir(tileCache()->directory());
+    QFile loadFile(saveDir.filePath(QLatin1String("nokia_version")));
+
+    if (!loadFile.open(QIODevice::ReadOnly)) {
+        qWarning("Failed to read nokia map version.");
+        return;
+    }
+
+    QByteArray saveData = loadFile.readAll();
+    loadFile.close();
+
+    QJsonDocument doc(QJsonDocument::fromJson(saveData));
+
+    QJsonObject object = doc.object();
+
+    m_mapVersion.setVersion(object[QLatin1String("version")].toInt());
+    m_mapVersion.setVersionData(object[QLatin1String("data")].toObject());
 }
 
 QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType mapType,

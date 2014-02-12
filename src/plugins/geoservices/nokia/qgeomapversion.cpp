@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Appello Systems AB.
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -46,75 +46,46 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
-#define QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
-
-#include "qgeotiledmappingmanagerengine_p.h"
-#include <QtPositioning/QGeoRectangle>
-#include "qgeomaptype_p.h"
 #include "qgeomapversion.h"
 
-#include <QGeoServiceProvider>
-
-#include <QList>
-#include <QHash>
-#include <QSet>
+#include <QJsonDocument>
 
 QT_BEGIN_NAMESPACE
 
-class QByteArray;
-class QGeoTileSpec;
-class QGeoNetworkAccessManager;
+QGeoMapVersion::QGeoMapVersion()
+    : m_version(-1) {}
 
-class QGeoTiledMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
+bool QGeoMapVersion::isNewVersion(const QJsonObject &newVersionData)
 {
-    Q_OBJECT
+    return m_versionData != newVersionData;
+}
 
-public:
-    QGeoTiledMappingManagerEngineNokia(QGeoNetworkAccessManager *networkManager,
-                                       const QVariantMap &parameters,
-                                       QGeoServiceProvider::Error *error,
-                                       QString *errorString);
-    ~QGeoTiledMappingManagerEngineNokia();
+int QGeoMapVersion::version() const
+{
+    return m_version;
+}
 
-    virtual QGeoMapData *createMapData();
-    QString evaluateCopyrightsText(const QGeoMapType mapType,
-                                   const qreal zoomLevel,
-                                   const QSet<QGeoTileSpec> &tiles);
-    QString getScheme(int mapId);
-    QString getBaseScheme(int mapId);
-    int mapVersion();
+void QGeoMapVersion::setVersion(int version)
+{
+    m_version = version;
+}
 
-public Q_SLOTS:
-    void loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData);
-    void parseNewVersionInfo(const QByteArray &versionData);
+void QGeoMapVersion::setVersionData(const QJsonObject &versionData)
+{
+    m_versionData = versionData;
+}
 
-private:
-    class CopyrightDesc
-    {
-    public:
-        CopyrightDesc()
-            : maxLevel(-1),
-              minLevel(-1) {}
 
-        qreal maxLevel;
-        qreal minLevel;
-        QList<QGeoRectangle> boxes;
-        QString alt;
-        QString label;
-    };
+QByteArray QGeoMapVersion::toJson() const
+{
 
-    void initialize();
-    void populateMapSchemes();
-    void updateVersion(const QJsonObject &newVersionData);
-    void saveMapVersion();
-    void loadMapVersion();
+    QJsonObject object;
+    object[QLatin1String("version")] = m_version;
+    object[QLatin1String("data")] = m_versionData;
 
-    QHash<QString, QList<CopyrightDesc> > m_copyrights;
-    QHash<int, QString> m_mapSchemes;
-    QGeoMapVersion m_mapVersion;
-};
+    QJsonDocument document(object);
+
+    return document.toJson();
+}
 
 QT_END_NAMESPACE
-
-#endif // QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H

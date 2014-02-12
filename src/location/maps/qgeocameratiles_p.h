@@ -80,6 +80,7 @@ public:
 
     void setPluginString(const QString &pluginString);
     void setMapType(const QGeoMapType &mapType);
+    void setMapVersion(int mapVersion);
 
     QSet<QGeoTileSpec> tiles() const;
     void findPrefetchTiles();

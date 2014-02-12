@@ -85,6 +85,7 @@ public:
 
     QString pluginString_;
     QGeoMapType mapType_;
+    int mapVersion_;
     QGeoCameraData camera_;
     QSize screenSize_;
     int tileSize_;
@@ -245,6 +246,17 @@ void QGeoCameraTiles::setMapType(const QGeoMapType &mapType)
     d->updateMetadata();
 }
 
+void QGeoCameraTiles::setMapVersion(const int mapVersion)
+{
+    Q_D(QGeoCameraTiles);
+
+    if (d->mapVersion_ == mapVersion)
+        return;
+
+    d->mapVersion_ = mapVersion;
+    d->updateMetadata();
+}
+
 void QGeoCameraTiles::setTileSize(int tileSize)
 {
     Q_D(QGeoCameraTiles);
@@ -285,7 +297,8 @@ QGeoCameraTilesPrivate::QGeoCameraTilesPrivate()
     : tileSize_(0),
       maxZoom_(0),
       intZoomLevel_(0),
-      sideLength_(0) {}
+      sideLength_(0),
+      mapVersion_(-1) {}
 
 QGeoCameraTilesPrivate::~QGeoCameraTilesPrivate() {}
 
@@ -300,7 +313,7 @@ void QGeoCameraTilesPrivate::updateMetadata()
 
     for (; i != end; ++i) {
         QGeoTileSpec tile = *i;
-        newTiles.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), tile.zoom(), tile.x(), tile.y()));
+        newTiles.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), tile.zoom(), tile.x(), tile.y(), mapVersion_));
     }
 
     tiles_ = newTiles;
@@ -988,7 +1001,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
         int minX = i->first;
         int maxX = i->second;
         for (int x = minX; x <= maxX; ++x) {
-            results.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), z, x, y));
+            results.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), z, x, y, mapVersion_));
         }
     }
 

@@ -27,7 +27,8 @@ HEADERS += \
             qgeointrinsicnetworkaccessmanager.h \
             qgeouriprovider.h \
             uri_constants.h \
-            qgeoerror_messages.h
+            qgeoerror_messages.h \
+            qgeomapversion.h
 
 
 SOURCES += \
@@ -45,7 +46,8 @@ SOURCES += \
             qgeointrinsicnetworkaccessmanager.cpp \
             qgeouriprovider.cpp \
             uri_constants.cpp \
-            qgeoerror_messages.cpp
+            qgeoerror_messages.cpp \
+            qgeomapversion.cpp
 
 include(placesv2/placesv2.pri)
 

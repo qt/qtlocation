@@ -68,7 +68,7 @@ class Q_LOCATION_EXPORT QGeoTileSpec
 public:
     QGeoTileSpec();
     QGeoTileSpec(const QGeoTileSpec &other);
-    QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y);
+    QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y, int version = -1);
     ~QGeoTileSpec();
 
     QGeoTileSpec &operator = (const QGeoTileSpec &other);
@@ -86,6 +86,9 @@ public:
 
     void setMapId(int mapId);
     int mapId() const;
+
+    void setVersion(int version);
+    int version() const;
 
     bool operator == (const QGeoTileSpec &rhs) const;
     bool operator < (const QGeoTileSpec &rhs) const;

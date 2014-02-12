@@ -80,6 +80,8 @@ public:
 public Q_SLOTS:
     void copyrightsFetched();
     void fetchCopyrightsData();
+    void versionFetched();
+    void fetchVersionData();
 
 private:
     Q_DISABLE_COPY(QGeoTileFetcherNokia)
@@ -93,6 +95,7 @@ private:
     QSize m_tileSize;
     QString m_token;
     QNetworkReply *m_copyrightsReply;
+    QNetworkReply *m_versionReply;
 
     QString m_applicationId;
     QGeoUriProvider *m_baseUriProvider;

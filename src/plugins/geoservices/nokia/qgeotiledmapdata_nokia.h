@@ -66,6 +66,8 @@ public:
 
     QString getViewCopyright();
     void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+    int mapVersion();
+
 
 private:
     Q_DISABLE_COPY(QGeoTiledMapDataNokia)

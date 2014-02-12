@@ -107,6 +107,7 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void tileError(const QGeoTileSpec &spec, const QString &errorString);
+    void mapVersionChanged();
 
 protected:
     void setTileFetcher(QGeoTileFetcher *fetcher);

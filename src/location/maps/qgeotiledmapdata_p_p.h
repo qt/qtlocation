@@ -97,6 +97,7 @@ public:
 
     void changeCameraData(const QGeoCameraData &oldCameraData);
     void changeActiveMapType(const QGeoMapType mapType);
+    void changeMapVersion(int mapVersion);
     void resized(int width, int height);
 
     QGeoCoordinate screenPositionToCoordinate(const QDoubleVector2D &pos) const;

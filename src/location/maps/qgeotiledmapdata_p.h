@@ -93,6 +93,9 @@ public:
     // Alternative to exposing this is to make tileFetched a slot, but then requestManager would
     // need to be a QObject
     QGeoTileRequestManager *getRequestManager();
+
+    virtual int mapVersion();
+
 protected:
     void mapResized(int width, int height);
     void changeCameraData(const QGeoCameraData &oldCameraData);
@@ -101,6 +104,7 @@ protected:
 
 protected Q_SLOTS:
     virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+    void updateMapVersion();
 
 private:
     QGeoTiledMapDataPrivate *d_ptr;

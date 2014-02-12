@@ -246,28 +246,42 @@ QString QGeoTileFetcherNokia::applicationId() const
 
 void QGeoTileFetcherNokia::copyrightsFetched()
 {
-    if (m_engineNokia) {
+    if (m_engineNokia && m_copyrightsReply->error() == QNetworkReply::NoError) {
         QMetaObject::invokeMethod(m_engineNokia.data(),
                                   "loadCopyrightsDescriptorsFromJson",
                                   Qt::QueuedConnection,
                                   Q_ARG(QByteArray, m_copyrightsReply->readAll()));
     }
+
+    m_copyrightsReply->deleteLater();
+}
+
+void QGeoTileFetcherNokia::versionFetched()
+{
+    if (m_engineNokia && m_versionReply->error() == QNetworkReply::NoError) {
+        QMetaObject::invokeMethod(m_engineNokia.data(),
+                                  "parseNewVersionInfo",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(QByteArray, m_versionReply->readAll()));
+    }
+
+    m_versionReply->deleteLater();
 }
 
 void QGeoTileFetcherNokia::fetchCopyrightsData()
 {
-    QString copyrightUrl = "http://";
+    QString copyrightUrl = QStringLiteral("http://");
 
     copyrightUrl += m_baseUriProvider->getCurrentHost();
-    copyrightUrl += "/maptile/2.1/copyright/newest?output=json";
+    copyrightUrl += QStringLiteral("/maptile/2.1/copyright/newest?output=json");
 
     if (!token().isEmpty()) {
-        copyrightUrl += "&token=";
+        copyrightUrl += QStringLiteral("&token=");
         copyrightUrl += token();
     }
 
     if (!applicationId().isEmpty()) {
-        copyrightUrl += "&app_id=";
+        copyrightUrl += QStringLiteral("&app_id=");
         copyrightUrl += applicationId();
     }
 
@@ -284,6 +298,38 @@ void QGeoTileFetcherNokia::fetchCopyrightsData()
     } else {
         connect(m_copyrightsReply, SIGNAL(finished()), this, SLOT(copyrightsFetched()));
     }
+}
+
+void QGeoTileFetcherNokia::fetchVersionData()
+{
+    QString versionUrl = QStringLiteral("http://");
+
+    versionUrl += m_baseUriProvider->getCurrentHost();
+    versionUrl += QStringLiteral("/maptile/2.1/version");
+
+    if (!token().isEmpty()) {
+        versionUrl += QStringLiteral("?token=");
+        versionUrl += token();
+    }
+
+    if (!applicationId().isEmpty()) {
+        versionUrl += QStringLiteral("&app_id=");
+        versionUrl += applicationId();
+    }
+
+    QNetworkRequest netRequest((QUrl(versionUrl)));
+    m_versionReply = m_networkManager->get(netRequest);
+
+    if (m_versionReply->error() != QNetworkReply::NoError) {
+        qWarning() << __FUNCTION__ << m_versionReply->errorString();
+        m_versionReply->deleteLater();
+        return;
+    }
+
+    if (m_versionReply->isFinished())
+        versionFetched();
+    else
+        connect(m_versionReply, SIGNAL(finished()), this, SLOT(versionFetched()));
 }
 
 QT_END_NAMESPACE
