@@ -43,11 +43,11 @@ qrc_*.cpp
 
 doc/src/snippets/cpp/cppsnippet
 doc/src/snippets/places/placescppsnippet
-examples/declarative/places_list/places_list
-examples/declarative/flickr/qml_position_flickr
-examples/declarative/places_map/places_map
-examples/logfilepositionsource/logfilepositionsource
-examples/weatherinfo/weatherinfo
+examples/location/places_list/places_list
+examples/positioning/flickr/qml_position_flickr
+examples/location/places_map/places_map
+examples/positioning/logfilepositionsource/logfilepositionsource
+examples/positioning/weatherinfo/weatherinfo
 
 config.tests/geoclue/geoclue
 config.tests/gypsy/gypsy
