@@ -90,14 +90,15 @@ static void velocity_changed (GeoclueVelocity *velocity,
                               gpointer userdata) // Ptr to this
 {
     Q_UNUSED(velocity)
-    Q_UNUSED(timestamp)
-    Q_UNUSED(direction)
-    Q_UNUSED(climb)
-    if (!(fields & GEOCLUE_VELOCITY_FIELDS_SPEED)) {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->velocityUpdateFailed();
+
+    QGeoPositionInfoSourceGeoclueMaster *master =
+        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata);
+
+    if (fields == GEOCLUE_VELOCITY_FIELDS_NONE) {
+        master->velocityUpdateFailed();
         return;
     }
-    static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->velocityUpdateSucceeded(speed);
+    master->velocityUpdateSucceeded(fields, timestamp, speed, direction, climb);
 }
 
 // Callback for single async update
@@ -117,10 +118,16 @@ static void position_callback (GeocluePosition *pos, GeocluePositionFields field
     }
 }
 
+static double knotsToMetersPerSecond(double knots)
+{
+    return knots * 1852.0 / 3600.0;
+}
+
 QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
 :   QGeoPositionInfoSource(parent), QGeoclueMaster(this), m_updateInterval(0), m_pos(0), m_vel(0),
-    m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false), m_lastVelocity(0),
-    m_lastPositionFromSatellite(false), m_methods(AllPositioningMethods), m_running(false)
+    m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false), m_lastVelocity(qQNaN()),
+    m_lastDirection(qQNaN()), m_lastClimb(qQNaN()), m_lastPositionFromSatellite(false),
+    m_methods(AllPositioningMethods), m_running(false)
 {
 #ifndef QT_NO_DATASTREAM
     // Load the last known location
@@ -169,13 +176,31 @@ void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateFailed()
     m_lastVelocityIsFresh = false;
 }
 
-void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateSucceeded(double speed)
+void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateSucceeded(GeoclueVelocityFields fields,
+                                                                  int timestamp, double speed,
+                                                                  double direction, double climb)
 {
+    Q_UNUSED(timestamp);
+
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster velocity update succeeded, speed: " << speed;
 #endif
     // Store the velocity and mark it as fresh. Simple but hopefully adequate.
-    m_lastVelocity = speed * 0.514444; // convert knots to m/s
+    if (fields & GEOCLUE_VELOCITY_FIELDS_SPEED)
+        m_lastVelocity = knotsToMetersPerSecond(speed);
+    else
+        m_lastVelocity = qQNaN();
+
+    if (fields & GEOCLUE_VELOCITY_FIELDS_DIRECTION)
+        m_lastDirection = direction;
+    else
+        m_lastDirection = qQNaN();
+
+    if (fields & GEOCLUE_VELOCITY_FIELDS_CLIMB)
+        m_lastClimb = climb;
+    else
+        m_lastClimb = qQNaN();
+
     m_lastVelocityIsFresh = true;
 }
 
@@ -190,8 +215,14 @@ void QGeoPositionInfoSourceGeoclueMaster::singleUpdateSucceeded(GeocluePositionF
     m_lastPosition = info;
     if (m_requestTimer.isActive())
         m_requestTimer.stop();
-    if (m_lastVelocityIsFresh)
-        info.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity); // assume groundspeed
+    if (m_lastVelocityIsFresh) {
+        if (!qIsNaN(m_lastVelocity))
+            info.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity);
+        if (!qIsNaN(m_lastDirection))
+            info.setAttribute(QGeoPositionInfo::Direction, m_lastDirection);
+        if (!qIsNaN(m_lastClimb))
+            info.setAttribute(QGeoPositionInfo::VerticalSpeed, m_lastClimb);
+    }
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster single update succeeded: ";
         qDebug() << "Lat, lon, alt, speed:" << info.coordinate().latitude() << info.coordinate().longitude() << info.coordinate().altitude() << info.attribute(QGeoPositionInfo::GroundSpeed);
@@ -230,7 +261,12 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePosition
     m_lastPosition = geoclueToPositionInfo(fields, timestamp, latitude, longitude, altitude, accuracy);
     m_lastPositionIsFresh = true;
     if (m_lastVelocityIsFresh) {
-        m_lastPosition.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity); // assume groundspeed
+        if (!qIsNaN(m_lastVelocity))
+            m_lastPosition.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity);
+        if (!qIsNaN(m_lastDirection))
+            m_lastPosition.setAttribute(QGeoPositionInfo::Direction, m_lastDirection);
+        if (!qIsNaN(m_lastClimb))
+            m_lastPosition.setAttribute(QGeoPositionInfo::VerticalSpeed, m_lastClimb);
         m_lastVelocityIsFresh = false;
     }
     // If a non-intervalled startUpdates has been issued, send an update.
