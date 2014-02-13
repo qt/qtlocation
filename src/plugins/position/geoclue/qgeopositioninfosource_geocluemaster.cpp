@@ -125,9 +125,9 @@ static double knotsToMetersPerSecond(double knots)
 
 QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
 :   QGeoPositionInfoSource(parent), QGeoclueMaster(this), m_updateInterval(0), m_pos(0), m_vel(0),
-    m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false), m_lastVelocity(qQNaN()),
-    m_lastDirection(qQNaN()), m_lastClimb(qQNaN()), m_lastPositionFromSatellite(false),
-    m_methods(AllPositioningMethods), m_running(false)
+    m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false), m_regularUpdateTimedOut(false),
+    m_lastVelocity(qQNaN()), m_lastDirection(qQNaN()), m_lastClimb(qQNaN()),
+    m_lastPositionFromSatellite(false), m_methods(AllPositioningMethods), m_running(false)
 {
 #ifndef QT_NO_DATASTREAM
     // Load the last known location
@@ -241,14 +241,13 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateFailed()
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster regular update failed.";
 #endif
-    // Emit timeout and keep on listening in case error condition clears.
-    // Currently this is emitted each time an error occurs, and thereby it assumes
-    // that there does not come many erroneous updates from position source.
-    // This assumption may be invalid.
+
     m_lastVelocityIsFresh = false;
     m_lastPositionIsFresh = false;
-    if (m_updateTimer.isActive())
+    if (m_updateTimer.isActive() && !m_regularUpdateTimedOut) {
+        m_regularUpdateTimedOut = true;
         emit updateTimeout();
+    }
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePositionFields fields,
@@ -260,6 +259,7 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePosition
 {
     m_lastPosition = geoclueToPositionInfo(fields, timestamp, latitude, longitude, altitude, accuracy);
     m_lastPositionIsFresh = true;
+    m_regularUpdateTimedOut = false;
     if (m_lastVelocityIsFresh) {
         if (!qIsNaN(m_lastVelocity))
             m_lastPosition.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity);
@@ -317,6 +317,7 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
 
     m_lastPositionIsFresh = false;
     m_lastVelocityIsFresh = false;
+    m_regularUpdateTimedOut = false;
 
     // Don't start Geoclue provider until necessary. Don't currently have a master client, no need
     // no recreate one.
@@ -465,6 +466,9 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdatesTimeout()
         emit positionUpdated(m_lastPosition);
         m_lastPositionIsFresh = false;
         m_lastVelocityIsFresh = false;
+    } else if (!m_regularUpdateTimedOut) {
+        m_regularUpdateTimedOut = true;
+        emit updateTimeout();
     }
 }
 

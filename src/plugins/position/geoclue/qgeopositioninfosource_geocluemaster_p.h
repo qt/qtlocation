@@ -125,6 +125,7 @@ private:
     QTimer m_requestTimer;
     bool m_lastPositionIsFresh;
     bool m_lastVelocityIsFresh;
+    bool m_regularUpdateTimedOut;
     double m_lastVelocity;
     double m_lastDirection;
     double m_lastClimb;
