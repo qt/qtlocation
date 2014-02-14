@@ -574,12 +574,12 @@ void QDeclarativePolylineMapItem::removeCoordinate(const QGeoCoordinate &coordin
     int index = path_.lastIndexOf(coordinate);
 
     if (index == -1) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolylineMapItem");
+        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolylineMapItem");
         return;
     }
 
     if (path_.count() < index + 1) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolylineMapItem");
+        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolylineMapItem");
         return;
     }
     path_.removeAt(index);

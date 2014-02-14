@@ -222,7 +222,8 @@ void QDeclarativeGeoRouteModel::abortRequest()
 QDeclarativeGeoRoute *QDeclarativeGeoRouteModel::get(int index)
 {
     if (index < 0 || index >= routes_.count()) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, INDEX_INVALID).arg(index);
+        qmlInfo(this) << QStringLiteral("Error, invalid index for get():")
+                      << index;
         return 0;
     }
     return routes_.at(index);
@@ -254,12 +255,12 @@ int QDeclarativeGeoRouteModel::rowCount(const QModelIndex &parent) const
 QVariant QDeclarativeGeoRouteModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, MODEL_INDEX_INVALID);
+        qmlInfo(this) << QStringLiteral("Error in indexing route model's data (invalid index).");
         return QVariant();
     }
 
     if (index.row() >= routes_.count()) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, MODEL_INDEX_OUT_OF_RANGE);
+        qmlInfo(this) << QStringLiteral("Fatal error in indexing route model's data (index overflow).");
         return QVariant();
     }
 
@@ -316,7 +317,8 @@ void QDeclarativeGeoRouteModel::pluginReady()
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_ROUTING).arg(serviceProvider->errorString());
+        qmlInfo(this) << QStringLiteral("Error: Plugin does not support routing.\nError message:")
+                      << serviceProvider->errorString();
         return;
     }
     connect(routingManager, SIGNAL(finished(QGeoRouteReply*)),
@@ -427,7 +429,7 @@ bool QDeclarativeGeoRouteModel::autoUpdate() const
 void QDeclarativeGeoRouteModel::setMeasurementSystem(QLocale::MeasurementSystem ms)
 {
     if (!plugin_) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_PLUGIN_NOT_SET);
+        qmlInfo(this) << ROUTE_PLUGIN_NOT_SET;
         return;
     }
 
@@ -437,7 +439,7 @@ void QDeclarativeGeoRouteModel::setMeasurementSystem(QLocale::MeasurementSystem 
 
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
+        qmlInfo(this) << ROUTE_MGR_NOT_SET;
         return;
     }
 
@@ -463,7 +465,7 @@ QLocale::MeasurementSystem QDeclarativeGeoRouteModel::measurementSystem() const
 
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
+        qmlInfo(this) << ROUTE_MGR_NOT_SET;
         if (plugin_->locales().isEmpty())
             return QLocale().measurementSystem();
 
@@ -575,7 +577,7 @@ void QDeclarativeGeoRouteModel::update()
         return;
 
     if (!plugin_) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_PLUGIN_NOT_SET);
+        qmlInfo(this) << ROUTE_PLUGIN_NOT_SET;
         return;
     }
 
@@ -585,17 +587,17 @@ void QDeclarativeGeoRouteModel::update()
 
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
+        qmlInfo(this) << ROUTE_MGR_NOT_SET;
         return;
     }
     if (!routeQuery_) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_QUERY_NOT_SET);
+        qmlInfo(this) << QStringLiteral("Cannot route, valid query not set.");
         return;
     }
     abortRequest(); // Clear previus requests
     QGeoRouteRequest request = routeQuery_->routeRequest();
     if (request.waypoints().count() < 2) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_WAYPOINTS_NOT_SET);
+        qmlInfo(this) << QStringLiteral("Not enough waypoints for routing.");
         return;
     }
 
@@ -952,7 +954,7 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(const QGeoRectangle &area)
 
     int index = excludedAreas.lastIndexOf(area);
     if (index == -1) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, CANNOT_REMOVE_AREA);
+        qmlInfo(this) << QStringLiteral("Cannot remove nonexistent area.");
         return;
     }
     excludedAreas.removeAt(index);
@@ -992,7 +994,7 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 void QDeclarativeGeoRouteQuery::addWaypoint(const QGeoCoordinate &waypoint)
 {
     if (!waypoint.isValid()) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, CANNOT_ADD_INVALID_WAYPOINT);
+        qmlInfo(this) << QStringLiteral("Not adding invalid waypoint.");
         return;
     }
 
@@ -1021,7 +1023,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(const QGeoCoordinate &waypoint)
 
     int index = waypoints.lastIndexOf(waypoint);
     if (index == -1) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, CANNOT_REMOVE_WAYPOINT);
+        qmlInfo(this) << QStringLiteral("Cannot remove nonexistent waypoint.");
         return;
     }
 

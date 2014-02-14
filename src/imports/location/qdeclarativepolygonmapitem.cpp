@@ -469,12 +469,12 @@ void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordina
     int index = path_.lastIndexOf(coordinate);
 
     if (index == -1) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolygonMapItem");
+        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolygonMapItem");
         return;
     }
 
     if (path_.count() < index + 1) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolygonMapItem");
+        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolygonMapItem");
         return;
     }
     path_.removeAt(index);

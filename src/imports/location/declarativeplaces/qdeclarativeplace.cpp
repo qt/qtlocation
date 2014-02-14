@@ -1187,7 +1187,7 @@ QPlaceManager *QDeclarativePlace::manager()
     }
 
     if (!m_plugin) {
-           qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_NOT_ASSIGNED_TO_PLACE);
+           qmlInfo(this) << QStringLiteral("Plugin is not assigned to place.");
            return 0;
     }
 
