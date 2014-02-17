@@ -47,7 +47,6 @@
  ****************************************************************************/
 
 #include "qgeotiledmapdata_nokia.h"
-#include "jsonparser.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qgeomapcontroller_p.h"
 
