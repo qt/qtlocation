@@ -57,10 +57,9 @@ QGeoMapItemGeometry::QGeoMapItemGeometry()
 */
 void QGeoMapItemGeometry::translate(const QPointF &offset)
 {
-    for (int i = 0; i < screenVertices_.size(); ++i) {
-        screenVertices_[i].x += offset.x();
-        screenVertices_[i].y += offset.y();
-    }
+    for (int i = 0; i < screenVertices_.size(); ++i)
+        screenVertices_[i] += offset;
+
     firstPointOffset_ += offset;
     screenOutline_.translate(offset);
     screenBounds_.translate(offset);
@@ -71,7 +70,7 @@ void QGeoMapItemGeometry::translate(const QPointF &offset)
 */
 void QGeoMapItemGeometry::allocateAndFill(QSGGeometry *geom) const
 {
-    const QVector<QGeoMapItemGeometry::Point> &vx = screenVertices_;
+    const QVector<QPointF> &vx = screenVertices_;
     const QVector<quint32> &ix = screenIndices_;
 
     if (isIndexed()) {
@@ -91,7 +90,7 @@ void QGeoMapItemGeometry::allocateAndFill(QSGGeometry *geom) const
 
     QSGGeometry::Point2D *pts = geom->vertexDataAsPoint2D();
     for (int i = 0; i < vx.size(); ++i)
-        pts[i].set(vx[i].x, vx[i].y);
+        pts[i].set(vx[i].x(), vx[i].y());
 }
 
 /*!

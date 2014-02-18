@@ -432,7 +432,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     QPolygonF tri;
     const float *vs = ts.vertices();
     for (int i = 0; i < (ts.vertexCount()/2*2); i += 2) {
-        screenVertices_ << Point(vs[i], vs[i + 1]);
+        screenVertices_ << QPointF(vs[i], vs[i + 1]);
 
         if (!qIsFinite(vs[i]) || !qIsFinite(vs[i + 1]))
             break;
