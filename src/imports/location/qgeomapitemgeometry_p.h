@@ -43,7 +43,6 @@
 #define QGEOMAPITEMGEOMETRY_H
 
 #include <QPainterPath>
-#include <QPolygonF>
 #include <QPointF>
 #include <QRectF>
 #include <QVector>
@@ -56,10 +55,8 @@ QT_BEGIN_NAMESPACE
 class QSGGeometry;
 class QGeoMap;
 
-class QGeoMapItemGeometry : public QObject
+class QGeoMapItemGeometry
 {
-    Q_OBJECT
-
 public:
 
     struct Point
@@ -70,7 +67,7 @@ public:
         qreal x, y;
     };
 
-    explicit QGeoMapItemGeometry(QObject *parent = 0);
+    QGeoMapItemGeometry();
 
     inline bool isSourceDirty() const { return sourceDirty_; }
     inline bool isScreenDirty() const { return screenDirty_; }

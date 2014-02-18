@@ -47,12 +47,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoMapItemGeometry::QGeoMapItemGeometry(QObject *parent) :
-    QObject(parent),
-    sourceDirty_(true),
-    screenDirty_(true),
-    clipToViewport_(true),
-    preserveGeometry_(false)
+QGeoMapItemGeometry::QGeoMapItemGeometry()
+:   sourceDirty_(true), screenDirty_(true), clipToViewport_(true), preserveGeometry_(false)
 {
 }
 

@@ -56,10 +56,8 @@ class MapPolygonNode;
 
 class QGeoMapPolygonGeometry : public QGeoMapItemGeometry
 {
-    Q_OBJECT
-
 public:
-    explicit QGeoMapPolygonGeometry(QObject *parent = 0);
+    QGeoMapPolygonGeometry();
 
     inline void setAssumeSimple(bool value) { assumeSimple_ = value; }
 

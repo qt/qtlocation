@@ -145,8 +145,8 @@ struct Vertex
     QVector2D position;
 };
 
-QGeoMapPolygonGeometry::QGeoMapPolygonGeometry(QObject *parent) :
-    QGeoMapItemGeometry(parent), assumeSimple_(false)
+QGeoMapPolygonGeometry::QGeoMapPolygonGeometry()
+:   assumeSimple_(false)
 {
 }
 

@@ -136,8 +136,7 @@ struct Vertex
     QVector2D position;
 };
 
-QGeoMapCircleGeometry::QGeoMapCircleGeometry(QObject *parent) :
-    QGeoMapPolygonGeometry(parent)
+QGeoMapCircleGeometry::QGeoMapCircleGeometry()
 {
 }
 

@@ -81,10 +81,8 @@ private:
 
 class QGeoMapPolylineGeometry : public QGeoMapItemGeometry
 {
-    Q_OBJECT
-
 public:
-    explicit QGeoMapPolylineGeometry(QObject *parent = 0);
+    QGeoMapPolylineGeometry();
 
     void updateSourcePoints(const QGeoMap &map,
                             const QList<QGeoCoordinate> &path);

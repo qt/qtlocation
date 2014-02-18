@@ -180,8 +180,7 @@ struct Vertex
     QVector2D position;
 };
 
-QGeoMapPolylineGeometry::QGeoMapPolylineGeometry(QObject *parent) :
-    QGeoMapItemGeometry(parent)
+QGeoMapPolylineGeometry::QGeoMapPolylineGeometry()
 {
 }
 
