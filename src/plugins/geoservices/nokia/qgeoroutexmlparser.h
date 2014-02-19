@@ -49,16 +49,17 @@
 #ifndef QROUTEXMLPARSER_H
 #define QROUTEXMLPARSER_H
 
-#include <QList>
-#include <QString>
-#include <QScopedPointer>
+#include <QtCore/QObject>
+#include <QtCore/QRunnable>
+#include <QtCore/QString>
+#include <QtCore/QList>
 
-#include <qgeoroutesegment.h>
-#include <qgeorouterequest.h>
-#include <qgeomaneuver.h>
+#include <QtLocation/QGeoRouteRequest>
+#include <QtLocation/QGeoRouteSegment>
+#include <QtLocation/QGeoManeuver>
 
 QT_BEGIN_NAMESPACE
-class QIODevice;
+
 class QXmlStreamReader;
 class QGeoRoute;
 class QGeoCoordinate;
@@ -92,15 +93,20 @@ public:
     int baseTime;
 };
 
-class QGeoRouteXmlParser
+class QGeoRouteXmlParser : public QObject, public QRunnable
 {
+    Q_OBJECT
+
 public:
     QGeoRouteXmlParser(const QGeoRouteRequest &request);
     ~QGeoRouteXmlParser();
 
-    bool parse(QIODevice *source);
-    QList<QGeoRoute> results() const;
-    QString errorString() const;
+    void parse(const QByteArray &data);
+    void run();
+
+signals:
+    void results(const QList<QGeoRoute> &routes);
+    void error(const QString &errorString);
 
 private:
     bool parseRootElement();
@@ -119,12 +125,14 @@ private:
     bool parseDynamicSpeedInfo(QGeoDynamicSpeedInfoContainer &speedInfo);
 
     QGeoRouteRequest m_request;
-    QScopedPointer<QXmlStreamReader> m_reader;
+    QByteArray m_data;
+    QXmlStreamReader *m_reader;
+
     QList<QGeoRoute> m_results;
-    QString m_errorString;
     QList<QGeoManeuverContainer> m_maneuvers;
     QList<QGeoRouteSegmentContainer> m_segments;
 };
 
 QT_END_NAMESPACE
+
 #endif
