@@ -51,22 +51,19 @@
 
 #include <QtPositioning/QGeoShape>
 
+Q_DECLARE_METATYPE(QList<QGeoLocation>)
+
 QT_BEGIN_NAMESPACE
 
 QGeoCodeReplyNokia::QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offset,
                                        const QGeoShape &viewport, QObject *parent)
-        : QGeoCodeReply(parent),
-        m_reply(reply)
+:   QGeoCodeReply(parent), m_reply(reply), m_parsing(false)
 {
-    connect(m_reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(networkFinished()));
+    qRegisterMetaType<QList<QGeoLocation> >();
 
-    connect(m_reply,
-            SIGNAL(error(QNetworkReply::NetworkError)),
-            this,
-            SLOT(networkError(QNetworkReply::NetworkError)));
+    connect(m_reply, SIGNAL(finished()), this, SLOT(networkFinished()));
+    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(networkError(QNetworkReply::NetworkError)));
 
     setLimit(limit);
     setOffset(offset);
@@ -75,18 +72,19 @@ QGeoCodeReplyNokia::QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offs
 
 QGeoCodeReplyNokia::~QGeoCodeReplyNokia()
 {
-    //TODO: possible mem leak -> m_reply->deleteLater() ?
+    abort();
 }
 
 void QGeoCodeReplyNokia::abort()
 {
-    if (!m_reply)
+    if (!m_reply && !m_parsing)
         return;
 
     m_reply->abort();
 
     m_reply->deleteLater();
     m_reply = 0;
+    m_parsing = false;
 }
 
 void QGeoCodeReplyNokia::networkFinished()
@@ -94,29 +92,17 @@ void QGeoCodeReplyNokia::networkFinished()
     if (!m_reply)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError) {
-        // Removed because this is already done in networkError, which previously caused _two_ errors to be raised for every error.
-        //setError(QGeoCodeReply::CommunicationError, m_reply->errorString());
-        //m_reply->deleteLater();
-        //m_reply = 0;
+    if (m_reply->error() != QNetworkReply::NoError)
         return;
-    }
 
-    QGeoCodeXmlParser parser;
-    if (parser.parse(m_reply)) {
-        QList<QGeoLocation> locations = parser.results();
-        QGeoShape bounds = viewport();
-        if (bounds.isValid()) {
-            for (int i = locations.size() - 1; i >= 0; --i) {
-                if (!bounds.contains(locations[i].coordinate()))
-                    locations.removeAt(i);
-            }
-        }
-        setLocations(locations);
-        setFinished(true);
-    } else {
-        setError(QGeoCodeReply::ParseError, parser.errorString());
-    }
+    QGeoCodeXmlParser *parser = new QGeoCodeXmlParser;
+    parser->setBounds(viewport());
+    connect(parser, SIGNAL(results(QList<QGeoLocation>)),
+            this, SLOT(appendResults(QList<QGeoLocation>)));
+    connect(parser, SIGNAL(error(QString)), this, SLOT(parseError(QString)));
+
+    m_parsing = true;
+    parser->parse(m_reply->readAll());
 
     m_reply->deleteLater();
     m_reply = 0;
@@ -133,6 +119,25 @@ void QGeoCodeReplyNokia::networkError(QNetworkReply::NetworkError error)
 
     m_reply->deleteLater();
     m_reply = 0;
+}
+
+void QGeoCodeReplyNokia::appendResults(const QList<QGeoLocation> &locations)
+{
+    if (!m_parsing)
+        return;
+
+    m_parsing = false;
+    setLocations(locations);
+    setFinished(true);
+}
+
+void QGeoCodeReplyNokia::parseError(const QString &errorString)
+{
+    Q_UNUSED(errorString)
+
+    setError(QGeoCodeReply::ParseError,
+             tr("The response from the service was not in a recognisable format."));
+    abort();
 }
 
 QT_END_NAMESPACE
