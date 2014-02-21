@@ -64,21 +64,18 @@
 
 #include <map>
 
-#define LARGE_TILE_DIMENSION 256
-
 QT_BEGIN_NAMESPACE
 
 namespace
 {
     QString sizeToStr(const QSize &size)
     {
-        static const QString s256("256");
-        static const QString s128("128");
-        if (size.height() >= LARGE_TILE_DIMENSION ||
-                size.width() >= LARGE_TILE_DIMENSION)
-            return s256;
+        if (size.height() >= 512 || size.width() >= 512)
+            return QStringLiteral("512");
+        else if (size.height() >= 256 || size.width() >= 256)
+            return QStringLiteral("256");
         else
-            return s128;
+            return QStringLiteral("128");   // 128 pixel tiles are deprecated.
     }
 
     bool isAerialType(const QString mapScheme)
