@@ -120,20 +120,16 @@ public:
             qmlRegisterType<QDeclarativeGeoAddress      >(uri, major, minor, "Address");
             qmlRegisterType<QDeclarativeGeoLocation     >(uri, major, minor, "Location");
 
-            // Register the 5.2 types
-            minor = 2;
-            qmlRegisterSingletonType<LocationSingleton  >(uri, major, minor, "QtPositioning", singleton_type_factory);
-            qmlRegisterValueTypeEnums<GeoShapeValueType >(uri, major, minor, "GeoShape");
-            qmlRegisterType<QDeclarativePosition        >(uri, major, minor, "Position");
-            qmlRegisterType<QDeclarativePositionSource  >(uri, major, minor, "PositionSource");
-            qmlRegisterType<QDeclarativeGeoAddress      >(uri, major, minor, "Address");
-            qmlRegisterType<QDeclarativeGeoLocation     >(uri, major, minor, "Location");
-
             // Register the 5.3 types
-            // Introduction of 5.3 version; existing 5.2 exports automatically become availabe under 5.3 as well
+            // Introduction of 5.3 version; existing 5.0 exports become automatically available under 5.3
             minor = 3;
             qmlRegisterType<QDeclarativeGeoCoordinateAnimation  >(uri, major, minor, "CoordinateAnimation");
             qmlRegisterType<QDeclarativePosition, 1             >(uri, major, minor, "Position");
+
+            // Register the 5.4 types
+            // Introduction of 5.4 version; iexisting 5.3 exports become automatically available under 5.4
+            minor = 4;
+            qmlRegisterSingletonType<LocationSingleton  >(uri, major, minor, "QtPositioning", singleton_type_factory);
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
         }
