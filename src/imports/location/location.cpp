@@ -91,64 +91,74 @@ class QLocationDeclarativeModule: public QQmlExtensionPlugin
 public:
     virtual void registerTypes(const char *uri)
     {
-        if (QLatin1String(uri) == QLatin1String("QtMobility.location")) {
-            qWarning("QtMobility.location is not supported. Use QtLocation instead.");
-        } else if (QLatin1String(uri) == QLatin1String("Qt.location")) {
-            qWarning("Qt.location is not supported. Use QtLocation instead.");
-        } else if (QLatin1String(uri) == QLatin1String("QtLocation")) {
+        if (QLatin1String(uri) == QLatin1String("QtLocation")) {
 
-            // @uri QtLocation 5.0
+            // @uri QtLocation
+            int major = 5;
+            int minor = 0;
 
-            qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
-            qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
-            qmlRegisterUncreatableType<QDeclarativeGeoServiceProviderRequirements>(uri, 5, 0, "PluginRequirements",
+            // Register the 5.0 types
+            // 5.0 is siltent and not advertised
+
+            qmlRegisterType<QDeclarativeGeoServiceProvider          >(uri, major, minor, "Plugin");
+            qmlRegisterType<QDeclarativeGeoServiceProviderParameter >(uri, major, minor, "PluginParameter");
+            qmlRegisterUncreatableType<QDeclarativeGeoServiceProviderRequirements>(uri, major, minor, "PluginRequirements",
                                         QStringLiteral("PluginRequirements is not intended instantiable by developer."));
-            qmlRegisterType<QDeclarativeGeoMap>(uri, 5, 0, "Map");
+            qmlRegisterType<QDeclarativeGeoMap                      >(uri, major, minor, "Map");
 
-            qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase>(uri, 5, 0, "GeoMapItemBase",
+            qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase   >(uri, major, minor, "GeoMapItemBase",
                                         QStringLiteral("HeoMapItemBase is not intended instantiable by developer."));
-            qmlRegisterType<QDeclarativeGeoMapQuickItem>(uri, 5, 0, "MapQuickItem");
-            qmlRegisterType<QDeclarativeGeoMapItemView>(uri, 5, 0, "MapItemView");
+            qmlRegisterType<QDeclarativeGeoMapQuickItem             >(uri, major, minor, "MapQuickItem");
+            qmlRegisterType<QDeclarativeGeoMapItemView              >(uri, major, minor, "MapItemView");
 
-            qmlRegisterType<QDeclarativeGeocodeModel>(uri, 5, 0, "GeocodeModel"); // geocoding and reverse geocoding
-            qmlRegisterType<QDeclarativeGeoRouteModel>(uri, 5, 0, "RouteModel");
-            qmlRegisterType<QDeclarativeGeoRouteQuery>(uri, 5, 0, "RouteQuery");
-            qmlRegisterType<QDeclarativeGeoRoute>(uri, 5, 0, "Route"); // data type
-            qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
-            qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
-            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent>(uri, 5, 0, "MapPinchEvent",
+            qmlRegisterType<QDeclarativeGeocodeModel                >(uri, major, minor, "GeocodeModel"); // geocoding and reverse geocoding
+            qmlRegisterType<QDeclarativeGeoRouteModel               >(uri, major, minor, "RouteModel");
+            qmlRegisterType<QDeclarativeGeoRouteQuery               >(uri, major, minor, "RouteQuery");
+            qmlRegisterType<QDeclarativeGeoRoute                    >(uri, major, minor, "Route"); // data type
+            qmlRegisterType<QDeclarativeGeoRouteSegment             >(uri, major, minor, "RouteSegment");
+            qmlRegisterType<QDeclarativeGeoManeuver                 >(uri, major, minor, "RouteManeuver");
+            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent >(uri, major, minor, "MapPinchEvent",
                                         QStringLiteral("(Map)PinchEvent is not intended instantiable by developer."));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea>(uri, 5, 0, "MapGestureArea",
+            qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea>(uri, major, minor, "MapGestureArea",
                                         QStringLiteral("(Map)HestureArea is not intended instantiable by developer."));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapType>(uri, 5, 0, "MapType",
+            qmlRegisterUncreatableType<QDeclarativeGeoMapType       >(uri, major, minor, "MapType",
                                         QStringLiteral("MapType is not intended instantiable by developer."));
-            qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
-            qmlRegisterType<QDeclarativePlaceEditorialModel>(uri, 5, 0, "EditorialModel");
-            qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "ImageModel");
-            qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
-            qmlRegisterType<QDeclarativePlaceIcon>(uri, 5, 0, "Icon");
-            qmlRegisterType<QDeclarativeRatings>(uri, 5, 0, "Ratings");
-            qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
-            qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
-            qmlRegisterType<QDeclarativePlaceUser>(uri, 5, 0, "User");
-            qmlRegisterType<QDeclarativeRectangleMapItem>(uri, 5, 0, "MapRectangle");
-            qmlRegisterType<QDeclarativeCircleMapItem>(uri, 5, 0, "MapCircle");
+            qmlRegisterType<QDeclarativeCategory                    >(uri, major, minor, "Category");
+            qmlRegisterType<QDeclarativePlaceEditorialModel         >(uri, major, minor, "EditorialModel");
+            qmlRegisterType<QDeclarativePlaceImageModel             >(uri, major, minor, "ImageModel");
+            qmlRegisterType<QDeclarativePlace                       >(uri, major, minor, "Place");
+            qmlRegisterType<QDeclarativePlaceIcon                   >(uri, major, minor, "Icon");
+            qmlRegisterType<QDeclarativeRatings                     >(uri, major, minor, "Ratings");
+            qmlRegisterType<QDeclarativeReviewModel                 >(uri, major, minor, "ReviewModel");
+            qmlRegisterType<QDeclarativeSupplier                    >(uri, major, minor, "Supplier");
+            qmlRegisterType<QDeclarativePlaceUser                   >(uri, major, minor, "User");
+            qmlRegisterType<QDeclarativeRectangleMapItem            >(uri, major, minor, "MapRectangle");
+            qmlRegisterType<QDeclarativeCircleMapItem               >(uri, major, minor, "MapCircle");
             qmlRegisterType<QDeclarativeMapLineProperties>();
-            qmlRegisterType<QDeclarativePolylineMapItem>(uri, 5, 0, "MapPolyline");
-            qmlRegisterType<QDeclarativePolygonMapItem>(uri, 5, 0, "MapPolygon");
-            qmlRegisterType<QDeclarativeRouteMapItem>(uri, 5, 0, "MapRoute");
+            qmlRegisterType<QDeclarativePolylineMapItem             >(uri, major, minor, "MapPolyline");
+            qmlRegisterType<QDeclarativePolygonMapItem              >(uri, major, minor, "MapPolygon");
+            qmlRegisterType<QDeclarativeRouteMapItem                >(uri, major, minor, "MapRoute");
 
-            qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");
-            qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "PlaceSearchModel");
-            qmlRegisterType<QDeclarativeSearchSuggestionModel>(uri, 5, 0, "PlaceSearchSuggestionModel");
-            qmlRegisterType<QDeclarativePlaceAttribute>(uri, 5,0, "PlaceAttribute");
-            qmlRegisterUncreatableType<QQmlPropertyMap>(uri, 5, 0, "ExtendedAttributes", "ExtendedAttributes instances cannot be instantiated.  "
+            qmlRegisterType<QDeclarativeSupportedCategoriesModel    >(uri, major, minor, "CategoryModel");
+            qmlRegisterType<QDeclarativeSearchResultModel           >(uri, major, minor, "PlaceSearchModel");
+            qmlRegisterType<QDeclarativeSearchSuggestionModel       >(uri, major, minor, "PlaceSearchSuggestionModel");
+            qmlRegisterType<QDeclarativePlaceAttribute              >(uri, major, minor, "PlaceAttribute");
+            qmlRegisterUncreatableType<QQmlPropertyMap              >(uri, major, minor, "ExtendedAttributes", "ExtendedAttributes instances cannot be instantiated.  "
                                                                    "Only Place types have ExtendedAttributes and they cannot be re-assigned "
                                                                    "(but can be modified).");
-            qmlRegisterType<QDeclarativeContactDetail>(uri, 5, 0, "ContactDetail");
-            qmlRegisterUncreatableType<QDeclarativeContactDetails>(uri, 5, 0, "ContactDetails", "ContactDetails instances cannot be instantiated.  "
+            qmlRegisterType<QDeclarativeContactDetail               >(uri, major, minor, "ContactDetail");
+            qmlRegisterUncreatableType<QDeclarativeContactDetails   >(uri, major, minor, "ContactDetails", "ContactDetails instances cannot be instantiated.  "
                                                                                                 "Only Place types have ContactDetails and they cannot "
                                                                                                 "be re-assigned (but can be modified).");
+
+            // Register the 5.3 types
+            // Introduction of 5.3 version; existing 5.0 exports automatically become available under 5.3 as well
+            // 5.3 is committed QML API despite missing release of QtLocation 5.3
+            minor = 3;
+            // For now there are no new types; just reregister one existing 5.0 type
+            qmlRegisterType<QDeclarativeGeoServiceProvider          >(uri, major, minor, "Plugin");
+
+            //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>("QPlaceCategory");
             qRegisterMetaType<QPlace>("QPlace");
             qRegisterMetaType<QPlaceIcon>("QPlaceIcon");
