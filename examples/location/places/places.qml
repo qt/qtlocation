@@ -40,7 +40,7 @@
 
 import QtQuick 2.0
 import QtPositioning 5.2
-import QtLocation 5.0
+import QtLocation 5.3
 import QtLocation.examples 5.0
 import "content/places"
 
@@ -264,7 +264,7 @@ Item {
                 searchRegionItem.destroy();
             }
 
-            searchRegionItem = Qt.createQmlObject('import QtLocation 5.0; MapRectangle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
+            searchRegionItem = Qt.createQmlObject('import QtLocation 5.3; MapRectangle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
             searchRegionItem.topLeft = r.topLeft;
             searchRegionItem.bottomRight = r.bottomRight;
             map.addMapItem(searchRegionItem);
@@ -306,7 +306,7 @@ Item {
                 searchRegionItem.destroy();
             }
 
-            searchRegionItem = Qt.createQmlObject('import QtLocation 5.0; MapCircle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
+            searchRegionItem = Qt.createQmlObject('import QtLocation 5.3; MapCircle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
             searchRegionItem.center = circle.center;
             searchRegionItem.radius = circle.radius;
             map.addMapItem(searchRegionItem);
@@ -336,7 +336,7 @@ Item {
         onGoButtonClicked: {
             /*if (isFavoritesEnabled) {
                 if (favoritesPlugin == null)
-                    favoritesPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { name: "places_jsondb" }', page);
+                    favoritesPlugin = Qt.createQmlObject('import QtLocation 5.3; Plugin { name: "places_jsondb" }', page);
                 favoritesPlugin.parameters = pluginParametersFromMap(pluginParameters);
                 placeSearchModel.favoritesPlugin = favoritesPlugin;
             } else {
@@ -536,7 +536,7 @@ Item {
         if (placesPlugin.supportsMapping()) {
             mapPlugin = placesPlugin;
         } else {
-            mapPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { required.mapping: Plugin.AnyMappingFeatures;' +
+            mapPlugin = Qt.createQmlObject('import QtLocation 5.3; Plugin { required.mapping: Plugin.AnyMappingFeatures;' +
                                                                            'parameters: pluginParametersFromMap(pluginParameters) }', page);
         }
 
@@ -547,10 +547,10 @@ Item {
     }
 
     function getPlacesPlugins() {
-        var plugin = Qt.createQmlObject('import QtLocation 5.0; Plugin {}', page);
+        var plugin = Qt.createQmlObject('import QtLocation 5.3; Plugin {}', page);
         var myArray = new Array;
         for (var i = 0; i < plugin.availableServiceProviders.length; i++) {
-            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
+            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
 
             if (tempPlugin.supportsPlaces())
                 myArray.push(tempPlugin.name)
@@ -562,7 +562,7 @@ Item {
     function pluginParametersFromMap(pluginParameters) {
         var parameters = new Array()
         for (var prop in pluginParameters){
-            var parameter = Qt.createQmlObject('import QtLocation 5.0; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
+            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
             parameters.push(parameter)
         }
         return parameters

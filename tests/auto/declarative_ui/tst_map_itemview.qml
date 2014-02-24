@@ -41,7 +41,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.0
+import QtLocation 5.3
 import QtPositioning 5.2
 import QtLocation.test 5.0
 
@@ -310,13 +310,13 @@ Item {
             clear_data();
             /*
             // basic create-destroy without items, mustn't crash
-            var dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
+            var dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.3; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
             verify(dynamicMap !== null)
             dynamicMap.destroy(1)
             //wait(5)
 
             // add rm add, destroy with item on it
-            dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
+            dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.3; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
             verify(dynamicMap !== null)
             dynamicMap.addMapItem(externalCircle);
             compare(dynamicMap.mapItems.length, 1)
@@ -328,8 +328,8 @@ Item {
             //wait(5)
 
             // try adding same item to two maps, will not be allowed
-            var dynamicMap2 = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Map { x:0; y:0; objectName: \'dynomik map2\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
-            dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
+            var dynamicMap2 = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.3; Map { x:0; y:0; objectName: \'dynomik map2\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
+            dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.3; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
             verify(dynamicMap !== null)
             verify(dynamicMap2 !== null)
             compare(dynamicMap.mapItems.length, 0)
@@ -339,7 +339,7 @@ Item {
             compare(dynamicMap2.mapItems.length, 0)
 
             // create and destroy a dynamic item that is in the map
-            var dynamicCircle = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; MapCircle { objectName: \'dynamic circle 1\'; center { latitude: 5; longitude: 5 } radius: 15 } ', masterItem, "dynamicCreationErrors" );
+            var dynamicCircle = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.3; MapCircle { objectName: \'dynamic circle 1\'; center { latitude: 5; longitude: 5 } radius: 15 } ', masterItem, "dynamicCreationErrors" );
             verify (dynamicCircle !== null)
             compare(map.mapItems.length, 0)
             map.addMapItem(dynamicCircle)
@@ -371,7 +371,7 @@ Item {
             mapForView.removeMapItem(internalCircle)
             compare(mapForView.mapItems.length, 7)
             // Basic adding and removing of dynamic object
-            var dynamicCircle = Qt.createQmlObject( "import QtQuick 2.0; import QtLocation 5.0; MapCircle {radius: 4000; center: mapDefaultCenter}", map, "");
+            var dynamicCircle = Qt.createQmlObject( "import QtQuick 2.0; import QtLocation 5.3; MapCircle {radius: 4000; center: mapDefaultCenter}", map, "");
             mapForView.addMapItem(dynamicCircle)
             compare(mapForView.mapItems.length, 8)
             mapForView.removeMapItem(dynamicCircle)

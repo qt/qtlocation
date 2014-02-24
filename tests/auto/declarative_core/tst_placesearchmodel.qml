@@ -41,7 +41,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.0
+import QtLocation 5.3
 import QtPositioning 5.2
 import "utils.js" as Utils
 
@@ -114,13 +114,13 @@ TestCase {
     }
 
     function test_setAndGet(data) {
-        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchModel {}', testCase, "PlaceSearchModel");
+        var testModel = Qt.createQmlObject('import QtLocation 5.3; PlaceSearchModel {}', testCase, "PlaceSearchModel");
         Utils.testObjectProperties(testCase, testModel, data);
         delete testModel;
     }
 
     function test_search_data() {
-        var park = Qt.createQmlObject('import QtLocation 5.0; Category {name: "Park"; categoryId: "c2e1252c-b997-44fc-8165-e53dd00f66a7"}', testCase, "Category");
+        var park = Qt.createQmlObject('import QtLocation 5.3; Category {name: "Park"; categoryId: "c2e1252c-b997-44fc-8165-e53dd00f66a7"}', testCase, "Category");
         return [
             {
                 tag: "searchTerm, multiple results",
@@ -170,7 +170,7 @@ TestCase {
     }
 
     function test_search(data) {
-        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchModel {}', testCase, "PlaceSearchModel");
+        var testModel = Qt.createQmlObject('import QtLocation 5.3; PlaceSearchModel {}', testCase, "PlaceSearchModel");
         testModel.plugin = testPlugin;
 
         var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
@@ -230,7 +230,7 @@ TestCase {
     }
 
     function test_cancel() {
-        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchModel {}', testCase, "PlaceSearchModel");
+        var testModel = Qt.createQmlObject('import QtLocation 5.3; PlaceSearchModel {}', testCase, "PlaceSearchModel");
         testModel.plugin = testPlugin;
 
         var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
@@ -274,7 +274,7 @@ TestCase {
     }
 
     function test_error() {
-        var testModel = Qt.createQmlObject('import QtLocation 5.0; PlaceSearchModel {}', testCase, "PlaceSearchModel");
+        var testModel = Qt.createQmlObject('import QtLocation 5.3; PlaceSearchModel {}', testCase, "PlaceSearchModel");
 
         var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         statusChangedSpy.target = testModel;

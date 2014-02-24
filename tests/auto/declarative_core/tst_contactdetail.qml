@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 import QtTest 1.0
-import QtLocation 5.0
+import QtLocation 5.3
 import "utils.js" as Utils
 
 TestCase {

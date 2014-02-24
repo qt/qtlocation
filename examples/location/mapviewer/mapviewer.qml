@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtLocation 5.0
+import QtLocation 5.3
 import QtPositioning 5.2
 import QtLocation.examples 5.0
 import "content/map"
@@ -546,9 +546,9 @@ Item {
     function createMap(provider){
         var plugin
         if (parameters.length>0)
-            plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
         else
-            plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"}', page)
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', page)
         if (plugin.supportsMapping()
                 && plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)
                 && plugin.supportsRouting()) {
@@ -558,7 +558,7 @@ Item {
                 minimap = null
             }
 
-            map = Qt.createQmlObject ('import QtLocation 5.0;\
+            map = Qt.createQmlObject ('import QtLocation 5.3;\
                                        import "content/map";\
                                        MapComponent{\
                                            z : backgroundRect.z + 1;\
@@ -611,11 +611,11 @@ Item {
     }
 
     function getPlugins(){
-        var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {}', page)
+        var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', page)
         var tempPlugin
         var myArray = new Array()
         for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
+            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
 
             if (tempPlugin.supportsMapping()
                     && tempPlugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)
@@ -630,7 +630,7 @@ Item {
     function setPluginParameters(pluginParameters) {
         var parameters = new Array()
         for (var prop in pluginParameters){
-            var parameter = Qt.createQmlObject('import QtLocation 5.0; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
+            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
             parameters.push(parameter)
         }
         page.parameters=parameters

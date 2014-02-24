@@ -41,7 +41,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.0
+import QtLocation 5.3
 import "utils.js" as Utils
 
 TestCase {
@@ -193,7 +193,7 @@ TestCase {
     }
 
     function createModel() {
-        return Qt.createQmlObject('import QtLocation 5.0; ImageModel {}',
+        return Qt.createQmlObject('import QtLocation 5.3; ImageModel {}',
                                   testCase, "imageModel");
     }
 }

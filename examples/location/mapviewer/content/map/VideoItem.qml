@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 import QtQuick 2.0;
-import QtLocation 5.0
+import QtLocation 5.3
 import QtMultimedia 5.0
 
 // NOTE: If the creation of this compoment fails, make sure you have the latest
