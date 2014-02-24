@@ -11,6 +11,7 @@ Module {
         name: "GeoShapeValueType"
         prototype: "QQmlValueType"
         exports: ["QtPositioning/GeoShape 5.0", "QtPositioning/GeoShape 5.2"]
+        isCreatable: false
         exportMetaObjectRevisions: [0, 0]
         Enum {
             name: "ShapeType"
@@ -36,6 +37,8 @@ Module {
             "QtPositioning/QtPositioning 5.0",
             "QtPositioning/QtPositioning 5.2"
         ]
+        isCreatable: false
+        isSingleton: true
         exportMetaObjectRevisions: [0, 0]
         Method { name: "coordinate"; type: "QGeoCoordinate" }
         Method {
@@ -122,8 +125,12 @@ Module {
     Component {
         name: "QDeclarativePosition"
         prototype: "QObject"
-        exports: ["QtPositioning/Position 5.0", "QtPositioning/Position 5.2"]
-        exportMetaObjectRevisions: [0, 0]
+        exports: [
+            "QtPositioning/Position 5.0",
+            "QtPositioning/Position 5.2",
+            "QtPositioning/Position 5.3"
+        ]
+        exportMetaObjectRevisions: [0, 0, 1]
         Property { name: "latitudeValid"; type: "bool"; isReadonly: true }
         Property { name: "longitudeValid"; type: "bool"; isReadonly: true }
         Property { name: "altitudeValid"; type: "bool"; isReadonly: true }
@@ -135,6 +142,14 @@ Module {
         Property { name: "verticalAccuracy"; type: "double" }
         Property { name: "horizontalAccuracyValid"; type: "bool"; isReadonly: true }
         Property { name: "verticalAccuracyValid"; type: "bool"; isReadonly: true }
+        Property { name: "directionValid"; revision: 1; type: "bool"; isReadonly: true }
+        Property { name: "direction"; revision: 1; type: "double"; isReadonly: true }
+        Property { name: "verticalSpeedValid"; revision: 1; type: "bool"; isReadonly: true }
+        Property { name: "verticalSpeed"; revision: 1; type: "double"; isReadonly: true }
+        Signal { name: "directionValidChanged"; revision: 1 }
+        Signal { name: "directionChanged"; revision: 1 }
+        Signal { name: "verticalSpeedValidChanged"; revision: 1 }
+        Signal { name: "verticalSpeedChanged"; revision: 1 }
     }
     Component {
         name: "QDeclarativePositionSource"
