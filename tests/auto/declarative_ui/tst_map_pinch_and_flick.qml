@@ -96,16 +96,10 @@ Item {
     SignalSpy {id: pinchUpdatedSpy; target: map.gesture; signalName: 'pinchUpdated'}
     SignalSpy {id: pinchFinishedSpy; target: map.gesture; signalName: 'pinchFinished'}
     SignalSpy {id: pinchMaximumZoomLevelChangeSpy; target: map.gesture; signalName: 'maximumZoomLevelChangeChanged'}
-    //SignalSpy {id: pinchMinimumZoomLevelSpy; target: map.gesture; signalName: 'minimumZoomLevelChanged'}
-    //SignalSpy {id: pinchMaximumZoomLevelSpy; target: map.gesture; signalName: 'maximumZoomLevelChanged'}
-    //SignalSpy {id: pinchMinimumRotationSpy; target: map.gesture; signalName: 'minimumRotationChanged'}
-    //SignalSpy {id: pinchMaximumRotationSpy; target: map.gesture; signalName: 'maximumRotationChanged'}
-    SignalSpy {id: pinchRotationFactorSpy; target: map.gesture; signalName: 'rotationFactorChanged'}
     SignalSpy {id: gestureEnabledSpy; target: map.gesture; signalName: 'enabledChanged'}
     SignalSpy {id: pinchActiveSpy; target: map.gesture; signalName: 'pinchActiveChanged'}
     SignalSpy {id: pinchActiveGesturesSpy; target: map.gesture; signalName: 'activeGesturesChanged'}
     SignalSpy {id: mapZoomLevelSpy; target: map; signalName: 'zoomLevelChanged'}
-    SignalSpy {id: mapBearingSpy; target: map; signalName: 'bearingChanged'}
     SignalSpy {id: flickDecelerationSpy; target: map.gesture; signalName: 'flickDecelerationChanged'}
     SignalSpy {id: movementStoppedSpy; target: map.gesture; signalName: 'movementStopped'}
     SignalSpy {id: flickStartedSpy; target: map.gesture; signalName: 'flickStarted'}
@@ -129,16 +123,10 @@ Item {
             pinchUpdatedSpy.clear()
             pinchFinishedSpy.clear()
             pinchMaximumZoomLevelChangeSpy.clear()
-            //pinchMinimumZoomLevelSpy.clear()
-            //pinchMaximumZoomLevelSpy.clear()
-            //pinchMinimumRotationSpy.clear()
-            //pinchMaximumRotationSpy.clear()
-            pinchRotationFactorSpy.clear()
             gestureEnabledSpy.clear()
             pinchActiveSpy.clear()
             pinchActiveGesturesSpy.clear()
             mapZoomLevelSpy.clear()
-            mapBearingSpy.clear()
             flickDecelerationSpy.clear()
             movementStoppedSpy.clear()
             flickStartedSpy.clear()
@@ -162,61 +150,21 @@ Item {
             compare(map.gesture.isPinchActive, false)
 
             verify(map.gesture.activeGestures & MapGestureArea.ZoomGesture)
-            verify(!(map.gesture.activeGestures & MapGestureArea.RotationGesture))
-            verify(!(map.gesture.activeGestures & MapGestureArea.TiltGesture))
             map.gesture.activeGestures = MapGestureArea.NoGesture
             compare(map.gesture.activeGestures, MapGestureArea.NoGesture)
             compare(pinchActiveGesturesSpy.count, 1)
             map.gesture.activeGestures = MapGestureArea.NoGesture
             compare(map.gesture.activeGestures, MapGestureArea.NoGesture)
             compare(pinchActiveGesturesSpy.count, 1)
-            map.gesture.activeGestures = MapGestureArea.ZoomGesture | MapGestureArea.RotationGesture
-            compare(map.gesture.activeGestures, MapGestureArea.ZoomGesture | MapGestureArea.RotationGesture)
+            map.gesture.activeGestures = MapGestureArea.ZoomGesture | MapGestureArea.PanGesture
+            compare(map.gesture.activeGestures, MapGestureArea.ZoomGesture | MapGestureArea.PanGesture)
             compare(pinchActiveGesturesSpy.count, 2)
-            map.gesture.activeGestures = MapGestureArea.RotationGesture
-            compare(map.gesture.activeGestures, MapGestureArea.RotationGesture)
+            map.gesture.activeGestures = MapGestureArea.PanGesture
+            compare(map.gesture.activeGestures, MapGestureArea.PanGesture)
             compare(pinchActiveGesturesSpy.count, 3)
             map.gesture.activeGestures = MapGestureArea.ZoomGesture
             compare(map.gesture.activeGestures, MapGestureArea.ZoomGesture)
             compare(pinchActiveGesturesSpy.count, 4)
-
-            /*
-            compare(map.gesture.minimumZoomLevel, map.minimumZoomLevel)
-            map.gesture.minimumZoomLevel = 5
-            compare(pinchMinimumZoomLevelSpy.count, 1)
-            compare(map.gesture.minimumZoomLevel, 5)
-            map.gesture.minimumZoomLevel = -1 // too small
-            map.gesture.minimumZoomLevel = 492 // too big
-            compare(pinchMinimumZoomLevelSpy.count, 1)
-            compare(map.gesture.minimumZoomLevel, 5)
-            map.gesture.minimumZoomLevel = map.minimumZoomLevel
-            compare(pinchMinimumZoomLevelSpy.count, 2)
-            compare(map.gesture.minimumZoomLevel, map.minimumZoomLevel)
-
-            compare(map.gesture.maximumZoomLevel, map.maximumZoomLevel)
-            map.gesture.maximumZoomLevel = 9
-            compare (pinchMaximumZoomLevelSpy.count, 1)
-            compare(map.gesture.maximumZoomLevel, 9)
-            map.gesture.maximumZoomLevel = -1 // too small
-            map.gesture.maximumZoomLevel = 3234 // too big
-            compare(pinchMaximumZoomLevelSpy.count, 1)
-            compare(map.gesture.maximumZoomLevel, 9)
-            map.gesture.maximumZoomLevel = map.maximumZoomLevel
-            compare(pinchMaximumZoomLevelSpy.count, 2)
-            compare(map.gesture.maximumZoomLevel, map.maximumZoomLevel)
-
-            clear_data()
-            map.gesture.minimumZoomLevel = 5  // ok
-            map.gesture.maximumZoomLevel = 9  // ok
-            map.gesture.minimumZoomLevel = 10 // bigger than max
-            map.gesture.maximumZoomLevel = 4  // smaller than min
-            compare (pinchMaximumZoomLevelSpy.count, 1)
-            compare (pinchMinimumZoomLevelSpy.count, 1)
-            compare(map.gesture.maximumZoomLevel, 9)
-            compare(map.gesture.minimumZoomLevel, 5)
-            map.gesture.minimumZoomLevel = map.minimumZoomLevel
-            map.gesture.maximumZoomLevel = map.maximumZoomLevel
-            */
 
             compare(map.gesture.maximumZoomLevelChange, 2)
             map.gesture.maximumZoomLevelChange = 4
@@ -234,58 +182,6 @@ Item {
             compare(pinchMaximumZoomLevelChangeSpy.count, 2)
             compare (map.gesture.maximumZoomLevelChange, 2)
 
-            /*
-            compare(map.gesture.minimumRotation, 0)
-            map.gesture.minimumRotation = 10
-            compare(pinchMinimumRotationSpy.count, 1)
-            compare(map.gesture.minimumRotation, 10)
-            map.gesture.minimumRotation = 10
-            compare(pinchMinimumRotationSpy.count, 1)
-            compare(map.gesture.minimumRotation, 10)
-            map.gesture.minimumRotation = -1  // too small
-            map.gesture.minimumRotation = 361 // too big
-            compare(pinchMinimumRotationSpy.count, 1)
-            compare(map.gesture.minimumRotation, 10)
-            map.gesture.minimumRotation = 0
-            compare(pinchMinimumRotationSpy.count, 2)
-            compare(map.gesture.minimumRotation, 0)
-
-            compare(map.gesture.maximumRotation, 45)
-            map.gesture.maximumRotation = 55
-            compare(pinchMaximumRotationSpy.count,1)
-            compare(map.gesture.maximumRotation, 55)
-            map.gesture.maximumRotation = 55
-            compare(pinchMaximumRotationSpy.count,1)
-            compare(map.gesture.maximumRotation, 55)
-            map.gesture.maximumRotation = -1  // too small
-            map.gesture.maximumRotation = 362 // too big
-            compare(pinchMaximumRotationSpy.count,1)
-            compare(map.gesture.maximumRotation, 55)
-            map.gesture.maximumRotation = 45
-            compare(pinchMaximumRotationSpy.count,2)
-            compare(map.gesture.maximumRotation, 45)
-            */
-
-            compare(map.gesture.rotationFactor, 1)
-            map.gesture.rotationFactor = 2
-            compare(pinchRotationFactorSpy.count, 1)
-            compare(map.gesture.rotationFactor, 2)
-            map.gesture.rotationFactor = 2
-            compare(pinchRotationFactorSpy.count, 1)
-            compare(map.gesture.rotationFactor, 2)
-            map.gesture.rotationFactor = -1 // too small
-            map.gesture.rotationFactor = 6  // too big
-            compare(pinchRotationFactorSpy.count, 1)
-            compare(map.gesture.rotationFactor, 2)
-            map.gesture.rotationFactor = 1
-            compare(pinchRotationFactorSpy.count, 2)
-            compare(map.gesture.rotationFactor, 1)
-            /*
-            compare(map.gesture.maximumTilt, 90)
-            compare(map.gesture.minimumTilt, 0)
-            compare(map.gesture.maximumTiltChange, 20)
-            */
-
             compare(map.gesture.flickDeceleration, 2500)
             map.gesture.flickDeceleration = 2600
             compare(flickDecelerationSpy.count, 1)
@@ -299,109 +195,6 @@ Item {
             map.gesture.flickDeceleration = 11000 // too big
             compare(flickDecelerationSpy.count, 3)
             compare(map.gesture.flickDeceleration, 10000) // clipped to max
-        }
-
-        function test_b_pinch_rotation() {
-            map.gesture.activeGestures = MapGestureArea.RotationGesture
-            map.gesture.rotationFactor = 1.0
-            map.zoomLevel = 8
-            compare(map.zoomLevel, 8)
-            map.center.latitude = 10
-            map.center.longitude = 11
-            clear_data()
-            compare(map.bearing, 0)
-            // 1. basic ccw rotation
-            pinchGenerator.pinch(
-                        Qt.point(100, 0),   // point 1 from
-                        Qt.point(50, 0),    // point 1 to
-                        Qt.point(0, 100),   // point 2 from
-                        Qt.point(50, 100)); // point 2 to
-            tryCompare(pinchStartedSpy, "count", 1);
-            wait(50);
-            compare(pinchActiveSpy.count,1) // check that pinch is active
-            compare(map.gesture.isPinchActive, true)
-            wait(200);
-            verify(pinchUpdatedSpy.count >= 5); // verify 'sane' number of updates received
-            tryCompare(pinchFinishedSpy, "count", 1);
-            compare(pinchActiveSpy.count,2)
-            compare(map.gesture.isPinchActive, false)
-            compare(map.zoomLevel, 8) // mustn't change
-            compare(mapBearingSpy.count, pinchUpdatedSpy.count)
-            verify(map.bearing > 20 && map.bearing < 30) // roughly right
-            var ccw_basic = map.bearing
-            // 2. reverse the previous rotation (cw same amount)
-            clear_data()
-            pinchGenerator.pinch(
-                        Qt.point(50, 0),
-                        Qt.point(100, 0),
-                        Qt.point(50, 100),
-                        Qt.point(0, 100));
-            tryCompare(pinchStartedSpy, "count", 1);
-            wait(250);
-            verify(pinchUpdatedSpy.count >= 5); // verify 'sane' number of updates received
-            tryCompare(pinchFinishedSpy, "count", 1);
-            compare(pinchActiveSpy.count,2)
-            compare(map.gesture.isPinchActive, false)
-            compare(map.zoomLevel, 8) // mustn't change
-            compare(mapBearingSpy.count, pinchUpdatedSpy.count)
-            verify(map.bearing < 2 || map.bearing > 358) // roughly right
-            // 3. set bearing manually on map and repeat the basic ccw rotation
-            clear_data()
-            map.bearing = 5
-            compare(mapBearingSpy.count, 1)
-            compare(map.bearing, 5)
-            pinchGenerator.pinch(Qt.point(100, 0),Qt.point(50, 0),Qt.point(0, 100),Qt.point(50, 100));
-            tryCompare(pinchFinishedSpy, "count", 1);
-            compare(map.bearing, ccw_basic + 5)
-            map.bearing = 0
-            // 4. manually setting bearing values
-            clear_data()
-            map.bearing = -1.5
-            compare(mapBearingSpy.count, 1)
-            compare(map.bearing, 358.5)
-            map.bearing = -357.2
-            compare(map.bearing, 2.8)
-            map.bearing = 702.5
-            compare(map.bearing, 343.5)
-            map.bearing = -702.5
-            compare(map.bearing, 16.5)
-            map.bearing = 0
-            // 5. rotation factor effects, repeat the basic ccw rotation
-            map.gesture.rotationFactor = 2
-            pinchGenerator.pinch(Qt.point(100, 0),Qt.point(50, 0),Qt.point(0, 100),Qt.point(50, 100));
-            tryCompare(pinchFinishedSpy, "count", 1);
-            verify (map.bearing >  (ccw_basic * 2 - 5)) // roughly right, hence the '5'
-            map.bearing = 0
-            map.gesture.rotationFactor = 0.5
-            pinchGenerator.pinch(Qt.point(100, 0),Qt.point(50, 0),Qt.point(0, 100),Qt.point(50, 100));
-            tryCompare(pinchFinishedSpy, "count", 2);
-            verify (map.bearing > (ccw_basic / 2 - 1) && map.bearing < (ccw_basic / 2 + 1)) // roughly right, hence the '1'
-            map.gesture.rotationFactor = 1.0
-            map.bearing = 0
-            // 6. manually changing the bearing during pinch rotation
-            clear_data()
-            pinchGenerator.pinch(Qt.point(100, 0),Qt.point(50, 0),Qt.point(0, 100),Qt.point(50, 100));
-            tryCompare(pinchStartedSpy, "count", 1);
-
-            tryCompare(pinchActiveSpy, "count",1) // check that pinch is active
-            compare(map.gesture.isPinchActive, true)
-            map.bearing += 100 // this will get overwritten
-            tryCompare(pinchFinishedSpy, "count", 1);
-            compare(map.bearing, ccw_basic)
-            // 7. test rotating past the '0' bearing
-            clear_data()
-            map.bearing = 350
-            pinchGenerator.pinch(Qt.point(100, 0),Qt.point(50, 0),Qt.point(0, 100),Qt.point(50, 100));
-            tryCompare(pinchFinishedSpy, "count", 1);
-            compare(map.bearing, ccw_basic - 10)
-            // 8. sanity check the biggest rotation factor
-            clear_data()
-            map.gesture.rotationFactor = 5
-            compare(map.gesture.rotationFactor, 5)
-            map.bearing = 0
-            pinchGenerator.pinch(Qt.point(100, 0),Qt.point(50, 0),Qt.point(0, 100),Qt.point(50, 100)); //ccw
-            tryCompare(pinchFinishedSpy, "count", 1);
-            compare(map.bearing, ccw_basic * 5)
         }
 
         function test_a_flick() {
