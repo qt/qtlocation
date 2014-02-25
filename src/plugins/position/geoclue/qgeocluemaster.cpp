@@ -50,7 +50,7 @@ namespace
 {
 
 void position_provider_changed(GeoclueMasterClient *client, char *name, char *description,
-                               char *service, char *path, gpointer userdata)
+                               char *service, char *path, QObject *handler)
 {
     Q_UNUSED(client)
     Q_UNUSED(name)
@@ -59,9 +59,7 @@ void position_provider_changed(GeoclueMasterClient *client, char *name, char *de
     const QByteArray pService = QByteArray(service);
     const QByteArray pPath = QByteArray(path);
 
-    QObject *o = static_cast<QObject *>(userdata);
-
-    QMetaObject::invokeMethod(o, "positionProviderChanged", Qt::QueuedConnection,
+    QMetaObject::invokeMethod(handler, "positionProviderChanged", Qt::QueuedConnection,
                               Q_ARG(QByteArray, pService), Q_ARG(QByteArray, pPath));
 }
 

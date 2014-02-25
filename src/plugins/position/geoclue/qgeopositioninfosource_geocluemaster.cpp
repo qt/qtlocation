@@ -47,6 +47,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QSaveFile>
 #include <QtCore/QStandardPaths>
+#include <QtCore/QVariantMap>
 #include <QtCore/QtNumeric>
 
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
@@ -60,74 +61,61 @@ QT_BEGIN_NAMESPACE
 #define MINIMUM_UPDATE_INTERVAL 1000
 #define UPDATE_TIMEOUT_COLD_START 120000
 
-// Callback for position-changed -signal
-static void position_changed (GeocluePosition      *position,
-                              GeocluePositionFields fields,
-                              int                   timestamp,
-                              double                latitude,
-                              double                longitude,
-                              double                altitude,
-                              GeoclueAccuracy      *accuracy,
-                              gpointer              userdata) // Ptr to this
+namespace
 {
-    Q_UNUSED(position);
-    if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
-          fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->regularUpdateFailed();
-    } else {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->regularUpdateSucceeded(
-                    fields, timestamp, latitude, longitude, altitude, accuracy);
-    }
+
+void position_changed(GeocluePosition *position, GeocluePositionFields fields, int timestamp,
+                      double latitude, double longitude, double altitude,
+                      GeoclueAccuracy *accuracy, QGeoPositionInfoSourceGeoclueMaster *master)
+{
+    Q_UNUSED(position)
+
+    if (fields & GEOCLUE_POSITION_FIELDS_LATITUDE && fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)
+        master->updatePosition(fields, timestamp, latitude, longitude, altitude, accuracy);
+    else
+        master->regularUpdateFailed();
 }
 
-// Callback for velocity-changed -signal
-static void velocity_changed (GeoclueVelocity *velocity,
-                              GeoclueVelocityFields fields,
-                              int timestamp,
-                              double speed,
-                              double direction,
-                              double climb,
-                              gpointer userdata) // Ptr to this
+void velocity_changed(GeoclueVelocity *velocity, GeoclueVelocityFields fields, int timestamp,
+                      double speed, double direction, double climb,
+                      QGeoPositionInfoSourceGeoclueMaster *master)
 {
     Q_UNUSED(velocity)
 
-    QGeoPositionInfoSourceGeoclueMaster *master =
-        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata);
-
-    if (fields == GEOCLUE_VELOCITY_FIELDS_NONE) {
+    if (fields == GEOCLUE_VELOCITY_FIELDS_NONE)
         master->velocityUpdateFailed();
-        return;
-    }
-    master->velocityUpdateSucceeded(fields, timestamp, speed, direction, climb);
+    else
+        master->velocityUpdateSucceeded(fields, timestamp, speed, direction, climb);
 }
 
-// Callback for single async update
-static void position_callback (GeocluePosition *pos, GeocluePositionFields fields, int timestamp,
-                               double latitude, double longitude, double altitude,
-                               GeoclueAccuracy *accuracy, GError *error, gpointer userdata)
+void position_callback(GeocluePosition *pos, GeocluePositionFields fields, int timestamp,
+                       double latitude, double longitude, double altitude,
+                       GeoclueAccuracy *accuracy, GError *error, gpointer userdata)
 {
-    Q_UNUSED(pos);
-    Q_UNUSED(accuracy);
+    Q_UNUSED(pos)
 
     if (error)
         g_error_free(error);
 
-    if (fields & GEOCLUE_POSITION_FIELDS_LATITUDE && fields & GEOCLUE_POSITION_FIELDS_LONGITUDE) {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->singleUpdateSucceeded(
-                    fields, timestamp, latitude, longitude, altitude, accuracy);
-    }
+    QGeoPositionInfoSourceGeoclueMaster *master =
+        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata);
+
+    if (fields & GEOCLUE_POSITION_FIELDS_LATITUDE && fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)
+        master->updatePosition(fields, timestamp, latitude, longitude, altitude, accuracy);
 }
 
-static double knotsToMetersPerSecond(double knots)
+double knotsToMetersPerSecond(double knots)
 {
     return knots * 1852.0 / 3600.0;
 }
 
+}
+
 QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
-:   QGeoPositionInfoSource(parent), QGeoclueMaster(this), m_updateInterval(0), m_pos(0), m_vel(0),
-    m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false), m_regularUpdateTimedOut(false),
-    m_lastVelocity(qQNaN()), m_lastDirection(qQNaN()), m_lastClimb(qQNaN()),
-    m_lastPositionFromSatellite(false), m_methods(AllPositioningMethods), m_running(false)
+:   QGeoPositionInfoSource(parent), QGeoclueMaster(this), m_pos(0), m_vel(0),
+    m_lastVelocityIsFresh(false), m_regularUpdateTimedOut(false), m_lastVelocity(qQNaN()),
+    m_lastDirection(qQNaN()), m_lastClimb(qQNaN()), m_lastPositionFromSatellite(false),
+    m_methods(AllPositioningMethods), m_running(false)
 {
 #ifndef QT_NO_DATASTREAM
     // Load the last known location
@@ -141,7 +129,6 @@ QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject
 
     m_requestTimer.setSingleShot(true);
     QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(requestUpdateTimeout()));
-    QObject::connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(startUpdatesTimeout()));
 
     setPreferredPositioningMethods(AllPositioningMethods);
 }
@@ -204,38 +191,6 @@ void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateSucceeded(GeoclueVelocit
     m_lastVelocityIsFresh = true;
 }
 
-void QGeoPositionInfoSourceGeoclueMaster::singleUpdateSucceeded(GeocluePositionFields fields,
-                                                                int                   timestamp,
-                                                                double                latitude,
-                                                                double                longitude,
-                                                                double                altitude,
-                                                                GeoclueAccuracy      *accuracy)
-{
-    QGeoPositionInfo info = geoclueToPositionInfo(fields, timestamp, latitude, longitude, altitude, accuracy);
-    m_lastPosition = info;
-    if (m_requestTimer.isActive())
-        m_requestTimer.stop();
-    if (m_lastVelocityIsFresh) {
-        if (!qIsNaN(m_lastVelocity))
-            info.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity);
-        if (!qIsNaN(m_lastDirection))
-            info.setAttribute(QGeoPositionInfo::Direction, m_lastDirection);
-        if (!qIsNaN(m_lastClimb))
-            info.setAttribute(QGeoPositionInfo::VerticalSpeed, m_lastClimb);
-    }
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-        qDebug() << "QGeoPositionInfoSourceGeoclueMaster single update succeeded: ";
-        qDebug() << "Lat, lon, alt, speed:" << info.coordinate().latitude() << info.coordinate().longitude() << info.coordinate().altitude() << info.attribute(QGeoPositionInfo::GroundSpeed);
-#endif
-    emit positionUpdated(info);
-
-    // Only stop positioning if regular updates not active.
-    if (!m_running) {
-        cleanupPositionSource();
-        releaseMasterClient();
-    }
-}
-
 void QGeoPositionInfoSourceGeoclueMaster::regularUpdateFailed()
 {
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
@@ -243,23 +198,40 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateFailed()
 #endif
 
     m_lastVelocityIsFresh = false;
-    m_lastPositionIsFresh = false;
-    if (m_updateTimer.isActive() && !m_regularUpdateTimedOut) {
+    if (m_running && !m_regularUpdateTimedOut) {
         m_regularUpdateTimedOut = true;
         emit updateTimeout();
     }
 }
 
-void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePositionFields fields,
-                                                                 int                   timestamp,
-                                                                 double                latitude,
-                                                                 double                longitude,
-                                                                 double                altitude,
-                                                                 GeoclueAccuracy      *accuracy)
+void QGeoPositionInfoSourceGeoclueMaster::updatePosition(GeocluePositionFields fields,
+                                                         int timestamp, double latitude,
+                                                         double longitude, double altitude,
+                                                         GeoclueAccuracy *accuracy)
 {
-    m_lastPosition = geoclueToPositionInfo(fields, timestamp, latitude, longitude, altitude, accuracy);
-    m_lastPositionIsFresh = true;
-    m_regularUpdateTimedOut = false;
+    if (m_requestTimer.isActive())
+        m_requestTimer.stop();
+
+    QGeoCoordinate coordinate(latitude, longitude);
+    if (fields & GEOCLUE_POSITION_FIELDS_ALTITUDE)
+        coordinate.setAltitude(altitude);
+
+    m_lastPosition = QGeoPositionInfo(coordinate, QDateTime::fromTime_t(timestamp));
+
+    if (accuracy) {
+        double horizontalAccuracy = qQNaN();
+        double verticalAccuracy = qQNaN();
+        GeoclueAccuracyLevel accuracyLevel = GEOCLUE_ACCURACY_LEVEL_NONE;
+        geoclue_accuracy_get_details(accuracy, &accuracyLevel, &horizontalAccuracy, &verticalAccuracy);
+
+        m_lastPositionFromSatellite = accuracyLevel & GEOCLUE_ACCURACY_LEVEL_DETAILED;
+
+        if (!qIsNaN(horizontalAccuracy))
+            m_lastPosition.setAttribute(QGeoPositionInfo::HorizontalAccuracy, horizontalAccuracy);
+        if (!qIsNaN(verticalAccuracy))
+            m_lastPosition.setAttribute(QGeoPositionInfo::VerticalAccuracy, verticalAccuracy);
+    }
+
     if (m_lastVelocityIsFresh) {
         if (!qIsNaN(m_lastVelocity))
             m_lastPosition.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity);
@@ -269,15 +241,24 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePosition
             m_lastPosition.setAttribute(QGeoPositionInfo::VerticalSpeed, m_lastClimb);
         m_lastVelocityIsFresh = false;
     }
-    // If a non-intervalled startUpdates has been issued, send an update.
-    if (!m_updateTimer.isActive()) {
-        m_lastPositionIsFresh = false;
-        emit positionUpdated(m_lastPosition);
-    }
+
+    m_regularUpdateTimedOut = false;
+
+    emit positionUpdated(m_lastPosition);
+
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
-        qDebug() << "QGeoPositionInfoSourceGeoclueMaster regular update succeeded: ";
-        qDebug() << "Lat, lon, alt, speed:" << m_lastPosition.coordinate().latitude() << m_lastPosition.coordinate().longitude() << m_lastPosition.coordinate().altitude() << m_lastPosition.attribute(QGeoPositionInfo::GroundSpeed);
+    qDebug() << "Lat, lon, alt, speed:"
+             << m_lastPosition.coordinate().latitude()
+             << m_lastPosition.coordinate().longitude()
+             << m_lastPosition.coordinate().altitude()
+             << m_lastPosition.attribute(QGeoPositionInfo::GroundSpeed);
 #endif
+
+    // Only stop positioning if regular updates not active.
+    if (!m_running) {
+        cleanupPositionSource();
+        releaseMasterClient();
+    }
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::cleanupPositionSource()
@@ -292,15 +273,59 @@ void QGeoPositionInfoSourceGeoclueMaster::cleanupPositionSource()
     }
 }
 
+void QGeoPositionInfoSourceGeoclueMaster::setOptions()
+{
+    if (!m_pos)
+        return;
+
+    QVariantMap options;
+    options.insert(QStringLiteral("UpdateInterval"), updateInterval());
+
+    GHashTable *gOptions = g_hash_table_new(g_str_hash, g_str_equal);
+
+    for (QVariantMap::ConstIterator i = options.constBegin(); i != options.constEnd(); ++i) {
+        char *key = qstrdup(i.key().toUtf8().constData());
+
+        const QVariant v = i.value();
+
+        GValue *value = new GValue;
+        *value = G_VALUE_INIT;
+
+        switch (v.userType()) {
+        case QMetaType::QString:
+            g_value_init(value, G_TYPE_STRING);
+            g_value_set_string(value, v.toString().toUtf8().constData());
+            break;
+        case QMetaType::Int:
+            g_value_init(value, G_TYPE_INT);
+            g_value_set_int(value, v.toInt());
+            break;
+        default:
+            qWarning("Unexpected type %d %s", v.userType(), v.typeName());
+        }
+
+        g_hash_table_insert(gOptions, key, value);
+    }
+
+    geoclue_provider_set_options(GEOCLUE_PROVIDER(m_pos), gOptions, 0);
+
+    GHashTableIter iter;
+    char *key;
+    GValue *value;
+
+    g_hash_table_iter_init(&iter, gOptions);
+    while (g_hash_table_iter_next(&iter, reinterpret_cast<void **>(&key), reinterpret_cast<void **>(&value))) {
+        delete[] key;
+        delete value;
+    }
+
+    g_hash_table_destroy(gOptions);
+}
+
 void QGeoPositionInfoSourceGeoclueMaster::setUpdateInterval(int msec)
 {
-    msec = (((msec > 0) && (msec < minimumUpdateInterval())) || msec < 0)? minimumUpdateInterval() : msec;
-    QGeoPositionInfoSource::setUpdateInterval(msec);
-    m_updateInterval = msec;
-    // If update timer is running, set the new interval
-    if (m_updateTimer.isActive()) {
-        m_updateTimer.setInterval(msec);
-    }
+    QGeoPositionInfoSource::setUpdateInterval(qMax(minimumUpdateInterval(), msec));
+    setOptions();
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(PositioningMethods methods)
@@ -315,7 +340,6 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
              << ", and set them to:" << preferredPositioningMethods();
 #endif
 
-    m_lastPositionIsFresh = false;
     m_lastVelocityIsFresh = false;
     m_regularUpdateTimedOut = false;
 
@@ -331,6 +355,7 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
 
     // Restart Geoclue provider with new requirements.
     configurePositionSource();
+    setOptions();
 }
 
 QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
@@ -362,14 +387,9 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
     m_running = true;
 
     // Start Geoclue provider.
-    if (!hasMasterClient())
+    if (!hasMasterClient()) {
         configurePositionSource();
-
-    if (m_updateInterval > 0) {
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-        qDebug() << "QGeoPositionInfoSourceGeoclueMaster startUpdates with interval: " << m_updateInterval;
-#endif
-        m_updateTimer.start(m_updateInterval);
+        setOptions();
     }
 
     // Emit last known position on start.
@@ -377,20 +397,10 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
         QMetaObject::invokeMethod(this, "positionUpdated", Qt::QueuedConnection,
                                   Q_ARG(QGeoPositionInfo, m_lastPosition));
     }
-
-    // m_pos and m_vel are likely to be invalid until Geoclue master selects a position provider.
-    if (!m_pos)
-        return;
-
-    g_signal_connect (G_OBJECT (m_pos), "position-changed",
-                      G_CALLBACK (position_changed),this);
-    if (m_vel) {
-        g_signal_connect (G_OBJECT (m_vel), "velocity-changed",
-                          G_CALLBACK (velocity_changed),this);
-    }
 }
 
-int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const {
+int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const
+{
     return MINIMUM_UPDATE_INTERVAL;
 }
 
@@ -399,8 +409,6 @@ void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
     if (!m_running)
         return;
 
-    if (m_updateTimer.isActive())
-        m_updateTimer.stop();
     if (m_pos)
         g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void *)position_changed, this);
     if (m_vel)
@@ -428,8 +436,10 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
         return;
     }
 
-    if (!hasMasterClient())
+    if (!hasMasterClient()) {
         configurePositionSource();
+        setOptions();
+    }
 
     // Create better logic for timeout value (specs leave it impl dependant).
     // Especially if there are active updates ongoing, there is no point of waiting
@@ -455,30 +465,18 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdateTimeout()
     }
 }
 
-void QGeoPositionInfoSourceGeoclueMaster::startUpdatesTimeout()
-{
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-    qDebug() << "QGeoPositionInfoSourceGeoclueMaster startUpdates timeout occurred.";
-#endif
-    // Check if there are position updates since last positionUpdated().
-    // Do not however send timeout, that's reserved for signaling errors.
-    if (m_lastPositionIsFresh) {
-        emit positionUpdated(m_lastPosition);
-        m_lastPositionIsFresh = false;
-        m_lastVelocityIsFresh = false;
-    } else if (!m_regularUpdateTimedOut) {
-        m_regularUpdateTimedOut = true;
-        emit updateTimeout();
-    }
-}
-
 void QGeoPositionInfoSourceGeoclueMaster::positionProviderChanged(const QByteArray &service, const QByteArray &path)
 {
     if (m_pos)
         cleanupPositionSource();
 
-    if (service.isEmpty() || path.isEmpty())
+    if (service.isEmpty() || path.isEmpty()) {
+        if (!m_regularUpdateTimedOut) {
+            m_regularUpdateTimedOut = true;
+            emit updateTimeout();
+        }
         return;
+    }
 
     m_pos = geoclue_position_new(service.constData(), path.constData());
     if (m_pos) {
@@ -489,6 +487,7 @@ void QGeoPositionInfoSourceGeoclueMaster::positionProviderChanged(const QByteArr
 
         // Get the current position immediately.
         geoclue_position_get_position_async(m_pos, position_callback, this);
+        setOptions();
 
         m_vel = geoclue_velocity_new(service.constData(), path.constData());
         if (m_vel && m_running) {
@@ -513,41 +512,6 @@ bool QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
 
     return false;
 }
-
-// Helper function to convert data into a QGeoPositionInfo
-QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(
-                                               GeocluePositionFields fields,
-                                               int                   timestamp,
-                                               double                latitude,
-                                               double                longitude,
-                                               double                altitude,
-                                               GeoclueAccuracy *     accuracy)
-{
-    QGeoCoordinate coordinate(latitude, longitude);
-    QDateTime dateTime = QDateTime();
-    dateTime.setTime_t(timestamp);
-    if (fields & GEOCLUE_POSITION_FIELDS_ALTITUDE) {
-        coordinate.setAltitude(altitude);
-    }
-    QGeoPositionInfo info(coordinate, dateTime);
-    if (accuracy) {
-        double horizontalAccuracy = qQNaN();
-        double verticalAccuracy = qQNaN();
-        GeoclueAccuracyLevel accuracyLevel = GEOCLUE_ACCURACY_LEVEL_NONE;
-        geoclue_accuracy_get_details(accuracy, &accuracyLevel, &horizontalAccuracy, &verticalAccuracy);
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-        qDebug() << "QGeoPositionInfoSourceGeoclueMaster::accuracy horizontal vertical level: " << horizontalAccuracy << verticalAccuracy << accuracyLevel;
-#endif
-        m_lastPositionFromSatellite = accuracyLevel & GEOCLUE_ACCURACY_LEVEL_DETAILED;
-
-        if (!qIsNaN(horizontalAccuracy))
-            info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, horizontalAccuracy);
-        if (!qIsNaN(verticalAccuracy))
-            info.setAttribute(QGeoPositionInfo::VerticalAccuracy, verticalAccuracy);
-    }
-    return info;
-}
-
 
 QGeoPositionInfoSource::Error QGeoPositionInfoSourceGeoclueMaster::error() const
 {
