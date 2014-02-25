@@ -162,6 +162,7 @@ TestCase {
         compare(directionSpy.count, 2)
         fuzzyCompare(testingSource.position.direction, 45, 0.1)
         verify(testingSource.position.speedValid)
+        console.log("Speed:", testingSource.position.speed)
         verify(testingSource.position.speed > 15000)
 
         testingSource.active = false;
