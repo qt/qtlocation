@@ -1,5 +1,5 @@
 TARGET = qtposition_simulator
-QT += positioning gui
+QT = core network positioning
 
 PLUGIN_TYPE = position
 load(qt_plugin)
