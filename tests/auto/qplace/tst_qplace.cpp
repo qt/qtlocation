@@ -682,7 +682,7 @@ void tst_Place::isEmptyTest()
     place.removeContactDetails(QLatin1String("phone"));
     QVERIFY(place.isEmpty());
 
-    // visiblity
+    // visibility
     place.setVisibility(QLocation::DeviceVisibility);
     QVERIFY(!place.isEmpty());
     place.setVisibility(QLocation::UnspecifiedVisibility);

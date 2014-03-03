@@ -70,7 +70,7 @@ public:
         searchRequest.setSearchTerm("ice cream");
         searchRequest.setSearchArea(QGeoCircle(QGeoCoordinate(12.34, 56.78)));
 
-        //2) Use the manager to initiate a request and retreive a reply object
+        //2) Use the manager to initiate a request and retrieve a reply object
         QPlaceSearchReply * searchReply = manager->search(searchRequest);
 
         //3) Connect the reply object to a slot which is invoked upon operation completion

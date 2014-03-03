@@ -131,7 +131,7 @@ void QDeclarativeGeoAddress::setAddress(const QGeoAddress &address)
     string to use to display the address to the user. It typically takes the format of
     an address as found on an envelope, but this is not always necessarily the case.
 
-    The adddress \c text is either automatically generated or explicitly assigned,
+    The address \c text is either automatically generated or explicitly assigned,
     this can be determined by checking \l isTextGenerated.
 
     If an empty string is assigned to \c text, then \l isTextGenerated will be set

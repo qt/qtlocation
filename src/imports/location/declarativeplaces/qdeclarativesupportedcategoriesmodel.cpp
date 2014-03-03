@@ -111,7 +111,7 @@ QT_USE_NAMESPACE
     \qmlmethod string QtLocation::CategoryModel::data(ModelIndex index, int role)
     \internal
 
-    This method retrieves the the model's data per \a index and \a role.
+    This method retrieves the model's data per \a index and \a role.
 */
 
 /*!

@@ -225,7 +225,7 @@ void QPlaceMatchRequest::setResults(const QList<QPlaceSearchResult> &results)
 }
 
 /*!
-    Returns the paramaters for matching places.
+    Returns the parameters for matching places.
 */
 QVariantMap QPlaceMatchRequest::parameters() const
 {

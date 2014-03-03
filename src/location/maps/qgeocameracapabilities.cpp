@@ -213,7 +213,7 @@ double QGeoCameraCapabilities::maximumZoomLevel() const
 
 /*!
     Sets whether the associated plugin can render a map when the camera
-    has an aribtrary bearing to \a supportsBearing.
+    has an arbitrary bearing to \a supportsBearing.
 */
 void QGeoCameraCapabilities::setSupportsBearing(bool supportsBearing)
 {
@@ -223,7 +223,7 @@ void QGeoCameraCapabilities::setSupportsBearing(bool supportsBearing)
 
 /*!
     Returns whether the associated plugin can render a map when the camera
-    has an aribtrary bearing.
+    has an arbitrary bearing.
 */
 bool QGeoCameraCapabilities::supportsBearing() const
 {

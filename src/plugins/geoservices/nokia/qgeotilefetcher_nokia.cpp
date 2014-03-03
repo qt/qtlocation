@@ -177,7 +177,7 @@ QString QGeoTileFetcherNokia::getLanguageString() const
     // here even though the entire list is updated automagically from the server.
     // The current languages are Arabic, Chinese, Simplified Chinese, English
     // French, German, Italian, Polish, Russian and Spanish. The default is English.
-    // These are acually available from the same host under the URL: /maptiler/v2/info
+    // These are actually available from the same host under the URL: /maptiler/v2/info
 
     switch (locale.language()) {
     case QLocale::Arabic:

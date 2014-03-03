@@ -158,7 +158,7 @@ QT_USE_NAMESPACE
 
     Updates the model based on the provided query parameters.  The model will be populated with a
     list of search suggestions for the partial \l searchTerm and \l searchArea.  If the \l plugin
-    supports it, other paramaters such as \l limit and \l offset may be specified.  \c update()
+    supports it, other parameters such as \l limit and \l offset may be specified.  \c update()
     submits the set of parameters to the \l plugin to process.
 
 

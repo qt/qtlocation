@@ -415,7 +415,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
     to use to display the address to the user. It typically takes the format of
     an address as found on an envelope, but this is not always necessarily the case.
 
-    The adddress text is either automatically generated or explicitly assigned.
+    The address text is either automatically generated or explicitly assigned.
     This can be determined by checking \l {QGeoAddress::isTextGenerated()} {isTextGenerated}.
 
     If an empty string is provided to setText(), then isTextGenerated() will be set

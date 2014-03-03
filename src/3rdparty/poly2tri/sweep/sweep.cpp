@@ -789,7 +789,7 @@ void Sweep::FlipScanEdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle&
     // flip with new edge op->eq
     FlipEdgeEvent(tcx, eq, op, &ot, op);
     // TODO: Actually I just figured out that it should be possible to
-    //       improve this by getting the next ot and op before the the above
+    //       improve this by getting the next ot and op before the above
     //       flip and continue the flipScanEdgeEvent here
     // set new ot and op here and loop back to inScanArea test
     // also need to set a new flip_triangle first

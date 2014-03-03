@@ -274,7 +274,7 @@ Item {
             anchors.fill: parent
             target: map
             enabled: false
-            focus: true           // enables keyboard control for convinience
+            focus: true           // enables keyboard control for convenience
             replaySpeedFactor: 1.1 // replay with 1.1 times the recording speed to better see what happens
             Text {
                 text: "PinchArea state: " + pinchGenerator.state + "\n"

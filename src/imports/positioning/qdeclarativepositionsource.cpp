@@ -636,7 +636,7 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
 /*!
     \qmlproperty enumeration PositionSource::sourceError
 
-    This property holds the error which last occured with the PositionSource.
+    This property holds the error which last occurred with the PositionSource.
 
     \list
     \li PositionSource.AccessError - The connection setup to the remote positioning backend failed because the
