@@ -250,7 +250,7 @@ void QGeoMapDataPrivate::setCameraData(const QGeoCameraData &cameraData)
 
     // Do not call this expensive function if the width is 0, since it will get called
     // anyway when it is resized to a width > 0.
-    // this is mainly an optimisation to the initalization of the geomap, which would otherwise
+    // this is mainly an optimization to the initialization of the geomap, which would otherwise
     // call changeCameraData four or more times
     if (width() > 0)
         map_->changeCameraData(oldCameraData);

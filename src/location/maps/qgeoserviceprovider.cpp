@@ -308,7 +308,7 @@ QGeoServiceProvider::PlacesFeatures QGeoServiceProvider::placesFeatures() const
  * methods we need to call. Ideally it would be nice to find a way to embed
  * these into the manager() template. */
 template <class Engine>
-Engine *createEngine(QGeoServiceProviderPrivate *d_ptr)
+Engine *createEngine(QGeoServiceProviderPrivate *)
 {
     return 0;
 }

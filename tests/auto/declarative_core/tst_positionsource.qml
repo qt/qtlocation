@@ -162,7 +162,7 @@ TestCase {
         compare(directionSpy.count, 2)
         fuzzyCompare(testingSource.position.direction, 45, 0.1)
         verify(testingSource.position.speedValid)
-        verify(testingSource.position.speed > 15000)
+        verify(testingSource.position.speed > 10000)
 
         testingSource.active = false;
         wait(2500);
@@ -173,6 +173,6 @@ TestCase {
         compare(directionSpy.count, 2)
         fuzzyCompare(testingSource.position.direction, 45, 0.1)
         verify(testingSource.position.speedValid)
-        verify(testingSource.position.speed > 15000)
+        verify(testingSource.position.speed > 10000)
     }
 }

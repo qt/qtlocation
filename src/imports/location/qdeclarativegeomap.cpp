@@ -256,9 +256,9 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
             copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
             copyrights = copyrightsWPtr_.data();
             connect(map_,
-                    SIGNAL(copyrightsChanged(const QImage &, const QPoint &)),
+                    SIGNAL(copyrightsChanged(QImage,QPoint)),
                     copyrights,
-                    SLOT(copyrightsChanged(const QImage &, const QPoint &)));
+                    SLOT(copyrightsChanged(QImage,QPoint)));
         } else {
             // just re-set its parent.
             copyrights->setParent(this);
@@ -278,8 +278,8 @@ void QDeclarativeGeoMap::pluginReady()
     mappingManager_ = serviceProvider_->mappingManager();
 
     if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
-        QString msg = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_MAPPING).arg(serviceProvider_->errorString());
-        qmlInfo(this) << msg;
+        qmlInfo(this) << QStringLiteral("Error: Plugin does not support mapping.\nError message:")
+                      << serviceProvider_->errorString();
         return;
     }
 
@@ -445,7 +445,7 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin_) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_SET_ONCE);
+        qmlInfo(this) << QStringLiteral("Plugin is a write-once property, and cannot be set again.");
         return;
     }
     plugin_ = plugin;
@@ -483,9 +483,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
     connect(map_,
-            SIGNAL(copyrightsChanged(const QImage &, const QPoint &)),
+            SIGNAL(copyrightsChanged(QImage,QPoint)),
             copyrightsWPtr_.data(),
-            SLOT(copyrightsChanged(const QImage &, const QPoint &)));
+            SLOT(copyrightsChanged(QImage,QPoint)));
 
     connect(map_,
             SIGNAL(updateRequired()),

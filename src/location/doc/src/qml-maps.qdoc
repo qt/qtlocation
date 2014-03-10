@@ -69,7 +69,7 @@ to center a \l{Map}{map} on the current position:
     Rectangle {
 
         import QtPositioning 5.2
-        import QtLocation 5.0
+        import QtLocation 5.3
         ...
 
         map : Map {

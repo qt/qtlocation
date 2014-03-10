@@ -62,7 +62,7 @@ class QGeoTileSpecPrivate : public QSharedData
 public:
     QGeoTileSpecPrivate();
     QGeoTileSpecPrivate(const QGeoTileSpecPrivate &other);
-    QGeoTileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y);
+    QGeoTileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y, int version);
     ~QGeoTileSpecPrivate();
 
     QGeoTileSpecPrivate &operator = (const QGeoTileSpecPrivate &other);
@@ -75,6 +75,7 @@ public:
     int zoom_;
     int x_;
     int y_;
+    int version_;
 };
 
 QT_END_NAMESPACE

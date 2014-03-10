@@ -239,9 +239,9 @@ QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(QString requestString,
             SLOT(placesFinished()));
 
     connect(reply,
-            SIGNAL(error(QGeoCodeReply::Error, QString)),
+            SIGNAL(error(QGeoCodeReply::Error,QString)),
             this,
-            SLOT(placesError(QGeoCodeReply::Error, QString)));
+            SLOT(placesError(QGeoCodeReply::Error,QString)));
 
     return reply;
 }
@@ -280,7 +280,7 @@ void QGeoCodingManagerEngineNokia::placesError(QGeoCodeReply::Error error, const
     if (!reply)
         return;
 
-    if (receivers(SIGNAL(error(QGeoCodeReply *, QGeoCodeReply::Error, QString))) == 0) {
+    if (receivers(SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString))) == 0) {
         reply->deleteLater();
         return;
     }

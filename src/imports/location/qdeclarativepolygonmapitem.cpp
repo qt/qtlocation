@@ -145,8 +145,8 @@ struct Vertex
     QVector2D position;
 };
 
-QGeoMapPolygonGeometry::QGeoMapPolygonGeometry(QObject *parent) :
-    QGeoMapItemGeometry(parent), assumeSimple_(false)
+QGeoMapPolygonGeometry::QGeoMapPolygonGeometry()
+:   assumeSimple_(false)
 {
 }
 
@@ -297,7 +297,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
                     p2t::Triangle *t = tris.at(i);
                     for (int j = 0; j < 3; ++j) {
                         p2t::Point *p = t->GetPoint(j);
-                        screenVertices_ << Point(p->x, p->y);
+                        screenVertices_ << QPointF(p->x, p->y);
                     }
                 }
                 delete cdt;
@@ -469,12 +469,12 @@ void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordina
     int index = path_.lastIndexOf(coordinate);
 
     if (index == -1) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolygonMapItem");
+        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolygonMapItem");
         return;
     }
 
     if (path_.count() < index + 1) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolygonMapItem");
+        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolygonMapItem");
         return;
     }
     path_.removeAt(index);

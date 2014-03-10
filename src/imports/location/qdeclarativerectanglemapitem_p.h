@@ -52,10 +52,8 @@ QT_BEGIN_NAMESPACE
 
 class QGeoMapRectangleGeometry : public QGeoMapItemGeometry
 {
-    Q_OBJECT
-
 public:
-    explicit QGeoMapRectangleGeometry(QObject *parent = 0);
+    QGeoMapRectangleGeometry();
 
     void updatePoints(const QGeoMap &map,
                       const QGeoCoordinate &topLeft,

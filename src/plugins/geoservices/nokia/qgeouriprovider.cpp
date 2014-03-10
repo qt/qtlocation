@@ -82,7 +82,7 @@ QGeoUriProvider::QGeoUriProvider(
     , m_maxSubdomains(0)
 {
 #ifdef USE_CHINA_NETWORK_REGISTRATION
-    QObject::connect(m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(int, const QString&)), this, SLOT(mobileCountryCodeChanged(int, const QString &)));
+    QObject::connect(m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(int,QString)), this, SLOT(mobileCountryCodeChanged(int,QString)));
 #endif
     setCurrentHost(isInternationalNetwork() || m_localizedHost.isEmpty() ? m_internationalHost : m_localizedHost);
 }

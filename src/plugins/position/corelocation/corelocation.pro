@@ -1,5 +1,5 @@
 TARGET = qtposition_cl
-QT += positioning gui
+QT = core positioning
 
 PLUGIN_TYPE = position
 PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryCL

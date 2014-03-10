@@ -111,7 +111,7 @@ bool QPlaceIconPrivate::operator == (const QPlaceIconPrivate &other) const
     \variable QPlaceIcon::SingleUrl
     \brief Parameter key for an icon that only has a single image URL.
 
-    The paramter value to be used with this key is a QUrl.  An icon with this parameter set will
+    The parameter value to be used with this key is a QUrl.  An icon with this parameter set will
     always return the specified URL regardless of the requested size when url() is called.
 */
 const QString QPlaceIcon::SingleUrl(QLatin1String("singleUrl"));

@@ -77,6 +77,12 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoTiledMappingManagerEngine *engine, QObjec
 {
     d_ptr = new QGeoTiledMapDataPrivate(this, engine);
     engine->registerMap(this);
+
+    connect(engine,
+            SIGNAL(mapVersionChanged()),
+            this,
+            SLOT(updateMapVersion()));
+    QMetaObject::invokeMethod(this, "updateMapVersion", Qt::QueuedConnection);
 }
 
 QGeoTiledMapData::~QGeoTiledMapData()
@@ -134,6 +140,17 @@ void QGeoTiledMapData::changeActiveMapType(const QGeoMapType mapType)
     d->changeActiveMapType(mapType);
 }
 
+int QGeoTiledMapData::mapVersion()
+{
+    return -1;
+}
+
+void QGeoTiledMapData::updateMapVersion()
+{
+    Q_D(QGeoTiledMapData);
+    d->changeMapVersion(mapVersion());
+}
+
 void QGeoTiledMapData::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
     Q_UNUSED(visibleTiles);
@@ -184,9 +201,9 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoT
     mapScene_->setTileSize(engine->tileSize().width());
 
     QObject::connect(mapScene_,
-                     SIGNAL(newTilesVisible(const QSet<QGeoTileSpec>&)),
+                     SIGNAL(newTilesVisible(QSet<QGeoTileSpec>)),
                      map_,
-                     SLOT(evaluateCopyrights(const QSet<QGeoTileSpec>)));
+                     SLOT(evaluateCopyrights(QSet<QGeoTileSpec>)));
 }
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
@@ -265,6 +282,11 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
 void QGeoTiledMapDataPrivate::changeActiveMapType(const QGeoMapType mapType)
 {
     cameraTiles_->setMapType(mapType);
+}
+
+void QGeoTiledMapDataPrivate::changeMapVersion(int mapVersion)
+{
+    cameraTiles_->setMapVersion(mapVersion);
 }
 
 void QGeoTiledMapDataPrivate::resized(int width, int height)

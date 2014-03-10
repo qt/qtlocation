@@ -334,6 +334,11 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
     return QSharedPointer<QGeoTileTexture>();
 }
 
+QString QGeoTileCache::directory() const
+{
+    return directory_;
+}
+
 void QGeoTileCache::insert(const QGeoTileSpec &spec,
                            const QByteArray &bytes,
                            const QString &format,
@@ -434,6 +439,13 @@ QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QStrin
     filename += QString::number(spec.x());
     filename += QLatin1String("-");
     filename += QString::number(spec.y());
+
+    //Append version if real version number to ensure backwards compatibility and eviction of old tiles
+    if (spec.version() != -1) {
+        filename += QLatin1String("-");
+        filename += QString::number(spec.version());
+    }
+
     filename += QLatin1String(".");
     filename += format;
 
@@ -454,13 +466,14 @@ QGeoTileSpec QGeoTileCache::filenameToTileSpec(const QString &filename)
     QString name = parts.at(0);
     QStringList fields = name.split('-');
 
-    if (fields.length() != 5)
+    int length = fields.length();
+    if (length != 5 && length != 6)
         return emptySpec;
 
     QList<int> numbers;
 
     bool ok = false;
-    for (int i = 1; i < 5; ++i) {
+    for (int i = 1; i < length; ++i) {
         ok = false;
         int value = fields.at(i).toInt(&ok);
         if (!ok)
@@ -468,11 +481,16 @@ QGeoTileSpec QGeoTileCache::filenameToTileSpec(const QString &filename)
         numbers.append(value);
     }
 
+    //File name without version, append default
+    if (numbers.length() < 5)
+        numbers.append(-1);
+
     return QGeoTileSpec(fields.at(0),
                     numbers.at(0),
                     numbers.at(1),
                     numbers.at(2),
-                    numbers.at(3));
+                    numbers.at(3),
+                    numbers.at(4));
 }
 
 QT_END_NAMESPACE

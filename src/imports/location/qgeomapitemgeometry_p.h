@@ -43,7 +43,6 @@
 #define QGEOMAPITEMGEOMETRY_H
 
 #include <QPainterPath>
-#include <QPolygonF>
 #include <QPointF>
 #include <QRectF>
 #include <QVector>
@@ -56,21 +55,10 @@ QT_BEGIN_NAMESPACE
 class QSGGeometry;
 class QGeoMap;
 
-class QGeoMapItemGeometry : public QObject
+class QGeoMapItemGeometry
 {
-    Q_OBJECT
-
 public:
-
-    struct Point
-    {
-        inline Point(qreal x, qreal y) : x(x), y(y) {}
-        inline Point() : x(0), y(0) {}
-        inline Point(const QPointF &pt) : x(pt.x()), y(pt.y()) {}
-        qreal x, y;
-    };
-
-    explicit QGeoMapItemGeometry(QObject *parent = 0);
+    QGeoMapItemGeometry();
 
     inline bool isSourceDirty() const { return sourceDirty_; }
     inline bool isScreenDirty() const { return screenDirty_; }
@@ -100,10 +88,10 @@ public:
     }
 
     inline QVector2D vertex(quint32 index) const {
-        return QVector2D(screenVertices_[index].x, screenVertices_[index].y);
+        return QVector2D(screenVertices_[index]);
     }
 
-    inline QVector<Point> vertices() const { return screenVertices_; }
+    inline QVector<QPointF> vertices() const { return screenVertices_; }
     inline QVector<quint32> indices() const { return screenIndices_; }
 
     inline bool isIndexed() const { return (!screenIndices_.isEmpty()); }
@@ -145,7 +133,7 @@ protected:
 
     QGeoCoordinate srcOrigin_;
 
-    QVector<Point> screenVertices_;
+    QVector<QPointF> screenVertices_;
     QVector<quint32> screenIndices_;
 };
 

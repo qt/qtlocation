@@ -80,7 +80,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
 
     setCameraCapabilities(capabilities);
 
-    setTileSize(QSize(256, 256));
+    setTileSize(QSize(512, 512));
 
     QList<QGeoMapType> types;
     types << QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Normal map view in daylight mode"), false, 1);
@@ -88,12 +88,12 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     types << QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view in daylight mode"), false, 3);
     types << QGeoMapType(QGeoMapType::HybridMap, tr("Hybrid Map"), tr("Satellite map view with streets in daylight mode"), false, 4);
     types << QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Color-reduced map view with public transport scheme in daylight mode"), false, 5);
-    types << QGeoMapType(QGeoMapType::GrayStreetMap, tr("Gray Street Map"), tr("Color-reduced map view in daylight mode (especially used for background maps)"), false, 6);
+    types << QGeoMapType(QGeoMapType::GrayStreetMap, tr("Gray Street Map"), tr("Color-reduced map view in daylight mode"), false, 6);
     types << QGeoMapType(QGeoMapType::StreetMap, tr("Mobile Street Map"), tr("Mobile normal map view in daylight mode"), true, 7);
     types << QGeoMapType(QGeoMapType::TerrainMap, tr("Mobile Terrain Map"), tr("Mobile terrain map view in daylight mode"), true, 8);
     types << QGeoMapType(QGeoMapType::HybridMap, tr("Mobile Hybrid Map"), tr("Mobile satellite map view with streets in daylight mode"), true, 9);
     types << QGeoMapType(QGeoMapType::TransitMap, tr("Mobile Transit Map"), tr("Mobile color-reduced map view with public transport scheme in daylight mode"), true, 10);
-    types << QGeoMapType(QGeoMapType::GrayStreetMap, tr("Mobile Gray Street Map"), tr("Mobile color-reduced map view in daylight mode (especially used for background maps)"), true, 11);
+    types << QGeoMapType(QGeoMapType::GrayStreetMap, tr("Mobile Gray Street Map"), tr("Mobile color-reduced map view in daylight mode"), true, 11);
     types << QGeoMapType(QGeoMapType::StreetMap, tr("Custom Street Map"), tr("Normal map view in daylight mode"), false, 12);
     types << QGeoMapType(QGeoMapType::StreetMap, tr("Night Street Map"), tr("Normal map view in night mode"), false, 13);
     types << QGeoMapType(QGeoMapType::StreetMap, tr("Mobile Night Street Map"), tr("Mobile normal map view in night mode"), true, 14);
@@ -138,7 +138,9 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     }
 
     populateMapSchemes();
+    loadMapVersion();
     QMetaObject::invokeMethod(fetcher, "fetchCopyrightsData", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(fetcher, "fetchVersionData", Qt::QueuedConnection);
 }
 
 QGeoTiledMappingManagerEngineNokia::~QGeoTiledMappingManagerEngineNokia()
@@ -179,6 +181,11 @@ QString QGeoTiledMappingManagerEngineNokia::getBaseScheme(int mapId)
     QString fullScheme(m_mapSchemes[mapId]);
 
     return fullScheme.section(QLatin1Char('.'), 0, 0);
+}
+
+int QGeoTiledMappingManagerEngineNokia::mapVersion()
+{
+    return m_mapVersion.version();
 }
 
 void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData)
@@ -223,6 +230,75 @@ void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const
         }
         m_copyrights[ keys[ keyIndex ] ] = copyrightDescList;
     }
+}
+
+void QGeoTiledMappingManagerEngineNokia::parseNewVersionInfo(const QByteArray &versionData)
+{
+    const QString versionString = QString::fromUtf8(versionData);
+
+    const QStringList versionLines =  versionString.split(QLatin1Char('\n'));
+    QJsonObject newVersionData;
+    foreach (const QString &line, versionLines) {
+        const QStringList versionInfo = line.split(':');
+        if (versionInfo.size() > 1) {
+            const QString versionKey = versionInfo[0].trimmed();
+            const QString versionValue = versionInfo[1].trimmed();
+            if (!versionKey.isEmpty() && !versionValue.isEmpty()) {
+                newVersionData[versionKey] = versionValue;
+            }
+        }
+    }
+
+    updateVersion(newVersionData);
+}
+
+void QGeoTiledMappingManagerEngineNokia::updateVersion(const QJsonObject &newVersionData) {
+
+    if (m_mapVersion.isNewVersion(newVersionData)) {
+
+        m_mapVersion.setVersionData(newVersionData);
+        m_mapVersion.setVersion(m_mapVersion.version() + 1);
+
+        saveMapVersion();
+
+        emit mapVersionChanged();
+    }
+}
+
+void QGeoTiledMappingManagerEngineNokia::saveMapVersion()
+{
+    QDir saveDir(tileCache()->directory());
+    QFile saveFile(saveDir.filePath(QLatin1String("nokia_version")));
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        qWarning("Failed to write nokia map version.");
+        return;
+    }
+
+    saveFile.write(m_mapVersion.toJson());
+    saveFile.close();
+}
+
+void QGeoTiledMappingManagerEngineNokia::loadMapVersion()
+{
+
+    QDir saveDir(tileCache()->directory());
+    QFile loadFile(saveDir.filePath(QLatin1String("nokia_version")));
+
+    if (!loadFile.open(QIODevice::ReadOnly)) {
+        qWarning("Failed to read nokia map version.");
+        return;
+    }
+
+    QByteArray saveData = loadFile.readAll();
+    loadFile.close();
+
+    QJsonDocument doc(QJsonDocument::fromJson(saveData));
+
+    QJsonObject object = doc.object();
+
+    m_mapVersion.setVersion(object[QLatin1String("version")].toInt());
+    m_mapVersion.setVersionData(object[QLatin1String("data")].toObject());
 }
 
 QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType mapType,

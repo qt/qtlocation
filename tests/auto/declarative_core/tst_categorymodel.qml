@@ -41,7 +41,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.0
+import QtLocation 5.3
 import "utils.js" as Utils
 
 TestCase {
@@ -87,7 +87,7 @@ TestCase {
 
     function test_hierarchicalModel() {
         var modelSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        var categoryModel = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0;'
+        var categoryModel = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.3;'
                                 + 'VisualDataModel { model: CategoryModel {} delegate: Item {} }',
                                 testCase, "VisualDataModel");
 
@@ -160,7 +160,7 @@ TestCase {
 
     function test_flatModel() {
         var modelSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        var categoryModel = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0;'
+        var categoryModel = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.3;'
                                 + 'VisualDataModel { model: CategoryModel {} delegate: Item {} }',
                                 testCase, "VisualDataModel");
 
@@ -218,7 +218,7 @@ TestCase {
     }
 
     function test_error() {
-        var testModel = Qt.createQmlObject('import QtLocation 5.0; CategoryModel {}', testCase, "CategoryModel");
+        var testModel = Qt.createQmlObject('import QtLocation 5.3; CategoryModel {}', testCase, "CategoryModel");
 
         var statusChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         statusChangedSpy.target = testModel;

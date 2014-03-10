@@ -111,7 +111,7 @@ QT_USE_NAMESPACE
     \qmlmethod string QtLocation::CategoryModel::data(ModelIndex index, int role)
     \internal
 
-    This method retrieves the the model's data per \a index and \a role.
+    This method retrieves the model's data per \a index and \a role.
 */
 
 /*!
@@ -263,12 +263,12 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                disconnect(placeManager, SIGNAL(categoryAdded(QPlaceCategory, QString)),
-                           this, SLOT(addedCategory(QPlaceCategory, QString)));
-                disconnect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory, QString)),
-                           this, SLOT(updatedCategory(QPlaceCategory, QString)));
-                disconnect(placeManager, SIGNAL(categoryRemoved(QString, QString)),
-                           this, SLOT(removedCategory(QString, QString)));
+                disconnect(placeManager, SIGNAL(categoryAdded(QPlaceCategory,QString)),
+                           this, SLOT(addedCategory(QPlaceCategory,QString)));
+                disconnect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory,QString)),
+                           this, SLOT(updatedCategory(QPlaceCategory,QString)));
+                disconnect(placeManager, SIGNAL(categoryRemoved(QString,QString)),
+                           this, SLOT(removedCategory(QString,QString)));
                 disconnect(placeManager, SIGNAL(dataChanged()),
                            this, SIGNAL(dataChanged()));
             }
@@ -479,12 +479,12 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
 
     // listen for any category notifications so that we can reupdate the categories
     // model.
-    connect(placeManager, SIGNAL(categoryAdded(QPlaceCategory, QString)),
-            this, SLOT(addedCategory(QPlaceCategory, QString)));
-    connect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory, QString)),
-            this, SLOT(updatedCategory(QPlaceCategory, QString)));
-    connect(placeManager, SIGNAL(categoryRemoved(QString, QString)),
-            this, SLOT(removedCategory(QString, QString)));
+    connect(placeManager, SIGNAL(categoryAdded(QPlaceCategory,QString)),
+            this, SLOT(addedCategory(QPlaceCategory,QString)));
+    connect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory,QString)),
+            this, SLOT(updatedCategory(QPlaceCategory,QString)));
+    connect(placeManager, SIGNAL(categoryRemoved(QString,QString)),
+            this, SLOT(removedCategory(QString,QString)));
     connect(placeManager, SIGNAL(dataChanged()),
             this, SIGNAL(dataChanged()));
 }

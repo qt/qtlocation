@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 import QtQuick 2.0;
-import QtLocation 5.0
+import QtLocation 5.3
 
 MapQuickItem {  //to be used inside MapComponent only
     id: imageItem

@@ -40,7 +40,7 @@
     To load the Qt Location module, add the following statement to your .qml files
 
     \code
-        import QtLocation 5.0
+        import QtLocation 5.3
     \endcode
 
     For C++ projects include the header appropriate for the current use case,
@@ -86,7 +86,7 @@ for navigation and awareness of objects that may aid or hinder a journey.
 To load the Qt Location module, add the following statement to your .qml files
 
 \code
-    import QtLocation 5.0
+    import QtLocation 5.3
 \endcode
 
 For C++ projects include the header appropriate for the current use case,

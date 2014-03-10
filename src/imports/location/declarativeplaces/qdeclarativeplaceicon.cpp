@@ -221,7 +221,7 @@ void QDeclarativePlaceIcon::pluginReady()
 QPlaceManager *QDeclarativePlaceIcon::manager() const
 {
     if (!m_plugin) {
-           qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_NOT_ASSIGNED_TO_PLACE_ICON);
+           qmlInfo(this) << QStringLiteral("Plugin is not assigned to place.");
            return 0;
     }
 

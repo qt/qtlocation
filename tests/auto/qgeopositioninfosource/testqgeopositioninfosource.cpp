@@ -332,7 +332,7 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
 
     m_source->setPreferredPositioningMethods(positioningMethod);
 
-    QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
     int time_out = 7000;
     m_source->setUpdateInterval(time_out);
@@ -346,7 +346,7 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     //simulated CI tests will quickly return -> real GPS tests take 2 minutes for satellite systems
     //use a 5 min timeout
     timer.setInterval(300000);
-    connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)),
+    connect(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)),
             &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
     timer.start();
@@ -429,7 +429,7 @@ void TestQGeoPositionInfoSource::minimumUpdateInterval()
 void TestQGeoPositionInfoSource::startUpdates_testIntervals()
 {
     CHECK_SOURCE_VALID;
-    QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
     m_source->setUpdateInterval(7000);
     int interval = m_source->updateInterval();
@@ -457,7 +457,7 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
 
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
@@ -505,7 +505,7 @@ void TestQGeoPositionInfoSource::startUpdates_testDefaultInterval()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
     m_source->startUpdates();
     for (int i = 0; i < 3; i++) {
@@ -521,7 +521,7 @@ void TestQGeoPositionInfoSource::startUpdates_testZeroInterval()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
@@ -536,7 +536,7 @@ void TestQGeoPositionInfoSource::startUpdates_moreThanOnce()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
@@ -555,7 +555,7 @@ void TestQGeoPositionInfoSource::stopUpdates()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
     m_source->setUpdateInterval(7000);
     m_source->startUpdates();
@@ -601,7 +601,7 @@ void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(7000);
@@ -612,7 +612,7 @@ void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
 void TestQGeoPositionInfoSource::requestUpdate_defaultTimeout()
 {
     CHECK_SOURCE_VALID;
-    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(0);
@@ -637,7 +637,7 @@ void TestQGeoPositionInfoSource::requestUpdate_repeatedCalls()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(7000);
@@ -653,7 +653,7 @@ void TestQGeoPositionInfoSource::requestUpdate_overlappingCalls()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(7000);
@@ -667,7 +667,7 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->setUpdateInterval(0);
@@ -691,7 +691,7 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->setUpdateInterval(10000);
@@ -714,7 +714,7 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(7000);
@@ -735,7 +735,7 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
 void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
 {
     CHECK_SOURCE_VALID;
-    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(7000);
@@ -770,11 +770,11 @@ void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
 {
     CHECK_SOURCE_VALID;
 
-    bool i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
+    bool i = connect(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
-    i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot2()));
+    i = connect(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(test_slot2()));
     QVERIFY(i == true);
-    i = disconnect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
+    i = disconnect(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
 
     m_source->requestUpdate(7000);

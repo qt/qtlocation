@@ -15,5 +15,11 @@ SOURCES += locationtest.cpp \
            qdeclarativepinchgenerator.cpp \
            qdeclarativelocationtestmodel.cpp
 
+IMPORT_FILES = \
+    qmldir
+
 load(qml_plugin)
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+
+# must be after load(qml_plugin)
+include(../imports.pri)

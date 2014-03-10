@@ -1,9 +1,9 @@
-/***************************************************************************
+/****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Appello Systems AB.
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtPositioning module of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,12 +37,55 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Nokia services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file NOKIA_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Nokia services
+** plugin source code.
+**
 ****************************************************************************/
-#include "error_messages.h"
+
+#include "qgeomapversion.h"
+
+#include <QJsonDocument>
 
 QT_BEGIN_NAMESPACE
 
-const char CONTEXT_NAME[] = "QtPositioningQML";
-const char MISSED_NMEA_FILE[] = QT_TRANSLATE_NOOP("QtPositioningQML", "Nmea file not found.");
+QGeoMapVersion::QGeoMapVersion()
+    : m_version(-1) {}
+
+bool QGeoMapVersion::isNewVersion(const QJsonObject &newVersionData)
+{
+    return m_versionData != newVersionData;
+}
+
+int QGeoMapVersion::version() const
+{
+    return m_version;
+}
+
+void QGeoMapVersion::setVersion(int version)
+{
+    m_version = version;
+}
+
+void QGeoMapVersion::setVersionData(const QJsonObject &versionData)
+{
+    m_versionData = versionData;
+}
+
+
+QByteArray QGeoMapVersion::toJson() const
+{
+
+    QJsonObject object;
+    object[QLatin1String("version")] = m_version;
+    object[QLatin1String("data")] = m_versionData;
+
+    QJsonDocument document(object);
+
+    return document.toJson();
+}
 
 QT_END_NAMESPACE

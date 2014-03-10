@@ -1,5 +1,5 @@
 TARGET = qtposition_positionpoll
-QT += positioning
+QT = core positioning
 
 PLUGIN_TYPE = position
 load(qt_plugin)

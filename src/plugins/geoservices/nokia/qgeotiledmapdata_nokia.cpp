@@ -155,4 +155,10 @@ void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visible
     }
 }
 
+int QGeoTiledMapDataNokia::mapVersion()
+{
+    QGeoTiledMappingManagerEngineNokia *engineNokia = static_cast<QGeoTiledMappingManagerEngineNokia *>(engine());
+    return engineNokia->mapVersion();
+}
+
 QT_END_NAMESPACE

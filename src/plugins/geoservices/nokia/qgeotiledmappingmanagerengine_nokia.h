@@ -52,6 +52,7 @@
 #include "qgeotiledmappingmanagerengine_p.h"
 #include <QtPositioning/QGeoRectangle>
 #include "qgeomaptype_p.h"
+#include "qgeomapversion.h"
 
 #include <QGeoServiceProvider>
 
@@ -82,9 +83,11 @@ public:
                                    const QSet<QGeoTileSpec> &tiles);
     QString getScheme(int mapId);
     QString getBaseScheme(int mapId);
+    int mapVersion();
 
 public Q_SLOTS:
     void loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData);
+    void parseNewVersionInfo(const QByteArray &versionData);
 
 private:
     class CopyrightDesc
@@ -103,9 +106,13 @@ private:
 
     void initialize();
     void populateMapSchemes();
+    void updateVersion(const QJsonObject &newVersionData);
+    void saveMapVersion();
+    void loadMapVersion();
 
     QHash<QString, QList<CopyrightDesc> > m_copyrights;
     QHash<int, QString> m_mapSchemes;
+    QGeoMapVersion m_mapVersion;
 };
 
 QT_END_NAMESPACE

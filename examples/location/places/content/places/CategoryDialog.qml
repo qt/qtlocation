@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtLocation 5.0
+import QtLocation 5.3
 import QtLocation.examples 5.0
 
 InputDialog {
@@ -60,7 +60,7 @@ InputDialog {
 
     //! [Category save]
     onGoButtonClicked: {
-        var modifiedCategory = category ? category : Qt.createQmlObject('import QtLocation 5.0; Category { }', page);
+        var modifiedCategory = category ? category : Qt.createQmlObject('import QtLocation 5.3; Category { }', page);
         modifiedCategory.plugin = placesPlugin;
 
         modifiedCategory.name = dialogModel.get(0).inputText;

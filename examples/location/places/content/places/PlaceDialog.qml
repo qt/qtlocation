@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtLocation 5.0
+import QtLocation 5.3
 import QtLocation.examples 5.0
 
 Dialog {
@@ -52,7 +52,7 @@ Dialog {
 
     function prepareDialog(inputPlace) {
         if (!inputPlace) {
-            locationPlace = Qt.createQmlObject('import QtLocation 5.0; Place { }', root);
+            locationPlace = Qt.createQmlObject('import QtLocation 5.3; Place { }', root);
             __createdPlace = true;
         } else {
             locationPlace  = inputPlace;
@@ -135,22 +135,22 @@ Dialog {
         var c = QtPositioning.coordinate(parseFloat(dataFieldsModel.get(9).inputText),
                                       parseFloat(dataFieldsModel.get(10).inputText));
         locationPlace.location.coordinate = c;
-        var phone = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
+        var phone = Qt.createQmlObject('import QtLocation 5.3; ContactDetail { }', locationPlace);
         phone.label = "Phone";
         phone.value = dataFieldsModel.get(11).inputText;
         locationPlace.contactDetails.phone = phone;
 
-        var fax = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
+        var fax = Qt.createQmlObject('import QtLocation 5.3; ContactDetail { }', locationPlace);
         fax.label = "Fax";
         fax.value = dataFieldsModel.get(12).inputText;
         locationPlace.contactDetails.fax = fax;
 
-        var email = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
+        var email = Qt.createQmlObject('import QtLocation 5.3; ContactDetail { }', locationPlace);
         email.label = "Email";
         email.value = dataFieldsModel.get(13).inputText;
         locationPlace.contactDetails.email = email;
 
-        var website = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
+        var website = Qt.createQmlObject('import QtLocation 5.3; ContactDetail { }', locationPlace);
         website.label = "Website";
         website.value = dataFieldsModel.get(14).inputText;
         locationPlace.contactDetails.website = website;

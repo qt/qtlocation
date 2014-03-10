@@ -135,6 +135,7 @@ public:
     void GLContextAvailable();
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec);
+    QString directory() const;
 
     // can be called without a specific tileCache pointer
     static void evictFromDiskCache(QGeoCachedTileDisk *td);

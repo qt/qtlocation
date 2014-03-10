@@ -141,9 +141,9 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
             SLOT(routeFinished()));
 
     connect(reply,
-            SIGNAL(error(QGeoRouteReply::Error, QString)),
+            SIGNAL(error(QGeoRouteReply::Error,QString)),
             this,
-            SLOT(routeError(QGeoRouteReply::Error, QString)));
+            SLOT(routeError(QGeoRouteReply::Error,QString)));
 
     return reply;
 }
@@ -172,9 +172,9 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
             SLOT(routeFinished()));
 
     connect(reply,
-            SIGNAL(error(QGeoRouteReply::Error, QString)),
+            SIGNAL(error(QGeoRouteReply::Error,QString)),
             this,
-            SLOT(routeError(QGeoRouteReply::Error, QString)));
+            SLOT(routeError(QGeoRouteReply::Error,QString)));
 
     return reply;
 }
@@ -495,7 +495,7 @@ void QGeoRoutingManagerEngineNokia::routeError(QGeoRouteReply::Error error, cons
     if (!reply)
         return;
 
-    if (receivers(SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString))) == 0) {
+    if (receivers(SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString))) == 0) {
         reply->deleteLater();
         return;
     }

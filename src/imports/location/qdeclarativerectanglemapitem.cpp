@@ -122,8 +122,7 @@ struct Vertex
     QVector2D position;
 };
 
-QGeoMapRectangleGeometry::QGeoMapRectangleGeometry(QObject *parent) :
-    QGeoMapItemGeometry(parent)
+QGeoMapRectangleGeometry::QGeoMapRectangleGeometry()
 {
 }
 

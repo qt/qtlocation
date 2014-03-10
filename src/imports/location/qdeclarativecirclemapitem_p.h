@@ -54,14 +54,10 @@ class QDeclarativeGeoMapQuickItem;
 
 class QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
 {
-    Q_OBJECT
-
 public:
-    explicit QGeoMapCircleGeometry(QObject *parent = 0);
+    QGeoMapCircleGeometry();
 
     void updateScreenPointsInvert(const QGeoMap &map);
-
-
 };
 
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase

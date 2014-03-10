@@ -41,7 +41,6 @@
 
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
-#include "error_messages.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtQml/qqmlinfo.h>
@@ -290,7 +289,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
                 QTimer::singleShot(0, this, SLOT(start()));
             }
         } else {
-            qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, MISSED_NMEA_FILE) << localFileName;
+            qmlInfo(this) << QStringLiteral("Nmea file not found") << localFileName;
 #ifdef QDECLARATIVE_POSITION_DEBUG
             qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
 #endif
@@ -637,7 +636,7 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
 /*!
     \qmlproperty enumeration PositionSource::sourceError
 
-    This property holds the error which last occured with the PositionSource.
+    This property holds the error which last occurred with the PositionSource.
 
     \list
     \li PositionSource.AccessError - The connection setup to the remote positioning backend failed because the

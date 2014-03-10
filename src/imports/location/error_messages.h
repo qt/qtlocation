@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
@@ -48,45 +47,17 @@ QT_BEGIN_NAMESPACE
 
 extern const char CONTEXT_NAME[];
 
-extern const char PLUGIN_DOESNOT_SUPPORT_MAPPING[];
-extern const char PLUGIN_DOESNOT_SUPPORT_ROUTING[];
-extern const char PLUGIN_DOESNOT_SUPPORT_GEOCODING[];
-
 extern const char PLUGIN_PROPERTY_NOT_SET[];
 extern const char PLUGIN_ERROR[];
 extern const char PLUGIN_PROVIDER_ERROR[];
 extern const char PLUGIN_NOT_VALID[];
-extern const char PLUGIN_NOT_ASSIGNED_TO_PLACE[];
-extern const char PLUGIN_NOT_ASSIGNED_TO_PLACE_ICON[];
+
 extern const char CATEGORIES_NOT_INITIALIZED[];
-extern const char NOT_INSTANTIABLE_BY_DEVELOPER[];
-
-extern const char UNSUPPORTED_BOUND_TYPE[];
-extern const char UNSUPPORTED_QUERY_TYPE[];
-extern const char PLUGIN_SET_ONCE[];
-
-extern const char PINCH_ROTATE_GESTURE_ACTIVATED[];
-extern const char PINCH_TILT_GESTURE_ACTIVATED[];
-
-extern const char INDEX_INVALID[];
-extern const char INDEX_OUT_OF_RANGE[];
-extern const char MODEL_INDEX_INVALID[];
-extern const char MODEL_INDEX_OUT_OF_RANGE[];
-
-extern const char GEOCODE_PLUGIN_NOT_SET[];
-extern const char GEOCODE_MGR_NOT_SET[];
-extern const char GEOCODE_QUERY_NOT_SET[];
 
 extern const char ROUTE_PLUGIN_NOT_SET[];
 extern const char ROUTE_MGR_NOT_SET[];
-extern const char ROUTE_QUERY_NOT_SET[];
-extern const char ROUTE_WAYPOINTS_NOT_SET[];
 
-extern const char CANNOT_REMOVE_AREA[];
-extern const char CANNOT_ADD_INVALID_WAYPOINT[];
-extern const char CANNOT_REMOVE_WAYPOINT[];
 extern const char COORD_NOT_BELONG_TO[];
-extern const char MISSED_NMEA_FILE[];
 extern const char UNABLE_TO_MAKE_REQUEST[];
 
 QT_END_NAMESPACE

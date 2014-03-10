@@ -146,7 +146,7 @@ void QDeclarativeGeocodeModel::update()
         return;
 
     if (!plugin_) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, GEOCODE_PLUGIN_NOT_SET);
+        qmlInfo(this) << QStringLiteral("Cannot geocode, plugin not set.");
         return;
     }
 
@@ -156,12 +156,12 @@ void QDeclarativeGeocodeModel::update()
 
     QGeoCodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, GEOCODE_MGR_NOT_SET);
+        qmlInfo(this) << QStringLiteral("Cannot geocode, geocode manager not set.");
         return;
     }
     if (!coordinate_.isValid() && (!address_ || address_->address().isEmpty()) &&
         (searchString_.isEmpty())) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, GEOCODE_QUERY_NOT_SET);
+        qmlInfo(this) << QStringLiteral("Cannot geocode, valid query not set.");
         return;
     }
     abortRequest(); // abort possible previous requests
@@ -288,7 +288,8 @@ void QDeclarativeGeocodeModel::pluginReady()
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoCodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_GEOCODING).arg(serviceProvider->errorString());
+        qmlInfo(this) << QStringLiteral("Error: Plugin does not support (reverse) geocoding.\nError message:")
+                      << serviceProvider->errorString();
         return;
     }
     connect(geocodingManager, SIGNAL(finished(QGeoCodeReply*)),
@@ -510,7 +511,7 @@ int QDeclarativeGeocodeModel::count() const
 QDeclarativeGeoLocation *QDeclarativeGeocodeModel::get(int index)
 {
     if (index < 0 || index >= declarativeLocations_.count()) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, INDEX_OUT_OF_RANGE).arg(index);
+        qmlInfo(this) << QStringLiteral("Index '%1' out of range").arg(index);
         return 0;
     }
     return declarativeLocations_.at(index);
@@ -662,11 +663,13 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
             connect(address_, SIGNAL(streetChanged()), this, SLOT(queryContentChanged()));
             connect(address_, SIGNAL(postalCodeChanged()), this, SLOT(queryContentChanged()));
         } else {
-            qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, UNSUPPORTED_QUERY_TYPE);
+            qmlInfo(this) << QStringLiteral("Unsupported query type for geocode model ")
+                          << QStringLiteral("(coordinate, string and Address supported).");
             return;
         }
     } else {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, UNSUPPORTED_QUERY_TYPE);
+        qmlInfo(this) << QStringLiteral("Unsupported query type for geocode model ")
+                      << QStringLiteral("(coordinate, string and Address supported).");
         return;
     }
 

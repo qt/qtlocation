@@ -1,10 +1,9 @@
-
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Appello Systems AB.
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtPositioning module of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -38,17 +37,39 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Nokia services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file NOKIA_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Nokia services
+** plugin source code.
+**
 ****************************************************************************/
-#ifndef ERROR_MESSAGES_H
-#define ERROR_MESSAGES_H
 
-#include <QString>
+#ifndef QGEOMAPVERSION_H
+#define QGEOMAPVERSION_H
+
+#include <QByteArray>
+#include <QJsonObject>
 
 QT_BEGIN_NAMESPACE
 
-extern const char CONTEXT_NAME[];
-extern const char MISSED_NMEA_FILE[];
+class QGeoMapVersion
+{
+
+public:
+    QGeoMapVersion();
+    bool isNewVersion(const QJsonObject &newVersionData);
+    int version() const;
+    void setVersion(const int);
+    void setVersionData(const QJsonObject &versionData);
+    QByteArray toJson() const;
+
+private:
+    int m_version;
+    QJsonObject m_versionData;
+};
 
 QT_END_NAMESPACE
 
-#endif // ERROR_MESSAGES_H
+#endif // QGEOMAPVERSION_H

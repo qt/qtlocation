@@ -88,7 +88,7 @@ bool QPlaceResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
 
     \snippet places/requesthandler.h Convert search result
 
-    The implmentation is handled in such a way that object slicing is not an issue.
+    The implementation is handled in such a way that object slicing is not an issue.
 
     \sa QPlaceSearchResult
 */

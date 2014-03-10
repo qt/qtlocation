@@ -250,9 +250,9 @@ void TestQGeoSatelliteInfoSource::startUpdates_testIntervals()
 {
     CHECK_SOURCE_VALID;
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy timeout(m_source, SIGNAL(requestTimeout()));
     m_source->setUpdateInterval(7000);
     int interval = m_source->updateInterval();
@@ -279,9 +279,9 @@ void TestQGeoSatelliteInfoSource::startUpdates_testIntervalChangesWhileRunning()
 
     CHECK_SOURCE_VALID;
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy timeout(m_source, SIGNAL(requestTimeout()));
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
@@ -334,9 +334,9 @@ void TestQGeoSatelliteInfoSource::startUpdates_testDefaultInterval()
 {
     CHECK_SOURCE_VALID;
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy timeout(m_source, SIGNAL(requestTimeout()));
     m_source->startUpdates();
     for (int i = 0; i < 3; i++) {
@@ -351,9 +351,9 @@ void TestQGeoSatelliteInfoSource::startUpdates_testZeroInterval()
 {
     CHECK_SOURCE_VALID;
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy timeout(m_source, SIGNAL(requestTimeout()));
 
     m_source->setUpdateInterval(0);
@@ -370,9 +370,9 @@ void TestQGeoSatelliteInfoSource::startUpdates_moreThanOnce()
 {
     CHECK_SOURCE_VALID;
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
 
@@ -391,9 +391,9 @@ void TestQGeoSatelliteInfoSource::stopUpdates()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     m_source->setUpdateInterval(10000);
     m_source->startUpdates();
 
@@ -422,7 +422,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate()
     QFETCH(int, timeout);
     QSignalSpy spy(m_source, SIGNAL(requestTimeout()));
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     m_source->requestUpdate(timeout);
     // Geoclue may deliver update instantly if there is a satellite fix
     QTRY_VERIFY_WITH_TIMEOUT(!spy.isEmpty() || !spyView.isEmpty(), 10);
@@ -440,9 +440,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
 
     m_source->requestUpdate(7000);
@@ -456,9 +456,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_defaultTimeout()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
 
     m_source->requestUpdate(0);
@@ -483,9 +483,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
 
     m_source->requestUpdate(7000);
 
@@ -503,9 +503,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
 
     m_source->requestUpdate(7000);
     m_source->requestUpdate(7000);
@@ -518,9 +518,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyTimeout(m_source,
                       SIGNAL(requestTimeout()));
 
@@ -537,9 +537,9 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
 
     m_source->setUpdateInterval(0);
@@ -567,9 +567,9 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
     m_source->setUpdateInterval(10000);
     m_source->requestUpdate(7000);
@@ -591,9 +591,9 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
 {
     CHECK_SOURCE_VALID;
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy timeout(m_source, SIGNAL(requestTimeout()));
 
     m_source->requestUpdate(7000);
@@ -616,9 +616,9 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates_SmallInterval(
 {
     CHECK_SOURCE_VALID;
     QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+                       SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+                      SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy timeout(m_source, SIGNAL(requestTimeout()));
 
     m_source->requestUpdate(7000);
@@ -656,11 +656,11 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 {
     CHECK_SOURCE_VALID;
 
-    bool i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    bool i = connect(m_source, SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
-    i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
+    i = connect(m_source, SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)), this, SLOT(test_slot2()));
     QVERIFY(i == true);
-    i = disconnect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    i = disconnect(m_source, SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
 
     m_source->requestUpdate(7000);
@@ -672,11 +672,11 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
 {
     CHECK_SOURCE_VALID;
 
-    bool i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    bool i = connect(m_source, SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
-    i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
+    i = connect(m_source, SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)), this, SLOT(test_slot2()));
     QVERIFY(i == true);
-    i = disconnect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    i = disconnect(m_source, SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
 
     m_source->requestUpdate(7000);

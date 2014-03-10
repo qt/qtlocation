@@ -43,7 +43,7 @@ import QtQuick 2.0
 //! [QtQuick import]
 //! [QtLocation import]
 import QtPositioning 5.2
-import QtLocation 5.0
+import QtLocation 5.3
 //! [QtLocation import]
 
 Item {
@@ -105,7 +105,7 @@ Item {
     function writeExtendedAttributes() {
     //! [ExtendedAttributes write]
         //assign a new attribute to a place
-        var smokingAttrib = Qt.createQmlObject('import QtLocation 5.0; PlaceAttribute {}', place);
+        var smokingAttrib = Qt.createQmlObject('import QtLocation 5.3; PlaceAttribute {}', place);
         smokingAttrib.label = "Smoking Allowed"
         smokingAttrib.text = "No"
         place.extendedAttributes.smoking = smokingAttrib;
@@ -273,7 +273,7 @@ Item {
 
     //! [ContactDetails write single]
     function writeSingle() {
-        var phoneNumber = Qt.createQmlObject('import QtLocation 5.0; ContactDetail {}', place);
+        var phoneNumber = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', place);
         phoneNumber.label = "Phone";
         phoneNumber.value = "555-5555"
         place.contactDetails.phone = phoneNumber;
@@ -282,11 +282,11 @@ Item {
 
     //! [ContactDetails write multiple]
     function writeMultiple() {
-        var bob = Qt.createQmlObject('import QtLocation 5.0; ContactDetail {}', place);
+        var bob = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', place);
         bob.label = "Bob";
         bob.value = "555-5555"
 
-        var alice = Qt.createQmlObject('import QtLocation 5.0; ContactDetail {}', place);
+        var alice = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', place);
         alice.label = "Alice";
         alice.value = "555-8745"
 
@@ -362,7 +362,7 @@ Item {
     function createAndSavePlace() {
         //! [Place createAndSavePlace]
         //creating and saving a place
-        var place = Qt.createQmlObject('import QtLocation 5.0; Place { }', parent);
+        var place = Qt.createQmlObject('import QtLocation 5.3; Place { }', parent);
         place.plugin = myPlugin;
         place.name = "New York";
         place.location.coordinate.latitude = 40.7
@@ -380,7 +380,7 @@ Item {
 
     function saveToNewPlugin() {
         //! [Place save to different plugin]
-        place = Qt.createQmlObject('import QtLocation 5.0; Place { }', parent);
+        place = Qt.createQmlObject('import QtLocation 5.3; Place { }', parent);
         place.plugin = destinationPlugin;
         place.copyFrom(originalPlace);
         place.save();
