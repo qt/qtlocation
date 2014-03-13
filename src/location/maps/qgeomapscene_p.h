@@ -67,11 +67,10 @@ class QGeoTileSpec;
 
 class QDoubleVector2D;
 
-class QGLSceneNode;
-class QGLCamera;
-class QGLPainter;
-class QGLTexture2D;
 class QGeoTileTexture;
+
+class QSGNode;
+class QQuickWindow;
 
 class QPointF;
 
@@ -97,9 +96,7 @@ public:
     QDoubleVector2D screenPositionToMercator(const QDoubleVector2D &pos) const;
     QDoubleVector2D mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
 
-    QGLCamera *camera() const;
-    QGLSceneNode *sceneNode() const;
-    void paintGL(QGLPainter *painter);
+    QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
     bool verticalLock() const;
     QSet<QGeoTileSpec> texturedTiles();

@@ -81,9 +81,6 @@ class QGeoTileRequestManager;
 class QGeoMapScene;
 class QGeoTiledMapData;
 class QGeoTiledMappingManagerEngine;
-class QGLPainter;
-
-class QGLSceneNode;
 
 class QGeoTiledMapDataPrivate
 {
@@ -93,7 +90,7 @@ public:
 
     QGeoTileCache *tileCache();
 
-    void paintGL(QGLPainter *painter);
+    QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window);
 
     void changeCameraData(const QGeoCameraData &oldCameraData);
     void changeActiveMapType(const QGeoMapType mapType);

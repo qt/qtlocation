@@ -75,7 +75,6 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGLPainter;
 class QGLSceneNode;
 class QGeoTileCache;
 class Tile;
@@ -119,8 +118,6 @@ public:
     // from QQuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
     virtual void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
-
-    void itemChange(ItemChange change, const ItemChangeData & data);
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
@@ -210,11 +207,6 @@ private:
 
     QDeclarativeGeoMapGestureArea *gestureArea_;
 
-    void paintGL(QGLPainter *painter);
-    void earlyDraw(QGLPainter *painter);
-    void restoreDefaults(QGLPainter *painter);
-
-    QQuickWindow *window_;
     int touchTimer_;
 
     QGeoMap *map_;

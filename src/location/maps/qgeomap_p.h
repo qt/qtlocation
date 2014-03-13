@@ -64,13 +64,13 @@ class QGeoCoordinate;
 
 class QGeoMappingManager;
 
-class MapItem;
 class QGeoMapController;
 class QGeoCameraCapabilities;
 
-class QGLCamera;
-class QGLPainter;
 class QGeoMapData;
+
+class QSGNode;
+class QQuickWindow;
 
 class QPointF;
 
@@ -87,8 +87,7 @@ public:
 
     QGeoMapController *mapController();
 
-    QGLCamera *glCamera() const;
-    void paintGL(QGLPainter *painter);
+    QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
     void resize(int width, int height);
     int width() const;

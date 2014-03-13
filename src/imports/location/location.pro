@@ -1,4 +1,4 @@
-QT += quick-private network positioning-private location-private qml-private 3d core-private gui-private
+QT += quick-private network positioning-private location-private qml-private core-private gui-private
 
 INCLUDEPATH += ../../location
 INCLUDEPATH += ../../location/maps
@@ -27,7 +27,6 @@ HEADERS += \
            qdeclarativegeomaptype_p.h \
            qdeclarativegeomapitembase_p.h \
            qdeclarativegeomapquickitem_p.h \
-           mapnode_p.h \
            qdeclarativecirclemapitem_p.h \
            qdeclarativerectanglemapitem_p.h \
            qdeclarativepolygonmapitem_p.h \
@@ -52,7 +51,6 @@ SOURCES += \
            qdeclarativegeomaptype.cpp \
            qdeclarativegeomapitembase.cpp \
            qdeclarativegeomapquickitem.cpp \
-           mapnode.cpp \
            qdeclarativecirclemapitem.cpp \
            qdeclarativerectanglemapitem.cpp \
            qdeclarativepolygonmapitem.cpp \

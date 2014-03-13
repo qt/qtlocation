@@ -74,9 +74,6 @@ class QGeoMappingManagerEngine;
 class QGeoMapData;
 class QGeoMapController;
 
-class QGLCamera;
-class QGLPainter;
-
 class QGeoMapDataPrivate
 {
 public:
@@ -86,8 +83,6 @@ public:
     QGeoMappingManagerEngine *engine() const;
 
     QGeoMapController *mapController();
-
-    QGLCamera *glCamera() const;
 
     void setCameraData(const QGeoCameraData &cameraData);
     QGeoCameraData cameraData() const;
@@ -106,7 +101,6 @@ private:
     int height_;
     double aspectRatio_;
 
-    QGLCamera *camera_;
     QGeoMapData *map_;
     QGeoMappingManagerEngine *engine_;
     QString pluginString_;

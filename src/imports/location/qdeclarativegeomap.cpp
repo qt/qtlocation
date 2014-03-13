@@ -53,7 +53,6 @@
 #include "qgeocameradata_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomapcontroller_p.h"
-#include "mapnode_p.h"
 #include <cmath>
 
 #include <QtPositioning/QGeoCoordinate>
@@ -68,6 +67,7 @@
 #include <QtQml/qqmlinfo.h>
 #include <QModelIndex>
 #include <QtQuick/QQuickWindow>
+#include <QtQuick/QSGSimpleRectNode>
 #include <QtGui/QGuiApplication>
 #include <QCoreApplication>
 
@@ -191,7 +191,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         activeMapType_(0),
         componentCompleted_(false),
         mappingManagerInitialized_(false),
-        window_(0),
         touchTimer_(-1),
         map_(0)
 {
@@ -368,16 +367,6 @@ QDeclarativeGeoMapGestureArea *QDeclarativeGeoMap::gesture()
 /*!
     \internal
 */
-void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData & data)
-{
-    QLOC_TRACE0;
-    if (change == ItemSceneChange)
-        window_ = data.window;
-}
-
-/*!
-    \internal
-*/
 void QDeclarativeGeoMap::populateMap()
 {
     QObjectList kids = children();
@@ -407,29 +396,27 @@ void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
 }
 
 /*!
-    \internal
-*/
-QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
+ * \internal
+ */
+QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
-    Q_UNUSED(data)
-    if (width() <= 0 || height() <= 0) {
+    if (!map_) {
         delete oldNode;
         return 0;
     }
 
-    MapNode *node = static_cast<MapNode *>(oldNode);
+    QSGSimpleRectNode *root = static_cast<QSGSimpleRectNode *>(oldNode);
+    if (!root)
+        root = new QSGSimpleRectNode(boundingRect(), QColor::fromRgbF(0.9, 0.9, 0.9));
+    else
+        root->setRect(boundingRect());
 
-    if (!node) {
-        node = new MapNode(map_);
-    }
+    QSGNode *content = root->childCount() ? root->firstChild() : 0;
+    content = map_->updateSceneGraph(content, window());
+    if (content && root->childCount() == 0)
+        root->appendChildNode(content);
 
-    if (!mappingManagerInitialized_)
-        return 0;
-
-    node->setSize(QSize(width(), height()));
-    node->update();
-
-    return node;
+    return root;
 }
 
 

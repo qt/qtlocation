@@ -55,15 +55,6 @@
 
 #include <qnumeric.h>
 
-#include <Qt3D/qglscenenode.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qglpainter.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qglcamera.h>
-#include <Qt3D/qglsubsurface.h>
-
 #include <QtPositioning/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 
@@ -109,10 +100,10 @@ QGeoTileCache *QGeoTiledMapData::tileCache()
     return d->tileCache();
 }
 
-void QGeoTiledMapData::paintGL(QGLPainter *painter)
+QSGNode *QGeoTiledMapData::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
     Q_D(QGeoTiledMapData);
-    d->paintGL(painter);
+    return d->updateSceneGraph(oldNode, window);
 }
 
 void QGeoTiledMapData::mapResized(int width, int height)
@@ -330,10 +321,9 @@ QSet<QGeoTileSpec> QGeoTiledMapDataPrivate::visibleTiles()
     return cameraTiles_->tiles();
 }
 
-void QGeoTiledMapDataPrivate::paintGL(QGLPainter *painter)
+QSGNode *QGeoTiledMapDataPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
-    mapScene_->paintGL(painter);
-    cache_->GLContextAvailable();
+    return mapScene_->updateSceneGraph(oldNode, window);
 }
 
 QGeoCoordinate QGeoTiledMapDataPrivate::screenPositionToCoordinate(const QDoubleVector2D &pos) const

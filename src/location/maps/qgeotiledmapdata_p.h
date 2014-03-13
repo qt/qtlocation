@@ -68,8 +68,10 @@ class QGeoTileTexture;
 class QGeoTileCache;
 class QGeoTiledMapDataPrivate;
 class QGeoTiledMappingManagerEngine;
-class MapItem;
 class QGeoTileRequestManager;
+
+class QQuickWindow;
+class QSGNode;
 
 class QPointF;
 
@@ -82,7 +84,7 @@ public:
 
     QGeoTileCache *tileCache();
 
-    void paintGL(QGLPainter *painter);
+    QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window);
 
     void newTileFetched(const QGeoTileSpec &spec);
 

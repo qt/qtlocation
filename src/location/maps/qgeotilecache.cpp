@@ -50,14 +50,10 @@
 #include <QPixmap>
 #include <QDebug>
 
-#include <Qt3D/qgltexture2d.h>
-
 Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
 Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
 
 QT_BEGIN_NAMESPACE
-QMutex QGeoTileCache::cleanupMutex_;
-QList<QGLTexture2D*> QGeoTileCache::cleanupList_;
 
 class QGeoCachedTileMemory
 {
@@ -75,8 +71,7 @@ public:
 };
 
 QGeoTileTexture::QGeoTileTexture()
-    : texture(0),
-      textureBound(false) {}
+    : textureBound(false) {}
 
 void QCache3QTileEvictionPolicy::aboutToBeRemoved(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj)
 {
@@ -100,7 +95,6 @@ QGeoCachedTileDisk::~QGeoCachedTileDisk()
 
 QGeoTileTexture::~QGeoTileTexture()
 {
-    QGeoTileCache::evictFromTextureCache(this);
 }
 
 QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
@@ -274,25 +268,6 @@ int QGeoTileCache::textureUsage() const
     return textureCache_.totalCost();
 }
 
-void QGeoTileCache::GLContextAvailable()
-{
-    QMutexLocker ml(&cleanupMutex_);
-
-    /* Throttle the cleanup to 10 items/frame to avoid blocking the render
-     * for too long. Normally only 6-20 tiles are on screen at a time so
-     * eviction rates shouldn't be much higher than this. */
-    int todo = qMin(cleanupList_.size(), 10);
-    for (int i = 0; i < todo; ++i) {
-        QGLTexture2D *texture = cleanupList_.front();
-        if (texture) {
-            texture->release();
-            texture->cleanupResources();
-            delete texture;
-        }
-        cleanupList_.pop_front();
-    }
-}
-
 QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
 {
     QSharedPointer<QGeoTileTexture> tt = textureCache_.object(spec);
@@ -372,12 +347,6 @@ void QGeoTileCache::evictFromMemoryCache(QGeoCachedTileMemory * /* tm  */)
 {
 }
 
-void QGeoTileCache::evictFromTextureCache(QGeoTileTexture *tt)
-{
-    QMutexLocker ml(&cleanupMutex_);
-    cleanupList_ << tt->texture;
-}
-
 QSharedPointer<QGeoCachedTileDisk> QGeoTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename)
 {
     QSharedPointer<QGeoCachedTileDisk> td(new QGeoCachedTileDisk);
@@ -409,15 +378,9 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileS
 {
     QSharedPointer<QGeoTileTexture> tt(new QGeoTileTexture);
     tt->spec = spec;
-    tt->texture = new QGLTexture2D();
-    tt->texture->setPixmap(pixmap);
-    tt->texture->setHorizontalWrap(QGL::ClampToEdge);
-    tt->texture->setVerticalWrap(QGL::ClampToEdge);
+    tt->image = pixmap.toImage();
 
-    /* Do not bind/cleanImage on the texture here -- it needs to be done
-     * in the render thread (by qgeomapscene) */
-
-    int textureCost = pixmap.width() * pixmap.height() * pixmap.depth() / 8;
+    int textureCost = tt->image.width() * tt->image.height() * tt->image.depth() / 8;
     textureCache_.insert(spec, tt, textureCost);
 
     return tt;

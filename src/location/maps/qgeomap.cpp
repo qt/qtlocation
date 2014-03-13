@@ -62,14 +62,7 @@
 
 #include <qnumeric.h>
 
-#include <Qt3D/qglscenenode.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qglpainter.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qglcamera.h>
-#include <Qt3D/qglsubsurface.h>
+#include <QtQuick/QSGNode>
 
 #include <cmath>
 
@@ -95,14 +88,9 @@ QGeoMapController *QGeoMap::mapController()
     return mapData_->mapController();
 }
 
-QGLCamera *QGeoMap::glCamera() const
+QSGNode *QGeoMap::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
-    return mapData_->glCamera();
-}
-
-void QGeoMap::paintGL(QGLPainter *painter)
-{
-    mapData_->paintGL(painter);
+    return mapData_->updateSceneGraph(oldNode, window);
 }
 
 void QGeoMap::resize(int width, int height)

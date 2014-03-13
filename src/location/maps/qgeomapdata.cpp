@@ -63,15 +63,6 @@
 
 #include <qnumeric.h>
 
-#include <Qt3D/qglscenenode.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qglpainter.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qglcamera.h>
-#include <Qt3D/qglsubsurface.h>
-
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
@@ -89,12 +80,6 @@ QGeoMapController *QGeoMapData::mapController()
 {
     Q_D(QGeoMapData);
     return d->mapController();
-}
-
-QGLCamera *QGeoMapData::glCamera() const
-{
-    Q_D(const QGeoMapData);
-    return d->glCamera();
 }
 
 void QGeoMapData::resize(int width, int height)
@@ -178,7 +163,6 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMap
     : width_(0),
       height_(0),
       aspectRatio_(0.0),
-      camera_(new QGLCamera()),
       map_(parent),
       engine_(engine),
       controller_(0),
@@ -191,7 +175,6 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
     // controller_ is a child of map_, don't need to delete it here
 
-    delete camera_;
     // TODO map items are not deallocated!
     // However: how to ensure this is done in rendering thread?
 }
@@ -211,11 +194,6 @@ QGeoMapController *QGeoMapDataPrivate::mapController()
     if (!controller_)
         controller_ = new QGeoMapController(map_);
     return controller_;
-}
-
-QGLCamera *QGeoMapDataPrivate::glCamera() const
-{
-    return camera_;
 }
 
 void QGeoMapDataPrivate::setCameraData(const QGeoCameraData &cameraData)

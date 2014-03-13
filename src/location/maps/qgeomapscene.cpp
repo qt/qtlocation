@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Jolla Ltd, author: <gunnar.sletta@jollamobile.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -49,15 +50,8 @@
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qdoublevector3d_p.h>
 
-#include <Qt3D/qglscenenode.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qglmaterial.h>
-#include <Qt3D/qgltexture2d.h>
-#include <Qt3D/qgeometrydata.h>
-#include <Qt3D/qglcamera.h>
-#include <Qt3D/qglpainter.h>
-#include <Qt3D/QGLLightParameters>
-
+#include <QtQuick/QSGSimpleTextureNode>
+#include <QtQuick/QQuickWindow>
 
 #include <QHash>
 
@@ -78,9 +72,10 @@ public:
     QGeoCameraData cameraData_;
     QSet<QGeoTileSpec> visibleTiles_;
 
-    QGLCamera *camera_;
-    QGLSceneNode *sceneNode_;
-    QGLLightParameters* light_;
+    QDoubleVector3D cameraUp_;
+    QDoubleVector3D cameraEye_;
+    QDoubleVector3D cameraCenter_;
+    QMatrix4x4 projectionMatrix_;
 
     // scales up the tile geometry and the camera altitude, resulting in no visible effect
     // other than to control the accuracy of the render by keeping the values in a sensible range
@@ -94,9 +89,7 @@ public:
     // it is 1<<zoomLevel
     int sideLength_;
 
-    QHash<QGeoTileSpec, QGLSceneNode *> nodes_;
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > textures_;
-    QList<QSharedPointer<QGeoTileTexture> > newUploads_;
 
     // tilesToGrid transform
     int minTileX_; // the minimum tile index, i.e. 0 to sideLength which is 1<< zoomLevel
@@ -130,14 +123,9 @@ public:
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
-    void updateTiles(const QSet<QGeoTileSpec> &tiles);
-    QGeometryData buildGeometry(const QGeoTileSpec &spec);
-    QGLSceneNode *buildSceneNodeFromGeometry(const QGeometryData &geom);
+    bool buildGeometry(const QGeoTileSpec &spec, QSGGeometry::TexturedPoint2D *vertices);
     void setTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
-    void setScalingOnTextures();
-
-    void paintGL(QGLPainter *painter);
 
 private:
     QGeoMapScene *q_ptr;
@@ -177,13 +165,7 @@ void QGeoMapScene::setCameraData(const QGeoCameraData &cameraData)
     d->cameraData_ = cameraData;
     d->intZoomLevel_ = static_cast<int>(std::floor(d->cameraData_.zoomLevel()));
     float delta = cameraData.zoomLevel() - d->intZoomLevel_;
-    if (qAbs(delta) < 0.05) {
-        d->linearScaling_ = false;
-        d->setScalingOnTextures();
-    } else {
-        d->linearScaling_ = true;
-        d->setScalingOnTextures();
-    }
+    d->linearScaling_ = qAbs(delta) > 0.05;
     d->sideLength_ = 1 << d->intZoomLevel_;
 }
 
@@ -211,28 +193,10 @@ QDoubleVector2D QGeoMapScene::mercatorToScreenPosition(const QDoubleVector2D &me
     return d->mercatorToScreenPosition(mercator);
 }
 
-QGLCamera *QGeoMapScene::camera() const
-{
-    Q_D(const QGeoMapScene);
-    return d->camera_;
-}
-
-QGLSceneNode *QGeoMapScene::sceneNode() const
-{
-    Q_D(const QGeoMapScene);
-    return d->sceneNode_;
-}
-
 bool QGeoMapScene::verticalLock() const
 {
     Q_D(const QGeoMapScene);
     return d->verticalLock_;
-}
-
-void QGeoMapScene::paintGL(QGLPainter *painter)
-{
-    Q_D(QGeoMapScene);
-    d->paintGL(painter);
 }
 
 QSet<QGeoTileSpec> QGeoMapScene::texturedTiles()
@@ -247,9 +211,6 @@ QSet<QGeoTileSpec> QGeoMapScene::texturedTiles()
 
 QGeoMapScenePrivate::QGeoMapScenePrivate(QGeoMapScene *scene)
     : tileSize_(0),
-      camera_(new QGLCamera()),
-      sceneNode_(new QGLSceneNode()),
-      light_(new QGLLightParameters()),
       scaleFactor_(10.0),
       intZoomLevel_(0),
       sideLength_(0),
@@ -269,14 +230,11 @@ QGeoMapScenePrivate::QGeoMapScenePrivate(QGeoMapScene *scene)
       screenHeight_(0.0),
       useVerticalLock_(false),
       verticalLock_(false),
-      linearScaling_(true),
+      linearScaling_(false),
       q_ptr(scene) {}
 
 QGeoMapScenePrivate::~QGeoMapScenePrivate()
 {
-    delete sceneNode_;
-    delete camera_;
-    delete light_;
 }
 
 QDoubleVector2D QGeoMapScenePrivate::screenPositionToMercator(const QDoubleVector2D &pos) const
@@ -340,7 +298,7 @@ QDoubleVector2D QGeoMapScenePrivate::mercatorToScreenPosition(const QDoubleVecto
     return QDoubleVector2D(x + screenOffsetX_, y + screenOffsetY_);
 }
 
-QGeometryData QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)
+bool QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGGeometry::TexturedPoint2D *vertices)
 {
     int x = spec.x();
 
@@ -352,7 +310,7 @@ QGeometryData QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)
             || (spec.y() < minTileY_)
             || (maxTileY_ < spec.y())
             || (spec.zoom() != tileZ_)) {
-        return 0;
+        return false;
     }
 
     double edge = scaleFactor_ * tileSize_;
@@ -368,102 +326,21 @@ QGeometryData QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)
     y1 *= edge;
     y2 *= edge;
 
-    QGeometryData g;
-
-    QDoubleVector3D n = QDoubleVector3D(0, 0, 1);
-
     //Texture coordinate order for veritcal flip of texture
-    g.appendVertex(QVector3D(x1, y1, 0.0));
-    g.appendNormal(n);
-    g.appendTexCoord(QVector2D(0.0, 0.0));
+    vertices[0].set(x1, y1, 0, 0);
+    vertices[1].set(x1, y2, 0, 1);
+    vertices[2].set(x2, y1, 1, 0);
+    vertices[3].set(x2, y2, 1, 1);
 
-    g.appendVertex(QVector3D(x1, y2, 0.0));
-    g.appendNormal(n);
-    g.appendTexCoord(QVector2D(0.0, 1.0));
-
-    g.appendVertex(QVector3D(x2, y2, 0.0));
-    g.appendNormal(n);
-    g.appendTexCoord(QVector2D(1.0, 1.0));
-
-    g.appendVertex(QVector3D(x2, y1, 0.0));
-    g.appendNormal(n);
-    g.appendTexCoord(QVector2D(1.0, 0.0));
-
-    return g;
-}
-
-QGLSceneNode *QGeoMapScenePrivate::buildSceneNodeFromGeometry(const QGeometryData &geom)
-{
-    QGLBuilder builder;
-    builder.addQuads(geom);
-    return builder.finalizedSceneNode();
-}
-
-
-void QGeoMapScenePrivate::setScalingOnTextures()
-{
-    if (!linearScaling_) {
-        foreach (const QSharedPointer<QGeoTileTexture> &tex, textures_.values()) {
-            tex->texture->setBindOptions(tex->texture->bindOptions() &
-                                         (~QGLTexture2D::LinearFilteringBindOption));
-        }
-    } else {
-        foreach (const QSharedPointer<QGeoTileTexture> &tex, textures_.values()) {
-            tex->texture->setBindOptions(tex->texture->bindOptions() |
-                                         (QGLTexture2D::LinearFilteringBindOption));
-        }
-    }
+    return true;
 }
 
 void QGeoMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
 {
     if (!visibleTiles_.contains(spec)) // Don't add the geometry if it isn't visible
         return;
-    if (linearScaling_) {
-        texture->texture->setBindOptions(texture->texture->bindOptions() |
-                                         (QGLTexture2D::LinearFilteringBindOption));
-    } else {
-        texture->texture->setBindOptions(texture->texture->bindOptions() &
-                                         (~QGLTexture2D::LinearFilteringBindOption));
-    }
 
-    //Avoid expensive conversion of ARGB32_Premultiplied to ARGB32
-    if (texture->texture->image().format() == QImage::Format_ARGB32_Premultiplied) {
-        texture->texture->setBindOptions(texture->texture->bindOptions() |
-                                         (QGLTexture2D::PremultipliedAlphaBindOption));
-    }
-
-    //There are tiles for different zoom levels, no need for mipmaps
-    texture->texture->setBindOptions(texture->texture->bindOptions() & (~QGLTexture2D::MipmapBindOption));
-
-    //We flip the texture coordinates instead of the texture
-    texture->texture->setBindOptions(texture->texture->bindOptions() & (~QGLTexture2D::InvertedYBindOption));
-
-    QGLSceneNode *node = nodes_.value(spec, 0);
-    if (!node) {
-        QGeometryData geom = buildGeometry(spec);
-        node = buildSceneNodeFromGeometry(geom);
-        if (!node)
-            return;
-
-        QGLMaterial *mat = new QGLMaterial(node);
-        mat->setTexture(texture->texture);
-        node->setEffect(QGL::LitDecalTexture2D);
-        node->setMaterial(mat);
-
-        sceneNode_->addNode(node);
-        nodes_.insert(spec, node);
-        textures_.insert(spec, texture);
-        newUploads_ << texture;
-
-    } else {
-        // TODO handle texture updates when we make node removal more efficient
-        if (textures_[spec].data() != texture.data()) {
-            textures_.insert(spec, texture);
-            node->material()->setTexture(texture->texture);
-            newUploads_ << texture;
-        }
-    }
+    textures_.insert(spec, texture);
 }
 
 // return true if new tiles introduced in [tiles]
@@ -485,49 +362,9 @@ void QGeoMapScenePrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     if (!toRemove.isEmpty())
         removeTiles(toRemove);
 
-    // only need to update tiles when the bounds have changed,
-    if (visibleTiles_ != tiles && !toUpdate.isEmpty())
-        updateTiles(toUpdate);
-
     visibleTiles_ = tiles;
     if (newTilesIntroduced)
         emit q->newTilesVisible(visibleTiles_);
-}
-
-void QGeoMapScenePrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
-{
-    typedef QSet<QGeoTileSpec>::const_iterator iter;
-    iter i = tiles.constBegin();
-    iter end = tiles.constEnd();
-    for (; i != end; ++i) {
-        QGeoTileSpec tile = *i;
-        QGLSceneNode *node = nodes_.value(tile, 0);
-
-        if (node) {
-            QGeometryData geom = buildGeometry(tile);
-            // if the new geometry (after wrapping) is the same as the old one,
-            // it can be reused
-            if ( node->children().size() > 0) {
-                if (node->children().front()->geometry() == geom)
-                    continue;
-            }
-
-            sceneNode_->removeNode(node);
-            QGLSceneNode *newNode = buildSceneNodeFromGeometry(geom);
-            if (newNode) {
-                QGLMaterial *mat = new QGLMaterial(newNode);
-                mat->setTexture(textures_[tile]->texture);
-                newNode->setEffect(QGL::LitDecalTexture2D);
-                newNode->setMaterial(mat);
-                sceneNode_->addNode(newNode);
-                nodes_.insert(tile, newNode);
-            } else {
-                nodes_.remove(tile);
-                textures_.remove(tile);
-            }
-            delete node;
-        }
-    }
 }
 
 void QGeoMapScenePrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)
@@ -538,14 +375,7 @@ void QGeoMapScenePrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)
 
     for (; i != end; ++i) {
         QGeoTileSpec tile = *i;
-        QGLSceneNode *node = nodes_.value(tile, 0);
-        if (node) {
-            // TODO protect with mutex?
-            sceneNode_->removeNode(node);
-            nodes_.remove(tile);
-            textures_.remove(tile);
-            delete node;
-        }
+        textures_.remove(tile);
     }
 }
 
@@ -629,7 +459,6 @@ void QGeoMapScenePrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
 
 void QGeoMapScenePrivate::setupCamera()
 {
-
     double f = 1.0 * qMin(screenSize_.width(), screenSize_.height());
 
     // fraction of zoom level
@@ -734,81 +563,204 @@ void QGeoMapScenePrivate::setupCamera()
     double nearPlane = 1.0;
     double farPlane = 4.0 * edge;
 
-    // TODO protect with mutex?
-    // set glcamera parameters
-    camera_->setCenter(center);
-    camera_->setEye(eye);
-    camera_->setUpVector(up);
-    camera_->setNearPlane(nearPlane);
-    camera_->setFarPlane(farPlane);
+    cameraUp_ = up;
+    cameraCenter_ = center;
+    cameraEye_ = eye;
+
+    float halfWidth = 1;
+    float halfHeight = 1;
+    if (aspectRatio > 1.0) {
+        halfWidth *= aspectRatio;
+    } else if (aspectRatio > 0.0f && aspectRatio < 1.0f) {
+        halfHeight /= aspectRatio;
+    }
+    projectionMatrix_.setToIdentity();
+    projectionMatrix_.frustum(-halfWidth, halfWidth, -halfHeight, halfHeight, nearPlane, farPlane);
 }
 
-void QGeoMapScenePrivate::paintGL(QGLPainter *painter)
+class QGeoMapTileContainerNode : public QSGTransformNode
 {
-    // TODO protect with mutex?
+public:
+    void addChild(const QGeoTileSpec &spec, QSGSimpleTextureNode *node)
+    {
+        tiles.insert(spec, node);
+        appendChildNode(node);
+    }
+    QHash<QGeoTileSpec, QSGSimpleTextureNode *> tiles;
+};
 
-    // TODO add a shortcut here for when we don't need to repeat and clip the map
-    // NOTE- this is important as the repeat code below removes a lot of accuracy
-    // by converting to float and adding/removing large numbers when at high zoom
-
-    // do any pending upload/releases
-    while (!newUploads_.isEmpty()) {
-        if (!newUploads_.front()->textureBound) {
-            newUploads_.front()->texture->bind();
-            newUploads_.front()->texture->clearImage();
-            newUploads_.front()->textureBound = true;
-        }
-        newUploads_.pop_front();
+class QGeoMapRootNode : public QSGClipNode
+{
+public:
+    QGeoMapRootNode()
+        : isTextureLinear(false)
+        , geometry(QSGGeometry::defaultAttributes_Point2D(), 4)
+        , root(new QSGTransformNode())
+        , tiles(new QGeoMapTileContainerNode())
+        , wrapLeft(new QGeoMapTileContainerNode())
+        , wrapRight(new QGeoMapTileContainerNode())
+    {
+        setIsRectangular(true);
+        setGeometry(&geometry);
+        root->appendChildNode(tiles);
+        root->appendChildNode(wrapLeft);
+        root->appendChildNode(wrapRight);
+        appendChildNode(root);
     }
 
-    glEnable(GL_SCISSOR_TEST);
+    ~QGeoMapRootNode()
+    {
+        qDeleteAll(textures.values());
+    }
 
-    painter->setScissor(QRect(screenOffsetX_, screenOffsetY_, screenWidth_, screenHeight_));
+    void setClipRect(const QRect &rect)
+    {
+        if (rect != clipRect) {
+            QSGGeometry::updateRectGeometry(&geometry, rect);
+            QSGClipNode::setClipRect(rect);
+            clipRect = rect;
+            markDirty(DirtyGeometry);
+        }
+    }
 
-    painter->setCamera(camera_);
+    void updateTiles(QGeoMapTileContainerNode *root, QGeoMapScenePrivate *d, double camAdjust);
 
-    painter->setMainLight(light_);
+    bool isTextureLinear;
 
-    sceneNode_->draw(painter);
+    QSGGeometry geometry;
+    QRect clipRect;
 
-    QGLCamera *camera = camera_;
+    QSGTransformNode *root;
 
-    bool old = camera->blockSignals(true);
+    QGeoMapTileContainerNode *tiles;        // The majority of the tiles
+    QGeoMapTileContainerNode *wrapLeft;     // When zoomed out, the tiles that wrap around on the left.
+    QGeoMapTileContainerNode *wrapRight;    // When zoomed out, the tiles that wrap around on the right
 
-    glDisable(GL_DEPTH_TEST);
+    QHash<QGeoTileSpec, QSGTexture *> textures;
+};
 
-    double sideLength = scaleFactor_ * tileSize_ * sideLength_;
+static bool qgeomapscene_isTileInViewport(const QSGGeometry::TexturedPoint2D *tp, const QMatrix4x4 &matrix) {
+    QPolygonF polygon; polygon.reserve(4);
+    for (int i=0; i<4; ++i)
+        polygon << matrix * QPointF(tp[i].x, tp[i].y);
+    return QRectF(-1, -1, 2, 2).intersects(polygon.boundingRect());
+}
 
-    QDoubleVector3D c = QDoubleVector3D(camera->center());
-    c.setX(c.x() + sideLength);
-    camera->setCenter(c);
+void QGeoMapRootNode::updateTiles(QGeoMapTileContainerNode *root,
+                                  QGeoMapScenePrivate *d,
+                                  double camAdjust)
+{
+    // Set up the matrix...
+    QDoubleVector3D eye = d->cameraEye_;
+    eye.setX(eye.x() + camAdjust);
+    QDoubleVector3D center = d->cameraCenter_;
+    center.setX(center.x() + camAdjust);
+    QMatrix4x4 cameraMatrix;
+    cameraMatrix.lookAt(eye, center, d->cameraUp_);
+    root->setMatrix(d->projectionMatrix_ * cameraMatrix);
 
-    QDoubleVector3D e = QDoubleVector3D(camera->eye());
-    e.setX(e.x() + sideLength);
-    camera->setEye(e);
+    QSet<QGeoTileSpec> tilesInSG = QSet<QGeoTileSpec>::fromList(root->tiles.keys());
+    QSet<QGeoTileSpec> toRemove = tilesInSG - d->visibleTiles_;
+    QSet<QGeoTileSpec> toAdd = d->visibleTiles_ - tilesInSG;
 
-    painter->setCamera(camera);
-    sceneNode_->draw(painter);
+    foreach (const QGeoTileSpec &s, toRemove)
+        delete root->tiles.take(s);
 
-    c.setX(c.x() - 2 * sideLength);
-    camera->setCenter(c);
-    e.setX(e.x() - 2 * sideLength);
-    camera->setEye(e);
+    for (QHash<QGeoTileSpec, QSGSimpleTextureNode *>::iterator it = root->tiles.begin();
+         it != root->tiles.end(); ) {
+        QSGGeometry visualGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
+        QSGGeometry::TexturedPoint2D *v = visualGeometry.vertexDataAsTexturedPoint2D();
+        bool ok = d->buildGeometry(it.key(), v) && qgeomapscene_isTileInViewport(v, root->matrix());
+        QSGSimpleTextureNode *node = it.value();
+        QSGNode::DirtyState dirtyBits = 0;
 
-    painter->setCamera(camera);
-    sceneNode_->draw(painter);
+        // Check and handle changes to vertex data.
+        if (ok && memcmp(node->geometry()->vertexData(), v, 4 * sizeof(QSGGeometry::TexturedPoint2D)) != 0) {
+            if (v[0].x == v[3].x || v[0].y == v[3].y) { // top-left == bottom-right => invalid => remove
+                ok = false;
+            } else {
+                memcpy(node->geometry()->vertexData(), v, 4 * sizeof(QSGGeometry::TexturedPoint2D));
+                dirtyBits |= QSGNode::DirtyGeometry;
+            }
+        }
 
-    c.setX(c.x() + sideLength);
-    camera->setCenter(c);
-    e.setX(e.x() + sideLength);
-    camera->setEye(e);
+        if (!ok) {
+            it = root->tiles.erase(it);
+            delete node;
+        } else {
+            if (isTextureLinear != d->linearScaling_) {
+                node->setFiltering(d->linearScaling_ ? QSGTexture::Linear : QSGTexture::Nearest);
+                dirtyBits |= QSGNode::DirtyMaterial;
+            }
+            if (dirtyBits != 0)
+                node->markDirty(dirtyBits);
+            it++;
+        }
+    }
 
-    painter->setCamera(camera);
-    sceneNode_->draw(painter);
+    foreach (const QGeoTileSpec &s, toAdd) {
+        QGeoTileTexture *tileTexture = d->textures_.value(s).data();
+        if (!tileTexture || tileTexture->image.isNull())
+            continue;
+        QSGSimpleTextureNode *tileNode = new QSGSimpleTextureNode();
+        // note: setTexture will update coordinates so do it here, before we buildGeometry
+        tileNode->setTexture(textures.value(s));
+        Q_ASSERT(tileNode->geometry());
+        Q_ASSERT(tileNode->geometry()->attributes() == QSGGeometry::defaultAttributes_TexturedPoint2D().attributes);
+        Q_ASSERT(tileNode->geometry()->vertexCount() == 4);
+        if (d->buildGeometry(s, tileNode->geometry()->vertexDataAsTexturedPoint2D())
+                && qgeomapscene_isTileInViewport(tileNode->geometry()->vertexDataAsTexturedPoint2D(), root->matrix())) {
+            tileNode->setFiltering(d->linearScaling_ ? QSGTexture::Linear : QSGTexture::Nearest);
+            root->addChild(s, tileNode);
+        } else {
+            delete tileNode;
+        }
+    }
+}
 
-    glEnable(GL_DEPTH_TEST);
+QSGNode *QGeoMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
+{
+    Q_D(QGeoMapScene);
+    float w = d->screenSize_.width();
+    float h = d->screenSize_.height();
+    if (w <= 0 || h <= 0) {
+        delete oldNode;
+        return 0;
+    }
 
-    camera->blockSignals(old);
+    QGeoMapRootNode *mapRoot = static_cast<QGeoMapRootNode *>(oldNode);
+    if (!mapRoot)
+        mapRoot = new QGeoMapRootNode();
+
+    mapRoot->setClipRect(QRect(d->screenOffsetX_, d->screenOffsetY_, d->screenWidth_, d->screenHeight_));
+
+    QMatrix4x4 itemSpaceMatrix;
+    itemSpaceMatrix.scale(w / 2, h / 2);
+    itemSpaceMatrix.translate(1, 1);
+    itemSpaceMatrix.scale(1, -1);
+    mapRoot->root->setMatrix(itemSpaceMatrix);
+
+    QSet<QGeoTileSpec> textures = QSet<QGeoTileSpec>::fromList(mapRoot->textures.keys());
+    QSet<QGeoTileSpec> toRemove = textures - d->visibleTiles_;
+    QSet<QGeoTileSpec> toAdd = d->visibleTiles_ - textures;
+
+    foreach (const QGeoTileSpec &spec, toRemove)
+        mapRoot->textures.take(spec)->deleteLater();
+    foreach (const QGeoTileSpec &spec, toAdd) {
+        QGeoTileTexture *tileTexture = d->textures_.value(spec).data();
+        if (!tileTexture || tileTexture->image.isNull())
+            continue;
+        mapRoot->textures.insert(spec, window->createTextureFromImage(tileTexture->image));
+    }
+
+    double sideLength = d->scaleFactor_ * d->tileSize_ * d->sideLength_;
+    mapRoot->updateTiles(mapRoot->tiles, d, 0);
+    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength);
+    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength);
+
+    mapRoot->isTextureLinear = d->linearScaling_;
+
+    return mapRoot;
 }
 
 QT_END_NAMESPACE

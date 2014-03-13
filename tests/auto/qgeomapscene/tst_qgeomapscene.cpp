@@ -50,9 +50,6 @@
 #include <QtPositioning/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 
-#include <Qt3D/qglscenenode.h>
-#include <Qt3D/qgltexture2d.h>
-
 #include <qtest.h>
 
 #include <QList>
@@ -397,86 +394,6 @@ class tst_QGeoMapScene : public QObject
             populateScreenMercatorData();
         }
 
-        void cameraMovementAndTileUpdate(){
-            QGeoCameraData camera;
-            camera.setZoomLevel(4.0);
-            camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(0.5, 0.5)));
-
-            QGeoMapScene mapGeometry;
-            mapGeometry.setTileSize(16);
-            mapGeometry.setScreenSize(QSize(16,16));
-            mapGeometry.setCameraData(camera);
-
-            QGeoCameraTiles ct;
-            ct.setMaximumZoomLevel(8);
-            ct.setTileSize(16);
-            ct.setCamera(camera);
-            ct.setScreenSize(QSize(16,16));
-            mapGeometry.setVisibleTiles(ct.tiles());
-
-            int sideLength = 1 << static_cast<int>(floor(camera.zoomLevel()));
-            double quaterTile = 1.0 / (sideLength * 4.0);
-
-            // test that there are no scene nodes initially
-            QGLSceneNode* node = mapGeometry.sceneNode();
-            QCOMPARE(node->children().count(), 0);
-
-            // the camera is currently centered on top-left corner of the middle tile
-            // (so 4 tiles should be visible and added to map geometry)
-            QSharedPointer<QGeoTileTexture> tt(new QGeoTileTexture);
-            tt->texture = new QGLTexture2D();
-            foreach (QGeoTileSpec spec, ct.tiles())
-                mapGeometry.addTile(spec, tt); // add tiles with empty texture
-            QGLSceneNode* node2 = mapGeometry.sceneNode();
-            QCOMPARE(node2->children().count(), ct.tiles().count());
-            QCOMPARE(node2->children().count(), 4);
-
-            // move camera slightly in x direction but within the same tile bounds
-            // and verify that no new tiles are added through addTile
-            camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(0.5 + quaterTile, 0.5)));
-            mapGeometry.setCameraData(camera);
-            ct.setCamera(camera);
-            mapGeometry.setVisibleTiles(ct.tiles());
-            foreach (QGeoTileSpec spec, ct.tiles())
-                mapGeometry.addTile(spec, tt);
-            QGLSceneNode* node3 = mapGeometry.sceneNode();
-            // test to see that there are still only 4 tiles in the map geometry
-            QCOMPARE(node3->children().count(), ct.tiles().count());
-            QCOMPARE(node3->children().count(), 4);
-
-            // move camera further in x to align with edges of middle tile so that 6 tiles are fetched
-            camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(0.5 + quaterTile*2, 0.5)));
-            mapGeometry.setCameraData(camera);
-            ct.setCamera(camera);
-            mapGeometry.setVisibleTiles(ct.tiles());
-            foreach (QGeoTileSpec spec, ct.tiles())
-                mapGeometry.addTile(spec, tt);
-            QGLSceneNode* node4 = mapGeometry.sceneNode();
-            QCOMPARE(node4->children().count(), ct.tiles().count());
-            QCOMPARE(node4->children().count(), 6);
-
-            // move camera further in x so that the 2 tiles on the left are now removed
-            camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(0.5 + quaterTile*4, 0.5)));
-            mapGeometry.setCameraData(camera);
-            ct.setCamera(camera);
-            mapGeometry.setVisibleTiles(ct.tiles());
-            foreach (QGeoTileSpec spec, ct.tiles())
-                mapGeometry.addTile(spec, tt);
-            QGLSceneNode* node5 = mapGeometry.sceneNode();
-            QCOMPARE(node5->children().count(), ct.tiles().count());
-            QCOMPARE(node5->children().count(), 4);
-
-           // test adding tiles with wrapping and clipping
-            camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(0.0, 0.0)));
-            mapGeometry.setCameraData(camera);
-            ct.setCamera(camera);
-            mapGeometry.setVisibleTiles(ct.tiles());
-            foreach (QGeoTileSpec spec, ct.tiles())
-                mapGeometry.addTile(spec, tt);
-            QGLSceneNode* node6 = mapGeometry.sceneNode();
-            QCOMPARE(node6->children().count(), ct.tiles().count());
-            QCOMPARE(node6->children().count(), 2);
-        }
 };
 
 QTEST_GUILESS_MAIN(tst_QGeoMapScene)
