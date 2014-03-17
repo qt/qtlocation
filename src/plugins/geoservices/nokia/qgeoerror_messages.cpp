@@ -59,5 +59,6 @@ const char REMOVING_CATEGORY_NOT_SUPPORTED[] = QT_TRANSLATE_NOOP("QtLocationQML"
 const char PARSE_ERROR[] = QT_TRANSLATE_NOOP("QtLocationQML", "Error parsing response.");
 const char NETWORK_ERROR[] = QT_TRANSLATE_NOOP("QtLocationQML", "Network error.");
 const char CANCEL_ERROR[] = QT_TRANSLATE_NOOP("QtLocationQML", "Request was canceled.");
+const char RESPONSE_NOT_RECOGNIZABLE[] = QT_TRANSLATE_NOOP("QtLocationQML", "The response from the service was not in a recognizable format.");
 
 QT_END_NAMESPACE

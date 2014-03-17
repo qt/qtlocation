@@ -48,8 +48,10 @@
 
 #include "qgeocodereply_nokia.h"
 #include "qgeocodexmlparser.h"
+#include "qgeoerror_messages.h"
 
 #include <QtPositioning/QGeoShape>
+#include <QtCore/QCoreApplication>
 
 Q_DECLARE_METATYPE(QList<QGeoLocation>)
 
@@ -136,7 +138,7 @@ void QGeoCodeReplyNokia::parseError(const QString &errorString)
     Q_UNUSED(errorString)
 
     setError(QGeoCodeReply::ParseError,
-             tr("The response from the service was not in a recognisable format."));
+             QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, RESPONSE_NOT_RECOGNIZABLE));
     abort();
 }
 
