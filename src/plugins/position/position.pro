@@ -5,7 +5,7 @@ config_gypsy:SUBDIRS += gypsy
 simulator:SUBDIRS += simulator
 blackberry:SUBDIRS += blackberry
 ios:SUBDIRS += corelocation
-android:SUBDIRS += android
+android:!android-no-sdk:SUBDIRS += android
 
 SUBDIRS += \
     positionpoll
