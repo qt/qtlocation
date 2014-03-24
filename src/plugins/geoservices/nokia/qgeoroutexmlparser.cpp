@@ -49,12 +49,12 @@
 #include "qgeoroutexmlparser.h"
 
 #include <QXmlStreamReader>
-#include <QIODevice>
 #include <QStringList>
 #include <QString>
+#include <QtCore/QThreadPool>
 
-#include <qgeoroute.h>
 #include <QtPositioning/QGeoRectangle>
+#include <QtLocation/QGeoRoute>
 
 QT_BEGIN_NAMESPACE
 
@@ -74,28 +74,23 @@ QGeoRouteXmlParser::~QGeoRouteXmlParser()
 {
 }
 
-bool QGeoRouteXmlParser::parse(QIODevice *source)
+void QGeoRouteXmlParser::parse(const QByteArray &data)
 {
-    m_reader.reset(new QXmlStreamReader(source));
-
-    if (!parseRootElement()) {
-        m_errorString = m_reader->errorString();
-        return false;
-    }
-
-    m_errorString = "";
-
-    return true;
+    m_data = data;
+    QThreadPool::globalInstance()->start(this);
 }
 
-QList<QGeoRoute> QGeoRouteXmlParser::results() const
+void QGeoRouteXmlParser::run()
 {
-    return m_results;
-}
+    m_reader = new QXmlStreamReader(m_data);
 
-QString QGeoRouteXmlParser::errorString() const
-{
-    return m_errorString;
+    if (!parseRootElement())
+        emit error(m_reader->errorString());
+    else
+        emit results(m_results);
+
+    delete m_reader;
+    m_reader = 0;
 }
 
 bool QGeoRouteXmlParser::parseRootElement()

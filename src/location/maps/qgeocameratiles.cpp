@@ -294,11 +294,9 @@ QSet<QGeoTileSpec> QGeoCameraTiles::tiles() const
 }
 
 QGeoCameraTilesPrivate::QGeoCameraTilesPrivate()
-    : tileSize_(0),
-      maxZoom_(0),
-      intZoomLevel_(0),
-      sideLength_(0),
-      mapVersion_(-1) {}
+:   mapVersion_(-1), tileSize_(0), maxZoom_(0), intZoomLevel_(0), sideLength_(0)
+{
+}
 
 QGeoCameraTilesPrivate::~QGeoCameraTilesPrivate() {}
 

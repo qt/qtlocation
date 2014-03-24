@@ -66,9 +66,12 @@ public:
 private Q_SLOTS:
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
+    void appendResults(const QList<QGeoLocation> &locations);
+    void parseError(const QString &errorString);
 
 private:
     QNetworkReply *m_reply;
+    bool m_parsing;
 };
 
 QT_END_NAMESPACE

@@ -671,10 +671,12 @@ int QDeclarativeSupportedCategoriesModel::rowToAddChild(PlaceCategoryNode *node,
 /*!
     \qmlsignal CategoryModel::dataChanged()
 
-   Indicates that significant changes have been made to the underlying datastore.
+   This signal is emitted when significant changes have been made to the underlying datastore.
 
    Applications should act on this signal at their own discretion.  The data
    provided by the model could be out of date and so the model should be reupdated
    sometime, however an immediate reupdate may be disconcerting to users if the categories
    change without any action on their part.
+
+   The corresponding handler is \c onDataChanged.
 */

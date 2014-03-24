@@ -54,6 +54,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGeoRouteXmlParser;
+
 class QGeoRouteReplyNokia : public QGeoRouteReply
 {
     Q_OBJECT
@@ -66,9 +68,12 @@ public:
 private Q_SLOTS:
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
+    void appendResults(const QList<QGeoRoute> &routes);
+    void parserError(const QString &errorString);
 
 private:
-    QList<QNetworkReply*> m_replies;
+    QList<QNetworkReply *> m_replies;
+    int m_parsers;
 };
 
 QT_END_NAMESPACE

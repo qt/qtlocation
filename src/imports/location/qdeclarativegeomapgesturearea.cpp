@@ -263,7 +263,9 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal QtLocation::MapGestureArea::pinchStarted(PinchEvent event)
 
-    Raised when a pinch gesture is started.
+    This signal is emitted when a pinch gesture is started.
+
+    The corresponding handler is \c onPinchStarted.
 
     \sa pinchUpdated, pinchFinished
 */
@@ -271,8 +273,10 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal QtLocation::MapGestureArea::pinchUpdated(PinchEvent event)
 
-    Once a pinch has begun this event gets raised as the user moves her fingers
-    across the map.
+    This signal is emitted as the user's fingers move across the map,
+    after the the \l pinchStarted signal is emitted.
+
+    The corresponding handler is \c onPinchUpdated.
 
     \sa pinchStarted, pinchFinished
 */
@@ -280,7 +284,9 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal QtLocation::MapGestureArea::pinchFinished(PinchEvent event)
 
-    The end of a pinch gesture is signaled by this event.
+    This signal is emitted at the end of a pinch gesture.
+
+    The corresponding handler is \c onPinchFinished.
 
     \sa pinchStarted, pinchUpdated
 */
@@ -288,35 +294,43 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal QtLocation::MapGestureArea::panStarted()
 
-    This handler is called when the view begins moving due to user
+    This signal is emitted when the view begins moving due to user
     interaction. Typically this means that the user is dragging a finger -
     or a mouse with one of more mouse buttons pressed - on the map.
+
+    The corresponding handler is \c onPanStarted.
 */
 
 /*!
     \qmlsignal QtLocation::MapGestureArea::panFinished()
 
-    This handler is called when the view stops moving due to user
-    interaction.  If a flick was generated, this handler will
-    be triggered once the flick stops.  If a flick was not
-    generated, the handler will be triggered when the
+    This signal is emitted when the view stops moving due to user
+    interaction.  If a flick was generated, this signal is
+    emitted when the flick stops.  If a flick was not
+    generated, this signal is emitted when the
     user stops dragging - that is a mouse or touch release.
+
+    The corresponding handler is \c onPanFinished.
 
 */
 
 /*!
     \qmlsignal QtLocation::MapGestureArea::flickStarted()
 
-    This handler is called when the view is flicked.  A flick
+    This signal is emitted when the view is flicked.  A flick
     starts from the point that the mouse or touch is released,
     while still in motion.
+
+    The corresponding handler is \c onFlichStarted.
 */
 
 /*!
     \qmlsignal QtLocation::MapGestureArea::flickFinished()
 
-    This handler is called when the view stops moving due to a flick.
+    This signal is emitted when the view stops moving due to a flick.
     The order of panFinished() and flickFinished() is not specified.
+
+    The corresponding handler is \c onFlickFinished.
 */
 
 QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent)

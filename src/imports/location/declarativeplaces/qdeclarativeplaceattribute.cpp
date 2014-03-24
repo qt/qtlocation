@@ -113,10 +113,12 @@
 */
 
 /*!
-    \qmlsignal void ExtendedAttributes::onValueChanged(string key, variant value)
+    \qmlsignal void ExtendedAttributes::valueChanged(string key, variant value)
 
-    This signal is raised when the set of attributes changes. \a key is the key
+    This signal is emitted when the set of attributes changes. \a key is the key
     corresponding to the \a value that was changed.
+
+    The corresponding handler is \c onValueChanged.
 */
 
 /*!

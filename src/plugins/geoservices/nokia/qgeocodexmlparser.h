@@ -49,29 +49,35 @@
 #ifndef QGEOCODEXMLPARSER_H
 #define QGEOCODEXMLPARSER_H
 
-#include <QString>
-#include <QList>
-#include <QScopedPointer>
+#include <QtCore/QObject>
+#include <QtCore/QRunnable>
+#include <QtCore/QString>
+#include <QtCore/QList>
+#include <QtPositioning/QGeoShape>
 
 QT_BEGIN_NAMESPACE
 
-class QIODevice;
 class QGeoLocation;
 class QGeoAddress;
 class QGeoRectangle;
 class QGeoCoordinate;
 class QXmlStreamReader;
 
-class QGeoCodeXmlParser
+class QGeoCodeXmlParser : public QObject, public QRunnable
 {
+    Q_OBJECT
+
 public:
     QGeoCodeXmlParser();
     ~QGeoCodeXmlParser();
 
-    bool parse(QIODevice *source);
+    void setBounds(const QGeoShape &bounds);
+    void parse(const QByteArray &data);
+    void run();
 
-    QList<QGeoLocation> results() const;
-    QString errorString() const;
+signals:
+    void results(const QList<QGeoLocation> &locations);
+    void error(const QString &errorString);
 
 private:
     bool parseRootElement();
@@ -81,7 +87,9 @@ private:
     bool parseBoundingBox(QGeoRectangle *bounds);
     bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 
-    QScopedPointer<QXmlStreamReader> m_reader;
+    QGeoShape m_bounds;
+    QByteArray m_data;
+    QXmlStreamReader *m_reader;
 
     QList<QGeoLocation> m_results;
     QString m_errorString;

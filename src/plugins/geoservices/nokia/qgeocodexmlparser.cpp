@@ -48,10 +48,9 @@
 
 #include "qgeocodexmlparser.h"
 
-#include <QXmlStreamReader>
-#include <QIODevice>
-
-#include <qgeolocation.h>
+#include <QtCore/QXmlStreamReader>
+#include <QtCore/QThreadPool>
+#include <QtPositioning/QGeoLocation>
 #include <QtPositioning/QGeoAddress>
 #include <QtPositioning/QGeoCoordinate>
 #include <QtPositioning/QGeoRectangle>
@@ -66,28 +65,28 @@ QGeoCodeXmlParser::~QGeoCodeXmlParser()
 {
 }
 
-bool QGeoCodeXmlParser::parse(QIODevice *source)
+void QGeoCodeXmlParser::setBounds(const QGeoShape &bounds)
 {
-    m_reader.reset(new QXmlStreamReader(source));
-
-    if (!parseRootElement()) {
-        m_errorString = m_reader->errorString();
-        return false;
-    }
-
-    m_errorString = "";
-
-    return true;
+    m_bounds = bounds;
 }
 
-QList<QGeoLocation> QGeoCodeXmlParser::results() const
+void QGeoCodeXmlParser::parse(const QByteArray &data)
 {
-    return m_results;
+    m_data = data;
+    QThreadPool::globalInstance()->start(this);
 }
 
-QString QGeoCodeXmlParser::errorString() const
+void QGeoCodeXmlParser::run()
 {
-    return m_errorString;
+    m_reader = new QXmlStreamReader(m_data);
+
+    if (!parseRootElement())
+        emit error(m_reader->errorString());
+    else
+        emit results(m_results);
+
+    delete m_reader;
+    m_reader = 0;
 }
 
 bool QGeoCodeXmlParser::parseRootElement()
@@ -137,7 +136,8 @@ bool QGeoCodeXmlParser::parseRootElement()
                     if (!parsePlace(&location))
                         return false;
 
-                    m_results.append(location);
+                    if (!m_bounds.isValid() || m_bounds.contains(location.coordinate()))
+                        m_results.append(location);
                 } else {
                     m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
                     return false;

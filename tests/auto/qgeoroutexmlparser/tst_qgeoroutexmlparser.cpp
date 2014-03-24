@@ -47,6 +47,9 @@
 #include <QMetaType>
 #include <QDebug>
 #include <QFile>
+#include <QSignalSpy>
+
+Q_DECLARE_METATYPE(QList<QGeoRoute>)
 
 QT_USE_NAMESPACE
 
@@ -58,7 +61,9 @@ public:
     tst_QGeoRouteXmlParser()
         : start(0.0, 0.0),
           end(1.0, 1.0)
-    {}
+    {
+        qRegisterMetaType<QList<QGeoRoute> >();
+    }
 
 private:
     // dummy values for creating the request object
@@ -74,11 +79,18 @@ private slots:
 
         QGeoRouteRequest req(start, end);
         QGeoRouteXmlParser xp(req);
+        xp.setAutoDelete(false);
 
-        QVERIFY(xp.parse(&f));
+        QSignalSpy resultsSpy(&xp, SIGNAL(results(QList<QGeoRoute>)));
+
+        xp.parse(f.readAll());
+
+        QTRY_COMPARE(resultsSpy.count(), 1);
+
+        QVariantList arguments = resultsSpy.first();
 
         // xml contains exactly 1 route
-        QList<QGeoRoute> results = xp.results();
+        QList<QGeoRoute> results = arguments.at(0).value<QList<QGeoRoute> >();
         QCOMPARE(results.size(), 1);
         QGeoRoute route = results.first();
 
@@ -121,11 +133,18 @@ private slots:
 
         QGeoRouteRequest req(start, end);
         QGeoRouteXmlParser xp(req);
+        xp.setAutoDelete(false);
 
-        QVERIFY(xp.parse(&f));
+        QSignalSpy resultsSpy(&xp, SIGNAL(results(QList<QGeoRoute>)));
+
+        xp.parse(f.readAll());
+
+        QTRY_COMPARE(resultsSpy.count(), 1);
+
+        QVariantList arguments = resultsSpy.first();
 
         // xml contains exactly 1 route
-        QList<QGeoRoute> results = xp.results();
+        QList<QGeoRoute> results = arguments.at(0).value<QList<QGeoRoute> >();
         QCOMPARE(results.size(), 1);
         QGeoRoute route = results.first();
 

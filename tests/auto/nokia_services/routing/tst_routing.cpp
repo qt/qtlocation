@@ -521,11 +521,10 @@ void tst_nokia_routing::foobar_data()
     QTest::newRow("QNetworkReply::UnknownNetworkError") << int(QNetworkReply::UnknownNetworkError);
     QTest::newRow("QNetworkReply::UnknownProxyError") << int(QNetworkReply::UnknownProxyError);
     QTest::newRow("QNetworkReply::ProxyAuthenticationRequiredError") << int(QNetworkReply::ProxyAuthenticationRequiredError);
-    QTest::newRow("QNetworkReply::UnknownContentError") << int(QNetworkReply::UnknownContentError);
     QTest::newRow("QNetworkReply::ProtocolFailure") << int(QNetworkReply::ProtocolFailure);
 }
 
 
-QTEST_APPLESS_MAIN(tst_nokia_routing)
+QTEST_MAIN(tst_nokia_routing)
 
 #include "tst_routing.moc"
