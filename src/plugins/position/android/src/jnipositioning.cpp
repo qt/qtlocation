@@ -167,7 +167,9 @@ namespace AndroidPositioning {
                 __android_log_print(ANDROID_LOG_INFO, logTag, "Unknown positioningMethod");
             }
         }
+
         env.jniEnv->ReleaseIntArrayElements(jProviders, providers, 0);
+        env.jniEnv->DeleteLocalRef(jProviders);
 
         return ret;
     }
@@ -261,6 +263,7 @@ namespace AndroidPositioning {
             info.setAttribute(QGeoPositionInfo::Direction, bearing);
         }
 
+        jniEnv->DeleteLocalRef(thisClass);
         return info;
     }
 
@@ -340,7 +343,10 @@ namespace AndroidPositioning {
         if (location == 0)
             return QGeoPositionInfo();
 
-        return positionInfoFromJavaLocation(env.jniEnv, location);
+        const QGeoPositionInfo info = positionInfoFromJavaLocation(env.jniEnv, location);
+        env.jniEnv->DeleteLocalRef(location);
+
+        return info;
     }
 
     inline int positioningMethodToInt(QGeoPositionInfoSource::PositioningMethods m)
