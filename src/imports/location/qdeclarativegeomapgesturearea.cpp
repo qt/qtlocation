@@ -274,7 +274,7 @@ QT_BEGIN_NAMESPACE
     \qmlsignal QtLocation::MapGestureArea::pinchUpdated(PinchEvent event)
 
     This signal is emitted as the user's fingers move across the map,
-    after the the \l pinchStarted signal is emitted.
+    after the \l pinchStarted signal is emitted.
 
     The corresponding handler is \c onPinchUpdated.
 
