@@ -127,7 +127,7 @@ public:
             qmlRegisterType<QDeclarativePosition, 1             >(uri, major, minor, "Position");
 
             // Register the 5.4 types
-            // Introduction of 5.4 version; iexisting 5.3 exports become automatically available under 5.4
+            // Introduction of 5.4 version; existing 5.3 exports become automatically available under 5.4
             minor = 4;
             qmlRegisterSingletonType<LocationSingleton  >(uri, major, minor, "QtPositioning", singleton_type_factory);
         } else {
