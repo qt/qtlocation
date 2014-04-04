@@ -73,11 +73,6 @@ namespace Simulator
 
         // register for location notifications
         mWorker->call("setRequestsLocationInfo");
-
-        // wait until initial data is received
-        QEventLoop loop;
-        connect(this, SIGNAL(initialDataReceived()), &loop, SLOT(quit()));
-        loop.exec();
     }
 
     LocationConnection::~LocationConnection()
