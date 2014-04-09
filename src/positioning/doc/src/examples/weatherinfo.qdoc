@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -34,7 +34,7 @@
 
     \ingroup qtpositioning-examples
 
-    Key Qt Positioning classes used in this example:
+    Key \l{Qt Positioning} classes used in this example:
 
     \list
     \li \l{QGeoPositionInfo}
@@ -42,6 +42,8 @@
     \endlist
 
     \image ../images/example-weatherinfo.png
+
+    \include examples-run.qdocinc
 
     The key part of this example is the application's data model, contained
     in the WeatherData and AppModel classes. WeatherData represents the weather
