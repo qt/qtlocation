@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Copyright (C) 2014 Jolla Ltd, author: <gunnar.sletta@jollamobile.com>
 ** Contact: http://www.qt-project.org/legal
 **
@@ -646,6 +646,11 @@ static bool qgeomapscene_isTileInViewport(const QSGGeometry::TexturedPoint2D *tp
     return QRectF(-1, -1, 2, 2).intersects(polygon.boundingRect());
 }
 
+static QVector3D toVector3D(const QDoubleVector3D& in)
+{
+    return QVector3D(in.x(), in.y(), in.z());
+}
+
 void QGeoMapRootNode::updateTiles(QGeoMapTileContainerNode *root,
                                   QGeoMapScenePrivate *d,
                                   double camAdjust)
@@ -656,7 +661,7 @@ void QGeoMapRootNode::updateTiles(QGeoMapTileContainerNode *root,
     QDoubleVector3D center = d->cameraCenter_;
     center.setX(center.x() + camAdjust);
     QMatrix4x4 cameraMatrix;
-    cameraMatrix.lookAt(eye, center, d->cameraUp_);
+    cameraMatrix.lookAt(toVector3D(eye), toVector3D(center), toVector3D(d->cameraUp_));
     root->setMatrix(d->projectionMatrix_ * cameraMatrix);
 
     QSet<QGeoTileSpec> tilesInSG = QSet<QGeoTileSpec>::fromList(root->tiles.keys());

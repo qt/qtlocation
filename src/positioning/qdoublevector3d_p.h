@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -70,11 +70,6 @@ public:
     Q_DECL_CONSTEXPR inline QDoubleVector3D(double xpos, double ypos, double zpos);
     Q_DECL_CONSTEXPR inline QDoubleVector3D(const QDoubleVector2D &vector);
     Q_DECL_CONSTEXPR inline QDoubleVector3D(const QDoubleVector2D &vector, double zpos);
-
-#ifdef QT_BUILD_LOCATION_LIB
-    Q_DECL_CONSTEXPR explicit inline QDoubleVector3D(const QVector3D &vector) : xp(vector.x()), yp(vector.y()), zp(vector.z()) {}
-    Q_DECL_CONSTEXPR inline operator QVector3D() const { return QVector3D(xp, yp, zp); }
-#endif
 
     inline bool isNull() const;
 

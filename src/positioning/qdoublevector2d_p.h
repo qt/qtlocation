@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -72,10 +72,6 @@ public:
     Q_DECL_CONSTEXPR inline QDoubleVector2D(double xpos, double ypos);
     Q_DECL_CONSTEXPR explicit inline QDoubleVector2D(const QPointF &p);
     explicit QDoubleVector2D(const QDoubleVector3D &vector);
-#ifdef QT_BUILD_LOCATION_LIB
-    Q_DECL_CONSTEXPR explicit inline QDoubleVector2D(const QVector2D &vector) : xp(vector.x()), yp(vector.y()) {}
-    Q_DECL_CONSTEXPR inline operator QVector2D() const { return QVector2D(xp, yp); }
-#endif
 
     Q_DECL_CONSTEXPR inline double manhattanLength() const;
     inline bool isNull() const;
