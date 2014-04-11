@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -24,9 +24,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-
-
 
 /*!
     \module QtPositioning
@@ -63,6 +60,10 @@
 \ingroup technology-apis
 
 The Qt Positioning API provides positioning information via QML and C++ interfaces.
+
+Currently the API is supported on \l{Qt for Android}{Android},
+\l{Qt for BlackBerry}{BlackBerry 10}, \l{Qt for iOS}{iOS} and
+\l{Qt for Linux/X11}{Linux} (using \l{http://www.freedesktop.org/wiki/Software/GeoClue}{GeoClue}).
 
 \section1 Overview
 

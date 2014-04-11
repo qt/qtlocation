@@ -86,7 +86,7 @@ bool QPlaceSearchResultPrivate::compare(const QPlaceSearchResultPrivate *other) 
 
     \snippet places/requesthandler.h Convert search result
 
-    The implmentation is handled in such a way that object slicing is not an issue.
+    The implementation is handled in such a way that object slicing is not an issue.
     It is not expected that client applications or backend plugins instantiate
     a QPlaceSearchResult directly, but rather client applications simply convert
     to search result subclasses and backend plugins only instantiate subclasses.

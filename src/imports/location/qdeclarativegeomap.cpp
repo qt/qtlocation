@@ -187,7 +187,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         serviceProvider_(0),
         mappingManager_(0),
         zoomLevel_(8.0),
-        center_(0,0),
+        center_(51.5073,-0.1277), //London city center
         activeMapType_(0),
         componentCompleted_(false),
         mappingManagerInitialized_(false),
@@ -643,16 +643,19 @@ qreal QDeclarativeGeoMap::zoomLevel() const
 }
 
 /*!
-\qmlproperty coordinate QtLocation::Map::center
+    \qmlproperty coordinate QtLocation::Map::center
 
     This property holds the coordinate which occupies the center of the
-    mapping viewport.
+    mapping viewport. Invalid center coordinates are ignored.
 
     The default value is an arbitrary valid coordinate.
 */
 void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
 {
     if (!mappingManagerInitialized_ && center == center_)
+        return;
+
+    if (!center.isValid())
         return;
 
     center_ = center;

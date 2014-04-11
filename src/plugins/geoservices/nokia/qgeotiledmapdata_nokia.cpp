@@ -69,77 +69,51 @@ QT_BEGIN_NAMESPACE
  */
 QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent /*= 0*/) :
     QGeoTiledMapData(engine, parent),
-    logo(":/images/logo.png"), // HERE logo image
-    copyrightsSlab(1, 1, QImage::Format_ARGB32) {}
+    logo(":/images/logo.png") // HERE logo image
+{}
 
 QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia() {}
 
 void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
     const int copyrightsMargin = 10;
-    const int shadowWidth = 3;
+    const int spaceToLogo = 4;
+    const int blurRate = 1;
     const int fontSize = 10;
 
     QGeoTiledMappingManagerEngineNokia *engineNokia = static_cast<QGeoTiledMappingManagerEngineNokia *>(engine());
     const QString copyrightsString = engineNokia->evaluateCopyrightsText(activeMapType(), mapController()->zoom(), visibleTiles);
 
-    if (width() > 0 && height() > 0 && (lastCopyrightsString.isNull() || copyrightsString != lastCopyrightsString)) {
-        copyrightsSlab = copyrightsSlab.copy(0, 0, width(), height());
-
-        // Blank image with full alpha
-        copyrightsSlab.fill(Qt::transparent);
-
-        QPainter painter(&copyrightsSlab);
-        painter.drawImage(QPoint(0, copyrightsSlab.height() - logo.height()), logo);
-
-        QColor fontColor(Qt::black);
-        fontColor.setAlpha(64);
+    if (width() > 0 && height() > 0 && ((copyrightsString.isNull() && copyrightsSlab.isNull()) || copyrightsString != lastCopyrightsString)) {
         QFont font("Sans Serif");
         font.setPixelSize(fontSize);
         font.setStyleHint(QFont::SansSerif);
         font.setWeight(QFont::Bold);
 
-        painter.setFont(font);
-        painter.setPen(fontColor);
-        QRect textLimitsRect(logo.width(),
-                             0,
-                             copyrightsSlab.width() - (logo.width() + copyrightsMargin * 2),
-                             copyrightsSlab.height());
+        QRect textBounds = QFontMetrics(font).boundingRect(0, 0, width(), height(), Qt::AlignBottom | Qt::AlignLeft | Qt::TextWordWrap, copyrightsString);
 
-        // Drawing the copyrights base shadow (watermark)
-        QRect textBoundingRect;
-        QRect wmRect(textLimitsRect);
-        int x, y;
-        for (x = 0; x < shadowWidth; x++) {
-            wmRect.setLeft(textLimitsRect.left() + x);
-            for (y = 0; y < shadowWidth; y++) {
-                wmRect.setBottom(textLimitsRect.bottom() - y);
-                painter.drawText(wmRect,
-                                 Qt::AlignLeft | Qt::AlignBottom | Qt::TextWordWrap,
-                                 copyrightsString,
-                                 &textBoundingRect);
+        copyrightsSlab = QImage(logo.width() + textBounds.width() + spaceToLogo + blurRate * 2,
+                                qMax(logo.height(), textBounds.height() + blurRate * 2),
+                                QImage::Format_ARGB32_Premultiplied);
+        copyrightsSlab.fill(Qt::transparent);
+
+        QPainter painter(&copyrightsSlab);
+        painter.drawImage(QPoint(0, copyrightsSlab.height() - logo.height()), logo);
+        painter.setFont(font);
+        painter.setPen(QColor(0, 0, 0, 64));
+        painter.translate(spaceToLogo + logo.width(), -blurRate);
+        for (int x=-blurRate; x<=blurRate; ++x) {
+            for (int y=-blurRate; y<=blurRate; ++y) {
+                painter.drawText(x, y, textBounds.width(), copyrightsSlab.height(),
+                                 Qt::AlignBottom | Qt::AlignLeft | Qt::TextWordWrap,
+                                 copyrightsString);
             }
         }
-
-        // Drawing the copyrights text top face
-        font.setWeight(QFont::Bold);
-        fontColor = Qt::white;
-        painter.setFont(font);
-        painter.setPen(fontColor);
-        wmRect.setLeft(textLimitsRect.left() + 1);
-        wmRect.setBottom(textLimitsRect.bottom() - 1);
-        painter.drawText(wmRect,
-                         Qt::AlignLeft | Qt::AlignBottom | Qt::TextWordWrap,
-                         copyrightsString,
-                         &textBoundingRect);
-
+        painter.setPen(Qt::white);
+        painter.drawText(0, 0, textBounds.width(), copyrightsSlab.height(),
+                         Qt::AlignBottom | Qt::AlignLeft | Qt::TextWordWrap,
+                         copyrightsString);
         painter.end();
-
-        int newHeight = qMax(logo.height(), textBoundingRect.height());
-
-        copyrightsSlab = copyrightsSlab.copy(0, copyrightsSlab.height() - newHeight,
-                                             logo.width() + textBoundingRect.width() + shadowWidth + copyrightsMargin * 2,
-                                             newHeight);
 
         QPoint copyrightsPos(copyrightsMargin, height() - (copyrightsSlab.height() + copyrightsMargin));
         lastCopyrightsPos = copyrightsPos;
