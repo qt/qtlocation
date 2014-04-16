@@ -2,6 +2,8 @@ TARGET = qtgeoservices_placesplugin_unsupported
 QT += location
 
 PLUGIN_TYPE = geoservices
+PLUGIN_CLASS_NAME = UnsupportedPlacesGeoServicePlugin
+PLUGIN_EXTENDS = -
 load(qt_plugin)
 
 HEADERS += qgeoserviceproviderplugin_test.h

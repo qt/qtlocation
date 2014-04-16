@@ -2,6 +2,7 @@ TARGET = qtposition_gypsy
 QT = core positioning
 
 PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = GypsyPositionPlugin
 load(qt_plugin)
 
 HEADERS += \

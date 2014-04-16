@@ -2,6 +2,8 @@ TARGET = qtgeoservices_geocodingplugin
 QT += location
 
 PLUGIN_TYPE = geoservices
+PLUGIN_CLASS_NAME = GeocodingTestGeoServicePlugin
+PLUGIN_EXTENDS = -
 load(qt_plugin)
 
 HEADERS += qgeocodingmanagerengine_test.h \

@@ -2,6 +2,7 @@ TARGET = qtposition_positionpoll
 QT = core positioning
 
 PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = PollPositionPlugin
 load(qt_plugin)
 
 SOURCES += \
