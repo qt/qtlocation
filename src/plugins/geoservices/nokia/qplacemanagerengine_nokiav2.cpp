@@ -600,38 +600,42 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
     if (m_categoryReply)
         return m_categoryReply.data();
 
-        m_tempTree.clear();
-        CategoryParser parser;
+    m_tempTree.clear();
+    CategoryParser parser;
 
-        if (!parser.parse(m_localDataPath + QLatin1String("/offline/offline-mapping.json"))) {
-            PlaceCategoryNode rootNode;
+    if (parser.parse(m_localDataPath + QLatin1String("/offline/offline-mapping.json"))) {
+        m_tempTree = parser.tree();
+    } else {
+        PlaceCategoryNode rootNode;
 
-            for (int i = 0; FIXED_CATEGORIES_indices[i] != -1; ++i) {
-                const QString id = QString::fromLatin1(FIXED_CATEGORIES_string +
-                                                       FIXED_CATEGORIES_indices[i]);
-                m_tempTree.insert(id, PlaceCategoryNode());
-                rootNode.childIds.append(id);
-            }
+        for (int i = 0; FIXED_CATEGORIES_indices[i] != -1; ++i) {
+            const QString id = QString::fromLatin1(FIXED_CATEGORIES_string +
+                                                   FIXED_CATEGORIES_indices[i]);
 
-            m_tempTree.insert(QString(), rootNode);
-        } else {
-            m_tempTree = parser.tree();
+            PlaceCategoryNode node;
+            node.category.setCategoryId(id);
+
+            m_tempTree.insert(id, node);
+            rootNode.childIds.append(id);
         }
 
-        //request all categories in the tree from the server
-        //because we don't want the root node, we remove it from the list
-        QStringList ids = m_tempTree.keys();
-        ids.removeAll(QString());
-        foreach (const QString &id, ids) {
-            QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                            QLatin1String("/places/v1/categories/places/") + id);
-            QNetworkReply *networkReply = sendRequest(requestUrl);
-            connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
-            connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                    this, SLOT(categoryReplyError()));
+        m_tempTree.insert(QString(), rootNode);
+    }
 
-            m_categoryRequests.insert(id, networkReply);
-        }
+    //request all categories in the tree from the server
+    //because we don't want the root node, we remove it from the list
+    QStringList ids = m_tempTree.keys();
+    ids.removeAll(QString());
+    foreach (const QString &id, ids) {
+        QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                        QLatin1String("/places/v1/categories/places/") + id);
+        QNetworkReply *networkReply = sendRequest(requestUrl);
+        connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
+        connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),
+                this, SLOT(categoryReplyError()));
+
+        m_categoryRequests.insert(id, networkReply);
+    }
 
     QPlaceCategoriesReplyImpl *reply = new QPlaceCategoriesReplyImpl(this);
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
@@ -764,6 +768,8 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
     if (!reply)
         return;
 
+    QString categoryId;
+
     if (reply->error() == QNetworkReply::NoError) {
         QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
         if (!document.isObject()) {
@@ -777,7 +783,7 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
 
         QJsonObject category = document.object();
 
-        QString categoryId = category.value(QLatin1String("categoryId")).toString();
+        categoryId = category.value(QLatin1String("categoryId")).toString();
         if (m_tempTree.contains(categoryId)) {
             PlaceCategoryNode node = m_tempTree.value(categoryId);
             node.category.setName(category.value(QLatin1String("name")).toString());
@@ -786,14 +792,23 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
 
             m_tempTree.insert(categoryId, node);
         }
+    } else {
+        categoryId = m_categoryRequests.key(reply);
+        PlaceCategoryNode rootNode = m_tempTree.value(QString());
+        rootNode.childIds.removeAll(categoryId);
+        m_tempTree.insert(QString(), rootNode);
+        m_tempTree.remove(categoryId);
     }
 
-    m_categoryRequests.remove(m_categoryRequests.key(reply));
+    m_categoryRequests.remove(categoryId);
     reply->deleteLater();
 
-    if (m_categoryRequests.isEmpty() && m_categoryReply) {
+    if (m_categoryRequests.isEmpty()) {
         m_categoryTree = m_tempTree;
-        m_categoryReply.data()->emitFinished();
+        m_tempTree.clear();
+
+        if (m_categoryReply)
+            m_categoryReply.data()->emitFinished();
     }
 }
 
