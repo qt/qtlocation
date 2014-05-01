@@ -63,7 +63,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_POSITIONING_EXPORT_PRIVATE QDoubleVector3D
+class Q_POSITIONING_EXPORT QDoubleVector3D
 {
 public:
     Q_DECL_CONSTEXPR inline QDoubleVector3D();
