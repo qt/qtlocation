@@ -2,6 +2,7 @@ TARGET = qtposition_android
 QT = core positioning
 
 PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = AndroidPositionPlugin
 load(qt_plugin)
 
 

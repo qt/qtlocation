@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -34,7 +34,7 @@
            fetch local content from a web service.
 
     This is a small example, illustrating one of the very core parts of the
-    Qt Positioning API: the ability to retrieve and use the user's current
+    \l{Qt Positioning} API: the ability to retrieve and use the user's current
     geographic position.
 
     Key QML types shown in this example:
@@ -45,7 +45,9 @@
 
     \image  qml-flickr-1.jpg
 
-    \section2 Retrieving the Current Position
+    \include examples-run.qdocinc
+
+    \section1 Retrieving the Current Position
 
     Retrieving the user's current position is achieved using the PositionSource
     type. In this example, we instantiate the PositionSource as part of the
@@ -67,7 +69,7 @@
 
     \snippet flickr/flickrmobile/GeoTab.qml props
 
-    \section2 Using the Current Position
+    \section1 Using the Current Position
 
     The longitude and latitude values retrieved here are eventually set on
     in properties on the RestModel component. The RestModel is an XmlListModel,

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -48,14 +48,11 @@ QT_BEGIN_NAMESPACE
 #ifndef QT_STATIC
 #    if defined(QT_BUILD_POSITIONING_LIB)
 #      define Q_POSITIONING_EXPORT         Q_DECL_EXPORT
-#      define Q_POSITIONING_EXPORT_PRIVATE Q_DECL_EXPORT
 #    else
 #      define Q_POSITIONING_EXPORT         Q_DECL_IMPORT
-#      define Q_POSITIONING_EXPORT_PRIVATE Q_DECL_IMPORT
 #    endif
 #else
 #    define Q_POSITIONING_EXPORT
-#    define Q_POSITIONING_EXPORT_PRIVATE
 #endif
 
 

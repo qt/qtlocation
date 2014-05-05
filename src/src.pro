@@ -5,9 +5,13 @@ SUBDIRS += positioning
 plugins.depends = positioning
 SUBDIRS += plugins
 
-positioning_doc_snippets.subdir = positioning/doc/snippets
-positioning_doc_snippets.depends = positioning
-SUBDIRS += positioning_doc_snippets
+contains(QT_CONFIG, private_tests) {
+    positioning_doc_snippets.subdir = positioning/doc/snippets
+    #plugin dependency required during static builds
+    positioning_doc_snippets.depends = positioning plugins
+
+    SUBDIRS += positioning_doc_snippets
+}
 
 qtHaveModule(quick) {
     SUBDIRS += 3rdparty
@@ -18,9 +22,13 @@ qtHaveModule(quick) {
     plugins.depends += location
     imports.depends += location
 
-    location_doc_snippets.subdir = location/doc/snippets
-    location_doc_snippets.depends = location
-    SUBDIRS += location_doc_snippets
+    contains(QT_CONFIG, private_tests) {
+        location_doc_snippets.subdir = location/doc/snippets
+        #plugin dependency required during static builds
+        location_doc_snippets.depends = location plugins
+
+        SUBDIRS += location_doc_snippets
+    }
 
     imports.depends += positioning
     SUBDIRS += imports

@@ -35,7 +35,7 @@
 
     \ingroup qtpositioning-examples
 
-    Key Qt Positioning classes used in this example:
+    Key \l{Qt Positioning} classes used in this example:
 
     \list
     \li \l{QGeoSatelliteInfo}
@@ -70,4 +70,6 @@
     If the platform does not provide satellite information the application automatically
     switches into a demo mode whereby it continuously switches between predefined
     sets of satellite data.
+
+    \include examples-run.qdocinc
 */

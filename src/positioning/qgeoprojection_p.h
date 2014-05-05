@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QDoubleVector2D;
 
-class Q_POSITIONING_EXPORT_PRIVATE QGeoProjection
+class Q_POSITIONING_EXPORT QGeoProjection
 {
 public:
     static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
