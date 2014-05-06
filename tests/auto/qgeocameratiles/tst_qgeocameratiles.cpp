@@ -77,7 +77,7 @@ class tst_QGeoCameraTiles : public QObject
 private:
     void row(const PositionTestInfo &pti, int xOffset, int yOffset, int tileX, int tileY, int tileW, int tileH)
     {
-        double step = 1 / (pow(2.0, 4.0) * 4);
+        double step = 1 / (std::pow(2.0, 4.0) * 4);
 
         QString row = pti.xyString;
         row += QLatin1String(" - ");
@@ -239,14 +239,14 @@ private slots:
         ct.setMaximumZoomLevel(8);
         ct.setTileSize(16);
         ct.setCamera(camera);
-        ct.setScreenSize(QSize(ceil(width), ceil(height)));
+        ct.setScreenSize(QSize(std::ceil(width), std::ceil(height)));
 
         QSet<QGeoTileSpec> tiles;
 
         QVERIFY2(tilesX.size() == tilesY.size(), "tilesX and tilesY have different size");
 
         for (int i = 0; i < tilesX.size(); ++i)
-            tiles.insert(QGeoTileSpec("", 0, static_cast<int>(floor(zoom)), tilesX.at(i), tilesY.at(i)));
+            tiles.insert(QGeoTileSpec("", 0, static_cast<int>(std::floor(zoom)), tilesX.at(i), tilesY.at(i)));
 
         QCOMPARE(ct.tiles(), tiles);
     }
@@ -556,8 +556,8 @@ private slots:
 
         pti.zoom = 4.5;
         pti.zoomString = QLatin1String("frac zoom");
-        pti.w = pti.w * pow(2.0, 0.5);
-        pti.h = pti.h * pow(2.0, 0.5);
+        pti.w = pti.w * std::pow(2.0, 0.5);
+        pti.h = pti.h * std::pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
@@ -800,8 +800,8 @@ private slots:
 
         pti.zoom = 4.5;
         pti.zoomString = QLatin1String("frac zoom");
-        pti.w = pti.w * pow(2.0, 0.5);
-        pti.h = pti.h * pow(2.0, 0.5);
+        pti.w = pti.w * std::pow(2.0, 0.5);
+        pti.h = pti.h * std::pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
@@ -1044,8 +1044,8 @@ private slots:
 
         pti.zoom = 4.5;
         pti.zoomString = QLatin1String("frac zoom");
-        pti.w = pti.w * pow(2.0, 0.5);
-        pti.h = pti.h * pow(2.0, 0.5);
+        pti.w = pti.w * std::pow(2.0, 0.5);
+        pti.h = pti.h * std::pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
@@ -1287,8 +1287,8 @@ private slots:
 
         pti.zoom = 4.5;
         pti.zoomString = QLatin1String("frac zoom");
-        pti.w = pti.w * pow(2.0, 0.5);
-        pti.h = pti.h * pow(2.0, 0.5);
+        pti.w = pti.w * std::pow(2.0, 0.5);
+        pti.h = pti.h * std::pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
@@ -1532,8 +1532,8 @@ private slots:
 
         pti.zoom = 4.5;
         pti.zoomString = QLatin1String("frac zoom");
-        pti.w = pti.w * pow(2.0, 0.5);
-        pti.h = pti.h * pow(2.0, 0.5);
+        pti.w = pti.w * std::pow(2.0, 0.5);
+        pti.h = pti.h * std::pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
@@ -1776,8 +1776,8 @@ private slots:
 
         pti.zoom = 4.5;
         pti.zoomString = QLatin1String("frac zoom");
-        pti.w = pti.w * pow(2.0, 0.5);
-        pti.h = pti.h * pow(2.0, 0.5);
+        pti.w = pti.w * std::pow(2.0, 0.5);
+        pti.h = pti.h * std::pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;

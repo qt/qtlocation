@@ -94,7 +94,7 @@ class tst_QGeoMapScene : public QObject
         double mercatorX;
         double mercatorY;
 
-        double halfLength = 1 / (pow(2.0, zoom) * 2);
+        double halfLength = 1 / (std::pow(2.0, zoom) * 2);
         double scaleX = screenWidth / tileSize;
         double scaleY = screenHeight / tileSize;
         double scaledHalfLengthX = halfLength * scaleX;
