@@ -81,7 +81,7 @@
 QT_BEGIN_NAMESPACE
 
 
-class QLocationDeclarativeModule: public QQmlExtensionPlugin
+class QtLocationDeclarativeModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
 
