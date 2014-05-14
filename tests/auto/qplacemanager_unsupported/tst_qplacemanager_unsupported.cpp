@@ -117,7 +117,7 @@ void tst_QPlaceManagerUnsupported::cleanupTestCase()
 
 void tst_QPlaceManagerUnsupported::testMetadata()
 {
-    QCOMPARE(m_manager->managerName(), QLatin1String("test.places.unsupported"));
+    QCOMPARE(m_manager->managerName(), QStringLiteral("test.places.unsupported"));
     QCOMPARE(m_manager->managerVersion(), 1);
     QCOMPARE(m_provider->placesFeatures(), QGeoServiceProvider::NoPlacesFeatures);
 }
@@ -210,8 +210,8 @@ void tst_QPlaceManagerUnsupported::testCategories()
 void tst_QPlaceManagerUnsupported::compatiblePlace()
 {
     QPlace place;
-    place.setPlaceId(QLatin1String("4-8-15-16-23-42"));
-    place.setName(QLatin1String("Island"));
+    place.setPlaceId(QStringLiteral("4-8-15-16-23-42"));
+    place.setName(QStringLiteral("Island"));
     place.setVisibility(QLocation::PublicVisibility);
 
     QPlace compatPlace = m_manager->compatiblePlace(place);

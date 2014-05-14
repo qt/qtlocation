@@ -108,7 +108,7 @@ void QPlaceSearchSuggestionReplyImpl::replyFinished()
 
     QJsonObject object = document.object();
 
-    QJsonArray suggestions = object.value(QLatin1String("suggestions")).toArray();
+    QJsonArray suggestions = object.value(QStringLiteral("suggestions")).toArray();
 
     QStringList s;
     for (int i = 0; i < suggestions.count(); ++i) {

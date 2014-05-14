@@ -97,8 +97,8 @@ void tst_QGeoAddress::textTest()
 {
     QGeoAddress address;
     QVERIFY(address.text().isEmpty());
-    address.setText(QLatin1String("123 Fake Street\nSpringfield"));
-    QCOMPARE(address.text(), QLatin1String("123 Fake Street\nSpringfield"));
+    address.setText(QStringLiteral("123 Fake Street\nSpringfield"));
+    QCOMPARE(address.text(), QStringLiteral("123 Fake Street\nSpringfield"));
 }
 
 void tst_QGeoAddress::cityTest()
@@ -201,7 +201,7 @@ void tst_QGeoAddress::generatedText()
     streetOnly.setStreet("street");
     streetOnly.setCountryCode(countryCode);
 
-    QCOMPARE(streetOnly.text(), QLatin1String("street"));
+    QCOMPARE(streetOnly.text(), QStringLiteral("street"));
 
     QGeoAddress cityOnly;
     cityOnly.setCity("city");
@@ -209,7 +209,7 @@ void tst_QGeoAddress::generatedText()
     if (countryCode == QLatin1String("CYM") || countryCode == QLatin1String("IRL"))
         QCOMPARE(cityOnly.text(), QString());
     else
-        QCOMPARE(cityOnly.text(), QLatin1String("city"));
+        QCOMPARE(cityOnly.text(), QStringLiteral("city"));
 
     QGeoAddress postalCodeOnly;
     postalCodeOnly.setPostalCode("postcode");
@@ -528,39 +528,39 @@ void tst_QGeoAddress::emptyClearTest()
     QGeoAddress testObj;
     QVERIFY(testObj.isEmpty());
 
-    testObj.setCountry(QLatin1String("country"));
+    testObj.setCountry(QStringLiteral("country"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setCountryCode(QLatin1String("countryCode"));
+    testObj.setCountryCode(QStringLiteral("countryCode"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setState(QLatin1String("state"));
+    testObj.setState(QStringLiteral("state"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setCounty(QLatin1String("county"));
+    testObj.setCounty(QStringLiteral("county"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setCity(QLatin1String("city"));
+    testObj.setCity(QStringLiteral("city"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setDistrict(QLatin1String("district"));
+    testObj.setDistrict(QStringLiteral("district"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setPostalCode(QLatin1String("postalCode"));
+    testObj.setPostalCode(QStringLiteral("postalCode"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setStreet(QLatin1String("street"));
+    testObj.setStreet(QStringLiteral("street"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setText(QLatin1String("formatted address"));
+    testObj.setText(QStringLiteral("formatted address"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 

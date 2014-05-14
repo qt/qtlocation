@@ -322,8 +322,8 @@ QDeclarativeGeoMapItemBase *QDeclarativeGeoMapItemView::createItemFromItemModel(
 
         modelMetaObject->setValue(iterator.value(), modelData);
     }
-    itemContext->setContextProperty(QLatin1String("model"), model);
-    itemContext->setContextProperty(QLatin1String("index"), modelRow);
+    itemContext->setContextProperty(QStringLiteral("model"), model);
+    itemContext->setContextProperty(QStringLiteral("index"), modelRow);
 
     QObject *obj = delegate_->create(itemContext);
 

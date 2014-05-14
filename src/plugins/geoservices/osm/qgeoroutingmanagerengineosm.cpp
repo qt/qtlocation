@@ -69,13 +69,13 @@ QGeoRouteReply* QGeoRoutingManagerEngineOsm::calculateRoute(const QGeoRouteReque
     QNetworkRequest networkRequest;
     networkRequest.setRawHeader("User-Agent", m_userAgent);
 
-    QUrl url(QLatin1String("http://router.project-osrm.org/viaroute"));
+    QUrl url(QStringLiteral("http://router.project-osrm.org/viaroute"));
     QUrlQuery query;
 
     query.addQueryItem(QStringLiteral("instructions"), QStringLiteral("true"));
 
     foreach (const QGeoCoordinate &c, request.waypoints()) {
-        query.addQueryItem(QLatin1String("loc"), QString::number(c.latitude()) + QLatin1Char(',') +
+        query.addQueryItem(QStringLiteral("loc"), QString::number(c.latitude()) + QLatin1Char(',') +
                                                  QString::number(c.longitude()));
     }
 

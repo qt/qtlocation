@@ -295,7 +295,7 @@ public:
                                 if (ro.contains(QStringLiteral("dateTime")))
                                     review.setDateTime(QDateTime::fromString(
                                                            ro.value(QStringLiteral("dateTime")).toString(),
-                                                           QLatin1String("hh:mm dd-MM-yyyy")));
+                                                           QStringLiteral("hh:mm dd-MM-yyyy")));
                                 if (ro.contains(QStringLiteral("reviewId")))
                                     review.setReviewId(ro.value("reviewId").toString());
 
@@ -651,12 +651,12 @@ public:
         QList<QPair<int, QUrl> > candidates;
 
         QMap<QString, int> sizeDictionary;
-        sizeDictionary.insert(QLatin1String("s"), 20);
-        sizeDictionary.insert(QLatin1String("m"), 30);
-        sizeDictionary.insert(QLatin1String("l"), 50);
+        sizeDictionary.insert(QStringLiteral("s"), 20);
+        sizeDictionary.insert(QStringLiteral("m"), 30);
+        sizeDictionary.insert(QStringLiteral("l"), 50);
 
         QStringList sizeKeys;
-        sizeKeys << QLatin1String("s") << QLatin1String("m") << QLatin1String("l");
+        sizeKeys << QStringLiteral("s") << QStringLiteral("m") << QStringLiteral("l");
 
         foreach (const QString &sizeKey, sizeKeys)
         {

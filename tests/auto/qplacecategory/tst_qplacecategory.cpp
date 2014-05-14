@@ -121,7 +121,7 @@ void tst_QPlaceCategory::isEmptyTest()
 {
     QPlaceIcon icon;
     QVariantMap parameters;
-    parameters.insert(QLatin1String("para"), QLatin1String("meter"));
+    parameters.insert(QStringLiteral("para"), QStringLiteral("meter"));
     icon.setParameters(parameters);
     QVERIFY(!icon.isEmpty());
 

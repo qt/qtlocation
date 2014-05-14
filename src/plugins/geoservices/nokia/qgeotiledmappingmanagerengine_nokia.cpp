@@ -111,28 +111,28 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     //       don't need this boilerplate
 
     QString cacheDir;
-    if (parameters.contains(QLatin1String("mapping.cache.directory")))
-        cacheDir = parameters.value(QLatin1String("mapping.cache.directory")).toString();
+    if (parameters.contains(QStringLiteral("mapping.cache.directory")))
+        cacheDir = parameters.value(QStringLiteral("mapping.cache.directory")).toString();
 
     QGeoTileCache *tileCache = createTileCacheWithDir(cacheDir);
 
-    if (parameters.contains(QLatin1String("mapping.cache.disk.size"))) {
+    if (parameters.contains(QStringLiteral("mapping.cache.disk.size"))) {
       bool ok = false;
-      int cacheSize = parameters.value(QLatin1String("mapping.cache.disk.size")).toString().toInt(&ok);
+      int cacheSize = parameters.value(QStringLiteral("mapping.cache.disk.size")).toString().toInt(&ok);
       if (ok)
           tileCache->setMaxDiskUsage(cacheSize);
     }
 
-    if (parameters.contains(QLatin1String("mapping.cache.memory.size"))) {
+    if (parameters.contains(QStringLiteral("mapping.cache.memory.size"))) {
       bool ok = false;
-      int cacheSize = parameters.value(QLatin1String("mapping.cache.memory.size")).toString().toInt(&ok);
+      int cacheSize = parameters.value(QStringLiteral("mapping.cache.memory.size")).toString().toInt(&ok);
       if (ok)
           tileCache->setMaxMemoryUsage(cacheSize);
     }
 
-    if (parameters.contains(QLatin1String("mapping.cache.texture.size"))) {
+    if (parameters.contains(QStringLiteral("mapping.cache.texture.size"))) {
       bool ok = false;
-      int cacheSize = parameters.value(QLatin1String("mapping.cache.texture.size")).toString().toInt(&ok);
+      int cacheSize = parameters.value(QStringLiteral("mapping.cache.texture.size")).toString().toInt(&ok);
       if (ok)
           tileCache->setExtraTextureUsage(cacheSize);
     }
@@ -149,26 +149,26 @@ QGeoTiledMappingManagerEngineNokia::~QGeoTiledMappingManagerEngineNokia()
 
 void QGeoTiledMappingManagerEngineNokia::populateMapSchemes()
 {
-    m_mapSchemes[0] = QLatin1String("normal.day");
-    m_mapSchemes[1] = QLatin1String("normal.day");
-    m_mapSchemes[2] = QLatin1String("satellite.day");
-    m_mapSchemes[3] = QLatin1String("terrain.day");
-    m_mapSchemes[4] = QLatin1String("hybrid.day");
-    m_mapSchemes[5] = QLatin1String("normal.day.transit");
-    m_mapSchemes[6] = QLatin1String("normal.day.grey");
-    m_mapSchemes[7] = QLatin1String("normal.day.mobile");
-    m_mapSchemes[8] = QLatin1String("terrain.day.mobile");
-    m_mapSchemes[9] = QLatin1String("hybrid.day.mobile");
-    m_mapSchemes[10] = QLatin1String("normal.day.transit.mobile");
-    m_mapSchemes[11] = QLatin1String("normal.day.grey.mobile");
-    m_mapSchemes[12] = QLatin1String("normal.day.custom");
-    m_mapSchemes[13] = QLatin1String("normal.night");
-    m_mapSchemes[14] = QLatin1String("normal.night.mobile");
-    m_mapSchemes[15] = QLatin1String("normal.night.grey");
-    m_mapSchemes[16] = QLatin1String("normal.night.grey.mobile");
-    m_mapSchemes[17] = QLatin1String("pedestrian.day");
-    m_mapSchemes[18] = QLatin1String("pedestrian.night");
-    m_mapSchemes[19] = QLatin1String("carnav.day.grey");
+    m_mapSchemes[0] = QStringLiteral("normal.day");
+    m_mapSchemes[1] = QStringLiteral("normal.day");
+    m_mapSchemes[2] = QStringLiteral("satellite.day");
+    m_mapSchemes[3] = QStringLiteral("terrain.day");
+    m_mapSchemes[4] = QStringLiteral("hybrid.day");
+    m_mapSchemes[5] = QStringLiteral("normal.day.transit");
+    m_mapSchemes[6] = QStringLiteral("normal.day.grey");
+    m_mapSchemes[7] = QStringLiteral("normal.day.mobile");
+    m_mapSchemes[8] = QStringLiteral("terrain.day.mobile");
+    m_mapSchemes[9] = QStringLiteral("hybrid.day.mobile");
+    m_mapSchemes[10] = QStringLiteral("normal.day.transit.mobile");
+    m_mapSchemes[11] = QStringLiteral("normal.day.grey.mobile");
+    m_mapSchemes[12] = QStringLiteral("normal.day.custom");
+    m_mapSchemes[13] = QStringLiteral("normal.night");
+    m_mapSchemes[14] = QStringLiteral("normal.night.mobile");
+    m_mapSchemes[15] = QStringLiteral("normal.night.grey");
+    m_mapSchemes[16] = QStringLiteral("normal.night.grey.mobile");
+    m_mapSchemes[17] = QStringLiteral("pedestrian.day");
+    m_mapSchemes[18] = QStringLiteral("pedestrian.night");
+    m_mapSchemes[19] = QStringLiteral("carnav.day.grey");
 }
 
 QString QGeoTiledMappingManagerEngineNokia::getScheme(int mapId)
@@ -268,7 +268,7 @@ void QGeoTiledMappingManagerEngineNokia::updateVersion(const QJsonObject &newVer
 void QGeoTiledMappingManagerEngineNokia::saveMapVersion()
 {
     QDir saveDir(tileCache()->directory());
-    QFile saveFile(saveDir.filePath(QLatin1String("nokia_version")));
+    QFile saveFile(saveDir.filePath(QStringLiteral("nokia_version")));
 
     if (!saveFile.open(QIODevice::WriteOnly)) {
         qWarning("Failed to write nokia map version.");
@@ -283,7 +283,7 @@ void QGeoTiledMappingManagerEngineNokia::loadMapVersion()
 {
 
     QDir saveDir(tileCache()->directory());
-    QFile loadFile(saveDir.filePath(QLatin1String("nokia_version")));
+    QFile loadFile(saveDir.filePath(QStringLiteral("nokia_version")));
 
     if (!loadFile.open(QIODevice::ReadOnly)) {
         qWarning("Failed to read nokia map version.");
@@ -297,8 +297,8 @@ void QGeoTiledMappingManagerEngineNokia::loadMapVersion()
 
     QJsonObject object = doc.object();
 
-    m_mapVersion.setVersion(object[QLatin1String("version")].toInt());
-    m_mapVersion.setVersionData(object[QLatin1String("data")].toObject());
+    m_mapVersion.setVersion(object[QStringLiteral("version")].toInt());
+    m_mapVersion.setVersionData(object[QStringLiteral("data")].toObject());
 }
 
 QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType mapType,

@@ -72,19 +72,19 @@ void tst_QPlaceContactDetail::constructorTest()
     QVERIFY(detail.label().isEmpty());
     QVERIFY(detail.value().isEmpty());
 
-    detail.setLabel(QLatin1String("Emergency Services"));
-    detail.setValue(QLatin1String("0118 999"));
+    detail.setLabel(QStringLiteral("Emergency Services"));
+    detail.setValue(QStringLiteral("0118 999"));
 
     QPlaceContactDetail detail2(detail);
-    QCOMPARE(detail2.label(), QLatin1String("Emergency Services"));
-    QCOMPARE(detail2.value(), QLatin1String("0118 999"));
+    QCOMPARE(detail2.label(), QStringLiteral("Emergency Services"));
+    QCOMPARE(detail2.value(), QStringLiteral("0118 999"));
 }
 
 void tst_QPlaceContactDetail::labelTest()
 {
     QPlaceContactDetail detail;
-    detail.setLabel(QLatin1String("home"));
-    QCOMPARE(detail.label(), QLatin1String("home"));
+    detail.setLabel(QStringLiteral("home"));
+    QCOMPARE(detail.label(), QStringLiteral("home"));
     detail.setLabel(QString());
     QVERIFY(detail.label().isEmpty());
 }
@@ -92,8 +92,8 @@ void tst_QPlaceContactDetail::labelTest()
 void tst_QPlaceContactDetail::valueTest()
 {
     QPlaceContactDetail detail;
-    detail.setValue(QLatin1String("555-5555"));
-    QCOMPARE(detail.value(), QLatin1String("555-5555"));
+    detail.setValue(QStringLiteral("555-5555"));
+    QCOMPARE(detail.value(), QStringLiteral("555-5555"));
     detail.setValue(QString());
     QVERIFY(detail.value().isEmpty());
 }
@@ -101,8 +101,8 @@ void tst_QPlaceContactDetail::valueTest()
 void tst_QPlaceContactDetail::clearTest()
 {
     QPlaceContactDetail detail;
-    detail.setLabel(QLatin1String("Ghostbusters"));
-    detail.setValue(QLatin1String("555-2368"));
+    detail.setLabel(QStringLiteral("Ghostbusters"));
+    detail.setValue(QStringLiteral("555-2368"));
     detail.clear();
     QVERIFY(detail.label().isEmpty());
     QVERIFY(detail.value().isEmpty());
@@ -111,12 +111,12 @@ void tst_QPlaceContactDetail::clearTest()
 void tst_QPlaceContactDetail::operatorsTest()
 {
     QPlaceContactDetail detail1;
-    detail1.setLabel(QLatin1String("Kramer"));
-    detail1.setValue(QLatin1String("555-filk"));
+    detail1.setLabel(QStringLiteral("Kramer"));
+    detail1.setValue(QStringLiteral("555-filk"));
 
     QPlaceContactDetail detail2;
-    detail2.setLabel(QLatin1String("Kramer"));
-    detail2.setValue(QLatin1String("555-filk"));
+    detail2.setLabel(QStringLiteral("Kramer"));
+    detail2.setValue(QStringLiteral("555-filk"));
 
     QVERIFY(detail1 == detail2);
     QVERIFY(!(detail1 != detail2));
@@ -136,10 +136,10 @@ void tst_QPlaceContactDetail::operatorsTest()
     QVERIFY(!(detail3 != detail1));
 
     QFETCH(QString, field);
-    if (field == QLatin1String("label"))
-        detail3.setLabel(QLatin1String("Cosmo"));
-    else if (field == QLatin1String("value"))
-        detail3.setValue(QLatin1String("555-5555"));
+    if (field == QStringLiteral("label"))
+        detail3.setLabel(QStringLiteral("Cosmo"));
+    else if (field == QStringLiteral("value"))
+        detail3.setValue(QStringLiteral("555-5555"));
 
     QVERIFY(!(detail1 == detail3));
     QVERIFY(detail1 != detail3);

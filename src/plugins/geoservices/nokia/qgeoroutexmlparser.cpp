@@ -102,7 +102,7 @@ bool QGeoRouteXmlParser::parseRootElement()
 
     if (m_reader->name() == QLatin1String("Error")) {
         QXmlStreamAttributes attributes = m_reader->attributes();
-        if (attributes.value(QLatin1String("type")) == QLatin1String("ApplicationError")
+        if (attributes.value(QStringLiteral("type")) == QLatin1String("ApplicationError")
             && attributes.value("subtype") == QLatin1String("NoRouteFound"))
             return true;
     }

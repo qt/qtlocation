@@ -112,7 +112,7 @@ void tst_QPlaceProposedSearchResult::constructorTest()
 
     QPlaceIcon icon;
     QVariantMap parameters;
-    parameters.insert(QLatin1String("paramKey"), QLatin1String("paramValue"));
+    parameters.insert(QStringLiteral("paramKey"), QStringLiteral("paramValue"));
     icon.setParameters(parameters);
     result.setIcon(icon);
 
@@ -181,7 +181,7 @@ void tst_QPlaceProposedSearchResult::icon()
 
     QPlaceIcon icon;
     QVariantMap iconParams;
-    iconParams.insert(QLatin1String("paramKey"), QLatin1String("paramValue"));
+    iconParams.insert(QStringLiteral("paramKey"), QStringLiteral("paramValue"));
     icon.setParameters(iconParams);
     result.setIcon(icon);
     QCOMPARE(result.icon(), icon);

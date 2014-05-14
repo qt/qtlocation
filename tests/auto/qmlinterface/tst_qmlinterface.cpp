@@ -98,12 +98,12 @@ tst_qmlinterface::tst_qmlinterface()
     m_coordinate.setLatitude(20.0);
     m_coordinate.setAltitude(30.0);
 
-    m_address.setCity(QLatin1String("Brisbane"));
-    m_address.setCountry(QLatin1String("Australia"));
-    m_address.setCountryCode(QLatin1String("AU"));
-    m_address.setPostalCode(QLatin1String("4000"));
-    m_address.setState(QLatin1String("Queensland"));
-    m_address.setStreet(QLatin1String("123 Fake Street"));
+    m_address.setCity(QStringLiteral("Brisbane"));
+    m_address.setCountry(QStringLiteral("Australia"));
+    m_address.setCountryCode(QStringLiteral("AU"));
+    m_address.setPostalCode(QStringLiteral("4000"));
+    m_address.setState(QStringLiteral("Queensland"));
+    m_address.setStreet(QStringLiteral("123 Fake Street"));
 
     m_rectangle.setCenter(m_coordinate);
     m_rectangle.setHeight(30.0);
@@ -113,42 +113,42 @@ tst_qmlinterface::tst_qmlinterface()
     m_location.setBoundingBox(m_rectangle);
     m_location.setCoordinate(m_coordinate);
 
-    m_category.setName(QLatin1String("Test category"));
-    m_category.setCategoryId(QLatin1String("test-category-id"));
+    m_category.setName(QStringLiteral("Test category"));
+    m_category.setCategoryId(QStringLiteral("test-category-id"));
 
     QVariantMap iconParams;
-    iconParams.insert(QPlaceIcon::SingleUrl, QUrl(QLatin1String("http://www.example.com/test-icon.png")));
+    iconParams.insert(QPlaceIcon::SingleUrl, QUrl(QStringLiteral("http://www.example.com/test-icon.png")));
     m_icon.setParameters(iconParams);
 
     m_ratings.setAverage(3.5);
     m_ratings.setMaximum(5.0);
     m_ratings.setCount(10);
 
-    m_supplier.setName(QLatin1String("Test supplier"));
-    m_supplier.setUrl(QUrl(QLatin1String("http://www.example.com/test-supplier")));
-    m_supplier.setSupplierId(QLatin1String("test-supplier-id"));
+    m_supplier.setName(QStringLiteral("Test supplier"));
+    m_supplier.setUrl(QUrl(QStringLiteral("http://www.example.com/test-supplier")));
+    m_supplier.setSupplierId(QStringLiteral("test-supplier-id"));
     m_supplier.setIcon(m_icon);
 
-    m_user.setName(QLatin1String("Test User"));
-    m_user.setUserId(QLatin1String("test-user-id"));
+    m_user.setName(QStringLiteral("Test User"));
+    m_user.setUserId(QStringLiteral("test-user-id"));
 
-    m_placeAttribute.setLabel(QLatin1String("Test Attribute"));
-    m_placeAttribute.setText(QLatin1String("Test attribute text"));
+    m_placeAttribute.setLabel(QStringLiteral("Test Attribute"));
+    m_placeAttribute.setText(QStringLiteral("Test attribute text"));
 
-    m_contactDetail.setLabel(QLatin1String("Test Contact Detail"));
-    m_contactDetail.setValue(QLatin1String("Test contact detail value"));
+    m_contactDetail.setLabel(QStringLiteral("Test Contact Detail"));
+    m_contactDetail.setValue(QStringLiteral("Test contact detail value"));
 
     QPlaceCategory category;
-    category.setName(QLatin1String("Test category 1"));
-    category.setCategoryId(QLatin1String("test-category-id-1"));
+    category.setName(QStringLiteral("Test category 1"));
+    category.setCategoryId(QStringLiteral("test-category-id-1"));
     m_categories.append(category);
-    category.setName(QLatin1String("Test category 2"));
-    category.setCategoryId(QLatin1String("test-category-id-2"));
+    category.setName(QStringLiteral("Test category 2"));
+    category.setCategoryId(QStringLiteral("test-category-id-2"));
     m_categories.append(category);
 
-    m_place.setName(QLatin1String("Test Place"));
-    m_place.setPlaceId(QLatin1String("test-place-id"));
-    m_place.setAttribution(QLatin1String("Place data by Foo"));
+    m_place.setName(QStringLiteral("Test Place"));
+    m_place.setPlaceId(QStringLiteral("test-place-id"));
+    m_place.setAttribution(QStringLiteral("Place data by Foo"));
     m_place.setCategories(m_categories);
     m_place.setLocation(m_location);
     m_place.setRatings(m_ratings);

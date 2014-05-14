@@ -192,20 +192,20 @@ void tst_QPlaceSearchRequest::searchContextTest()
 {
     QPlaceSearchRequest request;
     QVERIFY(!request.searchContext().value<QUrl>().isValid());
-    request.setSearchContext(QUrl(QLatin1String("http://www.example.com/")));
-    QCOMPARE(request.searchContext().value<QUrl>(), QUrl(QLatin1String("http://www.example.com/")));
+    request.setSearchContext(QUrl(QStringLiteral("http://www.example.com/")));
+    QCOMPARE(request.searchContext().value<QUrl>(), QUrl(QStringLiteral("http://www.example.com/")));
 }
 
 void tst_QPlaceSearchRequest::operatorsTest()
 {
     QPlaceSearchRequest testObj;
-    testObj.setSearchTerm(QLatin1String("testValue"));
+    testObj.setSearchTerm(QStringLiteral("testValue"));
     QPlaceSearchRequest testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setSearchTerm(QLatin1String("abc"));
+    testObj2.setSearchTerm(QStringLiteral("abc"));
     QVERIFY2(testObj != testObj2, "Object should be different");
-    testObj2.setSearchTerm(QLatin1String("testValue"));
+    testObj2.setSearchTerm(QStringLiteral("testValue"));
     QVERIFY(testObj == testObj2);
 
     QGeoRectangle b1(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
@@ -255,7 +255,7 @@ void tst_QPlaceSearchRequest::operatorsTest()
     //test that different search contexts do not match
     testObj.clear();
     testObj2.clear();
-    testObj2.setSearchContext(QUrl(QLatin1String("http://www.example.com/")));
+    testObj2.setSearchContext(QUrl(QStringLiteral("http://www.example.com/")));
     QVERIFY(testObj != testObj2);
 }
 

@@ -105,7 +105,7 @@ private slots:
 
         // check the first maneuver is correct
         QGeoManeuver first = segments.at(0).maneuver();
-        QCOMPARE(first.instructionText(), QLatin1String("Head toward Logan Rd (95) on Padstow Rd (56). Go for 0.3 miles."));
+        QCOMPARE(first.instructionText(), QStringLiteral("Head toward Logan Rd (95) on Padstow Rd (56). Go for 0.3 miles."));
         QCOMPARE(first.position(), QGeoCoordinate(-27.5752144, 153.0879669));
 
         QCOMPARE(first.timeToNextInstruction(), 24);

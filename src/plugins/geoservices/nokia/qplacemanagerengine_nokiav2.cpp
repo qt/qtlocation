@@ -136,20 +136,20 @@ bool CategoryParser::parse(const QString &fileName)
         QJsonDocument document = QJsonDocument::fromJson(mappingFile.readAll());
         if (document.isObject()) {
             QJsonObject docObject = document.object();
-            if (docObject.contains(QLatin1String("offline_explore"))) {
-                m_exploreObject = docObject.value(QLatin1String("offline_explore"))
+            if (docObject.contains(QStringLiteral("offline_explore"))) {
+                m_exploreObject = docObject.value(QStringLiteral("offline_explore"))
                                                 .toObject();
-                if (m_exploreObject.contains(QLatin1String("ROOT"))) {
+                if (m_exploreObject.contains(QStringLiteral("ROOT"))) {
                     processCategory(0, QString());
                     return true;
                 }
             } else {
-                m_errorString = fileName + QLatin1String("does not contain the "
-                                                       "offline_explore property");
+                m_errorString = fileName
+                    + QStringLiteral("does not contain the offline_explore property");
                 return false;
             }
         } else {
-            m_errorString = fileName + QLatin1String("is not an json object");
+            m_errorString = fileName + QStringLiteral("is not an json object");
             return false;
         }
     }
@@ -180,10 +180,10 @@ void CategoryParser::processCategory(int level, const QString &id, const QString
     //a proper assignment to the tree happens at the end of function
 
     QJsonObject categoryJson = m_exploreObject.value(id.isEmpty()
-                                                     ? QLatin1String("ROOT") : id).toObject();
-    QJsonArray children = categoryJson.value(QLatin1String("children")).toArray();
+                                                     ? QStringLiteral("ROOT") : id).toObject();
+    QJsonArray children = categoryJson.value(QStringLiteral("children")).toArray();
 
-    if (level + 1 <= maxLevel && !categoryJson.contains(QLatin1String("final"))) {
+    if (level + 1 <= maxLevel && !categoryJson.contains(QStringLiteral("final"))) {
         for (int i = 0; i < children.count(); ++i)  {
             QString childId = children.at(i).toString();
             if (!m_tree.contains(childId)) {
@@ -210,12 +210,12 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
 
     m_locales.append(QLocale());
 
-    m_appId = parameters.value(QLatin1String("app_id")).toString();
-    m_appCode = parameters.value(QLatin1String("token")).toString();
+    m_appId = parameters.value(QStringLiteral("app_id")).toString();
+    m_appCode = parameters.value(QStringLiteral("token")).toString();
 
     m_theme = parameters.value(IconThemeKey, QString()).toString();
 
-    if (m_theme == QLatin1String("default"))
+    if (m_theme == QStringLiteral("default"))
         m_theme.clear();
 
     m_localDataPath = parameters.value(LocalDataPathKey, QString()).toString();
@@ -224,7 +224,7 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
 
         if (!dataLocations.isEmpty() && !dataLocations.first().isEmpty()) {
             m_localDataPath = dataLocations.first()
-                                + QLatin1String("/nokia/qtlocation/data");
+                                + QStringLiteral("/nokia/qtlocation/data");
         }
     }
 
@@ -240,13 +240,13 @@ QPlaceManagerEngineNokiaV2::~QPlaceManagerEngineNokiaV2() {}
 QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &placeId)
 {
     QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                    QLatin1String("/places/v1/places/") + placeId);
+                    QStringLiteral("/places/v1/places/") + placeId);
 
     QUrlQuery queryItems;
 
-    queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
-    //queryItems.append(qMakePair<QString, QString>(QLatin1String("size"), QString::number(5)));
-    //queryItems.append(qMakePair<QString, QString>(QLatin1String("image_dimensions"), QLatin1String("w64-h64,w100")));
+    queryItems.addQueryItem(QStringLiteral("tf"), QStringLiteral("html"));
+    //queryItems.append(qMakePair<QString, QString>(QStringLiteral("size"), QString::number(5)));
+    //queryItems.append(qMakePair<QString, QString>(QStringLiteral("image_dimensions"), QStringLiteral("w64-h64,w100")));
 
     requestUrl.setQuery(queryItems);
 
@@ -271,45 +271,45 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QPlaceCont
        networkReply = sendRequest(u);
     } else {
         QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                        QLatin1String("/places/v1/places/") + request.placeId() +
-                        QLatin1String("/media/"));
+                        QStringLiteral("/places/v1/places/") + request.placeId() +
+                        QStringLiteral("/media/"));
 
         QUrlQuery queryItems;
 
         switch (request.contentType()) {
         case QPlaceContent::ImageType:
-            requestUrl.setPath(requestUrl.path() + QLatin1String("images"));
+            requestUrl.setPath(requestUrl.path() + QStringLiteral("images"));
 
-            queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+            queryItems.addQueryItem(QStringLiteral("tf"), QStringLiteral("html"));
 
             if (request.limit() > 0)
-                queryItems.addQueryItem(QLatin1String("size"), QString::number(request.limit()));
+                queryItems.addQueryItem(QStringLiteral("size"), QString::number(request.limit()));
 
-            //queryItems.append(qMakePair<QString, QString>(QLatin1String("image_dimensions"), QLatin1String("w64-h64,w100")));
+            //queryItems.append(qMakePair<QString, QString>(QStringLiteral("image_dimensions"), QStringLiteral("w64-h64,w100")));
 
             requestUrl.setQuery(queryItems);
 
             networkReply = sendRequest(requestUrl);
             break;
         case QPlaceContent::ReviewType:
-            requestUrl.setPath(requestUrl.path() + QLatin1String("reviews"));
+            requestUrl.setPath(requestUrl.path() + QStringLiteral("reviews"));
 
-            queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+            queryItems.addQueryItem(QStringLiteral("tf"), QStringLiteral("html"));
 
             if (request.limit() > 0)
-                queryItems.addQueryItem(QLatin1String("size"), QString::number(request.limit()));
+                queryItems.addQueryItem(QStringLiteral("size"), QString::number(request.limit()));
 
             requestUrl.setQuery(queryItems);
 
             networkReply = sendRequest(requestUrl);
             break;
         case QPlaceContent::EditorialType:
-            requestUrl.setPath(requestUrl.path() + QLatin1String("editorials"));
+            requestUrl.setPath(requestUrl.path() + QStringLiteral("editorials"));
 
-            queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+            queryItems.addQueryItem(QStringLiteral("tf"), QStringLiteral("html"));
 
             if (request.limit() > 0)
-                queryItems.addQueryItem(QLatin1String("size"), QString::number(request.limit()));
+                queryItems.addQueryItem(QStringLiteral("size"), QString::number(request.limit()));
 
             requestUrl.setQuery(queryItems);
 
@@ -352,7 +352,7 @@ static bool addAtForBoundingArea(const QGeoShape &area,
     if (!center.isValid()) {
         return false;
     } else {
-        queryItems->addQueryItem(QLatin1String("at"),
+        queryItems->addQueryItem(QStringLiteral("at"),
                                  QString::number(center.latitude()) +
                                  QLatin1Char(',') +
                                  QString::number(center.longitude()));
@@ -424,13 +424,13 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
     } else if (!query.searchTerm().isEmpty()) {
         // search term query
         QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                        QLatin1String("/places/v1/discover/search"));
+                        QStringLiteral("/places/v1/discover/search"));
 
-        queryItems.addQueryItem(QLatin1String("q"), query.searchTerm());
-        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+        queryItems.addQueryItem(QStringLiteral("q"), query.searchTerm());
+        queryItems.addQueryItem(QStringLiteral("tf"), QStringLiteral("html"));
 
         if (query.limit() > 0) {
-            queryItems.addQueryItem(QLatin1String("size"),
+            queryItems.addQueryItem(QStringLiteral("size"),
                                     QString::number(query.limit()));
         }
 
@@ -446,10 +446,10 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         return reply;
     } else if (!query.recommendationId().isEmpty()) {
         QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                        QLatin1String("/places/v1/places/") + query.recommendationId() +
-                        QLatin1String("/related/recommended"));
+                        QStringLiteral("/places/v1/places/") + query.recommendationId() +
+                        QStringLiteral("/related/recommended"));
 
-        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+        queryItems.addQueryItem(QStringLiteral("tf"), QStringLiteral("html"));
 
         requestUrl.setQuery(queryItems);
 
@@ -470,10 +470,10 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         addAtForBoundingArea(query.searchArea(), &queryItems);
 
-        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
+        queryItems.addQueryItem(QStringLiteral("tf"), QStringLiteral("html"));
 
         if (query.limit() > 0) {
-            queryItems.addQueryItem(QLatin1String("size"),
+            queryItems.addQueryItem(QStringLiteral("size"),
                                     QString::number(query.limit()));
         }
 
@@ -512,11 +512,11 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
     }
 
     QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                    QLatin1String("/places/v1/suggest"));
+                    QStringLiteral("/places/v1/suggest"));
 
     QUrlQuery queryItems;
 
-    queryItems.addQueryItem(QLatin1String("q"), query.searchTerm());
+    queryItems.addQueryItem(QStringLiteral("q"), query.searchTerm());
 
     if (!addAtForBoundingArea(query.searchArea(), &queryItems)) {
         QPlaceSearchSuggestionReplyImpl *reply = new QPlaceSearchSuggestionReplyImpl(0, this);
@@ -603,7 +603,7 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
     m_tempTree.clear();
     CategoryParser parser;
 
-    if (parser.parse(m_localDataPath + QLatin1String("/offline/offline-mapping.json"))) {
+    if (parser.parse(m_localDataPath + QStringLiteral("/offline/offline-mapping.json"))) {
         m_tempTree = parser.tree();
     } else {
         PlaceCategoryNode rootNode;
@@ -628,7 +628,7 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
     ids.removeAll(QString());
     foreach (const QString &id, ids) {
         QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                        QLatin1String("/places/v1/categories/places/") + id);
+                        QStringLiteral("/places/v1/categories/places/") + id);
         QNetworkReply *networkReply = sendRequest(requestUrl);
         connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
         connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),
@@ -783,12 +783,12 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
 
         QJsonObject category = document.object();
 
-        categoryId = category.value(QLatin1String("categoryId")).toString();
+        categoryId = category.value(QStringLiteral("categoryId")).toString();
         if (m_tempTree.contains(categoryId)) {
             PlaceCategoryNode node = m_tempTree.value(categoryId);
-            node.category.setName(category.value(QLatin1String("name")).toString());
+            node.category.setName(category.value(QStringLiteral("name")).toString());
             node.category.setCategoryId(categoryId);
-            node.category.setIcon(icon(category.value(QLatin1String("icon")).toString()));
+            node.category.setIcon(icon(category.value(QStringLiteral("icon")).toString()));
 
             m_tempTree.insert(categoryId, node);
         }
@@ -824,8 +824,8 @@ void QPlaceManagerEngineNokiaV2::categoryReplyError()
 QNetworkReply *QPlaceManagerEngineNokiaV2::sendRequest(const QUrl &url)
 {
     QUrlQuery queryItems(url);
-    queryItems.addQueryItem(QLatin1String("app_id"), m_appId);
-    queryItems.addQueryItem(QLatin1String("app_code"), m_appCode);
+    queryItems.addQueryItem(QStringLiteral("app_id"), m_appId);
+    queryItems.addQueryItem(QStringLiteral("app_code"), m_appCode);
 
     QUrl requestUrl = url;
     requestUrl.setQuery(queryItems);

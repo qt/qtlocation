@@ -93,7 +93,7 @@ void tst_Place::constructorTest()
     QPlaceAttribute paymentMethods;
     paymentMethods.setLabel("Payment methods");
     paymentMethods.setText("Visa");
-    testObj.setExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
+    testObj.setExtendedAttribute(QStringLiteral("paymentMethods"), paymentMethods);
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
@@ -227,13 +227,13 @@ void tst_Place::reviewContentTest()
     QVERIFY2(place.content(QPlaceContent::ReviewType).count() ==0,"Wrong default value");
 
     QPlaceReview dummyReview;
-    dummyReview.setTitle(QLatin1String("Review 1"));
+    dummyReview.setTitle(QStringLiteral("Review 1"));
 
     QPlaceReview dummyReview2;
-    dummyReview2.setTitle(QLatin1String("Review 2"));
+    dummyReview2.setTitle(QStringLiteral("Review 2"));
 
     QPlaceReview dummyReview3;
-    dummyReview3.setTitle(QLatin1String("Review 3"));
+    dummyReview3.setTitle(QStringLiteral("Review 3"));
 
     QPlaceContent::Collection reviewCollection;
     reviewCollection.insert(0,dummyReview);
@@ -251,10 +251,10 @@ void tst_Place::reviewContentTest()
     //replace the second and insert a sixth review
     //indexes 4 and 5 are "missing"
     QPlaceReview dummyReview2New;
-    dummyReview2.setTitle(QLatin1String("Review 2 new"));
+    dummyReview2.setTitle(QStringLiteral("Review 2 new"));
 
     QPlaceReview dummyReview6;
-    dummyReview6.setTitle(QLatin1String("Review 6"));
+    dummyReview6.setTitle(QStringLiteral("Review 6"));
 
     reviewCollection.clear();
     reviewCollection.insert(1, dummyReview2New);
@@ -277,13 +277,13 @@ void tst_Place::editorialContentTest()
     QVERIFY2(place.content(QPlaceContent::EditorialType).count() == 0, "Wrong default value");
 
     QPlaceEditorial dummyEditorial;
-    dummyEditorial.setTitle(QLatin1String("Editorial 1"));
+    dummyEditorial.setTitle(QStringLiteral("Editorial 1"));
 
     QPlaceEditorial dummyEditorial2;
-    dummyEditorial2.setTitle(QLatin1String("Editorial 2"));
+    dummyEditorial2.setTitle(QStringLiteral("Editorial 2"));
 
     QPlaceEditorial dummyEditorial3;
-    dummyEditorial3.setTitle(QLatin1String("Editorial 3"));
+    dummyEditorial3.setTitle(QStringLiteral("Editorial 3"));
 
     QPlaceContent::Collection editorialCollection;
     editorialCollection.insert(0,dummyEditorial);
@@ -301,10 +301,10 @@ void tst_Place::editorialContentTest()
     //replace the second and insert a sixth editorial
     //indexes 4 and 5 are "missing"
     QPlaceEditorial dummyEditorial2New;
-    dummyEditorial2.setTitle(QLatin1String("Editorial 2 new"));
+    dummyEditorial2.setTitle(QStringLiteral("Editorial 2 new"));
 
     QPlaceEditorial dummyEditorial6;
-    dummyEditorial6.setTitle(QLatin1String("Editorial 6"));
+    dummyEditorial6.setTitle(QStringLiteral("Editorial 6"));
 
     editorialCollection.clear();
     editorialCollection.insert(1, dummyEditorial2New);
@@ -377,8 +377,8 @@ void tst_Place::attributionTest()
 {
     QPlace testPlace;
     QVERIFY(testPlace.attribution().isEmpty());
-    testPlace.setAttribution(QLatin1String("attribution"));
-    QCOMPARE(testPlace.attribution(), QLatin1String("attribution"));
+    testPlace.setAttribution(QStringLiteral("attribution"));
+    QCOMPARE(testPlace.attribution(), QStringLiteral("attribution"));
     testPlace.setAttribution(QString());
     QVERIFY(testPlace.attribution().isEmpty());
 }
@@ -434,8 +434,8 @@ void tst_Place::primaryPhoneTest()
     QVERIFY2(place.primaryPhone().isEmpty(), "Wrong default value");
 
     QPlaceContactDetail contactDetail;
-    contactDetail.setLabel(QLatin1String("Phone"));
-    contactDetail.setValue(QLatin1String("555-5555"));
+    contactDetail.setLabel(QStringLiteral("Phone"));
+    contactDetail.setValue(QStringLiteral("555-5555"));
     place.appendContactDetail(QPlaceContactDetail::Phone, contactDetail);
 
     QCOMPARE(place.primaryPhone(), QString("555-5555"));
@@ -451,11 +451,11 @@ void tst_Place::primaryEmailTest()
     QVERIFY2(place.primaryEmail().isEmpty(), "Wrong default value");
 
     QPlaceContactDetail contactDetail;
-    contactDetail.setLabel(QLatin1String("Email"));
-    contactDetail.setValue(QLatin1String("test@test.com"));
+    contactDetail.setLabel(QStringLiteral("Email"));
+    contactDetail.setValue(QStringLiteral("test@test.com"));
     place.appendContactDetail(QPlaceContactDetail::Email, contactDetail);
 
-    QCOMPARE(place.primaryEmail(), QLatin1String("test@test.com"));
+    QCOMPARE(place.primaryEmail(), QStringLiteral("test@test.com"));
 
     //try clearing the primary email address
     place.setContactDetails(QPlaceContactDetail::Email, QList<QPlaceContactDetail>());
@@ -468,11 +468,11 @@ void tst_Place::primaryFaxTest()
     QVERIFY2(place.primaryFax().isEmpty(), "Wrong default value");
 
     QPlaceContactDetail contactDetail;
-    contactDetail.setLabel(QLatin1String("Fax"));
-    contactDetail.setValue(QLatin1String("555-5555"));
+    contactDetail.setLabel(QStringLiteral("Fax"));
+    contactDetail.setValue(QStringLiteral("555-5555"));
     place.appendContactDetail(QPlaceContactDetail::Fax, contactDetail);
 
-    QCOMPARE(place.primaryFax(), QLatin1String("555-5555"));
+    QCOMPARE(place.primaryFax(), QStringLiteral("555-5555"));
 
     //try clearing the primary fax number
     place.setContactDetails(QPlaceContactDetail::Fax, QList<QPlaceContactDetail>());
@@ -485,8 +485,8 @@ void tst_Place::primaryWebsiteTest()
     QVERIFY2(place.primaryWebsite().isEmpty(), "Wrong default value");
 
     QPlaceContactDetail contactDetail;
-    contactDetail.setLabel(QLatin1String("Website"));
-    contactDetail.setValue(QLatin1String("www.example.com"));
+    contactDetail.setLabel(QStringLiteral("Website"));
+    contactDetail.setValue(QStringLiteral("www.example.com"));
     place.appendContactDetail(QPlaceContactDetail::Website, contactDetail);
 
     QCOMPARE(place.primaryWebsite(), QUrl("www.example.com"));
@@ -503,7 +503,7 @@ void tst_Place::operatorsTest()
     QPlaceAttribute paymentMethods;
     paymentMethods.setLabel("Payment methods");
     paymentMethods.setText("Visa");
-    testObj.setExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
+    testObj.setExtendedAttribute(QStringLiteral("paymentMethods"), paymentMethods);
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
@@ -520,38 +520,38 @@ void tst_Place::extendedAttributeTest()
     QPlace place;
     QVERIFY(place.extendedAttributeTypes().isEmpty());
     QPlaceAttribute smoking;
-    smoking.setLabel(QLatin1String("Public Smoking"));
-    smoking.setText(QLatin1String("No"));
+    smoking.setLabel(QStringLiteral("Public Smoking"));
+    smoking.setText(QStringLiteral("No"));
 
     //test setting of an attribue
-    place.setExtendedAttribute(QLatin1String("smoking"), smoking);
+    place.setExtendedAttribute(QStringLiteral("smoking"), smoking);
 
-    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("smoking")));
+    QVERIFY(place.extendedAttributeTypes().contains(QStringLiteral("smoking")));
     QCOMPARE(place.extendedAttributeTypes().count(), 1);
 
-    QCOMPARE(place.extendedAttribute(QLatin1String("smoking")).label(), QLatin1String("Public Smoking"));
-    QCOMPARE(place.extendedAttribute(QLatin1String("smoking")).text(), QLatin1String("No"));
+    QCOMPARE(place.extendedAttribute(QStringLiteral("smoking")).label(), QStringLiteral("Public Smoking"));
+    QCOMPARE(place.extendedAttribute(QStringLiteral("smoking")).text(), QStringLiteral("No"));
 
     QPlaceAttribute shelter;
-    shelter.setLabel(QLatin1String("Outdoor shelter"));
-    shelter.setText(QLatin1String("Yes"));
+    shelter.setLabel(QStringLiteral("Outdoor shelter"));
+    shelter.setText(QStringLiteral("Yes"));
 
     //test setting another new attribute
     place.setExtendedAttribute("shelter", shelter);
-    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("shelter")));
-    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("smoking")));
+    QVERIFY(place.extendedAttributeTypes().contains(QStringLiteral("shelter")));
+    QVERIFY(place.extendedAttributeTypes().contains(QStringLiteral("smoking")));
     QCOMPARE(place.extendedAttributeTypes().count(), 2);
-    QCOMPARE(place.extendedAttribute(QLatin1String("shelter")).label(), QLatin1String("Outdoor shelter"));
-    QCOMPARE(place.extendedAttribute(QLatin1String("shelter")).text(), QLatin1String("Yes"));
+    QCOMPARE(place.extendedAttribute(QStringLiteral("shelter")).label(), QStringLiteral("Outdoor shelter"));
+    QCOMPARE(place.extendedAttribute(QStringLiteral("shelter")).text(), QStringLiteral("Yes"));
 
     //test overwriting an attribute
-    shelter.setText(QLatin1String("No"));
-    place.setExtendedAttribute(QLatin1String("shelter"), shelter);
+    shelter.setText(QStringLiteral("No"));
+    place.setExtendedAttribute(QStringLiteral("shelter"), shelter);
 
-    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("shelter")));
-    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("smoking")));
+    QVERIFY(place.extendedAttributeTypes().contains(QStringLiteral("shelter")));
+    QVERIFY(place.extendedAttributeTypes().contains(QStringLiteral("smoking")));
     QCOMPARE(place.extendedAttributeTypes().count(), 2);
-    QCOMPARE(place.extendedAttribute(QLatin1String("shelter")).text(), QLatin1String("No"));
+    QCOMPARE(place.extendedAttribute(QStringLiteral("shelter")).text(), QStringLiteral("No"));
 
     //test clearing of attributes by setting them to the default attribute
     foreach (const QString &attributeType, place.extendedAttributeTypes())
@@ -560,9 +560,9 @@ void tst_Place::extendedAttributeTest()
     QCOMPARE(place.extendedAttributeTypes().count(), 0);
 
     //test removing of attributes
-    place.setExtendedAttribute(QLatin1String("smoking"), smoking);
+    place.setExtendedAttribute(QStringLiteral("smoking"), smoking);
     QVERIFY(!place.extendedAttributeTypes().isEmpty());
-    place.removeExtendedAttribute(QLatin1String("smoking"));
+    place.removeExtendedAttribute(QStringLiteral("smoking"));
     QVERIFY(place.extendedAttributeTypes().isEmpty());
 }
 void tst_Place::visibilityTest()
@@ -589,12 +589,12 @@ void tst_Place::isEmptyTest()
     QVERIFY(!ratings.isEmpty());
 
     QPlaceSupplier supplier;
-    supplier.setName(QLatin1String("Foo & Bar Imports"));
+    supplier.setName(QStringLiteral("Foo & Bar Imports"));
     QVERIFY(!supplier.isEmpty());
 
     QPlaceIcon icon;
     QVariantMap iconParametersMap;
-    iconParametersMap.insert(QLatin1String("Para"), QLatin1String("meter"));
+    iconParametersMap.insert(QStringLiteral("Para"), QStringLiteral("meter"));
     icon.setParameters(iconParametersMap);
     QVERIFY(!icon.isEmpty());
 
@@ -603,7 +603,7 @@ void tst_Place::isEmptyTest()
     contentCollection.insert(42, content);
 
     QPlaceAttribute attribute;
-    attribute.setLabel(QLatin1String("noodle"));
+    attribute.setLabel(QStringLiteral("noodle"));
 
     QPlaceContactDetail contactDetail;
 
@@ -638,7 +638,7 @@ void tst_Place::isEmptyTest()
     QVERIFY(place.isEmpty());
 
     // attribution
-    place.setAttribution(QLatin1String("attr"));
+    place.setAttribution(QStringLiteral("attr"));
     QVERIFY(!place.isEmpty());
     place.setAttribution(QString());
     QVERIFY(place.isEmpty());
@@ -655,21 +655,21 @@ void tst_Place::isEmptyTest()
     place = QPlace();
 
     // name
-    place.setName(QLatin1String("Naniwa"));
+    place.setName(QStringLiteral("Naniwa"));
     QVERIFY(!place.isEmpty());
     place.setName(QString());
     QVERIFY(place.isEmpty());
 
     // placeId
-    place.setPlaceId(QLatin1String("naniwa"));
+    place.setPlaceId(QStringLiteral("naniwa"));
     QVERIFY(!place.isEmpty());
     place.setPlaceId(QString());
     QVERIFY(place.isEmpty());
 
     // extendedAttributes
-    place.setExtendedAttribute(QLatin1String("part"), attribute);
+    place.setExtendedAttribute(QStringLiteral("part"), attribute);
     QVERIFY(!place.isEmpty());
-    place.removeExtendedAttribute(QLatin1String("part"));
+    place.removeExtendedAttribute(QStringLiteral("part"));
     QVERIFY(place.isEmpty());
 
     // extendedAttributes
@@ -677,9 +677,9 @@ void tst_Place::isEmptyTest()
     QVERIFY(place.isEmpty());
 
     // contact detail
-    place.appendContactDetail(QLatin1String("phone"), contactDetail);
+    place.appendContactDetail(QStringLiteral("phone"), contactDetail);
     QVERIFY(!place.isEmpty());
-    place.removeContactDetails(QLatin1String("phone"));
+    place.removeContactDetails(QStringLiteral("phone"));
     QVERIFY(place.isEmpty());
 
     // visibility

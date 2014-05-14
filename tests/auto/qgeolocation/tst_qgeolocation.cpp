@@ -227,7 +227,7 @@ void tst_QGeoLocation::comparison_data()
 void tst_QGeoLocation::isEmpty()
 {
     QGeoAddress address;
-    address.setCity(QLatin1String("Braunschweig"));
+    address.setCity(QStringLiteral("Braunschweig"));
     QVERIFY(!address.isEmpty());
 
     QGeoRectangle boundingBox;

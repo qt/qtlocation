@@ -306,7 +306,6 @@ void QGeoTiledMapReply::abort()
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTileSpec &spec)
     : error(QGeoTiledMapReply::NoError),
-      errorString(QLatin1String("")),
       isFinished(false),
       isCached(false),
       spec(spec) {}

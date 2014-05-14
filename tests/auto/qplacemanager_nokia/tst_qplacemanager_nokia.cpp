@@ -102,7 +102,7 @@ void tst_QPlaceManagerNokia::initTestCase()
 void tst_QPlaceManagerNokia::unsupportedFunctions()
 {
     QPlace place;
-    place.setName(QLatin1String("Brisbane"));
+    place.setName(QStringLiteral("Brisbane"));
     QPlaceIdReply *savePlaceReply = placeManager->savePlace(place);
     QVERIFY(savePlaceReply);
     QVERIFY(checkSignals(savePlaceReply, QPlaceReply::UnsupportedError));
@@ -114,7 +114,7 @@ void tst_QPlaceManagerNokia::unsupportedFunctions()
     QCOMPARE(removePlaceReply->operationType(), QPlaceIdReply::RemovePlace);
 
     QPlaceCategory category;
-    category.setName(QLatin1String("Accommodation"));
+    category.setName(QStringLiteral("Accommodation"));
     QPlaceIdReply *saveCategoryReply = placeManager->saveCategory(category);
     QVERIFY(saveCategoryReply);
     QVERIFY(checkSignals(saveCategoryReply, QPlaceReply::UnsupportedError));

@@ -65,17 +65,17 @@ void tst_QPlaceSearchResult::constructorTest()
     QVERIFY(result.title().isEmpty());
     QVERIFY(result.icon().isEmpty());
 
-    result.setTitle(QLatin1String("title"));
+    result.setTitle(QStringLiteral("title"));
     QPlaceIcon icon;
     QVariantMap parameters;
-    parameters.insert(QLatin1String("paramKey"), QLatin1String("paramValue"));
+    parameters.insert(QStringLiteral("paramKey"), QStringLiteral("paramValue"));
     icon.setParameters(parameters);
     result.setIcon(icon);
 
     QPlaceSearchResult result2(result);
-    QCOMPARE(result2.title(), QLatin1String("title"));
-    QCOMPARE(result2.icon().parameters().value(QLatin1String("paramKey")).toString(),
-             QLatin1String("paramValue"));
+    QCOMPARE(result2.title(), QStringLiteral("title"));
+    QCOMPARE(result2.icon().parameters().value(QStringLiteral("paramKey")).toString(),
+             QStringLiteral("paramValue"));
 
     QCOMPARE(result2, result);
 }
@@ -84,8 +84,8 @@ void tst_QPlaceSearchResult::title()
 {
     QPlaceSearchResult result;
     QVERIFY(result.title().isEmpty());
-    result.setTitle(QLatin1String("title"));
-    QCOMPARE(result.title(), QLatin1String("title"));
+    result.setTitle(QStringLiteral("title"));
+    QCOMPARE(result.title(), QStringLiteral("title"));
     result.setTitle(QString());
     QVERIFY(result.title().isEmpty());
 }
@@ -96,7 +96,7 @@ void tst_QPlaceSearchResult::icon()
     QVERIFY(result.icon().isEmpty());
     QPlaceIcon icon;
     QVariantMap iconParams;
-    iconParams.insert(QLatin1String("paramKey"), QLatin1String("paramValue"));
+    iconParams.insert(QStringLiteral("paramKey"), QStringLiteral("paramValue"));
     result.setIcon(icon);
     QCOMPARE(result.icon(), icon);
     result.setIcon(QPlaceIcon());
@@ -111,11 +111,11 @@ void tst_QPlaceSearchResult::operators()
     QVERIFY(result1 == result2);
     QVERIFY(!(result1 != result2));
 
-    result1.setTitle(QLatin1String("title"));
+    result1.setTitle(QStringLiteral("title"));
     QVERIFY(!(result1 == result2));
     QVERIFY(result1 != result2);
 
-    result2.setTitle(QLatin1String("title"));
+    result2.setTitle(QStringLiteral("title"));
     QVERIFY(result1 == result2);
     QVERIFY(!(result1 != result2));
 }

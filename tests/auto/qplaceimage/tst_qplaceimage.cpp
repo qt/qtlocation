@@ -152,8 +152,8 @@ void tst_QPlaceImage::attributionTest()
 {
     QPlaceImage image;
     QVERIFY(image.attribution().isEmpty());
-    image.setAttribution(QLatin1String("Brought to you by acme"));
-    QCOMPARE(image.attribution(), QLatin1String("Brought to you by acme"));
+    image.setAttribution(QStringLiteral("Brought to you by acme"));
+    QCOMPARE(image.attribution(), QStringLiteral("Brought to you by acme"));
     image.setAttribution(QString());
     QVERIFY(image.attribution().isEmpty());
 }

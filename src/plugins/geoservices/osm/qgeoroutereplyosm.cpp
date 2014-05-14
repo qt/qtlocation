@@ -384,7 +384,7 @@ void QGeoRouteReplyOsm::networkReplyFinished()
 
         setFinished(true);
     } else {
-        setError(QGeoRouteReply::ParseError, QLatin1String("Couldn't parse json."));
+        setError(QGeoRouteReply::ParseError, QStringLiteral("Couldn't parse json."));
     }
 
     m_reply->deleteLater();

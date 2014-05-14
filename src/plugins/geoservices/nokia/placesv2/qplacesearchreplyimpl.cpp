@@ -126,13 +126,13 @@ void QPlaceSearchReplyImpl::replyFinished()
     if (resultsObject.contains(QStringLiteral("results")))
         resultsObject = resultsObject.value(QStringLiteral("results")).toObject();
 
-    QJsonArray items = resultsObject.value(QLatin1String("items")).toArray();
+    QJsonArray items = resultsObject.value(QStringLiteral("items")).toArray();
 
     QList<QPlaceSearchResult> results;
     for (int i = 0; i < items.count(); ++i) {
         QJsonObject item = items.at(i).toObject();
 
-        const QString type = item.value(QLatin1String("type")).toString();
+        const QString type = item.value(QStringLiteral("type")).toString();
         if (type == QStringLiteral("urn:nlp-types:place"))
             results.append(parsePlaceResult(item));
         else if (type == QStringLiteral("urn:nlp-types:search"))
@@ -164,22 +164,22 @@ QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) co
 {
     QPlaceResult result;
 
-    if (item.contains(QLatin1String("distance")))
-        result.setDistance(item.value(QLatin1String("distance")).toDouble());
+    if (item.contains(QStringLiteral("distance")))
+        result.setDistance(item.value(QStringLiteral("distance")).toDouble());
 
     QPlace place;
 
     QGeoLocation location;
 
-    location.setCoordinate(parseCoordinate(item.value(QLatin1String("position")).toArray()));
+    location.setCoordinate(parseCoordinate(item.value(QStringLiteral("position")).toArray()));
 
-    const QString vicinity = item.value(QLatin1String("vicinity")).toString();
+    const QString vicinity = item.value(QStringLiteral("vicinity")).toString();
     QGeoAddress address;
     address.setText(vicinity);
     location.setAddress(address);
 
-    if (item.contains(QLatin1String("bbox"))) {
-        QJsonArray bbox = item.value(QLatin1String("bbox")).toArray();
+    if (item.contains(QStringLiteral("bbox"))) {
+        QJsonArray bbox = item.value(QStringLiteral("bbox")).toArray();
         QGeoRectangle box(QGeoCoordinate(bbox.at(3).toDouble(), bbox.at(0).toDouble()),
                             QGeoCoordinate(bbox.at(1).toDouble(), bbox.at(2).toDouble()));
         location.setBoundingBox(box);
@@ -188,32 +188,32 @@ QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) co
     place.setLocation(location);
 
     QPlaceRatings ratings;
-    ratings.setAverage(item.value(QLatin1String("averageRating")).toDouble());
+    ratings.setAverage(item.value(QStringLiteral("averageRating")).toDouble());
     ratings.setMaximum(5.0);
     place.setRatings(ratings);
 
-    const QString title = item.value(QLatin1String("title")).toString();
+    const QString title = item.value(QStringLiteral("title")).toString();
     place.setName(title);
     result.setTitle(title);
 
-    QPlaceIcon icon = m_engine->icon(item.value(QLatin1String("icon")).toString());
+    QPlaceIcon icon = m_engine->icon(item.value(QStringLiteral("icon")).toString());
     place.setIcon(icon);
     result.setIcon(icon);
 
-    place.setCategory(parseCategory(item.value(QLatin1String("category")).toObject(),
+    place.setCategory(parseCategory(item.value(QStringLiteral("category")).toObject(),
                                     m_engine));
 
-    //QJsonArray having = item.value(QLatin1String("having")).toArray();
+    //QJsonArray having = item.value(QStringLiteral("having")).toArray();
 
-    result.setSponsored(item.value(QLatin1String("sponsored")).toBool());
+    result.setSponsored(item.value(QStringLiteral("sponsored")).toBool());
 
-    QUrl href = item.value(QLatin1String("href")).toString();
-    //QUrl type = item.value(QLatin1String("type")).toString();
+    QUrl href = item.value(QStringLiteral("href")).toString();
+    //QUrl type = item.value(QStringLiteral("type")).toString();
 
     place.setPlaceId(href.path().mid(18, 41));
 
     QPlaceAttribute provider;
-    provider.setText(QLatin1String("nokia"));
+    provider.setText(QStringLiteral("nokia"));
     place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
     place.setVisibility(QLocation::PublicVisibility);
 
@@ -226,7 +226,7 @@ QPlaceProposedSearchResult QPlaceSearchReplyImpl::parseSearchResult(const QJsonO
 {
     QPlaceProposedSearchResult result;
 
-    result.setTitle(item.value(QLatin1String("title")).toString());
+    result.setTitle(item.value(QStringLiteral("title")).toString());
 
     QPlaceIcon icon = m_engine->icon(item.value(QStringLiteral("icon")).toString());
     result.setIcon(icon);

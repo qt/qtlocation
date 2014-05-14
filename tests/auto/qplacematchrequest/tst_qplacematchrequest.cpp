@@ -70,13 +70,13 @@ void tst_QPlaceMatchRequest::constructorTest()
 {
     QPlaceMatchRequest request;
     QVariantMap params;
-    params.insert(QLatin1String("key"), QLatin1String("val"));
+    params.insert(QStringLiteral("key"), QStringLiteral("val"));
 
     QPlace place1;
-    place1.setName(QLatin1String("place1"));
+    place1.setName(QStringLiteral("place1"));
 
     QPlace place2;
-    place2.setName(QLatin1String("place2"));
+    place2.setName(QStringLiteral("place2"));
 
     QList<QPlace> places;
     places << place1 << place2;
@@ -96,10 +96,10 @@ void tst_QPlaceMatchRequest::placesTest()
     QCOMPARE(request.places().count(), 0);
 
     QPlace place1;
-    place1.setName(QLatin1String("place1"));
+    place1.setName(QStringLiteral("place1"));
 
     QPlace place2;
-    place2.setName(QLatin1String("place2"));
+    place2.setName(QStringLiteral("place2"));
 
     QList<QPlace> places;
     places << place1 << place2;
@@ -117,12 +117,12 @@ void tst_QPlaceMatchRequest::resultsTest()
     QCOMPARE(request.places().count(), 0);
 
     QPlace place1;
-    place1.setName(QLatin1String("place1"));
+    place1.setName(QStringLiteral("place1"));
     QPlaceResult result1;
     result1.setPlace(place1);
 
     QPlace place2;
-    place2.setName(QLatin1String("place2"));
+    place2.setName(QStringLiteral("place2"));
     QPlaceResult result2;
     result2.setPlace(place2);
 
@@ -145,7 +145,7 @@ void tst_QPlaceMatchRequest::parametersTest()
     QVERIFY(request.parameters().isEmpty());
 
     QVariantMap params;
-    params.insert(QLatin1String("key"), QLatin1String("value"));
+    params.insert(QStringLiteral("key"), QStringLiteral("value"));
 
     request.setParameters(params);
     QCOMPARE(request.parameters(), params);
@@ -155,13 +155,13 @@ void tst_QPlaceMatchRequest::clearTest()
 {
     QPlaceMatchRequest request;
     QVariantMap params;
-    params.insert(QLatin1String("key"), QLatin1String("value"));
+    params.insert(QStringLiteral("key"), QStringLiteral("value"));
 
     QPlace place1;
-    place1.setName(QLatin1String("place1"));
+    place1.setName(QStringLiteral("place1"));
 
     QPlace place2;
-    place2.setName(QLatin1String("place2"));
+    place2.setName(QStringLiteral("place2"));
 
     QList<QPlace> places;
     places << place1 << place2;

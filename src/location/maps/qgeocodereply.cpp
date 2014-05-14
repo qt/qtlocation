@@ -315,7 +315,6 @@ void QGeoCodeReply::setOffset(int offset)
 
 QGeoCodeReplyPrivate::QGeoCodeReplyPrivate()
     : error(QGeoCodeReply::NoError),
-      errorString(QLatin1String("")),
       isFinished(false),
       limit(-1),
       offset(0) {}

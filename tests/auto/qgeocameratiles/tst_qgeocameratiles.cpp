@@ -80,15 +80,15 @@ private:
         double step = 1 / (pow(2.0, 4.0) * 4);
 
         QString row = pti.xyString;
-        row += QLatin1String(" - ");
+        row += QStringLiteral(" - ");
         row += pti.zoomString;
-        row += QLatin1String(" - (");
+        row += QStringLiteral(" - (");
         row += QString::number(xOffset);
-        row += QLatin1String(",");
+        row += QStringLiteral(",");
         row += QString::number(yOffset);
-        row += QLatin1String(") - ");
+        row += QStringLiteral(") - ");
         row += pti.wString;
-        row += QLatin1String(" x ");
+        row += QStringLiteral(" x ");
         row += pti.hString;
 
         QList<int> xRow;
@@ -362,8 +362,8 @@ private slots:
 
         pti.w = t - 1;
         pti.h = t - 1;
-        pti.wString = QLatin1String("(1T - 1)");
-        pti.hString = QLatin1String("(1T - 1)");
+        pti.wString = QStringLiteral("(1T - 1)");
+        pti.hString = QStringLiteral("(1T - 1)");
 
         /*
 
@@ -522,70 +522,70 @@ private slots:
         right_tm1w << 2;
 
         pti.zoom = 4.0;
-        pti.zoomString = QLatin1String("int zoom");
+        pti.zoomString = QStringLiteral("int zoom");
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_tm1x, mid_tm1w, mid_tm1x, mid_tm1w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_tm1x, mid_tm1w, top_tm1x, top_tm1w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_tm1x, mid_tm1w, bottom_tm1x, bottom_tm1w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_tm1x, left_tm1w, mid_tm1x, mid_tm1w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_tm1x, right_tm1w, mid_tm1x, mid_tm1w);
 
         pti.zoom = 4.5;
-        pti.zoomString = QLatin1String("frac zoom");
+        pti.zoomString = QStringLiteral("frac zoom");
         pti.w = pti.w * pow(2.0, 0.5);
         pti.h = pti.h * pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_tm1x, mid_tm1w, mid_tm1x, mid_tm1w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_tm1x, mid_tm1w, top_tm1x, top_tm1w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_tm1x, mid_tm1w, bottom_tm1x, bottom_tm1w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_tm1x, left_tm1w, mid_tm1x, mid_tm1w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_tm1x, right_tm1w, mid_tm1x, mid_tm1w);
 
@@ -606,8 +606,8 @@ private slots:
 
         pti.w = t;
         pti.h = t;
-        pti.wString = QLatin1String("1T");
-        pti.hString = QLatin1String("1T");
+        pti.wString = QStringLiteral("1T");
+        pti.hString = QStringLiteral("1T");
 
         /*
 
@@ -766,70 +766,70 @@ private slots:
         right_tw << 2;
 
         pti.zoom = 4.0;
-        pti.zoomString = QLatin1String("int zoom");
+        pti.zoomString = QStringLiteral("int zoom");
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_tx, mid_tw, mid_tx, mid_tw);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_tx, mid_tw, top_tx, top_tw);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_tx, mid_tw, bottom_tx, bottom_tw);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_tx, left_tw, mid_tx, mid_tw);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_tx, right_tw, mid_tx, mid_tw);
 
         pti.zoom = 4.5;
-        pti.zoomString = QLatin1String("frac zoom");
+        pti.zoomString = QStringLiteral("frac zoom");
         pti.w = pti.w * pow(2.0, 0.5);
         pti.h = pti.h * pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_tx, mid_tw, mid_tx, mid_tw);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_tx, mid_tw, top_tx, top_tw);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_tx, mid_tw, bottom_tx, bottom_tw);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_tx, left_tw, mid_tx, mid_tw);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_tx, right_tw, mid_tx, mid_tw);
 
@@ -850,8 +850,8 @@ private slots:
 
         pti.w = t + 1;
         pti.h = t + 1;
-        pti.wString = QLatin1String("(1T + 1)");
-        pti.hString = QLatin1String("(1T + 1)");
+        pti.wString = QStringLiteral("(1T + 1)");
+        pti.hString = QStringLiteral("(1T + 1)");
 
         /*
 
@@ -1010,70 +1010,70 @@ private slots:
         right_tp1w << 2;
 
         pti.zoom = 4.0;
-        pti.zoomString = QLatin1String("int zoom");
+        pti.zoomString = QStringLiteral("int zoom");
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_tp1x, mid_tp1w, mid_tp1x, mid_tp1w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_tp1x, mid_tp1w, top_tp1x, top_tp1w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_tp1x, mid_tp1w, bottom_tp1x, bottom_tp1w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_tp1x, left_tp1w, mid_tp1x, mid_tp1w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_tp1x, right_tp1w, mid_tp1x, mid_tp1w);
 
         pti.zoom = 4.5;
-        pti.zoomString = QLatin1String("frac zoom");
+        pti.zoomString = QStringLiteral("frac zoom");
         pti.w = pti.w * pow(2.0, 0.5);
         pti.h = pti.h * pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_tp1x, mid_tp1w, mid_tp1x, mid_tp1w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_tp1x, mid_tp1w, top_tp1x, top_tp1w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_tp1x, mid_tp1w, bottom_tp1x, bottom_tp1w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_tp1x, left_tp1w, mid_tp1x, mid_tp1w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_tp1x, right_tp1w, mid_tp1x, mid_tp1w);
 
@@ -1094,8 +1094,8 @@ private slots:
 
         pti.w = 2 * t - 1;
         pti.h = 2 * t - 1;
-        pti.wString = QLatin1String("(2T - 1)");
-        pti.hString = QLatin1String("(2T - 1)");
+        pti.wString = QStringLiteral("(2T - 1)");
+        pti.hString = QStringLiteral("(2T - 1)");
 
         /*
                 offset = 0
@@ -1253,70 +1253,70 @@ private slots:
         right_t2m1w << 2;
 
         pti.zoom = 4.0;
-        pti.zoomString = QLatin1String("int zoom");
+        pti.zoomString = QStringLiteral("int zoom");
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_t2m1x, mid_t2m1w, mid_t2m1x, mid_t2m1w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_t2m1x, mid_t2m1w, top_t2m1x, top_t2m1w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_t2m1x, mid_t2m1w, bottom_t2m1x, bottom_t2m1w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_t2m1x, left_t2m1w, mid_t2m1x, mid_t2m1w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_t2m1x, right_t2m1w, mid_t2m1x, mid_t2m1w);
 
         pti.zoom = 4.5;
-        pti.zoomString = QLatin1String("frac zoom");
+        pti.zoomString = QStringLiteral("frac zoom");
         pti.w = pti.w * pow(2.0, 0.5);
         pti.h = pti.h * pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_t2m1x, mid_t2m1w, mid_t2m1x, mid_t2m1w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_t2m1x, mid_t2m1w, top_t2m1x, top_t2m1w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_t2m1x, mid_t2m1w, bottom_t2m1x, bottom_t2m1w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_t2m1x, left_t2m1w, mid_t2m1x, mid_t2m1w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_t2m1x, right_t2m1w, mid_t2m1x, mid_t2m1w);
 
@@ -1338,8 +1338,8 @@ private slots:
 
         pti.w = 2 * t;
         pti.h = 2 * t;
-        pti.wString = QLatin1String("2T");
-        pti.hString = QLatin1String("2T");
+        pti.wString = QStringLiteral("2T");
+        pti.hString = QStringLiteral("2T");
 
         /*
 
@@ -1498,70 +1498,70 @@ private slots:
         right_t2w << 4;
 
         pti.zoom = 4.0;
-        pti.zoomString = QLatin1String("int zoom");
+        pti.zoomString = QStringLiteral("int zoom");
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_t2x, mid_t2w, mid_t2x, mid_t2w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_t2x, mid_t2w, top_t2x, top_t2w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_t2x, mid_t2w, bottom_t2x, bottom_t2w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_t2x, left_t2w, mid_t2x, mid_t2w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_t2x, right_t2w, mid_t2x, mid_t2w);
 
         pti.zoom = 4.5;
-        pti.zoomString = QLatin1String("frac zoom");
+        pti.zoomString = QStringLiteral("frac zoom");
         pti.w = pti.w * pow(2.0, 0.5);
         pti.h = pti.h * pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_t2x, mid_t2w, mid_t2x, mid_t2w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_t2x, mid_t2w, top_t2x, top_t2w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_t2x, mid_t2w, bottom_t2x, bottom_t2w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_t2x, left_t2w, mid_t2x, mid_t2w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_t2x, right_t2w, mid_t2x, mid_t2w);
 
@@ -1582,8 +1582,8 @@ private slots:
 
         pti.w = 2 * t + 1;
         pti.h = 2 * t + 1;
-        pti.wString = QLatin1String("(2T + 1)");
-        pti.hString = QLatin1String("(2T + 1)");
+        pti.wString = QStringLiteral("(2T + 1)");
+        pti.hString = QStringLiteral("(2T + 1)");
 
         /*
 
@@ -1742,70 +1742,70 @@ private slots:
         right_t2p1w << 4;
 
         pti.zoom = 4.0;
-        pti.zoomString = QLatin1String("int zoom");
+        pti.zoomString = QStringLiteral("int zoom");
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_t2p1x, mid_t2p1w, mid_t2p1x, mid_t2p1w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_t2p1x, mid_t2p1w, top_t2p1x, top_t2p1w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_t2p1x, mid_t2p1w, bottom_t2p1x, bottom_t2p1w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_t2p1x, left_t2p1w, mid_t2p1x, mid_t2p1w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_t2p1x, right_t2p1w, mid_t2p1x, mid_t2p1w);
 
         pti.zoom = 4.5;
-        pti.zoomString = QLatin1String("frac zoom");
+        pti.zoomString = QStringLiteral("frac zoom");
         pti.w = pti.w * pow(2.0, 0.5);
         pti.h = pti.h * pow(2.0, 0.5);
 
         pti.x = 0.5;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("middle");
+        pti.xyString = QStringLiteral("middle");
 
         test_group(pti, mid_t2p1x, mid_t2p1w, mid_t2p1x, mid_t2p1w);
 
         pti.x = 0.5;
         pti.y = 0.0;
-        pti.xyString = QLatin1String("top");
+        pti.xyString = QStringLiteral("top");
 
         test_group(pti, mid_t2p1x, mid_t2p1w, top_t2p1x, top_t2p1w);
 
         pti.x = 0.5;
         pti.y = 15.0 / 16.0;
-        pti.xyString = QLatin1String("bottom");
+        pti.xyString = QStringLiteral("bottom");
 
         test_group(pti, mid_t2p1x, mid_t2p1w, bottom_t2p1x, bottom_t2p1w);
 
         pti.x = 0.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("left");
+        pti.xyString = QStringLiteral("left");
 
         test_group(pti, left_t2p1x, left_t2p1w, mid_t2p1x, mid_t2p1w);
 
         pti.x = 15.0 / 16.0;
         pti.y = 0.5;
-        pti.xyString = QLatin1String("right");
+        pti.xyString = QStringLiteral("right");
 
         test_group(pti, right_t2p1x, right_t2p1w, mid_t2p1x, mid_t2p1w);
     }

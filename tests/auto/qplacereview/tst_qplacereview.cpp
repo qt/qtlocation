@@ -209,12 +209,12 @@ void tst_QPlaceReview::userTest()
     QVERIFY(review.user().userId().isEmpty());
     QVERIFY(review.user().name().isEmpty());
     QPlaceUser user;
-    user.setUserId(QLatin1String("11111"));
-    user.setName(QLatin1String("Bob"));
+    user.setUserId(QStringLiteral("11111"));
+    user.setName(QStringLiteral("Bob"));
 
     review.setUser(user);
-    QCOMPARE(review.user().userId(), QLatin1String("11111"));
-    QCOMPARE(review.user().name(), QLatin1String("Bob"));
+    QCOMPARE(review.user().userId(), QStringLiteral("11111"));
+    QCOMPARE(review.user().name(), QStringLiteral("Bob"));
 
     review.setUser(QPlaceUser());
     QVERIFY(review.user().userId().isEmpty());

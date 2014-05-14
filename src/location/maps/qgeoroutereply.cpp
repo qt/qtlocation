@@ -261,7 +261,6 @@ void QGeoRouteReply::abort()
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteRequest &request)
     : error(QGeoRouteReply::NoError),
-      errorString(QLatin1String("")),
       isFinished(false),
       request(request) {}
 

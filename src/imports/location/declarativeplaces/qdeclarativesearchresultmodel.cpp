@@ -761,14 +761,14 @@ void QDeclarativeSearchResultModel::queryFinished()
             QGeoServiceProvider *serviceProvider = m_favoritesPlugin->sharedGeoServiceProvider();
             if (!serviceProvider) {
                 updateLayout();
-                setStatus(Error, QLatin1String("Favorites plugin returns a null QGeoServiceProvider instance"));
+                setStatus(Error, QStringLiteral("Favorites plugin returns a null QGeoServiceProvider instance"));
                 return;
             }
 
             QPlaceManager *favoritesManager = serviceProvider->placeManager();
             if (!favoritesManager) {
                 updateLayout();
-                setStatus(Error, QLatin1String("Favorites plugin returns a null QPlaceManager"));
+                setStatus(Error, QStringLiteral("Favorites plugin returns a null QPlaceManager"));
                 return;
             }
 
@@ -776,7 +776,7 @@ void QDeclarativeSearchResultModel::queryFinished()
             if (m_matchParameters.isEmpty()) {
                 if (!m_plugin) {
                     reply->deleteLater();
-                    setStatus(Error, QLatin1String("Plugin not assigned"));
+                    setStatus(Error, QStringLiteral("Plugin not assigned"));
                     return;
                 }
 
@@ -798,7 +798,7 @@ void QDeclarativeSearchResultModel::queryFinished()
         setStatus(Ready);
         reply->deleteLater();
     } else {
-        setStatus(Error, QLatin1String("Unknown reply type"));
+        setStatus(Error, QStringLiteral("Unknown reply type"));
         reply->deleteLater();
     }
 }

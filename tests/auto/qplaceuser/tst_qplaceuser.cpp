@@ -71,19 +71,19 @@ void tst_QPlaceUser::constructorTest()
     QVERIFY(user.name().isEmpty());
     QVERIFY(user.userId().isEmpty());
 
-    user.setName(QLatin1String("Thomas Anderson"));
-    user.setUserId(QLatin1String("Neo"));
+    user.setName(QStringLiteral("Thomas Anderson"));
+    user.setUserId(QStringLiteral("Neo"));
 
     QPlaceUser user2(user);
-    QCOMPARE(user2.name(), QLatin1String("Thomas Anderson"));
-    QCOMPARE(user2.userId(), QLatin1String("Neo"));
+    QCOMPARE(user2.name(), QStringLiteral("Thomas Anderson"));
+    QCOMPARE(user2.userId(), QStringLiteral("Neo"));
 }
 
 void tst_QPlaceUser::nameTest()
 {
     QPlaceUser user;
-    user.setName(QLatin1String("Thomas Anderson"));
-    QCOMPARE(user.name(), QLatin1String("Thomas Anderson"));
+    user.setName(QStringLiteral("Thomas Anderson"));
+    QCOMPARE(user.name(), QStringLiteral("Thomas Anderson"));
     user.setName(QString());
     QVERIFY(user.name().isEmpty());
 }
@@ -91,8 +91,8 @@ void tst_QPlaceUser::nameTest()
 void tst_QPlaceUser::userIdTest()
 {
     QPlaceUser user;
-    user.setUserId(QLatin1String("Neo"));
-    QCOMPARE(user.userId(), QLatin1String("Neo"));
+    user.setUserId(QStringLiteral("Neo"));
+    QCOMPARE(user.userId(), QStringLiteral("Neo"));
     user.setUserId(QString());
     QVERIFY(user.userId().isEmpty());
 }
@@ -100,12 +100,12 @@ void tst_QPlaceUser::userIdTest()
 void tst_QPlaceUser::operatorsTest()
 {
     QPlaceUser user1;
-    user1.setName(QLatin1String("Thomas Anderson"));
-    user1.setUserId(QLatin1String("Neo"));
+    user1.setName(QStringLiteral("Thomas Anderson"));
+    user1.setUserId(QStringLiteral("Neo"));
 
     QPlaceUser user2;
-    user2.setName(QLatin1String("Thomas Anderson"));
-    user2.setUserId(QLatin1String("Neo"));
+    user2.setName(QStringLiteral("Thomas Anderson"));
+    user2.setUserId(QStringLiteral("Neo"));
 
     QVERIFY(user1 == user2);
     QVERIFY(!(user1 != user2));
@@ -126,10 +126,10 @@ void tst_QPlaceUser::operatorsTest()
 
     QFETCH(QString, field);
 
-    if (field == QLatin1String("name"))
-        user3.setName(QLatin1String("bob"));
-    else if (field == QLatin1String("userId"))
-        user3.setUserId(QLatin1String("Morpheus"));
+    if (field == QStringLiteral("name"))
+        user3.setName(QStringLiteral("bob"));
+    else if (field == QStringLiteral("userId"))
+        user3.setUserId(QStringLiteral("Morpheus"));
     else
         qFatal("Unknown data field");
 

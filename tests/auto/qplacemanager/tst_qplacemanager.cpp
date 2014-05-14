@@ -105,7 +105,7 @@ void tst_QPlaceManager::initTestCase()
 
 void tst_QPlaceManager::testMetadata()
 {
-    QCOMPARE(placeManager->managerName(), QLatin1String("qmlgeo.test.plugin"));
+    QCOMPARE(placeManager->managerName(), QStringLiteral("qmlgeo.test.plugin"));
     QCOMPARE(placeManager->managerVersion(), 100);
 }
 
@@ -139,13 +139,13 @@ void tst_QPlaceManager::testMatchUnsupported()
 void tst_QPlaceManager::compatiblePlace()
 {
     QPlace place;
-    place.setPlaceId(QLatin1String("4-8-15-16-23-42"));
-    place.setName(QLatin1String("Island"));
+    place.setPlaceId(QStringLiteral("4-8-15-16-23-42"));
+    place.setName(QStringLiteral("Island"));
     place.setVisibility(QLocation::PublicVisibility);
 
     QPlace compatPlace = placeManager->compatiblePlace(place);
     QVERIFY(compatPlace.placeId().isEmpty());
-    QCOMPARE(compatPlace.name(), QLatin1String("Island"));
+    QCOMPARE(compatPlace.name(), QStringLiteral("Island"));
     QCOMPARE(compatPlace.visibility(), QLocation::UnspecifiedVisibility);
 }
 

@@ -90,7 +90,7 @@ void tst_QPlaceDetailsReply::placeTest()
 {
     TestDetailsReply *reply = new TestDetailsReply(this);
     QPlace place;
-    place.setName(QLatin1String("Gotham City"));
+    place.setName(QStringLiteral("Gotham City"));
     reply->setPlace(place);
 
     QCOMPARE(reply->place(), place);

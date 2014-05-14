@@ -547,9 +547,9 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
         case DegreesMinutes:
         case DegreesMinutesSeconds: {
             if (d->lat < 0)
-                latStr.insert(0, QLatin1String("-"));
+                latStr.insert(0, QStringLiteral("-"));
             if (d->lng < 0)
-                longStr.insert(0, QLatin1String("-"));
+                longStr.insert(0, QStringLiteral("-"));
             break;
         }
         case DegreesWithHemisphere:

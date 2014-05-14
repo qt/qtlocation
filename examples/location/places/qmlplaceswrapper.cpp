@@ -95,12 +95,12 @@ int main(int argc, char *argv[])
     if (parseArgs(args, parameters))
         return 0;
 
-    const QString mainQmlApp = QLatin1String("qrc:///places.qml");
+    const QString mainQmlApp = QStringLiteral("qrc:///places.qml");
     QQuickView view;
 
-    view.engine()->addImportPath(QLatin1String(":/imports"));
+    view.engine()->addImportPath(QStringLiteral(":/imports"));
 
-    view.rootContext()->setContextProperty(QLatin1String("pluginParameters"), parameters);
+    view.rootContext()->setContextProperty(QStringLiteral("pluginParameters"), parameters);
 
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);

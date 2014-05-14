@@ -45,7 +45,7 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("qrc:///flickr.qml");
+    const QString mainQmlApp = QStringLiteral("qrc:///flickr.qml");
     QQuickView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);

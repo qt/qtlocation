@@ -123,18 +123,18 @@ void tst_QPlaceSupplier::iconTest()
 void tst_QPlaceSupplier::operatorsTest()
 {
     QPlaceSupplier testObj;
-    testObj.setName(QLatin1String("Acme"));
+    testObj.setName(QStringLiteral("Acme"));
     QPlaceIcon icon;
     QVariantMap iconParams;
     iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded("http://example.com/icon.png"));
     icon.setParameters(iconParams);
     testObj.setIcon(icon);
-    testObj.setSupplierId(QLatin1String("34292"));
+    testObj.setSupplierId(QStringLiteral("34292"));
 
     QPlaceSupplier testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setSupplierId(QLatin1String("testValue2"));
+    testObj2.setSupplierId(QStringLiteral("testValue2"));
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
@@ -142,7 +142,7 @@ void tst_QPlaceSupplier::isEmptyTest()
 {
     QPlaceIcon icon;
     QVariantMap iconParametersMap;
-    iconParametersMap.insert(QLatin1String("Para"), QLatin1String("meter"));
+    iconParametersMap.insert(QStringLiteral("Para"), QStringLiteral("meter"));
     icon.setParameters(iconParametersMap);
     QVERIFY(!icon.isEmpty());
 
@@ -151,19 +151,19 @@ void tst_QPlaceSupplier::isEmptyTest()
     QVERIFY(supplier.isEmpty());
 
     // name
-    supplier.setName(QLatin1String("Name"));
+    supplier.setName(QStringLiteral("Name"));
     QVERIFY(!supplier.isEmpty());
     supplier.setName(QString());
     QVERIFY(supplier.isEmpty());
 
     // supplierId
-    supplier.setSupplierId(QLatin1String("1"));
+    supplier.setSupplierId(QStringLiteral("1"));
     QVERIFY(!supplier.isEmpty());
     supplier.setSupplierId(QString());
     QVERIFY(supplier.isEmpty());
 
     // url
-    supplier.setUrl(QUrl(QLatin1String("www.example.com")));
+    supplier.setUrl(QUrl(QStringLiteral("www.example.com")));
     QVERIFY(!supplier.isEmpty());
     supplier.setUrl(QUrl());
     QVERIFY(supplier.isEmpty());

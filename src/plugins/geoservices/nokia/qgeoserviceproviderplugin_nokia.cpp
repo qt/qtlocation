@@ -87,8 +87,8 @@ namespace
 
     void checkUsageTerms(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString)
     {
-        const QString appId = parameters.value(QLatin1String("app_id")).toString();
-        const QString token = parameters.value(QLatin1String("token")).toString();
+        const QString appId = parameters.value(QStringLiteral("app_id")).toString();
+        const QString token = parameters.value(QStringLiteral("token")).toString();
 
         if (!isValidParameter(appId) || !isValidParameter(token)) {
 

@@ -168,7 +168,7 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMap
       controller_(0),
       activeMapType_(QGeoMapType())
 {
-    pluginString_ = engine_->managerName() + QLatin1String("_") + QString::number(engine_->managerVersion());
+    pluginString_ = engine_->managerName() + QLatin1Char('_') + QString::number(engine_->managerVersion());
 }
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()

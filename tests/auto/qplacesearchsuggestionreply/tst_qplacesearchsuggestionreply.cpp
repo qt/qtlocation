@@ -93,8 +93,8 @@ void tst_QPlaceSearchSuggestionReply::typeTest()
 void tst_QPlaceSearchSuggestionReply::suggestionsTest()
 {
     QStringList suggestions;
-    suggestions << QLatin1String("one") << QLatin1String("two")
-                << QLatin1String("three");
+    suggestions << QStringLiteral("one") << QStringLiteral("two")
+                << QStringLiteral("three");
 
     SuggestionReply *reply = new SuggestionReply(this);
     reply->setSuggestions(suggestions);

@@ -105,9 +105,9 @@ static QString addressLine(const QStringList &parts)
 static QString formattedAddress(const QGeoAddress &address,
                                 const QString &newLine = QLatin1String("<br/>"))
 {
-    const QString Comma(QLatin1String(", "));
-    const QString Dash(QLatin1String("-"));
-    const QString Space(QLatin1String(" "));
+    const QString Comma(QStringLiteral(", "));
+    const QString Dash(QStringLiteral("-"));
+    const QString Space(QStringLiteral(" "));
 
     QString text;
 

@@ -100,10 +100,10 @@ void tst_QPlaceMatchReply::requestTest()
     QPlaceMatchRequest request;
 
     QPlace place1;
-    place1.setName(QLatin1String("place1"));
+    place1.setName(QStringLiteral("place1"));
 
     QPlace place2;
-    place2.setName(QLatin1String("place2"));
+    place2.setName(QStringLiteral("place2"));
 
     QList<QPlace> places;
     places << place1 << place2;

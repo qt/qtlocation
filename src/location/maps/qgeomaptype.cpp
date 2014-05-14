@@ -101,8 +101,6 @@ int QGeoMapType::mapId() const
 
 QGeoMapTypePrivate::QGeoMapTypePrivate()
     : style_(QGeoMapType::NoMap),
-      name_(QLatin1String("")),
-      description_(QLatin1String("")),
       mobile_(false),
       mapId_(0) {}
 

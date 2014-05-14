@@ -106,9 +106,9 @@ void tst_QPlaceReply::errorTest()
     QCOMPARE(reply->error(), QPlaceReply::NoError);
     QCOMPARE(reply->errorString(), QString());
 
-    reply->setError(QPlaceReply::CommunicationError, QLatin1String("Could not connect to server"));
+    reply->setError(QPlaceReply::CommunicationError, QStringLiteral("Could not connect to server"));
     QCOMPARE(reply->error(), QPlaceReply::CommunicationError);
-    QCOMPARE(reply->errorString(), QLatin1String("Could not connect to server"));
+    QCOMPARE(reply->errorString(), QStringLiteral("Could not connect to server"));
 
     reply->setError(QPlaceReply::NoError, QString());
     QCOMPARE(reply->error(), QPlaceReply::NoError);

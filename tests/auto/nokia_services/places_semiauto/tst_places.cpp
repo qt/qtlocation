@@ -660,13 +660,13 @@ void tst_QPlaceManagerNokia::content_data()
 void tst_QPlaceManagerNokia::unsupportedFunctions()
 {
     QPlace place;
-    place.setName(QLatin1String("Brisbane"));
+    place.setName(QStringLiteral("Brisbane"));
 
     QVERIFY(doSavePlace(place, QPlaceReply::UnsupportedError));
     QVERIFY(doRemovePlace(place, QPlaceReply::UnsupportedError));
 
     QPlaceCategory category;
-    category.setName(QLatin1String("Accommodation"));
+    category.setName(QStringLiteral("Accommodation"));
     QVERIFY(doSaveCategory(category, QPlaceReply::UnsupportedError));
     QVERIFY(doRemoveCategory(category, QPlaceReply::UnsupportedError));
 }

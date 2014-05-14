@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 //! [0]
     qRegisterMetaType<WeatherData>("WeatherData");
 //! [1]
-    const QString mainQmlApp = QLatin1String("qrc:///weatherinfo.qml");
+    const QString mainQmlApp = QStringLiteral("qrc:///weatherinfo.qml");
     QQuickView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
