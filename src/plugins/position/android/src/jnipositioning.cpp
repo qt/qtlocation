@@ -459,7 +459,7 @@ static void positionUpdated(JNIEnv *env, jobject /*thiz*/, jobject location, jin
 
     QGeoPositionInfoSourceAndroid *source = AndroidPositioning::idToPosSource()->value(androidClassKey);
     if (!source) {
-        qFatal("positionUpdated: source == 0");
+        qWarning("positionUpdated: source == 0");
         return;
     }
 
@@ -479,7 +479,7 @@ static void locationProvidersDisabled(JNIEnv *env, jobject /*thiz*/, jint androi
     if (!source)
         source = AndroidPositioning::idToSatSource()->value(androidClassKey);
     if (!source) {
-        qFatal("locationProvidersDisabled: source == 0");
+        qWarning("locationProvidersDisabled: source == 0");
         return;
     }
 
