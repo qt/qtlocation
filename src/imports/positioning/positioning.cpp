@@ -85,7 +85,7 @@ static LocationValueTypeProvider *getValueTypeProvider()
     return &provider;
 }
 
-class QLocationDeclarativeModule: public QQmlExtensionPlugin
+class QtPositioningDeclarativeModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
 
