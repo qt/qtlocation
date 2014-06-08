@@ -516,36 +516,39 @@ private slots:
             << qreal(1000.0)
             << qreal(10.0)
             << QGeoCoordinate();
-        QTest::newRow("brisbane -> melbourne")
-            << BRISBANE
-            << qreal(1374820.1618767744)
-            << qreal(211.1717286649)
-// the following platforms use float for qreal
-#if !defined(QT_NO_FPU) && !defined(Q_PROCESSOR_ARM) && !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
-            << MELBOURNE;
-#else
-            << QGeoCoordinate(-37.8142515084775, 144.963170622944);
-#endif
-        QTest::newRow("london -> new york")
-            << LONDON
-            << qreal(5570538.4987236429)
-            << qreal(288.3388804508)
-// the following platforms use float for qreal
-#if !defined(QT_NO_FPU) && !defined(Q_PROCESSOR_ARM) && !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
-            << NEW_YORK;
-#else
-            << QGeoCoordinate(40.7145220608416, -74.0071216045375);
-#endif
-        QTest::newRow("north pole -> south pole")
-            << NORTH_POLE
-            << qreal(20015109.4154876769)
-            << qreal(180.0)
-// the following platforms use float for qreal
-#if !defined(QT_NO_FPU) && !defined(Q_PROCESSOR_ARM) && !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
-            << SOUTH_POLE;
-#else
-            << QGeoCoordinate(-89.9999947369857, -90.0);
-#endif
+        if (sizeof(qreal) == sizeof(double)) {
+            QTest::newRow("brisbane -> melbourne")
+                << BRISBANE
+                << qreal(1374820.1618767744)
+                << qreal(211.1717286649)
+                << MELBOURNE;
+            QTest::newRow("london -> new york")
+                << LONDON
+                << qreal(5570538.4987236429)
+                << qreal(288.3388804508)
+                << NEW_YORK;
+            QTest::newRow("north pole -> south pole")
+                << NORTH_POLE
+                << qreal(20015109.4154876769)
+                << qreal(180.0)
+                << SOUTH_POLE;
+        } else {
+            QTest::newRow("brisbane -> melbourne")
+                << BRISBANE
+                << qreal(1374820.1618767744)
+                << qreal(211.1717286649)
+                << QGeoCoordinate(-37.8142515084775, 144.963170622944);
+            QTest::newRow("london -> new york")
+                << LONDON
+                << qreal(5570538.4987236429)
+                << qreal(288.3388804508)
+                << QGeoCoordinate(40.7145220608416, -74.0071216045375);
+            QTest::newRow("north pole -> south pole")
+                << NORTH_POLE
+                << qreal(20015109.4154876769)
+                << qreal(180.0)
+                << QGeoCoordinate(-89.9999947369857, -90.0);
+        }
     }
 
     void degreesToString()
