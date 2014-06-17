@@ -4,6 +4,7 @@ QT = core-private positioning-private
 MODULE_PLUGIN_TYPES = \
     geoservices
 
+CONFIG -= precompile_header
 QMAKE_DOCS = $$PWD/doc/qtlocation.qdocconf
 OTHER_FILES += doc/src/*.qdoc   # show .qdoc files in Qt Creator
 
