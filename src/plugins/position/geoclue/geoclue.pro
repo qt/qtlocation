@@ -2,7 +2,7 @@ TARGET = qtposition_geoclue
 QT = core positioning
 
 PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = GeoCluePositionPlugin
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryGeoclue
 load(qt_plugin)
 
 HEADERS += \

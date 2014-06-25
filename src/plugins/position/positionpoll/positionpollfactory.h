@@ -45,7 +45,7 @@
 #include <QObject>
 #include <QGeoPositionInfoSourceFactory>
 
-class QGeoPositionInfoSourceFactoryAndroid : public QObject, public QGeoPositionInfoSourceFactory
+class QGeoPositionInfoSourceFactoryPoll : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/5.0"
