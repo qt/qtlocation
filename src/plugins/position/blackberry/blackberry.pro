@@ -2,7 +2,7 @@ TARGET = qtposition_blackberry
 QT = core positioning
 
 PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = BBPositionPlugin
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryBb
 load(qt_plugin)
 
 INCLUDEPATH += $$QT.location.includes

@@ -2,7 +2,7 @@ TARGET = qtposition_android
 QT = core positioning
 
 PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = AndroidPositionPlugin
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryAndroid
 load(qt_plugin)
 
 

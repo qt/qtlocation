@@ -8,7 +8,7 @@ contains(QT_CONFIG, location-china-support) {
 }
 
 PLUGIN_TYPE = geoservices
-PLUGIN_CLASS_NAME = NokiaGeoServicePlugin
+PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryNokia
 load(qt_plugin)
 
 HEADERS += \

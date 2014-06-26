@@ -2,7 +2,7 @@ TARGET = qtposition_simulator
 QT = core network positioning
 
 PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = SimulatorPositionPlugin
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactorySimulator
 load(qt_plugin)
 
 INCLUDEPATH += $$QT.location.includes

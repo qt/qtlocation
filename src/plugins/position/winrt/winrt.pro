@@ -2,6 +2,7 @@ TARGET = qtposition_winrt
 QT = core positioning
 
 PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryWinrt
 load(qt_plugin)
 
 INCLUDEPATH += $$QT.location.includes

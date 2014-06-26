@@ -2,7 +2,7 @@ TARGET = qtposition_cl
 QT = core positioning
 
 PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = IOSPositionPlugin
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryCL
 load(qt_plugin)
 
 INCLUDEPATH += $$QT.location.includes
