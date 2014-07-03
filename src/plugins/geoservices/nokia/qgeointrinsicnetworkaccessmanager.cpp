@@ -69,6 +69,7 @@ void QGeoIntrinsicNetworkAccessManager::configure(const QVariantMap &parameters)
         proxy = parameters.value(m_customProxyToken).toString();
 
     if (!proxy.isEmpty()) {
+#ifndef QT_NO_NETWORKPROXY
         if (proxy.toLower() != QStringLiteral("system")) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
@@ -84,6 +85,9 @@ void QGeoIntrinsicNetworkAccessManager::configure(const QVariantMap &parameters)
             QNetworkProxyFactory::setUseSystemConfiguration(true);
             qDebug() << "Setting system proxy.";
         }
+#else
+        qDebug() << "No proxy support";
+#endif
     } else {
         qDebug() << "No proxy parameter specified.";
     }
