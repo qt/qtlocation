@@ -87,22 +87,12 @@ QT_BEGIN_NAMESPACE
 namespace
 {
 
-bool equalOrNaN(double a, double b)
+bool equalOrNaN(qreal a, qreal b)
 {
     return a == b || (qIsNaN(a) && qIsNaN(b));
 }
 
-bool equalOrNaN(float a, float b)
-{
-    return a == b || (qIsNaN(a) && qIsNaN(b));
-}
-
-bool exclusiveNaN(double a, double b)
-{
-    return qIsNaN(a) != qIsNaN(b);
-}
-
-bool exclusiveNaN(float a, float b)
+bool exclusiveNaN(qreal a, qreal b)
 {
     return qIsNaN(a) != qIsNaN(b);
 }
