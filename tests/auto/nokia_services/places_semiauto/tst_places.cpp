@@ -118,6 +118,7 @@ void tst_QPlaceManagerNokia::initTestCase()
     QVariantMap params;
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     QVERIFY(providers.contains("nokia"));
+#ifndef QT_NO_PROCESS
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
     if (!(env.contains(AppIdEnv) && env.contains(TokenEnv)))
@@ -128,7 +129,9 @@ void tst_QPlaceManagerNokia::initTestCase()
 
     if (env.contains(ProxyEnv))
         params.insert(QStringLiteral("proxy"), env.value(ProxyEnv));
-
+#else
+    QSKIP("Cannot parse process environment, NOKIA_APP_ID and NOKIA_TOKEN not set");
+#endif
     provider = new QGeoServiceProvider("nokia", params);
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
