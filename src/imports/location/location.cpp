@@ -151,10 +151,12 @@ public:
                                                                                                 "Only Place types have ContactDetails and they cannot "
                                                                                                 "be re-assigned (but can be modified).");
 
-            // Register the 5.3 types
             // Introduction of 5.3 version; existing 5.0 exports automatically become available under 5.3 as well
             // 5.3 is committed QML API despite missing release of QtLocation 5.3
-            minor = 3;
+
+            // Register the 5.4 types
+            // Implicitly registers 5.3
+            minor = 4;
             // For now there are no new types; just reregister one existing 5.0 type
             qmlRegisterType<QDeclarativeGeoServiceProvider          >(uri, major, minor, "Plugin");
 
