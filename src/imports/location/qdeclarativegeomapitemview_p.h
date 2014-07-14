@@ -42,15 +42,15 @@
 #ifndef QDECLARATIVEGEOMAPITEMVIEW_H
 #define QDECLARATIVEGEOMAPITEMVIEW_H
 
-#include "QModelIndex"
-
-#include <QtQuick/QQuickItem>
+#include <QtCore/QModelIndex>
 #include <QtQml/QQmlParserStatus>
-#include <QtCore/QPointer>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
 class QAbstractItemModel;
+class QQmlComponent;
+class QQuickItem;
 class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItemBase;
 
@@ -84,9 +84,6 @@ public:
     qreal zValue();
     void setZValue(qreal zValue);
 
-    bool isVisible() const;
-
-    QDeclarativeGeoMapItemBase *createItem(int modelRow);
     // From QQmlParserStatus
     virtual void componentComplete();
     void classBegin() {}
@@ -103,14 +100,12 @@ private:
 
 private Q_SLOTS:
     void itemModelReset();
-    void itemModelRowsInserted(QModelIndex, int start, int end);
-    void itemModelRowsRemoved(QModelIndex, int start, int end);
+    void itemModelRowsInserted(const QModelIndex &index, int start, int end);
+    void itemModelRowsRemoved(const QModelIndex &index, int start, int end);
 
 private:
-    bool visible_;
     bool componentCompleted_;
     QQmlComponent *delegate_;
-    QVariant modelVariant_;
     QAbstractItemModel *itemModel_;
     QDeclarativeGeoMap *map_;
     QList<QDeclarativeGeoMapItemBase *> mapItemList_;

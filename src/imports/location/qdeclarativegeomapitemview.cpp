@@ -44,7 +44,6 @@
 #include "qdeclarativegeomapitembase_p.h"
 
 #include <QtCore/QAbstractItemModel>
-#include <QtQml/QQmlParserStatus>
 #include <QtQml/QQmlContext>
 #include <QtQml/private/qqmlopenmetaobject_p.h>
 
@@ -56,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since Qt Location 5.0
-    \inherits QQuickItem
+    \inherits QObject
 
     \brief The MapItemView is used to populate Map from a model.
 
@@ -83,8 +82,7 @@ QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
 
 QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
 {
-    if (map_)
-        removeInstantiatedItems();
+    removeInstantiatedItems();
 }
 
 /*!
@@ -98,33 +96,39 @@ void QDeclarativeGeoMapItemView::componentComplete()
 /*!
     \qmlproperty model QtLocation::MapItemView::model
 
-    This property holds the model that provides data used for
-    creating the map item defined by the delegate.
+    This property holds the model that provides data used for creating the map items defined by the
+    delegate. Only QAbstractItemModel based models are supported.
 */
 QVariant QDeclarativeGeoMapItemView::model() const
 {
-    return modelVariant_;
+    return QVariant::fromValue(itemModel_);
 }
 
 void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
 {
-    if (!model.isValid() || model == modelVariant_)
+    QAbstractItemModel *itemModel = model.value<QAbstractItemModel *>();
+    if (itemModel == itemModel_)
         return;
 
-    QAbstractItemModel *itemModel = 0;
-    if (QObject *object = qvariant_cast<QObject *>(model))
-        itemModel = qobject_cast<QAbstractItemModel *>(object);
-    if (!itemModel)
-        return;
+    if (itemModel_) {
+        disconnect(itemModel_, SIGNAL(modelReset()), this, SLOT(itemModelReset()));
+        disconnect(itemModel_, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                   this, SLOT(itemModelRowsRemoved(QModelIndex,int,int)));
+        disconnect(itemModel_, SIGNAL(rowsInserted(QModelIndex,int,int)),
+                   this, SLOT(itemModelRowsInserted(QModelIndex,int,int)));
 
-    modelVariant_ = model;
-    itemModel_ = itemModel;
-    QObject::connect(itemModel_, SIGNAL(modelReset()),
-                     this, SLOT(itemModelReset()));
-    QObject::connect(itemModel_, SIGNAL(rowsRemoved(QModelIndex,int,int)),
-                     this, SLOT(itemModelRowsRemoved(QModelIndex,int,int)));
-    QObject::connect(itemModel_, SIGNAL(rowsInserted(QModelIndex,int,int)),
-                     this, SLOT(itemModelRowsInserted(QModelIndex,int,int)));
+        itemModel_ = 0;
+    }
+
+    if (itemModel) {
+        itemModel_ = itemModel;
+        connect(itemModel_, SIGNAL(modelReset()), this, SLOT(itemModelReset()));
+        connect(itemModel_, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                this, SLOT(itemModelRowsRemoved(QModelIndex,int,int)));
+        connect(itemModel_, SIGNAL(rowsInserted(QModelIndex,int,int)),
+                this, SLOT(itemModelRowsInserted(QModelIndex,int,int)));
+    }
+
     repopulate();
     emit modelChanged();
 }
@@ -140,14 +144,16 @@ void QDeclarativeGeoMapItemView::itemModelReset()
 /*!
     \internal
 */
-void QDeclarativeGeoMapItemView::itemModelRowsInserted(QModelIndex, int start, int end)
+void QDeclarativeGeoMapItemView::itemModelRowsInserted(const QModelIndex &index, int start, int end)
 {
+    Q_UNUSED(index)
+
     if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
         return;
 
     QDeclarativeGeoMapItemBase *mapItem;
     for (int i = start; i <= end; ++i) {
-        mapItem = createItem(i);
+        mapItem = createItemFromItemModel(i);
         if (!mapItem) {
             break;
         }
@@ -161,8 +167,10 @@ void QDeclarativeGeoMapItemView::itemModelRowsInserted(QModelIndex, int start, i
 /*!
     \internal
 */
-void QDeclarativeGeoMapItemView::itemModelRowsRemoved(QModelIndex, int start, int end)
+void QDeclarativeGeoMapItemView::itemModelRowsRemoved(const QModelIndex &index, int start, int end)
 {
+    Q_UNUSED(index)
+
     if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
         return;
 
@@ -184,7 +192,6 @@ void QDeclarativeGeoMapItemView::itemModelRowsRemoved(QModelIndex, int start, in
     This property holds the delegate which defines how each item in the
     model should be displayed. The Component must contain exactly one
     MapItem -derived object as the root object.
-
 */
 QQmlComponent *QDeclarativeGeoMapItemView::delegate() const
 {
@@ -193,8 +200,9 @@ QQmlComponent *QDeclarativeGeoMapItemView::delegate() const
 
 void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 {
-    if (!delegate)
+    if (delegate_ == delegate)
         return;
+
     delegate_ = delegate;
 
     repopulate();
@@ -208,7 +216,6 @@ void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
     to display all map items when items are added or removed.
 
     Defaults to false.
-
 */
 bool QDeclarativeGeoMapItemView::autoFitViewport() const
 {
@@ -265,15 +272,15 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems()
 */
 void QDeclarativeGeoMapItemView::repopulate()
 {
-    if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
-        return;
     // Free any earlier instances
     removeInstantiatedItems();
 
+    if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
+        return;
+
     // Iterate model data and instantiate delegates.
-    QDeclarativeGeoMapItemBase *mapItem;
     for (int i = 0; i < itemModel_->rowCount(); ++i) {
-        mapItem = createItem(i);
+        QDeclarativeGeoMapItemBase *mapItem = createItemFromItemModel(i);
         Q_ASSERT(mapItem);
         if (!mapItem) // bad
             break;
@@ -283,14 +290,6 @@ void QDeclarativeGeoMapItemView::repopulate()
     if (fitViewport_)
         fitViewport();
 }
-
-QDeclarativeGeoMapItemBase *QDeclarativeGeoMapItemView::createItem(int modelRow)
-{
-    if (itemModel_)
-        return createItemFromItemModel(modelRow);
-    return 0;
-}
-
 
 /*!
     \internal
