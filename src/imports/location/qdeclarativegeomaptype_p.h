@@ -57,6 +57,7 @@ class QDeclarativeGeoMapType : public QObject
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString description READ description CONSTANT)
     Q_PROPERTY(bool mobile READ mobile CONSTANT)
+    Q_PROPERTY(bool night READ night CONSTANT)
 
 public:
     enum MapStyle {
@@ -80,12 +81,12 @@ public:
     QString name() const;
     QString description() const;
     bool mobile() const;
+    bool night() const;
 
     const QGeoMapType mapType() { return mapType_; }
 
 private:
     QGeoMapType mapType_;
-
 };
 
 QT_END_NAMESPACE

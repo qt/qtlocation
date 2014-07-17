@@ -132,7 +132,7 @@ private slots:
         ct.setTileSize(16);
         ct.setCamera(camera);
         ct.setScreenSize(QSize(32, 32));
-        ct.setMapType(QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, 1));
+        ct.setMapType(QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1));
 
         QSet<QGeoTileSpec> tiles1 = ct.tiles();
 
@@ -185,7 +185,7 @@ private slots:
 
         QSet<QGeoTileSpec> tiles1 = ct.tiles();
 
-        QGeoMapType mapType1 = QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, 1);
+        QGeoMapType mapType1 = QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1);
         ct.setMapType(mapType1);
 
         QSet<QGeoTileSpec> tiles2 = ct.tiles();
@@ -203,7 +203,7 @@ private slots:
 
         QCOMPARE(tiles2, tiles2_check);
 
-        QGeoMapType mapType2 = QGeoMapType(QGeoMapType::StreetMap, "satellite map", "satellite map", false, 2);
+        QGeoMapType mapType2 = QGeoMapType(QGeoMapType::StreetMap, "satellite map", "satellite map", false, false, 2);
         ct.setMapType(mapType2);
 
         QSet<QGeoTileSpec> tiles3 = ct.tiles();

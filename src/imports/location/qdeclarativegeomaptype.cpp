@@ -122,6 +122,18 @@ bool QDeclarativeGeoMapType::mobile() const
     return mapType_.mobile();
 }
 
+/*!
+    \qmlproperty bool MapType::night
+
+    \brief Whether the map type is optimized for use at night.
+
+    Map types suitable for use at night usually have a dark background.
+*/
+bool QDeclarativeGeoMapType::night() const
+{
+    return mapType_.night();
+}
+
 #include "moc_qdeclarativegeomaptype_p.cpp"
 
 QT_END_NAMESPACE

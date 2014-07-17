@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QGEOMAPTYPE_P_H
 #define QGEOMAPTYPE_P_H
 
@@ -62,10 +63,9 @@ QT_BEGIN_NAMESPACE
 
 class QGeoMapTypePrivate : public QSharedData
 {
-
 public:
     QGeoMapTypePrivate();
-    QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
+    QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile, bool night, int mapId);
     QGeoMapTypePrivate(const QGeoMapTypePrivate &other);
     ~QGeoMapTypePrivate();
 
@@ -77,6 +77,7 @@ public:
     QString name_;
     QString description_;
     bool mobile_;
+    bool night_;
     int mapId_;
 };
 

@@ -53,9 +53,9 @@
 // We mean it.
 //
 
+#include <QtCore/QString>
+#include <QtCore/QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
-#include <QString>
-#include <QSharedDataPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -63,7 +63,6 @@ class QGeoMapTypePrivate;
 
 class Q_LOCATION_EXPORT QGeoMapType
 {
-
 public:
     enum MapStyle {
         NoMap = 0,
@@ -81,7 +80,8 @@ public:
 
     QGeoMapType();
     QGeoMapType(const QGeoMapType &other);
-    QGeoMapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
+    QGeoMapType(MapStyle style, const QString &name, const QString &description, bool mobile,
+                bool night, int mapId);
     ~QGeoMapType();
 
     QGeoMapType &operator = (const QGeoMapType &other);
@@ -93,6 +93,7 @@ public:
     QString name() const;
     QString description() const;
     bool mobile() const;
+    bool night() const;
     int mapId() const;
 
 private:
