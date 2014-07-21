@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -67,7 +67,7 @@ QT_BEGIN_NAMESPACE
     The \l {contains}{contains()} method can be used to test if a \l {coordinate} is
     within the geoshape.
 
-    \section2 Example Usage
+    \section1 Example Usage
 
     Use properties of type \l variant to store a \c {geoshape}.  To create a \c geoshape use one
     of the methods described below.
@@ -95,9 +95,9 @@ QT_BEGIN_NAMESPACE
     When integrating with C++, note that any QGeoShape value passed into QML from C++ is
     automatically converted into a \c geoshape value, and vice-versa.
 
-    \section2 Properties
+    \section1 Properties
 
-    \section3 isEmpty
+    \section2 isEmpty
 
     \code
     bool isEmpty
@@ -106,7 +106,7 @@ QT_BEGIN_NAMESPACE
     Returns whether this geo shape is empty. An empty geo shape is a region which has
     a geometrical area of 0.
 
-    \section3 isValid
+    \section2 isValid
 
     \code
     bool isValid
@@ -119,9 +119,9 @@ QT_BEGIN_NAMESPACE
     unsuitable value.
 
 
-    \section2 Methods
+    \section1 Methods
 
-    \section3 contains()
+    \section2 contains()
 
     \code
     bool contains(coordinate coord)

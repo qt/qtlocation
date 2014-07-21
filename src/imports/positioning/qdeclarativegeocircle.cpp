@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
     The circle is considered invalid if the \l center coordinate is invalid or if the \l radius is less
     than zero.
 
-    \section2 Example Usage
+    \section1 Example Usage
 
     Use properties of type \l variant to store a \c {geocircle}.  To create a \c geocircle value,
     use the \l {QtPositioning::circle}{QtPositioning.circle()} function:
@@ -80,9 +80,9 @@ QT_BEGIN_NAMESPACE
     When integrating with C++, note that any QGeoCircle value passed into QML from C++ is
     automatically converted into a \c geocircle value, and vise-versa.
 
-    \section2 Properties
+    \section1 Properties
 
-    \section3 center
+    \section2 center
 
     \code
     coordinate radius
@@ -90,7 +90,7 @@ QT_BEGIN_NAMESPACE
 
     This property holds the coordinate of the center of the geocircle.
 
-    \section3 radius
+    \section2 radius
 
     \code
     real radius
