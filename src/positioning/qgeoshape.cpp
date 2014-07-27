@@ -185,6 +185,21 @@ bool QGeoShape::contains(const QGeoCoordinate &coordinate) const
 }
 
 /*!
+    Returns the coordinate located at the geometric center of the geo shape.
+
+    \since 5.5
+*/
+QGeoCoordinate QGeoShape::center() const
+{
+    Q_D(const QGeoShape);
+
+    if (d)
+        return d->center();
+    else
+        return QGeoCoordinate();
+}
+
+/*!
     Extends the geo shape to also cover the coordinate \a coordinate
 */
 void QGeoShape::extendShape(const QGeoCoordinate &coordinate)

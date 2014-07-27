@@ -151,7 +151,7 @@ bool QGeoCircle::operator!=(const QGeoCircle &other) const
 
 bool QGeoCirclePrivate::isValid() const
 {
-    return center.isValid() && !qIsNaN(radius) && radius >= -1e-7;
+    return m_center.isValid() && !qIsNaN(radius) && radius >= -1e-7;
 }
 
 bool QGeoCirclePrivate::isEmpty() const
@@ -166,17 +166,17 @@ void QGeoCircle::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoCircle);
 
-    d->center = center;
+    d->m_center = center;
 }
 
 /*!
-    Returns the center coordinate of this geo circle.
+    Returns the center coordinate of this geo circle. Equivalent to QGeoShape::center().
 */
 QGeoCoordinate QGeoCircle::center() const
 {
     Q_D(const QGeoCircle);
 
-    return d->center;
+    return d->center();
 }
 
 /*!
@@ -205,11 +205,16 @@ bool QGeoCirclePrivate::contains(const QGeoCoordinate &coordinate) const
         return false;
 
     // see QTBUG-41447 for details
-    qreal distance = center.distanceTo(coordinate);
+    qreal distance = m_center.distanceTo(coordinate);
     if (qFuzzyCompare(distance, radius) || distance <= radius)
         return true;
 
     return false;
+}
+
+QGeoCoordinate QGeoCirclePrivate::center() const
+{
+    return m_center;
 }
 
 /*!
@@ -220,7 +225,7 @@ void QGeoCirclePrivate::extendShape(const QGeoCoordinate &coordinate)
     if (!isValid() || !coordinate.isValid() || contains(coordinate))
         return;
 
-    radius = center.distanceTo(coordinate);
+    radius = m_center.distanceTo(coordinate);
 }
 
 /*!
@@ -235,8 +240,8 @@ void QGeoCircle::translate(double degreesLatitude, double degreesLongitude)
 
     Q_D(QGeoCircle);
 
-    double lat = d->center.latitude();
-    double lon = d->center.longitude();
+    double lat = d->m_center.latitude();
+    double lon = d->m_center.longitude();
 
     lat += degreesLatitude;
     lon += degreesLongitude;
@@ -262,7 +267,7 @@ void QGeoCircle::translate(double degreesLatitude, double degreesLongitude)
             lon -= 180;
     }
 
-    d->center = QGeoCoordinate(lat, lon);
+    d->m_center = QGeoCoordinate(lat, lon);
 }
 
 /*!
@@ -290,12 +295,12 @@ QGeoCirclePrivate::QGeoCirclePrivate()
 }
 
 QGeoCirclePrivate::QGeoCirclePrivate(const QGeoCoordinate &center, qreal radius)
-:   QGeoShapePrivate(QGeoShape::CircleType), center(center), radius(radius)
+:   QGeoShapePrivate(QGeoShape::CircleType), m_center(center), radius(radius)
 {
 }
 
 QGeoCirclePrivate::QGeoCirclePrivate(const QGeoCirclePrivate &other)
-:   QGeoShapePrivate(QGeoShape::CircleType), center(other.center),
+:   QGeoShapePrivate(QGeoShape::CircleType), m_center(other.m_center),
     radius(other.radius)
 {
 }
@@ -314,7 +319,7 @@ bool QGeoCirclePrivate::operator==(const QGeoShapePrivate &other) const
 
     const QGeoCirclePrivate &otherCircle = static_cast<const QGeoCirclePrivate &>(other);
 
-    return radius == otherCircle.radius && center == otherCircle.center;
+    return radius == otherCircle.radius && m_center == otherCircle.m_center;
 }
 
 QT_END_NAMESPACE

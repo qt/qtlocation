@@ -174,6 +174,10 @@ void tst_QGeoCircle::center()
     QGeoCircle c;
     c.setCenter(QGeoCoordinate(1,1));
     QCOMPARE(c.center(), QGeoCoordinate(1,1));
+
+    QGeoShape shape = c;
+    QCOMPARE(shape.center(), c.center());
+
     c.setCenter(QGeoCoordinate(5,10));
     QCOMPARE(c.center(), QGeoCoordinate(5,10));
 }

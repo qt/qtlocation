@@ -374,28 +374,13 @@ void QGeoRectangle::setCenter(const QGeoCoordinate &center)
 }
 
 /*!
-    Returns the center of this geo rectangle.
+    Returns the center of this geo rectangle. Equivalent to QGeoShape::center().
 */
 QGeoCoordinate QGeoRectangle::center() const
 {
-    if (!isValid())
-        return QGeoCoordinate();
-
     Q_D(const QGeoRectangle);
 
-    double cLat = (d->topLeft.latitude() + d->bottomRight.latitude()) / 2.0;
-
-    double cLon = (d->bottomRight.longitude() + d->topLeft.longitude()) / 2.0;
-    if (d->topLeft.longitude() > d->bottomRight.longitude()) {
-        cLon = cLon - 180.0;
-    }
-
-    if (cLon < -180.0)
-        cLon += 360.0;
-    if (cLon > 180.0)
-        cLon -= 360.0;
-
-    return QGeoCoordinate(cLat, cLon);
+    return d->center();
 }
 
 /*!
@@ -584,6 +569,25 @@ bool QGeoRectanglePrivate::contains(const QGeoCoordinate &coordinate) const
     }
 
     return true;
+}
+
+QGeoCoordinate QGeoRectanglePrivate::center() const
+{
+    if (!isValid())
+        return QGeoCoordinate();
+
+    double cLat = (topLeft.latitude() + bottomRight.latitude()) / 2.0;
+    double cLon = (bottomRight.longitude() + topLeft.longitude()) / 2.0;
+
+    if (topLeft.longitude() > bottomRight.longitude())
+        cLon = cLon - 180.0;
+
+    if (cLon < -180.0)
+        cLon += 360.0;
+    if (cLon > 180.0)
+        cLon -= 360.0;
+
+    return QGeoCoordinate(cLat, cLon);
 }
 
 /*!

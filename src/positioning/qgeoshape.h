@@ -61,6 +61,8 @@ public:
     bool isEmpty() const;
     bool contains(const QGeoCoordinate &coordinate) const;
 
+    QGeoCoordinate center() const;
+
     void extendShape(const QGeoCoordinate &coordinate);
 
     bool operator==(const QGeoShape &other) const;

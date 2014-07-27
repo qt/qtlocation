@@ -829,7 +829,9 @@ void tst_QGeoRectangle::center()
     QFETCH(QGeoCoordinate, newCenter);
     QFETCH(QGeoRectangle, newBox);
 
+    QGeoShape shape = box;
     QCOMPARE(box.center(), oldCenter);
+    QCOMPARE(shape.center(), oldCenter);
     box.setCenter(newCenter);
     QCOMPARE(box, newBox);
 }

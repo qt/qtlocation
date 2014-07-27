@@ -329,27 +329,15 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QPlaceCont
 static bool addAtForBoundingArea(const QGeoShape &area,
                                  QUrlQuery *queryItems)
 {
-    QGeoCoordinate center;
-    switch (area.type()) {
-    case QGeoShape::RectangleType:
-        center = QGeoRectangle(area).center();
-        break;
-    case QGeoShape::CircleType:
-        center = QGeoCircle(area).center();
-        break;
-    case QGeoShape::UnknownType:
-        break;
-    }
-
-    if (!center.isValid()) {
+    QGeoCoordinate center = area.center();
+    if (!center.isValid())
         return false;
-    } else {
-        queryItems->addQueryItem(QStringLiteral("at"),
-                                 QString::number(center.latitude()) +
-                                 QLatin1Char(',') +
-                                 QString::number(center.longitude()));
-        return true;
-    }
+
+    queryItems->addQueryItem(QStringLiteral("at"),
+                             QString::number(center.latitude()) +
+                             QLatin1Char(',') +
+                             QString::number(center.longitude()));
+    return true;
 }
 
 QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest &query)

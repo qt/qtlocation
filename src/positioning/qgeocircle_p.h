@@ -62,13 +62,15 @@ public:
     bool isEmpty() const;
     bool contains(const QGeoCoordinate &coordinate) const;
 
+    QGeoCoordinate center() const Q_DECL_OVERRIDE;
+
     void extendShape(const QGeoCoordinate &coordinate);
 
     QGeoShapePrivate *clone() const;
 
     bool operator==(const QGeoShapePrivate &other) const;
 
-    QGeoCoordinate center;
+    QGeoCoordinate m_center;
     qreal radius;
 };
 

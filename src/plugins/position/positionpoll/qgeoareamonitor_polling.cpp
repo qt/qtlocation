@@ -420,26 +420,7 @@ QList<QGeoAreaMonitorInfo> QGeoAreaMonitorPolling::activeMonitors(const QGeoShap
 
     const MonitorTable list = d->activeMonitors();
     foreach (const QGeoAreaMonitorInfo &monitor, list) {
-        QGeoCoordinate center;
-        switch (monitor.area().type()) {
-            case QGeoShape::CircleType:
-            {
-                QGeoCircle circle(monitor.area());
-                center = circle.center();
-                break;
-            }
-            case QGeoShape::RectangleType:
-            {
-                QGeoRectangle rectangle(monitor.area());
-                center = rectangle.center();
-                break;
-            }
-            case QGeoShape::UnknownType:
-            {
-                break;
-            }
-        }
-        if (region.contains(center))
+        if (region.contains(monitor.area().center()))
             results.append(monitor);
     }
 
