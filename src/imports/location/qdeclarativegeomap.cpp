@@ -1088,13 +1088,13 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     double bottomRightY = 0;
 
     // find bounds of all map items
-    QGeoCoordinate geoCenter;
-    QDoubleVector2D centerPt;
     int itemCount = 0;
     for (int i = 0; i < mapItems_.count(); ++i) {
         if (!mapItems_.at(i))
             continue;
         QDeclarativeGeoMapItemBase *item = mapItems_.at(i).data();
+        if (!item)
+            continue;
 
         // skip quick items in the first pass and refine the fit later
         if (refine) {
@@ -1104,26 +1104,11 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
                     continue;
         }
 
-        // account for the special case - circle
-        QDeclarativeCircleMapItem *circleItem =
-                qobject_cast<QDeclarativeCircleMapItem *>(item);
+        topLeftX = item->position().x();
+        topLeftY = item->position().y();
+        bottomRightX = topLeftX + item->width();
+        bottomRightY = topLeftY + item->height();
 
-        if ((!circleItem || !circleItem->center().isValid()) && !item)
-            continue;
-        if (circleItem) {
-            geoCenter = circleItem->center();
-            centerPt = map_->coordinateToScreenPosition(geoCenter, false);
-            topLeftX = centerPt.x() - circleItem->width() / 2.0;
-            topLeftY = centerPt.y() - circleItem->height() / 2.0;
-            bottomRightX = centerPt.x() + circleItem->width() / 2.0;
-            bottomRightY = centerPt.y() + circleItem->height() / 2.0;
-        } else if (item) {
-            topLeftX = item->position().x();
-            topLeftY = item->position().y();
-            bottomRightX = topLeftX + item->width();
-            bottomRightY = topLeftY + item->height();
-            ++itemCount;
-        }
         if (itemCount == 0) {
             minX = topLeftX;
             maxX = bottomRightX;
