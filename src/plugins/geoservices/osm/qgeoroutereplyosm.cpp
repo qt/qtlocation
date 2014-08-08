@@ -348,8 +348,17 @@ void QGeoRouteReplyOsm::networkReplyFinished()
         QJsonObject object = document.object();
 
         //double version = object.value(QStringLiteral("version")).toDouble();
-        //int status = object.value(QStringLiteral("status")).toDouble();
-        //QString statusMessage = object.value(QStringLiteral("status_message")).toString();
+        int status = object.value(QStringLiteral("status")).toDouble();
+        QString statusMessage = object.value(QStringLiteral("status_message")).toString();
+
+        // status code is 0 in case of success
+        // status code is 207 if no route was found
+        // an error occurred when trying to find a route
+        if (0 != status) {
+            setError(QGeoRouteReply::UnknownError, statusMessage);
+            m_reply->deleteLater();
+            return;
+        }
 
         QJsonObject routeSummary = object.value(QStringLiteral("route_summary")).toObject();
 
