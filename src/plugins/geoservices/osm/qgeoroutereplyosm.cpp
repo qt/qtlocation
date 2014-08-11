@@ -339,6 +339,7 @@ void QGeoRouteReplyOsm::networkReplyFinished()
     if (m_reply->error() != QNetworkReply::NoError) {
         setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
         m_reply->deleteLater();
+        m_reply = 0;
         return;
     }
 
@@ -357,6 +358,7 @@ void QGeoRouteReplyOsm::networkReplyFinished()
         if (0 != status) {
             setError(QGeoRouteReply::UnknownError, statusMessage);
             m_reply->deleteLater();
+            m_reply = 0;
             return;
         }
 
@@ -397,6 +399,7 @@ void QGeoRouteReplyOsm::networkReplyFinished()
     }
 
     m_reply->deleteLater();
+    m_reply = 0;
 }
 
 void QGeoRouteReplyOsm::networkReplyError(QNetworkReply::NetworkError error)
