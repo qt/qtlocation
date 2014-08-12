@@ -115,7 +115,7 @@ QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject
 :   QGeoPositionInfoSource(parent), QGeoclueMaster(this), m_pos(0), m_vel(0),
     m_lastVelocityIsFresh(false), m_regularUpdateTimedOut(false), m_lastVelocity(qQNaN()),
     m_lastDirection(qQNaN()), m_lastClimb(qQNaN()), m_lastPositionFromSatellite(false),
-    m_methods(AllPositioningMethods), m_running(false)
+    m_methods(AllPositioningMethods), m_running(false), m_error(NoError)
 {
 #ifndef QT_NO_DATASTREAM
     // Load the last known location
@@ -497,25 +497,42 @@ void QGeoPositionInfoSourceGeoclueMaster::positionProviderChanged(const QByteArr
     }
 }
 
-bool QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
+void QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
 {
+    GeoclueAccuracyLevel accuracy;
+    GeoclueResourceFlags resourceFlags;
+
     switch (preferredPositioningMethods()) {
     case SatellitePositioningMethods:
-        return createMasterClient(GEOCLUE_ACCURACY_LEVEL_DETAILED, GEOCLUE_RESOURCE_GPS);
+        accuracy = GEOCLUE_ACCURACY_LEVEL_DETAILED;
+        resourceFlags = GEOCLUE_RESOURCE_GPS;
+        break;
     case NonSatellitePositioningMethods:
-        return createMasterClient(GEOCLUE_ACCURACY_LEVEL_NONE, GeoclueResourceFlags(GEOCLUE_RESOURCE_CELL | GEOCLUE_RESOURCE_NETWORK));
+        accuracy = GEOCLUE_ACCURACY_LEVEL_NONE;
+        resourceFlags = GeoclueResourceFlags(GEOCLUE_RESOURCE_CELL | GEOCLUE_RESOURCE_NETWORK);
+        break;
     case AllPositioningMethods:
-        return createMasterClient(GEOCLUE_ACCURACY_LEVEL_NONE, GEOCLUE_RESOURCE_ALL);
+        accuracy = GEOCLUE_ACCURACY_LEVEL_NONE;
+        resourceFlags = GEOCLUE_RESOURCE_ALL;
+        break;
     default:
         qWarning("GeoPositionInfoSourceGeoClueMaster unknown preferred method.");
+        m_error = UnknownSourceError;
+        emit QGeoPositionInfoSource::error(m_error);
+        return;
     }
 
-    return false;
+    if (createMasterClient(accuracy, resourceFlags)) {
+        m_error = NoError;
+    } else {
+        m_error = UnknownSourceError;
+        emit QGeoPositionInfoSource::error(m_error);
+    }
 }
 
 QGeoPositionInfoSource::Error QGeoPositionInfoSourceGeoclueMaster::error() const
 {
-    return NoError;
+    return m_error;
 }
 
 #include "moc_qgeopositioninfosource_geocluemaster_p.cpp"
