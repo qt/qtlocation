@@ -158,7 +158,8 @@ public:
             // Implicitly registers 5.3
             minor = 4;
             // For now there are no new types; just reregister one existing 5.0 type
-            qmlRegisterType<QDeclarativeGeoServiceProvider          >(uri, major, minor, "Plugin");
+            qmlRegisterUncreatableType<QDeclarativeGeoMapType, 1>(uri, major, minor, "MapType",
+                                        QStringLiteral("MapType is not intended instantiable by developer."));
 
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>("QPlaceCategory");

@@ -57,7 +57,7 @@ class QDeclarativeGeoMapType : public QObject
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString description READ description CONSTANT)
     Q_PROPERTY(bool mobile READ mobile CONSTANT)
-    Q_PROPERTY(bool night READ night CONSTANT)
+    Q_PROPERTY(bool night READ night CONSTANT REVISION 1)
 
 public:
     enum MapStyle {

@@ -124,6 +124,7 @@ bool QDeclarativeGeoMapType::mobile() const
 
 /*!
     \qmlproperty bool MapType::night
+    \since Qt Location 5.4
 
     \brief Whether the map type is optimized for use at night.
 
