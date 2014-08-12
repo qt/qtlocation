@@ -72,6 +72,9 @@ class QDeclarativePosition : public QObject
     Q_PROPERTY(bool verticalSpeedValid READ isVerticalSpeedValid NOTIFY verticalSpeedValidChanged REVISION 1)
     Q_PROPERTY(double verticalSpeed READ verticalSpeed NOTIFY verticalSpeedChanged REVISION 1)
 
+    Q_PROPERTY(double magneticVariation READ magneticVariation NOTIFY magneticVariationChanged REVISION 2)
+    Q_PROPERTY(bool magneticVariationValid READ isMagneticVariationValid NOTIFY magneticVariationChanged REVISION 2)
+
 public:
     explicit QDeclarativePosition(QObject *parent = 0);
     ~QDeclarativePosition();
@@ -98,6 +101,9 @@ public:
     double verticalSpeed() const;
     void setVerticalSpeed(double speed);
 
+    bool isMagneticVariationValid() const;
+    double magneticVariation() const;
+
     void setPosition(const QGeoPositionInfo &info);
 
 Q_SIGNALS:
@@ -117,6 +123,9 @@ Q_SIGNALS:
     Q_REVISION(1) void directionChanged();
     Q_REVISION(1) void verticalSpeedValidChanged();
     Q_REVISION(1) void verticalSpeedChanged();
+
+    Q_REVISION(2) void magneticVariationChanged();
+    Q_REVISION(2) void magneticVariationValidChanged();
 
 private:
     QGeoPositionInfo m_info;
