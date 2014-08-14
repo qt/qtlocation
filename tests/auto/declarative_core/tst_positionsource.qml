@@ -73,7 +73,6 @@ TestCase {
         // at least the test.source plugin should be available
         verify(defaultSource.name != "");
         compare(defaultSource.active, false);
-        compare(defaultSource.updateInterval, 0);
     }
 
     function test_inactive() {

@@ -113,7 +113,7 @@ class DefaultSourceTest : public TestQGeoPositionInfoSource
     Q_OBJECT
 protected:
     QGeoPositionInfoSource *createTestSource() {
-        return QGeoPositionInfoSource::createDefaultSource(0);
+        return QGeoPositionInfoSource::createSource(QStringLiteral("test.source"), 0);
     }
 };
 

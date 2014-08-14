@@ -101,7 +101,7 @@ private slots:
     void positionProviderChanged(const QByteArray &service, const QByteArray &path);
 
 private:
-    bool configurePositionSource();
+    void configurePositionSource();
     void cleanupPositionSource();
     void setOptions();
 
@@ -118,6 +118,7 @@ private:
     QGeoPositionInfo m_lastPosition;
     PositioningMethods m_methods;
     bool m_running;
+    QGeoPositionInfoSource::Error m_error;
 };
 
 QT_END_NAMESPACE
