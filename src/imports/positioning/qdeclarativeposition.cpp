@@ -142,7 +142,10 @@ void QDeclarativePosition::setPosition(const QGeoPositionInfo &info)
     bool emitVerticalSpeedValidChanged = exclusiveNaN(pVerticalSpeed, verticalSpeed);
 
     // magnetic variation
-    // not in QML API
+    const qreal pMagneticVariation = m_info.attribute(QGeoPositionInfo::MagneticVariation);
+    const qreal magneticVariation = info.attribute(QGeoPositionInfo::MagneticVariation);
+    bool emitMagneticVariationChanged = !equalOrNaN(pMagneticVariation, magneticVariation);
+    bool emitMagneticVariationValidChanged = exclusiveNaN(pMagneticVariation, magneticVariation);
 
     // horizontal accuracy
     const qreal pHorizontalAccuracy = m_info.attribute(QGeoPositionInfo::HorizontalAccuracy);
@@ -188,6 +191,10 @@ void QDeclarativePosition::setPosition(const QGeoPositionInfo &info)
         emit verticalAccuracyChanged();
     if (emitVerticalAccuracyValidChanged)
         emit verticalAccuracyValidChanged();
+    if (emitMagneticVariationChanged)
+        emit magneticVariationChanged();
+    if (emitMagneticVariationValidChanged)
+        emit magneticVariationValidChanged();
 }
 
 /*!
@@ -427,6 +434,38 @@ bool QDeclarativePosition::isVerticalSpeedValid() const
 double QDeclarativePosition::verticalSpeed() const
 {
     return m_info.attribute(QGeoPositionInfo::VerticalSpeed);
+}
+
+/*!
+    \qmlproperty bool Position::magneticVariationValid
+    \since Qt Positioning 5.4
+
+    This property is true if \l magneticVariation has been set (to indicate whether that data has been
+    received or not, as every update does not necessarily contain all data).
+
+    \sa magneticVariation
+*/
+bool QDeclarativePosition::isMagneticVariationValid() const
+{
+    return !qIsNaN(m_info.attribute(QGeoPositionInfo::MagneticVariation));
+}
+
+/*!
+    \qmlproperty double Position::magneticVariation
+    \since Qt Positioning 5.4
+
+    This property holds the angle between the horizontal component of the
+    magnetic field and true north, in degrees. Also known as magnetic
+    declination. A positive value indicates a clockwise direction from
+    true north and a negative value indicates a counter-clockwise direction.
+
+    It is a read-only property.
+
+    \sa magneticVariationValid
+*/
+double QDeclarativePosition::magneticVariation() const
+{
+    return m_info.attribute(QGeoPositionInfo::MagneticVariation);
 }
 
 #include "moc_qdeclarativeposition_p.cpp"

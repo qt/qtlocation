@@ -46,7 +46,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtQml/QQmlListProperty>
 
-#include <qgeopositioninfo.h>
+#include <QtPositioning/QGeoPositionInfoSource>
 
 //! [0]
 class WeatherData : public QObject {
@@ -146,6 +146,7 @@ public slots:
 private slots:
     void networkSessionOpened();
     void positionUpdated(QGeoPositionInfo gpsPos);
+    void positionError(QGeoPositionInfoSource::Error e);
     // these would have QNetworkReply* params but for the signalmapper
     void handleGeoNetworkData(QObject *networkReply);
     void handleWeatherNetworkData(QObject *networkReply);

@@ -233,6 +233,8 @@ void AppModel::networkSessionOpened()
         d->useGps = true;
         connect(d->src, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
+        connect(d->src, SIGNAL(error(QGeoPositionInfoSource::Error)),
+                this, SLOT(positionError(QGeoPositionInfoSource::Error)));
         d->src->startUpdates();
     } else {
         d->useGps = false;
@@ -275,6 +277,21 @@ void AppModel::positionUpdated(QGeoPositionInfo gpsPos)
     d->geoReplyMapper->setMapping(rep, rep);
     connect(rep, SIGNAL(finished()),
             d->geoReplyMapper, SLOT(map()));
+}
+
+void AppModel::positionError(QGeoPositionInfoSource::Error e)
+{
+    qWarning() << "Position source error. Falling back to simulation mode.";
+    // cleanup insufficient QGeoPositionInfoSource instance
+    d->src->stopUpdates();
+    d->src->deleteLater();
+    d->src = 0;
+
+    // activate simulation mode
+    d->useGps = false;
+    d->city = "Brisbane";
+    emit cityChanged();
+    this->refreshWeather();
 }
 
 void AppModel::handleGeoNetworkData(QObject *replyObj)

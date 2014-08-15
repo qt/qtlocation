@@ -75,7 +75,7 @@ struct Frustum
     QDoubleVector3D bottomRightFar;
 };
 
-typedef QVector<QDoubleVector3D> Polygon;
+typedef QVector<QDoubleVector3D> PolygonVector;
 
 class QGeoCameraTilesPrivate
 {
@@ -111,13 +111,13 @@ public:
     };
 
     void appendZIntersects(const QDoubleVector3D &start, const QDoubleVector3D &end, double z, QVector<QDoubleVector3D> &results) const;
-    Polygon frustumFootprint(const Frustum &frustum) const;
+    PolygonVector frustumFootprint(const Frustum &frustum) const;
 
-    QPair<Polygon, Polygon> splitPolygonAtAxisValue(const Polygon &polygon, int axis, double value) const;
-    QPair<Polygon, Polygon> clipFootprintToMap(const Polygon &footprint) const;
+    QPair<PolygonVector, PolygonVector> splitPolygonAtAxisValue(const PolygonVector &polygon, int axis, double value) const;
+    QPair<PolygonVector, PolygonVector> clipFootprintToMap(const PolygonVector &footprint) const;
 
     QList<QPair<double, int> > tileIntersections(double p1, int t1, double p2, int t2) const;
-    QSet<QGeoTileSpec> tilesFromPolygon(const Polygon &polygon) const;
+    QSet<QGeoTileSpec> tilesFromPolygon(const PolygonVector &polygon) const;
 
     struct TileMap
     {
@@ -324,10 +324,10 @@ void QGeoCameraTilesPrivate::updateGeometry(double viewExpansion)
     Frustum f = frustum(viewExpansion);
 
     // Find the polygon where the frustum intersects the plane of the map
-    Polygon footprint = frustumFootprint(f);
+    PolygonVector footprint = frustumFootprint(f);
 
     // Clip the polygon to the map, split it up if it cross the dateline
-    QPair<Polygon, Polygon> polygons = clipFootprintToMap(footprint);
+    QPair<PolygonVector, PolygonVector> polygons = clipFootprintToMap(footprint);
 
     if (!polygons.first.isEmpty()) {
         QSet<QGeoTileSpec> tilesLeft = tilesFromPolygon(polygons.first);
@@ -494,9 +494,9 @@ top:
 
 
 // Returns the intersection of the plane of the map and the camera frustum as a right handed polygon
-Polygon QGeoCameraTilesPrivate::frustumFootprint(const Frustum &frustum) const
+PolygonVector QGeoCameraTilesPrivate::frustumFootprint(const Frustum &frustum) const
 {
-    Polygon points;
+    PolygonVector points;
     points.reserve(24);
 
     appendZIntersects(frustum.topLeftNear, frustum.topLeftFar, 0.0, points);
@@ -534,7 +534,7 @@ Polygon QGeoCameraTilesPrivate::frustumFootprint(const Frustum &frustum) const
     //   - start with the first point, put it in the sorted part of the list
     //   - add the nearest unsorted point to the last sorted point to the end
     //     of the sorted points
-    Polygon::iterator i;
+    PolygonVector::iterator i;
     for (i = points.begin(); i != points.end(); ++i) {
         sorter.base = *i;
         if (i + 1 != points.end())
@@ -560,15 +560,15 @@ Polygon QGeoCameraTilesPrivate::frustumFootprint(const Frustum &frustum) const
     return points;
 }
 
-QPair<Polygon, Polygon> QGeoCameraTilesPrivate::splitPolygonAtAxisValue(const Polygon &polygon, int axis, double value) const
+QPair<PolygonVector, PolygonVector> QGeoCameraTilesPrivate::splitPolygonAtAxisValue(const PolygonVector &polygon, int axis, double value) const
 {
-    Polygon polygonBelow;
-    Polygon polygonAbove;
+    PolygonVector polygonBelow;
+    PolygonVector polygonAbove;
 
     int size = polygon.size();
 
     if (size == 0) {
-        return QPair<Polygon, Polygon>(polygonBelow, polygonAbove);
+        return QPair<PolygonVector, PolygonVector>(polygonBelow, polygonAbove);
     }
 
     QVector<int> comparisons = QVector<int>(polygon.size());
@@ -647,11 +647,11 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::splitPolygonAtAxisValue(const Po
         }
     }
 
-    return QPair<Polygon, Polygon>(polygonBelow, polygonAbove);
+    return QPair<PolygonVector, PolygonVector>(polygonBelow, polygonAbove);
 }
 
 
-QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon &footprint) const
+QPair<PolygonVector, PolygonVector> QGeoCameraTilesPrivate::clipFootprintToMap(const PolygonVector &footprint) const
 {
     bool clipX0 = false;
     bool clipX1 = false;
@@ -660,7 +660,7 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
 
     double side = 1.0 * sideLength_;
 
-    typedef Polygon::const_iterator const_iter;
+    typedef PolygonVector::const_iterator const_iter;
 
     const_iter i = footprint.constBegin();
     const_iter end = footprint.constEnd();
@@ -676,7 +676,7 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
             clipY1 = true;
     }
 
-    Polygon results = footprint;
+    PolygonVector results = footprint;
 
     if (clipY0) {
         results = splitPolygonAtAxisValue(results, 1, 0.0).second;
@@ -690,9 +690,9 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
         if (clipX1) {
             results = splitPolygonAtAxisValue(results, 0, 0.0).second;
             results = splitPolygonAtAxisValue(results, 0, side).first;
-            return QPair<Polygon, Polygon>(results, Polygon());
+            return QPair<PolygonVector, PolygonVector>(results, PolygonVector());
         } else {
-            QPair<Polygon, Polygon> pair = splitPolygonAtAxisValue(results, 0, 0.0);
+            QPair<PolygonVector, PolygonVector> pair = splitPolygonAtAxisValue(results, 0, 0.0);
             if (pair.first.isEmpty()) {
                 // if we touched the line but didn't cross it...
                 for (int i = 0; i < pair.second.size(); ++i) {
@@ -728,7 +728,7 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
         }
     } else {
         if (clipX1) {
-            QPair<Polygon, Polygon> pair = splitPolygonAtAxisValue(results, 0, side);
+            QPair<PolygonVector, PolygonVector> pair = splitPolygonAtAxisValue(results, 0, side);
             if (pair.second.isEmpty()) {
                 // if we touched the line but didn't cross it...
                 for (int i = 0; i < pair.first.size(); ++i) {
@@ -762,7 +762,7 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
             }
             return pair;
         } else {
-            return QPair<Polygon, Polygon>(results, Polygon());
+            return QPair<PolygonVector, PolygonVector>(results, PolygonVector());
         }
     }
 
@@ -802,7 +802,7 @@ QList<QPair<double, int> > QGeoCameraTilesPrivate::tileIntersections(double p1, 
     return results;
 }
 
-QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polygon) const
+QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector &polygon) const
 {
     int numPoints = polygon.size();
 
