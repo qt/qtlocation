@@ -132,6 +132,7 @@ public:
     bool hasValidCity() const;
     bool hasValidWeather() const;
     void setUseGps(bool value);
+    void hadError(bool tryAgain);
 
     QString city() const;
     void setCity(const QString &value);
@@ -144,6 +145,7 @@ public slots:
 
 //! [2]
 private slots:
+    void queryCity();
     void networkSessionOpened();
     void positionUpdated(QGeoPositionInfo gpsPos);
     void positionError(QGeoPositionInfoSource::Error e);
