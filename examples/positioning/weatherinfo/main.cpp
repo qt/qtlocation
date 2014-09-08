@@ -43,12 +43,14 @@
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlContext>
 #include <QtQuick/QQuickItem>
+#include <QLoggingCategory>
 
 //! [0]
 #include "appmodel.h"
 
 int main(int argc, char *argv[])
 {
+    QLoggingCategory::setFilterRules("wapp.*.debug=false");
     QGuiApplication application(argc, argv);
 
     qmlRegisterType<WeatherData>("WeatherInfo", 1, 0, "WeatherData");

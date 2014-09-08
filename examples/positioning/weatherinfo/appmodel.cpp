@@ -52,14 +52,18 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QStringList>
+#include <QTimer>
 #include <QUrlQuery>
 #include <QElapsedTimer>
+#include <QLoggingCategory>
 
 /*
  *This application uses http://openweathermap.org/api
  **/
 
 #define ZERO_KELVIN 273.15
+
+Q_LOGGING_CATEGORY(requestsLog,"wapp.requests")
 
 WeatherData::WeatherData(QObject *parent) :
         QObject(parent)
@@ -131,8 +135,10 @@ void WeatherData::setTemperature(const QString &value)
 class AppModelPrivate
 {
 public:
+    static const int baseMsBeforeNewRequest = 5 * 1000; // 5 s, increased after each missing answer up to 10x
     QGeoPositionInfoSource *src;
     QGeoCoordinate coord;
+    QString longitude, latitude;
     QString city;
     QNetworkAccessManager *nam;
     QNetworkSession *ns;
@@ -144,6 +150,10 @@ public:
     bool ready;
     bool useGps;
     QElapsedTimer throttle;
+    int nErrors;
+    int minMsBeforeNewRequest;
+    QTimer delayedCityRequestTimer;
+    QTimer requestNewWeatherTimer;
 
     AppModelPrivate() :
             src(NULL),
@@ -151,8 +161,16 @@ public:
             ns(NULL),
             fcProp(NULL),
             ready(false),
-            useGps(true)
-    {}
+            useGps(true),
+            nErrors(0),
+            minMsBeforeNewRequest(baseMsBeforeNewRequest)
+    {
+        delayedCityRequestTimer.setSingleShot(true);
+        delayedCityRequestTimer.setInterval(1000); // 1 s
+        requestNewWeatherTimer.setSingleShot(false);
+        requestNewWeatherTimer.setInterval(20*60*1000); // 20 min
+        throttle.invalidate();
+    }
 };
 
 static void forecastAppend(QQmlListProperty<WeatherData> *prop, WeatherData *val)
@@ -200,6 +218,12 @@ AppModel::AppModel(QObject *parent) :
             this, SLOT(handleWeatherNetworkData(QObject*)));
     connect(d->forecastReplyMapper, SIGNAL(mapped(QObject*)),
             this, SLOT(handleForecastNetworkData(QObject*)));
+    connect(&d->delayedCityRequestTimer, SIGNAL(timeout()),
+            this, SLOT(queryCity()));
+    connect(&d->requestNewWeatherTimer, SIGNAL(timeout()),
+            this, SLOT(refreshWeather()));
+    d->requestNewWeatherTimer.start();
+
 
 //! [1]
     // make sure we have an active network session
@@ -253,17 +277,27 @@ void AppModel::positionUpdated(QGeoPositionInfo gpsPos)
     if (!(d->useGps))
         return;
 
+    queryCity();
+}
+//! [3]
+
+void AppModel::queryCity()
+{
+    //don't update more often then once a minute
+    //to keep load on server low
+    if (d->throttle.isValid() && d->throttle.elapsed() < d->minMsBeforeNewRequest ) {
+        qCDebug(requestsLog) << "delaying query of city";
+        if (!d->delayedCityRequestTimer.isActive())
+            d->delayedCityRequestTimer.start();
+        return;
+    }
+    qDebug(requestsLog) << "requested query of city";
+    d->throttle.start();
+    d->minMsBeforeNewRequest = (d->nErrors + 1) * d->baseMsBeforeNewRequest;
+
     QString latitude, longitude;
     longitude.setNum(d->coord.longitude());
     latitude.setNum(d->coord.latitude());
-//! [3]
-
-    //don't update more often then once a minute
-    //to keep load on server low
-    if (d->throttle.isValid() && d->throttle.elapsed() < 1000*10 ) {
-        return;
-    }
-    d->throttle.restart();
 
     QUrl url("http://api.openweathermap.org/data/2.5/weather");
     QUrlQuery query;
@@ -271,6 +305,7 @@ void AppModel::positionUpdated(QGeoPositionInfo gpsPos)
     query.addQueryItem("lon", longitude);
     query.addQueryItem("mode", "json");
     url.setQuery(query);
+    qCDebug(requestsLog) << "submitting request";
 
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
     // connect up the signal right away
@@ -281,6 +316,7 @@ void AppModel::positionUpdated(QGeoPositionInfo gpsPos)
 
 void AppModel::positionError(QGeoPositionInfoSource::Error e)
 {
+    Q_UNUSED(e);
     qWarning() << "Position source error. Falling back to simulation mode.";
     // cleanup insufficient QGeoPositionInfoSource instance
     d->src->stopUpdates();
@@ -294,13 +330,30 @@ void AppModel::positionError(QGeoPositionInfoSource::Error e)
     this->refreshWeather();
 }
 
+void AppModel::hadError(bool tryAgain)
+{
+    qCDebug(requestsLog) << "hadError, will " << (tryAgain ? "" : "not ") << "rety";
+    d->throttle.start();
+    if (d->nErrors < 10)
+        ++d->nErrors;
+    d->minMsBeforeNewRequest = (d->nErrors + 1) * d->baseMsBeforeNewRequest;
+    if (tryAgain)
+        d->delayedCityRequestTimer.start();
+}
+
 void AppModel::handleGeoNetworkData(QObject *replyObj)
 {
     QNetworkReply *networkReply = qobject_cast<QNetworkReply*>(replyObj);
-    if (!networkReply)
+    if (!networkReply) {
+        hadError(false); // should retry?
         return;
+    }
 
     if (!networkReply->error()) {
+        d->nErrors = 0;
+        if (!d->throttle.isValid())
+            d->throttle.start();
+        d->minMsBeforeNewRequest = d->baseMsBeforeNewRequest;
         //convert coordinates to city name
         QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
 
@@ -308,19 +361,25 @@ void AppModel::handleGeoNetworkData(QObject *replyObj)
         QJsonValue jv = jo.value(QStringLiteral("name"));
 
         const QString city = jv.toString();
+        qCDebug(requestsLog) << "got city: " << city;
         if (city != d->city) {
-            if (!d->throttle.isValid())
-                d->throttle.start();
             d->city = city;
             emit cityChanged();
             refreshWeather();
         }
+    } else {
+        hadError(true);
     }
     networkReply->deleteLater();
 }
 
 void AppModel::refreshWeather()
 {
+    if (d->city.isEmpty()) {
+        qCDebug(requestsLog) << "refreshing weather skipped (no city)";
+        return;
+    }
+    qCDebug(requestsLog) << "refreshing weather";
     QUrl url("http://api.openweathermap.org/data/2.5/weather");
     QUrlQuery query;
 
@@ -342,6 +401,7 @@ static QString niceTemperatureString(double t)
 
 void AppModel::handleWeatherNetworkData(QObject *replyObj)
 {
+    qCDebug(requestsLog) << "got weather network data";
     QNetworkReply *networkReply = qobject_cast<QNetworkReply*>(replyObj);
     if (!networkReply)
         return;
@@ -393,6 +453,7 @@ void AppModel::handleWeatherNetworkData(QObject *replyObj)
 
 void AppModel::handleForecastNetworkData(QObject *replyObj)
 {
+    qCDebug(requestsLog) << "got forecast";
     QNetworkReply *networkReply = qobject_cast<QNetworkReply*>(replyObj);
     if (!networkReply)
         return;
