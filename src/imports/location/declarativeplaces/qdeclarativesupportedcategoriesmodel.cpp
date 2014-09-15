@@ -82,7 +82,7 @@ QT_USE_NAMESPACE
     \codeline
     \snippet declarative/places.qml CategoryView
 
-    To access the hierarchical category model it is necessary to use a \l VisualDataModel to access
+    To access the hierarchical category model it is necessary to use a \l DelegateModel to access
     the child items.
 */
 
@@ -364,7 +364,7 @@ void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &c
     parentNode->childIds.insert(rowToBeAdded,category.categoryId());
     endInsertRows();
 
-    //this is a workaround to deal with the fact that the hasModelChildren field of VisualDataodel
+    //this is a workaround to deal with the fact that the hasModelChildren field of DelegateModel
     //does not get updated when a child is added to a model
     beginResetModel();
     endResetModel();
@@ -428,7 +428,7 @@ void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory 
         categoryNode->parentId = parentId;
         endMoveRows();
 
-        //this is a workaround to deal with the fact that the hasModelChildren field of VisualDataodel
+        //this is a workaround to deal with the fact that the hasModelChildren field of DelegateModel
         //does not get updated when an index is updated to contain children
         beginResetModel();
         endResetModel();
