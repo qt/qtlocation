@@ -1065,6 +1065,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     double topLeftY = 0;
     double bottomRightX = 0;
     double bottomRightY = 0;
+    bool haveQuickItem = false;
 
     // find bounds of all map items
     int itemCount = 0;
@@ -1079,8 +1080,10 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
         if (refine) {
             QDeclarativeGeoMapQuickItem *quickItem =
                     qobject_cast<QDeclarativeGeoMapQuickItem*>(item);
-            if (quickItem)
-                    continue;
+            if (quickItem) {
+                haveQuickItem = true;
+                continue;
+            }
         }
 
         topLeftX = item->position().x();
@@ -1102,9 +1105,11 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
         ++itemCount;
     }
 
-    if (itemCount == 0)
+    if (itemCount == 0) {
+        if (haveQuickItem)
+            fitViewportToMapItemsRefine(false);
         return;
-
+    }
     double bboxWidth = maxX - minX;
     double bboxHeight = maxY - minY;
     double bboxCenterX = minX + (bboxWidth / 2.0);
