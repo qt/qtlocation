@@ -39,6 +39,7 @@
 ****************************************************************************/
 
  import QtQuick 2.0
+ import QtQuick.Window 2.0
 
  Component {
      id: photoDelegate
@@ -78,11 +79,11 @@
              states: [
                  State {
                      name: "Show"; when: thumb.status == Image.Ready
-                     PropertyChanges { target: scaleMe; scale: 1 }
+                     PropertyChanges { target: scaleMe; scale: Math.round(Screen.pixelDensity / 4) }
                  },
                  State {
                      name: "Details"
-                     PropertyChanges { target: scaleMe; scale: 1 }
+                     PropertyChanges { target: scaleMe; scale: Math.round(Screen.pixelDensity / 4)}
                      ParentChange { target: wrapper; parent: imageDetails.frontContainer }
                      PropertyChanges { target: wrapper; x: 20; y: 60; z: 1000 }
                      PropertyChanges { target: background; state: "DetailedView" }
