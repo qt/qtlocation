@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QGeoAreaMonitorInfo
     \inmodule QtPositioning
-    \since Qt Positioning 5.2
+    \since 5.2
     \ingroup QtPositioning-positioning
 
     \brief The QGeoAreaMonitorInfo class describes the parameters of an area or region
