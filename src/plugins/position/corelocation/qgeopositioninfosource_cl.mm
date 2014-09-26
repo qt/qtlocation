@@ -78,10 +78,14 @@
                                              newLocation.coordinate.longitude,
                                              newLocation.altitude),
                                              timeStamp);
-    location.setAttribute(QGeoPositionInfo::HorizontalAccuracy, newLocation.horizontalAccuracy);
-    location.setAttribute(QGeoPositionInfo::VerticalAccuracy, newLocation.verticalAccuracy);
-    location.setAttribute(QGeoPositionInfo::Direction, newLocation.course);
-    location.setAttribute(QGeoPositionInfo::GroundSpeed, newLocation.speed);
+    if (newLocation.horizontalAccuracy >= 0)
+        location.setAttribute(QGeoPositionInfo::HorizontalAccuracy, newLocation.horizontalAccuracy);
+    if (newLocation.verticalAccuracy >= 0)
+        location.setAttribute(QGeoPositionInfo::VerticalAccuracy, newLocation.verticalAccuracy);
+    if (newLocation.course >= 0)
+        location.setAttribute(QGeoPositionInfo::Direction, newLocation.course);
+    if (newLocation.speed >= 0)
+        location.setAttribute(QGeoPositionInfo::GroundSpeed, newLocation.speed);
 
     m_positionInfoSource->locationDataAvailable(location);
 }

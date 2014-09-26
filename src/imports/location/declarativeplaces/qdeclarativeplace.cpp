@@ -1203,14 +1203,18 @@ QPlaceManager *QDeclarativePlace::manager()
 */
 QString QDeclarativePlace::primaryValue(const QString &contactType) const
 {
-    if (m_contactDetails->value(contactType).userType() == QVariant::List) {
+    QVariant value = m_contactDetails->value(contactType);
+    if (value.userType() == qMetaTypeId<QJSValue>())
+        value = value.value<QJSValue>().toVariant();
+
+    if (value.userType() == QVariant::List) {
         QVariantList detailList = m_contactDetails->value(contactType).toList();
         if (!detailList.isEmpty()) {
             QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail *>(detailList.at(0).value<QObject *>());
             if (primaryDetail)
                 return primaryDetail->value();
         }
-    } else if (m_contactDetails->value(contactType).userType() == QMetaType::QObjectStar) {
+    } else if (value.userType() == QMetaType::QObjectStar) {
         QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail *>(m_contactDetails->value(contactType).value<QObject *>());
         if (primaryDetail)
             return primaryDetail->value();

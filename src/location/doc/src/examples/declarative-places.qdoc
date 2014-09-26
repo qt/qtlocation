@@ -94,12 +94,12 @@
     \codeline
     \snippet places/content/places/CategoryView.qml CategoryModel view 3
 
-    Because a hierarchical model is being used, a \l VisualDataModel is needed to provide
+    Because a hierarchical model is being used, a \l DelegateModel is needed to provide
     navigation functionality.  If flat list model was being used the view could use the
     \l CategoryModel directly.
 
     The view contains a header item that is used as a back button to navigate up the category tree.
-    The \e onClicked handler sets the root index of the \l VisualDataModel to the parent of the
+    The \e onClicked handler sets the root index of the \l DelegateModel to the parent of the
     current index.  Categories are displayed by the \e CategoryDelegate, which provides four
     signals.  The \e onArrowClicked handler sets the root index to the current index causing the
     sub categories of the selected category to be displayed.  The \e onClicked handler emits
