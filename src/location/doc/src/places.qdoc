@@ -37,7 +37,7 @@
     The Places API also facilitates management of places and
     categories, allowing users to save and remove them.
 
-    \section1 Introductory concepts
+    \section1 Introductory Concepts
 
     \section2 Plugin
     A \l Plugin is an abstraction for a backend. One \l Plugin might access places from a

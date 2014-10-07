@@ -88,7 +88,7 @@ The .pro file should have the \e positioning keyword added
 
 \code QT += positioning \endcode
 
-\section1 Related information
+\section1 Related Information
 \section2 Overview
 
 Positioning includes all the functionality necessary to find and work with geographic
