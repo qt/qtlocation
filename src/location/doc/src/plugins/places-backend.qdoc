@@ -105,7 +105,7 @@ compatible place.  Other times it may involve modifying certain properties, for 
 modifying the icon parameters to facilitate copying or downloading of the original
 place's icon to a location that the backend can access.
 
-\section1 Cross-Referencing Places Between Managers.
+\section1 Cross-Referencing Places Between Managers
 Sometimes a situation may arise where we wish to cross-reference and match places between managers.
 Such a situation may arise where one manager provides read-only access to places (origin manager), while another second r/w
 manager (destination manager) is used to save selected favorites from the first.  During a search of the origin manager, we may want to

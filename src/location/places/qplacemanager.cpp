@@ -89,7 +89,7 @@ QT_BEGIN_NAMESPACE
     See \l {Initializing a manager} for an example on how to create a manager.
 
 
-    \section1 Asynchronous Interface.
+    \section1 Asynchronous Interface
     The QPlaceManager class provides an abstraction of the datastore which contains place information.
     The functions provided by the QPlaceManager and primarily asynchronous and follow
     a request-reply model.   Typically a request is given to the manager, consisting

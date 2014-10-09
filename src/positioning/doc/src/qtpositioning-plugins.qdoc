@@ -33,7 +33,7 @@
 Qt Positioning provides the majority of its functionality through plugins. This
 document outlines how to develop a new position plugin.
 
-\section1 Plugin description
+\section1 Plugin Description
 
 Each plugin is described by a json file. The json describes the plugins capabilities and
 version. Below is an example of a json file used by the postionpoll plugin:

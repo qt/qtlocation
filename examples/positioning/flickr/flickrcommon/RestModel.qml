@@ -45,7 +45,7 @@ import QtQuick.XmlListModel 2.0
 XmlListModel {
     property variant coordinate
 
-    source: "http://api.flickr.com/services/rest/?" +
+    source: "https://api.flickr.com/services/rest/?" +
             "min_taken_date=2000-01-01+0:00:00&" +
             "extras=date_taken&" +
             "method=flickr.photos.search&" +
