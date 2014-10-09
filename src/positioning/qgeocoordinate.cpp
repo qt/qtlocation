@@ -502,6 +502,22 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
         case DegreesMinutesWithHemisphere: {
             double latMin = (absLat - int(absLat)) * 60;
             double lngMin = (absLng - int(absLng)) * 60;
+
+            if (qRound(latMin) >= 60) {
+                absLat++;
+                latMin = qAbs(latMin - 60.0f);
+                //avoid invalid latitude due to latMin rounding below
+                if (qRound(absLat) >= 90)
+                    latMin = 0.0f;
+            }
+            if (qRound(lngMin) >= 60) {
+                absLng++;
+                lngMin = qAbs(lngMin - 60.0f);
+                // avoid invalid longitude due to lngMin rounding below
+                if (qRound(absLng) >= 180)
+                    lngMin = 0.0f;
+            }
+
             latStr = QString::fromLatin1("%1%2 %3'")
                      .arg(QString::number(int(absLat)))
                      .arg(symbol)
@@ -518,6 +534,31 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
             double lngMin = (absLng - int(absLng)) * 60;
             double latSec = (latMin - int(latMin)) * 60;
             double lngSec = (lngMin - int(lngMin)) * 60;
+
+            // overflow to full minutes
+            if (qRound(latSec) >= 60) {
+                latMin++;
+                latSec = qAbs(latSec - 60.0f);
+                // overflow to full degrees
+                if (qRound(latMin) >= 60) {
+                    absLat++;
+                    latMin = qAbs(latMin - 60.0f);
+                    // avoid invalid latitude due to latSec rounding below
+                    if (qRound(absLat) >= 90)
+                        latSec = 0.0f;
+                }
+            }
+            if (qRound(lngSec) >= 60) {
+                lngMin++;
+                lngSec = qAbs(lngSec - 60.0f);
+                if (qRound(lngMin) >= 60) {
+                    absLng++;
+                    lngMin = qAbs(lngMin - 60.0f);
+                    // avoid invalid longitude due to lngSec rounding below
+                    if (qRound(absLng) >= 180)
+                        lngSec = 0.0f;
+                }
+            }
 
             latStr = QString::fromLatin1("%1%2 %3' %4\"")
                      .arg(QString::number(int(absLat)))
