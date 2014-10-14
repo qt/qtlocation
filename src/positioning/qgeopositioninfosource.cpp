@@ -376,6 +376,16 @@ QStringList QGeoPositionInfoSource::availableSources()
     lost or if a hardware error is detected.  Position updates will recommence if the data becomes
     available later on.  The updateTimeout() signal will not be emitted again until after the
     periodic updates resume.
+
+    On iOS, starting from version 8, Core Location framework requires additional
+    entries in the application's Info.plist with keys NSLocationAlwaysUsageDescription or
+    NSLocationWhenInUseUsageDescription and a string to be displayed in the authorization prompt.
+    The key NSLocationWhenInUseUsageDescription is used when requesting permission
+    to use location services while the app is in the foreground.
+    The key NSLocationAlwaysUsageDescription is used when requesting permission
+    to use location services whenever the app is running (both the foreground and the background).
+    If both entries are defined, NSLocationWhenInUseUsageDescription has a priority in the
+    foreground mode.
 */
 
 /*!
