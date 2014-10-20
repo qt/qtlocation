@@ -819,6 +819,28 @@ private slots:
         QTest::newRow("SW with alt, dms, hemisphere, 28.2341m")
                 << southWestWithAlt << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
                 << QString("27%1 28' 3.3\" S, 153%1 1' 40.4\" W, 28.2341m").arg(DEGREES_SYMB);
+
+        QTest::newRow("Wrap seconds to Minutes DMSH")
+                << QGeoCoordinate(1.1333333, 1.1333333) << QGeoCoordinate::DegreesMinutesSecondsWithHemisphere
+                << QString( "1%1 8' 0.0\" N, 1%1 8' 0.0\" E").arg(DEGREES_SYMB);
+        QTest::newRow("Wrap seconds to Minutes DMS")
+                << QGeoCoordinate(1.1333333, 1.1333333) << QGeoCoordinate::DegreesMinutesSeconds
+                << QString( "1%1 8' 0.0\", 1%1 8' 0.0\"").arg(DEGREES_SYMB);
+        QTest::newRow("Wrap minutes to Degrees DMH")
+                << QGeoCoordinate(1.999999, 1.999999) << QGeoCoordinate::DegreesMinutesWithHemisphere
+                << QString( "2%1 0.000' N, 2%1 0.000' E").arg(DEGREES_SYMB);
+        QTest::newRow("Wrap minutes to Degrees DM")
+                << QGeoCoordinate(1.999999, 1.999999) << QGeoCoordinate::DegreesMinutes
+                << QString( "2%1 0.000', 2%1 0.000'").arg(DEGREES_SYMB);
+
+        QTest::newRow("Wrap seconds to minutes to Degrees DM -> above valid long/lat values")
+                << QGeoCoordinate(89.9999, 179.9999) << QGeoCoordinate::DegreesMinutesSeconds
+                << QString( "90%1 0' 0.0\", 180%1 0' 0.0\"").arg(DEGREES_SYMB);
+
+        QTest::newRow("Wrap minutes to Degrees DM ->above valid long/lat values")
+                << QGeoCoordinate(89.9999, 179.9999) << QGeoCoordinate::DegreesMinutes
+                << QString( "90%1 0.000', 180%1 0.000'").arg(DEGREES_SYMB);
+
     }
 
     void datastream()
