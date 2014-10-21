@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS = nokia osm
+SUBDIRS = nokia osm mapbox
