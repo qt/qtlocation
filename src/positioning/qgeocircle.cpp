@@ -204,7 +204,12 @@ bool QGeoCirclePrivate::contains(const QGeoCoordinate &coordinate) const
     if (!isValid() || !coordinate.isValid())
         return false;
 
-    return center.distanceTo(coordinate) <= radius;
+    // see QTBUG-41447 for details
+    qreal distance = center.distanceTo(coordinate);
+    if (qFuzzyCompare(distance, radius) || distance <= radius)
+        return true;
+
+    return false;
 }
 
 /*!
