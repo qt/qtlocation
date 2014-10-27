@@ -137,6 +137,14 @@ bool QGeoPositionInfoSourceCL::enableLocationManager()
         m_locationManager = [[CLLocationManager alloc] init];
         m_locationManager.desiredAccuracy = kCLLocationAccuracyBest;
         m_locationManager.delegate = [[PositionLocationDelegate alloc] initWithInfoSource:this];
+
+        // These two methods are new in iOS 8. They require NSLocationAlwaysUsageDescription
+        // and NSLocationWhenInUseUsageDescription to be set in Info.plist to work (methods are
+        // noop if there are no such entries in plist).
+        if ([m_locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
+            [m_locationManager performSelector:@selector(requestAlwaysAuthorization)];
+        if ([m_locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)])
+            [m_locationManager performSelector:@selector(requestWhenInUseAuthorization)];
     }
 
     return (m_locationManager != 0);

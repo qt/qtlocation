@@ -41,7 +41,7 @@ Q_DECLARE_METATYPE(QGeoPositionInfo)
 
 
 QGeoPositionInfoSourceAndroid::QGeoPositionInfoSourceAndroid(QObject *parent) :
-    QGeoPositionInfoSource(parent), updatesRunning(false), m_error(UnknownSourceError)
+    QGeoPositionInfoSource(parent), updatesRunning(false), m_error(NoError)
 {
     qRegisterMetaType< QGeoPositionInfo >();
     androidClassKeyForUpdate = AndroidPositioning::registerPositionInfoSource(this);
