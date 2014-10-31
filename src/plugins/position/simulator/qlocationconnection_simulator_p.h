@@ -36,6 +36,8 @@
 
 #include "qlocationdata_simulator_p.h"
 
+#include <QtCore/QObject>
+
 QT_BEGIN_NAMESPACE
 
 namespace Simulator
