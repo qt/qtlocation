@@ -112,7 +112,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), zoomLevel_(0.0), inUpdate_(false),
+:   QDeclarativeGeoMapItemBase(parent), zoomLevel_(0.0),
     mapAndSourceItemSet_(false), updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);
