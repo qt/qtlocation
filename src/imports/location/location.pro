@@ -5,16 +5,6 @@ INCLUDEPATH += ../../location/maps
 INCLUDEPATH += ../../positioning
 INCLUDEPATH *= $$PWD
 
-LIBS += -L../../3rdparty/poly2tri -lpoly2tri
-
-win32 {
-    CONFIG(debug, debug|release) {
-        LIBS += -L../../3rdparty/poly2tri/debug
-    } else {
-        LIBS += -L../../3rdparty/poly2tri/release
-    }
-}
-
 HEADERS += \
            qdeclarativegeomapitemview_p.h \
            qdeclarativegeoserviceprovider_p.h \
@@ -65,6 +55,8 @@ SOURCES += \
 include(declarativeplaces/declarativeplaces.pri)
 
 load(qml_plugin)
+
+LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lpoly2tri$$qtPlatformTargetSuffix()
 
 OTHER_FILES += \
     plugin.json \
