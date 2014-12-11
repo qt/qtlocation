@@ -83,6 +83,8 @@ Map {
         when: followme
     }*/
 
+    onCopyrightLinkActivated: Qt.openUrlExternally(link)
+
     PositionSource{
         id: positionSource
         active: followme

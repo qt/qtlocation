@@ -67,7 +67,6 @@ QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia() {}
 
 void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
-    const int copyrightsMargin = 10;
     const int spaceToLogo = 4;
     const int blurRate = 1;
     const int fontSize = 10;
@@ -106,18 +105,10 @@ void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visible
                          copyrightsString);
         painter.end();
 
-        QPoint copyrightsPos(copyrightsMargin, height() - (copyrightsSlab.height() + copyrightsMargin));
-        lastCopyrightsPos = copyrightsPos;
-        emit copyrightsChanged(copyrightsSlab, copyrightsPos);
-
         lastCopyrightsString = copyrightsString;
     }
 
-    QPoint copyrightsPos(copyrightsMargin, height() - (copyrightsSlab.height() + copyrightsMargin));
-    if (copyrightsPos != lastCopyrightsPos) {
-        lastCopyrightsPos = copyrightsPos;
-        emit copyrightsChanged(copyrightsSlab, copyrightsPos);
-    }
+    emit copyrightsChanged(copyrightsSlab);
 }
 
 int QGeoTiledMapDataNokia::mapVersion()

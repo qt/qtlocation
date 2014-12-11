@@ -173,6 +173,13 @@ QT_BEGIN_NAMESPACE
     \image api-map.png
 */
 
+/*!
+    \qmlsignal QtLocation::Map::copyrightLinkActivated(string link)
+
+    This signal is emitted when the user clicks on a \a link in the copyright notice. The
+    application should open the link in a browser or display its contents to the user.
+*/
+
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         : QQuickItem(parent),
         plugin_(0),
@@ -247,10 +254,12 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
             // create a new one and set its parent, re-assign it to the weak pointer, then connect the copyrights-change signal
             copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
             copyrights = copyrightsWPtr_.data();
-            connect(map_,
-                    SIGNAL(copyrightsChanged(QImage,QPoint)),
-                    copyrights,
-                    SLOT(copyrightsChanged(QImage,QPoint)));
+            connect(map_, SIGNAL(copyrightsChanged(QImage)),
+                    copyrights, SLOT(copyrightsChanged(QImage)));
+            connect(map_, SIGNAL(copyrightsChanged(QString)),
+                    copyrights, SLOT(copyrightsChanged(QString)));
+            connect(copyrights, SIGNAL(linkActivated(QString)),
+                    this, SIGNAL(copyrightLinkActivated(QString)));
         } else {
             // just re-set its parent.
             copyrights->setParent(this);
@@ -478,10 +487,12 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     map_->setActiveMapType(QGeoMapType());
 
     copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
-    connect(map_,
-            SIGNAL(copyrightsChanged(QImage,QPoint)),
-            copyrightsWPtr_.data(),
-            SLOT(copyrightsChanged(QImage,QPoint)));
+    connect(map_, SIGNAL(copyrightsChanged(QImage)),
+            copyrightsWPtr_.data(), SLOT(copyrightsChanged(QImage)));
+    connect(map_, SIGNAL(copyrightsChanged(QString)),
+            copyrightsWPtr_.data(), SLOT(copyrightsChanged(QString)));
+    connect(copyrightsWPtr_.data(), SIGNAL(linkActivated(QString)),
+            this, SIGNAL(copyrightLinkActivated(QString)));
 
     connect(map_,
             SIGNAL(updateRequired()),

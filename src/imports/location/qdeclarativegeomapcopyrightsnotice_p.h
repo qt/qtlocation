@@ -1,5 +1,6 @@
 /****************************************************************************
 **
+** Copyright (C) 2014 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -34,14 +35,17 @@
 #ifndef QDECLARATIVEGEOMAPCOPYRIGHTSNOTICE_H
 #define QDECLARATIVEGEOMAPCOPYRIGHTSNOTICE_H
 
-#include <QQuickPaintedItem>
-#include <QImage>
+#include <QtGui/QImage>
+#include <QtQuick/QQuickPaintedItem>
 
 QT_BEGIN_NAMESPACE
+
+class QTextDocument;
 
 class QDeclarativeGeoMapCopyrightNotice : public QQuickPaintedItem
 {
     Q_OBJECT
+
 public:
     explicit QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent);
     ~QDeclarativeGeoMapCopyrightNotice();
@@ -49,13 +53,21 @@ public:
     void setCopyrightsZ(int copyrightsZ);
 
 public Q_SLOTS:
-    void copyrightsChanged(const QImage &copyrightsImage, const QPoint &copyrightsPos);
+    void copyrightsChanged(const QImage &copyrightsImage);
+    void copyrightsChanged(const QString &copyrightsHtml);
+
+signals:
+    void linkActivated(const QString &link);
 
 protected:
-    void paint(QPainter *painter);
+    void paint(QPainter *painter) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    QImage copyrightsImage_;
+    QTextDocument *m_copyrightsHtml;
+    QImage m_copyrightsImage;
+    QString m_activeAnchor;
 };
 
 QT_END_NAMESPACE

@@ -180,6 +180,7 @@ Q_SIGNALS:
     void maximumZoomLevelChanged();
     void mapItemsChanged();
     void errorChanged();
+    void copyrightLinkActivated(const QString &link);
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF &target);

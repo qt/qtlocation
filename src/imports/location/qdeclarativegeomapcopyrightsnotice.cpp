@@ -1,5 +1,6 @@
 /****************************************************************************
 **
+** Copyright (C) 2014 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -31,15 +32,25 @@
 **
 ****************************************************************************/
 
-#include <QPainter>
-#include <QPoint>
-
 #include "qdeclarativegeomapcopyrightsnotice_p.h"
+
+#include <QtGui/QTextDocument>
+#include <QtGui/QAbstractTextDocumentLayout>
+#include <QtGui/QPainter>
+#include <QtQuick/private/qquickanchors_p.h>
+#include <QtQuick/private/qquickanchors_p_p.h>
 
 QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent)
-    : QQuickPaintedItem(parent) {}
+:   QQuickPaintedItem(parent), m_copyrightsHtml(0)
+{
+    QQuickAnchors *anchors = property("anchors").value<QQuickAnchors *>();
+    if (anchors) {
+        anchors->setLeft(QQuickAnchorLine(parent, QQuickAnchorLine::Left));
+        anchors->setBottom(QQuickAnchorLine(parent, QQuickAnchorLine::Bottom));
+    }
+}
 
 QDeclarativeGeoMapCopyrightNotice::~QDeclarativeGeoMapCopyrightNotice()
 {
@@ -50,7 +61,29 @@ QDeclarativeGeoMapCopyrightNotice::~QDeclarativeGeoMapCopyrightNotice()
 */
 void QDeclarativeGeoMapCopyrightNotice::paint(QPainter *painter)
 {
-    painter->drawImage(0, 0, copyrightsImage_);
+    painter->drawImage(0, 0, m_copyrightsImage);
+}
+
+void QDeclarativeGeoMapCopyrightNotice::mousePressEvent(QMouseEvent *event)
+{
+    if (m_copyrightsHtml) {
+        m_activeAnchor = m_copyrightsHtml->documentLayout()->anchorAt(event->pos());
+        if (!m_activeAnchor.isEmpty())
+            return;
+    }
+
+    QQuickPaintedItem::mousePressEvent(event);
+}
+
+void QDeclarativeGeoMapCopyrightNotice::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (m_copyrightsHtml) {
+        QString anchor = m_copyrightsHtml->documentLayout()->anchorAt(event->pos());
+        if (anchor == m_activeAnchor && !anchor.isEmpty()) {
+            emit linkActivated(anchor);
+            m_activeAnchor.clear();
+        }
+    }
 }
 
 /*!
@@ -65,13 +98,45 @@ void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(int copyrightsZ)
 /*!
     \internal
 */
-void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrightsImage, const QPoint &copyrightsPos)
+void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrightsImage)
 {
-    setX(copyrightsPos.x());
-    setY(copyrightsPos.y());
-    setWidth(copyrightsImage.width());
-    setHeight(copyrightsImage.height());
-    copyrightsImage_ = copyrightsImage;
+    delete m_copyrightsHtml;
+    m_copyrightsHtml = 0;
+
+    m_copyrightsImage = copyrightsImage;
+
+    setWidth(m_copyrightsImage.width());
+    setHeight(m_copyrightsImage.height());
+
+    setKeepMouseGrab(false);
+    setAcceptedMouseButtons(Qt::NoButton);
+
+    update();
+}
+
+void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrightsHtml)
+{
+    if (!m_copyrightsHtml)
+        m_copyrightsHtml = new QTextDocument(this);
+
+    m_copyrightsHtml->setHtml(copyrightsHtml);
+
+    m_copyrightsImage = QImage(m_copyrightsHtml->size().toSize(),
+                               QImage::Format_ARGB32_Premultiplied);
+    m_copyrightsImage.fill(qPremultiply(qRgba(255, 255, 255, 128)));
+
+    QPainter painter(&m_copyrightsImage);
+    m_copyrightsHtml->drawContents(&painter);
+
+    setWidth(m_copyrightsImage.width());
+    setHeight(m_copyrightsImage.height());
+
+    setContentsSize(m_copyrightsImage.size());
+
+    setKeepMouseGrab(true);
+    setAcceptedMouseButtons(Qt::LeftButton);
+
+    update();
 }
 
 QT_END_NAMESPACE

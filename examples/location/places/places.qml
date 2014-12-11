@@ -497,8 +497,13 @@ Item {
 
         MapComponent {
             z: backgroundRect.z + 1
-            width: page.width
-            height: page.height - mainMenu.height
+
+            anchors {
+                top: searchBox.bottom
+                bottom: mainMenu.top
+                left: page.left
+                right: page.right
+            }
 
             MapItemView {
                 model: placeSearchModel
