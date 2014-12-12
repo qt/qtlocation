@@ -1,5 +1,6 @@
 /****************************************************************************
 **
+** Copyright (C) 2014 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
@@ -319,21 +320,21 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
     if (!m_response)
         return;
 
+    m_response->deleteLater();
+
     if (m_response->error() == QPlaceReply::NoError) {
         m_errorString.clear();
 
-        m_response->deleteLater();
         m_response = 0;
 
         updateLayout();
         setStatus(QDeclarativeSupportedCategoriesModel::Ready);
     } else {
-        m_errorString = m_response->errorString();
+        const QString errorString = m_response->errorString();
 
-        m_response->deleteLater();
         m_response = 0;
 
-        setStatus(QDeclarativeSupportedCategoriesModel::Error);
+        setStatus(Error, errorString);
     }
 }
 
@@ -343,6 +344,9 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
 void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &category,
                                                          const QString &parentId)
 {
+    if (m_response)
+        return;
+
     if (!m_categoriesTree.contains(parentId))
         return;
 
@@ -376,6 +380,9 @@ void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &c
 void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory &category,
                                                            const QString &parentId)
 {
+    if (m_response)
+        return;
+
     QString categoryId = category.categoryId();
 
     if (!m_categoriesTree.contains(parentId))
@@ -440,6 +447,9 @@ void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory 
 */
 void QDeclarativeSupportedCategoriesModel::removedCategory(const QString &categoryId, const QString &parentId)
 {
+    if (m_response)
+        return;
+
     if (!m_categoriesTree.contains(categoryId) || !m_categoriesTree.contains(parentId))
         return;
 
