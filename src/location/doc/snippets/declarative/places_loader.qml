@@ -48,7 +48,7 @@ Rectangle {
 
     Plugin {
         id: myPlugin
-        name: "nokia"
+        name: "osm"
         //specify plugin parameters if necessary
         //PluginParameter {...}
         //PluginParameter {...}

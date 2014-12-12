@@ -42,7 +42,7 @@
     \section2 Plugin
     A \l Plugin is an abstraction for a backend. One \l Plugin might access places from a
     REST server while another may access places from a local database. The following
-    instantiates a \l Plugin object by providing a name of "nokia". The \l Plugin name
+    instantiates a \l Plugin object by providing a name of "osm". The \l Plugin name
     identifies which backend to choose from. Plugins may also be provided with a set of
     \l {PluginParameter} {parameters}, which essentially takes the form of a set of
     key-value pairs. The \l {PluginParameter} {parameters} that can be specified vary

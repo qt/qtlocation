@@ -68,7 +68,7 @@ geocoding and routing information, which can be consumed by the application.
 There may be various GeoServices plugins for various tasks with some plugins
 providing more than one service. One QML \l Plugin must be created for each
 required GeoService plugin. Plugins are required for maps, routing and geocoding,
-however the default plugin handles all three of these services. A plugin may
+and places, however the default plugin handles all four of these services. A plugin may
 require online access or may support on-board maps and data.
 
 \note Plugins may not provide features such as paging or relevance hints.

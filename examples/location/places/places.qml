@@ -96,8 +96,8 @@ Item {
             for (var i = 0; i<plugins.length; i++) {
                 addItem(plugins[i]);
 
-                // default to nokia plugin
-                if (plugins[i] === "nokia")
+                // default to osm plugin
+                if (plugins[i] === "osm")
                     exclusiveButton = plugins[i];
             }
 

@@ -68,12 +68,12 @@ QT_BEGIN_NAMESPACE
     The following snippet shows a Plugin object being created with the
     \l required and \l preferred properties set. This Plugin will attach to the
     first plugin found plugin that supports both mapping and geocoding, and will
-    prefer plugins named "nokia" or "foo" to any others.
+    prefer plugins named "nokia" or "osm" to any others.
 
     \code
     Plugin {
         id: plugin
-        preferred: ["nokia", "foo"]
+        preferred: ["nokia", "osm"]
         required: Plugin.AnyMappingFeatures | Plugin.AnyGeocodingFeatures
     }
     \endcode

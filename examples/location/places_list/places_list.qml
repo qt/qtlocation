@@ -52,7 +52,7 @@ Rectangle {
     //! [Initialize Plugin]
     Plugin {
         id: myPlugin
-        name: "nokia"
+        name: "osm"
         //specify plugin parameters as necessary
         //PluginParameter {...}
         //PluginParameter {...}

@@ -190,8 +190,11 @@ Item {
 
         Component.onCompleted: {
             var plugins = getPlugins()
-            for (var i = 0; i<plugins.length; i++)
+            for (var i = 0; i<plugins.length; i++) {
                 addItem(plugins[i])
+                if (plugins[i] === "osm")
+                    exclusiveButton = plugins[i]
+            }
         }
 
         onExclusiveButtonChanged: createMap(exclusiveButton)
@@ -491,38 +494,6 @@ Item {
         }
     }
 
-
-    /*    GeocodeModel {
-        id: geocodeModel
-        plugin : Plugin { name : "nokia"}
-        onLocationsChanged: {
-            if (geocodeModel.count > 0) {
-                console.log('setting the coordinate as locations changed in model.')
-                map.center = geocodeModel.get(0).coordinate
-            }
-        }
-    }*/
-
-    //=====================Map=====================
-
-    /*        MapObjectView {
-            model: geocodeModel
-            delegate: Component {
-                MapCircle {
-                    radius: 10000
-                    color: "red"
-                    center: location.coordinate
-                }
-            }
-        }
-
-
-    */
-
-/*
-
-    }
-*/
     function geocodeMessage(){
         var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
         latitude = Math.round(map.geocodeModel.get(0).coordinate.latitude * 10000) / 10000
@@ -551,7 +522,7 @@ Item {
 
     function createMap(provider){
         var plugin
-        if (parameters.length>0)
+        if (parameters && parameters.length > 0)
             plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
         else
             plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', page)
