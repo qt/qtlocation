@@ -89,7 +89,6 @@ private:
     QQuickItem *opacityContainer_;
     QPointF anchorPoint_;
     qreal zoomLevel_;
-    bool inUpdate_;
     bool mapAndSourceItemSet_;
     bool updatingGeometry_;
 };
