@@ -57,20 +57,6 @@ QT_BEGIN_NAMESPACE
     or if the radius is less than zero.
 */
 
-#ifdef Q_NO_USING_KEYWORD
-/*!
-    \fn bool QGeoCircle::operator==(const QGeoShape &other) const
-
-    Returns true if \a other is equal to this geo circle; otherwise returns false.
-*/
-
-/*!
-    \fn bool QGeoCircle::operator!=(const QGeoShape &other) const
-
-    Returns true if \a other is not equal to this geo circle; otherwise returns false.
-*/
-#endif
-
 inline QGeoCirclePrivate *QGeoCircle::d_func()
 {
     return static_cast<QGeoCirclePrivate *>(d_ptr.data());

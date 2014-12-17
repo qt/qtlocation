@@ -53,24 +53,10 @@ public:
 
     QGeoCircle &operator=(const QGeoCircle &other);
 
-#ifdef Q_NO_USING_KEYWORD
-    bool operator==(const QGeoShape &other) const
-    {
-        return QGeoShape::operator==(other);
-    }
-#else
     using QGeoShape::operator==;
-#endif
     bool operator==(const QGeoCircle &other) const;
 
-#ifdef Q_NO_USING_KEYWORD
-    bool operator!=(const QGeoShape &other) const
-    {
-        return QGeoShape::operator!=(other);
-    }
-#else
     using QGeoShape::operator!=;
-#endif
     bool operator!=(const QGeoCircle &other) const;
 
     void setCenter(const QGeoCoordinate &center);

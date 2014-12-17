@@ -55,24 +55,10 @@ public:
 
     QGeoRectangle &operator=(const QGeoRectangle &other);
 
-#ifdef Q_NO_USING_KEYWORD
-    bool operator==(const QGeoShape &other) const
-    {
-        return QGeoShape::operator==(other);
-    }
-#else
     using QGeoShape::operator==;
-#endif
     bool operator==(const QGeoRectangle &other) const;
 
-#ifdef Q_NO_USING_KEYWORD
-    bool operator!=(const QGeoShape &other) const
-    {
-        return QGeoShape::operator!=(other);
-    }
-#else
     using QGeoShape::operator!=;
-#endif
     bool operator!=(const QGeoRectangle &other) const;
 
     void setTopLeft(const QGeoCoordinate &topLeft);
@@ -96,14 +82,7 @@ public:
     void setHeight(double degreesHeight);
     double height() const;
 
-#ifdef Q_NO_USING_KEYWORD
-    bool contains(const QGeoCoordinate &coordinate) const
-    {
-        return QGeoShape::contains(coordinate);
-    }
-#else
     using QGeoShape::contains;
-#endif
     bool contains(const QGeoRectangle &rectangle) const;
     bool intersects(const QGeoRectangle &rectangle) const;
 
