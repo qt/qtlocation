@@ -79,6 +79,7 @@ void QGeoCodeReplyOsm::networkReplyFinished()
     if (m_reply->error() != QNetworkReply::NoError)
         return;
 
+    QList<QGeoLocation> locations;
     QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
 
     if (document.isObject()) {
@@ -105,15 +106,11 @@ void QGeoCodeReplyOsm::networkReplyFinished()
         location.setCoordinate(coordinate);
         location.setAddress(address);
 
-        QList<QGeoLocation> locations;
         locations.append(location);
 
         setLocations(locations);
-        setFinished(true);
     } else if (document.isArray()) {
         QJsonArray results = document.array();
-
-        QList<QGeoLocation> locations;
 
         for (int i = 0; i < results.count(); ++i) {
             if (!results.at(i).isObject())
@@ -157,9 +154,10 @@ void QGeoCodeReplyOsm::networkReplyFinished()
             locations.append(location);
         }
 
-        setLocations(locations);
-        setFinished(true);
     }
+
+    setLocations(locations);
+    setFinished(true);
 
     m_reply->deleteLater();
     m_reply = 0;
