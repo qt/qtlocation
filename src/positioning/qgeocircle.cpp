@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -284,6 +284,19 @@ QGeoCircle QGeoCircle::translated(double degreesLatitude, double degreesLongitud
     QGeoCircle result(*this);
     result.translate(degreesLatitude, degreesLongitude);
     return result;
+}
+
+QString QGeoCircle::toString() const
+{
+    if (type() != QGeoShape::CircleType) {
+        qWarning("Not a circle");
+        return QStringLiteral("QGeoCircle(not a circle)");
+    }
+
+    return QStringLiteral("QGeoCircle({%1, %2}, %3)")
+        .arg(center().latitude())
+        .arg(center().longitude())
+        .arg(radius());
 }
 
 /*******************************************************************************

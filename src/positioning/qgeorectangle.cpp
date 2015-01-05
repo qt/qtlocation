@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -917,6 +917,20 @@ QGeoRectangle &QGeoRectangle::operator|=(const QGeoRectangle &rectangle)
     d->bottomRight = QGeoCoordinate(bottom, right);
 
     return *this;
+}
+
+QString QGeoRectangle::toString() const
+{
+    if (type() != QGeoShape::RectangleType) {
+        qWarning("Not a rectangle a %d\n", type());
+        return QStringLiteral("QGeoRectangle(not a rectangle)");
+    }
+
+    return QStringLiteral("QGeoRectangle({%1, %2}, {%3, %4})")
+        .arg(topLeft().latitude())
+        .arg(topLeft().longitude())
+        .arg(bottomRight().latitude())
+        .arg(bottomRight().longitude());
 }
 
 /*******************************************************************************

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -247,6 +247,11 @@ QGeoShape &QGeoShape::operator=(const QGeoShape &other)
 
     d_ptr = other.d_ptr;
     return *this;
+}
+
+QString QGeoShape::toString() const
+{
+    return QStringLiteral("QGeoShape(%1)").arg(type());
 }
 
 #ifndef QT_NO_DEBUG_STREAM

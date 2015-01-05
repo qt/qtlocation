@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -31,7 +31,6 @@
 **
 ****************************************************************************/
 
-#include "locationvaluetypeprovider.h"
 
 #include <QtPositioning/private/qdeclarativegeoaddress_p.h>
 #include <QtPositioning/private/qdeclarativegeolocation_p.h>
@@ -39,12 +38,7 @@
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
 
-#include "qdeclarativegeoshape.h"
-#include "qdeclarativegeorectangle.h"
-#include "qdeclarativegeocircle.h"
-#include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeocoordinateanimation_p.h"
-
 #include "locationsingleton.h"
 
 #include <QtCore/QVariantAnimation>
@@ -71,12 +65,6 @@ static QObject *singleton_type_factory(QQmlEngine *engine, QJSEngine *jsEngine)
     return new LocationSingleton;
 }
 
-static LocationValueTypeProvider *getValueTypeProvider()
-{
-    static LocationValueTypeProvider provider;
-    return &provider;
-}
-
 class QtPositioningDeclarativeModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
@@ -95,18 +83,22 @@ public:
             int minor = 0;
 
             qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
+            QMetaType::registerComparators<QGeoCoordinate>();
             qRegisterMetaType<QGeoAddress>("QGeoAddress");
             qRegisterMetaType<QGeoRectangle>("QGeoRectangle");
+            QMetaType::registerComparators<QGeoRectangle>();
             qRegisterMetaType<QGeoCircle>("QGeoCircle");
+            QMetaType::registerComparators<QGeoCircle>();
             qRegisterMetaType<QGeoLocation>("QGeoLocation");
+            qRegisterMetaType<QGeoShape>();
+            QMetaType::registerComparators<QGeoShape>();
 
             qRegisterAnimationInterpolator<QGeoCoordinate>(geoCoordinateInterpolator);
-            QQml_addValueTypeProvider(getValueTypeProvider());
 
             // Register the 5.0 types
             // 5.0 is silent and not advertised
             qmlRegisterSingletonType<LocationSingleton  >(uri, major, minor, "QtPositioning", singleton_type_factory);
-            qmlRegisterValueTypeEnums<GeoShapeValueType >(uri, major, minor, "GeoShape");
+            qmlRegisterValueTypeEnums<QGeoShape         >(uri, major, minor, "GeoShape");
             qmlRegisterType<QDeclarativePosition        >(uri, major, minor, "Position");
             qmlRegisterType<QDeclarativePositionSource  >(uri, major, minor, "PositionSource");
             qmlRegisterType<QDeclarativeGeoAddress      >(uri, major, minor, "Address");

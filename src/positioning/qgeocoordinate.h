@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -47,7 +47,15 @@ class QDataStream;
 class QGeoCoordinatePrivate;
 class Q_POSITIONING_EXPORT QGeoCoordinate
 {
+    Q_GADGET
+
+    Q_PROPERTY(double latitude READ latitude WRITE setLatitude)
+    Q_PROPERTY(double longitude READ longitude WRITE setLongitude)
+    Q_PROPERTY(double altitude READ altitude WRITE setAltitude)
+    Q_PROPERTY(bool isValid READ isValid)
+
 public:
+
     enum CoordinateType {
         InvalidCoordinate,
         Coordinate2D,
@@ -88,12 +96,12 @@ public:
     void setAltitude(double altitude);
     double altitude() const;
 
-    qreal distanceTo(const QGeoCoordinate &other) const;
-    qreal azimuthTo(const QGeoCoordinate &other) const;
+    Q_INVOKABLE qreal distanceTo(const QGeoCoordinate &other) const;
+    Q_INVOKABLE qreal azimuthTo(const QGeoCoordinate &other) const;
 
-    QGeoCoordinate atDistanceAndAzimuth(qreal distance, qreal azimuth, qreal distanceUp = 0.0) const;
+    Q_INVOKABLE QGeoCoordinate atDistanceAndAzimuth(qreal distance, qreal azimuth, qreal distanceUp = 0.0) const;
 
-    QString toString(CoordinateFormat format = DegreesMinutesSecondsWithHemisphere) const;
+    Q_INVOKABLE QString toString(CoordinateFormat format = DegreesMinutesSecondsWithHemisphere) const;
 
 private:
     QSharedDataPointer<QGeoCoordinatePrivate> d;
@@ -111,6 +119,14 @@ Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoCoordinate &);
 Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate);
 Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate);
 #endif
+
+// FIXME: Exists to satisfy QMetaType::registerComparators() which is required for
+//        QML value type. Remove once QMetaType has been fixed.
+inline bool operator<(const QGeoCoordinate &/*lhs*/, const QGeoCoordinate &/*rhs*/)
+{
+    qWarning("'<' operator not valid for QGeoCoordinate\n");
+    return false;
+}
 
 QT_END_NAMESPACE
 

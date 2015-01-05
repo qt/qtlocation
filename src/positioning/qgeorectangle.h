@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -43,6 +43,15 @@ class QGeoRectanglePrivate;
 
 class Q_POSITIONING_EXPORT QGeoRectangle : public QGeoShape
 {
+    Q_GADGET
+    Q_PROPERTY(QGeoCoordinate bottomLeft READ bottomLeft WRITE setBottomLeft)
+    Q_PROPERTY(QGeoCoordinate bottomRight READ bottomRight WRITE setBottomRight)
+    Q_PROPERTY(QGeoCoordinate topLeft READ topLeft WRITE setTopLeft)
+    Q_PROPERTY(QGeoCoordinate topRight READ topRight WRITE setTopRight)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
+    Q_PROPERTY(double height READ height WRITE setHeight)
+    Q_PROPERTY(double width READ width WRITE setWidth)
+
 public:
     QGeoRectangle();
     QGeoRectangle(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
@@ -114,6 +123,8 @@ public:
     QGeoRectangle operator|(const QGeoRectangle &rectangle) const;
     QGeoRectangle &operator|=(const QGeoRectangle &rectangle);
 
+    Q_INVOKABLE QString toString() const;
+
 private:
     inline QGeoRectanglePrivate *d_func();
     inline const QGeoRectanglePrivate *d_func() const;
@@ -124,6 +135,14 @@ Q_DECLARE_TYPEINFO(QGeoRectangle, Q_MOVABLE_TYPE);
 inline QGeoRectangle QGeoRectangle::operator|(const QGeoRectangle &rectangle) const
 {
     return united(rectangle);
+}
+
+// FIXME: Exists to satisfy QMetaType::registerComparators() which is required for
+//        QML value type. Remove once QMetaType has been fixed.
+inline bool operator<(const QGeoRectangle &/*lhs*/, const QGeoRectangle &/*rhs*/)
+{
+    qWarning("'<' operator not valid for QGeoRectangle\n");
+    return false;
 }
 
 QT_END_NAMESPACE

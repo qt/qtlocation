@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -803,8 +803,7 @@ QJSValue QDeclarativeGeoRouteQuery::waypoints()
     for (int i = 0; i < request_.waypoints().length(); ++i) {
         const QGeoCoordinate &c = request_.waypoints().at(i);
 
-        QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
-        QV4::ScopedValue cv(scope, QV4::QmlValueTypeWrapper::create(v8Engine, QVariant::fromValue(c), vt));
+        QV4::ScopedValue cv(scope, QV8Engine::fromVariant(v4, QVariant::fromValue(c)));
 
         waypointArray->putIndexed(i, cv);
     }
@@ -862,8 +861,7 @@ QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
     for (int i = 0; i < request_.excludeAreas().length(); ++i) {
         const QGeoRectangle &r = request_.excludeAreas().at(i);
 
-        QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoRectangle>());
-        QV4::ScopedValue cv(scope, QV4::QmlValueTypeWrapper::create(v8Engine, QVariant::fromValue(r), vt));
+        QV4::ScopedValue cv(scope, QV8Engine::fromVariant(v4, QVariant::fromValue(r)));
 
         excludedAreasArray->putIndexed(i, cv);
     }

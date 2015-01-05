@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -46,14 +46,18 @@ Item {
     property variant boundingBox1: QtPositioning.rectangle()
     property variant boundingBox2: QtPositioning.rectangle()
 
-    Component.onCompleted: {
-        boundingBox1.topLeft = coordinate1;
-        boundingBox1.bottomRight = coordinate2;
-        boundingBox1.width = 10;
+    property variant circle1: QtPositioning.circle()
+    property variant circle2: QtPositioning.circle(tr, 4000)
 
-        boundingBox2.topLeft = coordinate2;
-        boundingBox2.bottomLeft = coordinate1;
-        boundingBox2.width = 20;
+    Component.onCompleted: {
+        console.log("ffffff " + circle1 + " " + circle2)
+        boundingBox1.topLeft = bl
+        boundingBox1.bottomRight = bl
+        boundingBox1.width = 10
+
+        boundingBox2.topLeft = bl
+        boundingBox2.bottomRight = bl
+        boundingBox2.width = 20
     }
 
     property variant bl: QtPositioning.coordinate(0, 0)

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2015 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -169,8 +169,7 @@ QJSValue QDeclarativeGeoRoute::path() const
     for (int i = 0; i < route_.path().length(); ++i) {
         const QGeoCoordinate &c = route_.path().at(i);
 
-        QQmlValueType *vt = QQmlValueTypeFactory::valueType(qMetaTypeId<QGeoCoordinate>());
-        QV4::ScopedValue cv(scope, QV4::QmlValueTypeWrapper::create(v8Engine, QVariant::fromValue(c), vt));
+        QV4::ScopedValue cv(scope, QV8Engine::fromVariant(v4, QVariant::fromValue(c)));
 
         pathArray->putIndexed(i, cv);
     }
