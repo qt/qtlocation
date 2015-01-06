@@ -135,9 +135,15 @@ Item {
         }
         function update(){
             clear()
-            addItem("Reverse geocode")
-            addItem("Geocode")
-            addItem("Route")
+            if (map.plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)) {
+                addItem("Reverse geocode")
+            }
+            if (map.plugin.supportsGeocoding()) {
+                addItem("Geocode")
+            }
+            if (map.plugin.supportsRouting()) {
+                addItem("Route")
+            }
             var item = addItem("Follow me")
             item.text = Qt.binding(function() { return map.followme ? "Stop following" : "Follow me" });
             item = addItem("Minimap")
@@ -549,16 +555,13 @@ Item {
             plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
         else
             plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', page)
-        if (plugin.supportsMapping()
-                && plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)
-                && plugin.supportsRouting()) {
 
-            if (map) {
-                map.destroy()
-                minimap = null
-            }
+        if (map) {
+            map.destroy()
+            minimap = null
+        }
 
-            map = Qt.createQmlObject ('import QtLocation 5.3;\
+        map = Qt.createQmlObject ('import QtLocation 5.3;\
                                        import "content/map";\
                                        MapComponent{\
                                            z : backgroundRect.z + 1;\
@@ -603,11 +606,13 @@ Item {
                                                page.state = "";\
                                            }\
                                        }',page)
-            map.plugin = plugin;
-            tempGeocodeModel.plugin = plugin;
-            mapTypeMenu.update();
-            toolsMenu.update();
-        }
+
+
+        map.plugin = plugin;
+        tempGeocodeModel.plugin = plugin;
+        mapTypeMenu.update();
+        toolsMenu.update();
+
     }
 
     function getPlugins(){
@@ -616,14 +621,10 @@ Item {
         var myArray = new Array()
         for (var i = 0; i<plugin.availableServiceProviders.length; i++){
             tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
-
-            if (tempPlugin.supportsMapping()
-                    && tempPlugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)
-                    && tempPlugin.supportsRouting()) {
+            if (tempPlugin.supportsMapping())
                 myArray.push(tempPlugin.name)
-            }
         }
-
+        myArray.sort()
         return myArray
     }
 
@@ -636,8 +637,9 @@ Item {
         page.parameters=parameters
         if (providerMenu.exclusiveButton !== "")
             createMap(providerMenu.exclusiveButton);
-        else if (providerMenu.children.length > 0)
-            createMap(providerMenu.children[0].text);
+        else if (providerMenu.children.length > 0) {
+            providerMenu.exclusiveButton = providerMenu.children[0].text
+        }
     }
 
     //=====================States of page=====================
