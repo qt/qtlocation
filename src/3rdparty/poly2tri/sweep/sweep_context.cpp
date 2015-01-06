@@ -74,8 +74,8 @@ std::list<Triangle*> SweepContext::GetMap()
 
 void SweepContext::InitTriangulation()
 {
-  float xmax(points_[0]->x), xmin(points_[0]->x);
-  float ymax(points_[0]->y), ymin(points_[0]->y);
+  double xmax(points_[0]->x), xmin(points_[0]->x);
+  double ymax(points_[0]->y), ymin(points_[0]->y);
 
   // Calculate bounds.
   for (unsigned int i = 0; i < points_.size(); i++) {
@@ -90,8 +90,8 @@ void SweepContext::InitTriangulation()
       ymin = p.y;
   }
 
-  float dx = kAlpha * (xmax - xmin);
-  float dy = kAlpha * (ymax - ymin);
+  double dx = kAlpha * (xmax - xmin);
+  double dy = kAlpha * (ymax - ymin);
   head_ = new Point(xmax + dx, ymin - dy);
   tail_ = new Point(xmin - dx, ymin - dy);
 

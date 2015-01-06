@@ -40,7 +40,7 @@ namespace p2t {
 
 // Initial triangle factor, seed triangle will extend 30% of
 // PointSet width to both left and right.
-const float kAlpha = float(0.3);
+const double kAlpha = 0.3;
 
 struct Point;
 class Triangle;
@@ -100,7 +100,7 @@ struct Basin {
   Node* left_node;
   Node* bottom_node;
   Node* right_node;
-  float width;
+  double width;
   bool left_highest;
 
   Basin() : left_node(NULL), bottom_node(NULL), right_node(NULL), width(0.0), left_highest(false)
