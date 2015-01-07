@@ -442,7 +442,7 @@ void QDeclarativeGeocodeModel::setError(GeocodeError error)
 /*!
     \qmlproperty string QtLocation::GeocodeModel::errorString
 
-    This read-only property holds the textual presentation of latest geocoding error.
+    This read-only property holds the textual presentation of the latest geocoding error.
     If no error has occurred or the model has been reset, an empty string is returned.
 
     An empty string may also be returned if an error occurred which has no associated

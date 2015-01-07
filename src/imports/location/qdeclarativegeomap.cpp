@@ -184,7 +184,8 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         componentCompleted_(false),
         mappingManagerInitialized_(false),
         touchTimer_(-1),
-        map_(0)
+        map_(0),
+        error_(QGeoServiceProvider::NoError)
 {
     QLOC_TRACE0;
     setAcceptHoverEvents(false);
@@ -260,6 +261,16 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
     copyrights->setCopyrightsZ(maxChildZ + 1);
 }
 
+
+void QDeclarativeGeoMap::setError(QGeoServiceProvider::Error error, const QString &errorString)
+{
+    if (error_ == error && errorString_ == errorString)
+        return;
+    error_ = error;
+    errorString_ = errorString;
+    emit errorChanged();
+}
+
 /*!
     \internal
 */
@@ -267,6 +278,8 @@ void QDeclarativeGeoMap::pluginReady()
 {
     serviceProvider_ = plugin_->sharedGeoServiceProvider();
     mappingManager_ = serviceProvider_->mappingManager();
+
+    setError(serviceProvider_->error(), serviceProvider_->errorString());
 
     if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
         qmlInfo(this) << QStringLiteral("Error: Plugin does not support mapping.\nError message:")
@@ -756,6 +769,44 @@ void QDeclarativeGeoMap::cameraStopped()
     if (!mappingManagerInitialized_)
         return;
     map_->cameraStopped();
+}
+
+/*!
+    \qmlproperty string QtLocation::Map::errorString
+
+    This read-only property holds the textual presentation of the latest mapping provider error.
+    If no error has occurred, an empty string is returned.
+
+    An empty string may also be returned if an error occurred which has no associated
+    textual representation.
+
+    \sa QGeoServiceProvider::errorString()
+*/
+
+QString QDeclarativeGeoMap::errorString() const
+{
+    return errorString_;
+}
+
+/*!
+    \qmlproperty enumeration QtLocation::Map::error
+
+    This read-only property holds the last occurred mapping service provider error.
+
+    \list
+    \li Map.NoError - No error has occurred.
+    \li Map.NotSupportedError -The plugin does not support mapping functionality.
+    \li Map.UnknownParameterError -The plugin did not recognize one of the parameters it was given.
+    \li Map.MissingRequiredParameterError - The plugin did not find one of the parameters it was expecting.
+    \li Map.ConnectionError - The plugin could not connect to its backend service or database.
+    \endlist
+
+    \sa QGeoServiceProvider::Error
+*/
+
+QGeoServiceProvider::Error QDeclarativeGeoMap::error() const
+{
+    return error_;
 }
 
 /*!

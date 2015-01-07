@@ -194,10 +194,6 @@ Item {
                 addItem(plugins[i])
         }
 
-        onClicked: {
-            page.state = ""
-        }
-
         onExclusiveButtonChanged: createMap(exclusiveButton)
     }
 
@@ -245,6 +241,10 @@ Item {
             State{
                 name: "Distance"
                 PropertyChanges { target: messageDialog; title: "Distance" }
+            },
+            State{
+                name: "ProviderError"
+                PropertyChanges { target: messageDialog; title: "Provider Error" }
             }
         ]
     }
@@ -604,6 +604,16 @@ Item {
                                            }\
                                            onResetState: {\
                                                page.state = "";\
+                                           }\
+                                           onErrorChanged: {\
+                                               if (map.error != Map.NoError) {\
+                                               messageDialog.state = "ProviderError";\
+                                               messageDialog.text =  map.errorString + "<br/><br/><b>Try to select other provider</b>";\
+                                                   if (map.error == Map.MissingRequiredParameterError) \
+                                                       messageDialog.text += "<br/>or see \'mapviewer --help\'\
+                                                       how to pass plugin parameters.";\
+                                               page.state = "Message";\
+                                               }\
                                            }\
                                        }',page)
 

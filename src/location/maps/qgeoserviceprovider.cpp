@@ -105,25 +105,20 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 */
 
 /*!
-\enum QGeoServiceProvider::Error
+    \enum QGeoServiceProvider::Error
 
-Describes an error related to the loading and setup of a service provider
-plugin.
+    Describes an error related to the loading and setup of a service provider plugin.
 
-\value NoError
-No error has occurred.
-
-\value NotSupportedError
-The plugin does not support this functionality.
-
-\value UnknownParameterError
-The plugin did not recognize one of the parameters it was given.
-
-\value MissingRequiredParameterError
-The plugin did not find one of the parameters it was expecting.
-
-\value ConnectionError
-The plugin could not connect to its backend service or database.
+    \value NoError
+        No error has occurred.
+    \value NotSupportedError
+        The plugin does not support this functionality.
+    \value UnknownParameterError
+        The plugin did not recognize one of the parameters it was given.
+    \value MissingRequiredParameterError
+        The plugin did not find one of the parameters it was expecting.
+    \value ConnectionError
+        The plugin could not connect to its backend service or database.
 */
 
 /*!

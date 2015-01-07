@@ -44,6 +44,7 @@
 #include <QtQuick/QSGTexture>
 #include <QtQuick/QQuickPaintedItem>
 #include <QtQml/QQmlParserStatus>
+#include "qgeoserviceprovider.h"
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapgesturearea_p.h"
 #include "qgeomapcontroller_p.h"
@@ -87,7 +88,7 @@ class QDeclarativeGeoMapType;
 class QDeclarativeGeoMap : public QQuickItem
 {
     Q_OBJECT
-
+    Q_ENUMS(QGeoServiceProvider::Error)
     Q_PROPERTY(QDeclarativeGeoMapGestureArea *gesture READ gesture CONSTANT)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
@@ -97,6 +98,8 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(QList<QObject *> mapItems READ mapItems NOTIFY mapItemsChanged)
+    Q_PROPERTY(QGeoServiceProvider::Error error READ error NOTIFY errorChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -149,6 +152,9 @@ public:
     Q_INVOKABLE void pan(int dx, int dy);
     Q_INVOKABLE void cameraStopped(); // optional hint for prefetch
 
+    QString errorString() const;
+    QGeoServiceProvider::Error error() const;
+
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -169,6 +175,7 @@ Q_SIGNALS:
     void minimumZoomLevelChanged();
     void maximumZoomLevelChanged();
     void mapItemsChanged();
+    void errorChanged();
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF &target);
@@ -176,6 +183,9 @@ private Q_SLOTS:
     void mapZoomLevelChanged(qreal zoom);
     void pluginReady();
     void onMapChildrenChanged();
+
+protected:
+    void setError(QGeoServiceProvider::Error error, const QString &errorString);
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
@@ -207,6 +217,10 @@ private:
     QList<QPointer<QDeclarativeGeoMapItemBase> > mapItems_;
 
     QMutex updateMutex_;
+
+    QString errorString_;
+    QGeoServiceProvider::Error error_;
+
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;
     friend class QDeclarativeGeoMapGestureArea;

@@ -56,7 +56,7 @@ class QGeoServiceProviderPrivate;
 class Q_LOCATION_EXPORT QGeoServiceProvider : public QObject
 {
     Q_OBJECT
-
+    Q_ENUMS(Error)
 public:
     enum Error {
         NoError,

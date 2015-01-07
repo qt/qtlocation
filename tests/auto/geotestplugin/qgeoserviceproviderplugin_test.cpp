@@ -39,6 +39,24 @@
 
 #include <QtPlugin>
 
+namespace
+{
+    template<class EngineType>
+    EngineType * createEngine(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+    {
+        const QString failError = parameters.value(QStringLiteral("error")).toString();
+        const QString failErrorString = parameters.value(QStringLiteral("errorString")).toString();
+
+        if (!failError.isEmpty()) {
+            *error = QGeoServiceProvider::Error(failError.toInt());
+            *errorString = failErrorString;
+            return 0;
+        } else {
+            return new EngineType(parameters, error, errorString);
+        }
+    }
+}
+
 QGeoServiceProviderFactoryTest::QGeoServiceProviderFactoryTest()
 {
 }
@@ -51,7 +69,7 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEn
             const QVariantMap &parameters,
             QGeoServiceProvider::Error *error, QString *errorString) const
 {
-    return new QGeoRoutingManagerEngineTest(parameters, error, errorString);
+    return createEngine<QGeoRoutingManagerEngineTest>(parameters, error, errorString);
 }
 
 
@@ -59,7 +77,7 @@ QGeoCodingManagerEngine* QGeoServiceProviderFactoryTest::createGeocodingManagerE
                 const QVariantMap &parameters, QGeoServiceProvider::Error *error,
                 QString *errorString) const
 {
-    return new QGeoCodingManagerEngineTest(parameters, error, errorString);
+    return createEngine<QGeoCodingManagerEngineTest>(parameters, error, errorString);
 }
 
 
@@ -67,7 +85,7 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactoryTest::createMappingManagerEn
             const QVariantMap &parameters,
             QGeoServiceProvider::Error *error, QString *errorString) const
 {
-    return new QGeoTiledMappingManagerEngineTest(parameters, error, errorString);
+    return createEngine<QGeoTiledMappingManagerEngineTest>(parameters, error, errorString);
 }
 
 QPlaceManagerEngine* QGeoServiceProviderFactoryTest::createPlaceManagerEngine(

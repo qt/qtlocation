@@ -516,7 +516,7 @@ void QDeclarativeGeoRouteModel::setErrorString(const QString &error)
 /*!
     \qmlproperty string QtLocation::RouteModel::errorString
 
-    This read-only property holds the textual presentation of latest routing error.
+    This read-only property holds the textual presentation of the latest routing error.
     If no error has occurred or the model has been reset, an empty string is returned.
 
     An empty string may also be returned if an error occurred which has no associated
