@@ -48,6 +48,10 @@
 
 #include <dbus/dbus-glib.h>
 
+#ifndef QT_NO_DATASTREAM
+#include <QtCore/QDataStream>
+#endif
+
 QT_BEGIN_NAMESPACE
 
 #define MINIMUM_UPDATE_INTERVAL 1000
