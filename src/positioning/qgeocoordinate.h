@@ -120,14 +120,6 @@ Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoCoor
 Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate);
 #endif
 
-// FIXME: Exists to satisfy QMetaType::registerComparators() which is required for
-//        QML value type. Remove once QMetaType has been fixed.
-inline bool operator<(const QGeoCoordinate &/*lhs*/, const QGeoCoordinate &/*rhs*/)
-{
-    qWarning("'<' operator not valid for QGeoCoordinate\n");
-    return false;
-}
-
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoCoordinate)

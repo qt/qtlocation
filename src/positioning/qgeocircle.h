@@ -81,14 +81,6 @@ private:
 
 Q_DECLARE_TYPEINFO(QGeoCircle, Q_MOVABLE_TYPE);
 
-// FIXME: Exists to satisfy QMetaType::registerComparators() which is required for
-//        QML value type. Remove once QMetaType has been fixed.
-inline bool operator<(const QGeoCircle &/*lhs*/, const QGeoCircle &/*rhs*/)
-{
-    qWarning("'<' operator not valid for QGeoCircle\n");
-    return false;
-}
-
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoCircle)

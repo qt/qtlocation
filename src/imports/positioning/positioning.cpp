@@ -83,15 +83,15 @@ public:
             int minor = 0;
 
             qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
-            QMetaType::registerComparators<QGeoCoordinate>();
+            QMetaType::registerEqualsComparator<QGeoCoordinate>();
             qRegisterMetaType<QGeoAddress>("QGeoAddress");
             qRegisterMetaType<QGeoRectangle>("QGeoRectangle");
-            QMetaType::registerComparators<QGeoRectangle>();
+            QMetaType::registerEqualsComparator<QGeoRectangle>();
             qRegisterMetaType<QGeoCircle>("QGeoCircle");
-            QMetaType::registerComparators<QGeoCircle>();
+            QMetaType::registerEqualsComparator<QGeoCircle>();
             qRegisterMetaType<QGeoLocation>("QGeoLocation");
             qRegisterMetaType<QGeoShape>();
-            QMetaType::registerComparators<QGeoShape>();
+            QMetaType::registerEqualsComparator<QGeoShape>();
 
             qRegisterAnimationInterpolator<QGeoCoordinate>(geoCoordinateInterpolator);
 

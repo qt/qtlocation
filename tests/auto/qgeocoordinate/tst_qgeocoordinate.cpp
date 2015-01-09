@@ -87,7 +87,7 @@ private slots:
     void initTestcase()
     {
         qRegisterMetaType<QGeoCoordinate>();
-        QMetaType::registerComparators<QGeoCoordinate>();
+        QMetaType::registerEqualsComparator<QGeoCoordinate>();
     }
 
     void constructor()

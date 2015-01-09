@@ -98,14 +98,6 @@ Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoShap
 Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoShape &shape);
 #endif
 
-// FIXME: Exists to satisfy QMetaType::registerComparators() which is required for
-//        QML value type. Remove once QMetaType has been fixed.
-inline bool operator<(const QGeoShape &/*lhs*/, const QGeoShape &/*rhs*/)
-{
-    qWarning("'<' operator not valid for QGeoShape\n");
-    return false;
-}
-
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoShape)

@@ -116,14 +116,6 @@ inline QGeoRectangle QGeoRectangle::operator|(const QGeoRectangle &rectangle) co
     return united(rectangle);
 }
 
-// FIXME: Exists to satisfy QMetaType::registerComparators() which is required for
-//        QML value type. Remove once QMetaType has been fixed.
-inline bool operator<(const QGeoRectangle &/*lhs*/, const QGeoRectangle &/*rhs*/)
-{
-    qWarning("'<' operator not valid for QGeoRectangle\n");
-    return false;
-}
-
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoRectangle)
