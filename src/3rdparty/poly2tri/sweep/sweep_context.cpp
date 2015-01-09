@@ -34,7 +34,13 @@
 
 namespace p2t {
 
-SweepContext::SweepContext(std::vector<Point*> polyline)
+SweepContext::SweepContext(std::vector<Point*> polyline) :
+  front_(0),
+  head_(0),
+  tail_(0),
+  af_head_(0),
+  af_middle_(0),
+  af_tail_(0)
 {
   basin = Basin();
   edge_event = EdgeEvent();
@@ -68,8 +74,8 @@ std::list<Triangle*> SweepContext::GetMap()
 
 void SweepContext::InitTriangulation()
 {
-  float xmax(points_[0]->x), xmin(points_[0]->x);
-  float ymax(points_[0]->y), ymin(points_[0]->y);
+  double xmax(points_[0]->x), xmin(points_[0]->x);
+  double ymax(points_[0]->y), ymin(points_[0]->y);
 
   // Calculate bounds.
   for (unsigned int i = 0; i < points_.size(); i++) {
@@ -84,8 +90,8 @@ void SweepContext::InitTriangulation()
       ymin = p.y;
   }
 
-  float dx = kAlpha * (xmax - xmin);
-  float dy = kAlpha * (ymax - ymin);
+  double dx = kAlpha * (xmax - xmin);
+  double dy = kAlpha * (ymax - ymin);
   head_ = new Point(xmax + dx, ymin - dy);
   tail_ = new Point(xmin - dx, ymin - dy);
 
@@ -164,12 +170,20 @@ void SweepContext::RemoveFromMap(Triangle* triangle)
 
 void SweepContext::MeshClean(Triangle& triangle)
 {
-  if (&triangle != NULL && !triangle.IsInterior()) {
-    triangle.IsInterior(true);
-    triangles_.push_back(&triangle);
-    for (int i = 0; i < 3; i++) {
-      if (!triangle.constrained_edge[i])
-        MeshClean(*triangle.GetNeighbor(i));
+  std::vector<Triangle *> triangles;
+  triangles.push_back(&triangle);
+
+  while(!triangles.empty()){
+	Triangle *t = triangles.back();
+	triangles.pop_back();
+
+    if (t != NULL && !t->IsInterior()) {
+      t->IsInterior(true);
+      triangles_.push_back(t);
+      for (int i = 0; i < 3; i++) {
+        if (!t->constrained_edge[i])
+          triangles.push_back(t->GetNeighbor(i));
+      }
     }
   }
 }

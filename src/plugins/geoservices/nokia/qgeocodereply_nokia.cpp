@@ -71,8 +71,10 @@ QGeoCodeReplyNokia::~QGeoCodeReplyNokia()
 
 void QGeoCodeReplyNokia::abort()
 {
-    if (!m_reply && !m_parsing)
+    if (!m_reply) {
+        m_parsing = false;
         return;
+    }
 
     m_reply->abort();
 

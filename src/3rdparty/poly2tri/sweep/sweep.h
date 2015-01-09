@@ -174,19 +174,19 @@ private:
   bool LargeHole_DontFill(Node* node);
   bool AngleExceeds90Degrees(Point* origin, Point* pa, Point* pb);
   bool AngleExceedsPlus90DegreesOrIsNegative(Point* origin, Point* pa, Point* pb);
-  float Angle(Point& origin, Point& pa, Point& pb);
+  double Angle(Point& origin, Point& pa, Point& pb);
 
   /**
    *
    * @param node - middle node
    * @return the angle between 3 front nodes
    */
-  float HoleAngle(Node& node);
+  double HoleAngle(Node& node);
 
   /**
    * The basin angle is decided against the horizontal line [1,0]
    */
-  float BasinAngle(Node& node);
+  double BasinAngle(Node& node);
 
   /**
    * Fills a basin that has formed on the Advancing Front to the right

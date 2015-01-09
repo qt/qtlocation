@@ -44,9 +44,9 @@
 
 namespace p2t {
 
-const float PI_3div4 = 3 * M_PI / 4;
-const float PI_div2 = 1.57079632679489661923;
-const float EPSILON = 1e-12;
+const double PI_3div4 = 3 * M_PI / 4;
+const double PI_div2 = 1.57079632679489661923;
+const double EPSILON = 1e-12;
 
 enum Orientation { CW, CCW, COLLINEAR };
 
@@ -62,9 +62,9 @@ enum Orientation { CW, CCW, COLLINEAR };
  */
 Orientation Orient2d(Point& pa, Point& pb, Point& pc)
 {
-  float detleft = (pa.x - pc.x) * (pb.y - pc.y);
-  float detright = (pa.y - pc.y) * (pb.x - pc.x);
-  float val = detleft - detright;
+  double detleft = (pa.x - pc.x) * (pb.y - pc.y);
+  double detright = (pa.y - pc.y) * (pb.x - pc.x);
+  double val = detleft - detright;
   if (val > -EPSILON && val < EPSILON) {
     return COLLINEAR;
   } else if (val > 0) {
@@ -76,27 +76,27 @@ Orientation Orient2d(Point& pa, Point& pb, Point& pc)
 /*
 bool InScanArea(Point& pa, Point& pb, Point& pc, Point& pd)
 {
-  float pdx = pd.x;
-  float pdy = pd.y;
-  float adx = pa.x - pdx;
-  float ady = pa.y - pdy;
-  float bdx = pb.x - pdx;
-  float bdy = pb.y - pdy;
+  double pdx = pd.x;
+  double pdy = pd.y;
+  double adx = pa.x - pdx;
+  double ady = pa.y - pdy;
+  double bdx = pb.x - pdx;
+  double bdy = pb.y - pdy;
 
-  float adxbdy = adx * bdy;
-  float bdxady = bdx * ady;
-  float oabd = adxbdy - bdxady;
+  double adxbdy = adx * bdy;
+  double bdxady = bdx * ady;
+  double oabd = adxbdy - bdxady;
 
   if (oabd <= EPSILON) {
     return false;
   }
 
-  float cdx = pc.x - pdx;
-  float cdy = pc.y - pdy;
+  double cdx = pc.x - pdx;
+  double cdy = pc.y - pdy;
 
-  float cdxady = cdx * ady;
-  float adxcdy = adx * cdy;
-  float ocad = cdxady - adxcdy;
+  double cdxady = cdx * ady;
+  double adxcdy = adx * cdy;
+  double ocad = cdxady - adxcdy;
 
   if (ocad <= EPSILON) {
     return false;
@@ -109,12 +109,12 @@ bool InScanArea(Point& pa, Point& pb, Point& pc, Point& pd)
 
 bool InScanArea(Point& pa, Point& pb, Point& pc, Point& pd)
 {
-  float oadb = (pa.x - pb.x)*(pd.y - pb.y) - (pd.x - pb.x)*(pa.y - pb.y);
+  double oadb = (pa.x - pb.x)*(pd.y - pb.y) - (pd.x - pb.x)*(pa.y - pb.y);
   if (oadb >= -EPSILON) {
     return false;
   }
 
-  float oadc = (pa.x - pc.x)*(pd.y - pc.y) - (pd.x - pc.x)*(pa.y - pc.y);
+  double oadc = (pa.x - pc.x)*(pd.y - pc.y) - (pd.x - pc.x)*(pa.y - pc.y);
   if (oadc <= EPSILON) {
     return false;
   }

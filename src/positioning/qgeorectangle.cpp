@@ -67,26 +67,6 @@ QT_BEGIN_NAMESPACE
     in the center of the geo rectangle.
 */
 
-#ifdef Q_NO_USING_KEYWORD
-/*!
-    \fn bool QGeoRectangle::operator==(const QGeoShape &other) const
-
-    Returns true if \a other is equivalent to this geo rectangle; otherwise returns false.
-*/
-
-/*!
-    \fn bool QGeoRectangle::operator!=(const QGeoShape &other) const
-
-    Returns true if \a other is not equivalent to this geo rectangle; otherwise returns false.
-*/
-
-/*!
-    \fn bool QGeoRectangle::contains(const QGeoCoordinate &coordinate) const
-
-    Returns true if \a coordinate is within this geo rectangle; otherwise returns false.
-*/
-#endif
-
 inline QGeoRectanglePrivate *QGeoRectangle::d_func()
 {
     return static_cast<QGeoRectanglePrivate *>(d_ptr.data());
