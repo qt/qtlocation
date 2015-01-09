@@ -60,7 +60,7 @@ void tst_QGeoRouteReply::cleanupTestCase()
 
 void tst_QGeoRouteReply::init()
 {
-    qRegisterMetaType<QGeoRouteReply::Error>("Error");
+    qRegisterMetaType<QGeoRouteReply::Error>();
     signalerror = new QSignalSpy(reply, SIGNAL(error(QGeoRouteReply::Error,QString)));
     signalfinished = new QSignalSpy(reply, SIGNAL(finished()));
 }

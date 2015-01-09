@@ -82,14 +82,14 @@ public:
             int major = 5;
             int minor = 0;
 
-            qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
+            qRegisterMetaType<QGeoCoordinate>();
             QMetaType::registerEqualsComparator<QGeoCoordinate>();
-            qRegisterMetaType<QGeoAddress>("QGeoAddress");
-            qRegisterMetaType<QGeoRectangle>("QGeoRectangle");
+            qRegisterMetaType<QGeoAddress>();
+            qRegisterMetaType<QGeoRectangle>();
             QMetaType::registerEqualsComparator<QGeoRectangle>();
-            qRegisterMetaType<QGeoCircle>("QGeoCircle");
+            qRegisterMetaType<QGeoCircle>();
             QMetaType::registerEqualsComparator<QGeoCircle>();
-            qRegisterMetaType<QGeoLocation>("QGeoLocation");
+            qRegisterMetaType<QGeoLocation>();
             qRegisterMetaType<QGeoShape>();
             QMetaType::registerEqualsComparator<QGeoShape>();
 

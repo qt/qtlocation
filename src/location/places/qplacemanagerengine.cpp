@@ -70,8 +70,8 @@ QPlaceManagerEngine::QPlaceManagerEngine(const QVariantMap &parameters,
                                          QObject *parent)
 :   QObject(parent), d_ptr(new QPlaceManagerEnginePrivate)
 {
-    qRegisterMetaType<QPlaceReply::Error>("QPlaceReply::Error");
-    qRegisterMetaType<QPlaceReply *>("QPlaceReply *");
+    qRegisterMetaType<QPlaceReply::Error>();
+    qRegisterMetaType<QPlaceReply *>();
     Q_UNUSED(parameters)
 }
 

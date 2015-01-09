@@ -154,14 +154,14 @@ public:
                                         QStringLiteral("MapType is not intended instantiable by developer."));
 
             //registrations below are version independent
-            qRegisterMetaType<QPlaceCategory>("QPlaceCategory");
-            qRegisterMetaType<QPlace>("QPlace");
-            qRegisterMetaType<QPlaceIcon>("QPlaceIcon");
-            qRegisterMetaType<QPlaceRatings>("QPlaceRatings");
-            qRegisterMetaType<QPlaceSupplier>("QPlaceSupplier");
-            qRegisterMetaType<QPlaceUser>("QPlaceUser");
-            qRegisterMetaType<QPlaceAttribute>("QPlaceAttribute");
-            qRegisterMetaType<QPlaceContactDetail>("QPlaceContactDetail");
+            qRegisterMetaType<QPlaceCategory>();
+            qRegisterMetaType<QPlace>();
+            qRegisterMetaType<QPlaceIcon>();
+            qRegisterMetaType<QPlaceRatings>();
+            qRegisterMetaType<QPlaceSupplier>();
+            qRegisterMetaType<QPlaceUser>();
+            qRegisterMetaType<QPlaceAttribute>();
+            qRegisterMetaType<QPlaceContactDetail>();
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

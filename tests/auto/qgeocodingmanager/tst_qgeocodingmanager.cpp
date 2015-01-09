@@ -55,7 +55,7 @@ void tst_QGeoCodingManager::cleanupTestCase()
 
 void tst_QGeoCodingManager::init()
 {
-    qRegisterMetaType<QGeoCodeReply::Error>("Error");
+    qRegisterMetaType<QGeoCodeReply::Error>();
     qRegisterMetaType<QGeoCodeReply*>();
 
     signalerror = new QSignalSpy(qgeocodingmanager, SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)));

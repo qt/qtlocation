@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<AppModel>("WeatherInfo", 1, 0, "AppModel");
 
 //! [0]
-    qRegisterMetaType<WeatherData>("WeatherData");
+    qRegisterMetaType<WeatherData>();
 //! [1]
     const QString mainQmlApp = QStringLiteral("qrc:///weatherinfo.qml");
     QQuickView view;

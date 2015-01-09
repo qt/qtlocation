@@ -138,7 +138,7 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
         d->setParent(this);
         d->d_ptr->manager = this;
 
-        qRegisterMetaType<QPlaceCategory>("QPlaceCategory");
+        qRegisterMetaType<QPlaceCategory>();
 
         connect(d, SIGNAL(finished(QPlaceReply*)), this, SIGNAL(finished(QPlaceReply*)));
         connect(d, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
