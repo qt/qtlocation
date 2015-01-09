@@ -710,6 +710,7 @@ void QDeclarativeGeoMapGestureArea::updateVelocityList(const QPointF &pos)
 // simplify the gestures by using a state-machine format (easy to move to a future state machine)
 void QDeclarativeGeoMapGestureArea::update()
 {
+    if (!map_) return;
     // First state machine is for the number of touch points
     touchPointStateMachine();
 
