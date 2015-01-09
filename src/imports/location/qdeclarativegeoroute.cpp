@@ -161,16 +161,14 @@ QJSValue QDeclarativeGeoRoute::path() const
 {
     QQmlContext *context = QQmlEngine::contextForObject(parent());
     QQmlEngine *engine = context->engine();
-    QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
-    QV4::ExecutionEngine *v4 = QV8Engine::getV4(v8Engine);
+    QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
 
     QV4::Scope scope(v4);
     QV4::Scoped<QV4::ArrayObject> pathArray(scope, v4->newArrayObject(route_.path().length()));
     for (int i = 0; i < route_.path().length(); ++i) {
         const QGeoCoordinate &c = route_.path().at(i);
 
-        QV4::ScopedValue cv(scope, QV8Engine::fromVariant(v4, QVariant::fromValue(c)));
-
+        QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(c)));
         pathArray->putIndexed(i, cv);
     }
 

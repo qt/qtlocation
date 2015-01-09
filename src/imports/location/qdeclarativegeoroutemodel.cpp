@@ -795,16 +795,14 @@ QJSValue QDeclarativeGeoRouteQuery::waypoints()
 {
     QQmlContext *context = QQmlEngine::contextForObject(parent());
     QQmlEngine *engine = context->engine();
-    QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
-    QV4::ExecutionEngine *v4 = QV8Engine::getV4(v8Engine);
+    QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
 
     QV4::Scope scope(v4);
     QV4::Scoped<QV4::ArrayObject> waypointArray(scope, v4->newArrayObject(request_.waypoints().length()));
     for (int i = 0; i < request_.waypoints().length(); ++i) {
         const QGeoCoordinate &c = request_.waypoints().at(i);
 
-        QV4::ScopedValue cv(scope, QV8Engine::fromVariant(v4, QVariant::fromValue(c)));
-
+        QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(c)));
         waypointArray->putIndexed(i, cv);
     }
 
@@ -853,16 +851,14 @@ QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
 {
     QQmlContext *context = QQmlEngine::contextForObject(parent());
     QQmlEngine *engine = context->engine();
-    QV8Engine *v8Engine = QQmlEnginePrivate::getV8Engine(engine);
-    QV4::ExecutionEngine *v4 = QV8Engine::getV4(v8Engine);
+    QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
 
     QV4::Scope scope(v4);
     QV4::Scoped<QV4::ArrayObject> excludedAreasArray(scope, v4->newArrayObject(request_.excludeAreas().length()));
     for (int i = 0; i < request_.excludeAreas().length(); ++i) {
         const QGeoRectangle &r = request_.excludeAreas().at(i);
 
-        QV4::ScopedValue cv(scope, QV8Engine::fromVariant(v4, QVariant::fromValue(r)));
-
+        QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(r)));
         excludedAreasArray->putIndexed(i, cv);
     }
 

@@ -37,7 +37,8 @@
 #include "qdeclarativegeomaneuver_p.h"
 
 #include <QtCore/QObject>
-#include <QtQml/private/qv8engine_p.h>
+#include <QtQml/private/qv4engine_p.h>
+#include <QtQml/qjsvalue.h>
 #include <QtLocation/QGeoRouteSegment>
 
 QT_BEGIN_NAMESPACE

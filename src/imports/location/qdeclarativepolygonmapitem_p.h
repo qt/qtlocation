@@ -38,7 +38,6 @@
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qgeomapitemgeometry_p.h"
 
-#include <QtQml/private/qv8engine_p.h>
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
