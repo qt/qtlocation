@@ -1029,8 +1029,8 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
     else
         zoomRatio = bboxHeight / height();
 
-    qreal newZoom = log10(zoomRatio) / log10(0.5);
-    newZoom = floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
+    qreal newZoom = std::log10(zoomRatio) / std::log10(0.5);
+    newZoom = std::floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
     setProperty("zoomLevel", QVariant::fromValue(newZoom));
 }
 
@@ -1130,8 +1130,8 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     else
         zoomRatio = bboxHeight / height();
 
-    qreal newZoom = log10(zoomRatio) / log10(0.5);
-    newZoom = floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
+    qreal newZoom = std::log10(zoomRatio) / std::log10(0.5);
+    newZoom = std::floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
     setProperty("zoomLevel", QVariant::fromValue(newZoom));
 
     // as map quick items retain the same screen size after the camera zooms in/out

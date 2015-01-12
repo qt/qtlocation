@@ -268,20 +268,20 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoo
     // pre-calculate
     qreal latRad = qgeocoordinate_degToRad(center.latitude());
     qreal lonRad = qgeocoordinate_degToRad(center.longitude());
-    qreal cosLatRad = cos(latRad);
-    qreal sinLatRad = sin(latRad);
+    qreal cosLatRad = std::cos(latRad);
+    qreal sinLatRad = std::sin(latRad);
     qreal ratio = (distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000.0));
-    qreal cosRatio = cos(ratio);
-    qreal sinRatio = sin(ratio);
+    qreal cosRatio = std::cos(ratio);
+    qreal sinRatio = std::sin(ratio);
     qreal sinLatRad_x_cosRatio = sinLatRad * cosRatio;
     qreal cosLatRad_x_sinRatio = cosLatRad * sinRatio;
 
     for (int i = 0; i < steps; ++i) {
         qreal azimuthRad = 2 * M_PI * i / steps;
-        qreal resultLatRad = asin(sinLatRad_x_cosRatio
-                                   + cosLatRad_x_sinRatio * cos(azimuthRad));
-        qreal resultLonRad = lonRad + atan2(sin(azimuthRad) * cosLatRad_x_sinRatio,
-                                       cosRatio - sinLatRad * sin(resultLatRad));
+        qreal resultLatRad = std::asin(sinLatRad_x_cosRatio
+                                   + cosLatRad_x_sinRatio * std::cos(azimuthRad));
+        qreal resultLonRad = lonRad + std::atan2(std::sin(azimuthRad) * cosLatRad_x_sinRatio,
+                                       cosRatio - sinLatRad * std::sin(resultLatRad));
         qreal lat2 = qgeocoordinate_radToDeg(resultLatRad);
         qreal lon2 = qgeocoordinate_radToDeg(resultLonRad);
         if (lon2 < -180.0) {
