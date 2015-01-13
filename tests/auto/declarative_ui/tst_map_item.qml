@@ -115,7 +115,7 @@ Item {
     Map {
         id: map;
         x: 20; y: 20; width: 200; height: 200
-        zoomLevel: 3
+        zoomLevel: 9
         center: mapDefaultCenter
         plugin: testPlugin;
 

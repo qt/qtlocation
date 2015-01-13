@@ -462,6 +462,10 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     map_ = mappingManager_->createMap(this);
     gestureArea_->setMap(map_);
 
+    // once mappingManagerInitilized_ is set zoomLevel() returns the default initialised
+    // zoom level of the map controller. Overwrite it here to whatever the user chose.
+    map_->mapController()->setZoom(zoomLevel_);
+
     //The zoom level limits are only restricted by the plugins values, if the user has set a more
     //strict zoom level limit before initialization nothing is done here.
     if (mappingManager_->cameraCapabilities().minimumZoomLevel() > gestureArea_->minimumZoomLevel())
@@ -493,7 +497,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             SLOT(mapZoomLevelChanged(qreal)));
 
     map_->mapController()->setCenter(center_);
-    map_->mapController()->setZoom(zoomLevel_);
 
     QList<QGeoMapType> types = mappingManager_->supportedMapTypes();
     for (int i = 0; i < types.size(); ++i) {

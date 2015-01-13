@@ -63,10 +63,18 @@ Item {
     property variant invalidCoordinate: QtPositioning.coordinate()
     property variant altitudelessCoordinate: QtPositioning.coordinate(50, 50)
 
+    Map { id: mapZoomOnCompleted; width: 200; height: 200;
+          zoomLevel: 3; center: coordinate1; plugin: testPlugin;
+          Component.onCompleted: { zoomLevel = 7 } }
+    Map { id: mapZoomDefault; width: 200; height: 200;
+          center: coordinate1; plugin: testPlugin; }
+    Map { id: mapZoomUserInit; width: 200; height: 200;
+          zoomLevel: 4; center: coordinate1; plugin: testPlugin; }
     Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
     Map {id: coordinateMap; plugin: nokiaPlugin; center: coordinate3; width: 1000; height: 1000; zoomLevel: 15}
 
     SignalSpy {id: mapCenterSpy; target: map; signalName: 'centerChanged'}
+    SignalSpy {id: mapZoomSpy; target: mapZoomOnCompleted; signalName: 'zoomLevelChanged'}
 
     TestCase {
         when: windowShown
@@ -146,6 +154,18 @@ Item {
             map.maximumZoomLevel = 20
             compare(map.minimumZoomLevel, 0)
             compare(map.maximumZoomLevel, 20)
+        }
+
+        function test_zoom() {
+            wait(100)
+            compare(mapZoomOnCompleted.zoomLevel, 7)
+            compare(mapZoomDefault.zoomLevel, 8)
+            compare(mapZoomUserInit.zoomLevel, 4)
+
+            mapZoomSpy.clear()
+            mapZoomOnCompleted.zoomLevel = 6
+            tryCompare(mapZoomSpy, "count", 1)
+
         }
 
         function test_pan() {
