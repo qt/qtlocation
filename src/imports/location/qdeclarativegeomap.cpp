@@ -219,7 +219,7 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
 */
 void QDeclarativeGeoMap::onMapChildrenChanged()
 {
-    if (!componentCompleted_)
+    if (!componentCompleted_ || !mappingManagerInitialized_)
         return;
 
     int maxChildZ = 0;
