@@ -88,7 +88,6 @@ public:
     int minTileY_;
     int maxTileX_;
     int maxTileY_;
-    int tileZ_;    // caches the zoom level for this tile set
     int tileXWrapsBelow_; // the wrap point as a tile index
 
     // cameraToGrid transform
@@ -210,7 +209,6 @@ QGeoMapScenePrivate::QGeoMapScenePrivate(QGeoMapScene *scene)
       minTileY_(-1),
       maxTileX_(-1),
       maxTileY_(-1),
-      tileZ_(0),
       tileXWrapsBelow_(0),
       mercatorCenterX_(0.0),
       mercatorCenterY_(0.0),
@@ -301,7 +299,7 @@ bool QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGGeometry::T
             || (maxTileX_ < x)
             || (spec.y() < minTileY_)
             || (maxTileY_ < spec.y())
-            || (spec.zoom() != tileZ_)) {
+            || (spec.zoom() != intZoomLevel_)) {
         return false;
     }
 
@@ -378,15 +376,12 @@ void QGeoMapScenePrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
         minTileY_ = -1;
         maxTileX_ = -1;
         maxTileY_ = -1;
-        tileZ_ = -1;
         return;
     }
 
     typedef QSet<QGeoTileSpec>::const_iterator iter;
     iter i = tiles.constBegin();
     iter end = tiles.constEnd();
-
-    tileZ_ = i->zoom();
 
     // determine whether the set of map tiles crosses the dateline.
     // A gap in the tiles indicates dateline crossing
@@ -396,6 +391,8 @@ void QGeoMapScenePrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
     bool hasMidRight = false;
 
     for (; i != end; ++i) {
+        if ((*i).zoom() != intZoomLevel_)
+            continue;
         int x = (*i).x();
         if (x == 0)
             hasFarLeft = true;
@@ -438,6 +435,9 @@ void QGeoMapScenePrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
 
     for (; i != end; ++i) {
         tile = *i;
+        if (tile.zoom() != intZoomLevel_)
+            continue;
+
         int x = tile.x();
         if (tile.x() < tileXWrapsBelow_)
             x += sideLength_;
