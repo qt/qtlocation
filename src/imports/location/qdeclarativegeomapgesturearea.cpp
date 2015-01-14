@@ -781,7 +781,7 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
 */
 void QDeclarativeGeoMapGestureArea::startOneTouchPoint()
 {
-    sceneStartPoint1_ = touchPoints_.at(0).scenePos();
+    sceneStartPoint1_ = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
     lastPos_ = sceneStartPoint1_;
     lastPosTime_.start();
     QGeoCoordinate startCoord = map_->screenPositionToCoordinate(QDoubleVector2D(sceneStartPoint1_), false);
@@ -797,7 +797,7 @@ void QDeclarativeGeoMapGestureArea::startOneTouchPoint()
 */
 void QDeclarativeGeoMapGestureArea::updateOneTouchPoint()
 {
-    sceneCenter_ = touchPoints_.at(0).scenePos();
+    sceneCenter_ = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
     updateVelocityList(sceneCenter_);
 }
 
@@ -807,8 +807,8 @@ void QDeclarativeGeoMapGestureArea::updateOneTouchPoint()
 */
 void QDeclarativeGeoMapGestureArea::startTwoTouchPoints()
 {
-    sceneStartPoint1_ = touchPoints_.at(0).scenePos();
-    sceneStartPoint2_ = touchPoints_.at(1).scenePos();
+    sceneStartPoint1_ = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
+    sceneStartPoint2_ = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
     QPointF startPos = (sceneStartPoint1_ + sceneStartPoint2_) * 0.5;
     lastPos_ = startPos;
     lastPosTime_.start();
@@ -824,8 +824,8 @@ void QDeclarativeGeoMapGestureArea::startTwoTouchPoints()
 */
 void QDeclarativeGeoMapGestureArea::updateTwoTouchPoints()
 {
-    QPointF p1 = touchPoints_.at(0).scenePos();
-    QPointF p2 = touchPoints_.at(1).scenePos();
+    QPointF p1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
+    QPointF p2 = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
     qreal dx = p1.x() - p2.x();
     qreal dy = p1.y() - p2.y();
     distanceBetweenTouchPoints_ = sqrt(dx * dx + dy * dy);
@@ -893,8 +893,8 @@ bool QDeclarativeGeoMapGestureArea::canStartPinch()
     const int startDragDistance = qApp->styleHints()->startDragDistance();
 
     if (touchPoints_.count() >= 2) {
-        QPointF p1 = touchPoints_.at(0).scenePos();
-        QPointF p2 = touchPoints_.at(1).scenePos();
+        QPointF p1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
+        QPointF p2 = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
         if (qAbs(p1.x()-sceneStartPoint1_.x()) > startDragDistance
          || qAbs(p1.y()-sceneStartPoint1_.y()) > startDragDistance
          || qAbs(p2.x()-sceneStartPoint2_.x()) > startDragDistance
@@ -921,8 +921,8 @@ void QDeclarativeGeoMapGestureArea::startPinch()
     pinch_.zoom.previous = 1.0;
     pinch_.lastAngle = twoTouchAngle_;
 
-    pinch_.lastPoint1 = touchPoints_.at(0).scenePos();
-    pinch_.lastPoint2 = touchPoints_.at(1).scenePos();
+    pinch_.lastPoint1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
+    pinch_.lastPoint2 = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
 
     pinch_.zoom.start = declarativeMap_->zoomLevel();
 }
@@ -951,8 +951,8 @@ void QDeclarativeGeoMapGestureArea::updatePinch()
     pinch_.event.setCenter(declarativeMap_->mapFromScene(sceneCenter_));
     pinch_.event.setAngle(twoTouchAngle_);
 
-    pinch_.lastPoint1 = touchPoints_.at(0).scenePos();
-    pinch_.lastPoint2 = touchPoints_.at(1).scenePos();
+    pinch_.lastPoint1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
+    pinch_.lastPoint2 = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
     pinch_.event.setPoint1(pinch_.lastPoint1);
     pinch_.event.setPoint2(pinch_.lastPoint2);
     pinch_.event.setPointCount(touchPoints_.count());
@@ -1050,7 +1050,7 @@ bool QDeclarativeGeoMapGestureArea::canStartPan()
     // Check if thresholds for normal panning are met.
     // (normal panning vs flicking: flicking will start from mouse release event).
     const int startDragDistance = qApp->styleHints()->startDragDistance();
-    QPointF p1 = touchPoints_.at(0).scenePos();
+    QPointF p1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
     int dyFromPress = int(p1.y() - sceneStartPoint1_.y());
     int dxFromPress = int(p1.x() - sceneStartPoint1_.x());
     if ((qAbs(dyFromPress) > startDragDistance || qAbs(dxFromPress) > startDragDistance))
