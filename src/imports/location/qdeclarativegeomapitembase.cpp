@@ -171,7 +171,7 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate &coordina
     if (!map_ || !quickMap_)
         return;
 
-    QPointF topLeft = map_->coordinateToScreenPosition(coordinate, false).toPointF() - offset;
+    QPointF topLeft = map_->coordinateToItemPosition(coordinate, false).toPointF() - offset;
 
     setPosition(topLeft);
 }

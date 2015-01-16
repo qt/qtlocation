@@ -89,8 +89,8 @@ public:
     QGeoCameraData cameraData() const;
     QGeoCameraCapabilities cameraCapabilities() const;
 
-    QGeoCoordinate screenPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const;
-    QDoubleVector2D coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
+    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const;
+    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
 
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;

@@ -120,14 +120,14 @@ QGeoCameraData QGeoMap::cameraData() const
     return mapData_->cameraData();
 }
 
-QGeoCoordinate QGeoMap::screenPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
+QGeoCoordinate QGeoMap::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
 {
-    return mapData_->screenPositionToCoordinate(pos, clipToViewport);
+    return mapData_->itemPositionToCoordinate(pos, clipToViewport);
 }
 
-QDoubleVector2D QGeoMap::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
+QDoubleVector2D QGeoMap::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
-    return mapData_->coordinateToScreenPosition(coordinate, clipToViewport);
+    return mapData_->coordinateToItemPosition(coordinate, clipToViewport);
 }
 
 void QGeoMap::update()

@@ -173,7 +173,7 @@ void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, con
         return;
     }
 
-    QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(QDoubleVector2D(x(), y()) + (scaleFactor() * QDoubleVector2D(anchorPoint_)), false);
+    QGeoCoordinate newCoordinate = map()->itemPositionToCoordinate(QDoubleVector2D(x(), y()) + (scaleFactor() * QDoubleVector2D(anchorPoint_)), false);
     if (newCoordinate.isValid())
         setCoordinate(newCoordinate);
 

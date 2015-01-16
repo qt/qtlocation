@@ -89,8 +89,8 @@ public:
     void changeMapVersion(int mapVersion);
     void resized(int width, int height);
 
-    QGeoCoordinate screenPositionToCoordinate(const QDoubleVector2D &pos) const;
-    QDoubleVector2D coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos) const;
+    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate) const;
 
     void newTileFetched(const QGeoTileSpec &spec);
     QSet<QGeoTileSpec> visibleTiles();

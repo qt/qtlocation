@@ -139,7 +139,7 @@ void QGeoTiledMapData::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles
     Q_UNUSED(visibleTiles);
 }
 
-QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
+QGeoCoordinate QGeoTiledMapData::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
 {
     Q_D(const QGeoTiledMapData);
     if (clipToViewport) {
@@ -150,13 +150,13 @@ QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QDoubleVector2
             return QGeoCoordinate();
     }
 
-    return d->screenPositionToCoordinate(pos);
+    return d->itemPositionToCoordinate(pos);
 }
 
-QDoubleVector2D QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
+QDoubleVector2D QGeoTiledMapData::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
     Q_D(const QGeoTiledMapData);
-    QDoubleVector2D pos = d->coordinateToScreenPosition(coordinate);
+    QDoubleVector2D pos = d->coordinateToItemPosition(coordinate);
 
     if (clipToViewport) {
         int w = width();
@@ -318,14 +318,14 @@ QSGNode *QGeoTiledMapDataPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindo
     return mapScene_->updateSceneGraph(oldNode, window);
 }
 
-QGeoCoordinate QGeoTiledMapDataPrivate::screenPositionToCoordinate(const QDoubleVector2D &pos) const
+QGeoCoordinate QGeoTiledMapDataPrivate::itemPositionToCoordinate(const QDoubleVector2D &pos) const
 {
-    return QGeoProjection::mercatorToCoord(mapScene_->screenPositionToMercator(pos));
+    return QGeoProjection::mercatorToCoord(mapScene_->itemPositionToMercator(pos));
 }
 
-QDoubleVector2D QGeoTiledMapDataPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+QDoubleVector2D QGeoTiledMapDataPrivate::coordinateToItemPosition(const QGeoCoordinate &coordinate) const
 {
-    return mapScene_->mercatorToScreenPosition(QGeoProjection::coordToMercator(coordinate));
+    return mapScene_->mercatorToItemPosition(QGeoProjection::coordToMercator(coordinate));
 }
 
 QT_END_NAMESPACE

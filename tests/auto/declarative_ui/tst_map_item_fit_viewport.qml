@@ -232,7 +232,7 @@ Item {
             // sanity check that the coordinate conversion works, as
             // rest of the case relies on it. for robustness cut
             // a little slack with fuzzy compare
-            var mapcenter = map.toScreenPosition(map.center)
+            var mapcenter = map.fromCoordinate(map.center)
             verify (fuzzy_compare(mapcenter.x, 100, 2))
             verify (fuzzy_compare(mapcenter.y, 100, 2))
 
@@ -474,7 +474,7 @@ Item {
             mapCircleBottomRight = itemBottomRight;
 
             itemTopLeft = preMapQuickItem.coordinate
-            var preMapQuickItemScreenPosition = map.toScreenPosition(preMapQuickItem.coordinate)
+            var preMapQuickItemScreenPosition = map.fromCoordinate(preMapQuickItem.coordinate)
             preMapQuickItemScreenPosition.x += preMapQuickItem.sourceItem.width
             preMapQuickItemScreenPosition.y += preMapQuickItem.sourceItem.height
             itemBottomRight = map.toCoordinate(preMapQuickItemScreenPosition)
@@ -497,14 +497,14 @@ Item {
 
         function min_max_bounds_from_list(coorindates){
             var i = 0
-            var point = map.toScreenPosition(coorindates[0])
+            var point = map.fromCoordinate(coorindates[0])
             var minX = point.x
             var minY = point.y
             var maxX = point.x
             var maxY = point.y
 
             for (i=1; i < coorindates.length; ++i) {
-                point = map.toScreenPosition(coorindates[i])
+                point = map.fromCoordinate(coorindates[i])
                 if (point.x < minX)
                     minX = point.x
                 if (point.x > maxX)
@@ -582,7 +582,7 @@ Item {
         }
 
         function is_coord_on_screen(coord) {
-            return is_point_on_screen(map.toScreenPosition(coord))
+            return is_point_on_screen(map.fromCoordinate(coord))
         }
 
         function is_point_on_screen(point) {

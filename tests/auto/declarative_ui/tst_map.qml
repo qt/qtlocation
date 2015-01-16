@@ -256,22 +256,22 @@ Item {
             compare(coordinateMap.center.latitude, 50)
             compare(coordinateMap.center.longitude, 50)
             // valid to screen position
-            var point = coordinateMap.toScreenPosition(coordinateMap.center)
+            var point = coordinateMap.fromCoordinate(coordinateMap.center)
             verify (point.x > 495 && point.x < 505)
             verify (point.y > 495 && point.y < 505)
             // valid coordinate without altitude
-            point = coordinateMap.toScreenPosition(altitudelessCoordinate)
+            point = coordinateMap.fromCoordinate(altitudelessCoordinate)
             verify (point.x > 495 && point.x < 505)
             verify (point.y > 495 && point.y < 505)
             // out of map area
-            point = coordinateMap.toScreenPosition(coordinate4)
+            point = coordinateMap.fromCoordinate(coordinate4)
             verify(isNaN(point.x))
             verify(isNaN(point.y))
             // invalid coordinates
-            point = coordinateMap.toScreenPosition(invalidCoordinate)
+            point = coordinateMap.fromCoordinate(invalidCoordinate)
             verify(isNaN(point.x))
             verify(isNaN(point.y))
-            point = coordinateMap.toScreenPosition(null)
+            point = coordinateMap.fromCoordinate(null)
             verify(isNaN(point.x))
             verify(isNaN(point.y))
             // valid point to coordinate

@@ -102,7 +102,7 @@ QT_BEGIN_NAMESPACE
     When the map is displayed, each possible geographic coordinate that is
     visible will map to some pixel X and Y coordinate on the screen. To perform
     conversions between these two, Map provides the \l toCoordinate and
-    \l toScreenPosition functions, which are of general utility.
+    \l fromCoordinate functions, which are of general utility.
 
     \section2 Map Objects
 
@@ -708,39 +708,45 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 }
 
 /*!
-    \qmlmethod QtLocation::Map::toCoordinate(QPointF screenPosition)
+    \qmlmethod QtLocation::Map::toCoordinate(QPointF position)
 
-    Returns the coordinate which corresponds to the screen position
-    \a screenPosition.
+    Returns the coordinate which corresponds to the \a position relative to the map item.
 
-    Returns an invalid coordinate if \a screenPosition is not within
-    the current viewport.
+    Returns an invalid coordinate if \a position is not within the current viewport.
 */
-
-QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) const
+QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &position) const
 {
     if (map_)
-        return map_->screenPositionToCoordinate(QDoubleVector2D(screenPosition));
+        return map_->itemPositionToCoordinate(QDoubleVector2D(position));
     else
         return QGeoCoordinate();
 }
 
 /*!
-\qmlmethod QtLocation::Map::toScreenPosition(coordinate coordinate)
+    \qmlmethod QtLocation::Map::fromCoordinate(coordinate coordinate)
 
-    Returns the screen position which corresponds to the coordinate
-    \a coordinate.
+    Returns the position relative to the map item which corresponds to the \a coordinate.
 
-    Returns an invalid QPointF if \a coordinate is not within the
-    current viewport.
+    Returns an invalid QPointF if \a coordinate is not within the current viewport.
 */
-
-QPointF QDeclarativeGeoMap::toScreenPosition(const QGeoCoordinate &coordinate) const
+QPointF QDeclarativeGeoMap::fromCoordinate(const QGeoCoordinate &coordinate) const
 {
     if (map_)
-        return map_->coordinateToScreenPosition(coordinate).toPointF();
+        return map_->coordinateToItemPosition(coordinate).toPointF();
     else
         return QPointF(qQNaN(), qQNaN());
+}
+
+/*!
+    \qmlmethod QtLocation::Map::toScreenPosition(coordinate coordinate)
+    \obsolete
+
+    This function is missed named and is equilavent to \l {fromCoordinate}, which should be used
+    instead.
+*/
+QPointF QDeclarativeGeoMap::toScreenPosition(const QGeoCoordinate &coordinate) const
+{
+    return fromCoordinate(coordinate);
 }
 
 /*!
@@ -1042,8 +1048,8 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
     case QGeoShape::RectangleType:
     {
         QGeoRectangle rect = shape;
-        QDoubleVector2D topLeftPoint = map_->coordinateToScreenPosition(rect.topLeft(), false);
-        QDoubleVector2D botRightPoint = map_->coordinateToScreenPosition(rect.bottomRight(), false);
+        QDoubleVector2D topLeftPoint = map_->coordinateToItemPosition(rect.topLeft(), false);
+        QDoubleVector2D botRightPoint = map_->coordinateToItemPosition(rect.bottomRight(), false);
         bboxWidth = qAbs(topLeftPoint.x() - botRightPoint.x());
         bboxHeight = qAbs(topLeftPoint.y() - botRightPoint.y());
         centerCoordinate = rect.center();
@@ -1054,8 +1060,8 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
         QGeoCircle circle = shape;
         centerCoordinate = circle.center();
         QGeoCoordinate edge = centerCoordinate.atDistanceAndAzimuth(circle.radius(), 90);
-        QDoubleVector2D centerPoint = map_->coordinateToScreenPosition(centerCoordinate, false);
-        QDoubleVector2D edgePoint = map_->coordinateToScreenPosition(edge, false);
+        QDoubleVector2D centerPoint = map_->coordinateToItemPosition(centerCoordinate, false);
+        QDoubleVector2D edgePoint = map_->coordinateToItemPosition(edge, false);
         bboxWidth = qAbs(centerPoint.x() - edgePoint.x()) * 2;
         bboxHeight = bboxWidth;
         break;
@@ -1171,7 +1177,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
 
     // position camera to the center of bounding box
     QGeoCoordinate coordinate;
-    coordinate = map_->screenPositionToCoordinate(QDoubleVector2D(bboxCenterX, bboxCenterY), false);
+    coordinate = map_->itemPositionToCoordinate(QDoubleVector2D(bboxCenterX, bboxCenterY), false);
     setProperty("center", QVariant::fromValue(coordinate));
 
     // adjust zoom

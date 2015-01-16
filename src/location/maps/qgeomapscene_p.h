@@ -85,8 +85,8 @@ public:
 
     void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
-    QDoubleVector2D screenPositionToMercator(const QDoubleVector2D &pos) const;
-    QDoubleVector2D mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
+    QDoubleVector2D itemPositionToMercator(const QDoubleVector2D &pos) const;
+    QDoubleVector2D mercatorToItemPosition(const QDoubleVector2D &mercator) const;
 
     QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 

@@ -128,8 +128,8 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
     if (!screenDirty_ && !sourceDirty_)
         return;
 
-    QDoubleVector2D tl = map.coordinateToScreenPosition(topLeft, false);
-    QDoubleVector2D br = map.coordinateToScreenPosition(bottomRight, false);
+    QDoubleVector2D tl = map.coordinateToItemPosition(topLeft, false);
+    QDoubleVector2D br = map.coordinateToItemPosition(bottomRight, false);
 
     // We can get NaN if the map isn't set up correctly, or the projection
     // is faulty -- probably best thing to do is abort
@@ -139,7 +139,7 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
         return;
 
     if ( preserveGeometry_ ) {
-        double unwrapBelowX = map.coordinateToScreenPosition(geoLeftBound_, false).x();
+        double unwrapBelowX = map.coordinateToItemPosition(geoLeftBound_, false).x();
         if (br.x() < unwrapBelowX)
             br.setX(tl.x() + screenBounds_.width());
     }
@@ -423,7 +423,7 @@ void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, co
     }
 
     QDoubleVector2D newTopLeftPoint = QDoubleVector2D(x(),y());
-    QGeoCoordinate newTopLeft = map()->screenPositionToCoordinate(newTopLeftPoint, false);
+    QGeoCoordinate newTopLeft = map()->itemPositionToCoordinate(newTopLeftPoint, false);
     if (newTopLeft.isValid()) {
         // calculate new geo width while checking for dateline crossing
         const double lonW = bottomRight_.longitude() > topLeft_.longitude() ?

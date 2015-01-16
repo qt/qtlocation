@@ -336,7 +336,7 @@ class tst_QGeoMapScene : public QObject
             mapGeometry.setVisibleTiles(ct.tiles());
 
             QDoubleVector2D point(screenX,screenY);
-            QDoubleVector2D mecartorPos = mapGeometry.screenPositionToMercator(point);
+            QDoubleVector2D mecartorPos = mapGeometry.itemPositionToMercator(point);
 
             QCOMPARE(mecartorPos.x(),mercatorX);
             QCOMPARE(mecartorPos.y(),mercatorY);
@@ -376,7 +376,7 @@ class tst_QGeoMapScene : public QObject
             mapGeometry.setVisibleTiles(ct.tiles());
 
             QDoubleVector2D mercatorPos(mercatorX, mercatorY);
-            QPointF point = mapGeometry.mercatorToScreenPosition(mercatorPos).toPointF();
+            QPointF point = mapGeometry.mercatorToItemPosition(mercatorPos).toPointF();
 
             QCOMPARE(point.x(), screenX);
             QCOMPARE(point.y(), screenY);

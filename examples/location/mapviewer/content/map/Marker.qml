@@ -85,8 +85,9 @@ MapQuickItem {
             onPressAndHold:{
                 if (Math.abs(map.pressX - mouse.x ) < map.jitterThreshold
                         && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
-                    lastX = map.toScreenPosition(marker.coordinate).x
-                    lastY = map.toScreenPosition(marker.coordinate).y
+                    var p = map.fromCoordinate(marker.coordinate)
+                    lastX = p.x
+                    lastY = p.y
                     map.markerPopup()
                 }
             }

@@ -308,7 +308,7 @@ Item {
         function test_aa_precondition() {
             wait(10)
             // sanity check that the coordinate conversion works
-            var mapcenter = map.toScreenPosition(map.center)
+            var mapcenter = map.fromCoordinate(map.center)
             verify (fuzzy_compare(mapcenter.x, 100, 2))
             verify (fuzzy_compare(mapcenter.y, 100, 2))
         }
@@ -319,7 +319,7 @@ Item {
             compare (extMapPolygon.border.width, 1.0)
             compare (extMapPolygonClicked.count, 0)
             map.center = extMapPolygon.path[1]
-            var point = map.toScreenPosition(extMapPolygon.path[1])
+            var point = map.fromCoordinate(extMapPolygon.path[1])
             map.addMapItem(extMapPolygon)
             verify(extMapPolygon.path.length == 2)
             mouseClick(map, point.x - 5, point.y)
@@ -352,7 +352,7 @@ Item {
             map.clearMapItems()
             clear_data()
             compare (extMapPolyline.line.width, 1.0)
-            var point = map.toScreenPosition(extMapPolyline.path[1])
+            var point = map.fromCoordinate(extMapPolyline.path[1])
             map.addMapItem(extMapPolyline0) // mustn't crash or ill-behave
             verify(extMapPolyline0.path.length == 0)
             map.addMapItem(extMapPolyline)
@@ -418,17 +418,17 @@ Item {
             map.addMapItem(extMapRectDateline)
             verify(extMapRectDateline.topLeft.longitude == 175)
             verify(extMapRectDateline.bottomRight.longitude == -175)
-            var point = map.toScreenPosition(extMapRectDateline.topLeft)
+            var point = map.fromCoordinate(extMapRectDateline.topLeft)
             verify(point.x < map.width / 2.0)
-            point = map.toScreenPosition(extMapRectDateline.bottomRight)
+            point = map.fromCoordinate(extMapRectDateline.bottomRight)
             verify(point.x > map.width / 2.0)
             // move item away from dataline by directly setting its coords
             extMapRectDateline.bottomRight.longitude = datelineCoordinateRight.longitude
-            point = map.toScreenPosition(extMapRectDateline.bottomRight)
+            point = map.fromCoordinate(extMapRectDateline.bottomRight)
             verify(point.x > map.width / 2.0)
             // move item edge onto dateline
             extMapRectDateline.topLeft.longitude = datelineCoordinate.longitude
-            point = map.toScreenPosition(extMapRectDateline.topLeft)
+            point = map.fromCoordinate(extMapRectDateline.topLeft)
             verify(point.x == map.width / 2.0)
             // drag item back onto dateline
             mousePress(map, point.x + 5, point.y + 5)
@@ -438,9 +438,9 @@ Item {
                 mouseMove(map, point.x + 5 - i, point.y + 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y + 5)
-            point = map.toScreenPosition(extMapRectDateline.topLeft)
+            point = map.fromCoordinate(extMapRectDateline.topLeft)
             verify(point.x < map.width / 2.0)
-            point = map.toScreenPosition(extMapRectDateline.bottomRight)
+            point = map.fromCoordinate(extMapRectDateline.bottomRight)
             verify(point.x > map.width / 2.0)
             map.removeMapItem(extMapRectDateline)
 
@@ -448,10 +448,10 @@ Item {
             map.addMapItem(extMapCircleDateline)
             verify(extMapCircleDateline.center.longitude === 180)
             map.center = datelineCoordinate
-            point = map.toScreenPosition(extMapCircleDateline.center)
+            point = map.fromCoordinate(extMapCircleDateline.center)
             verify(point.x == map.width / 2.0)
             extMapCircleDateline.center.longitude = datelineCoordinateRight.longitude
-            point = map.toScreenPosition(extMapCircleDateline.center)
+            point = map.fromCoordinate(extMapCircleDateline.center)
             verify(point.x > map.width / 2.0)
             mousePress(map, point.x, point.y)
             for (i=0; i < 40; i += 4) {
@@ -459,7 +459,7 @@ Item {
                 mouseMove(map, point.x - i, point.y)
             }
             mouseRelease(map, point.x - i, point.y)
-            point = map.toScreenPosition(extMapCircleDateline.center)
+            point = map.fromCoordinate(extMapCircleDateline.center)
             verify(point.x < map.width / 2.0)
             map.removeMapItem(extMapCircleDateline)
 
@@ -467,10 +467,10 @@ Item {
             map.addMapItem(extMapQuickItemDateline)
             map.center = datelineCoordinate
             verify(extMapQuickItemDateline.coordinate.longitude === 175)
-            point = map.toScreenPosition(extMapQuickItemDateline.coordinate)
+            point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x < map.width / 2.0)
             extMapQuickItemDateline.coordinate.longitude = datelineCoordinateRight.longitude
-            point = map.toScreenPosition(extMapQuickItemDateline.coordinate)
+            point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x > map.width / 2.0)
             mousePress(map, point.x + 5, point.y + 5)
             for (i=0; i < 50; i += 5) {
@@ -478,7 +478,7 @@ Item {
                 mouseMove(map, point.x + 5 - i, point.y + 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y + 5)
-            point = map.toScreenPosition(extMapQuickItemDateline.coordinate)
+            point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x < map.width / 2.0)
             map.removeMapItem(extMapQuickItemDateline)
 
@@ -489,29 +489,29 @@ Item {
             verify(extMapPolygonDateline.path[1].longitude == -175)
             verify(extMapPolygonDateline.path[2].longitude == -175)
             verify(extMapPolygonDateline.path[3].longitude == 175)
-            point = map.toScreenPosition(extMapPolygonDateline.path[0])
+            point = map.fromCoordinate(extMapPolygonDateline.path[0])
             verify(point.x < map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonDateline.path[1])
+            point = map.fromCoordinate(extMapPolygonDateline.path[1])
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonDateline.path[2])
+            point = map.fromCoordinate(extMapPolygonDateline.path[2])
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonDateline.path[3])
+            point = map.fromCoordinate(extMapPolygonDateline.path[3])
             verify(point.x < map.width / 2.0)
             extMapPolygonDateline.path[1].longitude = datelineCoordinateRight.longitude
-            point = map.toScreenPosition(extMapPolygonDateline.path[1])
+            point = map.fromCoordinate(extMapPolygonDateline.path[1])
             verify(point.x > map.width / 2.0)
             extMapPolygonDateline.path[2].longitude = datelineCoordinateRight.longitude
-            point = map.toScreenPosition(extMapPolygonDateline.path[2])
+            point = map.fromCoordinate(extMapPolygonDateline.path[2])
             verify(point.x > map.width / 2.0)
             var path = extMapPolygonDateline.path;
             path[0].longitude = datelineCoordinate.longitude;
             extMapPolygonDateline.path = path;
-            point = map.toScreenPosition(extMapPolygonDateline.path[0])
+            point = map.fromCoordinate(extMapPolygonDateline.path[0])
             verify(point.x == map.width / 2.0)
             path = extMapPolygonDateline.path;
             path[3].longitude = datelineCoordinate.longitude;
             extMapPolygonDateline.path = path;
-            point = map.toScreenPosition(extMapPolygonDateline.path[3])
+            point = map.fromCoordinate(extMapPolygonDateline.path[3])
             verify(point.x == map.width / 2.0)
             mousePress(map, point.x + 5, point.y - 5)
             for (i=0; i < 16; i += 2) {
@@ -519,13 +519,13 @@ Item {
                 mouseMove(map, point.x + 5 - i, point.y - 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y - 5)
-            point = map.toScreenPosition(extMapPolygonDateline.path[0])
+            point = map.fromCoordinate(extMapPolygonDateline.path[0])
             verify(point.x < map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonDateline.path[1])
+            point = map.fromCoordinate(extMapPolygonDateline.path[1])
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonDateline.path[2])
+            point = map.fromCoordinate(extMapPolygonDateline.path[2])
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonDateline.path[3])
+            point = map.fromCoordinate(extMapPolygonDateline.path[3])
             verify(point.x < map.width / 2.0)
             map.removeMapItem(extMapPolygonDateline)
 
@@ -534,17 +534,17 @@ Item {
             map.center = datelineCoordinate
             verify(extMapPolylineDateline.path[0].longitude == 175)
             verify(extMapPolylineDateline.path[1].longitude == -175)
-            point = map.toScreenPosition(extMapPolylineDateline.path[0])
+            point = map.fromCoordinate(extMapPolylineDateline.path[0])
             verify(point.x < map.width / 2.0)
-            point = map.toScreenPosition(extMapPolylineDateline.path[1])
+            point = map.fromCoordinate(extMapPolylineDateline.path[1])
             verify(point.x > map.width / 2.0)
             extMapPolylineDateline.path[1].longitude = datelineCoordinateRight.longitude
-            point = map.toScreenPosition(extMapPolylineDateline.path[1])
+            point = map.fromCoordinate(extMapPolylineDateline.path[1])
             verify(point.x > map.width / 2.0)
             var path = extMapPolygonDateline.path;
             path[0].longitude = datelineCoordinate.longitude;
             extMapPolylineDateline.path = path;
-            point = map.toScreenPosition(extMapPolylineDateline.path[0])
+            point = map.fromCoordinate(extMapPolylineDateline.path[0])
             verify(point.x == map.width / 2.0)
             map.removeMapItem(extMapPolylineDateline)
 
@@ -553,9 +553,9 @@ Item {
             map.addMapItem(extMapRouteDateline)
             verify(extMapRouteDateline.route.path[0].longitude == 175)
             verify(extMapRouteDateline.route.path[1].longitude == -175)
-            point = map.toScreenPosition(extMapRouteDateline.route.path[0])
+            point = map.fromCoordinate(extMapRouteDateline.route.path[0])
             verify(point.x < map.width / 2.0)
-            point = map.toScreenPosition(extMapRouteDateline.route.path[1])
+            point = map.fromCoordinate(extMapRouteDateline.route.path[1])
             verify(point.x > map.width / 2.0)
             map.removeMapItem(extMapRouteDateline)
         }
@@ -599,16 +599,16 @@ Item {
             map.addMapItem(extMapRectEdge)
             verify(extMapRectEdge.topLeft.longitude == -15)
             verify(extMapRectEdge.bottomRight.longitude == -5)
-            var point = map.toScreenPosition(extMapRectEdge.topLeft)
+            var point = map.fromCoordinate(extMapRectEdge.topLeft)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapRectEdge.bottomRight)
+            point = map.fromCoordinate(extMapRectEdge.bottomRight)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
             var originalWidth = extMapRectEdge.width;
             verify(originalWidth < map.width / 2.0)
             // drag item onto map border
-            point = map.toScreenPosition(extMapRectEdge.topLeft)
+            point = map.fromCoordinate(extMapRectEdge.topLeft)
             mousePress(map, point.x + 5, point.y + 5)
             var i
             for (i=0; i < 20; i += 2) {
@@ -620,7 +620,7 @@ Item {
             // out of the map border, but in the future culling may take place
             // so tests for points outside the map border are ignored,
             // instead we check the item width
-            point = map.toScreenPosition(extMapRectEdge.topLeft)
+            point = map.fromCoordinate(extMapRectEdge.topLeft)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
             compare(extMapRectEdge.width, originalWidth)
@@ -630,19 +630,19 @@ Item {
             map.addMapItem(extMapCircleEdge)
             map.center = datelineCoordinate
             verify(extMapCircleEdge.center.longitude == -15)
-            var point = map.toScreenPosition(extMapCircleEdge.center)
+            var point = map.fromCoordinate(extMapCircleEdge.center)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
             originalWidth = extMapCircleEdge.width;
             verify(originalWidth < map.width / 2.0)
-            point = map.toScreenPosition(extMapCircleEdge.center)
+            point = map.fromCoordinate(extMapCircleEdge.center)
             mousePress(map, point.x, point.y)
             for (i=0; i < 20; i += 2) {
                 wait(1)
                 mouseMove(map, point.x + i, point.y)
             }
             mouseRelease(map, point.x + i, point.y)
-            point = map.toScreenPosition(extMapCircleEdge.center)
+            point = map.fromCoordinate(extMapCircleEdge.center)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
             fuzzy_compare(extMapCircleEdge.width, originalWidth)
@@ -652,7 +652,7 @@ Item {
             map.addMapItem(extMapQuickItemEdge)
             map.center = datelineCoordinate
             verify(extMapQuickItemEdge.coordinate.longitude == -15)
-            point = map.toScreenPosition(extMapQuickItemEdge.coordinate)
+            point = map.fromCoordinate(extMapQuickItemEdge.coordinate)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
             originalWidth = extMapQuickItemEdge.width;
@@ -663,7 +663,7 @@ Item {
                 mouseMove(map, point.x + 5 + i, point.y + 5)
             }
             mouseRelease(map, point.x + 5 + i, point.y + 5)
-            point = map.toScreenPosition(extMapQuickItemEdge.coordinate)
+            point = map.fromCoordinate(extMapQuickItemEdge.coordinate)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
             compare(extMapQuickItemEdge.width, originalWidth)
@@ -676,16 +676,16 @@ Item {
             verify(extMapPolygonEdge.path[1].longitude == -5)
             verify(extMapPolygonEdge.path[2].longitude == -5)
             verify(extMapPolygonEdge.path[3].longitude == -15)
-            point = map.toScreenPosition(extMapPolygonEdge.path[0])
+            point = map.fromCoordinate(extMapPolygonEdge.path[0])
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonEdge.path[1])
+            point = map.fromCoordinate(extMapPolygonEdge.path[1])
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonEdge.path[2])
+            point = map.fromCoordinate(extMapPolygonEdge.path[2])
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonEdge.path[3])
+            point = map.fromCoordinate(extMapPolygonEdge.path[3])
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
             originalWidth = extMapPolygonEdge.width;
@@ -696,10 +696,10 @@ Item {
                 mouseMove(map, point.x + 5 + i, point.y - 5)
             }
             mouseRelease(map, point.x + 5 + i, point.y - 5)
-            point = map.toScreenPosition(extMapPolygonEdge.path[0])
+            point = map.fromCoordinate(extMapPolygonEdge.path[0])
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
-            point = map.toScreenPosition(extMapPolygonEdge.path[3])
+            point = map.fromCoordinate(extMapPolygonEdge.path[3])
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
             compare(extMapPolygonEdge.width, originalWidth)
