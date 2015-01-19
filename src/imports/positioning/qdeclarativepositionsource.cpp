@@ -240,6 +240,8 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
                 localFileName.remove(0, 7);
             } else if (localFileName.startsWith("file:///")) {
                 localFileName.remove(0, 7);
+            } else if (localFileName.startsWith("qrc:/")) {
+                localFileName.remove(0, 5);
             }
             if (!QFile::exists(localFileName) && localFileName.startsWith("/")) {
                 localFileName.remove(0,1);
