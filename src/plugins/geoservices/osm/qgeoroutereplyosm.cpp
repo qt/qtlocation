@@ -274,7 +274,7 @@ static QGeoRoute constructRoute(const QByteArray &geometry, const QJsonArray &in
     for (int i = instructions.count() - 1; i >= 0; --i) {
         QJsonArray instruction = instructions.at(i).toArray();
 
-        if (instruction.count() != 8) {
+        if (instruction.count() < 8) {
             qWarning("Instruction does not contain enough fields.");
             continue;
         }
