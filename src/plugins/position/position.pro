@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-config_geoclue:SUBDIRS += geoclue
+qtHaveModule(dbus):SUBDIRS += geoclue
 config_gypsy:SUBDIRS += gypsy
 qtHaveModule(simulator):SUBDIRS += simulator
 ios:SUBDIRS += corelocation

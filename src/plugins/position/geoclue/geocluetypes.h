@@ -1,11 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Jolla Ltd.
-** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
 ** Commercial License Usage
@@ -33,16 +31,57 @@
 **
 ****************************************************************************/
 
-#include <geoclue/geoclue-position.h>
-#include <geoclue/geoclue-velocity.h>
+#ifndef GEOCLUETYPES_H
+#define GEOCLUETYPES_H
 
-int main()
+#include <QtDBus/QDBusArgument>
+#include <QtPositioning/QGeoSatelliteInfo>
+
+class Accuracy
 {
-    GType type = geoclue_position_get_type();
-    GeocluePosition position;
+public:
+    enum Level {
+        None = 0,
+        Country,
+        Region,
+        Locality,
+        PostalCode,
+        Street,
+        Detailed
+    };
 
-    type = geoclue_velocity_get_type();
-    GeoclueVelocity velocity;
+    Accuracy()
+    :   m_level(None), m_horizontal(0), m_vertical(0)
+    {
+    }
 
-    return 0;
-}
+    inline Level level() const { return m_level; }
+    inline double horizontal() const { return m_horizontal; }
+    inline double vertical() const { return m_vertical; }
+
+private:
+    Level m_level;
+    double m_horizontal;
+    double m_vertical;
+
+    friend const QDBusArgument &dbus_argument_helper(const QDBusArgument &arg, Accuracy &accuracy);
+};
+
+Q_DECLARE_METATYPE(Accuracy)
+Q_DECLARE_METATYPE(QList<QGeoSatelliteInfo>)
+
+
+QT_BEGIN_NAMESPACE
+
+Q_DECLARE_TYPEINFO(Accuracy, Q_MOVABLE_TYPE);
+
+QDBusArgument &operator<<(QDBusArgument &arg, const Accuracy &accuracy);
+const QDBusArgument &operator>>(const QDBusArgument &arg, Accuracy &accuracy);
+
+const QDBusArgument &operator>>(const QDBusArgument &arg, QGeoSatelliteInfo &si);
+const QDBusArgument &operator>>(const QDBusArgument &arg, QList<QGeoSatelliteInfo> &sis);
+
+QT_END_NAMESPACE
+
+#endif // GEOCLUETYPES_H
+

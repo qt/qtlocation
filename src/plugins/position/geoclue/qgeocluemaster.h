@@ -34,28 +34,50 @@
 #ifndef QGEOCLUEMASTER_H
 #define QGEOCLUEMASTER_H
 
+#include "geocluetypes.h"
+
 #include <QtCore/QObject>
 
-#include <geoclue/geoclue-master.h>
+class OrgFreedesktopGeoclueMasterInterface;
+class OrgFreedesktopGeoclueInterface;
+class OrgFreedesktopGeoclueMasterClientInterface;
 
 QT_BEGIN_NAMESPACE
 
-class QGeoclueMaster
+class QGeoclueMaster : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoclueMaster(QObject *handler);
-    virtual ~QGeoclueMaster();
+    QGeoclueMaster(QObject *parent = 0);
+    ~QGeoclueMaster();
+
+    enum ResourceFlag
+    {
+        ResourceNone = 0,
+        ResourceNetwork = 1 << 0,
+        ResourceCell = 1 << 1,
+        ResourceGps = 1 << 2,
+        ResourceAll = (1 << 10) - 1
+    };
+
+    Q_DECLARE_FLAGS(ResourceFlags, ResourceFlag)
 
     bool hasMasterClient() const;
-    bool createMasterClient(GeoclueAccuracyLevel accuracy, GeoclueResourceFlags resourceFlags);
+    bool createMasterClient(Accuracy::Level accuracyLevel, ResourceFlags resourceFlags);
     void releaseMasterClient();
 
-private:
-    GeoclueMasterClient *m_client;
-    GeocluePosition *m_masterPosition;
+signals:
+    void positionProviderChanged(const QString &name, const QString &description,
+                                 const QString &service, const QString &path);
 
-    QObject *m_handler;
+private:
+    OrgFreedesktopGeoclueMasterInterface *m_master;
+    OrgFreedesktopGeoclueInterface *m_provider;
+    OrgFreedesktopGeoclueMasterClientInterface *m_client;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoclueMaster::ResourceFlags)
 
 QT_END_NAMESPACE
 
