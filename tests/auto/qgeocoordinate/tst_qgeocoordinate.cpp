@@ -879,10 +879,11 @@ private slots:
     void debug()
     {
         QFETCH(QGeoCoordinate, c);
+        QFETCH(int, nextValue);
         QFETCH(QByteArray, debugString);
 
         qInstallMessageHandler(tst_qgeocoordinate_messageHandler);
-        qDebug() << c;
+        qDebug() << c << nextValue;
         qInstallMessageHandler(0);
         QCOMPARE(tst_qgeocoordinate_debug, debugString);
     }
@@ -890,17 +891,19 @@ private slots:
     void debug_data()
     {
         QTest::addColumn<QGeoCoordinate>("c");
+        QTest::addColumn<int>("nextValue");
         QTest::addColumn<QByteArray>("debugString");
 
-        QTest::newRow("uninitialized") << QGeoCoordinate()
-                << QByteArray("QGeoCoordinate(?, ?)");
-        QTest::newRow("initialized without altitude") << BRISBANE
-                << (QString("QGeoCoordinate(%1, %2)").arg(BRISBANE.latitude())
+
+        QTest::newRow("uninitialized") << QGeoCoordinate() << 45
+                << QByteArray("QGeoCoordinate(?, ?) 45");
+        QTest::newRow("initialized without altitude") << BRISBANE << 45
+                << (QString("QGeoCoordinate(%1, %2) 45").arg(BRISBANE.latitude())
                         .arg(BRISBANE.longitude())).toLatin1();
-        QTest::newRow("invalid initialization") << QGeoCoordinate(-100,-200)
-                << QByteArray("QGeoCoordinate(?, ?)");
-        QTest::newRow("initialized with altitude") << QGeoCoordinate(1,2,3)
-                << QByteArray("QGeoCoordinate(1, 2, 3)");
+        QTest::newRow("invalid initialization") << QGeoCoordinate(-100,-200) << 45
+                << QByteArray("QGeoCoordinate(?, ?) 45");
+        QTest::newRow("initialized with altitude") << QGeoCoordinate(1,2,3) << 45
+                << QByteArray("QGeoCoordinate(1, 2, 3) 45");
     }
 };
 

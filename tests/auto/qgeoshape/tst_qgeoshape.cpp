@@ -33,6 +33,23 @@
 
 #include <QtTest/QtTest>
 #include <QtPositioning/QGeoShape>
+#include <QtCore/QDebug>
+#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoCircle>
+
+QString tst_qgeoshape_debug;
+
+void tst_qgeoshape_messageHandler(QtMsgType type, const QMessageLogContext&,
+                                  const QString &msg)
+{
+    switch (type) {
+        case QtDebugMsg :
+            tst_qgeoshape_debug = msg;
+            break;
+        default:
+            break;
+    }
+}
 
 class tst_qgeoshape : public QObject
 {
@@ -40,6 +57,8 @@ class tst_qgeoshape : public QObject
 
 private slots:
     void testArea();
+    void debug_data();
+    void debug();
 };
 
 void tst_qgeoshape::testArea()
@@ -63,6 +82,33 @@ void tst_qgeoshape::testArea()
     QGeoShape area3(area2);
 
     QCOMPARE(area2, area3);
+}
+
+void tst_qgeoshape::debug_data()
+{
+    QTest::addColumn<QGeoShape>("shape");
+    QTest::addColumn<int>("nextValue");
+    QTest::addColumn<QString>("debugString");
+
+    QTest::newRow("uninitialized") << QGeoShape() << 45
+            << QString("QGeoShape(Unknown) 45");
+    QTest::newRow("uninitialized") << QGeoShape(QGeoRectangle()) << 45
+            << QString("QGeoShape(Rectangle) 45");
+    QTest::newRow("uninitialized") << QGeoShape(QGeoCircle()) << 45
+            << QString("QGeoShape(Circle) 45");
+}
+
+
+void tst_qgeoshape::debug()
+{
+    QFETCH(QGeoShape, shape);
+    QFETCH(int, nextValue);
+    QFETCH(QString, debugString);
+
+    qInstallMessageHandler(tst_qgeoshape_messageHandler);
+    qDebug() << shape << nextValue;
+    qInstallMessageHandler(0);
+    QCOMPARE(tst_qgeoshape_debug, debugString);
 }
 
 QTEST_MAIN(tst_qgeoshape)

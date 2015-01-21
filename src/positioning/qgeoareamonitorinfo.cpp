@@ -360,11 +360,12 @@ QDataStream &operator>>(QDataStream &ds, QGeoAreaMonitorInfo &monitor)
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QGeoAreaMonitorInfo &monitor)
 {
+    QDebugStateSaver saver(dbg);
     dbg.nospace() << "QGeoAreaMonitorInfo(\"" << qPrintable(monitor.name())
                   << "\", " << monitor.area()
                   << ", persistent: " << monitor.isPersistent()
                   << ", expiry: " << monitor.expiration() << ")";
-    return dbg.space();
+    return dbg;
 }
 
 #endif

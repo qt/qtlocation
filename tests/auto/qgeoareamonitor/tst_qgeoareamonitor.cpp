@@ -60,6 +60,21 @@ QT_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoPositionInfo)
 Q_DECLARE_METATYPE(QGeoAreaMonitorInfo)
 
+QString tst_qgeoareamonitorinfo_debug;
+
+void tst_qgeoareamonitorinfo_messageHandler(QtMsgType type,
+                                            const QMessageLogContext &,
+                                            const QString &msg)
+{
+    switch (type) {
+        case QtDebugMsg :
+            tst_qgeoareamonitorinfo_debug = msg;
+            break;
+        default:
+            break;
+    }
+}
+
 class tst_QGeoAreaMonitorSource : public QObject
 {
     Q_OBJECT
@@ -692,6 +707,51 @@ private slots:
 
         //obj was deleted when setting new source
         delete obj2;
+    }
+
+    void debug_data()
+    {
+        QTest::addColumn<QGeoAreaMonitorInfo>("info");
+        QTest::addColumn<int>("nextValue");
+        QTest::addColumn<QString>("debugString");
+
+        QGeoAreaMonitorInfo info;
+        QTest::newRow("uninitialized") << info << 45
+                << QString("QGeoAreaMonitorInfo(\"\", QGeoShape(Unknown), "
+                              "persistent: false, expiry: QDateTime(\" Qt::LocalTime\") ) 45");
+
+        info.setArea(QGeoRectangle());
+        info.setPersistent(true);
+        info.setName("RectangleAreaMonitor");
+        QTest::newRow("Rectangle Test") << info  << 45
+                << QString("QGeoAreaMonitorInfo(\"RectangleAreaMonitor\", QGeoShape(Rectangle), "
+                              "persistent: true, expiry: QDateTime(\" Qt::LocalTime\") ) 45");
+
+        info = QGeoAreaMonitorInfo();
+        info.setArea(QGeoCircle());
+        info.setPersistent(false);
+        info.setName("CircleAreaMonitor");
+        QVariantMap map;
+        map.insert(QString("foobarKey"), QVariant(45)); //should be ignored
+        info.setNotificationParameters(map);
+        QTest::newRow("Circle Test") << info  << 45
+                << QString("QGeoAreaMonitorInfo(\"CircleAreaMonitor\", QGeoShape(Circle), "
+                              "persistent: false, expiry: QDateTime(\" Qt::LocalTime\") ) 45");
+
+        // we ignore any further QDateTime related changes to avoid depending on QDateTime related
+        // failures in case its QDebug string changes
+    }
+
+    void debug()
+    {
+        QFETCH(QGeoAreaMonitorInfo, info);
+        QFETCH(int, nextValue);
+        QFETCH(QString, debugString);
+
+        qInstallMessageHandler(tst_qgeoareamonitorinfo_messageHandler);
+        qDebug() << info << nextValue;
+        qInstallMessageHandler(0);
+        QCOMPARE(tst_qgeoareamonitorinfo_debug, debugString);
     }
 };
 

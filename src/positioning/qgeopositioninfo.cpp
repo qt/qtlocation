@@ -249,37 +249,38 @@ bool QGeoPositionInfo::hasAttribute(Attribute attribute) const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
 {
+    QDebugStateSaver saver(dbg);
     dbg.nospace() << "QGeoPositionInfo(" << info.d->timestamp;
-    dbg.nospace() << ", ";
-    dbg.nospace() << info.d->coord;
+    dbg.nospace() << ", "; // timestamp force dbg.space() -> reverting here
+    dbg << info.d->coord;
 
     QList<QGeoPositionInfo::Attribute> attribs = info.d->doubleAttribs.keys();
     std::stable_sort(attribs.begin(), attribs.end()); // Output a sorted list from an unsorted hash.
     for (int i = 0; i < attribs.count(); ++i) {
-        dbg.nospace() << ", ";
+        dbg << ", ";
         switch (attribs[i]) {
             case QGeoPositionInfo::Direction:
-                dbg.nospace() << "Direction=";
+                dbg << "Direction=";
                 break;
             case QGeoPositionInfo::GroundSpeed:
-                dbg.nospace() << "GroundSpeed=";
+                dbg << "GroundSpeed=";
                 break;
             case QGeoPositionInfo::VerticalSpeed:
-                dbg.nospace() << "VerticalSpeed=";
+                dbg << "VerticalSpeed=";
                 break;
             case QGeoPositionInfo::MagneticVariation:
-                dbg.nospace() << "MagneticVariation=";
+                dbg << "MagneticVariation=";
                 break;
             case QGeoPositionInfo::HorizontalAccuracy:
-                dbg.nospace() << "HorizontalAccuracy=";
+                dbg << "HorizontalAccuracy=";
                 break;
             case QGeoPositionInfo::VerticalAccuracy:
-                dbg.nospace() << "VerticalAccuracy=";
+                dbg << "VerticalAccuracy=";
                 break;
         }
-        dbg.nospace() << info.d->doubleAttribs[attribs[i]];
+        dbg << info.d->doubleAttribs[attribs[i]];
     }
-    dbg.nospace() << ')';
+    dbg << ')';
     return dbg;
 }
 #endif

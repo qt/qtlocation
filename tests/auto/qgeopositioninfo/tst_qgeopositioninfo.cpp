@@ -347,10 +347,11 @@ private slots:
     void debug()
     {
         QFETCH(QGeoPositionInfo, info);
+        QFETCH(int, nextValue);
         QFETCH(QByteArray, debugStringEnd);
 
         qInstallMessageHandler(tst_qgeopositioninfo_messageHandler);
-        qDebug() << info;
+        qDebug() << info << nextValue;
         qInstallMessageHandler(0);
 
         // use endsWith() so we don't depend on QDateTime's debug() implementation
@@ -363,14 +364,15 @@ private slots:
     void debug_data()
     {
         QTest::addColumn<QGeoPositionInfo>("info");
+        QTest::addColumn<int>("nextValue");
         QTest::addColumn<QByteArray>("debugStringEnd");
 
-        QTest::newRow("no values") << QGeoPositionInfo()
-                << QString("QGeoCoordinate(?, ?))").toLatin1();
+        QTest::newRow("no values") << QGeoPositionInfo() << 40
+                << QString("QGeoCoordinate(?, ?)) 40").toLatin1();
 
         QGeoCoordinate coord(1, 1);
         QTest::newRow("coord, time") << QGeoPositionInfo(coord, QDateTime::currentDateTime())
-                << QByteArray("QGeoCoordinate(1, 1))");
+                << 40 << QByteArray("QGeoCoordinate(1, 1)) 40");
 
         QGeoPositionInfo info;
         info.setAttribute(QGeoPositionInfo::Direction, 1.1);
@@ -379,8 +381,8 @@ private slots:
         info.setAttribute(QGeoPositionInfo::MagneticVariation, 4.1);
         info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, 5.1);
         info.setAttribute(QGeoPositionInfo::VerticalAccuracy, 6.1);
-        QTest::newRow("all attributes") << info
-                << QByteArray("QGeoCoordinate(?, ?), Direction=1.1, GroundSpeed=2.1, VerticalSpeed=3.1, MagneticVariation=4.1, HorizontalAccuracy=5.1, VerticalAccuracy=6.1)");
+        QTest::newRow("all attributes") << info << 40
+                << QByteArray("QGeoCoordinate(?, ?), Direction=1.1, GroundSpeed=2.1, VerticalSpeed=3.1, MagneticVariation=4.1, HorizontalAccuracy=5.1, VerticalAccuracy=6.1) 40");
     }
 };
 

@@ -257,20 +257,20 @@ QString QGeoShape::toString() const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QGeoShape &shape)
 {
-    //dbg << *shape.d_func();
+    QDebugStateSaver saver(dbg);
     dbg.nospace() << "QGeoShape(";
     switch (shape.type()) {
     case QGeoShape::UnknownType:
-        dbg.nospace() << "Unknown";
+        dbg << "Unknown";
         break;
     case QGeoShape::RectangleType:
-        dbg.nospace() << "Rectangle";
+        dbg << "Rectangle";
         break;
     case QGeoShape::CircleType:
-        dbg.nospace() << "Circle";
+        dbg << "Circle";
     }
 
-    dbg.nospace() << ')';
+    dbg << ')';
 
     return dbg;
 }

@@ -237,25 +237,26 @@ bool QGeoSatelliteInfo::hasAttribute(Attribute attribute) const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
 {
+    QDebugStateSaver saver(dbg);
     dbg.nospace() << "QGeoSatelliteInfo(system=" << info.d->system;
-    dbg.nospace() << ", satId=" << info.d->satId;
-    dbg.nospace() << ", signal-strength=" << info.d->signal;
+    dbg << ", satId=" << info.d->satId;
+    dbg << ", signal-strength=" << info.d->signal;
 
 
     QList<int> attribs = info.d->doubleAttribs.keys();
     for (int i = 0; i < attribs.count(); ++i) {
-        dbg.nospace() << ", ";
+        dbg << ", ";
         switch (attribs[i]) {
             case QGeoSatelliteInfo::Elevation:
-                dbg.nospace() << "Elevation=";
+                dbg << "Elevation=";
                 break;
             case QGeoSatelliteInfo::Azimuth:
-                dbg.nospace() << "Azimuth=";
+                dbg << "Azimuth=";
                 break;
         }
-        dbg.nospace() << info.d->doubleAttribs[attribs[i]];
+        dbg << info.d->doubleAttribs[attribs[i]];
     }
-    dbg.nospace() << ')';
+    dbg << ')';
     return dbg;
 }
 #endif

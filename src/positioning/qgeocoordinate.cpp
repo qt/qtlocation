@@ -608,24 +608,25 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
 {
+    QDebugStateSaver saver(dbg);
     double lat = coord.latitude();
     double lng = coord.longitude();
 
     dbg.nospace() << "QGeoCoordinate(";
     if (qIsNaN(lat))
-        dbg.nospace() << '?';
+        dbg << '?';
     else
-        dbg.nospace() << lat;
-    dbg.nospace() << ", ";
+        dbg << lat;
+    dbg << ", ";
     if (qIsNaN(lng))
-        dbg.nospace() << '?';
+        dbg << '?';
     else
-        dbg.nospace() << lng;
+        dbg << lng;
     if (coord.type() == QGeoCoordinate::Coordinate3D) {
-        dbg.nospace() << ", ";
-        dbg.nospace() << coord.altitude();
+        dbg << ", ";
+        dbg << coord.altitude();
     }
-    dbg.nospace() << ')';
+    dbg << ')';
     return dbg;
 }
 #endif
