@@ -229,12 +229,12 @@ Q_DECL_CONSTEXPR inline QPointF QDoubleVector2D::toPointF() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QDoubleVector2D &vector);
+Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QDoubleVector2D &vector);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream &operator<<(QDataStream &, const QDoubleVector2D &);
-QDataStream &operator>>(QDataStream &, QDoubleVector2D &);
+Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &, const QDoubleVector2D &);
+Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &, QDoubleVector2D &);
 #endif
 
 QT_END_NAMESPACE

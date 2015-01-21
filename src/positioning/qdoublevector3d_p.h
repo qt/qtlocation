@@ -283,12 +283,12 @@ Q_DECL_CONSTEXPR inline QDoubleVector2D QDoubleVector3D::toVector2D() const
 
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QDoubleVector3D &vector);
+Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QDoubleVector3D &vector);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream &operator<<(QDataStream &, const QDoubleVector3D &);
-QDataStream &operator>>(QDataStream &, QDoubleVector3D &);
+Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &, const QDoubleVector3D &);
+Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &, QDoubleVector3D &);
 #endif
 
 QT_END_NAMESPACE
