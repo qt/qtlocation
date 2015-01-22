@@ -44,10 +44,7 @@
 #include <QtCore/QVariantAnimation>
 
 #include <QtQml/qqmlextensionplugin.h>
-#include <QtQml/qqml.h>
 #include <QtQml/private/qqmlvaluetype_p.h>
-#include <QtQml/private/qqmlglobal_p.h>
-#include <QtQml/private/qqmlmetatype_p.h>
 
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/QGeoCircle>

@@ -40,10 +40,7 @@
 #include <QtCore/QScopedValueRollback>
 #include <QtGui/private/qtriangulator_p.h>
 #include <QtQml/QQmlInfo>
-#include <QtQml/QQmlContext>
 #include <QtQml/private/qqmlengine_p.h>
-#include <private/qqmlvaluetypewrapper_p.h>
-#include <private/qjsvalue_p.h>
 #include <QPainter>
 #include <QPainterPath>
 #include <qnumeric.h>

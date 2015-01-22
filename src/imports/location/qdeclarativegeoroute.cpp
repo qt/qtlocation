@@ -33,11 +33,8 @@
 
 #include "qdeclarativegeoroute_p.h"
 #include "locationvaluetypehelper_p.h"
-#include <private/qjsvalue_p.h>
-#include <private/qqmlvaluetypewrapper_p.h>
 
 #include <QtQml/QQmlEngine>
-#include <QtQml/QQmlContext>
 #include <QtQml/qqmlinfo.h>
 #include <QtQml/private/qqmlengine_p.h>
 #include <QtPositioning/QGeoRectangle>
