@@ -392,7 +392,7 @@ QJSValue QDeclarativePolygonMapItem::path() const
         pathArray->putIndexed(i, cv);
     }
 
-    return new QJSValuePrivate(v4, QV4::ValueRef(pathArray));
+    return QJSValue(v4, pathArray.asReturnedValue());
 }
 
 void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
