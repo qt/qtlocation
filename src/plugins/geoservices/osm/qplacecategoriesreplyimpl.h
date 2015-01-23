@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -31,36 +31,25 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderpluginosm.h"
-#include "qgeotiledmappingmanagerengineosm.h"
-#include "qgeocodingmanagerengineosm.h"
-#include "qgeoroutingmanagerengineosm.h"
-#include "qplacemanagerengineosm.h"
+#ifndef QPLACECATEGORIESREPLYIMPL_H
+#define QPLACECATEGORIESREPLYIMPL_H
+
+#include <QtLocation/QPlaceReply>
 
 QT_BEGIN_NAMESPACE
 
-QGeoCodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+class QPlaceCategoriesReplyImpl : public QPlaceReply
 {
-    return new QGeoCodingManagerEngineOsm(parameters, error, errorString);
-}
+    Q_OBJECT
 
-QGeoMappingManagerEngine *QGeoServiceProviderFactoryOsm::createMappingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoTiledMappingManagerEngineOsm(parameters, error, errorString);
-}
+public:
+    explicit QPlaceCategoriesReplyImpl(QObject *parent = 0);
+    ~QPlaceCategoriesReplyImpl();
 
-QGeoRoutingManagerEngine *QGeoServiceProviderFactoryOsm::createRoutingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoRoutingManagerEngineOsm(parameters, error, errorString);
-}
-
-QPlaceManagerEngine *QGeoServiceProviderFactoryOsm::createPlaceManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QPlaceManagerEngineOsm(parameters, error, errorString);
-}
+    void emitFinished();
+    void setError(QPlaceReply::Error errorCode, const QString &errorString);
+};
 
 QT_END_NAMESPACE
+
+#endif // QPLACECATEGORIESREPLYIMPL_H

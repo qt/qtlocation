@@ -152,11 +152,11 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
                 this, SIGNAL(placeRemoved(QString)), Qt::QueuedConnection);
 
         connect(d, SIGNAL(categoryAdded(QPlaceCategory,QString)),
-                this, SIGNAL(categoryAdded(QPlaceCategory,QString)), Qt::QueuedConnection);
+                this, SIGNAL(categoryAdded(QPlaceCategory,QString)));
         connect(d, SIGNAL(categoryUpdated(QPlaceCategory,QString)),
-                this, SIGNAL(categoryUpdated(QPlaceCategory,QString)), Qt::QueuedConnection);
+                this, SIGNAL(categoryUpdated(QPlaceCategory,QString)));
         connect(d, SIGNAL(categoryRemoved(QString,QString)),
-                this, SIGNAL(categoryRemoved(QString,QString)), Qt::QueuedConnection);
+                this, SIGNAL(categoryRemoved(QString,QString)));
         connect(d, SIGNAL(dataChanged()),
                 this, SIGNAL(dataChanged()), Qt::QueuedConnection);
     } else {

@@ -159,8 +159,8 @@ QPlaceSearchReply *QPlaceManagerEngine::search(const QPlaceSearchRequest &reques
 {
     Q_UNUSED(request)
 
-    return new QPlaceSearchReplyUnsupported(QStringLiteral("Place search is not supported."),
-                                            this);
+    return new QPlaceSearchReplyUnsupported(QPlaceReply::UnsupportedError,
+                                            QStringLiteral("Place search is not supported."), this);
 }
 
 /*!

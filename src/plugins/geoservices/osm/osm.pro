@@ -14,8 +14,10 @@ HEADERS += \
     qgeocodingmanagerengineosm.h \
     qgeocodereplyosm.h \
     qgeoroutingmanagerengineosm.h \
-    qgeoroutereplyosm.h
-
+    qgeoroutereplyosm.h \
+    qplacemanagerengineosm.h \
+    qplacesearchreplyimpl.h \
+    qplacecategoriesreplyimpl.h
 
 SOURCES += \
     qgeoserviceproviderpluginosm.cpp \
@@ -26,7 +28,10 @@ SOURCES += \
     qgeocodingmanagerengineosm.cpp \
     qgeocodereplyosm.cpp \
     qgeoroutingmanagerengineosm.cpp \
-    qgeoroutereplyosm.cpp
+    qgeoroutereplyosm.cpp \
+    qplacemanagerengineosm.cpp \
+    qplacesearchreplyimpl.cpp \
+    qplacecategoriesreplyimpl.cpp
 
 OTHER_FILES += \
     osm_plugin.json

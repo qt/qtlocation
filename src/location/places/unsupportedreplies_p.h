@@ -96,10 +96,11 @@ class QPlaceSearchReplyUnsupported : public QPlaceSearchReply
     Q_OBJECT
 
 public:
-    QPlaceSearchReplyUnsupported(const QString &message, QPlaceManagerEngine *parent)
+    QPlaceSearchReplyUnsupported(QPlaceReply::Error errorCode, const QString &message,
+                                 QPlaceManagerEngine *parent)
     :   QPlaceSearchReply(parent)
     {
-        setError(QPlaceReply::UnsupportedError, message);
+        setError(errorCode, message);
         setFinished(true);
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error()),

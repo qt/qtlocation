@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtFoo module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
 ** Commercial License Usage
@@ -31,36 +31,38 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderpluginosm.h"
-#include "qgeotiledmappingmanagerengineosm.h"
-#include "qgeocodingmanagerengineosm.h"
-#include "qgeoroutingmanagerengineosm.h"
-#include "qplacemanagerengineosm.h"
+#ifndef QPLACESEARCHREPLYIMPL_H
+#define QPLACESEARCHREPLYIMPL_H
+
+#include <QtLocation/QPlaceSearchReply>
 
 QT_BEGIN_NAMESPACE
 
-QGeoCodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoCodingManagerEngineOsm(parameters, error, errorString);
-}
+class QNetworkReply;
+class QPlaceManagerEngineOsm;
+class QPlaceResult;
 
-QGeoMappingManagerEngine *QGeoServiceProviderFactoryOsm::createMappingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+class QPlaceSearchReplyImpl : public QPlaceSearchReply
 {
-    return new QGeoTiledMappingManagerEngineOsm(parameters, error, errorString);
-}
+    Q_OBJECT
 
-QGeoRoutingManagerEngine *QGeoServiceProviderFactoryOsm::createRoutingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoRoutingManagerEngineOsm(parameters, error, errorString);
-}
+public:
+    QPlaceSearchReplyImpl(const QPlaceSearchRequest &request, QNetworkReply *reply,
+                          QPlaceManagerEngineOsm *parent);
+    ~QPlaceSearchReplyImpl();
 
-QPlaceManagerEngine *QGeoServiceProviderFactoryOsm::createPlaceManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QPlaceManagerEngineOsm(parameters, error, errorString);
-}
+    void abort();
+
+private slots:
+    void setError(QPlaceReply::Error errorCode, const QString &errorString);
+    void replyFinished();
+
+private:
+    QPlaceResult parsePlaceResult(const QJsonObject &item) const;
+
+    QNetworkReply *m_reply;
+};
 
 QT_END_NAMESPACE
+
+#endif // QPLACESEARCHREPLYIMPL_H

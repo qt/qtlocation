@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -31,36 +31,29 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderpluginosm.h"
-#include "qgeotiledmappingmanagerengineosm.h"
-#include "qgeocodingmanagerengineosm.h"
-#include "qgeoroutingmanagerengineosm.h"
-#include "qplacemanagerengineosm.h"
+#include "qplacecategoriesreplyimpl.h"
 
 QT_BEGIN_NAMESPACE
 
-QGeoCodingManagerEngine *QGeoServiceProviderFactoryOsm::createGeocodingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+QPlaceCategoriesReplyImpl::QPlaceCategoriesReplyImpl(QObject *parent)
+:   QPlaceReply(parent)
 {
-    return new QGeoCodingManagerEngineOsm(parameters, error, errorString);
 }
 
-QGeoMappingManagerEngine *QGeoServiceProviderFactoryOsm::createMappingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+QPlaceCategoriesReplyImpl::~QPlaceCategoriesReplyImpl()
 {
-    return new QGeoTiledMappingManagerEngineOsm(parameters, error, errorString);
 }
 
-QGeoRoutingManagerEngine *QGeoServiceProviderFactoryOsm::createRoutingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+void QPlaceCategoriesReplyImpl::emitFinished()
 {
-    return new QGeoRoutingManagerEngineOsm(parameters, error, errorString);
+    setFinished(true);
+    emit finished();
 }
 
-QPlaceManagerEngine *QGeoServiceProviderFactoryOsm::createPlaceManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+void QPlaceCategoriesReplyImpl::setError(QPlaceReply::Error errorCode, const QString &errorString)
 {
-    return new QPlaceManagerEngineOsm(parameters, error, errorString);
+    QPlaceReply::setError(errorCode, errorString);
+    emit error(errorCode, errorString);
 }
 
 QT_END_NAMESPACE
