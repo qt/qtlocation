@@ -41,7 +41,6 @@ QGeoMapReplyMapbox::QGeoMapReplyMapbox(QNetworkReply *reply, const QGeoTileSpec 
     connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
     connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
-    connect(m_reply, SIGNAL(destroyed()), this, SLOT(replyDestroyed()));
 }
 
 QGeoMapReplyMapbox::~QGeoMapReplyMapbox()
@@ -63,11 +62,6 @@ void QGeoMapReplyMapbox::abort()
 QNetworkReply *QGeoMapReplyMapbox::networkReply() const
 {
     return m_reply;
-}
-
-void QGeoMapReplyMapbox::replyDestroyed()
-{
-    m_reply = 0;
 }
 
 void QGeoMapReplyMapbox::networkReplyFinished()

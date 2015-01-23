@@ -44,6 +44,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtLocation/private/qgeotilespec_p.h>
 #include <QtLocation/private/qgeotiledmapreply_p.h>
+#include <QtCore/QPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,12 +61,11 @@ public:
     QNetworkReply *networkReply() const;
 
 private Q_SLOTS:
-    void replyDestroyed();
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
 
 private:
-    QNetworkReply *m_reply;
+    QPointer<QNetworkReply> m_reply;
 };
 
 QT_END_NAMESPACE

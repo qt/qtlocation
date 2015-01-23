@@ -65,11 +65,6 @@ QNetworkReply *QGeoMapReplyOsm::networkReply() const
     return m_reply;
 }
 
-void QGeoMapReplyOsm::replyDestroyed()
-{
-    m_reply = 0;
-}
-
 void QGeoMapReplyOsm::networkReplyFinished()
 {
     if (!m_reply)

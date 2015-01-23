@@ -49,7 +49,6 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &s
         : QGeoTiledMapReply(spec, parent),
         m_reply(reply)
 {
-    m_reply->setParent(this);
     connect(m_reply,
             SIGNAL(finished()),
             this,
@@ -59,11 +58,6 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &s
             SIGNAL(error(QNetworkReply::NetworkError)),
             this,
             SLOT(networkError(QNetworkReply::NetworkError)));
-
-    connect(m_reply,
-            SIGNAL(destroyed()),
-            this,
-            SLOT(replyDestroyed()));
 }
 
 QGeoMapReplyNokia::~QGeoMapReplyNokia()
@@ -81,11 +75,6 @@ void QGeoMapReplyNokia::abort()
         return;
 
     m_reply->abort();
-}
-
-void QGeoMapReplyNokia::replyDestroyed()
-{
-    m_reply = 0;
 }
 
 void QGeoMapReplyNokia::networkFinished()
