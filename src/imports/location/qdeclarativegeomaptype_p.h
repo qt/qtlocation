@@ -63,6 +63,7 @@ public:
         GrayStreetMap = QGeoMapType::GrayStreetMap,
         PedestrianMap = QGeoMapType::PedestrianMap,
         CarNavigationMap = QGeoMapType::CarNavigationMap,
+        CycleMap = QGeoMapType::CycleMap,
         CustomMap = 100
     };
 

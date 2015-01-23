@@ -67,6 +67,7 @@ public:
         GrayStreetMap,
         PedestrianMap,
         CarNavigationMap,
+        CycleMap,
         CustomMap = 100
     };
 

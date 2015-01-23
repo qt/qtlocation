@@ -73,6 +73,7 @@ QDeclarativeGeoMapType::~QDeclarativeGeoMapType() {}
     \li MapType.GrayStreetMap - A gray-shaded street map.
     \li MapType::PedestrianMap - A street map suitable for pedestriants.
     \li MapType::CarNavigationMap - A street map suitable for car navigation.
+    \li MapType::CycleMap - A street map suitable for cyclists.
     \li MapType.CustomMap - A custom map type.
     \endlist
 */
