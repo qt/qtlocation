@@ -56,24 +56,37 @@ QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
     QNetworkRequest request;
     request.setRawHeader("User-Agent", m_userAgent);
 
+    QString urlPrefix;
+
     switch (spec.mapId()) {
-        case 1:
-            // opensteetmap.org street map
-            request.setUrl(QUrl(QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/map/") +
-                                QString::number(spec.zoom()) + QLatin1Char('/') +
-                                QString::number(spec.x()) + QLatin1Char('/') +
-                                QString::number(spec.y()) + QStringLiteral(".png")));
-            break;
-        case 2:
-            // opensteetmap.org satellite map
-            request.setUrl(QUrl(QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/sat/") +
-                                QString::number(spec.zoom()) + QLatin1Char('/') +
-                                QString::number(spec.x()) + QLatin1Char('/') +
-                                QString::number(spec.y()) + QStringLiteral(".png")));
-            break;
-        default:
-            qWarning("Unknown map id %d\n", spec.mapId());
+    case 1:
+        urlPrefix = QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/map/");
+        break;
+    case 2:
+        urlPrefix = QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/sat/");
+        break;
+    case 3:
+        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/cycle/");
+        break;
+    case 4:
+        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/transport/");
+        break;
+    case 5:
+        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/transport-dark/");
+        break;
+    case 6:
+        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/landscape/");
+        break;
+    case 7:
+        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/outdoors/");
+        break;
+    default:
+        qWarning("Unknown map id %d\n", spec.mapId());
     }
+
+    request.setUrl(QUrl(urlPrefix + QString::number(spec.zoom()) + QLatin1Char('/') +
+                        QString::number(spec.x()) + QLatin1Char('/') +
+                        QString::number(spec.y()) + QStringLiteral(".png")));
 
     QNetworkReply *reply = m_networkManager->get(request);
 

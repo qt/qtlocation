@@ -8,6 +8,7 @@ load(qt_plugin)
 HEADERS += \
     qgeoserviceproviderpluginosm.h \
     qgeotiledmappingmanagerengineosm.h \
+    qgeotiledmapdataosm.h \
     qgeotilefetcherosm.h \
     qgeomapreplyosm.h \
     qgeocodingmanagerengineosm.h \
@@ -19,6 +20,7 @@ HEADERS += \
 SOURCES += \
     qgeoserviceproviderpluginosm.cpp \
     qgeotiledmappingmanagerengineosm.cpp \
+    qgeotiledmapdataosm.cpp \
     qgeotilefetcherosm.cpp \
     qgeomapreplyosm.cpp \
     qgeocodingmanagerengineosm.cpp \

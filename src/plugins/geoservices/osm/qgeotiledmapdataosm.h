@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -31,68 +31,29 @@
 **
 ****************************************************************************/
 
-#include "qgeomapreplyosm.h"
+#ifndef QGEOTILEDMAPDATAOSM_H
+#define QGEOTILEDMAPDATAOSM_H
 
-#include <QtLocation/private/qgeotilespec_p.h>
+#include <QtLocation/private/qgeotiledmapdata_p.h>
 
-QGeoMapReplyOsm::QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent)
-:   QGeoTiledMapReply(spec, parent), m_reply(reply)
+QT_BEGIN_NAMESPACE
+
+class QGeoTiledMappingManagerEngineOsm;
+class QGeoTiledMapDataOsm: public QGeoTiledMapData
 {
-    connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
-    connect(m_reply, SIGNAL(destroyed()), this, SLOT(replyDestroyed()));
-}
+    Q_OBJECT
 
-QGeoMapReplyOsm::~QGeoMapReplyOsm()
-{
-    if (m_reply) {
-        m_reply->deleteLater();
-        m_reply = 0;
-    }
-}
+public:
+    QGeoTiledMapDataOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent = 0);
+    ~QGeoTiledMapDataOsm();
 
-void QGeoMapReplyOsm::abort()
-{
-    if (!m_reply)
-        return;
+protected:
+    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
 
-    m_reply->abort();
-}
+private:
+    int m_mapId;
+};
 
-QNetworkReply *QGeoMapReplyOsm::networkReply() const
-{
-    return m_reply;
-}
+QT_END_NAMESPACE
 
-void QGeoMapReplyOsm::networkReplyFinished()
-{
-    if (!m_reply)
-        return;
-
-    if (m_reply->error() != QNetworkReply::NoError)
-        return;
-
-    QByteArray a = m_reply->readAll();
-
-    setMapImageData(a);
-    setMapImageFormat("png");
-
-    setFinished(true);
-
-    m_reply->deleteLater();
-    m_reply = 0;
-}
-
-void QGeoMapReplyOsm::networkReplyError(QNetworkReply::NetworkError error)
-{
-    if (!m_reply)
-        return;
-
-    if (error != QNetworkReply::OperationCanceledError)
-        setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
-
-    setFinished(true);
-    m_reply->deleteLater();
-    m_reply = 0;
-}
+#endif

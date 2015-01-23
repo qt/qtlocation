@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -37,8 +37,9 @@
 This geo services plugin allows applications to access
 \l {http://openstreetmap.org}{Open Street Map} location based services using the Qt Location API.
 
-Data, imagery and map information provided by \l {http://www.mapquest.com}{MapQuest}, OpenStreetMap and
-contributors. The data is available under the \l {http://www.opendatacommons.org/licenses/odbl}{Open Database License}.
+Data, imagery and map information provided by \l {http://www.mapquest.com}{MapQuest},
+\l {http://www.thunderforest.com/}{ThunderForest}, OpenStreetMap and contributors. The data is
+available under the \l {http://www.opendatacommons.org/licenses/odbl}{Open Database License}.
 
 The Open Street Map geo services plugin can be loaded by using the plugin key "osm".
 

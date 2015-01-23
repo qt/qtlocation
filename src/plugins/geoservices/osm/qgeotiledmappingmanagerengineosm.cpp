@@ -33,6 +33,7 @@
 
 #include "qgeotiledmappingmanagerengineosm.h"
 #include "qgeotilefetcherosm.h"
+#include "qgeotiledmapdataosm.h"
 
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
@@ -51,8 +52,14 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     setTileSize(QSize(256, 256));
 
     QList<QGeoMapType> mapTypes;
-    mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("OpenStreetMap street map"), false, false, 1);
-    mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("OpenStreetMap satellite map"), false, false, 2);
+    // See map type implementations in QGeoTiledMapDataOsm and QGeoTileFetcherOsm.
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1);
+    mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2);
+    mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3);
+    mapTypes << QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Public transit map view in daylight mode"), false, false, 4);
+    mapTypes << QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5);
+    mapTypes << QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6);
+    mapTypes << QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7);
     setSupportedMapTypes(mapTypes);
 
     QGeoTileFetcherOsm *tileFetcher = new QGeoTileFetcherOsm(this);
@@ -73,7 +80,7 @@ QGeoTiledMappingManagerEngineOsm::~QGeoTiledMappingManagerEngineOsm()
 
 QGeoMapData *QGeoTiledMappingManagerEngineOsm::createMapData()
 {
-    return new QGeoTiledMapData(this, 0);
+    return new QGeoTiledMapDataOsm(this);
 }
 
 QT_END_NAMESPACE

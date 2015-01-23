@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -31,68 +31,54 @@
 **
 ****************************************************************************/
 
-#include "qgeomapreplyosm.h"
+#include "qgeotiledmapdataosm.h"
+#include "qgeotiledmappingmanagerengineosm.h"
 
 #include <QtLocation/private/qgeotilespec_p.h>
 
-QGeoMapReplyOsm::QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent)
-:   QGeoTiledMapReply(spec, parent), m_reply(reply)
+QT_BEGIN_NAMESPACE
+
+QGeoTiledMapDataOsm::QGeoTiledMapDataOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
+:   QGeoTiledMapData(engine, parent), m_mapId(-1)
 {
-    connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
-    connect(m_reply, SIGNAL(destroyed()), this, SLOT(replyDestroyed()));
 }
 
-QGeoMapReplyOsm::~QGeoMapReplyOsm()
+QGeoTiledMapDataOsm::~QGeoTiledMapDataOsm()
 {
-    if (m_reply) {
-        m_reply->deleteLater();
-        m_reply = 0;
+}
+
+void QGeoTiledMapDataOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
+{
+    if (visibleTiles.isEmpty())
+        return;
+
+    QGeoTileSpec tile = *visibleTiles.constBegin();
+    if (tile.mapId() == m_mapId)
+        return;
+
+    m_mapId = tile.mapId();
+
+    QString copyrights;
+    switch (m_mapId) {
+    case 1:
+    case 2:
+        // set attribution to Map Quest
+        copyrights = tr("Tiles Courtesy of <a href='http://www.mapquest.com/'>MapQuest</a><br/>Data \u00a9 <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        break;
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+        // set attribution to Thunder Forest
+        copyrights = tr("Maps \u00a9 <a href='http://www.thunderforest.com/'>Thunderforest</a><br/>Data \u00a9 <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        break;
+    default:
+        // set attribution to OSM
+        copyrights = tr("\u00a9 <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
     }
+
+    emit copyrightsChanged(copyrights);
 }
 
-void QGeoMapReplyOsm::abort()
-{
-    if (!m_reply)
-        return;
-
-    m_reply->abort();
-}
-
-QNetworkReply *QGeoMapReplyOsm::networkReply() const
-{
-    return m_reply;
-}
-
-void QGeoMapReplyOsm::networkReplyFinished()
-{
-    if (!m_reply)
-        return;
-
-    if (m_reply->error() != QNetworkReply::NoError)
-        return;
-
-    QByteArray a = m_reply->readAll();
-
-    setMapImageData(a);
-    setMapImageFormat("png");
-
-    setFinished(true);
-
-    m_reply->deleteLater();
-    m_reply = 0;
-}
-
-void QGeoMapReplyOsm::networkReplyError(QNetworkReply::NetworkError error)
-{
-    if (!m_reply)
-        return;
-
-    if (error != QNetworkReply::OperationCanceledError)
-        setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
-
-    setFinished(true);
-    m_reply->deleteLater();
-    m_reply = 0;
-}
+QT_END_NAMESPACE
