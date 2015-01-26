@@ -66,7 +66,7 @@ Item {
                 verticalCenter: parent.verticalCenter
             }
             elide: Text.ElideLeft
-            text: "Declarative location Flickr"
+            text: "GeoFlickr (QML)"
             font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
         }
     }

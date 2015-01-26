@@ -26,11 +26,11 @@
 ****************************************************************************/
 
 /*!
-    \example flickr
-    \title Flickr (QML)
+    \example geoflickr
+    \title GeoFlickr (QML)
     \ingroup qtpositioning-examples
 
-    \brief The Flickr example shows how to use the user's current position to
+    \brief The GeoFlickr example shows how to use the user's current position to
            fetch local content from a web service.
 
     This is a small example, illustrating one of the very core parts of the
@@ -54,20 +54,20 @@
     GeoTab component (the floating "window" describing current position and
     status).
 
-    \snippet flickr/flickrmobile/GeoTab.qml possrc
+    \snippet geoflickr/flickrmobile/GeoTab.qml possrc
 
     When the "Locate and update" button is pressed, we first interrogate the
     PositionSource to check if it has an available backend for positioning
     data. If it does not, we fall back to using a pre-recorded NMEA log
     for demonstration. We then instruct the PositionSource to update.
 
-    \snippet flickr/flickrmobile/GeoTab.qml locatebutton-top
-    \snippet flickr/flickrmobile/GeoTab.qml locatebutton-clicked
+    \snippet geoflickr/flickrmobile/GeoTab.qml locatebutton-top
+    \snippet geoflickr/flickrmobile/GeoTab.qml locatebutton-clicked
 
     To share the new position data with the rest of the application, we use
     properties that we have created on the GeoTab component:
 
-    \snippet flickr/flickrmobile/GeoTab.qml props
+    \snippet geoflickr/flickrmobile/GeoTab.qml props
 
     \section1 Using the Current Position
 
@@ -79,7 +79,7 @@
     In this case, it retrieves data from the Flickr REST API online, based on
     our current position
 
-    \snippet flickr/flickrcommon/RestModel.qml restmodel
+    \snippet geoflickr/flickrcommon/RestModel.qml restmodel
 
     This model data is then shown in a variety of Qt Quick views to produce
     the example application.

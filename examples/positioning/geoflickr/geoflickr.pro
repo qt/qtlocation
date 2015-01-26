@@ -1,5 +1,5 @@
-TEMPLATE=app
-TARGET = qml_position_flickr
+TEMPLATE = app
+TARGET = geoflickr
 
 QT += qml quick network positioning
 SOURCES += qmllocationflickr.cpp

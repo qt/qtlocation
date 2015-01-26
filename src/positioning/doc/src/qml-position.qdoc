@@ -111,9 +111,9 @@ PositionSource {
 
 
 
-\section2 \b{Flickr Example}
+\section2 \b{GeoFlickr Example}
 
-The \l{Flickr (QML)}{Flickr Example} uses the Location to download thumbnail
+The \l{GeoFlickr (QML)}{GeoFlickr Example} uses the Location to download thumbnail
 images from Flickr relevant to the current location.
 
 */

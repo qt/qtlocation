@@ -99,7 +99,7 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    The \l{flickr}{Flickr} example application shows how to use
+    The \l{geoflickr}{GeoFlickr} example application shows how to use
     a PositionSource in your application to retrieve local data for users
     from a REST web service.
 
