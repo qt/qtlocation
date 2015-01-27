@@ -707,15 +707,6 @@ Map {
                 break;
             }
 
-            case "Video": {
-                addGeoItem("VideoItem")
-                break;
-            }
-
-            case "3D QML Item": {
-                addGeoItem("3dItem")
-                break;
-            }
             }
         }
     }
@@ -1049,8 +1040,6 @@ Map {
         drawMenu.clear()
 
         drawMenu.addItem("Image")
-        drawMenu.addItem("Video")
-        drawMenu.addItem("3D QML Item")
 
         if (currentMarker <= length-2){
             drawMenu.addItem("Rectangle")

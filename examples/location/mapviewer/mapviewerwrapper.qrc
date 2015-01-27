@@ -11,9 +11,6 @@
         <file>content/dialogs/Message.qml</file>
         <file>content/dialogs/RouteDialog.qml</file>
         <file>content/map/ImageItem.qml</file>
-        <file>content/map/VideoItem.qml</file>
-        <file>content/map/3dItem.qml</file>
         <file>content/map/MiniMap.qml</file>
-        <file>demo.ogv</file>
     </qresource>
 </RCC>
