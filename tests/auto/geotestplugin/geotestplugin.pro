@@ -20,3 +20,4 @@ OTHER_FILES += \
     geotestplugin.json \
     place_data.json
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+RESOURCES += testdata.qrc

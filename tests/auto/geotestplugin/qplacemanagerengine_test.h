@@ -206,6 +206,7 @@ public:
         m_locales << QLocale();
         if (parameters.value(QStringLiteral("initializePlaceData"), false).toBool()) {
             QFile placeData(QFINDTESTDATA("place_data.json"));
+            QVERIFY(placeData.exists());
             if (placeData.open(QIODevice::ReadOnly)) {
                 QJsonDocument document = QJsonDocument::fromJson(placeData.readAll());
 
