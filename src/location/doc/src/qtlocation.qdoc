@@ -34,24 +34,23 @@
     \ingroup modules
     \qtvariable location
 
-    \brief Location module provides positioning, mapping, navigation, and place search
-       via QML and C++ interfaces.
+    \brief Provides C++ interfaces to retrieve location and navigational
+    information.
 
-    To load the Qt Location module, add the following statement to your .qml files
+    The C++ API provides access to geocoding and navigation information,
+    and also place search. Use the \l{Maps and Navigation (QML)}{QML}
+    API to render this information on an interactive map that supports
+    touch gestures, overlays, and so on.
 
-    \code
-        import QtLocation 5.3
-    \endcode
-
-    For C++ projects include the header appropriate for the current use case,
-    for example applications using routes may use
+    Include the appropriate header in your C++ code. For example,
+    applications using routes can include:
 
     \code #include <QGeoRoute> \endcode
 
-    The .pro file should have the \e location keyword added
+    Add the \e location keyword in the project file to link against the
+    Qt Location library:
 
     \code QT += location \endcode
-
 
     See more in the \l{Qt Location}{Qt Location Overview}.
 
@@ -62,27 +61,23 @@
 /*!
 \page qtlocation-index.html
 \title Qt Location
-\brief The Qt Location API provides mapping, navigation, and place search
-       via QML and C++ interfaces.
+\brief Provides QML and C++ interfaces to create location-aware
+applications.
 \ingroup technology-apis
 
-The Qt Location API provides mapping, navigation, and place search via QML
-and C++ interfaces.
-
-The API has not been released yet but due to its platform-independent nature is available
-on all Qt platforms.
+The Qt Location API helps you create viable mapping solutions using the data
+available from some of the popular location services.
 
 \section1 Overview
 
-The Qt Location API gives developers the ability to determine a position by
-using a variety of possible sources, including satellite, or wifi, or text file,
-and so on. That information can then be used to determine a position in a map
-context with appropriate navigation and to embed, in the map, defined places
-with descriptive metadata. These three parts
-allow a device to know where it is and its location with respect to important
-features. Using features such as roads, destinations, routes,
-and other navigation attributes, applications can specify beginning and end-points
-for navigation and awareness of objects that may aid or hinder a journey.
+The Qt Location API enables you to:
+\list
+  \li access and present map data,
+  \li support touch gesture on a specific area of the map,
+  \li query for a specific geographical location and route,
+  \li add additional layers on top, such as polylines and circles,
+  \li and search for places and related images.
+\endlist
 
 \section1 Getting Started
 
@@ -101,17 +96,19 @@ The .pro file should have the \e location keyword added
 
 \code QT += location \endcode
 
-\section2 API Sub-Modules
-The API is split into sub-modules, which each have QML and C++ APIs. It focuses on
-Map and Place information. The required position data can be retrieved via the
-\l {QtPositioning} module.
+\section2 Submodules
+
+The API is split into sub-modules, which provide QML and C++ interfaces for
+specific purposes. They focus mainly on Map and Place information. The required
+position data can be retrieved using the \l {QtPositioning} module.
 
 \section3 Places
-Places is
-the natural complement to Positioning, providing a source of geographic
-data about places of interest (POIs). As well as providing the location,
-size and other vitals about a POI, the Places API can also retrieve images,
-reviews and other rich content related to the place.
+
+The Places submodule is the natural complement to Positioning, providing a
+source of geographical data about Places of Interest (POI). Besides the source
+information, the API provides information about the location, size, and
+other related information about a POI. The Places API can also
+retrieve images, reviews, and other content related to a place.
 
 \table
 \row
@@ -121,15 +118,15 @@ reviews and other rich content related to the place.
 \endtable
 
 \section3 Maps and Navigation
-Maps and Navigation provides Qt Quick user
-interface components for displaying geographic information on a map, as
-well as allowing user interaction with map objects and the display itself.
-It also contains utilities for geocoding (finding a geographic coordinate
-from a street address) and navigation (including driving and walking
-directions).
+
+The module provides the QML and C++ alternatives for maps and navigation.
+The C++ alternative provides utility classes to get geocoding (finding a geographic
+coordinate from a street address) and navigation (including driving and walking
+directions) information, whereas its QML counterpart provides UI components to render
+the information.
+
 \table
 \row
-
 \li Maps and Navigation introduction:
     \li \l{Maps and Navigation (QML)}{for QML}
     \li \l{Maps and Navigation (C++)}{for C++}
@@ -137,8 +134,8 @@ directions).
 
 \section1 API References and Examples
 
-Alphabetized lists of all classes and user interface components in the API, as well as detailed
-example applications to demonstrate their usage.
+The following are lists of the classes and UI components provided by the module,
+with example applications to demonstrate their usage:
 
 \table
     \row
@@ -167,7 +164,7 @@ be provided to influence their behavior.
 
 \section2 Implementing New Back-Ends and Porting
 
-For systems integrators and distributors, information relating to making
+For systems integrators and distributors, information related to making
 Qt Location available for a new platform.
 
 \table
@@ -188,15 +185,19 @@ been reworked to be simpler to use.
 
 New features of Qt Location includes
 \list
-    \li Maps are now part of the Qt Quick scenegraph, and rendered using hardware-accelerated OpenGL
-    \li Arbitrary Qt Quick items on the map are supported using \l MapQuickItem
-    \li Now possible to create map overlays with a model
-    \li Built-in support for pinch-to-zoom gestures, flicking , and panning (see \l MapGestureArea)
-    \li Vast performance improvements over Qt Mobility 1.2, especially for large map polylines and objects in general
-    \li Full QML API now available for routing and geocoding -- compatible with standard QML model-view design
-    \li Service provider feature detection without having to open all the available plugins
-    \li Unified \l Plugin QML type used by routing/geocoding/maps etc with easy-to-set \l PluginParameter
-    \li Two plugins are supplied with Qt (a Nokia and an OSM plugin for GeoServices).
+    \li Maps are now part of the Qt Quick scenegraph, and rendered using
+    hardware-accelerated OpenGL.
+    \li Arbitrary Qt Quick items on the map are supported using \l MapQuickItem.
+    \li Support for map overlays using a model.
+    \li Built-in support for pinch-to-zoom gestures, flicking , and panning
+    (see \l MapGestureArea).
+    \li Vast performance improvements over Qt Mobility 1.2, especially for
+    large map polylines and objects in general.
+    \li The QML API for routing and geocoding is now available.
+    \li Service provider feature detection without having to open all of the
+    available plugins.
+    \li Unified \l Plugin QML type used by routing, geocoding, maps, and so on,
+    with easy-to-set \l PluginParameter.
     \li Landmarks API is replaced by the Places API
     \li \l Place supports viewing of richer content such as reviews, images, and editorials
     \li \l Place supports locale handling, sponsored search results, and supplier attribution

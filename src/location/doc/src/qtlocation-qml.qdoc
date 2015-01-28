@@ -33,23 +33,16 @@
 
 \section1 Overview
 
-The identifying string for this module is \e QtLocation. To use include the following import
-statement in the QML file.
-
-\snippet declarative/plugin.qml Plugin import
-
-\section2 Location QML Concepts
-
-Provided that a position has been obtained this module can
-add a \l {QtLocation::Map}{Map} with positions of interest and
-\l {QtLocation::Place}{Places}. The user can be made aware of nearby features and related
-information, displayed graphically. Features on the \l Map may be places of business, entertainment
-and so on.  They may include paths, roads, or forms of transport leading so that
-navigation optimization and assistance are possible.
+Provided that a position has been obtained, this module can add a
+\l{QtLocation::Map}{Map} with Places of Interest (POI) and
+\l{QtLocation::Place}{Places}. The user can be made aware of nearby features
+and related information, displayed graphically. Features on the \l Map can be
+places of business, entertainment, and so on.  They may include paths, roads,
+or forms of transport, enabling navigation optimization and assistance.
 
 To perform navigation we need \l {Route}s from start to destination. These routes
-are made up of segments. Each \l {QtLocation::RouteSegment}{RouteSegment}
-can be considered a navigation sub-task: drive 100 meters, turn left. The beginning and
+are made up of segments, where each \l {QtLocation::RouteSegment}{RouteSegment}
+can be considered a navigation subtask: drive 100 meters, turn left. The beginning and
 end of each segment is a \e waypoint, that is, one part of our journey.
 
 A typical use case for the API is a user looking for a particular type of
@@ -61,30 +54,26 @@ environment that can help or hinder the journey. The navigation then
 proceeds with the user's progress monitored by means of the current
 \l Location. In the context of this API the map application would be aware
 of the location and size of various places and the location of the user.
-Plugins would supply the data used by the application to determine routes and
-navigation instructions. The \l Place types would hold information about the
+Plugins would supply the data required by the application to determine routes
+and navigation instructions. The \l Place types would hold information about the
 destination and surrounding objects including displayable representations.
 The \l Map type would enable this information to be displayed, panned,
 zoomed and so on. The \l Route would be determined by a plugin with each
 \l RouteSegment holding the navigation instructions guided by the updated
 current \l Location.
 
-\l {Plugin}s are a means of specifying which Location based service to use. For example,
-a plugin may allow connection to a provider's service that handles geocoding and routing
-that the API and application can use. There may be various GeoServices plugins for various tasks
-with some plugins providing more than one service. One QML \l Plugin should be created
-for each required GeoService plugin. Plugins are required for maps, routing and geocoding,
+\l {Plugin}s are a means of specifying which location-based service to use. For
+example, a plugin may allow connection to a provider's service that provides
+geocoding and routing information, which can be consumed by the application.
+There may be various GeoServices plugins for various tasks with some plugins
+providing more than one service. One QML \l Plugin must be created for each
+required GeoService plugin. Plugins are required for maps, routing and geocoding,
 however the default plugin handles all three of these services. A plugin may
-require online access or may support on-board maps and data. The default "nokia"
-plugin only supports online use. The connection would be managed by QNetworkInfo and
-QNetworkConfigurationManager.
+require online access or may support on-board maps and data.
 
-\note: Plugins may not provide various features such as paging or relevance hints.
-Since plugins may be supplied by other providers, support for these aspects is
-dependent on the provider's implementation.
+\note Plugins may not provide features such as paging or relevance hints.
 
-The following table provides links to more detailed information on sections of the Qt Location QML
-API.
+The following links provide more detailed information about maps and places:
 
 \table
     \row
