@@ -43,6 +43,8 @@
 
 #include <QTimer>
 #include <QLocale>
+#include <QDir>
+#include <QStandardPaths>
 
 QT_BEGIN_NAMESPACE
 
@@ -274,8 +276,14 @@ QGeoTileCache *QGeoTiledMappingManagerEngine::createTileCacheWithDir(const QStri
 QGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
 {
     Q_D(QGeoTiledMappingManagerEngine);
-    if (!d->tileCache_)
-        d->tileCache_ = new QGeoTileCache();
+    if (!d->tileCache_) {
+        QString cacheDirectory;
+        if (!managerName().isEmpty()) {
+            cacheDirectory = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                    + QLatin1String("/QtLocation/") + managerName();
+        }
+        d->tileCache_ = new QGeoTileCache(cacheDirectory);
+    }
     return d->tileCache_;
 }
 

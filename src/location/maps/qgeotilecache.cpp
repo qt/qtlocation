@@ -101,11 +101,25 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     // rather than in each individual plugin (the plugins can
     // of course override them)
 
-    if (directory_.isEmpty()) {
-        directory_ = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
-                + QLatin1String("/QtLocation");
-        QDir::root().mkpath(directory_);
+    const QString basePath = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                 + QLatin1String("/QtLocation");
+
+    // delete old tiles from QtLocation 5.4 or prior
+    // TODO Remove cache cleanup in Qt 6
+    QDir baseDir(basePath);
+    if (baseDir.exists()) {
+        const QStringList oldCacheFiles = baseDir.entryList(QDir::Files);
+        foreach (const QString& file, oldCacheFiles)
+            baseDir.remove(file);
     }
+
+    if (directory_.isEmpty()) {
+        directory_ = basePath;
+        qWarning() << "Plugin uses uninitialized directory for QGeoTileCache"
+                      " which will was deleted during startup";
+    }
+
+    QDir::root().mkpath(directory_);
 
     // default values
     setMaxDiskUsage(20 * 1024 * 1024);

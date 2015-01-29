@@ -86,7 +86,7 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \li Aerial map tile service URL used by mapping manager. For all satellite, hybrid and terrain schemes.
 \row
     \li mapping.cache.directory
-    \li Map tile cache directory used as network disk cache.
+    \li Absolute path to map tile cache directory used as network disk cache.
 
     Default place for the cache is "QtLocation" directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
 \row

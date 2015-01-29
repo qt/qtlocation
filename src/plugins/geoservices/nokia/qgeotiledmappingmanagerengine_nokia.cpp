@@ -52,6 +52,7 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonDocument>
 #include <QtCore/qmath.h>
+#include <QtCore/qstandardpaths.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -102,11 +103,16 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     setTileFetcher(fetcher);
 
     // TODO: do this in a plugin-neutral way so that other tiled map plugins
-    //       don't need this boilerplate
+    //       don't need this boilerplate or hardcode plugin name
 
     QString cacheDir;
-    if (parameters.contains(QStringLiteral("mapping.cache.directory")))
+    if (parameters.contains(QStringLiteral("mapping.cache.directory"))) {
         cacheDir = parameters.value(QStringLiteral("mapping.cache.directory")).toString();
+    } else {
+        // managerName() is not yet set, we have to hardcode the plugin name below
+        cacheDir = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                + QLatin1String("/QtLocation/nokia");
+    }
 
     QGeoTileCache *tileCache = createTileCacheWithDir(cacheDir);
 
