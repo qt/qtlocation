@@ -109,7 +109,7 @@ class QDeclarativeGeoMapGestureArea: public QObject
     Q_PROPERTY(bool pinchEnabled READ pinchEnabled WRITE setPinchEnabled NOTIFY pinchEnabledChanged)
     Q_PROPERTY(bool panEnabled READ panEnabled WRITE setPanEnabled NOTIFY panEnabledChanged)
     Q_PROPERTY(bool isPinchActive READ isPinchActive NOTIFY pinchActiveChanged)
-    Q_PROPERTY(bool isPanActive READ isPanActive)
+    Q_PROPERTY(bool isPanActive READ isPanActive NOTIFY panActiveChanged)
     Q_PROPERTY(ActiveGestures activeGestures READ activeGestures WRITE setActiveGestures NOTIFY activeGesturesChanged)
     Q_PROPERTY(qreal maximumZoomLevelChange READ maximumZoomLevelChange WRITE setMaximumZoomLevelChange NOTIFY maximumZoomLevelChangeChanged)
     Q_PROPERTY(qreal flickDeceleration READ flickDeceleration WRITE setFlickDeceleration NOTIFY flickDecelerationChanged)
@@ -129,7 +129,6 @@ public:
     void setActiveGestures(ActiveGestures activeGestures);
 
     bool isPinchActive() const;
-    void setPinchActive(bool active);
     bool isPanActive() const;
 
     bool enabled() const;
@@ -147,13 +146,14 @@ public:
     qreal flickDeceleration() const;
     void setFlickDeceleration(qreal deceleration);
 
-    void touchEvent(QTouchEvent *event);
+    bool touchEvent(QTouchEvent *event);
 
     bool wheelEvent(QWheelEvent *event);
 
     bool mousePressEvent(QMouseEvent *event);
     bool mouseMoveEvent(QMouseEvent *event);
     bool mouseReleaseEvent(QMouseEvent *event);
+    void mouseUngrabEvent();
 
     bool filterMapChildMouseEvent(QMouseEvent *event);
     bool filterMapChildTouchEvent(QTouchEvent *event);
@@ -166,7 +166,10 @@ public:
 
     void setMap(QGeoMap *map);
 
+    bool hasGrabbedInput() const;
+
 Q_SIGNALS:
+    void panActiveChanged();
     void pinchActiveChanged();
     void enabledChanged();
     void maximumZoomLevelChangeChanged();
@@ -222,6 +225,15 @@ private:
     QGeoMap *map_;
     QDeclarativeGeoMap *declarativeMap_;
     bool enabled_;
+    bool hasGrab_;
+
+    enum InputType
+    {
+        NoInput,
+        MouseInput,
+        TouchInput
+    };
+    InputType activeInput_;
 
     struct Pinch
     {
@@ -283,6 +295,7 @@ private:
     enum PinchState
     {
         pinchInactive,
+        pinchInactiveTwoPoints,
         pinchActive
     } pinchState_;
 
@@ -295,6 +308,6 @@ private:
 };
 
 QT_END_NAMESPACE
-QML_DECLARE_TYPE(QDeclarativeGeoMapGestureArea);
+QML_DECLARE_TYPE(QDeclarativeGeoMapGestureArea)
 
 #endif // QDECLARATIVEGEOMAPGESTUREAREA_P_H

@@ -58,7 +58,6 @@
 #include <QtQml/QQmlContext>
 #include <QtQml/qqmlinfo.h>
 #include <QModelIndex>
-#include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGSimpleRectNode>
 #include <QtGui/QGuiApplication>
 #include <QCoreApplication>
@@ -196,7 +195,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 {
     QLOC_TRACE0;
     setAcceptHoverEvents(false);
-    setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
+    setAcceptedMouseButtons(Qt::LeftButton);
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
     setFiltersChildMouseEvents(true);
 
@@ -322,8 +321,7 @@ void QDeclarativeGeoMap::componentComplete()
 */
 void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 {
-    if (!mouseEvent(event))
-        event->ignore();
+    event->setAccepted(gestureArea_->mousePressEvent(event));
 }
 
 /*!
@@ -331,8 +329,7 @@ void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!mouseEvent(event))
-        event->ignore();
+    event->setAccepted(gestureArea_->mouseMoveEvent(event));
 }
 
 /*!
@@ -340,30 +337,16 @@ void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!mouseEvent(event))
-        event->ignore();
+    event->setAccepted(gestureArea_->mouseReleaseEvent(event));
 }
 
 /*!
     \internal
-    returns whether flickable used the event
 */
-bool QDeclarativeGeoMap::mouseEvent(QMouseEvent *event)
+void QDeclarativeGeoMap::mouseUngrabEvent()
 {
-    if (!mappingManagerInitialized_)
-        return false;
-    switch (event->type()) {
-    case QEvent::MouseButtonPress:
-        return gestureArea_->mousePressEvent(event);
-    case QEvent::MouseButtonRelease:
-        return gestureArea_->mouseReleaseEvent(event);
-    case QEvent::MouseMove:
-        return gestureArea_->mouseMoveEvent(event);
-    default:
-        return false;
-    }
+    gestureArea_->mouseUngrabEvent();
 }
-
 
 /*!
     \qmlproperty MapGestureArea QtLocation::Map::gesture
@@ -839,8 +822,7 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
         return;
     }
     QLOC_TRACE0;
-    event->accept();
-    gestureArea_->touchEvent(event);
+    event->setAccepted(gestureArea_->touchEvent(event));
 }
 
 /*!
@@ -859,29 +841,51 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 */
 bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
 {
-    Q_UNUSED(item)
+    if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseMove ||
+        event->type() == QEvent::MouseButtonRelease ||
+        event->type() == QEvent::MouseButtonDblClick) {
+        // Check if we have already grabbed input. This can happen if the previous touch event
+        // immediately triggers a gesture, the synthesized mouse event is still generated. Filter
+        // these events so that child items do no receive them.
+        if (gestureArea_->hasGrabbedInput())
+            return true;
+
+        // Ignore synthesized mouse events, but don't filter them, as child items may not handle
+        // touch events directly. After a gesture is recognized and an input grab obtained these
+        // events should cease to be generated, except for the case above.
+        QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        if (me->source() != Qt::MouseEventNotSynthesized)
+            return false;
+    } else if (event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchUpdate ||
+               event->type() == QEvent::TouchEnd) {
+        // Check if already grabbed mouse, if so filter out touch events.
+        // FIXME: Returning true here gives priority to touch input, which is not what is intended.
+        // In response to returning true ungrabMouse() is called and touch input will be handled
+        // thereafter.
+        if (gestureArea_->hasGrabbedInput())
+            return true;
+    }
+
     QLOC_TRACE0;
     switch (event->type()) {
     case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
     case QEvent::MouseMove:
         if (item->keepMouseGrab())
             return false;
-        if (!gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event)))
-            return false;
-        grabMouse();
-        return true;
-    case QEvent::UngrabMouse:
         return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
+    case QEvent::MouseButtonRelease:
+        return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
+    case QEvent::UngrabMouse:
+        // Never filter ungrab mouse events. This event notifies 'item' that the mouse has been
+        // grabbed and it should cancel any outstanding input event processing. For example, press
+        // and hold timers.
+        return false;
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
         if (item->keepMouseGrab())
             return false;
-        if (!gestureArea_->filterMapChildTouchEvent(static_cast<QTouchEvent *>(event)))
-            return false;
-        grabMouse();
-        return true;
+        return gestureArea_->filterMapChildTouchEvent(static_cast<QTouchEvent *>(event));
     case QEvent::Wheel:
         return gestureArea_->wheelEvent(static_cast<QWheelEvent *>(event));
     default:

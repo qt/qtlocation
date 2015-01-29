@@ -494,14 +494,21 @@ Item {
             compare(mouseUpper.lastWasHeld, false)
             compare(mouseUpper.lastX, 5)
             compare(mouseUpper.lastY, 5) // remember 20 offset of the mouse area
-            mousePress(map, 5, 26)
+
+            mouseRelease(map, 5, 25)
             compare(mouseUpperPressedSpy.count, 1)
+            compare(mouseUpperReleasedSpy.count, 1)
+            compare(mouseLowerPressedSpy.count, 0)
+            compare(mouseLowerReleasedSpy.count, 0)
+
+            mousePress(map, 5, 26)
+            compare(mouseUpperPressedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 0)
             compare(mouseOverlapperPressedSpy.count, 0)
 
             mouseRelease(map, 5, 26)
-            compare(mouseUpperPressedSpy.count, 1)
-            compare(mouseUpperReleasedSpy.count, 1)
+            compare(mouseUpperPressedSpy.count, 2)
+            compare(mouseUpperReleasedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 0)
             compare(mouseLowerReleasedSpy.count, 0)
             compare(mouseUpper.lastAccepted, true)
@@ -512,7 +519,7 @@ Item {
             compare(mouseUpper.lastY, 6) // remember 20 offset of the mouse area
 
             mousePress(map, 5, 75)
-            compare(mouseUpperPressedSpy.count, 1)
+            compare(mouseUpperPressedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseOverlapperPressedSpy.count, 0)
             compare(mouseLower.lastAccepted, true)
@@ -523,18 +530,19 @@ Item {
             compare(mouseLower.lastY, 25) // remember 50 offset of the mouse area
 
             mouseRelease(map, 5, 75)
-            compare(mouseUpperPressedSpy.count, 1)
-            compare(mouseUpperReleasedSpy.count, 1)
+            compare(mouseUpperPressedSpy.count, 2)
+            compare(mouseUpperReleasedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
+
             mousePress(map, 55, 75)
-            compare(mouseUpperPressedSpy.count, 1)
+            compare(mouseUpperPressedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseOverlapperPressedSpy.count, 1)
             compare(mouseOverlapperReleasedSpy.count, 0)
             mouseRelease(map, 55, 25)
-            compare(mouseUpperPressedSpy.count, 1)
-            compare(mouseUpperReleasedSpy.count, 1)
+            compare(mouseUpperPressedSpy.count, 2)
+            compare(mouseUpperReleasedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
             compare(mouseOverlapperReleasedSpy.count, 1)

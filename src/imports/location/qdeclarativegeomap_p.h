@@ -146,9 +146,6 @@ public:
     QT_DEPRECATED Q_INVOKABLE QPointF toScreenPosition(const QGeoCoordinate &coordinate) const;
 #endif
 
-    // callback for map mouse areas
-    bool mouseEvent(QMouseEvent *event);
-
     QDeclarativeGeoMapGestureArea *gesture();
 
     Q_INVOKABLE void fitViewportToGeoShape(const QVariant &shape);
@@ -163,6 +160,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void mouseUngrabEvent();
 
     void touchEvent(QTouchEvent *event);
     void wheelEvent(QWheelEvent *event);
