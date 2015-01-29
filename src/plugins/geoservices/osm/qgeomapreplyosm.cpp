@@ -41,7 +41,6 @@ QGeoMapReplyOsm::QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec,
     connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
     connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
-    connect(m_reply, SIGNAL(destroyed()), this, SLOT(replyDestroyed()));
 }
 
 QGeoMapReplyOsm::~QGeoMapReplyOsm()
