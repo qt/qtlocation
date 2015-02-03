@@ -37,7 +37,7 @@
 #include <QtPositioning/QGeoPositionInfoSource>
 #include <QtPositioning/QGeoSatelliteInfoSource>
 #include <QtPositioning/QGeoAreaMonitorSource>
-#include <QList>
+#include <QtCore/QList>
 
 QT_BEGIN_NAMESPACE
 

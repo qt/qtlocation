@@ -34,9 +34,9 @@
 #ifndef QGEOROUTEREQUEST_H
 #define QGEOROUTEREQUEST_H
 
-#include <QList>
-#include <QExplicitlySharedDataPointer>
-#include <QDateTime>
+#include <QtCore/QList>
+#include <QtCore/QExplicitlySharedDataPointer>
+#include <QtCore/QDateTime>
 
 #include <QtLocation/qlocationglobal.h>
 #include <QtPositioning/qgeocoordinate.h>

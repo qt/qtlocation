@@ -34,9 +34,9 @@
 #ifndef QPLACEATTRIBUTE_H
 #define QPLACEATTRIBUTE_H
 
-#include <QString>
-#include <QVariant>
-#include <QSharedDataPointer>
+#include <QtCore/QString>
+#include <QtCore/QVariant>
+#include <QtCore/QSharedDataPointer>
 
 #include <QtLocation/qlocationglobal.h>
 

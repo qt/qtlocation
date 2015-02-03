@@ -45,10 +45,10 @@
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceSearchResult>
 
-#include <QLocale>
-#include <QVector>
-#include <QString>
-#include <QObject>
+#include <QtCore/QLocale>
+#include <QtCore/QVector>
+#include <QtCore/QString>
+#include <QtCore/QObject>
 #include <QtLocation/QPlaceIcon>
 
 QT_BEGIN_NAMESPACE

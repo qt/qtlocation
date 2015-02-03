@@ -37,9 +37,9 @@
 #include <QtPositioning/QGeoCoordinate>
 #include <QtLocation/QGeoRouteRequest>
 
-#include <QExplicitlySharedDataPointer>
-#include <QList>
-#include <QHash>
+#include <QtCore/QExplicitlySharedDataPointer>
+#include <QtCore/QList>
+#include <QtCore/QHash>
 
 QT_BEGIN_NAMESPACE
 

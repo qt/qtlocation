@@ -34,8 +34,8 @@
 #ifndef QGEOROUTESEGMENT_H
 #define QGEOROUTESEGMENT_H
 
-#include <QExplicitlySharedDataPointer>
-#include <QList>
+#include <QtCore/QExplicitlySharedDataPointer>
+#include <QtCore/QList>
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE

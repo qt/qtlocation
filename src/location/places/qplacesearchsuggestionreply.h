@@ -36,7 +36,7 @@
 
 #include <QtLocation/QPlaceReply>
 
-#include <QStringList>
+#include <QtCore/QStringList>
 
 QT_BEGIN_NAMESPACE
 

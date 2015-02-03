@@ -37,9 +37,9 @@
 #include <QtLocation/QGeoCodeReply>
 #include <QtPositioning/QGeoRectangle>
 
-#include <QObject>
-#include <QList>
-#include <QMap>
+#include <QtCore/QObject>
+#include <QtCore/QList>
+#include <QtCore/QMap>
 
 QT_BEGIN_NAMESPACE
 

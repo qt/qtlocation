@@ -34,7 +34,7 @@
 #ifndef QGEOMANEUVER_H
 #define QGEOMANEUVER_H
 
-#include <qshareddata.h>
+#include <QtCore/qshareddata.h>
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
