@@ -34,15 +34,20 @@
            on a map using a MapItemView
     \image places-map.jpg
 
-    To write a QML application that will show places on a map, we start by
+    The example displays a map of the current location or, if no position is
+    available, it uses Brisbane/Australia. Subsequently a search for places
+    matching the term "pizza" is performed and each result shown on the map.
+
+    To write the QML application that will show places on a map, we start by
     making the following import declarations.
 
     \snippet places_map/places_map.qml Imports
 
     Instantiate a \l Plugin instance.  The \l Plugin is effectively the backend
-    from where places are sourced from.  Because the \c nokia plugin has been
-    specified, some mandatory parameters need to be filled in, see the \l
-    {Mandatory Parameters} {Nokia Plugin} documentation for details:
+    from where places are sourced from. Depending on the chosen plugin
+    some manadatory parameters may be needed. In this case the
+    \l {Qt Location Open Street Map Plugin}{OSM plugin} is selected which does not have any mandatory
+    parameters.
 
     \snippet places_map/places_map.qml Initialize Plugin
 
@@ -64,4 +69,11 @@
     Roles} {role}.
 
     \snippet places_map/places_map.qml Places MapItemView
+
+    Finally, a \c PositionSource is used to reset the map to the curent
+    location and find "pizza" places in the new area. The position information
+    is updated every 2 minutes and if the new position is more than 500 meters
+    away from the last pizza search area the place search is retriggered.
+
+    \snippet places_map/places_map.qml Current Location
 */
