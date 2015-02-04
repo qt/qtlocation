@@ -1,7 +1,6 @@
 QT += quick-private positioning-private qml-private core-private
 
 INCLUDEPATH *= $$PWD
-DEFINES += TOUCH_EVENT_WORKAROUND
 
 HEADERS += qdeclarativeposition_p.h \
            qdeclarativepositionsource_p.h \
