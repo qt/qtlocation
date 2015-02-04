@@ -142,10 +142,9 @@ public:
             // Introduction of 5.3 version; existing 5.0 exports automatically become available under 5.3 as well
             // 5.3 is committed QML API despite missing release of QtLocation 5.3
 
-            // Register the 5.4 types
-            // Implicitly registers 5.3
-            minor = 4;
-            // For now there are no new types; just reregister one existing 5.0 type
+            // Register the 5.5 types
+            // Implicitly registers 5.3 & 5.4
+            minor = 5;
             qmlRegisterUncreatableType<QDeclarativeGeoMapType, 1>(uri, major, minor, "MapType",
                                         QStringLiteral("MapType is not intended instantiable by developer."));
 

@@ -528,6 +528,9 @@ public:
             // Introduction of 5.4 version; existing 5.3 exports become automatically available under 5.4
             minor = 4;
             qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
+
+            minor = 5;
+            qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
         }
