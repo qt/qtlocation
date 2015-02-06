@@ -83,7 +83,7 @@ QString QGeoUriProvider::getCurrentHost() const
 {
     if (m_maxSubdomains) {
         QString result(m_firstSubdomain.toLatin1() + qrand() % m_maxSubdomains);
-        result += "." + m_currentHost;
+        result += '.' + m_currentHost;
         return result;
     }
     return m_currentHost;
