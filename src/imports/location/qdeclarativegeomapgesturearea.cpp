@@ -242,7 +242,7 @@ QT_BEGIN_NAMESPACE
 
     It is an indicative measure calculated from the dimensions of the
     map area, roughly corresponding how much zoom level could change with
-    maximum pinch zoom. Default value is 2.0, maximum value is 10.0
+    maximum pinch zoom. Default value is 4.0, maximum value is 10.0
 */
 
 /*!

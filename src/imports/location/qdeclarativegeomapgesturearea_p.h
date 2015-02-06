@@ -244,7 +244,7 @@ private:
         struct Zoom
         {
             Zoom() : minimum(-1.0), maximum(-1.0), start(0.0), previous(0.0),
-                     maximumChange(2.0) {}
+                     maximumChange(4.0) {}
             qreal minimum;
             qreal maximum;
             qreal start;
