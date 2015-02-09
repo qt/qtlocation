@@ -58,17 +58,17 @@ public:
     QGeoRectanglePrivate(const QGeoRectanglePrivate &other);
     ~QGeoRectanglePrivate();
 
-    bool isValid() const;
-    bool isEmpty() const;
-    bool contains(const QGeoCoordinate &coordinate) const;
+    bool isValid() const Q_DECL_OVERRIDE;
+    bool isEmpty() const Q_DECL_OVERRIDE;
+    bool contains(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
 
     QGeoCoordinate center() const Q_DECL_OVERRIDE;
 
-    void extendShape(const QGeoCoordinate &coordinate);
+    void extendShape(const QGeoCoordinate &coordinate) Q_DECL_OVERRIDE;
 
-    QGeoShapePrivate *clone() const;
+    QGeoShapePrivate *clone() const Q_DECL_OVERRIDE;
 
-    bool operator==(const QGeoShapePrivate &other) const;
+    bool operator==(const QGeoShapePrivate &other) const Q_DECL_OVERRIDE;
 
     QGeoCoordinate topLeft;
     QGeoCoordinate bottomRight;

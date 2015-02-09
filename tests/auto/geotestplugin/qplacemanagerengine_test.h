@@ -340,7 +340,7 @@ public:
         }
     }
 
-    QPlaceDetailsReply *getPlaceDetails(const QString &placeId)
+    QPlaceDetailsReply *getPlaceDetails(const QString &placeId) Q_DECL_OVERRIDE
     {
         DetailsReply *reply = new DetailsReply(this);
 
@@ -424,7 +424,7 @@ public:
         return reply;
     }
 
-    QPlaceSearchReply *search(const QPlaceSearchRequest &query)
+    QPlaceSearchReply *search(const QPlaceSearchRequest &query) Q_DECL_OVERRIDE
     {
         QList<QPlaceSearchResult> results;
 
@@ -469,7 +469,7 @@ public:
         return reply;
     }
 
-    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query)
+    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query) Q_DECL_OVERRIDE
     {
         QStringList suggestions;
         if (query.searchTerm() == QLatin1String("test")) {
@@ -485,7 +485,7 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *savePlace(const QPlace &place)
+    QPlaceIdReply *savePlace(const QPlace &place) Q_DECL_OVERRIDE
     {
         IdReply *reply = new IdReply(QPlaceIdReply::SavePlace, this);
 
@@ -508,7 +508,7 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *removePlace(const QString &placeId)
+    QPlaceIdReply *removePlace(const QString &placeId) Q_DECL_OVERRIDE
     {
         IdReply *reply = new IdReply(QPlaceIdReply::RemovePlace, this);
         reply->setId(placeId);
@@ -525,7 +525,7 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId)
+    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId) Q_DECL_OVERRIDE
     {
         IdReply *reply = new IdReply(QPlaceIdReply::SaveCategory, this);
 
@@ -566,7 +566,7 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *removeCategory(const QString &categoryId)
+    QPlaceIdReply *removeCategory(const QString &categoryId) Q_DECL_OVERRIDE
     {
         IdReply *reply = new IdReply(QPlaceIdReply::RemoveCategory, this);
         reply->setId(categoryId);
@@ -589,7 +589,7 @@ public:
         return reply;
     }
 
-    QPlaceReply *initializeCategories()
+    QPlaceReply *initializeCategories() Q_DECL_OVERRIDE
     {
         QPlaceReply *reply = new PlaceReply(this);
 
@@ -598,7 +598,7 @@ public:
         return reply;
     }
 
-    QString parentCategoryId(const QString &categoryId) const
+    QString parentCategoryId(const QString &categoryId) const Q_DECL_OVERRIDE
     {
         QHashIterator<QString, QStringList> i(m_childCategories);
         while (i.hasNext()) {
@@ -610,17 +610,17 @@ public:
         return QString();
     }
 
-    virtual QStringList childCategoryIds(const QString &categoryId) const
+    virtual QStringList childCategoryIds(const QString &categoryId) const Q_DECL_OVERRIDE
     {
         return m_childCategories.value(categoryId);
     }
 
-    virtual QPlaceCategory category(const QString &categoryId) const
+    virtual QPlaceCategory category(const QString &categoryId) const Q_DECL_OVERRIDE
     {
         return m_categories.value(categoryId);
     }
 
-    QList<QPlaceCategory> childCategories(const QString &parentId) const
+    QList<QPlaceCategory> childCategories(const QString &parentId) const Q_DECL_OVERRIDE
     {
         QList<QPlaceCategory> categories;
 
@@ -630,17 +630,18 @@ public:
         return categories;
     }
 
-    QList<QLocale> locales() const
+    QList<QLocale> locales() const Q_DECL_OVERRIDE
     {
         return m_locales;
     }
 
-    void setLocales(const QList<QLocale> &locales)
+    void setLocales(const QList<QLocale> &locales) Q_DECL_OVERRIDE
     {
         m_locales = locales;
     }
 
-    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const {
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const Q_DECL_OVERRIDE
+    {
         QList<QPair<int, QUrl> > candidates;
 
         QMap<QString, int> sizeDictionary;
@@ -676,7 +677,8 @@ public:
         }
     }
 
-    QPlace compatiblePlace(const QPlace &original) const {
+    QPlace compatiblePlace(const QPlace &original) const Q_DECL_OVERRIDE
+    {
         QPlace place;
         place.setName(original.name());
         return place;

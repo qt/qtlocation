@@ -67,9 +67,9 @@ public:
     explicit QDeclarativeRectangleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRectangleMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) Q_DECL_OVERRIDE;
     //from QuickItem
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
+    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_OVERRIDE;
 
     QGeoCoordinate topLeft();
     void setTopLeft(const QGeoCoordinate &center);
@@ -82,7 +82,7 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    bool contains(const QPointF &point) const;
+    bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void topLeftChanged(const QGeoCoordinate &topLeft);
@@ -93,9 +93,9 @@ protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-    virtual void updateMapItem();
+    virtual void updateMapItem() Q_DECL_OVERRIDE;
     void updateMapItemAssumeDirty();
-    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
+    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
     QGeoCoordinate topLeft_;

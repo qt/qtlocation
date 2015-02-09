@@ -79,8 +79,8 @@ private:
     QGeoAreaMonitorPollingPrivate* d;
     QGeoAreaMonitorSource::Error lastError;
 
-    void connectNotify(const QMetaMethod &signal);
-    void disconnectNotify(const QMetaMethod &signal);
+    void connectNotify(const QMetaMethod &signal) Q_DECL_OVERRIDE;
+    void disconnectNotify(const QMetaMethod &signal) Q_DECL_OVERRIDE;
 
     int idForSignal(const char *signal);
 };

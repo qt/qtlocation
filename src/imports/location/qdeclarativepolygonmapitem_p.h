@@ -74,9 +74,9 @@ public:
     explicit QDeclarativePolygonMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolygonMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) Q_DECL_OVERRIDE;
     //from QuickItem
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
+    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_OVERRIDE;
 
     Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
     Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
@@ -89,7 +89,7 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    bool contains(const QPointF &point) const;
+    bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void pathChanged();
@@ -99,9 +99,9 @@ protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-    virtual void updateMapItem();
+    virtual void updateMapItem() Q_DECL_OVERRIDE;
     void handleBorderUpdated();
-    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
+    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
     void pathPropertyChanged();

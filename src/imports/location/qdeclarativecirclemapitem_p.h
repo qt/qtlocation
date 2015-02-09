@@ -64,8 +64,8 @@ public:
     explicit QDeclarativeCircleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeCircleMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) Q_DECL_OVERRIDE;
+    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_OVERRIDE;
 
     QGeoCoordinate center();
     void setCenter(const QGeoCoordinate &center);
@@ -78,7 +78,7 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    bool contains(const QPointF &point) const;
+    bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &center);
@@ -89,9 +89,9 @@ protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-    virtual void updateMapItem();
+    virtual void updateMapItem() Q_DECL_OVERRIDE;
     void updateMapItemAssumeDirty();
-    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
+    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
     bool preserveCircleGeometry(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,

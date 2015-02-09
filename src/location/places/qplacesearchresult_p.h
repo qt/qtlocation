@@ -42,6 +42,7 @@
 
 QT_BEGIN_NAMESPACE
 
+// defines must be in sync with class below
 #define Q_IMPLEMENT_SEARCHRESULT_D_FUNC(Class) \
     Class##Private *Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
     const Class##Private *Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
@@ -50,8 +51,8 @@ QT_BEGIN_NAMESPACE
     Class::Class(const QPlaceSearchResult &other) : QPlaceSearchResult() { Class##Private::copyIfPossible(d_ptr, other); }
 
 #define Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(Class, ResultType) \
-    virtual QPlaceSearchResultPrivate *clone() const { return new Class##Private(*this); } \
-    virtual QPlaceSearchResult::SearchResultType type() const {return ResultType;} \
+    virtual QPlaceSearchResultPrivate *clone() const Q_DECL_OVERRIDE { return new Class##Private(*this); } \
+    virtual QPlaceSearchResult::SearchResultType type() const Q_DECL_OVERRIDE {return ResultType;} \
     static void copyIfPossible(QSharedDataPointer<QPlaceSearchResultPrivate> &d_ptr, const QPlaceSearchResult &other) \
     { \
         if (other.type() == ResultType) \
@@ -71,7 +72,15 @@ public:
     static const QSharedDataPointer<QPlaceSearchResultPrivate>
             &extract_d(const QPlaceSearchResult &other) { return other.d_ptr; }
 
-    Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(QPlaceSearchResult, QPlaceSearchResult::UnknownSearchResult)
+    virtual QPlaceSearchResultPrivate *clone() const { return new QPlaceSearchResultPrivate(*this); }
+    virtual QPlaceSearchResult::SearchResultType type() const  { return QPlaceSearchResult::UnknownSearchResult; }
+    static void copyIfPossible(QSharedDataPointer<QPlaceSearchResultPrivate> &d_ptr, const QPlaceSearchResult &other)
+    {
+        if (other.type() == QPlaceSearchResult::UnknownSearchResult)
+            d_ptr = extract_d(other);
+        else
+            d_ptr = new QPlaceSearchResultPrivate;
+    }
 
     QString title;
     QPlaceIcon icon;

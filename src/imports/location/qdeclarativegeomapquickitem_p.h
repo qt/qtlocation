@@ -54,7 +54,7 @@ public:
     explicit QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapQuickItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) Q_DECL_OVERRIDE;
 
     void setCoordinate(const QGeoCoordinate &coordinate);
     QGeoCoordinate coordinate();
@@ -78,9 +78,9 @@ protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-    virtual void updateMapItem();
-    virtual void afterChildrenChanged();
-    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
+    virtual void updateMapItem() Q_DECL_OVERRIDE;
+    virtual void afterChildrenChanged() Q_DECL_OVERRIDE;
+    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
     qreal scaleFactor();
