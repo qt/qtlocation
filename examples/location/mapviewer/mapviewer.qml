@@ -38,20 +38,158 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
+import QtQuick 2.4
+import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
 import QtLocation.examples 5.0
 import "content/map"
 import "content/dialogs"
 
-Item {
-    id: page
-    width: parent ? parent.width : 360
-    height: parent ? parent.height : 640
+ApplicationWindow {
+    id: appWindow
+    title: qsTr("Mapviewer")
+    height: 640
+    width: 360
+    visible: true
+
     property variant map
     property variant minimap
     property variant parameters
+
+    function geocodeMessage(){
+        var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
+        latitude = Math.round(map.geocodeModel.get(0).coordinate.latitude * 10000) / 10000
+        longitude =Math.round(map.geocodeModel.get(0).coordinate.longitude * 10000) / 10000
+        street = map.geocodeModel.get(0).address.street
+        district = map.geocodeModel.get(0).address.district
+        city = map.geocodeModel.get(0).address.city
+        county = map.geocodeModel.get(0).address.county
+        state = map.geocodeModel.get(0).address.state
+        countryCode = map.geocodeModel.get(0).address.countryCode
+        country = map.geocodeModel.get(0).address.country
+        postalCode = map.geocodeModel.get(0).address.postalCode
+
+        text = "<b>Latitude:</b> " + latitude + "<br/>"
+        text +="<b>Longitude:</b> " + longitude + "<br/>" + "<br/>"
+        if (street) text +="<b>Street: </b>"+ street + " <br/>"
+        if (district) text +="<b>District: </b>"+ district +" <br/>"
+        if (city) text +="<b>City: </b>"+ city + " <br/>"
+        if (county) text +="<b>County: </b>"+ county + " <br/>"
+        if (state) text +="<b>State: </b>"+ state + " <br/>"
+        if (countryCode) text +="<b>Country code: </b>"+ countryCode + " <br/>"
+        if (country) text +="<b>Country: </b>"+ country + " <br/>"
+        if (postalCode) text +="<b>PostalCode: </b>"+ postalCode + " <br/>"
+        return text
+    }
+
+    function createMap(provider){
+        var plugin
+        if (parameters && parameters.length>0)
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', page)
+        else
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', page)
+
+        if (map) {
+            map.destroy()
+            minimap = null
+        }
+
+        map = Qt.createQmlObject ('import QtLocation 5.3;\
+                                       import "content/map";\
+                                       MapComponent{\
+                                           z : backgroundRect.z + 1;\
+                                           width: page.width;\
+                                           height: page.height - mainMenu.height;\
+                                           onFollowmeChanged: {toolsMenu.update()}\
+                                           onSupportedMapTypesChanged: {mapTypeMenu.update()}\
+                                           onCoordinatesCaptured: {\
+                                               messageDialog.state = "Coordinates";\
+                                               messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);\
+                                               page.state = "Message";\
+                                           }\
+                                           onGeocodeFinished:{\
+                                               if (map.geocodeModel.status == GeocodeModel.Ready){\
+                                                   if (map.geocodeModel.count == 0) {messageDialog.state = "UnknownGeocodeError";}\
+                                                   else if (map.geocodeModel.count > 1) {messageDialog.state = "AmbiguousGeocode";}\
+                                                   else {messageDialog.state = "LocationInfo";}\
+                                               }\
+                                               else if (map.geocodeModel.status == GeocodeModel.Error) {messageDialog.state = "GeocodeError";}\
+                                               page.state = "Message";\
+                                           }\
+                                           onShowDistance:{\
+                                               messageDialog.state = "Distance";\
+                                               messageDialog.text = "<b>Distance:</b> " + distance;\
+                                               page.state = "Message";\
+                                           }\
+                                           onMoveMarker: {\
+                                               page.state = "Coordinates";\
+                                           }\
+                                           onRouteError: {\
+                                               messageDialog.state = "RouteError";\
+                                               page.state = "Message";\
+                                           }\
+                                           onRequestLocale:{\
+                                               page.state = "Locale";\
+                                           }\
+                                           onShowGeocodeInfo:{\
+                                               messageDialog.state = "LocationInfo";\
+                                               page.state = "Message";\
+                                           }\
+                                           onResetState: {\
+                                               page.state = "";\
+                                           }\
+                                           onErrorChanged: {\
+                                               if (map.error != Map.NoError) {\
+                                               messageDialog.state = "ProviderError";\
+                                               messageDialog.text =  map.errorString + "<br/><br/><b>Try to select other provider</b>";\
+                                                   if (map.error == Map.MissingRequiredParameterError) \
+                                                       messageDialog.text += "<br/>or see \'mapviewer --help\'\
+                                                       how to pass plugin parameters.";\
+                                               page.state = "Message";\
+                                               }\
+                                           }\
+                                       }',page)
+
+
+        map.plugin = plugin;
+        tempGeocodeModel.plugin = plugin;
+        mapTypeMenu.update();
+        toolsMenu.update();
+    }
+
+    function getPlugins(){
+        var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', page)
+        var tempPlugin
+        var myArray = new Array()
+        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
+            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
+            if (tempPlugin.supportsMapping())
+                myArray.push(tempPlugin.name)
+        }
+        myArray.sort()
+        return myArray
+    }
+
+    function setPluginParameters(pluginParameters) {
+        var parameters = new Array()
+        for (var prop in pluginParameters){
+            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
+            parameters.push(parameter)
+        }
+        appWindow.parameters=parameters
+        if (providerMenu.exclusiveButton !== "")
+            createMap(providerMenu.exclusiveButton);
+        else if (providerMenu.children.length > 0) {
+            providerMenu.exclusiveButton = providerMenu.children[0].text
+        }
+    }
+
+Item {
+    id: page
+    //fixme
+    width: appWindow.width
+    height: appWindow.height
 
     Rectangle {
         id: backgroundRect
@@ -494,135 +632,6 @@ Item {
         }
     }
 
-    function geocodeMessage(){
-        var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
-        latitude = Math.round(map.geocodeModel.get(0).coordinate.latitude * 10000) / 10000
-        longitude =Math.round(map.geocodeModel.get(0).coordinate.longitude * 10000) / 10000
-        street = map.geocodeModel.get(0).address.street
-        district = map.geocodeModel.get(0).address.district
-        city = map.geocodeModel.get(0).address.city
-        county = map.geocodeModel.get(0).address.county
-        state = map.geocodeModel.get(0).address.state
-        countryCode = map.geocodeModel.get(0).address.countryCode
-        country = map.geocodeModel.get(0).address.country
-        postalCode = map.geocodeModel.get(0).address.postalCode
-
-        text = "<b>Latitude:</b> " + latitude + "<br/>"
-        text +="<b>Longitude:</b> " + longitude + "<br/>" + "<br/>"
-        if (street) text +="<b>Street: </b>"+ street + " <br/>"
-        if (district) text +="<b>District: </b>"+ district +" <br/>"
-        if (city) text +="<b>City: </b>"+ city + " <br/>"
-        if (county) text +="<b>County: </b>"+ county + " <br/>"
-        if (state) text +="<b>State: </b>"+ state + " <br/>"
-        if (countryCode) text +="<b>Country code: </b>"+ countryCode + " <br/>"
-        if (country) text +="<b>Country: </b>"+ country + " <br/>"
-        if (postalCode) text +="<b>PostalCode: </b>"+ postalCode + " <br/>"
-        return text
-    }
-
-    function createMap(provider){
-        var plugin
-        if (parameters && parameters.length > 0)
-            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
-        else
-            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', page)
-
-        if (map) {
-            map.destroy()
-            minimap = null
-        }
-
-        map = Qt.createQmlObject ('import QtLocation 5.3;\
-                                       import "content/map";\
-                                       MapComponent{\
-                                           z : backgroundRect.z + 1;\
-                                           width: page.width;\
-                                           height: page.height - mainMenu.height;\
-                                           onFollowmeChanged: {toolsMenu.update()}\
-                                           onSupportedMapTypesChanged: {mapTypeMenu.update()}\
-                                           onCoordinatesCaptured: {\
-                                               messageDialog.state = "Coordinates";\
-                                               messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);\
-                                               page.state = "Message";\
-                                           }\
-                                           onGeocodeFinished:{\
-                                               if (map.geocodeModel.status == GeocodeModel.Ready){\
-                                                   if (map.geocodeModel.count == 0) {messageDialog.state = "UnknownGeocodeError";}\
-                                                   else if (map.geocodeModel.count > 1) {messageDialog.state = "AmbiguousGeocode";}\
-                                                   else {messageDialog.state = "LocationInfo";}\
-                                               }\
-                                               else if (map.geocodeModel.status == GeocodeModel.Error) {messageDialog.state = "GeocodeError";}\
-                                               page.state = "Message";\
-                                           }\
-                                           onShowDistance:{\
-                                               messageDialog.state = "Distance";\
-                                               messageDialog.text = "<b>Distance:</b> " + distance;\
-                                               page.state = "Message";\
-                                           }\
-                                           onMoveMarker: {\
-                                               page.state = "Coordinates";\
-                                           }\
-                                           onRouteError: {\
-                                               messageDialog.state = "RouteError";\
-                                               page.state = "Message";\
-                                           }\
-                                           onRequestLocale:{\
-                                               page.state = "Locale";\
-                                           }\
-                                           onShowGeocodeInfo:{\
-                                               messageDialog.state = "LocationInfo";\
-                                               page.state = "Message";\
-                                           }\
-                                           onResetState: {\
-                                               page.state = "";\
-                                           }\
-                                           onErrorChanged: {\
-                                               if (map.error != Map.NoError) {\
-                                               messageDialog.state = "ProviderError";\
-                                               messageDialog.text =  map.errorString + "<br/><br/><b>Try to select other provider</b>";\
-                                                   if (map.error == Map.MissingRequiredParameterError) \
-                                                       messageDialog.text += "<br/>or see \'mapviewer --help\'\
-                                                       how to pass plugin parameters.";\
-                                               page.state = "Message";\
-                                               }\
-                                           }\
-                                       }',page)
-
-
-        map.plugin = plugin;
-        tempGeocodeModel.plugin = plugin;
-        mapTypeMenu.update();
-        toolsMenu.update();
-
-    }
-
-    function getPlugins(){
-        var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', page)
-        var tempPlugin
-        var myArray = new Array()
-        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
-            if (tempPlugin.supportsMapping())
-                myArray.push(tempPlugin.name)
-        }
-        myArray.sort()
-        return myArray
-    }
-
-    function setPluginParameters(pluginParameters) {
-        var parameters = new Array()
-        for (var prop in pluginParameters){
-            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
-            parameters.push(parameter)
-        }
-        page.parameters=parameters
-        if (providerMenu.exclusiveButton !== "")
-            createMap(providerMenu.exclusiveButton);
-        else if (providerMenu.children.length > 0) {
-            providerMenu.exclusiveButton = providerMenu.children[0].text
-        }
-    }
-
     //=====================States of page=====================
     states: [
         State {
@@ -702,4 +711,5 @@ Item {
             NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
         }
     ]
+}
 }
