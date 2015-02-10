@@ -69,6 +69,7 @@ ApplicationWindow {
         postalCode: ""
     }
 
+
     Address {
         id: toAddress
         street: "Heal st"
@@ -277,9 +278,6 @@ ApplicationWindow {
                                                    showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode")); \
                                                }\
                                            }\
-                                           onShowDistance:{\
-                                               showMessage(qsTr("Distance"),"<b>" + qsTr("Distance:") + "</b> " + distance);\
-                                           }\
                                            onMoveMarker: {\
                                                page.state = "Coordinates";\
                                            }\
@@ -307,6 +305,9 @@ ApplicationWindow {
                                            }\
                                            onShowMainMenu: {\
                                                mapPopupMenu.show(coordinate);\
+                                           }\
+                                           onShowMarkerMenu: {\
+                                               markerPopupMenu.show(coordinate);\
                                            }\
                                        }',page)
         map.plugin = plugin;
@@ -367,6 +368,38 @@ ApplicationWindow {
             mapPopupMenu.popup()
         }
     }
+
+    MarkerPopupMenu {
+        id: markerPopupMenu
+        onItemClicked: {
+            stackView.pop(page)
+            if (item === "deleteMarker") {
+                map.deleteMarker(map.currentMarker)
+            } else if (item === "getMarkerCoordinate") {
+                map.coordinatesCaptured(map.markers[map.currentMarker].coordinate.latitude, map.markers[map.currentMarker].coordinate.longitude)
+            } else if (item === "moveMarkerTo") {
+                map.moveMarker()
+            } else if (item === "showDrawMenu") {
+                map.drawItemPopup()
+            } else if (item === "routeToNextPoint" || item === "routeToNextPoints") {
+                map.calculateRoute()
+            } else if (item === "distanceToNextPoint") {
+                var coordinate1 = map.markers[currentMarker].coordinate;
+                var coordinate2 = map.markers[currentMarker+1].coordinate;
+                var distance = map.formatDistance(coordinate1.distanceTo(coordinate2));
+                showMessage(qsTr("Distance"),"<b>" + qsTr("Distance:") + "</b> " + distance)
+            }
+        }
+
+        function show(coordinate) {
+            stackView.pop(page)
+            markerPopupMenu.markersCount = map.markers.length
+            markerPopupMenu.update()
+            markerPopupMenu.popup()
+        }
+
+    }
+
 
     StackView {
         id: stackView

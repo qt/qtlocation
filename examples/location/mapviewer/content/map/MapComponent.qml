@@ -66,6 +66,7 @@ Map {
     property int currentMarker
     signal resetState()
     signal showMainMenu(variant coordinate)
+    signal showMarkerMenu(variant coordinate)
 
     property int lastX : -1
     property int lastY : -1
@@ -74,7 +75,6 @@ Map {
     property int jitterThreshold : 30
     property bool followme: false
     property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
-    signal showDistance(string distance);
     signal requestLocale()
 
     /* @todo
@@ -621,48 +621,6 @@ Map {
     }
 
     OwnControls.Menu {
-        id: markerMenu
-        horizontalOrientation: false
-        autoWidth: true
-        z: map.z + 4
-        opacity: 0
-
-        width: 150
-        x: 0
-        y: 0
-        onClicked: {
-            map.state = ""
-            switch (button) {
-                case "Delete": {//remove marker
-                    map.deleteMarker(currentMarker)
-                    break;
-                }
-                case "Move to": {//move marker
-                    map.moveMarker()
-                    break;
-                }
-                case "Coordinates": {//show marker's coordinates
-                    map.coordinatesCaptured(markers[currentMarker].coordinate.latitude, markers[currentMarker].coordinate.longitude)
-                    break;
-                }
-                case "Distance to next point": {
-                    showDistance(formatDistance(map.markers[currentMarker].coordinate.distanceTo(map.markers[currentMarker+1].coordinate)));
-                    break;
-                }
-                case "Route to next points"://calculate route
-                case "Route to next point": {
-                    map.calculateRoute()
-                    break;
-                }
-                case "Draw...": {
-                    map.drawItemPopup()
-                    break;
-                }
-            }
-        }
-    }
-
-    OwnControls.Menu {
         id: drawMenu
         horizontalOrientation: false
         autoWidth: true
@@ -951,30 +909,6 @@ Map {
         if (markers.length == 0) markerCounter = 0
     }
 
-    function markerPopup(){
-        var array
-        var length = map.markers.length
-
-        markerMenu.clear()
-        markerMenu.addItem("Delete")
-        markerMenu.addItem("Coordinates")
-        markerMenu.addItem("Move to")
-        markerMenu.addItem("Draw...")
-
-
-        if (currentMarker == length-2){
-            markerMenu.addItem("Route to next point")
-            markerMenu.addItem("Distance to next point")
-
-        }
-        if (currentMarker < length-2){
-            markerMenu.addItem("Route to next points")
-            markerMenu.addItem("Distance to next point")
-        }
-        map.state = "MarkerPopupMenu"
-    }
-
-
     function drawItemPopup(){
         var array
         var length = map.markers.length
@@ -1052,12 +986,6 @@ Map {
 
     // states of map
     states: [
-        State {
-            name: "MarkerPopupMenu"
-            PropertyChanges { target: markerMenu; opacity: 1}
-            PropertyChanges { target: markerMenu; x: ((markers[currentMarker].lastMouseX + markerMenu.width > map.width) ? map.width - markerMenu.width : markers[currentMarker].lastMouseX )}
-            PropertyChanges { target: markerMenu; y: ((markers[currentMarker].lastMouseY + markerMenu.height > map.height - 40) ? map.height - markerMenu.height - 40 : markers[currentMarker].lastMouseY)}
-        },
         State {
             name: "DrawItemMenu"
             PropertyChanges { target: drawMenu; opacity: 1}

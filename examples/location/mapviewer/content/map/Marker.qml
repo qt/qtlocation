@@ -88,7 +88,7 @@ MapQuickItem {
                     var p = map.fromCoordinate(marker.coordinate)
                     lastX = p.x
                     lastY = p.y
-                    map.markerPopup()
+                    map.showMarkerMenu(marker.coordinate)
                 }
             }
         }

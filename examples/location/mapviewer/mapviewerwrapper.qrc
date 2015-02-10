@@ -23,5 +23,6 @@
         <file>Geocode.qml</file>
         <file>ReverseGeocode.qml</file>
         <file>MapPopupMenu.qml</file>
+        <file>MarkerPopupMenu.qml</file>
     </qresource>
 </RCC>
