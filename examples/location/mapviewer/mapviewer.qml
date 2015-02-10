@@ -129,9 +129,11 @@ ApplicationWindow {
                                    properties: { "address": fromAddress}})
                 stackView.currentItem.showPlace.connect(showPlace)
                 stackView.currentItem.closeForm.connect(closeForm)
-            } else {
-                stackView.pop(page)
-                page.state = tool
+            } else if (tool === "RevGeocode") {
+                stackView.push({ item: Qt.resolvedUrl("ReverseGeocode.qml") ,
+                                   properties: { "coordinate": fromCoordinate}})
+                stackView.currentItem.showPlace.connect(showPlace)
+                stackView.currentItem.closeForm.connect(closeForm)
             }
         }
 
@@ -354,29 +356,6 @@ ApplicationWindow {
 
         //=====================Dialogs=====================
 
-        //Reverse Geocode Dialog
-        OwnControls.InputDialog {
-            id: reverseGeocodeDialog
-            title: "Reverse Geocode"
-            z: backgroundRect.z + 2
-
-            Component.onCompleted: {
-                var obj = [["Latitude","-27.575"],["Longitude", "153.088"]]
-                setModel(obj)
-            }
-
-            onGoButtonClicked: {
-                page.state = ""
-                map.geocodeModel.query = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
-                                                                  parseFloat(dialogModel.get(1).inputText));
-                map.geocodeModel.update();
-            }
-
-            onCancelButtonClicked: {
-                page.state = ""
-            }
-        }
-
         //Get new coordinates for marker
         OwnControls.InputDialog {
             id: coordinatesDialog
@@ -431,10 +410,6 @@ ApplicationWindow {
         //=====================States of page=====================
         states: [
             State {
-                name: "RevGeocode"
-                PropertyChanges { target: reverseGeocodeDialog; opacity: 1 }
-            },
-            State {
                 name: "Coordinates"
                 PropertyChanges { target: coordinatesDialog; opacity: 1 }
             },
@@ -446,10 +421,6 @@ ApplicationWindow {
 
         //=====================State-transition animations for page=====================
         transitions: [
-            Transition {
-                to: "RevGeocode"
-                NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-            },
             Transition {
                 to: "Coordinates"
                 NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }

@@ -21,5 +21,6 @@
         <file>RouteCoordinate.qml</file>
         <file>RouteAddress.qml</file>
         <file>Geocode.qml</file>
+        <file>ReverseGeocode.qml</file>
     </qresource>
 </RCC>
