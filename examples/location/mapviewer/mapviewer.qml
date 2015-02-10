@@ -44,7 +44,6 @@ import QtLocation 5.3
 import QtPositioning 5.2
 import QtLocation.examples 5.0 as OwnControls
 import "content/map"
-import "content/dialogs"
 
 ApplicationWindow {
     id: appWindow
@@ -56,6 +55,26 @@ ApplicationWindow {
     property variant map
     property variant minimap
     property variant parameters
+
+    //defaults
+    property variant fromCoordinate: QtPositioning.coordinate(-27.575, 153.088)
+    property variant toCoordinate: QtPositioning.coordinate(-27.465, 153.023)
+
+    Address {
+        id :fromAddress
+        street: "53 Brandl St"
+        city: "Eight Mile Plains"
+        country: "Australia"
+        state : ""
+        postalCode: ""
+    }
+
+    Address {
+        id: toAddress
+        street: "Heal st"
+        city: "New Farm"
+        country: "Australia"
+    }
 
     menuBar: MainMenu {
         id: mainMenu
@@ -89,8 +108,26 @@ ApplicationWindow {
             map.activeMapType = mapType
         }
 
+
         onSelectTool: {
-            page.state = tool;
+            if (tool === "AddressRoute") {
+                stackView.push({ item: Qt.resolvedUrl("RouteAddress.qml") ,
+                                   properties: { "plugin": map.plugin,
+                                                 "toAddress": toAddress,
+                                                 "fromAddress": fromAddress}})
+                stackView.currentItem.showRoute.connect(showRoute)
+                stackView.currentItem.showMessage.connect(showMessage)
+                stackView.currentItem.closeForm.connect(closeForm)
+            } else if (tool === "CoordinateRoute") {
+                stackView.push({ item: Qt.resolvedUrl("RouteCoordinate.qml") ,
+                                   properties: { "toCoordinate": toCoordinate,
+                                                 "fromCoordinate": fromCoordinate}})
+                stackView.currentItem.showRoute.connect(showRoute)
+                stackView.currentItem.closeForm.connect(closeForm)
+            } else {
+                stackView.pop(page)
+                page.state = tool
+            }
         }
 
         onToggleMapState: {
@@ -113,6 +150,35 @@ ApplicationWindow {
             }
             page.state = ""
         }
+
+        //! [routerequest0]
+        function showRoute(startCoordinate, endCoordinate) {
+            // clear away any old data in the query
+            map.routeQuery.clearWaypoints();
+
+            // add the start and end coords as waypoints on the route
+            map.routeQuery.addWaypoint(startCoordinate)
+            map.routeQuery.addWaypoint(endCoordinate)
+            map.routeQuery.travelModes = RouteQuery.CarTravel
+            map.routeQuery.routeOptimizations = RouteQuery.FastestRoute
+            //! [routerequest0]
+
+            //! [routerequest0 feature weight]
+            for (var i=0; i<9; i++) {
+                map.routeQuery.setFeatureWeight(i, 0)
+            }
+            //for (var i=0; i<routeDialog.features.length; i++) {
+            //    map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
+            //}
+            //! [routerequest0 feature weight]
+
+            //! [routerequest1]
+            map.routeModel.update();
+            // center the map on the start coord
+            map.center = startCoordinate;
+            stackView.pop(page);
+            //! [routerequest1]
+        }
     }
 
     function showMessage(title,message,backPage) {
@@ -127,6 +193,10 @@ ApplicationWindow {
 
     function closeMessage(backPage) {
             stackView.pop(backPage)
+    }
+
+    function closeForm() {
+        stackView.pop(page)
     }
 
     function geocodeMessage(){
@@ -201,7 +271,7 @@ ApplicationWindow {
                                                page.state = "Coordinates";\
                                            }\
                                            onRouteError: {\
-                                               showMessage(qsTr("Route Error"),qsTr("Unable to find a route for the given points"));\
+                                               showMessage(qsTr("Route Error"),qsTr("Unable to find a route for the given points"),page);\
                                            }\
                                            onRequestLocale:{\
                                                page.state = "Locale";\
@@ -225,7 +295,6 @@ ApplicationWindow {
                                        }',page)
         map.plugin = plugin;
         map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
-        tempGeocodeModel.plugin = plugin;
     }
 
     function getPlugins(){
@@ -257,6 +326,7 @@ ApplicationWindow {
     }
 
 
+
     StackView {
         id: stackView
         anchors.fill: parent
@@ -272,129 +342,6 @@ ApplicationWindow {
         }
 
         //=====================Dialogs=====================
-
-        //Route Dialog
-        //! [routedialog0]
-        RouteDialog {
-            id: routeDialog
-
-            property variant startCoordinate
-            property variant endCoordinate
-
-            //! [routedialog0]
-            Address { id: startAddress }
-            Address { id: endAddress }
-
-            z: backgroundRect.z + 2
-
-            GeocodeModel {
-                id: tempGeocodeModel
-
-                property int success: 0
-
-                onCountChanged: {
-                    if (success == 1 && count == 1) {
-                        query = endAddress
-                        update();
-                    }
-                }
-
-                onStatusChanged: {
-                    if ((status == GeocodeModel.Ready) && (count == 1)) {
-                        success++
-                        if (success == 1){
-                            startCoordinate.latitude = get(0).coordinate.latitude
-                            startCoordinate.longitude = get(0).coordinate.longitude
-                        }
-                        if (success == 2) {
-                            endCoordinate.latitude = get(0).coordinate.latitude
-                            endCoordinate.longitude = get(0).coordinate.longitude
-                            success = 0
-                            routeDialog.calculateRoute()
-                        }
-                    }
-                    else if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)){
-                        var st = (success == 0 ) ? "start" : "end"
-                        success = 0
-                        map.routeModel.clearAll()
-                        if ((status == GeocodeModel.Ready) && (count == 0 ))  {
-                            showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode"));
-                        }
-                        else if (status == GeocodeModel.Error) {
-                            showMessage(qsTr("Geocode Error"),
-                                        qsTr("Unable to find location for the") + " " +
-                                        st + " " +qsTr("point"))
-                        }
-                        else if ((status == GeocodeModel.Ready) && (count > 1 )){
-                            showMessage(qsTr("Ambiguous geocode"),
-                                        count + " " + qsTr("results found for the") +
-                                        " " + st + " " +qsTr("point, please specify location"))
-                        }
-                    }
-                }
-            }
-
-            onGoButtonClicked: {
-                tempGeocodeModel.reset()
-                if (routeDialog.byCoordinates) {
-                    startCoordinate = QtPositioning.coordinate(parseFloat(routeDialog.startLatitude),
-                                                               parseFloat(routeDialog.startLongitude));
-                    endCoordinate = QtPositioning.coordinate(parseFloat(routeDialog.endLatitude),
-                                                             parseFloat(routeDialog.endLongitude));
-
-                    calculateRoute()
-                }
-                else {
-                    startAddress.country = routeDialog.startCountry
-                    startAddress.street = routeDialog.startStreet
-                    startAddress.city = routeDialog.startCity
-
-                    endAddress.country = routeDialog.endCountry
-                    endAddress.street = routeDialog.endStreet
-                    endAddress.city = routeDialog.endCity
-
-                    tempGeocodeModel.query = startAddress
-                    tempGeocodeModel.update();
-                }
-                page.state = ""
-            }
-
-            onCancelButtonClicked: {
-                page.state = ""
-            }
-
-            //! [routerequest0]
-            function calculateRoute() {
-                // clear away any old data in the query
-                map.routeQuery.clearWaypoints();
-
-                // add the start and end coords as waypoints on the route
-                map.routeQuery.addWaypoint(startCoordinate)
-                map.routeQuery.addWaypoint(endCoordinate)
-                map.routeQuery.travelModes = routeDialog.travelMode
-                map.routeQuery.routeOptimizations = routeDialog.routeOptimization
-                //! [routerequest0]
-
-                //! [routerequest0 feature weight]
-                for (var i=0; i<9; i++) {
-                    map.routeQuery.setFeatureWeight(i, 0)
-                }
-
-                for (var i=0; i<routeDialog.features.length; i++) {
-                    map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
-                }
-                //! [routerequest0 feature weight]
-
-                //! [routerequest1]
-                map.routeModel.update();
-
-                // center the map on the start coord
-                map.center = startCoordinate;
-                //! [routerequest1]
-            }
-            //! [routedialog1]
-        }
-        //! [routedialog1]
 
         //Geocode Dialog
         //! [geocode0]
@@ -519,10 +466,6 @@ ApplicationWindow {
                 PropertyChanges { target: reverseGeocodeDialog; opacity: 1 }
             },
             State {
-                name: "Route"
-                PropertyChanges { target: routeDialog; opacity: 1 }
-            },
-            State {
                 name: "Geocode"
                 PropertyChanges { target: geocodeDialog; opacity: 1 }
             },
@@ -540,10 +483,6 @@ ApplicationWindow {
         transitions: [
             Transition {
                 to: "RevGeocode"
-                NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-            },
-            Transition {
-                to: "Route"
                 NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
             },
             Transition {

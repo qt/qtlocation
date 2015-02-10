@@ -108,7 +108,8 @@ MenuBar {
                 addItem(qsTr("Geocode")).triggered.connect(function(){selectTool("Geocode")})
             }
             if (map.plugin.supportsRouting()) {
-                addItem(qsTr("Route")).triggered.connect(function(){selectTool("Route")})
+                addItem(qsTr("Route with coordinates")).triggered.connect(function(){selectTool("CoordinateRoute")})
+                addItem(qsTr("Route with address")).triggered.connect(function(){selectTool("AddressRoute")})
             }
 
             var item = addItem("")
