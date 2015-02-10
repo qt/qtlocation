@@ -119,6 +119,8 @@ MenuBar {
             item = addItem("")
             item.text = Qt.binding(function() { return isFollowMe ? qsTr("Stop following") : qsTr("Follow me")})
             item.triggered.connect(function() {toggleMapState("FollowMe")})
+
+            addItem(qsTr("Language")).triggered.connect(function(){selectTool("Language")})
         }
     }
 }

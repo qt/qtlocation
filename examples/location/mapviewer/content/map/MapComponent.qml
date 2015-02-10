@@ -151,6 +151,7 @@ Map {
         anchorPoint.y: poiNokia.sourceItem.height * 1.5
     }
 
+
     Slider {
         id: zoomSlider;
         z: map.z + 3
@@ -167,48 +168,6 @@ Map {
             map.zoomLevel = value
             map.state=""
             map.resetState()
-        }
-    }
-
-    Button {
-        id: languageButton
-        text: "en"
-        width: 30
-        height: 30
-        z: map.z + 2
-        anchors.bottom: zoomSlider.top
-        anchors.bottomMargin: 8
-        anchors.right: zoomSlider.right
-        onClicked: {
-            map.state = "LanguageMenu"
-        }
-    }
-
-    OwnControls.Menu {
-        id:languageMenu
-        horizontalOrientation: false
-        autoWidth: true
-        opacity: 0
-        z: map.z + 4
-        anchors.bottom: languageButton.top
-        anchors.right: languageButton.left
-        onClicked: {
-            switch (button) {
-            case "en":
-            case "fr": {
-                setLanguage(button);
-                break;
-            }
-            case "Other": {
-                map.requestLocale()
-            }
-            }
-            map.state = ""
-        }
-        Component.onCompleted: {
-            addItem("en")
-            addItem("fr")
-            addItem("Other")
         }
     }
 
@@ -976,13 +935,6 @@ Map {
         return dist
     }
 
-    function setLanguage(lang) {
-        map.plugin.locales = lang;
-        if (map.plugin.locales.length  >  0) {
-            languageButton.text = map.plugin.locales[0];
-        }
-    }
-
     // states of map
     states: [
         State {
@@ -1002,10 +954,6 @@ Map {
             PropertyChanges { target: pointMenu; opacity: 1}
             PropertyChanges { target: pointMenu; x: ((map.lastX + pointMenu.width > map.width) ? map.width - pointMenu.width : map.lastX)}
             PropertyChanges { target: pointMenu; y: ((map.lastY + pointMenu.height > map.height - 40) ? map.height - pointMenu.height - 40 : map.lastY)}
-        },
-        State {
-            name: "LanguageMenu"
-            PropertyChanges { target: languageMenu; opacity: 1}
         }
     ]
 //! [end]

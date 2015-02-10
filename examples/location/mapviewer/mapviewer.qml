@@ -42,7 +42,6 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
-import QtLocation.examples 5.0 as OwnControls
 import "content/map"
 
 ApplicationWindow {
@@ -135,6 +134,11 @@ ApplicationWindow {
                                    properties: { "coordinate": fromCoordinate}})
                 stackView.currentItem.showPlace.connect(showPlace)
                 stackView.currentItem.closeForm.connect(closeForm)
+            } else if (tool === "Language") {
+                stackView.push({ item: Qt.resolvedUrl("Locale.qml") ,
+                                 properties: { "locale":  map.plugin.locales[0]}})
+                stackView.currentItem.selectLanguage.connect(setLanguage)
+                stackView.currentItem.closeForm.connect(closeForm)
             }
         }
 
@@ -192,6 +196,11 @@ ApplicationWindow {
             // send the geocode request
             map.geocodeModel.query = geocode
             map.geocodeModel.update()
+        }
+
+        function setLanguage(lang) {
+            map.plugin.locales = lang;
+            stackView.pop(page)
         }
     }
 
@@ -280,9 +289,6 @@ ApplicationWindow {
                                            }\
                                            onRouteError: {\
                                                showMessage(qsTr("Route Error"),qsTr("Unable to find a route for the given points"),page);\
-                                           }\
-                                           onRequestLocale:{\
-                                               page.state = "Locale";\
                                            }\
                                            onShowGeocodeInfo:{\
                                                showMessage(qsTr("Location"),geocodeMessage(),page);\
@@ -426,45 +432,6 @@ ApplicationWindow {
             color: "lightgrey"
             z:2
         }
-
-        //=====================Dialogs=====================
-
-        //Get new locale
-        OwnControls.InputDialog {
-            id: localeDialog
-            title: "New Locale"
-            z: backgroundRect.z + 2
-
-            Component.onCompleted: {
-                var obj = [["Language", ""]]
-                setModel(obj)
-            }
-
-            onGoButtonClicked: {
-                page.state = ""
-                map.setLanguage(dialogModel.get(0).inputText.split(Qt.locale().groupSeparator));
-            }
-
-            onCancelButtonClicked: {
-                page.state = ""
-            }
-        }
-
-        //=====================States of page=====================
-        states: [
-            State {
-                name : "Locale"
-                PropertyChanges { target: localeDialog;  opacity: 1 }
-            }
-        ]
-
-        //=====================State-transition animations for page=====================
-        transitions: [
-            Transition {
-                to: ""
-                NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-            }
-        ]
     }
     }
 }
