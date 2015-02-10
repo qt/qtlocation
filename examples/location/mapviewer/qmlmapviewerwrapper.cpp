@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     engine.load(QUrl(mainQmlApp));
     QObject *item = engine.rootObjects().first();
     Q_ASSERT(item);
-    QMetaObject::invokeMethod(item, "setPluginParameters",
+    QMetaObject::invokeMethod(item, "initializeProvders",
                               Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
     QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));

@@ -42,7 +42,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
-import QtLocation.examples 5.0
+import QtLocation.examples 5.0 as OwnControls
 import "content/map"
 import "content/dialogs"
 
@@ -56,6 +56,56 @@ ApplicationWindow {
     property variant map
     property variant minimap
     property variant parameters
+
+    menuBar: MainMenu {
+        id: mainMenu
+
+        onSelectProvider: {
+            for (var i = 0; i < providerMenu.items.length; i++) {
+                providerMenu.items[i].checked = providerMenu.items[i].text === providerName
+            }
+            if (minimap) {
+                minimap.destroy()
+                minimap = null
+            }
+            createMap(providerName)
+            if (map.error === Map.NoError) {
+                selectMapType(map.activeMapType)
+                toolsMenu.createMenu(map);
+            } else {
+                mapTypeMenu.clear();
+                toolsMenu.clear();
+            }
+        }
+
+        onSelectMapType: {
+            for (var i = 0; i < mapTypeMenu.items.length; i++) {
+                mapTypeMenu.items[i].checked = mapTypeMenu.items[i].text === mapType.name
+            }
+            map.activeMapType = mapType
+        }
+
+        onSelectTool: {
+            page.state = tool;
+        }
+
+        onToggleMapState: {
+            if (state === "MiniMap") {
+                if (minimap) {
+                    minimap.destroy()
+                    minimap = null
+                    isMiniMap = false
+                } else {
+                    minimap = Qt.createQmlObject ('import "content/map"; MiniMap{ z: map.z + 2 }', map)
+                    isMiniMap = true
+                }
+                page.state = ""
+            } else if (state === "FollowMe") {
+                map.followme =! map.followme;
+                page.state = ""
+            }
+        }
+    }
 
     function geocodeMessage(){
         var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
@@ -85,6 +135,7 @@ ApplicationWindow {
 
     function createMap(provider){
         var plugin
+
         if (parameters && parameters.length>0)
             plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', page)
         else
@@ -100,9 +151,9 @@ ApplicationWindow {
                                        MapComponent{\
                                            z : backgroundRect.z + 1;\
                                            width: page.width;\
-                                           height: page.height - mainMenu.height;\
-                                           onFollowmeChanged: {toolsMenu.update()}\
-                                           onSupportedMapTypesChanged: {mapTypeMenu.update()}\
+                                           height: page.height;\
+                                           onFollowmeChanged: {mainMenu.isFollowMe = map.followme}\
+                                           onSupportedMapTypesChanged: {mainMenu.mapTypeMenu.createMenu(map)}\
                                            onCoordinatesCaptured: {\
                                                messageDialog.state = "Coordinates";\
                                                messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);\
@@ -150,13 +201,9 @@ ApplicationWindow {
                                                }\
                                            }\
                                        }',page)
-
-
         map.plugin = plugin;
         map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
         tempGeocodeModel.plugin = plugin;
-        mapTypeMenu.update();
-        toolsMenu.update();
     }
 
     function getPlugins(){
@@ -172,171 +219,30 @@ ApplicationWindow {
         return myArray
     }
 
-    function setPluginParameters(pluginParameters) {
+    function initializeProvders(pluginParameters) {
         var parameters = new Array()
         for (var prop in pluginParameters){
             var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
             parameters.push(parameter)
         }
-        appWindow.parameters=parameters
-        if (providerMenu.exclusiveButton !== "")
-            createMap(providerMenu.exclusiveButton);
-        else if (providerMenu.children.length > 0) {
-            providerMenu.exclusiveButton = providerMenu.children[0].text
+        appWindow.parameters = parameters
+        var plugins = getPlugins()
+        mainMenu.providerMenu.createMenu(plugins)
+        for (var i = 0; i<plugins.length; i++) {
+           if (plugins[i] === "osm")
+               mainMenu.selectProvider(plugins[i])
         }
     }
 
 Item {
     id: page
-    //fixme
-    width: appWindow.width
-    height: appWindow.height
+    anchors.fill: parent
 
     Rectangle {
         id: backgroundRect
         anchors.fill: parent
         color: "lightgrey"
         z:2
-    }
-
-    //=====================Menu=====================
-    Menu {
-        id:mainMenu
-        anchors.bottom: parent.bottom
-        z: backgroundRect.z + 3
-
-        Component.onCompleted: {
-            addItem("Tools")
-            addItem("Map Type")
-            addItem("Provider")
-        }
-
-        onClicked: {
-            switch (button) {
-            case "Tools": {
-                page.state = "Tools"
-                break;
-            }
-            case "Map Type": {
-                page.state = "MapType"
-                break;
-            }
-            case "Provider": {
-                page.state = "Provider"
-                break;
-            }
-            }
-        }
-    }
-
-    Menu {
-        id: toolsMenu
-        z: backgroundRect.z + 2
-        y: page.height
-        horizontalOrientation: false
-
-        onClicked: {
-            switch (button) {
-            case "Reverse geocode": {
-                page.state = "RevGeocode"
-                break;
-            }
-            case "Geocode": {
-                page.state = "Geocode"
-                break;
-            }
-            case "Route": {
-                page.state = "Route"
-                break;
-            }
-            case "Follow me": {
-                map.followme =true
-                page.state = ""
-                break;
-            }
-            case "Stop following": {
-                map.followme =false
-                page.state = ""
-                break;
-            }
-            case "Minimap": {
-                minimap = Qt.createQmlObject ('import "content/map"; MiniMap{ z: map.z + 2 }', map)
-                page.state = ""
-                break;
-            }
-            case "Hide minimap": {
-                if (minimap) minimap.destroy()
-                minimap = null
-                page.state = ""
-                break;
-            }
-            }
-        }
-        function update(){
-            clear()
-            if (map.plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)) {
-                addItem("Reverse geocode")
-            }
-            if (map.plugin.supportsGeocoding()) {
-                addItem("Geocode")
-            }
-            if (map.plugin.supportsRouting()) {
-                addItem("Route")
-            }
-            var item = addItem("Follow me")
-            item.text = Qt.binding(function() { return map.followme ? "Stop following" : "Follow me" });
-            item = addItem("Minimap")
-            item.text = Qt.binding(function() { return minimap ? "Hide minimap" : "Minimap" });
-        }
-    }
-
-    Menu {
-        id: mapTypeMenu
-        z: backgroundRect.z + 2
-        y: page.height
-        horizontalOrientation: false
-        exclusive: true
-
-        onClicked: {
-            page.state = ""
-        }
-
-        onExclusiveButtonChanged: {
-            for (var i = 0; i<map.supportedMapTypes.length; i++){
-                if (exclusiveButton == map.supportedMapTypes[i].name){
-                    map.activeMapType = map.supportedMapTypes[i]
-                    break;
-                }
-            }
-        }
-
-        function update(){
-            clear()
-            for (var i = 0; i<map.supportedMapTypes.length; i++)
-                addItem(map.supportedMapTypes[i].name)
-
-            if (map.supportedMapTypes.length > 0)
-                exclusiveButton = map.activeMapType.name
-        }
-    }
-
-    Menu {
-        id: providerMenu
-        z: backgroundRect.z + 2
-        y: page.height
-        horizontalOrientation: false
-        exclusive: true
-
-        Component.onCompleted: {
-            var plugins = getPlugins()
-            for (var i = 0; i<plugins.length; i++) {
-                addItem(plugins[i])
-                if (plugins[i] === "osm")
-                    exclusiveButton = plugins[i]
-            }
-        }
-
-        onExclusiveButtonChanged: createMap(exclusiveButton)
     }
 
     //=====================Dialogs=====================
@@ -515,7 +421,7 @@ Item {
 
     //Geocode Dialog
 //! [geocode0]
-    InputDialog {
+    OwnControls.InputDialog {
         id: geocodeDialog
 //! [geocode0]
         title: "Geocode"
@@ -557,7 +463,7 @@ Item {
 //! [geocode2]
 
     //Reverse Geocode Dialog
-    InputDialog {
+    OwnControls.InputDialog {
         id: reverseGeocodeDialog
         title: "Reverse Geocode"
         z: backgroundRect.z + 2
@@ -581,7 +487,7 @@ Item {
     }
 
     //Get new coordinates for marker
-    InputDialog {
+    OwnControls.InputDialog {
         id: coordinatesDialog
         title: "New coordinates"
         z: backgroundRect.z + 2
@@ -612,7 +518,7 @@ Item {
     }
 
     //Get new locale
-    InputDialog {
+    OwnControls.InputDialog {
         id: localeDialog
         title: "New Locale"
         z: backgroundRect.z + 2
@@ -656,18 +562,6 @@ Item {
             PropertyChanges { target: messageDialog; opacity: 1 }
         },
         State {
-            name : "Tools"
-            PropertyChanges { target: toolsMenu; y: page.height - toolsMenu.height - mainMenu.height }
-        },
-        State {
-            name : "Provider"
-            PropertyChanges { target: providerMenu; y: page.height - providerMenu.height - mainMenu.height }
-        },
-        State {
-            name : "MapType"
-            PropertyChanges { target: mapTypeMenu; y: page.height - mapTypeMenu.height - mainMenu.height }
-        },
-        State {
             name : "Locale"
             PropertyChanges { target: localeDialog;  opacity: 1 }
         }
@@ -698,18 +592,6 @@ Item {
         Transition {
             to: ""
             NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-        },
-        Transition {
-            to: "Provider"
-            NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
-        },
-        Transition {
-            to: "MapType"
-            NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
-        },
-        Transition {
-            to: "Tools"
-            NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
         }
     ]
 }

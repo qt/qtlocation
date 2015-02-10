@@ -12,5 +12,6 @@
         <file>content/dialogs/RouteDialog.qml</file>
         <file>content/map/ImageItem.qml</file>
         <file>content/map/MiniMap.qml</file>
+        <file>MainMenu.qml</file>
     </qresource>
 </RCC>
