@@ -13,5 +13,11 @@
         <file>content/map/ImageItem.qml</file>
         <file>content/map/MiniMap.qml</file>
         <file>MainMenu.qml</file>
+        <file>forms/MessageForm.ui.qml</file>
+        <file>forms/GeocodeForm.ui.qml</file>
+        <file>forms/ReverseGeocodeForm.ui.qml</file>
+        <file>forms/RouteCoordinateForm.ui.qml</file>
+        <file>forms/RouteAddressForm.ui.qml</file>
+        <file>forms/LocaleForm.ui.qml</file>
     </qresource>
 </RCC>
