@@ -24,7 +24,6 @@ qmlcontentmap.files += \
 OTHER_FILES += $$qmlcontentmap.files
 
 qmlcontentdialogs.files += \
-    content/dialogs/Message.qml \
     content/dialogs/RouteDialog.qml
 OTHER_FILES += $$qmlcontentdialogs.files
 

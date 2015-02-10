@@ -65,10 +65,12 @@ ApplicationWindow {
             for (var i = 0; i < providerMenu.items.length; i++) {
                 providerMenu.items[i].checked = providerMenu.items[i].text === providerName
             }
+
             if (minimap) {
                 minimap.destroy()
                 minimap = null
             }
+
             createMap(providerName)
             if (map.error === Map.NoError) {
                 selectMapType(map.activeMapType)
@@ -111,6 +113,20 @@ ApplicationWindow {
             }
             page.state = ""
         }
+    }
+
+    function showMessage(title,message,backPage) {
+        stackView.push({ item: Qt.resolvedUrl("Message.qml") ,
+                           properties: {
+                               "title" : title,
+                               "message" : message,
+                               "backPage" : backPage
+                           }})
+        stackView.currentItem.closeForm.connect(closeMessage)
+    }
+
+    function closeMessage(backPage) {
+            stackView.pop(backPage)
     }
 
     function geocodeMessage(){
@@ -161,49 +177,49 @@ ApplicationWindow {
                                            onFollowmeChanged: {mainMenu.isFollowMe = map.followme}\
                                            onSupportedMapTypesChanged: {mainMenu.mapTypeMenu.createMenu(map)}\
                                            onCoordinatesCaptured: {\
-                                               messageDialog.state = "Coordinates";\
-                                               messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);\
-                                               page.state = "Message";\
+                                               var text = "<b>" + qsTr("Latitude:") + "</b> " + roundNumber(latitude,4) + "<br/><b>" + qsTr("Longitude:") + "</b> " + roundNumber(longitude,4);\
+                                               showMessage(qsTr("Coordinates"),text);\
                                            }\
                                            onGeocodeFinished:{\
-                                               if (map.geocodeModel.status == GeocodeModel.Ready){\
-                                                   if (map.geocodeModel.count == 0) {messageDialog.state = "UnknownGeocodeError";}\
-                                                   else if (map.geocodeModel.count > 1) {messageDialog.state = "AmbiguousGeocode";}\
-                                                   else {messageDialog.state = "LocationInfo";}\
+                                               if (map.geocodeModel.status == GeocodeModel.Ready) {\
+                                                   if (map.geocodeModel.count == 0) {\
+                                                       showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode"));\
+                                                   } else if (map.geocodeModel.count > 1) { \
+                                                       showMessage(qsTr("Ambiguous geocode"), map.geocodeModel.count + " " + \
+                                                       qsTr("results found for the given address, please specify location"));\
+                                                   } else { \
+                                                       showMessage(qsTr("Location"), geocodeMessage());\
+                                                  ;}\
+                                               } else if (map.geocodeModel.status == GeocodeModel.Error) {\
+                                                   showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode")); \
                                                }\
-                                               else if (map.geocodeModel.status == GeocodeModel.Error) {messageDialog.state = "GeocodeError";}\
-                                               page.state = "Message";\
                                            }\
                                            onShowDistance:{\
-                                               messageDialog.state = "Distance";\
-                                               messageDialog.text = "<b>Distance:</b> " + distance;\
-                                               page.state = "Message";\
+                                               showMessage(qsTr("Distance"),"<b>" + qsTr("Distance:") + "</b> " + distance);\
                                            }\
                                            onMoveMarker: {\
                                                page.state = "Coordinates";\
                                            }\
                                            onRouteError: {\
-                                               messageDialog.state = "RouteError";\
-                                               page.state = "Message";\
+                                               showMessage(qsTr("Route Error"),qsTr("Unable to find a route for the given points"));\
                                            }\
                                            onRequestLocale:{\
                                                page.state = "Locale";\
                                            }\
                                            onShowGeocodeInfo:{\
-                                               messageDialog.state = "LocationInfo";\
-                                               page.state = "Message";\
+                                               showMessage(qsTr("Location"),geocodeMessage());\
                                            }\
                                            onResetState: {\
                                                page.state = "";\
                                            }\
                                            onErrorChanged: {\
                                                if (map.error != Map.NoError) {\
-                                               messageDialog.state = "ProviderError";\
-                                               messageDialog.text =  map.errorString + "<br/><br/><b>Try to select other provider</b>";\
+                                               var title = qsTr("ProviderError");\
+                                               var message =  map.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>";\
                                                    if (map.error == Map.MissingRequiredParameterError) \
-                                                       messageDialog.text += "<br/>or see \'mapviewer --help\'\
-                                                       how to pass plugin parameters.";\
-                                               page.state = "Message";\
+                                                       message += "<br/>" + qsTr("or see") + " \'mapviewer --help\' "\
+                                                       + qsTr("how to pass plugin parameters.");\
+                                               showMessage(title,message);\
                                                }\
                                            }\
                                        }',page)
@@ -256,56 +272,6 @@ ApplicationWindow {
         }
 
         //=====================Dialogs=====================
-        Message {
-            id: messageDialog
-            z: backgroundRect.z + 2
-            onOkButtonClicked: {
-                page.state = ""
-            }
-            onCancelButtonClicked: {
-                page.state = ""
-            }
-
-            states: [
-                State{
-                    name: "GeocodeError"
-                    PropertyChanges { target: messageDialog; title: "Geocode Error" }
-                    PropertyChanges { target: messageDialog; text: "No data available for the specified location" }
-                },
-                State{
-                    name: "UnknownGeocodeError"
-                    PropertyChanges { target: messageDialog; title: "Geocode Error" }
-                    PropertyChanges { target: messageDialog; text: "Unsuccessful geocode" }
-                },
-                State{
-                    name: "AmbiguousGeocode"
-                    PropertyChanges { target: messageDialog; title: "Ambiguous geocode" }
-                    PropertyChanges { target: messageDialog; text: map.geocodeModel.count + " results found for the given address, please specify location" }
-                },
-                State{
-                    name: "RouteError"
-                    PropertyChanges { target: messageDialog; title: "Route Error" }
-                    PropertyChanges { target: messageDialog; text: "Unable to find a route for the given points"}
-                },
-                State{
-                    name: "Coordinates"
-                    PropertyChanges { target: messageDialog; title: "Coordinates" }
-                },
-                State{
-                    name: "LocationInfo"
-                    PropertyChanges { target: messageDialog; title: "Location" }
-                    PropertyChanges { target: messageDialog; text: geocodeMessage() }
-                },
-                State{
-                    name: "Distance"
-                    PropertyChanges { target: messageDialog; title: "Distance" }
-                },
-                State{
-                    name: "ProviderError"
-                    PropertyChanges { target: messageDialog; title: "Provider Error" }
-                }
-            ]
-        }
 
         //Route Dialog
         //! [routedialog0]
@@ -349,26 +315,27 @@ ApplicationWindow {
                     }
                     else if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)){
                         var st = (success == 0 ) ? "start" : "end"
-                        messageDialog.state = ""
-                        if ((status == GeocodeModel.Ready) && (count == 0 )) messageDialog.state = "UnknownGeocodeError"
+                        success = 0
+                        map.routeModel.clearAll()
+                        if ((status == GeocodeModel.Ready) && (count == 0 ))  {
+                            showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode"));
+                        }
                         else if (status == GeocodeModel.Error) {
-                            messageDialog.state = "GeocodeError"
-                            messageDialog.text = "Unable to find location for the " + st + " point"
+                            showMessage(qsTr("Geocode Error"),
+                                        qsTr("Unable to find location for the") + " " +
+                                        st + " " +qsTr("point"))
                         }
                         else if ((status == GeocodeModel.Ready) && (count > 1 )){
-                            messageDialog.state = "AmbiguousGeocode"
-                            messageDialog.text = count + " results found for the " + st + " point, please specify location"
+                            showMessage(qsTr("Ambiguous geocode"),
+                                        count + " " + qsTr("results found for the") +
+                                        " " + st + " " +qsTr("point, please specify location"))
                         }
-                        success = 0
-                        page.state = "Message"
-                        map.routeModel.clearAll()
                     }
                 }
             }
 
             onGoButtonClicked: {
                 tempGeocodeModel.reset()
-                messageDialog.state = ""
                 if (routeDialog.byCoordinates) {
                     startCoordinate = QtPositioning.coordinate(parseFloat(routeDialog.startLatitude),
                                                                parseFloat(routeDialog.startLongitude));
@@ -450,7 +417,6 @@ ApplicationWindow {
             onGoButtonClicked: {
                 // manage the UI state transitions
                 page.state = ""
-                messageDialog.state = ""
 
                 // fill out the Address element
                 geocodeAddress.street = dialogModel.get(0).inputText
@@ -485,7 +451,6 @@ ApplicationWindow {
 
             onGoButtonClicked: {
                 page.state = ""
-                messageDialog.state = ""
                 map.geocodeModel.query = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
                                                                   parseFloat(dialogModel.get(1).inputText));
                 map.geocodeModel.update();
@@ -509,7 +474,6 @@ ApplicationWindow {
 
             onGoButtonClicked: {
                 page.state = ""
-                messageDialog.state = ""
                 var newLat = parseFloat(dialogModel.get(0).inputText)
                 var newLong = parseFloat(dialogModel.get(1).inputText)
 
@@ -540,7 +504,6 @@ ApplicationWindow {
 
             onGoButtonClicked: {
                 page.state = ""
-                messageDialog.state = ""
                 map.setLanguage(dialogModel.get(0).inputText.split(Qt.locale().groupSeparator));
             }
 
@@ -568,10 +531,6 @@ ApplicationWindow {
                 PropertyChanges { target: coordinatesDialog; opacity: 1 }
             },
             State {
-                name: "Message"
-                PropertyChanges { target: messageDialog; opacity: 1 }
-            },
-            State {
                 name : "Locale"
                 PropertyChanges { target: localeDialog;  opacity: 1 }
             }
@@ -593,10 +552,6 @@ ApplicationWindow {
             },
             Transition {
                 to: "Coordinates"
-                NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-            },
-            Transition {
-                to: "Message"
                 NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
             },
             Transition {

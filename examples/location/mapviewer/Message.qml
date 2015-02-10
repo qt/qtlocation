@@ -38,72 +38,22 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtLocation.examples 5.0
+import QtQuick 2.4
+import "forms"
 
-Item {
-    id: dialog
+MessageForm {
+    property string title
+    property string message
+    property variant backPage
 
-    anchors.fill: parent
+    signal closeForm(variant backPage)
 
-    property alias title: titleBar.text
-    property alias text: message.text
-    property int gap: 10
+    button.onClicked: {
+        closeForm(backPage)
+    }
 
-    signal okButtonClicked
-    signal cancelButtonClicked
-    opacity: 0
-    enabled: opacity > 0 ? true : false
-
-    Fader {}
-
-    Rectangle {
-        id: dialogRectangle
-
-        color: "#ECECEC"
-        width: parent.width - gap;
-        height: titleBar.height + message.height + okButton.height + gap*3
-        anchors {
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: gap/2
-        }
-
-        radius: 5
-
-        TitleBar {
-            id: titleBar;
-            width: parent.width; height: 40;
-            anchors.top: parent.top; anchors.left: parent.left;
-            opacity: 0.9;
-            onClicked: { dialog.cancelButtonClicked() }
-        }
-
-        Text {
-            id: message
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            anchors.top: titleBar.bottom
-            width: dialogRectangle.width - gap
-            anchors.topMargin: gap
-            textFormat: Text.RichText
-            wrapMode: Text.Wrap
-            onLinkActivated: {
-                Qt.openUrlExternally(link)
-            }
-            font.pixelSize: 14
-        }
-
-        Button {
-            id: okButton
-            text: "Ok"
-            anchors.top: message.bottom
-            anchors.topMargin: gap
-            width: 80; height: 32
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: {
-                dialog.okButtonClicked ()
-            }
-        }
+    Component.onCompleted: {
+        messageText.text = message
+        messageTitle.text = title
     }
 }

@@ -8,7 +8,6 @@
         <file>content/map/RectangleItem.qml</file>
         <file>content/map/CircleItem.qml</file>
         <file>content/map/PolygonItem.qml</file>
-        <file>content/dialogs/Message.qml</file>
         <file>content/dialogs/RouteDialog.qml</file>
         <file>content/map/ImageItem.qml</file>
         <file>content/map/MiniMap.qml</file>
@@ -19,5 +18,6 @@
         <file>forms/RouteCoordinateForm.ui.qml</file>
         <file>forms/RouteAddressForm.ui.qml</file>
         <file>forms/LocaleForm.ui.qml</file>
+        <file>Message.qml</file>
     </qresource>
 </RCC>
