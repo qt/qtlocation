@@ -376,21 +376,43 @@ ApplicationWindow {
         id: markerPopupMenu
         onItemClicked: {
             stackView.pop(page)
-            if (item === "deleteMarker") {
+            switch (item) {
+            case "deleteMarker":
                 map.deleteMarker(map.currentMarker)
-            } else if (item === "getMarkerCoordinate") {
+                break;
+            case "getMarkerCoordinate":
                 map.coordinatesCaptured(map.markers[map.currentMarker].coordinate.latitude, map.markers[map.currentMarker].coordinate.longitude)
-            } else if (item === "moveMarkerTo") {
+                break;
+            case "moveMarkerTo":
                 askForCoordinate()
-            } else if (item === "showDrawMenu") {
-                map.drawItemPopup()
-            } else if (item === "routeToNextPoint" || item === "routeToNextPoints") {
+                break;
+            case "routeToNextPoint":
+            case "routeToNextPoints":
                 map.calculateRoute()
-            } else if (item === "distanceToNextPoint") {
+                break
+            case "distanceToNextPoint":
                 var coordinate1 = map.markers[currentMarker].coordinate;
                 var coordinate2 = map.markers[currentMarker+1].coordinate;
                 var distance = map.formatDistance(coordinate1.distanceTo(coordinate2));
                 showMessage(qsTr("Distance"),"<b>" + qsTr("Distance:") + "</b> " + distance)
+                break
+            case "drawImage":
+                map.addGeoItem("ImageItem")
+                break
+            case "drawRectangle":
+                map.addGeoItem("RectangleItem")
+                break
+            case "drawCircle":
+                map.addGeoItem("CircleItem")
+                break;
+            case "drawPolyline":
+                map.addGeoItem("PolylineItem")
+                break;
+            case "drawPolygonMenu":
+                map.addGeoItem("PolygonItem")
+                break
+            default:
+                console.log("Unsupported operation")
             }
         }
 

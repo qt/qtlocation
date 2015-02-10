@@ -579,48 +579,6 @@ Map {
     }
 
     OwnControls.Menu {
-        id: drawMenu
-        horizontalOrientation: false
-        autoWidth: true
-        z: map.z + 4
-        opacity: 0
-
-        width: 150
-        x: 0
-        y: 0
-        onClicked: {
-            map.state = ""
-            switch (button) {
-            case "Polyline": {
-                addGeoItem("PolylineItem")
-                break;
-            }
-
-            case "Rectangle": {
-                addGeoItem("RectangleItem")
-                break;
-            }
-
-            case "Circle": {
-                addGeoItem("CircleItem")
-                break;
-            }
-
-            case "Polygon": {
-                addGeoItem("PolygonItem")
-                break;
-            }
-
-            case "Image": {
-                addGeoItem("ImageItem")
-                break;
-            }
-
-            }
-        }
-    }
-
-    OwnControls.Menu {
         id: routeMenu
         horizontalOrientation: false
         autoWidth: true
@@ -867,25 +825,6 @@ Map {
         if (markers.length == 0) markerCounter = 0
     }
 
-    function drawItemPopup(){
-        var array
-        var length = map.markers.length
-
-        drawMenu.clear()
-
-        drawMenu.addItem("Image")
-
-        if (currentMarker <= length-2){
-            drawMenu.addItem("Rectangle")
-            drawMenu.addItem("Circle")
-            drawMenu.addItem("Polyline")
-        }
-        if (currentMarker < length-2){
-            drawMenu.addItem("Polygon")
-        }
-        map.state = "DrawItemMenu"
-    }
-
     function calculateRoute(){
         routeQuery.clearWaypoints();
         for (var i = currentMarker; i< map.markers.length; i++){
@@ -937,12 +876,6 @@ Map {
 
     // states of map
     states: [
-        State {
-            name: "DrawItemMenu"
-            PropertyChanges { target: drawMenu; opacity: 1}
-            PropertyChanges { target: drawMenu; x: ((markers[currentMarker].lastMouseX + drawMenu.width > map.width) ? map.width - drawMenu.width : markers[currentMarker].lastMouseX )}
-            PropertyChanges { target: drawMenu; y: ((markers[currentMarker].lastMouseY + drawMenu.height > map.height - 40) ? map.height - drawMenu.height - 40 : markers[currentMarker].lastMouseY)}
-        },
         State {
             name: "RoutePopupMenu"
             PropertyChanges { target: routeMenu; opacity: 1}
