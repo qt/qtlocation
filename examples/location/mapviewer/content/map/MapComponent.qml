@@ -37,10 +37,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-import QtQuick 2.0
+import QtQuick 2.4
+import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
-import QtLocation.examples 5.0
+import QtLocation.examples 5.0 as OwnControls
 
 //! [top]
 Map {
@@ -149,27 +150,18 @@ Map {
         anchorPoint.y: poiNokia.sourceItem.height * 1.5
     }
 
-
     Slider {
         id: zoomSlider;
-        minimum: map.minimumZoomLevel;
-        maximum: map.maximumZoomLevel;
-        opacity: 1
-        visible: parent.visible
         z: map.z + 3
-        anchors {
-            bottom: parent.bottom;
-            bottomMargin: 15; rightMargin: 10; leftMargin: 90
-            left: parent.left
-        }
-        width: parent.width - anchors.rightMargin - anchors.leftMargin
-
+        minimumValue: map.minimumZoomLevel;
+        maximumValue: map.maximumZoomLevel;
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottomMargin: 15
+        anchors.rightMargin: 10
+        anchors.leftMargin: 90
         value: map.zoomLevel
-
-        Binding {
-            target: zoomSlider; property: "value"; value: map.zoomLevel
-        }
-
         onValueChanged: {
             map.zoomLevel = value
             map.state=""
@@ -191,7 +183,7 @@ Map {
         }
     }
 
-    Menu {
+    OwnControls.Menu {
         id:languageMenu
         horizontalOrientation: false
         autoWidth: true
@@ -627,7 +619,7 @@ Map {
         scaleTimer.restart()
     }
 
-    Menu {
+    OwnControls.Menu {
         id: markerMenu
         horizontalOrientation: false
         autoWidth: true
@@ -669,7 +661,7 @@ Map {
         }
     }
 
-    Menu {
+    OwnControls.Menu {
         id: drawMenu
         horizontalOrientation: false
         autoWidth: true
@@ -711,7 +703,7 @@ Map {
         }
     }
 
-    Menu {
+    OwnControls.Menu {
         id: popupMenu
         horizontalOrientation: false
         autoWidth: true
@@ -751,7 +743,7 @@ Map {
         }
     }
 
-    Menu {
+    OwnControls.Menu {
         id: routeMenu
         horizontalOrientation: false
         autoWidth: true
@@ -777,7 +769,7 @@ Map {
         }
     }
 
-    Menu {
+    OwnControls.Menu {
         id: pointMenu
         horizontalOrientation: false
         autoWidth: true

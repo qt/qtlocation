@@ -153,6 +153,7 @@ ApplicationWindow {
 
 
         map.plugin = plugin;
+        map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
         tempGeocodeModel.plugin = plugin;
         mapTypeMenu.update();
         toolsMenu.update();
