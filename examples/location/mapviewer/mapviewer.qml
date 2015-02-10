@@ -305,6 +305,9 @@ ApplicationWindow {
                                                showMessage(title,message);\
                                                }\
                                            }\
+                                           onShowMainMenu: {\
+                                               mapPopupMenu.show(coordinate);\
+                                           }\
                                        }',page)
         map.plugin = plugin;
         map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
@@ -338,7 +341,32 @@ ApplicationWindow {
         }
     }
 
+    MapPopupMenu {
+        id: mapPopupMenu
+        onItemClicked: {
+            stackView.pop(page)
+            if (item === "addMarker") {
+                map.addMarker()
+            } else if (item === "getCoordinate") {
+                map.coordinatesCaptured(coordinate.latitude, coordinate.longitude)
+            } else if (item === "fitViewport") {
+                map.fitViewportToMapItems()
+            } else if (item === "deleteMarkers") {
+                map.deleteMarkers()
+            } else if (item === "deleteItems") {
+                map.deleteMapItems()
+            }
+        }
 
+        function show(coordinate) {
+            stackView.pop(page)
+            mapPopupMenu.coordinate = coordinate
+            mapPopupMenu.markersCount = map.markers.length
+            mapPopupMenu.mapItemsCount = map.mapItems.length
+            mapPopupMenu.update()
+            mapPopupMenu.popup()
+        }
+    }
 
     StackView {
         id: stackView

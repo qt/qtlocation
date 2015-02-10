@@ -65,6 +65,7 @@ Map {
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
     property int currentMarker
     signal resetState()
+    signal showMainMenu(variant coordinate)
 
     property int lastX : -1
     property int lastY : -1
@@ -704,46 +705,6 @@ Map {
     }
 
     OwnControls.Menu {
-        id: popupMenu
-        horizontalOrientation: false
-        autoWidth: true
-        z: map.z + 4
-        opacity: 0
-
-        width: 150
-        x: 0
-        y: 0
-
-        onClicked: {
-            switch (button) {
-            case "Add Marker": {
-                addMarker()
-                break;
-            }
-            case "Get coordinate": {
-                map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
-                break;
-            }
-            case "Fit Viewport To Map Items": {
-                map.fitViewportToMapItems()
-                break;
-            }
-
-            case "Delete all markers": {
-                deleteMarkers()
-                break;
-            }
-
-            case "Delete all items": {
-                deleteMapItems()
-                break;
-            }
-            }
-            map.state = ""
-        }
-    }
-
-    OwnControls.Menu {
         id: routeMenu
         horizontalOrientation: false
         autoWidth: true
@@ -876,19 +837,8 @@ Map {
         onPressAndHold:{
             if (Math.abs(map.pressX - mouse.x ) < map.jitterThreshold
                     && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
-                popupMenu.clear()
-                popupMenu.addItem("Add Marker")
-                popupMenu.addItem("Get coordinate")
-                popupMenu.addItem("Fit Viewport To Map Items")
-
-                if (map.markers.length>0) {
-                    popupMenu.addItem("Delete all markers")
-                }
-
-                if (map.mapItems.length>0) {
-                    popupMenu.addItem("Delete all items")
-                }
-                map.state = "PopupMenu"
+                showMainMenu(lastCoordinate);
+                map.state = ""
             }
           }
         }
@@ -1102,12 +1052,6 @@ Map {
 
     // states of map
     states: [
-        State {
-            name: "PopupMenu"
-            PropertyChanges { target: popupMenu; opacity: 1}
-            PropertyChanges { target: popupMenu; x: ((map.lastX + popupMenu.width > map.width) ? map.width - popupMenu.width : map.lastX)}
-            PropertyChanges { target: popupMenu; y: ((map.lastY + popupMenu.height > map.height - 40) ? map.height - popupMenu.height - 40 : map.lastY)}
-        },
         State {
             name: "MarkerPopupMenu"
             PropertyChanges { target: markerMenu; opacity: 1}

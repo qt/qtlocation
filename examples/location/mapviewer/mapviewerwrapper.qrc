@@ -22,5 +22,6 @@
         <file>RouteAddress.qml</file>
         <file>Geocode.qml</file>
         <file>ReverseGeocode.qml</file>
+        <file>MapPopupMenu.qml</file>
     </qresource>
 </RCC>
