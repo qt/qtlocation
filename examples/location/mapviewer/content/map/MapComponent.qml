@@ -270,7 +270,6 @@ Map {
 //! [geocodemodel1]
 
     signal showGeocodeInfo()
-    signal moveMarker()
 
     signal geocodeFinished()
     signal routeError()

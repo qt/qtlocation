@@ -48,6 +48,7 @@ Item {
     property alias longitude: longitude
     property alias latitude: latitude
     property alias cancelButton: cancelButton
+    property alias tabTitle: tabTitle
     Rectangle {
         id: tabRectangle
         y: 20

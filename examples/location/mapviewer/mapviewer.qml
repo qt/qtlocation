@@ -278,9 +278,6 @@ ApplicationWindow {
                                                    showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode")); \
                                                }\
                                            }\
-                                           onMoveMarker: {\
-                                               page.state = "Coordinates";\
-                                           }\
                                            onRouteError: {\
                                                showMessage(qsTr("Route Error"),qsTr("Unable to find a route for the given points"),page);\
                                            }\
@@ -378,7 +375,7 @@ ApplicationWindow {
             } else if (item === "getMarkerCoordinate") {
                 map.coordinatesCaptured(map.markers[map.currentMarker].coordinate.latitude, map.markers[map.currentMarker].coordinate.longitude)
             } else if (item === "moveMarkerTo") {
-                map.moveMarker()
+                askForCoordinate()
             } else if (item === "showDrawMenu") {
                 map.drawItemPopup()
             } else if (item === "routeToNextPoint" || item === "routeToNextPoints") {
@@ -396,6 +393,21 @@ ApplicationWindow {
             markerPopupMenu.markersCount = map.markers.length
             markerPopupMenu.update()
             markerPopupMenu.popup()
+        }
+
+        function askForCoordinate() {
+            stackView.push({ item: Qt.resolvedUrl("ReverseGeocode.qml") ,
+                             properties: { "title": qsTr("New Coordinate"),
+                                           "coordinate":   map.markers[map.currentMarker].coordinate}})
+            stackView.currentItem.showPlace.connect(moveMarker)
+            stackView.currentItem.closeForm.connect(closeForm)
+        }
+
+        function moveMarker(coordinate)
+        {
+            map.markers[map.currentMarker].coordinate = coordinate;
+            map.center = coordinate;
+            stackView.pop(page)
         }
 
     }
@@ -416,36 +428,6 @@ ApplicationWindow {
         }
 
         //=====================Dialogs=====================
-
-        //Get new coordinates for marker
-        OwnControls.InputDialog {
-            id: coordinatesDialog
-            title: "New coordinates"
-            z: backgroundRect.z + 2
-
-            Component.onCompleted: {
-                var obj = [["Latitude", ""],["Longitude", ""]]
-                setModel(obj)
-            }
-
-            onGoButtonClicked: {
-                page.state = ""
-                var newLat = parseFloat(dialogModel.get(0).inputText)
-                var newLong = parseFloat(dialogModel.get(1).inputText)
-
-                if (newLat !== "NaN" && newLong !== "NaN") {
-                    var c = QtPositioning.coordinate(newLat, newLong);
-                    if (c.isValid) {
-                        map.markers[map.currentMarker].coordinate = c;
-                        map.center = c;
-                    }
-                }
-            }
-
-            onCancelButtonClicked: {
-                page.state = ""
-            }
-        }
 
         //Get new locale
         OwnControls.InputDialog {
@@ -471,10 +453,6 @@ ApplicationWindow {
         //=====================States of page=====================
         states: [
             State {
-                name: "Coordinates"
-                PropertyChanges { target: coordinatesDialog; opacity: 1 }
-            },
-            State {
                 name : "Locale"
                 PropertyChanges { target: localeDialog;  opacity: 1 }
             }
@@ -482,10 +460,6 @@ ApplicationWindow {
 
         //=====================State-transition animations for page=====================
         transitions: [
-            Transition {
-                to: "Coordinates"
-                NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-            },
             Transition {
                 to: ""
                 NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }

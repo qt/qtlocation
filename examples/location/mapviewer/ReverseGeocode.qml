@@ -45,6 +45,7 @@ import "forms"
 //Reverse Geocode Dialog
 ReverseGeocodeForm {
 
+    property string title;
     property variant coordinate
     signal showPlace(variant coordinate)
     signal closeForm()
@@ -69,5 +70,8 @@ ReverseGeocodeForm {
     Component.onCompleted: {
         latitude.text = "" + coordinate.latitude
         longitude.text = "" + coordinate.longitude
+        if (title.length != 0) {
+            tabTitle.text = title;
+        }
     }
 }
