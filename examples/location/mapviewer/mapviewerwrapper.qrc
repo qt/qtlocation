@@ -20,5 +20,6 @@
         <file>Message.qml</file>
         <file>RouteCoordinate.qml</file>
         <file>RouteAddress.qml</file>
+        <file>Geocode.qml</file>
     </qresource>
 </RCC>

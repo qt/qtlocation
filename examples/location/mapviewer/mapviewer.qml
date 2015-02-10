@@ -124,6 +124,11 @@ ApplicationWindow {
                                                  "fromCoordinate": fromCoordinate}})
                 stackView.currentItem.showRoute.connect(showRoute)
                 stackView.currentItem.closeForm.connect(closeForm)
+            } else if (tool === "Geocode") {
+                stackView.push({ item: Qt.resolvedUrl("Geocode.qml") ,
+                                   properties: { "address": fromAddress}})
+                stackView.currentItem.showPlace.connect(showPlace)
+                stackView.currentItem.closeForm.connect(closeForm)
             } else {
                 stackView.pop(page)
                 page.state = tool
@@ -178,6 +183,12 @@ ApplicationWindow {
             map.center = startCoordinate;
             stackView.pop(page);
             //! [routerequest1]
+        }
+
+        function showPlace(geocode) {
+            // send the geocode request
+            map.geocodeModel.query = geocode
+            map.geocodeModel.update()
         }
     }
 
@@ -258,7 +269,7 @@ ApplicationWindow {
                                                        showMessage(qsTr("Ambiguous geocode"), map.geocodeModel.count + " " + \
                                                        qsTr("results found for the given address, please specify location"));\
                                                    } else { \
-                                                       showMessage(qsTr("Location"), geocodeMessage());\
+                                                       showMessage(qsTr("Location"), geocodeMessage(),page);\
                                                   ;}\
                                                } else if (map.geocodeModel.status == GeocodeModel.Error) {\
                                                    showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode")); \
@@ -277,7 +288,7 @@ ApplicationWindow {
                                                page.state = "Locale";\
                                            }\
                                            onShowGeocodeInfo:{\
-                                               showMessage(qsTr("Location"),geocodeMessage());\
+                                               showMessage(qsTr("Location"),geocodeMessage(),page);\
                                            }\
                                            onResetState: {\
                                                page.state = "";\
@@ -342,48 +353,6 @@ ApplicationWindow {
         }
 
         //=====================Dialogs=====================
-
-        //Geocode Dialog
-        //! [geocode0]
-        OwnControls.InputDialog {
-            id: geocodeDialog
-            //! [geocode0]
-            title: "Geocode"
-            z: backgroundRect.z + 2
-
-            Component.onCompleted: {
-                var obj = [["Street", "Brandl St"],["City", "Eight Mile Plains"],["State", ""],["Country","Australia"], ["Postal code", ""]]
-                setModel(obj)
-            }
-
-            //! [geocode1]
-            Address {
-                id: geocodeAddress
-            }
-
-            onGoButtonClicked: {
-                // manage the UI state transitions
-                page.state = ""
-
-                // fill out the Address element
-                geocodeAddress.street = dialogModel.get(0).inputText
-                geocodeAddress.city = dialogModel.get(1).inputText
-                geocodeAddress.state = dialogModel.get(2).inputText
-                geocodeAddress.country = dialogModel.get(3).inputText
-                geocodeAddress.postalCode = dialogModel.get(4).inputText
-
-                // send the geocode request
-                map.geocodeModel.query = geocodeAddress
-                map.geocodeModel.update()
-            }
-            //! [geocode1]
-
-            onCancelButtonClicked: {
-                page.state = ""
-            }
-            //! [geocode2]
-        }
-        //! [geocode2]
 
         //Reverse Geocode Dialog
         OwnControls.InputDialog {
@@ -466,10 +435,6 @@ ApplicationWindow {
                 PropertyChanges { target: reverseGeocodeDialog; opacity: 1 }
             },
             State {
-                name: "Geocode"
-                PropertyChanges { target: geocodeDialog; opacity: 1 }
-            },
-            State {
                 name: "Coordinates"
                 PropertyChanges { target: coordinatesDialog; opacity: 1 }
             },
@@ -483,10 +448,6 @@ ApplicationWindow {
         transitions: [
             Transition {
                 to: "RevGeocode"
-                NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-            },
-            Transition {
-                to: "Geocode"
                 NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
             },
             Transition {
