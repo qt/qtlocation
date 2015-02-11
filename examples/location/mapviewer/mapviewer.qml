@@ -293,9 +293,6 @@ ApplicationWindow {
                                            onShowGeocodeInfo:{\
                                                showMessage(qsTr("Location"),geocodeMessage(),page);\
                                            }\
-                                           onResetState: {\
-                                               page.state = "";\
-                                           }\
                                            onErrorChanged: {\
                                                if (map.error != Map.NoError) {\
                                                var title = qsTr("ProviderError");\
@@ -311,6 +308,12 @@ ApplicationWindow {
                                            }\
                                            onShowMarkerMenu: {\
                                                markerPopupMenu.show(coordinate);\
+                                           }\
+                                           onShowRouteMenu: {\
+                                               itemPopupMenu.show("Route",coordinate);\
+                                           }\
+                                           onShowPointMenu: {\
+                                               itemPopupMenu.show("Point",coordinate);\
                                            }\
                                        }',page)
         map.plugin = plugin;
@@ -436,6 +439,39 @@ ApplicationWindow {
             map.markers[map.currentMarker].coordinate = coordinate;
             map.center = coordinate;
             stackView.pop(page)
+        }
+
+    }
+
+    ItemPopupMenu {
+
+        id: itemPopupMenu
+
+        function show(type,coordinate) {
+            stackView.pop(page)
+            itemPopupMenu.type = type
+            itemPopupMenu.update()
+            itemPopupMenu.popup()
+        }
+
+        onItemClicked: {
+            stackView.pop(page)
+            switch (item) {
+            case "infoRoute":
+                //ignore till next commit
+                break;
+            case "deleteRoute":
+                map.clearRoute()
+                break;
+            case "infoPoint":
+                map.showGeocodeInfo()
+                break;
+            case "deletePoint":
+                map.geocodeModel.reset()
+                break;
+            default:
+                console.log("Unsupported operation")
+            }
         }
 
     }

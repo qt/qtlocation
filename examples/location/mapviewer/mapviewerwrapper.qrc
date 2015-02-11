@@ -24,6 +24,7 @@
         <file>ReverseGeocode.qml</file>
         <file>MapPopupMenu.qml</file>
         <file>MarkerPopupMenu.qml</file>
+        <file>ItemPopupMenu.qml</file>
         <file>Locale.qml</file>
     </qresource>
 </RCC>

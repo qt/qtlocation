@@ -41,7 +41,6 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
-import QtLocation.examples 5.0 as OwnControls
 
 //! [top]
 Map {
@@ -64,9 +63,10 @@ Map {
     property variant mapItems
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
     property int currentMarker
-    signal resetState()
     signal showMainMenu(variant coordinate)
     signal showMarkerMenu(variant coordinate)
+    signal showRouteMenu(variant coordinate)
+    signal showPointMenu(variant coordinate)
 
     property int lastX : -1
     property int lastY : -1
@@ -167,7 +167,6 @@ Map {
         onValueChanged: {
             map.zoomLevel = value
             map.state=""
-            map.resetState()
         }
     }
 
@@ -244,8 +243,8 @@ Map {
         id: routeDelegate
 
         MapRoute {
+            id: route
             route: routeData
-
             line.color: routeMouseArea.containsMouse ? "lime" : "red"
             line.width: 5
             smooth: true
@@ -255,19 +254,18 @@ Map {
                 id: routeMouseArea
                 anchors.fill: parent
                 hoverEnabled: false
+                property variant lastCoordinate
 
                 onPressed : {
-                    map.resetState();
-                    map.state = ""
                     map.lastX = mouse.x + parent.x
                     map.lastY = mouse.y + parent.y
                     map.pressX = mouse.x + parent.x
                     map.pressY = mouse.y + parent.y
+                    lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
                 }
 
                 onPositionChanged: {
-                    if (map.state != "RoutePopupMenu" ||
-                        Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
+                    if (Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
                         Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
                         map.state = ""
                     }
@@ -280,7 +278,7 @@ Map {
                 onPressAndHold:{
                     if (Math.abs(map.pressX - parent.x- mouse.x ) < map.jitterThreshold
                             && Math.abs(map.pressY - parent.y - mouse.y ) < map.jitterThreshold) {
-                        map.state = "RoutePopupMenu"
+                         showRouteMenu(lastCoordinate);
                     }
                 }
             }
@@ -294,6 +292,7 @@ Map {
         id: pointDelegate
 
         MapCircle {
+            id: point
             radius: 1000
             color: circleMouseArea.containsMouse ? "lime" : "red"
             opacity: 0.6
@@ -303,19 +302,18 @@ Map {
                 anchors.fill:parent
                 id: circleMouseArea
                 hoverEnabled: false
+                property variant lastCoordinate
 
                 onPressed : {
-                    map.resetState();
-                    map.state = ""
                     map.lastX = mouse.x + parent.x
                     map.lastY = mouse.y + parent.y
                     map.pressX = mouse.x + parent.x
                     map.pressY = mouse.y + parent.y
+                    lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
                 }
 
                 onPositionChanged: {
-                    if (map.state != "PointPopupMenu" ||
-                        Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
+                    if (Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
                         Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
                         map.state = ""
                         if (pressed) parent.radius = parent.center.distanceTo(
@@ -330,7 +328,7 @@ Map {
                 onPressAndHold:{
                     if (Math.abs(map.pressX - parent.x- mouse.x ) < map.jitterThreshold
                             && Math.abs(map.pressY - parent.y - mouse.y ) < map.jitterThreshold) {
-                        map.state = "PointPopupMenu"
+                        showPointMenu(lastCoordinate);
                     }
                 }
             }
@@ -578,62 +576,6 @@ Map {
         scaleTimer.restart()
     }
 
-    OwnControls.Menu {
-        id: routeMenu
-        horizontalOrientation: false
-        autoWidth: true
-        z: map.z + 4
-        opacity: 0
-
-        width: 150
-        x: 0
-        y: 0
-
-        onClicked: {
-            switch (button) {
-                case "Delete": {//delete route
-                    routeModel.reset()
-                    routeInfoModel.update()
-                    break;
-                }
-            }
-            map.state = ""
-        }
-        Component.onCompleted: {
-            addItem("Delete")
-        }
-    }
-
-    OwnControls.Menu {
-        id: pointMenu
-        horizontalOrientation: false
-        autoWidth: true
-        z: map.z + 4
-        opacity: 0
-
-        width: 150
-        x: 0
-        y: 0
-
-        onClicked: {
-            switch (button) {
-                case "Info": {
-                    map.showGeocodeInfo()
-                    break;
-                }
-                case "Delete": {
-                    geocodeModel.reset()
-                    break;
-                }
-            }
-            map.state = ""
-        }
-        Component.onCompleted: {
-            addItem("Info")
-            addItem("Delete")
-        }
-    }
-
     Rectangle {
         id: infoLabel
         width: backgroundRect.width + 10
@@ -671,8 +613,6 @@ Map {
         anchors.fill: parent
 
         onPressed : {
-            map.resetState();
-            map.state = ""
             map.lastX = mouse.x
             map.lastY = mouse.y
             map.pressX = mouse.x
@@ -712,7 +652,6 @@ Map {
             if (Math.abs(map.pressX - mouse.x ) < map.jitterThreshold
                     && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
                 showMainMenu(lastCoordinate);
-                map.state = ""
             }
           }
         }
@@ -874,21 +813,11 @@ Map {
         return dist
     }
 
-    // states of map
-    states: [
-        State {
-            name: "RoutePopupMenu"
-            PropertyChanges { target: routeMenu; opacity: 1}
-            PropertyChanges { target: routeMenu; x: ((map.lastX + routeMenu.width > map.width) ? map.width - routeMenu.width : map.lastX)}
-            PropertyChanges { target: routeMenu; y: ((map.lastY + routeMenu.height > map.height - 40) ? map.height - routeMenu.height - 40 : map.lastY)}
-        },
-        State {
-            name: "PointPopupMenu"
-            PropertyChanges { target: pointMenu; opacity: 1}
-            PropertyChanges { target: pointMenu; x: ((map.lastX + pointMenu.width > map.width) ? map.width - pointMenu.width : map.lastX)}
-            PropertyChanges { target: pointMenu; y: ((map.lastY + pointMenu.height > map.height - 40) ? map.height - pointMenu.height - 40 : map.lastY)}
-        }
-    ]
+    function clearRoute() {
+        routeModel.reset()
+        routeInfoModel.update()
+    }
+
 //! [end]
 }
 //! [end]
