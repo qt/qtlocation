@@ -348,7 +348,6 @@ void QGeoMapScenePrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     setupCamera();
 
     QSet<QGeoTileSpec> toRemove = visibleTiles_ - tiles;
-    QSet<QGeoTileSpec> toUpdate = visibleTiles_ - toRemove;
     if (!toRemove.isEmpty())
         removeTiles(toRemove);
 
