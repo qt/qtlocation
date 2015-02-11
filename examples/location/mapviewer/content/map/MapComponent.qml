@@ -67,6 +67,7 @@ Map {
     signal showMarkerMenu(variant coordinate)
     signal showRouteMenu(variant coordinate)
     signal showPointMenu(variant coordinate)
+    signal showRouteList()
 
     property int lastX : -1
     property int lastY : -1
@@ -183,24 +184,21 @@ Map {
             if (status == RouteModel.Ready) {
                 switch (count) {
                 case 0:
-                    clearAll() // technically not an error
+                     // technically not an error
                     map.routeError()
                     break
                 case 1:
-                    routeInfoModel.update()
+                    showRouteList()
                     break
                 }
             } else if (status == RouteModel.Error) {
-                clearAll()
                 map.routeError()
             }
         }
 //! [routemodel1]
 
 //! [routemodel2]
-        function clearAll() {
-            routeInfoModel.update()
-        }
+
 //! [routemodel2]
 //! [routemodel3]
     }
@@ -337,97 +335,6 @@ Map {
     }
 //! [pointdel1]
 
-//! [routeinfodel0]
-    Component {
-        id: routeInfoDelegate
-        Row {
-            spacing: 10
-//! [routeinfodel0]
-            Text {
-                id: indexText
-                text: index + 1
-                color: "#242424"
-                font.bold: true
-                font.pixelSize: 14
-            }
-//! [routeinfodel1]
-            Text {
-                id: instructionText
-                text: instruction
-                color: "#242424"
-                wrapMode: Text.Wrap
-//! [routeinfodel1]
-                width: textArea.width - indexText.width - distanceText.width - spacing*4
-//! [routeinfodel2]
-                font.pixelSize: 14
-            }
-            Text {
-                id: distanceText
-                text: distance
-                color: "#242424"
-                font.bold: true
-                font.pixelSize: 14
-            }
-        }
-    }
-//! [routeinfodel2]
-
-    Component{
-        id: routeInfoHeader
-        Item {
-            width: textArea.width
-            height: travelTime.height + line.anchors.topMargin + line.height
-            Text {
-                id: travelTime
-                text: routeInfoModel.travelTime
-                color: "#242424"
-                font.bold: true
-                font.pixelSize: 14
-                anchors.left: parent.left
-            }
-            Text {
-                id: distance
-                text: routeInfoModel.distance
-                color: "#242424"
-                font.bold: true
-                font.pixelSize: 14
-                anchors.right: parent.right
-            }
-            Rectangle {
-                id: line
-                color: "#242424"
-                width: parent.width
-                height: 2
-                anchors.left: parent.left
-                anchors.topMargin: 1
-                anchors.top: distance.bottom
-            }
-        }
-    }
-
-//! [routeinfomodel]
-    ListModel {
-        id: routeInfoModel
-
-        property string travelTime
-        property string distance
-
-        function update() {
-            clear()
-            if (routeModel.count > 0) {
-                for (var i = 0; i < routeModel.get(0).segments.length; i++) {
-                    append({
-                        "instruction": routeModel.get(0).segments[i].maneuver.instructionText,
-                        "distance": formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)
-                    });
-                }
-            }
-            travelTime = routeModel.count == 0 ? "" : formatTime(routeModel.get(0).travelTime)
-            distance = routeModel.count == 0 ? "" : formatDistance(routeModel.get(0).distance)
-        }
-    }
-//! [routeinfomodel]
-
 //! [routeview]
     MapItemView {
         model: routeModel
@@ -442,66 +349,6 @@ Map {
         delegate: pointDelegate
     }
 //! [geocodeview]
-
-    Item {
-        id: infoTab
-        parent: scale.parent
-        z: map.z + 2
-        height: parent.height - 180
-        width: parent.width
-        x: -5 - infoRect.width
-        y: 60
-        visible: (routeInfoModel.count > 0)
-        Image {
-            id: catchImage
-            source: "../../resources/catch.png"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (infoTab.x == -5) infoTab.x -= infoRect.width
-                    else infoTab.x = -5
-                    map.state = ""
-                }
-            }
-        }
-
-        Behavior on x {
-            PropertyAnimation { properties: "x"; duration: 300; easing.type: Easing.InOutQuad }
-        }
-
-        Rectangle {
-            id: infoRect
-            width: parent.width - catchImage.sourceSize.width
-            height: parent.height
-            color: "#ECECEC"
-            opacity: 1
-            radius: 5
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: false
-            }
-            Item {
-                id: textArea
-                anchors.left: parent.left
-                anchors.leftMargin: 10
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                width: parent.width -15
-                height: parent.height - 20
-                ListView {
-                    id: routeInfoView
-                    model: routeInfoModel
-                    delegate: routeInfoDelegate
-                    header: routeInfoHeader
-                    anchors.fill: parent
-                    clip: true
-                }
-            }
-        }
-    }
-
 
     Item {//scale
         id: scale
@@ -811,11 +658,6 @@ Map {
             dist = dist + " m"
         }
         return dist
-    }
-
-    function clearRoute() {
-        routeModel.reset()
-        routeInfoModel.update()
     }
 
 //! [end]

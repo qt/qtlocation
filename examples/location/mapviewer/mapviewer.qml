@@ -188,7 +188,6 @@ ApplicationWindow {
             map.routeModel.update();
             // center the map on the start coord
             map.center = startCoordinate;
-            stackView.pop(page);
             //! [routerequest1]
         }
 
@@ -220,6 +219,14 @@ ApplicationWindow {
 
     function closeForm() {
         stackView.pop(page)
+    }
+
+    function showRouteListPage() {
+        stackView.push({ item: Qt.resolvedUrl("RouteList.qml") ,
+                           properties: {
+                               "routeModel" : map.routeModel
+                           }})
+        stackView.currentItem.closeForm.connect(closeForm)
     }
 
     function geocodeMessage(){
@@ -314,6 +321,9 @@ ApplicationWindow {
                                            }\
                                            onShowPointMenu: {\
                                                itemPopupMenu.show("Point",coordinate);\
+                                           }\
+                                           onShowRouteList: {\
+                                               showRouteListPage();
                                            }\
                                        }',page)
         map.plugin = plugin;
@@ -457,13 +467,13 @@ ApplicationWindow {
         onItemClicked: {
             stackView.pop(page)
             switch (item) {
-            case "infoRoute":
-                //ignore till next commit
+            case "showRouteInfo":
+                showRouteListPage()
                 break;
             case "deleteRoute":
-                map.clearRoute()
+                map.routeModel.reset();
                 break;
-            case "infoPoint":
+            case "showPointInfo":
                 map.showGeocodeInfo()
                 break;
             case "deletePoint":

@@ -26,5 +26,8 @@
         <file>MarkerPopupMenu.qml</file>
         <file>ItemPopupMenu.qml</file>
         <file>Locale.qml</file>
+        <file>RouteList.qml</file>
+        <file>RouteListDelegate.qml</file>
+        <file>RouteListHeader.qml</file>
     </qresource>
 </RCC>
