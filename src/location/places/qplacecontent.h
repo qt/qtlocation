@@ -35,9 +35,9 @@
 
 #include <QtLocation/qlocationglobal.h>
 
-#include <QMap>
-#include <QMetaType>
-#include <QSharedDataPointer>
+#include <QtCore/QMap>
+#include <QtCore/QMetaType>
+#include <QtCore/QSharedDataPointer>
 
 QT_BEGIN_NAMESPACE
 

@@ -36,8 +36,8 @@
 
 #include <QtLocation/QGeoRoute>
 
-#include <QList>
-#include <QObject>
+#include <QtCore/QList>
+#include <QtCore/QObject>
 
 QT_BEGIN_NAMESPACE
 

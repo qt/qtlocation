@@ -246,7 +246,7 @@ QStringList QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGe
         baseRequest += QString::number(i);
         baseRequest += QStringLiteral("=geo!");
         baseRequest += trimDouble(request.waypoints().at(i).latitude());
-        baseRequest += ",";
+        baseRequest += ',';
         baseRequest += trimDouble(request.waypoints().at(i).longitude());
     }
 
@@ -283,7 +283,7 @@ QStringList QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRo
 
     baseRequest += "&pos=";
     baseRequest += QString::number(position.latitude());
-    baseRequest += ",";
+    baseRequest += ',';
     baseRequest += QString::number(position.longitude());
 
     QGeoRouteRequest::RouteOptimizations optimization = route.request().routeOptimization();
@@ -328,7 +328,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest
         QString weightString = "";
         switch (weight) {
             case QGeoRouteRequest::PreferFeatureWeight:
-                weightString = "1";
+                weightString = '1';
                 break;
             case QGeoRouteRequest::AvoidFeatureWeight:
                 weightString = "-1";
@@ -370,9 +370,9 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest
     }
 
     requestString += "&mode=";
-    requestString += optimization + ";" + modes.join(",");
+    requestString += optimization + ';' + modes.join(',');
     if (featureStrings.count())
-        requestString += ";" + featureStrings.join(",");
+        requestString += ';' + featureStrings.join(',');
     return requestString;
 }
 

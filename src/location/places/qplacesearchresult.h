@@ -34,9 +34,9 @@
 #ifndef QPLACESEARCHRESULT_H
 #define QPLACESEARCHRESULT_H
 
-#include <QSharedDataPointer>
-#include <QVariant>
-#include <QString>
+#include <QtCore/QSharedDataPointer>
+#include <QtCore/QVariant>
+#include <QtCore/QString>
 #include <QtLocation/QPlace>
 
 QT_BEGIN_NAMESPACE

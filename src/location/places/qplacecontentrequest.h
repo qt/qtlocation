@@ -34,7 +34,7 @@
 #ifndef QPLACECONTENTREQUEST_H
 #define QPLACECONTENTREQUEST_H
 
-#include <QSharedDataPointer>
+#include <QtCore/QSharedDataPointer>
 
 #include <QtLocation/QPlaceContent>
 

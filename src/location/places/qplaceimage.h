@@ -34,8 +34,8 @@
 #ifndef QPLACEIMAGE_H
 #define QPLACEIMAGE_H
 
-#include <QSharedDataPointer>
-#include <QString>
+#include <QtCore/QSharedDataPointer>
+#include <QtCore/QString>
 #include <QtLocation/QPlaceSupplier>
 #include <QtLocation/QPlaceContent>
 

@@ -36,9 +36,9 @@
 
 #include <QtLocation/QGeoServiceProvider>
 
-#include <QtPlugin>
-#include <QMap>
-#include <QString>
+#include <QtCore/QtPlugin>
+#include <QtCore/QMap>
+#include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
 

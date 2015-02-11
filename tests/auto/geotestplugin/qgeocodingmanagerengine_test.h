@@ -251,6 +251,7 @@ public:
 protected:
      void timerEvent(QTimerEvent *event)
      {
+         Q_UNUSED(event);
          Q_ASSERT(timerId_ == event->timerId());
          Q_ASSERT(geocodeReply_);
          killTimer(timerId_);

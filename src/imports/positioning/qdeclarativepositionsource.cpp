@@ -99,7 +99,7 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    The \l{flickr}{Flickr} example application shows how to use
+    The \l{geoflickr}{GeoFlickr} example application shows how to use
     a PositionSource in your application to retrieve local data for users
     from a REST web service.
 
@@ -243,7 +243,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
             } else if (localFileName.startsWith("qrc:/")) {
                 localFileName.remove(0, 5);
             }
-            if (!QFile::exists(localFileName) && localFileName.startsWith("/")) {
+            if (!QFile::exists(localFileName) && localFileName.startsWith('/')) {
                 localFileName.remove(0,1);
             }
         }

@@ -37,8 +37,8 @@
 #include <QtPositioning/QGeoAreaMonitorInfo>
 #include <QtPositioning/QGeoPositionInfoSource>
 
-#include <QObject>
-#include <QStringList>
+#include <QtCore/QObject>
+#include <QtCore/QStringList>
 
 QT_BEGIN_NAMESPACE
 

@@ -58,7 +58,6 @@
 #include <QMetaEnum>
 #include <QProcess>
 #include <QEventLoop>
-#include <QString>
 #include <QtCore/private/qfactoryloader_p.h>
 
 QT_BEGIN_NAMESPACE
