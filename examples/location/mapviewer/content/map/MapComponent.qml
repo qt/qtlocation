@@ -49,8 +49,8 @@ Map {
 
     //! [coord]
     center {
-        latitude: -27.5796
-        longitude: 153.1003
+        latitude: 59.9485
+        longitude: 10.7686
     }
     //! [coord]
 
@@ -97,42 +97,12 @@ Map {
         }
     }
 
-    MapCircle {
-            id: poiEightMilePlains
-            center {
-                latitude: -27.5758
-                longitude: 153.0881
-            }
-
-            radius: 1800
-            color: "green"
-            border.width: 2
-            border.color: "#242424"
-            opacity: 0.7
-        }
-
     MapQuickItem {
-        sourceItem: Text{
-            text: "Eight Mile Plains"
-            color:"#242424"
-            font.bold: true
-            styleColor: "#ECECEC"
-            style: Text.Outline
-        }
-        coordinate {
-            latitude: -27.59
-            longitude: 153.084
-        }
-        anchorPoint.x: 0
-        anchorPoint.y: 0
-    }
-
-    MapQuickItem {
-        id: poiNokia
+        id: poiTheQtComapny
         sourceItem: Rectangle { width: 14; height: 14; color: "#1c94fc"; border.width: 2; border.color: "#242424"; smooth: true; radius: 7 }
         coordinate {
-           latitude: -27.5796
-           longitude: 153.1003
+           latitude: 59.9485
+           longitude: 10.7686
         }
         opacity:0.7
         anchorPoint.x: sourceItem.width/2
@@ -141,15 +111,15 @@ Map {
 
     MapQuickItem {
         sourceItem: Text{
-            text: "Nokia"
+            text: "The Qt Company"
             color:"#242424"
             font.bold: true
             styleColor: "#ECECEC"
             style: Text.Outline
         }
-        coordinate: poiNokia.coordinate
-        anchorPoint.x: -poiNokia.sourceItem.width * 0.5
-        anchorPoint.y: poiNokia.sourceItem.height * 1.5
+        coordinate: poiTheQtComapny.coordinate
+        anchorPoint.x: -poiTheQtComapny.sourceItem.width * 0.5
+        anchorPoint.y: poiTheQtComapny.sourceItem.height * 1.5
     }
 
 

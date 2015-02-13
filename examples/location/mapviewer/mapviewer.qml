@@ -56,24 +56,24 @@ ApplicationWindow {
     property variant parameters
 
     //defaults
-    property variant fromCoordinate: QtPositioning.coordinate(-27.575, 153.088)
-    property variant toCoordinate: QtPositioning.coordinate(-27.465, 153.023)
+    property variant fromCoordinate: QtPositioning.coordinate(59.9483, 10.7695)
+    property variant toCoordinate: QtPositioning.coordinate(59.9645, 10.671)
 
     Address {
         id :fromAddress
-        street: "53 Brandl St"
-        city: "Eight Mile Plains"
-        country: "Australia"
+        street: "Sandakerveien 116"
+        city: "Oslo"
+        country: "Norway"
         state : ""
-        postalCode: ""
+        postalCode: "0484"
     }
-
 
     Address {
         id: toAddress
-        street: "Heal st"
-        city: "New Farm"
-        country: "Australia"
+        street: "Holmenkollveien 140"
+        city: "Oslo"
+        country: "Norway"
+        postalCode: "0791"
     }
 
     menuBar: MainMenu {
