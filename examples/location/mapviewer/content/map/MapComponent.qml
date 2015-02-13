@@ -393,37 +393,6 @@ Map {
         scaleTimer.restart()
     }
 
-    Rectangle {
-        id: infoLabel
-        width: backgroundRect.width + 10
-        height: infoText.height + 5
-        y: 440
-        anchors.left: map.left
-        z: map.z + 1
-        color: "dimgrey"
-        opacity: (infoText.text !="") ? 0.8 : 0
-
-        Behavior on opacity {
-            NumberAnimation { duration: 200 }
-        }
-        Text {
-            id: infoText
-            width: parent.width
-            elide: Text.ElideLeft
-            maximumLineCount: 4
-            wrapMode: Text.Wrap
-            font.bold: true
-            font.pixelSize: 14
-            style: Text.Raised;
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 5
-            anchors.rightMargin: 5
-            color: "white"
-        }
-    }
-
     MouseArea {
         id: mouseArea
         property variant lastCoordinate

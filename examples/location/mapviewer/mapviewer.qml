@@ -271,7 +271,6 @@ ApplicationWindow {
         map = Qt.createQmlObject ('import QtLocation 5.3;\
                                        import "content/map";\
                                        MapComponent{\
-                                           z : backgroundRect.z + 1;\
                                            width: page.width;\
                                            height: page.height;\
                                            onFollowmeChanged: {mainMenu.isFollowMe = map.followme}\
@@ -492,14 +491,7 @@ ApplicationWindow {
         anchors.fill: parent
         focus: true
         initialItem: Item {
-        id: page
-
-        Rectangle {
-            id: backgroundRect
-            anchors.fill: parent
-            color: "lightgrey"
-            z:2
+            id: page
         }
-    }
     }
 }
