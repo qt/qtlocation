@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2012 - 2013 BlackBerry Limited. All rights reserved.
-** Contact: http://www.qt-project.org/legal
+** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
 **

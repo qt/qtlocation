@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2014 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **

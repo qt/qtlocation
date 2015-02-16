@@ -1,7 +1,7 @@
 /*********************f*******************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt-project.org/legal
+** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
 **

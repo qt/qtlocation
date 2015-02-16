@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2014 Appello Systems AB.
-** Contact: http://www.qt-project.org/legal
+** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **
