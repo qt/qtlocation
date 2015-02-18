@@ -41,12 +41,14 @@ moc_*.cpp
 ui_*.h
 qrc_*.cpp
 
-doc/src/snippets/cpp/cppsnippet
-doc/src/snippets/places/placescppsnippet
+src/positioning/doc/snippets/cpp/positioning_cppsnippet
+src/location/doc/snippets/cpp/cppsnippet
+src/location/doc/snippets/places/placescppsnippet
 examples/location/places_list/places_list
-examples/positioning/geoflickr/geoflickr
 examples/location/places_map/places_map
+examples/positioning/geoflickr/geoflickr
 examples/positioning/logfilepositionsource/logfilepositionsource
+examples/positioning/satelliteinfo/satelliteinfo
 examples/positioning/weatherinfo/weatherinfo
 
 config.tests/geoclue/geoclue
