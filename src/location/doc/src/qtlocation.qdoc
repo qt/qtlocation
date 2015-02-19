@@ -175,32 +175,4 @@ Qt Location available for a new platform.
         \li \l {Places Backend} {Places}
         \li Information for places backend implementors
 \endtable
-
-\section1 New Since Qt 4
-
-In Qt 4 Qt Mobility provided some location functionality for Positioning and Maps
-with Landmarks support. The new Qt Location API has had an extensive reworking
-of \l {Map}s and \l {Place}s (formerly Landmarks). Also both C++ and QML APIs have
-been reworked to be simpler to use.
-
-New features of Qt Location includes
-\list
-    \li Maps are now part of the Qt Quick scenegraph, and rendered using
-    hardware-accelerated OpenGL.
-    \li Arbitrary Qt Quick items on the map are supported using \l MapQuickItem.
-    \li Support for map overlays using a model.
-    \li Built-in support for pinch-to-zoom gestures, flicking , and panning
-    (see \l MapGestureArea).
-    \li Vast performance improvements over Qt Mobility 1.2, especially for
-    large map polylines and objects in general.
-    \li The QML API for routing and geocoding is now available.
-    \li Service provider feature detection without having to open all of the
-    available plugins.
-    \li Unified \l Plugin QML type used by routing, geocoding, maps, and so on,
-    with easy-to-set \l PluginParameter.
-    \li Landmarks API is replaced by the Places API
-    \li \l Place supports viewing of richer content such as reviews, images, and editorials
-    \li \l Place supports locale handling, sponsored search results, and supplier attribution
-\endlist
-
 */
