@@ -72,7 +72,8 @@ to center a \l{Map}{map} on the current position:
         import QtLocation 5.3
         ...
 
-        map : Map {
+        Map {
+            id: map
             // initialize map
             ...
         }
@@ -92,7 +93,7 @@ to center a \l{Map}{map} on the current position:
 geographical coordinates (latitude and longitude) from other geographical references
 to the locations. For example, this can be a street address. Reverse geocoding is also possible with
 a street address being used to determine a geographical coordinate. Geocoding
-is performed by using the \l GeoCodeModel type.
+is performed by using the \l [QML]{GeocodeModel} type.
 
 The following code examples are a small part of the \c map component in the
 \l {Map Viewer (QML)}{Map Viewer (QML)} example. The snippets
