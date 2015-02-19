@@ -57,10 +57,14 @@ public:
 
     QGeoCircle &operator=(const QGeoCircle &other);
 
+#ifndef Q_QDOC // workaround for QTBUG-44553
     using QGeoShape::operator==;
+#endif
     bool operator==(const QGeoCircle &other) const;
 
+#ifndef Q_QDOC
     using QGeoShape::operator!=;
+#endif
     bool operator!=(const QGeoCircle &other) const;
 
     void setCenter(const QGeoCoordinate &center);

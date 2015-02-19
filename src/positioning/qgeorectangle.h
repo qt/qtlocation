@@ -64,10 +64,14 @@ public:
 
     QGeoRectangle &operator=(const QGeoRectangle &other);
 
+#ifndef Q_QDOC // workaround for QTBUG-44553
     using QGeoShape::operator==;
+#endif
     bool operator==(const QGeoRectangle &other) const;
 
+#ifndef Q_QDOC
     using QGeoShape::operator!=;
+#endif
     bool operator!=(const QGeoRectangle &other) const;
 
     void setTopLeft(const QGeoCoordinate &topLeft);
