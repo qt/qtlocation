@@ -43,14 +43,10 @@ import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
 import "content/map"
+import "helper.js" as Helper
 
 ApplicationWindow {
     id: appWindow
-    title: qsTr("Mapviewer")
-    height: 640
-    width: 360
-    visible: true
-
     property variant map
     property variant minimap
     property variant parameters
@@ -58,6 +54,118 @@ ApplicationWindow {
     //defaults
     property variant fromCoordinate: QtPositioning.coordinate(59.9483, 10.7695)
     property variant toCoordinate: QtPositioning.coordinate(59.9645, 10.671)
+
+    function createMap(provider)
+    {
+        var plugin
+
+        if (parameters && parameters.length>0)
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
+        else
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', appWindow)
+
+        if (map) {
+            map.destroy()
+            minimap = null
+        }
+
+        map = Qt.createQmlObject ('import QtLocation 5.3;\
+                                       import "content/map";\
+                                       import "helper.js" as Helper;\
+                                       MapComponent{\
+                                           width: page.width;\
+                                           height: page.height;\
+                                           onFollowmeChanged: {mainMenu.isFollowMe = map.followme}\
+                                           onSupportedMapTypesChanged: {mainMenu.mapTypeMenu.createMenu(map)}\
+                                           onCoordinatesCaptured: {\
+                                               var text = "<b>" + qsTr("Latitude:") + "</b> " + Helper.roundNumber(latitude,4) + "<br/><b>" + qsTr("Longitude:") + "</b> " + Helper.roundNumber(longitude,4);\
+                                               stackView.showMessage(qsTr("Coordinates"),text);\
+                                           }\
+                                           onGeocodeFinished:{\
+                                               if (map.geocodeModel.status == GeocodeModel.Ready) {\
+                                                   if (map.geocodeModel.count == 0) {\
+                                                       stackView.showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode"));\
+                                                   } else if (map.geocodeModel.count > 1) { \
+                                                       stackView.showMessage(qsTr("Ambiguous geocode"), map.geocodeModel.count + " " + \
+                                                       qsTr("results found for the given address, please specify location"));\
+                                                   } else { \
+                                                       stackView.showMessage(qsTr("Location"), geocodeMessage(),page);\
+                                                  ;}\
+                                               } else if (map.geocodeModel.status == GeocodeModel.Error) {\
+                                                   stackView.showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode")); \
+                                               }\
+                                           }\
+                                           onRouteError: {\
+                                               stackView.showMessage(qsTr("Route Error"),qsTr("Unable to find a route for the given points"),page);\
+                                           }\
+                                           onShowGeocodeInfo:{\
+                                               stackView.showMessage(qsTr("Location"),geocodeMessage(),page);\
+                                           }\
+                                           onErrorChanged: {\
+                                               if (map.error != Map.NoError) {\
+                                               var title = qsTr("ProviderError");\
+                                               var message =  map.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>";\
+                                                   if (map.error == Map.MissingRequiredParameterError) \
+                                                       message += "<br/>" + qsTr("or see") + " \'mapviewer --help\' "\
+                                                       + qsTr("how to pass plugin parameters.");\
+                                               stackView.showMessage(title,message);\
+                                               }\
+                                           }\
+                                           onShowMainMenu: {\
+                                               mapPopupMenu.show(coordinate);\
+                                           }\
+                                           onShowMarkerMenu: {\
+                                               markerPopupMenu.show(coordinate);\
+                                           }\
+                                           onShowRouteMenu: {\
+                                               itemPopupMenu.show("Route",coordinate);\
+                                           }\
+                                           onShowPointMenu: {\
+                                               itemPopupMenu.show("Point",coordinate);\
+                                           }\
+                                           onShowRouteList: {\
+                                               stackView.showRouteListPage();
+                                           }\
+                                       }',page)
+        map.plugin = plugin;
+        map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
+    }
+
+    function getPlugins()
+    {
+        var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', appWindow)
+        var tempPlugin
+        var myArray = new Array()
+        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
+            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
+            if (tempPlugin.supportsMapping())
+                myArray.push(tempPlugin.name)
+        }
+        myArray.sort()
+        return myArray
+    }
+
+    function initializeProvders(pluginParameters)
+    {
+        var parameters = new Array()
+        for (var prop in pluginParameters){
+            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',appWindow)
+            parameters.push(parameter)
+        }
+        appWindow.parameters = parameters
+        var plugins = getPlugins()
+        mainMenu.providerMenu.createMenu(plugins)
+        for (var i = 0; i<plugins.length; i++) {
+            if (plugins[i] === "osm")
+                mainMenu.selectProvider(plugins[i])
+        }
+    }
+
+    title: qsTr("Mapviewer")
+    height: 640
+    width: 360
+    visible: true
+    menuBar: mainMenu
 
     Address {
         id :fromAddress
@@ -76,8 +184,60 @@ ApplicationWindow {
         postalCode: "0791"
     }
 
-    menuBar: MainMenu {
+    MainMenu {
         id: mainMenu
+
+        function toggleMiniMapState()
+        {
+            if (minimap) {
+                minimap.destroy()
+                minimap = null
+            } else {
+                minimap = Qt.createQmlObject ('import "content/map"; MiniMap{ z: map.z + 2 }', map)
+            }
+        }
+
+        //! [routerequest0]
+        function showRoute(startCoordinate, endCoordinate)
+        {
+            // clear away any old data in the query
+            map.routeQuery.clearWaypoints();
+
+            // add the start and end coords as waypoints on the route
+            map.routeQuery.addWaypoint(startCoordinate)
+            map.routeQuery.addWaypoint(endCoordinate)
+            map.routeQuery.travelModes = RouteQuery.CarTravel
+            map.routeQuery.routeOptimizations = RouteQuery.FastestRoute
+            //! [routerequest0]
+
+            //! [routerequest0 feature weight]
+            for (var i=0; i<9; i++) {
+                map.routeQuery.setFeatureWeight(i, 0)
+            }
+            //for (var i=0; i<routeDialog.features.length; i++) {
+            //    map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
+            //}
+            //! [routerequest0 feature weight]
+
+            //! [routerequest1]
+            map.routeModel.update();
+            // center the map on the start coord
+            map.center = startCoordinate;
+            //! [routerequest1]
+        }
+
+        function showPlace(geocode)
+        {
+            // send the geocode request
+            map.geocodeModel.query = geocode
+            map.geocodeModel.update()
+        }
+
+        function setLanguage(lang)
+        {
+            map.plugin.locales = lang;
+            stackView.pop(page)
+        }
 
         onSelectProvider: {
             stackView.pop()
@@ -110,271 +270,67 @@ ApplicationWindow {
 
 
         onSelectTool: {
-            if (tool === "AddressRoute") {
+            switch (tool) {
+            case "AddressRoute":
                 stackView.push({ item: Qt.resolvedUrl("RouteAddress.qml") ,
                                    properties: { "plugin": map.plugin,
-                                                 "toAddress": toAddress,
-                                                 "fromAddress": fromAddress}})
+                                       "toAddress": toAddress,
+                                       "fromAddress": fromAddress}})
                 stackView.currentItem.showRoute.connect(showRoute)
-                stackView.currentItem.showMessage.connect(showMessage)
-                stackView.currentItem.closeForm.connect(closeForm)
-            } else if (tool === "CoordinateRoute") {
+                stackView.currentItem.showMessage.connect(stackView.showMessage)
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            case "CoordinateRoute":
                 stackView.push({ item: Qt.resolvedUrl("RouteCoordinate.qml") ,
                                    properties: { "toCoordinate": toCoordinate,
-                                                 "fromCoordinate": fromCoordinate}})
+                                       "fromCoordinate": fromCoordinate}})
                 stackView.currentItem.showRoute.connect(showRoute)
-                stackView.currentItem.closeForm.connect(closeForm)
-            } else if (tool === "Geocode") {
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            case "Geocode":
                 stackView.push({ item: Qt.resolvedUrl("Geocode.qml") ,
                                    properties: { "address": fromAddress}})
                 stackView.currentItem.showPlace.connect(showPlace)
-                stackView.currentItem.closeForm.connect(closeForm)
-            } else if (tool === "RevGeocode") {
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            case "RevGeocode":
                 stackView.push({ item: Qt.resolvedUrl("ReverseGeocode.qml") ,
                                    properties: { "coordinate": fromCoordinate}})
                 stackView.currentItem.showPlace.connect(showPlace)
-                stackView.currentItem.closeForm.connect(closeForm)
-            } else if (tool === "Language") {
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            case "Language":
                 stackView.push({ item: Qt.resolvedUrl("Locale.qml") ,
-                                 properties: { "locale":  map.plugin.locales[0]}})
+                                   properties: { "locale":  map.plugin.locales[0]}})
                 stackView.currentItem.selectLanguage.connect(setLanguage)
-                stackView.currentItem.closeForm.connect(closeForm)
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            default:
+                console.log("Unsupported operation")
             }
         }
 
         onToggleMapState: {
             stackView.pop(page)
-            if (state === "FollowMe") {
-                map.followme =! map.followme
-                page.state = ""
-            } else if (state === "MiniMap") {
+            switch (state) {
+            case "FollowMe":
+                map.followme = !map.followme
+                break
+            case "MiniMap":
                 toggleMiniMapState()
                 isMiniMap = minimap
+                break
+            default:
+                console.log("Unsupported operation")
             }
-        }
-
-        function toggleMiniMapState() {
-            if (minimap) {
-                minimap.destroy()
-                minimap = null
-            } else {
-                minimap = Qt.createQmlObject ('import "content/map"; MiniMap{ z: map.z + 2 }', map)
-            }
-            page.state = ""
-        }
-
-        //! [routerequest0]
-        function showRoute(startCoordinate, endCoordinate) {
-            // clear away any old data in the query
-            map.routeQuery.clearWaypoints();
-
-            // add the start and end coords as waypoints on the route
-            map.routeQuery.addWaypoint(startCoordinate)
-            map.routeQuery.addWaypoint(endCoordinate)
-            map.routeQuery.travelModes = RouteQuery.CarTravel
-            map.routeQuery.routeOptimizations = RouteQuery.FastestRoute
-            //! [routerequest0]
-
-            //! [routerequest0 feature weight]
-            for (var i=0; i<9; i++) {
-                map.routeQuery.setFeatureWeight(i, 0)
-            }
-            //for (var i=0; i<routeDialog.features.length; i++) {
-            //    map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
-            //}
-            //! [routerequest0 feature weight]
-
-            //! [routerequest1]
-            map.routeModel.update();
-            // center the map on the start coord
-            map.center = startCoordinate;
-            //! [routerequest1]
-        }
-
-        function showPlace(geocode) {
-            // send the geocode request
-            map.geocodeModel.query = geocode
-            map.geocodeModel.update()
-        }
-
-        function setLanguage(lang) {
-            map.plugin.locales = lang;
-            stackView.pop(page)
-        }
-    }
-
-    function showMessage(title,message,backPage) {
-        stackView.push({ item: Qt.resolvedUrl("Message.qml") ,
-                           properties: {
-                               "title" : title,
-                               "message" : message,
-                               "backPage" : backPage
-                           }})
-        stackView.currentItem.closeForm.connect(closeMessage)
-    }
-
-    function closeMessage(backPage) {
-            stackView.pop(backPage)
-    }
-
-    function closeForm() {
-        stackView.pop(page)
-    }
-
-    function showRouteListPage() {
-        stackView.push({ item: Qt.resolvedUrl("RouteList.qml") ,
-                           properties: {
-                               "routeModel" : map.routeModel
-                           }})
-        stackView.currentItem.closeForm.connect(closeForm)
-    }
-
-    function geocodeMessage(){
-        var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
-        latitude = Math.round(map.geocodeModel.get(0).coordinate.latitude * 10000) / 10000
-        longitude =Math.round(map.geocodeModel.get(0).coordinate.longitude * 10000) / 10000
-        street = map.geocodeModel.get(0).address.street
-        district = map.geocodeModel.get(0).address.district
-        city = map.geocodeModel.get(0).address.city
-        county = map.geocodeModel.get(0).address.county
-        state = map.geocodeModel.get(0).address.state
-        countryCode = map.geocodeModel.get(0).address.countryCode
-        country = map.geocodeModel.get(0).address.country
-        postalCode = map.geocodeModel.get(0).address.postalCode
-
-        text = "<b>Latitude:</b> " + latitude + "<br/>"
-        text +="<b>Longitude:</b> " + longitude + "<br/>" + "<br/>"
-        if (street) text +="<b>Street: </b>"+ street + " <br/>"
-        if (district) text +="<b>District: </b>"+ district +" <br/>"
-        if (city) text +="<b>City: </b>"+ city + " <br/>"
-        if (county) text +="<b>County: </b>"+ county + " <br/>"
-        if (state) text +="<b>State: </b>"+ state + " <br/>"
-        if (countryCode) text +="<b>Country code: </b>"+ countryCode + " <br/>"
-        if (country) text +="<b>Country: </b>"+ country + " <br/>"
-        if (postalCode) text +="<b>PostalCode: </b>"+ postalCode + " <br/>"
-        return text
-    }
-
-    function createMap(provider){
-        var plugin
-
-        if (parameters && parameters.length>0)
-            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
-        else
-            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', appWindow)
-
-        if (map) {
-            map.destroy()
-            minimap = null
-        }
-
-        map = Qt.createQmlObject ('import QtLocation 5.3;\
-                                       import "content/map";\
-                                       MapComponent{\
-                                           width: page.width;\
-                                           height: page.height;\
-                                           onFollowmeChanged: {mainMenu.isFollowMe = map.followme}\
-                                           onSupportedMapTypesChanged: {mainMenu.mapTypeMenu.createMenu(map)}\
-                                           onCoordinatesCaptured: {\
-                                               var text = "<b>" + qsTr("Latitude:") + "</b> " + roundNumber(latitude,4) + "<br/><b>" + qsTr("Longitude:") + "</b> " + roundNumber(longitude,4);\
-                                               showMessage(qsTr("Coordinates"),text);\
-                                           }\
-                                           onGeocodeFinished:{\
-                                               if (map.geocodeModel.status == GeocodeModel.Ready) {\
-                                                   if (map.geocodeModel.count == 0) {\
-                                                       showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode"));\
-                                                   } else if (map.geocodeModel.count > 1) { \
-                                                       showMessage(qsTr("Ambiguous geocode"), map.geocodeModel.count + " " + \
-                                                       qsTr("results found for the given address, please specify location"));\
-                                                   } else { \
-                                                       showMessage(qsTr("Location"), geocodeMessage(),page);\
-                                                  ;}\
-                                               } else if (map.geocodeModel.status == GeocodeModel.Error) {\
-                                                   showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode")); \
-                                               }\
-                                           }\
-                                           onRouteError: {\
-                                               showMessage(qsTr("Route Error"),qsTr("Unable to find a route for the given points"),page);\
-                                           }\
-                                           onShowGeocodeInfo:{\
-                                               showMessage(qsTr("Location"),geocodeMessage(),page);\
-                                           }\
-                                           onErrorChanged: {\
-                                               if (map.error != Map.NoError) {\
-                                               var title = qsTr("ProviderError");\
-                                               var message =  map.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>";\
-                                                   if (map.error == Map.MissingRequiredParameterError) \
-                                                       message += "<br/>" + qsTr("or see") + " \'mapviewer --help\' "\
-                                                       + qsTr("how to pass plugin parameters.");\
-                                               showMessage(title,message);\
-                                               }\
-                                           }\
-                                           onShowMainMenu: {\
-                                               mapPopupMenu.show(coordinate);\
-                                           }\
-                                           onShowMarkerMenu: {\
-                                               markerPopupMenu.show(coordinate);\
-                                           }\
-                                           onShowRouteMenu: {\
-                                               itemPopupMenu.show("Route",coordinate);\
-                                           }\
-                                           onShowPointMenu: {\
-                                               itemPopupMenu.show("Point",coordinate);\
-                                           }\
-                                           onShowRouteList: {\
-                                               showRouteListPage();
-                                           }\
-                                       }',page)
-        map.plugin = plugin;
-        map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
-    }
-
-    function getPlugins(){
-        var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', appWindow)
-        var tempPlugin
-        var myArray = new Array()
-        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
-            if (tempPlugin.supportsMapping())
-                myArray.push(tempPlugin.name)
-        }
-        myArray.sort()
-        return myArray
-    }
-
-    function initializeProvders(pluginParameters) {
-        var parameters = new Array()
-        for (var prop in pluginParameters){
-            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',appWindow)
-            parameters.push(parameter)
-        }
-        appWindow.parameters = parameters
-        var plugins = getPlugins()
-        mainMenu.providerMenu.createMenu(plugins)
-        for (var i = 0; i<plugins.length; i++) {
-            if (plugins[i] === "osm")
-                mainMenu.selectProvider(plugins[i])
         }
     }
 
     MapPopupMenu {
         id: mapPopupMenu
-        onItemClicked: {
-            stackView.pop(page)
-            if (item === "addMarker") {
-                map.addMarker()
-            } else if (item === "getCoordinate") {
-                map.coordinatesCaptured(coordinate.latitude, coordinate.longitude)
-            } else if (item === "fitViewport") {
-                map.fitViewportToMapItems()
-            } else if (item === "deleteMarkers") {
-                map.deleteMarkers()
-            } else if (item === "deleteItems") {
-                map.deleteMapItems()
-            }
-        }
 
-        function show(coordinate) {
+        function show(coordinate)
+        {
             stackView.pop(page)
             mapPopupMenu.coordinate = coordinate
             mapPopupMenu.markersCount = map.markers.length
@@ -382,10 +338,58 @@ ApplicationWindow {
             mapPopupMenu.update()
             mapPopupMenu.popup()
         }
+
+        onItemClicked: {
+            stackView.pop(page)
+            switch (item) {
+            case "addMarker":
+                map.addMarker()
+                break
+            case "getCoordinate":
+                map.coordinatesCaptured(coordinate.latitude, coordinate.longitude)
+                break
+            case "fitViewport":
+                map.fitViewportToMapItems()
+                break
+            case "deleteMarkers":
+                map.deleteMarkers()
+                break
+            case "deleteItems":
+                map.deleteMapItems()
+                break
+            default:
+                console.log("Unsupported operation")
+            }
+        }
     }
 
     MarkerPopupMenu {
         id: markerPopupMenu
+
+        function show(coordinate)
+        {
+            stackView.pop(page)
+            markerPopupMenu.markersCount = map.markers.length
+            markerPopupMenu.update()
+            markerPopupMenu.popup()
+        }
+
+        function askForCoordinate()
+        {
+            stackView.push({ item: Qt.resolvedUrl("ReverseGeocode.qml") ,
+                               properties: { "title": qsTr("New Coordinate"),
+                                   "coordinate":   map.markers[map.currentMarker].coordinate}})
+            stackView.currentItem.showPlace.connect(moveMarker)
+            stackView.currentItem.closeForm.connect(stackView.closeForm)
+        }
+
+        function moveMarker(coordinate)
+        {
+            map.markers[map.currentMarker].coordinate = coordinate;
+            map.center = coordinate;
+            stackView.pop(page)
+        }
+
         onItemClicked: {
             stackView.pop(page)
             switch (item) {
@@ -405,8 +409,8 @@ ApplicationWindow {
             case "distanceToNextPoint":
                 var coordinate1 = map.markers[currentMarker].coordinate;
                 var coordinate2 = map.markers[currentMarker+1].coordinate;
-                var distance = map.formatDistance(coordinate1.distanceTo(coordinate2));
-                showMessage(qsTr("Distance"),"<b>" + qsTr("Distance:") + "</b> " + distance)
+                var distance = Helper.formatDistance(coordinate1.distanceTo(coordinate2));
+                stackView.showMessage(qsTr("Distance"),"<b>" + qsTr("Distance:") + "</b> " + distance)
                 break
             case "drawImage":
                 map.addGeoItem("ImageItem")
@@ -427,36 +431,13 @@ ApplicationWindow {
                 console.log("Unsupported operation")
             }
         }
-
-        function show(coordinate) {
-            stackView.pop(page)
-            markerPopupMenu.markersCount = map.markers.length
-            markerPopupMenu.update()
-            markerPopupMenu.popup()
-        }
-
-        function askForCoordinate() {
-            stackView.push({ item: Qt.resolvedUrl("ReverseGeocode.qml") ,
-                             properties: { "title": qsTr("New Coordinate"),
-                                           "coordinate":   map.markers[map.currentMarker].coordinate}})
-            stackView.currentItem.showPlace.connect(moveMarker)
-            stackView.currentItem.closeForm.connect(closeForm)
-        }
-
-        function moveMarker(coordinate)
-        {
-            map.markers[map.currentMarker].coordinate = coordinate;
-            map.center = coordinate;
-            stackView.pop(page)
-        }
-
     }
 
     ItemPopupMenu {
-
         id: itemPopupMenu
 
-        function show(type,coordinate) {
+        function show(type,coordinate)
+        {
             stackView.pop(page)
             itemPopupMenu.type = type
             itemPopupMenu.update()
@@ -467,7 +448,7 @@ ApplicationWindow {
             stackView.pop(page)
             switch (item) {
             case "showRouteInfo":
-                showRouteListPage()
+                stackView.showRouteListPage()
                 break;
             case "deleteRoute":
                 map.routeModel.reset();
@@ -482,9 +463,7 @@ ApplicationWindow {
                 console.log("Unsupported operation")
             }
         }
-
     }
-
 
     StackView {
         id: stackView
@@ -492,6 +471,36 @@ ApplicationWindow {
         focus: true
         initialItem: Item {
             id: page
+        }
+
+        function showMessage(title,message,backPage)
+        {
+            push({ item: Qt.resolvedUrl("Message.qml") ,
+                               properties: {
+                                   "title" : title,
+                                   "message" : message,
+                                   "backPage" : backPage
+                               }})
+            currentItem.closeForm.connect(closeMessage)
+        }
+
+        function closeMessage(backPage)
+        {
+            pop(backPage)
+        }
+
+        function closeForm()
+        {
+            pop(page)
+        }
+
+        function showRouteListPage()
+        {
+            push({ item: Qt.resolvedUrl("RouteList.qml") ,
+                               properties: {
+                                   "routeModel" : map.routeModel
+                               }})
+            currentItem.closeForm.connect(closeForm)
         }
     }
 }

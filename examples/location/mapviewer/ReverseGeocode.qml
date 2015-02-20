@@ -44,7 +44,6 @@ import "forms"
 
 //Reverse Geocode Dialog
 ReverseGeocodeForm {
-
     property string title;
     property variant coordinate
     signal showPlace(variant coordinate)

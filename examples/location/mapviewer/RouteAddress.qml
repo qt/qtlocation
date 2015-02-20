@@ -44,13 +44,49 @@ import QtPositioning 5.3
 import "forms"
 
 RouteAddressForm {
-
     property alias plugin : tempGeocodeModel.plugin;
     property variant fromAddress;
     property variant toAddress;
     signal showMessage(string topic, string message)
     signal showRoute(variant startCoordinate,variant endCoordinate)
     signal closeForm()
+
+    goButton.onClicked: {
+        tempGeocodeModel.reset()
+        fromAddress.country =  fromCountry.text
+        fromAddress.street = fromStreet.text
+        fromAddress.city =  fromCity.text
+        toAddress.country = toCountry.text
+        toAddress.street = toStreet.text
+        toAddress.city = toCity.text
+        tempGeocodeModel.startCoordinate = QtPositioning.coordinate()
+        tempGeocodeModel.endCoordinate = QtPositioning.coordinate()
+        tempGeocodeModel.query = fromAddress
+        tempGeocodeModel.update();
+        goButton.enabled = false;
+    }
+
+    clearButton.onClicked: {
+        fromStreet.text = ""
+        fromCity.text = ""
+        fromCountry.text = ""
+        toStreet.text = ""
+        toCity.text = ""
+        toCountry.text = ""
+    }
+
+    cancelButton.onClicked: {
+        closeForm()
+    }
+
+    Component.onCompleted: {
+        fromStreet.text  = fromAddress.street
+        fromCity.text =  fromAddress.city
+        fromCountry.text = fromAddress.country
+        toStreet.text = toAddress.street
+        toCity.text = toAddress.city
+        toCountry.text = toAddress.country
+    }
 
     GeocodeModel {
         id: tempGeocodeModel
@@ -103,42 +139,5 @@ RouteAddressForm {
                 }
             }
         }
-    }
-
-    goButton.onClicked: {
-        tempGeocodeModel.reset()
-        fromAddress.country =  fromCountry.text
-        fromAddress.street = fromStreet.text
-        fromAddress.city =  fromCity.text
-        toAddress.country = toCountry.text
-        toAddress.street = toStreet.text
-        toAddress.city = toCity.text
-        tempGeocodeModel.startCoordinate = QtPositioning.coordinate()
-        tempGeocodeModel.endCoordinate = QtPositioning.coordinate()
-        tempGeocodeModel.query = fromAddress
-        tempGeocodeModel.update();
-        goButton.enabled = false;
-    }
-
-    clearButton.onClicked: {
-        fromStreet.text = ""
-        fromCity.text = ""
-        fromCountry.text = ""
-        toStreet.text = ""
-        toCity.text = ""
-        toCountry.text = ""
-    }
-
-    cancelButton.onClicked: {
-        closeForm()
-    }
-
-    Component.onCompleted: {
-        fromStreet.text  = fromAddress.street
-        fromCity.text =  fromAddress.city
-        fromCountry.text = fromAddress.country
-        toStreet.text = toAddress.street
-        toCity.text = toAddress.city
-        toCountry.text = toAddress.country
     }
 }

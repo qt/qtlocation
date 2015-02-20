@@ -43,7 +43,6 @@ import QtQuick.Controls 1.3
 import QtLocation 5.3
 
 MenuBar {
-
     property variant  providerMenu: providerMenu
     property variant  mapTypeMenu: mapTypeMenu
     property variant  toolsMenu: toolsMenu
@@ -59,14 +58,16 @@ MenuBar {
         id: providerMenu
         title: qsTr("Provider")
 
-        function createMenu(plugins){
+        function createMenu(plugins)
+        {
             clear()
             for (var i = 0; i < plugins.length; i++) {
                 createProviderMenuItem(plugins[i]);
             }
         }
 
-        function createProviderMenuItem(provider){
+        function createProviderMenuItem(provider)
+        {
             var item = addItem(provider);
             item.checkable = true;
             item.triggered.connect(function(){selectProvider(provider)})
@@ -77,7 +78,8 @@ MenuBar {
         id: mapTypeMenu
         title: qsTr("MapType")
 
-        function createMenu(map){
+        function createMenu(map)
+        {
             clear()
             for (var i = 0; i<map.supportedMapTypes.length; i++) {
                 createMapTypeMenuItem(map.supportedMapTypes[i]).checked =
@@ -85,7 +87,8 @@ MenuBar {
             }
         }
 
-        function createMapTypeMenuItem(mapType){
+        function createMapTypeMenuItem(mapType)
+        {
             var item = addItem(mapType.name);
             item.checkable = true;
             item.triggered.connect(function(){selectMapType(mapType)})
@@ -95,11 +98,12 @@ MenuBar {
 
     Menu {
         id: toolsMenu
-        title: qsTr("Tools")
         property bool isFollowMe: false;
         property bool isMiniMap: false;
+        title: qsTr("Tools")
 
-        function createMenu(map){
+        function createMenu(map)
+        {
             clear()
             if (map.plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)) {
                 addItem(qsTr("Reverse geocode")).triggered.connect(function(){selectTool("RevGeocode")})

@@ -46,7 +46,6 @@ import "forms"
 //! [geocode0]
 GeocodeForm {
     //! [geocode0]
-
     property variant address
     signal showPlace(variant address)
     signal closeForm()

@@ -29,5 +29,6 @@
         <file>RouteList.qml</file>
         <file>RouteListDelegate.qml</file>
         <file>RouteListHeader.qml</file>
+        <file>helper.js</file>
     </qresource>
 </RCC>

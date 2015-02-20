@@ -40,15 +40,14 @@
 
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+import "helper.js" as Helper
 
 ListView {
     property variant routeModel
     property string totalTravelTime
     property string totalDistance
-
     signal closeForm()
 
-    id: listView
     interactive: true
 
     model: ListModel { id: routeList }
@@ -75,44 +74,11 @@ ListView {
             for (var i = 0; i < routeModel.get(0).segments.length; i++) {
                 routeList.append({
                                      "instruction": routeModel.get(0).segments[i].maneuver.instructionText,
-                                     "distance": formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)
+                                     "distance": Helper.formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)
                                  });
             }
         }
-        totalTravelTime = routeModel.count == 0 ? "" : formatTime(routeModel.get(0).travelTime)
-        totalDistance = routeModel.count == 0 ? "" : formatDistance(routeModel.get(0).distance)
-    }
-
-    function formatTime(sec){
-        var value = sec
-        var seconds = value % 60
-        value /= 60
-        value = (value > 1) ? Math.round(value) : 0
-        var minutes = value % 60
-        value /= 60
-        value = (value > 1) ? Math.round(value) : 0
-        var hours = value
-        if (hours > 0) value = hours + "h:"+ minutes + "m"
-        else value = minutes + "min"
-        return value
-    }
-
-    function formatDistance(meters)
-    {
-        var dist = Math.round(meters)
-        if (dist > 1000 ){
-            if (dist > 100000){
-                dist = Math.round(dist / 1000)
-            }
-            else{
-                dist = Math.round(dist / 100)
-                dist = dist / 10
-            }
-            dist = dist + " km"
-        }
-        else{
-            dist = dist + " m"
-        }
-        return dist
+        totalTravelTime = routeModel.count == 0 ? "" : Helper.formatTime(routeModel.get(0).travelTime)
+        totalDistance = routeModel.count == 0 ? "" : Helper.formatDistance(routeModel.get(0).distance)
     }
 }

@@ -38,46 +38,42 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.4
-import QtPositioning 5.2
-import "forms"
+function roundNumber(number, digits)
+{
+    var multiple = Math.pow(10, digits);
+    return Math.round(number * multiple) / multiple;
+}
 
-LocaleForm {
-    property string locale
-    signal selectLanguage(string language)
-    signal closeForm()
+function formatTime(sec)
+{
+    var value = sec
+    var seconds = value % 60
+    value /= 60
+    value = (value > 1) ? Math.round(value) : 0
+    var minutes = value % 60
+    value /= 60
+    value = (value > 1) ? Math.round(value) : 0
+    var hours = value
+    if (hours > 0) value = hours + "h:"+ minutes + "m"
+    else value = minutes + "min"
+    return value
+}
 
-    goButton.onClicked: {
-
-       if (!languageGroup.current) return
-
-       if (otherRadioButton.checked) {
-           selectLanguage(language.text)
-       } else {
-           selectLanguage(languageGroup.current.text)
-       }
-    }
-
-    clearButton.onClicked: {
-        language.text = ""
-    }
-
-    cancelButton.onClicked: {
-        closeForm()
-    }
-
-    Component.onCompleted: {
-        switch (locale) {
-            case "en":
-                enRadioButton.checked = true;
-                break
-            case "fr":
-                frRadioButton.checked = true;
-                break
-            default:
-                otherRadioButton.checked = true;
-                language.text = locale
-                break
+function formatDistance(meters)
+{
+    var dist = Math.round(meters)
+    if (dist > 1000 ){
+        if (dist > 100000){
+            dist = Math.round(dist / 1000)
         }
+        else{
+            dist = Math.round(dist / 100)
+            dist = dist / 10
+        }
+        dist = dist + " km"
     }
+    else{
+        dist = dist + " m"
+    }
+    return dist
 }

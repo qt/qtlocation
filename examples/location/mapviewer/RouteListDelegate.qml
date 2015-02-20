@@ -44,13 +44,13 @@ import QtQuick.Layouts 1.1
 
 Item {
     id: root
-    width: parent.width
-    height: indexLabel.height * 2
-
     property bool checked: false
     property alias routeInstruction: instructionLabel
     property alias routeDistance: distanceLabel
     property alias routeIndex: indexLabel
+
+    width: parent.width
+    height: indexLabel.height * 2
 
     RowLayout {
         spacing: 10

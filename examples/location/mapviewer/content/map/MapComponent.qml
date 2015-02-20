@@ -41,11 +41,228 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
+import "../../helper.js" as Helper
 
 //! [top]
 Map {
     id: map
-    zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
+    //! [top]
+    property variant markers
+    property variant mapItems
+    property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
+    property int currentMarker
+    property int lastX : -1
+    property int lastY : -1
+    property int pressX : -1
+    property int pressY : -1
+    property int jitterThreshold : 30
+    property bool followme: false
+    property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
+    //! [routemodel0]
+    property RouteQuery routeQuery: RouteQuery {}
+
+    property RouteModel routeModel: RouteModel {
+        plugin : map.plugin
+        query: routeQuery
+        //! [routemodel0]
+
+        //! [routemodel1]
+        onStatusChanged: {
+            if (status == RouteModel.Ready) {
+                switch (count) {
+                case 0:
+                    // technically not an error
+                    map.routeError()
+                    break
+                case 1:
+                    showRouteList()
+                    break
+                }
+            } else if (status == RouteModel.Error) {
+                map.routeError()
+            }
+        }
+        //! [routemodel1]
+
+        //! [routemodel2]
+
+        //! [routemodel2]
+        //! [routemodel3]
+    }
+    //! [routemodel3]
+
+    //! [geocodemodel0]
+    property GeocodeModel geocodeModel: GeocodeModel {
+        //! [geocodemodel0]
+        //! [geocodemodel0 body]
+        plugin: map.plugin
+        onStatusChanged: {
+            if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
+                map.geocodeFinished()
+        }
+        onLocationsChanged:
+        {
+            if (count == 1) {
+                map.center.latitude = get(0).coordinate.latitude
+                map.center.longitude = get(0).coordinate.longitude
+            }
+        }
+        //! [geocodemodel0 body]
+        //! [geocodemodel1]
+    }
+    //! [geocodemodel1]
+
+    signal showGeocodeInfo()
+    signal geocodeFinished()
+    signal routeError()
+    signal coordinatesCaptured(double latitude, double longitude)
+    signal showMainMenu(variant coordinate)
+    signal showMarkerMenu(variant coordinate)
+    signal showRouteMenu(variant coordinate)
+    signal showPointMenu(variant coordinate)
+    signal showRouteList()
+
+    function geocodeMessage()
+    {
+        var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
+        latitude = Math.round(geocodeModel.get(0).coordinate.latitude * 10000) / 10000
+        longitude =Math.round(geocodeModel.get(0).coordinate.longitude * 10000) / 10000
+        street = geocodeModel.get(0).address.street
+        district = geocodeModel.get(0).address.district
+        city = geocodeModel.get(0).address.city
+        county = geocodeModel.get(0).address.county
+        state = geocodeModel.get(0).address.state
+        countryCode = geocodeModel.get(0).address.countryCode
+        country = geocodeModel.get(0).address.country
+        postalCode = geocodeModel.get(0).address.postalCode
+
+        text = "<b>Latitude:</b> " + latitude + "<br/>"
+        text +="<b>Longitude:</b> " + longitude + "<br/>" + "<br/>"
+        if (street) text +="<b>Street: </b>"+ street + " <br/>"
+        if (district) text +="<b>District: </b>"+ district +" <br/>"
+        if (city) text +="<b>City: </b>"+ city + " <br/>"
+        if (county) text +="<b>County: </b>"+ county + " <br/>"
+        if (state) text +="<b>State: </b>"+ state + " <br/>"
+        if (countryCode) text +="<b>Country code: </b>"+ countryCode + " <br/>"
+        if (country) text +="<b>Country: </b>"+ country + " <br/>"
+        if (postalCode) text +="<b>PostalCode: </b>"+ postalCode + " <br/>"
+        return text
+    }
+
+    function calculateScale()
+    {
+        var coord1, coord2, dist, text, f
+        f = 0
+        coord1 = map.toCoordinate(Qt.point(0,scale.y))
+        coord2 = map.toCoordinate(Qt.point(0+scaleImage.sourceSize.width,scale.y))
+        dist = Math.round(coord1.distanceTo(coord2))
+
+        if (dist === 0) {
+            // not visible
+        } else {
+            for (var i = 0; i < scaleLengths.length-1; i++) {
+                if (dist < (scaleLengths[i] + scaleLengths[i+1]) / 2 ) {
+                    f = scaleLengths[i] / dist
+                    dist = scaleLengths[i]
+                    break;
+                }
+            }
+            if (f === 0) {
+                f = dist / scaleLengths[i]
+                dist = scaleLengths[i]
+            }
+        }
+
+        text = Helper.formatDistance(dist)
+        scaleImage.width = (scaleImage.sourceSize.width * f) - 2 * scaleImageLeft.sourceSize.width
+        scaleText.text = text
+    }
+
+    function deleteMarkers()
+    {
+        var count = map.markers.length
+        for (var i = 0; i<count; i++){
+            map.removeMapItem(map.markers[i])
+            map.markers[i].destroy()
+        }
+        map.markers = []
+        markerCounter = 0
+    }
+
+    function deleteMapItems()
+    {
+        var count = map.mapItems.length
+        for (var i = 0; i<count; i++){
+            map.removeMapItem(map.mapItems[i])
+            map.mapItems[i].destroy()
+        }
+        map.mapItems = []
+    }
+
+    function addMarker()
+    {
+        var count = map.markers.length
+        markerCounter++
+        var marker = Qt.createQmlObject ('Marker {}', map)
+        map.addMapItem(marker)
+        marker.z = map.z+1
+        marker.coordinate = mouseArea.lastCoordinate
+
+        //update list of markers
+        var myArray = new Array()
+        for (var i = 0; i<count; i++){
+            myArray.push(markers[i])
+        }
+        myArray.push(marker)
+        markers = myArray
+    }
+
+    function addGeoItem(item)
+    {
+        var count = map.mapItems.length
+        var co = Qt.createComponent(item+'.qml')
+        if (co.status == Component.Ready) {
+            var o = co.createObject(map)
+            o.setGeometry(map.markers, currentMarker)
+            map.addMapItem(o)
+            //update list of items
+            var myArray = new Array()
+            for (var i = 0; i<count; i++){
+                myArray.push(mapItems[i])
+            }
+            myArray.push(o)
+            mapItems = myArray
+
+        } else {
+            console.log(item + " is not supported right now, please call us later.")
+        }
+    }
+
+    function deleteMarker(index)
+    {
+        //update list of markers
+        var myArray = new Array()
+        var count = map.markers.length
+        for (var i = 0; i<count; i++){
+            if (index != i) myArray.push(map.markers[i])
+        }
+
+        map.removeMapItem(map.markers[index])
+        map.markers[index].destroy()
+        map.markers = myArray
+        if (markers.length == 0) markerCounter = 0
+    }
+
+    function calculateRoute(){
+        routeQuery.clearWaypoints();
+        for (var i = currentMarker; i< map.markers.length; i++){
+            routeQuery.addWaypoint(markers[i].coordinate)
+        }
+        routeQuery.travelModes = RouteQuery.CarTravel
+        routeQuery.routeOptimizations = RouteQuery.ShortestRoute
+        routeQuery.setFeatureWeight(0, 0)
+        routeModel.update();
+    }
 
     //! [coord]
     center {
@@ -57,26 +274,39 @@ Map {
     // Enable pinch gestures to zoom in and out
     gesture.flickDeceleration: 3000
     gesture.enabled: true
+    onCopyrightLinkActivated: Qt.openUrlExternally(link)
 
-//! [top]
-    property variant markers
-    property variant mapItems
-    property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
-    property int currentMarker
-    signal showMainMenu(variant coordinate)
-    signal showMarkerMenu(variant coordinate)
-    signal showRouteMenu(variant coordinate)
-    signal showPointMenu(variant coordinate)
-    signal showRouteList()
+    onCenterChanged:{
+        scaleTimer.restart()
+        if (map.followme)
+            if (map.center != positionSource.position.coordinate) map.followme = false
+    }
 
-    property int lastX : -1
-    property int lastY : -1
-    property int pressX : -1
-    property int pressY : -1
-    property int jitterThreshold : 30
-    property bool followme: false
-    property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
-    signal requestLocale()
+    onZoomLevelChanged:{
+        scaleTimer.restart()
+        if (map.followme) map.center = positionSource.position.coordinate
+    }
+
+    onWidthChanged:{
+        scaleTimer.restart()
+    }
+
+    onHeightChanged:{
+        scaleTimer.restart()
+    }
+
+    Component.onCompleted: {
+        markers = new Array();
+        mapItems = new Array();
+    }
+
+    Keys.onPressed: {
+        if ((event.key == Qt.Key_Plus) || (event.key == Qt.Key_VolumeUp)) {
+            map.zoomLevel += 1
+        } else if ((event.key == Qt.Key_Minus) || (event.key == Qt.Key_VolumeDown)){
+            map.zoomLevel -= 1
+        }
+    }
 
     /* @todo
     Binding {
@@ -85,8 +315,6 @@ Map {
         value: positionSource.position.coordinate
         when: followme
     }*/
-
-    onCopyrightLinkActivated: Qt.openUrlExternally(link)
 
     PositionSource{
         id: positionSource
@@ -101,8 +329,8 @@ Map {
         id: poiTheQtComapny
         sourceItem: Rectangle { width: 14; height: 14; color: "#1c94fc"; border.width: 2; border.color: "#242424"; smooth: true; radius: 7 }
         coordinate {
-           latitude: 59.9485
-           longitude: 10.7686
+            latitude: 59.9485
+            longitude: 10.7686
         }
         opacity:0.7
         anchorPoint.x: sourceItem.width/2
@@ -141,72 +369,6 @@ Map {
         }
     }
 
-//! [routemodel0]
-    property RouteQuery routeQuery: RouteQuery {}
-
-    property RouteModel routeModel: RouteModel {
-        plugin : map.plugin
-        query: routeQuery
-//! [routemodel0]
-
-//! [routemodel1]
-        onStatusChanged: {
-            if (status == RouteModel.Ready) {
-                switch (count) {
-                case 0:
-                     // technically not an error
-                    map.routeError()
-                    break
-                case 1:
-                    showRouteList()
-                    break
-                }
-            } else if (status == RouteModel.Error) {
-                map.routeError()
-            }
-        }
-//! [routemodel1]
-
-//! [routemodel2]
-
-//! [routemodel2]
-//! [routemodel3]
-    }
-//! [routemodel3]
-
-//! [geocodemodel0]
-    property GeocodeModel geocodeModel: GeocodeModel {
-//! [geocodemodel0]
-//! [geocodemodel0 body]
-        plugin: map.plugin
-        onStatusChanged: {
-            if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
-                map.geocodeFinished()
-        }
-        onLocationsChanged:
-        {
-            if (count == 1) {
-                map.center.latitude = get(0).coordinate.latitude
-                map.center.longitude = get(0).coordinate.longitude
-            }
-        }
-//! [geocodemodel0 body]
-//! [geocodemodel1]
-    }
-//! [geocodemodel1]
-
-    signal showGeocodeInfo()
-
-    signal geocodeFinished()
-    signal routeError()
-    signal coordinatesCaptured(double latitude, double longitude)
-
-    Component.onCompleted: {
-        markers = new Array();
-        mapItems = new Array();
-    }
-
-//! [routedelegate0]
     Component {
         id: routeDelegate
 
@@ -217,7 +379,7 @@ Map {
             line.width: 5
             smooth: true
             opacity: 0.8
-//! [routedelegate0]
+            //! [routedelegate0]
             MouseArea {
                 id: routeMouseArea
                 anchors.fill: parent
@@ -234,7 +396,7 @@ Map {
 
                 onPositionChanged: {
                     if (Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
-                        Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
+                            Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
                         map.state = ""
                     }
                     if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
@@ -246,16 +408,16 @@ Map {
                 onPressAndHold:{
                     if (Math.abs(map.pressX - parent.x- mouse.x ) < map.jitterThreshold
                             && Math.abs(map.pressY - parent.y - mouse.y ) < map.jitterThreshold) {
-                         showRouteMenu(lastCoordinate);
+                        showRouteMenu(lastCoordinate);
                     }
                 }
             }
         }
-//! [routedelegate1]
+        //! [routedelegate1]
     }
-//! [routedelegate1]
+    //! [routedelegate1]
 
-//! [pointdel0]
+    //! [pointdel0]
     Component {
         id: pointDelegate
 
@@ -265,7 +427,7 @@ Map {
             color: circleMouseArea.containsMouse ? "lime" : "red"
             opacity: 0.6
             center: locationData.coordinate
-//! [pointdel0]
+            //! [pointdel0]
             MouseArea {
                 anchors.fill:parent
                 id: circleMouseArea
@@ -282,7 +444,7 @@ Map {
 
                 onPositionChanged: {
                     if (Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
-                        Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
+                            Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
                         map.state = ""
                         if (pressed) parent.radius = parent.center.distanceTo(
                                          map.toCoordinate(Qt.point(mouse.x, mouse.y)))
@@ -300,25 +462,25 @@ Map {
                     }
                 }
             }
-//! [pointdel1]
+            //! [pointdel1]
         }
     }
-//! [pointdel1]
+    //! [pointdel1]
 
-//! [routeview]
+    //! [routeview]
     MapItemView {
         model: routeModel
         delegate: routeDelegate
         autoFitViewport: true
     }
-//! [routeview]
+    //! [routeview]
 
-//! [geocodeview]
+    //! [geocodeview]
     MapItemView {
         model: geocodeModel
         delegate: pointDelegate
     }
-//! [geocodeview]
+    //! [geocodeview]
 
     Item {//scale
         id: scale
@@ -374,25 +536,6 @@ Map {
         }
     }
 
-    onCenterChanged:{
-        scaleTimer.restart()
-        if (map.followme)
-            if (map.center != positionSource.position.coordinate) map.followme = false
-    }
-
-    onZoomLevelChanged:{
-        scaleTimer.restart()
-        if (map.followme) map.center = positionSource.position.coordinate
-    }
-
-    onWidthChanged:{
-        scaleTimer.restart()
-    }
-
-    onHeightChanged:{
-        scaleTimer.restart()
-    }
-
     MouseArea {
         id: mouseArea
         property variant lastCoordinate
@@ -410,8 +553,8 @@ Map {
 
         onPositionChanged: {
             if (map.state != "PopupMenu" ||
-                Math.abs(map.pressX - mouse.x ) > map.jitterThreshold ||
-                Math.abs(map.pressY - mouse.y ) > map.jitterThreshold) {
+                    Math.abs(map.pressX - mouse.x ) > map.jitterThreshold ||
+                    Math.abs(map.pressY - mouse.y ) > map.jitterThreshold) {
                 map.state = ""
             }
             if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
@@ -439,166 +582,8 @@ Map {
                     && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
                 showMainMenu(lastCoordinate);
             }
-          }
-        }
-
-
-    Keys.onPressed: {
-        if ((event.key == Qt.Key_Plus) || (event.key == Qt.Key_VolumeUp)) {
-            map.zoomLevel += 1
-        } else if ((event.key == Qt.Key_Minus) || (event.key == Qt.Key_VolumeDown)){
-            map.zoomLevel -= 1
         }
     }
-
-    function calculateScale(){
-        var coord1, coord2, dist, text, f
-        f = 0
-        coord1 = map.toCoordinate(Qt.point(0,scale.y))
-        coord2 = map.toCoordinate(Qt.point(0+scaleImage.sourceSize.width,scale.y))
-        dist = Math.round(coord1.distanceTo(coord2))
-
-        if (dist === 0) {
-            // not visible
-        } else {
-            for (var i = 0; i < scaleLengths.length-1; i++) {
-                if (dist < (scaleLengths[i] + scaleLengths[i+1]) / 2 ) {
-                    f = scaleLengths[i] / dist
-                    dist = scaleLengths[i]
-                    break;
-                }
-            }
-            if (f === 0) {
-                f = dist / scaleLengths[i]
-                dist = scaleLengths[i]
-            }
-        }
-
-        text = formatDistance(dist)
-        scaleImage.width = (scaleImage.sourceSize.width * f) - 2 * scaleImageLeft.sourceSize.width
-        scaleText.text = text
-    }
-
-
-    function deleteMarkers(){
-        var count = map.markers.length
-        for (var i = 0; i<count; i++){
-            map.removeMapItem(map.markers[i])
-            map.markers[i].destroy()
-        }
-        map.markers = []
-        markerCounter = 0
-    }
-
-    function deleteMapItems(){
-        var count = map.mapItems.length
-        for (var i = 0; i<count; i++){
-            map.removeMapItem(map.mapItems[i])
-            map.mapItems[i].destroy()
-        }
-        map.mapItems = []
-    }
-
-    function addMarker(){
-        var count = map.markers.length
-        markerCounter++
-        var marker = Qt.createQmlObject ('Marker {}', map)
-        map.addMapItem(marker)
-        marker.z = map.z+1
-        marker.coordinate = mouseArea.lastCoordinate
-
-        //update list of markers
-        var myArray = new Array()
-        for (var i = 0; i<count; i++){
-            myArray.push(markers[i])
-        }
-        myArray.push(marker)
-        markers = myArray
-    }
-
-    function addGeoItem(item){
-        var count = map.mapItems.length
-        var co = Qt.createComponent(item+'.qml')
-        if (co.status == Component.Ready) {
-            var o = co.createObject(map)
-            o.setGeometry(map.markers, currentMarker)
-            map.addMapItem(o)
-            //update list of items
-            var myArray = new Array()
-            for (var i = 0; i<count; i++){
-                myArray.push(mapItems[i])
-            }
-            myArray.push(o)
-            mapItems = myArray
-
-        } else {
-            console.log(item + " is not supported right now, please call us later.")
-        }
-    }
-
-    function deleteMarker(index){
-        //update list of markers
-        var myArray = new Array()
-        var count = map.markers.length
-        for (var i = 0; i<count; i++){
-            if (index != i) myArray.push(map.markers[i])
-        }
-
-        map.removeMapItem(map.markers[index])
-        map.markers[index].destroy()
-        map.markers = myArray
-        if (markers.length == 0) markerCounter = 0
-    }
-
-    function calculateRoute(){
-        routeQuery.clearWaypoints();
-        for (var i = currentMarker; i< map.markers.length; i++){
-            routeQuery.addWaypoint(markers[i].coordinate)
-        }
-        routeQuery.travelModes = RouteQuery.CarTravel
-        routeQuery.routeOptimizations = RouteQuery.ShortestRoute
-        routeQuery.setFeatureWeight(0, 0)
-        routeModel.update();
-    }
-
-    function roundNumber(number, digits) {
-        var multiple = Math.pow(10, digits);
-        return Math.round(number * multiple) / multiple;
-    }
-
-    function formatTime(sec){
-        var value = sec
-        var seconds = value % 60
-        value /= 60
-        value = (value > 1) ? Math.round(value) : 0
-        var minutes = value % 60
-        value /= 60
-        value = (value > 1) ? Math.round(value) : 0
-        var hours = value
-        if (hours > 0) value = hours + "h:"+ minutes + "m"
-        else value = minutes + "min"
-        return value
-    }
-
-    function formatDistance(meters)
-    {
-        var dist = Math.round(meters)
-        if (dist > 1000 ){
-            if (dist > 100000){
-                dist = Math.round(dist / 1000)
-            }
-            else{
-                dist = Math.round(dist / 100)
-                dist = dist / 10
-            }
-            dist = dist + " km"
-        }
-        else{
-            dist = dist + " m"
-        }
-        return dist
-    }
-
-//! [end]
+    //! [end]
 }
 //! [end]

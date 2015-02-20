@@ -42,11 +42,10 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 
 Item {
-
-    width: parent.width
-    height: tabTitle.height * 3.0
     property alias travelTime: travelTimeLabel
     property alias distance: distanceLabel
+    width: parent.width
+    height: tabTitle.height * 3.0
 
     Rectangle {
         id: tabRectangle
@@ -81,6 +80,5 @@ Item {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
         }
-
     }
 }
