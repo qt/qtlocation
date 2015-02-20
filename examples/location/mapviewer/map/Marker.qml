@@ -40,7 +40,6 @@
 
 import QtQuick 2.0;
 import QtLocation 5.3
-import QtLocation.examples 5.0
 
 //! [mqi-top]
 MapQuickItem {
@@ -56,7 +55,7 @@ MapQuickItem {
     sourceItem: Image {
         id: image
 //! [mqi-anchor]
-        source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "../../resources/marker_selected.png" :"../../resources/marker_hovered.png") : "../../resources/marker.png"
+        source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "../resources/marker_selected.png" :"../resources/marker_hovered.png") : "../resources/marker.png"
         MouseArea  {
             id: markerMouseArea
             property int pressX : -1

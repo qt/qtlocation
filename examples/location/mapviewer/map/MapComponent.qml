@@ -41,7 +41,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
-import "../../helper.js" as Helper
+import "../helper.js" as Helper
 
 //! [top]
 Map {
@@ -495,19 +495,19 @@ Map {
         }
         Image {
             id: scaleImageLeft
-            source: "../../resources/scale_end.png"
+            source: "../resources/scale_end.png"
             anchors.bottom: parent.bottom
             anchors.left: parent.left
         }
         Image {
             id: scaleImage
-            source: "../../resources/scale.png"
+            source: "../resources/scale.png"
             anchors.bottom: parent.bottom
             anchors.left: scaleImageLeft.right
         }
         Image {
             id: scaleImageRight
-            source: "../../resources/scale_end.png"
+            source: "../resources/scale_end.png"
             anchors.bottom: parent.bottom
             anchors.left: scaleImage.right
         }

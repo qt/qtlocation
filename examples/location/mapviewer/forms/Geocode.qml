@@ -37,25 +37,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-import QtQuick 2.0;
-import QtLocation 5.3
 
-MapQuickItem {  //to be used inside MapComponent only
-    id: imageItem
+import QtQuick 2.4
+import QtPositioning 5.2
 
-    MouseArea {
-        anchors.fill: parent
-        drag.target: parent
+//Geocode Dialog
+//! [geocode0]
+GeocodeForm {
+    //! [geocode0]
+    property variant address
+    signal showPlace(variant address)
+    signal closeForm()
+
+    //! [geocode1]
+    goButton.onClicked: {
+        // fill out the Address element
+        address.street = street.text
+        address.city = city.text
+        address.state = state.text
+        address.country = country.text
+        address.postalCode = postalCode.text
+        showPlace(address)
+    }
+    //! [geocode1]
+
+    clearButton.onClicked: {
+        street.text = ""
+        city.text = ""
+        state.text = ""
+        country.text = ""
+        postalCode.text = ""
+    }
+    //! [geocode2]
+
+    cancelButton.onClicked: {
+        closeForm()
     }
 
-    function setGeometry(markers, index) {
-        coordinate.latitude = markers[index].coordinate.latitude
-        coordinate.longitude = markers[index].coordinate.longitude
-    }
-
-    sourceItem: Image {
-        id: testImage
-        source: "../../icon.png"
-        opacity: 0.7
+    Component.onCompleted: {
+        street.text = address.street
+        city.text = address.city
+        state.text = address.state
+        country.text = address.country
+        postalCode.text = address.postalCode
     }
 }
+//! [geocode2]
+
+

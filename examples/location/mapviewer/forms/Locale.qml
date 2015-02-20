@@ -40,26 +40,25 @@
 
 import QtQuick 2.4
 import QtPositioning 5.2
-import "forms"
 
-//Reverse Geocode Dialog
-ReverseGeocodeForm {
-    property string title;
-    property variant coordinate
-    signal showPlace(variant coordinate)
+LocaleForm {
+    property string locale
+    signal selectLanguage(string language)
     signal closeForm()
 
     goButton.onClicked: {
-        var coordinate = QtPositioning.coordinate(parseFloat(latitude.text),
-                                                          parseFloat(longitude.text));
-        if (coordinate.isValid) {
-            showPlace(coordinate)
-        }
+
+       if (!languageGroup.current) return
+
+       if (otherRadioButton.checked) {
+           selectLanguage(language.text)
+       } else {
+           selectLanguage(languageGroup.current.text)
+       }
     }
 
     clearButton.onClicked: {
-        latitude.text = ""
-        longitude.text = ""
+        language.text = ""
     }
 
     cancelButton.onClicked: {
@@ -67,10 +66,17 @@ ReverseGeocodeForm {
     }
 
     Component.onCompleted: {
-        latitude.text = "" + coordinate.latitude
-        longitude.text = "" + coordinate.longitude
-        if (title.length != 0) {
-            tabTitle.text = title;
+        switch (locale) {
+            case "en":
+                enRadioButton.checked = true;
+                break
+            case "fr":
+                frRadioButton.checked = true;
+                break
+            default:
+                otherRadioButton.checked = true;
+                language.text = locale
+                break
         }
     }
 }

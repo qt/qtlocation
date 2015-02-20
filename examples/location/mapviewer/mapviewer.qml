@@ -42,7 +42,8 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtLocation 5.3
 import QtPositioning 5.2
-import "content/map"
+import "map"
+import "menus"
 import "helper.js" as Helper
 
 ApplicationWindow {
@@ -70,7 +71,7 @@ ApplicationWindow {
         }
 
         map = Qt.createQmlObject ('import QtLocation 5.3;\
-                                       import "content/map";\
+                                       import "map";\
                                        import "helper.js" as Helper;\
                                        MapComponent{\
                                            width: page.width;\
@@ -193,7 +194,7 @@ ApplicationWindow {
                 minimap.destroy()
                 minimap = null
             } else {
-                minimap = Qt.createQmlObject ('import "content/map"; MiniMap{ z: map.z + 2 }', map)
+                minimap = Qt.createQmlObject ('import "map"; MiniMap{ z: map.z + 2 }', map)
             }
         }
 
@@ -272,7 +273,7 @@ ApplicationWindow {
         onSelectTool: {
             switch (tool) {
             case "AddressRoute":
-                stackView.push({ item: Qt.resolvedUrl("RouteAddress.qml") ,
+                stackView.push({ item: Qt.resolvedUrl("forms/RouteAddress.qml") ,
                                    properties: { "plugin": map.plugin,
                                        "toAddress": toAddress,
                                        "fromAddress": fromAddress}})
@@ -281,26 +282,26 @@ ApplicationWindow {
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "CoordinateRoute":
-                stackView.push({ item: Qt.resolvedUrl("RouteCoordinate.qml") ,
+                stackView.push({ item: Qt.resolvedUrl("forms/RouteCoordinate.qml") ,
                                    properties: { "toCoordinate": toCoordinate,
                                        "fromCoordinate": fromCoordinate}})
                 stackView.currentItem.showRoute.connect(showRoute)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Geocode":
-                stackView.push({ item: Qt.resolvedUrl("Geocode.qml") ,
+                stackView.push({ item: Qt.resolvedUrl("forms/Geocode.qml") ,
                                    properties: { "address": fromAddress}})
                 stackView.currentItem.showPlace.connect(showPlace)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "RevGeocode":
-                stackView.push({ item: Qt.resolvedUrl("ReverseGeocode.qml") ,
+                stackView.push({ item: Qt.resolvedUrl("forms/ReverseGeocode.qml") ,
                                    properties: { "coordinate": fromCoordinate}})
                 stackView.currentItem.showPlace.connect(showPlace)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Language":
-                stackView.push({ item: Qt.resolvedUrl("Locale.qml") ,
+                stackView.push({ item: Qt.resolvedUrl("forms/Locale.qml") ,
                                    properties: { "locale":  map.plugin.locales[0]}})
                 stackView.currentItem.selectLanguage.connect(setLanguage)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
@@ -376,7 +377,7 @@ ApplicationWindow {
 
         function askForCoordinate()
         {
-            stackView.push({ item: Qt.resolvedUrl("ReverseGeocode.qml") ,
+            stackView.push({ item: Qt.resolvedUrl("forms/ReverseGeocode.qml") ,
                                properties: { "title": qsTr("New Coordinate"),
                                    "coordinate":   map.markers[map.currentMarker].coordinate}})
             stackView.currentItem.showPlace.connect(moveMarker)
@@ -475,7 +476,7 @@ ApplicationWindow {
 
         function showMessage(title,message,backPage)
         {
-            push({ item: Qt.resolvedUrl("Message.qml") ,
+            push({ item: Qt.resolvedUrl("forms/Message.qml") ,
                                properties: {
                                    "title" : title,
                                    "message" : message,
@@ -496,7 +497,7 @@ ApplicationWindow {
 
         function showRouteListPage()
         {
-            push({ item: Qt.resolvedUrl("RouteList.qml") ,
+            push({ item: Qt.resolvedUrl("forms/RouteList.qml") ,
                                properties: {
                                    "routeModel" : map.routeModel
                                }})

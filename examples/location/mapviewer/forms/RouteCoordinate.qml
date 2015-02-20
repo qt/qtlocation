@@ -39,21 +39,46 @@
 ****************************************************************************/
 
 import QtQuick 2.4
-import "forms"
+import QtPositioning 5.2
 
-MessageForm {
-    property string title
-    property string message
-    property variant backPage
+//Route Dialog
+//! [routedialog0]
+RouteCoordinateForm {
+    property variant toCoordinate
+    property variant fromCoordinate
+    signal showRoute(variant startCoordinate,variant endCoordinate)
+    signal closeForm()
 
-    signal closeForm(variant backPage)
+    //! [routedialog0]
+    goButton.onClicked: {
+        var startCoordinate = QtPositioning.coordinate(parseFloat(fromLatitude.text),
+                                                       parseFloat(fromLongitude.text));
+        var endCoordinate = QtPositioning.coordinate(parseFloat(toLatitude.text),
+                                                     parseFloat(toLongitude.text));
+        if (startCoordinate.isValid && endCoordinate.isValid) {
+           goButton.enabled = false;
+           showRoute(startCoordinate,endCoordinate)
+        }
+    }
 
-    button.onClicked: {
-        closeForm(backPage)
+    clearButton.onClicked: {
+        fromLatitude.text = ""
+        fromLongitude.text = ""
+        toLatitude.text = ""
+        toLongitude.text  = ""
+    }
+
+    cancelButton.onClicked: {
+        closeForm()
     }
 
     Component.onCompleted: {
-        messageText.text = message
-        messageTitle.text = title
+        fromLatitude.text = "" + fromCoordinate.latitude
+        fromLongitude.text = "" + fromCoordinate.longitude
+        toLatitude.text = "" + toCoordinate.latitude
+        toLongitude.text = "" + toCoordinate.longitude
     }
+    //! [routedialog1]
 }
+//! [routedialog1]
+

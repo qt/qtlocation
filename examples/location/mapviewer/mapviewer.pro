@@ -2,34 +2,39 @@ TARGET = qml_location_mapviewer
 TEMPLATE = app
 
 QT += qml network quick positioning location
-SOURCES += qmlmapviewerwrapper.cpp
+SOURCES += main.cpp
 
 RESOURCES += \
-    mapviewerwrapper.qrc
+    mapviewer.qrc
 
-qmlcontent.files += \
-    mapviewer.qml
-
-OTHER_FILES += $$qmlcontent.files
-
-qmlcontentmap.files += \
-    content/map/MapComponent.qml \
-    content/map/Marker.qml \
-    content/map/CircleItem.qml \
-    content/map/RectangleItem.qml \
-    content/map/PolylineItem.qml \
-    content/map/PolygonItem.qml \
-    content/map/ImageItem.qml \
-    content/map/MiniMap.qml
-OTHER_FILES += $$qmlcontentmap.files
-
-qmlcontentdialogs.files += \
-    content/dialogs/RouteDialog.qml
-OTHER_FILES += $$qmlcontentdialogs.files
-
-include(../common/common.pri)
+OTHER_FILES +=mapviewer.qml \
+    map/MapComponent.qml \
+    map/Marker.qml \
+    map/CircleItem.qml \
+    map/RectangleItem.qml \
+    map/PolylineItem.qml \
+    map/PolygonItem.qml \
+    map/ImageItem.qml \
+    map/MiniMap.qml \
+    menus/ItemPopupMenu.qml \
+    menus/MainMenu.qml \
+    menus/MapPopupMenu.qml \
+    menus/MarkerPopupMenu \
+    forms/Geocode.qml \
+    forms/GeocodeForm.ui.qml\
+    forms/Message.qml \
+    forms/MessageForm.ui.qml \
+    forms/ReverseGeocode.qml \
+    forms/ReverseGeocodeForm.ui.qml \
+    forms/RouteCoordinate.qml \
+    forms/Locale.qml \
+    forms/LocaleForm.ui.qml \
+    forms/RouteAddress.qml \
+    forms/RouteAddressForm.ui.qml \
+    forms/RouteCoordinateForm.ui.qml \
+    forms/RouteList.qml \
+    forms/RouteListDelegate.qml \
+    forms/RouteListHeader.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/location/mapviewer
-additional.files = ../common
-additional.path = $$[QT_INSTALL_EXAMPLES]/location/common
-INSTALLS += target additional
+INSTALLS += target

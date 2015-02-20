@@ -39,45 +39,46 @@
 ****************************************************************************/
 
 import QtQuick 2.4
-import QtPositioning 5.2
-import "forms"
+import QtQuick.Controls 1.3
+import "../helper.js" as Helper
 
-LocaleForm {
-    property string locale
-    signal selectLanguage(string language)
+ListView {
+    property variant routeModel
+    property string totalTravelTime
+    property string totalDistance
     signal closeForm()
 
-    goButton.onClicked: {
+    interactive: true
 
-       if (!languageGroup.current) return
+    model: ListModel { id: routeList }
 
-       if (otherRadioButton.checked) {
-           selectLanguage(language.text)
-       } else {
-           selectLanguage(languageGroup.current.text)
-       }
+    header: RouteListHeader {}
+
+    delegate:  RouteListDelegate{
+        routeIndex.text: index + 1
+        routeInstruction.text: instruction
+        routeDistance.text: distance
     }
 
-    clearButton.onClicked: {
-        language.text = ""
-    }
-
-    cancelButton.onClicked: {
-        closeForm()
+    footer: Button {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: qsTr("Close")
+        onClicked: {
+            closeForm()
+        }
     }
 
     Component.onCompleted: {
-        switch (locale) {
-            case "en":
-                enRadioButton.checked = true;
-                break
-            case "fr":
-                frRadioButton.checked = true;
-                break
-            default:
-                otherRadioButton.checked = true;
-                language.text = locale
-                break
+        routeList.clear()
+        if (routeModel.count > 0) {
+            for (var i = 0; i < routeModel.get(0).segments.length; i++) {
+                routeList.append({
+                                     "instruction": routeModel.get(0).segments[i].maneuver.instructionText,
+                                     "distance": Helper.formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)
+                                 });
+            }
         }
+        totalTravelTime = routeModel.count == 0 ? "" : Helper.formatTime(routeModel.get(0).travelTime)
+        totalDistance = routeModel.count == 0 ? "" : Helper.formatDistance(routeModel.get(0).distance)
     }
 }

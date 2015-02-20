@@ -40,33 +40,25 @@
 
 import QtQuick 2.4
 import QtPositioning 5.2
-import "forms"
 
-//Route Dialog
-//! [routedialog0]
-RouteCoordinateForm {
-    property variant toCoordinate
-    property variant fromCoordinate
-    signal showRoute(variant startCoordinate,variant endCoordinate)
+//Reverse Geocode Dialog
+ReverseGeocodeForm {
+    property string title;
+    property variant coordinate
+    signal showPlace(variant coordinate)
     signal closeForm()
 
-    //! [routedialog0]
     goButton.onClicked: {
-        var startCoordinate = QtPositioning.coordinate(parseFloat(fromLatitude.text),
-                                                       parseFloat(fromLongitude.text));
-        var endCoordinate = QtPositioning.coordinate(parseFloat(toLatitude.text),
-                                                     parseFloat(toLongitude.text));
-        if (startCoordinate.isValid && endCoordinate.isValid) {
-           goButton.enabled = false;
-           showRoute(startCoordinate,endCoordinate)
+        var coordinate = QtPositioning.coordinate(parseFloat(latitude.text),
+                                                          parseFloat(longitude.text));
+        if (coordinate.isValid) {
+            showPlace(coordinate)
         }
     }
 
     clearButton.onClicked: {
-        fromLatitude.text = ""
-        fromLongitude.text = ""
-        toLatitude.text = ""
-        toLongitude.text  = ""
+        latitude.text = ""
+        longitude.text = ""
     }
 
     cancelButton.onClicked: {
@@ -74,12 +66,10 @@ RouteCoordinateForm {
     }
 
     Component.onCompleted: {
-        fromLatitude.text = "" + fromCoordinate.latitude
-        fromLongitude.text = "" + fromCoordinate.longitude
-        toLatitude.text = "" + toCoordinate.latitude
-        toLongitude.text = "" + toCoordinate.longitude
+        latitude.text = "" + coordinate.latitude
+        longitude.text = "" + coordinate.longitude
+        if (title.length != 0) {
+            tabTitle.text = title;
+        }
     }
-    //! [routedialog1]
 }
-//! [routedialog1]
-
