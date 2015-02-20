@@ -39,32 +39,47 @@
 ****************************************************************************/
 
 //! [QtQuick import]
-import QtQuick 2.0
+import QtQuick 2.3
 //! [QtQuick import]
+import QtPositioning 5.3
 //! [QtLocation import]
 import QtLocation 5.3
 //! [QtLocation import]
 
 Item {
-    //! [RouteManeuver]
-    Text {
-        text: "Distance till next maneuver: " + routeManeuver.distanceToNextInstruction + " meters, estimated time: " + routeManeuver.timeToNextInstruction + " seconds."
-    }
-    //! [RouteManeuver]
+    width: 1000
+    height: 400
 
-    //! [RouteSegment]
-    Text {
-        text: "Segment distance " + routeSegment.distance + " meters, " + routeSegment.path.length + " points."
+    Plugin {
+        id: aPlugin
+        name: "osm"
     }
-    //! [RouteSegment]
 
-    //! [Route Maneuver List]
+    RouteQuery {
+        id: aQuery
+        waypoints: [
+            { latitude: -27.575, longitude: 153.088},
+            { latitude: -27.465, longitude: 153.023}
+        ]
+        travelModes: RouteQuery.CarTravel
+        routeOptimizations: RouteQuery.ShortestRoute
+    }
+
+    //! [Route Maneuver List1]
     RouteModel {
         id: routeModel
         // model initialization
+    //! [Route Maneuver List1]
+        plugin: aPlugin
+        autoUpdate: true
+        query: aQuery
+    //! [Route Maneuver List2]
     }
 
+
     ListView {
+        id: listview
+        anchors.fill: parent
         spacing: 10
         model: routeModel.status == RouteModel.Ready ? routeModel.get(0).segments : null
         visible: model ? true : false
@@ -74,10 +89,25 @@ Item {
             property bool hasManeuver : modelData.maneuver && modelData.maneuver.valid
             visible: hasManeuver
             Text { text: (1 + index) + "." }
+            Text { text: hasManeuver ? modelData.maneuver.instructionText : "" }
+    //! [Route Maneuver List2]
+            property RouteManeuver routeManeuver: modelData.maneuver
+            property RouteSegment routeSegment: modelData
+
+            //! [RouteManeuver]
             Text {
-                text: hasManeuver ? modelData.maneuver.instructionText : ""
+                text: "Distance till next maneuver: " + routeManeuver.distanceToNextInstruction
+                      + " meters, estimated time: " + routeManeuver.timeToNextInstruction + " seconds."
             }
+            //! [RouteManeuver]
+
+            //! [RouteSegment]
+            Text {
+                text: "Segment distance " + routeSegment.distance + " meters, " + routeSegment.path.length + " points."
+            }
+            //! [RouteSegment]
+    //! [Route Maneuver List3]
         }
     }
-    //! [Route Maneuver List]
+    //! [Route Maneuver List3]
 }
