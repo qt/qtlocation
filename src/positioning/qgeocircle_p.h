@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2015 The Qt Company Ltd.
+** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
 **
@@ -23,8 +23,8 @@
 ** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
 ** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Digia gives you certain additional
-** rights. These rights are described in the Digia Qt LGPL Exception
+** As a special exception, The Qt Company gives you certain additional
+** rights. These rights are described in The Qt Company LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** $QT_END_LICENSE$
@@ -58,17 +58,17 @@ public:
     QGeoCirclePrivate(const QGeoCirclePrivate &other);
     ~QGeoCirclePrivate();
 
-    bool isValid() const;
-    bool isEmpty() const;
-    bool contains(const QGeoCoordinate &coordinate) const;
+    bool isValid() const Q_DECL_OVERRIDE;
+    bool isEmpty() const Q_DECL_OVERRIDE;
+    bool contains(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
 
     QGeoCoordinate center() const Q_DECL_OVERRIDE;
 
-    void extendShape(const QGeoCoordinate &coordinate);
+    void extendShape(const QGeoCoordinate &coordinate) Q_DECL_OVERRIDE;
 
-    QGeoShapePrivate *clone() const;
+    QGeoShapePrivate *clone() const Q_DECL_OVERRIDE;
 
-    bool operator==(const QGeoShapePrivate &other) const;
+    bool operator==(const QGeoShapePrivate &other) const Q_DECL_OVERRIDE;
 
     QGeoCoordinate m_center;
     qreal radius;
