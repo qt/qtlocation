@@ -61,6 +61,7 @@ ApplicationWindow {
         id: mainMenu
 
         onSelectProvider: {
+            stackView.pop()
             for (var i = 0; i < providerMenu.items.length; i++) {
                 providerMenu.items[i].checked = providerMenu.items[i].text === providerName
             }
@@ -79,6 +80,7 @@ ApplicationWindow {
         }
 
         onSelectMapType: {
+            stackView.pop(page)
             for (var i = 0; i < mapTypeMenu.items.length; i++) {
                 mapTypeMenu.items[i].checked = mapTypeMenu.items[i].text === mapType.name
             }
@@ -90,20 +92,24 @@ ApplicationWindow {
         }
 
         onToggleMapState: {
-            if (state === "MiniMap") {
-                if (minimap) {
-                    minimap.destroy()
-                    minimap = null
-                    isMiniMap = false
-                } else {
-                    minimap = Qt.createQmlObject ('import "content/map"; MiniMap{ z: map.z + 2 }', map)
-                    isMiniMap = true
-                }
+            stackView.pop(page)
+            if (state === "FollowMe") {
+                map.followme =! map.followme
                 page.state = ""
-            } else if (state === "FollowMe") {
-                map.followme =! map.followme;
-                page.state = ""
+            } else if (state === "MiniMap") {
+                toggleMiniMapState()
+                isMiniMap = minimap
             }
+        }
+
+        function toggleMiniMapState() {
+            if (minimap) {
+                minimap.destroy()
+                minimap = null
+            } else {
+                minimap = Qt.createQmlObject ('import "content/map"; MiniMap{ z: map.z + 2 }', map)
+            }
+            page.state = ""
         }
     }
 
@@ -137,9 +143,9 @@ ApplicationWindow {
         var plugin
 
         if (parameters && parameters.length>0)
-            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', page)
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
         else
-            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', page)
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', appWindow)
 
         if (map) {
             map.destroy()
@@ -207,11 +213,11 @@ ApplicationWindow {
     }
 
     function getPlugins(){
-        var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', page)
+        var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', appWindow)
         var tempPlugin
         var myArray = new Array()
         for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
+            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
             if (tempPlugin.supportsMapping())
                 myArray.push(tempPlugin.name)
         }
@@ -222,7 +228,7 @@ ApplicationWindow {
     function initializeProvders(pluginParameters) {
         var parameters = new Array()
         for (var prop in pluginParameters){
-            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
+            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',appWindow)
             parameters.push(parameter)
         }
         appWindow.parameters = parameters
@@ -234,9 +240,13 @@ ApplicationWindow {
         }
     }
 
-Item {
-    id: page
-    anchors.fill: parent
+
+    StackView {
+        id: stackView
+        anchors.fill: parent
+        focus: true
+        initialItem:  Item {
+        id: page
 
     Rectangle {
         id: backgroundRect
@@ -595,4 +605,5 @@ Item {
         }
     ]
 }
+    }
 }
