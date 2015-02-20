@@ -98,6 +98,8 @@ QGeoCoordinatePrivate::~QGeoCoordinatePrivate()
     including WGS84.
 
     Azimuth in this context is equivalent to a compass bearing based on true north.
+
+    This class is a \l Q_GADGET since Qt 5.5.
 */
 
 /*!
@@ -123,6 +125,66 @@ QGeoCoordinatePrivate::~QGeoCoordinatePrivate()
     \sa toString()
 */
 
+/*!
+    \property QGeoCoordinate::latitude
+    \brief This property holds the latitude in decimal degrees.
+
+    The property is undefined (\l {qQNaN()}) if the latitude has not been set.
+    A positive latitude indicates the Northern Hemisphere, and a negative
+    latitude indicates the Southern Hemisphere. When setting the latitude the
+    new value should be in the
+    \l {http://en.wikipedia.org/wiki/World_Geodetic_System}{WGS84} datum format.
+
+    To be valid, the latitude must be between -90 to 90 inclusive.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoCoordinate::longitude
+    \brief This property holds the longitude in decimal degrees.
+
+    The property is undefined (\l {qQNaN()}) if the longitude has not been set.
+    A positive longitude indicates the Eastern Hemisphere, and a negative
+    longitude indicates the Western Hemisphere. When setting the longitude the
+    new value should be in the
+    \l {http://en.wikipedia.org/wiki/World_Geodetic_System}{WGS84} datum format.
+
+    To be valid, the longitude must be between -180 to 180 inclusive.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoCoordinate::altitude
+    \brief This property holds the altitude in meters above sea level.
+
+    The property is undefined (\l {qQNaN()}) if the altitude has not been set.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoCoordinate::isValid
+    \brief This property holds the validity of this geo coordinate.
+
+    The geo coordinate is valid if the \l [CPP]{longitude} and \l [CPP]{latitude}
+    properties have been set to valid values.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
 
 /*!
     Constructs a coordinate. The coordinate will be invalid until
@@ -228,7 +290,7 @@ bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 */
 
 /*!
-    Returns true if the type() is Coordinate2D or Coordinate3D.
+    Returns true if the \l longitude and \l latitude are valid.
 */
 bool QGeoCoordinate::isValid() const
 {

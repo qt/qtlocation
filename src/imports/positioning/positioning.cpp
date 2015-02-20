@@ -86,8 +86,8 @@ QT_BEGIN_NAMESPACE
 
     The latitude, longitude and altitude attributes stored in the coordinate type are represented
     as doubles, giving them approximately 16 decimal digits of precision -- enough to specify
-    micrometers.  The calculations performed in coordinate's methods such as \l azimuthTo() and
-    \l distanceTo() also use doubles for all intermediate values, but the inherent inaccuracies in
+    micrometers.  The calculations performed in coordinate's methods such as \l {azimuthTo}() and
+    \l {distanceTo}() also use doubles for all intermediate values, but the inherent inaccuracies in
     their spherical Earth model dominate the amount of error in their output.
 
     \section1 Example Usage
@@ -132,6 +132,8 @@ QT_BEGIN_NAMESPACE
     and a negative latitude indicates the Southern Hemisphere.
     If the property has not been set, its default value is NaN.
 
+    For more details see the \l {QGeoCoordinate::latitude} property
+
     \section2 longitude
 
     \code
@@ -143,6 +145,8 @@ QT_BEGIN_NAMESPACE
     and a negative longitude indicates the Western Hemisphere
     If the property has not been set, its default value is NaN.
 
+    For more details see the \l {QGeoCoordinate::longitude} property
+
     \section2 altitude
 
     \code
@@ -151,6 +155,8 @@ QT_BEGIN_NAMESPACE
 
     This property holds the altitude value (meters above sea level).
     If the property has not been set, its default value is NaN.
+
+    For more details see the \l {QGeoCoordinate::altitude} property
 
     \section2 isValid
 

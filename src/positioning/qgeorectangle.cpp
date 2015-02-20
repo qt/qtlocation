@@ -65,6 +65,108 @@ QT_BEGIN_NAMESPACE
     cross one of the poles the height is modified such that the geo rectangle
     touches but does not cross the pole and that the center coordinate is still
     in the center of the geo rectangle.
+
+    This class is a \l Q_GADGET since Qt 5.5.
+*/
+
+/*!
+    \property QGeoRectangle::bottomLeft
+    \brief This property holds the bottom left coorindate of this geo rectangle.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoRectangle::bottomRight
+    \brief This property holds the bottom right coordinate of this geo rectangle.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoRectangle::topLeft
+    \brief This property holds the top left coordinate of this geo rectangle.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoRectangle::topRight
+    \brief This property holds the top right coordinate of this geo rectangle.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoRectangle::center
+    \brief This property holds the center of this geo rectangle.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \sa QGeoShape::center
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoRectangle::width
+    \brief This property holds the width of this geo rectangle in degrees.
+
+    The property value is undefined if this geo rectangle is invalid.
+
+    If the new width is less than 0.0 or if this geo rectangle is invalid, this
+    function does nothing. To set up the values of an invalid
+    geo rectangle based on the center, width, and height, you should use
+    \l setCenter() first to make the geo rectangle valid.
+
+    360.0 is the width used only if the new width is equal or greater than 360.
+    In such cases the leftmost longitude of the geo rectangle is set to -180.0
+    degrees and the rightmost longitude of the geo rectangle is set to 180.0
+    degrees.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoRectangle::height
+    \brief This property holds the height of this geo rectangle in degrees.
+
+    The property value is undefined if this geo rectangle is invalid.
+
+    If the new height is less than 0.0 or if this geo rectangle is invalid,
+    the property is not changed. To set up the values of an invalid
+    geo rectangle based on the center, width, and height, you should use
+    \l setCenter() first to make the geo rectangle valid.
+
+    If the change in height would cause the geo rectangle to cross a pole,
+    the height is adjusted such that the geo rectangle only touches the pole.
+
+    This change is done such that the center coordinate is still at the
+    center of the geo rectangle, which may result in a geo rectangle with
+    a smaller height than expected.
+
+    180.0 is the height used only if the new height is greater or equal than 180.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
 */
 
 inline QGeoRectanglePrivate *QGeoRectangle::d_func()
@@ -365,15 +467,6 @@ QGeoCoordinate QGeoRectangle::center() const
 
 /*!
     Sets the width of this geo rectangle in degrees to \a degreesWidth.
-
-    If \a degreesWidth is less than 0.0 or if this geo rectangle is invalid this
-    function does nothing.  To set up the values of an invalid
-    geo rectangle based on the center, width and height you should use
-    setCenter() first in order to make the geo rectangle valid.
-
-    If \a degreesWidth is greater than 360.0 then 360.0 is used as the width,
-    the leftmost longitude of the geo rectangle is set to -180.0 degrees and the
-    rightmost longitude of the geo rectangle is set to 180.0 degrees.
 */
 void QGeoRectangle::setWidth(double degreesWidth)
 {
@@ -437,20 +530,6 @@ double QGeoRectangle::width() const
 
 /*!
     Sets the height of this geo rectangle in degrees to \a degreesHeight.
-
-    If \a degreesHeight is less than 0.0 or if this geo rectangle is invalid
-    this function does nothing. To set up the values of an invalid
-    geo rectangle based on the center, width and height you should use
-    setCenter() first in order to make the geo rectangle valid.
-
-    If the change in height would cause the geo rectangle to cross a pole
-    the height is adjusted such that the geo rectangle only touches the pole.
-
-    This change is done such that the center coordinate is still at the
-    center of the geo rectangle, which may result in a geo rectangle with
-    a smaller height than might otherwise be expected.
-
-    If \a degreesHeight is greater than 180.0 then 180.0 is used as the height.
 */
 void QGeoRectangle::setHeight(double degreesHeight)
 {
@@ -899,6 +978,11 @@ QGeoRectangle &QGeoRectangle::operator|=(const QGeoRectangle &rectangle)
     return *this;
 }
 
+/*!
+    Returns the geo rectangle properties as a string.
+
+    \since 5.5
+*/
 QString QGeoRectangle::toString() const
 {
     if (type() != QGeoShape::RectangleType) {

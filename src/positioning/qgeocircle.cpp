@@ -55,6 +55,38 @@ QT_BEGIN_NAMESPACE
 
     The circle is considered invalid if the center coordinate is invalid
     or if the radius is less than zero.
+
+    This class is a \l Q_GADGET since Qt 5.5.
+*/
+
+/*!
+    \property QGeoCircle::center
+    \brief This property holds the center coordinate for the geo circle.
+
+    The circle is considered invalid if this property contains an invalid
+    coordinate.
+
+    A default constructed QGeoCircle uses an invalid \l QGeoCoordinate
+    as center.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoCircle::radius
+    \brief This property holds the circle radius in meters.
+
+    The circle is considered invalid if this property is negative.
+
+    By default, the radius is initialized with \c -1.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
 */
 
 inline QGeoCirclePrivate *QGeoCircle::d_func()
@@ -271,6 +303,12 @@ QGeoCircle QGeoCircle::translated(double degreesLatitude, double degreesLongitud
     result.translate(degreesLatitude, degreesLongitude);
     return result;
 }
+
+/*!
+    Returns the geo circle properties as a string.
+
+    \since 5.5
+*/
 
 QString QGeoCircle::toString() const
 {
