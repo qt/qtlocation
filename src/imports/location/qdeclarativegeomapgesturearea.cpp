@@ -674,6 +674,7 @@ bool QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
         update();
         break;
     case QEvent::TouchEnd:
+    case QEvent::TouchCancel:
         touchPoints_.clear();
         update();
         activeInput_ = NoInput;
