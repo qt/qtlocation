@@ -99,22 +99,23 @@ The following code examples are a small part of the \c map component in the
 \l {Map Viewer (QML)}{Map Viewer (QML)} example. The snippets
 demonstrate the declaration of the \l GeocodeModel component.
 
-In the snippet we see that the \c geocodeModel property contains the plugin
-and two signal handlers. One for changes in status (\c onStatusChanged ) and
-the other to update the centering of the Map object (\c onLocationsChanged ).
+In the snippet we see that the [QML]{GeocodeModel} contains the plugin
+and two signal handlers. One for changes in status \l [QML]{GeocodeModel::status}{\c onStatusChanged} and
+the other to update the centering of the Map object \l [QML]{GeocodeModel::locationsChanged}{\c onLocationsChanged}.
 
-\snippet mapviewer/content/map/MapComponent.qml geocodemodel0
-\snippet mapviewer/content/map/MapComponent.qml geocodemodel0 body
-\snippet mapviewer/content/map/MapComponent.qml geocodemodel1
+\snippet mapviewer/map/MapComponent.qml geocodemodel0
 \codeline
-\snippet mapviewer/content/map/MapComponent.qml geocodeview
+\snippet mapviewer/map/MapComponent.qml geocodeview
 
-These geocoding features are called from a higher level piece of code. In this
-snippet we see an \c onGoButtonClicked signal handler that extracts the address
-from the user interface and then creates a query for the \l GeocodeModel to
-process and determine the geographical coordinates.
+The geocoding features are called from a higher level piece of code. In this
+snippet we see an \l [QML]{Address} object filled with the desired parameters.
 
-\snippet mapviewer/mapviewer.qml geocode1
+\snippet mapviewer/mapviewer.qml geocode0
+
+The \l [QML]{Address} is later used in a query for the \l GeocodeModel to
+process and determine the geographical \l [QML]{Coordinate}{coordinates}.
+
+\snippet mapviewer/map/MapComponent.qml geocode1
 
 
 \section2 Navigation
@@ -164,40 +165,31 @@ The \l RouteQuery properties can include
 \endtable
 
 
-In the following example a default RouteQuery is declared, later to be defined
-by some user input, and used in \c routeModel as the query. The \c routeInfoModel
-is a \l {Models and Views in Qt Quick#ListModel}{ListModel} that can be updated using an
-\c update() function that we will look at later.
+In the following example a default \l [QML]{RouteQuery} is declared within \l [QML]{RouteModel}.
 
-\snippet mapviewer/content/map/MapComponent.qml routemodel0
-\codeline
-\snippet mapviewer/content/map/MapComponent.qml routemodel1
-\codeline
-\snippet mapviewer/content/map/MapComponent.qml routemodel2
-\snippet mapviewer/content/map/MapComponent.qml routemodel3
+\snippet mapviewer/map/MapComponent.qml routemodel0
 
-The user enters, via a dialog, some information such as the starting point
+The user enters some information such as the starting point
 of the route, some waypoints and the destination. All of these locations are
 waypoints so the locations from start to finish will be entered as a sequence
 of waypoints. Then other query properties can be set that may be specific to
 this trip.
 
-\snippet mapviewer/mapviewer.qml routerequest0
-\codeline
-\snippet mapviewer/mapviewer.qml routerequest0 feature weight
-\codeline
-\snippet mapviewer/mapviewer.qml routerequest1
-\snippet mapviewer/mapviewer.qml routedialog1
+\snippet mapviewer/map/MapComponent.qml routerequest0
+\snippet mapviewer/map/MapComponent.qml routerequest1
 
 The \c routeInfoModel \l {Models and Views in Qt Quick#ListModel}{ListModel} is used to grab the
-results of the query and construct a suitable list for display.  The
-\l {Models and Views in Qt Quick#ListModel}{ListModel} \c routeInfoModel contains an \c update()
-function that loops through the segments extracting the segment length, instruction text and
-distance to the next instruction.  The extracted data is formatted for display as it is retrieved.
+results of the query and construct a suitable list for display.
+\snippet mapviewer/forms/RouteList.qml routeinfomodel0
+\snippet mapviewer/forms/RouteList.qml routeinfomodel1
+\snippet mapviewer/forms/RouteList.qml routeinfomodel3
 
-\snippet mapviewer/content/map/MapComponent.qml routeinfomodel
-\codeline
-\snippet mapviewer/content/map/MapComponent.qml routeview
+The \l {Models and Views in Qt Quick#ListModel}{ListModel} \c routeInfoModel can be filled
+with values using a code, that loops through the segments extracting the segment length,
+instruction text and distance to the next instruction. The extracted data is formatted
+for display as it is retrieved.
+
+\snippet mapviewer/forms/RouteList.qml routeinfomodel2
 
 For more information on the example see the \l {Map Viewer (QML)}{Map Viewer (QML)} example.
 
@@ -210,14 +202,14 @@ pinching to zoom.
 
 Enabling and configuring pinch and flickable is easy within the \l Map type.
 
-\snippet mapviewer/content/map/MapComponent.qml top
-\snippet mapviewer/content/map/MapComponent.qml end
+\snippet mapviewer/map/MapComponent.qml top
+\snippet mapviewer/map/MapComponent.qml mapnavigation
+\snippet mapviewer/map/MapComponent.qml end
 
-Zoom can also be controlled by other objects like sliders, as shown in the
-example, by implementing the \c onValueChanged handler to update the Map
-\l {QtLocation::Map::}{zoomLevel}.
+Zoom can also be controlled by other objects like sliders, with binding
+to the Map \l {QtLocation::Map::}{zoomLevel}.
 
-\section1 Types
+\section1 QML Types
 
 \section3 Maps
 \annotatedlist qml-QtLocation5-maps

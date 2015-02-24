@@ -53,8 +53,10 @@ ApplicationWindow {
     property variant parameters
 
     //defaults
+    //! [routecoordinate]
     property variant fromCoordinate: QtPositioning.coordinate(59.9483, 10.7695)
     property variant toCoordinate: QtPositioning.coordinate(59.9645, 10.671)
+    //! [routecoordinate]
 
     function createMap(provider)
     {
@@ -168,6 +170,7 @@ ApplicationWindow {
     visible: true
     menuBar: mainMenu
 
+    //! [geocode0]
     Address {
         id :fromAddress
         street: "Sandakerveien 116"
@@ -176,6 +179,7 @@ ApplicationWindow {
         state : ""
         postalCode: "0484"
     }
+    //! [geocode0]
 
     Address {
         id: toAddress
@@ -196,42 +200,6 @@ ApplicationWindow {
             } else {
                 minimap = Qt.createQmlObject ('import "map"; MiniMap{ z: map.z + 2 }', map)
             }
-        }
-
-        //! [routerequest0]
-        function showRoute(startCoordinate, endCoordinate)
-        {
-            // clear away any old data in the query
-            map.routeQuery.clearWaypoints();
-
-            // add the start and end coords as waypoints on the route
-            map.routeQuery.addWaypoint(startCoordinate)
-            map.routeQuery.addWaypoint(endCoordinate)
-            map.routeQuery.travelModes = RouteQuery.CarTravel
-            map.routeQuery.routeOptimizations = RouteQuery.FastestRoute
-            //! [routerequest0]
-
-            //! [routerequest0 feature weight]
-            for (var i=0; i<9; i++) {
-                map.routeQuery.setFeatureWeight(i, 0)
-            }
-            //for (var i=0; i<routeDialog.features.length; i++) {
-            //    map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
-            //}
-            //! [routerequest0 feature weight]
-
-            //! [routerequest1]
-            map.routeModel.update();
-            // center the map on the start coord
-            map.center = startCoordinate;
-            //! [routerequest1]
-        }
-
-        function showPlace(geocode)
-        {
-            // send the geocode request
-            map.geocodeModel.query = geocode
-            map.geocodeModel.update()
         }
 
         function setLanguage(lang)
@@ -277,7 +245,7 @@ ApplicationWindow {
                                    properties: { "plugin": map.plugin,
                                        "toAddress": toAddress,
                                        "fromAddress": fromAddress}})
-                stackView.currentItem.showRoute.connect(showRoute)
+                stackView.currentItem.showRoute.connect(map.calculateCoordinateRoute)
                 stackView.currentItem.showMessage.connect(stackView.showMessage)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
@@ -285,19 +253,19 @@ ApplicationWindow {
                 stackView.push({ item: Qt.resolvedUrl("forms/RouteCoordinate.qml") ,
                                    properties: { "toCoordinate": toCoordinate,
                                        "fromCoordinate": fromCoordinate}})
-                stackView.currentItem.showRoute.connect(showRoute)
+                stackView.currentItem.showRoute.connect(map.calculateCoordinateRoute)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Geocode":
                 stackView.push({ item: Qt.resolvedUrl("forms/Geocode.qml") ,
                                    properties: { "address": fromAddress}})
-                stackView.currentItem.showPlace.connect(showPlace)
+                stackView.currentItem.showPlace.connect(map.geocode)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "RevGeocode":
                 stackView.push({ item: Qt.resolvedUrl("forms/ReverseGeocode.qml") ,
                                    properties: { "coordinate": fromCoordinate}})
-                stackView.currentItem.showPlace.connect(showPlace)
+                stackView.currentItem.showPlace.connect(map.geocode)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Language":
@@ -405,7 +373,7 @@ ApplicationWindow {
                 break;
             case "routeToNextPoint":
             case "routeToNextPoints":
-                map.calculateRoute()
+                map.calculateMarkerRoute()
                 break
             case "distanceToNextPoint":
                 var coordinate1 = map.markers[currentMarker].coordinate;

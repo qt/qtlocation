@@ -41,15 +41,12 @@
 import QtQuick 2.4
 import QtPositioning 5.2
 
-//Geocode Dialog
-//! [geocode0]
 GeocodeForm {
-    //! [geocode0]
+
     property variant address
     signal showPlace(variant address)
     signal closeForm()
 
-    //! [geocode1]
     goButton.onClicked: {
         // fill out the Address element
         address.street = street.text
@@ -59,7 +56,6 @@ GeocodeForm {
         address.postalCode = postalCode.text
         showPlace(address)
     }
-    //! [geocode1]
 
     clearButton.onClicked: {
         street.text = ""
@@ -68,7 +64,6 @@ GeocodeForm {
         country.text = ""
         postalCode.text = ""
     }
-    //! [geocode2]
 
     cancelButton.onClicked: {
         closeForm()
@@ -82,6 +77,5 @@ GeocodeForm {
         postalCode.text = address.postalCode
     }
 }
-//! [geocode2]
 
 

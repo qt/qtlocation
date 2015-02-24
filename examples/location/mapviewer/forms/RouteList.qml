@@ -42,24 +42,23 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import "../helper.js" as Helper
 
+//! [routeinfomodel0]
 ListView {
+//! [routeinfomodel0]
     property variant routeModel
     property string totalTravelTime
     property string totalDistance
     signal closeForm()
-
+//! [routeinfomodel1]
     interactive: true
-
-    model: ListModel { id: routeList }
-
+    model: ListModel { id: routeInfoModel }
     header: RouteListHeader {}
-
     delegate:  RouteListDelegate{
         routeIndex.text: index + 1
         routeInstruction.text: instruction
         routeDistance.text: distance
     }
-
+//! [routeinfomodel1]
     footer: Button {
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("Close")
@@ -69,16 +68,20 @@ ListView {
     }
 
     Component.onCompleted: {
-        routeList.clear()
+        //! [routeinfomodel2]
+        routeInfoModel.clear()
         if (routeModel.count > 0) {
             for (var i = 0; i < routeModel.get(0).segments.length; i++) {
-                routeList.append({
-                                     "instruction": routeModel.get(0).segments[i].maneuver.instructionText,
-                                     "distance": Helper.formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)
-                                 });
+                routeInfoModel.append({
+                    "instruction": routeModel.get(0).segments[i].maneuver.instructionText,
+                     "distance": Helper.formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)
+                });
             }
         }
+        //! [routeinfomodel2]
         totalTravelTime = routeModel.count == 0 ? "" : Helper.formatTime(routeModel.get(0).travelTime)
         totalDistance = routeModel.count == 0 ? "" : Helper.formatDistance(routeModel.get(0).distance)
     }
+//! [routeinfomodel3]
 }
+//! [routeinfomodel3]

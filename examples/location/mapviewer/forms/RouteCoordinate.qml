@@ -41,15 +41,12 @@
 import QtQuick 2.4
 import QtPositioning 5.2
 
-//Route Dialog
-//! [routedialog0]
 RouteCoordinateForm {
     property variant toCoordinate
     property variant fromCoordinate
     signal showRoute(variant startCoordinate,variant endCoordinate)
     signal closeForm()
 
-    //! [routedialog0]
     goButton.onClicked: {
         var startCoordinate = QtPositioning.coordinate(parseFloat(fromLatitude.text),
                                                        parseFloat(fromLongitude.text));
@@ -78,7 +75,5 @@ RouteCoordinateForm {
         toLatitude.text = "" + toCoordinate.latitude
         toLongitude.text = "" + toCoordinate.longitude
     }
-    //! [routedialog1]
 }
-//! [routedialog1]
 

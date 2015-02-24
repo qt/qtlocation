@@ -46,7 +46,7 @@ import "../helper.js" as Helper
 //! [top]
 Map {
     id: map
-    //! [top]
+//! [top]
     property variant markers
     property variant mapItems
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
@@ -58,59 +58,9 @@ Map {
     property int jitterThreshold : 30
     property bool followme: false
     property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
-    //! [routemodel0]
-    property RouteQuery routeQuery: RouteQuery {}
-
-    property RouteModel routeModel: RouteModel {
-        plugin : map.plugin
-        query: routeQuery
-        //! [routemodel0]
-
-        //! [routemodel1]
-        onStatusChanged: {
-            if (status == RouteModel.Ready) {
-                switch (count) {
-                case 0:
-                    // technically not an error
-                    map.routeError()
-                    break
-                case 1:
-                    showRouteList()
-                    break
-                }
-            } else if (status == RouteModel.Error) {
-                map.routeError()
-            }
-        }
-        //! [routemodel1]
-
-        //! [routemodel2]
-
-        //! [routemodel2]
-        //! [routemodel3]
-    }
-    //! [routemodel3]
-
-    //! [geocodemodel0]
-    property GeocodeModel geocodeModel: GeocodeModel {
-        //! [geocodemodel0]
-        //! [geocodemodel0 body]
-        plugin: map.plugin
-        onStatusChanged: {
-            if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
-                map.geocodeFinished()
-        }
-        onLocationsChanged:
-        {
-            if (count == 1) {
-                map.center.latitude = get(0).coordinate.latitude
-                map.center.longitude = get(0).coordinate.longitude
-            }
-        }
-        //! [geocodemodel0 body]
-        //! [geocodemodel1]
-    }
-    //! [geocodemodel1]
+    property alias routeQuery: routeQuery
+    property alias routeModel: routeModel
+    property alias geocodeModel: geocodeModel
 
     signal showGeocodeInfo()
     signal geocodeFinished()
@@ -253,7 +203,8 @@ Map {
         if (markers.length == 0) markerCounter = 0
     }
 
-    function calculateRoute(){
+    function calculateMarkerRoute()
+    {
         routeQuery.clearWaypoints();
         for (var i = currentMarker; i< map.markers.length; i++){
             routeQuery.addWaypoint(markers[i].coordinate)
@@ -264,16 +215,64 @@ Map {
         routeModel.update();
     }
 
-    //! [coord]
+    function calculateCoordinateRoute(startCoordinate, endCoordinate)
+    {
+        //! [routerequest0]
+        // clear away any old data in the query
+        routeQuery.clearWaypoints();
+
+        // add the start and end coords as waypoints on the route
+        routeQuery.addWaypoint(startCoordinate)
+        routeQuery.addWaypoint(endCoordinate)
+        routeQuery.travelModes = RouteQuery.CarTravel
+        routeQuery.routeOptimizations = RouteQuery.FastestRoute
+
+        //! [routerequest0]
+
+        //! [routerequest0 feature weight]
+        for (var i=0; i<9; i++) {
+            routeQuery.setFeatureWeight(i, 0)
+        }
+        //for (var i=0; i<routeDialog.features.length; i++) {
+        //    map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
+        //}
+        //! [routerequest0 feature weight]
+
+        //! [routerequest1]
+        routeModel.update();
+
+        //! [routerequest1]
+        //! [routerequest2]
+        // center the map on the start coord
+        map.center = startCoordinate;
+        //! [routerequest2]
+    }
+
+    function geocode(fromAddress)
+    {
+        //! [geocode1]
+        // send the geocode request
+        geocodeModel.query = fromAddress
+        geocodeModel.update()
+        //! [geocode1]
+    }
+
+
+//! [coord]
+    zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
     center {
+        // The Qt Company in Oslo
         latitude: 59.9485
         longitude: 10.7686
     }
-    //! [coord]
+//! [coord]
 
-    // Enable pinch gestures to zoom in and out
+//! [mapnavigation]
+    // Enable pan, flick, and pinch gestures to zoom in and out
+    gesture.activeGestures: MapGestureArea.PanGesture | MapGestureArea.FlickGesture | MapGestureArea.ZoomGesture
     gesture.flickDeceleration: 3000
     gesture.enabled: true
+//! [mapnavigation]
     onCopyrightLinkActivated: Qt.openUrlExternally(link)
 
     onCenterChanged:{
@@ -407,6 +406,32 @@ Map {
         }
     }
 
+    //! [routemodel0]
+    RouteModel {
+        id: routeModel
+        plugin : map.plugin
+        query:  RouteQuery {
+            id: routeQuery
+        }
+        onStatusChanged: {
+            if (status == RouteModel.Ready) {
+                switch (count) {
+                case 0:
+                    // technically not an error
+                    map.routeError()
+                    break
+                case 1:
+                    map.showRouteList()
+                    break
+                }
+            } else if (status == RouteModel.Error) {
+                map.routeError()
+            }
+        }
+    }
+    //! [routemodel0]
+
+    //! [routedelegate0]
     Component {
         id: routeDelegate
 
@@ -417,7 +442,7 @@ Map {
             line.width: 5
             smooth: true
             opacity: 0.8
-            //! [routedelegate0]
+     //! [routedelegate0]
             MouseArea {
                 id: routeMouseArea
                 anchors.fill: parent
@@ -450,10 +475,28 @@ Map {
                     }
                 }
             }
+    //! [routedelegate1]
         }
-        //! [routedelegate1]
     }
     //! [routedelegate1]
+
+    //! [geocodemodel0]
+    GeocodeModel {
+        id: geocodeModel
+        plugin: map.plugin
+        onStatusChanged: {
+            if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
+                map.geocodeFinished()
+        }
+        onLocationsChanged:
+        {
+            if (count == 1) {
+                map.center.latitude = get(0).coordinate.latitude
+                map.center.longitude = get(0).coordinate.longitude
+            }
+        }
+    }
+    //! [geocodemodel0]
 
     //! [pointdel0]
     Component {
@@ -500,18 +543,20 @@ Map {
                     }
                 }
             }
-            //! [pointdel1]
+    //! [pointdel1]
         }
     }
     //! [pointdel1]
 
-    //! [routeview]
+    //! [routeview0]
     MapItemView {
         model: routeModel
         delegate: routeDelegate
+    //! [routeview0]
         autoFitViewport: true
+    //! [routeview1]
     }
-    //! [routeview]
+    //! [routeview1]
 
     //! [geocodeview]
     MapItemView {
@@ -578,6 +623,6 @@ Map {
             }
         }
     }
-    //! [end]
+//! [end]
 }
 //! [end]
