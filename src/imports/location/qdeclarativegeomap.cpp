@@ -539,12 +539,15 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
 {
     if (gestureArea_ && minimumZoomLevel >= 0) {
+        qreal oldMinimumZoomLevel = this->minimumZoomLevel();
         if (mappingManagerInitialized_
                 && minimumZoomLevel < mappingManager_->cameraCapabilities().minimumZoomLevel()) {
             minimumZoomLevel = mappingManager_->cameraCapabilities().minimumZoomLevel();
         }
         gestureArea_->setMinimumZoomLevel(minimumZoomLevel);
         setZoomLevel(qBound<qreal>(minimumZoomLevel, zoomLevel(), maximumZoomLevel()));
+        if (oldMinimumZoomLevel != minimumZoomLevel)
+            emit minimumZoomLevelChanged();
     }
 }
 
@@ -575,12 +578,15 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
 void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel)
 {
     if (gestureArea_ && maximumZoomLevel >= 0) {
+        qreal oldMaximumZoomLevel = this->maximumZoomLevel();
         if (mappingManagerInitialized_
                 && maximumZoomLevel > mappingManager_->cameraCapabilities().maximumZoomLevel()) {
             maximumZoomLevel = mappingManager_->cameraCapabilities().maximumZoomLevel();
         }
         gestureArea_->setMaximumZoomLevel(maximumZoomLevel);
         setZoomLevel(qBound<qreal>(minimumZoomLevel(), zoomLevel(), maximumZoomLevel));
+        if (oldMaximumZoomLevel != maximumZoomLevel)
+            emit maximumZoomLevelChanged();
     }
 }
 
