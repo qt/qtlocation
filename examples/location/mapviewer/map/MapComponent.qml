@@ -356,16 +356,54 @@ Map {
         z: map.z + 3
         minimumValue: map.minimumZoomLevel;
         maximumValue: map.maximumZoomLevel;
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
+        anchors.margins: 10
+        anchors.bottom: scale.top
+        anchors.top: parent.top
         anchors.right: parent.right
-        anchors.bottomMargin: 15
-        anchors.rightMargin: 10
-        anchors.leftMargin: 90
+        orientation : Qt.Vertical
         value: map.zoomLevel
         onValueChanged: {
             map.zoomLevel = value
             map.state=""
+        }
+    }
+
+    Item {
+        id: scale
+        z: map.z + 3
+        visible: scaleText.text != "0 m"
+        anchors.bottom: parent.bottom;
+        anchors.right: parent.right
+        anchors.margins: 20
+        height: scaleText.height * 2
+        width: scaleImage.width
+
+        Image {
+            id: scaleImageLeft
+            source: "../resources/scale_end.png"
+            anchors.bottom: parent.bottom
+            anchors.right: scaleImage.left
+        }
+        Image {
+            id: scaleImage
+            source: "../resources/scale.png"
+            anchors.bottom: parent.bottom
+            anchors.right: scaleImageRight.left
+        }
+        Image {
+            id: scaleImageRight
+            source: "../resources/scale_end.png"
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+        }
+        Label {
+            id: scaleText
+            color: "#004EAE"
+            anchors.centerIn: parent
+            text: "0 m"
+        }
+        Component.onCompleted: {
+            map.calculateScale();
         }
     }
 
@@ -481,50 +519,6 @@ Map {
         delegate: pointDelegate
     }
     //! [geocodeview]
-
-    Item {//scale
-        id: scale
-        parent: zoomSlider.parent
-        visible: scaleText.text != "0 m"
-        z: map.z + 2
-        opacity: 0.6
-        anchors {
-            bottom: zoomSlider.top;
-            bottomMargin: 8;
-            left: zoomSlider.left
-        }
-        Image {
-            id: scaleImageLeft
-            source: "../resources/scale_end.png"
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-        }
-        Image {
-            id: scaleImage
-            source: "../resources/scale.png"
-            anchors.bottom: parent.bottom
-            anchors.left: scaleImageLeft.right
-        }
-        Image {
-            id: scaleImageRight
-            source: "../resources/scale_end.png"
-            anchors.bottom: parent.bottom
-            anchors.left: scaleImage.right
-        }
-        Text {
-            id: scaleText
-            color: "#004EAE"
-            horizontalAlignment: Text.AlignHCenter
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.bottomMargin: 3
-            text: "0 m"
-            font.pixelSize: 14
-        }
-        Component.onCompleted: {
-            map.calculateScale();
-        }
-    }
 
     Timer {
         id: scaleTimer
