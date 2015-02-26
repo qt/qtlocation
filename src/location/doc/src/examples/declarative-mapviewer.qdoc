@@ -47,8 +47,8 @@
     \endcode
 
     Refer to the documentation for each of the geo services plugins for details on what plugin
-    parameters they support.  The Nokia services plugin supplied with Qt requires an \e app_id and
-    \e token pair.  See "\l {Qt Location Nokia Plugin}" for details.
+    parameters they support.  The HERE services plugin supplied with Qt requires an \e app_id and
+    \e token pair.  See "\l {Qt Location HERE Plugin}" for details.
 
     QML types shown in this example:
 
@@ -93,8 +93,8 @@
     a mouse.
 
     As we do not specify a plugin for supplying map data, the platform default
-    will be used. This is typically the "nokia" plugin, which provides data from
-    Nokia services. Additional licensing conditions do apply to the use of this data,
+    will be used. This is typically the "osm" plugin, which provides data from
+    OpenStreetMap services. Additional licensing conditions do apply to the use of this data,
     please see the documentation for further details.
 
     \section2 Finding an Address (Geocoding)

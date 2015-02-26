@@ -101,8 +101,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     accessible using their provider names:
 
     \list
-        \li "osm" -> \l {Qt Location Open Street Map Plugin}{OpenStreetMap}
-        \li "nokia" -> \l {Qt Location Nokia Plugin}{Nokia Services}
+        \li "mapbox" -> \l {Qt Location Mapbox Plugin}{Mapbox service}
+        \li "nokia" -> \l {Qt Location HERE Plugin}{HERE Services}
+        \li "osm" -> \l {Qt Location Open Street Map Plugin}{OpenStreetMap Services}
     \endlist
 */
 

@@ -70,8 +70,8 @@
     \endcode
 
     Refer to the documentation for each of the geo services plugins for details on what plugin
-    parameters they support.  The Nokia services plugin supplied with Qt requires an \e app_id and
-    \e token pair.  See "\l {Qt Location Nokia Plugin}" for details.
+    parameters they support.  The HERE services plugin supplied with Qt requires an \e app_id and
+    \e token pair.  See "\l {Qt Location HERE Plugin}" for details.
 
     \section1 Displaying Categories
 

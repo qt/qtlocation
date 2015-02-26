@@ -52,8 +52,8 @@
 
     \snippet places_list/places_list.qml Initialize Plugin
 
-    \note The Nokia plugin must be supplied with some mandatory parameters as outlined
-    in the \l {Mandatory Parameters} {Nokia Plugin} documentation.
+    \note The HERE plugin must be supplied with some mandatory parameters as outlined
+    in the \l {Mandatory Parameters} {HERE Plugin} documentation.
 
     \section2 Models, Views and Delegates
     The QML Places API is built around the notion of models, views and delegates.
