@@ -233,8 +233,6 @@ QT_BEGIN_NAMESPACE
     \li MapGestureArea.PanGesture  - Support the map pan gesture (value: 0x0002).
     \li MapGestureArea.FlickGesture  - Support the map flick gesture (value: 0x0004).
     \endlist
-
-    \note For the time being, only MapGestureArea.ZoomGesture is supported.
 */
 
 /*!
