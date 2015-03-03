@@ -70,7 +70,7 @@ QT_BEGIN_NAMESPACE
 
     The following snippet shows a Plugin object being created with the
     \l required and \l preferred properties set. This Plugin will attach to the
-    first plugin found plugin that supports both mapping and geocoding, and will
+    first found plugin that supports both mapping and geocoding, and will
     prefer plugins named "nokia" or "osm" to any others.
 
     \code
@@ -756,7 +756,7 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
 
     \section2 Example Usage
 
-    The following example shows an instantiation of the \l {Qt Location Nokia Plugin}{Nokia} plugin
+    The following example shows an instantiation of the \l {Qt Location HERE Plugin}{HERE} plugin
     with a mapping API \e app_id and \e token pair specific to the application.
 
     \code

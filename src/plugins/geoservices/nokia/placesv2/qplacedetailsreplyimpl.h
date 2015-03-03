@@ -32,13 +32,6 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Nokia services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file NOKIA_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Nokia services
-** plugin source code.
-**
 ****************************************************************************/
 
 #ifndef QPLACEDETAILSREPLYIMPL_H

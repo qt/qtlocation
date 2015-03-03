@@ -1,6 +1,7 @@
 TEMPLATE = aux
 
 content.files = \
+    declarative-location.qml \
     maps.qml \
     places.qml \
     plugin.qml \

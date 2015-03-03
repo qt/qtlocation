@@ -78,7 +78,7 @@ QDeclarativePlaceUser::~QDeclarativePlaceUser() {}
     \qmlproperty QPlaceUser QtLocation::User::user
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#placeuser} {Interfaces between C++ and QML Code}".
+    "\l {User - QPlaceUser} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativePlaceUser::setUser(const QPlaceUser &user)
 {

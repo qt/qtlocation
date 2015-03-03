@@ -72,7 +72,7 @@ QDeclarativeRatings::~QDeclarativeRatings() {}
     \qmlproperty QPlaceRatings Ratings::ratings
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#placeratings} {Interfaces between C++ and QML Code}".
+    "\l {Ratings - QPlaceRatings} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeRatings::setRatings(const QPlaceRatings &ratings)
 {

@@ -15,4 +15,5 @@
     "qtbase" => "",
     "qtxmlpatterns" => "",
     "qtdeclarative" => "",
+    "qtquickcontrols" => "",
 );

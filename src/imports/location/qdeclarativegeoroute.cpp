@@ -69,7 +69,9 @@ QT_BEGIN_NAMESPACE
     \snippet declarative/routing.qml QtQuick import
     \snippet declarative/routing.qml QtLocation import
     \codeline
-    \snippet declarative/routing.qml Route Maneuver List
+    \snippet declarative/routing.qml Route Maneuver List1
+    \snippet declarative/routing.qml Route Maneuver List2
+    \snippet declarative/routing.qml Route Maneuver List3
 
 */
 

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>places_list.qml</file>
+    </qresource>
+</RCC>

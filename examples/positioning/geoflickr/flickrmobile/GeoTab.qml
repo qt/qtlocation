@@ -93,6 +93,10 @@ Rectangle {
     PositionSource {
         id: positionSource
         onPositionChanged: { planet.source = "images/sun.png"; }
+
+        onUpdateTimeout: {
+            activityText.fadeOut = true
+        }
     }
 //! [possrc]
     function printableMethod(method) {
@@ -134,5 +138,25 @@ Rectangle {
     Text {id: sourceText; color: "white"; font.bold: true;
         anchors {left: planet.right; leftMargin: 5; verticalCenter: planet.verticalCenter}
         text: "Source: " + printableMethod(positionSource.supportedPositioningMethods); style: Text.Raised; styleColor: "black";
+    }
+
+    Text {
+        id: activityText; color: "white"; font.bold: true;
+        anchors { top: planet.bottom; horizontalCenter: parent.horizontalCenter }
+        property bool fadeOut: false
+
+        text: {
+            if (fadeOut)
+                return qsTr("Timeout occurred!");
+            else if (positionSource.active)
+                return qsTr("Retrieving update...")
+            else
+                return ""
+        }
+
+        Timer {
+            id: fadeoutTimer; repeat: false; interval: 3000; running: activityText.fadeOut
+            onTriggered: { activityText.fadeOut = false; }
+        }
     }
 }

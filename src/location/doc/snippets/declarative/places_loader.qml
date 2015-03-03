@@ -45,6 +45,7 @@ import QtLocation 5.3
 Rectangle {
     width: 360
     height: 360
+    property variant startCoordinate: QtPositioning.coordinate(-27.46778, 153.02778)
 
     Plugin {
         id: myPlugin
@@ -61,7 +62,7 @@ Rectangle {
         plugin: myPlugin
 
         searchTerm: "pizza"
-        searchArea: QtLocation.circle( -27.46778, 153.02778 )
+        searchArea: QtPositioning.circle(startCoordinate)
 
         Component.onCompleted: update()
     }

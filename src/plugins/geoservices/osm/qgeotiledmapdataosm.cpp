@@ -63,7 +63,7 @@ void QGeoTiledMapDataOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTi
     case 1:
     case 2:
         // set attribution to Map Quest
-        copyrights = tr("Tiles Courtesy of <a href='http://www.mapquest.com/'>MapQuest</a><br/>Data \u00a9 <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        copyrights = tr("Tiles Courtesy of <a href='http://www.mapquest.com/'>MapQuest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
         break;
     case 3:
     case 4:
@@ -71,11 +71,11 @@ void QGeoTiledMapDataOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTi
     case 6:
     case 7:
         // set attribution to Thunder Forest
-        copyrights = tr("Maps \u00a9 <a href='http://www.thunderforest.com/'>Thunderforest</a><br/>Data \u00a9 <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        copyrights = tr("Maps &copy; <a href='http://www.thunderforest.com/'>Thunderforest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
         break;
     default:
         // set attribution to OSM
-        copyrights = tr("\u00a9 <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        copyrights = tr("&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
     }
 
     emit copyrightsChanged(copyrights);

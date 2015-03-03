@@ -158,7 +158,7 @@ void QDeclarativeCategory::pluginReady()
     \target Category::category
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#category} {Interfaces between C++ and QML Code}".
+    "\l {Category - QPlaceCategory} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
 {

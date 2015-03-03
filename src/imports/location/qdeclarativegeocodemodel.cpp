@@ -103,6 +103,15 @@ QT_BEGIN_NAMESPACE
     \endcode
 */
 
+/*!
+    \qmlsignal QtLocation::GeocodeModel::locationsChanged()
+
+    This signal is emitted when locations in the model have changed.
+
+    \sa count
+*/
+
+
 QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject *parent)
 :   QAbstractListModel(parent), autoUpdate_(false), complete_(false), reply_(0), plugin_(0),
     status_(QDeclarativeGeocodeModel::Null), error_(QDeclarativeGeocodeModel::NoError),

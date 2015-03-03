@@ -179,7 +179,7 @@ to create a custom positioning source.
 
 \section3 \b{Flickr Example}
 
-The \l{Flickr QML}{Flickr Example} uses the Location to download thumbnail
+The \l{GeoFlickr QML}{Flickr Example} uses the current location to download thumbnail
 images from Flickr relevant to the current location.
 
 

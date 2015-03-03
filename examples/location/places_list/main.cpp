@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 {
     QGuiApplication app(argc,argv);
     QQuickView view;
-    view.setSource(QUrl::fromLocalFile("places_list.qml"));
+    view.setSource(QUrl(QStringLiteral("qrc:///places_list.qml")));
     view.show();
     return app.exec();
 }

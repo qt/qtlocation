@@ -109,7 +109,7 @@ public:
     void componentComplete();
 
 public Q_SLOTS:
-    void update();
+    void update(); // TODO Qt 6 change to void update(int)
     void start();
     void stop();
 
@@ -123,13 +123,14 @@ Q_SIGNALS:
     void sourceErrorChanged();
     void nameChanged();
     void validityChanged();
-
+    void updateTimeout();
 
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo &update);
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
     void socketConnected();
     void socketError(QAbstractSocket::SocketError error);
+    void updateTimeoutReceived();
 
 private:
     void setPosition(const QGeoPositionInfo &pi);

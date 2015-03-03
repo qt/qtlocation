@@ -173,6 +173,7 @@ Module {
         Property { name: "sourceError"; type: "SourceError"; isReadonly: true }
         Property { name: "name"; type: "string" }
         Signal { name: "validityChanged" }
+        Signal { name: "updateTimeout" }
         Method { name: "update" }
         Method { name: "start" }
         Method { name: "stop" }

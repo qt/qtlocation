@@ -70,8 +70,8 @@
     \endcode
 
     Refer to the documentation for each of the geo services plugins for details on what plugin
-    parameters they support.  The Nokia services plugin supplied with Qt requires an \e app_id and
-    \e token pair.  See "\l {Qt Location Nokia Plugin}" for details.
+    parameters they support.  The HERE services plugin supplied with Qt requires an \e app_id and
+    \e token pair.  See "\l {Qt Location HERE Plugin}" for details.
 
     \section1 Displaying Categories
 
@@ -162,7 +162,7 @@
 
     First some of the model's properties are set, which will be used to form the search request.
     The \l {PlaceSearchModel::searchArea}{searchArea} property is set to the
-    \e searchRegion object which is a \l GeoCircle with a center that is linked to the current
+    \e searchRegion object which is a \l [QML]{geocircle} with a center that is linked to the current
     location displayed on the \l Map.
 
     Finally, we define two helper functions \b searchForCategory() and \b {searchForText()},

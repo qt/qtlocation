@@ -74,6 +74,8 @@ bool QGeoShapePrivate::operator==(const QGeoShapePrivate &other) const
     For the sake of consistency, subclasses should describe the specific
     details of the associated areas in terms of QGeoCoordinate instances
     and distances in meters.
+
+    This class is a \l Q_GADGET since Qt 5.5.
 */
 
 /*!
@@ -86,6 +88,42 @@ bool QGeoShapePrivate::operator==(const QGeoShapePrivate &other) const
     \value CircleType       A circular shape.
 */
 
+/*!
+    \property QGeoShape::type
+    \brief This property holds the type of this geo shape.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoShape::isValid
+    \brief This property holds the validity of the geo shape.
+
+    A geo shape is considered to be invalid if some of the data that is required to
+    unambiguously describe the geo shape has not been set or has been set to an
+    unsuitable value depending on the subclass of this object. The default constructed
+    objects of this type are invalid.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
+
+/*!
+    \property QGeoShape::isEmpty
+    \brief This property defines whether this geo shape is empty.
+
+    An empty geo shape is a region which has a geometrical area of 0.
+
+    While this property is introduced in Qt 5.5, the related accessor functions
+    exist since the first version of this class.
+
+    \since 5.5
+*/
 inline QGeoShapePrivate *QGeoShape::d_func()
 {
     return static_cast<QGeoShapePrivate *>(d_ptr.data());
@@ -142,9 +180,6 @@ QGeoShape::ShapeType QGeoShape::type() const
 /*!
     Returns whether this geo shape is valid.
 
-    An geo shape is considered to be invalid if some of the data that is required to
-    unambiguously describe the geo shape has not been set or has been set to an
-    unsuitable value.
 */
 bool QGeoShape::isValid() const
 {
@@ -249,6 +284,11 @@ QGeoShape &QGeoShape::operator=(const QGeoShape &other)
     return *this;
 }
 
+/*!
+    Returns a string representation of this geo shape.
+
+    \since 5.5
+*/
 QString QGeoShape::toString() const
 {
     return QStringLiteral("QGeoShape(%1)").arg(type());

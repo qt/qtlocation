@@ -103,7 +103,7 @@ QDeclarativePlaceIcon::~QDeclarativePlaceIcon()
     \qmlproperty QPlaceIcon Icon::icon
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#placeicon} {Interfaces between C++ and QML Code}".
+    "\l {Icon - QPlaceIcon} {Interfaces between C++ and QML Code}".
 */
 QPlaceIcon QDeclarativePlaceIcon::icon() const
 {

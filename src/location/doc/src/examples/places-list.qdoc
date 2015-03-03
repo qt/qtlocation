@@ -39,9 +39,12 @@
     \snippet places_list/places_list.qml Imports
 
     Instantiate a \l Plugin instance.  The \l Plugin is effectively the backend
-    from where places are sourced from.  Because the \c nokia plugin has been
-    specified, some mandatory parameters need to be filled in, see the \l
-    {Mandatory Parameters} {Nokia Plugin} documentation for details:
+    from where places are sourced from.  Depending on the type of the plugin,
+    some mandatory parameters may be need to be filled in. The most likely type
+    of PluginParameter are some form of service access token which are documented
+    in the service plugin. As an example see the \l
+    {Mandatory Parameters} {HERE Plugin} documentation. In this snippet the \c osm
+    plugin is used which does not require any further parameter:
 
     \snippet places_list/places_list.qml Initialize Plugin
 

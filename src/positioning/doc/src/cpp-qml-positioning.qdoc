@@ -32,7 +32,6 @@
 \brief Some of the providing QtPositioning QML types providing interfaces to access and modify properties in C++.
 
 \section2 Address - QGeoAddress
-\target geoaddress
 The \l {QtPositioning::Address::address} {Address.address} property is used to provide an interface between C++ and QML code.  First a pointer to a
 Address object must be obtained from C++, then use the \l {QObject::property()}{property()} and
 \l {QObject::setProperty()}{setProperty()} functions to get and set the \c address property.
@@ -43,7 +42,6 @@ The following sets the properties of this object based on a QGeoAddress object f
 
 
 \section2 Location - QGeoLocation
-\target location
 The \l {Location::location} {Location.location} property is used to provide an interface between C++ and QML code.  First a pointer to a
 Location object must be obtained from C++, then use the \l {QObject::property()}{property()} and
 \l {QObject::setProperty()}{setProperty()} functions to get and set the \c location property.

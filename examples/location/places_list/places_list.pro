@@ -4,9 +4,9 @@ TEMPLATE = app
 QT += quick qml network
 SOURCES = main.cpp
 
-qmlcontent.files += $$files(*.qml)
+RESOURCES += \
+    resources.qrc
 
 target.path = $$[QT_INSTALL_EXAMPLES]/location/places_list
-qmlcontent.path = $$[QT_INSTALL_EXAMPLES]/location/places_list
+INSTALLS += target
 
-INSTALLS += target qmlcontent
