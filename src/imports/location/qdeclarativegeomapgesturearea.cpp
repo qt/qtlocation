@@ -567,7 +567,7 @@ QTouchEvent::TouchPoint makeTouchPointFromMouseEvent(QMouseEvent *event, Qt::Tou
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::mousePressEvent(QMouseEvent *event)
+bool QDeclarativeGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
 {
     if (!(enabled_ && activeGestures_))
         return false;
@@ -587,7 +587,7 @@ bool QDeclarativeGeoMapGestureArea::mousePressEvent(QMouseEvent *event)
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::mouseMoveEvent(QMouseEvent *event)
+bool QDeclarativeGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
 {
     if (!(enabled_ && activeGestures_))
         return false;
@@ -605,7 +605,7 @@ bool QDeclarativeGeoMapGestureArea::mouseMoveEvent(QMouseEvent *event)
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::mouseReleaseEvent(QMouseEvent *)
+bool QDeclarativeGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *)
 {
     if (!(enabled_ && activeGestures_))
         return false;
@@ -624,7 +624,7 @@ bool QDeclarativeGeoMapGestureArea::mouseReleaseEvent(QMouseEvent *)
 /*!
     \internal
 */
-void QDeclarativeGeoMapGestureArea::mouseUngrabEvent()
+void QDeclarativeGeoMapGestureArea::handleMouseUngrabEvent()
 {
     touchPoints_.clear();
     hasGrab_ = false;
@@ -636,7 +636,7 @@ void QDeclarativeGeoMapGestureArea::mouseUngrabEvent()
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
+bool QDeclarativeGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
 {
     if (!(enabled_ && activeGestures_))
         return false;
@@ -685,7 +685,7 @@ bool QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
     return true;
 }
 
-bool QDeclarativeGeoMapGestureArea::wheelEvent(QWheelEvent *event)
+bool QDeclarativeGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 {
     declarativeMap_->setZoomLevel(qBound(minimumZoomLevel(), declarativeMap_->zoomLevel() + event->angleDelta().y() * qreal(0.001), maximumZoomLevel()));
     return true;
@@ -703,13 +703,13 @@ bool QDeclarativeGeoMapGestureArea::filterMapChildMouseEvent(QMouseEvent *event)
     // (until we grab it).
     switch (event->type()) {
     case QEvent::MouseButtonPress:
-        mousePressEvent(event);
+        handleMousePressEvent(event);
         break;
     case QEvent::MouseButtonRelease:
-        mouseReleaseEvent(event);
+        handleMouseReleaseEvent(event);
         break;
     case QEvent::MouseMove:
-        mouseMoveEvent(event);
+        handleMouseMoveEvent(event);
         break;
     default:
         break;
@@ -727,7 +727,7 @@ bool QDeclarativeGeoMapGestureArea::filterMapChildTouchEvent(QTouchEvent *event)
 
     // We have not grabbed the touch id associated with this touch event yet. Process it but don't
     // filter it so the child can use it (until we grab it).
-    touchEvent(event);
+    handleTouchEvent(event);
     return false;
 }
 

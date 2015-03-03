@@ -149,14 +149,12 @@ public:
     qreal flickDeceleration() const;
     void setFlickDeceleration(qreal deceleration);
 
-    bool touchEvent(QTouchEvent *event);
-
-    bool wheelEvent(QWheelEvent *event);
-
-    bool mousePressEvent(QMouseEvent *event);
-    bool mouseMoveEvent(QMouseEvent *event);
-    bool mouseReleaseEvent(QMouseEvent *event);
-    void mouseUngrabEvent();
+    bool handleTouchEvent(QTouchEvent *event);
+    bool handleWheelEvent(QWheelEvent *event);
+    bool handleMousePressEvent(QMouseEvent *event);
+    bool handleMouseMoveEvent(QMouseEvent *event);
+    bool handleMouseReleaseEvent(QMouseEvent *event);
+    void handleMouseUngrabEvent();
 
     bool filterMapChildMouseEvent(QMouseEvent *event);
     bool filterMapChildTouchEvent(QTouchEvent *event);
