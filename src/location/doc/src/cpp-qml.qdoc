@@ -27,12 +27,11 @@
 
 /*!
 \page location-cpp-qml.html
-\title Interfaces between C++ and QML Code in Qt Positioning
+\title Interfaces between C++ and QML Code in Qt Location
 
 \brief Some of the location QML types providing interfaces to access and modify properties in C++.
 
 \section2 Category - QPlaceCategory
-\target category
 The \l {Category::category} {Category.category} property is used to provide an interface between C++ and QML code.  First a pointer to a
 Category object must be obtained from C++, then use the \l {QObject::property()}{property()} and
 \l {QObject::setProperty()}{setProperty()} functions to get and set the \c category property.
@@ -43,7 +42,6 @@ The following sets the properties of this object based on a QPlaceCategory objec
 
 
 \section2 ContactDetail - QDeclarativeContactDetail
-\target contact_detail
 The \l {ContactDetail::contactDetail} {ContactDetail.contactDetail} property is used to provide an interface between C++ and QML code.  First a pointer to a ContactDetail object must be obtained from C++, then use the
 \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
 to get and set the \c contactDetail property.
@@ -55,7 +53,6 @@ C++:
 
 
 \section2  Place - QPlace
-\target place
 The \l {Place::place} {Place.place} property is used to provide an interface between C++ and QML code.  First a pointer to a Place object must be obtained from C++, then use the
 \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
 to get and set the \c place property.
@@ -67,7 +64,6 @@ The following sets the properties of this object based on a QPlace object from C
 
 
 \section2  PlaceAttribute - QPlaceAttribute
-\target placeattribute
 The \l {PlaceAttribute::attribute} {PlaceAttribute.attribute} property is used to provide an interface between C++ and QML code.  First a pointer to a
 PlaceAttribute object must be obtained from C++, then use the
 \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
@@ -79,7 +75,6 @@ The following sets the properties of this object based on a QPlaceAttribute obje
 
 
 \section2 Icon - QPlaceIcon
-\target placeicon
 The \l {Icon::icon} {Icon.icon} property is used to provide an interface between C++ and QML code.  First a pointer to a Icon object must be obtained from C++, then use the \l {QObject::property()}{property()} and
 \l {QObject::setProperty()}{setProperty()} functions to get and set the \c icon property.
 The following gets the QPlaceIcon representing this object from C++:
@@ -89,7 +84,6 @@ The following sets the properties of this object based on a QPlaceIcon object fr
 
 
 \section2 User - QPlaceUser
-\target placeuser
 The \l {User::user} {User.user} property is used to provide an interface between C++ and QML code.  First a pointer to a
 User object must be obtained from C++, then use the \l {QObject::property()}{property()} and
 \l {QObject::setProperty()}{setProperty()} functions to get and set the \c user property.
@@ -100,7 +94,6 @@ The following sets the properties of this object based on a QPlaceUser object fr
 
 
 \section2 Ratings - QPlaceRatings
-\target placeratings
 The \l {Ratings::ratings} {Ratings.ratings} property is used to provide an interface between C++ and QML code.  First a pointer to a
 Ratings object must be obtained from C++, then use the \l {QObject::property()}{property()} and
 \l {QObject::setProperty()}{setProperty()} functions to get and set the \c ratings property.
@@ -111,7 +104,6 @@ The following sets the properties of this object based on a QPlaceRatings object
 
 
 \section2 Supplier - QPlaceSupplier
-\target placesupplier
 The \l {Supplier::supplier} {Supplier.supplier} property is used to provide an interface between C++ and QML code.  First a pointer to a
 Supplier object must be obtained from C++, then use the \l {QObject::property()}{property()} and
 \l {QObject::setProperty()}{setProperty()} functions to get and set the \c supplier property.

@@ -93,7 +93,7 @@ QDeclarativeGeoAddress::QDeclarativeGeoAddress(const QGeoAddress &address, QObje
     \qmlproperty QGeoAddress QtPositioning::Address::address
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {positioning-cpp-qml.html#geoaddress} {Interfaces between C++ and QML Code}".
+    "\l {Address - QGeoAddress} {Interfaces between C++ and QML Code}".
 */
 QGeoAddress QDeclarativeGeoAddress::address() const
 {

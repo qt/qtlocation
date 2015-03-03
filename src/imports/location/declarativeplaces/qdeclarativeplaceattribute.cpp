@@ -161,7 +161,7 @@ QDeclarativePlaceAttribute::~QDeclarativePlaceAttribute()
     \qmlproperty QPlaceAttribute PlaceAttribute::attribute
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#placeattribute} {Interfaces between C++ and QML Code}".
+    "\l {PlaceAttribute - QPlaceAttribute} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativePlaceAttribute::setAttribute(const QPlaceAttribute &src)
 {

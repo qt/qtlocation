@@ -159,7 +159,7 @@ QDeclarativeContactDetail::~QDeclarativeContactDetail()
     \qmlproperty QPlaceContactDetail QtLocation::ContactDetail::contactDetail
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#contact_detail} {Interfaces between C++ and QML Code}".
+    "\l {ContactDetail - QDeclarativeContactDetail} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeContactDetail::setContactDetail(const QPlaceContactDetail &src)
 {

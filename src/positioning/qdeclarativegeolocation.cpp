@@ -90,7 +90,7 @@ QDeclarativeGeoLocation::~QDeclarativeGeoLocation()
     \qmlproperty QGeoLocation QtPositioning::Location::location
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {positioning-cpp-qml.html#location} {Interfaces between C++ and QML Code}".
+    "\l {Location - QGeoLocation} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 {

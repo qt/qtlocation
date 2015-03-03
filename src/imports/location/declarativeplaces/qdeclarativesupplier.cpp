@@ -101,7 +101,7 @@ void QDeclarativeSupplier::componentComplete()
     \qmlproperty QPlaceSupplier Supplier::supplier
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#placesupplier} {Interfaces between C++ and QML Code}".
+    "\l {Supplier - QPlaceSupplier} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin)
 {

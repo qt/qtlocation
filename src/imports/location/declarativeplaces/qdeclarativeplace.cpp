@@ -306,7 +306,7 @@ QDeclarativePlaceEditorialModel *QDeclarativePlace::editorialModel()
     \qmlproperty QPlace Place::place
 
     For details on how to use this property to interface between C++ and QML see
-    "\l {location-cpp-qml.html#place} {Interfaces between C++ and QML Code}".
+    "\l {Place - QPlace} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativePlace::setPlace(const QPlace &src)
 {
