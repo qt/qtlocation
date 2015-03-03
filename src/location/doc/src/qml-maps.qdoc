@@ -58,7 +58,7 @@ The basic piece of position information is the \l {coordinate}.  A
 coordinate encapsulates data for the latitude, longitude and altitude of the location.  Altitude is
 in meters. It also has a method to determine distance to another
 \l {coordinate}.  The \l {coordinate} type may
-also be held within a \l {QtPositioning::Location}{Location} element, this will also have information
+also be held within a \l [QtPositioning]{Location} element, this will also have information
 on a bounding box size to determine sufficient proximity to the location and a location address.
 
 
