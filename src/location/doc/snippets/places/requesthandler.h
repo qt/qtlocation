@@ -293,7 +293,7 @@ public:
         QPlaceMatchRequest request;
         request.setResults(results);
         QVariantMap parameters;
-        parameters.insert(QPlaceMatchRequest::AlternativeId, "x_id_nokia");
+        parameters.insert(QPlaceMatchRequest::AlternativeId, "x_id_here");
         request.setParameters(parameters);
         matchReply = manager->matchingPlaces(request);
         //! [Match places]

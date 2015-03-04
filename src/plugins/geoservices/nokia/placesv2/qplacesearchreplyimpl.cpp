@@ -201,7 +201,7 @@ QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) co
     place.setPlaceId(href.path().mid(18, 41));
 
     QPlaceAttribute provider;
-    provider.setText(QStringLiteral("nokia"));
+    provider.setText(QStringLiteral("here"));
     place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
     place.setVisibility(QLocation::PublicVisibility);
 

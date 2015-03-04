@@ -48,6 +48,7 @@ private slots:
     void tst_features_data();
     void tst_features();
     void tst_misc();
+    void tst_nokiaRename();
 };
 
 void tst_QGeoServiceProvider::initTestCase()
@@ -69,7 +70,7 @@ void tst_QGeoServiceProvider::tst_availableServiceProvider()
     QCOMPARE(provider.count(), 7);
     // these providers are deployed
     QVERIFY(provider.contains(QStringLiteral("mapbox")));
-    QVERIFY(provider.contains(QStringLiteral("nokia")));
+    QVERIFY(provider.contains(QStringLiteral("here")));
     QVERIFY(provider.contains(QStringLiteral("osm")));
     // these providers exist for unit tests only
     QVERIFY(provider.contains(QStringLiteral("geocode.test.plugin")));
@@ -104,7 +105,7 @@ void tst_QGeoServiceProvider::tst_features_data()
                             << QGeoServiceProvider::RoutingFeatures(QGeoServiceProvider::NoRoutingFeatures)
                             << QGeoServiceProvider::PlacesFeatures(QGeoServiceProvider::NoPlacesFeatures);
 
-    QTest::newRow("nokia") << QString("nokia")
+    QTest::newRow("here")   << QString("here")
                             << QGeoServiceProvider::MappingFeatures(QGeoServiceProvider::OnlineMappingFeature)
                             << QGeoServiceProvider::GeocodingFeatures(QGeoServiceProvider::OnlineGeocodingFeature
                                                                       | QGeoServiceProvider::ReverseGeocodingFeature)
@@ -199,5 +200,18 @@ void tst_QGeoServiceProvider::tst_misc()
     QCOMPARE(osm_noexperimental.error(), QGeoServiceProvider::NoError);
 }
 
+void tst_QGeoServiceProvider::tst_nokiaRename()
+{
+    // The "nokia" plugin was renamed to "here".
+    // It remains available under the name "nokia" for now
+    // but is not advertised via QGeoServiceProvider::availableServiceProviders()
+
+    QVERIFY(!QGeoServiceProvider::availableServiceProviders().contains("nokia"));
+    QGeoServiceProvider provider(QStringLiteral("nokia"));
+    QCOMPARE(provider.error(), QGeoServiceProvider::NoError);
+
+}
+
 QTEST_GUILESS_MAIN(tst_QGeoServiceProvider)
+
 #include "tst_qgeoserviceprovider.moc"

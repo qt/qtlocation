@@ -38,7 +38,7 @@ import QtLocation 5.3
 Item {
 
     Plugin { id: unattachedPlugin }
-    Plugin { id: nokiaPlugin; name: "nokia"}
+    Plugin { id: herePlugin; name: "here"}
     Plugin { id: invalidPlugin; name: "invalid"; allowExperimental: true }
     Plugin { id: testPlugin;
             name: "qmlgeo.test.plugin"
@@ -83,11 +83,11 @@ Item {
                 verify(testPlugin.supportsRouting())
             }
 
-            if (invalidPlugin.availableServiceProviders.indexOf('nokia')) {
-                verify(nokiaPlugin.isAttached)
-                verify(nokiaPlugin.supportsMapping(Plugin.OnlineMappingFeature))
-                verify(nokiaPlugin.supportsGeocoding(Plugin.OnlineGeocodingFeature))
-                verify(nokiaPlugin.supportsRouting(Plugin.OnlineRoutingFeature))
+            if (invalidPlugin.availableServiceProviders.indexOf('here')) {
+                verify(herePlugin.isAttached)
+                verify(herePlugin.supportsMapping(Plugin.OnlineMappingFeature))
+                verify(herePlugin.supportsGeocoding(Plugin.OnlineGeocodingFeature))
+                verify(herePlugin.supportsRouting(Plugin.OnlineRoutingFeature))
             }
 
             verify(!unattachedPlugin.isAttached)
@@ -114,7 +114,7 @@ Item {
         }
 
         function test_required() {
-            // the required plugin should either get nokia or qmlgeo.test.plugin
+            // the required plugin should either get here or qmlgeo.test.plugin
             // either way the name will be non-empty and it'll meet the spec
             verify(requiredPlugin.name !== "")
             verify(requiredPlugin.supportsMapping(requiredPlugin.required.mapping))
@@ -130,19 +130,19 @@ Item {
         }
 
         function test_locale() {
-            compare(nokiaPlugin.locales, [Qt.locale().name]);
+            compare(herePlugin.locales, [Qt.locale().name]);
 
             //try assignment of a single locale
-            nokiaPlugin.locales = "fr_FR";
-            compare(nokiaPlugin.locales, ["fr_FR"]);
+            herePlugin.locales = "fr_FR";
+            compare(herePlugin.locales, ["fr_FR"]);
 
             //try assignment of multiple locales
-            nokiaPlugin.locales = ["fr_FR","en_US"];
-            compare(nokiaPlugin.locales, ["fr_FR","en_US"]);
+            herePlugin.locales = ["fr_FR","en_US"];
+            compare(herePlugin.locales, ["fr_FR","en_US"]);
 
             //check that assignment of empty locale list defaults to system locale
-            nokiaPlugin.locales = [];
-            compare(nokiaPlugin.locales, [Qt.locale().name]);
+            herePlugin.locales = [];
+            compare(herePlugin.locales, [Qt.locale().name]);
         }
     }
 }

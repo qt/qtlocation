@@ -109,12 +109,12 @@ void tst_QPlaceManagerNokia::initTestCase()
 {
     QVariantMap params;
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    QVERIFY(providers.contains("nokia"));
+    QVERIFY(providers.contains("here"));
 #ifndef QT_NO_PROCESS
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
     if (!(env.contains(AppIdEnv) && env.contains(TokenEnv)))
-        QSKIP("NOKIA_APP_ID and NOKIA_TOKEN environment variables not set");\
+        QSKIP("NOKIA_APPID and NOKIA_TOKEN environment variables not set");\
 
     params.insert(QStringLiteral("app_id"), env.value(AppIdEnv));
     params.insert(QStringLiteral("token"), env.value(TokenEnv));
@@ -122,9 +122,9 @@ void tst_QPlaceManagerNokia::initTestCase()
     if (env.contains(ProxyEnv))
         params.insert(QStringLiteral("proxy"), env.value(ProxyEnv));
 #else
-    QSKIP("Cannot parse process environment, NOKIA_APP_ID and NOKIA_TOKEN not set");
+    QSKIP("Cannot parse process environment, NOKIA_APPID and NOKIA_TOKEN not set");
 #endif
-    provider = new QGeoServiceProvider("nokia", params);
+    provider = new QGeoServiceProvider("here", params);
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
 }
@@ -436,7 +436,7 @@ void tst_QPlaceManagerNokia::categories()
         //check we can retrieve the very same category by id
         QCOMPARE(placeManager->category(category.categoryId()), category);
 
-        //since the nokia plugin only supports a single level category tree
+        //since the here plugin only supports a single level category tree
         //check that there are no parent or children categories
         QVERIFY(placeManager->parentCategoryId(category.categoryId()).isEmpty());
         QVERIFY(placeManager->childCategories(category.categoryId()).isEmpty());

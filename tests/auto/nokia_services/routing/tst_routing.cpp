@@ -323,7 +323,7 @@ void tst_nokia_routing::routingError(QGeoRouteReply* reply, QGeoRouteReply::Erro
 void tst_nokia_routing::initTestCase()
 {
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    QVERIFY(providers.contains(QStringLiteral("nokia")));
+    QVERIFY(providers.contains(QStringLiteral("here")));
 
     m_networkManager = new MockGeoNetworkAccessManager();
 
@@ -332,7 +332,7 @@ void tst_nokia_routing::initTestCase()
     parameters.insert(QStringLiteral("app_id"), "stub");
     parameters.insert(QStringLiteral("token"), "stub");
 
-    m_geoServiceProvider = new QGeoServiceProvider(QStringLiteral("nokia"), parameters);
+    m_geoServiceProvider = new QGeoServiceProvider(QStringLiteral("here"), parameters);
     QVERIFY(m_geoServiceProvider);
 
     m_routingManager = m_geoServiceProvider->routingManager();

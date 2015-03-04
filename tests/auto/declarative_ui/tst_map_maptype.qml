@@ -41,8 +41,8 @@ TestCase {
     name: "MapType"
 
     Plugin {
-        id: nokiaPlugin
-        name: "nokia"
+        id: herePlugin
+        name: "here"
         parameters: [
                        PluginParameter {
                            name: "app_id"
@@ -57,7 +57,7 @@ TestCase {
 
     Map {
         id: map;
-        plugin: nokiaPlugin
+        plugin: herePlugin
         center {
             latitude: 62.240501
             longitude: 25.757014

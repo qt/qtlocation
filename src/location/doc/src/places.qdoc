@@ -398,8 +398,8 @@
 
     The matching mechanism can vary between managers, but is typically accomplished through an alternative identifier.
     As part of the save process, the place identifier from the origin manager is saved as an alternative identifier attribute in the destination manager
-    (which can have its own place identifier scheme).  In the following example, the origin manager is from the 'nokia' QGeoServiceProider, therefore
-    as part of the saving process an alternative identifier attribute, x_id_nokia, is set for the place saved into the destination manager
+    (which can have its own place identifier scheme).  In the following example, the origin manager is from the 'here' QGeoServiceProider, therefore
+    as part of the saving process an alternative identifier attribute, x_id_here, is set for the place saved into the destination manager
     (when QPlaceManager::compatiblePlace() is called)
 
     \input place-crossref.qdocinc
@@ -408,7 +408,7 @@
     The QPlaceMatchRequest will be used on the destination manager to return corresponding places.  We also specify
     matching parameters which are key value pairs.  As mentioned previously, this can vary depending on the manager but typically
     the key is QPlaceMatchRequest::AlternativeId to indicate we are matching by alternative id, the value in this case would be
-    x_id_nokia which specifies which alternative identifier attribute we are using to do the matching.
+    x_id_here which specifies which alternative identifier attribute we are using to do the matching.
 
     \snippet places/requesthandler.h Match places
     \dots

@@ -110,7 +110,7 @@ void QPlaceMatchRequestPrivate::clear()
     A set of further parameters are specified which determines the criteria for matching.
 
     The typical key for matching is the QPlaceMatchRequest::AlternativeId, the value is an alternative identifier attribute type of the format
-    x_id_<provider name> for example x_id_nokia.  The provider name is name supplied to the QGeoServiceProvider instance.
+    x_id_<provider name> for example x_id_here.  The provider name is name supplied to the QGeoServiceProvider instance.
 
     See \l {Matching places between managers} for an example on how to use a match request.
 

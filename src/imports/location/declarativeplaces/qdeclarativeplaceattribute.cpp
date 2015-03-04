@@ -67,7 +67,7 @@
             \li x_provider
             \li The name of the provider that a place is sourced from
         \row
-            \li x_id_<provider> (for example x_id_nokia)
+            \li x_id_<provider> (for example x_id_here)
             \li An alternative identifier which identifies the place from the
                perspective of the specified provider.
     \endtable

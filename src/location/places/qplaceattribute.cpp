@@ -94,7 +94,7 @@ bool QPlaceAttributePrivate::isEmpty() const
         \li QPlaceAttribute::Provider
     \endlist
 
-    There is a class of attribute types of the format x_id_<provider> for example x_id_nokia.
+    There is a class of attribute types of the format x_id_<provider> for example x_id_here.
     This class of attributes is a set of alternative identifiers of the place, from the specified provider's
     perspective.
 

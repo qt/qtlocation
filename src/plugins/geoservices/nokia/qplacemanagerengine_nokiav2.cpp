@@ -212,7 +212,7 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
 
         if (!dataLocations.isEmpty() && !dataLocations.first().isEmpty()) {
             m_localDataPath = dataLocations.first()
-                                + QStringLiteral("/nokia/qtlocation/data");
+                                + QStringLiteral("/here/qtlocation/data");
         }
     }
 
