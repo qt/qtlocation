@@ -98,7 +98,7 @@ Q_DECLARE_METATYPE(tst_QPlaceManagerNokia::ExpectedResults)
 const QLatin1String tst_QPlaceManagerNokia::ValidKnownPlaceId("250u09tu-4561b8da952f4fd79c4e1998c3fcf032");
 
 const QLatin1String tst_QPlaceManagerNokia::ProxyEnv("NOKIA_PLUGIN_PROXY");
-const QLatin1String tst_QPlaceManagerNokia::AppIdEnv("NOKIA_APP_ID");
+const QLatin1String tst_QPlaceManagerNokia::AppIdEnv("NOKIA_APPID");
 const QLatin1String tst_QPlaceManagerNokia::TokenEnv("NOKIA_TOKEN");
 
 tst_QPlaceManagerNokia::tst_QPlaceManagerNokia()
@@ -377,6 +377,7 @@ void tst_QPlaceManagerNokia::recommendations_data()
 
 void tst_QPlaceManagerNokia::details()
 {
+    QSKIP("Fetching details from HERE place server always fails - QTBUG-44837");
     //fetch the details of a valid place
     QPlace place;
     QVERIFY(doFetchDetails(ValidKnownPlaceId, &place));
@@ -572,6 +573,13 @@ void tst_QPlaceManagerNokia::locale()
             }
         }
     }
+
+    // we are skipping the check below because we are requesting
+    // details for a place without a search before. This implies
+    // URL templating must be possible which the HERE place
+    // server refuses.
+
+    QSKIP("remainder of test skipped due to QTBUG-44837");
 
     //check that setting a locale will affect place detail fetches.
     QPlace place;
