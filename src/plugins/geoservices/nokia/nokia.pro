@@ -54,7 +54,6 @@ include(placesv2/placesv2.pri)
 
 RESOURCES += resource.qrc
 
-INCLUDEPATH += $$QT.location.includes
 INCLUDEPATH += ../../../location/maps
 
 OTHER_FILES += \

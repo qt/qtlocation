@@ -24,8 +24,6 @@ qtHaveModule(dbus):config_geoclue-satellite {
     SOURCES += qgeosatelliteinfosource_geocluemaster.cpp
 }
 
-INCLUDEPATH += $$QT.location.includes
-
 CONFIG += link_pkgconfig
 PKGCONFIG += geoclue
 

@@ -5,8 +5,6 @@ PLUGIN_TYPE = position
 PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryCL
 load(qt_plugin)
 
-INCLUDEPATH += $$QT.location.includes
-
 OBJECTIVE_SOURCES += \
     qgeopositioninfosource_cl.mm \
     qgeopositioninfosourcefactory_cl.mm

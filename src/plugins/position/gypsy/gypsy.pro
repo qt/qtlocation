@@ -13,8 +13,6 @@ SOURCES += \
     qgeosatelliteinfosource_gypsy.cpp \
     qgeopositioninfosourcefactory_gypsy.cpp
 
-INCLUDEPATH += $$QT.location.includes
-
 CONFIG += link_pkgconfig
 PKGCONFIG += gypsy gconf-2.0
 
