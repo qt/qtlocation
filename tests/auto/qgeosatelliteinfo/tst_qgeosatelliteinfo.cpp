@@ -33,7 +33,7 @@
 
 //TESTED_COMPONENT=src/location
 
-#include <qgeosatelliteinfo.h>
+#include <QtPositioning/qgeosatelliteinfo.h>
 
 #include <QMetaType>
 #include <QObject>

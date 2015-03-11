@@ -42,8 +42,8 @@
 #include <limits.h>
 
 #include <qnumeric.h>
-#include <qgeopositioninfosource.h>
-#include <qgeopositioninfo.h>
+#include <QtPositioning/qgeopositioninfosource.h>
+#include <QtPositioning/qgeopositioninfo.h>
 
 #include "testqgeopositioninfosource_p.h"
 #include "../utils/qlocationtestutils_p.h"

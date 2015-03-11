@@ -43,13 +43,13 @@
 #include <QDebug>
 #include <QDataStream>
 
-#include <qgeoareamonitorinfo.h>
-#include <qgeoareamonitorsource.h>
-#include <qgeopositioninfo.h>
-#include <qgeopositioninfosource.h>
-#include <qnmeapositioninfosource.h>
-#include <qgeocircle.h>
-#include <qgeorectangle.h>
+#include <QtPositioning/qgeoareamonitorinfo.h>
+#include <QtPositioning/qgeoareamonitorsource.h>
+#include <QtPositioning/qgeopositioninfo.h>
+#include <QtPositioning/qgeopositioninfosource.h>
+#include <QtPositioning/qnmeapositioninfosource.h>
+#include <QtPositioning/qgeocircle.h>
+#include <QtPositioning/qgeorectangle.h>
 
 #include "logfilepositionsource.h"
 

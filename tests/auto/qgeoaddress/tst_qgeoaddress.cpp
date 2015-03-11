@@ -34,7 +34,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qgeoaddress.h>
+#include <QtPositioning/qgeoaddress.h>
 
 QT_USE_NAMESPACE
 

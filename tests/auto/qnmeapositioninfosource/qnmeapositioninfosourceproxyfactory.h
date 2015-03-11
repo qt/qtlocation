@@ -36,7 +36,7 @@
 
 #include <QObject>
 
-#include <qnmeapositioninfosource.h>
+#include <QtPositioning/qnmeapositioninfosource.h>
 
 QT_BEGIN_NAMESPACE
 class QTcpServer;

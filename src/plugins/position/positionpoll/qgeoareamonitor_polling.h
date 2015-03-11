@@ -34,8 +34,8 @@
 #ifndef QGEOAREAMONITORPOLLING_H
 #define QGEOAREAMONITORPOLLING_H
 
-#include <qgeoareamonitorsource.h>
-#include <qgeopositioninfosource.h>
+#include <QtPositioning/qgeoareamonitorsource.h>
+#include <QtPositioning/qgeopositioninfosource.h>
 
 
 /**

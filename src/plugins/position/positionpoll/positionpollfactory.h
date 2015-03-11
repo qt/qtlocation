@@ -35,7 +35,7 @@
 #define POSITIONPOLLFACTORY_H
 
 #include <QObject>
-#include <QGeoPositionInfoSourceFactory>
+#include <QtPositioning/qgeopositioninfosourcefactory.h>
 
 class QGeoPositionInfoSourceFactoryPoll : public QObject, public QGeoPositionInfoSourceFactory
 {

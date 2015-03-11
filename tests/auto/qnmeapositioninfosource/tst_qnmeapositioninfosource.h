@@ -35,7 +35,7 @@
 #include "../qgeopositioninfosource/testqgeopositioninfosource_p.h"
 #include "../utils/qlocationtestutils_p.h"
 
-#include <qnmeapositioninfosource.h>
+#include <QtPositioning/qnmeapositioninfosource.h>
 
 #include <QTest>
 #include <QDir>

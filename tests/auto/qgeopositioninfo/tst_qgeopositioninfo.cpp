@@ -33,7 +33,7 @@
 
 //TESTED_COMPONENT=src/location
 
-#include <qgeopositioninfo.h>
+#include <QtPositioning/qgeopositioninfo.h>
 
 #include <QMetaType>
 #include <QObject>

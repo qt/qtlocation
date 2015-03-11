@@ -35,7 +35,7 @@
 
 #include "../utils/qlocationtestutils_p.h"
 
-#include <qgeocoordinate.h>
+#include <QtPositioning/qgeocoordinate.h>
 #include <qtest.h>
 
 #include <QMetaType>

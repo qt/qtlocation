@@ -39,8 +39,8 @@
 #include <QDebug>
 #include <QTimer>
 
-#include <qgeosatelliteinfosource.h>
-#include <qgeosatelliteinfo.h>
+#include <QtPositioning/qgeosatelliteinfosource.h>
+#include <QtPositioning/qgeosatelliteinfo.h>
 
 #include "testqgeosatelliteinfosource_p.h"
 #include "../utils/qlocationtestutils_p.h"

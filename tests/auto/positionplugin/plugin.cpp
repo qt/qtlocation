@@ -31,8 +31,8 @@
 **
 ****************************************************************************/
 
-#include <qgeopositioninfosource.h>
-#include <qgeopositioninfosourcefactory.h>
+#include <QtPositioning/qgeopositioninfosource.h>
+#include <QtPositioning/qgeopositioninfosourcefactory.h>
 #include <QObject>
 #include <QtPlugin>
 #include <QTimer>

@@ -40,7 +40,7 @@
 #ifndef LOGFILEPOSITIONSOURCE_H
 #define LOGFILEPOSITIONSOURCE_H
 
-#include <qgeopositioninfosource.h>
+#include <QtPositioning/qgeopositioninfosource.h>
 
 QT_BEGIN_NAMESPACE
 class QFile;
