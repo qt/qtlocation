@@ -37,6 +37,10 @@
 #include <geoclue_interface.h>
 #include <masterclient_interface.h>
 
+#include <QtCore/QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(lcPositioningGeoclue)
+
 QT_BEGIN_NAMESPACE
 
 QGeoclueMaster::QGeoclueMaster(QObject *parent)
@@ -61,11 +65,13 @@ bool QGeoclueMaster::createMasterClient(Accuracy::Level accuracyLevel, ResourceF
     Q_ASSERT(!m_provider || !m_client);
 
     if (!m_master) {
+        qCDebug(lcPositioningGeoclue) << "creating master interface";
         m_master = new OrgFreedesktopGeoclueMasterInterface(QStringLiteral("org.freedesktop.Geoclue.Master"),
                                                             QStringLiteral("/org/freedesktop/Geoclue/Master"),
                                                             QDBusConnection::sessionBus());
     }
 
+    qCDebug(lcPositioningGeoclue) << "creating client";
     QDBusPendingReply<QDBusObjectPath> client = m_master->Create();
     if (client.isError()) {
         QDBusError e = client.error();
@@ -74,7 +80,7 @@ bool QGeoclueMaster::createMasterClient(Accuracy::Level accuracyLevel, ResourceF
         return false;
     }
 
-    qDebug() << "Geoclue client path:" << client.value().path();
+    qCDebug(lcPositioningGeoclue) << "Geoclue client path:" << client.value().path();
 
     m_provider = new OrgFreedesktopGeoclueInterface(QStringLiteral("org.freedesktop.Geoclue.Master"),
                                                     client.value().path(), QDBusConnection::sessionBus());

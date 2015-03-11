@@ -36,7 +36,10 @@
 #include <geoclue_interface.h>
 #include <satellite_interface.h>
 
+#include <QtCore/QLoggingCategory>
 #include <QtDBus/QDBusPendingCallWatcher>
+
+Q_DECLARE_LOGGING_CATEGORY(lcPositioningGeoclue)
 
 #define MINIMUM_UPDATE_INTERVAL 1000
 

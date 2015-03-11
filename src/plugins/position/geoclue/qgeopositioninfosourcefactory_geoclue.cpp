@@ -37,7 +37,11 @@
 #include "qgeopositioninfosource_geocluemaster.h"
 #include "qgeosatelliteinfosource_geocluemaster.h"
 
+#include <QtCore/QLoggingCategory>
+
 Q_DECLARE_METATYPE(QGeoPositionInfo)
+
+Q_LOGGING_CATEGORY(lcPositioningGeoclue, "qt.positioning.geoclue")
 
 QT_BEGIN_NAMESPACE
 
