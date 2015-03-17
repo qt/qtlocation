@@ -35,10 +35,10 @@
 
 #include <QtTest/QtTest>
 #include <QSignalSpy>
-#include <qgeopositioninfosource.h>
-#include <qgeosatelliteinfosource.h>
-#include <qgeoareamonitorsource.h>
-#include <qgeocoordinate.h>
+#include <QtPositioning/qgeopositioninfosource.h>
+#include <QtPositioning/qgeosatelliteinfosource.h>
+#include <QtPositioning/qgeoareamonitorsource.h>
+#include <QtPositioning/qgeocoordinate.h>
 
 QT_USE_NAMESPACE
 

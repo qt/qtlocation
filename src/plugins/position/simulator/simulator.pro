@@ -5,8 +5,6 @@ PLUGIN_TYPE = position
 PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactorySimulator
 load(qt_plugin)
 
-INCLUDEPATH += $$QT.location.includes
-
 QT += simulator
 DEFINES += QT_SIMULATOR
 SOURCES += qgeopositioninfosource_simulator.cpp \

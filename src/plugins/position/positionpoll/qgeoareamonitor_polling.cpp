@@ -32,9 +32,9 @@
 ****************************************************************************/
 
 #include "qgeoareamonitor_polling.h"
-#include <qgeocoordinate.h>
-#include <qgeorectangle.h>
-#include <qgeocircle.h>
+#include <QtPositioning/qgeocoordinate.h>
+#include <QtPositioning/qgeorectangle.h>
+#include <QtPositioning/qgeocircle.h>
 
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qtimer.h>

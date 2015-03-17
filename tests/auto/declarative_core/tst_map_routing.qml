@@ -50,7 +50,6 @@ Item {
     property variant circle2: QtPositioning.circle(tr, 4000)
 
     Component.onCompleted: {
-        console.log("ffffff " + circle1 + " " + circle2)
         boundingBox1.topLeft = bl
         boundingBox1.bottomRight = bl
         boundingBox1.width = 10

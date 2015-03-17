@@ -5,8 +5,6 @@ PLUGIN_TYPE = position
 PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryBb
 load(qt_plugin)
 
-INCLUDEPATH += $$QT.location.includes
-
 LIBS = -lwmm -llocation_manager -lpps
 
 SOURCES += qgeopositioninfosource_bb.cpp \

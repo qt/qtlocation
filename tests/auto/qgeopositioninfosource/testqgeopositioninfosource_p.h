@@ -34,7 +34,7 @@
 #ifndef TESTQGEOPOSITIONINFOSOURCE_P_H
 #define TESTQGEOPOSITIONINFOSOURCE_P_H
 
-#include <qgeopositioninfosource.h>
+#include <QtPositioning/qgeopositioninfosource.h>
 
 #ifdef TST_GEOCLUEMOCK_ENABLED
 #include "geocluemock.h"

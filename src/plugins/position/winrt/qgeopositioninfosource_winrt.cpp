@@ -145,6 +145,11 @@ void QGeoPositionInfoSourceWinrt::setPreferredPositioningMethods(QGeoPositionInf
 
 void QGeoPositionInfoSourceWinrt::setUpdateInterval(int msec)
 {
+    // Windows Phone does not support 0 interval
+#ifdef Q_OS_WINPHONE
+    if (msec == 0)
+        msec = minimumUpdateInterval();
+#endif
     // If msec is 0 we send updates as data becomes available, otherwise we force msec to be equal
     // to or larger than the minimum update interval.
     if (msec != 0 && msec < minimumUpdateInterval())
@@ -225,10 +230,14 @@ void QGeoPositionInfoSourceWinrt::stopHandler()
 
 void QGeoPositionInfoSourceWinrt::requestUpdate(int timeout)
 {
-    if (timeout < minimumUpdateInterval()) {
+    if (timeout != 0 && timeout < minimumUpdateInterval()) {
         emit updateTimeout();
         return;
     }
+
+    if (timeout == 0)
+        timeout = 2*60*1000; // Maximum time for cold start (see Android)
+
     startHandler();
     m_singleUpdateTimer.start(timeout);
 }
