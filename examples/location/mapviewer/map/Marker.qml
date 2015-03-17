@@ -78,7 +78,6 @@ MapQuickItem {
                         break
                     }
                 }
-                map.state = ""
             }
 
             onPressAndHold:{

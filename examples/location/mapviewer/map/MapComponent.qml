@@ -363,7 +363,6 @@ Map {
         value: map.zoomLevel
         onValueChanged: {
             map.zoomLevel = value
-            map.state=""
         }
     }
 
@@ -458,11 +457,7 @@ Map {
                 }
 
                 onPositionChanged: {
-                    if (Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
-                            Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
-                        map.state = ""
-                    }
-                    if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
+                    if (mouse.button == Qt.LeftButton) {
                         map.lastX = mouse.x + parent.x
                         map.lastY = mouse.y + parent.y
                     }
@@ -526,11 +521,10 @@ Map {
                 onPositionChanged: {
                     if (Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
                             Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
-                        map.state = ""
                         if (pressed) parent.radius = parent.center.distanceTo(
                                          map.toCoordinate(Qt.point(mouse.x, mouse.y)))
                     }
-                    if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
+                    if (mouse.button == Qt.LeftButton) {
                         map.lastX = mouse.x + parent.x
                         map.lastY = mouse.y + parent.y
                     }
@@ -586,22 +580,10 @@ Map {
             map.pressX = mouse.x
             map.pressY = mouse.y
             lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-            //            if (mouse.button == Qt.MiddleButton)
-            //                addMarker()
         }
 
         onPositionChanged: {
-            if (map.state != "PopupMenu" ||
-                    Math.abs(map.pressX - mouse.x ) > map.jitterThreshold ||
-                    Math.abs(map.pressY - mouse.y ) > map.jitterThreshold) {
-                map.state = ""
-            }
-            if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
-                //                if ((map.lastX != -1) && (map.lastY != -1)) {
-                //                    var dx = mouse.x - map.lastX
-                //                    var dy = mouse.y - map.lastY
-                //                    map.pan(-dx, -dy)
-                //                }
+            if (mouse.button == Qt.LeftButton) {
                 map.lastX = mouse.x
                 map.lastY = mouse.y
             }
