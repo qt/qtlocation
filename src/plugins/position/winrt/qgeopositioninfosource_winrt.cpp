@@ -145,6 +145,11 @@ void QGeoPositionInfoSourceWinrt::setPreferredPositioningMethods(QGeoPositionInf
 
 void QGeoPositionInfoSourceWinrt::setUpdateInterval(int msec)
 {
+    // Windows Phone does not support 0 interval
+#ifdef Q_OS_WINPHONE
+    if (msec == 0)
+        msec = minimumUpdateInterval();
+#endif
     // If msec is 0 we send updates as data becomes available, otherwise we force msec to be equal
     // to or larger than the minimum update interval.
     if (msec != 0 && msec < minimumUpdateInterval())
