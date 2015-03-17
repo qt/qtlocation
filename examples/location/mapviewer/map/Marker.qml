@@ -55,7 +55,7 @@ MapQuickItem {
     sourceItem: Image {
         id: image
 //! [mqi-anchor]
-        source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "../resources/marker_selected.png" :"../resources/marker_hovered.png") : "../resources/marker.png"
+        source: markerMouseArea.pressed ? "../resources/marker_selected.png" : "../resources/marker.png"
         MouseArea  {
             id: markerMouseArea
             property int pressX : -1
