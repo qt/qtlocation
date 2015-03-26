@@ -118,6 +118,7 @@ class QDeclarativeGeoMapGestureArea: public QObject
     Q_PROPERTY(ActiveGestures activeGestures READ activeGestures WRITE setActiveGestures NOTIFY activeGesturesChanged)
     Q_PROPERTY(qreal maximumZoomLevelChange READ maximumZoomLevelChange WRITE setMaximumZoomLevelChange NOTIFY maximumZoomLevelChangeChanged)
     Q_PROPERTY(qreal flickDeceleration READ flickDeceleration WRITE setFlickDeceleration NOTIFY flickDecelerationChanged)
+    Q_PROPERTY(bool preventStealing READ preventStealing WRITE setPreventStealing NOTIFY preventStealingChanged REVISION 1)
 public:
     QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent = 0);
     ~QDeclarativeGeoMapGestureArea();
@@ -168,6 +169,9 @@ public:
 
     void setMap(QGeoMap *map);
 
+    bool preventStealing() const;
+    void setPreventStealing(bool prevent);
+
 Q_SIGNALS:
     void panActiveChanged();
     void pinchActiveChanged();
@@ -187,7 +191,7 @@ Q_SIGNALS:
     void panFinished();
     void flickStarted();
     void flickFinished();
-
+    void preventStealingChanged();
 private:
     void update();
 
@@ -223,7 +227,7 @@ private:
 private:
     QGeoMap *map_;
     QDeclarativeGeoMap *declarativeMap_;
-    bool enabled_;
+    bool m_enabled;
 
     struct Pinch
     {
@@ -275,6 +279,7 @@ private:
     qreal twoTouchAngle_;
     qreal distanceBetweenTouchPoints_;
     QPointF sceneCenter_;
+    bool m_preventStealing;
 
     // prototype state machine...
     enum TouchPointState

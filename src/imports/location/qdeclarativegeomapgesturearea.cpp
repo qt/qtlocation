@@ -348,8 +348,9 @@ Q_DESTRUCTOR_FUNCTION(unregisterQGeoCoordinateInterpolator)
 QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent)
     : QObject(parent),
       declarativeMap_(map),
-      enabled_(true),
-      activeGestures_(ZoomGesture | PanGesture | FlickGesture)
+      m_enabled(true),
+      activeGestures_(ZoomGesture | PanGesture | FlickGesture),
+      m_preventStealing(false)
 {
     map_ = 0;
     pan_.enabled_ = true,
@@ -372,6 +373,38 @@ void QDeclarativeGeoMapGestureArea::setMap(QGeoMap *map)
     pan_.animation_ = new QPropertyAnimation(map_->mapController(), "center", this);
     pan_.animation_->setEasingCurve(QEasingCurve(QEasingCurve::OutQuad));
     connect(pan_.animation_, SIGNAL(finished()), this, SLOT(endFlick()));
+}
+
+/*!
+    \qmlproperty bool QtQuick::MapGestureArea::preventStealing
+    This property holds whether the mouse events may be stolen from this
+    MapGestureArea.
+
+    If a Map is placed within an item that filters child mouse
+    and touch events, such as Flickable, the mouse and touch events
+    may be stolen from the MapGestureArea if a gesture is recognized
+    by the parent item, e.g. a flick gesture.  If preventStealing is
+    set to true, no item will steal the mouse and touch events.
+
+    Note that setting preventStealing to true once an item has started
+    stealing events will have no effect until the next press event.
+
+    By default this property is false.
+*/
+
+bool QDeclarativeGeoMapGestureArea::preventStealing() const
+{
+    return m_preventStealing;
+}
+
+void QDeclarativeGeoMapGestureArea::setPreventStealing(bool prevent)
+{
+    if (prevent != m_preventStealing) {
+        m_preventStealing = prevent;
+        declarativeMap_->setKeepMouseGrab(m_preventStealing && m_enabled);
+        declarativeMap_->setKeepTouchGrab(m_preventStealing && m_enabled);
+        emit preventStealingChanged();
+    }
 }
 
 QDeclarativeGeoMapGestureArea::~QDeclarativeGeoMapGestureArea()
@@ -418,7 +451,7 @@ bool QDeclarativeGeoMapGestureArea::isPanActive() const
 */
 bool QDeclarativeGeoMapGestureArea::enabled() const
 {
-    return enabled_;
+    return m_enabled;
 }
 
 /*!
@@ -426,9 +459,9 @@ bool QDeclarativeGeoMapGestureArea::enabled() const
 */
 void QDeclarativeGeoMapGestureArea::setEnabled(bool enabled)
 {
-    if (enabled == enabled_)
+    if (enabled == m_enabled)
         return;
-    enabled_ = enabled;
+    m_enabled = enabled;
     emit enabledChanged();
 }
 
@@ -706,14 +739,14 @@ void QDeclarativeGeoMapGestureArea::update()
     touchPointStateMachine();
 
     // Parallel state machine for pinch
-    if (isPinchActive() || (enabled_ && pinch_.enabled && (activeGestures_ & (ZoomGesture))))
+    if (isPinchActive() || (m_enabled && pinch_.enabled && (activeGestures_ & (ZoomGesture))))
         pinchStateMachine();
 
     // Parallel state machine for pan (since you can pan at the same time as pinching)
     // The stopPan function ensures that pan stops immediately when disabled,
     // but the line below allows pan continue its current gesture if you disable
     // the whole gesture (enabled_ flag), this keeps the enabled_ consistent with the pinch
-    if (isPanActive() || (enabled_ && pan_.enabled_ && (activeGestures_ & (PanGesture | FlickGesture))))
+    if (isPanActive() || (m_enabled && pan_.enabled_ && (activeGestures_ & (PanGesture | FlickGesture))))
         panStateMachine();
 }
 
@@ -840,6 +873,8 @@ void QDeclarativeGeoMapGestureArea::pinchStateMachine()
     case pinchInactive:
         if (m_allPoints.count() >= 2) {
             if (canStartPinch()) {
+                declarativeMap_->setKeepMouseGrab(true);
+                declarativeMap_->setKeepTouchGrab(true);
                 startPinch();
                 pinchState_ = pinchActive;
             } else {
@@ -852,6 +887,8 @@ void QDeclarativeGeoMapGestureArea::pinchStateMachine()
             pinchState_ = pinchInactive;
         } else {
             if (canStartPinch()) {
+                declarativeMap_->setKeepMouseGrab(true);
+                declarativeMap_->setKeepTouchGrab(true);
                 startPinch();
                 pinchState_ = pinchActive;
             }
@@ -859,8 +896,10 @@ void QDeclarativeGeoMapGestureArea::pinchStateMachine()
         break;
     case pinchActive:
         if (m_allPoints.count() <= 1) {
-            endPinch();
             pinchState_ = pinchInactive;
+            declarativeMap_->setKeepMouseGrab(m_preventStealing);
+            declarativeMap_->setKeepTouchGrab(m_preventStealing);
+            endPinch();
         }
         break;
     }
@@ -1000,6 +1039,7 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
             QGeoCoordinate newStartCoord = map_->itemPositionToCoordinate(QDoubleVector2D(sceneCenter_), false);
             startCoord_.setLongitude(newStartCoord.longitude());
             startCoord_.setLatitude(newStartCoord.latitude());
+            declarativeMap_->setKeepMouseGrab(true);
             panState_ = panActive;
         }
         break;
@@ -1011,6 +1051,7 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
                 panState_ = panInactive;
                 // mark as inactive for use by camera
                 if (pinchState_ == pinchInactive) {
+                    declarativeMap_->setKeepMouseGrab(m_preventStealing);
                     emit panFinished();
                     map_->prefetchData();
                 }
@@ -1020,6 +1061,7 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
     case panFlick:
         if (m_allPoints.count() > 0) { // re touched before movement ended
             endFlick();
+            declarativeMap_->setKeepMouseGrab(true);
             panState_ = panActive;
         }
         break;
@@ -1150,6 +1192,7 @@ void QDeclarativeGeoMapGestureArea::stopPan()
         endFlick();
     } else if (panState_ == panActive) {
         panState_ = panInactive;
+        declarativeMap_->setKeepMouseGrab(m_preventStealing);
         emit panFinished();
         emit panActiveChanged();
         map_->prefetchData();
@@ -1161,6 +1204,7 @@ void QDeclarativeGeoMapGestureArea::stopPan()
 */
 void QDeclarativeGeoMapGestureArea::endFlick()
 {
+    declarativeMap_->setKeepMouseGrab(m_preventStealing);
     emit panFinished();
     if (pan_.animation_->state() == QPropertyAnimation::Running)
         pan_.animation_->stop();
