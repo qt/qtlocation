@@ -994,7 +994,7 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
     case panInactive:
         if (canStartPan()) {
             // Update startCoord_ to ensure smooth start for panning when going over startDragDistance
-            QGeoCoordinate newStartCoord = map_->itemPositionToCoordinate(QDoubleVector2D(lastPos_), false);
+            QGeoCoordinate newStartCoord = map_->itemPositionToCoordinate(QDoubleVector2D(sceneCenter_), false);
             startCoord_.setLongitude(newStartCoord.longitude());
             startCoord_.setLatitude(newStartCoord.latitude());
             panState_ = panActive;
@@ -1053,7 +1053,7 @@ bool QDeclarativeGeoMapGestureArea::canStartPan()
     QPointF p1 = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
     int dyFromPress = int(p1.y() - sceneStartPoint1_.y());
     int dxFromPress = int(p1.x() - sceneStartPoint1_.x());
-    if ((qAbs(dyFromPress) > startDragDistance || qAbs(dxFromPress) > startDragDistance))
+    if ((qAbs(dyFromPress) >= startDragDistance || qAbs(dxFromPress) >= startDragDistance))
         return true;
     return false;
 }
