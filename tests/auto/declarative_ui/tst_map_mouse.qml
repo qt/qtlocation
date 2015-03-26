@@ -535,6 +535,8 @@ Item {
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
 
+
+            compare(mouseOverlapperPressedSpy.count, 0)
             mousePress(map, 55, 75)
             compare(mouseUpperPressedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
@@ -545,7 +547,8 @@ Item {
             compare(mouseUpperReleasedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
-            compare(mouseOverlapperReleasedSpy.count, 1)
+            //this should follow the same logic as Flickable
+            compare(mouseOverlapperReleasedSpy.count, 0)
         }
 
         function test_basic_click() {

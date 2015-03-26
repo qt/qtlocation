@@ -43,6 +43,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/qnumeric.h>
 #include <QThread>
+#include <QQuickWindow>
+#include <QtQuick/private/qquickwindow_p.h>
 
 #include "qgeotilecache_p.h"
 #include "qgeocameradata_p.h"
@@ -324,7 +326,10 @@ void QDeclarativeGeoMap::componentComplete()
 */
 void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 {
-    event->setAccepted(gestureArea_->handleMousePressEvent(event));
+    if (isInteractive())
+        gestureArea_->handleMousePressEvent(event);
+    else
+        QQuickItem::mousePressEvent(event);
 }
 
 /*!
@@ -332,7 +337,10 @@ void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
-    event->setAccepted(gestureArea_->handleMouseMoveEvent(event));
+    if (isInteractive())
+        gestureArea_->handleMouseMoveEvent(event);
+    else
+        QQuickItem::mouseMoveEvent(event);
 }
 
 /*!
@@ -340,7 +348,12 @@ void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 {
-    event->setAccepted(gestureArea_->handleMouseReleaseEvent(event));
+    if (isInteractive()) {
+        gestureArea_->handleMouseReleaseEvent(event);
+        ungrabMouse();
+    } else {
+        QQuickItem::mouseReleaseEvent(event);
+    }
 }
 
 /*!
@@ -348,7 +361,18 @@ void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseUngrabEvent()
 {
-    gestureArea_->handleMouseUngrabEvent();
+    if (isInteractive())
+        gestureArea_->handleMouseUngrabEvent();
+    else
+        QQuickItem::mouseUngrabEvent();
+}
+
+void QDeclarativeGeoMap::touchUngrabEvent()
+{
+    if (isInteractive())
+        gestureArea_->handleTouchUngrabEvent();
+    else
+        QQuickItem::touchUngrabEvent();
 }
 
 /*!
@@ -826,7 +850,15 @@ QGeoServiceProvider::Error QDeclarativeGeoMap::error() const
 */
 void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
 {
-    event->setAccepted(gestureArea_->handleTouchEvent(event));
+    if (isInteractive()) {
+        gestureArea_->handleTouchEvent(event);
+        if ( event->type() == QEvent::TouchEnd ||
+             event->type() == QEvent::TouchCancel) {
+            ungrabTouchPoints();
+        }
+    }
+    //this will always ignore event so sythesized event is generated;
+    QQuickItem::touchEvent(event);
 }
 
 /*!
@@ -834,9 +866,18 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
 */
 void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 {
-    event->setAccepted(gestureArea_->handleWheelEvent(event));
-    //TODO: wheelAngleChanged wtf ?
-    emit wheelAngleChanged(event->angleDelta());
+    if (isInteractive()) {
+        gestureArea_->handleWheelEvent(event);
+        //TODO: wheelAngleChanged wtf ? do we need that ?
+        emit wheelAngleChanged(event->angleDelta());
+    } else
+        QQuickItem::wheelEvent(event);
+
+}
+
+bool QDeclarativeGeoMap::isInteractive()
+{
+    return (gestureArea_->enabled() && gestureArea_->activeGestures()) || gestureArea_->isActive();
 }
 
 /*!
@@ -844,57 +885,43 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 */
 bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
 {
-    if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseMove ||
-        event->type() == QEvent::MouseButtonRelease ||
-        event->type() == QEvent::MouseButtonDblClick) {
-        // Check if we have already grabbed input. This can happen if the previous touch event
-        // immediately triggers a gesture, the synthesized mouse event is still generated. Filter
-        // these events so that child items do no receive them.
-        if (gestureArea_->hasGrabbedInput())
-            return true;
+    Q_UNUSED(item)
+    if (!isVisible() || !isEnabled() || !isInteractive())
+        return QQuickItem::childMouseEventFilter(item, event);
 
-        // Ignore synthesized mouse events, but don't filter them, as child items may not handle
-        // touch events directly. After a gesture is recognized and an input grab obtained these
-        // events should cease to be generated, except for the case above.
-        QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        if (me->source() != Qt::MouseEventNotSynthesized)
-            return false;
-    } else if (event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchUpdate ||
-               event->type() == QEvent::TouchEnd) {
-        // Check if already grabbed mouse, if so filter out touch events.
-        // FIXME: Returning true here gives priority to touch input, which is not what is intended.
-        // In response to returning true ungrabMouse() is called and touch input will be handled
-        // thereafter.
-        if (gestureArea_->hasGrabbedInput())
-            return true;
-    }
-
-    QLOC_TRACE0;
     switch (event->type()) {
     case QEvent::MouseButtonPress:
     case QEvent::MouseMove:
-        if (item->keepMouseGrab())
-            return false;
-        return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
     case QEvent::MouseButtonRelease:
-        return gestureArea_->filterMapChildMouseEvent(static_cast<QMouseEvent *>(event));
-    case QEvent::UngrabMouse:
-        // Never filter ungrab mouse events. This event notifies 'item' that the mouse has been
-        // grabbed and it should cancel any outstanding input event processing. For example, press
-        // and hold timers.
-        return false;
+        return sendMouseEvent(static_cast<QMouseEvent *>(event));
+    case QEvent::UngrabMouse: {
+        QQuickWindow *win = window();
+        if (!win) break;
+        if (!win->mouseGrabberItem() ||
+                (win->mouseGrabberItem() &&
+                 win->mouseGrabberItem() != this)) {
+            // child lost grab, we could even lost
+            // some events if grab already belongs for example
+            // in item in diffrent window , clear up states
+            mouseUngrabEvent();
+        }
+        break;
+    }
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
     case QEvent::TouchCancel:
-        if (item->keepMouseGrab())
-            return false;
-        return gestureArea_->filterMapChildTouchEvent(static_cast<QTouchEvent *>(event));
-    case QEvent::Wheel:
-        return gestureArea_->handleWheelEvent(static_cast<QWheelEvent *>(event));
+        if (static_cast<QTouchEvent *>(event)->touchPoints().count() >= 2) {
+            // 1 touch point = handle with MouseEvent (event is always synthesized)
+            // let the synthesized mouse event grab the mouse,
+            // note there is no mouse grabber at this point since
+            // touch event comes first (see Qt::AA_SynthesizeMouseForUnhandledTouchEvents)
+            return sendTouchEvent(static_cast<QTouchEvent *>(event));
+        }
     default:
-        return false;
+        break;
     }
+    return QQuickItem::childMouseEventFilter(item, event);
 }
 
 /*!
@@ -1217,6 +1244,99 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     // we refine the viewport again to achieve better results
     if (refine)
         fitViewportToMapItemsRefine(false);
+}
+
+bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
+{
+    QPointF localPos = mapFromScene(event->windowPos());
+    QQuickWindow *win = window();
+    QQuickItem *grabber = win ? win->mouseGrabberItem() : 0;
+    bool stealEvent = gestureArea_->isActive();
+
+    if ((stealEvent || contains(localPos)) && (!grabber || !grabber->keepMouseGrab())) {
+        QScopedPointer<QMouseEvent> mouseEvent(QQuickWindowPrivate::cloneMouseEvent(event, &localPos));
+        mouseEvent->setAccepted(false);
+
+        switch (mouseEvent->type()) {
+        case QEvent::MouseMove:
+            gestureArea_->handleMouseMoveEvent(mouseEvent.data());
+            break;
+        case QEvent::MouseButtonPress:
+            gestureArea_->handleMousePressEvent(mouseEvent.data());
+            break;
+        case QEvent::MouseButtonRelease:
+            gestureArea_->handleMouseReleaseEvent(mouseEvent.data());
+            break;
+        default:
+            break;
+        }
+
+        stealEvent = gestureArea_->isActive();
+        grabber = win ? win->mouseGrabberItem() : 0;
+
+        if (grabber && stealEvent && !grabber->keepMouseGrab() && grabber != this)
+            grabMouse();
+
+        if (stealEvent) {
+            //do not deliver
+            event->setAccepted(true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (event->type() == QEvent::MouseButtonRelease) {
+        if (win && win->mouseGrabberItem() == this)
+            ungrabMouse();
+    }
+
+    return false;
+}
+
+bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
+{
+    QQuickWindowPrivate *win = window() ? QQuickWindowPrivate::get(window()) : 0;
+    const QTouchEvent::TouchPoint &point = event->touchPoints().first();
+    QQuickItem *grabber = win ? win->itemForTouchPointId.value(point.id()) : 0;
+
+    bool stealEvent = gestureArea_->isActive();
+    bool containsPoint = contains(mapFromScene(point.scenePos()));
+
+    if ((stealEvent || containsPoint) && (!grabber || !grabber->keepTouchGrab())) {
+        QScopedPointer<QTouchEvent> touchEvent(new QTouchEvent(event->type(), event->device(), event->modifiers(), event->touchPointStates(), event->touchPoints()));
+        touchEvent->setTimestamp(event->timestamp());
+        touchEvent->setAccepted(false);
+
+        gestureArea_->handleTouchEvent(touchEvent.data());
+        stealEvent = gestureArea_->isActive();
+        grabber = win ? win->itemForTouchPointId.value(point.id()) : 0;
+
+        if (grabber && stealEvent && !grabber->keepTouchGrab() && grabber != this) {
+            QVector<int> ids;
+            foreach (const QTouchEvent::TouchPoint &tp, event->touchPoints()) {
+                if (!(tp.state() & Qt::TouchPointReleased)) {
+                    ids.append(tp.id());
+                }
+            }
+            grabTouchPoints(ids);
+        }
+
+        if (stealEvent) {
+            //do not deliver
+            event->setAccepted(true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (event->type() == QEvent::TouchEnd) {
+        if (win && win->itemForTouchPointId.value(point.id()) == this) {
+            ungrabTouchPoints();
+        }
+    }
+    return false;
 }
 
 #include "moc_qdeclarativegeomap_p.cpp"
