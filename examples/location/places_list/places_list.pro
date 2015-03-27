@@ -1,7 +1,7 @@
 TARGET = places_list
 TEMPLATE = app
 
-QT += quick qml network
+QT += quick qml network positioning location
 SOURCES = main.cpp
 
 RESOURCES += \
