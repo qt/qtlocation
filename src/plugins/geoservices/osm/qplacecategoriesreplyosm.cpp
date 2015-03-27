@@ -3,7 +3,7 @@
 ** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
 ** Contact: http://www.qt.io/licensing/
 **
-** This file is part of the QtFoo module of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
 ** Commercial License Usage
@@ -31,38 +31,29 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACESEARCHREPLYIMPL_H
-#define QPLACESEARCHREPLYIMPL_H
-
-#include <QtLocation/QPlaceSearchReply>
+#include "qplacecategoriesreplyosm.h"
 
 QT_BEGIN_NAMESPACE
 
-class QNetworkReply;
-class QPlaceManagerEngineOsm;
-class QPlaceResult;
-
-class QPlaceSearchReplyImpl : public QPlaceSearchReply
+QPlaceCategoriesReplyOsm::QPlaceCategoriesReplyOsm(QObject *parent)
+:   QPlaceReply(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    QPlaceSearchReplyImpl(const QPlaceSearchRequest &request, QNetworkReply *reply,
-                          QPlaceManagerEngineOsm *parent);
-    ~QPlaceSearchReplyImpl();
+QPlaceCategoriesReplyOsm::~QPlaceCategoriesReplyOsm()
+{
+}
 
-    void abort();
+void QPlaceCategoriesReplyOsm::emitFinished()
+{
+    setFinished(true);
+    emit finished();
+}
 
-private slots:
-    void setError(QPlaceReply::Error errorCode, const QString &errorString);
-    void replyFinished();
-
-private:
-    QPlaceResult parsePlaceResult(const QJsonObject &item) const;
-
-    QNetworkReply *m_reply;
-};
+void QPlaceCategoriesReplyOsm::setError(QPlaceReply::Error errorCode, const QString &errorString)
+{
+    QPlaceReply::setError(errorCode, errorString);
+    emit error(errorCode, errorString);
+}
 
 QT_END_NAMESPACE
-
-#endif // QPLACESEARCHREPLYIMPL_H

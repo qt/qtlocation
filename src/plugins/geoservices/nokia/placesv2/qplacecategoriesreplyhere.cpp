@@ -34,27 +34,29 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECATEGORIESREPLYIMPL_H
-#define QPLACECATEGORIESREPLYIMPL_H
-
-#include <QtLocation/QPlaceReply>
+#include "qplacecategoriesreplyhere.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceCategoriesReplyImpl : public QPlaceReply
+QPlaceCategoriesReplyHere::QPlaceCategoriesReplyHere(QObject *parent)
+:   QPlaceReply(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    explicit QPlaceCategoriesReplyImpl(QObject *parent = 0);
-    ~QPlaceCategoriesReplyImpl();
+QPlaceCategoriesReplyHere::~QPlaceCategoriesReplyHere()
+{
+}
 
-    void emitFinished();
+void QPlaceCategoriesReplyHere::emitFinished()
+{
+    setFinished(true);
+    emit finished();
+}
 
-private slots:
-    void setError(QPlaceReply::Error error_, const QString &errorString);
-};
+void QPlaceCategoriesReplyHere::setError(QPlaceReply::Error error_, const QString &errorString)
+{
+    QPlaceReply::setError(error_, errorString);
+    emit error(error_, errorString);
+}
 
 QT_END_NAMESPACE
-
-#endif // QPLACECATEGORIESREPLYIMPL_H

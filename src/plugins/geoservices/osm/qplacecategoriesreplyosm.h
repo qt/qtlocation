@@ -31,20 +31,20 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECATEGORIESREPLYIMPL_H
-#define QPLACECATEGORIESREPLYIMPL_H
+#ifndef QPLACECATEGORIESREPLYOSM_H
+#define QPLACECATEGORIESREPLYOSM_H
 
 #include <QtLocation/QPlaceReply>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceCategoriesReplyImpl : public QPlaceReply
+class QPlaceCategoriesReplyOsm : public QPlaceReply
 {
     Q_OBJECT
 
 public:
-    explicit QPlaceCategoriesReplyImpl(QObject *parent = 0);
-    ~QPlaceCategoriesReplyImpl();
+    explicit QPlaceCategoriesReplyOsm(QObject *parent = 0);
+    ~QPlaceCategoriesReplyOsm();
 
     void emitFinished();
     void setError(QPlaceReply::Error errorCode, const QString &errorString);
@@ -52,4 +52,4 @@ public:
 
 QT_END_NAMESPACE
 
-#endif // QPLACECATEGORIESREPLYIMPL_H
+#endif // QPLACECATEGORIESREPLYOSM_H

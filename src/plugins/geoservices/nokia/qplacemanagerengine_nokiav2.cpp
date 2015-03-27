@@ -36,10 +36,10 @@
 
 #include "qplacemanagerengine_nokiav2.h"
 
-#include "placesv2/qplacecategoriesreplyimpl.h"
+#include "placesv2/qplacecategoriesreplyhere.h"
 #include "placesv2/qplacecontentreplyimpl.h"
 #include "placesv2/qplacesearchsuggestionreplyimpl.h"
-#include "placesv2/qplacesearchreplyimpl.h"
+#include "placesv2/qplacesearchreplyhere.h"
 #include "placesv2/qplacedetailsreplyimpl.h"
 #include "placesv2/qplaceidreplyimpl.h"
 #include "qgeonetworkaccessmanager.h"
@@ -352,7 +352,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
                        || query.searchArea().type() != QGeoShape::UnknownType);
 
     if (unsupported) {
-        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, 0, this);
+        QPlaceSearchReplyHere *reply = new QPlaceSearchReplyHere(query, 0, this);
         connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
         connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
                 this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -368,7 +368,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
     // searches, which do not need search centers.
     if (query.recommendationId().isEmpty() && !query.searchContext().isValid()) {
         if (!addAtForBoundingArea(query.searchArea(), &queryItems)) {
-            QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, 0, this);
+            QPlaceSearchReplyHere *reply = new QPlaceSearchReplyHere(query, 0, this);
             connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
             connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
                     this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -414,7 +414,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         QNetworkReply *networkReply = sendRequest(requestUrl);
 
-        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, networkReply, this);
+        QPlaceSearchReplyHere *reply = new QPlaceSearchReplyHere(query, networkReply, this);
         connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
         connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
                 this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -458,7 +458,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         networkReply = sendRequest(requestUrl);
     }
 
-    QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(query, networkReply, this);
+    QPlaceSearchReplyHere *reply = new QPlaceSearchReplyHere(query, networkReply, this);
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -613,7 +613,7 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
         m_categoryRequests.insert(id, networkReply);
     }
 
-    QPlaceCategoriesReplyImpl *reply = new QPlaceCategoriesReplyImpl(this);
+    QPlaceCategoriesReplyHere *reply = new QPlaceCategoriesReplyHere(this);
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
