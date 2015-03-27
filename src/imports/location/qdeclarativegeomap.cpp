@@ -866,11 +866,9 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
 */
 void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 {
-    if (isInteractive()) {
+    if (isInteractive())
         gestureArea_->handleWheelEvent(event);
-        //TODO: wheelAngleChanged wtf ? do we need that ?
-        emit wheelAngleChanged(event->angleDelta());
-    } else
+    else
         QQuickItem::wheelEvent(event);
 
 }

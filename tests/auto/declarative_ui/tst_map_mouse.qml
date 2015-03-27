@@ -98,13 +98,6 @@ Item {
 
         plugin: testPlugin;
 
-        property real lastWheelAngleDeltaX: 0
-        property real lastWheelAngleDeltaY: 0
-        onWheelAngleChanged: {
-            lastWheelAngleDeltaX = angleDelta.x;
-            lastWheelAngleDeltaY = angleDelta.y;
-        }
-
         MouseArea {
             id: mouseUpper
             objectName: "mouseUpper"
@@ -208,11 +201,7 @@ Item {
 
         SignalSpy {id: mouseOverlapperEnabledChangedSpy; target: mouseOverlapper; signalName: "enabledChanged"}
 
-        SignalSpy {id: mapWheelSpy; target: map; signalName: "wheelAngleChanged"}
-
         function clear_data() {
-            map.lastWheelAngleDeltaX = 0
-            map.lastWheelAngleDeltaY = 0
             mouseUpperClickedSpy.clear()
             mouseLowerClickedSpy.clear()
             mouseOverlapperClickedSpy.clear()
@@ -305,24 +294,29 @@ Item {
             clear_data()
             wait(500);
             // on map but without mouse area
+            var startZoomLevel = 6
+            map.zoomLevel = startZoomLevel
             mouseWheel(map, 5, 5, 15, 5, Qt.LeftButton, Qt.NoModifiers)
-            compare(mapWheelSpy.count, 1)
-            compare(map.lastWheelAngleDeltaX, 15)
-            compare(map.lastWheelAngleDeltaY, 5)
+            //see QDeclarativeGeoMapGestureArea::handleWheelEvent
+            var endZoomLevel = startZoomLevel + 5 * 0.001
+            compare(map.zoomLevel,endZoomLevel)
+
+            map.zoomLevel = startZoomLevel
             mouseWheel(map, 5, 5, -15, -5, Qt.LeftButton, Qt.NoModifiers)
-            compare(mapWheelSpy.count, 2)
-            compare(map.lastWheelAngleDeltaX, -15)
-            compare(map.lastWheelAngleDeltaY, -5)
+            //see QDeclarativeGeoMapGestureArea::handleWheelEvent
+            endZoomLevel = startZoomLevel - 5 * 0.001
+            compare(map.zoomLevel,endZoomLevel)
+
             // on map on top of mouse area
+            map.zoomLevel = startZoomLevel
             mouseWheel(map, 55, 75, -30, -2, Qt.LeftButton, Qt.NoModifiers)
-            compare(mapWheelSpy.count, 3)
-            compare(map.lastWheelAngleDeltaX, -30)
-            compare(map.lastWheelAngleDeltaY, -2)
+            endZoomLevel = startZoomLevel - 2 * 0.001
+            compare(map.zoomLevel,endZoomLevel)
+
             // outside of map
+            map.zoomLevel = startZoomLevel
             mouseWheel(map, -100, -100, 40, 4, Qt.LeftButton, Qt.NoModifiers)
-            compare(mapWheelSpy.count, 3)
-            compare(map.lastWheelAngleDeltaX, -30)
-            compare(map.lastWheelAngleDeltaY, -2)
+            compare(map.zoomLevel,startZoomLevel)
         }
 
         function test_aaa_basic_properties() // _aaa_ to ensure execution first

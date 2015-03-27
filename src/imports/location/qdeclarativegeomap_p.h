@@ -174,7 +174,6 @@ protected:
     bool sendTouchEvent(QTouchEvent *event);
 
 Q_SIGNALS:
-    void wheelAngleChanged(QPoint angleDelta);
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
