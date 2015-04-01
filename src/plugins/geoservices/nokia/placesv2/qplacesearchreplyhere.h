@@ -34,29 +34,42 @@
 **
 ****************************************************************************/
 
-#include "qplacecategoriesreplyimpl.h"
+#ifndef QPLACESEARCHREPLYHERE_H
+#define QPLACESEARCHREPLYHERE_H
+
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/QPlaceSearchReply>
 
 QT_BEGIN_NAMESPACE
 
-QPlaceCategoriesReplyImpl::QPlaceCategoriesReplyImpl(QObject *parent)
-:   QPlaceReply(parent)
-{
-}
+class QPlaceManagerEngineNokiaV2;
+class QPlaceResult;
+class QPlaceProposedSearchResult;
 
-QPlaceCategoriesReplyImpl::~QPlaceCategoriesReplyImpl()
+class QPlaceSearchReplyHere : public QPlaceSearchReply
 {
-}
+    Q_OBJECT
 
-void QPlaceCategoriesReplyImpl::emitFinished()
-{
-    setFinished(true);
-    emit finished();
-}
+public:
+    explicit QPlaceSearchReplyHere(const QPlaceSearchRequest &request,
+                                   QNetworkReply *reply,
+                                   QPlaceManagerEngineNokiaV2 *parent);
+    ~QPlaceSearchReplyHere();
 
-void QPlaceCategoriesReplyImpl::setError(QPlaceReply::Error error_, const QString &errorString)
-{
-    QPlaceReply::setError(error_, errorString);
-    emit error(error_, errorString);
-}
+    void abort();
+
+private slots:
+    void setError(QPlaceReply::Error error_, const QString &errorString);
+    void replyFinished();
+
+private:
+    QPlaceResult parsePlaceResult(const QJsonObject &item) const;
+    QPlaceProposedSearchResult parseSearchResult(const QJsonObject &item) const;
+
+    QNetworkReply *m_reply;
+    QPlaceManagerEngineNokiaV2 *m_engine;
+};
 
 QT_END_NAMESPACE
+
+#endif // QPLACESEARCHREPLYHERE_H

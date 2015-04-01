@@ -16,7 +16,7 @@ qtHaveModule(quick) {
 
 SUBDIRS += plugins
 
-contains(QT_CONFIG, private_tests) {
+!android:contains(QT_CONFIG, private_tests) {
     SUBDIRS += positioning_doc_snippets
     positioning_doc_snippets.subdir = positioning/doc/snippets
 

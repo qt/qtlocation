@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-#include "qplacesearchreplyimpl.h"
+#include "qplacesearchreplyosm.h"
 #include "qplacemanagerengineosm.h"
 
 #include <QtCore/QJsonDocument>
@@ -45,7 +45,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(const QPlaceSearchRequest &request,
+QPlaceSearchReplyOsm::QPlaceSearchReplyOsm(const QPlaceSearchRequest &request,
                                              QNetworkReply *reply, QPlaceManagerEngineOsm *parent)
 :   QPlaceSearchReply(parent), m_reply(reply)
 {
@@ -60,17 +60,17 @@ QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(const QPlaceSearchRequest &request,
     connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
 }
 
-QPlaceSearchReplyImpl::~QPlaceSearchReplyImpl()
+QPlaceSearchReplyOsm::~QPlaceSearchReplyOsm()
 {
 }
 
-void QPlaceSearchReplyImpl::abort()
+void QPlaceSearchReplyOsm::abort()
 {
     if (m_reply)
         m_reply->abort();
 }
 
-void QPlaceSearchReplyImpl::setError(QPlaceReply::Error errorCode, const QString &errorString)
+void QPlaceSearchReplyOsm::setError(QPlaceReply::Error errorCode, const QString &errorString)
 {
     QPlaceReply::setError(errorCode, errorString);
     emit error(errorCode, errorString);
@@ -91,7 +91,7 @@ static QGeoRectangle parseBoundingBox(const QJsonArray &coordinates)
     return QGeoRectangle(QGeoCoordinate(top, left), QGeoCoordinate(bottom, right));
 }
 
-void QPlaceSearchReplyImpl::replyFinished()
+void QPlaceSearchReplyOsm::replyFinished()
 {
     QNetworkReply *reply = m_reply;
     m_reply->deleteLater();
@@ -157,7 +157,7 @@ void QPlaceSearchReplyImpl::replyFinished()
     emit finished();
 }
 
-QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) const
+QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) const
 {
     QPlace place;
 

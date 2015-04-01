@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceContentReply;
 class QNetworkReply;
 class QNetworkAccessManager;
-class QPlaceCategoriesReplyImpl;
+class QPlaceCategoriesReplyHere;
 class QGeoNetworkAccessManager;
 class QGeoUriProvider;
 
@@ -119,7 +119,7 @@ private:
     QPlaceCategoryTree m_tempTree;
     QHash<QString, QString> m_restIdToIconHash;
 
-    QPointer<QPlaceCategoriesReplyImpl> m_categoryReply;
+    QPointer<QPlaceCategoriesReplyHere> m_categoryReply;
     QHash<QString, QNetworkReply *> m_categoryRequests;
 
     QString m_appId;

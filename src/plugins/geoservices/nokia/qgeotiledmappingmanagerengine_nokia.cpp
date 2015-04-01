@@ -107,7 +107,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     } else {
         // managerName() is not yet set, we have to hardcode the plugin name below
         cacheDir = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
-                + QLatin1String("/QtLocation/nokia");
+                + QLatin1String("/QtLocation/here");
     }
 
     QGeoTileCache *tileCache = createTileCacheWithDir(cacheDir);
@@ -266,10 +266,10 @@ void QGeoTiledMappingManagerEngineNokia::updateVersion(const QJsonObject &newVer
 void QGeoTiledMappingManagerEngineNokia::saveMapVersion()
 {
     QDir saveDir(tileCache()->directory());
-    QFile saveFile(saveDir.filePath(QStringLiteral("nokia_version")));
+    QFile saveFile(saveDir.filePath(QStringLiteral("here_version")));
 
     if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Failed to write nokia map version.");
+        qWarning("Failed to write here/nokia map version.");
         return;
     }
 
@@ -281,10 +281,10 @@ void QGeoTiledMappingManagerEngineNokia::loadMapVersion()
 {
 
     QDir saveDir(tileCache()->directory());
-    QFile loadFile(saveDir.filePath(QStringLiteral("nokia_version")));
+    QFile loadFile(saveDir.filePath(QStringLiteral("here_version")));
 
     if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Failed to read nokia map version.");
+        qWarning("Failed to read here/nokia map version.");
         return;
     }
 

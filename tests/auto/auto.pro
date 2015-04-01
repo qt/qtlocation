@@ -49,6 +49,7 @@ qtHaveModule(location) {
            qgeoroutesegment \
            qgeoroutingmanager \
            qgeoroutingmanagerplugins \
+           qgeoserviceprovider \
            qgeotilespec \
            qgeoroutexmlparser \
            qgeomapcontroller \

@@ -34,7 +34,7 @@
 **
 ****************************************************************************/
 
-#include "qplacesearchreplyimpl.h"
+#include "qplacesearchreplyhere.h"
 #include "jsonparserhelpers.h"
 #include "../qplacemanagerengine_nokiav2.h"
 #include "../qgeoerror_messages.h"
@@ -51,7 +51,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(const QPlaceSearchRequest &request,
+QPlaceSearchReplyHere::QPlaceSearchReplyHere(const QPlaceSearchRequest &request,
                                              QNetworkReply *reply,
                                              QPlaceManagerEngineNokiaV2 *parent)
     :   QPlaceSearchReply(parent), m_reply(reply), m_engine(parent)
@@ -67,17 +67,17 @@ QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(const QPlaceSearchRequest &request,
     connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
 }
 
-QPlaceSearchReplyImpl::~QPlaceSearchReplyImpl()
+QPlaceSearchReplyHere::~QPlaceSearchReplyHere()
 {
 }
 
-void QPlaceSearchReplyImpl::abort()
+void QPlaceSearchReplyHere::abort()
 {
     if (m_reply)
         m_reply->abort();
 }
 
-void QPlaceSearchReplyImpl::setError(QPlaceReply::Error error_, const QString &errorString)
+void QPlaceSearchReplyHere::setError(QPlaceReply::Error error_, const QString &errorString)
 {
     QPlaceReply::setError(error_, errorString);
     emit error(error_, errorString);
@@ -85,7 +85,7 @@ void QPlaceSearchReplyImpl::setError(QPlaceReply::Error error_, const QString &e
     emit finished();
 }
 
-void QPlaceSearchReplyImpl::replyFinished()
+void QPlaceSearchReplyHere::replyFinished()
 {
     if (m_reply->error() != QNetworkReply::NoError) {
         switch (m_reply->error()) {
@@ -148,7 +148,7 @@ void QPlaceSearchReplyImpl::replyFinished()
     emit finished();
 }
 
-QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) const
+QPlaceResult QPlaceSearchReplyHere::parsePlaceResult(const QJsonObject &item) const
 {
     QPlaceResult result;
 
@@ -201,7 +201,7 @@ QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) co
     place.setPlaceId(href.path().mid(18, 41));
 
     QPlaceAttribute provider;
-    provider.setText(QStringLiteral("nokia"));
+    provider.setText(QStringLiteral("here"));
     place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
     place.setVisibility(QLocation::PublicVisibility);
 
@@ -210,7 +210,7 @@ QPlaceResult QPlaceSearchReplyImpl::parsePlaceResult(const QJsonObject &item) co
     return result;
 }
 
-QPlaceProposedSearchResult QPlaceSearchReplyImpl::parseSearchResult(const QJsonObject &item) const
+QPlaceProposedSearchResult QPlaceSearchReplyHere::parseSearchResult(const QJsonObject &item) const
 {
     QPlaceProposedSearchResult result;
 

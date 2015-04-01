@@ -1,6 +1,6 @@
 {
-    "Keys": ["nokia"],
-    "Provider": "nokia",
+    "Keys": ["here"],
+    "Provider": "here",
     "Version": 101,
     "Experimental": false,
     "Features": [

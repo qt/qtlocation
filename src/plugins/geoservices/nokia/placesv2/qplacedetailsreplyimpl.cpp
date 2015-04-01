@@ -329,7 +329,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
     //}
 
     QPlaceAttribute provider;
-    provider.setText(QLatin1String("nokia"));
+    provider.setText(QLatin1String("here"));
     place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
 
     place.setVisibility(QLocation::PublicVisibility);

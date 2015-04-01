@@ -34,42 +34,27 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACESEARCHREPLYIMPL_H
-#define QPLACESEARCHREPLYIMPL_H
+#ifndef QPLACECATEGORIESREPLYHERE_H
+#define QPLACECATEGORIESREPLYHERE_H
 
-#include <QtNetwork/QNetworkReply>
-#include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceReply>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceManagerEngineNokiaV2;
-class QPlaceResult;
-class QPlaceProposedSearchResult;
-
-class QPlaceSearchReplyImpl : public QPlaceSearchReply
+class QPlaceCategoriesReplyHere : public QPlaceReply
 {
     Q_OBJECT
 
 public:
-    explicit QPlaceSearchReplyImpl(const QPlaceSearchRequest &request,
-                                   QNetworkReply *reply,
-                                   QPlaceManagerEngineNokiaV2 *parent);
-    ~QPlaceSearchReplyImpl();
+    explicit QPlaceCategoriesReplyHere(QObject *parent = 0);
+    ~QPlaceCategoriesReplyHere();
 
-    void abort();
+    void emitFinished();
 
 private slots:
     void setError(QPlaceReply::Error error_, const QString &errorString);
-    void replyFinished();
-
-private:
-    QPlaceResult parsePlaceResult(const QJsonObject &item) const;
-    QPlaceProposedSearchResult parseSearchResult(const QJsonObject &item) const;
-
-    QNetworkReply *m_reply;
-    QPlaceManagerEngineNokiaV2 *m_engine;
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACESEARCHREPLYIMPL_H
+#endif // QPLACECATEGORIESREPLYHERE_H

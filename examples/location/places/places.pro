@@ -1,7 +1,7 @@
 TARGET = qml_location_places
 TEMPLATE = app
 
-QT += qml quick network
+QT += qml quick network positioning location
 SOURCES += qmlplaceswrapper.cpp
 
 RESOURCES += \

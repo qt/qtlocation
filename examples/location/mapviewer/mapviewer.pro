@@ -1,7 +1,7 @@
 TARGET = qml_location_mapviewer
 TEMPLATE = app
 
-QT += qml network quick
+QT += qml network quick positioning location
 SOURCES += qmlmapviewerwrapper.cpp
 
 RESOURCES += \

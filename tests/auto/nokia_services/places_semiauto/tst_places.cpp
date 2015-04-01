@@ -98,7 +98,7 @@ Q_DECLARE_METATYPE(tst_QPlaceManagerNokia::ExpectedResults)
 const QLatin1String tst_QPlaceManagerNokia::ValidKnownPlaceId("250u09tu-4561b8da952f4fd79c4e1998c3fcf032");
 
 const QLatin1String tst_QPlaceManagerNokia::ProxyEnv("NOKIA_PLUGIN_PROXY");
-const QLatin1String tst_QPlaceManagerNokia::AppIdEnv("NOKIA_APP_ID");
+const QLatin1String tst_QPlaceManagerNokia::AppIdEnv("NOKIA_APPID");
 const QLatin1String tst_QPlaceManagerNokia::TokenEnv("NOKIA_TOKEN");
 
 tst_QPlaceManagerNokia::tst_QPlaceManagerNokia()
@@ -109,12 +109,12 @@ void tst_QPlaceManagerNokia::initTestCase()
 {
     QVariantMap params;
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    QVERIFY(providers.contains("nokia"));
+    QVERIFY(providers.contains("here"));
 #ifndef QT_NO_PROCESS
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
     if (!(env.contains(AppIdEnv) && env.contains(TokenEnv)))
-        QSKIP("NOKIA_APP_ID and NOKIA_TOKEN environment variables not set");\
+        QSKIP("NOKIA_APPID and NOKIA_TOKEN environment variables not set");\
 
     params.insert(QStringLiteral("app_id"), env.value(AppIdEnv));
     params.insert(QStringLiteral("token"), env.value(TokenEnv));
@@ -122,9 +122,9 @@ void tst_QPlaceManagerNokia::initTestCase()
     if (env.contains(ProxyEnv))
         params.insert(QStringLiteral("proxy"), env.value(ProxyEnv));
 #else
-    QSKIP("Cannot parse process environment, NOKIA_APP_ID and NOKIA_TOKEN not set");
+    QSKIP("Cannot parse process environment, NOKIA_APPID and NOKIA_TOKEN not set");
 #endif
-    provider = new QGeoServiceProvider("nokia", params);
+    provider = new QGeoServiceProvider("here", params);
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
 }
@@ -377,6 +377,7 @@ void tst_QPlaceManagerNokia::recommendations_data()
 
 void tst_QPlaceManagerNokia::details()
 {
+    QSKIP("Fetching details from HERE place server always fails - QTBUG-44837");
     //fetch the details of a valid place
     QPlace place;
     QVERIFY(doFetchDetails(ValidKnownPlaceId, &place));
@@ -435,7 +436,7 @@ void tst_QPlaceManagerNokia::categories()
         //check we can retrieve the very same category by id
         QCOMPARE(placeManager->category(category.categoryId()), category);
 
-        //since the nokia plugin only supports a single level category tree
+        //since the here plugin only supports a single level category tree
         //check that there are no parent or children categories
         QVERIFY(placeManager->parentCategoryId(category.categoryId()).isEmpty());
         QVERIFY(placeManager->childCategories(category.categoryId()).isEmpty());
@@ -572,6 +573,13 @@ void tst_QPlaceManagerNokia::locale()
             }
         }
     }
+
+    // we are skipping the check below because we are requesting
+    // details for a place without a search before. This implies
+    // URL templating must be possible which the HERE place
+    // server refuses.
+
+    QSKIP("remainder of test skipped due to QTBUG-44837");
 
     //check that setting a locale will affect place detail fetches.
     QPlace place;

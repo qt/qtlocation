@@ -324,7 +324,7 @@ void QDeclarativeGeoMap::componentComplete()
 */
 void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 {
-    event->setAccepted(gestureArea_->mousePressEvent(event));
+    event->setAccepted(gestureArea_->handleMousePressEvent(event));
 }
 
 /*!
@@ -332,7 +332,7 @@ void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
-    event->setAccepted(gestureArea_->mouseMoveEvent(event));
+    event->setAccepted(gestureArea_->handleMouseMoveEvent(event));
 }
 
 /*!
@@ -340,7 +340,7 @@ void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 {
-    event->setAccepted(gestureArea_->mouseReleaseEvent(event));
+    event->setAccepted(gestureArea_->handleMouseReleaseEvent(event));
 }
 
 /*!
@@ -348,7 +348,7 @@ void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseUngrabEvent()
 {
-    gestureArea_->mouseUngrabEvent();
+    gestureArea_->handleMouseUngrabEvent();
 }
 
 /*!
@@ -552,12 +552,15 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
 {
     if (gestureArea_ && minimumZoomLevel >= 0) {
+        qreal oldMinimumZoomLevel = this->minimumZoomLevel();
         if (mappingManagerInitialized_
                 && minimumZoomLevel < mappingManager_->cameraCapabilities().minimumZoomLevel()) {
             minimumZoomLevel = mappingManager_->cameraCapabilities().minimumZoomLevel();
         }
         gestureArea_->setMinimumZoomLevel(minimumZoomLevel);
         setZoomLevel(qBound<qreal>(minimumZoomLevel, zoomLevel(), maximumZoomLevel()));
+        if (oldMinimumZoomLevel != minimumZoomLevel)
+            emit minimumZoomLevelChanged();
     }
 }
 
@@ -588,12 +591,15 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
 void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel)
 {
     if (gestureArea_ && maximumZoomLevel >= 0) {
+        qreal oldMaximumZoomLevel = this->maximumZoomLevel();
         if (mappingManagerInitialized_
                 && maximumZoomLevel > mappingManager_->cameraCapabilities().maximumZoomLevel()) {
             maximumZoomLevel = mappingManager_->cameraCapabilities().maximumZoomLevel();
         }
         gestureArea_->setMaximumZoomLevel(maximumZoomLevel);
         setZoomLevel(qBound<qreal>(minimumZoomLevel(), zoomLevel(), maximumZoomLevel));
+        if (oldMaximumZoomLevel != maximumZoomLevel)
+            emit maximumZoomLevelChanged();
     }
 }
 
@@ -820,12 +826,7 @@ QGeoServiceProvider::Error QDeclarativeGeoMap::error() const
 */
 void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
 {
-    if (!mappingManagerInitialized_) {
-        event->ignore();
-        return;
-    }
-    QLOC_TRACE0;
-    event->setAccepted(gestureArea_->touchEvent(event));
+    event->setAccepted(gestureArea_->handleTouchEvent(event));
 }
 
 /*!
@@ -833,9 +834,8 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
 */
 void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 {
-    QLOC_TRACE0;
-    event->accept();
-    gestureArea_->wheelEvent(event);
+    event->setAccepted(gestureArea_->handleWheelEvent(event));
+    //TODO: wheelAngleChanged wtf ?
     emit wheelAngleChanged(event->angleDelta());
 }
 
@@ -891,7 +891,7 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
             return false;
         return gestureArea_->filterMapChildTouchEvent(static_cast<QTouchEvent *>(event));
     case QEvent::Wheel:
-        return gestureArea_->wheelEvent(static_cast<QWheelEvent *>(event));
+        return gestureArea_->handleWheelEvent(static_cast<QWheelEvent *>(event));
     default:
         return false;
     }

@@ -160,15 +160,15 @@ public:
     QGeoServiceProvider::Error error() const;
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseUngrabEvent();
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
+    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
+    void mouseUngrabEvent() Q_DECL_OVERRIDE ;
 
-    void touchEvent(QTouchEvent *event);
-    void wheelEvent(QWheelEvent *event);
+    void touchEvent(QTouchEvent *event) Q_DECL_OVERRIDE ;
+    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE ;
 
-    bool childMouseEventFilter(QQuickItem *item, QEvent *event);
+    bool childMouseEventFilter(QQuickItem *item, QEvent *event) Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void wheelAngleChanged(QPoint angleDelta);

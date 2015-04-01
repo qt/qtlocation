@@ -32,8 +32,8 @@
 ****************************************************************************/
 
 #include "qplacemanagerengineosm.h"
-#include "qplacesearchreplyimpl.h"
-#include "qplacecategoriesreplyimpl.h"
+#include "qplacesearchreplyosm.h"
+#include "qplacecategoriesreplyosm.h"
 
 #include <QtCore/QUrlQuery>
 #include <QtCore/QXmlStreamReader>
@@ -180,7 +180,7 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
 
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(requestUrl));
 
-    QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(request, networkReply, this);
+    QPlaceSearchReplyOsm *reply = new QPlaceSearchReplyOsm(request, networkReply, this);
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -197,7 +197,7 @@ QPlaceReply *QPlaceManagerEngineOsm::initializeCategories()
         fetchNextCategoryLocale();
     }
 
-    QPlaceCategoriesReplyImpl *reply = new QPlaceCategoriesReplyImpl(this);
+    QPlaceCategoriesReplyOsm *reply = new QPlaceCategoriesReplyOsm(this);
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -310,14 +310,14 @@ void QPlaceManagerEngineOsm::categoryReplyFinished()
         m_categoryLocales.clear();
     }
 
-    foreach (QPlaceCategoriesReplyImpl *reply, m_pendingCategoriesReply)
+    foreach (QPlaceCategoriesReplyOsm *reply, m_pendingCategoriesReply)
         reply->emitFinished();
     m_pendingCategoriesReply.clear();
 }
 
 void QPlaceManagerEngineOsm::categoryReplyError()
 {
-    foreach (QPlaceCategoriesReplyImpl *reply, m_pendingCategoriesReply)
+    foreach (QPlaceCategoriesReplyOsm *reply, m_pendingCategoriesReply)
         reply->setError(QPlaceReply::CommunicationError, tr("Network request error"));
 }
 

@@ -26,7 +26,7 @@
 ****************************************************************************/
 
 /*!
-\page location-plugin-nokia.html
+\page location-plugin-here.html
 \title Qt Location HERE Plugin
 \ingroup QtLocation-plugins
 
@@ -35,14 +35,14 @@
 \section1 Overview
 
 Included with Qt Location is a geo services plugin which accesses the relevant HERE services
-provided by Nokia.  The use of these services is governed by the terms and conditions
+provided by HERE/Nokia.  The use of these services is governed by the terms and conditions
 available at \l {https://developer.here.com/terms-conditions}.
 
 Note that accepting the terms and conditions only applies those terms and conditions to the use of
 the HERE geo services plugin and does not limit the use of the other geo services plugins that may
 be included with Qt.
 
-The HERE geo services plugin can be loaded by using the plugin key "nokia".
+The HERE geo services plugin can be loaded by using the plugin key "here".
 
 The online plugin uses the tiled map classes, which caches tile data in heap memory and texture
 memory.
@@ -130,7 +130,7 @@ authentication.
 
 \code
 Plugin {
-    name: "nokia"
+    name: "here"
     PluginParameter { name: "app_id"; value: "myapp" }
     PluginParameter { name: "token"; value: "abcdefg12345" }
 }
@@ -143,7 +143,7 @@ QMap<QString,QVariant> params;
 params["app_id"] = "myapp";
 params["token"] = "abcdefg12345";
 
-QGeoServiceProvider *gsp = new QGeoServiceProvider("nokia", params);
+QGeoServiceProvider *gsp = new QGeoServiceProvider("here", params);
 \endcode
 
 \section1 Places
@@ -304,7 +304,7 @@ At the time of writing, it is known that some places provide \c openingHours
 (QPlaceAttribute::OpeningHours) and \c payment (QPlaceAttribute::Payment)
 methods but other attributes may be made available by the backend server.  All
 places provided by the plugin will have the \c x_provider
-(QPlaceAttribute::Provider)  attribute set to \c nokia.
+(QPlaceAttribute::Provider)  attribute set to \c here.
 
 \section3 Restrictions of Usage - ExtendedAttributes and Content
 The extended attributes  and rich content of places are not permitted

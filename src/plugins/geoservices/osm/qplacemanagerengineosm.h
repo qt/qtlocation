@@ -41,7 +41,7 @@ QT_BEGIN_NAMESPACE
 
 class QNetworkAccessManager;
 class QNetworkReply;
-class QPlaceCategoriesReplyImpl;
+class QPlaceCategoriesReplyOsm;
 
 class QPlaceManagerEngineOsm : public QPlaceManagerEngine
 {
@@ -78,7 +78,7 @@ private:
     QList<QLocale> m_locales;
 
     QNetworkReply *m_categoriesReply;
-    QList<QPlaceCategoriesReplyImpl *> m_pendingCategoriesReply;
+    QList<QPlaceCategoriesReplyOsm *> m_pendingCategoriesReply;
     QHash<QString, QPlaceCategory> m_categories;
     QHash<QString, QStringList> m_subcategories;
 

@@ -102,7 +102,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 
     \list
         \li "mapbox" -> \l {Qt Location Mapbox Plugin}{Mapbox service}
-        \li "nokia" -> \l {Qt Location HERE Plugin}{HERE Services}
+        \li "here" -> \l {Qt Location HERE Plugin}{HERE Services}
         \li "osm" -> \l {Qt Location Open Street Map Plugin}{OpenStreetMap Services}
     \endlist
 */
@@ -223,7 +223,11 @@ QGeoServiceProvider::QGeoServiceProvider(const QString &providerName,
 {
     d_ptr->experimental = allowExperimental;
     d_ptr->parameterMap = parameters;
-    d_ptr->providerName = providerName;
+    // TODO Qt 6 Remove silent nokia rename
+    if (providerName == QStringLiteral("nokia"))
+        d_ptr->providerName = QStringLiteral("here");
+    else
+        d_ptr->providerName = providerName;
     d_ptr->loadMeta();
 }
 
