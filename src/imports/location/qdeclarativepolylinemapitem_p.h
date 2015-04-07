@@ -109,7 +109,7 @@ public:
     Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
 
     QJSValue path() const;
-    void setPath(const QJSValue &value);
+    virtual void setPath(const QJSValue &value);
 
     bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
 
@@ -120,6 +120,7 @@ Q_SIGNALS:
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
+    void setPathFromGeoList(const QList<QGeoCoordinate> &path);
 
 protected Q_SLOTS:
     virtual void updateMapItem() Q_DECL_OVERRIDE;

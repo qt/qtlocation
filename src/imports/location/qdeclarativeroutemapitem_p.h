@@ -47,42 +47,27 @@ QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoRoute;
 
-class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
+class QDeclarativeRouteMapItem : public QDeclarativePolylineMapItem
 {
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
-    Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
 
 public:
     explicit QDeclarativeRouteMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRouteMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
-    //from QuickItem
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
-
     QDeclarativeGeoRoute *route() const;
     void setRoute(QDeclarativeGeoRoute *route);
-
-    QDeclarativeMapLineProperties *line();
-
-    bool contains(const QPointF &point) const;
 
 Q_SIGNALS:
     void routeChanged(const QDeclarativeGeoRoute *route);
 
-protected Q_SLOTS:
-    virtual void updateMapItem();
-    void updateAfterLinePropertiesChanged();
-    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
+protected:
+    void setPath(const QJSValue &value) Q_DECL_OVERRIDE;
 
 private:
-    QDeclarativeMapLineProperties line_;
     QDeclarativeGeoRoute *route_;
-    QList<QGeoCoordinate> path_;
-    bool dirtyMaterial_;
-    QGeoMapPolylineGeometry geometry_;
 };
 
 QT_END_NAMESPACE

@@ -78,40 +78,13 @@
 
 
 QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), route_(0)
+:   QDeclarativePolylineMapItem(parent), route_(0)
 {
     setFlag(ItemHasContents, true);
-    line_.setWidth(3.0);
-    QObject::connect(&line_, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(updateAfterLinePropertiesChanged()));
-    QObject::connect(&line_, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(updateAfterLinePropertiesChanged()));
 }
 
 QDeclarativeRouteMapItem::~QDeclarativeRouteMapItem()
 {
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeRouteMapItem::updateAfterLinePropertiesChanged()
-{
-    // mark dirty just in case we're a width change
-    geometry_.markSourceDirty();
-    updateMapItem();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
-{
-    QDeclarativeGeoMapItemBase::setMap(quickMap,map);
-    if (map) {
-        geometry_.markSourceDirty();
-        updateMapItem();
-    }
 }
 
 /*!
@@ -132,110 +105,20 @@ void QDeclarativeRouteMapItem::setRoute(QDeclarativeGeoRoute *route)
 
     route_ = route;
 
-    if (route_) {
-        path_ = route_->routePath();
-    } else {
-        path_ = QList<QGeoCoordinate>();
-    }
+    if (route_)
+        setPathFromGeoList(route_->routePath());
 
-    geometry_.markSourceDirty();
-    updateMapItem();
     emit routeChanged(route_);
-
 }
 
 /*!
-    \internal
-*/
-QSGNode *QDeclarativeRouteMapItem::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
+   \internal void QDeclarativeRouteMapItem::setPath(const QJSValue &value)
+
+   Used to disable path property on the RouteMapItem
+ */
+void QDeclarativeRouteMapItem::setPath(const QJSValue &value)
 {
-    Q_UNUSED(data);
-
-    MapPolylineNode *node = static_cast<MapPolylineNode *>(oldNode);
-
-    if (!node) {
-        node = new MapPolylineNode();
-    }
-
-    //TODO: update only material
-    if (geometry_.isScreenDirty() || dirtyMaterial_) {
-        geometry_.setPreserveGeometry(false);
-        node->update(line_.color(), &geometry_);
-        geometry_.markClean();
-        dirtyMaterial_ = false;
-    }
-    return node;
-}
-
-/*!
-    \qmlpropertygroup Location::MapRoute::line
-    \qmlproperty int MapRoute::line.width
-    \qmlproperty color MapRoute::line.color
-
-    This property is part of the line property group.
-    The line property group holds the width and color used to draw the line.
-
-    The width is in pixels and is independent of the zoom level of the map.
-    The default values correspond to a black border with a width of 1 pixel.
-
-    For no line, use a width of 0 or a transparent color.
-*/
-
-QDeclarativeMapLineProperties *QDeclarativeRouteMapItem::line()
-{
-    return &line_;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeRouteMapItem::updateMapItem()
-{
-    if (!map() || path_.isEmpty())
-        return;
-
-    geometry_.updateSourcePoints(*map(), path_);
-    geometry_.updateScreenPoints(*map(), line_.width());
-    setWidth(geometry_.sourceBoundingBox().width());
-    setHeight(geometry_.sourceBoundingBox().height());
-
-    setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
-    update();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeRouteMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
-{
-    // if the scene is tilted, we must regenerate our geometry every frame
-    if (map()->cameraCapabilities().supportsTilting()
-            && (event.cameraData.tilt() > 0.1
-                || event.cameraData.tilt() < -0.1)) {
-        geometry_.markSourceDirty();
-    }
-
-    // if the scene is rolled, we must regen too
-    if (map()->cameraCapabilities().supportsRolling()
-            && (event.cameraData.roll() > 0.1
-                || event.cameraData.roll() < -0.1)) {
-        geometry_.markSourceDirty();
-    }
-
-    // otherwise, only regen on rotate, resize and zoom
-    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
-        geometry_.markSourceDirty();
-    }
-
-    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
-    geometry_.markScreenDirty();
-    updateMapItem();
-}
-
-/*!
-    \internal
-*/
-bool QDeclarativeRouteMapItem::contains(const QPointF &point) const
-{
-    return geometry_.contains(point);
+    Q_UNUSED(value);
+    qWarning() << "Can not set the path on QDeclarativeRouteMapItem."
+               << "Please use the route property instead.";
 }
