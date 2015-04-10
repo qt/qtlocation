@@ -34,25 +34,18 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVE3DGRAPHICSGEOMAP_H
-#define QDECLARATIVE3DGRAPHICSGEOMAP_H
+#ifndef QDECLARATIVEGEOMAP_H
+#define QDECLARATIVEGEOMAP_H
 
-#include <QPointer>
-#include <QTouchEvent>
-#include <QBasicTimer>
-#include <QtQuick/QQuickItem>
-#include <QtCore/QMutex>
-
-#include <QtCore/QCoreApplication>
-
-#include <QtQuick/QSGTexture>
-#include <QtQuick/QQuickPaintedItem>
-#include <QtQml/QQmlParserStatus>
 #include "qgeoserviceprovider.h"
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapgesturearea_p.h"
-#include "qgeomapcontroller_p.h"
-#include "qdeclarativegeomapcopyrightsnotice_p.h"
+#include "qgeocameradata_p.h"
+#include <QtQuick/QQuickItem>
+#include <QtCore/QPointer>
+#include <QtCore/QMutex>
+
+
 
 //#define QT_DECLARATIVE_LOCATION_TRACE 1
 
@@ -66,28 +59,11 @@
 #define QLOC_TRACE2(msg1, msg2)
 #endif
 
-#include "qgeocameradata_p.h"
-#include "qgeomap_p.h"
-#include "qdeclarativegeomaptype_p.h"
-
 QT_BEGIN_NAMESPACE
 
-class QGLSceneNode;
-class QGeoTileCache;
-class Tile;
-class QGeoTileSpec;
-class QGeoMapSphere;
-class QGeoMappingManager;
-
-class QGeoCoordinate;
-class QGeoMapObject;
-class QGeoMapData;
-class QGeoServiceProvider;
 class QDeclarativeGeoServiceProvider;
-class QDeclarativeGeoMap;
-class QDeclarativeGeoMapItem;
-class QDeclarativeGeoMapItemBase;
 class QDeclarativeGeoMapType;
+class QDeclarativeGeoMapCopyrightNotice;
 
 class QDeclarativeGeoMap : public QQuickItem
 {
@@ -110,13 +86,6 @@ public:
 
     explicit QDeclarativeGeoMap(QQuickItem *parent = 0);
     ~QDeclarativeGeoMap();
-
-    // From QQmlParserStatus
-    virtual void componentComplete();
-
-    // from QQuickItem
-    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
-    virtual void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
@@ -160,6 +129,18 @@ public:
     QString errorString() const;
     QGeoServiceProvider::Error error() const;
 
+Q_SIGNALS:
+    void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
+    void zoomLevelChanged(qreal zoomLevel);
+    void centerChanged(const QGeoCoordinate &coordinate);
+    void activeMapTypeChanged();
+    void supportedMapTypesChanged();
+    void minimumZoomLevelChanged();
+    void maximumZoomLevelChanged();
+    void mapItemsChanged();
+    void errorChanged();
+    void copyrightLinkActivated(const QString &link);
+
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
@@ -173,17 +154,11 @@ protected:
     bool sendMouseEvent(QMouseEvent *event);
     bool sendTouchEvent(QTouchEvent *event);
 
-Q_SIGNALS:
-    void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
-    void zoomLevelChanged(qreal zoomLevel);
-    void centerChanged(const QGeoCoordinate &coordinate);
-    void activeMapTypeChanged();
-    void supportedMapTypesChanged();
-    void minimumZoomLevelChanged();
-    void maximumZoomLevelChanged();
-    void mapItemsChanged();
-    void errorChanged();
-    void copyrightLinkActivated(const QString &link);
+    void componentComplete() Q_DECL_OVERRIDE;
+    QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_OVERRIDE;
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
+
+    void setError(QGeoServiceProvider::Error error, const QString &errorString);
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF &target);
@@ -192,43 +167,30 @@ private Q_SLOTS:
     void pluginReady();
     void onMapChildrenChanged();
 
-protected:
-    void setError(QGeoServiceProvider::Error error, const QString &errorString);
-
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void populateMap();
     void fitViewportToMapItemsRefine(bool refine);
     bool isInteractive();
 
-    QDeclarativeGeoServiceProvider *plugin_;
-    QGeoServiceProvider *serviceProvider_;
-    QGeoMappingManager *mappingManager_;
-
-    qreal zoomLevel_;
-    qreal bearing_;
-    qreal tilt_;
-    QGeoCoordinate center_;
-
-    QDeclarativeGeoMapType *activeMapType_;
-    QList<QDeclarativeGeoMapType *> supportedMapTypes_;
-    bool componentCompleted_;
-    bool mappingManagerInitialized_;
-    QList<QDeclarativeGeoMapItemView *> mapViews_;
-
-    QDeclarativeGeoMapGestureArea *gestureArea_;
-
-    int touchTimer_;
-
-    QGeoMap *map_;
-    QPointer<QDeclarativeGeoMapCopyrightNotice> copyrightsWPtr_;
-
-    QList<QPointer<QDeclarativeGeoMapItemBase> > mapItems_;
-
-    QMutex updateMutex_;
-
-    QString errorString_;
-    QGeoServiceProvider::Error error_;
+private:
+    QDeclarativeGeoServiceProvider *m_plugin;
+    QGeoServiceProvider *m_serviceProvider;
+    QGeoMappingManager *m_mappingManager;
+    QGeoCoordinate m_center;
+    QDeclarativeGeoMapType *m_activeMapType;
+    QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
+    QList<QDeclarativeGeoMapItemView *> m_mapViews;
+    QDeclarativeGeoMapGestureArea *m_gestureArea;
+    QGeoMap *m_map;
+    QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
+    QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
+    QMutex m_updateMutex;
+    QString m_errorString;
+    QGeoServiceProvider::Error m_error;
+    qreal m_zoomLevel;
+    bool m_componentCompleted;
+    bool m_mappingManagerInitialized;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;
