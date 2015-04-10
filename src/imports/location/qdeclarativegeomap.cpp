@@ -182,7 +182,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_componentCompleted(false),
         m_mappingManagerInitialized(false)
 {
-    QLOC_TRACE0;
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton);
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
@@ -298,8 +297,6 @@ void QDeclarativeGeoMap::pluginReady()
 */
 void QDeclarativeGeoMap::componentComplete()
 {
-    QLOC_TRACE0;
-
     m_componentCompleted = true;
     populateMap();
     QQuickItem::componentComplete();
@@ -926,7 +923,6 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
 
 void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 {
-    QLOC_TRACE0;
     if (!item || item->quickMap())
         return;
     m_updateMutex.lock();
@@ -970,7 +966,6 @@ QList<QObject *> QDeclarativeGeoMap::mapItems()
 */
 void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 {
-    QLOC_TRACE0;
     if (!ptr || !m_map)
         return;
     QPointer<QDeclarativeGeoMapItemBase> item(ptr);
@@ -994,7 +989,6 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 */
 void QDeclarativeGeoMap::clearMapItems()
 {
-    QLOC_TRACE0;
     if (m_mapItems.isEmpty())
         return;
     m_updateMutex.lock();

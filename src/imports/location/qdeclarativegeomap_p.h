@@ -47,17 +47,7 @@
 
 
 
-//#define QT_DECLARATIVE_LOCATION_TRACE 1
 
-#ifdef QT_DECLARATIVE_LOCATION_TRACE
-#define QLOC_TRACE0 qDebug() << __FILE__ << __FUNCTION__;
-#define QLOC_TRACE1(msg1) qDebug() << __FILE__ << __FUNCTION__ << msg1;
-#define QLOC_TRACE2(msg1, msg2) qDebug() << __FILE__ << __FUNCTION__ << msg1 << msg2;
-#else
-#define QLOC_TRACE0
-#define QLOC_TRACE1(msg1)
-#define QLOC_TRACE2(msg1, msg2)
-#endif
 
 QT_BEGIN_NAMESPACE
 
