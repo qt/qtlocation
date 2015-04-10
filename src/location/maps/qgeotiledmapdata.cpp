@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 
 
 QGeoTiledMapData::QGeoTiledMapData(QGeoTiledMappingManagerEngine *engine, QObject *parent)
-    : QGeoMapData(engine, parent)
+    : QGeoMap(engine, parent)
 {
     d_ptr = new QGeoTiledMapDataPrivate(this, engine);
     engine->registerMap(this);

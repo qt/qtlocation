@@ -78,7 +78,7 @@ QGeoTiledMappingManagerEngineOsm::~QGeoTiledMappingManagerEngineOsm()
 {
 }
 
-QGeoMapData *QGeoTiledMappingManagerEngineOsm::createMapData()
+QGeoMap *QGeoTiledMappingManagerEngineOsm::createMapData()
 {
     return new QGeoTiledMapDataOsm(this);
 }

@@ -50,7 +50,7 @@
 #include <QObject>
 #include <QString>
 
-#include "qgeomapdata_p.h"
+#include "qgeomap_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
 
@@ -70,7 +70,7 @@ class QSGNode;
 
 class QPointF;
 
-class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
+class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMap
 {
     Q_OBJECT
 public:

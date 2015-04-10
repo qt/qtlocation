@@ -132,8 +132,8 @@ QGeoCameraCapabilities QGeoMappingManager::cameraCapabilities() const
 */
 QGeoMap *QGeoMappingManager::createMap(QObject *parent)
 {
-    QGeoMapData *mapData = d_ptr->engine->createMapData();
-    QGeoMap *map = new QGeoMap(mapData, parent);
+    QGeoMap * map = d_ptr->engine->createMapData();
+    connect(parent,&QObject::destroyed,map,&QGeoMap::deleteLater);
     return map;
 }
 

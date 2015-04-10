@@ -36,14 +36,14 @@
 
 #include "qgeomapcontroller_p.h"
 
-#include "qgeomapdata_p.h"
+#include "qgeomap_p.h"
 #include <QtPositioning/private/qgeoprojection_p.h>
 
 #include <QPointF>
 
 QT_BEGIN_NAMESPACE
 
-QGeoMapController::QGeoMapController(QGeoMapData *map)
+QGeoMapController::QGeoMapController(QGeoMap *map)
     : QObject(map),
       map_(map)
 {

@@ -378,7 +378,7 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
     return copyrightsText;
 }
 
-QGeoMapData *QGeoTiledMappingManagerEngineNokia::createMapData()
+QGeoMap *QGeoTiledMappingManagerEngineNokia::createMapData()
 {
     return new QGeoTiledMapDataNokia(this);
 }

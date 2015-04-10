@@ -515,7 +515,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     // Map tiles are built in this call
     m_map->resize(width(), height());
     // This prefetches a buffer around the map
-    m_map->cameraStopped();
+    m_map->prefetchData();
     m_map->update();
 
     emit minimumZoomLevelChanged();
@@ -785,7 +785,7 @@ void QDeclarativeGeoMap::cameraStopped()
 {
     if (!m_mappingManagerInitialized)
         return;
-    m_map->cameraStopped();
+    m_map->prefetchData();
 }
 
 /*!

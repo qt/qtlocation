@@ -85,7 +85,7 @@ QGeoTiledMappingManagerEngineMapbox::~QGeoTiledMappingManagerEngineMapbox()
 {
 }
 
-QGeoMapData *QGeoTiledMappingManagerEngineMapbox::createMapData()
+QGeoMap *QGeoTiledMappingManagerEngineMapbox::createMapData()
 {
     return new QGeoTiledMapData(this, 0);
 }

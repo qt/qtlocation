@@ -72,7 +72,7 @@ public:
         setTileFetcher(fetcher);
     }
 
-    QGeoMapData *createMapData()
+    QGeoMap *createMapData()
     {
         return new QGeoTiledMapDataTest(this);;
     }

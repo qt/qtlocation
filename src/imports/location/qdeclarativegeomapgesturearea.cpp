@@ -358,7 +358,7 @@ void QDeclarativeGeoMapGestureArea::setMap(QGeoMap *map)
     pan_.animation_->setEasingCurve(QEasingCurve(QEasingCurve::OutQuad));
     connect(pan_.animation_, SIGNAL(finished()), this, SLOT(endFlick()));
     connect(this, SIGNAL(movementStopped()),
-            map_, SLOT(cameraStopped()));
+            map_, SLOT(prefetchData()));
 }
 
 QDeclarativeGeoMapGestureArea::~QDeclarativeGeoMapGestureArea()

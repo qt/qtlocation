@@ -54,7 +54,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapData;
+class QGeoMap;
 
 
 class Q_LOCATION_EXPORT QGeoMapController : public QObject
@@ -68,7 +68,7 @@ class Q_LOCATION_EXPORT QGeoMapController : public QObject
     Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
 
 public:
-    QGeoMapController(QGeoMapData *map);
+    QGeoMapController(QGeoMap *map);
     ~QGeoMapController();
 
     QGeoCoordinate center() const;
@@ -103,7 +103,7 @@ Q_SIGNALS:
     void zoomChanged(qreal zoom);
 
 private:
-    QGeoMapData *map_;
+    QGeoMap *map_;
     QGeoCameraData oldCameraData_;
 };
 

@@ -35,7 +35,7 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 
-#include <QtLocation/private/qgeomapdata_p.h>
+#include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeomapcontroller_p.h>
 
 // cross-reference test plugin, where concrete subclasses are needed
