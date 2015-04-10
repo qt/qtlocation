@@ -33,32 +33,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qgeomapdata_p.h"
 #include "qgeomapdata_p_p.h"
-#include "qgeomap_p.h"
-
-#include "qgeotilecache_p.h"
-#include "qgeotilespec_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomapcontroller_p.h"
-
-#include "qgeocameratiles_p.h"
-#include "qgeotilerequestmanager_p.h"
-#include "qgeomapscene_p.h"
-
-#include "qgeomappingmanager_p.h"
-
-
-#include <QtPositioning/private/qgeoprojection_p.h>
-#include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtPositioning/private/qdoublevector3d_p.h>
-
-#include <QMutex>
-#include <QMap>
-
-#include <qnumeric.h>
-
-#include <cmath>
+#include "qgeomappingmanagerengine_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -155,15 +135,15 @@ QGeoMappingManagerEngine *QGeoMapData::engine()
 }
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapData *parent)
-    : width_(0),
-      height_(0),
-      aspectRatio_(0.0),
-      map_(parent),
-      engine_(engine),
-      controller_(0),
-      activeMapType_(QGeoMapType())
+    : m_width(0),
+      m_height(0),
+      m_aspectRatio(0.0),
+      m_map(parent),
+      m_engine(engine),
+      m_controller(0),
+      m_activeMapType(QGeoMapType())
 {
-    pluginString_ = engine_->managerName() + QLatin1Char('_') + QString::number(engine_->managerVersion());
+    m_pluginString = m_engine->managerName() + QLatin1Char('_') + QString::number(m_engine->managerVersion());
 }
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
@@ -176,49 +156,49 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
 
 QGeoMappingManagerEngine *QGeoMapDataPrivate::engine() const
 {
-    return engine_;
+    return m_engine;
 }
 
 QString QGeoMapDataPrivate::pluginString()
 {
-    return pluginString_;
+    return m_pluginString;
 }
 
 QGeoMapController *QGeoMapDataPrivate::mapController()
 {
-    if (!controller_)
-        controller_ = new QGeoMapController(map_);
-    return controller_;
+    if (!m_controller)
+        m_controller = new QGeoMapController(m_map);
+    return m_controller;
 }
 
 void QGeoMapDataPrivate::setCameraData(const QGeoCameraData &cameraData)
 {
-    QGeoCameraData oldCameraData = cameraData_;
-    cameraData_ = cameraData;
+    QGeoCameraData oldCameraData = m_cameraData;
+    m_cameraData = cameraData;
 
-    if (engine_) {
-        QGeoCameraCapabilities capabilities = engine_->cameraCapabilities();
-        if (cameraData_.zoomLevel() < capabilities.minimumZoomLevel())
-            cameraData_.setZoomLevel(capabilities.minimumZoomLevel());
+    if (m_engine) {
+        QGeoCameraCapabilities capabilities = m_engine->cameraCapabilities();
+        if (m_cameraData.zoomLevel() < capabilities.minimumZoomLevel())
+            m_cameraData.setZoomLevel(capabilities.minimumZoomLevel());
 
-        if (cameraData_.zoomLevel() > capabilities.maximumZoomLevel())
-            cameraData_.setZoomLevel(capabilities.maximumZoomLevel());
+        if (m_cameraData.zoomLevel() > capabilities.maximumZoomLevel())
+            m_cameraData.setZoomLevel(capabilities.maximumZoomLevel());
 
         if (!capabilities.supportsBearing())
-            cameraData_.setBearing(0.0);
+            m_cameraData.setBearing(0.0);
 
         if (capabilities.supportsTilting()) {
-            if (cameraData_.tilt() < capabilities.minimumTilt())
-                cameraData_.setTilt(capabilities.minimumTilt());
+            if (m_cameraData.tilt() < capabilities.minimumTilt())
+                m_cameraData.setTilt(capabilities.minimumTilt());
 
-            if (cameraData_.tilt() > capabilities.maximumTilt())
-                cameraData_.setTilt(capabilities.maximumTilt());
+            if (m_cameraData.tilt() > capabilities.maximumTilt())
+                m_cameraData.setTilt(capabilities.maximumTilt());
         } else {
-            cameraData_.setTilt(0.0);
+            m_cameraData.setTilt(0.0);
         }
 
         if (!capabilities.supportsRolling())
-            cameraData_.setRoll(0.0);
+            m_cameraData.setRoll(0.0);
     }
 
     // Do not call this expensive function if the width is 0, since it will get called
@@ -226,51 +206,51 @@ void QGeoMapDataPrivate::setCameraData(const QGeoCameraData &cameraData)
     // this is mainly an optimization to the initialization of the geomap, which would otherwise
     // call changeCameraData four or more times
     if (width() > 0)
-        map_->changeCameraData(oldCameraData);
+        m_map->changeCameraData(oldCameraData);
 }
 
 QGeoCameraData QGeoMapDataPrivate::cameraData() const
 {
-    return cameraData_;
+    return m_cameraData;
 }
 
 void QGeoMapDataPrivate::resize(int width, int height)
 {
-    width_ = width;
-    height_ = height;
-    aspectRatio_ = 1.0 * width_ / height_;
-    map_->mapResized(width, height);
-    setCameraData(cameraData_);
+    m_width = width;
+    m_height = height;
+    m_aspectRatio = 1.0 * m_width / m_height;
+    m_map->mapResized(width, height);
+    setCameraData(m_cameraData);
 }
 
 int QGeoMapDataPrivate::width() const
 {
-    return width_;
+    return m_width;
 }
 
 int QGeoMapDataPrivate::height() const
 {
-    return height_;
+    return m_height;
 }
 
 double QGeoMapDataPrivate::aspectRatio() const
 {
-    return aspectRatio_;
+    return m_aspectRatio;
 }
 
 void QGeoMapDataPrivate::setActiveMapType(const QGeoMapType &type)
 {
-    activeMapType_ = type;
+    m_activeMapType = type;
 
-    map_->changeActiveMapType(type);
-    setCameraData(cameraData_);
+    m_map->changeActiveMapType(type);
+    setCameraData(m_cameraData);
 
-    map_->update();
+    m_map->update();
 }
 
 const QGeoMapType QGeoMapDataPrivate::activeMapType() const
 {
-  return activeMapType_;
+  return m_activeMapType;
 }
 
 QT_END_NAMESPACE

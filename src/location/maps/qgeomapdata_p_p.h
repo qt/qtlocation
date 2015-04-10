@@ -47,25 +47,12 @@
 // We mean it.
 //
 
-#include <QList>
-#include <QSet>
-#include <QVector>
-#include <QPair>
-#include <QPolygonF>
-#include <QSizeF>
-#include <QMatrix4x4>
-#include <QString>
-
-#include <QtPositioning/private/qdoublevector3d_p.h>
-
-
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEngine;
-
 class QGeoMapData;
 class QGeoMapController;
 
@@ -92,17 +79,17 @@ public:
     QString pluginString();
 
 private:
-    int width_;
-    int height_;
-    double aspectRatio_;
+    int m_width;
+    int m_height;
+    double m_aspectRatio;
 
-    QGeoMapData *map_;
-    QGeoMappingManagerEngine *engine_;
-    QString pluginString_;
-    QGeoMapController *controller_;
+    QGeoMapData *m_map;
+    QGeoMappingManagerEngine *m_engine;
+    QString m_pluginString;
+    QGeoMapController *m_controller;
 
-    QGeoCameraData cameraData_;
-    QGeoMapType activeMapType_;
+    QGeoCameraData m_cameraData;
+    QGeoMapType m_activeMapType;
 };
 
 QT_END_NAMESPACE
