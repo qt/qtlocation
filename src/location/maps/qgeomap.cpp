@@ -36,122 +36,101 @@
 
 #include "qgeomap_p.h"
 #include "qgeomapdata_p.h"
-
-#include "qgeotilecache_p.h"
-#include "qgeotilespec_p.h"
-
 #include "qgeocameracapabilities_p.h"
-#include "qgeomapcontroller_p.h"
-
-#include <QtPositioning/private/qgeoprojection_p.h>
-#include <QtPositioning/private/qdoublevector3d_p.h>
-
-#include "qgeocameratiles_p.h"
-#include "qgeotilerequestmanager_p.h"
-#include "qgeomapscene_p.h"
-
-#include "qgeomappingmanager_p.h"
-
-#include <QMutex>
-#include <QMap>
-
-#include <qnumeric.h>
-
-#include <QtQuick/QSGNode>
-
-#include <cmath>
 
 QT_BEGIN_NAMESPACE
 
 QGeoMap::QGeoMap(QGeoMapData *mapData, QObject *parent)
     : QObject(parent),
-      mapData_(mapData)
+      m_mapData(mapData)
 {
-    connect(mapData_, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SIGNAL(cameraDataChanged(QGeoCameraData)));
-    connect(mapData_, SIGNAL(updateRequired()), this, SIGNAL(updateRequired()));
-    connect(mapData_, SIGNAL(activeMapTypeChanged()), this, SIGNAL(activeMapTypeChanged()));
-    connect(mapData_, SIGNAL(copyrightsChanged(QImage)), this, SIGNAL(copyrightsChanged(QImage)));
-    connect(mapData_, SIGNAL(copyrightsChanged(QString)), this, SIGNAL(copyrightsChanged(QString)));
+    connect(m_mapData, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SIGNAL(cameraDataChanged(QGeoCameraData)));
+    connect(m_mapData, SIGNAL(updateRequired()), this, SIGNAL(updateRequired()));
+    connect(m_mapData, SIGNAL(activeMapTypeChanged()), this, SIGNAL(activeMapTypeChanged()));
+    connect(m_mapData, SIGNAL(copyrightsChanged(QImage)), this, SIGNAL(copyrightsChanged(QImage)));
+    connect(m_mapData, SIGNAL(copyrightsChanged(QString)), this, SIGNAL(copyrightsChanged(QString)));
 }
 
 QGeoMap::~QGeoMap()
 {
-    delete mapData_;
+    delete m_mapData;
 }
 
 QGeoMapController *QGeoMap::mapController()
 {
-    return mapData_->mapController();
+    return m_mapData->mapController();
 }
 
 QSGNode *QGeoMap::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
-    return mapData_->updateSceneGraph(oldNode, window);
+    return m_mapData->updateSceneGraph(oldNode, window);
 }
 
 void QGeoMap::resize(int width, int height)
 {
-    mapData_->resize(width, height);
+    m_mapData->resize(width, height);
 }
 
 int QGeoMap::width() const
 {
-    return mapData_->width();
+    return m_mapData->width();
 }
 
 int QGeoMap::height() const
 {
-    return mapData_->height();
+    return m_mapData->height();
 }
 
 QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
-    return mapData_->cameraCapabilities();
+    return m_mapData->cameraCapabilities();
 }
 
 void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
 {
-    mapData_->setCameraData(cameraData);
+    m_mapData->setCameraData(cameraData);
 }
 
 void QGeoMap::cameraStopped()
 {
-    mapData_->prefetchData();
+    m_mapData->prefetchData();
 }
 
 QGeoCameraData QGeoMap::cameraData() const
 {
-    return mapData_->cameraData();
+    return m_mapData->cameraData();
 }
 
 QGeoCoordinate QGeoMap::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
 {
-    return mapData_->itemPositionToCoordinate(pos, clipToViewport);
+    return m_mapData->itemPositionToCoordinate(pos, clipToViewport);
 }
 
 QDoubleVector2D QGeoMap::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
-    return mapData_->coordinateToItemPosition(coordinate, clipToViewport);
+    return m_mapData->coordinateToItemPosition(coordinate, clipToViewport);
 }
 
 void QGeoMap::update()
 {
-    emit mapData_->update();
+    emit m_mapData->update();
 }
 
 void QGeoMap::setActiveMapType(const QGeoMapType type)
 {
-    mapData_->setActiveMapType(type);
+    m_mapData->setActiveMapType(type);
 }
 
 const QGeoMapType QGeoMap::activeMapType() const
 {
-    return mapData_->activeMapType();
+    return m_mapData->activeMapType();
 }
 
 QString QGeoMap::pluginString()
 {
-    return mapData_->pluginString();
+    return m_mapData->pluginString();
 }
+
+#include "moc_qgeomap_p.cpp"
 
 QT_END_NAMESPACE

@@ -47,27 +47,19 @@
 // We mean it.
 //
 
-#include <QObject>
-
-#include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
+#include <QtCore/QObject>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
-class QGeoMappingManager;
-
+class QGeoCameraData;
 class QGeoMapController;
-class QGeoCameraCapabilities;
-
 class QGeoMapData;
-
+class QGeoCameraCapabilities;
+class QGeoCoordinate;
 class QSGNode;
 class QQuickWindow;
-
-class QPointF;
 
 class Q_LOCATION_EXPORT QGeoMap : public QObject
 {
@@ -112,7 +104,7 @@ Q_SIGNALS:
     void copyrightsChanged(const QString &copyrights);
 
 private:
-    QGeoMapData *mapData_;
+    QGeoMapData *m_mapData;
 };
 
 QT_END_NAMESPACE
