@@ -49,6 +49,8 @@
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
+#include <QtCore/private/qobject_p.h>
+
 
 QT_BEGIN_NAMESPACE
 
@@ -56,38 +58,22 @@ class QGeoMappingManagerEngine;
 class QGeoMap;
 class QGeoMapController;
 
-class QGeoMapPrivate
+class QGeoMapPrivate :  public QObjectPrivate
 {
+    Q_DECLARE_PUBLIC(QGeoMap)
 public:
-    QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoMap *parent);
+    QGeoMapPrivate(QGeoMappingManagerEngine *engine);
     virtual ~QGeoMapPrivate();
 
-    QGeoMappingManagerEngine *engine() const;
-
-    QGeoMapController *mapController();
-
     void setCameraData(const QGeoCameraData &cameraData);
-    QGeoCameraData cameraData() const;
-
     void resize(int width, int height);
-    int width() const;
-    int height() const;
-    double aspectRatio() const;
-
-    const QGeoMapType activeMapType() const;
-    void setActiveMapType(const QGeoMapType &mapType);
-    QString pluginString();
-
-private:
+protected:
     int m_width;
     int m_height;
     double m_aspectRatio;
-
-    QGeoMap *m_map;
     QGeoMappingManagerEngine *m_engine;
     QString m_pluginString;
     QGeoMapController *m_controller;
-
     QGeoCameraData m_cameraData;
     QGeoMapType m_activeMapType;
 };

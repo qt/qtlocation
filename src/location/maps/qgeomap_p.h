@@ -65,6 +65,7 @@ class QQuickWindow;
 class Q_LOCATION_EXPORT QGeoMap : public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QGeoMap)
 
 public:
     QGeoMap(QGeoMappingManagerEngine *engine, QObject *parent = 0);
@@ -72,7 +73,7 @@ public:
 
     QGeoMapController *mapController();
 
-    virtual QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) = 0;
+    virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
 
     void resize(int width, int height);
     int width() const;
@@ -108,8 +109,6 @@ Q_SIGNALS:
     void copyrightsChanged(const QString &copyrightsHtml);
 
 private:
-    QGeoMapPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMap)
     Q_DISABLE_COPY(QGeoMap)
 };
 
