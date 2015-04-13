@@ -47,35 +47,23 @@
 // We mean it.
 //
 
-#include <QList>
-#include <QSet>
-#include <QVector>
-#include <QPair>
-#include <QPolygonF>
-#include <QSizeF>
-#include <QMatrix4x4>
-#include <QString>
-#include <QPointer>
-
-#include <QtPositioning/private/qdoublevector3d_p.h>
-#include <QtPositioning/private/qdoublevector2d_p.h>
-
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
+#include <QtPositioning/private/qdoublevector3d_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtCore/QPointer>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTile;
-class QGeoTileCache;
-class QGeoTileSpec;
-class QGeoMapController;
-class QGeoProjection;
-
 class QGeoCameraTiles;
-class QGeoTileRequestManager;
 class QGeoMapScene;
-class QGeoTiledMap;
+class QGeoTileCache;
 class QGeoTiledMappingManagerEngine;
+class QGeoTiledMap;
+class QGeoTileRequestManager;
+class QGeoTileSpec;
+class QSGNode;
+class QQuickWindow;
 
 class QGeoTiledMapPrivate
 {
@@ -102,15 +90,15 @@ public:
     QPointer<QGeoTiledMappingManagerEngine> engine() const;
 
 private:
-    QGeoTiledMap *map_;
-    QGeoTileCache *cache_;
-    QPointer<QGeoTiledMappingManagerEngine> engine_;
+    QGeoTiledMap *m_map;
+    QGeoTileCache *m_cache;
+    QPointer<QGeoTiledMappingManagerEngine> m_engine;
 
-    QGeoCameraTiles *cameraTiles_;
-    QGeoMapScene *mapScene_;
+    QGeoCameraTiles *m_cameraTiles;
+    QGeoMapScene *m_mapScene;
     Q_DISABLE_COPY(QGeoTiledMapPrivate)
 public:
-    QGeoTileRequestManager *tileRequests_;
+    QGeoTileRequestManager *m_tileRequests;
 };
 
 QT_END_NAMESPACE

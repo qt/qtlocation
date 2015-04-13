@@ -72,7 +72,7 @@ public:
 
     QGeoTileFetcher *tileFetcher();
 
-    virtual QGeoMap *createMap(QObject *parent);
+    virtual QGeoMap *createMap();
 
     void registerMap(QGeoTiledMap *map);
     void deregisterMap(QGeoTiledMap *map);

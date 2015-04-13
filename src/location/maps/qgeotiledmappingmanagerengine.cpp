@@ -94,9 +94,8 @@ QGeoTileFetcher *QGeoTiledMappingManagerEngine::tileFetcher()
     return d->fetcher_;
 }
 
-QGeoMap *QGeoTiledMappingManagerEngine::createMap(QObject *parent)
+QGeoMap *QGeoTiledMappingManagerEngine::createMap()
 {
-    Q_UNUSED(parent);
     return NULL;
 }
 
