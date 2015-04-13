@@ -47,6 +47,7 @@
 // We mean it.
 //
 
+#include "qgeomap_p_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
 #include <QtPositioning/private/qdoublevector3d_p.h>
@@ -65,18 +66,15 @@ class QGeoTileSpec;
 class QSGNode;
 class QQuickWindow;
 
-class QGeoTiledMapPrivate
+class QGeoTiledMapPrivate : public QGeoMapPrivate
 {
+    Q_DECLARE_PUBLIC(QGeoTiledMap)
 public:
-    QGeoTiledMapPrivate(QGeoTiledMap *parent, QGeoTiledMappingManagerEngine *engine);
+    QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine);
     ~QGeoTiledMapPrivate();
-
-    QGeoTileCache *tileCache();
 
     QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window);
 
-    void changeCameraData(const QGeoCameraData &oldCameraData);
-    void changeActiveMapType(const QGeoMapType mapType);
     void changeMapVersion(int mapVersion);
     void resized(int width, int height);
 
@@ -87,18 +85,21 @@ public:
     QSet<QGeoTileSpec> visibleTiles();
 
     void prefetchTiles();
-    QPointer<QGeoTiledMappingManagerEngine> engine() const;
+
+protected:
+    void mapResized(int width, int height) Q_DECL_OVERRIDE;
+    void changeCameraData(const QGeoCameraData &oldCameraData) Q_DECL_OVERRIDE;
+    void changeActiveMapType(const QGeoMapType mapType) Q_DECL_OVERRIDE;
 
 private:
-    QGeoTiledMap *m_map;
     QGeoTileCache *m_cache;
+    //TODO: fix base pointer
     QPointer<QGeoTiledMappingManagerEngine> m_engine;
 
     QGeoCameraTiles *m_cameraTiles;
     QGeoMapScene *m_mapScene;
-    Q_DISABLE_COPY(QGeoTiledMapPrivate)
-public:
     QGeoTileRequestManager *m_tileRequests;
+    Q_DISABLE_COPY(QGeoTiledMapPrivate)
 };
 
 QT_END_NAMESPACE

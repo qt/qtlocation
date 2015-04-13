@@ -45,6 +45,8 @@ class QGeoTiledMapTest: public QGeoTiledMap
 public:
     QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
         : QGeoTiledMap(engine, parent) {}
+public:
+       using QGeoTiledMap::setCameraData;
 
 };
 

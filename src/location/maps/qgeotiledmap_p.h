@@ -73,6 +73,8 @@ class QPointF;
 class Q_LOCATION_EXPORT QGeoTiledMap : public QGeoMap
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QGeoTiledMap)
+
 public:
     QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent);
     virtual ~QGeoTiledMap();
@@ -87,13 +89,7 @@ public:
     // Alternative to exposing this is to make tileFetched a slot, but then requestManager would
     // need to be a QObject
     QGeoTileRequestManager *getRequestManager();
-
-    virtual int mapVersion();
-
 protected:
-    void mapResized(int width, int height) Q_DECL_OVERRIDE;
-    void changeCameraData(const QGeoCameraData &oldCameraData) Q_DECL_OVERRIDE;
-    void changeActiveMapType(const QGeoMapType mapType) Q_DECL_OVERRIDE;
     void prefetchData() Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
@@ -101,8 +97,6 @@ protected Q_SLOTS:
     void updateMapVersion();
 
 private:
-    QGeoTiledMapPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoTiledMap)
     Q_DISABLE_COPY(QGeoTiledMap)
 
 };

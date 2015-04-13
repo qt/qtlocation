@@ -67,6 +67,12 @@ public:
 
     void setCameraData(const QGeoCameraData &cameraData);
     void resize(int width, int height);
+
+protected:
+    virtual void mapResized(int width, int height) = 0;
+    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0;
+    virtual void changeActiveMapType(const QGeoMapType mapType) = 0;
+
 protected:
     int m_width;
     int m_height;

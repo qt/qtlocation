@@ -68,7 +68,6 @@ class Q_LOCATION_EXPORT QGeoMap : public QObject
     Q_DECLARE_PRIVATE(QGeoMap)
 
 public:
-    QGeoMap(QGeoMappingManagerEngine *engine, QObject *parent = 0);
     virtual ~QGeoMap();
 
     QGeoMapController *mapController();
@@ -79,7 +78,6 @@ public:
     int width() const;
     int height() const;
 
-    void setCameraData(const QGeoCameraData &cameraData);
     QGeoCameraData cameraData() const;
 
     void setActiveMapType(const QGeoMapType mapType);
@@ -87,15 +85,15 @@ public:
 
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
+    virtual int mapVersion();
 
     QString pluginString();
     QGeoCameraCapabilities cameraCapabilities();
     QGeoMappingManagerEngine *engine();
 
 protected:
-    virtual void mapResized(int width, int height) = 0;
-    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0;
-    virtual void changeActiveMapType(const QGeoMapType mapType) = 0;
+    QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
+    void setCameraData(const QGeoCameraData &cameraData);
 
 public Q_SLOTS:
     void update();
@@ -110,6 +108,7 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QGeoMap)
+    friend class QGeoMapController;
 };
 
 QT_END_NAMESPACE
