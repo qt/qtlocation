@@ -219,6 +219,8 @@ QT_BEGIN_NAMESPACE
     \qmlproperty bool QtLocation::MapGestureArea::isPanActive
 
     This read-only property holds whether any pan gesture (panning or flicking) is active.
+
+    \note Change notifications for this property were introduced in Qt 5.5.
 */
 
 /*!

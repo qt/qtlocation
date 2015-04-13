@@ -148,10 +148,6 @@ Module {
         Property { name: "error"; type: "QGeoServiceProvider::Error"; isReadonly: true }
         Property { name: "errorString"; type: "string"; isReadonly: true }
         Signal {
-            name: "wheelAngleChanged"
-            Parameter { name: "angleDelta"; type: "QPoint" }
-        }
-        Signal {
             name: "pluginChanged"
             Parameter { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
         }
@@ -235,6 +231,7 @@ Module {
         Property { name: "activeGestures"; type: "ActiveGestures" }
         Property { name: "maximumZoomLevelChange"; type: "double" }
         Property { name: "flickDeceleration"; type: "double" }
+        Signal { name: "panActiveChanged" }
         Signal { name: "pinchActiveChanged" }
         Signal {
             name: "pinchStarted"
