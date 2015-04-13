@@ -39,7 +39,7 @@
 
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
-#include <QtLocation/private/qgeotiledmapdata_p.h>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -85,9 +85,9 @@ QGeoTiledMappingManagerEngineMapbox::~QGeoTiledMappingManagerEngineMapbox()
 {
 }
 
-QGeoMap *QGeoTiledMappingManagerEngineMapbox::createMapData()
+QGeoMap *QGeoTiledMappingManagerEngineMapbox::createMap()
 {
-    return new QGeoTiledMapData(this, 0);
+    return new QGeoTiledMap(this, 0);
 }
 
 QT_END_NAMESPACE

@@ -38,7 +38,7 @@
 #include <QSharedPointer>
 #include <QDebug>
 #include "qgeotilespec_p.h"
-#include "qgeotiledmapdata_p.h"
+#include "qgeotiledmap_p.h"
 #include "qgeotiledmappingmanagerengine_p.h"
 #include "qgeotilecache_p.h"
 
@@ -49,10 +49,10 @@ class RetryFuture;
 class QGeoTileRequestManagerPrivate
 {
 public:
-    explicit QGeoTileRequestManagerPrivate(QGeoTiledMapData *map);
+    explicit QGeoTileRequestManagerPrivate(QGeoTiledMap *map);
     ~QGeoTileRequestManagerPrivate();
 
-    QGeoTiledMapData *map_;
+    QGeoTiledMap *map_;
 
     QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
     void tileError(const QGeoTileSpec &tile, const QString &errorString);
@@ -64,7 +64,7 @@ public:
     void tileFetched(const QGeoTileSpec &spec);
 };
 
-QGeoTileRequestManager::QGeoTileRequestManager(QGeoTiledMapData *map)
+QGeoTileRequestManager::QGeoTileRequestManager(QGeoTiledMap *map)
     : d_ptr(new QGeoTileRequestManagerPrivate(map))
 {
 }
@@ -92,7 +92,7 @@ void QGeoTileRequestManager::tileError(const QGeoTileSpec &tile, const QString &
     d->tileError(tile, errorString);
 }
 
-QGeoTileRequestManagerPrivate::QGeoTileRequestManagerPrivate(QGeoTiledMapData *map)
+QGeoTileRequestManagerPrivate::QGeoTileRequestManagerPrivate(QGeoTiledMap *map)
     : map_(map)
 {
 }
@@ -169,17 +169,17 @@ class RetryFuture : public QObject
 {
     Q_OBJECT
 public:
-    RetryFuture(const QGeoTileSpec &tile, QGeoTiledMapData *map, QObject *parent = 0);
+    RetryFuture(const QGeoTileSpec &tile, QGeoTiledMap *map, QObject *parent = 0);
 
 public Q_SLOTS:
     void retry();
 
 private:
     QGeoTileSpec tile_;
-    QGeoTiledMapData *map_;
+    QGeoTiledMap *map_;
 };
 
-RetryFuture::RetryFuture(const QGeoTileSpec &tile, QGeoTiledMapData *map, QObject *parent)
+RetryFuture::RetryFuture(const QGeoTileSpec &tile, QGeoTiledMap *map, QObject *parent)
     : QObject(parent), tile_(tile), map_(map)
 {}
 

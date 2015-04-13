@@ -34,10 +34,10 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
+#ifndef QGEOMAP_NOKIA_H
+#define QGEOMAP_NOKIA_H
 
-#include "qgeotiledmapdata_p.h"
+#include "qgeotiledmap_p.h"
 #include <QImage>
 #include <QSize>
 
@@ -45,12 +45,12 @@ QT_BEGIN_NAMESPACE
 
 class QGeoTiledMappingManagerEngineNokia;
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+class QGeoTiledMapNokia: public QGeoTiledMap
 {
 Q_OBJECT
 public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+    QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent = 0);
+    ~QGeoTiledMapNokia();
 
     QString getViewCopyright();
     void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
@@ -58,7 +58,7 @@ public:
 
 
 private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
+    Q_DISABLE_COPY(QGeoTiledMapNokia)
 
     QImage logo;
     QImage copyrightsSlab;
@@ -67,4 +67,4 @@ private:
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPDATA_NOKIA_H
+#endif // QGEOMAP_NOKIA_H

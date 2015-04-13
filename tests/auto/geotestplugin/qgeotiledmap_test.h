@@ -31,20 +31,20 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPDATA_TEST_H
-#define QGEOTILEDMAPDATA_TEST_H
+#ifndef QGEOTILEDMAP_TEST_H
+#define QGEOTILEDMAP_TEST_H
 
-#include <QtLocation/private/qgeotiledmapdata_p.h>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_USE_NAMESPACE
 
 
-class QGeoTiledMapDataTest: public QGeoTiledMapData
+class QGeoTiledMapTest: public QGeoTiledMap
 {
     Q_OBJECT
 public:
-    QGeoTiledMapDataTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
-        : QGeoTiledMapData(engine, parent) {}
+    QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
+        : QGeoTiledMap(engine, parent) {}
 
 };
 

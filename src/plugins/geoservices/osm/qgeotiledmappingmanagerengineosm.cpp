@@ -33,11 +33,11 @@
 
 #include "qgeotiledmappingmanagerengineosm.h"
 #include "qgeotilefetcherosm.h"
-#include "qgeotiledmapdataosm.h"
+#include "qgeotiledmaposm.h"
 
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
-#include <QtLocation/private/qgeotiledmapdata_p.h>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -52,7 +52,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     setTileSize(QSize(256, 256));
 
     QList<QGeoMapType> mapTypes;
-    // See map type implementations in QGeoTiledMapDataOsm and QGeoTileFetcherOsm.
+    // See map type implementations in QGeoTiledMapOsm and QGeoTileFetcherOsm.
     mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1);
     mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2);
     mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3);
@@ -78,9 +78,9 @@ QGeoTiledMappingManagerEngineOsm::~QGeoTiledMappingManagerEngineOsm()
 {
 }
 
-QGeoMap *QGeoTiledMappingManagerEngineOsm::createMapData()
+QGeoMap *QGeoTiledMappingManagerEngineOsm::createMap()
 {
-    return new QGeoTiledMapDataOsm(this);
+    return new QGeoTiledMapOsm(this);
 }
 
 QT_END_NAMESPACE

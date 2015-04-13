@@ -31,29 +31,54 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPDATAOSM_H
-#define QGEOTILEDMAPDATAOSM_H
+#include "qgeotiledmaposm.h"
+#include "qgeotiledmappingmanagerengineosm.h"
 
-#include <QtLocation/private/qgeotiledmapdata_p.h>
+#include <QtLocation/private/qgeotilespec_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm;
-class QGeoTiledMapDataOsm: public QGeoTiledMapData
+QGeoTiledMapOsm::QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
+:   QGeoTiledMap(engine, parent), m_mapId(-1)
 {
-    Q_OBJECT
+}
 
-public:
-    QGeoTiledMapDataOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataOsm();
+QGeoTiledMapOsm::~QGeoTiledMapOsm()
+{
+}
 
-protected:
-    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
+void QGeoTiledMapOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
+{
+    if (visibleTiles.isEmpty())
+        return;
 
-private:
-    int m_mapId;
-};
+    QGeoTileSpec tile = *visibleTiles.constBegin();
+    if (tile.mapId() == m_mapId)
+        return;
+
+    m_mapId = tile.mapId();
+
+    QString copyrights;
+    switch (m_mapId) {
+    case 1:
+    case 2:
+        // set attribution to Map Quest
+        copyrights = tr("Tiles Courtesy of <a href='http://www.mapquest.com/'>MapQuest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        break;
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+        // set attribution to Thunder Forest
+        copyrights = tr("Maps &copy; <a href='http://www.thunderforest.com/'>Thunderforest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        break;
+    default:
+        // set attribution to OSM
+        copyrights = tr("&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+    }
+
+    emit copyrightsChanged(copyrights);
+}
 
 QT_END_NAMESPACE
-
-#endif

@@ -8,7 +8,6 @@ load(qt_plugin)
 HEADERS += \
     qgeoserviceproviderpluginosm.h \
     qgeotiledmappingmanagerengineosm.h \
-    qgeotiledmapdataosm.h \
     qgeotilefetcherosm.h \
     qgeomapreplyosm.h \
     qgeocodingmanagerengineosm.h \
@@ -17,12 +16,12 @@ HEADERS += \
     qgeoroutereplyosm.h \
     qplacemanagerengineosm.h \
     qplacesearchreplyosm.h \
-    qplacecategoriesreplyosm.h
+    qplacecategoriesreplyosm.h \
+    qgeotiledmaposm.h
 
 SOURCES += \
     qgeoserviceproviderpluginosm.cpp \
     qgeotiledmappingmanagerengineosm.cpp \
-    qgeotiledmapdataosm.cpp \
     qgeotilefetcherosm.cpp \
     qgeomapreplyosm.cpp \
     qgeocodingmanagerengineosm.cpp \
@@ -31,7 +30,8 @@ SOURCES += \
     qgeoroutereplyosm.cpp \
     qplacemanagerengineosm.cpp \
     qplacesearchreplyosm.cpp \
-    qplacecategoriesreplyosm.cpp
+    qplacecategoriesreplyosm.cpp \
+    qgeotiledmaposm.cpp
 
 
 OTHER_FILES += \

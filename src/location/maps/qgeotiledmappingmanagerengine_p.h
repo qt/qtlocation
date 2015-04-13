@@ -52,7 +52,7 @@ class QGeoTileFetcher;
 class QGeoTileTexture;
 
 class QGeoTileSpec;
-class QGeoTiledMapData;
+class QGeoTiledMap;
 class QGeoTileCache;
 
 class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
@@ -74,12 +74,12 @@ public:
 
     virtual QGeoMap *createMap(QObject *parent);
 
-    void registerMap(QGeoTiledMapData *map);
-    void deregisterMap(QGeoTiledMapData *map);
+    void registerMap(QGeoTiledMap *map);
+    void deregisterMap(QGeoTiledMap *map);
 
     QSize tileSize() const;
 
-    void updateTileRequests(QGeoTiledMapData *map,
+    void updateTileRequests(QGeoTiledMap *map,
                             const QSet<QGeoTileSpec> &tilesAdded,
                             const QSet<QGeoTileSpec> &tilesRemoved);
 

@@ -3,7 +3,7 @@ CONFIG += testcase
 TARGET = tst_qgeomapcontroller
 
 HEADERS += ../geotestplugin/qgeoserviceproviderplugin_test.h \
-           ../geotestplugin/qgeotiledmapdata_test.h \
+           ../geotestplugin/qgeotiledmap_test.h \
            ../geotestplugin/qgeotiledmappingmanagerengine_test.h \
            ../geotestplugin/qplacemanagerengine_test.h \
            ../geotestplugin/qgeotilefetcher_test.h \

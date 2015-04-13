@@ -33,8 +33,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeotiledmapdata_p.h"
-#include "qgeotiledmapdata_p_p.h"
+#include "qgeotiledmap_p.h"
+#include "qgeotiledmap_p_p.h"
 
 #include "qgeotiledmappingmanagerengine_p.h"
 #include "qgeotilecache_p.h"
@@ -58,10 +58,10 @@
 QT_BEGIN_NAMESPACE
 
 
-QGeoTiledMapData::QGeoTiledMapData(QGeoTiledMappingManagerEngine *engine, QObject *parent)
+QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent)
     : QGeoMap(engine, parent)
 {
-    d_ptr = new QGeoTiledMapDataPrivate(this, engine);
+    d_ptr = new QGeoTiledMapPrivate(this, engine);
     engine->registerMap(this);
 
     connect(engine,
@@ -71,80 +71,80 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoTiledMappingManagerEngine *engine, QObjec
     QMetaObject::invokeMethod(this, "updateMapVersion", Qt::QueuedConnection);
 }
 
-QGeoTiledMapData::~QGeoTiledMapData()
+QGeoTiledMap::~QGeoTiledMap()
 {
     if (d_ptr->engine()) // check if engine hasn't already been deleted
         d_ptr->engine().data()->deregisterMap(this);
     delete d_ptr;
 }
-QGeoTileRequestManager *QGeoTiledMapData::getRequestManager()
+QGeoTileRequestManager *QGeoTiledMap::getRequestManager()
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     return d->tileRequests_;
 }
 
-void QGeoTiledMapData::newTileFetched(const QGeoTileSpec &spec)
+void QGeoTiledMap::newTileFetched(const QGeoTileSpec &spec)
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     d->newTileFetched(spec);
 }
 
-QGeoTileCache *QGeoTiledMapData::tileCache()
+QGeoTileCache *QGeoTiledMap::tileCache()
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     return d->tileCache();
 }
 
-QSGNode *QGeoTiledMapData::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
+QSGNode *QGeoTiledMap::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     return d->updateSceneGraph(oldNode, window);
 }
 
-void QGeoTiledMapData::mapResized(int width, int height)
+void QGeoTiledMap::mapResized(int width, int height)
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     d->resized(width, height);
     evaluateCopyrights(d->visibleTiles());
 }
 
-void QGeoTiledMapData::changeCameraData(const QGeoCameraData &oldCameraData)
+void QGeoTiledMap::changeCameraData(const QGeoCameraData &oldCameraData)
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     d->changeCameraData(oldCameraData);
 }
 
-void QGeoTiledMapData::prefetchData()
+void QGeoTiledMap::prefetchData()
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     d->prefetchTiles();
 }
 
-void QGeoTiledMapData::changeActiveMapType(const QGeoMapType mapType)
+void QGeoTiledMap::changeActiveMapType(const QGeoMapType mapType)
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     d->changeActiveMapType(mapType);
 }
 
-int QGeoTiledMapData::mapVersion()
+int QGeoTiledMap::mapVersion()
 {
     return -1;
 }
 
-void QGeoTiledMapData::updateMapVersion()
+void QGeoTiledMap::updateMapVersion()
 {
-    Q_D(QGeoTiledMapData);
+    Q_D(QGeoTiledMap);
     d->changeMapVersion(mapVersion());
 }
 
-void QGeoTiledMapData::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
+void QGeoTiledMap::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
     Q_UNUSED(visibleTiles);
 }
 
-QGeoCoordinate QGeoTiledMapData::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
+QGeoCoordinate QGeoTiledMap::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
 {
-    Q_D(const QGeoTiledMapData);
+    Q_D(const QGeoTiledMap);
     if (clipToViewport) {
         int w = width();
         int h = height();
@@ -156,9 +156,9 @@ QGeoCoordinate QGeoTiledMapData::itemPositionToCoordinate(const QDoubleVector2D 
     return d->itemPositionToCoordinate(pos);
 }
 
-QDoubleVector2D QGeoTiledMapData::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
+QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
-    Q_D(const QGeoTiledMapData);
+    Q_D(const QGeoTiledMap);
     QDoubleVector2D pos = d->coordinateToItemPosition(coordinate);
 
     if (clipToViewport) {
@@ -172,7 +172,7 @@ QDoubleVector2D QGeoTiledMapData::coordinateToItemPosition(const QGeoCoordinate 
     return pos;
 }
 
-QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoTiledMappingManagerEngine *engine)
+QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMap *parent, QGeoTiledMappingManagerEngine *engine)
     : map_(parent),
       cache_(engine->tileCache()),
       engine_(engine),
@@ -192,7 +192,7 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoT
                      SLOT(evaluateCopyrights(QSet<QGeoTileSpec>)));
 }
 
-QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
+QGeoTiledMapPrivate::~QGeoTiledMapPrivate()
 {
     // controller_ is a child of map_, don't need to delete it here
 
@@ -204,17 +204,17 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
     // However: how to ensure this is done in rendering thread?
 }
 
-QGeoTileCache *QGeoTiledMapDataPrivate::tileCache()
+QGeoTileCache *QGeoTiledMapPrivate::tileCache()
 {
     return cache_;
 }
 
-QPointer<QGeoTiledMappingManagerEngine> QGeoTiledMapDataPrivate::engine() const
+QPointer<QGeoTiledMappingManagerEngine> QGeoTiledMapPrivate::engine() const
 {
     return engine_;
 }
 
-void QGeoTiledMapDataPrivate::prefetchTiles()
+void QGeoTiledMapPrivate::prefetchTiles()
 {
     cameraTiles_->findPrefetchTiles();
 
@@ -222,7 +222,7 @@ void QGeoTiledMapDataPrivate::prefetchTiles()
         tileRequests_->requestTiles(cameraTiles_->tiles() - mapScene_->texturedTiles());
 }
 
-void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
+void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
 {
     double lat = oldCameraData.center().latitude();
 
@@ -265,17 +265,17 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
     }
 }
 
-void QGeoTiledMapDataPrivate::changeActiveMapType(const QGeoMapType mapType)
+void QGeoTiledMapPrivate::changeActiveMapType(const QGeoMapType mapType)
 {
     cameraTiles_->setMapType(mapType);
 }
 
-void QGeoTiledMapDataPrivate::changeMapVersion(int mapVersion)
+void QGeoTiledMapPrivate::changeMapVersion(int mapVersion)
 {
     cameraTiles_->setMapVersion(mapVersion);
 }
 
-void QGeoTiledMapDataPrivate::resized(int width, int height)
+void QGeoTiledMapPrivate::resized(int width, int height)
 {
     if (cameraTiles_)
         cameraTiles_->setScreenSize(QSize(width, height));
@@ -299,7 +299,7 @@ void QGeoTiledMapDataPrivate::resized(int width, int height)
     }
 }
 
-void QGeoTiledMapDataPrivate::newTileFetched(const QGeoTileSpec &spec)
+void QGeoTiledMapPrivate::newTileFetched(const QGeoTileSpec &spec)
 {
     // Only promote the texture up to GPU if it is visible
     if (cameraTiles_->tiles().contains(spec)){
@@ -311,22 +311,22 @@ void QGeoTiledMapDataPrivate::newTileFetched(const QGeoTileSpec &spec)
     }
 }
 
-QSet<QGeoTileSpec> QGeoTiledMapDataPrivate::visibleTiles()
+QSet<QGeoTileSpec> QGeoTiledMapPrivate::visibleTiles()
 {
     return cameraTiles_->tiles();
 }
 
-QSGNode *QGeoTiledMapDataPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
+QSGNode *QGeoTiledMapPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
     return mapScene_->updateSceneGraph(oldNode, window);
 }
 
-QGeoCoordinate QGeoTiledMapDataPrivate::itemPositionToCoordinate(const QDoubleVector2D &pos) const
+QGeoCoordinate QGeoTiledMapPrivate::itemPositionToCoordinate(const QDoubleVector2D &pos) const
 {
     return QGeoProjection::mercatorToCoord(mapScene_->itemPositionToMercator(pos));
 }
 
-QDoubleVector2D QGeoTiledMapDataPrivate::coordinateToItemPosition(const QGeoCoordinate &coordinate) const
+QDoubleVector2D QGeoTiledMapPrivate::coordinateToItemPosition(const QGeoCoordinate &coordinate) const
 {
     return mapScene_->mercatorToItemPosition(QGeoProjection::coordToMercator(coordinate));
 }

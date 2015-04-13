@@ -240,7 +240,7 @@ void QDeclarativeGeoMapItemView::fitViewport()
 /*!
     \internal
 */
-void QDeclarativeGeoMapItemView::setMapData(QDeclarativeGeoMap *map)
+void QDeclarativeGeoMapItemView::setMap(QDeclarativeGeoMap *map)
 {
     if (!map || map_) // changing map on the fly not supported
         return;

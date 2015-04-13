@@ -34,7 +34,7 @@
  **
  ****************************************************************************/
 
-#include "qgeotiledmapdata_nokia.h"
+#include "qgeotiledmap_nokia.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qgeomapcontroller_p.h"
 
@@ -54,14 +54,14 @@ QT_BEGIN_NAMESPACE
  Constructs a new tiled map data object, which stores the map data required by
  \a geoMap and makes use of the functionality provided by \a engine.
  */
-QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent /*= 0*/) :
-    QGeoTiledMapData(engine, parent),
+QGeoTiledMapNokia::QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent /*= 0*/) :
+    QGeoTiledMap(engine, parent),
     logo(":/images/logo.png") // HERE logo image
 {}
 
-QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia() {}
+QGeoTiledMapNokia::~QGeoTiledMapNokia() {}
 
-void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
+void QGeoTiledMapNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
     const int spaceToLogo = 4;
     const int blurRate = 1;
@@ -107,7 +107,7 @@ void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visible
     emit copyrightsChanged(copyrightsSlab);
 }
 
-int QGeoTiledMapDataNokia::mapVersion()
+int QGeoTiledMapNokia::mapVersion()
 {
     QGeoTiledMappingManagerEngineNokia *engineNokia = static_cast<QGeoTiledMappingManagerEngineNokia *>(engine());
     return engineNokia->mapVersion();

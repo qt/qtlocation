@@ -31,54 +31,29 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmapdataosm.h"
-#include "qgeotiledmappingmanagerengineosm.h"
+#ifndef QGEOTILEDMAPOSM_H
+#define QGEOTILEDMAPOSM_H
 
-#include <QtLocation/private/qgeotilespec_p.h>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_BEGIN_NAMESPACE
 
-QGeoTiledMapDataOsm::QGeoTiledMapDataOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
-:   QGeoTiledMapData(engine, parent), m_mapId(-1)
+class QGeoTiledMappingManagerEngineOsm;
+class QGeoTiledMapOsm: public QGeoTiledMap
 {
-}
+    Q_OBJECT
 
-QGeoTiledMapDataOsm::~QGeoTiledMapDataOsm()
-{
-}
+public:
+    QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent = 0);
+    ~QGeoTiledMapOsm();
 
-void QGeoTiledMapDataOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
-{
-    if (visibleTiles.isEmpty())
-        return;
+protected:
+    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
 
-    QGeoTileSpec tile = *visibleTiles.constBegin();
-    if (tile.mapId() == m_mapId)
-        return;
-
-    m_mapId = tile.mapId();
-
-    QString copyrights;
-    switch (m_mapId) {
-    case 1:
-    case 2:
-        // set attribution to Map Quest
-        copyrights = tr("Tiles Courtesy of <a href='http://www.mapquest.com/'>MapQuest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
-        break;
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-        // set attribution to Thunder Forest
-        copyrights = tr("Maps &copy; <a href='http://www.thunderforest.com/'>Thunderforest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
-        break;
-    default:
-        // set attribution to OSM
-        copyrights = tr("&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
-    }
-
-    emit copyrightsChanged(copyrights);
-}
+private:
+    int m_mapId;
+};
 
 QT_END_NAMESPACE
+
+#endif

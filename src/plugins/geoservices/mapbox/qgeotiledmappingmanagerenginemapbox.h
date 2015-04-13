@@ -52,7 +52,7 @@ public:
                                         QGeoServiceProvider::Error *error, QString *errorString);
     ~QGeoTiledMappingManagerEngineMapbox();
 
-    QGeoMap *createMapData();
+    QGeoMap *createMap();
 };
 
 QT_END_NAMESPACE

@@ -36,7 +36,7 @@
 
 #include "qgeocameracapabilities_p.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
-#include "qgeotiledmapdata_nokia.h"
+#include "qgeotiledmap_nokia.h"
 #include "qgeotilefetcher_nokia.h"
 #include "qgeotilespec_p.h"
 #include "qgeotilecache_p.h"
@@ -378,9 +378,9 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
     return copyrightsText;
 }
 
-QGeoMap *QGeoTiledMappingManagerEngineNokia::createMapData()
+QGeoMap *QGeoTiledMappingManagerEngineNokia::createMap()
 {
-    return new QGeoTiledMapDataNokia(this);
+    return new QGeoTiledMapNokia(this);
 }
 
 QT_END_NAMESPACE

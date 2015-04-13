@@ -396,7 +396,7 @@ void QDeclarativeGeoMap::populateMap()
 void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
 {
     Q_UNUSED(view)
-    view->setMapData(this);
+    view->setMap(this);
     view->repopulate();
 }
 
