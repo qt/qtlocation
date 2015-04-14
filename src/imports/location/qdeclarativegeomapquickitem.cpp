@@ -106,10 +106,10 @@ QT_BEGIN_NAMESPACE
     to display a Marker on the Map. This strategy is used to show the map
     markers in the MapViewer example.
 
-    \snippet mapviewer/content/map/Marker.qml mqi-top
-    \snippet mapviewer/content/map/Marker.qml mqi-anchor
-    \snippet mapviewer/content/map/Marker.qml mqi-closeimage
-    \snippet mapviewer/content/map/Marker.qml mqi-close
+    \snippet mapviewer/map/Marker.qml mqi-top
+    \snippet mapviewer/map/Marker.qml mqi-anchor
+    \snippet mapviewer/map/Marker.qml mqi-closeimage
+    \snippet mapviewer/map/Marker.qml mqi-close
 
     \image api-mapquickitem.png
 */
