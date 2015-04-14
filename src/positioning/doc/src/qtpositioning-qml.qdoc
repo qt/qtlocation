@@ -55,7 +55,7 @@ the speed and heading of the device. It can also define a box or a circle that c
 produce a notification when the device either leaves or enters that region.
 
 More detailed information retrieving the current position can be found under
-{Positioning (QML)}{Location Positioning via QML}
+\l {Positioning (QML)}{Location Positioning via QML}
 
 \section1 Basic Types
 
