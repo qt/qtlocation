@@ -4,5 +4,6 @@ qtHaveModule(quick) {
     SUBDIRS += places \
                places_list \
                places_map \
-               mapviewer
+               mapviewer \
+               planespotter
 }
