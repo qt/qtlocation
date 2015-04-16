@@ -33,22 +33,17 @@
     \brief The Map Viewer example shows how to display and interact with a map,
            search for an address, and find driving directions.
 
+    \image example-mapviewer.png
+
     This is a large example covering many basic uses of maps, positioning, and
     navigation services in Qt Location. This page is divided into sections
     covering each of these areas of functionality with snippets from the code.
 
-    The Map Viewer example can work with any of the available geo services plugins.  However, some
-    plugins may require additional \l {QtLocation::PluginParameter}{plugin parameters} in order to
-    function correctly.  \l {QtLocation::PluginParameter}{Plugin parameters} can be passed on the
-    command line using the \c {--plugin} argument, which takes the form:
+    \include examples-run.qdocinc
 
-    \code
-        --plugin.<parameter name> <parameter value>
-    \endcode
+    \include example-parameters.qdocinc
 
-    Refer to the documentation for each of the geo services plugins for details on what plugin
-    parameters they support. The default plugin used by this example is
-    \l {Qt Location Open Street Map Plugin}, which does not require any parameters.
+    \section1 Overview
 
     QML types shown in this example:
 
@@ -72,9 +67,7 @@
         \endlist
     \endlist
 
-    \image ../images/example-mapviewer.png
-
-    \section2 Displaying a Map
+    \section1 Displaying a Map
 
     Drawing a map on-screen is accomplished using the Map type, as shown
     below.
@@ -87,7 +80,7 @@
     with a set latitude and longitude. We also set the initial zoom level to 50% (halfway between
     the maximum and minimum).
 
-    \section2 Finding an Address (Geocoding)
+    \section1 Finding an Address (Geocoding)
 
     To locate a certain address or place on the map uses a process called
     geocoding. In order to perform a geocode operation, we first need to adjust
@@ -122,7 +115,7 @@
 
     \snippet mapviewer/map/MapComponent.qml geocode1
 
-    \section2 Directions and Travel Routes
+    \section1 Directions and Travel Routes
 
     Similar to the GeocodeModel, Qt Location also features the RouteModel type,
     which allows information about routes (for example driving directions) between two

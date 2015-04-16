@@ -35,6 +35,13 @@
 
     \image qml-places.png
 
+    The Places example demonstrates how to search for Places. In particular it shows
+    how further information such as reviews, images and related content can be retrieved.
+
+    \include examples-run.qdocinc
+
+    \include example-parameters.qdocinc
+
     \section1 Overview
 
     The Places example presents an application window displaying a map.  At the top of the window
@@ -59,19 +66,6 @@
     new Places and Categories.  To create a new place, select "Place" from the "New" menu and fill
     in the fields.  Click "Go!" to save the place.  To create a new category, select "Category"
     from the "New" menu and fill in the fields.  Click "Go!" to save the category.
-
-    The Places example can work with any of the available geo services plugins.  However, some
-    plugins may require additional \l {QtLocation::PluginParameter}{plugin parameters} in order to
-    function correctly.  \l {QtLocation::PluginParameter}{Plugin parameters} can be passed on the
-    command line using the \c {--plugin} argument, which takes the form:
-
-    \code
-        --plugin.<parameter name> <parameter value>
-    \endcode
-
-    Refer to the documentation for each of the geo services plugins for details on what plugin
-    parameters they support.  The HERE services plugin supplied with Qt requires an \e app_id and
-    \e token pair.  See "\l {Qt Location HERE Plugin}" for details.
 
     \section1 Displaying Categories
 
