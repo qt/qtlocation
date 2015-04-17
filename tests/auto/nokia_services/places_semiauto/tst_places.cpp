@@ -436,10 +436,17 @@ void tst_QPlaceManagerNokia::categories()
         //check we can retrieve the very same category by id
         QCOMPARE(placeManager->category(category.categoryId()), category);
 
-        //since the here plugin only supports a single level category tree
-        //check that there are no parent or children categories
+        //the here plugin supports a two-level level category tree
         QVERIFY(placeManager->parentCategoryId(category.categoryId()).isEmpty());
-        QVERIFY(placeManager->childCategories(category.categoryId()).isEmpty());
+        const QList<QPlaceCategory> childCats =
+                placeManager->childCategories(category.categoryId());
+        if (!childCats.isEmpty()) {
+            foreach (const QPlaceCategory &child, childCats) {
+                // only two levels of categories hence 2.nd level has no further children
+                QVERIFY(placeManager->childCategories(child.categoryId()).isEmpty());
+                QVERIFY(placeManager->parentCategoryId(child.categoryId()) == category.categoryId());
+            }
+        }
     }
 }
 

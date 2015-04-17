@@ -606,6 +606,7 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
                 if (m_tempTree.contains(parentCategoryId)) {
                     PlaceCategoryNode node;
                     node.category.setCategoryId(subCategoryId);
+                    node.parentId = parentCategoryId;
 
                     // find parent
                     PlaceCategoryNode &parent = m_tempTree[parentCategoryId];
