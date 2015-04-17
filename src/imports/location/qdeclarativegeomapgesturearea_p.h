@@ -187,7 +187,6 @@ Q_SIGNALS:
     void panFinished();
     void flickStarted();
     void flickFinished();
-    void movementStopped();
 
 private:
     void update();

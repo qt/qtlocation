@@ -357,8 +357,6 @@ void QDeclarativeGeoMapGestureArea::setMap(QGeoMap *map)
     pan_.animation_ = new QPropertyAnimation(map_->mapController(), "center", this);
     pan_.animation_->setEasingCurve(QEasingCurve(QEasingCurve::OutQuad));
     connect(pan_.animation_, SIGNAL(finished()), this, SLOT(endFlick()));
-    connect(this, SIGNAL(movementStopped()),
-            map_, SLOT(prefetchData()));
 }
 
 QDeclarativeGeoMapGestureArea::~QDeclarativeGeoMapGestureArea()
@@ -996,7 +994,7 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
                 // mark as inactive for use by camera
                 if (pinchState_ == pinchInactive) {
                     emit panFinished();
-                    emit movementStopped();
+                    map_->prefetchData();
                 }
             }
         }
@@ -1136,7 +1134,7 @@ void QDeclarativeGeoMapGestureArea::stopPan()
         panState_ = panInactive;
         emit panFinished();
         emit panActiveChanged();
-        emit movementStopped();
+        map_->prefetchData();
     }
 }
 
@@ -1151,7 +1149,7 @@ void QDeclarativeGeoMapGestureArea::endFlick()
     emit flickFinished();
     panState_ = panInactive;
     emit panActiveChanged();
-    emit movementStopped();
+    map_->prefetchData();
 }
 
 

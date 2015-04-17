@@ -144,6 +144,11 @@ int QGeoMap::mapVersion()
     return -1;
 }
 
+void QGeoMap::prefetchData()
+{
+
+}
+
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
     : QObjectPrivate(),
       m_width(0),

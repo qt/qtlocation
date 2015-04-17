@@ -84,6 +84,7 @@ public:
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
     virtual int mapVersion();
+    virtual void prefetchData();
 
     QString pluginString();
     QGeoCameraCapabilities cameraCapabilities();
@@ -96,7 +97,6 @@ protected:
 
 public Q_SLOTS:
     void update();
-    virtual void prefetchData() {}
 
 Q_SIGNALS:
     void cameraDataChanged(const QGeoCameraData &cameraData);
