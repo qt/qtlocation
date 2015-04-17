@@ -43,9 +43,11 @@ import QtLocation 5.3
 MapRectangle {
     id: mapRectangle
 
-    color: mousearea.containsMouse ? "lime" : "red"
-    opacity: 0.5
-    border.width: 2.0
+    color: "#46a2da"
+    border.color: "#190a33"
+    border.width: 2
+    smooth: true
+    opacity: 0.25
 
     function setGeometry(markers, index){
         topLeft.latitude = Math.max(markers[index].coordinate.latitude, markers[index + 1].coordinate.latitude)
@@ -54,21 +56,4 @@ MapRectangle {
         bottomRight.longitude = Math.max(markers[index].coordinate.longitude, markers[index + 1].coordinate.longitude)
     }
 
-    Binding {
-        target: mapRectangle
-        property: 'border.width'
-        value: 60
-
-        when: ((topLeft.latitude == -27.1144) &&
-               (topLeft.longitude == 152.6594) &&
-               (bottomRight.latitude == -27.7434) &&
-               (bottomRight.longitude == 153.3021))
-    }
-
-    MouseArea {
-        anchors.fill:parent
-        id: mousearea
-        hoverEnabled: false
-        drag.target: parent
-    }
 }

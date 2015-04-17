@@ -44,11 +44,11 @@ import QtLocation 5.3
 
 MapPolygon {
 
-    color: "green"
-    border.color: "darkgreen"
-    border.width: 4
+    color: "#46a2da"
+    border.color: "#190a33"
+    border.width: 2
     smooth: true
-    opacity: 0.5
+    opacity: 0.25
 
     function setGeometry(markers, index){
         for (var i = index; i<markers.length; i++){
