@@ -69,7 +69,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
 
     setCameraCapabilities(capabilities);
 
-    setTileSize(QSize(512, 512));
+    setTileSize(QSize(256, 256));
 
     QList<QGeoMapType> types;
     types << QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Normal map view in daylight mode"), false, false, 1);
