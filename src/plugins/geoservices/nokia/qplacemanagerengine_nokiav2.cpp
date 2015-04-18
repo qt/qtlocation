@@ -72,11 +72,20 @@ static const char FIXED_CATEGORIES_string[] =
     "leisure-outdoor\0"
     "administrative-areas-buildings\0"
     "natural-geographical\0"
+    "petrol-station\0"
+    "atm-bank-exchange\0"
+    "toilet-rest-area\0"
+    "hospital-health-care-facility\0"
+    "eat-drink|restaurant\0" // subcategories always start after relative parent category
+    "eat-drink|coffee-tea\0"
+    "eat-drink|snacks-fast-food\0"
+    "transport|airport"
     "\0";
 
 static const int FIXED_CATEGORIES_indices[] = {
        0,   10,   20,   35,   45,   59,   68,   84,
-     115,   -1
+     115,  136,  151,  169,  186,  216,  237,  258,
+     285,   -1
 };
 
 static const char * const NokiaIcon = "nokiaIcon";
@@ -588,11 +597,30 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
             const QString id = QString::fromLatin1(FIXED_CATEGORIES_string +
                                                    FIXED_CATEGORIES_indices[i]);
 
-            PlaceCategoryNode node;
-            node.category.setCategoryId(id);
+            int subCatDivider = id.indexOf(QChar('|'));
+            if (subCatDivider >= 0) {
+                // found a sub category
+                const QString subCategoryId = id.mid(subCatDivider+1);
+                const QString parentCategoryId = id.left(subCatDivider);
 
-            m_tempTree.insert(id, node);
-            rootNode.childIds.append(id);
+                if (m_tempTree.contains(parentCategoryId)) {
+                    PlaceCategoryNode node;
+                    node.category.setCategoryId(subCategoryId);
+                    node.parentId = parentCategoryId;
+
+                    // find parent
+                    PlaceCategoryNode &parent = m_tempTree[parentCategoryId];
+                    parent.childIds.append(subCategoryId);
+                    m_tempTree.insert(subCategoryId, node);
+                }
+
+            } else {
+                PlaceCategoryNode node;
+                node.category.setCategoryId(id);
+
+                m_tempTree.insert(id, node);
+                rootNode.childIds.append(id);
+            }
         }
 
         m_tempTree.insert(QString(), rootNode);

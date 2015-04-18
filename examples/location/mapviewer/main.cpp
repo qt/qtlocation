@@ -41,7 +41,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QTextStream>
 #include <QtGui/QGuiApplication>
-#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickItem>
@@ -95,20 +95,17 @@ int main(int argc, char *argv[])
     if (parseArgs(args, parameters)) exit(0);
 
     const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
-    QQuickView view;
 
-    view.engine()->addImportPath(QLatin1String(":/imports"));
+    QQmlApplicationEngine engine;
 
-    view.rootContext()->setContextProperty("appDirPath", QCoreApplication::applicationDirPath());
-    view.setSource(QUrl(mainQmlApp));
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-
-    QQuickItem *object = view.rootObject();
-    QMetaObject::invokeMethod(object, "setPluginParameters",
+    engine.addImportPath(QLatin1String(":/imports"));
+    engine.rootContext()->setContextProperty("appDirPath", QCoreApplication::applicationDirPath());
+    engine.load(QUrl(mainQmlApp));
+    QObject *item = engine.rootObjects().first();
+    Q_ASSERT(item);
+    QMetaObject::invokeMethod(item, "initializeProvders",
                               Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
-    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-    view.setGeometry(QRect(100, 100, 360, 640));
-    view.show();
+    QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
     return application.exec();
 }

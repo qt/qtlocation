@@ -85,8 +85,9 @@ QDoubleVector3D QDoubleVector2D::toVector3D() const
 
 QDebug operator<<(QDebug dbg, const QDoubleVector2D &vector)
 {
+    QDebugStateSaver saver(dbg);
     dbg.nospace() << "QDoubleVector2D(" << vector.x() << ", " << vector.y() << ')';
-    return dbg.space();
+    return dbg;
 }
 
 #endif

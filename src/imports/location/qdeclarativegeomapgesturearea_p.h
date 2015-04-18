@@ -52,6 +52,7 @@ class QTouchEvent;
 class QWheelEvent;
 class QGeoMap;
 class QPropertyAnimation;
+class QQuickItem;
 
 class QDeclarativeGeoMapPinchEvent : public QObject
 {
@@ -133,6 +134,7 @@ public:
 
     bool isPinchActive() const;
     bool isPanActive() const;
+    bool isActive() const;
 
     bool enabled() const;
     void setEnabled(bool enabled);
@@ -149,15 +151,13 @@ public:
     qreal flickDeceleration() const;
     void setFlickDeceleration(qreal deceleration);
 
-    bool handleTouchEvent(QTouchEvent *event);
-    bool handleWheelEvent(QWheelEvent *event);
-    bool handleMousePressEvent(QMouseEvent *event);
-    bool handleMouseMoveEvent(QMouseEvent *event);
-    bool handleMouseReleaseEvent(QMouseEvent *event);
+    void handleTouchEvent(QTouchEvent *event);
+    void handleWheelEvent(QWheelEvent *event);
+    void handleMousePressEvent(QMouseEvent *event);
+    void handleMouseMoveEvent(QMouseEvent *event);
+    void handleMouseReleaseEvent(QMouseEvent *event);
     void handleMouseUngrabEvent();
-
-    bool filterMapChildMouseEvent(QMouseEvent *event);
-    bool filterMapChildTouchEvent(QTouchEvent *event);
+    void handleTouchUngrabEvent();
 
     void setMinimumZoomLevel(qreal min);
     qreal minimumZoomLevel() const;
@@ -166,8 +166,6 @@ public:
     qreal maximumZoomLevel() const;
 
     void setMap(QGeoMap *map);
-
-    bool hasGrabbedInput() const;
 
 Q_SIGNALS:
     void panActiveChanged();
@@ -226,15 +224,6 @@ private:
     QGeoMap *map_;
     QDeclarativeGeoMap *declarativeMap_;
     bool enabled_;
-    bool hasGrab_;
-
-    enum InputType
-    {
-        NoInput,
-        MouseInput,
-        TouchInput
-    };
-    InputType activeInput_;
 
     struct Pinch
     {
@@ -274,7 +263,9 @@ private:
     qreal velocityY_;
     QElapsedTimer lastPosTime_;
     QPointF lastPos_;
-    QList<QTouchEvent::TouchPoint> touchPoints_;
+    QList<QTouchEvent::TouchPoint> m_allPoints;
+    QList<QTouchEvent::TouchPoint> m_touchPoints;
+    QScopedPointer<QTouchEvent::TouchPoint> m_mousePoint;
     QPointF sceneStartPoint1_;
 
     // only set when two points in contact

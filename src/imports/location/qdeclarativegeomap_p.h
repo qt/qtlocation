@@ -39,6 +39,7 @@
 
 #include <QPointer>
 #include <QTouchEvent>
+#include <QBasicTimer>
 #include <QtQuick/QQuickItem>
 #include <QtCore/QMutex>
 
@@ -164,14 +165,15 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
     void mouseUngrabEvent() Q_DECL_OVERRIDE ;
-
+    void touchUngrabEvent() Q_DECL_OVERRIDE;
     void touchEvent(QTouchEvent *event) Q_DECL_OVERRIDE ;
     void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE ;
 
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) Q_DECL_OVERRIDE;
+    bool sendMouseEvent(QMouseEvent *event);
+    bool sendTouchEvent(QTouchEvent *event);
 
 Q_SIGNALS:
-    void wheelAngleChanged(QPoint angleDelta);
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
@@ -197,6 +199,7 @@ private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void populateMap();
     void fitViewportToMapItemsRefine(bool refine);
+    bool isInteractive();
 
     QDeclarativeGeoServiceProvider *plugin_;
     QGeoServiceProvider *serviceProvider_;

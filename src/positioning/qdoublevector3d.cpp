@@ -104,9 +104,10 @@ double QDoubleVector3D::length() const
 
 QDebug operator<<(QDebug dbg, const QDoubleVector3D &vector)
 {
+    QDebugStateSaver saver(dbg);
     dbg.nospace() << "QDoubleVector3D("
         << vector.x() << ", " << vector.y() << ", " << vector.z() << ')';
-    return dbg.space();
+    return dbg;
 }
 
 #endif

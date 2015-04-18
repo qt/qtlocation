@@ -219,6 +219,8 @@ QT_BEGIN_NAMESPACE
     \qmlproperty bool QtLocation::MapGestureArea::isPanActive
 
     This read-only property holds whether any pan gesture (panning or flicking) is active.
+
+    \note Change notifications for this property were introduced in Qt 5.5.
 */
 
 /*!
@@ -331,8 +333,6 @@ QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap 
     : QObject(parent),
       declarativeMap_(map),
       enabled_(true),
-      hasGrab_(false),
-      activeInput_(NoInput),
       activeGestures_(ZoomGesture | PanGesture | FlickGesture)
 {
     map_ = 0;
@@ -358,11 +358,6 @@ void QDeclarativeGeoMapGestureArea::setMap(QGeoMap *map)
     connect(pan_.animation_, SIGNAL(finished()), this, SLOT(endFlick()));
     connect(this, SIGNAL(movementStopped()),
             map_, SLOT(cameraStopped()));
-}
-
-bool QDeclarativeGeoMapGestureArea::hasGrabbedInput() const
-{
-    return hasGrab_;
 }
 
 QDeclarativeGeoMapGestureArea::~QDeclarativeGeoMapGestureArea()
@@ -551,74 +546,47 @@ void QDeclarativeGeoMapGestureArea::setFlickDeceleration(qreal deceleration)
 /*!
     \internal
 */
-QTouchEvent::TouchPoint makeTouchPointFromMouseEvent(QMouseEvent *event, Qt::TouchPointState state)
+QTouchEvent::TouchPoint* createTouchPointFromMouseEvent(QMouseEvent *event, Qt::TouchPointState state)
 {
     // this is only partially filled. But since it is only partially used it works
     // more robust would be to store a list of QPointFs rather than TouchPoints
-    QTouchEvent::TouchPoint newPoint;
-    newPoint.setPos(event->localPos());
-    newPoint.setScenePos(event->windowPos());
-    newPoint.setScreenPos(event->screenPos());
-    newPoint.setState(state);
-    newPoint.setId(0);
+    QTouchEvent::TouchPoint* newPoint = new QTouchEvent::TouchPoint();
+    newPoint->setPos(event->localPos());
+    newPoint->setScenePos(event->windowPos());
+    newPoint->setScreenPos(event->screenPos());
+    newPoint->setState(state);
+    newPoint->setId(0);
     return newPoint;
 }
 
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
+void QDeclarativeGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
 {
-    if (!(enabled_ && activeGestures_))
-        return false;
-
-    if (activeInput_ == TouchInput)
-        return false;
-
-    activeInput_ = MouseInput;
-
-    touchPoints_.clear();
-    touchPoints_ << makeTouchPointFromMouseEvent(event, Qt::TouchPointPressed);
-
-    update();
-    return true;
+    m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointPressed));
+    if (m_touchPoints.isEmpty()) update();
+    event->accept();
 }
 
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
+void QDeclarativeGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
 {
-    if (!(enabled_ && activeGestures_))
-        return false;
-
-    if (activeInput_ != MouseInput)
-        return false;
-
-    touchPoints_.clear();
-
-    touchPoints_ << makeTouchPointFromMouseEvent(event, Qt::TouchPointMoved);
-    update();
-    return true;
+    m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointMoved));
+    if (m_touchPoints.isEmpty()) update();
+    event->accept();
 }
 
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *)
+void QDeclarativeGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *event)
 {
-    if (!(enabled_ && activeGestures_))
-        return false;
-
-    if (activeInput_ == TouchInput)
-        return false;
-
-    touchPoints_.clear();
-    update();
-
-    activeInput_ = NoInput;
-
-    return true;
+    m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointReleased));
+    if (m_touchPoints.isEmpty()) update();
+    event->accept();
 }
 
 /*!
@@ -626,109 +594,34 @@ bool QDeclarativeGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *)
 */
 void QDeclarativeGeoMapGestureArea::handleMouseUngrabEvent()
 {
-    touchPoints_.clear();
-    hasGrab_ = false;
-    if (activeInput_ == MouseInput)
-        activeInput_ = NoInput;
+    m_mousePoint.reset();
     update();
 }
 
 /*!
     \internal
 */
-bool QDeclarativeGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
+void QDeclarativeGeoMapGestureArea::handleTouchUngrabEvent()
 {
-    if (!(enabled_ && activeGestures_))
-        return false;
-
-    if (activeInput_ == MouseInput)
-        return false;
-
-    switch (event->type()) {
-    case QEvent::TouchBegin:
-    case QEvent::TouchUpdate:
-        activeInput_ = TouchInput;
-        foreach (const QTouchEvent::TouchPoint &p, event->touchPoints()) {
-            QList<QTouchEvent::TouchPoint>::iterator i;
-            for (i = touchPoints_.begin(); i != touchPoints_.end(); ++i) {
-                if (i->id() == p.id()) {
-                    i = touchPoints_.erase(i);
-                    break;
-                }
-            }
-            switch (p.state()) {
-            case Qt::TouchPointPressed:
-            case Qt::TouchPointMoved:
-            case Qt::TouchPointStationary:
-                touchPoints_.insert(i, p);
-                break;
-            case Qt::TouchPointReleased:
-                // already removed
-                break;
-            default:
-                break;
-            }
-        }
-        update();
-        break;
-    case QEvent::TouchEnd:
-    case QEvent::TouchCancel:
-        touchPoints_.clear();
-        update();
-        activeInput_ = NoInput;
-        break;
-    default:
-        // no-op
-        break;
-    }
-
-    return true;
+    m_touchPoints.clear();
+    update();
 }
 
-bool QDeclarativeGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
+/*!
+    \internal
+*/
+void QDeclarativeGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
+{
+    m_touchPoints.clear();
+    for (int i = 0; i < event->touchPoints().count(); ++i)
+        m_touchPoints << event->touchPoints().at(i);
+    update();
+}
+
+void QDeclarativeGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 {
     declarativeMap_->setZoomLevel(qBound(minimumZoomLevel(), declarativeMap_->zoomLevel() + event->angleDelta().y() * qreal(0.001), maximumZoomLevel()));
-    return true;
-}
-
-/*!
-    \internal
-*/
-bool QDeclarativeGeoMapGestureArea::filterMapChildMouseEvent(QMouseEvent *event)
-{
-    if (!(enabled_ && activeGestures_))
-        return false;
-
-    // We have not grabbed the mouse yet. Process it but don't filter it so the child can use it
-    // (until we grab it).
-    switch (event->type()) {
-    case QEvent::MouseButtonPress:
-        handleMousePressEvent(event);
-        break;
-    case QEvent::MouseButtonRelease:
-        handleMouseReleaseEvent(event);
-        break;
-    case QEvent::MouseMove:
-        handleMouseMoveEvent(event);
-        break;
-    default:
-        break;
-    }
-    return false;
-}
-
-/*!
-    \internal
-*/
-bool QDeclarativeGeoMapGestureArea::filterMapChildTouchEvent(QTouchEvent *event)
-{
-    if (!(enabled_ && activeGestures_))
-        return false;
-
-    // We have not grabbed the touch id associated with this touch event yet. Process it but don't
-    // filter it so the child can use it (until we grab it).
-    handleTouchEvent(event);
-    return false;
+    event->accept();
 }
 
 /*!
@@ -772,11 +665,27 @@ void QDeclarativeGeoMapGestureArea::updateVelocityList(const QPointF &pos)
 /*!
     \internal
 */
+
+bool QDeclarativeGeoMapGestureArea::isActive() const
+{
+    return isPanActive() || isPinchActive();
+}
+
+/*!
+    \internal
+*/
 // simplify the gestures by using a state-machine format (easy to move to a future state machine)
 void QDeclarativeGeoMapGestureArea::update()
 {
     if (!map_) return;
     // First state machine is for the number of touch points
+
+    //combine touch with mouse event
+    m_allPoints.clear();
+    m_allPoints << m_touchPoints;
+    if (m_allPoints.isEmpty() && !m_mousePoint.isNull())
+        m_allPoints << *m_mousePoint.data();
+
     touchPointStateMachine();
 
     // Parallel state machine for pinch
@@ -789,31 +698,6 @@ void QDeclarativeGeoMapGestureArea::update()
     // the whole gesture (enabled_ flag), this keeps the enabled_ consistent with the pinch
     if (isPanActive() || (enabled_ && pan_.enabled_ && (activeGestures_ & (PanGesture | FlickGesture))))
         panStateMachine();
-
-    if (pinchState_ != pinchInactive || panState_ == panActive) {
-        if (!hasGrab_) {
-            if (activeInput_ == MouseInput) {
-                hasGrab_ = true;
-                declarativeMap_->grabMouse();
-            } else if (activeInput_ == TouchInput) {
-                hasGrab_ = true;
-                QVector<int> ids;
-                foreach (const QTouchEvent::TouchPoint &tp, touchPoints_)
-                    ids.append(tp.id());
-                declarativeMap_->grabTouchPoints(ids);
-            }
-        }
-    } else {
-        if (hasGrab_) {
-            if (activeInput_ == MouseInput) {
-                hasGrab_ = false;
-                declarativeMap_->ungrabMouse();
-            } else if (activeInput_ == TouchInput) {
-                hasGrab_ = false;
-                declarativeMap_->ungrabTouchPoints();
-            }
-        }
-    }
 }
 
 /*!
@@ -824,29 +708,29 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
     // Transitions:
     switch (touchPointState_) {
     case touchPoints0:
-        if (touchPoints_.count() == 1) {
+        if (m_allPoints.count() == 1) {
             clearTouchData();
             startOneTouchPoint();
             touchPointState_ = touchPoints1;
-        } else if (touchPoints_.count() >= 2) {
+        } else if (m_allPoints.count() >= 2) {
             clearTouchData();
             startTwoTouchPoints();
             touchPointState_ = touchPoints2;
         }
         break;
     case touchPoints1:
-        if (touchPoints_.count() == 0) {
+        if (m_allPoints.count() == 0) {
             touchPointState_ = touchPoints0;
-        } else if (touchPoints_.count() == 2) {
+        } else if (m_allPoints.count() == 2) {
             touchCenterCoord_ = map_->itemPositionToCoordinate(QDoubleVector2D(sceneCenter_), false);
             startTwoTouchPoints();
             touchPointState_ = touchPoints2;
         }
         break;
     case touchPoints2:
-        if (touchPoints_.count() == 0) {
+        if (m_allPoints.count() == 0) {
             touchPointState_ = touchPoints0;
-        } else if (touchPoints_.count() == 1) {
+        } else if (m_allPoints.count() == 1) {
             touchCenterCoord_ = map_->itemPositionToCoordinate(QDoubleVector2D(sceneCenter_), false);
             startOneTouchPoint();
             touchPointState_ = touchPoints1;
@@ -872,7 +756,7 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
 */
 void QDeclarativeGeoMapGestureArea::startOneTouchPoint()
 {
-    sceneStartPoint1_ = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
+    sceneStartPoint1_ = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
     lastPos_ = sceneStartPoint1_;
     lastPosTime_.start();
     QGeoCoordinate startCoord = map_->itemPositionToCoordinate(QDoubleVector2D(sceneStartPoint1_), false);
@@ -888,7 +772,7 @@ void QDeclarativeGeoMapGestureArea::startOneTouchPoint()
 */
 void QDeclarativeGeoMapGestureArea::updateOneTouchPoint()
 {
-    sceneCenter_ = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
+    sceneCenter_ = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
     updateVelocityList(sceneCenter_);
 }
 
@@ -898,8 +782,8 @@ void QDeclarativeGeoMapGestureArea::updateOneTouchPoint()
 */
 void QDeclarativeGeoMapGestureArea::startTwoTouchPoints()
 {
-    sceneStartPoint1_ = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
-    sceneStartPoint2_ = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
+    sceneStartPoint1_ = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
+    sceneStartPoint2_ = declarativeMap_->mapFromScene(m_allPoints.at(1).scenePos());
     QPointF startPos = (sceneStartPoint1_ + sceneStartPoint2_) * 0.5;
     lastPos_ = startPos;
     lastPosTime_.start();
@@ -915,13 +799,12 @@ void QDeclarativeGeoMapGestureArea::startTwoTouchPoints()
 */
 void QDeclarativeGeoMapGestureArea::updateTwoTouchPoints()
 {
-    QPointF p1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
-    QPointF p2 = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
+    QPointF p1 = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
+    QPointF p2 = declarativeMap_->mapFromScene(m_allPoints.at(1).scenePos());
     qreal dx = p1.x() - p2.x();
     qreal dy = p1.y() - p2.y();
     distanceBetweenTouchPoints_ = sqrt(dx * dx + dy * dy);
     sceneCenter_ = (p1 + p2) / 2;
-
     updateVelocityList(sceneCenter_);
 
     twoTouchAngle_ = QLineF(p1, p2).angle();
@@ -938,7 +821,7 @@ void QDeclarativeGeoMapGestureArea::pinchStateMachine()
     // Transitions:
     switch (pinchState_) {
     case pinchInactive:
-        if (touchPoints_.count() >= 2) {
+        if (m_allPoints.count() >= 2) {
             if (canStartPinch()) {
                 startPinch();
                 pinchState_ = pinchActive;
@@ -948,7 +831,7 @@ void QDeclarativeGeoMapGestureArea::pinchStateMachine()
         }
         break;
     case pinchInactiveTwoPoints:
-        if (touchPoints_.count() <= 1) {
+        if (m_allPoints.count() <= 1) {
             pinchState_ = pinchInactive;
         } else {
             if (canStartPinch()) {
@@ -958,7 +841,7 @@ void QDeclarativeGeoMapGestureArea::pinchStateMachine()
         }
         break;
     case pinchActive:
-        if (touchPoints_.count() <= 1) {
+        if (m_allPoints.count() <= 1) {
             endPinch();
             pinchState_ = pinchInactive;
         }
@@ -989,9 +872,9 @@ bool QDeclarativeGeoMapGestureArea::canStartPinch()
 {
     const int startDragDistance = qApp->styleHints()->startDragDistance();
 
-    if (touchPoints_.count() >= 2) {
-        QPointF p1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
-        QPointF p2 = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
+    if (m_allPoints.count() >= 2) {
+        QPointF p1 = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
+        QPointF p2 = declarativeMap_->mapFromScene(m_allPoints.at(1).scenePos());
         if (qAbs(p1.x()-sceneStartPoint1_.x()) > startDragDistance
          || qAbs(p1.y()-sceneStartPoint1_.y()) > startDragDistance
          || qAbs(p2.x()-sceneStartPoint2_.x()) > startDragDistance
@@ -1000,7 +883,7 @@ bool QDeclarativeGeoMapGestureArea::canStartPinch()
             pinch_.event.setAngle(twoTouchAngle_);
             pinch_.event.setPoint1(p1);
             pinch_.event.setPoint2(p2);
-            pinch_.event.setPointCount(touchPoints_.count());
+            pinch_.event.setPointCount(m_allPoints.count());
             pinch_.event.setAccepted(true);
             emit pinchStarted(&pinch_.event);
             return pinch_.event.accepted();
@@ -1015,11 +898,11 @@ bool QDeclarativeGeoMapGestureArea::canStartPinch()
 void QDeclarativeGeoMapGestureArea::startPinch()
 {
     pinch_.startDist = distanceBetweenTouchPoints_;
-    pinch_.zoom.previous = 1.0;
+    pinch_.zoom.previous = declarativeMap_->zoomLevel();
     pinch_.lastAngle = twoTouchAngle_;
 
-    pinch_.lastPoint1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
-    pinch_.lastPoint2 = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
+    pinch_.lastPoint1 = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
+    pinch_.lastPoint2 = declarativeMap_->mapFromScene(m_allPoints.at(1).scenePos());
 
     pinch_.zoom.start = declarativeMap_->zoomLevel();
 }
@@ -1048,11 +931,11 @@ void QDeclarativeGeoMapGestureArea::updatePinch()
     pinch_.event.setCenter(declarativeMap_->mapFromScene(sceneCenter_));
     pinch_.event.setAngle(twoTouchAngle_);
 
-    pinch_.lastPoint1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
-    pinch_.lastPoint2 = declarativeMap_->mapFromScene(touchPoints_.at(1).scenePos());
+    pinch_.lastPoint1 = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
+    pinch_.lastPoint2 = declarativeMap_->mapFromScene(m_allPoints.at(1).scenePos());
     pinch_.event.setPoint1(pinch_.lastPoint1);
     pinch_.event.setPoint2(pinch_.lastPoint2);
-    pinch_.event.setPointCount(touchPoints_.count());
+    pinch_.event.setPointCount(m_allPoints.count());
     pinch_.event.setAccepted(true);
 
     pinch_.lastAngle = twoTouchAngle_;
@@ -1064,6 +947,7 @@ void QDeclarativeGeoMapGestureArea::updatePinch()
         qreal perPinchMaximumZoomLevel = qMin(pinch_.zoom.start + pinch_.zoom.maximumChange, pinch_.zoom.maximum);
         newZoomLevel = qMin(qMax(perPinchMinimumZoomLevel, newZoomLevel), perPinchMaximumZoomLevel);
         declarativeMap_->setZoomLevel(newZoomLevel);
+        pinch_.zoom.previous = newZoomLevel;
     }
 }
 
@@ -1072,11 +956,12 @@ void QDeclarativeGeoMapGestureArea::updatePinch()
 */
 void QDeclarativeGeoMapGestureArea::endPinch()
 {
-    QPointF pinchCenter = declarativeMap_->mapFromScene(sceneCenter_);
-    pinch_.event.setCenter(pinchCenter);
+    QPointF p1 = declarativeMap_->mapFromScene(pinch_.lastPoint1);
+    QPointF p2 = declarativeMap_->mapFromScene(pinch_.lastPoint2);
+    pinch_.event.setCenter((p1 + p2) / 2);
     pinch_.event.setAngle(pinch_.lastAngle);
-    pinch_.event.setPoint1(declarativeMap_->mapFromScene(pinch_.lastPoint1));
-    pinch_.event.setPoint2(declarativeMap_->mapFromScene(pinch_.lastPoint2));
+    pinch_.event.setPoint1(p1);
+    pinch_.event.setPoint2(p2);
     pinch_.event.setAccepted(true);
     pinch_.event.setPointCount(0);
     emit pinchFinished(&pinch_.event);
@@ -1102,7 +987,7 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
         }
         break;
     case panActive:
-        if (touchPoints_.count() == 0) {
+        if (m_allPoints.count() == 0) {
             panState_ = panFlick;
             if (!tryStartFlick())
             {
@@ -1116,7 +1001,7 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
         }
         break;
     case panFlick:
-        if (touchPoints_.count() > 0) { // re touched before movement ended
+        if (m_allPoints.count() > 0) { // re touched before movement ended
             endFlick();
             panState_ = panActive;
         }
@@ -1145,13 +1030,13 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
 */
 bool QDeclarativeGeoMapGestureArea::canStartPan()
 {
-    if (touchPoints_.count() == 0 || (activeGestures_ & PanGesture) == 0)
+    if (m_allPoints.count() == 0 || (activeGestures_ & PanGesture) == 0)
         return false;
 
     // Check if thresholds for normal panning are met.
     // (normal panning vs flicking: flicking will start from mouse release event).
     const int startDragDistance = qApp->styleHints()->startDragDistance();
-    QPointF p1 = declarativeMap_->mapFromScene(touchPoints_.at(0).scenePos());
+    QPointF p1 = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
     int dyFromPress = int(p1.y() - sceneStartPoint1_.y());
     int dxFromPress = int(p1.x() - sceneStartPoint1_.x());
     if ((qAbs(dyFromPress) > startDragDistance || qAbs(dxFromPress) > startDragDistance))
@@ -1267,7 +1152,6 @@ void QDeclarativeGeoMapGestureArea::endFlick()
     emit panActiveChanged();
     emit movementStopped();
 }
-
 
 
 
