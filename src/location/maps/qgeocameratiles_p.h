@@ -48,18 +48,15 @@
 //
 
 #include <QtLocation/qlocationglobal.h>
-#include <QSet>
-#include <QSize>
-#include <QSizeF>
-#include <QPair>
+#include <QtCore/QScopedPointer>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoCameraData;
 class QGeoTileSpec;
 class QGeoMapType;
-
 class QGeoCameraTilesPrivate;
+class QSize;
 
 class Q_LOCATION_EXPORT QGeoCameraTiles {
 public:
@@ -80,9 +77,8 @@ public:
     QSet<QGeoTileSpec> tiles() const;
     void findPrefetchTiles();
 
-private:
-    QGeoCameraTilesPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoCameraTiles)
+protected:
+    QScopedPointer<QGeoCameraTilesPrivate> d_ptr;
     Q_DISABLE_COPY(QGeoCameraTiles)
 };
 
