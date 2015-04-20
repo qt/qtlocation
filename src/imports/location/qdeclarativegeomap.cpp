@@ -777,11 +777,11 @@ void QDeclarativeGeoMap::pan(int dx, int dy)
 
 
 /*!
-    \qmlmethod void QtLocation::Map::cameraStopped()
+    \qmlmethod void QtLocation::Map::prefetchData()
 
     Optional hint that allows the map to prefetch during this idle period
 */
-void QDeclarativeGeoMap::cameraStopped()
+void QDeclarativeGeoMap::prefetchData()
 {
     if (!m_mappingManagerInitialized)
         return;
