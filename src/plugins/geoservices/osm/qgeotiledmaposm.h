@@ -52,6 +52,7 @@ protected:
 
 private:
     int m_mapId;
+    const QString m_customCopyright;
 };
 
 QT_END_NAMESPACE

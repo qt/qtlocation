@@ -113,12 +113,20 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrigh
 
     setKeepMouseGrab(false);
     setAcceptedMouseButtons(Qt::NoButton);
+    setVisible(true);
 
     update();
 }
 
 void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrightsHtml)
 {
+    if (copyrightsHtml.isEmpty()) {
+        setVisible(false);
+        return;
+    } else {
+        setVisible(true);
+    }
+
     if (!m_copyrightsHtml)
         m_copyrightsHtml = new QTextDocument(this);
 

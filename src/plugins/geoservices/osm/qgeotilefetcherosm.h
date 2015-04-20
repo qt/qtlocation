@@ -49,12 +49,14 @@ public:
     QGeoTileFetcherOsm(QObject *parent = 0);
 
     void setUserAgent(const QByteArray &userAgent);
+    void setUrlPrefix(const QString &urlPrefix);
 
 private:
     QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
 
     QNetworkAccessManager *m_networkManager;
     QByteArray m_userAgent;
+    QString m_urlPrefix;
 };
 
 QT_END_NAMESPACE

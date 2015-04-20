@@ -55,5 +55,31 @@ The following table lists optional parameters that can be passed to the Open Str
     \li useragent
     \li User agent string set when making network requests.  This parameter should be set to a
         value that uniquely identifies the application.
+\row
+    \li mapping.host
+    \li Url string set when making network requests to the tile server.  This parameter should be set to a
+        valid server url with the correct osm api and the \l{Map::activeMapType} to the corresponding \l{MapType}.CustomMap.
+        The CustomMap will only be available if this parameter is set.
+        \note Setting the mapping.host parameter to a new server renders the map tile cache useless for the old custommap style.
+\row
+    \li mapping.copyright
+    \li Custom copryright string is used when setting the \l{Map::activeMapType} to \l{MapType}.CustomMap via urlprefix parameter.
+        This copyright will only be used when using the CustomMap from above. If empty no copyright will be displayed for the custom map.
 \endtable
+
+\section1 Parameter Usage Example
+
+The following example shows how to create an OSM plugin instance with
+parameters supplied for an useragent, and if necessary, a custom server url plus the corresponding copyright information for the tile provider.
+
+\section2 QML
+
+\code
+Plugin {
+    name: "osm"
+    PluginParameter { name: "useragent"; value: "My great Qt OSM application" }
+    PluginParameter { name: "mapping.host"; value: "http://osm.tile.server.address/" }
+    PluginParameter { name: "mapping.copyright"; value: "All mine" }
+}
+\endcode
 */

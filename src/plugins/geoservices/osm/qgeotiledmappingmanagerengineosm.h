@@ -50,6 +50,10 @@ public:
     ~QGeoTiledMappingManagerEngineOsm();
 
     QGeoMap *createMap();
+    QString customCopyright() const;
+
+private:
+    QString m_customCopyright;
 };
 
 QT_END_NAMESPACE

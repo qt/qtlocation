@@ -39,7 +39,7 @@
 QT_BEGIN_NAMESPACE
 
 QGeoTiledMapOsm::QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
-:   QGeoTiledMap(engine, parent), m_mapId(-1)
+:   QGeoTiledMap(engine, parent), m_mapId(-1), m_customCopyright(engine->customCopyright())
 {
 }
 
@@ -72,6 +72,9 @@ void QGeoTiledMapOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
     case 7:
         // set attribution to Thunder Forest
         copyrights = tr("Maps &copy; <a href='http://www.thunderforest.com/'>Thunderforest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        break;
+    case 8:
+        copyrights = m_customCopyright;
         break;
     default:
         // set attribution to OSM
