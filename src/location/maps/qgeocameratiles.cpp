@@ -49,11 +49,7 @@
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
-#define ENABLE_PREFETCHING
-// larger values fetch a bigger set when the camera stops
 #define PREFETCH_FRUSTUM_SCALE 2.0
-// #define PREFETCH_NEIGHBOUR_LAYER
-#define PREFETCH_TWO_NEIGHBOUR_LAYERS
 
 struct Frustum
 {
@@ -87,10 +83,13 @@ public:
     int m_intZoomLevel;
     int m_sideLength;
 
+    bool m_dirtyGeometry;
+    bool m_dirtyMetadata;
+
     void updateMetadata();
     void updateGeometry(double viewExpansion = 1.0);
 
-    Frustum frustum(double fieldOfViewGradient) const;
+    Frustum createFrustum(double fieldOfViewGradient) const;
 
     class LengthSorter
     {
@@ -128,73 +127,66 @@ QGeoCameraTiles::~QGeoCameraTiles()
 {
 }
 
-void QGeoCameraTiles::findPrefetchTiles()
+QSet<QGeoTileSpec> QGeoCameraTiles::prefetchTiles(PrefetchStle style)
 {
-#if defined(ENABLE_PREFETCHING)
+    int currentIntZoom = static_cast<int>(std::floor(d_ptr->m_camera.zoomLevel()));
+    double currentFloatZoom = d_ptr->m_camera.zoomLevel();
+
     d_ptr->m_tiles.clear();
-    int zoom = static_cast<int>(std::floor(d_ptr->m_camera.zoomLevel()));
-    d_ptr->m_intZoomLevel = zoom;
-    d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+    d_ptr->m_intZoomLevel = currentIntZoom;
+    d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel ;
     d_ptr->updateGeometry(PREFETCH_FRUSTUM_SCALE);
 
-#if defined(PREFETCH_NEIGHBOUR_LAYER)
-    double zoomFraction = d_ptr->m_camera.zoomLevel() - zoom;
-    int nearestNeighbourLayer = zoomFraction > 0.5 ? zoom + 1 : zoom - 1;
-    if (nearestNeighbourLayer <= d_ptr->m_maxZoom && nearestNeighbourLayer >= 0)
-    {
-        double oldZoom = d_ptr->m_camera.zoomLevel();
-        d_ptr->m_intZoomLevel = nearestNeighbourLayer;
-        d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
-        d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
+    switch (style) {
 
-        // Approx heuristic, keeping total # prefetched tiles roughly independent of the
-        // fractional zoom level.
-        double neighbourScale = (1.0 + zoomFraction)/2.0;
+    case PrefetchNeighbourLayer: {
 
-        d_ptr->updateGeometry(PREFETCH_FRUSTUM_SCALE * neighbourScale);
-        d_ptr->m_camera.setZoomLevel(oldZoom);
+        double zoomFraction = d_ptr->m_camera.zoomLevel() - currentIntZoom;
+        int nearestNeighbourLayer = zoomFraction > 0.5 ? currentIntZoom + 1 : currentIntZoom - 1;
+        if (nearestNeighbourLayer <= d_ptr->m_maxZoom && nearestNeighbourLayer >= 0) {
+            d_ptr->m_intZoomLevel = nearestNeighbourLayer;
+            d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+            d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
+            // Approx heuristic, keeping total # prefetched tiles roughly independent of the
+            // fractional zoom level.
+            double neighbourScale = (1.0 + zoomFraction)/2.0;
+            d_ptr->updateGeometry(PREFETCH_FRUSTUM_SCALE * neighbourScale);
+        }
     }
-#elif defined(PREFETCH_TWO_NEIGHBOUR_LAYERS)
- //   int size1 = d->tiles_.size();
 
-    // This is a simpler strategy, we just prefetch from layer above and below
-    // for the layer below we only use half the size as this fills the screen
-    double oldZoom = d_ptr->m_camera.zoomLevel();
-    if (zoom > 0)
-    {
-        d_ptr->m_intZoomLevel = zoom-1;
-        d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
-        d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
-        d_ptr->updateGeometry(0.5);
+    case PrefetchTwoNeighbourLayers: {
+        // This is a simpler strategy, we just prefetch from layer above and below
+        // for the layer below we only use half the size as this fills the screen
+        if (currentIntZoom > 0) {
+            d_ptr->m_intZoomLevel = currentIntZoom - 1;
+            d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+            d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
+            d_ptr->updateGeometry(0.5);
+        }
+        if (currentIntZoom < d_ptr->m_maxZoom) {
+            d_ptr->m_intZoomLevel = currentIntZoom + 1;
+            d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+            d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
+            d_ptr->updateGeometry(1.0);
+        }
     }
- //   int size2 = d->tiles_.size();
-    if (zoom < d_ptr->m_maxZoom)
-    {
-        d_ptr->m_intZoomLevel = zoom+1;
-        d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
-        d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
-        d_ptr->updateGeometry(1.0);
     }
- //   qDebug() << "prefetched main tiles: " << size1 << " higher detail layer: " << d->tiles_.size() - size2 << " low detail layer: " << size2 - size1;
-    d_ptr->m_intZoomLevel = zoom;
+
+    d_ptr->m_intZoomLevel = currentIntZoom;
     d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
-    d_ptr->m_camera.setZoomLevel(oldZoom);
-#endif
-#endif
+    d_ptr->m_camera.setZoomLevel(currentFloatZoom);
+    return d_ptr->m_tiles;
 }
-
 
 void QGeoCameraTiles::setCamera(const QGeoCameraData &camera)
 {
     if (d_ptr->m_camera == camera)
         return;
-    d_ptr->m_camera = camera;
 
+    d_ptr->m_dirtyGeometry = true;
+    d_ptr->m_camera = camera;
     d_ptr->m_intZoomLevel = static_cast<int>(std::floor(d_ptr->m_camera.zoomLevel()));
     d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
-
-    d_ptr->m_tiles.clear();
-    d_ptr->updateGeometry();
 }
 
 void QGeoCameraTiles::setScreenSize(const QSize &size)
@@ -202,9 +194,8 @@ void QGeoCameraTiles::setScreenSize(const QSize &size)
     if (d_ptr->m_screenSize == size)
         return;
 
+    d_ptr->m_dirtyGeometry = true;
     d_ptr->m_screenSize = size;
-    d_ptr->m_tiles.clear();
-    d_ptr->updateGeometry();
 }
 
 void QGeoCameraTiles::setPluginString(const QString &pluginString)
@@ -212,8 +203,8 @@ void QGeoCameraTiles::setPluginString(const QString &pluginString)
     if (d_ptr->m_pluginString == pluginString)
         return;
 
+    d_ptr->m_dirtyMetadata = true;
     d_ptr->m_pluginString = pluginString;
-    d_ptr->updateMetadata();
 }
 
 void QGeoCameraTiles::setMapType(const QGeoMapType &mapType)
@@ -221,8 +212,8 @@ void QGeoCameraTiles::setMapType(const QGeoMapType &mapType)
     if (d_ptr->m_mapType == mapType)
         return;
 
+    d_ptr->m_dirtyMetadata = true;
     d_ptr->m_mapType = mapType;
-    d_ptr->updateMetadata();
 }
 
 void QGeoCameraTiles::setMapVersion(const int mapVersion)
@@ -230,8 +221,8 @@ void QGeoCameraTiles::setMapVersion(const int mapVersion)
     if (d_ptr->m_mapVersion == mapVersion)
         return;
 
+    d_ptr->m_dirtyMetadata = true;
     d_ptr->m_mapVersion = mapVersion;
-    d_ptr->updateMetadata();
 }
 
 void QGeoCameraTiles::setTileSize(int tileSize)
@@ -239,9 +230,8 @@ void QGeoCameraTiles::setTileSize(int tileSize)
     if (d_ptr->m_tileSize == tileSize)
         return;
 
+    d_ptr->m_dirtyGeometry = true;
     d_ptr->m_tileSize = tileSize;
-    d_ptr->m_tiles.clear();
-    d_ptr->updateGeometry();
 }
 
 int QGeoCameraTiles::tileSize() const
@@ -254,18 +244,34 @@ void QGeoCameraTiles::setMaximumZoomLevel(int maxZoom)
     if (d_ptr->m_maxZoom == maxZoom)
         return;
 
+    d_ptr->m_dirtyGeometry = true;
     d_ptr->m_maxZoom = maxZoom;
-    d_ptr->m_tiles.clear();
-    d_ptr->updateGeometry();
 }
 
-QSet<QGeoTileSpec> QGeoCameraTiles::tiles() const
+QSet<QGeoTileSpec> QGeoCameraTiles::visibleTiles()
 {
+    if (d_ptr->m_dirtyGeometry) {
+        d_ptr->m_tiles.clear();
+        d_ptr->updateGeometry();
+        d_ptr->m_dirtyGeometry = false;
+    }
+
+    if (d_ptr->m_dirtyMetadata) {
+        d_ptr->updateMetadata();
+        d_ptr->m_dirtyMetadata = false;
+    }
+
     return d_ptr->m_tiles;
 }
 
 QGeoCameraTilesPrivate::QGeoCameraTilesPrivate()
-:   m_mapVersion(-1), m_tileSize(0), m_maxZoom(0), m_intZoomLevel(0), m_sideLength(0)
+:   m_mapVersion(-1),
+    m_tileSize(0),
+    m_maxZoom(0),
+    m_intZoomLevel(0),
+    m_sideLength(0),
+    m_dirtyGeometry(false),
+    m_dirtyMetadata(false)
 {
 }
 
@@ -292,7 +298,7 @@ void QGeoCameraTilesPrivate::updateGeometry(double viewExpansion)
 {
     // Find the frustum from the camera / screen / viewport information
     // The larger frustum when stationary is a form of prefetching
-    Frustum f = frustum(viewExpansion);
+    Frustum f = createFrustum(viewExpansion);
 
     // Find the polygon where the frustum intersects the plane of the map
     PolygonVector footprint = frustumFootprint(f);
@@ -311,7 +317,7 @@ void QGeoCameraTilesPrivate::updateGeometry(double viewExpansion)
     }
 }
 
-Frustum QGeoCameraTilesPrivate::frustum(double fieldOfViewGradient) const
+Frustum QGeoCameraTilesPrivate::createFrustum(double fieldOfViewGradient) const
 {
     QDoubleVector3D center = m_sideLength * QGeoProjection::coordToMercator(m_camera.center());
     center.setZ(0.0);
@@ -333,10 +339,7 @@ Frustum QGeoCameraTilesPrivate::frustum(double fieldOfViewGradient) const
 
     double aspectRatio = 1.0 * m_screenSize.width() / m_screenSize.height();
 
-    double hn = 0.0;
-    double wn = 0.0;
-    double hf = 0.0;
-    double wf = 0.0;
+    double hn,wn,hf,wf = 0.0;
 
     // fixes field of view at 45 degrees
     // this assumes that viewSize = 2*nearPlane x 2*nearPlane

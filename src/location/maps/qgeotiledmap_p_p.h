@@ -82,8 +82,6 @@ public:
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate) const;
 
     void newTileFetched(const QGeoTileSpec &spec);
-    QSet<QGeoTileSpec> visibleTiles();
-
     void prefetchTiles();
 
 protected:

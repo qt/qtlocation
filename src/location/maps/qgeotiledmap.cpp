@@ -177,10 +177,9 @@ QGeoTiledMapPrivate::~QGeoTiledMapPrivate()
 
 void QGeoTiledMapPrivate::prefetchTiles()
 {
-    m_cameraTiles->findPrefetchTiles();
-
     if (m_tileRequests)
-        m_tileRequests->requestTiles(m_cameraTiles->tiles() - m_mapScene->texturedTiles());
+        m_tileRequests->requestTiles(m_cameraTiles->prefetchTiles(QGeoCameraTiles::PrefetchTwoNeighbourLayers)
+                                     - m_mapScene->texturedTiles());
 }
 
 void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
@@ -211,12 +210,12 @@ void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
     m_cameraTiles->setCamera(cam);
 
     m_mapScene->setCameraData(cam);
-    m_mapScene->setVisibleTiles(m_cameraTiles->tiles());
+    m_mapScene->setVisibleTiles(m_cameraTiles->visibleTiles());
 
     if (m_tileRequests) {
         // don't request tiles that are already built and textured
         QList<QSharedPointer<QGeoTileTexture> > cachedTiles =
-                m_tileRequests->requestTiles(m_cameraTiles->tiles() - m_mapScene->texturedTiles());
+                m_tileRequests->requestTiles(m_cameraTiles->visibleTiles() - m_mapScene->texturedTiles());
 
         foreach (const QSharedPointer<QGeoTileTexture> &tex, cachedTiles) {
             m_mapScene->addTile(tex->spec, tex);
@@ -260,25 +259,20 @@ void QGeoTiledMapPrivate::mapResized(int width, int height)
         int newSize = qMax(m_cache->minTextureUsage(), texCacheSize);
         m_cache->setMinTextureUsage(newSize);
     }
-    q->evaluateCopyrights(visibleTiles());
+    q->evaluateCopyrights(m_cameraTiles->visibleTiles());
 }
 
 void QGeoTiledMapPrivate::newTileFetched(const QGeoTileSpec &spec)
 {
      Q_Q(QGeoTiledMap);
     // Only promote the texture up to GPU if it is visible
-    if (m_cameraTiles->tiles().contains(spec)){
+    if (m_cameraTiles->visibleTiles().contains(spec)){
         QSharedPointer<QGeoTileTexture> tex = m_engine.data()->getTileTexture(spec);
         if (tex) {
             m_mapScene->addTile(spec, tex);
             q->update();
         }
     }
-}
-
-QSet<QGeoTileSpec> QGeoTiledMapPrivate::visibleTiles()
-{
-    return m_cameraTiles->tiles();
 }
 
 QSGNode *QGeoTiledMapPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
