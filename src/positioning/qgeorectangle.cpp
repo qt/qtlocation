@@ -66,7 +66,8 @@ QT_BEGIN_NAMESPACE
     touches but does not cross the pole and that the center coordinate is still
     in the center of the geo rectangle.
 
-    This class is a \l Q_GADGET since Qt 5.5.
+    This class is a \l Q_GADGET since Qt 5.5. It can be
+    \l{Cpp_value_integration_positioning}{directly used from C++ and QML}.
 */
 
 /*!

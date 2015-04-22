@@ -48,40 +48,14 @@
 
     \include examples-run.qdocinc
 
-    \section1 Integrating C++ Data Structures
+    \section1 Overview
 
-    Starting with Qt 5.5, it has become much easier to integrate non-QObject based
-    data types into QML. This is achieved by adding \l Q_GADGET support to QtQml.
-    The macro converts classes into a light-weight
-    version of a QObject without the required \l QObject inheritance but retains
-    the reflection capabilities of \l QMetaObject. As a result they can be directly
-    exposed to QML and do not require any further wrapper classes.
 
-    To make use of this new development a significant number of Position and Location
-    related data types were converted to Q_GADGETs. They retain their API and value
-    type character but have become introspectable via \l QMetaObject. This conversion
-    was done to the following classes:
+    This example makes use of the \l Q_GADGET feature as part of its position controller
+    implementation. It permits \l {Cpp_value_integration_positioning}{direct integration}
+    of non-QObject based C++ value types into QML.
 
-    \list
-    \li \l QGeoCircle
-    \li \l QGeoCoordinate
-    \li \l QGeoRectangle
-    \li \l QGeoShape
-    \endlist
-
-    Using \l QGeoCoordinate as an example, the C++ types are directly exposed to the
-    QML environment via its meta type:
-
-    \code
-        qRegisterMetaType<QGeoCoordinate>();
-        QMetaType::registerEqualsComparator<QGeoCoordinate>();
-    \endcode
-
-    The above registration of \l QGeoCoordinate is automatically done once by the
-    QtPositioning QML plugin.
-
-    This example makes use of the feature as part of its position controller
-    implementation. The main purpose of the class is to track the current
+    The main purpose of the \c PlaneController class is to track the current
     coordinates of the plane at a given time. It exposes the position
     via its position property.
 

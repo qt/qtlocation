@@ -31,6 +31,49 @@
 
 \brief Some of the providing QtPositioning QML types providing interfaces to access and modify properties in C++.
 
+\section1 Overview
+
+Depending on the type of C++ class QtPositioning utilizes two methods to simplify
+exchange of position data between C++ and QML code.
+
+\target Cpp_value_integration_positioning
+\section1 Direct C++ Value Integration in QtPositioning
+
+Starting with Qt 5.5, it has become much easier to integrate non-QObject based
+data types into QML. This is achieved by adding \l Q_GADGET support to QtQml.
+The macro converts classes into a light-weight
+version of a QObject without the required \l QObject inheritance. At the same time
+it retains the reflection capabilities of \l QMetaObject. As a result they can be directly
+exposed to QML and do not require any further wrapper classes.
+
+A significant number of Position and Location
+related data types were converted to Q_GADGETs. They retain their API and value
+type character but have become introspectable via \l QMetaObject. This conversion
+was done to the following classes:
+
+\list
+\li \l QGeoCircle
+\li \l QGeoCoordinate
+\li \l QGeoRectangle
+\li \l QGeoShape
+\endlist
+
+Using \l QGeoCoordinate as an example, the C++ types are directly exposed to the
+QML environment via its meta type:
+
+\code
+    qRegisterMetaType<QGeoCoordinate>();
+    QMetaType::registerEqualsComparator<QGeoCoordinate>();
+\endcode
+
+The above registration of \l QGeoCoordinate is automatically done once by the
+QtPositioning QML plugin. The \l{Plane Spotter (QML)}{Plane Spotter} example demonstrates
+this feature.
+
+\section1 QVariant Based integration
+
+This section provides information on how to integrate QGeoAddress and QGeoLocation.
+
 \section2 Address - QGeoAddress
 The \l {QtPositioning::Address::address} {Address.address} property is used to provide an interface between C++ and QML code.  First a pointer to a
 Address object must be obtained from C++, then use the \l {QObject::property()}{property()} and
