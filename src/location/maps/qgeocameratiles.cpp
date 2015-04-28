@@ -322,9 +322,9 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double fieldOfViewGradient) const
     QDoubleVector3D center = m_sideLength * QGeoProjection::coordToMercator(m_camera.center());
     center.setZ(0.0);
 
-    double f = qMin(m_screenSize.width(), m_screenSize.height()) / (1.0 * m_tileSize);
+    double f = qMin(m_screenSize.width(), m_screenSize.height());
 
-    double z = std::pow(2.0, m_camera.zoomLevel() - m_intZoomLevel);
+    double z = std::pow(2.0, m_camera.zoomLevel() - m_intZoomLevel) * m_tileSize;
 
     double altitude = f / (2.0 * z);
     QDoubleVector3D eye = center;
@@ -336,7 +336,6 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double fieldOfViewGradient) const
 
     double nearPlane =  1 / (4.0 * m_tileSize );
     double farPlane = altitude + 1.0;
-
 
     double aspectRatio = 1.0 * m_screenSize.width() / m_screenSize.height();
 

@@ -456,31 +456,21 @@ void QGeoMapScenePrivate::setupCamera()
     double f = 1.0 * qMin(screenSize_.width(), screenSize_.height());
 
     // fraction of zoom level
-    double z = std::pow(2.0, cameraData_.zoomLevel() - intZoomLevel_);
+    double z = std::pow(2.0, cameraData_.zoomLevel() - intZoomLevel_) * tileSize_;
 
     // calculate altitdue that allows the visible map tiles
     // to fit in the screen correctly (note that a larger f will cause
     // the camera be higher, resulting in gray areas displayed around
     // the tiles)
-    double altitude = scaleFactor_ * f / (2.0 * z);
-
-    double aspectRatio = 1.0 * screenSize_.width() / screenSize_.height();
-
-    double a = f / (z * tileSize_);
+    double altitude = f / (2.0 * z) ;
 
     // mercatorWidth_ and mercatorHeight_ define the ratio for
     // mercator and screen coordinate conversion,
     // see mercatorToItemPosition() and itemPositionToMercator()
-    if (aspectRatio > 1.0) {
-        mercatorHeight_ = a;
-        mercatorWidth_ = a * aspectRatio;
-    } else {
-        mercatorWidth_ = a;
-        mercatorHeight_ = a / aspectRatio;
-    }
+    mercatorHeight_ = screenSize_.height() / z;
+    mercatorWidth_ = screenSize_.width() / z;
 
     // calculate center
-
     double edge = scaleFactor_ * tileSize_;
 
     // first calculate the camera center in map space in the range of 0 <-> sideLength (2^z)
@@ -526,7 +516,7 @@ void QGeoMapScenePrivate::setupCamera()
     // calculate eye
 
     QDoubleVector3D eye = center;
-    eye.setZ(altitude);
+    eye.setZ(altitude * edge);
 
     // calculate up
 
@@ -555,12 +545,13 @@ void QGeoMapScenePrivate::setupCamera()
     // near plane and far plane
 
     double nearPlane = 1.0;
-    double farPlane = 4.0 * edge;
+    double farPlane = (altitude + 1.0) * edge;
 
     cameraUp_ = up;
     cameraCenter_ = center;
     cameraEye_ = eye;
 
+    double aspectRatio = 1.0 * screenSize_.width() / screenSize_.height();
     float halfWidth = 1;
     float halfHeight = 1;
     if (aspectRatio > 1.0) {
