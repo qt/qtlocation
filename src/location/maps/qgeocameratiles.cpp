@@ -334,8 +334,9 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double fieldOfViewGradient) const
     QDoubleVector3D side = QDoubleVector3D::normal(view, QDoubleVector3D(0.0, 1.0, 0.0));
     QDoubleVector3D up = QDoubleVector3D::normal(side, view);
 
-    double nearPlane = m_sideLength / (1.0 * m_tileSize * (1 << m_maxZoom));
-    double farPlane = 3.0;
+    double nearPlane =  1 / (4.0 * m_tileSize );
+    double farPlane = altitude + 1.0;
+
 
     double aspectRatio = 1.0 * m_screenSize.width() / m_screenSize.height();
 
