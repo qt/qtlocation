@@ -38,8 +38,8 @@
 #define QGEOMAP_NOKIA_H
 
 #include "qgeotiledmap_p.h"
-#include <QImage>
-#include <QSize>
+#include <QtGui/QImage>
+#include <QtCore/QPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -56,13 +56,13 @@ public:
     void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
     int mapVersion();
 
-
 private:
-    Q_DISABLE_COPY(QGeoTiledMapNokia)
+    QImage m_logo;
+    QImage m_copyrightsSlab;
+    QString m_lastCopyrightsString;
+    QPointer<QGeoTiledMappingManagerEngineNokia> m_engine;
 
-    QImage logo;
-    QImage copyrightsSlab;
-    QString lastCopyrightsString;
+    Q_DISABLE_COPY(QGeoTiledMapNokia)
 };
 
 QT_END_NAMESPACE

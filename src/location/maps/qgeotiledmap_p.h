@@ -80,15 +80,13 @@ public:
     virtual ~QGeoTiledMap();
 
     QGeoTileCache *tileCache();
-    void newTileFetched(const QGeoTileSpec &spec);
+    QGeoTileRequestManager *requestManager();
+    void updateTile(const QGeoTileSpec &spec);
 
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     void prefetchData() Q_DECL_OVERRIDE;
 
-    // Alternative to exposing this is to make tileFetched a slot, but then requestManager would
-    // need to be a QObject
-    QGeoTileRequestManager *getRequestManager();
 
 protected:
     QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) Q_DECL_OVERRIDE;

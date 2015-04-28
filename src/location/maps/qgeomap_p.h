@@ -88,7 +88,6 @@ public:
 
     QString pluginString();
     QGeoCameraCapabilities cameraCapabilities();
-    QGeoMappingManagerEngine *engine();
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);

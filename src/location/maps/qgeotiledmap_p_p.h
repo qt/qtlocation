@@ -81,7 +81,7 @@ public:
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos) const;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate) const;
 
-    void newTileFetched(const QGeoTileSpec &spec);
+    void updateTile(const QGeoTileSpec &spec);
     void prefetchTiles();
 
 protected:
@@ -91,9 +91,6 @@ protected:
 
 private:
     QGeoTileCache *m_cache;
-    //TODO: fix base pointer
-    QPointer<QGeoTiledMappingManagerEngine> m_engine;
-
     QGeoCameraTiles *m_cameraTiles;
     QGeoMapScene *m_mapScene;
     QGeoTileRequestManager *m_tileRequests;

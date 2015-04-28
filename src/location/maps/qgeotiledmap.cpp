@@ -54,15 +54,13 @@ QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *paren
 {
     Q_D(QGeoTiledMap);
 
-    d->m_tileRequests = new QGeoTileRequestManager(this);
+    d->m_tileRequests = new QGeoTileRequestManager(this, engine);
 
     QObject::connect(d->m_mapScene,
                      SIGNAL(newTilesVisible(QSet<QGeoTileSpec>)),
                      this,
                      SLOT(evaluateCopyrights(QSet<QGeoTileSpec>)));
-
-    engine->registerMap(this);
-    connect(engine,
+    QObject::connect(engine,
             SIGNAL(mapVersionChanged()),
             this,
             SLOT(updateMapVersion()));
@@ -72,22 +70,20 @@ QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *paren
 QGeoTiledMap::~QGeoTiledMap()
 {
     Q_D(QGeoTiledMap);
-    if (d->m_engine) // check if engine hasn't already been deleted
-        d->m_engine.data()->deregisterMap(this);
     delete d->m_tileRequests;
     d->m_tileRequests = 0;
 }
 
-QGeoTileRequestManager *QGeoTiledMap::getRequestManager()
+QGeoTileRequestManager *QGeoTiledMap::requestManager()
 {
     Q_D(QGeoTiledMap);
     return d->m_tileRequests;
 }
 
-void QGeoTiledMap::newTileFetched(const QGeoTileSpec &spec)
+void QGeoTiledMap::updateTile(const QGeoTileSpec &spec)
 {
     Q_D(QGeoTiledMap);
-    d->newTileFetched(spec);
+    d->updateTile(spec);
 }
 
 QGeoTileCache *QGeoTiledMap::tileCache()
@@ -152,7 +148,6 @@ QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coo
 QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
     : QGeoMapPrivate(engine),
       m_cache(engine->tileCache()),
-      m_engine(engine),
       m_cameraTiles(new QGeoCameraTiles()),
       m_mapScene(new QGeoMapScene()),
       m_tileRequests(0)
@@ -262,13 +257,13 @@ void QGeoTiledMapPrivate::mapResized(int width, int height)
     q->evaluateCopyrights(m_cameraTiles->visibleTiles());
 }
 
-void QGeoTiledMapPrivate::newTileFetched(const QGeoTileSpec &spec)
+void QGeoTiledMapPrivate::updateTile(const QGeoTileSpec &spec)
 {
      Q_Q(QGeoTiledMap);
     // Only promote the texture up to GPU if it is visible
     if (m_cameraTiles->visibleTiles().contains(spec)){
-        QSharedPointer<QGeoTileTexture> tex = m_engine.data()->getTileTexture(spec);
-        if (tex) {
+        QSharedPointer<QGeoTileTexture> tex = m_tileRequests->tileTexture(spec);
+        if (!tex.isNull()) {
             m_mapScene->addTile(spec, tex);
             q->update();
         }

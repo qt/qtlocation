@@ -81,6 +81,8 @@ public:
     virtual ~QGeoMappingManagerEngine();
 
     virtual QGeoMap *createMap() = 0;
+    virtual void registerMap(QGeoMap *map) = 0;
+    virtual void deregisterMap(QGeoMap *map) = 0;
 
     QVariantMap parameters() const;
 
