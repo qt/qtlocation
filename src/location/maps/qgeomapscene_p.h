@@ -48,39 +48,29 @@
 //
 
 #include <QObject>
-#include <QSet>
-#include <QSharedPointer>
-#include <QSize>
 #include <QtLocation/qlocationglobal.h>
-#include <QtPositioning/private/qdoublevector2d_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
 class QGeoCameraData;
 class QGeoTileSpec;
-
 class QDoubleVector2D;
-
 class QGeoTileTexture;
-
 class QSGNode;
 class QQuickWindow;
-
-class QPointF;
-
 class QGeoMapScenePrivate;
 
 class Q_LOCATION_EXPORT QGeoMapScene : public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QGeoMapScene)
 public:
-    QGeoMapScene();
+    explicit QGeoMapScene(QObject *parent = 0);
     virtual ~QGeoMapScene();
 
     void setScreenSize(const QSize &size);
     void setTileSize(int tileSize);
-    void setCameraData(const QGeoCameraData &cameraData_);
+    void setCameraData(const QGeoCameraData &cameraData);
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
 
@@ -100,8 +90,6 @@ Q_SIGNALS:
     void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);
 
 private:
-    QGeoMapScenePrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapScene)
     Q_DISABLE_COPY(QGeoMapScene)
 };
 
