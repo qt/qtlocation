@@ -35,13 +35,8 @@
 ****************************************************************************/
 #include "qgeocameradata_p.h"
 #include <QtPositioning/private/qgeocoordinate_p.h>
-
-#include <QVariant>
-#include <QVariantAnimation>
-
-#include <QMetaType>
-
-#include <cmath>
+#include <QtCore/QVariant>
+#include <QtCore/QVariantAnimation>
 
 QT_BEGIN_NAMESPACE
 
@@ -55,50 +50,50 @@ public:
 
     bool operator == (const QGeoCameraDataPrivate &rhs) const;
 
-    QGeoCoordinate center_;
-    double bearing_;
-    double tilt_;
-    double roll_;
-    double zoomLevel_;
+    QGeoCoordinate m_center;
+    double m_bearing;
+    double m_tilt;
+    double m_roll;
+    double m_zoomLevel;
 };
 
 QGeoCameraDataPrivate::QGeoCameraDataPrivate()
     : QSharedData(),
-      center_(-27.5, 153),
-      bearing_(0.0),
-      tilt_(0.0),
-      roll_(0.0),
-      zoomLevel_(9.0) {}
+      m_center(-27.5, 153),
+      m_bearing(0.0),
+      m_tilt(0.0),
+      m_roll(0.0),
+      m_zoomLevel(9.0) {}
 
 QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
     : QSharedData(rhs),
-      center_(rhs.center_),
-      bearing_(rhs.bearing_),
-      tilt_(rhs.tilt_),
-      roll_(rhs.roll_),
-      zoomLevel_(rhs.zoomLevel_) {}
+      m_center(rhs.m_center),
+      m_bearing(rhs.m_bearing),
+      m_tilt(rhs.m_tilt),
+      m_roll(rhs.m_roll),
+      m_zoomLevel(rhs.m_zoomLevel) {}
 
 QGeoCameraDataPrivate &QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
 {
     if (this == &rhs)
         return *this;
 
-    center_ = rhs.center_;
-    bearing_ = rhs.bearing_;
-    tilt_ = rhs.tilt_;
-    roll_ = rhs.roll_;
-    zoomLevel_ = rhs.zoomLevel_;
+    m_center = rhs.m_center;
+    m_bearing = rhs.m_bearing;
+    m_tilt = rhs.m_tilt;
+    m_roll = rhs.m_roll;
+    m_zoomLevel = rhs.m_zoomLevel;
 
     return *this;
 }
 
 bool QGeoCameraDataPrivate::operator == (const QGeoCameraDataPrivate &rhs) const
 {
-    return ((center_ == rhs.center_)
-            && (bearing_ == rhs.bearing_)
-            && (tilt_ == rhs.tilt_)
-            && (roll_ == rhs.roll_)
-            && (zoomLevel_ == rhs.zoomLevel_));
+    return ((m_center == rhs.m_center)
+            && (m_bearing == rhs.m_bearing)
+            && (m_tilt == rhs.m_tilt)
+            && (m_roll == rhs.m_roll)
+            && (m_zoomLevel == rhs.m_zoomLevel));
 }
 
 QVariant cameraInterpolator(const QGeoCameraData &start,
@@ -167,52 +162,52 @@ bool QGeoCameraData::operator != (const QGeoCameraData &other) const
 
 void QGeoCameraData::setCenter(const QGeoCoordinate &center)
 {
-    d->center_ = center;
+    d->m_center = center;
 }
 
 QGeoCoordinate QGeoCameraData::center() const
 {
-    return d->center_;
+    return d->m_center;
 }
 
 void QGeoCameraData::setBearing(double bearing)
 {
-    d->bearing_ = bearing;
+    d->m_bearing = bearing;
 }
 
 double QGeoCameraData::bearing() const
 {
-    return d->bearing_;
+    return d->m_bearing;
 }
 
 void QGeoCameraData::setTilt(double tilt)
 {
-    d->tilt_ = tilt;
+    d->m_tilt = tilt;
 }
 
 double QGeoCameraData::tilt() const
 {
-    return d->tilt_;
+    return d->m_tilt;
 }
 
 void QGeoCameraData::setRoll(double roll)
 {
-    d->roll_ = roll;
+    d->m_roll = roll;
 }
 
 double QGeoCameraData::roll() const
 {
-    return d->roll_;
+    return d->m_roll;
 }
 
 void QGeoCameraData::setZoomLevel(double zoomFactor)
 {
-    d->zoomLevel_ = zoomFactor;
+    d->m_zoomLevel = zoomFactor;
 }
 
 double QGeoCameraData::zoomLevel() const
 {
-    return d->zoomLevel_;
+    return d->m_zoomLevel;
 }
 
 QT_END_NAMESPACE
