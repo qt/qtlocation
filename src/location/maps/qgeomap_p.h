@@ -72,8 +72,6 @@ public:
 
     QGeoMapController *mapController();
 
-    virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
-
     void resize(int width, int height);
     int width() const;
     int height() const;
@@ -94,6 +92,7 @@ public:
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);
+    virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
 
 public Q_SLOTS:
     void update();
@@ -108,7 +107,8 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QGeoMap)
-    friend class QGeoMapController;
+    friend class QGeoMapController; //setCameraData
+    friend class QDeclarativeGeoMap; //updateSceneGraph
 };
 
 QT_END_NAMESPACE
