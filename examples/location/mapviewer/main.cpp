@@ -38,12 +38,9 @@
 **
 ****************************************************************************/
 
-#include <QtCore/QStringList>
 #include <QtCore/QTextStream>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
-#include <QtQml/QQmlContext>
-#include <QtQuick/QQuickView>
 #include <QtQuick/QQuickItem>
 
 static bool parseArgs(QStringList& args, QVariantMap& parameters)
@@ -92,20 +89,19 @@ int main(int argc, char *argv[])
     QVariantMap parameters;
     QStringList args(QCoreApplication::arguments());
 
-    if (parseArgs(args, parameters)) exit(0);
-
-    const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
+    if (parseArgs(args, parameters))
+        return 0;
 
     QQmlApplicationEngine engine;
+    engine.addImportPath(QStringLiteral(":/imports"));
+    engine.load(QUrl(QStringLiteral("qrc:///mapviewer.qml")));
+    QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
 
-    engine.addImportPath(QLatin1String(":/imports"));
-    engine.rootContext()->setContextProperty("appDirPath", QCoreApplication::applicationDirPath());
-    engine.load(QUrl(mainQmlApp));
     QObject *item = engine.rootObjects().first();
     Q_ASSERT(item);
-    QMetaObject::invokeMethod(item, "initializeProvders",
+
+    QMetaObject::invokeMethod(item, "initializeProviders",
                               Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
-    QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
     return application.exec();
 }

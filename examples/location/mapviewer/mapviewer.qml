@@ -137,10 +137,9 @@ ApplicationWindow {
     function getPlugins()
     {
         var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', appWindow)
-        var tempPlugin
         var myArray = new Array()
-        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
+        for (var i = 0; i<plugin.availableServiceProviders.length; i++) {
+            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
             if (tempPlugin.supportsMapping())
                 myArray.push(tempPlugin.name)
         }
@@ -148,7 +147,7 @@ ApplicationWindow {
         return myArray
     }
 
-    function initializeProvders(pluginParameters)
+    function initializeProviders(pluginParameters)
     {
         var parameters = new Array()
         for (var prop in pluginParameters){
