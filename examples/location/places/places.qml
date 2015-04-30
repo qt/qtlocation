@@ -38,234 +38,308 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtPositioning 5.2
-import QtLocation 5.3
-import QtLocation.examples 5.0
-import "content/places"
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Layouts 1.2
+import QtPositioning 5.5
+import QtLocation 5.5
+import "items"
 
-Item {
-    id: page
-    width: (parent && parent.width > 0) ? parent.width : 360
-    height: (parent && parent.height > 0) ? parent.height : 640
-    property variant map
-    property variant startLocation
-    property variant searchRegion: QtPositioning.circle(startLocation)
+ApplicationWindow {
+    id: appWindow
+    property Map map
+    property variant parameters
+    property variant searchLocation: map ? map.center : QtPositioning.coordinate()
+    property variant searchRegion: QtPositioning.circle(searchLocation)
     property variant searchRegionItem
+
     property Plugin favoritesPlugin
 
-    Binding {
-        target: page
-        property: "startLocation"
-        value: map ? map.center : QtPositioning.coordinate()
-    }
+    function getPlugins() {
+        var plugin = Qt.createQmlObject('import QtLocation 5.3; Plugin {}', appWindow);
+        var myArray = new Array;
+        for (var i = 0; i < plugin.availableServiceProviders.length; i++) {
+            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
 
-    Rectangle {
-        id: backgroundRect
-        anchors.fill: parent
-        color: "lightgrey"
-        z: 2
-    }
-
-    //=====================Menu=====================
-    Menu {
-        id:mainMenu
-        anchors.bottom: parent.bottom
-        z: backgroundRect.z + 3
-
-        Component.onCompleted: {
-            addItem("Provider");
-            addItem("Search");
+            if (tempPlugin.supportsPlaces() && tempPlugin.supportsMapping() )
+                myArray.push(tempPlugin.name)
         }
-
-        onClicked: page.state = page.state == "" ? button : "";
+        myArray.sort()
+        return myArray;
     }
 
-    Menu {
-        id: providerMenu
-        z: backgroundRect.z + 2
-        y: page.height
-        horizontalOrientation: false
-        exclusive: true
+    function initializeProviders(pluginParameters)
+    {
+        var parameters = new Array()
+        for (var prop in pluginParameters) {
+            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',appWindow)
+            parameters.push(parameter)
+        }
+        appWindow.parameters = parameters
+        var plugins = getPlugins()
+        mainMenu.providerMenu.createMenu(plugins)
+        for (var i = 0; i<plugins.length; i++) {
+            if (plugins[i] === "osm")
+                mainMenu.selectProvider(plugins[i])
+        }
+    }
 
-        Component.onCompleted: {
-            var plugins = getPlacesPlugins()
-            for (var i = 0; i<plugins.length; i++) {
-                addItem(plugins[i]);
+    function createMap(provider) {
+        var plugin;
+        if (parameters && parameters.length>0)
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
+        else
+            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', appWindow)
 
-                // default to osm plugin
-                if (plugins[i] === "osm")
-                    exclusiveButton = plugins[i];
+        if (map)
+            map.destroy();
+        map = mapComponent.createObject(page);
+        map.plugin = plugin;
+        map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
+        categoryModel.plugin = plugin;
+        categoryModel.update();
+        placeSearchModel.plugin = plugin;
+        suggestionModel.plugin = plugin;
+    }
+
+    title: qsTr("Places")
+    width: 360
+    height: 640
+    visible: true
+    menuBar: mainMenu
+    toolBar: searchBar
+
+    MainMenu {
+        id: mainMenu
+        onSelectProvider: {
+            stackView.pop(page)
+            for (var i = 0; i < providerMenu.items.length; i++) {
+                providerMenu.items[i].checked = providerMenu.items[i].text === providerName
             }
 
-            // otherwise default to first
-            if (exclusiveButton === "")
-                exclusiveButton = plugins[0];
+            createMap(providerName)
+            if (map.error === Map.NoError) {
+                settingsMenu.createMenu(map);
+            } else {
+                settingsMenu.clear();
+            }
         }
-
-        onClicked: page.state = ""
-
-        onExclusiveButtonChanged: placesPlugin.name = exclusiveButton;
+        onSelectSetting: {
+            stackView.pop({tem:page,immediate: true})
+            switch (setting) {
+            case "searchCenter":
+                stackView.push({ item: Qt.resolvedUrl("forms/SearchCenter.qml") ,
+                                   properties: { "coordinate": map.center}})
+                stackView.currentItem.changeSearchCenter.connect(stackView.changeSearchCenter)
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            case "searchBoundingBox":
+                stackView.push({ item: Qt.resolvedUrl("forms/SearchBoundingBox.qml") ,
+                                   properties: { "searchRegion": searchRegion}})
+                stackView.currentItem.changeSearchBoundingBox.connect(stackView.changeSearchBoundingBox)
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            case "searchBoundingCircle":
+                stackView.push({ item: Qt.resolvedUrl("forms/SearchBoundingCircle.qml") ,
+                                   properties: { "searchRegion": searchRegion}})
+                stackView.currentItem.changeSearchBoundingCircle.connect(stackView.changeSearchBoundingCircle)
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            case "SearchOptions":
+                stackView.push({ item: Qt.resolvedUrl("forms/SearchOptions.qml") ,
+                                   properties: { "plugin": map.plugin,
+                                       "model": placeSearchModel}})
+                stackView.currentItem.changeSearchSettings.connect(stackView.changeSearchSettings)
+                stackView.currentItem.closeForm.connect(stackView.closeForm)
+                break
+            default:
+                console.log("Unsupported setting !")
+            }
+        }
     }
 
-    Menu {
-        id: searchMenu
-        z: backgroundRect.z + 2
-        y: page.height
-        horizontalOrientation: false
-
-        Component.onCompleted: {
-            addItem("Search Center");
-            addItem("Search Bounding Box");
-            addItem("Search Bounding Circle");
-            addItem("Search Options");
+    SearchBar {
+        id: searchBar
+        width: appWindow.width
+        searchBarVisbile: stackView.depth > 1 &&
+                          stackView.currentItem &&
+                          stackView.currentItem.objectName != "suggestionView" ? false : true
+        onShowCategories: {
+            if (map && map.plugin) {
+                stackView.pop({tem:page,immediate: true})
+                stackView.enterCategory()
+            }
         }
+        onGoBack: stackView.pop()
+        onSearchTextChanged: {
+            if (searchText.length >= 3) {
+                if (suggestionModel != null) {
+                    suggestionModel.searchTerm = searchText;
+                    suggestionModel.update();
+                }
+            }
+        }
+        onDoSearch: {
+            if (searchText.length > 0)
+                placeSearchModel.searchForText(searchText);
+        }
+        onShowMap: stackView.pop(page)
 
-        onClicked: page.state = button
     }
 
-    //=====================Dialogs=====================
+    StackView {
+        id: stackView
 
-    InputDialog {
-        id: searchCenterDialog
-        z: backgroundRect.z + 4
-
-        title: "Search center"
-
-        Behavior on opacity { NumberAnimation { duration: 500 } }
-
-        Component.onCompleted: prepareDialog()
-
-        function prepareDialog() {
-            setModel([
-                ["Latitude", searchRegion.center ? String(searchRegion.center.latitude) : ""],
-                ["Longitude", searchRegion.center ? String(searchRegion.center.longitude) : ""]
-            ]);
+        function showMessage(title,message,backPage)
+        {
+            push({ item: Qt.resolvedUrl("forms/Message.qml") ,
+                     properties: {
+                         "title" : title,
+                         "message" : message,
+                         "backPage" : backPage
+                     }})
+            currentItem.closeForm.connect(closeMessage)
         }
 
-        onCancelButtonClicked: page.state = ""
-        onGoButtonClicked: {
-            var c = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
-                                          parseFloat(dialogModel.get(1).inputText));
+        function closeMessage(backPage)
+        {
+            pop(backPage)
+        }
 
-            map.center = c;
+        function closeForm()
+        {
+            pop(page)
+        }
 
-            searchRegion = Qt.binding(function() { return QtPositioning.circle(startLocation) });
+        function enterCategory(index)
+        {
+            push({ item: Qt.resolvedUrl("views/CategoryView.qml") ,
+                     properties: { "categoryModel": categoryModel,
+                         "rootIndex" : index
+                     }})
+            currentItem.enterCategory.connect(stackView.enterCategory)
+            currentItem.searchCategory.connect(placeSearchModel.searchForCategory)
+        }
 
+        function showSuggestions()
+        {
+            if (currentItem.objectName != "suggestionView") {
+                stackView.pop(page)
+                push({ item: Qt.resolvedUrl("views/SuggestionView.qml") ,
+                         properties: { "suggestionModel": suggestionModel }
+                     })
+                currentItem.objectName = "suggestionView"
+                currentItem.suggestionSelected.connect(searchBar.showSearch)
+                currentItem.suggestionSelected.connect(placeSearchModel.searchForText)
+            }
+        }
+
+        function showPlaces()
+        {
+            if (currentItem.objectName != "searchResultView") {
+                stackView.pop({tem:page,immediate: true})
+                push({ item: Qt.resolvedUrl("views/SearchResultView.qml") ,
+                         properties: { "placeSearchModel": placeSearchModel }
+                     })
+                currentItem.showPlaceDetails.connect(showPlaceDatails)
+                currentItem.showMap.connect(searchBar.showMap)
+                currentItem.objectName = "searchResultView"
+            }
+        }
+
+        function showPlaceDatails(place, distance)
+        {
+            push({ item: Qt.resolvedUrl("forms/PlaceDetails.qml") ,
+                     properties: { "place": place,
+                         "distanceToPlace": distance }
+                 })
+            currentItem.searchForSimilar.connect(searchForSimilar)
+            currentItem.showReviews.connect(showReviews)
+            currentItem.showEditorials.connect(showEditorials)
+            currentItem.showImages.connect(showImages)
+        }
+
+        function showEditorials(place)
+        {
+            push({ item: Qt.resolvedUrl("views/EditorialView.qml") ,
+                     properties: { "place": place }
+                 })
+            currentItem.showEditorial.connect(showEditorial)
+        }
+
+        function showReviews(place)
+        {
+            push({ item: Qt.resolvedUrl("views/ReviewView.qml") ,
+                     properties: { "place": place }
+                 })
+            currentItem.showReview.connect(showReview)
+        }
+
+        function showImages(place)
+        {
+            push({ item: Qt.resolvedUrl("views/ImageView.qml") ,
+                     properties: { "place": place }
+                 })
+        }
+
+        function showEditorial(editorial)
+        {
+            push({ item: Qt.resolvedUrl("views/EditorialPage.qml") ,
+                     properties: { "editorial": editorial }
+                 })
+        }
+
+        function showReview(review)
+        {
+            push({ item: Qt.resolvedUrl("views/ReviewPage.qml") ,
+                     properties: { "review": review }
+                 })
+        }
+
+        function changeSearchCenter(coordinate)
+        {
+            stackView.pop(page)
+            map.center = coordinate;
             if (searchRegionItem) {
                 map.removeMapItem(searchRegionItem);
                 searchRegionItem.destroy();
             }
-
-            page.state = "";
-        }
-    }
-
-    InputDialog {
-        id: searchBoxDialog
-        z: backgroundRect.z + 4
-
-        title: "Search Bounding Box"
-
-        Behavior on opacity { NumberAnimation { duration: 500 } }
-
-        Component.onCompleted: prepareDialog()
-
-        function prepareDialog() {
-            setModel([
-                ["Latitude", searchRegion.center ? String(searchRegion.center.latitude) : ""],
-                ["Longitude", searchRegion.center ? String(searchRegion.center.longitude) : ""],
-                ["Width(deg)", searchRegion.width ? String(searchRegion.width) : "" ],
-                ["Height(deg)", searchRegion.height ? String(searchRegion.height) : "" ]
-            ]);
         }
 
-        onCancelButtonClicked: page.state = ""
-        onGoButtonClicked: {
-            var c = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
-                                          parseFloat(dialogModel.get(1).inputText));
-            var r = QtPositioning.rectangle(c, parseFloat(dialogModel.get(2).inputText),
-                                         parseFloat(dialogModel.get(3).inputText));
-
-            map.center = c;
-
-            searchRegion = r;
-
+        function changeSearchBoundingBox(coordinate,widthDeg,heightDeg)
+        {
+            stackView.pop(page)
+            map.center = coordinate
+            searchRegion = QtPositioning.rectangle(map.center, widthDeg, heightDeg)
             if (searchRegionItem) {
                 map.removeMapItem(searchRegionItem);
                 searchRegionItem.destroy();
             }
-
-            searchRegionItem = Qt.createQmlObject('import QtLocation 5.3; MapRectangle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
-            searchRegionItem.topLeft = r.topLeft;
-            searchRegionItem.bottomRight = r.bottomRight;
+            searchRegionItem = Qt.createQmlObject('import QtLocation 5.3; MapRectangle { color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page, "MapRectangle");
+            searchRegionItem.topLeft = searchRegion.topLeft;
+            searchRegionItem.bottomRight = searchRegion.bottomRight;
             map.addMapItem(searchRegionItem);
-
-            page.state = "";
-        }
-    }
-
-    InputDialog {
-        id: searchCircleDialog
-        z: backgroundRect.z + 4
-
-        title: "Search Bounding Circle"
-
-        Behavior on opacity { NumberAnimation { duration: 500 } }
-
-        Component.onCompleted: prepareDialog()
-
-        function prepareDialog() {
-            setModel([
-                ["Latitude", searchRegion.center ? String(searchRegion.center.latitude) : ""],
-                ["Longitude", searchRegion.center ? String(searchRegion.center.longitude) : ""],
-                ["Radius(m)", searchRegion.radius ? String(searchRegion.radius) : "" ]
-            ]);
         }
 
-        onCancelButtonClicked: page.state = ""
-        onGoButtonClicked: {
-            var c = QtPositioning.coordinate(parseFloat(dialogModel.get(0).inputText),
-                                          parseFloat(dialogModel.get(1).inputText));
-            var circle = QtPositioning.circle(c, parseFloat(dialogModel.get(2).inputText));
-
-            map.center = c;
-
-            searchRegion = circle;
+        function changeSearchBoundingCircle(coordinate,radius)
+        {
+            stackView.pop(page)
+            map.center = coordinate;
+            searchRegion = QtPositioning.circle(coordinate, radius)
 
             if (searchRegionItem) {
                 map.removeMapItem(searchRegionItem);
                 searchRegionItem.destroy();
             }
-
-            searchRegionItem = Qt.createQmlObject('import QtLocation 5.3; MapCircle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
-            searchRegionItem.center = circle.center;
-            searchRegionItem.radius = circle.radius;
+            searchRegionItem = Qt.createQmlObject('import QtLocation 5.3; MapCircle { color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page, "MapRectangle");
+            searchRegionItem.center = searchRegion.center;
+            searchRegionItem.radius = searchRegion.radius;
             map.addMapItem(searchRegionItem);
-
-            page.state = "";
-        }
-    }
-
-    OptionsDialog {
-        id: optionsDialog
-        z: backgroundRect.z + 4
-
-        Behavior on opacity { NumberAnimation { duration: 500 } }
-
-        Component.onCompleted: prepareDialog()
-
-        function prepareDialog() {
-            if (placeSearchModel.favoritesPlugin !== null)
-                isFavoritesEnabled = true;
-            else
-                isFavoritesEnabled = false;
-
-            locales = placesPlugin.locales.join(Qt.locale().groupSeparator);
         }
 
-        onCancelButtonClicked: page.state = ""
-        onGoButtonClicked: {
+        function changeSearchSettings(orderByDistance, orderByName, locales)
+        {
+            stackView.pop(page)
             /*if (isFavoritesEnabled) {
                 if (favoritesPlugin == null)
                     favoritesPlugin = Qt.createQmlObject('import QtLocation 5.3; Plugin { name: "places_jsondb" }', page);
@@ -279,187 +353,124 @@ Item {
             placeSearchModel.relevanceHint = orderByDistance ? PlaceSearchModel.DistanceHint :
                                                                orderByName ? PlaceSearchModel.LexicalPlaceNameHint :
                                                                              PlaceSearchModel.UnspecifiedHint;
-            placesPlugin.locales = locales.split(Qt.locale().groupSeparator);
-            categoryModel.update();
-            page.state = "";
-        }
-    }
-
-    //! [PlaceSearchModel model]
-    PlaceSearchModel {
-        id: placeSearchModel
-
-        plugin: placesPlugin
-        searchArea: searchRegion
-
-        function searchForCategory(category) {
-            searchTerm = "";
-            categories = category;
-            recommendationId = "";
-            searchArea = searchRegion
-            limit = -1;
-            update();
+            map.plugin.locales = locales.split(Qt.locale().groupSeparator);
         }
 
-        function searchForText(text) {
-            searchTerm = text;
-            categories = null;
-            recommendationId = "";
-            searchArea = searchRegion
-            limit = -1;
-            update();
+        //! [PlaceRecommendationModel search]
+        function searchForSimilar(place) {
+            stackView.pop(page)
+            searchBar.showSearch(place.name)
+            placeSearchModel.searchForRecommendations(place.placeId);
         }
+        //! [PlaceRecommendationModel search]
 
-        function searchForRecommendations(placeId) {
-            searchTerm = "";
-            categories = null;
-            recommendationId = placeId;
-            searchArea = null;
-            limit = -1;
-            update();
-        }
+        anchors.fill: parent
+        focus: true
+        initialItem:  Item {
+            id: page
 
-        onStatusChanged: {
-            switch (status) {
-            case PlaceSearchModel.Ready:
-                searchResultView.showSearchResults();
-                break;
-            case PlaceSearchModel.Error:
-                console.log(errorString());
+            //! [PlaceSearchModel model]
+            PlaceSearchModel {
+                id: placeSearchModel
+                searchArea: searchRegion
+
+                function searchForCategory(category) {
+                    searchTerm = "";
+                    categories = category;
+                    recommendationId = "";
+                    searchArea = searchRegion
+                    limit = -1;
+                    update();
+                }
+
+                function searchForText(text) {
+                    searchTerm = text;
+                    categories = null;
+                    recommendationId = "";
+                    searchArea = searchRegion
+                    limit = -1;
+                    update();
+                }
+
+                function searchForRecommendations(placeId) {
+                    searchTerm = "";
+                    categories = null;
+                    recommendationId = placeId;
+                    searchArea = null;
+                    limit = -1;
+                    update();
+                }
+
+                onStatusChanged: {
+                    switch (status) {
+                    case PlaceSearchModel.Ready:
+                        if (count > 0)
+                            stackView.showPlaces()
+                        else
+                            stackView.showMessage(qsTr("Search Place Error"),qsTr("Place not found !"))
+                        break;
+                    case PlaceSearchModel.Error:
+                        stackView.showMessage(qsTr("Search Place Error"),errorString())
+                        break;
+                    }
+                }
             }
-        }
-    }
-    //! [PlaceSearchModel model]
+            //! [PlaceSearchModel model]
 
-    //! [CategoryModel model]
-    CategoryModel {
-        id: categoryModel
-        plugin: placesPlugin
-        hierarchical: true
-    }
-    //! [CategoryModel model]
+            //! [PlaceSearchSuggestionModel model]
+            PlaceSearchSuggestionModel {
+                id: suggestionModel
+                searchArea: searchRegion
 
-    SearchBox {
-        id: searchBox
-
-        anchors.top: page.top
-        width: parent.width
-        expandedHeight: parent.height
-        z: backgroundRect.z + 3
-    }
-
-    Plugin {
-        id: placesPlugin
-
-        parameters: pluginParametersFromMap(pluginParameters)
-        onNameChanged: {
-            createMap(placesPlugin);
-            categoryModel.update();
-        }
-    }
-
-    Item {
-        id: searchResultTab
-
-        z: backgroundRect.z + 2
-        height: parent.height - searchBox.baseHeight - mainMenu.height
-        width: parent.width
-        x: 0
-        y: mainMenu.height - height + catchImage.width
-
-        opacity: 0
-
-        property bool open: false
-
-        Behavior on y { PropertyAnimation { duration: 300; easing.type: Easing.InOutQuad } }
-        Behavior on opacity { PropertyAnimation { duration: 300 } }
-
-        Image {
-            id: catchImage
-
-            source: "resources/catch.png"
-            rotation: 90
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: (width - height) / 2
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: searchResultTab.open = !searchResultTab.open;
+                onStatusChanged: {
+                    if (status == PlaceSearchSuggestionModel.Ready)
+                        stackView.showSuggestions()
+                }
             }
-        }
+            //! [PlaceSearchSuggestionModel model]
 
-        Rectangle {
-            id: searchResultTabPage
-
-            width: parent.width
-            height: parent.height - catchImage.width
-            color: "#ECECEC"
-            radius: 5
-
-            SearchResultView {
-                id: searchResultView
-
-                anchors.fill: parent
-                anchors.margins: 10
+            //! [CategoryModel model]
+            CategoryModel {
+                id: categoryModel
+                hierarchical: true
             }
-        }
+            //! [CategoryModel model]
 
-        states: [
-            State {
-                name: ""
-                when: placeSearchModel.count == 0
-                PropertyChanges { target: searchResultTab; open: false }
-            },
-            State {
-                name: "Close"
-                when: (placeSearchModel.count > 0) && !searchResultTab.open
-                PropertyChanges { target: searchResultTab; opacity: 1 }
-            },
-            State {
-                name: "Open"
-                when: (placeSearchModel.count > 0) && searchResultTab.open
-                PropertyChanges { target: searchResultTab; y: mainMenu.height; opacity: 1 }
-            }
-        ]
-    }
+            Component {
+                id: mapComponent
 
-    Component {
-        id: mapComponent
+                MapComponent {
+                    width: page.width
+                    height: page.height
 
-        MapComponent {
-            z: backgroundRect.z + 1
+                    onErrorChanged: {
+                        if (map.error != Map.NoError) {
+                            var title = qsTr("ProviderError");
+                            var message =  map.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>";
+                            if (map.error == Map.MissingRequiredParameterError)
+                                message += "<br/>" + qsTr("or see") + " \'mapviewer --help\' "
+                                        + qsTr("how to pass plugin parameters.");
+                            stackView.showMessage(title,message);
+                        }
+                    }
 
-            anchors {
-                top: searchBox.bottom
-                bottom: mainMenu.top
-                left: page.left
-                right: page.right
-            }
+                    MapItemView {
+                        model: placeSearchModel
+                        delegate: MapQuickItem {
+                            coordinate: model.type === PlaceSearchModel.PlaceResult ? place.location.coordinate : QtPositioning.coordinate()
 
-            MapItemView {
-                model: placeSearchModel
-                delegate: MapQuickItem {
-                    coordinate: model.type === PlaceSearchModel.PlaceResult ? place.location.coordinate : QtPositioning.coordinate()
+                            visible: model.type === PlaceSearchModel.PlaceResult
 
-                    visible: model.type === PlaceSearchModel.PlaceResult
+                            anchorPoint.x: image.width * 0.28
+                            anchorPoint.y: image.height
 
-                    anchorPoint.x: image.width * 0.28
-                    anchorPoint.y: image.height
-
-                    sourceItem: Image {
-                        id: image
-
-                        source: "resources/marker.png"
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                searchResultView.showPlaceDetails({
-                                    distance: model.distance,
-                                    place: model.place,
-                                });
-                                searchResultTab.state = "Open";
+                            sourceItem: Image {
+                                id: image
+                                source: "resources/marker.png"
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: stackView.showPlaceDatails(model.place,model.distance)
+                                }
                             }
                         }
                     }
@@ -468,89 +479,16 @@ Item {
         }
     }
 
-    function createMap(placesPlugin) {
-        var mapPlugin;
-        if (placesPlugin.supportsMapping()) {
-            mapPlugin = placesPlugin;
-        } else {
-            mapPlugin = Qt.createQmlObject('import QtLocation 5.3; Plugin { required.mapping: Plugin.AnyMappingFeatures;' +
-                                                                           'parameters: pluginParametersFromMap(pluginParameters) }', page);
-        }
-
-        if (map)
-            map.destroy();
-        map = mapComponent.createObject(page);
-        map.plugin = mapPlugin;
+    Rectangle {
+        color: "white"
+        opacity: busyIndicator.running ? 0.8 : 0
+        anchors.fill: parent
+        Behavior on opacity { NumberAnimation{} }
     }
-
-    function getPlacesPlugins() {
-        var plugin = Qt.createQmlObject('import QtLocation 5.3; Plugin {}', page);
-        var myArray = new Array;
-        for (var i = 0; i < plugin.availableServiceProviders.length; i++) {
-            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
-
-            if (tempPlugin.supportsPlaces())
-                myArray.push(tempPlugin.name)
-        }
-
-        return myArray;
+    BusyIndicator {
+        id: busyIndicator
+        anchors.centerIn: parent
+        running: placeSearchModel.status == PlaceSearchModel.Loading ||
+                 categoryModel.status === CategoryModel.Loading
     }
-
-    function pluginParametersFromMap(pluginParameters) {
-        var parameters = new Array()
-        for (var prop in pluginParameters){
-            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
-            parameters.push(parameter)
-        }
-        return parameters
-        //createMap(placesPlugin)
-    }
-
-    //=====================States of page=====================
-    states: [
-        State {
-            name: "Provider"
-            PropertyChanges { target: providerMenu; y: page.height - providerMenu.height - mainMenu.height }
-        },
-        State {
-            name: "Search"
-            PropertyChanges { target: searchMenu; y: page.height - searchMenu.height - mainMenu.height }
-        },
-        State {
-            name: "Search Center"
-            PropertyChanges { target: searchCenterDialog; opacity: 1 }
-            StateChangeScript { script: searchCenterDialog.prepareDialog() }
-        },
-        State {
-            name: "Search Bounding Box"
-            PropertyChanges { target: searchBoxDialog; opacity: 1 }
-            StateChangeScript { script: searchBoxDialog.prepareDialog() }
-        },
-        State {
-            name: "Search Bounding Circle"
-            PropertyChanges { target: searchCircleDialog; opacity: 1 }
-            StateChangeScript { script: searchCircleDialog.prepareDialog() }
-        },
-        State {
-            name: "Search Options"
-            PropertyChanges { target: optionsDialog; opacity: 1 }
-            StateChangeScript { script: optionsDialog.prepareDialog() }
-        }
-    ]
-
-    //=====================State-transition animations for page=====================
-    transitions: [
-        Transition {
-            to: ""
-            NumberAnimation { properties: "opacity,y,x,rotation" ; duration: 500; easing.type: Easing.Linear }
-        },
-        Transition {
-            to: "Provider"
-            NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
-        },
-        Transition {
-            to: "Search"
-            NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
-        }
-    ]
 }
