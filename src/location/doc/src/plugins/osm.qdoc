@@ -65,12 +65,18 @@ The following table lists optional parameters that can be passed to the Open Str
     \li mapping.copyright
     \li Custom copryright string is used when setting the \l{Map::activeMapType} to \l{MapType}.CustomMap via urlprefix parameter.
         This copyright will only be used when using the CustomMap from above. If empty no copyright will be displayed for the custom map.
+\row
+    \li routing.host
+    \li Url string set when making network requests to the routing server.  This parameter should be set to a
+        valid server url with the correct osrm api. If not specified the default \l {http://router.project-osrm.org/viaroute}{url} will be used.
+        \note The api documentation and sources are available at \l {http://project-osrm.org/}{Project OSRM}.
 \endtable
 
 \section1 Parameter Usage Example
 
 The following example shows how to create an OSM plugin instance with
 parameters supplied for an useragent, and if necessary, a custom server url plus the corresponding copyright information for the tile provider.
+Additionally, it is possible to choose another routing server than the public osrm one.
 
 \section2 QML
 
@@ -80,6 +86,7 @@ Plugin {
     PluginParameter { name: "useragent"; value: "My great Qt OSM application" }
     PluginParameter { name: "mapping.host"; value: "http://osm.tile.server.address/" }
     PluginParameter { name: "mapping.copyright"; value: "All mine" }
+    PluginParameter { name: "routing.host"; value: "http://osrm.server.address/viaroute" }
 }
 \endcode
 */

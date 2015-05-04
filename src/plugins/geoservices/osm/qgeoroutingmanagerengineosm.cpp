@@ -48,6 +48,11 @@ QGeoRoutingManagerEngineOsm::QGeoRoutingManagerEngineOsm(const QVariantMap &para
     else
         m_userAgent = "Qt Location based application";
 
+    if (parameters.contains(QStringLiteral("routing.host")))
+        m_urlPrefix = parameters.value(QStringLiteral("routing.host")).toString().toLatin1();
+    else
+        m_urlPrefix = QStringLiteral("http://router.project-osrm.org/viaroute");
+
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
 }
@@ -61,7 +66,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineOsm::calculateRoute(const QGeoRouteReque
     QNetworkRequest networkRequest;
     networkRequest.setRawHeader("User-Agent", m_userAgent);
 
-    QUrl url(QStringLiteral("http://router.project-osrm.org/viaroute"));
+    QUrl url(m_urlPrefix);
     QUrlQuery query;
 
     query.addQueryItem(QStringLiteral("instructions"), QStringLiteral("true"));
