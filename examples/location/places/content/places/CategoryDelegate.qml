@@ -45,14 +45,10 @@ import QtLocation.examples 5.0
 Item {
     id: root
 
-    property bool showSave: true
-    property bool showRemove: true
     property bool showChildren: true
 
     signal clicked
     signal arrowClicked
-    signal crossClicked
-    signal editClicked
 
     width: parent.width
     height: textItem.height
@@ -92,38 +88,6 @@ Item {
             onClicked: root.clicked()
         }
         //! [CategoryModel delegate text]
-    }
-
-    //! [CategoryModel delegate icon]
-    IconButton {
-        id: edit
-
-        anchors.right: cross.left
-        anchors.verticalCenter: parent.verticalCenter
-
-        visible: (placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false)
-                 && showSave
-
-        source: "../../resources/pencil.png"
-        hoveredSource: "../../resources/pencil_hovered.png"
-        pressedSource: "../../resources/pencil_pressed.png"
-
-        onClicked: root.editClicked()
-    }
-
-    IconButton {
-        id: cross
-
-        anchors.right: arrow.left
-        anchors.verticalCenter: parent.verticalCenter
-        visible: (placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.RemoveCategoryFeature) : false)
-                 && showRemove
-
-        source: "../../resources/cross.png"
-        hoveredSource: "../../resources/cross_hovered.png"
-        pressedSource: "../../resources/cross_pressed.png"
-
-        onClicked: root.crossClicked()
     }
 
     IconButton {

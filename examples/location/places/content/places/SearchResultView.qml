@@ -171,16 +171,6 @@ Item {
                         placeSearchModel.searchForRecommendations(place.placeId);
                     }
                     //! [PlaceRecommendationModel search]
-
-                    onEditPlace: {
-                        editPlaceDialog.prepareDialog(place);
-                        page.state = "EditPlace"
-                    }
-
-                    onDeletePlace:  {
-                        place.remove();
-                        showSearchResults();
-                    }
                 }
             }
             Item {

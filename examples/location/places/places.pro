@@ -20,8 +20,6 @@ qmlcontentplaces.files += \
     content/places/PlaceDelegate.qml \
     content/places/RatingView.qml \
     content/places/SearchResultView.qml \
-    content/places/PlaceDialog.qml \
-    content/places/CategoryDialog.qml \
     content/places/PlaceEditorials.qml \
     content/places/EditorialDelegate.qml \
     content/places/EditorialPage.qml \

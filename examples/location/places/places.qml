@@ -54,8 +54,6 @@ Item {
     property variant searchRegionItem
     property Plugin favoritesPlugin
 
-    onMapChanged: editPlaceDialog.prepareDialog()
-
     Binding {
         target: page
         property: "startLocation"
@@ -77,7 +75,6 @@ Item {
 
         Component.onCompleted: {
             addItem("Provider");
-            addItem("New");
             addItem("Search");
         }
 
@@ -112,38 +109,6 @@ Item {
     }
 
     Menu {
-        id: newMenu
-        z: backgroundRect.z + 2
-        y: page.height
-        horizontalOrientation: false
-
-        Component.onCompleted: {
-            var item = addItem("Place");
-            item.enabled = Qt.binding(function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SavePlaceFeature) : false })
-
-            item = addItem("Category");
-            item.enabled = Qt.binding(function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false })
-        }
-
-        onClicked: {
-            switch (button) {
-            case "Place": {
-                editPlaceDialog.prepareDialog();
-
-                page.state = "NewPlace";
-                break;
-            }
-            case "Category": {
-                editCategoryDialog.category = null;
-                editCategoryDialog.prepareDialog();
-                page.state = "NewCategory";
-                break;
-            }
-            }
-        }
-    }
-
-    Menu {
         id: searchMenu
         z: backgroundRect.z + 2
         y: page.height
@@ -160,39 +125,6 @@ Item {
     }
 
     //=====================Dialogs=====================
-    PlaceDialog {
-        id: editPlaceDialog
-        z: backgroundRect.z + 4
-
-        onCancelButtonClicked: page.state = ""
-        onCompleted: page.state = "";
-    }
-
-    CategoryDialog {
-        id: editCategoryDialog
-        z: backgroundRect.z + 4
-
-        onCancelButtonClicked: page.state = ""
-
-        Connections {
-            target: editCategoryDialog.category
-            onStatusChanged: {
-                switch (editCategoryDialog.category.status) {
-                case Category.Saving: {
-                    break;
-                }
-                case Category.Ready: {
-                    page.state = "";
-                    break;
-                }
-                case Category.Error: {
-                    console.log("Error while saving!");
-                    break;
-                }
-                }
-            }
-        }
-    }
 
     InputDialog {
         id: searchCenterDialog
@@ -581,28 +513,8 @@ Item {
             PropertyChanges { target: providerMenu; y: page.height - providerMenu.height - mainMenu.height }
         },
         State {
-            name: "New"
-            PropertyChanges { target: newMenu; y: page.height - newMenu.height - mainMenu.height }
-        },
-        State {
             name: "Search"
             PropertyChanges { target: searchMenu; y: page.height - searchMenu.height - mainMenu.height }
-        },
-        State {
-            name: "NewPlace"
-            PropertyChanges { target: editPlaceDialog; title: "New Place"; opacity: 1 }
-        },
-        State {
-            name: "NewCategory"
-            PropertyChanges { target: editCategoryDialog; title: "New Category"; opacity: 1 }
-        },
-        State {
-            name: "EditPlace"
-            PropertyChanges { target: editPlaceDialog; title: "Edit Place"; opacity: 1 }
-        },
-        State {
-            name: "EditCategory"
-            PropertyChanges { target: editCategoryDialog; opacity: 1 }
         },
         State {
             name: "Search Center"
@@ -634,10 +546,6 @@ Item {
         },
         Transition {
             to: "Provider"
-            NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
-        },
-        Transition {
-            to: "New"
             NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
         },
         Transition {

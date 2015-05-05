@@ -47,12 +47,9 @@ import QtLocation.examples 5.0
 ListView {
     id: root
 
-    property bool showSave: true
-    property bool showRemove: true
     property bool showChildren: true
 
     signal categoryClicked(variant category)
-    signal editClicked(variant category)
 //! [CategoryModel view 1]
 
     anchors.topMargin: 10
@@ -80,14 +77,10 @@ ListView {
         delegate: CategoryDelegate {
             id: categoryDelegate
 
-            showSave: root.showSave
-            showRemove: root.showRemove
             showChildren: root.showChildren
 
             onClicked: root.categoryClicked(category);
             onArrowClicked: categoryListModel.rootIndex = categoryListModel.modelIndex(index)
-            onCrossClicked: category.remove();
-            onEditClicked: root.editClicked(category);
         }
     }
 }

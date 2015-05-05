@@ -140,12 +140,6 @@ Rectangle {
             placeSearchModel.searchForCategory(category);
             searchRectangle.state = "";
         }
-
-        onEditClicked: {
-            editCategoryDialog.category = category;
-            page.state = "EditCategory";
-            searchRectangle.state = "";
-        }
     }
 
     BusyIndicator {

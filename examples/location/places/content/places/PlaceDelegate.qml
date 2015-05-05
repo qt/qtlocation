@@ -53,8 +53,6 @@ Item {
     signal showReviews(variant place)
     signal showEditorials(variant place)
     signal showImages(variant place)
-    signal editPlace(variant place)
-    signal deletePlace(variant place)
 
     Flickable {
         anchors.fill: parent
@@ -204,76 +202,6 @@ Item {
                 Button {
                     text: qsTr("Find similar")
                     onClicked: searchForSimilar(place)
-                }
-                Button {
-                    text: qsTr("Edit")
-                    visible: placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SavePlaceFeature) : false;
-                    onClicked: editPlace(place)
-                }
-
-                Button {
-                    text: qsTr("Delete");
-                    visible: placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.RemovePlaceFeature) : false;
-                    onClicked: deletePlace(place)
-                }
-
-                Item {
-                    width: parent.width
-                    height: childrenRect.height
-
-                    Button {
-                        id: saveButton;
-                        function updateSaveStatus() {
-                            if (updateSaveStatus.prevStatus === Place.Saving) {
-                                switch (place.favorite.status) {
-                                case Place.Ready:
-                                    break;
-                                case Place.Error:
-                                    saveStatus.text = "Save Failed";
-                                    saveStatus.visible = true;
-                                    console.log(place.favorite.errorString());
-                                    break;
-                                default:
-                                }
-                            } else if (updateSaveStatus.prevStatus == Place.Removing) {
-                                place.favorite = null;
-                                updateSaveStatus.prevStatus = Place.Ready
-                                return;
-
-                            }
-
-                            updateSaveStatus.prevStatus = place.favorite.status;
-                        }
-
-                        function reset()
-                        {
-                            saveButton.visible = (placeSearchModel.favoritesPlugin !== null);
-                            saveStatus.visible = false;
-                        }
-
-                        Component.onCompleted:  {
-                            reset();
-                            placeDelegate.placeChanged.connect(reset);
-                        }
-
-                        text: (place && place.favorite !== null) ? qsTr("Remove Favorite") : qsTr("Save as Favorite")
-                        onClicked:  {
-                            if (place.favorite === null) {
-                                place.initializeFavorite(placeSearchModel.favoritesPlugin);
-                                place.favorite.statusChanged.connect(updateSaveStatus);
-                                place.favorite.save();
-                            } else {
-                                place.favorite.statusChanged.connect(updateSaveStatus);
-                                place.favorite.remove();
-                            }
-                        }
-                    }
-
-                    Text {
-                        id: saveStatus
-                        anchors.top:  saveButton.bottom
-                        visible: false
-                    }
                 }
             }
         }
