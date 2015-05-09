@@ -74,6 +74,11 @@ a prefix.
     \li Url string set when making network requests to the routing server.  This parameter should be set to a
         valid server url with the correct osrm api. If not specified the default \l {http://router.project-osrm.org/viaroute}{url} will be used.
         \note The api documentation and sources are available at \l {http://project-osrm.org/}{Project OSRM}.
+\row
+    \li osm.geocoding.host
+    \li Url string set when making network requests to the geocoding server.  This parameter should be set to a
+        valid server url with the correct osm api. If not specified the default \l {http://nominatim.openstreetmap.org/}{url} will be used.
+        \note The api documentation is available at \l {https://wiki.openstreetmap.org/wiki/Nominatim}{Project OSM Nominatim}.
 \endtable
 
 \section1 Parameter Usage Example
@@ -91,6 +96,7 @@ Plugin {
     PluginParameter { name: "osm.mapping.host"; value: "http://osm.tile.server.address/" }
     PluginParameter { name: "osm.mapping.copyright"; value: "All mine" }
     PluginParameter { name: "osm.routing.host"; value: "http://osrm.server.address/viaroute" }
+    PluginParameter { name: "osm.geocoding.host"; value: "http://geocoding.server.address" }
 }
 \endcode
 */
