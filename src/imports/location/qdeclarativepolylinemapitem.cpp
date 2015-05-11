@@ -421,24 +421,32 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     // not the number of vertices
     screenVertices_.reserve(ts.vertexCount());
 
-    screenOutline_ = QPainterPath();
+    QRectF bb;
 
-    QPolygonF tri;
+    QPointF pt;
     const float *vs = ts.vertices();
     for (int i = 0; i < (ts.vertexCount()/2*2); i += 2) {
-        screenVertices_ << QPointF(vs[i], vs[i + 1]);
+        pt = QPointF(vs[i], vs[i + 1]);
+        screenVertices_ << pt;
 
-        if (!qIsFinite(vs[i]) || !qIsFinite(vs[i + 1]))
+        if (!qIsFinite(pt.x()) || !qIsFinite(pt.y()))
             break;
 
-        tri << QPointF(vs[i], vs[i + 1]);
-        if (tri.size() == 4) {
-            tri.remove(0);
-            screenOutline_.addPolygon(tri);
+        if (!bb.contains(pt)) {
+            if (pt.x() < bb.left())
+                bb.setLeft(pt.x());
+
+            if (pt.x() > bb.right())
+                bb.setRight(pt.x());
+
+            if (pt.y() < bb.top())
+                bb.setTop(pt.y());
+
+            if (pt.y() > bb.bottom())
+                bb.setBottom(pt.y());
         }
     }
 
-    QRectF bb = screenOutline_.boundingRect();
     screenBounds_ = bb;
     this->translate( -1 * sourceBounds_.topLeft());
 }
@@ -735,7 +743,17 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
 
 bool QDeclarativePolylineMapItem::contains(const QPointF &point) const
 {
-    return geometry_.contains(point);
+    QPolygonF tri;
+    for (int i = 0; i < geometry_.vertices().size(); ++i) {
+        tri << geometry_.vertices()[i];
+        if (tri.size() == 3) {
+            if (tri.containsPoint(point,Qt::OddEvenFill))
+                return true;
+            tri.remove(0);
+        }
+    }
+
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////
