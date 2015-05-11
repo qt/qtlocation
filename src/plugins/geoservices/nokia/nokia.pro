@@ -17,7 +17,6 @@ HEADERS += \
             qgeocodingmanagerengine_nokia.h \
             qgeotiledmappingmanagerengine_nokia.h \
             qgeotilefetcher_nokia.h \
-            qgeotiledmapdata_nokia.h \
             qgeomapreply_nokia.h \
             qgeoroutereply_nokia.h \
             qgeoroutexmlparser.h \
@@ -29,7 +28,8 @@ HEADERS += \
             qgeouriprovider.h \
             uri_constants.h \
             qgeoerror_messages.h \
-            qgeomapversion.h
+            qgeomapversion.h \
+            qgeotiledmap_nokia.h
 
 
 SOURCES += \
@@ -38,7 +38,6 @@ SOURCES += \
             qgeocodingmanagerengine_nokia.cpp \
             qgeotiledmappingmanagerengine_nokia.cpp \
             qgeotilefetcher_nokia.cpp \
-            qgeotiledmapdata_nokia.cpp \
             qgeomapreply_nokia.cpp \
             qgeoroutereply_nokia.cpp \
             qgeoroutexmlparser.cpp \
@@ -48,7 +47,8 @@ SOURCES += \
             qgeouriprovider.cpp \
             uri_constants.cpp \
             qgeoerror_messages.cpp \
-            qgeomapversion.cpp
+            qgeomapversion.cpp \
+            qgeotiledmap_nokia.cpp
 
 include(placesv2/placesv2.pri)
 

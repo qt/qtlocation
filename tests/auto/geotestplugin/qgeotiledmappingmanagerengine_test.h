@@ -41,7 +41,7 @@
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 
-#include "qgeotiledmapdata_test.h"
+#include "qgeotiledmap_test.h"
 #include "qgeotilefetcher_test.h"
 
 QT_USE_NAMESPACE
@@ -72,9 +72,9 @@ public:
         setTileFetcher(fetcher);
     }
 
-    QGeoMapData *createMapData()
+    QGeoMap *createMap()
     {
-        return new QGeoTiledMapDataTest(this);;
+        return new QGeoTiledMapTest(this);;
     }
 
 };

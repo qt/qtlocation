@@ -72,7 +72,7 @@ public:
     bool autoFitViewport() const;
     void setAutoFitViewport(const bool &);
 
-    void setMapData(QDeclarativeGeoMap *);
+    void setMap(QDeclarativeGeoMap *);
     void repopulate();
     void removeInstantiatedItems();
 

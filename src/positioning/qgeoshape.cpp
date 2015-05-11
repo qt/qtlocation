@@ -75,7 +75,8 @@ bool QGeoShapePrivate::operator==(const QGeoShapePrivate &other) const
     details of the associated areas in terms of QGeoCoordinate instances
     and distances in meters.
 
-    This class is a \l Q_GADGET since Qt 5.5.
+    This class is a \l Q_GADGET since Qt 5.5. It can be
+    \l{Cpp_value_integration_positioning}{directly used from C++ and QML}.
 */
 
 /*!

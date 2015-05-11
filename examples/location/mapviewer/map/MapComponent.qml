@@ -273,6 +273,7 @@ Map {
     gesture.flickDeceleration: 3000
     gesture.enabled: true
 //! [mapnavigation]
+    focus: true
     onCopyrightLinkActivated: Qt.openUrlExternally(link)
 
     onCenterChanged:{
@@ -300,10 +301,10 @@ Map {
     }
 
     Keys.onPressed: {
-        if ((event.key == Qt.Key_Plus) || (event.key == Qt.Key_VolumeUp)) {
-            map.zoomLevel += 1
-        } else if ((event.key == Qt.Key_Minus) || (event.key == Qt.Key_VolumeDown)){
-            map.zoomLevel -= 1
+        if (event.key === Qt.Key_Plus) {
+            map.zoomLevel++
+        } else if (event.key === Qt.Key_Minus) {
+            map.zoomLevel--
         }
     }
 
@@ -332,8 +333,7 @@ Map {
             longitude: 10.7686
         }
         opacity:0.7
-        anchorPoint.x: sourceItem.width/2
-        anchorPoint.y: sourceItem.height/2
+        anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
     }
 
     MapQuickItem {
@@ -345,8 +345,7 @@ Map {
             style: Text.Outline
         }
         coordinate: poiTheQtComapny.coordinate
-        anchorPoint.x: -poiTheQtComapny.sourceItem.width * 0.5
-        anchorPoint.y: poiTheQtComapny.sourceItem.height * 1.5
+        anchorPoint: Qt.point(-poiTheQtComapny.sourceItem.width * 0.5,poiTheQtComapny.sourceItem.height * 1.5)
     }
 
 
@@ -437,7 +436,7 @@ Map {
         MapRoute {
             id: route
             route: routeData
-            line.color: routeMouseArea.containsMouse ? "lime" : "red"
+            line.color: routeMouseArea.pressed ? "lime" : "red"
             line.width: 5
             smooth: true
             opacity: 0.8
@@ -469,6 +468,7 @@ Map {
                         showRouteMenu(lastCoordinate);
                     }
                 }
+
             }
     //! [routedelegate1]
         }
@@ -500,7 +500,7 @@ Map {
         MapCircle {
             id: point
             radius: 1000
-            color: circleMouseArea.containsMouse ? "lime" : "red"
+            color: circleMouseArea.pressed ? "lime" : "red"
             opacity: 0.6
             center: locationData.coordinate
             //! [pointdel0]
@@ -573,6 +573,7 @@ Map {
         id: mouseArea
         property variant lastCoordinate
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
         onPressed : {
             map.lastX = mouse.x
@@ -591,9 +592,11 @@ Map {
 
         onDoubleClicked: {
             map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-            if (mouse.button == Qt.LeftButton){
-                map.zoomLevel += 1
-            } else if (mouse.button == Qt.RightButton) map.zoomLevel -= 1
+            if (mouse.button === Qt.LeftButton) {
+                map.zoomLevel++
+            } else if (mouse.button === Qt.RightButton) {
+                map.zoomLevel--
+            }
             lastX = -1
             lastY = -1
         }

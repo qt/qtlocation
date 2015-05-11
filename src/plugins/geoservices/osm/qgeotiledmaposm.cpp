@@ -31,23 +31,23 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmapdataosm.h"
+#include "qgeotiledmaposm.h"
 #include "qgeotiledmappingmanagerengineosm.h"
 
 #include <QtLocation/private/qgeotilespec_p.h>
 
 QT_BEGIN_NAMESPACE
 
-QGeoTiledMapDataOsm::QGeoTiledMapDataOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
-:   QGeoTiledMapData(engine, parent), m_mapId(-1)
+QGeoTiledMapOsm::QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
+:   QGeoTiledMap(engine, parent), m_mapId(-1), m_customCopyright(engine->customCopyright())
 {
 }
 
-QGeoTiledMapDataOsm::~QGeoTiledMapDataOsm()
+QGeoTiledMapOsm::~QGeoTiledMapOsm()
 {
 }
 
-void QGeoTiledMapDataOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
+void QGeoTiledMapOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
     if (visibleTiles.isEmpty())
         return;
@@ -72,6 +72,9 @@ void QGeoTiledMapDataOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTi
     case 7:
         // set attribution to Thunder Forest
         copyrights = tr("Maps &copy; <a href='http://www.thunderforest.com/'>Thunderforest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+        break;
+    case 8:
+        copyrights = m_customCopyright;
         break;
     default:
         // set attribution to OSM

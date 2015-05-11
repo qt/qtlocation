@@ -36,7 +36,7 @@
 
 #include "qgeotilefetcher_nokia.h"
 #include "qgeomapreply_nokia.h"
-#include "qgeotiledmapdata_nokia.h"
+#include "qgeotiledmap_nokia.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qgeonetworkaccessmanager.h"
 #include "qgeouriprovider.h"

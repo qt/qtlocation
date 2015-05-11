@@ -35,13 +35,13 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 
-#include <QtLocation/private/qgeomapdata_p.h>
+#include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeomapcontroller_p.h>
 
 // cross-reference test plugin, where concrete subclasses are needed
 // in order to create a concrete mapcontroller
 #include "../geotestplugin/qgeoserviceproviderplugin_test.h"
-#include "../geotestplugin/qgeotiledmapdata_test.h"
+#include "../geotestplugin/qgeotiledmap_test.h"
 #include "../geotestplugin/qgeotiledmappingmanagerengine_test.h"
 
 QT_USE_NAMESPACE
@@ -55,7 +55,7 @@ public:
     ~tst_QGeoMapController();
 
 private:
-    QGeoTiledMapDataTest *map_;
+    QGeoTiledMapTest *map_;
     QSignalSpy *signalCenterChanged_;
     QSignalSpy *signalBearingChanged_;
     QSignalSpy *signalTiltChanged_;
@@ -79,7 +79,7 @@ tst_QGeoMapController::tst_QGeoMapController()
 {
     // unlike low level classes, geomapcontroller is built up from several parent classes
     // so, in order to test it, we need to create these parent classes for it to link to
-    // such as a GeoMapData
+    // such as a GeoMap
     QGeoServiceProviderFactoryTest serviceProviderTest; // empty constructor
 
     // TODO: check whether the default constructors of these objects allow the create to work
@@ -88,7 +88,7 @@ tst_QGeoMapController::tst_QGeoMapController()
     QString mappingErrorString;
 
     QGeoTiledMappingManagerEngineTest *mapEngine = static_cast<QGeoTiledMappingManagerEngineTest*>(serviceProviderTest.createMappingManagerEngine(parameterMap, &mappingError, &mappingErrorString));
-    map_ = new QGeoTiledMapDataTest(mapEngine);
+    map_ = new QGeoTiledMapTest(mapEngine);
     map_->resize(100, 100);
 
 

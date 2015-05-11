@@ -11,7 +11,7 @@ HEADERS += qgeocodingmanagerengine_test.h \
            qgeoroutingmanagerengine_test.h \
            qplacemanagerengine_test.h \
            qgeotiledmappingmanagerengine_test.h \
-           qgeotiledmapdata_test.h \
+           qgeotiledmap_test.h \
            qgeotilefetcher_test.h
 
 SOURCES += qgeoserviceproviderplugin_test.cpp

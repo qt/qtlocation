@@ -41,14 +41,11 @@
 #include <QtPositioning/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qdoublevector3d_p.h>
-
 #include <QVector>
 #include <QMap>
 #include <QPair>
-
-#include <QDebug>
-
-#include <algorithm>
+#include <QSet>
+#include <QSize>
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
@@ -78,17 +75,17 @@ public:
     QGeoCameraTilesPrivate();
     ~QGeoCameraTilesPrivate();
 
-    QString pluginString_;
-    QGeoMapType mapType_;
-    int mapVersion_;
-    QGeoCameraData camera_;
-    QSize screenSize_;
-    int tileSize_;
-    int maxZoom_;
-    QSet<QGeoTileSpec> tiles_;
+    QString m_pluginString;
+    QGeoMapType m_mapType;
+    int m_mapVersion;
+    QGeoCameraData m_camera;
+    QSize m_screenSize;
+    int m_tileSize;
+    int m_maxZoom;
+    QSet<QGeoTileSpec> m_tiles;
 
-    int intZoomLevel_;
-    int sideLength_;
+    int m_intZoomLevel;
+    int m_sideLength;
 
     void updateMetadata();
     void updateGeometry(double viewExpansion = 1.0);
@@ -129,64 +126,59 @@ QGeoCameraTiles::QGeoCameraTiles()
 
 QGeoCameraTiles::~QGeoCameraTiles()
 {
-    delete d_ptr;
 }
 
 void QGeoCameraTiles::findPrefetchTiles()
 {
 #if defined(ENABLE_PREFETCHING)
-    Q_D(QGeoCameraTiles);
-
-    d->tiles_.clear();
-
-    // qDebug() << "prefetch called";
-    int zoom = static_cast<int>(std::floor(d->camera_.zoomLevel()));
-    d->intZoomLevel_ = zoom;
-    d->sideLength_ = 1 << d->intZoomLevel_;
-    d->updateGeometry(PREFETCH_FRUSTUM_SCALE);
+    d_ptr->m_tiles.clear();
+    int zoom = static_cast<int>(std::floor(d_ptr->m_camera.zoomLevel()));
+    d_ptr->m_intZoomLevel = zoom;
+    d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+    d_ptr->updateGeometry(PREFETCH_FRUSTUM_SCALE);
 
 #if defined(PREFETCH_NEIGHBOUR_LAYER)
-    double zoomFraction = d->camera_.zoomLevel() - zoom;
+    double zoomFraction = d_ptr->m_camera.zoomLevel() - zoom;
     int nearestNeighbourLayer = zoomFraction > 0.5 ? zoom + 1 : zoom - 1;
-    if (nearestNeighbourLayer <= d->maxZoom_ && nearestNeighbourLayer >= 0)
+    if (nearestNeighbourLayer <= d_ptr->m_maxZoom && nearestNeighbourLayer >= 0)
     {
-        double oldZoom = d->camera_.zoomLevel();
-        d->intZoomLevel_ = nearestNeighbourLayer;
-        d->sideLength_ = 1 << d->intZoomLevel_;
-        d->camera_.setZoomLevel(d->intZoomLevel_);
+        double oldZoom = d_ptr->m_camera.zoomLevel();
+        d_ptr->m_intZoomLevel = nearestNeighbourLayer;
+        d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+        d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
 
         // Approx heuristic, keeping total # prefetched tiles roughly independent of the
         // fractional zoom level.
         double neighbourScale = (1.0 + zoomFraction)/2.0;
 
-        d->updateGeometry(PREFETCH_FRUSTUM_SCALE * neighbourScale);
-        d->camera_.setZoomLevel(oldZoom);
+        d_ptr->updateGeometry(PREFETCH_FRUSTUM_SCALE * neighbourScale);
+        d_ptr->m_camera.setZoomLevel(oldZoom);
     }
 #elif defined(PREFETCH_TWO_NEIGHBOUR_LAYERS)
  //   int size1 = d->tiles_.size();
 
     // This is a simpler strategy, we just prefetch from layer above and below
     // for the layer below we only use half the size as this fills the screen
-    double oldZoom = d->camera_.zoomLevel();
+    double oldZoom = d_ptr->m_camera.zoomLevel();
     if (zoom > 0)
     {
-        d->intZoomLevel_ = zoom-1;
-        d->sideLength_ = 1 << d->intZoomLevel_;
-        d->camera_.setZoomLevel(d->intZoomLevel_);
-        d->updateGeometry(0.5);
+        d_ptr->m_intZoomLevel = zoom-1;
+        d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+        d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
+        d_ptr->updateGeometry(0.5);
     }
  //   int size2 = d->tiles_.size();
-    if (zoom < d->maxZoom_)
+    if (zoom < d_ptr->m_maxZoom)
     {
-        d->intZoomLevel_ = zoom+1;
-        d->sideLength_ = 1 << d->intZoomLevel_;
-        d->camera_.setZoomLevel(d->intZoomLevel_);
-        d->updateGeometry(1.0);
+        d_ptr->m_intZoomLevel = zoom+1;
+        d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+        d_ptr->m_camera.setZoomLevel(d_ptr->m_intZoomLevel);
+        d_ptr->updateGeometry(1.0);
     }
  //   qDebug() << "prefetched main tiles: " << size1 << " higher detail layer: " << d->tiles_.size() - size2 << " low detail layer: " << size2 - size1;
-    d->intZoomLevel_ = zoom;
-    d->sideLength_ = 1 << d->intZoomLevel_;
-    d->camera_.setZoomLevel(oldZoom);
+    d_ptr->m_intZoomLevel = zoom;
+    d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
+    d_ptr->m_camera.setZoomLevel(oldZoom);
 #endif
 #endif
 }
@@ -194,102 +186,86 @@ void QGeoCameraTiles::findPrefetchTiles()
 
 void QGeoCameraTiles::setCamera(const QGeoCameraData &camera)
 {
-    Q_D(QGeoCameraTiles);
-
-    if (d->camera_ == camera)
+    if (d_ptr->m_camera == camera)
         return;
-    d->camera_ = camera;
+    d_ptr->m_camera = camera;
 
-    d->intZoomLevel_ = static_cast<int>(std::floor(d->camera_.zoomLevel()));
-    d->sideLength_ = 1 << d->intZoomLevel_;
+    d_ptr->m_intZoomLevel = static_cast<int>(std::floor(d_ptr->m_camera.zoomLevel()));
+    d_ptr->m_sideLength = 1 << d_ptr->m_intZoomLevel;
 
-    d->tiles_.clear();
-    d->updateGeometry();
+    d_ptr->m_tiles.clear();
+    d_ptr->updateGeometry();
 }
 
 void QGeoCameraTiles::setScreenSize(const QSize &size)
 {
-    Q_D(QGeoCameraTiles);
-
-    if (d->screenSize_ == size)
+    if (d_ptr->m_screenSize == size)
         return;
 
-    d->screenSize_ = size;
-    d->tiles_.clear();
-    d->updateGeometry();
+    d_ptr->m_screenSize = size;
+    d_ptr->m_tiles.clear();
+    d_ptr->updateGeometry();
 }
 
 void QGeoCameraTiles::setPluginString(const QString &pluginString)
 {
-    Q_D(QGeoCameraTiles);
-
-    if (d->pluginString_ == pluginString)
+    if (d_ptr->m_pluginString == pluginString)
         return;
 
-    d->pluginString_ = pluginString;
-    d->updateMetadata();
+    d_ptr->m_pluginString = pluginString;
+    d_ptr->updateMetadata();
 }
 
 void QGeoCameraTiles::setMapType(const QGeoMapType &mapType)
 {
-    Q_D(QGeoCameraTiles);
-
-    if (d->mapType_ == mapType)
+    if (d_ptr->m_mapType == mapType)
         return;
 
-    d->mapType_ = mapType;
-    d->updateMetadata();
+    d_ptr->m_mapType = mapType;
+    d_ptr->updateMetadata();
 }
 
 void QGeoCameraTiles::setMapVersion(const int mapVersion)
 {
-    Q_D(QGeoCameraTiles);
-
-    if (d->mapVersion_ == mapVersion)
+    if (d_ptr->m_mapVersion == mapVersion)
         return;
 
-    d->mapVersion_ = mapVersion;
-    d->updateMetadata();
+    d_ptr->m_mapVersion = mapVersion;
+    d_ptr->updateMetadata();
 }
 
 void QGeoCameraTiles::setTileSize(int tileSize)
 {
-    Q_D(QGeoCameraTiles);
-
-    if (d->tileSize_ == tileSize)
+    if (d_ptr->m_tileSize == tileSize)
         return;
 
-    d->tileSize_ = tileSize;
-    d->tiles_.clear();
-    d->updateGeometry();
+    d_ptr->m_tileSize = tileSize;
+    d_ptr->m_tiles.clear();
+    d_ptr->updateGeometry();
 }
 
 int QGeoCameraTiles::tileSize() const
 {
-    Q_D(const QGeoCameraTiles);
-    return d->tileSize_;
+    return d_ptr->m_tileSize;
 }
 
 void QGeoCameraTiles::setMaximumZoomLevel(int maxZoom)
 {
-    Q_D(QGeoCameraTiles);
-
-    if (d->maxZoom_ == maxZoom)
+    if (d_ptr->m_maxZoom == maxZoom)
         return;
 
-    d->maxZoom_ = maxZoom;
-    d->tiles_.clear();
-    d->updateGeometry();
+    d_ptr->m_maxZoom = maxZoom;
+    d_ptr->m_tiles.clear();
+    d_ptr->updateGeometry();
 }
 
 QSet<QGeoTileSpec> QGeoCameraTiles::tiles() const
 {
-    Q_D(const QGeoCameraTiles);
-    return d->tiles_;
+    return d_ptr->m_tiles;
 }
 
 QGeoCameraTilesPrivate::QGeoCameraTilesPrivate()
-:   mapVersion_(-1), tileSize_(0), maxZoom_(0), intZoomLevel_(0), sideLength_(0)
+:   m_mapVersion(-1), m_tileSize(0), m_maxZoom(0), m_intZoomLevel(0), m_sideLength(0)
 {
 }
 
@@ -301,15 +277,15 @@ void QGeoCameraTilesPrivate::updateMetadata()
 
     QSet<QGeoTileSpec> newTiles;
 
-    iter i = tiles_.constBegin();
-    iter end = tiles_.constEnd();
+    iter i = m_tiles.constBegin();
+    iter end = m_tiles.constEnd();
 
     for (; i != end; ++i) {
         QGeoTileSpec tile = *i;
-        newTiles.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), tile.zoom(), tile.x(), tile.y(), mapVersion_));
+        newTiles.insert(QGeoTileSpec(m_pluginString, m_mapType.mapId(), tile.zoom(), tile.x(), tile.y(), m_mapVersion));
     }
 
-    tiles_ = newTiles;
+    m_tiles = newTiles;
 }
 
 void QGeoCameraTilesPrivate::updateGeometry(double viewExpansion)
@@ -326,23 +302,23 @@ void QGeoCameraTilesPrivate::updateGeometry(double viewExpansion)
 
     if (!polygons.first.isEmpty()) {
         QSet<QGeoTileSpec> tilesLeft = tilesFromPolygon(polygons.first);
-        tiles_.unite(tilesLeft);
+        m_tiles.unite(tilesLeft);
     }
 
     if (!polygons.second.isEmpty()) {
         QSet<QGeoTileSpec> tilesRight = tilesFromPolygon(polygons.second);
-        tiles_.unite(tilesRight);
+        m_tiles.unite(tilesRight);
     }
 }
 
 Frustum QGeoCameraTilesPrivate::frustum(double fieldOfViewGradient) const
 {
-    QDoubleVector3D center = sideLength_ * QGeoProjection::coordToMercator(camera_.center());
+    QDoubleVector3D center = m_sideLength * QGeoProjection::coordToMercator(m_camera.center());
     center.setZ(0.0);
 
-    double f = qMin(screenSize_.width(), screenSize_.height()) / (1.0 * tileSize_);
+    double f = qMin(m_screenSize.width(), m_screenSize.height()) / (1.0 * m_tileSize);
 
-    double z = std::pow(2.0, camera_.zoomLevel() - intZoomLevel_);
+    double z = std::pow(2.0, m_camera.zoomLevel() - m_intZoomLevel);
 
     double altitude = f / (2.0 * z);
     QDoubleVector3D eye = center;
@@ -352,10 +328,10 @@ Frustum QGeoCameraTilesPrivate::frustum(double fieldOfViewGradient) const
     QDoubleVector3D side = QDoubleVector3D::normal(view, QDoubleVector3D(0.0, 1.0, 0.0));
     QDoubleVector3D up = QDoubleVector3D::normal(side, view);
 
-    double nearPlane = sideLength_ / (1.0 * tileSize_ * (1 << maxZoom_));
+    double nearPlane = m_sideLength / (1.0 * m_tileSize * (1 << m_maxZoom));
     double farPlane = 3.0;
 
-    double aspectRatio = 1.0 * screenSize_.width() / screenSize_.height();
+    double aspectRatio = 1.0 * m_screenSize.width() / m_screenSize.height();
 
     double hn = 0.0;
     double wn = 0.0;
@@ -653,7 +629,7 @@ QPair<PolygonVector, PolygonVector> QGeoCameraTilesPrivate::clipFootprintToMap(c
     bool clipY0 = false;
     bool clipY1 = false;
 
-    double side = 1.0 * sideLength_;
+    double side = 1.0 * m_sideLength;
 
     typedef PolygonVector::const_iterator const_iter;
 
@@ -815,18 +791,18 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
         int x = 0;
         int y = 0;
 
-        if (qFuzzyCompare(p.x(), sideLength_ * 1.0))
-            x = sideLength_ - 1;
+        if (qFuzzyCompare(p.x(), m_sideLength * 1.0))
+            x = m_sideLength - 1;
         else {
-            x = static_cast<int>(p.x()) % sideLength_;
+            x = static_cast<int>(p.x()) % m_sideLength;
             if ( !qFuzzyCompare(p.x(), 1.0 * x) && qFuzzyCompare(p.x(), 1.0 * (x + 1)) )
                 x++;
         }
 
-        if (qFuzzyCompare(p.y(), sideLength_ * 1.0))
-            y = sideLength_ - 1;
+        if (qFuzzyCompare(p.y(), m_sideLength * 1.0))
+            y = m_sideLength - 1;
         else {
-            y = static_cast<int>(p.y()) % sideLength_;
+            y = static_cast<int>(p.y()) % m_sideLength;
             if ( !qFuzzyCompare(p.y(), 1.0 * y) && qFuzzyCompare(p.y(), 1.0 * (y + 1)) )
                 y++;
         }
@@ -983,7 +959,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
 
     QSet<QGeoTileSpec> results;
 
-    int z = intZoomLevel_;
+    int z = m_intZoomLevel;
 
     typedef QMap<int, QPair<int, int> >::const_iterator iter;
     iter i = map.data.constBegin();
@@ -994,7 +970,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
         int minX = i->first;
         int maxX = i->second;
         for (int x = minX; x <= maxX; ++x) {
-            results.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), z, x, y, mapVersion_));
+            results.insert(QGeoTileSpec(m_pluginString, m_mapType.mapId(), z, x, y, m_mapVersion));
         }
     }
 

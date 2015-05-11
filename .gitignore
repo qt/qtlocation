@@ -46,6 +46,7 @@ src/location/doc/snippets/cpp/cppsnippet
 src/location/doc/snippets/places/placescppsnippet
 examples/location/places_list/places_list
 examples/location/places_map/places_map
+examples/location/planespotter/planespotter
 examples/positioning/geoflickr/geoflickr
 examples/positioning/logfilepositionsource/logfilepositionsource
 examples/positioning/satelliteinfo/satelliteinfo

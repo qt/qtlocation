@@ -41,7 +41,7 @@
 #include "qgeotilefetcher_p_p.h"
 #include "qgeotiledmapreply_p.h"
 #include "qgeotilespec_p.h"
-#include "qgeotiledmapdata_p.h"
+#include "qgeotiledmap_p.h"
 
 QT_BEGIN_NAMESPACE
 

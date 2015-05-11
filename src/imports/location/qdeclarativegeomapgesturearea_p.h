@@ -43,6 +43,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include "qgeocoordinate.h"
+#include "qgeomap_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -186,7 +187,6 @@ Q_SIGNALS:
     void panFinished();
     void flickStarted();
     void flickFinished();
-    void movementStopped();
 
 private:
     void update();

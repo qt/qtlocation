@@ -33,78 +33,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPDATA_P_P_H
-#define QGEOMAPDATA_P_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QGEOMAP_NOKIA_H
+#define QGEOMAP_NOKIA_H
 
-#include <QList>
-#include <QSet>
-#include <QVector>
-#include <QPair>
-#include <QPolygonF>
-#include <QSizeF>
-#include <QMatrix4x4>
-#include <QString>
-
-#include <QtPositioning/private/qdoublevector3d_p.h>
-
-
-#include "qgeocameradata_p.h"
-#include "qgeomaptype_p.h"
+#include "qgeotiledmap_p.h"
+#include <QImage>
+#include <QSize>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMappingManagerEngine;
+class QGeoTiledMappingManagerEngineNokia;
 
-class QGeoMapData;
-class QGeoMapController;
-
-class QGeoMapDataPrivate
+class QGeoTiledMapNokia: public QGeoTiledMap
 {
+Q_OBJECT
 public:
-    QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapData *parent);
-    virtual ~QGeoMapDataPrivate();
+    QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent = 0);
+    ~QGeoTiledMapNokia();
 
-    QGeoMappingManagerEngine *engine() const;
+    QString getViewCopyright();
+    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+    int mapVersion();
 
-    QGeoMapController *mapController();
-
-    void setCameraData(const QGeoCameraData &cameraData);
-    QGeoCameraData cameraData() const;
-
-    void resize(int width, int height);
-    int width() const;
-    int height() const;
-    double aspectRatio() const;
-
-    const QGeoMapType activeMapType() const;
-    void setActiveMapType(const QGeoMapType &mapType);
-    QString pluginString();
 
 private:
-    int width_;
-    int height_;
-    double aspectRatio_;
+    Q_DISABLE_COPY(QGeoTiledMapNokia)
 
-    QGeoMapData *map_;
-    QGeoMappingManagerEngine *engine_;
-    QString pluginString_;
-    QGeoMapController *controller_;
-
-    QGeoCameraData cameraData_;
-    QGeoMapType activeMapType_;
+    QImage logo;
+    QImage copyrightsSlab;
+    QString lastCopyrightsString;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAP_P_P_H
+#endif // QGEOMAP_NOKIA_H

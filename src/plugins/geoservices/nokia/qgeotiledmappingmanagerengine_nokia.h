@@ -65,7 +65,7 @@ public:
                                        QString *errorString);
     ~QGeoTiledMappingManagerEngineNokia();
 
-    virtual QGeoMapData *createMapData();
+    virtual QGeoMap *createMap();
     QString evaluateCopyrightsText(const QGeoMapType mapType,
                                    const qreal zoomLevel,
                                    const QSet<QGeoTileSpec> &tiles);

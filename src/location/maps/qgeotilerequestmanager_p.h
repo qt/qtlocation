@@ -54,7 +54,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMapData;
+class QGeoTiledMap;
 class QGeoTiledMappingManagerEngine;
 class QGeoTileSpec;
 class QGeoTileCache;
@@ -65,7 +65,7 @@ class QGeoTileRequestManagerPrivate;
 class QGeoTileRequestManager
 {
 public:
-    explicit QGeoTileRequestManager(QGeoTiledMapData *map);
+    explicit QGeoTileRequestManager(QGeoTiledMap *map);
     ~QGeoTileRequestManager();
 
     QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);

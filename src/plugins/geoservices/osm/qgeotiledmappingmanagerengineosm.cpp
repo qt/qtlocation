@@ -33,11 +33,11 @@
 
 #include "qgeotiledmappingmanagerengineosm.h"
 #include "qgeotilefetcherosm.h"
-#include "qgeotiledmapdataosm.h"
+#include "qgeotiledmaposm.h"
 
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
-#include <QtLocation/private/qgeotiledmapdata_p.h>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -52,7 +52,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     setTileSize(QSize(256, 256));
 
     QList<QGeoMapType> mapTypes;
-    // See map type implementations in QGeoTiledMapDataOsm and QGeoTileFetcherOsm.
+    // See map type implementations in QGeoTiledMapOsm and QGeoTileFetcherOsm.
     mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1);
     mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2);
     mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3);
@@ -60,6 +60,8 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     mapTypes << QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5);
     mapTypes << QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6);
     mapTypes << QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7);
+    if (parameters.contains(QStringLiteral("mapping.host")))
+        mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("Custom URL Map"), tr("Custom url map view set via urlprefix parameter"), false, false, 8);
     setSupportedMapTypes(mapTypes);
 
     QGeoTileFetcherOsm *tileFetcher = new QGeoTileFetcherOsm(this);
@@ -67,6 +69,12 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         const QByteArray ua = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
         tileFetcher->setUserAgent(ua);
     }
+    if (parameters.contains(QStringLiteral("mapping.host"))) {
+        const QString up = parameters.value(QStringLiteral("mapping.host")).toString().toLatin1();
+        tileFetcher->setUrlPrefix(up);
+    }
+    if (parameters.contains(QStringLiteral("mapping.copyright")))
+        m_customCopyright = parameters.value(QStringLiteral("mapping.copyright")).toString().toLatin1();
 
     setTileFetcher(tileFetcher);
 
@@ -78,9 +86,14 @@ QGeoTiledMappingManagerEngineOsm::~QGeoTiledMappingManagerEngineOsm()
 {
 }
 
-QGeoMapData *QGeoTiledMappingManagerEngineOsm::createMapData()
+QGeoMap *QGeoTiledMappingManagerEngineOsm::createMap()
 {
-    return new QGeoTiledMapDataOsm(this);
+    return new QGeoTiledMapOsm(this);
+}
+
+QString QGeoTiledMappingManagerEngineOsm::customCopyright() const
+{
+    return m_customCopyright;
 }
 
 QT_END_NAMESPACE

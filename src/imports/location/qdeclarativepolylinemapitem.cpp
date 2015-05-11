@@ -523,10 +523,19 @@ void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
         pathList.append(c);
     }
 
-    if (path_ == pathList)
+    setPathFromGeoList(pathList);
+}
+
+
+/*!
+    \internal
+*/
+void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate> &path)
+{
+    if (path_ == path)
         return;
 
-    path_ = pathList;
+    path_ = path;
 
     geometry_.markSourceDirty();
     updateMapItem();
@@ -719,6 +728,7 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
         node->update(line_.color(), &geometry_);
         geometry_.setPreserveGeometry(false);
         geometry_.markClean();
+        dirtyMaterial_ = false;
     }
     return node;
 }

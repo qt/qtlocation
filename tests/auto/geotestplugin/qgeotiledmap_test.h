@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2015 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
 ** Commercial License Usage
@@ -31,29 +31,23 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPDATAOSM_H
-#define QGEOTILEDMAPDATAOSM_H
+#ifndef QGEOTILEDMAP_TEST_H
+#define QGEOTILEDMAP_TEST_H
 
-#include <QtLocation/private/qgeotiledmapdata_p.h>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
-QT_BEGIN_NAMESPACE
+QT_USE_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm;
-class QGeoTiledMapDataOsm: public QGeoTiledMapData
+
+class QGeoTiledMapTest: public QGeoTiledMap
 {
     Q_OBJECT
-
 public:
-    QGeoTiledMapDataOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataOsm();
+    QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
+        : QGeoTiledMap(engine, parent) {}
+public:
+       using QGeoTiledMap::setCameraData;
 
-protected:
-    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
-
-private:
-    int m_mapId;
 };
-
-QT_END_NAMESPACE
 
 #endif

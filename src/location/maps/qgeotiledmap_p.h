@@ -33,8 +33,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOTILEDMAPDATA_P_P_H
-#define QGEOTILEDMAPDATA_P_P_H
+#ifndef QGEOTILEDMAP_P_H
+#define QGEOTILEDMAP_P_H
 
 //
 //  W A R N I N G
@@ -47,72 +47,61 @@
 // We mean it.
 //
 
-#include <QList>
-#include <QSet>
-#include <QVector>
-#include <QPair>
-#include <QPolygonF>
-#include <QSizeF>
-#include <QMatrix4x4>
+#include <QObject>
 #include <QString>
-#include <QPointer>
 
-#include <QtPositioning/private/qdoublevector3d_p.h>
-#include <QtPositioning/private/qdoublevector2d_p.h>
-
+#include "qgeomap_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
 
+#include <QtPositioning/private/qdoublevector2d_p.h>
+
 QT_BEGIN_NAMESPACE
 
-class QGeoTile;
-class QGeoTileCache;
 class QGeoTileSpec;
-class QGeoMapController;
-class QGeoProjection;
-
-class QGeoCameraTiles;
-class QGeoTileRequestManager;
-class QGeoMapScene;
-class QGeoTiledMapData;
+class QGeoTileTexture;
+class QGeoTileCache;
+class QGeoTiledMapPrivate;
 class QGeoTiledMappingManagerEngine;
+class QGeoTileRequestManager;
 
-class QGeoTiledMapDataPrivate
+class QQuickWindow;
+class QSGNode;
+
+class QPointF;
+
+class Q_LOCATION_EXPORT QGeoTiledMap : public QGeoMap
 {
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGeoTiledMap)
+
 public:
-    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoTiledMappingManagerEngine *engine);
-    ~QGeoTiledMapDataPrivate();
+    QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent);
+    virtual ~QGeoTiledMap();
 
     QGeoTileCache *tileCache();
-
-    QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window);
-
-    void changeCameraData(const QGeoCameraData &oldCameraData);
-    void changeActiveMapType(const QGeoMapType mapType);
-    void changeMapVersion(int mapVersion);
-    void resized(int width, int height);
-
-    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos) const;
-    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate) const;
-
     void newTileFetched(const QGeoTileSpec &spec);
-    QSet<QGeoTileSpec> visibleTiles();
 
-    void prefetchTiles();
-    QPointer<QGeoTiledMappingManagerEngine> engine() const;
+    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
+    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
+    void prefetchData() Q_DECL_OVERRIDE;
+
+    // Alternative to exposing this is to make tileFetched a slot, but then requestManager would
+    // need to be a QObject
+    QGeoTileRequestManager *getRequestManager();
+
+protected:
+    QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) Q_DECL_OVERRIDE;
+
+protected Q_SLOTS:
+    virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+    void updateMapVersion();
 
 private:
-    QGeoTiledMapData *map_;
-    QGeoTileCache *cache_;
-    QPointer<QGeoTiledMappingManagerEngine> engine_;
+    Q_DISABLE_COPY(QGeoTiledMap)
 
-    QGeoCameraTiles *cameraTiles_;
-    QGeoMapScene *mapScene_;
-    Q_DISABLE_COPY(QGeoTiledMapDataPrivate)
-public:
-    QGeoTileRequestManager *tileRequests_;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAP_P_P_H
+#endif // QGEOMAP_P_H

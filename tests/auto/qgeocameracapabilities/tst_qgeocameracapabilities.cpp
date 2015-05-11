@@ -35,7 +35,7 @@
 #include <QtTest/QtTest>
 
 #include "qgeocameracapabilities_p.h"
-#include "qgeotiledmapdata_p.h"
+#include "qgeotiledmap_p.h"
 
 QT_USE_NAMESPACE
 

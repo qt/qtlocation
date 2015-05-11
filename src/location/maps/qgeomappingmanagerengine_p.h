@@ -70,7 +70,7 @@ class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 
 class QGeoMappingManagerEnginePrivate;
-class QGeoMapData;
+class QGeoMap;
 
 class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
 {
@@ -80,7 +80,7 @@ public:
     explicit QGeoMappingManagerEngine(QObject *parent = 0);
     virtual ~QGeoMappingManagerEngine();
 
-    virtual QGeoMapData *createMapData() = 0;
+    virtual QGeoMap *createMap() = 0;
 
     QVariantMap parameters() const;
 

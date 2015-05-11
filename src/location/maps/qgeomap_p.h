@@ -47,72 +47,68 @@
 // We mean it.
 //
 
-#include <QObject>
-
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
+#include <QtCore/QObject>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
-class QGeoMappingManager;
-
+class QGeoMappingManagerEngine;
+class QGeoMapPrivate;
 class QGeoMapController;
 class QGeoCameraCapabilities;
-
-class QGeoMapData;
-
+class QGeoCoordinate;
 class QSGNode;
 class QQuickWindow;
-
-class QPointF;
 
 class Q_LOCATION_EXPORT QGeoMap : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(QGeoCameraData camera READ cameraData WRITE setCameraData NOTIFY cameraDataChanged)
-    Q_PROPERTY(QGeoMapType activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
+    Q_DECLARE_PRIVATE(QGeoMap)
 
 public:
-    QGeoMap(QGeoMapData *mapData, QObject *parent = 0);
     virtual ~QGeoMap();
 
     QGeoMapController *mapController();
-
-    QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
     void resize(int width, int height);
     int width() const;
     int height() const;
 
-    void setCameraData(const QGeoCameraData &cameraData);
     QGeoCameraData cameraData() const;
-    QGeoCameraCapabilities cameraCapabilities() const;
-
-    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const;
-    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
 
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
 
+    virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
+    virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
+    virtual int mapVersion();
+    virtual void prefetchData();
+
     QString pluginString();
+    QGeoCameraCapabilities cameraCapabilities();
+    QGeoMappingManagerEngine *engine();
+
+protected:
+    QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
+    void setCameraData(const QGeoCameraData &cameraData);
+    virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
 
 public Q_SLOTS:
     void update();
-    void cameraStopped(); // optional hint for prefetch
 
 Q_SIGNALS:
     void cameraDataChanged(const QGeoCameraData &cameraData);
     void updateRequired();
     void activeMapTypeChanged();
     void copyrightsChanged(const QImage &copyrightsImage);
-    void copyrightsChanged(const QString &copyrights);
+    void copyrightsChanged(const QString &copyrightsHtml);
 
 private:
-    QGeoMapData *mapData_;
+    Q_DISABLE_COPY(QGeoMap)
+    friend class QGeoMapController; //setCameraData
+    friend class QDeclarativeGeoMap; //updateSceneGraph
 };
 
 QT_END_NAMESPACE

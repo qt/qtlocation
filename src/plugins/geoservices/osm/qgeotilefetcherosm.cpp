@@ -51,6 +51,11 @@ void QGeoTileFetcherOsm::setUserAgent(const QByteArray &userAgent)
     m_userAgent = userAgent;
 }
 
+void QGeoTileFetcherOsm::setUrlPrefix(const QString &urlPrefix)
+{
+    m_urlPrefix = urlPrefix;
+}
+
 QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
 {
     QNetworkRequest request;
@@ -79,6 +84,9 @@ QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
         break;
     case 7:
         urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/outdoors/");
+        break;
+    case 8:
+        urlPrefix = m_urlPrefix;
         break;
     default:
         qWarning("Unknown map id %d\n", spec.mapId());

@@ -38,6 +38,10 @@
     available, it uses Brisbane/Australia. Subsequently a search for places
     matching the term "pizza" is performed and each result shown on the map.
 
+    \include examples-run.qdocinc
+
+    \section1 Local Search
+
     To write the QML application that will show places on a map, we start by
     making the following import declarations.
 
