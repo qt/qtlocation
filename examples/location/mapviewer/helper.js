@@ -38,6 +38,8 @@
 **
 ****************************************************************************/
 
+.pragma library
+
 function roundNumber(number, digits)
 {
     var multiple = Math.pow(10, digits);
