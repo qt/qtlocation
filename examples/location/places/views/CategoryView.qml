@@ -40,32 +40,28 @@
 
 import QtQuick 2.5
 import QtLocation 5.5
+import QtQml.Models 2.1
 
 
-//! [CategoryModel view 1]
+//! [CategoryModel view]
 ListView {
     id: root
     property variant categoryModel
     property variant rootIndex
 
     signal searchCategory(variant category)
-    signal enterCategory(variant index)
-//! [CategoryModel view 1]
+    signal showSubcategories(variant index)
+
     snapMode: ListView.SnapToItem
 
-//! [CategoryModel view 2]
-
-//! [CategoryModel view 2]
-
-//! [CategoryModel view 3]
-    model: VisualDataModel {
-        id: visalDataModel
+    model: DelegateModel {
+        id: delegeteDataModel
         model: root.categoryModel
         rootIndex: root.rootIndex
         delegate: CategoryDelegate {
             onSearchCategory: root.searchCategory(category);
-            onShowSubcategory: root.enterCategory(visalDataModel.modelIndex(index))
+            onShowSubcategories: root.showSubcategories(delegeteDataModel.modelIndex(index))
         }
     }
 }
-//! [CategoryModel view 3]
+//! [CategoryModel view]

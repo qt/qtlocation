@@ -158,8 +158,10 @@ ApplicationWindow {
         }
     }
 
+    //! [PlaceSearchSuggestionModel search text changed 1]
     SearchBar {
         id: searchBar
+    //! [PlaceSearchSuggestionModel search text changed 1]
         width: appWindow.width
         searchBarVisbile: stackView.depth > 1 &&
                           stackView.currentItem &&
@@ -171,21 +173,22 @@ ApplicationWindow {
             }
         }
         onGoBack: stackView.pop()
+    //! [PlaceSearchSuggestionModel search text changed 2]
         onSearchTextChanged: {
-            if (searchText.length >= 3) {
-                if (suggestionModel != null) {
-                    suggestionModel.searchTerm = searchText;
-                    suggestionModel.update();
-                }
+            if (searchText.length >= 3 && suggestionModel != null) {
+                suggestionModel.searchTerm = searchText;
+                suggestionModel.update();
             }
         }
+    //! [PlaceSearchSuggestionModel search text changed 2]
         onDoSearch: {
             if (searchText.length > 0)
                 placeSearchModel.searchForText(searchText);
         }
         onShowMap: stackView.pop(page)
-
+    //! [PlaceSearchSuggestionModel search text changed 3]
     }
+    //! [PlaceSearchSuggestionModel search text changed 3]
 
     StackView {
         id: stackView
@@ -217,7 +220,7 @@ ApplicationWindow {
                      properties: { "categoryModel": categoryModel,
                          "rootIndex" : index
                      }})
-            currentItem.enterCategory.connect(stackView.enterCategory)
+            currentItem.showSubcategories.connect(stackView.enterCategory)
             currentItem.searchCategory.connect(placeSearchModel.searchForCategory)
         }
 
