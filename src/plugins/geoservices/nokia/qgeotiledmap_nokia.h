@@ -54,7 +54,6 @@ public:
 
     QString getViewCopyright();
     void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
-    int mapVersion();
 
 private:
     QImage m_logo;

@@ -73,6 +73,7 @@ public:
     void setCameraData(const QGeoCameraData &cameraData);
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
+    const QSet<QGeoTileSpec> &visibleTiles() const;
 
     void setUseVerticalLock(bool lock);
 

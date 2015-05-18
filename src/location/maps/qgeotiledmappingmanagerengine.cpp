@@ -201,7 +201,6 @@ void QGeoTiledMappingManagerEngine::engineTileFinished(const QGeoTileSpec &spec,
     }
 
     d->tileHash_.remove(spec);
-
     tileCache()->insert(spec, bytes, format, d->cacheHint_);
 
     map = maps.constBegin();
@@ -243,10 +242,25 @@ void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
     d->tileSize_ = tileSize;
 }
 
+void QGeoTiledMappingManagerEngine::setTileVersion(int version)
+{
+    Q_D(QGeoTiledMappingManagerEngine);
+    if (d->m_tileVersion != version) {
+        d->m_tileVersion = version;
+        emit tileVersionChanged();
+    }
+}
+
 QSize QGeoTiledMappingManagerEngine::tileSize() const
 {
     Q_D(const QGeoTiledMappingManagerEngine);
     return d->tileSize_;
+}
+
+int QGeoTiledMappingManagerEngine::tileVersion() const
+{
+    Q_D(const QGeoTiledMappingManagerEngine);
+    return d->m_tileVersion;
 }
 
 QGeoTiledMappingManagerEngine::CacheAreas QGeoTiledMappingManagerEngine::cacheHint() const
@@ -292,7 +306,10 @@ QSharedPointer<QGeoTileTexture> QGeoTiledMappingManagerEngine::getTileTexture(co
 *******************************************************************************/
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
-:   cacheHint_(QGeoTiledMappingManagerEngine::AllCaches), tileCache_(0), fetcher_(0)
+:   m_tileVersion(-1),
+    cacheHint_(QGeoTiledMappingManagerEngine::AllCaches),
+    tileCache_(0),
+    fetcher_(0)
 {
 }
 

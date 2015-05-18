@@ -118,12 +118,6 @@ const QGeoMapType QGeoMap::activeMapType() const
     return d->m_activeMapType;
 }
 
-QString QGeoMap::pluginString()
-{
-    Q_D(const QGeoMap);
-    return d->m_pluginString;
-}
-
 QGeoCameraCapabilities QGeoMap::cameraCapabilities()
 {
     Q_D(const QGeoMap);
@@ -131,11 +125,6 @@ QGeoCameraCapabilities QGeoMap::cameraCapabilities()
         return d->m_engine->cameraCapabilities();
     else
         return QGeoCameraCapabilities();
-}
-
-int QGeoMap::mapVersion()
-{
-    return -1;
 }
 
 void QGeoMap::prefetchData()
@@ -152,9 +141,6 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
       m_controller(0),
       m_activeMapType(QGeoMapType())
 {
-    if (!m_engine.isNull()) {
-        m_pluginString = m_engine->managerName() + QLatin1Char('_') + QString::number(m_engine->managerVersion());
-    }
 }
 
 QGeoMapPrivate::~QGeoMapPrivate()

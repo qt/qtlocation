@@ -87,13 +87,12 @@ public:
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     void prefetchData() Q_DECL_OVERRIDE;
 
-
 protected:
     QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) Q_DECL_OVERRIDE;
-
-protected Q_SLOTS:
     virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
-    void updateMapVersion();
+
+private Q_SLOTS:
+    void handleTileVersionChanged();
 
 private:
     Q_DISABLE_COPY(QGeoTiledMap)

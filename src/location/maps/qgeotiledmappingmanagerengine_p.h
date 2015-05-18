@@ -76,6 +76,7 @@ public:
     void releaseMap(QGeoTiledMap *map);
 
     QSize tileSize() const;
+    int tileVersion() const;
 
     void updateTileRequests(QGeoTiledMap *map,
                             const QSet<QGeoTileSpec> &tilesAdded,
@@ -93,11 +94,12 @@ private Q_SLOTS:
 
 Q_SIGNALS:
     void tileError(const QGeoTileSpec &spec, const QString &errorString);
-    void mapVersionChanged();
+    void tileVersionChanged();
 
 protected:
     void setTileFetcher(QGeoTileFetcher *fetcher);
     void setTileSize(const QSize &tileSize);
+    void setTileVersion(int version);
     void setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint);
 
     QGeoTileCache *createTileCacheWithDir(const QString &cacheDirectory);

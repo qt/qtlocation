@@ -156,6 +156,12 @@ void QGeoMapScene::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     d->setVisibleTiles(tiles);
 }
 
+const QSet<QGeoTileSpec> &QGeoMapScene::visibleTiles() const
+{
+    Q_D(const QGeoMapScene);
+    return d->m_visibleTiles;
+}
+
 void QGeoMapScene::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
 {
     Q_D(QGeoMapScene);
@@ -325,14 +331,8 @@ void QGeoMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoT
     m_textures.insert(spec, texture);
 }
 
-// return true if new tiles introduced in [tiles]
 void QGeoMapScenePrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 {
-    Q_Q(QGeoMapScene);
-
-    // detect if new tiles introduced
-    bool newTilesIntroduced = !m_visibleTiles.contains(tiles);
-
     // work out the tile bounds for the new scene
     setTileBounds(tiles);
 
@@ -344,8 +344,6 @@ void QGeoMapScenePrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
         removeTiles(toRemove);
 
     m_visibleTiles = tiles;
-    if (newTilesIntroduced)
-        emit q->newTilesVisible(m_visibleTiles);
 }
 
 void QGeoMapScenePrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)

@@ -68,6 +68,7 @@ public:
     ~QGeoTiledMappingManagerEnginePrivate();
 
     QSize tileSize_;
+    int m_tileVersion;
     QHash<QGeoTiledMap *, QSet<QGeoTileSpec> > mapHash_;
     QHash<QGeoTileSpec, QSet<QGeoTiledMap *> > tileHash_;
     QGeoTiledMappingManagerEngine::CacheAreas cacheHint_;

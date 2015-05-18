@@ -110,13 +110,4 @@ void QGeoTiledMapNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTile
     emit copyrightsChanged(m_copyrightsSlab);
 }
 
-int QGeoTiledMapNokia::mapVersion()
-{
-    if (!m_engine.isNull())
-        return m_engine->mapVersion();
-    else
-        return QGeoTiledMap::mapVersion();
-
-}
-
 QT_END_NAMESPACE

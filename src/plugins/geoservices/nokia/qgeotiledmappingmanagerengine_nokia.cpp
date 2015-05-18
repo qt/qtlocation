@@ -258,8 +258,7 @@ void QGeoTiledMappingManagerEngineNokia::updateVersion(const QJsonObject &newVer
         m_mapVersion.setVersion(m_mapVersion.version() + 1);
 
         saveMapVersion();
-
-        emit mapVersionChanged();
+        setTileVersion(m_mapVersion.version());
     }
 }
 
@@ -297,6 +296,7 @@ void QGeoTiledMappingManagerEngineNokia::loadMapVersion()
 
     m_mapVersion.setVersion(object[QStringLiteral("version")].toInt());
     m_mapVersion.setVersionData(object[QStringLiteral("data")].toObject());
+    setTileVersion(m_mapVersion.version());
 }
 
 QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType mapType,
