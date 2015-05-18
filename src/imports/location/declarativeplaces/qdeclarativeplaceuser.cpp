@@ -59,7 +59,7 @@ QT_USE_NAMESPACE
     submitted an editorial:
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml EditorialModel
 */

@@ -82,7 +82,7 @@ QT_USE_NAMESPACE
     The following example displays a flat list of all available categories:
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml CategoryView
 

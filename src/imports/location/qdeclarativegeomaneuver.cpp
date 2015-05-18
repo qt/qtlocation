@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
     route maneuver:
 
     \snippet declarative/routing.qml QtQuick import
-    \snippet declarative/routing.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/routing.qml RouteManeuver
 */

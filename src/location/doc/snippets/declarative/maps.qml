@@ -41,9 +41,9 @@
 //! [QtQuick import]
 import QtQuick 2.0
 //! [QtQuick import]
-import QtPositioning 5.2
 //! [QtLocation import]
-import QtLocation 5.3
+import QtPositioning 5.5
+import QtLocation 5.5
 //! [QtLocation import]
 
 Item {

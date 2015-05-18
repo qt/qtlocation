@@ -84,8 +84,13 @@ The Qt Location API enables you to:
 To load the Qt Location module, add the following statement to your .qml files
 
 \code
-    import QtLocation 5.3
+    import QtPositioning 5.5
+    import QtLocation 5.5
 \endcode
+
+The QtLocation QML module depends on the QtPositioning QML module.
+Therefore every QML application that imports the QtLocation QML module must always
+import the QtPositioning module as well.
 
 For C++ projects include the header appropriate for the current use case,
 for example applications using routes may use

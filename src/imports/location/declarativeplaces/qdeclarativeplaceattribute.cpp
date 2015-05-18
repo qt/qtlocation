@@ -91,7 +91,7 @@
     The following example shows how to access all \l {PlaceAttribute}{PlaceAttributes} and print
     them to the console:
 
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml ExtendedAttributes read
 
@@ -135,7 +135,7 @@
     The following example shows how to display all attributes in a list:
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml ExtendedAttributes
 

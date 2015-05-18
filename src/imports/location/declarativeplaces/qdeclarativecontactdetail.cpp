@@ -70,7 +70,7 @@
     The following example shows how to access all \l {QtLocation::ContactDetail}{ContactDetails}
     and print them to the console:
 
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml ContactDetails read
 
@@ -78,7 +78,7 @@
     following demonstrates how to display a list of contact phone numbers in a list view:
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml ContactDetails phoneList
 

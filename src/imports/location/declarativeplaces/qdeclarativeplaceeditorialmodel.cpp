@@ -99,7 +99,7 @@ QT_BEGIN_NAMESPACE
     The following example shows how to display editorials for a place:
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml EditorialModel
 

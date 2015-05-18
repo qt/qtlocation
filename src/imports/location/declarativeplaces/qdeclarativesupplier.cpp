@@ -63,7 +63,7 @@ QT_USE_NAMESPACE
     The following example shows how to create and display a supplier in QML:
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml Supplier
 */

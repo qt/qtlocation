@@ -87,7 +87,7 @@ QT_USE_NAMESPACE
     actual place search with \l PlaceSearchModel.
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml SearchSuggestionModel
 
