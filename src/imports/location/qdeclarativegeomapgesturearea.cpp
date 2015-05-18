@@ -47,6 +47,7 @@
 #include <QtQuick/QQuickWindow>
 #include <QPropertyAnimation>
 #include <QDebug>
+#include <QtPositioning/private/qgeoprojection_p.h>
 #include "math.h"
 #include "qgeomap_p.h"
 #include "qdoublevector2d_p.h"
@@ -329,6 +330,20 @@ QT_BEGIN_NAMESPACE
 
     The corresponding handler is \c onFlickFinished.
 */
+
+static void registerQGeoCoordinateInterpolator()
+{
+    // required by QPropertyAnimation
+    qRegisterAnimationInterpolator<QGeoCoordinate>(geoCoordinateInterpolator);
+}
+Q_CONSTRUCTOR_FUNCTION(registerQGeoCoordinateInterpolator)
+
+static void unregisterQGeoCoordinateInterpolator()
+{
+    qRegisterAnimationInterpolator<QGeoCoordinate>(
+                (QVariant (*)(const QGeoCoordinate &, const QGeoCoordinate &, qreal))0);
+}
+Q_DESTRUCTOR_FUNCTION(unregisterQGeoCoordinateInterpolator)
 
 QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent)
     : QObject(parent),
