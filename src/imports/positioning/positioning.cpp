@@ -284,6 +284,8 @@ QT_BEGIN_NAMESPACE
     unambiguously describe the geoshape has not been set or has been set to an
     unsuitable value.
 
+    \section2 type
+
     \code
     ShapeType type
     \endcode
@@ -296,6 +298,7 @@ QT_BEGIN_NAMESPACE
         \li GeoShape.CircleType - The shape is a \l geocircle.
     \endlist
 
+    This QML property was introduced by Qt 5.5.
 
     \section1 Methods
 
