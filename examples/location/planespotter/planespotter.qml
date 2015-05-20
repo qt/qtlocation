@@ -185,15 +185,7 @@ Window {
         }
         //! [CppPlane2]
 
-        onWidthChanged: {
-            if (width > 0)
-                mapOfEurope.fitViewportToGeoShape(viewOfEurope)
-        }
-
-        onHeightChanged: {
-            if (height > 0)
-                mapOfEurope.fitViewportToGeoShape(viewOfEurope)
-        }
+        visibleRegion: viewOfEurope
     }
 
     Rectangle {

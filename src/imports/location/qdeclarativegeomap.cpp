@@ -180,7 +180,8 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_error(QGeoServiceProvider::NoError),
         m_zoomLevel(8.0),
         m_componentCompleted(false),
-        m_mappingManagerInitialized(false)
+        m_mappingManagerInitialized(false),
+        m_pendingFitViewport(false)
 {
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -692,6 +693,113 @@ QGeoCoordinate QDeclarativeGeoMap::center() const
         return m_center;
 }
 
+
+/*!
+    \qmlproperty geoshape QtLocation::Map::visibleRegion
+
+    This property holds the region which occupies the viewport of
+    the map. The camera is positioned in the center of the shape, and
+    at the largest integral zoom level possible which allows the
+    whole shape to be visible on the screen. This implies that
+    reading this property back shortly after having been set the
+    returned area is equal or larger than the set area.
+
+    Setting this property implicitly changes the \l center and
+    \l zoomLevel of the map. Any previously set value to those
+    properties will be overridden.
+
+    This property does not provide any change notifications.
+
+    \since 5.5
+*/
+void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
+{
+    if (shape == m_region)
+        return;
+
+    m_region = shape;
+    if (!shape.isValid()) {
+        // shape invalidated -> nothing to fit anymore
+        m_pendingFitViewport = false;
+        return;
+    }
+
+    if (!width() || !height()) {
+        m_pendingFitViewport = true;
+        return;
+    }
+
+    fitViewportToGeoShape();
+}
+
+QGeoShape QDeclarativeGeoMap::visibleRegion() const
+{
+    if (!width() || !height())
+        return QGeoShape();
+
+    QGeoCoordinate tl = m_map->itemPositionToCoordinate(QDoubleVector2D(0, 0));
+    QGeoCoordinate br = m_map->itemPositionToCoordinate(QDoubleVector2D(width(), height()));
+
+    return QGeoRectangle(tl, br);
+}
+
+void QDeclarativeGeoMap::fitViewportToGeoShape()
+{
+    double bboxWidth;
+    double bboxHeight;
+    QGeoCoordinate centerCoordinate;
+
+    switch (m_region.type()) {
+    case QGeoShape::RectangleType:
+    {
+        QGeoRectangle rect = m_region;
+        QDoubleVector2D topLeftPoint = m_map->coordinateToItemPosition(rect.topLeft(), false);
+        QDoubleVector2D botRightPoint = m_map->coordinateToItemPosition(rect.bottomRight(), false);
+        bboxWidth = qAbs(topLeftPoint.x() - botRightPoint.x());
+        bboxHeight = qAbs(topLeftPoint.y() - botRightPoint.y());
+        centerCoordinate = rect.center();
+        break;
+    }
+    case QGeoShape::CircleType:
+    {
+        QGeoCircle circle = m_region;
+        centerCoordinate = circle.center();
+        QGeoCoordinate edge = centerCoordinate.atDistanceAndAzimuth(circle.radius(), 90);
+        QDoubleVector2D centerPoint = m_map->coordinateToItemPosition(centerCoordinate, false);
+        QDoubleVector2D edgePoint = m_map->coordinateToItemPosition(edge, false);
+        bboxWidth = qAbs(centerPoint.x() - edgePoint.x()) * 2;
+        bboxHeight = bboxWidth;
+        break;
+    }
+    case QGeoShape::UnknownType:
+        //Fallthrough to default
+    default:
+        return;
+    }
+
+    // position camera to the center of bounding box
+    setProperty("center", QVariant::fromValue(centerCoordinate));
+
+    //If the shape is empty we just change centerposition, not zoom
+    if (bboxHeight == 0 && bboxWidth == 0)
+        return;
+
+    // adjust zoom
+    double bboxWidthRatio = bboxWidth / (bboxWidth + bboxHeight);
+    double mapWidthRatio = width() / (width() + height());
+    double zoomRatio;
+
+    if (bboxWidthRatio > mapWidthRatio)
+        zoomRatio = bboxWidth / width();
+    else
+        zoomRatio = bboxHeight / height();
+
+    qreal newZoom = std::log10(zoomRatio) / std::log10(0.5);
+
+    newZoom = std::floor(qMax(minimumZoomLevel(), (m_map->mapController()->zoom() + newZoom)));
+    setProperty("zoomLevel", QVariant::fromValue(newZoom));
+}
+
 /*!
     \internal
 */
@@ -1035,10 +1143,27 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
 
     m_map->resize(newGeometry.width(), newGeometry.height());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
+
+    /*!
+        The fitViewportTo*() functions depend on a valid map geometry.
+        If they were called prior to the first resize they cause
+        the zoomlevel to jump to 0 (showing the world). Therefore the
+        calls were queued up until now.
+
+        Multiple fitViewportTo*() calls replace each other.
+     */
+    if (m_pendingFitViewport && width() && height()) {
+        fitViewportToGeoShape();
+        m_pendingFitViewport = false;
+    }
+
 }
 
+// TODO Remove this function -> BC break
 /*!
     \qmlmethod QtLocation::Map::fitViewportToGeoShape(QGeoShape shape)
+
+    \internal
 
     Fits the current viewport to the boundary of the shape. The camera is positioned
     in the center of the shape, and at the largest integral zoom level possible which
@@ -1112,6 +1237,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
         zoomRatio = bboxHeight / height();
 
     qreal newZoom = std::log10(zoomRatio) / std::log10(0.5);
+
     newZoom = std::floor(qMax(minimumZoomLevel(), (m_map->mapController()->zoom() + newZoom)));
     setProperty("zoomLevel", QVariant::fromValue(newZoom));
 }
