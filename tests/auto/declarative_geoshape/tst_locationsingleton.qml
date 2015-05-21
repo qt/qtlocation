@@ -153,4 +153,42 @@ Item {
             compare(data.shape1 != data.shape2, !data.result)
         }
     }
+
+    TestCase {
+        name: "Conversions"
+
+        function test_shape_circle_conversions() {
+            var circle = QtPositioning.shapeToCircle(QtPositioning.shape())
+            verify(!circle.isValid)
+            circle = QtPositioning.shapeToCircle(QtPositioning.circle())
+            verify(!circle.isValid)
+            circle = QtPositioning.shapeToCircle(QtPositioning.circle(tl, 10000))
+            verify(circle.isValid)
+            compare(circle.center, tl)
+            compare(circle.radius, 10000)
+            circle = QtPositioning.shapeToCircle(QtPositioning.rectangle())
+            verify(!circle.isValid)
+            circle = QtPositioning.shapeToCircle(QtPositioning.rectangle(tl, br))
+            verify(!circle.isValid)
+            circle = QtPositioning.shapeToCircle(listBox)
+            verify(!circle.isValid)
+        }
+
+        function test_shape_rectangle_conversions() {
+            var rectangle = QtPositioning.shapeToRectangle(QtPositioning.shape())
+            verify(!rectangle.isValid)
+            rectangle = QtPositioning.shapeToRectangle(QtPositioning.circle())
+            verify(!rectangle.isValid)
+            rectangle = QtPositioning.shapeToRectangle(QtPositioning.circle(tl, 10000))
+            verify(!rectangle.isValid)
+            rectangle = QtPositioning.shapeToRectangle(QtPositioning.rectangle())
+            verify(!rectangle.isValid)
+            rectangle = QtPositioning.shapeToRectangle(QtPositioning.rectangle(tl, br))
+            verify(rectangle.isValid)
+            compare(rectangle.topLeft, tl)
+            compare(rectangle.bottomRight, br)
+            rectangle = QtPositioning.shapeToRectangle(listBox)
+            verify(rectangle.isValid)
+        }
+    }
 }
