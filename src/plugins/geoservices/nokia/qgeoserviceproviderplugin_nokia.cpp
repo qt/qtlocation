@@ -75,14 +75,19 @@ namespace
 
     void checkUsageTerms(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString)
     {
-        const QString appId = parameters.value(QStringLiteral("app_id")).toString();
-        const QString token = parameters.value(QStringLiteral("token")).toString();
+        QString appId, token;
 
-        if (!isValidParameter(appId) || !isValidParameter(token)) {
+        appId = parameters.value(QStringLiteral("here.app_id")).toString();
+        token = parameters.value(QStringLiteral("here.token")).toString();
 
-            *error = QGeoServiceProvider::MissingRequiredParameterError;
-            *errorString = QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, MISSED_CREDENTIALS);
-        }
+        if (isValidParameter(appId) && isValidParameter(token))
+            return;
+
+        if (parameters.contains(QStringLiteral("app_id")) || parameters.contains(QStringLiteral("token")))
+            qWarning() << QStringLiteral("Please prefix 'app_id' and 'token' with prefix 'here' (e.g.: 'here.app_id')");
+
+        *error = QGeoServiceProvider::MissingRequiredParameterError;
+        *errorString = QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, MISSED_CREDENTIALS);
     }
 
     template<class TInstance>

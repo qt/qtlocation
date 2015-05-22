@@ -116,11 +116,11 @@ void tst_QPlaceManagerNokia::initTestCase()
     if (!(env.contains(AppIdEnv) && env.contains(TokenEnv)))
         QSKIP("NOKIA_APPID and NOKIA_TOKEN environment variables not set");\
 
-    params.insert(QStringLiteral("app_id"), env.value(AppIdEnv));
-    params.insert(QStringLiteral("token"), env.value(TokenEnv));
+    params.insert(QStringLiteral("here.app_id"), env.value(AppIdEnv));
+    params.insert(QStringLiteral("here.token"), env.value(TokenEnv));
 
     if (env.contains(ProxyEnv))
-        params.insert(QStringLiteral("proxy"), env.value(ProxyEnv));
+        params.insert(QStringLiteral("here.proxy"), env.value(ProxyEnv));
 #else
     QSKIP("Cannot parse process environment, NOKIA_APPID and NOKIA_TOKEN not set");
 #endif

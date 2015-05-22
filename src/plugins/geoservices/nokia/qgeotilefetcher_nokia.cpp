@@ -77,14 +77,14 @@ QGeoTileFetcherNokia::QGeoTileFetcherNokia(const QVariantMap &parameters,
                                            const QSize &tileSize)
 :   QGeoTileFetcher(engine), m_engineNokia(engine), m_networkManager(networkManager),
     m_tileSize(tileSize), m_copyrightsReply(0),
-    m_baseUriProvider(new QGeoUriProvider(this, parameters, "mapping.host", MAP_TILES_HOST)),
-    m_aerialUriProvider(new QGeoUriProvider(this, parameters, "mapping.host.aerial", MAP_TILES_HOST_AERIAL))
+    m_baseUriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.mapping.host"), MAP_TILES_HOST)),
+    m_aerialUriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.mapping.host.aerial"), MAP_TILES_HOST_AERIAL))
 {
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
 
-    m_applicationId = parameters.value(QStringLiteral("app_id")).toString();
-    m_token = parameters.value(QStringLiteral("token")).toString();
+    m_applicationId = parameters.value(QStringLiteral("here.app_id")).toString();
+    m_token = parameters.value(QStringLiteral("here.token")).toString();
 }
 
 QGeoTileFetcherNokia::~QGeoTileFetcherNokia()

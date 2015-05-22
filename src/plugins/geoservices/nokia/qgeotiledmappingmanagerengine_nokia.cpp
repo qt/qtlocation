@@ -102,8 +102,8 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     //       don't need this boilerplate or hardcode plugin name
 
     QString cacheDir;
-    if (parameters.contains(QStringLiteral("mapping.cache.directory"))) {
-        cacheDir = parameters.value(QStringLiteral("mapping.cache.directory")).toString();
+    if (parameters.contains(QStringLiteral("here.mapping.cache.directory"))) {
+        cacheDir = parameters.value(QStringLiteral("here.mapping.cache.directory")).toString();
     } else {
         // managerName() is not yet set, we have to hardcode the plugin name below
         cacheDir = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
@@ -112,23 +112,23 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
 
     QGeoTileCache *tileCache = createTileCacheWithDir(cacheDir);
 
-    if (parameters.contains(QStringLiteral("mapping.cache.disk.size"))) {
+    if (parameters.contains(QStringLiteral("here.mapping.cache.disk.size"))) {
       bool ok = false;
-      int cacheSize = parameters.value(QStringLiteral("mapping.cache.disk.size")).toString().toInt(&ok);
+      int cacheSize = parameters.value(QStringLiteral("here.mapping.cache.disk.size")).toString().toInt(&ok);
       if (ok)
           tileCache->setMaxDiskUsage(cacheSize);
     }
 
-    if (parameters.contains(QStringLiteral("mapping.cache.memory.size"))) {
+    if (parameters.contains(QStringLiteral("here.mapping.cache.memory.size"))) {
       bool ok = false;
-      int cacheSize = parameters.value(QStringLiteral("mapping.cache.memory.size")).toString().toInt(&ok);
+      int cacheSize = parameters.value(QStringLiteral("here.mapping.cache.memory.size")).toString().toInt(&ok);
       if (ok)
           tileCache->setMaxMemoryUsage(cacheSize);
     }
 
-    if (parameters.contains(QStringLiteral("mapping.cache.texture.size"))) {
+    if (parameters.contains(QStringLiteral("here.mapping.cache.texture.size"))) {
       bool ok = false;
-      int cacheSize = parameters.value(QStringLiteral("mapping.cache.texture.size")).toString().toInt(&ok);
+      int cacheSize = parameters.value(QStringLiteral("here.mapping.cache.texture.size")).toString().toInt(&ok);
       if (ok)
           tileCache->setExtraTextureUsage(cacheSize);
     }

@@ -762,8 +762,8 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
     \code
     Plugin {
         name: "here"
-        PluginParameter { name: "app_id"; value: "EXAMPLE_API_ID" }
-        PluginParameter { name: "token"; value: "EXAMPLE_TOKEN_123" }
+        PluginParameter { name: "here.app_id"; value: "EXAMPLE_API_ID" }
+        PluginParameter { name: "here.token"; value: "EXAMPLE_TOKEN_123" }
     }
     \endcode
 */
