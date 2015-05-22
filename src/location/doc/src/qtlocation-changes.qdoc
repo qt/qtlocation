@@ -46,4 +46,10 @@
  \li added missing panActiveChanged() signal to \l[QML]{QtLocation::MapGestureArea::}{isPanActive} property
  \li removed movementStopped() signal
 \endlist
+
+\b Geoservice's plugin parameters
+\list
+    \li the \l{Qt Location HERE Plugin}{HERE} plugin uses the \c here prefix in front of each plugin parameter name
+    \li the \l{Qt Location Open Street Map Plugin}{OSM} plugin uses the \c osm prefix in front of each plugin parameter name
+\endlist
 */
