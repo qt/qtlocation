@@ -111,13 +111,6 @@ The following table lists optional parameters that can be passed to the HERE plu
     \li places.api_version
     \li Version of the REST API used by the places manager.  Currently versions 1 and 2 are
        supported. The version 1 is deprecated and will not be part of the final Qt release.  The default is version 2.
-\row
-    \li places.theme
-    \li Specifies the icon theme to be used for places and categories.  If no theme is
-        explicitly provided then the platform theme is used.  A default non-platform
-        specific theme can be specified using a value of "default".  The supported themes
-        are "wp7_dark" and "default".  On desktop platforms the "default" theme is the
-        platform theme.
 \endtable
 
 \section1 Parameter Usage Example
@@ -266,35 +259,6 @@ Both search term and search center \e {must} be provided when retrieving search 
 Only a given \e {place identifier} is supported as a parameter for a recommendations.  No other parameters
 such as limit, offset, and  search area are supported.  This limitation applies when using the
 HERE plugin with \l PlaceSearchModel and QPlaceManager::search().
-
-\section3 Icons themes, base urls and variants
-Icons are provided in the form of "base urls" which reference valid icon images.
-For example, if the "wp7_dark" theme was specified, then an icon url might look something like
-http://<server>/01.icon.wp7_dark and this references an actual icon image.
-
-However these urls are "base urls" in the sense that they can be appended onto, to provide variants.
-For example, one could add ".list.png" to the above url to get the list variant of the icon,
-http://<server>/01.icon.wp7_dark.list.png.
-
-The following table shows the themes provided by the HERE plugin, along with any
-variants supported for those themes:
-
-\table
-    \header
-        \li Theme
-        \li Supported type variants and appendage strings
-    \row
-        \li "default"
-        \li no variants supported
-    \row
-        \li "wp7_dark"
-        \li
-        \list
-        \li list : ".list.png"
-        \li map: ".map.png"
-        \endlist
-        (Note: the default base urls reference a map type icons)
-\endtable
 
 \section3 Extended Attributes
 The supported set of attributes provided by the HERE plugin are not fixed and
