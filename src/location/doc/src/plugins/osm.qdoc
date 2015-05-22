@@ -47,26 +47,30 @@ The Open Street Map geo services plugin can be loaded by using the plugin key "o
 
 \section2 Optional parameters
 The following table lists optional parameters that can be passed to the Open Street Map plugin.
+
+\note Since Qt 5.5 all parameters below must be prefixed with \c osm. Previous versions did not require
+a prefix.
+
 \table
 \header
     \li Parameter
     \li Description
 \row
-    \li useragent
+    \li osm.useragent
     \li User agent string set when making network requests.  This parameter should be set to a
         value that uniquely identifies the application.
 \row
-    \li mapping.host
+    \li osm.mapping.host
     \li Url string set when making network requests to the tile server.  This parameter should be set to a
         valid server url with the correct osm api and the \l{Map::activeMapType} to the corresponding \l{MapType}.CustomMap.
         The CustomMap will only be available if this parameter is set.
         \note Setting the mapping.host parameter to a new server renders the map tile cache useless for the old custommap style.
 \row
-    \li mapping.copyright
+    \li osm.mapping.copyright
     \li Custom copryright string is used when setting the \l{Map::activeMapType} to \l{MapType}.CustomMap via urlprefix parameter.
         This copyright will only be used when using the CustomMap from above. If empty no copyright will be displayed for the custom map.
 \row
-    \li routing.host
+    \li osm.routing.host
     \li Url string set when making network requests to the routing server.  This parameter should be set to a
         valid server url with the correct osrm api. If not specified the default \l {http://router.project-osrm.org/viaroute}{url} will be used.
         \note The api documentation and sources are available at \l {http://project-osrm.org/}{Project OSRM}.
@@ -83,10 +87,10 @@ Additionally, it is possible to choose another routing server than the public os
 \code
 Plugin {
     name: "osm"
-    PluginParameter { name: "useragent"; value: "My great Qt OSM application" }
-    PluginParameter { name: "mapping.host"; value: "http://osm.tile.server.address/" }
-    PluginParameter { name: "mapping.copyright"; value: "All mine" }
-    PluginParameter { name: "routing.host"; value: "http://osrm.server.address/viaroute" }
+    PluginParameter { name: "osm.useragent"; value: "My great Qt OSM application" }
+    PluginParameter { name: "osm.mapping.host"; value: "http://osm.tile.server.address/" }
+    PluginParameter { name: "osm.mapping.copyright"; value: "All mine" }
+    PluginParameter { name: "osm.routing.host"; value: "http://osrm.server.address/viaroute" }
 }
 \endcode
 */

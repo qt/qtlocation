@@ -92,8 +92,8 @@ QPlaceManagerEngineOsm::QPlaceManagerEngineOsm(const QVariantMap &parameters,
 :   QPlaceManagerEngine(parameters), m_networkManager(new QNetworkAccessManager(this)),
     m_categoriesReply(0)
 {
-    if (parameters.contains(QStringLiteral("useragent")))
-        m_userAgent = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
+    if (parameters.contains(QStringLiteral("osm.useragent")))
+        m_userAgent = parameters.value(QStringLiteral("osm.useragent")).toString().toLatin1();
     else
         m_userAgent = "Qt Location based application";
 

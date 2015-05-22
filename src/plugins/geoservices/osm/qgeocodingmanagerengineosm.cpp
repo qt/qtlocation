@@ -69,8 +69,8 @@ QGeoCodingManagerEngineOsm::QGeoCodingManagerEngineOsm(const QVariantMap &parame
                                                        QString *errorString)
 :   QGeoCodingManagerEngine(parameters), m_networkManager(new QNetworkAccessManager(this))
 {
-    if (parameters.contains(QStringLiteral("useragent")))
-        m_userAgent = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
+    if (parameters.contains(QStringLiteral("osm.useragent")))
+        m_userAgent = parameters.value(QStringLiteral("osm.useragent")).toString().toLatin1();
     else
         m_userAgent = "Qt Location based application";
 
