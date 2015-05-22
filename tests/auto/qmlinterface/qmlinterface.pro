@@ -9,7 +9,7 @@ QT       += location qml testlib
 #QT       -= gui
 
 TARGET = tst_qmlinterface
-CONFIG   += console
+CONFIG   += testcase
 CONFIG   -= app_bundle
 
 TEMPLATE = app
