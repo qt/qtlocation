@@ -72,6 +72,7 @@ public:
     void loadMeta();
     void loadPlugin(const QVariantMap &parameters);
     void unload();
+    void filterParameterMap();
 
     /* helper templates for generating the feature and manager accessors */
     template <class Manager, class Engine>
@@ -84,6 +85,7 @@ public:
     QJsonObject metaData;
 
     QVariantMap parameterMap;
+    QVariantMap cleanedParameterMap;
 
     bool experimental;
 

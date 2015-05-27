@@ -105,6 +105,17 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
         \li "here" -> \l {Qt Location HERE Plugin}{HERE Services}
         \li "osm" -> \l {Qt Location Open Street Map Plugin}{OpenStreetMap Services}
     \endlist
+
+    Each service provider must follow a naming convention for their service specific
+    parameter names/keys. They use the provider name as prefix for all their
+    parameter names. For example, the \l {Qt Location HERE Plugin}{HERE} service provider
+    requires the \c here.app_id parameter. When a provider is loaded only those parameters are
+    passed on whose parameter names start with the provider name. This avoids the sharing
+    sensitive parameters such as confidential \c token or \c app_id parameters with other
+    plugins.
+
+    Please check the GeoServices plugin specific documentation to
+    obtain a complete list of the available parameter names/keys and values.
 */
 
 /*!
@@ -215,6 +226,11 @@ QStringList QGeoServiceProvider::availableServiceProviders()
 
     If no plugin matching \a providerName was able to be loaded then error()
     and errorString() will provide details about why this is the case.
+
+    \note Before the list of \a parameters is passed on to the to-be-loaded
+    provider plugin, the list is filtered to avoid the sharing of plugin specific
+    parameters with unrelated provider plugins. Plugin specific parameter
+    keys must be prefixed with the provider name (e.g. \c here.app_id).
 */
 QGeoServiceProvider::QGeoServiceProvider(const QString &providerName,
                                          const QVariantMap &parameters,
@@ -308,19 +324,19 @@ Engine *createEngine(QGeoServiceProviderPrivate *)
 }
 template <> QGeoCodingManagerEngine *createEngine<QGeoCodingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
-    return d_ptr->factory->createGeocodingManagerEngine(d_ptr->parameterMap, &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString));
+    return d_ptr->factory->createGeocodingManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString));
 }
 template <> QGeoRoutingManagerEngine *createEngine<QGeoRoutingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
-    return d_ptr->factory->createRoutingManagerEngine(d_ptr->parameterMap, &(d_ptr->routingError), &(d_ptr->routingErrorString));
+    return d_ptr->factory->createRoutingManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->routingError), &(d_ptr->routingErrorString));
 }
 template <> QGeoMappingManagerEngine *createEngine<QGeoMappingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
-    return d_ptr->factory->createMappingManagerEngine(d_ptr->parameterMap, &(d_ptr->mappingError), &(d_ptr->mappingErrorString));
+    return d_ptr->factory->createMappingManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->mappingError), &(d_ptr->mappingErrorString));
 }
 template <> QPlaceManagerEngine *createEngine<QPlaceManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
-    return d_ptr->factory->createPlaceManagerEngine(d_ptr->parameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
+    return d_ptr->factory->createPlaceManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
 }
 
 /* Template for generating the code for each of the geocodingManager(),
@@ -334,8 +350,10 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
     QString &errorString = *_errorString;
     Manager *&manager = *_manager;
 
-    if (!this->factory)
+    if (!this->factory) {
+        this->filterParameterMap();
         this->loadPlugin(this->parameterMap);
+    }
 
     if (!this->factory || error != QGeoServiceProvider::NoError)
         return 0;
@@ -519,6 +537,11 @@ void QGeoServiceProvider::setAllowExperimental(bool allow)
     Sets the parameters used to construct individual manager classes for
     this service provider to \a parameters.
 
+    Before the list of \a parameters is passed on to the to-be-loaded
+    service provider, the list is filtered to avoid the sharing of provider specific
+    parameters with unrelated service providers. Provider specific parameter
+    keys must be prefixed with the provider name (e.g. \c here.app_id).
+
     \b {Important:} this will destroy any existing managers held by this
     service provider instance. You should be sure not to attempt to use any
     pointers that you have previously retrieved after calling this method.
@@ -597,6 +620,28 @@ void QGeoServiceProviderPrivate::unload()
     errorString = QLatin1String("");
     metaData = QJsonObject();
     metaData.insert(QStringLiteral("index"), -1);
+}
+
+/* Filter out any parameter that doesn't match any plugin */
+void QGeoServiceProviderPrivate::filterParameterMap()
+{
+    const QList<QString> availablePlugins =
+            QGeoServiceProviderPrivate::plugins().keys();
+
+    cleanedParameterMap = parameterMap;
+    foreach (const QString& name, availablePlugins) {
+        if (name == providerName) // don't remove parameters for current provider
+            continue;
+
+        QVariantMap::iterator i = cleanedParameterMap.begin();
+        while (i != cleanedParameterMap.end()) {
+            // remove every parameter meant for other plugins
+            if (i.key().startsWith(QString(name + QLatin1Char('.'))))
+                i = cleanedParameterMap.erase(i);
+            else
+                i++;
+        }
+    }
 }
 
 void QGeoServiceProviderPrivate::loadMeta()
