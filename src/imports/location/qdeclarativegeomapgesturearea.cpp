@@ -1049,7 +1049,7 @@ bool QDeclarativeGeoMapGestureArea::canStartPan()
 
     // Check if thresholds for normal panning are met.
     // (normal panning vs flicking: flicking will start from mouse release event).
-    const int startDragDistance = qApp->styleHints()->startDragDistance();
+    const int startDragDistance = qApp->styleHints()->startDragDistance() * 2;
     QPointF p1 = declarativeMap_->mapFromScene(m_allPoints.at(0).scenePos());
     int dyFromPress = int(p1.y() - sceneStartPoint1_.y());
     int dxFromPress = int(p1.x() - sceneStartPoint1_.x());
