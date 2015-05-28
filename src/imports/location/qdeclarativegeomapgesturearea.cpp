@@ -609,7 +609,8 @@ void QDeclarativeGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *event)
 void QDeclarativeGeoMapGestureArea::handleMouseUngrabEvent()
 {
     m_mousePoint.reset();
-    update();
+    if (m_touchPoints.isEmpty())
+        update();
 }
 
 /*!
@@ -629,6 +630,8 @@ void QDeclarativeGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
     m_touchPoints.clear();
     for (int i = 0; i < event->touchPoints().count(); ++i)
         m_touchPoints << event->touchPoints().at(i);
+    if (event->touchPoints().count() >= 2)
+        event->accept();
     update();
 }
 

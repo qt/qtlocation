@@ -1,0 +1,308 @@
+/****************************************************************************
+**
+** Copyright (C) 2015 The Qt Company Ltd.
+** Contact: http://www.qt.io/licensing/
+**
+** This file is part of the test suite of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL21$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see http://www.qt.io/terms-conditions. For further
+** information use the contact form at http://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 or version 3 as published by the Free
+** Software Foundation and appearing in the file LICENSE.LGPLv21 and
+** LICENSE.LGPLv3 included in the packaging of this file. Please review the
+** following information to ensure the GNU Lesser General Public License
+** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** As a special exception, The Qt Company gives you certain additional
+** rights. These rights are described in The Qt Company LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+import QtQuick 2.5
+import QtTest 1.0
+import QtLocation 5.5
+import QtPositioning 5.5
+import QtLocation.test 5.0
+
+Item {
+    // General-purpose elements for the test:
+    id: page
+    width: 100
+    height: 100
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
+
+    property variant coordinate: QtPositioning.coordinate(10, 11)
+
+    MouseArea {
+        id: mouseAreaBottom
+        anchors.fill: parent
+        visible: false
+    }
+
+    Map {
+        id: map
+        plugin: testPlugin
+        center: coordinate;
+        zoomLevel: 9;
+        anchors.fill: page
+        x:0; y:0
+
+        property real flickStartedLatitude
+        property real flickStartedLongitude
+        property bool disableFlickOnStarted: false
+        property bool disableFlickOnMovementStarted: false
+        gesture.onPanStarted: {
+            if (disableFlickOnMovementStarted)
+                map.gesture.panEnabled = false
+        }
+        gesture.onFlickStarted: {
+            flickStartedLatitude = map.center.latitude
+            flickStartedLatitude = map.center.longitude
+            if (disableFlickOnStarted)
+                map.gesture.panEnabled = false
+        }
+        MouseArea {
+            id: mouseAreaTop
+            anchors.fill: parent
+            visible: false
+        }
+    }
+
+    SignalSpy {id: centerSpy; target: map; signalName: 'centerChanged'}
+    SignalSpy {id: panFinishedSpy; target: map.gesture; signalName: 'panFinished'}
+    SignalSpy {id: gestureEnabledSpy; target: map.gesture; signalName: 'enabledChanged'}
+    SignalSpy {id: flickDecelerationSpy; target: map.gesture; signalName: 'flickDecelerationChanged'}
+    SignalSpy {id: flickStartedSpy; target: map.gesture; signalName: 'flickStarted'}
+    SignalSpy {id: flickFinishedSpy; target: map.gesture; signalName: 'flickFinished'}
+    SignalSpy {id: mouseAreaTopSpy; target: mouseAreaTop; signalName: 'onPressed'}
+    SignalSpy {id: mouseAreaBottomSpy; target: mouseAreaBottom; signalName: 'onPressed'}
+
+    TestCase {
+        when: windowShown
+        name: "MapFlick"
+
+        function init()
+        {
+            map.gesture.activeGestures = MapGestureArea.PanGesture | MapGestureArea.FlickGesture;
+            map.gesture.enabled = true
+            map.gesture.panEnabled = true
+            map.gesture.flickDeceleration = 500
+            map.zoomLevel = 0
+            map.disableFlickOnStarted = false
+            map.disableFlickOnMovementStarted = false
+            centerSpy.clear()
+            gestureEnabledSpy.clear()
+            flickDecelerationSpy.clear()
+            panFinishedSpy.clear()
+            flickStartedSpy.clear()
+            flickFinishedSpy.clear()
+            mouseAreaTopSpy.clear()
+            mouseAreaBottomSpy.clear()
+            mouseAreaBottom.visible = false
+            mouseAreaTop.visible = false
+        }
+
+        function initTestCase()
+        {
+            //check default values
+            compare(map.gesture.enabled, true)
+            map.gesture.enabled = false
+            compare(gestureEnabledSpy.count, 1)
+            compare(map.gesture.enabled, false)
+            map.gesture.enabled = false
+            compare(gestureEnabledSpy.count, 1)
+            compare(map.gesture.enabled, false)
+            map.gesture.enabled = true
+            compare(gestureEnabledSpy.count, 2)
+            compare(map.gesture.enabled, true)
+            compare(map.gesture.isPinchActive, false)
+            verify(map.gesture.activeGestures & MapGestureArea.ZoomGesture)
+            map.gesture.activeGestures = MapGestureArea.NoGesture
+            compare(map.gesture.activeGestures, MapGestureArea.NoGesture)
+            map.gesture.activeGestures = MapGestureArea.NoGesture
+            compare(map.gesture.activeGestures, MapGestureArea.NoGesture)
+            map.gesture.activeGestures = MapGestureArea.ZoomGesture | MapGestureArea.PanGesture
+            compare(map.gesture.activeGestures, MapGestureArea.ZoomGesture | MapGestureArea.PanGesture)
+            map.gesture.activeGestures = MapGestureArea.PanGesture
+            compare(map.gesture.activeGestures, MapGestureArea.PanGesture)
+            compare(map.gesture.flickDeceleration, 2500)
+            map.gesture.flickDeceleration = 2600
+            compare(flickDecelerationSpy.count, 1)
+            compare(map.gesture.flickDeceleration, 2600)
+            map.gesture.flickDeceleration = 2600
+            compare(flickDecelerationSpy.count, 1)
+            compare(map.gesture.flickDeceleration, 2600)
+            map.gesture.flickDeceleration = 400 // too small
+            compare(flickDecelerationSpy.count, 2)
+            compare(map.gesture.flickDeceleration, 500) // clipped to min
+            map.gesture.flickDeceleration = 11000 // too big
+            compare(flickDecelerationSpy.count, 3)
+            compare(map.gesture.flickDeceleration, 10000) // clipped to max
+        }
+
+        function flick_down()
+        {
+            map.center.latitude = 10
+            map.center.longitude = 11
+            mousePress(page, 0, 50)
+            for (var i = 0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(page, 0, (50 + i), 0, Qt.LeftButton);
+            }
+            mouseRelease(page, 0, 100)
+
+            // order of signals is: flickStarted, either order: (flickEnded, movementEnded)
+            verify(map.center.latitude > 10) // latitude increases we are going 'up/north' (moving mouse down)
+            var moveLatitude = map.center.latitude // store lat and check that flick continues
+
+            tryCompare(flickStartedSpy, "count", 1)
+            tryCompare(panFinishedSpy, "count", 1)
+            tryCompare(flickFinishedSpy, "count", 1)
+
+            verify(map.center.latitude > moveLatitude)
+            compare(map.center.longitude, 11) // should remain the same
+        }
+
+        function test_flick_down()
+        {
+            flick_down()
+        }
+
+        function test_flick_down_with_filtetring()
+        {
+            mouseAreaTop.visible = true
+            mouseAreaBottom.visible = true
+            flick_down()
+            tryCompare(mouseAreaTopSpy, "count", 1)
+            tryCompare(mouseAreaBottomSpy, "count",0)
+        }
+
+        function flick_up()
+        {
+            map.center.latitude = 70
+            map.center.longitude = 11
+            mousePress(page, 10, 95)
+            for (var i = 45; i > 0; i -= 5) {
+                wait(20)
+                mouseMove(page, 10, (50 + i), 0, Qt.LeftButton);
+            }
+            mouseRelease(page, 10, 50)
+            verify(map.center.latitude < 70)
+            var moveLatitude = map.center.latitude // store lat and check that flick continues
+            tryCompare(flickStartedSpy, "count", 1)
+            tryCompare(panFinishedSpy, "count", 1)
+            tryCompare(flickFinishedSpy, "count", 1)
+            verify(map.center.latitude < moveLatitude)
+            compare(map.center.longitude, 11) // should remain the same
+        }
+
+        function test_flick_up()
+        {
+            flick_up()
+        }
+
+        function test_flick_up_with_filtering()
+        {
+            mouseAreaTop.visible = true
+            mouseAreaBottom.visible = true
+            flick_up()
+            tryCompare(mouseAreaTopSpy, "count", 1)
+            tryCompare(mouseAreaBottomSpy, "count",0)
+        }
+
+
+        function test_flick_diagonal()
+        {
+            map.center.latitude = 50
+            map.center.longitude = 50
+            mousePress(page, 0, 0)
+            for (var i = 0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(page, i, i, 0, Qt.LeftButton);
+            }
+            mouseRelease(page, 50, 50)
+            verify(map.center.latitude > 50)
+            verify(map.center.longitude < 50)
+            var moveLatitude = map.center.latitude
+            var moveLongitude = map.center.longitude
+            tryCompare(flickStartedSpy, "count", 1)
+            tryCompare(panFinishedSpy, "count", 1)
+            tryCompare(flickFinishedSpy, "count", 1)
+            verify(map.center.latitude > moveLatitude)
+            verify(map.center.longitude < moveLongitude)
+        }
+
+        function test_flicking_while_disabled()
+        {
+            map.gesture.panEnabled = false
+            map.center.latitude = 50
+            map.center.longitude = 50
+            mousePress(page, 0, 0)
+            for (var i = 0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(page, i, i, 0, Qt.LeftButton);
+            }
+            mouseRelease(page, 50, 50)
+            compare(flickStartedSpy.count, 0)
+            compare(flickFinishedSpy.count, 0)
+            compare(panFinishedSpy.count, 0)
+        }
+
+        function test_disable_onFlickStarted()
+        {
+            map.disableFlickOnStarted = true
+            map.center.latitude = 50
+            map.center.longitude = 50
+            mousePress(page, 0, 0)
+            for (var i = 0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(page, i, i, 0, Qt.LeftButton);
+            }
+            mouseRelease(page, 50, 50)
+            var latitude = map.center.latitude;
+            var longitude = map.center.longitude
+            tryCompare(flickStartedSpy, "count", 1)
+            verify(map.center.latitude > 50)
+            tryCompare(flickStartedSpy, "count", 1)
+            tryCompare(panFinishedSpy, "count", 1)
+            tryCompare(flickFinishedSpy, "count", 1)
+            // compare that flick was interrupted (less movement than without interrupting)
+            compare(latitude, map.center.latitude)
+            compare(longitude, map.center.longitude)
+            map.disableFlickOnStarted = false
+            map.gesture.panEnabled = true
+        }
+
+        function test_disable_onMovementStarted()
+        {
+            map.disableFlickOnMovementStarted = true
+            map.center.latitude = 50
+            map.center.longitude = 50
+            mousePress(page, 0, 0)
+            for (var i = 0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(page, i, i, 0, Qt.LeftButton);
+            }
+            mouseRelease(page, 50, 50)
+            compare(map.center.latitude,50)
+            compare(map.center.longitude,50)
+            tryCompare(panFinishedSpy, "count", 1)
+            // compare that flick was interrupted (less movement than without interrupting)
+            compare(map.center.latitude,50)
+            compare(map.center.longitude,50)
+        }
+    }
+}

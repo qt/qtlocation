@@ -31,10 +31,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
+import QtQuick 2.5
 import QtTest 1.0
-import QtLocation 5.3
-import QtPositioning 5.2
+import QtLocation 5.5
+import QtPositioning 5.5
 import QtLocation.test 5.0
 
 Item {
@@ -44,12 +44,26 @@ Item {
     height: 100
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
 
-    property variant coordinate1: QtPositioning.coordinate(10, 11)
+    property variant coordinate: QtPositioning.coordinate(10, 11)
+
+    // From QtLocation.test plugin
+    PinchGenerator {
+        id: pinchGenerator
+        anchors.fill: parent
+        target: page
+        enabled: false
+    }
+
+    MouseArea {
+        id: mouseAreaBottom
+        anchors.fill: parent
+        visible: false
+    }
 
     Map {
         id: map
         plugin: testPlugin
-        center: coordinate1;
+        center: coordinate;
         zoomLevel: 9;
         anchors.fill: page
         x:0; y:0
@@ -65,59 +79,48 @@ Item {
             map.startPinchPoint2= pinch.point2;
             if (rejectPinch)
                 pinch.accepted = false;
-            //console.log('Pinch got started, point1: ' + pinch.point1 + ' point2: ' + pinch.point2 + ' angle: ' + pinch.angle)
         }
-        gesture.onPinchUpdated: {
-            map.lastPinchEvent = pinch;
-            //console.log('Pinch got updated, point1: ' + pinch.point1 + ' point2: ' + pinch.point2 + ' angle: ' + pinch.angle)
-        }
+        gesture.onPinchUpdated: map.lastPinchEvent = pinch;
+
         gesture.onPinchFinished: {
             map.lastPinchEvent = pinch;
-            map.endPinchPoint1= pinch.point1;
-            map.endPinchPoint2= pinch.point2;
+            map.endPinchPoint1 = pinch.point1;
+            map.endPinchPoint2 = pinch.point2;
         }
-        property real flickStartedLatitude
-        property real flickStartedLongitude
-        property bool disableFlickOnStarted: false
-        property bool disableFlickOnMovementStarted: false
-        gesture.onPanStarted: {
-            if (disableFlickOnMovementStarted)
-                map.gesture.panEnabled = false
-        }
-        gesture.onFlickStarted: {
-            flickStartedLatitude = map.center.latitude
-            flickStartedLatitude = map.center.longitude
-            if (disableFlickOnStarted)
-                map.gesture.panEnabled = false
+        MouseArea {
+            id: mouseAreaTop
+            anchors.fill: parent
+            visible: false
         }
     }
+
     SignalSpy {id: centerSpy; target: map; signalName: 'centerChanged'}
     SignalSpy {id: pinchStartedSpy; target: map.gesture; signalName: 'pinchStarted'}
     SignalSpy {id: pinchUpdatedSpy; target: map.gesture; signalName: 'pinchUpdated'}
     SignalSpy {id: pinchFinishedSpy; target: map.gesture; signalName: 'pinchFinished'}
     SignalSpy {id: pinchMaximumZoomLevelChangeSpy; target: map.gesture; signalName: 'maximumZoomLevelChangeChanged'}
-    SignalSpy {id: panFinishedSpy; target: map.gesture; signalName: 'panFinished'}
     SignalSpy {id: gestureEnabledSpy; target: map.gesture; signalName: 'enabledChanged'}
     SignalSpy {id: pinchActiveSpy; target: map.gesture; signalName: 'pinchActiveChanged'}
     SignalSpy {id: pinchActiveGesturesSpy; target: map.gesture; signalName: 'activeGesturesChanged'}
     SignalSpy {id: mapZoomLevelSpy; target: map; signalName: 'zoomLevelChanged'}
-    SignalSpy {id: flickDecelerationSpy; target: map.gesture; signalName: 'flickDecelerationChanged'}
-    SignalSpy {id: flickStartedSpy; target: map.gesture; signalName: 'flickStarted'}
-    SignalSpy {id: flickFinishedSpy; target: map.gesture; signalName: 'flickFinished'}
-
-    // From QtLocation.test plugin
-    PinchGenerator {
-        id: pinchGenerator
-        anchors.fill: parent
-        target: map
-        enabled: false
-    }
+    SignalSpy {id: mouseAreaTopSpy; target: mouseAreaTop; signalName: 'onPressed'}
+    SignalSpy {id: mouseAreaBottomSpy; target: mouseAreaBottom; signalName: 'onPressed'}
 
     TestCase {
         when: windowShown
-        name: "Map pinch"
+        name: "MapPinch"
 
-        function clear_data() {
+        function init()
+        {
+            map.gesture.activeGestures = MapGestureArea.ZoomGesture
+            map.gesture.enabled = true
+            map.rejectPinch = false
+            map.center = coordinate
+            map.minimumZoomLevel = 0
+            map.maximumZoomLevel = 20
+            mouseAreaBottom.visible = false
+            mouseAreaTop.visible = false
+            pinchGenerator.clear()
             centerSpy.clear()
             pinchStartedSpy.clear()
             pinchUpdatedSpy.clear()
@@ -127,26 +130,25 @@ Item {
             pinchActiveSpy.clear()
             pinchActiveGesturesSpy.clear()
             mapZoomLevelSpy.clear()
-            flickDecelerationSpy.clear()
-            panFinishedSpy.clear()
-            flickStartedSpy.clear()
-            flickFinishedSpy.clear()
+            mouseAreaTopSpy.clear()
+            mouseAreaBottomSpy.clear()
         }
 
         //see QDeclarativeGeoMapGestureArea::updatePinch()
         function calculateZoom(startPinchPoint1,startPinchPoint2,endPinchPoint1,endPinchPoint2,
-                               width,height, maximumZoomLevelChange, startZoomLevel) {
+                               width,height, maximumZoomLevelChange, startZoomLevel)
+        {
             var startDistance = Math.sqrt(Math.pow(startPinchPoint2.x - startPinchPoint1.x,2) +
-                         + Math.pow(startPinchPoint2.y - startPinchPoint1.y,2))
+                                          + Math.pow(startPinchPoint2.y - startPinchPoint1.y,2))
             var endDistance = Math.sqrt(Math.pow(endPinchPoint2.x - endPinchPoint1.x,2) +
-                         + Math.pow(endPinchPoint2.y - endPinchPoint1.y,2))
+                                        + Math.pow(endPinchPoint2.y - endPinchPoint1.y,2))
             return  2 * (endDistance - startDistance) * maximumZoomLevelChange /
                     (width + height) + startZoomLevel;
         }
 
-        function test_a_basic_properties() { // a to excecute first
-            clear_data()
-
+        function initTestCase()
+        {
+            //test default properties
             compare(map.gesture.enabled, true)
             map.gesture.enabled = false
             compare(gestureEnabledSpy.count, 1)
@@ -157,9 +159,7 @@ Item {
             map.gesture.enabled = true
             compare(gestureEnabledSpy.count, 2)
             compare(map.gesture.enabled, true)
-
             compare(map.gesture.isPinchActive, false)
-
             verify(map.gesture.activeGestures & MapGestureArea.ZoomGesture)
             map.gesture.activeGestures = MapGestureArea.NoGesture
             compare(map.gesture.activeGestures, MapGestureArea.NoGesture)
@@ -176,7 +176,6 @@ Item {
             map.gesture.activeGestures = MapGestureArea.ZoomGesture
             compare(map.gesture.activeGestures, MapGestureArea.ZoomGesture)
             compare(pinchActiveGesturesSpy.count, 4)
-
             compare(map.gesture.maximumZoomLevelChange, 4)
             map.gesture.maximumZoomLevelChange = 8
             compare(pinchMaximumZoomLevelChangeSpy.count, 1)
@@ -192,160 +191,16 @@ Item {
             map.gesture.maximumZoomLevelChange = 2
             compare(pinchMaximumZoomLevelChangeSpy.count, 2)
             compare (map.gesture.maximumZoomLevelChange, 2)
-
-            compare(map.gesture.flickDeceleration, 2500)
-            map.gesture.flickDeceleration = 2600
-            compare(flickDecelerationSpy.count, 1)
-            compare(map.gesture.flickDeceleration, 2600)
-            map.gesture.flickDeceleration = 2600
-            compare(flickDecelerationSpy.count, 1)
-            compare(map.gesture.flickDeceleration, 2600)
-            map.gesture.flickDeceleration = 400 // too small
-            compare(flickDecelerationSpy.count, 2)
-            compare(map.gesture.flickDeceleration, 500) // clipped to min
-            map.gesture.flickDeceleration = 11000 // too big
-            compare(flickDecelerationSpy.count, 3)
-            compare(map.gesture.flickDeceleration, 10000) // clipped to max
         }
 
-        function test_a_flick() {
-            clear_data()
-            var i=0
-            //var moveLatitude=0
-            // few sanity checks
-            map.gesture.activeGestures = MapGestureArea.PanGesture | MapGestureArea.FlickGesture;
-            map.gesture.enabled = true
-            map.gesture.panEnabled = true
-            // to get maximum changes (robust autotest)
-            map.gesture.flickDeceleration = 500
-            map.zoomLevel = 0
-            compare(map.center.latitude, coordinate1.latitude)
-            compare(map.center.longitude, coordinate1.longitude)
-            // 1. test basic flick down
-            clear_data()
-            map.center.latitude = 10
-            map.center.longitude = 11
-            mousePress(map, 0, 50)
-            for (i=0; i < 50; i += 5) {
-                wait(20)
-                mouseMove(map, 0, (50 + i), 0, Qt.LeftButton);
-            }
-            mouseRelease(map, 0, (50 + i))
 
-            // order of signals is: flickStarted, either order: (flickEnded, movementEnded)
-            verify(map.center.latitude > 10) // latitude increases we are going 'up/north' (moving mouse down)
-            var moveLatitude = map.center.latitude // store lat and check that flick continues
-            tryCompare(flickStartedSpy, "count", 1)
-
-            tryCompare(panFinishedSpy, "count", 1)
-            tryCompare(flickFinishedSpy, "count", 1)
-            verify(map.center.latitude > moveLatitude)
-            compare(map.center.longitude, 11) // should remain the same
-
-            // 2. test basic flick up
-            clear_data()
-            map.center.latitude = 70
-            map.center.longitude = 11
-            mousePress(map, 10, 95)
-            for (i=45; i > 0; i -= 5) {
-                wait(20)
-                mouseMove(map, 10, (50 + i), 0, Qt.LeftButton);
-            }
-            mouseRelease(map, 10, (50 + i))
-            verify(map.center.latitude < 70)
-            moveLatitude = map.center.latitude // store lat and check that flick continues
-            tryCompare(flickStartedSpy, "count", 1)
-            tryCompare(panFinishedSpy, "count", 1)
-            tryCompare(flickFinishedSpy, "count", 1)
-            verify(map.center.latitude < moveLatitude)
-            compare(map.center.longitude, 11) // should remain the same
-
-            // 3. basic flick diagonal
-            clear_data()
-            map.center.latitude = 50
-            map.center.longitude = 50
-            mousePress(map, 0, 0)
-            for (i=0; i < 50; i += 5) {
-                wait(20)
-                mouseMove(map, i, i, 0, Qt.LeftButton);
-            }
-            mouseRelease(map, i, i)
-            verify(map.center.latitude > 50)
-            verify(map.center.longitude < 50)
-            moveLatitude = map.center.latitude
-            var moveLongitude = map.center.longitude
-            tryCompare(flickStartedSpy, "count", 1)
-            tryCompare(panFinishedSpy, "count", 1)
-            tryCompare(flickFinishedSpy, "count", 1)
-            verify(map.center.latitude > moveLatitude)
-            verify(map.center.longitude < moveLongitude)
-            var diagonalFlickResultLatitude = map.center.latitude
-            var diagonalFlickResultLongitude = map.center.longitude
-            // 4. test flicking while disabled
-            clear_data()
-            map.gesture.panEnabled = false
-            map.center.latitude = 50
-            map.center.longitude = 50
-            for (i=0; i < 50; i += 5) {
-                wait(20)
-                mouseMove(map, i, i, 0, Qt.LeftButton);
-            }
-            mouseRelease(map, i, i)
-            compare(flickStartedSpy.count, 0)
-            compare(flickFinishedSpy.count, 0)
-            compare(panFinishedSpy.count, 0)
-            map.gesture.panEnabled = true
-
-            // 5. disable during flick: onFlickStarted
-            clear_data()
-            map.disableFlickOnStarted = true
-            map.center.latitude = 50
-            map.center.longitude = 50
-            mousePress(map, 0, 0)
-            for (i=0; i < 50; i += 5) {
-                wait(20)
-                mouseMove(map, i, i, 0, Qt.LeftButton);
-            }
-            mouseRelease(map, i, i)
-            tryCompare(flickStartedSpy, "count", 1)
-            verify(map.center.latitude > 50)
-            tryCompare(flickStartedSpy, "count", 1)
-            tryCompare(panFinishedSpy, "count", 1)
-            tryCompare(flickFinishedSpy, "count", 1)
-            // compare that flick was interrupted (less movement than without interrupting)
-            verify(diagonalFlickResultLatitude > map.center.latitude)
-            verify(diagonalFlickResultLongitude < map.center.longitude)
-            map.disableFlickOnStarted = false
-            map.gesture.panEnabled = true
-
-            // 6. disable during flick: onMovementStarted
-            clear_data()
-            map.disableFlickOnMovementStarted = true
-            map.center.latitude = 50
-            map.center.longitude = 50
-            mousePress(map, 0, 0)
-            for (i=0; i < 50; i += 5) {
-                wait(20)
-                mouseMove(map, i, i, 0, Qt.LeftButton);
-            }
-            mouseRelease(map, i, i)
-            verify(map.center.latitude === 50)
-            verify(map.center.longitude === 50)
-            tryCompare(panFinishedSpy, "count", 1)
-            // compare that flick was interrupted (less movement than without interrupting)
-            verify(diagonalFlickResultLatitude > map.center.latitude)
-            verify(diagonalFlickResultLongitude < map.center.longitude)
-            map.disableFlickOnMovementStarted = false
-        }
-
-        function test_pinch_zoom() {
+        function zoom_in()
+        {
             var startZoomLevel = 9
-            map.gesture.activeGestures = MapGestureArea.ZoomGesture
             map.zoomLevel = startZoomLevel
-            clear_data()
-
-            // 1. typical zoom in
+            mapZoomLevelSpy.clear()
             map.gesture.maximumZoomLevelChange = 2
+
             compare(map.gesture.isPinchActive, false)
             pinchGenerator.pinch(
                         Qt.point(0,50),   // point1From
@@ -362,10 +217,10 @@ Item {
             compare(map.lastPinchEvent.center.y, 50)
             compare(map.lastPinchEvent.angle, 0)
             verify((map.lastPinchEvent.point1.x > pinchGenerator.startDragDistance())
-                && (map.lastPinchEvent.point1.x < 25))
+                   && (map.lastPinchEvent.point1.x < 25))
             compare(map.lastPinchEvent.point1.y, 50)
             verify((map.lastPinchEvent.point2.x > 75)
-                && (map.lastPinchEvent.point2.x < 100 - pinchGenerator.startDragDistance()))
+                   && (map.lastPinchEvent.point2.x < 100 - pinchGenerator.startDragDistance()))
             compare(map.lastPinchEvent.point2.y, 50)
             compare(map.lastPinchEvent.accepted, true)
             compare(map.lastPinchEvent.pointCount, 2)
@@ -400,32 +255,77 @@ Item {
             compare(map.gesture.isPinchActive, false)
             compare(mapZoomLevelSpy.count, pinchUpdatedSpy.count)
             var endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
-                                              map.endPinchPoint1, map.endPinchPoint2,
-                                              map.width,map.height,
-                                              map.gesture.maximumZoomLevelChange,startZoomLevel)
+                                             map.endPinchPoint1, map.endPinchPoint2,
+                                             map.width,map.height,
+                                             map.gesture.maximumZoomLevelChange,startZoomLevel)
             compare(map.zoomLevel, endZoomLevel)
+        }
 
-            // 2. typical zoom out
-            clear_data();
-            startZoomLevel = 7.8
-            map.gesture.maximumZoomLevelChange = 2
+        function test_zoom_in()
+        {
+            zoom_in()
+        }
+
+        function test_zoom_in_with_top_filtering()
+        {
+            mouseAreaTop.visible = true
+            zoom_in()
+            tryCompare(mouseAreaTopSpy, "count", 1)
+        }
+
+        function test_zoom_in_with_below_filtering()
+        {
+            mouseAreaBottom.visible=true
+            zoom_in()
+            tryCompare(mouseAreaBottomSpy, "count",0)
+        }
+
+        function zoom_out()
+        {
+            var startZoomLevel = 7.8
             map.zoomLevel = startZoomLevel
-            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
-                                 Qt.point(50,50), Qt.point(100,50),
+            map.gesture.maximumZoomLevelChange = 2
+            compare (map.gesture.maximumZoomLevelChange, 2)
+            mapZoomLevelSpy.clear()
+            pinchGenerator.pinch(Qt.point(45,50), Qt.point(0,50),
+                                 Qt.point(55,50), Qt.point(100,50),
                                  40, 40, 10, 10);
             tryCompare(pinchStartedSpy, "count", 1);
             tryCompare(pinchFinishedSpy, "count", 1);
+            compare(map.gesture.isPinchActive, false)
             verify(pinchUpdatedSpy.count >= 5); // verify 'sane' number of updates received
-            endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
-                                              map.endPinchPoint1, map.endPinchPoint2,
-                                              map.width,map.height,
-                                              map.gesture.maximumZoomLevelChange,startZoomLevel)
+            compare(mapZoomLevelSpy.count, pinchUpdatedSpy.count)
+            var endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
+                                         map.endPinchPoint1, map.endPinchPoint2,
+                                         map.width,map.height,
+                                         map.gesture.maximumZoomLevelChange,startZoomLevel)
 
             compare(map.zoomLevel, endZoomLevel)
+        }
 
-            // 3. zoom in and back out (direction change during same pinch)
-            clear_data();
-            startZoomLevel = 7.8
+        function test_zoom_out()
+        {
+            zoom_out()
+        }
+
+        function test_zoom_out_with_top_filtering()
+        {
+            mouseAreaTop.visible=true
+            zoom_out()
+            tryCompare(mouseAreaTopSpy, "count", 1)
+        }
+
+        function test_zoom_out_with_below_filtering()
+        {
+            mouseAreaBottom.visible=true
+            zoom_out()
+            tryCompare(mouseAreaBottomSpy, "count",0)
+        }
+
+        function test_zoom_in_and_back_out()
+        {
+            // direction change during same pinch
+            var startZoomLevel = 7.8
             map.gesture.maximumZoomLevelChange = 2
             map.zoomLevel = startZoomLevel
             pinchGenerator.pinch(Qt.point(0,50), Qt.point(100,50),
@@ -434,31 +334,33 @@ Item {
             tryCompare(pinchStartedSpy, "count", 1);
             tryCompare(pinchFinishedSpy, "count", 1);
             verify(pinchUpdatedSpy.count >= 5); // verify 'sane' number of updates received
-            endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
-                                              map.endPinchPoint1, map.endPinchPoint2,
-                                              map.width,map.height,
-                                              map.gesture.maximumZoomLevelChange,startZoomLevel)
+            var endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
+                                         map.endPinchPoint1, map.endPinchPoint2,
+                                         map.width,map.height,
+                                         map.gesture.maximumZoomLevelChange,startZoomLevel)
             compare(map.zoomLevel, endZoomLevel) // should remain the same
+        }
 
-            // 4. typical zoom in with different change level
-            clear_data();
-            startZoomLevel = 8
-            map.gesture.maximumZoomLevelChange = 4
+        function test_zoom_in_with_different_change_level()
+        {
+            var startZoomLevel = 8
             map.zoomLevel = startZoomLevel
+            map.gesture.maximumZoomLevelChange = 4
             compare (map.gesture.maximumZoomLevelChange, 4)
             pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),
                                  Qt.point(100,50),Qt.point(50,50),
                                  40, 40, 10, 10);
             tryCompare(pinchFinishedSpy, "count", 1);
-            endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
-                                              map.endPinchPoint1, map.endPinchPoint2,
-                                              map.width,map.height,
-                                              map.gesture.maximumZoomLevelChange,startZoomLevel)
+            var endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
+                                         map.endPinchPoint1, map.endPinchPoint2,
+                                         map.width,map.height,
+                                         map.gesture.maximumZoomLevelChange,startZoomLevel)
             compare(map.zoomLevel, endZoomLevel)
+        }
 
-            // 5. typical zoom out with different change level
-            clear_data();
-            startZoomLevel = 8
+        function test_zoom_out_with_different_change_level()
+        {
+            var startZoomLevel = 8
             map.gesture.maximumZoomLevelChange = 1
             map.zoomLevel = startZoomLevel
             compare (map.gesture.maximumZoomLevelChange, 1)
@@ -466,33 +368,35 @@ Item {
                                  Qt.point(50,50), Qt.point(100,50),
                                  40, 40, 10, 10);
             tryCompare(pinchFinishedSpy, "count", 1);
-            endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
-                                              map.endPinchPoint1, map.endPinchPoint2,
-                                              map.width,map.height,
-                                              map.gesture.maximumZoomLevelChange,startZoomLevel)
+            var endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
+                                         map.endPinchPoint1, map.endPinchPoint2,
+                                         map.width,map.height,
+                                         map.gesture.maximumZoomLevelChange,startZoomLevel)
             compare(map.zoomLevel, endZoomLevel)
+        }
 
-            // 6. try to zoom in below minimum zoom level
-
-            clear_data()
-            startZoomLevel = 8
+        function test_zoom_in_below_minimum_zoom_level()
+        {
+            map.zoomLevel = 8
             map.gesture.maximumZoomLevelChange = 4
             map.minimumZoomLevel = 7
             pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),Qt.point(100,50),Qt.point(50,50));
             wait(250);
             tryCompare(pinchFinishedSpy, "count", 1);
-            compare(map.zoomLevel, 7) // would go to 6
+            compare(map.zoomLevel, 7)
+        }
 
-            // 7. try to zoom out above maximum zoom level
-            clear_data()
+        function test_zoom_out_above_maximum_zoom_level()
+        {
             map.gesture.maximumZoomLevelChange = 4
             map.maximumZoomLevel = 8
             pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
             tryCompare(pinchFinishedSpy, "count", 1);
-            compare(map.zoomLevel, 8) // would go to 9
+            compare(map.zoomLevel, 8)
+        }
 
-            // 8. pinch when max and min are same
-            clear_data()
+        function test_pinch_when_max_and_min_are_same()
+        {
             map.maximumZoomLevel = 8
             map.minimumZoomLevel = 8
             compare(map.maximumZoomLevel, 8)
@@ -502,9 +406,10 @@ Item {
             compare(map.zoomLevel, 8)
             map.minimumZoomLevel = 1
             map.maximumZoomLevel = 20
+        }
 
-            // 9. pinch when max..min is not where map zoomLevel currently is
-            clear_data()
+        function test_pinch_when_max_min_is_not_where_map_zoomLevel_currently_is()
+        {
             map.gesture.maximumZoomLevelChange = 4
             map.minimumZoomLevel = 4
             map.maximumZoomLevel = 6
@@ -522,9 +427,10 @@ Item {
             compare(map.zoomLevel, 4)
             map.minimumZoomLevel = 1
             map.maximumZoomLevel = 20
+        }
 
-            // 10. pinch while pinch area is disabled
-            clear_data()
+        function test_pinch_while_pinch_area_is_disabled()
+        {
             map.zoomLevel = 7.5
             map.gesture.enabled = false
             map.gesture.maximumZoomLevelChange = 2
@@ -539,11 +445,11 @@ Item {
             compare(pinchFinishedSpy.count, 0);
             compare(map.zoomLevel, 7.5)
             pinchGenerator.stop()
-            map.gesture.enabled = true
+        }
 
-            // 11. pinch disabling during pinching
-            clear_data()
-            startZoomLevel = 7.5
+        function test_pinch_disabling_during_pinching()
+        {
+            var startZoomLevel = 7.5
             map.zoomLevel = startZoomLevel
             pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
                                  Qt.point(50,50), Qt.point(100,50),
@@ -559,21 +465,22 @@ Item {
             verify(pinchupdates > 0)
             compare(pinchActiveSpy.count,3)
             compare(map.gesture.isPinchActive, false)
-            endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
-                                              map.endPinchPoint1, map.endPinchPoint2,
-                                              map.width,map.height,
-                                              map.gesture.maximumZoomLevelChange,startZoomLevel)
+            var endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
+                                         map.endPinchPoint1, map.endPinchPoint2,
+                                         map.width,map.height,
+                                         map.gesture.maximumZoomLevelChange,startZoomLevel)
             compare(map.zoomLevel, endZoomLevel)
             pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
                                  Qt.point(50,50), Qt.point(100,50),
                                  40, 40, 10, 10);
             compare(map.zoomLevel, endZoomLevel)
-            map.gesture.enabled = true
+        }
 
-            // 12. check nuthin happens if no active gestures
-            clear_data()
+        function test_check_no_active_gestures()
+        {
             map.zoomLevel = 8.5
             map.gesture.activeGestures = MapGestureArea.NoGesture
+
             pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
                                  Qt.point(50,50), Qt.point(100,50),
                                  40, 40, 10, 10);
@@ -583,11 +490,11 @@ Item {
             compare(pinchStartedSpy.count, 0);
             compare(map.zoomLevel, 8.5)
             pinchGenerator.stop()
-            map.gesture.activeGestures = MapGestureArea.ZoomGesture
+        }
 
-            // 13. manually changing zoom level during active pinch zoom
-            clear_data();
-            startZoomLevel = 8.5
+        function test_changing_zoom_level_during_active_pinch_zoom()
+        {
+            var startZoomLevel = 8.5
             map.zoomLevel = startZoomLevel
             map.gesture.maximumZoomLevelChange = 2
             pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
@@ -599,14 +506,15 @@ Item {
             map.zoomLevel = 3 // will get overridden by pinch
             tryCompare(pinchFinishedSpy, "count", 1);
             verify(pinchUpdatedSpy.count >= 5); // verify 'sane' number of updates received
-            endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
-                                          map.endPinchPoint1, map.endPinchPoint2,
-                                          map.width,map.height,
-                                          map.gesture.maximumZoomLevelChange,startZoomLevel)
+            var endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
+                                         map.endPinchPoint1, map.endPinchPoint2,
+                                         map.width,map.height,
+                                         map.gesture.maximumZoomLevelChange,startZoomLevel)
             compare(map.zoomLevel, endZoomLevel)
+        }
 
-            // 14. try to zoom below and above plugin's support
-            clear_data()
+        function test_zoom_below_and_above_plugin_support()
+        {
             map.gesture.maximumZoomLevelChange = 4
             map.zoomLevel = map.minimumZoomLevel + 0.5
             pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),
@@ -618,10 +526,11 @@ Item {
             pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
             tryCompare(pinchFinishedSpy, "count", 2);
             compare(map.zoomLevel, map.maximumZoomLevel)
-            map.zoomLevel = 10
+        }
 
-            // 15. check that pinch accepted works (rejection)
-            clear_data()
+        function test_check_pinch_accepted()
+        {
+            map.zoomLevel = 10
             map.rejectPinch = true
             pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),
                                  Qt.point(100,50),Qt.point(50,50),
@@ -631,20 +540,21 @@ Item {
             compare(pinchFinishedSpy.count, 0)
             compare(map.gesture.isPinchActive, false)
             compare(map.zoomLevel, 10)
-            startZoomLevel = 10
+            var startZoomLevel = 10
             map.rejectPinch = false
             wait(500)
             pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),Qt.point(100,50),Qt.point(50,50),40, 40, 10, 10);
             tryCompare(pinchFinishedSpy, "count",  1)
-            endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
-                                              map.endPinchPoint1, map.endPinchPoint2,
-                                              map.width,map.height,
-                                              map.gesture.maximumZoomLevelChange,startZoomLevel)
+            var endZoomLevel = calculateZoom( map.startPinchPoint1, map.startPinchPoint2,
+                                         map.endPinchPoint1, map.endPinchPoint2,
+                                         map.width,map.height,
+                                         map.gesture.maximumZoomLevelChange,startZoomLevel)
             compare(map.zoomLevel, endZoomLevel)
             compare(map.lastPinchEvent.accepted, true)
+        }
 
-            // 16. moving center
-            clear_data()
+        function test_moving_center()
+        {
             pinchGenerator.pinch(Qt.point(0, 50), Qt.point(50,100), Qt.point(50,0), Qt.point(100, 50))
             tryCompare(pinchStartedSpy, "count", 1)
             compare(map.lastPinchEvent.center.x, (map.lastPinchEvent.point1.x + map.lastPinchEvent.point2.x) /2)
@@ -655,8 +565,10 @@ Item {
             // sanity check that we are not comparing wrong (points) with wrong (center) and calling it a success
             verify((map.lastPinchEvent.center.x > 50) && (map.lastPinchEvent.center.x < 100))
             verify((map.lastPinchEvent.center.y > 50) && (map.lastPinchEvent.center.y < 100))
-            // 17. angle between points
-            clear_data()
+        }
+
+        function test_angle_between_points()
+        {
             // todo calculate the angle from points for comparison
             pinchGenerator.pinch(Qt.point(0,0), Qt.point(0,100), Qt.point(100,100), Qt.point(100,0))
             tryCompare(pinchStartedSpy, "count", 1)
