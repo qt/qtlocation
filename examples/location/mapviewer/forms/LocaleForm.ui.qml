@@ -38,9 +38,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.4
-import QtQuick.Controls 1.2
-import QtQuick.Layouts 1.0
+import QtQuick 2.5
+import QtQuick.Layouts 1.2
 
 Item {
     property alias clearButton: clearButton
@@ -128,7 +127,7 @@ Item {
 
                 Button {
                     id: goButton
-                    text: qsTr("Go !")
+                    text: qsTr("Proceed")
                 }
 
                 Button {
