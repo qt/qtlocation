@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \inherits QObject
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The MapType type holds information about a map type.
 

@@ -42,7 +42,7 @@
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The ExtendedAttributes type holds additional data about a \l Place.
 
@@ -122,7 +122,7 @@
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The PlaceAttribute type holds generic place attribute information.
 

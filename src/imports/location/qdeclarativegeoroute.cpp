@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeoRoute
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The Route type represents one geographical route.
 

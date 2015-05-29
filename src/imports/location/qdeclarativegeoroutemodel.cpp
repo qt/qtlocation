@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeoRouteModel
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The RouteModel type provides access to routes.
 
@@ -662,7 +662,7 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     \instantiates QDeclarativeGeoRouteQuery
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The RouteQuery type is used to provide query parameters to a
            RouteModel.

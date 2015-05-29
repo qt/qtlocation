@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeoMapItemView
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since Qt Location 5.5
     \inherits QObject
 
     \brief The MapItemView is used to populate Map from a model.

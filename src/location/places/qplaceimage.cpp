@@ -67,7 +67,7 @@ bool QPlaceImagePrivate::compare(const QPlaceContentPrivate *other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlaceImage class represents a reference to an image.
 

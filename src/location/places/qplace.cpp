@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlace class represents a set of data about a place.
 

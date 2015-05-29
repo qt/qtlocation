@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeocodeModel
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-geocoding
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The GeocodeModel type provides support for searching operations
            related to geographic information.

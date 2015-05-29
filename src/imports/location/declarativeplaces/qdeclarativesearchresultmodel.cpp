@@ -56,7 +56,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief Provides access to place search results.
 

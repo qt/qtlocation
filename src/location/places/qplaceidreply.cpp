@@ -57,7 +57,7 @@ QT_USE_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-replies
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlaceIdReply class manages operations which return an identifier such as
            saving and removal operations of places and categories.

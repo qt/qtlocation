@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-manager
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlaceManager class provides the interface which allows clients to access
     places stored in a particular backend.

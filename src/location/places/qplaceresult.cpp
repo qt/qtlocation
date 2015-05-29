@@ -70,7 +70,7 @@ bool QPlaceResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlaceResult class represents a search result containing a place.
 

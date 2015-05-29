@@ -45,7 +45,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeoServiceProvider
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-common
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The Plugin type describes a Location based services plugin.
 
@@ -741,7 +741,7 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
     \instantiates QDeclarativeGeoServiceProviderParameter
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-common
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The PluginParameter type describes a parameter to a \l Plugin.
 
