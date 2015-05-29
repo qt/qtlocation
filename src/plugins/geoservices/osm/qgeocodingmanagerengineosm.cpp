@@ -109,7 +109,7 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int l
         query.addQueryItem(QStringLiteral("viewbox"), boundingBoxToLtrb(bounds));
         query.addQueryItem(QStringLiteral("bounded"), QStringLiteral("1"));
     }
-    query.addQueryItem(QStringLiteral("polygon"), QStringLiteral("1"));
+    query.addQueryItem(QStringLiteral("polygon_geojson"), QStringLiteral("1"));
     query.addQueryItem(QStringLiteral("addressdetails"), QStringLiteral("1"));
     if (limit != -1)
         query.addQueryItem(QStringLiteral("limit"), QString::number(limit));
