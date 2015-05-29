@@ -44,10 +44,7 @@
 #include <QtQuick/QQuickItem>
 #include <QtCore/QPointer>
 #include <QtCore/QMutex>
-
-
-
-
+#include <QtPositioning/qgeoshape.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -70,6 +67,7 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QList<QObject *> mapItems READ mapItems NOTIFY mapItemsChanged)
     Q_PROPERTY(QGeoServiceProvider::Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
+    Q_PROPERTY(QGeoShape visibleRegion READ visibleRegion WRITE setVisibleRegion)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -95,6 +93,9 @@ public:
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
+    void setVisibleRegion(const QGeoShape &shape);
+    QGeoShape visibleRegion() const;
+
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
@@ -114,7 +115,7 @@ public:
     Q_INVOKABLE void fitViewportToGeoShape(const QVariant &shape);
     Q_INVOKABLE void fitViewportToMapItems();
     Q_INVOKABLE void pan(int dx, int dy);
-    Q_INVOKABLE void cameraStopped(); // optional hint for prefetch
+    Q_INVOKABLE void prefetchData(); // optional hint for prefetch
 
     QString errorString() const;
     QGeoServiceProvider::Error error() const;
@@ -161,6 +162,7 @@ private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void populateMap();
     void fitViewportToMapItemsRefine(bool refine);
+    void fitViewportToGeoShape();
     bool isInteractive();
 
 private:
@@ -181,6 +183,8 @@ private:
     qreal m_zoomLevel;
     bool m_componentCompleted;
     bool m_mappingManagerInitialized;
+    QGeoShape m_region;
+    bool m_pendingFitViewport;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

@@ -53,7 +53,7 @@ QT_USE_NAMESPACE
     ratings value out of a possible maximum as given by the \l maximum property.
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml Ratings
 */

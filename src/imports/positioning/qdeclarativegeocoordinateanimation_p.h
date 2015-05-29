@@ -39,9 +39,6 @@
 
 QT_BEGIN_NAMESPACE
 
-
-QVariant geoCoordinateInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress);
-
 class QDeclarativeGeoCoordinateAnimation : public QQuickPropertyAnimation
 {
     Q_OBJECT

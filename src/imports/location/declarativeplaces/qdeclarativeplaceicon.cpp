@@ -71,7 +71,7 @@ QT_USE_NAMESPACE
     The following code shows how to display a 64x64 pixel icon:
 
     \snippet declarative/places.qml QtQuick import
-    \snippet declarative/places.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml Icon
 

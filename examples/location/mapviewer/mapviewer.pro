@@ -8,6 +8,7 @@ RESOURCES += \
     mapviewer.qrc
 
 OTHER_FILES +=mapviewer.qml \
+    helper.js \
     map/MapComponent.qml \
     map/Marker.qml \
     map/CircleItem.qml \

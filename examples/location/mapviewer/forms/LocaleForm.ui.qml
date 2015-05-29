@@ -57,7 +57,7 @@ Item {
         id: tabRectangle
         y: 20
         height: tabTitle.height * 2
-        color: "#f36910"
+        color: "#46a2da"
         anchors.rightMargin: 0
         anchors.leftMargin: 0
         anchors.left: parent.left

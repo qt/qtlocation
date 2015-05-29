@@ -56,18 +56,16 @@ QGeoCodingManagerEngineNokia::QGeoCodingManagerEngineNokia(
         QString *errorString)
         : QGeoCodingManagerEngine(parameters)
         , m_networkManager(networkManager)
-        , m_uriProvider(new QGeoUriProvider(this, parameters, "geocoding.host", GEOCODING_HOST, GEOCODING_HOST_CN))
+        , m_uriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.geocoding.host"), GEOCODING_HOST, GEOCODING_HOST_CN))
 {
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
 
-    if (parameters.contains("token")) {
-        m_token = parameters.value("token").toString();
-    }
+    if (parameters.contains(QStringLiteral("here.token")))
+        m_token = parameters.value(QStringLiteral("here.token")).toString();
 
-    if (parameters.contains("app_id")) {
-        m_applicationId = parameters.value("app_id").toString();
-    }
+    if (parameters.contains(QStringLiteral("here.app_id")))
+        m_applicationId = parameters.value(QStringLiteral("here.app_id")).toString();
 
     if (error)
         *error = QGeoServiceProvider::NoError;

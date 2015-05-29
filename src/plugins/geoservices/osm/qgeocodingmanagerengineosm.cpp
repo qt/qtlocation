@@ -69,10 +69,15 @@ QGeoCodingManagerEngineOsm::QGeoCodingManagerEngineOsm(const QVariantMap &parame
                                                        QString *errorString)
 :   QGeoCodingManagerEngine(parameters), m_networkManager(new QNetworkAccessManager(this))
 {
-    if (parameters.contains(QStringLiteral("useragent")))
-        m_userAgent = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
+    if (parameters.contains(QStringLiteral("osm.useragent")))
+        m_userAgent = parameters.value(QStringLiteral("osm.useragent")).toString().toLatin1();
     else
         m_userAgent = "Qt Location based application";
+
+    if (parameters.contains(QStringLiteral("osm.geocoding.host")))
+        m_urlPrefix = parameters.value(QStringLiteral("geocoding.host")).toString().toLatin1();
+    else
+        m_urlPrefix = QStringLiteral("http://nominatim.openstreetmap.org");
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
@@ -94,7 +99,7 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int l
     QNetworkRequest request;
     request.setRawHeader("User-Agent", m_userAgent);
 
-    QUrl url(QStringLiteral("http://nominatim.openstreetmap.org/search"));
+    QUrl url(QString("%1/search").arg(m_urlPrefix));
     QUrlQuery query;
     query.addQueryItem(QStringLiteral("q"), address);
     query.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
@@ -131,7 +136,7 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &
     QNetworkRequest request;
     request.setRawHeader("User-Agent", m_userAgent);
 
-    QUrl url(QStringLiteral("http://nominatim.openstreetmap.org/reverse"));
+    QUrl url(QString("%1/reverse").arg(m_urlPrefix));
     QUrlQuery query;
     query.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
     query.addQueryItem(QStringLiteral("accept-language"), locale().name().left(2));

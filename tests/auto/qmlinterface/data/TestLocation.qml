@@ -31,20 +31,21 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.3
+import QtPositioning 5.5
 
 Location {
     address: TestAddress { }
-    boundingBox {
-        center {
-            longitude: 10.0
-            latitude: 20.0
-            altitude: 30.0
-        }
-        height: 30.0
-        width: 40.0
-    }
-
+//  TODO:unsupported syntax for now
+//    boundingBox {
+//        center {
+//            longitude: 10.0
+//            latitude: 20.0
+//            altitude: 30.0
+//        }
+//        height: 30.0
+//        width: 40.0
+//    }
+    boundingBox : QtPositioning.rectangle(QtPositioning.coordinate(20,10, 30),40.0,30)
     coordinate {
         longitude: 10.0
         latitude: 20.0

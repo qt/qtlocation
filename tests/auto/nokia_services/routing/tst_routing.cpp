@@ -329,8 +329,8 @@ void tst_nokia_routing::initTestCase()
 
     QVariantMap parameters;
     parameters.insert(QStringLiteral("nam"), QVariant::fromValue<void*>(m_networkManager));
-    parameters.insert(QStringLiteral("app_id"), "stub");
-    parameters.insert(QStringLiteral("token"), "stub");
+    parameters.insert(QStringLiteral("here.app_id"), "stub");
+    parameters.insert(QStringLiteral("here.token"), "stub");
 
     m_geoServiceProvider = new QGeoServiceProvider(QStringLiteral("here"), parameters);
     QVERIFY(m_geoServiceProvider);

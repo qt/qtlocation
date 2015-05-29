@@ -293,7 +293,7 @@ class tst_QGeoMapScene : public QObject
             mapScene.setCameraData(camera);
             QVERIFY(!mapScene.verticalLock());
             mapScene.setUseVerticalLock(true);
-            mapScene.setVisibleTiles(ct.tiles());
+            mapScene.setVisibleTiles(ct.visibleTiles());
             QVERIFY(mapScene.verticalLock());
 
             // Test the case when setting vertical lock has no effect
@@ -303,7 +303,7 @@ class tst_QGeoMapScene : public QObject
             mapScene2.setCameraData(camera);
             QVERIFY(!mapScene2.verticalLock());
             mapScene2.setUseVerticalLock(true);
-            mapScene2.setVisibleTiles(ct.tiles());
+            mapScene2.setVisibleTiles(ct.visibleTiles());
             QVERIFY(!mapScene2.verticalLock());
         }
 
@@ -333,7 +333,7 @@ class tst_QGeoMapScene : public QObject
             mapGeometry.setTileSize(tileSize);
             mapGeometry.setScreenSize(QSize(screenWidth,screenHeight));
             mapGeometry.setCameraData(camera);
-            mapGeometry.setVisibleTiles(ct.tiles());
+            mapGeometry.setVisibleTiles(ct.visibleTiles());
 
             QDoubleVector2D point(screenX,screenY);
             QDoubleVector2D mecartorPos = mapGeometry.itemPositionToMercator(point);
@@ -373,7 +373,7 @@ class tst_QGeoMapScene : public QObject
             mapGeometry.setTileSize(tileSize);
             mapGeometry.setScreenSize(QSize(screenWidth,screenHeight));
             mapGeometry.setCameraData(camera);
-            mapGeometry.setVisibleTiles(ct.tiles());
+            mapGeometry.setVisibleTiles(ct.visibleTiles());
 
             QDoubleVector2D mercatorPos(mercatorX, mercatorY);
             QPointF point = mapGeometry.mercatorToItemPosition(mercatorPos).toPointF();

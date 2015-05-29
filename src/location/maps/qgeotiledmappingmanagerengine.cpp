@@ -99,13 +99,23 @@ QGeoMap *QGeoTiledMappingManagerEngine::createMap()
     return NULL;
 }
 
-void QGeoTiledMappingManagerEngine::registerMap(QGeoTiledMap *map)
+void QGeoTiledMappingManagerEngine::registerMap(QGeoMap *m)
 {
+    QGeoTiledMap* map = qobject_cast<QGeoTiledMap*>(m);
+    if (!map) {
+        qWarning() << "QGeoTiledMappingManagerEngine can only register QGeoTiledMap";
+        return;
+    }
     d_ptr->tileMaps_.insert(map);
 }
 
-void QGeoTiledMappingManagerEngine::deregisterMap(QGeoTiledMap *map)
+void QGeoTiledMappingManagerEngine::deregisterMap(QGeoMap *m)
 {
+    QGeoTiledMap* map = qobject_cast<QGeoTiledMap*>(m);
+    if (!map) {
+        qWarning() << "QGeoTiledMappingManagerEngine can only deregister QGeoTiledMap";
+        return;
+    }
     d_ptr->tileMaps_.remove(map);
     d_ptr->mapHash_.remove(map);
 
@@ -213,7 +223,7 @@ void QGeoTiledMappingManagerEngine::engineTileFinished(const QGeoTileSpec &spec,
     map = maps.constBegin();
     mapEnd = maps.constEnd();
     for (; map != mapEnd; ++map) {
-        (*map)->getRequestManager()->tileFetched(spec);
+        (*map)->requestManager()->tileFetched(spec);
     }
 }
 
@@ -237,7 +247,7 @@ void QGeoTiledMappingManagerEngine::engineTileError(const QGeoTileSpec &spec, co
     d->tileHash_.remove(spec);
 
     for (map = maps.constBegin(); map != mapEnd; ++map) {
-        (*map)->getRequestManager()->tileError(spec, errorString);
+        (*map)->requestManager()->tileError(spec, errorString);
     }
 
     emit tileError(spec, errorString);

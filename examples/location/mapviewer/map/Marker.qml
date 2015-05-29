@@ -55,7 +55,8 @@ MapQuickItem {
     sourceItem: Image {
         id: image
 //! [mqi-anchor]
-        source: markerMouseArea.pressed ? "../resources/marker_selected.png" : "../resources/marker.png"
+        source: "../resources/marker.png"
+        opacity: markerMouseArea.pressed ? 0.6 : 1.0
         MouseArea  {
             id: markerMouseArea
             property int pressX : -1
@@ -93,11 +94,11 @@ MapQuickItem {
 
         Text{
             id: number
-            y: image.height/4
+            y: image.height/10
+            width: image.width
             color: "white"
             font.bold: true
             font.pixelSize: 14
-            width:27
             horizontalAlignment: Text.AlignHCenter
             Component.onCompleted: {
                 text = map.markerCounter

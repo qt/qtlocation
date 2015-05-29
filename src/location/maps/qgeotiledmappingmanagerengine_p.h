@@ -72,10 +72,9 @@ public:
 
     QGeoTileFetcher *tileFetcher();
 
-    virtual QGeoMap *createMap();
-
-    void registerMap(QGeoTiledMap *map);
-    void deregisterMap(QGeoTiledMap *map);
+    QGeoMap *createMap() Q_DECL_OVERRIDE;
+    void registerMap(QGeoMap *map) Q_DECL_OVERRIDE;
+    void deregisterMap(QGeoMap *map) Q_DECL_OVERRIDE;
 
     QSize tileSize() const;
 

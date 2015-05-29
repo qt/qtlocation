@@ -76,6 +76,7 @@ public:
     Q_INVOKABLE void replay();
     Q_INVOKABLE void clear();
     Q_INVOKABLE void stop();
+    Q_INVOKABLE int startDragDistance();
 
     // programmatic interface, useful for autotests
     Q_INVOKABLE void pinch(QPoint point1From,

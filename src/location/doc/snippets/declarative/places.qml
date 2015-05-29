@@ -41,10 +41,8 @@
 //! [QtQuick import]
 import QtQuick 2.0
 //! [QtQuick import]
-//! [QtLocation import]
-import QtPositioning 5.2
-import QtLocation 5.3
-//! [QtLocation import]
+import QtPositioning 5.5
+import QtLocation 5.5
 
 Item {
     width: 400; height: 400;

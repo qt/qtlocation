@@ -137,10 +137,9 @@ ApplicationWindow {
     function getPlugins()
     {
         var plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {}', appWindow)
-        var tempPlugin
         var myArray = new Array()
-        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
+        for (var i = 0; i<plugin.availableServiceProviders.length; i++) {
+            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
             if (tempPlugin.supportsMapping())
                 myArray.push(tempPlugin.name)
         }
@@ -148,7 +147,7 @@ ApplicationWindow {
         return myArray
     }
 
-    function initializeProvders(pluginParameters)
+    function initializeProviders(pluginParameters)
     {
         var parameters = new Array()
         for (var prop in pluginParameters){
@@ -241,6 +240,7 @@ ApplicationWindow {
         onSelectTool: {
             switch (tool) {
             case "AddressRoute":
+                stackView.pop({item:page, immediate: true})
                 stackView.push({ item: Qt.resolvedUrl("forms/RouteAddress.qml") ,
                                    properties: { "plugin": map.plugin,
                                        "toAddress": toAddress,
@@ -250,6 +250,7 @@ ApplicationWindow {
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "CoordinateRoute":
+                stackView.pop({item:page, immediate: true})
                 stackView.push({ item: Qt.resolvedUrl("forms/RouteCoordinate.qml") ,
                                    properties: { "toCoordinate": toCoordinate,
                                        "fromCoordinate": fromCoordinate}})
@@ -257,18 +258,21 @@ ApplicationWindow {
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Geocode":
+                stackView.pop({item:page, immediate: true})
                 stackView.push({ item: Qt.resolvedUrl("forms/Geocode.qml") ,
                                    properties: { "address": fromAddress}})
                 stackView.currentItem.showPlace.connect(map.geocode)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "RevGeocode":
+                stackView.pop({item:page, immediate: true})
                 stackView.push({ item: Qt.resolvedUrl("forms/ReverseGeocode.qml") ,
                                    properties: { "coordinate": fromCoordinate}})
                 stackView.currentItem.showPlace.connect(map.geocode)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Language":
+                stackView.pop({item:page, immediate: true})
                 stackView.push({ item: Qt.resolvedUrl("forms/Locale.qml") ,
                                    properties: { "locale":  map.plugin.locales[0]}})
                 stackView.currentItem.selectLanguage.connect(setLanguage)

@@ -33,7 +33,6 @@
 
 #include "qdeclarativegeocoordinateanimation_p.h"
 #include <QtQuick/private/qquickanimation_p_p.h>
-#include <QtPositioning/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -92,21 +91,6 @@ QGeoCoordinate QDeclarativeGeoCoordinateAnimation::to() const
 void QDeclarativeGeoCoordinateAnimation::setTo(const QGeoCoordinate &t)
 {
     QQuickPropertyAnimation::setTo(QVariant::fromValue(t));
-}
-
-QVariant geoCoordinateInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
-{
-    if (from == to) {
-        if (progress < 0.5) {
-            return QVariant::fromValue(from);
-        } else {
-            return QVariant::fromValue(to);
-        }
-    }
-
-    QGeoCoordinate result = QGeoProjection::coordinateInterpolation(from, to, progress);
-
-    return QVariant::fromValue(result);
 }
 
 QT_END_NAMESPACE

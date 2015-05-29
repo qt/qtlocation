@@ -47,10 +47,7 @@
 // We mean it.
 //
 
-#include <QSet>
-#include <QList>
-#include <QSharedPointer>
-#include <QString>
+#include <QtCore/QSharedPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -65,16 +62,17 @@ class QGeoTileRequestManagerPrivate;
 class QGeoTileRequestManager
 {
 public:
-    explicit QGeoTileRequestManager(QGeoTiledMap *map);
+    explicit QGeoTileRequestManager(QGeoTiledMap *map, QGeoTiledMappingManagerEngine *engine);
     ~QGeoTileRequestManager();
 
     QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
 
     void tileError(const QGeoTileSpec &tile, const QString &errorString);
     void tileFetched(const QGeoTileSpec &spec);
+    QSharedPointer<QGeoTileTexture> tileTexture(const QGeoTileSpec &spec);
+
 private:
-    QGeoTileRequestManagerPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoTileRequestManager)
+    QScopedPointer<QGeoTileRequestManagerPrivate> d_ptr;
     Q_DISABLE_COPY(QGeoTileRequestManager)
 };
 

@@ -127,16 +127,10 @@ QString QGeoMap::pluginString()
 QGeoCameraCapabilities QGeoMap::cameraCapabilities()
 {
     Q_D(const QGeoMap);
-    if (d->m_engine)
+    if (!d->m_engine.isNull())
         return d->m_engine->cameraCapabilities();
     else
         return QGeoCameraCapabilities();
-}
-
-QGeoMappingManagerEngine *QGeoMap::engine()
-{
-    Q_D(const QGeoMap);
-    return d->m_engine;
 }
 
 int QGeoMap::mapVersion()
@@ -158,7 +152,9 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
       m_controller(0),
       m_activeMapType(QGeoMapType())
 {
-    m_pluginString = m_engine->managerName() + QLatin1Char('_') + QString::number(m_engine->managerVersion());
+    if (!m_engine.isNull()) {
+        m_pluginString = m_engine->managerName() + QLatin1Char('_') + QString::number(m_engine->managerVersion());
+    }
 }
 
 QGeoMapPrivate::~QGeoMapPrivate()
@@ -174,7 +170,7 @@ void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
     QGeoCameraData oldCameraData = m_cameraData;
     m_cameraData = cameraData;
 
-    if (m_engine) {
+    if (!m_engine.isNull()) {
         QGeoCameraCapabilities capabilities = m_engine->cameraCapabilities();
         if (m_cameraData.zoomLevel() < capabilities.minimumZoomLevel())
             m_cameraData.setZoomLevel(capabilities.minimumZoomLevel());

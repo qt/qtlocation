@@ -59,6 +59,7 @@ private slots:
     void testArea();
     void debug_data();
     void debug();
+    void conversions();
 };
 
 void tst_qgeoshape::testArea()
@@ -109,6 +110,25 @@ void tst_qgeoshape::debug()
     qDebug() << shape << nextValue;
     qInstallMessageHandler(0);
     QCOMPARE(tst_qgeoshape_debug, debugString);
+}
+
+void tst_qgeoshape::conversions()
+{
+    QVariant varShape = QVariant::fromValue(QGeoShape());
+    QVariant varRect = QVariant::fromValue(QGeoRectangle(
+                                               QGeoCoordinate(1, 1),
+                                               QGeoCoordinate(2, 2)));
+    QVariant varCircle = QVariant::fromValue(QGeoCircle(QGeoCoordinate(3, 3), 1000));
+
+    QVERIFY(varShape.canConvert<QGeoShape>());
+    QVERIFY(varShape.canConvert<QGeoCircle>());
+    QVERIFY(varShape.canConvert<QGeoRectangle>());
+    QVERIFY(!varRect.canConvert<QGeoCircle>());
+    QVERIFY(varRect.canConvert<QGeoRectangle>());
+    QVERIFY(varRect.canConvert<QGeoShape>());
+    QVERIFY(varCircle.canConvert<QGeoCircle>());
+    QVERIFY(!varCircle.canConvert<QGeoRectangle>());
+    QVERIFY(varCircle.canConvert<QGeoShape>());
 }
 
 QTEST_MAIN(tst_qgeoshape)

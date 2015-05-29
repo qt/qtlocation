@@ -59,7 +59,7 @@ QGeoIntrinsicNetworkAccessManager::QGeoIntrinsicNetworkAccessManager(const QVari
 
 void QGeoIntrinsicNetworkAccessManager::configure(const QVariantMap &parameters)
 {
-    QString proxy = parameters.value(QStringLiteral("proxy")).toString();
+    QString proxy = parameters.value(QStringLiteral("here.proxy")).toString();
     if (proxy.isEmpty() && !m_customProxyToken.isEmpty())
         proxy = parameters.value(m_customProxyToken).toString();
 

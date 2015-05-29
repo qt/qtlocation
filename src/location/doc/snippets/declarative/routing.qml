@@ -41,10 +41,8 @@
 //! [QtQuick import]
 import QtQuick 2.3
 //! [QtQuick import]
-import QtPositioning 5.3
-//! [QtLocation import]
-import QtLocation 5.3
-//! [QtLocation import]
+import QtPositioning 5.5
+import QtLocation 5.5
 
 Item {
     width: 1000

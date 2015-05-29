@@ -54,14 +54,14 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(
         QString *errorString)
         : QGeoRoutingManagerEngine(parameters)
         , m_networkManager(networkManager)
-        , m_uriProvider(new QGeoUriProvider(this, parameters, "routing.host", ROUTING_HOST))
+        , m_uriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.routing.host"), ROUTING_HOST))
 
 {
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
 
-    m_appId = parameters.value(QStringLiteral("app_id")).toString();
-    m_token = parameters.value(QStringLiteral("token")).toString();
+    m_appId = parameters.value(QStringLiteral("here.app_id")).toString();
+    m_token = parameters.value(QStringLiteral("here.token")).toString();
 
     QGeoRouteRequest::FeatureTypes featureTypes;
     featureTypes |= QGeoRouteRequest::TollFeature;

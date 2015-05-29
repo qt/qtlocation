@@ -60,21 +60,21 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     mapTypes << QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5);
     mapTypes << QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6);
     mapTypes << QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7);
-    if (parameters.contains(QStringLiteral("mapping.host")))
+    if (parameters.contains(QStringLiteral("osm.mapping.host")))
         mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("Custom URL Map"), tr("Custom url map view set via urlprefix parameter"), false, false, 8);
     setSupportedMapTypes(mapTypes);
 
     QGeoTileFetcherOsm *tileFetcher = new QGeoTileFetcherOsm(this);
-    if (parameters.contains(QStringLiteral("useragent"))) {
-        const QByteArray ua = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
+    if (parameters.contains(QStringLiteral("osm.useragent"))) {
+        const QByteArray ua = parameters.value(QStringLiteral("osm.useragent")).toString().toLatin1();
         tileFetcher->setUserAgent(ua);
     }
-    if (parameters.contains(QStringLiteral("mapping.host"))) {
-        const QString up = parameters.value(QStringLiteral("mapping.host")).toString().toLatin1();
+    if (parameters.contains(QStringLiteral("osm.mapping.host"))) {
+        const QString up = parameters.value(QStringLiteral("osm.mapping.host")).toString().toLatin1();
         tileFetcher->setUrlPrefix(up);
     }
-    if (parameters.contains(QStringLiteral("mapping.copyright")))
-        m_customCopyright = parameters.value(QStringLiteral("mapping.copyright")).toString().toLatin1();
+    if (parameters.contains(QStringLiteral("osm.mapping.copyright")))
+        m_customCopyright = parameters.value(QStringLiteral("osm.mapping.copyright")).toString().toLatin1();
 
     setTileFetcher(tileFetcher);
 

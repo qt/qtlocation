@@ -737,6 +737,7 @@ void QDeclarativeSearchResultModel::queryFinished()
         updateLayout();
         setStatus(Error, reply->errorString());
         reply->deleteLater();
+        return;
     }
 
     if (reply->type() == QPlaceReply::SearchReply) {

@@ -180,12 +180,25 @@ inline const QGeoRectanglePrivate *QGeoRectangle::d_func() const
     return static_cast<const QGeoRectanglePrivate *>(d_ptr.constData());
 }
 
+struct RectangleVariantConversions
+{
+    RectangleVariantConversions()
+    {
+        QMetaType::registerConverter<QGeoRectangle, QGeoShape>();
+        QMetaType::registerConverter<QGeoShape, QGeoRectangle>();
+    }
+};
+
+
+Q_GLOBAL_STATIC(RectangleVariantConversions, initRectangleConversions)
+
 /*!
     Constructs a new, invalid geo rectangle.
 */
 QGeoRectangle::QGeoRectangle()
 :   QGeoShape(new QGeoRectanglePrivate)
 {
+    initRectangleConversions();
 }
 
 /*!
@@ -200,6 +213,7 @@ QGeoRectangle::QGeoRectangle()
 */
 QGeoRectangle::QGeoRectangle(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
 {
+    initRectangleConversions();
     d_ptr = new QGeoRectanglePrivate(center, center);
     setWidth(degreesWidth);
     setHeight(degreesHeight);
@@ -211,6 +225,7 @@ QGeoRectangle::QGeoRectangle(const QGeoCoordinate &center, double degreesWidth, 
 */
 QGeoRectangle::QGeoRectangle(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
 {
+    initRectangleConversions();
     d_ptr = new QGeoRectanglePrivate(topLeft, bottomRight);
 }
 
@@ -219,6 +234,7 @@ QGeoRectangle::QGeoRectangle(const QGeoCoordinate &topLeft, const QGeoCoordinate
 */
 QGeoRectangle::QGeoRectangle(const QList<QGeoCoordinate> &coordinates)
 {
+    initRectangleConversions();
     if (coordinates.isEmpty()) {
         d_ptr = new QGeoRectanglePrivate;
     } else {
@@ -237,6 +253,7 @@ QGeoRectangle::QGeoRectangle(const QList<QGeoCoordinate> &coordinates)
 QGeoRectangle::QGeoRectangle(const QGeoRectangle &other)
 :   QGeoShape(other)
 {
+    initRectangleConversions();
 }
 
 /*!
@@ -245,6 +262,7 @@ QGeoRectangle::QGeoRectangle(const QGeoRectangle &other)
 QGeoRectangle::QGeoRectangle(const QGeoShape &other)
 :   QGeoShape(other)
 {
+    initRectangleConversions();
     if (type() != QGeoShape::RectangleType)
         d_ptr = new QGeoRectanglePrivate;
 }

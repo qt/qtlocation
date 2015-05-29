@@ -63,6 +63,8 @@ public:
     QGeoCameraTiles();
     ~QGeoCameraTiles();
 
+    enum PrefetchStle { PrefetchNeighbourLayer, PrefetchTwoNeighbourLayers};
+
     void setCamera(const QGeoCameraData &camera);
     void setScreenSize(const QSize &size);
     void setTileSize(int tileSize);
@@ -74,8 +76,8 @@ public:
     void setMapType(const QGeoMapType &mapType);
     void setMapVersion(int mapVersion);
 
-    QSet<QGeoTileSpec> tiles() const;
-    void findPrefetchTiles();
+    QSet<QGeoTileSpec> visibleTiles();
+    QSet<QGeoTileSpec> prefetchTiles(PrefetchStle style);
 
 protected:
     QScopedPointer<QGeoCameraTilesPrivate> d_ptr;

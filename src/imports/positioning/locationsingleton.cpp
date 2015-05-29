@@ -172,3 +172,29 @@ QGeoCircle LocationSingleton::circle(const QGeoCoordinate &center, qreal radius)
     return QGeoCircle(center, radius);
 }
 
+/*!
+    \qmlmethod geocircle QtPositioning::shapeToCircle(geoshape shape) const
+
+    Converts \a shape to a geocircle.
+
+    \sa {geocircle}
+    \since 5.5
+*/
+QGeoCircle LocationSingleton::shapeToCircle(const QGeoShape &shape) const
+{
+    return QGeoCircle(shape);
+}
+
+/*!
+    \qmlmethod georectangle QtPositioning::shapeToRectangle(geoshape shape) const
+
+    Converts \a shape to a georectangle.
+
+    \sa {georectangle}
+    \since 5.5
+*/
+QGeoRectangle LocationSingleton::shapeToRectangle(const QGeoShape &shape) const
+{
+    return QGeoRectangle(shape);
+}
+

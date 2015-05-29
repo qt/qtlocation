@@ -327,12 +327,12 @@ Map {
 
     MapQuickItem {
         id: poiTheQtComapny
-        sourceItem: Rectangle { width: 14; height: 14; color: "#1c94fc"; border.width: 2; border.color: "#242424"; smooth: true; radius: 7 }
+        sourceItem: Rectangle { width: 14; height: 14; color: "#e41e25"; border.width: 2; border.color: "white"; smooth: true; radius: 7 }
         coordinate {
             latitude: 59.9485
             longitude: 10.7686
         }
-        opacity:0.7
+        opacity: 1.0
         anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
     }
 
@@ -436,7 +436,7 @@ Map {
         MapRoute {
             id: route
             route: routeData
-            line.color: routeMouseArea.pressed ? "lime" : "red"
+            line.color: "#46a2da"
             line.width: 5
             smooth: true
             opacity: 0.8
@@ -500,8 +500,11 @@ Map {
         MapCircle {
             id: point
             radius: 1000
-            color: circleMouseArea.pressed ? "lime" : "red"
-            opacity: 0.6
+            color: "#46a2da"
+            border.color: "#190a33"
+            border.width: 2
+            smooth: true
+            opacity: 0.25
             center: locationData.coordinate
             //! [pointdel0]
             MouseArea {

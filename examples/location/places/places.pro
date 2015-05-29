@@ -2,43 +2,43 @@ TARGET = qml_location_places
 TEMPLATE = app
 
 QT += qml quick network positioning location
-SOURCES += qmlplaceswrapper.cpp
+SOURCES += main.cpp
 
 RESOURCES += \
-    placeswrapper.qrc
+    places.qrc
 
-qmlcontent.files += \
-    places.qml
-OTHER_FILES += $$qmlcontent.files
-
-qmlcontentplaces.files += \
-    content/places/PlacesUtils.js \
-    content/places/Group.qml \
-    content/places/SearchBox.qml \
-    content/places/CategoryDelegate.qml \
-    content/places/SearchResultDelegate.qml \
-    content/places/PlaceDelegate.qml \
-    content/places/RatingView.qml \
-    content/places/SearchResultView.qml \
-    content/places/PlaceDialog.qml \
-    content/places/CategoryDialog.qml \
-    content/places/PlaceEditorials.qml \
-    content/places/EditorialDelegate.qml \
-    content/places/EditorialPage.qml \
-    content/places/PlaceReviews.qml \
-    content/places/ReviewDelegate.qml \
-    content/places/ReviewPage.qml \
-    content/places/PlaceImages.qml \
-    content/places/MapComponent.qml \
-    content/places/OptionsDialog.qml \
-    content/places/CategoryView.qml
-
-OTHER_FILES += $$qmlcontentplaces.files
-
-include(../common/common.pri)
+OTHER_FILES += \
+    places.qml \
+    helper.js \
+    items/MainMenu.qml \
+    items/SearchBar.qml \
+    items/MapComponent.qml \
+    forms/Message.qml \
+    forms/MessageForm.ui.qml \
+    forms/SearchCenter.qml \
+    forms/SearchCenterForm.ui.qml \
+    forms/SearchBoundingBox.qml \
+    forms/SearchBoundingBoxForm.ui.qml \
+    forms/SearchBoundingCircle.qml \
+    forms/SearchBoundingCircleForm.ui.qml \
+    forms/PlaceDetails.qml \
+    forms/PlaceDetailsForm.ui.qml \
+    forms/SearchOptions.qml \
+    forms/SearchOptionsForm.ui.qml \
+    views/SuggestionView.qml \
+    views/RatingView.qml \
+    views/CategoryView.qml \
+    views/CategoryDelegate.qml \
+    views/SearchResultDelegate.qml \
+    views/SearchResultView.qml \
+    views/EditorialView.qml \
+    views/EditorialDelegate.qml \
+    views/EditorialPage.qml \
+    views/ReviewView.qml \
+    views/ReviewDelegate.qml \
+    views/ReviewPage.qml \
+    views/ImageView.qml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/location/places
-additional.files = ../common
-additional.path = $$[QT_INSTALL_EXAMPLES]/location/common
-INSTALLS += target additional
+INSTALLS += target
 

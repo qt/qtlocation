@@ -36,6 +36,7 @@
 #include <QtTest/QtTest>
 #include <QtGui/QGuiApplication>
 #include <QtGui/qpa/qwindowsysteminterface.h>
+#include <QtGui/QStyleHints>
 
 QDeclarativePinchGenerator::QDeclarativePinchGenerator():
     target_(0),
@@ -331,7 +332,7 @@ void QDeclarativePinchGenerator::pinchRelease(QPoint point1To, QPoint point2To)
     QTest::touchEvent(window_, device_).release(0, point1To).release(1, point2To);
 }
 
-Q_INVOKABLE void QDeclarativePinchGenerator::replay()
+void QDeclarativePinchGenerator::replay()
 {
     if (state_ != Idle) {
         qDebug() << "Wrong state, will not replay pinch, state: " << state_;
@@ -354,7 +355,7 @@ Q_INVOKABLE void QDeclarativePinchGenerator::replay()
     setState(Replaying);
 }
 
-Q_INVOKABLE void QDeclarativePinchGenerator::clear()
+void QDeclarativePinchGenerator::clear()
 {
     stop();
     delete activeSwipe_;
@@ -365,7 +366,7 @@ Q_INVOKABLE void QDeclarativePinchGenerator::clear()
     }
 }
 
-Q_INVOKABLE void QDeclarativePinchGenerator::stop()
+void QDeclarativePinchGenerator::stop()
 {
     if (state_ != Replaying)
         return;
@@ -374,4 +375,9 @@ Q_INVOKABLE void QDeclarativePinchGenerator::stop()
     killTimer(replayTimer_);
     replayTimer_ = -1;
     setState(Idle);
+}
+
+int QDeclarativePinchGenerator::startDragDistance()
+{
+    return qApp->styleHints()->startDragDistance();
 }

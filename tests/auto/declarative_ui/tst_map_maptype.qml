@@ -45,11 +45,11 @@ TestCase {
         name: "here"
         parameters: [
                        PluginParameter {
-                           name: "app_id"
+                           name: "here.app_id"
                            value: "stub"
                        },
                        PluginParameter {
-                           name: "token"
+                           name: "here.token"
                            value: "stub"
                        }
                    ]

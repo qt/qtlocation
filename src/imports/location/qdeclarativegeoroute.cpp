@@ -67,7 +67,7 @@ QT_BEGIN_NAMESPACE
     This example shows how to display a route's maneuvers in a ListView:
 
     \snippet declarative/routing.qml QtQuick import
-    \snippet declarative/routing.qml QtLocation import
+    \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/routing.qml Route Maneuver List1
     \snippet declarative/routing.qml Route Maneuver List2

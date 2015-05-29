@@ -153,7 +153,7 @@ void tst_qmlinterface::testAddress()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestAddress.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QGeoAddress address = qmlObject->property("address").value<QGeoAddress>();
@@ -176,7 +176,7 @@ void tst_qmlinterface::testLocation()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestLocation.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QGeoLocation location = qmlObject->property("location").value<QGeoLocation>();
@@ -196,7 +196,7 @@ void tst_qmlinterface::testCategory()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestCategory.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QPlaceCategory category = qmlObject->property("category").value<QPlaceCategory>();
@@ -215,7 +215,7 @@ void tst_qmlinterface::testIcon()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestIcon.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QPlaceIcon icon = qmlObject->property("icon").value<QPlaceIcon>();
@@ -233,7 +233,7 @@ void tst_qmlinterface::testRatings()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestRatings.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QPlaceRatings ratings = qmlObject->property("ratings").value<QPlaceRatings>();
@@ -253,7 +253,7 @@ void tst_qmlinterface::testSupplier()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestSupplier.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QPlaceSupplier supplier = qmlObject->property("supplier").value<QPlaceSupplier>();
@@ -274,7 +274,7 @@ void tst_qmlinterface::testUser()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestUser.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QPlaceUser user = qmlObject->property("user").value<QPlaceUser>();
@@ -293,7 +293,7 @@ void tst_qmlinterface::testPlaceAttribute()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestPlaceAttribute.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QPlaceAttribute placeAttribute = qmlObject->property("attribute").value<QPlaceAttribute>();
@@ -312,7 +312,7 @@ void tst_qmlinterface::testContactDetail()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestContactDetail.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QPlaceContactDetail contactDetail = qmlObject->property("contactDetail").value<QPlaceContactDetail>();
@@ -331,7 +331,7 @@ void tst_qmlinterface::testPlace()
 {
     QQmlEngine engine;
     QQmlComponent component(&engine, SRCDIR "data/TestPlace.qml");
-    QVERIFY(component.isReady());
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
     QObject *qmlObject = component.create();
 
     QPlace place = qmlObject->property("place").value<QPlace>();

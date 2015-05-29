@@ -32,7 +32,6 @@
         <file>resources/scale_end.png</file>
         <file>resources/scale.png</file>
         <file>resources/marker.png</file>
-        <file>resources/marker_selected.png</file>
         <file>resources/icon.png</file>
     </qresource>
 </RCC>

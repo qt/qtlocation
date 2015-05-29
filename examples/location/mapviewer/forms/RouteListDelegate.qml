@@ -74,7 +74,7 @@ Item {
         anchors.right: parent.right
         anchors.margins: 15
         height: 1
-        color: "#f36910"
+        color: "#46a2da"
     }
 }
 

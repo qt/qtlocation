@@ -56,7 +56,8 @@ QT_BEGIN_NAMESPACE
  */
 QGeoTiledMapNokia::QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent /*= 0*/) :
     QGeoTiledMap(engine, parent),
-    logo(":/images/logo.png") // HERE logo image
+    m_logo(":/images/logo.png"), // HERE logo image
+    m_engine(engine)
 {}
 
 QGeoTiledMapNokia::~QGeoTiledMapNokia() {}
@@ -67,10 +68,12 @@ void QGeoTiledMapNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTile
     const int blurRate = 1;
     const int fontSize = 10;
 
-    QGeoTiledMappingManagerEngineNokia *engineNokia = static_cast<QGeoTiledMappingManagerEngineNokia *>(engine());
-    const QString copyrightsString = engineNokia->evaluateCopyrightsText(activeMapType(), mapController()->zoom(), visibleTiles);
+    if (m_engine.isNull())
+        return;
 
-    if (width() > 0 && height() > 0 && ((copyrightsString.isNull() && copyrightsSlab.isNull()) || copyrightsString != lastCopyrightsString)) {
+    const QString copyrightsString = m_engine->evaluateCopyrightsText(activeMapType(), mapController()->zoom(), visibleTiles);
+
+    if (width() > 0 && height() > 0 && ((copyrightsString.isNull() && m_copyrightsSlab.isNull()) || copyrightsString != m_lastCopyrightsString)) {
         QFont font("Sans Serif");
         font.setPixelSize(fontSize);
         font.setStyleHint(QFont::SansSerif);
@@ -78,39 +81,42 @@ void QGeoTiledMapNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTile
 
         QRect textBounds = QFontMetrics(font).boundingRect(0, 0, width(), height(), Qt::AlignBottom | Qt::AlignLeft | Qt::TextWordWrap, copyrightsString);
 
-        copyrightsSlab = QImage(logo.width() + textBounds.width() + spaceToLogo + blurRate * 2,
-                                qMax(logo.height(), textBounds.height() + blurRate * 2),
+        m_copyrightsSlab = QImage(m_logo.width() + textBounds.width() + spaceToLogo + blurRate * 2,
+                                qMax(m_logo.height(), textBounds.height() + blurRate * 2),
                                 QImage::Format_ARGB32_Premultiplied);
-        copyrightsSlab.fill(Qt::transparent);
+        m_copyrightsSlab.fill(Qt::transparent);
 
-        QPainter painter(&copyrightsSlab);
-        painter.drawImage(QPoint(0, copyrightsSlab.height() - logo.height()), logo);
+        QPainter painter(&m_copyrightsSlab);
+        painter.drawImage(QPoint(0, m_copyrightsSlab.height() - m_logo.height()), m_logo);
         painter.setFont(font);
         painter.setPen(QColor(0, 0, 0, 64));
-        painter.translate(spaceToLogo + logo.width(), -blurRate);
+        painter.translate(spaceToLogo + m_logo.width(), -blurRate);
         for (int x=-blurRate; x<=blurRate; ++x) {
             for (int y=-blurRate; y<=blurRate; ++y) {
-                painter.drawText(x, y, textBounds.width(), copyrightsSlab.height(),
+                painter.drawText(x, y, textBounds.width(), m_copyrightsSlab.height(),
                                  Qt::AlignBottom | Qt::AlignLeft | Qt::TextWordWrap,
                                  copyrightsString);
             }
         }
         painter.setPen(Qt::white);
-        painter.drawText(0, 0, textBounds.width(), copyrightsSlab.height(),
+        painter.drawText(0, 0, textBounds.width(), m_copyrightsSlab.height(),
                          Qt::AlignBottom | Qt::AlignLeft | Qt::TextWordWrap,
                          copyrightsString);
         painter.end();
 
-        lastCopyrightsString = copyrightsString;
+        m_lastCopyrightsString = copyrightsString;
     }
 
-    emit copyrightsChanged(copyrightsSlab);
+    emit copyrightsChanged(m_copyrightsSlab);
 }
 
 int QGeoTiledMapNokia::mapVersion()
 {
-    QGeoTiledMappingManagerEngineNokia *engineNokia = static_cast<QGeoTiledMappingManagerEngineNokia *>(engine());
-    return engineNokia->mapVersion();
+    if (!m_engine.isNull())
+        return m_engine->mapVersion();
+    else
+        return QGeoTiledMap::mapVersion();
+
 }
 
 QT_END_NAMESPACE

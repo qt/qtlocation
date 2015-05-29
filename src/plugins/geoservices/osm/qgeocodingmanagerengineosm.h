@@ -64,6 +64,7 @@ private Q_SLOTS:
 private:
     QNetworkAccessManager *m_networkManager;
     QByteArray m_userAgent;
+    QString m_urlPrefix;
 };
 
 QT_END_NAMESPACE
