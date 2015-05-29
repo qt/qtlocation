@@ -150,7 +150,7 @@ int QDeclarativeGeoRouteModel::count() const
 }
 
 /*!
-    \qmlmethod QtLocation::RouteModel::reset()
+    \qmlmethod void QtLocation::RouteModel::reset()
 
     Resets the model. All route data is cleared, any outstanding requests
     are aborted and possible errors are cleared. Model status will be set
@@ -175,7 +175,7 @@ void QDeclarativeGeoRouteModel::reset()
 }
 
 /*!
-    \qmlmethod QtLocation::RouteModel::cancel()
+    \qmlmethod void QtLocation::RouteModel::cancel()
 
     Cancels any outstanding requests and clears errors.  Model status will be set to either
     RouteModel.Null or RouteModel.Ready.
@@ -202,7 +202,7 @@ void QDeclarativeGeoRouteModel::abortRequest()
 
 
 /*!
-    \qmlmethod QtLocation::RouteModel::get(int)
+    \qmlmethod void QtLocation::RouteModel::get(int)
 
     Returns the Route at given index. Use \l count property to check the
     amount of routes available. The routes are indexed from zero, so the accessible range
@@ -557,7 +557,7 @@ void QDeclarativeGeoRouteModel::setError(RouteError error)
 }
 
 /*!
-    \qmlmethod QtLocation::RouteModel::update()
+    \qmlmethod void QtLocation::RouteModel::update()
 
     Instructs the RouteModel to update its data. This is most useful
     when \l autoUpdate is disabled, to force a refresh when the query
@@ -894,7 +894,7 @@ void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
 }
 
 /*!
-    \qmlmethod QtLocation::RouteQuery::addExcludedArea(georectangle)
+    \qmlmethod void QtLocation::RouteQuery::addExcludedArea(georectangle)
 
     Adds the given area to excluded areas (areas that the route must not cross).
     Same area can only be added once.
@@ -924,7 +924,7 @@ void QDeclarativeGeoRouteQuery::addExcludedArea(const QGeoRectangle &area)
 }
 
 /*!
-    \qmlmethod QtLocation::RouteQuery::removeExcludedArea(georectangle)
+    \qmlmethod void QtLocation::RouteQuery::removeExcludedArea(georectangle)
 
     Removes the given area to excluded areas (areas that the route must not cross).
 
@@ -951,7 +951,7 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(const QGeoRectangle &area)
 }
 
 /*!
-    \qmlmethod QtLocation::RouteQuery::clearExcludedAreas()
+    \qmlmethod void QtLocation::RouteQuery::clearExcludedAreas()
 
     Clears all excluded areas (areas that the route must not cross).
 
@@ -970,7 +970,7 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 }
 
 /*!
-    \qmlmethod QtLocation::RouteQuery::addWaypoint(coordinate)
+    \qmlmethod void QtLocation::RouteQuery::addWaypoint(coordinate)
 
     Appends a coordinate to the list of waypoints. Same coordinate
     can be set multiple times.
@@ -995,7 +995,7 @@ void QDeclarativeGeoRouteQuery::addWaypoint(const QGeoCoordinate &waypoint)
 }
 
 /*!
-    \qmlmethod QtLocation::RouteQuery::removeWaypoint(coordinate)
+    \qmlmethod void QtLocation::RouteQuery::removeWaypoint(coordinate)
 
     Removes the given from the list of waypoints. In case same coordinate
     appears multiple times, the most recently added coordinate instance is
@@ -1022,7 +1022,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(const QGeoCoordinate &waypoint)
 }
 
 /*!
-    \qmlmethod QtLocation::RouteQuery::clearWaypoints()
+    \qmlmethod void QtLocation::RouteQuery::clearWaypoints()
 
     Clears all waypoints.
 
@@ -1040,7 +1040,7 @@ void QDeclarativeGeoRouteQuery::clearWaypoints()
 }
 
 /*!
-    \qmlmethod QtLocation::RouteQuery::setFeatureWeight(FeatureType, FeatureWeight)
+    \qmlmethod void QtLocation::RouteQuery::setFeatureWeight(FeatureType, FeatureWeight)
 
     Defines the weight to associate with a feature during the planning of a
     route.
@@ -1082,7 +1082,7 @@ void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, Featur
 }
 
 /*!
-    \qmlmethod QtLocation::RouteQuery::resetFeatureWeights()
+    \qmlmethod void QtLocation::RouteQuery::resetFeatureWeights()
 
     Resets all feature weights to their default state (NeutralFeatureWeight).
 

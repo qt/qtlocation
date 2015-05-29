@@ -1042,7 +1042,7 @@ void QDeclarativePlace::setFavorite(QDeclarativePlace *favorite)
 }
 
 /*!
-    \qmlmethod Place::copyFrom(Place original)
+    \qmlmethod void Place::copyFrom(Place original)
 
     Copies data from an \a original place into this place.  Only data that is supported by this
     place's plugin is copied over and plugin specific data such as place identifier is not copied over.
@@ -1057,7 +1057,7 @@ void QDeclarativePlace::copyFrom(QDeclarativePlace *original)
 }
 
 /*!
-    \qmlmethod Place::initializeFavorite(Plugin destinationPlugin)
+    \qmlmethod void Place::initializeFavorite(Plugin destinationPlugin)
 
     Creates a favorite instance for the place which is to be saved into the
     \a destination plugin.  This method does nothing if the favorite property is

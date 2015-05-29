@@ -543,7 +543,7 @@ void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate>
 }
 
 /*!
-    \qmlmethod MapPolyline::addCoordinate(coordinate)
+    \qmlmethod void MapPolyline::addCoordinate(coordinate)
 
     Adds a coordinate to the path.
 
@@ -560,7 +560,7 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
 }
 
 /*!
-    \qmlmethod MapPolyline::removeCoordinate(coordinate)
+    \qmlmethod void MapPolyline::removeCoordinate(coordinate)
 
     Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.

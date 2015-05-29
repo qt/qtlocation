@@ -824,7 +824,7 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 }
 
 /*!
-    \qmlmethod QtLocation::Map::toCoordinate(QPointF position)
+    \qmlmethod coordinate QtLocation::Map::toCoordinate(QPointF position)
 
     Returns the coordinate which corresponds to the \a position relative to the map item.
 
@@ -839,7 +839,7 @@ QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &position) const
 }
 
 /*!
-    \qmlmethod QtLocation::Map::fromCoordinate(coordinate coordinate)
+    \qmlmethod point QtLocation::Map::fromCoordinate(coordinate coordinate)
 
     Returns the position relative to the map item which corresponds to the \a coordinate.
 
@@ -1012,7 +1012,7 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
 }
 
 /*!
-    \qmlmethod QtLocation::Map::addMapItem(MapItem item)
+    \qmlmethod void QtLocation::Map::addMapItem(MapItem item)
 
     Adds the given \a item to the Map (for example MapQuickItem, MapCircle). If the object
     already is on the Map, it will not be added again.
@@ -1161,7 +1161,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
 
 // TODO Remove this function -> BC break
 /*!
-    \qmlmethod QtLocation::Map::fitViewportToGeoShape(QGeoShape shape)
+    \qmlmethod void QtLocation::Map::fitViewportToGeoShape(QGeoShape shape)
 
     \internal
 
@@ -1243,7 +1243,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
 }
 
 /*!
-    \qmlmethod QtLocation::Map::fitViewportToMapItems()
+    \qmlmethod void QtLocation::Map::fitViewportToMapItems()
 
     Fits the current viewport to the boundary of all map items. The camera is positioned
     in the center of the map items, and at the largest integral zoom level possible which

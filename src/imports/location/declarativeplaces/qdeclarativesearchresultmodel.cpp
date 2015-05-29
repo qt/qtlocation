@@ -260,7 +260,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchModel::update()
+    \qmlmethod void PlaceSearchModel::update()
 
     Updates the model based on the provided query parameters.  The model will be populated with a
     list of places matching the search parameters specified by the type's properties.  Search
@@ -297,7 +297,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchModel::cancel()
+    \qmlmethod void PlaceSearchModel::cancel()
 
     Cancels an ongoing search operation immediately and sets the model
     status to PlaceSearchModel.Ready.  The model retains any search
@@ -309,7 +309,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchModel::reset()
+    \qmlmethod void PlaceSearchModel::reset()
 
     Resets the model.  All search results are cleared, any outstanding requests are aborted and
     possible errors are cleared.  Model status will be set to PlaceSearchModel.Null.
@@ -326,14 +326,14 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchModel::previousPage()
+    \qmlmethod void PlaceSearchModel::previousPage()
 
     Updates the model to display the previous page of search results. If there is no previous page
     then this method does nothing.
 */
 
 /*!
-    \qmlmethod PlaceSearchModel::nextPage()
+    \qmlmethod void PlaceSearchModel::nextPage()
 
     Updates the model to display the next page of search results. If there is no next page then
     this method does nothing.
@@ -664,7 +664,7 @@ QHash<int, QByteArray> QDeclarativeSearchResultModel::roleNames() const
 }
 
 /*!
-    \qmlmethod PlaceSearchModel::updateWith(int proposedSearchIndex)
+    \qmlmethod void PlaceSearchModel::updateWith(int proposedSearchIndex)
 
     Updates the model based on the ProposedSearchResult at index \a proposedSearchIndex. The model
     will be populated with a list of places matching the proposed search. Model status will be set
@@ -800,7 +800,7 @@ void QDeclarativeSearchResultModel::queryFinished()
 }
 
 /*!
-    \qmlmethod PlaceSearchModel::data(int index, string role)
+    \qmlmethod void PlaceSearchModel::data(int index, string role)
 
     Returns the data for a given \a role at the specified row \a index.
 */
