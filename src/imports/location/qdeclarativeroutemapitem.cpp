@@ -76,6 +76,20 @@
     \snippet declarative/maps.qml MapRoute
 */
 
+/*!
+    \qmlpropertygroup Location::MapRoute::line
+    \qmlproperty int MapRoute::line.width
+    \qmlproperty color MapRoute::line.color
+
+    This property is part of the line property group. The line
+    property group holds the width and color used to draw the line.
+
+    The width is in pixels and is independent of the zoom level of the map.
+    The default values correspond to a black border with a width of 1 pixel.
+
+    For no line, use a width of 0 or a transparent color.
+*/
+
 
 QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent)
 :   QDeclarativePolylineMapItem(parent), route_(0)
