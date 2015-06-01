@@ -178,7 +178,7 @@ QSet<QGeoTileSpec> QGeoCameraTiles::prefetchTiles(PrefetchStle style)
     return d_ptr->m_tiles;
 }
 
-void QGeoCameraTiles::setCamera(const QGeoCameraData &camera)
+void QGeoCameraTiles::setCameraData(const QGeoCameraData &camera)
 {
     if (d_ptr->m_camera == camera)
         return;
@@ -248,7 +248,7 @@ void QGeoCameraTiles::setMaximumZoomLevel(int maxZoom)
     d_ptr->m_maxZoom = maxZoom;
 }
 
-QSet<QGeoTileSpec> QGeoCameraTiles::visibleTiles()
+const QSet<QGeoTileSpec>& QGeoCameraTiles::visibleTiles()
 {
     if (d_ptr->m_dirtyGeometry) {
         d_ptr->m_tiles.clear();

@@ -122,7 +122,7 @@ private slots:
         QGeoCameraTiles ct;
         ct.setMaximumZoomLevel(8);
         ct.setTileSize(16);
-        ct.setCamera(camera);
+        ct.setCameraData(camera);
         ct.setScreenSize(QSize(32, 32));
         ct.setMapType(QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1));
 
@@ -171,7 +171,7 @@ private slots:
         QGeoCameraTiles ct;
         ct.setMaximumZoomLevel(8);
         ct.setTileSize(16);
-        ct.setCamera(camera);
+        ct.setCameraData(camera);
         ct.setScreenSize(QSize(32, 32));
         ct.setPluginString("pluginA");
 
@@ -230,7 +230,7 @@ private slots:
         QGeoCameraTiles ct;
         ct.setMaximumZoomLevel(8);
         ct.setTileSize(16);
-        ct.setCamera(camera);
+        ct.setCameraData(camera);
         ct.setScreenSize(QSize(std::ceil(width), std::ceil(height)));
 
         QSet<QGeoTileSpec> tiles;

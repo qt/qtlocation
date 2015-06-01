@@ -202,7 +202,7 @@ void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
         cam.setZoomLevel(izl);
     }
 
-    m_cameraTiles->setCamera(cam);
+    m_cameraTiles->setCameraData(cam);
 
     m_mapScene->setCameraData(cam);
     m_mapScene->setVisibleTiles(m_cameraTiles->visibleTiles());

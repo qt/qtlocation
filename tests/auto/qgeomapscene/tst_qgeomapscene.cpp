@@ -284,7 +284,7 @@ class tst_QGeoMapScene : public QObject
             QGeoCameraTiles ct;
             ct.setMaximumZoomLevel(8);
             ct.setTileSize(16);
-            ct.setCamera(camera);
+            ct.setCameraData(camera);
             ct.setScreenSize(QSize(16,16));
 
             QGeoMapScene mapScene;
@@ -326,7 +326,7 @@ class tst_QGeoMapScene : public QObject
             QGeoCameraTiles ct;
             ct.setMaximumZoomLevel(8);
             ct.setTileSize(tileSize);
-            ct.setCamera(camera);
+            ct.setCameraData(camera);
             ct.setScreenSize(QSize(screenWidth,screenHeight));
 
             QGeoMapScene mapGeometry;
@@ -366,7 +366,7 @@ class tst_QGeoMapScene : public QObject
             QGeoCameraTiles ct;
             ct.setMaximumZoomLevel(8);
             ct.setTileSize(tileSize);
-            ct.setCamera(camera);
+            ct.setCameraData(camera);
             ct.setScreenSize(QSize(screenWidth,screenHeight));
 
             QGeoMapScene mapGeometry;
