@@ -539,7 +539,7 @@ public:
             minor = 4;
             qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
 
-            minor = 5;
+            minor = 6;
             qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);

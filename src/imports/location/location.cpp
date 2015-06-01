@@ -98,7 +98,7 @@ public:
             qmlRegisterType<QDeclarativeGeoMap                      >(uri, major, minor, "Map");
 
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase   >(uri, major, minor, "GeoMapItemBase",
-                                        QStringLiteral("HeoMapItemBase is not intended instantiable by developer."));
+                                        QStringLiteral("GeoMapItemBase is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeGeoMapQuickItem             >(uri, major, minor, "MapQuickItem");
             qmlRegisterType<QDeclarativeGeoMapItemView              >(uri, major, minor, "MapItemView");
 
@@ -111,7 +111,7 @@ public:
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent >(uri, major, minor, "MapPinchEvent",
                                         QStringLiteral("(Map)PinchEvent is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea>(uri, major, minor, "MapGestureArea",
-                                        QStringLiteral("(Map)HestureArea is not intended instantiable by developer."));
+                                        QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapType       >(uri, major, minor, "MapType",
                                         QStringLiteral("MapType is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeCategory                    >(uri, major, minor, "Category");
@@ -147,9 +147,16 @@ public:
 
             // Register the 5.5 types
             // Implicitly registers 5.3 & 5.4
+
             minor = 5;
+            //TODO: this is broken QTBUG-40043
             qmlRegisterUncreatableType<QDeclarativeGeoMapType, 1>(uri, major, minor, "MapType",
-                                        QStringLiteral("MapType is not intended instantiable by developer."));
+                                                  QStringLiteral("MapType is not intended instantiable by developer."));
+            minor = 6;
+            //TODO: this is broken QTBUG-40043
+            qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea, 1>(uri, major, minor, "MapGestureArea",
+                                        QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));
+
 
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>();
