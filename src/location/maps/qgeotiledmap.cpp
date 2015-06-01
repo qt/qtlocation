@@ -72,6 +72,12 @@ QGeoTiledMap::~QGeoTiledMap()
     Q_D(QGeoTiledMap);
     delete d->m_tileRequests;
     d->m_tileRequests = 0;
+
+    if (!d->m_engine.isNull()) {
+        QGeoTiledMappingManagerEngine *engine = qobject_cast<QGeoTiledMappingManagerEngine*>(d->m_engine);
+        Q_ASSERT(engine);
+        engine->releaseMap(this);
+    }
 }
 
 QGeoTileRequestManager *QGeoTiledMap::requestManager()

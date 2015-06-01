@@ -66,14 +66,12 @@ public:
 QGeoTileRequestManager::QGeoTileRequestManager(QGeoTiledMap *map, QGeoTiledMappingManagerEngine *engine)
     : d_ptr(new QGeoTileRequestManagerPrivate(map, engine))
 {
-     if (!d_ptr->m_engine.isNull())
-         d_ptr->m_engine->registerMap(d_ptr->m_map);
+
 }
 
 QGeoTileRequestManager::~QGeoTileRequestManager()
 {
-    if (!d_ptr->m_engine.isNull())
-         d_ptr->m_engine->deregisterMap(d_ptr->m_map);
+
 }
 
 QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManager::requestTiles(const QSet<QGeoTileSpec> &tiles)

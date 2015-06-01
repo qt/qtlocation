@@ -99,24 +99,8 @@ QGeoMap *QGeoTiledMappingManagerEngine::createMap()
     return NULL;
 }
 
-void QGeoTiledMappingManagerEngine::registerMap(QGeoMap *m)
+void QGeoTiledMappingManagerEngine::releaseMap(QGeoTiledMap *map)
 {
-    QGeoTiledMap* map = qobject_cast<QGeoTiledMap*>(m);
-    if (!map) {
-        qWarning() << "QGeoTiledMappingManagerEngine can only register QGeoTiledMap";
-        return;
-    }
-    d_ptr->tileMaps_.insert(map);
-}
-
-void QGeoTiledMappingManagerEngine::deregisterMap(QGeoMap *m)
-{
-    QGeoTiledMap* map = qobject_cast<QGeoTiledMap*>(m);
-    if (!map) {
-        qWarning() << "QGeoTiledMappingManagerEngine can only deregister QGeoTiledMap";
-        return;
-    }
-    d_ptr->tileMaps_.remove(map);
     d_ptr->mapHash_.remove(map);
 
     QHash<QGeoTileSpec, QSet<QGeoTiledMap *> > newTileHash = d_ptr->tileHash_;
