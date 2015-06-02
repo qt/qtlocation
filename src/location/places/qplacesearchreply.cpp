@@ -56,7 +56,7 @@ public:
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-replies
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlaceSearchReply class manages a place search operation started by an
     instance of QPlaceManager.

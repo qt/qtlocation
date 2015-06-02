@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoRoute
     \inmodule QtLocation
     \ingroup QtLocation-routing
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QGeoRoute class represents a route between two points.
 

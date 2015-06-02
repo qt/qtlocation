@@ -53,7 +53,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The CategoryModel type provides a model of the categories supported by a \l Plugin.
 

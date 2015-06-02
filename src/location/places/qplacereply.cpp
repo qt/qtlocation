@@ -44,7 +44,7 @@ QT_USE_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-replies
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlaceReply class manages an operation started by an instance of QPlaceManager and
            serves as a base class for more specialized replies.

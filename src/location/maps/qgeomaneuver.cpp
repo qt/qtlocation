@@ -45,7 +45,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoManeuver
     \inmodule QtLocation
     \ingroup QtLocation-routing
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QGeoManeuver class represents the information relevant to the
     point at which two QGeoRouteSegments meet.

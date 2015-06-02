@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \inherits QObject
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The MapType type holds information about a map type.
 
@@ -74,9 +74,9 @@ QDeclarativeGeoMapType::~QDeclarativeGeoMapType() {}
     \li MapType.TerrainMap - A terrain map.
     \li MapType.HybridMap - A map with satellite imagery and street information.
     \li MapType.GrayStreetMap - A gray-shaded street map.
-    \li MapType::PedestrianMap - A street map suitable for pedestriants.
-    \li MapType::CarNavigationMap - A street map suitable for car navigation.
-    \li MapType::CycleMap - A street map suitable for cyclists.
+    \li MapType.PedestrianMap - A street map suitable for pedestriants.
+    \li MapType.CarNavigationMap - A street map suitable for car navigation.
+    \li MapType.CycleMap - A street map suitable for cyclists.
     \li MapType.CustomMap - A custom map type.
     \endlist
 */

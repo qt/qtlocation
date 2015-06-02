@@ -88,7 +88,7 @@ QT_BEGIN_NAMESPACE
     the Map grows in direct proportion to the number of points in the polyline.
 
     Like the other map objects, MapPolyline is normally drawn without a smooth
-    appearance. Setting the \l {QtQuick::Item::opacity}{opacity} property will force the object to
+    appearance. Setting the \l {Item::opacity}{opacity} property will force the object to
     be blended, which decreases performance considerably depending on the hardware in use.
 
     \note MapPolylines are implemented using the OpenGL GL_LINES
@@ -421,24 +421,32 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     // not the number of vertices
     screenVertices_.reserve(ts.vertexCount());
 
-    screenOutline_ = QPainterPath();
+    QRectF bb;
 
-    QPolygonF tri;
+    QPointF pt;
     const float *vs = ts.vertices();
     for (int i = 0; i < (ts.vertexCount()/2*2); i += 2) {
-        screenVertices_ << QPointF(vs[i], vs[i + 1]);
+        pt = QPointF(vs[i], vs[i + 1]);
+        screenVertices_ << pt;
 
-        if (!qIsFinite(vs[i]) || !qIsFinite(vs[i + 1]))
+        if (!qIsFinite(pt.x()) || !qIsFinite(pt.y()))
             break;
 
-        tri << QPointF(vs[i], vs[i + 1]);
-        if (tri.size() == 4) {
-            tri.remove(0);
-            screenOutline_.addPolygon(tri);
+        if (!bb.contains(pt)) {
+            if (pt.x() < bb.left())
+                bb.setLeft(pt.x());
+
+            if (pt.x() > bb.right())
+                bb.setRight(pt.x());
+
+            if (pt.y() < bb.top())
+                bb.setTop(pt.y());
+
+            if (pt.y() > bb.bottom())
+                bb.setBottom(pt.y());
         }
     }
 
-    QRectF bb = screenOutline_.boundingRect();
     screenBounds_ = bb;
     this->translate( -1 * sourceBounds_.topLeft());
 }
@@ -543,7 +551,7 @@ void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate>
 }
 
 /*!
-    \qmlmethod MapPolyline::addCoordinate(coordinate)
+    \qmlmethod void MapPolyline::addCoordinate(coordinate)
 
     Adds a coordinate to the path.
 
@@ -560,7 +568,7 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
 }
 
 /*!
-    \qmlmethod MapPolyline::removeCoordinate(coordinate)
+    \qmlmethod void MapPolyline::removeCoordinate(coordinate)
 
     Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
@@ -735,7 +743,17 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
 
 bool QDeclarativePolylineMapItem::contains(const QPointF &point) const
 {
-    return geometry_.contains(point);
+    QPolygonF tri;
+    for (int i = 0; i < geometry_.vertices().size(); ++i) {
+        tri << geometry_.vertices()[i];
+        if (tri.size() == 3) {
+            if (tri.containsPoint(point,Qt::OddEvenFill))
+                return true;
+            tri.remove(0);
+        }
+    }
+
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////

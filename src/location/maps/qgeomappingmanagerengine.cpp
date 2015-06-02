@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoMappingManagerEngine
     \inmodule QtLocation
     \ingroup QtLocation-impl
-    \since Qt Location 5.0
+    \since 5.5
     \internal
 
     \brief Provides support functionality for map display with QGeoServiceProvider.

@@ -37,10 +37,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-import QtQuick 2.4
-import QtQuick.Controls 1.3
-import QtLocation 5.3
-import QtPositioning 5.2
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtLocation 5.5
+import QtPositioning 5.5
 import "../helper.js" as Helper
 
 //! [top]

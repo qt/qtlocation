@@ -51,7 +51,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief Provides access to search term suggestions.
 
@@ -149,7 +149,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchSuggestionModel::update()
+    \qmlmethod void PlaceSearchSuggestionModel::update()
 
     Updates the model based on the provided query parameters.  The model will be populated with a
     list of search suggestions for the partial \l searchTerm and \l searchArea.  If the \l plugin
@@ -189,7 +189,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchSuggestionModel::cancel()
+    \qmlmethod void PlaceSearchSuggestionModel::cancel()
 
     Cancels an ongoing search suggestion operation immediately and sets the model
     status to PlaceSearchSuggestionModel.Ready.  The model retains any search
@@ -201,7 +201,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchSuggestionModel::reset()
+    \qmlmethod void PlaceSearchSuggestionModel::reset()
 
     Resets the model.  All search suggestions are cleared, any outstanding requests are aborted and
     possible errors are cleared.  Model status will be set to PlaceSearchSuggestionModel.Null.

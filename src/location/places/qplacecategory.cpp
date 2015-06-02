@@ -78,7 +78,7 @@ bool QPlaceCategoryPrivate::isEmpty() const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlaceCategory class represents a category that a \l QPlace can be associated with.
 

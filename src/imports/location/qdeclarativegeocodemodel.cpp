@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeocodeModel
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-geocoding
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The GeocodeModel type provides support for searching operations
            related to geographic information.
@@ -138,7 +138,7 @@ void QDeclarativeGeocodeModel::componentComplete()
 }
 
 /*!
-    \qmlmethod QtLocation::GeocodeModel::update()
+    \qmlmethod void QtLocation::GeocodeModel::update()
 
     Instructs the GeocodeModel to update its data. This is most useful
     when \l autoUpdate is disabled, to force a refresh when the query
@@ -575,7 +575,7 @@ void QDeclarativeGeocodeModel::setOffset(int offset)
 }
 
 /*!
-    \qmlmethod QtLocation::GeocodeModel::reset()
+    \qmlmethod void QtLocation::GeocodeModel::reset()
 
     Resets the model. All location data is cleared, any outstanding requests
     are aborted and possible errors are cleared. Model status will be set
@@ -598,7 +598,7 @@ void QDeclarativeGeocodeModel::reset()
 }
 
 /*!
-    \qmlmethod QtLocation::GeocodeModel::cancel()
+    \qmlmethod void QtLocation::GeocodeModel::cancel()
 
     Cancels any outstanding requests and clears errors.  Model status will be set to either
     GeocodeModel.Null or GeocodeModel.Ready.

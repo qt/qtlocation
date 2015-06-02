@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief Provides access to reviews of a \l Place.
 
@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
     To use the ReviewModel we need a view and a delegate. In this snippet we
     see the setting up of a ListView with a ReviewModel model and a delegate.
 
-    \snippet places/content/places/PlaceReviews.qml  ReviewModel delegate
+    \snippet places/views/ReviewView.qml  ReviewModel delegate
 
     The model returns data for the following roles:
 

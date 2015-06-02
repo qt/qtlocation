@@ -50,7 +50,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The Icon type represents an icon image source which can have multiple sizes.
 

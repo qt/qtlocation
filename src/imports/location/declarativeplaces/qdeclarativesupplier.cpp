@@ -46,7 +46,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief Holds data regarding the supplier of a place, a place's image, review, or editorial.
 

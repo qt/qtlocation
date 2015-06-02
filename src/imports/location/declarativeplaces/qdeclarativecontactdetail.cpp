@@ -42,7 +42,7 @@
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The ContactDetails type holds contact details for a \l Place.
 
@@ -120,7 +120,7 @@ QVariant QDeclarativeContactDetails::updateValue(const QString &, const QVariant
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The ContactDetail type holds a contact detail such as a phone number or a website
            address.

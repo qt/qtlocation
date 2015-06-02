@@ -69,7 +69,7 @@ bool QPlaceAttributePrivate::isEmpty() const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QPlaceAttribute class represents generic attribute information about a place.
 

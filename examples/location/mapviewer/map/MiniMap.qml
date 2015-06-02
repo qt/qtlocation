@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtLocation 5.3
+import QtQuick 2.5
+import QtLocation 5.5
 
 Rectangle{
     id: miniMapRect

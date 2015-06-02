@@ -44,7 +44,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoTiledMapReply
     \inmodule QtLocation
     \ingroup QtLocation-impl
-    \since Qt Location 5.0
+    \since 5.5
     \internal
 
     \brief The QGeoTiledMapReply class manages a tile fetch operation started

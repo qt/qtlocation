@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeRectangleMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The MapRectangle type displays a rectangle on a Map.
 

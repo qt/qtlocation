@@ -42,7 +42,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoServiceProviderFactory
     \inmodule QtLocation
     \ingroup QtLocation-impl
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QGeoServiceProviderFactory class is a factory class used as the
     plugin interface for services related to geographical information.

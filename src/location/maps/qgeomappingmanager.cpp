@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoMappingManager
     \inmodule QtLocation
     \ingroup QtLocation-maps
-    \since Qt Location 5.0
+    \since 5.5
     \internal
 
     \brief The QGeoMappingManager class provides support for displaying

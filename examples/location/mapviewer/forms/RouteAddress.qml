@@ -38,9 +38,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.4
-import QtLocation 5.3
-import QtPositioning 5.3
+import QtQuick 2.5
+import QtLocation 5.5
+import QtPositioning 5.5
 
 RouteAddressForm {
     property alias plugin : tempGeocodeModel.plugin;

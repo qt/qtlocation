@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoRouteSegment
     \inmodule QtLocation
     \ingroup QtLocation-routing
-    \since Qt Location 5.0
+    \since 5.5
 
     \brief The QGeoRouteSegment class represents a segment of a route.
 

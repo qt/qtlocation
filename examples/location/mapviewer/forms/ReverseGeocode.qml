@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.4
-import QtPositioning 5.2
+import QtQuick 2.5
+import QtPositioning 5.5
 
 //Reverse Geocode Dialog
 ReverseGeocodeForm {

@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativePolygonMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since Qt Location 5.5
 
     \brief The MapPolygon type displays a polygon on a Map
 
@@ -107,7 +107,7 @@ QT_BEGIN_NAMESPACE
     or removing points.
 
     Like the other map objects, MapPolygon is normally drawn without a smooth
-    appearance. Setting the \l {QtQuick::Item::opacity}{opacity} property will force the object to
+    appearance. Setting the \l {Item::opacity}{opacity} property will force the object to
     be blended, which decreases performance considerably depending on the hardware in use.
 
     \section2 Example Usage
@@ -428,7 +428,7 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 }
 
 /*!
-    \qmlmethod MapPolygon::addCoordinate(coordinate)
+    \qmlmethod void MapPolygon::addCoordinate(coordinate)
 
     Adds a coordinate to the path.
 
@@ -446,7 +446,7 @@ void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 }
 
 /*!
-    \qmlmethod MapPolygon::removeCoordinate(coordinate)
+    \qmlmethod void MapPolygon::removeCoordinate(coordinate)
 
     Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.

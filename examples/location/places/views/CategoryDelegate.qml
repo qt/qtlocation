@@ -45,15 +45,14 @@ import QtLocation 5.5
 Item {
     id: root
 
-    property alias text: textItem.text
+    property alias text: labelItem.text
     property bool checked: false
     signal searchCategory()
-    signal showSubcategory()
+    signal showSubcategories()
 
     width: parent.width
-    height: Math.max(icon.height, textItem.height * 2)
+    height: Math.max(icon.height, labelItem.height * 2)
 
-    //! [CategoryModel delegate icon]
     Image {
         id: icon
         anchors.left: parent.left
@@ -61,7 +60,6 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         source: category.icon.url()
     }
-    //! [CategoryModel delegate icon]
 
     Rectangle {
         anchors.fill: parent
@@ -71,11 +69,17 @@ Item {
 
     //! [CategoryModel delegate text]
     Label {
-        id: textItem
+        id: labelItem
         text: category.name
         anchors.left: icon.right
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: arrow.left
+    }
+
+    MouseArea {
+        id: mouse
+        anchors.fill: parent
+        onClicked: root.searchCategory()
     }
     //! [CategoryModel delegate text]
 
@@ -86,13 +90,7 @@ Item {
         height: 1
         color: "#46a2da"
     }
-
-    MouseArea {
-        id: mouse
-        anchors.fill: parent
-        onClicked: root.searchCategory()
-    }
-
+    //! [CategoryModel delegate arrow]
     ToolButton {
         id: arrow
         anchors.right: parent.right
@@ -100,6 +98,7 @@ Item {
         anchors.rightMargin: 15
         visible: model.hasModelChildren
         iconSource: "../../resources/right.png"
-        onClicked: root.showSubcategory()
+        onClicked: root.showSubcategories()
     }
+    //! [CategoryModel delegate arrow]
 }
