@@ -734,8 +734,8 @@ void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
 
 QGeoShape QDeclarativeGeoMap::visibleRegion() const
 {
-    if (!width() || !height())
-        return QGeoShape();
+    if (!m_map || !width() || !height())
+        return m_region;
 
     QGeoCoordinate tl = m_map->itemPositionToCoordinate(QDoubleVector2D(0, 0));
     QGeoCoordinate br = m_map->itemPositionToCoordinate(QDoubleVector2D(width(), height()));
@@ -745,6 +745,8 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
 
 void QDeclarativeGeoMap::fitViewportToGeoShape()
 {
+    if (!m_map) return;
+
     double bboxWidth;
     double bboxHeight;
     QGeoCoordinate centerCoordinate;
