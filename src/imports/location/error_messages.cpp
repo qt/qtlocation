@@ -46,11 +46,9 @@ const char PLUGIN_ERROR[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin Error (%1
 const char PLUGIN_PROVIDER_ERROR[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin Error (%1): Could not instantiate provider");
 const char PLUGIN_NOT_VALID[] = QT_TRANSLATE_NOOP("QtLocationQML", "Plugin is not valid");
 const char CATEGORIES_NOT_INITIALIZED[] = QT_TRANSLATE_NOOP("QtLocationQML", "Unable to initialize categories");
-const char UNABLE_TO_MAKE_REQUEST[]= QT_TRANSLATE_NOOP("QtLocationQML", "Unable to create request");
-
+const char UNABLE_TO_MAKE_REQUEST[] = QT_TRANSLATE_NOOP("QtLocationQML", "Unable to create request");
+const char INDEX_OUT_OF_RANGE[] = QT_TRANSLATE_NOOP("QtLocationQML", "Index '%1' out of range");
 //often used but only visible to developer -> no translation required
-const char ROUTE_PLUGIN_NOT_SET[] = "Cannot route, plugin not set.";
-const char ROUTE_MGR_NOT_SET[] = "Cannot route, route manager not set.";
 const char COORD_NOT_BELONG_TO[] = "Coordinate does not belong to %1";
 
 QT_END_NAMESPACE

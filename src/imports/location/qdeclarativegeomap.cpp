@@ -276,11 +276,13 @@ void QDeclarativeGeoMap::pluginReady()
     m_serviceProvider = m_plugin->sharedGeoServiceProvider();
     m_mappingManager = m_serviceProvider->mappingManager();
 
-    setError(m_serviceProvider->error(), m_serviceProvider->errorString());
+    if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
+        setError(m_serviceProvider->error(), m_serviceProvider->errorString());
+        return;
+    }
 
-    if (!m_mappingManager || m_serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << QStringLiteral("Error: Plugin does not support mapping.\nError message:")
-                      << m_serviceProvider->errorString();
+    if (!m_mappingManager) {
+        setError(QGeoServiceProvider::NotSupportedError, tr("Plugin does not support mapping."));
         return;
     }
 

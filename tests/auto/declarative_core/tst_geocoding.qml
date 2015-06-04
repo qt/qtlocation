@@ -37,8 +37,14 @@ import QtLocation 5.3
 import QtPositioning 5.2
 
 Item {
-    Plugin { id: herePlugin; name: "qmlgeo.test.plugin"; allowExperimental: true}
-    Plugin { id: invalidPlugin; name: "invalid"}
+    Plugin { id: testPlugin1; name: "qmlgeo.test.plugin"; allowExperimental: true}
+    Plugin { id: errorPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true
+        parameters: [
+            PluginParameter { name: "error"; value: "1"},
+            PluginParameter { name: "errorString"; value: "This error was expected. No worries !"}
+        ]
+    }
+
 
     property variant coordinate1: QtPositioning.coordinate(51, 41)
     property variant coordinate2: QtPositioning.coordinate(52, 42)
@@ -64,7 +70,7 @@ Item {
 
     TestCase {
         id: testCase1
-        name: "Map GeocodeModel basic API"
+        name: "GeocodeModel"
         function test_model_defaults_and_setters() {
             // Query: address
             compare (querySpy.count, 0)
@@ -162,26 +168,53 @@ Item {
 
             // Plugin
             compare(pluginSpy.count, 0)
-            emptyModel.plugin = herePlugin
+            emptyModel.plugin = testPlugin1
             compare(pluginSpy.count, 1)
-            compare(emptyModel.plugin, herePlugin)
-            emptyModel.plugin = herePlugin
+            compare(emptyModel.plugin, testPlugin1)
+            emptyModel.plugin = testPlugin1
             compare(pluginSpy.count, 1)
-            emptyModel.plugin = invalidPlugin
+            emptyModel.plugin = errorPlugin
             compare(pluginSpy.count, 2)
         }
         // Test that model acts gracefully when plugin is not set or is invalid
-         // (does not support routing)
-         GeocodeModel {id: invalidModel; plugin: invalidPlugin}
-         SignalSpy {id: countInvalidSpy; target: invalidModel; signalName: "countChanged"}
-         function test_invalid_plugin() {
-             invalidModel.update()
-             invalidModel.cancel()
-             invalidModel.reset()
-             invalidModel.update()
-             invalidModel.get(-1)
-             invalidModel.get(1)
-         }
+        // (does not support routing)
+        GeocodeModel {id: errorModel; plugin: errorPlugin}
+        SignalSpy {id: countInvalidSpy; target: errorModel; signalName: "countChanged"}
+        SignalSpy {id: errorSpy; target: errorModel; signalName: "errorChanged"}
+        function test_error_plugin() {
+            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            compare(errorModel.errorString,"This error was expected. No worries !")
+            errorSpy.clear()
+            errorModel.update()
+            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            compare(errorModel.errorString,qsTr("Cannot geocode, geocode manager not set."))
+            compare(errorSpy.count, 1)
+            errorSpy.clear()
+            errorModel.cancel()
+            compare(errorModel.error,GeocodeModel.NoError)
+            compare(errorModel.errorString,"")
+            compare(errorSpy.count, 1)
+            errorSpy.clear()
+            errorModel.reset()
+            compare(errorModel.error,GeocodeModel.NoError)
+            compare(errorModel.errorString,"")
+            compare(errorSpy.count, 0)
+            errorSpy.clear()
+            errorModel.update()
+            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            compare(errorModel.errorString,qsTr("Cannot geocode, geocode manager not set."))
+            compare(errorSpy.count, 1)
+            errorSpy.clear()
+            errorModel.get(-1)
+            compare(errorModel.error,GeocodeModel.UnsupportedOptionError)
+            compare(errorModel.errorString,qsTr("Index '-1' out of range"))
+            compare(errorSpy.count, 1)
+            errorSpy.clear()
+            errorModel.get(1)
+            compare(errorModel.error,GeocodeModel.UnsupportedOptionError)
+            compare(errorModel.errorString,qsTr("Index '1' out of range"))
+            compare(errorSpy.count, 1)
+        }
 
     }
     Address {id: address1; street: "wellknown street"; city: "expected city"; county: "2"}
@@ -196,7 +229,7 @@ Item {
     Address {id: automaticAddress1; street: "Auto st"; city: "Detroit"; county: "4"}
 
     Plugin {
-        id: testPlugin;
+        id: testPlugin2;
         name: "qmlgeo.test.plugin"
         allowExperimental: true
         parameters: [
@@ -243,7 +276,7 @@ Item {
         ]
     }
 
-    GeocodeModel {id: testModel; plugin: testPlugin}
+    GeocodeModel {id: testModel; plugin: testPlugin2}
     SignalSpy {id: locationsSpy; target: testModel; signalName: "locationsChanged"}
     SignalSpy {id: countSpy; target: testModel; signalName: "countChanged"}
     SignalSpy {id: testQuerySpy; target: testModel; signalName: "queryChanged"}
@@ -253,7 +286,7 @@ Item {
     SignalSpy {id: locationsSlackSpy; target: slackModel; signalName: "locationsChanged"}
     SignalSpy {id: countSlackSpy; target: slackModel; signalName: "countChanged"}
     SignalSpy {id: querySlackSpy; target: slackModel; signalName: "queryChanged"}
-    SignalSpy {id: errorStringSlackSpy; target: slackModel; signalName: "errorStringChanged"}
+    SignalSpy {id: errorStringSlackSpy; target: slackModel; signalName: "errorChanged"}
     SignalSpy {id: errorSlackSpy; target: slackModel; signalName: "errorChanged"}
     SignalSpy {id: pluginSlackSpy; target: slackModel; signalName: "pluginChanged"}
 
@@ -262,14 +295,14 @@ Item {
     SignalSpy {id: countImmediateSpy; target: immediateModel; signalName: "countChanged"}
     SignalSpy {id: queryImmediateSpy; target: immediateModel; signalName: "queryChanged"}
     SignalSpy {id: statusImmediateSpy; target: immediateModel; signalName: "statusChanged"}
-    SignalSpy {id: errorStringImmediateSpy; target: immediateModel; signalName: "errorStringChanged"}
+    SignalSpy {id: errorStringImmediateSpy; target: immediateModel; signalName: "errorChanged"}
     SignalSpy {id: errorImmediateSpy; target: immediateModel; signalName: "errorChanged"}
 
     GeocodeModel {id: automaticModel; plugin: autoPlugin; query: automaticAddress1; autoUpdate: true}
     SignalSpy {id: automaticLocationsSpy; target: automaticModel; signalName: "locationsChanged"}
 
     TestCase {
-        name: "Map GeocodeModel basic (reverse) geocoding"
+        name: "GeocodeModelGeocoding"
         function clear_slack_model() {
             slackModel.reset()
             locationsSlackSpy.clear()
@@ -332,7 +365,7 @@ Item {
             slackModel.update()
             wait (100)
             compare (countSlackSpy.count, 0)
-            slackModel.plugin = invalidPlugin
+            slackModel.plugin = errorPlugin
             wait (200)
             compare (countSlackSpy.count, 0)
             compare (pluginSlackSpy.count, 1)
@@ -416,7 +449,7 @@ Item {
             compare (slackModel.errorString, "")
             compare (slackModel.error, GeocodeModel.NoError)
         }
-        function test_basic_address_geocode() {
+        function test_address_geocode() {
             testQuerySpy.clear()
             locationsSpy.clear()
             testStatusSpy.clear()
@@ -440,7 +473,7 @@ Item {
             compare (testModel.get(0).address.city, "expected city")
         }
 
-        function test_basic_freetext_geocode() {
+        function test_freetext_geocode() {
             testQuerySpy.clear()
             locationsSpy.clear()
             testStatusSpy.clear()
@@ -577,7 +610,7 @@ Item {
             compare(countSlackSpy.count, 1)
             compare(slackModel.count, 7) // slackAddress1.county
         }
-        function test_basic_reverse_geocode() {
+        function test_reverse_geocode() {
             testModel.reset()
             testQuerySpy.clear()
             locationsSpy.clear()

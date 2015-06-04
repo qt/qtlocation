@@ -41,19 +41,14 @@
 QT_BEGIN_NAMESPACE
 
 extern const char CONTEXT_NAME[];
-
 extern const char PLUGIN_PROPERTY_NOT_SET[];
 extern const char PLUGIN_ERROR[];
 extern const char PLUGIN_PROVIDER_ERROR[];
 extern const char PLUGIN_NOT_VALID[];
-
 extern const char CATEGORIES_NOT_INITIALIZED[];
-
-extern const char ROUTE_PLUGIN_NOT_SET[];
-extern const char ROUTE_MGR_NOT_SET[];
-
 extern const char COORD_NOT_BELONG_TO[];
 extern const char UNABLE_TO_MAKE_REQUEST[];
+extern const char INDEX_OUT_OF_RANGE[];
 
 QT_END_NAMESPACE
 

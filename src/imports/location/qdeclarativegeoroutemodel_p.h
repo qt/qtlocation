@@ -70,7 +70,7 @@ class QDeclarativeGeoRouteModel : public QAbstractListModel, public QQmlParserSt
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(RouteError error READ error NOTIFY errorChanged)
     Q_PROPERTY(QLocale::MeasurementSystem measurementSystem READ measurementSystem WRITE setMeasurementSystem NOTIFY measurementSystemChanged)
 
@@ -94,7 +94,13 @@ public:
         CommunicationError = QGeoRouteReply::CommunicationError,
         ParseError = QGeoRouteReply::ParseError,
         UnsupportedOptionError = QGeoRouteReply::UnsupportedOptionError,
-        UnknownError = QGeoRouteReply::UnknownError
+        UnknownError = QGeoRouteReply::UnknownError,
+        //here we leave gap for future model errors
+        //now geo service provider errors
+        NotSupportedError = 100 + QGeoServiceProvider::NotSupportedError,
+        UnknownParameterError = 100 + QGeoServiceProvider::UnknownParameterError,
+        MissingRequiredParameterError = 100 + QGeoServiceProvider::MissingRequiredParameterError,
+        ConnectionError = 100 + QGeoServiceProvider::ConnectionError
     };
 
     explicit QDeclarativeGeoRouteModel(QObject *parent = 0);
@@ -136,8 +142,7 @@ Q_SIGNALS:
     void queryChanged();
     void autoUpdateChanged();
     void statusChanged();
-    void errorStringChanged();
-    void errorChanged();
+    void errorChanged(); //emitted also for errorString notification
     void routesChanged();
     void measurementSystemChanged();
 
@@ -154,8 +159,7 @@ private Q_SLOTS:
 
 private:
     void setStatus(Status status);
-    void setErrorString(const QString &error);
-    void setError(RouteError error);
+    void setError(RouteError error, const QString &errorString);
     void abortRequest();
 
     bool complete_;

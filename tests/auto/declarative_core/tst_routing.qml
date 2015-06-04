@@ -38,7 +38,12 @@ import QtPositioning 5.2
 
 Item {
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
-    Plugin { id: invalidPlugin; name: "invalid"}
+    Plugin { id: errorPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true
+        parameters: [
+            PluginParameter { name: "error"; value: "1"},
+            PluginParameter { name: "errorString"; value: "This error was expected. No worries !"}
+        ]
+    }
 
     property variant coordinate1: QtPositioning.coordinate(51, 0)
     property variant coordinate2: QtPositioning.coordinate(52, 0)
@@ -431,7 +436,7 @@ Item {
             compare(emptyModel.plugin, testPlugin)
             emptyModel.plugin = testPlugin
             compare(pluginSpy.count, 1)
-            emptyModel.plugin = invalidPlugin
+            emptyModel.plugin = errorPlugin
             compare(pluginSpy.count, 2)
 
             // Must act gracefully
@@ -440,14 +445,42 @@ Item {
         }
         // Test that model acts gracefully when plugin is not set or is invalid
         // (does not support routing)
-        RouteModel {id: invalidModel; plugin: invalidPlugin}
-        SignalSpy {id: countInvalidSpy; target: invalidModel; signalName: "countChanged"}
-        function test_invalid_plugin() {
-            invalidModel.update()
-            invalidModel.reset()
-            invalidModel.update()
-            invalidModel.get(-1)
-            invalidModel.get(1)
+        RouteModel {id: errorModel; plugin: errorPlugin}
+        SignalSpy {id: countInvalidSpy; target: errorModel; signalName: "countChanged"}
+        SignalSpy {id: errorSpy; target: errorModel; signalName: "errorChanged"}
+        function test_error_plugin() {
+            compare(errorModel.error,RouteModel.NotSupportedError)
+            compare(errorModel.errorString,"This error was expected. No worries !")
+            errorSpy.clear()
+            errorModel.update()
+            compare(errorModel.error,RouteModel.NotSupportedError)
+            compare(errorModel.errorString,qsTr("Cannot route, route manager not set."))
+            compare(errorSpy.count, 1)
+            errorSpy.clear()
+            errorModel.cancel()
+            compare(errorModel.error,RouteModel.NoError)
+            compare(errorModel.errorString,"")
+            compare(errorSpy.count, 1)
+            errorSpy.clear()
+            errorModel.reset()
+            compare(errorModel.error,RouteModel.NoError)
+            compare(errorModel.errorString,"")
+            compare(errorSpy.count, 0)
+            errorSpy.clear()
+            errorModel.update()
+            compare(errorModel.error,RouteModel.NotSupportedError)
+            compare(errorModel.errorString,qsTr("Cannot route, route manager not set."))
+            compare(errorSpy.count, 1)
+            errorSpy.clear()
+            errorModel.get(-1)
+            compare(errorModel.error,RouteModel.UnsupportedOptionError)
+            compare(errorModel.errorString,qsTr("Index '-1' out of range"))
+            compare(errorSpy.count, 1)
+            errorSpy.clear()
+            errorModel.get(1)
+            compare(errorModel.error,RouteModel.UnsupportedOptionError)
+            compare(errorModel.errorString,qsTr("Index '1' out of range"))
+            compare(errorSpy.count, 1)
         }
     }
 
@@ -532,7 +565,7 @@ Item {
     SignalSpy {id: testRoutesSpy; target: routeModel; signalName: "routesChanged"}
     SignalSpy {id: testCountSpy; target: routeModel; signalName: "countChanged" }
     SignalSpy {id: testStatusSpy; target: routeModel; signalName: "statusChanged"}
-    SignalSpy {id: testErrorStringSpy; target: routeModel; signalName: "errorStringChanged"}
+    SignalSpy {id: testErrorStringSpy; target: routeModel; signalName: "errorChanged"}
     SignalSpy {id: testErrorSpy; target: routeModel; signalName: "errorChanged"}
     SignalSpy {id: testWaypointsSpy; target: routeQuery; signalName: "waypointsChanged"}
 
@@ -540,7 +573,7 @@ Item {
     SignalSpy {id: testRoutesSlackSpy; target: routeModelSlack; signalName: "routesChanged"}
     SignalSpy {id: testCountSlackSpy; target: routeModelSlack; signalName: "countChanged" }
     SignalSpy {id: testStatusSlackSpy; target: routeModelSlack; signalName: "statusChanged"}
-    SignalSpy {id: testErrorStringSlackSpy; target: routeModelSlack; signalName: "errorStringChanged"}
+    SignalSpy {id: testErrorStringSlackSpy; target: routeModelSlack; signalName: "errorChanged"}
     SignalSpy {id: testErrorSlackSpy; target: routeModelSlack; signalName: "errorChanged"}
     SignalSpy {id: testPluginSlackSpy; target: routeModelSlack; signalName: "pluginChanged"}
 

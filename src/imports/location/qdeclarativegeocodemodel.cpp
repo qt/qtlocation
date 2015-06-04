@@ -150,7 +150,7 @@ void QDeclarativeGeocodeModel::update()
         return;
 
     if (!plugin_) {
-        qmlInfo(this) << QStringLiteral("Cannot geocode, plugin not set.");
+        setError(NotSupportedError, tr("Cannot geocode, plugin not set."));
         return;
     }
 
@@ -160,17 +160,16 @@ void QDeclarativeGeocodeModel::update()
 
     QGeoCodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager) {
-        qmlInfo(this) << QStringLiteral("Cannot geocode, geocode manager not set.");
+        setError(NotSupportedError, tr("Cannot geocode, geocode manager not set."));
         return;
     }
     if (!coordinate_.isValid() && (!address_ || address_->address().isEmpty()) &&
         (searchString_.isEmpty())) {
-        qmlInfo(this) << QStringLiteral("Cannot geocode, valid query not set.");
+        setError(ParseError, tr("Cannot geocode, valid query not set."));
         return;
     }
     abortRequest(); // abort possible previous requests
-    setErrorString("");   // clear previous error string
-    setError(NoError);
+    setError(NoError, QString());
 
     if (coordinate_.isValid()) {
         setStatus(QDeclarativeGeocodeModel::Loading);
@@ -291,11 +290,18 @@ void QDeclarativeGeocodeModel::pluginReady()
 {
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoCodingManager *geocodingManager = serviceProvider->geocodingManager();
-    if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << QStringLiteral("Error: Plugin does not support (reverse) geocoding.\nError message:")
-                      << serviceProvider->errorString();
+
+    if (serviceProvider->error() != QGeoServiceProvider::NoError) {
+        setError(GeocodeError(serviceProvider->error() + NotSupportedError - 1),
+                 serviceProvider->errorString());
         return;
     }
+
+    if (!geocodingManager) {
+        setError(NotSupportedError,tr("Plugin does not support (reverse) geocoding."));
+        return;
+    }
+
     connect(geocodingManager, SIGNAL(finished(QGeoCodeReply*)),
             this, SLOT(geocodeFinished(QGeoCodeReply*)));
     connect(geocodingManager, SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)),
@@ -362,8 +368,7 @@ void QDeclarativeGeocodeModel::geocodeFinished(QGeoCodeReply *reply)
         return;
     int oldCount = declarativeLocations_.count();
     setLocations(reply->locations());
-    setErrorString("");
-    setError(NoError);
+    setError(NoError, QString());
     setStatus(QDeclarativeGeocodeModel::Ready);
     reply->deleteLater();
     reply_ = 0;
@@ -389,8 +394,7 @@ void QDeclarativeGeocodeModel::geocodeError(QGeoCodeReply *reply,
         emit locationsChanged();
         emit countChanged();
     }
-    setErrorString(errorString);
-    setError(static_cast<QDeclarativeGeocodeModel::GeocodeError>(error));
+    setError(static_cast<QDeclarativeGeocodeModel::GeocodeError>(error), errorString);
     setStatus(QDeclarativeGeocodeModel::Error);
     reply->deleteLater();
     reply_ = 0;
@@ -443,11 +447,12 @@ QDeclarativeGeocodeModel::GeocodeError QDeclarativeGeocodeModel::error() const
     return error_;
 }
 
-void QDeclarativeGeocodeModel::setError(GeocodeError error)
+void QDeclarativeGeocodeModel::setError(GeocodeError error, const QString &errorString)
 {
-    if (error_ == error)
+    if (error_ == error && errorString_ == errorString)
         return;
     error_ = error;
+    errorString_ = errorString;
     emit errorChanged();
 }
 
@@ -464,14 +469,6 @@ void QDeclarativeGeocodeModel::setError(GeocodeError error)
 QString QDeclarativeGeocodeModel::errorString() const
 {
     return errorString_;
-}
-
-void QDeclarativeGeocodeModel::setErrorString(const QString &error)
-{
-    if (errorString_ == error)
-        return;
-    errorString_ = error;
-    emit errorStringChanged();
 }
 
 /*!
@@ -515,7 +512,7 @@ int QDeclarativeGeocodeModel::count() const
 QDeclarativeGeoLocation *QDeclarativeGeocodeModel::get(int index)
 {
     if (index < 0 || index >= declarativeLocations_.count()) {
-        qmlInfo(this) << QStringLiteral("Index '%1' out of range").arg(index);
+        setError(UnsupportedOptionError, QCoreApplication::translate(CONTEXT_NAME, INDEX_OUT_OF_RANGE).arg(index));
         return 0;
     }
     return declarativeLocations_.at(index);
@@ -592,8 +589,7 @@ void QDeclarativeGeocodeModel::reset()
     endResetModel();
 
     abortRequest();
-    setErrorString(QString());
-    setError(NoError);
+    setError(NoError, QString());
     setStatus(QDeclarativeGeocodeModel::Null);
 }
 
@@ -606,8 +602,7 @@ void QDeclarativeGeocodeModel::reset()
 void QDeclarativeGeocodeModel::cancel()
 {
     abortRequest();
-    setErrorString(QString());
-    setError(NoError);
+    setError(NoError, QString());
     setStatus(declarativeLocations_.isEmpty() ? Null : Ready);
 }
 
