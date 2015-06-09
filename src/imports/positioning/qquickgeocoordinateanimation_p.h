@@ -31,34 +31,50 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOCOORDINATEANIMATION_P_H
-#define QDECLARATIVEGEOCOORDINATEANIMATION_P_H
+#ifndef QQUICKGEOCOORDINATEANIMATION_P_H
+#define QQUICKGEOCOORDINATEANIMATION_P_H
 
 #include <QtQuick/private/qquickanimation_p.h>
 #include <QtPositioning/qgeocoordinate.h>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoCoordinateAnimation : public QQuickPropertyAnimation
+class QQuickGeoCoordinateAnimationPrivate;
+
+class QQuickGeoCoordinateAnimation : public QQuickPropertyAnimation
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QQuickPropertyAnimation)
+    Q_DECLARE_PRIVATE(QQuickGeoCoordinateAnimation)
     Q_PROPERTY(QGeoCoordinate from READ from WRITE setFrom)
     Q_PROPERTY(QGeoCoordinate to READ to WRITE setTo)
+    Q_PROPERTY(Direction direction READ direction WRITE setDirection NOTIFY directionChanged)
 
 public:
-    QDeclarativeGeoCoordinateAnimation(QObject *parent=0);
-    ~QDeclarativeGeoCoordinateAnimation();
+    enum Direction {
+        Shortest,
+        West,
+        East
+    };
+    Q_ENUM(Direction)
+
+    QQuickGeoCoordinateAnimation(QObject *parent=0);
+    ~QQuickGeoCoordinateAnimation();
 
     QGeoCoordinate from() const;
     void setFrom(const QGeoCoordinate &);
 
     QGeoCoordinate to() const;
     void setTo(const QGeoCoordinate &);
+
+    Direction direction() const;
+    void setDirection(Direction direction);
+
+Q_SIGNALS:
+    void directionChanged();
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QDeclarativeGeoCoordinateAnimation)
+QML_DECLARE_TYPE(QQuickGeoCoordinateAnimation)
 
-#endif // QDECLARATIVEGEOCOORDINATEANIMATION_P_H
+#endif // QQUICKCOORDINATEANIMATION_P_H

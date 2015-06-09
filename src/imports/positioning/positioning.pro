@@ -5,13 +5,14 @@ INCLUDEPATH *= $$PWD
 HEADERS += qdeclarativeposition_p.h \
            qdeclarativepositionsource_p.h \
            locationsingleton.h \
-           qdeclarativegeocoordinateanimation_p.h
+           qquickgeocoordinateanimation_p.h \
+           qquickgeocoordinateanimation_p_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            positioning.cpp \
            qdeclarativepositionsource.cpp \
            locationsingleton.cpp \
-           qdeclarativegeocoordinateanimation.cpp
+           qquickgeocoordinateanimation.cpp
 
 load(qml_plugin)
 

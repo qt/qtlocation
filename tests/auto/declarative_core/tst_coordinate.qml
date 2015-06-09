@@ -33,7 +33,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtPositioning 5.2
+import QtPositioning 5.5
 
 Item {
     id: item
@@ -73,10 +73,38 @@ Item {
         id: invalidLocation
     }
 
+
+    Item {
+        id: coordinateItem
+        property variant coordinate
+        property int animationDuration: 100
+        property var coordinateList: []
+        property int coordinateCount: 0
+
+        CoordinateAnimation {
+            id: coordinateAnimation
+            target: coordinateItem
+            property: "coordinate"
+            duration: coordinateItem.animationDuration
+        }
+        onCoordinateChanged: {
+            if (!coordinateList) {
+                coordinateList = []
+            }
+            coordinateList[coordinateCount] = QtPositioning.coordinate(coordinate.latitude,coordinate.longitude)
+            coordinateCount++
+        }
+
+        SignalSpy { id: coordinateAnimationStartSpy; target: coordinateAnimation; signalName: "started" }
+        SignalSpy { id: coordinateAnimationStopSpy; target: coordinateAnimation; signalName: "stopped" }
+        SignalSpy { id: coordinateAnimationDirectionSpy; target: coordinateAnimation; signalName: "directionChanged" }
+    }
+
     TestCase {
         name: "GeoLocation"
 
-        function test_Location_complete() {
+        function test_Location_complete()
+        {
             compare (testLocation.coordinate.longitude, inside.longitude)
             compare (testLocation.coordinate.latitude, inside.latitude)
 
@@ -93,7 +121,8 @@ Item {
             compare (testLocation.address.street, "53 Brandl St")
         }
 
-        function test_Location_invalid() {
+        function test_Location_invalid()
+        {
             compare(invalidLocation.coordinate.isValid, false)
             compare(invalidLocation.boundingBox.isEmpty, true)
             compare(invalidLocation.boundingBox.isValid, false)
@@ -104,7 +133,8 @@ Item {
     TestCase {
         name: "Coordinate"
 
-        function test_validity() {
+        function test_validity()
+        {
             compare(empty.isValid, false)
 
             empty.longitude = 0.0;
@@ -113,7 +143,8 @@ Item {
             compare(empty.isValid, true)
         }
 
-        function test_accessors() {
+        function test_accessors()
+        {
             compare(base.longitude, 1.0)
             compare(base.latitude, 1.0)
             compare(base.altitude, 5.0)
@@ -130,7 +161,8 @@ Item {
             compare(coordSpy.count, 3)
         }
 
-        function test_comparison_data() {
+        function test_comparison_data()
+        {
             return [
                 { tag: "empty", coord1: empty, coord2: QtPositioning.coordinate(), result: true },
                 { tag: "zero", coord1: zero, coord2: QtPositioning.coordinate(0, 0), result: true },
@@ -143,27 +175,31 @@ Item {
             ]
         }
 
-        function test_comparison(data) {
+        function test_comparison(data)
+        {
             compare(data.coord1 === data.coord2, data.result)
             compare(data.coord1 !== data.coord2, !data.result)
             compare(data.coord1 == data.coord2, data.result)
             compare(data.coord1 != data.coord2, !data.result)
         }
 
-        function test_distance() {
+        function test_distance()
+        {
             compare(zero.distanceTo(plusone), zero.distanceTo(minusone))
             compare(2*plusone.distanceTo(zero), plusone.distanceTo(minusone))
             compare(zero.distanceTo(plusone) > 0, true)
         }
 
-        function test_azimuth() {
+        function test_azimuth()
+        {
             compare(zero.azimuthTo(north), 0)
             compare(zero.azimuthTo(plusone), 90)
             compare(zero.azimuthTo(minusone), 270)
             compare(minusone.azimuthTo(plusone), 360 - plusone.azimuthTo(minusone))
         }
 
-        function test_atDistanceAndAzimuth() {
+        function test_atDistanceAndAzimuth()
+        {
             // 112km is approximately one degree of arc
 
             var coord_0d = zero.atDistanceAndAzimuth(112000, 0)
@@ -191,5 +227,138 @@ Item {
             var coord_30d2 = coord_30d.atDistanceAndAzimuth(200, 30)
             compare(zero.distanceTo(coord_30d2), 20200)
         }
+    }
+
+    TestCase {
+        name: "CoordinateAnimation"
+
+        function init()
+        {
+            coordinateAnimation.stop()
+            coordinateAnimationStartSpy.clear()
+            coordinateAnimationStopSpy.clear()
+            coordinateAnimationDirectionSpy.clear()
+            coordinateAnimation.from = QtPositioning.coordinate(50,50)
+            coordinateAnimation.to = QtPositioning.coordinate(50,50)
+            coordinateAnimation.direction = CoordinateAnimation.Shortest
+            coordinateItem.coordinate = QtPositioning.coordinate(50,50)
+            coordinateItem.coordinateList = []
+            coordinateItem.coordinateCount = 0
+        }
+
+        function initTestCase()
+        {
+            compare(coordinateAnimation.direction, CoordinateAnimation.Shortest)
+            compare(coordinateAnimationDirectionSpy.count,0)
+            coordinateAnimation.direction = CoordinateAnimation.Shortest
+            compare(coordinateAnimationDirectionSpy.count,0)
+            coordinateAnimation.direction = CoordinateAnimation.West
+            compare(coordinateAnimationDirectionSpy.count,1)
+            coordinateAnimation.direction = CoordinateAnimation.East
+            compare(coordinateAnimationDirectionSpy.count,2)
+        }
+
+        function toMercator(coord)
+        {
+            var pi = Math.PI
+            var lon = coord.longitude / 360.0 + 0.5;
+
+            var lat = coord.latitude;
+            lat = 0.5 - (Math.log(Math.tan((pi / 4.0) + (pi / 2.0) * lat / 180.0)) / pi) / 2.0;
+            lat = Math.max(0.0, lat);
+            lat = Math.min(1.0, lat);
+
+            return {'latitude': lat, 'longitude': lon};
+        }
+
+        function coordinate_animation(from, to, movingEast)
+        {
+            var fromMerc = toMercator(from)
+            var toMerc = toMercator(to)
+            var delta = (toMerc.latitude - fromMerc.latitude) / (toMerc.longitude - fromMerc.longitude)
+
+            compare(coordinateItem.coordinateList.length, 0);
+            coordinateAnimation.from =  from
+            coordinateAnimation.to = to
+            coordinateAnimation.start()
+            tryCompare(coordinateAnimationStartSpy,"count",1)
+            tryCompare(coordinateAnimationStopSpy,"count",1)
+
+            //check correct start position
+            compare(coordinateItem.coordinateList[0], from)
+            //check correct end position
+            compare(coordinateItem.coordinateList[coordinateItem.coordinateList.length - 1],to)
+
+            var i
+            var lastLongitude
+            for (i in coordinateItem.coordinateList) {
+                var coordinate = coordinateItem.coordinateList[i]
+                var mercCoordinate = toMercator(coordinate)
+
+                //check that coordinates from the animation is along a straight line between from and to
+                var estimatedLatitude = fromMerc.latitude + (mercCoordinate.longitude - fromMerc.longitude) * delta
+                verify(mercCoordinate.latitude - estimatedLatitude < 0.00000000001);
+
+                //check that each step has moved in the right direction
+
+                if (lastLongitude) {
+                    if (movingEast) {
+                        if (coordinate.longitude > 0 && lastLongitude < 0)
+                            verify(coordinate.longitude < lastLongitude + 360)
+                        else
+                            verify(coordinate.longitude < lastLongitude)
+                    } else {
+                        if (coordinate.longitude < 0 && lastLongitude > 0)
+                            verify(coordinate.longitude + 360 > lastLongitude)
+                        else
+                            verify(coordinate.longitude > lastLongitude)
+                    }
+                }
+                lastLongitude = coordinate.longitude
+            }
+        }
+
+        function test_default_coordinate_animation()
+        {
+            //shortest
+            coordinate_animation(QtPositioning.coordinate(58.0,12.0),
+                                 QtPositioning.coordinate(62.0,24.0),
+                                 false)
+        }
+
+        function test_east_direction_coordinate_animation(data)
+        {
+            coordinateAnimation.direction = CoordinateAnimation.East
+            coordinate_animation(data.from,
+                                 data.to,
+                                 true)
+        }
+
+        function test_east_direction_coordinate_animation_data()
+        {
+            return [
+                { from: QtPositioning.coordinate(58.0,24.0), to: QtPositioning.coordinate(58.0,12.0) },
+                { from: QtPositioning.coordinate(58.0,12.0), to: QtPositioning.coordinate(58.0,24.0) },
+            ]
+        }
+
+
+        function test_west_direction_coordinate_animation(data)
+        {
+            coordinateAnimation.direction = CoordinateAnimation.West
+            coordinate_animation(data.from,
+                                 data.to,
+                                 false)
+        }
+
+        function test_west_direction_coordinate_animation_data()
+        {
+            return [
+                { from: QtPositioning.coordinate(58.0,24.0),to: QtPositioning.coordinate(58.0,12.0) },
+                { from: QtPositioning.coordinate(58.0,12.0),to: QtPositioning.coordinate(58.0,24.0) },
+            ]
+        }
+
+
     }
 }
