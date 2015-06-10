@@ -138,7 +138,7 @@ Item {
             compare(emptyModel.bounds.center.latitude, dynamicCircle.center.latitude)
 
             // status
-            compare (emptyModel.status, RouteModel.Null)
+            compare (emptyModel.status, GeocodeModel.Null)
 
             // error
             compare (emptyModel.errorString, "")
@@ -296,7 +296,7 @@ Item {
             immediateModel.query = errorAddress1
             immediateModel.update()
             compare (immediateModel.errorString, errorAddress1.street)
-            compare (immediateModel.error, RouteModel.CommunicationError)
+            compare (immediateModel.error, GeocodeModel.CommunicationError)
             compare (immediateModel.count, 0)
             compare (statusImmediateSpy.count, 2)
             compare (immediateModel.status, GeocodeModel.Error)
