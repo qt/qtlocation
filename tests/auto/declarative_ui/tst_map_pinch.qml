@@ -35,7 +35,7 @@ import QtQuick 2.5
 import QtTest 1.0
 import QtLocation 5.5
 import QtPositioning 5.5
-import QtLocation.test 5.0
+import QtLocation.Test 5.5
 
 Item {
     // General-purpose elements for the test:
@@ -46,7 +46,7 @@ Item {
 
     property variant coordinate: QtPositioning.coordinate(10, 11)
 
-    // From QtLocation.test plugin
+    // From QtLocationTest plugin
     PinchGenerator {
         id: pinchGenerator
         anchors.fill: parent

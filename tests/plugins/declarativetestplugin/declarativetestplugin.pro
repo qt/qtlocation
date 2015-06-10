@@ -1,6 +1,6 @@
 CXX_MODULE = location
 TARGET  = declarative_location_test
-TARGETPATH = QtLocation/test
+TARGETPATH = QtLocation/Test
 
 QT += gui-private qml quick location testlib
 
@@ -19,7 +19,7 @@ IMPORT_FILES = \
     qmldir
 
 load(qml_plugin)
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+
 
 # must be after load(qml_plugin)
 include(../imports.pri)
