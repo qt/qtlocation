@@ -33,9 +33,8 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtPositioning 5.0
-import QtLocation 5.3
-import QtLocation.test 5.0
+import QtPositioning 5.5
+import QtLocation 5.5
 
 Item {
     id: page
@@ -279,7 +278,7 @@ Item {
     Text {id: progressText}
 
     TestCase {
-        name: "Map Item 2"
+        name: "MapItemDeatils"
         when: windowShown
 
     /*

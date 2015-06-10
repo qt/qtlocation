@@ -33,9 +33,8 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.3
-import QtPositioning 5.2
-import QtLocation.test 5.0
+import QtLocation 5.5
+import QtPositioning 5.5
 
     /*
      MouseArea setup for this test case.
@@ -554,10 +553,10 @@ Item {
             compare(mouseLowerClickedSpy.count, 0)
             compare(mouseOverlapperClickedSpy.count, 0)
             mouseUpper.acceptedButtons = Qt.LeftButton | Qt.RightButton
-            console.log('TC sending click event to upper mouse area 5,25')
+            // TC sending click event to upper mouse area 5,25
             mouseClick(map, 5, 25, Qt.RightButton, Qt.AltModifier)
             tryCompare(mouseUpperClickedSpy, "count", 1)
-            console.log('TC done and clicked was received')
+            // TC done and clicked was received
             //compare(mouseUpperClickedSpy.count, 1)
             compare(mouseLowerClickedSpy.count, 0)
             compare(mouseOverlapperClickedSpy.count, 0)

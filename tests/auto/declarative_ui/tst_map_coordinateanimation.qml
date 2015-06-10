@@ -33,8 +33,8 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.3
-import QtPositioning 5.3
+import QtLocation 5.5
+import QtPositioning 5.5
 
 Item {
     width:100
@@ -54,7 +54,6 @@ Item {
 
          Behavior on center {
              id: centerBehavior
-
              enabled: false
              CoordinateAnimation { duration: animationDuration }
          }
@@ -83,7 +82,7 @@ Item {
 
     TestCase {
         when: windowShown
-        name: "Coordinate animation"
+        name: "CoordinateAnimation"
 
         function test_coordinate_animation() {
 

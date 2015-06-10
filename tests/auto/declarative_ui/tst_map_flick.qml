@@ -35,7 +35,6 @@ import QtQuick 2.5
 import QtTest 1.0
 import QtLocation 5.5
 import QtPositioning 5.5
-import QtLocation.test 5.0
 
 Item {
     // General-purpose elements for the test:

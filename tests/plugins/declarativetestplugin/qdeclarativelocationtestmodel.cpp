@@ -169,8 +169,6 @@ void QDeclarativeLocationTestModel::repopulate()
     if (crazyMode_)
         datacount = (qAbs(qrand()) % datacount_);
 
-    qDebug() << "generating random content: " << datacount;
-
     for (int i = 0; i < datacount; ++i) {
         DataObject* dataobject = new DataObject;
         dataobject->coordinate_ = QGeoCoordinate(latitude, longitude);
@@ -202,10 +200,9 @@ void QDeclarativeLocationTestModel::scheduleRepopulation()
 {
     if (!componentCompleted_)
         return;
-    if (datacount_ <= 0) {
-        qDebug() << __FUNCTION__ << "won't schedule model, invalid datacount: " << datacount_;
+
+    if (datacount_ <= 0)
         return;
-    }
 
     if (timer_.isActive())
         timer_.stop();

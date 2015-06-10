@@ -33,8 +33,8 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.3
-import QtPositioning 5.2
+import QtLocation 5.5
+import QtPositioning 5.5
 
 Item {
     width:100
@@ -44,15 +44,15 @@ Item {
     Plugin { id: testPlugin2; name: "gmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: herePlugin; name: "here";
         parameters: [
-                       PluginParameter {
-                           name: "here.app_id"
-                           value: "stub"
-                       },
-                       PluginParameter {
-                           name: "here.token"
-                           value: "stub"
-                       }
-                   ]
+            PluginParameter {
+                name: "here.app_id"
+                value: "stub"
+            },
+            PluginParameter {
+                name: "here.token"
+                value: "stub"
+            }
+        ]
     }
 
     property variant coordinate1: QtPositioning.coordinate(10, 11)
@@ -64,12 +64,12 @@ Item {
     property variant altitudelessCoordinate: QtPositioning.coordinate(50, 50)
 
     Map { id: mapZoomOnCompleted; width: 200; height: 200;
-          zoomLevel: 3; center: coordinate1; plugin: testPlugin;
-          Component.onCompleted: { zoomLevel = 7 } }
+        zoomLevel: 3; center: coordinate1; plugin: testPlugin;
+        Component.onCompleted: { zoomLevel = 7 } }
     Map { id: mapZoomDefault; width: 200; height: 200;
-          center: coordinate1; plugin: testPlugin; }
+        center: coordinate1; plugin: testPlugin; }
     Map { id: mapZoomUserInit; width: 200; height: 200;
-          zoomLevel: 4; center: coordinate1; plugin: testPlugin; }
+        zoomLevel: 4; center: coordinate1; plugin: testPlugin; }
     Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
     Map {id: coordinateMap; plugin: herePlugin; center: coordinate3; width: 1000; height: 1000; zoomLevel: 15}
 
@@ -78,7 +78,7 @@ Item {
 
     TestCase {
         when: windowShown
-        name: "Basic Map properties"
+        name: "MapProperties"
 
         function fuzzy_compare(val, ref) {
             var tolerance = 0.01;
@@ -88,9 +88,11 @@ Item {
             return false;
         }
 
-        function test_map_center() {
+        function init() {
             mapCenterSpy.clear();
+        }
 
+        function test_map_center() {
             // coordinate is set at map element declaration
             compare(map.center.latitude, 10)
             compare(map.center.longitude, 11)
@@ -117,7 +119,8 @@ Item {
             compare(map.center.latitude, 12)
         }
 
-        function test_zoom_limits() {
+        function test_zoom_limits()
+        {
             map.center.latitude = 30
             map.center.longitude = 60
             map.zoomLevel = 4
@@ -156,7 +159,8 @@ Item {
             compare(map.maximumZoomLevel, 20)
         }
 
-        function test_zoom() {
+        function test_zoom()
+        {
             wait(100)
             compare(mapZoomOnCompleted.zoomLevel, 7)
             compare(mapZoomDefault.zoomLevel, 8)
@@ -168,7 +172,8 @@ Item {
 
         }
 
-        function test_pan() {
+        function test_pan()
+        {
             map.center.latitude = 30
             map.center.longitude = 60
             map.zoomLevel = 4
@@ -250,7 +255,8 @@ Item {
             mapCenterSpy.clear()
         }
 
-        function test_coordinate_conversion() {
+        function test_coordinate_conversion()
+        {
             wait(1000)
             mapCenterSpy.clear();
             compare(coordinateMap.center.latitude, 50)

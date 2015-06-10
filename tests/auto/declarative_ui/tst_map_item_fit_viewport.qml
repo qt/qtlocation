@@ -224,7 +224,7 @@ Item {
     }
 
     TestCase {
-        name: "Map Items Fit Viewport"
+        name: "MapItemsFitViewport"
         when: windowShown
 
         function test_aa_visible_basic() { // aa et al. for execution order

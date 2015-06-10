@@ -33,9 +33,8 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.3
-import QtLocation.test 5.0
-import QtPositioning 5.0
+import QtLocation 5.5
+import QtPositioning 5.5
 
     /*
 
@@ -238,7 +237,7 @@ Item {
         }
     }
     TestCase {
-        name: "Map Items"
+        name: "MapItems"
         when: windowShown
 
         function test_aa_items_on_map() { // aa et al. for execution order

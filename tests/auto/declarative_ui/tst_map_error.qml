@@ -35,20 +35,16 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.5
 import QtPositioning 5.5
-import QtLocation.test 5.0
-
 
 Item {
     id: page
     x: 0; y: 0;
     width: 200
     height: 100
-
     property variant coordinate: QtPositioning.coordinate(20, 20)
 
-    Plugin { id: errorPlugin;
-        name: "qmlgeo.test.plugin"
-        allowExperimental: true
+    Plugin {
+        id: errorPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true
         parameters: [
             PluginParameter { name: "error"; value: "1"},
             PluginParameter { name: "errorString"; value: "This error was expected. No worries !"}
@@ -98,7 +94,8 @@ Item {
             map_no_plugin.mouseClickedSpy.clear()
         }
 
-        function map_clicked(map) {
+        function map_clicked(map)
+        {
             mouseClick(map, 5, 5)
             mouseClick(map, 50, 50)
             mouseClick(map, 50, 50)
@@ -106,15 +103,18 @@ Item {
             compare(map.mouseClickedSpy.count, 3)
         }
 
-        function test_map_clicked_wiht_no_plugin() {
+        function test_map_clicked_wiht_no_plugin()
+        {
             map_clicked(map_no_plugin)
         }
 
-        function test_map_clicked_with_error_plugin() {
+        function test_map_clicked_with_error_plugin()
+        {
             map_clicked(map_error_plugin)
         }
 
-        function test_map_no_supportedMapTypes() {
+        function test_map_no_supportedMapTypes()
+        {
             compare(map_no_plugin.supportedMapTypes.length , 0)
             compare(map_error_plugin.supportedMapTypes.length , 0)
         }
@@ -209,6 +209,14 @@ Item {
             map_error_plugin.visibleRegion = QtPositioning.circle(coordinate,1000)
             verify(map_error_plugin.center != coordinate)
             verify(map_no_plugin.visibleRegion == QtPositioning.circle(coordinate,1000))
+        }
+
+        function test_map_activeMapType()
+        {
+            compare(map_no_plugin.supportedMapTypes.length, 0)
+            compare(map_no_plugin.activeMapType.style, MapType.NoMap)
+            compare(map_error_plugin.supportedMapTypes.length, 0)
+            compare(map_error_plugin.activeMapType.style, MapType.NoMap)
         }
     }
 }
