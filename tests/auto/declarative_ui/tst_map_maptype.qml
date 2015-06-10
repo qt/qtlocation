@@ -33,78 +33,65 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.3
+import QtLocation 5.5
 
-TestCase {
-    id: testCase
+Item{
+    id: page
+    x: 0; y: 0;
+    width: 100
+    height: 100
 
-    name: "MapType"
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
+    Map { id: map; anchors.fill: parent }
+    SignalSpy { id: supportedMapTypesSpy; target: map; signalName: "supportedMapTypesChanged" }
+    SignalSpy { id: activeMapTypeChangedSpy; target: map; signalName: "activeMapTypeChanged" }
 
-    Plugin {
-        id: herePlugin
-        name: "here"
-        parameters: [
-                       PluginParameter {
-                           name: "here.app_id"
-                           value: "stub"
-                       },
-                       PluginParameter {
-                           name: "here.token"
-                           value: "stub"
-                       }
-                   ]
-    }
+    TestCase {
+        id: testCase
+        name: "MapType"
+        when: windowShown
 
-    Map {
-        id: map;
-        plugin: herePlugin
-        center {
-            latitude: 62.240501
-            longitude: 25.757014
+        function initTestCase()
+        {
+            compare(map.supportedMapTypes.length, 0)
+            compare(map.activeMapType.style, MapType.NoMap)
+            map.plugin = testPlugin
+            tryCompare(supportedMapTypesSpy, "count", 1)
+            compare(map.supportedMapTypes.length,3)
+            compare(map.supportedMapTypes[0].style, MapType.StreetMap)
+            compare(map.supportedMapTypes[0].name, "StreetMap")
+            compare(map.supportedMapTypes[0].description, "StreetMap")
+            compare(map.supportedMapTypes[1].style, MapType.SatelliteMapDay)
+            compare(map.supportedMapTypes[1].name, "SatelliteMapDay")
+            compare(map.supportedMapTypes[1].description, "SatelliteMapDay")
+            compare(map.supportedMapTypes[2].style, MapType.CycleMap)
+            compare(map.supportedMapTypes[2].name, "CycleMap")
+            compare(map.supportedMapTypes[2].description, "CycleMap")
+            //default
+            compare(map.activeMapType.style, MapType.StreetMap)
         }
-        width: 100
-        height: 100
-    }
 
-    SignalSpy {id: supportedSetSpy; target: map; signalName: "supportedMapTypesChanged"}
-    SignalSpy {id: activeMapTypeChangedSpy; target: map; signalName: "activeMapTypeChanged"}
-
-    function initTestCase() {
-        if (map.supportedMapTypes.length == 0 && supportedSetSpy.count == 0) {
-            wait(1000)
-            if (supportedSetSpy.count == 0)
-                wait(2000)
-            compare(supportedSetSpy.count, 1,
-                    "supportedMapTypesChanged signal didn't arrive")
+        function init()
+        {
+            supportedMapTypesSpy.clear()
+            activeMapTypeChangedSpy.clear()
+            map.activeMapType = map.supportedMapTypes[0]
         }
-    }
 
-    function test_supported_types() {
-        var count = map.supportedMapTypes.length
-        console.log('Number of supported map types: ' + count)
+        function test_setting_types()
+        {
+            map.activeMapType = map.supportedMapTypes[0]
+            tryCompare(activeMapTypeChangedSpy, "count", 0)
 
-        console.log('Supported map types:')
-        for (var i = 0; i < count; i++) {
-            console.log('style: ' + map.supportedMapTypes[i].style
-                        + ', name: ' + map.supportedMapTypes[i].name
-                        + ', desc: ' + map.supportedMapTypes[i].description
-                        + ', mobile: ' + map.supportedMapTypes[i].mobile)
+            map.activeMapType = map.supportedMapTypes[1]
+            tryCompare(activeMapTypeChangedSpy, "count", 1)
+            compare(map.supportedMapTypes[1].name, map.activeMapType.name)
+            compare(map.supportedMapTypes[1].style, map.activeMapType.style)
+
+            map.activeMapType = map.supportedMapTypes[2]
+            tryCompare(activeMapTypeChangedSpy, "count", 2)
+            compare(map.supportedMapTypes[2].name, map.activeMapType.name)
+            compare(map.supportedMapTypes[2].style, map.activeMapType.style)
         }
-    }
-
-    function test_setting_types() {
-        var count = map.supportedMapTypes.length
-        console.log('Number of supported map types: '
-                    + map.supportedMapTypes.length)
-
-        activeMapTypeChangedSpy.clear();
-        for (var i = 0; i < count; i++) {
-            console.log('setting ' + map.supportedMapTypes[i].name)
-            map.activeMapType = map.supportedMapTypes[i]
-            compare(map.supportedMapTypes[i].name, map.activeMapType.name,
-                    "Error setting the active maptype (or getting it after)")
-        }
-        console.log('change count: ' + activeMapTypeChangedSpy.count)
-        compare(activeMapTypeChangedSpy.count, count)
     }
 }

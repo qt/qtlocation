@@ -192,6 +192,9 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
     // Create internal flickable and pinch area.
     m_gestureArea = new QDeclarativeGeoMapGestureArea(this, this);
+    m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
+                                                             tr("No Map"),
+                                                             tr("No Map"), false, false, 0), this);
 }
 
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
@@ -1123,9 +1126,12 @@ void QDeclarativeGeoMap::clearMapItems()
 */
 void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
 {
-    m_activeMapType = mapType;
-    m_map->setActiveMapType(mapType->mapType());
-    emit activeMapTypeChanged();
+    if (m_activeMapType->mapType() != mapType->mapType()) {
+        m_activeMapType = mapType;
+        if (m_map)
+            m_map->setActiveMapType(mapType->mapType());
+        emit activeMapTypeChanged();
+    }
 }
 
 QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
