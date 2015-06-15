@@ -66,6 +66,12 @@ public:
 
         setTileSize(QSize(256, 256));
 
+        QList<QGeoMapType> mapTypes;
+        mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("StreetMap"), tr("StreetMap"), false, false, 1);
+        mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("SatelliteMapDay"), tr("SatelliteMapDay"), false, false, 2);
+        mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("CycleMap"), tr("CycleMap"), false, false, 3);
+        setSupportedMapTypes(mapTypes);
+
         QGeoTileFetcherTest *fetcher = new QGeoTileFetcherTest(this);
         fetcher->setParams(parameters);
         fetcher->setTileSize(QSize(256, 255));
