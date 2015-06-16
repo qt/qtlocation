@@ -54,11 +54,7 @@ int main(int argc, char *argv[])
     view.setResizeMode(QQuickView::SizeRootObjectToView);
 
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-#if defined(Q_OS_QNX)
-    view.showFullScreen();
-#else
     view.show();
-#endif
 
     return app.exec();
 }
