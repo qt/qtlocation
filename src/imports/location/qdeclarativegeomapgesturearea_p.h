@@ -71,35 +71,35 @@ public:
     QDeclarativeGeoMapPinchEvent(const QPointF &center, qreal angle,
                                  const QPointF &point1, const QPointF &point2,
                                  int pointCount = 0, bool accepted = true)
-        : QObject(), center_(center), angle_(angle),
-          point1_(point1), point2_(point2),
-        pointCount_(pointCount), accepted_(accepted) {}
+        : QObject(), m_center(center), m_angle(angle),
+          m_point1(point1), m_point2(point2),
+        m_pointCount(pointCount), m_accepted(accepted) {}
     QDeclarativeGeoMapPinchEvent()
         : QObject(),
-          angle_(0.0),
-          pointCount_(0),
-          accepted_(true) {}
+          m_angle(0.0),
+          m_pointCount(0),
+          m_accepted(true) {}
 
-    QPointF center() const { return center_; }
-    void setCenter(const QPointF &center) { center_ = center; }
-    qreal angle() const { return angle_; }
-    void setAngle(qreal angle) { angle_ = angle; }
-    QPointF point1() const { return point1_; }
-    void setPoint1(const QPointF &p) { point1_ = p; }
-    QPointF point2() const { return point2_; }
-    void setPoint2(const QPointF &p) { point2_ = p; }
-    int pointCount() const { return pointCount_; }
-    void setPointCount(int count) { pointCount_ = count; }
-    bool accepted() const { return accepted_; }
-    void setAccepted(bool a) { accepted_ = a; }
+    QPointF center() const { return m_center; }
+    void setCenter(const QPointF &center) { m_center = center; }
+    qreal angle() const { return m_angle; }
+    void setAngle(qreal angle) { m_angle = angle; }
+    QPointF point1() const { return m_point1; }
+    void setPoint1(const QPointF &p) { m_point1 = p; }
+    QPointF point2() const { return m_point2; }
+    void setPoint2(const QPointF &p) { m_point2 = p; }
+    int pointCount() const { return m_pointCount; }
+    void setPointCount(int count) { m_pointCount = count; }
+    bool accepted() const { return m_accepted; }
+    void setAccepted(bool a) { m_accepted = a; }
 
 private:
-    QPointF center_;
-    qreal angle_;
-    QPointF point1_;
-    QPointF point2_;
-    int pointCount_;
-    bool accepted_;
+    QPointF m_center;
+    qreal m_angle;
+    QPointF m_point1;
+    QPointF m_point2;
+    int m_pointCount;
+    bool m_accepted;
 };
 
 // tbd: should we have a 'active' / 'moving' boolean attribute when pinch is active?
@@ -228,60 +228,61 @@ private:
     void updateVelocityList(const QPointF &pos);
 
 private:
-    QGeoMap *map_;
-    QDeclarativeGeoMap *declarativeMap_;
+    QGeoMap *m_map;
+    QDeclarativeGeoMap *m_declarativeMap;
     bool m_enabled;
 
     struct Pinch
     {
-        Pinch() : enabled(true), startDist(0), lastAngle(0.0) {}
+        Pinch() : m_enabled(true), m_startDist(0), m_lastAngle(0.0) {}
 
-        QDeclarativeGeoMapPinchEvent event;
-        bool enabled;
+        QDeclarativeGeoMapPinchEvent m_event;
+        bool m_enabled;
         struct Zoom
         {
-            Zoom() : minimum(-1.0), maximum(-1.0), start(0.0), previous(0.0),
+            Zoom() : m_minimum(-1.0), m_maximum(-1.0), m_start(0.0), m_previous(0.0),
                      maximumChange(4.0) {}
-            qreal minimum;
-            qreal maximum;
-            qreal start;
-            qreal previous;
+            qreal m_minimum;
+            qreal m_maximum;
+            qreal m_start;
+            qreal m_previous;
             qreal maximumChange;
-        } zoom;
+        } m_zoom;
 
-        QPointF lastPoint1;
-        QPointF lastPoint2;
-        qreal startDist;
-        qreal lastAngle;
-     } pinch_;
+        QPointF m_lastPoint1;
+        QPointF m_lastPoint2;
+        qreal m_startDist;
+        qreal m_lastAngle;
+     } m_pinch;
 
-    ActiveGestures activeGestures_;
+    ActiveGestures m_activeGestures;
 
     struct Pan
     {
-        qreal maxVelocity_;
-        qreal deceleration_;
-        QQuickGeoCoordinateAnimation *animation_;
-        bool enabled_;
-    } pan_;
+        qreal m_maxVelocity;
+        qreal m_deceleration;
+        QQuickGeoCoordinateAnimation *m_animation;
+        bool m_enabled;
+    } m_flick;
+
 
     // these are calculated regardless of gesture or number of touch points
-    qreal velocityX_;
-    qreal velocityY_;
-    QElapsedTimer lastPosTime_;
-    QPointF lastPos_;
+    qreal m_velocityX;
+    qreal m_velocityY;
+    QElapsedTimer m_lastPosTime;
+    QPointF m_lastPos;
     QList<QTouchEvent::TouchPoint> m_allPoints;
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     QScopedPointer<QTouchEvent::TouchPoint> m_mousePoint;
-    QPointF sceneStartPoint1_;
+    QPointF m_sceneStartPoint1;
 
     // only set when two points in contact
-    QPointF sceneStartPoint2_;
-    QGeoCoordinate startCoord_;
-    QGeoCoordinate touchCenterCoord_;
-    qreal twoTouchAngle_;
-    qreal distanceBetweenTouchPoints_;
-    QPointF sceneCenter_;
+    QPointF m_sceneStartPoint2;
+    QGeoCoordinate m_startCoord;
+    QGeoCoordinate m_touchCenterCoord;
+    qreal m_twoTouchAngle;
+    qreal m_distanceBetweenTouchPoints;
+    QPointF m_sceneCenter;
     bool m_preventStealing;
 
     // prototype state machine...
@@ -290,21 +291,21 @@ private:
         touchPoints0,
         touchPoints1,
         touchPoints2
-    } touchPointState_;
+    } m_touchPointState;
 
     enum PinchState
     {
         pinchInactive,
         pinchInactiveTwoPoints,
         pinchActive
-    } pinchState_;
+    } m_pinchState;
 
-    enum PanState
+    enum FlickState
     {
-        panInactive,
+        flickInactive,
         panActive,
-        panFlick
-    } panState_;
+        flickActive
+    } m_flickState;
 };
 
 QT_END_NAMESPACE
