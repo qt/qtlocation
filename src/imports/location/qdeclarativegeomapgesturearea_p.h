@@ -44,6 +44,7 @@
 #include <QElapsedTimer>
 #include "qgeocoordinate.h"
 #include "qgeomap_p.h"
+#include "qquickgeocoordinateanimation_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -216,8 +217,10 @@ private:
     void updatePan();
     bool tryStartFlick();
     void startFlick(int dx, int dy, int timeMs = 0);
-private Q_SLOTS:
     void endFlick();
+private Q_SLOTS:
+    void handleFlickAnimationStopped();
+
 
 private:
     void stopPan();
@@ -258,7 +261,7 @@ private:
     {
         qreal maxVelocity_;
         qreal deceleration_;
-        QPropertyAnimation *animation_;
+        QQuickGeoCoordinateAnimation *animation_;
         bool enabled_;
     } pan_;
 

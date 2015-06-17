@@ -63,6 +63,21 @@ QT_BEGIN_NAMESPACE
     \sa {Animation and Transitions in Qt Quick}
 */
 
+QVariant q_coordinateShortestInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
+{
+    if (from == to) {
+        if (progress < 0.5) {
+            return QVariant::fromValue(from);
+        } else {
+            return QVariant::fromValue(to);
+        }
+    }
+
+    QGeoCoordinate result = QGeoProjection::coordinateInterpolation(from, to, progress);
+
+    return QVariant::fromValue(result);
+}
+
 QVariant q_coordinateWestInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
 {
     QDoubleVector2D fromVector = QGeoProjection::coordToMercator(from);
@@ -197,7 +212,7 @@ void QQuickGeoCoordinateAnimation::setDirection(QQuickGeoCoordinateAnimation::Di
         break;
     case Shortest:
     default:
-        d->interpolator = QVariantAnimationPrivate::getInterpolator(d->interpolatorType);
+        d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(&q_coordinateShortestInterpolator);
         break;
     }
     emit directionChanged();

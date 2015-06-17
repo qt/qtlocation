@@ -128,19 +128,4 @@ QGeoCoordinate QGeoProjection::coordinateInterpolation(const QGeoCoordinate &fro
     return result;
 }
 
-QVariant geoCoordinateInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
-{
-    if (from == to) {
-        if (progress < 0.5) {
-            return QVariant::fromValue(from);
-        } else {
-            return QVariant::fromValue(to);
-        }
-    }
-
-    QGeoCoordinate result = QGeoProjection::coordinateInterpolation(from, to, progress);
-
-    return QVariant::fromValue(result);
-}
-
 QT_END_NAMESPACE

@@ -73,6 +73,8 @@ Q_SIGNALS:
     void directionChanged();
 };
 
+QVariant q_coordinateShortestInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress);
+
 QT_END_NAMESPACE
 
 QML_DECLARE_TYPE(QQuickGeoCoordinateAnimation)

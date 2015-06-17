@@ -57,10 +57,6 @@ QT_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QDoubleVector2D;
 
-Q_POSITIONING_EXPORT QVariant geoCoordinateInterpolator(const QGeoCoordinate &from,
-                                                        const QGeoCoordinate &to,
-                                                        qreal progress);
-
 class Q_POSITIONING_EXPORT QGeoProjection
 {
 public:

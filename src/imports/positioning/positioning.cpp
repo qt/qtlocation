@@ -517,7 +517,7 @@ public:
             qRegisterMetaType<QGeoShape>();
             QMetaType::registerEqualsComparator<QGeoShape>();
 
-            qRegisterAnimationInterpolator<QGeoCoordinate>(geoCoordinateInterpolator);
+            qRegisterAnimationInterpolator<QGeoCoordinate>(q_coordinateShortestInterpolator);
 
             // Register the 5.0 types
             // 5.0 is silent and not advertised

@@ -331,20 +331,6 @@ QT_BEGIN_NAMESPACE
     The corresponding handler is \c onFlickFinished.
 */
 
-static void registerQGeoCoordinateInterpolator()
-{
-    // required by QPropertyAnimation
-    qRegisterAnimationInterpolator<QGeoCoordinate>(geoCoordinateInterpolator);
-}
-Q_CONSTRUCTOR_FUNCTION(registerQGeoCoordinateInterpolator)
-
-static void unregisterQGeoCoordinateInterpolator()
-{
-    qRegisterAnimationInterpolator<QGeoCoordinate>(
-                (QVariant (*)(const QGeoCoordinate &, const QGeoCoordinate &, qreal))0);
-}
-Q_DESTRUCTOR_FUNCTION(unregisterQGeoCoordinateInterpolator)
-
 QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent)
     : QObject(parent),
       declarativeMap_(map),
@@ -370,9 +356,11 @@ void QDeclarativeGeoMapGestureArea::setMap(QGeoMap *map)
     if (map_ || !map)
         return;
     map_ = map;
-    pan_.animation_ = new QPropertyAnimation(map_->mapController(), "center", this);
-    pan_.animation_->setEasingCurve(QEasingCurve(QEasingCurve::OutQuad));
-    connect(pan_.animation_, SIGNAL(finished()), this, SLOT(endFlick()));
+    pan_.animation_ = new QQuickGeoCoordinateAnimation(this);
+    pan_.animation_->setTargetObject(map_->mapController());
+    pan_.animation_->setProperty(QStringLiteral("center"));
+    pan_.animation_->setEasing(QEasingCurve(QEasingCurve::OutQuad));
+    connect(pan_.animation_, &QQuickAbstractAnimation::stopped, this, &QDeclarativeGeoMapGestureArea::handleFlickAnimationStopped);
 }
 
 /*!
@@ -1172,14 +1160,14 @@ void QDeclarativeGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
 
     QGeoCoordinate animationStartCoordinate = map_->mapController()->center();
 
-    if (pan_.animation_->state() == QPropertyAnimation::Running)
+    if (pan_.animation_->isRunning())
         pan_.animation_->stop();
     QGeoCoordinate animationEndCoordinate = map_->mapController()->center();
     pan_.animation_->setDuration(timeMs);
     animationEndCoordinate.setLongitude(animationStartCoordinate.longitude() - (dx / pow(2.0, map_->mapController()->zoom())));
     animationEndCoordinate.setLatitude(animationStartCoordinate.latitude() + (dy / pow(2.0, map_->mapController()->zoom())));
-    pan_.animation_->setStartValue(QVariant::fromValue(animationStartCoordinate));
-    pan_.animation_->setEndValue(QVariant::fromValue(animationEndCoordinate));
+    pan_.animation_->setFrom(animationStartCoordinate);
+    pan_.animation_->setTo(animationEndCoordinate);
     pan_.animation_->start();
     emit flickStarted();
 }
@@ -1204,10 +1192,16 @@ void QDeclarativeGeoMapGestureArea::stopPan()
 */
 void QDeclarativeGeoMapGestureArea::endFlick()
 {
+    if (pan_.animation_->isRunning())
+        pan_.animation_->stop();
+    else
+        handleFlickAnimationStopped();
+}
+
+void QDeclarativeGeoMapGestureArea::handleFlickAnimationStopped()
+{
     declarativeMap_->setKeepMouseGrab(m_preventStealing);
     emit panFinished();
-    if (pan_.animation_->state() == QPropertyAnimation::Running)
-        pan_.animation_->stop();
     emit flickFinished();
     panState_ = panInactive;
     emit panActiveChanged();
