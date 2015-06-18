@@ -25,9 +25,9 @@ HEADERS += \
            qdeclarativeroutemapitem_p.h \
            qgeomapitemgeometry_p.h \
            qdeclarativegeomapcopyrightsnotice_p.h \
-           qdeclarativegeomapgesturearea_p.h \
            error_messages.h \
            locationvaluetypehelper_p.h\
+           qquickgeomapgesturearea_p.h\
            ../positioning/qquickgeocoordinateanimation_p.h
 
 SOURCES += \
@@ -50,9 +50,9 @@ SOURCES += \
            qdeclarativeroutemapitem.cpp \
            qgeomapitemgeometry.cpp \
            qdeclarativegeomapcopyrightsnotice.cpp \
-           qdeclarativegeomapgesturearea.cpp \
            error_messages.cpp \
            locationvaluetypehelper.cpp \
+           qquickgeomapgesturearea.cpp \
            ../positioning/qquickgeocoordinateanimation.cpp
 
 include(declarativeplaces/declarativeplaces.pri)

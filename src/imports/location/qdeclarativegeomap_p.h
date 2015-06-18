@@ -39,7 +39,7 @@
 
 #include "qgeoserviceprovider.h"
 #include "qdeclarativegeomapitemview_p.h"
-#include "qdeclarativegeomapgesturearea_p.h"
+#include "qquickgeomapgesturearea_p.h"
 #include "qgeocameradata_p.h"
 #include <QtQuick/QQuickItem>
 #include <QtCore/QPointer>

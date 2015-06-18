@@ -34,7 +34,7 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativegeomapgesturearea_p.h"
+#include "qquickgeomapgesturearea_p.h"
 #include "qdeclarativegeomap_p.h"
 #include "qgeomapcontroller_p.h"
 #include "error_messages.h"
@@ -1245,6 +1245,6 @@ void QDeclarativeGeoMapGestureArea::handleFlickAnimationStopped()
 
 
 
-#include "moc_qdeclarativegeomapgesturearea_p.cpp"
+#include "moc_qquickgeomapgesturearea_p.cpp"
 
 QT_END_NAMESPACE
