@@ -1164,8 +1164,25 @@ void QDeclarativeGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
         pan_.animation_->stop();
     QGeoCoordinate animationEndCoordinate = map_->mapController()->center();
     pan_.animation_->setDuration(timeMs);
-    animationEndCoordinate.setLongitude(animationStartCoordinate.longitude() - (dx / pow(2.0, map_->mapController()->zoom())));
-    animationEndCoordinate.setLatitude(animationStartCoordinate.latitude() + (dy / pow(2.0, map_->mapController()->zoom())));
+
+    double zoom = pow(2.0, map_->mapController()->zoom());
+    double longitude = animationStartCoordinate.longitude() - (dx / zoom);
+    double latitude = animationStartCoordinate.latitude() + (dy / zoom);
+
+    if (dx > 0)
+        pan_.animation_->setDirection(QQuickGeoCoordinateAnimation::East);
+    else
+        pan_.animation_->setDirection(QQuickGeoCoordinateAnimation::West);
+
+    //keep animation in correct bounds
+    if (latitude > 85.05113)
+        latitude = 85.05113;
+    else if (latitude < -85.05113)
+        latitude = -85.05113;
+
+    animationEndCoordinate.setLongitude(longitude);
+    animationEndCoordinate.setLatitude(latitude);
+
     pan_.animation_->setFrom(animationStartCoordinate);
     pan_.animation_->setTo(animationEndCoordinate);
     pan_.animation_->start();
