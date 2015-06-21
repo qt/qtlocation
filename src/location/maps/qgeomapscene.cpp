@@ -582,7 +582,7 @@ public:
 
     ~QGeoMapRootNode()
     {
-        qDeleteAll(textures.values());
+        qDeleteAll(textures);
     }
 
     void setClipRect(const QRect &rect)
