@@ -98,6 +98,7 @@ private:
     QGeoMapScene *m_mapScene;
     QGeoTileRequestManager *m_tileRequests;
     int m_maxZoomLevel;
+    int m_minZoomLevel;
     QGeoTiledMap::PrefetchStyle m_prefetchStyle;
     Q_DISABLE_COPY(QGeoTiledMapPrivate)
 };

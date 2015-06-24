@@ -169,6 +169,7 @@ QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
       m_mapScene(new QGeoMapScene()),
       m_tileRequests(0),
       m_maxZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().maximumZoomLevel()))),
+      m_minZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().minimumZoomLevel()))),
       m_prefetchStyle(QGeoTiledMap::PrefetchTwoNeighbourLayers)
 {
     int tileSize = engine->tileSize().width();
@@ -210,7 +211,7 @@ void QGeoTiledMapPrivate::prefetchTiles()
         case QGeoTiledMap::PrefetchNeighbourLayer: {
             double zoomFraction = camera.zoomLevel() - currentIntZoom;
             int nearestNeighbourLayer = zoomFraction > 0.5 ? currentIntZoom + 1 : currentIntZoom - 1;
-            if (nearestNeighbourLayer <= m_maxZoomLevel && nearestNeighbourLayer >= 0) {
+            if (nearestNeighbourLayer <= m_maxZoomLevel && nearestNeighbourLayer >= m_minZoomLevel) {
                 camera.setZoomLevel(nearestNeighbourLayer);
                 // Approx heuristic, keeping total # prefetched tiles roughly independent of the
                 // fractional zoom level.
@@ -225,7 +226,7 @@ void QGeoTiledMapPrivate::prefetchTiles()
         case QGeoTiledMap::PrefetchTwoNeighbourLayers: {
             // This is a simpler strategy, we just prefetch from layer above and below
             // for the layer below we only use half the size as this fills the screen
-            if (currentIntZoom > 0) {
+            if (currentIntZoom > m_minZoomLevel) {
                 camera.setZoomLevel(currentIntZoom - 1);
                 m_prefetchTiles->setCameraData(camera);
                 m_prefetchTiles->setViewExpansion(0.5);
