@@ -152,6 +152,7 @@ QSet<QGeoTileSpec> QGeoCameraTiles::prefetchTiles(PrefetchStle style)
             double neighbourScale = (1.0 + zoomFraction)/2.0;
             d_ptr->updateGeometry(PREFETCH_FRUSTUM_SCALE * neighbourScale);
         }
+        break;
     }
 
     case PrefetchTwoNeighbourLayers: {
