@@ -152,7 +152,6 @@ protected:
     void setError(QGeoServiceProvider::Error error, const QString &errorString);
 
 private Q_SLOTS:
-    void updateMapDisplay(const QRectF &target);
     void mappingManagerInitialized();
     void mapZoomLevelChanged(qreal zoom);
     void pluginReady();

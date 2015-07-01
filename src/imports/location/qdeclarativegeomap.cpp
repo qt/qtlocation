@@ -540,16 +540,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 /*!
     \internal
 */
-void QDeclarativeGeoMap::updateMapDisplay(const QRectF &target)
-{
-    Q_UNUSED(target);
-    QQuickItem::update();
-}
-
-
-/*!
-    \internal
-*/
 QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 {
     return m_plugin;
