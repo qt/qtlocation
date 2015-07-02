@@ -104,9 +104,10 @@ public:
     Q_INVOKABLE QString toString(CoordinateFormat format = DegreesMinutesSecondsWithHemisphere) const;
 
 private:
+    QGeoCoordinate(QGeoCoordinatePrivate &dd);
     QSharedDataPointer<QGeoCoordinatePrivate> d;
-
     friend class QGeoCoordinatePrivate;
+    friend class QQuickGeoCoordinateAnimation;
 };
 
 Q_DECLARE_TYPEINFO(QGeoCoordinate, Q_MOVABLE_TYPE);

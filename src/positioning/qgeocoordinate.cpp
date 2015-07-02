@@ -60,11 +60,11 @@ inline static double qgeocoordinate_radToDeg(double rad)
 }
 
 
-QGeoCoordinatePrivate::QGeoCoordinatePrivate() {
-    lat = qQNaN();
-    lng = qQNaN();
-    alt = qQNaN();
-}
+QGeoCoordinatePrivate::QGeoCoordinatePrivate():
+    lat(qQNaN()),
+    lng(qQNaN()),
+    alt(qQNaN())
+{}
 
 QGeoCoordinatePrivate::QGeoCoordinatePrivate(const QGeoCoordinatePrivate &other)
     : QSharedData(other),
@@ -76,6 +76,21 @@ QGeoCoordinatePrivate::QGeoCoordinatePrivate(const QGeoCoordinatePrivate &other)
 QGeoCoordinatePrivate::~QGeoCoordinatePrivate()
 {}
 
+
+QGeoMercatorCoordinatePrivate::QGeoMercatorCoordinatePrivate():
+    QGeoCoordinatePrivate(),
+    m_mercatorX(qQNaN()),
+    m_mercatorY(qQNaN())
+{}
+
+QGeoMercatorCoordinatePrivate::QGeoMercatorCoordinatePrivate(const QGeoMercatorCoordinatePrivate &other)
+    : QGeoCoordinatePrivate(other),
+      m_mercatorX(other.m_mercatorX),
+      m_mercatorY(other.m_mercatorY)
+{}
+
+QGeoMercatorCoordinatePrivate::~QGeoMercatorCoordinatePrivate()
+{}
 
 /*!
     \class QGeoCoordinate
@@ -664,6 +679,11 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
     if (qIsNaN(d->alt))
         return QString::fromLatin1("%1, %2").arg(latStr, longStr);
     return QString::fromLatin1("%1, %2, %3m").arg(latStr, longStr, QString::number(d->alt));
+}
+
+QGeoCoordinate::QGeoCoordinate(QGeoCoordinatePrivate &dd):
+    d(&dd)
+{
 }
 
 #ifndef QT_NO_DEBUG_STREAM

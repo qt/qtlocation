@@ -36,6 +36,7 @@
 #include <QtQuick/private/qquickanimation_p_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qgeocoordinate_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -63,7 +64,7 @@ QT_BEGIN_NAMESPACE
     \sa {Animation and Transitions in Qt Quick}
 */
 
-QVariant q_coordinateShortestInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
+QVariant q_coordinateInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
 {
     if (from == to) {
         if (progress < 0.5) {
@@ -78,21 +79,63 @@ QVariant q_coordinateShortestInterpolator(const QGeoCoordinate &from, const QGeo
     return QVariant::fromValue(result);
 }
 
+QVariant q_coordinateShortestInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
+{
+    const QGeoMercatorCoordinatePrivate* fromMercator =
+            static_cast<const QGeoMercatorCoordinatePrivate*>(QGeoCoordinatePrivate::get(&from));
+    const QGeoMercatorCoordinatePrivate* toMercator =
+            static_cast<const QGeoMercatorCoordinatePrivate*>(QGeoCoordinatePrivate::get(&to));
+
+    double toX = toMercator->m_mercatorX;
+    double toY = toMercator->m_mercatorY;
+    double fromX = fromMercator->m_mercatorX;
+    double fromY = fromMercator->m_mercatorY;
+    double x;
+    if (0.5 < qAbs(toX - fromX)) {
+        // handle dateline crossing
+        double ex = toX;
+        double sx = fromX;
+        if (ex < sx)
+            sx -= 1.0;
+        else if (sx < ex)
+            ex -= 1.0;
+
+        x = fromX + (toX - fromX) * progress;
+
+        if (x < 0.0)
+            x += 1.0;
+
+    } else {
+        x = fromX + (toX - fromX) * progress;
+    }
+
+    double y = fromY + (toY - fromY) * progress;
+
+    QGeoCoordinate result = QGeoProjection::mercatorToCoord(QDoubleVector2D(x, y));
+    result.setAltitude(from.altitude() + (to.altitude() - from.altitude()) * progress);
+    return QVariant::fromValue(result);
+}
+
 QVariant q_coordinateWestInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
 {
-    QDoubleVector2D fromVector = QGeoProjection::coordToMercator(from);
-    QDoubleVector2D toVector = QGeoProjection::coordToMercator(to);
+    const QGeoMercatorCoordinatePrivate* fromMercator =
+            static_cast<const QGeoMercatorCoordinatePrivate*>(QGeoCoordinatePrivate::get(&from));
+    const QGeoMercatorCoordinatePrivate* toMercator =
+            static_cast<const QGeoMercatorCoordinatePrivate*>(QGeoCoordinatePrivate::get(&to));
 
-    double toX = toVector.x();
-    double diff = toVector.x() - fromVector.x();
+    double toX = toMercator->m_mercatorX;
+    double toY = toMercator->m_mercatorY;
+    double fromX = fromMercator->m_mercatorX;
+    double fromY = fromMercator->m_mercatorY;
+    double diff = toX - fromX;
 
     while (diff < 0.0) {
         toX += 1.0;
         diff += 1.0;
     }
 
-    double x = fromVector.x() + (toX - fromVector.x()) * progress;
-    double y = fromVector.y() + (toVector.y() - fromVector.y()) * progress;
+    double x = fromX + (toX - fromX) * progress;
+    double y = fromY + (toY - fromY) * progress;
 
     while (x > 1.0)
         x -= 1.0;
@@ -105,19 +148,24 @@ QVariant q_coordinateWestInterpolator(const QGeoCoordinate &from, const QGeoCoor
 
 QVariant q_coordinateEastInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
 {
-    QDoubleVector2D fromVector = QGeoProjection::coordToMercator(from);
-    QDoubleVector2D toVector = QGeoProjection::coordToMercator(to);
+    const QGeoMercatorCoordinatePrivate* fromMercator =
+            static_cast<const QGeoMercatorCoordinatePrivate*>(QGeoCoordinatePrivate::get(&from));
+    const QGeoMercatorCoordinatePrivate* toMercator =
+            static_cast<const QGeoMercatorCoordinatePrivate*>(QGeoCoordinatePrivate::get(&to));
 
-    double toX = toVector.x();
-    double diff = toVector.x() - fromVector.x();
+    double toX = toMercator->m_mercatorX;
+    double toY = toMercator->m_mercatorY;
+    double fromX = fromMercator->m_mercatorX;
+    double fromY = fromMercator->m_mercatorY;
+    double diff = toX - fromX;
 
     while (diff > 0.0) {
         toX -= 1.0;
         diff -= 1.0;
     }
 
-    double x = fromVector.x() + (toX - fromVector.x()) * progress;
-    double y = fromVector.y() + (toVector.y() - fromVector.y()) * progress;
+    double x = fromX + (toX - fromX) * progress;
+    double y = fromY + (toY - fromY) * progress;
 
     while (x < 0.0)
         x += 1.0;
@@ -148,13 +196,21 @@ QQuickGeoCoordinateAnimation::~QQuickGeoCoordinateAnimation()
 */
 QGeoCoordinate QQuickGeoCoordinateAnimation::from() const
 {
-    Q_D(const QQuickPropertyAnimation);
+    Q_D(const QQuickGeoCoordinateAnimation);
     return d->from.value<QGeoCoordinate>();
 }
 
 void QQuickGeoCoordinateAnimation::setFrom(const QGeoCoordinate &f)
 {
-    QQuickPropertyAnimation::setFrom(QVariant::fromValue(f));
+    QGeoMercatorCoordinatePrivate *mercator = new QGeoMercatorCoordinatePrivate();
+    QDoubleVector2D fromVector = QGeoProjection::coordToMercator(f);
+    mercator->lat = f.latitude();
+    mercator->lng = f.longitude();
+    mercator->alt = f.altitude();
+    mercator->m_mercatorX = fromVector.x();
+    mercator->m_mercatorY = fromVector.y();
+    QGeoCoordinate from(*mercator);
+    QQuickPropertyAnimation::setFrom(QVariant::fromValue(from));
 }
 
 /*!
@@ -169,7 +225,15 @@ QGeoCoordinate QQuickGeoCoordinateAnimation::to() const
 
 void QQuickGeoCoordinateAnimation::setTo(const QGeoCoordinate &t)
 {
-    QQuickPropertyAnimation::setTo(QVariant::fromValue(t));
+    QGeoMercatorCoordinatePrivate *mercator = new QGeoMercatorCoordinatePrivate();
+    QDoubleVector2D toVector = QGeoProjection::coordToMercator(t);
+    mercator->lat = t.latitude();
+    mercator->lng = t.longitude();
+    mercator->alt = t.altitude();
+    mercator->m_mercatorX = toVector.x();
+    mercator->m_mercatorY = toVector.y();
+    QGeoCoordinate to(*mercator);
+    QQuickPropertyAnimation::setTo(QVariant::fromValue(to));
 }
 
 /*!

@@ -64,7 +64,22 @@ public:
     static void atDistanceAndAzimuth(const QGeoCoordinate &coord,
                                      qreal distance, qreal azimuth,
                                      double *lon, double *lat);
+    static const QGeoCoordinatePrivate *get(const QGeoCoordinate *c) {
+           return c->d.constData();
+    }
 };
+
+class Q_POSITIONING_EXPORT QGeoMercatorCoordinatePrivate : public QGeoCoordinatePrivate
+{
+public:
+    QGeoMercatorCoordinatePrivate();
+    QGeoMercatorCoordinatePrivate(const QGeoMercatorCoordinatePrivate &other);
+    ~QGeoMercatorCoordinatePrivate();
+
+    double m_mercatorX;
+    double m_mercatorY;
+};
+
 
 QT_END_NAMESPACE
 
