@@ -732,7 +732,7 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
     }
 
     //TODO: update only material
-    if (geometry_.isScreenDirty() || dirtyMaterial_) {
+    if (geometry_.isScreenDirty() || dirtyMaterial_ || !oldNode) {
         node->update(line_.color(), &geometry_);
         geometry_.setPreserveGeometry(false);
         geometry_.markClean();
