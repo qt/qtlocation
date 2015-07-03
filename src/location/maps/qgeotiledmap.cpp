@@ -47,7 +47,7 @@
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
-
+#define PREFETCH_FRUSTUM_SCALE 2.0
 
 QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent)
     : QGeoMap(*new QGeoTiledMapPrivate(engine), parent)
@@ -85,6 +85,12 @@ void QGeoTiledMap::updateTile(const QGeoTileSpec &spec)
     d->updateTile(spec);
 }
 
+void QGeoTiledMap::setPrefetchStyle(QGeoTiledMap::PrefetchStyle style)
+{
+    Q_D(QGeoTiledMap);
+    d->m_prefetchStyle = style;
+}
+
 QAbstractGeoTileCache *QGeoTiledMap::tileCache()
 {
     Q_D(QGeoTiledMap);
@@ -107,6 +113,7 @@ void QGeoTiledMap::clearData()
 {
     Q_D(QGeoTiledMap);
     d->m_cache->clearAll();
+    d->m_mapScene->clearTexturedTiles();
 }
 
 void QGeoTiledMap::handleTileVersionChanged()
@@ -157,14 +164,20 @@ QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coo
 QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
     : QGeoMapPrivate(engine),
       m_cache(engine->tileCache()),
-      m_cameraTiles(new QGeoCameraTiles()),
+      m_visibleTiles(new QGeoCameraTiles()),
+      m_prefetchTiles(new QGeoCameraTiles()),
       m_mapScene(new QGeoMapScene()),
-      m_tileRequests(0)
+      m_tileRequests(0),
+      m_maxZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().maximumZoomLevel()))),
+      m_prefetchStyle(QGeoTiledMap::PrefetchTwoNeighbourLayers)
 {
-    m_cameraTiles->setMaximumZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().maximumZoomLevel())));
-    m_cameraTiles->setTileSize(engine->tileSize().width());
-    m_cameraTiles->setPluginString(engine->managerName() + QLatin1Char('_') + QString::number(engine->managerVersion()));
-    m_mapScene->setTileSize(engine->tileSize().width());
+    int tileSize = engine->tileSize().width();
+    QString pluginString(engine->managerName() + QLatin1Char('_') + QString::number(engine->managerVersion()));
+    m_visibleTiles->setTileSize(tileSize);
+    m_prefetchTiles->setTileSize(tileSize);
+    m_visibleTiles->setPluginString(pluginString);
+    m_prefetchTiles->setPluginString(pluginString);
+    m_mapScene->setTileSize(tileSize);
 }
 
 QGeoTiledMapPrivate::~QGeoTiledMapPrivate()
@@ -172,17 +185,65 @@ QGeoTiledMapPrivate::~QGeoTiledMapPrivate()
     // controller_ is a child of map_, don't need to delete it here
 
     delete m_mapScene;
-    delete m_cameraTiles;
+    delete m_visibleTiles;
+    delete m_prefetchTiles;
 
     // TODO map items are not deallocated!
     // However: how to ensure this is done in rendering thread?
 }
 
+
 void QGeoTiledMapPrivate::prefetchTiles()
 {
-    if (m_tileRequests)
-        m_tileRequests->requestTiles(m_cameraTiles->prefetchTiles(QGeoCameraTiles::PrefetchTwoNeighbourLayers)
-                                     - m_mapScene->texturedTiles());
+    if (m_tileRequests) {
+
+        QSet<QGeoTileSpec> tiles;
+        QGeoCameraData camera = m_visibleTiles->cameraData();
+        int currentIntZoom = static_cast<int>(std::floor(camera.zoomLevel()));
+
+        m_prefetchTiles->setCameraData(camera);
+        m_prefetchTiles->setViewExpansion(PREFETCH_FRUSTUM_SCALE);
+        tiles = m_prefetchTiles->createTiles();
+
+        switch (m_prefetchStyle) {
+
+        case QGeoTiledMap::PrefetchNeighbourLayer: {
+            double zoomFraction = camera.zoomLevel() - currentIntZoom;
+            int nearestNeighbourLayer = zoomFraction > 0.5 ? currentIntZoom + 1 : currentIntZoom - 1;
+            if (nearestNeighbourLayer <= m_maxZoomLevel && nearestNeighbourLayer >= 0) {
+                camera.setZoomLevel(nearestNeighbourLayer);
+                // Approx heuristic, keeping total # prefetched tiles roughly independent of the
+                // fractional zoom level.
+                double neighbourScale = (1.0 + zoomFraction)/2.0;
+                m_prefetchTiles->setCameraData(camera);
+                m_prefetchTiles->setViewExpansion(PREFETCH_FRUSTUM_SCALE * neighbourScale);
+                tiles += m_prefetchTiles->createTiles();
+            }
+        }
+            break;
+
+        case QGeoTiledMap::PrefetchTwoNeighbourLayers: {
+            // This is a simpler strategy, we just prefetch from layer above and below
+            // for the layer below we only use half the size as this fills the screen
+            if (currentIntZoom > 0) {
+                camera.setZoomLevel(currentIntZoom - 1);
+                m_prefetchTiles->setCameraData(camera);
+                m_prefetchTiles->setViewExpansion(0.5);
+                tiles += m_prefetchTiles->createTiles();
+            }
+
+            if (currentIntZoom < m_maxZoomLevel) {
+                camera.setZoomLevel(currentIntZoom + 1);
+                m_prefetchTiles->setCameraData(camera);
+                m_prefetchTiles->setViewExpansion(1.0);
+                tiles += m_prefetchTiles->createTiles();
+            }
+
+        }
+        }
+
+        m_tileRequests->requestTiles(tiles - m_mapScene->texturedTiles());
+    }
 }
 
 void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
@@ -210,7 +271,7 @@ void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
         cam.setZoomLevel(izl);
     }
 
-    m_cameraTiles->setCameraData(cam);
+    m_visibleTiles->setCameraData(cam);
     m_mapScene->setCameraData(cam);
     updateScene();
 }
@@ -219,7 +280,7 @@ void QGeoTiledMapPrivate::updateScene()
 {
     Q_Q(QGeoTiledMap);
     // detect if new tiles introduced
-    const QSet<QGeoTileSpec>& tiles = m_cameraTiles->visibleTiles();
+    const QSet<QGeoTileSpec>& tiles = m_visibleTiles->createTiles();
     bool newTilesIntroduced = !m_mapScene->visibleTiles().contains(tiles);
     m_mapScene->setVisibleTiles(tiles);
 
@@ -228,7 +289,7 @@ void QGeoTiledMapPrivate::updateScene()
 
     // don't request tiles that are already built and textured
     QList<QSharedPointer<QGeoTileTexture> > cachedTiles =
-            m_tileRequests->requestTiles(m_cameraTiles->visibleTiles() - m_mapScene->texturedTiles());
+            m_tileRequests->requestTiles(m_visibleTiles->createTiles() - m_mapScene->texturedTiles());
 
     foreach (const QSharedPointer<QGeoTileTexture> &tex, cachedTiles) {
         m_mapScene->addTile(tex->spec, tex);
@@ -240,29 +301,30 @@ void QGeoTiledMapPrivate::updateScene()
 
 void QGeoTiledMapPrivate::changeActiveMapType(const QGeoMapType mapType)
 {
-    m_cameraTiles->setMapType(mapType);
+    m_visibleTiles->setMapType(mapType);
+    m_prefetchTiles->setMapType(mapType);
 }
 
 void QGeoTiledMapPrivate::changeTileVersion(int version)
 {
-    m_cameraTiles->setMapVersion(version);
+    m_visibleTiles->setMapVersion(version);
+    m_prefetchTiles->setMapVersion(version);
     updateScene();
 }
 
 void QGeoTiledMapPrivate::mapResized(int width, int height)
 {
     Q_Q(QGeoTiledMap);
-    if (m_cameraTiles)
-        m_cameraTiles->setScreenSize(QSize(width, height));
-    if (m_mapScene)
-        m_mapScene->setScreenSize(QSize(width, height));
+    m_visibleTiles->setScreenSize(QSize(width, height));
+    m_prefetchTiles->setScreenSize(QSize(width, height));
+    m_mapScene->setScreenSize(QSize(width, height));
     if (q)
         q->setCameraData(q->cameraData());
 
-    if (width > 0 && height > 0 && m_cache && m_cameraTiles) {
+    if (width > 0 && height > 0 && m_cache) {
         // absolute minimum size: one tile each side of display, 32-bit colour
-        int texCacheSize = (width + m_cameraTiles->tileSize() * 2) *
-                (height + m_cameraTiles->tileSize() * 2) * 4;
+        int texCacheSize = (width + m_visibleTiles->tileSize() * 2) *
+                (height + m_visibleTiles->tileSize() * 2) * 4;
 
         // multiply by 3 so the 'recent' list in the cache is big enough for
         // an entire display of tiles
@@ -272,14 +334,14 @@ void QGeoTiledMapPrivate::mapResized(int width, int height)
         int newSize = qMax(m_cache->minTextureUsage(), texCacheSize);
         m_cache->setMinTextureUsage(newSize);
     }
-    q->evaluateCopyrights(m_cameraTiles->visibleTiles());
+    q->evaluateCopyrights(m_visibleTiles->createTiles());
 }
 
 void QGeoTiledMapPrivate::updateTile(const QGeoTileSpec &spec)
 {
      Q_Q(QGeoTiledMap);
     // Only promote the texture up to GPU if it is visible
-    if (m_cameraTiles->visibleTiles().contains(spec)){
+    if (m_visibleTiles->createTiles().contains(spec)){
         QSharedPointer<QGeoTileTexture> tex = m_tileRequests->tileTexture(spec);
         if (!tex.isNull()) {
             m_mapScene->addTile(spec, tex);

@@ -42,8 +42,6 @@
 
 QT_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoCameraTiles::PrefetchStle)
-
 struct PositionTestInfo {
     QString xyString;
     QString zoomString;
@@ -71,8 +69,6 @@ private slots:
     void tilesMapType();
     void tilesPositions();
     void tilesPositions_data();
-    void fetchTiles();
-    void fetchTiles_data();
 };
 
 void tst_QGeoCameraTiles::row(const PositionTestInfo &pti, int xOffset, int yOffset, int tileX, int tileY, int tileW, int tileH)
@@ -127,17 +123,16 @@ void tst_QGeoCameraTiles::tilesPlugin()
     camera.setCenter(QGeoCoordinate(0.0, 0.0));
 
     QGeoCameraTiles ct;
-    ct.setMaximumZoomLevel(8);
     ct.setTileSize(16);
     ct.setCameraData(camera);
     ct.setScreenSize(QSize(32, 32));
     ct.setMapType(QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1));
 
-    QSet<QGeoTileSpec> tiles1 = ct.visibleTiles();
+    QSet<QGeoTileSpec> tiles1 = ct.createTiles();
 
     ct.setPluginString("pluginA");
 
-    QSet<QGeoTileSpec> tiles2 = ct.visibleTiles();
+    QSet<QGeoTileSpec> tiles2 = ct.createTiles();
 
     typedef QSet<QGeoTileSpec>::const_iterator iter;
     iter i1 = tiles1.constBegin();
@@ -154,7 +149,7 @@ void tst_QGeoCameraTiles::tilesPlugin()
 
     ct.setPluginString("pluginB");
 
-    QSet<QGeoTileSpec> tiles3 = ct.visibleTiles();
+    QSet<QGeoTileSpec> tiles3 = ct.createTiles();
 
     iter i2 = tiles2.constBegin();
     iter end2 = tiles2.constEnd();
@@ -176,18 +171,17 @@ void tst_QGeoCameraTiles::tilesMapType()
     camera.setCenter(QGeoCoordinate(0.0, 0.0));
 
     QGeoCameraTiles ct;
-    ct.setMaximumZoomLevel(8);
     ct.setTileSize(16);
     ct.setCameraData(camera);
     ct.setScreenSize(QSize(32, 32));
     ct.setPluginString("pluginA");
 
-    QSet<QGeoTileSpec> tiles1 = ct.visibleTiles();
+    QSet<QGeoTileSpec> tiles1 = ct.createTiles();
 
     QGeoMapType mapType1 = QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1);
     ct.setMapType(mapType1);
 
-    QSet<QGeoTileSpec> tiles2 = ct.visibleTiles();
+    QSet<QGeoTileSpec> tiles2 = ct.createTiles();
 
     typedef QSet<QGeoTileSpec>::const_iterator iter;
     iter i1 = tiles1.constBegin();
@@ -205,7 +199,7 @@ void tst_QGeoCameraTiles::tilesMapType()
     QGeoMapType mapType2 = QGeoMapType(QGeoMapType::StreetMap, "satellite map", "satellite map", false, false, 2);
     ct.setMapType(mapType2);
 
-    QSet<QGeoTileSpec> tiles3 = ct.visibleTiles();
+    QSet<QGeoTileSpec> tiles3 = ct.createTiles();
 
     iter i2 = tiles2.constBegin();
     iter end2 = tiles2.constEnd();
@@ -235,7 +229,6 @@ void tst_QGeoCameraTiles::tilesPositions()
     camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(mercatorX, mercatorY)));
 
     QGeoCameraTiles ct;
-    ct.setMaximumZoomLevel(8);
     ct.setTileSize(16);
     ct.setCameraData(camera);
     ct.setScreenSize(QSize(qCeil(width), qCeil(height)));
@@ -247,7 +240,7 @@ void tst_QGeoCameraTiles::tilesPositions()
     for (int i = 0; i < tilesX.size(); ++i)
         tiles.insert(QGeoTileSpec("", 0, static_cast<int>(qFloor(zoom)), tilesX.at(i), tilesY.at(i)));
 
-    QCOMPARE(ct.visibleTiles(), tiles);
+    QCOMPARE(ct.createTiles(), tiles);
 }
 
 void tst_QGeoCameraTiles::tilesPositions_data()
@@ -1807,68 +1800,6 @@ void tst_QGeoCameraTiles::tilesPositions_data()
     pti.xyString = QStringLiteral("right");
 
     test_group(pti, right_t2p1x, right_t2p1w, mid_t2p1x, mid_t2p1w);
-}
-
-void tst_QGeoCameraTiles::fetchTiles()
-{
-    QFETCH(double, zoomLevel);
-    QFETCH(int, visibleCount);
-    QFETCH(int, prefetchCount);
-    QFETCH(QGeoCameraTiles::PrefetchStle, style);
-    QFETCH(int, nearestNeighbourLayer);
-
-    QGeoCameraTiles ct;
-    ct.setMaximumZoomLevel(8);
-    ct.setTileSize(16);
-    ct.setScreenSize(QSize(16, 16));
-
-    QGeoCameraData camera;
-    camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D( 0.5 ,  0.5 )));
-
-    camera.setZoomLevel(zoomLevel - 1);
-    ct.setCameraData(camera);
-    QSet<QGeoTileSpec> prev_visible = ct.visibleTiles();
-    camera.setZoomLevel(zoomLevel);
-    ct.setCameraData(camera);
-    QSet<QGeoTileSpec> visible = ct.visibleTiles();
-    QSet<QGeoTileSpec> prefetched = ct.prefetchTiles(style);
-    camera.setZoomLevel(zoomLevel + 1);
-    ct.setCameraData(camera);
-    QSet<QGeoTileSpec> next_visible = ct.visibleTiles();
-
-    QVERIFY2(visibleCount == visible.size(), "visible count incorrect");
-    QVERIFY2(prefetchCount == prefetched.size(), "prefetch count incorrect");
-    QSetIterator<QGeoTileSpec> i(visible);
-    while (i.hasNext())
-        QVERIFY2(prefetched.contains(i.next()),"visible tile missing from prefetched tiles");
-
-    //for zoomLevels wihtout fractions more tiles are fetched for current zoomlevel due to ViewExpansion
-    if (qCeil(zoomLevel) != zoomLevel && style == QGeoCameraTiles::PrefetchNeighbourLayer && nearestNeighbourLayer < zoomLevel)
-        QVERIFY2(prefetched == prev_visible + visible, "wrongly prefetched tiles");
-
-    if (qCeil(zoomLevel) != zoomLevel && style == QGeoCameraTiles::PrefetchNeighbourLayer && nearestNeighbourLayer > zoomLevel)
-        QVERIFY2(prefetched == next_visible + visible, "wrongly prefetched tiles");
-
-    if (qCeil(zoomLevel) != zoomLevel && style == QGeoCameraTiles::PrefetchTwoNeighbourLayers)
-        QVERIFY2(prefetched == prev_visible + visible + next_visible, "wrongly prefetched tiles");
-}
-
-void tst_QGeoCameraTiles::fetchTiles_data()
-{
-    QTest::addColumn<double>("zoomLevel");
-    QTest::addColumn<int>("visibleCount");
-    QTest::addColumn<int>("prefetchCount");
-    QTest::addColumn<QGeoCameraTiles::PrefetchStle>("style");
-    QTest::addColumn<int>("nearestNeighbourLayer");
-    QTest::newRow("zoomLevel: 4 , visible count: 4 : prefetch count: 16") << 4.0 << 4 << 4 + 16 << QGeoCameraTiles::PrefetchNeighbourLayer << 3;
-    QTest::newRow("zoomLevel: 4.01 , visible count: 4 : prefetch count: 4") << 4.01 << 4 << 4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 3;
-    QTest::newRow("zoomLevel: 4.1 , visible count: 4 : prefetch count: 4") << 4.1 << 4 << 4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 3;
-    QTest::newRow("zoomLevel: 4.5 , visible count: 4 : prefetch count: 4") << 4.5 << 4 << 4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 3;
-    QTest::newRow("zoomLevel: 4.6 , visible count: 4 : prefetch count: 4") << 4.6 << 4 << 4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 5;
-    QTest::newRow("zoomLevel: 4.9 , visible count: 4 : prefetch count: 4") << 4.9 << 4 <<4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 5;
-    QTest::newRow("zoomLevel: 4 , visible count: 4 : prefetch count: 4") << 4.0 << 4 << 16 + 4 + 4 << QGeoCameraTiles::PrefetchTwoNeighbourLayers << 3;
-    QTest::newRow("zoomLevel: 4.1 , visible count: 4 : prefetch count: 4") << 4.1 << 4 << 4 + 4 + 4 << QGeoCameraTiles::PrefetchTwoNeighbourLayers << 3;
-    QTest::newRow("zoomLevel: 4.6 ,visible count: 4 : prefetch count: 4") << 4.6 << 4 << 4 + 4  + 4 << QGeoCameraTiles::PrefetchTwoNeighbourLayers << 5;
 }
 
 QTEST_GUILESS_MAIN(tst_QGeoCameraTiles)

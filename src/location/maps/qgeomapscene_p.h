@@ -87,6 +87,8 @@ public:
     bool verticalLock() const;
     QSet<QGeoTileSpec> texturedTiles();
 
+    void clearTexturedTiles();
+
 Q_SIGNALS:
     void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);
 

@@ -196,6 +196,12 @@ QSet<QGeoTileSpec> QGeoMapScene::texturedTiles()
     return textured;
 }
 
+void QGeoMapScene::clearTexturedTiles()
+{
+    Q_D(QGeoMapScene);
+    d->m_textures.clear();
+}
+
 QGeoMapScenePrivate::QGeoMapScenePrivate()
     : QObjectPrivate(),
       m_tileSize(0),

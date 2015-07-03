@@ -50,6 +50,7 @@ qtHaveModule(location) {
            qgeoroutingmanager \
            qgeoroutingmanagerplugins \
            qgeoserviceprovider \
+           qgeotiledmap \
            qgeotilespec \
            qgeoroutexmlparser \
            qgeomapcontroller \

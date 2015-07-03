@@ -277,7 +277,6 @@ class tst_QGeoMapScene : public QObject
             camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(0.0, 0.0)));
 
             QGeoCameraTiles ct;
-            ct.setMaximumZoomLevel(8);
             ct.setTileSize(16);
             ct.setCameraData(camera);
             ct.setScreenSize(QSize(16,16));
@@ -288,7 +287,7 @@ class tst_QGeoMapScene : public QObject
             mapScene.setCameraData(camera);
             QVERIFY(!mapScene.verticalLock());
             mapScene.setUseVerticalLock(true);
-            mapScene.setVisibleTiles(ct.visibleTiles());
+            mapScene.setVisibleTiles(ct.createTiles());
             QVERIFY(mapScene.verticalLock());
 
             // Test the case when setting vertical lock has no effect
@@ -298,7 +297,7 @@ class tst_QGeoMapScene : public QObject
             mapScene2.setCameraData(camera);
             QVERIFY(!mapScene2.verticalLock());
             mapScene2.setUseVerticalLock(true);
-            mapScene2.setVisibleTiles(ct.visibleTiles());
+            mapScene2.setVisibleTiles(ct.createTiles());
             QVERIFY(!mapScene2.verticalLock());
         }
 
@@ -319,7 +318,6 @@ class tst_QGeoMapScene : public QObject
             camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY)));
 
             QGeoCameraTiles ct;
-            ct.setMaximumZoomLevel(8);
             ct.setTileSize(tileSize);
             ct.setCameraData(camera);
             ct.setScreenSize(QSize(screenWidth,screenHeight));
@@ -328,7 +326,7 @@ class tst_QGeoMapScene : public QObject
             mapGeometry.setTileSize(tileSize);
             mapGeometry.setScreenSize(QSize(screenWidth,screenHeight));
             mapGeometry.setCameraData(camera);
-            mapGeometry.setVisibleTiles(ct.visibleTiles());
+            mapGeometry.setVisibleTiles(ct.createTiles());
 
             QDoubleVector2D point(screenX,screenY);
             QDoubleVector2D mecartorPos = mapGeometry.itemPositionToMercator(point);
@@ -359,7 +357,6 @@ class tst_QGeoMapScene : public QObject
             camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY)));
 
             QGeoCameraTiles ct;
-            ct.setMaximumZoomLevel(8);
             ct.setTileSize(tileSize);
             ct.setCameraData(camera);
             ct.setScreenSize(QSize(screenWidth,screenHeight));
@@ -368,7 +365,7 @@ class tst_QGeoMapScene : public QObject
             mapGeometry.setTileSize(tileSize);
             mapGeometry.setScreenSize(QSize(screenWidth,screenHeight));
             mapGeometry.setCameraData(camera);
-            mapGeometry.setVisibleTiles(ct.visibleTiles());
+            mapGeometry.setVisibleTiles(ct.createTiles());
 
             QDoubleVector2D mercatorPos(mercatorX, mercatorY);
             QPointF point = mapGeometry.mercatorToItemPosition(mercatorPos).toPointF();

@@ -29,20 +29,21 @@
 #ifndef QGEOTILEDMAP_TEST_H
 #define QGEOTILEDMAP_TEST_H
 
+#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
 #include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_USE_NAMESPACE
-
-
+class QGeoTiledMappingManagerEngineTest;
 class QGeoTiledMapTest: public QGeoTiledMap
 {
     Q_OBJECT
 public:
-    QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
-        : QGeoTiledMap(engine, parent) {}
+    QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0):
+        QGeoTiledMap(engine, parent),
+        m_engine(engine){}
 public:
-       using QGeoTiledMap::setCameraData;
-
+    using QGeoTiledMap::setCameraData;
+    QGeoTiledMappingManagerEngine *m_engine;
 };
 
 #endif

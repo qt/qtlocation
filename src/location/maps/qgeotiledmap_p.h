@@ -74,14 +74,15 @@ class Q_LOCATION_EXPORT QGeoTiledMap : public QGeoMap
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoTiledMap)
-
 public:
+    enum PrefetchStyle { PrefetchNeighbourLayer, PrefetchTwoNeighbourLayers };
     QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent);
     virtual ~QGeoTiledMap();
 
     QAbstractGeoTileCache *tileCache();
     QGeoTileRequestManager *requestManager();
     void updateTile(const QGeoTileSpec &spec);
+    void setPrefetchStyle(PrefetchStyle style);
 
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;

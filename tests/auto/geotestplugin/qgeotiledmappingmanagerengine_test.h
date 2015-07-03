@@ -57,8 +57,6 @@ public:
         capabilities.setMinimumZoomLevel(0.0);
         capabilities.setMaximumZoomLevel(20.0);
         capabilities.setSupportsBearing(true);
-        setCameraCapabilities(capabilities);
-
         setTileSize(QSize(256, 256));
 
         QList<QGeoMapType> mapTypes;
@@ -68,14 +66,25 @@ public:
         setSupportedMapTypes(mapTypes);
 
         QGeoTileFetcherTest *fetcher = new QGeoTileFetcherTest(this);
-        fetcher->setParams(parameters);
-        fetcher->setTileSize(QSize(256, 255));
+        if (parameters.contains(QStringLiteral("finishRequestImmediately")))
+            fetcher->setFinishRequestImmediately(parameters.value(QStringLiteral("finishRequestImmediately")).toBool());
+        if (parameters.contains(QStringLiteral("tileSize"))) {
+            int tileSize = parameters.value(QStringLiteral("tileSize")).toInt();
+            setTileSize(QSize(tileSize, tileSize));
+        }
+        if (parameters.contains(QStringLiteral("maxZoomLevel"))) {
+            double maxZoomLevel = parameters.value(QStringLiteral("maxZoomLevel")).toDouble();
+            capabilities.setMaximumZoomLevel(maxZoomLevel);
+        }
+
+        setCameraCapabilities(capabilities);
+        fetcher->setTileSize(tileSize());
         setTileFetcher(fetcher);
     }
 
     QGeoMap *createMap()
     {
-        return new QGeoTiledMapTest(this);;
+        return new QGeoTiledMapTest(this);
     }
 
 };

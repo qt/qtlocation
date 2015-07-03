@@ -93,9 +93,12 @@ private:
 
 private:
     QAbstractGeoTileCache *m_cache;
-    QGeoCameraTiles *m_cameraTiles;
+    QGeoCameraTiles *m_visibleTiles;
+    QGeoCameraTiles *m_prefetchTiles;
     QGeoMapScene *m_mapScene;
     QGeoTileRequestManager *m_tileRequests;
+    int m_maxZoomLevel;
+    QGeoTiledMap::PrefetchStyle m_prefetchStyle;
     Q_DISABLE_COPY(QGeoTiledMapPrivate)
 };
 

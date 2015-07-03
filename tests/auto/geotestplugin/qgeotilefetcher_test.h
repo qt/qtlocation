@@ -121,10 +121,9 @@ public:
         return mappingReply;
     }
 
-    void setParams(const QVariantMap &parameters)
+    void setFinishRequestImmediately(bool enabled)
     {
-        if (parameters.contains(QStringLiteral("finishRequestImmediately")))
-            finishRequestImmediately_ = parameters.value(QStringLiteral("finishRequestImmediately")).toBool();
+        finishRequestImmediately_ = enabled;
     }
 
     void setTileSize(QSize tileSize)
@@ -139,6 +138,8 @@ public Q_SLOTS:
         errorString_.clear();
         errorCode_ = QGeoTiledMapReply::NoError;
     }
+Q_SIGNALS:
+    void tileFetched(const QGeoTileSpec&);
 
 protected:
     void updateRequest(TiledMapReplyTest* mappingReply)
@@ -149,6 +150,7 @@ protected:
         } else {
             mappingReply->callSetError(QGeoTiledMapReply::NoError, "no error");
             mappingReply->callSetFinished(true);
+            emit tileFetched(mappingReply->tileSpec());
         }
     }
 
@@ -159,8 +161,9 @@ protected:
             return;
         }
         updateRequest(m_queue.takeFirst());
-        if (m_queue.isEmpty())
+        if (m_queue.isEmpty()) {
             timer_.stop();
+        }
     }
 
 private:
