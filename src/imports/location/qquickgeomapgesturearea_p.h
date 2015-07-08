@@ -34,12 +34,11 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPGESTUREAREA_P_H
-#define QDECLARATIVEGEOMAPGESTUREAREA_P_H
+#ifndef QQUICKGEOMAPGESTUREAREA_P_H
+#define QQUICKGEOMAPGESTUREAREA_P_H
 
-#include <QtQml/qqml.h>
+#include <QtQuick/QQuickItem>
 #include <QTouchEvent>
-#include <QObject>
 #include <QDebug>
 #include <QElapsedTimer>
 #include "qgeocoordinate.h"
@@ -53,8 +52,6 @@ class QDeclarativeGeoMap;
 class QTouchEvent;
 class QWheelEvent;
 class QGeoMap;
-class QPropertyAnimation;
-class QQuickItem;
 
 class QDeclarativeGeoMapPinchEvent : public QObject
 {
@@ -102,10 +99,7 @@ private:
     bool m_accepted;
 };
 
-// tbd: should we have a 'active' / 'moving' boolean attribute when pinch is active?
-
-// class QDeclarativeGeoMapGestureArea: public QObject // supporting pinching, panning, flicking
-class QDeclarativeGeoMapGestureArea: public QObject
+class QQuickGeoMapGestureArea: public QQuickItem
 {
     Q_OBJECT
     Q_ENUMS(ActiveGesture)
@@ -121,8 +115,8 @@ class QDeclarativeGeoMapGestureArea: public QObject
     Q_PROPERTY(qreal flickDeceleration READ flickDeceleration WRITE setFlickDeceleration NOTIFY flickDecelerationChanged)
     Q_PROPERTY(bool preventStealing READ preventStealing WRITE setPreventStealing NOTIFY preventStealingChanged REVISION 1)
 public:
-    QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent = 0);
-    ~QDeclarativeGeoMapGestureArea();
+    QQuickGeoMapGestureArea(QDeclarativeGeoMap *map);
+    ~QQuickGeoMapGestureArea();
 
     enum ActiveGesture {
         NoGesture = 0x0000,
@@ -309,6 +303,6 @@ private:
 };
 
 QT_END_NAMESPACE
-QML_DECLARE_TYPE(QDeclarativeGeoMapGestureArea)
+QML_DECLARE_TYPE(QQuickGeoMapGestureArea)
 
-#endif // QDECLARATIVEGEOMAPGESTUREAREA_P_H
+#endif // QQUICKGEOMAPGESTUREAREA_P_H

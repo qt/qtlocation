@@ -110,7 +110,7 @@ public:
             qmlRegisterType<QDeclarativeGeoManeuver                 >(uri, major, minor, "RouteManeuver");
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent >(uri, major, minor, "MapPinchEvent",
                                         QStringLiteral("(Map)PinchEvent is not intended instantiable by developer."));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea>(uri, major, minor, "MapGestureArea",
+            qmlRegisterUncreatableType<QQuickGeoMapGestureArea>(uri, major, minor, "MapGestureArea",
                                         QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapType       >(uri, major, minor, "MapType",
                                         QStringLiteral("MapType is not intended instantiable by developer."));
@@ -154,7 +154,7 @@ public:
                                                   QStringLiteral("MapType is not intended instantiable by developer."));
             minor = 6;
             //TODO: this is broken QTBUG-40043
-            qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea, 1>(uri, major, minor, "MapGestureArea",
+            qmlRegisterUncreatableType<QQuickGeoMapGestureArea, 1>(uri, major, minor, "MapGestureArea",
                                         QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));
 
 

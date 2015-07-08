@@ -175,7 +175,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_mappingManager(0),
         m_center(51.5073,-0.1277), //London city center
         m_activeMapType(0),
-        m_gestureArea(0),
+        m_gestureArea(new QQuickGeoMapGestureArea(this)),
         m_map(0),
         m_error(QGeoServiceProvider::NoError),
         m_zoomLevel(8.0),
@@ -190,8 +190,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
     connect(this, SIGNAL(childrenChanged()), this, SLOT(onMapChildrenChanged()), Qt::QueuedConnection);
 
-    // Create internal flickable and pinch area.
-    m_gestureArea = new QDeclarativeGeoMapGestureArea(this, this);
     m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                              tr("No Map"),
                                                              tr("No Map"), false, false, 0), this);
@@ -370,7 +368,7 @@ void QDeclarativeGeoMap::touchUngrabEvent()
     further details.
 */
 
-QDeclarativeGeoMapGestureArea *QDeclarativeGeoMap::gesture()
+QQuickGeoMapGestureArea *QDeclarativeGeoMap::gesture()
 {
     return m_gestureArea;
 }
@@ -1140,6 +1138,8 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 */
 void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
+    m_gestureArea->setSize(newGeometry.size());
+
     if (!m_mappingManagerInitialized)
         return;
 

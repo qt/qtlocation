@@ -56,7 +56,7 @@ class QDeclarativeGeoMap : public QQuickItem
 {
     Q_OBJECT
     Q_ENUMS(QGeoServiceProvider::Error)
-    Q_PROPERTY(QDeclarativeGeoMapGestureArea *gesture READ gesture CONSTANT)
+    Q_PROPERTY(QQuickGeoMapGestureArea *gesture READ gesture CONSTANT)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
@@ -110,7 +110,7 @@ public:
     QT_DEPRECATED Q_INVOKABLE QPointF toScreenPosition(const QGeoCoordinate &coordinate) const;
 #endif
 
-    QDeclarativeGeoMapGestureArea *gesture();
+    QQuickGeoMapGestureArea *gesture();
 
     Q_INVOKABLE void fitViewportToGeoShape(const QVariant &shape);
     Q_INVOKABLE void fitViewportToMapItems();
@@ -172,7 +172,7 @@ private:
     QDeclarativeGeoMapType *m_activeMapType;
     QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
-    QDeclarativeGeoMapGestureArea *m_gestureArea;
+    QQuickGeoMapGestureArea *m_gestureArea;
     QGeoMap *m_map;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
@@ -187,7 +187,7 @@ private:
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;
-    friend class QDeclarativeGeoMapGestureArea;
+    friend class QQuickGeoMapGestureArea;
     Q_DISABLE_COPY(QDeclarativeGeoMap)
 };
 
