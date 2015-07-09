@@ -211,9 +211,4 @@ Map {
             map.zoomLevel = value
         }
     }
-
-    MouseArea {
-        //workaround for QTBUG-46388
-        anchors.fill: parent
-    }
 }

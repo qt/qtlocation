@@ -118,6 +118,7 @@ Item {
             map.center = coordinate
             map.minimumZoomLevel = 0
             map.maximumZoomLevel = 20
+            mouseRelease(mouseAreaTop,0,0) //Fixme: mouse area state gets broken across the tests
             mouseAreaBottom.visible = false
             mouseAreaTop.visible = false
             pinchGenerator.clear()

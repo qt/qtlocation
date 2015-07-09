@@ -942,9 +942,10 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
              event->type() == QEvent::TouchCancel) {
             ungrabTouchPoints();
         }
+    } else {
+        //ignore event so sythesized event is generated;
+        QQuickItem::touchEvent(event);
     }
-    //this will always ignore event so sythesized event is generated;
-    QQuickItem::touchEvent(event);
 }
 
 /*!
