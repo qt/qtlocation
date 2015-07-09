@@ -658,7 +658,23 @@ void QDeclarativeGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
 
 void QDeclarativeGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 {
+    QGeoCoordinate wheelGeoPos = map_->itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
+    QPointF preZoomPoint = map_->coordinateToItemPosition(wheelGeoPos, false).toPointF();
+
     declarativeMap_->setZoomLevel(qBound(minimumZoomLevel(), declarativeMap_->zoomLevel() + event->angleDelta().y() * qreal(0.001), maximumZoomLevel()));
+
+    QPointF postZoomPoint = map_->coordinateToItemPosition(wheelGeoPos, false).toPointF();
+
+    if (preZoomPoint != postZoomPoint)
+    {
+        qreal dx = postZoomPoint.x() - preZoomPoint.x();
+        qreal dy = postZoomPoint.y() - preZoomPoint.y();
+        QPointF mapCenterPoint(map_->width() / 2.0 + dx, map_->height() / 2.0  + dy);
+
+        QGeoCoordinate mapCenterCoordinate = map_->itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
+        map_->mapController()->setCenter(mapCenterCoordinate);
+    }
+
     event->accept();
 }
 

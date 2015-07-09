@@ -103,8 +103,8 @@ public:
     Q_INVOKABLE void clearMapItems();
     QList<QObject *> mapItems();
 
-    Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &position) const;
-    Q_INVOKABLE QPointF fromCoordinate(const QGeoCoordinate &coordinate) const;
+    Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &position, bool clipToViewPort = true) const;
+    Q_INVOKABLE QPointF fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort = true) const;
 
 #if QT_DEPRECATED_SINCE(5,5)
     QT_DEPRECATED Q_INVOKABLE QPointF toScreenPosition(const QGeoCoordinate &coordinate) const;

@@ -821,31 +821,33 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 }
 
 /*!
-    \qmlmethod coordinate QtLocation::Map::toCoordinate(QPointF position)
+    \qmlmethod coordinate QtLocation::Map::toCoordinate(QPointF position, bool clipToViewPort)
 
     Returns the coordinate which corresponds to the \a position relative to the map item.
 
-    Returns an invalid coordinate if \a position is not within the current viewport.
+    If \a cliptoViewPort is \c true, or not supplied then returns an invalid coordinate if
+    \a position is not within the current viewport.
 */
-QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &position) const
+QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &position, bool clipToViewPort) const
 {
     if (m_map)
-        return m_map->itemPositionToCoordinate(QDoubleVector2D(position));
+        return m_map->itemPositionToCoordinate(QDoubleVector2D(position), clipToViewPort);
     else
         return QGeoCoordinate();
 }
 
 /*!
-    \qmlmethod point QtLocation::Map::fromCoordinate(coordinate coordinate)
+    \qmlmethod point QtLocation::Map::fromCoordinate(coordinate coordinate, bool clipToViewPort)
 
     Returns the position relative to the map item which corresponds to the \a coordinate.
 
-    Returns an invalid QPointF if \a coordinate is not within the current viewport.
+    If \a cliptoViewPort is \c true, or not supplied then returns an invalid QPointF if
+    \a coordinate is not within the current viewport.
 */
-QPointF QDeclarativeGeoMap::fromCoordinate(const QGeoCoordinate &coordinate) const
+QPointF QDeclarativeGeoMap::fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort) const
 {
     if (m_map)
-        return m_map->coordinateToItemPosition(coordinate).toPointF();
+        return m_map->coordinateToItemPosition(coordinate, clipToViewPort).toPointF();
     else
         return QPointF(qQNaN(), qQNaN());
 }
