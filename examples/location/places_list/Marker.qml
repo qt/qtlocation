@@ -38,64 +38,22 @@
 **
 ****************************************************************************/
 
-//! [Imports]
 import QtQuick 2.0
-import QtPositioning 5.5
-import QtLocation 5.5
-//! [Imports]
 
 Rectangle {
-    width: 360
-    height: 640
-    property variant startCoordinate: QtPositioning.coordinate( 59.9485, 10.7686) // The Qt Company in Oslo
-
-    //! [Initialize Plugin]
-    Plugin {
-        id: myPlugin
-        name: "osm"
-        //specify plugin parameters as necessary
-        //PluginParameter {...}
-        //PluginParameter {...}
-        //...
-    }
-    //! [Initialize Plugin]
-
-    //! [PlaceSearchModel]
-    PlaceSearchModel {
-        id: searchModel
-
-        plugin: myPlugin
-
-        searchTerm: "pizza"
-        searchArea: QtPositioning.circle(startCoordinate);
-
-        Component.onCompleted: update()
-
-    }
-    //! [PlaceSearchModel]
-
-    //! [Places ListView]
-    ListView {
-        anchors.fill: parent
-        model: searchModel
-        delegate: Component {
-            Row {
-                spacing: 5
-                Marker { height: parent.height }
-                Column {
-                    Text { text: title; font.bold: true }
-                    Text { text: place.location.address.text }
-                }
-            }
-        }
-    }
-    //! [Places ListView]
-
-    Connections {
-        target: searchModel
-        onStatusChanged: {
-            if (searchModel.status == PlaceSearchModel.Error)
-                console.log(searchModel.errorString());
+    width: image.width
+    Image {
+        id: image
+        anchors.centerIn: parent
+        source: "marker.png"
+        Text{
+            y: parent.height/10
+            width: parent.width
+            color: "white"
+            font.bold: true
+            font.pixelSize: 14
+            horizontalAlignment: Text.AlignHCenter
+            text: index
         }
     }
 }

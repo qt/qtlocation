@@ -5,7 +5,7 @@ QT += quick qml network positioning location
 SOURCES = main.cpp
 
 RESOURCES += \
-    places_map_resource.qrc
+    places_map.qrc
 
 target.path = $$[QT_INSTALL_EXAMPLES]/location/places_map
 INSTALLS += target
