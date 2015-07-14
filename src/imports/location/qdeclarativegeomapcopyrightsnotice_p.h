@@ -55,6 +55,8 @@ public:
 
     void setCopyrightsZ(int copyrightsZ);
 
+    void setCopyrightsVisible(bool visible);
+
 public Q_SLOTS:
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
@@ -71,6 +73,7 @@ private:
     QTextDocument *m_copyrightsHtml;
     QImage m_copyrightsImage;
     QString m_activeAnchor;
+    bool m_copyrightsVisible;
 };
 
 QT_END_NAMESPACE

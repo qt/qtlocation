@@ -181,7 +181,8 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_zoomLevel(8.0),
         m_componentCompleted(false),
         m_mappingManagerInitialized(false),
-        m_pendingFitViewport(false)
+        m_pendingFitViewport(false),
+        m_copyrightsVisible(true)
 {
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -249,6 +250,10 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
                     copyrights, SLOT(copyrightsChanged(QString)));
             connect(copyrights, SIGNAL(linkActivated(QString)),
                     this, SIGNAL(copyrightLinkActivated(QString)));
+
+            // set visibility of copyright notice
+            copyrights->setCopyrightsVisible(m_copyrightsVisible);
+
         } else {
             // just re-set its parent.
             copyrights->setParent(this);
@@ -503,6 +508,10 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             this,
             SLOT(mapZoomLevelChanged(qreal)));
 
+
+    // set visibility of copyright notice
+    m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
+
     m_map->mapController()->setCenter(m_center);
 
     QList<QGeoMapType> types = m_mappingManager->supportedMapTypes();
@@ -736,6 +745,33 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
 
     return QGeoRectangle(tl, br);
 }
+
+/*!
+    \qmlproperty bool QtLocation::Map::copyrightsVisible
+
+    This property holds the visibility of the copyrights notice. The notice is usually
+    displayed in the bottom left corner. By default, this property is set to \c true.
+
+    \note Many map providers require the notice to be visible as part of the terms and conditions.
+    Please consult the relevant provider documentation before turning this notice off.
+*/
+void QDeclarativeGeoMap::setCopyrightsVisible(bool visible)
+{
+    if (m_copyrightsVisible == visible)
+        return;
+
+    if (!m_copyrights.isNull())
+        m_copyrights->setCopyrightsVisible(visible);
+
+    m_copyrightsVisible = visible;
+    emit copyrightsVisibleChanged(visible);
+}
+
+bool QDeclarativeGeoMap::copyrightsVisible() const
+{
+    return m_copyrightsVisible;
+}
+
 
 void QDeclarativeGeoMap::fitViewportToGeoShape()
 {

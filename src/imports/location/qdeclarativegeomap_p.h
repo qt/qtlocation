@@ -68,6 +68,7 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QGeoServiceProvider::Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(QGeoShape visibleRegion READ visibleRegion WRITE setVisibleRegion)
+    Q_PROPERTY(bool copyrightsVisible READ copyrightsVisible WRITE setCopyrightsVisible NOTIFY copyrightsVisibleChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -95,6 +96,9 @@ public:
 
     void setVisibleRegion(const QGeoShape &shape);
     QGeoShape visibleRegion() const;
+
+    void setCopyrightsVisible(bool visible);
+    bool copyrightsVisible() const;
 
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
@@ -131,6 +135,7 @@ Q_SIGNALS:
     void mapItemsChanged();
     void errorChanged();
     void copyrightLinkActivated(const QString &link);
+    void copyrightsVisibleChanged(bool visible);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
@@ -184,6 +189,7 @@ private:
     bool m_mappingManagerInitialized;
     QGeoShape m_region;
     bool m_pendingFitViewport;
+    bool m_copyrightsVisible;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

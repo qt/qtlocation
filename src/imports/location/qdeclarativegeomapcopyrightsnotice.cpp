@@ -46,7 +46,7 @@
 QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent)
-:   QQuickPaintedItem(parent), m_copyrightsHtml(0)
+:   QQuickPaintedItem(parent), m_copyrightsHtml(0), m_copyrightsVisible(true)
 {
     QQuickAnchors *anchors = property("anchors").value<QQuickAnchors *>();
     if (anchors) {
@@ -92,6 +92,16 @@ void QDeclarativeGeoMapCopyrightNotice::mouseReleaseEvent(QMouseEvent *event)
 /*!
     \internal
 */
+void QDeclarativeGeoMapCopyrightNotice::setCopyrightsVisible(bool visible)
+{
+    m_copyrightsVisible = visible;
+
+    setVisible(!m_copyrightsImage.isNull() && visible);
+}
+
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(int copyrightsZ)
 {
     setZ(copyrightsZ);
@@ -113,14 +123,15 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrigh
 
     setKeepMouseGrab(false);
     setAcceptedMouseButtons(Qt::NoButton);
-    setVisible(true);
+    setVisible(m_copyrightsVisible);
 
     update();
 }
 
 void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrightsHtml)
 {
-    if (copyrightsHtml.isEmpty()) {
+    if (copyrightsHtml.isEmpty() || !m_copyrightsVisible) {
+        m_copyrightsImage = QImage();
         setVisible(false);
         return;
     } else {

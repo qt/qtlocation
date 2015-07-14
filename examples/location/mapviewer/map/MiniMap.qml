@@ -62,6 +62,7 @@ Rectangle{
         center: map.center
         plugin: map.plugin
         gesture.enabled: false
+        copyrightsVisible: false
 
         MapRectangle {
             color: "#44ff0000"
