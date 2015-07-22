@@ -6,5 +6,7 @@ HEADERS += tst_qgeoroutingmanager.h
 
 SOURCES += tst_qgeoroutingmanager.cpp
 
+CONFIG -= app_bundle
+
 QT += location testlib
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

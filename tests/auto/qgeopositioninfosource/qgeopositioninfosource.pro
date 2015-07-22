@@ -10,5 +10,7 @@ SOURCES += ../utils/qlocationtestutils.cpp \
            testqgeopositioninfosource.cpp \
            tst_qgeopositioninfosource.cpp
 
+CONFIG -= app_bundle
+
 QT += positioning testlib
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

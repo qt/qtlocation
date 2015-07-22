@@ -6,6 +6,8 @@ TARGET = tst_declarative_ui
 !no_ui_tests:CONFIG += qmltestcase
 SOURCES += main.cpp
 
+CONFIG -= app_bundle
+
 QT += location quick
 
 OTHER_FILES = *.qml

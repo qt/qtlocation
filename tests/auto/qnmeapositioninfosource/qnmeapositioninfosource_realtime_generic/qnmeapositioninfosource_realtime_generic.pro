@@ -18,6 +18,8 @@ SOURCES += ../../utils/qlocationtestutils.cpp \
            tst_qnmeapositioninfosource_realtime_generic.cpp
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 
+CONFIG -= app_bundle
+
 # This test relies on a working local QTcpSocket(Server). When the CI is under
 # heavy load the socket code cannot establish a connection which leads to flaky
 # test results. We make this test insiginficant as there is currently no known
