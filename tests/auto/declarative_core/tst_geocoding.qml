@@ -303,6 +303,8 @@ Item {
 
     TestCase {
         name: "GeocodeModelGeocoding"
+        /*
+        // see QTBUG-47423
         function clear_slack_model() {
             slackModel.reset()
             locationsSlackSpy.clear()
@@ -670,5 +672,6 @@ Item {
             compare(countSlackSpy.count, 1)
             compare(slackModel.count, 3) // slackCoordinate1.longitude
         }
+        */
     }
 }
