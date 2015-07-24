@@ -56,8 +56,13 @@ void tst_QGeoServiceProvider::initTestCase()
     /*
      * Set custom path since CI doesn't install test plugins
      */
+#ifdef Q_OS_WIN
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
+                                     QStringLiteral("/../../../../plugins"));
+#else
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
                                      + QStringLiteral("/../../../plugins"));
+#endif
 }
 
 void tst_QGeoServiceProvider::tst_availableServiceProvider()

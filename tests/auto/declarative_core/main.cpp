@@ -37,8 +37,13 @@
 static void initializeLibraryPath()
 {
     // Set custom path since CI doesn't install test plugins
+#ifdef Q_OS_WIN
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
+                                     QStringLiteral("/../../../../plugins"));
+#else
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
                                      QStringLiteral("/../../../plugins"));
+#endif
 }
 
 Q_COREAPP_STARTUP_FUNCTION(initializeLibraryPath)
