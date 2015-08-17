@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2015 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2015 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
@@ -48,6 +50,7 @@ class QQmlComponent;
 class QQuickItem;
 class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItemBase;
+class QQmlOpenMetaObject;
 
 class QDeclarativeGeoMapItemView : public QObject, public QQmlParserStatus
 {
@@ -88,24 +91,44 @@ Q_SIGNALS:
     void delegateChanged();
     void autoFitViewportChanged();
 
-private:
-    QDeclarativeGeoMapItemBase *createItemFromItemModel(int modelRow);
-
-    void fitViewport();
-
 private Q_SLOTS:
     void itemModelReset();
     void itemModelRowsInserted(const QModelIndex &index, int start, int end);
     void itemModelRowsRemoved(const QModelIndex &index, int start, int end);
+    void itemModelRowsMoved(const QModelIndex &parent, int start, int end,
+                            const QModelIndex &destination, int row);
+    void itemModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
+                              const QVector<int> &roles);
 
 private:
+    struct ItemData {
+        ItemData()
+        :   item(0), context(0), modelData(0), modelDataMeta(0)
+        {
+        }
+
+        ~ItemData();
+
+        QDeclarativeGeoMapItemBase *item;
+        QQmlContext *context;
+        QObject *modelData;
+        QQmlOpenMetaObject *modelDataMeta;
+    };
+
+    ItemData *createItemForIndex(const QModelIndex &index);
+    void fitViewport();
+
     bool componentCompleted_;
     QQmlComponent *delegate_;
     QAbstractItemModel *itemModel_;
     QDeclarativeGeoMap *map_;
-    QList<QDeclarativeGeoMapItemBase *> mapItemList_;
+    QVector<ItemData *> m_itemData;
     bool fitViewport_;
+
+    friend class QTypeInfo<ItemData>;
 };
+
+Q_DECLARE_TYPEINFO(QDeclarativeGeoMapItemView::ItemData, Q_MOVABLE_TYPE);
 
 QT_END_NAMESPACE
 
