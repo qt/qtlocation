@@ -73,13 +73,15 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
     : QObject(parent), componentCompleted_(false), delegate_(0),
-      itemModel_(0), map_(0), fitViewport_(false)
+      itemModel_(0), map_(0), fitViewport_(false), m_metaObjectType(0)
 {
 }
 
 QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
 {
     removeInstantiatedItems();
+    if (m_metaObjectType)
+        m_metaObjectType->release();
 }
 
 /*!
@@ -118,6 +120,10 @@ void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
         disconnect(itemModel_, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
                    this, SLOT(itemModelDataChanged(QModelIndex,QModelIndex,QVector<int>)));
 
+        removeInstantiatedItems();
+        m_metaObjectType->release();
+        m_metaObjectType = 0;
+
         itemModel_ = 0;
     }
 
@@ -132,9 +138,14 @@ void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
                 this, SLOT(itemModelRowsMoved(QModelIndex,int,int,QModelIndex,int)));
         connect(itemModel_, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
                 this, SLOT(itemModelDataChanged(QModelIndex,QModelIndex,QVector<int>)));
+
+        m_metaObjectType = new QQmlOpenMetaObjectType(&QObject::staticMetaObject, 0);
+        foreach (const QByteArray &name, itemModel_->roleNames())
+            m_metaObjectType->createProperty(name);
+
+        instantiateAllItems();
     }
 
-    repopulate();
     emit modelChanged();
 }
 
@@ -314,17 +325,14 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems()
 
 /*!
     \internal
-    Removes and repopulates all items.
-*/
-void QDeclarativeGeoMapItemView::repopulate()
-{
-    // Free any earlier instances
-    removeInstantiatedItems();
 
+    Instantiates all items.
+*/
+void QDeclarativeGeoMapItemView::instantiateAllItems()
+{
     if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
         return;
 
-    // Iterate model data and instantiate delegates.
     for (int i = 0; i < itemModel_->rowCount(); ++i) {
         const QModelIndex index = itemModel_->index(i, 0);
         ItemData *itemData = createItemForIndex(index);
@@ -341,6 +349,16 @@ void QDeclarativeGeoMapItemView::repopulate()
 
 /*!
     \internal
+    Removes and repopulates all items.
+*/
+void QDeclarativeGeoMapItemView::repopulate()
+{
+    removeInstantiatedItems();
+    instantiateAllItems();
+}
+
+/*!
+    \internal
 */
 QDeclarativeGeoMapItemView::ItemData *QDeclarativeGeoMapItemView::createItemForIndex(const QModelIndex &index)
 {
@@ -351,7 +369,7 @@ QDeclarativeGeoMapItemView::ItemData *QDeclarativeGeoMapItemView::createItemForI
     ItemData *itemData = new ItemData;
 
     itemData->modelData = new QObject;
-    itemData->modelDataMeta = new QQmlOpenMetaObject(itemData->modelData);
+    itemData->modelDataMeta = new QQmlOpenMetaObject(itemData->modelData, m_metaObjectType, false);
     itemData->context = new QQmlContext(qmlContext(this));
 
     QHashIterator<int, QByteArray> iterator(itemModel_->roleNames());
@@ -395,7 +413,6 @@ QDeclarativeGeoMapItemView::ItemData::~ItemData()
     delete item;
     delete context;
     delete modelData;
-    //delete modelDataMeta;
 }
 
 #include "moc_qdeclarativegeomapitemview_p.cpp"
