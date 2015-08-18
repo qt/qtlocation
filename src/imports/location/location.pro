@@ -28,7 +28,8 @@ HEADERS += \
            error_messages.h \
            locationvaluetypehelper_p.h\
            qquickgeomapgesturearea_p.h\
-           ../positioning/qquickgeocoordinateanimation_p.h
+           ../positioning/qquickgeocoordinateanimation_p.h \
+           mapitemviewdelegateincubator.h
 
 SOURCES += \
            location.cpp \
@@ -53,7 +54,8 @@ SOURCES += \
            error_messages.cpp \
            locationvaluetypehelper.cpp \
            qquickgeomapgesturearea.cpp \
-           ../positioning/qquickgeocoordinateanimation.cpp
+           ../positioning/qquickgeocoordinateanimation.cpp \
+           mapitemviewdelegateincubator.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 

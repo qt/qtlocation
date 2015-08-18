@@ -41,6 +41,7 @@
 
 #include <QtCore/QModelIndex>
 #include <QtQml/QQmlParserStatus>
+#include <QtQml/QQmlIncubator>
 #include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
@@ -52,6 +53,7 @@ class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItemBase;
 class QQmlOpenMetaObject;
 class QQmlOpenMetaObjectType;
+class MapItemViewDelegateIncubator;
 
 class QDeclarativeGeoMapItemView : public QObject, public QQmlParserStatus
 {
@@ -93,6 +95,10 @@ Q_SIGNALS:
     void delegateChanged();
     void autoFitViewportChanged();
 
+protected:
+    void incubatorStatusChanged(MapItemViewDelegateIncubator *incubator,
+                                QQmlIncubator::Status status);
+
 private Q_SLOTS:
     void itemModelReset();
     void itemModelRowsInserted(const QModelIndex &index, int start, int end);
@@ -105,19 +111,20 @@ private Q_SLOTS:
 private:
     struct ItemData {
         ItemData()
-        :   item(0), context(0), modelData(0), modelDataMeta(0)
+        :   incubator(0), item(0), context(0), modelData(0), modelDataMeta(0)
         {
         }
 
         ~ItemData();
 
+        MapItemViewDelegateIncubator *incubator;
         QDeclarativeGeoMapItemBase *item;
         QQmlContext *context;
         QObject *modelData;
         QQmlOpenMetaObject *modelDataMeta;
     };
 
-    ItemData *createItemForIndex(const QModelIndex &index);
+    void createItemForIndex(const QModelIndex &index);
     void fitViewport();
 
     bool componentCompleted_;
@@ -130,6 +137,7 @@ private:
     QQmlOpenMetaObjectType *m_metaObjectType;
 
     friend class QTypeInfo<ItemData>;
+    friend class MapItemViewDelegateIncubator;
 };
 
 Q_DECLARE_TYPEINFO(QDeclarativeGeoMapItemView::ItemData, Q_MOVABLE_TYPE);

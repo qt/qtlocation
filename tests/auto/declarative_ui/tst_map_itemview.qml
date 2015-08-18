@@ -176,11 +176,15 @@ Item {
     SignalSpy {id: mapItemsChangedSpy; target: mapForTestingRouteModel; signalName: "mapItemsChanged"}
 
     Map {
-        id: mapForView;
-        center: mapDefaultCenter;
-        plugin: testPlugin;
-        anchors.fill: parent;
+        id: mapForView
+
+        property int mapItemsLength: mapItems.length
+
+        center: mapDefaultCenter
+        plugin: testPlugin
+        anchors.fill: parent
         zoomLevel: 2
+
         MapCircle {
             id: internalCircle
             radius: 2000000
@@ -203,14 +207,19 @@ Item {
     }
 
     Map {
-        id: mapForTestingListModel;
-        center: mapDefaultCenter;
-        plugin: testPlugin;
-        anchors.fill: parent;
+        id: mapForTestingListModel
+
+        center: mapDefaultCenter
+        plugin: testPlugin
+        anchors.fill: parent
         zoomLevel: 2
 
-        property variant firstItemCoord: QtPositioning.coordinate(11, 31)
-        property variant secondItemCoord: QtPositioning.coordinate(12, 32)
+        property int mapItemsLength: mapItems.length
+        property variant itemCoordinates: [
+            QtPositioning.coordinate(11, 31),
+            QtPositioning.coordinate(12, 32),
+            QtPositioning.coordinate(13, 33)
+        ]
 
         MapItemView {
             id: listModelItemView
@@ -233,11 +242,15 @@ Item {
     }
 
     Map {
-        id: mapForTestingRouteModel;
-        plugin: testPlugin;
-        center: mapDefaultCenter;
-        anchors.fill: parent;
+        id: mapForTestingRouteModel
+
+        property int mapItemsLength: mapItems.length
+
+        plugin: testPlugin
+        center: mapDefaultCenter
+        anchors.fill: parent
         zoomLevel: 2
+
         MapItemView {
             id: routeItemView
             model: routeModel
@@ -355,7 +368,7 @@ Item {
 
         function test_add_and_remove_with_view() {
             // Basic adding and removing of static object
-            compare(mapForView.mapItems.length, 8) // 1 declared and 7 from model
+            tryCompare(mapForView, "mapItemsLength", 8) // 1 declared and 7 from model
             mapForView.addMapItem(internalCircle)
             compare(mapForView.mapItems.length, 8)
             mapForView.removeMapItem(internalCircle)
@@ -374,37 +387,49 @@ Item {
         SignalSpy {id: model1Spy; target: testModel; signalName: "modelChanged"}
         SignalSpy {id: model2Spy; target: testModel2; signalName: "modelChanged"}
         function test_model_change() {
+            // Ensure that internalCircle is removed
+            mapForView.removeMapItem(internalCircle)
+
             // Change the model of an MapItemView on the fly
             // and verify that object counts change accordingly.
             testModel.datacount = 7
             testModel.update()
-            compare(mapForView.mapItems.length, 7)
+
+            tryCompare(mapForView, "mapItemsLength", 7)
             testModel.datacount += 2
             testModel2.datacount += 1
-            compare(mapForView.mapItems.length, 9)
+            tryCompare(mapForView, "mapItemsLength", 9)
+
             theItemView.model = testModel
             compare(mapForView.mapItems.length, 9)
             theItemView.model = testModel2
-            compare(mapForView.mapItems.length, 4)
+            tryCompare(mapForView, "mapItemsLength", 4)
         }
 
         function test_listmodel() {
-            compare(mapForTestingListModel.mapItems.length, 3);
-            compare(mapForTestingListModel.mapItems[0].center.longitude,
-                    mapForTestingListModel.firstItemCoord.longitude);
-            compare(mapForTestingListModel.mapItems[0].center.latitude,
-                    mapForTestingListModel.firstItemCoord.latitude);
-            testingListModel.remove(0);
-            compare(mapForTestingListModel.mapItems.length, 2);
-            compare(mapForTestingListModel.mapItems[0].center.longitude,
-                    mapForTestingListModel.secondItemCoord.longitude);
-            compare(mapForTestingListModel.mapItems[0].center.latitude,
-                    mapForTestingListModel.secondItemCoord.latitude);
-            testingListModel.append({ lat: 1, lon: 1 });
-            compare(mapForTestingListModel.mapItems.length, 3);
-            compare(mapForTestingListModel.mapItems[2].center.latitude, 1);
-            testingListModel.clear();
-            compare(mapForTestingListModel.mapItems.length, 0);
+            tryCompare(mapForTestingListModel, "mapItemsLength", 3)
+
+            for (var i = 0; i < 3; ++i) {
+                var itemCoord = mapForTestingListModel.mapItems[i].center
+                var index = mapForTestingListModel.itemCoordinates.indexOf(itemCoord)
+                verify(0 <= index && index < 3)
+            }
+
+            testingListModel.remove(0)
+            compare(mapForTestingListModel.mapItems.length, 2)
+
+            for (var i = 0; i < 2; ++i) {
+                itemCoord = mapForTestingListModel.mapItems[i].center
+                index = mapForTestingListModel.itemCoordinates.indexOf(itemCoord)
+                verify(1 <= index && index < 3)
+            }
+
+            testingListModel.append({ lat: 1, lon: 1 })
+            tryCompare(mapForTestingListModel, "mapItemsLength", 3)
+            compare(mapForTestingListModel.mapItems[2].center, QtPositioning.coordinate(1, 1))
+
+            testingListModel.clear()
+            compare(mapForTestingListModel.mapItems.length, 0)
         }
 
         function test_routemodel() {
@@ -414,16 +439,16 @@ Item {
             compare(mapItemsChangedSpy.count, 0)
             routeQuery.numberAlternativeRoutes = 4
             routeModel.update();
-            compare(mapForTestingRouteModel.mapItems.length, 4)
+            tryCompare(mapForTestingRouteModel, "mapItemsLength", 4)
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
-            compare(mapForTestingRouteModel.mapItems.length, 3)
+            tryCompare(mapForTestingRouteModel, "mapItemsLength", 3)
             routeModel.reset();
             compare(mapForTestingRouteModel.mapItems.length, 0)
             routeModel.reset(); // clear empty model
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
-            compare(mapForTestingRouteModel.mapItems.length, 3)
+            tryCompare(mapForTestingRouteModel, "mapItemsLength", 3)
             mapForTestingRouteModel.addMapItem(externalCircle2)
             compare(mapForTestingRouteModel.mapItems.length, 4)
             compare(mapForTestingRouteModel.mapItems[3], externalCircle2)
