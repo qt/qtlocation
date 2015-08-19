@@ -1180,8 +1180,6 @@ bool QQuickGeoMapGestureArea::tryStartFlick()
 /*!
     \internal
 */
-// FIXME:
-// - not left right / up down flicking, so if map is rotated, will act unintuitively
 void QQuickGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
 {
     if (timeMs < 0)

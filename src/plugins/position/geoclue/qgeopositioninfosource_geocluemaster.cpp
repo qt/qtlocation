@@ -285,7 +285,7 @@ void QGeoPositionInfoSourceGeoclueMaster::setOptions()
         const QVariant v = i.value();
 
         GValue *value = new GValue;
-        *value = { 0, { { 0 } } };
+        memset(value, 0, sizeof(*value));
 
         switch (v.userType()) {
         case QMetaType::QString:
