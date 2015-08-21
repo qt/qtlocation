@@ -750,23 +750,20 @@ Item {
             // Autoupdate
             automaticRoutesSpy.clear();
             filledRouteQuery.numberAlternativeRoutes = 1 // 'altroutes - 70' is the echoed errorcode
-            wait (300)
-            compare(automaticRoutesSpy.count, 1);
+            tryCompare (automaticRoutesSpy, "count", 1) // 5 sec
             compare(routeModelAutomatic.count, 1) // There should be a route already
             compare (routeModelAutomatic.get(0).path.length, 5)
             compare (routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
 
             // Remove a waypoint and check that autoupdate works
             filledRouteQuery.removeWaypoint(fcoordinate2)
-            wait(300)
-            compare(automaticRoutesSpy.count, 2);
+            tryCompare (automaticRoutesSpy, "count", 2)
             compare (routeModelAutomatic.get(0).path.length, 4)
             compare (routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude)
 
             // Add a waypoint and check that autoupdate works
             filledRouteQuery.addWaypoint(fcoordinate2);
-            wait(300);
-            compare(automaticRoutesSpy.count, 3);
+            tryCompare (automaticRoutesSpy, "count", 3)
             compare(routeModelAutomatic.count, 1);
             compare(routeModelAutomatic.get(0).path.length, 5);
             compare(routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude);
@@ -779,15 +776,13 @@ Item {
                 { latitude: 65, longitude: 66 },
                 { latitude: 67, longitude: 68 }
             ];
-            wait(300)
-            compare(automaticRoutesSpy.count, 4);
+            tryCompare (automaticRoutesSpy, "count", 4)
             compare(routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
 
             // Change query
             routeModelAutomatic.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
-            wait(300)
-            compare(automaticRoutesSpy.count, 5);
+            tryCompare (automaticRoutesSpy, "count", 5)
             compare (routeModelAutomatic.get(0).path.length, 3)
 
             // Verify that the old query is disconnected internally ie. does not trigger update
@@ -798,8 +793,8 @@ Item {
                 { latitude: 65, longitude: 66 },
                 { latitude: 67, longitude: 68 }
             ];
-            wait(300)
-            compare(automaticRoutesSpy.count, 5);
+            wait(800) // wait to hope no further updates comes through
+            compare (automaticRoutesSpy.count, 5)
             compare(routeModelAutomatic.get(0).path.length, 3);
         }
 
