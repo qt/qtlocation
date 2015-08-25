@@ -177,16 +177,24 @@ Item {
             compare(pluginSpy.count, 2)
         }
         // Test that model acts gracefully when plugin is not set or is invalid
-        // (does not support routing)
+        // (does not support geocoding)
         GeocodeModel {id: errorModel; plugin: errorPlugin}
+        GeocodeModel {id: errorModelNoPlugin}
         SignalSpy {id: countInvalidSpy; target: errorModel; signalName: "countChanged"}
         SignalSpy {id: errorSpy; target: errorModel; signalName: "errorChanged"}
         function test_error_plugin() {
-            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            // test plugin not set
+            compare(errorModelNoPlugin.error,GeocodeModel.NoError)
+            errorModelNoPlugin.update()
+            compare(errorModelNoPlugin.error,GeocodeModel.EngineNotSetError)
+            console.log(errorModelNoPlugin.errorString)
+
+            //plugin set but otherwise not offering anything
+            compare(errorModel.error,GeocodeModel.EngineNotSetError)
             compare(errorModel.errorString,"This error was expected. No worries !")
             errorSpy.clear()
             errorModel.update()
-            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            compare(errorModel.error,GeocodeModel.EngineNotSetError)
             compare(errorModel.errorString,qsTr("Cannot geocode, geocode manager not set."))
             compare(errorSpy.count, 1)
             errorSpy.clear()
@@ -201,19 +209,12 @@ Item {
             compare(errorSpy.count, 0)
             errorSpy.clear()
             errorModel.update()
-            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            compare(errorModel.error,GeocodeModel.EngineNotSetError)
             compare(errorModel.errorString,qsTr("Cannot geocode, geocode manager not set."))
             compare(errorSpy.count, 1)
             errorSpy.clear()
-            errorModel.get(-1)
-            compare(errorModel.error,GeocodeModel.UnsupportedOptionError)
-            compare(errorModel.errorString,qsTr("Index '-1' out of range"))
-            compare(errorSpy.count, 1)
-            errorSpy.clear()
-            errorModel.get(1)
-            compare(errorModel.error,GeocodeModel.UnsupportedOptionError)
-            compare(errorModel.errorString,qsTr("Index '1' out of range"))
-            compare(errorSpy.count, 1)
+            var location = errorModel.get(-1)
+            compare(location, null)
         }
 
     }

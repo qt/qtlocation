@@ -577,10 +577,8 @@ Module {
                 "ParseError": 3,
                 "UnsupportedOptionError": 4,
                 "UnknownError": 5,
-                "NotSupportedError": 101,
-                "UnknownParameterError": 102,
-                "MissingRequiredParameterError": 103,
-                "ConnectionError": 104
+                "UnknownParameterError": 100,
+                "MissingRequiredParameterError": 101
             }
         }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
@@ -984,10 +982,8 @@ Module {
                 "UnsupportedOptionError": 4,
                 "CombinationError": 5,
                 "UnknownError": 6,
-                "NotSupportedError": 101,
-                "UnknownParameterError": 102,
-                "MissingRequiredParameterError": 103,
-                "ConnectionError": 104
+                "UnknownParameterError": 100,
+                "MissingRequiredParameterError": 101
             }
         }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }

@@ -446,14 +446,22 @@ Item {
         // Test that model acts gracefully when plugin is not set or is invalid
         // (does not support routing)
         RouteModel {id: errorModel; plugin: errorPlugin}
+        RouteModel {id: errorModelNoPlugin}
         SignalSpy {id: countInvalidSpy; target: errorModel; signalName: "countChanged"}
         SignalSpy {id: errorSpy; target: errorModel; signalName: "errorChanged"}
         function test_error_plugin() {
-            compare(errorModel.error,RouteModel.NotSupportedError)
+            // test plugin not set
+            compare(errorModelNoPlugin.error,RouteModel.NoError)
+            errorModelNoPlugin.update()
+            compare(errorModelNoPlugin.error,RouteModel.EngineNotSetError)
+            console.log(errorModelNoPlugin.errorString)
+
+            //plugin set but otherwise not offering anything
+            compare(errorModel.error,RouteModel.EngineNotSetError)
             compare(errorModel.errorString,"This error was expected. No worries !")
             errorSpy.clear()
             errorModel.update()
-            compare(errorModel.error,RouteModel.NotSupportedError)
+            compare(errorModel.error,RouteModel.EngineNotSetError)
             compare(errorModel.errorString,qsTr("Cannot route, route manager not set."))
             compare(errorSpy.count, 1)
             errorSpy.clear()
@@ -468,19 +476,12 @@ Item {
             compare(errorSpy.count, 0)
             errorSpy.clear()
             errorModel.update()
-            compare(errorModel.error,RouteModel.NotSupportedError)
+            compare(errorModel.error,RouteModel.EngineNotSetError)
             compare(errorModel.errorString,qsTr("Cannot route, route manager not set."))
             compare(errorSpy.count, 1)
             errorSpy.clear()
-            errorModel.get(-1)
-            compare(errorModel.error,RouteModel.UnsupportedOptionError)
-            compare(errorModel.errorString,qsTr("Index '-1' out of range"))
-            compare(errorSpy.count, 1)
-            errorSpy.clear()
-            errorModel.get(1)
-            compare(errorModel.error,RouteModel.UnsupportedOptionError)
-            compare(errorModel.errorString,qsTr("Index '1' out of range"))
-            compare(errorSpy.count, 1)
+            var data = errorModel.get(-1)
+            compare(data, null)
         }
     }
 

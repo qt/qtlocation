@@ -283,6 +283,7 @@ void QDeclarativeGeoMap::pluginReady()
     }
 
     if (!m_mappingManager) {
+        //TODO Should really be EngineNotSetError (see QML GeoCodeModel)
         setError(QGeoServiceProvider::NotSupportedError, tr("Plugin does not support mapping."));
         return;
     }
@@ -917,7 +918,7 @@ QString QDeclarativeGeoMap::errorString() const
 
     \list
     \li Map.NoError - No error has occurred.
-    \li Map.NotSupportedError -The plugin does not support mapping functionality.
+    \li Map.NotSupportedError -The maps plugin property was not set or there is no mapping manager associated with the plugin.
     \li Map.UnknownParameterError -The plugin did not recognize one of the parameters it was given.
     \li Map.MissingRequiredParameterError - The plugin did not find one of the parameters it was expecting.
     \li Map.ConnectionError - The plugin could not connect to its backend service or database.

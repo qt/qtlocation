@@ -95,12 +95,11 @@ public:
         ParseError = QGeoRouteReply::ParseError,
         UnsupportedOptionError = QGeoRouteReply::UnsupportedOptionError,
         UnknownError = QGeoRouteReply::UnknownError,
-        //here we leave gap for future model errors
-        //now geo service provider errors
-        NotSupportedError = 100 + QGeoServiceProvider::NotSupportedError,
-        UnknownParameterError = 100 + QGeoServiceProvider::UnknownParameterError,
-        MissingRequiredParameterError = 100 + QGeoServiceProvider::MissingRequiredParameterError,
-        ConnectionError = 100 + QGeoServiceProvider::ConnectionError
+        //we leave gap for future QGeoRouteReply errors
+
+        //QGeoServiceProvider related errors start here
+        UnknownParameterError = 100,
+        MissingRequiredParameterError
     };
 
     explicit QDeclarativeGeoRouteModel(QObject *parent = 0);
