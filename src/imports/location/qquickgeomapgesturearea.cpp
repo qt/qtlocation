@@ -144,7 +144,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype MapGestureArea
-    \instantiates QDeclarativeGeoMapGestureArea
+    \instantiates QQuickGeoMapGestureArea
 
     \inqmlmodule QtLocation
 
