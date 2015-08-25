@@ -12,4 +12,3 @@ SOURCES += qgeoserviceproviderplugin_test.cpp
 
 OTHER_FILES += \
     placesplugin.json
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

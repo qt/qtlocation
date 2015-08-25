@@ -11,4 +11,3 @@ RESOURCES += fixtures.qrc
 
 QT += location testlib
 
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

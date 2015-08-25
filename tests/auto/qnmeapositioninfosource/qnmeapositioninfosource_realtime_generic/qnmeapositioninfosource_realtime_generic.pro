@@ -16,7 +16,6 @@ SOURCES += ../../utils/qlocationtestutils.cpp \
            ../qnmeapositioninfosourceproxyfactory.cpp \
            ../tst_qnmeapositioninfosource.cpp \
            tst_qnmeapositioninfosource_realtime_generic.cpp
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 
 CONFIG -= app_bundle
 

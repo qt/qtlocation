@@ -14,4 +14,3 @@ QT += positioning testlib
 # Define whether a satellite source is available.  This must match the logic in
 # src/location/location.pro or the test will fail on some platforms.
 qtHaveModule(simulator):DEFINES += SATELLITE_SOURCE_AVAILABLE
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

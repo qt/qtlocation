@@ -13,7 +13,6 @@ SOURCES += ../../utils/qlocationtestutils.cpp \
            ../../qgeopositioninfosource/testqgeopositioninfosource.cpp \
            ../qnmeapositioninfosourceproxyfactory.cpp \
            tst_dummynmeapositioninfosource.cpp
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 
 # This test relies on a working local QTcpSocket(Server). When the CI is under
 # heavy load the socket code cannot establish a connection which leads to flaky

@@ -14,4 +14,3 @@ SOURCES += tst_qgeomapcontroller.cpp
 SOURCES += ../geotestplugin/qgeoserviceproviderplugin_test.cpp
 
 QT += location-private positioning-private testlib
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
