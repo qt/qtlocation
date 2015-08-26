@@ -94,6 +94,15 @@ Rectangle {
         id: positionSource
         onPositionChanged: { planet.source = "images/sun.png"; }
 
+        onSourceErrorChanged: {
+            if (sourceError == PositionSource.NoError)
+                return
+
+            console.log("Source error: " + sourceError)
+            activityText.fadeOut = true
+            stop()
+        }
+
         onUpdateTimeout: {
             activityText.fadeOut = true
         }
