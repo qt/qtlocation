@@ -303,8 +303,6 @@ Item {
 
     TestCase {
         name: "GeocodeModelGeocoding"
-        /*
-        // see QTBUG-47423
         function clear_slack_model() {
             slackModel.reset()
             locationsSlackSpy.clear()
@@ -521,9 +519,8 @@ Item {
             compare (countSlackSpy.count, 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
-            wait (200)
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (slackModel.count, 5)
-            compare (countSlackSpy.count, 1)
             compare (locationsSlackSpy.count, 1)
             // Frequent updates, previous requests are aborted
             slackModel.reset()
@@ -545,9 +542,8 @@ Item {
             wait (100)
             compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
-            wait (200)
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
-            compare(countSlackSpy.count, 1)
             compare(slackModel.count, 5) // limit
         }
 
@@ -583,8 +579,7 @@ Item {
             compare (countSlackSpy.count, 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
-            wait (200)
-            compare (countSlackSpy.count, 1)
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
             compare (slackModel.count, 7) //  slackAddress1.county)
             // Frequent updates, previous requests are aborted
@@ -607,9 +602,8 @@ Item {
             wait (100)
             compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
-            wait (200)
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
-            compare(countSlackSpy.count, 1)
             compare(slackModel.count, 7) // slackAddress1.county
         }
         function test_reverse_geocode() {
@@ -643,8 +637,8 @@ Item {
             compare (countSlackSpy.count, 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
-            wait (200)
-            compare (countSlackSpy.count, 1)
+
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
             compare (slackModel.count, 3) //  slackCoordinate1.longitude
             // Frequent updates, previous requests are aborted
@@ -667,11 +661,10 @@ Item {
             wait (100)
             compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
-            wait (200)
-            compare (locationsSlackSpy.count, 1)
-            compare(countSlackSpy.count, 1)
+
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
+            compare(locationsSlackSpy.count, 1)
             compare(slackModel.count, 3) // slackCoordinate1.longitude
         }
-        */
     }
 }
