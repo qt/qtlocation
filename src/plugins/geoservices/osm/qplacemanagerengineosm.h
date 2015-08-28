@@ -75,6 +75,7 @@ private:
 
     QNetworkAccessManager *m_networkManager;
     QByteArray m_userAgent;
+    QString m_urlPrefix;
     QList<QLocale> m_locales;
 
     QNetworkReply *m_categoriesReply;

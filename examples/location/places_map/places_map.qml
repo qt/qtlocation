@@ -40,13 +40,13 @@
 
 //! [Imports]
 import QtQuick 2.0
-import QtPositioning 5.2
-import QtLocation 5.3
+import QtPositioning 5.5
+import QtLocation 5.5
 //! [Imports]
 
 Rectangle {
     width: 360
-    height: 360
+    height: 640
 
     //! [Initialize Plugin]
     Plugin {
@@ -62,7 +62,7 @@ Rectangle {
     //! [Current Location]
     PositionSource {
         id: positionSource
-        property variant lastSearchPosition: locationBrisbane
+        property variant lastSearchPosition: locationOslo
         active: true
         updateInterval: 120000 // 2 mins
         onPositionChanged:  {
@@ -80,15 +80,15 @@ Rectangle {
     //! [Current Location]
 
     //! [PlaceSearchModel]
-    property variant locationBrisbane: QtPositioning.coordinate(-27.47, 153.025)
+    property variant locationOslo: QtPositioning.coordinate( 59.93, 10.76)
+
     PlaceSearchModel {
         id: searchModel
 
         plugin: myPlugin
 
         searchTerm: "Pizza"
-        //initially show Brisbane
-        searchArea: QtPositioning.circle(locationBrisbane)
+        searchArea: QtPositioning.circle(locationOslo)
 
         Component.onCompleted: update()
     }
@@ -99,7 +99,7 @@ Rectangle {
         id: map
         anchors.fill: parent
         plugin: myPlugin;
-        center: locationBrisbane
+        center: locationOslo
         zoomLevel: 13
 
         MapItemView {
@@ -110,9 +110,9 @@ Rectangle {
                 anchorPoint.x: image.width * 0.5
                 anchorPoint.y: image.height
 
-                sourceItem: Image {
-                    id: image
-                    source: "marker.png"
+                sourceItem: Column {
+                    Image { id: image; source: "marker.png" }
+                    Text { text: title; font.bold: true }
                 }
             }
         }

@@ -72,13 +72,20 @@ a prefix.
 \row
     \li osm.routing.host
     \li Url string set when making network requests to the routing server.  This parameter should be set to a
-        valid server url with the correct osrm api. If not specified the default \l {http://router.project-osrm.org/viaroute}{url} will be used.
-        \note The api documentation and sources are available at \l {http://project-osrm.org/}{Project OSRM}.
+        valid server url with the correct osrm API. If not specified the default \l {http://router.project-osrm.org/viaroute}{url} will be used.
+        \note The API documentation and sources are available at \l {http://project-osrm.org/}{Project OSRM}.
 \row
     \li osm.geocoding.host
     \li Url string set when making network requests to the geocoding server.  This parameter should be set to a
-        valid server url with the correct osm api. If not specified the default \l {http://nominatim.openstreetmap.org/}{url} will be used.
-        \note The api documentation is available at \l {https://wiki.openstreetmap.org/wiki/Nominatim}{Project OSM Nominatim}.
+        valid server url with the correct osm API. If not specified the default \l {http://nominatim.openstreetmap.org/}{url} will be used.
+        \note The API documentation is available at \l {https://wiki.openstreetmap.org/wiki/Nominatim}{Project OSM Nominatim}.
+\row
+    \li osm.places.host
+    \li Url string set when making network requests to the places server.
+        This parameter should be set to a valid server url with the correct osm API.
+        If not specified the default  \l {http://nominatim.openstreetmap.org/search}{url}
+        will be used.
+        \note The API documentation is available at \l {https://wiki.openstreetmap.org/wiki/Nominatim}{Project OSM Nominatim}.
 \endtable
 
 \section1 Parameter Usage Example

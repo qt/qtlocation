@@ -155,7 +155,7 @@
             \li
                 \snippet places_map/places_map.qml Places MapItemView
             \li
-                \inlineimage places-map.jpg
+                \inlineimage places-map.png
     \endtable
 
     \note For simplicty's sake we have assumed that every search result is of
