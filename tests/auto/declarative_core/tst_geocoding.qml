@@ -177,16 +177,24 @@ Item {
             compare(pluginSpy.count, 2)
         }
         // Test that model acts gracefully when plugin is not set or is invalid
-        // (does not support routing)
+        // (does not support geocoding)
         GeocodeModel {id: errorModel; plugin: errorPlugin}
+        GeocodeModel {id: errorModelNoPlugin}
         SignalSpy {id: countInvalidSpy; target: errorModel; signalName: "countChanged"}
         SignalSpy {id: errorSpy; target: errorModel; signalName: "errorChanged"}
         function test_error_plugin() {
-            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            // test plugin not set
+            compare(errorModelNoPlugin.error,GeocodeModel.NoError)
+            errorModelNoPlugin.update()
+            compare(errorModelNoPlugin.error,GeocodeModel.EngineNotSetError)
+            console.log(errorModelNoPlugin.errorString)
+
+            //plugin set but otherwise not offering anything
+            compare(errorModel.error,GeocodeModel.EngineNotSetError)
             compare(errorModel.errorString,"This error was expected. No worries !")
             errorSpy.clear()
             errorModel.update()
-            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            compare(errorModel.error,GeocodeModel.EngineNotSetError)
             compare(errorModel.errorString,qsTr("Cannot geocode, geocode manager not set."))
             compare(errorSpy.count, 1)
             errorSpy.clear()
@@ -201,19 +209,12 @@ Item {
             compare(errorSpy.count, 0)
             errorSpy.clear()
             errorModel.update()
-            compare(errorModel.error,GeocodeModel.NotSupportedError)
+            compare(errorModel.error,GeocodeModel.EngineNotSetError)
             compare(errorModel.errorString,qsTr("Cannot geocode, geocode manager not set."))
             compare(errorSpy.count, 1)
             errorSpy.clear()
-            errorModel.get(-1)
-            compare(errorModel.error,GeocodeModel.UnsupportedOptionError)
-            compare(errorModel.errorString,qsTr("Index '-1' out of range"))
-            compare(errorSpy.count, 1)
-            errorSpy.clear()
-            errorModel.get(1)
-            compare(errorModel.error,GeocodeModel.UnsupportedOptionError)
-            compare(errorModel.errorString,qsTr("Index '1' out of range"))
-            compare(errorSpy.count, 1)
+            var location = errorModel.get(-1)
+            compare(location, null)
         }
 
     }
@@ -303,8 +304,6 @@ Item {
 
     TestCase {
         name: "GeocodeModelGeocoding"
-        /*
-        // see QTBUG-47423
         function clear_slack_model() {
             slackModel.reset()
             locationsSlackSpy.clear()
@@ -521,9 +520,8 @@ Item {
             compare (countSlackSpy.count, 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
-            wait (200)
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (slackModel.count, 5)
-            compare (countSlackSpy.count, 1)
             compare (locationsSlackSpy.count, 1)
             // Frequent updates, previous requests are aborted
             slackModel.reset()
@@ -545,9 +543,8 @@ Item {
             wait (100)
             compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
-            wait (200)
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
-            compare(countSlackSpy.count, 1)
             compare(slackModel.count, 5) // limit
         }
 
@@ -583,8 +580,7 @@ Item {
             compare (countSlackSpy.count, 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
-            wait (200)
-            compare (countSlackSpy.count, 1)
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
             compare (slackModel.count, 7) //  slackAddress1.county)
             // Frequent updates, previous requests are aborted
@@ -607,9 +603,8 @@ Item {
             wait (100)
             compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
-            wait (200)
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
-            compare(countSlackSpy.count, 1)
             compare(slackModel.count, 7) // slackAddress1.county
         }
         function test_reverse_geocode() {
@@ -643,8 +638,8 @@ Item {
             compare (countSlackSpy.count, 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
-            wait (200)
-            compare (countSlackSpy.count, 1)
+
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
             compare (slackModel.count, 3) //  slackCoordinate1.longitude
             // Frequent updates, previous requests are aborted
@@ -667,11 +662,10 @@ Item {
             wait (100)
             compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
-            wait (200)
-            compare (locationsSlackSpy.count, 1)
-            compare(countSlackSpy.count, 1)
+
+            tryCompare(countSlackSpy, "count", 1); //waits up to 5s
+            compare(locationsSlackSpy.count, 1)
             compare(slackModel.count, 3) // slackCoordinate1.longitude
         }
-        */
     }
 }

@@ -46,7 +46,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
 {
     QGeoCameraCapabilities cameraCaps;
     cameraCaps.setMinimumZoomLevel(0.0);
-    cameraCaps.setMaximumZoomLevel(18.0);
+    cameraCaps.setMaximumZoomLevel(19.0);
     setCameraCapabilities(cameraCaps);
 
     setTileSize(QSize(256, 256));

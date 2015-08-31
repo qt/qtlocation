@@ -446,14 +446,22 @@ Item {
         // Test that model acts gracefully when plugin is not set or is invalid
         // (does not support routing)
         RouteModel {id: errorModel; plugin: errorPlugin}
+        RouteModel {id: errorModelNoPlugin}
         SignalSpy {id: countInvalidSpy; target: errorModel; signalName: "countChanged"}
         SignalSpy {id: errorSpy; target: errorModel; signalName: "errorChanged"}
         function test_error_plugin() {
-            compare(errorModel.error,RouteModel.NotSupportedError)
+            // test plugin not set
+            compare(errorModelNoPlugin.error,RouteModel.NoError)
+            errorModelNoPlugin.update()
+            compare(errorModelNoPlugin.error,RouteModel.EngineNotSetError)
+            console.log(errorModelNoPlugin.errorString)
+
+            //plugin set but otherwise not offering anything
+            compare(errorModel.error,RouteModel.EngineNotSetError)
             compare(errorModel.errorString,"This error was expected. No worries !")
             errorSpy.clear()
             errorModel.update()
-            compare(errorModel.error,RouteModel.NotSupportedError)
+            compare(errorModel.error,RouteModel.EngineNotSetError)
             compare(errorModel.errorString,qsTr("Cannot route, route manager not set."))
             compare(errorSpy.count, 1)
             errorSpy.clear()
@@ -468,19 +476,12 @@ Item {
             compare(errorSpy.count, 0)
             errorSpy.clear()
             errorModel.update()
-            compare(errorModel.error,RouteModel.NotSupportedError)
+            compare(errorModel.error,RouteModel.EngineNotSetError)
             compare(errorModel.errorString,qsTr("Cannot route, route manager not set."))
             compare(errorSpy.count, 1)
             errorSpy.clear()
-            errorModel.get(-1)
-            compare(errorModel.error,RouteModel.UnsupportedOptionError)
-            compare(errorModel.errorString,qsTr("Index '-1' out of range"))
-            compare(errorSpy.count, 1)
-            errorSpy.clear()
-            errorModel.get(1)
-            compare(errorModel.error,RouteModel.UnsupportedOptionError)
-            compare(errorModel.errorString,qsTr("Index '1' out of range"))
-            compare(errorSpy.count, 1)
+            var data = errorModel.get(-1)
+            compare(data, null)
         }
     }
 
@@ -750,23 +751,20 @@ Item {
             // Autoupdate
             automaticRoutesSpy.clear();
             filledRouteQuery.numberAlternativeRoutes = 1 // 'altroutes - 70' is the echoed errorcode
-            wait (300)
-            compare(automaticRoutesSpy.count, 1);
+            tryCompare (automaticRoutesSpy, "count", 1) // 5 sec
             compare(routeModelAutomatic.count, 1) // There should be a route already
             compare (routeModelAutomatic.get(0).path.length, 5)
             compare (routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
 
             // Remove a waypoint and check that autoupdate works
             filledRouteQuery.removeWaypoint(fcoordinate2)
-            wait(300)
-            compare(automaticRoutesSpy.count, 2);
+            tryCompare (automaticRoutesSpy, "count", 2)
             compare (routeModelAutomatic.get(0).path.length, 4)
             compare (routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude)
 
             // Add a waypoint and check that autoupdate works
             filledRouteQuery.addWaypoint(fcoordinate2);
-            wait(300);
-            compare(automaticRoutesSpy.count, 3);
+            tryCompare (automaticRoutesSpy, "count", 3)
             compare(routeModelAutomatic.count, 1);
             compare(routeModelAutomatic.get(0).path.length, 5);
             compare(routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude);
@@ -779,15 +777,13 @@ Item {
                 { latitude: 65, longitude: 66 },
                 { latitude: 67, longitude: 68 }
             ];
-            wait(300)
-            compare(automaticRoutesSpy.count, 4);
+            tryCompare (automaticRoutesSpy, "count", 4)
             compare(routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
 
             // Change query
             routeModelAutomatic.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
-            wait(300)
-            compare(automaticRoutesSpy.count, 5);
+            tryCompare (automaticRoutesSpy, "count", 5)
             compare (routeModelAutomatic.get(0).path.length, 3)
 
             // Verify that the old query is disconnected internally ie. does not trigger update
@@ -798,8 +794,8 @@ Item {
                 { latitude: 65, longitude: 66 },
                 { latitude: 67, longitude: 68 }
             ];
-            wait(300)
-            compare(automaticRoutesSpy.count, 5);
+            wait(800) // wait to hope no further updates comes through
+            compare (automaticRoutesSpy.count, 5)
             compare(routeModelAutomatic.get(0).path.length, 3);
         }
 

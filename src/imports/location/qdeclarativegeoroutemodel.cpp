@@ -212,7 +212,7 @@ void QDeclarativeGeoRouteModel::abortRequest()
 QDeclarativeGeoRoute *QDeclarativeGeoRouteModel::get(int index)
 {
     if (index < 0 || index >= routes_.count()) {
-        setError(UnsupportedOptionError, QCoreApplication::translate(CONTEXT_NAME, INDEX_OUT_OF_RANGE).arg(index));
+        qmlInfo(this) << QStringLiteral("Index '%1' out of range").arg(index);
         return 0;
     }
     return routes_.at(index);
@@ -307,13 +307,26 @@ void QDeclarativeGeoRouteModel::pluginReady()
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
 
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
-        setError(RouteError(serviceProvider->error() + NotSupportedError -1),
-                 serviceProvider->errorString());
+        QDeclarativeGeoRouteModel::RouteError newError = UnknownError;
+        switch (serviceProvider->error()) {
+        case QGeoServiceProvider::NotSupportedError:
+            newError = EngineNotSetError; break;
+        case QGeoServiceProvider::UnknownParameterError:
+            newError = UnknownParameterError; break;
+        case QGeoServiceProvider::MissingRequiredParameterError:
+            newError = MissingRequiredParameterError; break;
+        case QGeoServiceProvider::ConnectionError:
+            newError = CommunicationError; break;
+        default:
+            break;
+        }
+
+        setError(newError, serviceProvider->errorString());
         return;
     }
 
     if (!routingManager) {
-        setError(NotSupportedError, tr("Plugin does not support routing."));
+        setError(EngineNotSetError, tr("Plugin does not support routing."));
         return;
     }
 
@@ -519,12 +532,16 @@ QString QDeclarativeGeoRouteModel::errorString() const
     This read-only property holds the latest error value of the routing request.
 
     \list
-    \li RouteModel.NoError - No error has occurred
-    \li RouteModel.EngineNotSetError - The plugin/service provider used does not support routing
-    \li RouteModel.CommunicationError - An error occurred while communicating with the service provider
-    \li RouteModel.ParseError - The response from the service provider was in an unrecognizable format
-    \li RouteModel.UnsupportedOptionError - The requested operation or one of the options for the operation are not supported by the service provider.
-    \li RouteModel.UnknownError - An error occurred which does not fit into any of the other categories
+    \li RouteModel.NoError - No error has occurred.
+    \li RouteModel.CommunicationError - An error occurred while communicating with the service provider.
+    \li RouteModel.EngineNotSetError - The model's plugin property was not set or there is no routing manager associated with the plugin.
+    \li RouteModel.MissingRequiredParameterError - A required parameter was not specified.
+    \li RouteModel.ParseError - The response from the service provider was in an unrecognizable format.
+    \li RouteModel.UnknownError - An error occurred which does not fit into any of the other categories.
+    \li RouteModel.UnknownParameterError - The plugin did not recognize one of the parameters it was given.
+    \li RouteModel.UnsupportedOptionError - The requested operation is not supported by the routing provider.
+                                            This may happen when the loaded engine does not support a particular
+                                            type of routing request.
     \endlist
 */
 
@@ -555,7 +572,7 @@ void QDeclarativeGeoRouteModel::update()
         return;
 
     if (!plugin_) {
-        setError(NotSupportedError, tr("Cannot route, plugin not set."));
+        setError(EngineNotSetError, tr("Cannot route, plugin not set."));
         return;
     }
 
@@ -565,7 +582,7 @@ void QDeclarativeGeoRouteModel::update()
 
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager) {
-        setError(NotSupportedError, tr("Cannot route, route manager not set."));
+        setError(EngineNotSetError, tr("Cannot route, route manager not set."));
         return;
     }
     if (!routeQuery_) {
