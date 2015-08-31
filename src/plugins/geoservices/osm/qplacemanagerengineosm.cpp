@@ -97,6 +97,11 @@ QPlaceManagerEngineOsm::QPlaceManagerEngineOsm(const QVariantMap &parameters,
     else
         m_userAgent = "Qt Location based application";
 
+    if (parameters.contains(QStringLiteral("osm.places.host")))
+        m_urlPrefix = parameters.value(QStringLiteral("osm.places.host")).toString();
+    else
+        m_urlPrefix = QStringLiteral("http://nominatim.openstreetmap.org/search");
+
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
 }
@@ -175,7 +180,7 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
 
     queryItems.addQueryItem(QStringLiteral("addressdetails"), QStringLiteral("1"));
 
-    QUrl requestUrl(QStringLiteral("http://nominatim.openstreetmap.org/search?"));
+    QUrl requestUrl(m_urlPrefix);
     requestUrl.setQuery(queryItems);
 
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(requestUrl));

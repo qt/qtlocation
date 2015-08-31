@@ -43,13 +43,13 @@ QGeoRoutingManagerEngineOsm::QGeoRoutingManagerEngineOsm(const QVariantMap &para
                                                          QString *errorString)
 :   QGeoRoutingManagerEngine(parameters), m_networkManager(new QNetworkAccessManager(this))
 {
-    if (parameters.contains(QStringLiteral("useragent")))
-        m_userAgent = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
+    if (parameters.contains(QStringLiteral("osm.useragent")))
+        m_userAgent = parameters.value(QStringLiteral("osm.useragent")).toString().toLatin1();
     else
         m_userAgent = "Qt Location based application";
 
-    if (parameters.contains(QStringLiteral("routing.host")))
-        m_urlPrefix = parameters.value(QStringLiteral("routing.host")).toString().toLatin1();
+    if (parameters.contains(QStringLiteral("osm.routing.host")))
+        m_urlPrefix = parameters.value(QStringLiteral("osm.routing.host")).toString().toLatin1();
     else
         m_urlPrefix = QStringLiteral("http://router.project-osrm.org/viaroute");
 

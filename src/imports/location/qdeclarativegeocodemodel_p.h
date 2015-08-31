@@ -82,18 +82,17 @@ public:
 
     enum GeocodeError {
         NoError = QGeoCodeReply::NoError,
-        EngineNotSetError = QGeoCodeReply::EngineNotSetError,
-        CommunicationError = QGeoCodeReply::CommunicationError,
+        EngineNotSetError = QGeoCodeReply::EngineNotSetError, //TODO Qt6 consider merge with NotSupportedError
+        CommunicationError = QGeoCodeReply::CommunicationError, //TODO Qt6 merge with Map's ConnectionError
         ParseError = QGeoCodeReply::ParseError,
-        UnsupportedOptionError = QGeoCodeReply::UnsupportedOptionError,
+        UnsupportedOptionError = QGeoCodeReply::UnsupportedOptionError, //TODO Qt6 consider rename UnsupportedOperationError
         CombinationError = QGeoCodeReply::CombinationError,
         UnknownError = QGeoCodeReply::UnknownError,
-        //here we leave gap for future model errors
-        //now geo service provider errors
-        NotSupportedError = 100 + QGeoServiceProvider::NotSupportedError,
-        UnknownParameterError = 100 + QGeoServiceProvider::UnknownParameterError,
-        MissingRequiredParameterError = 100 + QGeoServiceProvider::MissingRequiredParameterError,
-        ConnectionError = 100 + QGeoServiceProvider::ConnectionError
+        //we leave gap for future QGeoCodeReply errors
+
+        //QGeoServiceProvider related errors start here
+        UnknownParameterError = 100,
+        MissingRequiredParameterError
     };
 
     enum Roles {

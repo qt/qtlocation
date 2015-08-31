@@ -32,7 +32,7 @@
 
     \brief The Places Map example demonstrates how to search for and display a list of places
            on a map using a MapItemView
-    \image places-map.jpg
+    \image places-map.png
 
     The example displays a map of the current location or, if no position is
     available, it uses Brisbane/Australia. Subsequently a search for places

@@ -150,7 +150,7 @@ void QDeclarativeGeocodeModel::update()
         return;
 
     if (!plugin_) {
-        setError(NotSupportedError, tr("Cannot geocode, plugin not set."));
+        setError(EngineNotSetError, tr("Cannot geocode, plugin not set."));
         return;
     }
 
@@ -160,7 +160,7 @@ void QDeclarativeGeocodeModel::update()
 
     QGeoCodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager) {
-        setError(NotSupportedError, tr("Cannot geocode, geocode manager not set."));
+        setError(EngineNotSetError, tr("Cannot geocode, geocode manager not set."));
         return;
     }
     if (!coordinate_.isValid() && (!address_ || address_->address().isEmpty()) &&
@@ -292,13 +292,26 @@ void QDeclarativeGeocodeModel::pluginReady()
     QGeoCodingManager *geocodingManager = serviceProvider->geocodingManager();
 
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
-        setError(GeocodeError(serviceProvider->error() + NotSupportedError - 1),
-                 serviceProvider->errorString());
+        QDeclarativeGeocodeModel::GeocodeError newError = UnknownError;
+        switch (serviceProvider->error()) {
+        case QGeoServiceProvider::NotSupportedError:
+            newError = EngineNotSetError; break;
+        case QGeoServiceProvider::UnknownParameterError:
+            newError = UnknownParameterError; break;
+        case QGeoServiceProvider::MissingRequiredParameterError:
+            newError = MissingRequiredParameterError; break;
+        case QGeoServiceProvider::ConnectionError:
+            newError = CommunicationError; break;
+        default:
+            break;
+        }
+
+        setError(newError, serviceProvider->errorString());
         return;
     }
 
     if (!geocodingManager) {
-        setError(NotSupportedError,tr("Plugin does not support (reverse) geocoding."));
+        setError(EngineNotSetError,tr("Plugin does not support (reverse) geocoding."));
         return;
     }
 
@@ -432,13 +445,17 @@ void QDeclarativeGeocodeModel::setStatus(QDeclarativeGeocodeModel::Status status
     This read-only property holds the latest error value of the geocoding request.
 
     \list
-    \li GeocodeModel.NoError - No error has occurred
-    \li GeocodeModel.EngineNotSetError - The plugin/service provider used does not support (reverse) geocoding
-    \li GeocodeModel.CommunicationError - An error occurred while communicating with the service provider
-    \li GeocodeModel.ParseError - The response from the service provider was in an unrecognizable format
-    \li GeocodeModel.UnsupportedOptionError - The requested operation or one of the options for the operation are not supported by the service provider.
-    \li GeocodeModel.CombinationError - An error occurred while results where being combined from multiple sources
-    \li GeocodeModel.UnknownError - An error occurred which does not fit into any of the other categories
+    \li GeocodeModel.NoError - No error has occurred.
+    \li GeocodeModel.CombinationError - An error occurred while results where being combined from multiple sources.
+    \li GeocodeModel.CommunicationError - An error occurred while communicating with the service provider.
+    \li GeocodeModel.EngineNotSetError - The model's plugin property was not set or there is no geocoding manager associated with the plugin.
+    \li GeocodeModel.MissingRequiredParameterError - A required parameter was not specified.
+    \li GeocodeModel.ParseError - The response from the service provider was in an unrecognizable format.
+    \li GeocodeModel.UnknownError - An error occurred which does not fit into any of the other categories.
+    \li GeocodeModel.UnknownParameterError - The plugin did not recognize one of the parameters it was given.
+    \li GeocodeModel.UnsupportedOptionError - The requested operation is not supported by the geocoding provider.
+                                              This may happen when the loaded engine does not support a particular geocoding request
+                                              such as reverse geocoding.
     \endlist
 */
 
@@ -512,7 +529,7 @@ int QDeclarativeGeocodeModel::count() const
 QDeclarativeGeoLocation *QDeclarativeGeocodeModel::get(int index)
 {
     if (index < 0 || index >= declarativeLocations_.count()) {
-        setError(UnsupportedOptionError, QCoreApplication::translate(CONTEXT_NAME, INDEX_OUT_OF_RANGE).arg(index));
+        qmlInfo(this) << QStringLiteral("Index '%1' out of range").arg(index);
         return 0;
     }
     return declarativeLocations_.at(index);
