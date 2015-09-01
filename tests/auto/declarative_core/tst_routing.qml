@@ -622,8 +622,7 @@ Item {
             compare (routeModelSlack.count, 0)
             // Check that results are cleared
             routeModelSlack.update()
-            wait (300)
-            compare (routeModelSlack.count, 3) // numberALternativeRoutes
+            tryCompare(routeModelSlack, "count", 3) // numberALternativeRoutes
             routeModelSlack.reset()
             compare (routeModelSlack.count, 0)
             // Check that changing plugin resets any ongoing requests
@@ -716,8 +715,7 @@ Item {
             wait (100)
             compare (testRoutesSlackSpy.count, 0)
             compare (testCountSlackSpy.count, 0)
-            wait (200)
-            compare (testRoutesSlackSpy.count, 1)
+            tryCompare(testRoutesSlackSpy, "count", 1)
             compare (testCountSlackSpy.count, 1)
             compare(routeModelSlack.count, 1)
             compare (routeModelSlack.get(0).path.length, 5)
@@ -743,8 +741,7 @@ Item {
             wait (100)
             compare(testRoutesSlackSpy.count, 0)
             compare(testCountSlackSpy.count, 0)
-            wait (200)
-            compare (testRoutesSlackSpy.count, 1)
+            tryCompare(testRoutesSlackSpy, "count", 1)
             compare(testCountSlackSpy.count, 1)
             compare(routeModelSlack.count, 1)
 
