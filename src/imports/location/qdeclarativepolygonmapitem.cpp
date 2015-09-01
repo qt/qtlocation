@@ -448,26 +448,19 @@ void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 /*!
     \qmlmethod void MapPolygon::removeCoordinate(coordinate)
 
-    Removes a coordinate from the path. If there are multiple instances of the
+    Removes \a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
 
+    If \a coordinate is not in the path this method does nothing.
+
     \sa addCoordinate, path
-
 */
-
 void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordinate)
 {
     int index = path_.lastIndexOf(coordinate);
-
-    if (index == -1) {
-        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolygonMapItem");
+    if (index == -1)
         return;
-    }
 
-    if (path_.count() < index + 1) {
-        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolygonMapItem");
-        return;
-    }
     path_.removeAt(index);
 
     geometry_.markSourceDirty();
