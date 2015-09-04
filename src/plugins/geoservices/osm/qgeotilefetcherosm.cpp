@@ -62,13 +62,16 @@ QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
     request.setRawHeader("User-Agent", m_userAgent);
 
     QString urlPrefix;
+    QString suffix = QStringLiteral(".png");
 
     switch (spec.mapId()) {
     case 1:
         urlPrefix = QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/map/");
+        suffix = QStringLiteral(".jpg");
         break;
     case 2:
         urlPrefix = QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/sat/");
+        suffix = QStringLiteral(".jpg");
         break;
     case 3:
         urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/cycle/");
@@ -94,7 +97,7 @@ QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
 
     request.setUrl(QUrl(urlPrefix + QString::number(spec.zoom()) + QLatin1Char('/') +
                         QString::number(spec.x()) + QLatin1Char('/') +
-                        QString::number(spec.y()) + QStringLiteral(".png")));
+                        QString::number(spec.y()) + suffix));
 
     QNetworkReply *reply = m_networkManager->get(request);
 

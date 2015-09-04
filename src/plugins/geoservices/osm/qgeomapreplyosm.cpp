@@ -75,7 +75,11 @@ void QGeoMapReplyOsm::networkReplyFinished()
     QByteArray a = m_reply->readAll();
 
     setMapImageData(a);
-    setMapImageFormat("png");
+    int mapId = tileSpec().mapId();
+    if (mapId == 1 || mapId == 2)
+        setMapImageFormat(QStringLiteral("jpg"));
+    else
+        setMapImageFormat(QStringLiteral("png"));
 
     setFinished(true);
 

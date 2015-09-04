@@ -297,19 +297,19 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
 
     QSharedPointer<QGeoCachedTileDisk> td = diskCache_.object(spec);
     if (td) {
-        QStringList parts = td->filename.split('.');
+        const QString format = QFileInfo(td->filename).suffix();
         QFile file(td->filename);
         file.open(QIODevice::ReadOnly);
         QByteArray bytes = file.readAll();
         file.close();
 
         QPixmap pixmap;
-        if (!pixmap.loadFromData(bytes, (parts.size() == 2 ? parts.at(1).toLocal8Bit().constData() : 0))) {
+        if (!pixmap.loadFromData(bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
             return QSharedPointer<QGeoTileTexture>(0);
         }
 
-        addToMemoryCache(spec, bytes, (parts.size() == 2 ? parts.at(1) : QLatin1String("")));
+        addToMemoryCache(spec, bytes, format);
         QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, pixmap);
         if (tt)
             return tt;
