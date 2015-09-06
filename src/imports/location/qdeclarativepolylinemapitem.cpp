@@ -570,25 +570,19 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
 /*!
     \qmlmethod void MapPolyline::removeCoordinate(coordinate)
 
-    Removes a coordinate from the path. If there are multiple instances of the
+    Removes \a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
+
+    If \a coordinate is not in the path this method does nothing.
 
     \sa addCoordinate, path
 */
-
 void QDeclarativePolylineMapItem::removeCoordinate(const QGeoCoordinate &coordinate)
 {
     int index = path_.lastIndexOf(coordinate);
-
-    if (index == -1) {
-        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolylineMapItem");
+    if (index == -1)
         return;
-    }
 
-    if (path_.count() < index + 1) {
-        qmlInfo(this) << COORD_NOT_BELONG_TO << QStringLiteral("PolylineMapItem");
-        return;
-    }
     path_.removeAt(index);
 
     geometry_.markSourceDirty();

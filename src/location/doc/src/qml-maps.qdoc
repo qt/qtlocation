@@ -48,8 +48,7 @@ Map item you can center the map, zoom, pinch and make the item flickable.
 The places to be added to the map are
 \l {Maps and Navigation (QML)#Putting Objects on a Map (Map Overlay Objects)}{MapItems}. The item's
 position is defined by a \l {coordinate}{coordinate} which includes latitude,
-longitude and altitude. The item is then displayed automatically after it is added to the Map.
-\l {Maps and Navigation (QML)#Putting Objects on a Map (Map Overlay Objects)}{MapItems} or \l Map.
+longitude and altitude. The item is then displayed automatically after it is added to the \l Map.
 
 \section2 Position on map
 
