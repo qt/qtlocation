@@ -3,5 +3,6 @@
     "Provider": "geoclue",
     "Position": true,
     "Satellite": true,
-    "Priority": 1000
+    "Priority": 1000,
+    "Testable": false
 }

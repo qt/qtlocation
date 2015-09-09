@@ -158,6 +158,12 @@ void QGeoPositionInfoSourcePrivate::loadPluginMetadata(QHash<QString, QJsonObjec
     QList<QJsonObject> meta = l->metaData();
     for (int i = 0; i < meta.size(); ++i) {
         QJsonObject obj = meta.at(i).value(QStringLiteral("MetaData")).toObject();
+        const QString testableKey = QStringLiteral("Testable");
+        if (obj.contains(testableKey) && !obj.value(testableKey).toBool()) {
+            static bool inTest = qEnvironmentVariableIsSet("QT_QTESTLIB_RUNNING");
+            if (inTest)
+                continue;
+        }
         obj.insert(QStringLiteral("index"), i);
         plugins.insertMulti(obj.value(QStringLiteral("Provider")).toString(), obj);
     }
