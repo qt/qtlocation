@@ -288,10 +288,8 @@ QGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
     Q_D(QGeoTiledMappingManagerEngine);
     if (!d->tileCache_) {
         QString cacheDirectory;
-        if (!managerName().isEmpty()) {
-            cacheDirectory = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
-                    + QLatin1String("/QtLocation/") + managerName();
-        }
+        if (!managerName().isEmpty())
+            cacheDirectory = QGeoTileCache::baseCacheDirectory() + managerName();
         d->tileCache_ = new QGeoTileCache(cacheDirectory);
     }
     return d->tileCache_;

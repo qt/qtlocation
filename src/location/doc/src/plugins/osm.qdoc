@@ -106,4 +106,12 @@ Plugin {
     PluginParameter { name: "osm.geocoding.host"; value: "http://geocoding.server.address" }
 }
 \endcode
+
+\section1 Other Plugin-specific Information
+
+\section2 Tile cache
+
+The tiles are cached in a \c{QtLocation/osm} directory in \l {QStandardPaths::writableLocation()}{QStandardPaths::writableLocation}
+(\l{QStandardPaths::GenericCacheLocation}). On systems that have no concept of a shared cache, the application-specific
+\l{QStandardPaths::CacheLocation} is used instead.
 */
