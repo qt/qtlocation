@@ -468,6 +468,23 @@ QString QGeoTileCache::baseCacheDirectory()
     // If this is not supported by the platform, use the application-specific cache
     // location. (e.g. ~/.cache/<app_name>/QtLocation)
     dir = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
+
+    if (!dir.isEmpty()) {
+        // The shared cache may not be writable when application isolation is enforced.
+        static bool writable = false;
+        static bool writableChecked = false;
+        if (!writableChecked) {
+            writableChecked = true;
+            QDir::root().mkpath(dir);
+            QFile writeTestFile(QDir(dir).filePath(QStringLiteral("qt_cache_check")));
+            writable = writeTestFile.open(QIODevice::WriteOnly);
+            if (writable)
+                writeTestFile.remove();
+        }
+        if (!writable)
+            dir = QString();
+    }
+
     if (dir.isEmpty())
         dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 
