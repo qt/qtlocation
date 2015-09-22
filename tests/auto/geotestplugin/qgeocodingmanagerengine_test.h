@@ -32,7 +32,7 @@
 ****************************************************************************/
 
 #ifndef QGEOCODINGMANAGERENGINE_TEST_H
-#define QGECODINGMANAGERENGINE_TEST_H
+#define QGEOCODINGMANAGERENGINE_TEST_H
 
 #include <qgeoserviceprovider.h>
 #include <qgeocodingmanagerengine.h>

@@ -39,14 +39,14 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Widget w1;
-    Widget w2;
+    Widget *w1 = new Widget;
+    Widget *w2 = new Widget;
 
     QTabWidget tabWidget;
     tabWidget.setTabPosition(QTabWidget::South);
 
-    tabWidget.addTab(&w1, "Instance 1");
-    tabWidget.addTab(&w2, "Instance 2");
+    tabWidget.addTab(w1, "Instance 1");
+    tabWidget.addTab(w2, "Instance 2");
 
     tabWidget.show();
     return a.exec();

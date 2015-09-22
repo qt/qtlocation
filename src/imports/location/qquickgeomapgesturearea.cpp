@@ -672,6 +672,9 @@ void QQuickGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
 
 void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 {
+    if (!m_map)
+        return;
+
     QGeoCoordinate wheelGeoPos = m_map->itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
     QPointF preZoomPoint = m_map->coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
@@ -744,7 +747,9 @@ bool QQuickGeoMapGestureArea::isActive() const
 // simplify the gestures by using a state-machine format (easy to move to a future state machine)
 void QQuickGeoMapGestureArea::update()
 {
-    if (!m_map) return;
+    if (!m_map)
+        return;
+
     // First state machine is for the number of touch points
 
     //combine touch with mouse event

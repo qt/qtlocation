@@ -2,7 +2,8 @@
     "Keys": ["geoclue"],
     "Provider": "geoclue",
     "Position": true,
-    "Satellite": false,
+    "Satellite": true,
     "Monitor": false,
-    "Priority": 1000
+    "Priority": 999,
+    "Testable": false
 }

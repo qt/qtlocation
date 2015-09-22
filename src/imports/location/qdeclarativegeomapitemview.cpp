@@ -1,5 +1,7 @@
 /****************************************************************************
 **
+** Copyright (C) 2015 Jolla Ltd.
+** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
 ** Copyright (C) 2015 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
@@ -37,9 +39,11 @@
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapitembase_p.h"
+#include "mapitemviewdelegateincubator.h"
 
 #include <QtCore/QAbstractItemModel>
 #include <QtQml/QQmlContext>
+#include <QtQml/QQmlIncubator>
 #include <QtQml/private/qqmlopenmetaobject_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -71,13 +75,15 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
     : QObject(parent), componentCompleted_(false), delegate_(0),
-      itemModel_(0), map_(0), fitViewport_(false)
+      itemModel_(0), map_(0), fitViewport_(false), m_metaObjectType(0)
 {
 }
 
 QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
 {
     removeInstantiatedItems();
+    if (m_metaObjectType)
+        m_metaObjectType->release();
 }
 
 /*!
@@ -86,6 +92,49 @@ QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
 void QDeclarativeGeoMapItemView::componentComplete()
 {
     componentCompleted_ = true;
+}
+
+void QDeclarativeGeoMapItemView::incubatorStatusChanged(MapItemViewDelegateIncubator *incubator,
+                                                        QQmlIncubator::Status status)
+{
+    if (status == QQmlIncubator::Loading)
+        return;
+
+    for (int i = 0; i < m_itemData.length(); ++i) {
+        ItemData *itemData = m_itemData.at(i);
+        if (itemData->incubator != incubator)
+            continue;
+
+        switch (status) {
+        case QQmlIncubator::Ready:
+            itemData->item = qobject_cast<QDeclarativeGeoMapItemBase *>(incubator->object());
+            if (!itemData->item) {
+                qWarning() << "QDeclarativeGeoMapItemView map item delegate is of unsupported type.";
+                delete incubator->object();
+            } else {
+                map_->addMapItem(itemData->item);
+                if (fitViewport_)
+                    fitViewport();
+            }
+            delete itemData->incubator;
+            itemData->incubator = 0;
+            break;
+        case QQmlIncubator::Null:
+            // Should never get here
+            delete itemData->incubator;
+            itemData->incubator = 0;
+            break;
+        case QQmlIncubator::Error:
+            qWarning() << "QDeclarativeGeoMapItemView map item creation failed.";
+            delete itemData->incubator;
+            itemData->incubator = 0;
+            break;
+        default:
+            ;
+        }
+
+        break;
+    }
 }
 
 /*!
@@ -111,6 +160,14 @@ void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
                    this, SLOT(itemModelRowsRemoved(QModelIndex,int,int)));
         disconnect(itemModel_, SIGNAL(rowsInserted(QModelIndex,int,int)),
                    this, SLOT(itemModelRowsInserted(QModelIndex,int,int)));
+        disconnect(itemModel_, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+                   this, SLOT(itemModelRowsMoved(QModelIndex,int,int,QModelIndex,int)));
+        disconnect(itemModel_, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
+                   this, SLOT(itemModelDataChanged(QModelIndex,QModelIndex,QVector<int>)));
+
+        removeInstantiatedItems();
+        m_metaObjectType->release();
+        m_metaObjectType = 0;
 
         itemModel_ = 0;
     }
@@ -122,9 +179,18 @@ void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
                 this, SLOT(itemModelRowsRemoved(QModelIndex,int,int)));
         connect(itemModel_, SIGNAL(rowsInserted(QModelIndex,int,int)),
                 this, SLOT(itemModelRowsInserted(QModelIndex,int,int)));
+        connect(itemModel_, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+                this, SLOT(itemModelRowsMoved(QModelIndex,int,int,QModelIndex,int)));
+        connect(itemModel_, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
+                this, SLOT(itemModelDataChanged(QModelIndex,QModelIndex,QVector<int>)));
+
+        m_metaObjectType = new QQmlOpenMetaObjectType(&QObject::staticMetaObject, 0);
+        foreach (const QByteArray &name, itemModel_->roleNames())
+            m_metaObjectType->createProperty(name);
+
+        instantiateAllItems();
     }
 
-    repopulate();
     emit modelChanged();
 }
 
@@ -146,15 +212,11 @@ void QDeclarativeGeoMapItemView::itemModelRowsInserted(const QModelIndex &index,
     if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
         return;
 
-    QDeclarativeGeoMapItemBase *mapItem;
     for (int i = start; i <= end; ++i) {
-        mapItem = createItemFromItemModel(i);
-        if (!mapItem) {
-            break;
-        }
-        mapItemList_.append(mapItem);
-        map_->addMapItem(mapItem);
+        const QModelIndex insertedIndex = itemModel_->index(i, 0, index);
+        createItemForIndex(insertedIndex);
     }
+
     if (fitViewport_)
         fitViewport();
 }
@@ -170,15 +232,54 @@ void QDeclarativeGeoMapItemView::itemModelRowsRemoved(const QModelIndex &index, 
         return;
 
     for (int i = end; i >= start; --i) {
-        QDeclarativeGeoMapItemBase *mapItem = mapItemList_.takeAt(i);
-        Q_ASSERT(mapItem);
-        if (!mapItem) // bad
+        ItemData *itemData = m_itemData.takeAt(i);
+        if (!itemData)
             break;
-        map_->removeMapItem(mapItem);
-        mapItem->deleteLater();
+
+        map_->removeMapItem(itemData->item);
+        delete itemData;
     }
+
     if (fitViewport_)
         fitViewport();
+}
+
+void QDeclarativeGeoMapItemView::itemModelRowsMoved(const QModelIndex &parent, int start, int end,
+                                                    const QModelIndex &destination, int row)
+{
+    Q_UNUSED(parent)
+    Q_UNUSED(start)
+    Q_UNUSED(end)
+    Q_UNUSED(destination)
+    Q_UNUSED(row)
+
+    qWarning() << "QDeclarativeGeoMapItemView does not support models that move rows.";
+}
+
+void QDeclarativeGeoMapItemView::itemModelDataChanged(const QModelIndex &topLeft,
+                                                      const QModelIndex &bottomRight,
+                                                      const QVector<int> &roles)
+{
+    Q_UNUSED(roles)
+
+    for (int i = topLeft.row(); i <= bottomRight.row(); ++i) {
+        const QModelIndex index = itemModel_->index(i, 0);
+        ItemData *itemData = m_itemData.at(i);
+
+        QHashIterator<int, QByteArray> iterator(itemModel_->roleNames());
+        while (iterator.hasNext()) {
+            iterator.next();
+
+            QVariant modelData = itemModel_->data(index, iterator.key());
+            if (!modelData.isValid())
+                continue;
+
+            itemData->context->setContextProperty(QString::fromLatin1(iterator.value().constData()),
+                                                  modelData);
+
+            itemData->modelDataMeta->setValue(iterator.value(), modelData);
+        }
+    }
 }
 
 /*!
@@ -254,11 +355,31 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems()
 {
     if (!map_)
         return;
-    foreach (QDeclarativeGeoMapItemBase *mapItem, mapItemList_) {
-        mapItem->deleteLater();
-        map_->removeMapItem(mapItem);
+
+    foreach (ItemData *itemData, m_itemData) {
+        map_->removeMapItem(itemData->item);
+        delete itemData;
     }
-    mapItemList_.clear();
+    m_itemData.clear();
+}
+
+/*!
+    \internal
+
+    Instantiates all items.
+*/
+void QDeclarativeGeoMapItemView::instantiateAllItems()
+{
+    if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
+        return;
+
+    for (int i = 0; i < itemModel_->rowCount(); ++i) {
+        const QModelIndex index = itemModel_->index(i, 0);
+        createItemForIndex(index);
+    }
+
+    if (fitViewport_)
+        fitViewport();
 }
 
 /*!
@@ -267,74 +388,54 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems()
 */
 void QDeclarativeGeoMapItemView::repopulate()
 {
-    // Free any earlier instances
     removeInstantiatedItems();
-
-    if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
-        return;
-
-    // Iterate model data and instantiate delegates.
-    for (int i = 0; i < itemModel_->rowCount(); ++i) {
-        QDeclarativeGeoMapItemBase *mapItem = createItemFromItemModel(i);
-        Q_ASSERT(mapItem);
-        if (!mapItem) // bad
-            break;
-        mapItemList_.append(mapItem);
-        map_->addMapItem(mapItem);
-    }
-    if (fitViewport_)
-        fitViewport();
+    instantiateAllItems();
 }
 
 /*!
     \internal
 */
-QDeclarativeGeoMapItemBase *QDeclarativeGeoMapItemView::createItemFromItemModel(int modelRow)
+void QDeclarativeGeoMapItemView::createItemForIndex(const QModelIndex &index)
 {
-    if (!delegate_ || !itemModel_)
-        return 0;
+    // Expected to be already tested by caller.
+    Q_ASSERT(delegate_);
+    Q_ASSERT(itemModel_);
 
-    QModelIndex index = itemModel_->index(modelRow, 0); // column 0
-    if (!index.isValid()) {
-        qWarning() << "QDeclarativeGeoMapItemView Index is not valid: " << modelRow;
-        return 0;
-    }
+    ItemData *itemData = new ItemData;
 
-    QObject *model = new QObject(this);
-    QQmlOpenMetaObject *modelMetaObject = new QQmlOpenMetaObject(model);
+    itemData->modelData = new QObject;
+    itemData->modelDataMeta = new QQmlOpenMetaObject(itemData->modelData, m_metaObjectType, false);
+    itemData->context = new QQmlContext(qmlContext(this));
 
     QHashIterator<int, QByteArray> iterator(itemModel_->roleNames());
-    QQmlContext *itemContext = new QQmlContext(qmlContext(this));
     while (iterator.hasNext()) {
         iterator.next();
+
         QVariant modelData = itemModel_->data(index, iterator.key());
         if (!modelData.isValid())
             continue;
 
-        itemContext->setContextProperty(QString::fromLatin1(iterator.value().constData()),
-                                        modelData);
+        itemData->context->setContextProperty(QString::fromLatin1(iterator.value().constData()),
+                                              modelData);
 
-        modelMetaObject->setValue(iterator.value(), modelData);
+        itemData->modelDataMeta->setValue(iterator.value(), modelData);
     }
-    itemContext->setContextProperty(QStringLiteral("model"), model);
-    itemContext->setContextProperty(QStringLiteral("index"), modelRow);
 
-    QObject *obj = delegate_->create(itemContext);
+    itemData->context->setContextProperty(QLatin1String("model"), itemData->modelData);
+    itemData->context->setContextProperty(QLatin1String("index"), index.row());
 
-    if (!obj) {
-        qWarning() << "QDeclarativeGeoMapItemView map item creation failed.";
-        delete itemContext;
-        return 0;
-    }
-    QDeclarativeGeoMapItemBase *declMapObj = qobject_cast<QDeclarativeGeoMapItemBase *>(obj);
-    if (!declMapObj) {
-        qWarning() << "QDeclarativeGeoMapItemView map item delegate is of unsupported type.";
-        delete itemContext;
-        return 0;
-    }
-    itemContext->setParent(declMapObj);
-    model->setParent(declMapObj);
-    return declMapObj;
+    itemData->incubator = new MapItemViewDelegateIncubator(this);
+    delegate_->create(*itemData->incubator, itemData->context);
+
+    m_itemData.insert(index.row(), itemData);
+}
+
+QDeclarativeGeoMapItemView::ItemData::~ItemData()
+{
+    delete incubator;
+    delete item;
+    delete context;
+    delete modelData;
 }
 
 #include "moc_qdeclarativegeomapitemview_p.cpp"

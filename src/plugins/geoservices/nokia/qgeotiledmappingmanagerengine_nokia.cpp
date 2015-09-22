@@ -106,8 +106,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
         cacheDir = parameters.value(QStringLiteral("here.mapping.cache.directory")).toString();
     } else {
         // managerName() is not yet set, we have to hardcode the plugin name below
-        cacheDir = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
-                + QLatin1String("/QtLocation/here");
+        cacheDir = QGeoTileCache::baseCacheDirectory() + QLatin1String("here");
     }
 
     QGeoTileCache *tileCache = createTileCacheWithDir(cacheDir);

@@ -36,28 +36,29 @@
 #ifndef QGEOPOSITIONINFOSOURCEFACTORY_GEOCLUE_H
 #define QGEOPOSITIONINFOSOURCEFACTORY_GEOCLUE_H
 
-#include <QObject>
-#include <qgeopositioninfosourcefactory.h>
+#include <QtCore/QObject>
+#include <QtPositioning/QGeoPositionInfoSourceFactory>
 
-#ifdef HAS_SATELLITE
-#define PLUGIN_JSON "plugin-satellite.json"
-#else
-#define PLUGIN_JSON "plugin.json"
-#endif
+QT_BEGIN_NAMESPACE
 
+/*
+    Qt Positioning plugin for Geoclue. This plugin supports Geoclue version 0.12.99.
+*/
 class QGeoPositionInfoSourceFactoryGeoclue : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
 
     Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/5.0"
-                      FILE PLUGIN_JSON)
+                      FILE "plugin.json")
 
     Q_INTERFACES(QGeoPositionInfoSourceFactory)
 
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent);
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent) Q_DECL_OVERRIDE;
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) Q_DECL_OVERRIDE;
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent) Q_DECL_OVERRIDE;
 };
+
+QT_END_NAMESPACE
 
 #endif

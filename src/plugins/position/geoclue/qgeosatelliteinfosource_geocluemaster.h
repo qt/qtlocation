@@ -36,17 +36,18 @@
 
 #include "qgeocluemaster.h"
 
-#include <geoclue/geoclue-satellite.h>
-
-#include <QtCore/qcompilerdetection.h>
 #include <QtCore/QTimer>
 #include <QtPositioning/QGeoSatelliteInfoSource>
+
+class OrgFreedesktopGeoclueInterface;
+class OrgFreedesktopGeoclueSatelliteInterface;
 
 QT_BEGIN_NAMESPACE
 
 class QDBusMessage;
+class QDBusPendingCallWatcher;
 
-class QGeoSatelliteInfoSourceGeoclueMaster : public QGeoSatelliteInfoSource, public QGeoclueMaster
+class QGeoSatelliteInfoSourceGeoclueMaster : public QGeoSatelliteInfoSource
 {
     Q_OBJECT
 
@@ -55,28 +56,36 @@ public:
     ~QGeoSatelliteInfoSourceGeoclueMaster();
 
     int minimumUpdateInterval() const Q_DECL_OVERRIDE;
+    void setUpdateInterval(int msec) Q_DECL_OVERRIDE;
+
     Error error() const Q_DECL_OVERRIDE;
 
     void startUpdates() Q_DECL_OVERRIDE;
     void stopUpdates() Q_DECL_OVERRIDE;
     void requestUpdate(int timeout = 0) Q_DECL_OVERRIDE;
 
+private slots:
+    void positionProviderChanged(const QString &name, const QString &description,
+                                 const QString &service, const QString &path);
+    void requestUpdateTimeout();
+
+    void getSatelliteFinished(QDBusPendingCallWatcher *watcher);
     void satelliteChanged(int timestamp, int satellitesUsed, int satellitesVisible,
                           const QList<int> &usedPrn, const QList<QGeoSatelliteInfo> &satInfos);
-
-    void requestUpdateFinished(int timestamp, int satellitesUsed, int satellitesVisible,
-                               const QList<int> &usedPrn, const QList<QGeoSatelliteInfo> &satInfos);
-
-private slots:
-    void requestUpdateTimeout();
-    void positionProviderChanged(const QByteArray &service, const QByteArray &path);
-    void satellitesChanged(const QDBusMessage &message);
+    void satelliteChanged(const QDBusMessage &message);
 
 private:
-    bool configureSatelliteSource();
+    void configureSatelliteSource();
     void cleanupSatelliteSource();
 
-    GeoclueSatellite *m_sat;
+    void updateSatelliteInfo(int timestamp, int satellitesUsed, int satellitesVisible,
+                              const QList<int> &usedPrn, const QList<QGeoSatelliteInfo> &satInfos);
+
+    QGeoclueMaster *m_master;
+
+    OrgFreedesktopGeoclueInterface *m_provider;
+    OrgFreedesktopGeoclueSatelliteInterface *m_sat;
+
     QTimer m_requestTimer;
     QList<QGeoSatelliteInfo> m_inView;
     QList<QGeoSatelliteInfo> m_inUse;

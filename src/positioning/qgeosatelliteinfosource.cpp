@@ -167,6 +167,12 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
         if (obj.value(QStringLiteral("Satellite")).isBool()
                 && obj.value(QStringLiteral("Satellite")).toBool())
         {
+            const QString testableKey = QStringLiteral("Testable");
+            if (obj.contains(testableKey) && !obj.value(testableKey).toBool()) {
+                static bool inTest = qEnvironmentVariableIsSet("QT_QTESTLIB_RUNNING");
+                if (inTest)
+                    continue;
+            }
             QGeoPositionInfoSourcePrivate d;
             d.metaData = obj;
             d.loadPlugin();

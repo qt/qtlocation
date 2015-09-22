@@ -1,9 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Jolla Ltd.
-** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2015 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
 **
@@ -33,33 +31,69 @@
 **
 ****************************************************************************/
 
-#include "qgeopositioninfosourcefactory_geoclue.h"
-#include "qgeopositioninfosource_geocluemaster.h"
-#include "qgeosatelliteinfosource_geocluemaster.h"
+#include "geocluetypes.h"
 
-#include <QtCore/QLoggingCategory>
+const QDBusArgument &dbus_argument_helper(const QDBusArgument &arg, Accuracy &accuracy)
+{
+    arg.beginStructure();
+    qint32 level;
+    arg >> level;
+    accuracy.m_level = static_cast<Accuracy::Level>(level);
+    arg >> accuracy.m_horizontal;
+    arg >> accuracy.m_vertical;
+    arg.endStructure();
 
-Q_DECLARE_METATYPE(QGeoPositionInfo)
-
-Q_LOGGING_CATEGORY(lcPositioningGeoclue, "qt.positioning.geoclue")
+    return arg;
+}
 
 QT_BEGIN_NAMESPACE
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
+QDBusArgument &operator<<(QDBusArgument &arg, const Accuracy &accuracy)
 {
-    qRegisterMetaType<QGeoPositionInfo>();
-    return new QGeoPositionInfoSourceGeoclueMaster(parent);
+    arg.beginStructure();
+    arg << qint32(accuracy.level());
+    arg << accuracy.horizontal();
+    arg << accuracy.vertical();
+    arg.endStructure();
+
+    return arg;
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSource(QObject *parent)
+const QDBusArgument &operator>>(const QDBusArgument &arg, Accuracy &accuracy)
 {
-    return new QGeoSatelliteInfoSourceGeoclueMaster(parent);
+    return dbus_argument_helper(arg, accuracy);
 }
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent)
+const QDBusArgument &operator>>(const QDBusArgument &argument, QGeoSatelliteInfo &si)
 {
-    Q_UNUSED(parent)
-    return 0;
+    qint32 a;
+
+    argument.beginStructure();
+    argument >> a;
+    si.setSatelliteIdentifier(a);
+    argument >> a;
+    si.setAttribute(QGeoSatelliteInfo::Elevation, a);
+    argument >> a;
+    si.setAttribute(QGeoSatelliteInfo::Azimuth, a);
+    argument >> a;
+    si.setSignalStrength(a);
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QList<QGeoSatelliteInfo> &sis)
+{
+    sis.clear();
+
+    argument.beginArray();
+    while (!argument.atEnd()) {
+        QGeoSatelliteInfo si;
+        argument >> si;
+        sis.append(si);
+    }
+    argument.endArray();
+
+    return argument;
 }
 
 QT_END_NAMESPACE

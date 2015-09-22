@@ -88,6 +88,10 @@
     m_positionInfoSource->setError(QGeoPositionInfoSource::AccessError);
 
     qWarning() << QString::fromNSString([error localizedDescription]);
+
+    if ([error code] == 0
+        && QString::fromNSString([error domain]) == QStringLiteral("kCLErrorDomain"))
+      qWarning() << "(is Wi-Fi turned on?)";
 }
 @end
 

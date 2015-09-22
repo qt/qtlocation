@@ -110,14 +110,6 @@ private slots:
     void removeSlotForSatellitesInUseUpdated();
     void removeSlotForSatellitesInViewUpdated();
 
-#ifdef TST_GYPSYMOCK_ENABLED
-    // Cases only ran with mock backend
-    void updateValues();
-    void initGoneBad();
-    void badUpdates();
-#endif
-
-
 private:
     QGeoSatelliteInfoSource *m_source;
     bool m_testingDefaultSource;

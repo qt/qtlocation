@@ -100,14 +100,10 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     qRegisterMetaType<QList<QGeoTileSpec> >();
     qRegisterMetaType<QSet<QGeoTileSpec> >();
 
-    // We keep default values here so that they are in one place
-    // rather than in each individual plugin (the plugins can
-    // of course override them)
-
-    const QString basePath = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
-                 + QLatin1String("/QtLocation");
+    const QString basePath = baseCacheDirectory();
 
     // delete old tiles from QtLocation 5.4 or prior
+    // Newer version use plugin-specific subdirectories so those are not affected.
     // TODO Remove cache cleanup in Qt 6
     QDir baseDir(basePath);
     if (baseDir.exists()) {
@@ -118,8 +114,7 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
 
     if (directory_.isEmpty()) {
         directory_ = basePath;
-        qWarning() << "Plugin uses uninitialized directory for QGeoTileCache"
-                      " which will was deleted during startup";
+        qWarning() << "Plugin uses uninitialized QGeoTileCache directory which was deleted during startup";
     }
 
     QDir::root().mkpath(directory_);
@@ -297,19 +292,19 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
 
     QSharedPointer<QGeoCachedTileDisk> td = diskCache_.object(spec);
     if (td) {
-        QStringList parts = td->filename.split('.');
+        const QString format = QFileInfo(td->filename).suffix();
         QFile file(td->filename);
         file.open(QIODevice::ReadOnly);
         QByteArray bytes = file.readAll();
         file.close();
 
         QPixmap pixmap;
-        if (!pixmap.loadFromData(bytes, (parts.size() == 2 ? parts.at(1).toLocal8Bit().constData() : 0))) {
+        if (!pixmap.loadFromData(bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
             return QSharedPointer<QGeoTileTexture>(0);
         }
 
-        addToMemoryCache(spec, bytes, (parts.size() == 2 ? parts.at(1) : QLatin1String("")));
+        addToMemoryCache(spec, bytes, format);
         QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, pixmap);
         if (tt)
             return tt;
@@ -463,6 +458,25 @@ QGeoTileSpec QGeoTileCache::filenameToTileSpec(const QString &filename)
                     numbers.at(2),
                     numbers.at(3),
                     numbers.at(4));
+}
+
+QString QGeoTileCache::baseCacheDirectory()
+{
+    QString dir;
+
+    // Try the shared cache first and use a specific directory. (e.g. ~/.cache/QtLocation)
+    // If this is not supported by the platform, use the application-specific cache
+    // location. (e.g. ~/.cache/<app_name>/QtLocation)
+    dir = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
+    if (dir.isEmpty())
+        dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+
+    if (!dir.endsWith(QLatin1Char('/')))
+        dir += QLatin1Char('/');
+
+    dir += QLatin1String("QtLocation/");
+
+    return dir;
 }
 
 QT_END_NAMESPACE

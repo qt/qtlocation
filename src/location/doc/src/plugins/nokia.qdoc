@@ -92,7 +92,9 @@ a prefix.
     \li here.mapping.cache.directory
     \li Absolute path to map tile cache directory used as network disk cache.
 
-    Default place for the cache is "QtLocation" directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
+    The default place for the cache is \c{QtLocation/here} directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
+    On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
+
 \row
     \li here.mapping.cache.disk.size
     \li Map tile disk cache size in bytes. Default size of the cache is 20MB.

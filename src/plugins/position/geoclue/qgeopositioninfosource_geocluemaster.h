@@ -36,33 +36,26 @@
 #ifndef QGEOPOSITIONINFOSOURCE_GEOCLUEMASTER_H
 #define QGEOPOSITIONINFOSOURCE_GEOCLUEMASTER_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
 #include "qgeocluemaster.h"
+#include "geocluetypes.h"
 
-#include <qgeopositioninfosource.h>
-#include <geoclue/geoclue-velocity.h>
-#include <QTimer>
+#include <QtCore/QTimer>
+#include <QtPositioning/QGeoPositionInfoSource>
 
-//#define Q_LOCATION_GEOCLUE_DEBUG
+class OrgFreedesktopGeoclueInterface;
+class OrgFreedesktopGeocluePositionInterface;
+class OrgFreedesktopGeoclueVelocityInterface;
 
 QT_BEGIN_NAMESPACE
 
-class QGeoPositionInfoSourceGeoclueMaster : public QGeoPositionInfoSource, public QGeoclueMaster
+class QDBusPendingCallWatcher;
+
+class QGeoPositionInfoSourceGeoclueMaster : public QGeoPositionInfoSource
 {
     Q_OBJECT
 
 public:
-    QGeoPositionInfoSourceGeoclueMaster(QObject *parent = 0);
+    explicit QGeoPositionInfoSourceGeoclueMaster(QObject *parent = 0);
     ~QGeoPositionInfoSourceGeoclueMaster();
 
     // From QGeoPositionInfoSource
@@ -72,34 +65,61 @@ public:
     void setPreferredPositioningMethods(PositioningMethods methods);
     int minimumUpdateInterval() const;
 
-    void updatePosition(GeocluePositionFields fields, int timestamp, double latitude,
-                        double longitude, double altitude, GeoclueAccuracy *accuracy);
-
-    void regularUpdateFailed();
-
-    void velocityUpdateFailed();
-    void velocityUpdateSucceeded(GeoclueVelocityFields fields, int timestamp, double speed,
-                                 double direction, double climb);
-
     Error error() const;
 
-public slots:
-    virtual void startUpdates();
-    virtual void stopUpdates();
-    virtual void requestUpdate(int timeout = 5000);
+    virtual void startUpdates() Q_DECL_OVERRIDE;
+    virtual void stopUpdates() Q_DECL_OVERRIDE;
+    virtual void requestUpdate(int timeout = 5000) Q_DECL_OVERRIDE;
 
 private slots:
+    void positionProviderChanged(const QString &name, const QString &description,
+                                 const QString &service, const QString &path);
     void requestUpdateTimeout();
-    void positionProviderChanged(const QByteArray &service, const QByteArray &path);
+
+    void getPositionFinished(QDBusPendingCallWatcher *watcher);
+    void positionChanged(qint32 fields, qint32 timestamp, double latitude, double longitude,
+                         double altitude, const Accuracy &accuracy);
+    void velocityChanged(qint32 fields, qint32 timestamp, double speed, double direction,
+                         double climb);
 
 private:
     void configurePositionSource();
     void cleanupPositionSource();
     void setOptions();
 
+    enum PositionField
+    {
+        NoPositionFields = 0,
+        Latitude = 1 << 0,
+        Longitude = 1 << 1,
+        Altitude = 1 << 2
+    };
+    Q_DECLARE_FLAGS(PositionFields, PositionField)
+
+    void updatePosition(PositionFields fields, int timestamp, double latitude,
+                        double longitude, double altitude, Accuracy accuracy);
+    void positionUpdateFailed();
+
+    enum VelocityField
+    {
+        NoVelocityFields = 0,
+        Speed = 1 << 0,
+        Direction = 1 << 1,
+        Climb = 1 << 2
+    };
+    Q_DECLARE_FLAGS(VelocityFields, VelocityField)
+
+    void updateVelocity(VelocityFields fields, int timestamp, double speed, double direction,
+                        double climb);
+    void velocityUpdateFailed();
+
 private:
-    GeocluePosition *m_pos;
-    GeoclueVelocity *m_vel;
+    QGeoclueMaster *m_master;
+
+    OrgFreedesktopGeoclueInterface *m_provider;
+    OrgFreedesktopGeocluePositionInterface *m_pos;
+    OrgFreedesktopGeoclueVelocityInterface *m_vel;
+
     QTimer m_requestTimer;
     bool m_lastVelocityIsFresh;
     bool m_regularUpdateTimedOut;
@@ -108,7 +128,6 @@ private:
     double m_lastClimb;
     bool m_lastPositionFromSatellite;
     QGeoPositionInfo m_lastPosition;
-    PositioningMethods m_methods;
     bool m_running;
     QGeoPositionInfoSource::Error m_error;
 };
