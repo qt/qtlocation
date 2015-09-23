@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \ingroup QtLocation-impl
     \ingroup QtLocation-places
     \ingroup QtLocation-places-manager
-    \since 5.5
+    \since 5.6
 
     \brief The QPlaceManagerEngine class provides an interface for
     implementers of QGeoServiceProvider plugins who want to provide access to place

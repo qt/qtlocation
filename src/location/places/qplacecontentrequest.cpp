@@ -72,7 +72,7 @@ void QPlaceContentRequestPrivate::clear()
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-requests
-    \since 5.5
+    \since 5.6
 
     \brief The QPlaceContentRequest class represents the parameters of a content request.
 

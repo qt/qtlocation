@@ -55,7 +55,7 @@ QT_USE_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-replies
-    \since 5.5
+    \since 5.6
 
     \brief The QPlaceSearchSuggestionReply class manages a search suggestion operation started by an
     instance of QPlaceManager.

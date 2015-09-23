@@ -68,7 +68,7 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since 5.5
+    \since 5.6
 
     \brief The QPlaceContent class serves as the base class for rich content types.
 

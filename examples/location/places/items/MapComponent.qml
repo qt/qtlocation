@@ -41,7 +41,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtPositioning 5.5
-import QtLocation 5.5
+import QtLocation 5.6
 import "../helper.js" as Helper
 
 Map {

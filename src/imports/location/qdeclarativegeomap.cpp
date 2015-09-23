@@ -704,7 +704,7 @@ QGeoCoordinate QDeclarativeGeoMap::center() const
 
     This property does not provide any change notifications.
 
-    \since 5.5
+    \since 5.6
 */
 void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
 {
