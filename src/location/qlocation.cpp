@@ -43,7 +43,7 @@ namespace QLocation {
 /*!
     \namespace QLocation
     \inmodule QtLocation
-    \target QLocation Namespace
+    \keyword QLocation Namespace
 
     \brief The QLocation namespace contains miscellaneous identifiers used throughout the
            QtLocation module.
