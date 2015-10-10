@@ -33,8 +33,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOTILECACHE_P_H
-#define QGEOTILECACHE_P_H
+#ifndef QGEOFILETILECACHE_P_H
+#define QGEOFILETILECACHE_P_H
 
 //
 //  W A R N I N G
@@ -58,6 +58,7 @@
 
 #include "qgeotilespec_p.h"
 #include "qgeotiledmappingmanagerengine_p.h"
+#include "qabstractgeotilecache_p.h"
 
 #include <QImage>
 
@@ -67,12 +68,12 @@ class QGeoMappingManager;
 
 class QGeoTile;
 class QGeoCachedTileMemory;
-class QGeoTileCache;
+class QGeoFileTileCache;
 
 class QPixmap;
 class QThread;
 
-/* This would be internal to qgeotilecache.cpp except that the eviction
+/* This would be internal to qgeofiletilecache.cpp except that the eviction
  * policy can't be defined without it being concrete here */
 class QGeoCachedTileDisk
 {
@@ -82,20 +83,7 @@ public:
     QGeoTileSpec spec;
     QString filename;
     QString format;
-    QGeoTileCache *cache;
-};
-
-/* This is also used in the mapgeometry */
-class Q_LOCATION_EXPORT QGeoTileTexture
-{
-public:
-
-    QGeoTileTexture();
-    ~QGeoTileTexture();
-
-    QGeoTileSpec spec;
-    QImage image;
-    bool textureBound;
+    QGeoFileTileCache *cache;
 };
 
 /* Custom eviction policy for the disk cache, to avoid deleting all the files
@@ -107,12 +95,12 @@ protected:
     void aboutToBeEvicted(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj);
 };
 
-class Q_LOCATION_EXPORT QGeoTileCache : public QObject
+class Q_LOCATION_EXPORT QGeoFileTileCache : public QAbstractGeoTileCache
 {
     Q_OBJECT
 public:
-    QGeoTileCache(const QString &directory = QString(), QObject *parent = 0);
-    ~QGeoTileCache();
+    QGeoFileTileCache(const QString &directory = QString(), QObject *parent = 0);
+    ~QGeoFileTileCache();
 
     void setMaxDiskUsage(int diskUsage);
     int maxDiskUsage() const;
@@ -129,7 +117,6 @@ public:
     int textureUsage() const;
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec);
-    QString directory() const;
 
     // can be called without a specific tileCache pointer
     static void evictFromDiskCache(QGeoCachedTileDisk *td);
@@ -139,15 +126,12 @@ public:
                 const QByteArray &bytes,
                 const QString &format,
                 QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches);
-    void handleError(const QGeoTileSpec &spec, const QString &errorString);
-
-    static QString baseCacheDirectory();
-
-public Q_SLOTS:
-    void printStats();
 
 private:
+    void printStats();
     void loadTiles();
+
+    QString directory() const;
 
     QSharedPointer<QGeoCachedTileDisk> addToDiskCache(const QGeoTileSpec &spec, const QString &filename);
     QSharedPointer<QGeoCachedTileMemory> addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
@@ -156,15 +140,16 @@ private:
     static QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory);
     static QGeoTileSpec filenameToTileSpec(const QString &filename);
 
-    QString directory_;
     QCache3Q<QGeoTileSpec, QGeoCachedTileDisk, QCache3QTileEvictionPolicy > diskCache_;
     QCache3Q<QGeoTileSpec, QGeoCachedTileMemory > memoryCache_;
     QCache3Q<QGeoTileSpec, QGeoTileTexture > textureCache_;
 
     int minTextureUsage_;
     int extraTextureUsage_;
+
+    QString directory_;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILECACHE_P_H
+#endif // QGEOFILETILECACHE_P_H

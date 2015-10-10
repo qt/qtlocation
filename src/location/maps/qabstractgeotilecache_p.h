@@ -33,8 +33,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOTILEDMAP_P_H
-#define QGEOTILEDMAP_P_H
+#ifndef QABSTRACTGEOTILECACHE_P_H
+#define QABSTRACTGEOTILECACHE_P_H
 
 //
 //  W A R N I N G
@@ -47,58 +47,77 @@
 // We mean it.
 //
 
+#include <QtLocation/qlocationglobal.h>
+
 #include <QObject>
-#include <QString>
+#include <QCache>
+#include "qcache3q_p.h"
+#include <QSet>
+#include <QMutex>
+#include <QTimer>
 
-#include "qgeomap_p.h"
-#include "qgeocameradata_p.h"
-#include "qgeomaptype_p.h"
+#include "qgeotilespec_p.h"
+#include "qgeotiledmappingmanagerengine_p.h"
 
-#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QImage>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTileSpec;
-class QGeoTileTexture;
+class QGeoMappingManager;
+
+class QGeoTile;
 class QAbstractGeoTileCache;
-class QGeoTiledMapPrivate;
-class QGeoTiledMappingManagerEngine;
-class QGeoTileRequestManager;
 
-class QQuickWindow;
-class QSGNode;
+class QThread;
 
-class QPointF;
+/* This is also used in the mapgeometry */
+class Q_LOCATION_EXPORT QGeoTileTexture
+{
+public:
 
-class Q_LOCATION_EXPORT QGeoTiledMap : public QGeoMap
+    QGeoTileTexture();
+    ~QGeoTileTexture();
+
+    QGeoTileSpec spec;
+    QImage image;
+    bool textureBound;
+};
+
+class Q_LOCATION_EXPORT QAbstractGeoTileCache : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGeoTiledMap)
-
 public:
-    QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent);
-    virtual ~QGeoTiledMap();
+    QAbstractGeoTileCache(QObject *parent = 0);
+    virtual ~QAbstractGeoTileCache();
 
-    QAbstractGeoTileCache *tileCache();
-    QGeoTileRequestManager *requestManager();
-    void updateTile(const QGeoTileSpec &spec);
+    virtual void setMaxDiskUsage(int diskUsage);
+    virtual int maxDiskUsage() const;
+    virtual int diskUsage() const;
 
-    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
-    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
-    void prefetchData() Q_DECL_OVERRIDE;
+    virtual void setMaxMemoryUsage(int memoryUsage);
+    virtual int maxMemoryUsage() const;
+    virtual int memoryUsage() const;
+
+    virtual void setMinTextureUsage(int textureUsage) = 0;
+    virtual void setExtraTextureUsage(int textureUsage) = 0;
+    virtual int maxTextureUsage() const = 0;
+    virtual int minTextureUsage() const = 0;
+    virtual int textureUsage() const = 0;
+
+    virtual QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) = 0;
+
+    virtual void insert(const QGeoTileSpec &spec,
+                const QByteArray &bytes,
+                const QString &format,
+                QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches) = 0;
+    virtual void handleError(const QGeoTileSpec &spec, const QString &errorString);
+
+    static QString baseCacheDirectory();
 
 protected:
-    QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) Q_DECL_OVERRIDE;
-    virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
-
-private Q_SLOTS:
-    void handleTileVersionChanged();
-
-private:
-    Q_DISABLE_COPY(QGeoTiledMap)
-
+    virtual void printStats() = 0;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAP_P_H
+#endif // QABSTRACTGEOTILECACHE_P_H

@@ -41,7 +41,7 @@
 
 #include "qgeotiledmap_p.h"
 #include "qgeotilerequestmanager_p.h"
-#include "qgeotilecache_p.h"
+#include "qgeofiletilecache_p.h"
 #include "qgeotilespec_p.h"
 
 #include <QTimer>
@@ -275,22 +275,22 @@ void QGeoTiledMappingManagerEngine::setCacheHint(QGeoTiledMappingManagerEngine::
     d->cacheHint_ = cacheHint;
 }
 
-QGeoTileCache *QGeoTiledMappingManagerEngine::createTileCacheWithDir(const QString &cacheDirectory)
+QAbstractGeoTileCache *QGeoTiledMappingManagerEngine::createTileCacheWithDir(const QString &cacheDirectory)
 {
     Q_D(QGeoTiledMappingManagerEngine);
     Q_ASSERT_X(!d->tileCache_, Q_FUNC_INFO, "This should be called only once");
-    d->tileCache_ = new QGeoTileCache(cacheDirectory);
+    d->tileCache_ = new QGeoFileTileCache(cacheDirectory);
     return d->tileCache_;
 }
 
-QGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
+QAbstractGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
 {
     Q_D(QGeoTiledMappingManagerEngine);
     if (!d->tileCache_) {
         QString cacheDirectory;
         if (!managerName().isEmpty())
-            cacheDirectory = QGeoTileCache::baseCacheDirectory() + managerName();
-        d->tileCache_ = new QGeoTileCache(cacheDirectory);
+            cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + managerName();
+        d->tileCache_ = new QGeoFileTileCache(cacheDirectory);
     }
     return d->tileCache_;
 }

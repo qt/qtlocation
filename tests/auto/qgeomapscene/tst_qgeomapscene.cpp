@@ -37,7 +37,7 @@
 #include "qgeomapscene_p.h"
 #include "qgeocameratiles_p.h"
 #include "qgeocameradata_p.h"
-#include "qgeotilecache_p.h"
+#include "qabstractgeotilecache_p.h"
 
 #include <QtPositioning/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>

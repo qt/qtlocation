@@ -49,7 +49,8 @@ PRIVATE_HEADERS += \
                     maps/qgeoroutingmanagerengine_p.h \
                     maps/qgeoroutingmanager_p.h \
                     maps/qgeoserviceprovider_p.h \
-                    maps/qgeotilecache_p.h \
+                    maps/qabstractgeotilecache_p.h \
+                    maps/qgeofiletilecache_p.h \
                     maps/qgeotiledmapreply_p.h \
                     maps/qgeotiledmapreply_p_p.h \
                     maps/qgeotilespec_p.h \
@@ -81,7 +82,8 @@ SOURCES += \
             maps/qgeoroutingmanagerengine.cpp \
             maps/qgeoserviceprovider.cpp \
             maps/qgeoserviceproviderfactory.cpp \
-            maps/qgeotilecache.cpp \
+            maps/qabstractgeotilecache.cpp \
+            maps/qgeofiletilecache.cpp \
             maps/qgeotiledmapreply.cpp \
             maps/qgeotilespec.cpp \
             maps/qgeotiledmap.cpp

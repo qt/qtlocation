@@ -37,7 +37,7 @@
 #include "qgeotiledmap_p_p.h"
 
 #include "qgeotiledmappingmanagerengine_p.h"
-#include "qgeotilecache_p.h"
+#include "qabstractgeotilecache_p.h"
 #include "qgeotilespec_p.h"
 
 #include "qgeocameratiles_p.h"
@@ -85,7 +85,7 @@ void QGeoTiledMap::updateTile(const QGeoTileSpec &spec)
     d->updateTile(spec);
 }
 
-QGeoTileCache *QGeoTiledMap::tileCache()
+QAbstractGeoTileCache *QGeoTiledMap::tileCache()
 {
     Q_D(QGeoTiledMap);
     return d->m_cache;
