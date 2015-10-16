@@ -75,7 +75,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     \class QGeoServiceProvider
     \inmodule QtLocation
     \ingroup QtLocation-common
-    \since 5.5
+    \since 5.6
 
     \brief The QGeoServiceProvider class aggregates access to services which provide
     geographical information.

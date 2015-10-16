@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 import QtQuick 2.5
-import QtLocation 5.5
+import QtLocation 5.6
 
 //TODO: remove/refactor me when items are integrated
 

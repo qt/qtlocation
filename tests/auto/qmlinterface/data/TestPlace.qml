@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.5
+import QtLocation 5.6
 
 Place {
     name: "Test Place"

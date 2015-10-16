@@ -80,7 +80,7 @@ bool QPlaceSupplierPrivate::isEmpty() const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since 5.5
+    \since 5.6
 
     \brief The QPlaceSupplier class represents a supplier of a place or content associated
     with a place.

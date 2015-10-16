@@ -101,7 +101,7 @@ void QPlaceMatchRequestPrivate::clear()
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-requests
-    \since 5.5
+    \since 5.6
 
     \brief The QPlaceMatchRequest class is used to find places from one manager that match those from another.  It represents
     a set of request parameters.

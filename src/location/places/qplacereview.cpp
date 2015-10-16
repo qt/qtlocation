@@ -76,7 +76,7 @@ bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since 5.5
+    \since 5.6
 
     \brief The QPlaceReview class represents a review of a place.
 

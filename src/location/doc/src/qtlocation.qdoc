@@ -68,9 +68,6 @@ applications.
 The Qt Location API helps you create viable mapping solutions using the data
 available from some of the popular location services.
 
-The release of this API with Qt 5.5 is a Technology Preview. This implies a
-soft API freeze for Qt Location.
-
 \section1 Overview
 
 The Qt Location API enables you to:
@@ -88,7 +85,7 @@ To load the Qt Location module, add the following statement to your .qml files
 
 \code
     import QtPositioning 5.5
-    import QtLocation 5.5
+    import QtLocation 5.6
 \endcode
 
 The QtLocation QML module depends on the QtPositioning QML module.

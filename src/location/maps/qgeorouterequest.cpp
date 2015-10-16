@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoRouteRequest
     \inmodule QtLocation
     \ingroup QtLocation-routing
-    \since 5.5
+    \since 5.6
 
     \brief The QGeoRouteRequest class represents the parameters and restrictions
     which define a request for routing information.

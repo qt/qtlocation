@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoCodingManager
     \inmodule QtLocation
     \ingroup QtLocation-geocoding
-    \since 5.5
+    \since 5.6
 
     \brief The QGeoCodingManager class provides support for geocoding
     operations.

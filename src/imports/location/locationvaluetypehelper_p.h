@@ -37,6 +37,17 @@
 #ifndef LOCATION_VALUE_TYPE_HELPER
 #define LOCATION_VALUE_TYPE_HELPER
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QJSValue>
 #include <QGeoCoordinate>
 #include <QGeoRectangle>
