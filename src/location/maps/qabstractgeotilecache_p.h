@@ -87,7 +87,6 @@ class Q_LOCATION_EXPORT QAbstractGeoTileCache : public QObject
 {
     Q_OBJECT
 public:
-    QAbstractGeoTileCache(QObject *parent = 0);
     virtual ~QAbstractGeoTileCache();
 
     virtual void setMaxDiskUsage(int diskUsage);
@@ -115,6 +114,8 @@ public:
     static QString baseCacheDirectory();
 
 protected:
+    QAbstractGeoTileCache(QObject *parent = 0);
+
     virtual void printStats() = 0;
 };
 

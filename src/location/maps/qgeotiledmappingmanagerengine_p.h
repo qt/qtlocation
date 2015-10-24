@@ -112,6 +112,7 @@ protected:
     void setTileSize(const QSize &tileSize);
     void setTileVersion(int version);
     void setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint);
+    void setTileCache(QAbstractGeoTileCache *cache);
 
     QAbstractGeoTileCache *createTileCacheWithDir(const QString &cacheDirectory);
 

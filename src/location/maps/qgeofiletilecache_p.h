@@ -102,21 +102,21 @@ public:
     QGeoFileTileCache(const QString &directory = QString(), QObject *parent = 0);
     ~QGeoFileTileCache();
 
-    void setMaxDiskUsage(int diskUsage);
-    int maxDiskUsage() const;
-    int diskUsage() const;
+    void setMaxDiskUsage(int diskUsage) Q_DECL_OVERRIDE;
+    int maxDiskUsage() const Q_DECL_OVERRIDE;
+    int diskUsage() const Q_DECL_OVERRIDE;
 
-    void setMaxMemoryUsage(int memoryUsage);
-    int maxMemoryUsage() const;
-    int memoryUsage() const;
+    void setMaxMemoryUsage(int memoryUsage) Q_DECL_OVERRIDE;
+    int maxMemoryUsage() const Q_DECL_OVERRIDE;
+    int memoryUsage() const Q_DECL_OVERRIDE;
 
-    void setMinTextureUsage(int textureUsage);
-    void setExtraTextureUsage(int textureUsage);
-    int maxTextureUsage() const;
-    int minTextureUsage() const;
-    int textureUsage() const;
+    void setMinTextureUsage(int textureUsage) Q_DECL_OVERRIDE;
+    void setExtraTextureUsage(int textureUsage) Q_DECL_OVERRIDE;
+    int maxTextureUsage() const Q_DECL_OVERRIDE;
+    int minTextureUsage() const Q_DECL_OVERRIDE;
+    int textureUsage() const Q_DECL_OVERRIDE;
 
-    QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec);
+    QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
 
     // can be called without a specific tileCache pointer
     static void evictFromDiskCache(QGeoCachedTileDisk *td);
@@ -125,10 +125,10 @@ public:
     void insert(const QGeoTileSpec &spec,
                 const QByteArray &bytes,
                 const QString &format,
-                QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches);
+                QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches) Q_DECL_OVERRIDE;
 
 private:
-    void printStats();
+    void printStats() Q_DECL_OVERRIDE;
     void loadTiles();
 
     QString directory() const;
@@ -144,10 +144,10 @@ private:
     QCache3Q<QGeoTileSpec, QGeoCachedTileMemory > memoryCache_;
     QCache3Q<QGeoTileSpec, QGeoTileTexture > textureCache_;
 
+    QString directory_;
+
     int minTextureUsage_;
     int extraTextureUsage_;
-
-    QString directory_;
 };
 
 QT_END_NAMESPACE
