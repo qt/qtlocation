@@ -976,7 +976,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 
 bool QDeclarativeGeoMap::isInteractive()
 {
-    return (m_gestureArea->enabled() && m_gestureArea->activeGestures()) || m_gestureArea->isActive();
+    return (m_gestureArea->enabled() && m_gestureArea->acceptedGestures()) || m_gestureArea->isActive();
 }
 
 /*!

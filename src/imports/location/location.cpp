@@ -108,7 +108,7 @@ public:
             qmlRegisterType<QDeclarativeGeoRoute                    >(uri, major, minor, "Route"); // data type
             qmlRegisterType<QDeclarativeGeoRouteSegment             >(uri, major, minor, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver                 >(uri, major, minor, "RouteManeuver");
-            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent >(uri, major, minor, "MapPinchEvent",
+            qmlRegisterUncreatableType<QGeoMapPinchEvent >(uri, major, minor, "MapPinchEvent",
                                         QStringLiteral("(Map)PinchEvent is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QQuickGeoMapGestureArea>(uri, major, minor, "MapGestureArea",
                                         QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));

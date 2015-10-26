@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype MapPinchEvent
-    \instantiates QDeclarativeGeoMapPinchEvent
+    \instantiates QGeoMapPinchEvent
     \inqmlmodule QtLocation
 
     \brief MapPinchEvent type provides basic information about pinch event.
@@ -159,7 +159,7 @@ QT_BEGIN_NAMESPACE
     without its parent Map.
 
     The two most commonly used properties of the MapGestureArea are the \l enabled
-    and \l activeGestures properties. Both of these must be set before a
+    and \l acceptedGestures properties. Both of these must be set before a
     MapGestureArea will have any effect upon interaction with the Map.
     The \l flickDeceleration property controls how quickly the map pan slows after contact
     is released while panning the map.
@@ -172,13 +172,13 @@ QT_BEGIN_NAMESPACE
 
     \section2 Example Usage
 
-    The following example enables the zoom and pan gestures on the map, but not flicking. So the
+    The following example enables the pinch and pan gestures on the map, but not flicking. So the
     map scrolling will halt immediately on releasing the mouse button / touch.
 
     \code
     Map {
         gesture.enabled: true
-        gesture.activeGestures: MapGestureArea.ZoomGesture | MapGestureArea.PanGesture
+        gesture.acceptedGestures: MapGestureArea.PinchGesture | MapGestureArea.PanGesture
     }
     \endcode
 
@@ -190,53 +190,20 @@ QT_BEGIN_NAMESPACE
     \qmlproperty bool QtLocation::MapGestureArea::enabled
 
     This property holds whether the gestures are enabled.
-    Note: disabling gestures during an active gesture does not have effect on
-    the potentially active current gesture.
-*/
-
-
-/*!
-    \qmlproperty bool QtLocation::MapGestureArea::panEnabled
-
-    This property holds whether the pan gestures are enabled.
-    Note: disabling gestures during an active gesture does not have effect on
-    the potentially active current gesture.
 */
 
 /*!
-    \qmlproperty bool QtLocation::MapGestureArea::pinchEnabled
+    \qmlproperty bool QtLocation::MapGestureArea::pinchActive
 
-    This property holds whether the pinch gestures are enabled.
-    Note: disabling gestures during an active gesture does not have effect on
-    the potentially active current gesture.
+    This read-only property holds whether pinch gesture is active.
 */
 
 /*!
-    \qmlproperty bool QtLocation::MapGestureArea::isPinchActive
+    \qmlproperty bool QtLocation::MapGestureArea::panActive
 
-    This read-only property holds whether any pinch gesture is active.
-*/
-
-/*!
-    \qmlproperty bool QtLocation::MapGestureArea::isPanActive
-
-    This read-only property holds whether any pan gesture (panning or flicking) is active.
+    This read-only property holds whether pan gesture is active.
 
     \note Change notifications for this property were introduced in Qt 5.5.
-*/
-
-/*!
-    \qmlproperty enumeration QtLocation::MapGestureArea::activeGestures
-
-    This property holds the gestures that will be active. By default
-    the zoom, pan and flick gestures are enabled.
-
-    \list
-    \li MapGestureArea.NoGesture - Don't support any additional gestures (value: 0x0000).
-    \li MapGestureArea.ZoomGesture - Support the map zoom gesture (value: 0x0001).
-    \li MapGestureArea.PanGesture  - Support the map pan gesture (value: 0x0002).
-    \li MapGestureArea.FlickGesture  - Support the map flick gesture (value: 0x0004).
-    \endlist
 */
 
 /*!
@@ -292,7 +259,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal QtLocation::MapGestureArea::panStarted()
 
-    This signal is emitted when the view begins moving due to user
+    This signal is emitted when the map begins to move due to user
     interaction. Typically this means that the user is dragging a finger -
     or a mouse with one of more mouse buttons pressed - on the map.
 
@@ -302,9 +269,9 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal QtLocation::MapGestureArea::panFinished()
 
-    This signal is emitted when the view stops moving due to user
+    This signal is emitted when the map stops moving due to user
     interaction.  If a flick was generated, this signal is
-    emitted when the flick stops.  If a flick was not
+    emitted before flick starts. If a flick was not
     generated, this signal is emitted when the
     user stops dragging - that is a mouse or touch release.
 
@@ -315,8 +282,8 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal QtLocation::MapGestureArea::flickStarted()
 
-    This signal is emitted when the view is flicked.  A flick
-    starts from the point that the mouse or touch is released,
+    This signal is emitted when the map is flicked.  A flick
+    starts from the point where the mouse or touch was released,
     while still in motion.
 
     The corresponding handler is \c onFlichStarted.
@@ -325,8 +292,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlsignal QtLocation::MapGestureArea::flickFinished()
 
-    This signal is emitted when the view stops moving due to a flick.
-    The order of panFinished() and flickFinished() is not specified.
+    This signal is emitted when the map stops moving due to a flick.
 
     The corresponding handler is \c onFlickFinished.
 */
@@ -336,8 +302,9 @@ QQuickGeoMapGestureArea::QQuickGeoMapGestureArea(QDeclarativeGeoMap *map)
       m_map(0),
       m_declarativeMap(map),
       m_enabled(true),
-      m_activeGestures(ZoomGesture | PanGesture | FlickGesture),
-      m_preventStealing(false)
+      m_acceptedGestures(PinchGesture | PanGesture | FlickGesture),
+      m_preventStealing(false),
+      m_panEnabled(true)
 {
     m_flick.m_enabled = true,
     m_flick.m_maxVelocity = QML_MAP_FLICK_DEFAULTMAXVELOCITY;
@@ -401,22 +368,36 @@ QQuickGeoMapGestureArea::~QQuickGeoMapGestureArea()
 }
 
 /*!
-    \internal
+    \qmlproperty enumeration QtLocation::MapGestureArea::acceptedGestures
+
+    This property holds the gestures that will be active. By default
+    the zoom, pan and flick gestures are enabled.
+
+    \list
+    \li MapGestureArea.NoGesture - Don't support any additional gestures (value: 0x0000).
+    \li MapGestureArea.PinchGesture - Support the map pinch gesture (value: 0x0001).
+    \li MapGestureArea.PanGesture  - Support the map pan gesture (value: 0x0002).
+    \li MapGestureArea.FlickGesture  - Support the map flick gesture (value: 0x0004).
+    \endlist
 */
-QQuickGeoMapGestureArea::ActiveGestures QQuickGeoMapGestureArea::activeGestures() const
+
+QQuickGeoMapGestureArea::AcceptedGestures QQuickGeoMapGestureArea::acceptedGestures() const
 {
-    return m_activeGestures;
+    return m_acceptedGestures;
 }
 
-/*!
-    \internal
-*/
-void QQuickGeoMapGestureArea::setActiveGestures(ActiveGestures activeGestures)
+
+void QQuickGeoMapGestureArea::setAcceptedGestures(AcceptedGestures acceptedGestures)
 {
-    if (activeGestures == m_activeGestures)
+    if (acceptedGestures == m_acceptedGestures)
         return;
-    m_activeGestures = activeGestures;
-    emit activeGesturesChanged();
+    m_acceptedGestures = acceptedGestures;
+
+    setPanEnabled(acceptedGestures & GeoMapGesture::PanGesture);
+    setFlickEnabled(acceptedGestures & GeoMapGesture::FlickGesture);
+    setPinchEnabled(acceptedGestures & GeoMapGesture::PinchGesture);
+
+    emit acceptedGesturesChanged();
 }
 
 /*!
@@ -451,6 +432,17 @@ void QQuickGeoMapGestureArea::setEnabled(bool enabled)
     if (enabled == m_enabled)
         return;
     m_enabled = enabled;
+
+    if (enabled) {
+        setPanEnabled(m_acceptedGestures & GeoMapGesture::PanGesture);
+        setFlickEnabled(m_acceptedGestures & GeoMapGesture::FlickGesture);
+        setPinchEnabled(m_acceptedGestures & GeoMapGesture::PinchGesture);
+    } else {
+        setPanEnabled(false);
+        setFlickEnabled(false);
+        setPinchEnabled(false);
+    }
+
     emit enabledChanged();
 }
 
@@ -471,7 +463,6 @@ void QQuickGeoMapGestureArea::setPinchEnabled(bool enabled)
     if (enabled == m_pinch.m_enabled)
         return;
     m_pinch.m_enabled = enabled;
-    emit pinchEnabledChanged();
 }
 
 /*!
@@ -479,7 +470,7 @@ void QQuickGeoMapGestureArea::setPinchEnabled(bool enabled)
 */
 bool QQuickGeoMapGestureArea::panEnabled() const
 {
-    return m_flick.m_enabled;
+    return m_panEnabled;
 }
 
 /*!
@@ -489,12 +480,33 @@ void QQuickGeoMapGestureArea::setPanEnabled(bool enabled)
 {
     if (enabled == m_flick.m_enabled)
         return;
-    m_flick.m_enabled = enabled;
-    emit panEnabledChanged();
+    m_panEnabled = enabled;
 
     // unlike the pinch, the pan existing functionality is to stop immediately
     if (!enabled)
         stopPan();
+}
+
+/*!
+    \internal
+*/
+bool QQuickGeoMapGestureArea::flickEnabled() const
+{
+    return m_flick.m_enabled;
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::setFlickEnabled(bool enabled)
+{
+    if (enabled == m_flick.m_enabled)
+        return;
+    m_flick.m_enabled = enabled;
+    // unlike the pinch, the flick existing functionality is to stop immediately
+    if (!enabled) {
+         stopFlick();
+    }
 }
 
 /*!
@@ -761,14 +773,14 @@ void QQuickGeoMapGestureArea::update()
     touchPointStateMachine();
 
     // Parallel state machine for pinch
-    if (isPinchActive() || (m_enabled && m_pinch.m_enabled && (m_activeGestures & (ZoomGesture))))
+    if (isPinchActive() || (m_enabled && m_pinch.m_enabled && (m_acceptedGestures & (PinchGesture))))
         pinchStateMachine();
 
     // Parallel state machine for pan (since you can pan at the same time as pinching)
     // The stopPan function ensures that pan stops immediately when disabled,
     // but the line below allows pan continue its current gesture if you disable
     // the whole gesture (enabled_ flag), this keeps the enabled_ consistent with the pinch
-    if (isPanActive() || (m_enabled && m_flick.m_enabled && (m_activeGestures & (PanGesture | FlickGesture))))
+    if (isPanActive() || (m_enabled && m_flick.m_enabled && (m_acceptedGestures & (PanGesture | FlickGesture))))
         panStateMachine();
 }
 
@@ -1019,7 +1031,7 @@ void QQuickGeoMapGestureArea::updatePinch()
     m_pinch.m_lastAngle = m_twoTouchAngle;
     emit pinchUpdated(&m_pinch.m_event);
 
-    if (m_activeGestures & ZoomGesture) {
+    if (m_acceptedGestures & PinchGesture) {
         // Take maximum and minimumzoomlevel into account
         qreal perPinchMinimumZoomLevel = qMax(m_pinch.m_zoom.m_start - m_pinch.m_zoom.maximumChange, m_pinch.m_zoom.m_minimum);
         qreal perPinchMaximumZoomLevel = qMin(m_pinch.m_zoom.m_start + m_pinch.m_zoom.maximumChange, m_pinch.m_zoom.m_maximum);
@@ -1067,22 +1079,25 @@ void QQuickGeoMapGestureArea::panStateMachine()
         break;
     case panActive:
         if (m_allPoints.count() == 0) {
-            m_flickState = flickActive;
             if (!tryStartFlick())
             {
                 m_flickState = flickInactive;
                 // mark as inactive for use by camera
                 if (m_pinchState == pinchInactive) {
                     m_declarativeMap->setKeepMouseGrab(m_preventStealing);
-                    emit panFinished();
                     m_map->prefetchData();
                 }
+                emit panFinished();
+            } else {
+                m_flickState = flickActive;
+                emit panFinished();
+                emit flickStarted();
             }
         }
         break;
     case flickActive:
         if (m_allPoints.count() > 0) { // re touched before movement ended
-            endFlick();
+            stopFlick();
             m_declarativeMap->setKeepMouseGrab(true);
             m_flickState = panActive;
         }
@@ -1111,7 +1126,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
 */
 bool QQuickGeoMapGestureArea::canStartPan()
 {
-    if (m_allPoints.count() == 0 || (m_activeGestures & PanGesture) == 0)
+    if (m_allPoints.count() == 0 || (m_acceptedGestures & PanGesture) == 0)
         return false;
 
     // Check if thresholds for normal panning are met.
@@ -1145,7 +1160,7 @@ void QQuickGeoMapGestureArea::updatePan()
 */
 bool QQuickGeoMapGestureArea::tryStartFlick()
 {
-    if ((m_activeGestures & FlickGesture) == 0)
+    if ((m_acceptedGestures & FlickGesture) == 0)
         return false;
     // if we drag then pause before release we should not cause a flick.
     qreal velocityX = 0.0;
@@ -1218,16 +1233,15 @@ void QQuickGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
     m_flick.m_animation->setFrom(animationStartCoordinate);
     m_flick.m_animation->setTo(animationEndCoordinate);
     m_flick.m_animation->start();
-    emit flickStarted();
 }
 
 void QQuickGeoMapGestureArea::stopPan()
 {
-    m_velocityX = 0;
-    m_velocityY = 0;
     if (m_flickState == flickActive) {
-        endFlick();
+        stopFlick();
     } else if (m_flickState == panActive) {
+        m_velocityX = 0;
+        m_velocityY = 0;
         m_flickState = flickInactive;
         m_declarativeMap->setKeepMouseGrab(m_preventStealing);
         emit panFinished();
@@ -1239,8 +1253,10 @@ void QQuickGeoMapGestureArea::stopPan()
 /*!
     \internal
 */
-void QQuickGeoMapGestureArea::endFlick()
+void QQuickGeoMapGestureArea::stopFlick()
 {
+    m_velocityX = 0;
+    m_velocityY = 0;
     if (m_flick.m_animation->isRunning())
         m_flick.m_animation->stop();
     else
@@ -1250,16 +1266,12 @@ void QQuickGeoMapGestureArea::endFlick()
 void QQuickGeoMapGestureArea::handleFlickAnimationStopped()
 {
     m_declarativeMap->setKeepMouseGrab(m_preventStealing);
-    emit panFinished();
-    emit flickFinished();
-    m_flickState = flickInactive;
-    emit panActiveChanged();
-    m_map->prefetchData();
+    if (m_flickState == flickActive) {
+        m_flickState = flickInactive;
+        emit flickFinished();
+        m_map->prefetchData();
+    }
 }
-
-
-
-
 
 #include "moc_qquickgeomapgesturearea_p.cpp"
 

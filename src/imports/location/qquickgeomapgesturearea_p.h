@@ -64,7 +64,7 @@ class QTouchEvent;
 class QWheelEvent;
 class QGeoMap;
 
-class QDeclarativeGeoMapPinchEvent : public QObject
+class QGeoMapPinchEvent : public QObject
 {
     Q_OBJECT
 
@@ -76,13 +76,13 @@ class QDeclarativeGeoMapPinchEvent : public QObject
     Q_PROPERTY(bool accepted READ accepted WRITE setAccepted)
 
 public:
-    QDeclarativeGeoMapPinchEvent(const QPointF &center, qreal angle,
+    QGeoMapPinchEvent(const QPointF &center, qreal angle,
                                  const QPointF &point1, const QPointF &point2,
                                  int pointCount = 0, bool accepted = true)
         : QObject(), m_center(center), m_angle(angle),
           m_point1(point1), m_point2(point2),
         m_pointCount(pointCount), m_accepted(accepted) {}
-    QDeclarativeGeoMapPinchEvent()
+    QGeoMapPinchEvent()
         : QObject(),
           m_angle(0.0),
           m_pointCount(0),
@@ -113,32 +113,32 @@ private:
 class QQuickGeoMapGestureArea: public QQuickItem
 {
     Q_OBJECT
-    Q_ENUMS(ActiveGesture)
-    Q_FLAGS(ActiveGestures)
+    Q_ENUMS(GeoMapGesture)
+    Q_FLAGS(AcceptedGestures)
 
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
-    Q_PROPERTY(bool pinchEnabled READ pinchEnabled WRITE setPinchEnabled NOTIFY pinchEnabledChanged)
-    Q_PROPERTY(bool panEnabled READ panEnabled WRITE setPanEnabled NOTIFY panEnabledChanged)
-    Q_PROPERTY(bool isPinchActive READ isPinchActive NOTIFY pinchActiveChanged)
-    Q_PROPERTY(bool isPanActive READ isPanActive NOTIFY panActiveChanged)
-    Q_PROPERTY(ActiveGestures activeGestures READ activeGestures WRITE setActiveGestures NOTIFY activeGesturesChanged)
+    Q_PROPERTY(bool pinchActive READ isPinchActive NOTIFY pinchActiveChanged)
+    Q_PROPERTY(bool panActive READ isPanActive NOTIFY panActiveChanged)
+    Q_PROPERTY(AcceptedGestures acceptedGestures READ acceptedGestures WRITE setAcceptedGestures NOTIFY acceptedGesturesChanged)
     Q_PROPERTY(qreal maximumZoomLevelChange READ maximumZoomLevelChange WRITE setMaximumZoomLevelChange NOTIFY maximumZoomLevelChangeChanged)
     Q_PROPERTY(qreal flickDeceleration READ flickDeceleration WRITE setFlickDeceleration NOTIFY flickDecelerationChanged)
     Q_PROPERTY(bool preventStealing READ preventStealing WRITE setPreventStealing NOTIFY preventStealingChanged REVISION 1)
+
 public:
     QQuickGeoMapGestureArea(QDeclarativeGeoMap *map);
     ~QQuickGeoMapGestureArea();
 
-    enum ActiveGesture {
+    enum GeoMapGesture {
         NoGesture = 0x0000,
-        ZoomGesture = 0x0001,
+        PinchGesture = 0x0001,
         PanGesture = 0x0002,
         FlickGesture = 0x004
     };
-    Q_DECLARE_FLAGS(ActiveGestures, ActiveGesture)
 
-    ActiveGestures activeGestures() const;
-    void setActiveGestures(ActiveGestures activeGestures);
+    Q_DECLARE_FLAGS(AcceptedGestures, GeoMapGesture)
+
+    AcceptedGestures acceptedGestures() const;
+    void setAcceptedGestures(AcceptedGestures acceptedGestures);
 
     bool isPinchActive() const;
     bool isPanActive() const;
@@ -146,12 +146,6 @@ public:
 
     bool enabled() const;
     void setEnabled(bool enabled);
-
-    // backwards compatibility
-    bool pinchEnabled() const;
-    void setPinchEnabled(bool enabled);
-    bool panEnabled() const;
-    void setPanEnabled(bool enabled);
 
     qreal maximumZoomLevelChange() const;
     void setMaximumZoomLevelChange(qreal maxChange);
@@ -183,16 +177,11 @@ Q_SIGNALS:
     void pinchActiveChanged();
     void enabledChanged();
     void maximumZoomLevelChangeChanged();
-    void activeGesturesChanged();
+    void acceptedGesturesChanged();
     void flickDecelerationChanged();
-
-    // backwards compatibility
-    void pinchEnabledChanged();
-    void panEnabledChanged();
-
-    void pinchStarted(QDeclarativeGeoMapPinchEvent *pinch);
-    void pinchUpdated(QDeclarativeGeoMapPinchEvent *pinch);
-    void pinchFinished(QDeclarativeGeoMapPinchEvent *pinch);
+    void pinchStarted(QGeoMapPinchEvent *pinch);
+    void pinchUpdated(QGeoMapPinchEvent *pinch);
+    void pinchFinished(QGeoMapPinchEvent *pinch);
     void panStarted();
     void panFinished();
     void flickStarted();
@@ -222,7 +211,15 @@ private:
     void updatePan();
     bool tryStartFlick();
     void startFlick(int dx, int dy, int timeMs = 0);
-    void endFlick();
+    void stopFlick();
+
+    bool pinchEnabled() const;
+    void setPinchEnabled(bool enabled);
+    bool panEnabled() const;
+    void setPanEnabled(bool enabled);
+    bool flickEnabled() const;
+    void setFlickEnabled(bool enabled);
+
 private Q_SLOTS:
     void handleFlickAnimationStopped();
 
@@ -241,7 +238,7 @@ private:
     {
         Pinch() : m_enabled(true), m_startDist(0), m_lastAngle(0.0) {}
 
-        QDeclarativeGeoMapPinchEvent m_event;
+        QGeoMapPinchEvent m_event;
         bool m_enabled;
         struct Zoom
         {
@@ -260,7 +257,7 @@ private:
         qreal m_lastAngle;
      } m_pinch;
 
-    ActiveGestures m_activeGestures;
+    AcceptedGestures m_acceptedGestures;
 
     struct Pan
     {
@@ -289,6 +286,7 @@ private:
     qreal m_distanceBetweenTouchPoints;
     QPointF m_sceneCenter;
     bool m_preventStealing;
+    bool m_panEnabled;
 
     // prototype state machine...
     enum TouchPointState

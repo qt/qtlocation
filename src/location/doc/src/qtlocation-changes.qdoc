@@ -45,8 +45,12 @@
 
 \b{\l{QtLocation::MapGestureArea}{MapGestureArea} Component}
 \list
- \li added missing panActiveChanged() signal to \l[QML]{QtLocation::MapGestureArea::}{isPanActive} property
+ \li added missing panActiveChanged() signal to \l[QML]{QtLocation::MapGestureArea::}{panActive} property
  \li removed movementStopped() signal
+ \li replaced isPanActive, isPinchActive with panActive, pinchActive
+ \li replaced activeGestures with acceptedGestures
+ \li replaced ZoomGesture with PinchGesture
+ \li removed properties panEnabled pinchEnable, please use acceptedGestures instead
 \endlist
 
 \b Geoservice's plugin parameters
