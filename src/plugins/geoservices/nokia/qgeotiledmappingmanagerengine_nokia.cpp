@@ -108,7 +108,8 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
         m_cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + QLatin1String("here");
     }
 
-    QAbstractGeoTileCache *tileCache = createTileCacheWithDir(m_cacheDirectory);
+    QAbstractGeoTileCache *tileCache = new QGeoFileTileCache(m_cacheDirectory);
+    setTileCache(tileCache);
 
     if (parameters.contains(QStringLiteral("here.mapping.cache.disk.size"))) {
       bool ok = false;

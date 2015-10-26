@@ -93,7 +93,7 @@ public:
                             const QSet<QGeoTileSpec> &tilesAdded,
                             const QSet<QGeoTileSpec> &tilesRemoved);
 
-    QAbstractGeoTileCache *tileCache(); // TODO: check this is still used
+    QAbstractGeoTileCache *tileCache();
     QSharedPointer<QGeoTileTexture> getTileTexture(const QGeoTileSpec &spec);
 
 
@@ -113,8 +113,6 @@ protected:
     void setTileVersion(int version);
     void setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint);
     void setTileCache(QAbstractGeoTileCache *cache);
-
-    QAbstractGeoTileCache *createTileCacheWithDir(const QString &cacheDirectory);
 
 private:
     QGeoTiledMappingManagerEnginePrivate *d_ptr;
