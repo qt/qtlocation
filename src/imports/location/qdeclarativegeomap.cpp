@@ -1227,6 +1227,10 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
                 continue;
             }
         }
+        // Force map items to update immediately. Needed to ensure correct item size and positions
+        // when recursively calling this function.
+        if (item->isPolishScheduled())
+           item->updatePolish();
 
         topLeftX = item->position().x();
         topLeftY = item->position().y();

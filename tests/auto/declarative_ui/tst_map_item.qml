@@ -257,37 +257,40 @@ Item {
             map.center = preMapRect.topLeft
             var point = map.fromCoordinate(preMapRect.topLeft)
             mouseClick(map, point.x + 5, point.y + 5)
-            compare(preMapRectClicked.count, 1)
+            tryCompare(preMapRectClicked, "count", 1)
             mouseClick(map, 1, 1) // no item hit
-            compare(preMapRectClicked.count, 1)
+            tryCompare(preMapRectClicked, "count", 1)
             compare(preMapCircleClicked.count, 0)
 
             // click circle, overlaps and is above rect
             map.center = preMapCircle.center
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapCircle.center)
             mouseClick(map, point.x - 5, point.y - 5)
-            compare(preMapRectClicked.count, 1)
+            tryCompare(preMapRectClicked, "count", 1)
             compare(preMapCircleClicked.count, 1)
 
             // click within circle bounding rect but not inside the circle geometry
             map.center = preMapCircle.center.atDistanceAndAzimuth(preMapCircle.radius, -45)
             mouseClick(map, preMapCircle.x + 4, preMapCircle.y + 4)
-            compare(preMapRectClicked.count, 2)
+            tryCompare(preMapRectClicked, "count", 2)
             compare(preMapCircleClicked.count, 1)
 
             // click quick item
             compare(preMapQuickItemClicked.count, 0)
             map.center = preMapQuickItem.coordinate
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
-            compare(preMapQuickItemClicked.count, 1)
+            tryCompare(preMapQuickItemClicked, "count", 1)
 
             // click polygon
             compare (preMapPolygonClicked.count, 0)
             map.center = preMapPolygon.path[1]
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapPolygon.path[1])
             mouseClick(map, point.x - 5, point.y)
-            compare(preMapPolygonClicked.count, 1)
+            tryCompare(preMapPolygonClicked, "count", 1)
 
             // remove items and repeat clicks to verify they are gone
             map.clearMapItems()
@@ -328,48 +331,54 @@ Item {
             compare (map.mapItems.length, 6)
             visualInspectionPoint()
             map.center = preMapRect.topLeft
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapRect.topLeft)
             mouseClick(map, point.x + 5, point.y + 5)
-            compare(preMapRectClicked.count, 1)
+            tryCompare(preMapRectClicked, "count", 1)
             map.center = preMapCircle.center
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapCircle.center)
             mouseClick(map, point.x - 5, point.y - 5)
-            compare(preMapRectClicked.count, 1)
+            tryCompare(preMapRectClicked, "count", 1)
             compare(preMapCircleClicked.count, 1)
             map.center = preMapCircle.center.atDistanceAndAzimuth(preMapCircle.radius, -45)
             mouseClick(map, preMapCircle.x + 4, preMapCircle.y + 4)
-            compare(preMapRectClicked.count, 2)
+            tryCompare(preMapRectClicked, "count", 2)
             compare(preMapCircleClicked.count, 1)
             compare(preMapQuickItemClicked.count, 0)
             map.center = preMapQuickItem.coordinate
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
-            compare(preMapQuickItemClicked.count, 1)
+            tryCompare(preMapQuickItemClicked, "count", 1)
             map.center = preMapPolygon.path[1]
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapPolygon.path[1])
             mouseClick(map, point.x - 5, point.y)
-            compare(preMapPolygonClicked.count, 1)
+            tryCompare(preMapPolygonClicked, "count", 1)
 
 
             // item clips to map. not sure if this is sensible test
             map.addMapItem(extMapCircle)
             map.center = extMapCircle.center
+            verify(waitForRendering(map))
             visualInspectionPoint();
             point = map.fromCoordinate(extMapCircle.center)
             mouseClick(map, point.x, point.y)
-            compare(extMapCircleClicked.count, 1)
+            tryCompare(extMapCircleClicked, "count", 1)
             mouseClick(map, point.x, -5)
-            compare(extMapCircleClicked.count, 1)
+            tryCompare(extMapCircleClicked, "count", 1)
             map.removeMapItem(extMapCircle)
 
             map.addMapItem(extMapQuickItem)
             map.center = extMapQuickItem.coordinate
+            verify(waitForRendering(map))
             visualInspectionPoint();
             point = map.fromCoordinate(extMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
-            compare(extMapQuickItemClicked.count, 1)
+            tryCompare(extMapQuickItemClicked, "count", 1)
             mouseClick(map, map.width + 5, point.y + 5)
-            compare(extMapQuickItemClicked.count, 1)
+            tryCompare(extMapQuickItemClicked, "count", 1)
             map.removeMapItem(extMapQuickItem)
         }
 
@@ -378,6 +387,8 @@ Item {
             // basic drags, drag rectangle
             compare (preMapRectActiveChanged.count, 0)
             map.center = preMapRect.topLeft
+            verify(waitForRendering(map))
+
             var i
             var point = map.fromCoordinate(preMapRect.topLeft)
             var targetCoordinate = map.toCoordinate(51, 51)
@@ -400,6 +411,7 @@ Item {
             // drag circle
             compare (preMapCircleActiveChanged.count, 0)
             map.center = preMapCircle.center
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapCircle.center)
             targetCoordinate = map.toCoordinate(51, 51)
             mousePress(map, point.x, point.y)
@@ -418,6 +430,7 @@ Item {
             // drag quick item
             compare (preMapQuickItemActiveChanged.count, 0)
             map.center = preMapQuickItem.coordinate
+            verify(waitForRendering(map))
             point = map.fromCoordinate(preMapQuickItem.coordinate)
             targetCoordinate = map.toCoordinate(51, 51)
             mousePress(map, point.x + 5, point.y + 5)

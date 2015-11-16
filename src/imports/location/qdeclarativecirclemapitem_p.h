@@ -56,8 +56,6 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapQuickItem;
-
 class QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
 {
 public:
@@ -101,10 +99,10 @@ Q_SIGNALS:
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
+    void updatePolish() Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-    virtual void updateMapItem() Q_DECL_OVERRIDE;
-    void updateMapItemAssumeDirty();
+    void markSourceDirtyAndUpdate();
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:

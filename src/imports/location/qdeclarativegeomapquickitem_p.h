@@ -90,9 +90,9 @@ Q_SIGNALS:
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
+    void updatePolish() Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
-    virtual void updateMapItem() Q_DECL_OVERRIDE;
     virtual void afterChildrenChanged() Q_DECL_OVERRIDE;
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 

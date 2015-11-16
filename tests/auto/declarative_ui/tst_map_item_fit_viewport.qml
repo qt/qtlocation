@@ -240,6 +240,7 @@ Item {
             // normal case - fit viewport to items which are all already visible
             verify_visibility_all_items()
             map.fitViewportToMapItems()
+            verify(waitForRendering(map))
             visualInspectionPoint()
             verify_visibility_all_items()
         }
@@ -577,6 +578,7 @@ Item {
             map.addMapItem(preMapPolygon)
             map.addMapItem(preMapPolyline)
             map.addMapItem(preMapRoute)
+            verify(waitForRendering(map))
             compare (map.mapItems.length, 6)
             calculate_bounds()
         }

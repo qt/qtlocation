@@ -100,7 +100,7 @@ Item {
             mouseClick(map, 50, 50)
             mouseClick(map, 50, 50)
             mouseClick(map, 50, 50)
-            compare(map.mouseClickedSpy.count, 3)
+            tryCompare(map.mouseClickedSpy, "count", 3)
         }
 
         function test_map_clicked_wiht_no_plugin()
