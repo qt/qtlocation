@@ -269,12 +269,12 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::get(const QGeoTileSpec &spec)
 
     QSharedPointer<QGeoCachedTileMemory> tm = memoryCache_.object(spec);
     if (tm) {
-        QPixmap pixmap;
-        if (!pixmap.loadFromData(tm->bytes)) {
+        QImage image;
+        if (!image.loadFromData(tm->bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
             return QSharedPointer<QGeoTileTexture>(0);
         }
-        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(spec, pixmap);
+        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(spec, image);
         if (tt)
             return tt;
     }
@@ -287,14 +287,14 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::get(const QGeoTileSpec &spec)
         QByteArray bytes = file.readAll();
         file.close();
 
-        QPixmap pixmap;
-        if (!pixmap.loadFromData(bytes)) {
+        QImage image;
+        if (!image.loadFromData(bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
             return QSharedPointer<QGeoTileTexture>(0);
         }
 
         addToMemoryCache(spec, bytes, format);
-        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, pixmap);
+        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, image);
         if (tt)
             return tt;
     }
@@ -365,13 +365,13 @@ QSharedPointer<QGeoCachedTileMemory> QGeoFileTileCache::addToMemoryCache(const Q
     return tm;
 }
 
-QSharedPointer<QGeoTileTexture> QGeoFileTileCache::addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap)
+QSharedPointer<QGeoTileTexture> QGeoFileTileCache::addToTextureCache(const QGeoTileSpec &spec, const QImage &image)
 {
     QSharedPointer<QGeoTileTexture> tt(new QGeoTileTexture);
     tt->spec = spec;
-    tt->image = pixmap.toImage();
+    tt->image = image;
 
-    int textureCost = tt->image.width() * tt->image.height() * tt->image.depth() / 8;
+    int textureCost = image.width() * image.height() * image.depth() / 8;
     textureCache_.insert(spec, tt, textureCost);
 
     return tt;

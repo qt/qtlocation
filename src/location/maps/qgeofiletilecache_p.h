@@ -135,7 +135,7 @@ private:
 
     QSharedPointer<QGeoCachedTileDisk> addToDiskCache(const QGeoTileSpec &spec, const QString &filename);
     QSharedPointer<QGeoCachedTileMemory> addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
-    QSharedPointer<QGeoTileTexture> addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap);
+    QSharedPointer<QGeoTileTexture> addToTextureCache(const QGeoTileSpec &spec, const QImage &image);
 
     static QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory);
     static QGeoTileSpec filenameToTileSpec(const QString &filename);
