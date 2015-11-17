@@ -181,6 +181,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_zoomLevel(8.0),
         m_componentCompleted(false),
         m_mappingManagerInitialized(false),
+        m_color(QColor::fromRgbF(0.9, 0.9, 0.9)),
         m_pendingFitViewport(false)
 {
     setAcceptHoverEvents(false);
@@ -417,9 +418,11 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 
     QSGSimpleRectNode *root = static_cast<QSGSimpleRectNode *>(oldNode);
     if (!root)
-        root = new QSGSimpleRectNode(boundingRect(), QColor::fromRgbF(0.9, 0.9, 0.9));
-    else
+        root = new QSGSimpleRectNode(boundingRect(), m_color);
+    else {
         root->setRect(boundingRect());
+        root->setColor(m_color);
+    }
 
     QSGNode *content = root->childCount() ? root->firstChild() : 0;
     content = m_map->updateSceneGraph(content, window());
@@ -735,6 +738,28 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
     QGeoCoordinate br = m_map->itemPositionToCoordinate(QDoubleVector2D(width(), height()));
 
     return QGeoRectangle(tl, br);
+}
+
+
+/*!
+    \qmlproperty color QtLocation::Map::color
+
+    This property holds the background color of the map element.
+
+    \since 5.6
+*/
+void QDeclarativeGeoMap::setColor(const QColor &color)
+{
+    if (color != m_color) {
+        m_color = color;
+        update();
+        emit colorChanged(m_color);
+    }
+}
+
+QColor QDeclarativeGeoMap::color() const
+{
+    return m_color;
 }
 
 void QDeclarativeGeoMap::fitViewportToGeoShape()

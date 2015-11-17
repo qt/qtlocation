@@ -55,6 +55,7 @@
 #include <QtQuick/QQuickItem>
 #include <QtCore/QPointer>
 #include <QtCore/QMutex>
+#include <QtGui/QColor>
 #include <QtPositioning/qgeoshape.h>
 
 QT_BEGIN_NAMESPACE
@@ -79,6 +80,7 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QGeoServiceProvider::Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(QGeoShape visibleRegion READ visibleRegion WRITE setVisibleRegion)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -106,6 +108,9 @@ public:
 
     void setVisibleRegion(const QGeoShape &shape);
     QGeoShape visibleRegion() const;
+
+    void setColor(const QColor &color);
+    QColor color() const;
 
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
@@ -142,6 +147,7 @@ Q_SIGNALS:
     void mapItemsChanged();
     void errorChanged();
     void copyrightLinkActivated(const QString &link);
+    void colorChanged(const QColor &color);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
@@ -194,6 +200,7 @@ private:
     bool m_componentCompleted;
     bool m_mappingManagerInitialized;
     QGeoShape m_region;
+    QColor m_color;
     bool m_pendingFitViewport;
 
     friend class QDeclarativeGeoMapItem;
