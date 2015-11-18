@@ -877,18 +877,6 @@ QPointF QDeclarativeGeoMap::fromCoordinate(const QGeoCoordinate &coordinate, boo
 }
 
 /*!
-    \qmlmethod QtLocation::Map::toScreenPosition(coordinate coordinate)
-    \obsolete
-
-    This function is missed named and is equilavent to \l {fromCoordinate}, which should be used
-    instead.
-*/
-QPointF QDeclarativeGeoMap::toScreenPosition(const QGeoCoordinate &coordinate) const
-{
-    return fromCoordinate(coordinate);
-}
-
-/*!
     \qmlmethod void QtLocation::Map::pan(int dx, int dy)
 
     Starts panning the map by \a dx pixels along the x-axis and
