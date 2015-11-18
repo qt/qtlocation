@@ -221,6 +221,12 @@ ApplicationWindow {
                 stackView.currentItem.selectLanguage.connect(setLanguage)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
+            case "Clear":
+                map.clearData()
+                break
+            case "Prefetch":
+                map.prefetchData()
+                break
             default:
                 console.log("Unsupported operation")
             }

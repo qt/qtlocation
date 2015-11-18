@@ -115,6 +115,7 @@ public:
     int maxTextureUsage() const Q_DECL_OVERRIDE;
     int minTextureUsage() const Q_DECL_OVERRIDE;
     int textureUsage() const Q_DECL_OVERRIDE;
+    void clearAll() Q_DECL_OVERRIDE;
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
 

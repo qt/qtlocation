@@ -102,6 +102,7 @@ public:
     virtual int maxTextureUsage() const = 0;
     virtual int minTextureUsage() const = 0;
     virtual int textureUsage() const = 0;
+    virtual void clearAll() = 0;
 
     virtual QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) = 0;
 

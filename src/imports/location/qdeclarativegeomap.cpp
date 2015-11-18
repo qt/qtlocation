@@ -908,6 +908,18 @@ void QDeclarativeGeoMap::prefetchData()
 }
 
 /*!
+    \qmlmethod void QtLocation::Map::clearData()
+
+    Clears map data collected by the currently selected plugin.
+    \note This method will delete cached files.
+    \sa plugin
+*/
+void QDeclarativeGeoMap::clearData()
+{
+    m_map->clearData();
+}
+
+/*!
     \qmlproperty string QtLocation::Map::errorString
 
     This read-only property holds the textual presentation of the latest mapping provider error.

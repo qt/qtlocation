@@ -132,6 +132,11 @@ void QGeoMap::prefetchData()
 
 }
 
+void QGeoMap::clearData()
+{
+
+}
+
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
     : QObjectPrivate(),
       m_width(0),

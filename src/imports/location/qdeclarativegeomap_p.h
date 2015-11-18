@@ -127,6 +127,7 @@ public:
     Q_INVOKABLE void fitViewportToMapItems();
     Q_INVOKABLE void pan(int dx, int dy);
     Q_INVOKABLE void prefetchData(); // optional hint for prefetch
+    Q_INVOKABLE void clearData();
 
     QString errorString() const;
     QGeoServiceProvider::Error error() const;

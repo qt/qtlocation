@@ -103,6 +103,12 @@ void QGeoTiledMap::prefetchData()
     d->prefetchTiles();
 }
 
+void QGeoTiledMap::clearData()
+{
+    Q_D(QGeoTiledMap);
+    d->m_cache->clearAll();
+}
+
 void QGeoTiledMap::handleTileVersionChanged()
 {
     Q_D(QGeoTiledMap);
