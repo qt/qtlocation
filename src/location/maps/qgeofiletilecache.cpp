@@ -307,6 +307,9 @@ void QGeoFileTileCache::insert(const QGeoTileSpec &spec,
                            const QString &format,
                            QGeoTiledMappingManagerEngine::CacheAreas areas)
 {
+    if (bytes.isEmpty())
+        return;
+
     if (areas & QGeoTiledMappingManagerEngine::DiskCache) {
         QString filename = tileSpecToFilename(spec, format, directory_);
         QFile file(filename);
