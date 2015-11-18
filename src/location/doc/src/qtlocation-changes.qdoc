@@ -33,12 +33,14 @@
 \b{\l{QtLocation::Map}{Map} Component}
 \list
     \li removed wheelAngleChanged() signal
-    \li added \l[QML]{QtLocation::Map}{error} property
-    \li added \l[QML]{QtLocation::Map}{errorString} property
-    \li added \l[QML]{QtLocation::Map}{copyrightLinkActivated} signal
+    \li added \l[QML]{QtLocation::Map::}{error} property
+    \li added \l[QML]{QtLocation::Map::}{errorString} property
+    \li added \l[QML]{QtLocation::Map::}{copyrightLinkActivated} signal
     \li removed toScreenPosition() method
-    \li added \l[QML]{QtLocation::Map}{fromCoordinate}() method
-    \li replaced cameraStopped() method with \l[QML]{QtLocation::Map}{prefetchData}() method
+    \li added \l[QML]{QtLocation::Map::}{fromCoordinate}() method
+    \li replaced cameraStopped() method with \l[QML]{QtLocation::Map::}{prefetchData} method
+    \li replaced fitViewportToGeoShape() method with \l[QML]{QtLocation::Map::}{visibleRegion} property
+
 \endlist
 
 \b{\l{QtLocation::MapGestureArea}{MapGestureArea} Component}

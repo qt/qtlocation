@@ -124,7 +124,6 @@ public:
 
     QQuickGeoMapGestureArea *gesture();
 
-    Q_INVOKABLE void fitViewportToGeoShape(const QVariant &shape);
     Q_INVOKABLE void fitViewportToMapItems();
     Q_INVOKABLE void pan(int dx, int dy);
     Q_INVOKABLE void prefetchData(); // optional hint for prefetch

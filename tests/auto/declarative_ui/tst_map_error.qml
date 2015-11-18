@@ -193,14 +193,6 @@ Item {
             map_no_plugin.fitViewportToMapItems()
         }
 
-        function test_map_fitViewportToGeoShape()
-        {
-            map_no_plugin.fitViewportToGeoShape(QtPositioning.circle(coordinate,1000))
-            verify(map_no_plugin.center != coordinate)
-            map_error_plugin.fitViewportToGeoShape(QtPositioning.circle(coordinate,1000))
-            verify(map_error_plugin.center != coordinate)
-        }
-
         function test_map_setVisibleRegion()
         {
             map_no_plugin.visibleRegion = QtPositioning.circle(coordinate,1000)

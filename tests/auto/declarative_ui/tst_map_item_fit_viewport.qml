@@ -322,7 +322,7 @@ Item {
             verify(!is_coord_on_screen(fitRect.topLeft))
             verify(!is_coord_on_screen(fitRect.bottomRight))
 
-            map.fitViewportToGeoShape(fitRect)
+            map.visibleRegion = fitRect
             visualInspectionPoint()
             calculate_fit_circle_bounds()
             //Rectangle should be visible, not circle
@@ -331,7 +331,7 @@ Item {
             verify(is_coord_on_screen(fitRect.topLeft))
             verify(is_coord_on_screen(fitRect.bottomRight))
 
-            map.fitViewportToGeoShape(fitCircle)
+            map.visibleRegion = fitCircle
             visualInspectionPoint()
             calculate_fit_circle_bounds()
             //Circle should be visible, not rectangle
@@ -340,7 +340,7 @@ Item {
             verify(!is_coord_on_screen(fitRect.topLeft))
             verify(!is_coord_on_screen(fitRect.bottomRight))
 
-            map.fitViewportToGeoShape(fitInvalidShape)
+            map.visibleRegion = fitInvalidShape
             visualInspectionPoint()
             calculate_fit_circle_bounds()
             //Invalid shape, map should be in the same position as before
@@ -349,7 +349,7 @@ Item {
             verify(!is_coord_on_screen(fitRect.topLeft))
             verify(!is_coord_on_screen(fitRect.bottomRight))
 
-            map.fitViewportToGeoShape(fitEmptyRect)
+            map.visibleRegion = fitEmptyRect
             visualInspectionPoint()
             calculate_fit_circle_bounds()
             //Empty shape, map should change centerlocation, empty rect visible
