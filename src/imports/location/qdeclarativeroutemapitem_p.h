@@ -74,6 +74,9 @@ public:
 Q_SIGNALS:
     void routeChanged(const QDeclarativeGeoRoute *route);
 
+private slots:
+    void updateRoutePath();
+
 protected:
     void setPath(const QJSValue &value) Q_DECL_OVERRIDE;
 
