@@ -46,7 +46,9 @@ PRIVATE_HEADERS += \
                     qdeclarativegeolocation_p.h \
                     qdoublevector2d_p.h \
                     qdoublevector3d_p.h \
-                    qgeoprojection_p.h
+                    qgeoprojection_p.h \
+                    qpositioningglobal_p.h \
+                    qlocationdata_simulator_p.h
 
 SOURCES += \
             qgeoaddress.cpp \
@@ -68,7 +70,8 @@ SOURCES += \
             qdeclarativegeolocation.cpp \
             qdoublevector2d.cpp \
             qdoublevector3d.cpp \
-            qgeoprojection.cpp
+            qgeoprojection.cpp \
+            qlocationdata_simulator.cpp
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

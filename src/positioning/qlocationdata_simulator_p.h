@@ -45,13 +45,22 @@
 // We mean it.
 //
 
+//
+//  DO NOT REMOVE
+//  -------------
+//
+// This header file contains structures used to serialize communication between
+// simulator's client and server implementations, it is included by simulator
+// positioning plugin.
+
+#include "qpositioningglobal_p.h"
 #include <QtCore/QMetaType>
 #include <QtCore/QDateTime>
 #include <QtCore/QList>
 
 QT_BEGIN_NAMESPACE
 
-struct QGeoPositionInfoData
+struct Q_POSITIONING_PRIVATE_EXPORT QGeoPositionInfoData
 {
     QGeoPositionInfoData();
 
@@ -76,7 +85,7 @@ struct QGeoPositionInfoData
     bool enabled;
 };
 
-struct QGeoSatelliteInfoData
+struct Q_POSITIONING_PRIVATE_EXPORT QGeoSatelliteInfoData
 {
     struct SatelliteInfo
     {
@@ -102,7 +111,13 @@ struct QGeoSatelliteInfoData
     QList<SatelliteInfo> satellites;
 };
 
-void qt_registerLocationTypes();
+Q_POSITIONING_PRIVATE_EXPORT void qt_registerLocationTypes();
+Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator<<(QDataStream &out, const QGeoPositionInfoData &s);
+Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator>>(QDataStream &in, QGeoPositionInfoData &s);
+Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator<<(QDataStream &out, const QGeoSatelliteInfoData &s);
+Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator>>(QDataStream &in, QGeoSatelliteInfoData &s);
+Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator<<(QDataStream &out, const QGeoSatelliteInfoData::SatelliteInfo &s);
+Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator>>(QDataStream &in, QGeoSatelliteInfoData::SatelliteInfo &s);
 
 QT_END_NAMESPACE
 
