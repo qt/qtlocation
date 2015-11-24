@@ -68,23 +68,21 @@ Q_SIGNALS:
 
 class QGeoTileFetcherTest: public QGeoTileFetcher
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     QGeoTileFetcherTest(QObject *parent = 0)
-    :   QGeoTileFetcher(parent), finishRequestImmediately_(false), mappingReply_(0),
-        errorCode_(QGeoTiledMapReply::NoError)
+    :    QGeoTileFetcher(parent), finishRequestImmediately_(false), errorCode_(QGeoTiledMapReply::NoError)
     {
     }
 
     bool init()
     {
-
         return true;
     }
 
     QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec)
     {
-        mappingReply_ = new TiledMapReplyTest(spec, this);
+        TiledMapReplyTest* mappingReply =  new TiledMapReplyTest(spec, this);
 
         QImage im(256, 256, QImage::Format_RGB888);
         im.fill(QColor("lightgray"));
@@ -113,12 +111,19 @@ public:
         buffer.open(QIODevice::WriteOnly);
         pm.save(&buffer, "PNG");
 
-        mappingReply_->callSetMapImageData(bytes);
-        mappingReply_->callSetMapImageFormat("png");
+        mappingReply->callSetMapImageData(bytes);
+        mappingReply->callSetMapImageFormat("png");
 
-        timer_.start(500, this);
+        if (finishRequestImmediately_) {
+            updateRequest(mappingReply);
+            return mappingReply;
+        } else {
+            if (m_queue.isEmpty())
+                timer_.start(500, this);
+            m_queue.append(mappingReply);
+        }
 
-        return mappingReply_;
+        return mappingReply;
     }
 
     void setParams(const QVariantMap &parameters)
@@ -141,31 +146,35 @@ public Q_SLOTS:
     }
 
 protected:
-     void timerEvent(QTimerEvent *event)
-     {
-         if (event->timerId() != timer_.timerId()) {
-             QGeoTileFetcher::timerEvent(event);
-             return;
-         }
+    void updateRequest(TiledMapReplyTest* mappingReply)
+    {
+        if (errorCode_) {
+            mappingReply->callSetError(errorCode_, errorString_);
+            emit tileError(mappingReply->tileSpec(), errorString_);
+        } else {
+            mappingReply->callSetError(QGeoTiledMapReply::NoError, "no error");
+            mappingReply->callSetFinished(true);
+        }
+    }
 
-         Q_ASSERT(mappingReply_);
-         timer_.stop();
-         if (errorCode_) {
-             mappingReply_->callSetError(errorCode_, errorString_);
-             emit tileError(mappingReply_->tileSpec(), errorString_);
-         } else {
-             mappingReply_->callSetError(QGeoTiledMapReply::NoError, "no error");
-             mappingReply_->callSetFinished(true);
-         }
-     }
+    void timerEvent(QTimerEvent *event)
+    {
+        if (event->timerId() != timer_.timerId()) {
+            QGeoTileFetcher::timerEvent(event);
+            return;
+        }
+        updateRequest(m_queue.takeFirst());
+        if (m_queue.isEmpty())
+            timer_.stop();
+    }
 
 private:
     bool finishRequestImmediately_;
-    TiledMapReplyTest* mappingReply_;
     QBasicTimer timer_;
     QGeoTiledMapReply::Error errorCode_;
     QString errorString_;
     QSize tileSize_;
+    QList<TiledMapReplyTest*> m_queue;
 };
 
 #endif
