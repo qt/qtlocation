@@ -41,7 +41,11 @@ Item {
     x: 0; y: 0;
     width: 240
     height: 240
-    Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
+    Plugin { id: testPlugin
+             name : "qmlgeo.test.plugin"
+             allowExperimental: true
+             parameters: [ PluginParameter { name: "finishRequestImmediately"; value: true}]
+    }
 
     property variant mapDefaultCenter: QtPositioning.coordinate(20, 20)
 
@@ -327,8 +331,9 @@ Item {
             verify(extMapPolygon0.path.length == 0)
             extMapPolygon.addCoordinate(polyCoordinate)
             verify(extMapPolygon.path.length == 3)
+            verify(waitForRendering(map))
             mouseClick(map, point.x - 5, point.y)
-            compare(extMapPolygonClicked.count, 1)
+            tryCompare(extMapPolygonClicked, "count", 1)
 
             extMapPolygon.path[0].latitude = 10
             verify(extMapPolygon.path[0].latitude, 10)
@@ -427,6 +432,7 @@ Item {
             verify(point.x > map.width / 2.0)
             // move item edge onto dateline
             extMapRectDateline.topLeft.longitude = datelineCoordinate.longitude
+            verify(waitForRendering(map))
             point = map.fromCoordinate(extMapRectDateline.topLeft)
             verify(point.x == map.width / 2.0)
             // drag item back onto dateline
@@ -450,6 +456,7 @@ Item {
             point = map.fromCoordinate(extMapCircleDateline.center)
             verify(point.x == map.width / 2.0)
             extMapCircleDateline.center.longitude = datelineCoordinateRight.longitude
+            verify(waitForRendering(map))
             point = map.fromCoordinate(extMapCircleDateline.center)
             verify(point.x > map.width / 2.0)
             mousePress(map, point.x, point.y)
@@ -469,6 +476,7 @@ Item {
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x < map.width / 2.0)
             extMapQuickItemDateline.coordinate.longitude = datelineCoordinateRight.longitude
+            verify(waitForRendering(map))
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x > map.width / 2.0)
             mousePress(map, point.x + 5, point.y + 5)
@@ -510,6 +518,7 @@ Item {
             path = extMapPolygonDateline.path;
             path[3].longitude = datelineCoordinate.longitude;
             extMapPolygonDateline.path = path;
+            verify(waitForRendering(map))
             point = map.fromCoordinate(extMapPolygonDateline.path[3])
             verify(point.x == map.width / 2.0)
             mousePress(map, point.x + 5, point.y - 5)
@@ -518,6 +527,7 @@ Item {
                 mouseMove(map, point.x + 5 - i, point.y - 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y - 5)
+            verify(waitForRendering(map,10000))
             point = map.fromCoordinate(extMapPolygonDateline.path[0])
             verify(point.x < map.width / 2.0)
             point = map.fromCoordinate(extMapPolygonDateline.path[1])
@@ -596,6 +606,7 @@ Item {
 
             // rectangle
             map.addMapItem(extMapRectEdge)
+            verify(waitForRendering(map))
             verify(extMapRectEdge.topLeft.longitude == -15)
             verify(extMapRectEdge.bottomRight.longitude == -5)
             var point = map.fromCoordinate(extMapRectEdge.topLeft)
@@ -650,6 +661,7 @@ Item {
             // quickitem
             map.addMapItem(extMapQuickItemEdge)
             map.center = datelineCoordinate
+            verify(waitForRendering(map))
             verify(extMapQuickItemEdge.coordinate.longitude == -15)
             point = map.fromCoordinate(extMapQuickItemEdge.coordinate)
             verify(point.x < map.width)
@@ -671,6 +683,7 @@ Item {
             // polygon
             map.center = datelineCoordinate
             map.addMapItem(extMapPolygonEdge)
+            verify(waitForRendering(map))
             verify(extMapPolygonEdge.path[0].longitude == -15)
             verify(extMapPolygonEdge.path[1].longitude == -5)
             verify(extMapPolygonEdge.path[2].longitude == -5)

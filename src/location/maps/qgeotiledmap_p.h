@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoTileSpec;
 class QGeoTileTexture;
-class QGeoTileCache;
+class QAbstractGeoTileCache;
 class QGeoTiledMapPrivate;
 class QGeoTiledMappingManagerEngine;
 class QGeoTileRequestManager;
@@ -79,7 +79,7 @@ public:
     QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent);
     virtual ~QGeoTiledMap();
 
-    QGeoTileCache *tileCache();
+    QAbstractGeoTileCache *tileCache();
     QGeoTileRequestManager *requestManager();
     void updateTile(const QGeoTileSpec &spec);
 

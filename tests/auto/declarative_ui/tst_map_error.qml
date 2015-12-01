@@ -100,7 +100,7 @@ Item {
             mouseClick(map, 50, 50)
             mouseClick(map, 50, 50)
             mouseClick(map, 50, 50)
-            compare(map.mouseClickedSpy.count, 3)
+            tryCompare(map.mouseClickedSpy, "count", 3)
         }
 
         function test_map_clicked_wiht_no_plugin()
@@ -191,14 +191,6 @@ Item {
         {
             map_error_plugin.fitViewportToMapItems()
             map_no_plugin.fitViewportToMapItems()
-        }
-
-        function test_map_fitViewportToGeoShape()
-        {
-            map_no_plugin.fitViewportToGeoShape(QtPositioning.circle(coordinate,1000))
-            verify(map_no_plugin.center != coordinate)
-            map_error_plugin.fitViewportToGeoShape(QtPositioning.circle(coordinate,1000))
-            verify(map_error_plugin.center != coordinate)
         }
 
         function test_map_setVisibleRegion()

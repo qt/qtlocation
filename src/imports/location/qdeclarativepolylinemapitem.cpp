@@ -472,7 +472,7 @@ void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
 {
     // mark dirty just in case we're a width change
     geometry_.markSourceDirty();
-    updateMapItem();
+    polishAndUpdate();
 }
 
 /*!
@@ -483,7 +483,7 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
         geometry_.markSourceDirty();
-        updateMapItem();
+        polishAndUpdate();
     }
 }
 
@@ -546,7 +546,7 @@ void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate>
     path_ = path;
 
     geometry_.markSourceDirty();
-    updateMapItem();
+    polishAndUpdate();
     emit pathChanged();
 }
 
@@ -563,7 +563,7 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
     path_.append(coordinate);
 
     geometry_.markSourceDirty();
-    updateMapItem();
+    polishAndUpdate();
     emit pathChanged();
 }
 
@@ -586,7 +586,7 @@ void QDeclarativePolylineMapItem::removeCoordinate(const QGeoCoordinate &coordin
     path_.removeAt(index);
 
     geometry_.markSourceDirty();
-    updateMapItem();
+    polishAndUpdate();
     emit pathChanged();
 }
 
@@ -652,7 +652,7 @@ void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, con
                            + newCoordinate.longitude() - firstLongitude));
         geometry_.setPreserveGeometry(true, leftBoundCoord);
         geometry_.markSourceDirty();
-        updateMapItem();
+        polishAndUpdate();
         emit pathChanged();
     }
 
@@ -688,13 +688,13 @@ void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChan
     }
     geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
     geometry_.markScreenDirty();
-    updateMapItem();
+    polishAndUpdate();
 }
 
 /*!
     \internal
 */
-void QDeclarativePolylineMapItem::updateMapItem()
+void QDeclarativePolylineMapItem::updatePolish()
 {
     if (!map() || path_.count() == 0)
         return;
@@ -709,7 +709,6 @@ void QDeclarativePolylineMapItem::updateMapItem()
     setHeight(geometry_.sourceBoundingBox().height());
 
     setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
-    update();
 }
 
 /*!

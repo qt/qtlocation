@@ -39,6 +39,7 @@
 #include <QtQml/QQmlInfo>
 #include <QtQuick/QSGOpacityNode>
 #include <QtQuick/private/qquickmousearea_p.h>
+#include <QtQuick/private/qquickitem_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -246,6 +247,17 @@ QSGNode *QDeclarativeGeoMapItemBase::updateMapItemPaintNode(QSGNode *oldNode, Up
 {
     delete oldNode;
     return 0;
+}
+
+bool QDeclarativeGeoMapItemBase::isPolishScheduled() const
+{
+    return QQuickItemPrivate::get(this)->polishScheduled;
+}
+
+void QDeclarativeGeoMapItemBase::polishAndUpdate()
+{
+    polish();
+    update();
 }
 
 

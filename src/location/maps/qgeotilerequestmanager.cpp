@@ -37,7 +37,7 @@
 #include "qgeotilespec_p.h"
 #include "qgeotiledmap_p.h"
 #include "qgeotiledmappingmanagerengine_p.h"
-#include "qgeotilecache_p.h"
+#include "qabstractgeotilecache_p.h"
 #include <QtCore/QPointer>
 
 QT_BEGIN_NAMESPACE

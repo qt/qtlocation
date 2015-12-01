@@ -177,9 +177,9 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(updateMapItemAssumeDirty()));
+                     this, SLOT(markSourceDirtyAndUpdate()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(updateMapItemAssumeDirty()));
+                     this, SLOT(markSourceDirtyAndUpdate()));
 }
 
 QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
@@ -192,11 +192,8 @@ QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
 void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
-    if (map) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-        updateMapItem();
-    }
+    if (map)
+        markSourceDirtyAndUpdate();
 }
 
 /*!
@@ -229,9 +226,7 @@ void QDeclarativeRectangleMapItem::setTopLeft(const QGeoCoordinate &topLeft)
 
     topLeft_ = topLeft;
 
-    geometry_.markSourceDirty();
-    borderGeometry_.markSourceDirty();
-    updateMapItem();
+    markSourceDirtyAndUpdate();
     emit topLeftChanged(topLeft_);
 }
 
@@ -243,11 +238,11 @@ QGeoCoordinate QDeclarativeRectangleMapItem::topLeft()
 /*!
     \internal
 */
-void QDeclarativeRectangleMapItem::updateMapItemAssumeDirty()
+void QDeclarativeRectangleMapItem::markSourceDirtyAndUpdate()
 {
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
-    updateMapItem();
+    polishAndUpdate();
 }
 
 /*!
@@ -263,9 +258,7 @@ void QDeclarativeRectangleMapItem::setBottomRight(const QGeoCoordinate &bottomRi
 
     bottomRight_ = bottomRight;
 
-    geometry_.markSourceDirty();
-    borderGeometry_.markSourceDirty();
-    updateMapItem();
+    markSourceDirtyAndUpdate();
     emit bottomRightChanged(bottomRight_);
 }
 
@@ -291,7 +284,7 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
         return;
     color_ = color;
     dirtyMaterial_ = true;
-    updateMapItem();
+    polishAndUpdate();
     emit colorChanged(color_);
 }
 
@@ -333,7 +326,7 @@ QSGNode *QDeclarativeRectangleMapItem::updateMapItemPaintNode(QSGNode *oldNode, 
 /*!
     \internal
 */
-void QDeclarativeRectangleMapItem::updateMapItem()
+void QDeclarativeRectangleMapItem::updatePolish()
 {
     if (!map() || !topLeft().isValid() || !bottomRight().isValid())
         return;
@@ -368,7 +361,6 @@ void QDeclarativeRectangleMapItem::updateMapItem()
     }
 
     setPositionOnMap(pathClosed.at(0), geometry_.firstPointOffset());
-    update();
 }
 
 /*!
@@ -404,7 +396,7 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
     borderGeometry_.setPreserveGeometry(true, borderGeometry_.geoLeftBound());
     geometry_.markScreenDirty();
     borderGeometry_.markScreenDirty();
-    updateMapItem();
+    polishAndUpdate();
 }
 
 /*!
@@ -448,9 +440,7 @@ void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, co
         bottomRight_ = newBottomRight;
         geometry_.setPreserveGeometry(true, newTopLeft);
         borderGeometry_.setPreserveGeometry(true, newTopLeft);
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-        updateMapItem();
+        markSourceDirtyAndUpdate();
         emit topLeftChanged(topLeft_);
         emit bottomRightChanged(bottomRight_);
     }

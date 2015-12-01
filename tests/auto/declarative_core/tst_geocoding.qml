@@ -343,19 +343,16 @@ Item {
             slackModel.query = slackAddress1
             slackAddress1.county = "5"
             slackModel.update()
-            wait (100)
-            compare (countSlackSpy.count, 0)
+            tryCompare(countSlackSpy, "count", 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
             slackModel.reset()
-            wait (200)
-            compare (countSlackSpy.count, 0)
+            tryCompare(countSlackSpy, "count", 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
             // Check that results are cleared
             slackModel.update()
-            wait (300)
-            compare (slackModel.count, 5) //  slackAddress1.county)
+            tryCompare(slackModel, "count", 5)
             slackModel.reset()
             compare (slackModel.count, 0)
             // Check that changing plugin resets any ongoing requests
@@ -364,20 +361,16 @@ Item {
             slackAddress1.county = "7"
             compare (pluginSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare (countSlackSpy.count, 0)
+            tryCompare(countSlackSpy, "count", 0)
             slackModel.plugin = errorPlugin
-            wait (200)
-            compare (countSlackSpy.count, 0)
+            tryCompare(countSlackSpy, "count", 0)
             compare (pluginSlackSpy.count, 1)
             // switch back and check that works
             slackModel.plugin = slackPlugin
             compare (pluginSlackSpy.count, 2)
             slackModel.update()
-            wait (100)
-            compare (countSlackSpy.count, 0)
-            wait (200)
-            compare (countSlackSpy.count, 1)
+            tryCompare(countSlackSpy, "count", 0)
+            tryCompare(countSlackSpy, "count", 1)
         }
         function test_error_geocode() {
             // basic immediate geocode error
@@ -516,8 +509,7 @@ Item {
             slackModel.query = "freetext geocode"
             compare (querySlackSpy.count, 1)
             slackModel.update()
-            wait (100)
-            compare (countSlackSpy.count, 0)
+            tryCompare(countSlackSpy, "count", 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
             tryCompare(countSlackSpy, "count", 1); //waits up to 5s
@@ -528,20 +520,16 @@ Item {
             locationsSlackSpy.clear()
             countSlackSpy.clear()
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
@@ -553,16 +541,13 @@ Item {
             compare (automaticLocationsSpy.count, 1)
             // change query and its contents and verify that autoupdate occurs
             automaticAddress1.county = 6
-            wait (300)
-            compare (automaticLocationsSpy.count, 2)
+            tryCompare(automaticLocationsSpy, "count", 2)
             compare (automaticModel.count, 6)
             automaticAddress1.street = "The Avenue"
-            wait (300)
-            compare (automaticLocationsSpy.count, 3)
+            tryCompare(automaticLocationsSpy, "count", 3)
             compare (automaticModel.count, 6)
             automaticModel.query = automaticCoordinate1
-            wait (300)
-            compare (automaticLocationsSpy.count, 4)
+            tryCompare(automaticLocationsSpy, "count", 4)
             compare (automaticModel.count, 3)
         }
 
@@ -576,8 +561,7 @@ Item {
             slackAddress1.county = "7"
             compare (querySlackSpy.count, 1)
             slackModel.update()
-            wait (100)
-            compare (countSlackSpy.count, 0)
+            tryCompare(countSlackSpy, "count", 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
             tryCompare(countSlackSpy, "count", 1); //waits up to 5s
@@ -588,20 +572,16 @@ Item {
             locationsSlackSpy.clear()
             countSlackSpy.clear()
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             tryCompare(countSlackSpy, "count", 1); //waits up to 5s
             compare (locationsSlackSpy.count, 1)
@@ -634,8 +614,7 @@ Item {
             slackModel.query = slackCoordinate1
             compare (querySlackSpy.count, 1)
             slackModel.update()
-            wait (100)
-            compare (countSlackSpy.count, 0)
+            tryCompare(countSlackSpy, "count", 0)
             compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
 
@@ -647,20 +626,16 @@ Item {
             locationsSlackSpy.clear()
             countSlackSpy.clear()
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
-            wait (100)
-            compare(locationsSlackSpy.count, 0)
+            tryCompare(locationsSlackSpy, "count", 0)
             compare(countSlackSpy.count, 0)
 
             tryCompare(countSlackSpy, "count", 1); //waits up to 5s

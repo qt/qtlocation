@@ -179,6 +179,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_map(0),
         m_error(QGeoServiceProvider::NoError),
         m_zoomLevel(8.0),
+        m_color(QColor::fromRgbF(0.9, 0.9, 0.9)),
         m_componentCompleted(false),
         m_mappingManagerInitialized(false),
         m_pendingFitViewport(false),
@@ -422,9 +423,11 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 
     QSGSimpleRectNode *root = static_cast<QSGSimpleRectNode *>(oldNode);
     if (!root)
-        root = new QSGSimpleRectNode(boundingRect(), QColor::fromRgbF(0.9, 0.9, 0.9));
-    else
+        root = new QSGSimpleRectNode(boundingRect(), m_color);
+    else {
         root->setRect(boundingRect());
+        root->setColor(m_color);
+    }
 
     QSGNode *content = root->childCount() ? root->firstChild() : 0;
     content = m_map->updateSceneGraph(content, window());
@@ -773,6 +776,28 @@ bool QDeclarativeGeoMap::copyrightsVisible() const
 }
 
 
+
+/*!
+    \qmlproperty color QtLocation::Map::color
+
+    This property holds the background color of the map element.
+
+    \since 5.6
+*/
+void QDeclarativeGeoMap::setColor(const QColor &color)
+{
+    if (color != m_color) {
+        m_color = color;
+        update();
+        emit colorChanged(m_color);
+    }
+}
+
+QColor QDeclarativeGeoMap::color() const
+{
+    return m_color;
+}
+
 void QDeclarativeGeoMap::fitViewportToGeoShape()
 {
     if (!m_map) return;
@@ -888,18 +913,6 @@ QPointF QDeclarativeGeoMap::fromCoordinate(const QGeoCoordinate &coordinate, boo
 }
 
 /*!
-    \qmlmethod QtLocation::Map::toScreenPosition(coordinate coordinate)
-    \obsolete
-
-    This function is missed named and is equilavent to \l {fromCoordinate}, which should be used
-    instead.
-*/
-QPointF QDeclarativeGeoMap::toScreenPosition(const QGeoCoordinate &coordinate) const
-{
-    return fromCoordinate(coordinate);
-}
-
-/*!
     \qmlmethod void QtLocation::Map::pan(int dx, int dy)
 
     Starts panning the map by \a dx pixels along the x-axis and
@@ -999,7 +1012,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 
 bool QDeclarativeGeoMap::isInteractive()
 {
-    return (m_gestureArea->enabled() && m_gestureArea->activeGestures()) || m_gestureArea->isActive();
+    return (m_gestureArea->enabled() && m_gestureArea->acceptedGestures()) || m_gestureArea->isActive();
 }
 
 /*!
@@ -1199,89 +1212,6 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
 
 }
 
-// TODO Remove this function -> BC break
-/*!
-    \qmlmethod void QtLocation::Map::fitViewportToGeoShape(QGeoShape shape)
-
-    \internal
-
-    Fits the current viewport to the boundary of the shape. The camera is positioned
-    in the center of the shape, and at the largest integral zoom level possible which
-    allows the whole shape to be visible on screen
-
-*/
-void QDeclarativeGeoMap::fitViewportToGeoShape(const QVariant &variantShape)
-{
-    if (!m_map || !m_mappingManagerInitialized)
-        return;
-
-    QGeoShape shape;
-
-    if (variantShape.userType() == qMetaTypeId<QGeoRectangle>())
-        shape = variantShape.value<QGeoRectangle>();
-    else if (variantShape.userType() == qMetaTypeId<QGeoCircle>())
-        shape = variantShape.value<QGeoCircle>();
-    else if (variantShape.userType() == qMetaTypeId<QGeoShape>())
-        shape = variantShape.value<QGeoShape>();
-
-    if (!shape.isValid())
-        return;
-
-    double bboxWidth;
-    double bboxHeight;
-    QGeoCoordinate centerCoordinate;
-
-    switch (shape.type()) {
-    case QGeoShape::RectangleType:
-    {
-        QGeoRectangle rect = shape;
-        QDoubleVector2D topLeftPoint = m_map->coordinateToItemPosition(rect.topLeft(), false);
-        QDoubleVector2D botRightPoint = m_map->coordinateToItemPosition(rect.bottomRight(), false);
-        bboxWidth = qAbs(topLeftPoint.x() - botRightPoint.x());
-        bboxHeight = qAbs(topLeftPoint.y() - botRightPoint.y());
-        centerCoordinate = rect.center();
-        break;
-    }
-    case QGeoShape::CircleType:
-    {
-        QGeoCircle circle = shape;
-        centerCoordinate = circle.center();
-        QGeoCoordinate edge = centerCoordinate.atDistanceAndAzimuth(circle.radius(), 90);
-        QDoubleVector2D centerPoint = m_map->coordinateToItemPosition(centerCoordinate, false);
-        QDoubleVector2D edgePoint = m_map->coordinateToItemPosition(edge, false);
-        bboxWidth = qAbs(centerPoint.x() - edgePoint.x()) * 2;
-        bboxHeight = bboxWidth;
-        break;
-    }
-    case QGeoShape::UnknownType:
-        //Fallthrough to default
-    default:
-        return;
-    }
-
-    // position camera to the center of bounding box
-    setProperty("center", QVariant::fromValue(centerCoordinate));
-
-    //If the shape is empty we just change centerposition, not zoom
-    if (bboxHeight == 0 && bboxWidth == 0)
-        return;
-
-    // adjust zoom
-    double bboxWidthRatio = bboxWidth / (bboxWidth + bboxHeight);
-    double mapWidthRatio = width() / (width() + height());
-    double zoomRatio;
-
-    if (bboxWidthRatio > mapWidthRatio)
-        zoomRatio = bboxWidth / width();
-    else
-        zoomRatio = bboxHeight / height();
-
-    qreal newZoom = std::log10(zoomRatio) / std::log10(0.5);
-
-    newZoom = std::floor(qMax(minimumZoomLevel(), (m_map->mapController()->zoom() + newZoom)));
-    setProperty("zoomLevel", QVariant::fromValue(newZoom));
-}
-
 /*!
     \qmlmethod void QtLocation::Map::fitViewportToMapItems()
 
@@ -1333,6 +1263,10 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
                 continue;
             }
         }
+        // Force map items to update immediately. Needed to ensure correct item size and positions
+        // when recursively calling this function.
+        if (item->isPolishScheduled())
+           item->updatePolish();
 
         topLeftX = item->position().x();
         topLeftY = item->position().y();

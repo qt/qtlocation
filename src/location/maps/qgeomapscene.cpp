@@ -36,7 +36,7 @@
 ****************************************************************************/
 #include "qgeomapscene_p.h"
 #include "qgeocameradata_p.h"
-#include "qgeotilecache_p.h"
+#include "qabstractgeotilecache_p.h"
 #include "qgeotilespec_p.h"
 #include <QtPositioning/private/qdoublevector3d_p.h>
 #include <QtCore/private/qobject_p.h>

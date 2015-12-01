@@ -33,7 +33,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeotilecache_p.h"
+#include "qgeofiletilecache_p.h"
 
 #include "qgeotilespec_p.h"
 
@@ -60,13 +60,10 @@ public:
     }
 
     QGeoTileSpec spec;
-    QGeoTileCache *cache;
+    QGeoFileTileCache *cache;
     QByteArray bytes;
     QString format;
 };
-
-QGeoTileTexture::QGeoTileTexture()
-    : textureBound(false) {}
 
 void QCache3QTileEvictionPolicy::aboutToBeRemoved(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj)
 {
@@ -88,18 +85,10 @@ QGeoCachedTileDisk::~QGeoCachedTileDisk()
         cache->evictFromDiskCache(this);
 }
 
-QGeoTileTexture::~QGeoTileTexture()
-{
-}
-
-QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
-    : QObject(parent), directory_(directory),
+QGeoFileTileCache::QGeoFileTileCache(const QString &directory, QObject *parent)
+    : QAbstractGeoTileCache(parent), directory_(directory),
       minTextureUsage_(0), extraTextureUsage_(0)
 {
-    qRegisterMetaType<QGeoTileSpec>();
-    qRegisterMetaType<QList<QGeoTileSpec> >();
-    qRegisterMetaType<QSet<QGeoTileSpec> >();
-
     const QString basePath = baseCacheDirectory();
 
     // delete old tiles from QtLocation 5.4 or prior
@@ -114,7 +103,7 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
 
     if (directory_.isEmpty()) {
         directory_ = basePath;
-        qWarning() << "Plugin uses uninitialized QGeoTileCache directory which was deleted during startup";
+        qWarning() << "Plugin uses uninitialized QGeoFileTileCache directory which was deleted during startup";
     }
 
     QDir::root().mkpath(directory_);
@@ -127,7 +116,7 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     loadTiles();
 }
 
-void QGeoTileCache::loadTiles()
+void QGeoFileTileCache::loadTiles()
 {
     QStringList formats;
     formats << QLatin1String("*.*");
@@ -181,7 +170,7 @@ void QGeoTileCache::loadTiles()
     }
 }
 
-QGeoTileCache::~QGeoTileCache()
+QGeoFileTileCache::~QGeoFileTileCache()
 {
     // write disk cache queues to disk
     QDir dir(directory_);
@@ -207,72 +196,72 @@ QGeoTileCache::~QGeoTileCache()
     }
 }
 
-void QGeoTileCache::printStats()
+void QGeoFileTileCache::printStats()
 {
     textureCache_.printStats();
     memoryCache_.printStats();
     diskCache_.printStats();
 }
 
-void QGeoTileCache::setMaxDiskUsage(int diskUsage)
+void QGeoFileTileCache::setMaxDiskUsage(int diskUsage)
 {
     diskCache_.setMaxCost(diskUsage);
 }
 
-int QGeoTileCache::maxDiskUsage() const
+int QGeoFileTileCache::maxDiskUsage() const
 {
     return diskCache_.maxCost();
 }
 
-int QGeoTileCache::diskUsage() const
+int QGeoFileTileCache::diskUsage() const
 {
     return diskCache_.totalCost();
 }
 
-void QGeoTileCache::setMaxMemoryUsage(int memoryUsage)
+void QGeoFileTileCache::setMaxMemoryUsage(int memoryUsage)
 {
     memoryCache_.setMaxCost(memoryUsage);
 }
 
-int QGeoTileCache::maxMemoryUsage() const
+int QGeoFileTileCache::maxMemoryUsage() const
 {
     return memoryCache_.maxCost();
 }
 
-int QGeoTileCache::memoryUsage() const
+int QGeoFileTileCache::memoryUsage() const
 {
     return memoryCache_.totalCost();
 }
 
-void QGeoTileCache::setExtraTextureUsage(int textureUsage)
+void QGeoFileTileCache::setExtraTextureUsage(int textureUsage)
 {
     extraTextureUsage_ = textureUsage;
     textureCache_.setMaxCost(minTextureUsage_ + extraTextureUsage_);
 }
 
-void QGeoTileCache::setMinTextureUsage(int textureUsage)
+void QGeoFileTileCache::setMinTextureUsage(int textureUsage)
 {
     minTextureUsage_ = textureUsage;
     textureCache_.setMaxCost(minTextureUsage_ + extraTextureUsage_);
 }
 
-int QGeoTileCache::maxTextureUsage() const
+int QGeoFileTileCache::maxTextureUsage() const
 {
     return textureCache_.maxCost();
 }
 
-int QGeoTileCache::minTextureUsage() const
+int QGeoFileTileCache::minTextureUsage() const
 {
     return minTextureUsage_;
 }
 
 
-int QGeoTileCache::textureUsage() const
+int QGeoFileTileCache::textureUsage() const
 {
     return textureCache_.totalCost();
 }
 
-QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
+QSharedPointer<QGeoTileTexture> QGeoFileTileCache::get(const QGeoTileSpec &spec)
 {
     QSharedPointer<QGeoTileTexture> tt = textureCache_.object(spec);
     if (tt)
@@ -280,12 +269,12 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
 
     QSharedPointer<QGeoCachedTileMemory> tm = memoryCache_.object(spec);
     if (tm) {
-        QPixmap pixmap;
-        if (!pixmap.loadFromData(tm->bytes)) {
+        QImage image;
+        if (!image.loadFromData(tm->bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
             return QSharedPointer<QGeoTileTexture>(0);
         }
-        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(spec, pixmap);
+        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(spec, image);
         if (tt)
             return tt;
     }
@@ -298,14 +287,14 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
         QByteArray bytes = file.readAll();
         file.close();
 
-        QPixmap pixmap;
-        if (!pixmap.loadFromData(bytes)) {
+        QImage image;
+        if (!image.loadFromData(bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
             return QSharedPointer<QGeoTileTexture>(0);
         }
 
         addToMemoryCache(spec, bytes, format);
-        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, pixmap);
+        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, image);
         if (tt)
             return tt;
     }
@@ -313,16 +302,14 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
     return QSharedPointer<QGeoTileTexture>();
 }
 
-QString QGeoTileCache::directory() const
-{
-    return directory_;
-}
-
-void QGeoTileCache::insert(const QGeoTileSpec &spec,
+void QGeoFileTileCache::insert(const QGeoTileSpec &spec,
                            const QByteArray &bytes,
                            const QString &format,
                            QGeoTiledMappingManagerEngine::CacheAreas areas)
 {
+    if (bytes.isEmpty())
+        return;
+
     if (areas & QGeoTiledMappingManagerEngine::DiskCache) {
         QString filename = tileSpecToFilename(spec, format, directory_);
         QFile file(filename);
@@ -342,16 +329,16 @@ void QGeoTileCache::insert(const QGeoTileSpec &spec,
      * and act as a poison */
 }
 
-void QGeoTileCache::evictFromDiskCache(QGeoCachedTileDisk *td)
+void QGeoFileTileCache::evictFromDiskCache(QGeoCachedTileDisk *td)
 {
     QFile::remove(td->filename);
 }
 
-void QGeoTileCache::evictFromMemoryCache(QGeoCachedTileMemory * /* tm  */)
+void QGeoFileTileCache::evictFromMemoryCache(QGeoCachedTileMemory * /* tm  */)
 {
 }
 
-QSharedPointer<QGeoCachedTileDisk> QGeoTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename)
+QSharedPointer<QGeoCachedTileDisk> QGeoFileTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename)
 {
     QSharedPointer<QGeoCachedTileDisk> td(new QGeoCachedTileDisk);
     td->spec = spec;
@@ -364,7 +351,7 @@ QSharedPointer<QGeoCachedTileDisk> QGeoTileCache::addToDiskCache(const QGeoTileS
     return td;
 }
 
-QSharedPointer<QGeoCachedTileMemory> QGeoTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
+QSharedPointer<QGeoCachedTileMemory> QGeoFileTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
 {
     QSharedPointer<QGeoCachedTileMemory> tm(new QGeoCachedTileMemory);
     tm->spec = spec;
@@ -378,24 +365,19 @@ QSharedPointer<QGeoCachedTileMemory> QGeoTileCache::addToMemoryCache(const QGeoT
     return tm;
 }
 
-QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap)
+QSharedPointer<QGeoTileTexture> QGeoFileTileCache::addToTextureCache(const QGeoTileSpec &spec, const QImage &image)
 {
     QSharedPointer<QGeoTileTexture> tt(new QGeoTileTexture);
     tt->spec = spec;
-    tt->image = pixmap.toImage();
+    tt->image = image;
 
-    int textureCost = tt->image.width() * tt->image.height() * tt->image.depth() / 8;
+    int textureCost = image.width() * image.height() * image.depth() / 8;
     textureCache_.insert(spec, tt, textureCost);
 
     return tt;
 }
 
-void QGeoTileCache::handleError(const QGeoTileSpec &, const QString &error)
-{
-    qWarning() << "tile request error " << error;
-}
-
-QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory)
+QString QGeoFileTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory)
 {
     QString filename = spec.plugin();
     filename += QLatin1String("-");
@@ -421,7 +403,7 @@ QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QStrin
     return dir.filePath(filename);
 }
 
-QGeoTileSpec QGeoTileCache::filenameToTileSpec(const QString &filename)
+QGeoTileSpec QGeoFileTileCache::filenameToTileSpec(const QString &filename)
 {
     QGeoTileSpec emptySpec;
 
@@ -460,40 +442,9 @@ QGeoTileSpec QGeoTileCache::filenameToTileSpec(const QString &filename)
                     numbers.at(4));
 }
 
-QString QGeoTileCache::baseCacheDirectory()
+QString QGeoFileTileCache::directory() const
 {
-    QString dir;
-
-    // Try the shared cache first and use a specific directory. (e.g. ~/.cache/QtLocation)
-    // If this is not supported by the platform, use the application-specific cache
-    // location. (e.g. ~/.cache/<app_name>/QtLocation)
-    dir = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
-
-    if (!dir.isEmpty()) {
-        // The shared cache may not be writable when application isolation is enforced.
-        static bool writable = false;
-        static bool writableChecked = false;
-        if (!writableChecked) {
-            writableChecked = true;
-            QDir::root().mkpath(dir);
-            QFile writeTestFile(QDir(dir).filePath(QStringLiteral("qt_cache_check")));
-            writable = writeTestFile.open(QIODevice::WriteOnly);
-            if (writable)
-                writeTestFile.remove();
-        }
-        if (!writable)
-            dir = QString();
-    }
-
-    if (dir.isEmpty())
-        dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
-
-    if (!dir.endsWith(QLatin1Char('/')))
-        dir += QLatin1Char('/');
-
-    dir += QLatin1String("QtLocation/");
-
-    return dir;
+    return directory_;
 }
 
 QT_END_NAMESPACE

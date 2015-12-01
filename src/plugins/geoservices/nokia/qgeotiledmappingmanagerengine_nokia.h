@@ -101,6 +101,8 @@ private:
     QHash<QString, QList<CopyrightDesc> > m_copyrights;
     QHash<int, QString> m_mapSchemes;
     QGeoMapVersion m_mapVersion;
+
+    QString m_cacheDirectory;
 };
 
 QT_END_NAMESPACE

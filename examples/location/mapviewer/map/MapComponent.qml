@@ -269,7 +269,7 @@ Map {
 
 //! [mapnavigation]
     // Enable pan, flick, and pinch gestures to zoom in and out
-    gesture.activeGestures: MapGestureArea.PanGesture | MapGestureArea.FlickGesture | MapGestureArea.ZoomGesture
+    gesture.acceptedGestures: MapGestureArea.PanGesture | MapGestureArea.FlickGesture | MapGestureArea.PinchGesture
     gesture.flickDeceleration: 3000
     gesture.enabled: true
 //! [mapnavigation]

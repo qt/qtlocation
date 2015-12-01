@@ -61,17 +61,24 @@ Item {
 
         property real flickStartedLatitude
         property real flickStartedLongitude
-        property bool disableFlickOnStarted: false
-        property bool disableFlickOnMovementStarted: false
+        property bool disableOnPanStartedWithNoGesture: false
+        property bool disableOnFlickStartedWithNoGesture: false
+        property bool disableOnPanStartedWithDisabled: false
+        property bool disableOnFlickStartedWithDisabled: false
+
         gesture.onPanStarted: {
-            if (disableFlickOnMovementStarted)
-                map.gesture.panEnabled = false
+            if (disableOnPanStartedWithNoGesture)
+                map.gesture.acceptedGestures =  MapGestureArea.NoGesture
+            if (disableOnPanStartedWithDisabled)
+                map.gesture.enabled = false
         }
         gesture.onFlickStarted: {
             flickStartedLatitude = map.center.latitude
             flickStartedLatitude = map.center.longitude
-            if (disableFlickOnStarted)
-                map.gesture.panEnabled = false
+            if (disableOnFlickStartedWithNoGesture)
+                map.gesture.acceptedGestures =  MapGestureArea.NoGesture
+            if (disableOnFlickStartedWithDisabled)
+                map.gesture.enabled = false
         }
         MouseArea {
             id: mouseAreaTop
@@ -81,6 +88,7 @@ Item {
     }
 
     SignalSpy {id: centerSpy; target: map; signalName: 'centerChanged'}
+    SignalSpy {id: panStartedSpy; target: map.gesture; signalName: 'panStarted'}
     SignalSpy {id: panFinishedSpy; target: map.gesture; signalName: 'panFinished'}
     SignalSpy {id: gestureEnabledSpy; target: map.gesture; signalName: 'enabledChanged'}
     SignalSpy {id: flickDecelerationSpy; target: map.gesture; signalName: 'flickDecelerationChanged'}
@@ -95,16 +103,19 @@ Item {
 
         function init()
         {
-            map.gesture.activeGestures = MapGestureArea.PanGesture | MapGestureArea.FlickGesture;
+            map.gesture.acceptedGestures = MapGestureArea.PanGesture | MapGestureArea.FlickGesture;
             map.gesture.enabled = true
             map.gesture.panEnabled = true
             map.gesture.flickDeceleration = 500
             map.zoomLevel = 0
-            map.disableFlickOnStarted = false
-            map.disableFlickOnMovementStarted = false
+            map.disableOnPanStartedWithNoGesture = false
+            map.disableOnFlickStartedWithNoGesture = false
+            map.disableOnPanStartedWithDisabled = false
+            map.disableOnFlickStartedWithDisabled = false
             centerSpy.clear()
             gestureEnabledSpy.clear()
             flickDecelerationSpy.clear()
+            panStartedSpy.clear()
             panFinishedSpy.clear()
             flickStartedSpy.clear()
             flickFinishedSpy.clear()
@@ -112,6 +123,8 @@ Item {
             mouseAreaBottomSpy.clear()
             mouseAreaBottom.visible = false
             mouseAreaTop.visible = false
+            compare(map.gesture.pinchActive, false)
+            compare(map.gesture.panActive, false)
         }
 
         function initTestCase()
@@ -127,16 +140,17 @@ Item {
             map.gesture.enabled = true
             compare(gestureEnabledSpy.count, 2)
             compare(map.gesture.enabled, true)
-            compare(map.gesture.isPinchActive, false)
-            verify(map.gesture.activeGestures & MapGestureArea.ZoomGesture)
-            map.gesture.activeGestures = MapGestureArea.NoGesture
-            compare(map.gesture.activeGestures, MapGestureArea.NoGesture)
-            map.gesture.activeGestures = MapGestureArea.NoGesture
-            compare(map.gesture.activeGestures, MapGestureArea.NoGesture)
-            map.gesture.activeGestures = MapGestureArea.ZoomGesture | MapGestureArea.PanGesture
-            compare(map.gesture.activeGestures, MapGestureArea.ZoomGesture | MapGestureArea.PanGesture)
-            map.gesture.activeGestures = MapGestureArea.PanGesture
-            compare(map.gesture.activeGestures, MapGestureArea.PanGesture)
+            compare(map.gesture.pinchActive, false)
+            compare(map.gesture.panActive, false)
+            verify(map.gesture.acceptedGestures & MapGestureArea.PinchGesture)
+            map.gesture.acceptedGestures = MapGestureArea.NoGesture
+            compare(map.gesture.acceptedGestures, MapGestureArea.NoGesture)
+            map.gesture.acceptedGestures = MapGestureArea.NoGesture
+            compare(map.gesture.acceptedGestures, MapGestureArea.NoGesture)
+            map.gesture.acceptedGestures = MapGestureArea.PinchGesture | MapGestureArea.PanGesture
+            compare(map.gesture.acceptedGestures, MapGestureArea.PinchGesture | MapGestureArea.PanGesture)
+            map.gesture.acceptedGestures = MapGestureArea.PanGesture
+            compare(map.gesture.acceptedGestures, MapGestureArea.PanGesture)
             compare(map.gesture.flickDeceleration, 2500)
             map.gesture.flickDeceleration = 2600
             compare(flickDecelerationSpy.count, 1)
@@ -222,7 +236,6 @@ Item {
             tryCompare(mouseAreaBottomSpy, "count",0)
         }
 
-
         function test_flick_diagonal()
         {
             map.center.latitude = 50
@@ -244,9 +257,8 @@ Item {
             verify(map.center.longitude < moveLongitude)
         }
 
-        function test_flicking_while_disabled()
+        function disabled_flicking()
         {
-            map.gesture.panEnabled = false
             map.center.latitude = 50
             map.center.longitude = 50
             mousePress(page, 0, 0)
@@ -255,16 +267,28 @@ Item {
                 mouseMove(page, i, i, 0, Qt.LeftButton);
             }
             mouseRelease(page, 50, 50)
+            compare(panStartedSpy.count, 0)
+            compare(panFinishedSpy.count, 0)
             compare(flickStartedSpy.count, 0)
             compare(flickFinishedSpy.count, 0)
-            compare(panFinishedSpy.count, 0)
         }
 
-        function test_disable_onFlickStarted()
+        function test_disabled_flicking_with_nogesture()
         {
-            map.disableFlickOnStarted = true
+            map.gesture.acceptedGestures = MapGestureArea.NoGesture
+        }
+
+        function test_disabled_flicking_with_disabled()
+        {
+            map.gesture.enabled = false
+            disabled_flicking()
+        }
+
+        function disable_onFlickStarted()
+        {
             map.center.latitude = 50
             map.center.longitude = 50
+            waitForRendering(map)
             mousePress(page, 0, 0)
             for (var i = 0; i < 50; i += 5) {
                 wait(20)
@@ -273,21 +297,30 @@ Item {
             mouseRelease(page, 50, 50)
             var latitude = map.center.latitude;
             var longitude = map.center.longitude
+            tryCompare(panStartedSpy, "count", 1)
             tryCompare(flickStartedSpy, "count", 1)
             verify(map.center.latitude > 50)
-            tryCompare(flickStartedSpy, "count", 1)
             tryCompare(panFinishedSpy, "count", 1)
             tryCompare(flickFinishedSpy, "count", 1)
             // compare that flick was interrupted (less movement than without interrupting)
             compare(latitude, map.center.latitude)
             compare(longitude, map.center.longitude)
-            map.disableFlickOnStarted = false
-            map.gesture.panEnabled = true
         }
 
-        function test_disable_onMovementStarted()
+        function test_disable_onFlickStarted_with_disabled()
         {
-            map.disableFlickOnMovementStarted = true
+            map.disableOnFlickStartedWithDisabled = true
+            disable_onFlickStarted()
+        }
+
+        function test_disable_onFlickStarted_with_nogesture()
+        {
+            map.disableOnFlickStartedWithNoGesture = true
+            disable_onFlickStarted()
+        }
+
+        function disable_onPanStarted()
+        {
             map.center.latitude = 50
             map.center.longitude = 50
             mousePress(page, 0, 0)
@@ -302,6 +335,19 @@ Item {
             // compare that flick was interrupted (less movement than without interrupting)
             compare(map.center.latitude,50)
             compare(map.center.longitude,50)
+            compare(map.gesture.panActive, false)
+        }
+
+        function test_disable_onPanStarted_with_disabled()
+        {
+            map.disableOnPanStartedWithDisabled = true
+            disable_onPanStarted()
+        }
+
+        function test_disable_onPanStarted_with_nogesture()
+        {
+            map.disableOnPanStartedWithNoGesture = true
+            disable_onPanStarted()
         }
     }
 }

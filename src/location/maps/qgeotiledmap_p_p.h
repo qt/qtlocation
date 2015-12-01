@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoCameraTiles;
 class QGeoMapScene;
-class QGeoTileCache;
+class QAbstractGeoTileCache;
 class QGeoTiledMappingManagerEngine;
 class QGeoTiledMap;
 class QGeoTileRequestManager;
@@ -92,7 +92,7 @@ private:
     void updateScene();
 
 private:
-    QGeoTileCache *m_cache;
+    QAbstractGeoTileCache *m_cache;
     QGeoCameraTiles *m_cameraTiles;
     QGeoMapScene *m_mapScene;
     QGeoTileRequestManager *m_tileRequests;

@@ -55,7 +55,10 @@ Item {
          Behavior on center {
              id: centerBehavior
              enabled: false
-             CoordinateAnimation { duration: animationDuration }
+             CoordinateAnimation {
+                 id: coordinateAnimation
+                 duration: animationDuration
+             }
          }
 
          onCenterChanged: {
@@ -107,7 +110,8 @@ Item {
             // Set to coordinate with animation enabled
             centerBehavior.enabled = true
             map.center = QtPositioning.coordinate(to.latitude, to.longitude)
-            wait(animationDuration * 2)
+            wait(animationDuration)
+            tryCompare(coordinateAnimation,"running",false)
 
             //check correct start position
             compare(coordinateList[0].latitude, from.latitude)

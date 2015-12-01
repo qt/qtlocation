@@ -55,6 +55,7 @@
 #include <QtQuick/QQuickItem>
 #include <QtCore/QPointer>
 #include <QtCore/QMutex>
+#include <QtGui/QColor>
 #include <QtPositioning/qgeoshape.h>
 
 QT_BEGIN_NAMESPACE
@@ -80,6 +81,7 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(QGeoShape visibleRegion READ visibleRegion WRITE setVisibleRegion)
     Q_PROPERTY(bool copyrightsVisible READ copyrightsVisible WRITE setCopyrightsVisible NOTIFY copyrightsVisibleChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -111,6 +113,9 @@ public:
     void setCopyrightsVisible(bool visible);
     bool copyrightsVisible() const;
 
+    void setColor(const QColor &color);
+    QColor color() const;
+
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
@@ -121,13 +126,8 @@ public:
     Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &position, bool clipToViewPort = true) const;
     Q_INVOKABLE QPointF fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort = true) const;
 
-#if QT_DEPRECATED_SINCE(5,5)
-    QT_DEPRECATED Q_INVOKABLE QPointF toScreenPosition(const QGeoCoordinate &coordinate) const;
-#endif
-
     QQuickGeoMapGestureArea *gesture();
 
-    Q_INVOKABLE void fitViewportToGeoShape(const QVariant &shape);
     Q_INVOKABLE void fitViewportToMapItems();
     Q_INVOKABLE void pan(int dx, int dy);
     Q_INVOKABLE void prefetchData(); // optional hint for prefetch
@@ -147,6 +147,7 @@ Q_SIGNALS:
     void errorChanged();
     void copyrightLinkActivated(const QString &link);
     void copyrightsVisibleChanged(bool visible);
+    void colorChanged(const QColor &color);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
@@ -196,9 +197,10 @@ private:
     QString m_errorString;
     QGeoServiceProvider::Error m_error;
     qreal m_zoomLevel;
+    QGeoShape m_region;
+    QColor m_color;
     bool m_componentCompleted;
     bool m_mappingManagerInitialized;
-    QGeoShape m_region;
     bool m_pendingFitViewport;
     bool m_copyrightsVisible;
 

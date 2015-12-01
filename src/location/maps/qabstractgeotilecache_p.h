@@ -33,9 +33,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QDECLARATIVEGEOMAPQUICKITEM_H
-#define QDECLARATIVEGEOMAPQUICKITEM_H
+#ifndef QABSTRACTGEOTILECACHE_P_H
+#define QABSTRACTGEOTILECACHE_P_H
 
 //
 //  W A R N I N G
@@ -48,67 +47,78 @@
 // We mean it.
 //
 
-#include <QtQuick/QQuickItem>
-#include <QtQuick/QSGNode>
+#include <QtLocation/qlocationglobal.h>
 
-#include "qdeclarativegeomap_p.h"
-#include "qdeclarativegeomapitembase_p.h"
+#include <QObject>
+#include <QCache>
+#include "qcache3q_p.h"
+#include <QSet>
+#include <QMutex>
+#include <QTimer>
+
+#include "qgeotilespec_p.h"
+#include "qgeotiledmappingmanagerengine_p.h"
+
+#include <QImage>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapQuickItem : public QDeclarativeGeoMapItemBase
+class QGeoMappingManager;
+
+class QGeoTile;
+class QAbstractGeoTileCache;
+
+class QThread;
+
+/* This is also used in the mapgeometry */
+class Q_LOCATION_EXPORT QGeoTileTexture
+{
+public:
+
+    QGeoTileTexture();
+    ~QGeoTileTexture();
+
+    QGeoTileSpec spec;
+    QImage image;
+    bool textureBound;
+};
+
+class Q_LOCATION_EXPORT QAbstractGeoTileCache : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPointF anchorPoint READ anchorPoint WRITE setAnchorPoint NOTIFY anchorPointChanged)
-    Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-    Q_PROPERTY(QQuickItem *sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
-
 public:
-    explicit QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
-    ~QDeclarativeGeoMapQuickItem();
+    virtual ~QAbstractGeoTileCache();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) Q_DECL_OVERRIDE;
+    virtual void setMaxDiskUsage(int diskUsage);
+    virtual int maxDiskUsage() const;
+    virtual int diskUsage() const;
 
-    void setCoordinate(const QGeoCoordinate &coordinate);
-    QGeoCoordinate coordinate();
+    virtual void setMaxMemoryUsage(int memoryUsage);
+    virtual int maxMemoryUsage() const;
+    virtual int memoryUsage() const;
 
-    void setSourceItem(QQuickItem *sourceItem);
-    QQuickItem *sourceItem();
+    virtual void setMinTextureUsage(int textureUsage) = 0;
+    virtual void setExtraTextureUsage(int textureUsage) = 0;
+    virtual int maxTextureUsage() const = 0;
+    virtual int minTextureUsage() const = 0;
+    virtual int textureUsage() const = 0;
 
-    void setAnchorPoint(const QPointF &anchorPoint);
-    QPointF anchorPoint() const;
+    virtual QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) = 0;
 
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
+    virtual void insert(const QGeoTileSpec &spec,
+                const QByteArray &bytes,
+                const QString &format,
+                QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches) = 0;
+    virtual void handleError(const QGeoTileSpec &spec, const QString &errorString);
 
-Q_SIGNALS:
-    void coordinateChanged();
-    void sourceItemChanged();
-    void anchorPointChanged();
-    void zoomLevelChanged();
+    static QString baseCacheDirectory();
 
 protected:
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
-    void updatePolish() Q_DECL_OVERRIDE;
+    QAbstractGeoTileCache(QObject *parent = 0);
 
-protected Q_SLOTS:
-    virtual void afterChildrenChanged() Q_DECL_OVERRIDE;
-    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
-
-private:
-    qreal scaleFactor();
-    QGeoCoordinate coordinate_;
-    QPointer<QQuickItem> sourceItem_;
-    QQuickItem *opacityContainer_;
-    QPointF anchorPoint_;
-    qreal zoomLevel_;
-    bool mapAndSourceItemSet_;
-    bool updatingGeometry_;
+    virtual void printStats() = 0;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QDeclarativeGeoMapQuickItem)
-
-#endif
+#endif // QABSTRACTGEOTILECACHE_P_H

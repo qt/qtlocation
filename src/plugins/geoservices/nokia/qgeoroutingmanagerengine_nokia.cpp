@@ -376,18 +376,15 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 {
     QString requestString;
 
-    const QList<QGeoRectangle> excludeAreas = request.excludeAreas();
-    QList<QGeoRectangle>::const_iterator beg = excludeAreas.begin();
-    QList<QGeoRectangle>::const_iterator end = excludeAreas.begin();
-    for (QList<QGeoRectangle>::const_iterator it = beg; it != end; ++it) {
+    foreach (const QGeoRectangle &area, request.excludeAreas()) {
         requestString += QLatin1String("&avoidareas=");
-        requestString += trimDouble(it->topLeft().latitude());
+        requestString += trimDouble(area.topLeft().latitude());
         requestString += QLatin1String(",");
-        requestString += trimDouble(it->topLeft().longitude());
+        requestString += trimDouble(area.topLeft().longitude());
         requestString += QLatin1String(";");
-        requestString += trimDouble(it->bottomRight().latitude());
+        requestString += trimDouble(area.bottomRight().latitude());
         requestString += QLatin1String(",");
-        requestString += trimDouble(it->bottomRight().longitude());
+        requestString += trimDouble(area.bottomRight().longitude());
     }
 
 //    TODO: work out what was going on here
