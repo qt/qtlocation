@@ -534,7 +534,6 @@ void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
     setPathFromGeoList(pathList);
 }
 
-
 /*!
     \internal
 */
@@ -551,13 +550,26 @@ void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate>
 }
 
 /*!
+    \qmlmethod int MapPolyline::pathLength()
+
+    Returns the number of coordinates of the polyline.
+
+    \since Qt Location 5.6
+
+    \sa path
+*/
+int QDeclarativePolylineMapItem::pathLength() const
+{
+    return path_.size();
+}
+
+/*!
     \qmlmethod void MapPolyline::addCoordinate(coordinate)
 
-    Adds a coordinate to the path.
+    Adds a coordinate to the end of the path.
 
-    \sa removeCoordinate, path
+    \sa insertCoordinate, removeCoordinate, path
 */
-
 void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 {
     path_.append(coordinate);
@@ -568,6 +580,78 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
 }
 
 /*!
+    \qmlmethod void MapPolyline::insertCoordinate(index, coordinate)
+
+    Inserts a \a coordinate to the path at the given \a index.
+
+    \since Qt Location 5.6
+
+    \sa addCoordinate, removeCoordinate, path
+*/
+void QDeclarativePolylineMapItem::insertCoordinate(int index, const QGeoCoordinate &coordinate)
+{
+    if (index < 0 || index > path_.size())
+        return;
+
+    path_.insert(index, coordinate);
+
+    geometry_.markSourceDirty();
+    polishAndUpdate();
+    emit pathChanged();
+}
+
+/*!
+    \qmlmethod void MapPolyline::replaceCoordinate(index, coordinate)
+
+    Replaces the coordinate in the current path at the given \a index
+    with the new \a coordinate.
+
+    \since Qt Location 5.6
+
+    \sa addCoordinate, insertCoordinate, removeCoordinate, path
+*/
+void QDeclarativePolylineMapItem::replaceCoordinate(int index, const QGeoCoordinate &coordinate)
+{
+    if (index < 0 || index >= path_.size())
+        return;
+
+    path_[index] = coordinate;
+
+    geometry_.markSourceDirty();
+    polishAndUpdate();
+    emit pathChanged();
+}
+
+/*!
+    \qmlmethod coordinate MapPolyline::coordinateAt(index)
+
+    Gets the coordinate of the polyline at the given \a index.
+    If the index is outside the path's bounds then an invalid
+    coordinate is returned.
+
+    \since Qt Location 5.6
+*/
+QGeoCoordinate QDeclarativePolylineMapItem::coordinateAt(int index) const
+{
+    if (index < 0 || index >= path_.size())
+        return QGeoCoordinate();
+
+    return path_.at(index);
+}
+
+/*!
+    \qmlmethod coordinate MapPolyline::containsCoordinate(coordinate)
+
+    Returns true if the given \a coordinate is part of the path.
+
+    \since Qt Location 5.6
+*/
+bool QDeclarativePolylineMapItem::containsCoordinate(const QGeoCoordinate &coordinate)
+{
+    return path_.indexOf(coordinate) > -1;
+}
+
+/*!
     \qmlmethod void MapPolyline::removeCoordinate(coordinate)
 
     Removes \a coordinate from the path. If there are multiple instances of the
@@ -575,12 +659,35 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
 
     If \a coordinate is not in the path this method does nothing.
 
-    \sa addCoordinate, path
+    \sa addCoordinate, insertCoordinate, path
 */
 void QDeclarativePolylineMapItem::removeCoordinate(const QGeoCoordinate &coordinate)
 {
     int index = path_.lastIndexOf(coordinate);
     if (index == -1)
+        return;
+
+    path_.removeAt(index);
+
+    geometry_.markSourceDirty();
+    polishAndUpdate();
+    emit pathChanged();
+}
+
+/*!
+    \qmlmethod void MapPolyline::removeCoordinate(index)
+
+    Removes a coordinate from the path at the given \a index.
+
+    If \a index is invalid then this method does nothing.
+
+    \since Qt Location 5.6
+
+    \sa addCoordinate, insertCoordinate, path
+*/
+void QDeclarativePolylineMapItem::removeCoordinate(int index)
+{
+    if (index < 0 || index >= path_.size())
         return;
 
     path_.removeAt(index);

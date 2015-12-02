@@ -34,6 +34,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtPositioning 5.2
+import QtLocation 5.5
 
 Item {
     id: testCase
@@ -189,6 +190,64 @@ Item {
             compare(rectangle.bottomRight, br)
             rectangle = QtPositioning.shapeToRectangle(listBox)
             verify(rectangle.isValid)
+        }
+    }
+
+
+    MapPolyline {
+        id: mapPolyline
+        path: [
+                { latitude: -27, longitude: 153.0 },
+                { latitude: -27, longitude: 154.1 },
+                { latitude: -28, longitude: 153.5 },
+                { latitude: -29, longitude: 153.5 }
+            ]
+    }
+
+    TestCase {
+        name: "MapPolyline path"
+        function test_path_operations() {
+            compare(mapPolyline.path[1].latitude, -27)
+            compare(mapPolyline.path[1].longitude, 154.1)
+            compare(mapPolyline.coordinateAt(1), QtPositioning.coordinate(27, 154.1))
+            compare(mapPolyline.path.length, mapPolyline.pathLength())
+
+            mapPolyline.removeCoordinate(1);
+            compare(mapPolyline.path[1].latitude, -28)
+            compare(mapPolyline.path[1].longitude, 153.5)
+            compare(mapPolyline.coordinateAt(1), QtPositioning.coordinate(-28, 153.5))
+            compare(mapPolyline.path.length, mapPolyline.pathLength())
+
+            mapPolyline.addCoordinate(QtPositioning.coordinate(30, 153.1))
+            compare(mapPolyline.path[mapPolyline.path.length-1].latitude, 30)
+            compare(mapPolyline.path[mapPolyline.path.length-1].longitude, 153.1)
+            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(30, 153.1)), true)
+            compare(mapPolyline.path.length, mapPolyline.pathLength())
+
+            mapPolyline.removeCoordinate(QtPositioning.coordinate(30, 153.1))
+            compare(mapPolyline.path[mapPolyline.path.length-1].latitude, -29)
+            compare(mapPolyline.path[mapPolyline.path.length-1].longitude, 153.5)
+            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(30, 153.1)), false)
+            compare(mapPolyline.path.length, mapPolyline.pathLength())
+
+            mapPolyline.insertCoordinate(2, QtPositioning.coordinate(35, 153.1))
+            compare(mapPolyline.path[2].latitude, 35)
+            compare(mapPolyline.path[2].longitude, 153.1)
+            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(35, 153.1)), true)
+            compare(mapPolyline.path.length, mapPolyline.pathLength())
+
+            mapPolyline.replaceCoordinate(2, QtPositioning.coordinate(45, 150.1))
+            compare(mapPolyline.path[2].latitude, 45)
+            compare(mapPolyline.path[2].longitude, 150.1)
+            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(35, 153.1)), false)
+            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(45, 150.1)), true)
+            compare(mapPolyline.path.length, mapPolyline.pathLength())
+
+            mapPolyline.insertCoordinate(2, QtPositioning.coordinate(35, 153.1))
+            compare(mapPolyline.coordinateAt(2).latitude, 35)
+            compare(mapPolyline.coordinateAt(2).longitude, 153.1)
+            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(35, 153.1)), true)
+            compare(mapPolyline.path.length, mapPolyline.pathLength())
         }
     }
 }
