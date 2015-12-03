@@ -37,75 +37,119 @@
 #include "qgeopositioninfosource_winrt_p.h"
 
 #include <QCoreApplication>
+#include <QMutex>
+#include <qfunctions_winrt.h>
+#include <private/qeventdispatcher_winrt_p.h>
 
+#include <functional>
 #include <windows.system.h>
 #include <windows.devices.geolocation.h>
+#include <windows.foundation.h>
 #include <windows.foundation.collections.h>
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using namespace ABI::Windows::Devices::Geolocation;
 using namespace ABI::Windows::Foundation;
-using namespace ABI::Windows::System;
+using namespace ABI::Windows::Foundation::Collections;
 
 typedef ITypedEventHandler<Geolocator *, PositionChangedEventArgs *> GeoLocatorPositionHandler;
 typedef ITypedEventHandler<Geolocator *, StatusChangedEventArgs *> GeoLocatorStatusHandler;
+typedef IAsyncOperationCompletedHandler<Geoposition*> PositionHandler;
+#if _MSC_VER >= 1900
+typedef IAsyncOperationCompletedHandler<GeolocationAccessStatus> AccessHandler;
+#endif
 
 QT_BEGIN_NAMESPACE
 
-QGeoPositionInfoSourceWinrt::QGeoPositionInfoSourceWinrt(QObject *parent)
+Q_DECLARE_METATYPE(QGeoPositionInfo)
+
+class QGeoPositionInfoSourceWinRTPrivate {
+public:
+    ComPtr<IGeolocator> locator;
+    QTimer periodicTimer;
+    QTimer singleUpdateTimer;
+    QGeoPositionInfo lastPosition;
+    QGeoPositionInfoSource::Error positionError;
+    EventRegistrationToken statusToken;
+    EventRegistrationToken positionToken;
+    QMutex mutex;
+    bool updatesOngoing;
+};
+
+
+QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     : QGeoPositionInfoSource(parent)
-    , m_positionError(QGeoPositionInfoSource::NoError)
-    , m_updatesOngoing(false)
+    , d_ptr(new QGeoPositionInfoSourceWinRTPrivate)
 {
-    HRESULT hr = RoActivateInstance(HString::MakeReference(RuntimeClass_Windows_Devices_Geolocation_Geolocator).Get(),
-                                    &m_locator);
+    Q_D(QGeoPositionInfoSourceWinRT);
+    d->positionError = QGeoPositionInfoSource::NoError;
+    d->updatesOngoing = false;
 
+    qRegisterMetaType<QGeoPositionInfo>();
+
+    requestAccess();
+    HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([this, d]() {
+        HRESULT hr = RoActivateInstance(HString::MakeReference(RuntimeClass_Windows_Devices_Geolocation_Geolocator).Get(),
+                                        &d->locator);
+        RETURN_HR_IF_FAILED("Could not initialize native location services.");
+
+        // StatusChanged throws an exception on Windows 8.1
+#if _MSC_VER >= 1900
+        hr = d->locator->add_StatusChanged(Callback<GeoLocatorStatusHandler>(this,
+                                                                             &QGeoPositionInfoSourceWinRT::onStatusChanged).Get(),
+                                           &d->statusToken);
+        RETURN_HR_IF_FAILED("Could not add status callback.");
+#endif
+
+        hr = d->locator->put_ReportInterval(1000);
+        RETURN_HR_IF_FAILED("Could not initialize report interval.");
+
+        return hr;
+    });
+    Q_ASSERT_SUCCEEDED(hr);
+
+    hr = d->locator->put_DesiredAccuracy(PositionAccuracy::PositionAccuracy_Default);
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
-        qErrnoWarning(hr, "Could not initialize native location services");
+        qErrnoWarning(hr, "Could not initialize desired accuracy.");
         return;
     }
 
-    hr = m_locator->put_ReportInterval(minimumUpdateInterval());
-    if (FAILED(hr)) {
-        setError(QGeoPositionInfoSource::UnknownSourceError);
-        qErrnoWarning(hr, "Could not initialize report interval");
-        return;
-    }
-    hr = m_locator->put_DesiredAccuracy(PositionAccuracy::PositionAccuracy_High);
-    if (FAILED(hr)) {
-        setError(QGeoPositionInfoSource::UnknownSourceError);
-        qErrnoWarning(hr, "Could not initialize desired accuracy");
-        return;
-    }
+    d->positionToken.value = 0;
 
-    m_positionToken.value = 0;
+    d->periodicTimer.setSingleShot(true);
+    d->periodicTimer.setInterval(minimumUpdateInterval());
+    connect(&d->periodicTimer, &QTimer::timeout, this, &QGeoPositionInfoSourceWinRT::virtualPositionUpdate);
 
-    m_periodicTimer.setSingleShot(true);
-    m_periodicTimer.setInterval(minimumUpdateInterval());
-    connect(&m_periodicTimer, SIGNAL(timeout()), this, SLOT(virtualPositionUpdate()));
-
-    m_singleUpdateTimer.setSingleShot(true);
-    connect(&m_singleUpdateTimer, SIGNAL(timeout()), this, SLOT(singleUpdateTimeOut()));
+    d->singleUpdateTimer.setSingleShot(true);
+    connect(&d->singleUpdateTimer, &QTimer::timeout, this, &QGeoPositionInfoSourceWinRT::singleUpdateTimeOut);
 
     setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
+
+    connect(this, &QGeoPositionInfoSourceWinRT::nativePositionUpdate, this, &QGeoPositionInfoSourceWinRT::updateSynchronized);
 }
 
-QGeoPositionInfoSourceWinrt::~QGeoPositionInfoSourceWinrt()
+QGeoPositionInfoSourceWinRT::~QGeoPositionInfoSourceWinRT()
 {
 }
 
-QGeoPositionInfo QGeoPositionInfoSourceWinrt::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
+QGeoPositionInfo QGeoPositionInfoSourceWinRT::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
+    Q_D(const QGeoPositionInfoSourceWinRT);
     Q_UNUSED(fromSatellitePositioningMethodsOnly)
-    return m_lastPosition;
+    return d->lastPosition;
 }
 
-QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinrt::supportedPositioningMethods() const
+QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinRT::supportedPositioningMethods() const
 {
+    Q_D(const QGeoPositionInfoSourceWinRT);
+
     PositionStatus status;
-    HRESULT hr = m_locator->get_LocationStatus(&status);
+    HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([d, &status]() {
+        HRESULT hr = d->locator->get_LocationStatus(&status);
+        return hr;
+    });
     if (FAILED(hr))
         return QGeoPositionInfoSource::NoPositioningMethods;
 
@@ -119,88 +163,94 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinrt::supporte
     return QGeoPositionInfoSource::AllPositioningMethods;
 }
 
-void QGeoPositionInfoSourceWinrt::setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
+void QGeoPositionInfoSourceWinRT::setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
 {
+    Q_D(QGeoPositionInfoSourceWinRT);
+
     PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
     QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
     if (previousPreferredPositioningMethods == preferredPositioningMethods())
         return;
 
-    bool needsRestart = m_positionToken.value != 0;
+    bool needsRestart = d->positionToken.value != 0;
 
     if (needsRestart)
         stopHandler();
 
-    HRESULT hr;
-    if (methods & PositioningMethod::SatellitePositioningMethods)
-        hr = m_locator->put_DesiredAccuracy(PositionAccuracy::PositionAccuracy_High);
-    else
-        hr = m_locator->put_DesiredAccuracy(PositionAccuracy::PositionAccuracy_Default);
-
-    if (FAILED(hr)) {
-        qErrnoWarning(hr, "Could not set positioning accuracy");
-        return;
-    }
+    PositionAccuracy acc = methods & PositioningMethod::SatellitePositioningMethods ?
+                PositionAccuracy::PositionAccuracy_High :
+                PositionAccuracy::PositionAccuracy_Default;
+    HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([d, acc]() {
+        HRESULT hr = d->locator->put_DesiredAccuracy(acc);
+        return hr;
+    });
+    RETURN_VOID_IF_FAILED("Could not set positioning accuracy.");
 
     if (needsRestart)
         startHandler();
 }
 
-void QGeoPositionInfoSourceWinrt::setUpdateInterval(int msec)
+void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
 {
-    // Windows Phone does not support 0 interval
-#ifdef Q_OS_WINPHONE
+    Q_D(QGeoPositionInfoSourceWinRT);
+    // Windows Phone 8.1 and Windows 10 do not support 0 interval
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_PHONE_APP)
     if (msec == 0)
         msec = minimumUpdateInterval();
 #endif
+
     // If msec is 0 we send updates as data becomes available, otherwise we force msec to be equal
     // to or larger than the minimum update interval.
     if (msec != 0 && msec < minimumUpdateInterval())
         msec = minimumUpdateInterval();
 
-    HRESULT hr = m_locator->put_ReportInterval(msec);
+    HRESULT hr = d->locator->put_ReportInterval(msec);
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
         qErrnoWarning(hr, "Failed to set update interval");
         return;
     }
-    if (msec != 0)
-        m_periodicTimer.setInterval(msec);
-    else
-        m_periodicTimer.setInterval(minimumUpdateInterval());
+
+    d->periodicTimer.setInterval(qMax(msec, minimumUpdateInterval()));
 
     QGeoPositionInfoSource::setUpdateInterval(msec);
 }
 
-int QGeoPositionInfoSourceWinrt::minimumUpdateInterval() const
+int QGeoPositionInfoSourceWinRT::minimumUpdateInterval() const
 {
     // We use one second to reduce potential timer events
     // in case the platform itself stops reporting
     return 1000;
 }
 
-void QGeoPositionInfoSourceWinrt::startUpdates()
+void QGeoPositionInfoSourceWinRT::startUpdates()
 {
-    if (m_updatesOngoing)
+    Q_D(QGeoPositionInfoSourceWinRT);
+
+    if (d->updatesOngoing)
         return;
 
     if (!startHandler())
         return;
-    m_updatesOngoing = true;
-    m_periodicTimer.start();
+    d->updatesOngoing = true;
+    d->periodicTimer.start();
 }
 
-void QGeoPositionInfoSourceWinrt::stopUpdates()
+void QGeoPositionInfoSourceWinRT::stopUpdates()
 {
+    Q_D(QGeoPositionInfoSourceWinRT);
+
     stopHandler();
-    m_updatesOngoing = false;
-    m_periodicTimer.stop();
+    d->updatesOngoing = false;
+    d->periodicTimer.stop();
 }
 
-bool QGeoPositionInfoSourceWinrt::startHandler()
+bool QGeoPositionInfoSourceWinRT::startHandler()
 {
+    Q_D(QGeoPositionInfoSourceWinRT);
+
     // Check if already attached
-    if (m_positionToken.value != 0)
+    if (d->positionToken.value != 0)
         return true;
 
     if (preferredPositioningMethods() == QGeoPositionInfoSource::NoPositioningMethods) {
@@ -208,31 +258,49 @@ bool QGeoPositionInfoSourceWinrt::startHandler()
         return false;
     }
 
-    if (!checkNativeState())
+    if (!requestAccess() || !checkNativeState())
         return false;
 
-    HRESULT hr = m_locator->add_PositionChanged(Callback<GeoLocatorPositionHandler>(this,
-                                                &QGeoPositionInfoSourceWinrt::onPositionChanged).Get(),
-                                                &m_positionToken);
+    HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([this, d]() {
+        HRESULT hr;
 
+        // We need to call this at least once on Windows 10 Mobile.
+        // Unfortunately this operation does not have a completion handler
+        // registered. That could have helped in the single update case
+        ComPtr<IAsyncOperation<Geoposition*>> op;
+        hr = d->locator->GetGeopositionAsync(&op);
+
+        hr = d->locator->add_PositionChanged(Callback<GeoLocatorPositionHandler>(this,
+                                                                                 &QGeoPositionInfoSourceWinRT::onPositionChanged).Get(),
+                                             &d->positionToken);
+        return hr;
+    });
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
         qErrnoWarning(hr, "Could not add position handler");
         return false;
     }
+
     return true;
 }
 
-void QGeoPositionInfoSourceWinrt::stopHandler()
+void QGeoPositionInfoSourceWinRT::stopHandler()
 {
-    if (!m_positionToken.value)
+    Q_D(QGeoPositionInfoSourceWinRT);
+
+    if (!d->positionToken.value)
         return;
-    m_locator->remove_PositionChanged(m_positionToken);
-    m_positionToken.value = 0;
+    QEventDispatcherWinRT::runOnXamlThread([d]() {
+        d->locator->remove_PositionChanged(d->positionToken);
+        return S_OK;
+    });
+    d->positionToken.value = 0;
 }
 
-void QGeoPositionInfoSourceWinrt::requestUpdate(int timeout)
+void QGeoPositionInfoSourceWinRT::requestUpdate(int timeout)
 {
+    Q_D(QGeoPositionInfoSourceWinRT);
+
     if (timeout != 0 && timeout < minimumUpdateInterval()) {
         emit updateTimeout();
         return;
@@ -242,11 +310,14 @@ void QGeoPositionInfoSourceWinrt::requestUpdate(int timeout)
         timeout = 2*60*1000; // Maximum time for cold start (see Android)
 
     startHandler();
-    m_singleUpdateTimer.start(timeout);
+    d->singleUpdateTimer.start(timeout);
 }
 
-void QGeoPositionInfoSourceWinrt::virtualPositionUpdate()
+void QGeoPositionInfoSourceWinRT::virtualPositionUpdate()
 {
+    Q_D(QGeoPositionInfoSourceWinRT);
+    QMutexLocker locker(&d->mutex);
+
     // Need to check if services are still running and ok
     if (!checkNativeState()) {
         stopUpdates();
@@ -258,39 +329,69 @@ void QGeoPositionInfoSourceWinrt::virtualPositionUpdate()
     // between backends.
     // This only applies to the periodic timer, not for single requests
     // We can only do this if we received a valid position before
-    if (m_lastPosition.isValid()) {
-        QGeoPositionInfo sent = m_lastPosition;
+    if (d->lastPosition.isValid()) {
+        QGeoPositionInfo sent = d->lastPosition;
         sent.setTimestamp(QDateTime::currentDateTime());
-        m_lastPosition = sent;
+        d->lastPosition = sent;
         emit positionUpdated(sent);
     }
-    m_periodicTimer.start();
+    d->periodicTimer.start();
 }
 
-void QGeoPositionInfoSourceWinrt::singleUpdateTimeOut()
+void QGeoPositionInfoSourceWinRT::singleUpdateTimeOut()
 {
-    emit updateTimeout();
-    if (!m_updatesOngoing)
+    Q_D(QGeoPositionInfoSourceWinRT);
+    QMutexLocker locker(&d->mutex);
+
+    if (d->singleUpdateTimer.isActive()) {
+        emit updateTimeout();
+        if (!d->updatesOngoing)
+            stopHandler();
+    }
+}
+
+void QGeoPositionInfoSourceWinRT::updateSynchronized(QGeoPositionInfo currentInfo)
+{
+    Q_D(QGeoPositionInfoSourceWinRT);
+    QMutexLocker locker(&d->mutex);
+
+    d->periodicTimer.stop();
+    d->lastPosition = currentInfo;
+
+    if (d->updatesOngoing)
+        d->periodicTimer.start();
+
+    if (d->singleUpdateTimer.isActive()) {
+        d->singleUpdateTimer.stop();
+        if (!d->updatesOngoing)
         stopHandler();
+    }
+
+    emit positionUpdated(currentInfo);
 }
 
-QGeoPositionInfoSource::Error QGeoPositionInfoSourceWinrt::error() const
+QGeoPositionInfoSource::Error QGeoPositionInfoSourceWinRT::error() const
 {
-    return m_positionError;
+    Q_D(const QGeoPositionInfoSourceWinRT);
+    return d->positionError;
 }
 
-void QGeoPositionInfoSourceWinrt::setError(QGeoPositionInfoSource::Error positionError)
+void QGeoPositionInfoSourceWinRT::setError(QGeoPositionInfoSource::Error positionError)
 {
-    if (positionError == m_positionError)
+    Q_D(QGeoPositionInfoSourceWinRT);
+
+    if (positionError == d->positionError)
         return;
-    m_positionError = positionError;
+    d->positionError = positionError;
     emit QGeoPositionInfoSource::error(positionError);
 }
 
-bool QGeoPositionInfoSourceWinrt::checkNativeState()
+bool QGeoPositionInfoSourceWinRT::checkNativeState()
 {
+    Q_D(QGeoPositionInfoSourceWinRT);
+
     PositionStatus status;
-    HRESULT hr = m_locator->get_LocationStatus(&status);
+    HRESULT hr = d->locator->get_LocationStatus(&status);
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
         qErrnoWarning(hr, "Could not query status");
@@ -314,17 +415,14 @@ bool QGeoPositionInfoSourceWinrt::checkNativeState()
     return result;
 }
 
-HRESULT QGeoPositionInfoSourceWinrt::onPositionChanged(IGeolocator *locator, IPositionChangedEventArgs *args)
+HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPositionChangedEventArgs *args)
 {
     Q_UNUSED(locator);
-
-    m_periodicTimer.stop();
 
     HRESULT hr;
     ComPtr<IGeoposition> pos;
     hr = args->get_Position(&pos);
-    if (FAILED(hr))
-        qErrnoWarning(hr, "Could not access position object");
+    RETURN_HR_IF_FAILED("Could not access position object.");
 
     QGeoPositionInfo currentInfo;
 
@@ -378,19 +476,48 @@ HRESULT QGeoPositionInfoSourceWinrt::onPositionChanged(IGeolocator *locator, IPo
 
     currentInfo.setTimestamp(QDateTime::currentDateTime());
 
-    m_lastPosition = currentInfo;
+    emit nativePositionUpdate(currentInfo);
 
-    if (m_updatesOngoing)
-        m_periodicTimer.start();
-
-    if (m_singleUpdateTimer.isActive()) {
-        m_singleUpdateTimer.stop();
-        if (!m_updatesOngoing)
-            stopHandler();
-    }
-
-    emit positionUpdated(currentInfo);
     return S_OK;
+}
+
+HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator*, IStatusChangedEventArgs *args)
+{
+    PositionStatus st;
+    args->get_Status(&st);
+    return S_OK;
+}
+
+bool QGeoPositionInfoSourceWinRT::requestAccess() const
+{
+#if _MSC_VER >= 1900
+    static GeolocationAccessStatus accessStatus = GeolocationAccessStatus_Unspecified;
+    static ComPtr<IGeolocatorStatics> statics;
+
+    if (accessStatus == GeolocationAccessStatus_Allowed)
+        return true;
+    else if (accessStatus == GeolocationAccessStatus_Denied)
+        return false;
+
+    ComPtr<IAsyncOperation<GeolocationAccessStatus>> op;
+    HRESULT hr;
+    hr = QEventDispatcherWinRT::runOnXamlThread([&op]() {
+        HRESULT hr;
+        hr = RoGetActivationFactory(HString::MakeReference(RuntimeClass_Windows_Devices_Geolocation_Geolocator).Get(),
+                                    IID_PPV_ARGS(&statics));
+        RETURN_HR_IF_FAILED("Could not access Geolocation Statics.");
+
+        hr = statics->RequestAccessAsync(&op);
+        return hr;
+    });
+    Q_ASSERT_SUCCEEDED(hr);
+
+    // We cannot wait inside the XamlThread as that would deadlock
+    QWinRTFunctions::await(op, &accessStatus);
+    return accessStatus == GeolocationAccessStatus_Allowed;
+#else // _MSC_VER < 1900
+    return true;
+#endif // _MSC_VER < 1900
 }
 
 QT_END_NAMESPACE
