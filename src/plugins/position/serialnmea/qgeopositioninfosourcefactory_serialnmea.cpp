@@ -36,6 +36,7 @@
 #include <QtSerialPort/qserialport.h>
 #include <QtSerialPort/qserialportinfo.h>
 #include <QtCore/qloggingcategory.h>
+#include <QSet>
 
 Q_LOGGING_CATEGORY(lcSerial, "qt.positioning.serialnmea")
 
@@ -64,16 +65,13 @@ NmeaSource::NmeaSource(QObject *parent)
         }
 
         // Try to find a well-known device.
+        QSet<int> supportedDevices;
+        supportedDevices << 0x67b; // GlobalSat (BU-353S4 and probably others)
+        supportedDevices << 0xe8d; // Qstarz MTK II
         QString portName;
-        for (int i = 0; i < ports.count(); ++i) {
-            const QString candidatePortName = ports[i].portName();
-            bool acceptThis = false;
-
-            // GlobalSat (BU-353S4 and probably others)
-            acceptThis |= ports[i].hasVendorIdentifier() && ports[i].vendorIdentifier() == 0x67b;
-
-            if (acceptThis) {
-                portName = candidatePortName;
+        foreach (const QSerialPortInfo& port, ports) {
+            if (port.hasVendorIdentifier() && supportedDevices.contains(port.vendorIdentifier())) {
+                portName = port.portName();
                 break;
             }
         }
