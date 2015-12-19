@@ -843,9 +843,10 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
 
 bool QDeclarativePolylineMapItem::contains(const QPointF &point) const
 {
+    QVector<QPointF> vertices = geometry_.vertices();
     QPolygonF tri;
-    for (int i = 0; i < geometry_.vertices().size(); ++i) {
-        tri << geometry_.vertices()[i];
+    for (int i = 0; i < vertices.size(); ++i) {
+        tri << vertices[i];
         if (tri.size() == 3) {
             if (tri.containsPoint(point,Qt::OddEvenFill))
                 return true;
