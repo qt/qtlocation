@@ -199,6 +199,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
 
     QDoubleVector2D origin, lastPoint, lastAddedPoint;
 
+    const double mapWidthHalf = map.width()/2.0;
     double unwrapBelowX = 0;
     if (preserveGeometry_)
         unwrapBelowX = map.coordinateToItemPosition(geoLeftBound_, false).x();
@@ -219,7 +220,8 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
         // unwrap x to preserve geometry if moved to border of map
         if (preserveGeometry_ && point.x() < unwrapBelowX
                 && !qFuzzyCompare(geoLeftBound_.longitude(), coord.longitude())
-                && !qFuzzyCompare(point.x(), unwrapBelowX))
+                && !qFuzzyCompare(point.x(), unwrapBelowX)
+                && !qFuzzyCompare(mapWidthHalf, point.x()))
             point.setX(unwrapBelowX + geoDistanceToScreenWidth(map, geoLeftBound_, coord));
 
         if (!foundValid) {
