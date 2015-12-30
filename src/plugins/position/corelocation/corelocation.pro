@@ -17,5 +17,5 @@ OTHER_FILES += \
     plugin.json
 
 osx: LIBS += -framework Foundation
-else: ios: LIBS += -framework CoreFoundation
+else: ios|tvos: LIBS += -framework CoreFoundation
 LIBS += -framework CoreLocation

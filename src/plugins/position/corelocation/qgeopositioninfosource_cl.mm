@@ -33,6 +33,7 @@
 
 #include <QTimerEvent>
 #include <QDebug>
+#include <QtCore/qglobal.h>
 
 #include "qgeopositioninfosource_cl_p.h"
 
@@ -74,10 +75,12 @@
         location.setAttribute(QGeoPositionInfo::HorizontalAccuracy, newLocation.horizontalAccuracy);
     if (newLocation.verticalAccuracy >= 0)
         location.setAttribute(QGeoPositionInfo::VerticalAccuracy, newLocation.verticalAccuracy);
+#ifndef Q_OS_TVOS
     if (newLocation.course >= 0)
         location.setAttribute(QGeoPositionInfo::Direction, newLocation.course);
     if (newLocation.speed >= 0)
         location.setAttribute(QGeoPositionInfo::GroundSpeed, newLocation.speed);
+#endif
 
     m_positionInfoSource->locationDataAvailable(location);
 }
@@ -157,7 +160,11 @@ void QGeoPositionInfoSourceCL::setTimeoutInterval(int msec)
 void QGeoPositionInfoSourceCL::startUpdates()
 {
     if (enableLocationManager()) {
+#ifdef Q_OS_TVOS
+        [m_locationManager requestLocation];    // service will run long enough for one location update
+#else
         [m_locationManager startUpdatingLocation];
+#endif
         m_started = true;
 
         setTimeoutInterval(m_updateTimeout);
@@ -183,7 +190,11 @@ void QGeoPositionInfoSourceCL::requestUpdate(int timeout)
     else if (enableLocationManager()) {
         // This will force LM to generate a new update
         [m_locationManager stopUpdatingLocation];
+#ifdef Q_OS_TVOS
+        [m_locationManager requestLocation];    // service will run long enough for one location update
+#else
         [m_locationManager startUpdatingLocation];
+#endif
 
         setTimeoutInterval(timeout);
     } else setError(QGeoPositionInfoSource::AccessError);
