@@ -344,10 +344,10 @@ void QGeoRouteReplyOsm::networkReplyFinished()
         int status = object.value(QStringLiteral("status")).toDouble();
         QString statusMessage = object.value(QStringLiteral("status_message")).toString();
 
-        // status code is 0 in case of success
+        // status code 0 or 200 are case of success
         // status code is 207 if no route was found
         // an error occurred when trying to find a route
-        if (0 != status) {
+        if (0 != status && 200 != status) {
             setError(QGeoRouteReply::UnknownError, statusMessage);
             m_reply->deleteLater();
             m_reply = 0;
