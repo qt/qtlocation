@@ -219,11 +219,11 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
 QStringList QGeoSatelliteInfoSource::availableSources()
 {
     QStringList plugins;
-    QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
-    foreach (const QString &name, meta.keys()) {
-        if (meta.value(name).value(QStringLiteral("Satellite")).isBool()
-                && meta.value(name).value(QStringLiteral("Satellite")).toBool()) {
-            plugins << name;
+    const QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
+    for (auto it = meta.cbegin(), end = meta.cend(); it != end; ++it) {
+        if (it.value().value(QStringLiteral("Satellite")).isBool()
+                && it.value().value(QStringLiteral("Satellite")).toBool()) {
+            plugins << it.key();
         }
     }
 

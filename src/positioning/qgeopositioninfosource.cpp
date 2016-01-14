@@ -329,11 +329,11 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sour
 QStringList QGeoPositionInfoSource::availableSources()
 {
     QStringList plugins;
-    QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
-    foreach (const QString &name, meta.keys()) {
-        if (meta.value(name).value(QStringLiteral("Position")).isBool()
-                && meta.value(name).value(QStringLiteral("Position")).toBool()) {
-            plugins << name;
+    const QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
+    for (auto it = meta.cbegin(), end = meta.cend(); it != end; ++it) {
+        if (it.value().value(QStringLiteral("Position")).isBool()
+                && it.value().value(QStringLiteral("Position")).toBool()) {
+            plugins << it.key();
         }
     }
 

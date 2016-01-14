@@ -269,14 +269,15 @@ void QPlaceDetailsReplyImpl::replyFinished()
     if (object.contains(QLatin1String("extended"))) {
         QJsonObject extendedObject = object.value(QLatin1String("extended")).toObject();
 
-        foreach (const QString &key, extendedObject.keys()) {
-            QJsonObject attributeObject = extendedObject.value(key).toObject();
+        for (auto it = extendedObject.constBegin(), end = extendedObject.constEnd(); it != end; ++it) {
+            QJsonObject attributeObject = it.value().toObject();
 
             QPlaceAttribute attribute;
 
             attribute.setLabel(attributeObject.value(QLatin1String("label")).toString());
             attribute.setText(attributeObject.value(QLatin1String("text")).toString());
 
+            QString key = it.key();
             if (key == QLatin1String("payment"))
                 place.setExtendedAttribute(QPlaceAttribute::Payment, attribute);
             else if (key == QLatin1String("openingHours"))

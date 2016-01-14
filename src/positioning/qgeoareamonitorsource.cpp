@@ -190,11 +190,11 @@ QGeoAreaMonitorSource *QGeoAreaMonitorSource::createSource(const QString &source
 QStringList QGeoAreaMonitorSource::availableSources()
 {
     QStringList plugins;
-    QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
-    foreach (const QString &name, meta.keys()) {
-        if (meta.value(name).value(QStringLiteral("Monitor")).isBool()
-                && meta.value(name).value(QStringLiteral("Monitor")).toBool()) {
-            plugins << name;
+    const QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
+    for (auto it = meta.cbegin(), end = meta.cend(); it != end; ++it) {
+        if (it.value().value(QStringLiteral("Monitor")).isBool()
+                && it.value().value(QStringLiteral("Monitor")).toBool()) {
+            plugins << it.key();
         }
     }
 

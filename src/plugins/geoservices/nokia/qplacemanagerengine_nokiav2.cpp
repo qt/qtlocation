@@ -627,18 +627,18 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
     }
 
     //request all categories in the tree from the server
-    //because we don't want the root node, we remove it from the list
-    QStringList ids = m_tempTree.keys();
-    ids.removeAll(QString());
-    foreach (const QString &id, ids) {
+    //because we don't want the root node, we skip it
+    for (auto it = m_tempTree.keyBegin(), end = m_tempTree.keyEnd(); it != end; ++it) {
+        if (*it == QString())
+            continue;
         QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
-                        QStringLiteral("/places/v1/categories/places/") + id);
+                        QStringLiteral("/places/v1/categories/places/") + *it);
         QNetworkReply *networkReply = sendRequest(requestUrl);
         connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
         connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),
                 this, SLOT(categoryReplyError()));
 
-        m_categoryRequests.insert(id, networkReply);
+        m_categoryRequests.insert(*it, networkReply);
     }
 
     QPlaceCategoriesReplyHere *reply = new QPlaceCategoriesReplyHere(this);

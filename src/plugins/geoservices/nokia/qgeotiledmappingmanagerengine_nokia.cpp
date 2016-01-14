@@ -194,13 +194,12 @@ void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const
     }
 
     QJsonObject jsonObj = doc.object();
-    QStringList keys = jsonObj.keys();
 
     m_copyrights.clear();
-    for (int keyIndex = 0; keyIndex < keys.count(); keyIndex++) {
+    for (auto it = jsonObj.constBegin(), end = jsonObj.constEnd(); it != end; ++it) {
         QList<CopyrightDesc> copyrightDescList;
 
-        QJsonArray descs = jsonObj[ keys[ keyIndex ] ].toArray();
+        QJsonArray descs = it.value().toArray();
         for (int descIndex = 0; descIndex < descs.count(); descIndex++) {
             CopyrightDesc copyrightDesc;
             QJsonObject desc = descs.at(descIndex).toObject();
@@ -225,7 +224,7 @@ void QGeoTiledMappingManagerEngineNokia::loadCopyrightsDescriptorsFromJson(const
             }
             copyrightDescList << copyrightDesc;
         }
-        m_copyrights[ keys[ keyIndex ] ] = copyrightDescList;
+        m_copyrights[it.key()] = copyrightDescList;
     }
 }
 
