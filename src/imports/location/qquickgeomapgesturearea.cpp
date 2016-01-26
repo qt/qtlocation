@@ -1202,6 +1202,8 @@ bool QQuickGeoMapGestureArea::tryStartFlick()
 */
 void QQuickGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
 {
+    if (!m_flick.m_animation)
+        return;
     if (timeMs < 0)
         return;
 
@@ -1255,6 +1257,8 @@ void QQuickGeoMapGestureArea::stopPan()
 */
 void QQuickGeoMapGestureArea::stopFlick()
 {
+    if (!m_flick.m_animation)
+        return;
     m_velocityX = 0;
     m_velocityY = 0;
     if (m_flick.m_animation->isRunning())
