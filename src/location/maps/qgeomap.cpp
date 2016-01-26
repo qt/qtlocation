@@ -109,6 +109,7 @@ void QGeoMap::setActiveMapType(const QGeoMapType type)
     d->m_activeMapType = type;
     d->changeActiveMapType(type);
     d->setCameraData(d->m_cameraData);
+    emit activeMapTypeChanged();
     update();
 }
 
@@ -128,6 +129,11 @@ QGeoCameraCapabilities QGeoMap::cameraCapabilities()
 }
 
 void QGeoMap::prefetchData()
+{
+
+}
+
+void QGeoMap::clearData()
 {
 
 }

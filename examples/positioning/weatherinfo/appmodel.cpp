@@ -154,6 +154,7 @@ public:
     int minMsBeforeNewRequest;
     QTimer delayedCityRequestTimer;
     QTimer requestNewWeatherTimer;
+    QString app_ident;
 
     AppModelPrivate() :
             src(NULL),
@@ -170,6 +171,7 @@ public:
         requestNewWeatherTimer.setSingleShot(false);
         requestNewWeatherTimer.setInterval(20*60*1000); // 20 min
         throttle.invalidate();
+        app_ident = QStringLiteral("36496bad1955bf3365448965a42b9eac");
     }
 };
 
@@ -304,6 +306,7 @@ void AppModel::queryCity()
     query.addQueryItem("lat", latitude);
     query.addQueryItem("lon", longitude);
     query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
     url.setQuery(query);
     qCDebug(requestsLog) << "submitting request";
 
@@ -385,6 +388,7 @@ void AppModel::refreshWeather()
 
     query.addQueryItem("q", d->city);
     query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
     url.setQuery(query);
 
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
@@ -443,6 +447,7 @@ void AppModel::handleWeatherNetworkData(QObject *replyObj)
     query.addQueryItem("q", d->city);
     query.addQueryItem("mode", "json");
     query.addQueryItem("cnt", "5");
+    query.addQueryItem("APPID", d->app_ident);
     url.setQuery(query);
 
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));

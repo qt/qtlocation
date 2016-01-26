@@ -116,8 +116,14 @@ public:
        //from QuickItem
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_OVERRIDE;
 
+    Q_INVOKABLE int pathLength() const;
     Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void insertCoordinate(int index, const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void replaceCoordinate(int index, const QGeoCoordinate &coordinate);
+    Q_INVOKABLE QGeoCoordinate coordinateAt(int index) const;
+    Q_INVOKABLE bool containsCoordinate(const QGeoCoordinate &coordinate);
     Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void removeCoordinate(int index);
 
     QJSValue path() const;
     virtual void setPath(const QJSValue &value);

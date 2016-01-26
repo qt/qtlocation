@@ -37,18 +37,18 @@
 #include "qgeopositioninfosourcefactory_winrt.h"
 #include "qgeopositioninfosource_winrt_p.h"
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryWinrt::positionInfoSource(QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryWinRT::positionInfoSource(QObject *parent)
 {
-    return new QGeoPositionInfoSourceWinrt(parent);
+    return new QGeoPositionInfoSourceWinRT(parent);
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryWinrt::satelliteInfoSource(QObject *parent)
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryWinRT::satelliteInfoSource(QObject *parent)
 {
     Q_UNUSED(parent);
     return 0;
 }
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryWinrt::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryWinRT::areaMonitor(QObject *parent)
 {
     Q_UNUSED(parent);
     return 0;

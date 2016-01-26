@@ -70,12 +70,14 @@ namespace ABI {
 
 QT_BEGIN_NAMESPACE
 
-class QGeoPositionInfoSourceWinrt : public QGeoPositionInfoSource
+class QGeoPositionInfoSourceWinRTPrivate;
+
+class QGeoPositionInfoSourceWinRT : public QGeoPositionInfoSource
 {
     Q_OBJECT
 public:
-    QGeoPositionInfoSourceWinrt(QObject *parent = 0);
-    ~QGeoPositionInfoSourceWinrt();
+    QGeoPositionInfoSourceWinRT(QObject *parent = 0);
+    ~QGeoPositionInfoSourceWinRT();
 
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     PositioningMethods supportedPositioningMethods() const;
@@ -89,6 +91,12 @@ public:
     HRESULT onPositionChanged(ABI::Windows::Devices::Geolocation::IGeolocator *locator,
                               ABI::Windows::Devices::Geolocation::IPositionChangedEventArgs *args);
 
+    HRESULT onStatusChanged(ABI::Windows::Devices::Geolocation::IGeolocator*,
+                            ABI::Windows::Devices::Geolocation::IStatusChangedEventArgs *args);
+
+    bool requestAccess() const;
+Q_SIGNALS:
+    void nativePositionUpdate(const QGeoPositionInfo);
 public slots:
     void startUpdates();
     void stopUpdates();
@@ -99,23 +107,16 @@ private slots:
     void stopHandler();
     void virtualPositionUpdate();
     void singleUpdateTimeOut();
+    void updateSynchronized(const QGeoPositionInfo info);
 private:
     bool startHandler();
 
-    Q_DISABLE_COPY(QGeoPositionInfoSourceWinrt)
+    Q_DISABLE_COPY(QGeoPositionInfoSourceWinRT)
     void setError(QGeoPositionInfoSource::Error positionError);
     bool checkNativeState();
 
-    Microsoft::WRL::ComPtr<ABI::Windows::Devices::Geolocation::IGeolocator> m_locator;
-    EventRegistrationToken m_positionToken;
-
-    QGeoPositionInfo m_lastPosition;
-    QGeoPositionInfoSource::Error m_positionError;
-
-    //EventRegistrationToken m_StatusToken;
-    QTimer m_periodicTimer;
-    QTimer m_singleUpdateTimer;
-    bool m_updatesOngoing;
+    QScopedPointer<QGeoPositionInfoSourceWinRTPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(QGeoPositionInfoSourceWinRT)
 };
 
 QT_END_NAMESPACE

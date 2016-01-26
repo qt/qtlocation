@@ -261,6 +261,19 @@ int QGeoFileTileCache::textureUsage() const
     return textureCache_.totalCost();
 }
 
+void QGeoFileTileCache::clearAll()
+{
+    textureCache_.clear();
+    memoryCache_.clear();
+    diskCache_.clear();
+    QDir dir(directory_);
+    dir.setNameFilters(QStringList() << QLatin1String("*-*-*-*.*"));
+    dir.setFilter(QDir::Files);
+    foreach (QString dirFile, dir.entryList()) {
+        dir.remove(dirFile);
+    }
+}
+
 QSharedPointer<QGeoTileTexture> QGeoFileTileCache::get(const QGeoTileSpec &spec)
 {
     QSharedPointer<QGeoTileTexture> tt = textureCache_.object(spec);

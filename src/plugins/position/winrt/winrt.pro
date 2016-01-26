@@ -1,8 +1,8 @@
 TARGET = qtposition_winrt
-QT = core positioning
+QT = core core-private positioning
 
 PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryWinrt
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryWinRT
 load(qt_plugin)
 
 SOURCES += qgeopositioninfosource_winrt.cpp \

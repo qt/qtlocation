@@ -45,6 +45,8 @@
 
     \include examples-run.qdocinc
 
+    The example uses weather data provided by \l http://www.openweathermap.org.
+
     The key part of this example is the application's data model, contained
     in the WeatherData and AppModel classes. WeatherData represents the weather
     information taken from the HTTP service. It is a simple data class, but we
