@@ -103,6 +103,19 @@ QSGNode *QGeoTiledMap::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
     return d->updateSceneGraph(oldNode, window);
 }
 
+// This method returns the minimum zoom level that this specific qgeomap type allows
+// at a given canvas size (width,height) and for a given tile size (usually 256).
+double QGeoTiledMap::minimumZoomLevel(int width, int height, int tileSize) const
+{
+    double maxSize = qMax(width,height);
+    double numTiles = maxSize / tileSize;
+    double minZoom = std::log(numTiles) / std::log(2.0);
+    const QGeoCameraCapabilities capa = cameraCapabilities();
+    if (capa.isValid())
+        minZoom = qMax(minZoom, capa.minimumZoomLevel());
+    return minZoom;
+}
+
 void QGeoTiledMap::prefetchData()
 {
     Q_D(QGeoTiledMap);
@@ -153,8 +166,9 @@ QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coo
     if (clipToViewport) {
         int w = width();
         int h = height();
-
-        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
+        double x = pos.x();
+        double y = pos.y();
+        if ((x < 0.0) || (x > w) || (y < 0) || (y > h) || qIsNaN(x) || qIsNaN(y))
             return QDoubleVector2D(qQNaN(), qQNaN());
     }
 
@@ -170,7 +184,8 @@ QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
       m_tileRequests(0),
       m_maxZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().maximumZoomLevel()))),
       m_minZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().minimumZoomLevel()))),
-      m_prefetchStyle(QGeoTiledMap::PrefetchTwoNeighbourLayers)
+      m_prefetchStyle(QGeoTiledMap::PrefetchTwoNeighbourLayers),
+      m_centerLatitudinalBound(0.0)
 {
     int tileSize = engine->tileSize().width();
     QString pluginString(engine->managerName() + QLatin1Char('_') + QString::number(engine->managerVersion()));
@@ -249,31 +264,40 @@ void QGeoTiledMapPrivate::prefetchTiles()
 
 void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
 {
-    Q_Q(QGeoTiledMap);
-    double lat = oldCameraData.center().latitude();
-
-    if (m_mapScene->verticalLock()) {
-        QGeoCoordinate coord = q->cameraData().center();
-        coord.setLatitude(lat);
-        q->cameraData().setCenter(coord);
-    }
-
-    // For zoomlevel, "snap" 0.05 either side of a whole number.
+    // For zoomlevel, "snap" 0.01 either side of a whole number.
     // This is so that when we turn off bilinear scaling, we're
     // snapped to the exact pixel size of the tiles
-    QGeoCameraData cam = q->cameraData();
-    int izl = static_cast<int>(std::floor(cam.zoomLevel()));
-    float delta = cam.zoomLevel() - izl;
+    int izl = static_cast<int>(std::floor(m_cameraData.zoomLevel()));
+    float delta = m_cameraData.zoomLevel() - izl;
     if (delta > 0.5) {
         izl++;
         delta -= 1.0;
     }
-    if (qAbs(delta) < 0.05) {
-        cam.setZoomLevel(izl);
+    if (qAbs(delta) < 0.01) {
+        m_cameraData.setZoomLevel(izl);
     }
 
-    m_visibleTiles->setCameraData(cam);
-    m_mapScene->setCameraData(cam);
+    double oldZoomLevel = oldCameraData.zoomLevel();
+    if (m_cameraData.zoomLevel() != oldZoomLevel) {
+        // Zoom level changed: recompute latitudinal border for the center
+        updateCenterLatitudinalBound(m_visibleTiles->tileSize(),m_cameraData.zoomLevel());
+    }
+
+    QGeoCoordinate coord = m_cameraData.center();
+    if (coord.isValid()) {
+        double lat = coord.latitude();
+        if (m_mapScene->verticalLock())
+            lat = oldCameraData.center().latitude();
+
+        // Clamp center latitude to prevent gray borders
+        lat = qBound(-m_centerLatitudinalBound, lat, m_centerLatitudinalBound);
+        coord.setLatitude(lat);
+    }
+    m_cameraData.setCenter(coord);
+
+    m_visibleTiles->setCameraData(m_cameraData);
+    m_mapScene->setCameraData(m_cameraData);
+
     updateScene();
 }
 
@@ -300,6 +324,27 @@ void QGeoTiledMapPrivate::updateScene()
         q->update();
 }
 
+// This method recalculates the "no-trespassing" limits for the map center.
+// This has to be done when:
+// 1) the map is resized, because the meters per pixel remain the same, but
+//    the amount of pixels between the center and the borders changes
+// 2) when the zoom level changes, because the amount of pixels between the center
+//    and the borders stays the same, but the meters per pixel change
+void QGeoTiledMapPrivate::updateCenterLatitudinalBound(int tileSize, double zoomLevel)
+{
+    double mapEdgeSize = std::pow(2.0,zoomLevel);
+    mapEdgeSize *= tileSize;
+
+    // At init time weird things happen
+    int clampedWindowHeight = (m_height > mapEdgeSize) ? mapEdgeSize : m_height;
+
+    // Use the window height divided by 2 as the topmost allowed center, with respect to the map size in pixels
+    double mercatorTopmost = (clampedWindowHeight * 0.5) /  mapEdgeSize ;
+    QGeoCoordinate topMost = QGeoProjection::mercatorToCoord(QDoubleVector2D(0.0,mercatorTopmost));
+
+    m_centerLatitudinalBound = topMost.latitude();
+}
+
 void QGeoTiledMapPrivate::changeActiveMapType(const QGeoMapType mapType)
 {
     m_visibleTiles->setMapType(mapType);
@@ -316,11 +361,25 @@ void QGeoTiledMapPrivate::changeTileVersion(int version)
 void QGeoTiledMapPrivate::mapResized(int width, int height)
 {
     Q_Q(QGeoTiledMap);
+
+    m_mapScene->setScreenSize(QSize(width, height));
     m_visibleTiles->setScreenSize(QSize(width, height));
     m_prefetchTiles->setScreenSize(QSize(width, height));
-    m_mapScene->setScreenSize(QSize(width, height));
-    if (q)
-        q->setCameraData(q->cameraData());
+    // Keep the following step order:
+    // 1) Update the minimum zoom level
+    m_minimumZoom = q->minimumZoomLevel(width, height, m_visibleTiles->tileSize());
+
+    // 2) clamp the current zoom level in the camera data, which will have to be
+    //    propagated in the QDeclarativeGeoMap
+    QGeoCameraData camData = q->cameraData();
+    double zoomLevel = camData.zoomLevel();
+    zoomLevel = qMax(m_minimumZoom,zoomLevel); // The correct zoom level. Will be set later
+
+    // 3) Since the map size changed, recompute latitudinal bound for the center.
+    //    This is re-done, despite being already in changeCameraData, because
+    //    changeCameraData triggers it only on zoomLevel changed, which might not
+    //    be the case.
+    updateCenterLatitudinalBound(m_visibleTiles->tileSize(), zoomLevel);
 
     if (width > 0 && height > 0 && m_cache) {
         // absolute minimum size: one tile each side of display, 32-bit colour

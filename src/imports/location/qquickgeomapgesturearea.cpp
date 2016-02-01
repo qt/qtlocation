@@ -690,8 +690,8 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
     QGeoCoordinate wheelGeoPos = m_map->itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
     QPointF preZoomPoint = m_map->coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
-    m_declarativeMap->setZoomLevel(qBound(minimumZoomLevel(), m_declarativeMap->zoomLevel() + event->angleDelta().y() * qreal(0.001), maximumZoomLevel()));
-
+    double zoomLevelDelta = event->angleDelta().y() * qreal(0.001);
+    m_declarativeMap->setZoomLevel(m_declarativeMap->zoomLevel() + zoomLevelDelta);
     QPointF postZoomPoint = m_map->coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
     if (preZoomPoint != postZoomPoint)

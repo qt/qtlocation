@@ -77,6 +77,7 @@ protected:
     int m_width;
     int m_height;
     double m_aspectRatio;
+    double m_minimumZoom;
     QPointer<QGeoMappingManagerEngine> m_engine;
     QGeoMapController *m_controller;
     QGeoCameraData m_cameraData;

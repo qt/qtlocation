@@ -60,16 +60,30 @@ Item {
 
     Map { id: mapZoomOnCompleted; width: 200; height: 200;
         zoomLevel: 3; center: coordinate1; plugin: testPlugin;
-        Component.onCompleted: { zoomLevel = 7 } }
+        Component.onCompleted: {
+            zoomLevel = 7
+        }
+    }
+    SignalSpy {id: mapZoomSpy; target: mapZoomOnCompleted; signalName: 'zoomLevelChanged'}
+
     Map { id: mapZoomDefault; width: 200; height: 200;
         center: coordinate1; plugin: testPlugin; }
-    Map { id: mapZoomUserInit; width: 200; height: 200;
-        zoomLevel: 4; center: coordinate1; plugin: testPlugin; }
-    Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
-    Map {id: coordinateMap; plugin: herePlugin; center: coordinate3; width: 1000; height: 1000; zoomLevel: 15}
 
+    Map { id: mapZoomUserInit; width: 210; height: 210;
+        zoomLevel: 4; center: coordinate1; plugin: testPlugin;
+        Component.onCompleted: {
+            console.log("mapZoomUserInit completed")
+        }
+    }
+
+    Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
     SignalSpy {id: mapCenterSpy; target: map; signalName: 'centerChanged'}
-    SignalSpy {id: mapZoomSpy; target: mapZoomOnCompleted; signalName: 'zoomLevelChanged'}
+
+    Map {id: coordinateMap; plugin: herePlugin; center: coordinate3;
+        width: 1000; height: 1000; zoomLevel: 15 }
+
+
+
 
     TestCase {
         when: windowShown
@@ -156,7 +170,7 @@ Item {
 
         function test_zoom()
         {
-            wait(100)
+            wait(1000)
             compare(mapZoomOnCompleted.zoomLevel, 7)
             compare(mapZoomDefault.zoomLevel, 8)
             compare(mapZoomUserInit.zoomLevel, 4)
@@ -164,7 +178,6 @@ Item {
             mapZoomSpy.clear()
             mapZoomOnCompleted.zoomLevel = 6
             tryCompare(mapZoomSpy, "count", 1)
-
         }
 
         function test_pan()
@@ -264,10 +277,13 @@ Item {
             point = coordinateMap.fromCoordinate(altitudelessCoordinate)
             verify (point.x > 495 && point.x < 505)
             verify (point.y > 495 && point.y < 505)
-            // out of map area
+            // out of map area in view
+            //var oldZoomLevel = coordinateMap.zoomLevel
+            //coordinateMap.zoomLevel = 8
             point = coordinateMap.fromCoordinate(coordinate4)
             verify(isNaN(point.x))
             verify(isNaN(point.y))
+            //coordinateMap.zoomLevel = oldZoomLevel
             // invalid coordinates
             point = coordinateMap.fromCoordinate(invalidCoordinate)
             verify(isNaN(point.x))

@@ -92,6 +92,7 @@ public:
 protected:
     QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) Q_DECL_OVERRIDE;
     virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+    double minimumZoomLevel(int width, int height, int tileSize) const;
 
 private Q_SLOTS:
     void handleTileVersionChanged();

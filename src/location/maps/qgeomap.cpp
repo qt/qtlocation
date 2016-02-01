@@ -119,7 +119,13 @@ const QGeoMapType QGeoMap::activeMapType() const
     return d->m_activeMapType;
 }
 
-QGeoCameraCapabilities QGeoMap::cameraCapabilities()
+double QGeoMap::minimumZoom() const
+{
+    Q_D(const QGeoMap);
+    return d->m_minimumZoom;
+}
+
+QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
     Q_D(const QGeoMap);
     if (!d->m_engine.isNull())
@@ -143,6 +149,7 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
       m_width(0),
       m_height(0),
       m_aspectRatio(0.0),
+      m_minimumZoom(0.0),
       m_engine(engine),
       m_controller(0),
       m_activeMapType(QGeoMapType())

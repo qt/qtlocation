@@ -34,7 +34,7 @@
 #include <QtLocation/private/qgeomappingmanager_p.h>
 #include <QtLocation/private/qgeomapcontroller_p.h>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
-
+#include <cmath>  /* for std::abs(double) */
 
 QT_USE_NAMESPACE
 
@@ -135,18 +135,29 @@ void tst_QGeoMapController::signalsConstructedTest()
 void tst_QGeoMapController::constructorTest_data()
 {
     QTest::addColumn<QGeoCoordinate>("center");
+    QTest::addColumn<QGeoCoordinate>("expectedCenter");
     QTest::addColumn<double>("bearing");
     QTest::addColumn<double>("tilt");
     QTest::addColumn<double>("roll");
     QTest::addColumn<double>("zoom");
-    QTest::newRow("zeros") << QGeoCoordinate() << 0.0 << 0.0 << 0.0 << 0.0;
-    QTest::newRow("valid") << QGeoCoordinate(10.0, 20.5, 30.8) << 0.1 << 0.2 << 0.3 << 2.0;
-    QTest::newRow("negative values") << QGeoCoordinate(-50, -20, 100) << -0.1 << -0.2 << -0.3 << 1.0;
+    QTest::newRow("zeros") << QGeoCoordinate() << QGeoCoordinate() << 0.0 << 0.0 << 0.0 << 0.0;
+    QTest::newRow("valid") << QGeoCoordinate(10.0, 20.5, 30.8) << QGeoCoordinate(10.0, 20.5, 30.8) << 0.1 << 0.2 << 0.3 << 2.0;
+    QTest::newRow("negative values") << QGeoCoordinate(-50, -20, 100) << QGeoCoordinate(-50, -20, 100) << -0.1 << -0.2 << -0.3 << 1.0;
+    QTest::newRow("clamped center negative") << QGeoCoordinate(-89, -45, 0) << QGeoCoordinate(-80.8728, -45, 0) << -0.1 << -0.2 << -0.3 << 1.0;
+    QTest::newRow("clamped center positive") << QGeoCoordinate(86, 38, 0) << QGeoCoordinate(80.8728, 38, 0) << -0.1 << -0.2 << -0.3 << 1.0;
+}
+
+bool almostEqual(float x, float y) // qFuzzyCompare is too strict for this test
+{
+  const float epsilon = 1e-5;
+  return std::abs(x - y) <= epsilon * std::abs(x);
+  // see Knuth section 4.2.2 pages 217-218
 }
 
 void tst_QGeoMapController::constructorTest()
 {
     QFETCH(QGeoCoordinate, center);
+    QFETCH(QGeoCoordinate, expectedCenter);
     QFETCH(double, bearing);
     QFETCH(double, tilt);
     QFETCH(double, roll);
@@ -163,10 +174,27 @@ void tst_QGeoMapController::constructorTest()
     m_map->setCameraData(cameraData);
     QGeoMapController mapController(m_map.data());
 
+
     // make sure the values come out the same
     // also make sure the values match what they were actually set to
-    QCOMPARE(mapController.center(), cameraData.center());
-    QCOMPARE(mapController.center(), center);
+    if (qIsNaN(cameraData.center().longitude())) {
+        QVERIFY(qIsNaN(mapController.center().longitude()));
+    } else {
+        QCOMPARE(mapController.center().longitude(), expectedCenter.longitude());
+    }
+    if (qIsNaN(cameraData.center().altitude())) {
+        QVERIFY(qIsNaN(mapController.center().altitude()));
+    } else {
+        QCOMPARE(mapController.center().altitude(), expectedCenter.altitude());
+    }
+
+    // Verify that the latitude is either what was set or that it has been clamped correctly
+    if (qIsNaN(cameraData.center().latitude())) {
+        QVERIFY(qIsNaN(mapController.center().latitude()));
+    } else {
+        QVERIFY(almostEqual(mapController.center().latitude(), expectedCenter.latitude()));
+    }
+
     QCOMPARE(mapController.zoom(), cameraData.zoomLevel());
     QCOMPARE(mapController.zoom(), zoom);
 

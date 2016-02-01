@@ -83,11 +83,10 @@ public:
 
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
+    double minimumZoom() const;
     virtual void prefetchData();
     virtual void clearData();
-
-    QGeoCameraCapabilities cameraCapabilities();
-
+    QGeoCameraCapabilities cameraCapabilities() const;
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
