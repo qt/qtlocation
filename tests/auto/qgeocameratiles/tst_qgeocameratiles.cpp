@@ -35,15 +35,14 @@
 
 #include <QtPositioning/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
-#include <qtest.h>
-
-#include <QList>
-#include <QPair>
-#include <QDebug>
-
-#include <cmath>
+#include <QtTest/QtTest>
+#include <QtCore/QList>
+#include <QtCore/QPair>
+#include <QtCore/qmath.h>
 
 QT_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QGeoCameraTiles::PrefetchStle)
 
 struct PositionTestInfo {
     QString xyString;
@@ -62,197 +61,210 @@ class tst_QGeoCameraTiles : public QObject
     Q_OBJECT
 
 private:
-    void row(const PositionTestInfo &pti, int xOffset, int yOffset, int tileX, int tileY, int tileW, int tileH)
-    {
-        double step = 1 / (std::pow(2.0, 4.0) * 4);
 
-        QString row = pti.xyString;
-        row += QStringLiteral(" - ");
-        row += pti.zoomString;
-        row += QStringLiteral(" - (");
-        row += QString::number(xOffset);
-        row += QStringLiteral(",");
-        row += QString::number(yOffset);
-        row += QStringLiteral(") - ");
-        row += pti.wString;
-        row += QStringLiteral(" x ");
-        row += pti.hString;
-
-        QList<int> xRow;
-        QList<int> yRow;
-
-        for (int y = 0; y < tileH; ++y) {
-            for (int x = 0; x < tileW; ++x) {
-                if (tileX + x < 16)
-                    xRow << tileX + x;
-                else
-                    xRow << tileX + x - 16;
-                yRow << tileY + y;
-            }
-        }
-
-        QTest::newRow(qPrintable(row))
-                << pti.x + step * xOffset << pti.y + step * yOffset
-                << pti.zoom << pti.w << pti.h
-                << xRow
-                << yRow;
-    }
-
-    void test_group(const PositionTestInfo &pti, QList<int> &xVals, QList<int> &wVals, QList<int> &yVals, QList<int> &hVals)
-    {
-        for (int x = 0; x < 5; ++x) {
-            for (int y = 0; y < 5; ++y) {
-                row(pti, x, y, xVals.at(x), yVals.at(y), wVals.at(x), hVals.at(y));
-            }
-        }
-    }
+    void row(const PositionTestInfo &pti, int xOffset, int yOffset, int tileX, int tileY, int tileW, int tileH);
+    void test_group(const PositionTestInfo &pti, QList<int> &xVals, QList<int> &wVals, QList<int> &yVals, QList<int> &hVals);
 
 private slots:
-    void tilesPlugin()
-    {
-        QGeoCameraData camera;
-        camera.setZoomLevel(4.0);
-        camera.setCenter(QGeoCoordinate(0.0, 0.0));
 
-        QGeoCameraTiles ct;
-        ct.setMaximumZoomLevel(8);
-        ct.setTileSize(16);
-        ct.setCameraData(camera);
-        ct.setScreenSize(QSize(32, 32));
-        ct.setMapType(QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1));
+    void tilesPlugin();
+    void tilesMapType();
+    void tilesPositions();
+    void tilesPositions_data();
+    void fetchTiles();
+    void fetchTiles_data();
+};
 
-        QSet<QGeoTileSpec> tiles1 = ct.visibleTiles();
+void tst_QGeoCameraTiles::row(const PositionTestInfo &pti, int xOffset, int yOffset, int tileX, int tileY, int tileW, int tileH)
+{
+    double step = 1 / (qPow(2.0, 4.0) * 4);
 
-        ct.setPluginString("pluginA");
+    QString row = pti.xyString;
+    row += QStringLiteral(" - ");
+    row += pti.zoomString;
+    row += QStringLiteral(" - (");
+    row += QString::number(xOffset);
+    row += QStringLiteral(",");
+    row += QString::number(yOffset);
+    row += QStringLiteral(") - ");
+    row += pti.wString;
+    row += QStringLiteral(" x ");
+    row += pti.hString;
 
-        QSet<QGeoTileSpec> tiles2 = ct.visibleTiles();
+    QList<int> xRow;
+    QList<int> yRow;
 
-        typedef QSet<QGeoTileSpec>::const_iterator iter;
-        iter i1 = tiles1.constBegin();
-        iter end1 = tiles1.constEnd();
-
-        QSet<QGeoTileSpec> tiles2_check;
-
-        for (; i1 != end1; ++i1) {
-            QGeoTileSpec tile = *i1;
-            tiles2_check.insert(QGeoTileSpec("pluginA", tile.mapId(), tile.zoom(), tile.x(), tile.y()));
+    for (int y = 0; y < tileH; ++y) {
+        for (int x = 0; x < tileW; ++x) {
+            if (tileX + x < 16)
+                xRow << tileX + x;
+            else
+                xRow << tileX + x - 16;
+            yRow << tileY + y;
         }
-
-        QCOMPARE(tiles2, tiles2_check);
-
-        ct.setPluginString("pluginB");
-
-        QSet<QGeoTileSpec> tiles3 = ct.visibleTiles();
-
-        iter i2 = tiles2.constBegin();
-        iter end2 = tiles2.constEnd();
-
-        QSet<QGeoTileSpec> tiles3_check;
-
-        for (; i2 != end2; ++i2) {
-            QGeoTileSpec tile = *i2;
-            tiles3_check.insert(QGeoTileSpec("pluginB", tile.mapId(), tile.zoom(), tile.x(), tile.y()));
-        }
-
-        QCOMPARE(tiles3, tiles3_check);
     }
 
-    void tilesMapType()
-    {
-        QGeoCameraData camera;
-        camera.setZoomLevel(4.0);
-        camera.setCenter(QGeoCoordinate(0.0, 0.0));
+    QTest::newRow(qPrintable(row))
+            << pti.x + step * xOffset << pti.y + step * yOffset
+            << pti.zoom << pti.w << pti.h
+            << xRow
+            << yRow;
+}
 
-        QGeoCameraTiles ct;
-        ct.setMaximumZoomLevel(8);
-        ct.setTileSize(16);
-        ct.setCameraData(camera);
-        ct.setScreenSize(QSize(32, 32));
-        ct.setPluginString("pluginA");
-
-        QSet<QGeoTileSpec> tiles1 = ct.visibleTiles();
-
-        QGeoMapType mapType1 = QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1);
-        ct.setMapType(mapType1);
-
-        QSet<QGeoTileSpec> tiles2 = ct.visibleTiles();
-
-        typedef QSet<QGeoTileSpec>::const_iterator iter;
-        iter i1 = tiles1.constBegin();
-        iter end1 = tiles1.constEnd();
-
-        QSet<QGeoTileSpec> tiles2_check;
-
-        for (; i1 != end1; ++i1) {
-            QGeoTileSpec tile = *i1;
-            tiles2_check.insert(QGeoTileSpec(tile.plugin(), mapType1.mapId(), tile.zoom(), tile.x(), tile.y()));
+void tst_QGeoCameraTiles::test_group(const PositionTestInfo &pti, QList<int> &xVals, QList<int> &wVals, QList<int> &yVals, QList<int> &hVals)
+{
+    for (int x = 0; x < 5; ++x) {
+        for (int y = 0; y < 5; ++y) {
+            row(pti, x, y, xVals.at(x), yVals.at(y), wVals.at(x), hVals.at(y));
         }
+    }
+}
 
-        QCOMPARE(tiles2, tiles2_check);
+void tst_QGeoCameraTiles::tilesPlugin()
+{
+    QGeoCameraData camera;
+    camera.setZoomLevel(4.0);
+    camera.setCenter(QGeoCoordinate(0.0, 0.0));
 
-        QGeoMapType mapType2 = QGeoMapType(QGeoMapType::StreetMap, "satellite map", "satellite map", false, false, 2);
-        ct.setMapType(mapType2);
+    QGeoCameraTiles ct;
+    ct.setMaximumZoomLevel(8);
+    ct.setTileSize(16);
+    ct.setCameraData(camera);
+    ct.setScreenSize(QSize(32, 32));
+    ct.setMapType(QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1));
 
-        QSet<QGeoTileSpec> tiles3 = ct.visibleTiles();
+    QSet<QGeoTileSpec> tiles1 = ct.visibleTiles();
 
-        iter i2 = tiles2.constBegin();
-        iter end2 = tiles2.constEnd();
+    ct.setPluginString("pluginA");
 
-        QSet<QGeoTileSpec> tiles3_check;
+    QSet<QGeoTileSpec> tiles2 = ct.visibleTiles();
 
-        for (; i2 != end2; ++i2) {
-            QGeoTileSpec tile = *i2;
-            tiles3_check.insert(QGeoTileSpec(tile.plugin(), mapType2.mapId(), tile.zoom(), tile.x(), tile.y()));
-        }
+    typedef QSet<QGeoTileSpec>::const_iterator iter;
+    iter i1 = tiles1.constBegin();
+    iter end1 = tiles1.constEnd();
 
-        QCOMPARE(tiles3, tiles3_check);
+    QSet<QGeoTileSpec> tiles2_check;
+
+    for (; i1 != end1; ++i1) {
+        QGeoTileSpec tile = *i1;
+        tiles2_check.insert(QGeoTileSpec("pluginA", tile.mapId(), tile.zoom(), tile.x(), tile.y()));
     }
 
-    void tilesPositions()
-    {
-        QFETCH(double, mercatorX);
-        QFETCH(double, mercatorY);
-        QFETCH(double, zoom);
-        QFETCH(double, width);
-        QFETCH(double, height);
-        QFETCH(QList<int> , tilesX);
-        QFETCH(QList<int> , tilesY);
+    QCOMPARE(tiles2, tiles2_check);
 
-        QGeoCameraData camera;
-        camera.setZoomLevel(zoom);
-        camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(mercatorX, mercatorY)));
+    ct.setPluginString("pluginB");
 
-        QGeoCameraTiles ct;
-        ct.setMaximumZoomLevel(8);
-        ct.setTileSize(16);
-        ct.setCameraData(camera);
-        ct.setScreenSize(QSize(std::ceil(width), std::ceil(height)));
+    QSet<QGeoTileSpec> tiles3 = ct.visibleTiles();
 
-        QSet<QGeoTileSpec> tiles;
+    iter i2 = tiles2.constBegin();
+    iter end2 = tiles2.constEnd();
 
-        QVERIFY2(tilesX.size() == tilesY.size(), "tilesX and tilesY have different size");
+    QSet<QGeoTileSpec> tiles3_check;
 
-        for (int i = 0; i < tilesX.size(); ++i)
-            tiles.insert(QGeoTileSpec("", 0, static_cast<int>(std::floor(zoom)), tilesX.at(i), tilesY.at(i)));
-
-        QCOMPARE(ct.visibleTiles(), tiles);
+    for (; i2 != end2; ++i2) {
+        QGeoTileSpec tile = *i2;
+        tiles3_check.insert(QGeoTileSpec("pluginB", tile.mapId(), tile.zoom(), tile.x(), tile.y()));
     }
 
-    void tilesPositions_data()
-    {
-        QTest::addColumn<double>("mercatorX");
-        QTest::addColumn<double>("mercatorY");
-        QTest::addColumn<double>("zoom");
-        QTest::addColumn<double>("width");
-        QTest::addColumn<double>("height");
-        QTest::addColumn<QList<int> >("tilesX");
-        QTest::addColumn<QList<int> >("tilesY");
+    QCOMPARE(tiles3, tiles3_check);
+}
 
-        int t = 16;
+void tst_QGeoCameraTiles::tilesMapType()
+{
+    QGeoCameraData camera;
+    camera.setZoomLevel(4.0);
+    camera.setCenter(QGeoCoordinate(0.0, 0.0));
 
-        PositionTestInfo pti;
+    QGeoCameraTiles ct;
+    ct.setMaximumZoomLevel(8);
+    ct.setTileSize(16);
+    ct.setCameraData(camera);
+    ct.setScreenSize(QSize(32, 32));
+    ct.setPluginString("pluginA");
 
-        /*
+    QSet<QGeoTileSpec> tiles1 = ct.visibleTiles();
+
+    QGeoMapType mapType1 = QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1);
+    ct.setMapType(mapType1);
+
+    QSet<QGeoTileSpec> tiles2 = ct.visibleTiles();
+
+    typedef QSet<QGeoTileSpec>::const_iterator iter;
+    iter i1 = tiles1.constBegin();
+    iter end1 = tiles1.constEnd();
+
+    QSet<QGeoTileSpec> tiles2_check;
+
+    for (; i1 != end1; ++i1) {
+        QGeoTileSpec tile = *i1;
+        tiles2_check.insert(QGeoTileSpec(tile.plugin(), mapType1.mapId(), tile.zoom(), tile.x(), tile.y()));
+    }
+
+    QCOMPARE(tiles2, tiles2_check);
+
+    QGeoMapType mapType2 = QGeoMapType(QGeoMapType::StreetMap, "satellite map", "satellite map", false, false, 2);
+    ct.setMapType(mapType2);
+
+    QSet<QGeoTileSpec> tiles3 = ct.visibleTiles();
+
+    iter i2 = tiles2.constBegin();
+    iter end2 = tiles2.constEnd();
+
+    QSet<QGeoTileSpec> tiles3_check;
+
+    for (; i2 != end2; ++i2) {
+        QGeoTileSpec tile = *i2;
+        tiles3_check.insert(QGeoTileSpec(tile.plugin(), mapType2.mapId(), tile.zoom(), tile.x(), tile.y()));
+    }
+
+    QCOMPARE(tiles3, tiles3_check);
+}
+
+void tst_QGeoCameraTiles::tilesPositions()
+{
+    QFETCH(double, mercatorX);
+    QFETCH(double, mercatorY);
+    QFETCH(double, zoom);
+    QFETCH(double, width);
+    QFETCH(double, height);
+    QFETCH(QList<int> , tilesX);
+    QFETCH(QList<int> , tilesY);
+
+    QGeoCameraData camera;
+    camera.setZoomLevel(zoom);
+    camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(mercatorX, mercatorY)));
+
+    QGeoCameraTiles ct;
+    ct.setMaximumZoomLevel(8);
+    ct.setTileSize(16);
+    ct.setCameraData(camera);
+    ct.setScreenSize(QSize(qCeil(width), qCeil(height)));
+
+    QSet<QGeoTileSpec> tiles;
+
+    QVERIFY2(tilesX.size() == tilesY.size(), "tilesX and tilesY have different size");
+
+    for (int i = 0; i < tilesX.size(); ++i)
+        tiles.insert(QGeoTileSpec("", 0, static_cast<int>(qFloor(zoom)), tilesX.at(i), tilesY.at(i)));
+
+    QCOMPARE(ct.visibleTiles(), tiles);
+}
+
+void tst_QGeoCameraTiles::tilesPositions_data()
+{
+    QTest::addColumn<double>("mercatorX");
+    QTest::addColumn<double>("mercatorY");
+    QTest::addColumn<double>("zoom");
+    QTest::addColumn<double>("width");
+    QTest::addColumn<double>("height");
+    QTest::addColumn<QList<int> >("tilesX");
+    QTest::addColumn<QList<int> >("tilesY");
+
+    int t = 16;
+
+    PositionTestInfo pti;
+
+    /*
             This test sets up various viewports onto a 16x16 map,
             and checks which tiles are visible against those that
             are expected to be visible.
@@ -328,31 +340,31 @@ private slots:
             and the tests are repeated.
         */
 
-        // TODO
-        // nail down semantics, modify tests and code to suite
-        // add corners of the map
+    // TODO
+    // nail down semantics, modify tests and code to suite
+    // add corners of the map
 
-        /*
+    /*
             width = t - 1
         */
 
-        QList<int> mid_tm1x;
-        QList<int> mid_tm1w;
-        QList<int> top_tm1x;
-        QList<int> top_tm1w;
-        QList<int> bottom_tm1x;
-        QList<int> bottom_tm1w;
-        QList<int> left_tm1x;
-        QList<int> left_tm1w;
-        QList<int> right_tm1x;
-        QList<int> right_tm1w;
+    QList<int> mid_tm1x;
+    QList<int> mid_tm1w;
+    QList<int> top_tm1x;
+    QList<int> top_tm1w;
+    QList<int> bottom_tm1x;
+    QList<int> bottom_tm1w;
+    QList<int> left_tm1x;
+    QList<int> left_tm1w;
+    QList<int> right_tm1x;
+    QList<int> right_tm1w;
 
-        pti.w = t - 1;
-        pti.h = t - 1;
-        pti.wString = QStringLiteral("(1T - 1)");
-        pti.hString = QStringLiteral("(1T - 1)");
+    pti.w = t - 1;
+    pti.h = t - 1;
+    pti.wString = QStringLiteral("(1T - 1)");
+    pti.hString = QStringLiteral("(1T - 1)");
 
-        /*
+    /*
 
                 offset = 0
                 + + + + + + + + + + + + + + + + + + + + +
@@ -369,22 +381,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tm1x << 7;
-        mid_tm1w << 2;
+    mid_tm1x << 7;
+    mid_tm1w << 2;
 
-        top_tm1x << 0;
-        top_tm1w << 1;
+    top_tm1x << 0;
+    top_tm1w << 1;
 
-        bottom_tm1x << 14;
-        bottom_tm1w << 2;
+    bottom_tm1x << 14;
+    bottom_tm1w << 2;
 
-        left_tm1x << 15;
-        left_tm1w << 2;
+    left_tm1x << 15;
+    left_tm1w << 2;
 
-        right_tm1x << 14;
-        right_tm1w << 2;
+    right_tm1x << 14;
+    right_tm1w << 2;
 
-        /*
+    /*
                 offset = 1
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -400,22 +412,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tm1x << 7;
-        mid_tm1w << 2;
+    mid_tm1x << 7;
+    mid_tm1w << 2;
 
-        top_tm1x << 0;
-        top_tm1w << 1;
+    top_tm1x << 0;
+    top_tm1w << 1;
 
-        bottom_tm1x << 14;
-        bottom_tm1w << 2;
+    bottom_tm1x << 14;
+    bottom_tm1w << 2;
 
-        left_tm1x << 15;
-        left_tm1w << 2;
+    left_tm1x << 15;
+    left_tm1w << 2;
 
-        right_tm1x << 14;
-        right_tm1w << 2;
+    right_tm1x << 14;
+    right_tm1w << 2;
 
-        /*
+    /*
                 offset = 2
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -431,22 +443,22 @@ private slots:
                 Covers:     1 tile
         */
 
-        mid_tm1x << 8;
-        mid_tm1w << 1;
+    mid_tm1x << 8;
+    mid_tm1w << 1;
 
-        top_tm1x << 0;
-        top_tm1w << 1;
+    top_tm1x << 0;
+    top_tm1w << 1;
 
-        bottom_tm1x << 15;
-        bottom_tm1w << 1;
+    bottom_tm1x << 15;
+    bottom_tm1w << 1;
 
-        left_tm1x << 0;
-        left_tm1w << 1;
+    left_tm1x << 0;
+    left_tm1w << 1;
 
-        right_tm1x << 15;
-        right_tm1w << 1;
+    right_tm1x << 15;
+    right_tm1w << 1;
 
-        /*
+    /*
                 offset = 3
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -462,22 +474,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tm1x << 8;
-        mid_tm1w << 2;
+    mid_tm1x << 8;
+    mid_tm1w << 2;
 
-        top_tm1x << 0;
-        top_tm1w << 2;
+    top_tm1x << 0;
+    top_tm1w << 2;
 
-        bottom_tm1x << 15;
-        bottom_tm1w << 1;
+    bottom_tm1x << 15;
+    bottom_tm1w << 1;
 
-        left_tm1x << 0;
-        left_tm1w << 2;
+    left_tm1x << 0;
+    left_tm1w << 2;
 
-        right_tm1x << 15;
-        right_tm1w << 2;
+    right_tm1x << 15;
+    right_tm1w << 2;
 
-        /*
+    /*
                 offset = 4
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -493,110 +505,110 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tm1x << 8;
-        mid_tm1w << 2;
+    mid_tm1x << 8;
+    mid_tm1w << 2;
 
-        top_tm1x << 0;
-        top_tm1w << 2;
+    top_tm1x << 0;
+    top_tm1w << 2;
 
-        bottom_tm1x << 15;
-        bottom_tm1w << 1;
+    bottom_tm1x << 15;
+    bottom_tm1w << 1;
 
-        left_tm1x << 0;
-        left_tm1w << 2;
+    left_tm1x << 0;
+    left_tm1w << 2;
 
-        right_tm1x << 15;
-        right_tm1w << 2;
+    right_tm1x << 15;
+    right_tm1w << 2;
 
-        pti.zoom = 4.0;
-        pti.zoomString = QStringLiteral("int zoom");
+    pti.zoom = 4.0;
+    pti.zoomString = QStringLiteral("int zoom");
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_tm1x, mid_tm1w, mid_tm1x, mid_tm1w);
+    test_group(pti, mid_tm1x, mid_tm1w, mid_tm1x, mid_tm1w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_tm1x, mid_tm1w, top_tm1x, top_tm1w);
+    test_group(pti, mid_tm1x, mid_tm1w, top_tm1x, top_tm1w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_tm1x, mid_tm1w, bottom_tm1x, bottom_tm1w);
+    test_group(pti, mid_tm1x, mid_tm1w, bottom_tm1x, bottom_tm1w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_tm1x, left_tm1w, mid_tm1x, mid_tm1w);
+    test_group(pti, left_tm1x, left_tm1w, mid_tm1x, mid_tm1w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_tm1x, right_tm1w, mid_tm1x, mid_tm1w);
+    test_group(pti, right_tm1x, right_tm1w, mid_tm1x, mid_tm1w);
 
-        pti.zoom = 4.5;
-        pti.zoomString = QStringLiteral("frac zoom");
-        pti.w = pti.w * std::pow(2.0, 0.5);
-        pti.h = pti.h * std::pow(2.0, 0.5);
+    pti.zoom = 4.5;
+    pti.zoomString = QStringLiteral("frac zoom");
+    pti.w = pti.w * qPow(2.0, 0.5);
+    pti.h = pti.h * qPow(2.0, 0.5);
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_tm1x, mid_tm1w, mid_tm1x, mid_tm1w);
+    test_group(pti, mid_tm1x, mid_tm1w, mid_tm1x, mid_tm1w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_tm1x, mid_tm1w, top_tm1x, top_tm1w);
+    test_group(pti, mid_tm1x, mid_tm1w, top_tm1x, top_tm1w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_tm1x, mid_tm1w, bottom_tm1x, bottom_tm1w);
+    test_group(pti, mid_tm1x, mid_tm1w, bottom_tm1x, bottom_tm1w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_tm1x, left_tm1w, mid_tm1x, mid_tm1w);
+    test_group(pti, left_tm1x, left_tm1w, mid_tm1x, mid_tm1w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_tm1x, right_tm1w, mid_tm1x, mid_tm1w);
+    test_group(pti, right_tm1x, right_tm1w, mid_tm1x, mid_tm1w);
 
-        /*
+    /*
             width = t
         */
 
-        QList<int> mid_tx;
-        QList<int> mid_tw;
-        QList<int> top_tx;
-        QList<int> top_tw;
-        QList<int> bottom_tx;
-        QList<int> bottom_tw;
-        QList<int> left_tx;
-        QList<int> left_tw;
-        QList<int> right_tx;
-        QList<int> right_tw;
+    QList<int> mid_tx;
+    QList<int> mid_tw;
+    QList<int> top_tx;
+    QList<int> top_tw;
+    QList<int> bottom_tx;
+    QList<int> bottom_tw;
+    QList<int> left_tx;
+    QList<int> left_tw;
+    QList<int> right_tx;
+    QList<int> right_tw;
 
-        pti.w = t;
-        pti.h = t;
-        pti.wString = QStringLiteral("1T");
-        pti.hString = QStringLiteral("1T");
+    pti.w = t;
+    pti.h = t;
+    pti.wString = QStringLiteral("1T");
+    pti.hString = QStringLiteral("1T");
 
-        /*
+    /*
 
                 offset = 0
                 + + + + + + + + + + + + + + + + + + + + +
@@ -613,22 +625,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tx << 7;
-        mid_tw << 2;
+    mid_tx << 7;
+    mid_tw << 2;
 
-        top_tx << 0;
-        top_tw << 1;
+    top_tx << 0;
+    top_tw << 1;
 
-        bottom_tx << 14;
-        bottom_tw << 2;
+    bottom_tx << 14;
+    bottom_tw << 2;
 
-        left_tx << 15;
-        left_tw << 2;
+    left_tx << 15;
+    left_tw << 2;
 
-        right_tx << 14;
-        right_tw << 2;
+    right_tx << 14;
+    right_tw << 2;
 
-        /*
+    /*
                 offset = 1
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -644,22 +656,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tx << 7;
-        mid_tw << 2;
+    mid_tx << 7;
+    mid_tw << 2;
 
-        top_tx << 0;
-        top_tw << 1;
+    top_tx << 0;
+    top_tw << 1;
 
-        bottom_tx << 14;
-        bottom_tw << 2;
+    bottom_tx << 14;
+    bottom_tw << 2;
 
-        left_tx << 15;
-        left_tw << 2;
+    left_tx << 15;
+    left_tw << 2;
 
-        right_tx << 14;
-        right_tw << 2;
+    right_tx << 14;
+    right_tw << 2;
 
-        /*
+    /*
                 offset = 2
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -675,22 +687,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_tx << 7;
-        mid_tw << 3;
+    mid_tx << 7;
+    mid_tw << 3;
 
-        top_tx << 0;
-        top_tw << 2;
+    top_tx << 0;
+    top_tw << 2;
 
-        bottom_tx << 14;
-        bottom_tw << 2;
+    bottom_tx << 14;
+    bottom_tw << 2;
 
-        left_tx << 15;
-        left_tw << 3;
+    left_tx << 15;
+    left_tw << 3;
 
-        right_tx << 14;
-        right_tw << 3;
+    right_tx << 14;
+    right_tw << 3;
 
-        /*
+    /*
                 offset = 3
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -706,22 +718,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tx << 8;
-        mid_tw << 2;
+    mid_tx << 8;
+    mid_tw << 2;
 
-        top_tx << 0;
-        top_tw << 2;
+    top_tx << 0;
+    top_tw << 2;
 
-        bottom_tx << 15;
-        bottom_tw << 1;
+    bottom_tx << 15;
+    bottom_tw << 1;
 
-        left_tx << 0;
-        left_tw << 2;
+    left_tx << 0;
+    left_tw << 2;
 
-        right_tx << 15;
-        right_tw << 2;
+    right_tx << 15;
+    right_tw << 2;
 
-        /*
+    /*
                 offset = 4
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -737,110 +749,110 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tx << 8;
-        mid_tw << 2;
+    mid_tx << 8;
+    mid_tw << 2;
 
-        top_tx << 0;
-        top_tw << 2;
+    top_tx << 0;
+    top_tw << 2;
 
-        bottom_tx << 15;
-        bottom_tw << 1;
+    bottom_tx << 15;
+    bottom_tw << 1;
 
-        left_tx << 0;
-        left_tw << 2;
+    left_tx << 0;
+    left_tw << 2;
 
-        right_tx << 15;
-        right_tw << 2;
+    right_tx << 15;
+    right_tw << 2;
 
-        pti.zoom = 4.0;
-        pti.zoomString = QStringLiteral("int zoom");
+    pti.zoom = 4.0;
+    pti.zoomString = QStringLiteral("int zoom");
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_tx, mid_tw, mid_tx, mid_tw);
+    test_group(pti, mid_tx, mid_tw, mid_tx, mid_tw);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_tx, mid_tw, top_tx, top_tw);
+    test_group(pti, mid_tx, mid_tw, top_tx, top_tw);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_tx, mid_tw, bottom_tx, bottom_tw);
+    test_group(pti, mid_tx, mid_tw, bottom_tx, bottom_tw);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_tx, left_tw, mid_tx, mid_tw);
+    test_group(pti, left_tx, left_tw, mid_tx, mid_tw);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_tx, right_tw, mid_tx, mid_tw);
+    test_group(pti, right_tx, right_tw, mid_tx, mid_tw);
 
-        pti.zoom = 4.5;
-        pti.zoomString = QStringLiteral("frac zoom");
-        pti.w = pti.w * std::pow(2.0, 0.5);
-        pti.h = pti.h * std::pow(2.0, 0.5);
+    pti.zoom = 4.5;
+    pti.zoomString = QStringLiteral("frac zoom");
+    pti.w = pti.w * qPow(2.0, 0.5);
+    pti.h = pti.h * qPow(2.0, 0.5);
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_tx, mid_tw, mid_tx, mid_tw);
+    test_group(pti, mid_tx, mid_tw, mid_tx, mid_tw);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_tx, mid_tw, top_tx, top_tw);
+    test_group(pti, mid_tx, mid_tw, top_tx, top_tw);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_tx, mid_tw, bottom_tx, bottom_tw);
+    test_group(pti, mid_tx, mid_tw, bottom_tx, bottom_tw);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_tx, left_tw, mid_tx, mid_tw);
+    test_group(pti, left_tx, left_tw, mid_tx, mid_tw);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_tx, right_tw, mid_tx, mid_tw);
+    test_group(pti, right_tx, right_tw, mid_tx, mid_tw);
 
-        /*
+    /*
             width = t + 1
         */
 
-        QList<int> mid_tp1x;
-        QList<int> mid_tp1w;
-        QList<int> top_tp1x;
-        QList<int> top_tp1w;
-        QList<int> bottom_tp1x;
-        QList<int> bottom_tp1w;
-        QList<int> left_tp1x;
-        QList<int> left_tp1w;
-        QList<int> right_tp1x;
-        QList<int> right_tp1w;
+    QList<int> mid_tp1x;
+    QList<int> mid_tp1w;
+    QList<int> top_tp1x;
+    QList<int> top_tp1w;
+    QList<int> bottom_tp1x;
+    QList<int> bottom_tp1w;
+    QList<int> left_tp1x;
+    QList<int> left_tp1w;
+    QList<int> right_tp1x;
+    QList<int> right_tp1w;
 
-        pti.w = t + 1;
-        pti.h = t + 1;
-        pti.wString = QStringLiteral("(1T + 1)");
-        pti.hString = QStringLiteral("(1T + 1)");
+    pti.w = t + 1;
+    pti.h = t + 1;
+    pti.wString = QStringLiteral("(1T + 1)");
+    pti.hString = QStringLiteral("(1T + 1)");
 
-        /*
+    /*
 
                 offset = 0
                 + + + + + + + + + + + + + + + + + + + + +
@@ -857,22 +869,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tp1x << 7;
-        mid_tp1w << 2;
+    mid_tp1x << 7;
+    mid_tp1w << 2;
 
-        top_tp1x << 0;
-        top_tp1w << 1;
+    top_tp1x << 0;
+    top_tp1w << 1;
 
-        bottom_tp1x << 14;
-        bottom_tp1w << 2;
+    bottom_tp1x << 14;
+    bottom_tp1w << 2;
 
-        left_tp1x << 15;
-        left_tp1w << 2;
+    left_tp1x << 15;
+    left_tp1w << 2;
 
-        right_tp1x << 14;
-        right_tp1w << 2;
+    right_tp1x << 14;
+    right_tp1w << 2;
 
-        /*
+    /*
                 offset = 1
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -888,22 +900,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tp1x << 7;
-        mid_tp1w << 2;
+    mid_tp1x << 7;
+    mid_tp1w << 2;
 
-        top_tp1x << 0;
-        top_tp1w << 1;
+    top_tp1x << 0;
+    top_tp1w << 1;
 
-        bottom_tp1x << 14;
-        bottom_tp1w << 2;
+    bottom_tp1x << 14;
+    bottom_tp1w << 2;
 
-        left_tp1x << 15;
-        left_tp1w << 2;
+    left_tp1x << 15;
+    left_tp1w << 2;
 
-        right_tp1x << 14;
-        right_tp1w << 2;
+    right_tp1x << 14;
+    right_tp1w << 2;
 
-        /*
+    /*
                 offset = 2
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -919,22 +931,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_tp1x << 7;
-        mid_tp1w << 3;
+    mid_tp1x << 7;
+    mid_tp1w << 3;
 
-        top_tp1x << 0;
-        top_tp1w << 2;
+    top_tp1x << 0;
+    top_tp1w << 2;
 
-        bottom_tp1x << 14;
-        bottom_tp1w << 2;
+    bottom_tp1x << 14;
+    bottom_tp1w << 2;
 
-        left_tp1x << 15;
-        left_tp1w << 3;
+    left_tp1x << 15;
+    left_tp1w << 3;
 
-        right_tp1x << 14;
-        right_tp1w << 3;
+    right_tp1x << 14;
+    right_tp1w << 3;
 
-        /*
+    /*
                 offset = 3
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -950,22 +962,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tp1x << 8;
-        mid_tp1w << 2;
+    mid_tp1x << 8;
+    mid_tp1w << 2;
 
-        top_tp1x << 0;
-        top_tp1w << 2;
+    top_tp1x << 0;
+    top_tp1w << 2;
 
-        bottom_tp1x << 15;
-        bottom_tp1w << 1;
+    bottom_tp1x << 15;
+    bottom_tp1w << 1;
 
-        left_tp1x << 0;
-        left_tp1w << 2;
+    left_tp1x << 0;
+    left_tp1w << 2;
 
-        right_tp1x << 15;
-        right_tp1w << 2;
+    right_tp1x << 15;
+    right_tp1w << 2;
 
-        /*
+    /*
                 offset = 4
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -981,110 +993,110 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_tp1x << 8;
-        mid_tp1w << 2;
+    mid_tp1x << 8;
+    mid_tp1w << 2;
 
-        top_tp1x << 0;
-        top_tp1w << 2;
+    top_tp1x << 0;
+    top_tp1w << 2;
 
-        bottom_tp1x << 15;
-        bottom_tp1w << 1;
+    bottom_tp1x << 15;
+    bottom_tp1w << 1;
 
-        left_tp1x << 0;
-        left_tp1w << 2;
+    left_tp1x << 0;
+    left_tp1w << 2;
 
-        right_tp1x << 15;
-        right_tp1w << 2;
+    right_tp1x << 15;
+    right_tp1w << 2;
 
-        pti.zoom = 4.0;
-        pti.zoomString = QStringLiteral("int zoom");
+    pti.zoom = 4.0;
+    pti.zoomString = QStringLiteral("int zoom");
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_tp1x, mid_tp1w, mid_tp1x, mid_tp1w);
+    test_group(pti, mid_tp1x, mid_tp1w, mid_tp1x, mid_tp1w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_tp1x, mid_tp1w, top_tp1x, top_tp1w);
+    test_group(pti, mid_tp1x, mid_tp1w, top_tp1x, top_tp1w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_tp1x, mid_tp1w, bottom_tp1x, bottom_tp1w);
+    test_group(pti, mid_tp1x, mid_tp1w, bottom_tp1x, bottom_tp1w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_tp1x, left_tp1w, mid_tp1x, mid_tp1w);
+    test_group(pti, left_tp1x, left_tp1w, mid_tp1x, mid_tp1w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_tp1x, right_tp1w, mid_tp1x, mid_tp1w);
+    test_group(pti, right_tp1x, right_tp1w, mid_tp1x, mid_tp1w);
 
-        pti.zoom = 4.5;
-        pti.zoomString = QStringLiteral("frac zoom");
-        pti.w = pti.w * std::pow(2.0, 0.5);
-        pti.h = pti.h * std::pow(2.0, 0.5);
+    pti.zoom = 4.5;
+    pti.zoomString = QStringLiteral("frac zoom");
+    pti.w = pti.w * qPow(2.0, 0.5);
+    pti.h = pti.h * qPow(2.0, 0.5);
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_tp1x, mid_tp1w, mid_tp1x, mid_tp1w);
+    test_group(pti, mid_tp1x, mid_tp1w, mid_tp1x, mid_tp1w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_tp1x, mid_tp1w, top_tp1x, top_tp1w);
+    test_group(pti, mid_tp1x, mid_tp1w, top_tp1x, top_tp1w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_tp1x, mid_tp1w, bottom_tp1x, bottom_tp1w);
+    test_group(pti, mid_tp1x, mid_tp1w, bottom_tp1x, bottom_tp1w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_tp1x, left_tp1w, mid_tp1x, mid_tp1w);
+    test_group(pti, left_tp1x, left_tp1w, mid_tp1x, mid_tp1w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_tp1x, right_tp1w, mid_tp1x, mid_tp1w);
+    test_group(pti, right_tp1x, right_tp1w, mid_tp1x, mid_tp1w);
 
-        /*
+    /*
             width = 2t - 1
         */
 
-        QList<int> mid_t2m1x;
-        QList<int> mid_t2m1w;
-        QList<int> top_t2m1x;
-        QList<int> top_t2m1w;
-        QList<int> bottom_t2m1x;
-        QList<int> bottom_t2m1w;
-        QList<int> left_t2m1x;
-        QList<int> left_t2m1w;
-        QList<int> right_t2m1x;
-        QList<int> right_t2m1w;
+    QList<int> mid_t2m1x;
+    QList<int> mid_t2m1w;
+    QList<int> top_t2m1x;
+    QList<int> top_t2m1w;
+    QList<int> bottom_t2m1x;
+    QList<int> bottom_t2m1w;
+    QList<int> left_t2m1x;
+    QList<int> left_t2m1w;
+    QList<int> right_t2m1x;
+    QList<int> right_t2m1w;
 
-        pti.w = 2 * t - 1;
-        pti.h = 2 * t - 1;
-        pti.wString = QStringLiteral("(2T - 1)");
-        pti.hString = QStringLiteral("(2T - 1)");
+    pti.w = 2 * t - 1;
+    pti.h = 2 * t - 1;
+    pti.wString = QStringLiteral("(2T - 1)");
+    pti.hString = QStringLiteral("(2T - 1)");
 
-        /*
+    /*
                 offset = 0
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1100,22 +1112,22 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_t2m1x << 7;
-        mid_t2m1w << 2;
+    mid_t2m1x << 7;
+    mid_t2m1w << 2;
 
-        top_t2m1x << 0;
-        top_t2m1w << 1;
+    top_t2m1x << 0;
+    top_t2m1w << 1;
 
-        bottom_t2m1x << 14;
-        bottom_t2m1w << 2;
+    bottom_t2m1x << 14;
+    bottom_t2m1w << 2;
 
-        left_t2m1x << 15;
-        left_t2m1w << 2;
+    left_t2m1x << 15;
+    left_t2m1w << 2;
 
-        right_t2m1x << 14;
-        right_t2m1w << 2;
+    right_t2m1x << 14;
+    right_t2m1w << 2;
 
-        /*
+    /*
                 offset = 1
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1131,22 +1143,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2m1x << 7;
-        mid_t2m1w << 3;
+    mid_t2m1x << 7;
+    mid_t2m1w << 3;
 
-        top_t2m1x << 0;
-        top_t2m1w << 2;
+    top_t2m1x << 0;
+    top_t2m1w << 2;
 
-        bottom_t2m1x << 14;
-        bottom_t2m1w << 2;
+    bottom_t2m1x << 14;
+    bottom_t2m1w << 2;
 
-        left_t2m1x << 15;
-        left_t2m1w << 3;
+    left_t2m1x << 15;
+    left_t2m1w << 3;
 
-        right_t2m1x << 14;
-        right_t2m1w << 3;
+    right_t2m1x << 14;
+    right_t2m1w << 3;
 
-        /*
+    /*
                 offset = 2
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1162,22 +1174,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2m1x << 7;
-        mid_t2m1w << 3;
+    mid_t2m1x << 7;
+    mid_t2m1w << 3;
 
-        top_t2m1x << 0;
-        top_t2m1w << 2;
+    top_t2m1x << 0;
+    top_t2m1w << 2;
 
-        bottom_t2m1x << 14;
-        bottom_t2m1w << 2;
+    bottom_t2m1x << 14;
+    bottom_t2m1w << 2;
 
-        left_t2m1x << 15;
-        left_t2m1w << 3;
+    left_t2m1x << 15;
+    left_t2m1w << 3;
 
-        right_t2m1x << 14;
-        right_t2m1w << 3;
+    right_t2m1x << 14;
+    right_t2m1w << 3;
 
-        /*
+    /*
                 offset = 3
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1193,22 +1205,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2m1x << 7;
-        mid_t2m1w << 3;
+    mid_t2m1x << 7;
+    mid_t2m1w << 3;
 
-        top_t2m1x << 0;
-        top_t2m1w << 2;
+    top_t2m1x << 0;
+    top_t2m1w << 2;
 
-        bottom_t2m1x << 14;
-        bottom_t2m1w << 2;
+    bottom_t2m1x << 14;
+    bottom_t2m1w << 2;
 
-        left_t2m1x << 15;
-        left_t2m1w << 3;
+    left_t2m1x << 15;
+    left_t2m1w << 3;
 
-        right_t2m1x << 14;
-        right_t2m1w << 3;
+    right_t2m1x << 14;
+    right_t2m1w << 3;
 
-        /*
+    /*
                 offset = 4
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1224,111 +1236,111 @@ private slots:
                 Covers:     2 tiles
         */
 
-        mid_t2m1x << 8;
-        mid_t2m1w << 2;
+    mid_t2m1x << 8;
+    mid_t2m1w << 2;
 
-        top_t2m1x << 0;
-        top_t2m1w << 2;
+    top_t2m1x << 0;
+    top_t2m1w << 2;
 
-        bottom_t2m1x << 15;
-        bottom_t2m1w << 1;
+    bottom_t2m1x << 15;
+    bottom_t2m1w << 1;
 
-        left_t2m1x << 0;
-        left_t2m1w << 2;
+    left_t2m1x << 0;
+    left_t2m1w << 2;
 
-        right_t2m1x << 15;
-        right_t2m1w << 2;
+    right_t2m1x << 15;
+    right_t2m1w << 2;
 
-        pti.zoom = 4.0;
-        pti.zoomString = QStringLiteral("int zoom");
+    pti.zoom = 4.0;
+    pti.zoomString = QStringLiteral("int zoom");
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_t2m1x, mid_t2m1w, mid_t2m1x, mid_t2m1w);
+    test_group(pti, mid_t2m1x, mid_t2m1w, mid_t2m1x, mid_t2m1w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_t2m1x, mid_t2m1w, top_t2m1x, top_t2m1w);
+    test_group(pti, mid_t2m1x, mid_t2m1w, top_t2m1x, top_t2m1w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_t2m1x, mid_t2m1w, bottom_t2m1x, bottom_t2m1w);
+    test_group(pti, mid_t2m1x, mid_t2m1w, bottom_t2m1x, bottom_t2m1w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_t2m1x, left_t2m1w, mid_t2m1x, mid_t2m1w);
+    test_group(pti, left_t2m1x, left_t2m1w, mid_t2m1x, mid_t2m1w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_t2m1x, right_t2m1w, mid_t2m1x, mid_t2m1w);
+    test_group(pti, right_t2m1x, right_t2m1w, mid_t2m1x, mid_t2m1w);
 
-        pti.zoom = 4.5;
-        pti.zoomString = QStringLiteral("frac zoom");
-        pti.w = pti.w * std::pow(2.0, 0.5);
-        pti.h = pti.h * std::pow(2.0, 0.5);
+    pti.zoom = 4.5;
+    pti.zoomString = QStringLiteral("frac zoom");
+    pti.w = pti.w * qPow(2.0, 0.5);
+    pti.h = pti.h * qPow(2.0, 0.5);
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_t2m1x, mid_t2m1w, mid_t2m1x, mid_t2m1w);
+    test_group(pti, mid_t2m1x, mid_t2m1w, mid_t2m1x, mid_t2m1w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_t2m1x, mid_t2m1w, top_t2m1x, top_t2m1w);
+    test_group(pti, mid_t2m1x, mid_t2m1w, top_t2m1x, top_t2m1w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_t2m1x, mid_t2m1w, bottom_t2m1x, bottom_t2m1w);
+    test_group(pti, mid_t2m1x, mid_t2m1w, bottom_t2m1x, bottom_t2m1w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_t2m1x, left_t2m1w, mid_t2m1x, mid_t2m1w);
+    test_group(pti, left_t2m1x, left_t2m1w, mid_t2m1x, mid_t2m1w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_t2m1x, right_t2m1w, mid_t2m1x, mid_t2m1w);
+    test_group(pti, right_t2m1x, right_t2m1w, mid_t2m1x, mid_t2m1w);
 
-        /*
+    /*
             width = 2t
         */
 
 
-        QList<int> mid_t2x;
-        QList<int> mid_t2w;
-        QList<int> top_t2x;
-        QList<int> top_t2w;
-        QList<int> bottom_t2x;
-        QList<int> bottom_t2w;
-        QList<int> left_t2x;
-        QList<int> left_t2w;
-        QList<int> right_t2x;
-        QList<int> right_t2w;
+    QList<int> mid_t2x;
+    QList<int> mid_t2w;
+    QList<int> top_t2x;
+    QList<int> top_t2w;
+    QList<int> bottom_t2x;
+    QList<int> bottom_t2w;
+    QList<int> left_t2x;
+    QList<int> left_t2w;
+    QList<int> right_t2x;
+    QList<int> right_t2w;
 
-        pti.w = 2 * t;
-        pti.h = 2 * t;
-        pti.wString = QStringLiteral("2T");
-        pti.hString = QStringLiteral("2T");
+    pti.w = 2 * t;
+    pti.h = 2 * t;
+    pti.wString = QStringLiteral("2T");
+    pti.hString = QStringLiteral("2T");
 
-        /*
+    /*
 
                 offset = 0
                 + + + + + + + + + + + + + + + + + + + + +
@@ -1345,22 +1357,22 @@ private slots:
                 Covers:     4 tiles
         */
 
-        mid_t2x << 6;
-        mid_t2w << 4;
+    mid_t2x << 6;
+    mid_t2w << 4;
 
-        top_t2x << 0;
-        top_t2w << 2;
+    top_t2x << 0;
+    top_t2w << 2;
 
-        bottom_t2x << 13;
-        bottom_t2w << 3;
+    bottom_t2x << 13;
+    bottom_t2w << 3;
 
-        left_t2x << 14;
-        left_t2w << 4;
+    left_t2x << 14;
+    left_t2w << 4;
 
-        right_t2x << 13;
-        right_t2w << 4;
+    right_t2x << 13;
+    right_t2w << 4;
 
-        /*
+    /*
                 offset = 1
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1376,22 +1388,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2x << 7;
-        mid_t2w << 3;
+    mid_t2x << 7;
+    mid_t2w << 3;
 
-        top_t2x << 0;
-        top_t2w << 2;
+    top_t2x << 0;
+    top_t2w << 2;
 
-        bottom_t2x << 14;
-        bottom_t2w << 2;
+    bottom_t2x << 14;
+    bottom_t2w << 2;
 
-        left_t2x << 15;
-        left_t2w << 3;
+    left_t2x << 15;
+    left_t2w << 3;
 
-        right_t2x << 14;
-        right_t2w << 3;
+    right_t2x << 14;
+    right_t2w << 3;
 
-        /*
+    /*
                 offset = 2
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1407,22 +1419,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2x << 7;
-        mid_t2w << 3;
+    mid_t2x << 7;
+    mid_t2w << 3;
 
-        top_t2x << 0;
-        top_t2w << 2;
+    top_t2x << 0;
+    top_t2w << 2;
 
-        bottom_t2x << 14;
-        bottom_t2w << 2;
+    bottom_t2x << 14;
+    bottom_t2w << 2;
 
-        left_t2x << 15;
-        left_t2w << 3;
+    left_t2x << 15;
+    left_t2w << 3;
 
-        right_t2x << 14;
-        right_t2w << 3;
+    right_t2x << 14;
+    right_t2w << 3;
 
-        /*
+    /*
                 offset = 3
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1438,22 +1450,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2x << 7;
-        mid_t2w << 3;
+    mid_t2x << 7;
+    mid_t2w << 3;
 
-        top_t2x << 0;
-        top_t2w << 2;
+    top_t2x << 0;
+    top_t2w << 2;
 
-        bottom_t2x << 14;
-        bottom_t2w << 2;
+    bottom_t2x << 14;
+    bottom_t2w << 2;
 
-        left_t2x << 15;
-        left_t2w << 3;
+    left_t2x << 15;
+    left_t2w << 3;
 
-        right_t2x << 14;
-        right_t2w << 3;
+    right_t2x << 14;
+    right_t2w << 3;
 
-        /*
+    /*
                 offset = 4
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1469,110 +1481,110 @@ private slots:
                 Covers:     4 tiles
         */
 
-        mid_t2x << 7;
-        mid_t2w << 4;
+    mid_t2x << 7;
+    mid_t2w << 4;
 
-        top_t2x << 0;
-        top_t2w << 3;
+    top_t2x << 0;
+    top_t2w << 3;
 
-        bottom_t2x << 14;
-        bottom_t2w << 2;
+    bottom_t2x << 14;
+    bottom_t2w << 2;
 
-        left_t2x << 15;
-        left_t2w << 4;
+    left_t2x << 15;
+    left_t2w << 4;
 
-        right_t2x << 14;
-        right_t2w << 4;
+    right_t2x << 14;
+    right_t2w << 4;
 
-        pti.zoom = 4.0;
-        pti.zoomString = QStringLiteral("int zoom");
+    pti.zoom = 4.0;
+    pti.zoomString = QStringLiteral("int zoom");
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_t2x, mid_t2w, mid_t2x, mid_t2w);
+    test_group(pti, mid_t2x, mid_t2w, mid_t2x, mid_t2w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_t2x, mid_t2w, top_t2x, top_t2w);
+    test_group(pti, mid_t2x, mid_t2w, top_t2x, top_t2w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_t2x, mid_t2w, bottom_t2x, bottom_t2w);
+    test_group(pti, mid_t2x, mid_t2w, bottom_t2x, bottom_t2w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_t2x, left_t2w, mid_t2x, mid_t2w);
+    test_group(pti, left_t2x, left_t2w, mid_t2x, mid_t2w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_t2x, right_t2w, mid_t2x, mid_t2w);
+    test_group(pti, right_t2x, right_t2w, mid_t2x, mid_t2w);
 
-        pti.zoom = 4.5;
-        pti.zoomString = QStringLiteral("frac zoom");
-        pti.w = pti.w * std::pow(2.0, 0.5);
-        pti.h = pti.h * std::pow(2.0, 0.5);
+    pti.zoom = 4.5;
+    pti.zoomString = QStringLiteral("frac zoom");
+    pti.w = pti.w * qPow(2.0, 0.5);
+    pti.h = pti.h * qPow(2.0, 0.5);
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_t2x, mid_t2w, mid_t2x, mid_t2w);
+    test_group(pti, mid_t2x, mid_t2w, mid_t2x, mid_t2w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_t2x, mid_t2w, top_t2x, top_t2w);
+    test_group(pti, mid_t2x, mid_t2w, top_t2x, top_t2w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_t2x, mid_t2w, bottom_t2x, bottom_t2w);
+    test_group(pti, mid_t2x, mid_t2w, bottom_t2x, bottom_t2w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_t2x, left_t2w, mid_t2x, mid_t2w);
+    test_group(pti, left_t2x, left_t2w, mid_t2x, mid_t2w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_t2x, right_t2w, mid_t2x, mid_t2w);
+    test_group(pti, right_t2x, right_t2w, mid_t2x, mid_t2w);
 
-        /*
+    /*
             width = 2t + 1
         */
 
-        QList<int> mid_t2p1x;
-        QList<int> mid_t2p1w;
-        QList<int> top_t2p1x;
-        QList<int> top_t2p1w;
-        QList<int> bottom_t2p1x;
-        QList<int> bottom_t2p1w;
-        QList<int> left_t2p1x;
-        QList<int> left_t2p1w;
-        QList<int> right_t2p1x;
-        QList<int> right_t2p1w;
+    QList<int> mid_t2p1x;
+    QList<int> mid_t2p1w;
+    QList<int> top_t2p1x;
+    QList<int> top_t2p1w;
+    QList<int> bottom_t2p1x;
+    QList<int> bottom_t2p1w;
+    QList<int> left_t2p1x;
+    QList<int> left_t2p1w;
+    QList<int> right_t2p1x;
+    QList<int> right_t2p1w;
 
-        pti.w = 2 * t + 1;
-        pti.h = 2 * t + 1;
-        pti.wString = QStringLiteral("(2T + 1)");
-        pti.hString = QStringLiteral("(2T + 1)");
+    pti.w = 2 * t + 1;
+    pti.h = 2 * t + 1;
+    pti.wString = QStringLiteral("(2T + 1)");
+    pti.hString = QStringLiteral("(2T + 1)");
 
-        /*
+    /*
 
                 offset = 0
                 + + + + + + + + + + + + + + + + + + + + +
@@ -1589,22 +1601,22 @@ private slots:
                 Covers:     4 tiles
         */
 
-        mid_t2p1x << 6;
-        mid_t2p1w << 4;
+    mid_t2p1x << 6;
+    mid_t2p1w << 4;
 
-        top_t2p1x << 0;
-        top_t2p1w << 2;
+    top_t2p1x << 0;
+    top_t2p1w << 2;
 
-        bottom_t2p1x << 13;
-        bottom_t2p1w << 3;
+    bottom_t2p1x << 13;
+    bottom_t2p1w << 3;
 
-        left_t2p1x << 14;
-        left_t2p1w << 4;
+    left_t2p1x << 14;
+    left_t2p1w << 4;
 
-        right_t2p1x << 13;
-        right_t2p1w << 4;
+    right_t2p1x << 13;
+    right_t2p1w << 4;
 
-        /*
+    /*
                 offset = 1
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1620,22 +1632,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2p1x << 7;
-        mid_t2p1w << 3;
+    mid_t2p1x << 7;
+    mid_t2p1w << 3;
 
-        top_t2p1x << 0;
-        top_t2p1w << 2;
+    top_t2p1x << 0;
+    top_t2p1w << 2;
 
-        bottom_t2p1x << 14;
-        bottom_t2p1w << 2;
+    bottom_t2p1x << 14;
+    bottom_t2p1w << 2;
 
-        left_t2p1x << 15;
-        left_t2p1w << 3;
+    left_t2p1x << 15;
+    left_t2p1w << 3;
 
-        right_t2p1x << 14;
-        right_t2p1w << 3;
+    right_t2p1x << 14;
+    right_t2p1w << 3;
 
-        /*
+    /*
                 offset = 2
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1651,22 +1663,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2p1x << 7;
-        mid_t2p1w << 3;
+    mid_t2p1x << 7;
+    mid_t2p1w << 3;
 
-        top_t2p1x << 0;
-        top_t2p1w << 2;
+    top_t2p1x << 0;
+    top_t2p1w << 2;
 
-        bottom_t2p1x << 14;
-        bottom_t2p1w << 2;
+    bottom_t2p1x << 14;
+    bottom_t2p1w << 2;
 
-        left_t2p1x << 15;
-        left_t2p1w << 3;
+    left_t2p1x << 15;
+    left_t2p1w << 3;
 
-        right_t2p1x << 14;
-        right_t2p1w << 3;
+    right_t2p1x << 14;
+    right_t2p1w << 3;
 
-        /*
+    /*
                 offset = 3
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1682,22 +1694,22 @@ private slots:
                 Covers:     3 tiles
         */
 
-        mid_t2p1x << 7;
-        mid_t2p1w << 3;
+    mid_t2p1x << 7;
+    mid_t2p1w << 3;
 
-        top_t2p1x << 0;
-        top_t2p1w << 2;
+    top_t2p1x << 0;
+    top_t2p1w << 2;
 
-        bottom_t2p1x << 14;
-        bottom_t2p1w << 2;
+    bottom_t2p1x << 14;
+    bottom_t2p1w << 2;
 
-        left_t2p1x << 15;
-        left_t2p1w << 3;
+    left_t2p1x << 15;
+    left_t2p1w << 3;
 
-        right_t2p1x << 14;
-        right_t2p1w << 3;
+    right_t2p1x << 14;
+    right_t2p1w << 3;
 
-        /*
+    /*
                 offset = 4
                 + + + + + + + + + + + + + + + + + + + + +
                 +       +       +       +       +       +
@@ -1713,90 +1725,151 @@ private slots:
                 Covers:     4 tiles
          */
 
-        mid_t2p1x << 7;
-        mid_t2p1w << 4;
+    mid_t2p1x << 7;
+    mid_t2p1w << 4;
 
-        top_t2p1x << 0;
-        top_t2p1w << 3;
+    top_t2p1x << 0;
+    top_t2p1w << 3;
 
-        bottom_t2p1x << 14;
-        bottom_t2p1w << 2;
+    bottom_t2p1x << 14;
+    bottom_t2p1w << 2;
 
-        left_t2p1x << 15;
-        left_t2p1w << 4;
+    left_t2p1x << 15;
+    left_t2p1w << 4;
 
-        right_t2p1x << 14;
-        right_t2p1w << 4;
+    right_t2p1x << 14;
+    right_t2p1w << 4;
 
-        pti.zoom = 4.0;
-        pti.zoomString = QStringLiteral("int zoom");
+    pti.zoom = 4.0;
+    pti.zoomString = QStringLiteral("int zoom");
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_t2p1x, mid_t2p1w, mid_t2p1x, mid_t2p1w);
+    test_group(pti, mid_t2p1x, mid_t2p1w, mid_t2p1x, mid_t2p1w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_t2p1x, mid_t2p1w, top_t2p1x, top_t2p1w);
+    test_group(pti, mid_t2p1x, mid_t2p1w, top_t2p1x, top_t2p1w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_t2p1x, mid_t2p1w, bottom_t2p1x, bottom_t2p1w);
+    test_group(pti, mid_t2p1x, mid_t2p1w, bottom_t2p1x, bottom_t2p1w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_t2p1x, left_t2p1w, mid_t2p1x, mid_t2p1w);
+    test_group(pti, left_t2p1x, left_t2p1w, mid_t2p1x, mid_t2p1w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_t2p1x, right_t2p1w, mid_t2p1x, mid_t2p1w);
+    test_group(pti, right_t2p1x, right_t2p1w, mid_t2p1x, mid_t2p1w);
 
-        pti.zoom = 4.5;
-        pti.zoomString = QStringLiteral("frac zoom");
-        pti.w = pti.w * std::pow(2.0, 0.5);
-        pti.h = pti.h * std::pow(2.0, 0.5);
+    pti.zoom = 4.5;
+    pti.zoomString = QStringLiteral("frac zoom");
+    pti.w = pti.w * qPow(2.0, 0.5);
+    pti.h = pti.h * qPow(2.0, 0.5);
 
-        pti.x = 0.5;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("middle");
+    pti.x = 0.5;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("middle");
 
-        test_group(pti, mid_t2p1x, mid_t2p1w, mid_t2p1x, mid_t2p1w);
+    test_group(pti, mid_t2p1x, mid_t2p1w, mid_t2p1x, mid_t2p1w);
 
-        pti.x = 0.5;
-        pti.y = 0.0;
-        pti.xyString = QStringLiteral("top");
+    pti.x = 0.5;
+    pti.y = 0.0;
+    pti.xyString = QStringLiteral("top");
 
-        test_group(pti, mid_t2p1x, mid_t2p1w, top_t2p1x, top_t2p1w);
+    test_group(pti, mid_t2p1x, mid_t2p1w, top_t2p1x, top_t2p1w);
 
-        pti.x = 0.5;
-        pti.y = 15.0 / 16.0;
-        pti.xyString = QStringLiteral("bottom");
+    pti.x = 0.5;
+    pti.y = 15.0 / 16.0;
+    pti.xyString = QStringLiteral("bottom");
 
-        test_group(pti, mid_t2p1x, mid_t2p1w, bottom_t2p1x, bottom_t2p1w);
+    test_group(pti, mid_t2p1x, mid_t2p1w, bottom_t2p1x, bottom_t2p1w);
 
-        pti.x = 0.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("left");
+    pti.x = 0.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("left");
 
-        test_group(pti, left_t2p1x, left_t2p1w, mid_t2p1x, mid_t2p1w);
+    test_group(pti, left_t2p1x, left_t2p1w, mid_t2p1x, mid_t2p1w);
 
-        pti.x = 15.0 / 16.0;
-        pti.y = 0.5;
-        pti.xyString = QStringLiteral("right");
+    pti.x = 15.0 / 16.0;
+    pti.y = 0.5;
+    pti.xyString = QStringLiteral("right");
 
-        test_group(pti, right_t2p1x, right_t2p1w, mid_t2p1x, mid_t2p1w);
-    }
-};
+    test_group(pti, right_t2p1x, right_t2p1w, mid_t2p1x, mid_t2p1w);
+}
+
+void tst_QGeoCameraTiles::fetchTiles()
+{
+    QFETCH(double, zoomLevel);
+    QFETCH(int, visibleCount);
+    QFETCH(int, prefetchCount);
+    QFETCH(QGeoCameraTiles::PrefetchStle, style);
+    QFETCH(int, nearestNeighbourLayer);
+
+    QGeoCameraTiles ct;
+    ct.setMaximumZoomLevel(8);
+    ct.setTileSize(16);
+    ct.setScreenSize(QSize(16, 16));
+
+    QGeoCameraData camera;
+    camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D( 0.5 ,  0.5 )));
+
+    camera.setZoomLevel(zoomLevel - 1);
+    ct.setCameraData(camera);
+    QSet<QGeoTileSpec> prev_visible = ct.visibleTiles();
+    camera.setZoomLevel(zoomLevel);
+    ct.setCameraData(camera);
+    QSet<QGeoTileSpec> visible = ct.visibleTiles();
+    QSet<QGeoTileSpec> prefetched = ct.prefetchTiles(style);
+    camera.setZoomLevel(zoomLevel + 1);
+    ct.setCameraData(camera);
+    QSet<QGeoTileSpec> next_visible = ct.visibleTiles();
+
+    QVERIFY2(visibleCount == visible.size(), "visible count incorrect");
+    QVERIFY2(prefetchCount == prefetched.size(), "prefetch count incorrect");
+    QSetIterator<QGeoTileSpec> i(visible);
+    while (i.hasNext())
+        QVERIFY2(prefetched.contains(i.next()),"visible tile missing from prefetched tiles");
+
+    //for zoomLevels wihtout fractions more tiles are fetched for current zoomlevel due to ViewExpansion
+    if (qCeil(zoomLevel) != zoomLevel && style == QGeoCameraTiles::PrefetchNeighbourLayer && nearestNeighbourLayer < zoomLevel)
+        QVERIFY2(prefetched == prev_visible + visible, "wrongly prefetched tiles");
+
+    if (qCeil(zoomLevel) != zoomLevel && style == QGeoCameraTiles::PrefetchNeighbourLayer && nearestNeighbourLayer > zoomLevel)
+        QVERIFY2(prefetched == next_visible + visible, "wrongly prefetched tiles");
+
+    if (qCeil(zoomLevel) != zoomLevel && style == QGeoCameraTiles::PrefetchTwoNeighbourLayers)
+        QVERIFY2(prefetched == prev_visible + visible + next_visible, "wrongly prefetched tiles");
+}
+
+void tst_QGeoCameraTiles::fetchTiles_data()
+{
+    QTest::addColumn<double>("zoomLevel");
+    QTest::addColumn<int>("visibleCount");
+    QTest::addColumn<int>("prefetchCount");
+    QTest::addColumn<QGeoCameraTiles::PrefetchStle>("style");
+    QTest::addColumn<int>("nearestNeighbourLayer");
+    QTest::newRow("zoomLevel: 4 , visible count: 4 : prefetch count: 16") << 4.0 << 4 << 4 + 16 << QGeoCameraTiles::PrefetchNeighbourLayer << 3;
+    QTest::newRow("zoomLevel: 4.01 , visible count: 4 : prefetch count: 4") << 4.01 << 4 << 4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 3;
+    QTest::newRow("zoomLevel: 4.1 , visible count: 4 : prefetch count: 4") << 4.1 << 4 << 4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 3;
+    QTest::newRow("zoomLevel: 4.5 , visible count: 4 : prefetch count: 4") << 4.5 << 4 << 4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 3;
+    QTest::newRow("zoomLevel: 4.6 , visible count: 4 : prefetch count: 4") << 4.6 << 4 << 4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 5;
+    QTest::newRow("zoomLevel: 4.9 , visible count: 4 : prefetch count: 4") << 4.9 << 4 <<4 + 4 << QGeoCameraTiles::PrefetchNeighbourLayer << 5;
+    QTest::newRow("zoomLevel: 4 , visible count: 4 : prefetch count: 4") << 4.0 << 4 << 16 + 4 + 4 << QGeoCameraTiles::PrefetchTwoNeighbourLayers << 3;
+    QTest::newRow("zoomLevel: 4.1 , visible count: 4 : prefetch count: 4") << 4.1 << 4 << 4 + 4 + 4 << QGeoCameraTiles::PrefetchTwoNeighbourLayers << 3;
+    QTest::newRow("zoomLevel: 4.6 ,visible count: 4 : prefetch count: 4") << 4.6 << 4 << 4 + 4  + 4 << QGeoCameraTiles::PrefetchTwoNeighbourLayers << 5;
+}
 
 QTEST_GUILESS_MAIN(tst_QGeoCameraTiles)
 #include "tst_qgeocameratiles.moc"
