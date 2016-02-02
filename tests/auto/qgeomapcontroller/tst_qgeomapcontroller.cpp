@@ -28,18 +28,25 @@
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
-#include <QSignalSpy>
-
-#include <QtLocation/private/qgeomap_p.h>
+#include <QtTest/QSignalSpy>
+#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/private/qgeotiledmap_p.h>
+#include <QtLocation/private/qgeomappingmanager_p.h>
 #include <QtLocation/private/qgeomapcontroller_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 
-// cross-reference test plugin, where concrete subclasses are needed
-// in order to create a concrete mapcontroller
-#include "../geotestplugin/qgeoserviceproviderplugin_test.h"
-#include "../geotestplugin/qgeotiledmap_test.h"
-#include "../geotestplugin/qgeotiledmappingmanagerengine_test.h"
 
 QT_USE_NAMESPACE
+
+class QGeoTiledMapTest: public QGeoTiledMap
+{
+    Q_OBJECT
+public:
+    QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
+        : QGeoTiledMap(engine, parent) {}
+public:
+    using QGeoTiledMap::setCameraData;
+};
 
 class tst_QGeoMapController : public QObject
 {
@@ -50,15 +57,10 @@ public:
     ~tst_QGeoMapController();
 
 private:
-    QGeoTiledMapTest *map_;
-    QSignalSpy *signalCenterChanged_;
-    QSignalSpy *signalBearingChanged_;
-    QSignalSpy *signalTiltChanged_;
-    QSignalSpy *signalRollChanged_;
-    QSignalSpy *signalZoomChanged_;
     void clearSignalSpies();
 
 private Q_SLOTS:
+    void initTestCase();
     void signalsConstructedTest();
     void constructorTest_data();
     void constructorTest();
@@ -68,58 +70,66 @@ private Q_SLOTS:
     void rollTest();
     void panTest();
     void zoomTest();
+
+private:
+    QScopedPointer<QGeoTiledMapTest> m_map;
+    QScopedPointer<QSignalSpy> m_signalCenterChanged;
+    QScopedPointer<QSignalSpy> m_signalBearingChanged;
+    QScopedPointer<QSignalSpy> m_signalTiltChanged;
+    QScopedPointer<QSignalSpy> m_signalRollChanged;
+    QScopedPointer<QSignalSpy> m_signalZoomChanged;
 };
 
 tst_QGeoMapController::tst_QGeoMapController()
 {
-    // unlike low level classes, geomapcontroller is built up from several parent classes
-    // so, in order to test it, we need to create these parent classes for it to link to
-    // such as a GeoMap
-    QGeoServiceProviderFactoryTest serviceProviderTest; // empty constructor
-
-    // TODO: check whether the default constructors of these objects allow the create to work
-    QVariantMap parameterMap;
-    QGeoServiceProvider::Error mappingError;
-    QString mappingErrorString;
-
-    QGeoTiledMappingManagerEngineTest *mapEngine = static_cast<QGeoTiledMappingManagerEngineTest*>(serviceProviderTest.createMappingManagerEngine(parameterMap, &mappingError, &mappingErrorString));
-    map_ = new QGeoTiledMapTest(mapEngine);
-    map_->resize(100, 100);
-
-
-    signalCenterChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(centerChanged(QGeoCoordinate)));
-    signalBearingChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(bearingChanged(qreal)));
-    signalTiltChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(tiltChanged(qreal)));
-    signalRollChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(rollChanged(qreal)));
-    signalZoomChanged_ = new QSignalSpy(map_->mapController(), SIGNAL(zoomChanged(qreal)));
-}
-
-void tst_QGeoMapController::clearSignalSpies()
-{
-    signalCenterChanged_->clear();
-    signalBearingChanged_->clear();
-    signalTiltChanged_->clear();
-    signalRollChanged_->clear();
-    signalZoomChanged_->clear();
 }
 
 tst_QGeoMapController::~tst_QGeoMapController()
 {
-    delete signalCenterChanged_;
-    delete signalBearingChanged_;
-    delete signalTiltChanged_;
-    delete signalRollChanged_;
-    delete signalZoomChanged_;
-    delete map_;
+}
+
+void tst_QGeoMapController::initTestCase()
+{
+    // Set custom path since CI doesn't install test plugins
+#ifdef Q_OS_WIN
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
+                                     QStringLiteral("/../../../../plugins"));
+#else
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
+                                     QStringLiteral("/../../../plugins"));
+#endif
+    QGeoServiceProvider *provider = new QGeoServiceProvider("qmlgeo.test.plugin");
+    provider->setAllowExperimental(true);
+    QGeoMappingManager *mappingManager = provider->mappingManager();
+    QVERIFY2(provider->error() == QGeoServiceProvider::NoError, "Could not load plugin: " + provider->errorString().toLatin1());
+
+    m_map.reset(static_cast<QGeoTiledMapTest*>(mappingManager->createMap(this)));
+    QVERIFY(m_map);
+    m_map->resize(100, 100);
+
+    m_signalCenterChanged.reset(new QSignalSpy(m_map->mapController(), &QGeoMapController::centerChanged));
+    m_signalBearingChanged.reset(new QSignalSpy(m_map->mapController(), &QGeoMapController::bearingChanged));
+    m_signalTiltChanged.reset(new QSignalSpy(m_map->mapController(), &QGeoMapController::tiltChanged));
+    m_signalRollChanged.reset(new QSignalSpy(m_map->mapController(), &QGeoMapController::rollChanged));
+    m_signalZoomChanged.reset(new QSignalSpy(m_map->mapController(), &QGeoMapController::zoomChanged));
+}
+
+void tst_QGeoMapController::clearSignalSpies()
+{
+    m_signalCenterChanged->clear();
+    m_signalBearingChanged->clear();
+    m_signalTiltChanged->clear();
+    m_signalRollChanged->clear();
+    m_signalZoomChanged->clear();
 }
 
 void tst_QGeoMapController::signalsConstructedTest()
 {
-    QVERIFY(signalCenterChanged_->isValid());
-    QVERIFY(signalBearingChanged_->isValid());
-    QVERIFY(signalTiltChanged_->isValid());
-    QVERIFY(signalRollChanged_->isValid());
-    QVERIFY(signalZoomChanged_->isValid());
+    QVERIFY(m_signalCenterChanged->isValid());
+    QVERIFY(m_signalBearingChanged->isValid());
+    QVERIFY(m_signalTiltChanged->isValid());
+    QVERIFY(m_signalRollChanged->isValid());
+    QVERIFY(m_signalZoomChanged->isValid());
 }
 
 void tst_QGeoMapController::constructorTest_data()
@@ -150,8 +160,8 @@ void tst_QGeoMapController::constructorTest()
     cameraData.setTilt(tilt);
     cameraData.setRoll(roll);
     cameraData.setZoomLevel(zoom);
-    map_->setCameraData(cameraData);
-    QGeoMapController mapController(map_);
+    m_map->setCameraData(cameraData);
+    QGeoMapController mapController(m_map.data());
 
     // make sure the values come out the same
     // also make sure the values match what they were actually set to
@@ -160,15 +170,15 @@ void tst_QGeoMapController::constructorTest()
     QCOMPARE(mapController.zoom(), cameraData.zoomLevel());
     QCOMPARE(mapController.zoom(), zoom);
 
-    if (map_->cameraCapabilities().supportsBearing()){
+    if (m_map->cameraCapabilities().supportsBearing()){
         QCOMPARE(mapController.bearing(), cameraData.bearing());
         QCOMPARE(mapController.bearing(), bearing);
     }
-    if (map_->cameraCapabilities().supportsTilting()){
+    if (m_map->cameraCapabilities().supportsTilting()){
         QCOMPARE(mapController.tilt(), cameraData.tilt());
         QCOMPARE(mapController.tilt(), tilt);
     }
-    if (map_->cameraCapabilities().supportsRolling()){
+    if (m_map->cameraCapabilities().supportsRolling()){
         QCOMPARE(mapController.roll(), cameraData.roll());
         QCOMPARE(mapController.roll(), roll);
     }
@@ -178,8 +188,8 @@ void tst_QGeoMapController::centerTest()
 {
     QGeoCameraData cameraData;
     cameraData.setCenter(QGeoCoordinate(10.0,-20.4,30.8));
-    map_->setCameraData(cameraData);
-    QGeoMapController mapController(map_);
+    m_map->setCameraData(cameraData);
+    QGeoMapController mapController(m_map.data());
     QCOMPARE(mapController.center(),QGeoCoordinate(10.0,-20.4,30.8));
 
     QGeoCoordinate coord(10.0,20.4,30.8);
@@ -187,11 +197,11 @@ void tst_QGeoMapController::centerTest()
     mapController.setCenter(coord);
 
     // check correct signal is triggered
-    QCOMPARE(signalCenterChanged_->count(),1);
-    QCOMPARE(signalBearingChanged_->count(),0);
-    QCOMPARE(signalTiltChanged_->count(),0);
-    QCOMPARE(signalRollChanged_->count(),0);
-    QCOMPARE(signalZoomChanged_->count(),0);
+    QCOMPARE(m_signalCenterChanged->count(),1);
+    QCOMPARE(m_signalBearingChanged->count(),0);
+    QCOMPARE(m_signalTiltChanged->count(),0);
+    QCOMPARE(m_signalRollChanged->count(),0);
+    QCOMPARE(m_signalZoomChanged->count(),0);
 
     QCOMPARE(mapController.center(),QGeoCoordinate(10.0,20.4,30.8));
 
@@ -201,13 +211,13 @@ void tst_QGeoMapController::centerTest()
 
 void tst_QGeoMapController::bearingTest()
 {
-    if (map_->cameraCapabilities().supportsBearing()){
+    if (m_map->cameraCapabilities().supportsBearing()){
         qreal bearing = 1.4;
 
         QGeoCameraData cameraData;
         cameraData.setBearing(bearing);
-        map_->setCameraData(cameraData);
-        QGeoMapController mapController(map_);
+        m_map->setCameraData(cameraData);
+        QGeoMapController mapController(m_map.data());
         QCOMPARE(mapController.bearing(),bearing);
 
         clearSignalSpies();
@@ -215,48 +225,48 @@ void tst_QGeoMapController::bearingTest()
         QCOMPARE(mapController.bearing(),-1.5);
 
         // check correct signal is triggered
-        QCOMPARE(signalCenterChanged_->count(),0);
-        QCOMPARE(signalBearingChanged_->count(),1);
-        QCOMPARE(signalTiltChanged_->count(),0);
-        QCOMPARE(signalRollChanged_->count(),0);
-        QCOMPARE(signalZoomChanged_->count(),0);
+        QCOMPARE(m_signalCenterChanged->count(),0);
+        QCOMPARE(m_signalBearingChanged->count(),1);
+        QCOMPARE(m_signalTiltChanged->count(),0);
+        QCOMPARE(m_signalRollChanged->count(),0);
+        QCOMPARE(m_signalZoomChanged->count(),0);
     }
 }
 
 void tst_QGeoMapController::tiltTest()
 {
-    if (map_->cameraCapabilities().supportsTilting()){
-        qreal tilt = map_->cameraCapabilities().maximumTilt();
+    if (m_map->cameraCapabilities().supportsTilting()){
+        qreal tilt = m_map->cameraCapabilities().maximumTilt();
 
         QGeoCameraData cameraData;
         cameraData.setTilt(tilt);
-        map_->setCameraData(cameraData);
-        QGeoMapController mapController(map_);
+        m_map->setCameraData(cameraData);
+        QGeoMapController mapController(m_map.data());
         QCOMPARE(mapController.tilt(),tilt);
 
-        tilt = map_->cameraCapabilities().minimumTilt();
+        tilt = m_map->cameraCapabilities().minimumTilt();
         clearSignalSpies();
         mapController.setTilt(tilt);
         QCOMPARE(mapController.tilt(),tilt);
 
         // check correct signal is triggered
-        QCOMPARE(signalCenterChanged_->count(),0);
-        QCOMPARE(signalBearingChanged_->count(),0);
-        QCOMPARE(signalTiltChanged_->count(),1);
-        QCOMPARE(signalRollChanged_->count(),0);
-        QCOMPARE(signalZoomChanged_->count(),0);
+        QCOMPARE(m_signalCenterChanged->count(),0);
+        QCOMPARE(m_signalBearingChanged->count(),0);
+        QCOMPARE(m_signalTiltChanged->count(),1);
+        QCOMPARE(m_signalRollChanged->count(),0);
+        QCOMPARE(m_signalZoomChanged->count(),0);
     }
 }
 
 void tst_QGeoMapController::rollTest()
 {
-    if (map_->cameraCapabilities().supportsRolling()){
+    if (m_map->cameraCapabilities().supportsRolling()){
         qreal roll = 1.4;
 
         QGeoCameraData cameraData;
         cameraData.setRoll(roll);
-        map_->setCameraData(cameraData);
-        QGeoMapController mapController(map_);
+        m_map->setCameraData(cameraData);
+        QGeoMapController mapController(m_map.data());
         QCOMPARE(mapController.roll(),roll);
 
         clearSignalSpies();
@@ -264,17 +274,17 @@ void tst_QGeoMapController::rollTest()
         QCOMPARE(mapController.roll(),-1.5);
 
         // check correct signal is triggered
-        QCOMPARE(signalCenterChanged_->count(),0);
-        QCOMPARE(signalBearingChanged_->count(),0);
-        QCOMPARE(signalTiltChanged_->count(),0);
-        QCOMPARE(signalRollChanged_->count(),1);
-        QCOMPARE(signalZoomChanged_->count(),0);
+        QCOMPARE(m_signalCenterChanged->count(),0);
+        QCOMPARE(m_signalBearingChanged->count(),0);
+        QCOMPARE(m_signalTiltChanged->count(),0);
+        QCOMPARE(m_signalRollChanged->count(),1);
+        QCOMPARE(m_signalZoomChanged->count(),0);
     }
 }
 
 void tst_QGeoMapController::panTest()
 {
-    QGeoMapController mapController(map_);
+    QGeoMapController mapController(m_map.data());
 
     mapController.setCenter(QGeoCoordinate(-1.0,-2.4,3.8));
 
@@ -296,19 +306,19 @@ void tst_QGeoMapController::panTest()
     QVERIFY(qFuzzyCompare(mapController.center().longitude(), -2.4) == false);
 
     // check correct signal is triggered
-    QCOMPARE(signalCenterChanged_->count(),1);
-    QCOMPARE(signalBearingChanged_->count(),0);
-    QCOMPARE(signalTiltChanged_->count(),0);
-    QCOMPARE(signalRollChanged_->count(),0);
-    QCOMPARE(signalZoomChanged_->count(),0);
+    QCOMPARE(m_signalCenterChanged->count(),1);
+    QCOMPARE(m_signalBearingChanged->count(),0);
+    QCOMPARE(m_signalTiltChanged->count(),0);
+    QCOMPARE(m_signalRollChanged->count(),0);
+    QCOMPARE(m_signalZoomChanged->count(),0);
 }
 
 void tst_QGeoMapController::zoomTest()
 {
     QGeoCameraData cameraData;
     cameraData.setZoomLevel(1.4);
-    map_->setCameraData(cameraData);
-    QGeoMapController mapController(map_);
+    m_map->setCameraData(cameraData);
+    QGeoMapController mapController(m_map.data());
 
     QCOMPARE(mapController.zoom(),1.4);
     mapController.setZoom(1.4);
@@ -318,14 +328,14 @@ void tst_QGeoMapController::zoomTest()
     QCOMPARE(mapController.zoom(),1.5);
 
     // check correct signal is triggered
-    QCOMPARE(signalCenterChanged_->count(),0);
-    QCOMPARE(signalBearingChanged_->count(),0);
-    QCOMPARE(signalTiltChanged_->count(),0);
-    QCOMPARE(signalRollChanged_->count(),0);
-    QCOMPARE(signalZoomChanged_->count(),1);
+    QCOMPARE(m_signalCenterChanged->count(),0);
+    QCOMPARE(m_signalBearingChanged->count(),0);
+    QCOMPARE(m_signalTiltChanged->count(),0);
+    QCOMPARE(m_signalRollChanged->count(),0);
+    QCOMPARE(m_signalZoomChanged->count(),1);
 }
 
 
-QTEST_APPLESS_MAIN(tst_QGeoMapController)
+QTEST_MAIN(tst_QGeoMapController)
 
 #include "tst_qgeomapcontroller.moc"
