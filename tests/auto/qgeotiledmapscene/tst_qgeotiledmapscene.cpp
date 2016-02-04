@@ -29,7 +29,7 @@
 //TESTED_COMPONENT=src/location/maps
 
 #include "qgeotilespec_p.h"
-#include "qgeomapscene_p.h"
+#include "qgeotiledmapscene_p.h"
 #include "qgeocameratiles_p.h"
 #include "qgeocameradata_p.h"
 #include "qabstractgeotilecache_p.h"
@@ -47,7 +47,7 @@
 
 QT_USE_NAMESPACE
 
-class tst_QGeoMapScene : public QObject
+class tst_QGeoTiledMapScene : public QObject
 {
     Q_OBJECT
 
@@ -281,7 +281,7 @@ class tst_QGeoMapScene : public QObject
             ct.setCameraData(camera);
             ct.setScreenSize(QSize(16,16));
 
-            QGeoMapScene mapScene;
+            QGeoTiledMapScene mapScene;
             mapScene.setTileSize(16);
             mapScene.setScreenSize(QSize(16,16*32));
             mapScene.setCameraData(camera);
@@ -291,7 +291,7 @@ class tst_QGeoMapScene : public QObject
             QVERIFY(mapScene.verticalLock());
 
             // Test the case when setting vertical lock has no effect
-            QGeoMapScene mapScene2;
+            QGeoTiledMapScene mapScene2;
             mapScene2.setTileSize(16);
             mapScene2.setScreenSize(QSize(16,16));
             mapScene2.setCameraData(camera);
@@ -322,7 +322,7 @@ class tst_QGeoMapScene : public QObject
             ct.setCameraData(camera);
             ct.setScreenSize(QSize(screenWidth,screenHeight));
 
-            QGeoMapScene mapGeometry;
+            QGeoTiledMapScene mapGeometry;
             mapGeometry.setTileSize(tileSize);
             mapGeometry.setScreenSize(QSize(screenWidth,screenHeight));
             mapGeometry.setCameraData(camera);
@@ -361,7 +361,7 @@ class tst_QGeoMapScene : public QObject
             ct.setCameraData(camera);
             ct.setScreenSize(QSize(screenWidth,screenHeight));
 
-            QGeoMapScene mapGeometry;
+            QGeoTiledMapScene mapGeometry;
             mapGeometry.setTileSize(tileSize);
             mapGeometry.setScreenSize(QSize(screenWidth,screenHeight));
             mapGeometry.setCameraData(camera);
@@ -380,5 +380,5 @@ class tst_QGeoMapScene : public QObject
 
 };
 
-QTEST_GUILESS_MAIN(tst_QGeoMapScene)
-#include "tst_qgeomapscene.moc"
+QTEST_GUILESS_MAIN(tst_QGeoTiledMapScene)
+#include "tst_qgeotiledmapscene.moc"

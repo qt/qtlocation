@@ -57,7 +57,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoCameraTiles;
-class QGeoMapScene;
+class QGeoTiledMapScene;
 class QAbstractGeoTileCache;
 class QGeoTiledMappingManagerEngine;
 class QGeoTiledMap;
@@ -96,7 +96,7 @@ private:
     QAbstractGeoTileCache *m_cache;
     QGeoCameraTiles *m_visibleTiles;
     QGeoCameraTiles *m_prefetchTiles;
-    QGeoMapScene *m_mapScene;
+    QGeoTiledMapScene *m_mapScene;
     QGeoTileRequestManager *m_tileRequests;
     int m_maxZoomLevel;
     int m_minZoomLevel;

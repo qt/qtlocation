@@ -26,7 +26,7 @@ PRIVATE_HEADERS += \
                     maps/qgeocodingmanager_p.h \
                     maps/qgeomaneuver_p.h \
                     maps/qgeomapcontroller_p.h \
-                    maps/qgeomapscene_p.h \
+                    maps/qgeotiledmapscene_p.h \
                     maps/qgeotilerequestmanager_p.h \
                     maps/qgeomap_p.h \
                     maps/qgeomap_p_p.h \
@@ -66,7 +66,6 @@ SOURCES += \
             maps/qgeocodingmanagerengine.cpp \
             maps/qgeomaneuver.cpp \
             maps/qgeomapcontroller.cpp \
-            maps/qgeomapscene.cpp \
             maps/qgeotilerequestmanager.cpp \
             maps/qgeomap.cpp \
             maps/qgeomappingmanager.cpp \
@@ -86,6 +85,7 @@ SOURCES += \
             maps/qgeofiletilecache.cpp \
             maps/qgeotiledmapreply.cpp \
             maps/qgeotilespec.cpp \
-            maps/qgeotiledmap.cpp
+            maps/qgeotiledmap.cpp \
+            maps/qgeotiledmapscene.cpp
 
 

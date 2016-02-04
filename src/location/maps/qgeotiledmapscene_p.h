@@ -33,8 +33,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPSCENE_P_H
-#define QGEOMAPSCENE_P_H
+#ifndef QGEOTILEDMAPSCENE_P_H
+#define QGEOTILEDMAPSCENE_P_H
 
 //
 //  W A R N I N G
@@ -58,15 +58,15 @@ class QDoubleVector2D;
 class QGeoTileTexture;
 class QSGNode;
 class QQuickWindow;
-class QGeoMapScenePrivate;
+class QGeoTiledMapScenePrivate;
 
-class Q_LOCATION_EXPORT QGeoMapScene : public QObject
+class Q_LOCATION_EXPORT QGeoTiledMapScene : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGeoMapScene)
+    Q_DECLARE_PRIVATE(QGeoTiledMapScene)
 public:
-    explicit QGeoMapScene(QObject *parent = 0);
-    virtual ~QGeoMapScene();
+    explicit QGeoTiledMapScene(QObject *parent = 0);
+    virtual ~QGeoTiledMapScene();
 
     void setScreenSize(const QSize &size);
     void setTileSize(int tileSize);
@@ -93,9 +93,9 @@ Q_SIGNALS:
     void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);
 
 private:
-    Q_DISABLE_COPY(QGeoMapScene)
+    Q_DISABLE_COPY(QGeoTiledMapScene)
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPSCENE_P_H
+#endif // QGEOTILEDMAPSCENE_P_H

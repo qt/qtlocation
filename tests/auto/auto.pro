@@ -42,7 +42,7 @@ qtHaveModule(location) {
            qgeocodereply \
            qgeocodingmanager \
            qgeomaneuver \
-           qgeomapscene \
+           qgeotiledmapscene \
            qgeoroute \
            qgeoroutereply \
            qgeorouterequest \

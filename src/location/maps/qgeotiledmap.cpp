@@ -42,7 +42,7 @@
 
 #include "qgeocameratiles_p.h"
 #include "qgeotilerequestmanager_p.h"
-#include "qgeomapscene_p.h"
+#include "qgeotiledmapscene_p.h"
 #include "qgeocameracapabilities_p.h"
 #include <cmath>
 
@@ -180,7 +180,7 @@ QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
       m_cache(engine->tileCache()),
       m_visibleTiles(new QGeoCameraTiles()),
       m_prefetchTiles(new QGeoCameraTiles()),
-      m_mapScene(new QGeoMapScene()),
+      m_mapScene(new QGeoTiledMapScene()),
       m_tileRequests(0),
       m_maxZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().maximumZoomLevel()))),
       m_minZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().minimumZoomLevel()))),
