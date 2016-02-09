@@ -149,11 +149,11 @@ public:
             // Implicitly registers 5.3 & 5.4
 
             minor = 5;
-            //TODO: this is broken QTBUG-40043
+            //TODO: this is broken QTBUG-50990
             qmlRegisterUncreatableType<QDeclarativeGeoMapType, 1>(uri, major, minor, "MapType",
                                                   QStringLiteral("MapType is not intended instantiable by developer."));
             minor = 6;
-            //TODO: this is broken QTBUG-40043
+            //TODO: this is broken QTBUG-50990
             qmlRegisterUncreatableType<QQuickGeoMapGestureArea, 1>(uri, major, minor, "MapGestureArea",
                                         QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));
 
