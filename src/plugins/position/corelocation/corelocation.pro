@@ -1,9 +1,6 @@
 TARGET = qtposition_cl
-QT = core positioning
 
-PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryCL
-load(qt_plugin)
+QT = core positioning
 
 OBJECTIVE_SOURCES += \
     qgeopositioninfosource_cl.mm \
@@ -19,3 +16,7 @@ OTHER_FILES += \
 osx: LIBS += -framework Foundation
 else: ios: LIBS += -framework CoreFoundation
 LIBS += -framework CoreLocation
+
+PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryCL
+load(qt_plugin)

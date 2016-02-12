@@ -1,4 +1,5 @@
 TARGET = qtgeoservices_nokia
+
 QT += location-private positioning-private network
 
 contains(QT_CONFIG, location-china-support) {
@@ -6,10 +7,6 @@ contains(QT_CONFIG, location-china-support) {
     DEFINES += USE_CHINA_NETWORK_REGISTRATION
     QT += systeminfo
 }
-
-PLUGIN_TYPE = geoservices
-PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryNokia
-load(qt_plugin)
 
 HEADERS += \
             qgeocodereply_nokia.h \
@@ -59,3 +56,6 @@ INCLUDEPATH += ../../../location/maps
 OTHER_FILES += \
     nokia_plugin.json
 
+PLUGIN_TYPE = geoservices
+PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryNokia
+load(qt_plugin)

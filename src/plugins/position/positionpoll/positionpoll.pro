@@ -1,9 +1,6 @@
 TARGET = qtposition_positionpoll
-QT = core positioning
 
-PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryPoll
-load(qt_plugin)
+QT = core positioning
 
 SOURCES += \
     qgeoareamonitor_polling.cpp \
@@ -15,3 +12,7 @@ HEADERS += \
 
 OTHER_FILES += \
     plugin.json
+
+PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryPoll
+load(qt_plugin)

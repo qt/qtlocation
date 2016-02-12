@@ -1,9 +1,6 @@
 TARGET = qtposition_simulator
 QT = core network positioning
 
-PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactorySimulator
-load(qt_plugin)
 INCLUDEPATH += ../../../positioning
 
 QT += simulator
@@ -19,3 +16,7 @@ HEADERS += qgeopositioninfosource_simulator_p.h \
 
 OTHER_FILES += \
     plugin.json
+
+PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactorySimulator
+load(qt_plugin)
