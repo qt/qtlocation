@@ -1,9 +1,9 @@
 TARGET = qtposition_simulator
-QT = core network positioning
+
+QT = core network positioning simulator
 
 INCLUDEPATH += ../../../positioning
 
-QT += simulator
 DEFINES += QT_SIMULATOR
 SOURCES += qgeopositioninfosource_simulator.cpp \
             qgeosatelliteinfosource_simulator.cpp \
