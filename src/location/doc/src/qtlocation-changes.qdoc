@@ -30,6 +30,12 @@
 \title Qt Location QML API changes since 5.4
 \brief Information about the Qt Location QML API changes since 5.4
 
+This page lists the QtLocation QML API changes since the first Qt Location Technology Preview
+in Qt 5.4. Since Qt 5.6 this API is considered to be final and subsequent releases will
+not break the given API anymore.
+
+\note The public C++ API remained binary compatible since Qt 5.4.
+
 \b{\l{QtLocation::Map}{Map} Component}
 \list
     \li removed wheelAngleChanged() signal
@@ -40,17 +46,27 @@
     \li added \l[QML]{QtLocation::Map::}{fromCoordinate}() method
     \li replaced cameraStopped() method with \l[QML]{QtLocation::Map::}{prefetchData} method
     \li replaced fitViewportToGeoShape() method with \l[QML]{QtLocation::Map::}{visibleRegion} property
-
+    \li added \l[QML]{QtLocation::Map::}{color} property
+    \li added \l[QML]{QtLocation::Map::}{clearData} method
 \endlist
 
 \b{\l{QtLocation::MapGestureArea}{MapGestureArea} Component}
 \list
- \li added missing panActiveChanged() signal to \l[QML]{QtLocation::MapGestureArea::}{panActive} property
  \li removed movementStopped() signal
- \li replaced isPanActive, isPinchActive with panActive, pinchActive
- \li replaced activeGestures with acceptedGestures
- \li replaced ZoomGesture with PinchGesture
- \li removed properties panEnabled pinchEnable, please use acceptedGestures instead
+ \li replaced isPanActive and isPinchActive properties with \l[QML]{QtLocation::MapGestureArea::}{panActive}
+     and \l[QML]{QtLocation::MapGestureArea::}{pinchActive} properties
+ \li replaced activeGestures with \l[QML]{QtLocation::MapGestureArea::}{acceptedGestures}
+ \li replaced MapGestureArea.ZoomGesture with \l[QML]{QtLocation::MapGestureArea::acceptedGestures}{MapGestureArea.PinchGesture}
+ \li removed properties panEnabled and pinchEnabled, please use \l[QML]{QtLocation::MapGestureArea::}{acceptedGestures} instead
+\endlist
+
+\b{\l{QtLocation::MapPolyline}{MapPolyline} Component}
+\list
+ \li added \l[QML]{QtLocation::MapPolyline::}{containsCoordinate} method
+ \li added \l[QML]{QtLocation::MapPolyline::}{coordinateAt} method
+ \li added \l[QML]{QtLocation::MapPolyline::}{insertCoordinate} method
+ \li added \l[QML]{QtLocation::MapPolyline::}{replaceCoordinate} method
+ \li added \l[QML]{QtLocation::MapPolyline::}{removeCoordinate} method
 \endlist
 
 \b Geoservice's plugin parameters
