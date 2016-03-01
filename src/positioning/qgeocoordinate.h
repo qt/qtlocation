@@ -122,6 +122,8 @@ Q_DECLARE_TYPEINFO(QGeoCoordinate, Q_MOVABLE_TYPE);
 Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoCoordinate &);
 #endif
 
+Q_POSITIONING_EXPORT uint qHash(const QGeoCoordinate &coordinate, uint seed = 0);
+
 #ifndef QT_NO_DATASTREAM
 Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate);
 Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate);

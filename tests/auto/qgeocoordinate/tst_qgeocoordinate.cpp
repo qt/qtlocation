@@ -900,6 +900,46 @@ private slots:
         QTest::newRow("initialized with altitude") << QGeoCoordinate(1,2,3) << 45
                 << QByteArray("QGeoCoordinate(1, 2, 3) 45");
     }
+
+    void hash()
+    {
+        uint s1 = qHash(QGeoCoordinate(1, 1, 2));
+        uint s2 = qHash(QGeoCoordinate(2, 1, 1));
+        uint s3 = qHash(QGeoCoordinate(1, 2, 1));
+        uint s10 = qHash(QGeoCoordinate(0, 0, 2));
+        uint s20 = qHash(QGeoCoordinate(2, 0, 0));
+        uint s30 = qHash(QGeoCoordinate(0, 2, 0));
+        uint s30NoAlt = qHash(QGeoCoordinate(0, 2));
+        uint s30WithSeed = qHash(QGeoCoordinate(0, 2, 0), 1);
+        uint nullCoordinate = qHash(QGeoCoordinate());
+
+        uint north1 = qHash(QGeoCoordinate(90.0, 34.7, 0));
+        uint north2 = qHash(QGeoCoordinate(90.0, 180, 0));
+
+        uint south1 = qHash(QGeoCoordinate(90.0, 67.7, 34.0));
+        uint south2 = qHash(QGeoCoordinate(90.0, 111, 34.0));
+
+        QVERIFY(s1 != s2);
+        QVERIFY(s2 != s3);
+        QVERIFY(s1 != s3);
+        QVERIFY(s10 != s20);
+        QVERIFY(s20 != s30);
+        QVERIFY(s10 != s30);
+        QVERIFY(s30NoAlt != s30);
+        QVERIFY(s30WithSeed != s30);
+
+        QVERIFY(nullCoordinate != s1);
+        QVERIFY(nullCoordinate != s2);
+        QVERIFY(nullCoordinate != s3);
+        QVERIFY(nullCoordinate != s10);
+        QVERIFY(nullCoordinate != s20);
+        QVERIFY(nullCoordinate != s30);
+        QVERIFY(nullCoordinate != s30NoAlt);
+        QVERIFY(nullCoordinate != s30WithSeed);
+
+        QVERIFY(north1 == north2);
+        QVERIFY(south1 == south2);
+    }
 };
 
 QTEST_GUILESS_MAIN(tst_QGeoCoordinate)
