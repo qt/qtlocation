@@ -199,10 +199,10 @@ private:
     QColor m_color;
     QGeoCameraData m_cameraData;
     bool m_componentCompleted;
-    bool m_mappingManagerInitialized;
     bool m_pendingFitViewport;
     bool m_copyrightsVisible;
     double m_maximumViewportLatitude;
+    bool m_initialized;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;
