@@ -109,7 +109,7 @@ void tst_QGeoTiledMap::initTestCase()
       QVERIFY2(provider->error() == QGeoServiceProvider::NoError, "Could not load plugin: " + provider->errorString().toLatin1());
       m_map.reset(static_cast<QGeoTiledMapTest*>(mappingManager->createMap(this)));
       QVERIFY(m_map);
-      m_map->resize(16, 16);
+      m_map->setSize(QSize(16, 16));
       m_fetcher = static_cast<QGeoTileFetcherTest*>(m_map->m_engine->tileFetcher());
       m_tilesCounter.reset(new FetchTileCounter());
       connect(m_fetcher, SIGNAL(tileFetched(const QGeoTileSpec&)), m_tilesCounter.data(), SLOT(tileFetched(const QGeoTileSpec&)));

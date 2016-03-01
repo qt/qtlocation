@@ -531,7 +531,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     // after this has been called at least once, after creation.
 
     if (!m_initialized && width() > 0 && height() > 0) {
-        m_map->resize(width(), height());
+        m_map->setSize(QSize(width(), height()));
         initialize();
     }
 
@@ -543,17 +543,13 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     connect(m_copyrights.data(), SIGNAL(linkActivated(QString)),
             this, SIGNAL(copyrightLinkActivated(QString)));
 
-    connect(m_map,
-            SIGNAL(updateRequired()),
-            this,
-            SLOT(update()));
+    connect(m_map, &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
 
     // set visibility of copyright notice
     m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
 
     // This prefetches a buffer around the map
     m_map->prefetchData();
-    m_map->update();
 
     emit minimumZoomLevelChanged();
     emit maximumZoomLevelChanged();
@@ -1247,14 +1243,12 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
     if (!m_map || !newGeometry.size().isValid())
         return;
 
-    m_map->resize(newGeometry.width(), newGeometry.height());
-
+    m_map->setSize(newGeometry.size().toSize());
 
     if (!m_initialized)
         initialize();
     else
         setMinimumZoomLevel(m_map->minimumZoomForMapSize(newGeometry.width(), newGeometry.height()));
-
 
     /*!
         The fitViewportTo*() functions depend on a valid map geometry.

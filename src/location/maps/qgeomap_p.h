@@ -70,9 +70,11 @@ class Q_LOCATION_EXPORT QGeoMap : public QObject
 public:
     virtual ~QGeoMap();
 
-    void resize(int width, int height);
+    void setSize(const QSize& size);
+    QSize size() const;
     int width() const;
     int height() const;
+
 
     QGeoCameraData cameraData() const;
     QGeoCameraCapabilities cameraCapabilities() const;
@@ -92,12 +94,9 @@ protected:
     void setCameraData(const QGeoCameraData &cameraData);
     virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
 
-public Q_SLOTS:
-    void update();
-
 Q_SIGNALS:
     void cameraDataChanged(const QGeoCameraData &cameraData);
-    void updateRequired();
+    void sgNodeChanged();
     void activeMapTypeChanged();
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
