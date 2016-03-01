@@ -70,23 +70,22 @@ class Q_LOCATION_EXPORT QGeoMap : public QObject
 public:
     virtual ~QGeoMap();
 
-    QGeoMapController *mapController();
-
     void resize(int width, int height);
     int width() const;
     int height() const;
 
     QGeoCameraData cameraData() const;
+    QGeoCameraCapabilities cameraCapabilities() const;
 
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
 
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
-    double minimumZoom() const;
+    virtual double minimumZoomForMapSize(int width, int height) const = 0;
+    virtual double maximumLatitudeForZoom(double zoomLevel) const = 0;
     virtual void prefetchData();
     virtual void clearData();
-    QGeoCameraCapabilities cameraCapabilities() const;
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);

@@ -39,7 +39,6 @@
 #include "qdeclarativegeomapcopyrightsnotice_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegeomaptype_p.h"
-#include "qgeomapcontroller_p.h"
 #include "qgeomappingmanager_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomap_p.h"
@@ -173,17 +172,16 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_plugin(0),
         m_serviceProvider(0),
         m_mappingManager(0),
-        m_center(51.5073,-0.1277), //London city center
         m_activeMapType(0),
         m_gestureArea(new QQuickGeoMapGestureArea(this)),
         m_map(0),
         m_error(QGeoServiceProvider::NoError),
-        m_zoomLevel(8.0),
         m_color(QColor::fromRgbF(0.9, 0.9, 0.9)),
         m_componentCompleted(false),
         m_mappingManagerInitialized(false),
         m_pendingFitViewport(false),
-        m_copyrightsVisible(true)
+        m_copyrightsVisible(true),
+        m_maximumViewportLatitude(0.0)
 {
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -195,6 +193,8 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                              tr("No Map"),
                                                              tr("No Map"), false, false, 0), this);
+    m_cameraData.setCenter(QGeoCoordinate(51.5073,-0.1277)); //London city center
+    m_cameraData.setZoomLevel(8.0);
 }
 
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
@@ -273,6 +273,29 @@ void QDeclarativeGeoMap::setError(QGeoServiceProvider::Error error, const QStrin
     m_error = error;
     m_errorString = errorString;
     emit errorChanged();
+}
+
+void QDeclarativeGeoMap::initialize()
+{
+    // try to keep center change signal in the end
+    bool centerHasChanged = false;
+
+    setMinimumZoomLevel(m_map->minimumZoomForMapSize(width(), height()));
+
+    // set latitude bundary check
+    m_maximumViewportLatitude = m_map->maximumLatitudeForZoom(m_cameraData.zoomLevel());
+    QGeoCoordinate center = m_cameraData.center();
+    center.setLatitude(qBound(-m_maximumViewportLatitude, center.latitude(), m_maximumViewportLatitude));
+
+    if (center != m_cameraData.center()) {
+        centerHasChanged = true;
+        m_cameraData.setCenter(center);
+    }
+
+    m_map->setCameraData(m_cameraData);
+
+    if (centerHasChanged)
+        emit centerChanged(m_cameraData.center());
 }
 
 /*!
@@ -475,7 +498,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     m_map = m_mappingManager->createMap(this);
     m_gestureArea->setMap(m_map);
 
-    m_map->setActiveMapType(QGeoMapType());
     QList<QGeoMapType> types = m_mappingManager->supportedMapTypes();
     for (int i = 0; i < types.size(); ++i) {
         QDeclarativeGeoMapType *type = new QDeclarativeGeoMapType(types[i], this);
@@ -486,15 +508,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         QDeclarativeGeoMapType *type = m_supportedMapTypes.at(0);
         m_activeMapType = type;
         m_map->setActiveMapType(type->mapType());
+    } else {
+        m_map->setActiveMapType(m_activeMapType->mapType());
     }
-
-    // Map tiles are built in this call. m_map->minimumZoom() becomes operational
-    // after this has been called at least once, after creation.
-    m_map->resize(width(), height());
-
-    // once mappingManagerInitilized_ is set, zoomLevel() returns the default initialised
-    // zoom level of the map (controller). Overwrite it here to whatever the user chose.
-    m_map->mapController()->setZoom(m_zoomLevel);
 
     //The zoom level limits are only restricted by the plugins values, if the user has set a more
     //strict zoom level limit before initialization nothing is done here.
@@ -506,8 +522,14 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             || m_mappingManager->cameraCapabilities().maximumZoomLevel() < m_gestureArea->maximumZoomLevel())
         setMaximumZoomLevel(m_mappingManager->cameraCapabilities().maximumZoomLevel());
 
-    // Finally, set the center too
-    m_map->mapController()->setCenter(m_center);
+
+    // Map tiles are built in this call. m_map->minimumZoom() becomes operational
+    // after this has been called at least once, after creation.
+
+    if (width() > 0 && height() > 0) {
+        m_map->resize(width(), height());
+        initialize();
+    }
 
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
     connect(m_map, SIGNAL(copyrightsChanged(QImage)),
@@ -521,15 +543,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             SIGNAL(updateRequired()),
             this,
             SLOT(update()));
-    connect(m_map->mapController(),
-            SIGNAL(centerChanged(QGeoCoordinate)),
-            this,
-            SIGNAL(centerChanged(QGeoCoordinate)));
-    connect(m_map->mapController(),
-            SIGNAL(zoomChanged(qreal)),
-            this,
-            SLOT(mapZoomLevelChanged(qreal)));
-
 
     // set visibility of copyright notice
     m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
@@ -540,7 +553,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     emit minimumZoomLevelChanged();
     emit maximumZoomLevelChanged();
-    emit zoomLevelChanged(m_zoomLevel);
     emit supportedMapTypesChanged();
     emit activeMapTypeChanged();
 
@@ -569,11 +581,14 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 */
 void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
 {
-    if (m_gestureArea && minimumZoomLevel >= 0) {
+
+    if (minimumZoomLevel >= 0) {
         qreal oldMinimumZoomLevel = this->minimumZoomLevel();
-        if (m_mappingManagerInitialized) {
-            minimumZoomLevel = qBound(m_map->minimumZoom(),minimumZoomLevel,m_mappingManager->cameraCapabilities().maximumZoomLevel());
-        }
+        if (m_mappingManagerInitialized)
+            minimumZoomLevel = qBound(m_mappingManager->cameraCapabilities().minimumZoomLevel(), minimumZoomLevel, maximumZoomLevel());
+        double minimumViewportZoomLevel = m_map->minimumZoomForMapSize(width(),height());
+        if (minimumZoomLevel < minimumViewportZoomLevel)
+            minimumZoomLevel = minimumViewportZoomLevel;
 
         m_gestureArea->setMinimumZoomLevel(minimumZoomLevel);
 
@@ -616,11 +631,10 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
 */
 void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel)
 {
-    if (m_gestureArea && maximumZoomLevel >= 0) {
+    if (maximumZoomLevel >= 0) {
         qreal oldMaximumZoomLevel = this->maximumZoomLevel();
-        if (m_mappingManagerInitialized) {
-            maximumZoomLevel = qBound(m_map->minimumZoom(),double(maximumZoomLevel),m_mappingManager->cameraCapabilities().maximumZoomLevel());
-        }
+        if (m_mappingManagerInitialized)
+            maximumZoomLevel = qBound(minimumZoomLevel(), double(maximumZoomLevel), m_mappingManager->cameraCapabilities().maximumZoomLevel());
 
         m_gestureArea->setMaximumZoomLevel(maximumZoomLevel);
 
@@ -661,24 +675,34 @@ qreal QDeclarativeGeoMap::maximumZoomLevel() const
 */
 void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
 {
-    if (m_zoomLevel == zoomLevel || zoomLevel < 0)
+    if (m_cameraData.zoomLevel() == zoomLevel || zoomLevel < 0)
         return;
 
+    //small optiomatization to avoid double setCameraData
+    bool centerHasChanged = false;
+
     if (m_mappingManagerInitialized) {
-        m_zoomLevel = qBound(minimumZoomLevel(), zoomLevel, maximumZoomLevel());
-        m_map->mapController()->setZoom(m_zoomLevel);
+        m_cameraData.setZoomLevel(qBound(minimumZoomLevel(), zoomLevel, maximumZoomLevel()));
+        m_maximumViewportLatitude = m_map->maximumLatitudeForZoom(m_cameraData.zoomLevel());
+        QGeoCoordinate coord = m_cameraData.center();
+        coord.setLatitude(qBound(-m_maximumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
+        if (coord != m_cameraData.center()) {
+            centerHasChanged = true;
+            m_cameraData.setCenter(coord);
+        }
+        m_map->setCameraData(m_cameraData);
     } else {
-        m_zoomLevel = zoomLevel;
+        m_cameraData.setZoomLevel(zoomLevel);
     }
-    emit zoomLevelChanged(zoomLevel);
+
+    if (centerHasChanged)
+        emit centerChanged(m_cameraData.center());
+    emit zoomLevelChanged(m_cameraData.zoomLevel());
 }
 
 qreal QDeclarativeGeoMap::zoomLevel() const
 {
-    if (m_mappingManagerInitialized)
-        return m_map->mapController()->zoom();
-    else
-        return m_zoomLevel;
+    return m_cameraData.zoomLevel();
 }
 
 /*!
@@ -691,28 +715,27 @@ qreal QDeclarativeGeoMap::zoomLevel() const
 */
 void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
 {
-    if (!m_mappingManagerInitialized && center == m_center)
+    if (center == m_cameraData.center())
         return;
 
     if (!center.isValid())
         return;
 
-    m_center = center;
-
-    if (m_center.isValid() && m_mappingManagerInitialized) {
-        m_map->mapController()->setCenter(m_center);
-        update();
+    if (m_mappingManagerInitialized) {
+        QGeoCoordinate coord(center);
+        coord.setLatitude(qBound(-m_maximumViewportLatitude, center.latitude(), m_maximumViewportLatitude));
+        m_cameraData.setCenter(coord);
+        m_map->setCameraData(m_cameraData);
     } else {
-        emit centerChanged(m_center);
+        m_cameraData.setCenter(center);
     }
+
+    emit centerChanged(m_cameraData.center());
 }
 
 QGeoCoordinate QDeclarativeGeoMap::center() const
 {
-    if (m_mappingManagerInitialized)
-        return m_map->mapController()->center();
-    else
-        return m_center;
+    return m_cameraData.center();
 }
 
 
@@ -869,19 +892,8 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
 
     qreal newZoom = std::log10(zoomRatio) / std::log10(0.5);
 
-    newZoom = std::floor(qMax(minimumZoomLevel(), (m_map->mapController()->zoom() + newZoom)));
+    newZoom = std::floor(qMax(minimumZoomLevel(), (zoomLevel() + newZoom)));
     setProperty("zoomLevel", QVariant::fromValue(newZoom));
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mapZoomLevelChanged(qreal zoom)
-{
-    if (zoom == m_zoomLevel)
-        return;
-    m_zoomLevel = zoom;
-    emit zoomLevelChanged(m_zoomLevel);
 }
 
 /*!
@@ -943,7 +955,12 @@ void QDeclarativeGeoMap::pan(int dx, int dy)
 {
     if (!m_mappingManagerInitialized)
         return;
-    m_map->mapController()->pan(dx, dy);
+    if (dx == 0 && dy == 0)
+        return;
+    QGeoCoordinate coord = m_map->itemPositionToCoordinate(
+                                QDoubleVector2D(m_map->width() / 2 + dx,
+                                        m_map->height() / 2 + dy));
+    setCenter(coord);
 }
 
 
@@ -1218,14 +1235,19 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     m_gestureArea->setSize(newGeometry.size());
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
 
-    if (!m_mappingManagerInitialized)
+    if (!m_mappingManagerInitialized || !newGeometry.size().isValid())
         return;
 
     m_map->resize(newGeometry.width(), newGeometry.height());
-    //Them minimum allowed zoom level to limit gray bundaries might have changed
-    setMinimumZoomLevel(m_map->minimumZoom());
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+
+
+    if (!oldGeometry.size().isValid()) // TBD: see following commit
+        initialize();
+    else
+        setMinimumZoomLevel(m_map->minimumZoomForMapSize(newGeometry.width(), newGeometry.height()));
+
 
     /*!
         The fitViewportTo*() functions depend on a valid map geometry.
@@ -1343,7 +1365,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
         zoomRatio = bboxHeight / height();
 
     qreal newZoom = std::log10(zoomRatio) / std::log10(0.5);
-    newZoom = std::floor(qMax(minimumZoomLevel(), (m_map->mapController()->zoom() + newZoom)));
+    newZoom = std::floor(qMax(minimumZoomLevel(), (zoomLevel() + newZoom)));
     setProperty("zoomLevel", QVariant::fromValue(newZoom));
 
     // as map quick items retain the same screen size after the camera zooms in/out

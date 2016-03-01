@@ -90,7 +90,6 @@ protected:
 
 private:
     void updateScene();
-    void updateCenterLatitudinalBound(int tileSize, double zoomLevel);
 
 private:
     QAbstractGeoTileCache *m_cache;
@@ -101,7 +100,7 @@ private:
     int m_maxZoomLevel;
     int m_minZoomLevel;
     QGeoTiledMap::PrefetchStyle m_prefetchStyle;
-    double m_centerLatitudinalBound;
+    bool m_geomoteryUpdated;
     Q_DISABLE_COPY(QGeoTiledMapPrivate)
 };
 

@@ -128,6 +128,41 @@ Item {
             compare(map.center.latitude, 12)
         }
 
+        function test_map_clamp()
+        {
+            //valid
+            map.center = QtPositioning.coordinate(10.0, 20.5, 30.8)
+            map.zoomLevel = 2.0
+
+            compare(map.center.latitude, 10)
+            compare(map.center.longitude, 20.5)
+            compare(map.center.altitude, 30.8)
+
+            //negative values
+            map.center = QtPositioning.coordinate(-50, -20, 100)
+            map.zoomLevel = 1.0
+
+            compare(map.center.latitude, -50)
+            compare(map.center.longitude, -20)
+            compare(map.center.altitude, 100)
+
+            //clamped center negative
+            map.center = QtPositioning.coordinate(-89, -45, 0)
+            map.zoomLevel = 1.0
+
+            fuzzyCompare(map.center.latitude, -80.8728, 0.001)
+            compare(map.center.longitude, -45)
+            compare(map.center.altitude, 0)
+
+            //clamped center positive
+            map.center = QtPositioning.coordinate(86, 38, 0)
+            map.zoomLevel = 1.0
+
+            fuzzyCompare(map.center.latitude, 80.8728, 0.001)
+            compare(map.center.longitude, 38)
+            compare(map.center.altitude, 0)
+        }
+
         function test_zoom_limits()
         {
             map.center.latitude = 30

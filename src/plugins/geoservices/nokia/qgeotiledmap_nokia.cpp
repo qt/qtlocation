@@ -36,7 +36,6 @@
 
 #include "qgeotiledmap_nokia.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
-#include "qgeomapcontroller_p.h"
 
 #include <QDebug>
 #include <QObject>
@@ -71,7 +70,7 @@ void QGeoTiledMapNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTile
     if (m_engine.isNull())
         return;
 
-    const QString copyrightsString = m_engine->evaluateCopyrightsText(activeMapType(), mapController()->zoom(), visibleTiles);
+    const QString copyrightsString = m_engine->evaluateCopyrightsText(activeMapType(), cameraData().zoomLevel(), visibleTiles);
 
     if (width() > 0 && height() > 0 && ((copyrightsString.isNull() && m_copyrightsSlab.isNull()) || copyrightsString != m_lastCopyrightsString)) {
         QFont font("Sans Serif");

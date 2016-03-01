@@ -168,10 +168,9 @@ protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
 
     void setError(QGeoServiceProvider::Error error, const QString &errorString);
-
+    void initialize();
 private Q_SLOTS:
     void mappingManagerInitialized();
-    void mapZoomLevelChanged(qreal zoom);
     void pluginReady();
     void onMapChildrenChanged();
 
@@ -186,7 +185,6 @@ private:
     QDeclarativeGeoServiceProvider *m_plugin;
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mappingManager;
-    QGeoCoordinate m_center;
     QDeclarativeGeoMapType *m_activeMapType;
     QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
@@ -197,13 +195,14 @@ private:
     QMutex m_updateMutex;
     QString m_errorString;
     QGeoServiceProvider::Error m_error;
-    qreal m_zoomLevel;
     QGeoShape m_region;
     QColor m_color;
+    QGeoCameraData m_cameraData;
     bool m_componentCompleted;
     bool m_mappingManagerInitialized;
     bool m_pendingFitViewport;
     bool m_copyrightsVisible;
+    double m_maximumViewportLatitude;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

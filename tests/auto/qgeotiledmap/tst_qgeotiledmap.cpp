@@ -40,7 +40,6 @@
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/private/qgeotiledmap_p.h>
 #include <QtLocation/private/qgeomappingmanager_p.h>
-#include <QtLocation/private/qgeomapcontroller_p.h>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 
 QT_USE_NAMESPACE

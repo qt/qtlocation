@@ -86,13 +86,14 @@ public:
 
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
+    double minimumZoomForMapSize(int width, int height) const Q_DECL_OVERRIDE;
+    double maximumLatitudeForZoom(double zoomLevel) const Q_DECL_OVERRIDE;
     void prefetchData() Q_DECL_OVERRIDE;
     void clearData() Q_DECL_OVERRIDE;
 
 protected:
     QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) Q_DECL_OVERRIDE;
     virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
-    double minimumZoomLevel(int width, int height, int tileSize) const;
 
 private Q_SLOTS:
     void handleTileVersionChanged();

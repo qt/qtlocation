@@ -53,7 +53,6 @@ qtHaveModule(location) {
            qgeotiledmap \
            qgeotilespec \
            qgeoroutexmlparser \
-           qgeomapcontroller \
            maptype \
            nokia_services \
            qgeocameratiles

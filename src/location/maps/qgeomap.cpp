@@ -37,8 +37,8 @@
 #include "qgeomap_p.h"
 #include "qgeomap_p_p.h"
 #include "qgeocameracapabilities_p.h"
-#include "qgeomapcontroller_p.h"
 #include "qgeomappingmanagerengine_p.h"
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -49,14 +49,6 @@ QGeoMap::QGeoMap(QGeoMapPrivate &dd, QObject *parent)
 
 QGeoMap::~QGeoMap()
 {
-}
-
-QGeoMapController *QGeoMap::mapController()
-{
-    Q_D(QGeoMap);
-    if (!d->m_controller)
-        d->m_controller = new QGeoMapController(this);
-    return d->m_controller;
 }
 
 void QGeoMap::resize(int width, int height)
@@ -119,11 +111,6 @@ const QGeoMapType QGeoMap::activeMapType() const
     return d->m_activeMapType;
 }
 
-double QGeoMap::minimumZoom() const
-{
-    Q_D(const QGeoMap);
-    return d->m_minimumZoom;
-}
 
 QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
@@ -149,9 +136,7 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
       m_width(0),
       m_height(0),
       m_aspectRatio(0.0),
-      m_minimumZoom(0.0),
       m_engine(engine),
-      m_controller(0),
       m_activeMapType(QGeoMapType())
 {
 }
@@ -168,31 +153,6 @@ void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
 {
     QGeoCameraData oldCameraData = m_cameraData;
     m_cameraData = cameraData;
-
-    if (!m_engine.isNull()) {
-        QGeoCameraCapabilities capabilities = m_engine->cameraCapabilities();
-        if (m_cameraData.zoomLevel() < capabilities.minimumZoomLevel())
-            m_cameraData.setZoomLevel(capabilities.minimumZoomLevel());
-
-        if (m_cameraData.zoomLevel() > capabilities.maximumZoomLevel())
-            m_cameraData.setZoomLevel(capabilities.maximumZoomLevel());
-
-        if (!capabilities.supportsBearing())
-            m_cameraData.setBearing(0.0);
-
-        if (capabilities.supportsTilting()) {
-            if (m_cameraData.tilt() < capabilities.minimumTilt())
-                m_cameraData.setTilt(capabilities.minimumTilt());
-
-            if (m_cameraData.tilt() > capabilities.maximumTilt())
-                m_cameraData.setTilt(capabilities.maximumTilt());
-        } else {
-            m_cameraData.setTilt(0.0);
-        }
-
-        if (!capabilities.supportsRolling())
-            m_cameraData.setRoll(0.0);
-    }
 
     // Do not call this expensive function if the width is 0, since it will get called
     // anyway when it is resized to a width > 0.
