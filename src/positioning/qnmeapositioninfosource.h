@@ -49,7 +49,7 @@ public:
         SimulationMode
     };
 
-    explicit QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent = 0);
+    explicit QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent = Q_NULLPTR);
     ~QNmeaPositionInfoSource();
 
     void setUserEquivalentRangeError(double uere);

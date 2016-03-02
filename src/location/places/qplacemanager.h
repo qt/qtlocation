@@ -112,7 +112,7 @@ Q_SIGNALS:
     void dataChanged();
 
 private:
-    QPlaceManager(QPlaceManagerEngine *engine, QObject *parent = 0);
+    explicit QPlaceManager(QPlaceManagerEngine *engine, QObject *parent = Q_NULLPTR);
     Q_DISABLE_COPY(QPlaceManager)
 
     QPlaceManagerEngine *d;
