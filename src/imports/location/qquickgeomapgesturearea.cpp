@@ -1229,6 +1229,11 @@ void QQuickGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
     else if (latitude < -85.05113)
         latitude = -85.05113;
 
+    if (longitude > 180)
+        longitude = longitude - 360;
+    else if (longitude < -180)
+        longitude = longitude + 360;
+
     animationEndCoordinate.setLongitude(longitude);
     animationEndCoordinate.setLatitude(latitude);
 
