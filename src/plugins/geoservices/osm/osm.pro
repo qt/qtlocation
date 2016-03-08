@@ -1,9 +1,6 @@
 TARGET = qtgeoservices_osm
-QT += location-private positioning-private network
 
-PLUGIN_TYPE = geoservices
-PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryOsm
-load(qt_plugin)
+QT += location-private positioning-private network
 
 HEADERS += \
     qgeoserviceproviderpluginosm.h \
@@ -37,3 +34,6 @@ SOURCES += \
 OTHER_FILES += \
     osm_plugin.json
 
+PLUGIN_TYPE = geoservices
+PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryOsm
+load(qt_plugin)

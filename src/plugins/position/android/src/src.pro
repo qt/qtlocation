@@ -1,10 +1,6 @@
 TARGET = qtposition_android
+
 QT = core positioning
-
-PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryAndroid
-load(qt_plugin)
-
 
 HEADERS = \
     positionfactory_android.h \
@@ -19,3 +15,7 @@ SOURCES = \
     qgeosatelliteinfosource_android.cpp
 
 OTHER_FILES = plugin.json
+
+PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryAndroid
+load(qt_plugin)

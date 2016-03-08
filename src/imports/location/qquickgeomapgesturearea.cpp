@@ -393,9 +393,9 @@ void QQuickGeoMapGestureArea::setAcceptedGestures(AcceptedGestures acceptedGestu
         return;
     m_acceptedGestures = acceptedGestures;
 
-    setPanEnabled(acceptedGestures & GeoMapGesture::PanGesture);
-    setFlickEnabled(acceptedGestures & GeoMapGesture::FlickGesture);
-    setPinchEnabled(acceptedGestures & GeoMapGesture::PinchGesture);
+    setPanEnabled(acceptedGestures & PanGesture);
+    setFlickEnabled(acceptedGestures & FlickGesture);
+    setPinchEnabled(acceptedGestures & PinchGesture);
 
     emit acceptedGesturesChanged();
 }
@@ -434,9 +434,9 @@ void QQuickGeoMapGestureArea::setEnabled(bool enabled)
     m_enabled = enabled;
 
     if (enabled) {
-        setPanEnabled(m_acceptedGestures & GeoMapGesture::PanGesture);
-        setFlickEnabled(m_acceptedGestures & GeoMapGesture::FlickGesture);
-        setPinchEnabled(m_acceptedGestures & GeoMapGesture::PinchGesture);
+        setPanEnabled(m_acceptedGestures & PanGesture);
+        setFlickEnabled(m_acceptedGestures & FlickGesture);
+        setPinchEnabled(m_acceptedGestures & PinchGesture);
     } else {
         setPanEnabled(false);
         setFlickEnabled(false);

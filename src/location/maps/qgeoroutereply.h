@@ -60,7 +60,7 @@ public:
         UnknownError
     };
 
-    QGeoRouteReply(Error error, const QString &errorString, QObject *parent = 0);
+    explicit QGeoRouteReply(Error error, const QString &errorString, QObject *parent = Q_NULLPTR);
     virtual ~QGeoRouteReply();
 
     bool isFinished() const;
@@ -77,7 +77,7 @@ Q_SIGNALS:
     void error(QGeoRouteReply::Error error, const QString &errorString = QString());
 
 protected:
-    QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent = 0);
+    explicit QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent = Q_NULLPTR);
 
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);

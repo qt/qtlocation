@@ -1,9 +1,6 @@
 TARGET = qtposition_gypsy
-QT = core positioning
 
-PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryGypsy
-load(qt_plugin)
+QT = core positioning
 
 HEADERS += \
     qgeosatelliteinfosource_gypsy_p.h \
@@ -18,3 +15,7 @@ PKGCONFIG += gypsy gconf-2.0
 
 OTHER_FILES += \
     plugin.json
+
+PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryGypsy
+load(qt_plugin)

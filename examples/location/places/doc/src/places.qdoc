@@ -33,7 +33,7 @@
     \brief The Places example demonstrates how to search for Places and access
            related content.
 
-    \image example-places.png
+    \image places.png
 
     The Places example demonstrates how to search for Places. In particular it shows
     how further information such as reviews, images and related content can be retrieved.

@@ -33,7 +33,7 @@
     \brief The Map Viewer example shows how to display and interact with a map,
            search for an address, and find driving directions.
 
-    \image example-mapviewer.png
+    \image mapviewer.png
 
     This is a large example covering many basic uses of maps, positioning, and
     navigation services in Qt Location. This page is divided into sections

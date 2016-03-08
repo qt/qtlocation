@@ -1,9 +1,6 @@
 TARGET = qtposition_geoclue
-QT = core positioning dbus
 
-PLUGIN_TYPE = position
-PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryGeoclue
-load(qt_plugin)
+QT = core positioning dbus
 
 HEADERS += \
     qgeopositioninfosource_geocluemaster.h \
@@ -35,3 +32,7 @@ INCLUDEPATH += $$QT.location.includes $$OUT_PWD
 
 OTHER_FILES += \
     plugin.json
+
+PLUGIN_TYPE = position
+PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryGeoclue
+load(qt_plugin)

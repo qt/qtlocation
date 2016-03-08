@@ -1,9 +1,6 @@
 TARGET = qtgeoservices_mapbox
-QT += location-private positioning-private network
 
-PLUGIN_TYPE = geoservices
-PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryMapbox
-load(qt_plugin)
+QT += location-private positioning-private network
 
 HEADERS += \
     qgeoserviceproviderpluginmapbox.h \
@@ -20,3 +17,6 @@ SOURCES += \
 OTHER_FILES += \
     mapbox_plugin.json
 
+PLUGIN_TYPE = geoservices
+PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryMapbox
+load(qt_plugin)
