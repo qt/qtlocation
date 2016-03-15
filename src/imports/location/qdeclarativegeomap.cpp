@@ -619,7 +619,7 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel)
     if (m_gestureArea && maximumZoomLevel >= 0) {
         qreal oldMaximumZoomLevel = this->maximumZoomLevel();
         if (m_mappingManagerInitialized) {
-            maximumZoomLevel = qBound(m_map->minimumZoom(),maximumZoomLevel,m_mappingManager->cameraCapabilities().maximumZoomLevel());
+            maximumZoomLevel = qBound(m_map->minimumZoom(),double(maximumZoomLevel),m_mappingManager->cameraCapabilities().maximumZoomLevel());
         }
 
         m_gestureArea->setMaximumZoomLevel(maximumZoomLevel);
