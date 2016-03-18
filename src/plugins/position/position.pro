@@ -4,7 +4,7 @@ qtHaveModule(dbus):SUBDIRS += geoclue
 config_gypsy:SUBDIRS += gypsy
 qtHaveModule(simulator):SUBDIRS += simulator
 osx|ios|tvos:SUBDIRS += corelocation
-android:!android-no-sdk:SUBDIRS += android
+android:SUBDIRS += android
 winrt:SUBDIRS += winrt
 win32:qtHaveModule(serialport):SUBDIRS += serialnmea
 
