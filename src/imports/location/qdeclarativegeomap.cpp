@@ -586,7 +586,7 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
         qreal oldMinimumZoomLevel = this->minimumZoomLevel();
 
         if (m_map) {
-            minimumZoomLevel = qBound(m_map->cameraCapabilities().minimumZoomLevel(), minimumZoomLevel, maximumZoomLevel());
+            minimumZoomLevel = qBound(qreal(m_map->cameraCapabilities().minimumZoomLevel()), minimumZoomLevel, maximumZoomLevel());
             double minimumViewportZoomLevel = m_map->minimumZoomForMapSize(width(),height());
             if (minimumZoomLevel < minimumViewportZoomLevel)
                 minimumZoomLevel = minimumViewportZoomLevel;
@@ -637,7 +637,7 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel)
         qreal oldMaximumZoomLevel = this->maximumZoomLevel();
 
         if (m_map)
-            maximumZoomLevel = qBound(minimumZoomLevel(), double(maximumZoomLevel), m_map->cameraCapabilities().maximumZoomLevel());
+            maximumZoomLevel = qBound(minimumZoomLevel(), maximumZoomLevel, qreal(m_map->cameraCapabilities().maximumZoomLevel()));
 
         m_gestureArea->setMaximumZoomLevel(maximumZoomLevel);
 
