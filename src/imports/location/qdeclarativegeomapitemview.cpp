@@ -262,6 +262,9 @@ void QDeclarativeGeoMapItemView::itemModelDataChanged(const QModelIndex &topLeft
 {
     Q_UNUSED(roles)
 
+    if (!m_itemData.count())
+        return;
+
     for (int i = topLeft.row(); i <= bottomRight.row(); ++i) {
         const QModelIndex index = itemModel_->index(i, 0);
         ItemData *itemData = m_itemData.at(i);
