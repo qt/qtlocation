@@ -34,37 +34,38 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativegeomap_p.h"
+#include <QtLocation/private/qdeclarativegeoserviceprovider_p.h>
+#include <QtLocation/private/qdeclarativegeomap_p.h>
 
-#include "qdeclarativegeoroute_p.h"
-#include "qdeclarativegeoroutemodel_p.h"
-#include "qdeclarativegeocodemodel_p.h"
-#include "qdeclarativegeomaneuver_p.h"
-#include "qdeclarativegeomapquickitem_p.h"
-#include "qdeclarativegeomapitemview_p.h"
-#include "qdeclarativegeomaptype_p.h"
-#include "qdeclarativerectanglemapitem_p.h"
-#include "qdeclarativecirclemapitem_p.h"
-#include "qdeclarativeroutemapitem_p.h"
-#include "qdeclarativepolylinemapitem_p.h"
-#include "qdeclarativepolygonmapitem_p.h"
-#include "qdeclarativegeomapparameter_p.h"
+#include <QtLocation/private/qdeclarativegeoroute_p.h>
+#include <QtLocation/private/qdeclarativegeoroutemodel_p.h>
+#include <QtLocation/private/qdeclarativegeocodemodel_p.h>
+#include <QtLocation/private/qdeclarativegeomaneuver_p.h>
+#include <QtLocation/private/qdeclarativegeomapitembase_p.h>
+#include <QtLocation/private/qdeclarativegeomapquickitem_p.h>
+#include <QtLocation/private/qdeclarativegeomapitemview_p.h>
+#include <QtLocation/private/qdeclarativegeomaptype_p.h>
+#include <QtLocation/private/qdeclarativerectanglemapitem_p.h>
+#include <QtLocation/private/qdeclarativecirclemapitem_p.h>
+#include <QtLocation/private/qdeclarativeroutemapitem_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
+#include <QtLocation/private/qdeclarativegeomapparameter_p.h>
 
 //Place includes
-#include "qdeclarativecategory_p.h"
-#include "qdeclarativeplace_p.h"
-#include "qdeclarativeplaceattribute_p.h"
-#include "qdeclarativeplaceicon_p.h"
-#include "qdeclarativeratings_p.h"
-#include "qdeclarativesupplier_p.h"
-#include "qdeclarativeplaceuser_p.h"
-#include "qdeclarativecontactdetail_p.h"
+#include <QtLocation/private/qdeclarativecategory_p.h>
+#include <QtLocation/private/qdeclarativeplace_p.h>
+#include <QtLocation/private/qdeclarativeplaceattribute_p.h>
+#include <QtLocation/private/qdeclarativeplaceicon_p.h>
+#include <QtLocation/private/qdeclarativeratings_p.h>
+#include <QtLocation/private/qdeclarativesupplier_p.h>
+#include <QtLocation/private/qdeclarativeplaceuser_p.h>
+#include <QtLocation/private/qdeclarativecontactdetail_p.h>
 
-#include "qdeclarativesupportedcategoriesmodel_p.h"
-#include "qdeclarativesearchresultmodel_p.h"
-#include "qdeclarativesearchsuggestionmodel_p.h"
-#include "error_messages.h"
+#include <QtLocation/private/qdeclarativesupportedcategoriesmodel_p.h>
+#include <QtLocation/private/qdeclarativesearchresultmodel_p.h>
+#include <QtLocation/private/qdeclarativesearchsuggestionmodel_p.h>
+#include <QtLocation/error_messages.h>
 
 #include <QtQml/qqmlextensionplugin.h>
 
