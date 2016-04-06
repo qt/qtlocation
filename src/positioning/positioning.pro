@@ -12,6 +12,8 @@ ANDROID_PERMISSIONS = \
     android.permission.ACCESS_FINE_LOCATION
 ANDROID_LIB_DEPENDENCIES = \
     plugins/position/libqtposition_android.so
+MODULE_WINRT_CAPABILITIES_DEVICE += \
+    location
 MODULE_PLUGIN_TYPES = \
     position
 
