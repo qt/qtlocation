@@ -61,7 +61,7 @@ include(declarativeplaces/declarativeplaces.pri)
 
 load(qml_plugin)
 
-LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lpoly2tri$$qtPlatformTargetSuffix()
+LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lpoly2tri$$qtPlatformTargetSuffix() -lclip2tri$$qtPlatformTargetSuffix()
 
 OTHER_FILES += \
     plugin.json \

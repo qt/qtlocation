@@ -51,8 +51,7 @@
 #include "qdoublevector2d_p.h"
 
 /* poly2tri triangulator includes */
-#include "../../3rdparty/poly2tri/common/shapes.h"
-#include "../../3rdparty/poly2tri/sweep/cdt.h"
+#include "../../3rdparty/clip2tri/clip2tri.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -275,44 +274,55 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
     screenOutline_ = ppi;
 
-    std::vector<p2t::Point*> curPts;
+#if 1
+    std::vector<std::vector<c2t::Point>> clipperPoints;
+    clipperPoints.push_back(std::vector<c2t::Point>());
+    std::vector<c2t::Point> &curPts = clipperPoints.front();
     curPts.reserve(ppi.elementCount());
     for (int i = 0; i < ppi.elementCount(); ++i) {
         const QPainterPath::Element e = ppi.elementAt(i);
         if (e.isMoveTo() || i == ppi.elementCount() - 1
-                || (qAbs(e.x - curPts.front()->x) < 0.1
-                    && qAbs(e.y - curPts.front()->y) < 0.1)) {
+                || (qAbs(e.x - curPts.front().x) < 0.1
+                    && qAbs(e.y - curPts.front().y) < 0.1)) {
             if (curPts.size() > 2) {
-                p2t::CDT *cdt = new p2t::CDT(curPts);
-                cdt->Triangulate();
-                std::vector<p2t::Triangle*> tris = cdt->GetTriangles();
-                screenVertices_.reserve(screenVertices_.size() + int(tris.size()));
-                for (size_t i = 0; i < tris.size(); ++i) {
-                    p2t::Triangle *t = tris.at(i);
-                    for (int j = 0; j < 3; ++j) {
-                        p2t::Point *p = t->GetPoint(j);
-                        screenVertices_ << QPointF(p->x, p->y);
-                    }
+                c2t::clip2tri *cdt = new c2t::clip2tri();
+                std::vector<c2t::Point> outputTriangles;
+                cdt->triangulate(clipperPoints, outputTriangles, std::vector<c2t::Point>());
+                for (size_t i = 0; i < outputTriangles.size(); ++i) {
+                    screenVertices_ << QPointF(outputTriangles[i].x, outputTriangles[i].y);
                 }
                 delete cdt;
             }
             curPts.clear();
             curPts.reserve(ppi.elementCount() - i);
-            curPts.push_back(new p2t::Point(e.x, e.y));
+            curPts.push_back( c2t::Point(e.x, e.y));
         } else if (e.isLineTo()) {
-            curPts.push_back(new p2t::Point(e.x, e.y));
+            curPts.push_back( c2t::Point(e.x, e.y));
         } else {
             qWarning("Unhandled element type in polygon painterpath");
         }
     }
+#else // Old qTriangulate()-based code.
+    QTriangleSet ts = qTriangulate(ppi);
+    qreal *vx = ts.vertices.data();
 
-    if (curPts.size() > 0) {
-        qDeleteAll(curPts.begin(), curPts.end());
-        curPts.clear();
+    screenIndices_.reserve(ts.indices.size());
+    screenVertices_.reserve(ts.vertices.size());
+
+    if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
+        const quint32 *ix = reinterpret_cast<const quint32 *>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
+            screenIndices_ << ix[i];
+    } else {
+        const quint16 *ix = reinterpret_cast<const quint16 *>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
+            screenIndices_ << ix[i];
     }
+    for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
+        screenVertices_ << QPointF(vx[i], vx[i + 1]);
+#endif
 
     screenBounds_ = ppi.boundingRect();
-
 }
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
