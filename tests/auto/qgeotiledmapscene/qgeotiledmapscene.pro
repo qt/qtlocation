@@ -1,8 +1,8 @@
 CONFIG += testcase
-TARGET = tst_qgeomapscene
+TARGET = tst_qgeotiledmapscene
 
 INCLUDEPATH += ../../../src/location/maps
 
-SOURCES += tst_qgeomapscene.cpp
+SOURCES += tst_qgeotiledmapscene.cpp
 
 QT += location positioning-private testlib

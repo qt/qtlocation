@@ -42,7 +42,7 @@ qtHaveModule(location) {
            qgeocodereply \
            qgeocodingmanager \
            qgeomaneuver \
-           qgeomapscene \
+           qgeotiledmapscene \
            qgeoroute \
            qgeoroutereply \
            qgeorouterequest \
@@ -53,7 +53,6 @@ qtHaveModule(location) {
            qgeotiledmap \
            qgeotilespec \
            qgeoroutexmlparser \
-           qgeomapcontroller \
            maptype \
            nokia_services \
            qgeocameratiles

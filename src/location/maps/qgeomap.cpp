@@ -37,8 +37,8 @@
 #include "qgeomap_p.h"
 #include "qgeomap_p_p.h"
 #include "qgeocameracapabilities_p.h"
-#include "qgeomapcontroller_p.h"
 #include "qgeomappingmanagerengine_p.h"
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -51,32 +51,31 @@ QGeoMap::~QGeoMap()
 {
 }
 
-QGeoMapController *QGeoMap::mapController()
+void QGeoMap::setSize(const QSize& size)
 {
     Q_D(QGeoMap);
-    if (!d->m_controller)
-        d->m_controller = new QGeoMapController(this);
-    return d->m_controller;
+    if (size == d->m_size)
+        return;
+    d->m_size = size;
+    d->changeMapSize(size);
 }
 
-void QGeoMap::resize(int width, int height)
+QSize QGeoMap::size() const
 {
-    Q_D(QGeoMap);
-    d->resize(width, height);
-    // always emit this signal to trigger items to redraw
-    emit cameraDataChanged(d->m_cameraData);
+    Q_D(const QGeoMap);
+    return d->m_size;
 }
 
 int QGeoMap::width() const
 {
     Q_D(const QGeoMap);
-    return d->m_width;
+    return d->m_size.width();
 }
 
 int QGeoMap::height() const
 {
     Q_D(const QGeoMap);
-    return d->m_height;
+    return d->m_size.height();
 }
 
 void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
@@ -84,11 +83,8 @@ void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
     Q_D(QGeoMap);
     if (cameraData == d->m_cameraData)
         return;
-
-    d->setCameraData(cameraData);
-
-    update();
-
+    d->m_cameraData = cameraData;
+    d->changeCameraData(cameraData);
     emit cameraDataChanged(d->m_cameraData);
 }
 
@@ -98,19 +94,14 @@ QGeoCameraData QGeoMap::cameraData() const
     return d->m_cameraData;
 }
 
-void QGeoMap::update()
-{
-    emit updateRequired();
-}
-
 void QGeoMap::setActiveMapType(const QGeoMapType type)
 {
     Q_D(QGeoMap);
+    if (type == d->m_activeMapType)
+        return;
     d->m_activeMapType = type;
     d->changeActiveMapType(type);
-    d->setCameraData(d->m_cameraData);
     emit activeMapTypeChanged();
-    update();
 }
 
 const QGeoMapType QGeoMap::activeMapType() const
@@ -119,7 +110,8 @@ const QGeoMapType QGeoMap::activeMapType() const
     return d->m_activeMapType;
 }
 
-QGeoCameraCapabilities QGeoMap::cameraCapabilities()
+
+QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
     Q_D(const QGeoMap);
     if (!d->m_engine.isNull())
@@ -140,68 +132,13 @@ void QGeoMap::clearData()
 
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
     : QObjectPrivate(),
-      m_width(0),
-      m_height(0),
-      m_aspectRatio(0.0),
       m_engine(engine),
-      m_controller(0),
       m_activeMapType(QGeoMapType())
 {
 }
 
 QGeoMapPrivate::~QGeoMapPrivate()
 {
-    // controller_ is a child of map_, don't need to delete it here
-
-    // TODO map items are not deallocated!
-    // However: how to ensure this is done in rendering thread?
-}
-
-void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
-{
-    QGeoCameraData oldCameraData = m_cameraData;
-    m_cameraData = cameraData;
-
-    if (!m_engine.isNull()) {
-        QGeoCameraCapabilities capabilities = m_engine->cameraCapabilities();
-        if (m_cameraData.zoomLevel() < capabilities.minimumZoomLevel())
-            m_cameraData.setZoomLevel(capabilities.minimumZoomLevel());
-
-        if (m_cameraData.zoomLevel() > capabilities.maximumZoomLevel())
-            m_cameraData.setZoomLevel(capabilities.maximumZoomLevel());
-
-        if (!capabilities.supportsBearing())
-            m_cameraData.setBearing(0.0);
-
-        if (capabilities.supportsTilting()) {
-            if (m_cameraData.tilt() < capabilities.minimumTilt())
-                m_cameraData.setTilt(capabilities.minimumTilt());
-
-            if (m_cameraData.tilt() > capabilities.maximumTilt())
-                m_cameraData.setTilt(capabilities.maximumTilt());
-        } else {
-            m_cameraData.setTilt(0.0);
-        }
-
-        if (!capabilities.supportsRolling())
-            m_cameraData.setRoll(0.0);
-    }
-
-    // Do not call this expensive function if the width is 0, since it will get called
-    // anyway when it is resized to a width > 0.
-    // this is mainly an optimization to the initialization of the geomap, which would otherwise
-    // call changeCameraData four or more times
-    if (m_width > 0)
-        changeCameraData(oldCameraData);
-}
-
-void QGeoMapPrivate::resize(int width, int height)
-{
-    m_width = width;
-    m_height = height;
-    m_aspectRatio = 1.0 * m_width / m_height;
-    mapResized(width, height);
-    setCameraData(m_cameraData);
 }
 
 QT_END_NAMESPACE

@@ -70,36 +70,33 @@ class Q_LOCATION_EXPORT QGeoMap : public QObject
 public:
     virtual ~QGeoMap();
 
-    QGeoMapController *mapController();
-
-    void resize(int width, int height);
+    void setSize(const QSize& size);
+    QSize size() const;
     int width() const;
     int height() const;
 
+
     QGeoCameraData cameraData() const;
+    QGeoCameraCapabilities cameraCapabilities() const;
 
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
 
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
+    virtual double minimumZoomForMapSize(int width, int height) const = 0;
+    virtual double maximumLatitudeForZoom(double zoomLevel) const = 0;
     virtual void prefetchData();
     virtual void clearData();
-
-    QGeoCameraCapabilities cameraCapabilities();
-
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);
     virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
 
-public Q_SLOTS:
-    void update();
-
 Q_SIGNALS:
     void cameraDataChanged(const QGeoCameraData &cameraData);
-    void updateRequired();
+    void sgNodeChanged();
     void activeMapTypeChanged();
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);

@@ -33,7 +33,7 @@
     \brief The \c {Plane Spotter} example demonstrates the tight integration of
     location and positioning data types into QML
 
-    \image planespotter.jpg
+    \image planespotter.png
 
     The \c {Plane Spotter} example demonstrates how to integrate location and positioning
     related C++ data types into QML and vice versa. This is useful when it is desirable to

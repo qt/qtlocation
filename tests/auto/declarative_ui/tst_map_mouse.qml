@@ -288,7 +288,7 @@ Item {
             clear_data()
             wait(500);
             // on map but without mouse area
-            var startZoomLevel = 6
+            var startZoomLevel = 6.20
             map.zoomLevel = startZoomLevel
             mouseWheel(map, 5, 5, 15, 5, Qt.LeftButton, Qt.NoModifiers)
             //see QDeclarativeGeoMapGestureArea::handleWheelEvent

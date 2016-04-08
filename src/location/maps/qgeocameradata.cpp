@@ -59,11 +59,11 @@ public:
 
 QGeoCameraDataPrivate::QGeoCameraDataPrivate()
     : QSharedData(),
-      m_center(-27.5, 153),
+      m_center(0, 0),
       m_bearing(0.0),
       m_tilt(0.0),
       m_roll(0.0),
-      m_zoomLevel(9.0) {}
+      m_zoomLevel(0.0) {}
 
 QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
     : QSharedData(rhs),

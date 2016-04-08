@@ -149,9 +149,9 @@ void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGeoMapType> &su
     d->supportedMapTypes = supportedMapTypes;
 }
 
-QGeoCameraCapabilities QGeoMappingManagerEngine::cameraCapabilities()
+QGeoCameraCapabilities QGeoMappingManagerEngine::cameraCapabilities() const
 {
-    Q_D(QGeoMappingManagerEngine);
+    Q_D(const QGeoMappingManagerEngine);
     return d->capabilities_;
 }
 

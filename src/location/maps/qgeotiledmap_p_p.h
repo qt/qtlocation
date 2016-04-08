@@ -57,7 +57,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoCameraTiles;
-class QGeoMapScene;
+class QGeoTiledMapScene;
 class QAbstractGeoTileCache;
 class QGeoTiledMappingManagerEngine;
 class QGeoTiledMap;
@@ -74,7 +74,6 @@ public:
     ~QGeoTiledMapPrivate();
 
     QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window);
-    void resized(int width, int height);
 
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos) const;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate) const;
@@ -83,8 +82,8 @@ public:
     void prefetchTiles();
 
 protected:
-    void mapResized(int width, int height) Q_DECL_OVERRIDE;
-    void changeCameraData(const QGeoCameraData &oldCameraData) Q_DECL_OVERRIDE;
+    void changeMapSize(const QSize& size) Q_DECL_OVERRIDE;
+    void changeCameraData(const QGeoCameraData &cameraData) Q_DECL_OVERRIDE;
     void changeActiveMapType(const QGeoMapType mapType) Q_DECL_OVERRIDE;
     void changeTileVersion(int version);
 
@@ -95,11 +94,12 @@ private:
     QAbstractGeoTileCache *m_cache;
     QGeoCameraTiles *m_visibleTiles;
     QGeoCameraTiles *m_prefetchTiles;
-    QGeoMapScene *m_mapScene;
+    QGeoTiledMapScene *m_mapScene;
     QGeoTileRequestManager *m_tileRequests;
     int m_maxZoomLevel;
     int m_minZoomLevel;
     QGeoTiledMap::PrefetchStyle m_prefetchStyle;
+    bool m_geomoteryUpdated;
     Q_DISABLE_COPY(QGeoTiledMapPrivate)
 };
 

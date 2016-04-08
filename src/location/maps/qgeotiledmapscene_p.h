@@ -33,8 +33,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPCONTROLLER_P_H
-#define QGEOMAPCONTROLLER_P_H
+#ifndef QGEOTILEDMAPSCENE_P_H
+#define QGEOTILEDMAPSCENE_P_H
 
 //
 //  W A R N I N G
@@ -48,65 +48,54 @@
 //
 
 #include <QObject>
-
-#include "qgeocoordinate.h"
-#include "qgeocameradata_p.h"
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMap;
+class QGeoCameraData;
+class QGeoTileSpec;
+class QDoubleVector2D;
+class QGeoTileTexture;
+class QSGNode;
+class QQuickWindow;
+class QGeoTiledMapScenePrivate;
 
-
-class Q_LOCATION_EXPORT QGeoMapController : public QObject
+class Q_LOCATION_EXPORT QGeoTiledMapScene : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
-    Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
-    Q_PROPERTY(qreal roll READ roll WRITE setRoll NOTIFY rollChanged)
-    Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
-
+    Q_DECLARE_PRIVATE(QGeoTiledMapScene)
 public:
-    QGeoMapController(QGeoMap *map);
-    ~QGeoMapController();
+    explicit QGeoTiledMapScene(QObject *parent = 0);
+    virtual ~QGeoTiledMapScene();
 
-    QGeoCoordinate center() const;
-    void setCenter(const QGeoCoordinate &center);
+    void setScreenSize(const QSize &size);
+    void setTileSize(int tileSize);
+    void setCameraData(const QGeoCameraData &cameraData);
 
-    void setLatitude(qreal latitude);
-    void setLongitude(qreal longitude);
-    void setAltitude(qreal altitude);
+    void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
+    const QSet<QGeoTileSpec> &visibleTiles() const;
 
-    qreal bearing() const;
-    void setBearing(qreal bearing);
+    void setUseVerticalLock(bool lock);
 
-    qreal tilt() const;
-    void setTilt(qreal tilt);
+    void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
-    qreal roll() const;
-    void setRoll(qreal roll);
+    QDoubleVector2D itemPositionToMercator(const QDoubleVector2D &pos) const;
+    QDoubleVector2D mercatorToItemPosition(const QDoubleVector2D &mercator) const;
 
-    qreal zoom() const;
-    void setZoom(qreal zoom);
+    QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
-    void pan(qreal dx, qreal dy);
+    bool verticalLock() const;
+    QSet<QGeoTileSpec> texturedTiles();
 
-private Q_SLOTS:
-    void cameraDataChanged(const QGeoCameraData &cameraData);
+    void clearTexturedTiles();
 
 Q_SIGNALS:
-    void centerChanged(const QGeoCoordinate &center);
-    void bearingChanged(qreal bearing);
-    void tiltChanged(qreal tilt);
-    void rollChanged(qreal roll);
-    void zoomChanged(qreal zoom);
+    void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);
 
 private:
-    QGeoMap *map_;
-    QGeoCameraData oldCameraData_;
+    Q_DISABLE_COPY(QGeoTiledMapScene)
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPCONTROLLER_P_H
+#endif // QGEOTILEDMAPSCENE_P_H

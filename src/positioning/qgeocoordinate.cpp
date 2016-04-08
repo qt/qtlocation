@@ -762,4 +762,21 @@ QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
 }
 #endif
 
+/*! \fn uint qHash(const QGeoCoordinate &coordinate, uint seed = 0)
+    \relates QHash
+    \since Qt 5.7
+
+    Returns a hash value for \a coordinate, using \a seed to seed the calculation.
+*/
+uint qHash(const QGeoCoordinate &coordinate, uint seed)
+{
+    QtPrivate::QHashCombine hash;
+    // north and south pole are geographically equivalent (no matter the longitude)
+    if (coordinate.latitude() != 90.0 && coordinate.latitude() != -90.0)
+        seed = hash(seed, coordinate.longitude());
+    seed = hash(seed, coordinate.latitude());
+    seed = hash(seed, coordinate.altitude());
+    return seed;
+}
+
 QT_END_NAMESPACE

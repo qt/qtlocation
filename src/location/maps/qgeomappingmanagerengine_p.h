@@ -89,7 +89,7 @@ public:
 
     QList<QGeoMapType> supportedMapTypes() const;
 
-    QGeoCameraCapabilities cameraCapabilities();
+    QGeoCameraCapabilities cameraCapabilities() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
