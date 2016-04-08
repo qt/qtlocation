@@ -469,8 +469,9 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
     double y = sin(dlon) * cos(lat2Rad);
     double x = cos(lat1Rad) * sin(lat2Rad) - sin(lat1Rad) * cos(lat2Rad) * cos(dlon);
 
+    double azimuth = qgeocoordinate_radToDeg(atan2(y, x)) + 360.0;
     double whole;
-    double fraction = modf(qgeocoordinate_radToDeg(atan2(y, x)), &whole);
+    double fraction = modf(azimuth, &whole);
     return qreal((int(whole + 360) % 360) + fraction);
 }
 
