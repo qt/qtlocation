@@ -430,7 +430,7 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
         return;
 
     path_ = pathList;
-
+    geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_);
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     polishAndUpdate();
@@ -448,7 +448,7 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 {
     path_.append(coordinate);
-
+    geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_, geoLeftBound_);
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     polishAndUpdate();
@@ -472,7 +472,7 @@ void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordina
         return;
 
     path_.removeAt(index);
-
+    geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_);
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     polishAndUpdate();
@@ -543,7 +543,7 @@ void QDeclarativePolygonMapItem::updatePolish()
     QList<QGeoCoordinate> closedPath = path_;
     closedPath << closedPath.first();
     borderGeometry_.clear();
-    borderGeometry_.updateSourcePoints(*map(), closedPath);
+    borderGeometry_.updateSourcePoints(*map(), closedPath, geoLeftBound_);
 
     if (border_.color() != Qt::transparent && border_.width() > 0)
         borderGeometry_.updateScreenPoints(*map(), border_.width());
@@ -640,12 +640,10 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
 
             path_.replace(i, coord);
         }
-
-        QGeoCoordinate leftBoundCoord = geometry_.geoLeftBound();
-        leftBoundCoord.setLongitude(QLocationUtils::wrapLong(leftBoundCoord.longitude()
-                           + newCoordinate.longitude() - firstLongitude));
-        geometry_.setPreserveGeometry(true, leftBoundCoord);
-        borderGeometry_.setPreserveGeometry(true, leftBoundCoord);
+        geoLeftBound_.setLongitude(QLocationUtils::wrapLong(geoLeftBound_.longitude()
+                                                            + newCoordinate.longitude() - firstLongitude));
+        geometry_.setPreserveGeometry(true, geoLeftBound_);
+        borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
         polishAndUpdate();

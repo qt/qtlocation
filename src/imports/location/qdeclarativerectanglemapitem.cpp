@@ -344,7 +344,7 @@ void QDeclarativeRectangleMapItem::updatePolish()
     pathClosed << pathClosed.first();
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
-        borderGeometry_.updateSourcePoints(*map(), pathClosed);
+        borderGeometry_.updateSourcePoints(*map(), pathClosed, topLeft_);
         borderGeometry_.updateScreenPoints(*map(), border_.width());
 
         QList<QGeoMapItemGeometry *> geoms;
@@ -392,8 +392,8 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
-    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
-    borderGeometry_.setPreserveGeometry(true, borderGeometry_.geoLeftBound());
+    geometry_.setPreserveGeometry(true, topLeft_);
+    borderGeometry_.setPreserveGeometry(true, topLeft_);
     geometry_.markScreenDirty();
     borderGeometry_.markScreenDirty();
     polishAndUpdate();

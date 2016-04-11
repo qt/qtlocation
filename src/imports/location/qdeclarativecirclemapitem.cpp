@@ -90,8 +90,8 @@ QT_BEGIN_NAMESPACE
     \section2 Performance
 
     MapCircle performance is almost equivalent to that of a MapPolygon with
-    125 vertices. There is a small amount of additional overhead with
-    respect to calculating the vertices first.
+    the same number of vertices. There is a small amount of additional
+    overhead with respect to calculating the vertices first.
 
     Like the other map objects, MapCircle is normally drawn without a smooth
     appearance. Setting the opacity property will force the object to be
@@ -124,6 +124,8 @@ QT_BEGIN_NAMESPACE
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
+static const int CircleSamples = 128;
 
 struct Vertex
 {
@@ -261,15 +263,22 @@ static bool crossEarthPole(const QGeoCoordinate &center, qreal distance)
     return false;
 }
 
-static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoordinate &center, qreal distance, int steps)
+static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
+                                      const QGeoCoordinate &center,
+                                      qreal distance,
+                                      int steps,
+                                      QGeoCoordinate &leftBound )
 {
     // Calculate points based on great-circle distance
     // Calculation is the same as GeoCoordinate's atDistanceAndAzimuth function
     // but tweaked here for computing multiple points
 
-    // pre-calculate
+    // pre-calculations
+    steps = qMax(steps, 3);
+    qreal centerLon = center.longitude();
+    qreal minLon = centerLon;
     qreal latRad = qgeocoordinate_degToRad(center.latitude());
-    qreal lonRad = qgeocoordinate_degToRad(center.longitude());
+    qreal lonRad = qgeocoordinate_degToRad(centerLon);
     qreal cosLatRad = std::cos(latRad);
     qreal sinLatRad = std::sin(latRad);
     qreal ratio = (distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000.0));
@@ -277,7 +286,7 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoo
     qreal sinRatio = std::sin(ratio);
     qreal sinLatRad_x_cosRatio = sinLatRad * cosRatio;
     qreal cosLatRad_x_sinRatio = cosLatRad * sinRatio;
-
+    int idx = 0;
     for (int i = 0; i < steps; ++i) {
         qreal azimuthRad = 2 * M_PI * i / steps;
         qreal resultLatRad = std::asin(sinLatRad_x_cosRatio
@@ -292,7 +301,17 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoo
             lon2 -= 360.0;
         }
         path << QGeoCoordinate(lat2, lon2, center.altitude());
+        // Consider only points in the left half of the circle for the left bound.
+        if (azimuthRad > M_PI) {
+            if (lon2 > centerLon) // if point and center are on different hemispheres
+                lon2 -= 360;
+            if (lon2 < minLon) {
+                minLon = lon2;
+                idx = i;
+            }
+        }
     }
+    leftBound = path.at(idx);
 }
 
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
@@ -460,13 +479,12 @@ void QDeclarativeCircleMapItem::updatePolish()
 
     if (geometry_.isSourceDirty()) {
         circlePath_.clear();
-        calculatePeripheralPoints(circlePath_, center_, radius_, 125);
+        calculatePeripheralPoints(circlePath_, center_, radius_, CircleSamples, geoLeftBound_);
     }
 
-    QGeoCoordinate leftBoundCoord;
     int pathCount = circlePath_.size();
-    bool preserve = preserveCircleGeometry(circlePath_, center_, radius_, leftBoundCoord);
-    geometry_.setPreserveGeometry(preserve, leftBoundCoord);
+    bool preserve = preserveCircleGeometry(circlePath_, center_, radius_);
+    geometry_.setPreserveGeometry(preserve, geoLeftBound_);
     geometry_.updateSourcePoints(*map(), circlePath_);
     if (crossEarthPole(center_, radius_) && circlePath_.size() == pathCount)
         geometry_.updateScreenPointsInvert(*map()); // invert fill area for really huge circles
@@ -475,8 +493,8 @@ void QDeclarativeCircleMapItem::updatePolish()
     if (border_.color() != Qt::transparent && border_.width() > 0) {
         QList<QGeoCoordinate> closedPath = circlePath_;
         closedPath << closedPath.first();
-        borderGeometry_.setPreserveGeometry(preserve, leftBoundCoord);
-        borderGeometry_.updateSourcePoints(*map(), closedPath);
+        borderGeometry_.setPreserveGeometry(preserve, geoLeftBound_);
+        borderGeometry_.updateSourcePoints(*map(), closedPath, geoLeftBound_);
         borderGeometry_.updateScreenPoints(*map(), border_.width());
 
         QList<QGeoMapItemGeometry *> geoms;
@@ -562,22 +580,12 @@ void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const
 }
 
 bool QDeclarativeCircleMapItem::preserveCircleGeometry (QList<QGeoCoordinate> &path,
-                                    const QGeoCoordinate &center, qreal distance,
-                                    QGeoCoordinate &leftBoundCoord)
+                                    const QGeoCoordinate &center, qreal distance)
 {
     // if circle crosses north/south pole, then don't preserve circular shape,
     if ( crossEarthPole(center, distance)) {
         updateCirclePathForRendering(path, center, distance);
         return false;
-    }
-    // else find and set its left bound
-    for (int i = 1; i < path.count(); ++i) {
-        int iNext = (i + 1) % path.count();
-        if (path.at(iNext).longitude() > path.at(i).longitude()
-             && path.at(i-1).longitude() > path.at(i).longitude()) {
-            if (qAbs(path.at(iNext).longitude() - path.at(i-1).longitude()) < 180)
-                leftBoundCoord = path.at(i);
-        }
     }
     return true;
 

@@ -122,11 +122,15 @@ private:
 
     QDeclarativeMapLineProperties border_;
     QList<QGeoCoordinate> path_;
+    QGeoCoordinate geoLeftBound_;
     QColor color_;
     bool dirtyMaterial_;
     QGeoMapPolygonGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;
     bool updatingGeometry_;
+    // for the left bound calculation
+    QVector<double> deltaXs_; // longitude deltas from path_[0]
+    double minX_;             // minimum value inside deltaXs_
 };
 
 //////////////////////////////////////////////////////////////////////

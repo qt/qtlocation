@@ -421,6 +421,8 @@ Item {
         function test_dateline() {
             map.center = datelineCoordinate
             map.zoomLevel = 2.2
+            var inspectionTime = 0 // change this to inspect the behavior.
+
             // rectangle
             // item spanning across dateline
             map.addMapItem(extMapRectDateline)
@@ -440,6 +442,7 @@ Item {
             verify(point.x == map.width / 2.0)
             // drag item back onto dateline
             verify(LocationTestHelper.waitForPolished(map))
+            visualInspectionPoint(inspectionTime)
             mousePress(map, point.x + 5, point.y + 5)
             var i
             for (i=0; i < 20; i += 2) {
@@ -448,6 +451,7 @@ Item {
             }
             mouseRelease(map, point.x + 5 - i, point.y + 5)
             verify(LocationTestHelper.waitForPolished(map))
+            visualInspectionPoint(inspectionTime)
             point = map.fromCoordinate(extMapRectDateline.topLeft)
             verify(point.x < map.width / 2.0)
             point = map.fromCoordinate(extMapRectDateline.bottomRight)
@@ -465,7 +469,7 @@ Item {
             point = map.fromCoordinate(extMapCircleDateline.center)
             verify(LocationTestHelper.waitForPolished(map))
             verify(point.x > map.width / 2.0)
-            visualInspectionPoint()
+            visualInspectionPoint(inspectionTime)
             mousePress(map, point.x, point.y)
             for (i=0; i < 50; i += 4) {
                 wait(1)
@@ -473,6 +477,7 @@ Item {
             }
             mouseRelease(map, point.x - i, point.y)
             verify(LocationTestHelper.waitForPolished(map))
+            visualInspectionPoint(inspectionTime)
             point = map.fromCoordinate(extMapCircleDateline.center)
             visualInspectionPoint()
             verify(point.x < map.width / 2.0)
@@ -489,7 +494,7 @@ Item {
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x > map.width / 2.0)
             verify(LocationTestHelper.waitForPolished(map))
-            visualInspectionPoint()
+            visualInspectionPoint(inspectionTime)
             mousePress(map, point.x + 5, point.y + 5)
             for (i=0; i < 64; i += 5) {
                 wait(1)
@@ -497,6 +502,7 @@ Item {
             }
             mouseRelease(map, point.x + 5 - i, point.y + 5)
             verify(LocationTestHelper.waitForPolished(map))
+            visualInspectionPoint(inspectionTime)
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             visualInspectionPoint()
             verify(point.x < map.width / 2.0)
@@ -534,6 +540,7 @@ Item {
             point = map.fromCoordinate(extMapPolygonDateline.path[3])
             verify(point.x == map.width / 2.0)
             verify(LocationTestHelper.waitForPolished(map))
+            visualInspectionPoint(inspectionTime)
             mousePress(map, point.x + 5, point.y - 5)
             for (i=0; i < 16; i += 2) {
                 wait(1)
@@ -541,6 +548,7 @@ Item {
             }
             mouseRelease(map, point.x + 5 - i, point.y - 5)
             verify(LocationTestHelper.waitForPolished(map))
+            visualInspectionPoint(inspectionTime)
             point = map.fromCoordinate(extMapPolygonDateline.path[0])
             verify(point.x < map.width / 2.0)
             point = map.fromCoordinate(extMapPolygonDateline.path[1])

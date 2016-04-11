@@ -107,7 +107,7 @@ protected Q_SLOTS:
 
 private:
     bool preserveCircleGeometry(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
-                                qreal distance, QGeoCoordinate &leftBoundCoord);
+                                qreal distance);
     void updateCirclePathForRendering(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
                                       qreal distance);
 
@@ -116,6 +116,7 @@ private:
     QDeclarativeMapLineProperties border_;
     QColor color_;
     qreal radius_;
+    QGeoCoordinate geoLeftBound_;
     QList<QGeoCoordinate> circlePath_;
     bool dirtyMaterial_;
     QGeoMapCircleGeometry geometry_;
