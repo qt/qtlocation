@@ -11,5 +11,5 @@ OTHER_FILES += flickr.qml \
                flickrcommon/* \
                flickrmobile/*
 
-target.path = $$[QT_INSTALL_EXAMPLES]/positioning/flickr
+target.path = $$[QT_INSTALL_EXAMPLES]/positioning/geoflickr
 INSTALLS += target
