@@ -469,7 +469,10 @@ private slots:
         QFETCH(QGeoCoordinate, c2);
         QFETCH(qreal, azimuth);
 
-        QCOMPARE(QString::number(c1.azimuthTo(c2)), QString::number(azimuth));
+        qreal result = c1.azimuthTo(c2);
+        QVERIFY(result >= 0.0);
+        QVERIFY(result < 360.0);
+        QCOMPARE(QString::number(result), QString::number(azimuth));
     }
 
     void azimuthTo_data()
@@ -488,6 +491,8 @@ private slots:
                 << LONDON << NEW_YORK << qreal(288.3388804508);
         QTest::newRow("north pole -> south pole")
                 << NORTH_POLE << SOUTH_POLE << qreal(180.0);
+        QTest::newRow("Almost 360degrees bearing")
+                << QGeoCoordinate(0.5,45.0,0.0) << QGeoCoordinate(0.5,-134.9999651,0.0)  << qreal(359.998);
     }
 
     void atDistanceAndAzimuth()
