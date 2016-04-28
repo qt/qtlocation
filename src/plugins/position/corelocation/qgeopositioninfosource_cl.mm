@@ -103,7 +103,7 @@ QGeoPositionInfoSourceCL::QGeoPositionInfoSourceCL(QObject *parent)
     , m_started(false)
     , m_updateTimer(0)
     , m_updateTimeout(0)
-    , m_positionError(QGeoPositionInfoSource::UnknownSourceError)
+    , m_positionError(QGeoPositionInfoSource::NoError)
 {
 }
 
