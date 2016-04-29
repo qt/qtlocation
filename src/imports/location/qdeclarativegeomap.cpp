@@ -799,6 +799,8 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
 
     \note Many map providers require the notice to be visible as part of the terms and conditions.
     Please consult the relevant provider documentation before turning this notice off.
+
+    \since 5.7
 */
 void QDeclarativeGeoMap::setCopyrightsVisible(bool visible)
 {
