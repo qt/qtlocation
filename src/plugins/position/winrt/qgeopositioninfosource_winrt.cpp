@@ -39,7 +39,9 @@
 #include <QCoreApplication>
 #include <QMutex>
 #include <qfunctions_winrt.h>
+#ifdef Q_OS_WINRT
 #include <private/qeventdispatcher_winrt_p.h>
+#endif
 
 #include <functional>
 #include <windows.system.h>
@@ -63,6 +65,16 @@ typedef IAsyncOperationCompletedHandler<GeolocationAccessStatus> AccessHandler;
 QT_BEGIN_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoPositionInfo)
+
+#ifndef Q_OS_WINRT
+namespace QEventDispatcherWinRT {
+HRESULT runOnXamlThread(const std::function<HRESULT ()> &delegate, bool waitForRun = true)
+{
+    Q_UNUSED(waitForRun);
+    return delegate();
+}
+}
+#endif
 
 class QGeoPositionInfoSourceWinRTPrivate {
 public:
@@ -490,7 +502,7 @@ HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator*, IStatusChange
 
 bool QGeoPositionInfoSourceWinRT::requestAccess() const
 {
-#if _MSC_VER >= 1900
+#if _MSC_VER >= 1900 && defined(Q_OS_WINRT)
     static GeolocationAccessStatus accessStatus = GeolocationAccessStatus_Unspecified;
     static ComPtr<IGeolocatorStatics> statics;
 
