@@ -407,6 +407,8 @@ Item {
 
      */
         function test_yz_dateline() {
+            if (Qt.platform.os === "windows")
+                skip("QTBUG-53455");
             map.clearMapItems()
             clear_data()
             map.center = datelineCoordinate
@@ -588,6 +590,8 @@ Item {
 
      */
         function test_zz_border_drag() {
+            if (Qt.platform.os === "windows")
+                skip("QTBUG-53455");
             map.clearMapItems()
             clear_data()
             map.center = datelineCoordinate

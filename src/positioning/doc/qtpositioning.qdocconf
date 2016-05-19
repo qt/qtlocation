@@ -40,7 +40,7 @@ headerdirs  += .. \
 sourcedirs  += .. \
                 ../../imports/positioning
 
-examplesinstallpath = qtlocation/positioning
+examplesinstallpath = positioning
 
 exampledirs += ../../../examples/positioning \
                snippets/
