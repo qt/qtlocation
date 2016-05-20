@@ -209,7 +209,7 @@ Item {
         function test_path_operations() {
             compare(mapPolyline.path[1].latitude, -27)
             compare(mapPolyline.path[1].longitude, 154.1)
-            compare(mapPolyline.coordinateAt(1), QtPositioning.coordinate(27, 154.1))
+            compare(mapPolyline.coordinateAt(1), QtPositioning.coordinate(-27, 154.1))
             compare(mapPolyline.path.length, mapPolyline.pathLength())
 
             mapPolyline.removeCoordinate(1);
