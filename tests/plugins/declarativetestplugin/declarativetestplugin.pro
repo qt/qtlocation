@@ -7,13 +7,15 @@ QT += gui-private qml quick location testlib
 INCLUDEPATH += ../../../src/imports/location
 INCLUDEPATH += ../../../src/location
 
-HEADERS += qdeclarativepinchgenerator_p.h \
-           qdeclarativelocationtestmodel_p.h
+HEADERS += \
+    qdeclarativepinchgenerator_p.h \
+    qdeclarativelocationtestmodel_p.h \
+    testhelper.h
 
-
-SOURCES += locationtest.cpp \
-           qdeclarativepinchgenerator.cpp \
-           qdeclarativelocationtestmodel.cpp
+SOURCES += \
+    locationtest.cpp \
+    qdeclarativepinchgenerator.cpp \
+    qdeclarativelocationtestmodel.cpp
 
 IMPORT_FILES = \
     qmldir

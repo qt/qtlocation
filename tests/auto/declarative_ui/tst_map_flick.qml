@@ -288,7 +288,6 @@ Item {
         {
             map.center.latitude = 50
             map.center.longitude = 50
-            waitForRendering(map)
             mousePress(page, 0, 0)
             for (var i = 0; i < 50; i += 5) {
                 wait(20)

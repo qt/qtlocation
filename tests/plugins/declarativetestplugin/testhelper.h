@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -31,43 +31,28 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativepinchgenerator_p.h"
-#include "qdeclarativelocationtestmodel_p.h"
-#include "testhelper.h"
+#ifndef TESTHELPER_H
+#define TESTHELPER_H
 
-#include <QtQml/QQmlExtensionPlugin>
-#include <QtQml/qqml.h>
-
-#include <QDebug>
+#include <QObject>
+#include <QSignalSpy>
+#include <QQuickItem>
+#include <QQuickWindow>
 
 QT_BEGIN_NAMESPACE
 
-static QObject *helper_factory(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine);
-    Q_UNUSED(scriptEngine);
-    TestHelper *helper = new TestHelper();
-    return helper;
-}
-
-class QLocationDeclarativeTestModule: public QQmlExtensionPlugin
+class TestHelper: public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface/1.0")
 public:
-    virtual void registerTypes(const char* uri)
+    TestHelper(QObject *parent = Q_NULLPTR):QObject(parent){}
+    Q_INVOKABLE bool waitForPolished(QQuickItem *item, int timeout = 10000) const
     {
-        if (QLatin1String(uri) == QLatin1String("QtLocation.Test")) {
-            qmlRegisterType<QDeclarativePinchGenerator>(uri, 5, 5, "PinchGenerator");
-            qmlRegisterType<QDeclarativeLocationTestModel>(uri, 5, 5, "TestModel");
-            qmlRegisterSingletonType<TestHelper>(uri, 5, 6, "LocationTestHelper", helper_factory);
-        } else {
-            qWarning() << "Unsupported URI given to load location test QML plugin: " << QLatin1String(uri);
-        }
+        QSignalSpy spy(item->window(), &QQuickWindow::afterAnimating);
+        return spy.wait(timeout);
     }
 };
 
-#include "locationtest.moc"
-
 QT_END_NAMESPACE
 
+#endif // TESTHELPER_H

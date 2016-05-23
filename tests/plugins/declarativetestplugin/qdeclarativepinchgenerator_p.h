@@ -46,6 +46,8 @@
 
 #define SWIPES_REQUIRED 2
 
+QT_BEGIN_NAMESPACE
+
 typedef struct {
     QList<QPoint> touchPoints;
     QList<int> durations;
@@ -136,5 +138,7 @@ private:
     bool enabled_;
     QTouchDevice* device_;
 };
+
+QT_END_NAMESPACE
 
 #endif

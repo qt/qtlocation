@@ -35,6 +35,7 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtPositioning 5.5
 import QtLocation 5.6
+import QtLocation.Test 5.6
 
 Item {
     id: page
@@ -308,22 +309,34 @@ Item {
      (0,240) ---------------------------------------------------- (240,240)
 
      */
-        function test_aa_precondition() {
-            wait(10)
+        function initTestCase()
+        {
             // sanity check that the coordinate conversion works
             var mapcenter = map.fromCoordinate(map.center)
             verify (fuzzy_compare(mapcenter.x, 100, 2))
             verify (fuzzy_compare(mapcenter.y, 100, 2))
         }
 
-        function test_polygon() {
+        function init()
+        {
             map.clearMapItems()
-            clear_data()
-            compare (extMapPolygon.border.width, 1.0)
-            compare (extMapPolygonClicked.count, 0)
+            extMapPolygon.border.width = 1.0
+            extMapPolygonClicked.clear()
+            extMapPolylineColorChanged.clear()
+            extMapPolylineWidthChanged.clear()
+            extMapPolylinePathChanged.clear()
+            extMapPolygonPathChanged.clear()
+            extMapPolygonColorChanged.clear()
+            extMapPolygonBorderColorChanged.clear()
+            extMapPolygonBorderWidthChanged.clear()
+        }
+
+        function test_polygon()
+        {
             map.center = extMapPolygon.path[1]
             var point = map.fromCoordinate(extMapPolygon.path[1])
             map.addMapItem(extMapPolygon)
+            verify(LocationTestHelper.waitForPolished(map))
             verify(extMapPolygon.path.length == 2)
             mouseClick(map, point.x - 5, point.y)
             compare(extMapPolygonClicked.count, 0)
@@ -331,7 +344,7 @@ Item {
             verify(extMapPolygon0.path.length == 0)
             extMapPolygon.addCoordinate(polyCoordinate)
             verify(extMapPolygon.path.length == 3)
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             mouseClick(map, point.x - 5, point.y)
             tryCompare(extMapPolygonClicked, "count", 1)
 
@@ -352,9 +365,8 @@ Item {
             verify(extMapPolygon.path.length == 0)
         }
 
-        function test_polyline() {
-            map.clearMapItems()
-            clear_data()
+        function test_polyline()
+        {
             compare (extMapPolyline.line.width, 1.0)
             var point = map.fromCoordinate(extMapPolyline.path[1])
             map.addMapItem(extMapPolyline0) // mustn't crash or ill-behave
@@ -411,14 +423,9 @@ Item {
      (0,240) ---------------------------------------------------- (600,240)
 
      */
-        function test_yz_dateline() {
-            if (Qt.platform.os === "windows")
-                skip("QTBUG-53455");
-            map.clearMapItems()
-            clear_data()
+        function test_dateline() {
             map.center = datelineCoordinate
             map.zoomLevel = 2.2
-
             // rectangle
             // item spanning across dateline
             map.addMapItem(extMapRectDateline)
@@ -434,10 +441,10 @@ Item {
             verify(point.x > map.width / 2.0)
             // move item edge onto dateline
             extMapRectDateline.topLeft.longitude = datelineCoordinate.longitude
-            verify(waitForRendering(map))
             point = map.fromCoordinate(extMapRectDateline.topLeft)
             verify(point.x == map.width / 2.0)
             // drag item back onto dateline
+            verify(LocationTestHelper.waitForPolished(map))
             mousePress(map, point.x + 5, point.y + 5)
             var i
             for (i=0; i < 20; i += 2) {
@@ -445,6 +452,7 @@ Item {
                 mouseMove(map, point.x + 5 - i, point.y + 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y + 5)
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapRectDateline.topLeft)
             verify(point.x < map.width / 2.0)
             point = map.fromCoordinate(extMapRectDateline.bottomRight)
@@ -458,15 +466,16 @@ Item {
             point = map.fromCoordinate(extMapCircleDateline.center)
             verify(point.x == map.width / 2.0)
             extMapCircleDateline.center.longitude = datelineCoordinateRight.longitude
-            verify(waitForRendering(map))
             point = map.fromCoordinate(extMapCircleDateline.center)
             verify(point.x > map.width / 2.0)
+            verify(LocationTestHelper.waitForPolished(map))
             mousePress(map, point.x, point.y)
             for (i=0; i < 40; i += 4) {
                 wait(1)
                 mouseMove(map, point.x - i, point.y)
             }
             mouseRelease(map, point.x - i, point.y)
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapCircleDateline.center)
             verify(point.x < map.width / 2.0)
             map.removeMapItem(extMapCircleDateline)
@@ -478,15 +487,16 @@ Item {
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x < map.width / 2.0)
             extMapQuickItemDateline.coordinate.longitude = datelineCoordinateRight.longitude
-            verify(waitForRendering(map))
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x > map.width / 2.0)
+            verify(LocationTestHelper.waitForPolished(map))
             mousePress(map, point.x + 5, point.y + 5)
             for (i=0; i < 50; i += 5) {
                 wait(1)
                 mouseMove(map, point.x + 5 - i, point.y + 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y + 5)
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x < map.width / 2.0)
             map.removeMapItem(extMapQuickItemDateline)
@@ -520,16 +530,16 @@ Item {
             path = extMapPolygonDateline.path;
             path[3].longitude = datelineCoordinate.longitude;
             extMapPolygonDateline.path = path;
-            verify(waitForRendering(map))
             point = map.fromCoordinate(extMapPolygonDateline.path[3])
             verify(point.x == map.width / 2.0)
+            verify(LocationTestHelper.waitForPolished(map))
             mousePress(map, point.x + 5, point.y - 5)
             for (i=0; i < 16; i += 2) {
                 wait(1)
                 mouseMove(map, point.x + 5 - i, point.y - 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y - 5)
-            verify(waitForRendering(map,10000))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapPolygonDateline.path[0])
             verify(point.x < map.width / 2.0)
             point = map.fromCoordinate(extMapPolygonDateline.path[1])
@@ -594,11 +604,7 @@ Item {
      (0,240) ---------------------------------------------------- (600,240)
 
      */
-        function test_zz_border_drag() {
-            if (Qt.platform.os === "windows")
-                skip("QTBUG-53455");
-            map.clearMapItems()
-            clear_data()
+        function test_border_drag() {
             map.center = datelineCoordinate
 
             // lower zoom level and change widths to reveal map border.
@@ -607,10 +613,9 @@ Item {
             map.zoomLevel = 1
             page.width = 600
             map.width = 560
-
             // rectangle
             map.addMapItem(extMapRectEdge)
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             verify(extMapRectEdge.topLeft.longitude == -15)
             verify(extMapRectEdge.bottomRight.longitude == -5)
             var point = map.fromCoordinate(extMapRectEdge.topLeft)
@@ -630,6 +635,7 @@ Item {
                 mouseMove(map, point.x + 5 + i, point.y + 5)
             }
             mouseRelease(map, point.x + 5 + i, point.y + 5)
+            verify(LocationTestHelper.waitForPolished(map))
             // currently the bottom right screen point is unwrapped and drawn
             // out of the map border, but in the future culling may take place
             // so tests for points outside the map border are ignored,
@@ -643,6 +649,7 @@ Item {
             // circle
             map.addMapItem(extMapCircleEdge)
             map.center = datelineCoordinate
+            verify(LocationTestHelper.waitForPolished(map))
             verify(extMapCircleEdge.center.longitude == -15)
             var point = map.fromCoordinate(extMapCircleEdge.center)
             verify(point.x < map.width)
@@ -656,6 +663,7 @@ Item {
                 mouseMove(map, point.x + i, point.y)
             }
             mouseRelease(map, point.x + i, point.y)
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapCircleEdge.center)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
@@ -665,7 +673,7 @@ Item {
             // quickitem
             map.addMapItem(extMapQuickItemEdge)
             map.center = datelineCoordinate
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             verify(extMapQuickItemEdge.coordinate.longitude == -15)
             point = map.fromCoordinate(extMapQuickItemEdge.coordinate)
             verify(point.x < map.width)
@@ -678,6 +686,7 @@ Item {
                 mouseMove(map, point.x + 5 + i, point.y + 5)
             }
             mouseRelease(map, point.x + 5 + i, point.y + 5)
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapQuickItemEdge.coordinate)
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
@@ -687,7 +696,7 @@ Item {
             // polygon
             map.center = datelineCoordinate
             map.addMapItem(extMapPolygonEdge)
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             verify(extMapPolygonEdge.path[0].longitude == -15)
             verify(extMapPolygonEdge.path[1].longitude == -5)
             verify(extMapPolygonEdge.path[2].longitude == -5)
@@ -712,6 +721,7 @@ Item {
                 mouseMove(map, point.x + 5 + i, point.y - 5)
             }
             mouseRelease(map, point.x + 5 + i, point.y - 5)
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapPolygonEdge.path[0])
             verify(point.x < map.width)
             verify(point.x > map.width / 2.0)
@@ -722,18 +732,6 @@ Item {
             map.removeMapItem(extMapPolygonEdge)
         }
 
-
-        function clear_data() {
-            extMapPolygonClicked.clear()
-            extMapPolylineColorChanged.clear()
-            extMapPolylineWidthChanged.clear()
-            extMapPolylinePathChanged.clear()
-            extMapPolygonPathChanged.clear()
-            extMapPolygonColorChanged.clear()
-            extMapPolygonBorderColorChanged.clear()
-            extMapPolygonBorderWidthChanged.clear()
-        }
-
         function fuzzy_compare(val, ref, tol) {
             var tolerance = 2
             if (tol !== undefined)
@@ -742,12 +740,6 @@ Item {
                 return true;
             console.log('map fuzzy cmp returns false for value, ref, tolerance: ' + val + ', ' + ref + ', ' + tolerance)
             return false;
-        }
-
-        // call to visualInspectionPoint testcase (only for development time visual inspection)
-        function visualInspectionPoint(text) {
-            progressText.text = text
-            //wait (500)
         }
     }
 }

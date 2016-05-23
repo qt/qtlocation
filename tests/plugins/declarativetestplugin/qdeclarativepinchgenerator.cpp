@@ -38,6 +38,8 @@
 #include <QtGui/qpa/qwindowsysteminterface.h>
 #include <QtGui/QStyleHints>
 
+QT_BEGIN_NAMESPACE
+
 QDeclarativePinchGenerator::QDeclarativePinchGenerator():
     target_(0),
     state_(Invalid),
@@ -381,3 +383,5 @@ int QDeclarativePinchGenerator::startDragDistance()
 {
     return qApp->styleHints()->startDragDistance();
 }
+
+QT_END_NAMESPACE

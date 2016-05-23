@@ -35,6 +35,7 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtLocation 5.6
 import QtPositioning 5.5
+import QtLocation.Test 5.6
 
     /*
 
@@ -67,7 +68,6 @@ Item {
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
-    property variant mapDefaultCenter: QtPositioning.coordinate(20, 20)
     property variant someCoordinate1: QtPositioning.coordinate(15, 15)
     property variant someCoordinate2: QtPositioning.coordinate(16, 16)
 
@@ -115,21 +115,10 @@ Item {
         id: map;
         x: 20; y: 20; width: 200; height: 200
         zoomLevel: 9
-        center: mapDefaultCenter
         plugin: testPlugin;
 
         MapRectangle {
             id: preMapRect
-            color: 'darkcyan'
-            border.width: 0
-            topLeft {
-                latitude: 20
-                longitude: 20
-            }
-            bottomRight {
-                latitude: 10
-                longitude: 30
-            }
             MouseArea {
                 id: preMapRectMa
                 anchors.fill: parent
@@ -144,13 +133,6 @@ Item {
         }
         MapCircle {
             id: preMapCircle
-            color: 'darkmagenta'
-            border.width: 0
-            center {
-                latitude: 10
-                longitude: 30
-            }
-            radius: 10000
             MouseArea {
                 id: preMapCircleMa
                 anchors.fill: parent
@@ -175,11 +157,8 @@ Item {
                 SignalSpy { id: preMapQuickItemClicked; target: parent; signalName: "clicked" }
                 SignalSpy { id: preMapQuickItemActiveChanged; target: parent.drag; signalName: "activeChanged" }
             }
-            coordinate {
-                latitude: 35
-                longitude: 3
-            }
             sourceItem: Rectangle {
+                id: preMapQuickItemSource
                 color: 'darkgreen'
                 width: 20
                 height: 20
@@ -240,21 +219,69 @@ Item {
         name: "MapItems"
         when: windowShown
 
-        function test_aa_items_on_map() { // aa et al. for execution order
-            wait(10)
+        function initTestCase()
+        {
             // sanity check that the coordinate conversion works, as
             // rest of the case relies on it. for robustness cut
             // a little slack with fuzzy compare
             var mapcenter = map.fromCoordinate(map.center)
             verify (fuzzy_compare(mapcenter.x, 100, 2))
             verify (fuzzy_compare(mapcenter.y, 100, 2))
+        }
 
-            // precondition
-            compare(preMapRectClicked.count, 0)
-            compare(preMapCircleClicked.count, 0)
+        function init()
+        {
+            map.center = QtPositioning.coordinate(20, 20)
+            preMapCircle.center = QtPositioning.coordinate(10,30)
+            preMapCircle.border.width = 0
+            preMapCircle.color = 'red'
+            preMapCircle.radius = 10000
+            preMapCircleClicked.clear()
+            preMapCircleCenterChanged.clear()
+            preMapCircleColorChanged.clear()
+            preMapCircleRadiusChanged.clear()
+            preMapCircleBorderColorChanged.clear()
+            preMapCircleBorderWidthChanged.clear()
 
+            preMapRect.color = 'red'
+            preMapRect.border.width = 0
+            preMapRect.topLeft = QtPositioning.coordinate(20, 20)
+            preMapRect.bottomRight = QtPositioning.coordinate(10, 30)
+            preMapRectTopLeftChanged.clear()
+            preMapRectBottomRightChanged.clear()
+            preMapRectColorChanged.clear()
+            preMapRectClicked.clear()
+            preMapRectActiveChanged.clear()
+
+            preMapQuickItem.sourceItem = preMapQuickItemSource
+            preMapQuickItem.zoomLevel = 0
+            preMapQuickItem.coordinate =  QtPositioning.coordinate(35, 3)
+            preMapQuickItemClicked.clear()
+            preMapQuickItem.anchorPoint = Qt.point(0,0)
+            preMapQuickItemCoordinateChanged.clear()
+            preMapQuickItemAnchorPointChanged.clear()
+            preMapQuickItemZoomLevelChanged.clear()
+            preMapQuickItemSourceItemChanged.clear()
+
+            preMapPolygonClicked.clear()
+            preMapPolylineColorChanged.clear()
+            preMapPolylineWidthChanged.clear()
+            preMapPolylinePathChanged.clear()
+            preMapPolygonPathChanged.clear()
+            preMapPolygonColorChanged.clear()
+            preMapPolygonBorderColorChanged.clear()
+            preMapPolygonBorderWidthChanged.clear()
+            preMapRouteRouteChanged.clear()
+            preMapRouteLineColorChanged.clear()
+            preMapRouteLineWidthChanged.clear()
+            verify(LocationTestHelper.waitForPolished(map))
+        }
+
+        function test_items_on_map()
+        {
             // click rect
             map.center = preMapRect.topLeft
+            verify(LocationTestHelper.waitForPolished(map))
             var point = map.fromCoordinate(preMapRect.topLeft)
             mouseClick(map, point.x + 5, point.y + 5)
             tryCompare(preMapRectClicked, "count", 1)
@@ -264,11 +291,11 @@ Item {
 
             // click circle, overlaps and is above rect
             map.center = preMapCircle.center
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapCircle.center)
             mouseClick(map, point.x - 5, point.y - 5)
-            tryCompare(preMapRectClicked, "count", 1)
-            compare(preMapCircleClicked.count, 1)
+            tryCompare(preMapCircleClicked, "count", 1)
+            compare(preMapRectClicked.count, 1)
 
             // click within circle bounding rect but not inside the circle geometry
             map.center = preMapCircle.center.atDistanceAndAzimuth(preMapCircle.radius, -45)
@@ -279,7 +306,7 @@ Item {
             // click quick item
             compare(preMapQuickItemClicked.count, 0)
             map.center = preMapQuickItem.coordinate
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
             tryCompare(preMapQuickItemClicked, "count", 1)
@@ -287,20 +314,22 @@ Item {
             // click polygon
             compare (preMapPolygonClicked.count, 0)
             map.center = preMapPolygon.path[1]
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapPolygon.path[1])
             mouseClick(map, point.x - 5, point.y)
             tryCompare(preMapPolygonClicked, "count", 1)
+        }
 
+        function test_no_items_on_map()
+        {
             // remove items and repeat clicks to verify they are gone
             map.clearMapItems()
-            clear_data()
             compare (map.mapItems.length, 0)
             map.center = preMapRect.topLeft
-            point = map.fromCoordinate(preMapRect.topLeft)
+            var point = map.fromCoordinate(preMapRect.topLeft)
             mouseClick(map, point.x + 5, point.y + 5)
             compare(preMapRectClicked.count, 0)
-            visualInspectionPoint()
+            verify(LocationTestHelper.waitForPolished(map))
             map.center = preMapCircle.center
             point = map.fromCoordinate(preMapCircle.center)
             mouseClick(map, point.x - 5, point.y - 5)
@@ -329,30 +358,31 @@ Item {
             map.addMapItem(preMapPolyline)
             map.addMapItem(preMapRoute)
             compare (map.mapItems.length, 6)
-            visualInspectionPoint()
+
             map.center = preMapRect.topLeft
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapRect.topLeft)
             mouseClick(map, point.x + 5, point.y + 5)
             tryCompare(preMapRectClicked, "count", 1)
             map.center = preMapCircle.center
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapCircle.center)
             mouseClick(map, point.x - 5, point.y - 5)
             tryCompare(preMapRectClicked, "count", 1)
             compare(preMapCircleClicked.count, 1)
             map.center = preMapCircle.center.atDistanceAndAzimuth(preMapCircle.radius, -45)
+            verify(LocationTestHelper.waitForPolished(map))
             mouseClick(map, preMapCircle.x + 4, preMapCircle.y + 4)
             tryCompare(preMapRectClicked, "count", 2)
             compare(preMapCircleClicked.count, 1)
             compare(preMapQuickItemClicked.count, 0)
             map.center = preMapQuickItem.coordinate
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
             tryCompare(preMapQuickItemClicked, "count", 1)
             map.center = preMapPolygon.path[1]
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapPolygon.path[1])
             mouseClick(map, point.x - 5, point.y)
             tryCompare(preMapPolygonClicked, "count", 1)
@@ -361,8 +391,7 @@ Item {
             // item clips to map. not sure if this is sensible test
             map.addMapItem(extMapCircle)
             map.center = extMapCircle.center
-            verify(waitForRendering(map))
-            visualInspectionPoint();
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapCircle.center)
             mouseClick(map, point.x, point.y)
             tryCompare(extMapCircleClicked, "count", 1)
@@ -372,8 +401,7 @@ Item {
 
             map.addMapItem(extMapQuickItem)
             map.center = extMapQuickItem.coordinate
-            verify(waitForRendering(map))
-            visualInspectionPoint();
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
             tryCompare(extMapQuickItemClicked, "count", 1)
@@ -382,13 +410,12 @@ Item {
             map.removeMapItem(extMapQuickItem)
         }
 
-        function test_ab_drag() {
-            clear_data()
+        function test_drag()
+        {
             // basic drags, drag rectangle
             compare (preMapRectActiveChanged.count, 0)
             map.center = preMapRect.topLeft
-            verify(waitForRendering(map))
-
+            verify(LocationTestHelper.waitForPolished(map))
             var i
             var point = map.fromCoordinate(preMapRect.topLeft)
             var targetCoordinate = map.toCoordinate(51, 51)
@@ -411,7 +438,7 @@ Item {
             // drag circle
             compare (preMapCircleActiveChanged.count, 0)
             map.center = preMapCircle.center
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapCircle.center)
             targetCoordinate = map.toCoordinate(51, 51)
             mousePress(map, point.x, point.y)
@@ -420,7 +447,7 @@ Item {
                 mouseMove(map, point.x - i, point.y - i)
             }
             mouseRelease(map, point.x - i, point.y - i)
-            visualInspectionPoint()
+            verify(LocationTestHelper.waitForPolished(map))
             compare(preMapRectActiveChanged.count, 2)
             compare(preMapCircleActiveChanged.count, 2)
             verify(preMapCircleCenterChanged.count > 1)
@@ -430,7 +457,7 @@ Item {
             // drag quick item
             compare (preMapQuickItemActiveChanged.count, 0)
             map.center = preMapQuickItem.coordinate
-            verify(waitForRendering(map))
+            verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapQuickItem.coordinate)
             targetCoordinate = map.toCoordinate(51, 51)
             mousePress(map, point.x + 5, point.y + 5)
@@ -439,15 +466,15 @@ Item {
                 mouseMove(map, point.x - i, point.y - i)
             }
             mouseRelease(map, point.x - i, point.y - i)
-            visualInspectionPoint()
+            verify(LocationTestHelper.waitForPolished(map))
             compare(preMapQuickItemActiveChanged.count, 2)
             verify(preMapQuickItemCoordinateChanged.count > 1)
             verify(fuzzy_compare(preMapQuickItem.coordinate.latitude, targetCoordinate.latitude, 0.2))
             verify(fuzzy_compare(preMapQuickItem.coordinate.longitude, targetCoordinate.longitude, 0.2))
         }
 
-        function test_ac_basic_properties() {
-            clear_data()
+        function test_basic_items_properties()
+        {
             // circle
             preMapCircle.center = someCoordinate1
             compare (preMapCircleCenterChanged.count, 1)
@@ -563,35 +590,6 @@ Item {
             compare (preMapQuickItemSourceItemChanged.count, 1)
         }
 
-        function clear_data() {
-            preMapRectClicked.clear()
-            preMapCircleClicked.clear()
-            preMapQuickItemClicked.clear()
-            preMapPolygonClicked.clear()
-            preMapCircleCenterChanged.clear()
-            preMapCircleColorChanged.clear()
-            preMapCircleRadiusChanged.clear()
-            preMapCircleBorderColorChanged.clear()
-            preMapCircleBorderWidthChanged.clear()
-            preMapRectTopLeftChanged.clear()
-            preMapRectBottomRightChanged.clear()
-            preMapRectColorChanged.clear()
-            preMapPolylineColorChanged.clear()
-            preMapPolylineWidthChanged.clear()
-            preMapPolylinePathChanged.clear()
-            preMapPolygonPathChanged.clear()
-            preMapPolygonColorChanged.clear()
-            preMapPolygonBorderColorChanged.clear()
-            preMapPolygonBorderWidthChanged.clear()
-            preMapRouteRouteChanged.clear()
-            preMapRouteLineColorChanged.clear()
-            preMapRouteLineWidthChanged.clear()
-            preMapQuickItemCoordinateChanged.clear()
-            preMapQuickItemAnchorPointChanged.clear()
-            preMapQuickItemZoomLevelChanged.clear()
-            preMapQuickItemSourceItemChanged.clear()
-        }
-
         function fuzzy_compare(val, ref, tol) {
             var tolerance = 2
             if (tol !== undefined)
@@ -602,16 +600,6 @@ Item {
             return false;
         }
 
-        // call to visualInspectionPoint testcase (for dev time visual inspection)
-        function visualInspectionPoint(time) {
-            var waitTime = 0 // 300
-            if (time !== undefined)
-                waitTime = time
-            if (waitTime > 0) {
-                console.log('halting for ' + waitTime + ' milliseconds')
-                wait (waitTime)
-            }
-        }
         // these 'real_' prefixed functions do sequences as
         // it would occur on real app (e.g. doubleclick is in fact
         // a sequence of press, release, doubleclick, release).
