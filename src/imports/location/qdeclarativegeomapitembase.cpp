@@ -133,6 +133,8 @@ void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
     if (map_ && quickMap_) {
         connect(map_, SIGNAL(cameraDataChanged(QGeoCameraData)),
                 this, SLOT(baseCameraDataChanged(QGeoCameraData)));
+        connect(quickMap, SIGNAL(heightChanged()), this, SLOT(polishAndUpdate()));
+        connect(quickMap, SIGNAL(widthChanged()), this, SLOT(polishAndUpdate()));
         lastSize_ = QSizeF(quickMap_->width(), quickMap_->height());
         lastCameraData_ = map_->cameraData();
     }
