@@ -36,6 +36,8 @@
 #include <QList>
 #include <QtPositioning/QGeoCoordinate>
 
+QT_BEGIN_NAMESPACE
+
 class DataObject: public QObject
 {
     Q_OBJECT
@@ -122,5 +124,7 @@ private:
     int crazyLevel_;
     bool crazyMode_;
 };
+
+QT_END_NAMESPACE
 
 #endif
