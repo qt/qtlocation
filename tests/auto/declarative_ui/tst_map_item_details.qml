@@ -270,7 +270,6 @@ Item {
     Map {
         id: map;
         x: 20; y: 20; width: 200; height: 200
-        zoomLevel: 3
         center: mapDefaultCenter
         plugin: testPlugin;
     }
@@ -315,6 +314,7 @@ Item {
         function init()
         {
             map.clearMapItems()
+            map.zoomLevel = 3
             extMapPolygon.border.width = 1.0
             extMapPolygonClicked.clear()
             extMapPolylineColorChanged.clear()
@@ -574,157 +574,6 @@ Item {
             point = map.fromCoordinate(extMapRouteDateline.route.path[1])
             verify(point.x > map.width / 2.0)
             map.removeMapItem(extMapRouteDateline)
-        }
-
-    /*
-
-     (0,0)   ---------------------------------------------------- (600,0)
-             | no map                                           |
-             |    (20,20)                                       |
-     (0,20)  |    ------------------------------------------    | (600,20)
-             |    |                                        |    |
-             |    |  map                                   |    |
-             |    |                                        |    |
-             |    |                                        |    |
-             |    |                                        |    |
-             |    |                   (lat 20, lon 180)    |    |
-             |    |                     x                  |    |
-             |    |                                        |    |
-             |    |                                        |    |
-             |    |                                        |    |
-             |    |                                        |    |
-             |    |                                        |    |
-             |    ------------------------------------------    |
-             |                                                  |
-     (0,240) ---------------------------------------------------- (600,240)
-
-     */
-        function test_border_drag() {
-            map.center = datelineCoordinate
-
-            // lower zoom level and change widths to reveal map border.
-            // Note: items are not visible at zoom level < 2.0,
-            // but for testing it's ok
-            map.zoomLevel = 1
-            page.width = 600
-            map.width = 560
-            // rectangle
-            map.addMapItem(extMapRectEdge)
-            verify(LocationTestHelper.waitForPolished(map))
-            verify(extMapRectEdge.topLeft.longitude == -15)
-            verify(extMapRectEdge.bottomRight.longitude == -5)
-            var point = map.fromCoordinate(extMapRectEdge.topLeft)
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            point = map.fromCoordinate(extMapRectEdge.bottomRight)
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            var originalWidth = extMapRectEdge.width;
-            verify(originalWidth < map.width / 2.0)
-            // drag item onto map border
-            point = map.fromCoordinate(extMapRectEdge.topLeft)
-            mousePress(map, point.x + 5, point.y + 5)
-            var i
-            for (i=0; i < 20; i += 2) {
-                wait(1)
-                mouseMove(map, point.x + 5 + i, point.y + 5)
-            }
-            mouseRelease(map, point.x + 5 + i, point.y + 5)
-            verify(LocationTestHelper.waitForPolished(map))
-            // currently the bottom right screen point is unwrapped and drawn
-            // out of the map border, but in the future culling may take place
-            // so tests for points outside the map border are ignored,
-            // instead we check the item width
-            point = map.fromCoordinate(extMapRectEdge.topLeft)
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            compare(extMapRectEdge.width, originalWidth)
-            map.removeMapItem(extMapRectEdge)
-
-            // circle
-            map.addMapItem(extMapCircleEdge)
-            map.center = datelineCoordinate
-            verify(LocationTestHelper.waitForPolished(map))
-            verify(extMapCircleEdge.center.longitude == -15)
-            var point = map.fromCoordinate(extMapCircleEdge.center)
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            originalWidth = extMapCircleEdge.width;
-            verify(originalWidth < map.width / 2.0)
-            point = map.fromCoordinate(extMapCircleEdge.center)
-            mousePress(map, point.x, point.y)
-            for (i=0; i < 20; i += 2) {
-                wait(1)
-                mouseMove(map, point.x + i, point.y)
-            }
-            mouseRelease(map, point.x + i, point.y)
-            verify(LocationTestHelper.waitForPolished(map))
-            point = map.fromCoordinate(extMapCircleEdge.center)
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            fuzzy_compare(extMapCircleEdge.width, originalWidth)
-            map.removeMapItem(extMapCircleEdge)
-
-            // quickitem
-            map.addMapItem(extMapQuickItemEdge)
-            map.center = datelineCoordinate
-            verify(LocationTestHelper.waitForPolished(map))
-            verify(extMapQuickItemEdge.coordinate.longitude == -15)
-            point = map.fromCoordinate(extMapQuickItemEdge.coordinate)
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            originalWidth = extMapQuickItemEdge.width;
-            verify(originalWidth < map.width / 2.0)
-            mousePress(map, point.x + 5, point.y + 5)
-            for (i=0; i < 20; i += 2) {
-                wait(1)
-                mouseMove(map, point.x + 5 + i, point.y + 5)
-            }
-            mouseRelease(map, point.x + 5 + i, point.y + 5)
-            verify(LocationTestHelper.waitForPolished(map))
-            point = map.fromCoordinate(extMapQuickItemEdge.coordinate)
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            compare(extMapQuickItemEdge.width, originalWidth)
-            map.removeMapItem(extMapQuickItemEdge)
-
-            // polygon
-            map.center = datelineCoordinate
-            map.addMapItem(extMapPolygonEdge)
-            verify(LocationTestHelper.waitForPolished(map))
-            verify(extMapPolygonEdge.path[0].longitude == -15)
-            verify(extMapPolygonEdge.path[1].longitude == -5)
-            verify(extMapPolygonEdge.path[2].longitude == -5)
-            verify(extMapPolygonEdge.path[3].longitude == -15)
-            point = map.fromCoordinate(extMapPolygonEdge.path[0])
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            point = map.fromCoordinate(extMapPolygonEdge.path[1])
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            point = map.fromCoordinate(extMapPolygonEdge.path[2])
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            point = map.fromCoordinate(extMapPolygonEdge.path[3])
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            originalWidth = extMapPolygonEdge.width;
-            verify(originalWidth < map.width / 2.0)
-            mousePress(map, point.x + 5, point.y - 5)
-            for (i=0; i < 20; i += 2) {
-                wait(1)
-                mouseMove(map, point.x + 5 + i, point.y - 5)
-            }
-            mouseRelease(map, point.x + 5 + i, point.y - 5)
-            verify(LocationTestHelper.waitForPolished(map))
-            point = map.fromCoordinate(extMapPolygonEdge.path[0])
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            point = map.fromCoordinate(extMapPolygonEdge.path[3])
-            verify(point.x < map.width)
-            verify(point.x > map.width / 2.0)
-            compare(extMapPolygonEdge.width, originalWidth)
-            map.removeMapItem(extMapPolygonEdge)
         }
 
         function fuzzy_compare(val, ref, tol) {
