@@ -201,7 +201,6 @@ bool QDeclarativeGeoMapItemBase::childMouseEventFilter(QQuickItem *item, QEvent 
     switch (event->type()) {
     case QEvent::MouseButtonPress:
     case QEvent::MouseButtonRelease:
-    case QEvent::MouseMove:
         if (contains(static_cast<QMouseEvent*>(event)->pos())) {
             return false;
         } else {
