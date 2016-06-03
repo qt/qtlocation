@@ -15,7 +15,7 @@ OTHER_FILES += \
 RESOURCES += \
     satelliteinfo.qrc
 
-target.path = $$[QT_INSTALL_EXAMPLES]/qtpositioning/satelliteinfo
+target.path = $$[QT_INSTALL_EXAMPLES]/positioning/satelliteinfo
 INSTALLS += target
 
 

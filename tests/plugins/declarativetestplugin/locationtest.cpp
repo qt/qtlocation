@@ -28,6 +28,7 @@
 
 #include "qdeclarativepinchgenerator_p.h"
 #include "qdeclarativelocationtestmodel_p.h"
+#include "testhelper.h"
 
 #include <QtQml/QQmlExtensionPlugin>
 #include <QtQml/qqml.h>
@@ -35,6 +36,14 @@
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
+
+static QObject *helper_factory(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+    TestHelper *helper = new TestHelper();
+    return helper;
+}
 
 class QLocationDeclarativeTestModule: public QQmlExtensionPlugin
 {
@@ -46,6 +55,7 @@ public:
         if (QLatin1String(uri) == QLatin1String("QtLocation.Test")) {
             qmlRegisterType<QDeclarativePinchGenerator>(uri, 5, 5, "PinchGenerator");
             qmlRegisterType<QDeclarativeLocationTestModel>(uri, 5, 5, "TestModel");
+            qmlRegisterSingletonType<TestHelper>(uri, 5, 6, "LocationTestHelper", helper_factory);
         } else {
             qWarning() << "Unsupported URI given to load location test QML plugin: " << QLatin1String(uri);
         }

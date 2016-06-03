@@ -684,7 +684,7 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
     //small optiomatization to avoid double setCameraData
     bool centerHasChanged = false;
 
-    if (m_map) {
+    if (m_initialized) {
         m_cameraData.setZoomLevel(qBound(minimumZoomLevel(), zoomLevel, maximumZoomLevel()));
         m_maximumViewportLatitude = m_map->maximumLatitudeForZoom(m_cameraData.zoomLevel());
         QGeoCoordinate coord = m_cameraData.center();
@@ -724,7 +724,7 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
     if (!center.isValid())
         return;
 
-    if (m_map) {
+    if (m_initialized) {
         QGeoCoordinate coord(center);
         coord.setLatitude(qBound(-m_maximumViewportLatitude, center.latitude(), m_maximumViewportLatitude));
         m_cameraData.setCenter(coord);
@@ -799,6 +799,8 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
 
     \note Many map providers require the notice to be visible as part of the terms and conditions.
     Please consult the relevant provider documentation before turning this notice off.
+
+    \since 5.7
 */
 void QDeclarativeGeoMap::setCopyrightsVisible(bool visible)
 {

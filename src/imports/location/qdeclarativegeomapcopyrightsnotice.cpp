@@ -50,8 +50,8 @@ QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem 
 {
     QQuickAnchors *anchors = property("anchors").value<QQuickAnchors *>();
     if (anchors) {
-        anchors->setLeft(QQuickAnchorLine(parent, QQuickAnchorLine::Left));
-        anchors->setBottom(QQuickAnchorLine(parent, QQuickAnchorLine::Bottom));
+        anchors->setLeft(QQuickAnchorLine(parent, QQuickAnchors::LeftAnchor));
+        anchors->setBottom(QQuickAnchorLine(parent, QQuickAnchors::BottomAnchor));
     }
 }
 

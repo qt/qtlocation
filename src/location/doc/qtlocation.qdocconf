@@ -41,7 +41,7 @@ sourcedirs  += .. \
                 ../../imports/location \
                 ../../plugins/geoservices/nokia
 
-examplesinstallpath = qtlocation/location
+examplesinstallpath = location
 
 exampledirs += ../../../examples/location \
                snippets/

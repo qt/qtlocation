@@ -31,6 +31,8 @@
 #include <QtCore/QTime>
 #include <QtCore>
 
+QT_BEGIN_NAMESPACE
+
 QDeclarativeLocationTestModel::QDeclarativeLocationTestModel(QObject *parent):
      QAbstractListModel(parent),
     delay_(0),
@@ -242,3 +244,5 @@ QHash<int, QByteArray> QDeclarativeLocationTestModel::roleNames() const
     roles.insert(TestDataRole, "modeldata");
     return roles;
 }
+
+QT_END_NAMESPACE
