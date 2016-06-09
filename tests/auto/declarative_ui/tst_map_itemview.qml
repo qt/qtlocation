@@ -398,6 +398,8 @@ Item {
             tryCompare(mapForView, "mapItemsLength", 7)
             testModel.datacount += 2
             testModel2.datacount += 1
+            // delegate spawning is async. wait a bit.
+            wait(1)
             tryCompare(mapForView, "mapItemsLength", 9)
 
             theItemView.model = testModel

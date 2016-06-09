@@ -29,7 +29,8 @@ HEADERS += \
            locationvaluetypehelper_p.h\
            qquickgeomapgesturearea_p.h\
            ../positioning/qquickgeocoordinateanimation_p.h \
-           mapitemviewdelegateincubator.h
+           mapitemviewdelegateincubator.h \
+           qdeclarativegeomapitemview_p_p.h
 
 SOURCES += \
            location.cpp \
