@@ -157,8 +157,6 @@ void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map && quickMap) {
-        connect(quickMap, SIGNAL(heightChanged()), this, SLOT(polishAndUpdate()));
-        connect(quickMap, SIGNAL(widthChanged()), this, SLOT(polishAndUpdate()));
         connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)),
                 this, SLOT(polishAndUpdate()));
         polishAndUpdate();

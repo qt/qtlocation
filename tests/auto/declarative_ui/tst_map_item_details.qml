@@ -277,7 +277,7 @@ Item {
     Text {id: progressText}
 
     TestCase {
-        name: "MapItemDeatils"
+        name: "MapItemDetails"
         when: windowShown
 
     /*
@@ -459,19 +459,22 @@ Item {
             verify(extMapCircleDateline.center.longitude === 180)
             map.center = datelineCoordinate
             point = map.fromCoordinate(extMapCircleDateline.center)
-            verify(point.x == map.width / 2.0)
-            extMapCircleDateline.center.longitude = datelineCoordinateRight.longitude
+            verify(point.x == map.width / 2.0) // center of the screen
+            visualInspectionPoint()
+            extMapCircleDateline.center.longitude = datelineCoordinateRight.longitude // -170, moving the circle to the right
             point = map.fromCoordinate(extMapCircleDateline.center)
-            verify(point.x > map.width / 2.0)
             verify(LocationTestHelper.waitForPolished(map))
+            verify(point.x > map.width / 2.0)
+            visualInspectionPoint()
             mousePress(map, point.x, point.y)
-            for (i=0; i < 40; i += 4) {
+            for (i=0; i < 50; i += 4) {
                 wait(1)
                 mouseMove(map, point.x - i, point.y)
             }
             mouseRelease(map, point.x - i, point.y)
             verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapCircleDateline.center)
+            visualInspectionPoint()
             verify(point.x < map.width / 2.0)
             map.removeMapItem(extMapCircleDateline)
 
@@ -481,18 +484,21 @@ Item {
             verify(extMapQuickItemDateline.coordinate.longitude === 175)
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x < map.width / 2.0)
+            visualInspectionPoint()
             extMapQuickItemDateline.coordinate.longitude = datelineCoordinateRight.longitude
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
             verify(point.x > map.width / 2.0)
             verify(LocationTestHelper.waitForPolished(map))
+            visualInspectionPoint()
             mousePress(map, point.x + 5, point.y + 5)
-            for (i=0; i < 50; i += 5) {
+            for (i=0; i < 64; i += 5) {
                 wait(1)
                 mouseMove(map, point.x + 5 - i, point.y + 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y + 5)
             verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(extMapQuickItemDateline.coordinate)
+            visualInspectionPoint()
             verify(point.x < map.width / 2.0)
             map.removeMapItem(extMapQuickItemDateline)
 
@@ -584,6 +590,16 @@ Item {
                 return true;
             console.log('map fuzzy cmp returns false for value, ref, tolerance: ' + val + ', ' + ref + ', ' + tolerance)
             return false;
+        }
+        // call to visualInspectionPoint testcase (for dev time visual inspection)
+        function visualInspectionPoint(time) {
+            var waitTime = 0 // 300
+            if (time !== undefined)
+                waitTime = time
+            if (waitTime > 0) {
+                console.log('halting for ' + waitTime + ' milliseconds')
+                wait (waitTime)
+            }
         }
     }
 }
