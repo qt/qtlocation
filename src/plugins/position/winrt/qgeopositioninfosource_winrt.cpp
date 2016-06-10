@@ -62,9 +62,9 @@ typedef IAsyncOperationCompletedHandler<Geoposition*> PositionHandler;
 typedef IAsyncOperationCompletedHandler<GeolocationAccessStatus> AccessHandler;
 #endif
 
-QT_BEGIN_NAMESPACE
-
 Q_DECLARE_METATYPE(QGeoPositionInfo)
+
+QT_BEGIN_NAMESPACE
 
 #ifndef Q_OS_WINRT
 namespace QEventDispatcherWinRT {
