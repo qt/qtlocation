@@ -411,6 +411,10 @@ QQuickGeoMapGestureArea *QDeclarativeGeoMap::gesture()
 void QDeclarativeGeoMap::populateMap()
 {
     QObjectList kids = children();
+    QList<QQuickItem *> quickKids = childItems();
+    for (int i=0; i < quickKids.count(); ++i)
+        kids.append(quickKids.at(i));
+
     for (int i = 0; i < kids.size(); ++i) {
         // dispatch items appropriately
         QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView *>(kids.at(i));
@@ -461,7 +465,6 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 
     return root;
 }
-
 
 /*!
     \qmlproperty Plugin QtLocation::Map::plugin
