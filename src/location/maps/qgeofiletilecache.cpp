@@ -390,7 +390,7 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::addToTextureCache(const QGeoT
     return tt;
 }
 
-QString QGeoFileTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory)
+QString QGeoFileTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const
 {
     QString filename = spec.plugin();
     filename += QLatin1String("-");
@@ -416,7 +416,7 @@ QString QGeoFileTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QS
     return dir.filePath(filename);
 }
 
-QGeoTileSpec QGeoFileTileCache::filenameToTileSpec(const QString &filename)
+QGeoTileSpec QGeoFileTileCache::filenameToTileSpec(const QString &filename) const
 {
     QGeoTileSpec emptySpec;
 

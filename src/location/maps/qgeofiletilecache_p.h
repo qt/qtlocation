@@ -128,7 +128,7 @@ public:
                 const QString &format,
                 QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches) Q_DECL_OVERRIDE;
 
-private:
+protected:
     void printStats() Q_DECL_OVERRIDE;
     void loadTiles();
 
@@ -138,8 +138,8 @@ private:
     QSharedPointer<QGeoCachedTileMemory> addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
     QSharedPointer<QGeoTileTexture> addToTextureCache(const QGeoTileSpec &spec, const QImage &image);
 
-    static QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory);
-    static QGeoTileSpec filenameToTileSpec(const QString &filename);
+    virtual QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const;
+    virtual QGeoTileSpec filenameToTileSpec(const QString &filename) const;
 
     QCache3Q<QGeoTileSpec, QGeoCachedTileDisk, QCache3QTileEvictionPolicy > diskCache_;
     QCache3Q<QGeoTileSpec, QGeoCachedTileMemory > memoryCache_;

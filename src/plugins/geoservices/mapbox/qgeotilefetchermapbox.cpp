@@ -47,7 +47,6 @@ QT_BEGIN_NAMESPACE
 QGeoTileFetcherMapbox::QGeoTileFetcherMapbox(QObject *parent)
 :   QGeoTileFetcher(parent), m_networkManager(new QNetworkAccessManager(this)),
     m_userAgent("Qt Location based application"),
-    m_mapId(""),
     m_format("png"),
     m_replyFormat("png"),
     m_accessToken("")
@@ -59,9 +58,9 @@ void QGeoTileFetcherMapbox::setUserAgent(const QByteArray &userAgent)
     m_userAgent = userAgent;
 }
 
-void QGeoTileFetcherMapbox::setMapId(const QString &mapId)
+void QGeoTileFetcherMapbox::setMapIds(const QVector<QString> &mapIds)
 {
-    m_mapId = mapId;
+    m_mapIds = mapIds;
 }
 
 void QGeoTileFetcherMapbox::setFormat(const QString &format)
@@ -87,7 +86,7 @@ QGeoTiledMapReply *QGeoTileFetcherMapbox::getTileImage(const QGeoTileSpec &spec)
     request.setRawHeader("User-Agent", m_userAgent);
 
     request.setUrl(QUrl(QStringLiteral("http://api.tiles.mapbox.com/v4/") +
-                        m_mapId + QLatin1Char('/') +
+                        ((spec.mapId() >= m_mapIds.size()) ? QStringLiteral("mapbox.streets") : m_mapIds[spec.mapId()]) + QLatin1Char('/') +
                         QString::number(spec.zoom()) + QLatin1Char('/') +
                         QString::number(spec.x()) + QLatin1Char('/') +
                         QString::number(spec.y()) + QLatin1Char('.') +

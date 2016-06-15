@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Canonical Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,30 +34,30 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEMAPBOX_H
-#define QGEOTILEDMAPPINGMANAGERENGINEMAPBOX_H
+#ifndef QGEOFILETILECACHEMAPBOX_H
+#define QGEOFILETILECACHEMAPBOX_H
 
-#include <QtLocation/QGeoServiceProvider>
-
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
+#include <QtLocation/private/qgeofiletilecache_p.h>
+#include <QMap>
+#include <QLatin1String>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineMapbox : public QGeoTiledMappingManagerEngine
+class QGeoFileTileCacheMapbox : public QGeoFileTileCache
 {
     Q_OBJECT
-
 public:
-    QGeoTiledMappingManagerEngineMapbox(const QVariantMap &parameters,
-                                        QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineMapbox();
+    QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTypes, const QString &directory = QString(), QObject *parent = 0);
+    ~QGeoFileTileCacheMapbox();
 
-    QGeoMap *createMap();
+protected:
+    QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const Q_DECL_OVERRIDE;
+    QGeoTileSpec filenameToTileSpec(const QString &filename) const Q_DECL_OVERRIDE;
 
-private:
-    QString m_cacheDirectory;
+    QList<QGeoMapType> m_mapTypes;
+    QMap<QString, int> m_mapNameToId;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAPPINGMANAGERENGINEMAPBOX_H
+#endif // QGEOFILETILECACHEMAPBOX_H

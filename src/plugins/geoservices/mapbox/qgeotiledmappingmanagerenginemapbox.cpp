@@ -40,8 +40,30 @@
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeotiledmap_p.h>
+#include "qgeofiletilecachemapbox.h"
 
 QT_BEGIN_NAMESPACE
+
+static QLatin1String mapboxPrefix = QLatin1String("mapbox.");
+
+static QString mapboxIdToMapName(const QString &id)
+{
+    if ((id.indexOf(mapboxPrefix) == 0) && (id.size() > mapboxPrefix.size())) {
+        // the names of the geomaptypes in this plugin reflect the actual mapbox mapIds, but are camel cased and with dashes replaced by spaces
+        QString name = id.right(id.size() - mapboxPrefix.size());
+        QStringList parts = name.split('-');
+        for (int i=0; i < parts.size(); ++i)
+            parts[i].replace(0, 1, parts[i][0].toUpper());
+        name = parts.join(" ");
+        return name;
+    } else {
+        return QString();
+    }
+}
+static inline QString mapNameToMapboxId(const QString &name)
+{
+    return mapboxPrefix + name.toLower().replace(' ','-');
+}
 
 QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString)
 :   QGeoTiledMappingManagerEngine()
@@ -54,17 +76,52 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
     setTileSize(QSize(256, 256));
 
     QList<QGeoMapType> mapTypes;
-    mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("Custom"), tr("Mapbox custom map"), false, false, 0);
+    // as index 0 to retain compatibility with the current API, that expects the passed map_id to be on by default.
+    if (parameters.contains(QStringLiteral("mapbox.map_id"))) {
+        const QString name = mapboxIdToMapName(parameters.value(QStringLiteral("mapbox.map_id")).toString());
+        mapTypes << QGeoMapType(QGeoMapType::CustomMap, name, QObject::tr(name.toLatin1().data()), false, false, mapTypes.size());
+    }
+
+    // As of 2016.06.15, valid mapbox map_ids are documented at https://www.mapbox.com/api-documentation/#maps
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("Streets"), tr("Street"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("Light"), tr("Light"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("Dark"), tr("Dark"), false, true, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, QStringLiteral("Satellite"), tr("Satellite"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::HybridMap, QStringLiteral("Streets Satellite"), tr("Streets Satellite"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Wheatpaste"), tr("Wheatpaste"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("Streets Basic"), tr("Streets Basic"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Comic"), tr("Comic"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::PedestrianMap, QStringLiteral("Outdoors"), tr("Outdoors"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CycleMap, QStringLiteral("Run Bike Hike"), tr("Run Bike Hike"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Pencil"), tr("Pencil"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Pirates"), tr("Pirates"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Emerald"), tr("Emerald"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("High Contrast"), tr("High Contrast"), false, false, mapTypes.size());
+
+    // New way to specify multiple customized map_ids via additional_map_ids
+    if (parameters.contains(QStringLiteral("mapbox.additional_map_ids"))) {
+        const QString ids = parameters.value(QStringLiteral("mapbox.additional_map_ids")).toString();
+        const QStringList idList = ids.split(',', QString::SkipEmptyParts);
+
+        for (const QString &str: idList) {
+                const QString name = mapboxIdToMapName(str);
+                if (!name.isEmpty())
+                    mapTypes << QGeoMapType(QGeoMapType::CustomMap, name, QObject::tr(name.toLatin1().data()), false, false, mapTypes.size());
+        }
+    }
+
+    QVector<QString> mapIds;
+    for (int i=0; i < mapTypes.size(); ++i)
+         mapIds.push_back(mapNameToMapboxId(mapTypes[i].name()));
+
     setSupportedMapTypes(mapTypes);
 
     QGeoTileFetcherMapbox *tileFetcher = new QGeoTileFetcherMapbox(this);
+    tileFetcher->setMapIds(mapIds);
+
     if (parameters.contains(QStringLiteral("useragent"))) {
         const QByteArray ua = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
         tileFetcher->setUserAgent(ua);
-    }
-    if (parameters.contains(QStringLiteral("mapbox.map_id"))) {
-        const QString id = parameters.value(QStringLiteral("mapbox.map_id")).toString();
-        tileFetcher->setMapId(id);
     }
     if (parameters.contains(QStringLiteral("mapbox.format"))) {
         const QString format = parameters.value(QStringLiteral("mapbox.format")).toString();
@@ -76,6 +133,52 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
     }
 
     setTileFetcher(tileFetcher);
+
+    // TODO: do this in a plugin-neutral way so that other tiled map plugins
+    //       don't need this boilerplate or hardcode plugin name
+
+    if (parameters.contains(QStringLiteral("mapbox.cache.directory"))) {
+        m_cacheDirectory = parameters.value(QStringLiteral("mapbox.cache.directory")).toString();
+    } else {
+        // managerName() is not yet set, we have to hardcode the plugin name below
+        m_cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + QLatin1String("mapbox");
+    }
+
+    // The Mapbox free plan allows for 6000 tiles to be stored for offline uses
+    // As of 2016.06.15, according to https://www.mapbox.com/help/mobile-offline/ ,
+    // this translates into 45-315 MiB, depending on the map and the area.
+    // Setting a default limit of 300MiB, which can be overridden via parameters, if
+    // the plan allows for more data to be stored offline.
+    // NOTE:
+    // It is illegal to violate Mapbox Terms of Service, setting a limit that exceeds
+    // what the plan the token belongs to allows.
+
+    QAbstractGeoTileCache *tileCache = new QGeoFileTileCacheMapbox(mapTypes, m_cacheDirectory);
+
+    if (parameters.contains(QStringLiteral("mapbox.cache.disk.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("mapbox.cache.disk.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setMaxDiskUsage(cacheSize);
+    } else {
+        tileCache->setMaxDiskUsage(300 * 1024 * 1024);
+    }
+
+    if (parameters.contains(QStringLiteral("mapbox.cache.memory.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("mapbox.cache.memory.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setMaxMemoryUsage(cacheSize);
+    }
+
+    if (parameters.contains(QStringLiteral("mapbox.cache.texture.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("mapbox.cache.texture.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setExtraTextureUsage(cacheSize);
+    }
+
+    setTileCache(tileCache);
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
