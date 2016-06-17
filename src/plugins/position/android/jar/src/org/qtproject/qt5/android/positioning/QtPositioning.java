@@ -236,7 +236,7 @@ public class QtPositioning implements LocationListener
                 positioningListener.isSatelliteUpdate = false;
 
                 if (updateInterval == 0)
-                    updateInterval = 1000; //don't update more often than once per second
+                    updateInterval = 50; //don't update more often than once per 50ms
 
                 positioningListener.updateIntervalTime = updateInterval;
                 if ((locationProvider & QT_GPS_PROVIDER) > 0) {
@@ -356,7 +356,7 @@ public class QtPositioning implements LocationListener
                 positioningListener.isSingleUpdate = isSingleRequest;
 
                 if (updateInterval == 0)
-                    updateInterval = 1000; //don't update more often than once per second
+                    updateInterval = 50; //don't update more often than once per 50ms
 
                 if (isSingleRequest)
                     Log.d(TAG, "Single update for Satellites " + updateInterval);

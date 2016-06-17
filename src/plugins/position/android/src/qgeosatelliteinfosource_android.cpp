@@ -84,7 +84,7 @@ void QGeoSatelliteInfoSourceAndroid::setUpdateInterval(int msec)
 
 int QGeoSatelliteInfoSourceAndroid::minimumUpdateInterval() const
 {
-    return 1000;
+    return 50;
 }
 
 QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSourceAndroid::error() const
