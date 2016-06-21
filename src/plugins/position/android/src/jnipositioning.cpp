@@ -100,7 +100,7 @@ namespace AndroidPositioning {
     {
         static bool firstInit = true;
         if (firstInit) {
-            qsrand( QDateTime::currentDateTime().toTime_t() );
+            qsrand( QDateTime::currentMSecsSinceEpoch() / 1000 );
             firstInit = false;
         }
 
