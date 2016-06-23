@@ -357,6 +357,27 @@ Item {
             verify(!is_coord_on_screen(fitCircleBottomRight))
             verify(is_coord_on_screen(fitEmptyRect.topLeft))
             verify(is_coord_on_screen(fitEmptyRect.bottomRight))
+
+            // Test if this can be reset
+            map.visibleRegion = fitRect
+            verify(is_coord_on_screen(fitRect.topLeft))
+            verify(is_coord_on_screen(fitRect.bottomRight))
+            // move map
+            map.center = QtPositioning.coordinate(0,0)
+            verify(!is_coord_on_screen(fitRect.topLeft))
+            verify(!is_coord_on_screen(fitRect.bottomRight))
+            // recheck
+            map.visibleRegion = fitRect
+            verify(is_coord_on_screen(fitRect.topLeft))
+            verify(is_coord_on_screen(fitRect.bottomRight))
+            //zoom map
+            map.zoomLevel++;
+            verify(!is_coord_on_screen(fitRect.topLeft))
+            verify(!is_coord_on_screen(fitRect.bottomRight))
+            // recheck
+            map.visibleRegion = fitRect
+            verify(is_coord_on_screen(fitRect.topLeft))
+            verify(is_coord_on_screen(fitRect.bottomRight))
         }
 
         /*function test_ad_visible_items_move() {

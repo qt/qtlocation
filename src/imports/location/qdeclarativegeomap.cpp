@@ -182,7 +182,8 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_componentCompleted(false),
         m_mappingManagerInitialized(false),
         m_color(QColor::fromRgbF(0.9, 0.9, 0.9)),
-        m_pendingFitViewport(false)
+        m_pendingFitViewport(false),
+        m_validRegion(false)
 {
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -503,7 +504,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     connect(m_map->mapController(),
             SIGNAL(centerChanged(QGeoCoordinate)),
             this,
-            SIGNAL(centerChanged(QGeoCoordinate)));
+            SLOT(mapCenterChanged(QGeoCoordinate)));
     connect(m_map->mapController(),
             SIGNAL(zoomChanged(qreal)),
             this,
@@ -646,6 +647,8 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
         return;
 
     m_zoomLevel = zoomLevel;
+    m_validRegion = false;
+
     if (m_mappingManagerInitialized)
         m_map->mapController()->setZoom(m_zoomLevel);
     emit zoomLevelChanged(zoomLevel);
@@ -676,6 +679,7 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
         return;
 
     m_center = center;
+    m_validRegion = false;
 
     if (m_center.isValid() && m_mappingManagerInitialized) {
         m_map->mapController()->setCenter(m_center);
@@ -714,7 +718,7 @@ QGeoCoordinate QDeclarativeGeoMap::center() const
 */
 void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
 {
-    if (shape == m_region)
+    if (shape == m_region && m_validRegion)
         return;
 
     m_region = shape;
@@ -822,6 +826,8 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
 
     newZoom = std::floor(qMax(minimumZoomLevel(), (m_map->mapController()->zoom() + newZoom)));
     setProperty("zoomLevel", QVariant::fromValue(newZoom));
+
+    m_validRegion = true;
 }
 
 /*!
@@ -832,7 +838,14 @@ void QDeclarativeGeoMap::mapZoomLevelChanged(qreal zoom)
     if (zoom == m_zoomLevel)
         return;
     m_zoomLevel = zoom;
+    m_validRegion = false;
     emit zoomLevelChanged(m_zoomLevel);
+}
+
+void QDeclarativeGeoMap::mapCenterChanged(const QGeoCoordinate &center)
+{
+    m_validRegion = false;
+    emit centerChanged(center);
 }
 
 /*!
