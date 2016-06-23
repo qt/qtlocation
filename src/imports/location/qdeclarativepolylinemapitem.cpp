@@ -868,7 +868,7 @@ MapPolylineNode::MapPolylineNode() :
     geometry_(QSGGeometry::defaultAttributes_Point2D(),0),
     blocked_(true)
 {
-    geometry_.setDrawingMode(GL_TRIANGLE_STRIP);
+    geometry_.setDrawingMode(QSGGeometry::DrawTriangleStrip);
     QSGGeometryNode::setMaterial(&fill_material_);
     QSGGeometryNode::setGeometry(&geometry_);
 }

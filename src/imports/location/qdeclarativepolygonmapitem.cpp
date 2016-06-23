@@ -653,7 +653,7 @@ MapPolygonNode::MapPolygonNode() :
     geometry_(QSGGeometry::defaultAttributes_Point2D(), 0),
     blocked_(true)
 {
-    geometry_.setDrawingMode(GL_TRIANGLES);
+    geometry_.setDrawingMode(QSGGeometry::DrawTriangles);
     QSGGeometryNode::setMaterial(&fill_material_);
     QSGGeometryNode::setGeometry(&geometry_);
 
