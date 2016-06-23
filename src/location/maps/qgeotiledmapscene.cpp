@@ -40,7 +40,7 @@
 #include "qgeotilespec_p.h"
 #include <QtPositioning/private/qdoublevector3d_p.h>
 #include <QtCore/private/qobject_p.h>
-#include <QtQuick/QSGSimpleTextureNode>
+#include <QtQuick/QSGImageNode>
 #include <QtQuick/QQuickWindow>
 #include <cmath>
 
@@ -559,12 +559,12 @@ void QGeoTiledMapScenePrivate::setupCamera()
 class QGeoTiledMapTileContainerNode : public QSGTransformNode
 {
 public:
-    void addChild(const QGeoTileSpec &spec, QSGSimpleTextureNode *node)
+    void addChild(const QGeoTileSpec &spec, QSGImageNode *node)
     {
         tiles.insert(spec, node);
         appendChildNode(node);
     }
-    QHash<QGeoTileSpec, QSGSimpleTextureNode *> tiles;
+    QHash<QGeoTileSpec, QSGImageNode *> tiles;
 };
 
 class QGeoTiledMapRootNode : public QSGClipNode
@@ -601,7 +601,10 @@ public:
         }
     }
 
-    void updateTiles(QGeoTiledMapTileContainerNode *root, QGeoTiledMapScenePrivate *d, double camAdjust);
+    void updateTiles(QGeoTiledMapTileContainerNode *root,
+                     QGeoTiledMapScenePrivate *d,
+                     double camAdjust,
+                     QQuickWindow *window);
 
     bool isTextureLinear;
 
@@ -630,8 +633,9 @@ static QVector3D toVector3D(const QDoubleVector3D& in)
 }
 
 void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
-                                  QGeoTiledMapScenePrivate *d,
-                                  double camAdjust)
+                                       QGeoTiledMapScenePrivate *d,
+                                       double camAdjust,
+                                       QQuickWindow *window)
 {
     // Set up the matrix...
     QDoubleVector3D eye = d->m_cameraEye;
@@ -649,12 +653,12 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
     foreach (const QGeoTileSpec &s, toRemove)
         delete root->tiles.take(s);
 
-    for (QHash<QGeoTileSpec, QSGSimpleTextureNode *>::iterator it = root->tiles.begin();
+    for (QHash<QGeoTileSpec, QSGImageNode *>::iterator it = root->tiles.begin();
          it != root->tiles.end(); ) {
         QSGGeometry visualGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
         QSGGeometry::TexturedPoint2D *v = visualGeometry.vertexDataAsTexturedPoint2D();
         bool ok = d->buildGeometry(it.key(), v) && qgeotiledmapscene_isTileInViewport(v, root->matrix());
-        QSGSimpleTextureNode *node = it.value();
+        QSGImageNode *node = it.value();
         QSGNode::DirtyState dirtyBits = 0;
 
         // Check and handle changes to vertex data.
@@ -685,7 +689,7 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         QGeoTileTexture *tileTexture = d->m_textures.value(s).data();
         if (!tileTexture || tileTexture->image.isNull())
             continue;
-        QSGSimpleTextureNode *tileNode = new QSGSimpleTextureNode();
+        QSGImageNode *tileNode = window->createImageNode();
         // note: setTexture will update coordinates so do it here, before we buildGeometry
         tileNode->setTexture(textures.value(s));
         Q_ASSERT(tileNode->geometry());
@@ -737,9 +741,9 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     }
 
     double sideLength = d->m_scaleFactor * d->m_tileSize * d->m_sideLength;
-    mapRoot->updateTiles(mapRoot->tiles, d, 0);
-    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength);
-    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength);
+    mapRoot->updateTiles(mapRoot->tiles, d, 0, window);
+    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength, window);
+    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength, window);
 
     mapRoot->isTextureLinear = d->m_linearScaling;
 

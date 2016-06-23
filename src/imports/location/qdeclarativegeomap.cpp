@@ -45,7 +45,7 @@
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
 #include <QtQuick/QQuickWindow>
-#include <QtQuick/QSGSimpleRectNode>
+#include <QtQuick/QSGRectangleNode>
 #include <QtQuick/private/qquickwindow_p.h>
 #include <QtQml/qqmlinfo.h>
 #include <cmath>
@@ -450,13 +450,12 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
         return 0;
     }
 
-    QSGSimpleRectNode *root = static_cast<QSGSimpleRectNode *>(oldNode);
+    QSGRectangleNode *root = static_cast<QSGRectangleNode *>(oldNode);
     if (!root)
-        root = new QSGSimpleRectNode(boundingRect(), m_color);
-    else {
-        root->setRect(boundingRect());
-        root->setColor(m_color);
-    }
+        root = window()->createRectangleNode();
+
+    root->setRect(boundingRect());
+    root->setColor(m_color);
 
     QSGNode *content = root->childCount() ? root->firstChild() : 0;
     content = m_map->updateSceneGraph(content, window());
