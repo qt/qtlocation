@@ -81,7 +81,11 @@ namespace
         token = parameters.value(QStringLiteral("here.token")).toString();
 
         if (isValidParameter(appId) && isValidParameter(token))
-            return;
+             return;
+        else if (!isValidParameter(appId))
+            qWarning() << "Invalid here.app_id";
+        else
+            qWarning() << "Invalid here.token";
 
         if (parameters.contains(QStringLiteral("app_id")) || parameters.contains(QStringLiteral("token")))
             qWarning() << QStringLiteral("Please prefix 'app_id' and 'token' with prefix 'here' (e.g.: 'here.app_id')");
