@@ -39,10 +39,10 @@ import QtLocation.Test 5.5
 
     /*
 
-     (0,0)   ---------------------------------------------------- (240,0)
+     (0,0)   ---------------------------------------------------- (296,0)
              | no map                                           |
              |    (20,20)                                       |
-     (0,20)  |    ------------------------------------------    | (240,20)
+     (0,20)  |    ------------------------------------------    | (296,20)
              |    |                                        |    |
              |    |  map                                   |    |
              |    |                                        |    |
@@ -57,15 +57,15 @@ import QtLocation.Test 5.5
              |    |                                        |    |
              |    ------------------------------------------    |
              |                                                  |
-     (0,240) ---------------------------------------------------- (240,240)
+     (0,296) ---------------------------------------------------- (296,296)
 
      */
 
 Item {
     id: page
     x: 0; y: 0;
-    width: 240
-    height: 240
+    width: 296
+    height: 296
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
     property variant mapDefaultCenter: QtPositioning.coordinate(20, 20)
@@ -102,11 +102,8 @@ Item {
     property variant mapPolylineBottomRight: QtPositioning.coordinate(0, 0)
     property variant mapRouteTopLeft: QtPositioning.coordinate(0, 0)
     property variant mapRouteBottomRight: QtPositioning.coordinate(0, 0)
-
-    property variant boundingBox: QtPositioning.rectangle(QtPositioning.coordinate(0, 0),
-                                                       QtPositioning.coordinate(0, 0))
-
-    property variant fitRect: QtPositioning.rectangle(QtPositioning.coordinate(80, 80), QtPositioning.coordinate(78, 82))
+    property variant fitRect: QtPositioning.rectangle(QtPositioning.coordinate(80, 80),
+                                                      QtPositioning.coordinate(78, 82))
     property variant fitEmptyRect: QtPositioning.rectangle(QtPositioning.coordinate(79, 79),-1, -1)
     property variant fitCircle: QtPositioning.circle(QtPositioning.coordinate(-50, -100), 1500)
     property variant fitInvalidShape: QtPositioning.shape()
@@ -116,7 +113,7 @@ Item {
 
     Map {
         id: map;
-        x: 20; y: 20; width: 200; height: 200
+        x: 20; y: 20; width: 256; height: 256
         zoomLevel: 3
         center: mapDefaultCenter
         plugin: testPlugin;
@@ -227,16 +224,58 @@ Item {
         name: "MapItemsFitViewport"
         when: windowShown
 
-        function test_aa_visible_basic() { // aa et al. for execution order
-            wait(10)
-            // sanity check that the coordinate conversion works, as
-            // rest of the case relies on it. for robustness cut
-            // a little slack with fuzzy compare
+        function initTestCase()
+        {
+            // sanity check that the coordinate conversion works
             var mapcenter = map.fromCoordinate(map.center)
-            verify (fuzzy_compare(mapcenter.x, 100, 2))
-            verify (fuzzy_compare(mapcenter.y, 100, 2))
+            verify (fuzzy_compare(mapcenter.x, 128, 2))
+            verify (fuzzy_compare(mapcenter.y, 128, 2))
+        }
 
-            reset()
+        function init()
+        {
+            preMapRect.topLeft.latitude = 20
+            preMapRect.topLeft.longitude = 20
+            preMapRect.bottomRight.latitude = 10
+            preMapRect.bottomRight.longitude = 30
+            preMapCircle.center.latitude = 10
+            preMapCircle.center.longitude = 30
+            preMapQuickItem.coordinate.latitude = 35
+            preMapQuickItem.coordinate.longitude = 3
+            var i
+            for (i = 0; i < preMapPolygon.path.length; ++i) {
+                preMapPolygon.path[i].latitude = preMapPolygonDefaultPath[i].latitude
+                preMapPolygon.path[i].longitude = preMapPolygonDefaultPath[i].longitude
+            }
+            for (i = 0; i < preMapPolyline.path.length; ++i) {
+                preMapPolyline.path[i].latitude = preMapPolylineDefaultPath[i].latitude
+                preMapPolyline.path[i].longitude = preMapPolylineDefaultPath[i].longitude
+            }
+            for (i = 0; i < preMapRoute.route.path.length; ++i) {
+                preMapRoute.route.path[i].latitude = preMapRouteDefaultPath[i].latitude
+                preMapRoute.route.path[i].longitude = preMapRouteDefaultPath[i].longitude
+            }
+            // remove items
+            map.clearMapItems()
+            //clear_data()
+            compare (map.mapItems.length, 0)
+            // reset map
+            map.center.latitude = 20
+            map.center.longitude = 20
+            map.zoomLevel = 3
+            // re-add items and verify they are back (without needing to pan map etc.)
+            map.addMapItem(preMapRect)
+            map.addMapItem(preMapCircle)
+            map.addMapItem(preMapQuickItem)
+            map.addMapItem(preMapPolygon)
+            map.addMapItem(preMapPolyline)
+            map.addMapItem(preMapRoute)
+            compare (map.mapItems.length, 6)
+            calculate_bounds()
+        }
+
+        function test_visible_itmes()
+        {
             // normal case - fit viewport to items which are all already visible
             verify_visibility_all_items()
             map.fitViewportToMapItems()
@@ -244,21 +283,23 @@ Item {
             verify_visibility_all_items()
         }
 
-        function test_ab_visible_zoom() {
-            var i
+        function test_visible_zoom_in()
+        {
             // zoom in (clipping also occurs)
             var z = map.zoomLevel
-            for (i = (z + 1); i < map.maximumZoomLevel; ++i ) {
-                reset()
+            for (var i = (z + 1); i < map.maximumZoomLevel; ++i ) {
                 map.zoomLevel = i
                 visualInspectionPoint()
                 map.fitViewportToMapItems()
                 visualInspectionPoint()
                 verify_visibility_all_items()
             }
+        }
+
+        function test_visible_zoom_out()
+        {
             // zoom out
-            for (i = (z - 1); i >= 0; --i ) {
-                reset()
+            for (var i = (z - 1); i >= 0; --i ) {
                 map.zoomLevel = i
                 visualInspectionPoint()
                 verify_visibility_all_items()
@@ -268,7 +309,7 @@ Item {
             }
         }
 
-        function test_ac_visible_map_move() {
+        function test_visible_map_move() {
             // move map so all items are out of screen
             // then fit viewport
             var xDir = 1
@@ -277,7 +318,6 @@ Item {
             var yDirChange = 1
             var dir = 0
             for (dir = 0; dir < 4; dir++) {
-                reset()
                 verify_visibility_all_items()
                 var i = 0
                 var panX = map.width * xDir * 0.5
@@ -312,8 +352,7 @@ Item {
             }
         }
 
-        function test_ad_fit_to_geoshape() {
-            reset()
+        function test_fit_to_geoshape() {
             visualInspectionPoint()
             calculate_fit_circle_bounds()
             //None should be visible
@@ -371,13 +410,70 @@ Item {
             verify(is_coord_on_screen(fitRect.topLeft))
             verify(is_coord_on_screen(fitRect.bottomRight))
             //zoom map
-            map.zoomLevel++;
+            map.zoomLevel++
             verify(!is_coord_on_screen(fitRect.topLeft))
             verify(!is_coord_on_screen(fitRect.bottomRight))
             // recheck
             map.visibleRegion = fitRect
             verify(is_coord_on_screen(fitRect.topLeft))
             verify(is_coord_on_screen(fitRect.bottomRight))
+        }
+
+        // checks that circles belongs to the view port
+        function circle_in_viewport(center, radius, visible)
+        {
+            for (var i = 0; i < 128; ++i) {
+                var azimuth = 360.0 * i / 128.0;
+                var coord = center.atDistanceAndAzimuth(radius,azimuth)
+                if (coord.isValid)
+                    verify(is_coord_on_screen(coord) === visible, visible ?
+                               "circle not visible" : "circle visible")
+            }
+        }
+
+        function test_fit_circle_to_viewport(data)
+        {
+            verify(!is_coord_on_screen(data.center))
+            circle_in_viewport(data.center, data.radius, false)
+            map.visibleRegion = QtPositioning.circle(data.center, data.radius)
+            circle_in_viewport(data.center, data.radius, true)
+        }
+
+        function test_fit_circle_to_viewport_data()
+        {
+            return [
+                        { tag: "circle 1", center:
+                            QtPositioning.coordinate(70,70), radius: 10 },
+                        { tag: "circle 2", center:
+                            QtPositioning.coordinate(80,30), radius: 2000000 },
+                        { tag: "circle 3", center:
+                            QtPositioning.coordinate(-82,30), radius: 2000000 },
+                        { tag: "circle 4", center:
+                            QtPositioning.coordinate(60,179), radius: 20000 },
+                        { tag: "circle 5", center:
+                            QtPositioning.coordinate(60,-179), radius: 20000 },
+                    ]
+        }
+
+        function test_fit_rectangle_to_viewport(data)
+        {
+            verify(!is_coord_on_screen(data.topLeft),"rectangle visible")
+            verify(!is_coord_on_screen(data.bottomRight),"rectangle visible")
+            map.visibleRegion = QtPositioning.rectangle(data.topLeft,data.bottomRight)
+            verify(is_coord_on_screen(data.topLeft),"rectangle not visible")
+            verify(is_coord_on_screen(data.bottomRight),"rectangle not visible")
+        }
+
+        function test_fit_rectangle_to_viewport_data()
+        {
+            return [
+                        { tag: "rectangle 1",
+                            topLeft: QtPositioning.coordinate(80, 80),
+                            bottomRight: QtPositioning.coordinate(78, 82) },
+                        { tag: "rectangle 2",
+                            topLeft: QtPositioning.coordinate(30,-130),
+                            bottomRight: QtPositioning.coordinate(0,-100)}
+                    ]
         }
 
         /*function test_ad_visible_items_move() {
@@ -561,46 +657,6 @@ Item {
             verify(is_coord_on_screen(mapRouteBottomRight))
         }
 
-        function reset(){
-            preMapRect.topLeft.latitude = 20
-            preMapRect.topLeft.longitude = 20
-            preMapRect.bottomRight.latitude = 10
-            preMapRect.bottomRight.longitude = 30
-            preMapCircle.center.latitude = 10
-            preMapCircle.center.longitude = 30
-            preMapQuickItem.coordinate.latitude = 35
-            preMapQuickItem.coordinate.longitude = 3
-            var i
-            for (i=0; i< preMapPolygon.path.length; ++i) {
-                preMapPolygon.path[i].latitude = preMapPolygonDefaultPath[i].latitude
-                preMapPolygon.path[i].longitude = preMapPolygonDefaultPath[i].longitude
-            }
-            for (i=0; i< preMapPolyline.path.length; ++i) {
-                preMapPolyline.path[i].latitude = preMapPolylineDefaultPath[i].latitude
-                preMapPolyline.path[i].longitude = preMapPolylineDefaultPath[i].longitude
-            }
-            for (i=0; i< preMapRoute.route.path.length; ++i) {
-                preMapRoute.route.path[i].latitude = preMapRouteDefaultPath[i].latitude
-                preMapRoute.route.path[i].longitude = preMapRouteDefaultPath[i].longitude
-            }
-            // remove items
-            map.clearMapItems()
-            //clear_data()
-            compare (map.mapItems.length, 0)
-            // reset map
-            map.center.latitude = 20
-            map.center.longitude = 20
-            map.zoomLevel = 3
-            // re-add items and verify they are back (without needing to pan map etc.)
-            map.addMapItem(preMapRect)
-            map.addMapItem(preMapCircle)
-            map.addMapItem(preMapQuickItem)
-            map.addMapItem(preMapPolygon)
-            map.addMapItem(preMapPolyline)
-            map.addMapItem(preMapRoute)
-            compare (map.mapItems.length, 6)
-            calculate_bounds()
-        }
 
         function is_coord_on_screen(coord) {
             return is_point_on_screen(map.fromCoordinate(coord))

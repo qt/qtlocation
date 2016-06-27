@@ -85,6 +85,8 @@ public:
 
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
+    QDoubleVector2D referenceCoordinateToItemPosition(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
+    QGeoCoordinate referenceItemPositionToCoordinate(const QDoubleVector2D &pos) const Q_DECL_OVERRIDE;
     void prefetchData() Q_DECL_OVERRIDE;
     void clearData() Q_DECL_OVERRIDE;
 
