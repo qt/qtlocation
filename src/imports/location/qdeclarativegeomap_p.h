@@ -54,7 +54,6 @@
 #include "qgeocameradata_p.h"
 #include <QtQuick/QQuickItem>
 #include <QtCore/QPointer>
-#include <QtCore/QMutex>
 #include <QtGui/QColor>
 #include <QtPositioning/qgeoshape.h>
 
@@ -192,7 +191,6 @@ private:
     QGeoMap *m_map;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
-    QMutex m_updateMutex;
     QString m_errorString;
     QGeoServiceProvider::Error m_error;
     QGeoShape m_region;

@@ -1133,13 +1133,11 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 {
     if (!item || item->quickMap())
         return;
-    m_updateMutex.lock();
     item->setParentItem(this);
     if (m_map)
         item->setMap(this, m_map);
     m_mapItems.append(item);
     emit mapItemsChanged();
-    m_updateMutex.unlock();
 }
 
 /*!
@@ -1179,13 +1177,11 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
     QPointer<QDeclarativeGeoMapItemBase> item(ptr);
     if (!m_mapItems.contains(item))
         return;
-    m_updateMutex.lock();
     item.data()->setParentItem(0);
     item.data()->setMap(0, 0);
     // these can be optimized for perf, as we already check the 'contains' above
     m_mapItems.removeOne(item);
     emit mapItemsChanged();
-    m_updateMutex.unlock();
 }
 
 /*!
@@ -1199,7 +1195,6 @@ void QDeclarativeGeoMap::clearMapItems()
 {
     if (m_mapItems.isEmpty())
         return;
-    m_updateMutex.lock();
     for (int i = 0; i < m_mapItems.count(); ++i) {
         if (m_mapItems.at(i)) {
             m_mapItems.at(i).data()->setParentItem(0);
@@ -1208,7 +1203,6 @@ void QDeclarativeGeoMap::clearMapItems()
     }
     m_mapItems.clear();
     emit mapItemsChanged();
-    m_updateMutex.unlock();
 }
 
 /*!
