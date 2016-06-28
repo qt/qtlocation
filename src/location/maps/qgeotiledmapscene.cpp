@@ -677,6 +677,8 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         } else {
             if (isTextureLinear != d->m_linearScaling) {
                 node->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
+                if (node->texture()->textureSize().width() > d->m_tileSize)
+                    node->setMipmapFiltering(QSGTexture::Linear);
                 dirtyBits |= QSGNode::DirtyMaterial;
             }
             if (dirtyBits != 0)
@@ -698,6 +700,8 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         if (d->buildGeometry(s, tileNode->geometry()->vertexDataAsTexturedPoint2D())
                 && qgeotiledmapscene_isTileInViewport(tileNode->geometry()->vertexDataAsTexturedPoint2D(), root->matrix())) {
             tileNode->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
+            if (tileNode->texture()->textureSize().width() > d->m_tileSize)
+                tileNode->setMipmapFiltering(QSGTexture::Linear);
             root->addChild(s, tileNode);
         } else {
             delete tileNode;

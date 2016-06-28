@@ -57,7 +57,7 @@ class QGeoTileFetcherNokia : public QGeoTileFetcher
 
 public:
     QGeoTileFetcherNokia(const QVariantMap &parameters, QGeoNetworkAccessManager *networkManager,
-                         QGeoTiledMappingManagerEngineNokia *engine, const QSize &tileSize);
+                         QGeoTiledMappingManagerEngineNokia *engine, const QSize &tileSize, int ppi);
     ~QGeoTileFetcherNokia();
 
     QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
@@ -74,13 +74,14 @@ public Q_SLOTS:
 private:
     Q_DISABLE_COPY(QGeoTileFetcherNokia)
 
-    QString getRequestString(const QGeoTileSpec &spec);
+    QString getRequestString(const QGeoTileSpec &spec, int ppi=72);
 
     QString getLanguageString() const;
 
     QPointer<QGeoTiledMappingManagerEngineNokia> m_engineNokia;
     QGeoNetworkAccessManager *m_networkManager;
-    QSize m_tileSize;
+    int m_tileSize;
+    int m_ppi;
     QString m_token;
     QNetworkReply *m_copyrightsReply;
     QNetworkReply *m_versionReply;

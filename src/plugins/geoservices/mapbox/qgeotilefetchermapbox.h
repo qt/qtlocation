@@ -50,7 +50,7 @@ class QGeoTileFetcherMapbox : public QGeoTileFetcher
     Q_OBJECT
 
 public:
-    QGeoTileFetcherMapbox(QObject *parent = 0);
+    QGeoTileFetcherMapbox(QObject *parent = 0, bool highDpiTiles = true);
 
     void setUserAgent(const QByteArray &userAgent);
     void setMapIds(const QVector<QString> &mapIds);
@@ -66,6 +66,7 @@ private:
     QString m_replyFormat;
     QString m_accessToken;
     QVector<QString> m_mapIds;
+    bool m_highDpiTiles;
 };
 
 QT_END_NAMESPACE

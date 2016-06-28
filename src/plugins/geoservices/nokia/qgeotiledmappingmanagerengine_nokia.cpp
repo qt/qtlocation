@@ -95,7 +95,14 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     types << QGeoMapType(QGeoMapType::CarNavigationMap, tr("Car Navigation Map"), tr("Normal map view in daylight mode for car navigation"), false, false, 21);
     setSupportedMapTypes(types);
 
-    QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(parameters, networkManager, this, tileSize());
+    int ppi = 250;
+    if (parameters.contains(QStringLiteral("here.mapping.highdpi_tiles"))) {
+        const QString param = parameters.value(QStringLiteral("here.mapping.highdpi_tiles")).toString().toLower();
+        if (param == "false")
+            ppi = 72;
+    }
+
+    QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(parameters, networkManager, this, tileSize(), ppi);
     setTileFetcher(fetcher);
 
     // TODO: do this in a plugin-neutral way so that other tiled map plugins

@@ -116,8 +116,13 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
 
     setSupportedMapTypes(mapTypes);
 
-    QGeoTileFetcherMapbox *tileFetcher = new QGeoTileFetcherMapbox(this);
-    tileFetcher->setMapIds(mapIds);
+    bool doubleRes = true;
+    if (parameters.contains(QStringLiteral("mapbox.highdpi_tiles"))) {
+        const QString param = parameters.value(QStringLiteral("mapbox.highdpi_tiles")).toString().toLower();
+        if (param == "false")
+            doubleRes = false;
+    }
+    QGeoTileFetcherMapbox *tileFetcher = new QGeoTileFetcherMapbox(this, doubleRes);
 
     if (parameters.contains(QStringLiteral("useragent"))) {
         const QByteArray ua = parameters.value(QStringLiteral("useragent")).toString().toLatin1();

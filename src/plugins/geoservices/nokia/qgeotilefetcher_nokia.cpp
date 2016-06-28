@@ -56,11 +56,11 @@ QT_BEGIN_NAMESPACE
 
 namespace
 {
-    QString sizeToStr(const QSize &size)
+    QString sizeToStr(int size)
     {
-        if (size.height() >= 512 || size.width() >= 512)
+        if (size > 256)
             return QStringLiteral("512");
-        else if (size.height() >= 256 || size.width() >= 256)
+        else if (size > 128)
             return QStringLiteral("256");
         else
             return QStringLiteral("128");   // 128 pixel tiles are deprecated.
@@ -74,13 +74,14 @@ namespace
 QGeoTileFetcherNokia::QGeoTileFetcherNokia(const QVariantMap &parameters,
                                            QGeoNetworkAccessManager *networkManager,
                                            QGeoTiledMappingManagerEngineNokia *engine,
-                                           const QSize &tileSize)
-:   QGeoTileFetcher(engine), m_engineNokia(engine), m_networkManager(networkManager),
-    m_tileSize(tileSize), m_copyrightsReply(0),
+                                           const QSize &tileSize,
+                                           int ppi)
+:   QGeoTileFetcher(engine), m_engineNokia(engine), m_networkManager(networkManager), m_ppi(ppi), m_copyrightsReply(0),
     m_baseUriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.mapping.host"), MAP_TILES_HOST)),
     m_aerialUriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.mapping.host.aerial"), MAP_TILES_HOST_AERIAL))
 {
     Q_ASSERT(networkManager);
+    m_tileSize = qMax(tileSize.width(), tileSize.height());
     m_networkManager->setParent(this);
 
     m_applicationId = parameters.value(QStringLiteral("here.app_id")).toString();
@@ -94,7 +95,11 @@ QGeoTileFetcherNokia::~QGeoTileFetcherNokia()
 QGeoTiledMapReply *QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
 {
     // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
-    QString rawRequest = getRequestString(spec);
+    int ppi = m_ppi;
+    if ((spec.mapId() == 2) || (spec.mapId() == 12) || (spec.mapId() == 21))
+        ppi = 72;  // HiDpi apparently not supported for these maps
+
+    QString rawRequest = getRequestString(spec, ppi);
     if (rawRequest.isEmpty()) {
         return new QGeoTiledMapReply(QGeoTiledMapReply::UnknownError,
                                      tr("Mapping manager no longer exists"), this);
@@ -110,7 +115,7 @@ QGeoTiledMapReply *QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
     return mapReply;
 }
 
-QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
+QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec, int ppi)
 {
     if (!m_engineNokia)
         return QString();
@@ -136,11 +141,11 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
     requestString += slash;
     requestString += QString::number(spec.y());
     requestString += slash;
-    requestString += sizeToStr(m_tileSize);
+    requestString += ((ppi > 72)) ? sizeToStr(m_tileSize * 2) : sizeToStr(m_tileSize);
     static const QString slashpng("/png8");
     requestString += slashpng;
 
-    if (!m_token.isEmpty() && !m_applicationId.isEmpty()) {
+    if (!m_token.isEmpty() && !m_applicationId.isEmpty()) { // TODO: remove the if
         requestString += "?token=";
         requestString += m_token;
 
@@ -148,9 +153,10 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
         requestString += m_applicationId;
     }
 
+    requestString += "&ppi=" + QString::number(ppi);
+
     requestString += "&lg=";
     requestString += getLanguageString();
-
     return requestString;
 }
 
