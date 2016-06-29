@@ -134,31 +134,17 @@ QT_BEGIN_NAMESPACE
     \section2 Example Usage
 
     The following snippet shows a simple Map and the necessary Plugin type
-    to use it. The map is centered near Brisbane, Australia, zoomed out to the
-    minimum zoom level, with gesture interaction enabled.
+    to use it. The map is centered over Oslo, Norway, with zoom level 10.
 
-    \code
-    Plugin {
-        id: somePlugin
-        // code here to choose the plugin as necessary
-    }
+    \quotefromfile minimal_map/main.qml
+    \skipto import
+    \printuntil }
+    \printline }
+    \skipto Map
+    \printuntil }
+    \printline }
 
-    Map {
-        id: map
-
-        plugin: somePlugin
-
-        center {
-            latitude: -27
-            longitude: 153
-        }
-        zoomLevel: map.minimumZoomLevel
-
-        gesture.enabled: true
-    }
-    \endcode
-
-    \image api-map.png
+    \image minimal_map.png
 */
 
 /*!
