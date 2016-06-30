@@ -7,14 +7,18 @@ HEADERS += \
     qgeotiledmappingmanagerenginemapbox.h \
     qgeotilefetchermapbox.h \
     qgeomapreplymapbox.h \
-    qgeofiletilecachemapbox.h
+    qgeofiletilecachemapbox.h \
+    qgeoroutingmanagerenginemapbox.h \
+    qgeoroutereplymapbox.h
 
 SOURCES += \
     qgeoserviceproviderpluginmapbox.cpp \
     qgeotiledmappingmanagerenginemapbox.cpp \
     qgeotilefetchermapbox.cpp \
     qgeomapreplymapbox.cpp \
-    qgeofiletilecachemapbox.cpp
+    qgeofiletilecachemapbox.cpp \
+    qgeoroutingmanagerenginemapbox.cpp \
+    qgeoroutereplymapbox.cpp
 
 OTHER_FILES += \
     mapbox_plugin.json

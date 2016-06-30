@@ -4,6 +4,7 @@
     "Version": 100,
     "Experimental": false,
     "Features": [
-        "OnlineMappingFeature"
+        "OnlineMappingFeature",
+        "OnlineRoutingFeature"
     ]
 }
