@@ -164,7 +164,7 @@ QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coo
 
 // This method returns the minimum zoom level that this specific qgeomap type allows
 // at a given canvas size (width,height) and for a given tile size (usually 256).
-double QGeoTiledMap::minimumZoomForMapSize(int width, int height) const
+double QGeoTiledMap::minimumZoomAtMapSize(int width, int height) const
 {
     Q_D(const QGeoTiledMap);
     double maxSize = qMax(width,height);
@@ -178,7 +178,7 @@ double QGeoTiledMap::minimumZoomForMapSize(int width, int height) const
 //    the amount of pixels between the center and the borders changes
 // 2) when the zoom level changes, because the amount of pixels between the center
 //    and the borders stays the same, but the meters per pixel change
-double QGeoTiledMap::maximumLatitudeForZoom(double zoomLevel) const
+double QGeoTiledMap::maximumCenterLatitudeAtZoom(double zoomLevel) const
 {
     Q_D(const QGeoTiledMap);
     double mapEdgeSize = std::pow(2.0,zoomLevel);
