@@ -129,6 +129,7 @@ public:
                 QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches) Q_DECL_OVERRIDE;
 
 protected:
+    void init() Q_DECL_OVERRIDE;
     void printStats() Q_DECL_OVERRIDE;
     void loadTiles();
 

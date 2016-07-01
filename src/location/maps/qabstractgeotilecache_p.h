@@ -116,8 +116,10 @@ public:
 
 protected:
     QAbstractGeoTileCache(QObject *parent = 0);
-
+    virtual void init() = 0;
     virtual void printStats() = 0;
+
+    friend class QGeoTiledMappingManagerEngine;
 };
 
 QT_END_NAMESPACE

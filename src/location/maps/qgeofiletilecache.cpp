@@ -86,8 +86,12 @@ QGeoCachedTileDisk::~QGeoCachedTileDisk()
 }
 
 QGeoFileTileCache::QGeoFileTileCache(const QString &directory, QObject *parent)
-    : QAbstractGeoTileCache(parent), directory_(directory),
-      minTextureUsage_(0), extraTextureUsage_(0)
+    : QAbstractGeoTileCache(parent), directory_(directory), minTextureUsage_(0), extraTextureUsage_(0)
+{
+
+}
+
+void QGeoFileTileCache::init()
 {
     const QString basePath = baseCacheDirectory();
 

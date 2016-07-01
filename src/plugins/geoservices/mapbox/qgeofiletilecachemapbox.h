@@ -39,7 +39,6 @@
 
 #include <QtLocation/private/qgeofiletilecache_p.h>
 #include <QMap>
-#include <QLatin1String>
 
 QT_BEGIN_NAMESPACE
 

@@ -280,6 +280,7 @@ void QGeoTiledMappingManagerEngine::setTileCache(QAbstractGeoTileCache *cache)
     Q_D(QGeoTiledMappingManagerEngine);
     Q_ASSERT_X(!d->tileCache_, Q_FUNC_INFO, "This should be called only once");
     d->tileCache_ = cache;
+    d->tileCache_->init();
 }
 
 QAbstractGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
@@ -290,6 +291,7 @@ QAbstractGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
         if (!managerName().isEmpty())
             cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + managerName();
         d->tileCache_ = new QGeoFileTileCache(cacheDirectory);
+        d->tileCache_->init();
     }
     return d->tileCache_;
 }
