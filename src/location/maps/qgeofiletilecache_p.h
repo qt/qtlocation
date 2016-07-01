@@ -138,6 +138,8 @@ protected:
     QSharedPointer<QGeoCachedTileDisk> addToDiskCache(const QGeoTileSpec &spec, const QString &filename);
     QSharedPointer<QGeoCachedTileMemory> addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
     QSharedPointer<QGeoTileTexture> addToTextureCache(const QGeoTileSpec &spec, const QImage &image);
+    QSharedPointer<QGeoTileTexture> getFromMemory(const QGeoTileSpec &spec);
+    QSharedPointer<QGeoTileTexture> getFromDisk(const QGeoTileSpec &spec);
 
     virtual QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const;
     virtual QGeoTileSpec filenameToTileSpec(const QString &filename) const;

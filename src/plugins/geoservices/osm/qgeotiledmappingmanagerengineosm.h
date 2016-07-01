@@ -60,6 +60,8 @@ public:
 
 private:
     QString m_customCopyright;
+    QString m_cacheDirectory;
+    QString m_offlineDirectory;
 };
 
 QT_END_NAMESPACE

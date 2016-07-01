@@ -1,6 +1,6 @@
 TARGET = qtgeoservices_osm
 
-QT += location-private positioning-private network
+QT += location-private positioning-private network concurrent
 
 HEADERS += \
     qgeoserviceproviderpluginosm.h \
@@ -14,7 +14,8 @@ HEADERS += \
     qplacemanagerengineosm.h \
     qplacesearchreplyosm.h \
     qplacecategoriesreplyosm.h \
-    qgeotiledmaposm.h
+    qgeotiledmaposm.h \
+    qgeofiletilecacheosm.h
 
 SOURCES += \
     qgeoserviceproviderpluginosm.cpp \
@@ -28,7 +29,8 @@ SOURCES += \
     qplacemanagerengineosm.cpp \
     qplacesearchreplyosm.cpp \
     qplacecategoriesreplyosm.cpp \
-    qgeotiledmaposm.cpp
+    qgeotiledmaposm.cpp \
+    qgeofiletilecacheosm.cpp
 
 
 OTHER_FILES += \

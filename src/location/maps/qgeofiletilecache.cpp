@@ -280,43 +280,10 @@ void QGeoFileTileCache::clearAll()
 
 QSharedPointer<QGeoTileTexture> QGeoFileTileCache::get(const QGeoTileSpec &spec)
 {
-    QSharedPointer<QGeoTileTexture> tt = textureCache_.object(spec);
+    QSharedPointer<QGeoTileTexture> tt = getFromMemory(spec);
     if (tt)
         return tt;
-
-    QSharedPointer<QGeoCachedTileMemory> tm = memoryCache_.object(spec);
-    if (tm) {
-        QImage image;
-        if (!image.loadFromData(tm->bytes)) {
-            handleError(spec, QLatin1String("Problem with tile image"));
-            return QSharedPointer<QGeoTileTexture>(0);
-        }
-        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(spec, image);
-        if (tt)
-            return tt;
-    }
-
-    QSharedPointer<QGeoCachedTileDisk> td = diskCache_.object(spec);
-    if (td) {
-        const QString format = QFileInfo(td->filename).suffix();
-        QFile file(td->filename);
-        file.open(QIODevice::ReadOnly);
-        QByteArray bytes = file.readAll();
-        file.close();
-
-        QImage image;
-        if (!image.loadFromData(bytes)) {
-            handleError(spec, QLatin1String("Problem with tile image"));
-            return QSharedPointer<QGeoTileTexture>(0);
-        }
-
-        addToMemoryCache(spec, bytes, format);
-        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, image);
-        if (tt)
-            return tt;
-    }
-
-    return QSharedPointer<QGeoTileTexture>();
+    return getFromDisk(spec);
 }
 
 void QGeoFileTileCache::insert(const QGeoTileSpec &spec,
@@ -392,6 +359,51 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::addToTextureCache(const QGeoT
     textureCache_.insert(spec, tt, textureCost);
 
     return tt;
+}
+
+QSharedPointer<QGeoTileTexture> QGeoFileTileCache::getFromMemory(const QGeoTileSpec &spec)
+{
+    QSharedPointer<QGeoTileTexture> tt = textureCache_.object(spec);
+    if (tt)
+        return tt;
+
+    QSharedPointer<QGeoCachedTileMemory> tm = memoryCache_.object(spec);
+    if (tm) {
+        QImage image;
+        if (!image.loadFromData(tm->bytes)) {
+            handleError(spec, QLatin1String("Problem with tile image"));
+            return QSharedPointer<QGeoTileTexture>(0);
+        }
+        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(spec, image);
+        if (tt)
+            return tt;
+    }
+    return QSharedPointer<QGeoTileTexture>();
+}
+
+QSharedPointer<QGeoTileTexture> QGeoFileTileCache::getFromDisk(const QGeoTileSpec &spec)
+{
+    QSharedPointer<QGeoCachedTileDisk> td = diskCache_.object(spec);
+    if (td) {
+        const QString format = QFileInfo(td->filename).suffix();
+        QFile file(td->filename);
+        file.open(QIODevice::ReadOnly);
+        QByteArray bytes = file.readAll();
+        file.close();
+
+        QImage image;
+        if (!image.loadFromData(bytes)) {
+            handleError(spec, QLatin1String("Problem with tile image"));
+            return QSharedPointer<QGeoTileTexture>(0);
+        }
+
+        addToMemoryCache(spec, bytes, format);
+        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, image);
+        if (tt)
+            return tt;
+    }
+
+    return QSharedPointer<QGeoTileTexture>();
 }
 
 QString QGeoFileTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const

@@ -86,6 +86,29 @@ a prefix.
         If not specified the default  \l {http://nominatim.openstreetmap.org/search}{url}
         will be used.
         \note The API documentation is available at \l {https://wiki.openstreetmap.org/wiki/Nominatim}{Project OSM Nominatim}.
+\row
+    \li osm.mapping.cache.directory
+    \li Absolute path to map tile cache directory used as network disk cache.
+
+    The default place for the cache is \c{QtLocation/osm} directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
+    On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
+\row
+    \li osm.mapping.offline.directory
+    \li Absolute path to a directory containing map tiles used as an offline storage. If specified, it will work together with the network disk cache, but tiles won't get automatically
+    inserted, removed or updated. The format of the tiles is the same used by the network disk cache.
+
+    There is no default value, and if this property is not set, no directory will be indexed and only the network disk cache will be used
+    to reduce network usage or to act as an offline storage for the currently cached tiles.
+\row
+    \li osm.mapping.cache.disk.size
+    \li Map tile disk cache size in bytes. Default size of the cache is 100MB.
+\row
+    \li osm.mapping.cache.memory.size
+    \li Map tile memory cache size in bytes. Default size of the cache is 3MB.
+\row
+    \li osm.mapping.cache.texture.size
+    \li Map tile texture cache size in bytes. Default size of the cache is 6MB. Note that the texture cache has a hard minimum size which depends on the size of the map viewport (it must contain enough data to display the tiles currently visible on the display). This value is the amount of cache to be used in addition to the bare minimum.
+
 \endtable
 
 \section1 Parameter Usage Example

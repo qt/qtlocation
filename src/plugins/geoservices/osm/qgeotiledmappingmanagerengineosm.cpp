@@ -40,6 +40,7 @@
 #include "qgeotiledmappingmanagerengineosm.h"
 #include "qgeotilefetcherosm.h"
 #include "qgeotiledmaposm.h"
+#include "qgeofiletilecacheosm.h"
 
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
@@ -83,6 +84,39 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         m_customCopyright = parameters.value(QStringLiteral("osm.mapping.copyright")).toString().toLatin1();
 
     setTileFetcher(tileFetcher);
+
+
+    if (parameters.contains(QStringLiteral("osm.mapping.cache.directory"))) {
+        m_cacheDirectory = parameters.value(QStringLiteral("osm.mapping.cache.directory")).toString();
+    } else {
+        // managerName() is not yet set, we have to hardcode the plugin name below
+        m_cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + QLatin1String("osm");
+    }
+    if (parameters.contains(QStringLiteral("osm.mapping.offline.directory"))) {
+        m_offlineDirectory = parameters.value(QStringLiteral("osm.mapping.offline.directory")).toString();
+    }
+    QAbstractGeoTileCache *tileCache = new QGeoFileTileCacheOsm(m_offlineDirectory, m_cacheDirectory);
+    if (parameters.contains(QStringLiteral("osm.mapping.cache.disk.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("osm.mapping.cache.disk.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setMaxDiskUsage(cacheSize);
+    } else {
+        tileCache->setMaxDiskUsage(100 * 1024 * 1024);
+    }
+    if (parameters.contains(QStringLiteral("osm.mapping.cache.memory.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("osm.mapping.cache.memory.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setMaxMemoryUsage(cacheSize);
+    }
+    if (parameters.contains(QStringLiteral("osm.mapping.cache.texture.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("osm.mapping.cache.texture.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setExtraTextureUsage(cacheSize);
+    }
+    setTileCache(tileCache);
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
