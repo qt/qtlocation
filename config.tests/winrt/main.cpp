@@ -29,10 +29,16 @@
 #include <functional>
 #include <windows.system.h>
 #include <windows.devices.geolocation.h>
+#include <windows.foundation.h>
 #include <wrl.h>
 
 using namespace Microsoft::WRL::Wrappers;
 using namespace ABI::Windows::Devices::Geolocation;
+using namespace ABI::Windows::Foundation;
+
+#if _MSC_VER >= 1900
+typedef IAsyncOperationCompletedHandler<GeolocationAccessStatus> AccessHandler;
+#endif
 
 int main(int, char**)
 {
