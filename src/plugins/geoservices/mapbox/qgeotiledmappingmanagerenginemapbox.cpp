@@ -116,13 +116,14 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
 
     setSupportedMapTypes(mapTypes);
 
-    bool doubleRes = true;
+    int scaleFactor = 2;
     if (parameters.contains(QStringLiteral("mapbox.highdpi_tiles"))) {
         const QString param = parameters.value(QStringLiteral("mapbox.highdpi_tiles")).toString().toLower();
         if (param == "false")
-            doubleRes = false;
+            scaleFactor = 1;
     }
-    QGeoTileFetcherMapbox *tileFetcher = new QGeoTileFetcherMapbox(this, doubleRes);
+
+    QGeoTileFetcherMapbox *tileFetcher = new QGeoTileFetcherMapbox(scaleFactor, this);
     tileFetcher->setMapIds(mapIds);
 
     if (parameters.contains(QStringLiteral("useragent"))) {
@@ -159,7 +160,7 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
     // It is illegal to violate Mapbox Terms of Service, setting a limit that exceeds
     // what the plan the token belongs to allows.
 
-    QAbstractGeoTileCache *tileCache = new QGeoFileTileCacheMapbox(mapTypes, m_cacheDirectory);
+    QGeoFileTileCache *tileCache = new QGeoFileTileCacheMapbox(mapTypes, scaleFactor, m_cacheDirectory);
 
     if (parameters.contains(QStringLiteral("mapbox.cache.disk.size"))) {
         bool ok = false;

@@ -39,7 +39,7 @@
 #include "qgeotiledmap_nokia.h"
 #include "qgeotilefetcher_nokia.h"
 #include "qgeotilespec_p.h"
-#include "qgeofiletilecache_p.h"
+#include "qgeofiletilecachenokia.h"
 
 #include <QDebug>
 #include <QDir>
@@ -115,7 +115,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
         m_cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + QLatin1String("here");
     }
 
-    QGeoFileTileCache *tileCache = new QGeoFileTileCache(m_cacheDirectory);
+    QGeoFileTileCache *tileCache = new QGeoFileTileCacheNokia(ppi, m_cacheDirectory);
     setTileCache(tileCache);
 
     if (parameters.contains(QStringLiteral("here.mapping.cache.disk.size"))) {

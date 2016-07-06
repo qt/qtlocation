@@ -34,30 +34,28 @@
 **
 ****************************************************************************/
 
-#include "qgeofiletilecachemapbox.h"
+#include "qgeofiletilecachenokia.h"
 #include <QtLocation/private/qgeotilespec_p.h>
 #include <QDir>
 
 QT_BEGIN_NAMESPACE
 
-QGeoFileTileCacheMapbox::QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTypes, int scaleFactor, const QString &directory, QObject *parent)
-    :QGeoFileTileCache(directory, parent), m_mapTypes(mapTypes)
+QGeoFileTileCacheNokia::QGeoFileTileCacheNokia(int ppi, const QString &directory, QObject *parent)
+    :QGeoFileTileCache(directory, parent)
 {
-    m_scaleFactor = qBound(1, scaleFactor, 2);
-    for (int i=0; i < mapTypes.size(); i++)
-        m_mapNameToId.insert(mapTypes[i].name(), i);
+    m_ppi = QString::number(ppi) + QLatin1String("p");
 }
 
-QGeoFileTileCacheMapbox::~QGeoFileTileCacheMapbox()
+QGeoFileTileCacheNokia::~QGeoFileTileCacheNokia()
 {
 
 }
 
-QString QGeoFileTileCacheMapbox::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const
+QString QGeoFileTileCacheNokia::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const
 {
     QString filename = spec.plugin();
     filename += QLatin1String("-");
-    filename += m_mapTypes[spec.mapId()].name();
+    filename += QString::number(spec.mapId());
     filename += QLatin1String("-");
     filename += QString::number(spec.zoom());
     filename += QLatin1String("-");
@@ -71,9 +69,8 @@ QString QGeoFileTileCacheMapbox::tileSpecToFilename(const QGeoTileSpec &spec, co
         filename += QString::number(spec.version());
     }
 
-    filename += QLatin1String("-@");
-    filename += QString::number(m_scaleFactor);
-    filename += QLatin1Char('x');
+    filename += QLatin1String("-");
+    filename += m_ppi;
 
     filename += QLatin1String(".");
     filename += format;
@@ -83,49 +80,45 @@ QString QGeoFileTileCacheMapbox::tileSpecToFilename(const QGeoTileSpec &spec, co
     return dir.filePath(filename);
 }
 
-QGeoTileSpec QGeoFileTileCacheMapbox::filenameToTileSpec(const QString &filename) const
+QGeoTileSpec QGeoFileTileCacheNokia::filenameToTileSpec(const QString &filename) const
 {
+    QGeoTileSpec emptySpec;
+
     QStringList parts = filename.split('.');
 
     if (parts.length() != 2)
-        return QGeoTileSpec();
+        return emptySpec;
 
     QString name = parts.at(0);
     QStringList fields = name.split('-');
 
     int length = fields.length();
-    if (length != 6 && length != 7) {
+    if (length != 6 && length != 7)
+        return emptySpec;
+    else if (fields.last() != m_ppi)
         return QGeoTileSpec();
-    } else {
-        int scaleIdx = fields.last().indexOf("@");
-        if (scaleIdx < 0 || fields.last().size() <= (scaleIdx + 2))
-            return QGeoTileSpec();
-        int scaleFactor = fields.last()[scaleIdx + 1].digitValue();
-        if (scaleFactor != m_scaleFactor)
-           return QGeoTileSpec();
-    }
 
     QList<int> numbers;
 
     bool ok = false;
-    for (int i = 2; i < length-1; ++i) { // skipping -@_X
+    for (int i = 1; i < length-1; ++i) { // skipping -<ppi>
         ok = false;
         int value = fields.at(i).toInt(&ok);
         if (!ok)
-            return QGeoTileSpec();
+            return emptySpec;
         numbers.append(value);
     }
 
     //File name without version, append default
-    if (numbers.length() < 4)
+    if (numbers.length() < 5)
         numbers.append(-1);
 
     return QGeoTileSpec(fields.at(0),
-                    m_mapNameToId[fields.at(1)],
                     numbers.at(0),
                     numbers.at(1),
                     numbers.at(2),
-                    numbers.at(3));
+                    numbers.at(3),
+                    numbers.at(4));
 }
 
 QT_END_NAMESPACE

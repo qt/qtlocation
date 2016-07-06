@@ -26,7 +26,8 @@ HEADERS += \
             uri_constants.h \
             qgeoerror_messages.h \
             qgeomapversion.h \
-            qgeotiledmap_nokia.h
+            qgeotiledmap_nokia.h \
+            qgeofiletilecachenokia.h
 
 
 SOURCES += \
@@ -45,7 +46,8 @@ SOURCES += \
             uri_constants.cpp \
             qgeoerror_messages.cpp \
             qgeomapversion.cpp \
-            qgeotiledmap_nokia.cpp
+            qgeotiledmap_nokia.cpp \
+            qgeofiletilecachenokia.cpp
 
 include(placesv2/placesv2.pri)
 

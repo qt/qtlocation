@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2014 Canonical Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,41 +34,27 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEFETCHERMAPBOX_H
-#define QGEOTILEFETCHERMAPBOX_H
+#ifndef QGEOFILETILECACHENOKIA_H
+#define QGEOFILETILECACHENOKIA_H
 
-#include <qvector.h>
-#include <QtLocation/private/qgeotilefetcher_p.h>
+#include <QtLocation/private/qgeofiletilecache_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngine;
-class QNetworkAccessManager;
-
-class QGeoTileFetcherMapbox : public QGeoTileFetcher
+class QGeoFileTileCacheNokia : public QGeoFileTileCache
 {
     Q_OBJECT
-
 public:
-    QGeoTileFetcherMapbox(int scaleFactor = 2, QObject *parent = 0);
+    QGeoFileTileCacheNokia(int ppi, const QString &directory = QString(), QObject *parent = 0);
+    ~QGeoFileTileCacheNokia();
 
-    void setUserAgent(const QByteArray &userAgent);
-    void setMapIds(const QVector<QString> &mapIds);
-    void setFormat(const QString &format);
-    void setAccessToken(const QString &accessToken);
+protected:
+    virtual QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const Q_DECL_OVERRIDE;
+    virtual QGeoTileSpec filenameToTileSpec(const QString &filename) const Q_DECL_OVERRIDE;
 
-private:
-    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
-
-    QNetworkAccessManager *m_networkManager;
-    QByteArray m_userAgent;
-    QString m_format;
-    QString m_replyFormat;
-    QString m_accessToken;
-    QVector<QString> m_mapIds;
-    int m_scaleFactor;
+    QString m_ppi;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEFETCHERMAPBOX_H
+#endif // QGEOFILETILECACHENOKIA_H

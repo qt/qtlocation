@@ -46,7 +46,7 @@ class QGeoFileTileCacheMapbox : public QGeoFileTileCache
 {
     Q_OBJECT
 public:
-    QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTypes, const QString &directory = QString(), QObject *parent = 0);
+    QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTypes, int scaleFactor, const QString &directory = QString(), QObject *parent = 0);
     ~QGeoFileTileCacheMapbox();
 
 protected:
@@ -55,6 +55,7 @@ protected:
 
     QList<QGeoMapType> m_mapTypes;
     QMap<QString, int> m_mapNameToId;
+    int m_scaleFactor;
 };
 
 QT_END_NAMESPACE

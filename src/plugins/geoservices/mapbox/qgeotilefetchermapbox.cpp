@@ -44,14 +44,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoTileFetcherMapbox::QGeoTileFetcherMapbox(QObject *parent, bool highDpiTiles)
+QGeoTileFetcherMapbox::QGeoTileFetcherMapbox(int scaleFactor, QObject *parent)
 :   QGeoTileFetcher(parent), m_networkManager(new QNetworkAccessManager(this)),
     m_userAgent("Qt Location based application"),
     m_format("png"),
     m_replyFormat("png"),
-    m_accessToken(""),
-    m_highDpiTiles(highDpiTiles)
+    m_accessToken("")
 {
+    m_scaleFactor = qBound(1, scaleFactor, 2);
 }
 
 void QGeoTileFetcherMapbox::setUserAgent(const QByteArray &userAgent)
@@ -90,7 +90,8 @@ QGeoTiledMapReply *QGeoTileFetcherMapbox::getTileImage(const QGeoTileSpec &spec)
                         ((spec.mapId() >= m_mapIds.size()) ? QStringLiteral("mapbox.streets") : m_mapIds[spec.mapId()]) + QLatin1Char('/') +
                         QString::number(spec.zoom()) + QLatin1Char('/') +
                         QString::number(spec.x()) + QLatin1Char('/') +
-                        QString::number(spec.y()) + ((m_highDpiTiles) ? QStringLiteral("@2x.") : QStringLiteral(".")) +
+                        QString::number(spec.y()) +
+                        ((m_scaleFactor > 1) ? (QLatin1Char('@') + QString::number(m_scaleFactor) + QLatin1String("x.")) : QLatin1String(".")) +
                         m_format + QLatin1Char('?') +
                         QStringLiteral("access_token=") + m_accessToken));
 
