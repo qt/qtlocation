@@ -123,6 +123,7 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
             doubleRes = false;
     }
     QGeoTileFetcherMapbox *tileFetcher = new QGeoTileFetcherMapbox(this, doubleRes);
+    tileFetcher->setMapIds(mapIds);
 
     if (parameters.contains(QStringLiteral("useragent"))) {
         const QByteArray ua = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
