@@ -74,7 +74,7 @@ ApplicationWindow {
 
         map = mapComponent.createObject(page);
         map.plugin = plugin;
-        map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
+        map.zoomLevel = 8
     }
 
     function getPlugins()

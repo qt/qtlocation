@@ -14,7 +14,8 @@ HEADERS += \
     qplacemanagerengineosm.h \
     qplacesearchreplyosm.h \
     qplacecategoriesreplyosm.h \
-    qgeotiledmaposm.h
+    qgeotiledmaposm.h \
+    qgeotileproviderosm.h
 
 SOURCES += \
     qgeoserviceproviderpluginosm.cpp \
@@ -28,7 +29,8 @@ SOURCES += \
     qplacemanagerengineosm.cpp \
     qplacesearchreplyosm.cpp \
     qplacecategoriesreplyosm.cpp \
-    qgeotiledmaposm.cpp
+    qgeotiledmaposm.cpp \
+    qgeotileproviderosm.cpp
 
 
 OTHER_FILES += \

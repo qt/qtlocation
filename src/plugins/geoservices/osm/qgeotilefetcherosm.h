@@ -34,31 +34,48 @@
 #ifndef QGEOTILEFETCHEROSM_H
 #define QGEOTILEFETCHEROSM_H
 
+#include "qgeotileproviderosm.h"
 #include <QtLocation/private/qgeotilefetcher_p.h>
+#include <QVector>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngine;
 class QNetworkAccessManager;
 
 class QGeoTileFetcherOsm : public QGeoTileFetcher
 {
     Q_OBJECT
 
+    friend class QGeoMapReplyOsm;
+    friend class QGeoTiledMappingManagerEngineOsm;
 public:
-    QGeoTileFetcherOsm(QObject *parent = 0);
+    QGeoTileFetcherOsm(const QVector<QGeoTileProviderOsm *> &providers,
+                       QNetworkAccessManager *nm,
+                       QObject *parent = 0);
 
     void setUserAgent(const QByteArray &userAgent);
-    void setUrlPrefix(const QString &urlPrefix);
+
+Q_SIGNALS:
+    void providerDataUpdated(const QGeoTileProviderOsm *provider);
+
+protected:
+    bool initialized() const Q_DECL_OVERRIDE;
+
+protected Q_SLOTS:
+    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
+    void onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error);
 
 private:
     QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
+    void readyUpdated();
 
-    QNetworkAccessManager *m_networkManager;
     QByteArray m_userAgent;
-    QString m_urlPrefix;
+    QVector<QGeoTileProviderOsm *> m_providers;
+    QNetworkAccessManager *m_nm;
+    bool m_ready;
 };
 
 QT_END_NAMESPACE
 
 #endif // QGEOTILEFETCHEROSM_H
+

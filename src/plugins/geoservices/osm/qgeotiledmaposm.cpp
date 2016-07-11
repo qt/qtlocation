@@ -33,14 +33,22 @@
 
 #include "qgeotiledmaposm.h"
 #include "qgeotiledmappingmanagerengineosm.h"
+#include "qgeotilefetcherosm.h"
 
 #include <QtLocation/private/qgeotilespec_p.h>
 
 QT_BEGIN_NAMESPACE
 
 QGeoTiledMapOsm::QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
-:   QGeoTiledMap(engine, parent), m_mapId(-1), m_customCopyright(engine->customCopyright())
+:   QGeoTiledMap(engine, parent), m_mapId(-1), m_engine(engine)
 {
+    // Needed because evaluateCopyrights() is only triggered if visible tiles change in the map.
+    // It fails the first time it gets called if providers aren't resolved, and subsequent calls
+    // to it will be skipped until visible tiles change.
+    // This connection makes sure the copyrights are evaluated when copyright data are ready regardless
+    // of what tiles are visible.
+    connect(qobject_cast<QGeoTileFetcherOsm *>(engine->tileFetcher()), &QGeoTileFetcherOsm::providerDataUpdated,
+            this, &QGeoTiledMapOsm::onProviderDataUpdated);
 }
 
 QGeoTiledMapOsm::~QGeoTiledMapOsm()
@@ -56,32 +64,43 @@ void QGeoTiledMapOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
     if (tile.mapId() == m_mapId)
         return;
 
-    m_mapId = tile.mapId();
+    int providerId = tile.mapId() - 1;
+    if (providerId < 0 || providerId >= m_engine->providers().size() || !m_engine->providers().at(providerId)->isValid())
+        return;
 
-    QString copyrights;
-    switch (m_mapId) {
-    case 1:
-    case 2:
-        // set attribution to Map Quest
-        copyrights = tr("Tiles Courtesy of <a href='http://www.mapquest.com/'>MapQuest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
-        break;
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-        // set attribution to Thunder Forest
-        copyrights = tr("Maps &copy; <a href='http://www.thunderforest.com/'>Thunderforest</a><br/>Data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
-        break;
-    case 8:
-        copyrights = m_customCopyright;
-        break;
-    default:
-        // set attribution to OSM
-        copyrights = tr("&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors");
+    m_mapId = tile.mapId();
+    onProviderDataUpdated(m_engine->providers().at(providerId));
+}
+
+void QGeoTiledMapOsm::onProviderDataUpdated(const QGeoTileProviderOsm *provider)
+{
+    if (!provider->isResolved() || provider->mapType().mapId() != m_mapId)
+        return;
+    QString copyRights;
+    const QString mapCopy = provider->mapCopyRight();
+    const QString dataCopy = provider->dataCopyRight();
+    const QString styleCopy = provider->styleCopyRight();
+    if (!mapCopy.isEmpty()) {
+        copyRights += QStringLiteral("Map &copy; ");
+        copyRights += mapCopy;
+    }
+    if (!dataCopy.isEmpty()) {
+        if (!copyRights.isEmpty())
+            copyRights += QStringLiteral("<br/>");
+        copyRights += QStringLiteral("Data &copy; ");
+        copyRights += dataCopy;
+    }
+    if (!styleCopy.isEmpty()) {
+        if (!copyRights.isEmpty())
+            copyRights += QStringLiteral("<br/>");
+        copyRights += QStringLiteral("Style &copy; ");
+        copyRights += styleCopy;
     }
 
-    emit copyrightsChanged(copyrights);
+    if (copyRights.isEmpty() && provider->mapType().style() == QGeoMapType::CustomMap)
+        copyRights = m_engine->customCopyright();
+
+    emit copyrightsChanged(copyRights);
 }
 
 QT_END_NAMESPACE

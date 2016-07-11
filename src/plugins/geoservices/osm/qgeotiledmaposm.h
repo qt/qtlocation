@@ -34,6 +34,8 @@
 #ifndef QGEOTILEDMAPOSM_H
 #define QGEOTILEDMAPOSM_H
 
+#include "qgeotileproviderosm.h"
+
 #include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -50,9 +52,12 @@ public:
 protected:
     void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
 
+protected Q_SLOTS:
+    void onProviderDataUpdated(const QGeoTileProviderOsm *provider);
+
 private:
     int m_mapId;
-    const QString m_customCopyright;
+    QGeoTiledMappingManagerEngineOsm *m_engine;
 };
 
 QT_END_NAMESPACE

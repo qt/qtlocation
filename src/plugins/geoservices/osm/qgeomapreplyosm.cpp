@@ -35,12 +35,16 @@
 
 #include <QtLocation/private/qgeotilespec_p.h>
 
-QGeoMapReplyOsm::QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent)
+QGeoMapReplyOsm::QGeoMapReplyOsm(QNetworkReply *reply,
+                                 const QGeoTileSpec &spec,
+                                 const QString &imageFormat,
+                                 QObject *parent)
 :   QGeoTiledMapReply(spec, parent), m_reply(reply)
 {
     connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
     connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    setMapImageFormat(imageFormat);
 }
 
 QGeoMapReplyOsm::~QGeoMapReplyOsm()
@@ -69,18 +73,15 @@ void QGeoMapReplyOsm::networkReplyFinished()
     if (!m_reply)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError)
+    if (m_reply->error() != QNetworkReply::NoError) {
+        m_reply->deleteLater();
+        m_reply = 0;
         return;
+    }
 
     QByteArray a = m_reply->readAll();
 
     setMapImageData(a);
-    int mapId = tileSpec().mapId();
-    if (mapId == 1 || mapId == 2)
-        setMapImageFormat(QStringLiteral("jpg"));
-    else
-        setMapImageFormat(QStringLiteral("png"));
-
     setFinished(true);
 
     m_reply->deleteLater();

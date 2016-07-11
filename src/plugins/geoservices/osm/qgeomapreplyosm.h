@@ -34,6 +34,9 @@
 #ifndef QGEOMAPREPLYOSM_H
 #define QGEOMAPREPLYOSM_H
 
+#include "qgeotilefetcherosm.h"
+#include "qgeotileproviderosm.h"
+
 #include <QtNetwork/QNetworkReply>
 #include <QtLocation/private/qgeotiledmapreply_p.h>
 #include <QtCore/qpointer.h>
@@ -45,7 +48,7 @@ class QGeoMapReplyOsm : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    explicit QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent = 0);
+    QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec, const QString &imageFormat, QObject *parent = 0);
     ~QGeoMapReplyOsm();
 
     void abort();
