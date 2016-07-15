@@ -108,7 +108,7 @@ public:
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
-    bool buildGeometry(const QGeoTileSpec &spec, QSGGeometry::TexturedPoint2D *vertices);
+    bool buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode);
     void setTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
 };
@@ -292,7 +292,7 @@ QDoubleVector2D QGeoTiledMapScenePrivate::mercatorToItemPosition(const QDoubleVe
     return QDoubleVector2D(x + m_screenOffsetX, y + m_screenOffsetY);
 }
 
-bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGGeometry::TexturedPoint2D *vertices)
+bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode)
 {
     int x = spec.x();
 
@@ -320,11 +320,9 @@ bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGGeomet
     y1 *= edge;
     y2 *= edge;
 
-    //Texture coordinate order for veritcal flip of texture
-    vertices[0].set(x1, y1, 0, 0);
-    vertices[1].set(x1, y2, 0, 1);
-    vertices[2].set(x2, y1, 1, 0);
-    vertices[3].set(x2, y2, 1, 1);
+    imageNode->setRect(QRectF(QPointF(x1, y2), QPointF(x2, y1)));
+    imageNode->setTextureCoordinatesTransform(QSGImageNode::MirrorVertically);
+    imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
 
     return true;
 }
@@ -620,11 +618,9 @@ public:
     QHash<QGeoTileSpec, QSGTexture *> textures;
 };
 
-static bool qgeotiledmapscene_isTileInViewport(const QSGGeometry::TexturedPoint2D *tp, const QMatrix4x4 &matrix) {
-    QPolygonF polygon; polygon.reserve(4);
-    for (int i=0; i<4; ++i)
-        polygon << matrix * QPointF(tp[i].x, tp[i].y);
-    return QRectF(-1, -1, 2, 2).intersects(polygon.boundingRect());
+static bool qgeotiledmapscene_isTileInViewport(const QRectF &tileRect, const QMatrix4x4 &matrix) {
+    const QRectF boundingRect = QRectF(matrix * tileRect.topLeft(), matrix * tileRect.bottomRight());
+    return QRectF(-1, -1, 2, 2).intersects(boundingRect);
 }
 
 static QVector3D toVector3D(const QDoubleVector3D& in)
@@ -655,21 +651,10 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
 
     for (QHash<QGeoTileSpec, QSGImageNode *>::iterator it = root->tiles.begin();
          it != root->tiles.end(); ) {
-        QSGGeometry visualGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
-        QSGGeometry::TexturedPoint2D *v = visualGeometry.vertexDataAsTexturedPoint2D();
-        bool ok = d->buildGeometry(it.key(), v) && qgeotiledmapscene_isTileInViewport(v, root->matrix());
         QSGImageNode *node = it.value();
-        QSGNode::DirtyState dirtyBits = 0;
+        bool ok = d->buildGeometry(it.key(), node) && qgeotiledmapscene_isTileInViewport(node->rect(), root->matrix());
 
-        // Check and handle changes to vertex data.
-        if (ok && memcmp(node->geometry()->vertexData(), v, 4 * sizeof(QSGGeometry::TexturedPoint2D)) != 0) {
-            if (v[0].x == v[3].x || v[0].y == v[3].y) { // top-left == bottom-right => invalid => remove
-                ok = false;
-            } else {
-                memcpy(node->geometry()->vertexData(), v, 4 * sizeof(QSGGeometry::TexturedPoint2D));
-                dirtyBits |= QSGNode::DirtyGeometry;
-            }
-        }
+        QSGNode::DirtyState dirtyBits = 0;
 
         if (!ok) {
             it = root->tiles.erase(it);
@@ -694,11 +679,7 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         QSGImageNode *tileNode = window->createImageNode();
         // note: setTexture will update coordinates so do it here, before we buildGeometry
         tileNode->setTexture(textures.value(s));
-        Q_ASSERT(tileNode->geometry());
-        Q_ASSERT(tileNode->geometry()->attributes() == QSGGeometry::defaultAttributes_TexturedPoint2D().attributes);
-        Q_ASSERT(tileNode->geometry()->vertexCount() == 4);
-        if (d->buildGeometry(s, tileNode->geometry()->vertexDataAsTexturedPoint2D())
-                && qgeotiledmapscene_isTileInViewport(tileNode->geometry()->vertexDataAsTexturedPoint2D(), root->matrix())) {
+        if (d->buildGeometry(s, tileNode) && qgeotiledmapscene_isTileInViewport(tileNode->rect(), root->matrix())) {
             tileNode->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
             if (tileNode->texture()->textureSize().width() > d->m_tileSize)
                 tileNode->setMipmapFiltering(QSGTexture::Linear);
