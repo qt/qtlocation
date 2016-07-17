@@ -65,11 +65,16 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
     delete d_ptr;
 }
 
-
+/*!
+    Sets the tile fetcher. Takes ownership of the QObject.
+*/
 void QGeoTiledMappingManagerEngine::setTileFetcher(QGeoTileFetcher *fetcher)
 {
     Q_D(QGeoTiledMappingManagerEngine);
 
+    if (d->fetcher_)
+        d->fetcher_->deleteLater();
+    fetcher->setParent(this);
     d->fetcher_ = fetcher;
 
     qRegisterMetaType<QGeoTileSpec>();
@@ -275,10 +280,14 @@ void QGeoTiledMappingManagerEngine::setCacheHint(QGeoTiledMappingManagerEngine::
     d->cacheHint_ = cacheHint;
 }
 
+/*!
+    Sets the tile cache. Takes ownership of the QObject.
+*/
 void QGeoTiledMappingManagerEngine::setTileCache(QAbstractGeoTileCache *cache)
 {
     Q_D(QGeoTiledMappingManagerEngine);
     Q_ASSERT_X(!d->tileCache_, Q_FUNC_INFO, "This should be called only once");
+    cache->setParent(this);
     d->tileCache_ = cache;
 }
 
@@ -312,7 +321,6 @@ QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
 
 QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate()
 {
-    delete tileCache_;
 }
 
 #include "moc_qgeotiledmappingmanagerengine_p.cpp"
