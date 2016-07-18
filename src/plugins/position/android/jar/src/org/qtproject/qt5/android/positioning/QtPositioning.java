@@ -39,7 +39,6 @@
 
 package org.qtproject.qt5.android.positioning;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
@@ -100,10 +99,10 @@ public class QtPositioning implements LocationListener
 
     private PositioningLooper looperThread;
 
-    static public void setActivity(Activity activity, Object activityDelegate)
+    static public void setContext(Context context)
     {
         try {
-            locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+            locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         } catch(Exception e) {
             e.printStackTrace();
         }
