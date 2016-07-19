@@ -44,27 +44,6 @@
 
 QT_BEGIN_NAMESPACE
 
-static QLatin1String mapboxPrefix = QLatin1String("mapbox.");
-
-static QString mapboxIdToMapName(const QString &id)
-{
-    if ((id.indexOf(mapboxPrefix) == 0) && (id.size() > mapboxPrefix.size())) {
-        // the names of the geomaptypes in this plugin reflect the actual mapbox mapIds, but are camel cased and with dashes replaced by spaces
-        QString name = id.right(id.size() - mapboxPrefix.size());
-        QStringList parts = name.split('-');
-        for (int i=0; i < parts.size(); ++i)
-            parts[i].replace(0, 1, parts[i][0].toUpper());
-        name = parts.join(" ");
-        return name;
-    } else {
-        return QString();
-    }
-}
-static inline QString mapNameToMapboxId(const QString &name)
-{
-    return mapboxPrefix + name.toLower().replace(' ','-');
-}
-
 QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString)
 :   QGeoTiledMappingManagerEngine()
 {
@@ -78,41 +57,40 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
     QList<QGeoMapType> mapTypes;
     // as index 0 to retain compatibility with the current API, that expects the passed map_id to be on by default.
     if (parameters.contains(QStringLiteral("mapbox.map_id"))) {
-        const QString name = mapboxIdToMapName(parameters.value(QStringLiteral("mapbox.map_id")).toString());
-        mapTypes << QGeoMapType(QGeoMapType::CustomMap, name, QObject::tr(name.toLatin1().data()), false, false, mapTypes.size());
+        const QString name = parameters.value(QStringLiteral("mapbox.map_id")).toString();
+        mapTypes << QGeoMapType(QGeoMapType::CustomMap, name, name, false, false, mapTypes.size());
     }
 
     // As of 2016.06.15, valid mapbox map_ids are documented at https://www.mapbox.com/api-documentation/#maps
-    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("Streets"), tr("Street"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("Light"), tr("Light"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("Dark"), tr("Dark"), false, true, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, QStringLiteral("Satellite"), tr("Satellite"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::HybridMap, QStringLiteral("Streets Satellite"), tr("Streets Satellite"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Wheatpaste"), tr("Wheatpaste"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("Streets Basic"), tr("Streets Basic"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Comic"), tr("Comic"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::PedestrianMap, QStringLiteral("Outdoors"), tr("Outdoors"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::CycleMap, QStringLiteral("Run Bike Hike"), tr("Run Bike Hike"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Pencil"), tr("Pencil"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Pirates"), tr("Pirates"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("Emerald"), tr("Emerald"), false, false, mapTypes.size());
-    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("High Contrast"), tr("High Contrast"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox.streets"), tr("Street"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox.light"), tr("Light"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox.dark"), tr("Dark"), false, true, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, QStringLiteral("mapbox.satellite"), tr("Satellite"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::HybridMap, QStringLiteral("mapbox.streets-satellite"), tr("Streets Satellite"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("mapbox.wheatpaste"), tr("Wheatpaste"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox.streets-basic"), tr("Streets Basic"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("mapbox.comic"), tr("Comic"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::PedestrianMap, QStringLiteral("mapbox.outdoors"), tr("Outdoors"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CycleMap, QStringLiteral("mapbox.run-bike-hike"), tr("Run Bike Hike"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("mapbox.pencil"), tr("Pencil"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("mapbox.pirates"), tr("Pirates"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("mapbox.emerald"), tr("Emerald"), false, false, mapTypes.size());
+    mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("mapbox.high-contrast"), tr("High Contrast"), false, false, mapTypes.size());
 
     // New way to specify multiple customized map_ids via additional_map_ids
     if (parameters.contains(QStringLiteral("mapbox.additional_map_ids"))) {
         const QString ids = parameters.value(QStringLiteral("mapbox.additional_map_ids")).toString();
         const QStringList idList = ids.split(',', QString::SkipEmptyParts);
 
-        for (const QString &str: idList) {
-                const QString name = mapboxIdToMapName(str);
-                if (!name.isEmpty())
-                    mapTypes << QGeoMapType(QGeoMapType::CustomMap, name, QObject::tr(name.toLatin1().data()), false, false, mapTypes.size());
+        for (const QString &name: idList) {
+            if (!name.isEmpty())
+                mapTypes << QGeoMapType(QGeoMapType::CustomMap, name, name, false, false, mapTypes.size());
         }
     }
 
     QVector<QString> mapIds;
     for (int i=0; i < mapTypes.size(); ++i)
-         mapIds.push_back(mapNameToMapboxId(mapTypes[i].name()));
+         mapIds.push_back(mapTypes[i].name());
 
     setSupportedMapTypes(mapTypes);
 
