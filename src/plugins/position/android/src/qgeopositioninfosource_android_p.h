@@ -78,6 +78,7 @@ private Q_SLOTS:
 
 private:
     void reconfigureRunningSystem();
+    void setError(Error error);
 
     bool updatesRunning;
     int androidClassKeyForUpdate;
