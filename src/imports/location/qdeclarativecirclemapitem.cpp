@@ -452,7 +452,7 @@ QSGNode *QDeclarativeCircleMapItem::updateMapItemPaintNode(QSGNode *oldNode, Upd
 */
 void QDeclarativeCircleMapItem::updatePolish()
 {
-    if (!map() || !center().isValid())
+    if (!map() || !center().isValid() || qIsNaN(radius_) || radius_ <= 0.0)
         return;
 
     QScopedValueRollback<bool> rollback(updatingGeometry_);
