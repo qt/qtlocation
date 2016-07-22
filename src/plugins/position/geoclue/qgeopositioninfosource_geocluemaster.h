@@ -65,17 +65,17 @@ public:
     ~QGeoPositionInfoSourceGeoclueMaster();
 
     // From QGeoPositionInfoSource
-    void setUpdateInterval(int msec);
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
-    PositioningMethods supportedPositioningMethods() const;
-    void setPreferredPositioningMethods(PositioningMethods methods);
-    int minimumUpdateInterval() const;
+    void setUpdateInterval(int msec) override;
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const override;
+    PositioningMethods supportedPositioningMethods() const override;
+    void setPreferredPositioningMethods(PositioningMethods methods) override;
+    int minimumUpdateInterval() const override;
 
-    Error error() const;
+    Error error() const override;
 
-    virtual void startUpdates() Q_DECL_OVERRIDE;
-    virtual void stopUpdates() Q_DECL_OVERRIDE;
-    virtual void requestUpdate(int timeout = 5000) Q_DECL_OVERRIDE;
+    void startUpdates() override;
+    void stopUpdates() override;
+    void requestUpdate(int timeout = 5000) override;
 
 private slots:
     void positionProviderChanged(const QString &name, const QString &description,
