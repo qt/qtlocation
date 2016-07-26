@@ -81,6 +81,12 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
             this,
             SIGNAL(initialized()),
             Qt::QueuedConnection);
+
+    connect(d_ptr->engine,
+            SIGNAL(supportedMapTypesChanged()),
+            this,
+            SIGNAL(supportedMapTypesChanged()),
+            Qt::QueuedConnection);
 }
 
 /*!

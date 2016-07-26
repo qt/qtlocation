@@ -98,6 +98,7 @@ public:
 
 Q_SIGNALS:
     void initialized();
+    void supportedMapTypesChanged();
 
 protected:
     void setSupportedMapTypes(const QList<QGeoMapType> &supportedMapTypes);

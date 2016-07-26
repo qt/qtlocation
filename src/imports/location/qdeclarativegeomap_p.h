@@ -170,6 +170,7 @@ private Q_SLOTS:
     void mapCenterChanged(const QGeoCoordinate &center);
     void pluginReady();
     void onMapChildrenChanged();
+    void onSupportedMapTypesChanged();
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
