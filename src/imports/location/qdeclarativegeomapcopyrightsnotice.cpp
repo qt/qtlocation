@@ -137,7 +137,11 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrig
     m_copyrightsImage.fill(qPremultiply(qRgba(255, 255, 255, 128)));
 
     QPainter painter(&m_copyrightsImage);
-    m_copyrightsHtml->drawContents(&painter);
+    //m_copyrightsHtml->drawContents(&painter);  // <- this uses the default application palette, that might have, f.ex., white text
+    QAbstractTextDocumentLayout::PaintContext ctx;
+    ctx.palette.setColor(QPalette::Text, QColor(QStringLiteral("black")));
+    ctx.palette.setColor(QPalette::Link, QColor(QStringLiteral("blue")));
+    m_copyrightsHtml->documentLayout()->draw(&painter, ctx);
 
     setWidth(m_copyrightsImage.width());
     setHeight(m_copyrightsImage.height());
