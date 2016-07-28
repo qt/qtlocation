@@ -84,8 +84,13 @@ public:
 
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
+
     virtual double minimumZoomForMapSize(int width, int height) const = 0;
     virtual double maximumLatitudeForZoom(double zoomLevel) const = 0;
+
+    virtual QDoubleVector2D referenceCoordinateToItemPosition(const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoCoordinate referenceItemPositionToCoordinate(const QDoubleVector2D &pos) const = 0;
+
     virtual void prefetchData();
     virtual void clearData();
 

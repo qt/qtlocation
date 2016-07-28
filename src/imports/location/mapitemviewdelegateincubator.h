@@ -38,6 +38,7 @@
 #define MAPITEMVIEWDELEGATEINCUBATOR_H
 
 #include <QtQml/QQmlIncubator>
+#include "qdeclarativegeomapitemview_p_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -46,13 +47,17 @@ class QDeclarativeGeoMapItemView;
 class MapItemViewDelegateIncubator : public QQmlIncubator
 {
 public:
-    MapItemViewDelegateIncubator(QDeclarativeGeoMapItemView *view);
+    MapItemViewDelegateIncubator(QDeclarativeGeoMapItemView *view, QDeclarativeGeoMapItemViewItemData *itemData, bool batched = true);
 
 protected:
     void statusChanged(Status status) Q_DECL_OVERRIDE;
 
 private:
     QDeclarativeGeoMapItemView *m_view;
+    QDeclarativeGeoMapItemViewItemData *m_itemData;
+    bool m_batched;
+
+    friend class QDeclarativeGeoMapItemView;
 };
 
 QT_END_NAMESPACE

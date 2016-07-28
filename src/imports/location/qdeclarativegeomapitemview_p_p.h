@@ -1,7 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
-** Copyright (C) 2015 Jolla Ltd, author: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -35,20 +34,52 @@
 **
 ****************************************************************************/
 
-#include "mapitemviewdelegateincubator.h"
-#include "qdeclarativegeomapitemview_p.h"
-#include "qdeclarativegeomapitemview_p_p.h"
+#ifndef QDECLARATIVEGEOMAPITEMVIEW_P_P_H
+#define QDECLARATIVEGEOMAPITEMVIEW_P_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtCore/QModelIndex>
+#include <QtQml/QQmlParserStatus>
+#include <QtQml/QQmlIncubator>
+#include <QtQml/qqml.h>
+#include <QtQml/private/qqmlopenmetaobject_p.h>
 
 QT_BEGIN_NAMESPACE
 
-MapItemViewDelegateIncubator::MapItemViewDelegateIncubator(QDeclarativeGeoMapItemView *view, QDeclarativeGeoMapItemViewItemData *itemData, bool batched)
-:   m_view(view), m_itemData(itemData), m_batched(batched)
-{
-}
+class MapItemViewDelegateIncubator;
+class QDeclarativeGeoMapItemView;
+class QDeclarativeGeoMapItemBase;
 
-void MapItemViewDelegateIncubator::statusChanged(QQmlIncubator::Status status)
-{
-    m_view->incubatorStatusChanged(this, status, m_batched);
-}
+struct QDeclarativeGeoMapItemViewItemData {
+    QDeclarativeGeoMapItemViewItemData()
+    :   incubator(0), item(0), context(0), modelData(0), modelDataMeta(0)
+    {
+    }
+
+    ~QDeclarativeGeoMapItemViewItemData();
+
+    MapItemViewDelegateIncubator *incubator;
+    QDeclarativeGeoMapItemBase *item;
+    QQmlContext *context;
+    QObject *modelData;
+    QQmlOpenMetaObject *modelDataMeta;
+
+    friend class MapItemViewDelegateIncubator;
+    friend class QDeclarativeGeoMapItemView;
+};
+
+Q_DECLARE_TYPEINFO(QDeclarativeGeoMapItemViewItemData, Q_MOVABLE_TYPE);
 
 QT_END_NAMESPACE
+
+#endif // QDECLARATIVEGEOMAPITEMVIEW_P_P_H

@@ -85,6 +85,7 @@ Q_SIGNALS:
 protected:
     void timerEvent(QTimerEvent *event);
     QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
+    virtual bool initialized() const;
 
 private:
     QGeoTileFetcherPrivate *d_ptr;

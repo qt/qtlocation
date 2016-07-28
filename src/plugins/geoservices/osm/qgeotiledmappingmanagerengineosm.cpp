@@ -40,10 +40,14 @@
 #include "qgeotiledmappingmanagerengineosm.h"
 #include "qgeotilefetcherosm.h"
 #include "qgeotiledmaposm.h"
+#include "qgeotileproviderosm.h"
 
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeotiledmap_p.h>
+#include <QtLocation/private/qgeofiletilecache_p.h>
+
+#include <QtNetwork/QNetworkAccessManager>
 
 QT_BEGIN_NAMESPACE
 
@@ -57,32 +61,141 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
 
     setTileSize(QSize(256, 256));
 
+    QNetworkAccessManager *nm = new QNetworkAccessManager();
+    QString domain = QStringLiteral("http://maps-redirect.qt.io/osm/5.6/");
+    if (parameters.contains(QStringLiteral("osm.mapping.providersrepository.address"))) {
+        QString customAddress = parameters.value(QStringLiteral("osm.mapping.providersrepository.address")).toString();
+        // Allowing some malformed addresses ( containing the suffix "/osm/5.6/"
+        if (customAddress.indexOf(QStringLiteral(":")) < 0) // defaulting to http:// if no prefix is found
+            customAddress = QStringLiteral("http://") + customAddress;
+        if (customAddress[customAddress.length()-1] != QLatin1Char('/'))
+            customAddress += QLatin1Char('/');
+        domain = customAddress;
+    }
+
+    m_providers.push_back(
+        new QGeoTileProviderOsm(domain + "street",
+            nm,
+            QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1),
+            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://c.tile.openstreetmap.org/%z/%x/%y.png"),
+                QStringLiteral("png"),
+                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap.org</a>"),
+                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
+            )));
+    m_providers.push_back(
+        new QGeoTileProviderOsm(domain + "satellite",
+            nm,
+            QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2),
+            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/%z/%y/%x"),
+                QStringLiteral("jpg"),
+                QStringLiteral("<a href='http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer'>USGS The National Map: Orthoimagery</a>"),
+                QStringLiteral("<a href='http://landsat.gsfc.nasa.gov/?page_id=2339'>USGS/NASA Landsat</a>")
+            )));
+    m_providers.push_back(
+        new QGeoTileProviderOsm(domain + "cycle",
+            nm,
+            QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3),
+            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://c.tile.opencyclemap.org/cycle/%z/%x/%y.png"),
+                QStringLiteral("png"),
+                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
+            )));
+    m_providers.push_back(
+        new QGeoTileProviderOsm(domain + "transit",
+            nm,
+            QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Public transit map view in daylight mode"), false, false, 4),
+            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://c.tile2.opencyclemap.org/transport/%z/%x/%y.png"),
+                QStringLiteral("png"),
+                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
+            )));
+    m_providers.push_back(
+        new QGeoTileProviderOsm(domain + "night-transit",
+            nm,
+            QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5),
+            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://a.tile.thunderforest.com/transport-dark/%z/%x/%y.png"),
+                QStringLiteral("png"),
+                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
+            )));
+    m_providers.push_back(
+        new QGeoTileProviderOsm(domain + "terrain",
+            nm,
+            QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6),
+            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://a.tile.thunderforest.com/landscape/%z/%x/%y.png"),
+                QStringLiteral("png"),
+                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
+            )));
+    m_providers.push_back(
+        new QGeoTileProviderOsm(domain + "hiking",
+            nm,
+            QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7),
+            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://a.tile.thunderforest.com/outdoors/%z/%x/%y.png"),
+                QStringLiteral("png"),
+                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
+            )));
+
+    if (parameters.contains(QStringLiteral("osm.mapping.custom.host"))
+            || parameters.contains(QStringLiteral("osm.mapping.host"))) {
+        // Adding a custom provider
+        QString tmsServer;
+        if (parameters.contains(QStringLiteral("osm.mapping.host")))
+            tmsServer = parameters.value(QStringLiteral("osm.mapping.host")).toString();
+        if (parameters.contains(QStringLiteral("osm.mapping.custom.host"))) // priority to the new one
+            tmsServer = parameters.value(QStringLiteral("osm.mapping.custom.host")).toString();
+
+        QString mapCopyright;
+        QString dataCopyright;
+        if (parameters.contains(QStringLiteral("osm.mapping.custom.mapcopyright")))
+            mapCopyright = parameters.value(QStringLiteral("osm.mapping.custom.mapcopyright")).toString();
+        if (parameters.contains(QStringLiteral("osm.mapping.custom.datacopyright")))
+            dataCopyright = parameters.value(QStringLiteral("osm.mapping.custom.datacopyright")).toString();
+
+        if (parameters.contains(QStringLiteral("osm.mapping.copyright")))
+            m_customCopyright = parameters.value(QStringLiteral("osm.mapping.copyright")).toString();
+
+        m_providers.push_back(
+            new QGeoTileProviderOsm("",
+                nm,
+                QGeoMapType(QGeoMapType::CustomMap, tr("Custom URL Map"), tr("Custom url map view set via urlprefix parameter"), false, false, 8),
+                QGeoTileProviderOsm::TileProvider(tmsServer + QStringLiteral("%z/%x/%y.png"),
+                    QStringLiteral("png"),
+                    mapCopyright,
+                    dataCopyright
+                )));
+
+        m_providers.last()->disableRedirection();
+   }
+
+    bool disableRedirection = false;
+    if (parameters.contains(QStringLiteral("osm.mapping.providersrepository.disabled")))
+        disableRedirection = parameters.value(QStringLiteral("osm.mapping.providersrepository.disabled")).toBool();
+
     QList<QGeoMapType> mapTypes;
+    foreach (QGeoTileProviderOsm * provider, m_providers) {
+        provider->setParent(this);
+        if (disableRedirection)
+            provider->disableRedirection();
+        mapTypes << provider->mapType();
+    }
     // See map type implementations in QGeoTiledMapOsm and QGeoTileFetcherOsm.
-    mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1);
-    mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2);
-    mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3);
-    mapTypes << QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Public transit map view in daylight mode"), false, false, 4);
-    mapTypes << QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5);
-    mapTypes << QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6);
-    mapTypes << QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7);
-    if (parameters.contains(QStringLiteral("osm.mapping.host")))
-        mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("Custom URL Map"), tr("Custom url map view set via urlprefix parameter"), false, false, 8);
     setSupportedMapTypes(mapTypes);
 
-    QGeoTileFetcherOsm *tileFetcher = new QGeoTileFetcherOsm(this);
+    QGeoTileFetcherOsm *tileFetcher = new QGeoTileFetcherOsm(m_providers, nm, this);
     if (parameters.contains(QStringLiteral("osm.useragent"))) {
         const QByteArray ua = parameters.value(QStringLiteral("osm.useragent")).toString().toLatin1();
         tileFetcher->setUserAgent(ua);
     }
-    if (parameters.contains(QStringLiteral("osm.mapping.host"))) {
-        const QString up = parameters.value(QStringLiteral("osm.mapping.host")).toString().toLatin1();
-        tileFetcher->setUrlPrefix(up);
-    }
-    if (parameters.contains(QStringLiteral("osm.mapping.copyright")))
-        m_customCopyright = parameters.value(QStringLiteral("osm.mapping.copyright")).toString().toLatin1();
+
 
     setTileFetcher(tileFetcher);
+
+    QAbstractGeoTileCache *tileCache = new QGeoFileTileCache(QAbstractGeoTileCache::baseCacheDirectory() + QStringLiteral("osm"));
+    // 50mb of disk cache by default to minimize n. of accesses to public OSM servers
+    tileCache->setMaxDiskUsage(50 * 1024 * 1024);
+    setTileCache(tileCache);
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
@@ -95,6 +208,11 @@ QGeoTiledMappingManagerEngineOsm::~QGeoTiledMappingManagerEngineOsm()
 QGeoMap *QGeoTiledMappingManagerEngineOsm::createMap()
 {
     return new QGeoTiledMapOsm(this);
+}
+
+const QVector<QGeoTileProviderOsm *> &QGeoTiledMappingManagerEngineOsm::providers()
+{
+    return m_providers;
 }
 
 QString QGeoTiledMappingManagerEngineOsm::customCopyright() const

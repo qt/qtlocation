@@ -111,7 +111,7 @@ void QGeoPositionInfoSourceAndroid::setPreferredPositioningMethods(QGeoPositionI
 
 int QGeoPositionInfoSourceAndroid::minimumUpdateInterval() const
 {
-    return 1000;
+    return 50;
 }
 
 QGeoPositionInfoSource::Error QGeoPositionInfoSourceAndroid::error() const
