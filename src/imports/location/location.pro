@@ -29,7 +29,8 @@ HEADERS += \
            locationvaluetypehelper_p.h\
            qquickgeomapgesturearea_p.h\
            ../positioning/qquickgeocoordinateanimation_p.h \
-           mapitemviewdelegateincubator.h
+           mapitemviewdelegateincubator.h \
+           qdeclarativegeomapitemview_p_p.h
 
 SOURCES += \
            location.cpp \
@@ -61,7 +62,7 @@ include(declarativeplaces/declarativeplaces.pri)
 
 load(qml_plugin)
 
-LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lpoly2tri$$qtPlatformTargetSuffix()
+LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lpoly2tri$$qtPlatformTargetSuffix() -lclip2tri$$qtPlatformTargetSuffix()
 
 OTHER_FILES += \
     plugin.json \

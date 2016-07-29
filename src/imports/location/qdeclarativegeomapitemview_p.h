@@ -54,6 +54,7 @@
 #include <QtQml/QQmlParserStatus>
 #include <QtQml/QQmlIncubator>
 #include <QtQml/qqml.h>
+#include "qdeclarativegeomapitemview_p_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -108,7 +109,8 @@ Q_SIGNALS:
 
 protected:
     void incubatorStatusChanged(MapItemViewDelegateIncubator *incubator,
-                                QQmlIncubator::Status status);
+                                QQmlIncubator::Status status,
+                                bool batched);
 
 private Q_SLOTS:
     void itemModelReset();
@@ -120,38 +122,26 @@ private Q_SLOTS:
                               const QVector<int> &roles);
 
 private:
-    struct ItemData {
-        ItemData()
-        :   incubator(0), item(0), context(0), modelData(0), modelDataMeta(0)
-        {
-        }
-
-        ~ItemData();
-
-        MapItemViewDelegateIncubator *incubator;
-        QDeclarativeGeoMapItemBase *item;
-        QQmlContext *context;
-        QObject *modelData;
-        QQmlOpenMetaObject *modelDataMeta;
-    };
-
-    void createItemForIndex(const QModelIndex &index);
+    void createItemForIndex(const QModelIndex &index, bool batched = false);
     void fitViewport();
+    void terminateOngoingRepopulation();
+    void removeItemData(QDeclarativeGeoMapItemViewItemData *itemData);
 
     bool componentCompleted_;
     QQmlComponent *delegate_;
     QAbstractItemModel *itemModel_;
     QDeclarativeGeoMap *map_;
-    QVector<ItemData *> m_itemData;
+    QVector<QDeclarativeGeoMapItemViewItemData *> m_itemData;
+    QVector<QDeclarativeGeoMapItemViewItemData *> m_itemDataBatched;
     bool fitViewport_;
 
     QQmlOpenMetaObjectType *m_metaObjectType;
+    int m_readyIncubators;
+    bool m_repopulating;
 
-    friend class QTypeInfo<ItemData>;
+    friend class QDeclarativeGeoMapItemViewItemData;
     friend class MapItemViewDelegateIncubator;
 };
-
-Q_DECLARE_TYPEINFO(QDeclarativeGeoMapItemView::ItemData, Q_MOVABLE_TYPE);
 
 QT_END_NAMESPACE
 

@@ -89,7 +89,8 @@ public:
     QGeoMapPolylineGeometry();
 
     void updateSourcePoints(const QGeoMap &map,
-                            const QList<QGeoCoordinate> &path);
+                            const QList<QGeoCoordinate> &path,
+                            const QGeoCoordinate geoLeftBound);
 
     void updateScreenPoints(const QGeoMap &map,
                             qreal strokeWidth);
@@ -132,6 +133,11 @@ public:
 
     QDeclarativeMapLineProperties *line();
 
+    static QGeoCoordinate computeLeftBound(const QList<QGeoCoordinate> &path, QVector<double> &deltaXs, double &minX);
+    static QGeoCoordinate updateLeftBound(const QList<QGeoCoordinate> &path, QVector<double> &deltaXs, double &minX, QGeoCoordinate currentLeftBound);
+    static QGeoCoordinate getLeftBound(const QList<QGeoCoordinate> &path, QVector<double> &deltaXs, double &minX);
+    static QGeoCoordinate getLeftBound(const QList<QGeoCoordinate> &path, QVector<double> &deltaXs, double &minX, QGeoCoordinate currentLeftBound);
+
 Q_SIGNALS:
     void pathChanged();
 
@@ -149,10 +155,14 @@ private:
 
     QDeclarativeMapLineProperties line_;
     QList<QGeoCoordinate> path_;
+    QGeoCoordinate geoLeftBound_;
     QColor color_;
     bool dirtyMaterial_;
     QGeoMapPolylineGeometry geometry_;
     bool updatingGeometry_;
+    // for the left bound calculation
+    QVector<double> deltaXs_; // longitude deltas from path_[0]
+    double minX_;             // minimum value inside deltaXs_
 };
 
 //////////////////////////////////////////////////////////////////////

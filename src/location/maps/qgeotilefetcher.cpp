@@ -73,7 +73,7 @@ void QGeoTileFetcher::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded,
 
     d->queue_ += tilesAdded.toList();
 
-    if (d->enabled_ && !d->queue_.isEmpty() && !d->timer_.isActive())
+    if (d->enabled_ && initialized() && !d->queue_.isEmpty() && !d->timer_.isActive())
         d->timer_.start(0, this);
 }
 
@@ -158,12 +158,17 @@ void QGeoTileFetcher::timerEvent(QTimerEvent *event)
         return;
     }
 
-    if (d->queue_.isEmpty()) {
+    if (d->queue_.isEmpty() || !initialized()) {
         d->timer_.stop();
         return;
     }
 
     requestNextTile();
+}
+
+bool QGeoTileFetcher::initialized() const
+{
+    return true;
 }
 
 void QGeoTileFetcher::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec)

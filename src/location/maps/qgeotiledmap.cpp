@@ -194,6 +194,20 @@ double QGeoTiledMap::maximumCenterLatitudeAtZoom(double zoomLevel) const
     return topMost.latitude();
 }
 
+QDoubleVector2D QGeoTiledMap::referenceCoordinateToItemPosition(const QGeoCoordinate &coordinate) const
+{
+    Q_D(const QGeoTiledMap);
+    QDoubleVector2D point = QGeoProjection::coordToMercator(coordinate);
+    return point * std::pow(2.0, d->m_cameraData.zoomLevel()) * d->m_visibleTiles->tileSize();
+}
+
+QGeoCoordinate QGeoTiledMap::referenceItemPositionToCoordinate(const QDoubleVector2D &pos) const
+{
+    Q_D(const QGeoTiledMap);
+    QDoubleVector2D point = pos / (std::pow(2.0, d->m_cameraData.zoomLevel()) * d->m_visibleTiles->tileSize());
+    return QGeoProjection::mercatorToCoord(point);
+}
+
 QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
     : QGeoMapPrivate(engine),
       m_cache(engine->tileCache()),

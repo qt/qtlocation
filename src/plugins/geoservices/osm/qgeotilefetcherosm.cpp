@@ -44,12 +44,36 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtLocation/private/qgeotilespec_p.h>
 
+
 QT_BEGIN_NAMESPACE
 
-QGeoTileFetcherOsm::QGeoTileFetcherOsm(QObject *parent)
-:   QGeoTileFetcher(parent), m_networkManager(new QNetworkAccessManager(this)),
-    m_userAgent("Qt Location based application")
+static bool providersResolved(const QVector<QGeoTileProviderOsm *> &providers)
 {
+    foreach (const QGeoTileProviderOsm *provider, providers)
+        if (!provider->isResolved())
+            return false;
+    return true;
+}
+
+QGeoTileFetcherOsm::QGeoTileFetcherOsm(const QVector<QGeoTileProviderOsm *> &providers,
+                                       QNetworkAccessManager *nm,
+                                       QObject *parent)
+:   QGeoTileFetcher(parent), m_userAgent("Qt Location based application"),
+    m_providers(providers), m_nm(nm), m_ready(true)
+{
+    m_nm->setParent(this);
+    foreach (QGeoTileProviderOsm *provider, m_providers) {
+        if (!provider->isResolved()) {
+            m_ready = false;
+            connect(provider, &QGeoTileProviderOsm::resolutionFinished,
+                    this, &QGeoTileFetcherOsm::onProviderResolutionFinished);
+            connect(provider, &QGeoTileProviderOsm::resolutionError,
+                    this, &QGeoTileFetcherOsm::onProviderResolutionError);
+            provider->resolveProvider();
+        }
+    }
+    if (m_ready)
+        readyUpdated();
 }
 
 void QGeoTileFetcherOsm::setUserAgent(const QByteArray &userAgent)
@@ -57,57 +81,55 @@ void QGeoTileFetcherOsm::setUserAgent(const QByteArray &userAgent)
     m_userAgent = userAgent;
 }
 
-void QGeoTileFetcherOsm::setUrlPrefix(const QString &urlPrefix)
+bool QGeoTileFetcherOsm::initialized() const
 {
-    m_urlPrefix = urlPrefix;
+    if (!m_ready) {
+        foreach (QGeoTileProviderOsm *provider, m_providers)
+            if (!provider->isResolved())
+                provider->resolveProvider();
+    }
+    return m_ready;
+}
+
+void QGeoTileFetcherOsm::onProviderResolutionFinished(const QGeoTileProviderOsm *provider)
+{
+    if ((m_ready = providersResolved(m_providers))) {
+        qWarning("QGeoTileFetcherOsm: all providers resolved");
+        readyUpdated();
+    }
+    emit providerDataUpdated(provider);
+}
+
+void QGeoTileFetcherOsm::onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error)
+{
+    Q_UNUSED(error)
+    if ((m_ready = providersResolved(m_providers))) {
+        qWarning("QGeoTileFetcherOsm: all providers resolved");
+        readyUpdated();
+    }
+    emit providerDataUpdated(provider);
 }
 
 QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
 {
-    QNetworkRequest request;
-    request.setRawHeader("User-Agent", m_userAgent);
-
-    QString urlPrefix;
-    QString suffix = QStringLiteral(".png");
-
-    switch (spec.mapId()) {
-    case 1:
-        urlPrefix = QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/map/");
-        suffix = QStringLiteral(".jpg");
-        break;
-    case 2:
-        urlPrefix = QStringLiteral("http://otile1.mqcdn.com/tiles/1.0.0/sat/");
-        suffix = QStringLiteral(".jpg");
-        break;
-    case 3:
-        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/cycle/");
-        break;
-    case 4:
-        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/transport/");
-        break;
-    case 5:
-        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/transport-dark/");
-        break;
-    case 6:
-        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/landscape/");
-        break;
-    case 7:
-        urlPrefix = QStringLiteral("http://a.tile.thunderforest.com/outdoors/");
-        break;
-    case 8:
-        urlPrefix = m_urlPrefix;
-        break;
-    default:
+    int id = spec.mapId();
+    if (id < 1 || id > m_providers.size()) {
         qWarning("Unknown map id %d\n", spec.mapId());
+        id = 0;
     }
+    id -= 1; // TODO: make OSM map ids start from 0.
 
-    request.setUrl(QUrl(urlPrefix + QString::number(spec.zoom()) + QLatin1Char('/') +
-                        QString::number(spec.x()) + QLatin1Char('/') +
-                        QString::number(spec.y()) + suffix));
+    const QUrl url = m_providers[id]->tileAddress(spec.x(), spec.y(), spec.zoom());
+    QNetworkRequest request;
+    request.setHeader(QNetworkRequest::UserAgentHeader, m_userAgent);
+    request.setUrl(url);
+    QNetworkReply *reply = m_nm->get(request);
+    return new QGeoMapReplyOsm(reply, spec, m_providers[id]->format());
+}
 
-    QNetworkReply *reply = m_networkManager->get(request);
-
-    return new QGeoMapReplyOsm(reply, spec);
+void QGeoTileFetcherOsm::readyUpdated()
+{
+    updateTileRequests(QSet<QGeoTileSpec>(), QSet<QGeoTileSpec>());
 }
 
 QT_END_NAMESPACE

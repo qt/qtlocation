@@ -201,6 +201,7 @@ private:
     bool m_copyrightsVisible;
     double m_maximumViewportLatitude;
     bool m_initialized;
+    bool m_validRegion;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

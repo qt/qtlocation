@@ -37,17 +37,18 @@
 
 #include "mapitemviewdelegateincubator.h"
 #include "qdeclarativegeomapitemview_p.h"
+#include "qdeclarativegeomapitemview_p_p.h"
 
 QT_BEGIN_NAMESPACE
 
-MapItemViewDelegateIncubator::MapItemViewDelegateIncubator(QDeclarativeGeoMapItemView *view)
-:   m_view(view)
+MapItemViewDelegateIncubator::MapItemViewDelegateIncubator(QDeclarativeGeoMapItemView *view, QDeclarativeGeoMapItemViewItemData *itemData, bool batched)
+:   m_view(view), m_itemData(itemData), m_batched(batched)
 {
 }
 
 void MapItemViewDelegateIncubator::statusChanged(QQmlIncubator::Status status)
 {
-    m_view->incubatorStatusChanged(this, status);
+    m_view->incubatorStatusChanged(this, status, m_batched);
 }
 
 QT_END_NAMESPACE

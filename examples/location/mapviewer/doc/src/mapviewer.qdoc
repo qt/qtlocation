@@ -52,7 +52,7 @@
         \list
         \li \l{QtLocation::Map}{Map}
         \li \l{QtLocation::MapGestureArea}{MapGestureArea}
-        \li \l[QML]{Coordinate}
+        \li \l[QML]{coordinate}
         \endlist
     \li Finding an address
         \list
@@ -76,7 +76,7 @@
     \snippet mapviewer/map/MapComponent.qml coord
     \snippet mapviewer/map/MapComponent.qml end
 
-    In this example, we give the map an initial center \l [QML]{Coordinate}{coordinate}
+    In this example, we give the map an initial center \l [QML]{coordinate}
     with a set latitude and longitude. We also set the initial zoom level to 50% (halfway between
     the maximum and minimum).
 
@@ -140,7 +140,7 @@
     With the model, view and delegate now complete, the only missing component
     is some kind of control over the model to begin the Route request process.
     In the simplest case, we can fill out a Route request using two already
-    available \l [QML]{Coordinate}{coordinates}:
+    available \l [QML]{coordinate}{coordinates}:
 
     \snippet mapviewer/mapviewer.qml routecoordinate
 

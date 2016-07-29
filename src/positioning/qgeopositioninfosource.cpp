@@ -94,9 +94,6 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 
     Note that the position source may have a minimum value requirement for
     update intervals, as returned by minimumUpdateInterval().
-
-    \warning On Windows CE it is not possible to detect if a device is GPS enabled.
-    The default position source on a Windows CE device without GPS support will never provide any position data.
 */
 
 /*!

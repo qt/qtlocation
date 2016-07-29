@@ -82,6 +82,7 @@ ApplicationWindow {
 
         map = mapComponent.createObject(page);
         map.plugin = plugin;
+
         if (zoomLevel != null) {
             map.zoomLevel = zoomLevel
             map.center = center

@@ -60,15 +60,30 @@ a prefix.
     \li User agent string set when making network requests.  This parameter should be set to a
         value that uniquely identifies the application.
 \row
-    \li osm.mapping.host
+    \li osm.mapping.custom.host
     \li Url string set when making network requests to the tile server.  This parameter should be set to a
         valid server url with the correct osm api and the \l{Map::activeMapType} to the corresponding \l{MapType}.CustomMap.
         The CustomMap will only be available if this parameter is set.
-        \note Setting the mapping.host parameter to a new server renders the map tile cache useless for the old custommap style.
+        \note Setting the mapping.custom.host parameter to a new server renders the map tile cache useless for the old custommap style.
 \row
-    \li osm.mapping.copyright
-    \li Custom copryright string is used when setting the \l{Map::activeMapType} to \l{MapType}.CustomMap via urlprefix parameter.
-        This copyright will only be used when using the CustomMap from above. If empty no copyright will be displayed for the custom map.
+    \li osm.mapping.custom.mapcopyright
+    \li Custom map copryright string is used when setting the \l{Map::activeMapType} to \l{MapType}.CustomMap via urlprefix parameter.
+        This copyright will only be used when using the CustomMap from above. If empty no map copyright will be displayed for the custom map.
+\row
+    \li osm.mapping.custom.datacopyright
+    \li Custom data copryright string is used when setting the \l{Map::activeMapType} to \l{MapType}.CustomMap via urlprefix parameter.
+        This copyright will only be used when using the CustomMap from above. If empty no data copyright will be displayed for the custom map.
+\row
+    \li osm.mapping.providersrepository.address
+    \li The OpenStreetMap plugin retrieves the provider's information from a remote repository. This is done to prevent using hardcoded
+    servers by default, which may become unavailable. By default this information is fetched from \l {http://maps-redirect.qt.io} {maps-redirect.qt.io}.
+    Setting this parameter changes the provider repository address to a user-specified one, which must contain the files
+    \tt{street}, \tt{satellite}, \tt{cycle}, \tt{transit}, \tt{night-transit}, \tt{terrain} and \tt{hiking}.
+\row
+    \li osm.mapping.providersrepository.disabled
+    \li By default, the OpenStreetMap plugin retrieves the provider's information from a remote repository to avoid a loss of service due to unavailability of hardcoded services.
+    The plugin, however, still contains fallback hardcoded provider data, in case the provider repository becomes unreachable.
+    Setting this parameter to \b true makes the plugin use the hardcoded urls only and therefore prevents the plugin from fetching provider data from the remote repository.
 \row
     \li osm.routing.host
     \li Url string set when making network requests to the routing server.  This parameter should be set to a
