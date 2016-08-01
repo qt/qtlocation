@@ -173,6 +173,7 @@ private Q_SLOTS:
     void mappingManagerInitialized();
     void pluginReady();
     void onMapChildrenChanged();
+    void onSupportedMapTypesChanged();
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);

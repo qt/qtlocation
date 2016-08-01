@@ -89,6 +89,7 @@ public:
 
 Q_SIGNALS:
     void initialized();
+    void supportedMapTypesChanged();
 
 protected:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);

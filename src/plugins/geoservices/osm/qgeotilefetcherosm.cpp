@@ -115,7 +115,10 @@ QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
     int id = spec.mapId();
     if (id < 1 || id > m_providers.size()) {
         qWarning("Unknown map id %d\n", spec.mapId());
-        id = 0;
+        if (m_providers.isEmpty())
+            return Q_NULLPTR;
+        else
+            id = 1;
     }
     id -= 1; // TODO: make OSM map ids start from 0.
 

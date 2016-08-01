@@ -37,11 +37,16 @@
 This geo services plugin allows applications to access
 \l {http://openstreetmap.org}{Open Street Map} location based services using the Qt Location API.
 
-Data, imagery and map information provided by \l {http://www.mapquest.com}{MapQuest},
+Data, imagery and map information provided by \l {http://korona.geog.uni-heidelberg.de/}{OpenMapSurfer},
 \l {http://www.thunderforest.com/}{ThunderForest}, OpenStreetMap and contributors. The data is
 available under the \l {http://www.opendatacommons.org/licenses/odbl}{Open Database License}.
 
 The Open Street Map geo services plugin can be loaded by using the plugin key "osm".
+
+\note Since Qt 5.6.2, the available map types offered by this plugin may change without notice depending on the
+actual availability of each provider. To prevent these changes, either a different geo service plugin should be used, or the plugin
+parameter \e osm.mapping.providersrepository.address should be set to a user-specified repository, in order to take full control over
+(and accept \b responsibility for) selecting the provider that is used for each map type.
 
 \section1 Parameters
 
@@ -78,7 +83,7 @@ a prefix.
     \li The OpenStreetMap plugin retrieves the provider's information from a remote repository. This is done to prevent using hardcoded
     servers by default, which may become unavailable. By default this information is fetched from \l {http://maps-redirect.qt.io} {maps-redirect.qt.io}.
     Setting this parameter changes the provider repository address to a user-specified one, which must contain the files
-    \tt{street}, \tt{satellite}, \tt{cycle}, \tt{transit}, \tt{night-transit}, \tt{terrain} and \tt{hiking}.
+    \tt{street}, \tt{satellite}, \tt{cycle}, \tt{transit}, \tt{night-transit}, \tt{terrain} and \tt{hiking}, each of which must contain valid provider information.
 \row
     \li osm.mapping.providersrepository.disabled
     \li By default, the OpenStreetMap plugin retrieves the provider's information from a remote repository to avoid a loss of service due to unavailability of hardcoded services.

@@ -254,6 +254,43 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
     copyrights->setCopyrightsZ(maxChildZ + 1);
 }
 
+static QDeclarativeGeoMapType *findMapType(const QList<QDeclarativeGeoMapType *> &types, const QGeoMapType &type)
+{
+    for (int i = 0; i < types.size(); ++i)
+        if (types[i]->mapType() == type)
+            return types[i];
+    return Q_NULLPTR;
+}
+
+void QDeclarativeGeoMap::onSupportedMapTypesChanged()
+{
+    QList<QDeclarativeGeoMapType *> supportedMapTypes;
+    QList<QGeoMapType> types = m_mappingManager->supportedMapTypes();
+    for (int i = 0; i < types.size(); ++i) {
+        // types that are present and get removed will be deleted at QObject destruction
+        QDeclarativeGeoMapType *type = findMapType(m_supportedMapTypes, types[i]);
+        if (!type)
+            type = new QDeclarativeGeoMapType(types[i], this);
+        supportedMapTypes.append(type);
+    }
+    m_supportedMapTypes.swap(supportedMapTypes);
+    if (m_supportedMapTypes.isEmpty()) {
+        m_map->setActiveMapType(QGeoMapType()); // no supported map types: setting an invalid one
+    } else {
+        bool hasMapType = false;
+        foreach (QDeclarativeGeoMapType *declarativeType, m_supportedMapTypes) {
+            if (declarativeType->mapType() == m_map->activeMapType())
+                hasMapType = true;
+        }
+        if (!hasMapType) {
+            QDeclarativeGeoMapType *type = m_supportedMapTypes.at(0);
+            m_activeMapType = type;
+            m_map->setActiveMapType(type->mapType());
+        }
+    }
+
+    emit supportedMapTypesChanged();
+}
 
 void QDeclarativeGeoMap::setError(QGeoServiceProvider::Error error, const QString &errorString)
 {
@@ -542,6 +579,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     // This prefetches a buffer around the map
     m_map->prefetchData();
 
+    connect(m_mappingManager, SIGNAL(supportedMapTypesChanged()), this, SLOT(onSupportedMapTypesChanged()));
     emit minimumZoomLevelChanged();
     emit maximumZoomLevelChanged();
     emit supportedMapTypesChanged();

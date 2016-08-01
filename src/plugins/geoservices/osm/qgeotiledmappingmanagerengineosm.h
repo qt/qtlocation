@@ -63,6 +63,13 @@ public:
     const QVector<QGeoTileProviderOsm *> &providers();
     QString customCopyright() const;
 
+protected Q_SLOTS:
+    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
+    void onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error);
+
+protected:
+    void updateMapTypes();
+
 private:
     QVector<QGeoTileProviderOsm *> m_providers;
     QString m_customCopyright;

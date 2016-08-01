@@ -86,11 +86,8 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         new QGeoTileProviderOsm(domain + "satellite",
             nm,
             QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2),
-            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/%z/%y/%x"),
-                QStringLiteral("jpg"),
-                QStringLiteral("<a href='http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer'>USGS The National Map: Orthoimagery</a>"),
-                QStringLiteral("<a href='http://landsat.gsfc.nasa.gov/?page_id=2339'>USGS/NASA Landsat</a>")
-            )));
+            QGeoTileProviderOsm::TileProvider()
+            ));
     m_providers.push_back(
         new QGeoTileProviderOsm(domain + "cycle",
             nm,
@@ -173,15 +170,17 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     if (parameters.contains(QStringLiteral("osm.mapping.providersrepository.disabled")))
         disableRedirection = parameters.value(QStringLiteral("osm.mapping.providersrepository.disabled")).toBool();
 
-    QList<QGeoMapType> mapTypes;
     foreach (QGeoTileProviderOsm * provider, m_providers) {
         provider->setParent(this);
         if (disableRedirection)
             provider->disableRedirection();
-        mapTypes << provider->mapType();
+
+        connect(provider, &QGeoTileProviderOsm::resolutionFinished,
+                this, &QGeoTiledMappingManagerEngineOsm::onProviderResolutionFinished);
+        connect(provider, &QGeoTileProviderOsm::resolutionError,
+                this, &QGeoTiledMappingManagerEngineOsm::onProviderResolutionError);
     }
-    // See map type implementations in QGeoTiledMapOsm and QGeoTileFetcherOsm.
-    setSupportedMapTypes(mapTypes);
+    updateMapTypes();
 
     QGeoTileFetcherOsm *tileFetcher = new QGeoTileFetcherOsm(m_providers, nm, this);
     if (parameters.contains(QStringLiteral("osm.useragent"))) {
@@ -218,6 +217,35 @@ const QVector<QGeoTileProviderOsm *> &QGeoTiledMappingManagerEngineOsm::provider
 QString QGeoTiledMappingManagerEngineOsm::customCopyright() const
 {
     return m_customCopyright;
+}
+
+void QGeoTiledMappingManagerEngineOsm::onProviderResolutionFinished(const QGeoTileProviderOsm *provider)
+{
+    if (!provider->isResolved())
+        return;
+    updateMapTypes();
+}
+
+void QGeoTiledMappingManagerEngineOsm::onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error)
+{
+    Q_UNUSED(error)
+    if (!provider->isResolved())
+        return;
+    updateMapTypes();
+}
+
+void QGeoTiledMappingManagerEngineOsm::updateMapTypes()
+{
+    QList<QGeoMapType> mapTypes;
+    foreach (QGeoTileProviderOsm * provider, m_providers) {
+        // assume provider are ok until they have been resolved invalid
+        if (!provider->isResolved() || provider->isValid())
+            mapTypes << provider->mapType();
+    }
+    const QList<QGeoMapType> currentlySupportedMapTypes = supportedMapTypes();
+    if (currentlySupportedMapTypes != mapTypes)
+        // See map type implementations in QGeoTiledMapOsm and QGeoTileFetcherOsm.
+        setSupportedMapTypes(mapTypes);
 }
 
 QT_END_NAMESPACE
