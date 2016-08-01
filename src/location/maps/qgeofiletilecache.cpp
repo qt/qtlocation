@@ -119,7 +119,7 @@ void QGeoFileTileCache::init()
     QDir::root().mkpath(directory_);
 
     // default values
-    setMaxDiskUsage(20 * 1024 * 1024);
+    setMaxDiskUsage(50 * 1024 * 1024);
     setMaxMemoryUsage(3 * 1024 * 1024);
     setExtraTextureUsage(6 * 1024 * 1024);
 
@@ -281,6 +281,34 @@ void QGeoFileTileCache::clearAll()
     dir.setFilter(QDir::Files);
     foreach (QString dirFile, dir.entryList()) {
         dir.remove(dirFile);
+    }
+}
+
+void QGeoFileTileCache::clearMapId(const int mapId)
+{
+    for (const QGeoTileSpec &k : diskCache_.keys())
+        if (k.mapId() == mapId)
+            diskCache_.remove(k, true);
+    for (const QGeoTileSpec &k : memoryCache_.keys())
+        if (k.mapId() == mapId)
+            memoryCache_.remove(k);
+    for (const QGeoTileSpec &k : textureCache_.keys())
+        if (k.mapId() == mapId)
+            textureCache_.remove(k);
+
+    // TODO: It seems the cache leaves residues, like some tiles do not get picked up.
+    // After the above calls, files that shouldnt be left behind are still on disk.
+    // Do an additional pass and make sure what has to be deleted gets deleted.
+    QDir dir(directory_);
+    QStringList formats;
+    formats << QLatin1String("*.*");
+    QStringList files = dir.entryList(formats, QDir::Files);
+    qWarning() << "Old tile data detected. Cache eviction left out "<< files.size() << "tiles";
+    for (const QString &tileFileName : files) {
+        QGeoTileSpec spec = filenameToTileSpec(tileFileName);
+        if (spec.mapId() != mapId)
+            continue;
+        QFile::remove(dir.filePath(tileFileName));
     }
 }
 

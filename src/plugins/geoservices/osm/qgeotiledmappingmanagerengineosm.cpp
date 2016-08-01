@@ -70,7 +70,10 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
             customAddress = QStringLiteral("http://") + customAddress;
         if (customAddress[customAddress.length()-1] != QLatin1Char('/'))
             customAddress += QLatin1Char('/');
-        domain = customAddress;
+        if (QUrl(customAddress).isValid())
+            domain = customAddress;
+        else
+            qWarning() << "Invalid custom providers repository address: " << customAddress;
     }
 
     bool highdpi = false;
@@ -105,37 +108,50 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     providers_terrain.push_back(new TileProvider(domain + "terrain"));
     providers_hiking.push_back(new TileProvider(domain + "hiking"));
     // Backups
+    const QDateTime defaultTs = QDateTime::fromString(QStringLiteral("2016-06-01T00:00:00"), Qt::ISODate);
     providers_street.push_back(
         new TileProvider(QStringLiteral("http://c.tile.openstreetmap.org/%z/%x/%y.png"),
             QStringLiteral("png"),
             QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap.org</a>"),
             QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
-    // No available satellite backup
+    providers_street.back()->setTimestamp(defaultTs);
+
+    // No available open access satellite backup with satisfactory level of details at the present.
+
     providers_cycle.push_back(
         new TileProvider(QStringLiteral("http://c.tile.opencyclemap.org/cycle/%z/%x/%y.png"),
             QStringLiteral("png"),
             QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
             QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+    providers_cycle.back()->setTimestamp(defaultTs);
+
     providers_transit.push_back(
         new TileProvider(QStringLiteral("http://c.tile2.opencyclemap.org/transport/%z/%x/%y.png"),
             QStringLiteral("png"),
             QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
             QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+    providers_transit.back()->setTimestamp(defaultTs);
+
     providers_nighttransit.push_back(
         new TileProvider(QStringLiteral("http://a.tile.thunderforest.com/transport-dark/%z/%x/%y.png"),
             QStringLiteral("png"),
             QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
             QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")) );
+    providers_nighttransit.back()->setTimestamp(defaultTs);
+
     providers_terrain.push_back(
         new TileProvider(QStringLiteral("http://a.tile.thunderforest.com/landscape/%z/%x/%y.png"),
             QStringLiteral("png"),
             QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
             QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+    providers_terrain.back()->setTimestamp(defaultTs);
+
     providers_hiking.push_back(
         new TileProvider(QStringLiteral("http://a.tile.thunderforest.com/outdoors/%z/%x/%y.png"),
             QStringLiteral("png"),
             QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
             QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+    providers_hiking.back()->setTimestamp(defaultTs);
 
 
     /* QGeoTileProviderOsms setup */
@@ -208,15 +224,8 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     }
     updateMapTypes();
 
-    QGeoTileFetcherOsm *tileFetcher = new QGeoTileFetcherOsm(m_providers, nm, this);
-    if (parameters.contains(QStringLiteral("osm.useragent"))) {
-        const QByteArray ua = parameters.value(QStringLiteral("osm.useragent")).toString().toLatin1();
-        tileFetcher->setUserAgent(ua);
-    }
 
-
-    setTileFetcher(tileFetcher);
-
+    /* TILE CACHE */
     if (parameters.contains(QStringLiteral("osm.mapping.cache.directory"))) {
         m_cacheDirectory = parameters.value(QStringLiteral("osm.mapping.cache.directory")).toString();
     } else {
@@ -225,11 +234,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     }
     if (parameters.contains(QStringLiteral("osm.mapping.offline.directory")))
         m_offlineDirectory = parameters.value(QStringLiteral("osm.mapping.offline.directory")).toString();
-
-    QAbstractGeoTileCache *tileCache = new QGeoFileTileCacheOsm(m_providers, m_offlineDirectory, m_cacheDirectory);
-
-    // 50mb of disk cache by default to minimize n. of accesses to public OSM servers
-    tileCache->setMaxDiskUsage(50 * 1024 * 1024);
+    QGeoFileTileCacheOsm *tileCache = new QGeoFileTileCacheOsm(m_providers, m_offlineDirectory, m_cacheDirectory);
 
     if (parameters.contains(QStringLiteral("osm.mapping.cache.disk.size"))) {
         bool ok = false;
@@ -252,6 +257,15 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
             tileCache->setExtraTextureUsage(cacheSize);
     }
     setTileCache(tileCache);
+
+
+    /* TILE FETCHER */
+    QGeoTileFetcherOsm *tileFetcher = new QGeoTileFetcherOsm(m_providers, nm, this);
+    if (parameters.contains(QStringLiteral("osm.useragent"))) {
+        const QByteArray ua = parameters.value(QStringLiteral("osm.useragent")).toString().toLatin1();
+        tileFetcher->setUserAgent(ua);
+    }
+    setTileFetcher(tileFetcher);
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();

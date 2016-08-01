@@ -117,6 +117,7 @@ public:
     int minTextureUsage() const Q_DECL_OVERRIDE;
     int textureUsage() const Q_DECL_OVERRIDE;
     void clearAll() Q_DECL_OVERRIDE;
+    void clearMapId(const int mapId);
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
 
