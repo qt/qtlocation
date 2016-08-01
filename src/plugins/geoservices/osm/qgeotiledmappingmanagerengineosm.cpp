@@ -62,10 +62,10 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     setTileSize(QSize(256, 256));
 
     QNetworkAccessManager *nm = new QNetworkAccessManager();
-    QString domain = QStringLiteral("http://maps-redirect.qt.io/osm/5.6/");
+    QString domain = QStringLiteral("http://maps-redirect.qt.io/osm/5.8/");
     if (parameters.contains(QStringLiteral("osm.mapping.providersrepository.address"))) {
         QString customAddress = parameters.value(QStringLiteral("osm.mapping.providersrepository.address")).toString();
-        // Allowing some malformed addresses ( containing the suffix "/osm/5.6/"
+        // Allowing some malformed addresses
         if (customAddress.indexOf(QStringLiteral(":")) < 0) // defaulting to http:// if no prefix is found
             customAddress = QStringLiteral("http://") + customAddress;
         if (customAddress[customAddress.length()-1] != QLatin1Char('/'))
