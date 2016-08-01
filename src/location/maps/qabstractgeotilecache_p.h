@@ -113,6 +113,7 @@ public:
     virtual void handleError(const QGeoTileSpec &spec, const QString &errorString);
 
     static QString baseCacheDirectory();
+    static QString baseLocationCacheDirectory();
 
 protected:
     QAbstractGeoTileCache(QObject *parent = 0);

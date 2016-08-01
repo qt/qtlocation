@@ -195,7 +195,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         m_cacheDirectory = parameters.value(QStringLiteral("osm.mapping.cache.directory")).toString();
     } else {
         // managerName() is not yet set, we have to hardcode the plugin name below
-        m_cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + QLatin1String("osm");
+        m_cacheDirectory = QAbstractGeoTileCache::baseLocationCacheDirectory() + QLatin1String("osm");
     }
     if (parameters.contains(QStringLiteral("osm.mapping.offline.directory")))
         m_offlineDirectory = parameters.value(QStringLiteral("osm.mapping.offline.directory")).toString();

@@ -298,7 +298,7 @@ QAbstractGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
     if (!d->tileCache_) {
         QString cacheDirectory;
         if (!managerName().isEmpty())
-            cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + managerName();
+            cacheDirectory = QAbstractGeoTileCache::baseLocationCacheDirectory() + managerName();
         d->tileCache_ = new QGeoFileTileCache(cacheDirectory);
         d->tileCache_->init();
     }

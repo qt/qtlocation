@@ -126,7 +126,7 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
         m_cacheDirectory = parameters.value(QStringLiteral("mapbox.cache.directory")).toString();
     } else {
         // managerName() is not yet set, we have to hardcode the plugin name below
-        m_cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + QLatin1String("mapbox");
+        m_cacheDirectory = QAbstractGeoTileCache::baseLocationCacheDirectory() + QLatin1String("mapbox");
     }
 
     // The Mapbox free plan allows for 6000 tiles to be stored for offline uses

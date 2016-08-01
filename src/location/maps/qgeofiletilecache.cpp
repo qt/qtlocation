@@ -93,20 +93,26 @@ QGeoFileTileCache::QGeoFileTileCache(const QString &directory, QObject *parent)
 
 void QGeoFileTileCache::init()
 {
-    const QString basePath = baseCacheDirectory();
+    const QString basePath = baseCacheDirectory() + QLatin1String("QtLocation/");
 
-    // delete old tiles from QtLocation 5.4 or prior
-    // Newer version use plugin-specific subdirectories so those are not affected.
+    // delete old tiles from QtLocation 5.7 or prior
+    // Newer version use plugin-specific subdirectories, versioned with qt version so those are not affected.
     // TODO Remove cache cleanup in Qt 6
     QDir baseDir(basePath);
     if (baseDir.exists()) {
         const QStringList oldCacheFiles = baseDir.entryList(QDir::Files);
         foreach (const QString& file, oldCacheFiles)
             baseDir.remove(file);
+        const QStringList oldCacheDirs = { QStringLiteral("osm"), QStringLiteral("mapbox"), QStringLiteral("here") };
+        foreach (const QString& d, oldCacheDirs) {
+            QDir oldCacheDir(basePath + QLatin1Char('/') + d);
+            if (oldCacheDir.exists())
+                oldCacheDir.removeRecursively();
+        }
     }
 
     if (directory_.isEmpty()) {
-        directory_ = basePath;
+        directory_ = baseLocationCacheDirectory();
         qWarning() << "Plugin uses uninitialized QGeoFileTileCache directory which was deleted during startup";
     }
 

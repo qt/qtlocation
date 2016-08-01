@@ -112,7 +112,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
         m_cacheDirectory = parameters.value(QStringLiteral("here.mapping.cache.directory")).toString();
     } else {
         // managerName() is not yet set, we have to hardcode the plugin name below
-        m_cacheDirectory = QAbstractGeoTileCache::baseCacheDirectory() + QLatin1String("here");
+        m_cacheDirectory = QAbstractGeoTileCache::baseLocationCacheDirectory() + QLatin1String("here");
     }
 
     QGeoFileTileCache *tileCache = new QGeoFileTileCacheNokia(ppi, m_cacheDirectory);

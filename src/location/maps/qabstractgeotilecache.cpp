@@ -139,9 +139,15 @@ QString QAbstractGeoTileCache::baseCacheDirectory()
     if (!dir.endsWith(QLatin1Char('/')))
         dir += QLatin1Char('/');
 
-    dir += QLatin1String("QtLocation/");
-
     return dir;
+}
+
+QString QAbstractGeoTileCache::baseLocationCacheDirectory()
+{
+    // This scheme allows to have the "tiles" prefix hardcoded here
+    // NOTE: changing the Qt version here requires changing it also in QGeoFileTileCache::init,
+    // in the code that remove old version tiles !
+    return baseCacheDirectory() + QLatin1String("QtLocation/5.8/tiles/");
 }
 
 QT_END_NAMESPACE
