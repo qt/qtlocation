@@ -498,7 +498,9 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
 
 QJSValue QDeclarativePolylineMapItem::path() const
 {
-    QQmlContext *context = QQmlEngine::contextForObject(parent());
+    QQmlContext *context = QQmlEngine::contextForObject(this);
+    if (!context)
+        return QJSValue();
     QQmlEngine *engine = context->engine();
     QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
 
