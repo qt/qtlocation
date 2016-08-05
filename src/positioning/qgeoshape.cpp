@@ -227,6 +227,22 @@ bool QGeoShape::contains(const QGeoCoordinate &coordinate) const
 }
 
 /*!
+    Returns a \a QGeoRectangle representing the geographical bounding rectangle of the
+    geo shape, that defines the latitudinal/longitudinal bounds of the geo shape.
+
+    \since 5.9
+*/
+QGeoRectangle QGeoShape::boundingGeoRectangle() const
+{
+    Q_D(const QGeoShape);
+
+    if (d)
+        return d->boundingGeoRectangle();
+    else
+        return QGeoRectangle();
+}
+
+/*!
     Returns the coordinate located at the geometric center of the geo shape.
 
     \since 5.5

@@ -40,6 +40,8 @@
 #include "qgeorectangle.h"
 #include "qgeorectangle_p.h"
 
+#include "qgeoprojection_p.h"
+#include "qdoublevector2d_p.h"
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
 #include <QList>
@@ -614,10 +616,7 @@ double QGeoRectangle::height() const
 
     Q_D(const QGeoRectangle);
 
-    double result = d->topLeft.latitude() - d->bottomRight.latitude();
-    if (result < 0.0)
-        result = qQNaN();
-    return result;
+    return d->topLeft.latitude() - d->bottomRight.latitude();
 }
 
 bool QGeoRectanglePrivate::contains(const QGeoCoordinate &coordinate) const
@@ -672,6 +671,11 @@ QGeoCoordinate QGeoRectanglePrivate::center() const
         cLon -= 360.0;
 
     return QGeoCoordinate(cLat, cLon);
+}
+
+QGeoRectangle QGeoRectanglePrivate::boundingGeoRectangle() const
+{
+    return QGeoRectangle(topLeft, bottomRight);
 }
 
 /*!

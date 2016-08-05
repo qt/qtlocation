@@ -70,6 +70,14 @@ public:
 
     QGeoCoordinate center() const Q_DECL_OVERRIDE;
 
+    QGeoRectangle boundingGeoRectangle() const Q_DECL_OVERRIDE;
+
+    bool crossNorthPole() const;
+    bool crossSouthPole() const;
+    void updateBoundingBox();
+    void setCenter(const QGeoCoordinate &c);
+    void setRadius(const qreal r);
+
     void extendShape(const QGeoCoordinate &coordinate) Q_DECL_OVERRIDE;
 
     QGeoShapePrivate *clone() const Q_DECL_OVERRIDE;
@@ -77,7 +85,8 @@ public:
     bool operator==(const QGeoShapePrivate &other) const Q_DECL_OVERRIDE;
 
     QGeoCoordinate m_center;
-    qreal radius;
+    qreal m_radius;
+    QGeoRectangle m_bbox;
 };
 
 QT_END_NAMESPACE

@@ -75,8 +75,8 @@ public:
     void setRadius(qreal radius);
     qreal radius() const;
 
-    void translate(double degreesLatitude, double degreesLongitude);
-    QGeoCircle translated(double degreesLatitude, double degreesLongitude) const;
+    Q_INVOKABLE void translate(double degreesLatitude, double degreesLongitude);
+    Q_INVOKABLE QGeoCircle translated(double degreesLatitude, double degreesLongitude) const;
 
     Q_INVOKABLE QString toString() const;
 

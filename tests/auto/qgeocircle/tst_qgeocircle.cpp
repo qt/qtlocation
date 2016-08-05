@@ -60,6 +60,9 @@ private slots:
     void contains_data();
     void contains();
 
+    void boundingGeoRectangle_data();
+    void boundingGeoRectangle();
+
     void extendShape();
     void extendShape_data();
 
@@ -281,7 +284,7 @@ void tst_QGeoCircle::contains_data()
     QTest::addColumn<QGeoCoordinate>("probe");
     QTest::addColumn<bool>("result");
 
-    QTest::newRow("own centre") << QGeoCoordinate(1,1) << qreal(100.0) <<
+    QTest::newRow("own center") << QGeoCoordinate(1,1) << qreal(100.0) <<
                                    QGeoCoordinate(1,1) << true;
     QTest::newRow("over the hills") << QGeoCoordinate(1,1) << qreal(100.0) <<
                                        QGeoCoordinate(30, 40) << false;
@@ -291,6 +294,7 @@ void tst_QGeoCircle::contains_data()
                                        QGeoCoordinate(1.00077538, 0.99955527) << true;
     QTest::newRow("at 1.01*radius") << QGeoCoordinate(1,1) << qreal(100.0) <<
                                        QGeoCoordinate(1.00071413, 0.99943423) << false;
+    // TODO: add tests for edge circle cases: cross 1 pole, cross both poles
 }
 
 void tst_QGeoCircle::contains()
@@ -305,6 +309,38 @@ void tst_QGeoCircle::contains()
 
     QGeoShape area = c;
     QCOMPARE(area.contains(probe), result);
+}
+
+void tst_QGeoCircle::boundingGeoRectangle_data()
+{
+    QTest::addColumn<QGeoCoordinate>("center");
+    QTest::addColumn<qreal>("radius");
+    QTest::addColumn<QGeoCoordinate>("probe");
+    QTest::addColumn<bool>("result");
+
+    QTest::newRow("own center") << QGeoCoordinate(1,1) << qreal(100.0) <<
+                                   QGeoCoordinate(1,1) << true;
+    QTest::newRow("over the hills") << QGeoCoordinate(1,1) << qreal(100.0) <<
+                                       QGeoCoordinate(30, 40) << false;
+    QTest::newRow("at 0.5*radius") << QGeoCoordinate(1,1) << qreal(100.0) <<
+                                      QGeoCoordinate(1.00015374,1.00015274) << true;
+    QTest::newRow("at 0.99*radius") << QGeoCoordinate(1,1) << qreal(100.0) <<
+                                       QGeoCoordinate(1.00077538, 0.99955527) << true;
+    QTest::newRow("Outside the box") << QGeoCoordinate(1,1) << qreal(100.0) <<
+                                       QGeoCoordinate(1.00071413, 0.99903423) << false;
+    // TODO: add tests for edge circle cases: cross 1 pole, cross both poles
+}
+
+void tst_QGeoCircle::boundingGeoRectangle()
+{
+    QFETCH(QGeoCoordinate, center);
+    QFETCH(qreal, radius);
+    QFETCH(QGeoCoordinate, probe);
+    QFETCH(bool, result);
+
+    QGeoCircle c(center, radius);
+    QGeoRectangle box = c.boundingGeoRectangle();
+    QCOMPARE(box.contains(probe), result);
 }
 
 void tst_QGeoCircle::extendShape()

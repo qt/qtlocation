@@ -70,6 +70,8 @@ public:
 
     QGeoCoordinate center() const Q_DECL_OVERRIDE;
 
+    QGeoRectangle boundingGeoRectangle() const Q_DECL_OVERRIDE;
+
     void extendShape(const QGeoCoordinate &coordinate) Q_DECL_OVERRIDE;
 
     QGeoShapePrivate *clone() const Q_DECL_OVERRIDE;

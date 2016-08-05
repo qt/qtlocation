@@ -53,6 +53,14 @@
 #include <QtCore/QtGlobal>
 #include <math.h>
 
+#ifndef M_1_180
+#define M_1_180 0.0055555555555555555555555555555555555555556
+#endif
+
+#ifndef M_1_PI
+#define M_1_PI   0.31830988618379067154
+#endif
+
 QT_BEGIN_NAMESPACE
 class QTime;
 class QByteArray;
@@ -174,6 +182,47 @@ public:
             return CardinalNW;
         else
             return CardinalNNW;
+    }
+
+    // For values exceeding +- 720.0
+    inline static double wrapLongExt(double lng) {
+        double remainder = fmod(lng + 180.0, 360.0);
+        return fmod(remainder + 360.0, 360.0) - 180.0;
+    }
+
+    // Mirrors the azimuth against the X axis. Azimuth assumed to be in [0,360[
+    inline static double mirrorAzimuthX(double azimuth) {
+        if (azimuth <= 90.0)
+             return 180.0 - azimuth;
+         else
+             return 180.0 + (360.0 - azimuth);
+    }
+
+    // Mirrors the azimuth against the Y axis. Azimuth assumed to be in [0,360[
+    inline static double mirrorAzimuthY(double azimuth) {
+        if (azimuth == 0.0)
+            return 0.0;
+        return 360.0 - azimuth;
+    }
+
+    inline static double radians(double degrees)
+    {
+        return degrees * M_PI * M_1_180;
+    }
+
+    inline static double degrees(double radians)
+    {
+        return radians * 180.0 * M_1_PI;
+    }
+
+    inline static double earthMeanRadius()
+    {
+        return 6371007.2;
+    }
+
+    inline static double mercatorMaxLatitude()
+    {
+        return 85.05113;
     }
 
     /*

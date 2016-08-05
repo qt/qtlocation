@@ -71,6 +71,9 @@ private slots:
     void center();
     void center_data();
 
+    void boundingGeoRectangle();
+    void boundingGeoRectangle_data();
+
     void containsCoord();
     void containsCoord_data();
 
@@ -957,6 +960,28 @@ void tst_QGeoRectangle::center_data()
                                 QGeoCoordinate(-90.0, -170.0));
 }
 
+void tst_QGeoRectangle::boundingGeoRectangle_data()
+{
+    QTest::addColumn<QGeoRectangle>("rectangle");
+
+    QGeoRectangle b1(QGeoCoordinate(70, 30), QGeoCoordinate(30, 70));
+    QGeoRectangle b2(QGeoCoordinate(70, 150), QGeoCoordinate(30, -170));
+    QGeoRectangle b3(QGeoCoordinate(90, 30), QGeoCoordinate(50, 70));
+    QGeoRectangle b4(QGeoCoordinate(-50, 30), QGeoCoordinate(-90, 70));
+
+    QTest::newRow("Box 1") << b1;
+    QTest::newRow("Box 2") << b2;
+    QTest::newRow("Box 3") << b3;
+    QTest::newRow("Box 4") << b4;
+}
+
+void tst_QGeoRectangle::boundingGeoRectangle()
+{
+    QFETCH(QGeoRectangle, rectangle);
+
+    QGeoRectangle box = rectangle.boundingGeoRectangle();
+    QCOMPARE(box, rectangle);
+}
 
 void tst_QGeoRectangle::containsCoord()
 {

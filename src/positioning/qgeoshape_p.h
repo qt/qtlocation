@@ -69,6 +69,8 @@ public:
 
     virtual QGeoCoordinate center() const = 0;
 
+    virtual QGeoRectangle boundingGeoRectangle() const = 0;
+
     virtual void extendShape(const QGeoCoordinate &coordinate) = 0;
 
     virtual QGeoShapePrivate *clone() const = 0;
@@ -89,4 +91,3 @@ Q_INLINE_TEMPLATE QGeoShapePrivate *QSharedDataPointer<QGeoShapePrivate>::clone(
 QT_END_NAMESPACE
 
 #endif
-
