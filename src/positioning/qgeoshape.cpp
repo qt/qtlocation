@@ -41,6 +41,8 @@
 #include "qgeoshape_p.h"
 #include "qgeorectangle.h"
 #include "qgeocircle.h"
+#include "qgeopath.h"
+
 
 #ifndef QT_NO_DEBUG_STREAM
 #include <QtCore/QDebug>
@@ -329,6 +331,9 @@ QDebug operator<<(QDebug dbg, const QGeoShape &shape)
     case QGeoShape::RectangleType:
         dbg << "Rectangle";
         break;
+    case QGeoShape::PathType:
+        dbg << "Path";
+        break;
     case QGeoShape::CircleType:
         dbg << "Circle";
     }
@@ -354,6 +359,13 @@ QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape)
     case QGeoShape::CircleType: {
         QGeoCircle c = shape;
         stream << c.center() << c.radius();
+        break;
+    }
+    case QGeoShape::PathType: {
+        QGeoPath p = shape;
+        stream << p.path().size();
+        for (const auto &c: p.path())
+            stream << c;
         break;
     }
     }
@@ -382,6 +394,18 @@ QDataStream &operator>>(QDataStream &stream, QGeoShape &shape)
         qreal r;
         stream >> c >> r;
         shape = QGeoCircle(c, r);
+        break;
+    }
+    case QGeoShape::PathType: {
+        QList<QGeoCoordinate> l;
+        QGeoCoordinate c;
+        int sz;
+        stream >> sz;
+        for (int i = 0; i < sz; i++) {
+            stream >> c;
+            l.append(c);
+        }
+        shape = QGeoPath(l);
         break;
     }
     }

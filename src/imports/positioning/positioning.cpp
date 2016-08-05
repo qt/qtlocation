@@ -55,6 +55,7 @@
 
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoPath>
 #include <QtPositioning/QGeoLocation>
 
 #include <QtCore/QDebug>
@@ -527,6 +528,8 @@ public:
             QMetaType::registerEqualsComparator<QGeoRectangle>();
             qRegisterMetaType<QGeoCircle>();
             QMetaType::registerEqualsComparator<QGeoCircle>();
+            qRegisterMetaType<QGeoPath>();
+            QMetaType::registerEqualsComparator<QGeoPath>();
             qRegisterMetaType<QGeoLocation>();
             qRegisterMetaType<QGeoShape>();
             QMetaType::registerEqualsComparator<QGeoShape>();

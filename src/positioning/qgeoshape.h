@@ -65,7 +65,8 @@ public:
     enum ShapeType {
         UnknownType,
         RectangleType,
-        CircleType
+        CircleType,
+        PathType
     };
 
     ShapeType type() const;

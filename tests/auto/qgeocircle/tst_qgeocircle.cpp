@@ -246,7 +246,7 @@ void tst_QGeoCircle::valid()
     QCOMPARE(c.isValid(), valid);
 
     QGeoShape area = c;
-    QCOMPARE(c.isValid(), valid);
+    QCOMPARE(area.isValid(), valid);
 }
 
 void tst_QGeoCircle::empty_data()

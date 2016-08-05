@@ -179,6 +179,19 @@ QGeoCircle LocationSingleton::circle(const QGeoCoordinate &center, qreal radius)
 }
 
 /*!
+    \qmlmethod geopath QtPositioning::path() const
+
+    Constructs an empty geopath.
+
+    \sa {geopath}
+    \since 5.9
+*/
+QGeoPath LocationSingleton::path() const
+{
+    return QGeoPath();
+}
+
+/*!
     \qmlmethod geocircle QtPositioning::shapeToCircle(geoshape shape) const
 
     Converts \a shape to a geocircle.
@@ -202,5 +215,18 @@ QGeoCircle LocationSingleton::shapeToCircle(const QGeoShape &shape) const
 QGeoRectangle LocationSingleton::shapeToRectangle(const QGeoShape &shape) const
 {
     return QGeoRectangle(shape);
+}
+
+/*!
+    \qmlmethod geopath QtPositioning::shapeToPath(geoshape shape) const
+
+    Converts \a shape to a geopath.
+
+    \sa {geopath}
+    \since 5.9
+*/
+QGeoPath LocationSingleton::shapeToPath(const QGeoShape &shape) const
+{
+    return QGeoPath(shape);
 }
 

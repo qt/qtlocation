@@ -37,46 +37,66 @@
 **
 ****************************************************************************/
 
-#ifndef LOCATIONSINGLETON_H
-#define LOCATIONSINGLETON_H
+#ifndef QGEOPATH_H
+#define QGEOPATH_H
 
-#include <QtCore/QObject>
-#include <QtCore/qnumeric.h>
-#include <QtPositioning/QGeoCoordinate>
 #include <QtPositioning/QGeoShape>
-#include <QtPositioning/QGeoRectangle>
-#include <QtPositioning/QGeoCircle>
-#include <QtPositioning/QGeoPath>
-#include <QVariant>
 
-class LocationSingleton : public QObject
+QT_BEGIN_NAMESPACE
+
+class QGeoCoordinate;
+class QGeoPathPrivate;
+
+class Q_POSITIONING_EXPORT QGeoPath : public QGeoShape
 {
-    Q_OBJECT
+    Q_GADGET
+    Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath)
+    Q_PROPERTY(qreal width READ width WRITE setWidth)
 
 public:
-    explicit LocationSingleton(QObject *parent = 0);
+    QGeoPath();
+    QGeoPath(const QList<QGeoCoordinate> &path, const qreal &width = 0.0);
+    QGeoPath(const QGeoPath &other);
+    QGeoPath(const QGeoShape &other);
 
-    Q_INVOKABLE QGeoCoordinate coordinate() const;
-    Q_INVOKABLE QGeoCoordinate coordinate(double latitude, double longitude,
-                                          double altitude = qQNaN()) const;
+    ~QGeoPath();
 
-    Q_INVOKABLE QGeoShape shape() const;
+    QGeoPath &operator=(const QGeoPath &other);
 
-    Q_INVOKABLE QGeoRectangle rectangle() const;
-    Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &center,
-                                        double width, double height) const;
-    Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &topLeft,
-                                        const QGeoCoordinate &bottomRight) const;
-    Q_INVOKABLE QGeoRectangle rectangle(const QVariantList &coordinates) const;
+    using QGeoShape::operator==;
+    bool operator==(const QGeoPath &other) const;
 
-    Q_INVOKABLE QGeoCircle circle() const;
-    Q_INVOKABLE QGeoCircle circle(const QGeoCoordinate &center, qreal radius = -1.0) const;
+    using QGeoShape::operator!=;
+    bool operator!=(const QGeoPath &other) const;
 
-    Q_INVOKABLE QGeoPath path() const;
+    void setPath(const QList<QGeoCoordinate> &path);
+    const QList<QGeoCoordinate> &path() const;
 
-    Q_INVOKABLE QGeoCircle shapeToCircle(const QGeoShape &shape) const;
-    Q_INVOKABLE QGeoRectangle shapeToRectangle(const QGeoShape &shape) const;
-    Q_INVOKABLE QGeoPath shapeToPath(const QGeoShape &shape) const;
+    void setWidth(const qreal &width);
+    qreal width() const;
+
+    Q_INVOKABLE void translate(double degreesLatitude, double degreesLongitude);
+    Q_INVOKABLE QGeoPath translated(double degreesLatitude, double degreesLongitude) const;
+    Q_INVOKABLE double length(int indexFrom = 0, int indexTo = -1) const;
+    Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void insertCoordinate(int index, const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void replaceCoordinate(int index, const QGeoCoordinate &coordinate);
+    Q_INVOKABLE QGeoCoordinate coordinateAt(int index) const;
+    Q_INVOKABLE bool containsCoordinate(const QGeoCoordinate &coordinate) const;
+    Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void removeCoordinate(int index);
+
+    Q_INVOKABLE QString toString() const;
+
+private:
+    inline QGeoPathPrivate *d_func();
+    inline const QGeoPathPrivate *d_func() const;
 };
 
-#endif // LOCATIONSINGLETON_H
+Q_DECLARE_TYPEINFO(QGeoPath, Q_MOVABLE_TYPE);
+
+QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QGeoPath)
+
+#endif // QGEOPATH_H

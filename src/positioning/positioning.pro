@@ -32,7 +32,8 @@ PUBLIC_HEADERS += \
                     qgeosatelliteinfosource.h \
                     qnmeapositioninfosource.h \
                     qgeopositioninfosourcefactory.h \
-                    qpositioningglobal.h
+                    qpositioningglobal.h \
+                    qgeopath.h \
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
@@ -50,7 +51,8 @@ PRIVATE_HEADERS += \
                     qdoublevector3d_p.h \
                     qgeoprojection_p.h \
                     qpositioningglobal_p.h \
-                    qlocationdata_simulator_p.h
+                    qlocationdata_simulator_p.h \
+                    qgeopath_p.h
 
 SOURCES += \
             qgeoaddress.cpp \
@@ -73,7 +75,8 @@ SOURCES += \
             qdoublevector2d.cpp \
             qdoublevector3d.cpp \
             qgeoprojection.cpp \
-            qlocationdata_simulator.cpp
+            qlocationdata_simulator.cpp \
+            qgeopath.cpp
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
