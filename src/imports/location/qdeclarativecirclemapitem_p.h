@@ -53,6 +53,7 @@
 #include "qdeclarativepolygonmapitem_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
+#include <QtPositioning/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 
@@ -91,6 +92,7 @@ public:
     QDeclarativeMapLineProperties *border();
 
     bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
+    const QGeoShape &geoShape() const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &center);
@@ -112,11 +114,9 @@ private:
                                       qreal distance);
 
 private:
-    QGeoCoordinate center_;
+    QGeoCircle circle_;
     QDeclarativeMapLineProperties border_;
     QColor color_;
-    qreal radius_;
-    QGeoCoordinate geoLeftBound_;
     QList<QGeoCoordinate> circlePath_;
     bool dirtyMaterial_;
     QGeoMapCircleGeometry geometry_;

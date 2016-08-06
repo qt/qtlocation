@@ -73,7 +73,7 @@ public:
     inline void markFullScreenDirty() { screenDirty_ = true; clipToViewport_ = false;}
     inline void markClean() { screenDirty_ = (sourceDirty_ = false); clipToViewport_ = true;}
 
-    inline void setPreserveGeometry(bool value, QGeoCoordinate geoLeftBound = QGeoCoordinate())
+    inline void setPreserveGeometry(bool value, const QGeoCoordinate &geoLeftBound = QGeoCoordinate())
     {
         preserveGeometry_ = value;
         if (preserveGeometry_)

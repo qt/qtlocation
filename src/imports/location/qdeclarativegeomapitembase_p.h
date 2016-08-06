@@ -49,6 +49,7 @@
 //
 
 #include <QtQuick/QQuickItem>
+#include <QtPositioning/QGeoShape>
 
 #include "qdeclarativegeomap_p.h"
 
@@ -75,6 +76,8 @@ public:
 class QDeclarativeGeoMapItemBase : public QQuickItem
 {
     Q_OBJECT
+
+    Q_PROPERTY(QGeoShape geoShape READ geoShape STORED false )
 public:
     explicit QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
     virtual ~QDeclarativeGeoMapItemBase();
@@ -84,6 +87,7 @@ public:
 
     QDeclarativeGeoMap *quickMap() { return quickMap_; }
     QGeoMap *map() { return map_; }
+    virtual const QGeoShape &geoShape() const = 0;
 
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);

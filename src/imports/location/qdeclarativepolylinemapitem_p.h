@@ -51,6 +51,7 @@
 #include "qdeclarativegeomapitembase_p.h"
 #include "qgeomapitemgeometry_p.h"
 
+#include <QtPositioning/QGeoPath>
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
@@ -141,13 +142,9 @@ public:
     virtual void setPath(const QJSValue &value);
 
     bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
+    const QGeoShape &geoShape() const Q_DECL_OVERRIDE;
 
     QDeclarativeMapLineProperties *line();
-
-    static QGeoCoordinate computeLeftBound(const QList<QGeoCoordinate> &path, QVector<double> &deltaXs, double &minX);
-    static QGeoCoordinate updateLeftBound(const QList<QGeoCoordinate> &path, QVector<double> &deltaXs, double &minX, QGeoCoordinate currentLeftBound);
-    static QGeoCoordinate getLeftBound(const QList<QGeoCoordinate> &path, QVector<double> &deltaXs, double &minX);
-    static QGeoCoordinate getLeftBound(const QList<QGeoCoordinate> &path, QVector<double> &deltaXs, double &minX, QGeoCoordinate currentLeftBound);
 
 Q_SIGNALS:
     void pathChanged();
@@ -158,22 +155,19 @@ protected:
     void updatePolish() Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
+    void markSourceDirtyAndUpdate();
     void updateAfterLinePropertiesChanged();
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
     void pathPropertyChanged();
 
+    QGeoPath geopath_;
     QDeclarativeMapLineProperties line_;
-    QList<QGeoCoordinate> path_;
-    QGeoCoordinate geoLeftBound_;
     QColor color_;
     bool dirtyMaterial_;
     QGeoMapPolylineGeometry geometry_;
     bool updatingGeometry_;
-    // for the left bound calculation
-    QVector<double> deltaXs_; // longitude deltas from path_[0]
-    double minX_;             // minimum value inside deltaXs_
 };
 
 //////////////////////////////////////////////////////////////////////

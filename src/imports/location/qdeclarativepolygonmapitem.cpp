@@ -198,14 +198,12 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 
         // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
         QDoubleVector2D lb(qInf(), qInf());
-        for (const QList<QDoubleVector2D> &path: clippedPaths) {
-            for (const QDoubleVector2D &p: path) {
-                if (p.x() < lb.x() || (p.x() == lb.x() && p.y() < lb.y())) {
+        for (const QList<QDoubleVector2D> &path: clippedPaths)
+            for (const QDoubleVector2D &p: path)
+                if (p.x() < lb.x() || (p.x() == lb.x() && p.y() < lb.y()))
                     // y-minimization needed to find the same point on polygon and border
                     lb = p;
-                }
-            }
-        }
+
         if (qIsInf(lb.x())) // e.g., when the polygon is clipped entirely
             return;
 
@@ -431,14 +429,14 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
 */
 QJSValue QDeclarativePolygonMapItem::path() const
 {
-    QQmlContext *context = QQmlEngine::contextForObject(parent());
+    QQmlContext *context = QQmlEngine::contextForObject(this);
     QQmlEngine *engine = context->engine();
     QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
 
     QV4::Scope scope(v4);
-    QV4::Scoped<QV4::ArrayObject> pathArray(scope, v4->newArrayObject(path_.length()));
-    for (int i = 0; i < path_.length(); ++i) {
-        const QGeoCoordinate &c = path_.at(i);
+    QV4::Scoped<QV4::ArrayObject> pathArray(scope, v4->newArrayObject(geopath_.path().length()));
+    for (int i = 0; i < geopath_.path().length(); ++i) {
+        const QGeoCoordinate &c = geopath_.coordinateAt(i);
 
         QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(c)));
         pathArray->putIndexed(i, cv);
@@ -466,16 +464,15 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
         pathList.append(c);
     }
 
-    if (path_ == pathList)
+    // Equivalent to QDeclarativePolylineMapItem::setPathFromGeoList
+    if (geopath_.path() == pathList)
         return;
 
-    path_ = pathList;
-    geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_);
-    geometry_.setPreserveGeometry(true, geoLeftBound_);
-    borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
-    geometry_.markSourceDirty();
-    borderGeometry_.markSourceDirty();
-    polishAndUpdate();
+    geopath_.setPath(pathList);
+
+    geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markSourceDirtyAndUpdate();
     emit pathChanged();
 }
 
@@ -489,13 +486,11 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 
 void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 {
-    path_.append(coordinate);
-    geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_, geoLeftBound_);
-    geometry_.setPreserveGeometry(true, geoLeftBound_);
-    borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
-    geometry_.markSourceDirty();
-    borderGeometry_.markSourceDirty();
-    polishAndUpdate();
+    geopath_.addCoordinate(coordinate);
+
+    geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markSourceDirtyAndUpdate();
     emit pathChanged();
 }
 
@@ -511,17 +506,14 @@ void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 */
 void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordinate)
 {
-    int index = path_.lastIndexOf(coordinate);
-    if (index == -1)
+    int length = geopath_.path().length();
+    geopath_.removeCoordinate(coordinate);
+    if (geopath_.path().length() == length)
         return;
 
-    path_.removeAt(index);
-    geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_);
-    geometry_.setPreserveGeometry(true, geoLeftBound_);
-    borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
-    geometry_.markSourceDirty();
-    borderGeometry_.markSourceDirty();
-    polishAndUpdate();
+    geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markSourceDirtyAndUpdate();
     emit pathChanged();
 }
 
@@ -577,13 +569,13 @@ QSGNode *QDeclarativePolygonMapItem::updateMapItemPaintNode(QSGNode *oldNode, Up
 */
 void QDeclarativePolygonMapItem::updatePolish()
 {
-    if (!map() || path_.count() == 0)
+    if (!map() || geopath_.path().length() == 0)
         return;
 
     QScopedValueRollback<bool> rollback(updatingGeometry_);
     updatingGeometry_ = true;
 
-    geometry_.updateSourcePoints(*map(), path_);
+    geometry_.updateSourcePoints(*map(), geopath_.path());
     geometry_.updateScreenPoints(*map());
 
     QList<QGeoMapItemGeometry *> geoms;
@@ -591,10 +583,10 @@ void QDeclarativePolygonMapItem::updatePolish()
     borderGeometry_.clear();
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
-        QList<QGeoCoordinate> closedPath = path_;
+        QList<QGeoCoordinate> closedPath = geopath_.path();
         closedPath << closedPath.first();
 
-        borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
+        borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
 
         const QGeoCoordinate &geometryOrigin = geometry_.origin();
 
@@ -621,6 +613,13 @@ void QDeclarativePolygonMapItem::updatePolish()
     setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft());
 }
 
+void QDeclarativePolygonMapItem::markSourceDirtyAndUpdate()
+{
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
+    polishAndUpdate();
+}
+
 /*!
     \internal
 */
@@ -644,6 +643,11 @@ bool QDeclarativePolygonMapItem::contains(const QPointF &point) const
     return (geometry_.contains(point) || borderGeometry_.contains(point));
 }
 
+const QGeoShape &QDeclarativePolygonMapItem::geoShape() const
+{
+    return geopath_;
+}
+
 /*!
     \internal
 */
@@ -653,44 +657,21 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
         QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
     }
+    // TODO: change the algorithm to preserve the distances and size!
+    QGeoCoordinate newCenter = map()->geoProjection().itemPositionToCoordinate(QDoubleVector2D(newGeometry.center()), false);
+    QGeoCoordinate oldCenter = map()->geoProjection().itemPositionToCoordinate(QDoubleVector2D(oldGeometry.center()), false);
+    if (!newCenter.isValid() || !oldCenter.isValid())
+        return;
+    double offsetLongi = newCenter.longitude() - oldCenter.longitude();
+    double offsetLati = newCenter.latitude() - oldCenter.latitude();
+    if (offsetLati == 0.0 && offsetLongi == 0.0)
+        return;
 
-    QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(geometry_.firstPointOffset());
-    QGeoCoordinate newCoordinate = map()->geoProjection().itemPositionToCoordinate(newPoint, false);
-    if (newCoordinate.isValid()) {
-        double firstLongitude = geoLeftBound_.longitude();
-        double firstLatitude = geoLeftBound_.latitude();
-        double minMaxLatitude = firstLatitude;
-        // prevent dragging over valid min and max latitudes
-        for (int i = 0; i < path_.count(); ++i) {
-            double newLatitude = path_.at(i).latitude()
-                    + newCoordinate.latitude() - firstLatitude;
-            if (!QLocationUtils::isValidLat(newLatitude)) {
-                if (qAbs(newLatitude) > qAbs(minMaxLatitude)) {
-                    minMaxLatitude = newLatitude;
-                }
-            }
-        }
-        // calculate offset needed to re-position the item within map border
-        double offsetLatitude = minMaxLatitude - QLocationUtils::clipLat(minMaxLatitude);
-        for (int i = 0; i < path_.count(); ++i) {
-            QGeoCoordinate coord = path_.at(i);
-            // handle dateline crossing
-            coord.setLongitude(QLocationUtils::wrapLong(coord.longitude()
-                               + newCoordinate.longitude() - firstLongitude));
-            coord.setLatitude(coord.latitude()
-                              + newCoordinate.latitude() - firstLatitude - offsetLatitude);
-
-            path_.replace(i, coord);
-        }
-        geoLeftBound_.setLongitude(QLocationUtils::wrapLong(geoLeftBound_.longitude()
-                                                            + newCoordinate.longitude() - firstLongitude));
-        geometry_.setPreserveGeometry(true, geoLeftBound_);
-        borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-        polishAndUpdate();
-        emit pathChanged();
-    }
+    geopath_.translate(offsetLati, offsetLongi);
+    geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markSourceDirtyAndUpdate();
+    emit pathChanged();
 
     // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
     // call to this function.

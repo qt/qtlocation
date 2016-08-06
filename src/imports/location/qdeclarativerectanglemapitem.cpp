@@ -162,18 +162,18 @@ QDeclarativeMapLineProperties *QDeclarativeRectangleMapItem::border()
 */
 void QDeclarativeRectangleMapItem::setTopLeft(const QGeoCoordinate &topLeft)
 {
-    if (topLeft_ == topLeft)
+    if (rectangle_.topLeft() == topLeft)
         return;
 
-    topLeft_ = topLeft;
+    rectangle_.setTopLeft(topLeft);
 
     markSourceDirtyAndUpdate();
-    emit topLeftChanged(topLeft_);
+    emit topLeftChanged(topLeft);
 }
 
 QGeoCoordinate QDeclarativeRectangleMapItem::topLeft()
 {
-    return topLeft_;
+    return rectangle_.topLeft();
 }
 
 /*!
@@ -194,18 +194,18 @@ void QDeclarativeRectangleMapItem::markSourceDirtyAndUpdate()
 */
 void QDeclarativeRectangleMapItem::setBottomRight(const QGeoCoordinate &bottomRight)
 {
-    if (bottomRight_ == bottomRight)
+    if (rectangle_.bottomRight() == bottomRight)
         return;
 
-    bottomRight_ = bottomRight;
+    rectangle_.setBottomRight(bottomRight);
 
     markSourceDirtyAndUpdate();
-    emit bottomRightChanged(bottomRight_);
+    emit bottomRightChanged(bottomRight);
 }
 
 QGeoCoordinate QDeclarativeRectangleMapItem::bottomRight()
 {
-    return bottomRight_;
+    return rectangle_.bottomRight();
 }
 
 /*!
@@ -276,12 +276,12 @@ void QDeclarativeRectangleMapItem::updatePolish()
     updatingGeometry_ = true;
 
     QList<QGeoCoordinate> path;
-    path << topLeft_;
-    path << QGeoCoordinate(topLeft_.latitude(), bottomRight_.longitude());
-    path << bottomRight_;
-    path << QGeoCoordinate(bottomRight_.latitude(), topLeft_.longitude());
+    path << rectangle_.topLeft();
+    path << QGeoCoordinate(rectangle_.topLeft().latitude(), rectangle_.bottomRight().longitude());
+    path << rectangle_.bottomRight();
+    path << QGeoCoordinate(rectangle_.bottomRight().latitude(), rectangle_.topLeft().longitude());
 
-    geometry_.setPreserveGeometry(true, topLeft_);
+    geometry_.setPreserveGeometry(true, rectangle_.topLeft());
     geometry_.updateSourcePoints(*map(), path);
     geometry_.updateScreenPoints(*map());
 
@@ -293,8 +293,7 @@ void QDeclarativeRectangleMapItem::updatePolish()
         QList<QGeoCoordinate> closedPath = path;
         closedPath << closedPath.first();
 
-        borderGeometry_.setPreserveGeometry(true, topLeft_);
-
+        borderGeometry_.setPreserveGeometry(true, rectangle_.topLeft());
         const QGeoCoordinate &geometryOrigin = geometry_.origin();
 
         borderGeometry_.srcPoints_.clear();
@@ -328,11 +327,9 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
     if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
         return;
 
-    geometry_.setPreserveGeometry(true, topLeft_);
-    borderGeometry_.setPreserveGeometry(true, topLeft_);
-    geometry_.markSourceDirty();
-    borderGeometry_.markSourceDirty();
-    polishAndUpdate();
+    geometry_.setPreserveGeometry(true, rectangle_.topLeft());
+    borderGeometry_.setPreserveGeometry(true, rectangle_.topLeft());
+    markSourceDirtyAndUpdate();
 }
 
 /*!
@@ -341,6 +338,11 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
 bool QDeclarativeRectangleMapItem::contains(const QPointF &point) const
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
+}
+
+const QGeoShape &QDeclarativeRectangleMapItem::geoShape() const
+{
+    return rectangle_;
 }
 
 /*!
@@ -352,34 +354,22 @@ void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, co
         QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
     }
+    // TODO: change the algorithm to preserve the distances and size
+    QGeoCoordinate newCenter = map()->geoProjection().itemPositionToCoordinate(QDoubleVector2D(newGeometry.center()), false);
+    QGeoCoordinate oldCenter = map()->geoProjection().itemPositionToCoordinate(QDoubleVector2D(oldGeometry.center()), false);
+    if (!newCenter.isValid() || !oldCenter.isValid())
+        return;
+    double offsetLongi = newCenter.longitude() - oldCenter.longitude();
+    double offsetLati = newCenter.latitude() - oldCenter.latitude();
+    if (offsetLati == 0.0 && offsetLongi == 0.0)
+        return;
 
-    QDoubleVector2D newTopLeftPoint = QDoubleVector2D(x(),y());
-    QGeoCoordinate newTopLeft = map()->geoProjection().itemPositionToCoordinate(newTopLeftPoint, false);
-    if (newTopLeft.isValid()) {
-        // calculate new geo width while checking for dateline crossing
-        const double lonW = bottomRight_.longitude() > topLeft_.longitude() ?
-                    bottomRight_.longitude() - topLeft_.longitude() :
-                    bottomRight_.longitude() + 360 - topLeft_.longitude();
-        const double latH = qAbs(bottomRight_.latitude() - topLeft_.latitude());
-        QGeoCoordinate newBottomRight;
-        // prevent dragging over valid min and max latitudes
-        if (QLocationUtils::isValidLat(newTopLeft.latitude() - latH)) {
-            newBottomRight.setLatitude(newTopLeft.latitude() - latH);
-        } else {
-            newBottomRight.setLatitude(QLocationUtils::clipLat(newTopLeft.latitude() - latH));
-            newTopLeft.setLatitude(newBottomRight.latitude() + latH);
-        }
-        // handle dateline crossing
-        newBottomRight.setLongitude(QLocationUtils::wrapLong(newTopLeft.longitude() + lonW));
-        newBottomRight.setAltitude(newTopLeft.altitude());
-        topLeft_ = newTopLeft;
-        bottomRight_ = newBottomRight;
-        geometry_.setPreserveGeometry(true, newTopLeft);
-        borderGeometry_.setPreserveGeometry(true, newTopLeft);
-        markSourceDirtyAndUpdate();
-        emit topLeftChanged(topLeft_);
-        emit bottomRightChanged(bottomRight_);
-    }
+    rectangle_.translate(offsetLati, offsetLongi);
+    geometry_.setPreserveGeometry(true, rectangle_.topLeft());
+    borderGeometry_.setPreserveGeometry(true, rectangle_.topLeft());
+    markSourceDirtyAndUpdate();
+    emit topLeftChanged(rectangle_.topLeft());
+    emit bottomRightChanged(rectangle_.bottomRight());
 
     // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
     // call to this function.

@@ -53,6 +53,7 @@
 
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapitembase_p.h"
+#include <QtPositioning/qgeoshape.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -82,6 +83,8 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
+    const QGeoShape &geoShape() const Q_DECL_OVERRIDE;
+
 Q_SIGNALS:
     void coordinateChanged();
     void sourceItemChanged();
@@ -99,6 +102,7 @@ protected Q_SLOTS:
 private:
     qreal scaleFactor();
     QGeoCoordinate coordinate_;
+    QGeoRectangle geoshape_;
     QPointer<QQuickItem> sourceItem_;
     QQuickItem *opacityContainer_;
     QPointF anchorPoint_;

@@ -351,7 +351,6 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
     qreal sinRatio = std::sin(ratio);
     qreal sinLatRad_x_cosRatio = sinLatRad * cosRatio;
     qreal cosLatRad_x_sinRatio = cosLatRad * sinRatio;
-
     for (int i = 0; i < steps; ++i) {
         qreal azimuthRad = 2 * M_PI * i / steps;
         qreal resultLatRad = std::asin(sinLatRad_x_cosRatio
@@ -366,7 +365,7 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
 }
 
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), radius_(0), dirtyMaterial_(true),
+:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), dirtyMaterial_(true),
     updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);
@@ -427,17 +426,17 @@ void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *ma
 */
 void QDeclarativeCircleMapItem::setCenter(const QGeoCoordinate &center)
 {
-    if (center_ == center)
+    if (circle_.center() == center)
         return;
 
-    center_ = center;
+    circle_.setCenter(center);
     markSourceDirtyAndUpdate();
-    emit centerChanged(center_);
+    emit centerChanged(center);
 }
 
 QGeoCoordinate QDeclarativeCircleMapItem::center()
 {
-    return center_;
+    return circle_.center();
 }
 
 /*!
@@ -470,17 +469,17 @@ QColor QDeclarativeCircleMapItem::color() const
 */
 void QDeclarativeCircleMapItem::setRadius(qreal radius)
 {
-    if (radius_ == radius)
+    if (circle_.radius() == radius)
         return;
 
-    radius_ = radius;
+    circle_.setRadius(radius);
     markSourceDirtyAndUpdate();
     emit radiusChanged(radius);
 }
 
 qreal QDeclarativeCircleMapItem::radius() const
 {
-    return radius_;
+    return circle_.radius();
 }
 
 /*!
@@ -522,7 +521,7 @@ QSGNode *QDeclarativeCircleMapItem::updateMapItemPaintNode(QSGNode *oldNode, Upd
 */
 void QDeclarativeCircleMapItem::updatePolish()
 {
-    if (!map() || !center().isValid() || qIsNaN(radius_) || radius_ <= 0.0)
+    if (!map() || !circle_.isValid())
         return;
 
     QScopedValueRollback<bool> rollback(updatingGeometry_);
@@ -530,19 +529,18 @@ void QDeclarativeCircleMapItem::updatePolish()
 
     if (geometry_.isSourceDirty()) {
         circlePath_.clear();
-        calculatePeripheralPoints(circlePath_, center_, radius_, CircleSamples);
-        geoLeftBound_ = QGeoCircle(center(), radius()).boundingGeoRectangle().topLeft();
+        calculatePeripheralPoints(circlePath_, circle_.center(), circle_.radius(), CircleSamples);
     }
 
     QList<QGeoCoordinate> originalCirclePath = circlePath_;
 
     int pathCount = circlePath_.size();
-    bool preserve = preserveCircleGeometry(circlePath_, center_, radius_);
-    geometry_.setPreserveGeometry(true, geoLeftBound_); // to set the geoLeftBound_
-    geometry_.setPreserveGeometry(preserve, geoLeftBound_);
+    bool preserve = preserveCircleGeometry(circlePath_, circle_.center(), circle_.radius());
+    geometry_.setPreserveGeometry(true, circle_.boundingGeoRectangle().topLeft()); // to set the geoLeftBound_
+    geometry_.setPreserveGeometry(preserve, circle_.boundingGeoRectangle().topLeft());
 
     bool invertedCircle = false;
-    if (crossEarthPole(center_, radius_) && circlePath_.size() == pathCount) {
+    if (crossEarthPole(circle_.center(), circle_.radius()) && circlePath_.size() == pathCount) {
         geometry_.updateScreenPointsInvert(circlePath_, *map()); // invert fill area for really huge circles
         invertedCircle = true;
     } else {
@@ -558,19 +556,14 @@ void QDeclarativeCircleMapItem::updatePolish()
         QList<QGeoCoordinate> closedPath = circlePath_;
         closedPath << closedPath.first();
 
-        QGeoCoordinate lb = geoLeftBound_;
         if (invertedCircle) {
             closedPath = originalCirclePath;
             closedPath << closedPath.first();
             std::reverse(closedPath.begin(), closedPath.end());
-
-            double circumferenceRadius = QLocationUtils::earthMeanDiameter() * 0.5 - radius();
-            QGeoCoordinate circumferenceCenter = QLocationUtils::antipodalPoint(center());
-            lb = QGeoCircle(circumferenceCenter, circumferenceRadius).boundingGeoRectangle().topLeft();
         }
 
-        borderGeometry_.setPreserveGeometry(true, geoLeftBound_); // to set the geoLeftBound_
-        borderGeometry_.setPreserveGeometry(preserve, geoLeftBound_);
+        borderGeometry_.setPreserveGeometry(true, circle_.boundingGeoRectangle().topLeft()); // to set the geoLeftBound_
+        borderGeometry_.setPreserveGeometry(preserve, circle_.boundingGeoRectangle().topLeft());
 
         // Use srcOrigin_ from fill geometry after clipping to ensure that translateToCommonOrigin won't fail.
         const QGeoCoordinate &geometryOrigin = geometry_.origin();
@@ -605,9 +598,7 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
     if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
         return;
 
-    geometry_.markSourceDirty();
-    borderGeometry_.markSourceDirty();
-    polishAndUpdate();
+    markSourceDirtyAndUpdate();
 }
 
 /*!
@@ -616,6 +607,11 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
 bool QDeclarativeCircleMapItem::contains(const QPointF &point) const
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
+}
+
+const QGeoShape &QDeclarativeCircleMapItem::geoShape() const
+{
+    return circle_;
 }
 
 /*!

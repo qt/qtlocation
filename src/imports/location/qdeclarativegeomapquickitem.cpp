@@ -145,6 +145,9 @@ void QDeclarativeGeoMapQuickItem::setCoordinate(const QGeoCoordinate &coordinate
         return;
 
     coordinate_ = coordinate;
+    geoshape_.setTopLeft(coordinate_);
+    geoshape_.setBottomRight(coordinate_);
+    // TODO: Handle zoomLevel != 0.0
 
     polishAndUpdate();
     emit coordinateChanged();
@@ -278,6 +281,7 @@ void QDeclarativeGeoMapQuickItem::setZoomLevel(qreal zoomLevel)
     if (zoomLevel == zoomLevel_)
         return;
     zoomLevel_ = zoomLevel;
+    // TODO: update geoshape_!
     polishAndUpdate();
     emit zoomLevelChanged();
 }
@@ -285,6 +289,13 @@ void QDeclarativeGeoMapQuickItem::setZoomLevel(qreal zoomLevel)
 qreal QDeclarativeGeoMapQuickItem::zoomLevel() const
 {
     return zoomLevel_;
+}
+
+const QGeoShape &QDeclarativeGeoMapQuickItem::geoShape() const
+{
+    // TODO: return a QGeoRectangle representing the bounding geo rectangle of the quick item
+    // when zoomLevel_ is != 0.0
+    return geoshape_;
 }
 
 /*!

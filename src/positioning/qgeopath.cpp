@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
     but never crosses the poles.
 
     This is relevant for the calculation of the bounding box returned by
-    \l QGeoShape::geoBoundingBox() for this shape, which will have the latitude of
+    \l QGeoShape::boundingGeoRectangle() for this shape, which will have the latitude of
     the top left corner set to the maximum latitude in the path point set.
     Similarly, the latitude of the bottom right corner will be the minimum latitude
     in the path point set.

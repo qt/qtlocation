@@ -86,6 +86,7 @@ public:
     QDeclarativeMapLineProperties *border();
 
     bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
+    const QGeoShape &geoShape() const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void topLeftChanged(const QGeoCoordinate &topLeft);
@@ -101,8 +102,7 @@ protected Q_SLOTS:
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
-    QGeoCoordinate topLeft_;
-    QGeoCoordinate bottomRight_;
+    QGeoRectangle rectangle_;
     QDeclarativeMapLineProperties border_;
     QColor color_;
     bool dirtyMaterial_;
