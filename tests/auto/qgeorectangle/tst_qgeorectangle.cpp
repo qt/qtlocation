@@ -1794,14 +1794,14 @@ void tst_QGeoRectangle::translate_data()
             << 20.0
             << 20.0
             << QGeoRectangle(QGeoCoordinate(90.0, -10.0),
-                               QGeoCoordinate(40.0, 50.0));
+                               QGeoCoordinate(30.0, 50.0));
 
     QTest::newRow("non wrapping -> south clip")
             << QGeoRectangle(QGeoCoordinate(-20.0, -30.0),
                                QGeoCoordinate(-80.0, 30.0))
             << -20.0
             << 20.0
-            << QGeoRectangle(QGeoCoordinate(-40.0, -10.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, -10.0),
                                QGeoCoordinate(-90.0, 50.0));
 
     QTest::newRow("wrapping -> non wrapping")
@@ -1826,14 +1826,14 @@ void tst_QGeoRectangle::translate_data()
             << 20.0
             << 20.0
             << QGeoRectangle(QGeoCoordinate(90.0, 150.0),
-                               QGeoCoordinate(40.0, -150.0));
+                               QGeoCoordinate(30.0, -150.0));
 
     QTest::newRow("wrapping -> south clip")
             << QGeoRectangle(QGeoCoordinate(-20.0, 130.0),
                                QGeoCoordinate(-80.0, -170.0))
             << -20.0
             << 20.0
-            << QGeoRectangle(QGeoCoordinate(-40.0, 150.0),
+            << QGeoRectangle(QGeoCoordinate(-30.0, 150.0),
                                QGeoCoordinate(-90.0, -150.0));
 }
 

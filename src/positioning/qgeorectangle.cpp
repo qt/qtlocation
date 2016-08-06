@@ -44,6 +44,7 @@
 #include "qdoublevector2d_p.h"
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
+#include "qlocationutils_p.h"
 #include <QList>
 QT_BEGIN_NAMESPACE
 
@@ -767,37 +768,18 @@ void QGeoRectangle::translate(double degreesLatitude, double degreesLongitude)
     double brLat = d->bottomRight.latitude();
     double brLon = d->bottomRight.longitude();
 
-    if ((tlLat != 90.0) || (brLat != -90.0)) {
-        tlLat += degreesLatitude;
-        brLat += degreesLatitude;
-    }
+    if (degreesLatitude >= 0.0)
+        degreesLatitude = qMin(degreesLatitude, 90.0 - tlLat);
+    else
+        degreesLatitude = qMax(degreesLatitude, -90.0 - brLat);
 
     if ( (tlLon != -180.0) || (brLon != 180.0) ) {
-        tlLon += degreesLongitude;
-        brLon += degreesLongitude;
+        tlLon = QLocationUtils::wrapLong(tlLon + degreesLongitude);
+        brLon = QLocationUtils::wrapLong(brLon + degreesLongitude);
     }
 
-    if (tlLon < -180.0)
-        tlLon += 360.0;
-    if (tlLon > 180.0)
-        tlLon -= 360.0;
-
-    if (brLon < -180.0)
-        brLon += 360.0;
-    if (brLon > 180.0)
-        brLon -= 360.0;
-
-    if (tlLat > 90.0)
-        tlLat = 90.0;
-
-    if (tlLat < -90.0)
-        tlLat = -90.0;
-
-    if (brLat > 90.0)
-        brLat = 90.0;
-
-    if (brLat < -90.0)
-        brLat = -90.0;
+    tlLat += degreesLatitude;
+    brLat += degreesLatitude;
 
     d->topLeft = QGeoCoordinate(tlLat, tlLon);
     d->bottomRight = QGeoCoordinate(brLat, brLon);
