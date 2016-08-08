@@ -443,16 +443,8 @@ void QGeoRectangle::setCenter(const QGeoCoordinate &center)
     double tlLon = center.longitude() - width / 2.0;
     double brLat = center.latitude() - height / 2.0;
     double brLon = center.longitude() + width / 2.0;
-
-    if (tlLon < -180.0)
-        tlLon += 360.0;
-    if (tlLon > 180.0)
-        tlLon -= 360.0;
-
-    if (brLon < -180.0)
-        brLon += 360.0;
-    if (brLon > 180.0)
-        brLon -= 360.0;
+    tlLon = QLocationUtils::wrapLong(tlLon);
+    brLon = QLocationUtils::wrapLong(brLon);
 
     if (tlLat > 90.0) {
         brLat = 2 * center.latitude() - 90.0;
@@ -518,18 +510,10 @@ void QGeoRectangle::setWidth(double degreesWidth)
     QGeoCoordinate c = center();
 
     double tlLon = c.longitude() - degreesWidth / 2.0;
-
-    if (tlLon < -180.0)
-        tlLon += 360.0;
-    if (tlLon > 180.0)
-        tlLon -= 360.0;
+    tlLon = QLocationUtils::wrapLong(tlLon);
 
     double brLon = c.longitude() + degreesWidth / 2.0;
-
-    if (brLon < -180.0)
-        brLon += 360.0;
-    if (brLon > 180.0)
-        brLon -= 360.0;
+    brLon = QLocationUtils::wrapLong(brLon);
 
     d->topLeft = QGeoCoordinate(tlLat, tlLon);
     d->bottomRight = QGeoCoordinate(brLat, brLon);
@@ -666,11 +650,7 @@ QGeoCoordinate QGeoRectanglePrivate::center() const
     if (topLeft.longitude() > bottomRight.longitude())
         cLon = cLon - 180.0;
 
-    if (cLon < -180.0)
-        cLon += 360.0;
-    if (cLon > 180.0)
-        cLon -= 360.0;
-
+    cLon = QLocationUtils::wrapLong(cLon);
     return QGeoCoordinate(cLat, cLon);
 }
 

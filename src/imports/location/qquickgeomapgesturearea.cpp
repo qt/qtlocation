@@ -1017,6 +1017,7 @@ void QQuickGeoMapGestureArea::updatePinch()
                 // Add to starting zoom level. Sign of (dist-pinchstartdist) takes care of zoom in / out
                 m_pinch.m_zoom.m_start;
     }
+
     m_pinch.m_event.setCenter(mapFromScene(m_sceneCenter));
     m_pinch.m_event.setAngle(m_twoTouchAngle);
 

@@ -384,12 +384,9 @@ void QGeoCircle::translate(double degreesLatitude, double degreesLongitude)
 
     lat += degreesLatitude;
     lon += degreesLongitude;
+    lon = QLocationUtils::wrapLong(lon);
 
-    if (lon < -180.0)
-        lon += 360.0;
-    if (lon > 180.0)
-        lon -= 360.0;
-
+    // TODO: remove this and simply clip latitude.
     if (lat > 90.0) {
         lat = 180.0 - lat;
         if (lon < 0.0)

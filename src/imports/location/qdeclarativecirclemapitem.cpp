@@ -46,6 +46,7 @@
 #include <QPainter>
 
 #include "qdoublevector2d_p.h"
+#include "qlocationutils_p.h"
 
 /* poly2tri triangulator includes */
 #include "../../3rdparty/poly2tri/common/shapes.h"
@@ -294,12 +295,8 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
         qreal resultLonRad = lonRad + std::atan2(std::sin(azimuthRad) * cosLatRad_x_sinRatio,
                                        cosRatio - sinLatRad * std::sin(resultLatRad));
         qreal lat2 = qgeocoordinate_radToDeg(resultLatRad);
-        qreal lon2 = qgeocoordinate_radToDeg(resultLonRad);
-        if (lon2 < -180.0) {
-            lon2 += 360.0;
-        } else if (lon2 > 180.0) {
-            lon2 -= 360.0;
-        }
+        qreal lon2 = QLocationUtils::wrapLong(qgeocoordinate_radToDeg(resultLonRad));
+
         path << QGeoCoordinate(lat2, lon2, center.altitude());
         // Consider only points in the left half of the circle for the left bound.
         if (azimuthRad > M_PI) {

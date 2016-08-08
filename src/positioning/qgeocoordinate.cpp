@@ -517,14 +517,8 @@ QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimut
     double resultLon, resultLat;
     QGeoCoordinatePrivate::atDistanceAndAzimuth(*this, distance, azimuth,
                                                 &resultLon, &resultLat);
-
-    if (resultLon > 180.0)
-        resultLon -= 360.0;
-    else if (resultLon < -180.0)
-        resultLon += 360.0;
-
     double resultAlt = d->alt + distanceUp;
-    return QGeoCoordinate(resultLat, resultLon, resultAlt);
+    return QGeoCoordinate(resultLat, QLocationUtils::wrapLong(resultLon), resultAlt);
 }
 
 /*!
