@@ -51,7 +51,7 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemview_p.h>
 #include <QtLocation/private/qquickgeomapgesturearea_p.h>
-
+#include <QtLocation/private/qdeclarativegeomapitemgroup_p.h>
 #include <QtLocation/qgeoserviceprovider.h>
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtQuick/QQuickItem>
@@ -153,6 +153,9 @@ public:
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItemBase *item);
 
+    Q_INVOKABLE void addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup);
+    Q_INVOKABLE void removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup);
+
     Q_INVOKABLE void clearMapItems();
     QList<QObject *> mapItems();
 
@@ -242,6 +245,7 @@ private:
     QGeoMap *m_map;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
+    QList<QPointer<QDeclarativeGeoMapItemGroup> > m_mapItemGroups;
     QString m_errorString;
     QGeoServiceProvider::Error m_error;
     QGeoRectangle m_visibleRegion;

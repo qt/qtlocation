@@ -52,6 +52,7 @@
 #include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
 #include <QtLocation/private/qdeclarativegeomapparameter_p.h>
 #include <QtLocation/private/qdeclarativegeomapcopyrightsnotice_p.h>
+#include <QtLocation/private/qdeclarativegeomapitemgroup_p.h>
 
 //Place includes
 #include <QtLocation/private/qdeclarativecategory_p.h>
@@ -173,7 +174,7 @@ public:
             minor = 9;
             qmlRegisterType<QDeclarativeGeoMapParameter>(uri, major, minor, "MapParameter");
             qmlRegisterType<QDeclarativeGeoMapCopyrightNotice>(uri, major, minor, "MapCopyrightNotice");
-
+            qmlRegisterType<QDeclarativeGeoMapItemGroup>(uri, major, minor, "MapItemGroup");
 
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>();

@@ -16,3 +16,6 @@ TESTDATA = $$OTHER_FILES
 
 # Import path used by 'make check' since CI doesn't install test imports
 IMPORTPATH = $$OUT_PWD/../../../qml
+
+DISTFILES += \
+    ItemGroup.qml

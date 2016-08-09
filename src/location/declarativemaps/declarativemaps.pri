@@ -28,6 +28,7 @@ PRIVATE_HEADERS += \
            declarativemaps/qdeclarativegeomapcopyrightsnotice_p.h \
            declarativemaps/locationvaluetypehelper_p.h \
            declarativemaps/qquickgeomapgesturearea_p.h \
+           declarativemaps/qdeclarativegeomapitemgroup_p.h \
            declarativemaps/mapitemviewdelegateincubator_p.h \
            ../imports/positioning/qquickgeocoordinateanimation_p.h
 
@@ -54,6 +55,7 @@ SOURCES += \
            declarativemaps/error_messages.cpp \
            declarativemaps/locationvaluetypehelper.cpp \
            declarativemaps/qquickgeomapgesturearea.cpp \
+           declarativemaps/qdeclarativegeomapitemgroup.cpp \
            ../imports/positioning/qquickgeocoordinateanimation.cpp \
            declarativemaps/mapitemviewdelegateincubator.cpp
 
