@@ -1495,9 +1495,16 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
 
 bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
 {
-    QQuickWindowPrivate *win = window() ? QQuickWindowPrivate::get(window()) : 0;
+    const QQuickPointerDevice *touchDevice = QQuickPointerDevice::touchDevice(event->device());
     const QTouchEvent::TouchPoint &point = event->touchPoints().first();
-    QQuickItem *grabber = win ? win->itemForTouchPointId.value(point.id()) : 0;
+
+    auto touchPointGrabberItem = [touchDevice](const QTouchEvent::TouchPoint &point) -> QQuickItem* {
+        if (QQuickEventPoint *eventPointer = touchDevice->pointerEvent()->pointById(point.id()))
+            return eventPointer->grabber();
+        return nullptr;
+    };
+
+    QQuickItem *grabber = touchPointGrabberItem(point);
 
     bool stealEvent = m_gestureArea->isActive();
     bool containsPoint = contains(mapFromScene(point.scenePos()));
@@ -1509,7 +1516,7 @@ bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
 
         m_gestureArea->handleTouchEvent(touchEvent.data());
         stealEvent = m_gestureArea->isActive();
-        grabber = win ? win->itemForTouchPointId.value(point.id()) : 0;
+        grabber = touchPointGrabberItem(point);
 
         if (grabber && stealEvent && !grabber->keepTouchGrab() && grabber != this) {
             QVector<int> ids;
@@ -1531,7 +1538,7 @@ bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
     }
 
     if (event->type() == QEvent::TouchEnd) {
-        if (win && win->itemForTouchPointId.value(point.id()) == this) {
+        if (touchPointGrabberItem(point) == this) {
             ungrabTouchPoints();
         }
     }
