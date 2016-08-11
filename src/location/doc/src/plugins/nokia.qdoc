@@ -106,7 +106,7 @@ a prefix.
     \li Map tile texture cache size in bytes. Default size of the cache is 6MB. Note that the texture cache has a hard minimum size which depends on the size of the map viewport (it must contain enough data to display the tiles currently visible on the display). This value is the amount of cache to be used in addition to the bare minimum.
 \row
     \li here.mapping.highdpi_tiles
-    \li Whether or not to request high dpi tiles. Valid values are \b true and \b false. The default value is \b true.
+    \li Whether or not to request high dpi tiles. Valid values are \b true and \b false. The default value is \b false.
 \row
     \li here.geocoding.host
     \li Geocoding service URL used by geocoding manager.

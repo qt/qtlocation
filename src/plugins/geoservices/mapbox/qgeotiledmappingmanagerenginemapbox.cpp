@@ -108,11 +108,11 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
 
     setSupportedMapTypes(mapTypes);
 
-    int scaleFactor = 2;
+    int scaleFactor = 1;
     if (parameters.contains(QStringLiteral("mapbox.highdpi_tiles"))) {
         const QString param = parameters.value(QStringLiteral("mapbox.highdpi_tiles")).toString().toLower();
-        if (param == "false")
-            scaleFactor = 1;
+        if (param == "true")
+            scaleFactor = 2;
     }
 
     QGeoTileFetcherMapbox *tileFetcher = new QGeoTileFetcherMapbox(scaleFactor, this);
