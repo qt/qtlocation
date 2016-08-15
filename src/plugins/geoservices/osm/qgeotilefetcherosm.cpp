@@ -121,6 +121,9 @@ QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)
     }
     id -= 1; // TODO: make OSM map ids start from 0.
 
+    if (spec.zoom() > m_providers[id]->maximumZoomLevel() || spec.zoom() < m_providers[id]->minimumZoomLevel())
+        return Q_NULLPTR;
+
     const QUrl url = m_providers[id]->tileAddress(spec.x(), spec.y(), spec.zoom());
     QNetworkRequest request;
     request.setHeader(QNetworkRequest::UserAgentHeader, m_userAgent);

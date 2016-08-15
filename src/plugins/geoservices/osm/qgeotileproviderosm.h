@@ -87,6 +87,8 @@ public:
     inline QString dataCopyRight() const;
     inline QString styleCopyRight() const;
     inline QString format() const;
+    inline int minimumZoomLevel() const;
+    inline int maximumZoomLevel() const;
     QUrl tileAddress(int x, int y, int z) const;
 
     // Optional properties, not needed to construct a provider
@@ -141,6 +143,8 @@ public:
     QString dataCopyRight() const;
     QString styleCopyRight() const;
     QString format() const;
+    int minimumZoomLevel() const;
+    int maximumZoomLevel() const;
     const QGeoMapType &mapType() const;
     bool isValid() const;
     bool isResolved() const;

@@ -99,6 +99,20 @@ QString QGeoTileProviderOsm::format() const
     return m_provider->format();
 }
 
+int QGeoTileProviderOsm::minimumZoomLevel() const
+{
+    if (m_status != Resolved || !m_provider)
+        return 0;
+    return m_provider->minimumZoomLevel();
+}
+
+int QGeoTileProviderOsm::maximumZoomLevel() const
+{
+    if (m_status != Resolved || !m_provider)
+        return 20;
+    return m_provider->maximumZoomLevel();
+}
+
 const QGeoMapType &QGeoTileProviderOsm::mapType() const
 {
     return m_mapType;
@@ -332,7 +346,7 @@ void TileProvider::onNetworkReplyFinished()
      * unavailable, without making the osm plugin fire requests to it. Default is true.
      *
      * MinimumZoomLevel and MaximumZoomLevel are also optional, and allow to prevent invalid tile
-     * requests to the providers, if they do not support the specific ZL. Default is 0 and 19,
+     * requests to the providers, if they do not support the specific ZL. Default is 0 and 20,
      * respectively.
      *
      * <server address template> is required, and is the tile url template, with %x, %y and %z as
@@ -401,7 +415,7 @@ void TileProvider::onNetworkReplyFinished()
         m_copyRightStyle = copyRightStyle.toString();
 
     m_minimumZoomLevel = 0;
-    m_maximumZoomLevel = 19;
+    m_maximumZoomLevel = 20;
     const QJsonValue minZoom = json.value(QLatin1String("MinimumZoomLevel"));
     if (minZoom.isDouble())
         m_minimumZoomLevel = qBound(0, int(minZoom.toDouble()), maxValidZoom);
@@ -515,6 +529,16 @@ QString TileProvider::styleCopyRight() const
 QString TileProvider::format() const
 {
     return m_format;
+}
+
+int TileProvider::minimumZoomLevel() const
+{
+    return m_minimumZoomLevel;
+}
+
+int TileProvider::maximumZoomLevel() const
+{
+    return m_maximumZoomLevel;
 }
 
 void TileProvider::setStyleCopyRight(const QString &copyright)
