@@ -100,9 +100,8 @@ void QGeoTileFetcherOsm::onProviderResolutionFinished(const QGeoTileProviderOsm 
     emit providerDataUpdated(provider);
 }
 
-void QGeoTileFetcherOsm::onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error)
+void QGeoTileFetcherOsm::onProviderResolutionError(const QGeoTileProviderOsm *provider)
 {
-    Q_UNUSED(error)
     if ((m_ready = providersResolved(m_providers))) {
         qWarning("QGeoTileFetcherOsm: all providers resolved");
         readyUpdated();

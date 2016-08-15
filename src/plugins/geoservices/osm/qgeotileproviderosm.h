@@ -40,13 +40,84 @@
 #include <QtLocation/private/qgeomaptype_p.h>
 
 #include <QtCore/QUrl>
+#include <QtCore/QVector>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtCore/QPointer>
 #include <QTimer>
 #include <algorithm>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
 
 QT_BEGIN_NAMESPACE
+
+class TileProvider: public QObject
+{
+    Q_OBJECT
+public:
+    enum Status {Idle,
+                 Resolving,
+                 Valid,
+                 Invalid };
+
+    TileProvider();
+    // "Online" constructor. Needs resolution to fetch the parameters
+    TileProvider(const QUrl &urlRedirector);
+    // Offline constructor. Doesn't need URLRedirector and networkmanager
+    TileProvider(const QString &urlTemplate,
+             const QString &format,
+             const QString &copyRightMap,
+             const QString &copyRightData,
+             int minimumZoomLevel = 0,
+             int maximumZoomLevel = 19);
+
+    ~TileProvider();
+    void setNetworkManager(QNetworkAccessManager *nm);
+
+    void resolveProvider();
+    void handleError(QNetworkReply::NetworkError error);
+    void setupProvider();
+
+    inline bool isValid() const;
+    inline bool isInvalid() const;
+    inline bool isResolved() const;
+    inline Status status() const;
+
+    inline QString mapCopyRight() const;
+    inline QString dataCopyRight() const;
+    inline QString styleCopyRight() const;
+    inline QString format() const;
+    QUrl tileAddress(int x, int y, int z) const;
+
+    // Optional properties, not needed to construct a provider
+    void setStyleCopyRight(const QString &copyright);
+
+    Status m_status;
+    QUrl m_urlRedirector; // The URL from where to fetch the URL template in case of a provider to resolve.
+    QNetworkAccessManager *m_nm;
+    QString m_urlTemplate;
+    QString m_format;
+    QString m_copyRightMap;
+    QString m_copyRightData;
+    QString m_copyRightStyle;
+    QString m_urlPrefix;
+    QString m_urlSuffix;
+    int m_minimumZoomLevel;
+    int m_maximumZoomLevel;
+
+    int paramsLUT[3];  //Lookup table to handle possibly shuffled x,y,z
+    QString paramsSep[2]; // what goes in between %x, %y and %z
+
+Q_SIGNALS:
+    void resolutionFinished(TileProvider *provider);
+    void resolutionError(TileProvider *provider);
+
+public Q_SLOTS:
+    void onNetworkReplyFinished();
+    void onNetworkReplyError(QNetworkReply::NetworkError error);
+
+friend class QGeoTileProviderOsm;
+};
 
 class QGeoTileProviderOsm: public QObject
 {
@@ -56,169 +127,14 @@ class QGeoTileProviderOsm: public QObject
     friend class QGeoMapReplyOsm;
     friend class QGeoTiledMappingManagerEngineOsm;
 public:
-    struct TileProvider {
-
-        static inline void sort2(int &a, int &b)
-        {
-            if (a > b) {
-                int temp=a;
-                a=b;
-                b=temp;
-            }
-        }
-
-        TileProvider() : m_valid(false)
-        {
-
-        }
-
-        TileProvider(const QString &urlTemplate,
-                 const QString &format,
-                 const QString &copyRightMap,
-                 const QString &copyRightData,
-                 int minimumZoomLevel = 0,
-                 int maximumZoomLevel = 19) : m_valid(false)
-        {
-            if (urlTemplate.isEmpty())
-                return;
-            m_urlTemplate = urlTemplate;
-
-            if (format.isEmpty())
-                return;
-            m_format = format;
-
-            m_copyRightMap = copyRightMap;
-            m_copyRightData = copyRightData;
-
-            if (minimumZoomLevel < 0 || minimumZoomLevel > 30)
-                return;
-            m_minimumZoomLevel = minimumZoomLevel;
-
-            if (maximumZoomLevel < 0 || maximumZoomLevel > 30 ||  maximumZoomLevel < minimumZoomLevel)
-                return;
-            m_maximumZoomLevel = maximumZoomLevel;
-
-            // Currently supporting only %x, %y and &z
-            int offset[3];
-            offset[0] = m_urlTemplate.indexOf(QLatin1String("%x"));
-            if (offset[0] < 0)
-                return;
-
-            offset[1] = m_urlTemplate.indexOf(QLatin1String("%y"));
-            if (offset[1] < 0)
-                return;
-
-            offset[2] = m_urlTemplate.indexOf(QLatin1String("%z"));
-            if (offset[2] < 0)
-                return;
-
-            int sortedOffsets[3];
-            std::copy(offset, offset + 3, sortedOffsets);
-            sort2(sortedOffsets[0] ,sortedOffsets[1]);
-            sort2(sortedOffsets[1] ,sortedOffsets[2]);
-            sort2(sortedOffsets[0] ,sortedOffsets[1]);
-
-            int min = sortedOffsets[0];
-            int max = sortedOffsets[2];
-            int mid = sortedOffsets[1];
-
-            // Initing LUT
-            for (int i=0; i<3; i++) {
-                if (offset[0] == sortedOffsets[i])
-                    paramsLUT[i] = 0;
-                else if (offset[1] == sortedOffsets[i])
-                    paramsLUT[i] = 1;
-                else
-                    paramsLUT[i] = 2;
-            }
-
-            m_urlPrefix = m_urlTemplate.mid(0 , min);
-            m_urlSuffix = m_urlTemplate.mid(max + 2, m_urlTemplate.size() - max - 2);
-
-            paramsSep[0] = m_urlTemplate.mid(min + 2, mid - min - 2);
-            paramsSep[1] = m_urlTemplate.mid(mid + 2, max - mid - 2);
-            m_valid = true;
-        }
-
-        ~TileProvider()
-        {
-        }
-
-        inline bool isValid() const
-        {
-            return m_valid;
-        }
-
-        inline QString mapCopyRight() const
-        {
-            return m_copyRightMap;
-        }
-
-        inline QString dataCopyRight() const
-        {
-            return m_copyRightData;
-        }
-
-        inline QString styleCopyRight() const
-        {
-            return m_copyRightStyle;
-        }
-
-        inline QString format() const
-        {
-            return m_format;
-        }
-
-        // Optional properties, not needed to construct a provider
-        void setStyleCopyRight(const QString &copyright)
-        {
-            m_copyRightStyle = copyright;
-        }
-
-        QUrl tileAddress(int x, int y, int z) const
-        {
-            if (z < m_minimumZoomLevel || z > m_maximumZoomLevel)
-                return QUrl();
-            int params[3] = { x, y, z};
-            QString url;
-            url += m_urlPrefix;
-            url += QString::number(params[paramsLUT[0]]);
-            url += paramsSep[0];
-            url += QString::number(params[paramsLUT[1]]);
-            url += paramsSep[1];
-            url += QString::number(params[paramsLUT[2]]);
-            url += m_urlSuffix;
-            return QUrl(url);
-        }
-
-        bool m_valid;
-        QString m_urlTemplate;
-        QString m_format;
-        QString m_copyRightMap;
-        QString m_copyRightData;
-        QString m_copyRightStyle;
-        QString m_urlPrefix;
-        QString m_urlSuffix;
-        int m_minimumZoomLevel;
-        int m_maximumZoomLevel;
-
-        int paramsLUT[3];  //Lookup table to handle possibly shuffled x,y,z
-        QString paramsSep[2]; // what goes in between %x, %y and %z
-    };
-
     enum Status {Idle,
                  Resolving,
-                 Valid,
-                 Invalid };
+                 Resolved };
 
-    QGeoTileProviderOsm(const QString &urlRedir,
-                     QNetworkAccessManager *nm,
-                     const QGeoMapType &mapType,
-                     const TileProvider &providerFallback);
-
+    QGeoTileProviderOsm(QNetworkAccessManager *nm,
+                        const QGeoMapType &mapType,
+                        const QVector<TileProvider *> &providers);
     ~QGeoTileProviderOsm();
-
-
 
     QUrl tileAddress(int x, int y, int z) const;
     QString mapCopyRight() const;
@@ -231,24 +147,27 @@ public:
 
 Q_SIGNALS:
     void resolutionFinished(const QGeoTileProviderOsm *provider);
-    void resolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error);
+    void resolutionError(const QGeoTileProviderOsm *provider);
 
 public Q_SLOTS:
-    void onNetworkReplyFinished();
-    void onNetworkReplyError(QNetworkReply::NetworkError error);
     void resolveProvider();
+    void disableRedirection();
+
+protected Q_SLOTS:
+    void onResolutionFinished(TileProvider *provider);
+    void onResolutionError(TileProvider *provider);
 
 protected:
-    void disableRedirection();
-    void handleError(QNetworkReply::NetworkError error);
+    void addProvider(TileProvider *provider);
+
+/* Data members */
 
     QNetworkAccessManager *m_nm;
-    QUrl m_urlRedirector;   // The URL from where to fetch the URL template
-    TileProvider m_provider;
-    TileProvider m_providerFallback;
+    QVector<TileProvider *> m_providerList;
+    TileProvider *m_provider;
+    int m_providerId;
     QGeoMapType m_mapType;
     Status m_status;
-    QTimer m_retryTimer;
 };
 
 QT_END_NAMESPACE

@@ -69,7 +69,7 @@ protected:
 
 protected Q_SLOTS:
     void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error);
+    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
 
 private:
     QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
