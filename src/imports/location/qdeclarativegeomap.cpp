@@ -548,12 +548,13 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     //The zoom level limits are only restricted by the plugins values, if the user has set a more
     //strict zoom level limit before initialization nothing is done here.
     //minimum zoom level might be changed to limit gray bundaries
-    if (m_mappingManager->cameraCapabilities().minimumZoomLevel() > m_gestureArea->minimumZoomLevel())
-        setMinimumZoomLevel(m_mappingManager->cameraCapabilities().minimumZoomLevel());
 
     if (m_gestureArea->maximumZoomLevel() < 0
             || m_mappingManager->cameraCapabilities().maximumZoomLevel() < m_gestureArea->maximumZoomLevel())
         setMaximumZoomLevel(m_mappingManager->cameraCapabilities().maximumZoomLevel());
+
+    if (m_mappingManager->cameraCapabilities().minimumZoomLevel() > m_gestureArea->minimumZoomLevel())
+        setMinimumZoomLevel(m_mappingManager->cameraCapabilities().minimumZoomLevel());
 
 
     // Map tiles are built in this call. m_map->minimumZoom() becomes operational
