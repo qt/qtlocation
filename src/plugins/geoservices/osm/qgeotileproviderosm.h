@@ -113,7 +113,7 @@ public:
                 return;
 
             int sortedOffsets[3];
-            std::copy(offset, offset + 4, sortedOffsets);
+            std::copy(offset, offset + 3, sortedOffsets);
             sort2(sortedOffsets[0] ,sortedOffsets[1]);
             sort2(sortedOffsets[1] ,sortedOffsets[2]);
             sort2(sortedOffsets[0] ,sortedOffsets[1]);
