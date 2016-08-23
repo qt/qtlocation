@@ -13,9 +13,7 @@ HEADERS += \
 OTHER_FILES += \
     plugin.json
 
-osx: LIBS += -framework Foundation
-else: ios|tvos: LIBS += -framework CoreFoundation
-LIBS += -framework CoreLocation
+LIBS += -framework Foundation -framework CoreLocation
 
 PLUGIN_TYPE = position
 PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryCL
