@@ -60,7 +60,9 @@ class MapItemViewDelegateIncubator;
 class QDeclarativeGeoMapItemView;
 class QDeclarativeGeoMapItemBase;
 
-struct QDeclarativeGeoMapItemViewItemData {
+class QDeclarativeGeoMapItemViewItemData
+{
+public:
     QDeclarativeGeoMapItemViewItemData()
     :   incubator(0), item(0), context(0), modelData(0), modelDataMeta(0)
     {
