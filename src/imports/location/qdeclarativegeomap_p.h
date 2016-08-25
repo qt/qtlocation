@@ -183,7 +183,6 @@ private:
 
 private:
     QDeclarativeGeoServiceProvider *m_plugin;
-    QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mappingManager;
     QDeclarativeGeoMapType *m_activeMapType;
     QList<QDeclarativeGeoMapType *> m_supportedMapTypes;

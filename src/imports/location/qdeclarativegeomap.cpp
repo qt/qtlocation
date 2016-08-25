@@ -158,7 +158,6 @@ static const qreal EARTH_MEAN_RADIUS = 6371007.2;
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         : QQuickItem(parent),
         m_plugin(0),
-        m_serviceProvider(0),
         m_mappingManager(0),
         m_activeMapType(0),
         m_gestureArea(new QQuickGeoMapGestureArea(this)),
@@ -331,11 +330,11 @@ void QDeclarativeGeoMap::initialize()
 */
 void QDeclarativeGeoMap::pluginReady()
 {
-    m_serviceProvider = m_plugin->sharedGeoServiceProvider();
-    m_mappingManager = m_serviceProvider->mappingManager();
+    QGeoServiceProvider *provider = m_plugin->sharedGeoServiceProvider();
+    m_mappingManager = provider->mappingManager();
 
-    if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
-        setError(m_serviceProvider->error(), m_serviceProvider->errorString());
+    if (provider->error() != QGeoServiceProvider::NoError) {
+        setError(provider->error(), provider->errorString());
         return;
     }
 
