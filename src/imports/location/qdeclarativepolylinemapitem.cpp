@@ -767,15 +767,15 @@ QGeoCoordinate QDeclarativePolylineMapItem::updateLeftBound(const QList<QGeoCoor
                                                             QGeoCoordinate currentLeftBound)
 {
     if (path.isEmpty()) {
+        deltaXs.clear();
         minX = qInf();
         return QGeoCoordinate();
     } else if (path.size() == 1) {
-        deltaXs.clear();
-        minX = 0.0;
+        deltaXs.resize(1);
+        deltaXs[0] = minX = 0.0;
         return path.last();
-    } else if ( path.size() != deltaXs.size() + 2 ) {  // this case should not happen
-        minX = qInf();
-        return QGeoCoordinate();
+    } else if ( path.size() != deltaXs.size() + 1 ) {  // something went wrong. This case should not happen
+        return computeLeftBound(path, deltaXs, minX);
     }
 
     const QGeoCoordinate &geoFrom = path.at(path.size()-2);
@@ -791,7 +791,7 @@ QGeoCoordinate QDeclarativePolylineMapItem::updateLeftBound(const QList<QGeoCoor
         deltaLongi =  longiTo - longiFrom;
     }
 
-    deltaXs.push_back((deltaXs.isEmpty()) ? 0.0 : deltaXs.last() + deltaLongi);
+    deltaXs.push_back(deltaXs.last() + deltaLongi);
     if (deltaXs.last() < minX) {
         minX = deltaXs.last();
         return path.last();
