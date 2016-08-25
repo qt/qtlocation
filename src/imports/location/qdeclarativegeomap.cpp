@@ -802,7 +802,7 @@ void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
         return;
     }
 
-    if (!width() || !height()) {
+    if (!m_map || !width() || !height()) {
         m_pendingFitViewport = true;
         return;
     }
