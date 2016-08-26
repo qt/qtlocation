@@ -71,6 +71,35 @@ void QGeoCodeReplyOsm::abort()
     m_reply = 0;
 }
 
+static QGeoAddress parseAddressObject(const QJsonObject &object)
+{
+    QGeoAddress address;
+    address.setText(object.value(QStringLiteral("display_name")).toString());
+    QJsonObject ao = object.value(QStringLiteral("address")).toObject();
+    // setCountry
+    address.setCountry(ao.value(QStringLiteral("country")).toString());
+    // setCountryCode
+    address.setCountryCode(ao.value(QStringLiteral("country_code")).toString());
+    // setState
+    address.setState(ao.value(QStringLiteral("state")).toString());
+    // setCity
+    if (ao.contains(QLatin1String("city")))
+        address.setCity(ao.value(QStringLiteral("city")).toString());
+    else if (ao.contains(QLatin1String("town")))
+        address.setCity(ao.value(QLatin1String("town")).toString());
+    else if (ao.contains(QLatin1String("village")))
+        address.setCity(ao.value(QLatin1String("village")).toString());
+    else
+        address.setCity(ao.value(QLatin1String("hamlet")).toString());
+    // setDistrict
+    address.setDistrict(ao.value(QStringLiteral("suburb")).toString());
+    // setPostalCode
+    address.setPostalCode(ao.value(QStringLiteral("postcode")).toString());
+    // setStreet
+    address.setStreet(ao.value(QStringLiteral("road")).toString());
+    return address;
+}
+
 void QGeoCodeReplyOsm::networkReplyFinished()
 {
     if (!m_reply)
@@ -90,21 +119,9 @@ void QGeoCodeReplyOsm::networkReplyFinished()
         coordinate.setLatitude(object.value(QStringLiteral("lat")).toString().toDouble());
         coordinate.setLongitude(object.value(QStringLiteral("lon")).toString().toDouble());
 
-        QJsonObject ao = object.value(QStringLiteral("address")).toObject();
-
-        QGeoAddress address;
-        address.setText(object.value(QStringLiteral("display_name")).toString());
-        address.setCountry(ao.value(QStringLiteral("country")).toString());
-        address.setCountryCode(ao.value(QStringLiteral("country_code")).toString());
-        address.setState(ao.value(QStringLiteral("state")).toString());
-        address.setCity(ao.value(QStringLiteral("city")).toString());
-        address.setDistrict(ao.value(QStringLiteral("suburb")).toString());
-        address.setPostalCode(ao.value(QStringLiteral("postcode")).toString());
-        address.setStreet(ao.value(QStringLiteral("road")).toString());
-
         QGeoLocation location;
         location.setCoordinate(coordinate);
-        location.setAddress(address);
+        location.setAddress(parseAddressObject(object));
 
         locations.append(location);
 
@@ -135,22 +152,10 @@ void QGeoCodeReplyOsm::networkReplyFinished()
                 }
             }
 
-            QJsonObject ao = object.value(QStringLiteral("address")).toObject();
-
-            QGeoAddress address;
-            address.setText(object.value(QStringLiteral("display_name")).toString());
-            address.setCountry(ao.value(QStringLiteral("country")).toString());
-            address.setCountryCode(ao.value(QStringLiteral("country_code")).toString());
-            address.setState(ao.value(QStringLiteral("state")).toString());
-            address.setCity(ao.value(QStringLiteral("city")).toString());
-            address.setDistrict(ao.value(QStringLiteral("suburb")).toString());
-            address.setPostalCode(ao.value(QStringLiteral("postcode")).toString());
-            address.setStreet(ao.value(QStringLiteral("road")).toString());
-
             QGeoLocation location;
             location.setCoordinate(coordinate);
             location.setBoundingBox(rectangle);
-            location.setAddress(address);
+            location.setAddress(parseAddressObject(object));
             locations.append(location);
         }
 
