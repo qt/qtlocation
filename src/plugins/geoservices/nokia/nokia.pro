@@ -2,12 +2,6 @@ TARGET = qtgeoservices_nokia
 
 QT += location-private positioning-private network
 
-contains(QT_CONFIG, location-china-support) {
-    # China support
-    DEFINES += USE_CHINA_NETWORK_REGISTRATION
-    QT += systeminfo
-}
-
 HEADERS += \
             qgeocodereply_nokia.h \
             qgeocodexmlparser.h \

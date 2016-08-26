@@ -35,24 +35,12 @@
 ****************************************************************************/
 #include "qgeouriprovider.h"
 
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-#include <QNetworkInfo>
-#endif
-
 #include <QMap>
 #include <QVariant>
 #include <QSet>
 #include <QString>
 
 QT_BEGIN_NAMESPACE
-
-namespace
-{
-    const QString CHINA_MCC = QLatin1String("460");     // China mobile country code
-    const QString CHINA2_MCC = QLatin1String("461");    // China mobile country code
-    const QString HONG_KONG_MCC = QLatin1String("454"); // Hong Kong mobile country code
-    const QString MACAU_MCC = QLatin1String("455");     // Macau mobile country code
-}
 
 QGeoUriProvider::QGeoUriProvider(
                 QObject *parent,
@@ -61,17 +49,11 @@ QGeoUriProvider::QGeoUriProvider(
                 const QString &internationalHost,
                 const QString &localizedHost)
     : QObject(parent)
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    , m_networkInfo(new QNetworkInfo(this))
-#endif
     , m_internationalHost(parameters.value(hostParameterName, internationalHost).toString())
     , m_localizedHost(localizedHost)
     , m_firstSubdomain(QChar::Null)
     , m_maxSubdomains(0)
 {
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    QObject::connect(m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(int,QString)), this, SLOT(mobileCountryCodeChanged(int,QString)));
-#endif
     setCurrentHost(isInternationalNetwork() || m_localizedHost.isEmpty() ? m_internationalHost : m_localizedHost);
 }
 
@@ -109,26 +91,7 @@ void QGeoUriProvider::mobileCountryCodeChanged(int interface, const QString& mcc
 
 bool QGeoUriProvider::isInternationalNetwork() const
 {
-#ifndef USE_CHINA_NETWORK_REGISTRATION
     return true;
-#else
-    static QSet<QString> codes;
-    if (codes.empty()) {
-        codes.insert(CHINA_MCC);
-        codes.insert(CHINA2_MCC);
-    }
-
-    QNetworkInfo::NetworkMode mode = m_networkInfo->currentNetworkMode();
-
-    int interfaces = m_networkInfo->networkInterfaceCount(mode);
-    for (int i = 0; i < interfaces; ++i) {
-        QString mcc = m_networkInfo->currentMobileCountryCode(interfaces);
-        if (codes.contains(mcc))
-            return false;
-    }
-
-    return true;
-#endif // USE_CHINA_NETWORK_REGISTRATION
 }
 
 QT_END_NAMESPACE
