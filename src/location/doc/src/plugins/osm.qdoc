@@ -63,7 +63,9 @@ a prefix.
 \row
     \li osm.useragent
     \li User agent string set when making network requests.  This parameter should be set to a
-        value that uniquely identifies the application.
+        value that uniquely identifies the application. Note that providers might block applications not setting this
+        parameter, leaving it to the stock plugin user agent (e.g., \l {http://wiki.openstreetmap.org/wiki/Nominatim_usage_policy}{Nominatim}
+        for geocoding)
 \row
     \li osm.mapping.custom.host
     \li Url string set when making network requests to the tile server.  This parameter should be set to a
