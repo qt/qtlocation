@@ -33,17 +33,25 @@
 #include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_USE_NAMESPACE
+
 class QGeoTiledMappingManagerEngineTest;
+class QGeoTiledMapTestPrivate;
+
 class QGeoTiledMapTest: public QGeoTiledMap
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QGeoTiledMapTest)
 public:
-    QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0):
-        QGeoTiledMap(engine, parent),
-        m_engine(engine){}
+    QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
+
+protected slots:
+    void onCameraCenter_testChanged(QGeoMapParameter *param, const char *propertyName);
+
 public:
     using QGeoTiledMap::setCameraData;
     QGeoTiledMappingManagerEngine *m_engine;
 };
 
 #endif
+
+

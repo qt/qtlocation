@@ -60,6 +60,17 @@ QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *paren
                      this,&QGeoTiledMap::handleTileVersionChanged);
 }
 
+QGeoTiledMap::QGeoTiledMap(QGeoTiledMapPrivate &dd, QGeoTiledMappingManagerEngine *engine, QObject *parent)
+    : QGeoMap(dd, parent)
+{
+    Q_D(QGeoTiledMap);
+
+    d->m_tileRequests = new QGeoTileRequestManager(this, engine);
+
+    QObject::connect(engine,&QGeoTiledMappingManagerEngine::tileVersionChanged,
+                     this,&QGeoTiledMap::handleTileVersionChanged);
+}
+
 QGeoTiledMap::~QGeoTiledMap()
 {
     Q_D(QGeoTiledMap);

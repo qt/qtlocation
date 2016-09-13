@@ -130,6 +130,32 @@ void QGeoMap::clearData()
 
 }
 
+void QGeoMap::addParameter(QGeoMapParameter *param)
+{
+    Q_D(QGeoMap);
+    if (param && !d->m_mapParameters.contains(param)) {
+        d->m_mapParameters.insert(param);
+        d->addParameter(param);
+    }
+}
+
+void QGeoMap::removeParameter(QGeoMapParameter *param)
+{
+    Q_D(QGeoMap);
+    if (param && d->m_mapParameters.contains(param)) {
+        d->removeParameter(param);
+        d->m_mapParameters.remove(param);
+    }
+}
+
+void QGeoMap::clearParameters()
+{
+    Q_D(QGeoMap);
+    for (QGeoMapParameter *p : d->m_mapParameters)
+        d->removeParameter(p);
+    d->m_mapParameters.clear();
+}
+
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
     : QObjectPrivate(),
       m_engine(engine),
@@ -139,6 +165,16 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
 
 QGeoMapPrivate::~QGeoMapPrivate()
 {
+}
+
+void QGeoMapPrivate::addParameter(QGeoMapParameter *param)
+{
+    Q_UNUSED(param)
+}
+
+void QGeoMapPrivate::removeParameter(QGeoMapParameter *param)
+{
+    Q_UNUSED(param)
 }
 
 QT_END_NAMESPACE

@@ -54,6 +54,7 @@
 #include "qgeocameradata_p.h"
 #include <QtQuick/QQuickItem>
 #include <QtCore/QPointer>
+#include <QtCore/QSet>
 #include <QtGui/QColor>
 #include <QtPositioning/qgeoshape.h>
 
@@ -62,6 +63,7 @@ QT_BEGIN_NAMESPACE
 class QDeclarativeGeoServiceProvider;
 class QDeclarativeGeoMapType;
 class QDeclarativeGeoMapCopyrightNotice;
+class QDeclarativeGeoMapParameter;
 
 class QDeclarativeGeoMap : public QQuickItem
 {
@@ -76,6 +78,7 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(QList<QObject *> mapItems READ mapItems NOTIFY mapItemsChanged)
+    Q_PROPERTY(QList<QObject *> mapParameters READ mapParameters)
     Q_PROPERTY(QGeoServiceProvider::Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(QGeoShape visibleRegion READ visibleRegion WRITE setVisibleRegion)
@@ -119,8 +122,14 @@ public:
 
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItemBase *item);
+
     Q_INVOKABLE void clearMapItems();
     QList<QObject *> mapItems();
+
+    Q_INVOKABLE void addMapParameter(QDeclarativeGeoMapParameter *parameter);
+    Q_INVOKABLE void removeMapParameter(QDeclarativeGeoMapParameter *parameter);
+    Q_INVOKABLE void clearMapParameters();
+    QList<QObject *> mapParameters();
 
     Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &position, bool clipToViewPort = true) const;
     Q_INVOKABLE QPointF fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort = true) const;
@@ -177,6 +186,7 @@ private Q_SLOTS:
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void populateMap();
+    void populateParameters();
     void fitViewportToMapItemsRefine(bool refine);
     void fitViewportToGeoShape();
     bool isInteractive();
@@ -202,6 +212,7 @@ private:
     double m_maximumViewportLatitude;
     bool m_initialized;
     bool m_validRegion;
+    QSet<QDeclarativeGeoMapParameter *> m_mapParameters;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -33,8 +33,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAP_P_P_H
-#define QGEOMAP_P_P_H
+
+#ifndef QDECLARATIVEGEOMAPPARAMETER_P_H
+#define QDECLARATIVEGEOMAPPARAMETER_P_H
 
 //
 //  W A R N I N G
@@ -47,43 +48,42 @@
 // We mean it.
 //
 
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeocameradata_p.h>
-#include <QtLocation/private/qgeomaptype_p.h>
-#include <QtCore/private/qobject_p.h>
-#include <QtCore/QSize>
-#include <QtCore/QSet>
-
+#include <QtLocation/private/qgeomapparameter_p.h>
+#include <QQmlParserStatus>
+#include <qqml.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMappingManagerEngine;
-class QGeoMap;
-class QGeoMapController;
-class QGeoMapParameter;
-
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
+class QDeclarativeGeoMapParameter : public QGeoMapParameter, public QQmlParserStatus
 {
-    Q_DECLARE_PUBLIC(QGeoMap)
+    Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
+
 public:
-    QGeoMapPrivate(QGeoMappingManagerEngine *engine);
-    virtual ~QGeoMapPrivate();
+    explicit QDeclarativeGeoMapParameter(QObject *parent = 0);
+    virtual ~QDeclarativeGeoMapParameter();
+
+    bool isComponentComplete() const;
+
+Q_SIGNALS:
+    void completed(QDeclarativeGeoMapParameter *);
 
 protected:
-    /* Hooks into the actual map implementations */
-    virtual void changeMapSize(const QSize &size) = 0; // called by QGeoMap::setSize()
-    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
-    virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()
-    virtual void addParameter(QGeoMapParameter *param);
-    virtual void removeParameter(QGeoMapParameter *param);
+    int initialPropertyCount() const;
+    // QQmlParserStatus implementation
+    void classBegin() override;
+    void componentComplete() override;
 
-    QSize m_size;
-    QPointer<QGeoMappingManagerEngine> m_engine;
-    QGeoCameraData m_cameraData;
-    QGeoMapType m_activeMapType;
-    QSet<QGeoMapParameter *> m_mapParameters;
+private slots:
+    void onPropertyUpdated(int index);
+
+private:
+    int m_initialPropertyCount;
+    bool m_complete;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAP_P_P_H
+QML_DECLARE_TYPE(QDeclarativeGeoMapParameter)
+
+#endif // QDECLARATIVEGEOMAPPARAMETER_P_H

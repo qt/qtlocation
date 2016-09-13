@@ -61,6 +61,7 @@ class QGeoCameraCapabilities;
 class QGeoCoordinate;
 class QSGNode;
 class QQuickWindow;
+class QGeoMapParameter;
 
 class Q_LOCATION_EXPORT QGeoMap : public QObject
 {
@@ -92,6 +93,10 @@ public:
 
     virtual void prefetchData();
     virtual void clearData();
+
+    void addParameter(QGeoMapParameter *param);
+    void removeParameter(QGeoMapParameter *param);
+    void clearParameters();
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);

@@ -29,8 +29,8 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include "qgeocameracapabilities_p.h"
-#include "qgeotiledmap_p.h"
+#include <QtLocation/private/qgeocameracapabilities_p.h>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_USE_NAMESPACE
 

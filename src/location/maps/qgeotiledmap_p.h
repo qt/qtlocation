@@ -49,10 +49,10 @@
 
 #include <QObject>
 #include <QString>
-
-#include "qgeomap_p.h"
-#include "qgeocameradata_p.h"
-#include "qgeomaptype_p.h"
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomap_p.h>
+#include <QtLocation/private/qgeocameradata_p.h>
+#include <QtLocation/private/qgeomaptype_p.h>
 
 #include <QtPositioning/private/qdoublevector2d_p.h>
 
@@ -70,7 +70,7 @@ class QSGNode;
 
 class QPointF;
 
-class Q_LOCATION_EXPORT QGeoTiledMap : public QGeoMap
+class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMap : public QGeoMap
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoTiledMap)
@@ -102,6 +102,8 @@ public Q_SLOTS:
 protected:
     QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) Q_DECL_OVERRIDE;
     virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+
+    QGeoTiledMap(QGeoTiledMapPrivate &dd, QGeoTiledMappingManagerEngine *engine, QObject *parent);
 
 private Q_SLOTS:
     void handleTileVersionChanged();

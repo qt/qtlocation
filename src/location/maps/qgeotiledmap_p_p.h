@@ -47,10 +47,10 @@
 // We mean it.
 //
 
-#include "qlocationglobal_p.h"
-#include "qgeomap_p_p.h"
-#include "qgeocameradata_p.h"
-#include "qgeomaptype_p.h"
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomap_p_p.h>
+#include <QtLocation/private/qgeocameradata_p.h>
+#include <QtLocation/private/qgeomaptype_p.h>
 #include <QtPositioning/private/qdoublevector3d_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtCore/QPointer>
@@ -90,10 +90,9 @@ protected:
     void changeTileVersion(int version);
     void clearScene();
 
-private:
     void updateScene();
 
-private:
+protected:
     QAbstractGeoTileCache *m_cache;
     QGeoCameraTiles *m_visibleTiles;
     QGeoCameraTiles *m_prefetchTiles;
@@ -102,7 +101,6 @@ private:
     int m_maxZoomLevel;
     int m_minZoomLevel;
     QGeoTiledMap::PrefetchStyle m_prefetchStyle;
-    bool m_geomoteryUpdated;
     Q_DISABLE_COPY(QGeoTiledMapPrivate)
 };
 

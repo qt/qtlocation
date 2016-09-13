@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -33,8 +33,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAP_P_P_H
-#define QGEOMAP_P_P_H
+
+
+#ifndef QGEOMAPPARAMETER_P_H
+#define QGEOMAPPARAMETER_P_H
 
 //
 //  W A R N I N G
@@ -47,43 +49,36 @@
 // We mean it.
 //
 
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeocameradata_p.h>
-#include <QtLocation/private/qgeomaptype_p.h>
-#include <QtCore/private/qobject_p.h>
-#include <QtCore/QSize>
-#include <QtCore/QSet>
-
+#include <QObject>
+#include <QString>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMappingManagerEngine;
-class QGeoMap;
-class QGeoMapController;
-class QGeoMapParameter;
-
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
+class Q_LOCATION_EXPORT QGeoMapParameter : public QObject
 {
-    Q_DECLARE_PUBLIC(QGeoMap)
+    Q_OBJECT
+
+    Q_PROPERTY(QString type READ type WRITE setType)
 public:
-    QGeoMapPrivate(QGeoMappingManagerEngine *engine);
-    virtual ~QGeoMapPrivate();
+    explicit QGeoMapParameter(QObject *parent = 0);
+    virtual ~QGeoMapParameter();
+
+    QString type() const;
+    void setType(const QString &type);
+
+    void updateProperty(const char *propertyName, QVariant value);
+
+Q_SIGNALS:
+    void propertyUpdated(QGeoMapParameter *param, const char *propertyName);
 
 protected:
-    /* Hooks into the actual map implementations */
-    virtual void changeMapSize(const QSize &size) = 0; // called by QGeoMap::setSize()
-    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
-    virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()
-    virtual void addParameter(QGeoMapParameter *param);
-    virtual void removeParameter(QGeoMapParameter *param);
+    QString m_type;
 
-    QSize m_size;
-    QPointer<QGeoMappingManagerEngine> m_engine;
-    QGeoCameraData m_cameraData;
-    QGeoMapType m_activeMapType;
-    QSet<QGeoMapParameter *> m_mapParameters;
+    Q_DISABLE_COPY(QGeoMapParameter)
+    friend class QGeoMap;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAP_P_P_H
+#endif // QGEOMAPPARAMETER_P_H

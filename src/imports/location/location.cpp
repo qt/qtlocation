@@ -49,6 +49,7 @@
 #include "qdeclarativeroutemapitem_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
+#include "qdeclarativegeomapparameter_p.h"
 
 //Place includes
 #include "qdeclarativecategory_p.h"
@@ -165,6 +166,11 @@ public:
             // Register the 5.7 types
             minor = 7;
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, major, minor, "RouteManeuver");
+
+            // Register the 5.9 types
+            minor = 9;
+            qmlRegisterType<QDeclarativeGeoMapParameter>(uri, major, minor, "MapParameter");
+
 
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>();

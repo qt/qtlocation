@@ -18,6 +18,7 @@ PUBLIC_HEADERS += \
                     maps/qgeoserviceprovider.h
 
 PRIVATE_HEADERS += \
+                    maps/qgeomapparameter_p.h \
                     maps/qgeocameracapabilities_p.h \
                     maps/qgeocameradata_p.h \
                     maps/qgeocameratiles_p.h \
@@ -91,5 +92,5 @@ SOURCES += \
             maps/qgeotiledmapscene.cpp \
             maps/qgeorouteparser.cpp \
             maps/qgeorouteparserosrmv5.cpp \
-            maps/qgeorouteparserosrmv4.cpp
-
+            maps/qgeorouteparserosrmv4.cpp \
+            maps/qgeomapparameter.cpp

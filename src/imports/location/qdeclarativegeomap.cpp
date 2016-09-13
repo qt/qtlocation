@@ -42,6 +42,7 @@
 #include "qgeomappingmanager_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomap_p.h"
+#include "qdeclarativegeomapparameter_p.h"
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
 #include <QtQuick/QQuickWindow>
@@ -359,6 +360,7 @@ void QDeclarativeGeoMap::pluginReady()
 void QDeclarativeGeoMap::componentComplete()
 {
     m_componentCompleted = true;
+    populateParameters();
     populateMap();
     QQuickItem::componentComplete();
 }
@@ -451,6 +453,19 @@ void QDeclarativeGeoMap::populateMap()
         if (mapItem) {
             addMapItem(mapItem);
         }
+    }
+}
+
+void QDeclarativeGeoMap::populateParameters()
+{
+    QObjectList kids = children();
+    QList<QQuickItem *> quickKids = childItems();
+    for (int i = 0; i < quickKids.count(); ++i)
+        kids.append(quickKids.at(i));
+    for (int i = 0; i < kids.size(); ++i) {
+        QDeclarativeGeoMapParameter *mapParameter = qobject_cast<QDeclarativeGeoMapParameter *>(kids.at(i));
+        if (mapParameter)
+            addMapParameter(mapParameter);
     }
 }
 
@@ -589,6 +604,11 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         if (item)
             item.data()->setMap(this, m_map);
     }
+
+    // All map parameters that were added before the plugin was ready
+    // need to be added to m_map
+    for (QDeclarativeGeoMapParameter *p : m_mapParameters)
+        m_map->addParameter(p);
 }
 
 /*!
@@ -1203,6 +1223,95 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
         item->setMap(this, m_map);
     m_mapItems.append(item);
     emit mapItemsChanged();
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::addMapParameter(MapParameter parameter)
+
+    Adds a MapParameter object to the map. The effect of this call is dependent
+    on the combination of the content of the MapParameter and the type of
+    underlying QGeoMap. If a MapParameter that is not supported by the underlying
+    QGeoMap gets added, the call has no effect.
+
+    The release of this API with Qt 5.9 is a Technology Preview.
+
+    \sa MapParameter, removeMapParameter, mapParameters, clearMapParameters
+
+    \since 5.9
+*/
+void QDeclarativeGeoMap::addMapParameter(QDeclarativeGeoMapParameter *parameter)
+{
+    if (!parameter->isComponentComplete()) {
+        connect(parameter, &QDeclarativeGeoMapParameter::completed, this, &QDeclarativeGeoMap::addMapParameter);
+        return;
+    }
+
+    disconnect(parameter);
+    if (m_mapParameters.contains(parameter))
+        return;
+    parameter->setParent(this);
+    m_mapParameters.insert(parameter); // parameter now owned by QDeclarativeGeoMap
+    if (m_map)
+        m_map->addParameter(parameter);
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::removeMapParameter(MapParameter parameter)
+
+    Removes the given MapParameter object from the map.
+
+    The release of this API with Qt 5.9 is a Technology Preview.
+
+    \sa MapParameter, addMapParameter, mapParameters, clearMapParameters
+
+    \since 5.9
+*/
+void QDeclarativeGeoMap::removeMapParameter(QDeclarativeGeoMapParameter *parameter)
+{
+    if (!m_mapParameters.contains(parameter))
+        return;
+    if (m_map)
+        m_map->removeParameter(parameter);
+    m_mapParameters.remove(parameter);
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::clearMapParameters()
+
+    Removes all map parameters from the map.
+
+    The release of this API with Qt 5.9 is a Technology Preview.
+
+    \sa MapParameter, mapParameters, addMapParameter, removeMapParameter, clearMapParameters
+
+    \since 5.9
+*/
+void QDeclarativeGeoMap::clearMapParameters()
+{
+    if (m_map)
+        m_map->clearParameters();
+    m_mapParameters.clear();
+}
+
+/*!
+    \qmlproperty list<MapParameters> QtLocation::Map::mapParameters
+
+    Returns the list of all map parameters in no particular order.
+    These items include map parameters that were declared statically as part of
+    the type declaration, as well as dynamical map parameters (\l addMapParameter).
+
+    The release of this API with Qt 5.9 is a Technology Preview.
+
+    \sa MapParameter, addMapParameter, removeMapParameter, clearMapParameters
+
+    \since 5.9
+*/
+QList<QObject *> QDeclarativeGeoMap::mapParameters()
+{
+    QList<QObject *> ret;
+    for (QDeclarativeGeoMapParameter *p : m_mapParameters)
+        ret << p;
+    return ret;
 }
 
 /*!

@@ -28,8 +28,8 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.6
 import QtPositioning 5.5
+import QtLocation 5.9
 
 Item {
     width:100
@@ -82,7 +82,11 @@ Item {
     Map {id: coordinateMap; plugin: herePlugin; center: coordinate3;
         width: 1000; height: 1000; zoomLevel: 15 }
 
-
+    MapParameter {
+        id: testParameter
+        type: "cameraCenter_test"
+        property var center: QtPositioning.coordinate(-33.0, -47.0)
+    }
 
 
     TestCase {
@@ -126,6 +130,51 @@ Item {
             verify(isNaN(map.center.altitude));
             compare(map.center.longitude, 13)
             compare(map.center.latitude, 12)
+        }
+
+        function test_map_parameters()
+        {
+            // coordinate is set at map element declaration
+            var center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            fuzzyCompare(center.latitude, 10, 0.1)
+            fuzzyCompare(center.longitude, 11, 0.1)
+
+            compare(map.mapParameters.length, 0)
+
+            map.addMapParameter(testParameter)
+
+            compare(map.mapParameters.length, 1)
+
+            center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            fuzzyCompare(center.latitude, -33, 0.1)
+            fuzzyCompare(center.longitude, -47, 0.1)
+
+            map.addMapParameter(testParameter)
+            compare(map.mapParameters.length, 1)
+
+            map.removeMapParameter(testParameter)
+            compare(map.mapParameters.length, 0)
+
+            center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            fuzzyCompare(center.latitude, -33, 0.1)
+            fuzzyCompare(center.longitude, -47, 0.1)
+
+            testParameter.center = map.center
+            map.addMapParameter(testParameter)
+            compare(map.mapParameters.length, 1)
+
+            var center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            fuzzyCompare(center.latitude, 10, 0.1)
+            fuzzyCompare(center.longitude, 11, 0.1)
+
+            testParameter.center = QtPositioning.coordinate(-33.0, -47.0)
+
+            center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            fuzzyCompare(center.latitude, -33, 0.1)
+            fuzzyCompare(center.longitude, -47, 0.1)
+
+            map.removeMapParameter(testParameter)
+            compare(map.mapParameters.length, 0)
         }
 
         function test_map_clamp()

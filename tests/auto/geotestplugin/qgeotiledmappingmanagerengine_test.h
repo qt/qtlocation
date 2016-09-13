@@ -57,6 +57,9 @@ public:
         capabilities.setMinimumZoomLevel(0.0);
         capabilities.setMaximumZoomLevel(20.0);
         capabilities.setSupportsBearing(true);
+        capabilities.setSupportsTilting(true);
+        capabilities.setMinimumTilt(0);
+        capabilities.setMaximumTilt(60);
         setTileSize(QSize(256, 256));
 
         QList<QGeoMapType> mapTypes;
