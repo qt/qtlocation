@@ -431,6 +431,8 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 
     path_ = pathList;
     geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
+    borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     polishAndUpdate();
@@ -449,6 +451,8 @@ void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 {
     path_.append(coordinate);
     geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_, geoLeftBound_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
+    borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     polishAndUpdate();
@@ -473,6 +477,8 @@ void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordina
 
     path_.removeAt(index);
     geoLeftBound_ = QDeclarativePolylineMapItem::getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
+    borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     polishAndUpdate();

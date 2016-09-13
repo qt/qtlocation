@@ -556,6 +556,7 @@ void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate>
 
     path_ = path;
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -586,6 +587,7 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
 {
     path_.append(coordinate);
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_, geoLeftBound_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -607,6 +609,7 @@ void QDeclarativePolylineMapItem::insertCoordinate(int index, const QGeoCoordina
 
     path_.insert(index, coordinate);
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -629,6 +632,7 @@ void QDeclarativePolylineMapItem::replaceCoordinate(int index, const QGeoCoordin
 
     path_[index] = coordinate;
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -697,6 +701,7 @@ void QDeclarativePolylineMapItem::removeCoordinate(int index)
 
     path_.removeAt(index);
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
