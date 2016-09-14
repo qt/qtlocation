@@ -1,6 +1,6 @@
 TARGET = qtposition_android
 
-QT = core positioning
+QT = core core-private positioning
 
 HEADERS = \
     positionfactory_android.h \
