@@ -242,6 +242,7 @@ void QGeoTiledMapReply::abort()
 {
     if (!isFinished())
         setFinished(true);
+    emit aborted();
 }
 
 /*

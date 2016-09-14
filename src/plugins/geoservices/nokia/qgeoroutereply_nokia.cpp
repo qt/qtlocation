@@ -49,43 +49,41 @@ QT_BEGIN_NAMESPACE
 QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request,
                                          const QList<QNetworkReply *> &replies,
                                          QObject *parent)
-:   QGeoRouteReply(request, parent), m_replies(replies), m_parsers(0)
+:   QGeoRouteReply(request, parent), m_parsers(0)
 {
     qRegisterMetaType<QList<QGeoRoute> >();
 
-    foreach (QNetworkReply *reply, m_replies) {
+    bool failure = false;
+    foreach (QNetworkReply *reply, replies) {
+        if (!reply) {
+            failure = true;
+            continue;
+        }
         connect(reply, SIGNAL(finished()), this, SLOT(networkFinished()));
         connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                 this, SLOT(networkError(QNetworkReply::NetworkError)));
+        connect(this, &QGeoRouteReply::aborted, reply, &QNetworkReply::abort);
+        connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
     }
+    if (failure)
+        setError(UnknownError, QStringLiteral("Null reply"));
+    else
+        connect(this, &QGeoRouteReply::aborted, [this](){ m_parsers = 0; });
 }
 
 QGeoRouteReplyNokia::~QGeoRouteReplyNokia()
 {
-    abort();
-}
-
-void QGeoRouteReplyNokia::abort()
-{
-    if (m_replies.isEmpty() && !m_parsers)
-        return;
-
-    foreach (QNetworkReply *reply, m_replies) {
-        reply->abort();
-        reply->deleteLater();
-    }
-    m_replies.clear();
-    m_parsers = 0;
 }
 
 void QGeoRouteReplyNokia::networkFinished()
 {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    if (!reply)
-        return;
+    reply->deleteLater();
 
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError
+        && reply->error() != QNetworkReply::UnknownContentError) {
         return;
+    }
 
     QGeoRouteXmlParser *parser = new QGeoRouteXmlParser(request());
     connect(parser, SIGNAL(results(QList<QGeoRoute>)),
@@ -94,32 +92,17 @@ void QGeoRouteReplyNokia::networkFinished()
 
     ++m_parsers;
     parser->parse(reply->readAll());
-
-    m_replies.removeOne(reply);
-    reply->deleteLater();
 }
 
 void QGeoRouteReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    if (!reply)
+    if (error == QNetworkReply::UnknownContentError)
         return;
-
-    if (error == QNetworkReply::UnknownContentError) {
-        QGeoRouteXmlParser *parser = new QGeoRouteXmlParser(request());
-        connect(parser, SIGNAL(results(QList<QGeoRoute>)),
-                this, SLOT(appendResults(QList<QGeoRoute>)));
-        connect(parser, SIGNAL(error(QString)), this, SLOT(parserError(QString)));
-
-        ++m_parsers;
-        parser->parse(reply->readAll());
-
-        m_replies.removeOne(reply);
-        reply->deleteLater();
-    } else {
-        setError(QGeoRouteReply::CommunicationError, reply->errorString());
-        abort();
-    }
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    setError(QGeoRouteReply::CommunicationError, reply->errorString());
+    if (error != QNetworkReply::OperationCanceledError) // Any error not caused by abort()
+        emit aborted(); // aborts all unfinished replies and sets m_parsers to 0
 }
 
 void QGeoRouteReplyNokia::appendResults(const QList<QGeoRoute> &routes)
@@ -130,19 +113,16 @@ void QGeoRouteReplyNokia::appendResults(const QList<QGeoRoute> &routes)
     --m_parsers;
     addRoutes(routes);
 
-    if (!m_parsers && m_replies.isEmpty())
+    if (!m_parsers)
         setFinished(true);
 }
 
 void QGeoRouteReplyNokia::parserError(const QString &errorString)
 {
     Q_UNUSED(errorString)
-
-    --m_parsers;
-
+    emit aborted();
     setError(QGeoRouteReply::ParseError,
              QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, RESPONSE_NOT_RECOGNIZABLE));
-    abort();
 }
 
 QT_END_NAMESPACE

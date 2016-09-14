@@ -51,16 +51,11 @@ class GeoRouteReplyEsri : public QGeoRouteReply
 
 public:
     GeoRouteReplyEsri(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = Q_NULLPTR);
-    virtual ~GeoRouteReplyEsri();
-
-    void abort() Q_DECL_OVERRIDE;
+    ~GeoRouteReplyEsri();
 
 private Q_SLOTS:
     void networkReplyFinished();
     void networkReplyError(QNetworkReply::NetworkError error);
-
-private:
-    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE

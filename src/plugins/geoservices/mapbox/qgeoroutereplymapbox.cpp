@@ -84,28 +84,21 @@ static QList<QGeoCoordinate> parseGeometry(const QJsonValue &geometry)
 
 QGeoRouteReplyMapbox::QGeoRouteReplyMapbox(QNetworkReply *reply, const QGeoRouteRequest &request,
                                      QObject *parent)
-:   QGeoRouteReply(request, parent), m_reply(reply)
+:   QGeoRouteReply(request, parent)
 {
-    connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
+    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    connect(this, &QGeoRouteReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 QGeoRouteReplyMapbox::~QGeoRouteReplyMapbox()
 {
-    if (m_reply)
-        m_reply->deleteLater();
-}
-
-void QGeoRouteReplyMapbox::abort()
-{
-    if (!m_reply)
-        return;
-
-    m_reply->abort();
-
-    m_reply->deleteLater();
-    m_reply = 0;
 }
 
 static QGeoRoute constructRoute(const QJsonObject &obj)
@@ -177,25 +170,19 @@ static QGeoRoute constructRoute(const QJsonObject &obj)
 
 void QGeoRouteReplyMapbox::networkReplyFinished()
 {
-    if (!m_reply)
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
-        m_reply = 0;
-        return;
-    }
-
-    QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     if (document.isObject()) {
         QJsonObject object = document.object();
 
         QString status = object.value(QStringLiteral("code")).toString();
         if (status != QStringLiteral("Ok")) {
             setError(QGeoRouteReply::UnknownError, object.value(QStringLiteral("message")).toString());
-            m_reply->deleteLater();
-            m_reply = 0;
             return;
         }
 
@@ -210,22 +197,14 @@ void QGeoRouteReplyMapbox::networkReplyFinished()
     } else {
         setError(QGeoRouteReply::ParseError, QStringLiteral("Couldn't parse json."));
     }
-
-    m_reply->deleteLater();
-    m_reply = 0;
 }
 
 void QGeoRouteReplyMapbox::networkReplyError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
-
-    if (!m_reply)
-        return;
-
-    setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-
-    m_reply->deleteLater();
-    m_reply = 0;
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    setError(QGeoRouteReply::CommunicationError, reply->errorString());
 }
 
 QT_END_NAMESPACE

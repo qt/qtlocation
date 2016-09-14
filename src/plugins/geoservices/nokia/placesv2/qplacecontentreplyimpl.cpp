@@ -48,28 +48,24 @@ QT_BEGIN_NAMESPACE
 QPlaceContentReplyImpl::QPlaceContentReplyImpl(const QPlaceContentRequest &request,
                                                QNetworkReply *reply,
                                                QPlaceManagerEngineNokiaV2 *engine)
-    :   QPlaceContentReply(engine), m_reply(reply), m_engine(engine)
+    :   QPlaceContentReply(engine), m_engine(engine)
 {
     Q_ASSERT(engine);
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
     setRequest(request);
 
-    if (!m_reply)
-        return;
-
-    m_reply->setParent(this);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(replyError(QNetworkReply::NetworkError)));
+    connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 QPlaceContentReplyImpl::~QPlaceContentReplyImpl()
 {
-}
-
-void QPlaceContentReplyImpl::abort()
-{
-    if (m_reply)
-        m_reply->abort();
 }
 
 void QPlaceContentReplyImpl::setError(QPlaceReply::Error error_, const QString &errorString)
@@ -82,31 +78,32 @@ void QPlaceContentReplyImpl::setError(QPlaceReply::Error error_, const QString &
 
 void QPlaceContentReplyImpl::replyFinished()
 {
-    if (m_reply->isOpen()) {
-        QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
-        if (!document.isObject()) {
-            setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
-            return;
-        }
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
 
-        QJsonObject object = document.object();
+    if (reply->error() != QNetworkReply::NoError)
+        return;
 
-        QPlaceContent::Collection collection;
-        int totalCount;
-        QPlaceContentRequest previous;
-        QPlaceContentRequest next;
-
-        parseCollection(request().contentType(), object, &collection, &totalCount,
-                        &previous, &next, m_engine);
-
-        setTotalCount(totalCount);
-        setContent(collection);
-        setPreviousPageRequest(previous);
-        setNextPageRequest(next);
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
+    if (!document.isObject()) {
+        setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
+        return;
     }
 
-    m_reply->deleteLater();
-    m_reply = 0;
+    QJsonObject object = document.object();
+
+    QPlaceContent::Collection collection;
+    int totalCount;
+    QPlaceContentRequest previous;
+    QPlaceContentRequest next;
+
+    parseCollection(request().contentType(), object, &collection, &totalCount,
+                    &previous, &next, m_engine);
+
+    setTotalCount(totalCount);
+    setContent(collection);
+    setPreviousPageRequest(previous);
+    setNextPageRequest(next);
 
     setFinished(true);
     emit finished();
@@ -114,13 +111,12 @@ void QPlaceContentReplyImpl::replyFinished()
 
 void QPlaceContentReplyImpl::replyError(QNetworkReply::NetworkError error)
 {
-    switch (error) {
-    case QNetworkReply::OperationCanceledError:
-        setError(CancelError, "Request canceled.");
-        break;
-    default:
-        setError(CommunicationError, "Network error.");
-    }
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    if (error == QNetworkReply::OperationCanceledError)
+        setError(QPlaceReply::CancelError, QStringLiteral("Request cancelled"));
+    else
+        setError(QPlaceReply::CommunicationError, reply->errorString());
 }
 
 QT_END_NAMESPACE

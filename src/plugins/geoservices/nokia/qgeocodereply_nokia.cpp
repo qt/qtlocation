@@ -47,13 +47,21 @@ QT_BEGIN_NAMESPACE
 
 QGeoCodeReplyNokia::QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offset,
                                        const QGeoShape &viewport, QObject *parent)
-:   QGeoCodeReply(parent), m_reply(reply), m_parsing(false)
+:   QGeoCodeReply(parent), m_parsing(false)
 {
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
     qRegisterMetaType<QList<QGeoLocation> >();
 
-    connect(m_reply, SIGNAL(finished()), this, SLOT(networkFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    connect(reply, SIGNAL(finished()), this, SLOT(networkFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkError(QNetworkReply::NetworkError)));
+    connect(this, &QGeoCodeReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QGeoCodeReply::aborted, [this](){ m_parsing = false; });
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
+
 
     setLimit(limit);
     setOffset(offset);
@@ -62,29 +70,14 @@ QGeoCodeReplyNokia::QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offs
 
 QGeoCodeReplyNokia::~QGeoCodeReplyNokia()
 {
-    abort();
-}
-
-void QGeoCodeReplyNokia::abort()
-{
-    if (!m_reply) {
-        m_parsing = false;
-        return;
-    }
-
-    m_reply->abort();
-
-    m_reply->deleteLater();
-    m_reply = 0;
-    m_parsing = false;
 }
 
 void QGeoCodeReplyNokia::networkFinished()
 {
-    if (!m_reply)
-        return;
+    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
 
-    if (m_reply->error() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     QGeoCodeXmlParser *parser = new QGeoCodeXmlParser;
@@ -94,23 +87,16 @@ void QGeoCodeReplyNokia::networkFinished()
     connect(parser, SIGNAL(error(QString)), this, SLOT(parseError(QString)));
 
     m_parsing = true;
-    parser->parse(m_reply->readAll());
-
-    m_reply->deleteLater();
-    m_reply = 0;
+    parser->parse(reply->readAll());
 }
 
 void QGeoCodeReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
 
-    if (!m_reply)
-        return;
-
-    setError(QGeoCodeReply::CommunicationError, m_reply->errorString());
-
-    m_reply->deleteLater();
-    m_reply = 0;
+    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    setError(QGeoCodeReply::CommunicationError, reply->errorString());
 }
 
 void QGeoCodeReplyNokia::appendResults(const QList<QGeoLocation> &locations)
@@ -129,7 +115,6 @@ void QGeoCodeReplyNokia::parseError(const QString &errorString)
 
     setError(QGeoCodeReply::ParseError,
              QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, RESPONSE_NOT_RECOGNIZABLE));
-    abort();
 }
 
 QT_END_NAMESPACE

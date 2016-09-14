@@ -54,15 +54,12 @@ public:
                            QPlaceManagerEngineNokiaV2 *engine);
     ~QPlaceContentReplyImpl();
 
-    void abort();
-
 private slots:
     void setError(QPlaceReply::Error error_, const QString &errorString);
     void replyFinished();
     void replyError(QNetworkReply::NetworkError error);
 
 private:
-    QNetworkReply *m_reply;
     QPlaceManagerEngineNokiaV2 *m_engine;
 };
 

@@ -49,50 +49,32 @@ static const unsigned char gifSignature[] = {0x47, 0x49, 0x46, 0x38, 0x00};
 
 GeoTiledMapReplyEsri::GeoTiledMapReplyEsri(QNetworkReply *reply, const QGeoTileSpec &spec,
                                            QObject *parent) :
-    QGeoTiledMapReply(spec, parent), m_reply(reply)
+    QGeoTiledMapReply(spec, parent)
 {
-    connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
+    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
-    connect(m_reply, SIGNAL(destroyed()), this, SLOT(replyDestroyed()));
+    connect(this, &QGeoTiledMapReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 GeoTiledMapReplyEsri::~GeoTiledMapReplyEsri()
 {
-    if (m_reply) {
-        m_reply->deleteLater();
-        m_reply = Q_NULLPTR;
-    }
-}
-
-void GeoTiledMapReplyEsri::abort()
-{
-    if (!m_reply)
-        return;
-
-    m_reply->abort();
-    QGeoTiledMapReply::abort();
-}
-
-void GeoTiledMapReplyEsri::replyDestroyed()
-{
-    m_reply = Q_NULLPTR;
 }
 
 void GeoTiledMapReplyEsri::networkReplyFinished()
 {
-    if (!m_reply)
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError)
-    {
-        setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
-        m_reply = Q_NULLPTR;
-        return;
-    }
-
-    QByteArray const& imageData = m_reply->readAll();
+    QByteArray const& imageData = reply->readAll();
 
     bool validFormat = true;
     if (imageData.startsWith(reinterpret_cast<const char*>(pngSignature)))
@@ -108,22 +90,16 @@ void GeoTiledMapReplyEsri::networkReplyFinished()
         setMapImageData(imageData);
 
     setFinished(true);
-
-    m_reply->deleteLater();
-    m_reply = Q_NULLPTR;
 }
 
 void GeoTiledMapReplyEsri::networkReplyError(QNetworkReply::NetworkError error)
 {
-    if (!m_reply)
-        return;
-
-    if (error != QNetworkReply::OperationCanceledError)
-        setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
-
-    setFinished(true);
-    m_reply->deleteLater();
-    m_reply = Q_NULLPTR;
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    if (error == QNetworkReply::OperationCanceledError)
+        setFinished(true);
+    else
+        setError(QGeoTiledMapReply::CommunicationError, reply->errorString());
 }
 
 QT_END_NAMESPACE

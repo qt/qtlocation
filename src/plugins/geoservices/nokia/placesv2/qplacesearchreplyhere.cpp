@@ -54,27 +54,23 @@ QT_BEGIN_NAMESPACE
 QPlaceSearchReplyHere::QPlaceSearchReplyHere(const QPlaceSearchRequest &request,
                                              QNetworkReply *reply,
                                              QPlaceManagerEngineNokiaV2 *parent)
-    :   QPlaceSearchReply(parent), m_reply(reply), m_engine(parent)
+    :   QPlaceSearchReply(parent), m_engine(parent)
 {
-    Q_ASSERT(parent);
-
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
     setRequest(request);
 
-    if (!m_reply)
-        return;
-
-    m_reply->setParent(this);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(replyError(QNetworkReply::NetworkError)));
+    connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 QPlaceSearchReplyHere::~QPlaceSearchReplyHere()
 {
-}
-
-void QPlaceSearchReplyHere::abort()
-{
-    if (m_reply)
-        m_reply->abort();
 }
 
 void QPlaceSearchReplyHere::setError(QPlaceReply::Error error_, const QString &errorString)
@@ -87,23 +83,13 @@ void QPlaceSearchReplyHere::setError(QPlaceReply::Error error_, const QString &e
 
 void QPlaceSearchReplyHere::replyFinished()
 {
-    if (m_reply->error() != QNetworkReply::NoError) {
-        switch (m_reply->error()) {
-        case QNetworkReply::OperationCanceledError:
-            setError(CancelError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, CANCEL_ERROR));
-            break;
-        case QNetworkReply::ContentNotFoundError:
-            setError(PlaceDoesNotExistError,
-                     QString::fromLatin1("The id, %1, does not reference an existing place")
-                     .arg(request().recommendationId()));
-            break;
-        default:
-            setError(CommunicationError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, NETWORK_ERROR));
-        }
-        return;
-    }
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
 
-    QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
+    if (reply->error() != QNetworkReply::NoError)
+        return;
+
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     if (!document.isObject()) {
         setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
         return;
@@ -140,9 +126,6 @@ void QPlaceSearchReplyHere::replyFinished()
     }
 
     setResults(results);
-
-    m_reply->deleteLater();
-    m_reply = 0;
 
     setFinished(true);
     emit finished();
@@ -225,6 +208,21 @@ QPlaceProposedSearchResult QPlaceSearchReplyHere::parseSearchResult(const QJsonO
     result.setSearchRequest(request);
 
     return result;
+}
+
+void QPlaceSearchReplyHere::replyError(QNetworkReply::NetworkError error)
+{
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    if (error == QNetworkReply::OperationCanceledError) {
+        setError(QPlaceReply::CancelError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, CANCEL_ERROR));
+    } else if (error == QNetworkReply::ContentNotFoundError) {
+        setError(QPlaceReply::PlaceDoesNotExistError,
+                 QString::fromLatin1("The id, %1, does not reference an existing place")
+                 .arg(request().recommendationId()));
+    } else {
+        setError(QPlaceReply::CommunicationError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, NETWORK_ERROR));
+    }
 }
 
 QT_END_NAMESPACE

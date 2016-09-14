@@ -53,32 +53,28 @@ QT_BEGIN_NAMESPACE
 
 QPlaceSearchReplyOsm::QPlaceSearchReplyOsm(const QPlaceSearchRequest &request,
                                              QNetworkReply *reply, QPlaceManagerEngineOsm *parent)
-:   QPlaceSearchReply(parent), m_reply(reply)
+:   QPlaceSearchReply(parent)
 {
     Q_ASSERT(parent);
-
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
     setRequest(request);
 
-    if (!m_reply)
-        return;
-
-    m_reply->setParent(this);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(networkError(QNetworkReply::NetworkError)));
+    connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 QPlaceSearchReplyOsm::~QPlaceSearchReplyOsm()
 {
 }
 
-void QPlaceSearchReplyOsm::abort()
-{
-    if (m_reply)
-        m_reply->abort();
-}
-
 void QPlaceSearchReplyOsm::setError(QPlaceReply::Error errorCode, const QString &errorString)
 {
-    QPlaceReply::setError(errorCode, errorString);
+    setError(errorCode, errorString);
     emit error(errorCode, errorString);
     setFinished(true);
     emit finished();
@@ -99,14 +95,11 @@ static QGeoRectangle parseBoundingBox(const QJsonArray &coordinates)
 
 void QPlaceSearchReplyOsm::replyFinished()
 {
-    QNetworkReply *reply = m_reply;
-    m_reply->deleteLater();
-    m_reply = 0;
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
 
-    if (reply->error() != QNetworkReply::NoError) {
-        setError(CommunicationError, tr("Communication error"));
+    if (reply->error() != QNetworkReply::NoError)
         return;
-    }
 
     QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     if (!document.isArray()) {
@@ -161,6 +154,14 @@ void QPlaceSearchReplyOsm::replyFinished()
 
     setFinished(true);
     emit finished();
+}
+
+void QPlaceSearchReplyOsm::networkError(QNetworkReply::NetworkError error)
+{
+    Q_UNUSED(error)
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    setError(QPlaceReply::CommunicationError, reply->errorString());
 }
 
 QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) const

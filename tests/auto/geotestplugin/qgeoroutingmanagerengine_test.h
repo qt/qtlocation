@@ -52,12 +52,6 @@ public:
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
     void  callSetFinished ( bool finished ) {setFinished(finished);}
     void  callSetRoutes(const QList<QGeoRoute> &routes) {setRoutes(routes);}
-
-    void abort() {
-        emit aborted();
-    }
-Q_SIGNALS:
-    void aborted();
 };
 
 class QGeoRoutingManagerEngineTest: public QGeoRoutingManagerEngine

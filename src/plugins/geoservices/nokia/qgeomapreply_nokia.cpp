@@ -42,63 +42,50 @@
 QT_BEGIN_NAMESPACE
 
 QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent)
-        : QGeoTiledMapReply(spec, parent),
-        m_reply(reply)
+        : QGeoTiledMapReply(spec, parent)
 {
-    connect(m_reply,
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
+    connect(reply,
             SIGNAL(finished()),
             this,
             SLOT(networkFinished()));
 
-    connect(m_reply,
+    connect(reply,
             SIGNAL(error(QNetworkReply::NetworkError)),
             this,
             SLOT(networkError(QNetworkReply::NetworkError)));
+    connect(this, &QGeoTiledMapReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 QGeoMapReplyNokia::~QGeoMapReplyNokia()
 {
 }
 
-QNetworkReply *QGeoMapReplyNokia::networkReply() const
-{
-    return m_reply;
-}
-
-void QGeoMapReplyNokia::abort()
-{
-    if (!m_reply)
-        return;
-
-    m_reply->abort();
-}
-
 void QGeoMapReplyNokia::networkFinished()
 {
-    if (!m_reply)
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError)
-        return;
-
-    setMapImageData(m_reply->readAll());
+    setMapImageData(reply->readAll());
     setMapImageFormat("png");
     setFinished(true);
-
-    m_reply->deleteLater();
-    m_reply = 0;
 }
 
 void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    if (!m_reply)
-        return;
-
-    if (error != QNetworkReply::OperationCanceledError)
-        setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
-    setFinished(true);
-    m_reply->deleteLater();
-    m_reply = 0;
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    if (error == QNetworkReply::OperationCanceledError)
+        setFinished(true);
+    else
+        setError(QGeoTiledMapReply::CommunicationError, reply->errorString());
 }
 
 QT_END_NAMESPACE

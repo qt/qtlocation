@@ -260,9 +260,6 @@ void QPlaceManagerEngineOsm::setLocales(const QList<QLocale> &locales)
 void QPlaceManagerEngineOsm::categoryReplyFinished()
 {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    if (!reply)
-        return;
-
     reply->deleteLater();
 
     QXmlStreamReader parser(reply);

@@ -197,7 +197,7 @@ void tst_QGeoRouteReply::abort()
     reply->abort();
 
     QCOMPARE(signalerror->count(), 0);
-    QCOMPARE(signalfinished->count(), 1);
+    QCOMPARE(signalfinished->count(), 0);
 }
 
 void tst_QGeoRouteReply::error()

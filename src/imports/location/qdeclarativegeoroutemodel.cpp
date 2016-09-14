@@ -120,7 +120,6 @@ QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
       complete_(false),
       plugin_(0),
       routeQuery_(0),
-      reply_(0),
       autoUpdate_(false),
       status_(QDeclarativeGeoRouteModel::Null),
       error_(QDeclarativeGeoRouteModel::NoError)
@@ -133,7 +132,6 @@ QDeclarativeGeoRouteModel::~QDeclarativeGeoRouteModel()
         qDeleteAll(routes_);
         routes_.clear();
     }
-    delete reply_;
 }
 
 /*!
@@ -168,7 +166,7 @@ void QDeclarativeGeoRouteModel::reset()
         endResetModel();
     }
 
-    abortRequest();
+    emit abortRequested();
     setError(NoError, QString());
     setStatus(QDeclarativeGeoRouteModel::Null);
 }
@@ -181,23 +179,10 @@ void QDeclarativeGeoRouteModel::reset()
 */
 void QDeclarativeGeoRouteModel::cancel()
 {
-    abortRequest();
+    emit abortRequested();
     setError(NoError, QString());
     setStatus(routes_.isEmpty() ? Null : Ready);
 }
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoRouteModel::abortRequest()
-{
-    if (reply_) {
-        reply_->abort();
-        reply_->deleteLater();
-        reply_ = 0;
-    }
-}
-
 
 /*!
     \qmlmethod void QtLocation::RouteModel::get(int)
@@ -589,7 +574,7 @@ void QDeclarativeGeoRouteModel::update()
         setError(ParseError,"Cannot route, valid query not set.");
         return;
     }
-    abortRequest(); // Clear previus requests
+    emit abortRequested(); // Clear previous requests
     QGeoRouteRequest request = routeQuery_->routeRequest();
     if (request.waypoints().count() < 2) {
         setError(ParseError,tr("Not enough waypoints for routing."));
@@ -598,13 +583,15 @@ void QDeclarativeGeoRouteModel::update()
 
     setError(NoError, QString());
 
-    reply_ = routingManager->calculateRoute(request);
+    QGeoRouteReply *reply = routingManager->calculateRoute(request);
     setStatus(QDeclarativeGeoRouteModel::Loading);
-    if (reply_->isFinished()) {
-        if (reply_->error() == QGeoRouteReply::NoError) {
-            routingFinished(reply_);
+    if (!reply->isFinished()) {
+        connect(this, &QDeclarativeGeoRouteModel::abortRequested, reply, &QGeoRouteReply::abort);
+    } else {
+        if (reply->error() == QGeoRouteReply::NoError) {
+            routingFinished(reply);
         } else {
-            routingError(reply_, reply_->error(), reply_->errorString());
+            routingError(reply, reply->error(), reply->errorString());
         }
     }
 }
@@ -614,7 +601,10 @@ void QDeclarativeGeoRouteModel::update()
 */
 void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
 {
-    if (reply != reply_ || reply->error() != QGeoRouteReply::NoError)
+    if (!reply)
+        return;
+    reply->deleteLater();
+    if (reply->error() != QGeoRouteReply::NoError)
         return;
 
     beginResetModel();
@@ -632,9 +622,6 @@ void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
     setError(NoError, QString());
     setStatus(QDeclarativeGeoRouteModel::Ready);
 
-    reply->deleteLater();
-    reply_ = 0;
-
     if (oldCount != 0 || routes_.count() != 0)
         emit routesChanged();
     if (oldCount != routes_.count())
@@ -648,12 +635,11 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
                                                QGeoRouteReply::Error error,
                                                const QString &errorString)
 {
-    if (reply != reply_)
+    if (!reply)
         return;
+    reply->deleteLater();
     setError(static_cast<QDeclarativeGeoRouteModel::RouteError>(error), errorString);
     setStatus(QDeclarativeGeoRouteModel::Error);
-    reply->deleteLater();
-    reply_ = 0;
 }
 
 

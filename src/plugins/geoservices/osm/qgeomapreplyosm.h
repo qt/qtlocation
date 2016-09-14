@@ -40,12 +40,8 @@
 #ifndef QGEOMAPREPLYOSM_H
 #define QGEOMAPREPLYOSM_H
 
-#include "qgeotilefetcherosm.h"
-#include "qgeotileproviderosm.h"
-
 #include <QtNetwork/QNetworkReply>
 #include <QtLocation/private/qgeotiledmapreply_p.h>
-#include <QtCore/qpointer.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -57,16 +53,9 @@ public:
     QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec, const QString &imageFormat, QObject *parent = 0);
     ~QGeoMapReplyOsm();
 
-    void abort();
-
-    QNetworkReply *networkReply() const;
-
 private Q_SLOTS:
     void networkReplyFinished();
     void networkReplyError(QNetworkReply::NetworkError error);
-
-private:
-    QPointer<QNetworkReply> m_reply;
 };
 
 QT_END_NAMESPACE

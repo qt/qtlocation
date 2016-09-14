@@ -56,17 +56,15 @@ public:
                                    QPlaceManagerEngineNokiaV2 *parent);
     ~QPlaceSearchReplyHere();
 
-    void abort();
-
 private slots:
     void setError(QPlaceReply::Error error_, const QString &errorString);
     void replyFinished();
+    void replyError(QNetworkReply::NetworkError error);
 
 private:
     QPlaceResult parsePlaceResult(const QJsonObject &item) const;
     QPlaceProposedSearchResult parseSearchResult(const QJsonObject &item) const;
 
-    QNetworkReply *m_reply;
     QPlaceManagerEngineNokiaV2 *m_engine;
 };
 

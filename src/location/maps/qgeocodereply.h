@@ -80,6 +80,7 @@ public:
 
 Q_SIGNALS:
     void finished();
+    void aborted();
     void error(QGeoCodeReply::Error error, const QString &errorString = QString());
 
 protected:

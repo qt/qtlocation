@@ -52,16 +52,9 @@ public:
     QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent = 0);
     ~QGeoMapReplyNokia();
 
-    void abort();
-
-    QNetworkReply *networkReply() const;
-
 private Q_SLOTS:
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
-
-private:
-    QPointer<QNetworkReply> m_reply;
 };
 
 QT_END_NAMESPACE

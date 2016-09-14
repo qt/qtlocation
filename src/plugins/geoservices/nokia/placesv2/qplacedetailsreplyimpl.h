@@ -53,15 +53,14 @@ public:
     QPlaceDetailsReplyImpl(QNetworkReply *reply, QPlaceManagerEngineNokiaV2 *parent);
     ~QPlaceDetailsReplyImpl();
 
-    void abort();
     void setPlaceId(const QString &placeId) { m_placeId = placeId; }
 
 private slots:
     void setError(QPlaceReply::Error error_, const QString &errorString);
     void replyFinished();
+    void replyError(QNetworkReply::NetworkError error);
 
 private:
-    QNetworkReply *m_reply;
     QPlaceManagerEngineNokiaV2 *m_engine;
     QString m_placeId;
 };

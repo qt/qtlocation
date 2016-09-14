@@ -48,43 +48,32 @@ QT_BEGIN_NAMESPACE
 
 GeoRouteReplyEsri::GeoRouteReplyEsri(QNetworkReply *reply, const QGeoRouteRequest &request,
                                      QObject *parent) :
-    QGeoRouteReply(request, parent), m_reply(reply)
+    QGeoRouteReply(request, parent)
 {
-    connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
+    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    connect(this, &QGeoRouteReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 GeoRouteReplyEsri::~GeoRouteReplyEsri()
 {
-    if (m_reply)
-        m_reply->deleteLater();
-}
-
-void GeoRouteReplyEsri::abort()
-{
-    if (!m_reply)
-        return;
-
-    m_reply->abort();
-    m_reply->deleteLater();
-    m_reply = Q_NULLPTR;
 }
 
 void GeoRouteReplyEsri::networkReplyFinished()
 {
-    if (!m_reply)
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError)
-    {
-        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
-        m_reply = Q_NULLPTR;
-        return;
-    }
-
-    QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     GeoRouteJsonParserEsri parser(document);
 
     if (parser.isValid())
@@ -94,21 +83,14 @@ void GeoRouteReplyEsri::networkReplyFinished()
     } else {
         setError(QGeoRouteReply::ParseError, parser.errorString());
     }
-
-    m_reply->deleteLater();
-    m_reply = Q_NULLPTR;
 }
 
 void GeoRouteReplyEsri::networkReplyError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
-
-    if (!m_reply)
-        return;
-
-    setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-    m_reply->deleteLater();
-    m_reply = Q_NULLPTR;
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    setError(QGeoRouteReply::CommunicationError, reply->errorString());
 }
 
 QT_END_NAMESPACE

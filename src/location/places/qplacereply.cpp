@@ -199,6 +199,7 @@ QPlaceReply::Error QPlaceReply::error() const
 */
 void QPlaceReply::abort()
 {
+    emit aborted();
 }
 
 /*!

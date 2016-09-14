@@ -44,55 +44,37 @@ QT_BEGIN_NAMESPACE
 
 QGeoRouteReplyOsm::QGeoRouteReplyOsm(QNetworkReply *reply, const QGeoRouteRequest &request,
                                      QObject *parent)
-:   QGeoRouteReply(request, parent), m_reply(reply)
+:   QGeoRouteReply(request, parent)
 {
-    connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
+    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    connect(this, &QGeoRouteReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 QGeoRouteReplyOsm::~QGeoRouteReplyOsm()
 {
-    if (m_reply)
-        m_reply->deleteLater();
-}
-
-void QGeoRouteReplyOsm::abort()
-{
-    if (!m_reply)
-        return;
-
-    m_reply->abort();
-
-    m_reply->deleteLater();
-    m_reply = 0;
 }
 
 void QGeoRouteReplyOsm::networkReplyFinished()
 {
-    if (!m_reply)
-        return;
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
 
-    if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
-        m_reply = 0;
+    if (reply->error() != QNetworkReply::NoError)
         return;
-    }
-
-    if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
-        m_reply = 0;
-        return;
-    }
 
     QGeoRoutingManagerEngineOsm *engine = qobject_cast<QGeoRoutingManagerEngineOsm *>(parent());
     const QGeoRouteParser *parser = engine->routeParser();
 
     QList<QGeoRoute> routes;
     QString errorString;
-    QGeoRouteReply::Error error = parser->parseReply(routes, errorString, m_reply->readAll());
+    QGeoRouteReply::Error error = parser->parseReply(routes, errorString, reply->readAll());
 
     if (error == QGeoRouteReply::NoError) {
         setRoutes(routes.mid(0,1)); // TODO QTBUG-56426
@@ -101,22 +83,14 @@ void QGeoRouteReplyOsm::networkReplyFinished()
     } else {
         setError(error, errorString);
     }
-
-    m_reply->deleteLater();
-    m_reply = 0;
 }
 
 void QGeoRouteReplyOsm::networkReplyError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
-
-    if (!m_reply)
-        return;
-
-    setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-
-    m_reply->deleteLater();
-    m_reply = 0;
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    setError(QGeoRouteReply::CommunicationError, reply->errorString());
 }
 
 QT_END_NAMESPACE

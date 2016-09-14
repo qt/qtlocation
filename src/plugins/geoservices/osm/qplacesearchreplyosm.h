@@ -41,6 +41,7 @@
 #define QPLACESEARCHREPLYOSM_H
 
 #include <QtLocation/QPlaceSearchReply>
+#include <QNetworkReply>
 
 QT_BEGIN_NAMESPACE
 
@@ -57,16 +58,13 @@ public:
                           QPlaceManagerEngineOsm *parent);
     ~QPlaceSearchReplyOsm();
 
-    void abort();
-
 private slots:
     void setError(QPlaceReply::Error errorCode, const QString &errorString);
     void replyFinished();
+    void networkError(QNetworkReply::NetworkError error);
 
 private:
     QPlaceResult parsePlaceResult(const QJsonObject &item) const;
-
-    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE

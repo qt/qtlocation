@@ -57,11 +57,6 @@ public:
     void  callSetOffset ( int offset ) {setOffset(offset);}
     void  callSetLocations ( const QList<QGeoLocation> & locations ) {setLocations(locations);}
     void  callSetViewport ( const QGeoShape &viewport ) {setViewport(viewport);}
-    void abort() {
-        emit aborted();
-    }
-Q_SIGNALS:
-    void aborted();
 };
 
 class QGeoCodingManagerEngineTest: public QGeoCodingManagerEngine

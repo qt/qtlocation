@@ -46,23 +46,21 @@ QT_BEGIN_NAMESPACE
 
 QPlaceSearchSuggestionReplyImpl::QPlaceSearchSuggestionReplyImpl(QNetworkReply *reply,
                                                                  QObject *parent)
-:   QPlaceSearchSuggestionReply(parent), m_reply(reply)
+:   QPlaceSearchSuggestionReply(parent)
 {
-    if (!m_reply)
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
         return;
-
-    m_reply->setParent(this);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    }
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(replyError(QNetworkReply::NetworkError)));
+    connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 QPlaceSearchSuggestionReplyImpl::~QPlaceSearchSuggestionReplyImpl()
 {
-}
-
-void QPlaceSearchSuggestionReplyImpl::abort()
-{
-    if (m_reply)
-        m_reply->abort();
 }
 
 void QPlaceSearchSuggestionReplyImpl::setError(QPlaceReply::Error error_,
@@ -76,18 +74,13 @@ void QPlaceSearchSuggestionReplyImpl::setError(QPlaceReply::Error error_,
 
 void QPlaceSearchSuggestionReplyImpl::replyFinished()
 {
-    if (m_reply->error() != QNetworkReply::NoError) {
-        switch (m_reply->error()) {
-        case QNetworkReply::OperationCanceledError:
-            setError(CancelError, "Request canceled.");
-            break;
-        default:
-            setError(CommunicationError, "Network error.");
-        }
-        return;
-    }
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
 
-    QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
+    if (reply->error() != QNetworkReply::NoError)
+        return;
+
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     if (!document.isObject()) {
         setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
         emit error(error(), errorString());
@@ -107,11 +100,18 @@ void QPlaceSearchSuggestionReplyImpl::replyFinished()
 
     setSuggestions(s);
 
-    m_reply->deleteLater();
-    m_reply = 0;
-
     setFinished(true);
     emit finished();
+}
+
+void QPlaceSearchSuggestionReplyImpl::replyError(QNetworkReply::NetworkError error)
+{
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    if (error == QNetworkReply::OperationCanceledError)
+        setError(QPlaceReply::CancelError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, CANCEL_ERROR));
+    else
+        setError(QPlaceReply::CommunicationError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, NETWORK_ERROR));
 }
 
 QT_END_NAMESPACE

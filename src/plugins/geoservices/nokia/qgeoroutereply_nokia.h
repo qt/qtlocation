@@ -51,8 +51,6 @@ public:
     QGeoRouteReplyNokia(const QGeoRouteRequest &request, const QList<QNetworkReply*> &replies, QObject *parent = 0);
     ~QGeoRouteReplyNokia();
 
-    void abort();
-
 private Q_SLOTS:
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
@@ -60,7 +58,6 @@ private Q_SLOTS:
     void parserError(const QString &errorString);
 
 private:
-    QList<QNetworkReply *> m_replies;
     int m_parsers;
 };
 

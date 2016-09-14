@@ -50,14 +50,10 @@ public:
     explicit QPlaceSearchSuggestionReplyImpl(QNetworkReply *reply, QObject *parent = 0);
     ~QPlaceSearchSuggestionReplyImpl();
 
-    void abort();
-
 private slots:
     void setError(QPlaceReply::Error error_, const QString &errorString);
     void replyFinished();
-
-private:
-    QNetworkReply *m_reply;
+    void replyError(QNetworkReply::NetworkError error);
 };
 
 QT_END_NAMESPACE

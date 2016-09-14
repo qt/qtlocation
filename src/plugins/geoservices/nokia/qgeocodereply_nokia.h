@@ -49,8 +49,6 @@ public:
     QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offset, const QGeoShape &viewport, QObject *parent = 0);
     ~QGeoCodeReplyNokia();
 
-    void abort();
-
 private Q_SLOTS:
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
@@ -58,7 +56,6 @@ private Q_SLOTS:
     void parseError(const QString &errorString);
 
 private:
-    QNetworkReply *m_reply;
     bool m_parsing;
 };
 

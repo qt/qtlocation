@@ -155,6 +155,7 @@ Q_SIGNALS:
     void errorChanged(); //emitted also for errorString notification
     void routesChanged();
     void measurementSystemChanged();
+    void abortRequested();
 
 public Q_SLOTS:
     void update();
@@ -170,13 +171,11 @@ private Q_SLOTS:
 private:
     void setStatus(Status status);
     void setError(RouteError error, const QString &errorString);
-    void abortRequest();
 
     bool complete_;
 
     QDeclarativeGeoServiceProvider *plugin_;
     QDeclarativeGeoRouteQuery *routeQuery_;
-    QGeoRouteReply *reply_;
 
     QList<QDeclarativeGeoRoute *> routes_;
     bool autoUpdate_;

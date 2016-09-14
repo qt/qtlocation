@@ -51,16 +51,11 @@ public:
     explicit QGeoMapReplyMapbox(QNetworkReply *reply, const QGeoTileSpec &spec, const QString &format, QObject *parent = 0);
     ~QGeoMapReplyMapbox();
 
-    void abort();
-
-    QNetworkReply *networkReply() const;
-
 private Q_SLOTS:
     void networkReplyFinished();
     void networkReplyError(QNetworkReply::NetworkError error);
 
 private:
-    QPointer<QNetworkReply> m_reply;
     QString m_format;
 };
 

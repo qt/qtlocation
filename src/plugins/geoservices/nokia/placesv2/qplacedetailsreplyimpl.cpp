@@ -88,25 +88,21 @@ static bool countryTableContains(const QString &countryCode)
 
 QPlaceDetailsReplyImpl::QPlaceDetailsReplyImpl(QNetworkReply *reply,
                                                QPlaceManagerEngineNokiaV2 *parent)
-    :   QPlaceDetailsReply(parent), m_reply(reply), m_engine(parent)
+:   QPlaceDetailsReply(parent), m_engine(parent)
 {
-    Q_ASSERT(parent);
-
-    if (!m_reply)
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
         return;
-
-    m_reply->setParent(this);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    }
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(replyError(QNetworkReply::NetworkError)));
+    connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
 
 QPlaceDetailsReplyImpl::~QPlaceDetailsReplyImpl()
 {
-}
-
-void QPlaceDetailsReplyImpl::abort()
-{
-    if (m_reply)
-        m_reply->abort();
 }
 
 void QPlaceDetailsReplyImpl::setError(QPlaceReply::Error error_, const QString &errorString)
@@ -119,23 +115,13 @@ void QPlaceDetailsReplyImpl::setError(QPlaceReply::Error error_, const QString &
 
 void QPlaceDetailsReplyImpl::replyFinished()
 {
-    if (m_reply->error() != QNetworkReply::NoError) {
-        switch (m_reply->error()) {
-        case QNetworkReply::OperationCanceledError:
-            setError(CancelError, "Request canceled.");
-            break;
-        case QNetworkReply::ContentNotFoundError:
-            setError(PlaceDoesNotExistError,
-                     QString::fromLatin1("The id, %1, does not reference an existing place")
-                     .arg(m_placeId));
-            break;
-        default:
-            setError(CommunicationError, "Network error.");
-        }
-        return;
-    }
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
 
-    QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
+    if (reply->error() != QNetworkReply::NoError)
+        return;
+
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     if (!document.isObject()) {
         setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
         return;
@@ -337,11 +323,23 @@ void QPlaceDetailsReplyImpl::replyFinished()
     place.setDetailsFetched(true);
     setPlace(place);
 
-    m_reply->deleteLater();
-    m_reply = 0;
-
     setFinished(true);
     emit finished();
+}
+
+void QPlaceDetailsReplyImpl::replyError(QNetworkReply::NetworkError error)
+{
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    if (error == QNetworkReply::OperationCanceledError) {
+        setError(QPlaceReply::CancelError, QStringLiteral("Request cancelled"));
+    } else if (error == QNetworkReply::ContentNotFoundError) {
+        setError(QPlaceReply::PlaceDoesNotExistError,
+                 QString::fromLatin1("The id, %1, does not reference an existing place")
+                 .arg(m_placeId));
+    } else {
+        setError(QPlaceReply::CommunicationError, reply->errorString());
+    }
 }
 
 QT_END_NAMESPACE

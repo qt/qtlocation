@@ -51,11 +51,17 @@ QT_BEGIN_NAMESPACE
 
 GeoCodeReplyEsri::GeoCodeReplyEsri(QNetworkReply *reply, OperationType operationType,
                                    QObject *parent) :
-    QGeoCodeReply(parent), m_reply(reply), m_operationType(operationType)
+    QGeoCodeReply(parent), m_operationType(operationType)
 {
-    connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    if (!reply) {
+        setError(UnknownError, QStringLiteral("Null reply"));
+        return;
+    }
+    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    connect(this, &QGeoCodeReply::aborted, reply, &QNetworkReply::abort);
+    connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 
     setLimit(1);
     setOffset(0);
@@ -63,49 +69,25 @@ GeoCodeReplyEsri::GeoCodeReplyEsri(QNetworkReply *reply, OperationType operation
 
 GeoCodeReplyEsri::~GeoCodeReplyEsri()
 {
-    if (m_reply)
-        m_reply->deleteLater();
-}
-
-void GeoCodeReplyEsri::abort()
-{
-    if (!m_reply)
-        return;
-
-    m_reply->abort();
-    QGeoCodeReply::abort();
-
-    m_reply->deleteLater();
-    m_reply = Q_NULLPTR;
 }
 
 void GeoCodeReplyEsri::networkReplyError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
-
-    if (!m_reply)
-        return;
-
-    setError(QGeoCodeReply::CommunicationError, m_reply->errorString());
-
-    m_reply->deleteLater();
-    m_reply = Q_NULLPTR;
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+    setError(QGeoCodeReply::CommunicationError, reply->errorString());
 }
 
 void GeoCodeReplyEsri::networkReplyFinished()
 {
-    if (!m_reply)
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    reply->deleteLater();
+
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
-    if (m_reply->error() != QNetworkReply::NoError)
-    {
-        setError(QGeoCodeReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
-        m_reply = Q_NULLPTR;
-        return;
-    }
-
-    QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
 
     if (document.isObject()) {
         QJsonObject object = document.object();
@@ -148,9 +130,6 @@ void GeoCodeReplyEsri::networkReplyFinished()
     } else {
         setError(QGeoCodeReply::CommunicationError, QStringLiteral("Unknown document"));
     }
-
-    m_reply->deleteLater();
-    m_reply = Q_NULLPTR;
 }
 
 QGeoLocation GeoCodeReplyEsri::parseAddress(const QJsonObject& object)

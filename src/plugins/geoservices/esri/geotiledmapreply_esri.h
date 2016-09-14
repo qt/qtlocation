@@ -52,17 +52,11 @@ class GeoTiledMapReplyEsri : public QGeoTiledMapReply
 
 public:
     GeoTiledMapReplyEsri(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent = Q_NULLPTR);
-    virtual ~GeoTiledMapReplyEsri();
-
-    void abort() Q_DECL_OVERRIDE;
+    ~GeoTiledMapReplyEsri();
 
 private Q_SLOTS:
-    void replyDestroyed();
     void networkReplyFinished();
     void networkReplyError(QNetworkReply::NetworkError error);
-
-private:
-    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE

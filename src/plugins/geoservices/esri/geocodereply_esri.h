@@ -58,9 +58,7 @@ public:
 
 public:
     GeoCodeReplyEsri(QNetworkReply *reply, OperationType operationType, QObject *parent = Q_NULLPTR);
-    virtual ~GeoCodeReplyEsri();
-
-    void abort() Q_DECL_OVERRIDE;
+    ~GeoCodeReplyEsri();
 
     inline OperationType operationType() const;
 
@@ -72,7 +70,6 @@ private Q_SLOTS:
     QGeoLocation parseCandidate(const QJsonObject &candidate);
 
 private:
-    QNetworkReply *m_reply;
     OperationType m_operationType;
 };
 

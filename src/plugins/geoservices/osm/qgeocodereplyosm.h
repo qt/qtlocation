@@ -53,14 +53,9 @@ public:
     explicit QGeoCodeReplyOsm(QNetworkReply *reply, QObject *parent = 0);
     ~QGeoCodeReplyOsm();
 
-    void abort();
-
 private Q_SLOTS:
     void networkReplyFinished();
     void networkReplyError(QNetworkReply::NetworkError error);
-
-private:
-    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE

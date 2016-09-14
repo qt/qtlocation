@@ -54,14 +54,9 @@ public:
     QGeoRouteReplyOsm(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = 0);
     ~QGeoRouteReplyOsm();
 
-    void abort() Q_DECL_OVERRIDE;
-
 private Q_SLOTS:
     void networkReplyFinished();
     void networkReplyError(QNetworkReply::NetworkError error);
-
-private:
-    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE

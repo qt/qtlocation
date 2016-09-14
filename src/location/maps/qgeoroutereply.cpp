@@ -218,8 +218,7 @@ void QGeoRouteReply::addRoutes(const QList<QGeoRoute> &routes)
 */
 void QGeoRouteReply::abort()
 {
-    if (!isFinished())
-        setFinished(true);
+    emit aborted();
 }
 
 /*!
