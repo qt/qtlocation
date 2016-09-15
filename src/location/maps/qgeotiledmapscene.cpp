@@ -101,6 +101,8 @@ public:
     bool m_verticalLock;
     bool m_linearScaling;
 
+    bool m_dropTextures;
+
     void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
     QDoubleVector2D itemPositionToMercator(const QDoubleVector2D &pos) const;
@@ -200,6 +202,7 @@ void QGeoTiledMapScene::clearTexturedTiles()
 {
     Q_D(QGeoTiledMapScene);
     d->m_textures.clear();
+    d->m_dropTextures = true;
 }
 
 QGeoTiledMapScenePrivate::QGeoTiledMapScenePrivate()
@@ -223,7 +226,8 @@ QGeoTiledMapScenePrivate::QGeoTiledMapScenePrivate()
       m_screenHeight(0.0),
       m_useVerticalLock(false),
       m_verticalLock(false),
-      m_linearScaling(false)
+      m_linearScaling(false),
+      m_dropTextures(false)
 {
 }
 
@@ -717,6 +721,18 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     itemSpaceMatrix.translate(1, 1);
     itemSpaceMatrix.scale(1, -1);
     mapRoot->root->setMatrix(itemSpaceMatrix);
+
+    if (d->m_dropTextures) {
+        foreach (const QGeoTileSpec &s, mapRoot->tiles->tiles.keys())
+            delete mapRoot->tiles->tiles.take(s);
+        foreach (const QGeoTileSpec &s, mapRoot->wrapLeft->tiles.keys())
+            delete mapRoot->wrapLeft->tiles.take(s);
+        foreach (const QGeoTileSpec &s, mapRoot->wrapRight->tiles.keys())
+            delete mapRoot->wrapRight->tiles.take(s);
+        foreach (const QGeoTileSpec &spec, mapRoot->textures.keys())
+            mapRoot->textures.take(spec)->deleteLater();
+        d->m_dropTextures = false;
+    }
 
     QSet<QGeoTileSpec> textures = QSet<QGeoTileSpec>::fromList(mapRoot->textures.keys());
     QSet<QGeoTileSpec> toRemove = textures - d->m_visibleTiles;

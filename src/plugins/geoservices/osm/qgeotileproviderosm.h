@@ -62,12 +62,13 @@ public:
 
     TileProvider();
     // "Online" constructor. Needs resolution to fetch the parameters
-    TileProvider(const QUrl &urlRedirector);
+    TileProvider(const QUrl &urlRedirector, bool highDpi = false);
     // Offline constructor. Doesn't need URLRedirector and networkmanager
     TileProvider(const QString &urlTemplate,
              const QString &format,
              const QString &copyRightMap,
              const QString &copyRightData,
+             bool highDpi = false,
              int minimumZoomLevel = 0,
              int maximumZoomLevel = 19);
 
@@ -89,6 +90,7 @@ public:
     inline QString format() const;
     inline int minimumZoomLevel() const;
     inline int maximumZoomLevel() const;
+    inline bool isHighDpi() const;
     QUrl tileAddress(int x, int y, int z) const;
 
     // Optional properties, not needed to construct a provider
@@ -106,6 +108,7 @@ public:
     QString m_urlSuffix;
     int m_minimumZoomLevel;
     int m_maximumZoomLevel;
+    bool m_highDpi;
 
     int paramsLUT[3];  //Lookup table to handle possibly shuffled x,y,z
     QString paramsSep[2]; // what goes in between %x, %y and %z
@@ -145,6 +148,7 @@ public:
     QString format() const;
     int minimumZoomLevel() const;
     int maximumZoomLevel() const;
+    bool isHighDpi() const;
     const QGeoMapType &mapType() const;
     bool isValid() const;
     bool isResolved() const;
@@ -152,6 +156,7 @@ public:
 Q_SIGNALS:
     void resolutionFinished(const QGeoTileProviderOsm *provider);
     void resolutionError(const QGeoTileProviderOsm *provider);
+    void resolutionRequired();
 
 public Q_SLOTS:
     void resolveProvider();

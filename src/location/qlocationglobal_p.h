@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,54 +37,27 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEFETCHEROSM_H
-#define QGEOTILEFETCHEROSM_H
+#ifndef QLOCATIONGLOBAL_P_H
+#define QLOCATIONGLOBAL_P_H
 
-#include "qgeotileproviderosm.h"
-#include <QtLocation/private/qgeotilefetcher_p.h>
-#include <QVector>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qlocationglobal.h"
 
 QT_BEGIN_NAMESPACE
 
-class QNetworkAccessManager;
-class QGeoTileFetcherOsmPrivate;
-
-class QGeoTileFetcherOsm : public QGeoTileFetcher
-{
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QGeoTileFetcherOsm)
-
-    friend class QGeoMapReplyOsm;
-    friend class QGeoTiledMappingManagerEngineOsm;
-public:
-    QGeoTileFetcherOsm(const QVector<QGeoTileProviderOsm *> &providers,
-                       QNetworkAccessManager *nm,
-                       QObject *parent = 0);
-
-    void setUserAgent(const QByteArray &userAgent);
-
-Q_SIGNALS:
-    void providerDataUpdated(const QGeoTileProviderOsm *provider);
-
-protected:
-    bool initialized() const Q_DECL_OVERRIDE;
-
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
-    void restartTimer();
-
-private:
-    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
-    void readyUpdated();
-
-    QByteArray m_userAgent;
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QNetworkAccessManager *m_nm;
-    bool m_ready;
-};
+#define Q_LOCATION_PRIVATE_EXPORT Q_LOCATION_EXPORT
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEFETCHEROSM_H
 
+#endif // QLOCATIONGLOBAL_P_H

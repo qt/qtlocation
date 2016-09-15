@@ -169,6 +169,11 @@ void QGeoCameraTiles::setMapType(const QGeoMapType &mapType)
     d_ptr->m_mapType = mapType;
 }
 
+QGeoMapType QGeoCameraTiles::activeMapType() const
+{
+    return d_ptr->m_mapType;
+}
+
 void QGeoCameraTiles::setMapVersion(int mapVersion)
 {
     if (d_ptr->m_mapVersion == mapVersion)

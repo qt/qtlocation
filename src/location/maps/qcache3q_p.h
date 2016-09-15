@@ -162,7 +162,7 @@ public:
     QSharedPointer<T> operator[](const Key &key) const;
 
     void remove(const Key &key);
-
+    QList<Key> keys() const;
     void printStats();
 
     // Copy data directly into a queue. Designed for single use after construction
@@ -422,6 +422,15 @@ void QCache3Q<Key,T,EvPolicy>::remove(const Key &key)
         EvPolicy::aboutToBeRemoved(n->k, n->v);
     lookup_.remove(key);
     delete n;
+}
+
+template <class Key, class T, class EvPolicy>
+QList<Key> QCache3Q<Key,T,EvPolicy>::keys() const
+{
+    QList<Key> keys;
+    for (auto i = lookup_.constBegin(); i != lookup_.constEnd(); ++i)
+        keys.append(i.key());
+    return keys;
 }
 
 template <class Key, class T, class EvPolicy>

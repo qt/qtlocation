@@ -16,6 +16,9 @@ PUBLIC_HEADERS += \
                     qlocation.h \
                     qlocationglobal.h
 
+PRIVATE_HEADERS += \
+                    qlocationglobal_p.h
+
 SOURCES += \
            qlocation.cpp
 

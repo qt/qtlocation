@@ -71,6 +71,7 @@ public:
     void setViewExpansion(double viewExpansion);
     void setPluginString(const QString &pluginString);
     void setMapType(const QGeoMapType &mapType);
+    QGeoMapType activeMapType() const;
     void setMapVersion(int mapVersion);
     const QSet<QGeoTileSpec>& createTiles();
 
