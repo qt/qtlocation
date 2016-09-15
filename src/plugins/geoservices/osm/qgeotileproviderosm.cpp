@@ -186,6 +186,7 @@ void QGeoTileProviderOsm::onResolutionError(TileProvider *provider)
                     //m_status = Resolving;
                     //p->resolveProvider();
                 }
+                break;
             }
         }
         if (!m_provider)
@@ -275,6 +276,7 @@ void TileProvider::resolveProvider()
     QNetworkRequest request;
     request.setHeader(QNetworkRequest::UserAgentHeader, QByteArrayLiteral("QGeoTileFetcherOsm"));
     request.setUrl(m_urlRedirector);
+    request.setAttribute(QNetworkRequest::BackgroundRequestAttribute, true);
     QNetworkReply *reply = m_nm->get(request);
     connect(reply, SIGNAL(finished()), this, SLOT(onNetworkReplyFinished()) );
     connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onNetworkReplyError(QNetworkReply::NetworkError)));
@@ -295,9 +297,9 @@ void TileProvider::handleError(QNetworkReply::NetworkError error)
     case QNetworkReply::ServiceUnavailableError:
         // Errors we don't expect to recover from in the near future, which
         // prevent accessing the redirection info but not the actual providers.
-        qWarning() << "QGeoTileProviderOsm network error:" << error;
         m_status = Invalid;
     default:
+        qWarning() << "QGeoTileProviderOsm network error:" << error;
         break;
     }
 }
