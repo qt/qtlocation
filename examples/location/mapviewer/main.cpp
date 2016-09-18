@@ -91,6 +91,8 @@ int main(int argc, char *argv[])
 
     if (parseArgs(args, parameters))
         return 0;
+    if (!args.contains(QStringLiteral("osm.useragent")))
+        parameters[QStringLiteral("osm.useragent")] = QStringLiteral("QtLocation Mapviewer example");
 
     QQmlApplicationEngine engine;
     engine.addImportPath(QStringLiteral(":/imports"));

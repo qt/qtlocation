@@ -82,9 +82,6 @@ QT_BEGIN_NAMESPACE
 
     Note that the satellite source may have a minimum value requirement for
     update intervals, as returned by minimumUpdateInterval().
-
-    \warning On Windows CE it is not possible to detect if a device is GPS enabled.
-    The default satellite source on a Windows CE device without GPS support will never provide any satellite data.
 */
 
 class QGeoSatelliteInfoSourcePrivate

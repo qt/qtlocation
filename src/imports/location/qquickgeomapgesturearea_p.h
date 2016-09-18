@@ -242,7 +242,7 @@ private:
         bool m_enabled;
         struct Zoom
         {
-            Zoom() : m_minimum(-1.0), m_maximum(-1.0), m_start(0.0), m_previous(0.0),
+            Zoom() : m_minimum(-1.0), m_maximum(20.0), m_start(0.0), m_previous(0.0),
                      maximumChange(4.0) {}
             qreal m_minimum;
             qreal m_maximum;
