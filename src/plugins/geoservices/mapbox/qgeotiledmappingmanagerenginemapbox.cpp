@@ -56,7 +56,10 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
 
     QList<QGeoMapType> mapTypes;
     // as index 0 to retain compatibility with the current API, that expects the passed map_id to be on by default.
-    if (parameters.contains(QStringLiteral("mapbox.map_id"))) {
+    if (parameters.contains(QStringLiteral("mapbox.mapping.map_id"))) {
+        const QString name = parameters.value(QStringLiteral("mapbox.mapping.map_id")).toString();
+        mapTypes << QGeoMapType(QGeoMapType::CustomMap, name, name, false, false, mapTypes.size());
+    } else if (parameters.contains(QStringLiteral("mapbox.map_id"))) { //deprecated
         const QString name = parameters.value(QStringLiteral("mapbox.map_id")).toString();
         mapTypes << QGeoMapType(QGeoMapType::CustomMap, name, name, false, false, mapTypes.size());
     }
@@ -92,8 +95,8 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
     mapTypes << QGeoMapType(QGeoMapType::CustomMap, QStringLiteral("mapbox.high-contrast"), tr("High Contrast"), false, false, mapTypes.size());
 
     // New way to specify multiple customized map_ids via additional_map_ids
-    if (parameters.contains(QStringLiteral("mapbox.additional_map_ids"))) {
-        const QString ids = parameters.value(QStringLiteral("mapbox.additional_map_ids")).toString();
+    if (parameters.contains(QStringLiteral("mapbox.mapping.additional_map_ids"))) {
+        const QString ids = parameters.value(QStringLiteral("mapbox.mapping.additional_map_ids")).toString();
         const QStringList idList = ids.split(',', QString::SkipEmptyParts);
 
         for (const QString &name: idList) {
@@ -109,7 +112,7 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
     setSupportedMapTypes(mapTypes);
 
     int scaleFactor = 1;
-    if (parameters.contains(QStringLiteral("mapbox.highdpi_tiles"))) {
+    if (parameters.contains(QStringLiteral("mapbox.mapping.highdpi_tiles"))) {
         const QString param = parameters.value(QStringLiteral("mapbox.highdpi_tiles")).toString().toLower();
         if (param == "true")
             scaleFactor = 2;
@@ -122,7 +125,10 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
         const QByteArray ua = parameters.value(QStringLiteral("useragent")).toString().toLatin1();
         tileFetcher->setUserAgent(ua);
     }
-    if (parameters.contains(QStringLiteral("mapbox.format"))) {
+    if (parameters.contains(QStringLiteral("mapbox.mapping.format"))) {
+        const QString format = parameters.value(QStringLiteral("mapbox.mapping.format")).toString();
+        tileFetcher->setFormat(format);
+    } else if (parameters.contains(QStringLiteral("mapbox.format"))) { //deprecated
         const QString format = parameters.value(QStringLiteral("mapbox.format")).toString();
         tileFetcher->setFormat(format);
     }
@@ -136,8 +142,8 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
     // TODO: do this in a plugin-neutral way so that other tiled map plugins
     //       don't need this boilerplate or hardcode plugin name
 
-    if (parameters.contains(QStringLiteral("mapbox.cache.directory"))) {
-        m_cacheDirectory = parameters.value(QStringLiteral("mapbox.cache.directory")).toString();
+    if (parameters.contains(QStringLiteral("mapbox.mapping.cache.directory"))) {
+        m_cacheDirectory = parameters.value(QStringLiteral("mapbox.mapping.cache.directory")).toString();
     } else {
         // managerName() is not yet set, we have to hardcode the plugin name below
         m_cacheDirectory = QAbstractGeoTileCache::baseLocationCacheDirectory() + QLatin1String("mapbox");
@@ -154,25 +160,25 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
 
     QGeoFileTileCache *tileCache = new QGeoFileTileCacheMapbox(mapTypes, scaleFactor, m_cacheDirectory);
 
-    if (parameters.contains(QStringLiteral("mapbox.cache.disk.size"))) {
+    if (parameters.contains(QStringLiteral("mapbox.mapping.cache.disk.size"))) {
         bool ok = false;
-        int cacheSize = parameters.value(QStringLiteral("mapbox.cache.disk.size")).toString().toInt(&ok);
+        int cacheSize = parameters.value(QStringLiteral("mapbox.mapping.cache.disk.size")).toString().toInt(&ok);
         if (ok)
             tileCache->setMaxDiskUsage(cacheSize);
     } else {
         tileCache->setMaxDiskUsage(300 * 1024 * 1024);
     }
 
-    if (parameters.contains(QStringLiteral("mapbox.cache.memory.size"))) {
+    if (parameters.contains(QStringLiteral("mapbox.mapping.cache.memory.size"))) {
         bool ok = false;
-        int cacheSize = parameters.value(QStringLiteral("mapbox.cache.memory.size")).toString().toInt(&ok);
+        int cacheSize = parameters.value(QStringLiteral("mapbox.mapping.cache.memory.size")).toString().toInt(&ok);
         if (ok)
             tileCache->setMaxMemoryUsage(cacheSize);
     }
 
-    if (parameters.contains(QStringLiteral("mapbox.cache.texture.size"))) {
+    if (parameters.contains(QStringLiteral("mapbox.mapping.cache.texture.size"))) {
         bool ok = false;
-        int cacheSize = parameters.value(QStringLiteral("mapbox.cache.texture.size")).toString().toInt(&ok);
+        int cacheSize = parameters.value(QStringLiteral("mapbox.mapping.cache.texture.size")).toString().toInt(&ok);
         if (ok)
             tileCache->setExtraTextureUsage(cacheSize);
     }

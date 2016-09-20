@@ -66,41 +66,41 @@ The following table lists optional parameters that can be passed to the Mapbox p
     \li Parameter
     \li Description
 \row
-    \li mapbox.map_id
+    \li mapbox.mapping.map_id, mapbox.map_id (\b deprecated)
     \li \l{https://www.mapbox.com/help/define-map-id/}{ID} of the Mapbox map to show. An example ID is "examples.map-zr0njcqy".
     If this parameter is present, the specified map type will be used by default, unless another is selected.
     If not present, the default Mapbox map ID is "mapbox.streets".
 \row
-    \li mapbox.additional_map_ids
+    \li mapbox.mapping.additional_map_ids
     \li Additional, comma separated, Mapbox map IDs to be added to the available map types.
 \row
-    \li mapbox.format
+    \li mapbox.mapping.format, mapbox.format (\b deprecated)
     \li Data format to download tiles in, available values are "png", "png32",
         "png64", "png128", "png256", (PNG with full, 32, 64, 128 and 256 color palette)
         "jpg70", "jpg80", "jpg90" (JPEG with 70%, 80% and 90% compression).
         Defaults to "png".
 \row
-    \li mapbox.highdpi_tiles
+    \li mapbox.mapping.highdpi_tiles
     \li Whether or not to request high dpi tiles. Valid values are \b true and \b false. The default value is \b false.
 \row
     \li useragent
     \li User agent string set when making network requests.
 \row
-    \li mapbox.cache.directory
+    \li mapbox.mapping.cache.directory
     \li Absolute path to map tile cache directory used as network disk cache.
 
     The default place for the cache is \c{QtLocation/mapbox} directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
     On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
 \row
-    \li mapbox.cache.disk.size
+    \li mapbox.mapping.cache.disk.size
     \li Map tile disk cache size in bytes. Default size of the cache is 300MB.
     Note that this is the maximum amount of data that the Mapbox free plan allows to cache.
     Make sure to comply with Mapbox Terms of Service before increasing this value.
 \row
-    \li mapbox.cache.memory.size
+    \li mapbox.mapping.cache.memory.size
     \li Map tile memory cache size in bytes. Default size of the cache is 3MB.
 \row
-    \li mapbox.cache.texture.size
+    \li mapbox.mapping.cache.texture.size
     \li Map tile texture cache size in bytes. Default size of the cache is 6MB.
     Note that the texture cache has a hard minimum size which depends on the size of the map viewport
     (it must contain enough data to display the tiles currently visible on the display).
