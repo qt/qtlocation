@@ -1,6 +1,11 @@
 TARGET = QtLocation
 QT = core-private positioning-private
 
+android {
+    # adding qtconcurrent dependency here for the osm plugin
+    QT += concurrent
+}
+
 MODULE_PLUGIN_TYPES = \
     geoservices
 
