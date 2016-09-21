@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,37 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#include "geotiledmap_esri.h"
+#include "geotiledmappingmanagerengine_esri.h"
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QtLocation/private/qgeotilespec_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+GeoTiledMapEsri::GeoTiledMapEsri(GeoTiledMappingManagerEngineEsri *engine, QObject *parent) :
+    QGeoTiledMap(engine, parent), m_engine(engine), m_mapId(-1)
 {
-    Q_OBJECT
+}
 
-    friend class QGeoTiledMapOsm;
-public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+GeoTiledMapEsri::~GeoTiledMapEsri()
+{
+}
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+void GeoTiledMapEsri::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
+{
+    if (visibleTiles.isEmpty())
+        return;
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
+    QGeoTileSpec tile = *(visibleTiles.constBegin());
+    if (tile.mapId() == m_mapId)
+        return;
 
-protected:
-    void updateMapTypes();
+    m_mapId = tile.mapId();
 
-private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
-};
+    GeoMapSource *mapSource = engine()->mapSource(m_mapId);
+
+    if (mapSource)
+        emit copyrightsChanged(mapSource->copyright());
+}
 
 QT_END_NAMESPACE
-
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H

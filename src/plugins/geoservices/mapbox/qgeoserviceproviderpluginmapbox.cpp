@@ -52,6 +52,12 @@ QGeoCodingManagerEngine *QGeoServiceProviderFactoryMapbox::createGeocodingManage
     return 0;
 }
 
+static inline QString msgAccessTokenParameter()
+{
+    return QGeoServiceProviderFactoryMapbox::tr("Mapbox plugin requires a 'mapbox.access_token' parameter.\n"
+                                                "Please visit https://www.mapbox.com");
+}
+
 QGeoMappingManagerEngine *QGeoServiceProviderFactoryMapbox::createMappingManagerEngine(
     const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
@@ -61,8 +67,7 @@ QGeoMappingManagerEngine *QGeoServiceProviderFactoryMapbox::createMappingManager
         return new QGeoTiledMappingManagerEngineMapbox(parameters, error, errorString);
     } else {
         *error = QGeoServiceProvider::MissingRequiredParameterError;
-        *errorString = tr("Mapbox plugin requires a 'mapbox.access_token' parameter.\n"
-                          "Please visit https://www.mapbox.com");
+        *errorString = msgAccessTokenParameter();
         return 0;
     }
 }
@@ -76,8 +81,7 @@ QGeoRoutingManagerEngine *QGeoServiceProviderFactoryMapbox::createRoutingManager
         return new QGeoRoutingManagerEngineMapbox(parameters, error, errorString);
     } else {
         *error = QGeoServiceProvider::MissingRequiredParameterError;
-        *errorString = tr("Mapbox plugin requires 'mapbox.access_token' parameters.\n"
-                          "Please visit https://www.mapbox.com");
+        *errorString = msgAccessTokenParameter();
         return 0;
     }
 }

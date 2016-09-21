@@ -44,114 +44,73 @@ QT_BEGIN_NAMESPACE
 
 static const int maxValidZoom = 30;
 
-QGeoTileProviderOsm::QGeoTileProviderOsm(const QString &urlRedir,
-                                   QNetworkAccessManager *nm,
-                                   const QGeoMapType &mapType,
-                                   const QGeoTileProviderOsm::TileProvider &providerFallback)
-    : m_nm(nm), m_urlRedirector(urlRedir),
-      m_providerFallback(providerFallback),
-      m_mapType(mapType), m_status(Idle)
+QGeoTileProviderOsm::QGeoTileProviderOsm(QNetworkAccessManager *nm,
+                                         const QGeoMapType &mapType,
+                                         const QVector<TileProvider *> &providers)
+:   m_nm(nm), m_provider(nullptr), m_mapType(mapType), m_status(Idle)
 {
-    if (!m_urlRedirector.isValid())
-        disableRedirection();
+    for (int i = 0; i < providers.size(); ++i) {
+        TileProvider *p = providers[i];
+        if (!m_provider)
+            m_providerId = i;
+        addProvider(p);
+    }
+
+    if (!m_provider || m_provider->isValid())
+        m_status = Resolved;
 }
 
 QGeoTileProviderOsm::~QGeoTileProviderOsm()
 {
-
-}
-
-void QGeoTileProviderOsm::resolveProvider()
-{
-    switch (m_status) {
-        case Resolving:
-        case Invalid:
-        case Valid:
-            return;
-        case Idle:
-            m_status = Resolving;
-            break;
-    }
-
-    QNetworkRequest request;
-    request.setHeader(QNetworkRequest::UserAgentHeader, QByteArrayLiteral("QGeoTileFetcherOsm"));
-    request.setUrl(m_urlRedirector);
-    QNetworkReply *reply = m_nm->get(request);
-    connect(reply, SIGNAL(finished()), this, SLOT(onNetworkReplyFinished()));
-    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(onNetworkReplyError(QNetworkReply::NetworkError)));
-}
-
-void QGeoTileProviderOsm::disableRedirection()
-{
-    m_status = Invalid;
-    m_provider.m_valid = false;
-}
-
-void QGeoTileProviderOsm::handleError(QNetworkReply::NetworkError error)
-{
-    switch (error) {
-        case QNetworkReply::ConnectionRefusedError:
-        case QNetworkReply::TooManyRedirectsError:
-        case QNetworkReply::InsecureRedirectError:
-        case QNetworkReply::ContentAccessDenied:
-        case QNetworkReply::ContentOperationNotPermittedError:
-        case QNetworkReply::ContentNotFoundError:
-        case QNetworkReply::AuthenticationRequiredError:
-        case QNetworkReply::ContentGoneError:
-        case QNetworkReply::OperationNotImplementedError:
-        case QNetworkReply::ServiceUnavailableError:
-            // Errors we don't expect to recover from in the near future, which
-            // prevent accessing the redirection info but not the actual providers.
-            m_status = Invalid;
-        default:
-            break;
-    }
 }
 
 QUrl QGeoTileProviderOsm::tileAddress(int x, int y, int z) const
 {
-    if (m_provider.isValid())
-        return m_provider.tileAddress(x,y,z);
-    if (m_providerFallback.isValid())
-        return m_providerFallback.tileAddress(x,y,z);
-    return QUrl();
+    if (m_status != Resolved || !m_provider)
+        return QUrl();
+    return m_provider->tileAddress(x, y, z);
 }
 
 QString QGeoTileProviderOsm::mapCopyRight() const
 {
-    if (m_provider.isValid())
-        return m_provider.mapCopyRight();
-    if (m_providerFallback.isValid())
-        return m_providerFallback.mapCopyRight();
-    return QString();
+    if (m_status != Resolved || !m_provider)
+        return QString();
+    return m_provider->mapCopyRight();
 }
 
 QString QGeoTileProviderOsm::dataCopyRight() const
 {
-    if (m_provider.isValid())
-        return m_provider.dataCopyRight();
-    if (m_providerFallback.isValid())
-        return m_providerFallback.dataCopyRight();
-    return QString();
+    if (m_status != Resolved || !m_provider)
+        return QString();
+    return m_provider->dataCopyRight();
 }
 
 QString QGeoTileProviderOsm::styleCopyRight() const
 {
-    if (m_provider.isValid())
-        return m_provider.styleCopyRight();
-    if (m_providerFallback.isValid())
-        return m_providerFallback.styleCopyRight();
-    return QString();
+    if (m_status != Resolved || !m_provider)
+        return QString();
+    return m_provider->styleCopyRight();
 }
 
 QString QGeoTileProviderOsm::format() const
 {
-    if (m_provider.isValid())
-        return m_provider.format();
-    if (m_providerFallback.isValid())
-        return m_providerFallback.format();
-    return QString();
+    if (m_status != Resolved || !m_provider)
+        return QString();
+    return m_provider->format();
+}
+
+int QGeoTileProviderOsm::minimumZoomLevel() const
+{
+    if (m_status != Resolved || !m_provider)
+        return 0;
+    return m_provider->minimumZoomLevel();
+}
+
+int QGeoTileProviderOsm::maximumZoomLevel() const
+{
+    if (m_status != Resolved || !m_provider)
+        return 20;
+    return m_provider->maximumZoomLevel();
 }
 
 const QGeoMapType &QGeoTileProviderOsm::mapType() const
@@ -161,33 +120,211 @@ const QGeoMapType &QGeoTileProviderOsm::mapType() const
 
 bool QGeoTileProviderOsm::isValid() const
 {
-    return (m_provider.isValid() || m_providerFallback.isValid());
+    if (m_status != Resolved || !m_provider)
+        return false;
+    return m_provider->isValid();
 }
 
 bool QGeoTileProviderOsm::isResolved() const
 {
-    return (m_status == Valid || m_status == Invalid);
+    return (m_status == Resolved);
 }
 
-void QGeoTileProviderOsm::onNetworkReplyFinished()
+void QGeoTileProviderOsm::resolveProvider()
+{
+    if (m_status == Resolved || m_status == Resolving)
+        return;
+
+    m_status = Resolving;
+    // Provider can't be null while on Idle status.
+    connect(m_provider, &TileProvider::resolutionFinished, this, &QGeoTileProviderOsm::onResolutionFinished);
+    connect(m_provider, &TileProvider::resolutionError, this, &QGeoTileProviderOsm::onResolutionError);
+    m_provider->resolveProvider();
+}
+
+void QGeoTileProviderOsm::disableRedirection()
+{
+    if (m_provider && m_provider->isValid())
+        return;
+    bool found = false;
+    for (TileProvider *p: m_providerList) {
+        if (p->isValid() && !found) {
+            m_provider = p;
+            found = true;
+        }
+        p->disconnect(this);
+    }
+}
+
+void QGeoTileProviderOsm::onResolutionFinished(TileProvider *provider)
+{
+    Q_UNUSED(provider)
+    // provider and m_provider are the same, at this point. m_status is Resolving.
+    m_status = Resolved;
+    emit resolutionFinished(this);
+}
+
+void QGeoTileProviderOsm::onResolutionError(TileProvider *provider)
+{
+    Q_UNUSED(provider)
+    // provider and m_provider are the same at this point. m_status is Resolving.
+    if (m_provider->isInvalid()) {
+        m_provider = nullptr;
+        m_status = Resolved;
+        if (m_providerId >= m_providerList.size() -1) { // no hope left
+            emit resolutionError(this);
+            return;
+        }
+        // Advance the pointer in the provider list, and possibly start resolution on the next in the list.
+        for (int i = m_providerId + 1; i < m_providerList.size(); ++i) {
+            m_providerId = i;
+            TileProvider *p = m_providerList[m_providerId];
+            if (!p->isInvalid()) {
+                m_provider = p;
+                if (!p->isValid()) {
+                    m_status = Idle;
+                    //m_status = Resolving;
+                    //p->resolveProvider();
+                }
+                break;
+            }
+        }
+        if (!m_provider)
+            emit resolutionError(this);
+    } else if (m_provider->isValid()) {
+        m_status = Resolved;
+        emit resolutionFinished(this);
+    } else { // still not resolved. But network error is recoverable.
+        m_status = Idle;
+        //m_provider->resolveProvider();
+    }
+}
+
+void QGeoTileProviderOsm::addProvider(TileProvider *provider)
+{
+    if (!provider)
+        return;
+    QScopedPointer<TileProvider> p(provider);
+    if (provider->status() == TileProvider::Invalid)
+        return; // if the provider is already resolved and invalid, no point in adding it.
+
+    provider = p.take();
+    provider->setNetworkManager(m_nm);
+    provider->setParent(this);
+    m_providerList.append(provider);
+    if (!m_provider)
+        m_provider = provider;
+}
+
+
+/*
+    QGeoTileProviderOsm::TileProvder
+*/
+
+static void sort2(int &a, int &b)
+{
+    if (a > b) {
+        int temp=a;
+        a=b;
+        b=temp;
+    }
+}
+
+TileProvider::TileProvider() : m_status(Invalid), m_nm(nullptr)
+{
+
+}
+
+TileProvider::TileProvider(const QUrl &urlRedirector) : m_status(Idle), m_urlRedirector(urlRedirector), m_nm(nullptr)
+{
+    if (!m_urlRedirector.isValid())
+        m_status = Invalid;
+}
+
+TileProvider::TileProvider(const QString &urlTemplate,
+                           const QString &format,
+                           const QString &copyRightMap,
+                           const QString &copyRightData,
+                           int minimumZoomLevel,
+                           int maximumZoomLevel)
+:   m_status(Invalid), m_nm(nullptr), m_urlTemplate(urlTemplate),
+    m_format(format), m_copyRightMap(copyRightMap), m_copyRightData(copyRightData),
+    m_minimumZoomLevel(minimumZoomLevel), m_maximumZoomLevel(maximumZoomLevel)
+{
+    setupProvider();
+}
+
+TileProvider::~TileProvider()
+{
+}
+
+void TileProvider::resolveProvider()
+{
+    if (!m_nm)
+        return;
+
+    switch (m_status) {
+    case Resolving:
+    case Invalid:
+    case Valid:
+        return;
+    case Idle:
+        m_status = Resolving;
+        break;
+    }
+
+    QNetworkRequest request;
+    request.setHeader(QNetworkRequest::UserAgentHeader, QByteArrayLiteral("QGeoTileFetcherOsm"));
+    request.setUrl(m_urlRedirector);
+    request.setAttribute(QNetworkRequest::BackgroundRequestAttribute, true);
+    QNetworkReply *reply = m_nm->get(request);
+    connect(reply, SIGNAL(finished()), this, SLOT(onNetworkReplyFinished()) );
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onNetworkReplyError(QNetworkReply::NetworkError)));
+}
+
+void TileProvider::handleError(QNetworkReply::NetworkError error)
+{
+    switch (error) {
+    case QNetworkReply::ConnectionRefusedError:
+    case QNetworkReply::TooManyRedirectsError:
+    case QNetworkReply::InsecureRedirectError:
+    case QNetworkReply::ContentAccessDenied:
+    case QNetworkReply::ContentOperationNotPermittedError:
+    case QNetworkReply::ContentNotFoundError:
+    case QNetworkReply::AuthenticationRequiredError:
+    case QNetworkReply::ContentGoneError:
+    case QNetworkReply::OperationNotImplementedError:
+    case QNetworkReply::ServiceUnavailableError:
+        // Errors we don't expect to recover from in the near future, which
+        // prevent accessing the redirection info but not the actual providers.
+        m_status = Invalid;
+    default:
+        qWarning() << "QGeoTileProviderOsm network error:" << error;
+        break;
+    }
+}
+
+void TileProvider::onNetworkReplyFinished()
 {
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
     switch (m_status) {
-        case Resolving:
-            m_status = Idle;
-        case Idle:    // should not happen
-        case Invalid: // should not happen
-            break;
-        case Valid: // should not happen
-            return;
+    case Resolving:
+        m_status = Idle;
+    case Idle:    // should not happen
+    case Invalid: // should not happen
+        break;
+    case Valid: // should not happen
+        emit resolutionFinished(this);
+        return;
     }
+
+    QObject errorEmitter;
+    QMetaObject::Connection errorEmitterConnection = connect(&errorEmitter, &QObject::destroyed, [this](){ this->resolutionError(this); });
 
     if (reply->error() != QNetworkReply::NoError) {
         handleError(reply->error());
-        if (m_status == Invalid)
-            emit resolutionError(this, reply->error());
         return;
     }
     m_status = Invalid;
@@ -211,7 +348,7 @@ void QGeoTileProviderOsm::onNetworkReplyFinished()
      * unavailable, without making the osm plugin fire requests to it. Default is true.
      *
      * MinimumZoomLevel and MaximumZoomLevel are also optional, and allow to prevent invalid tile
-     * requests to the providers, if they do not support the specific ZL. Default is 0 and 19,
+     * requests to the providers, if they do not support the specific ZL. Default is 0 and 20,
      * respectively.
      *
      * <server address template> is required, and is the tile url template, with %x, %y and %z as
@@ -241,12 +378,10 @@ void QGeoTileProviderOsm::onNetworkReplyFinished()
     QJsonDocument d = QJsonDocument::fromJson(reply->readAll(), &error);
     if (error.error != QJsonParseError::NoError) {
         qWarning() << "QGeoTileProviderOsm: Error parsing redirection data: "<<error.errorString() << "at "<<m_urlRedirector;
-        emit resolutionFinished(this);
         return;
     }
     if (!d.isObject()) {
         qWarning() << "QGeoTileProviderOsm: Invalid redirection data" << "at "<<m_urlRedirector;
-        emit resolutionFinished(this);
         return;
     }
     const QJsonObject json = d.object();
@@ -263,56 +398,185 @@ void QGeoTileProviderOsm::onNetworkReplyFinished()
          || !copyRightMap.isString()
          || !copyRightData.isString()) {
         qWarning() << "QGeoTileProviderOsm: Incomplete redirection data" << "at "<<m_urlRedirector;
-        emit resolutionFinished(this);
         return;
     }
+
+    m_urlTemplate = urlTemplate.toString();
+    m_format = imageFormat.toString();
+    m_copyRightMap = copyRightMap.toString();
+    m_copyRightData = copyRightData.toString();
 
     const QJsonValue enabled = json.value(QLatin1String("Enabled"));
     if (enabled.isBool() && ! enabled.toBool()) {
         qWarning() << "QGeoTileProviderOsm: Tileserver disabled" << "at "<<m_urlRedirector;
-        emit resolutionFinished(this);
         return;
     }
 
-    QString styleCopyRight;
     const QJsonValue copyRightStyle = json.value(QLatin1String("StyleCopyRight"));
     if (copyRightStyle != QJsonValue::Undefined && copyRightStyle.isString())
-        styleCopyRight = copyRightStyle.toString();
+        m_copyRightStyle = copyRightStyle.toString();
 
-    int minZL = 0;
-    int maxZL = 19;
+    m_minimumZoomLevel = 0;
+    m_maximumZoomLevel = 20;
     const QJsonValue minZoom = json.value(QLatin1String("MinimumZoomLevel"));
     if (minZoom.isDouble())
-        minZL = qBound(0, int(minZoom.toDouble()), maxValidZoom);
+        m_minimumZoomLevel = qBound(0, int(minZoom.toDouble()), maxValidZoom);
     const QJsonValue maxZoom = json.value(QLatin1String("MaximumZoomLevel"));
     if (maxZoom.isDouble())
-        maxZL = qBound(0, int(maxZoom.toDouble()), maxValidZoom);
+        m_maximumZoomLevel = qBound(0, int(maxZoom.toDouble()), maxValidZoom);
 
-    m_provider = TileProvider(urlTemplate.toString(),
-                              imageFormat.toString(),
-                              copyRightMap.toString(),
-                              copyRightData.toString(),
-                              minZL,
-                              maxZL);
-    m_provider.setStyleCopyRight(styleCopyRight);
-
-    if (m_provider.isValid())
-        m_status = Valid;
-
-    emit resolutionFinished(this);
+    setupProvider();
+    if (isValid()) {
+        QObject::disconnect(errorEmitterConnection);
+        emit resolutionFinished(this);
+    }
 }
 
-void QGeoTileProviderOsm::onNetworkReplyError(QNetworkReply::NetworkError error)
+void TileProvider::onNetworkReplyError(QNetworkReply::NetworkError error)
 {
     if (m_status == Resolving)
         m_status = Idle;
 
-    qWarning() << "QGeoTileProviderOsm::onNetworkReplyError " << error;
     handleError(error);
-
     static_cast<QNetworkReply *>(sender())->deleteLater();
-    if (m_status == Invalid)
-        emit resolutionError(this, error);
+    emit resolutionError(this);
 }
 
+void TileProvider::setupProvider()
+{
+    if (m_urlTemplate.isEmpty())
+        return;
+
+    if (m_format.isEmpty())
+        return;
+
+    if (m_minimumZoomLevel < 0 || m_minimumZoomLevel > 30)
+        return;
+
+    if (m_maximumZoomLevel < 0 || m_maximumZoomLevel > 30 ||  m_maximumZoomLevel < m_minimumZoomLevel)
+        return;
+
+    // Currently supporting only %x, %y and &z
+    int offset[3];
+    offset[0] = m_urlTemplate.indexOf(QLatin1String("%x"));
+    if (offset[0] < 0)
+        return;
+
+    offset[1] = m_urlTemplate.indexOf(QLatin1String("%y"));
+    if (offset[1] < 0)
+        return;
+
+    offset[2] = m_urlTemplate.indexOf(QLatin1String("%z"));
+    if (offset[2] < 0)
+        return;
+
+    int sortedOffsets[3];
+    std::copy(offset, offset + 3, sortedOffsets);
+    sort2(sortedOffsets[0] ,sortedOffsets[1]);
+    sort2(sortedOffsets[1] ,sortedOffsets[2]);
+    sort2(sortedOffsets[0] ,sortedOffsets[1]);
+
+    int min = sortedOffsets[0];
+    int max = sortedOffsets[2];
+    int mid = sortedOffsets[1];
+
+    // Initing LUT
+    for (int i=0; i<3; i++) {
+        if (offset[0] == sortedOffsets[i])
+            paramsLUT[i] = 0;
+        else if (offset[1] == sortedOffsets[i])
+            paramsLUT[i] = 1;
+        else
+            paramsLUT[i] = 2;
+    }
+
+    m_urlPrefix = m_urlTemplate.mid(0 , min);
+    m_urlSuffix = m_urlTemplate.mid(max + 2, m_urlTemplate.size() - max - 2);
+
+    paramsSep[0] = m_urlTemplate.mid(min + 2, mid - min - 2);
+    paramsSep[1] = m_urlTemplate.mid(mid + 2, max - mid - 2);
+    m_status = Valid;
+}
+
+bool TileProvider::isValid() const
+{
+    return m_status == Valid;
+}
+
+bool TileProvider::isInvalid() const
+{
+    return m_status == Invalid;
+}
+
+bool TileProvider::isResolved() const
+{
+    return (m_status == Valid || m_status == Invalid);
+}
+
+QString TileProvider::mapCopyRight() const
+{
+    return m_copyRightMap;
+}
+
+QString TileProvider::dataCopyRight() const
+{
+    return m_copyRightData;
+}
+
+QString TileProvider::styleCopyRight() const
+{
+    return m_copyRightStyle;
+}
+
+QString TileProvider::format() const
+{
+    return m_format;
+}
+
+int TileProvider::minimumZoomLevel() const
+{
+    return m_minimumZoomLevel;
+}
+
+int TileProvider::maximumZoomLevel() const
+{
+    return m_maximumZoomLevel;
+}
+
+void TileProvider::setStyleCopyRight(const QString &copyright)
+{
+    m_copyRightStyle = copyright;
+}
+
+QUrl TileProvider::tileAddress(int x, int y, int z) const
+{
+    if (z < m_minimumZoomLevel || z > m_maximumZoomLevel)
+        return QUrl();
+    int params[3] = { x, y, z};
+    QString url;
+    url += m_urlPrefix;
+    url += QString::number(params[paramsLUT[0]]);
+    url += paramsSep[0];
+    url += QString::number(params[paramsLUT[1]]);
+    url += paramsSep[1];
+    url += QString::number(params[paramsLUT[2]]);
+    url += m_urlSuffix;
+    return QUrl(url);
+}
+
+void TileProvider::setNetworkManager(QNetworkAccessManager *nm)
+{
+    m_nm = nm;
+}
+
+TileProvider::Status TileProvider::status() const
+{
+    return m_status;
+}
+
+
 QT_END_NAMESPACE
+
+
+
+

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,78 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#include "georoutereply_esri.h"
+#include "georoutejsonparser_esri.h"
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QJsonDocument>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+// JSON reference: http://resources.arcgis.com/en/help/arcgis-rest-api/#/Route_service_with_synchronous_execution/02r300000036000000/
+
+GeoRouteReplyEsri::GeoRouteReplyEsri(QNetworkReply *reply, const QGeoRouteRequest &request,
+                                     QObject *parent) :
+    QGeoRouteReply(request, parent), m_reply(reply)
 {
-    Q_OBJECT
+    connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
+    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+}
 
-    friend class QGeoTiledMapOsm;
-public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+GeoRouteReplyEsri::~GeoRouteReplyEsri()
+{
+    if (m_reply)
+        m_reply->deleteLater();
+}
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+void GeoRouteReplyEsri::abort()
+{
+    if (!m_reply)
+        return;
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
+    m_reply->abort();
+    m_reply->deleteLater();
+    m_reply = Q_NULLPTR;
+}
 
-protected:
-    void updateMapTypes();
+void GeoRouteReplyEsri::networkReplyFinished()
+{
+    if (!m_reply)
+        return;
 
-private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
-};
+    if (m_reply->error() != QNetworkReply::NoError)
+    {
+        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
+        m_reply->deleteLater();
+        m_reply = Q_NULLPTR;
+        return;
+    }
+
+    QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
+    GeoRouteJsonParserEsri parser(document);
+
+    if (parser.isValid())
+    {
+        setRoutes(parser.routes());
+        setFinished(true);
+    } else {
+        setError(QGeoRouteReply::ParseError, parser.errorString());
+    }
+
+    m_reply->deleteLater();
+    m_reply = Q_NULLPTR;
+}
+
+void GeoRouteReplyEsri::networkReplyError(QNetworkReply::NetworkError error)
+{
+    Q_UNUSED(error)
+
+    if (!m_reply)
+        return;
+
+    setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
+    m_reply->deleteLater();
+    m_reply = Q_NULLPTR;
+}
 
 QT_END_NAMESPACE
-
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H

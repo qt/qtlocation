@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,36 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#ifndef GEOSERVICEPROVIDERFACTORYESRI_H
+#define GEOSERVICEPROVIDERFACTORYESRI_H
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QObject>
+#include <QGeoServiceProviderFactory>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+class GeoServiceProviderFactoryEsri: public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
+    Q_INTERFACES(QGeoServiceProviderFactory)
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/5.0"
+                      FILE "esri_plugin.json")
 
-    friend class QGeoTiledMapOsm;
 public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
-
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
-
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
-
-protected:
-    void updateMapTypes();
-
-private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
+    QGeoCodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
+                                                          QGeoServiceProvider::Error *error,
+                                                          QString *errorString) const Q_DECL_OVERRIDE;
+    QGeoMappingManagerEngine *createMappingManagerEngine(const QVariantMap &parameters,
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const Q_DECL_OVERRIDE;
+    QGeoRoutingManagerEngine *createRoutingManagerEngine(const QVariantMap &parameters,
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const Q_DECL_OVERRIDE;
+    QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
+                                                  QGeoServiceProvider::Error *error,
+                                                  QString *errorString) const Q_DECL_OVERRIDE;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#endif // GEOSERVICEPROVIDERFACTORYESRI_H

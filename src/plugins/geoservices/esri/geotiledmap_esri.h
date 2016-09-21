@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,38 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#ifndef GEOTILEDMAPESRI_H
+#define GEOTILEDMAPESRI_H
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+class GeoTiledMappingManagerEngineEsri;
+
+class GeoTiledMapEsri: public QGeoTiledMap
 {
     Q_OBJECT
 
-    friend class QGeoTiledMapOsm;
 public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
-
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
-
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
+    explicit GeoTiledMapEsri(GeoTiledMappingManagerEngineEsri *engine, QObject *parent = Q_NULLPTR);
+    virtual ~GeoTiledMapEsri();
 
 protected:
-    void updateMapTypes();
+    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
+
+    inline GeoTiledMappingManagerEngineEsri *engine() const;
 
 private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
+    GeoTiledMappingManagerEngineEsri *m_engine;
+    int m_mapId;
 };
+
+inline GeoTiledMappingManagerEngineEsri *GeoTiledMapEsri::engine() const
+{
+    return m_engine;
+}
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#endif // GEOTILEDMAPESRI_H

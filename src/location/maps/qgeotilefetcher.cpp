@@ -109,8 +109,12 @@ void QGeoTileFetcher::requestNextTile()
         return;
 
     QGeoTileSpec ts = d->queue_.takeFirst();
+    if (d->queue_.isEmpty())
+        d->timer_.stop();
 
     QGeoTiledMapReply *reply = getTileImage(ts);
+    if (!reply)
+        return;
 
     if (reply->isFinished()) {
         handleReply(reply, ts);
@@ -123,9 +127,6 @@ void QGeoTileFetcher::requestNextTile()
 
         d->invmap_.insert(ts, reply);
     }
-
-    if (d->queue_.isEmpty())
-        d->timer_.stop();
 }
 
 void QGeoTileFetcher::finished()

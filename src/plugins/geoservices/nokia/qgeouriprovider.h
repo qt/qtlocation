@@ -64,9 +64,6 @@ private:
     bool isInternationalNetwork() const;
     void setCurrentHost(const QString &host);
 
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    QNetworkInfo *m_networkInfo;
-#endif
     const QString m_internationalHost;
     const QString m_localizedHost;
     QString m_currentHost;

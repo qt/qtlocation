@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,41 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#ifndef GEOCODINGMANAGERENGINEESRI_H
+#define GEOCODINGMANAGERENGINEESRI_H
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QGeoServiceProvider>
+#include <QGeoCodingManagerEngine>
+#include <QGeoCodeReply>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+class QNetworkAccessManager;
+
+class GeoCodingManagerEngineEsri : public QGeoCodingManagerEngine
 {
     Q_OBJECT
 
-    friend class QGeoTiledMapOsm;
 public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+    GeoCodingManagerEngineEsri(const QVariantMap &parameters, QGeoServiceProvider::Error *error,
+                               QString *errorString);
+    virtual ~GeoCodingManagerEngineEsri();
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+    QGeoCodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds) Q_DECL_OVERRIDE;
+    QGeoCodeReply *geocode(const QString &address, int limit, int offset,
+                           const QGeoShape &bounds) Q_DECL_OVERRIDE;
+    QGeoCodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
+                                  const QGeoShape &bounds) Q_DECL_OVERRIDE;
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
-
-protected:
-    void updateMapTypes();
+private Q_SLOTS:
+    void replyFinished();
+    void replyError(QGeoCodeReply::Error errorCode, const QString &errorString);
 
 private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
+    QNetworkAccessManager *m_networkManager;
+    QByteArray m_userAgent;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#endif // GEOCODINGMANAGERENGINEESRI_H

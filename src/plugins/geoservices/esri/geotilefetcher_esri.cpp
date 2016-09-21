@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,41 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#include "geotilefetcher_esri.h"
+#include "geotiledmappingmanagerengine_esri.h"
+#include "geotiledmapreply_esri.h"
 
-#include "qgeotileproviderosm.h"
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
 
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QtLocation/private/qgeotilespec_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+GeoTileFetcherEsri::GeoTileFetcherEsri(QObject *parent) :
+    QGeoTileFetcher(parent), m_networkManager(new QNetworkAccessManager(this)),
+    m_userAgent(QByteArrayLiteral("Qt Location based application"))
 {
-    Q_OBJECT
+}
 
-    friend class QGeoTiledMapOsm;
-public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+QGeoTiledMapReply *GeoTileFetcherEsri::getTileImage(const QGeoTileSpec &spec)
+{
+    QNetworkRequest request;
+    request.setHeader(QNetworkRequest::UserAgentHeader, userAgent());
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+    GeoTiledMappingManagerEngineEsri *engine = qobject_cast<GeoTiledMappingManagerEngineEsri *>(
+          parent());
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
+    GeoMapSource *mapSource = engine->mapSource(spec.mapId());
 
-protected:
-    void updateMapTypes();
+    if (!mapSource)
+        qWarning("Unknown mapId %d\n", spec.mapId());
+    else
+        request.setUrl(mapSource->url().arg(spec.zoom()).arg(spec.x()).arg(spec.y()));
 
-private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
-};
+    QNetworkReply *reply = m_networkManager->get(request);
+
+    return new GeoTiledMapReplyEsri(reply, spec);
+}
 
 QT_END_NAMESPACE
-
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H

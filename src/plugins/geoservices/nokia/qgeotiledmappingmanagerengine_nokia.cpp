@@ -95,11 +95,11 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     types << QGeoMapType(QGeoMapType::CarNavigationMap, tr("Car Navigation Map"), tr("Normal map view in daylight mode for car navigation"), false, false, 21);
     setSupportedMapTypes(types);
 
-    int ppi = 250;
+    int ppi = 72;
     if (parameters.contains(QStringLiteral("here.mapping.highdpi_tiles"))) {
         const QString param = parameters.value(QStringLiteral("here.mapping.highdpi_tiles")).toString().toLower();
-        if (param == "false")
-            ppi = 72;
+        if (param == "true")
+            ppi = 250;
     }
 
     QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(parameters, networkManager, this, tileSize(), ppi);

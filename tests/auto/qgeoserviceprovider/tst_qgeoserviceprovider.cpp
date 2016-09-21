@@ -65,13 +65,14 @@ void tst_QGeoServiceProvider::tst_availableServiceProvider()
     const QStringList provider = QGeoServiceProvider::availableServiceProviders();
 
     // Currently provided plugins
-    if (provider.count() != 7)
+    if (provider.count() != 8)
         qWarning() << provider;
-    QCOMPARE(provider.count(), 7);
+    QCOMPARE(provider.count(), 8);
     // these providers are deployed
     QVERIFY(provider.contains(QStringLiteral("mapbox")));
     QVERIFY(provider.contains(QStringLiteral("here")));
     QVERIFY(provider.contains(QStringLiteral("osm")));
+    QVERIFY(provider.contains(QStringLiteral("esri")));
     // these providers exist for unit tests only
     QVERIFY(provider.contains(QStringLiteral("geocode.test.plugin")));
     QVERIFY(provider.contains(QStringLiteral("georoute.test.plugin")));
@@ -124,6 +125,13 @@ void tst_QGeoServiceProvider::tst_features_data()
                                                                       | QGeoServiceProvider::ReverseGeocodingFeature)
                             << QGeoServiceProvider::RoutingFeatures(QGeoServiceProvider::OnlineRoutingFeature)
                             << QGeoServiceProvider::PlacesFeatures(QGeoServiceProvider::OnlinePlacesFeature);
+
+    QTest::newRow("esri")   << QString("esri")
+                            << QGeoServiceProvider::MappingFeatures(QGeoServiceProvider::OnlineMappingFeature)
+                            << QGeoServiceProvider::GeocodingFeatures(QGeoServiceProvider::OnlineGeocodingFeature
+                                                                      | QGeoServiceProvider::ReverseGeocodingFeature)
+                            << QGeoServiceProvider::RoutingFeatures(QGeoServiceProvider::OnlineRoutingFeature)
+                            << QGeoServiceProvider::PlacesFeatures(QGeoServiceProvider::NoPlacesFeatures);
 }
 
 void tst_QGeoServiceProvider::tst_features()

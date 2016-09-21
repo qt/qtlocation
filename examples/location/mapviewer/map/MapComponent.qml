@@ -377,7 +377,8 @@ Map {
         orientation : Qt.Vertical
         value: map.zoomLevel
         onValueChanged: {
-            map.zoomLevel = value
+            if (value >= 0)
+                map.zoomLevel = value
         }
     }
 

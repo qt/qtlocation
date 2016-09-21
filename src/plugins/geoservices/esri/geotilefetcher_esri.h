@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,57 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#ifndef GEOTILEFETCHERESRI_H
+#define GEOTILEFETCHERESRI_H
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QtLocation/private/qgeotilefetcher_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+class QGeoTiledMappingManagerEngine;
+class QNetworkAccessManager;
+
+class GeoTileFetcherEsri : public QGeoTileFetcher
 {
     Q_OBJECT
 
-    friend class QGeoTiledMapOsm;
 public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+    explicit GeoTileFetcherEsri(QObject *parent = Q_NULLPTR);
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+    inline const QByteArray &userAgent() const;
+    inline void setUserAgent(const QByteArray &userAgent);
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
-
-protected:
-    void updateMapTypes();
+    inline const QString &token() const;
+    inline void setToken(const QString &token);
 
 private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
+    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
+
+    QNetworkAccessManager *m_networkManager;
+    QByteArray m_userAgent;
+    QString m_token;
 };
+
+inline const QByteArray &GeoTileFetcherEsri::userAgent() const
+{
+    return m_userAgent;
+}
+
+inline void GeoTileFetcherEsri::setUserAgent(const QByteArray &userAgent)
+{
+    m_userAgent = userAgent;
+}
+
+inline const QString &GeoTileFetcherEsri::token() const
+{
+    return m_token;
+}
+
+inline void GeoTileFetcherEsri::setToken(const QString &token)
+{
+    m_token = token;
+}
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#endif // GEOTILEFETCHERESRI_H

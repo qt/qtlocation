@@ -104,6 +104,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
         \li "mapbox" -> \l {Qt Location Mapbox Plugin}{Mapbox service}
         \li "here" -> \l {Qt Location HERE Plugin}{HERE Services}
         \li "osm" -> \l {Qt Location Open Street Map Plugin}{OpenStreetMap Services}
+        \li "esri" -> \l {Qt Location Esri Plugin}{ESRI Services}
     \endlist
 
     Each service provider must follow a naming convention for their service specific

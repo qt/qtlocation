@@ -71,10 +71,13 @@ void QGeoTiledMapOsm::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
         return;
 
     int providerId = tile.mapId() - 1;
-    if (providerId < 0 || providerId >= m_engine->providers().size() || !m_engine->providers().at(providerId)->isValid())
+    if (providerId < 0 || providerId >= m_engine->providers().size())
         return;
 
     m_mapId = tile.mapId();
+    if (!m_engine->providers().at(providerId)->isValid())
+        return;
+
     onProviderDataUpdated(m_engine->providers().at(providerId));
 }
 

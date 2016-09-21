@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,42 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#ifndef GEOTILEDMAPPINGMANAGERENGINEESRI_H
+#define GEOTILEDMAPPINGMANAGERENGINEESRI_H
 
-#include "qgeotileproviderosm.h"
+#include <QGeoServiceProvider>
 
-#include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
 
-#include <QVector>
+#include "geomapsource.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+class GeoTiledMappingManagerEngineEsri : public QGeoTiledMappingManagerEngine
 {
     Q_OBJECT
 
-    friend class QGeoTiledMapOsm;
 public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
+    GeoTiledMappingManagerEngineEsri(const QVariantMap &parameters,
                                      QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+    virtual ~GeoTiledMappingManagerEngineEsri();
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+    QGeoMap *createMap() Q_DECL_OVERRIDE;
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
-
-protected:
-    void updateMapTypes();
+    inline const QList<GeoMapSource *>& mapSources() const;
+    GeoMapSource *mapSource(int mapId) const;
 
 private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
+    bool initializeMapSources(QGeoServiceProvider::Error *error, QString *errorString);
+
+    QList<GeoMapSource *> m_mapSources;
 };
+
+inline const QList<GeoMapSource *>& GeoTiledMappingManagerEngineEsri::mapSources() const
+{
+    return m_mapSources;
+}
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#endif // GEOTILEDMAPPINGMANAGERENGINEESRI_H

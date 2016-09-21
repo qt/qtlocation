@@ -63,7 +63,9 @@ a prefix.
 \row
     \li osm.useragent
     \li User agent string set when making network requests.  This parameter should be set to a
-        value that uniquely identifies the application.
+        value that uniquely identifies the application. Note that providers might block applications not setting this
+        parameter, leaving it to the stock plugin user agent (e.g., \l {http://wiki.openstreetmap.org/wiki/Nominatim_usage_policy}{Nominatim}
+        for geocoding)
 \row
     \li osm.mapping.custom.host
     \li Url string set when making network requests to the tile server.  This parameter should be set to a
@@ -89,6 +91,13 @@ a prefix.
     \li By default, the OpenStreetMap plugin retrieves the provider's information from a remote repository to avoid a loss of service due to unavailability of hardcoded services.
     The plugin, however, still contains fallback hardcoded provider data, in case the provider repository becomes unreachable.
     Setting this parameter to \b true makes the plugin use the hardcoded urls only and therefore prevents the plugin from fetching provider data from the remote repository.
+\row
+    \li osm.mapping.highdpi_tiles
+    \li Whether or not to request high dpi tiles. Valid values are \b true and \b false. The default value is \b false.
+    Please note that not all map types are available in high dpi. Setting this parameter to true might even have no effect if
+    no map type is available in high dpi at the moment. Provider information files for high dpi tiles are named
+    \tt{street-hires}, \tt{satellite-hires}, \tt{cycle-hires}, \tt{transit-hires}, \tt{night-transit-hires}, \tt{terrain-hires} and \tt{hiking-hires}.
+    These are fetched from the same location used for the low dpi counterparts.
 \row
     \li osm.routing.host
     \li Url string set when making network requests to the routing server.  This parameter should be set to a

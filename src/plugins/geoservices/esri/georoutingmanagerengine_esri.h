@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,40 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#ifndef GEOROUTINGMANAGERENGINEESRI_H
+#define GEOROUTINGMANAGERENGINEESRI_H
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QGeoServiceProvider>
+#include <QGeoRoutingManagerEngine>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+class QNetworkAccessManager;
+
+class GeoRoutingManagerEngineEsri : public QGeoRoutingManagerEngine
 {
     Q_OBJECT
 
-    friend class QGeoTiledMapOsm;
 public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+    GeoRoutingManagerEngineEsri(const QVariantMap &parameters, QGeoServiceProvider::Error *error,
+                                QString *errorString);
+    virtual ~GeoRoutingManagerEngineEsri();
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request) Q_DECL_OVERRIDE;
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
-
-protected:
-    void updateMapTypes();
+private Q_SLOTS:
+    void replyFinished();
+    void replyError(QGeoRouteReply::Error errorCode, const QString &errorString);
 
 private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
+    QString preferedDirectionLangage();
+    QString preferedDirectionsLengthUnits();
+
+    QNetworkAccessManager *m_networkManager;
+    QByteArray m_userAgent;
+    QString m_token;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#endif // GEOROUTINGMANAGERENGINEESRI_H

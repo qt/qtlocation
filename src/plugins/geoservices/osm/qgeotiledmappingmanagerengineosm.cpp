@@ -73,66 +73,93 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         domain = customAddress;
     }
 
-    m_providers.push_back(
-        new QGeoTileProviderOsm(domain + "street",
-            nm,
+    bool highdpi = false;
+    if (parameters.contains(QStringLiteral("osm.mapping.highdpi_tiles"))) {
+        const QString param = parameters.value(QStringLiteral("osm.mapping.highdpi_tiles")).toString().toLower();
+        if (param == "true")
+            highdpi = true;
+    }
+
+    /* TileProviders setup */
+    QVector<TileProvider *> providers_street;
+    QVector<TileProvider *> providers_satellite;
+    QVector<TileProvider *> providers_cycle;
+    QVector<TileProvider *> providers_transit;
+    QVector<TileProvider *> providers_nighttransit;
+    QVector<TileProvider *> providers_terrain;
+    QVector<TileProvider *> providers_hiking;
+    if (highdpi) {
+        providers_street.push_back(new TileProvider(domain + "street-hires"));
+        providers_satellite.push_back(new TileProvider(domain + "satellite-hires"));
+        providers_cycle.push_back(new TileProvider(domain + "cycle-hires"));
+        providers_transit.push_back(new TileProvider(domain + "transit-hires"));
+        providers_nighttransit.push_back(new TileProvider(domain + "night-transit-hires"));
+        providers_terrain.push_back(new TileProvider(domain + "terrain-hires"));
+        providers_hiking.push_back(new TileProvider(domain + "hiking-hires"));
+    }
+    providers_street.push_back(new TileProvider(domain + "street"));
+    providers_satellite.push_back(new TileProvider(domain + "satellite"));
+    providers_cycle.push_back(new TileProvider(domain + "cycle"));
+    providers_transit.push_back(new TileProvider(domain + "transit"));
+    providers_nighttransit.push_back(new TileProvider(domain + "night-transit"));
+    providers_terrain.push_back(new TileProvider(domain + "terrain"));
+    providers_hiking.push_back(new TileProvider(domain + "hiking"));
+    // Backups
+    providers_street.push_back(
+        new TileProvider(QStringLiteral("http://c.tile.openstreetmap.org/%z/%x/%y.png"),
+            QStringLiteral("png"),
+            QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap.org</a>"),
+            QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+    // No available satellite backup
+    providers_cycle.push_back(
+        new TileProvider(QStringLiteral("http://c.tile.opencyclemap.org/cycle/%z/%x/%y.png"),
+            QStringLiteral("png"),
+            QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+            QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+    providers_transit.push_back(
+        new TileProvider(QStringLiteral("http://c.tile2.opencyclemap.org/transport/%z/%x/%y.png"),
+            QStringLiteral("png"),
+            QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+            QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+    providers_nighttransit.push_back(
+        new TileProvider(QStringLiteral("http://a.tile.thunderforest.com/transport-dark/%z/%x/%y.png"),
+            QStringLiteral("png"),
+            QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+            QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")) );
+    providers_terrain.push_back(
+        new TileProvider(QStringLiteral("http://a.tile.thunderforest.com/landscape/%z/%x/%y.png"),
+            QStringLiteral("png"),
+            QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+            QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+    providers_hiking.push_back(
+        new TileProvider(QStringLiteral("http://a.tile.thunderforest.com/outdoors/%z/%x/%y.png"),
+            QStringLiteral("png"),
+            QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
+            QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")));
+
+
+    /* QGeoTileProviderOsms setup */
+    m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1),
-            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://c.tile.openstreetmap.org/%z/%x/%y.png"),
-                QStringLiteral("png"),
-                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap.org</a>"),
-                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
-            )));
-    m_providers.push_back(
-        new QGeoTileProviderOsm(domain + "satellite",
-            nm,
+            providers_street ));
+    m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2),
-            QGeoTileProviderOsm::TileProvider()
-            ));
-    m_providers.push_back(
-        new QGeoTileProviderOsm(domain + "cycle",
-            nm,
+            providers_satellite ));
+    m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3),
-            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://c.tile.opencyclemap.org/cycle/%z/%x/%y.png"),
-                QStringLiteral("png"),
-                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
-                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
-            )));
-    m_providers.push_back(
-        new QGeoTileProviderOsm(domain + "transit",
-            nm,
+            providers_cycle ));
+    m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Public transit map view in daylight mode"), false, false, 4),
-            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://c.tile2.opencyclemap.org/transport/%z/%x/%y.png"),
-                QStringLiteral("png"),
-                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
-                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
-            )));
-    m_providers.push_back(
-        new QGeoTileProviderOsm(domain + "night-transit",
-            nm,
+            providers_transit ));
+    m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5),
-            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://a.tile.thunderforest.com/transport-dark/%z/%x/%y.png"),
-                QStringLiteral("png"),
-                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
-                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
-            )));
-    m_providers.push_back(
-        new QGeoTileProviderOsm(domain + "terrain",
-            nm,
+            providers_nighttransit ));
+    m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6),
-            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://a.tile.thunderforest.com/landscape/%z/%x/%y.png"),
-                QStringLiteral("png"),
-                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
-                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
-            )));
-    m_providers.push_back(
-        new QGeoTileProviderOsm(domain + "hiking",
-            nm,
+            providers_terrain ));
+    m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7),
-            QGeoTileProviderOsm::TileProvider(QStringLiteral("http://a.tile.thunderforest.com/outdoors/%z/%x/%y.png"),
-                QStringLiteral("png"),
-                QStringLiteral("<a href='http://www.thunderforest.com/'>Thunderforest</a>"),
-                QStringLiteral("<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors")
-            )));
+            providers_hiking ));
 
     if (parameters.contains(QStringLiteral("osm.mapping.custom.host"))
             || parameters.contains(QStringLiteral("osm.mapping.host"))) {
@@ -154,14 +181,13 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
             m_customCopyright = parameters.value(QStringLiteral("osm.mapping.copyright")).toString();
 
         m_providers.push_back(
-            new QGeoTileProviderOsm("",
-                nm,
+            new QGeoTileProviderOsm( nm,
                 QGeoMapType(QGeoMapType::CustomMap, tr("Custom URL Map"), tr("Custom url map view set via urlprefix parameter"), false, false, 8),
-                QGeoTileProviderOsm::TileProvider(tmsServer + QStringLiteral("%z/%x/%y.png"),
+                { new TileProvider(tmsServer + QStringLiteral("%z/%x/%y.png"),
                     QStringLiteral("png"),
                     mapCopyright,
-                    dataCopyright
-                )));
+                    dataCopyright) }
+                ));
 
         m_providers.last()->disableRedirection();
    }
@@ -257,9 +283,8 @@ void QGeoTiledMappingManagerEngineOsm::onProviderResolutionFinished(const QGeoTi
     updateMapTypes();
 }
 
-void QGeoTiledMappingManagerEngineOsm::onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error)
+void QGeoTiledMappingManagerEngineOsm::onProviderResolutionError(const QGeoTileProviderOsm *provider)
 {
-    Q_UNUSED(error)
     if (!provider->isResolved())
         return;
     updateMapTypes();

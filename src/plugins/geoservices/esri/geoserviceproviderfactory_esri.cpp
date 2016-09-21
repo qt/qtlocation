@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#include "geoserviceproviderfactory_esri.h"
+#include "geotiledmappingmanagerengine_esri.h"
+#include "geocodingmanagerengine_esri.h"
+#include "georoutingmanagerengine_esri.h"
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+QGeoCodingManagerEngine *GeoServiceProviderFactoryEsri::createGeocodingManagerEngine(
+    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
-    Q_OBJECT
+    return new GeoCodingManagerEngineEsri(parameters, error, errorString);
+}
 
-    friend class QGeoTiledMapOsm;
-public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+QGeoMappingManagerEngine *GeoServiceProviderFactoryEsri::createMappingManagerEngine(
+    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    return new GeoTiledMappingManagerEngineEsri(parameters, error, errorString);
+}
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+QGeoRoutingManagerEngine *GeoServiceProviderFactoryEsri::createRoutingManagerEngine(
+    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    const QString token = parameters.value(QStringLiteral("esri.token")).toString();
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
+    if (!token.isEmpty()) {
+        return new GeoRoutingManagerEngineEsri(parameters, error, errorString);
+    } else {
+        *error = QGeoServiceProvider::MissingRequiredParameterError;
+        *errorString = tr("Esri plugin requires a 'esri.token' parameter.\n"
+                          "Please visit https://developers.arcgis.com/authentication/accessing-arcgis-online-services/");
+        return 0;
+    }
+}
 
-protected:
-    void updateMapTypes();
+QPlaceManagerEngine *GeoServiceProviderFactoryEsri::createPlaceManagerEngine(
+    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
 
-private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
-};
+    return Q_NULLPTR;
+}
 
 QT_END_NAMESPACE
-
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H

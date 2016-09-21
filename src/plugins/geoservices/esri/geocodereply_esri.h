@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2013-2016 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,46 +37,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINEOSM_H
-#define QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#ifndef GEOCODEREPLYESRI_H
+#define GEOCODEREPLYESRI_H
 
-#include "qgeotileproviderosm.h"
-
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
-
-#include <QVector>
+#include <QNetworkReply>
+#include <QGeoCodeReply>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerEngineOsm : public QGeoTiledMappingManagerEngine
+class GeoCodeReplyEsri : public QGeoCodeReply
 {
     Q_OBJECT
 
-    friend class QGeoTiledMapOsm;
 public:
-    QGeoTiledMappingManagerEngineOsm(const QVariantMap &parameters,
-                                     QGeoServiceProvider::Error *error, QString *errorString);
-    ~QGeoTiledMappingManagerEngineOsm();
+    enum OperationType
+    {
+        Geocode,
+        ReverseGeocode
+    };
 
-    QGeoMap *createMap();
-    const QVector<QGeoTileProviderOsm *> &providers();
-    QString customCopyright() const;
+public:
+    GeoCodeReplyEsri(QNetworkReply *reply, OperationType operationType, QObject *parent = Q_NULLPTR);
+    virtual ~GeoCodeReplyEsri();
 
-protected Q_SLOTS:
-    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
-    void onProviderResolutionError(const QGeoTileProviderOsm *provider);
+    void abort() Q_DECL_OVERRIDE;
 
-protected:
-    void updateMapTypes();
+    inline OperationType operationType() const;
+
+private Q_SLOTS:
+    void networkReplyFinished();
+    void networkReplyError(QNetworkReply::NetworkError error);
+
+    QGeoLocation parseAddress(const QJsonObject &object);
+    QGeoLocation parseCandidate(const QJsonObject &candidate);
 
 private:
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QString m_customCopyright;
-    QString m_cacheDirectory;
-    QString m_offlineDirectory;
+    QNetworkReply *m_reply;
+    OperationType m_operationType;
 };
+
+inline GeoCodeReplyEsri::OperationType GeoCodeReplyEsri::operationType() const
+{
+    return m_operationType;
+}
 
 QT_END_NAMESPACE
 
-#endif // QGEOTILEDMAPPINGMANAGERENGINEOSM_H
+#endif // GEOCODEREPLYESRI_H

@@ -661,9 +661,12 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
             delete node;
         } else {
             if (isTextureLinear != d->m_linearScaling) {
-                node->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
-                if (node->texture()->textureSize().width() > d->m_tileSize)
+                if (node->texture()->textureSize().width() > d->m_tileSize) {
+                    node->setFiltering(QSGTexture::Linear); // With mipmapping QSGTexture::Nearest generates artifacts
                     node->setMipmapFiltering(QSGTexture::Linear);
+                } else {
+                    node->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
+                }
                 dirtyBits |= QSGNode::DirtyMaterial;
             }
             if (dirtyBits != 0)
@@ -680,9 +683,12 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         // note: setTexture will update coordinates so do it here, before we buildGeometry
         tileNode->setTexture(textures.value(s));
         if (d->buildGeometry(s, tileNode) && qgeotiledmapscene_isTileInViewport(tileNode->rect(), root->matrix())) {
-            tileNode->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
-            if (tileNode->texture()->textureSize().width() > d->m_tileSize)
+            if (tileNode->texture()->textureSize().width() > d->m_tileSize) {
+                tileNode->setFiltering(QSGTexture::Linear); // with mipmapping QSGTexture::Nearest generates artifacts
                 tileNode->setMipmapFiltering(QSGTexture::Linear);
+            } else {
+                tileNode->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
+            }
             root->addChild(s, tileNode);
         } else {
             delete tileNode;

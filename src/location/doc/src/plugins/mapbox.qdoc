@@ -81,7 +81,7 @@ The following table lists optional parameters that can be passed to the Mapbox p
         Defaults to "png".
 \row
     \li mapbox.highdpi_tiles
-    \li Whether or not to request high dpi tiles. Valid values are \b true and \b false. The default value is \b true.
+    \li Whether or not to request high dpi tiles. Valid values are \b true and \b false. The default value is \b false.
 \row
     \li useragent
     \li User agent string set when making network requests.
