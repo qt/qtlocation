@@ -2,6 +2,7 @@ TARGET = qml_location_mapviewer
 TEMPLATE = app
 
 QT += qml network quick positioning location
+CONFIG += qtquickcompiler
 SOURCES += main.cpp
 
 RESOURCES += \
