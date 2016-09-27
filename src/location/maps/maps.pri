@@ -55,6 +55,10 @@ PRIVATE_HEADERS += \
                     maps/qgeotiledmapreply_p_p.h \
                     maps/qgeotilespec_p.h \
                     maps/qgeotilespec_p_p.h \
+                    maps/qgeorouteparser_p.h \
+                    maps/qgeorouteparser_p_p.h \
+                    maps/qgeorouteparserosrmv5_p.h \
+                    maps/qgeorouteparserosrmv4_p.h \
                     maps/qcache3q_p.h
 
 SOURCES += \
@@ -86,6 +90,12 @@ SOURCES += \
             maps/qgeofiletilecache.cpp \
             maps/qgeotiledmapreply.cpp \
             maps/qgeotilespec.cpp \
-            maps/qgeotiledmap.cpp
+            maps/qgeotiledmap.cpp \
+            maps/qgeorouteparser.cpp \
+            maps/qgeorouteparserosrmv5.cpp \
+            maps/qgeorouteparserosrmv4.cpp
+
+
+
 
 
