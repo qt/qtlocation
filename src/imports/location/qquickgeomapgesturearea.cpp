@@ -672,8 +672,13 @@ void QQuickGeoMapGestureArea::handleTouchUngrabEvent()
 void QQuickGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
 {
     m_touchPoints.clear();
-    for (int i = 0; i < event->touchPoints().count(); ++i)
-        m_touchPoints << event->touchPoints().at(i);
+    m_mousePoint.reset();
+
+    for (int i = 0; i < event->touchPoints().count(); ++i) {
+        auto point = event->touchPoints().at(i);
+        if (point.state() != Qt::TouchPointReleased)
+            m_touchPoints << point;
+    }
     if (event->touchPoints().count() >= 2)
         event->accept();
     else
