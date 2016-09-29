@@ -1277,6 +1277,7 @@ void QQuickGeoMapGestureArea::handleFlickAnimationStopped()
     if (m_flickState == flickActive) {
         m_flickState = flickInactive;
         emit flickFinished();
+        emit panActiveChanged();
         m_map->prefetchData();
     }
 }
