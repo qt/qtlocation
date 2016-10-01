@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-const QString ROUTING_HOST = QLatin1String("route.nlp.nokia.com");
+const QString ROUTING_HOST = QLatin1String("route.api.here.com");
 const QString GEOCODING_HOST = QLatin1String("loc.desktop.maps.svc.ovi.com");
 const QString GEOCODING_HOST_CN = QLatin1String("pr.geo.maps.svc.nokia.com.cn");
 const QString PLACES_HOST = QLatin1String("places.api.here.com");
