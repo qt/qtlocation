@@ -661,7 +661,7 @@ void QQuickGeoMapGestureArea::handleTouchUngrabEvent()
 {
         m_touchPoints.clear();
         //this is needed since in some cases mouse release is not delivered
-        //(second touch point brakes mouse synthesized events)
+        //(second touch point breaks mouse synthesized events)
         m_mousePoint.reset();
         update();
 }
