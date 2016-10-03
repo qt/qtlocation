@@ -52,7 +52,25 @@ The use of these services is governed by the \l {http://www.esri.com/legal/terms
 
 Data is provided by \l {http://www.esri.com/data/find-data}{many different content providers}.
 
-The Esri geo services plugin can be loaded by using the plugin key "esri".
+The Esri geoservices plugin can be loaded by using the plugin key "esri".
+
+To use the services provided by the Esri platform, a subscription is required. There are two kinds of subscriptions:
+
+\list
+    \li \l {https://developers.arcgis.com/plans/}{Developer Subscription}
+    \li \l {http://www.arcgis.com/features/plans/pricing.html}{ArcGIS Online Subscription}
+\endlist
+
+The Developer subscription offers a free-of-charge option for developing and testing your applications.
+With this, your applications can go to production under the following conditions:
+
+\list
+    \li The app can request up to one million maps per month, and one million geocodes per month.
+    \li The app does not directly generate revenue. That is, end users must be able to obtain it and to use it for free.
+\endlist
+
+If the above conditions cannot be met, the ArcGIS Online subscription is the correct choice, as it
+gives applications full access to the ArcGIS platform.
 
 \section1 Parameters
 
@@ -67,7 +85,8 @@ The Esri geo services plugin can be loaded by using the plugin key "esri".
     \li Security token for using routing services only. Mapping and geocoding services do not require a token.
 \endtable
 
-To use the routing services hosted on ArcGIS Online with the Esri plugin, a token is required. You can \l{https://developers.arcgis.com/authentication/accessing-arcgis-online-services/#registering-your-application}{obtain a token for testing purposes},
+To use the routing services hosted on ArcGIS Online with the Esri plugin, a token is required.
+You can \l{https://developers.arcgis.com/authentication/accessing-arcgis-online-services/#registering-your-application}{obtain a token for testing purposes},
 or you can sign up for an \l {http://www.arcgis.com/features/plans/pricing.html}{ArcGIS Online subscription}.
 
 \section2 Optional parameters
