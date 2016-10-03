@@ -1012,11 +1012,6 @@ void QQuickGeoMapGestureArea::updatePinch()
                 // Add to starting zoom level. Sign of (dist-pinchstartdist) takes care of zoom in / out
                 m_pinch.m_zoom.m_start;
     }
-    qreal da = m_pinch.m_lastAngle - m_twoTouchAngle;
-    if (da > 180)
-        da -= 360;
-    else if (da < -180)
-        da += 360;
     m_pinch.m_event.setCenter(mapFromScene(m_sceneCenter));
     m_pinch.m_event.setAngle(m_twoTouchAngle);
 
