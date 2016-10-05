@@ -198,18 +198,14 @@ float QDeclarativeGeoMapItemBase::zoomLevelOpacity() const
 bool QDeclarativeGeoMapItemBase::childMouseEventFilter(QQuickItem *item, QEvent *event)
 {
     Q_UNUSED(item)
-    switch (event->type()) {
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-        if (contains(static_cast<QMouseEvent*>(event)->pos())) {
-            return false;
-        } else {
-            event->setAccepted(false);
-            return true;
-        }
-    default:
-        return false;
+    if (event->type() == QEvent::MouseButtonPress && !contains(static_cast<QMouseEvent*>(event)->pos())) {
+        // This is an evil hack: in case of items that are not rectangles, we never accept the event.
+        // Instead the events are now delivered to QDeclarativeGeoMapItemBase which doesn't to anything with them.
+        // The map below it still works since it filters events and steals the events at some point.
+        event->setAccepted(false);
+        return true;
     }
+    return false;
 }
 
 /*!
