@@ -68,7 +68,7 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCacheOsm::get(const QGeoTileSpec &sp
     QSharedPointer<QGeoTileTexture> tt = getFromMemory(spec);
     if (tt)
         return tt;
-    if (tt = getFromOfflineStorage(spec))
+    if ((tt = getFromOfflineStorage(spec)))
         return tt;
     return getFromDisk(spec);
 }
