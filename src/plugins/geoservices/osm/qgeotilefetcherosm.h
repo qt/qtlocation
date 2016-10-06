@@ -75,7 +75,7 @@ protected Q_SLOTS:
     void restartTimer();
 
 private:
-    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
+    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
     void readyUpdated();
 
     QByteArray m_userAgent;
