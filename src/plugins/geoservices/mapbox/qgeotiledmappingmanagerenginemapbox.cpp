@@ -113,7 +113,7 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
 
     int scaleFactor = 1;
     if (parameters.contains(QStringLiteral("mapbox.mapping.highdpi_tiles"))) {
-        const QString param = parameters.value(QStringLiteral("mapbox.highdpi_tiles")).toString().toLower();
+        const QString param = parameters.value(QStringLiteral("mapbox.mapping.highdpi_tiles")).toString().toLower();
         if (param == "true")
             scaleFactor = 2;
     }
