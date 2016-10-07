@@ -41,6 +41,7 @@
 #include <QDebug>
 #include <QMap>
 #include <QtGlobal>
+#include <QtCore/private/qjnihelpers_p.h>
 #include <android/log.h>
 #include <jni.h>
 #include <QGeoPositionInfo>
@@ -367,6 +368,20 @@ namespace AndroidPositioning {
         QGeoPositionInfoSourceAndroid *source = AndroidPositioning::idToPosSource()->value(androidClassKey);
 
         if (source) {
+            // Android v23+ requires runtime permission check and requests
+            QString permission(QLatin1String("android.permission.ACCESS_FINE_LOCATION"));
+
+            if (QtAndroidPrivate::checkPermission(permission) == QtAndroidPrivate::PermissionsResult::Denied) {
+                const QHash<QString, QtAndroidPrivate::PermissionsResult> results =
+                        QtAndroidPrivate::requestPermissionsSync(env.jniEnv, QStringList() << permission);
+                if (!results.contains(permission)
+                    || results[permission] == QtAndroidPrivate::PermissionsResult::Denied)
+                {
+                    qWarning() << "Position retrieval not possible due to missing permission (ACCESS_FINE_LOCATION)";
+                    return QGeoPositionInfoSource::AccessError;
+                }
+            }
+
             int errorCode = env.jniEnv->CallStaticIntMethod(positioningClass, startUpdatesMethodId,
                                              androidClassKey,
                                              positioningMethodToInt(source->preferredPositioningMethods()),
@@ -404,6 +419,20 @@ namespace AndroidPositioning {
         QGeoPositionInfoSourceAndroid *source = AndroidPositioning::idToPosSource()->value(androidClassKey);
 
         if (source) {
+            // Android v23+ requires runtime permission check and requests
+            QString permission(QLatin1String("android.permission.ACCESS_FINE_LOCATION"));
+
+            if (QtAndroidPrivate::checkPermission(permission) == QtAndroidPrivate::PermissionsResult::Denied) {
+                const QHash<QString, QtAndroidPrivate::PermissionsResult> results =
+                        QtAndroidPrivate::requestPermissionsSync(env.jniEnv, QStringList() << permission);
+                if (!results.contains(permission)
+                    || results[permission] == QtAndroidPrivate::PermissionsResult::Denied)
+                {
+                    qWarning() << "Position update not possible due to missing permission (ACCESS_FINE_LOCATION)";
+                    return QGeoPositionInfoSource::AccessError;
+                }
+            }
+
             int errorCode = env.jniEnv->CallStaticIntMethod(positioningClass, requestUpdateMethodId,
                                              androidClassKey,
                                              positioningMethodToInt(source->preferredPositioningMethods()));

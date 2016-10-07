@@ -393,7 +393,6 @@ void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 {
     if (isInteractive()) {
         m_gestureArea->handleMouseReleaseEvent(event);
-        ungrabMouse();
     } else {
         QQuickItem::mouseReleaseEvent(event);
     }
@@ -1112,10 +1111,6 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
 {
     if (isInteractive()) {
         m_gestureArea->handleTouchEvent(event);
-        if ( event->type() == QEvent::TouchEnd ||
-             event->type() == QEvent::TouchCancel) {
-            ungrabTouchPoints();
-        }
     } else {
         //ignore event so sythesized event is generated;
         QQuickItem::touchEvent(event);
@@ -1486,11 +1481,6 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
         }
     }
 
-    if (event->type() == QEvent::MouseButtonRelease) {
-        if (win && win->mouseGrabberItem() == this)
-            ungrabMouse();
-    }
-
     return false;
 }
 
@@ -1538,11 +1528,6 @@ bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
         }
     }
 
-    if (event->type() == QEvent::TouchEnd) {
-        if (touchPointGrabberItem(point) == this) {
-            ungrabTouchPoints();
-        }
-    }
     return false;
 }
 

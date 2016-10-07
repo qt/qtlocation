@@ -1,13 +1,3 @@
-/*!
-\page legal-clipper.html
-\title Clipper Polygon Clipping Library
-\ingroup licensing
-
-\legalese
-\code
-Clipper Copyright Angus Johnson 2010-2014
-http://www.angusj.com
-
 Use, modification & distribution is subject to Boost Software License Ver 1.
 http://www.boost.org/LICENSE_1_0.txt
 
@@ -29,6 +19,3 @@ ASME 2005 International Design Engineering Technical Conferences
 and Computers and Information in Engineering Conference (IDETC/CIE2005)
 September 24-28, 2005 , Long Beach, California, USA
 http://www.me.berkeley.edu/~mcmains/pubs/DAC05OffsetPolygon.pdf
-\endcode
-\endlegalese
-*/

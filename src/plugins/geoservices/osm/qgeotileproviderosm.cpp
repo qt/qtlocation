@@ -113,6 +113,13 @@ int QGeoTileProviderOsm::maximumZoomLevel() const
     return m_provider->maximumZoomLevel();
 }
 
+bool QGeoTileProviderOsm::isHighDpi() const
+{
+    if (!m_provider)
+        return false;
+    return m_provider->isHighDpi();
+}
+
 const QGeoMapType &QGeoTileProviderOsm::mapType() const
 {
     return m_mapType;
@@ -183,8 +190,9 @@ void QGeoTileProviderOsm::onResolutionError(TileProvider *provider)
                 m_provider = p;
                 if (!p->isValid()) {
                     m_status = Idle;
-                    //m_status = Resolving;
-                    //p->resolveProvider();
+//                    m_status = Resolving;
+//                    p->resolveProvider();
+                    emit resolutionRequired();
                 }
                 break;
             }
@@ -230,12 +238,13 @@ static void sort2(int &a, int &b)
     }
 }
 
-TileProvider::TileProvider() : m_status(Invalid), m_nm(nullptr)
+TileProvider::TileProvider() : m_status(Invalid), m_nm(nullptr), m_highDpi(false)
 {
 
 }
 
-TileProvider::TileProvider(const QUrl &urlRedirector) : m_status(Idle), m_urlRedirector(urlRedirector), m_nm(nullptr)
+TileProvider::TileProvider(const QUrl &urlRedirector, bool highDpi)
+:   m_status(Idle), m_urlRedirector(urlRedirector), m_nm(nullptr), m_highDpi(highDpi)
 {
     if (!m_urlRedirector.isValid())
         m_status = Invalid;
@@ -245,11 +254,12 @@ TileProvider::TileProvider(const QString &urlTemplate,
                            const QString &format,
                            const QString &copyRightMap,
                            const QString &copyRightData,
+                           bool highDpi,
                            int minimumZoomLevel,
                            int maximumZoomLevel)
 :   m_status(Invalid), m_nm(nullptr), m_urlTemplate(urlTemplate),
     m_format(format), m_copyRightMap(copyRightMap), m_copyRightData(copyRightData),
-    m_minimumZoomLevel(minimumZoomLevel), m_maximumZoomLevel(maximumZoomLevel)
+    m_minimumZoomLevel(minimumZoomLevel), m_maximumZoomLevel(maximumZoomLevel), m_highDpi(highDpi)
 {
     setupProvider();
 }
@@ -299,7 +309,7 @@ void TileProvider::handleError(QNetworkReply::NetworkError error)
         // prevent accessing the redirection info but not the actual providers.
         m_status = Invalid;
     default:
-        qWarning() << "QGeoTileProviderOsm network error:" << error;
+        //qWarning() << "QGeoTileProviderOsm network error:" << error;
         break;
     }
 }
@@ -541,6 +551,11 @@ int TileProvider::minimumZoomLevel() const
 int TileProvider::maximumZoomLevel() const
 {
     return m_maximumZoomLevel;
+}
+
+bool TileProvider::isHighDpi() const
+{
+    return m_highDpi;
 }
 
 void TileProvider::setStyleCopyRight(const QString &copyright)

@@ -89,13 +89,13 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     QVector<TileProvider *> providers_terrain;
     QVector<TileProvider *> providers_hiking;
     if (highdpi) {
-        providers_street.push_back(new TileProvider(domain + "street-hires"));
-        providers_satellite.push_back(new TileProvider(domain + "satellite-hires"));
-        providers_cycle.push_back(new TileProvider(domain + "cycle-hires"));
-        providers_transit.push_back(new TileProvider(domain + "transit-hires"));
-        providers_nighttransit.push_back(new TileProvider(domain + "night-transit-hires"));
-        providers_terrain.push_back(new TileProvider(domain + "terrain-hires"));
-        providers_hiking.push_back(new TileProvider(domain + "hiking-hires"));
+        providers_street.push_back(new TileProvider(domain + "street-hires", true));
+        providers_satellite.push_back(new TileProvider(domain + "satellite-hires", true));
+        providers_cycle.push_back(new TileProvider(domain + "cycle-hires", true));
+        providers_transit.push_back(new TileProvider(domain + "transit-hires", true));
+        providers_nighttransit.push_back(new TileProvider(domain + "night-transit-hires", true));
+        providers_terrain.push_back(new TileProvider(domain + "terrain-hires", true));
+        providers_hiking.push_back(new TileProvider(domain + "hiking-hires", true));
     }
     providers_street.push_back(new TileProvider(domain + "street"));
     providers_satellite.push_back(new TileProvider(domain + "satellite"));
@@ -226,7 +226,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     if (parameters.contains(QStringLiteral("osm.mapping.offline.directory")))
         m_offlineDirectory = parameters.value(QStringLiteral("osm.mapping.offline.directory")).toString();
 
-    QAbstractGeoTileCache *tileCache = new QGeoFileTileCacheOsm(m_offlineDirectory, m_cacheDirectory);
+    QAbstractGeoTileCache *tileCache = new QGeoFileTileCacheOsm(m_providers, m_offlineDirectory, m_cacheDirectory);
 
     // 50mb of disk cache by default to minimize n. of accesses to public OSM servers
     tileCache->setMaxDiskUsage(50 * 1024 * 1024);
@@ -263,7 +263,10 @@ QGeoTiledMappingManagerEngineOsm::~QGeoTiledMappingManagerEngineOsm()
 
 QGeoMap *QGeoTiledMappingManagerEngineOsm::createMap()
 {
-    return new QGeoTiledMapOsm(this);
+    QGeoTiledMap *map = new QGeoTiledMapOsm(this);
+    connect(qobject_cast<QGeoFileTileCacheOsm *>(tileCache()), &QGeoFileTileCacheOsm::mapDataUpdated
+            , map, &QGeoTiledMap::clearScene);
+    return map;
 }
 
 const QVector<QGeoTileProviderOsm *> &QGeoTiledMappingManagerEngineOsm::providers()

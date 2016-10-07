@@ -43,6 +43,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtLocation/private/qgeotilespec_p.h>
+#include <QtLocation/private/qgeotilefetcher_p_p.h>
 
 
 QT_BEGIN_NAMESPACE
@@ -55,10 +56,30 @@ static bool providersResolved(const QVector<QGeoTileProviderOsm *> &providers)
     return true;
 }
 
+class QGeoTileFetcherOsmPrivate : public QGeoTileFetcherPrivate
+{
+    Q_DECLARE_PUBLIC(QGeoTileFetcherOsm)
+public:
+    QGeoTileFetcherOsmPrivate();
+    virtual ~QGeoTileFetcherOsmPrivate();
+
+private:
+    Q_DISABLE_COPY(QGeoTileFetcherOsmPrivate)
+};
+
+QGeoTileFetcherOsmPrivate::QGeoTileFetcherOsmPrivate() : QGeoTileFetcherPrivate()
+{
+}
+
+QGeoTileFetcherOsmPrivate::~QGeoTileFetcherOsmPrivate()
+{
+}
+
+
 QGeoTileFetcherOsm::QGeoTileFetcherOsm(const QVector<QGeoTileProviderOsm *> &providers,
                                        QNetworkAccessManager *nm,
                                        QObject *parent)
-:   QGeoTileFetcher(parent), m_userAgent("Qt Location based application"),
+:   QGeoTileFetcher(*new QGeoTileFetcherOsmPrivate(), parent), m_userAgent("Qt Location based application"),
     m_providers(providers), m_nm(nm), m_ready(true)
 {
     m_nm->setParent(this);
@@ -69,6 +90,8 @@ QGeoTileFetcherOsm::QGeoTileFetcherOsm(const QVector<QGeoTileProviderOsm *> &pro
                     this, &QGeoTileFetcherOsm::onProviderResolutionFinished);
             connect(provider, &QGeoTileProviderOsm::resolutionError,
                     this, &QGeoTileFetcherOsm::onProviderResolutionError);
+            connect(provider, &QGeoTileProviderOsm::resolutionRequired,
+                    this, &QGeoTileFetcherOsm::restartTimer, Qt::QueuedConnection);
             provider->resolveProvider();
         }
     }
@@ -107,6 +130,14 @@ void QGeoTileFetcherOsm::onProviderResolutionError(const QGeoTileProviderOsm *pr
         readyUpdated();
     }
     emit providerDataUpdated(provider);
+}
+
+void QGeoTileFetcherOsm::restartTimer()
+{
+    Q_D(QGeoTileFetcherOsm);
+
+    if (!d->queue_.isEmpty())
+        d->timer_.start(0, this);
 }
 
 QGeoTiledMapReply *QGeoTileFetcherOsm::getTileImage(const QGeoTileSpec &spec)

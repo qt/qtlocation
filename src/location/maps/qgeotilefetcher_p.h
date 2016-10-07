@@ -65,6 +65,7 @@ class QGeoTileSpec;
 class Q_LOCATION_EXPORT QGeoTileFetcher : public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QGeoTileFetcher)
 
 public:
     QGeoTileFetcher(QObject *parent = 0);
@@ -83,19 +84,18 @@ Q_SIGNALS:
     void tileError(const QGeoTileSpec &spec, const QString &errorString);
 
 protected:
+    QGeoTileFetcher(QGeoTileFetcherPrivate &dd, QObject *parent = 0);
+
     void timerEvent(QTimerEvent *event);
     QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
     virtual bool initialized() const;
 
 private:
-    QGeoTileFetcherPrivate *d_ptr;
 
     virtual QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) = 0;
     void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
 
-    Q_DECLARE_PRIVATE(QGeoTileFetcher)
     Q_DISABLE_COPY(QGeoTileFetcher)
-
     friend class QGeoTiledMappingManagerEngine;
 };
 

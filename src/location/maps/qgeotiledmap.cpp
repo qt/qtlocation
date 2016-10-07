@@ -116,6 +116,13 @@ void QGeoTiledMap::clearData()
     d->m_mapScene->clearTexturedTiles();
 }
 
+void QGeoTiledMap::clearScene(int mapId)
+{
+    Q_D(QGeoTiledMap);
+    if (activeMapType().mapId() == mapId)
+        d->clearScene();
+}
+
 void QGeoTiledMap::handleTileVersionChanged()
 {
     Q_D(QGeoTiledMap);
@@ -293,6 +300,11 @@ void QGeoTiledMapPrivate::prefetchTiles()
     }
 }
 
+QGeoMapType QGeoTiledMapPrivate::activeMapType()
+{
+    return m_visibleTiles->activeMapType();
+}
+
 void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &cameraData)
 {
     Q_Q(QGeoTiledMap);
@@ -353,6 +365,13 @@ void QGeoTiledMapPrivate::changeTileVersion(int version)
 {
     m_visibleTiles->setMapVersion(version);
     m_prefetchTiles->setMapVersion(version);
+    updateScene();
+}
+
+void QGeoTiledMapPrivate::clearScene()
+{
+    m_mapScene->clearTexturedTiles();
+    m_mapScene->setVisibleTiles(QSet<QGeoTileSpec>());
     updateScene();
 }
 

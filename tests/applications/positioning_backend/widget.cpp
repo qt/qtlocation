@@ -71,6 +71,16 @@ void Widget::positionUpdated(QGeoPositionInfo gpsPos)
         ui->labelVAccuracy->setText(QString::number(gpsPos.attribute(QGeoPositionInfo::VerticalAccuracy)));
     else
         ui->labelVAccuracy->setText(QStringLiteral("N/A"));
+
+    if (gpsPos.hasAttribute(QGeoPositionInfo::Direction))
+        ui->labelDirection->setText(QString::number(gpsPos.attribute(QGeoPositionInfo::Direction)));
+    else
+        ui->labelDirection->setText(QStringLiteral("N/A"));
+
+    if (gpsPos.hasAttribute(QGeoPositionInfo::GroundSpeed))
+        ui->labelSpeed->setText(QString::number(gpsPos.attribute(QGeoPositionInfo::GroundSpeed)));
+    else
+        ui->labelSpeed->setText(QStringLiteral("N/A"));
 }
 
 void Widget::positionTimedOut()

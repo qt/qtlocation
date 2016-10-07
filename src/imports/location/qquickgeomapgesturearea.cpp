@@ -661,7 +661,7 @@ void QQuickGeoMapGestureArea::handleTouchUngrabEvent()
 {
         m_touchPoints.clear();
         //this is needed since in some cases mouse release is not delivered
-        //(second touch point brakes mouse synthesized events)
+        //(second touch point breaks mouse synthesized events)
         m_mousePoint.reset();
         update();
 }
@@ -672,8 +672,13 @@ void QQuickGeoMapGestureArea::handleTouchUngrabEvent()
 void QQuickGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
 {
     m_touchPoints.clear();
-    for (int i = 0; i < event->touchPoints().count(); ++i)
-        m_touchPoints << event->touchPoints().at(i);
+    m_mousePoint.reset();
+
+    for (int i = 0; i < event->touchPoints().count(); ++i) {
+        auto point = event->touchPoints().at(i);
+        if (point.state() != Qt::TouchPointReleased)
+            m_touchPoints << point;
+    }
     if (event->touchPoints().count() >= 2)
         event->accept();
     else
@@ -1012,11 +1017,6 @@ void QQuickGeoMapGestureArea::updatePinch()
                 // Add to starting zoom level. Sign of (dist-pinchstartdist) takes care of zoom in / out
                 m_pinch.m_zoom.m_start;
     }
-    qreal da = m_pinch.m_lastAngle - m_twoTouchAngle;
-    if (da > 180)
-        da -= 360;
-    else if (da < -180)
-        da += 360;
     m_pinch.m_event.setCenter(mapFromScene(m_sceneCenter));
     m_pinch.m_event.setAngle(m_twoTouchAngle);
 
@@ -1277,6 +1277,7 @@ void QQuickGeoMapGestureArea::handleFlickAnimationStopped()
     if (m_flickState == flickActive) {
         m_flickState = flickInactive;
         emit flickFinished();
+        emit panActiveChanged();
         m_map->prefetchData();
     }
 }

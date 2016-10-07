@@ -46,20 +46,28 @@
 QT_BEGIN_NAMESPACE
 
 QGeoTileFetcher::QGeoTileFetcher(QObject *parent)
-:   QObject(parent), d_ptr(new QGeoTileFetcherPrivate)
+:   QObject(*new QGeoTileFetcherPrivate(), parent)
 {
     Q_D(QGeoTileFetcher);
 
     d->enabled_ = true;
 
-    if (!d->queue_.isEmpty())
-        d->timer_.start(0, this);
+//    if (!d->queue_.isEmpty())
+//        d->timer_.start(0, this);
+}
+
+QGeoTileFetcher::QGeoTileFetcher(QGeoTileFetcherPrivate &dd, QObject *parent)
+:   QObject(dd,parent)
+{
+    Q_D(QGeoTileFetcher);
+    d->enabled_ = true;
+
+//    if (!d->queue_.isEmpty())
+//        d->timer_.start(0, this);
 }
 
 QGeoTileFetcher::~QGeoTileFetcher()
 {
-
-    delete d_ptr;
 }
 
 void QGeoTileFetcher::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded,
@@ -194,7 +202,7 @@ void QGeoTileFetcher::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &
 *******************************************************************************/
 
 QGeoTileFetcherPrivate::QGeoTileFetcherPrivate()
-:   enabled_(false)
+:   QObjectPrivate(), enabled_(false)
 {
 }
 

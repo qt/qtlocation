@@ -1,6 +1,11 @@
 TARGET = QtLocation
 QT = core-private positioning-private
 
+android {
+    # adding qtconcurrent dependency here for the osm plugin
+    QT += concurrent
+}
+
 MODULE_PLUGIN_TYPES = \
     geoservices
 
@@ -10,6 +15,9 @@ OTHER_FILES += doc/src/*.qdoc   # show .qdoc files in Qt Creator
 PUBLIC_HEADERS += \
                     qlocation.h \
                     qlocationglobal.h
+
+PRIVATE_HEADERS += \
+                    qlocationglobal_p.h
 
 SOURCES += \
            qlocation.cpp

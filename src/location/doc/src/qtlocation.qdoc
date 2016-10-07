@@ -184,4 +184,16 @@ Qt Location available for a new platform.
         \li Information about QML API changes since 5.4
 \endtable
 
+    \section1 Licenses and Attributions
+
+    Qt Location is available under commercial licenses from \l{The Qt Company}.
+    In addition, it is available under the
+    \l{GNU Lesser General Public License, version 3}, or
+    the \l{GNU General Public License, version 2}.
+    See \l{Qt Licensing} for further details.
+
+    Furthermore Qt Location potentially contains third party
+    modules under following permissive licenses:
+
+    \generatelist{groupsbymodule attributions-qtlocation}
 */

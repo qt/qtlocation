@@ -96,6 +96,9 @@ public:
     void prefetchData() Q_DECL_OVERRIDE;
     void clearData() Q_DECL_OVERRIDE;
 
+public Q_SLOTS:
+    virtual void clearScene(int mapId);
+
 protected:
     QSGNode *updateSceneGraph(QSGNode *, QQuickWindow *window) Q_DECL_OVERRIDE;
     virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);

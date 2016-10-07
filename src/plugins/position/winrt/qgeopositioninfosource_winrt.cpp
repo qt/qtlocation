@@ -486,6 +486,17 @@ HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPo
         currentInfo.setAttribute(QGeoPositionInfo::GroundSpeed, value);
     }
 
+    IReference<double> *heading;
+    hr = coord.Get()->get_Heading(&heading);
+    if (SUCCEEDED(hr) && heading) {
+        double value;
+        hr = heading->get_Value(&value);
+        double mod = 360;
+        value = modf(value, &mod);
+        if (value >=0 && value <= 359) // get_Value might return nan/-nan
+            currentInfo.setAttribute(QGeoPositionInfo::Direction, value);
+    }
+
     currentInfo.setTimestamp(QDateTime::currentDateTime());
 
     emit nativePositionUpdate(currentInfo);

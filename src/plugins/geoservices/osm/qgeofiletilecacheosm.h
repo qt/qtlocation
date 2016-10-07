@@ -37,6 +37,7 @@
 #ifndef QGEOFILETILECACHEOSM_H
 #define QGEOFILETILECACHEOSM_H
 
+#include "qgeotileproviderosm.h"
 #include <QtLocation/private/qgeofiletilecache_p.h>
 #include <QHash>
 #include <QtConcurrent>
@@ -48,14 +49,24 @@ class QGeoFileTileCacheOsm : public QGeoFileTileCache
 {
     Q_OBJECT
 public:
-    QGeoFileTileCacheOsm(const QString &offlineDirectory = QString(), const QString &directory = QString(), QObject *parent = 0);
+    QGeoFileTileCacheOsm(const QVector<QGeoTileProviderOsm *> &providers, const QString &offlineDirectory = QString(), const QString &directory = QString(), QObject *parent = 0);
     ~QGeoFileTileCacheOsm();
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
 
+Q_SIGNALS:
+    void mapDataUpdated(int mapId);
+
+protected Q_SLOTS:
+    void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
+
 protected:
     void init() Q_DECL_OVERRIDE;
+    QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const Q_DECL_OVERRIDE;
+    QGeoTileSpec filenameToTileSpec(const QString &filename) const Q_DECL_OVERRIDE;
     QSharedPointer<QGeoTileTexture> getFromOfflineStorage(const QGeoTileSpec &spec);
+    void dropTiles(int mapId);
+    void loadTiles(int mapId);
 
     void initOfflineRegistry();
 
@@ -64,6 +75,8 @@ protected:
     QAtomicInt m_requestCancel;
     QFuture<void> m_future;
     QMutex storageLock;
+    QVector<QGeoTileProviderOsm *> m_providers;
+    QVector<bool> m_highDpi;
 };
 
 QT_END_NAMESPACE

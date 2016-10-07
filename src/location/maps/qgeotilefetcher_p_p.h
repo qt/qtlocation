@@ -48,6 +48,8 @@
 // We mean it.
 //
 
+#include <QtCore/private/qobject_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QSize>
 #include <QList>
 #include <QMap>
@@ -64,8 +66,9 @@ class QGeoTileSpec;
 class QGeoTiledMapReply;
 class QGeoTiledMappingManagerEngine;
 
-class QGeoTileFetcherPrivate
+class Q_LOCATION_PRIVATE_EXPORT QGeoTileFetcherPrivate : public QObjectPrivate
 {
+    Q_DECLARE_PUBLIC(QGeoTileFetcher)
 public:
     QGeoTileFetcherPrivate();
     virtual ~QGeoTileFetcherPrivate();
