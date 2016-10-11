@@ -107,7 +107,6 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QGeoMap)
-    friend class QGeoMapController; //setCameraData
     friend class QDeclarativeGeoMap; //updateSceneGraph
 };
 

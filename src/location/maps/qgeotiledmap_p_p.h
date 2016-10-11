@@ -47,6 +47,7 @@
 // We mean it.
 //
 
+#include "qlocationglobal_p.h"
 #include "qgeomap_p_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
@@ -66,7 +67,7 @@ class QGeoTileSpec;
 class QSGNode;
 class QQuickWindow;
 
-class QGeoTiledMapPrivate : public QGeoMapPrivate
+class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapPrivate : public QGeoMapPrivate
 {
     Q_DECLARE_PUBLIC(QGeoTiledMap)
 public:

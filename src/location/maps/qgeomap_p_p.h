@@ -47,6 +47,7 @@
 // We mean it.
 //
 
+#include "qlocationglobal_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
 #include <QtCore/private/qobject_p.h>
@@ -59,7 +60,7 @@ class QGeoMappingManagerEngine;
 class QGeoMap;
 class QGeoMapController;
 
-class QGeoMapPrivate :  public QObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QGeoMap)
 public:
@@ -67,14 +68,14 @@ public:
     virtual ~QGeoMapPrivate();
 
 protected:
-    virtual void changeMapSize(const QSize &size) = 0;
-    virtual void changeCameraData(const QGeoCameraData &cameraData) = 0;
-    virtual void changeActiveMapType(const QGeoMapType mapType) = 0;
+    /* Hooks into the actual map implementations */
+    virtual void changeMapSize(const QSize &size) = 0; // called by QGeoMap::setSize()
+    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
+    virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()
 
 protected:
     QSize m_size;
     QPointer<QGeoMappingManagerEngine> m_engine;
-    QGeoMapController *m_controller;
     QGeoCameraData m_cameraData;
     QGeoMapType m_activeMapType;
 };
