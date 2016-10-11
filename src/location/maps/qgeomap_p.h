@@ -49,6 +49,7 @@
 
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtCore/QObject>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
@@ -58,7 +59,6 @@ QT_BEGIN_NAMESPACE
 class QGeoMappingManagerEngine;
 class QGeoMapPrivate;
 class QGeoMapController;
-class QGeoCameraCapabilities;
 class QGeoCoordinate;
 class QSGNode;
 class QQuickWindow;
@@ -87,7 +87,7 @@ public:
 
     // returns the minimum zoom at the current viewport size
     double minimumZoom() const;
-    double maximumCenterLatitudeAtZoom(double zoomLevel) const;
+    double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const;
 
     // returns the size of the underlying map, at the current zoom level. Unrelated to width()/height()/size().
     double mapWidth() const;

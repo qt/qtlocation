@@ -35,7 +35,6 @@
 ****************************************************************************/
 
 #include "qdeclarativegeoserviceprovider_p.h"
-
 #include <QtQml/QQmlInfo>
 
 QT_BEGIN_NAMESPACE
@@ -421,7 +420,7 @@ void QDeclarativeGeoServiceProvider::setPreferred(const QStringList &val)
 /*!
     \qmlproperty bool Plugin::isAttached
 
-    This property indicates if the Plugin is attached to another Plugin.
+    This property indicates if the Plugin item is attached to a geoservice provider plugin.
 */
 bool QDeclarativeGeoServiceProvider::isAttached() const
 {

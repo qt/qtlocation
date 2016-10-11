@@ -62,6 +62,7 @@ public:
     bool supportsTilting_;
 
     // this is mutable so that it can be set from accessor functions that are const
+    // TODO: remove the mutable here
     mutable bool valid_;
 
     double minZoom_;
@@ -94,6 +95,7 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCap
       minTilt_(other.minTilt_),
       maxTilt_(other.maxTilt_),
       tileSize_(other.tileSize_) {}
+
 
 QGeoCameraCapabilitiesPrivate::~QGeoCameraCapabilitiesPrivate() {}
 

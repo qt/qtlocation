@@ -65,7 +65,7 @@ public:
 
     // returns the minimum zoom at the current viewport size
     virtual double minimumZoom() const = 0;
-    virtual double maximumCenterLatitudeAtZoom(double zoomLevel) const = 0;
+    virtual double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const = 0;
 
     // returns the size of the underlying map, at the current zoom level.
     virtual double mapWidth() const = 0;
@@ -95,7 +95,7 @@ public:
     ~QGeoProjectionWebMercator();
 
     double minimumZoom() const Q_DECL_OVERRIDE;
-    double maximumCenterLatitudeAtZoom(double zoomLevel) const Q_DECL_OVERRIDE;
+    double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const Q_DECL_OVERRIDE;
 
     // The size of the underlying map, at the current zoom level.
     double mapWidth() const Q_DECL_OVERRIDE;

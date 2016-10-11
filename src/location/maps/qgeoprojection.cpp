@@ -98,9 +98,9 @@ double QGeoProjectionWebMercator::minimumZoom() const
 //    the amount of pixels between the center and the borders changes
 // 2) when the zoom level changes, because the amount of pixels between the center
 //    and the borders stays the same, but the meters per pixel change
-double QGeoProjectionWebMercator::maximumCenterLatitudeAtZoom(double zoomLevel) const
+double QGeoProjectionWebMercator::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const
 {
-    double mapEdgeSize = std::pow(2.0, zoomLevel) * defaultTileSize;
+    double mapEdgeSize = std::pow(2.0, cameraData.zoomLevel()) * defaultTileSize;
 
     // At init time weird things happen
     int clampedWindowHeight = (m_viewportHeight > mapEdgeSize) ? mapEdgeSize : m_viewportHeight;
@@ -187,7 +187,7 @@ QDoubleVector2D QGeoProjectionWebMercator::wrappedMapProjectionToItemPosition(co
 QDoubleVector2D QGeoProjectionWebMercator::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
 {
     QDoubleVector2D pos = itemPosition;
-    pos /= QDoubleVector2D(m_viewportWidth, m_viewportHeight);
+    pos *= QDoubleVector2D(m_1_viewportWidth, m_1_viewportHeight);
     pos *= 2.0;
     pos -= QDoubleVector2D(1.0,1.0);
     pos *= QDoubleVector2D(m_halfWidth, m_halfHeight);
@@ -262,10 +262,9 @@ void QGeoProjectionWebMercator::setupCamera()
     double z = std::pow(2.0, m_cameraData.zoomLevel() - intZoomLevel) * defaultTileSize;
     double altitude = f / (2.0 * z) ;
 
+    //aperture(90 / 2) = 1
+    m_aperture = 0.41421356237309503; // For a field of view of 45 degrees, as 90 is loading too many tiles
     // calculate eye
-    // TODO: support field of view with apertureSize = tan(QLocationUtils::radians(m_cameraData.fieldOfView()) * 0.5);
-    double m_aperture = 1.0; //aperture(90 / 2) = 1
-
     m_eye = m_center;
     m_eye.setZ(altitude * defaultTileSize / m_aperture);
 
@@ -300,8 +299,8 @@ void QGeoProjectionWebMercator::setupCamera()
 
     double aspectRatio = 1.0 * m_viewportWidth / m_viewportHeight;
 
-    m_halfWidth = 1 * m_aperture;
-    m_halfHeight = 1 * m_aperture;
+    m_halfWidth = m_aperture;
+    m_halfHeight = m_aperture;
     if (aspectRatio > 1.0) {
         m_halfWidth *= aspectRatio;
     } else if (aspectRatio > 0.0 && aspectRatio < 1.0) {

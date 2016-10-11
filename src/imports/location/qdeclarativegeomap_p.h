@@ -74,6 +74,14 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
+
+    Q_PROPERTY(bool bearingSupported READ isBearingSupported NOTIFY bearingSupportChanged)
+    Q_PROPERTY(bool tiltingSupported READ isTiltingSupported NOTIFY tiltingSupportChanged)
+    Q_PROPERTY(qreal minimumTilt READ minimumTilt NOTIFY minimumTiltChanged)
+    Q_PROPERTY(qreal maximumTilt READ maximumTilt NOTIFY maximumTiltChanged)
+    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
+    Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
+
     Q_PROPERTY(QDeclarativeGeoMapType *activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
@@ -105,6 +113,17 @@ public:
 
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
+
+    void setBearing(qreal bearing);
+    qreal bearing() const;
+
+    void setTilt(qreal tilt);
+    qreal tilt() const;
+
+    bool isBearingSupported() const;
+    bool isTiltingSupported() const;
+    qreal minimumTilt() const;
+    qreal maximumTilt() const;
 
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
@@ -157,6 +176,12 @@ Q_SIGNALS:
     void copyrightLinkActivated(const QString &link);
     void copyrightsVisibleChanged(bool visible);
     void colorChanged(const QColor &color);
+    void bearingChanged(qreal bearing);
+    void tiltChanged(qreal tilt);
+    void bearingSupportChanged(bool bearingSupport);
+    void tiltingSupportChanged(bool tiltingSupport);
+    void minimumTiltChanged(qreal minimumTilt);
+    void maximumTiltChanged(qreal maximumTilt);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;

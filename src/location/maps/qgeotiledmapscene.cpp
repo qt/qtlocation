@@ -111,6 +111,7 @@ public:
     bool buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode);
     void setTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
+    inline bool isTiltedOrRotated() { return (m_cameraData.tilt() > 0.0) || (m_cameraData.bearing() > 0.0); }
 };
 
 QGeoTiledMapScene::QGeoTiledMapScene(QObject *parent)
@@ -140,7 +141,7 @@ void QGeoTiledMapScene::setCameraData(const QGeoCameraData &cameraData)
     d->m_cameraData = cameraData;
     d->m_intZoomLevel = static_cast<int>(std::floor(d->m_cameraData.zoomLevel()));
     float delta = cameraData.zoomLevel() - d->m_intZoomLevel;
-    d->m_linearScaling = qAbs(delta) > 0.05;
+    d->m_linearScaling = qAbs(delta) > 0.05 || d->isTiltedOrRotated();
     d->m_sideLength = 1 << d->m_intZoomLevel;
 }
 

@@ -372,17 +372,7 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
         return;
 
     // if the scene is tilted, we must regenerate our geometry every frame
-    if (map()->cameraCapabilities().supportsTilting()
-            && (event.cameraData.tilt() > 0.1
-                || event.cameraData.tilt() < -0.1)) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-    }
-
-    // if the scene is rolled, we must regen too
-    if (map()->cameraCapabilities().supportsRolling()
-            && (event.cameraData.roll() > 0.1
-                || event.cameraData.roll() < -0.1)) {
+    if ((event.cameraData.tilt() > 0.0 || event.tiltChanged) && map()->cameraCapabilities().supportsTilting()) {
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }

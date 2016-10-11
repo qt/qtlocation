@@ -84,6 +84,12 @@ Item {
     Map {id: coordinateMap; plugin: herePlugin; center: coordinate3;
         width: 1000; height: 1000; zoomLevel: 15 }
 
+    Map {id: mapTiltBearing; plugin: testPlugin; center: coordinate1;
+        width: 1000; height: 1000; zoomLevel: 4; bearing: 45.0; tilt: 25.0 }
+
+    Map {id: mapTiltBearingHere; plugin: herePlugin; center: coordinate1;
+        width: 1000; height: 1000; zoomLevel: 4; bearing: 45.0; tilt: 25.0 }
+
     MapParameter {
         id: testParameter
         type: "cameraCenter_test"
@@ -161,11 +167,11 @@ Item {
             fuzzyCompare(center.latitude, -33, 0.1)
             fuzzyCompare(center.longitude, -47, 0.1)
 
-            testParameter.center = mapPar.center
+            testParameter.center = mapPar.center  // map.center has not been affected as it lives in the Declarative Map
             mapPar.addMapParameter(testParameter)
             compare(mapPar.mapParameters.length, 1)
 
-            var center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
+            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
             fuzzyCompare(center.latitude, 10, 0.1)
             fuzzyCompare(center.longitude, 11, 0.1)
 
@@ -347,6 +353,40 @@ Item {
             map.center.latitude = 30
             map.center.longitude = 60
             mapCenterSpy.clear()
+        }
+
+        function test_map_tilt_bearing()
+        {
+            compare(map.bearing, 0.0)
+            compare(map.tilt, 0.0)
+            compare(mapTiltBearing.bearing, 45.0)
+            compare(mapTiltBearing.tilt, 25.0)
+            compare(mapTiltBearingHere.bearing, 0.0)
+            compare(mapTiltBearingHere.tilt, 0.0)
+
+            mapTiltBearing.bearing = 0.0
+            mapTiltBearing.tilt = 0.0
+            compare(mapTiltBearing.bearing, 0.0)
+            compare(mapTiltBearing.tilt, 0.0)
+
+            mapTiltBearing.bearing = 480.0
+            mapTiltBearing.tilt = 140.0
+            compare(mapTiltBearing.bearing, 120.0)
+            compare(mapTiltBearing.tilt, 60.0)
+
+            mapTiltBearing.tilt = -140.0
+            compare(mapTiltBearing.tilt, 0.0)
+
+            mapTiltBearingHere.bearing = 45.0
+            mapTiltBearingHere.tilt = 25.0
+            compare(mapTiltBearingHere.bearing, 0.0)
+            compare(mapTiltBearingHere.tilt, 0.0)
+
+            mapTiltBearing.bearing = 45.0
+            mapTiltBearing.tilt = 25.0
+            mapTiltBearing.zoomLevel = 8.0
+            compare(mapTiltBearing.bearing, 45.0)
+            compare(mapTiltBearing.tilt, 25.0)
         }
 
         function test_coordinate_conversion()

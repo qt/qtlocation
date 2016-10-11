@@ -308,14 +308,35 @@ void QDeclarativeGeoMap::setError(QGeoServiceProvider::Error error, const QStrin
 
 void QDeclarativeGeoMap::initialize()
 {
-    // try to keep center change signal in the end
+    // try to keep change signals in the end
     bool centerHasChanged = false;
+    bool bearingHasChanged = false;
+    bool tiltHasChanged = false;
+    bool minTiltHasChanged = false;
+    bool maxTiltHasChanged = false;
+
+    QGeoCoordinate center = m_cameraData.center();
 
     setMinimumZoomLevel(m_map->minimumZoom());
 
-    // set latitude bundary check
-    m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData.zoomLevel());
-    QGeoCoordinate center = m_cameraData.center();
+    double bearing = m_cameraData.bearing();
+    double tilt = m_cameraData.tilt();
+    if (m_map->cameraCapabilities().minimumTilt() != 0)
+        minTiltHasChanged = true;
+    if (m_map->cameraCapabilities().maximumTilt() != 89)
+        maxTiltHasChanged = true;
+    if (!m_map->cameraCapabilities().supportsBearing() && bearing != 0.0) {
+        m_cameraData.setBearing(0);
+        bearingHasChanged = true;
+    }
+    if (!m_map->cameraCapabilities().supportsTilting() && tilt != 0.0) {
+        m_cameraData.setTilt(0);
+        tiltHasChanged = true;
+    }
+
+    // set latitude boundary check
+    m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
+
     center.setLatitude(qBound(-m_maximumViewportLatitude, center.latitude(), m_maximumViewportLatitude));
 
     if (center != m_cameraData.center()) {
@@ -329,6 +350,18 @@ void QDeclarativeGeoMap::initialize()
 
     if (centerHasChanged)
         emit centerChanged(m_cameraData.center());
+
+    if (bearingHasChanged)
+        emit bearingChanged(m_cameraData.bearing());
+
+    if (tiltHasChanged)
+        emit tiltChanged(m_cameraData.tilt());
+
+    if (minTiltHasChanged)
+        emit minimumTiltChanged(m_map->cameraCapabilities().minimumTilt());
+
+    if (maxTiltHasChanged)
+        emit maximumTiltChanged(m_map->cameraCapabilities().maximumTilt());
 }
 
 /*!
@@ -565,9 +598,8 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     //The zoom level limits are only restricted by the plugins values, if the user has set a more
     //strict zoom level limit before initialization nothing is done here.
     //minimum zoom level might be changed to limit gray bundaries
-
-    if (m_gestureArea->maximumZoomLevel() < 0
-            || m_mappingManager->cameraCapabilities().maximumZoomLevelAt256() < m_gestureArea->maximumZoomLevel())
+    //This code assumes that plugins' maximum zoom level will never exceed 30.0
+    if (m_mappingManager->cameraCapabilities().maximumZoomLevelAt256() < m_gestureArea->maximumZoomLevel())
         setMaximumZoomLevel(m_mappingManager->cameraCapabilities().maximumZoomLevelAt256());
 
     if (m_mappingManager->cameraCapabilities().minimumZoomLevelAt256() > m_gestureArea->minimumZoomLevel())
@@ -638,7 +670,6 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
         qreal oldMinimumZoomLevel = this->minimumZoomLevel();
 
         if (m_map) {
-
             minimumZoomLevel = qBound(qreal(m_map->cameraCapabilities().minimumZoomLevelAt256()), minimumZoomLevel, maximumZoomLevel());
             double minimumViewportZoomLevel = m_map->minimumZoom();
             if (minimumZoomLevel < minimumViewportZoomLevel)
@@ -666,17 +697,12 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
     defined by the plugin used, to prevent the map from being smaller than the
     viewport in either dimension.
 
-    If a plugin supporting mapping is not set, -1.0 is returned.
+    If a plugin supporting mapping is not set, 0.0 is returned.
 */
 
 qreal QDeclarativeGeoMap::minimumZoomLevel() const
 {
-    if (m_gestureArea->minimumZoomLevel() != -1)
-        return m_gestureArea->minimumZoomLevel();
-    else if (m_map)
-        return m_map->cameraCapabilities().minimumZoomLevelAt256();
-    else
-        return -1.0;
+    return m_gestureArea->minimumZoomLevel();
 }
 
 /*!
@@ -708,17 +734,12 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel)
     This property holds the maximum valid zoom level for the map.
 
     The maximum zoom level is defined by the \l plugin used.
-    If a plugin supporting mapping is not set, -1.0 is returned.
+    If a plugin supporting mapping is not set, 30.0 is returned.
 */
 
 qreal QDeclarativeGeoMap::maximumZoomLevel() const
 {
-    if (m_gestureArea->maximumZoomLevel() != -1)
-        return m_gestureArea->maximumZoomLevel();
-    else if (m_map)
-        return m_map->cameraCapabilities().minimumZoomLevelAt256();
-    else
-        return -1.0;
+    return m_gestureArea->maximumZoomLevel();
 }
 
 /*!
@@ -734,12 +755,12 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
     if (m_cameraData.zoomLevel() == zoomLevel || zoomLevel < 0)
         return;
 
-    //small optiomatization to avoid double setCameraData
+    //small optimization to avoid double setCameraData
     bool centerHasChanged = false;
 
     if (m_initialized) {
         m_cameraData.setZoomLevel(qBound(minimumZoomLevel(), zoomLevel, maximumZoomLevel()));
-        m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData.zoomLevel());
+        m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
         QGeoCoordinate coord = m_cameraData.center();
         coord.setLatitude(qBound(-m_maximumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
         if (coord != m_cameraData.center()) {
@@ -761,6 +782,126 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
 qreal QDeclarativeGeoMap::zoomLevel() const
 {
     return m_cameraData.zoomLevel();
+}
+
+/*!
+    \qmlproperty real QtLocation::Map::bearing
+
+    This property holds the bearing for the map.
+    The default value is 0.
+    If the Plugin used for the Map supports bearing, the valid range for this value is between 0 and 360.
+    If the Plugin used for the Map does not support bearing, changing this property will have no effect.
+
+    \since Qt Location 5.9
+*/
+void QDeclarativeGeoMap::setBearing(qreal bearing)
+{
+    bearing = std::fmod(bearing, qreal(360.0));
+    if (m_map && !m_map->cameraCapabilities().supportsBearing())
+        bearing = 0.0;
+    if (m_cameraData.bearing() == bearing || bearing < 0.0)
+        return;
+
+    m_cameraData.setBearing(bearing);
+    if (m_map)
+        m_map->setCameraData(m_cameraData);
+    emit bearingChanged(bearing);
+}
+
+qreal QDeclarativeGeoMap::bearing() const
+{
+    return m_cameraData.bearing();
+}
+
+/*!
+    \qmlproperty real QtLocation::Map::tilt
+
+    This property holds the tilt for the map.
+    The default value is 0.
+    If the Plugin used for the Map supports tilt, the valid range for this value is
+    [ plugin.minimumTilt, plugin.maximumTilt ].
+    If the Plugin used for the Map does not support tilting, changing this property will have no effect.
+
+    \since Qt Location 5.9
+*/
+void QDeclarativeGeoMap::setTilt(qreal tilt)
+{
+    tilt = qBound(minimumTilt(), tilt, maximumTilt());
+    if (m_cameraData.tilt() == tilt)
+        return;
+
+    m_cameraData.setTilt(tilt);
+    if (m_map)
+        m_map->setCameraData(m_cameraData);
+    emit tiltChanged(tilt);
+}
+
+qreal QDeclarativeGeoMap::tilt() const
+{
+    return m_cameraData.tilt();
+}
+
+/*!
+    \qmlproperty bool QtLocation::Map::bearingSupported
+
+    This property indicates if the Map supports bearing.
+    If the plugin property of the map is not set, or the plugin does not support mapping, this property is false.
+
+    \since Qt Location 5.9
+*/
+bool QDeclarativeGeoMap::isBearingSupported() const
+{
+    if (!m_map)
+        return false;
+    return m_map->cameraCapabilities().supportsBearing();
+}
+
+/*!
+    \qmlproperty bool QtLocation::Map::tiltingSupported
+
+    This property indicates if the Map supports tilting.
+    If the plugin property of the map is not set, or the plugin does not support mapping, this property is false.
+
+    \since Qt Location 5.9
+*/
+bool QDeclarativeGeoMap::isTiltingSupported() const
+{
+    if (!m_map)
+        return false;
+    return m_map->cameraCapabilities().supportsTilting();
+}
+
+/*!
+    \qmlproperty bool QtLocation::Map::minimumTilt
+
+    This property holds the minimum tilt that the map supports.
+    If the plugin property of the map is not set, or the plugin does not support mapping, this property is 0.
+
+    \since Qt Location 5.9
+*/
+qreal QDeclarativeGeoMap::minimumTilt() const
+{
+    if (!m_map || !m_map->cameraCapabilities().supportsTilting())
+        return 0.0;
+    return m_map->cameraCapabilities().minimumTilt();
+}
+
+/*!
+    \qmlproperty bool QtLocation::Map::maximumTilt
+
+    This property holds the maximum tilt that the map supports.
+    If the plugin property of the map is not set, this property is 89.
+    If the plugin is set and it does not support mapping, this property is 0.
+
+    \since Qt Location 5.9
+*/
+qreal QDeclarativeGeoMap::maximumTilt() const
+{
+    if (!m_map)
+        return 89.0;
+    else if (!m_map->cameraCapabilities().supportsTilting())
+        return 0.0;
+    return m_map->cameraCapabilities().maximumTilt();
 }
 
 /*!
@@ -1433,7 +1574,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
         setMinimumZoomLevel(m_map->minimumZoom());
 
         // Update the center latitudinal threshold
-        double maximumCenterLatitudeAtZoom = m_map->maximumCenterLatitudeAtZoom(m_cameraData.zoomLevel());
+        double maximumCenterLatitudeAtZoom = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
         if (maximumCenterLatitudeAtZoom != m_maximumViewportLatitude) {
             m_maximumViewportLatitude = maximumCenterLatitudeAtZoom;
             QGeoCoordinate coord = m_cameraData.center();

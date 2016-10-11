@@ -82,7 +82,7 @@ QGeoCameraDataPrivate &QGeoCameraDataPrivate::operator = (const QGeoCameraDataPr
     m_center = rhs.m_center;
     m_bearing = rhs.m_bearing;
     m_tilt = rhs.m_tilt;
-    m_roll = rhs.m_roll;
+    m_roll = rhs.m_roll;;
     m_zoomLevel = rhs.m_zoomLevel;
 
     return *this;

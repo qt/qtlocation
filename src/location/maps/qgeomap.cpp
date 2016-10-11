@@ -118,10 +118,10 @@ double QGeoMap::minimumZoom() const
     return d->m_geoProjection->minimumZoom();
 }
 
-double QGeoMap::maximumCenterLatitudeAtZoom(double zoomLevel) const
+double QGeoMap::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const
 {
     Q_D(const QGeoMap);
-    return d->m_geoProjection->maximumCenterLatitudeAtZoom(zoomLevel);
+    return d->m_geoProjection->maximumCenterLatitudeAtZoom(cameraData);
 }
 
 double QGeoMap::mapWidth() const

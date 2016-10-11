@@ -53,17 +53,11 @@
 #include <QtCore/QtGlobal>
 #include <math.h>
 
-#ifndef M_PI
-#define M_PI   3.14159265358979323846264338327950288
-#endif
-
-#ifndef M_1_180
-#define M_1_180 0.0055555555555555555555555555555555555555556
-#endif
-
-#ifndef M_1_PI
-#define M_1_PI   0.31830988618379067154
-#endif
+static const double M_PID     = 3.14159265358979323846264338327950288; // to get more precision than float
+static const double M_1_180D  = 0.0055555555555555555555555555555555555555556;
+static const double M_1_PID   = 1.0 / M_PID;
+static const double M_PI_180D = M_PID / 180.0; //0.0174532925199432954743716805978692718781530857086181640625;
+static const double M_180_PID = 180.0 / M_PID; // 57.29577951308232286464772187173366546630859375
 
 QT_BEGIN_NAMESPACE
 class QTime;
@@ -211,14 +205,13 @@ public:
 
     inline static double radians(double degrees)
     {
-        return degrees * M_PI * M_1_180;
+        return degrees * M_PI_180D;
     }
 
     inline static double degrees(double radians)
     {
-        return radians * 180.0 * M_1_PI;
+        return radians * M_180_PID;
     }
-
     inline static double earthMeanRadius()
     {
         return 6371007.2;
