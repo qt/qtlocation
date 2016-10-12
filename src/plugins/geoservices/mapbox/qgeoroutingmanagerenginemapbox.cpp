@@ -89,10 +89,19 @@ QGeoRouteReply* QGeoRoutingManagerEngineMapbox::calculateRoute(const QGeoRouteRe
     foreach (const QGeoCoordinate &c, request.waypoints()) {
         url += QString("%1,%2;").arg(c.longitude()).arg(c.latitude());
     }
-    if (url.right(1) == ";") url.chop(1);
-    url += QString("?steps=true&overview=full&geometries=geojson&access_token=%1").arg(m_accessToken);
+    if (url.right(1) == ";")
+        url.chop(1);
 
-    networkRequest.setUrl(QUrl(url));
+    QUrlQuery query;
+    query.addQueryItem(QStringLiteral("steps"), QStringLiteral("true"));
+    query.addQueryItem(QStringLiteral("alternatives"), QStringLiteral("true"));
+    query.addQueryItem(QStringLiteral("overview"), QStringLiteral("full"));
+    query.addQueryItem(QStringLiteral("geometries"), QStringLiteral("geojson"));
+    query.addQueryItem(QStringLiteral("access_token"), m_accessToken);
+
+    QUrl u(url);
+    u.setQuery(query);
+    networkRequest.setUrl(u);
 
     QNetworkReply *reply = m_networkManager->get(networkRequest);
     QGeoRouteReplyMapbox *routeReply = new QGeoRouteReplyMapbox(reply, request, this);
