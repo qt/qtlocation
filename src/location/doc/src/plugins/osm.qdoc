@@ -94,8 +94,14 @@ a prefix.
 \row
     \li osm.routing.host
     \li Url string set when making network requests to the routing server.  This parameter should be set to a
-        valid server url with the correct osrm API. If not specified the default \l {http://router.project-osrm.org/viaroute}{url} will be used.
+        valid server url with the correct osrm API. If not specified the default \l {http://router.project-osrm.org/route/v1/driving/}{url} will be used.
         \note The API documentation and sources are available at \l {http://project-osrm.org/}{Project OSRM}.
+
+\row
+    \li osm.routing.apiversion
+    \li String defining the api version of the (custom) OSRM server. Valid values are \b{v4} and \b{v5}. The default is \b{v5}.
+        This parameter should be set only if \tt{osm.routing.host} is set, and is an OSRM v4 server.
+
 \row
     \li osm.geocoding.host
     \li Url string set when making network requests to the geocoding server.  This parameter should be set to a
