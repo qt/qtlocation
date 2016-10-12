@@ -68,7 +68,7 @@ public:
 
 protected:
     virtual void changeMapSize(const QSize &size) = 0;
-    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0;
+    virtual void changeCameraData(const QGeoCameraData &cameraData) = 0;
     virtual void changeActiveMapType(const QGeoMapType mapType) = 0;
 
 protected:
