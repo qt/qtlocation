@@ -70,11 +70,11 @@ void QGeoMapItemGeometry::allocateAndFill(QSGGeometry *geom) const
 
     if (isIndexed()) {
         geom->allocate(vx.size(), ix.size());
-        if (geom->indexType() == QSGGeometry::TypeUnsignedShort) {
+        if (geom->indexType() == QSGGeometry::UnsignedShortType) {
             quint16 *its = geom->indexDataAsUShort();
             for (int i = 0; i < ix.size(); ++i)
                 its[i] = ix[i];
-        } else if (geom->indexType() == QSGGeometry::TypeUnsignedInt) {
+        } else if (geom->indexType() == QSGGeometry::UnsignedIntType) {
             quint32 *its = geom->indexDataAsUInt();
             for (int i = 0; i < ix.size(); ++i)
                 its[i] = ix[i];
