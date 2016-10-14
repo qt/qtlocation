@@ -1310,10 +1310,25 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
 
     m_map->setSize(newGeometry.size().toSize());
 
-    if (!m_initialized)
+    if (!m_initialized) {
         initialize();
-    else
+    } else {
         setMinimumZoomLevel(m_map->minimumZoomAtMapSize(newGeometry.width(), newGeometry.height()));
+
+        // Update the center latitudinal threshold
+        double maximumCenterLatitudeAtZoom = m_map->maximumCenterLatitudeAtZoom(m_cameraData.zoomLevel());
+        if (maximumCenterLatitudeAtZoom != m_maximumViewportLatitude) {
+            m_maximumViewportLatitude = maximumCenterLatitudeAtZoom;
+            QGeoCoordinate coord = m_cameraData.center();
+            coord.setLatitude(qBound(-m_maximumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
+
+            if (coord != m_cameraData.center()) {
+                m_cameraData.setCenter(coord);
+                m_map->setCameraData(m_cameraData);
+                emit centerChanged(m_cameraData.center());
+            }
+        }
+    }
 
     /*!
         The fitViewportTo*() functions depend on a valid map geometry.
