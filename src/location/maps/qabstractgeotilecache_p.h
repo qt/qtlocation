@@ -107,8 +107,12 @@ public:
     virtual int minTextureUsage() const = 0;
     virtual int textureUsage() const = 0;
     virtual void clearAll() = 0;
-    virtual void setCostStrategy(CostStrategy costStrategy) = 0;
-    virtual CostStrategy costStrategy() = 0;
+    virtual void setCostStrategyDisk(CostStrategy costStrategy) = 0;
+    virtual CostStrategy costStrategyDisk() const = 0;
+    virtual void setCostStrategyMemory(CostStrategy costStrategy) = 0;
+    virtual CostStrategy costStrategyMemory() const = 0;
+    virtual void setCostStrategyTexture(CostStrategy costStrategy) = 0;
+    virtual CostStrategy costStrategyTexture() const = 0;
 
     virtual QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) = 0;
 

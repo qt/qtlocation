@@ -92,14 +92,13 @@ The following table lists optional parameters that can be passed to the Mapbox p
     The default place for the cache is \c{QtLocation/mapbox} directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
     On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
 \row
-    \li mapbox.mapping.cache.cost_strategy
-    \li The cost strategy to use to cache map tiles.
+    \li mapbox.mapping.cache.disk.cost_strategy
+    \li The cost strategy to use to cache map tiles on disk.
     Valid values are \b bytesize and \b unitary.
-    Using \b bytesize, the size parameters (\b mapbox.mapping.cache.disk.size,
-    \b mapbox.mapping.cache.memory.size and \b mapbox.mapping.cache.texture.size) will
+    Using \b bytesize, the related size parameter (\b mapbox.mapping.cache.disk.size) will
     be interpreted as bytes.
     Using \b unitary, they will be interpreted as number of tiles.
-    The default value is \b unitary.
+    The default value for this parameter is \b unitary.
 \row
     \li mapbox.mapping.cache.disk.size
     \li Disk cache size for map tiles.
@@ -108,10 +107,26 @@ The following table lists optional parameters that can be passed to the Mapbox p
     Note that 6000 is the maximum amount of tiles that the Mapbox free plan allows to cache.
     Make sure to comply with Mapbox Terms of Service before increasing this value.
 \row
+    \li mapbox.mapping.cache.memory.cost_strategy
+    \li The cost strategy to use to cache map tiles in memory.
+    Valid values are \b bytesize and \b unitary.
+    Using \b bytesize, the related size parameter (\b mapbox.mapping.cache.memory.size) will
+    be interpreted as bytes.
+    Using \b unitary, they will be interpreted as number of tiles.
+    The default value for this parameter is \b bytesize.
+\row
     \li mapbox.mapping.cache.memory.size
     \li Memory cache size for map tiles.
     The Default size of this cache is 100 if \b unitary is used as cost strategy, or
     3 MiB, if \b bytesize is used as cost strategy.
+\row
+    \li mapbox.mapping.cache.texture.cost_strategy
+    \li The cost strategy to use to cache decompressed map tiles in memory.
+    Valid values are \b bytesize and \b unitary.
+    Using \b bytesize, the related size parameter (\b mapbox.mapping.cache.texture.size) will
+    be interpreted as bytes.
+    Using \b unitary, they will be interpreted as number of tiles.
+    The default value for this parameter is \b bytesize.
 \row
     \li mapbox.mapping.cache.texture.size
     \li Texture cache size for map tiles.

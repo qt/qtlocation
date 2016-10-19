@@ -86,7 +86,8 @@ QGeoCachedTileDisk::~QGeoCachedTileDisk()
 }
 
 QGeoFileTileCache::QGeoFileTileCache(const QString &directory, QObject *parent)
-    : QAbstractGeoTileCache(parent), directory_(directory), minTextureUsage_(0), extraTextureUsage_(0), costStrategy_(ByteSize)
+    : QAbstractGeoTileCache(parent), directory_(directory), minTextureUsage_(0), extraTextureUsage_(0)
+    ,costStrategyDisk_(ByteSize), costStrategyMemory_(ByteSize), costStrategyTexture_(ByteSize)
 {
 
 }
@@ -119,15 +120,20 @@ void QGeoFileTileCache::init()
     QDir::root().mkpath(directory_);
 
     // default values
-    if (costStrategy_ == ByteSize) {
+    if (costStrategyDisk_ == ByteSize)
         setMaxDiskUsage(50 * 1024 * 1024);
-        setMaxMemoryUsage(3 * 1024 * 1024);
-        setExtraTextureUsage(6 * 1024 * 1024);
-    } else {
+    else
         setMaxDiskUsage(1000);
+
+    if (costStrategyMemory_ == ByteSize)
+        setMaxMemoryUsage(3 * 1024 * 1024);
+    else
         setMaxMemoryUsage(100);
+
+    if (costStrategyTexture_ == ByteSize)
+        setExtraTextureUsage(6 * 1024 * 1024);
+    else
         setExtraTextureUsage(30); // byte size of texture is >> compressed image, hence unitary cost should be lower
-    }
 
     loadTiles();
 }
@@ -318,14 +324,34 @@ void QGeoFileTileCache::clearMapId(const int mapId)
     }
 }
 
-void QGeoFileTileCache::setCostStrategy(QAbstractGeoTileCache::CostStrategy costStrategy)
+void QGeoFileTileCache::setCostStrategyDisk(QAbstractGeoTileCache::CostStrategy costStrategy)
 {
-    costStrategy_ = costStrategy;
+    costStrategyDisk_ = costStrategy;
 }
 
-QAbstractGeoTileCache::CostStrategy QGeoFileTileCache::costStrategy()
+QAbstractGeoTileCache::CostStrategy QGeoFileTileCache::costStrategyDisk() const
 {
-    return costStrategy_;
+    return costStrategyDisk_;
+}
+
+void QGeoFileTileCache::setCostStrategyMemory(QAbstractGeoTileCache::CostStrategy costStrategy)
+{
+    costStrategyMemory_ = costStrategy;
+}
+
+QAbstractGeoTileCache::CostStrategy QGeoFileTileCache::costStrategyMemory() const
+{
+    return costStrategyMemory_;
+}
+
+void QGeoFileTileCache::setCostStrategyTexture(QAbstractGeoTileCache::CostStrategy costStrategy)
+{
+    costStrategyTexture_ = costStrategy;
+}
+
+QAbstractGeoTileCache::CostStrategy QGeoFileTileCache::costStrategyTexture() const
+{
+    return costStrategyTexture_;
 }
 
 QSharedPointer<QGeoTileTexture> QGeoFileTileCache::get(const QGeoTileSpec &spec)
@@ -380,7 +406,7 @@ QSharedPointer<QGeoCachedTileDisk> QGeoFileTileCache::addToDiskCache(const QGeoT
     td->cache = this;
 
     int cost = 1;
-    if (costStrategy_ == ByteSize) {
+    if (costStrategyDisk_ == ByteSize) {
         QFileInfo fi(filename);
         cost = fi.size();
     }
@@ -397,7 +423,7 @@ QSharedPointer<QGeoCachedTileMemory> QGeoFileTileCache::addToMemoryCache(const Q
     tm->format = format;
 
     int cost = 1;
-    if (costStrategy_ == ByteSize)
+    if (costStrategyMemory_ == ByteSize)
         cost = bytes.size();
     memoryCache_.insert(spec, tm, cost);
 
@@ -411,7 +437,7 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::addToTextureCache(const QGeoT
     tt->image = image;
 
     int cost = 1;
-    if (costStrategy_ == ByteSize)
+    if (costStrategyTexture_ == ByteSize)
         cost = image.width() * image.height() * image.depth() / 8;
     textureCache_.insert(spec, tt, cost);
 
