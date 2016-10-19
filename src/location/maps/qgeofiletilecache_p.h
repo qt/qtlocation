@@ -118,6 +118,9 @@ public:
     int textureUsage() const Q_DECL_OVERRIDE;
     void clearAll() Q_DECL_OVERRIDE;
     void clearMapId(const int mapId);
+    void setCostStrategy(CostStrategy costStrategy) Q_DECL_OVERRIDE;
+    CostStrategy costStrategy() Q_DECL_OVERRIDE;
+
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
 
@@ -154,6 +157,7 @@ protected:
 
     int minTextureUsage_;
     int extraTextureUsage_;
+    CostStrategy costStrategy_;
 };
 
 QT_END_NAMESPACE

@@ -92,18 +92,34 @@ The following table lists optional parameters that can be passed to the Mapbox p
     The default place for the cache is \c{QtLocation/mapbox} directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
     On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
 \row
+    \li mapbox.mapping.cache.cost_strategy
+    \li The cost strategy to use to cache map tiles.
+    Valid values are \b bytesize and \b unitary.
+    Using \b bytesize, the size parameters (\b mapbox.mapping.cache.disk.size,
+    \b mapbox.mapping.cache.memory.size and \b mapbox.mapping.cache.texture.size) will
+    be interpreted as bytes.
+    Using \b unitary, they will be interpreted as number of tiles.
+    The default value is \b unitary.
+\row
     \li mapbox.mapping.cache.disk.size
-    \li Map tile disk cache size in bytes. Default size of the cache is 300MB.
-    Note that this is the maximum amount of data that the Mapbox free plan allows to cache.
+    \li Disk cache size for map tiles.
+    The default size of this cache is 6000 if \b unitary is used as cost strategy,
+    or 50 MiB, if \b bytesize is used as cost strategy.
+    Note that 6000 is the maximum amount of tiles that the Mapbox free plan allows to cache.
     Make sure to comply with Mapbox Terms of Service before increasing this value.
 \row
     \li mapbox.mapping.cache.memory.size
-    \li Map tile memory cache size in bytes. Default size of the cache is 3MB.
+    \li Memory cache size for map tiles.
+    The Default size of this cache is 100 if \b unitary is used as cost strategy, or
+    3 MiB, if \b bytesize is used as cost strategy.
 \row
     \li mapbox.mapping.cache.texture.size
-    \li Map tile texture cache size in bytes. Default size of the cache is 6MB.
-    Note that the texture cache has a hard minimum size which depends on the size of the map viewport
-    (it must contain enough data to display the tiles currently visible on the display).
-    This value is the amount of cache to be used in addition to the bare minimum.
+    \li Texture cache size for map tiles.
+    The Default size of this cache is 30 if \b unitary is used as cost strategy, or
+    6 MiB, if \b bytesize is used as cost strategy.
+    Note that the texture cache has a hard minimum size which depends on the size of the map
+    viewport (it must contain enough data to display the tiles currently visible on the
+    display).
+    This value is the amount of tiles to be cached in addition to the bare minimum.
 \endtable
 */

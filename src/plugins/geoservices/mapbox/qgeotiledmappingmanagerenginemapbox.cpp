@@ -149,16 +149,23 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
         m_cacheDirectory = QAbstractGeoTileCache::baseLocationCacheDirectory() + QLatin1String("mapbox");
     }
 
-    // The Mapbox free plan allows for 6000 tiles to be stored for offline uses
-    // As of 2016.06.15, according to https://www.mapbox.com/help/mobile-offline/ ,
-    // this translates into 45-315 MiB, depending on the map and the area.
-    // Setting a default limit of 300MiB, which can be overridden via parameters, if
-    // the plan allows for more data to be stored offline.
-    // NOTE:
-    // It is illegal to violate Mapbox Terms of Service, setting a limit that exceeds
-    // what the plan the token belongs to allows.
-
     QGeoFileTileCache *tileCache = new QGeoFileTileCacheMapbox(mapTypes, scaleFactor, m_cacheDirectory);
+
+    // The Mapbox free plan allows for 6000 tiles to be stored for offline uses,
+    // As of 2016.06.15, according to https://www.mapbox.com/help/mobile-offline/ .
+    // Thus defaulting to Unitary strategy, and setting 6000 tiles as default cache disk size
+    if (parameters.contains(QStringLiteral("mapbox.mapping.cache.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("mapbox.mapping.cache.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategy(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategy(QGeoFileTileCache::Unitary);
+    } else {
+        // Default to unitary
+        tileCache->setCostStrategy(QGeoFileTileCache::Unitary);
+    }
+
+
 
     if (parameters.contains(QStringLiteral("mapbox.mapping.cache.disk.size"))) {
         bool ok = false;
@@ -166,7 +173,8 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
         if (ok)
             tileCache->setMaxDiskUsage(cacheSize);
     } else {
-        tileCache->setMaxDiskUsage(300 * 1024 * 1024);
+        if (tileCache->costStrategy() == QGeoFileTileCache::Unitary)
+            tileCache->setMaxDiskUsage(6000); // The maximum allowed with the free tier
     }
 
     if (parameters.contains(QStringLiteral("mapbox.mapping.cache.memory.size"))) {
