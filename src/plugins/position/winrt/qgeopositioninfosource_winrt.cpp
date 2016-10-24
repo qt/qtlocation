@@ -491,8 +491,9 @@ HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPo
     if (SUCCEEDED(hr) && heading) {
         double value;
         hr = heading->get_Value(&value);
-        double mod = 360;
+        double mod = 0;
         value = modf(value, &mod);
+        value += static_cast<int>(mod) % 360;
         if (value >=0 && value <= 359) // get_Value might return nan/-nan
             currentInfo.setAttribute(QGeoPositionInfo::Direction, value);
     }
