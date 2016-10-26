@@ -1,6 +1,6 @@
 TARGET = qtposition_gypsy
 
-QT = core positioning
+QT = core positioning-private
 
 HEADERS += \
     qgeosatelliteinfosource_gypsy_p.h \
@@ -10,8 +10,7 @@ SOURCES += \
     qgeosatelliteinfosource_gypsy.cpp \
     qgeopositioninfosourcefactory_gypsy.cpp
 
-CONFIG += link_pkgconfig
-PKGCONFIG += gypsy gconf-2.0
+QMAKE_USE_PRIVATE += gypsy
 
 OTHER_FILES += \
     plugin.json
