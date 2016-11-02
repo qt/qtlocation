@@ -51,6 +51,7 @@
 //
 
 #include <QtCore/QtGlobal>
+#include <math.h>
 
 QT_BEGIN_NAMESPACE
 class QTime;
@@ -60,6 +61,25 @@ class QGeoPositionInfo;
 class QLocationUtils
 {
 public:
+    enum CardinalDirection {
+        CardinalN,
+        CardinalE,
+        CardinalS,
+        CardinalW,
+        CardinalNE,
+        CardinalSE,
+        CardinalSW,
+        CardinalNW,
+        CardinalNNE,
+        CardinalENE,
+        CardinalESE,
+        CardinalSSE,
+        CardinalSSW,
+        CardinalWSW,
+        CardinalWNW,
+        CardinalNNW
+    };
+
     inline static bool isValidLat(double lat) {
         return lat >= -90 && lat <= 90;
     }
@@ -81,6 +101,79 @@ public:
         else if (lng < -180)
             lng += 360;
         return lng;
+    }
+
+    inline static CardinalDirection azimuthToCardinalDirection4(double azimuth)
+    {
+        azimuth = fmod(azimuth, 360.0);
+        if (azimuth < 45.0 || azimuth > 315.0 )
+            return CardinalN;
+        else if (azimuth < 135.0)
+            return CardinalE;
+        else if (azimuth < 225.0)
+            return CardinalS;
+        else
+            return CardinalW;
+    }
+
+    inline static CardinalDirection azimuthToCardinalDirection8(double azimuth)
+    {
+        azimuth = fmod(azimuth, 360.0);
+        if (azimuth < 22.5 || azimuth > 337.5 )
+            return CardinalN;
+        else if (azimuth < 67.5)
+            return CardinalNE;
+        else if (azimuth < 112.5)
+            return CardinalE;
+        else if (azimuth < 157.5)
+            return CardinalSE;
+        else if (azimuth < 202.5)
+            return CardinalS;
+
+        else if (azimuth < 247.5)
+            return CardinalSW;
+        else if (azimuth < 292.5)
+            return CardinalW;
+        else
+            return CardinalNW;
+    }
+
+    inline static CardinalDirection azimuthToCardinalDirection16(double azimuth)
+    {
+        azimuth = fmod(azimuth, 360.0);
+        if (azimuth < 11.5 || azimuth > 348.75 )
+            return CardinalN;
+        else if (azimuth < 33.75)
+            return CardinalNNE;
+        else if (azimuth < 56.25)
+            return CardinalNE;
+        else if (azimuth < 78.75)
+            return CardinalENE;
+        else if (azimuth < 101.25)
+            return CardinalE;
+        else if (azimuth < 123.75)
+            return CardinalESE;
+        else if (azimuth < 146.25)
+            return CardinalSE;
+        else if (azimuth < 168.75)
+            return CardinalSSE;
+        else if (azimuth < 191.25)
+            return CardinalS;
+
+        else if (azimuth < 213.75)
+            return CardinalSSW;
+        else if (azimuth < 236.25)
+            return CardinalSW;
+        else if (azimuth < 258.75)
+            return CardinalWSW;
+        else if (azimuth < 281.25)
+            return CardinalW;
+        else if (azimuth < 303.75)
+            return CardinalWNW;
+        else if (azimuth < 326.25)
+            return CardinalNW;
+        else
+            return CardinalNNW;
     }
 
     /*
