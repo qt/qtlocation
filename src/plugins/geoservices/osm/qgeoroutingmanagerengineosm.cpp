@@ -39,6 +39,8 @@
 
 #include "qgeoroutingmanagerengineosm.h"
 #include "qgeoroutereplyosm.h"
+#include "QtLocation/private/qgeorouteparserosrmv4_p.h"
+#include "QtLocation/private/qgeorouteparserosrmv5_p.h"
 
 #include <QtCore/QUrlQuery>
 
@@ -57,7 +59,14 @@ QGeoRoutingManagerEngineOsm::QGeoRoutingManagerEngineOsm(const QVariantMap &para
     if (parameters.contains(QStringLiteral("osm.routing.host")))
         m_urlPrefix = parameters.value(QStringLiteral("osm.routing.host")).toString().toLatin1();
     else
-        m_urlPrefix = QStringLiteral("http://router.project-osrm.org/viaroute");
+        m_urlPrefix = QStringLiteral("http://router.project-osrm.org/route/v1/driving/");
+        // for v4 it was "http://router.project-osrm.org/viaroute"
+
+    if (parameters.contains(QStringLiteral("osm.routing.apiversion"))
+            && (parameters.value(QStringLiteral("osm.routing.apiversion")).toString().toLatin1() == QByteArray("v4")))
+        m_routeParser = new QGeoRouteParserOsrmV4(this);
+    else
+        m_routeParser = new QGeoRouteParserOsrmV5(this);
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
@@ -70,20 +79,9 @@ QGeoRoutingManagerEngineOsm::~QGeoRoutingManagerEngineOsm()
 QGeoRouteReply* QGeoRoutingManagerEngineOsm::calculateRoute(const QGeoRouteRequest &request)
 {
     QNetworkRequest networkRequest;
-    networkRequest.setRawHeader("User-Agent", m_userAgent);
+    networkRequest.setHeader(QNetworkRequest::UserAgentHeader, m_userAgent);
 
-    QUrl url(m_urlPrefix);
-    QUrlQuery query;
-
-    query.addQueryItem(QStringLiteral("instructions"), QStringLiteral("true"));
-
-    foreach (const QGeoCoordinate &c, request.waypoints()) {
-        query.addQueryItem(QStringLiteral("loc"), QString::number(c.latitude()) + QLatin1Char(',') +
-                                                 QString::number(c.longitude()));
-    }
-
-    url.setQuery(query);
-    networkRequest.setUrl(url);
+    networkRequest.setUrl(routeParser()->requestUrl(request, m_urlPrefix));
 
     QNetworkReply *reply = m_networkManager->get(networkRequest);
 
@@ -94,6 +92,11 @@ QGeoRouteReply* QGeoRoutingManagerEngineOsm::calculateRoute(const QGeoRouteReque
             this, SLOT(replyError(QGeoRouteReply::Error,QString)));
 
     return routeReply;
+}
+
+const QGeoRouteParser *QGeoRoutingManagerEngineOsm::routeParser() const
+{
+    return m_routeParser;
 }
 
 void QGeoRoutingManagerEngineOsm::replyFinished()

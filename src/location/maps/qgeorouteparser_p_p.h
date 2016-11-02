@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -33,16 +33,28 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "uri_constants.h"
+
+#ifndef QGEOROUTEPARSER_P_P_H
+#define QGEOROUTEPARSER_P_P_H
+
+#include <QtCore/private/qobject_p.h>
+#include <QtCore/QUrl>
+#include <QtLocation/qgeoroutereply.h>
+#include <QtLocation/qgeorouterequest.h>
 
 QT_BEGIN_NAMESPACE
 
-const QString ROUTING_HOST = QLatin1String("route.api.here.com");
-const QString GEOCODING_HOST = QLatin1String("loc.desktop.maps.svc.ovi.com");
-const QString GEOCODING_HOST_CN = QLatin1String("pr.geo.maps.svc.nokia.com.cn");
-const QString PLACES_HOST = QLatin1String("places.api.here.com");
-const QString PLACES_HOST_CN = QLatin1String("places.nlp.nokia.com.cn");
-const QString MAP_TILES_HOST = QLatin1String("1-4.base.maps.api.here.com");
-const QString MAP_TILES_HOST_AERIAL = QLatin1String("1-4.aerial.maps.api.here.com");
+class QGeoRouteParserPrivate :  public QObjectPrivate
+{
+    Q_DECLARE_PUBLIC(QGeoRouteParser)
+public:
+    QGeoRouteParserPrivate();
+    virtual ~QGeoRouteParserPrivate();
+
+    virtual QGeoRouteReply::Error parseReply(QList<QGeoRoute> &routes, QString &errorString, const QByteArray &reply) const = 0;
+    virtual QUrl requestUrl(const QGeoRouteRequest &request, const QString &prefix) const = 0;
+};
 
 QT_END_NAMESPACE
+
+#endif // QGEOROUTEPARSER_P_P_H

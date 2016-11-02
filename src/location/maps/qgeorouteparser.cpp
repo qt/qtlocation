@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -33,16 +33,58 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "uri_constants.h"
+
+#include "qgeorouteparser_p.h"
+#include "qgeorouteparser_p_p.h"
+#include "qgeoroutesegment.h"
+#include "qgeomaneuver.h"
+
+#include <QtCore/private/qobject_p.h>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonArray>
+#include <QtPositioning/private/qlocationutils_p.h>
 
 QT_BEGIN_NAMESPACE
 
-const QString ROUTING_HOST = QLatin1String("route.api.here.com");
-const QString GEOCODING_HOST = QLatin1String("loc.desktop.maps.svc.ovi.com");
-const QString GEOCODING_HOST_CN = QLatin1String("pr.geo.maps.svc.nokia.com.cn");
-const QString PLACES_HOST = QLatin1String("places.api.here.com");
-const QString PLACES_HOST_CN = QLatin1String("places.nlp.nokia.com.cn");
-const QString MAP_TILES_HOST = QLatin1String("1-4.base.maps.api.here.com");
-const QString MAP_TILES_HOST_AERIAL = QLatin1String("1-4.aerial.maps.api.here.com");
+/*
+    Private class implementations
+*/
+
+QGeoRouteParserPrivate::QGeoRouteParserPrivate() : QObjectPrivate()
+{
+}
+
+QGeoRouteParserPrivate::~QGeoRouteParserPrivate()
+{
+}
+
+/*
+    Public class implementations
+*/
+
+QGeoRouteParser::~QGeoRouteParser()
+{
+
+}
+
+QGeoRouteParser::QGeoRouteParser(QGeoRouteParserPrivate &dd, QObject *parent) : QObject(dd, parent)
+{
+
+}
+
+QGeoRouteReply::Error QGeoRouteParser::parseReply(QList<QGeoRoute> &routes, QString &errorString, const QByteArray &reply) const
+{
+    Q_D(const QGeoRouteParser);
+    return d->parseReply(routes, errorString, reply);
+}
+
+QUrl QGeoRouteParser::requestUrl(const QGeoRouteRequest &request, const QString &prefix) const
+{
+    Q_D(const QGeoRouteParser);
+    return d->requestUrl(request, prefix);
+}
 
 QT_END_NAMESPACE
+
+
