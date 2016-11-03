@@ -74,13 +74,6 @@ void QGeoRouteReplyOsm::networkReplyFinished()
         return;
     }
 
-    if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
-        m_reply = 0;
-        return;
-    }
-
     QGeoRoutingManagerEngineOsm *engine = qobject_cast<QGeoRoutingManagerEngineOsm *>(parent());
     const QGeoRouteParser *parser = engine->routeParser();
 
