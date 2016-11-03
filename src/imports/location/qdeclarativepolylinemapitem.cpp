@@ -556,6 +556,7 @@ void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate>
 
     path_ = path;
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -586,6 +587,7 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
 {
     path_.append(coordinate);
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_, geoLeftBound_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -607,6 +609,7 @@ void QDeclarativePolylineMapItem::insertCoordinate(int index, const QGeoCoordina
 
     path_.insert(index, coordinate);
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -629,6 +632,7 @@ void QDeclarativePolylineMapItem::replaceCoordinate(int index, const QGeoCoordin
 
     path_[index] = coordinate;
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -697,6 +701,7 @@ void QDeclarativePolylineMapItem::removeCoordinate(int index)
 
     path_.removeAt(index);
     geoLeftBound_ = getLeftBound(path_, deltaXs_, minX_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_);
     geometry_.markSourceDirty();
     polishAndUpdate();
     emit pathChanged();
@@ -762,15 +767,15 @@ QGeoCoordinate QDeclarativePolylineMapItem::updateLeftBound(const QList<QGeoCoor
                                                             QGeoCoordinate currentLeftBound)
 {
     if (path.isEmpty()) {
+        deltaXs.clear();
         minX = qInf();
         return QGeoCoordinate();
     } else if (path.size() == 1) {
-        deltaXs.clear();
-        minX = 0.0;
+        deltaXs.resize(1);
+        deltaXs[0] = minX = 0.0;
         return path.last();
-    } else if ( path.size() != deltaXs.size() + 2 ) {  // this case should not happen
-        minX = qInf();
-        return QGeoCoordinate();
+    } else if ( path.size() != deltaXs.size() + 1 ) {  // something went wrong. This case should not happen
+        return computeLeftBound(path, deltaXs, minX);
     }
 
     const QGeoCoordinate &geoFrom = path.at(path.size()-2);
@@ -786,7 +791,7 @@ QGeoCoordinate QDeclarativePolylineMapItem::updateLeftBound(const QList<QGeoCoor
         deltaLongi =  longiTo - longiFrom;
     }
 
-    deltaXs.push_back((deltaXs.isEmpty()) ? 0.0 : deltaXs.last() + deltaLongi);
+    deltaXs.push_back(deltaXs.last() + deltaLongi);
     if (deltaXs.last() < minX) {
         minX = deltaXs.last();
         return path.last();

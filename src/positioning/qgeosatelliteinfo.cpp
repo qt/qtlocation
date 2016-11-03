@@ -283,7 +283,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
     stream << info.d->signal;
     stream << info.d->doubleAttribs;
     stream << info.d->satId;
-    stream << info.d->system;
+    stream << int(info.d->system);
     return stream;
 }
 #endif

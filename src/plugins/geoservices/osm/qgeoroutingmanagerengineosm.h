@@ -42,6 +42,7 @@
 
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QGeoRoutingManagerEngine>
+#include <QtLocation/private/qgeorouteparser_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -58,6 +59,7 @@ public:
     ~QGeoRoutingManagerEngineOsm();
 
     QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request);
+    const QGeoRouteParser *routeParser() const;
 
 private Q_SLOTS:
     void replyFinished();
@@ -65,6 +67,7 @@ private Q_SLOTS:
 
 private:
     QNetworkAccessManager *m_networkManager;
+    QGeoRouteParser *m_routeParser;
     QByteArray m_userAgent;
     QString m_urlPrefix;
 };

@@ -967,8 +967,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
                             bboxHeight / (height() - margins));
     // fixme: use log2 with c++11
     zoomRatio = std::log(zoomRatio) / std::log(2.0);
-    double newZoom = qMax(minimumZoomLevel(), zoomLevel()
-                          - zoomRatio);
+    double newZoom = qMax<double>(minimumZoomLevel(), zoomLevel() - zoomRatio);
     setZoomLevel(newZoom);
     m_validRegion = true;
 }

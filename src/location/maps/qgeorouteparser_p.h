@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -33,16 +33,47 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "uri_constants.h"
+
+#ifndef QOSRMROUTEPARSER_P_H
+#define QOSRMROUTEPARSER_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/qgeoroutereply.h>
+#include <QtLocation/qgeorouterequest.h>
+#include <QtCore/QByteArray>
+#include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
 
-const QString ROUTING_HOST = QLatin1String("route.api.here.com");
-const QString GEOCODING_HOST = QLatin1String("loc.desktop.maps.svc.ovi.com");
-const QString GEOCODING_HOST_CN = QLatin1String("pr.geo.maps.svc.nokia.com.cn");
-const QString PLACES_HOST = QLatin1String("places.api.here.com");
-const QString PLACES_HOST_CN = QLatin1String("places.nlp.nokia.com.cn");
-const QString MAP_TILES_HOST = QLatin1String("1-4.base.maps.api.here.com");
-const QString MAP_TILES_HOST_AERIAL = QLatin1String("1-4.aerial.maps.api.here.com");
+class QGeoRouteParserPrivate;
+class Q_LOCATION_EXPORT QGeoRouteParser : public QObject
+{
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGeoRouteParser)
+
+public:
+    virtual ~QGeoRouteParser();
+    QGeoRouteReply::Error parseReply(QList<QGeoRoute> &routes, QString &errorString, const QByteArray &reply) const;
+    QUrl requestUrl(const QGeoRouteRequest &request, const QString &prefix) const;
+
+protected:
+    QGeoRouteParser(QGeoRouteParserPrivate &dd, QObject *parent = Q_NULLPTR);
+
+private:
+    Q_DISABLE_COPY(QGeoRouteParser)
+};
 
 QT_END_NAMESPACE
+
+#endif // QOSRMROUTEPARSER_P_H
