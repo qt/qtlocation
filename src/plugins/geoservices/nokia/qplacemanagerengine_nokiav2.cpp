@@ -200,7 +200,7 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
     QString *errorString)
     : QPlaceManagerEngine(parameters)
     , m_manager(networkManager)
-    , m_uriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.places.host"), PLACES_HOST, PLACES_HOST_CN))
+    , m_uriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.places.host"), PLACES_HOST))
 {
     Q_ASSERT(networkManager);
     m_manager->setParent(this);
