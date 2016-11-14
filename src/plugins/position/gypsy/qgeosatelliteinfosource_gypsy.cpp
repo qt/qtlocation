@@ -141,7 +141,7 @@ gchar *SatelliteGypsyEngine::eng_gconf_client_get_string(GConfClient *client, co
 }
 
 QGeoSatelliteInfoSourceGypsy::QGeoSatelliteInfoSourceGypsy(QObject *parent) : QGeoSatelliteInfoSource(parent),
-    m_engine(0), m_satellite(0), m_device(0), m_updatesOngoing(false), m_requestOngoing(false)
+    m_engine(0), m_satellite(0), m_device(0), m_updatesOngoing(false), m_requestOngoing(false), m_requestTimer(this)
 {
     m_requestTimer.setSingleShot(true);
     QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(requestUpdateTimeout()));
