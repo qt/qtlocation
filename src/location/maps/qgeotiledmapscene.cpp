@@ -84,21 +84,15 @@ public:
     int m_maxTileY;
     int m_tileXWrapsBelow; // the wrap point as a tile index
 
-    // cameraToGrid transform
-    double m_mercatorCenterX; // center of camera in grid space (0 to sideLength)
-    double m_mercatorCenterY;
-    double m_mercatorWidth;   // width of camera in grid space (0 to sideLength)
-    double m_mercatorHeight;
+    // mercatorToItemPosition
+    double m_cameraCenterXMercator;
+    double m_cameraCenterYMercator;
+    double m_cameraWidthMercator;
+    double m_cameraHeightMercator;
 
-    // screenToWindow transform
-    double m_screenOffsetX; // in pixels
-    double m_screenOffsetY; // in pixels
     // cameraToScreen transform
     double m_screenWidth; // in pixels
     double m_screenHeight; // in pixels
-
-    bool m_useVerticalLock;
-    bool m_verticalLock;
     bool m_linearScaling;
 
     bool m_dropTextures;
@@ -122,12 +116,6 @@ QGeoTiledMapScene::QGeoTiledMapScene(QObject *parent)
 
 QGeoTiledMapScene::~QGeoTiledMapScene()
 {
-}
-
-void QGeoTiledMapScene::setUseVerticalLock(bool lock)
-{
-    Q_D(QGeoTiledMapScene);
-    d->m_useVerticalLock = lock;
 }
 
 void QGeoTiledMapScene::setScreenSize(const QSize &size)
@@ -182,12 +170,6 @@ QDoubleVector2D QGeoTiledMapScene::mercatorToItemPosition(const QDoubleVector2D 
     return d->mercatorToItemPosition(mercator);
 }
 
-bool QGeoTiledMapScene::verticalLock() const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->m_verticalLock;
-}
-
 QSet<QGeoTileSpec> QGeoTiledMapScene::texturedTiles()
 {
     Q_D(QGeoTiledMapScene);
@@ -216,16 +198,12 @@ QGeoTiledMapScenePrivate::QGeoTiledMapScenePrivate()
       m_maxTileX(-1),
       m_maxTileY(-1),
       m_tileXWrapsBelow(0),
-      m_mercatorCenterX(0.0),
-      m_mercatorCenterY(0.0),
-      m_mercatorWidth(0.0),
-      m_mercatorHeight(0.0),
-      m_screenOffsetX(0.0),
-      m_screenOffsetY(0.0),
+      m_cameraCenterXMercator(0),
+      m_cameraCenterYMercator(0),
+      m_cameraWidthMercator(0),
+      m_cameraHeightMercator(0),
       m_screenWidth(0.0),
       m_screenHeight(0.0),
-      m_useVerticalLock(false),
-      m_verticalLock(false),
       m_linearScaling(false),
       m_dropTextures(false)
 {
@@ -237,63 +215,40 @@ QGeoTiledMapScenePrivate::~QGeoTiledMapScenePrivate()
 
 QDoubleVector2D QGeoTiledMapScenePrivate::itemPositionToMercator(const QDoubleVector2D &pos) const
 {
-    double x = m_mercatorWidth * (((pos.x() - m_screenOffsetX) / m_screenWidth) - 0.5);
-    x += m_mercatorCenterX;
+    double x = pos.x();
+    x /= m_screenSize.width();
+    x -= 0.5;
+    x *= m_cameraWidthMercator;
+    x += m_cameraCenterXMercator;
 
-    if (x > 1.0 * m_sideLength)
-        x -= 1.0 * m_sideLength;
-    if (x < 0.0)
-        x += 1.0 * m_sideLength;
+    double y = pos.y();
+    y /= m_screenSize.height();
+    y -= 0.5;
+    y *= m_cameraHeightMercator;
+    y += m_cameraCenterYMercator;
 
-    x /= 1.0 * m_sideLength;
-
-    double y = m_mercatorHeight * (((pos.y() - m_screenOffsetY) / m_screenHeight) - 0.5);
-    y += m_mercatorCenterY;
-    y /= 1.0 * m_sideLength;
+    if (x > 1.0)
+        x -= 1.0;
+    else if (x <= 0.0)
+        x += 1.0;
 
     return QDoubleVector2D(x, y);
 }
 
 QDoubleVector2D QGeoTiledMapScenePrivate::mercatorToItemPosition(const QDoubleVector2D &mercator) const
 {
-    double mx = m_sideLength * mercator.x();
-
-    double lb = m_mercatorCenterX - m_mercatorWidth / 2.0;
-    if (lb < 0.0)
-        lb += m_sideLength;
-    double ub = m_mercatorCenterX + m_mercatorWidth / 2.0;
-    if (m_sideLength < ub)
-        ub -= m_sideLength;
-
-    double m = (mx - m_mercatorCenterX) / m_mercatorWidth;
-
-    double mWrapLower = (mx - m_mercatorCenterX - m_sideLength) / m_mercatorWidth;
-    double mWrapUpper = (mx - m_mercatorCenterX + m_sideLength) / m_mercatorWidth;
-
-    // correct for crossing dateline
-    if (qFuzzyCompare(ub - lb + 1.0, 1.0) || (ub < lb) ) {
-        if (m_mercatorCenterX < ub) {
-            if (lb < mx) {
-                 m = mWrapLower;
-            }
-        } else if (lb < m_mercatorCenterX) {
-            if (mx <= ub) {
-                m = mWrapUpper;
-            }
-        }
+    double x = mercator.x();
+    if (m_cameraCenterXMercator < 0.5) {
+        if (x - m_cameraCenterXMercator > 0.5 )
+            x -= 1.0;
+    } else if (m_cameraCenterXMercator > 0.5) {
+        if (x - m_cameraCenterXMercator < -0.5 )
+            x += 1.0;
     }
 
-    // apply wrapping if necessary so we don't return unreasonably large pos/neg screen positions
-    // also allows map items to be drawn properly if some of their coords are out of the screen
-    if ( qAbs(mWrapLower) < qAbs(m) )
-        m = mWrapLower;
-    if ( qAbs(mWrapUpper) < qAbs(m) )
-        m = mWrapUpper;
-
-    double x = m_screenWidth * (0.5 + m);
-    double y = m_screenHeight * (0.5 + (m_sideLength * mercator.y() - m_mercatorCenterY) / m_mercatorHeight);
-
-    return QDoubleVector2D(x + m_screenOffsetX, y + m_screenOffsetY);
+    x = ((x - m_cameraCenterXMercator) / m_cameraWidthMercator + 0.5) * m_screenSize.width();
+    double y = ((mercator.y() - m_cameraCenterYMercator) / m_cameraHeightMercator + 0.5) *  m_screenSize.height();
+    return QDoubleVector2D(x, y);
 }
 
 bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode)
@@ -453,57 +408,36 @@ void QGeoTiledMapScenePrivate::setupCamera()
     // fraction of zoom level
     double z = std::pow(2.0, m_cameraData.zoomLevel() - m_intZoomLevel) * m_tileSize;
 
-    // calculate altitdue that allows the visible map tiles
-    // to fit in the screen correctly (note that a larger f will cause
-    // the camera be higher, resulting in gray areas displayed around
-    // the tiles)
+    // Maps smaller than screen size are NOT supported
+
+    // calculate altitude that allows the visible map tiles
+    // to fit in the screen correctly (note that a larger f would cause
+    // the camera be higher, resulting in empty areas displayed around
+    // the tiles or repeated tiles)
     double altitude = f / (2.0 * z) ;
 
-    // mercatorWidth_ and mercatorHeight_ define the ratio for
-    // mercator and screen coordinate conversion,
-    // see mercatorToItemPosition() and itemPositionToMercator()
-    m_mercatorHeight = m_screenSize.height() / z;
-    m_mercatorWidth = m_screenSize.width() / z;
+    m_cameraWidthMercator  = m_screenSize.width()  / (std::pow(2.0, m_cameraData.zoomLevel()) * m_tileSize);
+    m_cameraHeightMercator = m_screenSize.height() / (std::pow(2.0, m_cameraData.zoomLevel()) * m_tileSize);
 
     // calculate center
     double edge = m_scaleFactor * m_tileSize;
 
     // first calculate the camera center in map space in the range of 0 <-> sideLength (2^z)
-    QDoubleVector3D center = (m_sideLength * QGeoProjection::coordToMercator(m_cameraData.center()));
+    QDoubleVector2D camCenterMercator = QGeoProjection::coordToMercator(m_cameraData.center());
+    QDoubleVector3D center = m_sideLength * camCenterMercator;
+    m_cameraCenterXMercator = camCenterMercator.x();
+    m_cameraCenterYMercator = camCenterMercator.y();
 
     // wrap the center if necessary (due to dateline crossing)
     if (center.x() < m_tileXWrapsBelow)
         center.setX(center.x() + 1.0 * m_sideLength);
 
-    m_mercatorCenterX = center.x();
-    m_mercatorCenterY = center.y();
-
     // work out where the camera center is w.r.t minimum tile bounds
     center.setX(center.x() - 1.0 * m_minTileX);
     center.setY(1.0 * m_minTileY - center.y());
 
-    // letter box vertically
-    if (m_useVerticalLock && (m_mercatorHeight > 1.0 * m_sideLength)) {
-        center.setY(-1.0 * m_sideLength / 2.0);
-        m_mercatorCenterY = m_sideLength / 2.0;
-        m_screenOffsetY = m_screenSize.height() * (0.5 - m_sideLength / (2 * m_mercatorHeight));
-        m_screenHeight = m_screenSize.height() - 2 * m_screenOffsetY;
-        m_mercatorHeight = 1.0 * m_sideLength;
-        m_verticalLock = true;
-    } else {
-        m_screenOffsetY = 0.0;
-        m_screenHeight = m_screenSize.height();
-        m_verticalLock = false;
-    }
-
-    if (m_mercatorWidth > 1.0 * m_sideLength) {
-        m_screenOffsetX = m_screenSize.width() * (0.5 - (m_sideLength / (2 * m_mercatorWidth)));
-        m_screenWidth = m_screenSize.width() - 2 * m_screenOffsetX;
-        m_mercatorWidth = 1.0 * m_sideLength;
-    } else {
-        m_screenOffsetX = 0.0;
-        m_screenWidth = m_screenSize.width();
-    }
+    m_screenHeight = m_screenSize.height();
+    m_screenWidth = m_screenSize.width();
 
     // apply necessary scaling to the camera center
     center *= edge;
@@ -714,7 +648,7 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     if (!mapRoot)
         mapRoot = new QGeoTiledMapRootNode();
 
-    mapRoot->setClipRect(QRect(d->m_screenOffsetX, d->m_screenOffsetY, d->m_screenWidth, d->m_screenHeight));
+    mapRoot->setClipRect(QRect(0, 0, d->m_screenWidth, d->m_screenHeight));
 
     QMatrix4x4 itemSpaceMatrix;
     itemSpaceMatrix.scale(w / 2, h / 2);

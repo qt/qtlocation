@@ -52,7 +52,7 @@ class tst_QGeoTiledMapScene : public QObject
     Q_OBJECT
 
     private:
-    void row(QString name, double screenX, double screenY, double cameraCenterX, double cameraCenterY,
+    void row(QString name, double screenX, double screenX2, double screenY, double cameraCenterX, double cameraCenterY,
              double zoom, int tileSize, int screenWidth, int screenHeight, double mercatorX, double mercatorY){
 
         // expected behaviour of wrapping
@@ -62,7 +62,7 @@ class tst_QGeoTiledMapScene : public QObject
             mercatorX -= 1.0;
 
         QTest::newRow(qPrintable(name))
-                << screenX << screenY
+                << screenX << screenX2 << screenY
                 << cameraCenterX << cameraCenterY
                 << zoom << tileSize
                 << screenWidth << screenHeight
@@ -74,6 +74,7 @@ class tst_QGeoTiledMapScene : public QObject
                          int tileSize, int screenWidth, int screenHeight)
     {
         double screenX;
+        double screenX2;
         double screenY;
         double mercatorX;
         double mercatorY;
@@ -84,76 +85,92 @@ class tst_QGeoTiledMapScene : public QObject
         double scaledHalfLengthX = halfLength * scaleX;
         double scaledHalfLengthY = halfLength * scaleY;
 
-        // top left
-        screenX = 0.0;
-        screenY = 1.0 * screenHeight;
-        mercatorX = cameraCenterX - scaledHalfLengthX;
-        mercatorY = cameraCenterY + scaledHalfLengthY;
-        row (name + QString("_topLeftScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
-                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
-
-        // top
-        screenX = 0.5 * screenWidth;
-        screenY = 1.0 * screenHeight;
-        mercatorX = cameraCenterX;
-        mercatorY = cameraCenterY + scaledHalfLengthY;
-        row (name + QString("_topScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
-                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
-
-        // top right
-        screenX = 1.0 * screenWidth;
-        screenY = 1.0 * screenHeight;
-        mercatorX = cameraCenterX + scaledHalfLengthX;
-        mercatorY = cameraCenterY + scaledHalfLengthY;
-        row (name + QString("_topRightScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
-                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
-
-        // left
-        screenX = 0.0 * screenWidth;
-        screenY = 0.5 * screenHeight;
-        mercatorX = cameraCenterX - scaledHalfLengthX;
-        mercatorY = cameraCenterY;
-        row (name + QString("_leftScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
-                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
-
-        // center
-        screenX = 0.5 * screenWidth;
-        screenY = 0.5 * screenHeight;
-        mercatorX = cameraCenterX;
-        mercatorY = cameraCenterY;
-        row (name + QString("_centerScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
-                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
-
-        // right
-        screenX = 1.0 * screenWidth;
-        screenY = 0.5 * screenHeight;
-        mercatorX = cameraCenterX + scaledHalfLengthX;
-        mercatorY = cameraCenterY;
-        row (name + QString("_rightScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
-                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
+        bool matchingMapEnds = false;
+        if (screenWidth == std::pow(2.0, zoom) * tileSize)
+            matchingMapEnds = true;
 
         // bottom left
-        screenX = 0.0;
-        screenY = 0.0;
+        screenX = screenX2 = 0.0;
+        if (matchingMapEnds)
+            screenX2 = abs(screenX - 1.0) * screenWidth;
+        screenY = 1.0 * screenHeight;
         mercatorX = cameraCenterX - scaledHalfLengthX;
-        mercatorY = cameraCenterY - scaledHalfLengthY;
-        row (name + QString("_bottomLeftrScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
+        mercatorY = cameraCenterY + scaledHalfLengthY;
+        row (name + QString("_bottomLeftScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
                      zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
 
         // bottom
-        screenX = 0.5 * screenWidth;
-        screenY = 0.0;
+        screenX = screenX2 = 0.5 * screenWidth;
+        screenY = 1.0 * screenHeight;
         mercatorX = cameraCenterX;
-        mercatorY = cameraCenterY - scaledHalfLengthY;
-        row (name + QString("_bottomScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
+        mercatorY = cameraCenterY + scaledHalfLengthY;
+        row (name + QString("_bottomScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
                      zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
 
         // bottom right
-        screenX = 1.0 * screenWidth;
+        screenX = screenX2 = 1.0 * screenWidth;
+        if (matchingMapEnds)
+            screenX2 = abs(screenX - 1.0) * screenWidth;
+        screenY = 1.0 * screenHeight;
+        mercatorX = cameraCenterX + scaledHalfLengthX;
+        mercatorY = cameraCenterY + scaledHalfLengthY;
+        row (name + QString("_bottomRightScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
+                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
+
+        // left
+        screenX = screenX2 = 0.0 * screenWidth;
+        if (matchingMapEnds)
+            screenX2 = abs(screenX - 1.0) * screenWidth;
+        screenY = 0.5 * screenHeight;
+        mercatorX = cameraCenterX - scaledHalfLengthX;
+        mercatorY = cameraCenterY;
+        row (name + QString("_leftScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
+                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
+
+        // center
+        screenX = screenX2 = 0.5 * screenWidth;
+        screenY = 0.5 * screenHeight;
+        mercatorX = cameraCenterX;
+        mercatorY = cameraCenterY;
+        row (name + QString("_centerScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
+                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
+
+        // right
+        screenX = screenX2 = 1.0 * screenWidth;
+        if (matchingMapEnds)
+            screenX2 = abs(screenX - 1.0) * screenWidth;
+        screenY = 0.5 * screenHeight;
+        mercatorX = cameraCenterX + scaledHalfLengthX;
+        mercatorY = cameraCenterY;
+        row (name + QString("_rightScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
+                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
+
+        // top left
+        screenX = screenX2 = 0.0;
+        if (matchingMapEnds)
+            screenX2 = abs(screenX - 1.0) * screenWidth;
+        screenY = 0.0;
+        mercatorX = cameraCenterX - scaledHalfLengthX;
+        mercatorY = cameraCenterY - scaledHalfLengthY;
+        row (name + QString("_topLeftrScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
+                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
+
+        // top
+        screenX = screenX2 = 0.5 * screenWidth;
+        screenY = 0.0;
+        mercatorX = cameraCenterX;
+        mercatorY = cameraCenterY - scaledHalfLengthY;
+        row (name + QString("_topScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
+                     zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
+
+        // top right
+        screenX = screenX2 = 1.0 * screenWidth;
+        if (matchingMapEnds)
+            screenX2 = abs(screenX - 1.0) * screenWidth;
         screenY = 0.0;
         mercatorX = cameraCenterX + scaledHalfLengthX;
         mercatorY = cameraCenterY - scaledHalfLengthY;
-        row (name + QString("_bottomRightScreen"), screenX, screenY, cameraCenterX, cameraCenterY,
+        row (name + QString("_topRightScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
                      zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
 
     }
@@ -164,21 +181,21 @@ class tst_QGeoTiledMapScene : public QObject
         double cameraCenterX;
         double cameraCenterY;
 
-        // top left
+        // bottom left
         cameraCenterX = 0;
         cameraCenterY = 1.0;
-        screenPositions(name + QString("_topLeftCamera"), cameraCenterX, cameraCenterY,
+        screenPositions(name + QString("_bottomLeftCamera"), cameraCenterX, cameraCenterY,
                         zoom, tileSize, screenWidth, screenHeight);
 
-        // top
+        // bottom
         cameraCenterX = 0.5;
         cameraCenterY = 1.0;
-        screenPositions(name + QString("_topCamera"), cameraCenterX, cameraCenterY,
+        screenPositions(name + QString("_bottomCamera"), cameraCenterX, cameraCenterY,
                         zoom, tileSize, screenWidth, screenHeight);
-        // top right
+        // bottom right
         cameraCenterX = 1.0;
         cameraCenterY = 1.0;
-        screenPositions(name + QString("_topRightCamera"), cameraCenterX, cameraCenterY,
+        screenPositions(name + QString("_bottomRightCamera"), cameraCenterX, cameraCenterY,
                         zoom, tileSize, screenWidth, screenHeight);
         // left
         cameraCenterX = 0.0;
@@ -195,25 +212,26 @@ class tst_QGeoTiledMapScene : public QObject
         cameraCenterY = 0.5;
         screenPositions(name + QString("_rightCamera"), cameraCenterX, cameraCenterY,
                         zoom, tileSize, screenWidth, screenHeight);
-        // bottom left
+        // top left
         cameraCenterX = 0.0;
         cameraCenterY = 0.0;
-        screenPositions(name + QString("_bottomLeftCamera"), cameraCenterX, cameraCenterY,
+        screenPositions(name + QString("_topLeftCamera"), cameraCenterX, cameraCenterY,
                         zoom, tileSize, screenWidth, screenHeight);
-        // bottom
+        // top
         cameraCenterX = 0.5;
         cameraCenterY = 0.0;
-        screenPositions(name + QString("_bottomCamera"), cameraCenterX, cameraCenterY,
+        screenPositions(name + QString("_topCamera"), cameraCenterX, cameraCenterY,
                         zoom, tileSize, screenWidth, screenHeight);
-        // bottom right
+        // top right
         cameraCenterX = 1.0;
         cameraCenterY = 0.0;
-        screenPositions(name + QString("_bottomRightCamera"), cameraCenterX, cameraCenterY,
+        screenPositions(name + QString("_topRightCamera"), cameraCenterX, cameraCenterY,
                         zoom, tileSize, screenWidth, screenHeight);
     }
 
     void populateScreenMercatorData(){
         QTest::addColumn<double>("screenX");
+        QTest::addColumn<double>("screenX2");
         QTest::addColumn<double>("screenY");
         QTest::addColumn<double>("cameraCenterX");
         QTest::addColumn<double>("cameraCenterY");
@@ -230,7 +248,7 @@ class tst_QGeoTiledMapScene : public QObject
         int screenHeight;
         QString name;
         tileSize = 16;
-        zoom = 4.0;
+        zoom = 1.0; // 4 tiles in the map. map size =  32x32
 
         /*
             ScreenWidth = t
@@ -259,6 +277,7 @@ class tst_QGeoTiledMapScene : public QObject
         name = QString("_(2t x t)");
         screenCameraPositions(name, zoom, tileSize, screenWidth, screenHeight);
 
+
         /*
             Screen Width = t * 2
             Screen Height = t * 2
@@ -270,37 +289,6 @@ class tst_QGeoTiledMapScene : public QObject
     }
 
     private slots:
-
-       void useVerticalLock(){
-            QGeoCameraData camera;
-            camera.setZoomLevel(4.0);
-            camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(0.0, 0.0)));
-
-            QGeoCameraTiles ct;
-            ct.setTileSize(16);
-            ct.setCameraData(camera);
-            ct.setScreenSize(QSize(16,16));
-
-            QGeoTiledMapScene mapScene;
-            mapScene.setTileSize(16);
-            mapScene.setScreenSize(QSize(16,16*32));
-            mapScene.setCameraData(camera);
-            QVERIFY(!mapScene.verticalLock());
-            mapScene.setUseVerticalLock(true);
-            mapScene.setVisibleTiles(ct.createTiles());
-            QVERIFY(mapScene.verticalLock());
-
-            // Test the case when setting vertical lock has no effect
-            QGeoTiledMapScene mapScene2;
-            mapScene2.setTileSize(16);
-            mapScene2.setScreenSize(QSize(16,16));
-            mapScene2.setCameraData(camera);
-            QVERIFY(!mapScene2.verticalLock());
-            mapScene2.setUseVerticalLock(true);
-            mapScene2.setVisibleTiles(ct.createTiles());
-            QVERIFY(!mapScene2.verticalLock());
-        }
-
         void screenToMercatorPositions(){
             QFETCH(double, screenX);
             QFETCH(double, screenY);
@@ -315,7 +303,8 @@ class tst_QGeoTiledMapScene : public QObject
 
             QGeoCameraData camera;
             camera.setZoomLevel(zoom);
-            camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY)));
+            QGeoCoordinate centerCoordinate = QGeoProjection::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY));
+            camera.setCenter(centerCoordinate);
 
             QGeoCameraTiles ct;
             ct.setTileSize(tileSize);
@@ -329,10 +318,10 @@ class tst_QGeoTiledMapScene : public QObject
             mapGeometry.setVisibleTiles(ct.createTiles());
 
             QDoubleVector2D point(screenX,screenY);
-            QDoubleVector2D mecartorPos = mapGeometry.itemPositionToMercator(point);
+            QDoubleVector2D mercartorPos = mapGeometry.itemPositionToMercator(point);
 
-            QCOMPARE(mecartorPos.x(),mercatorX);
-            QCOMPARE(mecartorPos.y(),mercatorY);
+            QCOMPARE(mercartorPos.x(), mercatorX);
+            QCOMPARE(mercartorPos.y(), mercatorY);
         }
 
         void screenToMercatorPositions_data()
@@ -342,6 +331,7 @@ class tst_QGeoTiledMapScene : public QObject
 
         void mercatorToScreenPositions(){
             QFETCH(double, screenX);
+            QFETCH(double, screenX2);
             QFETCH(double, screenY);
             QFETCH(double, cameraCenterX);
             QFETCH(double, cameraCenterY);
@@ -354,7 +344,8 @@ class tst_QGeoTiledMapScene : public QObject
 
             QGeoCameraData camera;
             camera.setZoomLevel(zoom);
-            camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY)));
+            QGeoCoordinate coord = QGeoProjection::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY));
+            camera.setCenter(coord);
 
             QGeoCameraTiles ct;
             ct.setTileSize(tileSize);
@@ -370,7 +361,11 @@ class tst_QGeoTiledMapScene : public QObject
             QDoubleVector2D mercatorPos(mercatorX, mercatorY);
             QPointF point = mapGeometry.mercatorToItemPosition(mercatorPos).toPointF();
 
-            QCOMPARE(point.x(), screenX);
+            QVERIFY2((point.x() == screenX) || (point.x() == screenX2),
+                                 qPrintable(QString("Accepted: { %1 , %2 } Actual: %3")
+                                            .arg(QString::number(screenX))
+                                            .arg(QString::number(screenX2))
+                                            .arg(QString::number(point.x()))));
             QCOMPARE(point.y(), screenY);
         }
 

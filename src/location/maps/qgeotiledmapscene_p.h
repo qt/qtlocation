@@ -75,8 +75,6 @@ public:
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     const QSet<QGeoTileSpec> &visibleTiles() const;
 
-    void setUseVerticalLock(bool lock);
-
     void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
     QDoubleVector2D itemPositionToMercator(const QDoubleVector2D &pos) const;
@@ -84,7 +82,6 @@ public:
 
     QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
-    bool verticalLock() const;
     QSet<QGeoTileSpec> texturedTiles();
 
     void clearTexturedTiles();
