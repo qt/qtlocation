@@ -150,8 +150,6 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     if (!sourceDirty_)
         return;
 
-    double minX = -1.0;
-
     // build the actual path
     QDoubleVector2D origin;
     QDoubleVector2D lastPoint;
@@ -182,13 +180,10 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 
         if (i == 0) {
             origin = point;
-            minX = point.x();
             srcOrigin_ = coord;
             srcPath_.moveTo(point.toPointF() - origin.toPointF());
             lastPoint = point;
         } else {
-            if (point.x() <= minX)
-                minX = point.x();
             const QDoubleVector2D diff = (point - lastPoint);
             if (diff.x() * diff.x() + diff.y() * diff.y() >= 3.0) {
                 srcPath_.lineTo(point.toPointF() - origin.toPointF());
@@ -203,7 +198,6 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         srcPath_ = srcPath_.simplified();
 
     sourceBounds_ = srcPath_.boundingRect();
-    geoLeftBound_ = map.itemPositionToCoordinate(QDoubleVector2D(minX, 0), false);
 }
 
 /*!
