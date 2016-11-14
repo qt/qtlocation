@@ -200,7 +200,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     srcPointTypes_.clear();
     srcPointTypes_.reserve(path.size());
 
-    QDoubleVector2D origin, lastPoint, lastAddedPoint;
+    QDoubleVector2D origin, lastAddedPoint;
 
     const double mapWidthHalf = map.width()/2.0;
     double unwrapBelowX = 0;
@@ -263,8 +263,6 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
                 lastAddedPoint = point;
             }
         }
-
-        lastPoint = point;
     }
 
     sourceBounds_ = QRectF(QPointF(minX, minY), QPointF(maxX, maxY));
