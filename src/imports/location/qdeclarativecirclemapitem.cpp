@@ -506,7 +506,7 @@ void QDeclarativeCircleMapItem::updatePolish()
         setHeight(geometry_.screenBoundingBox().height());
     }
 
-    setPositionOnMap(circlePath_.at(0), geometry_.firstPointOffset());
+    setPositionOnMap(geoLeftBound_, geometry_.firstPointOffset());
 }
 
 /*!

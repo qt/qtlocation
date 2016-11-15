@@ -200,12 +200,14 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     srcPointTypes_.clear();
     srcPointTypes_.reserve(path.size());
 
-    QDoubleVector2D origin, lastAddedPoint;
-
+    QDoubleVector2D lastAddedPoint;
     const double mapWidthHalf = map.viewportWidth()/2.0;
+    QDoubleVector2D origin = map.geoProjection().coordinateToItemPosition(geoLeftBound_, false);
+
+    srcOrigin_ = geoLeftBound_;
     double unwrapBelowX = 0;
     if (preserveGeometry_)
-        unwrapBelowX = map.geoProjection().coordinateToItemPosition(geoLeftBound_, false).x();
+        unwrapBelowX = origin.x();
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -236,9 +238,8 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
 
         if (!foundValid) {
             foundValid = true;
-            srcOrigin_ = coord;  // TODO: Make this consistent with the left bound
-            origin = point;
-            point = QDoubleVector2D(0,0);
+
+            point = point - origin; // (0,0) if point == geoLeftBound_
 
             minX = point.x();
             maxX = minX;
@@ -827,8 +828,8 @@ void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, con
     QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(geometry_.firstPointOffset());
     QGeoCoordinate newCoordinate = map()->geoProjection().itemPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
-        double firstLongitude = path_.at(0).longitude();
-        double firstLatitude = path_.at(0).latitude();
+        double firstLongitude = geoLeftBound_.longitude();
+        double firstLatitude = geoLeftBound_.latitude();
         double minMaxLatitude = firstLatitude;
         // prevent dragging over valid min and max latitudes
         for (int i = 0; i < path_.count(); ++i) {
@@ -903,7 +904,7 @@ void QDeclarativePolylineMapItem::updatePolish()
     setWidth(geometry_.sourceBoundingBox().width());
     setHeight(geometry_.sourceBoundingBox().height());
 
-    setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
+    setPositionOnMap(geoLeftBound_, -1 * geometry_.sourceBoundingBox().topLeft());
 }
 
 /*!

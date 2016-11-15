@@ -150,14 +150,17 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     if (!sourceDirty_)
         return;
 
+    bool foundValid = false;
+
     // build the actual path
-    QDoubleVector2D origin;
-    QDoubleVector2D lastPoint;
+    QDoubleVector2D lastAddedPoint;
     srcPath_ = QPainterPath();
 
+    srcOrigin_ = geoLeftBound_;
+    QDoubleVector2D origin = map.geoProjection().coordinateToItemPosition(geoLeftBound_, false);
     double unwrapBelowX = 0;
     if (preserveGeometry_ )
-        unwrapBelowX = map.geoProjection().coordinateToItemPosition(geoLeftBound_, false).x();
+        unwrapBelowX = origin.x();
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -178,16 +181,18 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
                 && !qFuzzyCompare(geoLeftBound_.longitude(), coord.longitude()))
             point.setX(unwrapBelowX + geoDistanceToScreenWidth(map, geoLeftBound_, coord));
 
-        if (i == 0) {
-            origin = point;
-            srcOrigin_ = coord;
-            srcPath_.moveTo(point.toPointF() - origin.toPointF());
-            lastPoint = point;
+
+        if (!foundValid) {
+            foundValid = true;
+            point = point - origin;
+            srcPath_.moveTo(point.toPointF());
+            lastAddedPoint = point;
         } else {
-            const QDoubleVector2D diff = (point - lastPoint);
-            if (diff.x() * diff.x() + diff.y() * diff.y() >= 3.0) {
-                srcPath_.lineTo(point.toPointF() - origin.toPointF());
-                lastPoint = point;
+            point -= origin;
+            if ((point - lastAddedPoint).manhattanLength() > 3 ||
+                    i == path.size() - 1) {
+                srcPath_.lineTo(point.toPointF());
+                lastAddedPoint = point;
             }
         }
     }
@@ -555,7 +560,7 @@ void QDeclarativePolygonMapItem::updatePolish()
     setWidth(combined.width());
     setHeight(combined.height());
 
-    setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
+    setPositionOnMap(geoLeftBound_, -1 * geometry_.sourceBoundingBox().topLeft());
 }
 
 /*!
@@ -605,8 +610,8 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
     QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(geometry_.firstPointOffset());
     QGeoCoordinate newCoordinate = map()->geoProjection().itemPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
-        double firstLongitude = path_.at(0).longitude();
-        double firstLatitude = path_.at(0).latitude();
+        double firstLongitude = geoLeftBound_.longitude();
+        double firstLatitude = geoLeftBound_.latitude();
         double minMaxLatitude = firstLatitude;
         // prevent dragging over valid min and max latitudes
         for (int i = 0; i < path_.count(); ++i) {
