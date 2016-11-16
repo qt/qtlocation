@@ -120,6 +120,39 @@ QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
         return QGeoCameraCapabilities();
 }
 
+/* Default implementations */
+QGeoCoordinate QGeoMap::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
+{
+    if (clipToViewport) {
+        int w = viewportWidth();
+        int h = viewportHeight();
+
+        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
+            return QGeoCoordinate();
+    }
+
+    QDoubleVector2D wrappedMapProjection = itemPositionToWrappedMapProjection(pos);
+    // With rotation/tilting, a screen position might end up outside the projection space.
+    // TODO: test for it
+    return mapProjectionToGeo(unwrapMapProjection(wrappedMapProjection));
+}
+
+QDoubleVector2D QGeoMap::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
+{
+    QDoubleVector2D pos = wrappedMapProjectionToItemPosition(wrapMapProjection(geoToMapProjection(coordinate)));
+
+    if (clipToViewport) {
+        int w = viewportWidth();
+        int h = viewportHeight();
+        double x = pos.x();
+        double y = pos.y();
+        if ((x < -0.5) || (x > w + 0.5) || (y < -0.5) || (y > h + 0.5) || qIsNaN(x) || qIsNaN(y))
+            return QDoubleVector2D(qQNaN(), qQNaN());
+    }
+    return pos;
+}
+
+
 void QGeoMap::prefetchData()
 {
 

@@ -84,13 +84,28 @@ public:
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
 
-    virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
-    virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
     virtual double minimumZoomAtViewportSize(int viewportWidth, int viewportHeight) const = 0;
     virtual double maximumCenterLatitudeAtZoom(double zoomLevel) const = 0;
 
-    virtual QDoubleVector2D referenceCoordinateToItemPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate referenceItemPositionToCoordinate(const QDoubleVector2D &pos) const = 0;
+    // The size of the underlying map, at the current zoom level. Unrelated to width()/height()/size().
+    virtual double mapWidth() const = 0;
+    virtual double mapHeight() const = 0;
+
+    // Conversion methods for QGeoCoordinate <-> screen.
+    // This currently assumes that the "MapProjection" space is [0, 1][0, 1] for every type of possibly supported map projection
+    virtual QDoubleVector2D geoToMapProjection(const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoCoordinate mapProjectionToGeo(const QDoubleVector2D &projection) const = 0;
+
+    virtual QDoubleVector2D wrapMapProjection(const QDoubleVector2D &projection) const = 0;
+    virtual QDoubleVector2D unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const = 0;
+
+    virtual QDoubleVector2D wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const = 0;
+    virtual QDoubleVector2D itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const = 0;
+
+    // Convenience methods to avoid the chain itemPositionToWrappedProjection(wrapProjection(geoToProjection()))
+    // These also come with a default implementation that can, however, be overridden.
+    virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const;
+    virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
 
     virtual void prefetchData();
     virtual void clearData();

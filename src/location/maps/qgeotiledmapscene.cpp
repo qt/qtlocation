@@ -74,6 +74,7 @@ public:
     // the number of tiles in each direction for the whole map (earth) at the current zoom level.
     // it is 1<<zoomLevel
     int m_sideLength;
+    double m_mapEdgeSize;
 
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > m_textures;
 
@@ -84,11 +85,13 @@ public:
     int m_maxTileY;
     int m_tileXWrapsBelow; // the wrap point as a tile index
 
-    // mercatorToItemPosition
+    // mercator to camera transform for coordinates (not tiles!)
     double m_cameraCenterXMercator;
     double m_cameraCenterYMercator;
     double m_cameraWidthMercator;
     double m_cameraHeightMercator;
+    double m_1_cameraWidthMercator;
+    double m_1_cameraHeightMercator;
 
     // cameraToScreen transform
     double m_screenWidth; // in pixels
@@ -101,6 +104,15 @@ public:
 
     QDoubleVector2D itemPositionToMercator(const QDoubleVector2D &pos) const;
     QDoubleVector2D mercatorToItemPosition(const QDoubleVector2D &mercator) const;
+
+    QDoubleVector2D geoToMapProjection(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate mapProjectionToGeo(const QDoubleVector2D &projection) const;
+
+    QDoubleVector2D wrapMapProjection(const QDoubleVector2D &projection) const;
+    QDoubleVector2D unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const;
+
+    QDoubleVector2D wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const;
+    QDoubleVector2D itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
@@ -138,6 +150,7 @@ void QGeoTiledMapScene::setCameraData(const QGeoCameraData &cameraData)
     float delta = cameraData.zoomLevel() - d->m_intZoomLevel;
     d->m_linearScaling = qAbs(delta) > 0.05;
     d->m_sideLength = 1 << d->m_intZoomLevel;
+    d->m_mapEdgeSize = std::pow(2.0, cameraData.zoomLevel()) * d->m_tileSize;
 }
 
 void QGeoTiledMapScene::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
@@ -158,6 +171,12 @@ void QGeoTiledMapScene::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTil
     d->addTile(spec, texture);
 }
 
+double QGeoTiledMapScene::mapEdgeSize() const
+{
+    Q_D(const QGeoTiledMapScene);
+    return d->m_mapEdgeSize;
+}
+
 QDoubleVector2D QGeoTiledMapScene::itemPositionToMercator(const QDoubleVector2D &pos) const
 {
     Q_D(const QGeoTiledMapScene);
@@ -168,6 +187,42 @@ QDoubleVector2D QGeoTiledMapScene::mercatorToItemPosition(const QDoubleVector2D 
 {
     Q_D(const QGeoTiledMapScene);
     return d->mercatorToItemPosition(mercator);
+}
+
+QDoubleVector2D QGeoTiledMapScene::geoToMapProjection(const QGeoCoordinate &coordinate) const
+{
+    Q_D(const QGeoTiledMapScene);
+    return d->geoToMapProjection(coordinate);
+}
+
+QGeoCoordinate QGeoTiledMapScene::mapProjectionToGeo(const QDoubleVector2D &projection) const
+{
+    Q_D(const QGeoTiledMapScene);
+    return d->mapProjectionToGeo(projection);
+}
+
+QDoubleVector2D QGeoTiledMapScene::wrapMapProjection(const QDoubleVector2D &projection) const
+{
+    Q_D(const QGeoTiledMapScene);
+    return d->wrapMapProjection(projection);
+}
+
+QDoubleVector2D QGeoTiledMapScene::unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const
+{
+    Q_D(const QGeoTiledMapScene);
+    return d->unwrapMapProjection(wrappedProjection);
+}
+
+QDoubleVector2D QGeoTiledMapScene::wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const
+{
+    Q_D(const QGeoTiledMapScene);
+    return d->wrappedMapProjectionToItemPosition(wrappedProjection);
+}
+
+QDoubleVector2D QGeoTiledMapScene::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
+{
+    Q_D(const QGeoTiledMapScene);
+    return d->itemPositionToWrappedMapProjection(itemPosition);
 }
 
 QSet<QGeoTileSpec> QGeoTiledMapScene::texturedTiles()
@@ -213,31 +268,32 @@ QGeoTiledMapScenePrivate::~QGeoTiledMapScenePrivate()
 {
 }
 
+// Old screenToMercator logic
 QDoubleVector2D QGeoTiledMapScenePrivate::itemPositionToMercator(const QDoubleVector2D &pos) const
 {
-    double x = pos.x();
-    x /= m_screenSize.width();
-    x -= 0.5;
-    x *= m_cameraWidthMercator;
-    x += m_cameraCenterXMercator;
-
-    double y = pos.y();
-    y /= m_screenSize.height();
-    y -= 0.5;
-    y *= m_cameraHeightMercator;
-    y += m_cameraCenterYMercator;
-
-    if (x > 1.0)
-        x -= 1.0;
-    else if (x <= 0.0)
-        x += 1.0;
-
-    return QDoubleVector2D(x, y);
+    return unwrapMapProjection(itemPositionToWrappedMapProjection(pos));
 }
 
+// Old mercatorToScreen logic
 QDoubleVector2D QGeoTiledMapScenePrivate::mercatorToItemPosition(const QDoubleVector2D &mercator) const
 {
-    double x = mercator.x();
+    return wrappedMapProjectionToItemPosition(wrapMapProjection(mercator));
+}
+
+QDoubleVector2D QGeoTiledMapScenePrivate::geoToMapProjection(const QGeoCoordinate &coordinate) const
+{
+    return QGeoProjection::coordToMercator(coordinate);
+}
+
+QGeoCoordinate QGeoTiledMapScenePrivate::mapProjectionToGeo(const QDoubleVector2D &projection) const
+{
+    return QGeoProjection::mercatorToCoord(projection);
+}
+
+//wraps around center
+QDoubleVector2D QGeoTiledMapScenePrivate::wrapMapProjection(const QDoubleVector2D &projection) const
+{
+    double x = projection.x();
     if (m_cameraCenterXMercator < 0.5) {
         if (x - m_cameraCenterXMercator > 0.5 )
             x -= 1.0;
@@ -246,8 +302,42 @@ QDoubleVector2D QGeoTiledMapScenePrivate::mercatorToItemPosition(const QDoubleVe
             x += 1.0;
     }
 
-    x = ((x - m_cameraCenterXMercator) / m_cameraWidthMercator + 0.5) * m_screenSize.width();
-    double y = ((mercator.y() - m_cameraCenterYMercator) / m_cameraHeightMercator + 0.5) *  m_screenSize.height();
+    return QDoubleVector2D(x, projection.y());
+}
+
+QDoubleVector2D QGeoTiledMapScenePrivate::unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const
+{
+    double x = wrappedProjection.x();
+    if (x > 1.0)
+        return QDoubleVector2D(x - 1.0, wrappedProjection.y());
+    if (x <= 0.0)
+        return QDoubleVector2D(x + 1.0, wrappedProjection.y());
+    return wrappedProjection;
+}
+
+QDoubleVector2D QGeoTiledMapScenePrivate::wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const
+{
+    // TODO: Support tilt/bearing through a projection matrix.
+    double x = ((wrappedProjection.x() - m_cameraCenterXMercator) * m_1_cameraWidthMercator + 0.5) * m_screenSize.width();
+    double y = ((wrappedProjection.y() - m_cameraCenterYMercator) * m_1_cameraHeightMercator + 0.5) * m_screenSize.height();
+    return QDoubleVector2D(x, y);
+}
+
+QDoubleVector2D QGeoTiledMapScenePrivate::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
+{
+    // TODO: Support tilt/bearing through an inverse projection matrix.
+    double x = itemPosition.x();
+    x /= m_screenSize.width();
+    x -= 0.5;
+    x *= m_cameraWidthMercator;
+    x += m_cameraCenterXMercator;
+
+    double y = itemPosition.y();
+    y /= m_screenSize.height();
+    y -= 0.5;
+    y *= m_cameraHeightMercator;
+    y += m_cameraCenterYMercator;
+
     return QDoubleVector2D(x, y);
 }
 
@@ -408,7 +498,8 @@ void QGeoTiledMapScenePrivate::setupCamera()
     // fraction of zoom level
     double z = std::pow(2.0, m_cameraData.zoomLevel() - m_intZoomLevel) * m_tileSize;
 
-    // Maps smaller than screen size are NOT supported
+    // Maps smaller than screen size are NOT supported. But we can't simply return here, as this call
+    // might be invoked also before a valid zoom level is set.
 
     // calculate altitude that allows the visible map tiles
     // to fit in the screen correctly (note that a larger f would cause
@@ -416,8 +507,10 @@ void QGeoTiledMapScenePrivate::setupCamera()
     // the tiles or repeated tiles)
     double altitude = f / (2.0 * z) ;
 
-    m_cameraWidthMercator  = m_screenSize.width()  / (std::pow(2.0, m_cameraData.zoomLevel()) * m_tileSize);
-    m_cameraHeightMercator = m_screenSize.height() / (std::pow(2.0, m_cameraData.zoomLevel()) * m_tileSize);
+    m_cameraWidthMercator = m_screenSize.width() / m_mapEdgeSize;
+    m_cameraHeightMercator = m_screenSize.height() / m_mapEdgeSize;
+    m_1_cameraWidthMercator = 1.0 / m_cameraWidthMercator;
+    m_1_cameraHeightMercator = 1.0 / m_cameraHeightMercator;
 
     // calculate center
     double edge = m_scaleFactor * m_tileSize;
@@ -648,6 +741,7 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     if (!mapRoot)
         mapRoot = new QGeoTiledMapRootNode();
 
+    // Setting clip rect to fullscreen, as now the map can never be smaller than the viewport.
     mapRoot->setClipRect(QRect(0, 0, d->m_screenWidth, d->m_screenHeight));
 
     QMatrix4x4 itemSpaceMatrix;

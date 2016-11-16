@@ -84,14 +84,23 @@ public:
     void updateTile(const QGeoTileSpec &spec);
     void setPrefetchStyle(PrefetchStyle style);
 
-    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
-    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     double minimumZoomAtViewportSize(int viewportWidth, int viewportHeight) const Q_DECL_OVERRIDE;
     double maximumCenterLatitudeAtZoom(double zoomLevel) const Q_DECL_OVERRIDE;
 
+    double mapWidth() const Q_DECL_OVERRIDE;
+    double mapHeight() const Q_DECL_OVERRIDE;
 
-    QDoubleVector2D referenceCoordinateToItemPosition(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
-    QGeoCoordinate referenceItemPositionToCoordinate(const QDoubleVector2D &pos) const Q_DECL_OVERRIDE;
+    QDoubleVector2D geoToMapProjection(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
+    QGeoCoordinate mapProjectionToGeo(const QDoubleVector2D &projection) const Q_DECL_OVERRIDE;
+
+    QDoubleVector2D wrapMapProjection(const QDoubleVector2D &projection) const Q_DECL_OVERRIDE;
+    QDoubleVector2D unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const Q_DECL_OVERRIDE;
+
+    QDoubleVector2D wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const Q_DECL_OVERRIDE;
+    QDoubleVector2D itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const Q_DECL_OVERRIDE;
+
+    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
+    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
 
     void prefetchData() Q_DECL_OVERRIDE;
     void clearData() Q_DECL_OVERRIDE;

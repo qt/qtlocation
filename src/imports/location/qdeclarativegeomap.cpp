@@ -962,21 +962,21 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
         return;
     }
 
-    // adjust zoom, use reference world to keep things simple
-    // otherwise we would need to do the error prone longitudes
-    // wrapping
-    QDoubleVector2D topLeftPoint =
-            m_map->referenceCoordinateToItemPosition(topLeft);
-    QDoubleVector2D bottomRightPoint =
-            m_map->referenceCoordinateToItemPosition(bottomRight);
+    QDoubleVector2D topLeftPoint = m_map->geoToMapProjection(topLeft);
+    QDoubleVector2D bottomRightPoint = m_map->geoToMapProjection(bottomRight);
+    if (bottomRightPoint.x() < topLeftPoint.x()) // crossing the dateline
+        bottomRightPoint.setX(bottomRightPoint.x() + 1.0);
+
 
     double bboxWidth = bottomRightPoint.x() - topLeftPoint.x();
     double bboxHeight = bottomRightPoint.y() - topLeftPoint.y();
+    bboxWidth *= m_map->mapWidth();
+    bboxHeight *= m_map->mapHeight();
 
     // find center of the bounding box
-    QGeoCoordinate centerCoordinate =
-            m_map->referenceItemPositionToCoordinate(
-                (topLeftPoint + bottomRightPoint)/2);
+    QDoubleVector2D center = (topLeftPoint + bottomRightPoint) * 0.5;
+    center.setX(center.x() > 1.0 ? center.x() - 1.0 : center.x());
+    QGeoCoordinate centerCoordinate = m_map->mapProjectionToGeo(center);
 
     // position camera to the center of bounding box
     setCenter(centerCoordinate);

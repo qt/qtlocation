@@ -149,37 +149,6 @@ void QGeoTiledMap::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
     Q_UNUSED(visibleTiles);
 }
 
-QGeoCoordinate QGeoTiledMap::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
-{
-    Q_D(const QGeoTiledMap);
-    if (clipToViewport) {
-        int w = viewportWidth();
-        int h = viewportHeight();
-
-        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-            return QGeoCoordinate();
-    }
-
-    return d->itemPositionToCoordinate(pos);
-}
-
-QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
-{
-    Q_D(const QGeoTiledMap);
-    QDoubleVector2D pos = d->coordinateToItemPosition(coordinate);
-
-    if (clipToViewport) {
-        int w = viewportWidth();
-        int h = viewportHeight();
-        double x = pos.x();
-        double y = pos.y();
-        if ((x < 0.0) || (x > w) || (y < 0) || (y > h) || qIsNaN(x) || qIsNaN(y))
-            return QDoubleVector2D(qQNaN(), qQNaN());
-    }
-
-    return pos;
-}
-
 // This method returns the minimum zoom level that this specific qgeomap type allows
 // at a given canvas size (width,height) and for a given tile size (usually 256).
 double QGeoTiledMap::minimumZoomAtViewportSize(int width, int height) const
@@ -210,20 +179,6 @@ double QGeoTiledMap::maximumCenterLatitudeAtZoom(double zoomLevel) const
     QGeoCoordinate topMost = QGeoProjection::mercatorToCoord(QDoubleVector2D(0.0,mercatorTopmost));
 
     return topMost.latitude();
-}
-
-QDoubleVector2D QGeoTiledMap::referenceCoordinateToItemPosition(const QGeoCoordinate &coordinate) const
-{
-    Q_D(const QGeoTiledMap);
-    QDoubleVector2D point = QGeoProjection::coordToMercator(coordinate);
-    return point * std::pow(2.0, d->m_cameraData.zoomLevel()) * d->m_visibleTiles->tileSize();
-}
-
-QGeoCoordinate QGeoTiledMap::referenceItemPositionToCoordinate(const QDoubleVector2D &pos) const
-{
-    Q_D(const QGeoTiledMap);
-    QDoubleVector2D point = pos / (std::pow(2.0, d->m_cameraData.zoomLevel()) * d->m_visibleTiles->tileSize());
-    return QGeoProjection::mercatorToCoord(point);
 }
 
 QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
@@ -377,6 +332,91 @@ void QGeoTiledMapPrivate::changeTileVersion(int version)
     m_visibleTiles->setMapVersion(version);
     m_prefetchTiles->setMapVersion(version);
     updateScene();
+}
+
+double QGeoTiledMap::mapWidth() const
+{
+    Q_D(const QGeoTiledMap);
+    return d->m_mapScene->mapEdgeSize();
+}
+
+double QGeoTiledMap::mapHeight() const
+{
+    return mapWidth(); // WebMercator, the only projection supported by QGeoTiledMap, is square.
+}
+
+QDoubleVector2D QGeoTiledMap::geoToMapProjection(const QGeoCoordinate &coordinate) const
+{
+    Q_D(const QGeoTiledMap);
+    return d->m_mapScene->geoToMapProjection(coordinate);
+}
+
+QGeoCoordinate QGeoTiledMap::mapProjectionToGeo(const QDoubleVector2D &projection) const
+{
+    Q_D(const QGeoTiledMap);
+    return d->m_mapScene->mapProjectionToGeo(projection);
+}
+
+QDoubleVector2D QGeoTiledMap::wrapMapProjection(const QDoubleVector2D &projection) const
+{
+    Q_D(const QGeoTiledMap);
+    return d->m_mapScene->wrapMapProjection(projection);
+}
+
+QDoubleVector2D QGeoTiledMap::unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const
+{
+    Q_D(const QGeoTiledMap);
+    return d->m_mapScene->unwrapMapProjection(wrappedProjection);
+}
+
+QDoubleVector2D QGeoTiledMap::wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const
+{
+    Q_D(const QGeoTiledMap);
+    return d->m_mapScene->wrappedMapProjectionToItemPosition(wrappedProjection);
+}
+
+QDoubleVector2D QGeoTiledMap::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
+{
+    Q_D(const QGeoTiledMap);
+    return d->m_mapScene->itemPositionToWrappedMapProjection(itemPosition);
+}
+
+QGeoCoordinate QGeoTiledMap::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
+{
+    if (clipToViewport) {
+        int w = viewportWidth();
+        int h = viewportHeight();
+
+        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
+            return QGeoCoordinate();
+    }
+
+#if 0 // Old code, no tilt/rotation
+    Q_D(const QGeoTiledMap);
+    return d->itemPositionToCoordinate(pos);
+#else
+    return mapProjectionToGeo(unwrapMapProjection(itemPositionToWrappedMapProjection(pos)));
+#endif
+}
+
+QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
+{
+#if 0 // Old code, no tilt/rotation
+    Q_D(const QGeoTiledMap);
+    QDoubleVector2D pos = d->coordinateToItemPosition(coordinate);
+#else
+    QDoubleVector2D pos = wrappedMapProjectionToItemPosition(wrapMapProjection(geoToMapProjection(coordinate)));
+#endif
+    if (clipToViewport) {
+        int w = viewportWidth();
+        int h = viewportHeight();
+        double x = pos.x();
+        double y = pos.y();
+        if ((x < 0.0) || (x > w) || (y < 0) || (y > h) || qIsNaN(x) || qIsNaN(y))
+            return QDoubleVector2D(qQNaN(), qQNaN());
+    }
+
+    return pos;
 }
 
 void QGeoTiledMapPrivate::clearScene()

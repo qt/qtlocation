@@ -49,6 +49,7 @@
 
 #include <QObject>
 #include <QtLocation/qlocationglobal.h>
+#include <QtPositioning/QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 
@@ -77,8 +78,19 @@ public:
 
     void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
+    double mapEdgeSize() const;
+
     QDoubleVector2D itemPositionToMercator(const QDoubleVector2D &pos) const;
     QDoubleVector2D mercatorToItemPosition(const QDoubleVector2D &mercator) const;
+
+    QDoubleVector2D geoToMapProjection(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate mapProjectionToGeo(const QDoubleVector2D &projection) const;
+
+    QDoubleVector2D wrapMapProjection(const QDoubleVector2D &projection) const;
+    QDoubleVector2D unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const;
+
+    QDoubleVector2D wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const;
+    QDoubleVector2D itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
 
     QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
