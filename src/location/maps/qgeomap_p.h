@@ -70,10 +70,11 @@ class Q_LOCATION_EXPORT QGeoMap : public QObject
 public:
     virtual ~QGeoMap();
 
-    void setSize(const QSize& size);
-    QSize size() const;
-    int width() const;
-    int height() const;
+    // Sets the display size
+    void setViewportSize(const QSize& viewportSize);
+    QSize viewportSize() const;
+    int viewportWidth() const;
+    int viewportHeight() const;
 
 
     QGeoCameraData cameraData() const;
@@ -84,7 +85,7 @@ public:
 
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
-    virtual double minimumZoomAtMapSize(int width, int height) const = 0;
+    virtual double minimumZoomAtViewportSize(int viewportWidth, int viewportHeight) const = 0;
     virtual double maximumCenterLatitudeAtZoom(double zoomLevel) const = 0;
 
     virtual QDoubleVector2D referenceCoordinateToItemPosition(const QGeoCoordinate &coordinate) const = 0;

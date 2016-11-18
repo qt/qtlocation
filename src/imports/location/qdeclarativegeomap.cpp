@@ -306,7 +306,7 @@ void QDeclarativeGeoMap::initialize()
     // try to keep center change signal in the end
     bool centerHasChanged = false;
 
-    setMinimumZoomLevel(m_map->minimumZoomAtMapSize(width(), height()));
+    setMinimumZoomLevel(m_map->minimumZoomAtViewportSize(width(), height()));
 
     // set latitude bundary check
     m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData.zoomLevel());
@@ -559,7 +559,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     // after this has been called at least once, after creation.
 
     if (!m_initialized && width() > 0 && height() > 0) {
-        m_map->setSize(QSize(width(), height()));
+        m_map->setViewportSize(QSize(width(), height()));
         initialize();
     }
 
@@ -615,7 +615,7 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
 
         if (m_map) {
             minimumZoomLevel = qBound(qreal(m_map->cameraCapabilities().minimumZoomLevel()), minimumZoomLevel, maximumZoomLevel());
-            double minimumViewportZoomLevel = m_map->minimumZoomAtMapSize(width(),height());
+            double minimumViewportZoomLevel = m_map->minimumZoomAtViewportSize(width(),height());
             if (minimumZoomLevel < minimumViewportZoomLevel)
                 minimumZoomLevel = minimumViewportZoomLevel;
         }
@@ -1035,8 +1035,8 @@ void QDeclarativeGeoMap::pan(int dx, int dy)
     if (dx == 0 && dy == 0)
         return;
     QGeoCoordinate coord = m_map->itemPositionToCoordinate(
-                                QDoubleVector2D(m_map->width() / 2 + dx,
-                                        m_map->height() / 2 + dy));
+                                QDoubleVector2D(m_map->viewportWidth() / 2 + dx,
+                                        m_map->viewportHeight() / 2 + dy));
     setCenter(coord);
 }
 
@@ -1307,12 +1307,12 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
     if (!m_map || !newGeometry.size().isValid())
         return;
 
-    m_map->setSize(newGeometry.size().toSize());
+    m_map->setViewportSize(newGeometry.size().toSize());
 
     if (!m_initialized)
         initialize();
     else
-        setMinimumZoomLevel(m_map->minimumZoomAtMapSize(newGeometry.width(), newGeometry.height()));
+        setMinimumZoomLevel(m_map->minimumZoomAtViewportSize(newGeometry.width(), newGeometry.height()));
 
     /*!
         The fitViewportTo*() functions depend on a valid map geometry.

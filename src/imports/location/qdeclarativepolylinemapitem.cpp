@@ -202,7 +202,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
 
     QDoubleVector2D origin, lastAddedPoint;
 
-    const double mapWidthHalf = map.width()/2.0;
+    const double mapWidthHalf = map.viewportWidth()/2.0;
     double unwrapBelowX = 0;
     if (preserveGeometry_)
         unwrapBelowX = map.coordinateToItemPosition(geoLeftBound_, false).x();
@@ -400,7 +400,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
     // Create the viewport rect in the same coordinate system
     // as the actual points
-    QRectF viewport(0, 0, map.width(), map.height());
+    QRectF viewport(0, 0, map.viewportWidth(), map.viewportHeight());
     viewport.adjust(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
     viewport.translate(-1 * origin);
 

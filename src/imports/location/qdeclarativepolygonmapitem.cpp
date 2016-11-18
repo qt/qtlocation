@@ -214,7 +214,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     if (!screenDirty_)
         return;
 
-    if (map.width() == 0 || map.height() == 0) {
+    if (map.viewportWidth() == 0 || map.viewportHeight() == 0) {
         clear();
         return;
     }
@@ -223,7 +223,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
     // Create the viewport rect in the same coordinate system
     // as the actual points
-    QRectF viewport(0, 0, map.width(), map.height());
+    QRectF viewport(0, 0, map.viewportWidth(), map.viewportHeight());
     viewport.translate(-1 * origin.toPointF());
 
     QPainterPath vpPath;

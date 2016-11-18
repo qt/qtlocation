@@ -142,8 +142,8 @@ QGeoCoordinate QGeoTiledMap::itemPositionToCoordinate(const QDoubleVector2D &pos
 {
     Q_D(const QGeoTiledMap);
     if (clipToViewport) {
-        int w = width();
-        int h = height();
+        int w = viewportWidth();
+        int h = viewportHeight();
 
         if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
             return QGeoCoordinate();
@@ -158,8 +158,8 @@ QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coo
     QDoubleVector2D pos = d->coordinateToItemPosition(coordinate);
 
     if (clipToViewport) {
-        int w = width();
-        int h = height();
+        int w = viewportWidth();
+        int h = viewportHeight();
         double x = pos.x();
         double y = pos.y();
         if ((x < 0.0) || (x > w) || (y < 0) || (y > h) || qIsNaN(x) || qIsNaN(y))
@@ -171,7 +171,7 @@ QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coo
 
 // This method returns the minimum zoom level that this specific qgeomap type allows
 // at a given canvas size (width,height) and for a given tile size (usually 256).
-double QGeoTiledMap::minimumZoomAtMapSize(int width, int height) const
+double QGeoTiledMap::minimumZoomAtViewportSize(int width, int height) const
 {
     Q_D(const QGeoTiledMap);
     double maxSize = qMax(width,height);
@@ -192,7 +192,7 @@ double QGeoTiledMap::maximumCenterLatitudeAtZoom(double zoomLevel) const
     mapEdgeSize *= d->m_visibleTiles->tileSize();
 
     // At init time weird things happen
-    int clampedWindowHeight = (height() > mapEdgeSize) ? mapEdgeSize : height();
+    int clampedWindowHeight = (viewportHeight() > mapEdgeSize) ? mapEdgeSize : viewportHeight();
 
     // Use the window height divided by 2 as the topmost allowed center, with respect to the map size in pixels
     double mercatorTopmost = (clampedWindowHeight * 0.5) /  mapEdgeSize ;
@@ -375,7 +375,7 @@ void QGeoTiledMapPrivate::clearScene()
     updateScene();
 }
 
-void QGeoTiledMapPrivate::changeMapSize(const QSize& size)
+void QGeoTiledMapPrivate::changeViewportSize(const QSize& size)
 {
     Q_Q(QGeoTiledMap);
 

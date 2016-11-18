@@ -72,13 +72,13 @@ void QGeoTiledMapNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTile
 
     const QString copyrightsString = m_engine->evaluateCopyrightsText(activeMapType(), cameraData().zoomLevel(), visibleTiles);
 
-    if (width() > 0 && height() > 0 && ((copyrightsString.isNull() && m_copyrightsSlab.isNull()) || copyrightsString != m_lastCopyrightsString)) {
+    if (viewportWidth() > 0 && viewportHeight() > 0 && ((copyrightsString.isNull() && m_copyrightsSlab.isNull()) || copyrightsString != m_lastCopyrightsString)) {
         QFont font("Sans Serif");
         font.setPixelSize(fontSize);
         font.setStyleHint(QFont::SansSerif);
         font.setWeight(QFont::Bold);
 
-        QRect textBounds = QFontMetrics(font).boundingRect(0, 0, width(), height(), Qt::AlignBottom | Qt::AlignLeft | Qt::TextWordWrap, copyrightsString);
+        QRect textBounds = QFontMetrics(font).boundingRect(0, 0, viewportWidth(), viewportHeight(), Qt::AlignBottom | Qt::AlignLeft | Qt::TextWordWrap, copyrightsString);
 
         m_copyrightsSlab = QImage(m_logo.width() + textBounds.width() + spaceToLogo + blurRate * 2,
                                 qMax(m_logo.height(), textBounds.height() + blurRate * 2),
