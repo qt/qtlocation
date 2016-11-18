@@ -1,0 +1,98 @@
+/****************************************************************************
+**
+** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2017 Mapbox, Inc.
+** Copyright (C) 2014 Canonical Ltd.
+** Contact: http://www.qt.io/licensing/
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see http://www.qt.io/terms-conditions. For further
+** information use the contact form at http://www.qt.io/contact-us.
+**
+** GNU Free Documentation License Usage
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file. Please review the following information to ensure
+** the GNU Free Documentation License version 1.3 requirements
+** will be met: http://www.gnu.org/copyleft/fdl.html.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+\page location-plugin-mapboxgl.html
+\title Qt Location Mapbox GL Plugin
+\ingroup QtLocation-plugins
+
+\brief Uses Mapbox GL for location services.
+
+\section1 Overview
+
+This geo services plugin allows applications to access
+\l {http://mapbox.com}{Mapbox} mapping services using the Qt Location API.
+The use of these services is governed by the \l {https://www.mapbox.com/tos}{Mapbox terms of service}.
+
+This plugin differs from the \l {http://doc.qt.io/qt-5/location-plugin-mapbox.html}{Mapbox} plugin because it uses
+the \l {https://github.com/mapbox/mapbox-gl-native/} {Mapbox GL map engine} for rendering both raster tiles and \l
+{https://www.mapbox.com/vector-tiles} {vector tiles} in real-time. The benefits are: text staying upright, font
+antialiasing, labels flowing between zoom levels, smooth pan, tilt, rotation and continuous zoom.
+
+The appearance and behavior of vector maps can be customized by creating custom map styles. This can be
+done with tools like \l {https://www.mapbox.com/studio} {Mapbox Studio}.
+
+The Mapbox GL geo services plugin can be loaded by using the plugin key "mapboxgl".
+
+Both Mapbox geo services plugins require an access token to access map styles
+and tiles hosted by Mapbox. To create a Mapbox account visit \l{https://www.mapbox.com/pricing}.
+
+\section2 Optional parameters
+
+The following table lists optional parameters that can be passed to the Mapbox plugin.
+
+\table
+\header
+    \li Parameter
+    \li Description
+\row
+    \li mapboxgl.access_token
+    \li \l{https://www.mapbox.com/help/define-access-token}{Access token} provided by Mapbox.
+\row
+    \li mapboxgl.mapping.additional_style_urls
+    \li Additional, comma separated, Mapbox \l{https://www.mapbox.com/help/define-style-url}
+    {style URLs} to be added to the available style URLs. Additional styles will be prepended to
+    the \l[QML]{QtLocation::Map::}{supportedMapTypes} property of the \l{QtLocation::Map}{Map} item.
+\row
+    \li mapboxgl.mapping.cache.directory
+    \li Absolute path to map tile cache directory used as network disk cache.
+
+    The default place for the cache is \c{QtLocation/mapboxgl} directory in \l {QStandardPaths::writableLocation()}
+    {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}). On systems that have no concept
+    of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
+
+    This is an \l {https://www.mapbox.com/help/mobile-offline/#ambient-caching} {ambient cache}, meaning it will
+    get populated on the fly until it reaches the size limit, and when that happens, it will evict the least used
+    tiles.
+
+    This cache can also be used for storing \l {https://www.mapbox.com/help/mobile-offline}{offline tiles},
+    but the offline database must be populated using the \l {https://github.com/mapbox/mapbox-gl-native/blob/master/bin/offline.cpp}
+    {offline tool}. The offline database will work alongside with the ambient cache in the same file.
+    Make sure to comply with Mapbox Terms of Service before creating an offline database.
+\row
+    \li mapboxgl.mapping.cache.memory
+    \li Whether or not the cache should be in-memory only. Valid values are \b true and \b false. The default
+    value is \b false. When set to \b true, the disk cache is never created. The ambient cache will work in-memory,
+    but the offline database cannot be used with this option enabled.
+\row
+    \li mapboxgl.mapping.cache.size
+    \li Cache size for map resources in bytes.
+    The default size of this cache is 50 MiB.
+    Make sure to comply with Mapbox Terms of Service before increasing this value.
+*/

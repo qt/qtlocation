@@ -1,0 +1,3 @@
+[submodule "src/plugins/geoservices/3rdparty/mapbox-gl-native"]
+	path = src/plugins/geoservices/3rdparty/mapbox-gl-native
+	url = https://codereview.qt-project.org/p/qt/qtlocation-mapboxgl.git
