@@ -47,8 +47,8 @@
 // We mean it.
 //
 
-#include "qgeocameradata_p.h"
-#include "qgeomaptype_p.h"
+#include <QtLocation/private/qgeocameradata_p.h>
+#include <QtLocation/private/qgeomaptype_p.h>
 #include <QtCore/QObject>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 

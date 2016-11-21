@@ -6,4 +6,4 @@ INCLUDEPATH += ../../../src/location/maps
 
 SOURCES += tst_qgeocameracapabilities.cpp
 
-QT += location positioning-private testlib
+QT += location-private positioning-private testlib
