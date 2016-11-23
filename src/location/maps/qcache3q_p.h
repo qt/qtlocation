@@ -145,7 +145,7 @@ private:
     QHash<Key, Node *> lookup_;
 
 public:
-    explicit QCache3Q(int maxCost = 100, int minRecent = -1, int maxOldPopular = -1);
+    explicit QCache3Q(int maxCost = 0, int minRecent = -1, int maxOldPopular = -1);
     inline ~QCache3Q() { clear(); delete q1_; delete q2_; delete q3_; delete q1_evicted_; }
 
     inline int maxCost() const { return maxCost_; }
@@ -398,7 +398,7 @@ void QCache3Q<Key,T,EvPolicy>::rebalance()
         } else {
             Node *n = q2_->l;
             unlink(n);
-            if (n->pop > (q2_->pop / q2_->size)) {
+            if (q2_->size && n->pop > (q2_->pop / q2_->size)) {
                 link_front(n, q3_);
             } else {
                 EvPolicy::aboutToBeEvicted(n->k, n->v);

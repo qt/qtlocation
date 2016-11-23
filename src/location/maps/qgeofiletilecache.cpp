@@ -120,20 +120,26 @@ void QGeoFileTileCache::init()
     QDir::root().mkpath(directory_);
 
     // default values
-    if (costStrategyDisk_ == ByteSize)
-        setMaxDiskUsage(50 * 1024 * 1024);
-    else
-        setMaxDiskUsage(1000);
+    if (!diskCache_.maxCost()) { // If setMaxDiskUsage has not been called yet
+        if (costStrategyDisk_ == ByteSize)
+            setMaxDiskUsage(50 * 1024 * 1024);
+        else
+            setMaxDiskUsage(1000);
+    }
 
-    if (costStrategyMemory_ == ByteSize)
-        setMaxMemoryUsage(3 * 1024 * 1024);
-    else
-        setMaxMemoryUsage(100);
+    if (!memoryCache_.maxCost()) { // If setMaxMemoryUsage has not been called yet
+        if (costStrategyMemory_ == ByteSize)
+            setMaxMemoryUsage(3 * 1024 * 1024);
+        else
+            setMaxMemoryUsage(100);
+    }
 
-    if (costStrategyTexture_ == ByteSize)
-        setExtraTextureUsage(6 * 1024 * 1024);
-    else
-        setExtraTextureUsage(30); // byte size of texture is >> compressed image, hence unitary cost should be lower
+    if (!textureCache_.maxCost()) { // If setExtraTextureUsage has not been called yet
+        if (costStrategyTexture_ == ByteSize)
+            setExtraTextureUsage(6 * 1024 * 1024);
+        else
+            setExtraTextureUsage(30); // byte size of texture is >> compressed image, hence unitary cost should be lower
+    }
 
     loadTiles();
 }
@@ -172,7 +178,11 @@ void QGeoFileTileCache::loadTiles()
                 QFileInfo fi(tileDisk->filename);
                 specs.append(spec);
                 queue.append(tileDisk);
-                costs.append(fi.size());
+                if (costStrategyDisk_ == ByteSize)
+                    costs.append(fi.size());
+                else
+                    costs.append(1);
+
             }
         }
 
