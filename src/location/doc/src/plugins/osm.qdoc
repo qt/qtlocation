@@ -135,14 +135,44 @@ a prefix.
     There is no default value, and if this property is not set, no directory will be indexed and only the network disk cache will be used
     to reduce network usage or to act as an offline storage for the currently cached tiles.
 \row
+    \li osm.mapping.cache.disk.cost_strategy
+    \li The cost strategy to use to cache map tiles on disk.
+    Valid values are \b bytesize and \b unitary.
+    Using \b bytesize, the related size parameter (\b osm.mapping.cache.disk.size) will
+    be interpreted as bytes.
+    Using \b unitary, they will be interpreted as number of tiles.
+    The default value for this parameter is \b bytesize.
+\row
     \li osm.mapping.cache.disk.size
-    \li Map tile disk cache size in bytes. Default size of the cache is 100MB.
+    \li Disk cache size for map tiles. The default size of the cache is 50 MiB when \b bytesize is the cost
+    strategy for this cache, or 1000 tiles, when \b unitary is the cost strategy.
+\row
+    \li osm.mapping.cache.memory.cost_strategy
+    \li The cost strategy to use to cache map tiles in memory.
+    Valid values are \b bytesize and \b unitary.
+    Using \b bytesize, the related size parameter (\b osm.mapping.cache.memory.size) will
+    be interpreted as bytes.
+    Using \b unitary, they will be interpreted as number of tiles.
+    The default value for this parameter is \b bytesize.
 \row
     \li osm.mapping.cache.memory.size
-    \li Map tile memory cache size in bytes. Default size of the cache is 3MB.
+    \li Memory cache size for map tiles. The default size of the cache is 3 MiB when \b bytesize is the cost
+    strategy for this cache, or 100 tiles, when \b unitary is the cost strategy.
+\row
+    \li osm.mapping.cache.texture.cost_strategy
+    \li The cost strategy to use to cache decompressed map tiles in memory.
+    Valid values are \b bytesize and \b unitary.
+    Using \b bytesize, the related size parameter (\b osm.mapping.cache.texture.size) will
+    be interpreted as bytes.
+    Using \b unitary, they will be interpreted as number of tiles.
+    The default value for this parameter is \b bytesize.
 \row
     \li osm.mapping.cache.texture.size
-    \li Map tile texture cache size in bytes. Default size of the cache is 6MB. Note that the texture cache has a hard minimum size which depends on the size of the map viewport (it must contain enough data to display the tiles currently visible on the display). This value is the amount of cache to be used in addition to the bare minimum.
+    \li Texture cache size for map tiles. The default size of the cache is 6 MiB when \b bytesize is the cost
+    strategy for this cache, or 30 tiles, when \b unitary is the cost strategy.
+    Note that the texture cache has a hard minimum size which depends on the size of the map viewport
+    (it must contain enough data to display the tiles currently visible on the display).
+    This value is the amount of cache to be used in addition to the bare minimum.
 
 \endtable
 

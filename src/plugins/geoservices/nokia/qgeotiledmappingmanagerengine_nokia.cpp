@@ -105,9 +105,9 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(parameters, networkManager, this, tileSize(), ppi);
     setTileFetcher(fetcher);
 
+    /* TILE CACHE */
     // TODO: do this in a plugin-neutral way so that other tiled map plugins
     //       don't need this boilerplate or hardcode plugin name
-
     if (parameters.contains(QStringLiteral("here.mapping.cache.directory"))) {
         m_cacheDirectory = parameters.value(QStringLiteral("here.mapping.cache.directory")).toString();
     } else {
@@ -116,8 +116,19 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     }
 
     QGeoFileTileCache *tileCache = new QGeoFileTileCacheNokia(ppi, m_cacheDirectory);
-    setTileCache(tileCache);
 
+    /*
+     * Disk cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("here.mapping.cache.disk.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("here.mapping.cache.disk.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyDisk(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyDisk(QGeoFileTileCache::Unitary);
+    } else {
+        tileCache->setCostStrategyDisk(QGeoFileTileCache::ByteSize);
+    }
     if (parameters.contains(QStringLiteral("here.mapping.cache.disk.size"))) {
       bool ok = false;
       int cacheSize = parameters.value(QStringLiteral("here.mapping.cache.disk.size")).toString().toInt(&ok);
@@ -125,6 +136,18 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
           tileCache->setMaxDiskUsage(cacheSize);
     }
 
+    /*
+     * Memory cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("here.mapping.cache.memory.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("here.mapping.cache.memory.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyMemory(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyMemory(QGeoFileTileCache::Unitary);
+    } else {
+        tileCache->setCostStrategyMemory(QGeoFileTileCache::ByteSize);
+    }
     if (parameters.contains(QStringLiteral("here.mapping.cache.memory.size"))) {
       bool ok = false;
       int cacheSize = parameters.value(QStringLiteral("here.mapping.cache.memory.size")).toString().toInt(&ok);
@@ -132,6 +155,18 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
           tileCache->setMaxMemoryUsage(cacheSize);
     }
 
+    /*
+     * Texture cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("here.mapping.cache.texture.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("here.mapping.cache.texture.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyTexture(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyTexture(QGeoFileTileCache::Unitary);
+    } else {
+        tileCache->setCostStrategyTexture(QGeoFileTileCache::ByteSize);
+    }
     if (parameters.contains(QStringLiteral("here.mapping.cache.texture.size"))) {
       bool ok = false;
       int cacheSize = parameters.value(QStringLiteral("here.mapping.cache.texture.size")).toString().toInt(&ok);
@@ -139,6 +174,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
           tileCache->setExtraTextureUsage(cacheSize);
     }
 
+    setTileCache(tileCache);
     populateMapSchemes();
     loadMapVersion();
     QMetaObject::invokeMethod(fetcher, "fetchCopyrightsData", Qt::QueuedConnection);

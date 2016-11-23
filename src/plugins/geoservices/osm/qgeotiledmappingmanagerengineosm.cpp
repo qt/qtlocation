@@ -236,13 +236,36 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         m_offlineDirectory = parameters.value(QStringLiteral("osm.mapping.offline.directory")).toString();
     QGeoFileTileCacheOsm *tileCache = new QGeoFileTileCacheOsm(m_providers, m_offlineDirectory, m_cacheDirectory);
 
+    /*
+     * Disk cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("osm.mapping.cache.disk.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("osm.mapping.cache.disk.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyDisk(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyDisk(QGeoFileTileCache::Unitary);
+    } else {
+        tileCache->setCostStrategyDisk(QGeoFileTileCache::ByteSize);
+    }
     if (parameters.contains(QStringLiteral("osm.mapping.cache.disk.size"))) {
         bool ok = false;
         int cacheSize = parameters.value(QStringLiteral("osm.mapping.cache.disk.size")).toString().toInt(&ok);
         if (ok)
             tileCache->setMaxDiskUsage(cacheSize);
+    }
+
+    /*
+     * Memory cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("osm.mapping.cache.memory.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("osm.mapping.cache.memory.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyMemory(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyMemory(QGeoFileTileCache::Unitary);
     } else {
-        tileCache->setMaxDiskUsage(100 * 1024 * 1024);
+        tileCache->setCostStrategyMemory(QGeoFileTileCache::ByteSize);
     }
     if (parameters.contains(QStringLiteral("osm.mapping.cache.memory.size"))) {
         bool ok = false;
@@ -250,12 +273,27 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         if (ok)
             tileCache->setMaxMemoryUsage(cacheSize);
     }
+
+    /*
+     * Texture cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("osm.mapping.cache.texture.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("osm.mapping.cache.texture.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyTexture(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyTexture(QGeoFileTileCache::Unitary);
+    } else {
+        tileCache->setCostStrategyTexture(QGeoFileTileCache::ByteSize);
+    }
     if (parameters.contains(QStringLiteral("osm.mapping.cache.texture.size"))) {
         bool ok = false;
         int cacheSize = parameters.value(QStringLiteral("osm.mapping.cache.texture.size")).toString().toInt(&ok);
         if (ok)
             tileCache->setExtraTextureUsage(cacheSize);
     }
+
+
     setTileCache(tileCache);
 
 
