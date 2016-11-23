@@ -58,9 +58,7 @@ using namespace ABI::Windows::Foundation::Collections;
 typedef ITypedEventHandler<Geolocator *, PositionChangedEventArgs *> GeoLocatorPositionHandler;
 typedef ITypedEventHandler<Geolocator *, StatusChangedEventArgs *> GeoLocatorStatusHandler;
 typedef IAsyncOperationCompletedHandler<Geoposition*> PositionHandler;
-#if _MSC_VER >= 1900
 typedef IAsyncOperationCompletedHandler<GeolocationAccessStatus> AccessHandler;
-#endif
 
 Q_DECLARE_METATYPE(QGeoPositionInfo)
 
@@ -106,13 +104,10 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
                                         &d->locator);
         RETURN_HR_IF_FAILED("Could not initialize native location services.");
 
-        // StatusChanged throws an exception on Windows 8.1
-#if _MSC_VER >= 1900
         hr = d->locator->add_StatusChanged(Callback<GeoLocatorStatusHandler>(this,
                                                                              &QGeoPositionInfoSourceWinRT::onStatusChanged).Get(),
                                            &d->statusToken);
         RETURN_HR_IF_FAILED("Could not add status callback.");
-#endif
 
         hr = d->locator->put_ReportInterval(1000);
         RETURN_HR_IF_FAILED("Could not initialize report interval.");
@@ -531,7 +526,7 @@ HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator*, IStatusChange
 
 bool QGeoPositionInfoSourceWinRT::requestAccess() const
 {
-#if _MSC_VER >= 1900 && defined(Q_OS_WINRT)
+#ifdef Q_OS_WINRT
     static GeolocationAccessStatus accessStatus = GeolocationAccessStatus_Unspecified;
     static ComPtr<IGeolocatorStatics> statics;
 
@@ -556,9 +551,9 @@ bool QGeoPositionInfoSourceWinRT::requestAccess() const
     // We cannot wait inside the XamlThread as that would deadlock
     QWinRTFunctions::await(op, &accessStatus);
     return accessStatus == GeolocationAccessStatus_Allowed;
-#else // _MSC_VER < 1900
+#else // Q_OS_WINRT
     return true;
-#endif // _MSC_VER < 1900
+#endif // Q_OS_WINRT
 }
 
 QT_END_NAMESPACE
