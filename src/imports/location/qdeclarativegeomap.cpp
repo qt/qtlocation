@@ -890,6 +890,9 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
         QGeoRectangle rect = m_region;
         topLeft = rect.topLeft();
         bottomRight = rect.bottomRight();
+        if (bottomRight.longitude() < topLeft.longitude())
+            bottomRight.setLongitude(bottomRight.longitude() + 360.0);
+
         break;
     }
     case QGeoShape::CircleType:

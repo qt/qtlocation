@@ -34,31 +34,26 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOCODEXMLPARSER_H
-#define QGEOCODEXMLPARSER_H
+#ifndef QGEOCODEJSONPARSER_H
+#define QGEOCODEJSONPARSER_H
+
+#include <QtPositioning/QGeoShape>
+#include <QtPositioning/QGeoLocation>
 
 #include <QtCore/QObject>
 #include <QtCore/QRunnable>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QByteArray>
 #include <QtCore/QString>
 #include <QtCore/QList>
-#include <QtPositioning/QGeoShape>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoLocation;
-class QGeoAddress;
-class QGeoRectangle;
-class QGeoCoordinate;
-class QXmlStreamReader;
-
-class QGeoCodeXmlParser : public QObject, public QRunnable
+class QGeoCodeJsonParser : public QObject, public QRunnable
 {
     Q_OBJECT
 
 public:
-    QGeoCodeXmlParser();
-    ~QGeoCodeXmlParser();
-
     void setBounds(const QGeoShape &bounds);
     void parse(const QByteArray &data);
     void run();
@@ -68,17 +63,9 @@ signals:
     void error(const QString &errorString);
 
 private:
-    bool parseRootElement();
-    bool parsePlace(QGeoLocation *location);
-    bool parseLocation(QGeoLocation *location);
-    bool parseAddress(QGeoAddress *address);
-    bool parseBoundingBox(QGeoRectangle *bounds);
-    bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
-
-    QGeoShape m_bounds;
+    QJsonDocument m_document;
     QByteArray m_data;
-    QXmlStreamReader *m_reader;
-
+    QGeoShape m_bounds;
     QList<QGeoLocation> m_results;
     QString m_errorString;
 };

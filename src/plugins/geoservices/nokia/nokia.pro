@@ -10,7 +10,7 @@ contains(QT_CONFIG, location-china-support) {
 
 HEADERS += \
             qgeocodereply_nokia.h \
-            qgeocodexmlparser.h \
+            qgeocodejsonparser.h \
             qgeocodingmanagerengine_nokia.h \
             qgeotiledmappingmanagerengine_nokia.h \
             qgeotilefetcher_nokia.h \
@@ -31,7 +31,7 @@ HEADERS += \
 
 SOURCES += \
             qgeocodereply_nokia.cpp \
-            qgeocodexmlparser.cpp \
+            qgeocodejsonparser.cpp \
             qgeocodingmanagerengine_nokia.cpp \
             qgeotiledmappingmanagerengine_nokia.cpp \
             qgeotilefetcher_nokia.cpp \

@@ -43,9 +43,8 @@ QT_BEGIN_NAMESPACE
 
 extern const QString ROUTING_HOST;
 extern const QString GEOCODING_HOST;
-extern const QString GEOCODING_HOST_CN;
+extern const QString REVERSE_GEOCODING_HOST;
 extern const QString PLACES_HOST;
-extern const QString PLACES_HOST_CN;
 extern const QString MAP_TILES_HOST;
 extern const QString MAP_TILES_HOST_AERIAL;
 
