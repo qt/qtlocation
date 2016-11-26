@@ -92,4 +92,3 @@ SOURCES += \
             maps/qgeorouteparser.cpp \
             maps/qgeorouteparserosrmv5.cpp \
             maps/qgeorouteparserosrmv4.cpp
-

@@ -75,14 +75,15 @@ private Q_SLOTS:
 
 private:
     static QString trimDouble(double degree, int decimalDigits = 10);
-    QGeoCodeReply *geocode(QString requestString, const QGeoShape &bounds, int limit = -1, int offset = 0);
+    QGeoCodeReply *geocode(QString requestString, const QGeoShape &bounds, bool manualBoundsRequired = true, int limit = -1, int offset = 0);
     QString languageToMarc(QLocale::Language language);
     QString getAuthenticationString() const;
 
     QGeoNetworkAccessManager *m_networkManager;
+    QGeoUriProvider *m_uriProvider;
+    QGeoUriProvider *m_reverseGeocodingUriProvider;
     QString m_token;
     QString m_applicationId;
-    QGeoUriProvider *m_uriProvider;
 };
 
 QT_END_NAMESPACE

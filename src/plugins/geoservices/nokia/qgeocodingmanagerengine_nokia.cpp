@@ -41,8 +41,12 @@
 #include "qgeouriprovider.h"
 #include "uri_constants.h"
 
-#include <qgeoaddress.h>
-#include <qgeocoordinate.h>
+#include <QtPositioning/QGeoAddress>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoShape>
+
 #include <QUrl>
 #include <QMap>
 #include <QStringList>
@@ -56,7 +60,8 @@ QGeoCodingManagerEngineNokia::QGeoCodingManagerEngineNokia(
         QString *errorString)
         : QGeoCodingManagerEngine(parameters)
         , m_networkManager(networkManager)
-        , m_uriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.geocoding.host"), GEOCODING_HOST, GEOCODING_HOST_CN))
+        , m_uriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.geocoding.host"), GEOCODING_HOST))
+        , m_reverseGeocodingUriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.reversegeocoding.host"), REVERSE_GEOCODING_HOST))
 {
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
@@ -81,7 +86,7 @@ QString QGeoCodingManagerEngineNokia::getAuthenticationString() const
     QString authenticationString;
 
     if (!m_token.isEmpty() && !m_applicationId.isEmpty()) {
-        authenticationString += "?token=";
+        authenticationString += "?app_code=";
         authenticationString += m_token;
 
         authenticationString += "&app_id=";
@@ -95,14 +100,42 @@ QString QGeoCodingManagerEngineNokia::getAuthenticationString() const
 QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(const QGeoAddress &address,
                                                      const QGeoShape &bounds)
 {
-    QString requestString = "http://";
+    QString requestString = "https://";
     requestString += m_uriProvider->getCurrentHost();
-    requestString += "/geocoder/gc/2.0";
+    requestString += "/6.2/geocode.json";
 
     requestString += getAuthenticationString();
+    requestString += "&gen=9";
 
-    requestString += "&lg=";
+    requestString += "&language=";
     requestString += languageToMarc(locale().language());
+
+    bool manualBoundsRequired = false;
+    if (bounds.type() == QGeoShape::RectangleType) {
+        QGeoRectangle rect(bounds);
+        if (rect.isValid()) {
+            requestString += "&bbox=";
+            requestString += trimDouble(rect.topLeft().latitude());
+            requestString += ",";
+            requestString += trimDouble(rect.topLeft().longitude());
+            requestString += ";";
+            requestString += trimDouble(rect.bottomRight().latitude());
+            requestString += ",";
+            requestString += trimDouble(rect.bottomRight().longitude());
+        }
+    } else if (bounds.type() == QGeoShape::CircleType) {
+        QGeoCircle circ(bounds);
+        if (circ.isValid()) {
+            requestString += "?prox=";
+            requestString += trimDouble(circ.center().latitude());
+            requestString += ",";
+            requestString += trimDouble(circ.center().longitude());
+            requestString += ",";
+            requestString += trimDouble(circ.radius());
+        }
+    } else {
+        manualBoundsRequired = true;
+    }
 
     if (address.country().isEmpty()) {
         QStringList parts;
@@ -119,8 +152,8 @@ QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(const QGeoAddress &address,
         if (!address.street().isEmpty())
             parts << address.street();
 
-        requestString += "&obloc=";
-        requestString += parts.join(" ");
+        requestString += "&searchtext=";
+        requestString += parts.join("+").replace(' ', '+');
     } else {
         requestString += "&country=";
         requestString += address.country();
@@ -136,7 +169,7 @@ QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(const QGeoAddress &address,
         }
 
         if (!address.postalCode().isEmpty()) {
-            requestString += "&zip=";
+            requestString += "&postalcode=";
             requestString += address.postalCode();
         }
 
@@ -146,39 +179,7 @@ QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(const QGeoAddress &address,
         }
     }
 
-
-    // TODO?
-    // street number has been removed from QGeoAddress
-    // do we need to try to split it out from QGeoAddress::street
-    // in order to geocode properly
-
-    // Old code:
-//    if (!address.streetNumber().isEmpty()) {
-//        requestString += "&number=";
-//        requestString += address.streetNumber();
-//    }
-
-    return geocode(requestString, bounds);
-}
-
-QGeoCodeReply *QGeoCodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
-                                                            const QGeoShape &bounds)
-{
-    QString requestString = "http://";
-    requestString += m_uriProvider->getCurrentHost();
-    requestString += "/geocoder/rgc/2.0";
-
-    requestString += getAuthenticationString();
-
-    requestString += "&long=";
-    requestString += trimDouble(coordinate.longitude());
-    requestString += "&lat=";
-    requestString += trimDouble(coordinate.latitude());
-
-    requestString += "&lg=";
-    requestString += languageToMarc(locale().language());
-
-    return geocode(requestString, bounds);
+    return geocode(requestString, bounds, manualBoundsRequired);
 }
 
 QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(const QString &address,
@@ -186,50 +187,117 @@ QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(const QString &address,
                                                      int offset,
                                                      const QGeoShape &bounds)
 {
-    QString requestString = "http://";
+    QString requestString = "https://";
     requestString += m_uriProvider->getCurrentHost();
-    requestString += "/geocoder/gc/2.0";
+    requestString += "/6.2/geocode.json";
 
     requestString += getAuthenticationString();
+    requestString += "&gen=9";
 
-    requestString += "&lg=";
+    requestString += "&language=";
     requestString += languageToMarc(locale().language());
 
-    requestString += "&obloc=";
-    requestString += address;
+    requestString += "&searchtext=";
+    requestString += QString(address).replace(' ', '+');
 
     if (limit > 0) {
-        requestString += "&total=";
+        requestString += "&maxresults=";
         requestString += QString::number(limit);
     }
-
     if (offset > 0) {
-        requestString += "&offset=";
-        requestString += QString::number(offset);
+        // We cannot do this precisely, since HERE doesn't allow
+        // precise result-set offset to be supplied; instead, it
+        // returns "pages" of results at a time.
+        // So, we tell HERE which page of results we want, and the
+        // client has to filter out duplicates if they changed
+        // the limit param since the last call.
+        requestString += "&pageinformation=";
+        requestString += QString::number(offset/limit);
     }
 
-    return geocode(requestString, bounds, limit, offset);
+    bool manualBoundsRequired = false;
+    if (bounds.type() == QGeoShape::RectangleType) {
+        QGeoRectangle rect(bounds);
+        if (rect.isValid()) {
+            requestString += "&bbox=";
+            requestString += trimDouble(rect.topLeft().latitude());
+            requestString += ",";
+            requestString += trimDouble(rect.topLeft().longitude());
+            requestString += ";";
+            requestString += trimDouble(rect.bottomRight().latitude());
+            requestString += ",";
+            requestString += trimDouble(rect.bottomRight().longitude());
+        }
+    } else if (bounds.type() == QGeoShape::CircleType) {
+        QGeoCircle circ(bounds);
+        if (circ.isValid()) {
+            requestString += "?prox=";
+            requestString += trimDouble(circ.center().latitude());
+            requestString += ",";
+            requestString += trimDouble(circ.center().longitude());
+            requestString += ",";
+            requestString += trimDouble(circ.radius());
+        }
+    } else {
+        manualBoundsRequired = true;
+    }
+
+    return geocode(requestString, bounds, manualBoundsRequired, limit, offset);
 }
 
 QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(QString requestString,
                                                      const QGeoShape &bounds,
+                                                     bool manualBoundsRequired,
                                                      int limit,
                                                      int offset)
 {
-    QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
-    QGeoCodeReplyNokia *reply = new QGeoCodeReplyNokia(networkReply, limit, offset, bounds, this);
+    QGeoCodeReplyNokia *reply = new QGeoCodeReplyNokia(
+                m_networkManager->get(QNetworkRequest(QUrl(requestString))),
+                limit, offset, bounds, manualBoundsRequired, this);
 
-    connect(reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(placesFinished()));
+    connect(reply, &QGeoCodeReplyNokia::finished,
+            this, &QGeoCodingManagerEngineNokia::placesFinished);
 
-    connect(reply,
-            SIGNAL(error(QGeoCodeReply::Error,QString)),
-            this,
-            SLOT(placesError(QGeoCodeReply::Error,QString)));
+    connect(reply, static_cast<void (QGeoCodeReply::*)(QGeoCodeReply::Error, const QString &)>(&QGeoCodeReplyNokia::error),
+            this, &QGeoCodingManagerEngineNokia::placesError);
 
     return reply;
+}
+
+QGeoCodeReply *QGeoCodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
+                                                            const QGeoShape &bounds)
+{
+    QString requestString = "https://";
+    requestString += m_reverseGeocodingUriProvider->getCurrentHost();
+    requestString += "/6.2/reversegeocode.json";
+
+    requestString += getAuthenticationString();
+    requestString += "&gen=9";
+
+    requestString += "&mode=retrieveAddresses";
+
+    requestString += "&prox=";
+    requestString += trimDouble(coordinate.latitude());
+    requestString += ",";
+    requestString += trimDouble(coordinate.longitude());
+
+    bool manualBoundsRequired = false;
+    if (bounds.type() == QGeoShape::CircleType) {
+        QGeoCircle circ(bounds);
+        if (circ.isValid() && circ.center() == coordinate) {
+            requestString += ",";
+            requestString += trimDouble(circ.radius());
+        } else {
+            manualBoundsRequired = true;
+        }
+    } else {
+        manualBoundsRequired = true;
+    }
+
+    requestString += "&language=";
+    requestString += languageToMarc(locale().language());
+
+    return geocode(requestString, bounds, manualBoundsRequired);
 }
 
 QString QGeoCodingManagerEngineNokia::trimDouble(double degree, int decimalDigits)

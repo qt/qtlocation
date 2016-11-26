@@ -35,7 +35,7 @@
 ****************************************************************************/
 
 #include "qgeocodereply_nokia.h"
-#include "qgeocodexmlparser.h"
+#include "qgeocodejsonparser.h"
 #include "qgeoerror_messages.h"
 
 #include <QtPositioning/QGeoShape>
@@ -45,9 +45,15 @@ Q_DECLARE_METATYPE(QList<QGeoLocation>)
 
 QT_BEGIN_NAMESPACE
 
+// manualBoundsRequired will be true if the parser has to manually
+// check if a given result lies within the viewport bounds,
+// and false if the bounds information was able to be supplied
+// to the server in the request (so it should not return any
+// out-of-bounds results).
 QGeoCodeReplyNokia::QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offset,
-                                       const QGeoShape &viewport, QObject *parent)
-:   QGeoCodeReply(parent), m_reply(reply), m_parsing(false)
+                                       const QGeoShape &viewport, bool manualBoundsRequired,
+                                       QObject *parent)
+:   QGeoCodeReply(parent), m_reply(reply), m_parsing(false), m_manualBoundsRequired(manualBoundsRequired)
 {
     qRegisterMetaType<QList<QGeoLocation> >();
 
@@ -87,8 +93,9 @@ void QGeoCodeReplyNokia::networkFinished()
     if (m_reply->error() != QNetworkReply::NoError)
         return;
 
-    QGeoCodeXmlParser *parser = new QGeoCodeXmlParser;
-    parser->setBounds(viewport());
+    QGeoCodeJsonParser *parser = new QGeoCodeJsonParser; // QRunnable, autoDelete = true.
+    if (m_manualBoundsRequired)
+        parser->setBounds(viewport());
     connect(parser, SIGNAL(results(QList<QGeoLocation>)),
             this, SLOT(appendResults(QList<QGeoLocation>)));
     connect(parser, SIGNAL(error(QString)), this, SLOT(parseError(QString)));
