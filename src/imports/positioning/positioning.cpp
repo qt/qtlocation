@@ -548,12 +548,12 @@ public:
             qmlRegisterType<QQuickGeoCoordinateAnimation  >(uri, major, minor, "CoordinateAnimation");
             qmlRegisterType<QDeclarativePosition, 1             >(uri, major, minor, "Position");
 
-            // Register the 5.4 types
-            // Introduction of 5.4 version; existing 5.3 exports become automatically available under 5.4
             minor = 4;
             qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
 
-            minor = 7;
+            // Register the 5.8 types
+            // Introduction of 5.8 version; existing 5.4 exports become automatically available under 5.8
+            minor = 8;
             qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);

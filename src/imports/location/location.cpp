@@ -162,8 +162,8 @@ public:
             qmlRegisterUncreatableType<QQuickGeoMapGestureArea, 1>(uri, major, minor, "MapGestureArea",
                                         QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));
 
-            // Register the 5.7 types
-            minor = 7;
+            // Register the 5.8 types
+            minor = 8;
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, major, minor, "RouteManeuver");
 
             //registrations below are version independent
