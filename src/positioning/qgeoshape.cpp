@@ -260,7 +260,17 @@ QGeoCoordinate QGeoShape::center() const
 }
 
 /*!
-    Extends the geo shape to also cover the coordinate \a coordinate
+    \deprecated
+
+    This method used to extend the geo shape to also cover the coordinate \a coordinate.
+
+    It currently only works for \l QGeoCircle and \l QGeoRectangle, on which the functionality remains,
+    now also accessible through QGeoCircle::extendCircle and QGeoRectangle::extendRectangle.
+
+    This method should therefore not be called on a generic QGeoShape any longer, as the behavior for
+    other shape types is undefined.
+
+    \sa QGeoRectangle::extendRectangle, QGeoCircle::extendCircle
 */
 void QGeoShape::extendShape(const QGeoCoordinate &coordinate)
 {

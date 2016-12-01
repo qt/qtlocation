@@ -77,6 +77,7 @@ public:
 
     Q_INVOKABLE void translate(double degreesLatitude, double degreesLongitude);
     Q_INVOKABLE QGeoCircle translated(double degreesLatitude, double degreesLongitude) const;
+    Q_INVOKABLE void extendCircle(const QGeoCoordinate &coordinate);
 
     Q_INVOKABLE QString toString() const;
 

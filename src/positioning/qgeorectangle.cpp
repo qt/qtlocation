@@ -782,6 +782,17 @@ QGeoRectangle QGeoRectangle::translated(double degreesLatitude, double degreesLo
 }
 
 /*!
+    Extends the geo rectangle to also cover the coordinate \a coordinate
+
+    \since 5.9
+*/
+void QGeoRectangle::extendRectangle(const QGeoCoordinate &coordinate)
+{
+    Q_D(QGeoRectangle);
+    d->extendShape(coordinate);
+}
+
+/*!
     Returns the smallest geo rectangle which contains both this geo rectangle and \a rectangle.
 
     If the centers of the two geo rectangles are separated by exactly 180.0 degrees then the

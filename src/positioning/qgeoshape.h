@@ -167,6 +167,7 @@ public:
 
     Q_INVOKABLE void translate(double degreesLatitude, double degreesLongitude);
     Q_INVOKABLE QGeoRectangle translated(double degreesLatitude, double degreesLongitude) const;
+    Q_INVOKABLE void extendRectangle(const QGeoCoordinate &coordinate);
 
     Q_INVOKABLE QGeoRectangle united(const QGeoRectangle &rectangle) const;
     QGeoRectangle operator|(const QGeoRectangle &rectangle) const;

@@ -63,8 +63,8 @@ private slots:
     void boundingGeoRectangle_data();
     void boundingGeoRectangle();
 
-    void extendShape();
-    void extendShape_data();
+    void extendCircle();
+    void extendCircle_data();
 
     void areaComparison();
     void areaComparison_data();
@@ -343,7 +343,7 @@ void tst_QGeoCircle::boundingGeoRectangle()
     QCOMPARE(box.contains(probe), result);
 }
 
-void tst_QGeoCircle::extendShape()
+void tst_QGeoCircle::extendCircle()
 {
     QFETCH(QGeoCircle, circle);
     QFETCH(QGeoCoordinate, coord);
@@ -351,12 +351,12 @@ void tst_QGeoCircle::extendShape()
     QFETCH(bool, containsExtended);
 
     QCOMPARE(circle.contains(coord), containsFirst);
-    circle.extendShape(coord);
+    circle.extendCircle(coord);
     QCOMPARE(circle.contains(coord), containsExtended);
 
 }
 
-void tst_QGeoCircle::extendShape_data()
+void tst_QGeoCircle::extendCircle_data()
 {
     QTest::addColumn<QGeoCircle>("circle");
     QTest::addColumn<QGeoCoordinate>("coord");

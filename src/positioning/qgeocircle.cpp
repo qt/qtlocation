@@ -423,6 +423,17 @@ QGeoCircle QGeoCircle::translated(double degreesLatitude, double degreesLongitud
 }
 
 /*!
+    Extends the geo circle to also cover the coordinate \a coordinate
+
+    \since 5.9
+*/
+void QGeoCircle::extendCircle(const QGeoCoordinate &coordinate)
+{
+    Q_D(QGeoCircle);
+    d->extendShape(coordinate);
+}
+
+/*!
     Returns the geo circle properties as a string.
 
     \since 5.5

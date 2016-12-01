@@ -86,8 +86,8 @@ private slots:
     void unite();
     void unite_data();
 
-    void extendShape();
-    void extendShape_data();
+    void extendRectangle();
+    void extendRectangle_data();
 
     void areaComparison();
     void areaComparison_data();
@@ -2226,17 +2226,17 @@ void tst_QGeoRectangle::unite_data()
 }
 
 
-void tst_QGeoRectangle::extendShape()
+void tst_QGeoRectangle::extendRectangle()
 {
     QFETCH(QGeoRectangle, box);
     QFETCH(QGeoCoordinate, coord);
     QFETCH(QGeoRectangle, out);
 
-    box.extendShape(coord);
+    box.extendRectangle(coord);
     QCOMPARE(box, out);
 }
 
-void tst_QGeoRectangle::extendShape_data()
+void tst_QGeoRectangle::extendRectangle_data()
 {
     QTest::addColumn<QGeoRectangle>("box");
     QTest::addColumn<QGeoCoordinate>("coord");
