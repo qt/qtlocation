@@ -49,7 +49,7 @@ PRIVATE_HEADERS += \
                     qdeclarativegeolocation_p.h \
                     qdoublevector2d_p.h \
                     qdoublevector3d_p.h \
-                    qgeoprojection_p.h \
+                    qwebmercator_p.h \
                     qpositioningglobal_p.h \
                     qlocationdata_simulator_p.h \
                     qgeopath_p.h
@@ -74,9 +74,9 @@ SOURCES += \
             qdeclarativegeolocation.cpp \
             qdoublevector2d.cpp \
             qdoublevector3d.cpp \
-            qgeoprojection.cpp \
+            qgeopath.cpp \
             qlocationdata_simulator.cpp \
-            qgeopath.cpp
+            qwebmercator.cpp
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

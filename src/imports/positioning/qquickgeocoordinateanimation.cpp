@@ -41,7 +41,7 @@
 #include "qquickgeocoordinateanimation_p_p.h"
 #include <QtQuick/private/qquickanimation_p_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qgeocoordinate_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -80,7 +80,7 @@ QVariant q_coordinateInterpolator(const QGeoCoordinate &from, const QGeoCoordina
         }
     }
 
-    QGeoCoordinate result = QGeoProjection::coordinateInterpolation(from, to, progress);
+    QGeoCoordinate result = QWebMercator::coordinateInterpolation(from, to, progress);
 
     return QVariant::fromValue(result);
 }
@@ -117,7 +117,7 @@ QVariant q_coordinateShortestInterpolator(const QGeoCoordinate &from, const QGeo
 
     double y = fromY + (toY - fromY) * progress;
 
-    QGeoCoordinate result = QGeoProjection::mercatorToCoord(QDoubleVector2D(x, y));
+    QGeoCoordinate result = QWebMercator::mercatorToCoord(QDoubleVector2D(x, y));
     result.setAltitude(from.altitude() + (to.altitude() - from.altitude()) * progress);
     return QVariant::fromValue(result);
 }
@@ -146,7 +146,7 @@ QVariant q_coordinateWestInterpolator(const QGeoCoordinate &from, const QGeoCoor
     while (x > 1.0)
         x -= 1.0;
 
-    QGeoCoordinate result = QGeoProjection::mercatorToCoord(QDoubleVector2D(x, y));
+    QGeoCoordinate result = QWebMercator::mercatorToCoord(QDoubleVector2D(x, y));
     result.setAltitude(from.altitude() + (to.altitude() - from.altitude()) * progress);
 
     return QVariant::fromValue(result);
@@ -176,7 +176,7 @@ QVariant q_coordinateEastInterpolator(const QGeoCoordinate &from, const QGeoCoor
     while (x < 0.0)
         x += 1.0;
 
-    QGeoCoordinate result = QGeoProjection::mercatorToCoord(QDoubleVector2D(x, y));
+    QGeoCoordinate result = QWebMercator::mercatorToCoord(QDoubleVector2D(x, y));
     result.setAltitude(from.altitude() + (to.altitude() - from.altitude()) * progress);
 
     return QVariant::fromValue(result);
@@ -209,7 +209,7 @@ QGeoCoordinate QQuickGeoCoordinateAnimation::from() const
 void QQuickGeoCoordinateAnimation::setFrom(const QGeoCoordinate &f)
 {
     QGeoMercatorCoordinatePrivate *mercator = new QGeoMercatorCoordinatePrivate();
-    QDoubleVector2D fromVector = QGeoProjection::coordToMercator(f);
+    QDoubleVector2D fromVector = QWebMercator::coordToMercator(f);
     mercator->lat = f.latitude();
     mercator->lng = f.longitude();
     mercator->alt = f.altitude();
@@ -232,7 +232,7 @@ QGeoCoordinate QQuickGeoCoordinateAnimation::to() const
 void QQuickGeoCoordinateAnimation::setTo(const QGeoCoordinate &t)
 {
     QGeoMercatorCoordinatePrivate *mercator = new QGeoMercatorCoordinatePrivate();
-    QDoubleVector2D toVector = QGeoProjection::coordToMercator(t);
+    QDoubleVector2D toVector = QWebMercator::coordToMercator(t);
     mercator->lat = t.latitude();
     mercator->lng = t.longitude();
     mercator->alt = t.altitude();

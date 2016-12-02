@@ -53,6 +53,10 @@
 #include <QtCore/QtGlobal>
 #include <math.h>
 
+#ifndef M_PI
+#define M_PI   3.14159265358979323846264338327950288
+#endif
+
 #ifndef M_1_180
 #define M_1_180 0.0055555555555555555555555555555555555555556
 #endif

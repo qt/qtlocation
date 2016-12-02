@@ -43,7 +43,7 @@
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
 #include "qlocationutils_p.h"
-#include "qgeoprojection_p.h"
+#include "qwebmercator_p.h"
 
 #include "qdoublevector2d_p.h"
 #include "qdoublevector3d_p.h"
@@ -438,21 +438,21 @@ bool QGeoPathPrivate::contains(const QGeoCoordinate &coordinate) const
     else if (m_path.size() == 1)
         return (m_path[0].distanceTo(coordinate) <= lineRadius);
 
-    double leftBoundMercator = QGeoProjection::coordToMercator(m_bbox.topLeft()).x();
+    double leftBoundMercator = QWebMercator::coordToMercator(m_bbox.topLeft()).x();
 
-    QDoubleVector2D p = QGeoProjection::coordToMercator(coordinate);
+    QDoubleVector2D p = QWebMercator::coordToMercator(coordinate);
     if (p.x() < leftBoundMercator)
         p.setX(p.x() + leftBoundMercator);  // unwrap X
 
     QDoubleVector2D a;
     QDoubleVector2D b;
     if (m_path.size()) {
-        a = QGeoProjection::coordToMercator(m_path[0]);
+        a = QWebMercator::coordToMercator(m_path[0]);
         if (a.x() < leftBoundMercator)
             a.setX(a.x() + leftBoundMercator);  // unwrap X
     }
     for (int i = 1; i < m_path.size(); i++) {
-        b = QGeoProjection::coordToMercator(m_path[i]);
+        b = QWebMercator::coordToMercator(m_path[i]);
         if (b.x() < leftBoundMercator)
             b.setX(b.x() + leftBoundMercator);  // unwrap X
         if (b == a)
@@ -471,7 +471,7 @@ bool QGeoPathPrivate::contains(const QGeoCoordinate &coordinate) const
         if (candidate.x() > 1.0)
             candidate.setX(candidate.x() - leftBoundMercator); // wrap X
 
-        QGeoCoordinate closest = QGeoProjection::mercatorToCoord(candidate);
+        QGeoCoordinate closest = QWebMercator::mercatorToCoord(candidate);
 
         double distanceMeters = coordinate.distanceTo(closest);
         if (distanceMeters <= lineRadius)

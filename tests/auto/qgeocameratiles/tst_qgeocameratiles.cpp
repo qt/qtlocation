@@ -33,7 +33,7 @@
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
 
-#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtTest/QtTest>
 #include <QtCore/QList>
@@ -226,7 +226,7 @@ void tst_QGeoCameraTiles::tilesPositions()
 
     QGeoCameraData camera;
     camera.setZoomLevel(zoom);
-    camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(mercatorX, mercatorY)));
+    camera.setCenter(QWebMercator::mercatorToCoord(QDoubleVector2D(mercatorX, mercatorY)));
 
     QGeoCameraTiles ct;
     ct.setTileSize(16);

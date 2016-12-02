@@ -39,6 +39,7 @@
 #include "qabstractgeotilecache_p.h"
 #include "qgeotilespec_p.h"
 #include <QtPositioning/private/qdoublevector3d_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtCore/private/qobject_p.h>
 #include <QtQuick/QSGImageNode>
 #include <QtQuick/QQuickWindow>
@@ -282,12 +283,12 @@ QDoubleVector2D QGeoTiledMapScenePrivate::mercatorToItemPosition(const QDoubleVe
 
 QDoubleVector2D QGeoTiledMapScenePrivate::geoToMapProjection(const QGeoCoordinate &coordinate) const
 {
-    return QGeoProjection::coordToMercator(coordinate);
+    return QWebMercator::coordToMercator(coordinate);
 }
 
 QGeoCoordinate QGeoTiledMapScenePrivate::mapProjectionToGeo(const QDoubleVector2D &projection) const
 {
-    return QGeoProjection::mercatorToCoord(projection);
+    return QWebMercator::mercatorToCoord(projection);
 }
 
 //wraps around center
@@ -516,7 +517,7 @@ void QGeoTiledMapScenePrivate::setupCamera()
     double edge = m_scaleFactor * m_tileSize;
 
     // first calculate the camera center in map space in the range of 0 <-> sideLength (2^z)
-    QDoubleVector2D camCenterMercator = QGeoProjection::coordToMercator(m_cameraData.center());
+    QDoubleVector2D camCenterMercator = QWebMercator::coordToMercator(m_cameraData.center());
     QDoubleVector3D center = m_sideLength * camCenterMercator;
     m_cameraCenterXMercator = camCenterMercator.x();
     m_cameraCenterYMercator = camCenterMercator.y();

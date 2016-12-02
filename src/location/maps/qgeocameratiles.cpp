@@ -38,7 +38,7 @@
 #include "qgeotilespec_p.h"
 #include "qgeomaptype_p.h"
 
-#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qdoublevector3d_p.h>
 #include <QVector>
@@ -274,7 +274,7 @@ void QGeoCameraTilesPrivate::updateGeometry()
 
 Frustum QGeoCameraTilesPrivate::createFrustum(double fieldOfViewGradient) const
 {
-    QDoubleVector3D center = m_sideLength * QGeoProjection::coordToMercator(m_camera.center());
+    QDoubleVector3D center = m_sideLength * QWebMercator::coordToMercator(m_camera.center());
     center.setZ(0.0);
 
     double f = qMin(m_screenSize.width(), m_screenSize.height());

@@ -47,7 +47,7 @@
 #include <QDebug>
 #include <QEasingCurve>
 #include <QGeoCoordinate>
-#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 
 #define ANIMATION_DURATION 4000
 
@@ -162,7 +162,7 @@ private:
             progress = ((qreal)startTime.msecsTo(current) / ANIMATION_DURATION);
         }
 
-        setPosition(QGeoProjection::coordinateInterpolation(
+        setPosition(QWebMercator::coordinateInterpolation(
                           fromCoordinate, toCoordinate, easingCurve.valueForProgress(progress)));
 
         if (!timer.isActive())

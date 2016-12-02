@@ -35,7 +35,7 @@
 ****************************************************************************/
 #include "qgeotiledmap_p.h"
 #include "qgeotiledmap_p_p.h"
-
+#include <QtPositioning/private/qwebmercator_p.h>
 #include "qgeotiledmappingmanagerengine_p.h"
 #include "qabstractgeotilecache_p.h"
 #include "qgeotilespec_p.h"
@@ -176,7 +176,7 @@ double QGeoTiledMap::maximumCenterLatitudeAtZoom(double zoomLevel) const
 
     // Use the window height divided by 2 as the topmost allowed center, with respect to the map size in pixels
     double mercatorTopmost = (clampedWindowHeight * 0.5) /  mapEdgeSize ;
-    QGeoCoordinate topMost = QGeoProjection::mercatorToCoord(QDoubleVector2D(0.0,mercatorTopmost));
+    QGeoCoordinate topMost = QWebMercator::mercatorToCoord(QDoubleVector2D(0.0,mercatorTopmost));
 
     return topMost.latitude();
 }
@@ -473,12 +473,12 @@ QSGNode *QGeoTiledMapPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow *w
 
 QGeoCoordinate QGeoTiledMapPrivate::itemPositionToCoordinate(const QDoubleVector2D &pos) const
 {
-    return QGeoProjection::mercatorToCoord(m_mapScene->itemPositionToMercator(pos));
+    return QWebMercator::mercatorToCoord(m_mapScene->itemPositionToMercator(pos));
 }
 
 QDoubleVector2D QGeoTiledMapPrivate::coordinateToItemPosition(const QGeoCoordinate &coordinate) const
 {
-    return m_mapScene->mercatorToItemPosition(QGeoProjection::coordToMercator(coordinate));
+    return m_mapScene->mercatorToItemPosition(QWebMercator::coordToMercator(coordinate));
 }
 
 QT_END_NAMESPACE

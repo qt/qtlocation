@@ -37,7 +37,7 @@
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
 #include "qgeocameracapabilities_p.h"
-#include "qgeoprojection_p.h"
+#include "qwebmercator_p.h"
 
 #include <cmath>
 

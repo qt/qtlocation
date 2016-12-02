@@ -40,7 +40,7 @@
 #include "qgeorectangle.h"
 #include "qgeorectangle_p.h"
 
-#include "qgeoprojection_p.h"
+#include "qwebmercator_p.h"
 #include "qdoublevector2d_p.h"
 #include "qgeocoordinate.h"
 #include "qnumeric.h"

@@ -46,7 +46,7 @@
 #include <QtQuick/QQuickWindow>
 #include <QPropertyAnimation>
 #include <QDebug>
-#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include "math.h"
 #include "qgeomap_p.h"
 #include "qdoublevector2d_p.h"

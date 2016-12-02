@@ -34,7 +34,7 @@
 #include "qgeocameradata_p.h"
 #include "qabstractgeotilecache_p.h"
 
-#include <QtPositioning/private/qgeoprojection_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 
 #include <qtest.h>
@@ -303,7 +303,7 @@ class tst_QGeoTiledMapScene : public QObject
 
             QGeoCameraData camera;
             camera.setZoomLevel(zoom);
-            QGeoCoordinate centerCoordinate = QGeoProjection::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY));
+            QGeoCoordinate centerCoordinate = QWebMercator::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY));
             camera.setCenter(centerCoordinate);
 
             QGeoCameraTiles ct;
@@ -344,7 +344,7 @@ class tst_QGeoTiledMapScene : public QObject
 
             QGeoCameraData camera;
             camera.setZoomLevel(zoom);
-            QGeoCoordinate coord = QGeoProjection::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY));
+            QGeoCoordinate coord = QWebMercator::mercatorToCoord(QDoubleVector2D(cameraCenterX, cameraCenterY));
             camera.setCenter(coord);
 
             QGeoCameraTiles ct;

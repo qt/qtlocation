@@ -36,8 +36,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOPROJECTION_P_H
-#define QGEOPROJECTION_P_H
+#ifndef QWEBMERCATOR_P_H
+#define QWEBMERCATOR_P_H
 
 //
 //  W A R N I N G
@@ -50,20 +50,17 @@
 // We mean it.
 //
 
-#ifndef M_PI
-#define M_PI (3.14159265358979323846)
-#endif
-
 #include <qglobal.h>
 #include <QtCore/qvariant.h>
-#include "qpositioningglobal.h"
+#include <math.h>
+#include "qpositioningglobal_p.h"
 
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QDoubleVector2D;
 
-class Q_POSITIONING_EXPORT QGeoProjection
+class Q_POSITIONING_PRIVATE_EXPORT QWebMercator
 {
 public:
     static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
@@ -76,4 +73,4 @@ private:
 
 QT_END_NAMESPACE
 
-#endif // QGEOPROJECTION_P_H
+#endif // QWEBMERCATOR_P_H

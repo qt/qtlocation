@@ -50,8 +50,6 @@
 #include "qlocationglobal.h"
 #include "qgeocoordinate.h"
 
-#include <QtPositioning/private/qgeoprojection_p.h>
-
 #include <QMetaType>
 
 #include <QSharedDataPointer>

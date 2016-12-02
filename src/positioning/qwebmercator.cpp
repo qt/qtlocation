@@ -36,7 +36,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeoprojection_p.h"
+#include "qwebmercator_p.h"
 
 #include "qgeocoordinate.h"
 
@@ -49,7 +49,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDoubleVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord)
+QDoubleVector2D QWebMercator::coordToMercator(const QGeoCoordinate &coord)
 {
     const double pi = M_PI;
 
@@ -62,13 +62,13 @@ QDoubleVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord)
     return QDoubleVector2D(lon, lat);
 }
 
-double QGeoProjection::realmod(const double a, const double b)
+double QWebMercator::realmod(const double a, const double b)
 {
     quint64 div = static_cast<quint64>(a / b);
     return a - static_cast<double>(div) * b;
 }
 
-QGeoCoordinate QGeoProjection::mercatorToCoord(const QDoubleVector2D &mercator)
+QGeoCoordinate QWebMercator::mercatorToCoord(const QDoubleVector2D &mercator)
 {
     const double pi = M_PI;
 
@@ -101,10 +101,10 @@ QGeoCoordinate QGeoProjection::mercatorToCoord(const QDoubleVector2D &mercator)
     return QGeoCoordinate(lat, lng, 0.0);
 }
 
-QGeoCoordinate QGeoProjection::coordinateInterpolation(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
+QGeoCoordinate QWebMercator::coordinateInterpolation(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
 {
-    QDoubleVector2D s = QGeoProjection::coordToMercator(from);
-    QDoubleVector2D e = QGeoProjection::coordToMercator(to);
+    QDoubleVector2D s = QWebMercator::coordToMercator(from);
+    QDoubleVector2D e = QWebMercator::coordToMercator(to);
 
     double x = s.x();
 
@@ -128,7 +128,7 @@ QGeoCoordinate QGeoProjection::coordinateInterpolation(const QGeoCoordinate &fro
 
     double y = (1.0 - progress) * s.y() + progress * e.y();
 
-    QGeoCoordinate result = QGeoProjection::mercatorToCoord(QDoubleVector2D(x, y));
+    QGeoCoordinate result = QWebMercator::mercatorToCoord(QDoubleVector2D(x, y));
     result.setAltitude((1.0 - progress) * from.altitude() + progress * to.altitude());
 
     return result;

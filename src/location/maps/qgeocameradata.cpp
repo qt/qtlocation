@@ -35,6 +35,7 @@
 ****************************************************************************/
 #include "qgeocameradata_p.h"
 #include <QtPositioning/private/qgeocoordinate_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtCore/QVariant>
 #include <QtCore/QVariantAnimation>
 
@@ -112,7 +113,7 @@ QVariant cameraInterpolator(const QGeoCameraData &start,
         }
     }
     else {
-        QGeoCoordinate coordinateResult = QGeoProjection::coordinateInterpolation(from, to, progress);
+        QGeoCoordinate coordinateResult = QWebMercator::coordinateInterpolation(from, to, progress);
         result.setCenter(coordinateResult);
     }
 

@@ -34,6 +34,7 @@
 **
 ****************************************************************************/
 
+#include <QtPositioning/private/qwebmercator_p.h>
 #include "qgeocameracapabilities_p.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qgeotiledmap_nokia.h"
@@ -378,10 +379,10 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
 
         pt.setX(viewX0 / divFactor);
         pt.setY(viewY0 / divFactor);
-        viewport.setTopLeft(QGeoProjection::mercatorToCoord(pt));
+        viewport.setTopLeft(QWebMercator::mercatorToCoord(pt));
         pt.setX(viewX1 / divFactor);
         pt.setY(viewY1 / divFactor);
-        viewport.setBottomRight(QGeoProjection::mercatorToCoord(pt));
+        viewport.setBottomRight(QWebMercator::mercatorToCoord(pt));
     }
 
     // TODO: the following invalidation detection algorithm may be improved later.

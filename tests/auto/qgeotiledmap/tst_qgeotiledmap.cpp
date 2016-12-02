@@ -37,6 +37,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 #include <QtTest/QSignalSpy>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/private/qgeotiledmap_p.h>
 #include <QtLocation/private/qgeomappingmanager_p.h>
@@ -126,7 +127,7 @@ void tst_QGeoTiledMap::fetchTiles()
     m_map->setPrefetchStyle(style);
 
     QGeoCameraData camera;
-    camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D( 0.5 ,  0.5 )));
+    camera.setCenter(QWebMercator::mercatorToCoord(QDoubleVector2D( 0.5 ,  0.5 )));
 
     //prev_visible
     camera.setZoomLevel(zoomLevel-1);
