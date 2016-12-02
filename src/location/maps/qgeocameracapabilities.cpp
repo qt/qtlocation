@@ -37,6 +37,14 @@
 #include "qgeocameracapabilities_p.h"
 
 #include <QSharedData>
+#include <cmath>
+
+static const double invLog2 = 1.0 / std::log(2.0);
+
+static double zoomLevelTo256(double zoomLevelForTileSize, double tileSize)
+{
+    return std::log( std::pow(2.0, zoomLevelForTileSize) * tileSize / 256.0 ) * invLog2;
+}
 
 QT_BEGIN_NAMESPACE
 
@@ -60,6 +68,7 @@ public:
     double maxZoom_;
     double minTilt_;
     double maxTilt_;
+    int tileSize_;
 };
 
 QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
@@ -70,7 +79,8 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
       minZoom_(0.0),
       maxZoom_(0.0),
       minTilt_(0.0),
-      maxTilt_(0.0) {}
+      maxTilt_(0.0),
+      tileSize_(256) {}
 
 
 QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCapabilitiesPrivate &other)
@@ -82,7 +92,8 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCap
       minZoom_(other.minZoom_),
       maxZoom_(other.maxZoom_),
       minTilt_(other.minTilt_),
-      maxTilt_(other.maxTilt_) {}
+      maxTilt_(other.maxTilt_),
+      tileSize_(other.tileSize_) {}
 
 QGeoCameraCapabilitiesPrivate::~QGeoCameraCapabilitiesPrivate() {}
 
@@ -99,6 +110,7 @@ QGeoCameraCapabilitiesPrivate &QGeoCameraCapabilitiesPrivate::operator = (const 
     maxZoom_ = other.maxZoom_;
     minTilt_ = other.minTilt_;
     maxTilt_ = other.maxTilt_;
+    tileSize_ = other.tileSize_;
 
     return *this;
 }
@@ -149,6 +161,18 @@ QGeoCameraCapabilities &QGeoCameraCapabilities::operator = (const QGeoCameraCapa
     return *this;
 }
 
+void QGeoCameraCapabilities::setTileSize(int tileSize)
+{
+    if (tileSize < 1)
+        return;
+    d->tileSize_ = tileSize;
+}
+
+int QGeoCameraCapabilities::tileSize() const
+{
+    return d->tileSize_;
+}
+
 /*!
     Returns whether this instance of the class is considered "valid". To be
     valid, the instance must have had at least one capability set (to either
@@ -183,6 +207,13 @@ double QGeoCameraCapabilities::minimumZoomLevel() const
     return d->minZoom_;
 }
 
+double QGeoCameraCapabilities::minimumZoomLevelAt256() const
+{
+    if (d->tileSize_ == 256)
+        return d->minZoom_;
+    return zoomLevelTo256(d->minZoom_, d->tileSize_);
+}
+
 /*!
     Sets the maximum zoom level supported by the associated plugin to \a maximumZoomLevel.
 
@@ -204,6 +235,13 @@ void QGeoCameraCapabilities::setMaximumZoomLevel(double maximumZoomLevel)
 double QGeoCameraCapabilities::maximumZoomLevel() const
 {
     return d->maxZoom_;
+}
+
+double QGeoCameraCapabilities::maximumZoomLevelAt256() const
+{
+    if (d->tileSize_ == 256)
+        return d->maxZoom_;
+    return zoomLevelTo256(d->maxZoom_, d->tileSize_);
 }
 
 /*!

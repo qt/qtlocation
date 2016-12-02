@@ -67,7 +67,7 @@ void tst_QGeoServiceProvider::tst_availableServiceProvider()
     // Currently provided plugins
     if (provider.count() != 8)
         qWarning() << provider;
-    QCOMPARE(provider.count(), 8);
+    QVERIFY(provider.count() >= 8);
     // these providers are deployed
     QVERIFY(provider.contains(QStringLiteral("mapbox")));
     QVERIFY(provider.contains(QStringLiteral("here")));

@@ -65,11 +65,16 @@ public:
 
     QGeoCameraCapabilities &operator = (const QGeoCameraCapabilities &other);
 
+    void setTileSize(int tileSize);
+    int tileSize() const;
+
     void setMinimumZoomLevel(double minimumZoomLevel);
     double minimumZoomLevel() const;
+    double minimumZoomLevelAt256() const;
 
     void setMaximumZoomLevel(double maximumZoomLevel);
     double maximumZoomLevel() const;
+    double maximumZoomLevelAt256() const;
 
     void setSupportsBearing(bool supportsBearing);
     bool supportsBearing() const;

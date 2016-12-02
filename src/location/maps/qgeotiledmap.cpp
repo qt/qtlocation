@@ -49,6 +49,18 @@
 QT_BEGIN_NAMESPACE
 #define PREFETCH_FRUSTUM_SCALE 2.0
 
+static const double invLog2 = 1.0 / std::log(2.0);
+
+static double zoomLevelFrom256(double zoomLevelFor256, double tileSize)
+{
+    return std::log( std::pow(2.0, zoomLevelFor256) * 256.0 / tileSize ) * invLog2;
+}
+
+static double zoomLevelTo256(double zoomLevelForTileSize, double tileSize)
+{
+    return std::log( std::pow(2.0, zoomLevelForTileSize) * tileSize / 256.0 ) * invLog2;
+}
+
 QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent)
     : QGeoMap(*new QGeoTiledMapPrivate(engine), parent)
 {
@@ -150,13 +162,16 @@ void QGeoTiledMap::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 }
 
 // This method returns the minimum zoom level that this specific qgeomap type allows
-// at a given canvas size (width,height) and for a given tile size (usually 256).
+// at a given canvas size (width,height) and for the default tile size of 256^2
 double QGeoTiledMap::minimumZoomAtViewportSize(int width, int height) const
 {
     Q_D(const QGeoTiledMap);
+    double tileSize = d->m_visibleTiles->tileSize();
     double maxSize = qMax(width,height);
-    double numTiles = maxSize / d->m_visibleTiles->tileSize();
-    return std::log(numTiles) / std::log(2.0);
+    double numTiles = maxSize / tileSize;
+    if (tileSize == 256.0)
+        return std::log(numTiles) * invLog2;
+    return zoomLevelTo256(std::log(numTiles) * invLog2, tileSize);
 }
 
 // This method recalculates the "no-trespassing" limits for the map center.
@@ -275,10 +290,18 @@ void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &cameraData)
 {
     Q_Q(QGeoTiledMap);
 
+    QGeoCameraData cam = cameraData;
+
+    // The incoming zoom level is intended for a tileSize of 256.
+    // Adapt it to the current tileSize
+    double zoomLevel = cameraData.zoomLevel();
+    if (m_visibleTiles->tileSize() != 256)
+        zoomLevel = zoomLevelFrom256(zoomLevel, m_visibleTiles->tileSize());
+    cam.setZoomLevel(zoomLevel);
+
     // For zoomlevel, "snap" 0.01 either side of a whole number.
     // This is so that when we turn off bilinear scaling, we're
     // snapped to the exact pixel size of the tiles
-    QGeoCameraData cam = cameraData;
     int izl = static_cast<int>(std::floor(cam.zoomLevel()));
     float delta = cam.zoomLevel() - izl;
 
@@ -286,6 +309,8 @@ void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &cameraData)
         izl++;
         delta -= 1.0;
     }
+
+    // TODO: Don't do this if there's tilt or bearing.
     if (qAbs(delta) < 0.01) {
         cam.setZoomLevel(izl);
     }

@@ -101,7 +101,7 @@ void tst_QGeoTiledMap::initTestCase()
                                      QStringLiteral("/../../../plugins"));
 #endif
       QVariantMap parameters;
-      parameters["tileSize"] = 16;
+      parameters["tileSize"] = 256;
       parameters["maxZoomLevel"] = 8;
       parameters["finishRequestImmediately"] = true;
       QGeoServiceProvider *provider = new QGeoServiceProvider("qmlgeo.test.plugin",parameters);
@@ -110,7 +110,7 @@ void tst_QGeoTiledMap::initTestCase()
       QVERIFY2(provider->error() == QGeoServiceProvider::NoError, "Could not load plugin: " + provider->errorString().toLatin1());
       m_map.reset(static_cast<QGeoTiledMapTest*>(mappingManager->createMap(this)));
       QVERIFY(m_map);
-      m_map->setViewportSize(QSize(16, 16));
+      m_map->setViewportSize(QSize(256, 256));
       m_fetcher = static_cast<QGeoTileFetcherTest*>(m_map->m_engine->tileFetcher());
       m_tilesCounter.reset(new FetchTileCounter());
       connect(m_fetcher, SIGNAL(tileFetched(const QGeoTileSpec&)), m_tilesCounter.data(), SLOT(tileFetched(const QGeoTileSpec&)));

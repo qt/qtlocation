@@ -79,6 +79,8 @@ Item {
     Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
     SignalSpy {id: mapCenterSpy; target: map; signalName: 'centerChanged'}
 
+    Map {id: mapPar; plugin: testPlugin; center: coordinate1; width: 512; height: 512}
+
     Map {id: coordinateMap; plugin: herePlugin; center: coordinate3;
         width: 1000; height: 1000; zoomLevel: 15 }
 
@@ -135,46 +137,46 @@ Item {
         function test_map_parameters()
         {
             // coordinate is set at map element declaration
-            var center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            var center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
             fuzzyCompare(center.latitude, 10, 0.1)
             fuzzyCompare(center.longitude, 11, 0.1)
 
-            compare(map.mapParameters.length, 0)
+            compare(mapPar.mapParameters.length, 0)
 
-            map.addMapParameter(testParameter)
+            mapPar.addMapParameter(testParameter)
 
-            compare(map.mapParameters.length, 1)
+            compare(mapPar.mapParameters.length, 1)
 
-            center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
             fuzzyCompare(center.latitude, -33, 0.1)
             fuzzyCompare(center.longitude, -47, 0.1)
 
-            map.addMapParameter(testParameter)
-            compare(map.mapParameters.length, 1)
+            mapPar.addMapParameter(testParameter)
+            compare(mapPar.mapParameters.length, 1)
 
-            map.removeMapParameter(testParameter)
-            compare(map.mapParameters.length, 0)
+            mapPar.removeMapParameter(testParameter)
+            compare(mapPar.mapParameters.length, 0)
 
-            center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
             fuzzyCompare(center.latitude, -33, 0.1)
             fuzzyCompare(center.longitude, -47, 0.1)
 
-            testParameter.center = map.center
-            map.addMapParameter(testParameter)
-            compare(map.mapParameters.length, 1)
+            testParameter.center = mapPar.center
+            mapPar.addMapParameter(testParameter)
+            compare(mapPar.mapParameters.length, 1)
 
-            var center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            var center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
             fuzzyCompare(center.latitude, 10, 0.1)
             fuzzyCompare(center.longitude, 11, 0.1)
 
             testParameter.center = QtPositioning.coordinate(-33.0, -47.0)
 
-            center = map.toCoordinate(Qt.point((map.width - 1) / 2.0, (map.height - 1) / 2.0))
+            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
             fuzzyCompare(center.latitude, -33, 0.1)
             fuzzyCompare(center.longitude, -47, 0.1)
 
-            map.removeMapParameter(testParameter)
-            compare(map.mapParameters.length, 0)
+            mapPar.removeMapParameter(testParameter)
+            compare(mapPar.mapParameters.length, 0)
         }
 
         function test_map_clamp()
