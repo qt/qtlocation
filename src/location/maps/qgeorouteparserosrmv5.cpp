@@ -428,9 +428,9 @@ static QString instructionNewName(const QString &wayName, QGeoManeuver::Instruct
         case QGeoManeuver::DirectionLightRight:
         case QGeoManeuver::DirectionBearRight:
             if (wayName.isEmpty())
-                return QGeoRouteParserOsrmV5::tr("Contine slightly right");
+                return QGeoRouteParserOsrmV5::tr("Continue slightly right");
             else
-                return QGeoRouteParserOsrmV5::tr("Contine slightly right onto %1").arg(wayName);
+                return QGeoRouteParserOsrmV5::tr("Continue slightly right onto %1").arg(wayName);
         case QGeoManeuver::DirectionUTurnLeft:
         case QGeoManeuver::DirectionUTurnRight:
             if (wayName.isEmpty())
@@ -468,9 +468,9 @@ static QString instructionNotification(const QString &wayName, QGeoManeuver::Ins
         case QGeoManeuver::DirectionLightRight:
         case QGeoManeuver::DirectionBearRight:
             if (wayName.isEmpty())
-                return QGeoRouteParserOsrmV5::tr("Contine on the right");
+                return QGeoRouteParserOsrmV5::tr("Continue on the right");
             else
-                return QGeoRouteParserOsrmV5::tr("Contine on the right on %1").arg(wayName);
+                return QGeoRouteParserOsrmV5::tr("Continue on the right on %1").arg(wayName);
         case QGeoManeuver::DirectionForward:
         default:
             if (wayName.isEmpty())
