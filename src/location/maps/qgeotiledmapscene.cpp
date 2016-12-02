@@ -75,7 +75,6 @@ public:
     // the number of tiles in each direction for the whole map (earth) at the current zoom level.
     // it is 1<<zoomLevel
     int m_sideLength;
-    double m_mapEdgeSize;
 
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > m_textures;
 
@@ -85,14 +84,6 @@ public:
     int m_maxTileX;
     int m_maxTileY;
     int m_tileXWrapsBelow; // the wrap point as a tile index
-
-    // mercator to camera transform for coordinates (not tiles!)
-    double m_cameraCenterXMercator;
-    double m_cameraCenterYMercator;
-    double m_cameraWidthMercator;
-    double m_cameraHeightMercator;
-    double m_1_cameraWidthMercator;
-    double m_1_cameraHeightMercator;
 
     // cameraToScreen transform
     double m_screenWidth; // in pixels
@@ -151,7 +142,6 @@ void QGeoTiledMapScene::setCameraData(const QGeoCameraData &cameraData)
     float delta = cameraData.zoomLevel() - d->m_intZoomLevel;
     d->m_linearScaling = qAbs(delta) > 0.05;
     d->m_sideLength = 1 << d->m_intZoomLevel;
-    d->m_mapEdgeSize = std::pow(2.0, cameraData.zoomLevel()) * d->m_tileSize;
 }
 
 void QGeoTiledMapScene::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
@@ -170,60 +160,6 @@ void QGeoTiledMapScene::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTil
 {
     Q_D(QGeoTiledMapScene);
     d->addTile(spec, texture);
-}
-
-double QGeoTiledMapScene::mapEdgeSize() const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->m_mapEdgeSize;
-}
-
-QDoubleVector2D QGeoTiledMapScene::itemPositionToMercator(const QDoubleVector2D &pos) const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->itemPositionToMercator(pos);
-}
-
-QDoubleVector2D QGeoTiledMapScene::mercatorToItemPosition(const QDoubleVector2D &mercator) const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->mercatorToItemPosition(mercator);
-}
-
-QDoubleVector2D QGeoTiledMapScene::geoToMapProjection(const QGeoCoordinate &coordinate) const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->geoToMapProjection(coordinate);
-}
-
-QGeoCoordinate QGeoTiledMapScene::mapProjectionToGeo(const QDoubleVector2D &projection) const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->mapProjectionToGeo(projection);
-}
-
-QDoubleVector2D QGeoTiledMapScene::wrapMapProjection(const QDoubleVector2D &projection) const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->wrapMapProjection(projection);
-}
-
-QDoubleVector2D QGeoTiledMapScene::unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->unwrapMapProjection(wrappedProjection);
-}
-
-QDoubleVector2D QGeoTiledMapScene::wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->wrappedMapProjectionToItemPosition(wrappedProjection);
-}
-
-QDoubleVector2D QGeoTiledMapScene::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
-{
-    Q_D(const QGeoTiledMapScene);
-    return d->itemPositionToWrappedMapProjection(itemPosition);
 }
 
 QSet<QGeoTileSpec> QGeoTiledMapScene::texturedTiles()
@@ -254,10 +190,6 @@ QGeoTiledMapScenePrivate::QGeoTiledMapScenePrivate()
       m_maxTileX(-1),
       m_maxTileY(-1),
       m_tileXWrapsBelow(0),
-      m_cameraCenterXMercator(0),
-      m_cameraCenterYMercator(0),
-      m_cameraWidthMercator(0),
-      m_cameraHeightMercator(0),
       m_screenWidth(0.0),
       m_screenHeight(0.0),
       m_linearScaling(false),
@@ -267,79 +199,6 @@ QGeoTiledMapScenePrivate::QGeoTiledMapScenePrivate()
 
 QGeoTiledMapScenePrivate::~QGeoTiledMapScenePrivate()
 {
-}
-
-// Old screenToMercator logic
-QDoubleVector2D QGeoTiledMapScenePrivate::itemPositionToMercator(const QDoubleVector2D &pos) const
-{
-    return unwrapMapProjection(itemPositionToWrappedMapProjection(pos));
-}
-
-// Old mercatorToScreen logic
-QDoubleVector2D QGeoTiledMapScenePrivate::mercatorToItemPosition(const QDoubleVector2D &mercator) const
-{
-    return wrappedMapProjectionToItemPosition(wrapMapProjection(mercator));
-}
-
-QDoubleVector2D QGeoTiledMapScenePrivate::geoToMapProjection(const QGeoCoordinate &coordinate) const
-{
-    return QWebMercator::coordToMercator(coordinate);
-}
-
-QGeoCoordinate QGeoTiledMapScenePrivate::mapProjectionToGeo(const QDoubleVector2D &projection) const
-{
-    return QWebMercator::mercatorToCoord(projection);
-}
-
-//wraps around center
-QDoubleVector2D QGeoTiledMapScenePrivate::wrapMapProjection(const QDoubleVector2D &projection) const
-{
-    double x = projection.x();
-    if (m_cameraCenterXMercator < 0.5) {
-        if (x - m_cameraCenterXMercator > 0.5 )
-            x -= 1.0;
-    } else if (m_cameraCenterXMercator > 0.5) {
-        if (x - m_cameraCenterXMercator < -0.5 )
-            x += 1.0;
-    }
-
-    return QDoubleVector2D(x, projection.y());
-}
-
-QDoubleVector2D QGeoTiledMapScenePrivate::unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const
-{
-    double x = wrappedProjection.x();
-    if (x > 1.0)
-        return QDoubleVector2D(x - 1.0, wrappedProjection.y());
-    if (x <= 0.0)
-        return QDoubleVector2D(x + 1.0, wrappedProjection.y());
-    return wrappedProjection;
-}
-
-QDoubleVector2D QGeoTiledMapScenePrivate::wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const
-{
-    // TODO: Support tilt/bearing through a projection matrix.
-    double x = ((wrappedProjection.x() - m_cameraCenterXMercator) * m_1_cameraWidthMercator + 0.5) * m_screenSize.width();
-    double y = ((wrappedProjection.y() - m_cameraCenterYMercator) * m_1_cameraHeightMercator + 0.5) * m_screenSize.height();
-    return QDoubleVector2D(x, y);
-}
-
-QDoubleVector2D QGeoTiledMapScenePrivate::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
-{
-    // TODO: Support tilt/bearing through an inverse projection matrix.
-    double x = itemPosition.x();
-    x /= m_screenSize.width();
-    x -= 0.5;
-    x *= m_cameraWidthMercator;
-    x += m_cameraCenterXMercator;
-
-    double y = itemPosition.y();
-    y /= m_screenSize.height();
-    y -= 0.5;
-    y *= m_cameraHeightMercator;
-    y += m_cameraCenterYMercator;
-
-    return QDoubleVector2D(x, y);
 }
 
 bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode)
@@ -508,19 +367,12 @@ void QGeoTiledMapScenePrivate::setupCamera()
     // the tiles or repeated tiles)
     double altitude = f / (2.0 * z) ;
 
-    m_cameraWidthMercator = m_screenSize.width() / m_mapEdgeSize;
-    m_cameraHeightMercator = m_screenSize.height() / m_mapEdgeSize;
-    m_1_cameraWidthMercator = 1.0 / m_cameraWidthMercator;
-    m_1_cameraHeightMercator = 1.0 / m_cameraHeightMercator;
-
     // calculate center
     double edge = m_scaleFactor * m_tileSize;
 
     // first calculate the camera center in map space in the range of 0 <-> sideLength (2^z)
     QDoubleVector2D camCenterMercator = QWebMercator::coordToMercator(m_cameraData.center());
     QDoubleVector3D center = m_sideLength * camCenterMercator;
-    m_cameraCenterXMercator = camCenterMercator.x();
-    m_cameraCenterYMercator = camCenterMercator.y();
 
     // wrap the center if necessary (due to dateline crossing)
     if (center.x() < m_tileXWrapsBelow)

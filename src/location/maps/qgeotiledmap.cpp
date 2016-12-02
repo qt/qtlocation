@@ -39,6 +39,7 @@
 #include "qgeotiledmappingmanagerengine_p.h"
 #include "qabstractgeotilecache_p.h"
 #include "qgeotilespec_p.h"
+#include "qgeoprojection_p.h"
 
 #include "qgeocameratiles_p.h"
 #include "qgeotilerequestmanager_p.h"
@@ -54,11 +55,6 @@ static const double invLog2 = 1.0 / std::log(2.0);
 static double zoomLevelFrom256(double zoomLevelFor256, double tileSize)
 {
     return std::log( std::pow(2.0, zoomLevelFor256) * 256.0 / tileSize ) * invLog2;
-}
-
-static double zoomLevelTo256(double zoomLevelForTileSize, double tileSize)
-{
-    return std::log( std::pow(2.0, zoomLevelForTileSize) * tileSize / 256.0 ) * invLog2;
 }
 
 QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent)
@@ -161,43 +157,8 @@ void QGeoTiledMap::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
     Q_UNUSED(visibleTiles);
 }
 
-// This method returns the minimum zoom level that this specific qgeomap type allows
-// at a given canvas size (width,height) and for the default tile size of 256^2
-double QGeoTiledMap::minimumZoomAtViewportSize(int width, int height) const
-{
-    Q_D(const QGeoTiledMap);
-    double tileSize = d->m_visibleTiles->tileSize();
-    double maxSize = qMax(width,height);
-    double numTiles = maxSize / tileSize;
-    if (tileSize == 256.0)
-        return std::log(numTiles) * invLog2;
-    return zoomLevelTo256(std::log(numTiles) * invLog2, tileSize);
-}
-
-// This method recalculates the "no-trespassing" limits for the map center.
-// This has to be done when:
-// 1) the map is resized, because the meters per pixel remain the same, but
-//    the amount of pixels between the center and the borders changes
-// 2) when the zoom level changes, because the amount of pixels between the center
-//    and the borders stays the same, but the meters per pixel change
-double QGeoTiledMap::maximumCenterLatitudeAtZoom(double zoomLevel) const
-{
-    Q_D(const QGeoTiledMap);
-    double mapEdgeSize = std::pow(2.0,zoomLevel);
-    mapEdgeSize *= d->m_visibleTiles->tileSize();
-
-    // At init time weird things happen
-    int clampedWindowHeight = (viewportHeight() > mapEdgeSize) ? mapEdgeSize : viewportHeight();
-
-    // Use the window height divided by 2 as the topmost allowed center, with respect to the map size in pixels
-    double mercatorTopmost = (clampedWindowHeight * 0.5) /  mapEdgeSize ;
-    QGeoCoordinate topMost = QWebMercator::mercatorToCoord(QDoubleVector2D(0.0,mercatorTopmost));
-
-    return topMost.latitude();
-}
-
 QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
-    : QGeoMapPrivate(engine),
+    : QGeoMapPrivate(engine, new QGeoProjectionWebMercator),
       m_cache(engine->tileCache()),
       m_visibleTiles(new QGeoCameraTiles()),
       m_prefetchTiles(new QGeoCameraTiles()),
@@ -359,91 +320,6 @@ void QGeoTiledMapPrivate::changeTileVersion(int version)
     updateScene();
 }
 
-double QGeoTiledMap::mapWidth() const
-{
-    Q_D(const QGeoTiledMap);
-    return d->m_mapScene->mapEdgeSize();
-}
-
-double QGeoTiledMap::mapHeight() const
-{
-    return mapWidth(); // WebMercator, the only projection supported by QGeoTiledMap, is square.
-}
-
-QDoubleVector2D QGeoTiledMap::geoToMapProjection(const QGeoCoordinate &coordinate) const
-{
-    Q_D(const QGeoTiledMap);
-    return d->m_mapScene->geoToMapProjection(coordinate);
-}
-
-QGeoCoordinate QGeoTiledMap::mapProjectionToGeo(const QDoubleVector2D &projection) const
-{
-    Q_D(const QGeoTiledMap);
-    return d->m_mapScene->mapProjectionToGeo(projection);
-}
-
-QDoubleVector2D QGeoTiledMap::wrapMapProjection(const QDoubleVector2D &projection) const
-{
-    Q_D(const QGeoTiledMap);
-    return d->m_mapScene->wrapMapProjection(projection);
-}
-
-QDoubleVector2D QGeoTiledMap::unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const
-{
-    Q_D(const QGeoTiledMap);
-    return d->m_mapScene->unwrapMapProjection(wrappedProjection);
-}
-
-QDoubleVector2D QGeoTiledMap::wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const
-{
-    Q_D(const QGeoTiledMap);
-    return d->m_mapScene->wrappedMapProjectionToItemPosition(wrappedProjection);
-}
-
-QDoubleVector2D QGeoTiledMap::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
-{
-    Q_D(const QGeoTiledMap);
-    return d->m_mapScene->itemPositionToWrappedMapProjection(itemPosition);
-}
-
-QGeoCoordinate QGeoTiledMap::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
-{
-    if (clipToViewport) {
-        int w = viewportWidth();
-        int h = viewportHeight();
-
-        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-            return QGeoCoordinate();
-    }
-
-#if 0 // Old code, no tilt/rotation
-    Q_D(const QGeoTiledMap);
-    return d->itemPositionToCoordinate(pos);
-#else
-    return mapProjectionToGeo(unwrapMapProjection(itemPositionToWrappedMapProjection(pos)));
-#endif
-}
-
-QDoubleVector2D QGeoTiledMap::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
-{
-#if 0 // Old code, no tilt/rotation
-    Q_D(const QGeoTiledMap);
-    QDoubleVector2D pos = d->coordinateToItemPosition(coordinate);
-#else
-    QDoubleVector2D pos = wrappedMapProjectionToItemPosition(wrapMapProjection(geoToMapProjection(coordinate)));
-#endif
-    if (clipToViewport) {
-        int w = viewportWidth();
-        int h = viewportHeight();
-        double x = pos.x();
-        double y = pos.y();
-        if ((x < 0.0) || (x > w) || (y < 0) || (y > h) || qIsNaN(x) || qIsNaN(y))
-            return QDoubleVector2D(qQNaN(), qQNaN());
-    }
-
-    return pos;
-}
-
 void QGeoTiledMapPrivate::clearScene()
 {
     m_mapScene->clearTexturedTiles();
@@ -494,16 +370,6 @@ void QGeoTiledMapPrivate::updateTile(const QGeoTileSpec &spec)
 QSGNode *QGeoTiledMapPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
     return m_mapScene->updateSceneGraph(oldNode, window);
-}
-
-QGeoCoordinate QGeoTiledMapPrivate::itemPositionToCoordinate(const QDoubleVector2D &pos) const
-{
-    return QWebMercator::mercatorToCoord(m_mapScene->itemPositionToMercator(pos));
-}
-
-QDoubleVector2D QGeoTiledMapPrivate::coordinateToItemPosition(const QGeoCoordinate &coordinate) const
-{
-    return m_mapScene->mercatorToItemPosition(QWebMercator::coordToMercator(coordinate));
 }
 
 QT_END_NAMESPACE

@@ -76,9 +76,6 @@ public:
 
     QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window);
 
-    QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos) const;
-    QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate) const;
-
     void updateTile(const QGeoTileSpec &spec);
     void prefetchTiles();
     QGeoMapType activeMapType();

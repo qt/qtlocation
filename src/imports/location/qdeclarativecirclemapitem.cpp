@@ -150,7 +150,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QGeoMap &map)
         return;
     }
 
-    QPointF origin = map.coordinateToItemPosition(srcOrigin_, false).toPointF();
+    QPointF origin = map.geoProjection().coordinateToItemPosition(srcOrigin_, false).toPointF();
 
     QPainterPath ppi = srcPath_;
 
@@ -169,9 +169,9 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QGeoMap &map)
 
     // calculate actual width of map on screen in pixels
     QGeoCoordinate mapCenter(0, map.cameraData().center().longitude());
-    QDoubleVector2D midPoint = map.coordinateToItemPosition(mapCenter, false);
+    QDoubleVector2D midPoint = map.geoProjection().coordinateToItemPosition(mapCenter, false);
     QDoubleVector2D midPointPlusOne = QDoubleVector2D(midPoint.x() + 1.0, midPoint.y());
-    QGeoCoordinate coord1 = map.itemPositionToCoordinate(midPointPlusOne, false);
+    QGeoCoordinate coord1 = map.geoProjection().itemPositionToCoordinate(midPointPlusOne, false);
     double geoDistance = coord1.longitude() - map.cameraData().center().longitude();
     if ( geoDistance < 0 )
         geoDistance += 360.0;
@@ -568,7 +568,7 @@ void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const
     }
 
     QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(width(), height()) / 2;
-    QGeoCoordinate newCoordinate = map()->itemPositionToCoordinate(newPoint, false);
+    QGeoCoordinate newCoordinate = map()->geoProjection().itemPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid())
         setCenter(newCoordinate);
 
@@ -603,19 +603,19 @@ void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QGeoCoordinat
         return;
     QList<int> wrapPathIndex;
     // calculate actual width of map on screen in pixels
-    QDoubleVector2D midPoint = map()->coordinateToItemPosition(map()->cameraData().center(), false);
+    QDoubleVector2D midPoint = map()->geoProjection().coordinateToItemPosition(map()->cameraData().center(), false);
     QDoubleVector2D midPointPlusOne(midPoint.x() + 1.0, midPoint.y());
-    QGeoCoordinate coord1 = map()->itemPositionToCoordinate(midPointPlusOne, false);
+    QGeoCoordinate coord1 = map()->geoProjection().itemPositionToCoordinate(midPointPlusOne, false);
     qreal geoDistance = coord1.longitude() - map()->cameraData().center().longitude();
     if ( geoDistance < 0 )
         geoDistance += 360;
     qreal mapWidth = 360.0 / geoDistance;
     mapWidth = qMin(static_cast<int>(mapWidth), map()->viewportWidth());
-    QDoubleVector2D prev = map()->coordinateToItemPosition(path.at(0), false);
+    QDoubleVector2D prev = map()->geoProjection().coordinateToItemPosition(path.at(0), false);
     // find the points in path where wrapping occurs
     for (int i = 1; i <= path.count(); ++i) {
         int index = i % path.count();
-        QDoubleVector2D point = map()->coordinateToItemPosition(path.at(index), false);
+        QDoubleVector2D point = map()->geoProjection().coordinateToItemPosition(path.at(index), false);
         if ( (qAbs(point.x() - prev.x())) >= mapWidth/2.0 ) {
             wrapPathIndex << index;
             if (wrapPathIndex.size() == 2 || !(crossNorthPole && crossSouthPole))

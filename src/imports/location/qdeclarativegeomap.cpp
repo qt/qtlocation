@@ -311,7 +311,7 @@ void QDeclarativeGeoMap::initialize()
     // try to keep center change signal in the end
     bool centerHasChanged = false;
 
-    setMinimumZoomLevel(m_map->minimumZoomAtViewportSize(width(), height()));
+    setMinimumZoomLevel(m_map->minimumZoom());
 
     // set latitude bundary check
     m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData.zoomLevel());
@@ -638,8 +638,9 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel)
         qreal oldMinimumZoomLevel = this->minimumZoomLevel();
 
         if (m_map) {
+
             minimumZoomLevel = qBound(qreal(m_map->cameraCapabilities().minimumZoomLevelAt256()), minimumZoomLevel, maximumZoomLevel());
-            double minimumViewportZoomLevel = m_map->minimumZoomAtViewportSize(width(),height());
+            double minimumViewportZoomLevel = m_map->minimumZoom();
             if (minimumZoomLevel < minimumViewportZoomLevel)
                 minimumZoomLevel = minimumViewportZoomLevel;
         }
@@ -840,8 +841,8 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
     if (!m_map || !width() || !height())
         return m_region;
 
-    QGeoCoordinate tl = m_map->itemPositionToCoordinate(QDoubleVector2D(0, 0));
-    QGeoCoordinate br = m_map->itemPositionToCoordinate(QDoubleVector2D(width(), height()));
+    QGeoCoordinate tl = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(0, 0));
+    QGeoCoordinate br = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(width(), height()));
 
     return QGeoRectangle(tl, br);
 }
@@ -967,8 +968,8 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
         return;
     }
 
-    QDoubleVector2D topLeftPoint = m_map->geoToMapProjection(topLeft);
-    QDoubleVector2D bottomRightPoint = m_map->geoToMapProjection(bottomRight);
+    QDoubleVector2D topLeftPoint = m_map->geoProjection().geoToMapProjection(topLeft);
+    QDoubleVector2D bottomRightPoint = m_map->geoProjection().geoToMapProjection(bottomRight);
     if (bottomRightPoint.x() < topLeftPoint.x()) // crossing the dateline
         bottomRightPoint.setX(bottomRightPoint.x() + 1.0);
 
@@ -981,7 +982,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
     // find center of the bounding box
     QDoubleVector2D center = (topLeftPoint + bottomRightPoint) * 0.5;
     center.setX(center.x() > 1.0 ? center.x() - 1.0 : center.x());
-    QGeoCoordinate centerCoordinate = m_map->mapProjectionToGeo(center);
+    QGeoCoordinate centerCoordinate = m_map->geoProjection().mapProjectionToGeo(center);
 
     // position camera to the center of bounding box
     setCenter(centerCoordinate);
@@ -1023,7 +1024,7 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &position, bool clipToViewPort) const
 {
     if (m_map)
-        return m_map->itemPositionToCoordinate(QDoubleVector2D(position), clipToViewPort);
+        return m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(position), clipToViewPort);
     else
         return QGeoCoordinate();
 }
@@ -1039,7 +1040,7 @@ QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &position, bool cl
 QPointF QDeclarativeGeoMap::fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort) const
 {
     if (m_map)
-        return m_map->coordinateToItemPosition(coordinate, clipToViewPort).toPointF();
+        return m_map->geoProjection().coordinateToItemPosition(coordinate, clipToViewPort).toPointF();
     else
         return QPointF(qQNaN(), qQNaN());
 }
@@ -1061,7 +1062,8 @@ void QDeclarativeGeoMap::pan(int dx, int dy)
         return;
     if (dx == 0 && dy == 0)
         return;
-    QGeoCoordinate coord = m_map->itemPositionToCoordinate(
+
+    QGeoCoordinate coord = m_map->geoProjection().itemPositionToCoordinate(
                                 QDoubleVector2D(m_map->viewportWidth() / 2 + dx,
                                         m_map->viewportHeight() / 2 + dy));
     setCenter(coord);
@@ -1428,7 +1430,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
     if (!m_initialized) {
         initialize();
     } else {
-        setMinimumZoomLevel(m_map->minimumZoomAtViewportSize(newGeometry.width(), newGeometry.height()));
+        setMinimumZoomLevel(m_map->minimumZoom());
 
         // Update the center latitudinal threshold
         double maximumCenterLatitudeAtZoom = m_map->maximumCenterLatitudeAtZoom(m_cameraData.zoomLevel());
@@ -1548,7 +1550,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
 
     // position camera to the center of bounding box
     QGeoCoordinate coordinate;
-    coordinate = m_map->itemPositionToCoordinate(QDoubleVector2D(bboxCenterX, bboxCenterY), false);
+    coordinate = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(bboxCenterX, bboxCenterY), false);
     setProperty("center", QVariant::fromValue(coordinate));
 
     // adjust zoom

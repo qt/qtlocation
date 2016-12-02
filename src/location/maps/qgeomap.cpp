@@ -57,6 +57,7 @@ void QGeoMap::setViewportSize(const QSize& size)
     if (size == d->m_viewportSize)
         return;
     d->m_viewportSize = size;
+    d->m_geoProjection->setViewportSize(size);
     d->changeViewportSize(size);
 }
 
@@ -84,6 +85,7 @@ void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
     if (cameraData == d->m_cameraData)
         return;
     d->m_cameraData = cameraData;
+    d->m_geoProjection->setCameraData(cameraData);
     d->changeCameraData(cameraData);
     emit cameraDataChanged(d->m_cameraData);
 }
@@ -110,6 +112,35 @@ const QGeoMapType QGeoMap::activeMapType() const
     return d->m_activeMapType;
 }
 
+double QGeoMap::minimumZoom() const
+{
+    Q_D(const QGeoMap);
+    return d->m_geoProjection->minimumZoom();
+}
+
+double QGeoMap::maximumCenterLatitudeAtZoom(double zoomLevel) const
+{
+    Q_D(const QGeoMap);
+    return d->m_geoProjection->maximumCenterLatitudeAtZoom(zoomLevel);
+}
+
+double QGeoMap::mapWidth() const
+{
+    Q_D(const QGeoMap);
+    return d->m_geoProjection->mapWidth();
+}
+
+double QGeoMap::mapHeight() const
+{
+    Q_D(const QGeoMap);
+    return d->m_geoProjection->mapHeight();
+}
+
+const QGeoProjection &QGeoMap::geoProjection() const
+{
+    Q_D(const QGeoMap);
+    return *(d->m_geoProjection);
+}
 
 QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
@@ -119,39 +150,6 @@ QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
     else
         return QGeoCameraCapabilities();
 }
-
-/* Default implementations */
-QGeoCoordinate QGeoMap::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
-{
-    if (clipToViewport) {
-        int w = viewportWidth();
-        int h = viewportHeight();
-
-        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-            return QGeoCoordinate();
-    }
-
-    QDoubleVector2D wrappedMapProjection = itemPositionToWrappedMapProjection(pos);
-    // With rotation/tilting, a screen position might end up outside the projection space.
-    // TODO: test for it
-    return mapProjectionToGeo(unwrapMapProjection(wrappedMapProjection));
-}
-
-QDoubleVector2D QGeoMap::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
-{
-    QDoubleVector2D pos = wrappedMapProjectionToItemPosition(wrapMapProjection(geoToMapProjection(coordinate)));
-
-    if (clipToViewport) {
-        int w = viewportWidth();
-        int h = viewportHeight();
-        double x = pos.x();
-        double y = pos.y();
-        if ((x < -0.5) || (x > w + 0.5) || (y < -0.5) || (y > h + 0.5) || qIsNaN(x) || qIsNaN(y))
-            return QDoubleVector2D(qQNaN(), qQNaN());
-    }
-    return pos;
-}
-
 
 void QGeoMap::prefetchData()
 {
@@ -189,8 +187,9 @@ void QGeoMap::clearParameters()
     d->m_mapParameters.clear();
 }
 
-QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
+QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
     : QObjectPrivate(),
+      m_geoProjection(geoProjection),
       m_engine(engine),
       m_activeMapType(QGeoMapType())
 {
@@ -198,6 +197,8 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine)
 
 QGeoMapPrivate::~QGeoMapPrivate()
 {
+    if (m_geoProjection)
+        delete m_geoProjection;
 }
 
 void QGeoMapPrivate::addParameter(QGeoMapParameter *param)

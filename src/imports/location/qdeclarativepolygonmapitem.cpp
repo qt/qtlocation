@@ -157,7 +157,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 
     double unwrapBelowX = 0;
     if (preserveGeometry_ )
-        unwrapBelowX = map.coordinateToItemPosition(geoLeftBound_, false).x();
+        unwrapBelowX = map.geoProjection().coordinateToItemPosition(geoLeftBound_, false).x();
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -165,7 +165,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         if (!coord.isValid())
             continue;
 
-        QDoubleVector2D point = map.coordinateToItemPosition(coord, false);
+        QDoubleVector2D point = map.geoProjection().coordinateToItemPosition(coord, false);
 
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
@@ -213,7 +213,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
         return;
     }
 
-    QDoubleVector2D origin = map.coordinateToItemPosition(srcOrigin_, false);
+    QDoubleVector2D origin = map.geoProjection().coordinateToItemPosition(srcOrigin_, false);
 
     // Create the viewport rect in the same coordinate system
     // as the actual points
@@ -613,7 +613,7 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
     }
 
     QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(geometry_.firstPointOffset());
-    QGeoCoordinate newCoordinate = map()->itemPositionToCoordinate(newPoint, false);
+    QGeoCoordinate newCoordinate = map()->geoProjection().itemPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
         double firstLongitude = path_.at(0).longitude();
         double firstLatitude = path_.at(0).latitude();

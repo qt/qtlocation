@@ -5,4 +5,4 @@ INCLUDEPATH += ../../../src/location/maps
 
 SOURCES += tst_qgeotiledmapscene.cpp
 
-QT += location positioning-private testlib
+QT += location-private positioning-private testlib

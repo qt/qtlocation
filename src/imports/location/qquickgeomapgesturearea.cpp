@@ -691,12 +691,12 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
     if (!m_map)
         return;
 
-    QGeoCoordinate wheelGeoPos = m_map->itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
-    QPointF preZoomPoint = m_map->coordinateToItemPosition(wheelGeoPos, false).toPointF();
+    QGeoCoordinate wheelGeoPos = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
+    QPointF preZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
     double zoomLevelDelta = event->angleDelta().y() * qreal(0.001);
     m_declarativeMap->setZoomLevel(m_declarativeMap->zoomLevel() + zoomLevelDelta);
-    QPointF postZoomPoint = m_map->coordinateToItemPosition(wheelGeoPos, false).toPointF();
+    QPointF postZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
     if (preZoomPoint != postZoomPoint)
     {
@@ -704,7 +704,7 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
         qreal dy = postZoomPoint.y() - preZoomPoint.y();
         QPointF mapCenterPoint(m_map->viewportWidth() / 2.0 + dx, m_map->viewportHeight() / 2.0  + dy);
 
-        QGeoCoordinate mapCenterCoordinate = m_map->itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
+        QGeoCoordinate mapCenterCoordinate = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
         m_declarativeMap->setCenter(mapCenterCoordinate);
     }
     event->accept();
@@ -810,7 +810,7 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
         if (m_allPoints.count() == 0) {
             m_touchPointState = touchPoints0;
         } else if (m_allPoints.count() == 2) {
-            m_touchCenterCoord = m_map->itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
+            m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
             startTwoTouchPoints();
             m_touchPointState = touchPoints2;
         }
@@ -819,7 +819,7 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
         if (m_allPoints.count() == 0) {
             m_touchPointState = touchPoints0;
         } else if (m_allPoints.count() == 1) {
-            m_touchCenterCoord = m_map->itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
+            m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
             startOneTouchPoint();
             m_touchPointState = touchPoints1;
         }
@@ -847,7 +847,7 @@ void QQuickGeoMapGestureArea::startOneTouchPoint()
     m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
     m_lastPos = m_sceneStartPoint1;
     m_lastPosTime.start();
-    QGeoCoordinate startCoord = m_map->itemPositionToCoordinate(QDoubleVector2D(m_sceneStartPoint1), false);
+    QGeoCoordinate startCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_sceneStartPoint1), false);
     // ensures a smooth transition for panning
     m_startCoord.setLongitude(m_startCoord.longitude() + startCoord.longitude() -
                              m_touchCenterCoord.longitude());
@@ -875,7 +875,7 @@ void QQuickGeoMapGestureArea::startTwoTouchPoints()
     QPointF startPos = (m_sceneStartPoint1 + m_sceneStartPoint2) * 0.5;
     m_lastPos = startPos;
     m_lastPosTime.start();
-    QGeoCoordinate startCoord = m_map->itemPositionToCoordinate(QDoubleVector2D(startPos), false);
+    QGeoCoordinate startCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(startPos), false);
     m_startCoord.setLongitude(m_startCoord.longitude() + startCoord.longitude() -
                              m_touchCenterCoord.longitude());
     m_startCoord.setLatitude(m_startCoord.latitude() + startCoord.latitude() -
@@ -1070,7 +1070,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
     case flickInactive:
         if (canStartPan()) {
             // Update startCoord_ to ensure smooth start for panning when going over startDragDistance
-            QGeoCoordinate newStartCoord = m_map->itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
+            QGeoCoordinate newStartCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
             m_startCoord.setLongitude(newStartCoord.longitude());
             m_startCoord.setLatitude(newStartCoord.latitude());
             m_declarativeMap->setKeepMouseGrab(true);
@@ -1145,13 +1145,13 @@ bool QQuickGeoMapGestureArea::canStartPan()
 */
 void QQuickGeoMapGestureArea::updatePan()
 {
-    QPointF startPoint = m_map->coordinateToItemPosition(m_startCoord, false).toPointF();
+    QPointF startPoint = m_map->geoProjection().coordinateToItemPosition(m_startCoord, false).toPointF();
     int dx = static_cast<int>(m_sceneCenter.x() - startPoint.x());
     int dy = static_cast<int>(m_sceneCenter.y() - startPoint.y());
     QPointF mapCenterPoint;
     mapCenterPoint.setY(m_map->viewportHeight() / 2.0  - dy);
     mapCenterPoint.setX(m_map->viewportWidth() / 2.0 - dx);
-    QGeoCoordinate animationStartCoordinate = m_map->itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
+    QGeoCoordinate animationStartCoordinate = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
     m_declarativeMap->setCenter(animationStartCoordinate);
 }
 

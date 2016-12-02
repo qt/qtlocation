@@ -33,7 +33,7 @@
 #include "qgeocameratiles_p.h"
 #include "qgeocameradata_p.h"
 #include "qabstractgeotilecache_p.h"
-
+#include <QtLocation/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 
@@ -247,8 +247,8 @@ class tst_QGeoTiledMapScene : public QObject
         int screenWidth;
         int screenHeight;
         QString name;
-        tileSize = 16;
-        zoom = 1.0; // 4 tiles in the map. map size =  32x32
+        tileSize = 256;
+        zoom = 1.0; // 4 tiles in the map. map size =  2*tileSize x 2*tileSize
 
         /*
             ScreenWidth = t
@@ -317,8 +317,12 @@ class tst_QGeoTiledMapScene : public QObject
             mapGeometry.setCameraData(camera);
             mapGeometry.setVisibleTiles(ct.createTiles());
 
+            QGeoProjectionWebMercator projection;
+            projection.setViewportSize(QSize(screenWidth,screenHeight));
+            projection.setCameraData(camera);
+
             QDoubleVector2D point(screenX,screenY);
-            QDoubleVector2D mercartorPos = mapGeometry.itemPositionToMercator(point);
+            QDoubleVector2D mercartorPos = projection.unwrapMapProjection(projection.itemPositionToWrappedMapProjection(point));
 
             QCOMPARE(mercartorPos.x(), mercatorX);
             QCOMPARE(mercartorPos.y(), mercatorY);
@@ -358,8 +362,12 @@ class tst_QGeoTiledMapScene : public QObject
             mapGeometry.setCameraData(camera);
             mapGeometry.setVisibleTiles(ct.createTiles());
 
+            QGeoProjectionWebMercator projection;
+            projection.setViewportSize(QSize(screenWidth,screenHeight));
+            projection.setCameraData(camera);
+
             QDoubleVector2D mercatorPos(mercatorX, mercatorY);
-            QPointF point = mapGeometry.mercatorToItemPosition(mercatorPos).toPointF();
+            QPointF point = projection.wrappedMapProjectionToItemPosition(projection.wrapMapProjection(mercatorPos)).toPointF();
 
             QVERIFY2((point.x() == screenX) || (point.x() == screenX2),
                                  qPrintable(QString("Accepted: { %1 , %2 } Actual: %3")

@@ -50,6 +50,7 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
+#include <QtLocation/private/qgeoprojection_p.h>
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/QSize>
 #include <QtCore/QSet>
@@ -66,9 +67,10 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QGeoMap)
 public:
-    QGeoMapPrivate(QGeoMappingManagerEngine *engine);
+    QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection);
     virtual ~QGeoMapPrivate();
 
+    const QGeoProjection *geoProjection() const;
 protected:
     /* Hooks into the actual map implementations */
     virtual void addParameter(QGeoMapParameter *param);
@@ -80,6 +82,7 @@ protected:
 
 protected:
     QSize m_viewportSize;
+    QGeoProjection *m_geoProjection;
     QPointer<QGeoMappingManagerEngine> m_engine;
     QGeoCameraData m_cameraData;
     QGeoMapType m_activeMapType;

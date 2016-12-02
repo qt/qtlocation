@@ -205,7 +205,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     const double mapWidthHalf = map.viewportWidth()/2.0;
     double unwrapBelowX = 0;
     if (preserveGeometry_)
-        unwrapBelowX = map.coordinateToItemPosition(geoLeftBound_, false).x();
+        unwrapBelowX = map.geoProjection().coordinateToItemPosition(geoLeftBound_, false).x();
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -213,7 +213,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
         if (!coord.isValid())
             continue;
 
-        QDoubleVector2D point = map.coordinateToItemPosition(coord, false);
+        QDoubleVector2D point = map.geoProjection().coordinateToItemPosition(coord, false);
 
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
@@ -391,7 +391,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     if (!screenDirty_)
         return;
 
-    QPointF origin = map.coordinateToItemPosition(srcOrigin_, false).toPointF();
+    QPointF origin = map.geoProjection().coordinateToItemPosition(srcOrigin_, false).toPointF();
 
     if (!qIsFinite(origin.x()) || !qIsFinite(origin.y())) {
         clear();
@@ -825,7 +825,7 @@ void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, con
     }
 
     QDoubleVector2D newPoint = QDoubleVector2D(x(),y()) + QDoubleVector2D(geometry_.firstPointOffset());
-    QGeoCoordinate newCoordinate = map()->itemPositionToCoordinate(newPoint, false);
+    QGeoCoordinate newCoordinate = map()->geoProjection().itemPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
         double firstLongitude = path_.at(0).longitude();
         double firstLatitude = path_.at(0).latitude();

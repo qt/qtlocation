@@ -59,6 +59,7 @@ PRIVATE_HEADERS += \
                     maps/qgeorouteparser_p_p.h \
                     maps/qgeorouteparserosrmv5_p.h \
                     maps/qgeorouteparserosrmv4_p.h \
+                    maps/qgeoprojection_p.h \
                     maps/qcache3q_p.h
 
 SOURCES += \
@@ -93,4 +94,5 @@ SOURCES += \
             maps/qgeorouteparser.cpp \
             maps/qgeorouteparserosrmv5.cpp \
             maps/qgeorouteparserosrmv4.cpp \
-            maps/qgeomapparameter.cpp
+            maps/qgeomapparameter.cpp \
+            maps/qgeoprojection.cpp
