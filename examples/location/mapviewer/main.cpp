@@ -84,6 +84,10 @@ static bool parseArgs(QStringList& args, QVariantMap& parameters)
 
 int main(int argc, char *argv[])
 {
+    const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
+    for (const QByteArray &p : additionalLibraryPaths.split(':'))
+        QCoreApplication::addLibraryPath(QString(p));
+
     QGuiApplication application(argc, argv);
 
     QVariantMap parameters;
