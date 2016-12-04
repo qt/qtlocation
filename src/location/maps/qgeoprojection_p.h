@@ -50,7 +50,7 @@
 
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeocameradata_p.h>
-#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qdoublematrix4x4_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -116,6 +116,7 @@ public:
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
 
+    bool isProjectable(const QDoubleVector2D &wrappedProjection) const;
 private:
     void setupCamera();
 
@@ -126,16 +127,45 @@ private:
     // mercator to camera transform for coordinates (not tiles!)
     double m_cameraCenterXMercator;
     double m_cameraCenterYMercator;
-    double m_cameraWidthMercator;
-    double m_cameraHeightMercator;
-    double m_1_cameraWidthMercator;
-    double m_1_cameraHeightMercator;
 
     // cameraToScreen transform
     double m_viewportWidth; // in pixels
     double m_viewportHeight; // in pixels
     double m_1_viewportWidth;
     double m_1_viewportHeight;
+
+    QDoubleMatrix4x4 m_transformation;
+    QDoubleVector3D  m_eye;
+    QDoubleVector3D  m_up;
+    QDoubleVector3D  m_center;
+    QDoubleVector3D  m_view;
+    QDoubleVector3D  m_viewNormalized;
+    QDoubleVector3D  m_side;
+    QDoubleVector3D  m_centerNearPlane;
+    double           m_sideLength; // map edge size at integer zoom level
+    double           m_aperture;
+    double           m_nearPlane;
+    double           m_farPlane;
+    double           m_halfWidth;
+    double           m_halfHeight;
+
+    struct Plane
+    {
+        Plane() {}
+        Plane(const QDoubleVector3D &planePoint, const QDoubleVector3D &planeNormal)
+        :   m_point(planePoint), m_normal(planeNormal) { }
+
+        QDoubleVector3D lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection) const
+        {
+            QDoubleVector3D w = linePoint - m_point;
+            // s = -n.dot(w) / n.dot(u).  p = p0 + su; u is lineDirection
+            double s = QDoubleVector3D::dotProduct(-m_normal, w) / QDoubleVector3D::dotProduct(m_normal, lineDirection);
+            return linePoint + lineDirection * s;
+        }
+
+        QDoubleVector3D m_point;
+        QDoubleVector3D m_normal;
+    } m_plane;
 };
 
 QT_END_NAMESPACE

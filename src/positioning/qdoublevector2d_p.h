@@ -91,6 +91,7 @@ public:
     inline QDoubleVector2D &operator*=(double factor);
     inline QDoubleVector2D &operator*=(const QDoubleVector2D &vector);
     inline QDoubleVector2D &operator/=(double divisor);
+    inline QDoubleVector2D &operator/=(const QDoubleVector2D &vector);
 
     Q_DECL_CONSTEXPR static inline double dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
     { return v1.xp * v2.xp + v1.yp * v2.yp; }
@@ -176,6 +177,13 @@ inline QDoubleVector2D &QDoubleVector2D::operator/=(double divisor)
 {
     xp /= divisor;
     yp /= divisor;
+    return *this;
+}
+
+inline QDoubleVector2D &QDoubleVector2D::operator/=(const QDoubleVector2D &vector)
+{
+    xp /= vector.xp;
+    yp /= vector.yp;
     return *this;
 }
 
