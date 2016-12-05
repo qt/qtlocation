@@ -145,7 +145,7 @@ private:
     QHash<Key, Node *> lookup_;
 
 public:
-    explicit QCache3Q(int maxCost = 100, int minRecent = -1, int maxOldPopular = -1);
+    explicit QCache3Q(int maxCost = 0, int minRecent = -1, int maxOldPopular = -1);
     inline ~QCache3Q() { clear(); delete q1_; delete q2_; delete q3_; delete q1_evicted_; }
 
     inline int maxCost() const { return maxCost_; }
@@ -161,7 +161,7 @@ public:
     QSharedPointer<T> object(const Key &key) const;
     QSharedPointer<T> operator[](const Key &key) const;
 
-    void remove(const Key &key);
+    void remove(const Key &key, bool force = false);
     QList<Key> keys() const;
     void printStats();
 
@@ -398,7 +398,7 @@ void QCache3Q<Key,T,EvPolicy>::rebalance()
         } else {
             Node *n = q2_->l;
             unlink(n);
-            if (n->pop > (q2_->pop / q2_->size)) {
+            if (q2_->size && n->pop > (q2_->pop / q2_->size)) {
                 link_front(n, q3_);
             } else {
                 EvPolicy::aboutToBeEvicted(n->k, n->v);
@@ -411,14 +411,14 @@ void QCache3Q<Key,T,EvPolicy>::rebalance()
 }
 
 template <class Key, class T, class EvPolicy>
-void QCache3Q<Key,T,EvPolicy>::remove(const Key &key)
+void QCache3Q<Key,T,EvPolicy>::remove(const Key &key, bool force)
 {
     if (!lookup_.contains(key)) {
         return;
     }
     Node *n = lookup_[key];
     unlink(n);
-    if (n->q != q1_evicted_)
+    if (n->q != q1_evicted_ && !force)
         EvPolicy::aboutToBeRemoved(n->k, n->v);
     lookup_.remove(key);
     delete n;
@@ -427,10 +427,7 @@ void QCache3Q<Key,T,EvPolicy>::remove(const Key &key)
 template <class Key, class T, class EvPolicy>
 QList<Key> QCache3Q<Key,T,EvPolicy>::keys() const
 {
-    QList<Key> keys;
-    for (auto i = lookup_.constBegin(); i != lookup_.constEnd(); ++i)
-        keys.append(i.key());
-    return keys;
+    return lookup_.keys();
 }
 
 template <class Key, class T, class EvPolicy>

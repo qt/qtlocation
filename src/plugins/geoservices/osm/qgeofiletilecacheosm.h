@@ -49,7 +49,10 @@ class QGeoFileTileCacheOsm : public QGeoFileTileCache
 {
     Q_OBJECT
 public:
-    QGeoFileTileCacheOsm(const QVector<QGeoTileProviderOsm *> &providers, const QString &offlineDirectory = QString(), const QString &directory = QString(), QObject *parent = 0);
+    QGeoFileTileCacheOsm(const QVector<QGeoTileProviderOsm *> &providers,
+                         const QString &offlineDirectory = QString(),
+                         const QString &directory = QString(),
+                         QObject *parent = 0);
     ~QGeoFileTileCacheOsm();
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
@@ -59,6 +62,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);
+    void onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error);
 
 protected:
     void init() Q_DECL_OVERRIDE;
@@ -68,15 +72,18 @@ protected:
     void dropTiles(int mapId);
     void loadTiles(int mapId);
 
-    void initOfflineRegistry();
+    void initOfflineRegistry(int mapId = -1);
+    void clearObsoleteTiles(const QGeoTileProviderOsm *p);
 
     QString m_offlineDirectory;
     QHash<QGeoTileSpec, QString> m_tilespecToOfflineFilepath;
     QAtomicInt m_requestCancel;
     QFuture<void> m_future;
+    QMap<int, QFuture<void>> m_mapIdFutures;
     QMutex storageLock;
     QVector<QGeoTileProviderOsm *> m_providers;
     QVector<bool> m_highDpi;
+    QVector<QDateTime> m_maxMapIdTimestamps;
 };
 
 QT_END_NAMESPACE

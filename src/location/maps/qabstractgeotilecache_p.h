@@ -87,6 +87,10 @@ class Q_LOCATION_EXPORT QAbstractGeoTileCache : public QObject
 {
     Q_OBJECT
 public:
+    enum CostStrategy {
+        Unitary,
+        ByteSize
+    };
     virtual ~QAbstractGeoTileCache();
 
     virtual void setMaxDiskUsage(int diskUsage);
@@ -103,6 +107,12 @@ public:
     virtual int minTextureUsage() const = 0;
     virtual int textureUsage() const = 0;
     virtual void clearAll() = 0;
+    virtual void setCostStrategyDisk(CostStrategy costStrategy) = 0;
+    virtual CostStrategy costStrategyDisk() const = 0;
+    virtual void setCostStrategyMemory(CostStrategy costStrategy) = 0;
+    virtual CostStrategy costStrategyMemory() const = 0;
+    virtual void setCostStrategyTexture(CostStrategy costStrategy) = 0;
+    virtual CostStrategy costStrategyTexture() const = 0;
 
     virtual QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) = 0;
 

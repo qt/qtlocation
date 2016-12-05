@@ -87,10 +87,10 @@ QGeoTileSpec QGeoFileTileCacheMapbox::filenameToTileSpec(const QString &filename
 {
     QStringList parts = filename.split('.');
 
-    if (parts.length() != 2)
+    if (parts.length() != 3)
         return QGeoTileSpec();
 
-    QString name = parts.at(0);
+    QString name = parts.at(0) + parts.at(1);
     QStringList fields = name.split('-');
 
     int length = fields.length();

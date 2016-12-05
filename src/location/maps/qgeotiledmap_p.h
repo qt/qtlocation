@@ -86,7 +86,7 @@ public:
 
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
-    double minimumZoomAtMapSize(int width, int height) const Q_DECL_OVERRIDE;
+    double minimumZoomAtViewportSize(int viewportWidth, int viewportHeight) const Q_DECL_OVERRIDE;
     double maximumCenterLatitudeAtZoom(double zoomLevel) const Q_DECL_OVERRIDE;
 
 

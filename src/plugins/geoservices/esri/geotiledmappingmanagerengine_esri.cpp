@@ -127,6 +127,75 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
 
     setTileFetcher(tileFetcher);
 
+    /* TILE CACHE */
+    QString cacheDirectory;
+    if (parameters.contains(QStringLiteral("esri.mapping.cache.directory"))) {
+        cacheDirectory = parameters.value(QStringLiteral("esri.mapping.cache.directory")).toString();
+    } else {
+        // managerName() is not yet set, we have to hardcode the plugin name below
+        cacheDirectory = QAbstractGeoTileCache::baseLocationCacheDirectory() + QLatin1String("esri");
+    }
+    QGeoFileTileCache *tileCache = new QGeoFileTileCache(cacheDirectory);
+
+    /*
+     * Disk cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("esri.mapping.cache.disk.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("esri.mapping.cache.disk.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyDisk(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyDisk(QGeoFileTileCache::Unitary);
+    } else {
+        tileCache->setCostStrategyDisk(QGeoFileTileCache::ByteSize);
+    }
+    if (parameters.contains(QStringLiteral("esri.mapping.cache.disk.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("esri.mapping.cache.disk.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setMaxDiskUsage(cacheSize);
+    }
+
+    /*
+     * Memory cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("esri.mapping.cache.memory.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("esri.mapping.cache.memory.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyMemory(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyMemory(QGeoFileTileCache::Unitary);
+    } else {
+        tileCache->setCostStrategyMemory(QGeoFileTileCache::ByteSize);
+    }
+    if (parameters.contains(QStringLiteral("esri.mapping.cache.memory.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("esri.mapping.cache.memory.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setMaxMemoryUsage(cacheSize);
+    }
+
+    /*
+     * Texture cache setup -- defaults to ByteSize (old behavior)
+     */
+    if (parameters.contains(QStringLiteral("esri.mapping.cache.texture.cost_strategy"))) {
+        QString cacheStrategy = parameters.value(QStringLiteral("esri.mapping.cache.texture.cost_strategy")).toString().toLower();
+        if (cacheStrategy == QLatin1String("bytesize"))
+            tileCache->setCostStrategyTexture(QGeoFileTileCache::ByteSize);
+        else
+            tileCache->setCostStrategyTexture(QGeoFileTileCache::Unitary);
+    } else {
+        tileCache->setCostStrategyTexture(QGeoFileTileCache::ByteSize);
+    }
+    if (parameters.contains(QStringLiteral("esri.mapping.cache.texture.size"))) {
+        bool ok = false;
+        int cacheSize = parameters.value(QStringLiteral("esri.mapping.cache.texture.size")).toString().toInt(&ok);
+        if (ok)
+            tileCache->setExtraTextureUsage(cacheSize);
+    }
+
+
+    setTileCache(tileCache);
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
 }

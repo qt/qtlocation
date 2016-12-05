@@ -43,6 +43,7 @@
 QT_BEGIN_NAMESPACE
 
 static const int maxValidZoom = 30;
+static const QDateTime defaultTs = QDateTime::fromString(QStringLiteral("2016-06-01T00:00:00"), Qt::ISODate);
 
 QGeoTileProviderOsm::QGeoTileProviderOsm(QNetworkAccessManager *nm,
                                          const QGeoMapType &mapType,
@@ -120,6 +121,13 @@ bool QGeoTileProviderOsm::isHighDpi() const
     return m_provider->isHighDpi();
 }
 
+const QDateTime QGeoTileProviderOsm::timestamp() const
+{
+    if (!m_provider)
+        return QDateTime();
+    return m_provider->timestamp();
+}
+
 const QGeoMapType &QGeoTileProviderOsm::mapType() const
 {
     return m_mapType;
@@ -190,8 +198,10 @@ void QGeoTileProviderOsm::onResolutionError(TileProvider *provider)
                 m_provider = p;
                 if (!p->isValid()) {
                     m_status = Idle;
-//                    m_status = Resolving;
-//                    p->resolveProvider();
+#if 0  // leaving triggering the retry to the tile fetcher, instead of constantly spinning it in here.
+                    m_status = Resolving;
+                    p->resolveProvider();
+#endif
                     emit resolutionRequired();
                 }
                 break;
@@ -204,7 +214,9 @@ void QGeoTileProviderOsm::onResolutionError(TileProvider *provider)
         emit resolutionFinished(this);
     } else { // still not resolved. But network error is recoverable.
         m_status = Idle;
-        //m_provider->resolveProvider();
+#if 0   // leaving triggering the retry to the tile fetcher
+        m_provider->resolveProvider();
+#endif
     }
 }
 
@@ -226,7 +238,7 @@ void QGeoTileProviderOsm::addProvider(TileProvider *provider)
 
 
 /*
-    QGeoTileProviderOsm::TileProvder
+    Class TileProvder
 */
 
 static void sort2(int &a, int &b)
@@ -238,13 +250,13 @@ static void sort2(int &a, int &b)
     }
 }
 
-TileProvider::TileProvider() : m_status(Invalid), m_nm(nullptr), m_highDpi(false)
+TileProvider::TileProvider() : m_status(Invalid), m_nm(nullptr), m_timestamp(defaultTs), m_highDpi(false)
 {
 
 }
 
 TileProvider::TileProvider(const QUrl &urlRedirector, bool highDpi)
-:   m_status(Idle), m_urlRedirector(urlRedirector), m_nm(nullptr), m_highDpi(highDpi)
+:   m_status(Idle), m_urlRedirector(urlRedirector), m_nm(nullptr), m_timestamp(defaultTs), m_highDpi(highDpi)
 {
     if (!m_urlRedirector.isValid())
         m_status = Invalid;
@@ -259,7 +271,7 @@ TileProvider::TileProvider(const QString &urlTemplate,
                            int maximumZoomLevel)
 :   m_status(Invalid), m_nm(nullptr), m_urlTemplate(urlTemplate),
     m_format(format), m_copyRightMap(copyRightMap), m_copyRightData(copyRightData),
-    m_minimumZoomLevel(minimumZoomLevel), m_maximumZoomLevel(maximumZoomLevel), m_highDpi(highDpi)
+    m_minimumZoomLevel(minimumZoomLevel), m_maximumZoomLevel(maximumZoomLevel), m_timestamp(defaultTs), m_highDpi(highDpi)
 {
     setupProvider();
 }
@@ -352,6 +364,7 @@ void TileProvider::onNetworkReplyFinished()
      *     "StyleCopyRight" : "<copyright>", (optional)
      *     "MinimumZoomLevel" : <minimumZoomLevel>, (optional)
      *     "MaximumZoomLevel" : <maximumZoomLevel>,  (optional)
+     *     "Timestamp" : <timestamp>, (optional)
      * }
      *
      * Enabled is optional, and allows to temporarily disable a tile provider if it becomes
@@ -361,27 +374,31 @@ void TileProvider::onNetworkReplyFinished()
      * requests to the providers, if they do not support the specific ZL. Default is 0 and 20,
      * respectively.
      *
-     * <server address template> is required, and is the tile url template, with %x, %y and %z as
+     * UrlTemplate is required, and is the tile url template, with %x, %y and %z as
      * placeholders for the actual parameters.
      * Example:
      * http://localhost:8080/maps/%z/%x/%y.png
      *
-     * <image format> is required, and is the format of the tile.
+     * ImageFormat is required, and is the format of the tile.
      * Examples:
      * "png", "jpg"
      *
-     * <MapCopyRight> is required and is the string that will be displayed in the "Map (c)" part
+     * MapCopyRight is required and is the string that will be displayed in the "Map (c)" part
      * of the on-screen copyright notice. Can be an empty string.
      * Example:
      * "<a href='http://www.mapquest.com/'>MapQuest</a>"
      *
-     * <DataCopyRight> is required and is the string that will be displayed in the "Data (c)" part
+     * DataCopyRight is required and is the string that will be displayed in the "Data (c)" part
      * of the on-screen copyright notice. Can be an empty string.
      * Example:
      * "<a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
      *
-     * <StyleCopyRight> is optional and is the string that will be displayed in the optional "Style (c)" part
+     * StyleCopyRight is optional and is the string that will be displayed in the optional "Style (c)" part
      * of the on-screen copyright notice.
+     *
+     * Timestamp is optional, and if set will cause QtLocation to clear the content of the cache older
+     * than this timestamp. The purpose is to prevent mixing tiles from different providers in the cache
+     * upon provider change. The value must be a string in ISO 8601 format (see Qt::ISODate)
      */
 
     QJsonParseError error;
@@ -434,6 +451,10 @@ void TileProvider::onNetworkReplyFinished()
     const QJsonValue maxZoom = json.value(QLatin1String("MaximumZoomLevel"));
     if (maxZoom.isDouble())
         m_maximumZoomLevel = qBound(0, int(maxZoom.toDouble()), maxValidZoom);
+
+    const QJsonValue ts = json.value(QLatin1String("Timestamp"));
+    if (ts.isString())
+        m_timestamp = QDateTime::fromString(ts.toString(), Qt::ISODate);
 
     setupProvider();
     if (isValid()) {
@@ -553,6 +574,11 @@ int TileProvider::maximumZoomLevel() const
     return m_maximumZoomLevel;
 }
 
+const QDateTime &TileProvider::timestamp() const
+{
+    return m_timestamp;
+}
+
 bool TileProvider::isHighDpi() const
 {
     return m_highDpi;
@@ -561,6 +587,11 @@ bool TileProvider::isHighDpi() const
 void TileProvider::setStyleCopyRight(const QString &copyright)
 {
     m_copyRightStyle = copyright;
+}
+
+void TileProvider::setTimestamp(const QDateTime &timestamp)
+{
+    m_timestamp = timestamp;
 }
 
 QUrl TileProvider::tileAddress(int x, int y, int z) const
@@ -591,7 +622,3 @@ TileProvider::Status TileProvider::status() const
 
 
 QT_END_NAMESPACE
-
-
-
-

@@ -71,13 +71,15 @@ public:
 
 protected:
     /* Hooks into the actual map implementations */
-    virtual void changeMapSize(const QSize &size) = 0; // called by QGeoMap::setSize()
-    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
-    virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()
     virtual void addParameter(QGeoMapParameter *param);
     virtual void removeParameter(QGeoMapParameter *param);
 
-    QSize m_size;
+    virtual void changeViewportSize(const QSize &size) = 0; // called by QGeoMap::setSize()
+    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
+    virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()
+
+protected:
+    QSize m_viewportSize;
     QPointer<QGeoMappingManagerEngine> m_engine;
     QGeoCameraData m_cameraData;
     QGeoMapType m_activeMapType;

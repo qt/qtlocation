@@ -87,6 +87,7 @@ QGeoCachedTileDisk::~QGeoCachedTileDisk()
 
 QGeoFileTileCache::QGeoFileTileCache(const QString &directory, QObject *parent)
     : QAbstractGeoTileCache(parent), directory_(directory), minTextureUsage_(0), extraTextureUsage_(0)
+    ,costStrategyDisk_(ByteSize), costStrategyMemory_(ByteSize), costStrategyTexture_(ByteSize)
 {
 
 }
@@ -119,9 +120,26 @@ void QGeoFileTileCache::init()
     QDir::root().mkpath(directory_);
 
     // default values
-    setMaxDiskUsage(20 * 1024 * 1024);
-    setMaxMemoryUsage(3 * 1024 * 1024);
-    setExtraTextureUsage(6 * 1024 * 1024);
+    if (!diskCache_.maxCost()) { // If setMaxDiskUsage has not been called yet
+        if (costStrategyDisk_ == ByteSize)
+            setMaxDiskUsage(50 * 1024 * 1024);
+        else
+            setMaxDiskUsage(1000);
+    }
+
+    if (!memoryCache_.maxCost()) { // If setMaxMemoryUsage has not been called yet
+        if (costStrategyMemory_ == ByteSize)
+            setMaxMemoryUsage(3 * 1024 * 1024);
+        else
+            setMaxMemoryUsage(100);
+    }
+
+    if (!textureCache_.maxCost()) { // If setExtraTextureUsage has not been called yet
+        if (costStrategyTexture_ == ByteSize)
+            setExtraTextureUsage(6 * 1024 * 1024);
+        else
+            setExtraTextureUsage(30); // byte size of texture is >> compressed image, hence unitary cost should be lower
+    }
 
     loadTiles();
 }
@@ -160,7 +178,11 @@ void QGeoFileTileCache::loadTiles()
                 QFileInfo fi(tileDisk->filename);
                 specs.append(spec);
                 queue.append(tileDisk);
-                costs.append(fi.size());
+                if (costStrategyDisk_ == ByteSize)
+                    costs.append(fi.size());
+                else
+                    costs.append(1);
+
             }
         }
 
@@ -284,6 +306,64 @@ void QGeoFileTileCache::clearAll()
     }
 }
 
+void QGeoFileTileCache::clearMapId(const int mapId)
+{
+    for (const QGeoTileSpec &k : diskCache_.keys())
+        if (k.mapId() == mapId)
+            diskCache_.remove(k, true);
+    for (const QGeoTileSpec &k : memoryCache_.keys())
+        if (k.mapId() == mapId)
+            memoryCache_.remove(k);
+    for (const QGeoTileSpec &k : textureCache_.keys())
+        if (k.mapId() == mapId)
+            textureCache_.remove(k);
+
+    // TODO: It seems the cache leaves residues, like some tiles do not get picked up.
+    // After the above calls, files that shouldnt be left behind are still on disk.
+    // Do an additional pass and make sure what has to be deleted gets deleted.
+    QDir dir(directory_);
+    QStringList formats;
+    formats << QLatin1String("*.*");
+    QStringList files = dir.entryList(formats, QDir::Files);
+    qWarning() << "Old tile data detected. Cache eviction left out "<< files.size() << "tiles";
+    for (const QString &tileFileName : files) {
+        QGeoTileSpec spec = filenameToTileSpec(tileFileName);
+        if (spec.mapId() != mapId)
+            continue;
+        QFile::remove(dir.filePath(tileFileName));
+    }
+}
+
+void QGeoFileTileCache::setCostStrategyDisk(QAbstractGeoTileCache::CostStrategy costStrategy)
+{
+    costStrategyDisk_ = costStrategy;
+}
+
+QAbstractGeoTileCache::CostStrategy QGeoFileTileCache::costStrategyDisk() const
+{
+    return costStrategyDisk_;
+}
+
+void QGeoFileTileCache::setCostStrategyMemory(QAbstractGeoTileCache::CostStrategy costStrategy)
+{
+    costStrategyMemory_ = costStrategy;
+}
+
+QAbstractGeoTileCache::CostStrategy QGeoFileTileCache::costStrategyMemory() const
+{
+    return costStrategyMemory_;
+}
+
+void QGeoFileTileCache::setCostStrategyTexture(QAbstractGeoTileCache::CostStrategy costStrategy)
+{
+    costStrategyTexture_ = costStrategy;
+}
+
+QAbstractGeoTileCache::CostStrategy QGeoFileTileCache::costStrategyTexture() const
+{
+    return costStrategyTexture_;
+}
+
 QSharedPointer<QGeoTileTexture> QGeoFileTileCache::get(const QGeoTileSpec &spec)
 {
     QSharedPointer<QGeoTileTexture> tt = getFromMemory(spec);
@@ -335,9 +415,12 @@ QSharedPointer<QGeoCachedTileDisk> QGeoFileTileCache::addToDiskCache(const QGeoT
     td->filename = filename;
     td->cache = this;
 
-    QFileInfo fi(filename);
-    int diskCost = fi.size();
-    diskCache_.insert(spec, td, diskCost);
+    int cost = 1;
+    if (costStrategyDisk_ == ByteSize) {
+        QFileInfo fi(filename);
+        cost = fi.size();
+    }
+    diskCache_.insert(spec, td, cost);
     return td;
 }
 
@@ -349,7 +432,9 @@ QSharedPointer<QGeoCachedTileMemory> QGeoFileTileCache::addToMemoryCache(const Q
     tm->bytes = bytes;
     tm->format = format;
 
-    int cost = bytes.size();
+    int cost = 1;
+    if (costStrategyMemory_ == ByteSize)
+        cost = bytes.size();
     memoryCache_.insert(spec, tm, cost);
 
     return tm;
@@ -361,8 +446,10 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::addToTextureCache(const QGeoT
     tt->spec = spec;
     tt->image = image;
 
-    int textureCost = image.width() * image.height() * image.depth() / 8;
-    textureCache_.insert(spec, tt, textureCost);
+    int cost = 1;
+    if (costStrategyTexture_ == ByteSize)
+        cost = image.width() * image.height() * image.depth() / 8;
+    textureCache_.insert(spec, tt, cost);
 
     return tt;
 }

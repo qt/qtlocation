@@ -125,7 +125,7 @@ double QGeoMapItemGeometry::geoDistanceToScreenWidth(const QGeoMap &map,
     // Do not wrap around half the globe
     Q_ASSERT(!qFuzzyCompare(fromCoord.longitude(), toCoord.longitude()));
 
-    QGeoCoordinate mapMid = map.itemPositionToCoordinate(QDoubleVector2D(map.width()/2.0, 0));
+    QGeoCoordinate mapMid = map.itemPositionToCoordinate(QDoubleVector2D(map.viewportWidth()/2.0, 0));
     double halfGeoDist = toCoord.longitude() - fromCoord.longitude();
     if (toCoord.longitude() < fromCoord.longitude())
         halfGeoDist += 360;
@@ -133,7 +133,7 @@ double QGeoMapItemGeometry::geoDistanceToScreenWidth(const QGeoMap &map,
     QGeoCoordinate geoDelta =  QGeoCoordinate(0,
                     QLocationUtils::wrapLong(mapMid.longitude() + halfGeoDist));
     QDoubleVector2D halfScreenDist = map.coordinateToItemPosition(geoDelta, false)
-                                - QDoubleVector2D(map.width()/2.0, 0);
+                                - QDoubleVector2D(map.viewportWidth()/2.0, 0);
     return halfScreenDist.x() * 2.0;
 }
 

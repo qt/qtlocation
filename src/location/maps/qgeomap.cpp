@@ -51,31 +51,31 @@ QGeoMap::~QGeoMap()
 {
 }
 
-void QGeoMap::setSize(const QSize& size)
+void QGeoMap::setViewportSize(const QSize& size)
 {
     Q_D(QGeoMap);
-    if (size == d->m_size)
+    if (size == d->m_viewportSize)
         return;
-    d->m_size = size;
-    d->changeMapSize(size);
+    d->m_viewportSize = size;
+    d->changeViewportSize(size);
 }
 
-QSize QGeoMap::size() const
+QSize QGeoMap::viewportSize() const
 {
     Q_D(const QGeoMap);
-    return d->m_size;
+    return d->m_viewportSize;
 }
 
-int QGeoMap::width() const
+int QGeoMap::viewportWidth() const
 {
     Q_D(const QGeoMap);
-    return d->m_size.width();
+    return d->m_viewportSize.width();
 }
 
-int QGeoMap::height() const
+int QGeoMap::viewportHeight() const
 {
     Q_D(const QGeoMap);
-    return d->m_size.height();
+    return d->m_viewportSize.height();
 }
 
 void QGeoMap::setCameraData(const QGeoCameraData &cameraData)

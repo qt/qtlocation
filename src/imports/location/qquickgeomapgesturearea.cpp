@@ -702,7 +702,7 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
     {
         qreal dx = postZoomPoint.x() - preZoomPoint.x();
         qreal dy = postZoomPoint.y() - preZoomPoint.y();
-        QPointF mapCenterPoint(m_map->width() / 2.0 + dx, m_map->height() / 2.0  + dy);
+        QPointF mapCenterPoint(m_map->viewportWidth() / 2.0 + dx, m_map->viewportHeight() / 2.0  + dy);
 
         QGeoCoordinate mapCenterCoordinate = m_map->itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
         m_declarativeMap->setCenter(mapCenterCoordinate);
@@ -1149,8 +1149,8 @@ void QQuickGeoMapGestureArea::updatePan()
     int dx = static_cast<int>(m_sceneCenter.x() - startPoint.x());
     int dy = static_cast<int>(m_sceneCenter.y() - startPoint.y());
     QPointF mapCenterPoint;
-    mapCenterPoint.setY(m_map->height() / 2.0  - dy);
-    mapCenterPoint.setX(m_map->width() / 2.0 - dx);
+    mapCenterPoint.setY(m_map->viewportHeight() / 2.0  - dy);
+    mapCenterPoint.setX(m_map->viewportWidth() / 2.0 - dx);
     QGeoCoordinate animationStartCoordinate = m_map->itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
     m_declarativeMap->setCenter(animationStartCoordinate);
 }

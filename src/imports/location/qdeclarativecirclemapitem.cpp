@@ -145,7 +145,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QGeoMap &map)
     if (!screenDirty_)
         return;
 
-    if (map.width() == 0 || map.height() == 0) {
+    if (map.viewportWidth() == 0 || map.viewportHeight() == 0) {
         clear();
         return;
     }
@@ -177,7 +177,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QGeoMap &map)
         geoDistance += 360.0;
     double mapWidth = 360.0 / geoDistance;
 
-    qreal leftOffset = origin.x() - (map.width()/2.0 - mapWidth/2.0) - firstPointOffset_.x();
+    qreal leftOffset = origin.x() - (map.viewportWidth()/2.0 - mapWidth/2.0) - firstPointOffset_.x();
     qreal topOffset = origin.y() - (midPoint.y() - mapWidth/2.0) - firstPointOffset_.y();
     QPainterPath ppiBorder;
     ppiBorder.moveTo(QPointF(-leftOffset, -topOffset));
@@ -610,7 +610,7 @@ void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QGeoCoordinat
     if ( geoDistance < 0 )
         geoDistance += 360;
     qreal mapWidth = 360.0 / geoDistance;
-    mapWidth = qMin(static_cast<int>(mapWidth), map()->width());
+    mapWidth = qMin(static_cast<int>(mapWidth), map()->viewportWidth());
     QDoubleVector2D prev = map()->coordinateToItemPosition(path.at(0), false);
     // find the points in path where wrapping occurs
     for (int i = 1; i <= path.count(); ++i) {

@@ -48,6 +48,7 @@
 #include <algorithm>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
+#include <QDateTime>
 
 QT_BEGIN_NAMESPACE
 
@@ -90,11 +91,13 @@ public:
     inline QString format() const;
     inline int minimumZoomLevel() const;
     inline int maximumZoomLevel() const;
+    inline const QDateTime &timestamp() const;
     inline bool isHighDpi() const;
     QUrl tileAddress(int x, int y, int z) const;
 
     // Optional properties, not needed to construct a provider
     void setStyleCopyRight(const QString &copyright);
+    void setTimestamp(const QDateTime &timestamp);
 
     Status m_status;
     QUrl m_urlRedirector; // The URL from where to fetch the URL template in case of a provider to resolve.
@@ -108,6 +111,7 @@ public:
     QString m_urlSuffix;
     int m_minimumZoomLevel;
     int m_maximumZoomLevel;
+    QDateTime m_timestamp;
     bool m_highDpi;
 
     int paramsLUT[3];  //Lookup table to handle possibly shuffled x,y,z
@@ -152,6 +156,7 @@ public:
     const QGeoMapType &mapType() const;
     bool isValid() const;
     bool isResolved() const;
+    const QDateTime timestamp() const;
 
 Q_SIGNALS:
     void resolutionFinished(const QGeoTileProviderOsm *provider);

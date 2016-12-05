@@ -343,7 +343,7 @@ void QGeoPositionInfoSourceWinRT::virtualPositionUpdate()
     // We can only do this if we received a valid position before
     if (d->lastPosition.isValid()) {
         QGeoPositionInfo sent = d->lastPosition;
-        sent.setTimestamp(QDateTime::currentDateTime());
+        sent.setTimestamp(sent.timestamp().addMSecs(updateInterval()));
         d->lastPosition = sent;
         emit positionUpdated(sent);
     }
@@ -498,7 +498,24 @@ HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPo
             currentInfo.setAttribute(QGeoPositionInfo::Direction, value);
     }
 
-    currentInfo.setTimestamp(QDateTime::currentDateTime());
+    DateTime dateTime;
+    hr = coord->get_Timestamp(&dateTime);
+
+    if (dateTime.UniversalTime > 0) {
+        ULARGE_INTEGER uLarge;
+        uLarge.QuadPart = dateTime.UniversalTime;
+        FILETIME fileTime;
+        fileTime.dwHighDateTime = uLarge.HighPart;
+        fileTime.dwLowDateTime = uLarge.LowPart;
+        SYSTEMTIME systemTime;
+        if (FileTimeToSystemTime(&fileTime, &systemTime)) {
+            currentInfo.setTimestamp(QDateTime(QDate(systemTime.wYear, systemTime.wMonth,
+                                                     systemTime.wDay),
+                                               QTime(systemTime.wHour, systemTime.wMinute,
+                                                     systemTime.wSecond, systemTime.wMilliseconds),
+                                               Qt::UTC));
+        }
+    }
 
     emit nativePositionUpdate(currentInfo);
 
