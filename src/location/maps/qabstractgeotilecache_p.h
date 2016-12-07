@@ -57,13 +57,13 @@
 #include <QTimer>
 
 #include "qgeotilespec_p.h"
-#include "qgeotiledmappingmanagerengine_p.h"
 
 #include <QImage>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoMappingManager;
+class QGeoMappingManagerEngine;
 
 class QGeoTile;
 class QAbstractGeoTileCache;
@@ -91,6 +91,14 @@ public:
         Unitary,
         ByteSize
     };
+
+    enum CacheArea {
+        DiskCache = 0x01,
+        MemoryCache = 0x02,
+        AllCaches = 0xFF
+    };
+    Q_DECLARE_FLAGS(CacheAreas, CacheArea)
+
     virtual ~QAbstractGeoTileCache();
 
     virtual void setMaxDiskUsage(int diskUsage);
@@ -119,19 +127,21 @@ public:
     virtual void insert(const QGeoTileSpec &spec,
                 const QByteArray &bytes,
                 const QString &format,
-                QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches) = 0;
+                QAbstractGeoTileCache::CacheAreas areas = QAbstractGeoTileCache::AllCaches) = 0;
     virtual void handleError(const QGeoTileSpec &spec, const QString &errorString);
+    virtual void init() = 0;
 
     static QString baseCacheDirectory();
     static QString baseLocationCacheDirectory();
 
 protected:
     QAbstractGeoTileCache(QObject *parent = 0);
-    virtual void init() = 0;
     virtual void printStats() = 0;
 
     friend class QGeoTiledMappingManagerEngine;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QAbstractGeoTileCache::CacheAreas)
 
 QT_END_NAMESPACE
 

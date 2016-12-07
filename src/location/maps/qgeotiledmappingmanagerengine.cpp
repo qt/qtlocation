@@ -268,13 +268,13 @@ int QGeoTiledMappingManagerEngine::tileVersion() const
     return d->m_tileVersion;
 }
 
-QGeoTiledMappingManagerEngine::CacheAreas QGeoTiledMappingManagerEngine::cacheHint() const
+QAbstractGeoTileCache::CacheAreas QGeoTiledMappingManagerEngine::cacheHint() const
 {
     Q_D(const QGeoTiledMappingManagerEngine);
     return d->cacheHint_;
 }
 
-void QGeoTiledMappingManagerEngine::setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint)
+void QGeoTiledMappingManagerEngine::setCacheHint(QAbstractGeoTileCache::CacheAreas cacheHint)
 {
     Q_D(QGeoTiledMappingManagerEngine);
     d->cacheHint_ = cacheHint;
@@ -315,7 +315,7 @@ QSharedPointer<QGeoTileTexture> QGeoTiledMappingManagerEngine::getTileTexture(co
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
 :   m_tileVersion(-1),
-    cacheHint_(QGeoTiledMappingManagerEngine::AllCaches),
+    cacheHint_(QAbstractGeoTileCache::AllCaches),
     tileCache_(0),
     fetcher_(0)
 {

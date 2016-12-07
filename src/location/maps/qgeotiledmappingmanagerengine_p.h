@@ -52,32 +52,24 @@
 #include <QSize>
 #include <QPair>
 #include <QtLocation/qlocationglobal.h>
-#include "qgeomaptype_p.h"
-#include "qgeomappingmanagerengine_p.h"
+#include <QtLocation/private/qabstractgeotilecache_p.h>
+#include <QtLocation/private/qgeomaptype_p.h>
+#include <QtLocation/private/qgeomappingmanagerengine_p.h>
+
 
 QT_BEGIN_NAMESPACE
 
 class QGeoTiledMappingManagerEnginePrivate;
-class QGeoMapRequestOptions;
 class QGeoTileFetcher;
 class QGeoTileTexture;
-
 class QGeoTileSpec;
 class QGeoTiledMap;
-class QAbstractGeoTileCache;
 
 class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
 {
     Q_OBJECT
 
 public:
-    enum CacheArea {
-        DiskCache = 0x01,
-        MemoryCache = 0x02,
-        AllCaches = 0xFF
-    };
-    Q_DECLARE_FLAGS(CacheAreas, CacheArea)
-
     explicit QGeoTiledMappingManagerEngine(QObject *parent = 0);
     virtual ~QGeoTiledMappingManagerEngine();
 
@@ -97,7 +89,7 @@ public:
     QSharedPointer<QGeoTileTexture> getTileTexture(const QGeoTileSpec &spec);
 
 
-    QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
+    QAbstractGeoTileCache::CacheAreas cacheHint() const;
 
 private Q_SLOTS:
     void engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
@@ -111,7 +103,7 @@ protected:
     void setTileFetcher(QGeoTileFetcher *fetcher);
     void setTileSize(const QSize &tileSize);
     void setTileVersion(int version);
-    void setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint);
+    void setCacheHint(QAbstractGeoTileCache::CacheAreas cacheHint);
     void setTileCache(QAbstractGeoTileCache *cache);
 
 private:
@@ -122,8 +114,6 @@ private:
 
     friend class QGeoTileFetcher;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoTiledMappingManagerEngine::CacheAreas)
 
 QT_END_NAMESPACE
 

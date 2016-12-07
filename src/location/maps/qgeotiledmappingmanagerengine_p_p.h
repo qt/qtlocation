@@ -71,7 +71,7 @@ public:
     int m_tileVersion;
     QHash<QGeoTiledMap *, QSet<QGeoTileSpec> > mapHash_;
     QHash<QGeoTileSpec, QSet<QGeoTiledMap *> > tileHash_;
-    QGeoTiledMappingManagerEngine::CacheAreas cacheHint_;
+    QAbstractGeoTileCache::CacheAreas cacheHint_;
     QAbstractGeoTileCache *tileCache_;
     QGeoTileFetcher *fetcher_;
 

@@ -135,7 +135,7 @@ public:
     void insert(const QGeoTileSpec &spec,
                 const QByteArray &bytes,
                 const QString &format,
-                QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches) Q_DECL_OVERRIDE;
+                QAbstractGeoTileCache::CacheAreas areas = QAbstractGeoTileCache::AllCaches) Q_DECL_OVERRIDE;
 
 protected:
     void init() Q_DECL_OVERRIDE;

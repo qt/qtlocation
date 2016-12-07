@@ -87,7 +87,7 @@ protected:
     QGeoTileFetcher(QGeoTileFetcherPrivate &dd, QObject *parent = 0);
 
     void timerEvent(QTimerEvent *event);
-    QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
+    QAbstractGeoTileCache::CacheAreas cacheHint() const;
     virtual bool initialized() const;
 
 private:

@@ -375,12 +375,12 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::get(const QGeoTileSpec &spec)
 void QGeoFileTileCache::insert(const QGeoTileSpec &spec,
                            const QByteArray &bytes,
                            const QString &format,
-                           QGeoTiledMappingManagerEngine::CacheAreas areas)
+                           QAbstractGeoTileCache::CacheAreas areas)
 {
     if (bytes.isEmpty())
         return;
 
-    if (areas & QGeoTiledMappingManagerEngine::DiskCache) {
+    if (areas & QAbstractGeoTileCache::DiskCache) {
         QString filename = tileSpecToFilename(spec, format, directory_);
         QFile file(filename);
         file.open(QIODevice::WriteOnly);
@@ -390,7 +390,7 @@ void QGeoFileTileCache::insert(const QGeoTileSpec &spec,
         addToDiskCache(spec, filename);
     }
 
-    if (areas & QGeoTiledMappingManagerEngine::MemoryCache) {
+    if (areas & QAbstractGeoTileCache::MemoryCache) {
         addToMemoryCache(spec, bytes, format);
     }
 
