@@ -92,7 +92,7 @@ class tst_QGeoTiledMapScene : public QObject
         // bottom left
         screenX = screenX2 = 0.0;
         if (matchingMapEnds)
-            screenX2 = abs(screenX - 1.0) * screenWidth;
+            screenX2 = qAbs(screenX - 1.0) * screenWidth;
         screenY = 1.0 * screenHeight;
         mercatorX = cameraCenterX - scaledHalfLengthX;
         mercatorY = cameraCenterY + scaledHalfLengthY;
@@ -110,7 +110,7 @@ class tst_QGeoTiledMapScene : public QObject
         // bottom right
         screenX = screenX2 = 1.0 * screenWidth;
         if (matchingMapEnds)
-            screenX2 = abs(screenX - 1.0) * screenWidth;
+            screenX2 = qAbs(screenX - 1.0) * screenWidth;
         screenY = 1.0 * screenHeight;
         mercatorX = cameraCenterX + scaledHalfLengthX;
         mercatorY = cameraCenterY + scaledHalfLengthY;
@@ -120,7 +120,7 @@ class tst_QGeoTiledMapScene : public QObject
         // left
         screenX = screenX2 = 0.0 * screenWidth;
         if (matchingMapEnds)
-            screenX2 = abs(screenX - 1.0) * screenWidth;
+            screenX2 = qAbs(screenX - 1.0) * screenWidth;
         screenY = 0.5 * screenHeight;
         mercatorX = cameraCenterX - scaledHalfLengthX;
         mercatorY = cameraCenterY;
@@ -138,7 +138,7 @@ class tst_QGeoTiledMapScene : public QObject
         // right
         screenX = screenX2 = 1.0 * screenWidth;
         if (matchingMapEnds)
-            screenX2 = abs(screenX - 1.0) * screenWidth;
+            screenX2 = qAbs(screenX - 1.0) * screenWidth;
         screenY = 0.5 * screenHeight;
         mercatorX = cameraCenterX + scaledHalfLengthX;
         mercatorY = cameraCenterY;
@@ -148,7 +148,7 @@ class tst_QGeoTiledMapScene : public QObject
         // top left
         screenX = screenX2 = 0.0;
         if (matchingMapEnds)
-            screenX2 = abs(screenX - 1.0) * screenWidth;
+            screenX2 = qAbs(screenX - 1.0) * screenWidth;
         screenY = 0.0;
         mercatorX = cameraCenterX - scaledHalfLengthX;
         mercatorY = cameraCenterY - scaledHalfLengthY;
@@ -166,7 +166,7 @@ class tst_QGeoTiledMapScene : public QObject
         // top right
         screenX = screenX2 = 1.0 * screenWidth;
         if (matchingMapEnds)
-            screenX2 = abs(screenX - 1.0) * screenWidth;
+            screenX2 = qAbs(screenX - 1.0) * screenWidth;
         screenY = 0.0;
         mercatorX = cameraCenterX + scaledHalfLengthX;
         mercatorY = cameraCenterY - scaledHalfLengthY;
