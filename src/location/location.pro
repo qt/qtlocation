@@ -1,6 +1,10 @@
 TARGET = QtLocation
 QT = core-private positioning-private
 
+#INCLUDEPATH += ../3rdparty/poly2tri
+INCLUDEPATH += ../3rdparty/clipper
+INCLUDEPATH += ../3rdparty/clip2tri
+
 android {
     # adding qtconcurrent dependency here for the osm plugin
     QT += concurrent
@@ -28,3 +32,5 @@ include(places/places.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 load(qt_module)
+
+LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lclip2tri$$qtPlatformTargetSuffix()

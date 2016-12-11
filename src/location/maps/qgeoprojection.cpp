@@ -37,12 +37,23 @@
 #include "qgeoprojection_p.h"
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qlocationutils_p.h>
+#include <QtPositioning/private/qclipperutils_p.h>
 #include <QSize>
 #include <cmath>
 
-QT_BEGIN_NAMESPACE
+namespace {
+    static const double defaultTileSize = 256.0;
+    static const QDoubleVector3D xyNormal(0.0, 0.0, 1.0);
+    static const QDoubleVector3D xyPoint(0.0, 0.0, 0.0);
+    static const QGeoProjectionWebMercator::Plane xyPlane(QDoubleVector3D(0,0,0), QDoubleVector3D(0,0,1));
+    static const QList<QDoubleVector2D> mercatorGeometry = {
+                                                QDoubleVector2D(-1.0,0.0),
+                                                QDoubleVector2D( 2.0,0.0),
+                                                QDoubleVector2D( 2.0,1.0),
+                                                QDoubleVector2D(-1.0,1.0) };
+}
 
-static const double defaultTileSize = 256.0;
+QT_BEGIN_NAMESPACE
 
 QGeoProjection::QGeoProjection()
 {
@@ -57,7 +68,6 @@ QGeoProjection::~QGeoProjection()
 /*
  * QGeoProjectionWebMercator implementation
 */
-
 
 QGeoProjectionWebMercator::QGeoProjectionWebMercator()
     : QGeoProjection(),
@@ -74,10 +84,8 @@ QGeoProjectionWebMercator::QGeoProjectionWebMercator()
       m_nearPlane(0.0),
       m_farPlane(0.0),
       m_halfWidth(0.0),
-      m_halfHeight(0.0),
-      m_plane(QDoubleVector3D(0,0,0), QDoubleVector3D(0,0,1))
+      m_halfHeight(0.0)
 {
-
 }
 
 QGeoProjectionWebMercator::~QGeoProjectionWebMercator()
@@ -190,16 +198,8 @@ QDoubleVector2D QGeoProjectionWebMercator::itemPositionToWrappedMapProjection(co
     pos *= QDoubleVector2D(m_1_viewportWidth, m_1_viewportHeight);
     pos *= 2.0;
     pos -= QDoubleVector2D(1.0,1.0);
-    pos *= QDoubleVector2D(m_halfWidth, m_halfHeight);
 
-    QDoubleVector3D p = m_centerNearPlane;
-    p -= m_up * pos.y();
-    p -= m_side * pos.x();
-
-    QDoubleVector3D ray = p - m_eye;
-    ray.normalize();
-
-    return (m_plane.lineIntersection(m_eye, ray) / m_sideLength).toVector2D();
+    return viewportToWrappedMapProjection(pos);
 }
 
 /* Default implementations */
@@ -235,32 +235,67 @@ QDoubleVector2D QGeoProjectionWebMercator::coordinateToItemPosition(const QGeoCo
     return pos;
 }
 
+QDoubleVector2D QGeoProjectionWebMercator::geoToWrappedMapProjection(const QGeoCoordinate &coordinate) const
+{
+    return wrapMapProjection(geoToMapProjection(coordinate));
+}
+
+QGeoCoordinate QGeoProjectionWebMercator::wrappedMapProjectionToGeo(const QDoubleVector2D &wrappedProjection) const
+{
+    return mapProjectionToGeo(unwrapMapProjection(wrappedProjection));
+}
+
 bool QGeoProjectionWebMercator::isProjectable(const QDoubleVector2D &wrappedProjection) const
 {
-    QDoubleVector3D pos = wrappedProjection * m_sideLength;
+    if (m_cameraData.tilt() == 0.0)
+        return true;
 
-    // TODO: add an offset to the eye
-    QDoubleVector3D p = m_eye - pos;
+    QDoubleVector3D pos = wrappedProjection * m_sideLength;
+    // use m_centerNearPlane in order to add an offset to m_eye.
+    QDoubleVector3D p = m_centerNearPlane - pos;
     double dot = QDoubleVector3D::dotProduct(p , m_viewNormalized);
 
-    if (dot < 0.0) // behind the eye
+    if (dot < 0.0) // behind the near plane
         return false;
     return true;
 }
 
+QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleRegion() const
+{
+    return m_visibleRegion;
+}
+
+QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
+{
+    QDoubleVector2D pos = itemPosition;
+    pos *= QDoubleVector2D(m_halfWidth, m_halfHeight);
+
+    QDoubleVector3D p = m_centerNearPlane;
+    p -= m_up * pos.y();
+    p -= m_side * pos.x();
+
+    QDoubleVector3D ray = p - m_eye;
+    ray.normalize();
+
+    return (xyPlane.lineIntersection(m_eye, ray) / m_sideLength).toVector2D();
+}
+
 void QGeoProjectionWebMercator::setupCamera()
 {
-    QDoubleVector2D camCenterMercator = geoToMapProjection(m_cameraData.center());
-    m_cameraCenterXMercator = camCenterMercator.x();
-    m_cameraCenterYMercator = camCenterMercator.y();
+    m_centerMercator = geoToMapProjection(m_cameraData.center());
+    m_cameraCenterXMercator = m_centerMercator.x();
+    m_cameraCenterYMercator = m_centerMercator.y();
 
     int intZoomLevel = static_cast<int>(std::floor(m_cameraData.zoomLevel()));
     m_sideLength = (1 << intZoomLevel) * defaultTileSize;
-    m_center = camCenterMercator * m_sideLength;
+    m_center = m_centerMercator * m_sideLength;
 
     double f = 1.0 * qMin(m_viewportWidth, m_viewportHeight);
     double z = std::pow(2.0, m_cameraData.zoomLevel() - intZoomLevel) * defaultTileSize;
-    double altitude = f / (2.0 * z) ;
+    double altitude = f / (2.0 * z);
+    // Also in mercator space
+    double z_mercator = std::pow(2.0, m_cameraData.zoomLevel()) * defaultTileSize;
+    double altitude_mercator = f / (2.0 * z_mercator);
 
     //aperture(90 / 2) = 1
     m_aperture = tan(QLocationUtils::radians(m_cameraData.fieldOfView()) * 0.5);
@@ -268,44 +303,76 @@ void QGeoProjectionWebMercator::setupCamera()
     m_eye = m_center;
     m_eye.setZ(altitude * defaultTileSize / m_aperture);
 
+    // And in mercator space
+    m_eyeMercator = m_centerMercator;
+    m_eyeMercator.setZ(altitude_mercator);
+
     m_view = m_eye - m_center;
     QDoubleVector3D side = QDoubleVector3D::normal(m_view, QDoubleVector3D(0.0, 1.0, 0.0));
     m_up = QDoubleVector3D::normal(side, m_view);
 
+    // In mercator space too
+    m_viewMercator = m_eyeMercator - m_centerMercator;
+    QDoubleVector3D sideMercator = QDoubleVector3D::normal(m_viewMercator, QDoubleVector3D(0.0, 1.0, 0.0));
+    m_upMercator = QDoubleVector3D::normal(sideMercator, m_viewMercator);
+
     if (m_cameraData.bearing() > 0.0) {
-        // old bearing, tilt and roll code
         QDoubleMatrix4x4 mBearing;
         mBearing.rotate(m_cameraData.bearing(), m_view);
         m_up = mBearing * m_up;
+
+        // In mercator space too
+        QDoubleMatrix4x4 mBearingMercator;
+        mBearingMercator.rotate(m_cameraData.bearing(), m_viewMercator);
+        m_upMercator = mBearingMercator * m_upMercator;
     }
 
     m_side = QDoubleVector3D::normal(m_up, m_view);
+    m_sideMercator = QDoubleVector3D::normal(m_upMercator, m_viewMercator);
 
-    if (m_cameraData.tilt() > 0.0) {
+    if (m_cameraData.tilt() > 0.0) { // tilt has been already thresholded by QGeoCameraData::setTilt
         QDoubleMatrix4x4 mTilt;
         mTilt.rotate(-m_cameraData.tilt(), m_side);
         m_eye = mTilt * m_view + m_center;
+
+        // In mercator space too
+        QDoubleMatrix4x4 mTiltMercator;
+        mTiltMercator.rotate(-m_cameraData.tilt(), m_sideMercator);
+        m_eyeMercator = mTiltMercator * m_viewMercator + m_centerMercator;
     }
 
     m_view = m_eye - m_center;
     m_viewNormalized = m_view.normalized();
     m_up = QDoubleVector3D::normal(m_view, m_side);
 
-    m_nearPlane = 1;
-    // 10000.0 to make sure that everything fits in the frustum even at high zoom levels
-    // (that is, with a very large map)
-    // TODO: extend this to support clip distance
-    m_farPlane =  (altitude + 10000.0) * defaultTileSize;
+    m_nearPlane = 1.0;
+    // At ZL 20 the map has 2^20 tiles per side. That is 1048576.
+    // Placing the camera on one corner of the map, rotated toward the opposite corner, and tilted
+    // at almost 90 degrees would  require a frustum that can span the whole size of this map.
+    // For this reason, the far plane is set to 2 * 2^20 * defaultTileSize.
+    // That is, in order to make sure that the whole map would fit in the frustum at this ZL.
+    // Since we are using a double matrix, and since the largest value in the matrix is going to be
+    // 2 * m_farPlane (as near plane is 1.0), there should be sufficient precision left.
+    //
+    // TODO: extend this to support clip distance.
+    m_farPlane =  (altitude + 2097152.0) * defaultTileSize;
+
+    m_viewMercator = m_eyeMercator - m_centerMercator;
+    m_upMercator = QDoubleVector3D::normal(m_viewMercator, m_sideMercator);
+    m_nearPlaneMercator = 1.0 / m_sideLength;
 
     double aspectRatio = 1.0 * m_viewportWidth / m_viewportHeight;
 
     m_halfWidth = m_aperture;
     m_halfHeight = m_aperture;
+    double verticalAperture = m_aperture;
     if (aspectRatio > 1.0) {
         m_halfWidth *= aspectRatio;
     } else if (aspectRatio > 0.0 && aspectRatio < 1.0) {
         m_halfHeight /= aspectRatio;
+        verticalAperture /= aspectRatio;
     }
+    double verticalHalfFOV = QLocationUtils::degrees(atan(verticalAperture));
 
     QDoubleMatrix4x4 cameraMatrix;
     cameraMatrix.lookAt(m_eye, m_center, m_up);
@@ -314,7 +381,113 @@ void QGeoProjectionWebMercator::setupCamera()
     projectionMatrix.frustum(-m_halfWidth, m_halfWidth, -m_halfHeight, m_halfHeight, m_nearPlane, m_farPlane);
 
     m_transformation = projectionMatrix * cameraMatrix;
-    m_centerNearPlane = m_eye + m_view.normalized();
+    m_centerNearPlane = m_eye + m_viewNormalized;
+    m_centerNearPlaneMercator = m_eyeMercator + m_viewNormalized * m_nearPlaneMercator;
+
+    // TODO: support tilting angles > 90.0, if desired. And flip the bottom corners with the top corners, if needed
+    // by clipper.
+
+    // The following formula is used to have a growing epsilon with the zoom level,
+    // in order not to have too large values at low zl, which would overflow when converted to Clipper::cInt.
+    const double upperBoundEpsilon = 1.0 / std::pow(10, 1.0 + m_cameraData.zoomLevel() / 5.0);
+    const double elevationUpperBound = 90.0 - upperBoundEpsilon;
+    const double maxRayElevation = qMin(elevationUpperBound - m_cameraData.tilt(), verticalHalfFOV);
+    double maxHalfAperture = 0;
+    double verticalEstateToSkip = 0;
+    if (maxRayElevation < verticalHalfFOV) {
+        maxHalfAperture = tan(QLocationUtils::radians(maxRayElevation));
+        verticalEstateToSkip = 1.0 - maxHalfAperture / verticalAperture;
+    }
+
+    QDoubleVector2D tl = viewportToWrappedMapProjection(QDoubleVector2D(-1, -1 + verticalEstateToSkip ));
+    QDoubleVector2D tr = viewportToWrappedMapProjection(QDoubleVector2D( 1, -1 + verticalEstateToSkip ));
+    QDoubleVector2D bl = viewportToWrappedMapProjection(QDoubleVector2D(-1,  1 ));
+    QDoubleVector2D br = viewportToWrappedMapProjection(QDoubleVector2D( 1,  1 ));
+
+    QList<QDoubleVector2D> mapRect;
+    mapRect.push_back(QDoubleVector2D(-1.0, 1.0));
+    mapRect.push_back(QDoubleVector2D( 2.0, 1.0));
+    mapRect.push_back(QDoubleVector2D( 2.0, 0.0));
+    mapRect.push_back(QDoubleVector2D(-1.0, 0.0));
+
+    QList<QDoubleVector2D> viewportRect;
+    viewportRect.push_back(bl);
+    viewportRect.push_back(br);
+    viewportRect.push_back(tr);
+    viewportRect.push_back(tl);
+
+    c2t::clip2tri clipper;
+    clipper.clearClipper();
+    clipper.addSubjectPath(QClipperUtils::qListToPath(mapRect), true);
+    clipper.addClipPolygon(QClipperUtils::qListToPath(viewportRect));
+
+    Paths res = clipper.execute(c2t::clip2tri::Intersection);
+    m_visibleRegion.clear();
+    if (res.size())
+        m_visibleRegion = QClipperUtils::pathToQList(res[0]); // Intersection between two convex quadrilaterals should always be a single polygon
+}
+
+/*
+ *
+ *  Line implementation
+ *
+ */
+
+QGeoProjectionWebMercator::Line2D::Line2D()
+{
+
+}
+
+QGeoProjectionWebMercator::Line2D::Line2D(const QDoubleVector2D &linePoint, const QDoubleVector2D &lineDirection)
+    :   m_point(linePoint), m_direction(lineDirection.normalized())
+{
+
+}
+
+bool QGeoProjectionWebMercator::Line2D::isValid() const
+{
+    return (m_direction.length() > 0.5);
+}
+
+/*
+ *
+ *  Plane implementation
+ *
+ */
+
+QGeoProjectionWebMercator::Plane::Plane()
+{
+
+}
+
+QGeoProjectionWebMercator::Plane::Plane(const QDoubleVector3D &planePoint, const QDoubleVector3D &planeNormal)
+    :   m_point(planePoint), m_normal(planeNormal.normalized()) { }
+
+QDoubleVector3D QGeoProjectionWebMercator::Plane::lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection) const
+{
+    QDoubleVector3D w = linePoint - m_point;
+    // s = -n.dot(w) / n.dot(u).  p = p0 + su; u is lineDirection
+    double s = QDoubleVector3D::dotProduct(-m_normal, w) / QDoubleVector3D::dotProduct(m_normal, lineDirection);
+    return linePoint + lineDirection * s;
+}
+
+QGeoProjectionWebMercator::Line2D QGeoProjectionWebMercator::Plane::planeXYIntersection() const
+{
+    // cross product of the two normals for the line direction
+    QDoubleVector3D lineDirection = QDoubleVector3D::crossProduct(m_normal, xyNormal);
+    lineDirection.setZ(0.0);
+    lineDirection.normalize();
+
+    // cross product of the line direction and the plane normal to find the direction on the plane
+    // intersecting the xy plane
+    QDoubleVector3D directionToXY = QDoubleVector3D::crossProduct(m_normal, lineDirection);
+    QDoubleVector3D p = xyPlane.lineIntersection(m_point, directionToXY);
+    return Line2D(p.toVector2D(), lineDirection.toVector2D());
+}
+
+bool QGeoProjectionWebMercator::Plane::isValid() const
+{
+    return (m_normal.length() > 0.5);
 }
 
 QT_END_NAMESPACE

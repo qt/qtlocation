@@ -48,10 +48,11 @@
 #include <QPainterPath>
 #include <qnumeric.h>
 
-#include "qdoublevector2d_p.h"
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qclipperutils_p.h>
 
 /* poly2tri triangulator includes */
-#include "../../3rdparty/clip2tri/clip2tri.h"
+#include <clip2tri.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -131,11 +132,6 @@ QT_BEGIN_NAMESPACE
     \image api-mappolygon.png
 */
 
-struct Vertex
-{
-    QVector2D position;
-};
-
 QGeoMapPolygonGeometry::QGeoMapPolygonGeometry()
 :   assumeSimple_(false)
 {
@@ -150,54 +146,99 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     if (!sourceDirty_)
         return;
 
-    bool foundValid = false;
-
-    // build the actual path
-    QDoubleVector2D lastAddedPoint;
     srcPath_ = QPainterPath();
 
+    // build the actual path
+    // The approach is the same as described in QGeoMapPolylineGeometry::updateSourcePoints
     srcOrigin_ = geoLeftBound_;
-    QDoubleVector2D origin = map.geoProjection().coordinateToItemPosition(geoLeftBound_, false);
     double unwrapBelowX = 0;
-    if (preserveGeometry_ )
-        unwrapBelowX = origin.x();
+    QDoubleVector2D leftBoundWrapped = map.geoProjection().wrapMapProjection(map.geoProjection().geoToMapProjection(geoLeftBound_));
+    if (preserveGeometry_)
+        unwrapBelowX = leftBoundWrapped.x();
 
+    QList<QDoubleVector2D> wrappedPath;
+    wrappedPath.reserve(path.size());
+    QDoubleVector2D wrappedLeftBound(qInf(), qInf());
+    // 1)
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
-
         if (!coord.isValid())
             continue;
 
-        QDoubleVector2D point = map.geoProjection().coordinateToItemPosition(coord, false);
+        QDoubleVector2D wrappedProjection = map.geoProjection().wrapMapProjection(map.geoProjection().geoToMapProjection(coord));
 
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
-        if (!qIsFinite(point.x()) || !qIsFinite(point.y()))
+        if (!qIsFinite(wrappedProjection.x()) || !qIsFinite(wrappedProjection.y()))
             return;
 
+        const bool isPointLessThanUnwrapBelowX = (wrappedProjection.x() < leftBoundWrapped.x());
         // unwrap x to preserve geometry if moved to border of map
-        if (preserveGeometry_ && point.x() < unwrapBelowX
-                && !qFuzzyCompare(point.x(), unwrapBelowX)
-                && !qFuzzyCompare(geoLeftBound_.longitude(), coord.longitude()))
-            point.setX(unwrapBelowX + geoDistanceToScreenWidth(map, geoLeftBound_, coord));
-
-
-        if (!foundValid) {
-            foundValid = true;
-            point = point - origin;
-            srcPath_.moveTo(point.toPointF());
-            lastAddedPoint = point;
-        } else {
-            point -= origin;
-            if ((point - lastAddedPoint).manhattanLength() > 3 ||
-                    i == path.size() - 1) {
-                srcPath_.lineTo(point.toPointF());
-                lastAddedPoint = point;
-            }
+        if (preserveGeometry_ && isPointLessThanUnwrapBelowX) {
+            double distance = wrappedProjection.x() - unwrapBelowX;
+            if (distance < 0.0)
+                distance += 1.0;
+            wrappedProjection.setX(unwrapBelowX + distance);
         }
+        if (wrappedProjection.x() < wrappedLeftBound.x() || (wrappedProjection.x() == wrappedLeftBound.x() && wrappedProjection.y() < wrappedLeftBound.y())) {
+            wrappedLeftBound = wrappedProjection;
+        }
+        wrappedPath.append(wrappedProjection);
     }
 
-    srcPath_.closeSubpath();
+    // 2)
+    QList<QList<QDoubleVector2D> > clippedPaths;
+    const QList<QDoubleVector2D> &visibleRegion = map.geoProjection().visibleRegion();
+    if (visibleRegion.size()) {
+        c2t::clip2tri clipper;
+        clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), true);
+        clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
+        Paths res = clipper.execute(c2t::clip2tri::Intersection, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+        clippedPaths = QClipperUtils::pathsToQList(res);
+
+        // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
+        QDoubleVector2D lb(qInf(), qInf());
+        for (const QList<QDoubleVector2D> &path: clippedPaths) {
+            for (const QDoubleVector2D &p: path) {
+                if (p.x() < lb.x() || (p.x() == lb.x() && p.y() < lb.y())) {
+                    // y-minimization needed to find the same point on polygon and border
+                    lb = p;
+                }
+            }
+        }
+        if (qIsInf(lb.x())) // e.g., when the polygon is clipped entirely
+            return;
+
+        // 2.2) Prevent the conversion to and from clipper from introducing negative offsets which
+        //      in turn will make the geometry wrap around.
+        lb.setX(qMax(wrappedLeftBound.x(), lb.x()));
+        leftBoundWrapped = lb;
+        srcOrigin_ = map.geoProjection().mapProjectionToGeo(map.geoProjection().unwrapMapProjection(lb));
+    } else {
+        clippedPaths.append(wrappedPath);
+    }
+
+    // 3)
+    QDoubleVector2D origin = map.geoProjection().wrappedMapProjectionToItemPosition(leftBoundWrapped);
+    for (const QList<QDoubleVector2D> &path: clippedPaths) {
+        QDoubleVector2D lastAddedPoint;
+        for (int i = 0; i < path.size(); ++i) {
+            QDoubleVector2D point = map.geoProjection().wrappedMapProjectionToItemPosition(path.at(i));
+            point = point - origin; // (0,0) if point == geoLeftBound_
+
+            if (i == 0) {
+                srcPath_.moveTo(point.toPointF());
+                lastAddedPoint = point;
+            } else {
+                if ((point - lastAddedPoint).manhattanLength() > 3 ||
+                        i == path.size() - 1) {
+                    srcPath_.lineTo(point.toPointF());
+                    lastAddedPoint = point;
+                }
+            }
+        }
+        srcPath_.closeSubpath();
+    }
 
     if (!assumeSimple_)
         srcPath_ = srcPath_.simplified();
@@ -228,16 +269,16 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     QPainterPath vpPath;
     vpPath.addRect(viewport);
 
-    QPainterPath ppi;
-    if (clipToViewport_)
-        ppi = srcPath_.intersected(vpPath); // get the clipped version of the path
-    else ppi = srcPath_;
-
+    // The geometry has already been clipped against the visible region projection in wrapped mercator space.
+    QPainterPath ppi = srcPath_;
     clear();
 
     // a polygon requires at least 3 points;
     if (ppi.elementCount() < 3)
         return;
+
+    // TODO: move this to clip2tri, and remove the code below.
+    // For clip2tri use the intersection between the the viewport AND the map as clipping region.
 
     // Intersection between the viewport and a concave polygon can create multiple polygons
     // joined by a line at the viewport border, and poly2tri does not triangulate this very well
@@ -273,7 +314,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
     screenOutline_ = ppi;
 
-#if 1
+#if 0 // TODO: This code appears to crash seldomly in presence of tilt. Requires further investigation
     std::vector<std::vector<c2t::Point>> clipperPoints;
     clipperPoints.push_back(std::vector<c2t::Point>());
     std::vector<c2t::Point> &curPts = clipperPoints.front();
@@ -545,22 +586,39 @@ void QDeclarativePolygonMapItem::updatePolish()
     geometry_.updateSourcePoints(*map(), path_);
     geometry_.updateScreenPoints(*map());
 
-    QList<QGeoCoordinate> closedPath = path_;
-    closedPath << closedPath.first();
-    borderGeometry_.clear();
-    borderGeometry_.updateSourcePoints(*map(), closedPath, geoLeftBound_);
-
-    if (border_.color() != Qt::transparent && border_.width() > 0)
-        borderGeometry_.updateScreenPoints(*map(), border_.width());
-
     QList<QGeoMapItemGeometry *> geoms;
-    geoms << &geometry_ << &borderGeometry_;
-    QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
+    geoms << &geometry_;
+    borderGeometry_.clear();
 
+    if (border_.color() != Qt::transparent && border_.width() > 0) {
+        QList<QGeoCoordinate> closedPath = path_;
+        closedPath << closedPath.first();
+
+        borderGeometry_.setPreserveGeometry(true, geoLeftBound_);
+
+        const QGeoCoordinate &geometryOrigin = geometry_.origin();
+
+        borderGeometry_.srcPoints_.clear();
+        borderGeometry_.srcPointTypes_.clear();
+
+        QDoubleVector2D borderLeftBoundWrapped;
+        QList<QList<QDoubleVector2D > > clippedPaths = borderGeometry_.clipPath(*map(), closedPath, borderLeftBoundWrapped);
+        if (clippedPaths.size()) {
+            borderLeftBoundWrapped = map()->geoProjection().geoToWrappedMapProjection(geometryOrigin);
+            borderGeometry_.pathToScreen(*map(), clippedPaths, borderLeftBoundWrapped);
+            borderGeometry_.updateScreenPoints(*map(), border_.width());
+
+            geoms << &borderGeometry_;
+        } else {
+            borderGeometry_.clear();
+        }
+    }
+
+    QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
     setWidth(combined.width());
     setHeight(combined.height());
 
-    setPositionOnMap(geoLeftBound_, -1 * geometry_.sourceBoundingBox().topLeft());
+    setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft());
 }
 
 /*!
@@ -571,21 +629,10 @@ void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChang
     if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
         return;
 
-    // if the scene is tilted, we must regenerate our geometry every frame
-    if ((event.cameraData.tilt() > 0.0 || event.tiltChanged) && map()->cameraCapabilities().supportsTilting()) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-    }
-
-    // otherwise, only regen on rotate, resize and zoom
-    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-    }
     geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
     borderGeometry_.setPreserveGeometry(true, borderGeometry_.geoLeftBound());
-    geometry_.markScreenDirty();
-    borderGeometry_.markScreenDirty();
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     polishAndUpdate();
 }
 

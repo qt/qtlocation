@@ -95,11 +95,22 @@ public:
     void updateScreenPoints(const QGeoMap &map,
                             qreal strokeWidth);
 
+protected:
+    QList<QList<QDoubleVector2D> > clipPath(const QGeoMap &map,
+                    const QList<QGeoCoordinate> &path,
+                    QDoubleVector2D &leftBoundWrapped);
+
+    void pathToScreen(const QGeoMap &map,
+                      const QList<QList<QDoubleVector2D> > &clippedPaths,
+                      const QDoubleVector2D &leftBoundWrapped);
+
 private:
     QVector<qreal> srcPoints_;
     QVector<QPainterPath::ElementType> srcPointTypes_;
 
-
+    friend class QDeclarativeCircleMapItem;
+    friend class QDeclarativePolygonMapItem;
+    friend class QDeclarativeRectangleMapItem;
 };
 
 class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase

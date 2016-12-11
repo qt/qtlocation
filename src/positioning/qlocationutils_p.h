@@ -52,12 +52,16 @@
 
 #include <QtCore/QtGlobal>
 #include <math.h>
+#include <QtPositioning/QGeoCoordinate>
 
 static const double M_PID     = 3.14159265358979323846264338327950288; // to get more precision than float
 static const double M_1_180D  = 0.0055555555555555555555555555555555555555556;
 static const double M_1_PID   = 1.0 / M_PID;
 static const double M_PI_180D = M_PID / 180.0; //0.0174532925199432954743716805978692718781530857086181640625;
 static const double M_180_PID = 180.0 / M_PID; // 57.29577951308232286464772187173366546630859375
+static const double offsetEpsilon = 0.0000000000001;
+static const double leftOffset = -180.0 + offsetEpsilon;
+static const double rightOffset = 180.0 - offsetEpsilon;
 
 QT_BEGIN_NAMESPACE
 class QTime;
@@ -87,25 +91,25 @@ public:
     };
 
     inline static bool isValidLat(double lat) {
-        return lat >= -90 && lat <= 90;
+        return lat >= -90.0 && lat <= 90.0;
     }
     inline static bool isValidLong(double lng) {
-        return lng >= -180 && lng <= 180;
+        return lng >= -180.0 && lng <= 180.0;
     }
 
     inline static double clipLat(double lat) {
-        if (lat > 90)
-            lat = 90;
-        else if (lat < -90)
-            lat = -90;
+        if (lat > 90.0)
+            lat = 90.0;
+        else if (lat < -90.0)
+            lat = -90.0;
         return lat;
     }
 
     inline static double wrapLong(double lng) {
-        if (lng > 180)
-            lng -= 360;
-        else if (lng < -180)
-            lng += 360;
+        if (lng > 180.0)
+            lng -= 360.0;
+        else if (lng < -180.0)
+            lng += 360.0;
         return lng;
     }
 
@@ -212,14 +216,37 @@ public:
     {
         return radians * M_180_PID;
     }
+
     inline static double earthMeanRadius()
     {
         return 6371007.2;
     }
 
+    inline static double earthMeanDiameter()
+    {
+        return earthMeanRadius() * 2.0 * M_PID;
+    }
+
     inline static double mercatorMaxLatitude()
     {
         return 85.05113;
+    }
+
+    inline static QGeoCoordinate antipodalPoint(const QGeoCoordinate &p)
+    {
+        return QGeoCoordinate(-p.latitude(), wrapLong(p.longitude() + 180.0));
+    }
+
+    // Leftmost longitude before wrapping kicks in
+    inline static double mapLeftLongitude(double centerLongitude)
+    {
+        return wrapLong(centerLongitude + leftOffset);
+    }
+
+    // Rightmost longitude before wrapping kicks in
+    inline static double  mapRightLongitude(double centerLongitude)
+    {
+        return wrapLong(centerLongitude - leftOffset);
     }
 
     /*

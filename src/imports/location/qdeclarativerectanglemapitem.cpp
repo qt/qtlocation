@@ -112,65 +112,6 @@ QT_BEGIN_NAMESPACE
     \image api-maprectangle.png
 */
 
-struct Vertex
-{
-    QVector2D position;
-};
-
-QGeoMapRectangleGeometry::QGeoMapRectangleGeometry()
-{
-}
-
-/*!
-    \internal
-*/
-void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
-                                            const QGeoCoordinate &topLeft,
-                                            const QGeoCoordinate &bottomRight)
-{
-    if (!screenDirty_ && !sourceDirty_)
-        return;
-
-    QDoubleVector2D tl = map.geoProjection().coordinateToItemPosition(topLeft, false);
-    QDoubleVector2D br = map.geoProjection().coordinateToItemPosition(bottomRight, false);
-
-    // We can get NaN if the map isn't set up correctly, or the projection
-    // is faulty -- probably best thing to do is abort
-    if (!qIsFinite(tl.x()) || !qIsFinite(tl.y()))
-        return;
-    if (!qIsFinite(br.x()) || !qIsFinite(br.y()))
-        return;
-
-    if ( preserveGeometry_ ) {
-        double unwrapBelowX = map.geoProjection().coordinateToItemPosition(geoLeftBound_, false).x();
-        if (br.x() < unwrapBelowX)
-            br.setX(tl.x() + screenBounds_.width());
-    }
-
-    QRectF re(tl.toPointF(), br.toPointF());
-    re.translate(-1 * tl.toPointF());
-
-    clear();
-    screenVertices_.reserve(6);
-
-    screenVertices_ << re.topLeft();
-    screenVertices_ << re.topRight();
-    screenVertices_ << re.bottomLeft();
-
-    screenVertices_ << re.topRight();
-    screenVertices_ << re.bottomLeft();
-    screenVertices_ << re.bottomRight();
-
-    firstPointOffset_ = QPointF(0,0);
-    srcOrigin_ = topLeft;
-    screenBounds_ = re;
-
-    screenOutline_ = QPainterPath();
-    screenOutline_.addRect(re);
-
-    geoLeftBound_ = topLeft;
-}
-
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), dirtyMaterial_(true),
     updatingGeometry_(false)
@@ -334,33 +275,49 @@ void QDeclarativeRectangleMapItem::updatePolish()
     QScopedValueRollback<bool> rollback(updatingGeometry_);
     updatingGeometry_ = true;
 
-    geometry_.updatePoints(*map(), topLeft_, bottomRight_);
+    QList<QGeoCoordinate> path;
+    path << topLeft_;
+    path << QGeoCoordinate(topLeft_.latitude(), bottomRight_.longitude());
+    path << bottomRight_;
+    path << QGeoCoordinate(bottomRight_.latitude(), topLeft_.longitude());
 
-    QList<QGeoCoordinate> pathClosed;
-    pathClosed << topLeft_;
-    pathClosed << QGeoCoordinate(topLeft_.latitude(), bottomRight_.longitude());
-    pathClosed << bottomRight_;
-    pathClosed << QGeoCoordinate(bottomRight_.latitude(), topLeft_.longitude());
-    pathClosed << pathClosed.first();
+    geometry_.setPreserveGeometry(true, topLeft_);
+    geometry_.updateSourcePoints(*map(), path);
+    geometry_.updateScreenPoints(*map());
+
+    QList<QGeoMapItemGeometry *> geoms;
+    geoms << &geometry_;
+    borderGeometry_.clear();
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
-        borderGeometry_.updateSourcePoints(*map(), pathClosed, topLeft_);
-        borderGeometry_.updateScreenPoints(*map(), border_.width());
+        QList<QGeoCoordinate> closedPath = path;
+        closedPath << closedPath.first();
 
-        QList<QGeoMapItemGeometry *> geoms;
-        geoms << &geometry_ << &borderGeometry_;
-        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
+        borderGeometry_.setPreserveGeometry(true, topLeft_);
 
-        setWidth(combined.width());
-        setHeight(combined.height());
-    } else {
-        borderGeometry_.clear();
+        const QGeoCoordinate &geometryOrigin = geometry_.origin();
 
-        setWidth(geometry_.screenBoundingBox().width());
-        setHeight(geometry_.screenBoundingBox().height());
+        borderGeometry_.srcPoints_.clear();
+        borderGeometry_.srcPointTypes_.clear();
+
+        QDoubleVector2D borderLeftBoundWrapped;
+        QList<QList<QDoubleVector2D > > clippedPaths = borderGeometry_.clipPath(*map(), closedPath, borderLeftBoundWrapped);
+        if (clippedPaths.size()) {
+            borderLeftBoundWrapped = map()->geoProjection().geoToWrappedMapProjection(geometryOrigin);
+            borderGeometry_.pathToScreen(*map(), clippedPaths, borderLeftBoundWrapped);
+            borderGeometry_.updateScreenPoints(*map(), border_.width());
+
+            geoms << &borderGeometry_;
+        } else {
+            borderGeometry_.clear();
+        }
     }
 
-    setPositionOnMap(pathClosed.at(0), geometry_.firstPointOffset());
+    QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
+    setWidth(combined.width());
+    setHeight(combined.height());
+
+    setPositionOnMap(geometry_.origin(), geometry_.firstPointOffset());
 }
 
 /*!
@@ -371,21 +328,10 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
     if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
         return;
 
-    // if the scene is tilted, we must regenerate our geometry every frame
-    if ((event.cameraData.tilt() > 0.0 || event.tiltChanged) && map()->cameraCapabilities().supportsTilting()) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-    }
-
-    // otherwise, only regen on rotate, resize and zoom
-    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-    }
     geometry_.setPreserveGeometry(true, topLeft_);
     borderGeometry_.setPreserveGeometry(true, topLeft_);
-    geometry_.markScreenDirty();
-    borderGeometry_.markScreenDirty();
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     polishAndUpdate();
 }
 

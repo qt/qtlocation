@@ -30,7 +30,7 @@
 #define CLIP2TRI_H_
 
 #include <vector>
-#include "../clipper/clipper.h"
+#include <clipper.h>
 
 using namespace std;
 using namespace ClipperLib;
@@ -57,18 +57,6 @@ struct Point
    Point(T in_x, U in_y) { x = static_cast<F32>(in_x); y = static_cast<F32>(in_y); }
 };
 
-struct PointD
-{
-   F64 x;
-   F64 y;
-
-   PointD();
-   PointD(const PointD &pt);
-
-   template<class T, class U>
-   PointD(T in_x, U in_y) { x = static_cast<F64>(in_x); y = static_cast<F64>(in_y); }
-};
-
 class clip2tri
 {
 private:
@@ -85,29 +73,26 @@ private:
          const PolyTree &polyTree, bool ignoreFills = true, bool ignoreHoles = false);
 
 public:
+   enum Operation { Union, Intersection, Difference, Xor };
    clip2tri();
    virtual ~clip2tri();
 
    void triangulate(const vector<vector<Point> > &inputPolygons, vector<Point> &outputTriangles,
          const vector<Point> &boundingPolygon);
 
-   inline static IntPoint intPoint(double x, double y);
-   inline static PointD   pointD(IntPoint p);
-
-   // Clip polygons MUST be closed. Meaning path[0] == path[path.size()-1]
-   void addClipPolygon(const std::vector<IntPoint> &path);
+   // Clip polygons are intended as closed, even if the first and last vertex aren't the same.
+   void addClipPolygon(const Path &path);
    // Closed means the path has to be effectively closed. Meaning path[0] == path[path.size()-1]
-   void addSubjectPath(const std::vector<IntPoint> &path, bool closed);
+   void addSubjectPath(const Path &path, bool closed);
 
    void clearClipper();
 
-   Paths executeUnion(PolyFillType subjFillType = pftEvenOdd,
-                      PolyFillType clipFillType = pftEvenOdd);
-
-   Paths executeIntersection(PolyFillType subjFillType = pftEvenOdd,
-                             PolyFillType clipFillType = pftEvenOdd);
+   Paths execute(const Operation op,
+                 const PolyFillType subjFillType = pftNonZero,
+                 const PolyFillType clipFillType = pftNonZero);
 
    Clipper clipper;
+   bool openSubject;
 };
 
 } /* namespace c2t */

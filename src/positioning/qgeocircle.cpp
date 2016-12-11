@@ -316,11 +316,11 @@ void QGeoCirclePrivate::updateBoundingBox()
             ));
 
         QGeoCoordinate topLeft;
-        topLeft.setLatitude(m_center.latitude() + lat_delta_in_deg);
-        topLeft.setLongitude(m_center.longitude() - lon_delta_in_deg);
+        topLeft.setLatitude(QLocationUtils::clipLat(m_center.latitude() + lat_delta_in_deg));
+        topLeft.setLongitude(QLocationUtils::wrapLong(m_center.longitude() - lon_delta_in_deg));
         QGeoCoordinate bottomRight;
-        bottomRight.setLatitude(m_center.latitude() - lat_delta_in_deg);
-        bottomRight.setLongitude(m_center.longitude() + lon_delta_in_deg);
+        bottomRight.setLatitude(QLocationUtils::clipLat(m_center.latitude() - lat_delta_in_deg));
+        bottomRight.setLongitude(QLocationUtils::wrapLong(m_center.longitude() + lon_delta_in_deg));
 
         m_bbox = QGeoRectangle(topLeft, bottomRight);
     }

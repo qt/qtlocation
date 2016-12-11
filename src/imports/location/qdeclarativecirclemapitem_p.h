@@ -61,7 +61,7 @@ class QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
 public:
     QGeoMapCircleGeometry();
 
-    void updateScreenPointsInvert(const QGeoMap &map);
+    void updateScreenPointsInvert(const QList<QGeoCoordinate> &circlePath, const QGeoMap &map);
 };
 
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase

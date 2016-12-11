@@ -40,17 +40,22 @@
 #include "qwebmercator_p.h"
 
 #include <cmath>
+#include <algorithm>
 
 #include <QtCore/QScopedValueRollback>
 #include <QPen>
 #include <QPainter>
+#include <QtGui/private/qtriangulator_p.h>
 
 #include "qdoublevector2d_p.h"
 #include "qlocationutils_p.h"
+#include "qgeocircle.h"
 
 /* poly2tri triangulator includes */
-#include "../../3rdparty/poly2tri/common/shapes.h"
-#include "../../3rdparty/poly2tri/sweep/cdt.h"
+#include <common/shapes.h>
+#include <sweep/cdt.h>
+
+#include <QtPositioning/private/qclipperutils_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -122,9 +127,10 @@ QT_BEGIN_NAMESPACE
     \image api-mapcircle.png
 */
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
+#ifdef M_PI
+#undef M_PI
 #endif
+#define M_PI 3.14159265358979323846264338327950288
 
 static const int CircleSamples = 128;
 
@@ -140,53 +146,105 @@ QGeoMapCircleGeometry::QGeoMapCircleGeometry()
 /*!
     \internal
 */
-void QGeoMapCircleGeometry::updateScreenPointsInvert(const QGeoMap &map)
+void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QGeoCoordinate> &circlePath, const QGeoMap &map)
 {
-    if (!screenDirty_)
+    // Not checking for !screenDirty anymore, as everything is now recalculated.
+    clear();
+    if (map.viewportWidth() == 0 || map.viewportHeight() == 0 || circlePath.size() < 3) // a circle requires at least 3 points;
         return;
 
-    if (map.viewportWidth() == 0 || map.viewportHeight() == 0) {
-        clear();
-        return;
+    /*
+     * No special case for no tilting as these items are very rare, and usually at most one per map.
+     *
+     * Approach:
+     * 1) subtract the circle from a rectangle filling the whole map, *in wrapped mercator space*
+     * 2) clip the resulting geometries against the visible region, *in wrapped mercator space*
+     * 3) create a QPainterPath with each of the resulting polygons projected to screen
+     * 4) use qTriangulate() to triangulate the painter path
+     */
+
+    // 1)
+    double topLati = QLocationUtils::mercatorMaxLatitude();
+    double bottomLati = -(QLocationUtils::mercatorMaxLatitude());
+    double leftLongi = QLocationUtils::mapLeftLongitude(map.cameraData().center().longitude());
+    double rightLongi = QLocationUtils::mapRightLongitude(map.cameraData().center().longitude());
+
+    srcOrigin_ = QGeoCoordinate(topLati,leftLongi);
+    QDoubleVector2D tl = map.geoProjection().geoToWrappedMapProjection(QGeoCoordinate(topLati,leftLongi));
+    QDoubleVector2D tr = map.geoProjection().geoToWrappedMapProjection(QGeoCoordinate(topLati,rightLongi));
+    QDoubleVector2D br = map.geoProjection().geoToWrappedMapProjection(QGeoCoordinate(bottomLati,rightLongi));
+    QDoubleVector2D bl = map.geoProjection().geoToWrappedMapProjection(QGeoCoordinate(bottomLati,leftLongi));
+
+    QList<QDoubleVector2D> fill;
+    fill << tl << tr << br << bl;
+
+    QList<QDoubleVector2D> hole;
+    for (const QGeoCoordinate &c: circlePath)
+        hole << map.geoProjection().geoToWrappedMapProjection(c);
+
+    c2t::clip2tri clipper;
+    clipper.addSubjectPath(QClipperUtils::qListToPath(fill), true);
+    clipper.addClipPolygon(QClipperUtils::qListToPath(hole));
+    Paths difference = clipper.execute(c2t::clip2tri::Difference, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+
+    // 2)
+    QDoubleVector2D lb = map.geoProjection().geoToWrappedMapProjection(srcOrigin_);
+    QList<QList<QDoubleVector2D> > clippedPaths;
+    const QList<QDoubleVector2D> &visibleRegion = map.geoProjection().visibleRegion();
+    if (visibleRegion.size()) {
+        clipper.clearClipper();
+        for (const Path &p: difference)
+            clipper.addSubjectPath(p, true);
+        clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
+        Paths res = clipper.execute(c2t::clip2tri::Intersection, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+        clippedPaths = QClipperUtils::pathsToQList(res);
+
+        // 2.1) update srcOrigin_ with the point with minimum X/Y
+        lb = QDoubleVector2D(qInf(), qInf());
+        for (const QList<QDoubleVector2D> &path: clippedPaths) {
+            for (const QDoubleVector2D &p: path) {
+                if (p.x() < lb.x() || (p.x() == lb.x() && p.y() < lb.y())) {
+                    lb = p;
+                }
+            }
+        }
+        if (qIsInf(lb.x()))
+            return;
+
+        // Prevent the conversion to and from clipper from introducing negative offsets which
+        // in turn will make the geometry wrap around.
+        lb.setX(qMax(tl.x(), lb.x()));
+        srcOrigin_ = map.geoProjection().mapProjectionToGeo(map.geoProjection().unwrapMapProjection(lb));
+    } else {
+        clippedPaths = QClipperUtils::pathsToQList(difference);
     }
 
-    QPointF origin = map.geoProjection().coordinateToItemPosition(srcOrigin_, false).toPointF();
+    //3)
+    QDoubleVector2D origin = map.geoProjection().wrappedMapProjectionToItemPosition(lb);
 
-    QPainterPath ppi = srcPath_;
+    QPainterPath ppi;
+    for (const QList<QDoubleVector2D> &path: clippedPaths) {
+        QDoubleVector2D lastAddedPoint;
+        for (int i = 0; i < path.size(); ++i) {
+            QDoubleVector2D point = map.geoProjection().wrappedMapProjectionToItemPosition(path.at(i));
+            //point = point - origin; // Do this using ppi.translate()
 
-    clear();
+            if (i == 0) {
+                ppi.moveTo(point.toPointF());
+                lastAddedPoint = point;
+            } else {
+                if ((point - lastAddedPoint).manhattanLength() > 3 ||
+                        i == path.size() - 1) {
+                    ppi.lineTo(point.toPointF());
+                    lastAddedPoint = point;
+                }
+            }
+        }
+        ppi.closeSubpath();
+    }
+    ppi.translate(-1 * origin.toPointF());
 
-    // a circle requires at least 3 points;
-    if (ppi.elementCount() < 3)
-        return;
-
-    // translate the path into top-left-centric coordinates
-    QRectF bb = ppi.boundingRect();
-    ppi.translate(-bb.left(), -bb.top());
-    firstPointOffset_ = -1 * bb.topLeft();
-
-    ppi.closeSubpath();
-
-    // calculate actual width of map on screen in pixels
-    QGeoCoordinate mapCenter(0, map.cameraData().center().longitude());
-    QDoubleVector2D midPoint = map.geoProjection().coordinateToItemPosition(mapCenter, false);
-    QDoubleVector2D midPointPlusOne = QDoubleVector2D(midPoint.x() + 1.0, midPoint.y());
-    QGeoCoordinate coord1 = map.geoProjection().itemPositionToCoordinate(midPointPlusOne, false);
-    double geoDistance = coord1.longitude() - map.cameraData().center().longitude();
-    if ( geoDistance < 0 )
-        geoDistance += 360.0;
-    double mapWidth = 360.0 / geoDistance;
-
-    qreal leftOffset = origin.x() - (map.viewportWidth()/2.0 - mapWidth/2.0) - firstPointOffset_.x();
-    qreal topOffset = origin.y() - (midPoint.y() - mapWidth/2.0) - firstPointOffset_.y();
-    QPainterPath ppiBorder;
-    ppiBorder.moveTo(QPointF(-leftOffset, -topOffset));
-    ppiBorder.lineTo(QPointF(mapWidth - leftOffset, -topOffset));
-    ppiBorder.lineTo(QPointF(mapWidth - leftOffset, mapWidth - topOffset));
-    ppiBorder.lineTo(QPointF(-leftOffset, mapWidth - topOffset));
-
-    screenOutline_ = ppiBorder;
-
+#if 0 // old poly2tri code, has to be ported to clip2tri in order to work with tilted projections
     std::vector<p2t::Point*> borderPts;
     borderPts.reserve(4);
 
@@ -235,20 +293,28 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QGeoMap &map)
         qDeleteAll(borderPts.begin(), borderPts.end());
         borderPts.clear();
     }
+#else // Using qTriangulate as this case is not frequent, and not many circles including both poles are usually used
+    QTriangleSet ts = qTriangulate(ppi);
+    qreal *vx = ts.vertices.data();
 
-    screenBounds_ = ppiBorder.boundingRect();
+    screenIndices_.reserve(ts.indices.size());
+    screenVertices_.reserve(ts.vertices.size());
 
-}
+    if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
+        const quint32 *ix = reinterpret_cast<const quint32 *>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
+            screenIndices_ << ix[i];
+    } else {
+        const quint16 *ix = reinterpret_cast<const quint16 *>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
+            screenIndices_ << ix[i];
+    }
+    for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
+        screenVertices_ << QPointF(vx[i], vx[i + 1]);
+#endif
 
-static const qreal qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
-
-inline static qreal qgeocoordinate_degToRad(qreal deg)
-{
-    return deg * M_PI / 180;
-}
-inline static qreal qgeocoordinate_radToDeg(qreal rad)
-{
-    return rad * 180 / M_PI;
+    screenBounds_ = ppi.boundingRect();
+    sourceBounds_ = screenBounds_;
 }
 
 static bool crossEarthPole(const QGeoCoordinate &center, qreal distance)
@@ -267,8 +333,7 @@ static bool crossEarthPole(const QGeoCoordinate &center, qreal distance)
 static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
                                       const QGeoCoordinate &center,
                                       qreal distance,
-                                      int steps,
-                                      QGeoCoordinate &leftBound )
+                                      int steps)
 {
     // Calculate points based on great-circle distance
     // Calculation is the same as GeoCoordinate's atDistanceAndAzimuth function
@@ -277,38 +342,27 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
     // pre-calculations
     steps = qMax(steps, 3);
     qreal centerLon = center.longitude();
-    qreal minLon = centerLon;
-    qreal latRad = qgeocoordinate_degToRad(center.latitude());
-    qreal lonRad = qgeocoordinate_degToRad(centerLon);
+    qreal latRad = QLocationUtils::radians(center.latitude());
+    qreal lonRad = QLocationUtils::radians(centerLon);
     qreal cosLatRad = std::cos(latRad);
     qreal sinLatRad = std::sin(latRad);
-    qreal ratio = (distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000.0));
+    qreal ratio = (distance / (QLocationUtils::earthMeanRadius()));
     qreal cosRatio = std::cos(ratio);
     qreal sinRatio = std::sin(ratio);
     qreal sinLatRad_x_cosRatio = sinLatRad * cosRatio;
     qreal cosLatRad_x_sinRatio = cosLatRad * sinRatio;
-    int idx = 0;
+
     for (int i = 0; i < steps; ++i) {
         qreal azimuthRad = 2 * M_PI * i / steps;
         qreal resultLatRad = std::asin(sinLatRad_x_cosRatio
                                    + cosLatRad_x_sinRatio * std::cos(azimuthRad));
         qreal resultLonRad = lonRad + std::atan2(std::sin(azimuthRad) * cosLatRad_x_sinRatio,
                                        cosRatio - sinLatRad * std::sin(resultLatRad));
-        qreal lat2 = qgeocoordinate_radToDeg(resultLatRad);
-        qreal lon2 = QLocationUtils::wrapLong(qgeocoordinate_radToDeg(resultLonRad));
+        qreal lat2 = QLocationUtils::degrees(resultLatRad);
+        qreal lon2 = QLocationUtils::wrapLong(QLocationUtils::degrees(resultLonRad));
 
         path << QGeoCoordinate(lat2, lon2, center.altitude());
-        // Consider only points in the left half of the circle for the left bound.
-        if (azimuthRad > M_PI) {
-            if (lon2 > centerLon) // if point and center are on different hemispheres
-                lon2 -= 360;
-            if (lon2 < minLon) {
-                minLon = lon2;
-                idx = i;
-            }
-        }
     }
-    leftBound = path.at(idx);
 }
 
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
@@ -476,37 +530,71 @@ void QDeclarativeCircleMapItem::updatePolish()
 
     if (geometry_.isSourceDirty()) {
         circlePath_.clear();
-        calculatePeripheralPoints(circlePath_, center_, radius_, CircleSamples, geoLeftBound_);
+        calculatePeripheralPoints(circlePath_, center_, radius_, CircleSamples);
+        geoLeftBound_ = QGeoCircle(center(), radius()).boundingGeoRectangle().topLeft();
     }
+
+    QList<QGeoCoordinate> originalCirclePath = circlePath_;
 
     int pathCount = circlePath_.size();
     bool preserve = preserveCircleGeometry(circlePath_, center_, radius_);
+    geometry_.setPreserveGeometry(true, geoLeftBound_); // to set the geoLeftBound_
     geometry_.setPreserveGeometry(preserve, geoLeftBound_);
-    geometry_.updateSourcePoints(*map(), circlePath_);
-    if (crossEarthPole(center_, radius_) && circlePath_.size() == pathCount)
-        geometry_.updateScreenPointsInvert(*map()); // invert fill area for really huge circles
-    else geometry_.updateScreenPoints(*map());
+
+    bool invertedCircle = false;
+    if (crossEarthPole(center_, radius_) && circlePath_.size() == pathCount) {
+        geometry_.updateScreenPointsInvert(circlePath_, *map()); // invert fill area for really huge circles
+        invertedCircle = true;
+    } else {
+        geometry_.updateSourcePoints(*map(), circlePath_);
+        geometry_.updateScreenPoints(*map());
+    }
+
+    borderGeometry_.clear();
+    QList<QGeoMapItemGeometry *> geoms;
+    geoms << &geometry_;
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
         QList<QGeoCoordinate> closedPath = circlePath_;
         closedPath << closedPath.first();
+
+        QGeoCoordinate lb = geoLeftBound_;
+        if (invertedCircle) {
+            closedPath = originalCirclePath;
+            closedPath << closedPath.first();
+            std::reverse(closedPath.begin(), closedPath.end());
+
+            double circumferenceRadius = QLocationUtils::earthMeanDiameter() * 0.5 - radius();
+            QGeoCoordinate circumferenceCenter = QLocationUtils::antipodalPoint(center());
+            lb = QGeoCircle(circumferenceCenter, circumferenceRadius).boundingGeoRectangle().topLeft();
+        }
+
+        borderGeometry_.setPreserveGeometry(true, geoLeftBound_); // to set the geoLeftBound_
         borderGeometry_.setPreserveGeometry(preserve, geoLeftBound_);
-        borderGeometry_.updateSourcePoints(*map(), closedPath, geoLeftBound_);
-        borderGeometry_.updateScreenPoints(*map(), border_.width());
 
-        QList<QGeoMapItemGeometry *> geoms;
-        geoms << &geometry_ << &borderGeometry_;
-        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
+        // Use srcOrigin_ from fill geometry after clipping to ensure that translateToCommonOrigin won't fail.
+        const QGeoCoordinate &geometryOrigin = geometry_.origin();
 
-        setWidth(combined.width());
-        setHeight(combined.height());
-    } else {
-        borderGeometry_.clear();
-        setWidth(geometry_.screenBoundingBox().width());
-        setHeight(geometry_.screenBoundingBox().height());
+        borderGeometry_.srcPoints_.clear();
+        borderGeometry_.srcPointTypes_.clear();
+
+        QDoubleVector2D borderLeftBoundWrapped;
+        QList<QList<QDoubleVector2D > > clippedPaths = borderGeometry_.clipPath(*map(), closedPath, borderLeftBoundWrapped);
+        if (clippedPaths.size()) {
+            borderLeftBoundWrapped = map()->geoProjection().geoToWrappedMapProjection(geometryOrigin);
+            borderGeometry_.pathToScreen(*map(), clippedPaths, borderLeftBoundWrapped);
+            borderGeometry_.updateScreenPoints(*map(), border_.width());
+            geoms << &borderGeometry_;
+        } else {
+            borderGeometry_.clear();
+        }
     }
 
-    setPositionOnMap(geoLeftBound_, geometry_.firstPointOffset());
+    QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
+    setWidth(combined.width());
+    setHeight(combined.height());
+
+    setPositionOnMap(geometry_.origin(), geometry_.firstPointOffset());
 }
 
 /*!
@@ -517,25 +605,8 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
     if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
         return;
 
-    // if the scene is tilted, we must regenerate our geometry every frame
-    if ((event.cameraData.tilt() > 0.0 || event.tiltChanged) && map()->cameraCapabilities().supportsTilting()) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-    }
-
-    // otherwise, only regen on rotate, resize and zoom
-    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-    }
-
-    if (event.centerChanged && crossEarthPole(center_, radius_)) {
-        geometry_.markSourceDirty();
-        borderGeometry_.markSourceDirty();
-    }
-
-    geometry_.markScreenDirty();
-    borderGeometry_.markScreenDirty();
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     polishAndUpdate();
 }
 
@@ -578,8 +649,23 @@ bool QDeclarativeCircleMapItem::preserveCircleGeometry (QList<QGeoCoordinate> &p
 
 }
 
-
-// A workaround for circle path to be drawn correctly using a polygon geometry
+/*
+ * A workaround for circle path to be drawn correctly using a polygon geometry
+ * This method generates a polygon like
+ *  _____________
+ *  |           |
+ *   \         /
+ *    |       |
+ *   /         \
+ *  |           |
+ *  -------------
+ *
+ * or a polygon like
+ *
+ *  ______________
+ *  |    ____    |
+ *   \__/    \__/
+ */
 void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QGeoCoordinate> &path,
                                                              const QGeoCoordinate &center,
                                                              qreal distance)
@@ -589,24 +675,24 @@ void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QGeoCoordinat
     qreal distanceToSouthPole = center.distanceTo(QGeoCoordinate(-poleLat, 0));
     bool crossNorthPole = distanceToNorthPole < distance;
     bool crossSouthPole = distanceToSouthPole < distance;
-    if (!crossNorthPole && !crossSouthPole)
-        return;
+
     QList<int> wrapPathIndex;
-    // calculate actual width of map on screen in pixels
-    QDoubleVector2D midPoint = map()->geoProjection().coordinateToItemPosition(map()->cameraData().center(), false);
-    QDoubleVector2D midPointPlusOne(midPoint.x() + 1.0, midPoint.y());
-    QGeoCoordinate coord1 = map()->geoProjection().itemPositionToCoordinate(midPointPlusOne, false);
-    qreal geoDistance = coord1.longitude() - map()->cameraData().center().longitude();
-    if ( geoDistance < 0 )
-        geoDistance += 360;
-    qreal mapWidth = 360.0 / geoDistance;
-    mapWidth = qMin(static_cast<int>(mapWidth), map()->viewportWidth());
-    QDoubleVector2D prev = map()->geoProjection().coordinateToItemPosition(path.at(0), false);
+    QDoubleVector2D prev = map()->geoProjection().wrapMapProjection(map()->geoProjection().geoToMapProjection(path.at(0)));
+
+    for (int i = 1; i <= path.count(); ++i) {
+        int index = i % path.count();
+        QDoubleVector2D point = map()->geoProjection().wrapMapProjection(map()->geoProjection().geoToMapProjection(path.at(index)));
+        double diff = qAbs(point.x() - prev.x());
+        if (diff > 0.5) {
+            continue;
+        }
+    }
+
     // find the points in path where wrapping occurs
     for (int i = 1; i <= path.count(); ++i) {
         int index = i % path.count();
-        QDoubleVector2D point = map()->geoProjection().coordinateToItemPosition(path.at(index), false);
-        if ( (qAbs(point.x() - prev.x())) >= mapWidth/2.0 ) {
+        QDoubleVector2D point = map()->geoProjection().wrapMapProjection(map()->geoProjection().geoToMapProjection(path.at(index)));
+        if ( (qAbs(point.x() - prev.x())) >= 0.5 ) { // TODO: Add a projectionWidth to GeoProjection, perhaps?
             wrapPathIndex << index;
             if (wrapPathIndex.size() == 2 || !(crossNorthPole && crossSouthPole))
                 break;

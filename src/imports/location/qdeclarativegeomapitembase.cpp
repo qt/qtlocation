@@ -177,7 +177,12 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate &coordina
     if (!map_ || !quickMap_)
         return;
 
-    QPointF topLeft = map_->geoProjection().coordinateToItemPosition(coordinate, false).toPointF() - offset;
+    QDoubleVector2D wrappedProjection = map_->geoProjection().geoToWrappedMapProjection(coordinate);
+    if (! map_->geoProjection().isProjectable(wrappedProjection))
+        return;
+
+    QDoubleVector2D pos = map_->geoProjection().wrappedMapProjectionToItemPosition(wrappedProjection);
+    QPointF topLeft = pos.toPointF() - offset;
 
     setPosition(topLeft);
 }

@@ -4,6 +4,9 @@ INCLUDEPATH += ../../location
 INCLUDEPATH += ../../location/maps
 INCLUDEPATH += ../../positioning
 INCLUDEPATH += ../positioning
+INCLUDEPATH += ../../3rdparty/clip2tri
+INCLUDEPATH += ../../3rdparty/clipper
+INCLUDEPATH += ../../3rdparty/poly2tri
 INCLUDEPATH *= $$PWD
 
 HEADERS += \

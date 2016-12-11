@@ -51,22 +51,11 @@
 #include "qdeclarativegeomapitembase_p.h"
 #include "qgeomapitemgeometry_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
+#include "qdeclarativepolygonmapitem_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
-
-class QGeoMapRectangleGeometry : public QGeoMapItemGeometry
-{
-public:
-    QGeoMapRectangleGeometry();
-
-    void updatePoints(const QGeoMap &map,
-                      const QGeoCoordinate &topLeft,
-                      const QGeoCoordinate &bottomRight);
-};
-
-class MapRectangleNode;
 
 class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 {
@@ -117,7 +106,7 @@ private:
     QDeclarativeMapLineProperties border_;
     QColor color_;
     bool dirtyMaterial_;
-    QGeoMapRectangleGeometry geometry_;
+    QGeoMapPolygonGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;
     bool updatingGeometry_;
 };

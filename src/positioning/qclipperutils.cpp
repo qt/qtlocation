@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -36,42 +36,65 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QWEBMERCATOR_P_H
-#define QWEBMERCATOR_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <qglobal.h>
-#include <QtCore/qvariant.h>
-#include <math.h>
-#include "qpositioningglobal_p.h"
+#include "qclipperutils_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QDoubleVector2D;
+static const double kClipperScaleFactor = 281474976710656.0;  // 48 bits of precision
+static const double kClipperScaleFactorInv = 1.0 / kClipperScaleFactor;
 
-class Q_POSITIONING_PRIVATE_EXPORT QWebMercator
+double QClipperUtils::clipperScaleFactor()
 {
-public:
-    static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
-    static QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator);
-    static QGeoCoordinate mercatorToCoordClamped(const QDoubleVector2D &mercator);
-    static QGeoCoordinate coordinateInterpolation(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress);
+    return kClipperScaleFactor;
+}
 
-private:
-    static double realmod(const double a, const double b);
-};
+QDoubleVector2D QClipperUtils::toVector2D(const IntPoint &p)
+{
+    return QDoubleVector2D(double(p.X) * kClipperScaleFactorInv, double(p.Y) * kClipperScaleFactorInv);
+}
+
+IntPoint QClipperUtils::toIntPoint(const QDoubleVector2D &p)
+{
+    return IntPoint(cInt(p.x() * kClipperScaleFactor), cInt(p.y() * kClipperScaleFactor));
+}
+
+QList<QDoubleVector2D> QClipperUtils::pathToQList(const Path &path)
+{
+    QList<QDoubleVector2D> res;
+    res.reserve(path.size());
+    for (const IntPoint &ip: path)
+        res.append(toVector2D(ip));
+    return res;
+}
+
+QList<QList<QDoubleVector2D> > QClipperUtils::pathsToQList(const Paths &paths)
+{
+    QList<QList<QDoubleVector2D> > res;
+    res.reserve(paths.size());
+    for (const Path &p: paths) {
+        res.append(pathToQList(p));
+    }
+    return res;
+}
+
+Path QClipperUtils::qListToPath(const QList<QDoubleVector2D> &list)
+{
+    Path res;
+    res.reserve(list.size());
+    for (const QDoubleVector2D &p: list)
+        res.push_back(toIntPoint(p));
+    return res;
+}
+
+Paths QClipperUtils::qListToPaths(const QList<QList<QDoubleVector2D> > &lists)
+{
+    Paths res;
+    res.reserve(lists.size());
+    for (const QList<QDoubleVector2D> &l: lists) {
+        res.push_back(qListToPath(l));
+    }
+    return res;
+}
 
 QT_END_NAMESPACE
-
-#endif // QWEBMERCATOR_P_H

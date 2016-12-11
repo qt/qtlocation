@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the QtPositioning module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -36,8 +36,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QWEBMERCATOR_P_H
-#define QWEBMERCATOR_P_H
+#ifndef QCLIPPERUTILS_P_H
+#define QCLIPPERUTILS_P_H
 
 //
 //  W A R N I N G
@@ -50,28 +50,37 @@
 // We mean it.
 //
 
-#include <qglobal.h>
-#include <QtCore/qvariant.h>
-#include <math.h>
-#include "qpositioningglobal_p.h"
+/*
+ * This file is intended to be include only in source files of
+ * QtPositioning/QtLocation. It is in QtPositioning to enable manipulation
+ * of geo polygons
+ */
+
+#include <QtPositioning/private/qpositioningglobal_p.h>
+#include <QtCore/QtGlobal>
+#include <QtCore/QList>
+#include <cmath>
+/* clip2tri triangulator includes */
+#include <clip2tri.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QDoubleVector2D;
-
-class Q_POSITIONING_PRIVATE_EXPORT QWebMercator
+class Q_POSITIONING_PRIVATE_EXPORT QClipperUtils
 {
 public:
-    static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
-    static QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator);
-    static QGeoCoordinate mercatorToCoordClamped(const QDoubleVector2D &mercator);
-    static QGeoCoordinate coordinateInterpolation(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress);
+    static double clipperScaleFactor();
 
-private:
-    static double realmod(const double a, const double b);
+    static QDoubleVector2D  toVector2D(const IntPoint &p);
+    static IntPoint         toIntPoint(const QDoubleVector2D &p);
+
+    static QList<QDoubleVector2D> pathToQList(const Path &path);
+    static QList<QList<QDoubleVector2D> > pathsToQList(const Paths &paths);
+
+    static Path  qListToPath(const QList<QDoubleVector2D> &list);
+    static Paths qListToPaths(const QList<QList<QDoubleVector2D> > &lists);
 };
 
 QT_END_NAMESPACE
 
-#endif // QWEBMERCATOR_P_H
+#endif // QCLIPPERUTILS_P_H
