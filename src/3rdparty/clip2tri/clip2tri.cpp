@@ -41,6 +41,8 @@ namespace c2t
 static const F32 CLIPPER_SCALE_FACT = 1000.0f;
 static const F32 CLIPPER_SCALE_FACT_INVERSE = 0.001f;
 
+static const F64 CLIPPER_SCALE_FACT_D = double(1<<31);
+static const F64 CLIPPER_SCALE_FACT_INVERSE_D = 1.0 / double(1<<31);
 
 /////////////////////////////////
 
@@ -81,6 +83,78 @@ void clip2tri::triangulate(const vector<vector<Point> > &inputPolygons, vector<P
 
    // This will downscale the Clipper output and use poly2tri to triangulate
    triangulateComplex(outputTriangles, bounds, solution);
+}
+
+IntPoint clip2tri::intPoint(double x, double y)
+{
+    return IntPoint(S64(x * CLIPPER_SCALE_FACT_D), S64(y * CLIPPER_SCALE_FACT_D));
+}
+
+PointD clip2tri::pointD(IntPoint p)
+{
+    return PointD(F64(p.X) * CLIPPER_SCALE_FACT_INVERSE_D, F64(p.Y) * CLIPPER_SCALE_FACT_INVERSE_D);
+}
+
+void clip2tri::addClipPolygon(const std::vector<IntPoint> &path)
+{
+    try  // prevent any exception to spill into Qt
+    {
+        if (path.front() != path.back())
+            return; // Clip polygons must be closed.
+        clipper.AddPath(path, ptClip, true);
+    }
+    catch(...)
+    {
+       printf("addClipPolygon: clipper.AddPath, something went wrong\n");
+    }
+}
+
+void clip2tri::addSubjectPath(const std::vector<IntPoint> &path, bool closed)
+{
+    try  // prevent any exception to spill into Qt
+    {
+        if (path.front() != path.back() && closed)
+            return; // Clip polygons must be closed.
+        clipper.AddPath(path, ptSubject, closed);
+    }
+    catch(...)
+    {
+       printf("addSubjectPath: clipper.AddPath, something went wrong\n");
+    }
+}
+
+void clip2tri::clearClipper()
+{
+    // clear doesn't throw
+    clipper.Clear();
+}
+
+Paths clip2tri::executeUnion(PolyFillType subjFillType, PolyFillType clipFillType)
+{
+    Paths solution;
+    try  // prevent any exception to spill into Qt
+    {
+        clipper.Execute(ctUnion, solution, subjFillType, subjFillType);
+    }
+    catch(...)
+    {
+       printf("executeUnion: clipper.Execute, something went wrong\n");
+    }
+    return solution;
+}
+
+Paths clip2tri::executeIntersection(PolyFillType subjFillType, PolyFillType clipFillType)
+{
+    Paths solution;
+    try  // prevent any exception to spill into Qt
+    {
+        clipper.Execute(ctIntersection, solution, subjFillType, subjFillType);
+    }
+    catch(...)
+    {
+       printf("executeIntersection: clipper.Execute, something went wrong\n");
+    }
+    return solution;
 }
 
 

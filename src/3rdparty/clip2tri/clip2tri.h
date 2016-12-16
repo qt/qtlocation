@@ -57,6 +57,17 @@ struct Point
    Point(T in_x, U in_y) { x = static_cast<F32>(in_x); y = static_cast<F32>(in_y); }
 };
 
+struct PointD
+{
+   F64 x;
+   F64 y;
+
+   PointD();
+   PointD(const PointD &pt);
+
+   template<class T, class U>
+   PointD(T in_x, U in_y) { x = static_cast<F64>(in_x); y = static_cast<F64>(in_y); }
+};
 
 class clip2tri
 {
@@ -79,6 +90,24 @@ public:
 
    void triangulate(const vector<vector<Point> > &inputPolygons, vector<Point> &outputTriangles,
          const vector<Point> &boundingPolygon);
+
+   inline static IntPoint intPoint(double x, double y);
+   inline static PointD   pointD(IntPoint p);
+
+   // Clip polygons MUST be closed. Meaning path[0] == path[path.size()-1]
+   void addClipPolygon(const std::vector<IntPoint> &path);
+   // Closed means the path has to be effectively closed. Meaning path[0] == path[path.size()-1]
+   void addSubjectPath(const std::vector<IntPoint> &path, bool closed);
+
+   void clearClipper();
+
+   Paths executeUnion(PolyFillType subjFillType = pftEvenOdd,
+                      PolyFillType clipFillType = pftEvenOdd);
+
+   Paths executeIntersection(PolyFillType subjFillType = pftEvenOdd,
+                             PolyFillType clipFillType = pftEvenOdd);
+
+   Clipper clipper;
 };
 
 } /* namespace c2t */
