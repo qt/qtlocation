@@ -48,7 +48,7 @@ Item {
     property alias postalCode: postalCode
     property alias street: street
     property alias city: city
-    property alias state: state
+    property alias stateName: stateName
     property alias country: country
     property alias cancelButton: cancelButton
     Rectangle {
@@ -119,7 +119,7 @@ Item {
             }
 
             TextField {
-                id: state
+                id: stateName
                 Layout.fillWidth: true
             }
 
