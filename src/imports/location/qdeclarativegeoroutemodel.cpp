@@ -197,7 +197,7 @@ void QDeclarativeGeoRouteModel::cancel()
 QDeclarativeGeoRoute *QDeclarativeGeoRouteModel::get(int index)
 {
     if (index < 0 || index >= routes_.count()) {
-        qmlInfo(this) << QStringLiteral("Index '%1' out of range").arg(index);
+        qmlWarning(this) << QStringLiteral("Index '%1' out of range").arg(index);
         return 0;
     }
     return routes_.at(index);
@@ -229,12 +229,12 @@ int QDeclarativeGeoRouteModel::rowCount(const QModelIndex &parent) const
 QVariant QDeclarativeGeoRouteModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
-        qmlInfo(this) << QStringLiteral("Error in indexing route model's data (invalid index).");
+        qmlWarning(this) << QStringLiteral("Error in indexing route model's data (invalid index).");
         return QVariant();
     }
 
     if (index.row() >= routes_.count()) {
-        qmlInfo(this) << QStringLiteral("Fatal error in indexing route model's data (index overflow).");
+        qmlWarning(this) << QStringLiteral("Fatal error in indexing route model's data (index overflow).");
         return QVariant();
     }
 
@@ -807,7 +807,7 @@ void QDeclarativeGeoRouteQuery::setWaypoints(const QJSValue &value)
         QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
 
         if (!ok || !c.isValid()) {
-            qmlInfo(this) << "Unsupported waypoint type";
+            qmlWarning(this) << "Unsupported waypoint type";
             return;
         }
 
@@ -863,7 +863,7 @@ void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
         QGeoRectangle r = parseRectangle(value.property(i), &ok);
 
         if (!ok || !r.isValid()) {
-            qmlInfo(this) << "Unsupported area type";
+            qmlWarning(this) << "Unsupported area type";
             return;
         }
 
@@ -926,7 +926,7 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(const QGeoRectangle &area)
 
     int index = excludedAreas.lastIndexOf(area);
     if (index == -1) {
-        qmlInfo(this) << QStringLiteral("Cannot remove nonexistent area.");
+        qmlWarning(this) << QStringLiteral("Cannot remove nonexistent area.");
         return;
     }
     excludedAreas.removeAt(index);
@@ -966,7 +966,7 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 void QDeclarativeGeoRouteQuery::addWaypoint(const QGeoCoordinate &waypoint)
 {
     if (!waypoint.isValid()) {
-        qmlInfo(this) << QStringLiteral("Not adding invalid waypoint.");
+        qmlWarning(this) << QStringLiteral("Not adding invalid waypoint.");
         return;
     }
 
@@ -995,7 +995,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(const QGeoCoordinate &waypoint)
 
     int index = waypoints.lastIndexOf(waypoint);
     if (index == -1) {
-        qmlInfo(this) << QStringLiteral("Cannot remove nonexistent waypoint.");
+        qmlWarning(this) << QStringLiteral("Cannot remove nonexistent waypoint.");
         return;
     }
 

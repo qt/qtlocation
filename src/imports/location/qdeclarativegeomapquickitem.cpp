@@ -224,11 +224,11 @@ void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
                     && sourceItem_.data() != i
                     && opacityContainer_ != i) {
                 if (!printedWarning) {
-                    qmlInfo(this) << "Use the sourceItem property for the contained item, direct children are not supported";
+                    qmlWarning(this) << "Use the sourceItem property for the contained item, direct children are not supported";
                     printedWarning = true;
                 }
 
-                qmlInfo(i) << "deleting this child";
+                qmlWarning(i) << "deleting this child";
                 i->deleteLater();
             }
         }

@@ -182,7 +182,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
             }
         }
 
-        qmlInfo(this) << "Could not find a plugin with the required features to attach to";
+        qmlWarning(this) << "Could not find a plugin with the required features to attach to";
     }
 }
 

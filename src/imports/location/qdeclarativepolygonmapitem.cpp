@@ -413,7 +413,7 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
         QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
 
         if (!ok || !c.isValid()) {
-            qmlInfo(this) << "Unsupported path type";
+            qmlWarning(this) << "Unsupported path type";
             return;
         }
 

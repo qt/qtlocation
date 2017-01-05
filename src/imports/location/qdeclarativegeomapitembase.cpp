@@ -102,11 +102,11 @@ void QDeclarativeGeoMapItemBase::afterChildrenChanged()
             if (i->flags() & QQuickItem::ItemHasContents
                     && !qobject_cast<QQuickMouseArea *>(i)) {
                 if (!printedWarning) {
-                    qmlInfo(this) << "Geographic map items do not support child items";
+                    qmlWarning(this) << "Geographic map items do not support child items";
                     printedWarning = true;
                 }
 
-                qmlInfo(i) << "deleting this child";
+                qmlWarning(i) << "deleting this child";
                 i->deleteLater();
             }
         }

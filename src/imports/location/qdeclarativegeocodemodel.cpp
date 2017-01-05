@@ -529,7 +529,7 @@ int QDeclarativeGeocodeModel::count() const
 QDeclarativeGeoLocation *QDeclarativeGeocodeModel::get(int index)
 {
     if (index < 0 || index >= declarativeLocations_.count()) {
-        qmlInfo(this) << QStringLiteral("Index '%1' out of range").arg(index);
+        qmlWarning(this) << QStringLiteral("Index '%1' out of range").arg(index);
         return 0;
     }
     return declarativeLocations_.at(index);
@@ -679,12 +679,12 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
             connect(address_, SIGNAL(streetChanged()), this, SLOT(queryContentChanged()));
             connect(address_, SIGNAL(postalCodeChanged()), this, SLOT(queryContentChanged()));
         } else {
-            qmlInfo(this) << QStringLiteral("Unsupported query type for geocode model ")
+            qmlWarning(this) << QStringLiteral("Unsupported query type for geocode model ")
                           << QStringLiteral("(coordinate, string and Address supported).");
             return;
         }
     } else {
-        qmlInfo(this) << QStringLiteral("Unsupported query type for geocode model ")
+        qmlWarning(this) << QStringLiteral("Unsupported query type for geocode model ")
                       << QStringLiteral("(coordinate, string and Address supported).");
         return;
     }

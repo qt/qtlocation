@@ -203,7 +203,7 @@ void QDeclarativePlaceIcon::pluginReady()
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
+        qmlWarning(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
                          .arg(m_plugin->name()).arg(serviceProvider->errorString());
         return;
     }
@@ -216,7 +216,7 @@ void QDeclarativePlaceIcon::pluginReady()
 QPlaceManager *QDeclarativePlaceIcon::manager() const
 {
     if (!m_plugin) {
-           qmlInfo(this) << QStringLiteral("Plugin is not assigned to place.");
+           qmlWarning(this) << QStringLiteral("Plugin is not assigned to place.");
            return 0;
     }
 

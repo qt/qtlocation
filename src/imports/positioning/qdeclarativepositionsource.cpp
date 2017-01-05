@@ -311,7 +311,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
                 QTimer::singleShot(0, this, SLOT(start()));
             }
         } else {
-            qmlInfo(this) << QStringLiteral("Nmea file not found") << localFileName;
+            qmlWarning(this) << QStringLiteral("Nmea file not found") << localFileName;
 #ifdef QDECLARATIVE_POSITION_DEBUG
             qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
 #endif

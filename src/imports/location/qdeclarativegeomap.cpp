@@ -516,7 +516,7 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (m_plugin) {
-        qmlInfo(this) << QStringLiteral("Plugin is a write-once property, and cannot be set again.");
+        qmlWarning(this) << QStringLiteral("Plugin is a write-once property, and cannot be set again.");
         return;
     }
     m_plugin = plugin;

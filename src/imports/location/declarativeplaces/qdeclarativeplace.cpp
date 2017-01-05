@@ -1182,7 +1182,7 @@ QPlaceManager *QDeclarativePlace::manager()
     }
 
     if (!m_plugin) {
-           qmlInfo(this) << QStringLiteral("Plugin is not assigned to place.");
+           qmlWarning(this) << QStringLiteral("Plugin is not assigned to place.");
            return 0;
     }
 
