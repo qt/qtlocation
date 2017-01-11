@@ -174,8 +174,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_pendingFitViewport(false),
         m_copyrightsVisible(true),
         m_maximumViewportLatitude(0.0),
-        m_initialized(false),
-        m_validRegion(false)
+        m_initialized(false)
 {
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -795,8 +794,6 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
         m_cameraData.setZoomLevel(zoomLevel);
     }
 
-    m_validRegion = false;
-
     if (centerHasChanged)
         emit centerChanged(m_cameraData.center());
     emit zoomLevelChanged(m_cameraData.zoomLevel());
@@ -1011,7 +1008,6 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
         m_cameraData.setCenter(center);
     }
 
-    m_validRegion = false;
     emit centerChanged(m_cameraData.center());
 }
 
@@ -1041,12 +1037,15 @@ QGeoCoordinate QDeclarativeGeoMap::center() const
 */
 void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
 {
-    if (shape == m_region && m_validRegion)
+    if (shape.boundingGeoRectangle() == visibleRegion())
         return;
 
-    m_region = shape;
-    if (!shape.isValid()) {
+    m_visibleRegion = shape.boundingGeoRectangle();
+    if (!m_visibleRegion.isValid()
+        || (m_visibleRegion.bottomRight().latitude() >= 85.0) // rect entirely outside web mercator
+        || (m_visibleRegion.topLeft().latitude() <= -85.0)) {
         // shape invalidated -> nothing to fit anymore
+        m_visibleRegion = QGeoRectangle();
         m_pendingFitViewport = false;
         return;
     }
@@ -1062,7 +1061,7 @@ void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
 QGeoShape QDeclarativeGeoMap::visibleRegion() const
 {
     if (!m_map || !width() || !height())
-        return m_region;
+        return m_visibleRegion;
 
     QGeoCoordinate tl = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(0, 0));
     QGeoCoordinate br = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(width(), height()));
@@ -1121,86 +1120,17 @@ QColor QDeclarativeGeoMap::color() const
     return m_color;
 }
 
+// TODO: offer the possibility to specify the margins.
 void QDeclarativeGeoMap::fitViewportToGeoShape()
 {
-    int margins  = 10;
-    if (!m_map || width() <= margins || height() <= margins)
+    const int margins  = 10;
+    if (!m_map  || !m_visibleRegion.isValid() || width() <= margins || height() <= margins)
         return;
 
-    QGeoCoordinate topLeft;
-    QGeoCoordinate bottomRight;
-
-    switch (m_region.type()) {
-    case QGeoShape::RectangleType:
-    {
-        QGeoRectangle rect = m_region;
-        topLeft = rect.topLeft();
-        bottomRight = rect.bottomRight();
-        if (bottomRight.longitude() < topLeft.longitude())
-            bottomRight.setLongitude(bottomRight.longitude() + 360.0);
-
-        break;
-    }
-    case QGeoShape::CircleType:
-    {
-        const double pi = M_PI;
-        QGeoCircle circle = m_region;
-        QGeoCoordinate centerCoordinate = circle.center();
-
-        // calculate geo bounding box of the circle
-        // circle tangential points with meridians and the north pole create
-        // spherical triangle, we use spherical law of sines
-        // sin(lon_delta_in_rad)/sin(r_in_rad) =
-        // sin(alpha_in_rad)/sin(pi/2 - lat_in_rad), where:
-        // * lon_delta_in_rad - delta of longitudes of circle center
-        //   and tangential points
-        // * r_in_rad - angular radius of the circle
-        // * lat_in_rad - latitude of circle center
-        // * alpha_in_rad - angle between meridian and radius to the circle =>
-        //   this is tangential point => sin(alpha) = 1
-        // * lat_delta_in_rad - delta of latitudes of circle center and
-        //   latitude of points where great circle (going through circle
-        //   center) crosses circle and the pole
-
-        double r_in_rad = circle.radius() / EARTH_MEAN_RADIUS; // angular r
-        double lat_delta_in_deg = r_in_rad * 180 / pi;
-        double lon_delta_in_deg = std::asin(std::sin(r_in_rad) /
-               std::cos(centerCoordinate.latitude() * pi / 180)) * 180 / pi;
-
-        topLeft.setLatitude(centerCoordinate.latitude() + lat_delta_in_deg);
-        topLeft.setLongitude(centerCoordinate.longitude() - lon_delta_in_deg);
-        bottomRight.setLatitude(centerCoordinate.latitude()
-                                - lat_delta_in_deg);
-        bottomRight.setLongitude(centerCoordinate.longitude()
-                                 + lon_delta_in_deg);
-
-        // adjust if circle reaches poles => cross all meridians and
-        // fit into Mercator projection bounds
-        if (topLeft.latitude() > 90 || bottomRight.latitude() < -90) {
-            topLeft.setLatitude(qMin(topLeft.latitude(), 85.05113));
-            topLeft.setLongitude(-180.0);
-            bottomRight.setLatitude(qMax(bottomRight.latitude(),
-                                                 -85.05113));
-            bottomRight.setLongitude(180.0);
-        }
-        break;
-    }
-    case QGeoShape::UnknownType:
-        //Fallthrough to default
-    default:
-        return;
-    }
-
-    QDoubleVector2D topLeftPoint = m_map->geoProjection().geoToMapProjection(topLeft);
-    QDoubleVector2D bottomRightPoint = m_map->geoProjection().geoToMapProjection(bottomRight);
+    QDoubleVector2D topLeftPoint = m_map->geoProjection().geoToMapProjection(m_visibleRegion.topLeft());
+    QDoubleVector2D bottomRightPoint = m_map->geoProjection().geoToMapProjection(m_visibleRegion.bottomRight());
     if (bottomRightPoint.x() < topLeftPoint.x()) // crossing the dateline
         bottomRightPoint.setX(bottomRightPoint.x() + 1.0);
-
-
-    double bboxWidth = bottomRightPoint.x() - topLeftPoint.x();
-    double bboxHeight = bottomRightPoint.y() - topLeftPoint.y();
-    bboxWidth *= m_map->mapWidth();
-    bboxHeight *= m_map->mapHeight();
 
     // find center of the bounding box
     QDoubleVector2D center = (topLeftPoint + bottomRightPoint) * 0.5;
@@ -1211,16 +1141,17 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
     setCenter(centerCoordinate);
 
     // if the shape is empty we just change center position, not zoom
-    if (bboxHeight == 0 && bboxWidth == 0)
+    double bboxWidth  = (bottomRightPoint.x() - topLeftPoint.x()) * m_map->mapWidth();
+    double bboxHeight = (bottomRightPoint.y() - topLeftPoint.y()) * m_map->mapHeight();
+
+    if (bboxHeight == 0.0 && bboxWidth == 0.0)
         return;
 
     double zoomRatio = qMax(bboxWidth / (width() - margins),
                             bboxHeight / (height() - margins));
-    // fixme: use log2 with c++11
     zoomRatio = std::log(zoomRatio) / std::log(2.0);
     double newZoom = qMax<double>(minimumZoomLevel(), zoomLevel() - zoomRatio);
     setZoomLevel(newZoom);
-    m_validRegion = true;
 }
 
 

@@ -239,7 +239,7 @@ private:
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
     QString m_errorString;
     QGeoServiceProvider::Error m_error;
-    QGeoShape m_region;
+    QGeoRectangle m_visibleRegion;
     QColor m_color;
     QGeoCameraData m_cameraData;
     bool m_componentCompleted;
@@ -247,7 +247,6 @@ private:
     bool m_copyrightsVisible;
     double m_maximumViewportLatitude;
     bool m_initialized;
-    bool m_validRegion;
     QSet<QDeclarativeGeoMapParameter *> m_mapParameters;
 
     friend class QDeclarativeGeoMapItem;

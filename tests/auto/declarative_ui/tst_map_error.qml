@@ -192,10 +192,16 @@ Item {
         {
             map_no_plugin.visibleRegion = QtPositioning.circle(coordinate,1000)
             verify(map_no_plugin.center != coordinate)
-            verify(map_no_plugin.visibleRegion == QtPositioning.circle(coordinate,1000))
+            verify(map_no_plugin.visibleRegion.contains(coordinate.atDistanceAndAzimuth(1000,0)) == true)
+            verify(map_no_plugin.visibleRegion.contains(coordinate.atDistanceAndAzimuth(1000,90)) == true)
+            verify(map_no_plugin.visibleRegion.contains(coordinate.atDistanceAndAzimuth(1000,180)) == true)
+            verify(map_no_plugin.visibleRegion.contains(coordinate.atDistanceAndAzimuth(1000,270)) == true)
             map_error_plugin.visibleRegion = QtPositioning.circle(coordinate,1000)
             verify(map_error_plugin.center != coordinate)
-            verify(map_no_plugin.visibleRegion == QtPositioning.circle(coordinate,1000))
+            verify(map_error_plugin.visibleRegion.contains(coordinate.atDistanceAndAzimuth(1000,0)) == true)
+            verify(map_error_plugin.visibleRegion.contains(coordinate.atDistanceAndAzimuth(1000,90)) == true)
+            verify(map_error_plugin.visibleRegion.contains(coordinate.atDistanceAndAzimuth(1000,180)) == true)
+            verify(map_error_plugin.visibleRegion.contains(coordinate.atDistanceAndAzimuth(1000,270)) == true)
         }
 
         function test_map_activeMapType()
