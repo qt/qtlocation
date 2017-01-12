@@ -51,14 +51,10 @@
 //
 
 #include <QtCore/QtGlobal>
-#include <math.h>
+#include <math.h> // needed for non-std:: versions of functions
+#include <qmath.h>
 #include <QtPositioning/QGeoCoordinate>
 
-static const double M_PID     = 3.14159265358979323846264338327950288; // to get more precision than float
-static const double M_1_180D  = 0.0055555555555555555555555555555555555555556;
-static const double M_1_PID   = 1.0 / M_PID;
-static const double M_PI_180D = M_PID / 180.0; //0.0174532925199432954743716805978692718781530857086181640625;
-static const double M_180_PID = 180.0 / M_PID; // 57.29577951308232286464772187173366546630859375
 static const double offsetEpsilon = 0.0000000000001;
 static const double leftOffset = -180.0 + offsetEpsilon;
 static const double rightOffset = 180.0 - offsetEpsilon;
@@ -209,12 +205,12 @@ public:
 
     inline static double radians(double degrees)
     {
-        return degrees * M_PI_180D;
+        return qDegreesToRadians(degrees);
     }
 
     inline static double degrees(double radians)
     {
-        return radians * M_180_PID;
+        return qRadiansToDegrees(radians);
     }
 
     inline static double earthMeanRadius()
@@ -224,7 +220,7 @@ public:
 
     inline static double earthMeanDiameter()
     {
-        return earthMeanRadius() * 2.0 * M_PID;
+        return earthMeanRadius() * 2.0 * M_PI;
     }
 
     inline static double mercatorMaxLatitude()

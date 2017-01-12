@@ -40,7 +40,7 @@
 #include "qwebmercator_p.h"
 #include <QtLocation/private/qgeomap_p.h>
 
-#include <cmath>
+#include <qmath.h>
 #include <algorithm>
 
 #include <QtCore/QScopedValueRollback>
@@ -127,11 +127,6 @@ QT_BEGIN_NAMESPACE
 
     \image api-mapcircle.png
 */
-
-#ifdef M_PI
-#undef M_PI
-#endif
-#define M_PI 3.14159265358979323846264338327950288
 
 static const int CircleSamples = 128;
 

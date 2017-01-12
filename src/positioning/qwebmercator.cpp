@@ -41,8 +41,7 @@
 #include "qgeocoordinate.h"
 
 #include <qnumeric.h>
-
-#include <cmath>
+#include <qmath.h>
 
 #include "qdoublevector2d_p.h"
 #include "qdoublevector3d_p.h"
@@ -111,7 +110,7 @@ QGeoCoordinate QWebMercator::mercatorToCoordClamped(const QDoubleVector2D &merca
     else if (fy > 1.0)
         fy = 1.0;
 
-    double lat = (180.0 / M_PI) * (2.0 * std::atan(std::exp(M_PI * (1.0 - 2.0 * fy))) - (M_PI / 2.0));
+    double lat = qRadiansToDegrees(2.0 * std::atan(std::exp(M_PI * (1.0 - 2.0 * fy))) - (M_PI / 2.0));
 
     double lng;
     if (fx >= 0) {

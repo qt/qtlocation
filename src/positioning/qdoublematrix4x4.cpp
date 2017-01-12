@@ -508,7 +508,7 @@ void QDoubleMatrix4x4::rotate(double angle, double x, double y, double z)
         s = 0.0;
         c = -1.0;
     } else {
-        double a = angle * M_PI / 180.0;
+        double a = qDegreesToRadians(angle);
         c = std::cos(a);
         s = std::sin(a);
     }
@@ -614,7 +614,7 @@ void QDoubleMatrix4x4::projectedRotate(double angle, double x, double y, double 
         s = 0.0;
         c = -1.0;
     } else {
-        double a = angle * M_PI / 180.0;
+        double a = qDegreesToRadians(angle);
         c = std::cos(a);
         s = std::sin(a);
     }
@@ -778,7 +778,7 @@ void QDoubleMatrix4x4::perspective(double verticalAngle, double aspectRatio, dou
 
     // Construct the projection.
     QDoubleMatrix4x4 m(1);
-    double radians = (verticalAngle / 2.0) * M_PI / 180.0;
+    double radians = qDegreesToRadians(verticalAngle / 2.0);
     double sine = std::sin(radians);
     if (sine == 0.0)
         return;
