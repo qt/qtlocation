@@ -97,11 +97,11 @@ public:
         return lng >= -180.0 && lng <= 180.0;
     }
 
-    inline static double clipLat(double lat) {
-        if (lat > 90.0)
-            lat = 90.0;
-        else if (lat < -90.0)
-            lat = -90.0;
+    inline static double clipLat(double lat, double clipValue = 90.0) {
+        if (lat > clipValue)
+            lat = clipValue;
+        else if (lat < -clipValue)
+            lat = -clipValue;
         return lat;
     }
 

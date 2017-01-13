@@ -183,6 +183,7 @@ private:
     double           m_farPlane;
     double           m_halfWidth;
     double           m_halfHeight;
+    double           m_minimumUnprojectableY;
 
     // For the clipping region
     QDoubleVector3D  m_centerMercator;

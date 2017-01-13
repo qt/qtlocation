@@ -48,8 +48,12 @@
 #include <QPropertyAnimation>
 #include <QDebug>
 #include "math.h"
+#include <cmath>
 #include "qgeomap_p.h"
 #include "qdoublevector2d_p.h"
+#include "qlocationutils_p.h"
+#include <QtGui/QMatrix4x4>
+
 
 #define QML_MAP_FLICK_DEFAULTMAXVELOCITY 2500
 #define QML_MAP_FLICK_MINIMUMDECELERATION 500
@@ -62,6 +66,18 @@
 static const int FlickThreshold = 20;
 // Really slow flicks can be annoying.
 const qreal MinimumFlickVelocity = 75.0;
+
+// Returns the new map center after anchoring coordinate to anchorPoint on the screen
+// Approach: find the displacement in (wrapped) mercator space, and apply that to the center
+static QGeoCoordinate anchorCoordinateToPoint(QGeoMap &map, const QGeoCoordinate &coordinate, const QPointF &anchorPoint)
+{
+    QDoubleVector2D centerProj = map.geoProjection().geoToWrappedMapProjection(map.cameraData().center());
+    QDoubleVector2D coordProj  = map.geoProjection().geoToWrappedMapProjection(coordinate);
+
+    QDoubleVector2D anchorProj = map.geoProjection().itemPositionToWrappedMapProjection(QDoubleVector2D(anchorPoint));
+    // Y-clamping done in mercatorToCoord
+    return map.geoProjection().wrappedMapProjectionToGeo(centerProj + coordProj - anchorProj);
+}
 
 QT_BEGIN_NAMESPACE
 
@@ -194,13 +210,13 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlproperty bool QtLocation::MapGestureArea::pinchActive
 
-    This read-only property holds whether pinch gesture is active.
+    This read-only property holds whether the pinch gesture is active.
 */
 
 /*!
     \qmlproperty bool QtLocation::MapGestureArea::panActive
 
-    This read-only property holds whether pan gesture is active.
+    This read-only property holds whether the pan gesture is active.
 
     \note Change notifications for this property were introduced in Qt 5.5.
 */
@@ -459,8 +475,6 @@ bool QQuickGeoMapGestureArea::pinchEnabled() const
 */
 void QQuickGeoMapGestureArea::setPinchEnabled(bool enabled)
 {
-    if (enabled == m_pinch.m_enabled)
-        return;
     m_pinch.m_enabled = enabled;
 }
 
@@ -516,6 +530,7 @@ void QQuickGeoMapGestureArea::setFlickEnabled(bool enabled)
  */
 void QQuickGeoMapGestureArea::setMinimumZoomLevel(qreal min)
 {
+    // TODO: remove m_zoom.m_minimum and m_maximum and use m_declarativeMap directly instead.
     if (min >= 0)
         m_pinch.m_zoom.m_minimum = min;
 }
@@ -691,22 +706,16 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
     if (!m_map)
         return;
 
-    QGeoCoordinate wheelGeoPos = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
-    QPointF preZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
+    const QGeoCoordinate &wheelGeoPos = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
+    const QPointF &preZoomPoint = event->posF();
 
-    double zoomLevelDelta = event->angleDelta().y() * qreal(0.001);
+    const double zoomLevelDelta = event->angleDelta().y() * qreal(0.001);
     m_declarativeMap->setZoomLevel(m_declarativeMap->zoomLevel() + zoomLevelDelta);
-    QPointF postZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
+    const QPointF &postZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
-    if (preZoomPoint != postZoomPoint)
-    {
-        qreal dx = postZoomPoint.x() - preZoomPoint.x();
-        qreal dy = postZoomPoint.y() - preZoomPoint.y();
-        QPointF mapCenterPoint(m_map->viewportWidth() / 2.0 + dx, m_map->viewportHeight() / 2.0  + dy);
+    if (preZoomPoint != postZoomPoint) // need to re-anchor the wheel geoPos to the event position
+          m_declarativeMap->setCenter(anchorCoordinateToPoint(*m_map, wheelGeoPos, preZoomPoint));
 
-        QGeoCoordinate mapCenterCoordinate = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
-        m_declarativeMap->setCenter(mapCenterCoordinate);
-    }
     event->accept();
 }
 
@@ -1145,13 +1154,7 @@ bool QQuickGeoMapGestureArea::canStartPan()
 */
 void QQuickGeoMapGestureArea::updatePan()
 {
-    QPointF startPoint = m_map->geoProjection().coordinateToItemPosition(m_startCoord, false).toPointF();
-    int dx = static_cast<int>(m_sceneCenter.x() - startPoint.x());
-    int dy = static_cast<int>(m_sceneCenter.y() - startPoint.y());
-    QPointF mapCenterPoint;
-    mapCenterPoint.setY(m_map->viewportHeight() / 2.0  - dy);
-    mapCenterPoint.setX(m_map->viewportWidth() / 2.0 - dx);
-    QGeoCoordinate animationStartCoordinate = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(mapCenterPoint), false);
+    QGeoCoordinate animationStartCoordinate = anchorCoordinateToPoint(*m_map, m_startCoord, m_sceneCenter);
     m_declarativeMap->setCenter(animationStartCoordinate);
 }
 
@@ -1214,28 +1217,23 @@ void QQuickGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
     QGeoCoordinate animationEndCoordinate = m_declarativeMap->center();
     m_flick.m_animation->setDuration(timeMs);
 
-    double zoom = pow(2.0, m_declarativeMap->zoomLevel());
-    double longitude = animationStartCoordinate.longitude() - (dx / zoom);
-    double latitude = animationStartCoordinate.latitude() + (dy / zoom);
+    QPointF delta(dx, dy);
+    QMatrix4x4 matBearing;
+    matBearing.rotate(m_map->cameraData().bearing(), 0, 0, 1);
+    delta = matBearing * delta;
 
-    if (dx > 0)
+    double zoom = pow(2.0, m_declarativeMap->zoomLevel());
+    double longitude = animationStartCoordinate.longitude() - (delta.x() / zoom);
+    double latitude = animationStartCoordinate.latitude() + (delta.y() / zoom);
+
+    if (delta.x() > 0)
         m_flick.m_animation->setDirection(QQuickGeoCoordinateAnimation::East);
     else
         m_flick.m_animation->setDirection(QQuickGeoCoordinateAnimation::West);
 
     //keep animation in correct bounds
-    if (latitude > 85.05113)
-        latitude = 85.05113;
-    else if (latitude < -85.05113)
-        latitude = -85.05113;
-
-    if (longitude > 180)
-        longitude = longitude - 360;
-    else if (longitude < -180)
-        longitude = longitude + 360;
-
-    animationEndCoordinate.setLongitude(longitude);
-    animationEndCoordinate.setLatitude(latitude);
+    animationEndCoordinate.setLongitude(QLocationUtils::wrapLong(longitude));
+    animationEndCoordinate.setLatitude(QLocationUtils::clipLat(latitude, QLocationUtils::mercatorMaxLatitude()));
 
     m_flick.m_animation->setFrom(animationStartCoordinate);
     m_flick.m_animation->setTo(animationEndCoordinate);

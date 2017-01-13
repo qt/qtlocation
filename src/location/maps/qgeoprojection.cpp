@@ -84,7 +84,8 @@ QGeoProjectionWebMercator::QGeoProjectionWebMercator()
       m_nearPlane(0.0),
       m_farPlane(0.0),
       m_halfWidth(0.0),
-      m_halfHeight(0.0)
+      m_halfHeight(0.0),
+      m_minimumUnprojectableY(0.0)
 {
 }
 
@@ -195,6 +196,9 @@ QDoubleVector2D QGeoProjectionWebMercator::wrappedMapProjectionToItemPosition(co
 QDoubleVector2D QGeoProjectionWebMercator::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
 {
     QDoubleVector2D pos = itemPosition;
+    // when the camera is tilted, picking a point above the horizon returns a coordinate behind the camera
+    if (pos.y() < m_minimumUnprojectableY)
+        pos.setY(m_minimumUnprojectableY);
     pos *= QDoubleVector2D(m_1_viewportWidth, m_1_viewportHeight);
     pos *= 2.0;
     pos -= QDoubleVector2D(1.0,1.0);
@@ -398,6 +402,8 @@ void QGeoProjectionWebMercator::setupCamera()
         maxHalfAperture = tan(QLocationUtils::radians(maxRayElevation));
         verticalEstateToSkip = 1.0 - maxHalfAperture / verticalAperture;
     }
+
+    m_minimumUnprojectableY = verticalEstateToSkip * 0.5 * m_viewportHeight; // verticalEstateToSkip is relative to half aperture
 
     QDoubleVector2D tl = viewportToWrappedMapProjection(QDoubleVector2D(-1, -1 + verticalEstateToSkip ));
     QDoubleVector2D tr = viewportToWrappedMapProjection(QDoubleVector2D( 1, -1 + verticalEstateToSkip ));
