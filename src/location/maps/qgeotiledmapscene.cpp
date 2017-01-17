@@ -43,7 +43,16 @@
 #include <QtCore/private/qobject_p.h>
 #include <QtQuick/QSGImageNode>
 #include <QtQuick/QQuickWindow>
+#include <QtGui/QVector3D>
 #include <cmath>
+#include <QtPositioning/private/qlocationutils_p.h>
+#include <QtPositioning/private/qdoublematrix4x4_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
+
+static QVector3D toVector3D(const QDoubleVector3D& in)
+{
+    return QVector3D(in.x(), in.y(), in.z());
+}
 
 QT_BEGIN_NAMESPACE
 
@@ -75,6 +84,7 @@ public:
     // the number of tiles in each direction for the whole map (earth) at the current zoom level.
     // it is 1<<zoomLevel
     int m_sideLength;
+    double m_mapEdgeSize;
 
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > m_textures;
 
@@ -85,31 +95,16 @@ public:
     int m_maxTileY;
     int m_tileXWrapsBelow; // the wrap point as a tile index
 
-    // cameraToScreen transform
-    double m_screenWidth; // in pixels
-    double m_screenHeight; // in pixels
     bool m_linearScaling;
 
     bool m_dropTextures;
 
     void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
-    QDoubleVector2D itemPositionToMercator(const QDoubleVector2D &pos) const;
-    QDoubleVector2D mercatorToItemPosition(const QDoubleVector2D &mercator) const;
-
-    QDoubleVector2D geoToMapProjection(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate mapProjectionToGeo(const QDoubleVector2D &projection) const;
-
-    QDoubleVector2D wrapMapProjection(const QDoubleVector2D &projection) const;
-    QDoubleVector2D unwrapMapProjection(const QDoubleVector2D &wrappedProjection) const;
-
-    QDoubleVector2D wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const;
-    QDoubleVector2D itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
-
-    void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
+    void setVisibleTiles(const QSet<QGeoTileSpec> &visibleTiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
     bool buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode);
-    void setTileBounds(const QSet<QGeoTileSpec> &tiles);
+    void updateTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
     inline bool isTiltedOrRotated() { return (m_cameraData.tilt() > 0.0) || (m_cameraData.bearing() > 0.0); }
 };
@@ -143,6 +138,7 @@ void QGeoTiledMapScene::setCameraData(const QGeoCameraData &cameraData)
     float delta = cameraData.zoomLevel() - d->m_intZoomLevel;
     d->m_linearScaling = qAbs(delta) > 0.05 || d->isTiltedOrRotated();
     d->m_sideLength = 1 << d->m_intZoomLevel;
+    d->m_mapEdgeSize = std::pow(2.0, cameraData.zoomLevel()) * d->m_tileSize;
 }
 
 void QGeoTiledMapScene::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
@@ -191,8 +187,6 @@ QGeoTiledMapScenePrivate::QGeoTiledMapScenePrivate()
       m_maxTileX(-1),
       m_maxTileY(-1),
       m_tileXWrapsBelow(0),
-      m_screenWidth(0.0),
-      m_screenHeight(0.0),
       m_linearScaling(false),
       m_dropTextures(false)
 {
@@ -245,19 +239,19 @@ void QGeoTiledMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<
     m_textures.insert(spec, texture);
 }
 
-void QGeoTiledMapScenePrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
+void QGeoTiledMapScenePrivate::setVisibleTiles(const QSet<QGeoTileSpec> &visibleTiles)
 {
     // work out the tile bounds for the new scene
-    setTileBounds(tiles);
+    updateTileBounds(visibleTiles);
 
     // set up the gl camera for the new scene
     setupCamera();
 
-    QSet<QGeoTileSpec> toRemove = m_visibleTiles - tiles;
+    QSet<QGeoTileSpec> toRemove = m_visibleTiles - visibleTiles;
     if (!toRemove.isEmpty())
         removeTiles(toRemove);
 
-    m_visibleTiles = tiles;
+    m_visibleTiles = visibleTiles;
 }
 
 void QGeoTiledMapScenePrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)
@@ -272,7 +266,7 @@ void QGeoTiledMapScenePrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)
     }
 }
 
-void QGeoTiledMapScenePrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
+void QGeoTiledMapScenePrivate::updateTileBounds(const QSet<QGeoTileSpec> &tiles)
 {
     if (tiles.isEmpty()) {
         m_minTileX = -1;
@@ -354,26 +348,24 @@ void QGeoTiledMapScenePrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
 
 void QGeoTiledMapScenePrivate::setupCamera()
 {
+    // NOTE: The following instruction is correct only because WebMercator is a square projection!
     double f = 1.0 * qMin(m_screenSize.width(), m_screenSize.height());
 
-    // fraction of zoom level
+    // Using fraction of zoom level, z varies between [ m_tileSize , 2 * m_tileSize [
     double z = std::pow(2.0, m_cameraData.zoomLevel() - m_intZoomLevel) * m_tileSize;
 
-    // Maps smaller than screen size are NOT supported. But we can't simply return here, as this call
-    // might be invoked also before a valid zoom level is set.
-
     // calculate altitude that allows the visible map tiles
-    // to fit in the screen correctly (note that a larger f would cause
-    // the camera be higher, resulting in empty areas displayed around
-    // the tiles or repeated tiles)
-    double altitude = f / (2.0 * z) ;
+    // to fit in the screen correctly (note that a larger f will cause
+    // the camera be higher, resulting in gray areas displayed around
+    // the tiles)
+    double altitude = f / (2.0 * z);
 
     // calculate center
     double edge = m_scaleFactor * m_tileSize;
 
     // first calculate the camera center in map space in the range of 0 <-> sideLength (2^z)
     QDoubleVector2D camCenterMercator = QWebMercator::coordToMercator(m_cameraData.center());
-    QDoubleVector3D center = m_sideLength * camCenterMercator;
+    QDoubleVector3D center = (m_sideLength * camCenterMercator);
 
     // wrap the center if necessary (due to dateline crossing)
     if (center.x() < m_tileXWrapsBelow)
@@ -383,16 +375,15 @@ void QGeoTiledMapScenePrivate::setupCamera()
     center.setX(center.x() - 1.0 * m_minTileX);
     center.setY(1.0 * m_minTileY - center.y());
 
-    m_screenHeight = m_screenSize.height();
-    m_screenWidth = m_screenSize.width();
-
     // apply necessary scaling to the camera center
     center *= edge;
 
     // calculate eye
-
+    double apertureSize = 1.0;
+    if (m_cameraData.fieldOfView() != 90.0) //aperture(90 / 2) = 1
+        apertureSize = tan(QLocationUtils::radians(m_cameraData.fieldOfView()) * 0.5);
     QDoubleVector3D eye = center;
-    eye.setZ(altitude * edge);
+    eye.setZ(altitude * edge / apertureSize);
 
     // calculate up
 
@@ -400,19 +391,24 @@ void QGeoTiledMapScenePrivate::setupCamera()
     QDoubleVector3D side = QDoubleVector3D::normal(view, QDoubleVector3D(0.0, 1.0, 0.0));
     QDoubleVector3D up = QDoubleVector3D::normal(side, view);
 
-    // old bearing, tilt and roll code
-    //    QMatrix4x4 mBearing;
-    //    mBearing.rotate(-1.0 * camera.bearing(), view);
-    //    up = mBearing * up;
+    // old bearing, tilt and roll code.
+    // Now using double matrices until distilling the transformation to QMatrix4x4
+    QDoubleMatrix4x4 mBearing;
+    // -1.0 * bearing removed, now map north goes in the bearing direction
+    mBearing.rotate(-1.0 * m_cameraData.bearing(), view);
+    up = mBearing * up;
 
-    //    QDoubleVector3D side2 = QDoubleVector3D::normal(up, view);
-    //    QMatrix4x4 mTilt;
-    //    mTilt.rotate(camera.tilt(), side2);
-    //    eye = (mTilt * view) + center;
+    QDoubleVector3D side2 = QDoubleVector3D::normal(up, view);
+    if (m_cameraData.tilt() > 0.01) {
+        QDoubleMatrix4x4 mTilt;
+        mTilt.rotate(m_cameraData.tilt(), side2);
+        eye = mTilt * view + center;
+    }
 
-    //    view = eye - center;
-    //    side = QDoubleVector3D::normal(view, QDoubleVector3D(0.0, 1.0, 0.0));
-    //    up = QDoubleVector3D::normal(view, side2);
+    view = eye - center;
+    view.normalize();
+    side = QDoubleVector3D::normal(view, QDoubleVector3D(0.0, 1.0, 0.0));
+    up = QDoubleVector3D::normal(view, side2);
 
     //    QMatrix4x4 mRoll;
     //    mRoll.rotate(camera.roll(), view);
@@ -421,15 +417,19 @@ void QGeoTiledMapScenePrivate::setupCamera()
     // near plane and far plane
 
     double nearPlane = 1.0;
-    double farPlane = (altitude + 1.0) * edge;
+    // Clip plane. Used to be (altitude + 1.0) * edge. This does not affect the perspective. minimum value would be > 0.0
+    // Since, for some reasons possibly related to how QSG works, this clipping plane is unable to clip part of tiles,
+    // Instead of farPlane =  (altitude + m_cameraData.clipDistance()) * edge , we use a fixed large clipDistance, and
+    // leave the clipping only in QGeoCameraTiles::createFrustum
+    double farPlane =  (altitude + 10000.0) * edge;
 
     m_cameraUp = up;
     m_cameraCenter = center;
     m_cameraEye = eye;
 
     double aspectRatio = 1.0 * m_screenSize.width() / m_screenSize.height();
-    float halfWidth = 1;
-    float halfHeight = 1;
+    float halfWidth = 1 * apertureSize;
+    float halfHeight = 1 * apertureSize;
     if (aspectRatio > 1.0) {
         halfWidth *= aspectRatio;
     } else if (aspectRatio > 0.0f && aspectRatio < 1.0f) {
@@ -503,14 +503,33 @@ public:
     QHash<QGeoTileSpec, QSGTexture *> textures;
 };
 
-static bool qgeotiledmapscene_isTileInViewport(const QRectF &tileRect, const QMatrix4x4 &matrix) {
+static bool qgeotiledmapscene_isTileInViewport_Straight(const QRectF &tileRect, const QMatrix4x4 &matrix)
+{
     const QRectF boundingRect = QRectF(matrix * tileRect.topLeft(), matrix * tileRect.bottomRight());
     return QRectF(-1, -1, 2, 2).intersects(boundingRect);
 }
 
-static QVector3D toVector3D(const QDoubleVector3D& in)
+static bool qgeotiledmapscene_isTileInViewport_rotationTilt(const QRectF &tileRect, const QMatrix4x4 &matrix)
 {
-    return QVector3D(in.x(), in.y(), in.z());
+    // Transformed corners
+    const QPointF tlt = matrix * tileRect.topLeft();
+    const QPointF trt = matrix * tileRect.topRight();
+    const QPointF blt = matrix * tileRect.bottomLeft();
+    const QPointF brt = matrix * tileRect.bottomRight();
+
+    const QRectF boundingRect = QRectF(QPointF(qMin(qMin(qMin(tlt.x(), trt.x()), blt.x()), brt.x())
+                                              ,qMax(qMax(qMax(tlt.y(), trt.y()), blt.y()), brt.y()))
+                                      ,QPointF(qMax(qMax(qMax(tlt.x(), trt.x()), blt.x()), brt.x())
+                                              ,qMin(qMin(qMin(tlt.y(), trt.y()), blt.y()), brt.y()))
+                                       );
+    return QRectF(-1, -1, 2, 2).intersects(boundingRect);
+}
+
+static bool qgeotiledmapscene_isTileInViewport(const QRectF &tileRect, const QMatrix4x4 &matrix, const bool straight)
+{
+    if (straight)
+        return qgeotiledmapscene_isTileInViewport_Straight(tileRect, matrix);
+    return qgeotiledmapscene_isTileInViewport_rotationTilt(tileRect, matrix);
 }
 
 void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
@@ -533,11 +552,13 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
 
     foreach (const QGeoTileSpec &s, toRemove)
         delete root->tiles.take(s);
+    bool straight = !d->isTiltedOrRotated();
 
     for (QHash<QGeoTileSpec, QSGImageNode *>::iterator it = root->tiles.begin();
          it != root->tiles.end(); ) {
         QSGImageNode *node = it.value();
-        bool ok = d->buildGeometry(it.key(), node) && qgeotiledmapscene_isTileInViewport(node->rect(), root->matrix());
+        bool ok = d->buildGeometry(it.key(), node)
+                && qgeotiledmapscene_isTileInViewport(node->rect(), root->matrix(), straight);
 
         QSGNode::DirtyState dirtyBits = 0;
 
@@ -567,7 +588,8 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         QSGImageNode *tileNode = window->createImageNode();
         // note: setTexture will update coordinates so do it here, before we buildGeometry
         tileNode->setTexture(textures.value(s));
-        if (d->buildGeometry(s, tileNode) && qgeotiledmapscene_isTileInViewport(tileNode->rect(), root->matrix())) {
+        if (d->buildGeometry(s, tileNode)
+                && qgeotiledmapscene_isTileInViewport(tileNode->rect(), root->matrix(), straight)) {
             if (tileNode->texture()->textureSize().width() > d->m_tileSize) {
                 tileNode->setFiltering(QSGTexture::Linear); // with mipmapping QSGTexture::Nearest generates artifacts
                 tileNode->setMipmapFiltering(QSGTexture::Linear);
@@ -596,7 +618,7 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
         mapRoot = new QGeoTiledMapRootNode();
 
     // Setting clip rect to fullscreen, as now the map can never be smaller than the viewport.
-    mapRoot->setClipRect(QRect(0, 0, d->m_screenWidth, d->m_screenHeight));
+    mapRoot->setClipRect(QRect(0, 0, w, h));
 
     QMatrix4x4 itemSpaceMatrix;
     itemSpaceMatrix.scale(w / 2, h / 2);

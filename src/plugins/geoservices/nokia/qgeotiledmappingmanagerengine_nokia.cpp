@@ -67,7 +67,12 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
 
     capabilities.setMinimumZoomLevel(0.0);
     capabilities.setMaximumZoomLevel(20.0);
-
+    capabilities.setSupportsBearing(true);
+    capabilities.setSupportsTilting(true);
+    capabilities.setMinimumTilt(0);
+    capabilities.setMaximumTilt(80);
+    capabilities.setMinimumFieldOfView(20.0);
+    capabilities.setMaximumFieldOfView(120.0);
     setCameraCapabilities(capabilities);
 
     setTileSize(QSize(256, 256));

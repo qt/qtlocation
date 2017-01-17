@@ -361,8 +361,8 @@ Item {
             compare(map.tilt, 0.0)
             compare(mapTiltBearing.bearing, 45.0)
             compare(mapTiltBearing.tilt, 25.0)
-            compare(mapTiltBearingHere.bearing, 0.0)
-            compare(mapTiltBearingHere.tilt, 0.0)
+            compare(mapTiltBearingHere.bearing, 45.0)
+            compare(mapTiltBearingHere.tilt, 25.0)
 
             mapTiltBearing.bearing = 0.0
             mapTiltBearing.tilt = 0.0
@@ -379,6 +379,10 @@ Item {
 
             mapTiltBearingHere.bearing = 45.0
             mapTiltBearingHere.tilt = 25.0
+            compare(mapTiltBearingHere.bearing, 45.0)
+            compare(mapTiltBearingHere.tilt, 25.0)
+            mapTiltBearingHere.bearing = 0.0
+            mapTiltBearingHere.tilt = 0.0
             compare(mapTiltBearingHere.bearing, 0.0)
             compare(mapTiltBearingHere.tilt, 0.0)
 
