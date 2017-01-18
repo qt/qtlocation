@@ -77,7 +77,7 @@ QGeoMapViewportChangeEvent &QGeoMapViewportChangeEvent::operator=(const QGeoMapV
 }
 
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
-:   QQuickItem(parent), map_(0), quickMap_(0)
+:   QQuickItem(parent), map_(0), quickMap_(0), geoGeometryDirty_(true), geoMaterialDirty_(true)
 {
     setFiltersChildMouseEvents(true);
     connect(this, SIGNAL(childrenChanged()),
@@ -221,8 +221,10 @@ bool QDeclarativeGeoMapItemBase::childMouseEventFilter(QQuickItem *item, QEvent 
 */
 QSGNode *QDeclarativeGeoMapItemBase::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *pd)
 {
-    if (!map_ || !quickMap_) {
-        delete oldNode;
+    if (!map_ || !quickMap_ || map_->supportedMapItemTypes() & itemType()) {
+        if (oldNode)
+            delete oldNode;
+        oldNode = 0;
         return 0;
     }
 
@@ -254,6 +256,26 @@ QSGNode *QDeclarativeGeoMapItemBase::updateMapItemPaintNode(QSGNode *oldNode, Up
     return 0;
 }
 
+bool QDeclarativeGeoMapItemBase::isDirty() const
+{
+    return geoGeometryDirty_ || geoMaterialDirty_;
+}
+
+bool QDeclarativeGeoMapItemBase::isGeoMaterialDirty() const
+{
+    return geoMaterialDirty_;
+}
+
+bool QDeclarativeGeoMapItemBase::isGeoGeometryDirty() const
+{
+    return geoGeometryDirty_;
+}
+
+void QDeclarativeGeoMapItemBase::markClean()
+{
+    geoGeometryDirty_ = geoMaterialDirty_ = false;
+}
+
 bool QDeclarativeGeoMapItemBase::isPolishScheduled() const
 {
     return QQuickItemPrivate::get(this)->polishScheduled;
@@ -264,7 +286,6 @@ void QDeclarativeGeoMapItemBase::polishAndUpdate()
     polish();
     update();
 }
-
 
 #include "moc_qdeclarativegeomapitembase_p.cpp"
 

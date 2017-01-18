@@ -192,6 +192,12 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
 {
+    // Removing map parameters and map items from m_map
+    if (m_map) {
+        m_map->clearParameters();
+        m_map->clearMapItems();
+    }
+
     if (!m_mapViews.isEmpty())
         qDeleteAll(m_mapViews);
     // remove any map items associations
@@ -660,8 +666,10 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     // Any map items that were added before the plugin was ready
     // need to have setMap called again
     foreach (const QPointer<QDeclarativeGeoMapItemBase> &item, m_mapItems) {
-        if (item)
-            item.data()->setMap(this, m_map);
+        if (item) {
+            item->setMap(this, m_map);
+            m_map->addMapItem(item.data()); // m_map filters out what is not supported.
+        }
     }
 
     // All map parameters that were added before the plugin was ready
@@ -1383,9 +1391,11 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
     if (!item || item->quickMap())
         return;
     item->setParentItem(this);
-    if (m_map)
-        item->setMap(this, m_map);
     m_mapItems.append(item);
+    if (m_map) {
+        item->setMap(this, m_map);
+        m_map->addMapItem(item);
+    }
     emit mapItemsChanged();
 }
 
@@ -1512,6 +1522,7 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 {
     if (!ptr || !m_map)
         return;
+    m_map->removeMapItem(ptr);
     QPointer<QDeclarativeGeoMapItemBase> item(ptr);
     if (!m_mapItems.contains(item))
         return;
@@ -1531,6 +1542,7 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 */
 void QDeclarativeGeoMap::clearMapItems()
 {
+    m_map->clearMapItems();
     if (m_mapItems.isEmpty())
         return;
     for (int i = 0; i < m_mapItems.count(); ++i) {
@@ -1670,6 +1682,10 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
         }
         // Force map items to update immediately. Needed to ensure correct item size and positions
         // when recursively calling this function.
+        // TODO: See if we really need updatePolish on delegated items, in particular
+        // in relation to
+        // a) fitViewportToMapItems
+        // b) presence of MouseArea
         if (item->isPolishScheduled())
            item->updatePolish();
 

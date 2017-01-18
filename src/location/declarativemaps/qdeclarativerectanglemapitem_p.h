@@ -89,6 +89,7 @@ public:
 
     bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
     const QGeoShape &geoShape() const Q_DECL_OVERRIDE;
+    QGeoMap::ItemType itemType() const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
     void topLeftChanged(const QGeoCoordinate &topLeft);

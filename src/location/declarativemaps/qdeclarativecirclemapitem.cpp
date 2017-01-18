@@ -375,6 +375,10 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
                      this, SLOT(markSourceDirtyAndUpdate()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
                      this, SLOT(markSourceDirtyAndUpdate()));
+    QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
+                     this, SLOT(markGeoMaterialDirty()));
+    QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
+                     this, SLOT(markGeoMaterialDirty()));
 
     // assume that circles are not self-intersecting
     // to speed up processing
@@ -432,6 +436,7 @@ void QDeclarativeCircleMapItem::setCenter(const QGeoCoordinate &center)
         return;
 
     circle_.setCenter(center);
+    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit centerChanged(center);
 }
@@ -453,6 +458,7 @@ void QDeclarativeCircleMapItem::setColor(const QColor &color)
         return;
     color_ = color;
     dirtyMaterial_ = true;
+    geoMaterialDirty_ = true;
     update();
     emit colorChanged(color_);
 }
@@ -475,6 +481,7 @@ void QDeclarativeCircleMapItem::setRadius(qreal radius)
         return;
 
     circle_.setRadius(radius);
+    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit radiusChanged(radius);
 }
@@ -614,6 +621,11 @@ bool QDeclarativeCircleMapItem::contains(const QPointF &point) const
 const QGeoShape &QDeclarativeCircleMapItem::geoShape() const
 {
     return circle_;
+}
+
+QGeoMap::ItemType QDeclarativeCircleMapItem::itemType() const
+{
+    return QGeoMap::MapCircle;
 }
 
 /*!

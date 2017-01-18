@@ -373,6 +373,10 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
                      this, SLOT(handleBorderUpdated()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
                      this, SLOT(handleBorderUpdated()));
+    QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
+                     this, SLOT(markGeoMaterialDirty()));
+    QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
+                     this, SLOT(markGeoMaterialDirty()));
 }
 
 /*!
@@ -473,6 +477,7 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 }
@@ -491,6 +496,7 @@ void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 }
@@ -514,6 +520,7 @@ void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordina
 
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 }
@@ -538,6 +545,7 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
 
     color_ = color;
     dirtyMaterial_ = true;
+    geoMaterialDirty_ = true;
     update();
     emit colorChanged(color_);
 }
@@ -649,6 +657,11 @@ const QGeoShape &QDeclarativePolygonMapItem::geoShape() const
     return geopath_;
 }
 
+QGeoMap::ItemType QDeclarativePolygonMapItem::itemType() const
+{
+    return QGeoMap::MapPolygon;
+}
+
 /*!
     \internal
 */
@@ -671,6 +684,7 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
     geopath_.translate(offsetLati, offsetLongi);
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 

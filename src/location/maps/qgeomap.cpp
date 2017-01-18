@@ -38,6 +38,7 @@
 #include "qgeomap_p_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomappingmanagerengine_p.h"
+#include "qdeclarativegeomapitembase_p.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -49,6 +50,7 @@ QGeoMap::QGeoMap(QGeoMapPrivate &dd, QObject *parent)
 
 QGeoMap::~QGeoMap()
 {
+    clearParameters();
 }
 
 void QGeoMap::setViewportSize(const QSize& size)
@@ -187,6 +189,38 @@ void QGeoMap::clearParameters()
     d->m_mapParameters.clear();
 }
 
+QGeoMap::ItemTypes QGeoMap::supportedMapItemTypes() const
+{
+    Q_D(const QGeoMap);
+    return d->supportedMapItemTypes();
+}
+
+void QGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    Q_D(QGeoMap);
+    if (item && !d->m_mapItems.contains(item) && d->supportedMapItemTypes() & item->itemType()) {
+        d->m_mapItems.insert(item);
+        d->addMapItem(item);
+    }
+}
+
+void QGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    Q_D(QGeoMap);
+    if (item && d->m_mapItems.contains(item)) {
+        d->removeMapItem(item);
+        d->m_mapItems.remove(item);
+    }
+}
+
+void QGeoMap::clearMapItems()
+{
+    Q_D(QGeoMap);
+    for (QDeclarativeGeoMapItemBase *p : d->m_mapItems)
+        d->removeMapItem(p);
+    d->m_mapItems.clear();
+}
+
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
     : QObjectPrivate(),
       m_geoProjection(geoProjection),
@@ -209,6 +243,21 @@ void QGeoMapPrivate::addParameter(QGeoMapParameter *param)
 void QGeoMapPrivate::removeParameter(QGeoMapParameter *param)
 {
     Q_UNUSED(param)
+}
+
+QGeoMap::ItemTypes QGeoMapPrivate::supportedMapItemTypes() const
+{
+    return QGeoMap::NoItem;
+}
+
+void QGeoMapPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    Q_UNUSED(item)
+}
+
+void QGeoMapPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    Q_UNUSED(item)
 }
 
 QT_END_NAMESPACE
