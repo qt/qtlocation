@@ -42,21 +42,95 @@
 #include <QtGui/QPainter>
 #include <QtQuick/private/qquickanchors_p.h>
 #include <QtQuick/private/qquickanchors_p_p.h>
+#include <QtLocation/private/qdeclarativegeomap_p.h>
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype MapCopyrightNotice
+    \instantiates QDeclarativeGeoMapCopyrightNotice
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-maps
+    \since Qt Location 5.9
+
+    \brief The MapCopyrightNotice item displays the current valid
+    copyright notice for a Map element.
+
+    This object can be used to place an additional copyright notices
+    programmatically.
+
+    Note that declaring a MapCopyrightNotice inside a QtLocation::Map element
+    is not possible, like for any other QQuickItem.
+
+    The release of this API with Qt 5.9 is a Technology Preview.
+*/
+
+/*!
+    \qmlproperty bool QtLocation::MapCopyrightNotice::mapSource
+
+    This property holds the current map source providing the copyright data shown
+    in this notice.
+    In order to let the MapCopyrightNotice display a copyright, this property must
+    be set, as it is the only data source for this element.
+*/
+
 QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent)
-:   QQuickPaintedItem(parent), m_copyrightsHtml(0), m_copyrightsVisible(true)
+:   QQuickPaintedItem(parent), m_copyrightsHtml(0), m_copyrightsVisible(true), m_mapSource(0)
 {
-    QQuickAnchors *anchors = property("anchors").value<QQuickAnchors *>();
-    if (anchors) {
-        anchors->setLeft(QQuickAnchorLine(parent, QQuickAnchors::LeftAnchor));
-        anchors->setBottom(QQuickAnchorLine(parent, QQuickAnchors::BottomAnchor));
-    }
+    // If this item is constructed inside the map, automatically anchor it where it always used to be.
+    if (qobject_cast<QDeclarativeGeoMap *>(parent))
+        anchorToBottomLeft();
 }
 
 QDeclarativeGeoMapCopyrightNotice::~QDeclarativeGeoMapCopyrightNotice()
 {
+}
+
+void QDeclarativeGeoMapCopyrightNotice::anchorToBottomLeft()
+{
+    if (!parent())
+        return;
+    QQuickAnchors *anchors = property("anchors").value<QQuickAnchors *>();
+    if (anchors) {
+        anchors->setLeft(QQuickAnchorLine(qobject_cast<QQuickItem *>(parent()), QQuickAnchors::LeftAnchor));
+        anchors->setBottom(QQuickAnchorLine(qobject_cast<QQuickItem *>(parent()), QQuickAnchors::BottomAnchor));
+    }
+}
+
+void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *mapSource)
+{
+    if (m_mapSource == mapSource)
+        return;
+
+    if (m_mapSource) {
+        // disconnect this object from current map source
+        m_mapSource->disconnect(this);
+        m_copyrightsHtml->clear();
+        m_copyrightsImage = QImage();
+        m_mapSource = Q_NULLPTR;
+    }
+
+    if (mapSource) {
+        m_mapSource = mapSource;
+        // First update the copyright. Only Image will do here, no need to store HTML right away.
+        if (!mapSource->m_copyrights->m_copyrightsImage.isNull())
+            m_copyrightsImage = mapSource->m_copyrights->m_copyrightsImage;
+
+        connect(m_mapSource, SIGNAL(copyrightsChanged(QImage)),
+                this, SLOT(copyrightsChanged(QImage)));
+        connect(m_mapSource, SIGNAL(copyrightsChanged(QString)),
+                this, SLOT(copyrightsChanged(QString)));
+        connect(this, SIGNAL(linkActivated(QString)),
+                m_mapSource, SIGNAL(copyrightLinkActivated(QString)));
+    }
+
+    update();
+    emit mapSourceChanged();
+}
+
+QDeclarativeGeoMap *QDeclarativeGeoMapCopyrightNotice::mapSource()
+{
+    return m_mapSource;
 }
 
 /*!
@@ -130,10 +204,11 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrigh
 
 void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrightsHtml)
 {
-    if (copyrightsHtml.isEmpty() || !m_copyrightsVisible) {
-        m_copyrightsImage = QImage();
+    if (copyrightsHtml.isEmpty()) {
         setVisible(false);
         return;
+    } else if (!m_copyrightsVisible) {
+        setVisible(false);
     } else {
         setVisible(true);
     }

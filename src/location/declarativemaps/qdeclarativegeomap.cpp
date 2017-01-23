@@ -244,10 +244,17 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
             // create a new one and set its parent, re-assign it to the weak pointer, then connect the copyrights-change signal
             m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
             copyrights = m_copyrights.data();
+
             connect(m_map, SIGNAL(copyrightsChanged(QImage)),
                     copyrights, SLOT(copyrightsChanged(QImage)));
+            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+                    this,  SIGNAL(copyrightsChanged(QImage)));
+
             connect(m_map, SIGNAL(copyrightsChanged(QString)),
                     copyrights, SLOT(copyrightsChanged(QString)));
+            connect(m_map, SIGNAL(copyrightsChanged(QString)),
+                    this,  SIGNAL(copyrightsChanged(QString)));
+
             connect(copyrights, SIGNAL(linkActivated(QString)),
                     this, SIGNAL(copyrightLinkActivated(QString)));
 
@@ -643,10 +650,17 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     }
 
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
+
     connect(m_map, SIGNAL(copyrightsChanged(QImage)),
             m_copyrights.data(), SLOT(copyrightsChanged(QImage)));
+    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+            this,  SIGNAL(copyrightsChanged(QImage)));
+
     connect(m_map, SIGNAL(copyrightsChanged(QString)),
             m_copyrights.data(), SLOT(copyrightsChanged(QString)));
+    connect(m_map, SIGNAL(copyrightsChanged(QString)),
+            this,  SIGNAL(copyrightsChanged(QString)));
+
     connect(m_copyrights.data(), SIGNAL(linkActivated(QString)),
             this, SIGNAL(copyrightLinkActivated(QString)));
     connect(m_map, &QGeoMap::sgNodeChanged, this, &QQuickItem::update);

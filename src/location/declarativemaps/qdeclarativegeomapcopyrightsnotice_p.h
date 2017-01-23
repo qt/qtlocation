@@ -57,18 +57,24 @@
 QT_BEGIN_NAMESPACE
 
 class QTextDocument;
+class QDeclarativeGeoMap;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapCopyrightNotice : public QQuickPaintedItem
 {
     Q_OBJECT
+    Q_PROPERTY(QDeclarativeGeoMap *mapSource READ mapSource WRITE setMapSource NOTIFY mapSourceChanged)
 
 public:
-    explicit QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent);
+    QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent = Q_NULLPTR);
     ~QDeclarativeGeoMapCopyrightNotice();
 
     void setCopyrightsZ(int copyrightsZ);
 
     void setCopyrightsVisible(bool visible);
+    void anchorToBottomLeft();
+
+    void setMapSource(QDeclarativeGeoMap *mapSource);
+    QDeclarativeGeoMap *mapSource();
 
 public Q_SLOTS:
     void copyrightsChanged(const QImage &copyrightsImage);
@@ -76,6 +82,7 @@ public Q_SLOTS:
 
 signals:
     void linkActivated(const QString &link);
+    void mapSourceChanged();
 
 protected:
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
@@ -87,6 +94,7 @@ private:
     QImage m_copyrightsImage;
     QString m_activeAnchor;
     bool m_copyrightsVisible;
+    QDeclarativeGeoMap *m_mapSource;
 };
 
 QT_END_NAMESPACE

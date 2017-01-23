@@ -196,6 +196,8 @@ Q_SIGNALS:
     void maximumTiltChanged(qreal maximumTilt);
     void minimumFieldOfViewChanged(qreal minimumFieldOfView);
     void maximumFieldOfViewChanged(qreal maximumFieldOfView);
+    void copyrightsChanged(const QImage &copyrightsImage);
+    void copyrightsChanged(const QString &copyrightsHtml);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
@@ -255,6 +257,7 @@ private:
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;
     friend class QQuickGeoMapGestureArea;
+    friend class QDeclarativeGeoMapCopyrightNotice;
     Q_DISABLE_COPY(QDeclarativeGeoMap)
 };
 

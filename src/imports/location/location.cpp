@@ -51,6 +51,7 @@
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 #include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
 #include <QtLocation/private/qdeclarativegeomapparameter_p.h>
+#include <QtLocation/private/qdeclarativegeomapcopyrightsnotice_p.h>
 
 //Place includes
 #include <QtLocation/private/qdeclarativecategory_p.h>
@@ -171,6 +172,7 @@ public:
             // Register the 5.9 types
             minor = 9;
             qmlRegisterType<QDeclarativeGeoMapParameter>(uri, major, minor, "MapParameter");
+            qmlRegisterType<QDeclarativeGeoMapCopyrightNotice>(uri, major, minor, "MapCopyrightNotice");
 
 
             //registrations below are version independent
