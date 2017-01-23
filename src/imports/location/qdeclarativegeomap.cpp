@@ -312,8 +312,11 @@ void QDeclarativeGeoMap::initialize()
     bool centerHasChanged = false;
     bool bearingHasChanged = false;
     bool tiltHasChanged = false;
+    bool fovHasChanged = false;
     bool minTiltHasChanged = false;
     bool maxTiltHasChanged = false;
+    bool minFovHasChanged = false;
+    bool maxFovHasChanged = false;
 
     QGeoCoordinate center = m_cameraData.center();
 
@@ -321,6 +324,11 @@ void QDeclarativeGeoMap::initialize()
 
     double bearing = m_cameraData.bearing();
     double tilt = m_cameraData.tilt();
+    double fov = m_cameraData.fieldOfView(); // Must be 45.0
+    if (m_map->cameraCapabilities().minimumFieldOfView() != 1)
+        minFovHasChanged = true;
+    if (m_map->cameraCapabilities().maximumFieldOfView() != 179)
+        maxFovHasChanged = true;
     if (m_map->cameraCapabilities().minimumTilt() != 0)
         minTiltHasChanged = true;
     if (m_map->cameraCapabilities().maximumTilt() != 89)
@@ -333,6 +341,12 @@ void QDeclarativeGeoMap::initialize()
         m_cameraData.setTilt(0);
         tiltHasChanged = true;
     }
+
+    m_cameraData.setFieldOfView(qBound(m_map->cameraCapabilities().minimumFieldOfView(),
+                                       fov,
+                                       m_map->cameraCapabilities().maximumFieldOfView()));
+    if (fov != m_cameraData.fieldOfView())
+        fovHasChanged  = true;
 
     // set latitude boundary check
     m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
@@ -357,11 +371,20 @@ void QDeclarativeGeoMap::initialize()
     if (tiltHasChanged)
         emit tiltChanged(m_cameraData.tilt());
 
+    if (fovHasChanged)
+        emit fieldOfViewChanged(m_cameraData.fieldOfView());
+
     if (minTiltHasChanged)
         emit minimumTiltChanged(m_map->cameraCapabilities().minimumTilt());
 
     if (maxTiltHasChanged)
         emit maximumTiltChanged(m_map->cameraCapabilities().maximumTilt());
+
+    if (minFovHasChanged)
+        emit minimumFieldOfViewChanged(m_map->cameraCapabilities().minimumFieldOfView());
+
+    if (maxFovHasChanged)
+        emit maximumFieldOfViewChanged(m_map->cameraCapabilities().maximumFieldOfView());
 }
 
 /*!
@@ -839,6 +862,65 @@ void QDeclarativeGeoMap::setTilt(qreal tilt)
 qreal QDeclarativeGeoMap::tilt() const
 {
     return m_cameraData.tilt();
+}
+
+/*!
+    \qmlproperty real QtLocation::Map::fieldOfView
+
+    This property holds the field of view of the camera used to look at the map, in degrees.
+    If the plugin property of the map is not set, or the plugin does not support mapping, the value is 45 degrees.
+
+    Note that changing this value implicitly changes also the distance between the camera and the map,
+    so that, at a tilting angle of 0 degrees, the resulting image is identical for any value used for this property.
+
+    For more information about this parameter, consult the Wikipedia articles about \l {https://en.wikipedia.org/wiki/Field_of_view} {Field of view} and
+    \l {https://en.wikipedia.org/wiki/Angle_of_view} {Angle of view}.
+
+    \since Qt Location 5.9
+*/
+void QDeclarativeGeoMap::setFieldOfView(qreal fieldOfView)
+{
+    fieldOfView = qBound(minimumFieldOfView(), fieldOfView, maximumFieldOfView());
+    if (m_cameraData.fieldOfView() == fieldOfView)
+        return;
+
+    m_cameraData.setFieldOfView(fieldOfView);
+    if (m_map)
+        m_map->setCameraData(m_cameraData);
+    emit fieldOfViewChanged(fieldOfView);
+}
+
+qreal QDeclarativeGeoMap::fieldOfView() const
+{
+    return m_cameraData.fieldOfView();
+}
+
+/*!
+    \qmlproperty bool QtLocation::Map::minimumFieldOfView
+    This property holds the minimum field of view  that the map supports.
+    If the plugin property of the map is not set, or the plugin does not support mapping, this property is 1.
+
+    \since Qt Location 5.9
+*/
+qreal QDeclarativeGeoMap::minimumFieldOfView() const
+{
+    if (!m_map)
+        return 1;
+    return m_map->cameraCapabilities().minimumFieldOfView();
+}
+
+/*!
+    \qmlproperty bool QtLocation::Map::maximumFieldOfView
+    This property holds the maximum field of view that the map supports.
+    If the plugin property of the map is not set, or the plugin does not support mapping, this property is 179.
+
+    \since Qt Location 5.9
+*/
+qreal QDeclarativeGeoMap::maximumFieldOfView() const
+{
+    if (!m_map)
+        return 179;
+    return m_map->cameraCapabilities().maximumFieldOfView();
 }
 
 /*!

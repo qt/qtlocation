@@ -81,6 +81,9 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(qreal maximumTilt READ maximumTilt NOTIFY maximumTiltChanged)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
+    Q_PROPERTY(qreal fieldOfView READ fieldOfView WRITE setFieldOfView NOTIFY fieldOfViewChanged)
+    Q_PROPERTY(qreal minimumFieldOfView READ minimumFieldOfView NOTIFY minimumFieldOfViewChanged)
+    Q_PROPERTY(qreal maximumFieldOfView READ maximumFieldOfView NOTIFY minimumFieldOfViewChanged)
 
     Q_PROPERTY(QDeclarativeGeoMapType *activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
@@ -119,6 +122,11 @@ public:
 
     void setTilt(qreal tilt);
     qreal tilt() const;
+
+    void setFieldOfView(qreal fieldOfView);
+    qreal fieldOfView() const;
+    qreal minimumFieldOfView() const;
+    qreal maximumFieldOfView() const;
 
     bool isBearingSupported() const;
     bool isTiltingSupported() const;
@@ -178,10 +186,13 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);
+    void fieldOfViewChanged(qreal fieldOfView);
     void bearingSupportChanged(bool bearingSupport);
     void tiltingSupportChanged(bool tiltingSupport);
     void minimumTiltChanged(qreal minimumTilt);
     void maximumTiltChanged(qreal maximumTilt);
+    void minimumFieldOfViewChanged(qreal minimumFieldOfView);
+    void maximumFieldOfViewChanged(qreal maximumFieldOfView);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;

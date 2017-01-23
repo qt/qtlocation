@@ -263,7 +263,7 @@ void QGeoProjectionWebMercator::setupCamera()
     double altitude = f / (2.0 * z) ;
 
     //aperture(90 / 2) = 1
-    m_aperture = 0.41421356237309503; // For a field of view of 45 degrees, as 90 is loading too many tiles
+    m_aperture = tan(QLocationUtils::radians(m_cameraData.fieldOfView()) * 0.5);
     // calculate eye
     m_eye = m_center;
     m_eye.setZ(altitude * defaultTileSize / m_aperture);

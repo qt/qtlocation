@@ -55,6 +55,7 @@ public:
     double m_bearing;
     double m_tilt;
     double m_roll;
+    double m_fieldOfView;
     double m_zoomLevel;
 };
 
@@ -64,6 +65,7 @@ QGeoCameraDataPrivate::QGeoCameraDataPrivate()
       m_bearing(0.0),
       m_tilt(0.0),
       m_roll(0.0),
+      m_fieldOfView(45.0),
       m_zoomLevel(0.0) {}
 
 QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
@@ -72,6 +74,7 @@ QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
       m_bearing(rhs.m_bearing),
       m_tilt(rhs.m_tilt),
       m_roll(rhs.m_roll),
+      m_fieldOfView(rhs.m_fieldOfView),
       m_zoomLevel(rhs.m_zoomLevel) {}
 
 QGeoCameraDataPrivate &QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
@@ -82,7 +85,8 @@ QGeoCameraDataPrivate &QGeoCameraDataPrivate::operator = (const QGeoCameraDataPr
     m_center = rhs.m_center;
     m_bearing = rhs.m_bearing;
     m_tilt = rhs.m_tilt;
-    m_roll = rhs.m_roll;;
+    m_roll = rhs.m_roll;
+    m_fieldOfView = rhs.m_fieldOfView;
     m_zoomLevel = rhs.m_zoomLevel;
 
     return *this;
@@ -94,6 +98,7 @@ bool QGeoCameraDataPrivate::operator == (const QGeoCameraDataPrivate &rhs) const
             && (m_bearing == rhs.m_bearing)
             && (m_tilt == rhs.m_tilt)
             && (m_roll == rhs.m_roll)
+            && (m_fieldOfView == rhs.m_fieldOfView)
             && (m_zoomLevel == rhs.m_zoomLevel));
 }
 
@@ -123,6 +128,7 @@ QVariant cameraInterpolator(const QGeoCameraData &start,
     result.setBearing(sf * start.bearing() + ef * end.bearing());
     result.setTilt(sf * start.tilt() + ef * end.tilt());
     result.setRoll(sf * start.roll() + ef * end.roll());
+    result.setFieldOfView(sf * start.fieldOfView() + ef * end.fieldOfView());
     result.setZoomLevel(sf * start.zoomLevel() + ef * end.zoomLevel());
 
     return QVariant::fromValue(result);
@@ -199,6 +205,16 @@ void QGeoCameraData::setRoll(double roll)
 double QGeoCameraData::roll() const
 {
     return d->m_roll;
+}
+
+void QGeoCameraData::setFieldOfView(double fieldOfView)
+{
+    d->m_fieldOfView = fieldOfView;
+}
+
+double QGeoCameraData::fieldOfView() const
+{
+    return d->m_fieldOfView;
 }
 
 void QGeoCameraData::setZoomLevel(double zoomFactor)

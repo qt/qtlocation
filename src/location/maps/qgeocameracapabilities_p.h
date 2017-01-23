@@ -91,6 +91,12 @@ public:
     void setMaximumTilt(double maximumTilt);
     double maximumTilt() const;
 
+    void setMinimumFieldOfView(double minimumFieldOfView);
+    double minimumFieldOfView() const;
+
+    void setMaximumFieldOfView(double maximumFieldOfView);
+    double maximumFieldOfView() const;
+
     bool isValid() const;
 
 private:

@@ -82,6 +82,9 @@ public:
     void setRoll(double roll);
     double roll() const;
 
+    void setFieldOfView(double fieldOfView);
+    double fieldOfView() const;
+
     // Zoom level is intended to be relative to a tileSize of 256^2 pixels.
     // E.g., a zoom level of 0 must result in a mapWidth of 256, and so on.
     void setZoomLevel(double zoomLevel);
