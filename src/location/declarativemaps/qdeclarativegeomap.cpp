@@ -839,6 +839,8 @@ qreal QDeclarativeGeoMap::zoomLevel() const
 void QDeclarativeGeoMap::setBearing(qreal bearing)
 {
     bearing = std::fmod(bearing, qreal(360.0));
+    if (bearing < 0.0)
+        bearing += 360.0;
     if (m_map && !m_map->cameraCapabilities().supportsBearing())
         bearing = 0.0;
     if (m_cameraData.bearing() == bearing || bearing < 0.0)

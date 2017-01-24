@@ -120,6 +120,8 @@ class Q_LOCATION_PRIVATE_EXPORT QQuickGeoMapGestureArea: public QQuickItem
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(bool pinchActive READ isPinchActive NOTIFY pinchActiveChanged)
     Q_PROPERTY(bool panActive READ isPanActive NOTIFY panActiveChanged)
+    Q_PROPERTY(bool rotationActive READ isRotationActive NOTIFY rotationActiveChanged)
+    Q_PROPERTY(bool tiltActive READ isTiltActive NOTIFY tiltActiveChanged)
     Q_PROPERTY(AcceptedGestures acceptedGestures READ acceptedGestures WRITE setAcceptedGestures NOTIFY acceptedGesturesChanged)
     Q_PROPERTY(qreal maximumZoomLevelChange READ maximumZoomLevelChange WRITE setMaximumZoomLevelChange NOTIFY maximumZoomLevelChangeChanged)
     Q_PROPERTY(qreal flickDeceleration READ flickDeceleration WRITE setFlickDeceleration NOTIFY flickDecelerationChanged)
@@ -133,7 +135,9 @@ public:
         NoGesture = 0x0000,
         PinchGesture = 0x0001,
         PanGesture = 0x0002,
-        FlickGesture = 0x004
+        FlickGesture = 0x0004,
+        RotationGesture = 0x0008,
+        TiltGesture = 0x0010
     };
 
     Q_DECLARE_FLAGS(AcceptedGestures, GeoMapGesture)
@@ -142,6 +146,8 @@ public:
     void setAcceptedGestures(AcceptedGestures acceptedGestures);
 
     bool isPinchActive() const;
+    bool isRotationActive() const;
+    bool isTiltActive() const;
     bool isPanActive() const;
     bool isActive() const;
 
@@ -176,6 +182,8 @@ public:
 Q_SIGNALS:
     void panActiveChanged();
     void pinchActiveChanged();
+    void rotationActiveChanged();
+    void tiltActiveChanged();
     void enabledChanged();
     void maximumZoomLevelChangeChanged();
     void acceptedGesturesChanged();
@@ -187,6 +195,12 @@ Q_SIGNALS:
     void panFinished();
     void flickStarted();
     void flickFinished();
+    void rotationStarted(QGeoMapPinchEvent *pinch);
+    void rotationUpdated(QGeoMapPinchEvent *pinch);
+    void rotationFinished(QGeoMapPinchEvent *pinch);
+    void tiltStarted(QGeoMapPinchEvent *pinch);
+    void tiltUpdated(QGeoMapPinchEvent *pinch);
+    void tiltFinished(QGeoMapPinchEvent *pinch);
     void preventStealingChanged();
 private:
     void update();
@@ -197,6 +211,20 @@ private:
     void updateOneTouchPoint();
     void startTwoTouchPoints();
     void updateTwoTouchPoints();
+
+    // All two fingers vertical parallel panning related code, which encompasses tilting
+    void tiltStateMachine();
+    bool canStartTilt();
+    void startTilt();
+    void updateTilt();
+    void endTilt();
+
+    // All two fingers rotation related code, which encompasses rotation
+    void rotationStateMachine();
+    bool canStartRotation();
+    void startRotation();
+    void updateRotation();
+    void endRotation();
 
     // All pinch related code, which encompasses zoom
     void pinchStateMachine();
@@ -216,6 +244,10 @@ private:
 
     bool pinchEnabled() const;
     void setPinchEnabled(bool enabled);
+    bool rotationEnabled() const;
+    void setRotationEnabled(bool enabled);
+    bool tiltEnabled() const;
+    void setTiltEnabled(bool enabled);
     bool panEnabled() const;
     void setPanEnabled(bool enabled);
     bool flickEnabled() const;
@@ -235,12 +267,16 @@ private:
     QDeclarativeGeoMap *m_declarativeMap;
     bool m_enabled;
 
+    // This should be intended as a "two fingers gesture" struct
     struct Pinch
     {
-        Pinch() : m_enabled(true), m_startDist(0), m_lastAngle(0.0) {}
+        Pinch() : m_pinchEnabled(true), m_rotationEnabled(true), m_tiltEnabled(true),
+                  m_startDist(0), m_lastAngle(0.0) {}
 
         QGeoMapPinchEvent m_event;
-        bool m_enabled;
+        bool m_pinchEnabled;
+        bool m_rotationEnabled;
+        bool m_tiltEnabled;
         struct Zoom
         {
             Zoom() : m_minimum(0.0), m_maximum(30.0), m_start(0.0), m_previous(0.0),
@@ -252,6 +288,21 @@ private:
             qreal maximumChange;
         } m_zoom;
 
+        struct Rotation
+        {
+            Rotation() : m_startBearing(0.0), m_previousTouchAngle(0.0), m_totalAngle(0.0) {}
+            qreal m_startBearing;
+            qreal m_previousTouchAngle; // needed for detecting crossing +- 180 in a safer way
+            qreal m_totalAngle;
+        } m_rotation;
+
+        struct Tilt
+        {
+            Tilt() {}
+            QPointF m_startTouchCentroid;
+            qreal m_startTilt;
+        } m_tilt;
+
         QPointF m_lastPoint1;
         QPointF m_lastPoint2;
         qreal m_startDist;
@@ -262,10 +313,13 @@ private:
 
     struct Pan
     {
+        Pan() : m_maxVelocity(2500), m_deceleration(2500), m_animation(0), m_flickEnabled(true), m_panEnabled(true) {}
+
         qreal m_maxVelocity;
         qreal m_deceleration;
         QQuickGeoCoordinateAnimation *m_animation;
-        bool m_enabled;
+        bool m_flickEnabled;
+        bool m_panEnabled;
     } m_flick;
 
 
@@ -284,8 +338,9 @@ private:
     QGeoCoordinate m_startCoord;
     QGeoCoordinate m_touchCenterCoord;
     qreal m_twoTouchAngle;
+    qreal m_twoTouchAngleStart;
     qreal m_distanceBetweenTouchPoints;
-    QPointF m_sceneCenter;
+    QPointF m_touchPointsCentroid;
     bool m_preventStealing;
     bool m_panEnabled;
 
@@ -303,6 +358,20 @@ private:
         pinchInactiveTwoPoints,
         pinchActive
     } m_pinchState;
+
+    enum RotationState
+    {
+        rotationInactive,
+        rotationInactiveTwoPoints,
+        rotationActive
+    } m_rotationState;
+
+    enum TiltState
+    {
+        tiltInactive,
+        tiltInactiveTwoPoints,
+        tiltActive
+    } m_tiltState;
 
     enum FlickState
     {

@@ -65,7 +65,13 @@
 // before we perform a flick.
 static const int FlickThreshold = 20;
 // Really slow flicks can be annoying.
-const qreal MinimumFlickVelocity = 75.0;
+static const qreal MinimumFlickVelocity = 75.0;
+// Tolerance for detecting two finger sliding start
+static const qreal MaximumParallelPosition = 40.0; // in degrees
+// Tolerance for detecting parallel sliding
+static const qreal MaximumParallelSlidingAngle = 5.0; // in degrees
+// Tolerance for starting rotation
+static const qreal MinimumRotationStartingAngle = 15.0; // in degrees
 
 // Returns the new map center after anchoring coordinate to anchorPoint on the screen
 // Approach: find the displacement in (wrapped) mercator space, and apply that to the center
@@ -77,6 +83,61 @@ static QGeoCoordinate anchorCoordinateToPoint(QGeoMap &map, const QGeoCoordinate
     QDoubleVector2D anchorProj = map.geoProjection().itemPositionToWrappedMapProjection(QDoubleVector2D(anchorPoint));
     // Y-clamping done in mercatorToCoord
     return map.geoProjection().wrappedMapProjectionToGeo(centerProj + coordProj - anchorProj);
+}
+
+// Keeps it in +- 180
+static qreal touchAngle(const QPointF &p1, const QPointF &p2)
+{
+    qreal angle = QLineF(p1, p2).angle();
+    if (angle > 180)
+        angle -= 360;
+    return angle;
+}
+
+// Deals with angles crossing the +-180 edge, assumes that the delta can't be > 180
+static qreal angleDelta(const qreal angle1, const qreal angle2)
+{
+    qreal delta = angle1 - angle2;
+    if (delta > 180.0) // detect crossing angle1 positive, angle2 negative, rotation counterclockwise, difference negative
+        delta = angle1 - angle2 - 360.0;
+    else if (delta < -180.0) // detect crossing angle1 negative, angle2 positive, rotation clockwise, difference positive
+        delta = angle1 - angle2 + 360.0;
+
+    return delta;
+}
+
+static bool pointDragged(const QPointF &pOld, const QPointF &pNew)
+{
+    static const int startDragDistance = qApp->styleHints()->startDragDistance();
+    return ( qAbs(pNew.x() - pOld.x()) > startDragDistance
+             || qAbs(pNew.y() - pOld.y()) > startDragDistance);
+}
+
+static qreal vectorSize(const QPointF &vector)
+{
+    return std::sqrt(vector.x() * vector.x() + vector.y() * vector.y());
+}
+
+static bool movingParallel(const QPointF &p1old, const QPointF &p1new, const QPointF &p2old, const QPointF &p2new)
+{
+    if (!pointDragged(p1old, p1new) || !pointDragged(p2old, p2new))
+        return false;
+
+    QPointF v1 = p1new - p1old;
+    QPointF v2 = p2new - p2old;
+    qreal v1v2size = vectorSize(v1 + v2);
+
+    if (v1v2size < vectorSize(v1) || v1v2size < vectorSize(v2)) // going in opposite directions
+        return false;
+
+    const qreal newAngle = touchAngle(p1new, p2new);
+    const qreal oldAngle = touchAngle(p1old, p2old);
+    const qreal angleDiff = angleDelta(newAngle, oldAngle);
+
+    if (qAbs(angleDiff) > MaximumParallelSlidingAngle)
+        return false;
+
+    return true;
 }
 
 QT_BEGIN_NAMESPACE
@@ -166,7 +227,8 @@ QT_BEGIN_NAMESPACE
     \brief The MapGestureArea type provides Map gesture interaction.
 
     MapGestureArea objects are used as part of a Map, to provide for panning,
-    flicking and pinch-to-zoom gesture used on touch displays.
+    flicking and pinch-to-zoom gesture used on touch displays, as well as two finger rotation
+    and two finger parallel vertical sliding to tilt the map.
 
     A MapGestureArea is automatically created with a new Map and available with
     the \l{Map::gesture}{gesture} property. This is the only way
@@ -219,6 +281,22 @@ QT_BEGIN_NAMESPACE
     This read-only property holds whether the pan gesture is active.
 
     \note Change notifications for this property were introduced in Qt 5.5.
+*/
+
+/*!
+    \qmlproperty bool QtLocation::MapGestureArea::rotationActive
+
+    This read-only property holds whether the two-finger rotation gesture is active.
+
+    \since Qt Location 5.9
+*/
+
+/*!
+    \qmlproperty bool QtLocation::MapGestureArea::tiltActive
+
+    This read-only property holds whether the two-finger tilt gesture is active.
+
+    \since Qt Location 5.9
 */
 
 /*!
@@ -312,22 +390,93 @@ QT_BEGIN_NAMESPACE
     The corresponding handler is \c onFlickFinished.
 */
 
+/*!
+    \qmlsignal QtLocation::MapGestureArea::rotationStarted(PinchEvent event)
+
+    This signal is emitted when a two-finger rotation gesture is started.
+
+    The corresponding handler is \c onRotationStarted.
+
+    \sa rotationUpdated, rotationFinished
+
+    \since Qt Location 5.9
+*/
+
+/*!
+    \qmlsignal QtLocation::MapGestureArea::rotationUpdated(PinchEvent event)
+
+    This signal is emitted as the user's fingers move across the map,
+    after the \l rotationStarted signal is emitted.
+
+    The corresponding handler is \c onRotationUpdated.
+
+    \sa rotationStarted, rotationFinished
+
+    \since Qt Location 5.9
+*/
+
+/*!
+    \qmlsignal QtLocation::MapGestureArea::rotationFinished(PinchEvent event)
+
+    This signal is emitted at the end of a two-finger rotation gesture.
+
+    The corresponding handler is \c onRotationFinished.
+
+    \sa rotationStarted, rotationUpdated
+
+    \since Qt Location 5.9
+*/
+
+/*!
+    \qmlsignal QtLocation::MapGestureArea::tiltStarted(PinchEvent event)
+
+    This signal is emitted when a two-finger tilt gesture is started.
+
+    The corresponding handler is \c onTiltStarted.
+
+    \sa tiltUpdated, tiltFinished
+
+    \since Qt Location 5.9
+*/
+
+/*!
+    \qmlsignal QtLocation::MapGestureArea::tiltUpdated(PinchEvent event)
+
+    This signal is emitted as the user's fingers move across the map,
+    after the \l tiltStarted signal is emitted.
+
+    The corresponding handler is \c onTiltUpdated.
+
+    \sa tiltStarted, tiltFinished
+
+    \since Qt Location 5.9
+*/
+
+/*!
+    \qmlsignal QtLocation::MapGestureArea::tiltFinished(PinchEvent event)
+
+    This signal is emitted at the end of a two-finger tilt gesture.
+
+    The corresponding handler is \c onTiltFinished.
+
+    \sa tiltStarted, tiltUpdated
+
+    \since Qt Location 5.9
+*/
+
 QQuickGeoMapGestureArea::QQuickGeoMapGestureArea(QDeclarativeGeoMap *map)
     : QQuickItem(map),
       m_map(0),
       m_declarativeMap(map),
       m_enabled(true),
-      m_acceptedGestures(PinchGesture | PanGesture | FlickGesture),
-      m_preventStealing(false),
-      m_panEnabled(true)
+      m_acceptedGestures(PinchGesture | PanGesture | FlickGesture | RotationGesture | TiltGesture),
+      m_preventStealing(false)
 {
-    m_flick.m_enabled = true,
-    m_flick.m_maxVelocity = QML_MAP_FLICK_DEFAULTMAXVELOCITY;
-    m_flick.m_deceleration = QML_MAP_FLICK_DEFAULTDECELERATION;
-    m_flick.m_animation = 0;
     m_touchPointState = touchPoints0;
     m_pinchState = pinchInactive;
     m_flickState = flickInactive;
+    m_rotationState = rotationInactive;
+    m_tiltState = tiltInactive;
 }
 
 /*!
@@ -393,6 +542,8 @@ QQuickGeoMapGestureArea::~QQuickGeoMapGestureArea()
     \li MapGestureArea.PinchGesture - Support the map pinch gesture (value: 0x0001).
     \li MapGestureArea.PanGesture  - Support the map pan gesture (value: 0x0002).
     \li MapGestureArea.FlickGesture  - Support the map flick gesture (value: 0x0004).
+    \li MapGestureArea.RotationGesture  - Support the map rotation gesture (value: 0x0008).
+    \li MapGestureArea.TiltGesture  - Support the map tilt gesture (value: 0x0010).
     \endlist
 */
 
@@ -408,9 +559,13 @@ void QQuickGeoMapGestureArea::setAcceptedGestures(AcceptedGestures acceptedGestu
         return;
     m_acceptedGestures = acceptedGestures;
 
-    setPanEnabled(acceptedGestures & PanGesture);
-    setFlickEnabled(acceptedGestures & FlickGesture);
-    setPinchEnabled(acceptedGestures & PinchGesture);
+    if (enabled()) {
+        setPanEnabled(acceptedGestures & PanGesture);
+        setFlickEnabled(acceptedGestures & FlickGesture);
+        setPinchEnabled(acceptedGestures & PinchGesture);
+        setRotationEnabled(acceptedGestures & RotationGesture);
+        setTiltEnabled(acceptedGestures & TiltGesture);
+    }
 
     emit acceptedGesturesChanged();
 }
@@ -421,6 +576,22 @@ void QQuickGeoMapGestureArea::setAcceptedGestures(AcceptedGestures acceptedGestu
 bool QQuickGeoMapGestureArea::isPinchActive() const
 {
     return m_pinchState == pinchActive;
+}
+
+/*!
+    \internal
+*/
+bool QQuickGeoMapGestureArea::isRotationActive() const
+{
+    return m_rotationState == rotationActive;
+}
+
+/*!
+    \internal
+*/
+bool QQuickGeoMapGestureArea::isTiltActive() const
+{
+    return m_tiltState == tiltActive;
 }
 
 /*!
@@ -452,22 +623,25 @@ void QQuickGeoMapGestureArea::setEnabled(bool enabled)
         setPanEnabled(m_acceptedGestures & PanGesture);
         setFlickEnabled(m_acceptedGestures & FlickGesture);
         setPinchEnabled(m_acceptedGestures & PinchGesture);
+        setRotationEnabled(m_acceptedGestures & RotationGesture);
+        setTiltEnabled(m_acceptedGestures & TiltGesture);
     } else {
         setPanEnabled(false);
         setFlickEnabled(false);
         setPinchEnabled(false);
+        setRotationEnabled(false);
+        setTiltEnabled(false);
     }
 
     emit enabledChanged();
 }
-
 
 /*!
     \internal
 */
 bool QQuickGeoMapGestureArea::pinchEnabled() const
 {
-    return m_pinch.m_enabled;
+    return m_pinch.m_pinchEnabled;
 }
 
 /*!
@@ -475,7 +649,39 @@ bool QQuickGeoMapGestureArea::pinchEnabled() const
 */
 void QQuickGeoMapGestureArea::setPinchEnabled(bool enabled)
 {
-    m_pinch.m_enabled = enabled;
+    m_pinch.m_pinchEnabled = enabled;
+}
+
+/*!
+    \internal
+*/
+bool QQuickGeoMapGestureArea::rotationEnabled() const
+{
+    return m_pinch.m_rotationEnabled;
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::setRotationEnabled(bool enabled)
+{
+    m_pinch.m_rotationEnabled = enabled;
+}
+
+/*!
+    \internal
+*/
+bool QQuickGeoMapGestureArea::tiltEnabled() const
+{
+    return m_pinch.m_tiltEnabled;
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::setTiltEnabled(bool enabled)
+{
+    m_pinch.m_tiltEnabled = enabled;
 }
 
 /*!
@@ -483,7 +689,7 @@ void QQuickGeoMapGestureArea::setPinchEnabled(bool enabled)
 */
 bool QQuickGeoMapGestureArea::panEnabled() const
 {
-    return m_panEnabled;
+    return m_flick.m_panEnabled;
 }
 
 /*!
@@ -491,9 +697,9 @@ bool QQuickGeoMapGestureArea::panEnabled() const
 */
 void QQuickGeoMapGestureArea::setPanEnabled(bool enabled)
 {
-    if (enabled == m_flick.m_enabled)
+    if (enabled == m_flick.m_panEnabled)
         return;
-    m_panEnabled = enabled;
+    m_flick.m_panEnabled = enabled;
 
     // unlike the pinch, the pan existing functionality is to stop immediately
     if (!enabled)
@@ -505,7 +711,7 @@ void QQuickGeoMapGestureArea::setPanEnabled(bool enabled)
 */
 bool QQuickGeoMapGestureArea::flickEnabled() const
 {
-    return m_flick.m_enabled;
+    return m_flick.m_flickEnabled;
 }
 
 /*!
@@ -513,9 +719,9 @@ bool QQuickGeoMapGestureArea::flickEnabled() const
 */
 void QQuickGeoMapGestureArea::setFlickEnabled(bool enabled)
 {
-    if (enabled == m_flick.m_enabled)
+    if (enabled == m_flick.m_flickEnabled)
         return;
-    m_flick.m_enabled = enabled;
+    m_flick.m_flickEnabled = enabled;
     // unlike the pinch, the flick existing functionality is to stop immediately
     if (!enabled) {
          stopFlick();
@@ -726,8 +932,8 @@ void QQuickGeoMapGestureArea::clearTouchData()
 {
     m_velocityX = 0;
     m_velocityY = 0;
-    m_sceneCenter.setX(0);
-    m_sceneCenter.setY(0);
+    m_touchPointsCentroid.setX(0);
+    m_touchPointsCentroid.setY(0);
     m_touchCenterCoord.setLongitude(0);
     m_touchCenterCoord.setLatitude(0);
     m_startCoord.setLongitude(0);
@@ -763,7 +969,7 @@ void QQuickGeoMapGestureArea::updateVelocityList(const QPointF &pos)
 
 bool QQuickGeoMapGestureArea::isActive() const
 {
-    return isPanActive() || isPinchActive();
+    return isPanActive() || isPinchActive() || isRotationActive() || isTiltActive();
 }
 
 /*!
@@ -774,7 +980,6 @@ void QQuickGeoMapGestureArea::update()
 {
     if (!m_map)
         return;
-
     // First state machine is for the number of touch points
 
     //combine touch with mouse event
@@ -785,16 +990,27 @@ void QQuickGeoMapGestureArea::update()
 
     touchPointStateMachine();
 
+    // Parallel state machine for tilt. Tilt goes first as it blocks anything else, when started.
+    // But tilting can also only start if nothing else is active.
+    if (isTiltActive() || m_pinch.m_tiltEnabled)
+        tiltStateMachine();
+
     // Parallel state machine for pinch
-    if (isPinchActive() || (m_enabled && m_pinch.m_enabled && (m_acceptedGestures & (PinchGesture))))
+    if (isPinchActive() || m_pinch.m_pinchEnabled)
         pinchStateMachine();
 
     // Parallel state machine for pan (since you can pan at the same time as pinching)
     // The stopPan function ensures that pan stops immediately when disabled,
-    // but the line below allows pan continue its current gesture if you disable
-    // the whole gesture (enabled_ flag), this keeps the enabled_ consistent with the pinch
-    if (isPanActive() || (m_enabled && m_flick.m_enabled && (m_acceptedGestures & (PanGesture | FlickGesture))))
+    // but the isPanActive() below allows pan continue its current gesture if you disable
+    // the whole gesture.
+    if (isPanActive() || m_flick.m_flickEnabled || m_flick.m_panEnabled)
         panStateMachine();
+
+    // Parallel state machine for rotation.
+    // Rotation goes last because when panning and rotating, first the new center has to be set,
+    // then the rotation has to be applied
+    if (isRotationActive() || m_pinch.m_rotationEnabled)
+        rotationStateMachine();
 }
 
 /*!
@@ -819,7 +1035,7 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
         if (m_allPoints.count() == 0) {
             m_touchPointState = touchPoints0;
         } else if (m_allPoints.count() == 2) {
-            m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
+            m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_touchPointsCentroid), false);
             startTwoTouchPoints();
             m_touchPointState = touchPoints2;
         }
@@ -828,7 +1044,7 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
         if (m_allPoints.count() == 0) {
             m_touchPointState = touchPoints0;
         } else if (m_allPoints.count() == 1) {
-            m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
+            m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_touchPointsCentroid), false);
             startOneTouchPoint();
             m_touchPointState = touchPoints1;
         }
@@ -869,10 +1085,9 @@ void QQuickGeoMapGestureArea::startOneTouchPoint()
 */
 void QQuickGeoMapGestureArea::updateOneTouchPoint()
 {
-    m_sceneCenter = mapFromScene(m_allPoints.at(0).scenePos());
-    updateVelocityList(m_sceneCenter);
+    m_touchPointsCentroid = mapFromScene(m_allPoints.at(0).scenePos());
+    updateVelocityList(m_touchPointsCentroid);
 }
-
 
 /*!
     \internal
@@ -889,6 +1104,7 @@ void QQuickGeoMapGestureArea::startTwoTouchPoints()
                              m_touchCenterCoord.longitude());
     m_startCoord.setLatitude(m_startCoord.latitude() + startCoord.latitude() -
                             m_touchCenterCoord.latitude());
+    m_twoTouchAngleStart = touchAngle(m_sceneStartPoint1, m_sceneStartPoint2); // Initial angle used for calculating rotation
 }
 
 /*!
@@ -901,12 +1117,280 @@ void QQuickGeoMapGestureArea::updateTwoTouchPoints()
     qreal dx = p1.x() - p2.x();
     qreal dy = p1.y() - p2.y();
     m_distanceBetweenTouchPoints = sqrt(dx * dx + dy * dy);
-    m_sceneCenter = (p1 + p2) / 2;
-    updateVelocityList(m_sceneCenter);
+    m_touchPointsCentroid = (p1 + p2) / 2;
+    updateVelocityList(m_touchPointsCentroid);
 
-    m_twoTouchAngle = QLineF(p1, p2).angle();
-    if (m_twoTouchAngle > 180)
-        m_twoTouchAngle -= 360;
+    m_twoTouchAngle = touchAngle(p1, p2);
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::tiltStateMachine()
+{
+    TiltState lastState = m_tiltState;
+    // Transitions:
+    switch (m_tiltState) {
+    case tiltInactive:
+        if (m_allPoints.count() >= 2) {
+            if (!isRotationActive() && !isPanActive() && !isPinchActive() && canStartTilt()) {
+                m_declarativeMap->setKeepMouseGrab(true);
+                m_declarativeMap->setKeepTouchGrab(true);
+                startTilt();
+                m_tiltState = tiltActive;
+            } else {
+                m_tiltState = tiltInactiveTwoPoints;
+            }
+        }
+        break;
+    case tiltInactiveTwoPoints:
+        if (m_allPoints.count() <= 1) {
+            m_tiltState = tiltInactive;
+        } else {
+            if (!isRotationActive() && !isPanActive() && !isPinchActive() && canStartTilt()) {
+                m_declarativeMap->setKeepMouseGrab(true);
+                m_declarativeMap->setKeepTouchGrab(true);
+                startTilt();
+                m_tiltState = tiltActive;
+            }
+        }
+        break;
+    case tiltActive:
+        if (m_allPoints.count() <= 1) {
+            m_tiltState = tiltInactive;
+            m_declarativeMap->setKeepMouseGrab(m_preventStealing);
+            m_declarativeMap->setKeepTouchGrab(m_preventStealing);
+            endTilt();
+        }
+        break;
+    }
+    // This line implements an exclusive state machine, where the transitions and updates don't
+    // happen on the same frame
+    if (m_tiltState != lastState) {
+        emit tiltActiveChanged();
+        return;
+    }
+
+    // Update
+    switch (m_tiltState) {
+    case tiltInactive:
+    case tiltInactiveTwoPoints:
+        break; // do nothing
+    case tiltActive:
+        updateTilt();
+        break;
+    }
+}
+
+/*!
+    \internal
+*/
+bool QQuickGeoMapGestureArea::canStartTilt()
+{
+    if (m_allPoints.count() >= 2) {
+        QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
+        QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
+        if (qAbs(m_twoTouchAngle) < MaximumParallelPosition
+                && movingParallel(m_sceneStartPoint1, p1, m_sceneStartPoint2, p2)) {
+            m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
+            m_pinch.m_event.setAngle(m_twoTouchAngle);
+            m_pinch.m_event.setPoint1(p1);
+            m_pinch.m_event.setPoint2(p2);
+            m_pinch.m_event.setPointCount(m_allPoints.count());
+            m_pinch.m_event.setAccepted(true);
+            emit tiltStarted(&m_pinch.m_event);
+            return m_pinch.m_event.accepted();
+        }
+    }
+    return false;
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::startTilt()
+{
+    m_pinch.m_tilt.m_startTouchCentroid = m_touchPointsCentroid;
+    m_pinch.m_tilt.m_startTilt = m_declarativeMap->tilt();
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::updateTilt()
+{
+    // Calculate the new tilt
+    qreal verticalDisplacement = (m_touchPointsCentroid - m_pinch.m_tilt.m_startTouchCentroid).y();
+
+    // Approach: 10pixel = 1 degree.
+    qreal tilt =  verticalDisplacement / 10.0;
+    qreal newTilt = m_pinch.m_tilt.m_startTilt - tilt;
+    m_declarativeMap->setTilt(newTilt);
+
+    m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
+    m_pinch.m_event.setAngle(m_twoTouchAngle);
+    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
+    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePos());
+    m_pinch.m_event.setPoint1(m_pinch.m_lastPoint1);
+    m_pinch.m_event.setPoint2(m_pinch.m_lastPoint2);
+    m_pinch.m_event.setPointCount(m_allPoints.count());
+    m_pinch.m_event.setAccepted(true);
+
+    emit tiltUpdated(&m_pinch.m_event);
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::endTilt()
+{
+    QPointF p1 = mapFromScene(m_pinch.m_lastPoint1);
+    QPointF p2 = mapFromScene(m_pinch.m_lastPoint2);
+    m_pinch.m_event.setCenter((p1 + p2) / 2);
+    m_pinch.m_event.setAngle(m_pinch.m_lastAngle);
+    m_pinch.m_event.setPoint1(p1);
+    m_pinch.m_event.setPoint2(p2);
+    m_pinch.m_event.setAccepted(true);
+    m_pinch.m_event.setPointCount(0);
+    emit tiltFinished(&m_pinch.m_event);
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::rotationStateMachine()
+{
+    RotationState lastState = m_rotationState;
+    // Transitions:
+    switch (m_rotationState) {
+    case rotationInactive:
+        if (m_allPoints.count() >= 2) {
+            if (!isTiltActive() && canStartRotation()) {
+                m_declarativeMap->setKeepMouseGrab(true);
+                m_declarativeMap->setKeepTouchGrab(true);
+                startRotation();
+                m_rotationState = rotationActive;
+            } else {
+                m_rotationState = rotationInactiveTwoPoints;
+            }
+        }
+        break;
+    case rotationInactiveTwoPoints:
+        if (m_allPoints.count() <= 1) {
+            m_rotationState = rotationInactive;
+        } else {
+            if (!isTiltActive() && canStartRotation()) {
+                m_declarativeMap->setKeepMouseGrab(true);
+                m_declarativeMap->setKeepTouchGrab(true);
+                startRotation();
+                m_rotationState = rotationActive;
+            }
+        }
+        break;
+    case rotationActive:
+        if (m_allPoints.count() <= 1) {
+            m_rotationState = rotationInactive;
+            m_declarativeMap->setKeepMouseGrab(m_preventStealing);
+            m_declarativeMap->setKeepTouchGrab(m_preventStealing);
+            endRotation();
+        }
+        break;
+    }
+    // This line implements an exclusive state machine, where the transitions and updates don't
+    // happen on the same frame
+    if (m_rotationState != lastState) {
+        emit rotationActiveChanged();
+        return;
+    }
+
+    // Update
+    switch (m_rotationState) {
+    case rotationInactive:
+    case rotationInactiveTwoPoints:
+        break; // do nothing
+    case rotationActive:
+        updateRotation();
+        break;
+    }
+}
+
+/*!
+    \internal
+*/
+bool QQuickGeoMapGestureArea::canStartRotation()
+{
+    if (m_allPoints.count() >= 2) {
+        QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
+        QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
+        if (pointDragged(m_sceneStartPoint1, p1) || pointDragged(m_sceneStartPoint2, p2)) {
+            qreal delta = angleDelta(m_twoTouchAngleStart, m_twoTouchAngle);
+            if (qAbs(delta) < MinimumRotationStartingAngle) {
+                return false;
+            }
+            m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
+            m_pinch.m_event.setAngle(m_twoTouchAngle);
+            m_pinch.m_event.setPoint1(p1);
+            m_pinch.m_event.setPoint2(p2);
+            m_pinch.m_event.setPointCount(m_allPoints.count());
+            m_pinch.m_event.setAccepted(true);
+            emit rotationStarted(&m_pinch.m_event);
+            return m_pinch.m_event.accepted();
+        }
+    }
+    return false;
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::startRotation()
+{
+    m_pinch.m_rotation.m_startBearing = m_declarativeMap->bearing();
+    m_pinch.m_rotation.m_previousTouchAngle = m_twoTouchAngleStart;
+    m_pinch.m_rotation.m_totalAngle = 0.0;
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::updateRotation()
+{
+    // Calculate the new bearing
+    qreal angle = angleDelta(m_pinch.m_rotation.m_previousTouchAngle, m_twoTouchAngle);
+    if (qAbs(angle) < 0.2) // avoiding too many updates
+        return;
+
+    m_pinch.m_rotation.m_previousTouchAngle = m_twoTouchAngle;
+    m_pinch.m_rotation.m_totalAngle += angle;
+    qreal newBearing = m_pinch.m_rotation.m_startBearing - m_pinch.m_rotation.m_totalAngle;
+    m_declarativeMap->setBearing(newBearing);
+
+    m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
+    m_pinch.m_event.setAngle(m_twoTouchAngle);
+    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
+    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePos());
+    m_pinch.m_event.setPoint1(m_pinch.m_lastPoint1);
+    m_pinch.m_event.setPoint2(m_pinch.m_lastPoint2);
+    m_pinch.m_event.setPointCount(m_allPoints.count());
+    m_pinch.m_event.setAccepted(true);
+
+    emit rotationUpdated(&m_pinch.m_event);
+}
+
+/*!
+    \internal
+*/
+void QQuickGeoMapGestureArea::endRotation()
+{
+    QPointF p1 = mapFromScene(m_pinch.m_lastPoint1);
+    QPointF p2 = mapFromScene(m_pinch.m_lastPoint2);
+    m_pinch.m_event.setCenter((p1 + p2) / 2);
+    m_pinch.m_event.setAngle(m_pinch.m_lastAngle);
+    m_pinch.m_event.setPoint1(p1);
+    m_pinch.m_event.setPoint2(p2);
+    m_pinch.m_event.setAccepted(true);
+    m_pinch.m_event.setPointCount(0);
+    emit rotationFinished(&m_pinch.m_event);
 }
 
 /*!
@@ -919,7 +1403,7 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
     switch (m_pinchState) {
     case pinchInactive:
         if (m_allPoints.count() >= 2) {
-            if (canStartPinch()) {
+            if (!isTiltActive() && canStartPinch()) {
                 m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startPinch();
@@ -933,7 +1417,7 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
         if (m_allPoints.count() <= 1) {
             m_pinchState = pinchInactive;
         } else {
-            if (canStartPinch()) {
+            if (!isTiltActive() && canStartPinch()) {
                 m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startPinch();
@@ -942,7 +1426,7 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
         }
         break;
     case pinchActive:
-        if (m_allPoints.count() <= 1) {
+        if (m_allPoints.count() <= 1) { // Once started, pinch goes off only when finger(s) are release
             m_pinchState = pinchInactive;
             m_declarativeMap->setKeepMouseGrab(m_preventStealing);
             m_declarativeMap->setKeepTouchGrab(m_preventStealing);
@@ -973,16 +1457,12 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
 */
 bool QQuickGeoMapGestureArea::canStartPinch()
 {
-    const int startDragDistance = qApp->styleHints()->startDragDistance();
-
     if (m_allPoints.count() >= 2) {
         QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
         QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
-        if (qAbs(p1.x()-m_sceneStartPoint1.x()) > startDragDistance
-         || qAbs(p1.y()-m_sceneStartPoint1.y()) > startDragDistance
-         || qAbs(p2.x()-m_sceneStartPoint2.x()) > startDragDistance
-         || qAbs(p2.y()-m_sceneStartPoint2.y()) > startDragDistance) {
-            m_pinch.m_event.setCenter(mapFromScene(m_sceneCenter));
+        if (pointDragged(m_sceneStartPoint1, p1)
+         || pointDragged(m_sceneStartPoint2, p2)) {
+            m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
             m_pinch.m_event.setAngle(m_twoTouchAngle);
             m_pinch.m_event.setPoint1(p1);
             m_pinch.m_event.setPoint2(p2);
@@ -1027,7 +1507,7 @@ void QQuickGeoMapGestureArea::updatePinch()
                 m_pinch.m_zoom.m_start;
     }
 
-    m_pinch.m_event.setCenter(mapFromScene(m_sceneCenter));
+    m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
     m_pinch.m_event.setAngle(m_twoTouchAngle);
 
     m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
@@ -1077,9 +1557,9 @@ void QQuickGeoMapGestureArea::panStateMachine()
     // Transitions
     switch (m_flickState) {
     case flickInactive:
-        if (canStartPan()) {
+        if (!isTiltActive() && canStartPan()) {
             // Update startCoord_ to ensure smooth start for panning when going over startDragDistance
-            QGeoCoordinate newStartCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_sceneCenter), false);
+            QGeoCoordinate newStartCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_touchPointsCentroid), false);
             m_startCoord.setLongitude(newStartCoord.longitude());
             m_startCoord.setLatitude(newStartCoord.latitude());
             m_declarativeMap->setKeepMouseGrab(true);
@@ -1092,7 +1572,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
             {
                 m_flickState = flickInactive;
                 // mark as inactive for use by camera
-                if (m_pinchState == pinchInactive) {
+                if (m_pinchState == pinchInactive && m_rotationState == rotationInactive && m_tiltState == tiltInactive) {
                     m_declarativeMap->setKeepMouseGrab(m_preventStealing);
                     m_map->prefetchData();
                 }
@@ -1154,7 +1634,7 @@ bool QQuickGeoMapGestureArea::canStartPan()
 */
 void QQuickGeoMapGestureArea::updatePan()
 {
-    QGeoCoordinate animationStartCoordinate = anchorCoordinateToPoint(*m_map, m_startCoord, m_sceneCenter);
+    QGeoCoordinate animationStartCoordinate = anchorCoordinateToPoint(*m_map, m_startCoord, m_touchPointsCentroid);
     m_declarativeMap->setCenter(animationStartCoordinate);
 }
 
@@ -1176,7 +1656,7 @@ bool QQuickGeoMapGestureArea::tryStartFlick()
     int flickTimeX = 0;
     int flickPixelsX = 0;
     int flickPixelsY = 0;
-    if (qAbs(velocityY) > MinimumFlickVelocity && qAbs(m_sceneCenter.y() - m_sceneStartPoint1.y()) > FlickThreshold) {
+    if (qAbs(velocityY) > MinimumFlickVelocity && qAbs(m_touchPointsCentroid.y() - m_sceneStartPoint1.y()) > FlickThreshold) {
         // calculate Y flick animation values
         qreal acceleration = m_flick.m_deceleration;
         if ((velocityY > 0.0f) == (m_flick.m_deceleration > 0.0f))
@@ -1184,7 +1664,7 @@ bool QQuickGeoMapGestureArea::tryStartFlick()
         flickTimeY = static_cast<int>(-1000 * velocityY / acceleration);
         flickPixelsY = (flickTimeY * velocityY) / (1000.0 * 2);
     }
-    if (qAbs(velocityX) > MinimumFlickVelocity && qAbs(m_sceneCenter.x() - m_sceneStartPoint1.x()) > FlickThreshold) {
+    if (qAbs(velocityX) > MinimumFlickVelocity && qAbs(m_touchPointsCentroid.x() - m_sceneStartPoint1.x()) > FlickThreshold) {
         // calculate X flick animation values
         qreal acceleration = m_flick.m_deceleration;
         if ((velocityX > 0.0f) == (m_flick.m_deceleration > 0.0f))
