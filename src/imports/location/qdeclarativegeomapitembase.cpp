@@ -187,15 +187,17 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate &coordina
     setPosition(topLeft);
 }
 
+static const double opacityRampMin = 1.5;
+static const double opacityRampMax = 2.5;
 /*!
     \internal
 */
 float QDeclarativeGeoMapItemBase::zoomLevelOpacity() const
 {
-    if (quickMap_->zoomLevel() > 3.0)
+    if (quickMap_->zoomLevel() > opacityRampMax)
         return 1.0;
-    else if (quickMap_->zoomLevel() > 2.0)
-        return quickMap_->zoomLevel() - 2.0;
+    else if (quickMap_->zoomLevel() > opacityRampMin)
+        return quickMap_->zoomLevel() - opacityRampMin;
     else
         return 0.0;
 }
