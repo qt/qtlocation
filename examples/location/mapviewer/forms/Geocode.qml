@@ -51,7 +51,7 @@ GeocodeForm {
         // fill out the Address element
         address.street = street.text
         address.city = city.text
-        address.state = state.text
+        address.state = stateName.text
         address.country = country.text
         address.postalCode = postalCode.text
         showPlace(address)
@@ -60,7 +60,7 @@ GeocodeForm {
     clearButton.onClicked: {
         street.text = ""
         city.text = ""
-        state.text = ""
+        stateName.text = ""
         country.text = ""
         postalCode.text = ""
     }
@@ -72,7 +72,7 @@ GeocodeForm {
     Component.onCompleted: {
         street.text = address.street
         city.text = address.city
-        state.text = address.state
+        stateName.text = address.state
         country.text = address.country
         postalCode.text = address.postalCode
     }

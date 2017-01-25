@@ -53,6 +53,7 @@ QGeoFileTileCacheOsm::QGeoFileTileCacheOsm(const QVector<QGeoTileProviderOsm *> 
 {
     m_highDpi.resize(providers.size());
     for (int i = 0; i < providers.size(); i++) {
+        providers[i]->setParent(this);
         m_highDpi[i] = providers[i]->isHighDpi();
         m_mapIdFutures[providers[i]->mapType().mapId()].isFinished(); // To construct a default future for this mapId
         connect(providers[i], &QGeoTileProviderOsm::resolutionFinished, this, &QGeoFileTileCacheOsm::onProviderResolutionFinished);
