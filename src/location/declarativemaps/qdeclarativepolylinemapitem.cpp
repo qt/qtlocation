@@ -527,7 +527,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), dirtyMaterial_(true), updatingGeometry_(false)
+:   QDeclarativeGeoMapItemBase(parent), line_(this), dirtyMaterial_(true), updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&line_, SIGNAL(colorChanged(QColor)),

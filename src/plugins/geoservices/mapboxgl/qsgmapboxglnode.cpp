@@ -92,3 +92,19 @@ QMapboxGL* QSGMapboxGLNode::map() const
 {
     return m_map.data();
 }
+
+QMapbox::AnnotationID QSGMapboxGLNode::addAnnotation(const QMapbox::Annotation &annotation)
+{
+    return m_map->addAnnotation(annotation);
+}
+
+void QSGMapboxGLNode::updateAnnotation(QMapbox::AnnotationID id,const QMapbox::Annotation &annotation)
+{
+    m_map->updateAnnotation(id, annotation);
+}
+
+void QSGMapboxGLNode::removeAnnotation(QMapbox::AnnotationID annotationId)
+{
+    m_map->removeAnnotation(annotationId);
+}
+

@@ -53,6 +53,12 @@ public:
 
     void setMapboxGLSettings(const QMapboxGLSettings &);
 
+private Q_SLOTS:
+    void onMapItemLinePathChange();
+    void onMapItemLineOpacityChange();
+    void onMapItemLineWidthChange(qreal);
+    void onMapItemLineColorChange(const QColor &);
+
 protected:
     QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window) Q_DECL_OVERRIDE;
 

@@ -45,6 +45,11 @@
 #include <QtGui/QOpenGLFramebufferObject>
 #include <QtLocation/private/qgeomap_p_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
+#include <QtLocation/private/qdeclarativegeomapitembase_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+
+#include "qgeopath.h"
+
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGImageNode>
 #include <QtQuick/private/qsgtexture_p.h>
@@ -78,6 +83,10 @@ public:
 
     QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
+    QGeoMap::ItemTypes supportedMapItemTypes() const Q_DECL_OVERRIDE;
+    void addMapItem(QDeclarativeGeoMapItemBase *item) Q_DECL_OVERRIDE;
+    void removeMapItem(QDeclarativeGeoMapItemBase *item) Q_DECL_OVERRIDE;
+
     /* Data members */
     enum SyncState : int {
         NoSync = 0,
@@ -92,6 +101,11 @@ public:
     QTimer m_refresh;
     bool m_shouldRefresh = true;
     bool m_warned = false;
+
+    QHash<QDeclarativeGeoMapItemBase *, QMapbox::AnnotationID> m_managedMapItems;
+    QList<QDeclarativeGeoMapItemBase *> m_mapItemsToAdd;
+    QList<QDeclarativeGeoMapItemBase *> m_mapItemsToUpdate;
+    QList<QDeclarativeGeoMapItemBase *> m_mapItemsToRemove;
 
     SyncStates m_syncState = NoSync;
 
@@ -140,6 +154,73 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow
         map->setStyleUrl(m_activeMapType.name());
     }
 
+    for (QDeclarativeGeoMapItemBase *mapItem : m_mapItemsToRemove) {
+        Q_ASSERT(m_managedMapItems.contains(mapItem));
+        q->disconnect(mapItem);
+
+        QDeclarativePolylineMapItem *polyline = qobject_cast<QDeclarativePolylineMapItem *>(mapItem);
+        QDeclarativeMapLineProperties *lineStyle = polyline->line();
+        q->disconnect(lineStyle);
+
+        map->removeAnnotation(m_managedMapItems.take(mapItem));
+        if (m_mapItemsToUpdate.contains(mapItem)) {
+            m_mapItemsToUpdate.removeAll(mapItem);
+        }
+    }
+    m_mapItemsToRemove.clear();
+
+    for (QDeclarativeGeoMapItemBase *mapItem : m_mapItemsToAdd) {
+        Q_ASSERT(!m_managedMapItems.contains(mapItem));
+
+        QMapbox::Coordinates coordinates;
+        const QGeoPath *path = static_cast<const QGeoPath *>(&mapItem->geoShape());
+        for (const QGeoCoordinate &coordinate : path->path()) {
+            coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
+        }
+
+        QDeclarativePolylineMapItem *polyline = qobject_cast<QDeclarativePolylineMapItem *>(mapItem);
+        QObject::connect(polyline, &QDeclarativePolylineMapItem::pathChanged, q, &QGeoMapMapboxGL::onMapItemLinePathChange);
+        QObject::connect(polyline, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged, q, &QGeoMapMapboxGL::onMapItemLineOpacityChange);
+
+        QDeclarativeMapLineProperties *lineStyle = polyline->line();
+        QObject::connect(lineStyle, &QDeclarativeMapLineProperties::widthChanged, q, &QGeoMapMapboxGL::onMapItemLineWidthChange);
+        QObject::connect(lineStyle, &QDeclarativeMapLineProperties::colorChanged, q, &QGeoMapMapboxGL::onMapItemLineColorChange);
+
+        const float opacity = mapItem->mapItemOpacity();
+        const float width = lineStyle->width();
+        const QColor color = lineStyle->color();
+
+        QMapbox::CoordinatesCollections geometry { { coordinates } };
+        QMapbox::LineAnnotation lineAnnotation { { QMapbox::ShapeAnnotationGeometry::Type::LineStringType, geometry }, opacity, width, color };
+        QMapbox::Annotation annotation { QVariant::fromValue<QMapbox::LineAnnotation>(lineAnnotation) };
+
+        m_managedMapItems.insert(mapItem, map->addAnnotation(annotation));
+    }
+    m_mapItemsToAdd.clear();
+
+    for (QDeclarativeGeoMapItemBase *mapItem: m_mapItemsToUpdate) {
+        Q_ASSERT(m_managedMapItems.contains(mapItem));
+        QMapbox::Coordinates coordinates;
+        const QGeoPath *path = static_cast<const QGeoPath *>(&mapItem->geoShape());
+        for (const QGeoCoordinate &coordinate : path->path()) {
+            coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
+        }
+
+        QDeclarativePolylineMapItem *polyline = qobject_cast<QDeclarativePolylineMapItem *>(mapItem);
+        QDeclarativeMapLineProperties *lineStyle = polyline->line();
+
+        const float opacity = mapItem->mapItemOpacity();
+        const float width = lineStyle->width();
+        const QColor color = lineStyle->color();
+
+        QMapbox::CoordinatesCollections geometry { { coordinates } };
+        QMapbox::LineAnnotation lineAnnotation { { QMapbox::ShapeAnnotationGeometry::Type::LineStringType, geometry }, opacity, width, color };
+        QMapbox::Annotation annotation { QVariant::fromValue<QMapbox::LineAnnotation>(lineAnnotation) };
+
+        map->updateAnnotation(m_managedMapItems.value(mapItem), annotation);
+    }
+    m_mapItemsToUpdate.clear();
+
     if (m_syncState & CameraDataSync) {
         map->setZoom(zoomLevelFrom256(m_cameraData.zoomLevel() , MBGL_TILE_SIZE));
         map->setBearing(m_cameraData.bearing());
@@ -158,6 +239,51 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow
     m_syncState = NoSync;
 
     return mbglNode;
+}
+
+QGeoMap::ItemTypes QGeoMapMapboxGLPrivate::supportedMapItemTypes() const
+{
+    return QGeoMap::MapPolyline;
+}
+
+void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    Q_Q(QGeoMapMapboxGL);
+
+    switch (item->itemType()) {
+    case QGeoMap::NoItem:
+    case QGeoMap::MapRectangle:
+    case QGeoMap::MapCircle:
+    case QGeoMap::MapPolygon:
+    case QGeoMap::MapQuickItem:
+    case QGeoMap::CustomMapItem:
+        return;
+    case QGeoMap::MapPolyline:
+        m_mapItemsToAdd << item;
+        break;
+    }
+
+    emit q->sgNodeChanged();
+}
+
+void QGeoMapMapboxGLPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    Q_Q(QGeoMapMapboxGL);
+
+    switch (item->itemType()) {
+    case QGeoMap::NoItem:
+    case QGeoMap::MapRectangle:
+    case QGeoMap::MapCircle:
+    case QGeoMap::MapPolygon:
+    case QGeoMap::MapQuickItem:
+    case QGeoMap::CustomMapItem:
+        return;
+    case QGeoMap::MapPolyline:
+        m_mapItemsToRemove << item;
+        break;
+    }
+
+    emit q->sgNodeChanged();
 }
 
 void QGeoMapMapboxGLPrivate::changeViewportSize(const QSize &)
@@ -212,4 +338,40 @@ QSGNode *QGeoMapMapboxGL::updateSceneGraph(QSGNode *oldNode, QQuickWindow *windo
 {
     Q_D(QGeoMapMapboxGL);
     return d->updateSceneGraph(oldNode, window);
+}
+
+void QGeoMapMapboxGL::onMapItemLinePathChange()
+{
+    Q_D(QGeoMapMapboxGL);
+    QDeclarativeGeoMapItemBase *mapItem = static_cast<QDeclarativeGeoMapItemBase *>(sender());
+    if (mapItem && !d->m_mapItemsToUpdate.contains(mapItem)) {
+        d->m_mapItemsToUpdate << mapItem;
+    }
+}
+
+void QGeoMapMapboxGL::onMapItemLineOpacityChange()
+{
+    Q_D(QGeoMapMapboxGL);
+    QDeclarativeGeoMapItemBase *mapItem = static_cast<QDeclarativeGeoMapItemBase *>(sender());
+    if (mapItem && !d->m_mapItemsToUpdate.contains(mapItem)) {
+        d->m_mapItemsToUpdate << mapItem;
+    }
+}
+
+void QGeoMapMapboxGL::onMapItemLineWidthChange(qreal)
+{
+    Q_D(QGeoMapMapboxGL);
+    QDeclarativeGeoMapItemBase *mapItem = static_cast<QDeclarativeGeoMapItemBase *>(sender()->parent());
+    if (mapItem && !d->m_mapItemsToUpdate.contains(mapItem)) {
+        d->m_mapItemsToUpdate << mapItem;
+    }
+}
+
+void QGeoMapMapboxGL::onMapItemLineColorChange(const QColor &)
+{
+    Q_D(QGeoMapMapboxGL);
+    QDeclarativeGeoMapItemBase *mapItem = static_cast<QDeclarativeGeoMapItemBase *>(sender()->parent());
+    if (mapItem && !d->m_mapItemsToUpdate.contains(mapItem)) {
+        d->m_mapItemsToUpdate << mapItem;
+    }
 }
