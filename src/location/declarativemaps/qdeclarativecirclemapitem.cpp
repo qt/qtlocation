@@ -246,56 +246,6 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QGeoCoordinate>
     }
     ppi.translate(-1 * origin.toPointF());
 
-#if 0 // old poly2tri code, has to be ported to clip2tri in order to work with tilted projections
-    std::vector<p2t::Point*> borderPts;
-    borderPts.reserve(4);
-
-    std::vector<p2t::Point*> curPts;
-    curPts.reserve(ppi.elementCount());
-    for (int i = 0; i < ppi.elementCount(); ++i) {
-        const QPainterPath::Element e = ppi.elementAt(i);
-        if (e.isMoveTo() || i == ppi.elementCount() - 1
-                || (qAbs(e.x - curPts.front()->x) < 0.1
-                    && qAbs(e.y - curPts.front()->y) < 0.1)) {
-            if (curPts.size() > 2) {
-                for (int j = 0; j < 4; ++j) {
-                    const QPainterPath::Element e2 = ppiBorder.elementAt(j);
-                    borderPts.push_back(new p2t::Point(e2.x, e2.y));
-                }
-                p2t::CDT *cdt = new p2t::CDT(borderPts);
-                cdt->AddHole(curPts);
-                cdt->Triangulate();
-                std::vector<p2t::Triangle*> tris = cdt->GetTriangles();
-                screenVertices_.reserve(screenVertices_.size() + int(tris.size()));
-                for (size_t i = 0; i < tris.size(); ++i) {
-                    p2t::Triangle *t = tris.at(i);
-                    for (int j = 0; j < 3; ++j) {
-                        p2t::Point *p = t->GetPoint(j);
-                        screenVertices_ << QPointF(p->x, p->y);
-                    }
-                }
-                delete cdt;
-            }
-            curPts.clear();
-            curPts.reserve(ppi.elementCount() - i);
-            curPts.push_back(new p2t::Point(e.x, e.y));
-        } else if (e.isLineTo()) {
-            curPts.push_back(new p2t::Point(e.x, e.y));
-        } else {
-            qWarning("Unhandled element type in circle painterpath");
-        }
-    }
-
-    if (curPts.size() > 0) {
-        qDeleteAll(curPts.begin(), curPts.end());
-        curPts.clear();
-    }
-
-    if (borderPts.size() > 0) {
-        qDeleteAll(borderPts.begin(), borderPts.end());
-        borderPts.clear();
-    }
-#else // Using qTriangulate as this case is not frequent, and not many circles including both poles are usually used
     QTriangleSet ts = qTriangulate(ppi);
     qreal *vx = ts.vertices.data();
 
@@ -313,7 +263,6 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QGeoCoordinate>
     }
     for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
         screenVertices_ << QPointF(vx[i], vx[i + 1]);
-#endif
 
     screenBounds_ = ppi.boundingRect();
     sourceBounds_ = screenBounds_;
@@ -702,7 +651,7 @@ void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QGeoCoordinat
     for (int i = 1; i <= path.count(); ++i) {
         int index = i % path.count();
         QDoubleVector2D point = map()->geoProjection().wrapMapProjection(map()->geoProjection().geoToMapProjection(path.at(index)));
-        if ( (qAbs(point.x() - prev.x())) >= 0.5 ) { // TODO: Add a projectionWidth to GeoProjection, perhaps?
+        if ( (qAbs(point.x() - prev.x())) >= 0.5 ) {
             wrapPathIndex << index;
             if (wrapPathIndex.size() == 2 || !(crossNorthPole && crossSouthPole))
                 break;

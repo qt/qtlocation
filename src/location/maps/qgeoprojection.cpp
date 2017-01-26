@@ -388,8 +388,7 @@ void QGeoProjectionWebMercator::setupCamera()
     m_centerNearPlane = m_eye + m_viewNormalized;
     m_centerNearPlaneMercator = m_eyeMercator + m_viewNormalized * m_nearPlaneMercator;
 
-    // TODO: support tilting angles > 90.0, if desired. And flip the bottom corners with the top corners, if needed
-    // by clipper.
+    // The method does not support tilting angles >= 90.0 or < 0.
 
     // The following formula is used to have a growing epsilon with the zoom level,
     // in order not to have too large values at low zl, which would overflow when converted to Clipper::cInt.

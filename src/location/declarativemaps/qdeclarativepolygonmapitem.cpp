@@ -276,9 +276,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     if (ppi.elementCount() < 3)
         return;
 
-    // TODO: move this to clip2tri, and remove the code below.
-    // For clip2tri use the intersection between the the viewport AND the map as clipping region.
-
     // Intersection between the viewport and a concave polygon can create multiple polygons
     // joined by a line at the viewport border, and poly2tri does not triangulate this very well
     // so use the full src path if the resulting polygon is concave.
@@ -313,35 +310,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
     screenOutline_ = ppi;
 
-#if 0 // TODO: This code appears to crash seldomly in presence of tilt. Requires further investigation
-    std::vector<std::vector<c2t::Point>> clipperPoints;
-    clipperPoints.push_back(std::vector<c2t::Point>());
-    std::vector<c2t::Point> &curPts = clipperPoints.front();
-    curPts.reserve(ppi.elementCount());
-    for (int i = 0; i < ppi.elementCount(); ++i) {
-        const QPainterPath::Element e = ppi.elementAt(i);
-        if (e.isMoveTo() || i == ppi.elementCount() - 1
-                || (qAbs(e.x - curPts.front().x) < 0.1
-                    && qAbs(e.y - curPts.front().y) < 0.1)) {
-            if (curPts.size() > 2) {
-                c2t::clip2tri *cdt = new c2t::clip2tri();
-                std::vector<c2t::Point> outputTriangles;
-                cdt->triangulate(clipperPoints, outputTriangles, std::vector<c2t::Point>());
-                for (size_t i = 0; i < outputTriangles.size(); ++i) {
-                    screenVertices_ << QPointF(outputTriangles[i].x, outputTriangles[i].y);
-                }
-                delete cdt;
-            }
-            curPts.clear();
-            curPts.reserve(ppi.elementCount() - i);
-            curPts.push_back( c2t::Point(e.x, e.y));
-        } else if (e.isLineTo()) {
-            curPts.push_back( c2t::Point(e.x, e.y));
-        } else {
-            qWarning("Unhandled element type in polygon painterpath");
-        }
-    }
-#else // Old qTriangulate()-based code.
     QTriangleSet ts = qTriangulate(ppi);
     qreal *vx = ts.vertices.data();
 
@@ -359,7 +327,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     }
     for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
         screenVertices_ << QPointF(vx[i], vx[i + 1]);
-#endif
 
     screenBounds_ = ppi.boundingRect();
 }

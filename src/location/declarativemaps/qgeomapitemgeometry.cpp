@@ -101,15 +101,6 @@ QRectF QGeoMapItemGeometry::translateToCommonOrigin(const QList<QGeoMapItemGeome
     // first get max offset
     QPointF maxOffset = geoms.at(0)->firstPointOffset();
     foreach (QGeoMapItemGeometry *g, geoms) {
-#ifndef QT_NO_DEBUG
-        //Q_ASSERT(g->origin() == origin);  // this might fail on clipper clipping inaccuracies, so better to remove it in production
-        if (!qFuzzyCompare(origin.latitude(), g->origin().latitude())) {
-            qWarning("translateToCommonOrigin: Origins differ!");
-        }
-        if (!qFuzzyCompare(origin.longitude(), g->origin().longitude())) {
-            qWarning("translateToCommonOrigin: Origins differ!");
-        }
-#endif
         QPointF o = g->firstPointOffset();
         maxOffset.setX(qMax(o.x(), maxOffset.x()));
         maxOffset.setY(qMax(o.y(), maxOffset.y()));
