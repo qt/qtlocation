@@ -74,8 +74,29 @@ QT_BEGIN_NAMESPACE
     be set, as it is the only data source for this element.
 */
 
+/*!
+    \qmlproperty color QtLocation::MapCopyrightNotice::backgroundColor
+
+    This property holds the current background color of the copyright notice.
+*/
+
+/*!
+    \qmlproperty string QtLocation::MapCopyrightNotice::styleSheet
+
+    This property holds the current css2.1 style sheet used to style the copyright notice, if in HTML form.
+
+    Example:
+    \code
+    MapCopyrightNotice {
+        mapSource: myMap
+        styleSheet: "body { color : green; font-family: \"Lucida\"; font-size: 8px} a{ font-size: 8px; color:#A62900}"
+    }
+    \endcode
+*/
+
 QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent)
-:   QQuickPaintedItem(parent), m_copyrightsHtml(0), m_copyrightsVisible(true), m_mapSource(0)
+:   QQuickPaintedItem(parent), m_copyrightsHtml(0), m_copyrightsVisible(true), m_mapSource(0),
+    m_backgroundColor(255, 255, 255, 128)
 {
     // If this item is constructed inside the map, automatically anchor it where it always used to be.
     if (qobject_cast<QDeclarativeGeoMap *>(parent))
@@ -133,6 +154,38 @@ QDeclarativeGeoMap *QDeclarativeGeoMapCopyrightNotice::mapSource()
     return m_mapSource;
 }
 
+QColor QDeclarativeGeoMapCopyrightNotice::backgroundColor() const
+{
+    return m_backgroundColor;
+}
+
+QString QDeclarativeGeoMapCopyrightNotice::styleSheet() const
+{
+    return m_styleSheet;
+}
+
+void QDeclarativeGeoMapCopyrightNotice::setBackgroundColor(const QColor &color)
+{
+    m_backgroundColor = color;
+    rasterizeHtmlAndUpdate();
+    emit backgroundColorChanged(m_backgroundColor);
+}
+
+void QDeclarativeGeoMapCopyrightNotice::setStyleSheet(const QString &styleSheet)
+{
+    if (styleSheet == m_styleSheet)
+        return;
+
+    m_styleSheet = styleSheet;
+    if (!m_html.isEmpty() && m_copyrightsHtml) {
+        delete m_copyrightsHtml;
+        createCopyright();
+        m_copyrightsHtml->setHtml(m_html);
+    }
+    rasterizeHtmlAndUpdate();
+    emit styleSheetChanged(m_styleSheet);
+}
+
 /*!
     \internal
 */
@@ -161,6 +214,36 @@ void QDeclarativeGeoMapCopyrightNotice::mouseReleaseEvent(QMouseEvent *event)
             m_activeAnchor.clear();
         }
     }
+}
+
+void QDeclarativeGeoMapCopyrightNotice::rasterizeHtmlAndUpdate()
+{
+    if (!m_copyrightsHtml || m_copyrightsHtml->isEmpty())
+        return;
+
+    m_copyrightsImage = QImage(m_copyrightsHtml->size().toSize(),
+                               QImage::Format_ARGB32_Premultiplied);
+
+    m_copyrightsImage.fill(qPremultiply(m_backgroundColor.rgba()));
+    QPainter painter(&m_copyrightsImage);
+    QAbstractTextDocumentLayout::PaintContext ctx;
+    ctx.palette.setColor(QPalette::Text, QStringLiteral("black"));
+    m_copyrightsHtml->documentLayout()->draw(&painter, ctx);
+
+    setImplicitSize(m_copyrightsImage.width(), m_copyrightsImage.height());
+    setContentsSize(m_copyrightsImage.size());
+
+    setKeepMouseGrab(true);
+    setAcceptedMouseButtons(Qt::LeftButton);
+
+    update();
+}
+
+void QDeclarativeGeoMapCopyrightNotice::createCopyright()
+{
+    m_copyrightsHtml = new QTextDocument(this);
+    if (!m_styleSheet.isEmpty())
+        m_copyrightsHtml->setDefaultStyleSheet(m_styleSheet);
 }
 
 /*!
@@ -192,8 +275,7 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrigh
 
     m_copyrightsImage = copyrightsImage;
 
-    setWidth(m_copyrightsImage.width());
-    setHeight(m_copyrightsImage.height());
+    setImplicitSize(m_copyrightsImage.width(), m_copyrightsImage.height());
 
     setKeepMouseGrab(false);
     setAcceptedMouseButtons(Qt::NoButton);
@@ -213,31 +295,12 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrig
         setVisible(true);
     }
 
+    m_html = copyrightsHtml;
     if (!m_copyrightsHtml)
-        m_copyrightsHtml = new QTextDocument(this);
+        createCopyright();
 
     m_copyrightsHtml->setHtml(copyrightsHtml);
-
-    m_copyrightsImage = QImage(m_copyrightsHtml->size().toSize(),
-                               QImage::Format_ARGB32_Premultiplied);
-    m_copyrightsImage.fill(qPremultiply(qRgba(255, 255, 255, 128)));
-
-    QPainter painter(&m_copyrightsImage);
-    //m_copyrightsHtml->drawContents(&painter);  // <- this uses the default application palette, that might have, f.ex., white text
-    QAbstractTextDocumentLayout::PaintContext ctx;
-    ctx.palette.setColor(QPalette::Text, QColor(QStringLiteral("black")));
-    ctx.palette.setColor(QPalette::Link, QColor(QStringLiteral("blue")));
-    m_copyrightsHtml->documentLayout()->draw(&painter, ctx);
-
-    setWidth(m_copyrightsImage.width());
-    setHeight(m_copyrightsImage.height());
-
-    setContentsSize(m_copyrightsImage.size());
-
-    setKeepMouseGrab(true);
-    setAcceptedMouseButtons(Qt::LeftButton);
-
-    update();
+    rasterizeHtmlAndUpdate();
 }
 
 QT_END_NAMESPACE

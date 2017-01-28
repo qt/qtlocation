@@ -45,6 +45,11 @@
 
 QT_BEGIN_NAMESPACE
 
+static QString bodify(const QString &html)
+{
+    return QStringLiteral("<body>") + html + QStringLiteral("</body>");
+}
+
 QGeoTiledMapOsm::QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
 :   QGeoTiledMap(engine, parent), m_mapId(-1), m_engine(engine)
 {
@@ -95,13 +100,13 @@ void QGeoTiledMapOsm::onProviderDataUpdated(const QGeoTileProviderOsm *provider)
     }
     if (!dataCopy.isEmpty()) {
         if (!copyRights.isEmpty())
-            copyRights += QStringLiteral("<br/>");
+            copyRights += QStringLiteral(" | ");
         copyRights += QStringLiteral("Data &copy; ");
         copyRights += dataCopy;
     }
     if (!styleCopy.isEmpty()) {
         if (!copyRights.isEmpty())
-            copyRights += QStringLiteral("<br/>");
+            copyRights += QStringLiteral(" | ");
         copyRights += QStringLiteral("Style &copy; ");
         copyRights += styleCopy;
     }
@@ -109,7 +114,7 @@ void QGeoTiledMapOsm::onProviderDataUpdated(const QGeoTileProviderOsm *provider)
     if (copyRights.isEmpty() && provider->mapType().style() == QGeoMapType::CustomMap)
         copyRights = m_engine->customCopyright();
 
-    emit copyrightsChanged(copyRights);
+    emit copyrightsChanged(bodify(copyRights));
 }
 
 QT_END_NAMESPACE

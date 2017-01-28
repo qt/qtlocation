@@ -63,6 +63,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapCopyrightNotice : public QQuic
 {
     Q_OBJECT
     Q_PROPERTY(QDeclarativeGeoMap *mapSource READ mapSource WRITE setMapSource NOTIFY mapSourceChanged)
+    Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
+    Q_PROPERTY(QString styleSheet READ styleSheet WRITE setStyleSheet NOTIFY styleSheetChanged)
 
 public:
     QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent = Q_NULLPTR);
@@ -76,6 +78,11 @@ public:
     void setMapSource(QDeclarativeGeoMap *mapSource);
     QDeclarativeGeoMap *mapSource();
 
+    QColor backgroundColor() const;
+    QString styleSheet() const;
+    void setBackgroundColor(const QColor &color);
+    void setStyleSheet(const QString &styleSheet);
+
 public Q_SLOTS:
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
@@ -83,18 +90,26 @@ public Q_SLOTS:
 signals:
     void linkActivated(const QString &link);
     void mapSourceChanged();
+    void backgroundColorChanged(const QColor &color);
+    void styleSheetChanged(const QString &styleSheet);
 
 protected:
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void rasterizeHtmlAndUpdate();
 
 private:
+    void createCopyright();
+
     QTextDocument *m_copyrightsHtml;
+    QString m_html;
     QImage m_copyrightsImage;
     QString m_activeAnchor;
     bool m_copyrightsVisible;
     QDeclarativeGeoMap *m_mapSource;
+    QColor m_backgroundColor;
+    QString m_styleSheet;
 };
 
 QT_END_NAMESPACE
