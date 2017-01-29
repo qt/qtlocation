@@ -68,7 +68,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty georectangle QtLocation::MapParameter::type
+    \qmlproperty string QtLocation::MapParameter::type
 
     Set-once property which holds a string defining the type of the MapParameter
 */
