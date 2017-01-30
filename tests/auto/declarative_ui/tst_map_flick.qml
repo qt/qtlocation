@@ -34,8 +34,8 @@ import QtPositioning 5.5
 Item {
     // General-purpose elements for the test:
     id: page
-    width: 100
-    height: 100
+    width: 120
+    height: 120
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
 
     property variant coordinate: QtPositioning.coordinate(10, 11)
@@ -235,12 +235,14 @@ Item {
         {
             map.center.latitude = 50
             map.center.longitude = 50
-            mousePress(page, 0, 0)
+            mousePress(page, 2, 2)
+            var pos;
             for (var i = 0; i < 50; i += 5) {
                 wait(20)
                 mouseMove(page, i, i, 0, Qt.LeftButton);
+                pos = i;
             }
-            mouseRelease(page, 50, 50)
+            mouseRelease(page, pos, pos)
             verify(map.center.latitude > 50)
             verify(map.center.longitude < 50)
             var moveLatitude = map.center.latitude
