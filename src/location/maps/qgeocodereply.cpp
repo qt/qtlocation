@@ -225,9 +225,20 @@ void QGeoCodeReply::setLocations(const QList<QGeoLocation> &locations)
 }
 
 /*!
+    \fn void QGeoCodeReply::aborted()
+    \since 5.9
+
+    This signal is emitted when the operation has been cancelled.
+
+    \sa abort()
+*/
+
+/*!
     Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
+
+    \sa aborted()
 */
 void QGeoCodeReply::abort()
 {

@@ -195,7 +195,18 @@ QPlaceReply::Error QPlaceReply::error() const
 }
 
 /*!
-    Aborts the operation.
+    \fn void QPlaceReply::aborted()
+    \since 5.9
+
+    This signal is emitted when the operation has been cancelled.
+
+    \sa abort()
+*/
+
+/*!
+    Cancels the operation immediately.
+
+    \sa aborted()
 */
 void QPlaceReply::abort()
 {
