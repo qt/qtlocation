@@ -125,7 +125,8 @@ a prefix.
     \li osm.mapping.cache.directory
     \li Absolute path to map tile cache directory used as network disk cache.
 
-    The default place for the cache is \c{QtLocation/osm} directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
+    The default place for the cache is the \c{QtLocation/osm} subdirectory in the location returned by
+    QStandardPaths::writableLocation(), called with QStandardPaths::GenericCacheLocation  as a parameter.
     On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
 \row
     \li osm.mapping.offline.directory
