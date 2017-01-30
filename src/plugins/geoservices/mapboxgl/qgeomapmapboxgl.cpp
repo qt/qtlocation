@@ -91,6 +91,7 @@ public:
 
     QTimer m_refresh;
     bool m_shouldRefresh = true;
+    bool m_warned = false;
 
     SyncStates m_syncState = NoSync;
 
@@ -118,14 +119,13 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow
 {
     Q_Q(QGeoMapMapboxGL);
 
-    static bool warned;
-    if (!warned) {
+    if (!m_warned) {
         if (window->openglContext()->thread() != QCoreApplication::instance()->thread()) {
             qWarning() << "Threaded rendering is not supported by Mapbox GL plugin.";
             QMetaObject::invokeMethod(&m_refresh, "start", Qt::QueuedConnection);
         }
 
-        warned = true;
+        m_warned = true;
     }
 
     QSGMapboxGLNode *mbglNode = static_cast<QSGMapboxGLNode *>(oldNode);
