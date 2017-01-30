@@ -97,12 +97,15 @@ public:
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
     virtual QGeoMap::ItemType itemType() const = 0;
-
+    qreal mapItemOpacity() const;
     // Data-related bool. Used by QGeoMaps that render the item directly.
     bool isDirty() const;
     bool isGeoMaterialDirty() const;
     bool isGeoGeometryDirty() const;
     void markClean();
+
+Q_SIGNALS:
+    void mapItemOpacityChanged();
 
 protected Q_SLOTS:
     virtual void afterChildrenChanged();
@@ -137,6 +140,8 @@ private:
 
     QSizeF lastSize_;
     QGeoCameraData lastCameraData_;
+
+    QDeclarativeGeoMapItemGroup *parentGroup_;
 
     friend class QDeclarativeGeoMap;
 };

@@ -77,11 +77,18 @@ QGeoMapViewportChangeEvent &QGeoMapViewportChangeEvent::operator=(const QGeoMapV
 }
 
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
-:   QQuickItem(parent), map_(0), quickMap_(0), geoGeometryDirty_(true), geoMaterialDirty_(true)
+:   QQuickItem(parent), map_(0), quickMap_(0), geoGeometryDirty_(true), geoMaterialDirty_(true), parentGroup_(0)
 {
     setFiltersChildMouseEvents(true);
     connect(this, SIGNAL(childrenChanged()),
             this, SLOT(afterChildrenChanged()));
+    // Changing opacity on a mapItemGroup should affect also the opacity on the children.
+    // This must be notified to plugins, if they are to render the item.
+    connect(this, &QQuickItem::opacityChanged, this, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged);
+    parentGroup_ = qobject_cast<QDeclarativeGeoMapItemGroup *>(parent);
+    if (parentGroup_)
+        connect(qobject_cast<QDeclarativeGeoMapItemGroup *>(parent), &QQuickItem::opacityChanged,
+                this, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged);
 }
 
 QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
@@ -254,6 +261,13 @@ QSGNode *QDeclarativeGeoMapItemBase::updateMapItemPaintNode(QSGNode *oldNode, Up
 {
     delete oldNode;
     return 0;
+}
+
+qreal QDeclarativeGeoMapItemBase::mapItemOpacity() const
+{
+    if (parentGroup_)
+        return parentGroup_->opacity() * opacity();
+    return opacity();
 }
 
 bool QDeclarativeGeoMapItemBase::isDirty() const
