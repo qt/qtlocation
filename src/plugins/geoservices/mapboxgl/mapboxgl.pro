@@ -21,9 +21,9 @@ SOURCES += \
 OTHER_FILES += \
     mapboxgl_plugin.json
 
-INCLUDEPATH += ../3rdparty/mapbox-gl-native/platform/qt/include
+INCLUDEPATH += ../../../3rdparty/mapbox-gl-native/platform/qt/include
 
-LIBS_PRIVATE += -L$$OUT_PWD/../3rdparty/mapbox-gl-native/ -lqmapboxgl
+LIBS_PRIVATE += -L$$OUT_PWD/../../../3rdparty/mapbox-gl-native/ -lqmapboxgl
 
 PLUGIN_TYPE = geoservices
 PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryMapboxGL
