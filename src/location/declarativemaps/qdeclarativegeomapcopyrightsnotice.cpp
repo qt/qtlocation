@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty bool QtLocation::MapCopyrightNotice::mapSource
+    \qmlproperty Map QtLocation::MapCopyrightNotice::mapSource
 
     This property holds the current map source providing the copyright data shown
     in this notice.
