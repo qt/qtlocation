@@ -170,6 +170,7 @@ public:
     QQuickGeoMapGestureArea *gesture();
 
     Q_INVOKABLE void fitViewportToMapItems();
+    Q_INVOKABLE void fitViewportToVisibleMapItems();
     Q_INVOKABLE void pan(int dx, int dy);
     Q_INVOKABLE void prefetchData(); // optional hint for prefetch
     Q_INVOKABLE void clearData();
@@ -231,7 +232,7 @@ private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void populateMap();
     void populateParameters();
-    void fitViewportToMapItemsRefine(bool refine);
+    void fitViewportToMapItemsRefine(bool refine, bool onlyVisible);
     void fitViewportToGeoShape();
     bool isInteractive();
 
