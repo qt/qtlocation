@@ -62,6 +62,7 @@ public:
     bool supportsTilting_;
 
     // this is mutable so that it can be set from accessor functions that are const
+    // TODO: remove the mutable here
     mutable bool valid_;
 
     double minZoom_;
@@ -69,6 +70,8 @@ public:
     double minTilt_;
     double maxTilt_;
     int tileSize_;
+    double minimumFieldOfView_;
+    double maximumFieldOfView_;
 };
 
 QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
@@ -80,7 +83,9 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
       maxZoom_(0.0),
       minTilt_(0.0),
       maxTilt_(0.0),
-      tileSize_(256) {}
+      tileSize_(256),
+      minimumFieldOfView_(45.0),  // Defaulting to a fixed FOV of 45 degrees. Too large FOVs cause the loading of too many tiles
+      maximumFieldOfView_(45.0) {}
 
 
 QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCapabilitiesPrivate &other)
@@ -93,7 +98,10 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCap
       maxZoom_(other.maxZoom_),
       minTilt_(other.minTilt_),
       maxTilt_(other.maxTilt_),
-      tileSize_(other.tileSize_) {}
+      tileSize_(other.tileSize_),
+      minimumFieldOfView_(other.minimumFieldOfView_),
+      maximumFieldOfView_(other.maximumFieldOfView_) {}
+
 
 QGeoCameraCapabilitiesPrivate::~QGeoCameraCapabilitiesPrivate() {}
 
@@ -111,6 +119,8 @@ QGeoCameraCapabilitiesPrivate &QGeoCameraCapabilitiesPrivate::operator = (const 
     minTilt_ = other.minTilt_;
     maxTilt_ = other.maxTilt_;
     tileSize_ = other.tileSize_;
+    minimumFieldOfView_ = other.minimumFieldOfView_;
+    maximumFieldOfView_ = other.maximumFieldOfView_;
 
     return *this;
 }
@@ -346,5 +356,52 @@ double QGeoCameraCapabilities::maximumTilt() const
 {
     return d->maxTilt_;
 }
+
+/*!
+    Sets the minimum field of view supported by the associated plugin to \a minimumFieldOfView.
+    The value is in degrees and is clamped against a [1, 179] range.
+
+    \since 5.9
+*/
+void QGeoCameraCapabilities::setMinimumFieldOfView(double minimumFieldOfView)
+{
+    d->minimumFieldOfView_ = qBound(1.0, minimumFieldOfView, 179.0);
+    d->valid_ = true;
+}
+
+/*!
+    Returns the minimum field of view supported by the associated plugin.
+    The value is in degrees.
+
+    \since 5.9
+*/
+double QGeoCameraCapabilities::minimumFieldOfView() const
+{
+    return d->minimumFieldOfView_;
+}
+
+/*!
+    Sets the maximum field of view supported by the associated plugin to \a maximumFieldOfView.
+    The value is in degrees and is clamped against a [1, 179] range.
+
+    \since 5.9
+*/
+void QGeoCameraCapabilities::setMaximumFieldOfView(double maximumFieldOfView)
+{
+    d->maximumFieldOfView_ = maximumFieldOfView;
+    d->valid_ = true;
+}
+
+/*!
+    Returns the maximum field of view supported by the associated plugin.
+    The value is in degrees.
+
+    \since 5.9
+*/
+double QGeoCameraCapabilities::maximumFieldOfView() const
+{
+    return d->maximumFieldOfView_;
+}
+
 
 QT_END_NAMESPACE

@@ -39,7 +39,7 @@
 ****************************************************************************/
 import QtQuick 2.5
 import QtQuick.Controls 1.4
-import QtLocation 5.6
+import QtLocation 5.9
 import QtPositioning 5.5
 import "../helper.js" as Helper
 
@@ -269,7 +269,7 @@ Map {
 
 //! [mapnavigation]
     // Enable pan, flick, and pinch gestures to zoom in and out
-    gesture.acceptedGestures: MapGestureArea.PanGesture | MapGestureArea.FlickGesture | MapGestureArea.PinchGesture
+    gesture.acceptedGestures: MapGestureArea.PanGesture | MapGestureArea.FlickGesture | MapGestureArea.PinchGesture | MapGestureArea.RotationGesture | MapGestureArea.TiltGesture
     gesture.flickDeceleration: 3000
     gesture.enabled: true
 //! [mapnavigation]

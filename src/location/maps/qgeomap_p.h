@@ -49,6 +49,7 @@
 
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtCore/QObject>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
@@ -58,11 +59,11 @@ QT_BEGIN_NAMESPACE
 class QGeoMappingManagerEngine;
 class QGeoMapPrivate;
 class QGeoMapController;
-class QGeoCameraCapabilities;
 class QGeoCoordinate;
 class QSGNode;
 class QQuickWindow;
 class QGeoMapParameter;
+class QDeclarativeGeoMapItemBase;
 
 class Q_LOCATION_EXPORT QGeoMap : public QObject
 {
@@ -70,6 +71,18 @@ class Q_LOCATION_EXPORT QGeoMap : public QObject
     Q_DECLARE_PRIVATE(QGeoMap)
 
 public:
+    enum ItemType {
+        NoItem = 0x0000,
+        MapRectangle = 0x0001,
+        MapCircle = 0x0002,
+        MapPolyline = 0x0004,
+        MapPolygon = 0x0008,
+        MapQuickItem = 0x0010,
+        CustomMapItem = 0x8000
+    };
+
+    Q_DECLARE_FLAGS(ItemTypes, ItemType)
+
     virtual ~QGeoMap();
 
     // Sets the display size
@@ -87,7 +100,7 @@ public:
 
     // returns the minimum zoom at the current viewport size
     double minimumZoom() const;
-    double maximumCenterLatitudeAtZoom(double zoomLevel) const;
+    double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const;
 
     // returns the size of the underlying map, at the current zoom level. Unrelated to width()/height()/size().
     double mapWidth() const;
@@ -101,6 +114,12 @@ public:
     void addParameter(QGeoMapParameter *param);
     void removeParameter(QGeoMapParameter *param);
     void clearParameters();
+
+    ItemTypes supportedMapItemTypes() const;
+
+    void addMapItem(QDeclarativeGeoMapItemBase *item);
+    void removeMapItem(QDeclarativeGeoMapItemBase *item);
+    void clearMapItems();
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
@@ -118,6 +137,8 @@ private:
     Q_DISABLE_COPY(QGeoMap)
     friend class QDeclarativeGeoMap; //updateSceneGraph
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoMap::ItemTypes)
 
 QT_END_NAMESPACE
 

@@ -95,7 +95,12 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
 
     cameraCaps.setMinimumZoomLevel(minimumZoomLevel);
     cameraCaps.setMaximumZoomLevel(maximumZoomLevel);
-
+    cameraCaps.setSupportsBearing(true);
+    cameraCaps.setSupportsTilting(true);
+    cameraCaps.setMinimumTilt(0);
+    cameraCaps.setMaximumTilt(80);
+    cameraCaps.setMinimumFieldOfView(20.0);
+    cameraCaps.setMaximumFieldOfView(120.0);
     setCameraCapabilities(cameraCaps);
 
     setTileSize(QSize(256, 256));

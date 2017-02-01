@@ -152,7 +152,7 @@ class tst_QGeoTiledMapScene : public QObject
         screenY = 0.0;
         mercatorX = cameraCenterX - scaledHalfLengthX;
         mercatorY = cameraCenterY - scaledHalfLengthY;
-        row (name + QString("_topLeftrScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
+        row (name + QString("_topLeftScreen"), screenX, screenX2, screenY, cameraCenterX, cameraCenterY,
                      zoom, tileSize, screenWidth, screenHeight, mercatorX, mercatorY);
 
         // top
@@ -288,6 +288,12 @@ class tst_QGeoTiledMapScene : public QObject
         screenCameraPositions(name, zoom, tileSize, screenWidth, screenHeight);
     }
 
+    // Calculates the distance in mercator space of 2 x coordinates, assuming that 1 == 0
+    double wrappedMercatorDistance(double x1, double x2)
+    {
+        return qMin(qMin(qAbs(x1 - 1.0 - x2), qAbs(x1 - x2)), qAbs(x1 + 1.0 - x2));
+    }
+
     private slots:
         void screenToMercatorPositions(){
             QFETCH(double, screenX);
@@ -324,8 +330,15 @@ class tst_QGeoTiledMapScene : public QObject
             QDoubleVector2D point(screenX,screenY);
             QDoubleVector2D mercartorPos = projection.unwrapMapProjection(projection.itemPositionToWrappedMapProjection(point));
 
-            QCOMPARE(mercartorPos.x(), mercatorX);
-            QCOMPARE(mercartorPos.y(), mercatorY);
+            const double tolerance = 0.00000000001; // FuzzyCompare is too strict here
+            QVERIFY2(wrappedMercatorDistance(mercartorPos.x(),  mercatorX) < tolerance,
+                                 qPrintable(QString("Accepted: %1 ,  Actual: %2")
+                                            .arg(QString::number(mercatorX))
+                                            .arg(QString::number(mercartorPos.x()))));
+            QVERIFY2(qAbs(mercartorPos.y() - mercatorY) < tolerance,
+                                 qPrintable(QString("Accepted: %1 ,  Actual: %2")
+                                            .arg(QString::number(mercatorY))
+                                            .arg(QString::number(mercartorPos.y()))));
         }
 
         void screenToMercatorPositions_data()

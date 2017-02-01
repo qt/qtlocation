@@ -54,6 +54,7 @@
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/QSize>
 #include <QtCore/QSet>
+#include "qgeomap_p.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -62,6 +63,7 @@ class QGeoMappingManagerEngine;
 class QGeoMap;
 class QGeoMapController;
 class QGeoMapParameter;
+class QDeclarativeGeoMapItemBase;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
 {
@@ -76,6 +78,10 @@ protected:
     virtual void addParameter(QGeoMapParameter *param);
     virtual void removeParameter(QGeoMapParameter *param);
 
+    virtual QGeoMap::ItemTypes supportedMapItemTypes() const;
+    virtual void addMapItem(QDeclarativeGeoMapItemBase *item);
+    virtual void removeMapItem(QDeclarativeGeoMapItemBase *item);
+
     virtual void changeViewportSize(const QSize &size) = 0; // called by QGeoMap::setSize()
     virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
     virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()
@@ -87,6 +93,7 @@ protected:
     QGeoCameraData m_cameraData;
     QGeoMapType m_activeMapType;
     QSet<QGeoMapParameter *> m_mapParameters;
+    QSet<QDeclarativeGeoMapItemBase *> m_mapItems;
 };
 
 QT_END_NAMESPACE

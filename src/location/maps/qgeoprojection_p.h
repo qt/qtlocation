@@ -65,11 +65,14 @@ public:
 
     // returns the minimum zoom at the current viewport size
     virtual double minimumZoom() const = 0;
-    virtual double maximumCenterLatitudeAtZoom(double zoomLevel) const = 0;
+    virtual double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const = 0;
 
     // returns the size of the underlying map, at the current zoom level.
     virtual double mapWidth() const = 0;
     virtual double mapHeight() const = 0;
+
+    virtual bool isProjectable(const QDoubleVector2D &wrappedProjection) const = 0;
+    virtual QList<QDoubleVector2D> visibleRegion() const = 0;
 
     // Conversion methods for QGeoCoordinate <-> screen.
     // This currently assumes that the "MapProjection" space is [0, 1][0, 1] for every type of possibly supported map projection
@@ -83,9 +86,10 @@ public:
     virtual QDoubleVector2D itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const = 0;
 
     // Convenience methods to avoid the chain itemPositionToWrappedProjection(wrapProjection(geoToProjection()))
-    // These also come with a default implementation that can, however, be overridden.
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
+    virtual QDoubleVector2D geoToWrappedMapProjection(const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoCoordinate wrappedMapProjectionToGeo(const QDoubleVector2D &wrappedProjection) const = 0;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoProjectionWebMercator : public QGeoProjection
@@ -95,7 +99,7 @@ public:
     ~QGeoProjectionWebMercator();
 
     double minimumZoom() const Q_DECL_OVERRIDE;
-    double maximumCenterLatitudeAtZoom(double zoomLevel) const Q_DECL_OVERRIDE;
+    double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const Q_DECL_OVERRIDE;
 
     // The size of the underlying map, at the current zoom level.
     double mapWidth() const Q_DECL_OVERRIDE;
@@ -115,10 +119,41 @@ public:
 
     QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
+    QDoubleVector2D geoToWrappedMapProjection(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
+    QGeoCoordinate wrappedMapProjectionToGeo(const QDoubleVector2D &wrappedProjection) const Q_DECL_OVERRIDE;
 
-    bool isProjectable(const QDoubleVector2D &wrappedProjection) const;
+    bool isProjectable(const QDoubleVector2D &wrappedProjection) const Q_DECL_OVERRIDE;
+    QList<QDoubleVector2D> visibleRegion() const Q_DECL_OVERRIDE;
+
+    inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
+
 private:
     void setupCamera();
+
+public:
+    struct Line2D
+    {
+        Line2D();
+        Line2D(const QDoubleVector2D &linePoint, const QDoubleVector2D &lineDirection);
+
+        bool isValid() const;
+
+        QDoubleVector2D m_point;
+        QDoubleVector2D m_direction;
+    };
+
+    struct Plane
+    {
+        Plane();
+        Plane(const QDoubleVector3D &planePoint, const QDoubleVector3D &planeNormal);
+
+        QDoubleVector3D lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection) const;
+        Line2D planeXYIntersection() const;
+        bool isValid() const;
+
+        QDoubleVector3D m_point;
+        QDoubleVector3D m_normal;
+    };
 
 private:
     QGeoCameraData m_cameraData;
@@ -148,24 +183,21 @@ private:
     double           m_farPlane;
     double           m_halfWidth;
     double           m_halfHeight;
+    double           m_minimumUnprojectableY;
 
-    struct Plane
-    {
-        Plane() {}
-        Plane(const QDoubleVector3D &planePoint, const QDoubleVector3D &planeNormal)
-        :   m_point(planePoint), m_normal(planeNormal) { }
+    // For the clipping region
+    QDoubleVector3D  m_centerMercator;
+    QDoubleVector3D  m_eyeMercator;
+    QDoubleVector3D  m_viewMercator;
+    QDoubleVector3D  m_upMercator;
+    QDoubleVector3D  m_sideMercator;
+    QDoubleVector3D  m_centerNearPlaneMercator;
+    double           m_nearPlaneMercator;
+    Line2D           m_nearPlaneMapIntersection;
 
-        QDoubleVector3D lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection) const
-        {
-            QDoubleVector3D w = linePoint - m_point;
-            // s = -n.dot(w) / n.dot(u).  p = p0 + su; u is lineDirection
-            double s = QDoubleVector3D::dotProduct(-m_normal, w) / QDoubleVector3D::dotProduct(m_normal, lineDirection);
-            return linePoint + lineDirection * s;
-        }
+    QList<QDoubleVector2D> m_visibleRegion;
 
-        QDoubleVector3D m_point;
-        QDoubleVector3D m_normal;
-    } m_plane;
+    Q_DISABLE_COPY(QGeoProjectionWebMercator)
 };
 
 QT_END_NAMESPACE

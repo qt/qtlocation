@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += positioning
-plugins.depends += positioning
+plugins.depends += positioning 3rdparty
 
 qtHaveModule(quick) {
     SUBDIRS += 3rdparty

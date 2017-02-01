@@ -28,7 +28,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.6
+import QtLocation 5.9
 import QtPositioning 5.5
 import QtLocation.Test 5.6
 
@@ -74,6 +74,10 @@ Item {
         ]
     }
     Item { id: someItem }
+
+    ItemGroup {
+        id: itemGroup1
+    }
 
     MapCircle {
         id: extMapCircle
@@ -403,6 +407,10 @@ Item {
             mouseClick(map, map.width + 5, point.y + 5)
             tryCompare(extMapQuickItemClicked, "count", 1)
             map.removeMapItem(extMapQuickItem)
+
+            var numItemsOnMap = map.mapItems.length
+            map.addMapItemGroup( itemGroup1 )
+            compare(map.mapItems.length, numItemsOnMap + 3)
         }
 
         function test_drag()

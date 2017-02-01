@@ -2,6 +2,9 @@ TARGET = clip2tri
 
 CONFIG += staticlib exceptions
 
+INCLUDEPATH += ../poly2tri
+INCLUDEPATH += ../clipper
+
 load(qt_helper_lib)
 
 # workaround for QTBUG-31586
