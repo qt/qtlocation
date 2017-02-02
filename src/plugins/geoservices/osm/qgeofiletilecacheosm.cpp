@@ -318,6 +318,9 @@ QGeoTileSpec QGeoFileTileCacheOsm::filenameToTileSpec(const QString &filename) c
         numbers.append(value);
     }
 
+    if (numbers.at(0) > m_providers.size())
+        return emptySpec;
+
     bool highDpi = m_providers[numbers.at(0) - 1]->isHighDpi();
     if (highDpi && fields.at(1) != QLatin1Char('h'))
         return emptySpec;
