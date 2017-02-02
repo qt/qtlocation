@@ -114,7 +114,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), dirtyMaterial_(true),
+:   QDeclarativeGeoMapItemBase(parent), border_(this), color_(Qt::transparent), dirtyMaterial_(true),
     updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);

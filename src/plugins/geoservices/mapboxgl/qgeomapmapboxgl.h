@@ -55,10 +55,28 @@ public:
     void setMapboxGLSettings(const QMapboxGLSettings &);
 
 private Q_SLOTS:
-    void onMapItemLinePathChange();
-    void onMapItemLineOpacityChange();
-    void onMapItemLineWidthChange(qreal);
-    void onMapItemLineColorChange(const QColor &);
+    // QMapboxGL
+    void onMapChanged(QMapboxGL::MapChange);
+
+    // QDeclarativeGeoMapItemBase
+    void onMapItemOpacityChanged();
+
+    // QDeclarativeRectangleMapItem
+    void onMapRectangleGeometryChanged();
+    void onMapRectangleColorChanged();
+    void onMapRectangleBorderColorChanged();
+    void onMapRectangleBorderWidthChanged();
+
+    // QDeclarativePolygonMapItem
+    void onMapPolygonGeometryChanged();
+    void onMapPolygonColorChanged();
+    void onMapPolygonBorderColorChanged();
+    void onMapPolygonBorderWidthChanged();
+
+    // QDeclarativePolylineMapItem
+    void onMapPolylineGeometryChanged();
+    void onMapPolylineLineColorChanged();
+    void onMapPolylineLineWidthChanged();
 
 public Q_SLOTS:
     void copyrightsChanged(const QString &copyrightsHtml);

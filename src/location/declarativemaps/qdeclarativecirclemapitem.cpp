@@ -315,7 +315,7 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
 }
 
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), color_(Qt::transparent), dirtyMaterial_(true),
+:   QDeclarativeGeoMapItemBase(parent), border_(this), color_(Qt::transparent), dirtyMaterial_(true),
     updatingGeometry_(false)
 {
     setFlag(ItemHasContents, true);

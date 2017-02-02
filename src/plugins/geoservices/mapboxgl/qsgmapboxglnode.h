@@ -56,10 +56,6 @@ public:
 
     QMapboxGL* map() const;
 
-    QMapbox::AnnotationID addAnnotation(const QMapbox::Annotation &);
-    void updateAnnotation(QMapbox::AnnotationID, const QMapbox::Annotation &);
-    void removeAnnotation(QMapbox::AnnotationID);
-
 private:
     QScopedPointer<QMapboxGL> m_map;
     QScopedPointer<QOpenGLFramebufferObject> m_fbo;
