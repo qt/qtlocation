@@ -4,7 +4,9 @@ QT += \
     quick-private \
     location-private \
     positioning-private \
-    network
+    network \
+    opengl \
+    sql
 
 HEADERS += \
     qgeoserviceproviderpluginmapboxgl.h \
