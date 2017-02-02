@@ -43,6 +43,7 @@
 #include <QtCore/private/qobject_p.h>
 #include <QtQuick/QSGImageNode>
 #include <QtQuick/QQuickWindow>
+#include <QtQuick/private/qsgdefaultimagenode_p.h>
 #include <QtGui/QVector3D>
 #include <cmath>
 #include <QtPositioning/private/qlocationutils_p.h>
@@ -487,7 +488,8 @@ public:
     void updateTiles(QGeoTiledMapTileContainerNode *root,
                      QGeoTiledMapScenePrivate *d,
                      double camAdjust,
-                     QQuickWindow *window);
+                     QQuickWindow *window,
+                     bool ogl);
 
     bool isTextureLinear;
 
@@ -535,7 +537,8 @@ static bool qgeotiledmapscene_isTileInViewport(const QRectF &tileRect, const QMa
 void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                                        QGeoTiledMapScenePrivate *d,
                                        double camAdjust,
-                                       QQuickWindow *window)
+                                       QQuickWindow *window,
+                                       bool ogl)
 {
     // Set up the matrix...
     QDoubleVector3D eye = d->m_cameraEye;
@@ -573,6 +576,8 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                 } else {
                     node->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
                 }
+                if (ogl)
+                    static_cast<QSGDefaultImageNode *>(node)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
                 dirtyBits |= QSGNode::DirtyMaterial;
             }
             if (dirtyBits != 0)
@@ -596,6 +601,8 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
             } else {
                 tileNode->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
             }
+            if (ogl)
+                static_cast<QSGDefaultImageNode *>(tileNode)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
             root->addChild(s, tileNode);
         } else {
             delete tileNode;
@@ -613,6 +620,7 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
         return 0;
     }
 
+    bool isOpenGL = (window->rendererInterface()->graphicsApi() == QSGRendererInterface::OpenGL);
     QGeoTiledMapRootNode *mapRoot = static_cast<QGeoTiledMapRootNode *>(oldNode);
     if (!mapRoot)
         mapRoot = new QGeoTiledMapRootNode();
@@ -652,9 +660,9 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     }
 
     double sideLength = d->m_scaleFactor * d->m_tileSize * d->m_sideLength;
-    mapRoot->updateTiles(mapRoot->tiles, d, 0, window);
-    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength, window);
-    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength, window);
+    mapRoot->updateTiles(mapRoot->tiles, d, 0, window, isOpenGL);
+    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength, window, isOpenGL);
+    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength, window, isOpenGL);
 
     mapRoot->isTextureLinear = d->m_linearScaling;
 
