@@ -69,6 +69,7 @@ private slots:
     void tilesMapType();
     void tilesPositions();
     void tilesPositions_data();
+    void test_tilted_frustum();
 };
 
 void tst_QGeoCameraTiles::row(const PositionTestInfo &pti, int xOffset, int yOffset, int tileX, int tileY, int tileW, int tileH)
@@ -114,6 +115,29 @@ void tst_QGeoCameraTiles::test_group(const PositionTestInfo &pti, QList<int> &xV
             row(pti, x, y, xVals.at(x), yVals.at(y), wVals.at(x), hVals.at(y));
         }
     }
+}
+
+void tst_QGeoCameraTiles::test_tilted_frustum()
+{
+    // ctFull : Full map in the view, all 16 zl2 tiles visible. Using this as control.
+    QGeoCameraData cameraFull;
+    cameraFull.setZoomLevel(2);
+    cameraFull.setCenter(QGeoCoordinate(0,0));
+    QGeoCameraTiles ctFull;
+    ctFull.setTileSize(64);
+    ctFull.setCameraData(cameraFull);
+    ctFull.setScreenSize(QSize(256, 256));
+
+    QGeoCameraData camera;
+    camera.setZoomLevel(2.322);
+    camera.setTilt(30);
+    camera.setCenter(QWebMercator::mercatorToCoord(QDoubleVector2D(0.75, 0.5)));
+    QGeoCameraTiles ct;
+    ct.setTileSize(64);
+    ct.setScreenSize(QSize(320, 180));
+    ct.setCameraData(camera);
+
+    QCOMPARE(ct.createTiles(), ctFull.createTiles());
 }
 
 void tst_QGeoCameraTiles::tilesPlugin()
