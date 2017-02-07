@@ -63,6 +63,11 @@
 
 namespace {
 
+// WARNING! The development token is subject to Mapbox Terms of Services
+// and must not be used in production.
+static char developmentToken[] =
+    "pk.eyJ1IjoicXRzZGsiLCJhIjoiY2l5azV5MHh5MDAwdTMybzBybjUzZnhxYSJ9.9rfbeqPjX2BusLRDXHCOBA";
+
 static const double invLog2 = 1.0 / std::log(2.0);
 
 static double zoomLevelFrom256(double zoomLevelFor256, double tileSize)
@@ -97,6 +102,7 @@ public:
     Q_DECLARE_FLAGS(SyncStates, SyncState);
 
     QMapboxGLSettings m_settings;
+    bool m_developmentMode = false;
 
     QTimer m_refresh;
     bool m_shouldRefresh = true;
@@ -151,6 +157,9 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow
     QMapboxGL *map = mbglNode->map();
 
     if (m_syncState & MapTypeSync) {
+        m_developmentMode = m_activeMapType.name().startsWith("mapbox://")
+            && m_settings.accessToken() == developmentToken;
+
         map->setStyleUrl(m_activeMapType.name());
     }
 
@@ -332,6 +341,12 @@ void QGeoMapMapboxGL::setMapboxGLSettings(const QMapboxGLSettings& settings)
     Q_D(QGeoMapMapboxGL);
 
     d->m_settings = settings;
+
+    // If the access token is not set, use the development access token.
+    // This will only affect mapbox:// styles.
+    if (d->m_settings.accessToken().isEmpty()) {
+        d->m_settings.setAccessToken(developmentToken);
+    }
 }
 
 QSGNode *QGeoMapMapboxGL::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
@@ -373,5 +388,19 @@ void QGeoMapMapboxGL::onMapItemLineColorChange(const QColor &)
     QDeclarativeGeoMapItemBase *mapItem = static_cast<QDeclarativeGeoMapItemBase *>(sender()->parent());
     if (mapItem && !d->m_mapItemsToUpdate.contains(mapItem)) {
         d->m_mapItemsToUpdate << mapItem;
+    }
+}
+
+void QGeoMapMapboxGL::copyrightsChanged(const QString &copyrightsHtml)
+{
+    Q_D(QGeoMapMapboxGL);
+
+    if (d->m_developmentMode) {
+        QString copyrightsHtmlDev = "<a href=\"https://www.mapbox.com/pricing/\">"
+            + QObject::tr("Development access token, do not use in production!") + "</a> - "
+            + copyrightsHtml;
+        QGeoMap::copyrightsChanged(copyrightsHtmlDev);
+    } else {
+        QGeoMap::copyrightsChanged(copyrightsHtml);
     }
 }

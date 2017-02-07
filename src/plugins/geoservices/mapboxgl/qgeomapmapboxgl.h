@@ -59,7 +59,10 @@ private Q_SLOTS:
     void onMapItemLineWidthChange(qreal);
     void onMapItemLineColorChange(const QColor &);
 
-protected:
+public Q_SLOTS:
+    void copyrightsChanged(const QString &copyrightsHtml);
+
+private:
     QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window) Q_DECL_OVERRIDE;
 
     QGeoMappingManagerEngineMapboxGL *m_engine;

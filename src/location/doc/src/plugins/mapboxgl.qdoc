@@ -64,6 +64,11 @@ The following table lists optional parameters that can be passed to the Mapbox p
 \row
     \li mapboxgl.access_token
     \li \l{https://www.mapbox.com/help/define-access-token}{Access token} provided by Mapbox.
+    The token can also be specified using the environment variable \c{MAPBOX_ACCESS_TOKEN}, but if also
+    set using a plugin parameter, then this last one will have the precedence over the environment variable.
+    When not set, a development token will be used by default. The development token is subject to the Mapbox
+    \l{https://www.mapbox.com/tos}{Terms of Services} and must not be used in production. This property has
+    no effect on styles hosted outside the Mapbox servers.
 \row
     \li mapboxgl.mapping.additional_style_urls
     \li Additional, comma separated, Mapbox \l{https://www.mapbox.com/help/define-style-url}
