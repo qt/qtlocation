@@ -221,6 +221,11 @@ void QGeoMap::clearMapItems()
     d->m_mapItems.clear();
 }
 
+QString QGeoMap::copyrightsStyleSheet() const
+{
+    return QStringLiteral("#copyright-root { background: rgba(255, 255, 255, 128) }");
+}
+
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
     : QObjectPrivate(),
       m_geoProjection(geoProjection),

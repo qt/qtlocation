@@ -75,12 +75,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty color QtLocation::MapCopyrightNotice::backgroundColor
-
-    This property holds the current background color of the copyright notice.
-*/
-
-/*!
     \qmlproperty string QtLocation::MapCopyrightNotice::styleSheet
 
     This property holds the current css2.1 style sheet used to style the copyright notice, if in HTML form.
@@ -96,7 +90,7 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent)
 :   QQuickPaintedItem(parent), m_copyrightsHtml(0), m_copyrightsVisible(true), m_mapSource(0),
-    m_backgroundColor(255, 255, 255, 128)
+    m_userDefinedStyleSheet(false)
 {
     // If this item is constructed inside the map, automatically anchor it where it always used to be.
     if (qobject_cast<QDeclarativeGeoMap *>(parent))
@@ -126,6 +120,7 @@ void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *mapSour
     if (m_mapSource) {
         // disconnect this object from current map source
         m_mapSource->disconnect(this);
+        m_mapSource->m_map->disconnect(this);
         m_copyrightsHtml->clear();
         m_copyrightsImage = QImage();
         m_mapSource = Q_NULLPTR;
@@ -141,8 +136,12 @@ void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *mapSour
                 this, SLOT(copyrightsChanged(QImage)));
         connect(m_mapSource, SIGNAL(copyrightsChanged(QString)),
                 this, SLOT(copyrightsChanged(QString)));
+        connect(m_mapSource->m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+                this, SLOT(onCopyrightsStyleSheetChanged(QString)));
         connect(this, SIGNAL(linkActivated(QString)),
                 m_mapSource, SIGNAL(copyrightLinkActivated(QString)));
+
+        onCopyrightsStyleSheetChanged(m_mapSource->m_map->copyrightsStyleSheet());
     }
 
     update();
@@ -154,25 +153,15 @@ QDeclarativeGeoMap *QDeclarativeGeoMapCopyrightNotice::mapSource()
     return m_mapSource;
 }
 
-QColor QDeclarativeGeoMapCopyrightNotice::backgroundColor() const
-{
-    return m_backgroundColor;
-}
-
 QString QDeclarativeGeoMapCopyrightNotice::styleSheet() const
 {
     return m_styleSheet;
 }
 
-void QDeclarativeGeoMapCopyrightNotice::setBackgroundColor(const QColor &color)
-{
-    m_backgroundColor = color;
-    rasterizeHtmlAndUpdate();
-    emit backgroundColorChanged(m_backgroundColor);
-}
-
 void QDeclarativeGeoMapCopyrightNotice::setStyleSheet(const QString &styleSheet)
 {
+    m_userDefinedStyleSheet = true;
+
     if (styleSheet == m_styleSheet)
         return;
 
@@ -224,7 +213,7 @@ void QDeclarativeGeoMapCopyrightNotice::rasterizeHtmlAndUpdate()
     m_copyrightsImage = QImage(m_copyrightsHtml->size().toSize(),
                                QImage::Format_ARGB32_Premultiplied);
 
-    m_copyrightsImage.fill(qPremultiply(m_backgroundColor.rgba()));
+    m_copyrightsImage.fill(qPremultiply(QColor(Qt::transparent).rgba()));
     QPainter painter(&m_copyrightsImage);
     QAbstractTextDocumentLayout::PaintContext ctx;
     ctx.palette.setColor(QPalette::Text, QStringLiteral("black"));
@@ -244,6 +233,9 @@ void QDeclarativeGeoMapCopyrightNotice::createCopyright()
     m_copyrightsHtml = new QTextDocument(this);
     if (!m_styleSheet.isEmpty())
         m_copyrightsHtml->setDefaultStyleSheet(m_styleSheet);
+
+    // The default 4 makes the copyright too wide and tall.
+    m_copyrightsHtml->setDocumentMargin(0);
 }
 
 /*!
@@ -295,12 +287,30 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrig
         setVisible(true);
     }
 
-    m_html = copyrightsHtml;
+    // Divfy, so we can style the background. The extra <span> is a
+    // workaround to QTBUG-58838 and should be removed when it gets fixed.
+    m_html = QStringLiteral("<div id='copyright-root'><span>") + copyrightsHtml + QStringLiteral("</span></div>");
+
     if (!m_copyrightsHtml)
         createCopyright();
 
-    m_copyrightsHtml->setHtml(copyrightsHtml);
+    m_copyrightsHtml->setHtml(m_html);
     rasterizeHtmlAndUpdate();
+}
+
+void QDeclarativeGeoMapCopyrightNotice::onCopyrightsStyleSheetChanged(const QString &styleSheet)
+{
+    if (m_userDefinedStyleSheet || styleSheet == m_styleSheet)
+        return;
+
+    m_styleSheet = styleSheet;
+    if (!m_html.isEmpty() && m_copyrightsHtml) {
+        delete m_copyrightsHtml;
+        createCopyright();
+        m_copyrightsHtml->setHtml(m_html);
+    }
+    rasterizeHtmlAndUpdate();
+    emit styleSheetChanged(m_styleSheet);
 }
 
 QT_END_NAMESPACE

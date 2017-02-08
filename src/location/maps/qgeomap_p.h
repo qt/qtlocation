@@ -121,6 +121,8 @@ public:
     void removeMapItem(QDeclarativeGeoMapItemBase *item);
     void clearMapItems();
 
+    virtual QString copyrightsStyleSheet() const;
+
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);
@@ -132,6 +134,7 @@ Q_SIGNALS:
     void activeMapTypeChanged();
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
+    void copyrightsStyleSheetChanged(const QString &styleSheet);
 
 private:
     Q_DISABLE_COPY(QGeoMap)

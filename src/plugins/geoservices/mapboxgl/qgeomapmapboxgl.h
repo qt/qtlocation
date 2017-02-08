@@ -51,6 +51,7 @@ public:
     QGeoMapMapboxGL(QGeoMappingManagerEngineMapboxGL *engine, QObject *parent);
     virtual ~QGeoMapMapboxGL();
 
+    QString copyrightsStyleSheet() const Q_DECL_OVERRIDE;
     void setMapboxGLSettings(const QMapboxGLSettings &);
 
 private Q_SLOTS:

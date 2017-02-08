@@ -20,6 +20,8 @@ SOURCES += \
     qgeomapmapboxgl.cpp \
     qsgmapboxglnode.cpp
 
+RESOURCES += mapboxgl.qrc
+
 OTHER_FILES += \
     mapboxgl_plugin.json
 

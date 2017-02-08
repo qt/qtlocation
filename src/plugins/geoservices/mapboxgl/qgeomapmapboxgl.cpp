@@ -336,6 +336,11 @@ QGeoMapMapboxGL::~QGeoMapMapboxGL()
 {
 }
 
+QString QGeoMapMapboxGL::copyrightsStyleSheet() const
+{
+    return QStringLiteral("* { vertical-align: middle; font-weight: normal }");
+}
+
 void QGeoMapMapboxGL::setMapboxGLSettings(const QMapboxGLSettings& settings)
 {
     Q_D(QGeoMapMapboxGL);
@@ -395,12 +400,17 @@ void QGeoMapMapboxGL::copyrightsChanged(const QString &copyrightsHtml)
 {
     Q_D(QGeoMapMapboxGL);
 
+    QString copyrightsHtmlFinal = copyrightsHtml;
+
     if (d->m_developmentMode) {
-        QString copyrightsHtmlDev = "<a href=\"https://www.mapbox.com/pricing/\">"
-            + tr("Development access token, do not use in production!") + "</a> - "
-            + copyrightsHtml;
-        QGeoMap::copyrightsChanged(copyrightsHtmlDev);
-    } else {
-        QGeoMap::copyrightsChanged(copyrightsHtml);
+        copyrightsHtmlFinal.prepend("<a href='https://www.mapbox.com/pricing'>"
+            + QObject::tr("Development access token, do not use in production!") + "</a> - ");
     }
+
+    if (d->m_activeMapType.name().startsWith("mapbox://")) {
+        copyrightsHtmlFinal = "<table><tr><th><img src='qrc:/mapboxgl/logo.png'/></th><th>"
+            + copyrightsHtmlFinal + "</th></tr></table>";
+    }
+
+    QGeoMap::copyrightsChanged(copyrightsHtmlFinal);
 }

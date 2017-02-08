@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
  */
 QGeoTiledMapNokia::QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent /*= 0*/) :
     QGeoTiledMap(engine, parent),
-    m_logo(":/images/logo.png"), // HERE logo image
+    m_logo(":/nokia/logo.png"), // HERE logo image
     m_engine(engine)
 {}
 

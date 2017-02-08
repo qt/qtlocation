@@ -255,6 +255,8 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
         if (!copyrights) {
             // create a new one and set its parent, re-assign it to the weak pointer, then connect the copyrights-change signal
             m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
+            m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
+
             copyrights = m_copyrights.data();
 
             connect(m_map, SIGNAL(copyrightsChanged(QImage)),
@@ -266,6 +268,9 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
                     copyrights, SLOT(copyrightsChanged(QString)));
             connect(m_map, SIGNAL(copyrightsChanged(QString)),
                     this,  SIGNAL(copyrightsChanged(QString)));
+
+            connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+                    copyrights, SLOT(onCopyrightsStyleSheetChanged(QString)));
 
             connect(copyrights, SIGNAL(linkActivated(QString)),
                     this, SIGNAL(copyrightLinkActivated(QString)));
@@ -671,6 +676,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     }
 
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
+    m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
 
     connect(m_map, SIGNAL(copyrightsChanged(QImage)),
             m_copyrights.data(), SLOT(copyrightsChanged(QImage)));
@@ -681,6 +687,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             m_copyrights.data(), SLOT(copyrightsChanged(QString)));
     connect(m_map, SIGNAL(copyrightsChanged(QString)),
             this,  SIGNAL(copyrightsChanged(QString)));
+
+    connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+            m_copyrights.data(), SLOT(onCopyrightsStyleSheetChanged(QString)));
 
     connect(m_copyrights.data(), SIGNAL(linkActivated(QString)),
             this, SIGNAL(copyrightLinkActivated(QString)));
