@@ -95,4 +95,5 @@ The following table lists optional parameters that can be passed to the Mapbox p
     \li Cache size for map resources in bytes.
     The default size of this cache is 50 MiB.
     Make sure to comply with Mapbox Terms of Service before increasing this value.
+\endtable
 */
