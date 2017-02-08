@@ -364,6 +364,4 @@ qreal QDeclarativeGeoMapQuickItem::scaleFactor()
     return scale;
 }
 
-#include "moc_qdeclarativegeomapquickitem_p.cpp"
-
 QT_END_NAMESPACE

@@ -350,6 +350,4 @@ bool QDeclarativeGeoAddress::isTextGenerated() const
     return m_address.isTextGenerated();
 }
 
-#include "moc_qdeclarativegeoaddress_p.cpp"
-
 QT_END_NAMESPACE

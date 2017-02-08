@@ -281,6 +281,4 @@ void QDeclarativeGeoMapItemBase::polishAndUpdate()
     update();
 }
 
-#include "moc_qdeclarativegeomapitembase_p.cpp"
-
 QT_END_NAMESPACE

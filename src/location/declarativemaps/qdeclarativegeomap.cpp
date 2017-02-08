@@ -1968,6 +1968,4 @@ bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
     return false;
 }
 
-#include "moc_qdeclarativegeomap_p.cpp"
-
 QT_END_NAMESPACE

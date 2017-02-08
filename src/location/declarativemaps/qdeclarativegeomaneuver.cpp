@@ -196,6 +196,4 @@ bool QDeclarativeGeoManeuver::waypointValid() const
     return maneuver_.waypoint().isValid();
 }
 
-#include "moc_qdeclarativegeomaneuver_p.cpp"
-
 QT_END_NAMESPACE

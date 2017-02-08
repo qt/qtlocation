@@ -100,8 +100,6 @@ namespace Simulator
         *qtSatelliteInfo() = data;
     }
 
-#include "moc_qlocationconnection_simulator_p.cpp"
-
 } // namespace
 
 QGeoPositionInfoData *qtPositionInfo()

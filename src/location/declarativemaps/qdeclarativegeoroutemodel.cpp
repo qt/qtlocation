@@ -1303,6 +1303,4 @@ void QDeclarativeGeoRouteQuery::doCoordinateChanged()
     emit queryDetailsChanged();
 }
 
-#include "moc_qdeclarativegeoroutemodel_p.cpp"
-
 QT_END_NAMESPACE

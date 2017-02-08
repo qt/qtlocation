@@ -129,5 +129,4 @@ void QGeoSatelliteInfoSourceSimulator::updateData()
     emit satellitesInUseUpdated(satellitesInUse);
 }
 
-#include "moc_qgeosatelliteinfosource_simulator_p.cpp"
 QT_END_NAMESPACE

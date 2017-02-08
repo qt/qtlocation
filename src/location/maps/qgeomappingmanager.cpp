@@ -193,6 +193,4 @@ QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
     engine = 0;
 }
 
-#include "moc_qgeomappingmanager_p.cpp"
-
 QT_END_NAMESPACE

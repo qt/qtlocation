@@ -478,6 +478,4 @@ QStringList QGeoPositionInfoSource::availableSources()
     \value UnknownSourceError An unidentified error occurred.
  */
 
-#include "moc_qgeopositioninfosource.cpp"
-
 QT_END_NAMESPACE

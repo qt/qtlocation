@@ -43,10 +43,10 @@
 
 #include <QtLocation/qlocationglobal.h>
 #include <QtPositioning/qgeocoordinate.h>
+#include <QtPositioning/qgeorectangle.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoRectangle;
 class QGeoRouteRequestPrivate;
 
 class Q_LOCATION_EXPORT QGeoRouteRequest

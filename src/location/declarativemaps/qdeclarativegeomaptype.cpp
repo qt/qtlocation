@@ -131,6 +131,4 @@ bool QDeclarativeGeoMapType::night() const
     return mapType_.night();
 }
 
-#include "moc_qdeclarativegeomaptype_p.cpp"
-
 QT_END_NAMESPACE

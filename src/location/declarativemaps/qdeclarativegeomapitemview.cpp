@@ -536,6 +536,4 @@ QDeclarativeGeoMapItemViewItemData::~QDeclarativeGeoMapItemViewItemData()
     delete modelData;
 }
 
-#include "moc_qdeclarativegeomapitemview_p.cpp"
-
 QT_END_NAMESPACE

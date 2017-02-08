@@ -1761,6 +1761,4 @@ void QQuickGeoMapGestureArea::handleFlickAnimationStopped()
     }
 }
 
-#include "moc_qquickgeomapgesturearea_p.cpp"
-
 QT_END_NAMESPACE

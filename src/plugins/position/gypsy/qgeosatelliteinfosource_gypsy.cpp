@@ -370,5 +370,4 @@ void QGeoSatelliteInfoSourceGypsy::requestUpdateTimeout()
     emit requestTimeout();
 }
 
-#include "moc_qgeosatelliteinfosource_gypsy_p.cpp"
 QT_END_NAMESPACE

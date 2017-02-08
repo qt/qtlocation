@@ -145,6 +145,4 @@ QDeclarativeGeoMapItemGroup::~QDeclarativeGeoMapItemGroup()
 
 }
 
-#include "moc_qdeclarativegeomapitemgroup_p.cpp"
-
 QT_END_NAMESPACE

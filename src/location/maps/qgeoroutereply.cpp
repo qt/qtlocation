@@ -274,6 +274,4 @@ QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QStrin
 
 QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
 
-#include "moc_qgeoroutereply.cpp"
-
 QT_END_NAMESPACE

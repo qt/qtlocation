@@ -322,6 +322,4 @@ QGeoCodingManagerPrivate::~QGeoCodingManagerPrivate()
 /*******************************************************************************
 *******************************************************************************/
 
-#include "moc_qgeocodingmanager.cpp"
-
 QT_END_NAMESPACE
