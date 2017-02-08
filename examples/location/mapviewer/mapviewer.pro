@@ -10,6 +10,7 @@ RESOURCES += \
 OTHER_FILES +=mapviewer.qml \
     helper.js \
     map/MapComponent.qml \
+    map/MapSliders.qml \
     map/Marker.qml \
     map/CircleItem.qml \
     map/RectangleItem.qml \

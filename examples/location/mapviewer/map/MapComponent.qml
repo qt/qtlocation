@@ -364,22 +364,11 @@ Map {
         anchorPoint: Qt.point(-poiTheQtComapny.sourceItem.width * 0.5,poiTheQtComapny.sourceItem.height * 1.5)
     }
 
-
-    Slider {
-        id: zoomSlider;
+    MapSliders {
+        id: sliders
         z: map.z + 3
-        minimumValue: map.minimumZoomLevel;
-        maximumValue: map.maximumZoomLevel;
-        anchors.margins: 10
-        anchors.bottom: scale.top
-        anchors.top: parent.top
-        anchors.right: parent.right
-        orientation : Qt.Vertical
-        value: map.zoomLevel
-        onValueChanged: {
-            if (value >= 0)
-                map.zoomLevel = value
-        }
+        mapSource: map
+        edge: Qt.LeftEdge
     }
 
     Item {
