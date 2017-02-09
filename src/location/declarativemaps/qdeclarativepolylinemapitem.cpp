@@ -533,10 +533,6 @@ QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
                      this, SLOT(updateAfterLinePropertiesChanged()));
     QObject::connect(&line_, SIGNAL(widthChanged(qreal)),
                      this, SLOT(updateAfterLinePropertiesChanged()));
-    QObject::connect(&line_, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(markGeoMaterialDirty()));
-    QObject::connect(&line_, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(markGeoMaterialDirty()));
 }
 
 QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()
@@ -653,7 +649,6 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
     geopath_.addCoordinate(coordinate);
 
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
-    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 }
@@ -697,7 +692,6 @@ void QDeclarativePolylineMapItem::replaceCoordinate(int index, const QGeoCoordin
     geopath_.replaceCoordinate(index, coordinate);
 
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
-    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 }
@@ -747,7 +741,6 @@ void QDeclarativePolylineMapItem::removeCoordinate(const QGeoCoordinate &coordin
     geopath_.removeCoordinate(coordinate);
     if (geopath_.path().length() == length)
         return;
-    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 }
@@ -771,7 +764,6 @@ void QDeclarativePolylineMapItem::removeCoordinate(int index)
     geopath_.removeCoordinate(index);
 
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
-    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 }
@@ -816,7 +808,6 @@ void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, con
 
     geopath_.translate(offsetLati, offsetLongi);
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
-    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 

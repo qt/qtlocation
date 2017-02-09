@@ -122,10 +122,6 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
                      this, SLOT(markSourceDirtyAndUpdate()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
                      this, SLOT(markSourceDirtyAndUpdate()));
-    QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(markGeoMaterialDirty()));
-    QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(markGeoMaterialDirty()));
 }
 
 QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
@@ -171,7 +167,6 @@ void QDeclarativeRectangleMapItem::setTopLeft(const QGeoCoordinate &topLeft)
         return;
 
     rectangle_.setTopLeft(topLeft);
-    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit topLeftChanged(topLeft);
 }
@@ -203,7 +198,6 @@ void QDeclarativeRectangleMapItem::setBottomRight(const QGeoCoordinate &bottomRi
         return;
 
     rectangle_.setBottomRight(bottomRight);
-    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit bottomRightChanged(bottomRight);
 }
@@ -230,7 +224,6 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
         return;
     color_ = color;
     dirtyMaterial_ = true;
-    geoMaterialDirty_ = true;
     polishAndUpdate();
     emit colorChanged(color_);
 }
@@ -378,7 +371,6 @@ void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, co
     rectangle_.translate(offsetLati, offsetLongi);
     geometry_.setPreserveGeometry(true, rectangle_.topLeft());
     borderGeometry_.setPreserveGeometry(true, rectangle_.topLeft());
-    markGeoGeometryDirty();
     markSourceDirtyAndUpdate();
     emit topLeftChanged(rectangle_.topLeft());
     emit bottomRightChanged(rectangle_.bottomRight());

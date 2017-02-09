@@ -98,11 +98,6 @@ public:
 
     virtual QGeoMap::ItemType itemType() const = 0;
     qreal mapItemOpacity() const;
-    // Data-related bool. Used by QGeoMaps that render the item directly.
-    bool isDirty() const;
-    bool isGeoMaterialDirty() const;
-    bool isGeoGeometryDirty() const;
-    void markClean();
 
 Q_SIGNALS:
     void mapItemOpacityChanged();
@@ -111,15 +106,6 @@ protected Q_SLOTS:
     virtual void afterChildrenChanged();
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) = 0;
     void polishAndUpdate();
-    inline void markGeoMaterialDirty()
-    {
-        geoMaterialDirty_ = true;
-    }
-
-    inline void markGeoGeometryDirty()
-    {
-        geoGeometryDirty_ = true;
-    }
 
 protected:
     float zoomLevelOpacity() const;
@@ -128,11 +114,6 @@ protected:
 
 private Q_SLOTS:
     void baseCameraDataChanged(const QGeoCameraData &camera);
-
-protected:
-    // For consumption by QGeoMaps that are capable of drawing items
-    bool geoGeometryDirty_;
-    bool geoMaterialDirty_;
 
 private:
     QGeoMap *map_;

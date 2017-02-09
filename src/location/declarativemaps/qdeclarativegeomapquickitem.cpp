@@ -149,7 +149,6 @@ void QDeclarativeGeoMapQuickItem::setCoordinate(const QGeoCoordinate &coordinate
     geoshape_.setTopLeft(coordinate_);
     geoshape_.setBottomRight(coordinate_);
     // TODO: Handle zoomLevel != 0.0
-    markGeoGeometryDirty();
     polishAndUpdate();
     emit coordinateChanged();
 }
@@ -204,7 +203,6 @@ void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem *sourceItem)
     if (sourceItem_.data() == sourceItem)
         return;
     sourceItem_ = sourceItem;
-    markGeoGeometryDirty(); // This is equivalent to geometry
     polishAndUpdate();
     emit sourceItemChanged();
 }
@@ -250,7 +248,6 @@ void QDeclarativeGeoMapQuickItem::setAnchorPoint(const QPointF &anchorPoint)
     if (anchorPoint == anchorPoint_)
         return;
     anchorPoint_ = anchorPoint;
-    markGeoGeometryDirty(); // This is equivalent to geometry
     polishAndUpdate();
     emit anchorPointChanged();
 }
@@ -283,7 +280,6 @@ void QDeclarativeGeoMapQuickItem::setZoomLevel(qreal zoomLevel)
     if (zoomLevel == zoomLevel_)
         return;
     zoomLevel_ = zoomLevel;
-    markGeoGeometryDirty(); // This is equivalent to geometry
     // TODO: update geoshape_!
     polishAndUpdate();
     emit zoomLevelChanged();
