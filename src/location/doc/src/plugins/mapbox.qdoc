@@ -89,8 +89,10 @@ The following table lists optional parameters that can be passed to the Mapbox p
     \li mapbox.mapping.cache.directory
     \li Absolute path to map tile cache directory used as network disk cache.
 
-    The default place for the cache is \c{QtLocation/mapbox} directory in \l {QStandardPaths::writableLocation()} {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}).
-    On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
+    The default place for the cache is the \c{QtLocation/mapbox} subdirectory in the location returned by
+    QStandardPaths::writableLocation(), called with QStandardPaths::GenericCacheLocation as a parameter.
+    On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation}
+    is used instead.
 \row
     \li mapbox.mapping.cache.disk.cost_strategy
     \li The cost strategy to use to cache map tiles on disk.
