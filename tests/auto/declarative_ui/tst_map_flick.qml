@@ -189,7 +189,7 @@ Item {
             flick_down()
         }
 
-        function test_flick_down_with_filtetring()
+        function test_flick_down_with_filtering()
         {
             mouseAreaTop.visible = true
             mouseAreaBottom.visible = true
