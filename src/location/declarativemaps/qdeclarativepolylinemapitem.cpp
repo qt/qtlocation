@@ -35,7 +35,6 @@
  ****************************************************************************/
 
 #include "qdeclarativepolylinemapitem_p.h"
-#include "qgeocameracapabilities_p.h"
 #include "qlocationutils_p.h"
 #include "error_messages.h"
 #include "locationvaluetypehelper_p.h"

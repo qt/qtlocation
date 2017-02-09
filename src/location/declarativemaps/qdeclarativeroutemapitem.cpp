@@ -37,7 +37,6 @@
 
 #include "qdeclarativeroutemapitem_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
-#include "qgeocameracapabilities_p.h"
 #include "qdeclarativegeoroute_p.h"
 
 #include <QtQml/QQmlInfo>
