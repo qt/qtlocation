@@ -260,6 +260,47 @@ Item {
             compare(map.maximumZoomLevel, 20)
         }
 
+        function test_tilt_limits()
+        {
+            // Tilt limits are read only
+            map.tilt = 0
+
+            //initial plugin values
+            compare(map.minimumTilt, 0)
+            compare(map.maximumTilt, 60)
+
+            map.tilt = 18
+            compare(map.tilt, 18)
+
+            map.tilt = -2
+            compare(map.tilt, 0)
+
+            map.tilt = 2
+            compare(map.tilt, 2)
+
+            map.tilt = 62
+            compare(map.tilt, 60)
+
+            map.tilt = 0
+            compare(map.tilt, 0)
+        }
+
+        function test_fov_limits()
+        {
+            // Tilt limits are read only
+            map.fieldOfView = 45
+
+            //initial plugin values
+            compare(map.fieldOfView, 45)
+            compare(map.fieldOfView, 45)
+
+            map.fieldOfView = 18
+            compare(map.fieldOfView, 45)
+
+            map.fieldOfView = 62
+            compare(map.fieldOfView, 45)
+        }
+
         function test_zoom()
         {
             wait(1000)

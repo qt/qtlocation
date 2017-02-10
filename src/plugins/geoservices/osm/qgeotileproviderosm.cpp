@@ -47,8 +47,9 @@ static const QDateTime defaultTs = QDateTime::fromString(QStringLiteral("2016-06
 
 QGeoTileProviderOsm::QGeoTileProviderOsm(QNetworkAccessManager *nm,
                                          const QGeoMapType &mapType,
-                                         const QVector<TileProvider *> &providers)
-:   m_nm(nm), m_provider(nullptr), m_mapType(mapType), m_status(Idle)
+                                         const QVector<TileProvider *> &providers,
+                                         const QGeoCameraCapabilities &cameraCapabilities)
+:   m_nm(nm), m_provider(nullptr), m_mapType(mapType), m_status(Idle), m_cameraCapabilities(cameraCapabilities)
 {
     for (int i = 0; i < providers.size(); ++i) {
         TileProvider *p = providers[i];
@@ -59,6 +60,8 @@ QGeoTileProviderOsm::QGeoTileProviderOsm(QNetworkAccessManager *nm,
 
     if (!m_provider || m_provider->isValid())
         m_status = Resolved;
+
+    connect(this, &QGeoTileProviderOsm::resolutionFinished, this, &QGeoTileProviderOsm::updateCameraCapabilities);
 }
 
 QGeoTileProviderOsm::~QGeoTileProviderOsm()
@@ -126,6 +129,11 @@ const QDateTime QGeoTileProviderOsm::timestamp() const
     if (!m_provider)
         return QDateTime();
     return m_provider->timestamp();
+}
+
+QGeoCameraCapabilities QGeoTileProviderOsm::cameraCapabilities() const
+{
+    return m_cameraCapabilities;
 }
 
 const QGeoMapType &QGeoTileProviderOsm::mapType() const
@@ -218,6 +226,15 @@ void QGeoTileProviderOsm::onResolutionError(TileProvider *provider)
         m_provider->resolveProvider();
 #endif
     }
+}
+
+void QGeoTileProviderOsm::updateCameraCapabilities()
+{
+    // Set proper min/max ZoomLevel coming from the json, if available.
+    m_cameraCapabilities.setMinimumZoomLevel(minimumZoomLevel());
+    m_cameraCapabilities.setMaximumZoomLevel(maximumZoomLevel());
+
+    // Pushing the change
 }
 
 void QGeoTileProviderOsm::addProvider(TileProvider *provider)

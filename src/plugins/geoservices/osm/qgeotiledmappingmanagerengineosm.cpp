@@ -163,25 +163,25 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     /* QGeoTileProviderOsms setup */
     m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1),
-            providers_street ));
+            providers_street, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2),
-            providers_satellite ));
+            providers_satellite, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3),
-            providers_cycle ));
+            providers_cycle, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Public transit map view in daylight mode"), false, false, 4),
-            providers_transit ));
+            providers_transit, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5),
-            providers_nighttransit ));
+            providers_nighttransit, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6),
-            providers_terrain ));
+            providers_terrain, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
             QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7),
-            providers_hiking ));
+            providers_hiking, cameraCaps ));
 
     if (parameters.contains(QStringLiteral("osm.mapping.custom.host"))
             || parameters.contains(QStringLiteral("osm.mapping.host"))) {
@@ -208,7 +208,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
                 { new TileProvider(tmsServer + QStringLiteral("%z/%x/%y.png"),
                     QStringLiteral("png"),
                     mapCopyright,
-                    dataCopyright) }
+                    dataCopyright) }, cameraCaps
                 ));
 
         m_providers.last()->disableRedirection();
@@ -335,6 +335,16 @@ const QVector<QGeoTileProviderOsm *> &QGeoTiledMappingManagerEngineOsm::provider
 QString QGeoTiledMappingManagerEngineOsm::customCopyright() const
 {
     return m_customCopyright;
+}
+
+QGeoCameraCapabilities QGeoTiledMappingManagerEngineOsm::cameraCapabilities(const QGeoMapType &mapType) const
+{
+    if (mapType.mapId() == 0)
+        return QGeoMappingManagerEngine::cameraCapabilities(mapType);
+    int idx = mapType.mapId() - 1;
+    if (idx >= m_providers.size())
+        return QGeoMappingManagerEngine::cameraCapabilities(QGeoMapType());
+    return m_providers[idx]->cameraCapabilities();
 }
 
 void QGeoTiledMappingManagerEngineOsm::onProviderResolutionFinished(const QGeoTileProviderOsm *provider)

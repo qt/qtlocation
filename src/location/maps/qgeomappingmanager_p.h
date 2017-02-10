@@ -52,7 +52,7 @@
 #include <QSize>
 #include <QPair>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include "qgeomaptype_p.h"
+#include <QtLocation/private/qgeomaptype_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -81,8 +81,6 @@ public:
     QList<QGeoMapType> supportedMapTypes() const;
 
     bool isInitialized() const;
-
-    QGeoCameraCapabilities cameraCapabilities() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;

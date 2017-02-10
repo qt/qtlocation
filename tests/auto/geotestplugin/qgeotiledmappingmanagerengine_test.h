@@ -66,6 +66,7 @@ public:
         mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("StreetMap"), tr("StreetMap"), false, false, 1);
         mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("SatelliteMapDay"), tr("SatelliteMapDay"), false, false, 2);
         mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("CycleMap"), tr("CycleMap"), false, false, 3);
+        mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("AlternateCameraCapabilities"), tr("AlternateCameraCapabilities"), false, false, 4);
         setSupportedMapTypes(mapTypes);
 
         QGeoTileFetcherTest *fetcher = new QGeoTileFetcherTest(this);
@@ -88,6 +89,27 @@ public:
     QGeoMap *createMap()
     {
         return new QGeoTiledMapTest(this);
+    }
+
+    QGeoCameraCapabilities cameraCapabilities(const QGeoMapType &mapType) const Q_DECL_OVERRIDE
+    {
+        switch (mapType.mapId()) {
+        case 4:
+        {
+            QGeoCameraCapabilities capabilities;
+            capabilities.setMinimumZoomLevel(0.0);
+            capabilities.setMaximumZoomLevel(19.0);
+            capabilities.setSupportsBearing(true);
+            capabilities.setSupportsTilting(true);
+            capabilities.setMinimumTilt(0);
+            capabilities.setMaximumTilt(80);
+            capabilities.setMinimumFieldOfView(1);
+            capabilities.setMaximumFieldOfView(179);
+            return capabilities;
+        }
+        default:
+            return QGeoMappingManagerEngine::cameraCapabilities(mapType);
+        }
     }
 
 };

@@ -54,6 +54,7 @@
 #include <QtLocation/private/qdeclarativegeomapitemgroup_p.h>
 #include <QtLocation/qgeoserviceprovider.h>
 #include <QtLocation/private/qgeocameradata_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtQuick/QQuickItem>
 #include <QtCore/QList>
 #include <QtCore/QPointer>
@@ -111,10 +112,10 @@ public:
     void setActiveMapType(QDeclarativeGeoMapType *mapType);
     QDeclarativeGeoMapType *activeMapType() const;
 
-    void setMinimumZoomLevel(qreal minimumZoomLevel);
+    void setMinimumZoomLevel(qreal minimumZoomLevel, bool userSet = true);
     qreal minimumZoomLevel() const;
 
-    void setMaximumZoomLevel(qreal maximumZoomLevel);
+    void setMaximumZoomLevel(qreal maximumZoomLevel, bool userSet = true);
     qreal maximumZoomLevel() const;
 
     void setZoomLevel(qreal zoomLevel);
@@ -227,6 +228,7 @@ private Q_SLOTS:
     void pluginReady();
     void onMapChildrenChanged();
     void onSupportedMapTypesChanged();
+    void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
@@ -258,6 +260,9 @@ private:
     double m_maximumViewportLatitude;
     bool m_initialized;
     QList<QDeclarativeGeoMapParameter *> m_mapParameters;
+    QGeoCameraCapabilities m_cameraCapabilities;
+    qreal m_userMinimumZoomLevel;
+    qreal m_userMaximumZoomLevel;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

@@ -51,6 +51,8 @@
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
+#include <QtLocation/private/qgeomap_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/QSize>
 #include <QtCore/QList>
@@ -73,6 +75,8 @@ public:
     virtual ~QGeoMapPrivate();
 
     const QGeoProjection *geoProjection() const;
+    void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
+    const QGeoCameraCapabilities &cameraCapabilities() const;
 protected:
     /* Hooks into the actual map implementations */
     virtual void addParameter(QGeoMapParameter *param);
@@ -94,6 +98,7 @@ protected:
     QGeoMapType m_activeMapType;
     QList<QGeoMapParameter *> m_mapParameters;
     QList<QDeclarativeGeoMapItemBase *> m_mapItems;
+    QGeoCameraCapabilities m_cameraCapabilities;
 };
 
 QT_END_NAMESPACE
