@@ -47,7 +47,6 @@
 // We mean it.
 //
 
-#include <QtLocation/qlocationglobal.h>
 #include <QtLocation/private/qlocationglobal_p.h>
 
 #include <QObject>
@@ -96,7 +95,7 @@ protected:
     void aboutToBeEvicted(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj);
 };
 
-class Q_LOCATION_EXPORT QGeoFileTileCache : public QAbstractGeoTileCache
+class Q_LOCATION_PRIVATE_EXPORT QGeoFileTileCache : public QAbstractGeoTileCache
 {
     Q_OBJECT
 public:

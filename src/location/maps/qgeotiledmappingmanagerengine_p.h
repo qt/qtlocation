@@ -51,7 +51,7 @@
 #include <QObject>
 #include <QSize>
 #include <QPair>
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qabstractgeotilecache_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeomappingmanagerengine_p.h>
@@ -65,7 +65,7 @@ class QGeoTileTexture;
 class QGeoTileSpec;
 class QGeoTiledMap;
 
-class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
+class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
 {
     Q_OBJECT
 

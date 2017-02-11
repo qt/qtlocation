@@ -56,7 +56,7 @@
 #include <QMap>
 #include <QString>
 #include <QVariant>
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include "qgeomaptype_p.h"
 #include "qgeomappingmanager_p.h"
 
@@ -72,7 +72,7 @@ class QGeoMapRequestOptions;
 class QGeoMappingManagerEnginePrivate;
 class QGeoMap;
 
-class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
+class Q_LOCATION_PRIVATE_EXPORT QGeoMappingManagerEngine : public QObject
 {
     Q_OBJECT
 

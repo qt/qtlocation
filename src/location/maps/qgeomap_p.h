@@ -47,6 +47,7 @@
 // We mean it.
 //
 
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
@@ -65,7 +66,7 @@ class QQuickWindow;
 class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
 
-class Q_LOCATION_EXPORT QGeoMap : public QObject
+class Q_LOCATION_PRIVATE_EXPORT QGeoMap : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoMap)

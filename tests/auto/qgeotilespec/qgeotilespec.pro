@@ -6,4 +6,4 @@ INCLUDEPATH += ../../../src/location/maps
 
 SOURCES += tst_qgeotilespec.cpp
 
-QT += location testlib
+QT += location-private testlib

@@ -47,7 +47,7 @@
 // We mean it.
 //
 
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtCore/QScopedPointer>
 
 QT_BEGIN_NAMESPACE
@@ -58,7 +58,7 @@ class QGeoMapType;
 class QGeoCameraTilesPrivate;
 class QSize;
 
-class Q_LOCATION_EXPORT QGeoCameraTiles {
+class Q_LOCATION_PRIVATE_EXPORT QGeoCameraTiles {
 public:
     QGeoCameraTiles();
     ~QGeoCameraTiles();
