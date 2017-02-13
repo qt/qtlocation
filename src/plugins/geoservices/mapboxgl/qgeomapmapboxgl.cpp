@@ -397,7 +397,7 @@ void QGeoMapMapboxGL::copyrightsChanged(const QString &copyrightsHtml)
 
     if (d->m_developmentMode) {
         QString copyrightsHtmlDev = "<a href=\"https://www.mapbox.com/pricing/\">"
-            + QObject::tr("Development access token, do not use in production!") + "</a> - "
+            + tr("Development access token, do not use in production!") + "</a> - "
             + copyrightsHtml;
         QGeoMap::copyrightsChanged(copyrightsHtmlDev);
     } else {
