@@ -3,7 +3,7 @@ SUBDIRS += poly2tri
 SUBDIRS += clipper
 SUBDIRS += clip2tri
 
-qtConfig(opengl) {
+qtHaveModule(opengl) {
     linux|android: {
         equals(QT_GCC_MAJOR_VERSION, 4): greaterThan(QT_GCC_MINOR_VERSION, 8) {
             SUBDIRS += mapbox-gl-native
