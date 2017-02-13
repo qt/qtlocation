@@ -571,7 +571,7 @@ void QDeclarativeGeoRouteModel::update()
         return;
     }
     if (!routeQuery_) {
-        setError(ParseError,"Cannot route, valid query not set.");
+        setError(ParseError, tr("Cannot route, valid query not set."));
         return;
     }
     emit abortRequested(); // Clear previous requests
