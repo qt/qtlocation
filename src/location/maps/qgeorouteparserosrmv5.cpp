@@ -590,11 +590,9 @@ static QString instructionRoundaboutTurn(const QString &wayName, QGeoManeuver::I
 
 static QString instructionTrain(const QString &wayName)
 {
-    QString instruction = QGeoRouteParserOsrmV5::tr("Take the train");
-    if (!wayName.isEmpty())
-        instruction += QLatin1String(" [") + wayName + QLatin1Char(']');
-
-    return instruction;
+    return wayName.isEmpty()
+        ? QGeoRouteParserOsrmV5::tr("Take the train")
+        : QGeoRouteParserOsrmV5::tr("Take the train [%1]").arg(wayName);
 }
 
 static QString instructionTurn(const QString &wayName, QGeoManeuver::InstructionDirection direction)
