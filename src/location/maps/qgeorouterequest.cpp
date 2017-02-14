@@ -37,9 +37,6 @@
 #include "qgeorouterequest.h"
 #include "qgeorouterequest_p.h"
 
-#include "qgeocoordinate.h"
-#include "qgeorectangle.h"
-
 QT_BEGIN_NAMESPACE
 
 /*!
