@@ -1483,7 +1483,7 @@ void QDeclarativeGeoMap::addMapParameter(QDeclarativeGeoMapParameter *parameter)
     if (m_mapParameters.contains(parameter))
         return;
     parameter->setParent(this);
-    m_mapParameters.insert(parameter); // parameter now owned by QDeclarativeGeoMap
+    m_mapParameters.append(parameter); // parameter now owned by QDeclarativeGeoMap
     if (m_map)
         m_map->addParameter(parameter);
 }
@@ -1505,7 +1505,7 @@ void QDeclarativeGeoMap::removeMapParameter(QDeclarativeGeoMapParameter *paramet
         return;
     if (m_map)
         m_map->removeParameter(parameter);
-    m_mapParameters.remove(parameter);
+    m_mapParameters.removeOne(parameter);
 }
 
 /*!

@@ -12,12 +12,15 @@ HEADERS += \
     qgeoserviceproviderpluginmapboxgl.h \
     qgeomappingmanagerenginemapboxgl.h \
     qgeomapmapboxgl.h \
+    qgeomapmapboxgl_p.h \
+    qmapboxglstylechange_p.h \
     qsgmapboxglnode.h
 
 SOURCES += \
     qgeoserviceproviderpluginmapboxgl.cpp \
     qgeomappingmanagerenginemapboxgl.cpp \
     qgeomapmapboxgl.cpp \
+    qmapboxglstylechange.cpp \
     qsgmapboxglnode.cpp
 
 RESOURCES += mapboxgl.qrc
