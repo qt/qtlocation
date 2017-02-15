@@ -133,6 +133,10 @@ QGeoMappingManagerEngineMapboxGL::QGeoMappingManagerEngineMapboxGL(const QVarian
             m_settings.setCacheDatabaseMaximumSize(cacheSize);
     }
 
+    if (parameters.contains(QStringLiteral("mapboxgl.use_fbo"))) {
+        m_useFBO = parameters.value(QStringLiteral("mapboxgl.use_fbo")).toBool();
+    }
+
     engineInitialized();
 }
 
@@ -144,6 +148,7 @@ QGeoMap *QGeoMappingManagerEngineMapboxGL::createMap()
 {
     QGeoMapMapboxGL* map = new QGeoMapMapboxGL(this, 0);
     map->setMapboxGLSettings(m_settings);
+    map->setUseFBO(m_useFBO);
 
     return map;
 }

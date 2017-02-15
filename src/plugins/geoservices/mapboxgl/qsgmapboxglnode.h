@@ -38,6 +38,8 @@
 #ifndef QSGMAPBOXGLNODE_H
 #define QSGMAPBOXGLNODE_H
 
+#include <QtQuick/QQuickWindow>
+#include <QtQuick/QSGRenderNode>
 #include <QtQuick/QSGSimpleTextureNode>
 #include <QtQuick/private/qsgtexture_p.h>
 #include <QtGui/QOpenGLFramebufferObject>
@@ -46,19 +48,34 @@
 
 class QGeoMapMapboxGL;
 
-class QSGMapboxGLNode : public QSGSimpleTextureNode
+class QSGMapboxGLTextureNode : public QSGSimpleTextureNode
 {
 public:
-    QSGMapboxGLNode(const QMapboxGLSettings &, const QSize &, qreal pixelRatio, QGeoMapMapboxGL *geoMap);
-
-    void resize(const QSize &size, qreal pixelRatio);
-    void render();
+    QSGMapboxGLTextureNode(const QMapboxGLSettings &, const QSize &, qreal pixelRatio, QGeoMapMapboxGL *geoMap);
 
     QMapboxGL* map() const;
+
+    void resize(const QSize &size, qreal pixelRatio);
+    void render(QQuickWindow *);
 
 private:
     QScopedPointer<QMapboxGL> m_map;
     QScopedPointer<QOpenGLFramebufferObject> m_fbo;
+};
+
+class QSGMapboxGLRenderNode : public QSGRenderNode
+{
+public:
+    QSGMapboxGLRenderNode(const QMapboxGLSettings &, const QSize &, qreal pixelRatio, QGeoMapMapboxGL *geoMap);
+
+    QMapboxGL* map() const;
+
+    // QSGRenderNode
+    void render(const RenderState *state) Q_DECL_OVERRIDE;
+    StateFlags changedStates() const Q_DECL_OVERRIDE;
+
+private:
+    QScopedPointer<QMapboxGL> m_map;
 };
 
 #endif // QSGMAPBOXGLNODE_H

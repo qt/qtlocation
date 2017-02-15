@@ -146,6 +146,7 @@ public:
     Q_DECLARE_FLAGS(SyncStates, SyncState);
 
     QMapboxGLSettings m_settings;
+    bool m_useFBO = true;
     bool m_developmentMode = false;
 
     QTimer m_refresh;
@@ -183,7 +184,7 @@ QGeoMapMapboxGLPrivate::~QGeoMapMapboxGLPrivate()
 {
 }
 
-QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
+QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *window)
 {
     Q_Q(QGeoMapMapboxGL);
 
@@ -196,14 +197,24 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow
         m_warned = true;
     }
 
-    QSGMapboxGLNode *mbglNode = static_cast<QSGMapboxGLNode *>(oldNode);
-    if (!mbglNode) {
-        mbglNode = new QSGMapboxGLNode(m_settings, m_viewportSize, window->devicePixelRatio(), q);
-        QObject::connect(mbglNode->map(), &QMapboxGL::mapChanged, q, &QGeoMapMapboxGL::onMapChanged);
-        m_syncState = MapTypeSync | CameraDataSync | ViewportSync;
+    QMapboxGL *map = 0;
+    if (m_useFBO) {
+        if (!node) {
+            QSGMapboxGLTextureNode *mbglNode = new QSGMapboxGLTextureNode(m_settings, m_viewportSize, window->devicePixelRatio(), q);
+            QObject::connect(mbglNode->map(), &QMapboxGL::mapChanged, q, &QGeoMapMapboxGL::onMapChanged);
+            m_syncState = MapTypeSync | CameraDataSync | ViewportSync;
+            node = mbglNode;
+        }
+        map = static_cast<QSGMapboxGLTextureNode *>(node)->map();
+    } else {
+        if (!node) {
+            QSGMapboxGLRenderNode *mbglNode = new QSGMapboxGLRenderNode(m_settings, m_viewportSize, window->devicePixelRatio(), q);
+            QObject::connect(mbglNode->map(), &QMapboxGL::mapChanged, q, &QGeoMapMapboxGL::onMapChanged);
+            m_syncState = MapTypeSync | CameraDataSync | ViewportSync;
+            node = mbglNode;
+        }
+        map = static_cast<QSGMapboxGLRenderNode *>(node)->map();
     }
-
-    QMapboxGL *map = mbglNode->map();
 
     if (m_syncState & MapTypeSync) {
         m_developmentMode = m_activeMapType.name().startsWith("mapbox://")
@@ -319,14 +330,20 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *oldNode, QQuickWindow
     }
 
     if (m_syncState & ViewportSync) {
-        mbglNode->resize(m_viewportSize, window->devicePixelRatio());
+        if (m_useFBO) {
+            static_cast<QSGMapboxGLTextureNode *>(node)->resize(m_viewportSize, window->devicePixelRatio());
+        } else {
+            map->resize(m_viewportSize, m_viewportSize * window->devicePixelRatio());
+        }
     }
 
-    mbglNode->render();
+    if (m_useFBO) {
+        static_cast<QSGMapboxGLTextureNode *>(node)->render(window);
+    }
 
     m_syncState = NoSync;
 
-    return mbglNode;
+    return node;
 }
 
 QGeoMap::ItemTypes QGeoMapMapboxGLPrivate::supportedMapItemTypes() const
@@ -463,6 +480,12 @@ void QGeoMapMapboxGL::setMapboxGLSettings(const QMapboxGLSettings& settings)
     if (d->m_settings.accessToken().isEmpty()) {
         d->m_settings.setAccessToken(developmentToken);
     }
+}
+
+void QGeoMapMapboxGL::setUseFBO(bool useFBO)
+{
+    Q_D(QGeoMapMapboxGL);
+    d->m_useFBO = useFBO;
 }
 
 QSGNode *QGeoMapMapboxGL::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
