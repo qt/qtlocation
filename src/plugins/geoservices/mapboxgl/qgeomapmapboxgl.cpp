@@ -622,7 +622,7 @@ void QGeoMapMapboxGL::copyrightsChanged(const QString &copyrightsHtml)
 
     if (d->m_developmentMode) {
         copyrightsHtmlFinal.prepend("<a href='https://www.mapbox.com/pricing'>"
-            + QObject::tr("Development access token, do not use in production!") + "</a> - ");
+            + tr("Development access token, do not use in production!") + "</a> - ");
     }
 
     if (d->m_activeMapType.name().startsWith("mapbox://")) {
