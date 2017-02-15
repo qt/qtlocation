@@ -95,6 +95,7 @@ static QString cardinalDirection4(QLocationUtils::CardinalDirection direction)
 {
     switch (direction) {
         case QLocationUtils::CardinalN:
+            //: Translations exist at https://github.com/Project-OSRM/osrm-text-instructions.
             //: Always used in "Head %1 [onto <street name>]"
             return QGeoRouteParserOsrmV5::tr("North");
         case QLocationUtils::CardinalE:
