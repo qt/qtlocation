@@ -77,13 +77,21 @@ Item{
 
         function init()
         {
+            map.activeMapType = map.supportedMapTypes[0]
+
             supportedMapTypesSpy.clear()
             activeMapTypeChangedSpy.clear()
-            map.activeMapType = map.supportedMapTypes[0]
+            minimumZoomLevelChangedSpy.clear();
+            maximumZoomLevelChangedSpy.clear();
+            minimumTiltChangedSpy.clear();
+            maximumTiltChangedSpy.clear();
+            minimumFieldOfViewChangedSpy.clear();
+            maximumFieldOfViewChangedSpy.clear();
         }
 
         function test_setting_types()
         {
+            // resetting it first
             map.activeMapType = map.supportedMapTypes[0]
             tryCompare(activeMapTypeChangedSpy, "count", 0)
 
@@ -105,13 +113,6 @@ Item{
 
         function test_maptype_capabilities()
         {
-            minimumZoomLevelChangedSpy.clear();
-            maximumZoomLevelChangedSpy.clear();
-            minimumTiltChangedSpy.clear();
-            maximumTiltChangedSpy.clear();
-            minimumFieldOfViewChangedSpy.clear();
-            maximumFieldOfViewChangedSpy.clear();
-
             map.activeMapType = map.supportedMapTypes[0]
 
             compare(map.minimumZoomLevel, 0)

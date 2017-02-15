@@ -176,7 +176,11 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_maximumViewportLatitude(0.0),
         m_initialized(false),
         m_userMinimumZoomLevel(qQNaN()),
-        m_userMaximumZoomLevel(qQNaN())
+        m_userMaximumZoomLevel(qQNaN()),
+        m_userMinimumTilt(qQNaN()),
+        m_userMaximumTilt(qQNaN()),
+        m_userMinimumFieldOfView(qQNaN()),
+        m_userMaximumFieldOfView(qQNaN())
 {
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -200,6 +204,11 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     m_cameraCapabilities.setMaximumTilt(89.5);
     m_cameraCapabilities.setMinimumFieldOfView(1);
     m_cameraCapabilities.setMaximumFieldOfView(179);
+
+    m_minimumTilt = m_cameraCapabilities.minimumTilt();
+    m_maximumTilt = m_cameraCapabilities.maximumTilt();
+    m_minimumFieldOfView = m_cameraCapabilities.minimumFieldOfView();
+    m_maximumFieldOfView = m_cameraCapabilities.maximumFieldOfView();
 }
 
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
@@ -634,20 +643,6 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
         return;
     m_cameraCapabilities = m_map->cameraCapabilities();
 
-    bool minTiltHasChanged = false;
-    bool maxTiltHasChanged = false;
-    bool minFovHasChanged = false;
-    bool maxFovHasChanged = false;
-
-    if (m_cameraCapabilities.minimumFieldOfView() != oldCameraCapabilities.minimumFieldOfView())
-        minFovHasChanged = true;
-    if (m_cameraCapabilities.maximumFieldOfView() != oldCameraCapabilities.maximumFieldOfView())
-        maxFovHasChanged = true;
-    if (m_cameraCapabilities.minimumTilt() != oldCameraCapabilities.minimumTilt())
-        minTiltHasChanged = true;
-    if (m_cameraCapabilities.maximumTilt() != oldCameraCapabilities.maximumTilt())
-        maxTiltHasChanged = true;
-
     //The zoom level limits are only restricted by the plugins values, if the user has set a more
     //strict zoom level limit before initialization nothing is done here.
     //minimum zoom level might be changed to limit gray bundaries
@@ -658,7 +653,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
         if (qIsNaN(m_userMaximumZoomLevel)) {
             // If the user didn't set anything
             setMaximumZoomLevel(m_cameraCapabilities.maximumZoomLevelAt256(), false);
-        } else if (m_userMaximumZoomLevel > m_gestureArea->maximumZoomLevel()) {
+        } else {  // Try to set what the user requested
             // Else if the user set something larger, but that got clamped by the previous camera caps
             setMaximumZoomLevel(qMin<qreal>(m_cameraCapabilities.maximumZoomLevelAt256(),
                                             m_userMaximumZoomLevel), false);
@@ -671,7 +666,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
         if (qIsNaN(m_userMinimumZoomLevel)) {
             // If the user didn't set anything, trying to set the new caps.
             setMinimumZoomLevel(m_cameraCapabilities.minimumZoomLevelAt256(), false);
-        } else if (m_userMinimumZoomLevel < m_gestureArea->minimumZoomLevel()) {
+        } else {  // Try to set what the user requested
             // Else if the user set a minimum, m_gestureArea->minimumZoomLevel() might be larger
             // because of different reasons. Resetting it, as if it ends to be the same,
             // no signal will be emitted.
@@ -680,17 +675,43 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
         }
     }
 
-    if (minTiltHasChanged)
-        emit minimumTiltChanged(m_cameraCapabilities.minimumTilt());
+    // Tilt
+    if (m_cameraCapabilities.maximumTilt() < m_maximumTilt) {
+        setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
+    } else if (m_cameraCapabilities.maximumTilt() > m_maximumTilt) {
+        if (qIsNaN(m_userMaximumTilt))
+            setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
+        else // Try to set what the user requested
+            setMaximumTilt(qMin<qreal>(m_cameraCapabilities.maximumTilt(), m_userMaximumTilt), false);
+    }
 
-    if (maxTiltHasChanged)
-        emit maximumTiltChanged(m_cameraCapabilities.maximumTilt());
+    if (m_cameraCapabilities.minimumTilt() > m_minimumTilt) {
+        setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
+    } else if (m_cameraCapabilities.minimumTilt() < m_minimumTilt) {
+        if (qIsNaN(m_userMinimumTilt))
+            setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
+        else // Try to set what the user requested
+            setMinimumTilt(qMax<qreal>(m_cameraCapabilities.minimumTilt(), m_userMinimumTilt), false);
+    }
 
-    if (minFovHasChanged)
-        emit minimumFieldOfViewChanged(m_cameraCapabilities.minimumFieldOfView());
+    // FoV
+    if (m_cameraCapabilities.maximumFieldOfView() < m_maximumFieldOfView) {
+        setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
+    } else if (m_cameraCapabilities.maximumFieldOfView() > m_maximumFieldOfView) {
+        if (qIsNaN(m_userMaximumFieldOfView))
+            setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
+        else // Try to set what the user requested
+            setMaximumFieldOfView(qMin<qreal>(m_cameraCapabilities.maximumFieldOfView(), m_userMaximumFieldOfView), false);
+    }
 
-    if (maxFovHasChanged)
-        emit maximumFieldOfViewChanged(m_cameraCapabilities.maximumFieldOfView());
+    if (m_cameraCapabilities.minimumFieldOfView() > m_minimumFieldOfView) {
+        setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
+    } else if (m_cameraCapabilities.minimumFieldOfView() < m_minimumFieldOfView) {
+        if (qIsNaN(m_userMinimumFieldOfView))
+            setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
+        else // Try to set what the user requested
+            setMinimumFieldOfView(qMax<qreal>(m_cameraCapabilities.minimumFieldOfView(), m_userMinimumFieldOfView), false);
+    }
 }
 
 
@@ -839,7 +860,7 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSe
     defined by the plugin used, to prevent the map from being smaller than the
     viewport in either dimension.
 
-    If a plugin supporting mapping is not set, 0.0 is returned.
+    If the \l plugin property is not set or the plugin does not support mapping, this property is \c 0.
 */
 
 qreal QDeclarativeGeoMap::minimumZoomLevel() const
@@ -877,7 +898,7 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel, bool userSe
     This property holds the maximum valid zoom level for the map.
 
     The maximum zoom level is defined by the \l plugin used.
-    If a plugin supporting mapping is not set, 30.0 is returned.
+    If the \l plugin property is not set or the plugin does not support mapping, this property is \c 30.
 */
 
 qreal QDeclarativeGeoMap::maximumZoomLevel() const
@@ -959,11 +980,12 @@ qreal QDeclarativeGeoMap::bearing() const
 /*!
     \qmlproperty real QtLocation::Map::tilt
 
-    This property holds the tilt for the map.
+    This property holds the tilt for the map, in degrees.
     The default value is 0.
-    If the Plugin used for the Map supports tilt, the valid range for this value is
-    [ plugin.minimumTilt, plugin.maximumTilt ].
+    The valid range for this value is [ minimumTilt, maximumTilt ].
     If the Plugin used for the Map does not support tilting, changing this property will have no effect.
+
+    \sa minimumTilt, maximumTilt
 
     \since Qt Location 5.9
 */
@@ -984,6 +1006,25 @@ qreal QDeclarativeGeoMap::tilt() const
     return m_cameraData.tilt();
 }
 
+void QDeclarativeGeoMap::setMinimumTilt(qreal minimumTilt, bool userSet)
+{
+    if (minimumTilt >= 0) {
+        if (userSet)
+            m_userMinimumTilt = minimumTilt;
+        qreal oldMinimumTilt = this->minimumTilt();
+
+        m_minimumTilt = qBound(m_cameraCapabilities.minimumTilt(),
+                               minimumTilt,
+                               m_cameraCapabilities.maximumTilt());
+
+        if (tilt() < m_minimumTilt)
+            setTilt(m_minimumTilt);
+
+        if (oldMinimumTilt != m_minimumTilt)
+            emit minimumTiltChanged(m_minimumTilt);
+    }
+}
+
 /*!
     \qmlproperty real QtLocation::Map::fieldOfView
 
@@ -995,6 +1036,8 @@ qreal QDeclarativeGeoMap::tilt() const
 
     For more information about this parameter, consult the Wikipedia articles about \l {https://en.wikipedia.org/wiki/Field_of_view} {Field of view} and
     \l {https://en.wikipedia.org/wiki/Angle_of_view} {Angle of view}.
+
+    \sa minimumFieldOfView, maximumFieldOfView
 
     \since Qt Location 5.9
 */
@@ -1015,28 +1058,78 @@ qreal QDeclarativeGeoMap::fieldOfView() const
     return m_cameraData.fieldOfView();
 }
 
+void QDeclarativeGeoMap::setMinimumFieldOfView(qreal minimumFieldOfView, bool userSet)
+{
+    if (minimumFieldOfView > 0 && minimumFieldOfView < 180.0) {
+        if (userSet)
+            m_userMinimumFieldOfView = minimumFieldOfView;
+        qreal oldMinimumFoV = this->minimumFieldOfView();
+
+        m_minimumFieldOfView = qBound(m_cameraCapabilities.minimumFieldOfView(),
+                                      minimumFieldOfView,
+                                      m_cameraCapabilities.maximumFieldOfView());
+
+        if (fieldOfView() < m_minimumFieldOfView)
+            setFieldOfView(m_minimumFieldOfView);
+
+        if (oldMinimumFoV != m_minimumFieldOfView)
+            emit minimumFieldOfViewChanged(m_minimumFieldOfView);
+    }
+}
+
 /*!
     \qmlproperty bool QtLocation::Map::minimumFieldOfView
-    This property holds the minimum field of view  that the map supports.
-    If the plugin property of the map is not set, or the plugin does not support mapping, this property is 1.
+
+    This property holds the minimum valid field of view for the map, in degrees.
+
+    The minimum tilt field of view by the \l plugin used is a lower bound for
+    this property.
+    If the \l plugin property is not set or the plugin does not support mapping, this property is \c 1.
+
+    \sa fieldOfView, maximumFieldOfView
 
     \since Qt Location 5.9
 */
 qreal QDeclarativeGeoMap::minimumFieldOfView() const
 {
-    return m_cameraCapabilities.minimumFieldOfView();
+    return m_minimumFieldOfView;
+}
+
+void QDeclarativeGeoMap::setMaximumFieldOfView(qreal maximumFieldOfView, bool userSet)
+{
+    if (maximumFieldOfView > 0 && maximumFieldOfView < 180.0) {
+        if (userSet)
+            m_userMaximumFieldOfView = maximumFieldOfView;
+        qreal oldMaximumFoV = this->maximumFieldOfView();
+
+        m_maximumFieldOfView = qBound(m_cameraCapabilities.minimumFieldOfView(),
+                                      maximumFieldOfView,
+                                      m_cameraCapabilities.maximumFieldOfView());
+
+        if (fieldOfView() > m_maximumFieldOfView)
+            setFieldOfView(m_maximumFieldOfView);
+
+        if (oldMaximumFoV != m_maximumFieldOfView)
+            emit maximumFieldOfViewChanged(m_maximumFieldOfView);
+    }
 }
 
 /*!
     \qmlproperty bool QtLocation::Map::maximumFieldOfView
-    This property holds the maximum field of view that the map supports.
-    If the plugin property of the map is not set, or the plugin does not support mapping, this property is 179.
+
+    This property holds the maximum valid field of view for the map, in degrees.
+
+    The minimum tilt field of view by the \l plugin used is an upper bound for
+    this property.
+    If the \l plugin property is not set or the plugin does not support mapping, this property is \c 179.
+
+    \sa fieldOfView, minimumFieldOfView
 
     \since Qt Location 5.9
 */
 qreal QDeclarativeGeoMap::maximumFieldOfView() const
 {
-    return m_cameraCapabilities.maximumFieldOfView();
+    return m_maximumFieldOfView;
 }
 
 /*!
@@ -1068,28 +1161,56 @@ bool QDeclarativeGeoMap::isTiltingSupported() const
 /*!
     \qmlproperty bool QtLocation::Map::minimumTilt
 
-    This property holds the minimum tilt that the map supports.
-    If the plugin property of the map is not set, or the plugin does not support mapping, this property is 0.
+    This property holds the minimum valid tilt for the map, in degrees.
+
+    The minimum tilt defined by the \l plugin used is a lower bound for
+    this property.
+    If the \l plugin property is not set or the plugin does not support mapping, this property is \c 0.
+
+    \sa tilt, maximumTilt
 
     \since Qt Location 5.9
 */
 qreal QDeclarativeGeoMap::minimumTilt() const
 {
-    return m_cameraCapabilities.minimumTilt();
+    return m_minimumTilt;
+}
+
+void QDeclarativeGeoMap::setMaximumTilt(qreal maximumTilt, bool userSet)
+{
+    if (maximumTilt >= 0) {
+        if (userSet)
+            m_userMaximumTilt = maximumTilt;
+        qreal oldMaximumTilt = this->maximumTilt();
+
+        m_maximumTilt = qBound(m_cameraCapabilities.minimumTilt(),
+                               maximumTilt,
+                               m_cameraCapabilities.maximumTilt());
+
+        if (tilt() > m_maximumTilt)
+            setTilt(m_maximumTilt);
+
+        if (oldMaximumTilt != m_maximumTilt)
+            emit maximumTiltChanged(m_maximumTilt);
+    }
 }
 
 /*!
     \qmlproperty bool QtLocation::Map::maximumTilt
 
-    This property holds the maximum tilt that the map supports.
-    If the plugin property of the map is not set, this property is 89.
-    If the plugin is set and it does not support mapping, this property is 0.
+    This property holds the maximum valid tilt for the map, in degrees.
+
+    The maximum tilt defined by the \l plugin used is an upper bound for
+    this property.
+    If the \l plugin property is not set or the plugin does not support mapping, this property is \c 89.5.
+
+    \sa tilt, minimumTilt
 
     \since Qt Location 5.9
 */
 qreal QDeclarativeGeoMap::maximumTilt() const
 {
-    return m_cameraCapabilities.maximumTilt();
+    return m_maximumTilt;
 }
 
 /*!
