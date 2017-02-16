@@ -87,7 +87,10 @@ ApplicationWindow {
             map.zoomLevel = zoomLevel
             map.center = center
         } else {
-            map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
+            // Use an integer ZL to enable nearest interpolation, if possible.
+            map.zoomLevel = Math.floor((map.maximumZoomLevel - map.minimumZoomLevel)/2)
+            // defaulting to 45 degrees, if possible.
+            map.fieldOfView = Math.min(Math.max(45.0, map.minimumFieldOfView), map.maximumFieldOfView)
         }
 
         map.forceActiveFocus()
