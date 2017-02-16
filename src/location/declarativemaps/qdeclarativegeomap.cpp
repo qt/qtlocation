@@ -1133,32 +1133,6 @@ qreal QDeclarativeGeoMap::maximumFieldOfView() const
 }
 
 /*!
-    \qmlproperty bool QtLocation::Map::bearingSupported
-
-    This property indicates if the Map supports bearing.
-    If the plugin property of the map is not set, or the plugin does not support mapping, this property is false.
-
-    \since Qt Location 5.9
-*/
-bool QDeclarativeGeoMap::isBearingSupported() const
-{
-    return m_cameraCapabilities.supportsBearing();
-}
-
-/*!
-    \qmlproperty bool QtLocation::Map::tiltingSupported
-
-    This property indicates if the Map supports tilting.
-    If the plugin property of the map is not set, or the plugin does not support mapping, this property is false.
-
-    \since Qt Location 5.9
-*/
-bool QDeclarativeGeoMap::isTiltingSupported() const
-{
-    return m_cameraCapabilities.supportsTilting();
-}
-
-/*!
     \qmlproperty bool QtLocation::Map::minimumTilt
 
     This property holds the minimum valid tilt for the map, in degrees.

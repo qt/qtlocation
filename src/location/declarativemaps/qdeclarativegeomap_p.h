@@ -79,13 +79,10 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
 
-
-    Q_PROPERTY(bool tiltingSupported READ isTiltingSupported NOTIFY tiltingSupportChanged)
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
     Q_PROPERTY(qreal minimumTilt READ minimumTilt WRITE setMinimumTilt NOTIFY minimumTiltChanged)
     Q_PROPERTY(qreal maximumTilt READ maximumTilt WRITE setMaximumTilt NOTIFY maximumTiltChanged)
 
-    Q_PROPERTY(bool bearingSupported READ isBearingSupported NOTIFY bearingSupportChanged)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
 
     Q_PROPERTY(qreal fieldOfView READ fieldOfView WRITE setFieldOfView NOTIFY fieldOfViewChanged)
@@ -124,11 +121,9 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
-    bool isBearingSupported() const;
     void setBearing(qreal bearing);
     qreal bearing() const;
 
-    bool isTiltingSupported() const;
     void setTilt(qreal tilt);
     qreal tilt() const;
     void setMinimumTilt(qreal minimumTilt, bool userSet = true);
@@ -201,8 +196,6 @@ Q_SIGNALS:
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);
     void fieldOfViewChanged(qreal fieldOfView);
-    void bearingSupportChanged(bool bearingSupport);
-    void tiltingSupportChanged(bool tiltingSupport);
     void minimumTiltChanged(qreal minimumTilt);
     void maximumTiltChanged(qreal maximumTilt);
     void minimumFieldOfViewChanged(qreal minimumFieldOfView);
