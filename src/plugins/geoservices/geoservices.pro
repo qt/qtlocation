@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-SUBDIRS = nokia osm mapbox esri
+SUBDIRS = nokia osm mapbox esri itemsoverlay
 
 qtConfig(c++14):!win32 {
     !exists(../../3rdparty/mapbox-gl-native/CMakeLists.txt) {
