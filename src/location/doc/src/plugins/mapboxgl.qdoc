@@ -102,7 +102,7 @@ The following table lists optional parameters that can be passed to the Mapbox p
     The default size of this cache is 50 MiB.
     Make sure to comply with Mapbox Terms of Service before increasing this value.
 \row
-    \li mapboxgl.use_fbo
+    \li mapboxgl.mapping.use_fbo
     \li Sets whether to use a framebuffer object to render Mapbox GL Native.
     Valid values are \b true and \b false. The default value is \b true. When
     set to \b false, the map is rendered issuing OpenGL commands directly,
