@@ -1,13 +1,17 @@
 TEMPLATE = subdirs
 
+SUBDIRS += 3rdparty/clip2tri 3rdparty/clipper 3rdparty/poly2tri
+3rdparty/clip2tri.depends = 3rdparty/clipper 3rdparty/poly2tri
+
 SUBDIRS += positioning
-plugins.depends += positioning 3rdparty
+positioning.depends = 3rdparty/clip2tri
 
 qtHaveModule(quick) {
-    SUBDIRS += 3rdparty
+    plugins.depends += positioning
 
     SUBDIRS += location
-    location.depends += positioning 3rdparty
+    location.depends += positioning 3rdparty/clip2tri
+
     plugins.depends += location
 
     SUBDIRS += imports
