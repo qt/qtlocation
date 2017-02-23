@@ -185,12 +185,7 @@ QDoubleVector2D QGeoProjectionWebMercator::unwrapMapProjection(const QDoubleVect
 
 QDoubleVector2D QGeoProjectionWebMercator::wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const
 {
-    QDoubleVector3D pos = wrappedProjection * m_sideLength;
-    QDoubleVector2D res =  (m_transformation * pos).toVector2D();
-    res += QDoubleVector2D(1.0,1.0);
-    res *= 0.5;
-    res *= QDoubleVector2D(m_viewportWidth, m_viewportHeight);
-    return res;
+    return (m_transformation * wrappedProjection).toVector2D();
 }
 
 QDoubleVector2D QGeoProjectionWebMercator::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
@@ -384,7 +379,24 @@ void QGeoProjectionWebMercator::setupCamera()
     QDoubleMatrix4x4 projectionMatrix;
     projectionMatrix.frustum(-m_halfWidth, m_halfWidth, -m_halfHeight, m_halfHeight, m_nearPlane, m_farPlane);
 
-    m_transformation = projectionMatrix * cameraMatrix;
+    /*
+     * The full transformation chain for m_transformation is:
+     * matScreen * matScreenFit * matShift *  projectionMatrix * cameraMatrix * matZoomLevelScale
+     * where:
+     * matZoomLevelScale = scale(m_sideLength, m_sideLength, 1.0)
+     * matShift = translate(1.0, 1.0, 0.0)
+     * matScreenFit = scale(0.5, 0.5, 1.0)
+     * matScreen = scale(m_viewportWidth, m_viewportHeight, 1.0)
+     */
+
+    QDoubleMatrix4x4 matScreenTransformation;
+    matScreenTransformation.scale(0.5 * m_viewportWidth, 0.5 * m_viewportHeight, 1.0);
+    matScreenTransformation(0,3) = 0.5 * m_viewportWidth;
+    matScreenTransformation(1,3) = 0.5 * m_viewportHeight;
+
+    m_transformation = matScreenTransformation *  projectionMatrix * cameraMatrix;
+    m_transformation.scale(m_sideLength, m_sideLength, 1.0);
+
     m_centerNearPlane = m_eye + m_viewNormalized;
     m_centerNearPlaneMercator = m_eyeMercator + m_viewNormalized * m_nearPlaneMercator;
 

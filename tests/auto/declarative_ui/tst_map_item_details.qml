@@ -439,7 +439,7 @@ Item {
             // move item edge onto dateline
             extMapRectDateline.topLeft.longitude = datelineCoordinate.longitude
             point = map.fromCoordinate(extMapRectDateline.topLeft)
-            verify(point.x == map.width / 2.0)
+            compare(point.x, map.width / 2.0)
             // drag item back onto dateline
             verify(LocationTestHelper.waitForPolished(map))
             visualInspectionPoint(inspectionTime)
@@ -463,7 +463,7 @@ Item {
             verify(extMapCircleDateline.center.longitude === 180)
             map.center = datelineCoordinate
             point = map.fromCoordinate(extMapCircleDateline.center)
-            verify(point.x == map.width / 2.0) // center of the screen
+            compare(point.x, map.width / 2.0) // center of the screen
             visualInspectionPoint()
             extMapCircleDateline.center.longitude = datelineCoordinateRight.longitude // -170, moving the circle to the right
             point = map.fromCoordinate(extMapCircleDateline.center)
@@ -533,12 +533,12 @@ Item {
             path[0].longitude = datelineCoordinate.longitude;
             extMapPolygonDateline.path = path;
             point = map.fromCoordinate(extMapPolygonDateline.path[0])
-            verify(point.x == map.width / 2.0)
+            compare(point.x, map.width / 2.0)
             path = extMapPolygonDateline.path;
             path[3].longitude = datelineCoordinate.longitude;
             extMapPolygonDateline.path = path;
             point = map.fromCoordinate(extMapPolygonDateline.path[3])
-            verify(point.x == map.width / 2.0)
+            compare(point.x, map.width / 2.0)
             verify(LocationTestHelper.waitForPolished(map))
             visualInspectionPoint(inspectionTime)
             mousePress(map, point.x + 5, point.y - 5)
@@ -575,7 +575,7 @@ Item {
             path[0].longitude = datelineCoordinate.longitude;
             extMapPolylineDateline.path = path;
             point = map.fromCoordinate(extMapPolylineDateline.path[0])
-            verify(point.x == map.width / 2.0)
+            compare(point.x, map.width / 2.0)
             map.removeMapItem(extMapPolylineDateline)
 
             // map route
