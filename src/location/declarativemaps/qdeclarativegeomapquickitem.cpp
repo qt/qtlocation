@@ -115,9 +115,25 @@ QT_BEGIN_NAMESPACE
     \image api-mapquickitem.png
 */
 
+QMapQuickItemMatrix4x4::QMapQuickItemMatrix4x4(QObject *parent) : QQuickTransform(parent) { }
+
+void QMapQuickItemMatrix4x4::setMatrix(const QMatrix4x4 &matrix)
+{
+    if (m_matrix == matrix)
+        return;
+    m_matrix = matrix;
+    update();
+}
+
+void QMapQuickItemMatrix4x4::applyTo(QMatrix4x4 *matrix) const
+{
+    *matrix *= m_matrix;
+}
+
+
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), zoomLevel_(0.0),
-    mapAndSourceItemSet_(false), updatingGeometry_(false)
+    mapAndSourceItemSet_(false), updatingGeometry_(false), matrix_(nullptr)
 {
     setFlag(ItemHasContents, true);
     opacityContainer_ = new QQuickItem(this);
@@ -177,7 +193,13 @@ void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, con
         return;
     }
 
-    QGeoCoordinate newCoordinate = map()->geoProjection().itemPositionToCoordinate(QDoubleVector2D(x(), y()) + (scaleFactor() * QDoubleVector2D(anchorPoint_)), false);
+    QGeoCoordinate newCoordinate;
+    // with zoomLevel set the anchorPoint has to be factored into the transformation to properly transform around it.
+    if (zoomLevel_ != 0.0)
+        newCoordinate = map()->geoProjection().itemPositionToCoordinate(QDoubleVector2D(x(), y()), false);
+    else
+        newCoordinate = map()->geoProjection().itemPositionToCoordinate(QDoubleVector2D(x(), y()) + QDoubleVector2D(anchorPoint_), false);
+
     if (newCoordinate.isValid())
         setCoordinate(newCoordinate);
 
@@ -337,11 +359,20 @@ void QDeclarativeGeoMapQuickItem::updatePolish()
 
     opacityContainer_->setOpacity(zoomLevelOpacity());
 
-    sourceItem_.data()->setScale(scaleFactor());
-    sourceItem_.data()->setPosition(QPointF(0,0));
     setWidth(sourceItem_.data()->width());
     setHeight(sourceItem_.data()->height());
-    setPositionOnMap(coordinate(), scaleFactor() * anchorPoint_);
+    if (zoomLevel_ != 0.0) { // zoom level initialized to 0.0. If it's different, it has been set explicitly.
+        if (!matrix_) {
+            matrix_ = new QMapQuickItemMatrix4x4(this);
+            matrix_->appendToItem(opacityContainer_);
+        }
+        matrix_->setMatrix(map()->geoProjection().quickItemTransformation(coordinate(), anchorPoint_, zoomLevel_));
+        setPositionOnMap(coordinate(), QPointF(0,0));
+    } else {
+        if (matrix_)
+            matrix_->setMatrix(QMatrix4x4());
+        setPositionOnMap(coordinate(), anchorPoint_);
+    }
 }
 
 /*!
