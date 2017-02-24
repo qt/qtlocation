@@ -54,7 +54,6 @@
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/QSize>
 #include <QtCore/QList>
-#include <QtCore/QSet>
 #include "qgeomap_p.h"
 
 
@@ -94,7 +93,7 @@ protected:
     QGeoCameraData m_cameraData;
     QGeoMapType m_activeMapType;
     QList<QGeoMapParameter *> m_mapParameters;
-    QSet<QDeclarativeGeoMapItemBase *> m_mapItems;
+    QList<QDeclarativeGeoMapItemBase *> m_mapItems;
 };
 
 QT_END_NAMESPACE

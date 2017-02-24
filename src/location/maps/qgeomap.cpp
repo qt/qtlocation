@@ -199,7 +199,7 @@ void QGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 {
     Q_D(QGeoMap);
     if (item && !d->m_mapItems.contains(item) && d->supportedMapItemTypes() & item->itemType()) {
-        d->m_mapItems.insert(item);
+        d->m_mapItems.append(item);
         d->addMapItem(item);
     }
 }
@@ -209,7 +209,7 @@ void QGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
     Q_D(QGeoMap);
     if (item && d->m_mapItems.contains(item)) {
         d->removeMapItem(item);
-        d->m_mapItems.remove(item);
+        d->m_mapItems.removeOne(item);
     }
 }
 
