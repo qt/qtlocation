@@ -2,20 +2,32 @@ TEMPLATE = subdirs
 
 SUBDIRS = nokia osm mapbox esri
 
-qtHaveModule(opengl) {
-    linux|android: {
+defineTest(supportsMapboxGL) {
+    !qtHaveModule(opengl) {
+        return(false)
+    }
+
+    linux|android {
         equals(QT_GCC_MAJOR_VERSION, 4): greaterThan(QT_GCC_MINOR_VERSION, 8) {
-            SUBDIRS += mapboxgl ../../3rdparty/mapbox-gl-native
-            mapboxgl.depends = ../../3rdparty/mapbox-gl-native
+            return(true)
         }
 
         greaterThan(QT_GCC_MAJOR_VERSION, 4) {
-            SUBDIRS += mapboxgl ../../3rdparty/mapbox-gl-native
-            mapboxgl.depends = ../../3rdparty/mapbox-gl-native
+            return(true)
         }
     }
 
-    ios|macos: {
+    ios|macos {
+        return(true)
+    }
+
+    return(false)
+}
+
+supportsMapboxGL() {
+    !exists(../../3rdparty/mapbox-gl-native) {
+        error("Submodule mapbox-gl-native does not exist. Run 'git submodule update --init' on qtlocation.")
+    } else {
         SUBDIRS += mapboxgl ../../3rdparty/mapbox-gl-native
         mapboxgl.depends = ../../3rdparty/mapbox-gl-native
     }
