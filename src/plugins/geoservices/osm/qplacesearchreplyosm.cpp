@@ -74,7 +74,7 @@ QPlaceSearchReplyOsm::~QPlaceSearchReplyOsm()
 
 void QPlaceSearchReplyOsm::setError(QPlaceReply::Error errorCode, const QString &errorString)
 {
-    setError(errorCode, errorString);
+    QPlaceReply::setError(errorCode, errorString);
     emit error(errorCode, errorString);
     setFinished(true);
     emit finished();
