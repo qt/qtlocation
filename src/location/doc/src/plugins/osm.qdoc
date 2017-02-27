@@ -68,9 +68,11 @@ a prefix.
         for geocoding)
 \row
     \li osm.mapping.custom.host
-    \li Url string set when making network requests to the tile server.  This parameter should be set to a
-        valid server url with the correct osm api and the \l{Map::activeMapType} to the corresponding \l{MapType}.CustomMap.
-        The CustomMap will only be available if this parameter is set.
+    \li Url string of a custom tile server.  This parameter should be set to a valid server url offering the correct osm API.
+        To use this server, the \l{Map::activeMapType} parameter of the \l Map should be set to the supported map type
+        whose type is \l{MapType}.CustomMap.
+        This map type is only be available if this plugin parameter is set, in which case it is
+        always \l{Map::supportedMapTypes}[supportedMapTypes.length - 1].
         \note Setting the mapping.custom.host parameter to a new server renders the map tile cache useless for the old custommap style.
 \row
     \li osm.mapping.custom.mapcopyright
