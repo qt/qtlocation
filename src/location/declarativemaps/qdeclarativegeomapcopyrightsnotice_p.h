@@ -63,7 +63,6 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapCopyrightNotice : public QQuic
 {
     Q_OBJECT
     Q_PROPERTY(QDeclarativeGeoMap *mapSource READ mapSource WRITE setMapSource NOTIFY mapSourceChanged)
-    Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
     Q_PROPERTY(QString styleSheet READ styleSheet WRITE setStyleSheet NOTIFY styleSheetChanged)
 
 public:
@@ -78,14 +77,13 @@ public:
     void setMapSource(QDeclarativeGeoMap *mapSource);
     QDeclarativeGeoMap *mapSource();
 
-    QColor backgroundColor() const;
     QString styleSheet() const;
-    void setBackgroundColor(const QColor &color);
     void setStyleSheet(const QString &styleSheet);
 
 public Q_SLOTS:
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
+    void onCopyrightsStyleSheetChanged(const QString &styleSheet);
 
 signals:
     void linkActivated(const QString &link);
@@ -110,6 +108,7 @@ private:
     QDeclarativeGeoMap *m_mapSource;
     QColor m_backgroundColor;
     QString m_styleSheet;
+    bool m_userDefinedStyleSheet;
 };
 
 QT_END_NAMESPACE

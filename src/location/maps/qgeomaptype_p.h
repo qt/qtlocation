@@ -50,13 +50,13 @@
 
 #include <QtCore/QString>
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoMapTypePrivate;
 
-class Q_LOCATION_EXPORT QGeoMapType
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapType
 {
 public:
     enum MapStyle {

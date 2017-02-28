@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>mapviewer.qml</file>
         <file>map/MapComponent.qml</file>
+        <file>map/MapSliders.qml</file>
         <file>map/Marker.qml</file>
         <file>map/PolylineItem.qml</file>
         <file>map/RectangleItem.qml</file>

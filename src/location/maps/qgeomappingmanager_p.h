@@ -51,7 +51,7 @@
 #include <QObject>
 #include <QSize>
 #include <QPair>
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include "qgeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -66,7 +66,7 @@ class QGeoMappingManagerEngine;
 class QGeoCameraCapabilities;
 
 
-class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
+class Q_LOCATION_PRIVATE_EXPORT QGeoMappingManager : public QObject
 {
     Q_OBJECT
 

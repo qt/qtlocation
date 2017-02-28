@@ -47,7 +47,7 @@
 // We mean it.
 //
 
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 
 #include <QObject>
 #include <QCache>
@@ -71,7 +71,7 @@ class QAbstractGeoTileCache;
 class QThread;
 
 /* This is also used in the mapgeometry */
-class Q_LOCATION_EXPORT QGeoTileTexture
+class Q_LOCATION_PRIVATE_EXPORT QGeoTileTexture
 {
 public:
 
@@ -83,7 +83,7 @@ public:
     bool textureBound;
 };
 
-class Q_LOCATION_EXPORT QAbstractGeoTileCache : public QObject
+class Q_LOCATION_PRIVATE_EXPORT QAbstractGeoTileCache : public QObject
 {
     Q_OBJECT
 public:

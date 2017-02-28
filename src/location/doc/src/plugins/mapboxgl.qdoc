@@ -64,6 +64,11 @@ The following table lists optional parameters that can be passed to the Mapbox p
 \row
     \li mapboxgl.access_token
     \li \l{https://www.mapbox.com/help/define-access-token}{Access token} provided by Mapbox.
+    The token can also be specified using the environment variable \c{MAPBOX_ACCESS_TOKEN}, but if also
+    set using a plugin parameter, then this last one will have the precedence over the environment variable.
+    When not set, a development token will be used by default. The development token is subject to the Mapbox
+    \l{https://www.mapbox.com/tos}{Terms of Services} and must not be used in production. This property has
+    no effect on styles hosted outside the Mapbox servers.
 \row
     \li mapboxgl.mapping.additional_style_urls
     \li Additional, comma separated, Mapbox \l{https://www.mapbox.com/help/define-style-url}
@@ -73,9 +78,10 @@ The following table lists optional parameters that can be passed to the Mapbox p
     \li mapboxgl.mapping.cache.directory
     \li Absolute path to map tile cache directory used as network disk cache.
 
-    The default place for the cache is \c{QtLocation/mapboxgl} directory in \l {QStandardPaths::writableLocation()}
-    {QStandardPaths::writableLocation}(\l{QStandardPaths::GenericCacheLocation}). On systems that have no concept
-    of a shared cache, the application-specific \l{QStandardPaths::CacheLocation} is used instead.
+    The default place for the cache is the \c{QtLocation/mapboxgl} subdirectory in the location returned by
+    QStandardPaths::writableLocation(), called with QStandardPaths::GenericCacheLocation as a parameter.
+    On systems that have no concept of a shared cache, the application-specific \l{QStandardPaths::CacheLocation}
+    is used instead.
 
     This is an \l {https://www.mapbox.com/help/mobile-offline/#ambient-caching} {ambient cache}, meaning it will
     get populated on the fly until it reaches the size limit, and when that happens, it will evict the least used
@@ -95,4 +101,15 @@ The following table lists optional parameters that can be passed to the Mapbox p
     \li Cache size for map resources in bytes.
     The default size of this cache is 50 MiB.
     Make sure to comply with Mapbox Terms of Service before increasing this value.
+\row
+    \li mapboxgl.mapping.use_fbo
+    \li Sets whether to use a framebuffer object to render Mapbox GL Native.
+    Valid values are \b true and \b false. The default value is \b true. When
+    set to \b false, the map is rendered issuing OpenGL commands directly,
+    through a QSGRenderNode, to improve the rendering performance. This mode is
+    experimental, and it does not support QQuickItem transformations nor stencil
+    clipping. It might be also produce rendering artifacts e.g. when adding it
+    inside a \l{QtQuick::Flipable}{Flipable} item.
+
+\endtable
 */

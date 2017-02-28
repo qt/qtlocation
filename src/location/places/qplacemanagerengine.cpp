@@ -458,5 +458,3 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 */
 
 QT_END_NAMESPACE
-
-#include "moc_qplacemanagerengine.cpp"

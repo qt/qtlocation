@@ -55,8 +55,8 @@
 #include <QtLocation/qgeoserviceprovider.h>
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtQuick/QQuickItem>
+#include <QtCore/QList>
 #include <QtCore/QPointer>
-#include <QtCore/QSet>
 #include <QtGui/QColor>
 #include <QtPositioning/qgeoshape.h>
 #include <QtLocation/private/qgeomap_p.h>
@@ -257,7 +257,7 @@ private:
     bool m_copyrightsVisible;
     double m_maximumViewportLatitude;
     bool m_initialized;
-    QSet<QDeclarativeGeoMapParameter *> m_mapParameters;
+    QList<QDeclarativeGeoMapParameter *> m_mapParameters;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

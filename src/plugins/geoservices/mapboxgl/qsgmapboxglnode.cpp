@@ -35,16 +35,19 @@
 **
 ****************************************************************************/
 
-#include <qsgmapboxglnode.h>
-#include <qgeomapmapboxgl.h>
+#include "qsgmapboxglnode.h"
+#include "qgeomapmapboxgl.h"
 
 #include <QtGui/QOpenGLContext>
 #include <QtGui/QOpenGLFunctions>
 
-QSGMapboxGLNode::QSGMapboxGLNode(const QMapboxGLSettings &settings, const QSize &size, qreal pixelRatio, QGeoMapMapboxGL *geoMap)
+// QSGMapboxGLTextureNode
+
+QSGMapboxGLTextureNode::QSGMapboxGLTextureNode(const QMapboxGLSettings &settings, const QSize &size, qreal pixelRatio, QGeoMapMapboxGL *geoMap)
         : QSGSimpleTextureNode()
 {
     setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
+    setFiltering(QSGTexture::Linear);
 
     m_map.reset(new QMapboxGL(nullptr, settings, size, pixelRatio));
 
@@ -53,7 +56,7 @@ QSGMapboxGLNode::QSGMapboxGLNode(const QMapboxGLSettings &settings, const QSize 
             static_cast<void (QGeoMap::*)(const QString &)>(&QGeoMapMapboxGL::copyrightsChanged));
 }
 
-void QSGMapboxGLNode::resize(const QSize &size, qreal pixelRatio)
+void QSGMapboxGLTextureNode::resize(const QSize &size, qreal pixelRatio)
 {
     const QSize fbSize = size * pixelRatio;
     m_map->resize(size, fbSize);
@@ -76,35 +79,61 @@ void QSGMapboxGLNode::resize(const QSize &size, qreal pixelRatio)
     markDirty(QSGNode::DirtyGeometry);
 }
 
-void QSGMapboxGLNode::render()
+void QSGMapboxGLTextureNode::render(QQuickWindow *window)
 {
-    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+    window->setClearBeforeRendering(false);
+
+    QOpenGLFunctions *f = window->openglContext()->functions();
     f->glViewport(0, 0, m_fbo->width(), m_fbo->height());
 
     m_fbo->bind();
-    m_map->render(m_fbo.data());
+    m_map->render();
     m_fbo->release();
 
+    window->resetOpenGLState();
     markDirty(QSGNode::DirtyMaterial);
 }
 
-QMapboxGL* QSGMapboxGLNode::map() const
+QMapboxGL* QSGMapboxGLTextureNode::map() const
 {
     return m_map.data();
 }
 
-QMapbox::AnnotationID QSGMapboxGLNode::addAnnotation(const QMapbox::Annotation &annotation)
+// QSGMapboxGLRenderNode
+
+QSGMapboxGLRenderNode::QSGMapboxGLRenderNode(const QMapboxGLSettings &settings, const QSize &size, qreal pixelRatio, QGeoMapMapboxGL *geoMap)
+        : QSGRenderNode()
 {
-    return m_map->addAnnotation(annotation);
+    m_map.reset(new QMapboxGL(nullptr, settings, size, pixelRatio));
+    QObject::connect(m_map.data(), &QMapboxGL::needsRendering, geoMap, &QGeoMap::sgNodeChanged);
+    QObject::connect(m_map.data(), &QMapboxGL::copyrightsChanged, geoMap,
+            static_cast<void (QGeoMap::*)(const QString &)>(&QGeoMapMapboxGL::copyrightsChanged));
 }
 
-void QSGMapboxGLNode::updateAnnotation(QMapbox::AnnotationID id,const QMapbox::Annotation &annotation)
+QMapboxGL* QSGMapboxGLRenderNode::map() const
 {
-    m_map->updateAnnotation(id, annotation);
+    return m_map.data();
 }
 
-void QSGMapboxGLNode::removeAnnotation(QMapbox::AnnotationID annotationId)
+void QSGMapboxGLRenderNode::render(const RenderState *state)
 {
-    m_map->removeAnnotation(annotationId);
+    // QMapboxGL assumes we've prepared the viewport prior to render().
+    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+    f->glViewport(state->scissorRect().x(), state->scissorRect().y(), state->scissorRect().width(), state->scissorRect().height());
+    f->glScissor(state->scissorRect().x(), state->scissorRect().y(), state->scissorRect().width(), state->scissorRect().height());
+    f->glEnable(GL_SCISSOR_TEST);
+
+    m_map->render();
+}
+
+QSGRenderNode::StateFlags QSGMapboxGLRenderNode::changedStates() const
+{
+    return QSGRenderNode::DepthState
+         | QSGRenderNode::StencilState
+         | QSGRenderNode::ScissorState
+         | QSGRenderNode::ColorState
+         | QSGRenderNode::BlendState
+         | QSGRenderNode::ViewportState
+         | QSGRenderNode::RenderTargetState;
 }
 

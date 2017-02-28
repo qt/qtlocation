@@ -325,6 +325,4 @@ QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate()
 {
 }
 
-#include "moc_qgeotiledmappingmanagerengine_p.cpp"
-
 QT_END_NAMESPACE

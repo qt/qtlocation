@@ -722,6 +722,4 @@ void QDeclarativeGeocodeModel::setAutoUpdate(bool update)
     emit autoUpdateChanged();
 }
 
-#include "moc_qdeclarativegeocodemodel_p.cpp"
-
 QT_END_NAMESPACE

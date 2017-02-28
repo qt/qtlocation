@@ -167,7 +167,7 @@ void QGeoMap::addParameter(QGeoMapParameter *param)
 {
     Q_D(QGeoMap);
     if (param && !d->m_mapParameters.contains(param)) {
-        d->m_mapParameters.insert(param);
+        d->m_mapParameters.append(param);
         d->addParameter(param);
     }
 }
@@ -177,7 +177,7 @@ void QGeoMap::removeParameter(QGeoMapParameter *param)
     Q_D(QGeoMap);
     if (param && d->m_mapParameters.contains(param)) {
         d->removeParameter(param);
-        d->m_mapParameters.remove(param);
+        d->m_mapParameters.removeOne(param);
     }
 }
 
@@ -219,6 +219,11 @@ void QGeoMap::clearMapItems()
     for (QDeclarativeGeoMapItemBase *p : d->m_mapItems)
         d->removeMapItem(p);
     d->m_mapItems.clear();
+}
+
+QString QGeoMap::copyrightsStyleSheet() const
+{
+    return QStringLiteral("#copyright-root { background: rgba(255, 255, 255, 128) }");
 }
 
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)

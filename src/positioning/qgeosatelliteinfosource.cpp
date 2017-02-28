@@ -345,6 +345,4 @@ QStringList QGeoSatelliteInfoSource::availableSources()
  */
 
 
-#include "moc_qgeosatelliteinfosource.cpp"
-
 QT_END_NAMESPACE

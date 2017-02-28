@@ -314,6 +314,4 @@ QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error erro
 
 QGeoTiledMapReplyPrivate::~QGeoTiledMapReplyPrivate() {}
 
-#include "moc_qgeotiledmapreply_p.cpp"
-
 QT_END_NAMESPACE

@@ -571,7 +571,7 @@ void QDeclarativeGeoRouteModel::update()
         return;
     }
     if (!routeQuery_) {
-        setError(ParseError,"Cannot route, valid query not set.");
+        setError(ParseError, tr("Cannot route, valid query not set."));
         return;
     }
     emit abortRequested(); // Clear previous requests
@@ -1302,7 +1302,5 @@ void QDeclarativeGeoRouteQuery::doCoordinateChanged()
     m_excludedAreaCoordinateChanged = false;
     emit queryDetailsChanged();
 }
-
-#include "moc_qdeclarativegeoroutemodel_p.cpp"
 
 QT_END_NAMESPACE

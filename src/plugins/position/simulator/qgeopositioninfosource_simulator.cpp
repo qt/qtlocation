@@ -167,6 +167,4 @@ void QGeoPositionInfoSourceSimulator::setError(QGeoPositionInfoSource::Error pos
     emit QGeoPositionInfoSource::error(positionError);
 }
 
-#include "moc_qgeopositioninfosource_simulator_p.cpp"
-
 QT_END_NAMESPACE

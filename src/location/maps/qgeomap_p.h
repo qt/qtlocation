@@ -47,6 +47,7 @@
 // We mean it.
 //
 
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
@@ -65,7 +66,7 @@ class QQuickWindow;
 class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
 
-class Q_LOCATION_EXPORT QGeoMap : public QObject
+class Q_LOCATION_PRIVATE_EXPORT QGeoMap : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoMap)
@@ -121,6 +122,8 @@ public:
     void removeMapItem(QDeclarativeGeoMapItemBase *item);
     void clearMapItems();
 
+    virtual QString copyrightsStyleSheet() const;
+
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);
@@ -132,6 +135,7 @@ Q_SIGNALS:
     void activeMapTypeChanged();
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
+    void copyrightsStyleSheetChanged(const QString &styleSheet);
 
 private:
     Q_DISABLE_COPY(QGeoMap)

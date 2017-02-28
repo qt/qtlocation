@@ -53,6 +53,7 @@
 #include <QtLocation/private/qgeoprojection_p.h>
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/QSize>
+#include <QtCore/QList>
 #include <QtCore/QSet>
 #include "qgeomap_p.h"
 
@@ -92,7 +93,7 @@ protected:
     QPointer<QGeoMappingManagerEngine> m_engine;
     QGeoCameraData m_cameraData;
     QGeoMapType m_activeMapType;
-    QSet<QGeoMapParameter *> m_mapParameters;
+    QList<QGeoMapParameter *> m_mapParameters;
     QSet<QDeclarativeGeoMapItemBase *> m_mapItems;
 };
 

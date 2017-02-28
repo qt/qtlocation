@@ -45,11 +45,6 @@
 
 QT_BEGIN_NAMESPACE
 
-static QString bodify(const QString &html)
-{
-    return QStringLiteral("<body>") + html + QStringLiteral("</body>");
-}
-
 QGeoTiledMapOsm::QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent)
 :   QGeoTiledMap(engine, parent), m_mapId(-1), m_engine(engine)
 {
@@ -114,7 +109,7 @@ void QGeoTiledMapOsm::onProviderDataUpdated(const QGeoTileProviderOsm *provider)
     if (copyRights.isEmpty() && provider->mapType().style() == QGeoMapType::CustomMap)
         copyRights = m_engine->customCopyright();
 
-    emit copyrightsChanged(bodify(copyRights));
+    emit copyrightsChanged(copyRights);
 }
 
 QT_END_NAMESPACE

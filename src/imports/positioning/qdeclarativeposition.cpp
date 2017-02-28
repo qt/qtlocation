@@ -466,6 +466,4 @@ double QDeclarativePosition::magneticVariation() const
     return m_info.attribute(QGeoPositionInfo::MagneticVariation);
 }
 
-#include "moc_qdeclarativeposition_p.cpp"
-
 QT_END_NAMESPACE

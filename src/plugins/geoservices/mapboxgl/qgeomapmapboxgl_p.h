@@ -35,48 +35,71 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPMAPBOXGL_H
-#define QGEOMAPMAPBOXGL_H
+#ifndef QGEOMAPMAPBOXGL_P_H
+#define QGEOMAPMAPBOXGL_P_H
 
-#include "qgeomappingmanagerenginemapboxgl.h"
-#include <QtLocation/private/qgeomap_p.h>
+#include <QtCore/QHash>
+#include <QtCore/QList>
+#include <QtCore/QSharedPointer>
+#include <QtCore/QTimer>
+#include <QtCore/QVariant>
+#include <QtLocation/private/qgeomap_p_p.h>
 #include <QtLocation/private/qgeomapparameter_p.h>
 
-class QGeoMapMapboxGLPrivate;
+class QMapboxGL;
+class QMapboxGLStyleChange;
 
-class QGeoMapMapboxGL : public QGeoMap
+class QGeoMapMapboxGLPrivate : public QGeoMapPrivate
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QGeoMapMapboxGL)
+    Q_DECLARE_PUBLIC(QGeoMapMapboxGL)
 
 public:
-    QGeoMapMapboxGL(QGeoMappingManagerEngineMapboxGL *engine, QObject *parent);
-    virtual ~QGeoMapMapboxGL();
+    QGeoMapMapboxGLPrivate(QGeoMappingManagerEngineMapboxGL *engine);
 
-    QString copyrightsStyleSheet() const Q_DECL_OVERRIDE;
-    void setMapboxGLSettings(const QMapboxGLSettings &);
-    void setUseFBO(bool);
+    ~QGeoMapMapboxGLPrivate();
 
-private Q_SLOTS:
-    // QMapboxGL
-    void onMapChanged(QMapboxGL::MapChange);
+    QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
-    // QDeclarativeGeoMapItemBase
-    void onMapItemPropertyChanged();
-    void onMapItemSubPropertyChanged();
-    void onMapItemUnsupportedPropertyChanged();
-    void onMapItemGeometryChanged();
+    void addParameter(QGeoMapParameter *param) Q_DECL_OVERRIDE;
+    void removeParameter(QGeoMapParameter *param) Q_DECL_OVERRIDE;
 
-    // QGeoMapParameter
-    void onParameterPropertyUpdated(QGeoMapParameter *param, const char *propertyName);
+    QGeoMap::ItemTypes supportedMapItemTypes() const Q_DECL_OVERRIDE;
+    void addMapItem(QDeclarativeGeoMapItemBase *item) Q_DECL_OVERRIDE;
+    void removeMapItem(QDeclarativeGeoMapItemBase *item) Q_DECL_OVERRIDE;
 
-public Q_SLOTS:
-    void copyrightsChanged(const QString &copyrightsHtml);
+    /* Data members */
+    enum SyncState : int {
+        NoSync = 0,
+        ViewportSync   = 1 << 0,
+        CameraDataSync = 1 << 1,
+        MapTypeSync    = 1 << 2
+    };
+    Q_DECLARE_FLAGS(SyncStates, SyncState);
+
+    QMapboxGLSettings m_settings;
+    bool m_useFBO = true;
+    bool m_developmentMode = false;
+
+    QTimer m_refresh;
+    bool m_shouldRefresh = true;
+    bool m_warned = false;
+    bool m_styleLoaded = false;
+
+    SyncStates m_syncState = NoSync;
+
+    QList<QSharedPointer<QMapboxGLStyleChange>> m_styleChanges;
+
+protected:
+    void changeViewportSize(const QSize &size) Q_DECL_OVERRIDE;
+    void changeCameraData(const QGeoCameraData &oldCameraData) Q_DECL_OVERRIDE;
+    void changeActiveMapType(const QGeoMapType mapType) Q_DECL_OVERRIDE;
 
 private:
-    QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window) Q_DECL_OVERRIDE;
+    Q_DISABLE_COPY(QGeoMapMapboxGLPrivate);
 
-    QGeoMappingManagerEngineMapboxGL *m_engine;
+    void syncStyleChanges(QMapboxGL *map);
 };
 
-#endif // QGEOMAPMAPBOXGL_H
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoMapMapboxGLPrivate::SyncStates)
+
+#endif // QGEOMAPMAPBOXGL_P_H

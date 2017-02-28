@@ -272,6 +272,4 @@ void QDeclarativeGeoRoute::clearSegments()
     segments_.clear();
 }
 
-#include "moc_qdeclarativegeoroute_p.cpp"
-
 QT_END_NAMESPACE

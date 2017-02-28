@@ -420,6 +420,4 @@ QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
 
 QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}
 
-#include "moc_qgeoroutingmanagerengine.cpp"
-
 QT_END_NAMESPACE

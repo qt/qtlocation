@@ -51,11 +51,11 @@
 
 #include <QObject>
 #include <QString>
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeoMapParameter : public QObject
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapParameter : public QObject
 {
     Q_OBJECT
 

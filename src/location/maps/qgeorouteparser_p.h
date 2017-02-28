@@ -48,7 +48,7 @@
 // We mean it.
 //
 
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/qgeoroutereply.h>
 #include <QtLocation/qgeorouterequest.h>
 #include <QtCore/QByteArray>
@@ -57,7 +57,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoRouteParserPrivate;
-class Q_LOCATION_EXPORT QGeoRouteParser : public QObject
+class Q_LOCATION_PRIVATE_EXPORT QGeoRouteParser : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoRouteParser)

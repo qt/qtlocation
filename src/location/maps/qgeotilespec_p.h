@@ -48,7 +48,7 @@
 // We mean it.
 //
 
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtCore/QMetaType>
 #include <QString>
 
@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoTileSpecPrivate;
 
-class Q_LOCATION_EXPORT QGeoTileSpec
+class Q_LOCATION_PRIVATE_EXPORT QGeoTileSpec
 {
 public:
     QGeoTileSpec();
@@ -92,9 +92,9 @@ private:
     QSharedDataPointer<QGeoTileSpecPrivate> d;
 };
 
-Q_LOCATION_EXPORT unsigned int qHash(const QGeoTileSpec &spec);
+Q_LOCATION_PRIVATE_EXPORT unsigned int qHash(const QGeoTileSpec &spec);
 
-Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
+Q_LOCATION_PRIVATE_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
 
 QT_END_NAMESPACE
 

@@ -408,6 +408,4 @@ QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
     delete engine;
 }
 
-#include "moc_qgeoroutingmanager.cpp"
-
 QT_END_NAMESPACE

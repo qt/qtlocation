@@ -335,7 +335,4 @@ QGeoCodeReplyPrivate::QGeoCodeReplyPrivate(QGeoCodeReply::Error error, const QSt
 
 QGeoCodeReplyPrivate::~QGeoCodeReplyPrivate() {}
 
-
-#include "moc_qgeocodereply.cpp"
-
 QT_END_NAMESPACE

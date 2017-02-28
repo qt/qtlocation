@@ -255,6 +255,8 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
         if (!copyrights) {
             // create a new one and set its parent, re-assign it to the weak pointer, then connect the copyrights-change signal
             m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
+            m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
+
             copyrights = m_copyrights.data();
 
             connect(m_map, SIGNAL(copyrightsChanged(QImage)),
@@ -266,6 +268,9 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
                     copyrights, SLOT(copyrightsChanged(QString)));
             connect(m_map, SIGNAL(copyrightsChanged(QString)),
                     this,  SIGNAL(copyrightsChanged(QString)));
+
+            connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+                    copyrights, SLOT(onCopyrightsStyleSheetChanged(QString)));
 
             connect(copyrights, SIGNAL(linkActivated(QString)),
                     this, SIGNAL(copyrightLinkActivated(QString)));
@@ -655,11 +660,11 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     //strict zoom level limit before initialization nothing is done here.
     //minimum zoom level might be changed to limit gray bundaries
     //This code assumes that plugins' maximum zoom level will never exceed 30.0
-    if (m_mappingManager->cameraCapabilities().maximumZoomLevelAt256() < m_gestureArea->maximumZoomLevel())
-        setMaximumZoomLevel(m_mappingManager->cameraCapabilities().maximumZoomLevelAt256());
+    if (m_map->cameraCapabilities().maximumZoomLevelAt256() < m_gestureArea->maximumZoomLevel())
+        setMaximumZoomLevel(m_map->cameraCapabilities().maximumZoomLevelAt256());
 
-    if (m_mappingManager->cameraCapabilities().minimumZoomLevelAt256() > m_gestureArea->minimumZoomLevel())
-        setMinimumZoomLevel(m_mappingManager->cameraCapabilities().minimumZoomLevelAt256());
+    if (m_map->cameraCapabilities().minimumZoomLevelAt256() > m_gestureArea->minimumZoomLevel())
+        setMinimumZoomLevel(m_map->cameraCapabilities().minimumZoomLevelAt256());
 
 
     // Map tiles are built in this call. m_map->minimumZoom() becomes operational
@@ -671,6 +676,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     }
 
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
+    m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
 
     connect(m_map, SIGNAL(copyrightsChanged(QImage)),
             m_copyrights.data(), SLOT(copyrightsChanged(QImage)));
@@ -681,6 +687,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             m_copyrights.data(), SLOT(copyrightsChanged(QString)));
     connect(m_map, SIGNAL(copyrightsChanged(QString)),
             this,  SIGNAL(copyrightsChanged(QString)));
+
+    connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+            m_copyrights.data(), SLOT(onCopyrightsStyleSheetChanged(QString)));
 
     connect(m_copyrights.data(), SIGNAL(linkActivated(QString)),
             this, SIGNAL(copyrightLinkActivated(QString)));
@@ -1474,7 +1483,7 @@ void QDeclarativeGeoMap::addMapParameter(QDeclarativeGeoMapParameter *parameter)
     if (m_mapParameters.contains(parameter))
         return;
     parameter->setParent(this);
-    m_mapParameters.insert(parameter); // parameter now owned by QDeclarativeGeoMap
+    m_mapParameters.append(parameter); // parameter now owned by QDeclarativeGeoMap
     if (m_map)
         m_map->addParameter(parameter);
 }
@@ -1496,7 +1505,7 @@ void QDeclarativeGeoMap::removeMapParameter(QDeclarativeGeoMapParameter *paramet
         return;
     if (m_map)
         m_map->removeParameter(parameter);
-    m_mapParameters.remove(parameter);
+    m_mapParameters.removeOne(parameter);
 }
 
 /*!
@@ -1958,7 +1967,5 @@ bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
 
     return false;
 }
-
-#include "moc_qdeclarativegeomap_p.cpp"
 
 QT_END_NAMESPACE

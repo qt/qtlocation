@@ -44,11 +44,6 @@
 
 QT_BEGIN_NAMESPACE
 
-static QString bodify(const QString &html)
-{
-    return QStringLiteral("<body>") + html + QStringLiteral("</body>");
-}
-
 GeoTiledMapEsri::GeoTiledMapEsri(GeoTiledMappingManagerEngineEsri *engine, QObject *parent) :
     QGeoTiledMap(engine, parent), m_engine(engine), m_mapId(-1)
 {
@@ -72,7 +67,7 @@ void GeoTiledMapEsri::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
     GeoMapSource *mapSource = engine()->mapSource(m_mapId);
 
     if (mapSource)
-        emit copyrightsChanged(bodify(mapSource->copyright()));
+        emit copyrightsChanged(mapSource->copyright());
 }
 
 QT_END_NAMESPACE

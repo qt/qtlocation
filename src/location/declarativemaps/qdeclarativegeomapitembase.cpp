@@ -77,7 +77,7 @@ QGeoMapViewportChangeEvent &QGeoMapViewportChangeEvent::operator=(const QGeoMapV
 }
 
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
-:   QQuickItem(parent), map_(0), quickMap_(0), geoGeometryDirty_(true), geoMaterialDirty_(true), parentGroup_(0)
+:   QQuickItem(parent), map_(0), quickMap_(0), parentGroup_(0)
 {
     setFiltersChildMouseEvents(true);
     connect(this, SIGNAL(childrenChanged()),
@@ -270,26 +270,6 @@ qreal QDeclarativeGeoMapItemBase::mapItemOpacity() const
     return opacity();
 }
 
-bool QDeclarativeGeoMapItemBase::isDirty() const
-{
-    return geoGeometryDirty_ || geoMaterialDirty_;
-}
-
-bool QDeclarativeGeoMapItemBase::isGeoMaterialDirty() const
-{
-    return geoMaterialDirty_;
-}
-
-bool QDeclarativeGeoMapItemBase::isGeoGeometryDirty() const
-{
-    return geoGeometryDirty_;
-}
-
-void QDeclarativeGeoMapItemBase::markClean()
-{
-    geoGeometryDirty_ = geoMaterialDirty_ = false;
-}
-
 bool QDeclarativeGeoMapItemBase::isPolishScheduled() const
 {
     return QQuickItemPrivate::get(this)->polishScheduled;
@@ -300,7 +280,5 @@ void QDeclarativeGeoMapItemBase::polishAndUpdate()
     polish();
     update();
 }
-
-#include "moc_qdeclarativegeomapitembase_p.cpp"
 
 QT_END_NAMESPACE

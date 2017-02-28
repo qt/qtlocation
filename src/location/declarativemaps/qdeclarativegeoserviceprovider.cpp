@@ -815,7 +815,5 @@ QVariant QDeclarativeGeoServiceProviderParameter::value() const
 /*******************************************************************************
 *******************************************************************************/
 
-#include "moc_qdeclarativegeoserviceprovider_p.cpp"
-
 QT_END_NAMESPACE
 

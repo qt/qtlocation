@@ -63,10 +63,22 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
+    int ppi = 72;
+    if (parameters.contains(QStringLiteral("here.mapping.highdpi_tiles"))) {
+        const QString param = parameters.value(QStringLiteral("here.mapping.highdpi_tiles")).toString().toLower();
+        if (param == "true")
+            ppi = 250;
+    }
+
     QGeoCameraCapabilities capabilities;
 
     capabilities.setMinimumZoomLevel(0.0);
     capabilities.setMaximumZoomLevel(20.0);
+    if (ppi > 72) {
+        // Zoom levels 0 and 20 are not supported for 512x512 tiles.
+        capabilities.setMinimumZoomLevel(1.0);
+        capabilities.setMaximumZoomLevel(19.0);
+    }
     capabilities.setSupportsBearing(true);
     capabilities.setSupportsTilting(true);
     capabilities.setMinimumTilt(0);
@@ -100,13 +112,6 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     types << QGeoMapType(QGeoMapType::PedestrianMap, tr("Mobile Pedestrian Night Street Map"), tr("Mobile pedestrian map view in night mode for mobile usage"), true, true, 20);
     types << QGeoMapType(QGeoMapType::CarNavigationMap, tr("Car Navigation Map"), tr("Normal map view in daylight mode for car navigation"), false, false, 21);
     setSupportedMapTypes(types);
-
-    int ppi = 72;
-    if (parameters.contains(QStringLiteral("here.mapping.highdpi_tiles"))) {
-        const QString param = parameters.value(QStringLiteral("here.mapping.highdpi_tiles")).toString().toLower();
-        if (param == "true")
-            ppi = 250;
-    }
 
     QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(parameters, networkManager, this, tileSize(), ppi);
     setTileFetcher(fetcher);
