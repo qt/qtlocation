@@ -25,8 +25,8 @@ defineTest(supportsMapboxGL) {
 }
 
 supportsMapboxGL() {
-    !exists(../../3rdparty/mapbox-gl-native) {
-        error("Submodule mapbox-gl-native does not exist. Run 'git submodule update --init' on qtlocation.")
+    !exists(../../3rdparty/mapbox-gl-native/CMakeLists.txt) {
+        warning("Submodule mapbox-gl-native does not exist. Run 'git submodule update --init' on qtlocation.")
     } else {
         SUBDIRS += mapboxgl ../../3rdparty/mapbox-gl-native
         mapboxgl.depends = ../../3rdparty/mapbox-gl-native
