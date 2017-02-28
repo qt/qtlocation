@@ -557,6 +557,7 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         delete root->tiles.take(s);
     bool straight = !d->isTiltedOrRotated();
 
+    qreal pixelRatio = window->effectiveDevicePixelRatio();
     for (QHash<QGeoTileSpec, QSGImageNode *>::iterator it = root->tiles.begin();
          it != root->tiles.end(); ) {
         QSGImageNode *node = it.value();
@@ -570,7 +571,7 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
             delete node;
         } else {
             if (isTextureLinear != d->m_linearScaling) {
-                if (node->texture()->textureSize().width() > d->m_tileSize) {
+                if (node->texture()->textureSize().width() > d->m_tileSize * pixelRatio) {
                     node->setFiltering(QSGTexture::Linear); // With mipmapping QSGTexture::Nearest generates artifacts
                     node->setMipmapFiltering(QSGTexture::Linear);
                 } else {
@@ -595,7 +596,7 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         tileNode->setTexture(textures.value(s));
         if (d->buildGeometry(s, tileNode)
                 && qgeotiledmapscene_isTileInViewport(tileNode->rect(), root->matrix(), straight)) {
-            if (tileNode->texture()->textureSize().width() > d->m_tileSize) {
+            if (tileNode->texture()->textureSize().width() > d->m_tileSize * pixelRatio) {
                 tileNode->setFiltering(QSGTexture::Linear); // with mipmapping QSGTexture::Nearest generates artifacts
                 tileNode->setMipmapFiltering(QSGTexture::Linear);
             } else {
