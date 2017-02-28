@@ -163,11 +163,12 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCacheOsm::getFromOfflineStorage(cons
 {
     QMutexLocker locker(&storageLock);
     if (m_tilespecToOfflineFilepath.contains(spec)) {
-        QFile file(m_tilespecToOfflineFilepath[spec]);
+        const QString fileName = m_tilespecToOfflineFilepath[spec];
+        locker.unlock();
+        QFile file(fileName);
         file.open(QIODevice::ReadOnly);
         QByteArray bytes = file.readAll();
         file.close();
-        locker.unlock();
 
         QImage image;
         if (!image.loadFromData(bytes)) {
