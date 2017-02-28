@@ -49,13 +49,14 @@ QGeoFileTileCacheOsm::QGeoFileTileCacheOsm(const QVector<QGeoTileProviderOsm *> 
                                            const QString &offlineDirectory,
                                            const QString &directory,
                                            QObject *parent)
-:   QGeoFileTileCache(directory, parent), m_offlineDirectory(offlineDirectory), m_requestCancel(0), m_providers(providers)
+:   QGeoFileTileCache(directory, parent), m_offlineDirectory(offlineDirectory), m_providers(providers)
 {
     m_highDpi.resize(providers.size());
     for (int i = 0; i < providers.size(); i++) {
         providers[i]->setParent(this);
         m_highDpi[i] = providers[i]->isHighDpi();
         m_mapIdFutures[providers[i]->mapType().mapId()].isFinished(); // To construct a default future for this mapId
+        m_requestCancel[providers[i]->mapType().mapId()] = 0;
         connect(providers[i], &QGeoTileProviderOsm::resolutionFinished, this, &QGeoFileTileCacheOsm::onProviderResolutionFinished);
         connect(providers[i], &QGeoTileProviderOsm::resolutionError, this, &QGeoFileTileCacheOsm::onProviderResolutionFinished);
     }
@@ -63,10 +64,10 @@ QGeoFileTileCacheOsm::QGeoFileTileCacheOsm(const QVector<QGeoTileProviderOsm *> 
 
 QGeoFileTileCacheOsm::~QGeoFileTileCacheOsm()
 {
-    m_requestCancel = 1;
-    m_future.waitForFinished();
-    for (const QGeoTileProviderOsm *p : m_providers)
+    for (const QGeoTileProviderOsm *p : m_providers) {
+        m_requestCancel[p->mapType().mapId()] = 1;
         m_mapIdFutures[p->mapType().mapId()].waitForFinished();
+    }
 }
 
 QSharedPointer<QGeoTileTexture> QGeoFileTileCacheOsm::get(const QGeoTileSpec &spec)
@@ -88,12 +89,20 @@ void QGeoFileTileCacheOsm::onProviderResolutionFinished(const QGeoTileProviderOs
             int mapId = m_providers[i]->mapType().mapId();
             m_highDpi[i] = m_providers[i]->isHighDpi();
 
+            // Terminate initOfflineRegistry future for mapId.
+            if (!m_offlineDirectory.isEmpty()) {
+                m_requestCancel[mapId] = 1;
+                m_mapIdFutures[mapId].waitForFinished();
+                m_requestCancel[mapId] = 0;
+            }
+
             // reload cache for mapId i
             dropTiles(mapId);
             loadTiles(mapId);
 
             // reload offline registry for mapId i
-            m_mapIdFutures[mapId] = QtConcurrent::run(this, &QGeoFileTileCacheOsm::initOfflineRegistry, mapId);
+            if (!m_offlineDirectory.isEmpty())
+                m_mapIdFutures[mapId] = QtConcurrent::run(this, &QGeoFileTileCacheOsm::initOfflineRegistry, mapId);
 
             // send signal to clear scene in all maps created through this provider that use the reloaded tiles
             emit mapDataUpdated(mapId);
@@ -101,7 +110,8 @@ void QGeoFileTileCacheOsm::onProviderResolutionFinished(const QGeoTileProviderOs
     }
 }
 
-// On resolution error the provider is removed ONLY if there is no enabled hardcoded fallback.
+// On resolution error the provider is removed.
+// This happens ONLY if there is no enabled hardcoded fallback for the mapId.
 // Hardcoded fallbacks also have a timestamp, that can get updated with Qt releases.
 void QGeoFileTileCacheOsm::onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error)
 {
@@ -109,6 +119,7 @@ void QGeoFileTileCacheOsm::onProviderResolutionError(const QGeoTileProviderOsm *
     clearObsoleteTiles(provider); // this still removes tiles who happen to be older than qgeotileproviderosm.cpp defaultTs
 }
 
+// init() is always called before the provider resolution starts
 void QGeoFileTileCacheOsm::init()
 {
     if (directory_.isEmpty())
@@ -141,22 +152,23 @@ void QGeoFileTileCacheOsm::init()
     // Base class ::init()
     QGeoFileTileCache::init();
 
-    for (QGeoTileProviderOsm * p: m_providers)
+    for (QGeoTileProviderOsm * p: m_providers) {
         clearObsoleteTiles(p);
-
-    if (!m_offlineDirectory.isEmpty())
-        m_future = QtConcurrent::run(this, &QGeoFileTileCacheOsm::initOfflineRegistry, -1);
+        if (!m_offlineDirectory.isEmpty())
+            m_mapIdFutures[p->mapType().mapId()] = QtConcurrent::run(this, &QGeoFileTileCacheOsm::initOfflineRegistry, p->mapType().mapId());
+    }
 }
 
 QSharedPointer<QGeoTileTexture> QGeoFileTileCacheOsm::getFromOfflineStorage(const QGeoTileSpec &spec)
 {
     QMutexLocker locker(&storageLock);
     if (m_tilespecToOfflineFilepath.contains(spec)) {
-        QFile file(m_tilespecToOfflineFilepath[spec]);
+        const QString fileName = m_tilespecToOfflineFilepath[spec];
+        locker.unlock();
+        QFile file(fileName);
         file.open(QIODevice::ReadOnly);
         QByteArray bytes = file.readAll();
         file.close();
-        locker.unlock();
 
         QImage image;
         if (!image.loadFromData(bytes)) {
@@ -190,6 +202,11 @@ void QGeoFileTileCacheOsm::dropTiles(int mapId)
     for (const QGeoTileSpec &k : keys)
         if (k.mapId() == mapId)
             diskCache_.remove(k);
+
+    keys = m_tilespecToOfflineFilepath.keys();
+    for (const QGeoTileSpec &k : keys)
+        if (k.mapId() == mapId)
+            m_tilespecToOfflineFilepath.remove(k);
 }
 
 void QGeoFileTileCacheOsm::loadTiles(int mapId)
@@ -211,6 +228,9 @@ void QGeoFileTileCacheOsm::loadTiles(int mapId)
 
 void QGeoFileTileCacheOsm::initOfflineRegistry(int mapId)
 {
+    if (mapId < 1) // map ids in osm start from 1
+        return;
+
     // Dealing with duplicates: picking the newest
     QMap<QString, QPair<QString, QDateTime> > fileDates; // key is filename, value is <filepath, lastmodified>
     QDirIterator it(m_offlineDirectory, QStringList() << "*.*", QDir::Files, QDirIterator::Subdirectories | QDirIterator::FollowSymlinks );
@@ -219,42 +239,37 @@ void QGeoFileTileCacheOsm::initOfflineRegistry(int mapId)
         QFileInfo f(path);
         if (!fileDates.contains(f.fileName()) || fileDates[f.fileName()].second < f.lastModified())
             fileDates[f.fileName()] = QPair<QString, QDateTime>(f.filePath(), f.lastModified());
-        if (m_requestCancel)
+        if (m_requestCancel[mapId])
             return;
     }
 
     // Clear the content of the index. Entirely (at startup), or selectively (when a provider resolution changes the highDpi status).
-    if (mapId < 0) {
-        storageLock.lock();
-        m_tilespecToOfflineFilepath.clear();
-        storageLock.unlock();
-    } else {
-        QList<QGeoTileSpec> toRemove;
-        for (auto i = m_tilespecToOfflineFilepath.constBegin(); i != m_tilespecToOfflineFilepath.constEnd(); ++i) {
-            if (i.key().mapId() == mapId)
-                toRemove.append(i.key());
-        }
-        storageLock.lock();
-        for (const auto &i : toRemove)
-            m_tilespecToOfflineFilepath.remove(i);
-        storageLock.unlock();
+    QList<QGeoTileSpec> toRemove;
+    for (auto i = m_tilespecToOfflineFilepath.constBegin(); i != m_tilespecToOfflineFilepath.constEnd(); ++i) {
+        if (i.key().mapId() == mapId)
+            toRemove.append(i.key());
     }
-    if (m_requestCancel)
+    storageLock.lock();
+    for (const auto &i : toRemove)
+        m_tilespecToOfflineFilepath.remove(i);
+    storageLock.unlock();
+
+    if (m_requestCancel[mapId])
         return;
 
-    // Fill the index entirely or selectively
+    // Fill the index by mapId
     int count = 0;
     for (auto i= fileDates.constBegin(); i != fileDates.constEnd(); ++i) {
         QGeoTileSpec spec = filenameToTileSpec(i.key());
         if (spec.zoom() == -1)
             continue;
-        if (mapId >= 0 && spec.mapId() != mapId) // if mapId != -1, pick up only those files with that mapId.
+        if (spec.mapId() != mapId)
             continue;
         count++;
         storageLock.lock();
         m_tilespecToOfflineFilepath[spec] = i.value().first;
         storageLock.unlock();
-        if (m_requestCancel)
+        if (m_requestCancel[mapId])
             return;
     }
     //qInfo() << "OSM plugin has found and is using "<< count <<" offline tiles";

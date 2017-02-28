@@ -191,7 +191,7 @@ void QGeoTileProviderOsm::onResolutionError(TileProvider *provider)
 {
     Q_UNUSED(provider)
     // provider and m_provider are the same at this point. m_status is Resolving.
-    if (m_provider->isInvalid()) {
+    if (!m_provider || m_provider->isInvalid()) {
         m_provider = nullptr;
         m_status = Resolved;
         if (m_providerId >= m_providerList.size() -1) { // no hope left
