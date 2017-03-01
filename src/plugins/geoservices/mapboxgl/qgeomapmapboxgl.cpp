@@ -176,8 +176,7 @@ void QGeoMapMapboxGLPrivate::removeParameter(QGeoMapParameter *param)
 
 QGeoMap::ItemTypes QGeoMapMapboxGLPrivate::supportedMapItemTypes() const
 {
-    // TODO https://bugreports.qt.io/browse/QTBUG-58869
-    return QGeoMap::MapRectangle | QGeoMap::MapPolygon | QGeoMap::MapPolyline;
+    return QGeoMap::MapRectangle | QGeoMap::MapCircle | QGeoMap::MapPolygon | QGeoMap::MapPolyline;
 }
 
 void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
@@ -188,25 +187,32 @@ void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
     case QGeoMap::NoItem:
     case QGeoMap::MapQuickItem:
     case QGeoMap::CustomMapItem:
-    case QGeoMap::MapCircle:
         return;
     case QGeoMap::MapRectangle: {
-        QDeclarativeRectangleMapItem *mapItem = qobject_cast<QDeclarativeRectangleMapItem *>(item);
+        QDeclarativeRectangleMapItem *mapItem = static_cast<QDeclarativeRectangleMapItem *>(item);
         QObject::connect(mapItem, &QDeclarativeRectangleMapItem::bottomRightChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem, &QDeclarativeRectangleMapItem::topLeftChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem, &QDeclarativeRectangleMapItem::colorChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
         QObject::connect(mapItem->border(), &QDeclarativeMapLineProperties::colorChanged, q, &QGeoMapMapboxGL::onMapItemSubPropertyChanged);
         QObject::connect(mapItem->border(), &QDeclarativeMapLineProperties::widthChanged, q, &QGeoMapMapboxGL::onMapItemUnsupportedPropertyChanged);
     } break;
+    case QGeoMap::MapCircle: {
+        QDeclarativeCircleMapItem *mapItem = static_cast<QDeclarativeCircleMapItem *>(item);
+        QObject::connect(mapItem, &QDeclarativeCircleMapItem::centerChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
+        QObject::connect(mapItem, &QDeclarativeCircleMapItem::radiusChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
+        QObject::connect(mapItem, &QDeclarativeCircleMapItem::colorChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
+        QObject::connect(mapItem->border(), &QDeclarativeMapLineProperties::colorChanged, q, &QGeoMapMapboxGL::onMapItemSubPropertyChanged);
+        QObject::connect(mapItem->border(), &QDeclarativeMapLineProperties::widthChanged, q, &QGeoMapMapboxGL::onMapItemUnsupportedPropertyChanged);
+    } break;
     case QGeoMap::MapPolygon: {
-        QDeclarativePolygonMapItem *mapItem = qobject_cast<QDeclarativePolygonMapItem *>(item);
+        QDeclarativePolygonMapItem *mapItem = static_cast<QDeclarativePolygonMapItem *>(item);
         QObject::connect(mapItem, &QDeclarativePolygonMapItem::pathChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem, &QDeclarativePolygonMapItem::colorChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem->border(), &QDeclarativeMapLineProperties::colorChanged, q, &QGeoMapMapboxGL::onMapItemSubPropertyChanged);
         QObject::connect(mapItem->border(), &QDeclarativeMapLineProperties::widthChanged, q, &QGeoMapMapboxGL::onMapItemUnsupportedPropertyChanged);
     } break;
     case QGeoMap::MapPolyline: {
-        QDeclarativePolylineMapItem *mapItem = qobject_cast<QDeclarativePolylineMapItem *>(item);
+        QDeclarativePolylineMapItem *mapItem = static_cast<QDeclarativePolylineMapItem *>(item);
         QObject::connect(mapItem, &QDeclarativePolylineMapItem::pathChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem->line(), &QDeclarativeMapLineProperties::colorChanged, q, &QGeoMapMapboxGL::onMapItemSubPropertyChanged);
         QObject::connect(mapItem->line(), &QDeclarativeMapLineProperties::widthChanged, q, &QGeoMapMapboxGL::onMapItemSubPropertyChanged);
@@ -228,10 +234,12 @@ void QGeoMapMapboxGLPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
     case QGeoMap::NoItem:
     case QGeoMap::MapQuickItem:
     case QGeoMap::CustomMapItem:
-    case QGeoMap::MapCircle:
         return;
     case QGeoMap::MapRectangle:
         q->disconnect(static_cast<QDeclarativeRectangleMapItem *>(item)->border());
+        break;
+    case QGeoMap::MapCircle:
+        q->disconnect(static_cast<QDeclarativeCircleMapItem *>(item)->border());
         break;
     case QGeoMap::MapPolygon:
         q->disconnect(static_cast<QDeclarativePolygonMapItem *>(item)->border());

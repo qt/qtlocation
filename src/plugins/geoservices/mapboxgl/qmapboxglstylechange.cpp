@@ -86,6 +86,32 @@ QMapbox::Feature featureFromMapRectangle(QDeclarativeRectangleMapItem *mapItem)
     return QMapbox::Feature(QMapbox::Feature::PolygonType, geometry, {}, getId(mapItem));
 }
 
+QMapbox::Feature featureFromMapCircle(QDeclarativeCircleMapItem *mapItem)
+{
+    static const int circleSamples = 128;
+
+    QList<QGeoCoordinate> path;
+    QGeoCoordinate leftBound;
+    QDeclarativeCircleMapItem::calculatePeripheralPoints(path, mapItem->center(), mapItem->radius(), circleSamples, leftBound);
+    QList<QDoubleVector2D> pathProjected;
+    for (const QGeoCoordinate &c : qAsConst(path))
+        pathProjected << mapItem->map()->geoProjection().geoToMapProjection(c);
+    if (QDeclarativeCircleMapItem::crossEarthPole(mapItem->center(), mapItem->radius()))
+        mapItem->preserveCircleGeometry(pathProjected, mapItem->center(), mapItem->radius());
+    path.clear();
+    for (const QDoubleVector2D &c : qAsConst(pathProjected))
+        path << mapItem->map()->geoProjection().mapProjectionToGeo(c);
+
+
+    QMapbox::Coordinates coordinates;
+    for (const QGeoCoordinate &coordinate : path) {
+        coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
+    }
+    coordinates.append(coordinates.first());  // closing the path
+    QMapbox::CoordinatesCollections geometry { { coordinates } };
+    return QMapbox::Feature(QMapbox::Feature::PolygonType, geometry, {}, getId(mapItem));
+}
+
 QMapbox::Feature featureFromMapPolygon(QDeclarativePolygonMapItem *mapItem)
 {
     const QGeoPath *path = static_cast<const QGeoPath *>(&mapItem->geoShape());
@@ -126,6 +152,8 @@ QMapbox::Feature featureFromMapItem(QDeclarativeGeoMapItemBase *item)
     switch (item->itemType()) {
     case QGeoMap::MapRectangle:
         return featureFromMapRectangle(static_cast<QDeclarativeRectangleMapItem *>(item));
+    case QGeoMap::MapCircle:
+        return featureFromMapCircle(static_cast<QDeclarativeCircleMapItem *>(item));
     case QGeoMap::MapPolygon:
         return featureFromMapPolygon(static_cast<QDeclarativePolygonMapItem *>(item));
     case QGeoMap::MapPolyline:
@@ -182,6 +210,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapItem(QDe
 
     switch (item->itemType()) {
     case QGeoMap::MapRectangle:
+    case QGeoMap::MapCircle:
     case QGeoMap::MapPolygon:
     case QGeoMap::MapPolyline:
         break;
@@ -325,6 +354,8 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
     switch (item->itemType()) {
     case QGeoMap::MapRectangle:
         return fromMapItem(static_cast<QDeclarativeRectangleMapItem *>(item));
+    case QGeoMap::MapCircle:
+        return fromMapItem(static_cast<QDeclarativeCircleMapItem *>(item));
     case QGeoMap::MapPolygon:
         return fromMapItem(static_cast<QDeclarativePolygonMapItem *>(item));
     case QGeoMap::MapPolyline:
@@ -336,6 +367,23 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
 }
 
 QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::fromMapItem(QDeclarativeRectangleMapItem *item)
+{
+    QList<QSharedPointer<QMapboxGLStyleChange>> changes;
+    changes.reserve(3);
+
+    const QString id = getId(item);
+
+    changes << QSharedPointer<QMapboxGLStyleChange>(
+        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-opacity"), item->mapItemOpacity()));
+    changes << QSharedPointer<QMapboxGLStyleChange>(
+        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-color"), item->color()));
+    changes << QSharedPointer<QMapboxGLStyleChange>(
+        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-outline-color"), item->border()->color()));
+
+    return changes;
+}
+
+QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::fromMapItem(QDeclarativeCircleMapItem *item)
 {
     QList<QSharedPointer<QMapboxGLStyleChange>> changes;
     changes.reserve(3);
