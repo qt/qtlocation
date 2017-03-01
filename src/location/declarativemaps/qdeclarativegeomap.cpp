@@ -159,8 +159,6 @@ QT_BEGIN_NAMESPACE
     application should open the link in a browser or display its contents to the user.
 */
 
-static const qreal EARTH_MEAN_RADIUS = 6371007.2;
-
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         : QQuickItem(parent),
         m_plugin(0),

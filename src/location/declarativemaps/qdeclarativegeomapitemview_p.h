@@ -141,7 +141,7 @@ private:
     int m_readyIncubators;
     bool m_repopulating;
 
-    friend struct QDeclarativeGeoMapItemViewItemData;
+    friend class QDeclarativeGeoMapItemViewItemData;
     friend class MapItemViewDelegateIncubator;
 };
 
