@@ -194,6 +194,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapItem(QDe
     changes << QMapboxGLStyleAddLayer::fromFeature(feature);
     changes << QMapboxGLStyleAddSource::fromFeature(feature);
     changes << QMapboxGLStyleSetPaintProperty::fromMapItem(item);
+    changes << QMapboxGLStyleSetLayoutProperty::fromMapItem(item);
 
     return changes;
 }
@@ -246,6 +247,36 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fro
     return changes;
 }
 
+QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fromMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    switch (item->itemType()) {
+    case QGeoMap::MapPolyline:
+        return fromMapItem(static_cast<QDeclarativePolylineMapItem *>(item));
+    default:
+        qWarning() << "Unsupported QGeoMap item type: " << item->itemType();
+        return QList<QSharedPointer<QMapboxGLStyleChange>>();
+    }
+}
+
+QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fromMapItem(QDeclarativePolylineMapItem *item)
+{
+    QList<QSharedPointer<QMapboxGLStyleChange>> changes;
+    changes.reserve(2);
+
+    const QString id = getId(item);
+
+    changes << QSharedPointer<QMapboxGLStyleChange>(
+        new QMapboxGLStyleSetLayoutProperty(id, QStringLiteral("line-cap"), QStringLiteral("square")));
+    changes << QSharedPointer<QMapboxGLStyleChange>(
+        new QMapboxGLStyleSetLayoutProperty(id, QStringLiteral("line-join"), QStringLiteral("bevel")));
+
+    return changes;
+}
+
+QMapboxGLStyleSetLayoutProperty::QMapboxGLStyleSetLayoutProperty(const QString& layer, const QString& property, const QVariant &value)
+    : m_layer(layer), m_property(property), m_value(value)
+{
+}
 
 // QMapboxGLStyleSetPaintProperty
 
