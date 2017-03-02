@@ -52,15 +52,12 @@
 #include <QString>
 #include <QVariant>
 
-#include <QPluginLoader>
 #include <QDebug>
 #include <QStringList>
 #include <QCoreApplication>
 #include <QObject>
 #include <QMetaObject>
 #include <QMetaEnum>
-#include <QProcess>
-#include <QEventLoop>
 #include <QtCore/private/qfactoryloader_p.h>
 
 QT_BEGIN_NAMESPACE
