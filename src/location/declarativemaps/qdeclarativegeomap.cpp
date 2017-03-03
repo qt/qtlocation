@@ -159,6 +159,12 @@ QT_BEGIN_NAMESPACE
     application should open the link in a browser or display its contents to the user.
 */
 
+/*!
+    \qmlsignal QtLocation::Map::initialized()
+
+    This signal is emitted when the initialization of the map is complete.
+*/
+
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         : QQuickItem(parent),
         m_plugin(0),
@@ -417,6 +423,8 @@ void QDeclarativeGeoMap::initialize()
 
     if (fovHasChanged)
         emit fieldOfViewChanged(m_cameraData.fieldOfView());
+
+    emit initialized();
 }
 
 /*!

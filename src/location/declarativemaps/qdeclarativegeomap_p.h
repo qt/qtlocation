@@ -202,6 +202,7 @@ Q_SIGNALS:
     void maximumFieldOfViewChanged(qreal maximumFieldOfView);
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
+    void initialized();
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
