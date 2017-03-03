@@ -93,7 +93,7 @@ private:
     static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativePolylineMapItem *);
 
     QMapboxGLStyleSetPaintProperty() = default;
-    QMapboxGLStyleSetPaintProperty(const QString& layer, const QString& property, const QVariant &value);
+    QMapboxGLStyleSetPaintProperty(const QString &layer, const QString &property, const QVariant &value);
 
     QString m_layer;
     QString m_property;
