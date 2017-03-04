@@ -3,10 +3,6 @@ TEMPLATE = subdirs
 SUBDIRS = nokia osm mapbox esri
 
 defineTest(supportsMapboxGL) {
-    !qtHaveModule(opengl) {
-        return(false)
-    }
-
     linux|android {
         equals(QT_GCC_MAJOR_VERSION, 4): greaterThan(QT_GCC_MINOR_VERSION, 8) {
             return(true)

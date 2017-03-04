@@ -5,7 +5,6 @@ QT += \
     location-private \
     positioning-private \
     network \
-    opengl \
     sql
 
 HEADERS += \
