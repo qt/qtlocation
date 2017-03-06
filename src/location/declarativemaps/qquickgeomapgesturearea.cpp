@@ -999,18 +999,18 @@ void QQuickGeoMapGestureArea::update()
     if (isPinchActive() || m_pinch.m_pinchEnabled)
         pinchStateMachine();
 
+    // Parallel state machine for rotation.
+    if (isRotationActive() || m_pinch.m_rotationEnabled)
+        rotationStateMachine();
+
     // Parallel state machine for pan (since you can pan at the same time as pinching)
     // The stopPan function ensures that pan stops immediately when disabled,
     // but the isPanActive() below allows pan continue its current gesture if you disable
     // the whole gesture.
+    // Pan goes last because it does reanchoring in updatePan()  which makes the map
+    // properly rotate around the touch point centroid.
     if (isPanActive() || m_flick.m_flickEnabled || m_flick.m_panEnabled)
         panStateMachine();
-
-    // Parallel state machine for rotation.
-    // Rotation goes last because when panning and rotating, first the new center has to be set,
-    // then the rotation has to be applied
-    if (isRotationActive() || m_pinch.m_rotationEnabled)
-        rotationStateMachine();
 }
 
 /*!
