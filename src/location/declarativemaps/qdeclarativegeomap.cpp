@@ -159,12 +159,6 @@ QT_BEGIN_NAMESPACE
     application should open the link in a browser or display its contents to the user.
 */
 
-/*!
-    \qmlsignal QtLocation::Map::initialized()
-
-    This signal is emitted when the initialization of the map is complete.
-*/
-
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         : QQuickItem(parent),
         m_plugin(0),
@@ -424,7 +418,7 @@ void QDeclarativeGeoMap::initialize()
     if (fovHasChanged)
         emit fieldOfViewChanged(m_cameraData.fieldOfView());
 
-    emit initialized();
+    emit mapReadyChanged(true);
 }
 
 /*!
@@ -1328,6 +1322,21 @@ void QDeclarativeGeoMap::setColor(const QColor &color)
 QColor QDeclarativeGeoMap::color() const
 {
     return m_color;
+}
+
+/*!
+    \qmlproperty color QtLocation::Map::mapReady
+
+    This property holds whether the map has been successfully initialized and is ready to be used.
+    Some methods, such as \l fromCoordinate and \l toCoordinate, will not work before the map is ready.
+    Due to the architecture of the \l Map, it's advised to use the signal emitted for this property
+    in place of \l Component.onCompleted, to make sure that everything behaves as expected.
+
+    \since 5.9
+*/
+bool QDeclarativeGeoMap::mapReady() const
+{
+    return m_initialized;
 }
 
 // TODO: offer the possibility to specify the margins.

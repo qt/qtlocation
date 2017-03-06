@@ -99,6 +99,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QGeoShape visibleRegion READ visibleRegion WRITE setVisibleRegion)
     Q_PROPERTY(bool copyrightsVisible READ copyrightsVisible WRITE setCopyrightsVisible NOTIFY copyrightsVisibleChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(bool mapReady READ mapReady NOTIFY mapReadyChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -149,6 +150,8 @@ public:
 
     void setColor(const QColor &color);
     QColor color() const;
+
+    bool mapReady() const;
 
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
@@ -202,7 +205,7 @@ Q_SIGNALS:
     void maximumFieldOfViewChanged(qreal maximumFieldOfView);
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
-    void initialized();
+    void mapReadyChanged(bool ready);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
