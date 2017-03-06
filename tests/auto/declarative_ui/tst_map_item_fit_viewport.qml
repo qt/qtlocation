@@ -572,13 +572,13 @@ Item {
         }
 
         function calculate_fit_circle_bounds() {
-            var circleDiagonal = Math.sqrt(2 * fitCircle.radius * fitCircle.radius)
+            var circleDiagonal = Math.sqrt(2) * fitCircle.radius
             fitCircleTopLeft = fitCircle.center.atDistanceAndAzimuth(circleDiagonal,-45)
             fitCircleBottomRight = fitCircle.center.atDistanceAndAzimuth(circleDiagonal,135)
         }
 
         function calculate_bounds(){
-            var circleDiagonal = Math.sqrt(2 * preMapCircle.radius * preMapCircle.radius)
+            var circleDiagonal = Math.sqrt(2) * preMapCircle.radius
             var itemTopLeft = preMapCircle.center.atDistanceAndAzimuth(circleDiagonal,-45)
             var itemBottomRight = preMapCircle.center.atDistanceAndAzimuth(circleDiagonal,135)
 
