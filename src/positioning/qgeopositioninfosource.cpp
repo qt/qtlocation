@@ -46,17 +46,14 @@
 #include <QJsonObject>
 #include <QCryptographicHash>
 #include <QtCore/private/qfactoryloader_p.h>
-#include <QtCore/private/qlibrary_p.h>
 
 #include <algorithm>
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QT_NO_LIBRARY
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
         ("org.qt-project.qt.position.sourcefactory/5.0",
          QLatin1String("/position")))
-#endif
 
 /*!
     \class QGeoPositionInfoSource
