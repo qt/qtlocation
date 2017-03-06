@@ -48,6 +48,7 @@ private slots:
 
 void tst_QGeoServiceProvider::initTestCase()
 {
+#if QT_CONFIG(library)
     /*
      * Set custom path since CI doesn't install test plugins
      */
@@ -57,6 +58,7 @@ void tst_QGeoServiceProvider::initTestCase()
 #else
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
                                      + QStringLiteral("/../../../plugins"));
+#endif
 #endif
 }
 

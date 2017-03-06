@@ -77,6 +77,7 @@ class tst_QGeoAreaMonitorSource : public QObject
 private slots:
     void initTestCase()
     {
+#if QT_CONFIG(library)
         /*
          * Set custom path since CI doesn't install plugins
          */
@@ -86,6 +87,7 @@ private slots:
 #else
         QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
                                          + QStringLiteral("/../../../plugins"));
+#endif
 #endif
         qRegisterMetaType<QGeoPositionInfo>();
         qRegisterMetaType<QGeoAreaMonitorInfo>();

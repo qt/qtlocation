@@ -36,6 +36,7 @@ class tst_QNmeaPositionInfoSource_Simulation_Generic : public TestQGeoPositionIn
 public:
     tst_QNmeaPositionInfoSource_Simulation_Generic()
     {
+#if QT_CONFIG(library)
         /*
          * Set custom path since CI doesn't install test plugins
          */
@@ -45,6 +46,7 @@ public:
 #else
         QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
                                          + QStringLiteral("/../../../../plugins"));
+#endif
 #endif
     }
 

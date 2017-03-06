@@ -91,6 +91,7 @@ tst_QGeoTiledMap::~tst_QGeoTiledMap()
 
 void tst_QGeoTiledMap::initTestCase()
 {
+#if QT_CONFIG(library)
     // Set custom path since CI doesn't install test plugins
 #ifdef Q_OS_WIN
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
@@ -98,6 +99,7 @@ void tst_QGeoTiledMap::initTestCase()
 #else
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
                                      QStringLiteral("/../../../plugins"));
+#endif
 #endif
       QVariantMap parameters;
       parameters["tileSize"] = 16;
