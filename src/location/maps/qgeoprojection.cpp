@@ -44,7 +44,6 @@
 namespace {
     static const double defaultTileSize = 256.0;
     static const QDoubleVector3D xyNormal(0.0, 0.0, 1.0);
-    static const QDoubleVector3D xyPoint(0.0, 0.0, 0.0);
     static const QGeoProjectionWebMercator::Plane xyPlane(QDoubleVector3D(0,0,0), QDoubleVector3D(0,0,1));
     static const QList<QDoubleVector2D> mercatorGeometry = {
                                                 QDoubleVector2D(-1.0,0.0),
