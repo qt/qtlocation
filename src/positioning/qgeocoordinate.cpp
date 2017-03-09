@@ -680,6 +680,8 @@ QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
     double lat = coord.latitude();
     double lng = coord.longitude();
 
+    QTextStreamManipulator tsm = qSetRealNumberPrecision(11);
+    dbg << tsm;
     dbg.nospace() << "QGeoCoordinate(";
     if (qIsNaN(lat))
         dbg << '?';
