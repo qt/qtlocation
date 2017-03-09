@@ -258,11 +258,6 @@ QMatrix4x4 QGeoProjectionWebMercator::quickItemTransformation(const QGeoCoordina
     const QDoubleVector2D anchorScaled = QDoubleVector2D(anchorPoint.x(), anchorPoint.y()) * scale;
     const QDoubleVector2D anchorMercator = anchorScaled / mapWidth();
 
-    // Check for coord OOB, only coordinate is going to be projected to item position, so
-    // testing also coordAnchored might be superfluous
-    if (!isProjectable(coordWrapped))
-        return QMatrix4x4();
-
     const QDoubleVector2D coordAnchored = coordWrapped - anchorMercator;
     const QDoubleVector2D coordAnchoredScaled = coordAnchored * m_sideLength;
     QDoubleMatrix4x4 matTranslateScale;
@@ -272,21 +267,18 @@ QMatrix4x4 QGeoProjectionWebMercator::quickItemTransformation(const QGeoCoordina
                      (std::floor(zoomLevel) - std::floor(m_cameraData.zoomLevel())));
     matTranslateScale.scale(scale);
 
-    const QDoubleVector2D coordOnScreen = wrappedMapProjectionToItemPosition(coordWrapped);
-    QDoubleMatrix4x4 matTransformation;
-    matTransformation.translate(-coordOnScreen.x(), -coordOnScreen.y(), 0);
-    matTransformation *= m_quickItemTransformation;
-
     /*
-     *  The full transformation chain for quickItemTransformation() is:
+     *  The full transformation chain for quickItemTransformation() would be:
      *  matScreenShift * m_quickItemTransformation * matTranslate * matScale
      *  where:
      *  matScreenShift = translate(-coordOnScreen.x(), -coordOnScreen.y(), 0)
      *  matTranslate = translate(coordAnchoredScaled.x(), coordAnchoredScaled.y(), 0.0)
      *  matScale = scale(scale)
+     *
+     *  However, matScreenShift is removed, as setPosition(0,0) is used in place of setPositionOnScreen.
      */
 
-    return toMatrix4x4(matTransformation * matTranslateScale);
+    return toMatrix4x4(m_quickItemTransformation * matTranslateScale);
 }
 
 bool QGeoProjectionWebMercator::isProjectable(const QDoubleVector2D &wrappedProjection) const
