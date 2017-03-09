@@ -77,7 +77,7 @@ namespace AndroidPositioning {
         AttachedJNIEnv()
         {
             attached = false;
-            if (javaVM->GetEnv((void**)&jniEnv, JNI_VERSION_1_6) < 0) {
+            if (javaVM && javaVM->GetEnv((void**)&jniEnv, JNI_VERSION_1_6) < 0) {
                 if (javaVM->AttachCurrentThread(&jniEnv, NULL) < 0) {
                     __android_log_print(ANDROID_LOG_ERROR, logTag, "AttachCurrentThread failed");
                     jniEnv = 0;
