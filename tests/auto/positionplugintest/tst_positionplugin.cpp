@@ -53,6 +53,7 @@ private slots:
 
 void tst_PositionPlugin::initTestCase()
 {
+#if QT_CONFIG(library)
     /*
      * Set custom path since CI doesn't install test plugins
      */
@@ -62,6 +63,7 @@ void tst_PositionPlugin::initTestCase()
 #else
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
                                      + QStringLiteral("/../../../plugins"));
+#endif
 #endif
     qRegisterMetaType<QGeoPositionInfo>();
 }

@@ -75,6 +75,7 @@ private:
 
 void tst_QPlaceManagerUnsupported::initTestCase()
 {
+#if QT_CONFIG(library)
     /*
      * Set custom path since CI doesn't install test plugins
      */
@@ -84,6 +85,7 @@ void tst_QPlaceManagerUnsupported::initTestCase()
 #else
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
                                      + QStringLiteral("/../../../plugins"));
+#endif
 #endif
 
     m_provider = 0;
