@@ -69,9 +69,13 @@ static const qreal MinimumFlickVelocity = 75.0;
 // Tolerance for detecting two finger sliding start
 static const qreal MaximumParallelPosition = 40.0; // in degrees
 // Tolerance for detecting parallel sliding
-static const qreal MaximumParallelSlidingAngle = 5.0; // in degrees
+static const qreal MaximumParallelSlidingAngle = 4.0; // in degrees
 // Tolerance for starting rotation
-static const qreal MinimumRotationStartingAngle = 15.0; // in degrees
+static const qreal MinimumRotationStartingAngle = 8.0; // in degrees
+// Tolerance for starting pinch
+static const qreal MinimumPinchDelta = 40; // in pixels
+// Tolerance for starting tilt when sliding vertical
+static const qreal MinimumPanToTiltDelta = 80; // in pixels;
 
 // Returns the new map center after anchoring coordinate to anchorPoint on the screen
 // Approach: find the displacement in (wrapped) mercator space, and apply that to the center
@@ -85,10 +89,15 @@ static QGeoCoordinate anchorCoordinateToPoint(QGeoMap &map, const QGeoCoordinate
     return map.geoProjection().wrappedMapProjectionToGeo(centerProj + coordProj - anchorProj);
 }
 
+static qreal angleFromPoints(const QPointF &p1, const QPointF &p2)
+{
+    return QLineF(p1, p2).angle();
+}
+
 // Keeps it in +- 180
 static qreal touchAngle(const QPointF &p1, const QPointF &p2)
 {
-    qreal angle = QLineF(p1, p2).angle();
+    qreal angle = angleFromPoints(p1, p2);
     if (angle > 180)
         angle -= 360;
     return angle;
@@ -118,7 +127,17 @@ static qreal vectorSize(const QPointF &vector)
     return std::sqrt(vector.x() * vector.x() + vector.y() * vector.y());
 }
 
-static bool movingParallel(const QPointF &p1old, const QPointF &p1new, const QPointF &p2old, const QPointF &p2new)
+// This linearizes the angles around 0, and keep it linear around 180, allowing to differentiate
+// touch angles that are supposed to be parallel (0 or 180 depending on what finger goes first)
+static qreal touchAngleTilting(const QPointF &p1, const QPointF &p2)
+{
+    qreal angle = angleFromPoints(p1, p2);
+    if (angle > 270)
+        angle -= 360;
+    return angle;
+}
+
+static bool movingParallelVertical(const QPointF &p1old, const QPointF &p1new, const QPointF &p2old, const QPointF &p2new)
 {
     if (!pointDragged(p1old, p1new) || !pointDragged(p2old, p2new))
         return false;
@@ -130,8 +149,8 @@ static bool movingParallel(const QPointF &p1old, const QPointF &p1new, const QPo
     if (v1v2size < vectorSize(v1) || v1v2size < vectorSize(v2)) // going in opposite directions
         return false;
 
-    const qreal newAngle = touchAngle(p1new, p2new);
-    const qreal oldAngle = touchAngle(p1old, p2old);
+    const qreal newAngle = touchAngleTilting(p1new, p2new);
+    const qreal oldAngle = touchAngleTilting(p1old, p2old);
     const qreal angleDiff = angleDelta(newAngle, oldAngle);
 
     if (qAbs(angleDiff) > MaximumParallelSlidingAngle)
@@ -972,6 +991,31 @@ void QQuickGeoMapGestureArea::updateVelocityList(const QPointF &pos)
     }
 }
 
+void QQuickGeoMapGestureArea::setTouchPointState(const QQuickGeoMapGestureArea::TouchPointState state)
+{
+    m_touchPointState = state;
+}
+
+void QQuickGeoMapGestureArea::setFlickState(const QQuickGeoMapGestureArea::FlickState state)
+{
+    m_flickState = state;
+}
+
+void QQuickGeoMapGestureArea::setTiltState(const QQuickGeoMapGestureArea::TiltState state)
+{
+    m_tiltState = state;
+}
+
+void QQuickGeoMapGestureArea::setRotationState(const QQuickGeoMapGestureArea::RotationState state)
+{
+    m_rotationState = state;
+}
+
+void QQuickGeoMapGestureArea::setPinchState(const QQuickGeoMapGestureArea::PinchState state)
+{
+    m_pinchState = state;
+}
+
 /*!
     \internal
 */
@@ -1033,29 +1077,29 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
         if (m_allPoints.count() == 1) {
             clearTouchData();
             startOneTouchPoint();
-            m_touchPointState = touchPoints1;
+            setTouchPointState(touchPoints1);
         } else if (m_allPoints.count() >= 2) {
             clearTouchData();
             startTwoTouchPoints();
-            m_touchPointState = touchPoints2;
+            setTouchPointState(touchPoints2);
         }
         break;
     case touchPoints1:
         if (m_allPoints.count() == 0) {
-            m_touchPointState = touchPoints0;
+            setTouchPointState(touchPoints0);
         } else if (m_allPoints.count() == 2) {
             m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_touchPointsCentroid), false);
             startTwoTouchPoints();
-            m_touchPointState = touchPoints2;
+            setTouchPointState(touchPoints2);
         }
         break;
     case touchPoints2:
         if (m_allPoints.count() == 0) {
-            m_touchPointState = touchPoints0;
+            setTouchPointState(touchPoints0);
         } else if (m_allPoints.count() == 1) {
             m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_touchPointsCentroid), false);
             startOneTouchPoint();
-            m_touchPointState = touchPoints1;
+            setTouchPointState(touchPoints1);
         }
         break;
     };
@@ -1098,6 +1142,11 @@ void QQuickGeoMapGestureArea::updateOneTouchPoint()
     updateVelocityList(m_touchPointsCentroid);
 }
 
+static qreal distanceBetweenTouchPoints(const QPointF &p1, const QPointF &p2)
+{
+    return QLineF(p1, p2).length();
+}
+
 /*!
     \internal
 */
@@ -1114,6 +1163,8 @@ void QQuickGeoMapGestureArea::startTwoTouchPoints()
     m_startCoord.setLatitude(m_startCoord.latitude() + startCoord.latitude() -
                             m_touchCenterCoord.latitude());
     m_twoTouchAngleStart = touchAngle(m_sceneStartPoint1, m_sceneStartPoint2); // Initial angle used for calculating rotation
+    m_distanceBetweenTouchPointsStart = distanceBetweenTouchPoints(m_sceneStartPoint1, m_sceneStartPoint2);
+    m_twoTouchPointsCentroidStart = (m_sceneStartPoint1 + m_sceneStartPoint2) / 2;
 }
 
 /*!
@@ -1123,9 +1174,7 @@ void QQuickGeoMapGestureArea::updateTwoTouchPoints()
 {
     QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
     QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
-    qreal dx = p1.x() - p2.x();
-    qreal dy = p1.y() - p2.y();
-    m_distanceBetweenTouchPoints = sqrt(dx * dx + dy * dy);
+    m_distanceBetweenTouchPoints = distanceBetweenTouchPoints(p1, p2);
     m_touchPointsCentroid = (p1 + p2) / 2;
     updateVelocityList(m_touchPointsCentroid);
 
@@ -1142,31 +1191,31 @@ void QQuickGeoMapGestureArea::tiltStateMachine()
     switch (m_tiltState) {
     case tiltInactive:
         if (m_allPoints.count() >= 2) {
-            if (!isRotationActive() && !isPanActive() && !isPinchActive() && canStartTilt()) {
+            if (!isRotationActive() && !isPinchActive() && canStartTilt()) { // only gesture that can be overridden: pan/flick
                 m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startTilt();
-                m_tiltState = tiltActive;
+                setTiltState(tiltActive);
             } else {
-                m_tiltState = tiltInactiveTwoPoints;
+                setTiltState(tiltInactiveTwoPoints);
             }
         }
         break;
     case tiltInactiveTwoPoints:
         if (m_allPoints.count() <= 1) {
-            m_tiltState = tiltInactive;
+            setTiltState(tiltInactive);
         } else {
-            if (!isRotationActive() && !isPanActive() && !isPinchActive() && canStartTilt()) {
+            if (!isRotationActive() && !isPinchActive() && canStartTilt()) { // only gesture that can be overridden: pan/flick
                 m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startTilt();
-                m_tiltState = tiltActive;
+                setTiltState(tiltActive);
             }
         }
         break;
     case tiltActive:
         if (m_allPoints.count() <= 1) {
-            m_tiltState = tiltInactive;
+            setTiltState(tiltInactive);
             m_declarativeMap->setKeepMouseGrab(m_preventStealing);
             m_declarativeMap->setKeepTouchGrab(m_preventStealing);
             endTilt();
@@ -1191,6 +1240,11 @@ void QQuickGeoMapGestureArea::tiltStateMachine()
     }
 }
 
+bool validateTouchAngleForTilting(const qreal angle)
+{
+    return ((qAbs(angle) - 180.0) < MaximumParallelPosition) || (qAbs(angle) < MaximumParallelPosition);
+}
+
 /*!
     \internal
 */
@@ -1199,8 +1253,9 @@ bool QQuickGeoMapGestureArea::canStartTilt()
     if (m_allPoints.count() >= 2) {
         QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
         QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
-        if (qAbs(m_twoTouchAngle) < MaximumParallelPosition
-                && movingParallel(m_sceneStartPoint1, p1, m_sceneStartPoint2, p2)) {
+        if (validateTouchAngleForTilting(m_twoTouchAngle)
+                && movingParallelVertical(m_sceneStartPoint1, p1, m_sceneStartPoint2, p2)
+                && qAbs(m_twoTouchPointsCentroidStart.y() - m_touchPointsCentroid.y()) > MinimumPanToTiltDelta) {
             m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
             m_pinch.m_event.setAngle(m_twoTouchAngle);
             m_pinch.m_event.setPoint1(p1);
@@ -1208,7 +1263,7 @@ bool QQuickGeoMapGestureArea::canStartTilt()
             m_pinch.m_event.setPointCount(m_allPoints.count());
             m_pinch.m_event.setAccepted(true);
             emit tiltStarted(&m_pinch.m_event);
-            return m_pinch.m_event.accepted();
+            return true;
         }
     }
     return false;
@@ -1219,6 +1274,11 @@ bool QQuickGeoMapGestureArea::canStartTilt()
 */
 void QQuickGeoMapGestureArea::startTilt()
 {
+    if (isPanActive()) {
+        stopPan();
+        setFlickState(flickInactive);
+    }
+
     m_pinch.m_tilt.m_startTouchCentroid = m_touchPointsCentroid;
     m_pinch.m_tilt.m_startTilt = m_declarativeMap->tilt();
 }
@@ -1278,27 +1338,27 @@ void QQuickGeoMapGestureArea::rotationStateMachine()
                 m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startRotation();
-                m_rotationState = rotationActive;
+                setRotationState(rotationActive);
             } else {
-                m_rotationState = rotationInactiveTwoPoints;
+                setRotationState(rotationInactiveTwoPoints);
             }
         }
         break;
     case rotationInactiveTwoPoints:
         if (m_allPoints.count() <= 1) {
-            m_rotationState = rotationInactive;
+            setRotationState(rotationInactive);
         } else {
             if (!isTiltActive() && canStartRotation()) {
                 m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startRotation();
-                m_rotationState = rotationActive;
+                setRotationState(rotationActive);
             }
         }
         break;
     case rotationActive:
         if (m_allPoints.count() <= 1) {
-            m_rotationState = rotationInactive;
+            setRotationState(rotationInactive);
             m_declarativeMap->setKeepMouseGrab(m_preventStealing);
             m_declarativeMap->setKeepTouchGrab(m_preventStealing);
             endRotation();
@@ -1416,27 +1476,27 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
                 m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startPinch();
-                m_pinchState = pinchActive;
+                setPinchState(pinchActive);
             } else {
-                m_pinchState = pinchInactiveTwoPoints;
+                setPinchState(pinchInactiveTwoPoints);
             }
         }
         break;
     case pinchInactiveTwoPoints:
         if (m_allPoints.count() <= 1) {
-            m_pinchState = pinchInactive;
+            setPinchState(pinchInactive);
         } else {
             if (!isTiltActive() && canStartPinch()) {
                 m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startPinch();
-                m_pinchState = pinchActive;
+                setPinchState(pinchActive);
             }
         }
         break;
     case pinchActive:
         if (m_allPoints.count() <= 1) { // Once started, pinch goes off only when finger(s) are release
-            m_pinchState = pinchInactive;
+            setPinchState(pinchInactive);
             m_declarativeMap->setKeepMouseGrab(m_preventStealing);
             m_declarativeMap->setKeepTouchGrab(m_preventStealing);
             endPinch();
@@ -1469,8 +1529,7 @@ bool QQuickGeoMapGestureArea::canStartPinch()
     if (m_allPoints.count() >= 2) {
         QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
         QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
-        if (pointDragged(m_sceneStartPoint1, p1)
-         || pointDragged(m_sceneStartPoint2, p2)) {
+        if (qAbs(m_distanceBetweenTouchPoints - m_distanceBetweenTouchPointsStart) > MinimumPinchDelta) {
             m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
             m_pinch.m_event.setAngle(m_twoTouchAngle);
             m_pinch.m_event.setPoint1(p1);
@@ -1572,14 +1631,14 @@ void QQuickGeoMapGestureArea::panStateMachine()
             m_startCoord.setLongitude(newStartCoord.longitude());
             m_startCoord.setLatitude(newStartCoord.latitude());
             m_declarativeMap->setKeepMouseGrab(true);
-            m_flickState = panActive;
+            setFlickState(panActive);
         }
         break;
     case panActive:
         if (m_allPoints.count() == 0) {
             if (!tryStartFlick())
             {
-                m_flickState = flickInactive;
+                setFlickState(flickInactive);
                 // mark as inactive for use by camera
                 if (m_pinchState == pinchInactive && m_rotationState == rotationInactive && m_tiltState == tiltInactive) {
                     m_declarativeMap->setKeepMouseGrab(m_preventStealing);
@@ -1587,7 +1646,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
                 }
                 emit panFinished();
             } else {
-                m_flickState = flickActive;
+                setFlickState(flickActive);
                 emit panFinished();
                 emit flickStarted();
             }
@@ -1597,7 +1656,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
         if (m_allPoints.count() > 0) { // re touched before movement ended
             stopFlick();
             m_declarativeMap->setKeepMouseGrab(true);
-            m_flickState = panActive;
+            setFlickState(panActive);
         }
         break;
     }
@@ -1736,7 +1795,7 @@ void QQuickGeoMapGestureArea::stopPan()
     } else if (m_flickState == panActive) {
         m_velocityX = 0;
         m_velocityY = 0;
-        m_flickState = flickInactive;
+        setFlickState(flickInactive);
         m_declarativeMap->setKeepMouseGrab(m_preventStealing);
         emit panFinished();
         emit panActiveChanged();
@@ -1763,7 +1822,7 @@ void QQuickGeoMapGestureArea::handleFlickAnimationStopped()
 {
     m_declarativeMap->setKeepMouseGrab(m_preventStealing);
     if (m_flickState == flickActive) {
-        m_flickState = flickInactive;
+        setFlickState(flickInactive);
         emit flickFinished();
         emit panActiveChanged();
         m_map->prefetchData();

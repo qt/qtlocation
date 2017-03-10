@@ -340,10 +340,13 @@ private:
     qreal m_twoTouchAngle;
     qreal m_twoTouchAngleStart;
     qreal m_distanceBetweenTouchPoints;
+    qreal m_distanceBetweenTouchPointsStart;
+    QPointF m_twoTouchPointsCentroidStart;
     QPointF m_touchPointsCentroid;
     bool m_preventStealing;
     bool m_panEnabled;
 
+private:
     // prototype state machine...
     enum TouchPointState
     {
@@ -379,6 +382,12 @@ private:
         panActive,
         flickActive
     } m_flickState;
+
+    inline void setTouchPointState(const TouchPointState state);
+    inline void setFlickState(const FlickState state);
+    inline void setTiltState(const TiltState state);
+    inline void setRotationState(const RotationState state);
+    inline void setPinchState(const PinchState state);
 };
 
 QT_END_NAMESPACE
