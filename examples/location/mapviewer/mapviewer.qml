@@ -73,10 +73,18 @@ ApplicationWindow {
         }
 
         var zoomLevel = null
+        var tilt = null
+        var bearing = null
+        var fov = null
         var center = null
+        var panelExpanded = null
         if (map) {
             zoomLevel = map.zoomLevel
+            tilt = map.tilt
+            bearing = map.bearing
+            fov = map.fieldOfView
             center = map.center
+            panelExpanded = map.slidersExpanded
             map.destroy()
         }
 
@@ -84,8 +92,12 @@ ApplicationWindow {
         map.plugin = plugin;
 
         if (zoomLevel != null) {
+            map.tilt = tilt
+            map.bearing = bearing
+            map.fieldOfView = fov
             map.zoomLevel = zoomLevel
             map.center = center
+            map.slidersExpanded = panelExpanded
         } else {
             // Use an integer ZL to enable nearest interpolation, if possible.
             map.zoomLevel = Math.floor((map.maximumZoomLevel - map.minimumZoomLevel)/2)

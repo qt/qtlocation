@@ -61,6 +61,7 @@ Map {
     property alias routeQuery: routeQuery
     property alias routeModel: routeModel
     property alias geocodeModel: geocodeModel
+    property alias slidersExpanded: sliders.expanded
 
     signal showGeocodeInfo()
     signal geocodeFinished()
