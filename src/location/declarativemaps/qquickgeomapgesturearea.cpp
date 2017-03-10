@@ -702,8 +702,10 @@ void QQuickGeoMapGestureArea::setPanEnabled(bool enabled)
     m_flick.m_panEnabled = enabled;
 
     // unlike the pinch, the pan existing functionality is to stop immediately
-    if (!enabled)
+    if (!enabled) {
         stopPan();
+        m_flickState = flickInactive;
+    }
 }
 
 /*!
@@ -724,7 +726,14 @@ void QQuickGeoMapGestureArea::setFlickEnabled(bool enabled)
     m_flick.m_flickEnabled = enabled;
     // unlike the pinch, the flick existing functionality is to stop immediately
     if (!enabled) {
-         stopFlick();
+        bool stateActive = (m_flickState != flickInactive);
+        stopFlick();
+        if (stateActive) {
+            if (m_flick.m_panEnabled)
+                m_flickState = panActive;
+            else
+                m_flickState = flickInactive;
+        }
     }
 }
 
