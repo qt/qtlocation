@@ -155,8 +155,8 @@
     This is all that is required to display a Route on the Map. However, it is
     also useful to be able to retrieve the written directions and explanation
     of the travel route. In the example, these are displayed in a \l {ListView} element.
-    To create this content, we use a standard \l {Models and Views in Qt Quick#ListModel}{ListModel} and
-    \l {ListView} pair. The data in the \l {Models and Views in Qt Quick#ListModel}{ListModel} is
+    To create this content, we use a standard \l {Models and Views in Qt Quick#Models}{ListModel} and
+    \l {ListView} pair. The data in the \l {Models and Views in Qt Quick#Models}{ListModel} is
     built from the routeModel's output:
 
     \snippet mapviewer/forms/RouteList.qml routeinfomodel0
