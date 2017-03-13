@@ -233,7 +233,7 @@ namespace AndroidPositioning {
         //time stamp
         mid = getCachedMethodID(jniEnv, thisClass, "getTime", "()J");
         jlong timestamp = jniEnv->CallLongMethod(location, mid);
-        info.setTimestamp(QDateTime::fromMSecsSinceEpoch(timestamp));
+        info.setTimestamp(QDateTime::fromMSecsSinceEpoch(timestamp, Qt::UTC));
 
         //accuracy
         mid = getCachedMethodID(jniEnv, thisClass, "hasAccuracy", "()Z");
