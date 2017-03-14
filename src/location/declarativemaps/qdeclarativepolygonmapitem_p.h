@@ -68,7 +68,7 @@ public:
     inline void setAssumeSimple(bool value) { assumeSimple_ = value; }
 
     void updateSourcePoints(const QGeoMap &map,
-                            const QList<QGeoCoordinate> &path);
+                            const QList<QDoubleVector2D> &path);
 
     void updateScreenPoints(const QGeoMap &map);
 
@@ -122,9 +122,12 @@ protected Q_SLOTS:
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
+    void regenerateCache();
+    void updateCache();
     void pathPropertyChanged();
 
     QGeoPath geopath_;
+    QList<QDoubleVector2D> geopathProjected_;
     QDeclarativeMapLineProperties border_;
     QColor color_;
     bool dirtyMaterial_;

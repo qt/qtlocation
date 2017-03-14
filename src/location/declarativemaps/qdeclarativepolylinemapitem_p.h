@@ -91,7 +91,7 @@ public:
     QGeoMapPolylineGeometry();
 
     void updateSourcePoints(const QGeoMap &map,
-                            const QList<QGeoCoordinate> &path,
+                            const QList<QDoubleVector2D> &path,
                             const QGeoCoordinate geoLeftBound);
 
     void updateScreenPoints(const QGeoMap &map,
@@ -99,7 +99,7 @@ public:
 
 protected:
     QList<QList<QDoubleVector2D> > clipPath(const QGeoMap &map,
-                    const QList<QGeoCoordinate> &path,
+                    const QList<QDoubleVector2D> &path,
                     QDoubleVector2D &leftBoundWrapped);
 
     void pathToScreen(const QGeoMap &map,
@@ -162,9 +162,12 @@ protected Q_SLOTS:
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
+    void regenerateCache();
+    void updateCache();
     void pathPropertyChanged();
 
     QGeoPath geopath_;
+    QList<QDoubleVector2D> geopathProjected_;
     QDeclarativeMapLineProperties line_;
     QColor color_;
     bool dirtyMaterial_;

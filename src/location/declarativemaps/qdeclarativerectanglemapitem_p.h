@@ -53,6 +53,7 @@
 #include <QtLocation/private/qgeomapitemgeometry_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 #include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
 
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
@@ -97,6 +98,7 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected:
+    void updatePath();
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
     void updatePolish() Q_DECL_OVERRIDE;
 
@@ -112,6 +114,7 @@ private:
     QGeoMapPolygonGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;
     bool updatingGeometry_;
+    QList<QDoubleVector2D> pathMercator_;
 };
 
 //////////////////////////////////////////////////////////////////////
