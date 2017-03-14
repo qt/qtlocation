@@ -248,7 +248,7 @@ double QGeoCameraCapabilities::minimumZoomLevelAt256() const
 {
     if (d->tileSize_ == 256)
         return d->minZoom_;
-    return zoomLevelTo256(d->minZoom_, d->tileSize_);
+    return qMax<double>(0, zoomLevelTo256(d->minZoom_, d->tileSize_));
 }
 
 /*!
@@ -278,7 +278,7 @@ double QGeoCameraCapabilities::maximumZoomLevelAt256() const
 {
     if (d->tileSize_ == 256)
         return d->maxZoom_;
-    return zoomLevelTo256(d->maxZoom_, d->tileSize_);
+    return qMax<double>(0, zoomLevelTo256(d->maxZoom_, d->tileSize_));
 }
 
 /*!
