@@ -1,5 +1,6 @@
 TARGET = QtPositioning
 QT = core-private
+CONFIG += simd optimize_full
 
 #INCLUDEPATH += ../3rdparty/poly2tri
 INCLUDEPATH += ../3rdparty/clipper
