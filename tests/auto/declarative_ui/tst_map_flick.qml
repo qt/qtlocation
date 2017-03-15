@@ -30,6 +30,7 @@ import QtQuick 2.5
 import QtTest 1.0
 import QtLocation 5.6
 import QtPositioning 5.5
+import QtLocation.Test 5.6
 
 Item {
     // General-purpose elements for the test:
@@ -98,6 +99,8 @@ Item {
 
         function init()
         {
+            if (Qt.platform.os === "windows" && (LocationTestHelper.x86Bits() === 32))
+                skip("QTBUG-59503")
             map.gesture.acceptedGestures = MapGestureArea.PanGesture | MapGestureArea.FlickGesture;
             map.gesture.enabled = true
             map.gesture.panEnabled = true
