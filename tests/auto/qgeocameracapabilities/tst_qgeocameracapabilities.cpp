@@ -54,6 +54,8 @@ private Q_SLOTS:
     void supportsTiltingTest();
     void minimumTiltTest();
     void maximumTiltTest();
+    void minimumFieldOfViewTest();
+    void maximumFieldOfViewTest();
     void operatorsTest_data();
     void operatorsTest();
     void isValidTest();
@@ -68,12 +70,14 @@ void tst_QGeoCameraCapabilities::populateGeoCameraCapabilitiesData(){
     QTest::addColumn<double>("maximumZoomLevel");
     QTest::addColumn<double>("minimumTilt");
     QTest::addColumn<double>("maximumTilt");
+    QTest::addColumn<double>("minimumFieldOfView");
+    QTest::addColumn<double>("maximumFieldOfView");
     QTest::addColumn<bool>("bearingSupport");
     QTest::addColumn<bool>("rollingSupport");
     QTest::addColumn<bool>("tiltingSupport");
-    QTest::newRow("zeros") << 0.0 << 0.0 << 0.0 << 0.0 << false << false << false;
-    QTest::newRow("valid") << 1.0 << 2.0 << 0.5 << 1.5 << true << true << true;
-    QTest::newRow("negative values") << 0.0 << 0.5 << -0.5 << -0.1 << true << true << true;
+    QTest::newRow("zeros") << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << false << false << false;
+    QTest::newRow("valid") << 1.0 << 2.0 << 0.5 << 1.5 << 1.0 << 179.0 << true << true << true;
+    QTest::newRow("negative values") << 0.0 << 0.5 << -0.5 << -0.1 << -20.0 << -30.0 << true << true << true;
 }
 
 void tst_QGeoCameraCapabilities::constructorTest_data(){
@@ -86,9 +90,14 @@ void tst_QGeoCameraCapabilities::constructorTest()
     QFETCH(double, maximumZoomLevel);
     QFETCH(double, minimumTilt);
     QFETCH(double, maximumTilt);
+    QFETCH(double, minimumFieldOfView);
+    QFETCH(double, maximumFieldOfView);
     QFETCH(bool, bearingSupport);
     QFETCH(bool, rollingSupport);
     QFETCH(bool, tiltingSupport);
+
+    minimumFieldOfView = qBound(1.0, minimumFieldOfView, 179.0);
+    maximumFieldOfView = qBound(1.0, maximumFieldOfView, 179.0);
 
     // contructor test with default values
     QGeoCameraCapabilities cameraCapabilities;
@@ -100,12 +109,16 @@ void tst_QGeoCameraCapabilities::constructorTest()
     QVERIFY2(cameraCapabilities.supportsTilting() == cameraCapabilities2.supportsTilting(), "Copy constructor failed for tilting support");
     QCOMPARE(cameraCapabilities.minimumTilt(), cameraCapabilities2.minimumTilt());
     QCOMPARE(cameraCapabilities.maximumTilt(), cameraCapabilities2.maximumTilt());
+    QCOMPARE(cameraCapabilities.minimumFieldOfView(), cameraCapabilities2.minimumFieldOfView());
+    QCOMPARE(cameraCapabilities.maximumFieldOfView(), cameraCapabilities2.maximumFieldOfView());
 
     // constructor test after setting values
     cameraCapabilities.setMinimumZoomLevel(minimumZoomLevel);
     cameraCapabilities.setMaximumZoomLevel(maximumZoomLevel);
     cameraCapabilities.setMinimumTilt(minimumTilt);
     cameraCapabilities.setMaximumTilt(maximumTilt);
+    cameraCapabilities.setMinimumFieldOfView(minimumFieldOfView);
+    cameraCapabilities.setMaximumFieldOfView(maximumFieldOfView);
     cameraCapabilities.setSupportsBearing(bearingSupport);
     cameraCapabilities.setSupportsRolling(rollingSupport);
     cameraCapabilities.setSupportsTilting(tiltingSupport);
@@ -116,6 +129,8 @@ void tst_QGeoCameraCapabilities::constructorTest()
     QCOMPARE(cameraCapabilities3.maximumZoomLevel(), maximumZoomLevel);
     QCOMPARE(cameraCapabilities3.minimumTilt(), minimumTilt);
     QCOMPARE(cameraCapabilities3.maximumTilt(), maximumTilt);
+    QCOMPARE(cameraCapabilities3.minimumFieldOfView(), minimumFieldOfView);
+    QCOMPARE(cameraCapabilities3.maximumFieldOfView(), maximumFieldOfView);
     QVERIFY2(cameraCapabilities3.supportsBearing() == bearingSupport, "Copy constructor failed for bearing support");
     QVERIFY2(cameraCapabilities3.supportsRolling() == rollingSupport, "Copy constructor failed for rolling support ");
     QVERIFY2(cameraCapabilities3.supportsTilting() == tiltingSupport, "Copy constructor failed for tilting support");
@@ -127,6 +142,8 @@ void tst_QGeoCameraCapabilities::constructorTest()
     QVERIFY2(cameraCapabilities.supportsTilting() == cameraCapabilities3.supportsTilting(), "Copy constructor failed for tilting support");
     QCOMPARE(cameraCapabilities.minimumTilt(), cameraCapabilities3.minimumTilt());
     QCOMPARE(cameraCapabilities.maximumTilt(), cameraCapabilities3.maximumTilt());
+    QCOMPARE(cameraCapabilities.minimumFieldOfView(), cameraCapabilities3.minimumFieldOfView());
+    QCOMPARE(cameraCapabilities.maximumFieldOfView(), cameraCapabilities3.maximumFieldOfView());
 }
 
 void tst_QGeoCameraCapabilities::minimumZoomLevelTest()
@@ -213,6 +230,40 @@ void tst_QGeoCameraCapabilities::maximumTiltTest(){
     QCOMPARE(cameraCapabilities2.maximumTilt(), 1.5);
 }
 
+void tst_QGeoCameraCapabilities::minimumFieldOfViewTest()
+{
+    QGeoCameraCapabilities cameraCapabilities;
+    QCOMPARE(cameraCapabilities.minimumFieldOfView(), 45.0); // min/max default to 45
+    cameraCapabilities.setMinimumFieldOfView(1.5);
+    QCOMPARE(cameraCapabilities.minimumFieldOfView(), 1.5);
+    cameraCapabilities.setMinimumFieldOfView(-1.5);
+    QCOMPARE(cameraCapabilities.minimumFieldOfView(), 1.0);
+    cameraCapabilities.setMinimumFieldOfView(245.5);
+    QCOMPARE(cameraCapabilities.minimumFieldOfView(), 179.0);
+
+    QGeoCameraCapabilities cameraCapabilities2 = cameraCapabilities;
+    QCOMPARE(cameraCapabilities2.minimumFieldOfView(), 179.0);
+    cameraCapabilities.setMinimumFieldOfView(2.5);
+    QCOMPARE(cameraCapabilities2.minimumFieldOfView(), 179.0);
+}
+
+void tst_QGeoCameraCapabilities::maximumFieldOfViewTest()
+{
+    QGeoCameraCapabilities cameraCapabilities;
+    QCOMPARE(cameraCapabilities.maximumFieldOfView(), 45.0); // min/max default to 45
+    cameraCapabilities.setMaximumFieldOfView(1.5);
+    QCOMPARE(cameraCapabilities.maximumFieldOfView(), 1.5);
+    cameraCapabilities.setMaximumFieldOfView(-1.5);
+    QCOMPARE(cameraCapabilities.maximumFieldOfView(), 1.0);
+    cameraCapabilities.setMaximumFieldOfView(245.5);
+    QCOMPARE(cameraCapabilities.maximumFieldOfView(), 179.0);
+
+    QGeoCameraCapabilities cameraCapabilities2 = cameraCapabilities;
+    QCOMPARE(cameraCapabilities2.maximumFieldOfView(), 179.0);
+    cameraCapabilities.setMaximumFieldOfView(2.5);
+    QCOMPARE(cameraCapabilities2.maximumFieldOfView(), 179.0);
+}
+
 void tst_QGeoCameraCapabilities::operatorsTest_data(){
     populateGeoCameraCapabilitiesData();
 }
@@ -223,15 +274,22 @@ void tst_QGeoCameraCapabilities::operatorsTest(){
     QFETCH(double, maximumZoomLevel);
     QFETCH(double, minimumTilt);
     QFETCH(double, maximumTilt);
+    QFETCH(double, minimumFieldOfView);
+    QFETCH(double, maximumFieldOfView);
     QFETCH(bool, bearingSupport);
     QFETCH(bool, rollingSupport);
     QFETCH(bool, tiltingSupport);
+
+    minimumFieldOfView = qBound(1.0, minimumFieldOfView, 179.0);
+    maximumFieldOfView = qBound(1.0, maximumFieldOfView, 179.0);
 
     QGeoCameraCapabilities cameraCapabilities;
     cameraCapabilities.setMinimumZoomLevel(minimumZoomLevel);
     cameraCapabilities.setMaximumZoomLevel(maximumZoomLevel);
     cameraCapabilities.setMinimumTilt(minimumTilt);
     cameraCapabilities.setMaximumTilt(maximumTilt);
+    cameraCapabilities.setMinimumFieldOfView(minimumFieldOfView);
+    cameraCapabilities.setMaximumFieldOfView(maximumFieldOfView);
     cameraCapabilities.setSupportsBearing(bearingSupport);
     cameraCapabilities.setSupportsRolling(rollingSupport);
     cameraCapabilities.setSupportsTilting(tiltingSupport);
@@ -242,17 +300,21 @@ void tst_QGeoCameraCapabilities::operatorsTest(){
     QCOMPARE(cameraCapabilities2.maximumZoomLevel(), maximumZoomLevel);
     QCOMPARE(cameraCapabilities2.minimumTilt(), minimumTilt);
     QCOMPARE(cameraCapabilities2.maximumTilt(), maximumTilt);
-    QVERIFY2(cameraCapabilities2.supportsBearing() == bearingSupport, "Copy constructor failed for bearing support");
-    QVERIFY2(cameraCapabilities2.supportsRolling() == rollingSupport, "Copy constructor failed for rolling support ");
-    QVERIFY2(cameraCapabilities2.supportsTilting() == tiltingSupport, "Copy constructor failed for tilting support");
+    QVERIFY2(cameraCapabilities2.supportsBearing() == bearingSupport, "Assignment operator failed for bearing support");
+    QVERIFY2(cameraCapabilities2.supportsRolling() == rollingSupport, "Assignment operator failed for rolling support ");
+    QVERIFY2(cameraCapabilities2.supportsTilting() == tiltingSupport, "Assignment operator failed for tilting support");
+    QCOMPARE(cameraCapabilities2.minimumFieldOfView(), minimumFieldOfView);
+    QCOMPARE(cameraCapabilities2.maximumFieldOfView(), maximumFieldOfView);
     // verify that values have not changed after a constructor copy
     QCOMPARE(cameraCapabilities.minimumZoomLevel(), cameraCapabilities2.minimumZoomLevel());
     QCOMPARE(cameraCapabilities.maximumZoomLevel(), cameraCapabilities2.maximumZoomLevel());
-    QVERIFY2(cameraCapabilities.supportsBearing() == cameraCapabilities2.supportsBearing(), "Copy constructor failed for bearing support");
-    QVERIFY2(cameraCapabilities.supportsRolling() == cameraCapabilities2.supportsRolling(), "Copy constructor failed for rolling support ");
-    QVERIFY2(cameraCapabilities.supportsTilting() == cameraCapabilities2.supportsTilting(), "Copy constructor failed for tilting support");
+    QVERIFY2(cameraCapabilities.supportsBearing() == cameraCapabilities2.supportsBearing(), "Assignment operator failed for bearing support");
+    QVERIFY2(cameraCapabilities.supportsRolling() == cameraCapabilities2.supportsRolling(), "Assignment operator failed for rolling support ");
+    QVERIFY2(cameraCapabilities.supportsTilting() == cameraCapabilities2.supportsTilting(), "Assignment operator failed for tilting support");
     QCOMPARE(cameraCapabilities.minimumTilt(), cameraCapabilities2.minimumTilt());
     QCOMPARE(cameraCapabilities.maximumTilt(), cameraCapabilities2.maximumTilt());
+    QCOMPARE(cameraCapabilities.minimumFieldOfView(), cameraCapabilities2.minimumFieldOfView());
+    QCOMPARE(cameraCapabilities.maximumFieldOfView(), cameraCapabilities2.maximumFieldOfView());
 }
 
 void tst_QGeoCameraCapabilities::isValidTest(){

@@ -35,6 +35,7 @@ QT_USE_NAMESPACE
 
 void tst_QGeoCodingManager::initTestCase()
 {
+#if QT_CONFIG(library)
     /*
      * Set custom path since CI doesn't install test plugins
      */
@@ -44,6 +45,7 @@ void tst_QGeoCodingManager::initTestCase()
 #else
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()
                                      + QStringLiteral("/../../../plugins"));
+#endif
 #endif
     tst_QGeoCodingManager::loadGeocodingManager();
 }

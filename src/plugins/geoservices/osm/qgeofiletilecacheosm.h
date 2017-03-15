@@ -72,13 +72,12 @@ protected:
     void dropTiles(int mapId);
     void loadTiles(int mapId);
 
-    void initOfflineRegistry(int mapId = -1);
+    void initOfflineRegistry(int mapId);
     void clearObsoleteTiles(const QGeoTileProviderOsm *p);
 
     QString m_offlineDirectory;
     QHash<QGeoTileSpec, QString> m_tilespecToOfflineFilepath;
-    QAtomicInt m_requestCancel;
-    QFuture<void> m_future;
+    QMap<int, QAtomicInt> m_requestCancel;
     QMap<int, QFuture<void>> m_mapIdFutures;
     QMutex storageLock;
     QVector<QGeoTileProviderOsm *> m_providers;

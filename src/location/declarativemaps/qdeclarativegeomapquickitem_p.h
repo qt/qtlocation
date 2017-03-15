@@ -59,6 +59,17 @@
 
 QT_BEGIN_NAMESPACE
 
+class QMapQuickItemMatrix4x4 : public QQuickTransform
+{
+public:
+    QMapQuickItemMatrix4x4(QObject *parent = nullptr);
+
+    void setMatrix(const QMatrix4x4& matrix);
+    void applyTo(QMatrix4x4 *matrix) const Q_DECL_OVERRIDE;
+
+    QMatrix4x4 m_matrix;
+};
+
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapQuickItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
@@ -112,6 +123,7 @@ private:
     qreal zoomLevel_;
     bool mapAndSourceItemSet_;
     bool updatingGeometry_;
+    QMapQuickItemMatrix4x4 *matrix_;
 };
 
 QT_END_NAMESPACE

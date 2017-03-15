@@ -57,6 +57,8 @@ public:
 
     QGeoCameraCapabilitiesPrivate &operator = (const QGeoCameraCapabilitiesPrivate &other);
 
+    bool operator == (const QGeoCameraCapabilitiesPrivate &rhs) const;
+
     bool supportsBearing_;
     bool supportsRolling_;
     bool supportsTilting_;
@@ -125,6 +127,21 @@ QGeoCameraCapabilitiesPrivate &QGeoCameraCapabilitiesPrivate::operator = (const 
     return *this;
 }
 
+bool QGeoCameraCapabilitiesPrivate::operator == (const QGeoCameraCapabilitiesPrivate &rhs) const
+{
+    return ((supportsBearing_ == rhs.supportsBearing_)
+            && (supportsRolling_ == rhs.supportsRolling_)
+            && (supportsTilting_ == rhs.supportsTilting_)
+            && (valid_ == rhs.valid_)
+            && (minZoom_ == rhs.minZoom_)
+            && (maxZoom_ == rhs.maxZoom_)
+            && (minTilt_ == rhs.minTilt_)
+            && (maxTilt_ == rhs.maxTilt_)
+            && (tileSize_ == rhs.tileSize_)
+            && (minimumFieldOfView_ == rhs.minimumFieldOfView_)
+            && (maximumFieldOfView_ == rhs.maximumFieldOfView_));
+}
+
 /*!
     \class QGeoCameraCapabilities
     \inmodule QtLocation
@@ -169,6 +186,16 @@ QGeoCameraCapabilities &QGeoCameraCapabilities::operator = (const QGeoCameraCapa
 
     d = other.d;
     return *this;
+}
+
+bool QGeoCameraCapabilities::operator == (const QGeoCameraCapabilities &rhs) const
+{
+    return (*(d.constData()) == *(rhs.d.constData()));
+}
+
+bool QGeoCameraCapabilities::operator != (const QGeoCameraCapabilities &other) const
+{
+    return !(operator==(other));
 }
 
 void QGeoCameraCapabilities::setTileSize(int tileSize)
@@ -388,7 +415,7 @@ double QGeoCameraCapabilities::minimumFieldOfView() const
 */
 void QGeoCameraCapabilities::setMaximumFieldOfView(double maximumFieldOfView)
 {
-    d->maximumFieldOfView_ = maximumFieldOfView;
+    d->maximumFieldOfView_ = qBound(1.0, maximumFieldOfView, 179.0);
     d->valid_ = true;
 }
 

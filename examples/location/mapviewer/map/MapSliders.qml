@@ -41,6 +41,7 @@
 import QtQuick 2.6
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 2.0 as C2
 
 Row {
     id: containerRow
@@ -49,6 +50,7 @@ Row {
     property real fontSize : 14
     property color labelBackground : "transparent"
     property int edge: Qt.RightEdge
+    property alias expanded: sliderToggler.checked
 
     function rightEdge() {
         return (containerRow.edge === Qt.RightEdge);
@@ -65,7 +67,7 @@ Row {
         width: 32
         height: 96
         checkable: true
-        checked: false
+        checked: true
         anchors.verticalCenter: parent.verticalCenter
 
         transform:  Scale {
@@ -204,58 +206,52 @@ Row {
 
             // The sliders row
             Row {
-                spacing: 10
+                spacing: -10
                 id: sliderRow
                 height: sliderContainer.slidersHeight
 
-                Slider {
+                C2.Slider {
                     id: zoomSlider
                     height: parent.height
                     orientation : Qt.Vertical
+                    from : containerRow.mapSource.minimumZoomLevel
+                    to : containerRow.mapSource.maximumZoomLevel
+                    value : containerRow.mapSource.zoomLevel
                     onValueChanged: {
                             containerRow.mapSource.zoomLevel = value
                     }
-                    Component.onCompleted: {
-                        minimumValue = Qt.binding(function() { return containerRow.mapSource.minimumZoomLevel; })
-                        maximumValue = Qt.binding(function() { return containerRow.mapSource.maximumZoomLevel; })
-                        value = Qt.binding(function() { return containerRow.mapSource.zoomLevel; })
-                    }
                 }
-                Slider {
+                C2.Slider {
                     id: bearingSlider
                     height: parent.height
-                    minimumValue: 0
-                    maximumValue: 360
+                    from: 0
+                    to: 360
                     orientation : Qt.Vertical
                     value: containerRow.mapSource.bearing
                     onValueChanged: {
                         containerRow.mapSource.bearing = value;
                     }
                 }
-                Slider {
+                C2.Slider {
                     id: tiltSlider
                     height: parent.height
                     orientation : Qt.Vertical
+                    from: containerRow.mapSource.minimumTilt;
+                    to: containerRow.mapSource.maximumTilt
+                    value: containerRow.mapSource.tilt
                     onValueChanged: {
                         containerRow.mapSource.tilt = value;
                     }
-                    Component.onCompleted: {
-                        minimumValue = Qt.binding(function() { return containerRow.mapSource.minimumTilt; })
-                        maximumValue = Qt.binding(function() { return containerRow.mapSource.maximumTilt; })
-                        value = Qt.binding(function() { return containerRow.mapSource.tilt; })
-                    }
                 }
-                Slider {
+                C2.Slider {
                     id: fovSlider
                     height: parent.height
                     orientation : Qt.Vertical
+                    from: containerRow.mapSource.minimumFieldOfView
+                    to: containerRow.mapSource.maximumFieldOfView
+                    value: containerRow.mapSource.fieldOfView
                     onValueChanged: {
                         containerRow.mapSource.fieldOfView = value;
-                    }
-                    Component.onCompleted: {
-                        minimumValue = Qt.binding(function() { return containerRow.mapSource.minimumFieldOfView; })
-                        maximumValue = Qt.binding(function() { return containerRow.mapSource.maximumFieldOfView; })
-                        value = Qt.binding(function() { return containerRow.mapSource.fieldOfView; })
                     }
                 }
             } // Row sliders

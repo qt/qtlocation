@@ -30,7 +30,9 @@
 #include <QString>
 #include <QtTest/QtTest>
 
+#if QT_CONFIG(process)
 #include <QtCore/QProcessEnvironment>
+#endif
 #include <QtPositioning/QGeoCircle>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceEditorial>
@@ -105,7 +107,7 @@ void tst_QPlaceManagerNokia::initTestCase()
     QVariantMap params;
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     QVERIFY(providers.contains("here"));
-#ifndef QT_NO_PROCESS
+#if QT_CONFIG(process)
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
     if (!(env.contains(AppIdEnv) && env.contains(TokenEnv)))

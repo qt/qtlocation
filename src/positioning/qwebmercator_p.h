@@ -52,7 +52,6 @@
 
 #include <qglobal.h>
 #include <QtCore/qvariant.h>
-#include <math.h>
 #include "qpositioningglobal_p.h"
 
 QT_BEGIN_NAMESPACE

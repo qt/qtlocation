@@ -77,9 +77,9 @@ double knotsToMetersPerSecond(double knots)
 
 QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
 :   QGeoPositionInfoSource(parent), m_master(new QGeoclueMaster(this)), m_provider(0), m_pos(0),
-    m_vel(0), m_lastVelocityIsFresh(false), m_regularUpdateTimedOut(false), m_lastVelocity(qQNaN()),
-    m_lastDirection(qQNaN()), m_lastClimb(qQNaN()), m_lastPositionFromSatellite(false),
-    m_running(false), m_error(NoError), m_requestTimer(this)
+    m_vel(0), m_requestTimer(this), m_lastVelocityIsFresh(false), m_regularUpdateTimedOut(false),
+    m_lastVelocity(qQNaN()), m_lastDirection(qQNaN()), m_lastClimb(qQNaN()), m_lastPositionFromSatellite(false),
+    m_running(false), m_error(NoError)
 {
     qDBusRegisterMetaType<Accuracy>();
 

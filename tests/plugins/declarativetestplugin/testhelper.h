@@ -38,6 +38,7 @@
 #include <QSignalSpy>
 #include <QQuickItem>
 #include <QQuickWindow>
+#include <QSysInfo>
 
 QT_BEGIN_NAMESPACE
 
@@ -50,6 +51,14 @@ public:
     {
         QSignalSpy spy(item->window(), &QQuickWindow::afterAnimating);
         return spy.wait(timeout);
+    }
+
+    Q_INVOKABLE int x86Bits() const
+    {
+        if ( QSysInfo::currentCpuArchitecture() == "x86_64" )
+            return 64;
+        else
+            return 32;
     }
 };
 

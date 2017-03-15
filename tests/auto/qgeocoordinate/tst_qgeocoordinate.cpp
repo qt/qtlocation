@@ -894,16 +894,17 @@ private slots:
         QTest::addColumn<int>("nextValue");
         QTest::addColumn<QByteArray>("debugString");
 
-
         QTest::newRow("uninitialized") << QGeoCoordinate() << 45
                 << QByteArray("QGeoCoordinate(?, ?) 45");
         QTest::newRow("initialized without altitude") << BRISBANE << 45
-                << (QString("QGeoCoordinate(%1, %2) 45").arg(BRISBANE.latitude())
-                        .arg(BRISBANE.longitude())).toLatin1();
+                << (QString("QGeoCoordinate(%1, %2) 45").arg(BRISBANE.latitude(), 0, 'g', 9)
+                        .arg(BRISBANE.longitude(), 0, 'g', 9)).toLatin1();
         QTest::newRow("invalid initialization") << QGeoCoordinate(-100,-200) << 45
                 << QByteArray("QGeoCoordinate(?, ?) 45");
         QTest::newRow("initialized with altitude") << QGeoCoordinate(1,2,3) << 45
                 << QByteArray("QGeoCoordinate(1, 2, 3) 45");
+        QTest::newRow("extra long coordinates") << QGeoCoordinate(89.123412341, 179.123412341)
+                << 45 << QByteArray("QGeoCoordinate(89.123412341, 179.12341234) 45");
     }
 
     void hash()

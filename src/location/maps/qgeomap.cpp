@@ -92,6 +92,12 @@ void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
     emit cameraDataChanged(d->m_cameraData);
 }
 
+void QGeoMap::setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities)
+{
+    Q_D(QGeoMap);
+    d->setCameraCapabilities(cameraCapabilities);
+}
+
 QGeoCameraData QGeoMap::cameraData() const
 {
     Q_D(const QGeoMap);
@@ -104,6 +110,7 @@ void QGeoMap::setActiveMapType(const QGeoMapType type)
     if (type == d->m_activeMapType)
         return;
     d->m_activeMapType = type;
+    d->setCameraCapabilities(d->m_engine->cameraCapabilities(type)); // emits
     d->changeActiveMapType(type);
     emit activeMapTypeChanged();
 }
@@ -147,10 +154,7 @@ const QGeoProjection &QGeoMap::geoProjection() const
 QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
     Q_D(const QGeoMap);
-    if (!d->m_engine.isNull())
-        return d->m_engine->cameraCapabilities();
-    else
-        return QGeoCameraCapabilities();
+    return d->m_cameraCapabilities;
 }
 
 void QGeoMap::prefetchData()
@@ -199,7 +203,7 @@ void QGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 {
     Q_D(QGeoMap);
     if (item && !d->m_mapItems.contains(item) && d->supportedMapItemTypes() & item->itemType()) {
-        d->m_mapItems.insert(item);
+        d->m_mapItems.append(item);
         d->addMapItem(item);
     }
 }
@@ -209,7 +213,7 @@ void QGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
     Q_D(QGeoMap);
     if (item && d->m_mapItems.contains(item)) {
         d->removeMapItem(item);
-        d->m_mapItems.remove(item);
+        d->m_mapItems.removeOne(item);
     }
 }
 
@@ -232,12 +236,30 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection 
       m_engine(engine),
       m_activeMapType(QGeoMapType())
 {
+    // Setting the default camera caps without emitting anything
+    if (engine)
+        m_cameraCapabilities = m_engine->cameraCapabilities(m_activeMapType);
 }
 
 QGeoMapPrivate::~QGeoMapPrivate()
 {
     if (m_geoProjection)
         delete m_geoProjection;
+}
+
+void QGeoMapPrivate::setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities)
+{
+    Q_Q(QGeoMap);
+    if (m_cameraCapabilities == cameraCapabilities)
+        return;
+    QGeoCameraCapabilities oldCaps = m_cameraCapabilities;
+    m_cameraCapabilities = cameraCapabilities;
+    emit q->cameraCapabilitiesChanged(oldCaps);
+}
+
+const QGeoCameraCapabilities &QGeoMapPrivate::cameraCapabilities() const
+{
+    return m_cameraCapabilities;
 }
 
 void QGeoMapPrivate::addParameter(QGeoMapParameter *param)

@@ -38,7 +38,7 @@
 #define QTILEPROVIDEROSM_H
 
 #include <QtLocation/private/qgeomaptype_p.h>
-
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtCore/QUrl>
 #include <QtCore/QVector>
 #include <QtNetwork/QNetworkAccessManager>
@@ -142,7 +142,8 @@ public:
 
     QGeoTileProviderOsm(QNetworkAccessManager *nm,
                         const QGeoMapType &mapType,
-                        const QVector<TileProvider *> &providers);
+                        const QVector<TileProvider *> &providers,
+                        const QGeoCameraCapabilities &cameraCapabilities);
     ~QGeoTileProviderOsm();
 
     QUrl tileAddress(int x, int y, int z) const;
@@ -157,6 +158,7 @@ public:
     bool isValid() const;
     bool isResolved() const;
     const QDateTime timestamp() const;
+    QGeoCameraCapabilities cameraCapabilities() const;
 
 Q_SIGNALS:
     void resolutionFinished(const QGeoTileProviderOsm *provider);
@@ -170,6 +172,7 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void onResolutionFinished(TileProvider *provider);
     void onResolutionError(TileProvider *provider);
+    void updateCameraCapabilities();
 
 protected:
     void addProvider(TileProvider *provider);
@@ -182,6 +185,7 @@ protected:
     int m_providerId;
     QGeoMapType m_mapType;
     Status m_status;
+    QGeoCameraCapabilities m_cameraCapabilities;
 };
 
 QT_END_NAMESPACE

@@ -65,6 +65,9 @@ public:
 
     QGeoCameraCapabilities &operator = (const QGeoCameraCapabilities &other);
 
+    bool operator == (const QGeoCameraCapabilities &other) const;
+    bool operator != (const QGeoCameraCapabilities &other) const;
+
     void setTileSize(int tileSize);
     int tileSize() const;
 

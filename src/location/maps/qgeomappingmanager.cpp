@@ -128,11 +128,6 @@ int QGeoMappingManager::managerVersion() const
     return d_ptr->engine->managerVersion();
 }
 
-QGeoCameraCapabilities QGeoMappingManager::cameraCapabilities() const
-{
-    return d_ptr->engine->cameraCapabilities();
-}
-
 /*!
     Returns a new QGeoMap instance which will be managed by this manager.
 */

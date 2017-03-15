@@ -109,6 +109,9 @@ void QGeoTiledMapOsm::onProviderDataUpdated(const QGeoTileProviderOsm *provider)
     if (copyRights.isEmpty() && provider->mapType().style() == QGeoMapType::CustomMap)
         copyRights = m_engine->customCopyright();
 
+    // Update CameraCapabilities
+    setCameraCapabilities(provider->cameraCapabilities());
+
     emit copyrightsChanged(copyRights);
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2014 Canonical Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,72 +34,26 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGER_H
-#define QGEOMAPPINGMANAGER_H
+#ifndef QGEOMAPPINGMANAGERENGINEITEMSOVERLAY_H
+#define QGEOMAPPINGMANAGERENGINEITEMSOVERLAY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomaptype_p.h>
+#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/private/qgeomappingmanagerengine_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMap;
-class QLocale;
-class QGeoRectangle;
-class QGeoCoordinate;
-class QGeoMappingManagerPrivate;
-class QGeoMapRequestOptions;
-class QGeoMappingManagerEngine;
-class QGeoCameraCapabilities;
-
-
-class Q_LOCATION_PRIVATE_EXPORT QGeoMappingManager : public QObject
+class QGeoMappingManagerEngineItemsOverlay : public QGeoMappingManagerEngine
 {
     Q_OBJECT
 
 public:
-    ~QGeoMappingManager();
+    QGeoMappingManagerEngineItemsOverlay(const QVariantMap &parameters,
+                                        QGeoServiceProvider::Error *error, QString *errorString);
+    ~QGeoMappingManagerEngineItemsOverlay();
 
-    QString managerName() const;
-    int managerVersion() const;
-
-    QGeoMap *createMap(QObject *parent);
-
-    QList<QGeoMapType> supportedMapTypes() const;
-
-    bool isInitialized() const;
-
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-Q_SIGNALS:
-    void initialized();
-    void supportedMapTypesChanged();
-
-protected:
-    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
-
-private:
-    QGeoMappingManagerPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoMappingManager)
-
-    friend class QGeoServiceProvider;
-    friend class QGeoServiceProviderPrivate;
+    QGeoMap *createMap() Q_DECL_OVERRIDE;
 };
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QGEOMAPPINGMANAGERENGINENOMAP_H

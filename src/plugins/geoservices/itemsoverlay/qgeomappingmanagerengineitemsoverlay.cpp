@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,72 +34,47 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGER_H
-#define QGEOMAPPINGMANAGER_H
+#include "qgeomappingmanagerengineitemsoverlay.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
+#include "qgeomapitemsoverlay.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMap;
-class QLocale;
-class QGeoRectangle;
-class QGeoCoordinate;
-class QGeoMappingManagerPrivate;
-class QGeoMapRequestOptions;
-class QGeoMappingManagerEngine;
-class QGeoCameraCapabilities;
 
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMappingManager : public QObject
+QGeoMappingManagerEngineItemsOverlay::QGeoMappingManagerEngineItemsOverlay(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+:   QGeoMappingManagerEngine()
 {
-    Q_OBJECT
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+    QGeoCameraCapabilities cameraCaps;
+    cameraCaps.setMinimumZoomLevel(0.0);
+    cameraCaps.setMaximumZoomLevel(30.0);
+    cameraCaps.setSupportsBearing(true);
+    cameraCaps.setSupportsTilting(true);
+    cameraCaps.setMinimumTilt(0);
+    cameraCaps.setMaximumTilt(89);
+    cameraCaps.setMinimumFieldOfView(1.0);
+    cameraCaps.setMaximumFieldOfView(179.0);
+    setCameraCapabilities(cameraCaps);
 
-public:
-    ~QGeoMappingManager();
+    QList<QGeoMapType> mapTypes;
+    mapTypes << QGeoMapType(QGeoMapType::NoMap, tr("Empty Map"), tr("Empty Map"), false, false, 1);
+    setSupportedMapTypes(mapTypes);
 
-    QString managerName() const;
-    int managerVersion() const;
+    engineInitialized();
+}
 
-    QGeoMap *createMap(QObject *parent);
+QGeoMappingManagerEngineItemsOverlay::~QGeoMappingManagerEngineItemsOverlay()
+{
+}
 
-    QList<QGeoMapType> supportedMapTypes() const;
-
-    bool isInitialized() const;
-
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-Q_SIGNALS:
-    void initialized();
-    void supportedMapTypesChanged();
-
-protected:
-    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
-
-private:
-    QGeoMappingManagerPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoMappingManager)
-
-    friend class QGeoServiceProvider;
-    friend class QGeoServiceProviderPrivate;
-};
+QGeoMap *QGeoMappingManagerEngineItemsOverlay::createMap()
+{
+    return new QGeoMapItemsOverlay(this, this);
+}
 
 QT_END_NAMESPACE
-
-#endif

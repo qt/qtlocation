@@ -1,19 +1,12 @@
 TEMPLATE = subdirs
 
-SUBDIRS = nokia osm mapbox esri
+SUBDIRS = nokia osm mapbox esri itemsoverlay
 
-qtHaveModule(opengl) {
-    linux|android: {
-        equals(QT_GCC_MAJOR_VERSION, 4): greaterThan(QT_GCC_MINOR_VERSION, 8) {
-            SUBDIRS += mapboxgl
-        }
-
-        greaterThan(QT_GCC_MAJOR_VERSION, 4) {
-            SUBDIRS += mapboxgl
-        }
-    }
-
-    ios|macos: {
-        SUBDIRS += mapboxgl
+qtConfig(c++14):!win32 {
+    !exists(../../3rdparty/mapbox-gl-native/CMakeLists.txt) {
+        warning("Submodule mapbox-gl-native does not exist. Run 'git submodule update --init' on qtlocation.")
+    } else {
+        SUBDIRS += mapboxgl ../../3rdparty/mapbox-gl-native
+        mapboxgl.depends = ../../3rdparty/mapbox-gl-native
     }
 }

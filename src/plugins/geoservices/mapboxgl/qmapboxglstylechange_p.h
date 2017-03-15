@@ -68,11 +68,15 @@ class QMapboxGLStyleSetLayoutProperty : public QMapboxGLStyleChange
 {
 public:
     static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapParameter(QGeoMapParameter *);
+    static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativeGeoMapItemBase *);
 
     void apply(QMapboxGL *map) Q_DECL_OVERRIDE;
 
 private:
+    static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativePolylineMapItem *);
+
     QMapboxGLStyleSetLayoutProperty() = default;
+    QMapboxGLStyleSetLayoutProperty(const QString &layer, const QString &property, const QVariant &value);
 
     QString m_layer;
     QString m_property;
@@ -93,7 +97,7 @@ private:
     static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativePolylineMapItem *);
 
     QMapboxGLStyleSetPaintProperty() = default;
-    QMapboxGLStyleSetPaintProperty(const QString& layer, const QString& property, const QVariant &value);
+    QMapboxGLStyleSetPaintProperty(const QString &layer, const QString &property, const QVariant &value);
 
     QString m_layer;
     QString m_property;

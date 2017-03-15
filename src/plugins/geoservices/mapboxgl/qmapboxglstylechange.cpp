@@ -62,13 +62,24 @@ QString getId(QDeclarativeGeoMapItemBase *mapItem)
     return QStringLiteral("QDeclarativeGeoMapItemBase-") + QString::number(quint64(mapItem));
 }
 
+// Mapbox GL supports geometry segments that spans above 180 degrees in
+// longitude. To keep visual expectations in parity with Qt, we need to adapt
+// the coordinates to always use the shortest path when in ambiguity.
+bool geoRectangleCrossesDateLine(const QGeoRectangle &rect) {
+    return rect.topLeft().longitude() > rect.bottomRight().longitude();
+}
+
 QMapbox::Feature featureFromMapRectangle(QDeclarativeRectangleMapItem *mapItem)
 {
     const QGeoRectangle *rect = static_cast<const QGeoRectangle *>(&mapItem->geoShape());
     QMapbox::Coordinate bottomLeft { rect->bottomLeft().latitude(), rect->bottomLeft().longitude() };
-    QMapbox::Coordinate bottomRight { rect->bottomRight().latitude(), rect->bottomRight().longitude() };
     QMapbox::Coordinate topLeft { rect->topLeft().latitude(), rect->topLeft().longitude() };
+    QMapbox::Coordinate bottomRight { rect->bottomRight().latitude(), rect->bottomRight().longitude() };
     QMapbox::Coordinate topRight { rect->topRight().latitude(), rect->topRight().longitude() };
+    if (geoRectangleCrossesDateLine(*rect)) {
+        bottomRight.second += 360.0;
+        topRight.second += 360.0;
+    }
     QMapbox::CoordinatesCollections geometry { { { bottomLeft, bottomRight, topRight, topLeft, bottomLeft } } };
 
     return QMapbox::Feature(QMapbox::Feature::PolygonType, geometry, {}, getId(mapItem));
@@ -78,8 +89,13 @@ QMapbox::Feature featureFromMapPolygon(QDeclarativePolygonMapItem *mapItem)
 {
     const QGeoPath *path = static_cast<const QGeoPath *>(&mapItem->geoShape());
     QMapbox::Coordinates coordinates;
+    const bool crossesDateline = geoRectangleCrossesDateLine(path->boundingGeoRectangle());
     for (const QGeoCoordinate &coordinate : path->path()) {
-        coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
+        if (!coordinates.empty() && crossesDateline && qAbs(coordinate.longitude() - coordinates.last().second) > 180.0) {
+            coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() + (coordinate.longitude() >= 0 ? -360.0 : 360.0) };
+        } else {
+            coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
+        }
     }
     coordinates.append(coordinates.first());
     QMapbox::CoordinatesCollections geometry { { coordinates } };
@@ -91,8 +107,13 @@ QMapbox::Feature featureFromMapPolyline(QDeclarativePolylineMapItem *mapItem)
 {
     const QGeoPath *path = static_cast<const QGeoPath *>(&mapItem->geoShape());
     QMapbox::Coordinates coordinates;
+    const bool crossesDateline = geoRectangleCrossesDateLine(path->boundingGeoRectangle());
     for (const QGeoCoordinate &coordinate : path->path()) {
-        coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
+        if (!coordinates.empty() && crossesDateline && qAbs(coordinate.longitude() - coordinates.last().second) > 180.0) {
+            coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() + (coordinate.longitude() >= 0 ? -360.0 : 360.0) };
+        } else {
+            coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
+        }
     }
     QMapbox::CoordinatesCollections geometry { { coordinates } };
 
@@ -173,6 +194,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapItem(QDe
     changes << QMapboxGLStyleAddLayer::fromFeature(feature);
     changes << QMapboxGLStyleAddSource::fromFeature(feature);
     changes << QMapboxGLStyleSetPaintProperty::fromMapItem(item);
+    changes << QMapboxGLStyleSetLayoutProperty::fromMapItem(item);
 
     return changes;
 }
@@ -225,6 +247,36 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fro
     return changes;
 }
 
+QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fromMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    switch (item->itemType()) {
+    case QGeoMap::MapPolyline:
+        return fromMapItem(static_cast<QDeclarativePolylineMapItem *>(item));
+    default:
+        qWarning() << "Unsupported QGeoMap item type: " << item->itemType();
+        return QList<QSharedPointer<QMapboxGLStyleChange>>();
+    }
+}
+
+QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fromMapItem(QDeclarativePolylineMapItem *item)
+{
+    QList<QSharedPointer<QMapboxGLStyleChange>> changes;
+    changes.reserve(2);
+
+    const QString id = getId(item);
+
+    changes << QSharedPointer<QMapboxGLStyleChange>(
+        new QMapboxGLStyleSetLayoutProperty(id, QStringLiteral("line-cap"), QStringLiteral("square")));
+    changes << QSharedPointer<QMapboxGLStyleChange>(
+        new QMapboxGLStyleSetLayoutProperty(id, QStringLiteral("line-join"), QStringLiteral("bevel")));
+
+    return changes;
+}
+
+QMapboxGLStyleSetLayoutProperty::QMapboxGLStyleSetLayoutProperty(const QString& layer, const QString& property, const QVariant &value)
+    : m_layer(layer), m_property(property), m_value(value)
+{
+}
 
 // QMapboxGLStyleSetPaintProperty
 

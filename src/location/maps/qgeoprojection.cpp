@@ -53,6 +53,14 @@ namespace {
                                                 QDoubleVector2D(-1.0,1.0) };
 }
 
+static QMatrix4x4 toMatrix4x4(const QDoubleMatrix4x4 &m)
+{
+    return QMatrix4x4(m(0,0), m(0,1), m(0,2), m(0,3),
+                      m(1,0), m(1,1), m(1,2), m(1,3),
+                      m(2,0), m(2,1), m(2,2), m(2,3),
+                      m(3,0), m(3,1), m(3,2), m(3,3));
+}
+
 QT_BEGIN_NAMESPACE
 
 QGeoProjection::QGeoProjection()
@@ -185,12 +193,7 @@ QDoubleVector2D QGeoProjectionWebMercator::unwrapMapProjection(const QDoubleVect
 
 QDoubleVector2D QGeoProjectionWebMercator::wrappedMapProjectionToItemPosition(const QDoubleVector2D &wrappedProjection) const
 {
-    QDoubleVector3D pos = wrappedProjection * m_sideLength;
-    QDoubleVector2D res =  (m_transformation * pos).toVector2D();
-    res += QDoubleVector2D(1.0,1.0);
-    res *= 0.5;
-    res *= QDoubleVector2D(m_viewportWidth, m_viewportHeight);
-    return res;
+    return (m_transformation * wrappedProjection).toVector2D();
 }
 
 QDoubleVector2D QGeoProjectionWebMercator::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
@@ -249,6 +252,44 @@ QGeoCoordinate QGeoProjectionWebMercator::wrappedMapProjectionToGeo(const QDoubl
     return mapProjectionToGeo(unwrapMapProjection(wrappedProjection));
 }
 
+QMatrix4x4 QGeoProjectionWebMercator::quickItemTransformation(const QGeoCoordinate &coordinate, const QPointF &anchorPoint, double zoomLevel) const
+{
+    const QDoubleVector2D coordWrapped = geoToWrappedMapProjection(coordinate);
+    double scale = std::pow(0.5, zoomLevel - m_cameraData.zoomLevel());
+    const QDoubleVector2D anchorScaled = QDoubleVector2D(anchorPoint.x(), anchorPoint.y()) * scale;
+    const QDoubleVector2D anchorMercator = anchorScaled / mapWidth();
+
+    // Check for coord OOB, only coordinate is going to be projected to item position, so
+    // testing also coordAnchored might be superfluous
+    if (!isProjectable(coordWrapped))
+        return QMatrix4x4();
+
+    const QDoubleVector2D coordAnchored = coordWrapped - anchorMercator;
+    const QDoubleVector2D coordAnchoredScaled = coordAnchored * m_sideLength;
+    QDoubleMatrix4x4 matTranslateScale;
+    matTranslateScale.translate(coordAnchoredScaled.x(), coordAnchoredScaled.y(), 0.0);
+
+    scale = std::pow(0.5, (zoomLevel - std::floor(zoomLevel)) +
+                     (std::floor(zoomLevel) - std::floor(m_cameraData.zoomLevel())));
+    matTranslateScale.scale(scale);
+
+    const QDoubleVector2D coordOnScreen = wrappedMapProjectionToItemPosition(coordWrapped);
+    QDoubleMatrix4x4 matTransformation;
+    matTransformation.translate(-coordOnScreen.x(), -coordOnScreen.y(), 0);
+    matTransformation *= m_quickItemTransformation;
+
+    /*
+     *  The full transformation chain for quickItemTransformation() is:
+     *  matScreenShift * m_quickItemTransformation * matTranslate * matScale
+     *  where:
+     *  matScreenShift = translate(-coordOnScreen.x(), -coordOnScreen.y(), 0)
+     *  matTranslate = translate(coordAnchoredScaled.x(), coordAnchoredScaled.y(), 0.0)
+     *  matScale = scale(scale)
+     */
+
+    return toMatrix4x4(matTransformation * matTranslateScale);
+}
+
 bool QGeoProjectionWebMercator::isProjectable(const QDoubleVector2D &wrappedProjection) const
 {
     if (m_cameraData.tilt() == 0.0)
@@ -269,6 +310,9 @@ QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleRegion() const
     return m_visibleRegion;
 }
 
+/*
+    actual implementation of itemPositionToWrappedMapProjection
+*/
 QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
 {
     QDoubleVector2D pos = itemPosition;
@@ -384,7 +428,25 @@ void QGeoProjectionWebMercator::setupCamera()
     QDoubleMatrix4x4 projectionMatrix;
     projectionMatrix.frustum(-m_halfWidth, m_halfWidth, -m_halfHeight, m_halfHeight, m_nearPlane, m_farPlane);
 
-    m_transformation = projectionMatrix * cameraMatrix;
+    /*
+     * The full transformation chain for m_transformation is:
+     * matScreen * matScreenFit * matShift *  projectionMatrix * cameraMatrix * matZoomLevelScale
+     * where:
+     * matZoomLevelScale = scale(m_sideLength, m_sideLength, 1.0)
+     * matShift = translate(1.0, 1.0, 0.0)
+     * matScreenFit = scale(0.5, 0.5, 1.0)
+     * matScreen = scale(m_viewportWidth, m_viewportHeight, 1.0)
+     */
+
+    QDoubleMatrix4x4 matScreenTransformation;
+    matScreenTransformation.scale(0.5 * m_viewportWidth, 0.5 * m_viewportHeight, 1.0);
+    matScreenTransformation(0,3) = 0.5 * m_viewportWidth;
+    matScreenTransformation(1,3) = 0.5 * m_viewportHeight;
+
+    m_transformation = matScreenTransformation *  projectionMatrix * cameraMatrix;
+    m_quickItemTransformation = m_transformation;
+    m_transformation.scale(m_sideLength, m_sideLength, 1.0);
+
     m_centerNearPlane = m_eye + m_viewNormalized;
     m_centerNearPlaneMercator = m_eyeMercator + m_viewNormalized * m_nearPlaneMercator;
 

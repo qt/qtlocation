@@ -65,6 +65,7 @@ QT_BEGIN_NAMESPACE
 
 struct Frustum
 {
+    QDoubleVector3D apex;
     QDoubleVector3D topLeftNear;
     QDoubleVector3D topLeftFar;
     QDoubleVector3D topRightNear;
@@ -103,16 +104,6 @@ public:
 
     Frustum createFrustum(double viewExpansion) const;
 
-    class LengthSorter
-    {
-    public:
-        QDoubleVector3D base;
-        bool operator()(const QDoubleVector3D &lhs, const QDoubleVector3D &rhs)
-        {
-            return (lhs - base).lengthSquared() < (rhs - base).lengthSquared();
-        }
-    };
-
     struct ClippedFootprint
     {
         ClippedFootprint(const PolygonVector &left_, const PolygonVector &mid_, const PolygonVector &right_)
@@ -123,7 +114,6 @@ public:
         PolygonVector right;
     };
 
-    void appendZIntersects(const QDoubleVector3D &start, const QDoubleVector3D &end, double z, QVector<QDoubleVector3D> &results) const;
     PolygonVector frustumFootprint(const Frustum &frustum) const;
 
     QPair<PolygonVector, PolygonVector> splitPolygonAtAxisValue(const PolygonVector &polygon, int axis, double value) const;
@@ -373,168 +363,60 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double viewExpansion) const
 
     Frustum frustum;
 
-    frustum.topLeftFar = cf + (up * hhf) - (right * hwf);
-    frustum.topRightFar = cf + (up * hhf) + (right * hwf);
-    frustum.bottomLeftFar = cf - (up * hhf) - (right * hwf);
-    frustum.bottomRightFar = cf - (up * hhf) + (right * hwf);
+    frustum.apex = eye;
 
-    frustum.topLeftNear = cn + (up * hhn) - (right * hwn);
-    frustum.topRightNear = cn + (up * hhn) + (right * hwn);
-    frustum.bottomLeftNear = cn - (up * hhn) - (right * hwn);
-    frustum.bottomRightNear = cn - (up * hhn) + (right * hwn);
+    frustum.topLeftFar = cf - (up * hhf) - (right * hwf);
+    frustum.topRightFar = cf - (up * hhf) + (right * hwf);
+    frustum.bottomLeftFar = cf + (up * hhf) - (right * hwf);
+    frustum.bottomRightFar = cf + (up * hhf) + (right * hwf);
+
+    frustum.topLeftNear = cn - (up * hhn) - (right * hwn);
+    frustum.topRightNear = cn - (up * hhn) + (right * hwn);
+    frustum.bottomLeftNear = cn + (up * hhn) - (right * hwn);
+    frustum.bottomRightNear = cn + (up * hhn) + (right * hwn);
 
     return frustum;
 }
 
-void QGeoCameraTilesPrivate::appendZIntersects(const QDoubleVector3D &start,
+static bool appendZIntersects(const QDoubleVector3D &start,
                                                const QDoubleVector3D &end,
                                                double z,
-                                               QVector<QDoubleVector3D> &results) const
+                                               QVector<QDoubleVector3D> &results)
 {
     if (start.z() == end.z()) {
-        if (start.z() == z) {
-            results.append(start);
-            results.append(end);
-        }
+        return false;
     } else {
         double f = (start.z() - z) / (start.z() - end.z());
-        if ((0 <= f) && (f <= 1.0)) {
+        if ((f >= 0) && (f <= 1.0)) {
             results.append((1 - f) * start + f * end);
+            return true;
         }
     }
+    return false;
 }
-
-/***************************************************/
-/* Local copy of qSort & qSortHelper to suppress deprecation warnings
- * following the deprecation of QtAlgorithms. The comparison has subtle
- * differences which eluded detection so far. We just reuse old qSort for now.
- **/
-
-template <typename RandomAccessIterator, typename LessThan>
-inline void localqSort(RandomAccessIterator start, RandomAccessIterator end, LessThan lessThan)
-{
-    if (start != end)
-        localqSortHelper(start, end, *start, lessThan);
-}
-
-template <typename RandomAccessIterator, typename T, typename LessThan>
-void localqSortHelper(RandomAccessIterator start, RandomAccessIterator end, const T &t, LessThan lessThan)
-{
-top:
-    int span = int(end - start);
-    if (span < 2)
-        return;
-
-    --end;
-    RandomAccessIterator low = start, high = end - 1;
-    RandomAccessIterator pivot = start + span / 2;
-
-    if (lessThan(*end, *start))
-        qSwap(*end, *start);
-    if (span == 2)
-        return;
-
-    if (lessThan(*pivot, *start))
-        qSwap(*pivot, *start);
-    if (lessThan(*end, *pivot))
-        qSwap(*end, *pivot);
-    if (span == 3)
-        return;
-
-    qSwap(*pivot, *end);
-
-    while (low < high) {
-        while (low < high && lessThan(*low, *end))
-            ++low;
-
-        while (high > low && lessThan(*end, *high))
-            --high;
-
-        if (low < high) {
-            qSwap(*low, *high);
-            ++low;
-            --high;
-        } else {
-            break;
-        }
-    }
-
-    if (lessThan(*low, *end))
-        ++low;
-
-    qSwap(*end, *low);
-    localqSortHelper(start, low, t, lessThan);
-
-    start = low + 1;
-    ++end;
-    goto top;
-}
-/***************************************************/
-
 
 // Returns the intersection of the plane of the map and the camera frustum as a right handed polygon
 PolygonVector QGeoCameraTilesPrivate::frustumFootprint(const Frustum &frustum) const
 {
     PolygonVector points;
-    points.reserve(24);
+    points.reserve(4);
 
-    appendZIntersects(frustum.topLeftNear, frustum.topLeftFar, 0.0, points);
-    appendZIntersects(frustum.topRightNear, frustum.topRightFar, 0.0, points);
-    appendZIntersects(frustum.bottomLeftNear, frustum.bottomLeftFar, 0.0, points);
-    appendZIntersects(frustum.bottomRightNear, frustum.bottomRightFar, 0.0, points);
+    // The camera is always upright. Tilting angle never reach 90degrees.
+    // Meaning: bottom frustum edges always intersect the map plane, top ones may not.
 
-    appendZIntersects(frustum.topLeftNear, frustum.bottomLeftNear, 0.0, points);
-    appendZIntersects(frustum.bottomLeftNear, frustum.bottomRightNear, 0.0, points);
-    appendZIntersects(frustum.bottomRightNear, frustum.topRightNear, 0.0, points);
-    appendZIntersects(frustum.topRightNear, frustum.topLeftNear, 0.0, points);
+    // Top Right
+    if (!appendZIntersects(frustum.apex, frustum.topRightFar, 0.0, points))
+        appendZIntersects(frustum.topRightFar, frustum.bottomRightFar, 0.0, points);
 
-    appendZIntersects(frustum.topLeftFar, frustum.bottomLeftFar, 0.0, points);
-    appendZIntersects(frustum.bottomLeftFar, frustum.bottomRightFar, 0.0, points);
-    appendZIntersects(frustum.bottomRightFar, frustum.topRightFar, 0.0, points);
-    appendZIntersects(frustum.topRightFar, frustum.topLeftFar, 0.0, points);
+    // Bottom Right
+    appendZIntersects(frustum.apex, frustum.bottomRightFar, 0.0, points);
 
-    if (points.isEmpty())
-        return points;
+    // Bottom Left
+    appendZIntersects(frustum.apex, frustum.bottomLeftFar, 0.0, points);
 
-    // sort points into a right handed polygon
-
-    LengthSorter sorter;
-
-    // - initial sort to remove duplicates
-    sorter.base = points.first();
-    localqSort(points.begin(), points.end(), sorter);
-    //std::sort(points.begin(), points.end(), sorter);
-    for (int i = points.size() - 1; i > 0; --i) {
-        if (points.at(i) == points.at(i - 1))
-            points.remove(i);
-    }
-
-    // - proper sort
-    //   - start with the first point, put it in the sorted part of the list
-    //   - add the nearest unsorted point to the last sorted point to the end
-    //     of the sorted points
-    PolygonVector::iterator i;
-    for (i = points.begin(); i != points.end(); ++i) {
-        sorter.base = *i;
-        if (i + 1 != points.end())
-            std::sort(i + 1, points.end(), sorter) ;
-    }
-
-    // - determine if what we have is right handed
-    int size = points.size();
-    if (size >= 3) {
-        QDoubleVector3D normal = QDoubleVector3D::normal(points.at(1) - points.at(0),
-                                                         points.at(2) - points.at(1));
-        // - if not, reverse the list
-        if (normal.z() < 0.0) {
-            int halfSize = size / 2;
-            for (int i = 0; i < halfSize; ++i) {
-                QDoubleVector3D spare = points.at(i);
-                points[i] = points[size - 1 - i];
-                points[size - 1 - i] = spare;
-            }
-        }
-    }
+    // Top Left
+    if (!appendZIntersects(frustum.apex, frustum.topLeftFar, 0.0, points))
+        appendZIntersects(frustum.topLeftFar, frustum.bottomLeftFar, 0.0, points);
 
     return points;
 }

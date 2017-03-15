@@ -66,6 +66,7 @@ class QGeoTileRequestManager;
 class QGeoTileSpec;
 class QSGNode;
 class QQuickWindow;
+class QGeoCameraCapabilities;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapPrivate : public QGeoMapPrivate
 {
@@ -79,6 +80,7 @@ public:
     void updateTile(const QGeoTileSpec &spec);
     void prefetchTiles();
     QGeoMapType activeMapType();
+    void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
 
 protected:
     void changeViewportSize(const QSize& size) Q_DECL_OVERRIDE;

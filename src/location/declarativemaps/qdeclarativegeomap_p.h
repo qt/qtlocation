@@ -54,6 +54,7 @@
 #include <QtLocation/private/qdeclarativegeomapitemgroup_p.h>
 #include <QtLocation/qgeoserviceprovider.h>
 #include <QtLocation/private/qgeocameradata_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtQuick/QQuickItem>
 #include <QtCore/QList>
 #include <QtCore/QPointer>
@@ -78,15 +79,15 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
 
-    Q_PROPERTY(bool bearingSupported READ isBearingSupported NOTIFY bearingSupportChanged)
-    Q_PROPERTY(bool tiltingSupported READ isTiltingSupported NOTIFY tiltingSupportChanged)
-    Q_PROPERTY(qreal minimumTilt READ minimumTilt NOTIFY minimumTiltChanged)
-    Q_PROPERTY(qreal maximumTilt READ maximumTilt NOTIFY maximumTiltChanged)
-    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
+    Q_PROPERTY(qreal minimumTilt READ minimumTilt WRITE setMinimumTilt NOTIFY minimumTiltChanged)
+    Q_PROPERTY(qreal maximumTilt READ maximumTilt WRITE setMaximumTilt NOTIFY maximumTiltChanged)
+
+    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
+
     Q_PROPERTY(qreal fieldOfView READ fieldOfView WRITE setFieldOfView NOTIFY fieldOfViewChanged)
-    Q_PROPERTY(qreal minimumFieldOfView READ minimumFieldOfView NOTIFY minimumFieldOfViewChanged)
-    Q_PROPERTY(qreal maximumFieldOfView READ maximumFieldOfView NOTIFY minimumFieldOfViewChanged)
+    Q_PROPERTY(qreal minimumFieldOfView READ minimumFieldOfView WRITE setMinimumFieldOfView NOTIFY minimumFieldOfViewChanged)
+    Q_PROPERTY(qreal maximumFieldOfView READ maximumFieldOfView WRITE setMaximumFieldOfView NOTIFY minimumFieldOfViewChanged)
 
     Q_PROPERTY(QDeclarativeGeoMapType *activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
@@ -98,6 +99,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QGeoShape visibleRegion READ visibleRegion WRITE setVisibleRegion)
     Q_PROPERTY(bool copyrightsVisible READ copyrightsVisible WRITE setCopyrightsVisible NOTIFY copyrightsVisibleChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(bool mapReady READ mapReady NOTIFY mapReadyChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -111,10 +113,10 @@ public:
     void setActiveMapType(QDeclarativeGeoMapType *mapType);
     QDeclarativeGeoMapType *activeMapType() const;
 
-    void setMinimumZoomLevel(qreal minimumZoomLevel);
+    void setMinimumZoomLevel(qreal minimumZoomLevel, bool userSet = true);
     qreal minimumZoomLevel() const;
 
-    void setMaximumZoomLevel(qreal maximumZoomLevel);
+    void setMaximumZoomLevel(qreal maximumZoomLevel, bool userSet = true);
     qreal maximumZoomLevel() const;
 
     void setZoomLevel(qreal zoomLevel);
@@ -125,16 +127,17 @@ public:
 
     void setTilt(qreal tilt);
     qreal tilt() const;
+    void setMinimumTilt(qreal minimumTilt, bool userSet = true);
+    qreal minimumTilt() const;
+    void setMaximumTilt(qreal maximumTilt, bool userSet = true);
+    qreal maximumTilt() const;
 
     void setFieldOfView(qreal fieldOfView);
     qreal fieldOfView() const;
+    void setMinimumFieldOfView(qreal minimumFieldOfView, bool userSet = true);
     qreal minimumFieldOfView() const;
+    void setMaximumFieldOfView(qreal maximumFieldOfView, bool userSet = true);
     qreal maximumFieldOfView() const;
-
-    bool isBearingSupported() const;
-    bool isTiltingSupported() const;
-    qreal minimumTilt() const;
-    qreal maximumTilt() const;
 
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
@@ -147,6 +150,8 @@ public:
 
     void setColor(const QColor &color);
     QColor color() const;
+
+    bool mapReady() const;
 
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
@@ -194,14 +199,13 @@ Q_SIGNALS:
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);
     void fieldOfViewChanged(qreal fieldOfView);
-    void bearingSupportChanged(bool bearingSupport);
-    void tiltingSupportChanged(bool tiltingSupport);
     void minimumTiltChanged(qreal minimumTilt);
     void maximumTiltChanged(qreal maximumTilt);
     void minimumFieldOfViewChanged(qreal minimumFieldOfView);
     void maximumFieldOfViewChanged(qreal maximumFieldOfView);
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
+    void mapReadyChanged(bool ready);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
@@ -227,6 +231,7 @@ private Q_SLOTS:
     void pluginReady();
     void onMapChildrenChanged();
     void onSupportedMapTypesChanged();
+    void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
@@ -258,6 +263,19 @@ private:
     double m_maximumViewportLatitude;
     bool m_initialized;
     QList<QDeclarativeGeoMapParameter *> m_mapParameters;
+    QGeoCameraCapabilities m_cameraCapabilities;
+    qreal m_userMinimumZoomLevel;
+    qreal m_userMaximumZoomLevel;
+
+    qreal m_minimumTilt;
+    qreal m_maximumTilt;
+    qreal m_userMinimumTilt;
+    qreal m_userMaximumTilt;
+
+    qreal m_minimumFieldOfView;
+    qreal m_maximumFieldOfView;
+    qreal m_userMinimumFieldOfView;
+    qreal m_userMaximumFieldOfView;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

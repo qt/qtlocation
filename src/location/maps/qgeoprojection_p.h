@@ -90,6 +90,7 @@ public:
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D geoToWrappedMapProjection(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate wrappedMapProjectionToGeo(const QDoubleVector2D &wrappedProjection) const = 0;
+    virtual QMatrix4x4 quickItemTransformation(const QGeoCoordinate &coordinate, const QPointF &anchorPoint, qreal zoomLevel) const = 0;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoProjectionWebMercator : public QGeoProjection
@@ -121,6 +122,7 @@ public:
     QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const Q_DECL_OVERRIDE;
     QDoubleVector2D geoToWrappedMapProjection(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
     QGeoCoordinate wrappedMapProjectionToGeo(const QDoubleVector2D &wrappedProjection) const Q_DECL_OVERRIDE;
+    QMatrix4x4 quickItemTransformation(const QGeoCoordinate &coordinate, const QPointF &anchorPoint, qreal zoomLevel) const Q_DECL_OVERRIDE;
 
     bool isProjectable(const QDoubleVector2D &wrappedProjection) const Q_DECL_OVERRIDE;
     QList<QDoubleVector2D> visibleRegion() const Q_DECL_OVERRIDE;
@@ -170,6 +172,7 @@ private:
     double m_1_viewportHeight;
 
     QDoubleMatrix4x4 m_transformation;
+    QDoubleMatrix4x4 m_quickItemTransformation;
     QDoubleVector3D  m_eye;
     QDoubleVector3D  m_up;
     QDoubleVector3D  m_center;

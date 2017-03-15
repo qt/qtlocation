@@ -127,12 +127,14 @@ public:
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);
+    void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
     virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
 
 Q_SIGNALS:
     void cameraDataChanged(const QGeoCameraData &cameraData);
     void sgNodeChanged();
     void activeMapTypeChanged();
+    void cameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void copyrightsStyleSheetChanged(const QString &styleSheet);

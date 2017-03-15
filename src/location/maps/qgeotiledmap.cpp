@@ -66,6 +66,10 @@ QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *paren
 
     QObject::connect(engine,&QGeoTiledMappingManagerEngine::tileVersionChanged,
                      this,&QGeoTiledMap::handleTileVersionChanged);
+    QObject::connect(this, &QGeoMap::cameraCapabilitiesChanged,
+                     [d](const QGeoCameraCapabilities &oldCameraCapabilities) {
+                       d->onCameraCapabilitiesChanged(oldCameraCapabilities);
+                     });
 }
 
 QGeoTiledMap::QGeoTiledMap(QGeoTiledMapPrivate &dd, QGeoTiledMappingManagerEngine *engine, QObject *parent)
@@ -77,6 +81,10 @@ QGeoTiledMap::QGeoTiledMap(QGeoTiledMapPrivate &dd, QGeoTiledMappingManagerEngin
 
     QObject::connect(engine,&QGeoTiledMappingManagerEngine::tileVersionChanged,
                      this,&QGeoTiledMap::handleTileVersionChanged);
+    QObject::connect(this, &QGeoMap::cameraCapabilitiesChanged,
+                     [d](const QGeoCameraCapabilities &oldCameraCapabilities) {
+                       d->onCameraCapabilitiesChanged(oldCameraCapabilities);
+                     });
 }
 
 QGeoTiledMap::~QGeoTiledMap()
@@ -164,11 +172,11 @@ QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
       m_prefetchTiles(new QGeoCameraTiles()),
       m_mapScene(new QGeoTiledMapScene()),
       m_tileRequests(0),
-      m_maxZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().maximumZoomLevel()))),
-      m_minZoomLevel(static_cast<int>(std::ceil(engine->cameraCapabilities().minimumZoomLevel()))),
+      m_maxZoomLevel(static_cast<int>(std::ceil(m_cameraCapabilities.maximumZoomLevel()))),
+      m_minZoomLevel(static_cast<int>(std::ceil(m_cameraCapabilities.minimumZoomLevel()))),
       m_prefetchStyle(QGeoTiledMap::PrefetchTwoNeighbourLayers)
 {
-    int tileSize = engine->tileSize().width();
+    int tileSize = m_cameraCapabilities.tileSize();
     QString pluginString(engine->managerName() + QLatin1Char('_') + QString::number(engine->managerVersion()));
     m_visibleTiles->setTileSize(tileSize);
     m_prefetchTiles->setTileSize(tileSize);
@@ -245,6 +253,23 @@ void QGeoTiledMapPrivate::prefetchTiles()
 QGeoMapType QGeoTiledMapPrivate::activeMapType()
 {
     return m_visibleTiles->activeMapType();
+}
+
+// Called before changeCameraData
+void QGeoTiledMapPrivate::onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities)
+{
+    // Handle varying min/maxZoomLevel
+    if (oldCameraCapabilities.minimumZoomLevel() != m_cameraCapabilities.minimumZoomLevel())
+        m_minZoomLevel = static_cast<int>(std::ceil(m_cameraCapabilities.minimumZoomLevel()));
+    if (oldCameraCapabilities.maximumZoomLevel() != m_cameraCapabilities.maximumZoomLevel())
+        m_maxZoomLevel = static_cast<int>(std::ceil(m_cameraCapabilities.maximumZoomLevel()));
+
+    // Handle varying tile size
+    if (oldCameraCapabilities.tileSize() != m_cameraCapabilities.tileSize()) {
+        m_visibleTiles->setTileSize(oldCameraCapabilities.tileSize());
+        m_prefetchTiles->setTileSize(oldCameraCapabilities.tileSize());
+        m_mapScene->setTileSize(oldCameraCapabilities.tileSize());
+    }
 }
 
 void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &cameraData)

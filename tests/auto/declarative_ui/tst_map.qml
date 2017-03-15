@@ -260,6 +260,105 @@ Item {
             compare(map.maximumZoomLevel, 20)
         }
 
+        function test_tilt_limits()
+        {
+            map.tilt = 0
+
+            //initial plugin values
+            compare(map.minimumTilt, 0)
+            compare(map.maximumTilt, 60)
+
+            //Higher min level than curr tilt, should change curr tilt
+            map.minimumTilt = 5
+            map.maximumTilt = 18
+            compare(map.tilt, 5)
+            compare(map.minimumTilt, 5)
+            compare(map.maximumTilt, 18)
+
+            //Trying to set higher than max, max should be set.
+            map.maximumTilt = 61
+            compare(map.minimumTilt, 5)
+            compare(map.maximumTilt, 60)
+
+            //Negative values should be ignored
+            map.minimumTilt = -1
+            map.maximumTilt = -2
+            compare(map.minimumTilt, 5)
+            compare(map.maximumTilt, 60)
+
+            //Max limit lower than curr zoom, should change curr zoom
+            map.tilt = 18
+            map.maximumTilt = 16
+            compare(map.tilt, 16)
+
+            //resetting default
+            map.minimumTilt = 0
+            map.maximumTilt = 60
+            map.tilt = 0
+            compare(map.minimumTilt, 0)
+            compare(map.maximumTilt, 60)
+            compare(map.tilt, 0)
+        }
+
+        function test_fov_limits()
+        {
+            map.fieldOfView = 45
+
+            //initial plugin values
+            compare(map.minimumFieldOfView, 45)
+            compare(map.maximumFieldOfView, 45)
+
+            map.minimumFieldOfView = 5
+            map.maximumFieldOfView = 18
+            map.fieldOfView = 4
+            compare(map.fieldOfView, 45)
+            compare(map.minimumFieldOfView, 45)
+            compare(map.maximumFieldOfView, 45)
+
+            map.activeMapType = map.supportedMapTypes[3]
+            // camera caps are [1-179], user previously asked for [5-18]
+            compare(map.minimumFieldOfView, 5)
+            compare(map.maximumFieldOfView, 18)
+
+            map.fieldOfView = 4
+            compare(map.fieldOfView, 5)
+
+            //Higher min level than curr fieldOfView, should change curr fieldOfView
+            map.minimumFieldOfView = 6
+            compare(map.fieldOfView, 6)
+            compare(map.minimumFieldOfView, 6)
+            compare(map.maximumFieldOfView, 18)
+
+            //Trying to set higher than max, max should be set.
+            map.maximumFieldOfView = 179.5
+            compare(map.minimumFieldOfView, 6)
+            compare(map.maximumFieldOfView, 179)
+
+            //Negative values should be ignored
+            map.minimumFieldOfView = -1
+            map.maximumFieldOfView = -2
+            compare(map.minimumFieldOfView, 6)
+            compare(map.maximumFieldOfView, 179)
+
+            //Max limit lower than curr zoom, should change curr zoom
+            map.fieldOfView = 18
+            compare(map.fieldOfView, 18)
+            map.maximumFieldOfView = 16
+            compare(map.maximumFieldOfView, 16)
+            compare(map.fieldOfView, 16)
+
+            //resetting default
+            map.minimumFieldOfView = 1
+            map.maximumFieldOfView = 179
+            compare(map.minimumFieldOfView, 1)
+            compare(map.maximumFieldOfView, 179)
+
+            map.activeMapType = map.supportedMapTypes[0]
+            compare(map.minimumFieldOfView, 45)
+            compare(map.maximumFieldOfView, 45)
+            compare(map.fieldOfView, 45)
+        }
+
         function test_zoom()
         {
             wait(1000)

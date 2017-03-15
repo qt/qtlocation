@@ -5,7 +5,6 @@ QT += \
     location-private \
     positioning-private \
     network \
-    opengl \
     sql
 
 HEADERS += \
@@ -30,7 +29,14 @@ OTHER_FILES += \
 
 INCLUDEPATH += ../../../3rdparty/mapbox-gl-native/platform/qt/include
 
-LIBS_PRIVATE += -L$$OUT_PWD/../../../3rdparty/mapbox-gl-native/ -lqmapboxgl
+qtConfig(icu) {
+    include(../../../3rdparty/icu_dependency.pri)
+}
+
+include(../../../3rdparty/zlib_dependency.pri)
+
+load(qt_build_paths)
+LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lqmapboxgl
 
 PLUGIN_TYPE = geoservices
 PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryMapboxGL
