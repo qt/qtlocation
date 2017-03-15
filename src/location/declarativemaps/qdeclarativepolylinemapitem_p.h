@@ -164,7 +164,6 @@ protected Q_SLOTS:
 private:
     void regenerateCache();
     void updateCache();
-    void pathPropertyChanged();
 
     QGeoPath geopath_;
     QList<QDoubleVector2D> geopathProjected_;
