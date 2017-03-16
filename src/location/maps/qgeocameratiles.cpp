@@ -297,7 +297,7 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double viewExpansion) const
         apertureSize = tan(QLocationUtils::radians(m_camera.fieldOfView()) * 0.5);
     QDoubleVector3D center = m_sideLength * QWebMercator::coordToMercator(m_camera.center());
 
-    double f = qMin(m_screenSize.width(), m_screenSize.height());
+    double f = m_screenSize.height();
 
     double z = std::pow(2.0, m_camera.zoomLevel() - m_intZoomLevel) * m_tileSize; // between 1 and 2 * m_tileSize
 
@@ -339,19 +339,12 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double viewExpansion) const
     // This used to fix the (half) field of view at 45 degrees
     // half because this assumed that viewSize = 2*nearPlane x 2*nearPlane
     viewExpansion *= apertureSize;
-    if (aspectRatio > 1.0) {
-        hhn = viewExpansion * nearPlane;
-        hwn = hhn * aspectRatio;
 
-        hhf = viewExpansion * farPlane;
-        hwf = hhf * aspectRatio;
-    } else {
-        hwn = viewExpansion * nearPlane;
-        hhn = hwn / aspectRatio;
+    hhn = viewExpansion * nearPlane;
+    hwn = hhn * aspectRatio;
 
-        hwf = viewExpansion * farPlane;
-        hhf = hwf / aspectRatio;
-    }
+    hhf = viewExpansion * farPlane;
+    hwf = hhf * aspectRatio;
 
     QDoubleVector3D d = center - eye;
     d.normalize();

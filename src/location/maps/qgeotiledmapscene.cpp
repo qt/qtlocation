@@ -350,7 +350,7 @@ void QGeoTiledMapScenePrivate::updateTileBounds(const QSet<QGeoTileSpec> &tiles)
 void QGeoTiledMapScenePrivate::setupCamera()
 {
     // NOTE: The following instruction is correct only because WebMercator is a square projection!
-    double f = 1.0 * qMin(m_screenSize.width(), m_screenSize.height());
+    double f = m_screenSize.height();
 
     // Using fraction of zoom level, z varies between [ m_tileSize , 2 * m_tileSize [
     double z = std::pow(2.0, m_cameraData.zoomLevel() - m_intZoomLevel) * m_tileSize;
@@ -431,11 +431,8 @@ void QGeoTiledMapScenePrivate::setupCamera()
     double aspectRatio = 1.0 * m_screenSize.width() / m_screenSize.height();
     float halfWidth = 1 * apertureSize;
     float halfHeight = 1 * apertureSize;
-    if (aspectRatio > 1.0) {
-        halfWidth *= aspectRatio;
-    } else if (aspectRatio > 0.0f && aspectRatio < 1.0f) {
-        halfHeight /= aspectRatio;
-    }
+    halfWidth *= aspectRatio;
+
     m_projectionMatrix.setToIdentity();
     m_projectionMatrix.frustum(-halfWidth, halfWidth, -halfHeight, halfHeight, nearPlane, farPlane);
 }

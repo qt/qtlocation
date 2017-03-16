@@ -329,7 +329,7 @@ void QGeoProjectionWebMercator::setupCamera()
     m_sideLength = (1 << intZoomLevel) * defaultTileSize;
     m_center = m_centerMercator * m_sideLength;
 
-    double f = 1.0 * qMin(m_viewportWidth, m_viewportHeight);
+    double f = m_viewportHeight;
     double z = std::pow(2.0, m_cameraData.zoomLevel() - intZoomLevel) * defaultTileSize;
     double altitude = f / (2.0 * z);
     // Also in mercator space
@@ -402,16 +402,10 @@ void QGeoProjectionWebMercator::setupCamera()
 
     double aspectRatio = 1.0 * m_viewportWidth / m_viewportHeight;
 
-    m_halfWidth = m_aperture;
+    m_halfWidth = m_aperture * aspectRatio;
     m_halfHeight = m_aperture;
-    double verticalAperture = m_aperture;
-    if (aspectRatio > 1.0) {
-        m_halfWidth *= aspectRatio;
-    } else if (aspectRatio > 0.0 && aspectRatio < 1.0) {
-        m_halfHeight /= aspectRatio;
-        verticalAperture /= aspectRatio;
-    }
-    double verticalHalfFOV = QLocationUtils::degrees(atan(verticalAperture));
+
+    double verticalHalfFOV = QLocationUtils::degrees(atan(m_aperture));
 
     QDoubleMatrix4x4 cameraMatrix;
     cameraMatrix.lookAt(m_eye, m_center, m_up);
@@ -452,7 +446,7 @@ void QGeoProjectionWebMercator::setupCamera()
     double verticalEstateToSkip = 0;
     if (maxRayElevation < verticalHalfFOV) {
         maxHalfAperture = tan(QLocationUtils::radians(maxRayElevation));
-        verticalEstateToSkip = 1.0 - maxHalfAperture / verticalAperture;
+        verticalEstateToSkip = 1.0 - maxHalfAperture / m_aperture;
     }
 
     m_minimumUnprojectableY = verticalEstateToSkip * 0.5 * m_viewportHeight; // verticalEstateToSkip is relative to half aperture
