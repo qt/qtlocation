@@ -149,10 +149,9 @@ private slots:
     void networkSessionOpened();
     void positionUpdated(QGeoPositionInfo gpsPos);
     void positionError(QGeoPositionInfoSource::Error e);
-    // these would have QNetworkReply* params but for the signalmapper
-    void handleGeoNetworkData(QObject *networkReply);
-    void handleWeatherNetworkData(QObject *networkReply);
-    void handleForecastNetworkData(QObject *networkReply);
+    void handleGeoNetworkData(QNetworkReply *networkReply);
+    void handleWeatherNetworkData(QNetworkReply *networkReply);
+    void handleForecastNetworkData(QNetworkReply *networkReply);
 
 //! [3]
 signals:
