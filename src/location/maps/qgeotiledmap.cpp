@@ -199,7 +199,7 @@ QGeoTiledMapPrivate::~QGeoTiledMapPrivate()
 
 void QGeoTiledMapPrivate::prefetchTiles()
 {
-    if (m_tileRequests) {
+    if (m_tileRequests && m_prefetchStyle != QGeoTiledMap::NoPrefetching) {
 
         QSet<QGeoTileSpec> tiles;
         QGeoCameraData camera = m_visibleTiles->cameraData();
@@ -242,8 +242,11 @@ void QGeoTiledMapPrivate::prefetchTiles()
                 m_prefetchTiles->setViewExpansion(1.0);
                 tiles += m_prefetchTiles->createTiles();
             }
-
         }
+            break;
+
+        default:
+            break;
         }
 
         m_tileRequests->requestTiles(tiles - m_mapScene->texturedTiles());
