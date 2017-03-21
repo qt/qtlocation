@@ -81,8 +81,6 @@ void QSGMapboxGLTextureNode::resize(const QSize &size, qreal pixelRatio)
 
 void QSGMapboxGLTextureNode::render(QQuickWindow *window)
 {
-    window->setClearBeforeRendering(false);
-
     QOpenGLFunctions *f = window->openglContext()->functions();
     f->glViewport(0, 0, m_fbo->width(), m_fbo->height());
 
