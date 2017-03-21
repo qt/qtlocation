@@ -185,6 +185,17 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
           tileCache->setExtraTextureUsage(cacheSize);
     }
 
+    /* PREFETCHING */
+    if (parameters.contains(QStringLiteral("here.mapping.prefetching_style"))) {
+        const QString prefetchingMode = parameters.value(QStringLiteral("here.mapping.prefetching_style")).toString();
+        if (prefetchingMode == QStringLiteral("TwoNeighbourLayers"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchTwoNeighbourLayers;
+        else if (prefetchingMode == QStringLiteral("OneNeighbourLayer"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchNeighbourLayer;
+        else if (prefetchingMode == QStringLiteral("NoPrefetching"))
+            m_prefetchStyle = QGeoTiledMap::NoPrefetching;
+    }
+
     setTileCache(tileCache);
     populateMapSchemes();
     loadMapVersion();
@@ -431,7 +442,9 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
 
 QGeoMap *QGeoTiledMappingManagerEngineNokia::createMap()
 {
-    return new QGeoTiledMapNokia(this);
+    QGeoTiledMap *map = new QGeoTiledMapNokia(this);
+    map->setPrefetchStyle(m_prefetchStyle);
+    return map;
 }
 
 QT_END_NAMESPACE

@@ -311,6 +311,17 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     }
     setTileFetcher(tileFetcher);
 
+    /* PREFETCHING */
+    if (parameters.contains(QStringLiteral("osm.mapping.prefetching_style"))) {
+        const QString prefetchingMode = parameters.value(QStringLiteral("osm.mapping.prefetching_style")).toString();
+        if (prefetchingMode == QStringLiteral("TwoNeighbourLayers"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchTwoNeighbourLayers;
+        else if (prefetchingMode == QStringLiteral("OneNeighbourLayer"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchNeighbourLayer;
+        else if (prefetchingMode == QStringLiteral("NoPrefetching"))
+            m_prefetchStyle = QGeoTiledMap::NoPrefetching;
+    }
+
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
 }
@@ -324,6 +335,7 @@ QGeoMap *QGeoTiledMappingManagerEngineOsm::createMap()
     QGeoTiledMap *map = new QGeoTiledMapOsm(this);
     connect(qobject_cast<QGeoFileTileCacheOsm *>(tileCache()), &QGeoFileTileCacheOsm::mapDataUpdated
             , map, &QGeoTiledMap::clearScene);
+    map->setPrefetchStyle(m_prefetchStyle);
     return map;
 }
 

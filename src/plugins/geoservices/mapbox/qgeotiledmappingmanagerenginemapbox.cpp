@@ -221,6 +221,16 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
             tileCache->setExtraTextureUsage(cacheSize);
     }
 
+    /* PREFETCHING */
+    if (parameters.contains(QStringLiteral("mapbox.mapping.prefetching_style"))) {
+        const QString prefetchingMode = parameters.value(QStringLiteral("mapbox.mapping.prefetching_style")).toString();
+        if (prefetchingMode == QStringLiteral("TwoNeighbourLayers"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchTwoNeighbourLayers;
+        else if (prefetchingMode == QStringLiteral("OneNeighbourLayer"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchNeighbourLayer;
+        else if (prefetchingMode == QStringLiteral("NoPrefetching"))
+            m_prefetchStyle = QGeoTiledMap::NoPrefetching;
+    }
 
     setTileCache(tileCache);
 
@@ -234,7 +244,9 @@ QGeoTiledMappingManagerEngineMapbox::~QGeoTiledMappingManagerEngineMapbox()
 
 QGeoMap *QGeoTiledMappingManagerEngineMapbox::createMap()
 {
-    return new QGeoTiledMap(this, 0);
+    QGeoTiledMap *map = new QGeoTiledMap(this, 0);
+    map->setPrefetchStyle(m_prefetchStyle);
+    return map;
 }
 
 QT_END_NAMESPACE

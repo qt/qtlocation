@@ -55,6 +55,7 @@
 #include <QtLocation/private/qabstractgeotilecache_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeomappingmanagerengine_p.h>
+#include <QtLocation/private/qgeotiledmap_p.h>
 
 
 QT_BEGIN_NAMESPACE
@@ -106,6 +107,7 @@ protected:
     void setCacheHint(QAbstractGeoTileCache::CacheAreas cacheHint);
     void setTileCache(QAbstractGeoTileCache *cache);
 
+    QGeoTiledMap::PrefetchStyle m_prefetchStyle;
 private:
     QGeoTiledMappingManagerEnginePrivate *d_ptr;
 

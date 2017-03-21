@@ -199,6 +199,16 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
             tileCache->setExtraTextureUsage(cacheSize);
     }
 
+    /* PREFETCHING */
+    if (parameters.contains(QStringLiteral("esri.mapping.prefetching_style"))) {
+        const QString prefetchingMode = parameters.value(QStringLiteral("esri.mapping.prefetching_style")).toString();
+        if (prefetchingMode == QStringLiteral("TwoNeighbourLayers"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchTwoNeighbourLayers;
+        else if (prefetchingMode == QStringLiteral("OneNeighbourLayer"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchNeighbourLayer;
+        else if (prefetchingMode == QStringLiteral("NoPrefetching"))
+            m_prefetchStyle = QGeoTiledMap::NoPrefetching;
+    }
 
     setTileCache(tileCache);
     *error = QGeoServiceProvider::NoError;
@@ -212,7 +222,9 @@ GeoTiledMappingManagerEngineEsri::~GeoTiledMappingManagerEngineEsri()
 
 QGeoMap *GeoTiledMappingManagerEngineEsri::createMap()
 {
-    return new GeoTiledMapEsri(this);
+    QGeoTiledMap *map = new GeoTiledMapEsri(this);
+    map->setPrefetchStyle(m_prefetchStyle);
+    return map;
 }
 
 // ${z} = Zoom
