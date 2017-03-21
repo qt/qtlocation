@@ -129,7 +129,7 @@ a prefix.
     Using \b unitary, they will be interpreted as number of tiles.
     The default value for this parameter is \b bytesize.
 \row
-    \li osm.mapping.cache.texture.size
+    \li here.mapping.cache.texture.size
     \li Texture cache size for map tiles. The default size of the cache is 6 MiB when \b bytesize is the cost
     strategy for this cache, or 30 tiles, when \b unitary is the cost strategy.
     Note that the texture cache has a hard minimum size which depends on the size of the map viewport
