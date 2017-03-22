@@ -368,7 +368,7 @@ void QDeclarativeRectangleMapItem::updatePath()
 */
 void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
+    if (!map() || !rectangle_.isValid() || updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
         QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
     }

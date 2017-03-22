@@ -582,7 +582,7 @@ QGeoMap::ItemType QDeclarativeCircleMapItem::itemType() const
 */
 void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (updatingGeometry_ || newGeometry == oldGeometry) {
+    if (!map() || !circle_.isValid() || updatingGeometry_ || newGeometry == oldGeometry) {
         QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
     }

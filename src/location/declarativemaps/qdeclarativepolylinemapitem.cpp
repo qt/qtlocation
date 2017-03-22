@@ -800,7 +800,7 @@ QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
 */
 void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
+    if (!map() || !geopath_.isValid() || updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
         QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
     }
