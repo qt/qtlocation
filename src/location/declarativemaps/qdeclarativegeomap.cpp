@@ -2039,7 +2039,7 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
     QQuickItem *grabber = win ? win->mouseGrabberItem() : 0;
     bool stealEvent = m_gestureArea->isActive();
 
-    if ((stealEvent || contains(localPos)) && (!grabber || !grabber->keepMouseGrab())) {
+    if ((stealEvent || contains(localPos)) && (!grabber || (!grabber->keepMouseGrab() && !grabber->keepTouchGrab()))) {
         QScopedPointer<QMouseEvent> mouseEvent(QQuickWindowPrivate::cloneMouseEvent(event, &localPos));
         mouseEvent->setAccepted(false);
 
@@ -2060,7 +2060,7 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
         stealEvent = m_gestureArea->isActive();
         grabber = win ? win->mouseGrabberItem() : 0;
 
-        if (grabber && stealEvent && !grabber->keepMouseGrab() && grabber != this)
+        if (grabber && stealEvent && !grabber->keepMouseGrab() && !grabber->keepTouchGrab() && grabber != this)
             grabMouse();
 
         if (stealEvent) {
