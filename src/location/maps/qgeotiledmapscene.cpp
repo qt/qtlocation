@@ -88,6 +88,7 @@ public:
     double m_mapEdgeSize;
 
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > m_textures;
+    QVector<QGeoTileSpec> m_updatedTextures;
 
     // tilesToGrid transform
     int m_minTileX; // the minimum tile index, i.e. 0 to sideLength which is 1<< zoomLevel
@@ -164,9 +165,9 @@ QSet<QGeoTileSpec> QGeoTiledMapScene::texturedTiles()
 {
     Q_D(QGeoTiledMapScene);
     QSet<QGeoTileSpec> textured;
-    foreach (const QGeoTileSpec &tile, d->m_textures.keys()) {
-        textured += tile;
-    }
+    for (auto it = d->m_textures.cbegin(); it != d->m_textures.cend(); ++it)
+        textured += it.value()->spec;
+
     return textured;
 }
 
@@ -227,7 +228,19 @@ bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageN
 
     imageNode->setRect(QRectF(QPointF(x1, y2), QPointF(x2, y1)));
     imageNode->setTextureCoordinatesTransform(QSGImageNode::MirrorVertically);
-    imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
+
+    // Calculate the texture mapping, in case we are magnifying some lower ZL tile
+    const QGeoTileSpec textureSpec = m_textures.value(spec)->spec;
+    if (textureSpec.zoom() < spec.zoom()) {
+        // Currently only using lower ZL tiles for the overzoom.
+        const int tilesPerTexture = 1 << (spec.zoom() - textureSpec.zoom());
+        const int mappedSize = imageNode->texture()->textureSize().width() / tilesPerTexture;
+        const int x = (spec.x() % tilesPerTexture) * mappedSize;
+        const int y = (spec.y() % tilesPerTexture) * mappedSize;
+        imageNode->setSourceRect(QRectF(x, y, mappedSize, mappedSize));
+    } else {
+        imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
+    }
 
     return true;
 }
@@ -237,6 +250,8 @@ void QGeoTiledMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<
     if (!m_visibleTiles.contains(spec)) // Don't add the geometry if it isn't visible
         return;
 
+    if (m_textures.contains(spec))
+        m_updatedTextures.append(spec);
     m_textures.insert(spec, texture);
 }
 
@@ -642,6 +657,25 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
         foreach (const QGeoTileSpec &spec, mapRoot->textures.keys())
             mapRoot->textures.take(spec)->deleteLater();
         d->m_dropTextures = false;
+    }
+
+    // Evicting loZL tiles temporarily used in place of hiZL ones
+    if (d->m_updatedTextures.size()) {
+        const QVector<QGeoTileSpec> &toRemove = d->m_updatedTextures;
+        for (const QGeoTileSpec &s : toRemove) {
+            if (mapRoot->tiles->tiles.contains(s))
+                delete mapRoot->tiles->tiles.take(s);
+
+            if (mapRoot->wrapLeft->tiles.contains(s))
+                delete mapRoot->wrapLeft->tiles.take(s);
+
+            if (mapRoot->wrapRight->tiles.contains(s))
+                delete mapRoot->wrapRight->tiles.take(s);
+
+            if (mapRoot->textures.contains(s))
+                mapRoot->textures.take(s)->deleteLater();
+        }
+        d->m_updatedTextures.clear();
     }
 
     QSet<QGeoTileSpec> textures = QSet<QGeoTileSpec>::fromList(mapRoot->textures.keys());

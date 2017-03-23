@@ -320,12 +320,11 @@ void QGeoTiledMapPrivate::updateScene()
         q->evaluateCopyrights(tiles);
 
     // don't request tiles that are already built and textured
-    QList<QSharedPointer<QGeoTileTexture> > cachedTiles =
+    QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > cachedTiles =
             m_tileRequests->requestTiles(m_visibleTiles->createTiles() - m_mapScene->texturedTiles());
 
-    foreach (const QSharedPointer<QGeoTileTexture> &tex, cachedTiles) {
-        m_mapScene->addTile(tex->spec, tex);
-    }
+    for (auto it = cachedTiles.cbegin(); it != cachedTiles.cend(); ++it)
+        m_mapScene->addTile(it.key(), it.value());
 
     if (!cachedTiles.isEmpty())
         emit q->sgNodeChanged();
