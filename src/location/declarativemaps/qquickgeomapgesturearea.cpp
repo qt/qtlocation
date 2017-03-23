@@ -71,7 +71,7 @@ static const qreal MaximumParallelPosition = 40.0; // in degrees
 // Tolerance for detecting parallel sliding
 static const qreal MaximumParallelSlidingAngle = 4.0; // in degrees
 // Tolerance for starting rotation
-static const qreal MinimumRotationStartingAngle = 8.0; // in degrees
+static const qreal MinimumRotationStartingAngle = 15.0; // in degrees
 // Tolerance for starting pinch
 static const qreal MinimumPinchDelta = 40; // in pixels
 // Tolerance for starting tilt when sliding vertical
@@ -1415,7 +1415,7 @@ bool QQuickGeoMapGestureArea::canStartRotation()
 void QQuickGeoMapGestureArea::startRotation()
 {
     m_pinch.m_rotation.m_startBearing = m_declarativeMap->bearing();
-    m_pinch.m_rotation.m_previousTouchAngle = m_twoTouchAngleStart;
+    m_pinch.m_rotation.m_previousTouchAngle = m_twoTouchAngle;
     m_pinch.m_rotation.m_totalAngle = 0.0;
 }
 
