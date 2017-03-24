@@ -490,6 +490,10 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::getFromDisk(const QGeoTileSpe
             return QSharedPointer<QGeoTileTexture>(0);
         }
 
+        // Converting it here, instead of in each QSGTexture::bind()
+        if (image.format() != QImage::Format_RGB32 && image.format() != QImage::Format_ARGB32_Premultiplied)
+            image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
         addToMemoryCache(spec, bytes, format);
         QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, image);
         if (tt)
