@@ -91,15 +91,6 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
 {
     Q_Q(QGeoMapMapboxGL);
 
-    if (!m_warned) {
-        if (window->openglContext()->thread() != QCoreApplication::instance()->thread()) {
-            qWarning() << "Threaded rendering is not supported by Mapbox GL plugin.";
-            QMetaObject::invokeMethod(&m_refresh, "start", Qt::QueuedConnection);
-        }
-
-        m_warned = true;
-    }
-
     QMapboxGL *map = 0;
     if (m_useFBO) {
         if (!node) {
@@ -150,6 +141,8 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
     if (m_useFBO) {
         static_cast<QSGMapboxGLTextureNode *>(node)->render(window);
     }
+
+    threadedRenderingHack(window, map);
 
     m_syncState = NoSync;
 
@@ -276,6 +269,31 @@ void QGeoMapMapboxGLPrivate::syncStyleChanges(QMapboxGL *map)
     }
 
     m_styleChanges.clear();
+}
+
+void QGeoMapMapboxGLPrivate::threadedRenderingHack(QQuickWindow *window, QMapboxGL *map)
+{
+    // FIXME: Optimal support for threaded rendering needs core changes
+    // in Mapbox GL Native. Meanwhile we need to set a timer to update
+    // the map until all the resources are loaded, which is not exactly
+    // battery friendly, because might trigger more paints than we need.
+    if (!m_warned) {
+        m_threadedRendering = window->openglContext()->thread() != QCoreApplication::instance()->thread();
+
+        if (m_threadedRendering) {
+            qWarning() << "Threaded rendering is not optimal in the Mapbox GL plugin.";
+        }
+
+        m_warned = true;
+    }
+
+    if (m_threadedRendering) {
+        if (!map->isFullyLoaded()) {
+            QMetaObject::invokeMethod(&m_refresh, "start", Qt::QueuedConnection);
+        } else {
+            QMetaObject::invokeMethod(&m_refresh, "stop", Qt::QueuedConnection);
+        }
+    }
 }
 
 /*
