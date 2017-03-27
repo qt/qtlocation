@@ -55,6 +55,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QtPositioning/qgeocoordinate.h>
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 
@@ -260,7 +261,7 @@ private Q_SLOTS:
 private:
     void stopPan();
     void clearTouchData();
-    void updateVelocityList(const QPointF &pos);
+    void updateFlickParameters(const QPointF &pos);
 
 private:
     QGeoMap *m_map;
@@ -324,12 +325,11 @@ private:
 
 
     // these are calculated regardless of gesture or number of touch points
-    qreal m_velocityX;
-    qreal m_velocityY;
+    QVector2D m_flickVector;
     QElapsedTimer m_lastPosTime;
     QPointF m_lastPos;
-    QList<QTouchEvent::TouchPoint> m_allPoints;
-    QList<QTouchEvent::TouchPoint> m_touchPoints;
+    QVector<QTouchEvent::TouchPoint> m_allPoints;
+    QVector<QTouchEvent::TouchPoint> m_touchPoints;
     QScopedPointer<QTouchEvent::TouchPoint> m_mousePoint;
     QPointF m_sceneStartPoint1;
 

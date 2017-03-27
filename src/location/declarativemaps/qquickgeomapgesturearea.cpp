@@ -60,7 +60,7 @@
 #define QML_MAP_FLICK_DEFAULTDECELERATION 2500
 #define QML_MAP_FLICK_MAXIMUMDECELERATION 10000
 
-#define QML_MAP_FLICK_VELOCITY_SAMPLE_PERIOD 50
+#define QML_MAP_FLICK_VELOCITY_SAMPLE_PERIOD 38
 // FlickThreshold determines how far the "mouse" must have moved
 // before we perform a flick.
 static const int FlickThreshold = 20;
@@ -76,6 +76,11 @@ static const qreal MinimumRotationStartingAngle = 15.0; // in degrees
 static const qreal MinimumPinchDelta = 40; // in pixels
 // Tolerance for starting tilt when sliding vertical
 static const qreal MinimumPanToTiltDelta = 80; // in pixels;
+
+static qreal distanceBetweenTouchPoints(const QPointF &p1, const QPointF &p2)
+{
+    return QLineF(p1, p2).length();
+}
 
 // Returns the new map center after anchoring coordinate to anchorPoint on the screen
 // Approach: find the displacement in (wrapped) mercator space, and apply that to the center
@@ -958,8 +963,7 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 */
 void QQuickGeoMapGestureArea::clearTouchData()
 {
-    m_velocityX = 0;
-    m_velocityY = 0;
+    m_flickVector = QVector2D();
     m_touchPointsCentroid.setX(0);
     m_touchPointsCentroid.setY(0);
     m_touchCenterCoord.setLongitude(0);
@@ -972,7 +976,7 @@ void QQuickGeoMapGestureArea::clearTouchData()
 /*!
     \internal
 */
-void QQuickGeoMapGestureArea::updateVelocityList(const QPointF &pos)
+void QQuickGeoMapGestureArea::updateFlickParameters(const QPointF &pos)
 {
     // Take velocity samples every sufficient period of time, used later to determine the flick
     // duration and speed (when mouse is released).
@@ -980,14 +984,12 @@ void QQuickGeoMapGestureArea::updateVelocityList(const QPointF &pos)
 
     if (elapsed >= QML_MAP_FLICK_VELOCITY_SAMPLE_PERIOD) {
         elapsed /= 1000.;
-        int dyFromLastPos = pos.y() - m_lastPos.y();
-        int dxFromLastPos = pos.x() - m_lastPos.x();
+        qreal vel  = distanceBetweenTouchPoints(pos, m_lastPos) / elapsed;
+        m_flickVector = (QVector2D(pos) - QVector2D(m_lastPos)).normalized();
+        m_flickVector *= qBound<qreal>(-m_flick.m_maxVelocity, vel, m_flick.m_maxVelocity);
+
         m_lastPos = pos;
         m_lastPosTime.restart();
-        qreal velX = qreal(dxFromLastPos) / elapsed;
-        qreal velY = qreal(dyFromLastPos) / elapsed;
-        m_velocityX = qBound<qreal>(-m_flick.m_maxVelocity, velX, m_flick.m_maxVelocity);
-        m_velocityY = qBound<qreal>(-m_flick.m_maxVelocity, velY, m_flick.m_maxVelocity);
     }
 }
 
@@ -1139,12 +1141,7 @@ void QQuickGeoMapGestureArea::startOneTouchPoint()
 void QQuickGeoMapGestureArea::updateOneTouchPoint()
 {
     m_touchPointsCentroid = mapFromScene(m_allPoints.at(0).scenePos());
-    updateVelocityList(m_touchPointsCentroid);
-}
-
-static qreal distanceBetweenTouchPoints(const QPointF &p1, const QPointF &p2)
-{
-    return QLineF(p1, p2).length();
+    updateFlickParameters(m_touchPointsCentroid);
 }
 
 /*!
@@ -1176,7 +1173,7 @@ void QQuickGeoMapGestureArea::updateTwoTouchPoints()
     QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
     m_distanceBetweenTouchPoints = distanceBetweenTouchPoints(p1, p2);
     m_touchPointsCentroid = (p1 + p2) / 2;
-    updateVelocityList(m_touchPointsCentroid);
+    updateFlickParameters(m_touchPointsCentroid);
 
     m_twoTouchAngle = touchAngle(p1, p2);
 }
@@ -1714,35 +1711,26 @@ bool QQuickGeoMapGestureArea::tryStartFlick()
     if ((m_acceptedGestures & FlickGesture) == 0)
         return false;
     // if we drag then pause before release we should not cause a flick.
-    qreal velocityX = 0.0;
-    qreal velocityY = 0.0;
-    if (m_lastPosTime.elapsed() < QML_MAP_FLICK_VELOCITY_SAMPLE_PERIOD) {
-        velocityY = m_velocityY;
-        velocityX = m_velocityX;
-    }
-    int flickTimeY = 0;
-    int flickTimeX = 0;
-    int flickPixelsX = 0;
-    int flickPixelsY = 0;
-    if (qAbs(velocityY) > MinimumFlickVelocity && qAbs(m_touchPointsCentroid.y() - m_sceneStartPoint1.y()) > FlickThreshold) {
-        // calculate Y flick animation values
+    qreal flickSpeed = 0.0;
+    if (m_lastPosTime.elapsed() < QML_MAP_FLICK_VELOCITY_SAMPLE_PERIOD)
+        flickSpeed = m_flickVector.length();
+
+    int flickTime = 0;
+    int flickPixels = 0;
+    QVector2D flickVector;
+
+    if (qAbs(flickSpeed) > MinimumFlickVelocity
+            && distanceBetweenTouchPoints(m_touchPointsCentroid, m_sceneStartPoint1) > FlickThreshold) {
         qreal acceleration = m_flick.m_deceleration;
-        if ((velocityY > 0.0f) == (m_flick.m_deceleration > 0.0f))
+        if ((flickSpeed > 0.0f) == (m_flick.m_deceleration > 0.0f))
             acceleration = acceleration * -1.0f;
-        flickTimeY = static_cast<int>(-1000 * velocityY / acceleration);
-        flickPixelsY = (flickTimeY * velocityY) / (1000.0 * 2);
+        flickTime = static_cast<int>(-1000 * flickSpeed / acceleration);
+        flickPixels = (flickTime * flickSpeed) / 2000.0;
+        flickVector = m_flickVector.normalized() * flickPixels;
     }
-    if (qAbs(velocityX) > MinimumFlickVelocity && qAbs(m_touchPointsCentroid.x() - m_sceneStartPoint1.x()) > FlickThreshold) {
-        // calculate X flick animation values
-        qreal acceleration = m_flick.m_deceleration;
-        if ((velocityX > 0.0f) == (m_flick.m_deceleration > 0.0f))
-            acceleration = acceleration * -1.0f;
-        flickTimeX = static_cast<int>(-1000 * velocityX / acceleration);
-        flickPixelsX = (flickTimeX * velocityX) / (1000.0 * 2);
-    }
-    int flickTime = qMax(flickTimeY, flickTimeX);
+
     if (flickTime > 0) {
-        startFlick(flickPixelsX, flickPixelsY, flickTime);
+        startFlick(flickVector.x(), flickVector.y(), flickTime);
         return true;
     }
     return false;
@@ -1793,8 +1781,7 @@ void QQuickGeoMapGestureArea::stopPan()
     if (m_flickState == flickActive) {
         stopFlick();
     } else if (m_flickState == panActive) {
-        m_velocityX = 0;
-        m_velocityY = 0;
+        m_flickVector = QVector2D();
         setFlickState(flickInactive);
         m_declarativeMap->setKeepMouseGrab(m_preventStealing);
         emit panFinished();
@@ -1810,8 +1797,7 @@ void QQuickGeoMapGestureArea::stopFlick()
 {
     if (!m_flick.m_animation)
         return;
-    m_velocityX = 0;
-    m_velocityY = 0;
+    m_flickVector = QVector2D();
     if (m_flick.m_animation->isRunning())
         m_flick.m_animation->stop();
     else
