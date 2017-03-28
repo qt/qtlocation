@@ -126,21 +126,31 @@ void QGeoTiledMapScene::setScreenSize(const QSize &size)
     d->m_screenSize = size;
 }
 
+void QGeoTiledMapScene::updateSceneParameters()
+{
+    Q_D(QGeoTiledMapScene);
+    d->m_intZoomLevel = static_cast<int>(std::floor(d->m_cameraData.zoomLevel()));
+    const float delta = d->m_cameraData.zoomLevel() - d->m_intZoomLevel;
+    d->m_linearScaling = qAbs(delta) > 0.05 || d->isTiltedOrRotated();
+    d->m_sideLength = 1 << d->m_intZoomLevel;
+    d->m_mapEdgeSize = std::pow(2.0, d->m_cameraData.zoomLevel()) * d->m_tileSize;
+}
+
 void QGeoTiledMapScene::setTileSize(int tileSize)
 {
     Q_D(QGeoTiledMapScene);
+    if (d->m_tileSize == tileSize)
+        return;
+
     d->m_tileSize = tileSize;
+    updateSceneParameters();
 }
 
 void QGeoTiledMapScene::setCameraData(const QGeoCameraData &cameraData)
 {
     Q_D(QGeoTiledMapScene);
     d->m_cameraData = cameraData;
-    d->m_intZoomLevel = static_cast<int>(std::floor(d->m_cameraData.zoomLevel()));
-    float delta = cameraData.zoomLevel() - d->m_intZoomLevel;
-    d->m_linearScaling = qAbs(delta) > 0.05 || d->isTiltedOrRotated();
-    d->m_sideLength = 1 << d->m_intZoomLevel;
-    d->m_mapEdgeSize = std::pow(2.0, cameraData.zoomLevel()) * d->m_tileSize;
+    updateSceneParameters();
 }
 
 void QGeoTiledMapScene::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)

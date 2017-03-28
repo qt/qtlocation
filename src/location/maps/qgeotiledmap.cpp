@@ -335,6 +335,9 @@ void QGeoTiledMapPrivate::updateScene()
 
 void QGeoTiledMapPrivate::changeActiveMapType(const QGeoMapType mapType)
 {
+    m_visibleTiles->setTileSize(m_cameraCapabilities.tileSize());
+    m_prefetchTiles->setTileSize(m_cameraCapabilities.tileSize());
+    m_mapScene->setTileSize(m_cameraCapabilities.tileSize());
     m_visibleTiles->setMapType(mapType);
     m_prefetchTiles->setMapType(mapType);
     updateScene();
