@@ -43,13 +43,15 @@
 
 // QSGMapboxGLTextureNode
 
+static const QSize minTextureSize = QSize(64, 64);
+
 QSGMapboxGLTextureNode::QSGMapboxGLTextureNode(const QMapboxGLSettings &settings, const QSize &size, qreal pixelRatio, QGeoMapMapboxGL *geoMap)
         : QSGSimpleTextureNode()
 {
     setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
     setFiltering(QSGTexture::Linear);
 
-    m_map.reset(new QMapboxGL(nullptr, settings, size, pixelRatio));
+    m_map.reset(new QMapboxGL(nullptr, settings, size.expandedTo(minTextureSize), pixelRatio));
 
     QObject::connect(m_map.data(), &QMapboxGL::needsRendering, geoMap, &QGeoMap::sgNodeChanged);
     QObject::connect(m_map.data(), &QMapboxGL::copyrightsChanged, geoMap,
@@ -58,8 +60,9 @@ QSGMapboxGLTextureNode::QSGMapboxGLTextureNode(const QMapboxGLSettings &settings
 
 void QSGMapboxGLTextureNode::resize(const QSize &size, qreal pixelRatio)
 {
-    const QSize fbSize = size * pixelRatio;
-    m_map->resize(size, fbSize);
+    const QSize& minSize = size.expandedTo(minTextureSize);
+    const QSize fbSize = minSize * pixelRatio;
+    m_map->resize(minSize, fbSize);
 
     m_fbo.reset(new QOpenGLFramebufferObject(fbSize, QOpenGLFramebufferObject::CombinedDepthStencil));
 
@@ -75,7 +78,7 @@ void QSGMapboxGLTextureNode::resize(const QSize &size, qreal pixelRatio)
         setOwnsTexture(true);
     }
 
-    setRect(QRectF(QPointF(), size));
+    setRect(QRectF(QPointF(), minSize));
     markDirty(QSGNode::DirtyGeometry);
 }
 
