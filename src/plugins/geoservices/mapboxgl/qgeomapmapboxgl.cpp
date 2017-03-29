@@ -91,6 +91,11 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
 {
     Q_Q(QGeoMapMapboxGL);
 
+    if (m_viewportSize.isEmpty()) {
+        delete node;
+        return 0;
+    }
+
     QMapboxGL *map = 0;
     if (m_useFBO) {
         if (!node) {
