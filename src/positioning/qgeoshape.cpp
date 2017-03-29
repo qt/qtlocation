@@ -95,6 +95,7 @@ bool QGeoShapePrivate::operator==(const QGeoShapePrivate &other) const
     \value UnknownType      A shape of unknown type.
     \value RectangleType    A rectangular shape.
     \value CircleType       A circular shape.
+    \value PathType         A path type.
 */
 
 /*!
@@ -229,7 +230,7 @@ bool QGeoShape::contains(const QGeoCoordinate &coordinate) const
 }
 
 /*!
-    Returns a \a QGeoRectangle representing the geographical bounding rectangle of the
+    Returns a QGeoRectangle representing the geographical bounding rectangle of the
     geo shape, that defines the latitudinal/longitudinal bounds of the geo shape.
 
     \since 5.9

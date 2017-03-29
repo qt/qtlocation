@@ -1336,7 +1336,7 @@ QColor QDeclarativeGeoMap::color() const
     This property holds whether the map has been successfully initialized and is ready to be used.
     Some methods, such as \l fromCoordinate and \l toCoordinate, will not work before the map is ready.
     Due to the architecture of the \l Map, it's advised to use the signal emitted for this property
-    in place of \l Component.onCompleted, to make sure that everything behaves as expected.
+    in place of \l {QtQml::Component::completed()}{Component.onCompleted}, to make sure that everything behaves as expected.
 
     \since 5.9
 */

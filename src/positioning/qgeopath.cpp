@@ -115,7 +115,8 @@ QGeoPath::QGeoPath()
 }
 
 /*!
-    Constructs a new geo path from a list of coordinates.
+    Constructs a new geo path from a list of coordinates
+    (\a path and \a width).
 */
 QGeoPath::QGeoPath(const QList<QGeoCoordinate> &path, const qreal &width)
 :   QGeoShape(new QGeoPathPrivate(path, width))
