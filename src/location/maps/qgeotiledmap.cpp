@@ -340,7 +340,8 @@ void QGeoTiledMapPrivate::changeActiveMapType(const QGeoMapType mapType)
     m_mapScene->setTileSize(m_cameraCapabilities.tileSize());
     m_visibleTiles->setMapType(mapType);
     m_prefetchTiles->setMapType(mapType);
-    updateScene();
+    changeCameraData(m_cameraData); // Updates the zoom level to the possibly new tile size
+    // updateScene called in changeCameraData()
 }
 
 void QGeoTiledMapPrivate::changeTileVersion(int version)
