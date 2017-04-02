@@ -7,6 +7,9 @@ android {
 
 CONFIG += simd optimize_full
 
+# 3rdparty headers produce warnings with MSVC
+msvc: CONFIG -= warning_clean
+
 INCLUDEPATH += ../3rdparty/poly2tri
 INCLUDEPATH += ../3rdparty/clipper
 INCLUDEPATH += ../3rdparty/clip2tri
