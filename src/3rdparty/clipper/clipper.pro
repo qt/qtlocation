@@ -2,7 +2,7 @@ TARGET = clipper
 
 CONFIG += staticlib
 CONFIG += exceptions
-
+CONFIG += warn_off
 
 load(qt_helper_lib)
 

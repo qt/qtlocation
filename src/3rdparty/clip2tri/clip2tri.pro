@@ -1,6 +1,6 @@
 TARGET = clip2tri
 
-CONFIG += staticlib exceptions
+CONFIG += staticlib exceptions warn_off
 
 INCLUDEPATH += ../poly2tri
 INCLUDEPATH += ../clipper

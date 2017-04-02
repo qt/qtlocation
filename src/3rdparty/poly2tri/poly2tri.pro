@@ -1,6 +1,6 @@
 TARGET = poly2tri
 
-CONFIG += staticlib
+CONFIG += staticlib warn_off
 
 load(qt_helper_lib)
 
