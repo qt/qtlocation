@@ -105,7 +105,7 @@ public:
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &visibleTiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
-    bool buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode);
+    bool buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode, bool &overzooming);
     void updateTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
     inline bool isTiltedOrRotated() { return (m_cameraData.tilt() > 0.0) || (m_cameraData.bearing() > 0.0); }
@@ -208,8 +208,9 @@ QGeoTiledMapScenePrivate::~QGeoTiledMapScenePrivate()
 {
 }
 
-bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode)
+bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode, bool &overzooming)
 {
+    overzooming = false;
     int x = spec.x();
 
     if (x < m_tileXWrapsBelow)
@@ -242,6 +243,7 @@ bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageN
     // Calculate the texture mapping, in case we are magnifying some lower ZL tile
     const QGeoTileSpec textureSpec = m_textures.value(spec)->spec;
     if (textureSpec.zoom() < spec.zoom()) {
+        overzooming = true;
         // Currently only using lower ZL tiles for the overzoom.
         const int tilesPerTexture = 1 << (spec.zoom() - textureSpec.zoom());
         const int mappedSize = imageNode->texture()->textureSize().width() / tilesPerTexture;
@@ -578,12 +580,12 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
     foreach (const QGeoTileSpec &s, toRemove)
         delete root->tiles.take(s);
     bool straight = !d->isTiltedOrRotated();
-
+    bool overzooming;
     qreal pixelRatio = window->effectiveDevicePixelRatio();
     for (QHash<QGeoTileSpec, QSGImageNode *>::iterator it = root->tiles.begin();
          it != root->tiles.end(); ) {
         QSGImageNode *node = it.value();
-        bool ok = d->buildGeometry(it.key(), node)
+        bool ok = d->buildGeometry(it.key(), node, overzooming)
                 && qgeotiledmapscene_isTileInViewport(node->rect(), root->matrix(), straight);
 
         QSGNode::DirtyState dirtyBits = 0;
@@ -597,7 +599,7 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                     node->setFiltering(QSGTexture::Linear); // With mipmapping QSGTexture::Nearest generates artifacts
                     node->setMipmapFiltering(QSGTexture::Linear);
                 } else {
-                    node->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
+                    node->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
                 }
                 if (ogl)
                     static_cast<QSGDefaultImageNode *>(node)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
@@ -616,13 +618,13 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         QSGImageNode *tileNode = window->createImageNode();
         // note: setTexture will update coordinates so do it here, before we buildGeometry
         tileNode->setTexture(textures.value(s));
-        if (d->buildGeometry(s, tileNode)
+        if (d->buildGeometry(s, tileNode, overzooming)
                 && qgeotiledmapscene_isTileInViewport(tileNode->rect(), root->matrix(), straight)) {
             if (tileNode->texture()->textureSize().width() > d->m_tileSize * pixelRatio) {
                 tileNode->setFiltering(QSGTexture::Linear); // with mipmapping QSGTexture::Nearest generates artifacts
                 tileNode->setMipmapFiltering(QSGTexture::Linear);
             } else {
-                tileNode->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
+                tileNode->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
             }
             if (ogl)
                 static_cast<QSGDefaultImageNode *>(tileNode)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
