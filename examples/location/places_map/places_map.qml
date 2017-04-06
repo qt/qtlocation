@@ -51,7 +51,7 @@ Rectangle {
     //! [Initialize Plugin]
     Plugin {
         id: myPlugin
-        name: "osm"
+        name: "osm" // "mapboxgl", "esri", ...
         //specify plugin parameters if necessary
         //PluginParameter {...}
         //PluginParameter {...}

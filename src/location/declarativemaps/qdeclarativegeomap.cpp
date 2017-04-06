@@ -139,7 +139,7 @@ QT_BEGIN_NAMESPACE
     \section2 Example Usage
 
     The following snippet shows a simple Map and the necessary Plugin type
-    to use it. The map is centered over Oslo, Norway, with zoom level 10.
+    to use it. The map is centered over Oslo, Norway, with zoom level 14.
 
     \quotefromfile minimal_map/main.qml
     \skipto import

@@ -49,8 +49,8 @@ Window {
     visible: true
 
     Plugin {
-        id: osmPlugin
-        name: "osm"
+        id: mapPlugin
+        name: "osm" // "mapboxgl", "esri", ...
         // specify plugin parameters if necessary
         // PluginParameter {
         //     name:
@@ -60,8 +60,8 @@ Window {
 
     Map {
         anchors.fill: parent
-        plugin: osmPlugin
+        plugin: mapPlugin
         center: QtPositioning.coordinate(59.91, 10.75) // Oslo
-        zoomLevel: 10
+        zoomLevel: 14
     }
 }
