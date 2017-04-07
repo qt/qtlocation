@@ -791,7 +791,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // Any map items that were added before the plugin was ready
     // need to have setMap called again
-    foreach (const QPointer<QDeclarativeGeoMapItemBase> &item, m_mapItems) {
+    for (const QPointer<QDeclarativeGeoMapItemBase> &item : qAsConst(m_mapItems)) {
         if (item) {
             item->setMap(this, m_map);
             m_map->addMapItem(item.data()); // m_map filters out what is not supported.
@@ -811,7 +811,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // All map parameters that were added before the plugin was ready
     // need to be added to m_map
-    for (QDeclarativeGeoMapParameter *p : m_mapParameters)
+    for (QDeclarativeGeoMapParameter *p : qAsConst(m_mapParameters))
         m_map->addParameter(p);
 
     if (m_initialized)
@@ -1702,7 +1702,7 @@ void QDeclarativeGeoMap::clearMapParameters()
 QList<QObject *> QDeclarativeGeoMap::mapParameters()
 {
     QList<QObject *> ret;
-    for (QDeclarativeGeoMapParameter *p : m_mapParameters)
+    for (QDeclarativeGeoMapParameter *p : qAsConst(m_mapParameters))
         ret << p;
     return ret;
 }
