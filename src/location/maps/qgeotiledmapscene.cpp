@@ -577,7 +577,7 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
     QSet<QGeoTileSpec> toRemove = tilesInSG - d->m_visibleTiles;
     QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - tilesInSG;
 
-    foreach (const QGeoTileSpec &s, toRemove)
+    for (const QGeoTileSpec &s : toRemove)
         delete root->tiles.take(s);
     bool straight = !d->isTiltedOrRotated();
     bool overzooming;
@@ -611,7 +611,7 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         }
     }
 
-    foreach (const QGeoTileSpec &s, toAdd) {
+    for (const QGeoTileSpec &s : toAdd) {
         QGeoTileTexture *tileTexture = d->m_textures.value(s).data();
         if (!tileTexture || tileTexture->image.isNull())
             continue;
@@ -660,13 +660,13 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     mapRoot->root->setMatrix(itemSpaceMatrix);
 
     if (d->m_dropTextures) {
-        foreach (const QGeoTileSpec &s, mapRoot->tiles->tiles.keys())
+        for (const QGeoTileSpec &s : mapRoot->tiles->tiles.keys())
             delete mapRoot->tiles->tiles.take(s);
-        foreach (const QGeoTileSpec &s, mapRoot->wrapLeft->tiles.keys())
+        for (const QGeoTileSpec &s : mapRoot->wrapLeft->tiles.keys())
             delete mapRoot->wrapLeft->tiles.take(s);
-        foreach (const QGeoTileSpec &s, mapRoot->wrapRight->tiles.keys())
+        for (const QGeoTileSpec &s : mapRoot->wrapRight->tiles.keys())
             delete mapRoot->wrapRight->tiles.take(s);
-        foreach (const QGeoTileSpec &spec, mapRoot->textures.keys())
+        for (const QGeoTileSpec &spec : mapRoot->textures.keys())
             mapRoot->textures.take(spec)->deleteLater();
         d->m_dropTextures = false;
     }
@@ -694,9 +694,9 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     QSet<QGeoTileSpec> toRemove = textures - d->m_visibleTiles;
     QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - textures;
 
-    foreach (const QGeoTileSpec &spec, toRemove)
+    for (const QGeoTileSpec &spec : toRemove)
         mapRoot->textures.take(spec)->deleteLater();
-    foreach (const QGeoTileSpec &spec, toAdd) {
+    for (const QGeoTileSpec &spec : toAdd) {
         QGeoTileTexture *tileTexture = d->m_textures.value(spec).data();
         if (!tileTexture || tileTexture->image.isNull())
             continue;
