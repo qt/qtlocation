@@ -241,16 +241,20 @@ bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageN
     imageNode->setTextureCoordinatesTransform(QSGImageNode::MirrorVertically);
 
     // Calculate the texture mapping, in case we are magnifying some lower ZL tile
-    const QGeoTileSpec textureSpec = m_textures.value(spec)->spec;
-    if (textureSpec.zoom() < spec.zoom()) {
-        overzooming = true;
-        // Currently only using lower ZL tiles for the overzoom.
-        const int tilesPerTexture = 1 << (spec.zoom() - textureSpec.zoom());
-        const int mappedSize = imageNode->texture()->textureSize().width() / tilesPerTexture;
-        const int x = (spec.x() % tilesPerTexture) * mappedSize;
-        const int y = (spec.y() % tilesPerTexture) * mappedSize;
-        imageNode->setSourceRect(QRectF(x, y, mappedSize, mappedSize));
+    const auto it = m_textures.find(spec); // This should be always found, but apparently sometimes it isn't, possibly due to memory shortage
+    if (it != m_textures.end()) {
+        if (it.value()->spec.zoom() < spec.zoom()) {
+            // Currently only using lower ZL tiles for the overzoom.
+            const int tilesPerTexture = 1 << (spec.zoom() - it.value()->spec.zoom());
+            const int mappedSize = imageNode->texture()->textureSize().width() / tilesPerTexture;
+            const int x = (spec.x() % tilesPerTexture) * mappedSize;
+            const int y = (spec.y() % tilesPerTexture) * mappedSize;
+            imageNode->setSourceRect(QRectF(x, y, mappedSize, mappedSize));
+        } else {
+            imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
+        }
     } else {
+        qWarning() << "!! buildGeometry: tileSpec not present in m_textures !!";
         imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
     }
 
