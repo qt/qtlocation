@@ -68,7 +68,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoTileFetcher : public QObject
     Q_DECLARE_PRIVATE(QGeoTileFetcher)
 
 public:
-    QGeoTileFetcher(QObject *parent = 0);
+    QGeoTileFetcher(QGeoMappingManagerEngine *parent);
     virtual ~QGeoTileFetcher();
 
 public Q_SLOTS:
@@ -84,7 +84,7 @@ Q_SIGNALS:
     void tileError(const QGeoTileSpec &spec, const QString &errorString);
 
 protected:
-    QGeoTileFetcher(QGeoTileFetcherPrivate &dd, QObject *parent = 0);
+    QGeoTileFetcher(QGeoTileFetcherPrivate &dd, QGeoMappingManagerEngine *parent);
 
     void timerEvent(QTimerEvent *event);
     QAbstractGeoTileCache::CacheAreas cacheHint() const;

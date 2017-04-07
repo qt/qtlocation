@@ -45,22 +45,24 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoTileFetcher::QGeoTileFetcher(QObject *parent)
+QGeoTileFetcher::QGeoTileFetcher(QGeoMappingManagerEngine *parent)
 :   QObject(*new QGeoTileFetcherPrivate(), parent)
 {
     Q_D(QGeoTileFetcher);
 
     d->enabled_ = true;
+    d->engine_ = parent;
 
 //    if (!d->queue_.isEmpty())
 //        d->timer_.start(0, this);
 }
 
-QGeoTileFetcher::QGeoTileFetcher(QGeoTileFetcherPrivate &dd, QObject *parent)
+QGeoTileFetcher::QGeoTileFetcher(QGeoTileFetcherPrivate &dd, QGeoMappingManagerEngine *parent)
 :   QObject(dd,parent)
 {
     Q_D(QGeoTileFetcher);
     d->enabled_ = true;
+    d->engine_ = parent;
 
 //    if (!d->queue_.isEmpty())
 //        d->timer_.start(0, this);
@@ -119,6 +121,13 @@ void QGeoTileFetcher::requestNextTile()
     QGeoTileSpec ts = d->queue_.takeFirst();
     if (d->queue_.isEmpty())
         d->timer_.stop();
+
+    // Check against min/max zoom to prevent sending requests for not existing objects
+    const QGeoCameraCapabilities & cameraCaps = d->engine_->cameraCapabilities(ts.mapId());
+    // the ZL in QGeoTileSpec is relative to the native tile size of the provider.
+    // It gets denormalized in QGeoTiledMap.
+    if (ts.zoom() < cameraCaps.minimumZoomLevel() || ts.zoom() > cameraCaps.maximumZoomLevel())
+        return;
 
     QGeoTiledMapReply *reply = getTileImage(ts);
     if (!reply)
@@ -202,7 +211,7 @@ void QGeoTileFetcher::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &
 *******************************************************************************/
 
 QGeoTileFetcherPrivate::QGeoTileFetcherPrivate()
-:   QObjectPrivate(), enabled_(false)
+:   QObjectPrivate(), enabled_(false), engine_(0)
 {
 }
 

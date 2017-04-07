@@ -32,6 +32,7 @@
 #include <QtLocation/private/qgeotiledmapreply_p.h>
 #include <QtLocation/private/qgeotilefetcher_p.h>
 #include <QtLocation/private/qgeotilespec_p.h>
+#include <QtLocation/private/qgeomappingmanagerengine_p.h>
 
 #include <QLocale>
 #include <QPainter>
@@ -65,7 +66,7 @@ class QGeoTileFetcherTest: public QGeoTileFetcher
 {
     Q_OBJECT
 public:
-    QGeoTileFetcherTest(QObject *parent = 0)
+    QGeoTileFetcherTest(QGeoMappingManagerEngine *parent)
     :    QGeoTileFetcher(parent), finishRequestImmediately_(false), errorCode_(QGeoTiledMapReply::NoError)
     {
     }

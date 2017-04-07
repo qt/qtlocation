@@ -52,7 +52,7 @@ class GeoTileFetcherEsri : public QGeoTileFetcher
     Q_OBJECT
 
 public:
-    explicit GeoTileFetcherEsri(QObject *parent = Q_NULLPTR);
+    explicit GeoTileFetcherEsri(QGeoTiledMappingManagerEngine *parent);
 
     inline const QByteArray &userAgent() const;
     inline void setUserAgent(const QByteArray &userAgent);

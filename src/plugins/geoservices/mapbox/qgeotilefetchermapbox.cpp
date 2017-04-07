@@ -44,7 +44,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoTileFetcherMapbox::QGeoTileFetcherMapbox(int scaleFactor, QObject *parent)
+QGeoTileFetcherMapbox::QGeoTileFetcherMapbox(int scaleFactor, QGeoTiledMappingManagerEngine *parent)
 :   QGeoTileFetcher(parent), m_networkManager(new QNetworkAccessManager(this)),
     m_userAgent("Qt Location based application"),
     m_format("png"),
