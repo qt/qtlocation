@@ -865,7 +865,7 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSe
 
         m_gestureArea->setMinimumZoomLevel(minimumZoomLevel);
 
-        if (zoomLevel() < minimumZoomLevel)
+        if (zoomLevel() < minimumZoomLevel && (m_gestureArea->enabled() || !m_cameraCapabilities.overzoomEnabled()))
             setZoomLevel(minimumZoomLevel);
 
         if (oldMinimumZoomLevel != minimumZoomLevel)
@@ -908,7 +908,7 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel, bool userSe
 
         m_gestureArea->setMaximumZoomLevel(maximumZoomLevel);
 
-        if (zoomLevel() > maximumZoomLevel)
+        if (zoomLevel() > maximumZoomLevel && (m_gestureArea->enabled() || !m_cameraCapabilities.overzoomEnabled()))
             setZoomLevel(maximumZoomLevel);
 
         if (oldMaximumZoomLevel != maximumZoomLevel)
@@ -947,7 +947,8 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
     bool centerHasChanged = false;
 
     if (m_initialized) {
-        m_cameraData.setZoomLevel(qBound(minimumZoomLevel(), zoomLevel, maximumZoomLevel()));
+        m_cameraData.setZoomLevel(qBound<qreal>(m_cameraCapabilities.overzoomEnabled() ? 0 : minimumZoomLevel(), zoomLevel,
+                                                m_cameraCapabilities.overzoomEnabled() ? 30 : maximumZoomLevel()));
         m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
         QGeoCoordinate coord = m_cameraData.center();
         coord.setLatitude(qBound(-m_maximumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));

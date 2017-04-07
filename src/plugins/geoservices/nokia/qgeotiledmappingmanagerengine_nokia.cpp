@@ -85,6 +85,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     capabilities.setMaximumTilt(80);
     capabilities.setMinimumFieldOfView(20.0);
     capabilities.setMaximumFieldOfView(120.0);
+    capabilities.setOverzoomEnabled(true);
     setCameraCapabilities(capabilities);
 
     setTileSize(QSize(256, 256));

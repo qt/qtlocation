@@ -100,6 +100,9 @@ public:
     void setMaximumFieldOfView(double maximumFieldOfView);
     double maximumFieldOfView() const;
 
+    void setOverzoomEnabled(bool overzoomEnabled);
+    bool overzoomEnabled() const;
+
     bool isValid() const;
 
 private:
