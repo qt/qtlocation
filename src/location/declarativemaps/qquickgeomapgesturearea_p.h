@@ -50,6 +50,7 @@
 
 #include <QtLocation/private/qlocationglobal_p.h>
 
+#include <QtCore/QPointer>
 #include <QtQuick/QQuickItem>
 #include <QTouchEvent>
 #include <QDebug>
@@ -175,7 +176,7 @@ public:
     void setMaximumZoomLevel(qreal max);
     qreal maximumZoomLevel() const;
 
-    void setMap(QGeoMap *map);
+    void setMap(QPointer<QGeoMap> map);
 
     bool preventStealing() const;
     void setPreventStealing(bool prevent);
@@ -264,7 +265,7 @@ private:
     void updateFlickParameters(const QPointF &pos);
 
 private:
-    QGeoMap *m_map;
+    QPointer<QGeoMap> m_map;
     QDeclarativeGeoMap *m_declarativeMap;
     bool m_enabled;
 

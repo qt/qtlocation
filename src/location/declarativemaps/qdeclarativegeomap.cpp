@@ -278,17 +278,17 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
 
             copyrights = m_copyrights.data();
 
-            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+            connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
                     copyrights, SLOT(copyrightsChanged(QImage)));
-            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+            connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
                     this,  SIGNAL(copyrightsChanged(QImage)));
 
-            connect(m_map, SIGNAL(copyrightsChanged(QString)),
+            connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
                     copyrights, SLOT(copyrightsChanged(QString)));
-            connect(m_map, SIGNAL(copyrightsChanged(QString)),
+            connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
                     this,  SIGNAL(copyrightsChanged(QString)));
 
-            connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+            connect(m_map.data(), SIGNAL(copyrightsStyleSheetChanged(QString)),
                     copyrights, SLOT(onCopyrightsStyleSheetChanged(QString)));
 
             connect(copyrights, SIGNAL(linkActivated(QString)),
@@ -724,7 +724,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
 */
 void QDeclarativeGeoMap::mappingManagerInitialized()
 {
-    m_map = m_mappingManager->createMap(this);
+    m_map = QPointer<QGeoMap>(m_mappingManager->createMap(this));
 
     if (!m_map)
         return;
@@ -759,23 +759,23 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
     m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
 
-    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
             m_copyrights.data(), SLOT(copyrightsChanged(QImage)));
-    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
             this,  SIGNAL(copyrightsChanged(QImage)));
 
-    connect(m_map, SIGNAL(copyrightsChanged(QString)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
             m_copyrights.data(), SLOT(copyrightsChanged(QString)));
-    connect(m_map, SIGNAL(copyrightsChanged(QString)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
             this,  SIGNAL(copyrightsChanged(QString)));
 
-    connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+    connect(m_map.data(), SIGNAL(copyrightsStyleSheetChanged(QString)),
             m_copyrights.data(), SLOT(onCopyrightsStyleSheetChanged(QString)));
 
     connect(m_copyrights.data(), SIGNAL(linkActivated(QString)),
             this, SIGNAL(copyrightLinkActivated(QString)));
-    connect(m_map, &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
-    connect(m_map, &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
+    connect(m_map.data(), &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
+    connect(m_map.data(), &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
 
     // set visibility of copyright notice
     m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
