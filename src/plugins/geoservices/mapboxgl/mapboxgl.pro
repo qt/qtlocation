@@ -36,7 +36,7 @@ qtConfig(icu) {
 include(../../../3rdparty/zlib_dependency.pri)
 
 load(qt_build_paths)
-LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lqmapboxgl
+LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lqmapboxgl$$qtPlatformTargetSuffix()
 
 PLUGIN_TYPE = geoservices
 PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryMapboxGL
