@@ -110,7 +110,7 @@ void QGeoMap::setActiveMapType(const QGeoMapType type)
     if (type == d->m_activeMapType)
         return;
     d->m_activeMapType = type;
-    d->setCameraCapabilities(d->m_engine->cameraCapabilities(type)); // emits
+    d->setCameraCapabilities(d->m_engine->cameraCapabilities(type.mapId())); // emits
     d->changeActiveMapType(type);
     emit activeMapTypeChanged();
 }
@@ -238,7 +238,7 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection 
 {
     // Setting the default camera caps without emitting anything
     if (engine)
-        m_cameraCapabilities = m_engine->cameraCapabilities(m_activeMapType);
+        m_cameraCapabilities = m_engine->cameraCapabilities(m_activeMapType.mapId());
 }
 
 QGeoMapPrivate::~QGeoMapPrivate()

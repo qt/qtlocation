@@ -91,9 +91,9 @@ public:
         return new QGeoTiledMapTest(this);
     }
 
-    QGeoCameraCapabilities cameraCapabilities(const QGeoMapType &mapType) const Q_DECL_OVERRIDE
+    QGeoCameraCapabilities cameraCapabilities(int mapId) const Q_DECL_OVERRIDE
     {
-        switch (mapType.mapId()) {
+        switch (mapId) {
         case 4:
         {
             QGeoCameraCapabilities capabilities;
@@ -108,7 +108,7 @@ public:
             return capabilities;
         }
         default:
-            return QGeoMappingManagerEngine::cameraCapabilities(mapType);
+            return QGeoMappingManagerEngine::cameraCapabilities(mapId);
         }
     }
 

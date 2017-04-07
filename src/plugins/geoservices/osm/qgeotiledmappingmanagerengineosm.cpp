@@ -349,13 +349,13 @@ QString QGeoTiledMappingManagerEngineOsm::customCopyright() const
     return m_customCopyright;
 }
 
-QGeoCameraCapabilities QGeoTiledMappingManagerEngineOsm::cameraCapabilities(const QGeoMapType &mapType) const
+QGeoCameraCapabilities QGeoTiledMappingManagerEngineOsm::cameraCapabilities(int mapId) const
 {
-    if (mapType.mapId() == 0)
-        return QGeoMappingManagerEngine::cameraCapabilities(mapType);
-    int idx = mapType.mapId() - 1;
+    if (mapId == 0)
+        return QGeoMappingManagerEngine::cameraCapabilities(mapId);
+    int idx = mapId - 1;
     if (idx >= m_providers.size())
-        return QGeoMappingManagerEngine::cameraCapabilities(QGeoMapType());
+        return QGeoMappingManagerEngine::cameraCapabilities(mapId);
     return m_providers[idx]->cameraCapabilities();
 }
 
