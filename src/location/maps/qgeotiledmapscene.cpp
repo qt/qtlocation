@@ -573,9 +573,9 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
     cameraMatrix.lookAt(toVector3D(eye), toVector3D(center), toVector3D(d->m_cameraUp));
     root->setMatrix(d->m_projectionMatrix * cameraMatrix);
 
-    QSet<QGeoTileSpec> tilesInSG = QSet<QGeoTileSpec>::fromList(root->tiles.keys());
-    QSet<QGeoTileSpec> toRemove = tilesInSG - d->m_visibleTiles;
-    QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - tilesInSG;
+    const QSet<QGeoTileSpec> tilesInSG = QSet<QGeoTileSpec>::fromList(root->tiles.keys());
+    const QSet<QGeoTileSpec> toRemove = tilesInSG - d->m_visibleTiles;
+    const QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - tilesInSG;
 
     for (const QGeoTileSpec &s : toRemove)
         delete root->tiles.take(s);
@@ -690,9 +690,9 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
         d->m_updatedTextures.clear();
     }
 
-    QSet<QGeoTileSpec> textures = QSet<QGeoTileSpec>::fromList(mapRoot->textures.keys());
-    QSet<QGeoTileSpec> toRemove = textures - d->m_visibleTiles;
-    QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - textures;
+    const QSet<QGeoTileSpec> textures = QSet<QGeoTileSpec>::fromList(mapRoot->textures.keys());
+    const QSet<QGeoTileSpec> toRemove = textures - d->m_visibleTiles;
+    const QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - textures;
 
     for (const QGeoTileSpec &spec : toRemove)
         mapRoot->textures.take(spec)->deleteLater();
