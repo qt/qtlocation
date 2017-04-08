@@ -419,6 +419,9 @@ void QDeclarativeGeoMap::initialize()
         emit fieldOfViewChanged(m_cameraData.fieldOfView());
 
     emit mapReadyChanged(true);
+
+    if (m_copyrights)
+         update();
 }
 
 /*!
@@ -810,6 +813,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     // need to be added to m_map
     for (QDeclarativeGeoMapParameter *p : m_mapParameters)
         m_map->addParameter(p);
+
+    if (m_initialized)
+        update();
 }
 
 /*!
