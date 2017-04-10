@@ -936,7 +936,7 @@ Q_POSITIONING_PRIVATE_EXPORT QDebug operator<<(QDebug dbg, const QDoubleMatrix4x
 
 #ifndef QT_NO_DATASTREAM
 Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator<<(QDataStream &, const QDoubleMatrix4x4 &);
-Q_GUI_EXPORT QDataStream &operator>>(QDataStream &, QDoubleMatrix4x4 &);
+Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator>>(QDataStream &, QDoubleMatrix4x4 &);
 #endif
 
 
