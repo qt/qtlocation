@@ -29,14 +29,14 @@ OTHER_FILES += \
 
 INCLUDEPATH += ../../../3rdparty/mapbox-gl-native/platform/qt/include
 
-qtConfig(icu) {
-    include(../../../3rdparty/icu_dependency.pri)
-}
-
 include(../../../3rdparty/zlib_dependency.pri)
 
 load(qt_build_paths)
 LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lqmapboxgl$$qtPlatformTargetSuffix()
+
+qtConfig(icu) {
+    include(../../../3rdparty/icu_dependency.pri)
+}
 
 PLUGIN_TYPE = geoservices
 PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryMapboxGL
