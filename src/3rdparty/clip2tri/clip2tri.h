@@ -33,7 +33,7 @@
 #include <clipper.h>
 
 using namespace std;
-using namespace ClipperLib;
+using namespace QtClipperLib;
 
 namespace c2t
 {

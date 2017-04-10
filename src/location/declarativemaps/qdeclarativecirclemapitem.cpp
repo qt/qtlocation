@@ -181,7 +181,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     c2t::clip2tri clipper;
     clipper.addSubjectPath(QClipperUtils::qListToPath(fill), true);
     clipper.addClipPolygon(QClipperUtils::qListToPath(hole));
-    Paths difference = clipper.execute(c2t::clip2tri::Difference, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+    Paths difference = clipper.execute(c2t::clip2tri::Difference, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
 
     // 2)
     QDoubleVector2D lb = map.geoProjection().geoToWrappedMapProjection(srcOrigin_);
@@ -192,7 +192,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
         for (const Path &p: difference)
             clipper.addSubjectPath(p, true);
         clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+        Paths res = clipper.execute(c2t::clip2tri::Intersection, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
         clippedPaths = QClipperUtils::pathsToQList(res);
 
         // 2.1) update srcOrigin_ with the point with minimum X/Y

@@ -190,7 +190,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         c2t::clip2tri clipper;
         clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), true);
         clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+        Paths res = clipper.execute(c2t::clip2tri::Intersection, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
         clippedPaths = QClipperUtils::pathsToQList(res);
 
         // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
