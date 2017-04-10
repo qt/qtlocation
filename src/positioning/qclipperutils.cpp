@@ -62,7 +62,7 @@ IntPoint QClipperUtils::toIntPoint(const QDoubleVector2D &p)
 QList<QDoubleVector2D> QClipperUtils::pathToQList(const Path &path)
 {
     QList<QDoubleVector2D> res;
-    res.reserve(path.size());
+    res.reserve(int(path.size()));
     for (const IntPoint &ip: path)
         res.append(toVector2D(ip));
     return res;
@@ -71,7 +71,7 @@ QList<QDoubleVector2D> QClipperUtils::pathToQList(const Path &path)
 QList<QList<QDoubleVector2D> > QClipperUtils::pathsToQList(const Paths &paths)
 {
     QList<QList<QDoubleVector2D> > res;
-    res.reserve(paths.size());
+    res.reserve(int(paths.size()));
     for (const Path &p: paths) {
         res.append(pathToQList(p));
     }
