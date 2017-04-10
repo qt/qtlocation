@@ -102,7 +102,7 @@ Item {
     SignalSpy {id: mouseAreaBottomSpy; target: mouseAreaBottom; signalName: 'onPressed'}
 
     TestCase {
-        when: windowShown
+        when: windowShown && map.mapReady
         name: "MapPinch"
 
         function init()

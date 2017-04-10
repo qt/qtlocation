@@ -40,6 +40,11 @@ Item {
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
 
     property variant mapDefaultCenter: QtPositioning.coordinate(10, 30)
+    property bool allMapsReady: map.mapReady
+                                && map3.mapReady
+                                && mapForView.mapReady
+                                && mapForTestingListModel.mapReady
+                                && mapForTestingRouteModel.mapReady
 
     Map {
         id: map
@@ -259,7 +264,7 @@ Item {
 
     TestCase {
         name: "MapItem"
-        when: windowShown
+        when: windowShown && allMapsReady
         function clear_data() {
             mapItemSpy.clear()
         }

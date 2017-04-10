@@ -57,6 +57,14 @@ Item {
     property variant coordinate5: QtPositioning.coordinate(20, 180)
     property variant invalidCoordinate: QtPositioning.coordinate()
     property variant altitudelessCoordinate: QtPositioning.coordinate(50, 50)
+    property bool allMapsReady: mapZoomOnCompleted.mapReady
+                                && mapZoomDefault.mapReady
+                                && mapZoomUserInit.mapReady
+                                && map.mapReady
+                                && mapPar.mapReady
+                                && coordinateMap.mapReady
+                                && mapTiltBearing.mapReady
+                                && mapTiltBearingHere.mapReady
 
     Map { id: mapZoomOnCompleted; width: 200; height: 200;
         zoomLevel: 3; center: coordinate1; plugin: testPlugin;
@@ -98,7 +106,7 @@ Item {
 
 
     TestCase {
-        when: windowShown
+        when: windowShown && allMapsReady
         name: "MapProperties"
 
         function fuzzy_compare(val, ref) {

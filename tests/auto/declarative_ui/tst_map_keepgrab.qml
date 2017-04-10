@@ -61,7 +61,7 @@ Item {
 
 
     TestCase {
-        when: windowShown
+        when: windowShown && map.mapReady
         name: "MapKeepGrabAndPreventSteal"
 
         function initTestCase()

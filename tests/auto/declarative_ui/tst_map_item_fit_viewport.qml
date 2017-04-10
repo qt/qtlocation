@@ -217,7 +217,7 @@ Item {
 
     TestCase {
         name: "MapItemsFitViewport"
-        when: windowShown
+        when: windowShown && map.mapReady
 
         function initTestCase()
         {

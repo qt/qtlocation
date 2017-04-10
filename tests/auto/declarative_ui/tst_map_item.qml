@@ -216,7 +216,7 @@ Item {
     }
     TestCase {
         name: "MapItems"
-        when: windowShown
+        when: windowShown && map.mapReady
 
         function initTestCase()
         {
