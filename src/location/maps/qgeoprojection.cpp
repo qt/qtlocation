@@ -39,6 +39,7 @@
 #include <QtPositioning/private/qlocationutils_p.h>
 #include <QtPositioning/private/qclipperutils_p.h>
 #include <QSize>
+#include <QtGui/QMatrix4x4>
 #include <cmath>
 
 namespace {

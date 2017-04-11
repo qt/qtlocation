@@ -40,6 +40,7 @@
 #include "qdoublematrix4x4_p.h"
 #include <QtCore/qmath.h>
 //#include <QtCore/qvariant.h>
+#include <QtCore/qdatastream.h>
 #include <cmath>
 
 QT_BEGIN_NAMESPACE

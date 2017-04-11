@@ -53,9 +53,9 @@
 
 #include <QtPositioning/private/qpositioningglobal_p.h>
 #include <QtPositioning/private/qdoublevector3d_p.h>
+#include <QtCore/QDebug>
 #include <QtCore/qmetatype.h>
 #include <QtCore/QRectF>
-#include <QtGui/qmatrix4x4.h>
 
 QT_BEGIN_NAMESPACE
 
