@@ -218,6 +218,7 @@ void QDeclarativePinchGenerator::itemChange(ItemChange change, const ItemChangeD
 void QDeclarativePinchGenerator::timerEvent(QTimerEvent *event)
 {
     Q_ASSERT(replayTimer_ == event->timerId());
+    Q_UNUSED(event);
     Q_ASSERT(state_ == Replaying);
 
     int slaveSwipe = masterSwipe_ ^ 1;
