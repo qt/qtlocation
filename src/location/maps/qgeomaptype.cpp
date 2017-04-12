@@ -46,8 +46,8 @@ QGeoMapType::QGeoMapType(const QGeoMapType &other)
     : d_ptr(other.d_ptr) {}
 
 QGeoMapType::QGeoMapType(QGeoMapType::MapStyle style, const QString &name,
-                         const QString &description, bool mobile, bool night, int mapId)
-:   d_ptr(new QGeoMapTypePrivate(style, name, description, mobile, night, mapId))
+                         const QString &description, bool mobile, bool night, int mapId, QByteArray pluginName)
+:   d_ptr(new QGeoMapTypePrivate(style, name, description, mobile, night, mapId, pluginName))
 {
 }
 
@@ -102,6 +102,11 @@ int QGeoMapType::mapId() const
     return d_ptr->mapId_;
 }
 
+QByteArray QGeoMapType::pluginName() const
+{
+    return d_ptr->pluginName_;
+}
+
 QGeoMapTypePrivate::QGeoMapTypePrivate()
 :   style_(QGeoMapType::NoMap), mobile_(false), night_(false), mapId_(0)
 {
@@ -109,15 +114,15 @@ QGeoMapTypePrivate::QGeoMapTypePrivate()
 
 QGeoMapTypePrivate::QGeoMapTypePrivate(const QGeoMapTypePrivate &other)
 :   QSharedData(other), style_(other.style_), name_(other.name_), description_(other.description_),
-    mobile_(other.mobile_), night_(other.night_), mapId_(other.mapId_)
+    mobile_(other.mobile_), night_(other.night_), mapId_(other.mapId_), pluginName_(other.pluginName_)
 {
 }
 
 QGeoMapTypePrivate::QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name,
                                        const QString &description, bool mobile, bool night,
-                                       int mapId)
+                                       int mapId, QByteArray pluginName)
 :   style_(style), name_(name), description_(description), mobile_(mobile), night_(night),
-    mapId_(mapId)
+    mapId_(mapId), pluginName_(pluginName)
 {
 }
 
@@ -127,8 +132,9 @@ QGeoMapTypePrivate::~QGeoMapTypePrivate()
 
 bool QGeoMapTypePrivate::operator==(const QGeoMapTypePrivate &other) const
 {
-    return style_ == other.style_ && name_ == other.name_ && description_ == other.description_ &&
-           mobile_ == other.mobile_ && night_ == other.night_ && mapId_ == other.mapId_;
+    return pluginName_ == other.pluginName_ && style_ == other.style_ && name_ == other.name_ &&
+           description_ == other.description_ && mobile_ == other.mobile_ && night_ == other.night_ &&
+           mapId_ == other.mapId_;
 }
 
 QT_END_NAMESPACE

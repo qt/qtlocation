@@ -190,7 +190,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
     m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                              tr("No Map"),
-                                                             tr("No Map"), false, false, 0), this);
+                                                             tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
     m_cameraData.setCenter(QGeoCoordinate(51.5073,-0.1277)); //London city center
     m_cameraData.setZoomLevel(8.0);
 
@@ -738,12 +738,20 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         m_supportedMapTypes.append(type);
     }
 
-    if (!m_supportedMapTypes.isEmpty()) {
-        QDeclarativeGeoMapType *type = m_supportedMapTypes.at(0);
-        m_activeMapType = type;
-        m_map->setActiveMapType(type->mapType());
-    } else {
+    if (m_activeMapType && m_plugin->name().toLatin1() == m_activeMapType->mapType().pluginName()) {
         m_map->setActiveMapType(m_activeMapType->mapType());
+    } else {
+        if (m_activeMapType)
+            m_activeMapType->deleteLater();
+
+        if (!m_supportedMapTypes.isEmpty()) {
+                m_activeMapType = m_supportedMapTypes.at(0);
+                m_map->setActiveMapType(m_activeMapType->mapType());
+        } else {
+            m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
+                                                                     tr("No Map"),
+                                                                     tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
+        }
     }
 
     // Update camera capabilities
@@ -1890,10 +1898,16 @@ void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGro
 void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
 {
     if (m_activeMapType->mapType() != mapType->mapType()) {
-        m_activeMapType = mapType;
-        if (m_map)
-            m_map->setActiveMapType(mapType->mapType());
-        emit activeMapTypeChanged();
+        if (m_map) {
+            if (mapType->mapType().pluginName() == m_plugin->name().toLatin1()) {
+                m_map->setActiveMapType(mapType->mapType());
+                m_activeMapType = mapType;
+                emit activeMapTypeChanged();
+            }
+        } else {
+            m_activeMapType = mapType;
+            emit activeMapTypeChanged();
+        }
     }
 }
 

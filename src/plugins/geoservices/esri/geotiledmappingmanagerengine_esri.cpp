@@ -118,7 +118,8 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
                         mapSource->description(),
                         mapSource->mobile(),
                         mapSource->night(),
-                        mapSource->mapId());
+                        mapSource->mapId(),
+                        "esri");
     }
 
     setSupportedMapTypes(mapTypes);
