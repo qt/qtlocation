@@ -50,13 +50,13 @@
 
 #include <QSharedDataPointer>
 
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoCameraCapabilitiesPrivate;
 
-class Q_LOCATION_EXPORT QGeoCameraCapabilities
+class Q_LOCATION_PRIVATE_EXPORT QGeoCameraCapabilities
 {
 public:
     QGeoCameraCapabilities();
