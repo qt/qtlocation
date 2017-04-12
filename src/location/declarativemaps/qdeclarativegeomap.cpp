@@ -750,10 +750,23 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // Map tiles are built in this call. m_map->minimumZoom() becomes operational
     // after this has been called at least once, after creation.
-
+    // However, getting into the following block may fire a copyrightsChanged that would get lost,
+    // as the connections are set up after.
+    QString copyrightString;
+    QImage copyrightImage;
     if (!m_initialized && width() > 0 && height() > 0) {
+        QMetaObject::Connection copyrightStringCatcherConnection =
+                connect(m_map.data(),
+                        QOverload<const QString &>::of(&QGeoMap::copyrightsChanged),
+                        [&copyrightString](const QString &copy){ copyrightString = copy; });
+        QMetaObject::Connection copyrightImageCatcherConnection =
+                connect(m_map.data(),
+                        QOverload<const QImage &>::of(&QGeoMap::copyrightsChanged),
+                        [&copyrightImage](const QImage &copy){ copyrightImage = copy; });
         m_map->setViewportSize(QSize(width(), height()));
         initialize();
+        QObject::disconnect(copyrightStringCatcherConnection);
+        QObject::disconnect(copyrightImageCatcherConnection);
     }
 
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
@@ -768,6 +781,11 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             m_copyrights.data(), SLOT(copyrightsChanged(QString)));
     connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
             this,  SIGNAL(copyrightsChanged(QString)));
+
+    if (!copyrightString.isEmpty())
+        emit m_map.data()->copyrightsChanged(copyrightString);
+    else if (!copyrightImage.isNull())
+        emit m_map.data()->copyrightsChanged(copyrightImage);
 
     connect(m_map.data(), SIGNAL(copyrightsStyleSheetChanged(QString)),
             m_copyrights.data(), SLOT(onCopyrightsStyleSheetChanged(QString)));
