@@ -438,6 +438,14 @@ double QGeoCameraCapabilities::maximumFieldOfView() const
 /*!
     Sets whether overzooming is supported by the associated plugin.
 
+    Overzooming means that zoom levels outside the [minimumZL, maximumZL] range can be set,
+    and if tiles aren't available for those zoom levels, either tiles from other zoom levels
+    will be used, or nothing will be shown.
+
+    Set this value to false if the plugin is not capable of that. For example if using
+    a mapping engine that always clamp the zoomLevel value, which may cause misalignment in case
+    of stacked map elements.
+
     \since 5.9
 */
 void QGeoCameraCapabilities::setOverzoomEnabled(bool overzoomEnabled)

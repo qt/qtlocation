@@ -936,7 +936,9 @@ qreal QDeclarativeGeoMap::maximumZoomLevel() const
     This property holds the zoom level for the map.
 
     Larger values for the zoom level provide more detail. Zoom levels
-    are always non-negative. The default value is 8.0.
+    are always non-negative. The default value is 8.0. Depending on the plugin in use,
+    values outside the [minimumZoomLevel, maximumZoomLevel] range, which represent the range for which
+    tiles are available, may be accepted, or clamped.
 */
 void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
 {
