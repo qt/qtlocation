@@ -86,7 +86,7 @@ public:
         setTileFetcher(fetcher);
     }
 
-    QGeoMap *createMap()
+    QGeoMap *createMap() override
     {
         return new QGeoTiledMapTest(this);
     }
