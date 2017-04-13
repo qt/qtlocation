@@ -93,7 +93,7 @@ protected:
 private:
 
     virtual QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) = 0;
-    void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
+    virtual void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
 
     Q_DISABLE_COPY(QGeoTileFetcher)
     friend class QGeoTiledMappingManagerEngine;
