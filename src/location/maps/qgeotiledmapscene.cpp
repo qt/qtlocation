@@ -250,6 +250,7 @@ bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageN
             const int x = (spec.x() % tilesPerTexture) * mappedSize;
             const int y = (spec.y() % tilesPerTexture) * mappedSize;
             imageNode->setSourceRect(QRectF(x, y, mappedSize, mappedSize));
+            overzooming = true;
         } else {
             imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
         }
