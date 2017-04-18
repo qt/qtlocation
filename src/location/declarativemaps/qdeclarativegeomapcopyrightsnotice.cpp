@@ -235,8 +235,10 @@ void QDeclarativeGeoMapCopyrightNotice::rasterizeHtmlAndUpdate()
 void QDeclarativeGeoMapCopyrightNotice::createCopyright()
 {
     m_copyrightsHtml = new QTextDocument(this);
+#if QT_CONFIG(cssparser)
     if (!m_styleSheet.isEmpty())
         m_copyrightsHtml->setDefaultStyleSheet(m_styleSheet);
+#endif
 
     // The default 4 makes the copyright too wide and tall.
     m_copyrightsHtml->setDocumentMargin(0);
