@@ -169,7 +169,11 @@ void QDeclarativeGeoMapCopyrightNotice::setStyleSheet(const QString &styleSheet)
     if (!m_html.isEmpty() && m_copyrightsHtml) {
         delete m_copyrightsHtml;
         createCopyright();
+#if QT_CONFIG(texthtmlparser)
         m_copyrightsHtml->setHtml(m_html);
+#else
+        m_copyrightsHtml->setPlainText(m_html);
+#endif
     }
     rasterizeHtmlAndUpdate();
     emit styleSheetChanged(m_styleSheet);
@@ -289,12 +293,20 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrig
 
     // Divfy, so we can style the background. The extra <span> is a
     // workaround to QTBUG-58838 and should be removed when it gets fixed.
+#if QT_CONFIG(texthtmlparser)
     m_html = QStringLiteral("<div id='copyright-root'><span>") + copyrightsHtml + QStringLiteral("</span></div>");
+#else
+    m_html = copyrightsHtml;
+#endif
 
     if (!m_copyrightsHtml)
         createCopyright();
 
+#if QT_CONFIG(texthtmlparser)
     m_copyrightsHtml->setHtml(m_html);
+#else
+    m_copyrightsHtml->setPlainText(m_html);
+#endif
     rasterizeHtmlAndUpdate();
 }
 
@@ -307,7 +319,11 @@ void QDeclarativeGeoMapCopyrightNotice::onCopyrightsStyleSheetChanged(const QStr
     if (!m_html.isEmpty() && m_copyrightsHtml) {
         delete m_copyrightsHtml;
         createCopyright();
+#if QT_CONFIG(texthtmlparser)
         m_copyrightsHtml->setHtml(m_html);
+#else
+        m_copyrightsHtml->setPlainText(m_html);
+#endif
     }
     rasterizeHtmlAndUpdate();
     emit styleSheetChanged(m_styleSheet);
