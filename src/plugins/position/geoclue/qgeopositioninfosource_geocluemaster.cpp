@@ -104,7 +104,7 @@ QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject
 
 QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
 {
-#ifndef QT_NO_DATASTREAM
+#if !defined(QT_NO_DATASTREAM) && QT_CONFIG(temporaryfile)
     if (m_lastPosition.isValid()) {
         QSaveFile file(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
                        QStringLiteral("/qtposition-geoclue"));
