@@ -163,7 +163,9 @@ public:
     void setFlickDeceleration(qreal deceleration);
 
     void handleTouchEvent(QTouchEvent *event);
+#if QT_CONFIG(wheelevent)
     void handleWheelEvent(QWheelEvent *event);
+#endif
     void handleMousePressEvent(QMouseEvent *event);
     void handleMouseMoveEvent(QMouseEvent *event);
     void handleMouseReleaseEvent(QMouseEvent *event);

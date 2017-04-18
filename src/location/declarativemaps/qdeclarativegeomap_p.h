@@ -214,7 +214,9 @@ protected:
     void mouseUngrabEvent() Q_DECL_OVERRIDE ;
     void touchUngrabEvent() Q_DECL_OVERRIDE;
     void touchEvent(QTouchEvent *event) Q_DECL_OVERRIDE ;
+#if QT_CONFIG(wheelevent)
     void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE ;
+#endif
 
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) Q_DECL_OVERRIDE;
     bool sendMouseEvent(QMouseEvent *event);

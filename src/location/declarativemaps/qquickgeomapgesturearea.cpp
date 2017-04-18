@@ -41,7 +41,9 @@
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/qevent.h>
+#if QT_CONFIG(wheelevent)
 #include <QtGui/QWheelEvent>
+#endif
 #include <QtGui/QStyleHints>
 #include <QtQml/qqmlinfo.h>
 #include <QtQuick/QQuickWindow>
@@ -940,6 +942,7 @@ void QQuickGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
     update();
 }
 
+#if QT_CONFIG(wheelevent)
 void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 {
     if (!m_map)
@@ -958,6 +961,7 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 
     event->accept();
 }
+#endif
 
 /*!
     \internal

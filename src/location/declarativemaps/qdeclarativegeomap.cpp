@@ -1545,6 +1545,7 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
     }
 }
 
+#if QT_CONFIG(wheelevent)
 /*!
     \internal
 */
@@ -1556,6 +1557,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
         QQuickItem::wheelEvent(event);
 
 }
+#endif
 
 bool QDeclarativeGeoMap::isInteractive()
 {
