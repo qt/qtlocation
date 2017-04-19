@@ -68,17 +68,17 @@ QGeoMappingManagerEngineMapboxGL::QGeoMappingManagerEngineMapboxGL(const QVarian
     QList<QGeoMapType> mapTypes;
     int mapId = 0;
 
-    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox://styles/mapbox/streets-v9"),
+    mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox://styles/mapbox/streets-v10"),
             tr("Streets"), false, false, ++mapId);
     mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox://styles/mapbox/basic-v9"),
             tr("Basic"), false, false, ++mapId);
     mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox://styles/mapbox/bright-v9"),
             tr("Bright"), false, false, ++mapId);
-    mapTypes << QGeoMapType(QGeoMapType::TerrainMap, QStringLiteral("mapbox://styles/mapbox/outdoors-v9"),
+    mapTypes << QGeoMapType(QGeoMapType::TerrainMap, QStringLiteral("mapbox://styles/mapbox/outdoors-v10"),
             tr("Outdoors"), false, false, ++mapId);
     mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, QStringLiteral("mapbox://styles/mapbox/satellite-v9"),
             tr("Satellite"), false, false, ++mapId);
-    mapTypes << QGeoMapType(QGeoMapType::HybridMap, QStringLiteral("mapbox://styles/mapbox/satellite-streets-v9"),
+    mapTypes << QGeoMapType(QGeoMapType::HybridMap, QStringLiteral("mapbox://styles/mapbox/satellite-streets-v10"),
             tr("Satellite Streets"), false, false, ++mapId);
     mapTypes << QGeoMapType(QGeoMapType::GrayStreetMap, QStringLiteral("mapbox://styles/mapbox/light-v9"),
             tr("Light"), false, false, ++mapId);
