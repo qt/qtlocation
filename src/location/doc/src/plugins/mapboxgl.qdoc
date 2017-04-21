@@ -53,6 +53,22 @@ The Mapbox GL geo services plugin can be loaded by using the plugin key "mapboxg
 Both Mapbox geo services plugins require an access token to access map styles
 and tiles hosted by Mapbox. To create a Mapbox account visit \l{https://www.mapbox.com/pricing}.
 
+\section1 Platform Support
+
+Qt Location Mapbox GL Plugin has the following support for platforms:
+
+\list
+    \li Microsoft Windows (win32) - Supported, requires MinGW 5.0+ and ANGLE as OpenGL backend
+    \li Linux X11 - Supported, requires GCC 4.9+
+    \li macOS - Supported
+    \li Android - Supported
+    \li Embedded Linux - Supported, requires GCC 4.9+
+    \li iOS - Supported
+    \li WinRT - Not supported
+\endlist
+
+\section1 Parameters
+
 \section2 Optional plugin parameters
 
 The following table lists optional parameters that can be passed to the Mapbox plugin.
@@ -168,6 +184,8 @@ replacing the dash with camel case for technical reasons (i.e. \b line-cap will 
     be used for adding a layer from a GeoJSON source based on specific parts of the data source, like by using only the points
     in the GeoJSON.
 \endtable
+
+\section1 Example usage
 
 This example adds inline GeoJSON data to the map. Simply adding a \b source is not enough to get the data
 visible. It is also necessary to create a \b layer based on this source. After the layer is added, we also need

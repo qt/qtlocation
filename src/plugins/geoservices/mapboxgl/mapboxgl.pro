@@ -38,6 +38,14 @@ qtConfig(icu) {
     include(../../../3rdparty/icu_dependency.pri)
 }
 
+# When building for Windows with dynamic OpenGL, this plugin
+# can only run with ANGLE because Mapbox GL requires at least
+# OpenGL ES and does not use QOpenGLFunctions for resolving
+# the OpenGL symbols. -lopengl32 only gives OpenGL 1.1.
+win32:qtConfig(dynamicgl) {
+    LIBS_PRIVATE += -lQtANGLE
+}
+
 PLUGIN_TYPE = geoservices
 PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryMapboxGL
 load(qt_plugin)

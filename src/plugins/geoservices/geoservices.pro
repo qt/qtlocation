@@ -6,7 +6,7 @@ qtConfig(concurrent) {
     SUBDIRS += osm
 }
 
-qtConfig(c++14):!win32:!qnx {
+qtConfig(c++14):!win32|mingw:!qnx {
     !exists(../../3rdparty/mapbox-gl-native/CMakeLists.txt) {
         warning("Submodule mapbox-gl-native does not exist. Run 'git submodule update --init' on qtlocation.")
     } else {
