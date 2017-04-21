@@ -78,6 +78,7 @@ class QGeoPositionInfoSourceWinRT : public QGeoPositionInfoSource
 public:
     QGeoPositionInfoSourceWinRT(QObject *parent = 0);
     ~QGeoPositionInfoSourceWinRT();
+    int init();
 
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     PositioningMethods supportedPositioningMethods() const;

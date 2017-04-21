@@ -97,8 +97,19 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     d->updatesOngoing = false;
 
     qRegisterMetaType<QGeoPositionInfo>();
+}
 
-    requestAccess();
+QGeoPositionInfoSourceWinRT::~QGeoPositionInfoSourceWinRT()
+{
+}
+
+int QGeoPositionInfoSourceWinRT::init()
+{
+    Q_D(QGeoPositionInfoSourceWinRT);
+    if (!requestAccess()) {
+        qWarning ("Location access failed.");
+        return -1;
+    }
     HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([this, d]() {
         HRESULT hr = RoActivateInstance(HString::MakeReference(RuntimeClass_Windows_Devices_Geolocation_Geolocator).Get(),
                                         &d->locator);
@@ -114,13 +125,17 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
 
         return hr;
     });
-    Q_ASSERT_SUCCEEDED(hr);
+    if (FAILED(hr)) {
+        setError(QGeoPositionInfoSource::UnknownSourceError);
+        qErrnoWarning(hr, "Could not register status changed callback");
+        return -1;
+    }
 
     hr = d->locator->put_DesiredAccuracy(PositionAccuracy::PositionAccuracy_Default);
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
         qErrnoWarning(hr, "Could not initialize desired accuracy.");
-        return;
+        return -1;
     }
 
     d->positionToken.value = 0;
@@ -135,10 +150,7 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
 
     connect(this, &QGeoPositionInfoSourceWinRT::nativePositionUpdate, this, &QGeoPositionInfoSourceWinRT::updateSynchronized);
-}
-
-QGeoPositionInfoSourceWinRT::~QGeoPositionInfoSourceWinRT()
-{
+    return 0;
 }
 
 QGeoPositionInfo QGeoPositionInfoSourceWinRT::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
