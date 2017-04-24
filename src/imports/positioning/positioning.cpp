@@ -244,7 +244,7 @@ QT_BEGIN_NAMESPACE
     The \l isEmpty attribute can be used to test if the geoshape represents a region with a
     geometrical area of 0.
 
-    The \l {contains}{contains()} method can be used to test if a \l {coordinate} is
+    The \l {contains}() method can be used to test if a \l {coordinate} is
     within the geoshape.
 
     \section1 Example Usage
@@ -522,7 +522,7 @@ QT_BEGIN_NAMESPACE
     \section2 width
 
     This property holds the width of the path in meters. This is currently only used
-    when calling the \l {geoshape.contains} method.
+    when calling the \l {contains}() method.
 
     The default value for the width is 0.
 */
