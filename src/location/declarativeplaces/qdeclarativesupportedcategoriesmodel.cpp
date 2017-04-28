@@ -38,7 +38,7 @@
 #include "qdeclarativesupportedcategoriesmodel_p.h"
 #include "qdeclarativeplaceicon_p.h"
 #include "qgeoserviceprovider.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 
 #include <QCoreApplication>
 #include <QtQml/QQmlInfo>

@@ -37,7 +37,7 @@
 #include "qquickgeomapgesturearea_p.h"
 #include "qquickgeocoordinateanimation_p.h"
 #include "qdeclarativegeomap_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/qevent.h>

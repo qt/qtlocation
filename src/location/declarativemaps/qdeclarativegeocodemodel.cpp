@@ -35,7 +35,7 @@
 ****************************************************************************/
 
 #include "qdeclarativegeocodemodel_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtQml/QQmlInfo>

@@ -67,7 +67,6 @@
 #include <QtLocation/private/qdeclarativesupportedcategoriesmodel_p.h>
 #include <QtLocation/private/qdeclarativesearchresultmodel_p.h>
 #include <QtLocation/private/qdeclarativesearchsuggestionmodel_p.h>
-#include <QtLocation/error_messages.h>
 
 #include <QtQml/qqmlextensionplugin.h>
 

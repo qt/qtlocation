@@ -39,7 +39,7 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativeplaceicon_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QMetaObject>

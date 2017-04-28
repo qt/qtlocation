@@ -35,7 +35,7 @@
 ****************************************************************************/
 
 #include "qdeclarativeplaceicon_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>

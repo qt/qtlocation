@@ -36,7 +36,7 @@
 
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qlocationutils_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
 #include "qdoublevector2d_p.h"
 #include <QtLocation/private/qgeomap_p.h>

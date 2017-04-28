@@ -2,10 +2,8 @@ QT += quick-private network positioning-private qml-private core-private gui-pri
 
 INCLUDEPATH += declarativemaps
 
-PUBLIC_HEADERS += \
-           declarativemaps/error_messages.h
-
 PRIVATE_HEADERS += \
+           declarativemaps/error_messages_p.h \
            declarativemaps/qdeclarativegeomapitemview_p.h \
            declarativemaps/qdeclarativegeomapitemview_p_p.h \
            declarativemaps/qdeclarativegeoserviceprovider_p.h \
