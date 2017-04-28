@@ -59,7 +59,7 @@
 #include <QtCore/QList>
 #include <QtCore/QPointer>
 #include <QtGui/QColor>
-#include <QtPositioning/qgeoshape.h>
+#include <QtPositioning/qgeorectangle.h>
 #include <QtLocation/private/qgeomap_p.h>
 
 QT_BEGIN_NAMESPACE
