@@ -953,7 +953,8 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 
     const double zoomLevelDelta = event->angleDelta().y() * qreal(0.001);
     // Gesture area should always honor maxZL, but Map might not.
-    m_declarativeMap->setZoomLevel(qMin<qreal>(m_declarativeMap->zoomLevel() + zoomLevelDelta, maximumZoomLevel()));
+    m_declarativeMap->setZoomLevel(qMin<qreal>(m_declarativeMap->zoomLevel() + zoomLevelDelta, maximumZoomLevel()),
+                                   false);
     const QPointF &postZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
     if (preZoomPoint != postZoomPoint) // need to re-anchor the wheel geoPos to the event position
@@ -1595,7 +1596,7 @@ void QQuickGeoMapGestureArea::updatePinch()
         qreal perPinchMinimumZoomLevel = qMax(m_pinch.m_zoom.m_start - m_pinch.m_zoom.maximumChange, m_pinch.m_zoom.m_minimum);
         qreal perPinchMaximumZoomLevel = qMin(m_pinch.m_zoom.m_start + m_pinch.m_zoom.maximumChange, m_pinch.m_zoom.m_maximum);
         newZoomLevel = qMin(qMax(perPinchMinimumZoomLevel, newZoomLevel), perPinchMaximumZoomLevel);
-        m_declarativeMap->setZoomLevel(qMin<qreal>(newZoomLevel, maximumZoomLevel()));
+        m_declarativeMap->setZoomLevel(qMin<qreal>(newZoomLevel, maximumZoomLevel()), false);
         m_pinch.m_zoom.m_previous = newZoomLevel;
     }
 }

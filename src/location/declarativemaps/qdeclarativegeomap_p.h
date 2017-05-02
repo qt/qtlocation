@@ -228,6 +228,8 @@ protected:
 
     void setError(QGeoServiceProvider::Error error, const QString &errorString);
     void initialize();
+    void setZoomLevel(qreal zoomLevel, bool overzoom);
+
 private Q_SLOTS:
     void mappingManagerInitialized();
     void pluginReady();

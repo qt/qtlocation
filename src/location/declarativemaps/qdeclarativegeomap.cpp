@@ -942,6 +942,21 @@ qreal QDeclarativeGeoMap::maximumZoomLevel() const
 */
 void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
 {
+    return setZoomLevel(zoomLevel, m_cameraCapabilities.overzoomEnabled());
+}
+
+/*!
+    \internal
+
+    Sets the zoom level.
+    Larger values for the zoom level provide more detail. Zoom levels
+    are always non-negative. The default value is 8.0. Values outside the
+    [minimumZoomLevel, maximumZoomLevel] range, which represent the range for which
+    tiles are available, can be accepted or clamped by setting the overzoom argument
+    to true or false respectively.
+*/
+void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
+{
     if (m_cameraData.zoomLevel() == zoomLevel || zoomLevel < 0)
         return;
 
@@ -949,8 +964,9 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
     bool centerHasChanged = false;
 
     if (m_initialized) {
-        m_cameraData.setZoomLevel(qBound<qreal>(m_cameraCapabilities.overzoomEnabled() ? 0 : minimumZoomLevel(), zoomLevel,
-                                                m_cameraCapabilities.overzoomEnabled() ? 30 : maximumZoomLevel()));
+        m_cameraData.setZoomLevel(qBound<qreal>(overzoom ? m_map->minimumZoom() : minimumZoomLevel(),
+                                                zoomLevel,
+                                                overzoom ? 30 : maximumZoomLevel()));
         m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
         QGeoCoordinate coord = m_cameraData.center();
         coord.setLatitude(qBound(-m_maximumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
