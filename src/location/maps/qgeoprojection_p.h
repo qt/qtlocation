@@ -131,6 +131,7 @@ public:
 
 private:
     void setupCamera();
+    void updateVisibleRegion();
 
 public:
     struct Line2D
@@ -187,6 +188,7 @@ private:
     double           m_halfWidth;
     double           m_halfHeight;
     double           m_minimumUnprojectableY;
+    double           m_verticalEstateToSkip;
 
     // For the clipping region
     QDoubleVector3D  m_centerMercator;
@@ -199,6 +201,7 @@ private:
     Line2D           m_nearPlaneMapIntersection;
 
     QList<QDoubleVector2D> m_visibleRegion;
+    bool             m_visibleRegionDirty;
 
     Q_DISABLE_COPY(QGeoProjectionWebMercator)
 };

@@ -93,7 +93,9 @@ QGeoProjectionWebMercator::QGeoProjectionWebMercator()
       m_farPlane(0.0),
       m_halfWidth(0.0),
       m_halfHeight(0.0),
-      m_minimumUnprojectableY(0.0)
+      m_minimumUnprojectableY(0.0),
+      m_verticalEstateToSkip(0.0),
+      m_visibleRegionDirty(false)
 {
 }
 
@@ -299,6 +301,8 @@ bool QGeoProjectionWebMercator::isProjectable(const QDoubleVector2D &wrappedProj
 
 QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleRegion() const
 {
+    if (m_visibleRegionDirty)
+        const_cast<QGeoProjectionWebMercator *>(this)->updateVisibleRegion();
     return m_visibleRegion;
 }
 
@@ -444,16 +448,22 @@ void QGeoProjectionWebMercator::setupCamera()
     const double elevationUpperBound = 90.0 - upperBoundEpsilon;
     const double maxRayElevation = qMin(elevationUpperBound - m_cameraData.tilt(), verticalHalfFOV);
     double maxHalfAperture = 0;
-    double verticalEstateToSkip = 0;
+    m_verticalEstateToSkip = 0;
     if (maxRayElevation < verticalHalfFOV) {
         maxHalfAperture = tan(QLocationUtils::radians(maxRayElevation));
-        verticalEstateToSkip = 1.0 - maxHalfAperture / m_aperture;
+        m_verticalEstateToSkip = 1.0 - maxHalfAperture / m_aperture;
     }
 
-    m_minimumUnprojectableY = verticalEstateToSkip * 0.5 * m_viewportHeight; // verticalEstateToSkip is relative to half aperture
+    m_minimumUnprojectableY = m_verticalEstateToSkip * 0.5 * m_viewportHeight; // m_verticalEstateToSkip is relative to half aperture
+    m_visibleRegionDirty = true;
+}
 
-    QDoubleVector2D tl = viewportToWrappedMapProjection(QDoubleVector2D(-1, -1 + verticalEstateToSkip ));
-    QDoubleVector2D tr = viewportToWrappedMapProjection(QDoubleVector2D( 1, -1 + verticalEstateToSkip ));
+void QGeoProjectionWebMercator::updateVisibleRegion()
+{
+    m_visibleRegionDirty = false;
+
+    QDoubleVector2D tl = viewportToWrappedMapProjection(QDoubleVector2D(-1, -1 + m_verticalEstateToSkip ));
+    QDoubleVector2D tr = viewportToWrappedMapProjection(QDoubleVector2D( 1, -1 + m_verticalEstateToSkip ));
     QDoubleVector2D bl = viewportToWrappedMapProjection(QDoubleVector2D(-1,  1 ));
     QDoubleVector2D br = viewportToWrappedMapProjection(QDoubleVector2D( 1,  1 ));
 
