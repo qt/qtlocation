@@ -45,6 +45,7 @@
 #include "qdeclarativegeomapparameter_p.h"
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoPath>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGRectangleNode>
 #include <QtQuick/private/qquickwindow_p.h>
@@ -1310,10 +1311,12 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
     if (!m_map || !width() || !height())
         return m_visibleRegion;
 
-    QGeoCoordinate tl = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(0, 0));
-    QGeoCoordinate br = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(width(), height()));
+    const QList<QDoubleVector2D> &visibleRegion = m_map->geoProjection().visibleRegion();
+    QGeoPath path;
+    for (const QDoubleVector2D &c: visibleRegion)
+        path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
 
-    return QGeoRectangle(tl, br);
+    return path.boundingGeoRectangle();
 }
 
 /*!
