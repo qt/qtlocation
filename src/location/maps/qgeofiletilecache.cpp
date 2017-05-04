@@ -151,7 +151,7 @@ void QGeoFileTileCache::loadTiles()
 
     QDir dir(directory_);
     QStringList files = dir.entryList(formats, QDir::Files);
-
+#if 0 // workaround for QTBUG-60581
     // Method:
     // 1. read each queue file then, if each file exists, deserialize the data into the appropriate
     // cache queue.
@@ -189,7 +189,7 @@ void QGeoFileTileCache::loadTiles()
         diskCache_.deserializeQueue(i, specs, queue, costs);
         file.close();
     }
-
+#endif
     // 2. remaining tiles that aren't registered in a queue get pushed into cache here
     // this is a backup, in case the queue manifest files get deleted or out of sync due to
     // the application not closing down properly
@@ -204,6 +204,7 @@ void QGeoFileTileCache::loadTiles()
 
 QGeoFileTileCache::~QGeoFileTileCache()
 {
+#if 0 // workaround for QTBUG-60581
     // write disk cache queues to disk
     QDir dir(directory_);
     for (int i = 1; i<=4; i++) {
@@ -226,6 +227,7 @@ QGeoFileTileCache::~QGeoFileTileCache()
         }
         file.close();
     }
+#endif
 }
 
 void QGeoFileTileCache::printStats()
