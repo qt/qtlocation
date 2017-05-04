@@ -426,8 +426,11 @@ QSharedPointer<QGeoCachedTileDisk> QGeoFileTileCache::addToDiskCache(const QGeoT
     return td;
 }
 
-QSharedPointer<QGeoCachedTileMemory> QGeoFileTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
+void QGeoFileTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
 {
+    if (isTileBogus(bytes))
+        return;
+
     QSharedPointer<QGeoCachedTileMemory> tm(new QGeoCachedTileMemory);
     tm->spec = spec;
     tm->cache = this;
@@ -438,8 +441,6 @@ QSharedPointer<QGeoCachedTileMemory> QGeoFileTileCache::addToMemoryCache(const Q
     if (costStrategyMemory_ == ByteSize)
         cost = bytes.size();
     memoryCache_.insert(spec, tm, cost);
-
-    return tm;
 }
 
 QSharedPointer<QGeoTileTexture> QGeoFileTileCache::addToTextureCache(const QGeoTileSpec &spec, const QImage &image)
@@ -487,6 +488,17 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::getFromDisk(const QGeoTileSpe
         file.close();
 
         QImage image;
+        // Some tiles from the servers could be valid images but the tile fetcher
+        // might be able to recognize them as tiles that should not be shown.
+        // If that's the case, the tile fetcher should write "NoRetry" inside the file.
+        if (isTileBogus(bytes)) {
+            QSharedPointer<QGeoTileTexture> tt(new QGeoTileTexture);
+            tt->spec = spec;
+            tt->image = image;
+            return tt;
+        }
+
+        // This is a truly invalid image. The fetcher should try again.
         if (!image.loadFromData(bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
             return QSharedPointer<QGeoTileTexture>(0);
@@ -503,6 +515,13 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::getFromDisk(const QGeoTileSpe
     }
 
     return QSharedPointer<QGeoTileTexture>();
+}
+
+bool QGeoFileTileCache::isTileBogus(const QByteArray &bytes) const
+{
+    if (bytes.size() == 7 && bytes == QByteArrayLiteral("NoRetry"))
+        return true;
+    return false;
 }
 
 QString QGeoFileTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const

@@ -391,7 +391,7 @@ void QGeoTiledMapPrivate::updateTile(const QGeoTileSpec &spec)
     // Only promote the texture up to GPU if it is visible
     if (m_visibleTiles->createTiles().contains(spec)){
         QSharedPointer<QGeoTileTexture> tex = m_tileRequests->tileTexture(spec);
-        if (!tex.isNull()) {
+        if (!tex.isNull() && !tex->image.isNull()) {
             m_mapScene->addTile(spec, tex);
             emit q->sgNodeChanged();
         }
