@@ -144,11 +144,12 @@ protected:
     QString directory() const;
 
     QSharedPointer<QGeoCachedTileDisk> addToDiskCache(const QGeoTileSpec &spec, const QString &filename);
-    QSharedPointer<QGeoCachedTileMemory> addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
+    void addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
     QSharedPointer<QGeoTileTexture> addToTextureCache(const QGeoTileSpec &spec, const QImage &image);
     QSharedPointer<QGeoTileTexture> getFromMemory(const QGeoTileSpec &spec);
     QSharedPointer<QGeoTileTexture> getFromDisk(const QGeoTileSpec &spec);
 
+    virtual bool isTileBogus(const QByteArray &bytes) const;
     virtual QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const;
     virtual QGeoTileSpec filenameToTileSpec(const QString &filename) const;
 

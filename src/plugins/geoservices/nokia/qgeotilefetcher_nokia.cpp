@@ -96,8 +96,15 @@ QGeoTiledMapReply *QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
 {
     // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
     int ppi = m_ppi;
-    if ((spec.mapId() == 2) || (spec.mapId() == 12) || (spec.mapId() == 21))
+    if ((spec.mapId() == 2) || (spec.mapId() == 12) || (spec.mapId() == 21)) {
         ppi = 72;  // HiDpi apparently not supported for these maps
+    } else if ((spec.mapId() >= 7 && spec.mapId() <= 11)
+            || (spec.mapId() == 14)
+            || (spec.mapId() == 16)
+            || (spec.mapId() == 18)
+            || (spec.mapId() == 20)) {
+        ppi = 250; // LoDpi apparently not supported for these maps
+    }
 
     QString rawRequest = getRequestString(spec, ppi);
     if (rawRequest.isEmpty()) {

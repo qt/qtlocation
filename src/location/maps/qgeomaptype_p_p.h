@@ -50,6 +50,7 @@
 
 #include <QMetaType>
 #include <QString>
+#include <QByteArray>
 #include <QSharedData>
 
 #include "qgeomaptype_p.h"
@@ -60,7 +61,8 @@ class QGeoMapTypePrivate : public QSharedData
 {
 public:
     QGeoMapTypePrivate();
-    QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile, bool night, int mapId);
+    QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile,
+                       bool night, int mapId, QByteArray pluginName);
     QGeoMapTypePrivate(const QGeoMapTypePrivate &other);
     ~QGeoMapTypePrivate();
 
@@ -74,6 +76,7 @@ public:
     bool mobile_;
     bool night_;
     int mapId_;
+    QByteArray pluginName_;
 };
 
 QT_END_NAMESPACE

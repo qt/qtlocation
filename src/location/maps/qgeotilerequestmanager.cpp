@@ -127,7 +127,8 @@ QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPriva
             QGeoTileSpec tile = *i;
             QSharedPointer<QGeoTileTexture> tex = m_engine->getTileTexture(tile);
             if (tex) {
-                cachedTex.insert(tile, tex);
+                if (!tex->image.isNull())
+                    cachedTex.insert(tile, tex);
                 cached.insert(tile);
             } else {
                 // Try to use textures from lower zoom levels, but still request the proper tile
@@ -139,7 +140,7 @@ QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPriva
                     spec.setX(tile.x() / denominator);
                     spec.setY(tile.y() / denominator);
                     QSharedPointer<QGeoTileTexture> t = m_engine->getTileTexture(spec);
-                    if (t) {
+                    if (t && !t->image.isNull()) {
                         cachedTex.insert(tile, t);
                         break;
                     }
