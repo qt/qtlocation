@@ -79,6 +79,7 @@ public:
     QMapboxGLSettings m_settings;
     bool m_useFBO = true;
     bool m_developmentMode = false;
+    QString m_mapItemsBefore;
 
     QTimer m_refresh;
     bool m_shouldRefresh = true;

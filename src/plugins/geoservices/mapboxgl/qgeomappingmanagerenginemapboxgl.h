@@ -59,6 +59,7 @@ public:
 private:
     QMapboxGLSettings m_settings;
     bool m_useFBO = true;
+    QString m_mapItemsBefore;
 };
 
 QT_END_NAMESPACE

@@ -128,6 +128,14 @@ The following table lists optional parameters that can be passed to the Mapbox p
     experimental, and it does not support QQuickItem transformations nor stencil
     clipping. It might be also produce rendering artifacts e.g. when adding it
     inside a \l{QtQuick::Flipable}{Flipable} item.
+\row
+    \li mapboxgl.mapping.items.insert_before
+    \li Some map items such as \l{QtLocation::MapPolyline}{MapPolyline},
+    \l{QtLocation::MapPolygon}{MapPolygon} and \l{QtLocation::MapRectangle}{MapRectangle}
+    will be rendered after the topmost \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#layers}{layer}
+    of the style. With this parameter set, the map items will be rendered \b before the layer ID
+    specified, unless the layer is not present on the current style, which will fallback
+    to the default behavior. This parameter can be used to display route lines under labels.
 \endtable
 
 \section2 Optional map parameters
@@ -166,7 +174,7 @@ replacing the dash with camel case for technical reasons (i.e. \b line-cap will 
     \li layer
     \li Adds a new \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#layers}{style layer} to the map. On a Mapbox GL map,
     layers are used in styles for adding styling rules to specific subsets of data. A layer will contain a reference to the
-    data for which they are defining a style.
+    data for which they are defining a style. Use the \b before attribute to insert a layer before an existing layer.
 \row
     \li paint
     \li Defines how a layer will be painted. \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#layer-paint}{Paint} properties
@@ -218,6 +226,10 @@ Map {
         property var name: "route"
         property var layerType: "line"
         property var source: "routeSource"
+
+        // Draw under the first road label layer
+        // of the mapbox-streets style.
+        property var before: "road-label-small"
     }
 
     MapParameter {

@@ -175,7 +175,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapParamete
     return changes;
 }
 
-QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapItem(QDeclarativeGeoMapItemBase *item)
+QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapItem(QDeclarativeGeoMapItemBase *item, const QString &before)
 {
     QList<QSharedPointer<QMapboxGLStyleChange>> changes;
 
@@ -191,7 +191,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapItem(QDe
 
     QMapbox::Feature feature = featureFromMapItem(item);
 
-    changes << QMapboxGLStyleAddLayer::fromFeature(feature);
+    changes << QMapboxGLStyleAddLayer::fromFeature(feature, before);
     changes << QMapboxGLStyleAddSource::fromFeature(feature);
     changes << QMapboxGLStyleSetPaintProperty::fromMapItem(item);
     changes << QMapboxGLStyleSetLayoutProperty::fromMapItem(item);
@@ -390,7 +390,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
 
 void QMapboxGLStyleAddLayer::apply(QMapboxGL *map)
 {
-    map->addLayer(m_params);
+    map->addLayer(m_params, m_before);
 }
 
 QSharedPointer<QMapboxGLStyleChange> QMapboxGLStyleAddLayer::fromMapParameter(QGeoMapParameter *param)
@@ -406,10 +406,12 @@ QSharedPointer<QMapboxGLStyleChange> QMapboxGLStyleAddLayer::fromMapParameter(QG
         layer->m_params[QStringLiteral("source-layer")] = param->property("sourceLayer");
     }
 
+    layer->m_before = param->property("before").toString();
+
     return QSharedPointer<QMapboxGLStyleChange>(layer);
 }
 
-QSharedPointer<QMapboxGLStyleChange> QMapboxGLStyleAddLayer::fromFeature(const QMapbox::Feature &feature)
+QSharedPointer<QMapboxGLStyleChange> QMapboxGLStyleAddLayer::fromFeature(const QMapbox::Feature &feature, const QString &before)
 {
     auto layer = new QMapboxGLStyleAddLayer();
     layer->m_params[QStringLiteral("id")] = feature.id;
@@ -426,6 +428,8 @@ QSharedPointer<QMapboxGLStyleChange> QMapboxGLStyleAddLayer::fromFeature(const Q
         layer->m_params[QStringLiteral("type")] = QStringLiteral("fill");
         break;
     }
+
+    layer->m_before = before;
 
     return QSharedPointer<QMapboxGLStyleChange>(layer);
 }

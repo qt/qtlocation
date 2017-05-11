@@ -138,6 +138,10 @@ QGeoMappingManagerEngineMapboxGL::QGeoMappingManagerEngineMapboxGL(const QVarian
         m_useFBO = parameters.value(QStringLiteral("mapboxgl.mapping.use_fbo")).toBool();
     }
 
+    if (parameters.contains(QStringLiteral("mapboxgl.mapping.items.insert_before"))) {
+        m_mapItemsBefore = parameters.value(QStringLiteral("mapboxgl.mapping.items.insert_before")).toString();
+    }
+
     engineInitialized();
 }
 
@@ -150,6 +154,7 @@ QGeoMap *QGeoMappingManagerEngineMapboxGL::createMap()
     QGeoMapMapboxGL* map = new QGeoMapMapboxGL(this, 0);
     map->setMapboxGLSettings(m_settings);
     map->setUseFBO(m_useFBO);
+    map->setMapItemsBefore(m_mapItemsBefore);
 
     return map;
 }

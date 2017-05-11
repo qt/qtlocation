@@ -210,7 +210,7 @@ void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
 
     QObject::connect(item, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
 
-    m_styleChanges << QMapboxGLStyleChange::addMapItem(item);
+    m_styleChanges << QMapboxGLStyleChange::addMapItem(item, m_mapItemsBefore);
 
     emit q->sgNodeChanged();
 }
@@ -342,6 +342,12 @@ void QGeoMapMapboxGL::setUseFBO(bool useFBO)
     d->m_useFBO = useFBO;
 }
 
+void QGeoMapMapboxGL::setMapItemsBefore(const QString &before)
+{
+    Q_D(QGeoMapMapboxGL);
+    d->m_mapItemsBefore = before;
+}
+
 QSGNode *QGeoMapMapboxGL::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
     Q_D(QGeoMapMapboxGL);
@@ -362,7 +368,7 @@ void QGeoMapMapboxGL::onMapChanged(QMapboxGL::MapChange change)
             d->m_styleChanges << QMapboxGLStyleChange::addMapParameter(param);
 
         for (QDeclarativeGeoMapItemBase *item : d->m_mapItems)
-            d->m_styleChanges << QMapboxGLStyleChange::addMapItem(item);
+            d->m_styleChanges << QMapboxGLStyleChange::addMapItem(item, d->m_mapItemsBefore);
     }
 }
 
