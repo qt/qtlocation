@@ -51,6 +51,8 @@ class QGeoServiceProviderFactoryMapboxGL: public QObject, public QGeoServiceProv
                       FILE "mapboxgl_plugin.json")
 
 public:
+    QGeoServiceProviderFactoryMapboxGL();
+
     QGeoCodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
                                                           QGeoServiceProvider::Error *error,
                                                           QString *errorString) const;

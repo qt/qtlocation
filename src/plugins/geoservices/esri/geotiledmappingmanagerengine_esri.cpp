@@ -240,7 +240,7 @@ bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider:
                                                             QString *errorString)
 {
     initResources();
-    QFile mapsFile(":/maps.json");
+    QFile mapsFile(":/esri/maps.json");
 
     if (!mapsFile.open(QIODevice::ReadOnly)) {
         *error = QGeoServiceProvider::NotSupportedError;
