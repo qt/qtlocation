@@ -2139,11 +2139,12 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
 
 bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
 {
-    const QQuickPointerDevice *touchDevice = QQuickPointerDevice::touchDevice(event->device());
+    QQuickPointerDevice *touchDevice = QQuickPointerDevice::touchDevice(event->device());
     const QTouchEvent::TouchPoint &point = event->touchPoints().first();
+    QQuickWindowPrivate *windowPriv = QQuickWindowPrivate::get(window());
 
-    auto touchPointGrabberItem = [touchDevice](const QTouchEvent::TouchPoint &point) -> QQuickItem* {
-        if (QQuickEventPoint *eventPointer = touchDevice->pointerEvent()->pointById(point.id()))
+    auto touchPointGrabberItem = [touchDevice, windowPriv](const QTouchEvent::TouchPoint &point) -> QQuickItem* {
+        if (QQuickEventPoint *eventPointer = windowPriv->pointerEventInstance(touchDevice)->pointById(point.id()))
             return eventPointer->grabber();
         return nullptr;
     };
