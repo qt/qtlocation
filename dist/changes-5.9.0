@@ -16,6 +16,16 @@ Each of these identifiers can be entered in the bug tracker to obtain more
 information about a particular change.
 
 ****************************************************************************
+*                           General                                        *
+****************************************************************************
+
+Third-Party Code
+----------------
+
+ - Added Mapbox GL Native as a third-party component to
+   src/3rdparty/mapbox-gl-native.
+
+****************************************************************************
 *                           Library                                        *
 ****************************************************************************
 
