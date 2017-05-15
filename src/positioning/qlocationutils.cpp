@@ -361,7 +361,7 @@ bool QLocationUtils::getNmeaTime(const QByteArray &bytes, QTime *time)
         int midLen = qMin(3, bytes.size() - dotIndex - 1);
         int msecs = bytes.mid(dotIndex + 1, midLen).toUInt(&hasMsecs);
         if (hasMsecs)
-            tempTime = tempTime.addMSecs(msecs);
+            tempTime = tempTime.addMSecs(msecs*(midLen == 3 ? 1 : midLen == 2 ? 10 : 100));
     }
 
     if (tempTime.isValid()) {
