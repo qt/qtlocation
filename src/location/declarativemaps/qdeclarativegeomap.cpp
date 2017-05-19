@@ -1924,7 +1924,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
     m_gestureArea->setSize(newGeometry.size());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 
-    if (!m_map || !newGeometry.size().isValid())
+    if (!m_map || newGeometry.size().isEmpty())
         return;
 
     m_map->setViewportSize(newGeometry.size().toSize());
