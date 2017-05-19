@@ -606,8 +606,10 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                 } else {
                     node->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
                 }
+#if QT_CONFIG(opengl)
                 if (ogl)
                     static_cast<QSGDefaultImageNode *>(node)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
+#endif
                 dirtyBits |= QSGNode::DirtyMaterial;
             }
             if (dirtyBits != 0)
@@ -631,8 +633,10 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
             } else {
                 tileNode->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
             }
+#if QT_CONFIG(opengl)
             if (ogl)
                 static_cast<QSGDefaultImageNode *>(tileNode)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
+#endif
             root->addChild(s, tileNode);
         } else {
             delete tileNode;
