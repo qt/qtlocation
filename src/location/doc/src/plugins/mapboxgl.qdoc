@@ -53,6 +53,8 @@ The Mapbox GL geo services plugin can be loaded by using the plugin key "mapboxg
 Both Mapbox geo services plugins require an access token to access map styles
 and tiles hosted by Mapbox. To create a Mapbox account visit \l{https://www.mapbox.com/pricing}.
 
+\b {Note:} the API for this plugin is introduced in Qt 5.9 as \e {technology preview}.
+
 \section1 Platform Support
 
 Qt Location Mapbox GL Plugin has the following support for platforms:
