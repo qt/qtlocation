@@ -43,7 +43,8 @@ qtConfig(icu) {
 # OpenGL ES and does not use QOpenGLFunctions for resolving
 # the OpenGL symbols. -lopengl32 only gives OpenGL 1.1.
 win32:qtConfig(dynamicgl) {
-    LIBS_PRIVATE += -lQtANGLE
+    qtConfig(combined-angle-lib): LIBS_PRIVATE += -l$${LIBQTANGLE_NAME}
+    else: LIBS_PRIVATE += -l$${LIBEGL_NAME} -l$${LIBGLESV2_NAME}
 }
 
 PLUGIN_TYPE = geoservices
