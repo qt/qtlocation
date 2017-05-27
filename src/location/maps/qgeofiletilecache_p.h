@@ -136,6 +136,9 @@ public:
                 const QString &format,
                 QAbstractGeoTileCache::CacheAreas areas = QAbstractGeoTileCache::AllCaches) Q_DECL_OVERRIDE;
 
+    static QString tileSpecToFilenameDefault(const QGeoTileSpec &spec, const QString &format, const QString &directory);
+    static QGeoTileSpec filenameToTileSpecDefault(const QString &filename);
+
 protected:
     void init() Q_DECL_OVERRIDE;
     void printStats() Q_DECL_OVERRIDE;

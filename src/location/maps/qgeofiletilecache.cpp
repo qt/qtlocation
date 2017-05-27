@@ -401,6 +401,71 @@ void QGeoFileTileCache::insert(const QGeoTileSpec &spec,
      * and act as a poison */
 }
 
+QString QGeoFileTileCache::tileSpecToFilenameDefault(const QGeoTileSpec &spec, const QString &format, const QString &directory)
+{
+    QString filename = spec.plugin();
+    filename += QLatin1String("-");
+    filename += QString::number(spec.mapId());
+    filename += QLatin1String("-");
+    filename += QString::number(spec.zoom());
+    filename += QLatin1String("-");
+    filename += QString::number(spec.x());
+    filename += QLatin1String("-");
+    filename += QString::number(spec.y());
+
+    //Append version if real version number to ensure backwards compatibility and eviction of old tiles
+    if (spec.version() != -1) {
+        filename += QLatin1String("-");
+        filename += QString::number(spec.version());
+    }
+
+    filename += QLatin1String(".");
+    filename += format;
+
+    QDir dir = QDir(directory);
+
+    return dir.filePath(filename);
+}
+
+QGeoTileSpec QGeoFileTileCache::filenameToTileSpecDefault(const QString &filename)
+{
+    QGeoTileSpec emptySpec;
+
+    QStringList parts = filename.split('.');
+
+    if (parts.length() != 2)
+        return emptySpec;
+
+    QString name = parts.at(0);
+    QStringList fields = name.split('-');
+
+    int length = fields.length();
+    if (length != 5 && length != 6)
+        return emptySpec;
+
+    QList<int> numbers;
+
+    bool ok = false;
+    for (int i = 1; i < length; ++i) {
+        ok = false;
+        int value = fields.at(i).toInt(&ok);
+        if (!ok)
+            return emptySpec;
+        numbers.append(value);
+    }
+
+    //File name without version, append default
+    if (numbers.length() < 5)
+        numbers.append(-1);
+
+    return QGeoTileSpec(fields.at(0),
+                    numbers.at(0),
+                    numbers.at(1),
+                    numbers.at(2),
+                    numbers.at(3),
+                    numbers.at(4));
+}
+
 void QGeoFileTileCache::evictFromDiskCache(QGeoCachedTileDisk *td)
 {
     QFile::remove(td->filename);
@@ -526,67 +591,12 @@ bool QGeoFileTileCache::isTileBogus(const QByteArray &bytes) const
 
 QString QGeoFileTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const
 {
-    QString filename = spec.plugin();
-    filename += QLatin1String("-");
-    filename += QString::number(spec.mapId());
-    filename += QLatin1String("-");
-    filename += QString::number(spec.zoom());
-    filename += QLatin1String("-");
-    filename += QString::number(spec.x());
-    filename += QLatin1String("-");
-    filename += QString::number(spec.y());
-
-    //Append version if real version number to ensure backwards compatibility and eviction of old tiles
-    if (spec.version() != -1) {
-        filename += QLatin1String("-");
-        filename += QString::number(spec.version());
-    }
-
-    filename += QLatin1String(".");
-    filename += format;
-
-    QDir dir = QDir(directory);
-
-    return dir.filePath(filename);
+    return tileSpecToFilenameDefault(spec, format, directory);
 }
 
 QGeoTileSpec QGeoFileTileCache::filenameToTileSpec(const QString &filename) const
 {
-    QGeoTileSpec emptySpec;
-
-    QStringList parts = filename.split('.');
-
-    if (parts.length() != 2)
-        return emptySpec;
-
-    QString name = parts.at(0);
-    QStringList fields = name.split('-');
-
-    int length = fields.length();
-    if (length != 5 && length != 6)
-        return emptySpec;
-
-    QList<int> numbers;
-
-    bool ok = false;
-    for (int i = 1; i < length; ++i) {
-        ok = false;
-        int value = fields.at(i).toInt(&ok);
-        if (!ok)
-            return emptySpec;
-        numbers.append(value);
-    }
-
-    //File name without version, append default
-    if (numbers.length() < 5)
-        numbers.append(-1);
-
-    return QGeoTileSpec(fields.at(0),
-                    numbers.at(0),
-                    numbers.at(1),
-                    numbers.at(2),
-                    numbers.at(3),
-                    numbers.at(4));
+    return filenameToTileSpecDefault(filename);
 }
 
 QString QGeoFileTileCache::directory() const
