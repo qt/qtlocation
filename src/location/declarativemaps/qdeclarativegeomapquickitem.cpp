@@ -159,7 +159,7 @@ QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
 */
 void QDeclarativeGeoMapQuickItem::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    if (coordinate_ == coordinate)
+    if (coordinate_ == coordinate || !coordinate.isValid())
         return;
 
     coordinate_ = coordinate;
