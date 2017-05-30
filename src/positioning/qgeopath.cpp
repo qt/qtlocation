@@ -247,6 +247,17 @@ double QGeoPath::length(int indexFrom, int indexTo) const
 }
 
 /*!
+    Returns the number of elements in the path.
+
+    \since 5.10
+*/
+int QGeoPath::size() const
+{
+    Q_D(const QGeoPath);
+    return d->size();
+}
+
+/*!
     Appends \a coordinate to the path.
 */
 void QGeoPath::addCoordinate(const QGeoCoordinate &coordinate)
@@ -413,6 +424,11 @@ double QGeoPathPrivate::length(int indexFrom, int indexTo) const
     for (int i = indexFrom; i < indexTo; i++)
         len += m_path[i].distanceTo(m_path[i+1]);
     return len;
+}
+
+int QGeoPathPrivate::size() const
+{
+    return m_path.size();
 }
 
 /*!

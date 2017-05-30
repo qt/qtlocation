@@ -78,6 +78,7 @@ public:
     Q_INVOKABLE void translate(double degreesLatitude, double degreesLongitude);
     Q_INVOKABLE QGeoPath translated(double degreesLatitude, double degreesLongitude) const;
     Q_INVOKABLE double length(int indexFrom = 0, int indexTo = -1) const;
+    Q_INVOKABLE int size() const;
     Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
     Q_INVOKABLE void insertCoordinate(int index, const QGeoCoordinate &coordinate);
     Q_INVOKABLE void replaceCoordinate(int index, const QGeoCoordinate &coordinate);

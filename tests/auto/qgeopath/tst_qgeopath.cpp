@@ -47,6 +47,7 @@ private slots:
 
     void path();
     void width();
+    void size();
 
     void translate_data();
     void translate();
@@ -186,6 +187,32 @@ void tst_QGeoPath::width()
     QGeoPath p;
     p.setWidth(10.0);
     QCOMPARE(p.width(), qreal(10.0));
+}
+
+void tst_QGeoPath::size()
+{
+    QList<QGeoCoordinate> coords;
+
+    QGeoPath p1(coords, 3);
+    QCOMPARE(p1.size(), coords.size());
+
+    coords.append(QGeoCoordinate(1,1));
+    QGeoPath p2(coords, 3);
+    QCOMPARE(p2.size(), coords.size());
+
+    coords.append(QGeoCoordinate(2,2));
+    QGeoPath p3(coords, 3);
+    QCOMPARE(p3.size(), coords.size());
+
+    coords.append(QGeoCoordinate(3,0));
+    QGeoPath p4(coords, 3);
+    QCOMPARE(p4.size(), coords.size());
+
+    p4.removeCoordinate(2);
+    QCOMPARE(p4.size(), coords.size() - 1);
+
+    p4.removeCoordinate(coords.first());
+    QCOMPARE(p4.size(), coords.size() - 2);
 }
 
 void tst_QGeoPath::translate_data()

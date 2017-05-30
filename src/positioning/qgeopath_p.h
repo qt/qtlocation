@@ -85,6 +85,7 @@ public:
     qreal width() const;
     void setWidth(const qreal &width);
     double length(int indexFrom, int indexTo) const;
+    int size() const;
     void addCoordinate(const QGeoCoordinate &coordinate);
     void insertCoordinate(int index, const QGeoCoordinate &coordinate);
     void replaceCoordinate(int index, const QGeoCoordinate &coordinate);
