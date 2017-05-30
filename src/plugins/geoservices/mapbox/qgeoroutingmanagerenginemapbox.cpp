@@ -77,14 +77,21 @@ QGeoRouteReply* QGeoRoutingManagerEngineMapbox::calculateRoute(const QGeoRouteRe
     QString url("https://api.mapbox.com/directions/v5/mapbox/");
 
     QGeoRouteRequest::TravelModes travelModes = request.travelModes();
-    if (travelModes.testFlag(QGeoRouteRequest::PedestrianTravel))
+    if (travelModes.testFlag(QGeoRouteRequest::PedestrianTravel)) {
         url += "walking/";
-    else
-    if (travelModes.testFlag(QGeoRouteRequest::BicycleTravel))
+    } else if (travelModes.testFlag(QGeoRouteRequest::BicycleTravel)) {
         url += "cycling/";
-    else
-    if (travelModes.testFlag(QGeoRouteRequest::CarTravel))
-        url += "driving/";
+    } else if (travelModes.testFlag(QGeoRouteRequest::CarTravel)) {
+        const QList<QGeoRouteRequest::FeatureType> &featureTypes = request.featureTypes();
+        int trafficFeatureIdx = featureTypes.indexOf(QGeoRouteRequest::TrafficFeature);
+        QGeoRouteRequest::FeatureWeight trafficWeight = request.featureWeight(QGeoRouteRequest::TrafficFeature);
+        if (trafficFeatureIdx >= 0 &&
+           (trafficWeight == QGeoRouteRequest::AvoidFeatureWeight || trafficWeight == QGeoRouteRequest::DisallowFeatureWeight)) {
+            url += "driving-traffic/";
+        } else {
+            url += "driving/";
+        }
+    }
 
     foreach (const QGeoCoordinate &c, request.waypoints()) {
         url += QString("%1,%2;").arg(c.longitude()).arg(c.latitude());
