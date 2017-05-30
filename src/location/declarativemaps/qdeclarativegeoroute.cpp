@@ -147,7 +147,7 @@ qreal QDeclarativeGeoRoute::distance() const
 }
 
 /*!
-    \qmlproperty QJSValue QtLocation::Route::path
+    \qmlproperty list<coordinate> QtLocation::Route::path
 
     Read-only property which holds the geographical coordinates of this route.
     Coordinates are listed in the order in which they would be traversed by someone

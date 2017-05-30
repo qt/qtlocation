@@ -764,7 +764,7 @@ void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternative
 }
 
 /*!
-    \qmlproperty QJSValue RouteQuery::waypoints
+    \qmlproperty list<coordinate> RouteQuery::waypoints
 
 
     The waypoint coordinates of the desired route.
