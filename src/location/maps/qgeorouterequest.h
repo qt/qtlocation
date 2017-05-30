@@ -70,7 +70,8 @@ public:
         TunnelFeature = 0x00000010,
         DirtRoadFeature = 0x00000020,
         ParksFeature = 0x00000040,
-        MotorPoolLaneFeature = 0x00000080
+        MotorPoolLaneFeature = 0x00000080,
+        TrafficFeature = 0x00000100
     };
     Q_DECLARE_FLAGS(FeatureTypes, FeatureType)
 

@@ -360,6 +360,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest
             case QGeoRouteRequest::PublicTransitFeature:
             case QGeoRouteRequest::ParksFeature:
             case QGeoRouteRequest::MotorPoolLaneFeature:
+            case QGeoRouteRequest::TrafficFeature:
             case QGeoRouteRequest::NoFeature:
                 break;
         }

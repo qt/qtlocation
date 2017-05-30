@@ -722,6 +722,7 @@ void QDeclarativeGeoRouteQuery::componentComplete()
     \li RouteQuery.DirtRoadFeature - Consider dirt roads when planning the route
     \li RouteQuery.ParksFeature - Consider parks when planning the route
     \li RouteQuery.MotorPoolLaneFeature - Consider motor pool lanes when planning the route
+    \li RouteQuery.TrafficFeature - Consider traffic when planning the route
     \endlist
 
     \sa setFeatureWeight, featureWeight

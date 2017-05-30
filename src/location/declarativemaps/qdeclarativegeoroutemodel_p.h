@@ -238,7 +238,8 @@ public:
         TunnelFeature = QGeoRouteRequest::TunnelFeature,
         DirtRoadFeature = QGeoRouteRequest::DirtRoadFeature,
         ParksFeature = QGeoRouteRequest::ParksFeature,
-        MotorPoolLaneFeature = QGeoRouteRequest::MotorPoolLaneFeature
+        MotorPoolLaneFeature = QGeoRouteRequest::MotorPoolLaneFeature,
+        TrafficFeature = QGeoRouteRequest::TrafficFeature
     };
     Q_DECLARE_FLAGS(FeatureTypes, FeatureType)
 

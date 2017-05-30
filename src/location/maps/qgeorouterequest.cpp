@@ -134,6 +134,8 @@ QT_BEGIN_NAMESPACE
         Consider parks when planning the route.
     \value MotorPoolLaneFeature
         Consider motor pool lanes when planning the route.
+    \value TrafficFeature
+        Consider the current traffic situation when planning the route. Since QtLocation 5.10
 */
 
 /*!
