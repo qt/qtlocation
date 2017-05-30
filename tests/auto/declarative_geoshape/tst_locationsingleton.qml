@@ -71,6 +71,13 @@ Item {
         }
     }
 
+    property variant trace1 : [     QtPositioning.coordinate(43.773175, 11.255386),
+                                    QtPositioning.coordinate(43.773546 , 11.255372) ]
+    property variant trace2 : [     QtPositioning.coordinate(43.773175, 11.255386),
+                                    QtPositioning.coordinate(43.773546 , 11.255372),
+                                    QtPositioning.coordinate(43.77453 , 11.255734)]
+
+
     // coordinate unit square
     property variant bl: QtPositioning.coordinate(0, 0)
     property variant tl: QtPositioning.coordinate(1, 0)
@@ -185,6 +192,28 @@ Item {
             compare(rectangle.bottomRight, br)
             rectangle = QtPositioning.shapeToRectangle(listBox)
             verify(rectangle.isValid)
+        }
+
+        function test_shape_path_conversions() {
+            var path = QtPositioning.shapeToPath(QtPositioning.shape())
+            verify(!path.isValid)
+            path = QtPositioning.shapeToPath(QtPositioning.circle())
+            verify(!path.isValid)
+            path = QtPositioning.shapeToPath(QtPositioning.circle(tl, 10000))
+            verify(!path.isValid)
+            path = QtPositioning.shapeToPath(QtPositioning.rectangle())
+            verify(!path.isValid)
+            path = QtPositioning.shapeToPath(QtPositioning.rectangle(tl, br))
+            verify(!path.isValid)
+
+            path = QtPositioning.shapeToPath(QtPositioning.path())
+            verify(!path.isValid)
+            path = QtPositioning.shapeToPath(QtPositioning.path(trace1, 1))
+            verify(path.isValid)
+            path = QtPositioning.shapeToPath(QtPositioning.path(trace2, 2))
+            verify(path.isValid)
+            verify(path !== QtPositioning.shapeToPath(QtPositioning.path(trace1, 1)))
+            compare(path, QtPositioning.shapeToPath(QtPositioning.path(trace2, 2)))
         }
     }
 
