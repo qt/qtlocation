@@ -1324,7 +1324,17 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
     for (const QDoubleVector2D &c: visibleRegion)
         path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
 
-    return path.boundingGeoRectangle();
+    QGeoRectangle vr = path.boundingGeoRectangle();
+
+    bool empty = vr.topLeft().latitude() == vr.bottomRight().latitude() ||
+            qFuzzyCompare(vr.topLeft().longitude(), vr.bottomRight().longitude()); // QTBUG-57690
+
+    if (empty) {
+        vr.setTopLeft(QGeoCoordinate(vr.topLeft().latitude(), -180));
+        vr.setBottomRight(QGeoCoordinate(vr.bottomRight().latitude(), 180));
+    }
+
+    return vr;
 }
 
 /*!
