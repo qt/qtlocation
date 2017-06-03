@@ -631,6 +631,7 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
     case PlaceRole:
         if (result.type() == QPlaceSearchResult::PlaceResult)
             return QVariant::fromValue(static_cast<QObject *>(m_places.at(index.row())));
+        break;
     case SponsoredRole:
         if (result.type() == QPlaceSearchResult::PlaceResult) {
             QPlaceResult placeResult = result;
