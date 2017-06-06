@@ -73,6 +73,17 @@ QGeoProjection::~QGeoProjection()
 
 }
 
+QGeoCoordinate QGeoProjection::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint) const
+{
+    // Approach: find the displacement in (wrapped) mercator space, and apply that to the center
+    QDoubleVector2D centerProj = geoToWrappedMapProjection(cameraData().center());
+    QDoubleVector2D coordProj  = geoToWrappedMapProjection(coordinate);
+
+    QDoubleVector2D anchorProj = itemPositionToWrappedMapProjection(QDoubleVector2D(anchorPoint));
+    // Y-clamping done in mercatorToCoord
+    return wrappedMapProjectionToGeo(centerProj + coordProj - anchorProj);
+}
+
 /*
  * QGeoProjectionWebMercator implementation
 */
@@ -488,6 +499,11 @@ void QGeoProjectionWebMercator::updateVisibleRegion()
     m_visibleRegion.clear();
     if (res.size())
         m_visibleRegion = QClipperUtils::pathToQList(res[0]); // Intersection between two convex quadrilaterals should always be a single polygon
+}
+
+QGeoCameraData QGeoProjectionWebMercator::cameraData() const
+{
+    return m_cameraData;
 }
 
 /*

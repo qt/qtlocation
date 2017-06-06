@@ -84,18 +84,6 @@ static qreal distanceBetweenTouchPoints(const QPointF &p1, const QPointF &p2)
     return QLineF(p1, p2).length();
 }
 
-// Returns the new map center after anchoring coordinate to anchorPoint on the screen
-// Approach: find the displacement in (wrapped) mercator space, and apply that to the center
-static QGeoCoordinate anchorCoordinateToPoint(QGeoMap &map, const QGeoCoordinate &coordinate, const QPointF &anchorPoint)
-{
-    QDoubleVector2D centerProj = map.geoProjection().geoToWrappedMapProjection(map.cameraData().center());
-    QDoubleVector2D coordProj  = map.geoProjection().geoToWrappedMapProjection(coordinate);
-
-    QDoubleVector2D anchorProj = map.geoProjection().itemPositionToWrappedMapProjection(QDoubleVector2D(anchorPoint));
-    // Y-clamping done in mercatorToCoord
-    return map.geoProjection().wrappedMapProjectionToGeo(centerProj + coordProj - anchorProj);
-}
-
 static qreal angleFromPoints(const QPointF &p1, const QPointF &p2)
 {
     return QLineF(p1, p2).angle();
@@ -958,7 +946,7 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
     const QPointF &postZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
     if (preZoomPoint != postZoomPoint) // need to re-anchor the wheel geoPos to the event position
-          m_declarativeMap->setCenter(anchorCoordinateToPoint(*m_map, wheelGeoPos, preZoomPoint));
+          m_declarativeMap->setCenter(m_map->geoProjection().anchorCoordinateToPoint(wheelGeoPos, preZoomPoint));
 
     event->accept();
 }
@@ -1705,7 +1693,7 @@ bool QQuickGeoMapGestureArea::canStartPan()
 */
 void QQuickGeoMapGestureArea::updatePan()
 {
-    QGeoCoordinate animationStartCoordinate = anchorCoordinateToPoint(*m_map, m_startCoord, m_touchPointsCentroid);
+    QGeoCoordinate animationStartCoordinate = m_map->geoProjection().anchorCoordinateToPoint(m_startCoord, m_touchPointsCentroid);
     m_declarativeMap->setCenter(animationStartCoordinate);
 }
 

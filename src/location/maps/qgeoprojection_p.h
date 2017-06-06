@@ -91,6 +91,12 @@ public:
     virtual QDoubleVector2D geoToWrappedMapProjection(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate wrappedMapProjectionToGeo(const QDoubleVector2D &wrappedProjection) const = 0;
     virtual QMatrix4x4 quickItemTransformation(const QGeoCoordinate &coordinate, const QPointF &anchorPoint, qreal zoomLevel) const = 0;
+
+    // Returns the new map center after anchoring coordinate to anchorPoint on the screen
+    QGeoCoordinate anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint) const;
+
+private:
+    virtual QGeoCameraData cameraData() const = 0;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoProjectionWebMercator : public QGeoProjection
@@ -132,6 +138,7 @@ public:
 private:
     void setupCamera();
     void updateVisibleRegion();
+    QGeoCameraData cameraData() const Q_DECL_OVERRIDE;
 
 public:
     struct Line2D
