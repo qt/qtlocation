@@ -243,6 +243,8 @@ QT_BEGIN_NAMESPACE
     MapGestureArea objects are used as part of a Map, to provide for panning,
     flicking and pinch-to-zoom gesture used on touch displays, as well as two finger rotation
     and two finger parallel vertical sliding to tilt the map.
+    On platforms supporting \l QWheelEvent, using the scroll wheel alone, or in combination with
+    key modifiers Shift or Control will also zoom, rotate or tilt the map, respectively.
 
     A MapGestureArea is automatically created with a new Map and available with
     the \l{Map::gesture}{gesture} property. This is the only way
@@ -939,15 +941,26 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
     const QGeoCoordinate &wheelGeoPos = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
     const QPointF &preZoomPoint = event->posF();
 
-    const double zoomLevelDelta = event->angleDelta().y() * qreal(0.001);
-    // Gesture area should always honor maxZL, but Map might not.
-    m_declarativeMap->setZoomLevel(qMin<qreal>(m_declarativeMap->zoomLevel() + zoomLevelDelta, maximumZoomLevel()),
-                                   false);
-    const QPointF &postZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
+    // Not using AltModifier as, for some reason, it causes angleDelta to be 0
+    if (event->modifiers() & Qt::ShiftModifier && rotationEnabled()) {
+        // First set bearing
+        const double bearingDelta = event->angleDelta().y() * qreal(0.05);
+        m_declarativeMap->setBearing(m_declarativeMap->bearing() + bearingDelta);
+        // then reanchor
+        m_declarativeMap->setCenter(m_map->geoProjection().anchorCoordinateToPoint(wheelGeoPos, preZoomPoint));
+    } else if (event->modifiers() & Qt::ControlModifier && tiltEnabled()) {
+        const double tiltDelta = event->angleDelta().y() * qreal(0.05);
+        m_declarativeMap->setTilt(m_declarativeMap->tilt() + tiltDelta);
+    } else if (pinchEnabled()) {
+        const double zoomLevelDelta = event->angleDelta().y() * qreal(0.001);
+        // Gesture area should always honor maxZL, but Map might not.
+        m_declarativeMap->setZoomLevel(qMin<qreal>(m_declarativeMap->zoomLevel() + zoomLevelDelta, maximumZoomLevel()),
+                                       false);
+        const QPointF &postZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
 
-    if (preZoomPoint != postZoomPoint) // need to re-anchor the wheel geoPos to the event position
-          m_declarativeMap->setCenter(m_map->geoProjection().anchorCoordinateToPoint(wheelGeoPos, preZoomPoint));
-
+        if (preZoomPoint != postZoomPoint) // need to re-anchor the wheel geoPos to the event position
+              m_declarativeMap->setCenter(m_map->geoProjection().anchorCoordinateToPoint(wheelGeoPos, preZoomPoint));
+    }
     event->accept();
 }
 #endif
