@@ -1460,6 +1460,33 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 }
 
 /*!
+    \qmlmethod void QtLocation::Map::setBearing(real bearing, coordinate coordinate)
+
+    Sets the bearing for the map to \a bearing, rotating it around \a coordinate.
+    If the Plugin used for the Map supports bearing, the valid range for \a bearing is between 0 and 360.
+    If the Plugin used for the Map does not support bearing, or if the map is tilted and \a coordinate happens
+    to be behind the camera, or if the map is not ready (see \l mapReady), calling this method will have no effect.
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
+{
+    if (!m_map)
+        return;
+
+    const QDoubleVector2D coordWrapped = m_map->geoProjection().geoToWrappedMapProjection(coordinate);
+    if (!m_map->geoProjection().isProjectable(coordWrapped))
+        return;
+
+    const QPointF rotationPoint = m_map->geoProjection().wrappedMapProjectionToItemPosition(coordWrapped).toPointF();
+
+    // First set bearing
+    setBearing(bearing);
+    // then reanchor
+    setCenter(m_map->geoProjection().anchorCoordinateToPoint(coordinate, rotationPoint));
+}
+
+/*!
     \qmlmethod coordinate QtLocation::Map::toCoordinate(QPointF position, bool clipToViewPort)
 
     Returns the coordinate which corresponds to the \a position relative to the map item.

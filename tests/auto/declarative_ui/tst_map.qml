@@ -515,6 +515,33 @@ Item {
             compare(mapTiltBearing.tilt, 25.0)
         }
 
+        function test_map_setbearing()
+        {
+            var zeroCoord = QtPositioning.coordinate(0,0)
+            mapTiltBearing.bearing = 0.0
+            mapTiltBearing.tilt = 0.0
+            mapTiltBearing.zoomLevel = 3
+            mapTiltBearing.center = zeroCoord
+            compare(mapTiltBearing.bearing, 0.0)
+            compare(mapTiltBearing.tilt, 0.0)
+            compare(mapTiltBearing.zoomLevel, 3)
+            compare(mapTiltBearing.center, zeroCoord)
+
+            var fulcrum = QtPositioning.coordinate(20,-20)
+            var fulcrumPos = mapTiltBearing.fromCoordinate(fulcrum)
+            var bearing = 90.0
+            mapTiltBearing.setBearing(bearing, fulcrum)
+            var fulcrumPosAfter = mapTiltBearing.fromCoordinate(fulcrum)
+            compare(mapTiltBearing.bearing, bearing)
+            compare(fulcrumPos, fulcrumPosAfter)
+
+            // resetting
+            mapTiltBearing.center = coordinate1
+            mapTiltBearing.zoomLevel = 4
+            mapTiltBearing.bearing = 45.0
+            mapTiltBearing.tilt = 25.0
+        }
+
         function test_coordinate_conversion()
         {
             wait(1000)

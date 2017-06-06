@@ -155,6 +155,8 @@ public:
 
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
+    Q_INVOKABLE void setBearing(qreal bearing, const QGeoCoordinate &coordinate);
+
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItemBase *item);
 
