@@ -1487,6 +1487,30 @@ void QDeclarativeGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordin
 }
 
 /*!
+    \qmlmethod void QtLocation::Map::alignCoordinateToPoint(coordinate coordinate, QPointF point)
+
+    Aligns \a coordinate to \a point.
+    This method effectively extends the functionality offered by the \l center qml property, allowing
+    to align a coordinate to point of the Map element other than its center.
+    This is useful in those applications where the center of the scene (e.g., a cursor) is not to be
+    placed exactly in the center of the map.
+
+    If the map is tilted, and \a coordinate happens to be behind the camera, or if the map is not ready
+    (see \l mapReady), calling this method will have no effect.
+
+    \sa center
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::alignCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &point)
+{
+    if (!m_map)
+        return;
+
+    setCenter(m_map->geoProjection().anchorCoordinateToPoint(coordinate, point));
+}
+
+/*!
     \qmlmethod coordinate QtLocation::Map::toCoordinate(QPointF position, bool clipToViewPort)
 
     Returns the coordinate which corresponds to the \a position relative to the map item.

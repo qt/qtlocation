@@ -542,6 +542,32 @@ Item {
             mapTiltBearing.tilt = 25.0
         }
 
+        function test_map_align_coordinate_to_point()
+        {
+            var zeroCoord = QtPositioning.coordinate(0,0)
+            mapTiltBearing.bearing = 0.0
+            mapTiltBearing.tilt = 0.0
+            mapTiltBearing.zoomLevel = 3
+            mapTiltBearing.center = zeroCoord
+            compare(mapTiltBearing.bearing, 0.0)
+            compare(mapTiltBearing.tilt, 0.0)
+            compare(mapTiltBearing.zoomLevel, 3)
+            compare(mapTiltBearing.center, zeroCoord)
+
+            var coord = QtPositioning.coordinate(20,-20)
+            var point = Qt.point(400, 400)
+            mapTiltBearing.alignCoordinateToPoint(coord, point)
+            var coordAfter = mapTiltBearing.toCoordinate(point)
+            compare(coord.latitude, coordAfter.latitude)
+            compare(coord.longitude, coordAfter.longitude)
+
+            // resetting
+            mapTiltBearing.center = coordinate1
+            mapTiltBearing.zoomLevel = 4
+            mapTiltBearing.bearing = 45.0
+            mapTiltBearing.tilt = 25.0
+        }
+
         function test_coordinate_conversion()
         {
             wait(1000)
