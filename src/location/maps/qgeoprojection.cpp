@@ -39,12 +39,12 @@
 #include <QtPositioning/private/qlocationutils_p.h>
 #include <QtPositioning/private/qclipperutils_p.h>
 #include <QSize>
+#include <QtGui/QMatrix4x4>
 #include <cmath>
 
 namespace {
     static const double defaultTileSize = 256.0;
     static const QDoubleVector3D xyNormal(0.0, 0.0, 1.0);
-    static const QDoubleVector3D xyPoint(0.0, 0.0, 0.0);
     static const QGeoProjectionWebMercator::Plane xyPlane(QDoubleVector3D(0,0,0), QDoubleVector3D(0,0,1));
     static const QList<QDoubleVector2D> mercatorGeometry = {
                                                 QDoubleVector2D(-1.0,0.0),
@@ -93,7 +93,9 @@ QGeoProjectionWebMercator::QGeoProjectionWebMercator()
       m_farPlane(0.0),
       m_halfWidth(0.0),
       m_halfHeight(0.0),
-      m_minimumUnprojectableY(0.0)
+      m_minimumUnprojectableY(0.0),
+      m_verticalEstateToSkip(0.0),
+      m_visibleRegionDirty(false)
 {
 }
 
@@ -259,11 +261,6 @@ QMatrix4x4 QGeoProjectionWebMercator::quickItemTransformation(const QGeoCoordina
     const QDoubleVector2D anchorScaled = QDoubleVector2D(anchorPoint.x(), anchorPoint.y()) * scale;
     const QDoubleVector2D anchorMercator = anchorScaled / mapWidth();
 
-    // Check for coord OOB, only coordinate is going to be projected to item position, so
-    // testing also coordAnchored might be superfluous
-    if (!isProjectable(coordWrapped))
-        return QMatrix4x4();
-
     const QDoubleVector2D coordAnchored = coordWrapped - anchorMercator;
     const QDoubleVector2D coordAnchoredScaled = coordAnchored * m_sideLength;
     QDoubleMatrix4x4 matTranslateScale;
@@ -273,21 +270,18 @@ QMatrix4x4 QGeoProjectionWebMercator::quickItemTransformation(const QGeoCoordina
                      (std::floor(zoomLevel) - std::floor(m_cameraData.zoomLevel())));
     matTranslateScale.scale(scale);
 
-    const QDoubleVector2D coordOnScreen = wrappedMapProjectionToItemPosition(coordWrapped);
-    QDoubleMatrix4x4 matTransformation;
-    matTransformation.translate(-coordOnScreen.x(), -coordOnScreen.y(), 0);
-    matTransformation *= m_quickItemTransformation;
-
     /*
-     *  The full transformation chain for quickItemTransformation() is:
+     *  The full transformation chain for quickItemTransformation() would be:
      *  matScreenShift * m_quickItemTransformation * matTranslate * matScale
      *  where:
      *  matScreenShift = translate(-coordOnScreen.x(), -coordOnScreen.y(), 0)
      *  matTranslate = translate(coordAnchoredScaled.x(), coordAnchoredScaled.y(), 0.0)
      *  matScale = scale(scale)
+     *
+     *  However, matScreenShift is removed, as setPosition(0,0) is used in place of setPositionOnScreen.
      */
 
-    return toMatrix4x4(matTransformation * matTranslateScale);
+    return toMatrix4x4(m_quickItemTransformation * matTranslateScale);
 }
 
 bool QGeoProjectionWebMercator::isProjectable(const QDoubleVector2D &wrappedProjection) const
@@ -307,6 +301,8 @@ bool QGeoProjectionWebMercator::isProjectable(const QDoubleVector2D &wrappedProj
 
 QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleRegion() const
 {
+    if (m_visibleRegionDirty)
+        const_cast<QGeoProjectionWebMercator *>(this)->updateVisibleRegion();
     return m_visibleRegion;
 }
 
@@ -338,7 +334,7 @@ void QGeoProjectionWebMercator::setupCamera()
     m_sideLength = (1 << intZoomLevel) * defaultTileSize;
     m_center = m_centerMercator * m_sideLength;
 
-    double f = 1.0 * qMin(m_viewportWidth, m_viewportHeight);
+    double f = m_viewportHeight;
     double z = std::pow(2.0, m_cameraData.zoomLevel() - intZoomLevel) * defaultTileSize;
     double altitude = f / (2.0 * z);
     // Also in mercator space
@@ -411,16 +407,10 @@ void QGeoProjectionWebMercator::setupCamera()
 
     double aspectRatio = 1.0 * m_viewportWidth / m_viewportHeight;
 
-    m_halfWidth = m_aperture;
+    m_halfWidth = m_aperture * aspectRatio;
     m_halfHeight = m_aperture;
-    double verticalAperture = m_aperture;
-    if (aspectRatio > 1.0) {
-        m_halfWidth *= aspectRatio;
-    } else if (aspectRatio > 0.0 && aspectRatio < 1.0) {
-        m_halfHeight /= aspectRatio;
-        verticalAperture /= aspectRatio;
-    }
-    double verticalHalfFOV = QLocationUtils::degrees(atan(verticalAperture));
+
+    double verticalHalfFOV = QLocationUtils::degrees(atan(m_aperture));
 
     QDoubleMatrix4x4 cameraMatrix;
     cameraMatrix.lookAt(m_eye, m_center, m_up);
@@ -458,16 +448,22 @@ void QGeoProjectionWebMercator::setupCamera()
     const double elevationUpperBound = 90.0 - upperBoundEpsilon;
     const double maxRayElevation = qMin(elevationUpperBound - m_cameraData.tilt(), verticalHalfFOV);
     double maxHalfAperture = 0;
-    double verticalEstateToSkip = 0;
+    m_verticalEstateToSkip = 0;
     if (maxRayElevation < verticalHalfFOV) {
         maxHalfAperture = tan(QLocationUtils::radians(maxRayElevation));
-        verticalEstateToSkip = 1.0 - maxHalfAperture / verticalAperture;
+        m_verticalEstateToSkip = 1.0 - maxHalfAperture / m_aperture;
     }
 
-    m_minimumUnprojectableY = verticalEstateToSkip * 0.5 * m_viewportHeight; // verticalEstateToSkip is relative to half aperture
+    m_minimumUnprojectableY = m_verticalEstateToSkip * 0.5 * m_viewportHeight; // m_verticalEstateToSkip is relative to half aperture
+    m_visibleRegionDirty = true;
+}
 
-    QDoubleVector2D tl = viewportToWrappedMapProjection(QDoubleVector2D(-1, -1 + verticalEstateToSkip ));
-    QDoubleVector2D tr = viewportToWrappedMapProjection(QDoubleVector2D( 1, -1 + verticalEstateToSkip ));
+void QGeoProjectionWebMercator::updateVisibleRegion()
+{
+    m_visibleRegionDirty = false;
+
+    QDoubleVector2D tl = viewportToWrappedMapProjection(QDoubleVector2D(-1, -1 + m_verticalEstateToSkip ));
+    QDoubleVector2D tr = viewportToWrappedMapProjection(QDoubleVector2D( 1, -1 + m_verticalEstateToSkip ));
     QDoubleVector2D bl = viewportToWrappedMapProjection(QDoubleVector2D(-1,  1 ));
     QDoubleVector2D br = viewportToWrappedMapProjection(QDoubleVector2D( 1,  1 ));
 

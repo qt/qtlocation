@@ -90,7 +90,7 @@ void clip2tri::addClipPolygon(const Path &path)
     {
         clipper.AddPath(path, ptClip, true);
     }
-    catch(ClipperLib::clipperException &e)
+    catch(QtClipperLib::clipperException &e)
     {
         printf("addClipPolygon: %s\n", e.what());
     }
@@ -102,7 +102,7 @@ void clip2tri::addSubjectPath(const Path &path, bool closed)
     {
         clipper.AddPath(path, ptSubject, closed);
     }
-    catch(ClipperLib::clipperException &e)
+    catch(QtClipperLib::clipperException &e)
     {
         printf("addSubjectPath: %s\n", e.what());
         return;
@@ -118,17 +118,17 @@ void clip2tri::clearClipper()
     openSubject = false;
 }
 
-static ClipperLib::ClipType operation(const clip2tri::Operation &op)
+static QtClipperLib::ClipType operation(const clip2tri::Operation &op)
 {
     switch (op) {
     case clip2tri::Intersection:
-        return ClipperLib::ctIntersection;
+        return QtClipperLib::ctIntersection;
     case clip2tri::Union:
-        return ClipperLib::ctUnion;
+        return QtClipperLib::ctUnion;
     case clip2tri::Difference:
-        return ClipperLib::ctDifference;
+        return QtClipperLib::ctDifference;
     case clip2tri::Xor:
-        return ClipperLib::ctXor;
+        return QtClipperLib::ctXor;
     }
     return ctIntersection;
 }
@@ -166,7 +166,7 @@ Paths clip2tri::execute(const clip2tri::Operation op, const PolyFillType subjFil
             }
         }
     }
-    catch(ClipperLib::clipperException &e)
+    catch(QtClipperLib::clipperException &e)
     {
         printf("executing %s: %s\n", operationName(op).c_str(), e.what());
     }
@@ -237,7 +237,7 @@ bool clip2tri::mergePolysToPolyTree(const vector<vector<Point> > &inputPolygons,
    {
       clipper.AddPaths(input, ptSubject, true);
    }
-   catch(ClipperLib::clipperException &e)
+   catch(QtClipperLib::clipperException &e)
    {
        printf("mergePolysToPolyTree: %s\n", e.what());
    }

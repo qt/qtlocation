@@ -39,6 +39,26 @@
 
 #include "locationsingleton.h"
 
+static QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
+{
+    QGeoCoordinate c;
+
+    if (value.isObject()) {
+        if (value.hasProperty(QStringLiteral("latitude")))
+            c.setLatitude(value.property(QStringLiteral("latitude")).toNumber());
+        if (value.hasProperty(QStringLiteral("longitude")))
+            c.setLongitude(value.property(QStringLiteral("longitude")).toNumber());
+        if (value.hasProperty(QStringLiteral("altitude")))
+            c.setAltitude(value.property(QStringLiteral("altitude")).toNumber());
+
+        if (ok)
+            *ok = true;
+    }
+
+    return c;
+}
+
+
 /*!
     \qmltype QtPositioning
     \instantiates LocationSingleton
@@ -189,6 +209,28 @@ QGeoCircle LocationSingleton::circle(const QGeoCoordinate &center, qreal radius)
 QGeoPath LocationSingleton::path() const
 {
     return QGeoPath();
+}
+
+QGeoPath LocationSingleton::path(const QJSValue &value, qreal width) const
+{
+    QList<QGeoCoordinate> pathList;
+
+    if (value.isArray()) {
+        quint32 length = value.property(QStringLiteral("length")).toUInt();
+        for (quint32 i = 0; i < length; ++i) {
+            bool ok;
+            QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
+
+            if (!ok || !c.isValid()) {
+                pathList.clear(); // aborting
+                break;
+            }
+
+            pathList.append(c);
+        }
+    }
+
+    return QGeoPath(pathList, width);
 }
 
 /*!

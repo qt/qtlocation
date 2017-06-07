@@ -36,7 +36,7 @@
 
 #include "qdeclarativepolygonmapitem_p.h"
 #include "qlocationutils_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
 #include <QtLocation/private/qgeomap_p.h>
 
@@ -141,7 +141,7 @@ QGeoMapPolygonGeometry::QGeoMapPolygonGeometry()
     \internal
 */
 void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
-                                                const QList<QGeoCoordinate> &path)
+                                                const QList<QDoubleVector2D> &path)
 {
     if (!sourceDirty_)
         return;
@@ -161,11 +161,8 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     QDoubleVector2D wrappedLeftBound(qInf(), qInf());
     // 1)
     for (int i = 0; i < path.size(); ++i) {
-        const QGeoCoordinate &coord = path.at(i);
-        if (!coord.isValid())
-            continue;
-
-        QDoubleVector2D wrappedProjection = map.geoProjection().wrapMapProjection(map.geoProjection().geoToMapProjection(coord));
+        const QDoubleVector2D &coord = path.at(i);
+        QDoubleVector2D wrappedProjection = map.geoProjection().wrapMapProjection(coord);
 
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
@@ -193,7 +190,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         c2t::clip2tri clipper;
         clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), true);
         clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+        Paths res = clipper.execute(c2t::clip2tri::Intersection, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
         clippedPaths = QClipperUtils::pathsToQList(res);
 
         // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
@@ -380,6 +377,7 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
+        regenerateCache();
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
         polishAndUpdate();
@@ -437,6 +435,7 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 
     geopath_.setPath(pathList);
 
+    regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
@@ -453,8 +452,11 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 
 void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 {
-    geopath_.addCoordinate(coordinate);
+    if (!coordinate.isValid())
+        return;
 
+    geopath_.addCoordinate(coordinate);
+    updateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
@@ -478,6 +480,7 @@ void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordina
     if (geopath_.path().length() == length)
         return;
 
+    regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
@@ -542,7 +545,7 @@ void QDeclarativePolygonMapItem::updatePolish()
     QScopedValueRollback<bool> rollback(updatingGeometry_);
     updatingGeometry_ = true;
 
-    geometry_.updateSourcePoints(*map(), geopath_.path());
+    geometry_.updateSourcePoints(*map(), geopathProjected_);
     geometry_.updateScreenPoints(*map());
 
     QList<QGeoMapItemGeometry *> geoms;
@@ -550,7 +553,7 @@ void QDeclarativePolygonMapItem::updatePolish()
     borderGeometry_.clear();
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
-        QList<QGeoCoordinate> closedPath = geopath_.path();
+        QList<QDoubleVector2D> closedPath = geopathProjected_;
         closedPath << closedPath.first();
 
         borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
@@ -605,6 +608,29 @@ void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChang
 /*!
     \internal
 */
+void QDeclarativePolygonMapItem::regenerateCache()
+{
+    if (!map())
+        return;
+    geopathProjected_.clear();
+    geopathProjected_.reserve(geopath_.path().size());
+    for (const QGeoCoordinate &c : geopath_.path())
+        geopathProjected_ << map()->geoProjection().geoToMapProjection(c);
+}
+
+/*!
+    \internal
+*/
+void QDeclarativePolygonMapItem::updateCache()
+{
+    if (!map())
+        return;
+    geopathProjected_ << map()->geoProjection().geoToMapProjection(geopath_.path().last());
+}
+
+/*!
+    \internal
+*/
 bool QDeclarativePolygonMapItem::contains(const QPointF &point) const
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
@@ -625,7 +651,7 @@ QGeoMap::ItemType QDeclarativePolygonMapItem::itemType() const
 */
 void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
+    if (!map() || !geopath_.isValid() || updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
         QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
     }
@@ -640,6 +666,7 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
         return;
 
     geopath_.translate(offsetLati, offsetLongi);
+    regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();

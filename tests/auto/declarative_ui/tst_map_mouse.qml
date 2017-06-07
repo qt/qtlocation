@@ -161,7 +161,7 @@ Item {
 
     TestCase {
         name: "MouseArea"
-        when: windowShown
+        when: windowShown && map.mapReady
         SignalSpy {id: mouseUpperClickedSpy; target: mouseUpper; signalName: "clicked"}
         SignalSpy {id: mouseLowerClickedSpy; target: mouseLower; signalName: "clicked"}
         SignalSpy {id: mouseOverlapperClickedSpy; target: mouseOverlapper; signalName: "clicked"}

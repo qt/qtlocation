@@ -33,7 +33,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "error_messages.h"
+#include "error_messages_p.h"
 
 QT_BEGIN_NAMESPACE
 

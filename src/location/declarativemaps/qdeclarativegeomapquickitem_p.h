@@ -108,6 +108,7 @@ Q_SIGNALS:
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
     void updatePolish() Q_DECL_OVERRIDE;
+    bool childMouseEventFilter(QQuickItem *item, QEvent *event) Q_DECL_OVERRIDE;
 
 protected Q_SLOTS:
     virtual void afterChildrenChanged() Q_DECL_OVERRIDE;
@@ -115,6 +116,7 @@ protected Q_SLOTS:
 
 private:
     qreal scaleFactor();
+    QGeoCoordinate dragStartCoordinate_;
     QGeoCoordinate coordinate_;
     QGeoRectangle geoshape_;
     QPointer<QQuickItem> sourceItem_;

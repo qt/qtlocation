@@ -36,7 +36,7 @@
 
 #include "qdeclarativegeoroutemodel_p.h"
 #include "qdeclarativegeoroute_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
 
 #include <QtCore/QCoreApplication>
@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
     geographic routes from a backend provider. Routes include data about driving
     directions between two points, walking directions with multiple waypoints,
     and various other similar concepts. It functions much like other Model
-    types in QML (see for example \l {Models and Views in Qt Quick#ListModel}{ListModel} and
+    types in QML (see for example \l {Models and Views in Qt Quick#Models}{ListModel} and
     \l XmlListModel), and interacts with views such as \l MapItemView, and \l{ListView}.
 
     Like \l Map and \l GeocodeModel, all the data for a RouteModel to work comes
@@ -764,7 +764,7 @@ void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternative
 }
 
 /*!
-    \qmlproperty QJSValue RouteQuery::waypoints
+    \qmlproperty list<coordinate> RouteQuery::waypoints
 
 
     The waypoint coordinates of the desired route.

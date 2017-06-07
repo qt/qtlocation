@@ -40,7 +40,7 @@
 #ifndef QGEOCIRCLE_H
 #define QGEOCIRCLE_H
 
-#include <QtPositioning/QGeoShape>
+#include <QtPositioning/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
 

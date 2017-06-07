@@ -50,11 +50,13 @@
 
 #include <QtLocation/private/qlocationglobal_p.h>
 
+#include <QtCore/QPointer>
 #include <QtQuick/QQuickItem>
 #include <QTouchEvent>
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QtPositioning/qgeocoordinate.h>
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 
@@ -161,7 +163,9 @@ public:
     void setFlickDeceleration(qreal deceleration);
 
     void handleTouchEvent(QTouchEvent *event);
+#if QT_CONFIG(wheelevent)
     void handleWheelEvent(QWheelEvent *event);
+#endif
     void handleMousePressEvent(QMouseEvent *event);
     void handleMouseMoveEvent(QMouseEvent *event);
     void handleMouseReleaseEvent(QMouseEvent *event);
@@ -174,7 +178,7 @@ public:
     void setMaximumZoomLevel(qreal max);
     qreal maximumZoomLevel() const;
 
-    void setMap(QGeoMap *map);
+    void setMap(QPointer<QGeoMap> map);
 
     bool preventStealing() const;
     void setPreventStealing(bool prevent);
@@ -260,10 +264,10 @@ private Q_SLOTS:
 private:
     void stopPan();
     void clearTouchData();
-    void updateVelocityList(const QPointF &pos);
+    void updateFlickParameters(const QPointF &pos);
 
 private:
-    QGeoMap *m_map;
+    QPointer<QGeoMap> m_map;
     QDeclarativeGeoMap *m_declarativeMap;
     bool m_enabled;
 
@@ -324,12 +328,11 @@ private:
 
 
     // these are calculated regardless of gesture or number of touch points
-    qreal m_velocityX;
-    qreal m_velocityY;
+    QVector2D m_flickVector;
     QElapsedTimer m_lastPosTime;
     QPointF m_lastPos;
-    QList<QTouchEvent::TouchPoint> m_allPoints;
-    QList<QTouchEvent::TouchPoint> m_touchPoints;
+    QVector<QTouchEvent::TouchPoint> m_allPoints;
+    QVector<QTouchEvent::TouchPoint> m_touchPoints;
     QScopedPointer<QTouchEvent::TouchPoint> m_mousePoint;
     QPointF m_sceneStartPoint1;
 
@@ -340,10 +343,13 @@ private:
     qreal m_twoTouchAngle;
     qreal m_twoTouchAngleStart;
     qreal m_distanceBetweenTouchPoints;
+    qreal m_distanceBetweenTouchPointsStart;
+    QPointF m_twoTouchPointsCentroidStart;
     QPointF m_touchPointsCentroid;
     bool m_preventStealing;
     bool m_panEnabled;
 
+private:
     // prototype state machine...
     enum TouchPointState
     {
@@ -379,6 +385,12 @@ private:
         panActive,
         flickActive
     } m_flickState;
+
+    inline void setTouchPointState(const TouchPointState state);
+    inline void setFlickState(const FlickState state);
+    inline void setTiltState(const TiltState state);
+    inline void setRotationState(const RotationState state);
+    inline void setPinchState(const PinchState state);
 };
 
 QT_END_NAMESPACE

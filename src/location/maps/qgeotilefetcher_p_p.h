@@ -50,6 +50,7 @@
 
 #include <QtCore/private/qobject_p.h>
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
 #include <QSize>
 #include <QList>
 #include <QMap>
@@ -64,7 +65,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoTileSpec;
 class QGeoTiledMapReply;
-class QGeoTiledMappingManagerEngine;
+class QGeoMappingManagerEngine;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoTileFetcherPrivate : public QObjectPrivate
 {
@@ -78,6 +79,7 @@ public:
     QMutex queueMutex_;
     QList<QGeoTileSpec> queue_;
     QHash<QGeoTileSpec, QGeoTiledMapReply *> invmap_;
+    QGeoMappingManagerEngine *engine_;
 
 private:
     Q_DISABLE_COPY(QGeoTileFetcherPrivate)

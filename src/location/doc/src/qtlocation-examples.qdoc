@@ -39,7 +39,7 @@
     These examples can work with any of the available geo services plugins. However, some plugins may
     require additional \l {QtLocation::PluginParameter}{plugin parameters} in order to function correctly.
     The default plugin used by these examples is \l {Qt Location Open Street Map Plugin}, which does not
-    require any parameters.
-
+    require any parameters. The \l {Qt Location Mapbox GL Plugin} was used for the screenshots and can also
+    be used without any parameters, for development purposes, on the platforms it is available.
 */
 

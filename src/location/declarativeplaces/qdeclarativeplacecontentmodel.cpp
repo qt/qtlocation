@@ -38,7 +38,7 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativeplaceuser_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>

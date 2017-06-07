@@ -53,7 +53,7 @@ public:
     QGeoTiledMap *m_map;
     QPointer<QGeoTiledMappingManagerEngine> m_engine;
 
-    QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
+    QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
     void tileError(const QGeoTileSpec &tile, const QString &errorString);
 
     QHash<QGeoTileSpec, int> m_retries;
@@ -74,7 +74,7 @@ QGeoTileRequestManager::~QGeoTileRequestManager()
 
 }
 
-QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManager::requestTiles(const QSet<QGeoTileSpec> &tiles)
+QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > QGeoTileRequestManager::requestTiles(const QSet<QGeoTileSpec> &tiles)
 {
     return d_ptr->requestTiles(tiles);
 }
@@ -107,7 +107,7 @@ QGeoTileRequestManagerPrivate::~QGeoTileRequestManagerPrivate()
 {
 }
 
-QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTiles(const QSet<QGeoTileSpec> &tiles)
+QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTiles(const QSet<QGeoTileSpec> &tiles)
 {
     QSet<QGeoTileSpec> cancelTiles = m_requested - tiles;
     QSet<QGeoTileSpec> requestTiles = tiles - m_requested;
@@ -117,7 +117,7 @@ QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTi
 
     typedef QSet<QGeoTileSpec>::const_iterator iter;
 
-    QList<QSharedPointer<QGeoTileTexture> > cachedTex;
+    QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > cachedTex;
 
     // remove tiles in cache from request tiles
     if (!m_engine.isNull()) {
@@ -127,8 +127,24 @@ QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTi
             QGeoTileSpec tile = *i;
             QSharedPointer<QGeoTileTexture> tex = m_engine->getTileTexture(tile);
             if (tex) {
-                cachedTex << tex;
+                if (!tex->image.isNull())
+                    cachedTex.insert(tile, tex);
                 cached.insert(tile);
+            } else {
+                // Try to use textures from lower zoom levels, but still request the proper tile
+                QGeoTileSpec spec = tile;
+                const int endRange = qMax(0, tile.zoom() - 4); // Using up to 4 zoom levels up. 4 is arbitrary.
+                for (int z = tile.zoom() - 1; z >= endRange; z--) {
+                    int denominator = 1 << (tile.zoom() - z);
+                    spec.setZoom(z);
+                    spec.setX(tile.x() / denominator);
+                    spec.setY(tile.y() / denominator);
+                    QSharedPointer<QGeoTileTexture> t = m_engine->getTileTexture(spec);
+                    if (t && !t->image.isNull()) {
+                        cachedTex.insert(tile, t);
+                        break;
+                    }
+                }
             }
         }
     }

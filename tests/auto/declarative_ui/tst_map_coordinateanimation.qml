@@ -79,7 +79,7 @@ Item {
     }
 
     TestCase {
-        when: windowShown
+        when: windowShown && map.mapReady
         name: "CoordinateAnimation"
 
         function test_coordinate_animation() {

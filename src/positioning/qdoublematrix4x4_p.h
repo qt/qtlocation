@@ -53,9 +53,9 @@
 
 #include <QtPositioning/private/qpositioningglobal_p.h>
 #include <QtPositioning/private/qdoublevector3d_p.h>
+#include <QtCore/QDebug>
 #include <QtCore/qmetatype.h>
 #include <QtCore/QRectF>
-#include <QtGui/qmatrix4x4.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -936,7 +936,7 @@ Q_POSITIONING_PRIVATE_EXPORT QDebug operator<<(QDebug dbg, const QDoubleMatrix4x
 
 #ifndef QT_NO_DATASTREAM
 Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator<<(QDataStream &, const QDoubleMatrix4x4 &);
-Q_GUI_EXPORT QDataStream &operator>>(QDataStream &, QDoubleMatrix4x4 &);
+Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator>>(QDataStream &, QDoubleMatrix4x4 &);
 #endif
 
 

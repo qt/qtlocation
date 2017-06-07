@@ -56,6 +56,7 @@ public:
     QString copyrightsStyleSheet() const Q_DECL_OVERRIDE;
     void setMapboxGLSettings(const QMapboxGLSettings &);
     void setUseFBO(bool);
+    void setMapItemsBefore(const QString &);
 
 private Q_SLOTS:
     // QMapboxGL

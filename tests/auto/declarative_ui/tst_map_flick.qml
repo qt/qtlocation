@@ -94,7 +94,7 @@ Item {
     SignalSpy {id: mouseAreaBottomSpy; target: mouseAreaBottom; signalName: 'onPressed'}
 
     TestCase {
-        when: windowShown
+        when: windowShown && map.mapReady
         name: "MapFlick"
 
         function init()

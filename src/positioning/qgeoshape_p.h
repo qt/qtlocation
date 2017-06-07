@@ -53,7 +53,7 @@
 
 #include <QtCore/QSharedData>
 
-#include "qgeoshape.h"
+#include "qgeorectangle.h"
 
 QT_BEGIN_NAMESPACE
 

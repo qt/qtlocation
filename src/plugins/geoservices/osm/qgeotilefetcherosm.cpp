@@ -78,7 +78,7 @@ QGeoTileFetcherOsmPrivate::~QGeoTileFetcherOsmPrivate()
 
 QGeoTileFetcherOsm::QGeoTileFetcherOsm(const QVector<QGeoTileProviderOsm *> &providers,
                                        QNetworkAccessManager *nm,
-                                       QObject *parent)
+                                       QGeoMappingManagerEngine *parent)
 :   QGeoTileFetcher(*new QGeoTileFetcherOsmPrivate(), parent), m_userAgent("Qt Location based application"),
     m_providers(providers), m_nm(nm), m_ready(true)
 {

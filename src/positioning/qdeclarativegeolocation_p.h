@@ -53,7 +53,7 @@
 
 #include <QtCore/QObject>
 #include <QtPositioning/QGeoLocation>
-#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/qgeorectangle.h>
 #include <QtPositioning/private/qdeclarativegeoaddress_p.h>
 
 QT_BEGIN_NAMESPACE

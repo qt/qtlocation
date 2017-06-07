@@ -278,7 +278,7 @@ Item {
 
     TestCase {
         name: "MapItemDetails"
-        when: windowShown
+        when: windowShown && map.mapReady
 
     /*
 

@@ -52,6 +52,8 @@ class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProvid
                       FILE "nokia_plugin.json")
 
 public:
+    QGeoServiceProviderFactoryNokia();
+
     QGeoCodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
                                                           QGeoServiceProvider::Error *error,
                                                           QString *errorString) const;

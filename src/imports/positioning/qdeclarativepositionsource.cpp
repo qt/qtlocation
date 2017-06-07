@@ -45,7 +45,7 @@
 #include <QtQml/qqml.h>
 #include <qnmeapositioninfosource.h>
 #include <QFile>
-#include <QTcpSocket>
+#include <QtNetwork/QTcpSocket>
 #include <QTimer>
 
 QT_BEGIN_NAMESPACE

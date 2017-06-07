@@ -88,6 +88,8 @@ Q_SIGNALS:
     void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);
 
 private:
+    void updateSceneParameters();
+
     Q_DISABLE_COPY(QGeoTiledMapScene)
 };
 

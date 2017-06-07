@@ -39,7 +39,12 @@
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryWinRT::positionInfoSource(QObject *parent)
 {
-    return new QGeoPositionInfoSourceWinRT(parent);
+    QGeoPositionInfoSourceWinRT *src = new QGeoPositionInfoSourceWinRT(parent);
+    if (src->init() < 0) {
+        delete src;
+        src = 0;
+    }
+    return src;
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryWinRT::satelliteInfoSource(QObject *parent)

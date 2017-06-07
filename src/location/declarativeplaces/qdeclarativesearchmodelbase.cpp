@@ -36,7 +36,7 @@
 
 #include "qdeclarativesearchmodelbase_p.h"
 #include "qdeclarativeplace_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtQml/QQmlInfo>

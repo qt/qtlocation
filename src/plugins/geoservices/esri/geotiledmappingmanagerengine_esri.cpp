@@ -101,6 +101,7 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
     cameraCaps.setMaximumTilt(80);
     cameraCaps.setMinimumFieldOfView(20.0);
     cameraCaps.setMaximumFieldOfView(120.0);
+    cameraCaps.setOverzoomEnabled(true);
     setCameraCapabilities(cameraCaps);
 
     setTileSize(QSize(256, 256));
@@ -117,7 +118,8 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
                         mapSource->description(),
                         mapSource->mobile(),
                         mapSource->night(),
-                        mapSource->mapId());
+                        mapSource->mapId(),
+                        "esri");
     }
 
     setSupportedMapTypes(mapTypes);
@@ -199,6 +201,16 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
             tileCache->setExtraTextureUsage(cacheSize);
     }
 
+    /* PREFETCHING */
+    if (parameters.contains(QStringLiteral("esri.mapping.prefetching_style"))) {
+        const QString prefetchingMode = parameters.value(QStringLiteral("esri.mapping.prefetching_style")).toString();
+        if (prefetchingMode == QStringLiteral("TwoNeighbourLayers"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchTwoNeighbourLayers;
+        else if (prefetchingMode == QStringLiteral("OneNeighbourLayer"))
+            m_prefetchStyle = QGeoTiledMap::PrefetchNeighbourLayer;
+        else if (prefetchingMode == QStringLiteral("NoPrefetching"))
+            m_prefetchStyle = QGeoTiledMap::NoPrefetching;
+    }
 
     setTileCache(tileCache);
     *error = QGeoServiceProvider::NoError;
@@ -212,7 +224,9 @@ GeoTiledMappingManagerEngineEsri::~GeoTiledMappingManagerEngineEsri()
 
 QGeoMap *GeoTiledMappingManagerEngineEsri::createMap()
 {
-    return new GeoTiledMapEsri(this);
+    QGeoTiledMap *map = new GeoTiledMapEsri(this);
+    map->setPrefetchStyle(m_prefetchStyle);
+    return map;
 }
 
 // ${z} = Zoom
@@ -226,7 +240,7 @@ bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider:
                                                             QString *errorString)
 {
     initResources();
-    QFile mapsFile(":/maps.json");
+    QFile mapsFile(":/esri/maps.json");
 
     if (!mapsFile.open(QIODevice::ReadOnly)) {
         *error = QGeoServiceProvider::NotSupportedError;

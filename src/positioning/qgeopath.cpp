@@ -115,7 +115,8 @@ QGeoPath::QGeoPath()
 }
 
 /*!
-    Constructs a new geo path from a list of coordinates.
+    Constructs a new geo path from a list of coordinates
+    (\a path and \a width).
 */
 QGeoPath::QGeoPath(const QList<QGeoCoordinate> &path, const qreal &width)
 :   QGeoShape(new QGeoPathPrivate(path, width))
@@ -463,7 +464,7 @@ bool QGeoPathPrivate::contains(const QGeoCoordinate &coordinate) const
 
         QDoubleVector2D candidate = ( (p-a).length() < (p-b).length() ) ? a : b;
 
-        if (u < (b - a).length()
+        if (u > 0 && u < 1
             && (p-intersection).length() < (p-candidate).length()  ) // And it falls in the segment
                 candidate = intersection;
 

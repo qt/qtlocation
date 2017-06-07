@@ -36,7 +36,7 @@
 
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qlocationutils_p.h"
-#include "error_messages.h"
+#include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
 #include "qdoublevector2d_p.h"
 #include <QtLocation/private/qgeomap_p.h>
@@ -179,7 +179,7 @@ QGeoMapPolylineGeometry::QGeoMapPolylineGeometry()
 }
 
 QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &map,
-                                                           const QList<QGeoCoordinate> &path,
+                                                           const QList<QDoubleVector2D> &path,
                                                            QDoubleVector2D &leftBoundWrapped)
 {
     /*
@@ -202,11 +202,8 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
     QDoubleVector2D wrappedLeftBound(qInf(), qInf());
     // 1)
     for (int i = 0; i < path.size(); ++i) {
-        const QGeoCoordinate &coord = path.at(i);
-        if (!coord.isValid())
-            continue;
-
-        QDoubleVector2D wrappedProjection = map.geoProjection().wrapMapProjection(map.geoProjection().geoToMapProjection(coord));
+        const QDoubleVector2D &coord = path.at(i);
+        QDoubleVector2D wrappedProjection = map.geoProjection().wrapMapProjection(coord);
 
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
@@ -310,7 +307,7 @@ void QGeoMapPolylineGeometry::pathToScreen(const QGeoMap &map,
     \internal
 */
 void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
-                                                 const QList<QGeoCoordinate> &path,
+                                                 const QList<QDoubleVector2D> &path,
                                                  const QGeoCoordinate geoLeftBound)
 {
     if (!sourceDirty_)
@@ -556,6 +553,7 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
+        regenerateCache();
         geometry_.markSourceDirty();
         polishAndUpdate();
     }
@@ -618,6 +616,7 @@ void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate>
 
     geopath_.setPath(path);
 
+    regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
     emit pathChanged();
@@ -646,8 +645,12 @@ int QDeclarativePolylineMapItem::pathLength() const
 */
 void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 {
+    if (!coordinate.isValid())
+        return;
+
     geopath_.addCoordinate(coordinate);
 
+    updateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
     emit pathChanged();
@@ -669,6 +672,7 @@ void QDeclarativePolylineMapItem::insertCoordinate(int index, const QGeoCoordina
 
     geopath_.insertCoordinate(index, coordinate);
 
+    regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
     emit pathChanged();
@@ -691,6 +695,7 @@ void QDeclarativePolylineMapItem::replaceCoordinate(int index, const QGeoCoordin
 
     geopath_.replaceCoordinate(index, coordinate);
 
+    regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
     emit pathChanged();
@@ -741,6 +746,8 @@ void QDeclarativePolylineMapItem::removeCoordinate(const QGeoCoordinate &coordin
     geopath_.removeCoordinate(coordinate);
     if (geopath_.path().length() == length)
         return;
+
+    regenerateCache();
     markSourceDirtyAndUpdate();
     emit pathChanged();
 }
@@ -763,6 +770,7 @@ void QDeclarativePolylineMapItem::removeCoordinate(int index)
 
     geopath_.removeCoordinate(index);
 
+    regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
     emit pathChanged();
@@ -792,7 +800,7 @@ QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
 */
 void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
+    if (!map() || !geopath_.isValid() || updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
         QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
     }
@@ -807,6 +815,7 @@ void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, con
         return;
 
     geopath_.translate(offsetLati, offsetLongi);
+    regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
     emit pathChanged();
@@ -830,6 +839,29 @@ void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChan
 /*!
     \internal
 */
+void QDeclarativePolylineMapItem::regenerateCache()
+{
+    if (!map())
+        return;
+    geopathProjected_.clear();
+    geopathProjected_.reserve(geopath_.path().size());
+    for (const QGeoCoordinate &c : geopath_.path())
+        geopathProjected_ << map()->geoProjection().geoToMapProjection(c);
+}
+
+/*!
+    \internal
+*/
+void QDeclarativePolylineMapItem::updateCache()
+{
+    if (!map())
+        return;
+    geopathProjected_ << map()->geoProjection().geoToMapProjection(geopath_.path().last());
+}
+
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::updatePolish()
 {
     if (!map() || geopath_.path().length() == 0)
@@ -838,7 +870,7 @@ void QDeclarativePolylineMapItem::updatePolish()
     QScopedValueRollback<bool> rollback(updatingGeometry_);
     updatingGeometry_ = true;
 
-    geometry_.updateSourcePoints(*map(), geopath_.path(), geopath_.boundingGeoRectangle().topLeft());
+    geometry_.updateSourcePoints(*map(), geopathProjected_, geopath_.boundingGeoRectangle().topLeft());
     geometry_.updateScreenPoints(*map(), line_.width());
 
     setWidth(geometry_.sourceBoundingBox().width());

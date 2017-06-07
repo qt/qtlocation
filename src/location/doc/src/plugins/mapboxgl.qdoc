@@ -53,7 +53,25 @@ The Mapbox GL geo services plugin can be loaded by using the plugin key "mapboxg
 Both Mapbox geo services plugins require an access token to access map styles
 and tiles hosted by Mapbox. To create a Mapbox account visit \l{https://www.mapbox.com/pricing}.
 
-\section2 Optional parameters
+\b {Note:} the API for this plugin is introduced in Qt 5.9 as \e {technology preview}.
+
+\section1 Platform Support
+
+Qt Location Mapbox GL Plugin has the following support for platforms:
+
+\list
+    \li Microsoft Windows (win32) - Supported, requires MinGW 5.0+ and ANGLE as OpenGL backend
+    \li Linux X11 - Supported, requires GCC 4.9+
+    \li macOS - Supported
+    \li Android - Supported
+    \li Embedded Linux - Supported, requires GCC 4.9+
+    \li iOS - Supported
+    \li WinRT - Not supported
+\endlist
+
+\section1 Parameters
+
+\section2 Optional plugin parameters
 
 The following table lists optional parameters that can be passed to the Mapbox plugin.
 
@@ -110,6 +128,133 @@ The following table lists optional parameters that can be passed to the Mapbox p
     experimental, and it does not support QQuickItem transformations nor stencil
     clipping. It might be also produce rendering artifacts e.g. when adding it
     inside a \l{QtQuick::Flipable}{Flipable} item.
-
+\row
+    \li mapboxgl.mapping.items.insert_before
+    \li Some map items such as \l{QtLocation::MapPolyline}{MapPolyline},
+    \l{QtLocation::MapPolygon}{MapPolygon} and \l{QtLocation::MapRectangle}{MapRectangle}
+    will be rendered after the topmost \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#layers}{layer}
+    of the style. With this parameter set, the map items will be rendered \b before the layer ID
+    specified, unless the layer is not present on the current style, which will fallback
+    to the default behavior. This parameter can be used to display route lines under labels.
 \endtable
+
+\section2 Optional map parameters
+
+The \l{QtLocation::Map}{Map} item using this plugin, can also be customized using \l{QtLocation::MapParameter}{MapParameters},
+allowing runtime changes to the map style and data.
+
+Examples of what can be currently controlled using \l{QtLocation::MapParameter}{MapParameter} are:
+
+\list
+    \li Hide and show parts of the map, like roads and buildings.
+    \li Change paint properties like color and opacity of various parts of the map.
+    \li Change layout properties like thickness and line joints.
+    \li Add data to the map.
+    \li Add sprites to the map.
+\endlist
+
+With the exception of extrusion and data driven style properties, every property described at the
+\l {https://www.mapbox.com/mapbox-gl-js/style-spec/}{Mapbox Style Specification} can be changed at runtime.
+
+The \l{QtLocation::MapParameter}{MapParameters}, used to control the style of the map at runtime, always
+have a \b type property, followed by user defined properties that try to match the
+\l {https://www.mapbox.com/mapbox-gl-js/style-spec/}{Mapbox Style Specification} naming as much as possible,
+replacing the dash with camel case for technical reasons (i.e. \b line-cap will be translated to \b lineCap).
+
+\table
+\header
+    \li Parameter type
+    \li Description
+\row
+    \li source
+    \li A style data \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#sources}{source}. When using a source
+    of \b sourceType \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#sources-geojson}{geojson}, the
+    \b data property can be both inlined or sourced from qrc.
+\row
+    \li layer
+    \li Adds a new \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#layers}{style layer} to the map. On a Mapbox GL map,
+    layers are used in styles for adding styling rules to specific subsets of data. A layer will contain a reference to the
+    data for which they are defining a style. Use the \b before attribute to insert a layer before an existing layer.
+\row
+    \li paint
+    \li Defines how a layer will be painted. \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#layer-paint}{Paint} properties
+    can be used for changing the color and opacity of roads in the map or the land color, among other things.
+\row
+    \li layout
+    \li Defines how a layer will be layouted. \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#layer-layout}{Layout} properties
+    can be used for setting a layer's visibility, and for defining the spacing between dashes in a dashed line, among other things.
+\row
+    \li image
+    \li Adds a \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#root-sprite}{sprite} to the map to be used by a style layer.
+    This property is required if any style layer uses the properties such as \b backgroundPattern, \b fillPattern, \b linePattern,
+    or \b iconImage.
+\row
+    \li filter
+    \li A \l {https://www.mapbox.com/mapbox-gl-js/style-spec/#types-filter}{filter} selects specific features from a layer. This can
+    be used for adding a layer from a GeoJSON source based on specific parts of the data source, like by using only the points
+    in the GeoJSON.
+\endtable
+
+\section1 Example usage
+
+This example adds inline GeoJSON data to the map. Simply adding a \b source is not enough to get the data
+visible. It is also necessary to create a \b layer based on this source. After the layer is added, we also need
+to style its \b paint and \b layout properties. In this case we are changing the line color to blue, and the line
+width to 8 pixels, as well as also setting round line joints and caps.
+
+\code
+Map {
+    plugin: Plugin { name: "mapboxgl" }
+
+    center: QtPositioning.coordinate(60.170448, 24.942046) // Helsinki
+    zoomLevel: 12
+
+    MapParameter {
+        type: "source"
+
+        property var name: "routeSource"
+        property var sourceType: "geojson"
+        property var data: '{ "type": "FeatureCollection", "features": \
+            [{ "type": "Feature", "properties": {}, "geometry": { \
+            "type": "LineString", "coordinates": [[ 24.934938848018646, \
+            60.16830257086771 ], [ 24.943315386772156, 60.16227776476442 ]]}}]}'
+    }
+
+    MapParameter {
+        type: "layer"
+
+        property var name: "route"
+        property var layerType: "line"
+        property var source: "routeSource"
+
+        // Draw under the first road label layer
+        // of the mapbox-streets style.
+        property var before: "road-label-small"
+    }
+
+    MapParameter {
+        type: "paint"
+
+        property var layer: "route"
+        property var lineColor: "blue"
+        property var lineWidth: 8.0
+    }
+
+    MapParameter {
+        type: "layout"
+
+        property var layer: "route"
+        property var lineJoin: "round"
+        property var lineCap: "round"
+    }
+}
+\endcode
+
+Note that the order we add the parameters is important, because there is dependency between the
+parameters. Adding a layer before adding a source will create an invalid layer, same goes for
+adding a paint property for a layer that doesn't exist.
+
+Paint and layout properties can also be used for styling existing layers of the current style, and
+not only layers created at runtime. \l {https://www.mapbox.com/studio/}{Mapbox Studio} can be used
+for inspecting layers of a given style.
 */

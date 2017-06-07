@@ -128,7 +128,7 @@ QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
 }
 
 /*!
-    \qmlproperty QJSValue QtLocation::RouteSegment::path
+    \qmlproperty list<coordinate> QtLocation::RouteSegment::path
 
     Read-only property which holds the geographical coordinates of this segment.
     Coordinates are listed in the order in which they would be traversed by someone

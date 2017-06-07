@@ -604,9 +604,9 @@ Map {
             var mouseGeoPos = map.toCoordinate(Qt.point(mouse.x, mouse.y));
             var preZoomPoint = map.fromCoordinate(mouseGeoPos, false);
             if (mouse.button === Qt.LeftButton) {
-                map.zoomLevel++;
+                map.zoomLevel = Math.floor(map.zoomLevel + 1)
             } else if (mouse.button === Qt.RightButton) {
-                map.zoomLevel--;
+                map.zoomLevel = Math.floor(map.zoomLevel - 1)
             }
             var postZoomPoint = map.fromCoordinate(mouseGeoPos, false);
             var dx = postZoomPoint.x - preZoomPoint.x;

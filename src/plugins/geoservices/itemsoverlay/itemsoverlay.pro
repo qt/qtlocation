@@ -12,9 +12,10 @@ SOURCES += \
     qgeomappingmanagerengineitemsoverlay.cpp \
     qgeomapitemsoverlay.cpp
 
+OTHER_FILES += \
+    itemsoverlay_plugin.json
+
 PLUGIN_TYPE = geoservices
 PLUGIN_CLASS_NAME = QGeoServiceProviderFactoryItemsOverlay
 load(qt_plugin)
 
-DISTFILES += \
-    itemsoverlay_plugin.json

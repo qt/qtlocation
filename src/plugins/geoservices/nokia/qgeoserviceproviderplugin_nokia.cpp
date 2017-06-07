@@ -47,6 +47,11 @@
 #include <QNetworkProxy>
 #include <QCoreApplication>
 
+static void initResources()
+{
+    Q_INIT_RESOURCE(nokia);
+}
+
 QT_BEGIN_NAMESPACE
 
 namespace
@@ -108,6 +113,11 @@ namespace
 
         return new TInstance(networkManager, parameters, error, errorString);
     }
+}
+
+QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia()
+{
+    initResources();
 }
 
 QGeoCodingManagerEngine *QGeoServiceProviderFactoryNokia::createGeocodingManagerEngine(

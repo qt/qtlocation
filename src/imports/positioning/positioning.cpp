@@ -244,7 +244,7 @@ QT_BEGIN_NAMESPACE
     The \l isEmpty attribute can be used to test if the geoshape represents a region with a
     geometrical area of 0.
 
-    The \l {contains}{contains()} method can be used to test if a \l {coordinate} is
+    The \l {contains}() method can be used to test if a \l {coordinate} is
     within the geoshape.
 
     \section1 Example Usage
@@ -493,6 +493,38 @@ QT_BEGIN_NAMESPACE
     This property holds the radius of the geocircle in meters.
 
     The default value for the radius is -1 indicating an invalid geocircle area.
+*/
+
+/*!
+    \qmlbasictype geopath
+    \inqmlmodule QtPositioning
+    \ingroup qml-QtPositioning5-basictypes
+    \since 5.9
+
+    \brief The geopath type represents a geographic path.
+
+    The \c geopath type is a \l {geoshape} that represents a geographic
+    path. It is a direct representation of a \l QGeoPath and is defined
+    in terms of a \l {path} which holds the list of geo coordinates in the
+    path.
+
+    The path is considered invalid if it is empty.
+
+    When integrating with C++, note that any QGeoPath value passed into QML from C++ is
+    automatically converted into a \c geopath value, and vice versa.
+
+    \section1 Properties
+
+    \section2 path
+
+    This property holds the list of coordinates defining the path.
+
+    \section2 width
+
+    This property holds the width of the path in meters. This is currently only used
+    when calling the \l {contains}() method.
+
+    The default value for the width is 0.
 */
 
 static QObject *singleton_type_factory(QQmlEngine *engine, QJSEngine *jsEngine)

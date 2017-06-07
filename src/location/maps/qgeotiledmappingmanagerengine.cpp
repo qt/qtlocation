@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
 
 QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine(QObject *parent)
     : QGeoMappingManagerEngine(parent),
+      m_prefetchStyle(QGeoTiledMap::PrefetchTwoNeighbourLayers),
       d_ptr(new QGeoTiledMappingManagerEnginePrivate)
 {
 }

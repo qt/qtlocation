@@ -59,7 +59,7 @@
 #include <QtCore/QList>
 #include <QtCore/QPointer>
 #include <QtGui/QColor>
-#include <QtPositioning/qgeoshape.h>
+#include <QtPositioning/qgeorectangle.h>
 #include <QtLocation/private/qgeomap_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -214,7 +214,9 @@ protected:
     void mouseUngrabEvent() Q_DECL_OVERRIDE ;
     void touchUngrabEvent() Q_DECL_OVERRIDE;
     void touchEvent(QTouchEvent *event) Q_DECL_OVERRIDE ;
+#if QT_CONFIG(wheelevent)
     void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE ;
+#endif
 
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) Q_DECL_OVERRIDE;
     bool sendMouseEvent(QMouseEvent *event);
@@ -226,6 +228,8 @@ protected:
 
     void setError(QGeoServiceProvider::Error error, const QString &errorString);
     void initialize();
+    void setZoomLevel(qreal zoomLevel, bool overzoom);
+
 private Q_SLOTS:
     void mappingManagerInitialized();
     void pluginReady();
@@ -248,7 +252,7 @@ private:
     QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
     QQuickGeoMapGestureArea *m_gestureArea;
-    QGeoMap *m_map;
+    QPointer<QGeoMap> m_map;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
     QList<QPointer<QDeclarativeGeoMapItemGroup> > m_mapItemGroups;

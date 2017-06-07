@@ -50,13 +50,13 @@
 
 #include <QSharedDataPointer>
 
-#include <QtLocation/qlocationglobal.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoCameraCapabilitiesPrivate;
 
-class Q_LOCATION_EXPORT QGeoCameraCapabilities
+class Q_LOCATION_PRIVATE_EXPORT QGeoCameraCapabilities
 {
 public:
     QGeoCameraCapabilities();
@@ -99,6 +99,9 @@ public:
 
     void setMaximumFieldOfView(double maximumFieldOfView);
     double maximumFieldOfView() const;
+
+    void setOverzoomEnabled(bool overzoomEnabled);
+    bool overzoomEnabled() const;
 
     bool isValid() const;
 

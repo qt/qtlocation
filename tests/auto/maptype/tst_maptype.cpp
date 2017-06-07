@@ -52,8 +52,9 @@ tst_MapType::tst_MapType() {}
 
 void tst_MapType::constructorTest()
 {
+    const QByteArray pluginName = "tst_MapType";
     QGeoMapType *testObjPtr = new QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street map"),
-                                              QStringLiteral("map description"), true, true, 1);
+                                              QStringLiteral("map description"), true, true, 1, pluginName);
     QVERIFY(testObjPtr);
     QCOMPARE(testObjPtr->style(), QGeoMapType::StreetMap);
     QCOMPARE(testObjPtr->name(), QStringLiteral("street map"));
@@ -61,6 +62,7 @@ void tst_MapType::constructorTest()
     QVERIFY(testObjPtr->mobile());
     QVERIFY(testObjPtr->night());
     QCOMPARE(testObjPtr->mapId(), 1);
+    QCOMPARE(testObjPtr->pluginName(), pluginName);
     delete testObjPtr;
 
     testObjPtr = new QGeoMapType();
@@ -70,6 +72,7 @@ void tst_MapType::constructorTest()
     QVERIFY2(!testObjPtr->mobile(), "Wrong default value");
     QVERIFY2(!testObjPtr->night(), "Wrong default value");
     QCOMPARE(testObjPtr->mapId(), 0);
+    QCOMPARE(testObjPtr->pluginName(), QByteArrayLiteral(""));
     delete testObjPtr;
 }
 
@@ -79,50 +82,58 @@ void tst_MapType::comparison_data()
     QTest::addColumn<QGeoMapType>("type2");
     QTest::addColumn<bool>("expected");
 
+    const QByteArray pluginName = "tst_MapType";
+
     QTest::newRow("null") << QGeoMapType() << QGeoMapType() << true;
 
     QTest::newRow("equal") << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                          QStringLiteral("street desc"), false, false, 42)
+                                          QStringLiteral("street desc"), false, false, 42, pluginName)
                            << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                          QStringLiteral("street desc"), false, false, 42)
+                                          QStringLiteral("street desc"), false, false, 42, pluginName)
                            << true;
 
     QTest::newRow("style") << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                          QStringLiteral("street desc"), false, false, 42)
+                                          QStringLiteral("street desc"), false, false, 42, pluginName)
                            << QGeoMapType(QGeoMapType::TerrainMap, QStringLiteral("street name"),
-                                          QStringLiteral("street desc"), false, false, 42)
+                                          QStringLiteral("street desc"), false, false, 42, pluginName)
                            << false;
 
     QTest::newRow("name") << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                         QStringLiteral("street desc"), false, false, 42)
+                                         QStringLiteral("street desc"), false, false, 42, pluginName)
                           << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("different name"),
-                                         QStringLiteral("street desc"), false, false, 42)
+                                         QStringLiteral("street desc"), false, false, 42, pluginName)
                           << false;
 
     QTest::newRow("description") << QGeoMapType(QGeoMapType::StreetMap,
                                                 QStringLiteral("street name"),
-                                                QStringLiteral("street desc"), false, false, 42)
+                                                QStringLiteral("street desc"), false, false, 42, pluginName)
                                  << QGeoMapType(QGeoMapType::StreetMap,
                                                 QStringLiteral("street name"),
-                                                QStringLiteral("different desc"), false, false, 42)
+                                                QStringLiteral("different desc"), false, false, 42, pluginName)
                                  << false;
 
     QTest::newRow("mobile") << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                           QStringLiteral("street desc"), false, false, 42)
+                                           QStringLiteral("street desc"), false, false, 42, pluginName)
                             << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                           QStringLiteral("street desc"), true, false, 42)
+                                           QStringLiteral("street desc"), true, false, 42, pluginName)
                             << false;
 
     QTest::newRow("night") << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                           QStringLiteral("street desc"), false, false, 42)
+                                           QStringLiteral("street desc"), false, false, 42, pluginName)
                             << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                           QStringLiteral("street desc"), false, true, 42)
+                                           QStringLiteral("street desc"), false, true, 42, pluginName)
                             << false;
 
     QTest::newRow("id") << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                       QStringLiteral("street desc"), false, false, 42)
+                                       QStringLiteral("street desc"), false, false, 42, pluginName)
                         << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
-                                       QStringLiteral("street desc"), false, false, 99)
+                                       QStringLiteral("street desc"), false, false, 99, pluginName)
+                        << false;
+
+    QTest::newRow("plugin_name") << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
+                                       QStringLiteral("street desc"), false, false, 42, pluginName)
+                        << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("street name"),
+                                       QStringLiteral("street desc"), false, false, 42, QByteArrayLiteral("abc"))
                         << false;
 }
 

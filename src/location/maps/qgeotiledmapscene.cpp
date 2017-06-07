@@ -88,6 +88,7 @@ public:
     double m_mapEdgeSize;
 
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > m_textures;
+    QVector<QGeoTileSpec> m_updatedTextures;
 
     // tilesToGrid transform
     int m_minTileX; // the minimum tile index, i.e. 0 to sideLength which is 1<< zoomLevel
@@ -104,7 +105,7 @@ public:
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &visibleTiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
-    bool buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode);
+    bool buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode, bool &overzooming);
     void updateTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
     inline bool isTiltedOrRotated() { return (m_cameraData.tilt() > 0.0) || (m_cameraData.bearing() > 0.0); }
@@ -125,21 +126,31 @@ void QGeoTiledMapScene::setScreenSize(const QSize &size)
     d->m_screenSize = size;
 }
 
+void QGeoTiledMapScene::updateSceneParameters()
+{
+    Q_D(QGeoTiledMapScene);
+    d->m_intZoomLevel = static_cast<int>(std::floor(d->m_cameraData.zoomLevel()));
+    const float delta = d->m_cameraData.zoomLevel() - d->m_intZoomLevel;
+    d->m_linearScaling = qAbs(delta) > 0.05 || d->isTiltedOrRotated();
+    d->m_sideLength = 1 << d->m_intZoomLevel;
+    d->m_mapEdgeSize = std::pow(2.0, d->m_cameraData.zoomLevel()) * d->m_tileSize;
+}
+
 void QGeoTiledMapScene::setTileSize(int tileSize)
 {
     Q_D(QGeoTiledMapScene);
+    if (d->m_tileSize == tileSize)
+        return;
+
     d->m_tileSize = tileSize;
+    updateSceneParameters();
 }
 
 void QGeoTiledMapScene::setCameraData(const QGeoCameraData &cameraData)
 {
     Q_D(QGeoTiledMapScene);
     d->m_cameraData = cameraData;
-    d->m_intZoomLevel = static_cast<int>(std::floor(d->m_cameraData.zoomLevel()));
-    float delta = cameraData.zoomLevel() - d->m_intZoomLevel;
-    d->m_linearScaling = qAbs(delta) > 0.05 || d->isTiltedOrRotated();
-    d->m_sideLength = 1 << d->m_intZoomLevel;
-    d->m_mapEdgeSize = std::pow(2.0, cameraData.zoomLevel()) * d->m_tileSize;
+    updateSceneParameters();
 }
 
 void QGeoTiledMapScene::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
@@ -164,9 +175,9 @@ QSet<QGeoTileSpec> QGeoTiledMapScene::texturedTiles()
 {
     Q_D(QGeoTiledMapScene);
     QSet<QGeoTileSpec> textured;
-    foreach (const QGeoTileSpec &tile, d->m_textures.keys()) {
-        textured += tile;
-    }
+    for (auto it = d->m_textures.cbegin(); it != d->m_textures.cend(); ++it)
+        textured += it.value()->spec;
+
     return textured;
 }
 
@@ -197,8 +208,9 @@ QGeoTiledMapScenePrivate::~QGeoTiledMapScenePrivate()
 {
 }
 
-bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode)
+bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode, bool &overzooming)
 {
+    overzooming = false;
     int x = spec.x();
 
     if (x < m_tileXWrapsBelow)
@@ -227,7 +239,25 @@ bool QGeoTiledMapScenePrivate::buildGeometry(const QGeoTileSpec &spec, QSGImageN
 
     imageNode->setRect(QRectF(QPointF(x1, y2), QPointF(x2, y1)));
     imageNode->setTextureCoordinatesTransform(QSGImageNode::MirrorVertically);
-    imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
+
+    // Calculate the texture mapping, in case we are magnifying some lower ZL tile
+    const auto it = m_textures.find(spec); // This should be always found, but apparently sometimes it isn't, possibly due to memory shortage
+    if (it != m_textures.end()) {
+        if (it.value()->spec.zoom() < spec.zoom()) {
+            // Currently only using lower ZL tiles for the overzoom.
+            const int tilesPerTexture = 1 << (spec.zoom() - it.value()->spec.zoom());
+            const int mappedSize = imageNode->texture()->textureSize().width() / tilesPerTexture;
+            const int x = (spec.x() % tilesPerTexture) * mappedSize;
+            const int y = (spec.y() % tilesPerTexture) * mappedSize;
+            imageNode->setSourceRect(QRectF(x, y, mappedSize, mappedSize));
+            overzooming = true;
+        } else {
+            imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
+        }
+    } else {
+        qWarning() << "!! buildGeometry: tileSpec not present in m_textures !!";
+        imageNode->setSourceRect(QRectF(QPointF(0,0), imageNode->texture()->textureSize()));
+    }
 
     return true;
 }
@@ -237,6 +267,8 @@ void QGeoTiledMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<
     if (!m_visibleTiles.contains(spec)) // Don't add the geometry if it isn't visible
         return;
 
+    if (m_textures.contains(spec))
+        m_updatedTextures.append(spec);
     m_textures.insert(spec, texture);
 }
 
@@ -350,7 +382,7 @@ void QGeoTiledMapScenePrivate::updateTileBounds(const QSet<QGeoTileSpec> &tiles)
 void QGeoTiledMapScenePrivate::setupCamera()
 {
     // NOTE: The following instruction is correct only because WebMercator is a square projection!
-    double f = 1.0 * qMin(m_screenSize.width(), m_screenSize.height());
+    double f = m_screenSize.height();
 
     // Using fraction of zoom level, z varies between [ m_tileSize , 2 * m_tileSize [
     double z = std::pow(2.0, m_cameraData.zoomLevel() - m_intZoomLevel) * m_tileSize;
@@ -431,11 +463,8 @@ void QGeoTiledMapScenePrivate::setupCamera()
     double aspectRatio = 1.0 * m_screenSize.width() / m_screenSize.height();
     float halfWidth = 1 * apertureSize;
     float halfHeight = 1 * apertureSize;
-    if (aspectRatio > 1.0) {
-        halfWidth *= aspectRatio;
-    } else if (aspectRatio > 0.0f && aspectRatio < 1.0f) {
-        halfHeight /= aspectRatio;
-    }
+    halfWidth *= aspectRatio;
+
     m_projectionMatrix.setToIdentity();
     m_projectionMatrix.frustum(-halfWidth, halfWidth, -halfHeight, halfHeight, nearPlane, farPlane);
 }
@@ -549,19 +578,19 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
     cameraMatrix.lookAt(toVector3D(eye), toVector3D(center), toVector3D(d->m_cameraUp));
     root->setMatrix(d->m_projectionMatrix * cameraMatrix);
 
-    QSet<QGeoTileSpec> tilesInSG = QSet<QGeoTileSpec>::fromList(root->tiles.keys());
-    QSet<QGeoTileSpec> toRemove = tilesInSG - d->m_visibleTiles;
-    QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - tilesInSG;
+    const QSet<QGeoTileSpec> tilesInSG = QSet<QGeoTileSpec>::fromList(root->tiles.keys());
+    const QSet<QGeoTileSpec> toRemove = tilesInSG - d->m_visibleTiles;
+    const QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - tilesInSG;
 
-    foreach (const QGeoTileSpec &s, toRemove)
+    for (const QGeoTileSpec &s : toRemove)
         delete root->tiles.take(s);
     bool straight = !d->isTiltedOrRotated();
-
+    bool overzooming;
     qreal pixelRatio = window->effectiveDevicePixelRatio();
     for (QHash<QGeoTileSpec, QSGImageNode *>::iterator it = root->tiles.begin();
          it != root->tiles.end(); ) {
         QSGImageNode *node = it.value();
-        bool ok = d->buildGeometry(it.key(), node)
+        bool ok = d->buildGeometry(it.key(), node, overzooming)
                 && qgeotiledmapscene_isTileInViewport(node->rect(), root->matrix(), straight);
 
         QSGNode::DirtyState dirtyBits = 0;
@@ -575,10 +604,12 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                     node->setFiltering(QSGTexture::Linear); // With mipmapping QSGTexture::Nearest generates artifacts
                     node->setMipmapFiltering(QSGTexture::Linear);
                 } else {
-                    node->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
+                    node->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
                 }
+#if QT_CONFIG(opengl)
                 if (ogl)
                     static_cast<QSGDefaultImageNode *>(node)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
+#endif
                 dirtyBits |= QSGNode::DirtyMaterial;
             }
             if (dirtyBits != 0)
@@ -587,23 +618,25 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
         }
     }
 
-    foreach (const QGeoTileSpec &s, toAdd) {
+    for (const QGeoTileSpec &s : toAdd) {
         QGeoTileTexture *tileTexture = d->m_textures.value(s).data();
         if (!tileTexture || tileTexture->image.isNull())
             continue;
         QSGImageNode *tileNode = window->createImageNode();
         // note: setTexture will update coordinates so do it here, before we buildGeometry
         tileNode->setTexture(textures.value(s));
-        if (d->buildGeometry(s, tileNode)
+        if (d->buildGeometry(s, tileNode, overzooming)
                 && qgeotiledmapscene_isTileInViewport(tileNode->rect(), root->matrix(), straight)) {
             if (tileNode->texture()->textureSize().width() > d->m_tileSize * pixelRatio) {
                 tileNode->setFiltering(QSGTexture::Linear); // with mipmapping QSGTexture::Nearest generates artifacts
                 tileNode->setMipmapFiltering(QSGTexture::Linear);
             } else {
-                tileNode->setFiltering(d->m_linearScaling ? QSGTexture::Linear : QSGTexture::Nearest);
+                tileNode->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
             }
+#if QT_CONFIG(opengl)
             if (ogl)
                 static_cast<QSGDefaultImageNode *>(tileNode)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
+#endif
             root->addChild(s, tileNode);
         } else {
             delete tileNode;
@@ -636,24 +669,43 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     mapRoot->root->setMatrix(itemSpaceMatrix);
 
     if (d->m_dropTextures) {
-        foreach (const QGeoTileSpec &s, mapRoot->tiles->tiles.keys())
+        for (const QGeoTileSpec &s : mapRoot->tiles->tiles.keys())
             delete mapRoot->tiles->tiles.take(s);
-        foreach (const QGeoTileSpec &s, mapRoot->wrapLeft->tiles.keys())
+        for (const QGeoTileSpec &s : mapRoot->wrapLeft->tiles.keys())
             delete mapRoot->wrapLeft->tiles.take(s);
-        foreach (const QGeoTileSpec &s, mapRoot->wrapRight->tiles.keys())
+        for (const QGeoTileSpec &s : mapRoot->wrapRight->tiles.keys())
             delete mapRoot->wrapRight->tiles.take(s);
-        foreach (const QGeoTileSpec &spec, mapRoot->textures.keys())
+        for (const QGeoTileSpec &spec : mapRoot->textures.keys())
             mapRoot->textures.take(spec)->deleteLater();
         d->m_dropTextures = false;
     }
 
-    QSet<QGeoTileSpec> textures = QSet<QGeoTileSpec>::fromList(mapRoot->textures.keys());
-    QSet<QGeoTileSpec> toRemove = textures - d->m_visibleTiles;
-    QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - textures;
+    // Evicting loZL tiles temporarily used in place of hiZL ones
+    if (d->m_updatedTextures.size()) {
+        const QVector<QGeoTileSpec> &toRemove = d->m_updatedTextures;
+        for (const QGeoTileSpec &s : toRemove) {
+            if (mapRoot->tiles->tiles.contains(s))
+                delete mapRoot->tiles->tiles.take(s);
 
-    foreach (const QGeoTileSpec &spec, toRemove)
+            if (mapRoot->wrapLeft->tiles.contains(s))
+                delete mapRoot->wrapLeft->tiles.take(s);
+
+            if (mapRoot->wrapRight->tiles.contains(s))
+                delete mapRoot->wrapRight->tiles.take(s);
+
+            if (mapRoot->textures.contains(s))
+                mapRoot->textures.take(s)->deleteLater();
+        }
+        d->m_updatedTextures.clear();
+    }
+
+    const QSet<QGeoTileSpec> textures = QSet<QGeoTileSpec>::fromList(mapRoot->textures.keys());
+    const QSet<QGeoTileSpec> toRemove = textures - d->m_visibleTiles;
+    const QSet<QGeoTileSpec> toAdd = d->m_visibleTiles - textures;
+
+    for (const QGeoTileSpec &spec : toRemove)
         mapRoot->textures.take(spec)->deleteLater();
-    foreach (const QGeoTileSpec &spec, toAdd) {
+    for (const QGeoTileSpec &spec : toAdd) {
         QGeoTileTexture *tileTexture = d->m_textures.value(spec).data();
         if (!tileTexture || tileTexture->image.isNull())
             continue;

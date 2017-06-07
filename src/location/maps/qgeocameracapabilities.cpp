@@ -74,6 +74,7 @@ public:
     int tileSize_;
     double minimumFieldOfView_;
     double maximumFieldOfView_;
+    bool overzoomEnabled_;
 };
 
 QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
@@ -87,7 +88,8 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
       maxTilt_(0.0),
       tileSize_(256),
       minimumFieldOfView_(45.0),  // Defaulting to a fixed FOV of 45 degrees. Too large FOVs cause the loading of too many tiles
-      maximumFieldOfView_(45.0) {}
+      maximumFieldOfView_(45.0),
+      overzoomEnabled_(false) {}
 
 
 QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCapabilitiesPrivate &other)
@@ -102,7 +104,8 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCap
       maxTilt_(other.maxTilt_),
       tileSize_(other.tileSize_),
       minimumFieldOfView_(other.minimumFieldOfView_),
-      maximumFieldOfView_(other.maximumFieldOfView_) {}
+      maximumFieldOfView_(other.maximumFieldOfView_),
+      overzoomEnabled_(other.overzoomEnabled_){}
 
 
 QGeoCameraCapabilitiesPrivate::~QGeoCameraCapabilitiesPrivate() {}
@@ -123,6 +126,7 @@ QGeoCameraCapabilitiesPrivate &QGeoCameraCapabilitiesPrivate::operator = (const 
     tileSize_ = other.tileSize_;
     minimumFieldOfView_ = other.minimumFieldOfView_;
     maximumFieldOfView_ = other.maximumFieldOfView_;
+    overzoomEnabled_ = other.overzoomEnabled_;
 
     return *this;
 }
@@ -139,7 +143,8 @@ bool QGeoCameraCapabilitiesPrivate::operator == (const QGeoCameraCapabilitiesPri
             && (maxTilt_ == rhs.maxTilt_)
             && (tileSize_ == rhs.tileSize_)
             && (minimumFieldOfView_ == rhs.minimumFieldOfView_)
-            && (maximumFieldOfView_ == rhs.maximumFieldOfView_));
+            && (maximumFieldOfView_ == rhs.maximumFieldOfView_)
+            && (overzoomEnabled_ == rhs.overzoomEnabled_));
 }
 
 /*!
@@ -248,7 +253,7 @@ double QGeoCameraCapabilities::minimumZoomLevelAt256() const
 {
     if (d->tileSize_ == 256)
         return d->minZoom_;
-    return zoomLevelTo256(d->minZoom_, d->tileSize_);
+    return qMax<double>(0, zoomLevelTo256(d->minZoom_, d->tileSize_));
 }
 
 /*!
@@ -278,7 +283,7 @@ double QGeoCameraCapabilities::maximumZoomLevelAt256() const
 {
     if (d->tileSize_ == 256)
         return d->maxZoom_;
-    return zoomLevelTo256(d->maxZoom_, d->tileSize_);
+    return qMax<double>(0, zoomLevelTo256(d->maxZoom_, d->tileSize_));
 }
 
 /*!
@@ -428,6 +433,35 @@ void QGeoCameraCapabilities::setMaximumFieldOfView(double maximumFieldOfView)
 double QGeoCameraCapabilities::maximumFieldOfView() const
 {
     return d->maximumFieldOfView_;
+}
+
+/*!
+    Sets whether overzooming is supported by the associated plugin.
+
+    Overzooming means that zoom levels outside the [minimumZL, maximumZL] range can be set,
+    and if tiles aren't available for those zoom levels, either tiles from other zoom levels
+    will be used, or nothing will be shown.
+
+    Set this value to false if the plugin is not capable of that. For example if using
+    a mapping engine that always clamp the zoomLevel value, which may cause misalignment in case
+    of stacked map elements.
+
+    \since 5.9
+*/
+void QGeoCameraCapabilities::setOverzoomEnabled(bool overzoomEnabled)
+{
+    d->overzoomEnabled_ = overzoomEnabled;
+    d->valid_ = true;
+}
+
+/*!
+    Returns whether overzooming is supported by the associated plugin.
+
+    \since 5.9
+*/
+bool QGeoCameraCapabilities::overzoomEnabled() const
+{
+    return d->overzoomEnabled_;
 }
 
 

@@ -58,7 +58,7 @@ public:
     virtual ~QMapboxGLStyleChange() = default;
 
     static QList<QSharedPointer<QMapboxGLStyleChange>> addMapParameter(QGeoMapParameter *);
-    static QList<QSharedPointer<QMapboxGLStyleChange>> addMapItem(QDeclarativeGeoMapItemBase *);
+    static QList<QSharedPointer<QMapboxGLStyleChange>> addMapItem(QDeclarativeGeoMapItemBase *, const QString &before);
     static QList<QSharedPointer<QMapboxGLStyleChange>> removeMapItem(QDeclarativeGeoMapItemBase *);
 
     virtual void apply(QMapboxGL *map) = 0;
@@ -109,7 +109,7 @@ class QMapboxGLStyleAddLayer : public QMapboxGLStyleChange
 {
 public:
     static QSharedPointer<QMapboxGLStyleChange> fromMapParameter(QGeoMapParameter *);
-    static QSharedPointer<QMapboxGLStyleChange> fromFeature(const QMapbox::Feature &feature);
+    static QSharedPointer<QMapboxGLStyleChange> fromFeature(const QMapbox::Feature &feature, const QString &before);
 
     void apply(QMapboxGL *map) Q_DECL_OVERRIDE;
 
@@ -117,6 +117,7 @@ private:
     QMapboxGLStyleAddLayer() = default;
 
     QVariantMap m_params;
+    QString m_before;
 };
 
 class QMapboxGLStyleRemoveLayer : public QMapboxGLStyleChange

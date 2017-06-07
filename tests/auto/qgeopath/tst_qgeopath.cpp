@@ -275,8 +275,8 @@ void tst_QGeoPath::contains_data()
     c.append(QGeoCoordinate(3,0));
 
     QTest::newRow("One of the points") << c[0] << c[1] << c[2] << 0.0 << QGeoCoordinate(2, 2) << true;
-    QTest::newRow("Not so far away") << c[0] << c[1] << c[2] << 0.0 << QGeoCoordinate(0, 0) << false;
-    QTest::newRow("Not so far away and large line") << c[0] << c[1] << c[2] << 100000.0 << QGeoCoordinate(0, 0) << true;
+    QTest::newRow("Not so far away") << c[0] << c[1] << c[2] << 0.0 << QGeoCoordinate(0.8, 0.8) << false;
+    QTest::newRow("Not so far away and large line") << c[0] << c[1] << c[2] << 100000.0 << QGeoCoordinate(0.8, 0.8) << true;
 }
 
 void tst_QGeoPath::contains()
@@ -378,7 +378,7 @@ void tst_QGeoPath::extendShape_data()
 
     QTest::newRow("One of the points") << c[0] << c[1] << c[2] << 0.0 << QGeoCoordinate(2, 2) << true << true;
     QTest::newRow("Not so far away") << c[0] << c[1] << c[2] << 0.0 << QGeoCoordinate(0, 0) << false << true;
-    QTest::newRow("Not so far away and large line") << c[0] << c[1] << c[2] << 100000.0 << QGeoCoordinate(0, 0) << true << true;
+    QTest::newRow("Not so far away and large line") << c[0] << c[1] << c[2] << 100000.0 << QGeoCoordinate(0.8, 0.8) << true << true;
 }
 
 QTEST_MAIN(tst_QGeoPath)

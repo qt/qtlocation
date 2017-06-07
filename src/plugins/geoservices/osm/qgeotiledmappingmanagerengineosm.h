@@ -59,10 +59,10 @@ public:
                                      QGeoServiceProvider::Error *error, QString *errorString);
     ~QGeoTiledMappingManagerEngineOsm();
 
-    QGeoMap *createMap();
+    QGeoMap *createMap() override;
     const QVector<QGeoTileProviderOsm *> &providers();
     QString customCopyright() const;
-    QGeoCameraCapabilities cameraCapabilities(const QGeoMapType &mapType) const Q_DECL_OVERRIDE;
+    QGeoCameraCapabilities cameraCapabilities(int mapId) const override;
 
 protected Q_SLOTS:
     void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);

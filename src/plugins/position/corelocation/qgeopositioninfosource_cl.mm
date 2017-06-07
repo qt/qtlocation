@@ -140,6 +140,22 @@ bool QGeoPositionInfoSourceCL::enableLocationManager()
 {
     if (!m_locationManager) {
         m_locationManager = [[CLLocationManager alloc] init];
+
+#ifdef Q_OS_IOS
+        NSDictionary<NSString *, id> *infoDict = [[NSBundle mainBundle] infoDictionary];
+        if (id value = [infoDict objectForKey:@"UIBackgroundModes"]) {
+            if ([value isKindOfClass:[NSArray class]]) {
+                NSArray *modes = static_cast<NSArray *>(value);
+                for (id mode in modes) {
+                    if ([@"location" isEqualToString:mode]) {
+                        m_locationManager.allowsBackgroundLocationUpdates = YES;
+                        break;
+                    }
+                }
+            }
+        }
+#endif
+
         m_locationManager.desiredAccuracy = kCLLocationAccuracyBest;
         m_locationManager.delegate = [[PositionLocationDelegate alloc] initWithInfoSource:this];
 

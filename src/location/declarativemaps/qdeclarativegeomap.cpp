@@ -45,6 +45,7 @@
 #include "qdeclarativegeomapparameter_p.h"
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoPath>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGRectangleNode>
 #include <QtQuick/private/qquickwindow_p.h>
@@ -139,7 +140,7 @@ QT_BEGIN_NAMESPACE
     \section2 Example Usage
 
     The following snippet shows a simple Map and the necessary Plugin type
-    to use it. The map is centered over Oslo, Norway, with zoom level 10.
+    to use it. The map is centered over Oslo, Norway, with zoom level 14.
 
     \quotefromfile minimal_map/main.qml
     \skipto import
@@ -189,7 +190,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
     m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                              tr("No Map"),
-                                                             tr("No Map"), false, false, 0), this);
+                                                             tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
     m_cameraData.setCenter(QGeoCoordinate(51.5073,-0.1277)); //London city center
     m_cameraData.setZoomLevel(8.0);
 
@@ -278,17 +279,17 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
 
             copyrights = m_copyrights.data();
 
-            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+            connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
                     copyrights, SLOT(copyrightsChanged(QImage)));
-            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+            connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
                     this,  SIGNAL(copyrightsChanged(QImage)));
 
-            connect(m_map, SIGNAL(copyrightsChanged(QString)),
+            connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
                     copyrights, SLOT(copyrightsChanged(QString)));
-            connect(m_map, SIGNAL(copyrightsChanged(QString)),
+            connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
                     this,  SIGNAL(copyrightsChanged(QString)));
 
-            connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+            connect(m_map.data(), SIGNAL(copyrightsStyleSheetChanged(QString)),
                     copyrights, SLOT(onCopyrightsStyleSheetChanged(QString)));
 
             connect(copyrights, SIGNAL(linkActivated(QString)),
@@ -419,6 +420,9 @@ void QDeclarativeGeoMap::initialize()
         emit fieldOfViewChanged(m_cameraData.fieldOfView());
 
     emit mapReadyChanged(true);
+
+    if (m_copyrights)
+         update();
 }
 
 /*!
@@ -721,7 +725,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
 */
 void QDeclarativeGeoMap::mappingManagerInitialized()
 {
-    m_map = m_mappingManager->createMap(this);
+    m_map = QPointer<QGeoMap>(m_mappingManager->createMap(this));
 
     if (!m_map)
         return;
@@ -734,12 +738,20 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         m_supportedMapTypes.append(type);
     }
 
-    if (!m_supportedMapTypes.isEmpty()) {
-        QDeclarativeGeoMapType *type = m_supportedMapTypes.at(0);
-        m_activeMapType = type;
-        m_map->setActiveMapType(type->mapType());
-    } else {
+    if (m_activeMapType && m_plugin->name().toLatin1() == m_activeMapType->mapType().pluginName()) {
         m_map->setActiveMapType(m_activeMapType->mapType());
+    } else {
+        if (m_activeMapType)
+            m_activeMapType->deleteLater();
+
+        if (!m_supportedMapTypes.isEmpty()) {
+                m_activeMapType = m_supportedMapTypes.at(0);
+                m_map->setActiveMapType(m_activeMapType->mapType());
+        } else {
+            m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
+                                                                     tr("No Map"),
+                                                                     tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
+        }
     }
 
     // Update camera capabilities
@@ -747,32 +759,50 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // Map tiles are built in this call. m_map->minimumZoom() becomes operational
     // after this has been called at least once, after creation.
-
+    // However, getting into the following block may fire a copyrightsChanged that would get lost,
+    // as the connections are set up after.
+    QString copyrightString;
+    QImage copyrightImage;
     if (!m_initialized && width() > 0 && height() > 0) {
+        QMetaObject::Connection copyrightStringCatcherConnection =
+                connect(m_map.data(),
+                        QOverload<const QString &>::of(&QGeoMap::copyrightsChanged),
+                        [&copyrightString](const QString &copy){ copyrightString = copy; });
+        QMetaObject::Connection copyrightImageCatcherConnection =
+                connect(m_map.data(),
+                        QOverload<const QImage &>::of(&QGeoMap::copyrightsChanged),
+                        [&copyrightImage](const QImage &copy){ copyrightImage = copy; });
         m_map->setViewportSize(QSize(width(), height()));
         initialize();
+        QObject::disconnect(copyrightStringCatcherConnection);
+        QObject::disconnect(copyrightImageCatcherConnection);
     }
 
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
     m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
 
-    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
             m_copyrights.data(), SLOT(copyrightsChanged(QImage)));
-    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
             this,  SIGNAL(copyrightsChanged(QImage)));
 
-    connect(m_map, SIGNAL(copyrightsChanged(QString)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
             m_copyrights.data(), SLOT(copyrightsChanged(QString)));
-    connect(m_map, SIGNAL(copyrightsChanged(QString)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
             this,  SIGNAL(copyrightsChanged(QString)));
 
-    connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+    if (!copyrightString.isEmpty())
+        emit m_map.data()->copyrightsChanged(copyrightString);
+    else if (!copyrightImage.isNull())
+        emit m_map.data()->copyrightsChanged(copyrightImage);
+
+    connect(m_map.data(), SIGNAL(copyrightsStyleSheetChanged(QString)),
             m_copyrights.data(), SLOT(onCopyrightsStyleSheetChanged(QString)));
 
     connect(m_copyrights.data(), SIGNAL(linkActivated(QString)),
             this, SIGNAL(copyrightLinkActivated(QString)));
-    connect(m_map, &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
-    connect(m_map, &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
+    connect(m_map.data(), &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
+    connect(m_map.data(), &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
 
     // set visibility of copyright notice
     m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
@@ -788,7 +818,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // Any map items that were added before the plugin was ready
     // need to have setMap called again
-    foreach (const QPointer<QDeclarativeGeoMapItemBase> &item, m_mapItems) {
+    for (const QPointer<QDeclarativeGeoMapItemBase> &item : qAsConst(m_mapItems)) {
         if (item) {
             item->setMap(this, m_map);
             m_map->addMapItem(item.data()); // m_map filters out what is not supported.
@@ -808,8 +838,11 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // All map parameters that were added before the plugin was ready
     // need to be added to m_map
-    for (QDeclarativeGeoMapParameter *p : m_mapParameters)
+    for (QDeclarativeGeoMapParameter *p : qAsConst(m_mapParameters))
         m_map->addParameter(p);
+
+    if (m_initialized)
+        update();
 }
 
 /*!
@@ -841,7 +874,7 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSe
 
         m_gestureArea->setMinimumZoomLevel(minimumZoomLevel);
 
-        if (zoomLevel() < minimumZoomLevel)
+        if (zoomLevel() < minimumZoomLevel && (m_gestureArea->enabled() || !m_cameraCapabilities.overzoomEnabled()))
             setZoomLevel(minimumZoomLevel);
 
         if (oldMinimumZoomLevel != minimumZoomLevel)
@@ -884,7 +917,7 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel, bool userSe
 
         m_gestureArea->setMaximumZoomLevel(maximumZoomLevel);
 
-        if (zoomLevel() > maximumZoomLevel)
+        if (zoomLevel() > maximumZoomLevel && (m_gestureArea->enabled() || !m_cameraCapabilities.overzoomEnabled()))
             setZoomLevel(maximumZoomLevel);
 
         if (oldMaximumZoomLevel != maximumZoomLevel)
@@ -912,9 +945,26 @@ qreal QDeclarativeGeoMap::maximumZoomLevel() const
     This property holds the zoom level for the map.
 
     Larger values for the zoom level provide more detail. Zoom levels
-    are always non-negative. The default value is 8.0.
+    are always non-negative. The default value is 8.0. Depending on the plugin in use,
+    values outside the [minimumZoomLevel, maximumZoomLevel] range, which represent the range for which
+    tiles are available, may be accepted, or clamped.
 */
 void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
+{
+    return setZoomLevel(zoomLevel, m_cameraCapabilities.overzoomEnabled());
+}
+
+/*!
+    \internal
+
+    Sets the zoom level.
+    Larger values for the zoom level provide more detail. Zoom levels
+    are always non-negative. The default value is 8.0. Values outside the
+    [minimumZoomLevel, maximumZoomLevel] range, which represent the range for which
+    tiles are available, can be accepted or clamped by setting the overzoom argument
+    to true or false respectively.
+*/
+void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
 {
     if (m_cameraData.zoomLevel() == zoomLevel || zoomLevel < 0)
         return;
@@ -923,7 +973,9 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
     bool centerHasChanged = false;
 
     if (m_initialized) {
-        m_cameraData.setZoomLevel(qBound(minimumZoomLevel(), zoomLevel, maximumZoomLevel()));
+        m_cameraData.setZoomLevel(qBound<qreal>(overzoom ? m_map->minimumZoom() : minimumZoomLevel(),
+                                                zoomLevel,
+                                                overzoom ? 30 : maximumZoomLevel()));
         m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
         QGeoCoordinate coord = m_cameraData.center();
         coord.setLatitude(qBound(-m_maximumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
@@ -1267,10 +1319,12 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
     if (!m_map || !width() || !height())
         return m_visibleRegion;
 
-    QGeoCoordinate tl = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(0, 0));
-    QGeoCoordinate br = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(width(), height()));
+    const QList<QDoubleVector2D> &visibleRegion = m_map->geoProjection().visibleRegion();
+    QGeoPath path;
+    for (const QDoubleVector2D &c: visibleRegion)
+        path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
 
-    return QGeoRectangle(tl, br);
+    return path.boundingGeoRectangle();
 }
 
 /*!
@@ -1330,7 +1384,7 @@ QColor QDeclarativeGeoMap::color() const
     This property holds whether the map has been successfully initialized and is ready to be used.
     Some methods, such as \l fromCoordinate and \l toCoordinate, will not work before the map is ready.
     Due to the architecture of the \l Map, it's advised to use the signal emitted for this property
-    in place of \l Component.onCompleted, to make sure that everything behaves as expected.
+    in place of \l {QtQml::Component::completed()}{Component.onCompleted}, to make sure that everything behaves as expected.
 
     \since 5.9
 */
@@ -1518,6 +1572,7 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
     }
 }
 
+#if QT_CONFIG(wheelevent)
 /*!
     \internal
 */
@@ -1529,6 +1584,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
         QQuickItem::wheelEvent(event);
 
 }
+#endif
 
 bool QDeclarativeGeoMap::isInteractive()
 {
@@ -1696,7 +1752,7 @@ void QDeclarativeGeoMap::clearMapParameters()
 QList<QObject *> QDeclarativeGeoMap::mapParameters()
 {
     QList<QObject *> ret;
-    for (QDeclarativeGeoMapParameter *p : m_mapParameters)
+    for (QDeclarativeGeoMapParameter *p : qAsConst(m_mapParameters))
         ret << p;
     return ret;
 }
@@ -1842,10 +1898,16 @@ void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGro
 void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
 {
     if (m_activeMapType->mapType() != mapType->mapType()) {
-        m_activeMapType = mapType;
-        if (m_map)
-            m_map->setActiveMapType(mapType->mapType());
-        emit activeMapTypeChanged();
+        if (m_map) {
+            if (mapType->mapType().pluginName() == m_plugin->name().toLatin1()) {
+                m_map->setActiveMapType(mapType->mapType());
+                m_activeMapType = mapType;
+                emit activeMapTypeChanged();
+            }
+        } else {
+            m_activeMapType = mapType;
+            emit activeMapTypeChanged();
+        }
     }
 }
 
@@ -1862,7 +1924,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
     m_gestureArea->setSize(newGeometry.size());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 
-    if (!m_map || !newGeometry.size().isValid())
+    if (!m_map || newGeometry.size().isEmpty())
         return;
 
     m_map->setViewportSize(newGeometry.size().toSize());
@@ -2039,7 +2101,7 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
     QQuickItem *grabber = win ? win->mouseGrabberItem() : 0;
     bool stealEvent = m_gestureArea->isActive();
 
-    if ((stealEvent || contains(localPos)) && (!grabber || !grabber->keepMouseGrab())) {
+    if ((stealEvent || contains(localPos)) && (!grabber || (!grabber->keepMouseGrab() && !grabber->keepTouchGrab()))) {
         QScopedPointer<QMouseEvent> mouseEvent(QQuickWindowPrivate::cloneMouseEvent(event, &localPos));
         mouseEvent->setAccepted(false);
 
@@ -2060,7 +2122,7 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
         stealEvent = m_gestureArea->isActive();
         grabber = win ? win->mouseGrabberItem() : 0;
 
-        if (grabber && stealEvent && !grabber->keepMouseGrab() && grabber != this)
+        if (grabber && stealEvent && !grabber->keepMouseGrab() && !grabber->keepTouchGrab() && grabber != this)
             grabMouse();
 
         if (stealEvent) {
@@ -2077,11 +2139,12 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
 
 bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
 {
-    const QQuickPointerDevice *touchDevice = QQuickPointerDevice::touchDevice(event->device());
+    QQuickPointerDevice *touchDevice = QQuickPointerDevice::touchDevice(event->device());
     const QTouchEvent::TouchPoint &point = event->touchPoints().first();
+    QQuickWindowPrivate *windowPriv = QQuickWindowPrivate::get(window());
 
-    auto touchPointGrabberItem = [touchDevice](const QTouchEvent::TouchPoint &point) -> QQuickItem* {
-        if (QQuickEventPoint *eventPointer = touchDevice->pointerEvent()->pointById(point.id()))
+    auto touchPointGrabberItem = [touchDevice, windowPriv](const QTouchEvent::TouchPoint &point) -> QQuickItem* {
+        if (QQuickEventPoint *eventPointer = windowPriv->pointerEventInstance(touchDevice)->pointById(point.id()))
             return eventPointer->grabber();
         return nullptr;
     };

@@ -129,12 +129,20 @@ a prefix.
     Using \b unitary, they will be interpreted as number of tiles.
     The default value for this parameter is \b bytesize.
 \row
-    \li osm.mapping.cache.texture.size
+    \li here.mapping.cache.texture.size
     \li Texture cache size for map tiles. The default size of the cache is 6 MiB when \b bytesize is the cost
     strategy for this cache, or 30 tiles, when \b unitary is the cost strategy.
     Note that the texture cache has a hard minimum size which depends on the size of the map viewport
     (it must contain enough data to display the tiles currently visible on the display).
     This value is the amount of cache to be used in addition to the bare minimum.
+\row
+    \li here.mapping.prefetching_style
+    \li This parameter allows to provide a hint how tile prefetching is to be performed by the engine. The default value,
+    \tt{TwoNeighbourLayers}, makes the engine prefetch tiles for the layer above and the one below the current tile
+    layer, providing ready tiles when zooming in or out from the current zoom level.
+    \tt{OneNeighbourLayer} only prefetches the one layer closest to the current zoom level.
+    Finally, \tt{NoPrefetching} allows to disable the prefetching, so only tiles that are visible will be fetched.
+    Note that, depending on the active map type, this hint might be ignored.
 \row
     \li here.mapping.highdpi_tiles
     \li Whether or not to request high dpi tiles. Valid values are \b true and \b false. The default value is \b false.

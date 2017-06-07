@@ -63,7 +63,7 @@ class QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
 public:
     QGeoMapCircleGeometry();
 
-    void updateScreenPointsInvert(const QList<QGeoCoordinate> &circlePath, const QGeoMap &map);
+    void updateScreenPointsInvert(const QList<QDoubleVector2D> &circlePath, const QGeoMap &map);
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
@@ -110,16 +110,17 @@ protected Q_SLOTS:
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
 
 private:
-    bool preserveCircleGeometry(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
+    void updateCirclePath();
+    bool preserveCircleGeometry(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
                                 qreal distance);
-    void updateCirclePathForRendering(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
+    void updateCirclePathForRendering(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
                                       qreal distance);
 
 private:
     QGeoCircle circle_;
     QDeclarativeMapLineProperties border_;
     QColor color_;
-    QList<QGeoCoordinate> circlePath_;
+    QList<QDoubleVector2D> circlePath_;
     bool dirtyMaterial_;
     QGeoMapCircleGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;

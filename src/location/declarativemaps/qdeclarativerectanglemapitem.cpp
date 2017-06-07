@@ -134,8 +134,10 @@ QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
 void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
-    if (map)
-        markSourceDirtyAndUpdate();
+    if (!map)
+        return;
+    updatePath();
+    markSourceDirtyAndUpdate();
 }
 
 /*!
@@ -167,6 +169,7 @@ void QDeclarativeRectangleMapItem::setTopLeft(const QGeoCoordinate &topLeft)
         return;
 
     rectangle_.setTopLeft(topLeft);
+    updatePath();
     markSourceDirtyAndUpdate();
     emit topLeftChanged(topLeft);
 }
@@ -198,6 +201,7 @@ void QDeclarativeRectangleMapItem::setBottomRight(const QGeoCoordinate &bottomRi
         return;
 
     rectangle_.setBottomRight(bottomRight);
+    updatePath();
     markSourceDirtyAndUpdate();
     emit bottomRightChanged(bottomRight);
 }
@@ -274,14 +278,8 @@ void QDeclarativeRectangleMapItem::updatePolish()
     QScopedValueRollback<bool> rollback(updatingGeometry_);
     updatingGeometry_ = true;
 
-    QList<QGeoCoordinate> path;
-    path << rectangle_.topLeft();
-    path << QGeoCoordinate(rectangle_.topLeft().latitude(), rectangle_.bottomRight().longitude());
-    path << rectangle_.bottomRight();
-    path << QGeoCoordinate(rectangle_.bottomRight().latitude(), rectangle_.topLeft().longitude());
-
     geometry_.setPreserveGeometry(true, rectangle_.topLeft());
-    geometry_.updateSourcePoints(*map(), path);
+    geometry_.updateSourcePoints(*map(), pathMercator_);
     geometry_.updateScreenPoints(*map());
 
     QList<QGeoMapItemGeometry *> geoms;
@@ -289,7 +287,7 @@ void QDeclarativeRectangleMapItem::updatePolish()
     borderGeometry_.clear();
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
-        QList<QGeoCoordinate> closedPath = path;
+        QList<QDoubleVector2D> closedPath = pathMercator_;
         closedPath << closedPath.first();
 
         borderGeometry_.setPreserveGeometry(true, rectangle_.topLeft());
@@ -352,9 +350,25 @@ QGeoMap::ItemType QDeclarativeRectangleMapItem::itemType() const
 /*!
     \internal
 */
+void QDeclarativeRectangleMapItem::updatePath()
+{
+    if (!map())
+        return;
+    pathMercator_.clear();
+    pathMercator_ << map()->geoProjection().geoToMapProjection(rectangle_.topLeft());
+    pathMercator_ << map()->geoProjection().geoToMapProjection(
+                         QGeoCoordinate(rectangle_.topLeft().latitude(), rectangle_.bottomRight().longitude()));
+    pathMercator_ << map()->geoProjection().geoToMapProjection(rectangle_.bottomRight());
+    pathMercator_ << map()->geoProjection().geoToMapProjection(
+                         QGeoCoordinate(rectangle_.bottomRight().latitude(), rectangle_.topLeft().longitude()));
+}
+
+/*!
+    \internal
+*/
 void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
+    if (!map() || !rectangle_.isValid() || updatingGeometry_ || newGeometry.topLeft() == oldGeometry.topLeft()) {
         QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
         return;
     }
@@ -369,6 +383,7 @@ void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, co
         return;
 
     rectangle_.translate(offsetLati, offsetLongi);
+    updatePath();
     geometry_.setPreserveGeometry(true, rectangle_.topLeft());
     borderGeometry_.setPreserveGeometry(true, rectangle_.topLeft());
     markSourceDirtyAndUpdate();

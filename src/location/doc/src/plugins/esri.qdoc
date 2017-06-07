@@ -150,6 +150,14 @@ or you can sign up for an \l {http://www.arcgis.com/features/plans/pricing.html}
     Note that the texture cache has a hard minimum size which depends on the size of the map viewport
     (it must contain enough data to display the tiles currently visible on the display).
     This value is the amount of cache to be used in addition to the bare minimum.
+\row
+    \li esri.mapping.prefetching_style
+    \li This parameter allows to provide a hint how tile prefetching is to be performed by the engine. The default value,
+    \tt{TwoNeighbourLayers}, makes the engine prefetch tiles for the layer above and the one below the current tile
+    layer, providing ready tiles when zooming in or out from the current zoom level.
+    \tt{OneNeighbourLayer} only prefetches the one layer closest to the current zoom level.
+    Finally, \tt{NoPrefetching} allows to disable the prefetching, so only tiles that are visible will be fetched.
+    Note that, depending on the active map type, this hint might be ignored.
 \endtable
 
 \section2 Directions language

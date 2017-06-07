@@ -199,7 +199,7 @@ QGeoTiledMapPrivate::~QGeoTiledMapPrivate()
 
 void QGeoTiledMapPrivate::prefetchTiles()
 {
-    if (m_tileRequests) {
+    if (m_tileRequests && m_prefetchStyle != QGeoTiledMap::NoPrefetching) {
 
         QSet<QGeoTileSpec> tiles;
         QGeoCameraData camera = m_visibleTiles->cameraData();
@@ -242,8 +242,11 @@ void QGeoTiledMapPrivate::prefetchTiles()
                 m_prefetchTiles->setViewExpansion(1.0);
                 tiles += m_prefetchTiles->createTiles();
             }
-
         }
+            break;
+
+        default:
+            break;
         }
 
         m_tileRequests->requestTiles(tiles - m_mapScene->texturedTiles());
@@ -320,12 +323,11 @@ void QGeoTiledMapPrivate::updateScene()
         q->evaluateCopyrights(tiles);
 
     // don't request tiles that are already built and textured
-    QList<QSharedPointer<QGeoTileTexture> > cachedTiles =
+    QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > cachedTiles =
             m_tileRequests->requestTiles(m_visibleTiles->createTiles() - m_mapScene->texturedTiles());
 
-    foreach (const QSharedPointer<QGeoTileTexture> &tex, cachedTiles) {
-        m_mapScene->addTile(tex->spec, tex);
-    }
+    for (auto it = cachedTiles.cbegin(); it != cachedTiles.cend(); ++it)
+        m_mapScene->addTile(it.key(), it.value());
 
     if (!cachedTiles.isEmpty())
         emit q->sgNodeChanged();
@@ -333,9 +335,13 @@ void QGeoTiledMapPrivate::updateScene()
 
 void QGeoTiledMapPrivate::changeActiveMapType(const QGeoMapType mapType)
 {
+    m_visibleTiles->setTileSize(m_cameraCapabilities.tileSize());
+    m_prefetchTiles->setTileSize(m_cameraCapabilities.tileSize());
+    m_mapScene->setTileSize(m_cameraCapabilities.tileSize());
     m_visibleTiles->setMapType(mapType);
     m_prefetchTiles->setMapType(mapType);
-    updateScene();
+    changeCameraData(m_cameraData); // Updates the zoom level to the possibly new tile size
+    // updateScene called in changeCameraData()
 }
 
 void QGeoTiledMapPrivate::changeTileVersion(int version)
@@ -385,7 +391,7 @@ void QGeoTiledMapPrivate::updateTile(const QGeoTileSpec &spec)
     // Only promote the texture up to GPU if it is visible
     if (m_visibleTiles->createTiles().contains(spec)){
         QSharedPointer<QGeoTileTexture> tex = m_tileRequests->tileTexture(spec);
-        if (!tex.isNull()) {
+        if (!tex.isNull() && !tex->image.isNull()) {
             m_mapScene->addTile(spec, tex);
             emit q->sgNodeChanged();
         }

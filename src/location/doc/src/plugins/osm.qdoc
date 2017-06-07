@@ -101,6 +101,14 @@ a prefix.
     \tt{street-hires}, \tt{satellite-hires}, \tt{cycle-hires}, \tt{transit-hires}, \tt{night-transit-hires}, \tt{terrain-hires} and \tt{hiking-hires}.
     These are fetched from the same location used for the low dpi counterparts.
 \row
+    \li osm.mapping.prefetching_style
+    \li This parameter allows to provide a hint how tile prefetching is to be performed by the engine. The default value,
+    \tt{TwoNeighbourLayers}, makes the engine prefetch tiles for the layer above and the one below the current tile
+    layer, providing ready tiles when zooming in or out from the current zoom level.
+    \tt{OneNeighbourLayer} only prefetches the one layer closest to the current zoom level.
+    Finally, \tt{NoPrefetching} allows to disable the prefetching, so only tiles that are visible will be fetched.
+    Note that, depending on the active map type, this hint might be ignored.
+\row
     \li osm.routing.host
     \li Url string set when making network requests to the routing server.  This parameter should be set to a
         valid server url with the correct osrm API. If not specified the default \l {http://router.project-osrm.org/route/v1/driving/}{url} will be used.

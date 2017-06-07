@@ -75,7 +75,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMap : public QGeoMap
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoTiledMap)
 public:
-    enum PrefetchStyle { PrefetchNeighbourLayer, PrefetchTwoNeighbourLayers };
+    enum PrefetchStyle { NoPrefetching, PrefetchNeighbourLayer, PrefetchTwoNeighbourLayers };
     QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent);
     virtual ~QGeoTiledMap();
 

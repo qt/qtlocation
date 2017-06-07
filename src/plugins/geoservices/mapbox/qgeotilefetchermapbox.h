@@ -50,7 +50,7 @@ class QGeoTileFetcherMapbox : public QGeoTileFetcher
     Q_OBJECT
 
 public:
-    QGeoTileFetcherMapbox(int scaleFactor = 2, QObject *parent = 0);
+    QGeoTileFetcherMapbox(int scaleFactor, QGeoTiledMappingManagerEngine *parent);
 
     void setUserAgent(const QByteArray &userAgent);
     void setMapIds(const QVector<QString> &mapIds);

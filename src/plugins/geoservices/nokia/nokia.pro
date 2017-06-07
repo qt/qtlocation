@@ -45,7 +45,7 @@ SOURCES += \
 
 include(placesv2/placesv2.pri)
 
-RESOURCES += resource.qrc
+RESOURCES += nokia.qrc
 
 INCLUDEPATH += ../../../location/maps
 

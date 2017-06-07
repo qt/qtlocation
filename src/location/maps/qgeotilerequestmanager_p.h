@@ -64,7 +64,7 @@ public:
     explicit QGeoTileRequestManager(QGeoTiledMap *map, QGeoTiledMappingManagerEngine *engine);
     ~QGeoTileRequestManager();
 
-    QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
+    QMap<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
 
     void tileError(const QGeoTileSpec &tile, const QString &errorString);
     void tileFetched(const QGeoTileSpec &spec);

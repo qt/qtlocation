@@ -91,13 +91,9 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
 {
     Q_Q(QGeoMapMapboxGL);
 
-    if (!m_warned) {
-        if (window->openglContext()->thread() != QCoreApplication::instance()->thread()) {
-            qWarning() << "Threaded rendering is not supported by Mapbox GL plugin.";
-            QMetaObject::invokeMethod(&m_refresh, "start", Qt::QueuedConnection);
-        }
-
-        m_warned = true;
+    if (m_viewportSize.isEmpty()) {
+        delete node;
+        return 0;
     }
 
     QMapboxGL *map = 0;
@@ -150,6 +146,8 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
     if (m_useFBO) {
         static_cast<QSGMapboxGLTextureNode *>(node)->render(window);
     }
+
+    threadedRenderingHack(window, map);
 
     m_syncState = NoSync;
 
@@ -212,7 +210,7 @@ void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
 
     QObject::connect(item, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
 
-    m_styleChanges << QMapboxGLStyleChange::addMapItem(item);
+    m_styleChanges << QMapboxGLStyleChange::addMapItem(item, m_mapItemsBefore);
 
     emit q->sgNodeChanged();
 }
@@ -278,6 +276,31 @@ void QGeoMapMapboxGLPrivate::syncStyleChanges(QMapboxGL *map)
     m_styleChanges.clear();
 }
 
+void QGeoMapMapboxGLPrivate::threadedRenderingHack(QQuickWindow *window, QMapboxGL *map)
+{
+    // FIXME: Optimal support for threaded rendering needs core changes
+    // in Mapbox GL Native. Meanwhile we need to set a timer to update
+    // the map until all the resources are loaded, which is not exactly
+    // battery friendly, because might trigger more paints than we need.
+    if (!m_warned) {
+        m_threadedRendering = window->openglContext()->thread() != QCoreApplication::instance()->thread();
+
+        if (m_threadedRendering) {
+            qWarning() << "Threaded rendering is not optimal in the Mapbox GL plugin.";
+        }
+
+        m_warned = true;
+    }
+
+    if (m_threadedRendering) {
+        if (!map->isFullyLoaded()) {
+            QMetaObject::invokeMethod(&m_refresh, "start", Qt::QueuedConnection);
+        } else {
+            QMetaObject::invokeMethod(&m_refresh, "stop", Qt::QueuedConnection);
+        }
+    }
+}
+
 /*
  * QGeoMapMapboxGL implementation
  */
@@ -319,6 +342,12 @@ void QGeoMapMapboxGL::setUseFBO(bool useFBO)
     d->m_useFBO = useFBO;
 }
 
+void QGeoMapMapboxGL::setMapItemsBefore(const QString &before)
+{
+    Q_D(QGeoMapMapboxGL);
+    d->m_mapItemsBefore = before;
+}
+
 QSGNode *QGeoMapMapboxGL::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
     Q_D(QGeoMapMapboxGL);
@@ -339,7 +368,7 @@ void QGeoMapMapboxGL::onMapChanged(QMapboxGL::MapChange change)
             d->m_styleChanges << QMapboxGLStyleChange::addMapParameter(param);
 
         for (QDeclarativeGeoMapItemBase *item : d->m_mapItems)
-            d->m_styleChanges << QMapboxGLStyleChange::addMapItem(item);
+            d->m_styleChanges << QMapboxGLStyleChange::addMapItem(item, d->m_mapItemsBefore);
     }
 }
 

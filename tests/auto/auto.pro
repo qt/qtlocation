@@ -62,6 +62,9 @@ qtHaveModule(location) {
                 declarative_geoshape
 
         !mac: SUBDIRS += declarative_ui
+
+        # QTBUG-60268
+        boot2qt: SUBDIRS -= declarative_ui
     }
 }
 

@@ -79,10 +79,12 @@ public:
     QMapboxGLSettings m_settings;
     bool m_useFBO = true;
     bool m_developmentMode = false;
+    QString m_mapItemsBefore;
 
     QTimer m_refresh;
     bool m_shouldRefresh = true;
     bool m_warned = false;
+    bool m_threadedRendering = false;
     bool m_styleLoaded = false;
 
     SyncStates m_syncState = NoSync;
@@ -98,6 +100,7 @@ private:
     Q_DISABLE_COPY(QGeoMapMapboxGLPrivate);
 
     void syncStyleChanges(QMapboxGL *map);
+    void threadedRenderingHack(QQuickWindow *window, QMapboxGL *map);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoMapMapboxGLPrivate::SyncStates)
