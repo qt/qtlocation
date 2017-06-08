@@ -393,9 +393,20 @@ void QDeclarativeGeoMapQuickItem::updatePolish()
         matrix_->setMatrix(map()->geoProjection().quickItemTransformation(coordinate(), anchorPoint_, zoomLevel_));
         setPosition(QPointF(0,0));
     } else {
-        if (matrix_)
-            matrix_->setMatrix(QMatrix4x4());
-        setPositionOnMap(coordinate(), anchorPoint_);
+        // if the coordinate is behind the camera, we use the transformation to get the item out of the way
+        if (map()->cameraData().tilt() > 0.0
+            && !map()->geoProjection().isProjectable(map()->geoProjection().geoToWrappedMapProjection(coordinate()))) {
+            if (!matrix_) {
+                matrix_ = new QMapQuickItemMatrix4x4(this);
+                matrix_->appendToItem(opacityContainer_);
+            }
+            matrix_->setMatrix(map()->geoProjection().quickItemTransformation(coordinate(), anchorPoint_, map()->cameraData().zoomLevel()));
+            setPosition(QPointF(0,0));
+        } else {
+            if (matrix_)
+                matrix_->setMatrix(QMatrix4x4());
+            setPositionOnMap(coordinate(), anchorPoint_);
+        }
     }
 }
 
