@@ -45,7 +45,7 @@ QGeoFileTileCacheMapbox::QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTy
 {
     m_scaleFactor = qBound(1, scaleFactor, 2);
     for (int i=0; i < mapTypes.size(); i++)
-        m_mapNameToId.insert(mapTypes[i].name(), i);
+        m_mapNameToId.insert(mapTypes[i].name(), i+1);
 }
 
 QGeoFileTileCacheMapbox::~QGeoFileTileCacheMapbox()
@@ -57,7 +57,7 @@ QString QGeoFileTileCacheMapbox::tileSpecToFilename(const QGeoTileSpec &spec, co
 {
     QString filename = spec.plugin();
     filename += QLatin1String("-");
-    filename += m_mapTypes[spec.mapId()].name();
+    filename += m_mapTypes[spec.mapId()-1].name();
     filename += QLatin1String("-");
     filename += QString::number(spec.zoom());
     filename += QLatin1String("-");
@@ -87,7 +87,7 @@ QGeoTileSpec QGeoFileTileCacheMapbox::filenameToTileSpec(const QString &filename
 {
     QStringList parts = filename.split('.');
 
-    if (parts.length() != 3)
+    if (parts.length() != 3) // 3 because the map name has always a dot in it.
         return QGeoTileSpec();
 
     QString name = parts.at(0) + parts.at(1);
