@@ -607,6 +607,27 @@ void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
 }
 
 /*!
+    \qmlmethod int MapPolyline::setPath(geopath path)
+
+    Sets the \l path using a \l QGeoPath type.
+
+    \since 5.10
+
+    \sa path
+*/
+void QDeclarativePolylineMapItem::setPath(const QGeoPath &path)
+{
+    if (geopath_.path() == path.path())
+        return;
+
+    geopath_ = path;
+    regenerateCache();
+    geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markSourceDirtyAndUpdate();
+    emit pathChanged();
+}
+
+/*!
     \internal
 */
 void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate> &path)
