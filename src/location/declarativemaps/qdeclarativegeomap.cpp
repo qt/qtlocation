@@ -1849,13 +1849,11 @@ void QDeclarativeGeoMap::clearMapItems()
 */
 void QDeclarativeGeoMap::addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 {
-    if (!itemGroup)
+    if (!itemGroup || itemGroup->quickMap()) // || Already added to some map
         return;
 
+    itemGroup->setQuickMap(this);
     QPointer<QDeclarativeGeoMapItemGroup> g(itemGroup);
-    if (m_mapItemGroups.contains(g))
-        return;
-
     m_mapItemGroups.append(g);
     const QList<QQuickItem *> quickKids = g->childItems();
     for (auto c: quickKids) {
@@ -1877,7 +1875,7 @@ void QDeclarativeGeoMap::addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 */
 void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 {
-    if (!itemGroup)
+    if (!itemGroup || itemGroup->quickMap() != this) // cant remove an itemGroup added to another map
         return;
 
     QPointer<QDeclarativeGeoMapItemGroup> g(itemGroup);
@@ -1890,6 +1888,7 @@ void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGro
         if (mapItem)
             removeMapItem(mapItem);
     }
+    itemGroup->setQuickMap(nullptr);
     itemGroup->setParentItem(0);
 }
 
