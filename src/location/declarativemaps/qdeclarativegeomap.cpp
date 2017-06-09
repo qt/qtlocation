@@ -1841,9 +1841,7 @@ void QDeclarativeGeoMap::clearMapItems()
     \qmlmethod void QtLocation::Map::addMapItemGroup(MapItemGroup itemGroup)
 
     Adds the map items contained in the given \a itemGroup to the Map
-    (for example MapQuickItem, MapCircle). These items will be reparented, and the map
-    will be their new parent. Property bindings defined using \e{parent.} inside a MapItemGroup
-    will therefore not work.
+    (for example MapQuickItem, MapCircle).
 
     \sa MapItemGroup, removeMapItemGroup
 
