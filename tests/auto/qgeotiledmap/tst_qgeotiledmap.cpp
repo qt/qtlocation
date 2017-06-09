@@ -134,6 +134,8 @@ void tst_QGeoTiledMap::fetchTiles()
 
     //prev_visible
     camera.setZoomLevel(zoomLevel-1);
+    // Delay needed on slow targets (e.g. Qemu)
+    QTest::qWait(10);
     m_map->clearData();
     m_tilesCounter->m_tiles.clear();
     m_map->setCameraData(camera);
@@ -142,6 +144,8 @@ void tst_QGeoTiledMap::fetchTiles()
 
     //visible + prefetch
     camera.setZoomLevel(zoomLevel);
+    // Delay needed on slow targets (e.g. Qemu)
+    QTest::qWait(10);
     m_map->clearData();
     m_tilesCounter->m_tiles.clear();
     m_map->setCameraData(camera);
@@ -155,6 +159,8 @@ void tst_QGeoTiledMap::fetchTiles()
 
     //next visible
     camera.setZoomLevel(zoomLevel + 1);
+    // Delay needed on slow targets (e.g. Qemu)
+    QTest::qWait(10);
     m_map->clearData();
     m_tilesCounter->m_tiles.clear();
     m_map->setCameraData(camera);

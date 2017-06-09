@@ -170,7 +170,7 @@ Item {
             map.center.longitude = 11
             mousePress(page, 0, 50)
             for (var i = 0; i < 50; i += 5) {
-                wait(20)
+                wait(25)
                 mouseMove(page, 0, (50 + i), 0, Qt.LeftButton);
             }
             mouseRelease(page, 0, 100)
@@ -207,7 +207,7 @@ Item {
             map.center.longitude = 11
             mousePress(page, 10, 95)
             for (var i = 45; i > 0; i -= 5) {
-                wait(20)
+                wait(25)
                 mouseMove(page, 10, (50 + i), 0, Qt.LeftButton);
             }
             mouseRelease(page, 10, 50)
@@ -242,7 +242,7 @@ Item {
             mousePress(page, pos, pos)
             for (var i = pos; i < 50; i += 5) {
                 pos = i
-                wait(20)
+                wait(25)
                 mouseMove(page, pos, pos, 0, Qt.LeftButton);
             }
             mouseRelease(page, pos, pos)
@@ -263,7 +263,7 @@ Item {
             map.center.longitude = 50
             mousePress(page, 0, 0)
             for (var i = 0; i < 50; i += 5) {
-                wait(20)
+                wait(25)
                 mouseMove(page, i, i, 0, Qt.LeftButton);
             }
             mouseRelease(page, 50, 50)
@@ -290,7 +290,7 @@ Item {
             map.center.longitude = 50
             mousePress(page, 0, 0)
             for (var i = 0; i < 50; i += 5) {
-                wait(20)
+                wait(25)
                 mouseMove(page, i, i, 0, Qt.LeftButton);
             }
             mouseRelease(page, 50, 50)
@@ -324,7 +324,7 @@ Item {
             map.center.longitude = 50
             mousePress(page, 0, 0)
             for (var i = 0; i < 50; i += 5) {
-                wait(20)
+                wait(25)
                 mouseMove(page, i, i, 0, Qt.LeftButton);
             }
             mouseRelease(page, 50, 50)

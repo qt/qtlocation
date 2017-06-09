@@ -234,7 +234,8 @@ void tst_nokia_routing::calculateRoute()
     m_routingManager->calculateRoute(m_dummyRequest);
     m_replyUnowned->complete();
     m_replyUnowned = 0;
-    QTRY_VERIFY_WITH_TIMEOUT(m_calculationDone, 100);
+    // Timeout of 200ms is required for slow targets (e.g. Qemu)
+    QTRY_VERIFY_WITH_TIMEOUT(m_calculationDone, 200);
 }
 
 void tst_nokia_routing::onReply(QGeoRouteReply* reply)
