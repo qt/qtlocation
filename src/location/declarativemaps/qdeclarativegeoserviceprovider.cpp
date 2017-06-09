@@ -36,6 +36,7 @@
 
 #include "qdeclarativegeoserviceprovider_p.h"
 #include <QtQml/QQmlInfo>
+#include <QtQml/QQmlEngine>
 
 QT_BEGIN_NAMESPACE
 
@@ -399,6 +400,19 @@ QDeclarativeGeoServiceProviderRequirements *QDeclarativeGeoServiceProvider::requ
     return required_;
 }
 
+void QDeclarativeGeoServiceProvider::setRequirements(QDeclarativeGeoServiceProviderRequirements *req)
+{
+    if (!name().isEmpty() || !req)
+        return;
+
+    if (required_ && *required_ == *req)
+        return;
+
+    delete required_;
+    required_ = req;
+    QQmlEngine::setObjectOwnership(req, QQmlEngine::CppOwnership); // To prevent the engine from making this object disappear
+}
+
 /*!
     \qmlproperty stringlist Plugin::preferred
 
@@ -730,6 +744,12 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
     }
 
     return true;
+}
+
+bool QDeclarativeGeoServiceProviderRequirements::operator == (const QDeclarativeGeoServiceProviderRequirements &rhs) const
+{
+    return (mapping_ == rhs.mapping_ && routing_ == rhs.routing_
+            && geocoding_ == rhs.geocoding_ && places_ == rhs.places_);
 }
 
 /*******************************************************************************
