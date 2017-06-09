@@ -141,6 +141,7 @@ private:
     int m_readyIncubators;
     bool m_repopulating;
 
+    friend class QDeclarativeGeoMap;
     friend class QDeclarativeGeoMapItemViewItemData;
     friend class MapItemViewDelegateIncubator;
 };

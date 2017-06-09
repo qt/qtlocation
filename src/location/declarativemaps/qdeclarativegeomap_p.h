@@ -164,6 +164,9 @@ public:
     Q_INVOKABLE void addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup);
     Q_INVOKABLE void removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup);
 
+    Q_INVOKABLE void removeMapItemView(QDeclarativeGeoMapItemView *itemView);
+    Q_INVOKABLE void addMapItemView(QDeclarativeGeoMapItemView *itemView);
+
     Q_INVOKABLE void clearMapItems();
     QList<QObject *> mapItems();
 

@@ -222,8 +222,18 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
         m_map->clearMapItems();
     }
 
-    if (!m_mapViews.isEmpty())
-        qDeleteAll(m_mapViews);
+    // This forces the destruction of the associated items now, not when QObject destructor is called, at which point
+    // QDeclarativeGeoMap is long gone
+    if (!m_mapViews.isEmpty()) {
+        for (QDeclarativeGeoMapItemView *v : qAsConst(m_mapViews)) {
+            if (!v)
+                continue;
+            if (v->parent() == this)
+                delete v;
+            else
+                v->removeInstantiatedItems();
+        }
+    }
     // remove any map items associations
     for (int i = 0; i < m_mapItems.count(); ++i) {
         if (m_mapItems.at(i))
@@ -1950,6 +1960,47 @@ void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGro
     }
     itemGroup->setQuickMap(nullptr);
     itemGroup->setParentItem(0);
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::removeMapItemView(MapItemView itemView)
+
+    Removes \a itemView and the items instantiated by it from the Map.
+
+    \sa MapItemView, addMapItemView
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::removeMapItemView(QDeclarativeGeoMapItemView *itemView)
+{
+    if (!itemView || itemView->map_ != this) // can't remove a view that is already added to another map
+        return;
+
+    itemView->removeInstantiatedItems();
+    itemView->map_ = 0;
+    // it can be removed from the list at this point, since no operations that require a Map have to be done
+    // anymore on destruction.
+    m_mapViews.removeOne(itemView);
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::addMapItemView(MapItemView itemView)
+
+    Adds \a itemView to the Map.
+
+    \sa MapItemView, removeMapItemView
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::addMapItemView(QDeclarativeGeoMapItemView *itemView)
+{
+    if (!itemView || itemView->map_) // can't add a view twice
+        return;
+
+    // Not appending it to m_mapViews because it seems unnecessary even if the
+    // itemView is a child of this (in which case it would be destroyed
+    m_mapViews.append(itemView);
+    setupMapView(itemView);
 }
 
 /*!
