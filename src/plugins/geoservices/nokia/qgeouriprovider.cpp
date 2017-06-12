@@ -37,6 +37,7 @@
 
 #include <QMap>
 #include <QVariant>
+#include <QRandomGenerator>
 #include <QSet>
 #include <QString>
 
@@ -60,7 +61,7 @@ QGeoUriProvider::QGeoUriProvider(
 QString QGeoUriProvider::getCurrentHost() const
 {
     if (m_maxSubdomains) {
-        QString result(m_firstSubdomain.toLatin1() + qrand() % m_maxSubdomains);
+        QString result(m_firstSubdomain.toLatin1() + QRandomGenerator::bounded(m_maxSubdomains));
         result += '.' + m_currentHost;
         return result;
     }

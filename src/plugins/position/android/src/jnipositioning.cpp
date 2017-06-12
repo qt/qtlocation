@@ -40,6 +40,7 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QMap>
+#include <QRandomGenerator>
 #include <QtGlobal>
 #include <QtCore/private/qjnihelpers_p.h>
 #include <android/log.h>
@@ -100,7 +101,6 @@ namespace AndroidPositioning {
     {
         static bool firstInit = true;
         if (firstInit) {
-            qsrand( QDateTime::currentMSecsSinceEpoch() / 1000 );
             firstInit = false;
         }
 
@@ -109,7 +109,7 @@ namespace AndroidPositioning {
             QGeoPositionInfoSourceAndroid *src = qobject_cast<QGeoPositionInfoSourceAndroid *>(obj);
             Q_ASSERT(src);
             do {
-                key = qrand();
+                key = QRandomGenerator::get32();
             } while (idToPosSource()->contains(key));
 
             idToPosSource()->insert(key, src);
@@ -117,7 +117,7 @@ namespace AndroidPositioning {
             QGeoSatelliteInfoSourceAndroid *src = qobject_cast<QGeoSatelliteInfoSourceAndroid *>(obj);
             Q_ASSERT(src);
             do {
-                key = qrand();
+                key = QRandomGenerator::get32();
             } while (idToSatSource()->contains(key));
 
             idToSatSource()->insert(key, src);

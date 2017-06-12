@@ -41,8 +41,6 @@ QDeclarativeLocationTestModel::QDeclarativeLocationTestModel(QObject *parent):
     crazyLevel_(0),
     crazyMode_(false)
 {
-    // seed crazy random generator
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()) + QCoreApplication::applicationPid());
     timer_.setSingleShot(true);
     connect(&timer_, SIGNAL(timeout()), this, SLOT(timerFired()));
 }
@@ -63,7 +61,7 @@ void QDeclarativeLocationTestModel::timerFired()
     repopulate();
     if (crazyMode_) {
         //qDebug() << "raw randomw value: " << qrand();
-        int delay = (qAbs(qrand()) % crazyLevel_); // writing software is exact science
+        int delay = (QRandomGenerator::bounded(uint(INT_MAX) + 1) % crazyLevel_); // writing software is exact science
         delay = qMax(1000, delay); // 3 ms at minimum
         qDebug() << "starting timer with : " << delay;
         timer_.start(delay);
@@ -164,7 +162,7 @@ void QDeclarativeLocationTestModel::repopulate()
     }
     int datacount = datacount_;
     if (crazyMode_)
-        datacount = (qAbs(qrand()) % datacount_);
+        datacount = QRandomGenerator::bounded(datacount_);
 
     for (int i = 0; i < datacount; ++i) {
         DataObject* dataobject = new DataObject;
@@ -206,7 +204,7 @@ void QDeclarativeLocationTestModel::scheduleRepopulation()
 
     if (crazyMode_) {
         // start generating arbitrary amount of data at arbitrary intervals
-        int delay = (qAbs(qrand()) % crazyLevel_); // writing software is exact science
+        int delay = QRandomGenerator::bounded(crazyLevel_); // writing software is exact science
         delay = qMax(3, delay); // 3 ms at minimum
         qDebug() << "starting timer with : " << delay;
         timer_.start(delay);
