@@ -128,7 +128,7 @@ public:
     QList<QDoubleVector2D> visibleRegion() const Q_DECL_OVERRIDE;
 
     inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
-
+    inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition, double &s) const;
 private:
     void setupCamera();
     void updateVisibleRegion();
@@ -151,6 +151,7 @@ public:
         Plane(const QDoubleVector3D &planePoint, const QDoubleVector3D &planeNormal);
 
         QDoubleVector3D lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection) const;
+        inline QDoubleVector3D lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection, double &s) const;
         Line2D planeXYIntersection() const;
         bool isValid() const;
 

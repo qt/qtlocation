@@ -201,14 +201,25 @@ QDoubleVector2D QGeoProjectionWebMercator::wrappedMapProjectionToItemPosition(co
 QDoubleVector2D QGeoProjectionWebMercator::itemPositionToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
 {
     QDoubleVector2D pos = itemPosition;
-    // when the camera is tilted, picking a point above the horizon returns a coordinate behind the camera
-    if (pos.y() < m_minimumUnprojectableY)
-        pos.setY(m_minimumUnprojectableY);
     pos *= QDoubleVector2D(m_1_viewportWidth, m_1_viewportHeight);
     pos *= 2.0;
     pos -= QDoubleVector2D(1.0,1.0);
 
-    return viewportToWrappedMapProjection(pos);
+    double s;
+    QDoubleVector2D res = viewportToWrappedMapProjection(pos, s);
+
+    // a positive s means a point behind the camera. So do it again, after clamping Y. See QTBUG-61813
+    if (s > 0.0) {
+        pos = itemPosition;
+        // when the camera is tilted, picking a point above the horizon returns a coordinate behind the camera
+        pos.setY(m_minimumUnprojectableY);
+        pos *= QDoubleVector2D(m_1_viewportWidth, m_1_viewportHeight);
+        pos *= 2.0;
+        pos -= QDoubleVector2D(1.0,1.0);
+        res = viewportToWrappedMapProjection(pos, s);
+    }
+
+    return res;
 }
 
 /* Default implementations */
@@ -306,10 +317,16 @@ QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleRegion() const
     return m_visibleRegion;
 }
 
+QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
+{
+    double s;
+    return viewportToWrappedMapProjection(itemPosition, s);
+}
+
 /*
     actual implementation of itemPositionToWrappedMapProjection
 */
-QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
+QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition, double &s) const
 {
     QDoubleVector2D pos = itemPosition;
     pos *= QDoubleVector2D(m_halfWidth, m_halfHeight);
@@ -321,7 +338,7 @@ QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const 
     QDoubleVector3D ray = p - m_eye;
     ray.normalize();
 
-    return (xyPlane.lineIntersection(m_eye, ray) / m_sideLength).toVector2D();
+    return (xyPlane.lineIntersection(m_eye, ray, s) / m_sideLength).toVector2D();
 }
 
 void QGeoProjectionWebMercator::setupCamera()
@@ -528,9 +545,15 @@ QGeoProjectionWebMercator::Plane::Plane(const QDoubleVector3D &planePoint, const
 
 QDoubleVector3D QGeoProjectionWebMercator::Plane::lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection) const
 {
+    double s;
+    return lineIntersection(linePoint, lineDirection, s);
+}
+
+QDoubleVector3D QGeoProjectionWebMercator::Plane::lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection, double &s) const
+{
     QDoubleVector3D w = linePoint - m_point;
     // s = -n.dot(w) / n.dot(u).  p = p0 + su; u is lineDirection
-    double s = QDoubleVector3D::dotProduct(-m_normal, w) / QDoubleVector3D::dotProduct(m_normal, lineDirection);
+    s = QDoubleVector3D::dotProduct(-m_normal, w) / QDoubleVector3D::dotProduct(m_normal, lineDirection);
     return linePoint + lineDirection * s;
 }
 
