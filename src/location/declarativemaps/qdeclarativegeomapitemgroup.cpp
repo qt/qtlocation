@@ -135,7 +135,7 @@ QT_BEGIN_NAMESPACE
     \image api-mapitemgroup.png
 */
 
-QDeclarativeGeoMapItemGroup::QDeclarativeGeoMapItemGroup(QQuickItem *parent): QQuickItem(parent)
+QDeclarativeGeoMapItemGroup::QDeclarativeGeoMapItemGroup(QQuickItem *parent): QQuickItem(parent), m_quickMap(nullptr)
 {
 
 }
@@ -143,6 +143,16 @@ QDeclarativeGeoMapItemGroup::QDeclarativeGeoMapItemGroup(QQuickItem *parent): QQ
 QDeclarativeGeoMapItemGroup::~QDeclarativeGeoMapItemGroup()
 {
 
+}
+
+void QDeclarativeGeoMapItemGroup::setQuickMap(QDeclarativeGeoMap *quickMap)
+{
+    m_quickMap = quickMap;
+}
+
+QDeclarativeGeoMap *QDeclarativeGeoMapItemGroup::quickMap() const
+{
+    return m_quickMap;
 }
 
 QT_END_NAMESPACE

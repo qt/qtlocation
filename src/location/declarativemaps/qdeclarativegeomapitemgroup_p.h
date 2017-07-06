@@ -53,6 +53,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDeclarativeGeoMap;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemGroup : public QQuickItem
 {
     Q_OBJECT
@@ -60,6 +61,10 @@ public:
     explicit QDeclarativeGeoMapItemGroup(QQuickItem *parent = 0);
     virtual ~QDeclarativeGeoMapItemGroup();
 
+    void setQuickMap(QDeclarativeGeoMap *quickMap);
+    QDeclarativeGeoMap *quickMap() const;
+private:
+    QDeclarativeGeoMap *m_quickMap;
 };
 
 QT_END_NAMESPACE

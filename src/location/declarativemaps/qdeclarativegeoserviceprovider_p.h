@@ -100,7 +100,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoServiceProvider : public QObject,
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QStringList availableServiceProviders READ availableServiceProviders CONSTANT)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> parameters READ parameters)
-    Q_PROPERTY(QDeclarativeGeoServiceProviderRequirements *required READ requirements)
+    Q_PROPERTY(QDeclarativeGeoServiceProviderRequirements *required READ requirements WRITE setRequirements)
     Q_PROPERTY(QStringList locales READ locales WRITE setLocales NOTIFY localesChanged)
     Q_PROPERTY(QStringList preferred READ preferred WRITE setPreferred NOTIFY preferredChanged)
     Q_PROPERTY(bool allowExperimental READ allowExperimental WRITE setAllowExperimental NOTIFY allowExperimentalChanged)
@@ -182,6 +182,7 @@ public:
     QStringList availableServiceProviders();
 
     QDeclarativeGeoServiceProviderRequirements *requirements() const;
+    void setRequirements(QDeclarativeGeoServiceProviderRequirements *req);
 
     QStringList preferred() const;
     void setPreferred(const QStringList &val);
@@ -258,6 +259,8 @@ public:
     void setPlacesRequirements(const QDeclarativeGeoServiceProvider::PlacesFeatures &features);
 
     Q_INVOKABLE bool matches(const QGeoServiceProvider *provider) const;
+
+    bool operator == (const QDeclarativeGeoServiceProviderRequirements &rhs) const;
 
 Q_SIGNALS:
     void mappingRequirementsChanged(const QDeclarativeGeoServiceProvider::MappingFeatures &features);

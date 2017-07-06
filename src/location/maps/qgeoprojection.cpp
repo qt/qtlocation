@@ -254,7 +254,7 @@ QGeoCoordinate QGeoProjectionWebMercator::wrappedMapProjectionToGeo(const QDoubl
     return mapProjectionToGeo(unwrapMapProjection(wrappedProjection));
 }
 
-QMatrix4x4 QGeoProjectionWebMercator::quickItemTransformation(const QGeoCoordinate &coordinate, const QPointF &anchorPoint, double zoomLevel) const
+QMatrix4x4 QGeoProjectionWebMercator::quickItemTransformation(const QGeoCoordinate &coordinate, const QPointF &anchorPoint, qreal zoomLevel) const
 {
     const QDoubleVector2D coordWrapped = geoToWrappedMapProjection(coordinate);
     double scale = std::pow(0.5, zoomLevel - m_cameraData.zoomLevel());

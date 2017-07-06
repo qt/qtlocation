@@ -69,9 +69,9 @@ QT_BEGIN_NAMESPACE
     will update its output automatically. Otherwise, the \l{update} method may
     be used. By default, autoUpdate is disabled.
 
-    The data stored and returned in the GeocodeModel consists of \l{Location}
+    The data stored and returned in the GeocodeModel consists of \l [QML] {Location}
     objects, as a list with the role name "locationData". See the documentation
-    for \l{Location} for further details on its structure and contents.
+    for \l [QML] {Location} for further details on its structure and contents.
 
     \section2 Example Usage
 
@@ -519,7 +519,7 @@ int QDeclarativeGeocodeModel::count() const
 /*!
     \qmlmethod Location QtLocation::GeocodeModel::get(int)
 
-    Returns the Location at given index. Use \l count property to check the
+    Returns the \l [QML] {Location} at given index. Use \l count property to check the
     amount of locations available. The locations are indexed from zero, so the accessible range
     is 0...(count - 1).
 

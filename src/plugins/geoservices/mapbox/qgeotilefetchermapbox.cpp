@@ -87,7 +87,7 @@ QGeoTiledMapReply *QGeoTileFetcherMapbox::getTileImage(const QGeoTileSpec &spec)
     request.setRawHeader("User-Agent", m_userAgent);
 
     request.setUrl(QUrl(QStringLiteral("http://api.tiles.mapbox.com/v4/") +
-                        ((spec.mapId() >= m_mapIds.size()) ? QStringLiteral("mapbox.streets") : m_mapIds[spec.mapId()]) + QLatin1Char('/') +
+                        ((spec.mapId() >= m_mapIds.size()) ? QStringLiteral("mapbox.streets") : m_mapIds[spec.mapId() - 1]) + QLatin1Char('/') +
                         QString::number(spec.zoom()) + QLatin1Char('/') +
                         QString::number(spec.x()) + QLatin1Char('/') +
                         QString::number(spec.y()) +

@@ -1324,7 +1324,17 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
     for (const QDoubleVector2D &c: visibleRegion)
         path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
 
-    return path.boundingGeoRectangle();
+    QGeoRectangle vr = path.boundingGeoRectangle();
+
+    bool empty = vr.topLeft().latitude() == vr.bottomRight().latitude() ||
+            qFuzzyCompare(vr.topLeft().longitude(), vr.bottomRight().longitude()); // QTBUG-57690
+
+    if (empty) {
+        vr.setTopLeft(QGeoCoordinate(vr.topLeft().latitude(), -180));
+        vr.setBottomRight(QGeoCoordinate(vr.bottomRight().latitude(), 180));
+    }
+
+    return vr;
 }
 
 /*!
@@ -1831,9 +1841,7 @@ void QDeclarativeGeoMap::clearMapItems()
     \qmlmethod void QtLocation::Map::addMapItemGroup(MapItemGroup itemGroup)
 
     Adds the map items contained in the given \a itemGroup to the Map
-    (for example MapQuickItem, MapCircle). These items will be reparented, and the map
-    will be their new parent. Property bindings defined using \e{parent.} inside a MapItemGroup
-    will therefore not work.
+    (for example MapQuickItem, MapCircle).
 
     \sa MapItemGroup, removeMapItemGroup
 
@@ -1841,13 +1849,11 @@ void QDeclarativeGeoMap::clearMapItems()
 */
 void QDeclarativeGeoMap::addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 {
-    if (!itemGroup)
+    if (!itemGroup || itemGroup->quickMap()) // || Already added to some map
         return;
 
+    itemGroup->setQuickMap(this);
     QPointer<QDeclarativeGeoMapItemGroup> g(itemGroup);
-    if (m_mapItemGroups.contains(g))
-        return;
-
     m_mapItemGroups.append(g);
     const QList<QQuickItem *> quickKids = g->childItems();
     for (auto c: quickKids) {
@@ -1869,7 +1875,7 @@ void QDeclarativeGeoMap::addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 */
 void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 {
-    if (!itemGroup)
+    if (!itemGroup || itemGroup->quickMap() != this) // cant remove an itemGroup added to another map
         return;
 
     QPointer<QDeclarativeGeoMapItemGroup> g(itemGroup);
@@ -1882,6 +1888,7 @@ void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGro
         if (mapItem)
             removeMapItem(mapItem);
     }
+    itemGroup->setQuickMap(nullptr);
     itemGroup->setParentItem(0);
 }
 

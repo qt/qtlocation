@@ -70,6 +70,9 @@ The following table lists optional parameters that can be passed to the Mapbox p
     \li \l{https://www.mapbox.com/help/define-map-id/}{ID} of the Mapbox map to show. An example ID is "examples.map-zr0njcqy".
     If this parameter is present, the specified map type will be used by default, unless another is selected.
     If not present, the default Mapbox map ID is "mapbox.streets".
+    \b{Note:} neither in this parameter nor in \b{mapbox.mapping.additional_map_ids} it is allowed to use repeated map_ids.
+    This includes the map_ids bundled in the plugin by default (documented \l{https://www.mapbox.com/api-documentation/#maps}{here} under
+    \b{Mapbox classic map IDs}). Failing to do so will cause tile cache corruption.
 \row
     \li mapbox.mapping.additional_map_ids
     \li Additional, comma separated, Mapbox map IDs to be added to the available map types.

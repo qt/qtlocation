@@ -364,11 +364,11 @@ void QGeoMapMapboxGL::onMapChanged(QMapboxGL::MapChange change)
         d->m_styleLoaded = false;
         d->m_styleChanges.clear();
 
-        for (QGeoMapParameter *param : d->m_mapParameters)
-            d->m_styleChanges << QMapboxGLStyleChange::addMapParameter(param);
-
         for (QDeclarativeGeoMapItemBase *item : d->m_mapItems)
             d->m_styleChanges << QMapboxGLStyleChange::addMapItem(item, d->m_mapItemsBefore);
+
+        for (QGeoMapParameter *param : d->m_mapParameters)
+            d->m_styleChanges << QMapboxGLStyleChange::addMapParameter(param);
     }
 }
 

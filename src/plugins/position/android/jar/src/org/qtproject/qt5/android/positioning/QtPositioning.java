@@ -110,6 +110,10 @@ public class QtPositioning implements LocationListener
 
     static private int[] providerList()
     {
+        if (locationManager == null) {
+            Log.w(TAG, "No locationManager available in QtPositioning");
+            return new int[0];
+        }
         List<String> providers = locationManager.getAllProviders();
         int retList[] = new int[providers.size()];
         for (int i = 0; i < providers.size();  i++) {

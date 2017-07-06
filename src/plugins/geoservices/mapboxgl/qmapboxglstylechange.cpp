@@ -59,7 +59,8 @@ bool isImmutableProperty(const QString &name)
 
 QString getId(QDeclarativeGeoMapItemBase *mapItem)
 {
-    return QStringLiteral("QDeclarativeGeoMapItemBase-") + QString::number(quint64(mapItem));
+    return QStringLiteral("QtLocation-") +
+            ((mapItem->objectName().isEmpty()) ? QString::number(quint64(mapItem)) : mapItem->objectName());
 }
 
 // Mapbox GL supports geometry segments that spans above 180 degrees in

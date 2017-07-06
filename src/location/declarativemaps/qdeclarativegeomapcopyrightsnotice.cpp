@@ -129,20 +129,29 @@ void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *mapSour
     if (mapSource) {
         m_mapSource = mapSource;
         // First update the copyright. Only Image will do here, no need to store HTML right away.
-        if (!mapSource->m_copyrights->m_copyrightsImage.isNull())
+        if (mapSource->m_copyrights && !mapSource->m_copyrights->m_copyrightsImage.isNull())
             m_copyrightsImage = mapSource->m_copyrights->m_copyrightsImage;
 
         connect(m_mapSource, SIGNAL(copyrightsChanged(QImage)),
                 this, SLOT(copyrightsChanged(QImage)));
         connect(m_mapSource, SIGNAL(copyrightsChanged(QString)),
                 this, SLOT(copyrightsChanged(QString)));
-        connect(m_mapSource->m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
-                this, SLOT(onCopyrightsStyleSheetChanged(QString)));
-        connect(this, SIGNAL(linkActivated(QString)),
-                m_mapSource, SIGNAL(copyrightLinkActivated(QString)));
 
-        onCopyrightsStyleSheetChanged(m_mapSource->m_map->copyrightsStyleSheet());
+        if (m_mapSource->m_map)
+            connectMap();
+        else
+            connect(m_mapSource, &QDeclarativeGeoMap::mapReadyChanged, this, &QDeclarativeGeoMapCopyrightNotice::connectMap);
     }
+}
+
+void QDeclarativeGeoMapCopyrightNotice::connectMap()
+{
+    connect(m_mapSource->m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
+            this, SLOT(onCopyrightsStyleSheetChanged(QString)));
+    connect(this, SIGNAL(linkActivated(QString)),
+            m_mapSource, SIGNAL(copyrightLinkActivated(QString)));
+
+    onCopyrightsStyleSheetChanged(m_mapSource->m_map->copyrightsStyleSheet());
 
     update();
     emit mapSourceChanged();
