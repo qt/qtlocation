@@ -317,6 +317,13 @@ QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleRegion() const
     return m_visibleRegion;
 }
 
+QList<QDoubleVector2D> QGeoProjectionWebMercator::projectableRegion() const
+{
+    if (m_visibleRegionDirty)
+        const_cast<QGeoProjectionWebMercator *>(this)->updateVisibleRegion();
+    return m_projectableRegion;
+}
+
 QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
 {
     double s;
@@ -350,6 +357,8 @@ void QGeoProjectionWebMercator::setupCamera()
     int intZoomLevel = static_cast<int>(std::floor(m_cameraData.zoomLevel()));
     m_sideLength = (1 << intZoomLevel) * defaultTileSize;
     m_center = m_centerMercator * m_sideLength;
+    //aperture(90 / 2) = 1
+    m_aperture = tan(QLocationUtils::radians(m_cameraData.fieldOfView()) * 0.5);
 
     double f = m_viewportHeight;
     double z = std::pow(2.0, m_cameraData.zoomLevel() - intZoomLevel) * defaultTileSize;
@@ -358,15 +367,13 @@ void QGeoProjectionWebMercator::setupCamera()
     double z_mercator = std::pow(2.0, m_cameraData.zoomLevel()) * defaultTileSize;
     double altitude_mercator = f / (2.0 * z_mercator);
 
-    //aperture(90 / 2) = 1
-    m_aperture = tan(QLocationUtils::radians(m_cameraData.fieldOfView()) * 0.5);
     // calculate eye
     m_eye = m_center;
     m_eye.setZ(altitude * defaultTileSize / m_aperture);
 
     // And in mercator space
     m_eyeMercator = m_centerMercator;
-    m_eyeMercator.setZ(altitude_mercator);
+    m_eyeMercator.setZ(altitude_mercator  / m_aperture);
 
     m_view = m_eye - m_center;
     QDoubleVector3D side = QDoubleVector3D::normal(m_view, QDoubleVector3D(0.0, 1.0, 0.0));
@@ -402,7 +409,7 @@ void QGeoProjectionWebMercator::setupCamera()
         m_eyeMercator = mTiltMercator * m_viewMercator + m_centerMercator;
     }
 
-    m_view = m_eye - m_center;
+    m_view = m_eye - m_center; // ToDo: this should be inverted (center - eye), and the rest should follow
     m_viewNormalized = m_view.normalized();
     m_up = QDoubleVector3D::normal(m_view, m_side);
 
@@ -455,7 +462,7 @@ void QGeoProjectionWebMercator::setupCamera()
     m_transformation.scale(m_sideLength, m_sideLength, 1.0);
 
     m_centerNearPlane = m_eye + m_viewNormalized;
-    m_centerNearPlaneMercator = m_eyeMercator + m_viewNormalized * m_nearPlaneMercator;
+    m_centerNearPlaneMercator = m_eyeMercator - m_viewNormalized * m_nearPlaneMercator;
 
     // The method does not support tilting angles >= 90.0 or < 0.
 
@@ -505,6 +512,46 @@ void QGeoProjectionWebMercator::updateVisibleRegion()
     m_visibleRegion.clear();
     if (res.size())
         m_visibleRegion = QClipperUtils::pathToQList(res[0]); // Intersection between two convex quadrilaterals should always be a single polygon
+
+    m_projectableRegion.clear();
+    if (m_cameraData.tilt() == 0) {
+        m_projectableRegion = mapRect;
+    } else {
+        QGeoProjectionWebMercator::Plane nearPlane(m_centerNearPlaneMercator, m_viewNormalized);
+        Line2D nearPlaneXYIntersection = nearPlane.planeXYIntersection();
+        double squareHalfSide = qMax(5.0, nearPlaneXYIntersection.m_point.length());
+        QDoubleVector2D viewDirectionProjected = -m_viewNormalized.toVector2D().normalized();
+
+
+        QDoubleVector2D tl = nearPlaneXYIntersection.m_point
+                            - squareHalfSide * nearPlaneXYIntersection.m_direction
+                            + 2 * squareHalfSide * viewDirectionProjected;
+        QDoubleVector2D tr = nearPlaneXYIntersection.m_point
+                            + squareHalfSide * nearPlaneXYIntersection.m_direction
+                            + 2 * squareHalfSide * viewDirectionProjected;
+        QDoubleVector2D bl = nearPlaneXYIntersection.m_point
+                            - squareHalfSide * nearPlaneXYIntersection.m_direction;
+        QDoubleVector2D br = nearPlaneXYIntersection.m_point
+                            + squareHalfSide * nearPlaneXYIntersection.m_direction;
+
+        QList<QDoubleVector2D> projectableRect;
+        projectableRect.push_back(bl);
+        projectableRect.push_back(br);
+        projectableRect.push_back(tr);
+        projectableRect.push_back(tl);
+
+
+        c2t::clip2tri clipperProjectable;
+        clipperProjectable.clearClipper();
+        clipperProjectable.addSubjectPath(QClipperUtils::qListToPath(mapRect), true);
+        clipperProjectable.addClipPolygon(QClipperUtils::qListToPath(projectableRect));
+
+        Paths resProjectable = clipperProjectable.execute(c2t::clip2tri::Intersection);
+        if (resProjectable.size())
+            m_projectableRegion = QClipperUtils::pathToQList(resProjectable[0]); // Intersection between two convex quadrilaterals should always be a single polygon
+        else
+            m_projectableRegion = viewportRect;
+    }
 }
 
 /*
