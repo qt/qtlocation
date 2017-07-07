@@ -53,6 +53,8 @@
 
 /* poly2tri triangulator includes */
 #include <clip2tri.h>
+#include <earcut.hpp>
+#include <array>
 
 QT_BEGIN_NAMESPACE
 
@@ -185,7 +187,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 
     // 2)
     QList<QList<QDoubleVector2D> > clippedPaths;
-    const QList<QDoubleVector2D> &visibleRegion = map.geoProjection().visibleRegion();
+    const QList<QDoubleVector2D> &visibleRegion = map.geoProjection().projectableRegion();
     if (visibleRegion.size()) {
         c2t::clip2tri clipper;
         clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), true);
@@ -270,23 +272,42 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     ppi.closeSubpath();
     screenOutline_ = ppi;
 
-    QTriangleSet ts = qTriangulate(ppi);
-    qreal *vx = ts.vertices.data();
+    using Coord = double;
+    using N = uint32_t;
+    using Point = std::array<Coord, 2>;
 
-    screenIndices_.reserve(ts.indices.size());
-    screenVertices_.reserve(ts.vertices.size());
+    std::vector<std::vector<Point>> polygon;
+    polygon.push_back(std::vector<Point>());
+    std::vector<Point> &poly = polygon.front();
+    // ... fill polygon structure with actual data
 
-    if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
-        const quint32 *ix = reinterpret_cast<const quint32 *>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
-            screenIndices_ << ix[i];
-    } else {
-        const quint16 *ix = reinterpret_cast<const quint16 *>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
-            screenIndices_ << ix[i];
+    for (int i = 0; i < ppi.elementCount(); ++i) {
+        const QPainterPath::Element e = ppi.elementAt(i);
+        if (e.isMoveTo() || i == ppi.elementCount() - 1
+                || (qAbs(e.x - poly.front()[0]) < 0.1
+                    && qAbs(e.y - poly.front()[1]) < 0.1)) {
+            Point p = { e.x, e.y };
+            poly.push_back( p );
+        } else if (e.isLineTo()) {
+            Point p = { e.x, e.y };
+            poly.push_back( p );
+        } else {
+            qWarning("Unhandled element type in polygon painterpath");
+        }
     }
-    for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
-        screenVertices_ << QPointF(vx[i], vx[i + 1]);
+
+    if (poly.size() > 2) {
+        // Run tessellation
+        // Returns array of indices that refer to the vertices of the input polygon.
+        // Three subsequent indices form a triangle.
+        screenVertices_.clear();
+        screenIndices_.clear();
+        for (const auto &p : poly)
+            screenVertices_ << QPointF(p[0], p[1]);
+        std::vector<N> indices = mapbox::earcut<N>(polygon);
+        for (const auto &i: indices)
+            screenIndices_ << quint32(i);
+    }
 
     screenBounds_ = ppi.boundingRect();
 }

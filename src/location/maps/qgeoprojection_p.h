@@ -73,6 +73,7 @@ public:
 
     virtual bool isProjectable(const QDoubleVector2D &wrappedProjection) const = 0;
     virtual QList<QDoubleVector2D> visibleRegion() const = 0;
+    virtual QList<QDoubleVector2D> projectableRegion() const = 0;
 
     // Conversion methods for QGeoCoordinate <-> screen.
     // This currently assumes that the "MapProjection" space is [0, 1][0, 1] for every type of possibly supported map projection
@@ -126,7 +127,7 @@ public:
 
     bool isProjectable(const QDoubleVector2D &wrappedProjection) const Q_DECL_OVERRIDE;
     QList<QDoubleVector2D> visibleRegion() const Q_DECL_OVERRIDE;
-
+    QList<QDoubleVector2D> projectableRegion() const Q_DECL_OVERRIDE;
     inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
     inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition, double &s) const;
 private:
@@ -202,6 +203,7 @@ private:
     Line2D           m_nearPlaneMapIntersection;
 
     QList<QDoubleVector2D> m_visibleRegion;
+    QList<QDoubleVector2D> m_projectableRegion;
     bool             m_visibleRegionDirty;
 
     Q_DISABLE_COPY(QGeoProjectionWebMercator)
