@@ -234,6 +234,37 @@ QGeoPath LocationSingleton::path(const QJSValue &value, qreal width) const
 }
 
 /*!
+    \qmlmethod geopolygon QtPositioning::polygon() const
+
+    Constructs an empty geopolygon.
+
+    \sa {geopolygon}
+    \since 5.10
+*/
+QGeoPath LocationSingleton::polygon() const
+{
+    return QGeoPolygon();
+}
+
+/*!
+    \qmlmethod geopolygon QtPositioning::polygon(list<coordinate> coordinates) const
+
+    Constructs a geopolygon from coordinates.
+
+    \sa {geopolygon}
+    \since 5.10
+*/
+QGeoPath LocationSingleton::polygon(const QVariantList &coordinates) const
+{
+    QList<QGeoCoordinate> internalCoordinates;
+    for (int i = 0; i < coordinates.size(); i++) {
+        if (coordinates.at(i).canConvert<QGeoCoordinate>())
+            internalCoordinates << coordinates.at(i).value<QGeoCoordinate>();
+    }
+    return QGeoPolygon(internalCoordinates);
+}
+
+/*!
     \qmlmethod geocircle QtPositioning::shapeToCircle(geoshape shape) const
 
     Converts \a shape to a geocircle.
@@ -272,3 +303,15 @@ QGeoPath LocationSingleton::shapeToPath(const QGeoShape &shape) const
     return QGeoPath(shape);
 }
 
+/*!
+    \qmlmethod geopath QtPositioning::shapeToPolygon(geoshape shape) const
+
+    Converts \a shape to a geopolygon.
+
+    \sa {geopolygon}
+    \since 5.10
+*/
+QGeoPolygon LocationSingleton::shapeToPolygon(const QGeoShape &shape) const
+{
+    return QGeoPolygon(shape);
+}

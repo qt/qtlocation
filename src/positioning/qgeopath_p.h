@@ -54,6 +54,7 @@
 #include "qgeoshape_p.h"
 #include "qgeocoordinate.h"
 #include "qlocationutils_p.h"
+#include <QtPositioning/private/qclipperutils_p.h>
 
 #include <QtCore/QVector>
 
@@ -62,14 +63,16 @@ QT_BEGIN_NAMESPACE
 class QGeoPathPrivate : public QGeoShapePrivate
 {
 public:
-    QGeoPathPrivate();
-    QGeoPathPrivate(const QList<QGeoCoordinate> &path, const qreal width = 0.0);
+    QGeoPathPrivate(QGeoShape::ShapeType type);
+    QGeoPathPrivate(QGeoShape::ShapeType type, const QList<QGeoCoordinate> &path, const qreal width = 0.0);
     QGeoPathPrivate(const QGeoPathPrivate &other);
     ~QGeoPathPrivate();
 
     bool isValid() const Q_DECL_OVERRIDE;
     bool isEmpty() const Q_DECL_OVERRIDE;
     bool contains(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
+    bool lineContains(const QGeoCoordinate &coordinate) const;
+    bool polygonContains(const QGeoCoordinate &coordinate) const;
 
     QGeoCoordinate center() const Q_DECL_OVERRIDE;
     QGeoRectangle boundingGeoRectangle() const Q_DECL_OVERRIDE;
@@ -95,7 +98,7 @@ public:
     void removeCoordinate(int index);
     void computeBoundingBox();
     void updateBoundingBox();
-
+    void updateClipperPath();
 
     QList<QGeoCoordinate> m_path;
     QVector<double> m_deltaXs; // longitude deltas from m_path[0]
@@ -105,6 +108,8 @@ public:
     double m_maxLati;             // minimum latitude. paths do not wrap around through the poles
     QGeoRectangle m_bbox;
     qreal m_width;
+    bool m_clipperDirty;
+    QtClipperLib::Path m_clipperPath;
 };
 
 QT_END_NAMESPACE

@@ -91,6 +91,8 @@ public:
                  const PolyFillType subjFillType = pftNonZero,
                  const PolyFillType clipFillType = pftNonZero);
 
+   static int pointInPolygon(const IntPoint &pt, const Path &path);
+
    Clipper clipper;
    bool openSubject;
 };

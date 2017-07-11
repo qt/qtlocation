@@ -173,6 +173,11 @@ Paths clip2tri::execute(const clip2tri::Operation op, const PolyFillType subjFil
     return solution;
 }
 
+int clip2tri::pointInPolygon(const IntPoint &pt, const Path &path)
+{
+    return PointInPolygon(pt, path);
+}
+
 Path clip2tri::upscaleClipperPoints(const vector<Point> &inputPolygon)
 {
    Path outputPolygon;

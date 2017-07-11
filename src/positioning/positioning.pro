@@ -38,6 +38,7 @@ PUBLIC_HEADERS += \
                     qnmeapositioninfosource.h \
                     qgeopositioninfosourcefactory.h \
                     qpositioningglobal.h \
+                    qgeopolygon.h \
                     qgeopath.h \
 
 PRIVATE_HEADERS += \
@@ -59,6 +60,7 @@ PRIVATE_HEADERS += \
                     qlocationdata_simulator_p.h \
                     qdoublematrix4x4_p.h \
                     qgeopath_p.h \
+                    qgeopolygon_p.h \
                     qclipperutils_p.h
 
 SOURCES += \
@@ -82,6 +84,7 @@ SOURCES += \
             qdoublevector2d.cpp \
             qdoublevector3d.cpp \
             qgeopath.cpp \
+            qgeopolygon.cpp \
             qlocationdata_simulator.cpp \
             qwebmercator.cpp \
             qdoublematrix4x4.cpp \

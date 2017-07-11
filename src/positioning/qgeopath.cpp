@@ -109,7 +109,7 @@ Q_GLOBAL_STATIC(PathVariantConversions, initPathConversions)
     Constructs a new, empty geo path.
 */
 QGeoPath::QGeoPath()
-:   QGeoShape(new QGeoPathPrivate)
+:   QGeoShape(new QGeoPathPrivate(QGeoShape::PathType))
 {
     initPathConversions();
 }
@@ -119,7 +119,7 @@ QGeoPath::QGeoPath()
     (\a path and \a width).
 */
 QGeoPath::QGeoPath(const QList<QGeoCoordinate> &path, const qreal &width)
-:   QGeoShape(new QGeoPathPrivate(path, width))
+:   QGeoShape(new QGeoPathPrivate(QGeoShape::PathType, path, width))
 {
     initPathConversions();
 }
@@ -141,7 +141,7 @@ QGeoPath::QGeoPath(const QGeoShape &other)
 {
     initPathConversions();
     if (type() != QGeoShape::PathType)
-        d_ptr = new QGeoPathPrivate;
+        d_ptr = new QGeoPathPrivate(QGeoShape::PathType);
 }
 
 /*!
@@ -341,22 +341,22 @@ QString QGeoPath::toString() const
  * QGeoPathPrivate
 *******************************************************************************/
 
-QGeoPathPrivate::QGeoPathPrivate()
-:   QGeoShapePrivate(QGeoShape::PathType), m_width(0)
+QGeoPathPrivate::QGeoPathPrivate(QGeoShape::ShapeType type)
+:   QGeoShapePrivate(type), m_width(0), m_clipperDirty(true)
 {
 }
 
-QGeoPathPrivate::QGeoPathPrivate(const QList<QGeoCoordinate> &path, const qreal width)
-:   QGeoShapePrivate(QGeoShape::PathType), m_width(0)
+QGeoPathPrivate::QGeoPathPrivate(QGeoShape::ShapeType type, const QList<QGeoCoordinate> &path, const qreal width)
+:   QGeoShapePrivate(type), m_width(0), m_clipperDirty(true)
 {
     setPath(path);
     setWidth(width);
 }
 
 QGeoPathPrivate::QGeoPathPrivate(const QGeoPathPrivate &other)
-:   QGeoShapePrivate(QGeoShape::PathType), m_path(other.m_path),
+:   QGeoShapePrivate(other.type), m_path(other.m_path),
     m_deltaXs(other.m_deltaXs), m_minX(other.m_minX), m_maxX(other.m_maxX), m_minLati(other.m_minLati),
-    m_maxLati(other.m_maxLati), m_bbox(other.m_bbox), m_width(other.m_width)
+    m_maxLati(other.m_maxLati), m_bbox(other.m_bbox), m_width(other.m_width), m_clipperDirty(true)
 {
 }
 
@@ -375,17 +375,25 @@ bool QGeoPathPrivate::operator==(const QGeoShapePrivate &other) const
     const QGeoPathPrivate &otherPath = static_cast<const QGeoPathPrivate &>(other);
     if (m_path.size() != otherPath.m_path.size())
         return false;
-    return m_width == otherPath.m_width && m_path == otherPath.m_path;
+
+    if (type == QGeoShape::PathType)
+        return m_width == otherPath.m_width && m_path == otherPath.m_path;
+    else
+        return m_path == otherPath.m_path;
 }
 
 bool QGeoPathPrivate::isValid() const
 {
-    return !isEmpty();
+    if (type == QGeoShape::PathType)
+        return !isEmpty();
+    else
+        return m_path.size() > 2;
+
 }
 
 bool QGeoPathPrivate::isEmpty() const
 {
-    return m_path.isEmpty();
+    return m_path.isEmpty(); // this should perhaps return geometric emptiness, less than 2 points for line, or empty polygon for polygons
 }
 
 const QList<QGeoCoordinate> &QGeoPathPrivate::path() const
@@ -416,6 +424,7 @@ void QGeoPathPrivate::setWidth(const qreal &width)
 
 double QGeoPathPrivate::length(int indexFrom, int indexTo) const
 {
+    bool wrap = indexTo == -1;
     if (indexTo < 0 || indexTo >= path().size())
         indexTo = path().size() - 1;
     double len = 0.0;
@@ -423,6 +432,8 @@ double QGeoPathPrivate::length(int indexFrom, int indexTo) const
     // instead of the shortest path from A to B.
     for (int i = indexFrom; i < indexTo; i++)
         len += m_path[i].distanceTo(m_path[i+1]);
+    if (wrap)
+        len += m_path.last().distanceTo(m_path.first());
     return len;
 }
 
@@ -435,6 +446,14 @@ int QGeoPathPrivate::size() const
     Returns true if coordinate is present in m_path.
 */
 bool QGeoPathPrivate::contains(const QGeoCoordinate &coordinate) const
+{
+    if (type == QGeoShape::PathType)
+        return lineContains(coordinate);
+    else
+        return polygonContains(coordinate);
+}
+
+bool QGeoPathPrivate::lineContains(const QGeoCoordinate &coordinate) const
 {
     // Unoptimized approach:
     // - consider each segment of the path
@@ -501,6 +520,20 @@ bool QGeoPathPrivate::contains(const QGeoCoordinate &coordinate) const
     // Last check if the coordinate is on the left of leftBoundMercator, but close enough to
     // m_path[0]
     return (m_path[0].distanceTo(coordinate) <= lineRadius);
+}
+
+bool QGeoPathPrivate::polygonContains(const QGeoCoordinate &coordinate) const
+{
+    if (m_clipperDirty)
+        const_cast<QGeoPathPrivate *>(this)->updateClipperPath();
+
+    QDoubleVector2D coord = QWebMercator::coordToMercator(coordinate);
+    double tlx = QWebMercator::coordToMercator(m_bbox.topLeft()).x();
+    if (coord.x() < tlx)
+        coord.setX(coord.x() + 1.0);
+
+    IntPoint intCoord = QClipperUtils::toIntPoint(coord);
+    return c2t::clip2tri::pointInPolygon(intCoord, m_clipperPath) != 0;
 }
 
 QGeoCoordinate QGeoPathPrivate::center() const
@@ -591,6 +624,7 @@ void QGeoPathPrivate::removeCoordinate(int index)
 
 void QGeoPathPrivate::computeBoundingBox()
 {
+    m_clipperDirty = true;
     if (m_path.isEmpty()) {
         m_deltaXs.clear();
         m_minX = qInf();
@@ -641,6 +675,7 @@ void QGeoPathPrivate::computeBoundingBox()
 
 void QGeoPathPrivate::updateBoundingBox()
 {
+    m_clipperDirty = true;
     if (m_path.isEmpty()) {
         m_deltaXs.clear();
         m_minX = qInf();
@@ -691,6 +726,20 @@ void QGeoPathPrivate::updateBoundingBox()
         m_minLati = geoTo.latitude();
     m_bbox = QGeoRectangle(QGeoCoordinate(m_maxLati, currentMinLongi),
                            QGeoCoordinate(m_minLati, currentMaxLongi));
+}
+
+void QGeoPathPrivate::updateClipperPath()
+{
+    m_clipperDirty = false;
+    double tlx = QWebMercator::coordToMercator(m_bbox.topLeft()).x();
+    QList<QDoubleVector2D> preservedPath;
+    for (const QGeoCoordinate &c : m_path) {
+        QDoubleVector2D crd = QWebMercator::coordToMercator(c);
+        if (crd.x() < tlx)
+            crd.setX(crd.x() + 1.0);
+        preservedPath << crd;
+    }
+    m_clipperPath = QClipperUtils::qListToPath(preservedPath);
 }
 
 QT_END_NAMESPACE
