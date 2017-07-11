@@ -256,16 +256,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
         return;
     }
 
-    QDoubleVector2D origin = map.geoProjection().coordinateToItemPosition(srcOrigin_, false);
-
-    // Create the viewport rect in the same coordinate system
-    // as the actual points
-    QRectF viewport(0, 0, map.viewportWidth(), map.viewportHeight());
-    viewport.translate(-1 * origin.toPointF());
-
-    QPainterPath vpPath;
-    vpPath.addRect(viewport);
-
     // The geometry has already been clipped against the visible region projection in wrapped mercator space.
     QPainterPath ppi = srcPath_;
     clear();
@@ -274,38 +264,12 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     if (ppi.elementCount() < 3)
         return;
 
-    // Intersection between the viewport and a concave polygon can create multiple polygons
-    // joined by a line at the viewport border, and poly2tri does not triangulate this very well
-    // so use the full src path if the resulting polygon is concave.
-    if (clipToViewport_) {
-        int changeInX = 0;
-        int changeInY = 0;
-        QPainterPath::Element e1 = ppi.elementAt(1);
-        QPainterPath::Element e = ppi.elementAt(0);
-        QVector2D edgeA(e1.x - e.x ,e1.y - e.y);
-        for (int i = 2; i <= ppi.elementCount(); ++i) {
-            e = ppi.elementAt(i % ppi.elementCount());
-            if (e.x == e1.x && e.y == e1.y)
-                continue;
-            QVector2D edgeB(e.x - e1.x, e.y - e1.y);
-            if ((edgeA.x() < 0) == (edgeB.x() >= 0))
-                changeInX++;
-            if ((edgeA.y() < 0) == (edgeB.y() >= 0))
-                changeInY++;
-            edgeA = edgeB;
-            e1 = e;
-        }
-        if (changeInX > 2 || changeInY > 2) // polygon is concave
-            ppi = srcPath_;
-    }
-
     // translate the path into top-left-centric coordinates
     QRectF bb = ppi.boundingRect();
     ppi.translate(-bb.left(), -bb.top());
     firstPointOffset_ = -1 * bb.topLeft();
 
     ppi.closeSubpath();
-
     screenOutline_ = ppi;
 
     using Coord = double;

@@ -9,5 +9,7 @@
     "LicenseId": "ISC",
     "License": "ISC License",
     "LicenseFile": "LICENSE",
-    "Copyright": "Copyright (c) 2015 Mapbox"
+    "Copyright": "Copyright (c) 2015 Mapbox",
+    "Version": "v0.12.3",
+    "DownloadLocation": "https://github.com/mapbox/earcut.hpp/releases/tag/v0.12.3"
 }
