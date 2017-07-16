@@ -89,6 +89,7 @@ protected:
     void timerEvent(QTimerEvent *event);
     QAbstractGeoTileCache::CacheAreas cacheHint() const;
     virtual bool initialized() const;
+    virtual bool fetchingEnabled() const;
 
 private:
 

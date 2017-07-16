@@ -126,7 +126,7 @@ void QGeoTileFetcher::requestNextTile()
     const QGeoCameraCapabilities & cameraCaps = d->engine_->cameraCapabilities(ts.mapId());
     // the ZL in QGeoTileSpec is relative to the native tile size of the provider.
     // It gets denormalized in QGeoTiledMap.
-    if (ts.zoom() < cameraCaps.minimumZoomLevel() || ts.zoom() > cameraCaps.maximumZoomLevel())
+    if (ts.zoom() < cameraCaps.minimumZoomLevel() || ts.zoom() > cameraCaps.maximumZoomLevel() || !fetchingEnabled())
         return;
 
     QGeoTiledMapReply *reply = getTileImage(ts);
@@ -185,6 +185,11 @@ void QGeoTileFetcher::timerEvent(QTimerEvent *event)
 }
 
 bool QGeoTileFetcher::initialized() const
+{
+    return true;
+}
+
+bool QGeoTileFetcher::fetchingEnabled() const
 {
     return true;
 }
