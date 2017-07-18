@@ -100,7 +100,7 @@ public:
             int minor = 0;
 
             // Register the 5.0 types
-            // 5.0 is siltent and not advertised
+            // 5.0 is silent and not advertised
 
             qmlRegisterType<QDeclarativeGeoServiceProvider          >(uri, major, minor, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter >(uri, major, minor, "PluginParameter");
@@ -174,6 +174,11 @@ public:
             qmlRegisterType<QDeclarativeGeoMapParameter>(uri, major, minor, "MapParameter");
             qmlRegisterType<QDeclarativeGeoMapCopyrightNotice>(uri, major, minor, "MapCopyrightNotice");
             qmlRegisterType<QDeclarativeGeoMapItemGroup>(uri, major, minor, "MapItemGroup");
+
+            // Register the 5.10 types
+            minor = 10;
+            qmlRegisterUncreatableType<QDeclarativeGeoCameraCapabilities>(uri, major, minor, "CameraCapabilities"
+                                                                             , QStringLiteral("CameraCapabilities is not intended instantiable by developer."));
 
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>();

@@ -63,7 +63,7 @@ public:
     GeoMapSource *mapSource(int mapId) const;
 
 private:
-    bool initializeMapSources(QGeoServiceProvider::Error *error, QString *errorString);
+    bool initializeMapSources(QGeoServiceProvider::Error *error, QString *errorString, const QGeoCameraCapabilities &cameraCaps);
 
     QList<GeoMapSource *> m_mapSources;
 };

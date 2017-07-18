@@ -67,8 +67,8 @@ static const MapStyleData mapStyles[] =
 
 GeoMapSource::GeoMapSource(QGeoMapType::MapStyle style, const QString &name,
                            const QString &description, bool mobile, bool night, int mapId,
-                           const QString &url, const QString &copyright) :
-    QGeoMapType(style, name, description, mobile, night, mapId, "esri"),
+                           const QString &url, const QString &copyright, const QGeoCameraCapabilities &cameraCapabilities) :
+    QGeoMapType(style, name, description, mobile, night, mapId, "esri", cameraCapabilities),
     m_url(url), m_copyright(copyright)
 {
 }

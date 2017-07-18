@@ -64,10 +64,22 @@ public:
 
         const QByteArray pluginName = "qmlgeo.test.plugin";
         QList<QGeoMapType> mapTypes;
-        mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("StreetMap"), tr("StreetMap"), false, false, 1, pluginName);
-        mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("SatelliteMapDay"), tr("SatelliteMapDay"), false, false, 2, pluginName);
-        mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("CycleMap"), tr("CycleMap"), false, false, 3, pluginName);
-        mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("AlternateCameraCapabilities"), tr("AlternateCameraCapabilities"), false, false, 4, pluginName);
+        mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("StreetMap"), tr("StreetMap"), false, false, 1, pluginName, capabilities);
+        mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("SatelliteMapDay"), tr("SatelliteMapDay"), false, false, 2, pluginName, capabilities);
+        mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("CycleMap"), tr("CycleMap"), false, false, 3, pluginName, capabilities);
+
+        QGeoCameraCapabilities capabilities4;
+        capabilities4.setMinimumZoomLevel(0.0);
+        capabilities4.setMaximumZoomLevel(19.0);
+        capabilities4.setSupportsBearing(true);
+        capabilities4.setSupportsTilting(true);
+        capabilities4.setMinimumTilt(0);
+        capabilities4.setMaximumTilt(80);
+        capabilities4.setMinimumFieldOfView(1);
+        capabilities4.setMaximumFieldOfView(179);
+        QVariantMap meta;
+        meta["foo"] = 42;
+        mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("AlternateCameraCapabilities"), tr("AlternateCameraCapabilities"), false, false, 4, pluginName, capabilities4, meta);
         setSupportedMapTypes(mapTypes);
 
         QGeoTileFetcherTest *fetcher = new QGeoTileFetcherTest(this);
@@ -91,28 +103,6 @@ public:
     {
         return new QGeoTiledMapTest(this);
     }
-
-    QGeoCameraCapabilities cameraCapabilities(int mapId) const Q_DECL_OVERRIDE
-    {
-        switch (mapId) {
-        case 4:
-        {
-            QGeoCameraCapabilities capabilities;
-            capabilities.setMinimumZoomLevel(0.0);
-            capabilities.setMaximumZoomLevel(19.0);
-            capabilities.setSupportsBearing(true);
-            capabilities.setSupportsTilting(true);
-            capabilities.setMinimumTilt(0);
-            capabilities.setMaximumTilt(80);
-            capabilities.setMinimumFieldOfView(1);
-            capabilities.setMaximumFieldOfView(179);
-            return capabilities;
-        }
-        default:
-            return QGeoMappingManagerEngine::cameraCapabilities(mapId);
-        }
-    }
-
 };
 
 #endif

@@ -62,7 +62,6 @@ public:
     QGeoMap *createMap() override;
     const QVector<QGeoTileProviderOsm *> &providers();
     QString customCopyright() const;
-    QGeoCameraCapabilities cameraCapabilities(int mapId) const override;
 
 protected Q_SLOTS:
     void onProviderResolutionFinished(const QGeoTileProviderOsm *provider);

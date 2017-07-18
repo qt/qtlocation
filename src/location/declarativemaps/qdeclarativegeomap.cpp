@@ -190,7 +190,11 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
     m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                              tr("No Map"),
-                                                             tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
+                                                             tr("No Map"),
+                                                             false, false,
+                                                             0,
+                                                             QByteArrayLiteral(""),
+                                                             QGeoCameraCapabilities()), this);
     m_cameraData.setCenter(QGeoCoordinate(51.5073,-0.1277)); //London city center
     m_cameraData.setZoomLevel(8.0);
 
@@ -750,7 +754,12 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         } else {
             m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                                      tr("No Map"),
-                                                                     tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
+                                                                     tr("No Map"),
+                                                                     false,
+                                                                     false,
+                                                                     0,
+                                                                     QByteArrayLiteral(""),
+                                                                     QGeoCameraCapabilities()), this);
         }
     }
 

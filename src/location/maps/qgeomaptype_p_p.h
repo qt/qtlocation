@@ -50,9 +50,10 @@
 
 #include <QMetaType>
 #include <QString>
+#include <QVariantMap>
 #include <QByteArray>
 #include <QSharedData>
-
+#include "qgeocameracapabilities_p.h"
 #include "qgeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -62,7 +63,9 @@ class QGeoMapTypePrivate : public QSharedData
 public:
     QGeoMapTypePrivate();
     QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile,
-                       bool night, int mapId, QByteArray pluginName);
+                       bool night, int mapId, const QByteArray &pluginName,
+                       const QGeoCameraCapabilities &cameraCapabilities,
+                       const QVariantMap &metadata);
     QGeoMapTypePrivate(const QGeoMapTypePrivate &other);
     ~QGeoMapTypePrivate();
 
@@ -77,6 +80,8 @@ public:
     bool night_;
     int mapId_;
     QByteArray pluginName_;
+    QGeoCameraCapabilities cameraCapabilities_;
+    QVariantMap metadata_;
 };
 
 QT_END_NAMESPACE

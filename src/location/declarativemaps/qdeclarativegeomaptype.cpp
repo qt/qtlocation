@@ -57,7 +57,8 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapType::QDeclarativeGeoMapType(const QGeoMapType mapType, QObject *parent)
     : QObject(parent),
-      mapType_(mapType) {}
+      mapType_(mapType),
+      cameraCapabilities_(new QDeclarativeGeoCameraCapabilities(mapType.cameraCapabilities(), this)) {}
 
 QDeclarativeGeoMapType::~QDeclarativeGeoMapType() {}
 
@@ -129,6 +130,118 @@ bool QDeclarativeGeoMapType::mobile() const
 bool QDeclarativeGeoMapType::night() const
 {
     return mapType_.night();
+}
+
+/*!
+    \qmlproperty CameraCapabilities MapType::cameraCapabilities
+    \since Qt Location 5.10
+
+    This property holds the camera capabilities for this map type.
+*/
+QDeclarativeGeoCameraCapabilities *QDeclarativeGeoMapType::cameraCapabilities() const
+{
+    return cameraCapabilities_;
+}
+
+/*!
+    \qmlproperty VariantMap MapType::metadata
+    \since Qt Location 5.10
+
+    This property holds optional, extra metadata related to a specific map type.
+    The content of this property is entirely plugin-specific.
+*/
+QVariantMap QDeclarativeGeoMapType::metadata() const
+{
+    return mapType_.metadata();
+}
+
+/*
+ *      QDeclarativeGeoCameraCapabilities implementation
+ */
+
+/*!
+    \qmltype CameraCapabilities
+    \instantiates QDeclarativeGeoCameraCapabilities
+    \inherits QObject
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-maps
+    \since Qt Location 5.10
+
+    \brief The CameraCapabilities type holds information about the camera capabilities for a specific map type.
+
+    This includes the map minimum and maximum zoom level, minimum and maximum tilt angle and
+    minimum and maximum field of view.
+*/
+
+QDeclarativeGeoCameraCapabilities::QDeclarativeGeoCameraCapabilities(const QGeoCameraCapabilities &cameraCaps, QObject *parent)
+    : QObject(parent), cameraCaps_(cameraCaps)
+{
+
+}
+
+QDeclarativeGeoCameraCapabilities::~QDeclarativeGeoCameraCapabilities()
+{
+
+}
+
+/*!
+    \qmlproperty qreal CameraCapabilities::minimumZoomLevel
+
+    This read-only property holds the minimum available zoom level with this map type.
+*/
+qreal QDeclarativeGeoCameraCapabilities::minimumZoomLevel() const
+{
+    return cameraCaps_.minimumZoomLevelAt256();
+}
+
+/*!
+    \qmlproperty qreal CameraCapabilities::maximumZoomLevel
+
+    This read-only property holds the maximum available zoom level with this map type.
+*/
+qreal QDeclarativeGeoCameraCapabilities::maximumZoomLevel() const
+{
+    return cameraCaps_.maximumZoomLevelAt256();
+}
+
+/*!
+    \qmlproperty qreal CameraCapabilities::minimumTilt
+
+    This read-only property holds the minimum available tilt with this map type.
+*/
+qreal QDeclarativeGeoCameraCapabilities::minimumTilt() const
+{
+    return cameraCaps_.minimumTilt();
+}
+
+/*!
+    \qmlproperty qreal CameraCapabilities::maximumTilt
+
+    This read-only property holds the maximum available tilt with this map type.
+*/
+qreal QDeclarativeGeoCameraCapabilities::maximumTilt() const
+{
+    return cameraCaps_.maximumTilt();
+}
+
+/*!
+    \qmlproperty qreal CameraCapabilities::minimumFieldOfView
+
+    This read-only property holds the minimum available field of view with this map type.
+*/
+qreal QDeclarativeGeoCameraCapabilities::minimumFieldOfView() const
+{
+    return cameraCaps_.minimumFieldOfView();
+}
+
+/*!
+    \qmlproperty qreal CameraCapabilities::maximumFieldOfView
+
+    This read-only property holds the maximum available field of view with this map type.
+*/
+qreal QDeclarativeGeoCameraCapabilities::maximumFieldOfView() const
+{
+    return cameraCaps_.maximumFieldOfView();
 }
 
 QT_END_NAMESPACE

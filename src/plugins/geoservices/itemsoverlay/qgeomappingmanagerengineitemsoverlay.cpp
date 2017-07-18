@@ -62,7 +62,7 @@ QGeoMappingManagerEngineItemsOverlay::QGeoMappingManagerEngineItemsOverlay(const
     setCameraCapabilities(cameraCaps);
 
     QList<QGeoMapType> mapTypes;
-    mapTypes << QGeoMapType(QGeoMapType::NoMap, tr("Empty Map"), tr("Empty Map"), false, false, 1, "itemsoverlay");
+    mapTypes << QGeoMapType(QGeoMapType::NoMap, tr("Empty Map"), tr("Empty Map"), false, false, 1, "itemsoverlay", cameraCaps);
     setSupportedMapTypes(mapTypes);
 
     engineInitialized();

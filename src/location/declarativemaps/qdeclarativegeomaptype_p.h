@@ -56,6 +56,31 @@
 
 QT_BEGIN_NAMESPACE
 
+class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoCameraCapabilities: public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel CONSTANT)
+    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel CONSTANT)
+    Q_PROPERTY(qreal minimumTilt READ minimumTilt CONSTANT)
+    Q_PROPERTY(qreal maximumTilt READ maximumTilt CONSTANT)
+    Q_PROPERTY(qreal minimumFieldOfView READ minimumFieldOfView CONSTANT)
+    Q_PROPERTY(qreal maximumFieldOfView READ maximumFieldOfView CONSTANT)
+
+public:
+    QDeclarativeGeoCameraCapabilities(const QGeoCameraCapabilities &cameraCaps, QObject *parent = 0);
+    ~QDeclarativeGeoCameraCapabilities();
+
+    qreal minimumZoomLevel() const;
+    qreal maximumZoomLevel() const;
+    qreal minimumTilt() const;
+    qreal maximumTilt() const;
+    qreal minimumFieldOfView() const;
+    qreal maximumFieldOfView() const;
+
+private:
+    QGeoCameraCapabilities cameraCaps_;
+};
+
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapType : public QObject
 {
     Q_OBJECT
@@ -66,6 +91,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapType : public QObject
     Q_PROPERTY(QString description READ description CONSTANT)
     Q_PROPERTY(bool mobile READ mobile CONSTANT)
     Q_PROPERTY(bool night READ night CONSTANT REVISION 1)
+    Q_PROPERTY(QDeclarativeGeoCameraCapabilities *cameraCapabilities READ cameraCapabilities CONSTANT)
+    Q_PROPERTY(QVariantMap metadata READ metadata CONSTANT)
 
 public:
     enum MapStyle {
@@ -91,11 +118,14 @@ public:
     QString description() const;
     bool mobile() const;
     bool night() const;
+    QDeclarativeGeoCameraCapabilities *cameraCapabilities() const;
+    QVariantMap metadata() const;
 
     const QGeoMapType mapType() { return mapType_; }
 
 private:
     QGeoMapType mapType_;
+    QDeclarativeGeoCameraCapabilities *cameraCapabilities_;
 };
 
 QT_END_NAMESPACE

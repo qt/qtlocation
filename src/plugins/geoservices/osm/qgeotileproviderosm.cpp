@@ -234,7 +234,8 @@ void QGeoTileProviderOsm::updateCameraCapabilities()
     m_cameraCapabilities.setMinimumZoomLevel(minimumZoomLevel());
     m_cameraCapabilities.setMaximumZoomLevel(maximumZoomLevel());
 
-    // Pushing the change
+    m_mapType = QGeoMapType(m_mapType.style(), m_mapType.name(), m_mapType.description(), m_mapType.mobile(),
+                            m_mapType.night(), m_mapType.mapId(), m_mapType.pluginName(), m_cameraCapabilities);
 }
 
 void QGeoTileProviderOsm::addProvider(TileProvider *provider)

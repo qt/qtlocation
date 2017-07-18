@@ -106,7 +106,7 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
 
     setTileSize(QSize(256, 256));
 
-    if (!initializeMapSources(error, errorString))
+    if (!initializeMapSources(error, errorString, cameraCaps))
         return;
 
     QList<QGeoMapType> mapTypes;
@@ -119,7 +119,8 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
                         mapSource->mobile(),
                         mapSource->night(),
                         mapSource->mapId(),
-                        "esri");
+                        "esri",
+                        cameraCaps);
     }
 
     setSupportedMapTypes(mapTypes);
@@ -237,7 +238,8 @@ QGeoMap *GeoTiledMappingManagerEngineEsri::createMap()
 // template = 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{{z}}/{{y}}/{{x}}.png'
 
 bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider::Error *error,
-                                                            QString *errorString)
+                                                            QString *errorString,
+                                                            const QGeoCameraCapabilities &cameraCaps)
 {
     initResources();
     QFile mapsFile(":/esri/maps.json");
@@ -271,9 +273,7 @@ bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider:
     foreach (QVariant mapSourceElement, mapSources) {
         QVariantMap mapSource = mapSourceElement.toMap();
 
-        int mapId = mapSource[kPropMapId].toInt();
-        if (mapId <= 0)
-            mapId = m_mapSources.count() + 1;
+        int mapId = m_mapSources.count() + 1;
 
         m_mapSources << new GeoMapSource(
                             GeoMapSource::mapStyle(mapSource[kPropStyle].toString()),
@@ -283,7 +283,8 @@ bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider:
                             mapSource[kPropMapId].toBool(),
                             mapId,
                             GeoMapSource::toFormat(mapSource[kPropUrl].toString()),
-                            mapSource[kPropCopyright].toString()
+                            mapSource[kPropCopyright].toString(),
+                            cameraCaps
                             );
     }
 

@@ -150,7 +150,7 @@ void tst_QGeoCameraTiles::tilesPlugin()
     ct.setTileSize(16);
     ct.setCameraData(camera);
     ct.setScreenSize(QSize(32, 32));
-    ct.setMapType(QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1, QByteArrayLiteral("")));
+    ct.setMapType(QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1, QByteArrayLiteral(""), QGeoCameraCapabilities()));
 
     QSet<QGeoTileSpec> tiles1 = ct.createTiles();
 
@@ -202,7 +202,7 @@ void tst_QGeoCameraTiles::tilesMapType()
 
     QSet<QGeoTileSpec> tiles1 = ct.createTiles();
 
-    QGeoMapType mapType1 = QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1, QByteArrayLiteral(""));
+    QGeoMapType mapType1 = QGeoMapType(QGeoMapType::StreetMap, "street map", "street map", false, false, 1, QByteArrayLiteral(""), QGeoCameraCapabilities());
     ct.setMapType(mapType1);
 
     QSet<QGeoTileSpec> tiles2 = ct.createTiles();
@@ -220,7 +220,7 @@ void tst_QGeoCameraTiles::tilesMapType()
 
     QCOMPARE(tiles2, tiles2_check);
 
-    QGeoMapType mapType2 = QGeoMapType(QGeoMapType::StreetMap, "satellite map", "satellite map", false, false, 2, QByteArrayLiteral(""));
+    QGeoMapType mapType2 = QGeoMapType(QGeoMapType::StreetMap, "satellite map", "satellite map", false, false, 2, QByteArrayLiteral(""), QGeoCameraCapabilities());
     ct.setMapType(mapType2);
 
     QSet<QGeoTileSpec> tiles3 = ct.createTiles();

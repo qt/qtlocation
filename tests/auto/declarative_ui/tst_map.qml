@@ -29,7 +29,7 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtPositioning 5.5
-import QtLocation 5.9
+import QtLocation 5.10
 
 Item {
     width:100
@@ -237,6 +237,8 @@ Item {
             //initial plugin values
             compare(map.minimumZoomLevel, 0)
             compare(map.maximumZoomLevel, 20)
+            compare(map.activeMapType.cameraCapabilities.minimumZoomLevel, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumZoomLevel, 20)
 
             //Higher min level than curr zoom, should change curr zoom
             map.minimumZoomLevel = 5
@@ -260,6 +262,8 @@ Item {
             map.zoomLevel = 18
             map.maximumZoomLevel = 16
             compare(map.zoomLevel, 16)
+            compare(map.activeMapType.cameraCapabilities.minimumZoomLevel, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumZoomLevel, 20)
 
             //reseting default
             map.minimumZoomLevel = 0
@@ -275,6 +279,8 @@ Item {
             //initial plugin values
             compare(map.minimumTilt, 0)
             compare(map.maximumTilt, 60)
+            compare(map.activeMapType.cameraCapabilities.minimumTilt, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumTilt, 60)
 
             //Higher min level than curr tilt, should change curr tilt
             map.minimumTilt = 5
@@ -282,6 +288,9 @@ Item {
             compare(map.tilt, 5)
             compare(map.minimumTilt, 5)
             compare(map.maximumTilt, 18)
+            // Capabilities remain the same
+            compare(map.activeMapType.cameraCapabilities.minimumTilt, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumTilt, 60)
 
             //Trying to set higher than max, max should be set.
             map.maximumTilt = 61
@@ -315,6 +324,8 @@ Item {
             //initial plugin values
             compare(map.minimumFieldOfView, 45)
             compare(map.maximumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 45)
 
             map.minimumFieldOfView = 5
             map.maximumFieldOfView = 18
@@ -327,6 +338,8 @@ Item {
             // camera caps are [1-179], user previously asked for [5-18]
             compare(map.minimumFieldOfView, 5)
             compare(map.maximumFieldOfView, 18)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 1)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 179)
 
             map.fieldOfView = 4
             compare(map.fieldOfView, 5)
@@ -365,6 +378,8 @@ Item {
             compare(map.minimumFieldOfView, 45)
             compare(map.maximumFieldOfView, 45)
             compare(map.fieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 45)
         }
 
         function test_zoom()
