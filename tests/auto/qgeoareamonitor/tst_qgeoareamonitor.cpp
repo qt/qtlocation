@@ -720,14 +720,14 @@ private slots:
         QGeoAreaMonitorInfo info;
         QTest::newRow("uninitialized") << info << 45
                 << QString("QGeoAreaMonitorInfo(\"\", QGeoShape(Unknown), "
-                              "persistent: false, expiry: QDateTime( Qt::TimeSpec(LocalTime))) 45");
+                              "persistent: false, expiry: QDateTime(Invalid)) 45");
 
         info.setArea(QGeoRectangle());
         info.setPersistent(true);
         info.setName("RectangleAreaMonitor");
         QTest::newRow("Rectangle Test") << info  << 45
                 << QString("QGeoAreaMonitorInfo(\"RectangleAreaMonitor\", QGeoShape(Rectangle), "
-                              "persistent: true, expiry: QDateTime( Qt::TimeSpec(LocalTime))) 45");
+                              "persistent: true, expiry: QDateTime(Invalid)) 45");
 
         info = QGeoAreaMonitorInfo();
         info.setArea(QGeoCircle());
@@ -738,7 +738,7 @@ private slots:
         info.setNotificationParameters(map);
         QTest::newRow("Circle Test") << info  << 45
                 << QString("QGeoAreaMonitorInfo(\"CircleAreaMonitor\", QGeoShape(Circle), "
-                              "persistent: false, expiry: QDateTime( Qt::TimeSpec(LocalTime))) 45");
+                              "persistent: false, expiry: QDateTime(Invalid)) 45");
 
         // we ignore any further QDateTime related changes to avoid depending on QDateTime related
         // failures in case its QDebug string changes
@@ -746,6 +746,7 @@ private slots:
 
     void debug()
     {
+        QSKIP("Waiting for upcoming QDateTime debug operator changes being integrated");
         QFETCH(QGeoAreaMonitorInfo, info);
         QFETCH(int, nextValue);
         QFETCH(QString, debugString);
