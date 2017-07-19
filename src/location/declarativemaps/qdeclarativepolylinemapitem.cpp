@@ -226,7 +226,7 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
 
     // 2)
     QList<QList<QDoubleVector2D> > clippedPaths;
-    const QList<QDoubleVector2D> &visibleRegion = map.geoProjection().projectableRegion();
+    const QList<QDoubleVector2D> &visibleRegion = map.geoProjection().visibleRegion();
     if (visibleRegion.size()) {
         c2t::clip2tri clipper;
         clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), false);
