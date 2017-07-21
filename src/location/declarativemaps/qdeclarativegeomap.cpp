@@ -503,9 +503,7 @@ void QDeclarativeGeoMap::populateParameters()
 */
 void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
 {
-    Q_UNUSED(view)
     view->setMap(this);
-    view->repopulate();
 }
 
 /*!

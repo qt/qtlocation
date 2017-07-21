@@ -51,11 +51,13 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-
+#include <map>
 #include <QtCore/QModelIndex>
 #include <QtQml/QQmlParserStatus>
 #include <QtQml/QQmlIncubator>
 #include <QtQml/qqml.h>
+#include <QtQml/private/qqmldelegatemodel_p.h>
+#include <QtQuick/private/qquicktransition_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -68,6 +70,7 @@ class QQmlOpenMetaObject;
 class QQmlOpenMetaObjectType;
 class MapItemViewDelegateIncubator;
 class QDeclarativeGeoMapItemViewItemData;
+class QDeclarativeGeoMapItemView;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemView : public QObject, public QQmlParserStatus
 {
@@ -78,6 +81,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemView : public QObject, pub
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(QQmlComponent *delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
     Q_PROPERTY(bool autoFitViewport READ autoFitViewport WRITE setAutoFitViewport NOTIFY autoFitViewportChanged)
+//    Q_PROPERTY(QQuickTransition *enter MEMBER m_enter)
+//    Q_PROPERTY(QQuickTransition *exit MEMBER m_exit)
 
 public:
     explicit QDeclarativeGeoMapItemView(QQuickItem *parent = 0);
@@ -90,60 +95,46 @@ public:
     void setDelegate(QQmlComponent *);
 
     bool autoFitViewport() const;
-    void setAutoFitViewport(const bool &);
+    void setAutoFitViewport(const bool &fit);
 
     void setMap(QDeclarativeGeoMap *);
-    void repopulate();
     void removeInstantiatedItems();
     void instantiateAllItems();
 
-    qreal zValue();
-    void setZValue(qreal zValue);
-
     // From QQmlParserStatus
-    virtual void componentComplete();
-    void classBegin() {}
+    void componentComplete() override;
+    void classBegin() override;
 
 Q_SIGNALS:
     void modelChanged();
     void delegateChanged();
     void autoFitViewportChanged();
 
-protected:
-    void incubatorStatusChanged(MapItemViewDelegateIncubator *incubator,
-                                QQmlIncubator::Status status,
-                                bool batched);
-
 private Q_SLOTS:
-    void itemModelReset();
-    void itemModelRowsInserted(const QModelIndex &index, int start, int end);
-    void itemModelRowsRemoved(const QModelIndex &index, int start, int end);
-    void itemModelRowsMoved(const QModelIndex &parent, int start, int end,
-                            const QModelIndex &destination, int row);
-    void itemModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
-                              const QVector<int> &roles);
+    void destroyingItem(QObject *object);
+    void initItem(int index, QObject *object);
+    void createdItem(int index, QObject *object);
+    void modelUpdated(const QQmlChangeSet &changeSet, bool reset);
+    void exitTransitionFinished();
 
 private:
-    void createItemForIndex(const QModelIndex &index, bool batched = false);
     void fitViewport();
-    void terminateOngoingRepopulation();
-    void removeItemData(QDeclarativeGeoMapItemViewItemData *itemData);
+    void removeItemFromMap(int index);
+    void addItemToMap(QDeclarativeGeoMapItemBase *item, int index);
 
     bool m_componentCompleted;
     QQmlComponent *m_delegate;
-    QAbstractItemModel *m_itemModel;
+    QVariant m_itemModel;
     QDeclarativeGeoMap *m_map;
-    QVector<QDeclarativeGeoMapItemViewItemData *> m_itemData;
-    QVector<QDeclarativeGeoMapItemViewItemData *> m_itemDataBatched;
+    QList<QDeclarativeGeoMapItemBase *> m_instantiatedItems;
     bool m_fitViewport;
-
-    QQmlOpenMetaObjectType *m_metaObjectType;
-    int m_readyIncubators;
-    bool m_repopulating;
+    QQmlDelegateModel *m_delegateModel;
+    QQuickTransition *m_enter = nullptr;
+    QQuickTransition *m_exit = nullptr;
 
     friend class QDeclarativeGeoMap;
-    friend class QDeclarativeGeoMapItemViewItemData;
-    friend class MapItemViewDelegateIncubator;
+    friend class QDeclarativeGeoMapItemBase;
+    friend class QDeclarativeGeoMapItemTransitionManager;
 };
 
 QT_END_NAMESPACE

@@ -56,9 +56,12 @@
 #include <QtLocation/private/qdeclarativegeomap_p.h>
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomap_p.h>
+#include <QtQuick/private/qquicktransitionmanager_p_p.h>
+#include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
-
+class QDeclarativeGeoMapItemTransitionManager;
+class QDeclarativeGeoMapItemBase;
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapViewportChangeEvent
 {
 public:
@@ -75,6 +78,29 @@ public:
     bool tiltChanged;
     bool bearingChanged;
     bool rollChanged;
+};
+
+class QDeclarativeGeoMapItemTransitionManager : public QQuickTransitionManager
+{
+public:
+    enum TransitionState {
+        NoTransition, EnterTransition, ExitTransition
+    };
+
+    QDeclarativeGeoMapItemTransitionManager(QDeclarativeGeoMapItemBase *mapItem);
+
+    void transitionEnter();
+    void transitionExit();
+
+protected:
+    void finished() override;
+
+public:
+    QDeclarativeGeoMapItemBase *m_mapItem;
+    QDeclarativeGeoMapItemView *m_view = nullptr;
+    QList<QQuickStateAction> enterActions;
+    QList<QQuickStateAction> exitActions;
+    TransitionState m_transitionState = NoTransition;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
@@ -99,8 +125,15 @@ public:
     virtual QGeoMap::ItemType itemType() const = 0;
     qreal mapItemOpacity() const;
 
+    virtual bool prepareEnterTransition();
+    virtual bool prepareExitTransition();
+    virtual void finalizeEnterTransition();
+    virtual void finalizeExitTransition();
+
 Q_SIGNALS:
     void mapItemOpacityChanged();
+    void enterTransitionFinished();
+    void exitTransitionFinished();
 
 protected Q_SLOTS:
     virtual void afterChildrenChanged();
@@ -124,7 +157,11 @@ private:
 
     QDeclarativeGeoMapItemGroup *parentGroup_;
 
+    QScopedPointer<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
+
     friend class QDeclarativeGeoMap;
+    friend class QDeclarativeGeoMapItemView;
+    friend class QDeclarativeGeoMapItemTransitionManager;
 };
 
 QT_END_NAMESPACE

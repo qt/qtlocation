@@ -283,6 +283,44 @@ qreal QDeclarativeGeoMapItemBase::mapItemOpacity() const
     return opacity();
 }
 
+bool QDeclarativeGeoMapItemBase::prepareEnterTransition()
+{
+    if (m_transitionManager->m_transitionState == QDeclarativeGeoMapItemTransitionManager::EnterTransition
+            && m_transitionManager->isRunning())
+        return false;
+
+    if (m_transitionManager->m_transitionState != QDeclarativeGeoMapItemTransitionManager::EnterTransition) {
+        setVisible(true);
+        m_transitionManager->m_transitionState = QDeclarativeGeoMapItemTransitionManager::EnterTransition;
+    }
+    return true;
+}
+
+bool QDeclarativeGeoMapItemBase::prepareExitTransition()
+{
+    if (m_transitionManager->m_transitionState == QDeclarativeGeoMapItemTransitionManager::ExitTransition
+            && m_transitionManager->isRunning())
+        return false;
+
+    if (m_transitionManager->m_transitionState != QDeclarativeGeoMapItemTransitionManager::ExitTransition) {
+        m_transitionManager->m_transitionState = QDeclarativeGeoMapItemTransitionManager::ExitTransition;
+    }
+    return true;
+}
+
+void QDeclarativeGeoMapItemBase::finalizeEnterTransition()
+{
+    m_transitionManager->m_transitionState = QDeclarativeGeoMapItemTransitionManager::NoTransition;
+    emit enterTransitionFinished();
+}
+
+void QDeclarativeGeoMapItemBase::finalizeExitTransition()
+{
+    setVisible(false);
+    m_transitionManager->m_transitionState = QDeclarativeGeoMapItemTransitionManager::NoTransition;
+    emit exitTransitionFinished();
+}
+
 bool QDeclarativeGeoMapItemBase::isPolishScheduled() const
 {
     return QQuickItemPrivate::get(this)->polishScheduled;
@@ -293,5 +331,44 @@ void QDeclarativeGeoMapItemBase::polishAndUpdate()
     polish();
     update();
 }
+
+QDeclarativeGeoMapItemTransitionManager::QDeclarativeGeoMapItemTransitionManager(QDeclarativeGeoMapItemBase *mapItem)
+    : QQuickTransitionManager(), m_mapItem(mapItem)
+{
+}
+
+void QDeclarativeGeoMapItemTransitionManager::transitionEnter()
+{
+    if (m_transitionState == ExitTransition)
+        cancel();
+
+    if (!m_mapItem->prepareEnterTransition())
+        return;
+
+    if (m_view && m_view->m_enter)
+        transition(enterActions, m_view->m_enter, m_mapItem);
+    else
+        finished();
+}
+
+void QDeclarativeGeoMapItemTransitionManager::transitionExit()
+{
+    if (!m_mapItem->prepareExitTransition())
+        return;
+
+    if (m_view && m_view->m_exit)
+        transition(exitActions, m_view->m_exit, m_mapItem);
+    else
+        finished();
+}
+
+void QDeclarativeGeoMapItemTransitionManager::finished()
+{
+    if (m_transitionState == EnterTransition)
+        m_mapItem->finalizeEnterTransition();
+    else if (m_transitionState == ExitTransition)
+        m_mapItem->finalizeExitTransition();
+}
+
 
 QT_END_NAMESPACE
