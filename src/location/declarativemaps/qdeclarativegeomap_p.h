@@ -252,7 +252,7 @@ private:
     QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
     QQuickGeoMapGestureArea *m_gestureArea;
-    QPointer<QGeoMap> m_map;
+    QGeoMap* m_map = nullptr;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
     QList<QPointer<QDeclarativeGeoMapItemGroup> > m_mapItemGroups;

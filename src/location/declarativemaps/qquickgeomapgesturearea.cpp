@@ -508,7 +508,7 @@ QQuickGeoMapGestureArea::QQuickGeoMapGestureArea(QDeclarativeGeoMap *map)
 /*!
     \internal
 */
-void QQuickGeoMapGestureArea::setMap(QPointer<QGeoMap> map)
+void QQuickGeoMapGestureArea::setMap(QGeoMap *map)
 {
     if (m_map || !map)
         return;
