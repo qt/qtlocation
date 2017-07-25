@@ -123,6 +123,8 @@ public:
     void clearMapItems();
 
     virtual QString copyrightsStyleSheet() const;
+    virtual void setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate, bool tilt);
+    virtual bool handleEvent(QEvent *event);
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);

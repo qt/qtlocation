@@ -509,6 +509,7 @@ void QQuickGeoMapGestureArea::setMap(QGeoMap *map)
     m_flick.m_animation->setProperty(QStringLiteral("center"));
     m_flick.m_animation->setEasing(QEasingCurve(QEasingCurve::OutQuad));
     connect(m_flick.m_animation, &QQuickAbstractAnimation::stopped, this, &QQuickGeoMapGestureArea::handleFlickAnimationStopped);
+    m_map->setAcceptedGestures(panEnabled(), flickEnabled(), pinchEnabled(), rotationEnabled(), tiltEnabled());
 }
 
 /*!
@@ -583,6 +584,9 @@ void QQuickGeoMapGestureArea::setAcceptedGestures(AcceptedGestures acceptedGestu
         setTiltEnabled(acceptedGestures & TiltGesture);
     }
 
+    if (m_map)
+        m_map->setAcceptedGestures(panEnabled(), flickEnabled(), pinchEnabled(), rotationEnabled(), tiltEnabled());
+
     emit acceptedGesturesChanged();
 }
 
@@ -648,6 +652,8 @@ void QQuickGeoMapGestureArea::setEnabled(bool enabled)
         setRotationEnabled(false);
         setTiltEnabled(false);
     }
+    if (m_map)
+        m_map->setAcceptedGestures(panEnabled(), flickEnabled(), pinchEnabled(), rotationEnabled(), tiltEnabled());
 
     emit enabledChanged();
 }
@@ -857,6 +863,11 @@ QTouchEvent::TouchPoint* createTouchPointFromMouseEvent(QMouseEvent *event, Qt::
 */
 void QQuickGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
 {
+    if (m_map && m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
     m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointPressed));
     if (m_touchPoints.isEmpty()) update();
     event->accept();
@@ -867,6 +878,11 @@ void QQuickGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
 */
 void QQuickGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
 {
+    if (m_map && m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
     m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointMoved));
     if (m_touchPoints.isEmpty()) update();
     event->accept();
@@ -877,6 +893,11 @@ void QQuickGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
 */
 void QQuickGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *event)
 {
+    if (m_map && m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
     if (!m_mousePoint.isNull()) {
         //this looks super ugly , however is required in case we do not get synthesized MouseReleaseEvent
         //and we reset the point already in handleTouchUngrabEvent
@@ -917,6 +938,11 @@ void QQuickGeoMapGestureArea::handleTouchUngrabEvent()
 */
 void QQuickGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
 {
+    if (m_map && m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
     m_touchPoints.clear();
     m_mousePoint.reset();
 
@@ -937,6 +963,11 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 {
     if (!m_map)
         return;
+
+    if (m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
 
     const QGeoCoordinate &wheelGeoPos = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
     const QPointF &preZoomPoint = event->posF();

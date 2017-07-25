@@ -98,6 +98,12 @@ void QGeoMap::setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabili
     d->setCameraCapabilities(cameraCapabilities);
 }
 
+bool QGeoMap::handleEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+    return false;
+}
+
 QGeoCameraData QGeoMap::cameraData() const
 {
     Q_D(const QGeoMap);
@@ -228,6 +234,15 @@ void QGeoMap::clearMapItems()
 QString QGeoMap::copyrightsStyleSheet() const
 {
     return QStringLiteral("#copyright-root { background: rgba(255, 255, 255, 128) }");
+}
+
+void QGeoMap::setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate, bool tilt)
+{
+    Q_UNUSED(pan)
+    Q_UNUSED(flick)
+    Q_UNUSED(pinch)
+    Q_UNUSED(rotate)
+    Q_UNUSED(tilt)
 }
 
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
