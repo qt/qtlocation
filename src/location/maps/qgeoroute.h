@@ -87,8 +87,10 @@ public:
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
 
-private:
+protected:
+    QGeoRoute(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd);
     QExplicitlySharedDataPointer<QGeoRoutePrivate> d_ptr;
+    friend class QDeclarativeGeoRoute;
 };
 
 QT_END_NAMESPACE

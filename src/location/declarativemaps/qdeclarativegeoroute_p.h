@@ -84,6 +84,8 @@ public:
     void appendSegment(QDeclarativeGeoRouteSegment *segment);
     void clearSegments();
 
+    int segmentsCount() const;
+
 Q_SIGNALS:
     void pathChanged();
 
@@ -93,11 +95,12 @@ private:
     static QDeclarativeGeoRouteSegment *segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, int index);
     static void segments_clear(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
 
-    void init();
+    void initSegments(unsigned int lastIndex = -1);
     QList<QGeoCoordinate> routePath();
 
     QGeoRoute route_;
     QList<QDeclarativeGeoRouteSegment *> segments_;
+    bool segmentsDirty_;
     friend class QDeclarativeRouteMapItem;
 };
 

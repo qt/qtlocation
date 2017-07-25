@@ -115,7 +115,7 @@ The instruction indicates that the direction of travel should bear to the left.
     setWaypoint() is called.
 */
 QGeoManeuver::QGeoManeuver()
-    : d_ptr(new QGeoManeuverPrivate()) {}
+    : d_ptr(new QGeoManeuverPrivateDefault()) {}
 
 /*!
     Constructs a maneuver object from the contents of \a other.
@@ -165,7 +165,7 @@ bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
 */
 bool QGeoManeuver::isValid() const
 {
-    return d_ptr->valid;
+    return d_ptr->valid();
 }
 
 /*!
@@ -174,8 +174,8 @@ bool QGeoManeuver::isValid() const
 */
 void QGeoManeuver::setPosition(const QGeoCoordinate &position)
 {
-    d_ptr->valid = true;
-    d_ptr->position = position;
+    d_ptr->setValid(true);
+    d_ptr->setPosition(position);
 }
 
 /*!
@@ -183,7 +183,7 @@ void QGeoManeuver::setPosition(const QGeoCoordinate &position)
 */
 QGeoCoordinate QGeoManeuver::position() const
 {
-    return d_ptr->position;
+    return d_ptr->position();
 }
 
 /*!
@@ -191,8 +191,8 @@ QGeoCoordinate QGeoManeuver::position() const
 */
 void QGeoManeuver::setInstructionText(const QString &instructionText)
 {
-    d_ptr->valid = true;
-    d_ptr->text = instructionText;
+    d_ptr->setValid(true);
+    d_ptr->setText(instructionText);
 }
 
 /*!
@@ -200,7 +200,7 @@ void QGeoManeuver::setInstructionText(const QString &instructionText)
 */
 QString QGeoManeuver::instructionText() const
 {
-    return d_ptr->text;
+    return d_ptr->text();
 }
 
 /*!
@@ -209,8 +209,8 @@ QString QGeoManeuver::instructionText() const
 */
 void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
 {
-    d_ptr->valid = true;
-    d_ptr->direction = direction;
+    d_ptr->setValid(true);
+    d_ptr->setDirection(direction);
 }
 
 /*!
@@ -218,7 +218,7 @@ void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
 */
 QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 {
-    return d_ptr->direction;
+    return d_ptr->direction();
 }
 
 /*!
@@ -228,8 +228,8 @@ QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 */
 void QGeoManeuver::setTimeToNextInstruction(int secs)
 {
-    d_ptr->valid = true;
-    d_ptr->timeToNextInstruction = secs;
+    d_ptr->setValid(true);
+    d_ptr->setTimeToNextInstruction(secs);
 }
 
 /*!
@@ -239,7 +239,7 @@ void QGeoManeuver::setTimeToNextInstruction(int secs)
 */
 int QGeoManeuver::timeToNextInstruction() const
 {
-    return d_ptr->timeToNextInstruction;
+    return d_ptr->timeToNextInstruction();
 }
 
 /*!
@@ -249,8 +249,8 @@ int QGeoManeuver::timeToNextInstruction() const
 */
 void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
 {
-    d_ptr->valid = true;
-    d_ptr->distanceToNextInstruction = distance;
+    d_ptr->setValid(true);
+    d_ptr->setDistanceToNextInstruction(distance);
 }
 
 /*!
@@ -260,7 +260,7 @@ void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
 */
 qreal QGeoManeuver::distanceToNextInstruction() const
 {
-    return d_ptr->distanceToNextInstruction;
+    return d_ptr->distanceToNextInstruction();
 }
 
 /*!
@@ -268,8 +268,8 @@ qreal QGeoManeuver::distanceToNextInstruction() const
 */
 void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
 {
-    d_ptr->valid = true;
-    d_ptr->waypoint = coordinate;
+    d_ptr->setValid(true);
+    d_ptr->setWaypoint(coordinate);
 }
 
 /*!
@@ -280,39 +280,231 @@ void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
 */
 QGeoCoordinate QGeoManeuver::waypoint() const
 {
-    return d_ptr->waypoint;
+    return d_ptr->waypoint();
 }
+
+QGeoManeuver::QGeoManeuver(const QSharedDataPointer<QGeoManeuverPrivate> &dd)
+    : d_ptr(dd) {}
+
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoManeuverPrivate::QGeoManeuverPrivate()
-    : valid(false),
-      direction(QGeoManeuver::NoDirection),
-      timeToNextInstruction(0),
-      distanceToNextInstruction(0.0) {}
+{
+
+}
 
 QGeoManeuverPrivate::QGeoManeuverPrivate(const QGeoManeuverPrivate &other)
-    : QSharedData(other),
-      valid(other.valid),
-      position(other.position),
-      text(other.text),
-      direction(other.direction),
-      timeToNextInstruction(other.timeToNextInstruction),
-      distanceToNextInstruction(other.distanceToNextInstruction),
-      waypoint(other.waypoint) {}
-
-QGeoManeuverPrivate::~QGeoManeuverPrivate() {}
-
-bool QGeoManeuverPrivate::operator ==(const QGeoManeuverPrivate &other) const
+    : QSharedData(other)
 {
-    return ((valid == other.valid)
-            && (position == other.position)
-            && (text == other.text)
-            && (direction == other.direction)
-            && (timeToNextInstruction == other.timeToNextInstruction)
-            && (distanceToNextInstruction == other.distanceToNextInstruction)
-            && (waypoint == other.waypoint));
+
+}
+
+QGeoManeuverPrivate::~QGeoManeuverPrivate()
+{
+
+}
+
+bool QGeoManeuverPrivate::operator==(const QGeoManeuverPrivate &other) const
+{
+    return ((valid() == other.valid())
+            && (position() == other.position())
+            && (text() == other.text())
+            && (direction() == other.direction())
+            && (timeToNextInstruction() == other.timeToNextInstruction())
+            && (distanceToNextInstruction() == other.distanceToNextInstruction())
+            && (waypoint() == other.waypoint()));
+}
+
+bool QGeoManeuverPrivate::valid() const
+{
+    return false;
+}
+
+void QGeoManeuverPrivate::setValid(bool valid)
+{
+    Q_UNUSED(valid)
+}
+
+QString QGeoManeuverPrivate::id() const
+{
+    return QString();
+}
+
+void QGeoManeuverPrivate::setId(const QString id)
+{
+    Q_UNUSED(id)
+}
+
+QGeoCoordinate QGeoManeuverPrivate::position() const
+{
+    return QGeoCoordinate();
+}
+
+void QGeoManeuverPrivate::setPosition(const QGeoCoordinate &position)
+{
+    Q_UNUSED(position)
+}
+
+QString QGeoManeuverPrivate::text() const
+{
+    return QString();
+}
+
+void QGeoManeuverPrivate::setText(const QString &text)
+{
+    Q_UNUSED(text)
+}
+
+QGeoManeuver::InstructionDirection QGeoManeuverPrivate::direction() const
+{
+    return QGeoManeuver::NoDirection;
+}
+
+void QGeoManeuverPrivate::setDirection(QGeoManeuver::InstructionDirection direction)
+{
+    Q_UNUSED(direction)
+}
+
+int QGeoManeuverPrivate::timeToNextInstruction() const
+{
+    return 0;
+}
+
+void QGeoManeuverPrivate::setTimeToNextInstruction(int timeToNextInstruction)
+{
+    Q_UNUSED(timeToNextInstruction)
+}
+
+qreal QGeoManeuverPrivate::distanceToNextInstruction() const
+{
+    return 0;
+}
+
+void QGeoManeuverPrivate::setDistanceToNextInstruction(qreal distanceToNextInstruction)
+{
+    Q_UNUSED(distanceToNextInstruction)
+}
+
+QGeoCoordinate QGeoManeuverPrivate::waypoint() const
+{
+    return QGeoCoordinate();
+}
+
+void QGeoManeuverPrivate::setWaypoint(const QGeoCoordinate &waypoint)
+{
+    Q_UNUSED(waypoint)
+}
+
+
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoManeuverPrivateDefault::QGeoManeuverPrivateDefault()
+    : m_valid(false),
+      m_direction(QGeoManeuver::NoDirection),
+      m_timeToNextInstruction(0),
+      m_distanceToNextInstruction(0.0) {}
+
+QGeoManeuverPrivateDefault::QGeoManeuverPrivateDefault(const QGeoManeuverPrivateDefault &other)
+    : QGeoManeuverPrivate(other),
+      m_valid(other.m_valid),
+      m_position(other.m_position),
+      m_text(other.m_text),
+      m_direction(other.m_direction),
+      m_timeToNextInstruction(other.m_timeToNextInstruction),
+      m_distanceToNextInstruction(other.m_distanceToNextInstruction),
+      m_waypoint(other.m_waypoint) {}
+
+QGeoManeuverPrivateDefault::~QGeoManeuverPrivateDefault() {}
+
+
+
+bool QGeoManeuverPrivateDefault::operator ==(const QGeoManeuverPrivateDefault &other) const
+{
+    return QGeoManeuverPrivateDefault::operator ==(other);
+}
+
+bool QGeoManeuverPrivateDefault::valid() const
+{
+    return m_valid;
+}
+
+void QGeoManeuverPrivateDefault::setValid(bool valid)
+{
+    m_valid = valid;
+}
+
+QString QGeoManeuverPrivateDefault::id() const
+{
+    return m_id;
+}
+
+void QGeoManeuverPrivateDefault::setId(const QString id)
+{
+    m_id = id;
+}
+
+QGeoCoordinate QGeoManeuverPrivateDefault::position() const
+{
+    return m_position;
+}
+
+void QGeoManeuverPrivateDefault::setPosition(const QGeoCoordinate &position)
+{
+    m_position = position;
+}
+
+QString QGeoManeuverPrivateDefault::text() const
+{
+    return m_text;
+}
+
+void QGeoManeuverPrivateDefault::setText(const QString &text)
+{
+    m_text = text;
+}
+
+QGeoManeuver::InstructionDirection QGeoManeuverPrivateDefault::direction() const
+{
+    return m_direction;
+}
+
+void QGeoManeuverPrivateDefault::setDirection(QGeoManeuver::InstructionDirection direction)
+{
+    m_direction = direction;
+}
+
+int QGeoManeuverPrivateDefault::timeToNextInstruction() const
+{
+    return m_timeToNextInstruction;
+}
+
+void QGeoManeuverPrivateDefault::setTimeToNextInstruction(int timeToNextInstruction)
+{
+    m_timeToNextInstruction = timeToNextInstruction;
+}
+
+qreal QGeoManeuverPrivateDefault::distanceToNextInstruction() const
+{
+    return m_distanceToNextInstruction;
+}
+
+void QGeoManeuverPrivateDefault::setDistanceToNextInstruction(qreal distanceToNextInstruction)
+{
+    m_distanceToNextInstruction = distanceToNextInstruction;
+}
+
+QGeoCoordinate QGeoManeuverPrivateDefault::waypoint() const
+{
+    return m_waypoint;
+}
+
+void QGeoManeuverPrivateDefault::setWaypoint(const QGeoCoordinate &waypoint)
+{
+    m_waypoint = waypoint;
 }
 
 QT_END_NAMESPACE

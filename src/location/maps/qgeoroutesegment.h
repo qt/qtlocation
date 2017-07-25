@@ -78,9 +78,8 @@ public:
     QGeoManeuver maneuver() const;
 
 protected:
-    QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr);
+    QGeoRouteSegment(const QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &dd);
 
-private:
     QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> d_ptr;
 };
 

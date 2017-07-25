@@ -503,6 +503,14 @@ Item {
     }
 
     Plugin {
+        id: testPlugin_slacker_alt
+        name: "qmlgeo.test.plugin"
+        allowExperimental: true
+        PluginParameter { name: "gc_finishRequestImmediately"; value: false}
+        PluginParameter { name: "gc_alternateGeoRoute"; value: true}
+    }
+
+    Plugin {
         id: bacicRoutingPlugin_slacker;
         name: "qmlgeo.test.plugin"
         allowExperimental: true
@@ -529,24 +537,27 @@ Item {
     property variant f2coordinate3: QtPositioning.coordinate(63, 64)
 
     RouteQuery {id: routeQuery}
+    property var routeQueryDefaultWaypoints: [
+        { latitude: 60, longitude: 60 },
+        { latitude: 61, longitude: 62 },
+        { latitude: 63, longitude: 64 },
+        { latitude: 65, longitude: 66 },
+        { latitude: 67, longitude: 68 }
+    ]
+    property var routeQuery2DefaultWaypoints: [
+        f2coordinate1,
+        f2coordinate2,
+        f2coordinate3
+    ]
     RouteQuery {
         id: filledRouteQuery
         numberAlternativeRoutes: 0
-        waypoints: [
-            { latitude: 60, longitude: 60 },
-            { latitude: 61, longitude: 62 },
-            { latitude: 63, longitude: 64 },
-            { latitude: 65, longitude: 66 },
-            { latitude: 67, longitude: 68 }
-        ]
+        waypoints: routeQueryDefaultWaypoints
     }
     RouteQuery {
         id: filledRouteQuery2
-        waypoints: [
-            f2coordinate1,
-            f2coordinate2,
-            f2coordinate3
-        ]
+        numberAlternativeRoutes: 0
+        waypoints: routeQuery2DefaultWaypoints
     }
     RouteModel {
         id: routeModelAutomatic;
@@ -554,8 +565,15 @@ Item {
         query: filledRouteQuery;
         autoUpdate: true
     }
+    RouteModel {
+        id: routeModelAutomaticAltImpl;
+        plugin: testPlugin_slacker_alt;
+        query: filledRouteQuery;
+        autoUpdate: true
+    }
 
     SignalSpy {id: automaticRoutesSpy; target: routeModelAutomatic; signalName: "routesChanged" }
+    SignalSpy {id: automaticRoutesSpyAlt; target: routeModelAutomaticAltImpl; signalName: "routesChanged" }
 
     RouteModel {id: routeModel; plugin: testPlugin_immediate; query: routeQuery }
     SignalSpy {id: testRoutesSpy; target: routeModel; signalName: "routesChanged"}
@@ -740,26 +758,34 @@ Item {
             compare(testCountSlackSpy.count, 1)
             compare(routeModelSlack.count, 1)
 
+            test_basic_routing_automatic(routeModelAutomatic, automaticRoutesSpy, "routeModelAutomatic")
+            test_basic_routing_automatic(routeModelAutomaticAltImpl, automaticRoutesSpyAlt, "routeModelAutomaticAltImpl")
+        }
+
+        function test_basic_routing_automatic(model, spy, label) {
+            if (label === undefined)
+                return
+            console.log("testing",label)
             // Autoupdate
-            automaticRoutesSpy.clear();
+            spy.clear();
             filledRouteQuery.numberAlternativeRoutes = 1 // 'altroutes - 70' is the echoed errorcode
-            tryCompare (automaticRoutesSpy, "count", 1) // 5 sec
-            compare(routeModelAutomatic.count, 1) // There should be a route already
-            compare (routeModelAutomatic.get(0).path.length, 5)
-            compare (routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
+            tryCompare (spy, "count", 1) // 5 sec
+            compare(model.count, 1) // There should be a route already
+            compare (model.get(0).path.length, 5)
+            compare (model.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
 
             // Remove a waypoint and check that autoupdate works
             filledRouteQuery.removeWaypoint(fcoordinate2)
-            tryCompare (automaticRoutesSpy, "count", 2)
-            compare (routeModelAutomatic.get(0).path.length, 4)
-            compare (routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude)
+            tryCompare (spy, "count", 2)
+            compare (model.get(0).path.length, 4)
+            compare (model.get(0).path[0].latitude, fcoordinate1.latitude)
 
             // Add a waypoint and check that autoupdate works
             filledRouteQuery.addWaypoint(fcoordinate2);
-            tryCompare (automaticRoutesSpy, "count", 3)
-            compare(routeModelAutomatic.count, 1);
-            compare(routeModelAutomatic.get(0).path.length, 5);
-            compare(routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude);
+            tryCompare (spy, "count", 3)
+            compare(model.count, 1);
+            compare(model.get(0).path.length, 5);
+            compare(model.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude);
 
             // Change contents of a coordinate and check that autoupdate works
             filledRouteQuery.waypoints = [
@@ -769,14 +795,14 @@ Item {
                 { latitude: 65, longitude: 66 },
                 { latitude: 67, longitude: 68 }
             ];
-            tryCompare (automaticRoutesSpy, "count", 4)
-            compare(routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
+            tryCompare (spy, "count", 4)
+            compare(model.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
 
             // Change query
-            routeModelAutomatic.query = filledRouteQuery2
+            model.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
-            tryCompare (automaticRoutesSpy, "count", 5)
-            compare (routeModelAutomatic.get(0).path.length, 3)
+            tryCompare (spy, "count", 5)
+            compare (model.get(0).path.length, 3)
 
             // Verify that the old query is disconnected internally ie. does not trigger update
             filledRouteQuery.waypoints = [
@@ -787,9 +813,17 @@ Item {
                 { latitude: 67, longitude: 68 }
             ];
             wait(800) // wait to hope no further updates comes through
-            compare (automaticRoutesSpy.count, 5)
-            compare(routeModelAutomatic.get(0).path.length, 3);
+            compare (spy.count, 5)
+            compare(model.get(0).path.length, 3);
+
+            // ReSetting
+            filledRouteQuery.numberAlternativeRoutes = 0
+            filledRouteQuery2.numberAlternativeRoutes = 0
+            filledRouteQuery.waypoints = routeQueryDefaultWaypoints
+            filledRouteQuery2.waypoints = routeQuery2DefaultWaypoints
         }
+
+
 
         function test_route_query_handles_destroyed_qml_objects() {
             var coordinate = QtPositioning.coordinate(11, 52);

@@ -71,7 +71,14 @@ QT_BEGIN_NAMESPACE
     Constructs a route object.
 */
 QGeoRoute::QGeoRoute()
-    : d_ptr(new QGeoRoutePrivate()) {}
+    : d_ptr(new QGeoRoutePrivateDefault()) {}
+
+/*!
+    Constructs a route object using dd as private implementation.
+*/
+QGeoRoute::QGeoRoute(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd): d_ptr(dd)
+{
+}
 
 /*!
     Constructs a route object from the contents of \a other.
@@ -104,7 +111,8 @@ QGeoRoute &QGeoRoute::operator= (const QGeoRoute & other)
 */
 bool QGeoRoute::operator ==(const QGeoRoute &other) const
 {
-    return (*d_ptr.constData() == *other.d_ptr.constData());
+    return ( (d_ptr.constData() == other.d_ptr.constData())
+            || (*d_ptr) == (*other.d_ptr));
 }
 
 /*!
@@ -112,7 +120,7 @@ bool QGeoRoute::operator ==(const QGeoRoute &other) const
 */
 bool QGeoRoute::operator !=(const QGeoRoute &other) const
 {
-    return !(*d_ptr.constData() == *other.d_ptr.constData());
+    return !(operator==(other));
 }
 
 /*!
@@ -124,7 +132,7 @@ bool QGeoRoute::operator !=(const QGeoRoute &other) const
 */
 void QGeoRoute::setRouteId(const QString &id)
 {
-    d_ptr->id = id;
+    d_ptr->setId(id);
 }
 
 /*!
@@ -136,7 +144,7 @@ void QGeoRoute::setRouteId(const QString &id)
 */
 QString QGeoRoute::routeId() const
 {
-    return d_ptr->id;
+    return d_ptr->id();
 }
 
 /*!
@@ -145,7 +153,7 @@ QString QGeoRoute::routeId() const
 */
 void QGeoRoute::setRequest(const QGeoRouteRequest &request)
 {
-    d_ptr->request = request;
+    d_ptr->setRequest(request);
 }
 
 /*!
@@ -154,7 +162,7 @@ void QGeoRoute::setRequest(const QGeoRouteRequest &request)
 */
 QGeoRouteRequest QGeoRoute::request() const
 {
-    return d_ptr->request;
+    return d_ptr->request();
 }
 
 /*!
@@ -162,7 +170,7 @@ QGeoRouteRequest QGeoRoute::request() const
 */
 void QGeoRoute::setBounds(const QGeoRectangle &bounds)
 {
-    d_ptr->bounds = bounds;
+    d_ptr->setBounds(bounds);
 }
 
 /*!
@@ -170,7 +178,7 @@ void QGeoRoute::setBounds(const QGeoRectangle &bounds)
 */
 QGeoRectangle QGeoRoute::bounds() const
 {
-    return d_ptr->bounds;
+    return d_ptr->bounds();
 }
 
 /*!
@@ -178,7 +186,7 @@ QGeoRectangle QGeoRoute::bounds() const
 */
 void QGeoRoute::setFirstRouteSegment(const QGeoRouteSegment &routeSegment)
 {
-    d_ptr->firstSegment = routeSegment;
+    d_ptr->setFirstSegment(routeSegment);
 }
 
 /*!
@@ -192,7 +200,7 @@ void QGeoRoute::setFirstRouteSegment(const QGeoRouteSegment &routeSegment)
 */
 QGeoRouteSegment QGeoRoute::firstRouteSegment() const
 {
-    return d_ptr->firstSegment;
+    return d_ptr->firstSegment();
 }
 
 /*!
@@ -201,7 +209,7 @@ QGeoRouteSegment QGeoRoute::firstRouteSegment() const
 */
 void QGeoRoute::setTravelTime(int secs)
 {
-    d_ptr->travelTime = secs;
+    d_ptr->setTravelTime(secs);
 }
 
 /*!
@@ -210,7 +218,7 @@ void QGeoRoute::setTravelTime(int secs)
 */
 int QGeoRoute::travelTime() const
 {
-    return d_ptr->travelTime;
+    return d_ptr->travelTime();
 }
 
 /*!
@@ -218,7 +226,7 @@ int QGeoRoute::travelTime() const
 */
 void QGeoRoute::setDistance(qreal distance)
 {
-    d_ptr->distance = distance;
+    d_ptr->setDistance(distance);
 }
 
 /*!
@@ -226,7 +234,7 @@ void QGeoRoute::setDistance(qreal distance)
 */
 qreal QGeoRoute::distance() const
 {
-    return d_ptr->distance;
+    return d_ptr->distance();
 }
 
 /*!
@@ -236,7 +244,7 @@ qreal QGeoRoute::distance() const
 */
 void QGeoRoute::setTravelMode(QGeoRouteRequest::TravelMode mode)
 {
-    d_ptr->travelMode = mode;
+    d_ptr->setTravelMode(mode);
 }
 
 /*!
@@ -246,7 +254,7 @@ void QGeoRoute::setTravelMode(QGeoRouteRequest::TravelMode mode)
 */
 QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
 {
-    return d_ptr->travelMode;
+    return d_ptr->travelMode();
 }
 
 /*!
@@ -257,7 +265,7 @@ QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
 */
 void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 {
-    d_ptr->path = path;
+    d_ptr->setPath(path);
 }
 
 /*!
@@ -268,34 +276,37 @@ void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 */
 QList<QGeoCoordinate> QGeoRoute::path() const
 {
-    return d_ptr->path;
+    return d_ptr->path();
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoRoutePrivate::QGeoRoutePrivate()
-    : travelTime(0),
-      distance(0.0),
-      travelMode(QGeoRouteRequest::CarTravel) {}
+{
 
-QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
-    : QSharedData(other),
-      id(other.id),
-      request(other.request),
-      bounds(other.bounds),
-      travelTime(other.travelTime),
-      distance(other.distance),
-      travelMode(other.travelMode),
-      path(other.path),
-      firstSegment(other.firstSegment) {}
+}
+
+QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other) : QSharedData(other)
+{
+
+}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
 bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
 {
-    QGeoRouteSegment s1 = firstSegment;
-    QGeoRouteSegment s2 = other.firstSegment;
+    return equals(other);
+}
+
+bool QGeoRoutePrivate::equals(const QGeoRoutePrivate &other) const
+{
+    if (!other.engineName().isEmpty()) // only way to know if other comes from an engine without dynamic_cast
+        return false;
+
+    // here both routes are of type QGeoRoutePrivateDefault
+    QGeoRouteSegment s1 = firstSegment();
+    QGeoRouteSegment s2 = other.firstSegment();
 
     while (true) {
         if (s1.isValid() != s2.isValid())
@@ -308,13 +319,219 @@ bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
         s2 = s2.nextRouteSegment();
     }
 
-    return ((id == other.id)
-            && (request == other.request)
-            && (bounds == other.bounds)
-            && (travelTime == other.travelTime)
-            && (distance == other.distance)
-            && (travelMode == other.travelMode)
-            && (path == other.path));
+    return ((id() == other.id())
+            && (request() == other.request())
+            && (bounds() == other.bounds())
+            && (travelTime() == other.travelTime())
+            && (distance() == other.distance())
+            && (travelMode() == other.travelMode())
+            && (path() == other.path()));
+}
+
+void QGeoRoutePrivate::setId(const QString &id)
+{
+    Q_UNUSED(id)
+}
+
+QString QGeoRoutePrivate::id() const
+{
+    return QString();
+}
+
+void QGeoRoutePrivate::setRequest(const QGeoRouteRequest &request)
+{
+    Q_UNUSED(request)
+}
+
+QGeoRouteRequest QGeoRoutePrivate::request() const
+{
+    return QGeoRouteRequest();
+}
+
+void QGeoRoutePrivate::setBounds(const QGeoRectangle &bounds)
+{
+    Q_UNUSED(bounds)
+}
+
+QGeoRectangle QGeoRoutePrivate::bounds() const
+{
+    return QGeoRectangle();
+}
+
+void QGeoRoutePrivate::setTravelTime(int travelTime)
+{
+    Q_UNUSED(travelTime)
+}
+
+int QGeoRoutePrivate::travelTime() const
+{
+    return 0;
+}
+
+void QGeoRoutePrivate::setDistance(qreal distance)
+{
+    Q_UNUSED(distance)
+}
+
+qreal QGeoRoutePrivate::distance() const
+{
+    return 0;
+}
+
+void QGeoRoutePrivate::setTravelMode(QGeoRouteRequest::TravelMode mode)
+{
+    Q_UNUSED(mode)
+}
+
+QGeoRouteRequest::TravelMode QGeoRoutePrivate::travelMode() const
+{
+    return QGeoRouteRequest::CarTravel;
+}
+
+void QGeoRoutePrivate::setPath(const QList<QGeoCoordinate> &path)
+{
+    Q_UNUSED(path)
+}
+
+QList<QGeoCoordinate> QGeoRoutePrivate::path() const
+{
+    return QList<QGeoCoordinate>();
+}
+
+void QGeoRoutePrivate::setFirstSegment(const QGeoRouteSegment &firstSegment)
+{
+    Q_UNUSED(firstSegment)
+}
+
+QGeoRouteSegment QGeoRoutePrivate::firstSegment() const
+{
+    return QGeoRouteSegment();
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+
+QGeoRoutePrivateDefault::QGeoRoutePrivateDefault()
+    : m_travelTime(0),
+      m_distance(0.0),
+      m_travelMode(QGeoRouteRequest::CarTravel),
+      m_numSegments(-1) {}
+
+QGeoRoutePrivateDefault::QGeoRoutePrivateDefault(const QGeoRoutePrivateDefault &other)
+    : QGeoRoutePrivate(other),
+      m_id(other.m_id),
+      m_request(other.m_request),
+      m_bounds(other.m_bounds),
+      m_routeSegments(other.m_routeSegments),
+      m_travelTime(other.m_travelTime),
+      m_distance(other.m_distance),
+      m_travelMode(other.m_travelMode),
+      m_path(other.m_path),
+      m_firstSegment(other.m_firstSegment),
+      m_numSegments(other.m_numSegments){}
+
+
+QGeoRoutePrivateDefault::~QGeoRoutePrivateDefault() {}
+
+void QGeoRoutePrivateDefault::setId(const QString &id)
+{
+    m_id = id;
+}
+
+QString QGeoRoutePrivateDefault::id() const
+{
+    return m_id;
+}
+
+void QGeoRoutePrivateDefault::setRequest(const QGeoRouteRequest &request)
+{
+    m_request = request;
+}
+
+QGeoRouteRequest QGeoRoutePrivateDefault::request() const
+{
+    return m_request;
+}
+
+void QGeoRoutePrivateDefault::setBounds(const QGeoRectangle &bounds)
+{
+    m_bounds = bounds;
+}
+
+QGeoRectangle QGeoRoutePrivateDefault::bounds() const
+{
+    return m_bounds;
+}
+
+void QGeoRoutePrivateDefault::setTravelTime(int travelTime)
+{
+    m_travelTime = travelTime;
+}
+
+int QGeoRoutePrivateDefault::travelTime() const
+{
+    return m_travelTime;
+}
+
+void QGeoRoutePrivateDefault::setDistance(qreal distance)
+{
+    m_distance = distance;
+}
+
+qreal QGeoRoutePrivateDefault::distance() const
+{
+    return m_distance;
+}
+
+void QGeoRoutePrivateDefault::setTravelMode(QGeoRouteRequest::TravelMode mode)
+{
+    m_travelMode = mode;
+}
+
+QGeoRouteRequest::TravelMode QGeoRoutePrivateDefault::travelMode() const
+{
+    return m_travelMode;
+}
+
+void QGeoRoutePrivateDefault::setPath(const QList<QGeoCoordinate> &path)
+{
+    m_path = path;
+}
+
+QList<QGeoCoordinate> QGeoRoutePrivateDefault::path() const
+{
+    return m_path;
+}
+
+void QGeoRoutePrivateDefault::setFirstSegment(const QGeoRouteSegment &firstSegment)
+{
+    m_firstSegment = firstSegment;
+}
+
+QGeoRouteSegment QGeoRoutePrivateDefault::firstSegment() const
+{
+    return m_firstSegment;
+}
+
+QString QGeoRoutePrivateDefault::engineName() const
+{
+    return QString();
+}
+
+int QGeoRoutePrivateDefault::segmentsCount() const
+{
+    if (m_numSegments >= 0)
+        return m_numSegments;
+
+    int count = 0;
+    QGeoRouteSegment segment = m_firstSegment;
+    while (segment.isValid()) {
+        ++count;
+        segment = segment.nextRouteSegment();
+    }
+    m_numSegments = count;
+    return count;
 }
 
 QT_END_NAMESPACE

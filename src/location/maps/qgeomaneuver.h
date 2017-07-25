@@ -95,7 +95,9 @@ public:
     void setWaypoint(const QGeoCoordinate &coordinate);
     QGeoCoordinate waypoint() const;
 
-private:
+protected:
+    QGeoManeuver(const QSharedDataPointer<QGeoManeuverPrivate> &dd);
+
     QSharedDataPointer<QGeoManeuverPrivate> d_ptr;
 };
 
