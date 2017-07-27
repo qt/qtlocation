@@ -121,6 +121,7 @@ private:
     QDeclarativeMapLineProperties border_;
     QColor color_;
     QList<QDoubleVector2D> circlePath_;
+    QGeoCoordinate leftBound_;
     bool dirtyMaterial_;
     QGeoMapCircleGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;

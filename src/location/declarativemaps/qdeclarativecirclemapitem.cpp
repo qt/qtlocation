@@ -278,7 +278,8 @@ static bool crossEarthPole(const QGeoCoordinate &center, qreal distance)
 static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
                                       const QGeoCoordinate &center,
                                       qreal distance,
-                                      int steps)
+                                      int steps,
+                                      QGeoCoordinate &leftBound)
 {
     // Calculate points based on great-circle distance
     // Calculation is the same as GeoCoordinate's atDistanceAndAzimuth function
@@ -287,15 +288,17 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
     // pre-calculations
     steps = qMax(steps, 3);
     qreal centerLon = center.longitude();
+    qreal minLon = centerLon;
     qreal latRad = QLocationUtils::radians(center.latitude());
     qreal lonRad = QLocationUtils::radians(centerLon);
     qreal cosLatRad = std::cos(latRad);
     qreal sinLatRad = std::sin(latRad);
-    qreal ratio = (distance / (QLocationUtils::earthMeanRadius()));
+    qreal ratio = (distance / QLocationUtils::earthMeanRadius());
     qreal cosRatio = std::cos(ratio);
     qreal sinRatio = std::sin(ratio);
     qreal sinLatRad_x_cosRatio = sinLatRad * cosRatio;
     qreal cosLatRad_x_sinRatio = cosLatRad * sinRatio;
+    int idx = 0;
     for (int i = 0; i < steps; ++i) {
         qreal azimuthRad = 2 * M_PI * i / steps;
         qreal resultLatRad = std::asin(sinLatRad_x_cosRatio
@@ -306,7 +309,17 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
         qreal lon2 = QLocationUtils::wrapLong(QLocationUtils::degrees(resultLonRad));
 
         path << QGeoCoordinate(lat2, lon2, center.altitude());
+        // Consider only points in the left half of the circle for the left bound.
+        if (azimuthRad > M_PI) {
+            if (lon2 > centerLon) // if point and center are on different hemispheres
+                lon2 -= 360;
+            if (lon2 < minLon) {
+                minLon = lon2;
+                idx = i;
+            }
+        }
     }
+    leftBound = path.at(idx);
 }
 
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
@@ -480,8 +493,10 @@ void QDeclarativeCircleMapItem::updatePolish()
 
     int pathCount = circlePath.size();
     bool preserve = preserveCircleGeometry(circlePath, circle_.center(), circle_.radius());
-    geometry_.setPreserveGeometry(true, circle_.boundingGeoRectangle().topLeft()); // to set the geoLeftBound_
-    geometry_.setPreserveGeometry(preserve, circle_.boundingGeoRectangle().topLeft());
+    // using leftBound_ instead of the analytically calculated circle_.boundingGeoRectangle().topLeft());
+    // to fix QTBUG-62154
+    geometry_.setPreserveGeometry(true, leftBound_); // to set the geoLeftBound_
+    geometry_.setPreserveGeometry(preserve, leftBound_);
 
     bool invertedCircle = false;
     if (crossEarthPole(circle_.center(), circle_.radius()) && circlePath.size() == pathCount) {
@@ -506,8 +521,8 @@ void QDeclarativeCircleMapItem::updatePolish()
             std::reverse(closedPath.begin(), closedPath.end());
         }
 
-        borderGeometry_.setPreserveGeometry(true, circle_.boundingGeoRectangle().topLeft()); // to set the geoLeftBound_
-        borderGeometry_.setPreserveGeometry(preserve, circle_.boundingGeoRectangle().topLeft());
+        borderGeometry_.setPreserveGeometry(true, leftBound_);
+        borderGeometry_.setPreserveGeometry(preserve, leftBound_);
 
         // Use srcOrigin_ from fill geometry after clipping to ensure that translateToCommonOrigin won't fail.
         const QGeoCoordinate &geometryOrigin = geometry_.origin();
@@ -553,7 +568,7 @@ void QDeclarativeCircleMapItem::updateCirclePath()
     if (!map())
         return;
     QList<QGeoCoordinate> path;
-    calculatePeripheralPoints(path, circle_.center(), circle_.radius(), CircleSamples);
+    calculatePeripheralPoints(path, circle_.center(), circle_.radius(), CircleSamples, leftBound_);
     circlePath_.clear();
     for (const QGeoCoordinate &c : path)
         circlePath_ << map()->geoProjection().geoToMapProjection(c);
