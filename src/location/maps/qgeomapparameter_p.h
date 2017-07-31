@@ -64,8 +64,8 @@ public:
     explicit QGeoMapParameter(QObject *parent = 0);
     virtual ~QGeoMapParameter();
 
-    QString type() const;
-    void setType(const QString &type);
+    virtual QString type() const;
+    virtual void setType(const QString &type);
 
     void updateProperty(const char *propertyName, QVariant value);
 
