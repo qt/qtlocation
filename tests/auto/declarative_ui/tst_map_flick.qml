@@ -105,7 +105,7 @@ Item {
             map.gesture.enabled = true
             map.gesture.panEnabled = true
             map.gesture.flickDeceleration = 500
-            map.zoomLevel = 0
+            map.zoomLevel = 9 // or flicking diagonally won't work
             map.disableOnPanStartedWithNoGesture = false
             map.disableOnFlickStartedWithNoGesture = false
             map.disableOnPanStartedWithDisabled = false
@@ -238,12 +238,12 @@ Item {
         {
             map.center.latitude = 50
             map.center.longitude = 50
-            mousePress(page, 2, 2)
-            var pos;
-            for (var i = 0; i < 50; i += 5) {
+            var pos = 5
+            mousePress(page, pos, pos)
+            for (var i = pos; i < 50; i += 5) {
+                pos = i
                 wait(20)
-                mouseMove(page, i, i, 0, Qt.LeftButton);
-                pos = i;
+                mouseMove(page, pos, pos, 0, Qt.LeftButton);
             }
             mouseRelease(page, pos, pos)
             verify(map.center.latitude > 50)
