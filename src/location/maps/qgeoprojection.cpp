@@ -491,11 +491,17 @@ void QGeoProjectionWebMercator::updateVisibleRegion()
     QDoubleVector2D bl = viewportToWrappedMapProjection(QDoubleVector2D(-1,  1 ));
     QDoubleVector2D br = viewportToWrappedMapProjection(QDoubleVector2D( 1,  1 ));
 
+    // To make sure that what is returned can be safely converted back to lat/lon without risking overlaps
+    double mapLeftLongitude = QLocationUtils::mapLeftLongitude(m_cameraData.center().longitude());
+    double mapRightLongitude = QLocationUtils::mapRightLongitude(m_cameraData.center().longitude());
+    double leftX = geoToWrappedMapProjection(QGeoCoordinate(0, mapLeftLongitude)).x();
+    double rightX = geoToWrappedMapProjection(QGeoCoordinate(0, mapRightLongitude)).x();
+
     QList<QDoubleVector2D> mapRect;
-    mapRect.push_back(QDoubleVector2D(-1.0, 1.0));
-    mapRect.push_back(QDoubleVector2D( 2.0, 1.0));
-    mapRect.push_back(QDoubleVector2D( 2.0, 0.0));
-    mapRect.push_back(QDoubleVector2D(-1.0, 0.0));
+    mapRect.push_back(QDoubleVector2D(leftX, 1.0));
+    mapRect.push_back(QDoubleVector2D(rightX, 1.0));
+    mapRect.push_back(QDoubleVector2D(rightX, 0.0));
+    mapRect.push_back(QDoubleVector2D(leftX, 0.0));
 
     QList<QDoubleVector2D> viewportRect;
     viewportRect.push_back(bl);
@@ -514,6 +520,12 @@ void QGeoProjectionWebMercator::updateVisibleRegion()
         m_visibleRegion = QClipperUtils::pathToQList(res[0]); // Intersection between two convex quadrilaterals should always be a single polygon
 
     m_projectableRegion.clear();
+    mapRect.clear();
+    // The full map rectangle in extended mercator space
+    mapRect.push_back(QDoubleVector2D(-1.0, 1.0));
+    mapRect.push_back(QDoubleVector2D( 2.0, 1.0));
+    mapRect.push_back(QDoubleVector2D( 2.0, 0.0));
+    mapRect.push_back(QDoubleVector2D(-1.0, 0.0));
     if (m_cameraData.tilt() == 0) {
         m_projectableRegion = mapRect;
     } else {

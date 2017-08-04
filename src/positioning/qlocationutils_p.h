@@ -55,7 +55,7 @@
 #include <qmath.h>
 #include <QtPositioning/QGeoCoordinate>
 
-static const double offsetEpsilon = 0.0000000000001;
+static const double offsetEpsilon = 1e-12; // = 0.000000000001
 static const double leftOffset = -180.0 + offsetEpsilon;
 static const double rightOffset = 180.0 - offsetEpsilon;
 

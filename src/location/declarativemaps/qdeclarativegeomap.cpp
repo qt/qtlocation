@@ -1323,20 +1323,21 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
 
     const QList<QDoubleVector2D> &visibleRegion = m_map->geoProjection().visibleRegion();
     QGeoPath path;
-    for (const QDoubleVector2D &c: visibleRegion)
+    for (int i = 0; i < visibleRegion.size(); ++i) {
+         const QDoubleVector2D &c = visibleRegion.at(i);
+        // If a segment spans more than half of the map longitudinally, split in 2.
+        if (i && qAbs(visibleRegion.at(i-1).x() - c.x()) >= 0.5) { // This assumes a segment is never >= 1.0 (whole map span)
+            QDoubleVector2D extraPoint = (visibleRegion.at(i-1) + c) * 0.5;
+            path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
+        }
         path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
-
-    QGeoRectangle vr = path.boundingGeoRectangle();
-
-    bool empty = vr.topLeft().latitude() == vr.bottomRight().latitude() ||
-            qFuzzyCompare(vr.topLeft().longitude(), vr.bottomRight().longitude()); // QTBUG-57690
-
-    if (empty) {
-        vr.setTopLeft(QGeoCoordinate(vr.topLeft().latitude(), -180));
-        vr.setBottomRight(QGeoCoordinate(vr.bottomRight().latitude(), 180));
+    }
+    if (visibleRegion.size() >= 2 && qAbs(visibleRegion.last().x() - visibleRegion.first().x()) >= 0.5) {
+        QDoubleVector2D extraPoint = (visibleRegion.last() + visibleRegion.first()) * 0.5;
+        path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
     }
 
-    return vr;
+    return path.boundingGeoRectangle();
 }
 
 /*!
