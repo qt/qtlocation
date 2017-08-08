@@ -102,7 +102,6 @@ private:
     QString m_layer;
     QString m_property;
     QVariant m_value;
-    QString m_class;
 };
 
 class QMapboxGLStyleAddLayer : public QMapboxGLStyleChange
