@@ -1423,7 +1423,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
     QGeoCoordinate centerCoordinate = m_map->geoProjection().mapProjectionToGeo(center);
 
     // position camera to the center of bounding box
-    setCenter(centerCoordinate);
+    setProperty("center", QVariant::fromValue(centerCoordinate)); // not using setCenter(centerCoordinate) to honor a possible animation set on the center property
 
     // if the shape is empty we just change center position, not zoom
     double bboxWidth  = (bottomRightPoint.x() - topLeftPoint.x()) * m_map->mapWidth();
@@ -1436,7 +1436,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
                             bboxHeight / (height() - margins));
     zoomRatio = std::log(zoomRatio) / std::log(2.0);
     double newZoom = qMax<double>(minimumZoomLevel(), zoomLevel() - zoomRatio);
-    setZoomLevel(newZoom);
+    setProperty("zoomLevel", QVariant::fromValue(newZoom)); // not using setZoomLevel(newZoom)  to honor a possible animation set on the zoomLevel property
 }
 
 
