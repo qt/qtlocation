@@ -104,7 +104,7 @@ QGeoRoute &QGeoRoute::operator= (const QGeoRoute & other)
 */
 bool QGeoRoute::operator ==(const QGeoRoute &other) const
 {
-    return (d_ptr.constData() == other.d_ptr.constData());
+    return (*d_ptr.constData() == *other.d_ptr.constData());
 }
 
 /*!
@@ -112,7 +112,7 @@ bool QGeoRoute::operator ==(const QGeoRoute &other) const
 */
 bool QGeoRoute::operator !=(const QGeoRoute &other) const
 {
-    return (d_ptr.constData() != other.d_ptr.constData());
+    return !(*d_ptr.constData() == *other.d_ptr.constData());
 }
 
 /*!
