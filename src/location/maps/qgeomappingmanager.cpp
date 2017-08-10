@@ -133,10 +133,8 @@ int QGeoMappingManager::managerVersion() const
 */
 QGeoMap *QGeoMappingManager::createMap(QObject *parent)
 {
-    QGeoMap * map = d_ptr->engine->createMap();
-    if (map)
-        connect(parent, &QObject::destroyed,map, &QGeoMap::deleteLater);
-    return map;
+    Q_UNUSED(parent)
+    return d_ptr->engine->createMap();
 }
 
 QList<QGeoMapType> QGeoMappingManager::supportedMapTypes() const

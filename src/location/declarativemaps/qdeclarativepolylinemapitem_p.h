@@ -141,6 +141,7 @@ public:
 
     QJSValue path() const;
     virtual void setPath(const QJSValue &value);
+    Q_INVOKABLE void setPath(const QGeoPath &path);
 
     bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
     const QGeoShape &geoShape() const Q_DECL_OVERRIDE;

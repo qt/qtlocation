@@ -155,11 +155,17 @@ public:
 
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
+    Q_INVOKABLE void setBearing(qreal bearing, const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void alignCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &point);
+
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItemBase *item);
 
     Q_INVOKABLE void addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup);
     Q_INVOKABLE void removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup);
+
+    Q_INVOKABLE void removeMapItemView(QDeclarativeGeoMapItemView *itemView);
+    Q_INVOKABLE void addMapItemView(QDeclarativeGeoMapItemView *itemView);
 
     Q_INVOKABLE void clearMapItems();
     QList<QObject *> mapItems();
@@ -252,7 +258,7 @@ private:
     QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
     QQuickGeoMapGestureArea *m_gestureArea;
-    QPointer<QGeoMap> m_map;
+    QGeoMap* m_map = nullptr;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
     QList<QPointer<QDeclarativeGeoMapItemGroup> > m_mapItemGroups;

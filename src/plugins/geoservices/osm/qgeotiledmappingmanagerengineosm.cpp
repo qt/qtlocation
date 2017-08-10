@@ -164,25 +164,25 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     /* QGeoTileProviderOsms setup */
     const QByteArray pluginName = "osm";
     m_providers.push_back( new QGeoTileProviderOsm( nm,
-            QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1, pluginName),
+            QGeoMapType(QGeoMapType::StreetMap, tr("Street Map"), tr("Street map view in daylight mode"), false, false, 1, pluginName, cameraCaps),
             providers_street, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
-            QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2, pluginName),
+            QGeoMapType(QGeoMapType::SatelliteMapDay, tr("Satellite Map"), tr("Satellite map view in daylight mode"), false, false, 2, pluginName, cameraCaps),
             providers_satellite, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
-            QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3, pluginName),
+            QGeoMapType(QGeoMapType::CycleMap, tr("Cycle Map"), tr("Cycle map view in daylight mode"), false, false, 3, pluginName, cameraCaps),
             providers_cycle, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
-            QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Public transit map view in daylight mode"), false, false, 4, pluginName),
+            QGeoMapType(QGeoMapType::TransitMap, tr("Transit Map"), tr("Public transit map view in daylight mode"), false, false, 4, pluginName, cameraCaps),
             providers_transit, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
-            QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5, pluginName),
+            QGeoMapType(QGeoMapType::TransitMap, tr("Night Transit Map"), tr("Public transit map view in night mode"), false, true, 5, pluginName, cameraCaps),
             providers_nighttransit, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
-            QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6, pluginName),
+            QGeoMapType(QGeoMapType::TerrainMap, tr("Terrain Map"), tr("Terrain map view"), false, false, 6, pluginName, cameraCaps),
             providers_terrain, cameraCaps ));
     m_providers.push_back( new QGeoTileProviderOsm( nm,
-            QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7, pluginName),
+            QGeoMapType(QGeoMapType::PedestrianMap, tr("Hiking Map"), tr("Hiking map view"), false, false, 7, pluginName, cameraCaps),
             providers_hiking, cameraCaps ));
 
     if (parameters.contains(QStringLiteral("osm.mapping.custom.host"))
@@ -206,7 +206,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
 
         m_providers.push_back(
             new QGeoTileProviderOsm( nm,
-                QGeoMapType(QGeoMapType::CustomMap, tr("Custom URL Map"), tr("Custom url map view set via urlprefix parameter"), false, false, 8, pluginName),
+                QGeoMapType(QGeoMapType::CustomMap, tr("Custom URL Map"), tr("Custom url map view set via urlprefix parameter"), false, false, 8, pluginName, cameraCaps),
                 { new TileProvider(tmsServer + QStringLiteral("%z/%x/%y.png"),
                     QStringLiteral("png"),
                     mapCopyright,
@@ -349,16 +349,6 @@ const QVector<QGeoTileProviderOsm *> &QGeoTiledMappingManagerEngineOsm::provider
 QString QGeoTiledMappingManagerEngineOsm::customCopyright() const
 {
     return m_customCopyright;
-}
-
-QGeoCameraCapabilities QGeoTiledMappingManagerEngineOsm::cameraCapabilities(int mapId) const
-{
-    if (mapId == 0)
-        return QGeoMappingManagerEngine::cameraCapabilities(mapId);
-    int idx = mapId - 1;
-    if (idx >= m_providers.size())
-        return QGeoMappingManagerEngine::cameraCapabilities(mapId);
-    return m_providers[idx]->cameraCapabilities();
 }
 
 void QGeoTiledMappingManagerEngineOsm::onProviderResolutionFinished(const QGeoTileProviderOsm *provider)

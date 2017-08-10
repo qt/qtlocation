@@ -51,6 +51,8 @@
 #include <QtCore/QString>
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
+#include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 
@@ -59,7 +61,7 @@ class QGeoMapTypePrivate;
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapType
 {
 public:
-    enum MapStyle {
+    enum MapStyle { // ### Qt6: change this to be a QFlags instead, or remove.
         NoMap = 0,
         StreetMap,
         SatelliteMapDay,
@@ -77,7 +79,9 @@ public:
     QGeoMapType();
     QGeoMapType(const QGeoMapType &other);
     QGeoMapType(MapStyle style, const QString &name, const QString &description, bool mobile,
-                bool night, int mapId, QByteArray pluginName);
+                bool night, int mapId, const QByteArray &pluginName,
+                const QGeoCameraCapabilities &cameraCapabilities,
+                const QVariantMap &metadata = QVariantMap());
     ~QGeoMapType();
 
     QGeoMapType &operator = (const QGeoMapType &other);
@@ -92,6 +96,8 @@ public:
     bool night() const;
     int mapId() const;
     QByteArray pluginName() const;
+    QGeoCameraCapabilities cameraCapabilities() const;
+    QVariantMap metadata() const;
 
 private:
     QSharedDataPointer<QGeoMapTypePrivate> d_ptr;

@@ -70,25 +70,25 @@ QGeoMappingManagerEngineMapboxGL::QGeoMappingManagerEngineMapboxGL(const QVarian
     const QByteArray pluginName = "mapboxgl";
 
     mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox://styles/mapbox/streets-v10"),
-            tr("Streets"), false, false, ++mapId, pluginName);
+            tr("Streets"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox://styles/mapbox/basic-v9"),
-            tr("Basic"), false, false, ++mapId, pluginName);
+            tr("Basic"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::StreetMap, QStringLiteral("mapbox://styles/mapbox/bright-v9"),
-            tr("Bright"), false, false, ++mapId, pluginName);
+            tr("Bright"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::TerrainMap, QStringLiteral("mapbox://styles/mapbox/outdoors-v10"),
-            tr("Outdoors"), false, false, ++mapId, pluginName);
+            tr("Outdoors"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, QStringLiteral("mapbox://styles/mapbox/satellite-v9"),
-            tr("Satellite"), false, false, ++mapId, pluginName);
+            tr("Satellite"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::HybridMap, QStringLiteral("mapbox://styles/mapbox/satellite-streets-v10"),
-            tr("Satellite Streets"), false, false, ++mapId, pluginName);
+            tr("Satellite Streets"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::GrayStreetMap, QStringLiteral("mapbox://styles/mapbox/light-v9"),
-            tr("Light"), false, false, ++mapId, pluginName);
+            tr("Light"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::GrayStreetMap, QStringLiteral("mapbox://styles/mapbox/dark-v9"),
-            tr("Dark"), false, false, ++mapId, pluginName);
+            tr("Dark"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::TransitMap, QStringLiteral("mapbox://styles/mapbox/traffic-day-v1"),
-            tr("Streets Traffic Day"), false, false, ++mapId, pluginName);
+            tr("Streets Traffic Day"), false, false, ++mapId, pluginName, cameraCaps);
     mapTypes << QGeoMapType(QGeoMapType::TransitMap, QStringLiteral("mapbox://styles/mapbox/traffic-night-v1"),
-            tr("Streets Traffic Night"), false, true, ++mapId, pluginName);
+            tr("Streets Traffic Night"), false, true, ++mapId, pluginName, cameraCaps);
 
     if (parameters.contains(QStringLiteral("mapboxgl.mapping.additional_style_urls"))) {
         const QString ids = parameters.value(QStringLiteral("mapboxgl.mapping.additional_style_urls")).toString();
@@ -99,7 +99,7 @@ QGeoMappingManagerEngineMapboxGL::QGeoMappingManagerEngineMapboxGL(const QVarian
                 continue;
 
             mapTypes.prepend(QGeoMapType(QGeoMapType::CustomMap, *it,
-                    tr("User provided style"), false, false, ++mapId, pluginName));
+                    tr("User provided style"), false, false, ++mapId, pluginName, cameraCaps));
         }
     }
 

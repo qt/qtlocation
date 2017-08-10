@@ -173,6 +173,8 @@ void QGeoTileProviderOsm::disableRedirection()
     for (TileProvider *p: m_providerList) {
         if (p->isValid() && !found) {
             m_provider = p;
+            m_providerId = m_providerList.indexOf(p);
+            m_status = Resolved;
             found = true;
         }
         p->disconnect(this);
@@ -234,7 +236,8 @@ void QGeoTileProviderOsm::updateCameraCapabilities()
     m_cameraCapabilities.setMinimumZoomLevel(minimumZoomLevel());
     m_cameraCapabilities.setMaximumZoomLevel(maximumZoomLevel());
 
-    // Pushing the change
+    m_mapType = QGeoMapType(m_mapType.style(), m_mapType.name(), m_mapType.description(), m_mapType.mobile(),
+                            m_mapType.night(), m_mapType.mapId(), m_mapType.pluginName(), m_cameraCapabilities);
 }
 
 void QGeoTileProviderOsm::addProvider(TileProvider *provider)

@@ -154,7 +154,13 @@ QGeoCameraCapabilities QGeoMappingManagerEngine::cameraCapabilities(int mapId) c
 {
     Q_UNUSED(mapId)
     Q_D(const QGeoMappingManagerEngine);
-    return d->capabilities_;
+
+    if (mapId == 0)
+        return d->capabilities_;
+    int idx = mapId - 1;
+    if (idx >= supportedMapTypes().size())
+        return d->capabilities_;
+    return supportedMapTypes().at(idx).cameraCapabilities();
 }
 
 void QGeoMappingManagerEngine::setCameraCapabilities(const QGeoCameraCapabilities &capabilities)

@@ -157,6 +157,17 @@ Item {
     }
 
     MapPolyline {
+        id: polylineForSetpath
+        line.width: 3
+        path: [
+            { latitude: 20, longitude: 175 },
+            { latitude: 20, longitude: -175 },
+            { latitude: 10, longitude: -175 },
+            { latitude: 10, longitude: 175 }
+        ]
+    }
+
+    MapPolyline {
         id: extMapPolylineDateline
         line.width : 3
         path: [
@@ -393,6 +404,33 @@ Item {
             verify(extMapPolyline.path.length == 1)
             extMapPolyline.removeCoordinate(extMapPolyline.path[0])
             verify(extMapPolyline.path.length == 0)
+        }
+
+        function test_polyline_setpath()
+        {
+            compare (polylineForSetpath.line.width, 3.0)
+            verify(polylineForSetpath.path.length == 4)
+            compare(polylineForSetpath.path[0], QtPositioning.coordinate(20, 175))
+            compare(polylineForSetpath.path[3], QtPositioning.coordinate(10, 175))
+
+
+            var originalPath = QtPositioning.shapeToPath(polylineForSetpath.geoShape)
+
+            var geoPath = QtPositioning.path([   { latitude: 20, longitude: -15 },
+                                                 { latitude: 20, longitude: -5 },
+                                                 { latitude: 10, longitude: -5 },
+                                                 { latitude: 10, longitude: -15 },
+                                                 { latitude: 10, longitude: -105 } ], 50)
+
+            polylineForSetpath.setPath(geoPath)
+            verify(polylineForSetpath.path.length == 5)
+            compare(polylineForSetpath.path[0], QtPositioning.coordinate(20, -15))
+            compare(polylineForSetpath.path[3], QtPositioning.coordinate(10, -15))
+
+            polylineForSetpath.setPath(originalPath)
+            verify(polylineForSetpath.path.length == 4)
+            compare(polylineForSetpath.path[0], QtPositioning.coordinate(20, 175))
+            compare(polylineForSetpath.path[3], QtPositioning.coordinate(10, 175))
         }
 
     /*

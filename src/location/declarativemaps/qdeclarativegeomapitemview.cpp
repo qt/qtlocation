@@ -431,6 +431,9 @@ void QDeclarativeGeoMapItemView::instantiateAllItems()
     fitViewport();
 }
 
+/*
+ *  used internally
+*/
 void QDeclarativeGeoMapItemView::removeItemData(QDeclarativeGeoMapItemViewItemData *itemData)
 {
     if (!itemData)

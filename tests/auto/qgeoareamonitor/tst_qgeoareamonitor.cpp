@@ -746,7 +746,6 @@ private slots:
 
     void debug()
     {
-        QSKIP("Waiting for upcoming QDateTime debug operator changes being integrated");
         QFETCH(QGeoAreaMonitorInfo, info);
         QFETCH(int, nextValue);
         QFETCH(QString, debugString);

@@ -7,8 +7,6 @@ SUBDIRS += positioning
 positioning.depends = 3rdparty/clip2tri
 
 qtHaveModule(quick) {
-    plugins.depends += positioning
-
     SUBDIRS += location
     location.depends += positioning 3rdparty/clip2tri
 
@@ -18,6 +16,7 @@ qtHaveModule(quick) {
     imports.depends += positioning location
 }
 
+plugins.depends += positioning
 SUBDIRS += plugins
 
 !android:contains(QT_CONFIG, private_tests) {

@@ -46,6 +46,35 @@ Item {
                                 && mapForTestingListModel.mapReady
                                 && mapForTestingRouteModel.mapReady
 
+    MapItemView {
+        id: routeItemViewExtra
+        model: routeModel
+        delegate: Component {
+            MapRoute {
+                route:  routeData
+            }
+        }
+    }
+
+    MapItemView {
+        id: listModelItemViewExtra
+        model: ListModel {
+            id: testingListModelExtra
+            ListElement { lat: 11; lon: 31 }
+            ListElement { lat: 12; lon: 32 }
+            ListElement { lat: 13; lon: 33 }
+        }
+        delegate: Component {
+            MapCircle {
+                radius: 1500000
+                center {
+                    latitude: lat
+                    longitude: lon
+                }
+            }
+        }
+    }
+
     Map {
         id: map
         objectName: 'staticallyDeclaredMap'
@@ -432,6 +461,42 @@ Item {
 
             testingListModel.clear()
             compare(mapForTestingListModel.mapItems.length, 0)
+
+            // Repopulating the model with initial data
+            testingListModel.append({ "lat": 11, "lon": 31 })
+            testingListModel.append({ "lat": 12, "lon": 32 })
+            testingListModel.append({ "lat": 13, "lon": 33 })
+        }
+
+        function test_add_extra_listmodel() {
+            tryCompare(mapForTestingListModel, "mapItemsLength", 3)
+            mapForTestingListModel.addMapItemView(listModelItemViewExtra)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 6)
+            mapForTestingListModel.removeMapItemView(listModelItemViewExtra)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 3)
+            mapForTestingListModel.addMapItemView(listModelItemViewExtra)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 6)
+            mapForTestingListModel.removeMapItemView(listModelItemView)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 3)
+            mapForTestingListModel.removeMapItemView(listModelItemViewExtra)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 0)
+            mapForTestingListModel.addMapItemView(listModelItemViewExtra)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 3)
+            testingListModelExtra.clear()
+            tryCompare(mapForTestingListModel, "mapItemsLength", 0)
+            mapForTestingListModel.removeMapItemView(listModelItemViewExtra)
+
+            mapForTestingListModel.addMapItemView(listModelItemView)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 3)
+
+            testingListModelExtra.append({ "lat": 11, "lon": 31 })
+            testingListModelExtra.append({ "lat": 12, "lon": 32 })
+            testingListModelExtra.append({ "lat": 13, "lon": 33 })
+
+            mapForTestingListModel.addMapItemView(listModelItemViewExtra)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 6)
+            mapForTestingListModel.removeMapItemView(listModelItemViewExtra)
+            tryCompare(mapForTestingListModel, "mapItemsLength", 3)
         }
 
         function test_routemodel() {
@@ -451,6 +516,18 @@ Item {
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
             tryCompare(mapForTestingRouteModel, "mapItemsLength", 3)
+
+            // Test adding the extra mapitemview fed from the same route model
+            mapForTestingRouteModel.addMapItemView(routeItemViewExtra)
+            tryCompare(mapForTestingRouteModel, "mapItemsLength", 6)
+            routeQuery.numberAlternativeRoutes = 4
+            routeModel.update();
+            tryCompare(mapForTestingRouteModel, "mapItemsLength", 8)
+            routeQuery.numberAlternativeRoutes = 3
+            routeModel.update();
+            mapForTestingRouteModel.removeMapItemView(routeItemViewExtra)
+            tryCompare(mapForTestingRouteModel, "mapItemsLength", 3)
+
             mapForTestingRouteModel.addMapItem(externalCircle2)
             compare(mapForTestingRouteModel.mapItems.length, 4)
             compare(mapForTestingRouteModel.mapItems[3], externalCircle2)

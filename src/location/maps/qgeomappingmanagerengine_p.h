@@ -90,7 +90,7 @@ public:
     QList<QGeoMapType> supportedMapTypes() const;
 
     // the class is private, so this can be virtual here for now.
-    virtual QGeoCameraCapabilities cameraCapabilities(int mapId = 0) const;
+    QGeoCameraCapabilities cameraCapabilities(int mapId = 0) const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;

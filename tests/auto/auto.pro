@@ -78,6 +78,7 @@ SUBDIRS += \
            qgeorectangle \
            qgeocircle \
            qgeopath \
+           qgeopolygon \
            qgeocoordinate \
            qgeolocation \
            qgeopositioninfo \

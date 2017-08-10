@@ -190,7 +190,11 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
     m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                              tr("No Map"),
-                                                             tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
+                                                             tr("No Map"),
+                                                             false, false,
+                                                             0,
+                                                             QByteArrayLiteral(""),
+                                                             QGeoCameraCapabilities()), this);
     m_cameraData.setCenter(QGeoCoordinate(51.5073,-0.1277)); //London city center
     m_cameraData.setZoomLevel(8.0);
 
@@ -218,8 +222,18 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
         m_map->clearMapItems();
     }
 
-    if (!m_mapViews.isEmpty())
-        qDeleteAll(m_mapViews);
+    // This forces the destruction of the associated items now, not when QObject destructor is called, at which point
+    // QDeclarativeGeoMap is long gone
+    if (!m_mapViews.isEmpty()) {
+        for (QDeclarativeGeoMapItemView *v : qAsConst(m_mapViews)) {
+            if (!v)
+                continue;
+            if (v->parent() == this)
+                delete v;
+            else
+                v->removeInstantiatedItems();
+        }
+    }
     // remove any map items associations
     for (int i = 0; i < m_mapItems.count(); ++i) {
         if (m_mapItems.at(i))
@@ -241,6 +255,8 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
 
     delete m_copyrights.data();
     m_copyrights.clear();
+
+    delete m_map;
 }
 
 /*!
@@ -279,17 +295,17 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
 
             copyrights = m_copyrights.data();
 
-            connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
+            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
                     copyrights, SLOT(copyrightsChanged(QImage)));
-            connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
+            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
                     this,  SIGNAL(copyrightsChanged(QImage)));
 
-            connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
+            connect(m_map, SIGNAL(copyrightsChanged(QString)),
                     copyrights, SLOT(copyrightsChanged(QString)));
-            connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
+            connect(m_map, SIGNAL(copyrightsChanged(QString)),
                     this,  SIGNAL(copyrightsChanged(QString)));
 
-            connect(m_map.data(), SIGNAL(copyrightsStyleSheetChanged(QString)),
+            connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
                     copyrights, SLOT(onCopyrightsStyleSheetChanged(QString)));
 
             connect(copyrights, SIGNAL(linkActivated(QString)),
@@ -725,7 +741,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
 */
 void QDeclarativeGeoMap::mappingManagerInitialized()
 {
-    m_map = QPointer<QGeoMap>(m_mappingManager->createMap(this));
+    m_map = m_mappingManager->createMap(this);
 
     if (!m_map)
         return;
@@ -750,7 +766,12 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         } else {
             m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                                      tr("No Map"),
-                                                                     tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
+                                                                     tr("No Map"),
+                                                                     false,
+                                                                     false,
+                                                                     0,
+                                                                     QByteArrayLiteral(""),
+                                                                     QGeoCameraCapabilities()), this);
         }
     }
 
@@ -765,11 +786,11 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     QImage copyrightImage;
     if (!m_initialized && width() > 0 && height() > 0) {
         QMetaObject::Connection copyrightStringCatcherConnection =
-                connect(m_map.data(),
+                connect(m_map,
                         QOverload<const QString &>::of(&QGeoMap::copyrightsChanged),
                         [&copyrightString](const QString &copy){ copyrightString = copy; });
         QMetaObject::Connection copyrightImageCatcherConnection =
-                connect(m_map.data(),
+                connect(m_map,
                         QOverload<const QImage &>::of(&QGeoMap::copyrightsChanged),
                         [&copyrightImage](const QImage &copy){ copyrightImage = copy; });
         m_map->setViewportSize(QSize(width(), height()));
@@ -781,28 +802,28 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
     m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
 
-    connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
+    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
             m_copyrights.data(), SLOT(copyrightsChanged(QImage)));
-    connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
+    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
             this,  SIGNAL(copyrightsChanged(QImage)));
 
-    connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
+    connect(m_map, SIGNAL(copyrightsChanged(QString)),
             m_copyrights.data(), SLOT(copyrightsChanged(QString)));
-    connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
+    connect(m_map, SIGNAL(copyrightsChanged(QString)),
             this,  SIGNAL(copyrightsChanged(QString)));
 
     if (!copyrightString.isEmpty())
-        emit m_map.data()->copyrightsChanged(copyrightString);
+        emit m_map->copyrightsChanged(copyrightString);
     else if (!copyrightImage.isNull())
-        emit m_map.data()->copyrightsChanged(copyrightImage);
+        emit m_map->copyrightsChanged(copyrightImage);
 
-    connect(m_map.data(), SIGNAL(copyrightsStyleSheetChanged(QString)),
+    connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
             m_copyrights.data(), SLOT(onCopyrightsStyleSheetChanged(QString)));
 
     connect(m_copyrights.data(), SIGNAL(linkActivated(QString)),
             this, SIGNAL(copyrightLinkActivated(QString)));
-    connect(m_map.data(), &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
-    connect(m_map.data(), &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
+    connect(m_map, &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
+    connect(m_map, &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
 
     // set visibility of copyright notice
     m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
@@ -1321,20 +1342,21 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
 
     const QList<QDoubleVector2D> &visibleRegion = m_map->geoProjection().visibleRegion();
     QGeoPath path;
-    for (const QDoubleVector2D &c: visibleRegion)
+    for (int i = 0; i < visibleRegion.size(); ++i) {
+         const QDoubleVector2D &c = visibleRegion.at(i);
+        // If a segment spans more than half of the map longitudinally, split in 2.
+        if (i && qAbs(visibleRegion.at(i-1).x() - c.x()) >= 0.5) { // This assumes a segment is never >= 1.0 (whole map span)
+            QDoubleVector2D extraPoint = (visibleRegion.at(i-1) + c) * 0.5;
+            path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
+        }
         path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
-
-    QGeoRectangle vr = path.boundingGeoRectangle();
-
-    bool empty = vr.topLeft().latitude() == vr.bottomRight().latitude() ||
-            qFuzzyCompare(vr.topLeft().longitude(), vr.bottomRight().longitude()); // QTBUG-57690
-
-    if (empty) {
-        vr.setTopLeft(QGeoCoordinate(vr.topLeft().latitude(), -180));
-        vr.setBottomRight(QGeoCoordinate(vr.bottomRight().latitude(), 180));
+    }
+    if (visibleRegion.size() >= 2 && qAbs(visibleRegion.last().x() - visibleRegion.first().x()) >= 0.5) {
+        QDoubleVector2D extraPoint = (visibleRegion.last() + visibleRegion.first()) * 0.5;
+        path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
     }
 
-    return vr;
+    return path.boundingGeoRectangle();
 }
 
 /*!
@@ -1421,7 +1443,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
     QGeoCoordinate centerCoordinate = m_map->geoProjection().mapProjectionToGeo(center);
 
     // position camera to the center of bounding box
-    setCenter(centerCoordinate);
+    setProperty("center", QVariant::fromValue(centerCoordinate)); // not using setCenter(centerCoordinate) to honor a possible animation set on the center property
 
     // if the shape is empty we just change center position, not zoom
     double bboxWidth  = (bottomRightPoint.x() - topLeftPoint.x()) * m_map->mapWidth();
@@ -1434,7 +1456,7 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
                             bboxHeight / (height() - margins));
     zoomRatio = std::log(zoomRatio) / std::log(2.0);
     double newZoom = qMax<double>(minimumZoomLevel(), zoomLevel() - zoomRatio);
-    setZoomLevel(newZoom);
+    setProperty("zoomLevel", QVariant::fromValue(newZoom)); // not using setZoomLevel(newZoom)  to honor a possible animation set on the zoomLevel property
 }
 
 
@@ -1448,6 +1470,57 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
 QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 {
     return QQmlListProperty<QDeclarativeGeoMapType>(this, m_supportedMapTypes);
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::setBearing(real bearing, coordinate coordinate)
+
+    Sets the bearing for the map to \a bearing, rotating it around \a coordinate.
+    If the Plugin used for the Map supports bearing, the valid range for \a bearing is between 0 and 360.
+    If the Plugin used for the Map does not support bearing, or if the map is tilted and \a coordinate happens
+    to be behind the camera, or if the map is not ready (see \l mapReady), calling this method will have no effect.
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
+{
+    if (!m_map)
+        return;
+
+    const QDoubleVector2D coordWrapped = m_map->geoProjection().geoToWrappedMapProjection(coordinate);
+    if (!m_map->geoProjection().isProjectable(coordWrapped))
+        return;
+
+    const QPointF rotationPoint = m_map->geoProjection().wrappedMapProjectionToItemPosition(coordWrapped).toPointF();
+
+    // First set bearing
+    setBearing(bearing);
+    // then reanchor
+    setCenter(m_map->geoProjection().anchorCoordinateToPoint(coordinate, rotationPoint));
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::alignCoordinateToPoint(coordinate coordinate, QPointF point)
+
+    Aligns \a coordinate to \a point.
+    This method effectively extends the functionality offered by the \l center qml property, allowing
+    to align a coordinate to point of the Map element other than its center.
+    This is useful in those applications where the center of the scene (e.g., a cursor) is not to be
+    placed exactly in the center of the map.
+
+    If the map is tilted, and \a coordinate happens to be behind the camera, or if the map is not ready
+    (see \l mapReady), calling this method will have no effect.
+
+    \sa center
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::alignCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &point)
+{
+    if (!m_map)
+        return;
+
+    setCenter(m_map->geoProjection().anchorCoordinateToPoint(coordinate, point));
 }
 
 /*!
@@ -1890,6 +1963,47 @@ void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGro
     }
     itemGroup->setQuickMap(nullptr);
     itemGroup->setParentItem(0);
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::removeMapItemView(MapItemView itemView)
+
+    Removes \a itemView and the items instantiated by it from the Map.
+
+    \sa MapItemView, addMapItemView
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::removeMapItemView(QDeclarativeGeoMapItemView *itemView)
+{
+    if (!itemView || itemView->map_ != this) // can't remove a view that is already added to another map
+        return;
+
+    itemView->removeInstantiatedItems();
+    itemView->map_ = 0;
+    // it can be removed from the list at this point, since no operations that require a Map have to be done
+    // anymore on destruction.
+    m_mapViews.removeOne(itemView);
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::addMapItemView(MapItemView itemView)
+
+    Adds \a itemView to the Map.
+
+    \sa MapItemView, removeMapItemView
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::addMapItemView(QDeclarativeGeoMapItemView *itemView)
+{
+    if (!itemView || itemView->map_) // can't add a view twice
+        return;
+
+    // Not appending it to m_mapViews because it seems unnecessary even if the
+    // itemView is a child of this (in which case it would be destroyed
+    m_mapViews.append(itemView);
+    setupMapView(itemView);
 }
 
 /*!

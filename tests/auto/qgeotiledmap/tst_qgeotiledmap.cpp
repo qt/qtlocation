@@ -113,6 +113,7 @@ void tst_QGeoTiledMap::initTestCase()
       m_map.reset(static_cast<QGeoTiledMapTest*>(mappingManager->createMap(this)));
       QVERIFY(m_map);
       m_map->setViewportSize(QSize(256, 256));
+      m_map->setActiveMapType(m_map->m_engine->supportedMapTypes().first());
       m_fetcher = static_cast<QGeoTileFetcherTest*>(m_map->m_engine->tileFetcher());
       m_tilesCounter.reset(new FetchTileCounter());
       connect(m_fetcher, SIGNAL(tileFetched(const QGeoTileSpec&)), m_tilesCounter.data(), SLOT(tileFetched(const QGeoTileSpec&)));

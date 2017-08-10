@@ -28,7 +28,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.6
+import QtLocation 5.10
 
 Item{
     id: page
@@ -122,6 +122,13 @@ Item{
             compare(map.minimumFieldOfView, 45)
             compare(map.maximumFieldOfView, 45)
 
+            compare(map.activeMapType.cameraCapabilities.minimumZoomLevel, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumZoomLevel, 20)
+            compare(map.activeMapType.cameraCapabilities.minimumTilt, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumTilt, 60)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 45)
+
             tryCompare(minimumZoomLevelChangedSpy, "count", 0)
             tryCompare(maximumZoomLevelChangedSpy, "count", 0)
             tryCompare(minimumTiltChangedSpy, "count", 0)
@@ -138,6 +145,13 @@ Item{
             compare(map.maximumTilt, 60)
             compare(map.minimumFieldOfView, 45)
             compare(map.maximumFieldOfView, 45)
+
+            compare(map.activeMapType.cameraCapabilities.minimumZoomLevel, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumZoomLevel, 20)
+            compare(map.activeMapType.cameraCapabilities.minimumTilt, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumTilt, 60)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 45)
 
             tryCompare(minimumZoomLevelChangedSpy, "count", 0)
             tryCompare(maximumZoomLevelChangedSpy, "count", 0)
@@ -156,6 +170,13 @@ Item{
             compare(map.minimumFieldOfView, 1)
             compare(map.maximumFieldOfView, 179)
 
+            compare(map.activeMapType.cameraCapabilities.minimumZoomLevel, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumZoomLevel, 19)
+            compare(map.activeMapType.cameraCapabilities.minimumTilt, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumTilt, 80)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 1)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 179)
+
             tryCompare(minimumZoomLevelChangedSpy, "count", 0)
             tryCompare(maximumZoomLevelChangedSpy, "count", 1)
             tryCompare(minimumTiltChangedSpy, "count", 0)
@@ -173,13 +194,29 @@ Item{
             compare(map.minimumFieldOfView, 45)
             compare(map.maximumFieldOfView, 45)
 
+            compare(map.activeMapType.cameraCapabilities.minimumZoomLevel, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumZoomLevel, 20)
+            compare(map.activeMapType.cameraCapabilities.minimumTilt, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumTilt, 60)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 45)
+
             tryCompare(minimumZoomLevelChangedSpy, "count", 0)
             tryCompare(maximumZoomLevelChangedSpy, "count", 2)
             tryCompare(minimumTiltChangedSpy, "count", 0)
             tryCompare(maximumTiltChangedSpy, "count", 2)
             tryCompare(minimumFieldOfViewChangedSpy, "count", 2)
             tryCompare(maximumFieldOfViewChangedSpy, "count", 2)
+        }
 
+        function test_maptype_metadata()
+        {
+            map.activeMapType = map.supportedMapTypes[0]
+            compare(Object.keys(map.activeMapType.metadata).length, 0)
+
+            map.activeMapType = map.supportedMapTypes[3]
+            compare(Object.keys(map.activeMapType.metadata).length, 1)
+            compare(map.activeMapType.metadata['foo'], 42)
         }
     }
 }

@@ -29,7 +29,8 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtPositioning 5.5
-import QtLocation 5.9
+import QtLocation 5.10
+import QtLocation.Test 5.6
 
 Item {
     width:100
@@ -55,6 +56,10 @@ Item {
     property variant coordinate3: QtPositioning.coordinate(50, 50, 0)
     property variant coordinate4: QtPositioning.coordinate(80, 80, 0)
     property variant coordinate5: QtPositioning.coordinate(20, 180)
+    property variant coordinateCenterVisibleRegion: QtPositioning.coordinate(27, 77)
+    property variant coordinateVisible1: QtPositioning.coordinate(28, 77)
+    property variant coordinateVisible2: QtPositioning.coordinate(33, 79.1)
+    property variant coordinateVisible3: QtPositioning.coordinate(27, 80.5)
     property variant invalidCoordinate: QtPositioning.coordinate()
     property variant altitudelessCoordinate: QtPositioning.coordinate(50, 50)
     property bool allMapsReady: mapZoomOnCompleted.mapReady
@@ -83,6 +88,9 @@ Item {
             console.log("mapZoomUserInit completed")
         }
     }
+
+    Map { id: mapVisibleRegion; width: 800; height: 600;
+        center: coordinateCenterVisibleRegion; plugin: testPlugin; zoomLevel: 1.0 }
 
     Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
     SignalSpy {id: mapCenterSpy; target: map; signalName: 'centerChanged'}
@@ -146,6 +154,39 @@ Item {
             verify(isNaN(map.center.altitude));
             compare(map.center.longitude, 13)
             compare(map.center.latitude, 12)
+        }
+
+        function test_map_visible_region()
+        {
+            mapVisibleRegion.zoomLevel = 1.0
+            wait(50)
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
+
+            mapVisibleRegion.zoomLevel = 1.88
+            verify(LocationTestHelper.waitForPolished(mapVisibleRegion))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
+
+            mapVisibleRegion.zoomLevel = 2.12
+            verify(LocationTestHelper.waitForPolished(mapVisibleRegion))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
+
+            mapVisibleRegion.zoomLevel = 2.5
+            verify(LocationTestHelper.waitForPolished(mapVisibleRegion))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
+
+            mapVisibleRegion.zoomLevel = 2.7
+            verify(LocationTestHelper.waitForPolished(mapVisibleRegion))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
         }
 
         function test_map_parameters()
@@ -237,6 +278,8 @@ Item {
             //initial plugin values
             compare(map.minimumZoomLevel, 0)
             compare(map.maximumZoomLevel, 20)
+            compare(map.activeMapType.cameraCapabilities.minimumZoomLevel, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumZoomLevel, 20)
 
             //Higher min level than curr zoom, should change curr zoom
             map.minimumZoomLevel = 5
@@ -260,6 +303,8 @@ Item {
             map.zoomLevel = 18
             map.maximumZoomLevel = 16
             compare(map.zoomLevel, 16)
+            compare(map.activeMapType.cameraCapabilities.minimumZoomLevel, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumZoomLevel, 20)
 
             //reseting default
             map.minimumZoomLevel = 0
@@ -275,6 +320,8 @@ Item {
             //initial plugin values
             compare(map.minimumTilt, 0)
             compare(map.maximumTilt, 60)
+            compare(map.activeMapType.cameraCapabilities.minimumTilt, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumTilt, 60)
 
             //Higher min level than curr tilt, should change curr tilt
             map.minimumTilt = 5
@@ -282,6 +329,9 @@ Item {
             compare(map.tilt, 5)
             compare(map.minimumTilt, 5)
             compare(map.maximumTilt, 18)
+            // Capabilities remain the same
+            compare(map.activeMapType.cameraCapabilities.minimumTilt, 0)
+            compare(map.activeMapType.cameraCapabilities.maximumTilt, 60)
 
             //Trying to set higher than max, max should be set.
             map.maximumTilt = 61
@@ -315,6 +365,8 @@ Item {
             //initial plugin values
             compare(map.minimumFieldOfView, 45)
             compare(map.maximumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 45)
 
             map.minimumFieldOfView = 5
             map.maximumFieldOfView = 18
@@ -327,6 +379,8 @@ Item {
             // camera caps are [1-179], user previously asked for [5-18]
             compare(map.minimumFieldOfView, 5)
             compare(map.maximumFieldOfView, 18)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 1)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 179)
 
             map.fieldOfView = 4
             compare(map.fieldOfView, 5)
@@ -365,6 +419,8 @@ Item {
             compare(map.minimumFieldOfView, 45)
             compare(map.maximumFieldOfView, 45)
             compare(map.fieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.minimumFieldOfView, 45)
+            compare(map.activeMapType.cameraCapabilities.maximumFieldOfView, 45)
         }
 
         function test_zoom()
@@ -498,6 +554,59 @@ Item {
             mapTiltBearing.zoomLevel = 8.0
             compare(mapTiltBearing.bearing, 45.0)
             compare(mapTiltBearing.tilt, 25.0)
+        }
+
+        function test_map_setbearing()
+        {
+            var zeroCoord = QtPositioning.coordinate(0,0)
+            mapTiltBearing.bearing = 0.0
+            mapTiltBearing.tilt = 0.0
+            mapTiltBearing.zoomLevel = 3
+            mapTiltBearing.center = zeroCoord
+            compare(mapTiltBearing.bearing, 0.0)
+            compare(mapTiltBearing.tilt, 0.0)
+            compare(mapTiltBearing.zoomLevel, 3)
+            compare(mapTiltBearing.center, zeroCoord)
+
+            var fulcrum = QtPositioning.coordinate(20,-20)
+            var fulcrumPos = mapTiltBearing.fromCoordinate(fulcrum)
+            var bearing = 90.0
+            mapTiltBearing.setBearing(bearing, fulcrum)
+            var fulcrumPosAfter = mapTiltBearing.fromCoordinate(fulcrum)
+            compare(mapTiltBearing.bearing, bearing)
+            compare(fulcrumPos, fulcrumPosAfter)
+
+            // resetting
+            mapTiltBearing.center = coordinate1
+            mapTiltBearing.zoomLevel = 4
+            mapTiltBearing.bearing = 45.0
+            mapTiltBearing.tilt = 25.0
+        }
+
+        function test_map_align_coordinate_to_point()
+        {
+            var zeroCoord = QtPositioning.coordinate(0,0)
+            mapTiltBearing.bearing = 0.0
+            mapTiltBearing.tilt = 0.0
+            mapTiltBearing.zoomLevel = 3
+            mapTiltBearing.center = zeroCoord
+            compare(mapTiltBearing.bearing, 0.0)
+            compare(mapTiltBearing.tilt, 0.0)
+            compare(mapTiltBearing.zoomLevel, 3)
+            compare(mapTiltBearing.center, zeroCoord)
+
+            var coord = QtPositioning.coordinate(20,-20)
+            var point = Qt.point(400, 400)
+            mapTiltBearing.alignCoordinateToPoint(coord, point)
+            var coordAfter = mapTiltBearing.toCoordinate(point)
+            compare(coord.latitude, coordAfter.latitude)
+            compare(coord.longitude, coordAfter.longitude)
+
+            // resetting
+            mapTiltBearing.center = coordinate1
+            mapTiltBearing.zoomLevel = 4
+            mapTiltBearing.bearing = 45.0
+            mapTiltBearing.tilt = 25.0
         }
 
         function test_coordinate_conversion()

@@ -41,6 +41,7 @@
 #define GEOMAPSOURCE_H
 
 #include <QtLocation/private/qgeomaptype_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -49,7 +50,7 @@ class GeoMapSource : public QGeoMapType
 public:
     GeoMapSource(QGeoMapType::MapStyle style, const QString &name,
                  const QString &description, bool mobile, bool night, int mapId,
-                 const QString &url, const QString &copyright);
+                 const QString &url, const QString &copyright, const QGeoCameraCapabilities &cameraCapabilities);
 
     inline const QString &url() const;
     inline const QString &copyright() const;
