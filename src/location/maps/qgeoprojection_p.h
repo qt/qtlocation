@@ -73,6 +73,7 @@ public:
 
     virtual bool isProjectable(const QDoubleVector2D &wrappedProjection) const = 0;
     virtual QList<QDoubleVector2D> visibleRegion() const = 0;
+    virtual QList<QDoubleVector2D> projectableRegion() const = 0;
 
     // Conversion methods for QGeoCoordinate <-> screen.
     // This currently assumes that the "MapProjection" space is [0, 1][0, 1] for every type of possibly supported map projection
@@ -132,9 +133,9 @@ public:
 
     bool isProjectable(const QDoubleVector2D &wrappedProjection) const Q_DECL_OVERRIDE;
     QList<QDoubleVector2D> visibleRegion() const Q_DECL_OVERRIDE;
-
+    QList<QDoubleVector2D> projectableRegion() const Q_DECL_OVERRIDE;
     inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
-
+    inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition, double &s) const;
 private:
     void setupCamera();
     void updateVisibleRegion();
@@ -158,6 +159,7 @@ public:
         Plane(const QDoubleVector3D &planePoint, const QDoubleVector3D &planeNormal);
 
         QDoubleVector3D lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection) const;
+        inline QDoubleVector3D lineIntersection(const QDoubleVector3D &linePoint, const QDoubleVector3D &lineDirection, double &s) const;
         Line2D planeXYIntersection() const;
         bool isValid() const;
 
@@ -208,6 +210,7 @@ private:
     Line2D           m_nearPlaneMapIntersection;
 
     QList<QDoubleVector2D> m_visibleRegion;
+    QList<QDoubleVector2D> m_projectableRegion;
     bool             m_visibleRegionDirty;
 
     Q_DISABLE_COPY(QGeoProjectionWebMercator)

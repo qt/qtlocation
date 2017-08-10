@@ -159,7 +159,7 @@ QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
 */
 void QDeclarativeGeoMapQuickItem::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    if (coordinate_ == coordinate || !coordinate.isValid())
+    if (coordinate_ == coordinate)
         return;
 
     coordinate_ = coordinate;
@@ -376,6 +376,13 @@ void QDeclarativeGeoMapQuickItem::updatePolish()
                 this, SLOT(polishAndUpdate()));
         connect(sourceItem_.data(), SIGNAL(heightChanged()),
                 this, SLOT(polishAndUpdate()));
+    }
+
+    if (!coordinate_.isValid()) {
+        opacityContainer_->setVisible(false);
+        return;
+    } else {
+        opacityContainer_->setVisible(true);
     }
 
     QScopedValueRollback<bool> rollback(updatingGeometry_);

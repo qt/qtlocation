@@ -178,7 +178,7 @@ public:
     void setMaximumZoomLevel(qreal max);
     qreal maximumZoomLevel() const;
 
-    void setMap(QPointer<QGeoMap> map);
+    void setMap(QGeoMap* map);
 
     bool preventStealing() const;
     void setPreventStealing(bool prevent);
@@ -267,7 +267,7 @@ private:
     void updateFlickParameters(const QPointF &pos);
 
 private:
-    QPointer<QGeoMap> m_map;
+    QGeoMap* m_map;
     QDeclarativeGeoMap *m_declarativeMap;
     bool m_enabled;
 

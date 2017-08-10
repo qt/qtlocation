@@ -30,6 +30,7 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtPositioning 5.5
 import QtLocation 5.10
+import QtLocation.Test 5.6
 
 Item {
     width:100
@@ -55,6 +56,10 @@ Item {
     property variant coordinate3: QtPositioning.coordinate(50, 50, 0)
     property variant coordinate4: QtPositioning.coordinate(80, 80, 0)
     property variant coordinate5: QtPositioning.coordinate(20, 180)
+    property variant coordinateCenterVisibleRegion: QtPositioning.coordinate(27, 77)
+    property variant coordinateVisible1: QtPositioning.coordinate(28, 77)
+    property variant coordinateVisible2: QtPositioning.coordinate(33, 79.1)
+    property variant coordinateVisible3: QtPositioning.coordinate(27, 80.5)
     property variant invalidCoordinate: QtPositioning.coordinate()
     property variant altitudelessCoordinate: QtPositioning.coordinate(50, 50)
     property bool allMapsReady: mapZoomOnCompleted.mapReady
@@ -83,6 +88,9 @@ Item {
             console.log("mapZoomUserInit completed")
         }
     }
+
+    Map { id: mapVisibleRegion; width: 800; height: 600;
+        center: coordinateCenterVisibleRegion; plugin: testPlugin; zoomLevel: 1.0 }
 
     Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
     SignalSpy {id: mapCenterSpy; target: map; signalName: 'centerChanged'}
@@ -146,6 +154,39 @@ Item {
             verify(isNaN(map.center.altitude));
             compare(map.center.longitude, 13)
             compare(map.center.latitude, 12)
+        }
+
+        function test_map_visible_region()
+        {
+            mapVisibleRegion.zoomLevel = 1.0
+            wait(50)
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
+
+            mapVisibleRegion.zoomLevel = 1.88
+            verify(LocationTestHelper.waitForPolished(mapVisibleRegion))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
+
+            mapVisibleRegion.zoomLevel = 2.12
+            verify(LocationTestHelper.waitForPolished(mapVisibleRegion))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
+
+            mapVisibleRegion.zoomLevel = 2.5
+            verify(LocationTestHelper.waitForPolished(mapVisibleRegion))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
+
+            mapVisibleRegion.zoomLevel = 2.7
+            verify(LocationTestHelper.waitForPolished(mapVisibleRegion))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
+            verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
         }
 
         function test_map_parameters()
