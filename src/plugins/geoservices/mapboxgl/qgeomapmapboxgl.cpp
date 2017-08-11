@@ -160,6 +160,11 @@ void QGeoMapMapboxGLPrivate::addParameter(QGeoMapParameter *param)
 
     QObject::connect(param, &QGeoMapParameter::propertyUpdated, q,
         &QGeoMapMapboxGL::onParameterPropertyUpdated);
+
+    if (m_styleLoaded) {
+        m_styleChanges << QMapboxGLStyleChange::addMapParameter(param);
+        emit q->sgNodeChanged();
+    }
 }
 
 void QGeoMapMapboxGLPrivate::removeParameter(QGeoMapParameter *param)
