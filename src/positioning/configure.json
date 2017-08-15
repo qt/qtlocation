@@ -38,7 +38,7 @@
 
     "summary": [
         {
-            "section": "Qt Location",
+            "section": "Qt Positioning",
             "entries": [
                 "gypsy",
                 "winrt_geolocation"
