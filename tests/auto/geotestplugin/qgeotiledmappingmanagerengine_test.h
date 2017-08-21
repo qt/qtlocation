@@ -68,6 +68,12 @@ public:
         mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("SatelliteMapDay"), tr("SatelliteMapDay"), false, false, 2, pluginName);
         mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("CycleMap"), tr("CycleMap"), false, false, 3, pluginName);
         mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("AlternateCameraCapabilities"), tr("AlternateCameraCapabilities"), false, false, 4, pluginName);
+
+        if (parameters.contains(QStringLiteral("extraMapTypeName"))) {
+            QString  extraMapTypeName = parameters.value(QStringLiteral("extraMapTypeName")).toString();
+            mapTypes << QGeoMapType(QGeoMapType::CustomMap, extraMapTypeName, extraMapTypeName, false, false, 5, pluginName);
+        }
+
         setSupportedMapTypes(mapTypes);
 
         QGeoTileFetcherTest *fetcher = new QGeoTileFetcherTest(this);

@@ -113,12 +113,42 @@ void QDeclarativeGeoServiceProvider::setName(const QString &name)
         return;
 
     name_ = name;
+
+    if (complete_)
+        tryAttach();
+
+    emit nameChanged(name_);
+}
+
+/*!
+    \internal
+*/
+bool QDeclarativeGeoServiceProvider::parametersReady() {
+    for (const QDeclarativeGeoServiceProviderParameter *p: qAsConst(parameters_)) {
+        if (!p->isInitialized())
+            return false;
+    }
+    return true;
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoServiceProvider::tryAttach()
+{
+    if (!parametersReady())
+        return;
+
     delete sharedProvider_;
+    sharedProvider_ = nullptr;
+
+    if (name_.isEmpty())
+        return;
+
     sharedProvider_ = new QGeoServiceProvider(name_, parameterMap());
     sharedProvider_->setLocale(locales_.at(0));
     sharedProvider_->setAllowExperimental(experimental_);
 
-    emit nameChanged(name_);
     emit attached();
 }
 
@@ -147,11 +177,17 @@ QStringList QDeclarativeGeoServiceProvider::availableServiceProviders()
 void QDeclarativeGeoServiceProvider::componentComplete()
 {
     complete_ = true;
-    if (!name_.isEmpty()) {
-        return;
+
+    for (QDeclarativeGeoServiceProviderParameter *p: qAsConst(parameters_)) {
+        if (!p->isInitialized()) {
+            connect(p, &QDeclarativeGeoServiceProviderParameter::initialized,
+                    this, &QDeclarativeGeoServiceProvider::tryAttach);
+        }
     }
 
-    if (!prefer_.isEmpty()
+    if (!name_.isEmpty()) {
+        tryAttach();
+    } else if (!prefer_.isEmpty()
             || required_->mappingRequirements() != NoMappingFeatures
             || required_->routingRequirements() != NoRoutingFeatures
             || required_->geocodingRequirements() != NoGeocodingFeatures
@@ -796,15 +832,18 @@ QDeclarativeGeoServiceProviderParameter::~QDeclarativeGeoServiceProviderParamete
     \qmlproperty string PluginParameter::name
 
     This property holds the name of the plugin parameter as a single formatted string.
+    This property is a write-once property.
 */
 void QDeclarativeGeoServiceProviderParameter::setName(const QString &name)
 {
-    if (name_ == name)
+    if (!name_.isEmpty() || name.isEmpty())
         return;
 
     name_ = name;
 
     emit nameChanged(name_);
+    if (value_.isValid())
+        emit initialized();
 }
 
 QString QDeclarativeGeoServiceProviderParameter::name() const
@@ -816,20 +855,28 @@ QString QDeclarativeGeoServiceProviderParameter::name() const
     \qmlproperty QVariant PluginParameter::value
 
     This property holds the value of the plugin parameter which support different types of values (variant).
+    This property is a write-once property.
 */
 void QDeclarativeGeoServiceProviderParameter::setValue(const QVariant &value)
 {
-    if (value_ == value)
+    if (value_.isValid() || !value.isValid() || value.isNull())
         return;
 
     value_ = value;
 
     emit valueChanged(value_);
+    if (!name_.isEmpty())
+        emit initialized();
 }
 
 QVariant QDeclarativeGeoServiceProviderParameter::value() const
 {
     return value_;
+}
+
+bool QDeclarativeGeoServiceProviderParameter::isInitialized() const
+{
+    return !name_.isEmpty() && value_.isValid();
 }
 
 /*******************************************************************************

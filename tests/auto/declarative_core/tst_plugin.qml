@@ -99,9 +99,14 @@ Item {
             verify(invalidPlugin.supportsRouting())
             verify(invalidPlugin.supportsPlaces())
 
+            invalidPlugin.name = 'here'
+            compare(invalidAttachedSpy.count, 2)
+            verify(invalidPlugin.supportsMapping(Plugin.OnlineMappingFeature))
+            verify(invalidPlugin.supportsGeocoding(Plugin.OnlineGeocodingFeature))
+            verify(invalidPlugin.supportsRouting(Plugin.OnlineRoutingFeature))
+
             invalidPlugin.name = ''
             compare(invalidAttachedSpy.count, 2)
-
             verify(!invalidPlugin.supportsMapping())
             verify(!invalidPlugin.supportsGeocoding())
             verify(!invalidPlugin.supportsRouting())

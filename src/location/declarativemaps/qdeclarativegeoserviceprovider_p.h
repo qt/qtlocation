@@ -78,9 +78,12 @@ public:
     void setValue(const QVariant &value);
     QVariant value() const;
 
+    bool isInitialized() const;
+
 Q_SIGNALS:
     void nameChanged(const QString &name);
     void valueChanged(const QVariant &value);
+    void initialized();
 
 private:
     QString name_;
@@ -210,6 +213,8 @@ Q_SIGNALS:
     void allowExperimentalChanged(bool allow);
 
 private:
+    bool parametersReady();
+    void tryAttach();
     static void parameter_append(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
     static int parameter_count(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
     static QDeclarativeGeoServiceProviderParameter *parameter_at(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index);

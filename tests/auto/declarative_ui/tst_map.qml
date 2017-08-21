@@ -50,6 +50,20 @@ Item {
             }
         ]
     }
+    Plugin {
+        id: testPluginLazyParameter;
+        name: "qmlgeo.test.plugin"
+        allowExperimental: true
+        property string extraTypeName : undefined
+        PluginParameter { name: "supported"; value: true}
+        PluginParameter { name: "finishRequestImmediately"; value: true}
+        PluginParameter { name: "validateWellKnownValues"; value: true}
+        PluginParameter { name: "extraMapTypeName"; value: testPluginLazyParameter.extraTypeName}
+
+        Component.onCompleted: {
+            extraTypeName = "SomeString"
+        }
+    }
 
     property variant coordinate1: QtPositioning.coordinate(10, 11)
     property variant coordinate2: QtPositioning.coordinate(12, 13)
@@ -106,6 +120,11 @@ Item {
     Map {id: mapTiltBearingHere; plugin: herePlugin; center: coordinate1;
         width: 1000; height: 1000; zoomLevel: 4; bearing: 45.0; tilt: 25.0 }
 
+    Map {
+        id: mapWithLazyPlugin
+        plugin: testPluginLazyParameter
+    }
+
     MapParameter {
         id: testParameter
         type: "cameraCenter_test"
@@ -127,6 +146,11 @@ Item {
 
         function init() {
             mapCenterSpy.clear();
+        }
+
+        function test_lazy_parameter() {
+            compare(mapWithLazyPlugin.supportedMapTypes.length, 5)
+            compare(mapWithLazyPlugin.supportedMapTypes[4].name, "SomeString")
         }
 
         function test_map_center() {
