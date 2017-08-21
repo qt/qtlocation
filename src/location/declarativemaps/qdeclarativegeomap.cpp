@@ -539,26 +539,26 @@ QQuickGeoMapGestureArea *QDeclarativeGeoMap::gesture()
 */
 void QDeclarativeGeoMap::populateMap()
 {
-    QObjectList kids = children();
-    QList<QQuickItem *> quickKids = childItems();
-    for (int i=0; i < quickKids.count(); ++i)
-        kids.append(quickKids.at(i));
+    QSet<QObject *> kids = children().toSet();
+    const QList<QQuickItem *> quickKids = childItems();
+    for (QQuickItem *ite: quickKids)
+        kids.insert(ite);
 
-    for (int i = 0; i < kids.size(); ++i) {
+    for (QObject *k : qAsConst(kids)) {
         // dispatch items appropriately
-        QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView *>(kids.at(i));
+        QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView *>(k);
         if (mapView) {
             m_mapViews.append(mapView);
             setupMapView(mapView);
             continue;
         }
-        QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(kids.at(i));
+        QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(k);
         if (mapItem) {
             addMapItem(mapItem);
             continue;
         }
         // Allow to add to the map Map items contained inside a parent QQuickItem, but only those at one level of nesting.
-        QDeclarativeGeoMapItemGroup *itemGroup = qobject_cast<QDeclarativeGeoMapItemGroup *>(kids.at(i));
+        QDeclarativeGeoMapItemGroup *itemGroup = qobject_cast<QDeclarativeGeoMapItemGroup *>(k);
         if (itemGroup) {
             addMapItemGroup(itemGroup);
             continue;
