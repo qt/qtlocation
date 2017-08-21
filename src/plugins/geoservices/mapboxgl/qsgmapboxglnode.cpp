@@ -65,6 +65,7 @@ void QSGMapboxGLTextureNode::resize(const QSize &size, qreal pixelRatio)
     m_map->resize(minSize, fbSize);
 
     m_fbo.reset(new QOpenGLFramebufferObject(fbSize, QOpenGLFramebufferObject::CombinedDepthStencil));
+    m_map->setFramebufferObject(m_fbo->handle());
 
     QSGPlainTexture *fboTexture = static_cast<QSGPlainTexture *>(texture());
     if (!fboTexture)
