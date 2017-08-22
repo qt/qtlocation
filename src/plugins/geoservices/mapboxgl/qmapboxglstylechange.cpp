@@ -54,7 +54,7 @@ QString formatPropertyName(QString *name)
 
 bool isImmutableProperty(const QString &name)
 {
-    return name == QStringLiteral("type") || name == QStringLiteral("layer") || name == QStringLiteral("class");
+    return name == QStringLiteral("type") || name == QStringLiteral("layer");
 }
 
 QString getId(QDeclarativeGeoMapItemBase *mapItem)
@@ -288,7 +288,7 @@ QMapboxGLStyleSetPaintProperty::QMapboxGLStyleSetPaintProperty(const QString& la
 
 void QMapboxGLStyleSetPaintProperty::apply(QMapboxGL *map)
 {
-    map->setPaintProperty(m_layer, m_property, m_value, m_class);
+    map->setPaintProperty(m_layer, m_property, m_value);
 }
 
 QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::fromMapParameter(QGeoMapParameter *param)
@@ -313,7 +313,6 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
 
         paint->m_layer = param->property("layer").toString();
         paint->m_property = formatPropertyName(&name);
-        paint->m_class = param->property("class").toString();
 
         changes << QSharedPointer<QMapboxGLStyleChange>(paint);
     }
@@ -399,15 +398,30 @@ QSharedPointer<QMapboxGLStyleChange> QMapboxGLStyleAddLayer::fromMapParameter(QG
     Q_ASSERT(param->type() == "layer");
 
     auto layer = new QMapboxGLStyleAddLayer();
-    layer->m_params[QStringLiteral("id")] = param->property("name");
-    layer->m_params[QStringLiteral("source")] = param->property("source");
-    layer->m_params[QStringLiteral("type")] = param->property("layerType");
 
-    if (param->property("sourceLayer").isValid()) {
-        layer->m_params[QStringLiteral("source-layer")] = param->property("sourceLayer");
+    static const QStringList layerProperties = QStringList()
+        << QStringLiteral("name") << QStringLiteral("layerType") << QStringLiteral("before");
+
+    // Offset objectName and type properties.
+    for (int i = 2; i < param->metaObject()->propertyCount(); ++i) {
+        QString name = param->metaObject()->property(i).name();
+        QVariant value = param->property(name.toLatin1());
+
+        switch (layerProperties.indexOf(name)) {
+        case -1:
+            layer->m_params[formatPropertyName(&name)] = value;
+            break;
+        case 0: // name
+            layer->m_params[QStringLiteral("id")] = value;
+            break;
+        case 1: // layerType
+            layer->m_params[QStringLiteral("type")] = value;
+            break;
+        case 2: // before
+            layer->m_before = value.toString();
+            break;
+        }
     }
-
-    layer->m_before = param->property("before").toString();
 
     return QSharedPointer<QMapboxGLStyleChange>(layer);
 }
