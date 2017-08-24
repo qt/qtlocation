@@ -559,10 +559,9 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::prefe
 
 void QDeclarativePositionSource::start()
 {
-    if (!m_positionSource)
-        return;
+    if (m_positionSource)
+        m_positionSource->startUpdates();
 
-    m_positionSource->startUpdates();
     if (!m_active) {
         m_active = true;
         emit activeChanged();
@@ -721,6 +720,12 @@ void QDeclarativePositionSource::componentComplete()
                 static_cast<QGeoPositionInfoSource::PositioningMethods>(int(m_preferredPositioningMethods)));
 
             setPosition(m_positionSource->lastKnownPosition());
+
+            if (m_active)
+                QTimer::singleShot(0, this, SLOT(start())); // delay ensures all properties have been set
+        } else if (m_active) {
+            m_active = false;
+            emit activeChanged();
         }
 
         if (previousUpdateInterval != updateInterval())
@@ -733,12 +738,6 @@ void QDeclarativePositionSource::componentComplete()
             emit supportedPositioningMethodsChanged();
 
         emit validityChanged();
-
-        if (m_active) {
-            m_active = false;
-            emit activeChanged();
-        }
-
         emit nameChanged();
     }
 }
