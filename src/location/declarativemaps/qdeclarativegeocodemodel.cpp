@@ -319,6 +319,9 @@ void QDeclarativeGeocodeModel::pluginReady()
             this, SLOT(geocodeFinished(QGeoCodeReply*)));
     connect(geocodingManager, SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)),
             this, SLOT(geocodeError(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
+
+    if (complete_ && autoUpdate_)
+        update();
 }
 
 /*!
