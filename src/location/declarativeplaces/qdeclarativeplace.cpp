@@ -385,7 +385,7 @@ void QDeclarativePlace::setPlace(const QPlace &src)
                                                m_src.content(QPlaceContent::EditorialType));
     }
 
-    synchronizeExtendedAttributes();
+    pullExtendedAttributes();
     synchronizeContacts();
 }
 
@@ -1076,7 +1076,7 @@ void QDeclarativePlace::initializeFavorite(QDeclarativeGeoServiceProvider *plugi
 /*!
     \internal
 */
-void QDeclarativePlace::synchronizeExtendedAttributes()
+void QDeclarativePlace::pullExtendedAttributes()
 {
     QStringList keys = m_extendedAttributes->keys();
     foreach (const QString &key, keys)

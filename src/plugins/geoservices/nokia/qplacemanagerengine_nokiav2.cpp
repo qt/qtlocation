@@ -313,6 +313,7 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QPlaceCont
             networkReply = sendRequest(requestUrl);
             break;
         case QPlaceContent::NoType:
+        default:
             ;
         }
     }
