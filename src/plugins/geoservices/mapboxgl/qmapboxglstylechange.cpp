@@ -279,13 +279,20 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fro
 
 QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fromMapItem(QDeclarativeGeoMapItemBase *item)
 {
+    QList<QSharedPointer<QMapboxGLStyleChange>> changes;
+
     switch (item->itemType()) {
     case QGeoMap::MapPolyline:
-        return fromMapItem(static_cast<QDeclarativePolylineMapItem *>(item));
+        changes = fromMapItem(static_cast<QDeclarativePolylineMapItem *>(item));
     default:
-        qWarning() << "Unsupported QGeoMap item type: " << item->itemType();
-        return QList<QSharedPointer<QMapboxGLStyleChange>>();
+        break;
     }
+
+    changes << QSharedPointer<QMapboxGLStyleChange>(
+        new QMapboxGLStyleSetLayoutProperty(getId(item), QStringLiteral("visibility"),
+            item->isVisible() ? QStringLiteral("visible") : QStringLiteral("none")));
+
+    return changes;
 }
 
 QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fromMapItem(QDeclarativePolylineMapItem *item)

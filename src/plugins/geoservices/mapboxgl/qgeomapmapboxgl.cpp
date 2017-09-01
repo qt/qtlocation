@@ -190,6 +190,8 @@ void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
         return;
     case QGeoMap::MapRectangle: {
         QDeclarativeRectangleMapItem *mapItem = static_cast<QDeclarativeRectangleMapItem *>(item);
+        QObject::connect(mapItem, &QQuickItem::visibleChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
+        QObject::connect(mapItem, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
         QObject::connect(mapItem, &QDeclarativeRectangleMapItem::bottomRightChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem, &QDeclarativeRectangleMapItem::topLeftChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem, &QDeclarativeRectangleMapItem::colorChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
@@ -198,6 +200,8 @@ void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
     } break;
     case QGeoMap::MapCircle: {
         QDeclarativeCircleMapItem *mapItem = static_cast<QDeclarativeCircleMapItem *>(item);
+        QObject::connect(mapItem, &QQuickItem::visibleChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
+        QObject::connect(mapItem, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
         QObject::connect(mapItem, &QDeclarativeCircleMapItem::centerChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem, &QDeclarativeCircleMapItem::radiusChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem, &QDeclarativeCircleMapItem::colorChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
@@ -206,6 +210,8 @@ void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
     } break;
     case QGeoMap::MapPolygon: {
         QDeclarativePolygonMapItem *mapItem = static_cast<QDeclarativePolygonMapItem *>(item);
+        QObject::connect(mapItem, &QQuickItem::visibleChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
+        QObject::connect(mapItem, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
         QObject::connect(mapItem, &QDeclarativePolygonMapItem::pathChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem, &QDeclarativePolygonMapItem::colorChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem->border(), &QDeclarativeMapLineProperties::colorChanged, q, &QGeoMapMapboxGL::onMapItemSubPropertyChanged);
@@ -213,6 +219,8 @@ void QGeoMapMapboxGLPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
     } break;
     case QGeoMap::MapPolyline: {
         QDeclarativePolylineMapItem *mapItem = static_cast<QDeclarativePolylineMapItem *>(item);
+        QObject::connect(mapItem, &QQuickItem::visibleChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
+        QObject::connect(mapItem, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged, q, &QGeoMapMapboxGL::onMapItemPropertyChanged);
         QObject::connect(mapItem, &QDeclarativePolylineMapItem::pathChanged, q, &QGeoMapMapboxGL::onMapItemGeometryChanged);
         QObject::connect(mapItem->line(), &QDeclarativeMapLineProperties::colorChanged, q, &QGeoMapMapboxGL::onMapItemSubPropertyChanged);
         QObject::connect(mapItem->line(), &QDeclarativeMapLineProperties::widthChanged, q, &QGeoMapMapboxGL::onMapItemSubPropertyChanged);
@@ -391,6 +399,7 @@ void QGeoMapMapboxGL::onMapItemPropertyChanged()
 
     QDeclarativeGeoMapItemBase *item = static_cast<QDeclarativeGeoMapItemBase *>(sender());
     d->m_styleChanges << QMapboxGLStyleSetPaintProperty::fromMapItem(item);
+    d->m_styleChanges << QMapboxGLStyleSetLayoutProperty::fromMapItem(item);
 
     emit sgNodeChanged();
 }
