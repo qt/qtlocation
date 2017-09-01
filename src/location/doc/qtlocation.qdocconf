@@ -16,7 +16,7 @@ qhp.QtLocation.indexRoot           =
 
 qhp.QtLocation.filterAttributes    = qtlocation $QT_VERSION qtrefdoc
 qhp.QtLocation.customFilters.Qt.name = QtLocation $QT_VERSION
-qhp.QtLocation.customFilters.Qt.filterAttributes = qtLocation $QT_VERSION
+qhp.QtLocation.customFilters.Qt.filterAttributes = qtlocation $QT_VERSION
 qhp.QtLocation.subprojects         = classes qml examples
 qhp.QtLocation.subprojects.classes.title = C++ Classes
 qhp.QtLocation.subprojects.classes.indexTitle = Qt Location C++ Classes
