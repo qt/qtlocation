@@ -45,8 +45,7 @@ import QtLocation 5.6
 //! [Imports]
 
 Rectangle {
-    width: 360
-    height: 640
+    anchors.fill: parent
 
     //! [Initialize Plugin]
     Plugin {

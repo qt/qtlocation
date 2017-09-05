@@ -96,6 +96,12 @@ public:
     const QGeoShape &geoShape() const Q_DECL_OVERRIDE;
     QGeoMap::ItemType itemType() const Q_DECL_OVERRIDE;
 
+    static bool crossEarthPole(const QGeoCoordinate &center, qreal distance);
+    static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
+                                   qreal distance, int steps, QGeoCoordinate &leftBound);
+    bool preserveCircleGeometry(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
+                                qreal distance);
+
 Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &center);
     void radiusChanged(qreal radius);
@@ -111,8 +117,6 @@ protected Q_SLOTS:
 
 private:
     void updateCirclePath();
-    bool preserveCircleGeometry(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
-                                qreal distance);
     void updateCirclePathForRendering(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
                                       qreal distance);
 
