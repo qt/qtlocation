@@ -44,6 +44,12 @@
 
 QT_BEGIN_NAMESPACE
 
+template<>
+QGeoRoutePrivate *QExplicitlySharedDataPointer<QGeoRoutePrivate>::clone()
+{
+    return d->clone();
+}
+
 /*!
     \class QGeoRoute
     \inmodule QtLocation
@@ -433,6 +439,11 @@ QGeoRoutePrivateDefault::QGeoRoutePrivateDefault(const QGeoRoutePrivateDefault &
 
 
 QGeoRoutePrivateDefault::~QGeoRoutePrivateDefault() {}
+
+QGeoRoutePrivate *QGeoRoutePrivateDefault::clone()
+{
+    return new QGeoRoutePrivateDefault(*this);
+}
 
 void QGeoRoutePrivateDefault::setId(const QString &id)
 {

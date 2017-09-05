@@ -41,6 +41,12 @@
 
 QT_BEGIN_NAMESPACE
 
+template<>
+QGeoManeuverPrivate *QSharedDataPointer<QGeoManeuverPrivate>::clone()
+{
+    return d->clone();
+}
+
 /*!
     \class QGeoManeuver
     \inmodule QtLocation
@@ -146,7 +152,8 @@ QGeoManeuver &QGeoManeuver::operator= (const QGeoManeuver & other)
 */
 bool QGeoManeuver::operator== (const QGeoManeuver &other) const
 {
-    return (*(d_ptr.constData()) == *(other.d_ptr.constData()));
+    return ( (d_ptr.constData() == other.d_ptr.constData())
+            ||  (*(d_ptr.constData()) == *(other.d_ptr.constData())) );
 }
 
 /*!
@@ -308,6 +315,11 @@ QGeoManeuverPrivate::~QGeoManeuverPrivate()
 
 bool QGeoManeuverPrivate::operator==(const QGeoManeuverPrivate &other) const
 {
+    return equals(other);
+}
+
+bool QGeoManeuverPrivate::equals(const QGeoManeuverPrivate &other) const
+{
     return ((valid() == other.valid())
             && (position() == other.position())
             && (text() == other.text())
@@ -420,11 +432,9 @@ QGeoManeuverPrivateDefault::QGeoManeuverPrivateDefault(const QGeoManeuverPrivate
 
 QGeoManeuverPrivateDefault::~QGeoManeuverPrivateDefault() {}
 
-
-
-bool QGeoManeuverPrivateDefault::operator ==(const QGeoManeuverPrivateDefault &other) const
+QGeoManeuverPrivate *QGeoManeuverPrivateDefault::clone()
 {
-    return QGeoManeuverPrivateDefault::operator ==(other);
+    return new QGeoManeuverPrivateDefault(*this);
 }
 
 bool QGeoManeuverPrivateDefault::valid() const

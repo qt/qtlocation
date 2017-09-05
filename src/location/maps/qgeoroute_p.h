@@ -66,6 +66,7 @@ public:
     QGeoRoutePrivate();
     QGeoRoutePrivate(const QGeoRoutePrivate &other);
     virtual ~QGeoRoutePrivate();
+    virtual QGeoRoutePrivate *clone() = 0;
 
     bool operator == (const QGeoRoutePrivate &other) const;
 
@@ -93,10 +94,11 @@ public:
     virtual void setFirstSegment(const QGeoRouteSegment &firstSegment);
     virtual QGeoRouteSegment firstSegment() const;
 
-    virtual bool equals(const QGeoRoutePrivate &other) const;
-
     virtual QString engineName() const = 0;
     virtual int segmentsCount() const = 0;
+
+protected:
+    virtual bool equals(const QGeoRoutePrivate &other) const;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT  QGeoRoutePrivateDefault : public QGeoRoutePrivate
@@ -105,6 +107,7 @@ public:
     QGeoRoutePrivateDefault();
     QGeoRoutePrivateDefault(const QGeoRoutePrivateDefault &other);
     ~QGeoRoutePrivateDefault();
+    virtual QGeoRoutePrivate *clone() override;
 
     virtual void setId(const QString &id) override;
     virtual QString id() const override;

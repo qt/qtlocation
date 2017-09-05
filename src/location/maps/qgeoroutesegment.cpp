@@ -42,6 +42,12 @@
 
 QT_BEGIN_NAMESPACE
 
+template<>
+QGeoRouteSegmentPrivate *QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate>::clone()
+{
+    return d->clone();
+}
+
 /*!
     \class QGeoRouteSegment
     \inmodule QtLocation
@@ -250,6 +256,11 @@ QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate()
 
 bool QGeoRouteSegmentPrivate::operator ==(const QGeoRouteSegmentPrivate &other) const
 {
+    return equals(other);
+}
+
+bool QGeoRouteSegmentPrivate::equals(const QGeoRouteSegmentPrivate &other) const
+{
     return ((valid() == other.valid())
             && (travelTime() == other.travelTime())
             && (distance() == other.distance())
@@ -342,6 +353,11 @@ QGeoRouteSegmentPrivateDefault::QGeoRouteSegmentPrivateDefault(const QGeoRouteSe
 QGeoRouteSegmentPrivateDefault::~QGeoRouteSegmentPrivateDefault()
 {
 
+}
+
+QGeoRouteSegmentPrivate *QGeoRouteSegmentPrivateDefault::clone()
+{
+    return new QGeoRouteSegmentPrivateDefault(*this);
 }
 
 bool QGeoRouteSegmentPrivateDefault::operator ==(const QGeoRouteSegmentPrivateDefault &other) const

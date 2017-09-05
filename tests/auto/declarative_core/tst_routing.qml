@@ -774,6 +774,9 @@ Item {
             compare (model.get(0).path.length, 5)
             compare (model.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
 
+            if (label === "routeModelAutomaticAltImpl") // Test that it is an altImpl
+                compare(model.get(0).travelTime,  123456)
+
             // Remove a waypoint and check that autoupdate works
             filledRouteQuery.removeWaypoint(fcoordinate2)
             tryCompare (spy, "count", 2)

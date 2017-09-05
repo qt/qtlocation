@@ -67,6 +67,7 @@ public:
     QGeoRouteSegmentPrivate();
     QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other);
     virtual ~QGeoRouteSegmentPrivate();
+    virtual QGeoRouteSegmentPrivate *clone() = 0;
 
     bool operator ==(const QGeoRouteSegmentPrivate &other) const;
 
@@ -89,6 +90,9 @@ public:
     virtual void setNextRouteSegment(const QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &next);
 
     QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> m_nextSegment;
+
+protected:
+    virtual bool equals(const QGeoRouteSegmentPrivate &other) const;
 };
 
 
@@ -99,6 +103,7 @@ public:
     QGeoRouteSegmentPrivateDefault();
     QGeoRouteSegmentPrivateDefault(const QGeoRouteSegmentPrivateDefault &other);
     ~QGeoRouteSegmentPrivateDefault();
+    virtual QGeoRouteSegmentPrivate *clone() override;
 
     bool operator ==(const QGeoRouteSegmentPrivateDefault &other) const;
 

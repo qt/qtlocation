@@ -63,6 +63,7 @@ public:
     QGeoManeuverPrivate();
     QGeoManeuverPrivate(const QGeoManeuverPrivate &other);
     virtual ~QGeoManeuverPrivate();
+    virtual QGeoManeuverPrivate *clone() = 0;
 
     bool operator== (const QGeoManeuverPrivate &other) const;
 
@@ -90,6 +91,8 @@ public:
     virtual QGeoCoordinate waypoint() const;
     virtual void setWaypoint(const QGeoCoordinate &waypoint);
 
+protected:
+    virtual bool equals(const QGeoManeuverPrivate &other) const;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoManeuverPrivateDefault : public QGeoManeuverPrivate
@@ -98,8 +101,7 @@ public:
     QGeoManeuverPrivateDefault();
     QGeoManeuverPrivateDefault(const QGeoManeuverPrivateDefault &other);
     ~QGeoManeuverPrivateDefault();
-
-    bool operator== (const QGeoManeuverPrivateDefault &other) const;
+    virtual QGeoManeuverPrivate *clone() override;
 
     virtual bool valid() const override;
     virtual void setValid(bool valid) override;
