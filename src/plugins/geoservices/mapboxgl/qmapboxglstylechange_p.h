@@ -93,6 +93,7 @@ public:
 
 private:
     static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativeRectangleMapItem *);
+    static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativeCircleMapItem *);
     static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativePolygonMapItem *);
     static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativePolylineMapItem *);
 
