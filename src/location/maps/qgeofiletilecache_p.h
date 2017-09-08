@@ -147,6 +147,7 @@ protected:
     QString directory() const;
 
     QSharedPointer<QGeoCachedTileDisk> addToDiskCache(const QGeoTileSpec &spec, const QString &filename);
+    bool addToDiskCache(const QGeoTileSpec &spec, const QString &filename, const QByteArray &bytes);
     void addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
     QSharedPointer<QGeoTileTexture> addToTextureCache(const QGeoTileSpec &spec, const QImage &image);
     QSharedPointer<QGeoTileTexture> getFromMemory(const QGeoTileSpec &spec);
@@ -167,6 +168,9 @@ protected:
     CostStrategy costStrategyDisk_;
     CostStrategy costStrategyMemory_;
     CostStrategy costStrategyTexture_;
+    bool isDiskCostSet_;
+    bool isMemoryCostSet_;
+    bool isTextureCostSet_;
 };
 
 QT_END_NAMESPACE
