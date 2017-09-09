@@ -943,14 +943,20 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
 
     // Not using AltModifier as, for some reason, it causes angleDelta to be 0
     if (event->modifiers() & Qt::ShiftModifier && rotationEnabled()) {
+        emit rotationStarted(&m_pinch.m_event);
         // First set bearing
         const double bearingDelta = event->angleDelta().y() * qreal(0.05);
         m_declarativeMap->setBearing(m_declarativeMap->bearing() + bearingDelta);
         // then reanchor
         m_declarativeMap->setCenter(m_map->geoProjection().anchorCoordinateToPoint(wheelGeoPos, preZoomPoint));
+        emit rotationUpdated(&m_pinch.m_event);
+        emit rotationFinished(&m_pinch.m_event);
     } else if (event->modifiers() & Qt::ControlModifier && tiltEnabled()) {
+        emit tiltStarted(&m_pinch.m_event);
         const double tiltDelta = event->angleDelta().y() * qreal(0.05);
         m_declarativeMap->setTilt(m_declarativeMap->tilt() + tiltDelta);
+        emit tiltUpdated(&m_pinch.m_event);
+        emit tiltFinished(&m_pinch.m_event);
     } else if (pinchEnabled()) {
         const double zoomLevelDelta = event->angleDelta().y() * qreal(0.001);
         // Gesture area should always honor maxZL, but Map might not.
