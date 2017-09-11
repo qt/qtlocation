@@ -262,7 +262,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     sourceBounds_ = screenBounds_;
 }
 
-static bool crossEarthPole(const QGeoCoordinate &center, qreal distance)
+bool QDeclarativeCircleMapItem::crossEarthPole(const QGeoCoordinate &center, qreal distance)
 {
     qreal poleLat = 90;
     QGeoCoordinate northPole = QGeoCoordinate(poleLat, center.longitude());
@@ -275,7 +275,7 @@ static bool crossEarthPole(const QGeoCoordinate &center, qreal distance)
     return false;
 }
 
-static void calculatePeripheralPoints(QList<QGeoCoordinate> &path,
+void QDeclarativeCircleMapItem::calculatePeripheralPoints(QList<QGeoCoordinate> &path,
                                       const QGeoCoordinate &center,
                                       qreal distance,
                                       int steps,
@@ -644,9 +644,9 @@ void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QDoubleVector
                                                              const QGeoCoordinate &center,
                                                              qreal distance)
 {
-    qreal poleLat = 90;
-    qreal distanceToNorthPole = center.distanceTo(QGeoCoordinate(poleLat, 0));
-    qreal distanceToSouthPole = center.distanceTo(QGeoCoordinate(-poleLat, 0));
+    const qreal poleLat = 90;
+    const qreal distanceToNorthPole = center.distanceTo(QGeoCoordinate(poleLat, 0));
+    const qreal distanceToSouthPole = center.distanceTo(QGeoCoordinate(-poleLat, 0));
     bool crossNorthPole = distanceToNorthPole < distance;
     bool crossSouthPole = distanceToSouthPole < distance;
 

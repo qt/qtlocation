@@ -64,6 +64,7 @@ public:
 
         const QByteArray pluginName = "qmlgeo.test.plugin";
         QList<QGeoMapType> mapTypes;
+
         mapTypes << QGeoMapType(QGeoMapType::StreetMap, tr("StreetMap"), tr("StreetMap"), false, false, 1, pluginName, capabilities);
         mapTypes << QGeoMapType(QGeoMapType::SatelliteMapDay, tr("SatelliteMapDay"), tr("SatelliteMapDay"), false, false, 2, pluginName, capabilities);
         mapTypes << QGeoMapType(QGeoMapType::CycleMap, tr("CycleMap"), tr("CycleMap"), false, false, 3, pluginName, capabilities);
@@ -80,6 +81,12 @@ public:
         QVariantMap meta;
         meta["foo"] = 42;
         mapTypes << QGeoMapType(QGeoMapType::CustomMap, tr("AlternateCameraCapabilities"), tr("AlternateCameraCapabilities"), false, false, 4, pluginName, capabilities4, meta);
+
+        if (parameters.contains(QStringLiteral("extraMapTypeName"))) {
+            QString  extraMapTypeName = parameters.value(QStringLiteral("extraMapTypeName")).toString();
+            mapTypes << QGeoMapType(QGeoMapType::CustomMap, extraMapTypeName, extraMapTypeName, false, false, 5, pluginName, capabilities);
+        }
+
         setSupportedMapTypes(mapTypes);
 
         QGeoTileFetcherTest *fetcher = new QGeoTileFetcherTest(this);
