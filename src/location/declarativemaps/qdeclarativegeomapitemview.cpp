@@ -378,7 +378,7 @@ void QDeclarativeGeoMapItemView::setAutoFitViewport(const bool &fitViewport)
 */
 void QDeclarativeGeoMapItemView::fitViewport()
 {
-    if (!map_ || !fitViewport_ || m_repopulating)
+    if (!map_ || !map_->mapReady() || !fitViewport_ || m_repopulating)
         return;
 
     if (map_->mapItems().size() > 0)

@@ -46,6 +46,7 @@
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/QGeoPath>
+#include <QtPositioning/QGeoPolygon>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGRectangleNode>
 #include <QtQuick/private/qquickwindow_p.h>
@@ -1341,22 +1342,22 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
         return m_visibleRegion;
 
     const QList<QDoubleVector2D> &visibleRegion = m_map->geoProjection().visibleRegion();
-    QGeoPath path;
+    QGeoPolygon poly;
     for (int i = 0; i < visibleRegion.size(); ++i) {
          const QDoubleVector2D &c = visibleRegion.at(i);
         // If a segment spans more than half of the map longitudinally, split in 2.
         if (i && qAbs(visibleRegion.at(i-1).x() - c.x()) >= 0.5) { // This assumes a segment is never >= 1.0 (whole map span)
             QDoubleVector2D extraPoint = (visibleRegion.at(i-1) + c) * 0.5;
-            path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
+            poly.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
         }
-        path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
+        poly.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
     }
     if (visibleRegion.size() >= 2 && qAbs(visibleRegion.last().x() - visibleRegion.first().x()) >= 0.5) {
         QDoubleVector2D extraPoint = (visibleRegion.last() + visibleRegion.first()) * 0.5;
-        path.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
+        poly.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
     }
 
-    return path.boundingGeoRectangle();
+    return poly;
 }
 
 /*!

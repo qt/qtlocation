@@ -88,6 +88,7 @@ QGeoCachedTileDisk::~QGeoCachedTileDisk()
 QGeoFileTileCache::QGeoFileTileCache(const QString &directory, QObject *parent)
     : QAbstractGeoTileCache(parent), directory_(directory), minTextureUsage_(0), extraTextureUsage_(0)
     ,costStrategyDisk_(ByteSize), costStrategyMemory_(ByteSize), costStrategyTexture_(ByteSize)
+    ,isDiskCostSet_(false), isMemoryCostSet_(false), isTextureCostSet_(false)
 {
 
 }
@@ -120,21 +121,21 @@ void QGeoFileTileCache::init()
     QDir::root().mkpath(directory_);
 
     // default values
-    if (!diskCache_.maxCost()) { // If setMaxDiskUsage has not been called yet
+    if (!isDiskCostSet_) { // If setMaxDiskUsage has not been called yet
         if (costStrategyDisk_ == ByteSize)
             setMaxDiskUsage(50 * 1024 * 1024);
         else
             setMaxDiskUsage(1000);
     }
 
-    if (!memoryCache_.maxCost()) { // If setMaxMemoryUsage has not been called yet
+    if (!isMemoryCostSet_) { // If setMaxMemoryUsage has not been called yet
         if (costStrategyMemory_ == ByteSize)
             setMaxMemoryUsage(3 * 1024 * 1024);
         else
             setMaxMemoryUsage(100);
     }
 
-    if (!textureCache_.maxCost()) { // If setExtraTextureUsage has not been called yet
+    if (!isTextureCostSet_) { // If setExtraTextureUsage has not been called yet
         if (costStrategyTexture_ == ByteSize)
             setExtraTextureUsage(6 * 1024 * 1024);
         else
@@ -240,6 +241,7 @@ void QGeoFileTileCache::printStats()
 void QGeoFileTileCache::setMaxDiskUsage(int diskUsage)
 {
     diskCache_.setMaxCost(diskUsage);
+    isDiskCostSet_ = true;
 }
 
 int QGeoFileTileCache::maxDiskUsage() const
@@ -255,6 +257,7 @@ int QGeoFileTileCache::diskUsage() const
 void QGeoFileTileCache::setMaxMemoryUsage(int memoryUsage)
 {
     memoryCache_.setMaxCost(memoryUsage);
+    isMemoryCostSet_ = true;
 }
 
 int QGeoFileTileCache::maxMemoryUsage() const
@@ -271,6 +274,7 @@ void QGeoFileTileCache::setExtraTextureUsage(int textureUsage)
 {
     extraTextureUsage_ = textureUsage;
     textureCache_.setMaxCost(minTextureUsage_ + extraTextureUsage_);
+    isTextureCostSet_ = true;
 }
 
 void QGeoFileTileCache::setMinTextureUsage(int textureUsage)
@@ -384,12 +388,7 @@ void QGeoFileTileCache::insert(const QGeoTileSpec &spec,
 
     if (areas & QAbstractGeoTileCache::DiskCache) {
         QString filename = tileSpecToFilename(spec, format, directory_);
-        QFile file(filename);
-        file.open(QIODevice::WriteOnly);
-        file.write(bytes);
-        file.close();
-
-        addToDiskCache(spec, filename);
+        addToDiskCache(spec, filename, bytes);
     }
 
     if (areas & QAbstractGeoTileCache::MemoryCache) {
@@ -489,6 +488,27 @@ QSharedPointer<QGeoCachedTileDisk> QGeoFileTileCache::addToDiskCache(const QGeoT
     }
     diskCache_.insert(spec, td, cost);
     return td;
+}
+
+bool QGeoFileTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename, const QByteArray &bytes)
+{
+    QSharedPointer<QGeoCachedTileDisk> td(new QGeoCachedTileDisk);
+    td->spec = spec;
+    td->filename = filename;
+    td->cache = this;
+
+    int cost = 1;
+    if (costStrategyDisk_ == ByteSize)
+        cost = bytes.size();
+
+    if (diskCache_.insert(spec, td, cost)) {
+        QFile file(filename);
+        file.open(QIODevice::WriteOnly);
+        file.write(bytes);
+        file.close();
+        return true;
+    }
+    return false;
 }
 
 void QGeoFileTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
