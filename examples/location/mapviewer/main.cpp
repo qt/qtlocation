@@ -84,10 +84,11 @@ static bool parseArgs(QStringList& args, QVariantMap& parameters)
 
 int main(int argc, char *argv[])
 {
+#if QT_CONFIG(library)
     const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
     for (const QByteArray &p : additionalLibraryPaths.split(':'))
         QCoreApplication::addLibraryPath(QString(p));
-
+#endif
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication application(argc, argv);
 
