@@ -86,6 +86,7 @@ public:
 
     void prefetchData() Q_DECL_OVERRIDE;
     void clearData() Q_DECL_OVERRIDE;
+    Capabilities capabilities() const override;
 
 public Q_SLOTS:
     virtual void clearScene(int mapId);

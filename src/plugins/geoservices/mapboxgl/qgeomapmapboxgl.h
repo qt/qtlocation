@@ -57,6 +57,7 @@ public:
     void setMapboxGLSettings(const QMapboxGLSettings &);
     void setUseFBO(bool);
     void setMapItemsBefore(const QString &);
+    Capabilities capabilities() const override;
 
 private Q_SLOTS:
     // QMapboxGL

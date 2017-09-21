@@ -41,6 +41,7 @@
 #include <qnumeric.h>
 #include <QRectF>
 #include <QPointF>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtCore/QScopedValueRollback>
@@ -272,8 +273,11 @@ QSGNode *QDeclarativeRectangleMapItem::updateMapItemPaintNode(QSGNode *oldNode, 
 */
 void QDeclarativeRectangleMapItem::updatePolish()
 {
-    if (!map() || !topLeft().isValid() || !bottomRight().isValid())
+    if (!map() || !topLeft().isValid() || !bottomRight().isValid()
+            || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
+
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
 
     QScopedValueRollback<bool> rollback(updatingGeometry_);
     updatingGeometry_ = true;
@@ -299,7 +303,7 @@ void QDeclarativeRectangleMapItem::updatePolish()
         QDoubleVector2D borderLeftBoundWrapped;
         QList<QList<QDoubleVector2D > > clippedPaths = borderGeometry_.clipPath(*map(), closedPath, borderLeftBoundWrapped);
         if (clippedPaths.size()) {
-            borderLeftBoundWrapped = map()->geoProjection().geoToWrappedMapProjection(geometryOrigin);
+            borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
             borderGeometry_.pathToScreen(*map(), clippedPaths, borderLeftBoundWrapped);
             borderGeometry_.updateScreenPoints(*map(), border_.width());
 
@@ -355,11 +359,11 @@ void QDeclarativeRectangleMapItem::updatePath()
     if (!map())
         return;
     pathMercator_.clear();
-    pathMercator_ << map()->geoProjection().geoToMapProjection(rectangle_.topLeft());
-    pathMercator_ << map()->geoProjection().geoToMapProjection(
+    pathMercator_ << QWebMercator::coordToMercator(rectangle_.topLeft());
+    pathMercator_ << QWebMercator::coordToMercator(
                          QGeoCoordinate(rectangle_.topLeft().latitude(), rectangle_.bottomRight().longitude()));
-    pathMercator_ << map()->geoProjection().geoToMapProjection(rectangle_.bottomRight());
-    pathMercator_ << map()->geoProjection().geoToMapProjection(
+    pathMercator_ << QWebMercator::coordToMercator(rectangle_.bottomRight());
+    pathMercator_ << QWebMercator::coordToMercator(
                          QGeoCoordinate(rectangle_.bottomRight().latitude(), rectangle_.topLeft().longitude()));
 }
 

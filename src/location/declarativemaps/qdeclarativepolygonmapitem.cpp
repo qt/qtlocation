@@ -147,14 +147,14 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 {
     if (!sourceDirty_)
         return;
-
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map.geoProjection());
     srcPath_ = QPainterPath();
 
     // build the actual path
     // The approach is the same as described in QGeoMapPolylineGeometry::updateSourcePoints
     srcOrigin_ = geoLeftBound_;
     double unwrapBelowX = 0;
-    QDoubleVector2D leftBoundWrapped = map.geoProjection().wrapMapProjection(map.geoProjection().geoToMapProjection(geoLeftBound_));
+    QDoubleVector2D leftBoundWrapped = p.wrapMapProjection(p.geoToMapProjection(geoLeftBound_));
     if (preserveGeometry_)
         unwrapBelowX = leftBoundWrapped.x();
 
@@ -164,7 +164,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     // 1)
     for (int i = 0; i < path.size(); ++i) {
         const QDoubleVector2D &coord = path.at(i);
-        QDoubleVector2D wrappedProjection = map.geoProjection().wrapMapProjection(coord);
+        QDoubleVector2D wrappedProjection = p.wrapMapProjection(coord);
 
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
@@ -187,7 +187,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 
     // 2)
     QList<QList<QDoubleVector2D> > clippedPaths;
-    const QList<QDoubleVector2D> &visibleRegion = map.geoProjection().projectableRegion();
+    const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
     if (visibleRegion.size()) {
         c2t::clip2tri clipper;
         clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), true);
@@ -210,17 +210,17 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         //      in turn will make the geometry wrap around.
         lb.setX(qMax(wrappedLeftBound.x(), lb.x()));
         leftBoundWrapped = lb;
-        srcOrigin_ = map.geoProjection().mapProjectionToGeo(map.geoProjection().unwrapMapProjection(lb));
+        srcOrigin_ = p.mapProjectionToGeo(p.unwrapMapProjection(lb));
     } else {
         clippedPaths.append(wrappedPath);
     }
 
     // 3)
-    QDoubleVector2D origin = map.geoProjection().wrappedMapProjectionToItemPosition(leftBoundWrapped);
+    QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(leftBoundWrapped);
     for (const QList<QDoubleVector2D> &path: clippedPaths) {
         QDoubleVector2D lastAddedPoint;
         for (int i = 0; i < path.size(); ++i) {
-            QDoubleVector2D point = map.geoProjection().wrappedMapProjectionToItemPosition(path.at(i));
+            QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
             point = point - origin; // (0,0) if point == geoLeftBound_
 
             if (i == 0) {
@@ -500,9 +500,11 @@ QSGNode *QDeclarativePolygonMapItem::updateMapItemPaintNode(QSGNode *oldNode, Up
 */
 void QDeclarativePolygonMapItem::updatePolish()
 {
-    if (!map() || geopath_.path().length() == 0)
+    if (!map() || geopath_.path().length() == 0
+            || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
 
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
     QScopedValueRollback<bool> rollback(updatingGeometry_);
     updatingGeometry_ = true;
 
@@ -527,7 +529,7 @@ void QDeclarativePolygonMapItem::updatePolish()
         QDoubleVector2D borderLeftBoundWrapped;
         QList<QList<QDoubleVector2D > > clippedPaths = borderGeometry_.clipPath(*map(), closedPath, borderLeftBoundWrapped);
         if (clippedPaths.size()) {
-            borderLeftBoundWrapped = map()->geoProjection().geoToWrappedMapProjection(geometryOrigin);
+            borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
             borderGeometry_.pathToScreen(*map(), clippedPaths, borderLeftBoundWrapped);
             borderGeometry_.updateScreenPoints(*map(), border_.width());
 
@@ -571,12 +573,13 @@ void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChang
 */
 void QDeclarativePolygonMapItem::regenerateCache()
 {
-    if (!map())
+    if (!map() || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
     geopathProjected_.clear();
     geopathProjected_.reserve(geopath_.path().size());
     for (const QGeoCoordinate &c : geopath_.path())
-        geopathProjected_ << map()->geoProjection().geoToMapProjection(c);
+        geopathProjected_ << p.geoToMapProjection(c);
 }
 
 /*!
@@ -584,9 +587,10 @@ void QDeclarativePolygonMapItem::regenerateCache()
 */
 void QDeclarativePolygonMapItem::updateCache()
 {
-    if (!map())
+    if (!map() || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
-    geopathProjected_ << map()->geoProjection().geoToMapProjection(geopath_.path().last());
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
+    geopathProjected_ << p.geoToMapProjection(geopath_.path().last());
 }
 
 /*!

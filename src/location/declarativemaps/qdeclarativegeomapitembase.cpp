@@ -185,11 +185,19 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate &coordina
     if (!map_ || !quickMap_)
         return;
 
-    QDoubleVector2D wrappedProjection = map_->geoProjection().geoToWrappedMapProjection(coordinate);
-    if (!map_->geoProjection().isProjectable(wrappedProjection))
-        return;
+    QDoubleVector2D pos;
+    if (map()->geoProjection().projectionType() == QGeoProjection::ProjectionWebMercator) {
+        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
+        QDoubleVector2D wrappedProjection = p.geoToWrappedMapProjection(coordinate);
+        if (!p.isProjectable(wrappedProjection))
+            return;
+        pos = p.wrappedMapProjectionToItemPosition(wrappedProjection);
+    } else {
+        pos = map()->geoProjection().coordinateToItemPosition(coordinate, false);
+        if (qIsNaN(pos.x()))
+            return;
+    }
 
-    QDoubleVector2D pos = map_->geoProjection().wrappedMapProjectionToItemPosition(wrappedProjection);
     QPointF topLeft = pos.toPointF() - offset;
 
     setPosition(topLeft);

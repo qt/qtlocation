@@ -372,6 +372,13 @@ void QGeoMapMapboxGL::setMapItemsBefore(const QString &before)
     d->m_mapItemsBefore = before;
 }
 
+QGeoMap::Capabilities QGeoMapMapboxGL::capabilities() const
+{
+    return Capabilities(SupportsVisibleRegion
+                        | SupportsSetBearing
+                        | SupportsAnchoringCoordinate);
+}
+
 QSGNode *QGeoMapMapboxGL::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)
 {
     Q_D(QGeoMapMapboxGL);

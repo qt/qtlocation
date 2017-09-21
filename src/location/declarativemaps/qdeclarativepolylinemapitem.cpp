@@ -189,11 +189,11 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
      * 2.1) recalculate the origin and geoLeftBound to prevent these parameters from ending in unprojectable areas
      * 2.2) ensure the left bound does not wrap around due to QGeoCoordinate <-> clipper conversions
      */
-
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map.geoProjection());
     srcOrigin_ = geoLeftBound_;
 
     double unwrapBelowX = 0;
-    leftBoundWrapped = map.geoProjection().wrapMapProjection(map.geoProjection().geoToMapProjection(geoLeftBound_));
+    leftBoundWrapped = p.wrapMapProjection(p.geoToMapProjection(geoLeftBound_));
     if (preserveGeometry_)
         unwrapBelowX = leftBoundWrapped.x();
 
@@ -203,7 +203,7 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
     // 1)
     for (int i = 0; i < path.size(); ++i) {
         const QDoubleVector2D &coord = path.at(i);
-        QDoubleVector2D wrappedProjection = map.geoProjection().wrapMapProjection(coord);
+        QDoubleVector2D wrappedProjection = p.wrapMapProjection(coord);
 
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
@@ -226,7 +226,7 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
 
     // 2)
     QList<QList<QDoubleVector2D> > clippedPaths;
-    const QList<QDoubleVector2D> &visibleRegion = map.geoProjection().projectableRegion();
+    const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
     if (visibleRegion.size()) {
         c2t::clip2tri clipper;
         clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), false);
@@ -265,18 +265,19 @@ void QGeoMapPolylineGeometry::pathToScreen(const QGeoMap &map,
                                            const QList<QList<QDoubleVector2D> > &clippedPaths,
                                            const QDoubleVector2D &leftBoundWrapped)
 {
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map.geoProjection());
     // 3) project the resulting geometry to screen position and calculate screen bounds
     double minX = qInf();
     double minY = qInf();
     double maxX = -qInf();
     double maxY = -qInf();
 
-    srcOrigin_ = map.geoProjection().mapProjectionToGeo(map.geoProjection().unwrapMapProjection(leftBoundWrapped));
-    QDoubleVector2D origin = map.geoProjection().wrappedMapProjectionToItemPosition(leftBoundWrapped);
+    srcOrigin_ = p.mapProjectionToGeo(p.unwrapMapProjection(leftBoundWrapped));
+    QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(leftBoundWrapped);
     for (const QList<QDoubleVector2D> &path: clippedPaths) {
         QDoubleVector2D lastAddedPoint;
         for (int i = 0; i < path.size(); ++i) {
-            QDoubleVector2D point = map.geoProjection().wrappedMapProjectionToItemPosition(path.at(i));
+            QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
 
             point = point - origin; // (0,0) if point == geoLeftBound_
 
@@ -722,12 +723,13 @@ void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChan
 */
 void QDeclarativePolylineMapItem::regenerateCache()
 {
-    if (!map())
+    if (!map() || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
     geopathProjected_.clear();
     geopathProjected_.reserve(geopath_.path().size());
     for (const QGeoCoordinate &c : geopath_.path())
-        geopathProjected_ << map()->geoProjection().geoToMapProjection(c);
+        geopathProjected_ << p.geoToMapProjection(c);
 }
 
 /*!
@@ -735,9 +737,10 @@ void QDeclarativePolylineMapItem::regenerateCache()
 */
 void QDeclarativePolylineMapItem::updateCache()
 {
-    if (!map())
+    if (!map() ||  map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
-    geopathProjected_ << map()->geoProjection().geoToMapProjection(geopath_.path().last());
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
+    geopathProjected_ << p.geoToMapProjection(geopath_.path().last());
 }
 
 /*!
@@ -745,7 +748,8 @@ void QDeclarativePolylineMapItem::updateCache()
 */
 void QDeclarativePolylineMapItem::updatePolish()
 {
-    if (!map() || geopath_.path().length() == 0)
+    if (!map() || geopath_.path().length() == 0
+            || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
 
     QScopedValueRollback<bool> rollback(updatingGeometry_);

@@ -96,6 +96,9 @@ protected:
     virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
     virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()
 
+    virtual double mapWidth() const;
+    virtual double mapHeight() const;
+
 protected:
     QSize m_viewportSize;
     QGeoProjection *m_geoProjection;

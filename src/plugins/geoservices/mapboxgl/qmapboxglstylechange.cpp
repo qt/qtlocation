@@ -89,18 +89,18 @@ QMapbox::Feature featureFromMapRectangle(QDeclarativeRectangleMapItem *mapItem)
 QMapbox::Feature featureFromMapCircle(QDeclarativeCircleMapItem *mapItem)
 {
     static const int circleSamples = 128;
-
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(mapItem->map()->geoProjection());
     QList<QGeoCoordinate> path;
     QGeoCoordinate leftBound;
     QDeclarativeCircleMapItem::calculatePeripheralPoints(path, mapItem->center(), mapItem->radius(), circleSamples, leftBound);
     QList<QDoubleVector2D> pathProjected;
     for (const QGeoCoordinate &c : qAsConst(path))
-        pathProjected << mapItem->map()->geoProjection().geoToMapProjection(c);
+        pathProjected << p.geoToMapProjection(c);
     if (QDeclarativeCircleMapItem::crossEarthPole(mapItem->center(), mapItem->radius()))
         mapItem->preserveCircleGeometry(pathProjected, mapItem->center(), mapItem->radius());
     path.clear();
     for (const QDoubleVector2D &c : qAsConst(pathProjected))
-        path << mapItem->map()->geoProjection().mapProjectionToGeo(c);
+        path << p.mapProjectionToGeo(c);
 
 
     QMapbox::Coordinates coordinates;

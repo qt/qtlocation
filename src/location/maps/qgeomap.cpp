@@ -91,7 +91,7 @@ void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
     if (cameraData == d->m_cameraData)
         return;
     d->m_cameraData = cameraData;
-    d->m_geoProjection->setCameraData(cameraData);
+    d->m_geoProjection->setCameraData(cameraData, false);
     d->changeCameraData(cameraData);
     emit cameraDataChanged(d->m_cameraData);
 }
@@ -106,6 +106,40 @@ bool QGeoMap::handleEvent(QEvent *event)
 {
     Q_UNUSED(event)
     return false;
+}
+
+bool QGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
+{
+    Q_D(QGeoMap);
+    bool res = d->m_geoProjection->setBearing(bearing, coordinate);
+    if (!res)
+        return false;
+
+    setCameraData(geoProjection().cameraData());
+    return true;
+}
+
+bool QGeoMap::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint)
+{
+    QGeoCoordinate newCenter = geoProjection().anchorCoordinateToPoint(coordinate, anchorPoint);
+    QGeoCameraData data = cameraData();
+    if (data.center() != newCenter) {
+        data.setCenter(newCenter);
+        setCameraData(data);
+        return true;
+    }
+    return false;
+}
+
+bool QGeoMap::fitViewportToGeoRectangle(const QGeoRectangle &rectangle)
+{
+    Q_UNUSED(rectangle)
+    return false;
+}
+
+QGeoShape QGeoMap::visibleRegion() const
+{
+    return geoProjection().visibleRegion();
 }
 
 QGeoCameraData QGeoMap::cameraData() const
@@ -146,13 +180,13 @@ double QGeoMap::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) co
 double QGeoMap::mapWidth() const
 {
     Q_D(const QGeoMap);
-    return d->m_geoProjection->mapWidth();
+    return d->mapWidth();
 }
 
 double QGeoMap::mapHeight() const
 {
     Q_D(const QGeoMap);
-    return d->m_geoProjection->mapHeight();
+    return d->mapHeight();
 }
 
 const QGeoProjection &QGeoMap::geoProjection() const
@@ -165,6 +199,11 @@ QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
     Q_D(const QGeoMap);
     return d->m_cameraCapabilities;
+}
+
+QGeoMap::Capabilities QGeoMap::capabilities() const
+{
+    return Capabilities(QGeoMap::SupportsNothing);
 }
 
 void QGeoMap::prefetchData()
@@ -335,6 +374,20 @@ bool QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
 QList<QGeoMapObject *> QGeoMapPrivate::mapObjects() const
 {
     return QList<QGeoMapObject *>();
+}
+
+double QGeoMapPrivate::mapWidth() const
+{
+    if (m_geoProjection->projectionType() == QGeoProjection::ProjectionWebMercator)
+        return static_cast<const QGeoProjectionWebMercator *>(m_geoProjection)->mapWidth();
+    return 0; // override this for maps supporting other projections
+}
+
+double QGeoMapPrivate::mapHeight() const
+{
+    if (m_geoProjection->projectionType() == QGeoProjection::ProjectionWebMercator)
+        return static_cast<const QGeoProjectionWebMercator *>(m_geoProjection)->mapHeight();
+    return 0; // override this for maps supporting other projections
 }
 
 QT_END_NAMESPACE

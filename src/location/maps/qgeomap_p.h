@@ -73,6 +73,8 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMap : public QObject
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoMap)
 
+    Q_ENUMS(Capability)
+    Q_FLAGS(Capabilities)
 public:
     enum ItemType {
         NoItem = 0x0000,
@@ -86,6 +88,16 @@ public:
 
     Q_DECLARE_FLAGS(ItemTypes, ItemType)
 
+    enum Capability {
+        SupportsNothing = 0x0000,
+        SupportsVisibleRegion = 0x0001,
+        SupportsSetBearing = 0x0002,
+        SupportsAnchoringCoordinate = 0x0004,
+        SupportsFittingViewportToGeoRectangle = 0x0008
+    };
+
+    Q_DECLARE_FLAGS(Capabilities, Capability)
+
     virtual ~QGeoMap();
 
     // Sets the display size
@@ -97,6 +109,7 @@ public:
 
     QGeoCameraData cameraData() const;
     QGeoCameraCapabilities cameraCapabilities() const;
+    virtual Capabilities capabilities() const;
 
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
@@ -131,6 +144,11 @@ public:
     virtual QString copyrightsStyleSheet() const;
     virtual void setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate, bool tilt);
     virtual bool handleEvent(QEvent *event);
+
+    virtual bool setBearing(qreal bearing, const QGeoCoordinate &coordinate);
+    virtual QGeoShape visibleRegion() const;
+    virtual bool anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint);
+    virtual bool fitViewportToGeoRectangle(const QGeoRectangle &rectangle);
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);

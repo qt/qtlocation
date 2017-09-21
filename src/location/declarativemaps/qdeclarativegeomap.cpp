@@ -61,6 +61,15 @@
 
 QT_BEGIN_NAMESPACE
 
+static qreal sanitizeBearing(qreal bearing)
+{
+    bearing = std::fmod(bearing, qreal(360.0));
+    if (bearing < 0.0)
+        bearing += 360.0;
+
+    return bearing;
+}
+
 /*!
     \qmltype Map
     \instantiates QDeclarativeGeoMap
@@ -389,7 +398,7 @@ void QDeclarativeGeoMap::initialize()
 
     QGeoCoordinate center = m_cameraData.center();
 
-    if (qIsNaN(m_userMinimumZoomLevel))
+    if (!qIsFinite(m_userMinimumZoomLevel))
         setMinimumZoomLevel(m_map->minimumZoom(), false);
     else
         setMinimumZoomLevel(qMax<qreal>(m_map->minimumZoom(), m_userMinimumZoomLevel), false);
@@ -681,7 +690,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     if (m_cameraCapabilities.maximumZoomLevelAt256() < m_gestureArea->maximumZoomLevel()) {
         setMaximumZoomLevel(m_cameraCapabilities.maximumZoomLevelAt256(), false);
     } else if (m_cameraCapabilities.maximumZoomLevelAt256() > m_gestureArea->maximumZoomLevel()) {
-        if (qIsNaN(m_userMaximumZoomLevel)) {
+        if (!qIsFinite(m_userMaximumZoomLevel)) {
             // If the user didn't set anything
             setMaximumZoomLevel(m_cameraCapabilities.maximumZoomLevelAt256(), false);
         } else {  // Try to set what the user requested
@@ -694,7 +703,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     if (m_cameraCapabilities.minimumZoomLevelAt256() > m_gestureArea->minimumZoomLevel()) {
         setMinimumZoomLevel(m_cameraCapabilities.minimumZoomLevelAt256(), false);
     } else if (m_cameraCapabilities.minimumZoomLevelAt256() < m_gestureArea->minimumZoomLevel()) {
-        if (qIsNaN(m_userMinimumZoomLevel)) {
+        if (!qIsFinite(m_userMinimumZoomLevel)) {
             // If the user didn't set anything, trying to set the new caps.
             setMinimumZoomLevel(m_cameraCapabilities.minimumZoomLevelAt256(), false);
         } else {  // Try to set what the user requested
@@ -710,7 +719,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     if (m_cameraCapabilities.maximumTilt() < m_maximumTilt) {
         setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
     } else if (m_cameraCapabilities.maximumTilt() > m_maximumTilt) {
-        if (qIsNaN(m_userMaximumTilt))
+        if (!qIsFinite(m_userMaximumTilt))
             setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
         else // Try to set what the user requested
             setMaximumTilt(qMin<qreal>(m_cameraCapabilities.maximumTilt(), m_userMaximumTilt), false);
@@ -719,7 +728,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     if (m_cameraCapabilities.minimumTilt() > m_minimumTilt) {
         setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
     } else if (m_cameraCapabilities.minimumTilt() < m_minimumTilt) {
-        if (qIsNaN(m_userMinimumTilt))
+        if (!qIsFinite(m_userMinimumTilt))
             setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
         else // Try to set what the user requested
             setMinimumTilt(qMax<qreal>(m_cameraCapabilities.minimumTilt(), m_userMinimumTilt), false);
@@ -729,7 +738,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     if (m_cameraCapabilities.maximumFieldOfView() < m_maximumFieldOfView) {
         setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
     } else if (m_cameraCapabilities.maximumFieldOfView() > m_maximumFieldOfView) {
-        if (qIsNaN(m_userMaximumFieldOfView))
+        if (!qIsFinite(m_userMaximumFieldOfView))
             setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
         else // Try to set what the user requested
             setMaximumFieldOfView(qMin<qreal>(m_cameraCapabilities.maximumFieldOfView(), m_userMaximumFieldOfView), false);
@@ -738,7 +747,7 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     if (m_cameraCapabilities.minimumFieldOfView() > m_minimumFieldOfView) {
         setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
     } else if (m_cameraCapabilities.minimumFieldOfView() < m_minimumFieldOfView) {
-        if (qIsNaN(m_userMinimumFieldOfView))
+        if (!qIsFinite(m_userMinimumFieldOfView))
             setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
         else // Try to set what the user requested
             setMinimumFieldOfView(qMax<qreal>(m_cameraCapabilities.minimumFieldOfView(), m_userMinimumFieldOfView), false);
@@ -1042,18 +1051,53 @@ qreal QDeclarativeGeoMap::zoomLevel() const
 */
 void QDeclarativeGeoMap::setBearing(qreal bearing)
 {
-    bearing = std::fmod(bearing, qreal(360.0));
-    if (bearing < 0.0)
-        bearing += 360.0;
-    if (m_map && !m_cameraCapabilities.supportsBearing())
-        bearing = 0.0;
-    if (m_cameraData.bearing() == bearing || bearing < 0.0)
+    bearing = sanitizeBearing(bearing);
+    if (m_cameraData.bearing() == bearing)
         return;
 
     m_cameraData.setBearing(bearing);
     if (m_map)
         m_map->setCameraData(m_cameraData);
     emit bearingChanged(bearing);
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::setBearing(real bearing, coordinate coordinate)
+
+    Sets the bearing for the map to \a bearing, rotating it around \a coordinate.
+    If the Plugin used for the Map supports bearing, the valid range for \a bearing is between 0 and 360.
+    If the Plugin used for the Map does not support bearing, or if the map is tilted and \a coordinate happens
+    to be behind the camera, or if the map is not ready (see \l mapReady), calling this method will have no effect.
+
+    The release of this API with Qt 5.10 is a Technology Preview.
+
+    \since 5.10
+*/
+void QDeclarativeGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
+{
+    if (!m_map)
+        return;
+
+    const QGeoCoordinate currentCenter = center();
+    const qreal currentBearing = QDeclarativeGeoMap::bearing();
+    bearing = sanitizeBearing(bearing);
+
+    if (!coordinate.isValid()
+            || !qIsFinite(bearing)
+            || (coordinate == currentCenter && bearing == currentBearing))
+        return;
+
+    if (m_map->capabilities() & QGeoMap::SupportsSetBearing) {
+        if (!m_map->setBearing(bearing, coordinate))
+            return;
+
+        m_cameraData = m_map->cameraData();
+
+        if (m_cameraData.center() != currentCenter)
+            emit centerChanged(m_cameraData.center());
+        if (m_cameraData.bearing() != currentBearing)
+            emit bearingChanged(bearing);
+    }
 }
 
 qreal QDeclarativeGeoMap::bearing() const
@@ -1351,23 +1395,23 @@ QGeoShape QDeclarativeGeoMap::visibleRegion() const
     if (!m_map || !width() || !height())
         return m_visibleRegion;
 
-    const QList<QDoubleVector2D> &visibleRegion = m_map->geoProjection().visibleRegion();
-    QGeoPolygon poly;
-    for (int i = 0; i < visibleRegion.size(); ++i) {
-         const QDoubleVector2D &c = visibleRegion.at(i);
-        // If a segment spans more than half of the map longitudinally, split in 2.
-        if (i && qAbs(visibleRegion.at(i-1).x() - c.x()) >= 0.5) { // This assumes a segment is never >= 1.0 (whole map span)
-            QDoubleVector2D extraPoint = (visibleRegion.at(i-1) + c) * 0.5;
-            poly.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
-        }
-        poly.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(c));
+    if (m_map->capabilities() & QGeoMap::SupportsVisibleRegion) {
+        return m_map->visibleRegion();
+    } else {
+        // ToDo: handle projections not supporting visible region in a better way.
+        // This approach will fail when horizon is in the view or the map is greatly zoomed out.
+        QList<QGeoCoordinate> visiblePoly;
+        visiblePoly << m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(0,0), false);
+        visiblePoly << m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_map->viewportWidth() - 1,
+                                                                                       0), false);
+        visiblePoly << m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_map->viewportWidth() - 1,
+                                                                                       m_map->viewportHeight() - 1), false);
+        visiblePoly << m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(0,
+                                                                                       m_map->viewportHeight() - 1), false);
+        QGeoPath path;
+        path.setPath(visiblePoly);
+        return path.boundingGeoRectangle();
     }
-    if (visibleRegion.size() >= 2 && qAbs(visibleRegion.last().x() - visibleRegion.first().x()) >= 0.5) {
-        QDoubleVector2D extraPoint = (visibleRegion.last() + visibleRegion.first()) * 0.5;
-        poly.addCoordinate(m_map->geoProjection().wrappedMapProjectionToGeo(extraPoint));
-    }
-
-    return poly;
 }
 
 /*!
@@ -1439,35 +1483,53 @@ bool QDeclarativeGeoMap::mapReady() const
 // TODO: offer the possibility to specify the margins.
 void QDeclarativeGeoMap::fitViewportToGeoShape()
 {
-    const int margins  = 10;
-    if (!m_map  || !m_visibleRegion.isValid() || width() <= margins || height() <= margins)
-        return;
+    if (m_map->geoProjection().projectionType() == QGeoProjection::ProjectionWebMercator) {
+        // This case remains handled here, and not inside QGeoMap*::fitViewportToGeoRectangle,
+        // in order to honor animations on center and zoomLevel
+        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_map->geoProjection());
+        const int margins  = 10;
+        if (!m_map  || !m_visibleRegion.isValid() || width() <= margins || height() <= margins)
+            return;
 
-    QDoubleVector2D topLeftPoint = m_map->geoProjection().geoToMapProjection(m_visibleRegion.topLeft());
-    QDoubleVector2D bottomRightPoint = m_map->geoProjection().geoToMapProjection(m_visibleRegion.bottomRight());
-    if (bottomRightPoint.x() < topLeftPoint.x()) // crossing the dateline
-        bottomRightPoint.setX(bottomRightPoint.x() + 1.0);
+        QDoubleVector2D topLeftPoint = p.geoToMapProjection(m_visibleRegion.topLeft());
+        QDoubleVector2D bottomRightPoint = p.geoToMapProjection(m_visibleRegion.bottomRight());
+        if (bottomRightPoint.x() < topLeftPoint.x()) // crossing the dateline
+            bottomRightPoint.setX(bottomRightPoint.x() + 1.0);
 
-    // find center of the bounding box
-    QDoubleVector2D center = (topLeftPoint + bottomRightPoint) * 0.5;
-    center.setX(center.x() > 1.0 ? center.x() - 1.0 : center.x());
-    QGeoCoordinate centerCoordinate = m_map->geoProjection().mapProjectionToGeo(center);
+        // find center of the bounding box
+        QDoubleVector2D center = (topLeftPoint + bottomRightPoint) * 0.5;
+        center.setX(center.x() > 1.0 ? center.x() - 1.0 : center.x());
+        QGeoCoordinate centerCoordinate = p.mapProjectionToGeo(center);
 
-    // position camera to the center of bounding box
-    setProperty("center", QVariant::fromValue(centerCoordinate)); // not using setCenter(centerCoordinate) to honor a possible animation set on the center property
+        // position camera to the center of bounding box
+        setProperty("center", QVariant::fromValue(centerCoordinate)); // not using setCenter(centerCoordinate) to honor a possible animation set on the center property
 
-    // if the shape is empty we just change center position, not zoom
-    double bboxWidth  = (bottomRightPoint.x() - topLeftPoint.x()) * m_map->mapWidth();
-    double bboxHeight = (bottomRightPoint.y() - topLeftPoint.y()) * m_map->mapHeight();
+        // if the shape is empty we just change center position, not zoom
+        double bboxWidth  = (bottomRightPoint.x() - topLeftPoint.x()) * m_map->mapWidth();
+        double bboxHeight = (bottomRightPoint.y() - topLeftPoint.y()) * m_map->mapHeight();
 
-    if (bboxHeight == 0.0 && bboxWidth == 0.0)
-        return;
+        if (bboxHeight == 0.0 && bboxWidth == 0.0)
+            return;
 
-    double zoomRatio = qMax(bboxWidth / (width() - margins),
-                            bboxHeight / (height() - margins));
-    zoomRatio = std::log(zoomRatio) / std::log(2.0);
-    double newZoom = qMax<double>(minimumZoomLevel(), zoomLevel() - zoomRatio);
-    setProperty("zoomLevel", QVariant::fromValue(newZoom)); // not using setZoomLevel(newZoom)  to honor a possible animation set on the zoomLevel property
+        double zoomRatio = qMax(bboxWidth / (width() - margins),
+                                bboxHeight / (height() - margins));
+        zoomRatio = std::log(zoomRatio) / std::log(2.0);
+        double newZoom = qMax<double>(minimumZoomLevel(), zoomLevel() - zoomRatio);
+        setProperty("zoomLevel", QVariant::fromValue(newZoom)); // not using setZoomLevel(newZoom)  to honor a possible animation set on the zoomLevel property
+    } else if (m_map->capabilities() & QGeoMap::SupportsFittingViewportToGeoRectangle) {
+        // Animations cannot be honored in this case, as m_map act as a black box
+        const QGeoCoordinate currentCenter = center();
+        const qreal currentZoom = zoomLevel();
+
+        if (!m_map->fitViewportToGeoRectangle(m_visibleRegion))
+            return;
+
+        m_cameraData = m_map->cameraData();
+        if (m_cameraData.center() != currentCenter)
+            emit centerChanged(m_cameraData.center());
+        if (m_cameraData.zoomLevel() != currentZoom)
+            emit zoomLevelChanged(m_cameraData.zoomLevel());
+    }
 }
 
 
@@ -1481,35 +1543,6 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
 QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 {
     return QQmlListProperty<QDeclarativeGeoMapType>(this, m_supportedMapTypes);
-}
-
-/*!
-    \qmlmethod void QtLocation::Map::setBearing(real bearing, coordinate coordinate)
-
-    Sets the bearing for the map to \a bearing, rotating it around \a coordinate.
-    If the Plugin used for the Map supports bearing, the valid range for \a bearing is between 0 and 360.
-    If the Plugin used for the Map does not support bearing, or if the map is tilted and \a coordinate happens
-    to be behind the camera, or if the map is not ready (see \l mapReady), calling this method will have no effect.
-
-    The release of this API with Qt 5.10 is a Technology Preview.
-
-    \since 5.10
-*/
-void QDeclarativeGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
-{
-    if (!m_map)
-        return;
-
-    const QDoubleVector2D coordWrapped = m_map->geoProjection().geoToWrappedMapProjection(coordinate);
-    if (!m_map->geoProjection().isProjectable(coordWrapped))
-        return;
-
-    const QPointF rotationPoint = m_map->geoProjection().wrappedMapProjectionToItemPosition(coordWrapped).toPointF();
-
-    // First set bearing
-    setBearing(bearing);
-    // then reanchor
-    setCenter(m_map->geoProjection().anchorCoordinateToPoint(coordinate, rotationPoint));
 }
 
 /*!
@@ -1532,10 +1565,23 @@ void QDeclarativeGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordin
 */
 void QDeclarativeGeoMap::alignCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &point)
 {
-    if (!m_map)
+    if (!m_map || !(m_map->capabilities() & QGeoMap::SupportsAnchoringCoordinate))
         return;
 
-    setCenter(m_map->geoProjection().anchorCoordinateToPoint(coordinate, point));
+    const QGeoCoordinate currentCenter = center();
+
+    if (!coordinate.isValid()
+            || !qIsFinite(point.x())
+            || !qIsFinite(point.y()))
+        return;
+
+    if (!m_map->anchorCoordinateToPoint(coordinate, point))
+        return;
+
+    m_cameraData = m_map->cameraData();
+
+    if (m_cameraData.center() != currentCenter)
+        emit centerChanged(m_cameraData.center());
 }
 
 /*!
