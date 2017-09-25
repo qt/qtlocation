@@ -225,6 +225,9 @@ QDoubleVector2D QGeoProjectionWebMercator::itemPositionToWrappedMapProjection(co
 /* Default implementations */
 QGeoCoordinate QGeoProjectionWebMercator::itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport) const
 {
+    if (qIsNaN(pos.x()) || qIsNaN(pos.y()))
+        return QGeoCoordinate();
+
     if (clipToViewport) {
         int w = m_viewportWidth;
         int h = m_viewportHeight;
@@ -242,7 +245,14 @@ QGeoCoordinate QGeoProjectionWebMercator::itemPositionToCoordinate(const QDouble
 
 QDoubleVector2D QGeoProjectionWebMercator::coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
-    QDoubleVector2D pos = wrappedMapProjectionToItemPosition(wrapMapProjection(geoToMapProjection(coordinate)));
+    if (!coordinate.isValid())
+        return QDoubleVector2D(qQNaN(), qQNaN());
+
+    QDoubleVector2D wrappedProjection = wrapMapProjection(geoToMapProjection(coordinate));
+    if (!isProjectable(wrappedProjection))
+        return QDoubleVector2D(qQNaN(), qQNaN());
+
+    QDoubleVector2D pos = wrappedMapProjectionToItemPosition(wrappedProjection);
 
     if (clipToViewport) {
         int w = m_viewportWidth;
@@ -339,10 +349,10 @@ QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const 
     pos *= QDoubleVector2D(m_halfWidth, m_halfHeight);
 
     QDoubleVector3D p = m_centerNearPlane;
-    p -= m_up * pos.y();
-    p -= m_side * pos.x();
+    p += m_up * pos.y();
+    p += m_side * pos.x();
 
-    QDoubleVector3D ray = p - m_eye;
+    QDoubleVector3D ray = m_eye - p;
     ray.normalize();
 
     return (xyPlane.lineIntersection(m_eye, ray, s) / m_sideLength).toVector2D();
@@ -461,7 +471,7 @@ void QGeoProjectionWebMercator::setupCamera()
     m_quickItemTransformation = m_transformation;
     m_transformation.scale(m_sideLength, m_sideLength, 1.0);
 
-    m_centerNearPlane = m_eye + m_viewNormalized;
+    m_centerNearPlane = m_eye - m_viewNormalized;
     m_centerNearPlaneMercator = m_eyeMercator - m_viewNormalized * m_nearPlaneMercator;
 
     // The method does not support tilting angles >= 90.0 or < 0.
