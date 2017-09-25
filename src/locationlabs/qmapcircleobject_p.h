@@ -34,58 +34,60 @@
 **
 ****************************************************************************/
 
-#include <QtLocationLabs/private/qmapiconobject_p.h>
-#include <QtLocationLabs/private/qmapobjectview_p.h>
-#include <QtLocationLabs/private/qmaprouteobject_p.h>
-#include <QtLocationLabs/private/qmapcircleobject_p.h>
-//#include <QtLocationLabs/private/qdeclarativenavigator_p.h>
+#ifndef QMAPCIRCLEOBJECT_P_H
+#define QMAPCIRCLEOBJECT_P_H
 
-#include <QtQml/qqmlextensionplugin.h>
-#include <QtQml/qqml.h>
-#include <QtCore/QDebug>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-static void initResources()
-{
-#ifdef QT_STATIC
-    Q_INIT_RESOURCE(qmake_QtLocationLabs);
-#endif
-}
+#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtCore/QUrl>
+#include <QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 
-
-class QtLocationLabsDeclarativeModule: public QQmlExtensionPlugin
+class Q_LOCATIONLABS_PRIVATE_EXPORT QMapCircleObject : public QGeoMapObject
 {
     Q_OBJECT
-
-    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid
-                      FILE "plugin.json")
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
 
 public:
-    QtLocationLabsDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { initResources(); }
-    virtual void registerTypes(const char *uri)
-    {
-        if (QLatin1String(uri) == QLatin1String("Qt.labs.location")) {
+    QMapCircleObject(QObject *parent = nullptr);
+    ~QMapCircleObject() override;
 
-            // @uri QtLocationLabs
-            int major = 5;
-            int minor = 11;
+    QGeoCoordinate center() const;
+    qreal radius() const;
+    QColor color() const;
 
-            // Register the 5.11 types
-            //qmlRegisterType<QDeclarativeNavigator>(uri, major, minor, "Navigator");
-            qmlRegisterType<QMapIconObject>(uri, major, minor, "MapIconObject");
-            qmlRegisterType<QMapObjectView>(uri, major, minor, "MapObjectView");
-            qmlRegisterType<QMapRouteObject>(uri, major, minor, "MapRouteObject");
-            qmlRegisterType<QMapCircleObject>(uri, major, minor, "MapCircleObject");
+    void setCenter(const QGeoCoordinate &center);
+    void setRadius(qreal radius);
+    void setColor(const QColor &color);
 
-            // Register the latest Qt version as QML type version
-            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
-        } else {
-            qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
-        }
-    }
+    QDeclarativeMapLineProperties * border();
+    void setMap(QGeoMap *map) override;
+
+signals:
+    void centerChanged();
+    void radiusChanged();
+    void colorChanged();
+
+protected:
+    QDeclarativeMapLineProperties *m_border = nullptr;
 };
 
-#include "locationlabs.moc"
-
 QT_END_NAMESPACE
+
+#endif // QMAPCIRCLEOBJECT_P_H
