@@ -97,23 +97,26 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
     }
 
     QMapboxGL *map = 0;
-    if (m_useFBO) {
-        if (!node) {
+    if (!node) {
+        QOpenGLContext *currentCtx = QOpenGLContext::currentContext();
+        if (!currentCtx) {
+            qWarning("QOpenGLContext is NULL!");
+            return node;
+        }
+        if (m_useFBO) {
             QSGMapboxGLTextureNode *mbglNode = new QSGMapboxGLTextureNode(m_settings, m_viewportSize, window->devicePixelRatio(), q);
             QObject::connect(mbglNode->map(), &QMapboxGL::mapChanged, q, &QGeoMapMapboxGL::onMapChanged);
             m_syncState = MapTypeSync | CameraDataSync | ViewportSync;
             node = mbglNode;
-        }
-        map = static_cast<QSGMapboxGLTextureNode *>(node)->map();
-    } else {
-        if (!node) {
+        } else {
             QSGMapboxGLRenderNode *mbglNode = new QSGMapboxGLRenderNode(m_settings, m_viewportSize, window->devicePixelRatio(), q);
             QObject::connect(mbglNode->map(), &QMapboxGL::mapChanged, q, &QGeoMapMapboxGL::onMapChanged);
             m_syncState = MapTypeSync | CameraDataSync | ViewportSync;
             node = mbglNode;
         }
-        map = static_cast<QSGMapboxGLRenderNode *>(node)->map();
     }
+    map = (m_useFBO) ? static_cast<QSGMapboxGLTextureNode *>(node)->map()
+                     : static_cast<QSGMapboxGLRenderNode *>(node)->map();
 
     if (m_syncState & MapTypeSync) {
         m_developmentMode = m_activeMapType.name().startsWith("mapbox://")
