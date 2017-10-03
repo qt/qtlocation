@@ -214,9 +214,14 @@ bool QDeclarativeGeoMapItemBase::childMouseEventFilter(QQuickItem *item, QEvent 
 {
     Q_UNUSED(item)
     if (event->type() == QEvent::MouseButtonPress && !contains(static_cast<QMouseEvent*>(event)->pos())) {
-        // This is an evil hack: in case of items that are not rectangles, we never accept the event.
-        // Instead the events are now delivered to QDeclarativeGeoMapItemBase which doesn't to anything with them.
-        // The map below it still works since it filters events and steals the events at some point.
+        // In case of items that are not rectangles, this filter is used to test if the event has landed
+        // inside the actual item shape.
+        // If so, the method returns true, meaning that it prevents the event delivery to child "*item" (for example,
+        // a mouse area that is on top of this map item).
+        // However, this method sets "accepted" to false, so that the event can still be passed further up,
+        // specifically to the parent Map, that is a sort of flickable.
+        // Otherwise, if the event is not contained within the map item, the method returns false, meaning the event
+        // is delivered to the child *item (like the mouse area associated).
         event->setAccepted(false);
         return true;
     }
