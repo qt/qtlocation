@@ -35,7 +35,7 @@ load(qt_build_paths)
 LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lqmapboxgl$$qtPlatformTargetSuffix()
 
 qtConfig(icu) {
-    include(../../../3rdparty/icu_dependency.pri)
+    QMAKE_USE_PRIVATE += icu
 }
 
 # When building for Windows with dynamic OpenGL, this plugin
