@@ -124,7 +124,10 @@ QMapbox::Feature featureFromMapPolygon(QDeclarativePolygonMapItem *mapItem)
             coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
         }
     }
-    coordinates.append(coordinates.first());
+
+    if (!coordinates.empty())
+        coordinates.append(coordinates.first()); // closing the path
+
     QMapbox::CoordinatesCollections geometry { { coordinates } };
 
     return QMapbox::Feature(QMapbox::Feature::PolygonType, geometry, {}, getId(mapItem));
