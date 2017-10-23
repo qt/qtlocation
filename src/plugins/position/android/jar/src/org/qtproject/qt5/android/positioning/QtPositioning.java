@@ -229,8 +229,11 @@ public class QtPositioning implements LocationListener
     static private void removeActiveListener(int androidClassKey)
     {
         QtPositioning listener = runningListeners.remove(androidClassKey);
-        locationManager.removeUpdates(listener);
-        listener.setActiveLooper(false);
+
+        if (listener != null) {
+            locationManager.removeUpdates(listener);
+            listener.setActiveLooper(false);
+        }
     }
 
 
