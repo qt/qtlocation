@@ -109,7 +109,7 @@ namespace AndroidPositioning {
             QGeoPositionInfoSourceAndroid *src = qobject_cast<QGeoPositionInfoSourceAndroid *>(obj);
             Q_ASSERT(src);
             do {
-                key = QRandomGenerator::get32();
+                key = QRandomGenerator::global()->generate();
             } while (idToPosSource()->contains(key));
 
             idToPosSource()->insert(key, src);
@@ -117,7 +117,7 @@ namespace AndroidPositioning {
             QGeoSatelliteInfoSourceAndroid *src = qobject_cast<QGeoSatelliteInfoSourceAndroid *>(obj);
             Q_ASSERT(src);
             do {
-                key = QRandomGenerator::get32();
+                key = QRandomGenerator::global()->generate();
             } while (idToSatSource()->contains(key));
 
             idToSatSource()->insert(key, src);
