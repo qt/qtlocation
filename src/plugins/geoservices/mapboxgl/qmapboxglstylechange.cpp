@@ -384,7 +384,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
     const QString id = getId(item);
 
     changes << QSharedPointer<QMapboxGLStyleChange>(
-        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-opacity"), item->mapItemOpacity()));
+        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-opacity"), item->color().alphaF() * item->mapItemOpacity()));
     changes << QSharedPointer<QMapboxGLStyleChange>(
         new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-color"), item->color()));
     changes << QSharedPointer<QMapboxGLStyleChange>(
@@ -401,7 +401,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
     const QString id = getId(item);
 
     changes << QSharedPointer<QMapboxGLStyleChange>(
-        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-opacity"), item->mapItemOpacity()));
+        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-opacity"), item->color().alphaF() * item->mapItemOpacity()));
     changes << QSharedPointer<QMapboxGLStyleChange>(
         new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-color"), item->color()));
     changes << QSharedPointer<QMapboxGLStyleChange>(
@@ -418,7 +418,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
     const QString id = getId(item);
 
     changes << QSharedPointer<QMapboxGLStyleChange>(
-        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-opacity"), item->mapItemOpacity()));
+        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-opacity"), item->color().alphaF() * item->mapItemOpacity()));
     changes << QSharedPointer<QMapboxGLStyleChange>(
         new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("fill-color"), item->color()));
     changes << QSharedPointer<QMapboxGLStyleChange>(
@@ -435,7 +435,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
     const QString id = getId(item);
 
     changes << QSharedPointer<QMapboxGLStyleChange>(
-        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("line-opacity"), item->mapItemOpacity()));
+        new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("line-opacity"), item->line()->color().alphaF() * item->mapItemOpacity()));
     changes << QSharedPointer<QMapboxGLStyleChange>(
         new QMapboxGLStyleSetPaintProperty(id, QStringLiteral("line-color"), item->line()->color()));
     changes << QSharedPointer<QMapboxGLStyleChange>(
