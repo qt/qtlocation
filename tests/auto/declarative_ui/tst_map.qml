@@ -72,6 +72,7 @@ Item {
                                 && coordinateMap.mapReady
                                 && mapTiltBearing.mapReady
                                 && mapTiltBearingHere.mapReady
+                                && mapTestProjection.mapReady
 
     Map { id: mapZoomOnCompleted; width: 200; height: 200;
         zoomLevel: 3; center: coordinate1; plugin: testPlugin;
@@ -111,6 +112,13 @@ Item {
     Map {
         id: mapWithLazyPlugin
         plugin: testPluginLazyParameter
+    }
+
+    Map {
+        id: mapTestProjection
+        plugin: testPlugin
+        width: 200
+        height: 200
     }
 
     MapParameter {
@@ -661,6 +669,20 @@ Item {
             coord = coordinateMap.toCoordinate(Qt.point(-5, -6))
             verify(isNaN(coord.latitude))
             verify(isNaN(coord.longitde))
+
+            // test with tilting
+            coord = QtPositioning.coordinate(45.6, 17.67)
+            var pos = mapTestProjection.fromCoordinate(coord, false)
+            compare(Math.floor(pos.x), 3339)
+            compare(Math.floor(pos.y), 1727)
+            mapTestProjection.tilt = 6
+            pos = mapTestProjection.fromCoordinate(coord, false)
+            compare(Math.floor(pos.x), 11066)
+            compare(Math.floor(pos.y), 5577)
+            mapTestProjection.tilt = 12
+            pos = mapTestProjection.fromCoordinate(coord, false)
+            verify(isNaN(pos.latitude))
+            verify(isNaN(pos.longitde))
         }
     }
 }
