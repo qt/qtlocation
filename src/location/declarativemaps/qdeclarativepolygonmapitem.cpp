@@ -374,6 +374,7 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
 
     This property holds the ordered list of coordinates which
     define the polygon.
+    Having less than 3 different coordinates in the path results in undefined behavior.
 
     \sa addCoordinate, removeCoordinate
 */
