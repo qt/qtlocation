@@ -106,7 +106,10 @@ void tst_QGeoServiceProvider::tst_features_data()
                             << QGeoServiceProvider::MappingFeatures(QGeoServiceProvider::OnlineMappingFeature)
                             << QGeoServiceProvider::GeocodingFeatures(QGeoServiceProvider::NoGeocodingFeatures)
                             << QGeoServiceProvider::RoutingFeatures(QGeoServiceProvider::OnlineRoutingFeature)
-                            << QGeoServiceProvider::PlacesFeatures(QGeoServiceProvider::NoPlacesFeatures);
+                            << QGeoServiceProvider::PlacesFeatures(QGeoServiceProvider::OnlinePlacesFeature
+                                                                   | QGeoServiceProvider::PlaceRecommendationsFeature
+                                                                   | QGeoServiceProvider::SearchSuggestionsFeature
+                                                                   | QGeoServiceProvider::LocalizedPlacesFeature);
 
     QTest::newRow("here")   << QString("here")
                             << QGeoServiceProvider::MappingFeatures(QGeoServiceProvider::OnlineMappingFeature)

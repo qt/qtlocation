@@ -37,6 +37,7 @@
 #include "qgeoserviceproviderpluginmapbox.h"
 #include "qgeotiledmappingmanagerenginemapbox.h"
 #include "qgeoroutingmanagerenginemapbox.h"
+#include "qplacemanagerenginemapbox.h"
 
 #include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
 
@@ -89,11 +90,15 @@ QGeoRoutingManagerEngine *QGeoServiceProviderFactoryMapbox::createRoutingManager
 QPlaceManagerEngine *QGeoServiceProviderFactoryMapbox::createPlaceManagerEngine(
     const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
+    const QString accessToken = parameters.value(QStringLiteral("mapbox.access_token")).toString();
 
-    return 0;
+    if (!accessToken.isEmpty()) {
+        return new QPlaceManagerEngineMapbox(parameters, error, errorString);
+    } else {
+        *error = QGeoServiceProvider::MissingRequiredParameterError;
+        *errorString = msgAccessTokenParameter();
+        return 0;
+    }
 }
 
 QT_END_NAMESPACE

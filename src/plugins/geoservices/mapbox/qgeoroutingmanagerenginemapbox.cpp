@@ -40,6 +40,7 @@
 
 #include "qgeoroutingmanagerenginemapbox.h"
 #include "qgeoroutereplymapbox.h"
+#include "qmapboxcommon.h"
 
 #include <QtCore/QUrlQuery>
 #include <QtCore/QDebug>
@@ -51,7 +52,7 @@ QGeoRoutingManagerEngineMapbox::QGeoRoutingManagerEngineMapbox(const QVariantMap
                                                          QString *errorString)
     : QGeoRoutingManagerEngine(parameters),
       m_networkManager(new QNetworkAccessManager(this)),
-      m_userAgent("Qt Location based application")
+      m_userAgent(mapboxDefaultUserAgent)
 {
     if (parameters.contains(QStringLiteral("mapbox.useragent"))) {
         m_userAgent = parameters.value(QStringLiteral("mapbox.useragent")).toString().toLatin1();
@@ -74,29 +75,29 @@ QGeoRouteReply* QGeoRoutingManagerEngineMapbox::calculateRoute(const QGeoRouteRe
     QNetworkRequest networkRequest;
     networkRequest.setRawHeader("User-Agent", m_userAgent);
 
-    QString url("https://api.mapbox.com/directions/v5/mapbox/");
+    QString url = mapboxDirectionsApiPath;
 
     QGeoRouteRequest::TravelModes travelModes = request.travelModes();
     if (travelModes.testFlag(QGeoRouteRequest::PedestrianTravel)) {
-        url += "walking/";
+        url += QStringLiteral("walking/");
     } else if (travelModes.testFlag(QGeoRouteRequest::BicycleTravel)) {
-        url += "cycling/";
+        url += QStringLiteral("cycling/");
     } else if (travelModes.testFlag(QGeoRouteRequest::CarTravel)) {
         const QList<QGeoRouteRequest::FeatureType> &featureTypes = request.featureTypes();
         int trafficFeatureIdx = featureTypes.indexOf(QGeoRouteRequest::TrafficFeature);
         QGeoRouteRequest::FeatureWeight trafficWeight = request.featureWeight(QGeoRouteRequest::TrafficFeature);
         if (trafficFeatureIdx >= 0 &&
            (trafficWeight == QGeoRouteRequest::AvoidFeatureWeight || trafficWeight == QGeoRouteRequest::DisallowFeatureWeight)) {
-            url += "driving-traffic/";
+            url += QStringLiteral("driving-traffic/");
         } else {
-            url += "driving/";
+            url += QStringLiteral("driving/");
         }
     }
 
     foreach (const QGeoCoordinate &c, request.waypoints()) {
         url += QString("%1,%2;").arg(c.longitude()).arg(c.latitude());
     }
-    if (url.right(1) == ";")
+    if (url.right(1) == QLatin1Char(';'))
         url.chop(1);
 
     QUrlQuery query;

@@ -66,6 +66,10 @@ The following table lists optional parameters that can be passed to the Mapbox p
     \li Parameter
     \li Description
 \row
+    \li mapbox.enterprise
+    \li Boolean representing whether the access token comes from a
+    \l{https://www.mapbox.com/enterprise}{Mapbox Enterprise} account.
+\row
     \li mapbox.mapping.map_id, mapbox.map_id (\b deprecated)
     \li \l{https://www.mapbox.com/help/define-map-id/}{ID} of the Mapbox map to show. An example ID is "examples.map-zr0njcqy".
     If this parameter is present, the specified map type will be used by default, unless another is selected.
