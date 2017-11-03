@@ -47,6 +47,16 @@ QGeoMapParameter::QGeoMapParameter(QObject *parent) : QObject(parent)
 
 }
 
+QGeoMapParameter::QGeoMapParameter(const QList<QPair<QLatin1String, QVariant> > &properties, QObject *parent) : QObject(parent)
+{
+    for (const auto &p: properties) {
+        if (p.first == QLatin1String("type"))
+            setType(p.second.toString());
+        else
+            updateProperty(p.first.data(), p.second);
+    }
+}
+
 QGeoMapParameter::~QGeoMapParameter()
 {
 }
