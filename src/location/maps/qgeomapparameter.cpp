@@ -37,6 +37,8 @@
 
 #include "qgeomapparameter_p.h"
 #include <QtCore/QVariant>
+#include <QDebug>
+#include <QMetaProperty>
 
 QT_BEGIN_NAMESPACE
 
@@ -68,6 +70,17 @@ void QGeoMapParameter::updateProperty(const char *propertyName, QVariant value)
     // Since this object has only type defined as Q_PROPERTY() which is a set-once
     // no check is really needed here.
     emit propertyUpdated(this, propertyName);
+}
+
+QVariantMap QGeoMapParameter::toVariantMap() const
+{
+    QVariantMap res;
+    const QMetaObject *metaObj = metaObject();
+    for (int i = 2; i < metaObj->propertyCount(); ++i) { // 0 is objectName, 1 is type, we want to skip both of them here.
+        const char *propName = metaObj->property(i).name();
+        res[QLatin1String(propName)] = property(propName);
+    }
+    return res;
 }
 
 QT_END_NAMESPACE

@@ -134,9 +134,14 @@ public:
     void setRoutes(const QGeoRouteRequest& request, RouteReplyTest* reply)
     {
         QList<QGeoRoute> routes;
+        int travelTime = 0;
+        if (request.extraParameters().contains("test-traveltime"))
+            travelTime = request.extraParameters().value("test-traveltime").value("requestedTime").toInt();
+
         for (int i = 0; i < request.numberAlternativeRoutes(); ++i) {
             QGeoRoute route;
             route.setPath(request.waypoints());
+            route.setTravelTime(travelTime);
             routes.append(route);
         }
         reply->callSetRoutes(routes);

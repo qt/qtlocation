@@ -207,6 +207,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
     Q_PROPERTY(QJSValue waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
     Q_PROPERTY(QJSValue excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
+    Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
+    Q_CLASSINFO("DefaultProperty", "quickChildren")
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -218,7 +220,7 @@ public:
     void classBegin() {}
     void componentComplete();
 
-    QGeoRouteRequest routeRequest() const;
+    QGeoRouteRequest routeRequest();
 
     enum TravelMode {
         CarTravel = QGeoRouteRequest::CarTravel,
@@ -314,6 +316,18 @@ public:
     void setRouteOptimizations(RouteOptimizations optimization);
     RouteOptimizations routeOptimizations() const;
 
+    template <typename T = QObject>
+    QList<T*> quickChildren() const
+    {
+        QList<T*> res;
+        for (auto kid : qAsConst(m_children)) {
+            auto val = qobject_cast<T*>(kid);
+            if (val)
+                res.push_back(val);
+        }
+        return res;
+    }
+
 Q_SIGNALS:
     void numberAlternativeRoutesChanged();
     void travelModesChanged();
@@ -327,9 +341,20 @@ Q_SIGNALS:
     void segmentDetailChanged();
 
     void queryDetailsChanged();
+    void extraParametersChanged();
 
 private Q_SLOTS:
     void excludedAreaCoordinateChanged();
+    void extraParameterChanged();
+
+protected:
+    static void append(QQmlListProperty<QObject> *p, QObject *v);
+    static int count(QQmlListProperty<QObject> *p);
+    static QObject *at(QQmlListProperty<QObject> *p, int idx);
+    static void clear(QQmlListProperty<QObject> *p);
+
+    QQmlListProperty<QObject> declarativeChildren();
+    QList<QObject*> m_children;
 
 private:
     Q_INVOKABLE void doCoordinateChanged();
@@ -337,7 +362,7 @@ private:
     QGeoRouteRequest request_;
     bool complete_;
     bool m_excludedAreaCoordinateChanged;
-
+    bool m_extraParametersChanged = false;
 };
 
 QT_END_NAMESPACE

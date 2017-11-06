@@ -32,6 +32,13 @@ import QtLocation 5.3
 import QtPositioning 5.2
 
 Item {
+    id: root
+    function cloneArray(a) {
+        var i = a.length
+        var arr = new Array(i)
+        while (i--) arr[i] = a[i];
+        return arr
+    }
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: errorPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true
         parameters: [
@@ -764,10 +771,35 @@ Item {
             tryCompare (automaticRoutesSpy, "count", 4)
             compare(routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
 
+            // Extra parameter
+            var param = Qt.createQmlObject ('import QtLocation 5.9; MapParameter { type : "test-traveltime"; property var requestedTime : 42}', root)
+            var initialParams = cloneArray(filledRouteQuery.quickChildren)
+            var modifiedParams = cloneArray(initialParams)
+            modifiedParams.push(param)
+
+            filledRouteQuery.quickChildren = modifiedParams
+            tryCompare (automaticRoutesSpy, "count", 5)
+            compare(routeModelAutomatic.get(0).travelTime, 42)
+            param.requestedTime = 43
+            tryCompare (automaticRoutesSpy, "count", 6)
+            compare(routeModelAutomatic.get(0).travelTime, 43)
+            filledRouteQuery.quickChildren = initialParams
+            tryCompare (automaticRoutesSpy, "count", 7)
+            compare(routeModelAutomatic.get(0).travelTime, 0)
+            var secondParam = Qt.createQmlObject ('import QtLocation 5.9; MapParameter { type : "foo"; property var bar : 42}', root)
+            modifiedParams.push(secondParam)
+            param.requestedTime = 44
+            filledRouteQuery.quickChildren = modifiedParams
+            tryCompare (automaticRoutesSpy, "count", 8)
+            compare(routeModelAutomatic.get(0).travelTime, 44)
+            filledRouteQuery.quickChildren = initialParams
+            tryCompare (automaticRoutesSpy, "count", 9)
+            compare(routeModelAutomatic.get(0).travelTime, 0)
+
             // Change query
             routeModelAutomatic.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
-            tryCompare (automaticRoutesSpy, "count", 5)
+            tryCompare (automaticRoutesSpy, "count", 10)
             compare (routeModelAutomatic.get(0).path.length, 3)
 
             // Verify that the old query is disconnected internally ie. does not trigger update
@@ -779,7 +811,7 @@ Item {
                 { latitude: 67, longitude: 68 }
             ];
             wait(800) // wait to hope no further updates comes through
-            compare (automaticRoutesSpy.count, 5)
+            compare (automaticRoutesSpy.count, 10)
             compare(routeModelAutomatic.get(0).path.length, 3);
         }
 

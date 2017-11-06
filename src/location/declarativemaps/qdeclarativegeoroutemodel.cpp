@@ -45,6 +45,7 @@
 #include <QtQml/private/qqmlengine_p.h>
 #include <QtLocation/QGeoRoutingManager>
 #include <QtPositioning/QGeoRectangle>
+#include "qdeclarativegeomapparameter_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -653,7 +654,7 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     \brief The RouteQuery type is used to provide query parameters to a
            RouteModel.
 
-    A RouteQuery contains all the parameters necessary to make a request
+    A RouteQuery is used to pack all the parameters necessary to make a request
     to a routing service, which can then populate the contents of a RouteModel.
 
     These parameters describe key details of the route, such as \l waypoints to
@@ -664,6 +665,10 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     RouteQuery objects are used exclusively to fill out the value of a
     RouteModel's \l{RouteModel::query}{query} property, which can then begin
     the retrieval process to populate the model.
+
+    Some plugins might allow or require specific parameters to operate.
+    In order to specify these plugin-specific parameters, MapParameter elements
+    can be nested inside a RouteQuery.
 
     \section2 Example Usage
 
@@ -1285,8 +1290,17 @@ void QDeclarativeGeoRouteQuery::setRouteOptimizations(QDeclarativeGeoRouteQuery:
 /*!
     \internal
 */
-QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest() const
+QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest()
 {
+    if (m_extraParametersChanged) {
+        m_extraParametersChanged = false;
+        // Update extra params into request
+        const QList<QDeclarativeGeoMapParameter *> params = quickChildren<QDeclarativeGeoMapParameter>();
+        QMap<QString, QVariantMap> extraParameters;
+        for (const QDeclarativeGeoMapParameter *p: params)
+            extraParameters[p->type()] = p->toVariantMap();
+        request_.setExtraParameters(extraParameters);
+    }
     return request_;
 }
 
@@ -1296,6 +1310,66 @@ void QDeclarativeGeoRouteQuery::excludedAreaCoordinateChanged()
         m_excludedAreaCoordinateChanged = true;
         QMetaObject::invokeMethod(this, "doCoordinateChanged", Qt::QueuedConnection);
     }
+}
+
+void QDeclarativeGeoRouteQuery::extraParameterChanged()
+{
+    m_extraParametersChanged = true;
+    if (complete_) {
+        emit extraParametersChanged();
+        emit queryDetailsChanged();
+    }
+}
+
+void QDeclarativeGeoRouteQuery::append(QQmlListProperty<QObject> *p, QObject *v)
+{
+    QDeclarativeGeoRouteQuery *query = static_cast<QDeclarativeGeoRouteQuery*>(p->object);
+    query->m_children.append(v);
+
+    QDeclarativeGeoMapParameter *param = qobject_cast<QDeclarativeGeoMapParameter *>(v);
+    if (param) {
+        query->m_extraParametersChanged = true;
+        query->connect(param, &QGeoMapParameter::propertyUpdated,
+                       query, &QDeclarativeGeoRouteQuery::extraParameterChanged);
+        emit query->extraParametersChanged();
+        emit query->queryDetailsChanged();
+    }
+}
+
+int QDeclarativeGeoRouteQuery::count(QQmlListProperty<QObject> *p)
+{
+    return static_cast<QDeclarativeGeoRouteQuery*>(p->object)->m_children.count();
+}
+
+QObject *QDeclarativeGeoRouteQuery::at(QQmlListProperty<QObject> *p, int idx)
+{
+    return static_cast<QDeclarativeGeoRouteQuery*>(p->object)->m_children.at(idx);
+}
+
+void QDeclarativeGeoRouteQuery::clear(QQmlListProperty<QObject> *p)
+{
+    QDeclarativeGeoRouteQuery *query = static_cast<QDeclarativeGeoRouteQuery*>(p->object);
+    for (auto kid : qAsConst(query->m_children)) {
+        auto val = qobject_cast<QDeclarativeGeoMapParameter *>(kid);
+        if (val) {
+            val->disconnect(val, nullptr, query, nullptr);
+            query->m_extraParametersChanged = true;
+        }
+    }
+    query->m_children.clear();
+    if (query->m_extraParametersChanged && query->complete_) {
+        emit query->extraParametersChanged();
+        emit query->queryDetailsChanged();
+    }
+}
+
+QQmlListProperty<QObject> QDeclarativeGeoRouteQuery::declarativeChildren()
+{
+    return QQmlListProperty<QObject>(this, nullptr,
+                                           &QDeclarativeGeoRouteQuery::append,
+                                           &QDeclarativeGeoRouteQuery::count,
+                                           &QDeclarativeGeoRouteQuery::at,
+                                           &QDeclarativeGeoRouteQuery::clear);
 }
 
 void QDeclarativeGeoRouteQuery::doCoordinateChanged()
