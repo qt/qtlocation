@@ -39,6 +39,7 @@
 #include "qgeocoordinate.h"
 #include "qgeocoordinate_p.h"
 #include "qlocationutils_p.h"
+#include "qgeocoordinateobject_p.h"
 
 #include <QDateTime>
 #include <QHash>
@@ -250,6 +251,16 @@ QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
         : d(other.d)
 {}
 
+QGeoCoordinate::QGeoCoordinate(const QGeoCoordinateObject &coordinateoObject) : d(coordinateoObject.coordinate().d)
+{
+}
+
+QGeoCoordinate::QGeoCoordinate(const QGeoCoordinateObject *coordinateObject) : d(new QGeoCoordinatePrivate)
+{
+    if (coordinateObject)
+        d = coordinateObject->coordinate().d;
+}
+
 /*!
     Assigns \a other to this coordinate and returns a reference to this coordinate.
 */
@@ -259,6 +270,18 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
         return *this;
 
     d = other.d;
+    return (*this);
+}
+
+QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinateObject &coordinateoObject)
+{
+    d = coordinateoObject.coordinate().d;
+    return (*this);
+}
+
+QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinateObject *coordinateoObject)
+{
+    d = coordinateoObject->coordinate().d;
     return (*this);
 }
 
@@ -288,6 +311,19 @@ bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
         lngEqual = true;
 
     return (latEqual && lngEqual && altEqual);
+}
+
+/*!
+
+*/
+bool QGeoCoordinate::operator==(const QGeoCoordinateObject &other) const
+{
+    return (*this == other.coordinate());
+}
+
+bool QGeoCoordinate::operator==(const QGeoCoordinateObject *other) const
+{
+    return (*this == other->coordinate());
 }
 
 /*!

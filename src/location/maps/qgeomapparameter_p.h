@@ -65,6 +65,8 @@ public:
     explicit QGeoMapParameter(QObject *parent = 0);
     virtual ~QGeoMapParameter();
 
+    bool operator==(const QGeoMapParameter &other) const;
+
     QString type() const;
     void setType(const QString &type);
 

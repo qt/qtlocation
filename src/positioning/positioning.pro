@@ -58,6 +58,8 @@ PRIVATE_HEADERS += \
                     qlocationdata_simulator_p.h \
                     qdoublematrix4x4_p.h \
                     qgeopath_p.h \
+                    qgeopolygon_p.h \
+                    qgeocoordinateobject_p.h \
                     qclipperutils_p.h
 
 SOURCES += \
@@ -85,7 +87,8 @@ SOURCES += \
             qlocationdata_simulator.cpp \
             qwebmercator.cpp \
             qdoublematrix4x4.cpp \
-            qclipperutils.cpp
+            qclipperutils.cpp \
+            qgeocoordinateobject.cpp
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

@@ -51,6 +51,7 @@ class QDebug;
 class QDataStream;
 
 class QGeoCoordinatePrivate;
+class QGeoCoordinateObject;
 class Q_POSITIONING_EXPORT QGeoCoordinate
 {
     Q_GADGET
@@ -81,13 +82,25 @@ public:
     QGeoCoordinate(double latitude, double longitude);
     QGeoCoordinate(double latitude, double longitude, double altitude);
     QGeoCoordinate(const QGeoCoordinate &other);
+    QGeoCoordinate(const QGeoCoordinateObject &coordinateoObject);
+    QGeoCoordinate(const QGeoCoordinateObject *coordinateObject);
     ~QGeoCoordinate();
 
     QGeoCoordinate &operator=(const QGeoCoordinate &other);
+    QGeoCoordinate &operator=(const QGeoCoordinateObject &coordinateObject);
+    QGeoCoordinate &operator=(const QGeoCoordinateObject *coordinateoObject);
 
     bool operator==(const QGeoCoordinate &other) const;
+    bool operator==(const QGeoCoordinateObject &other) const;
+    bool operator==(const QGeoCoordinateObject *other) const;
     inline bool operator!=(const QGeoCoordinate &other) const {
         return !operator==(other);
+    }
+    inline bool operator!=(const QGeoCoordinateObject &other) const {
+        return !operator==(other);
+    }
+    inline bool operator!=(const QGeoCoordinateObject *other) const {
+        return !operator==(*other);
     }
 
     bool isValid() const;

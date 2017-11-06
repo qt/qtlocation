@@ -54,6 +54,7 @@
 #include <QSharedData>
 #include <QDateTime>
 #include <QMap>
+#include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 
@@ -67,6 +68,7 @@ public:
     bool operator ==(const QGeoRouteRequestPrivate &other) const;
 
     QList<QGeoCoordinate> waypoints;
+    QList<QVariantMap> waypointMetadata;
     QList<QGeoRectangle> excludeAreas;
     int numberAlternativeRoutes;
     QGeoRouteRequest::TravelModes travelModes;

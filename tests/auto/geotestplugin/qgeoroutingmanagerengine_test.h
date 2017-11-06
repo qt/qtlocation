@@ -142,6 +142,16 @@ public:
             QGeoRoute route;
             route.setPath(request.waypoints());
             route.setTravelTime(travelTime);
+
+            const QList<QVariantMap> metadata = request.waypointsMetadata();
+            for (const auto &meta: metadata) {
+                if (meta.contains("extra")) {
+                    QVariantMap extra = meta.value("extra").toMap();
+                    if (extra.contains("user_distance"))
+                        route.setDistance(meta.value("extra").toMap().value("user_distance").toMap().value("distance").toDouble());
+                }
+            }
+
             routes.append(route);
         }
         reply->callSetRoutes(routes);

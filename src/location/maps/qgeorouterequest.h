@@ -119,6 +119,9 @@ public:
     void setWaypoints(const QList<QGeoCoordinate> &waypoints);
     QList<QGeoCoordinate> waypoints() const;
 
+    void setWaypointsMetadata(const QList<QVariantMap> &waypointMetadata);
+    QList<QVariantMap> waypointsMetadata() const;
+
     void setExcludeAreas(const QList<QGeoRectangle> &areas);
     QList<QGeoRectangle> excludeAreas() const;
 

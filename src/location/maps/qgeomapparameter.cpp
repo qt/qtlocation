@@ -51,6 +51,11 @@ QGeoMapParameter::~QGeoMapParameter()
 {
 }
 
+bool QGeoMapParameter::operator==(const QGeoMapParameter &other) const
+{
+    return (other.toVariantMap() == toVariantMap());
+}
+
 QString QGeoMapParameter::type() const
 {
     return m_type;

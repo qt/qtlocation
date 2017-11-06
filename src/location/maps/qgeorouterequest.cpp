@@ -296,6 +296,27 @@ QList<QGeoCoordinate> QGeoRouteRequest::waypoints() const
 }
 
 /*!
+    Sets \a waypoint metadata as the metadata for the waypoints set in this request.
+    The metadata are intended as one QVariantMap per waypoint, given in the same order as
+    the waypoints.
+
+    The content of the QVariantMap is somehow backend-specific, but properties that can be specified using
+    \l Waypoint elements in QML can be assumed to be named and to work the same way across plugins, where supported.
+*/
+void QGeoRouteRequest::setWaypointsMetadata(const QList<QVariantMap> &waypointMetadata)
+{
+    d_ptr->waypointMetadata = waypointMetadata;
+}
+
+/*!
+    Returns the metadata for the waypoints in this request.
+*/
+QList<QVariantMap> QGeoRouteRequest::waypointsMetadata() const
+{
+    return d_ptr->waypointMetadata;
+}
+
+/*!
     Sets \a areas as excluded areas that the route must not cross.
 */
 void QGeoRouteRequest::setExcludeAreas(const QList<QGeoRectangle> &areas)
@@ -481,6 +502,7 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
     : QSharedData(other),
       waypoints(other.waypoints),
+      waypointMetadata(other.waypointMetadata),
       excludeAreas(other.excludeAreas),
       numberAlternativeRoutes(other.numberAlternativeRoutes),
       travelModes(other.travelModes),
@@ -495,6 +517,7 @@ QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) const
 {
     return ((waypoints == other.waypoints)
+            && (waypointMetadata == other.waypointMetadata)
             && (excludeAreas == other.excludeAreas)
             && (numberAlternativeRoutes == other.numberAlternativeRoutes)
             && (travelModes == other.travelModes)
