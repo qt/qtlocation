@@ -446,6 +446,27 @@ QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
     return d_ptr->maneuverDetail;
 }
 
+/*!
+    Sets the extra parameters for the route request.
+    The format of the extra parameters is plugin specific, and documented per plugin.
+
+    \since 5.11
+*/
+void QGeoRouteRequest::setExtraParameters(const QMap<QString, QVariantMap> &extraParameters)
+{
+    d_ptr->extraParameters = extraParameters;
+}
+
+/*!
+    Returns the extra parameters set for this route request.
+
+    \since 5.11
+*/
+QMap<QString, QVariantMap> QGeoRouteRequest::extraParameters() const
+{
+    return d_ptr->extraParameters;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -466,7 +487,8 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &
       featureWeights(other.featureWeights),
       routeOptimization(other.routeOptimization),
       segmentDetail(other.segmentDetail),
-      maneuverDetail(other.maneuverDetail) {}
+      maneuverDetail(other.maneuverDetail),
+      extraParameters(other.extraParameters) {}
 
 QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 
@@ -479,7 +501,8 @@ bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) 
             && (featureWeights == other.featureWeights)
             && (routeOptimization == other.routeOptimization)
             && (segmentDetail == other.segmentDetail)
-            && (maneuverDetail == other.maneuverDetail));
+            && (maneuverDetail == other.maneuverDetail)
+            && (extraParameters ==  other.extraParameters));
 }
 
 QT_END_NAMESPACE

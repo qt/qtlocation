@@ -75,6 +75,7 @@ public:
     QGeoRouteRequest::RouteOptimizations routeOptimization;
     QGeoRouteRequest::SegmentDetail segmentDetail;
     QGeoRouteRequest::ManeuverDetail maneuverDetail;
+    QMap<QString, QVariantMap> extraParameters;
 };
 
 QT_END_NAMESPACE
