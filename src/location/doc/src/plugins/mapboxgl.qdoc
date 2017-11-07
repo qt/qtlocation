@@ -60,7 +60,7 @@ and tiles hosted by Mapbox. To create a Mapbox account visit \l{https://www.mapb
 Qt Location Mapbox GL Plugin has the following support for platforms:
 
 \list
-    \li Microsoft Windows (win32) - Supported, requires MinGW 5.0+ and ANGLE as OpenGL backend
+    \li Microsoft Windows (win32) - Supported, requires MinGW 5.0+
     \li Linux X11 - Supported, requires GCC 4.9+
     \li macOS - Supported
     \li Android - Supported
