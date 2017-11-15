@@ -37,7 +37,7 @@
             "condition": [
                 "features.opengl",
                 "features.c++14",
-                "!config.qnx && (!config.win32 || (config.mingw && features.angle))"
+                "!config.qnx && (!config.win32 || config.mingw)"
             ],
             "output": [ "privateFeature" ]
         },
