@@ -104,7 +104,9 @@ void tst_QGeoServiceProvider::tst_features_data()
 
     QTest::newRow("mapbox") << QString("mapbox")
                             << QGeoServiceProvider::MappingFeatures(QGeoServiceProvider::OnlineMappingFeature)
-                            << QGeoServiceProvider::GeocodingFeatures(QGeoServiceProvider::NoGeocodingFeatures)
+                            << QGeoServiceProvider::GeocodingFeatures(QGeoServiceProvider::OnlineGeocodingFeature
+                                                                      | QGeoServiceProvider::ReverseGeocodingFeature
+                                                                      | QGeoServiceProvider::LocalizedGeocodingFeature)
                             << QGeoServiceProvider::RoutingFeatures(QGeoServiceProvider::OnlineRoutingFeature)
                             << QGeoServiceProvider::PlacesFeatures(QGeoServiceProvider::OnlinePlacesFeature
                                                                    | QGeoServiceProvider::PlaceRecommendationsFeature

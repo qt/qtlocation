@@ -14,6 +14,8 @@ HEADERS += \
     qplacemanagerenginemapbox.h \
     qplacesearchsuggestionreplymapbox.h \
     qplacesearchreplymapbox.h \
+    qgeocodingmanagerenginemapbox.h \
+    qgeocodereplymapbox.h \
     qmapboxcommon.h
 
 SOURCES += \
@@ -28,6 +30,8 @@ SOURCES += \
     qplacemanagerenginemapbox.cpp \
     qplacesearchsuggestionreplymapbox.cpp \
     qplacesearchreplymapbox.cpp \
+    qgeocodingmanagerenginemapbox.cpp \
+    qgeocodereplymapbox.cpp \
     qmapboxcommon.cpp
 
 RESOURCES += mapbox.qrc

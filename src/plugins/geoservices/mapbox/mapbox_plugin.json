@@ -9,6 +9,9 @@
         "OnlinePlacesFeature",
         "PlaceRecommendationsFeature",
         "SearchSuggestionsFeature",
-        "LocalizedPlacesFeature"
+        "LocalizedPlacesFeature",
+        "OnlineGeocodingFeature",
+        "ReverseGeocodingFeature",
+        "LocalizedGeocodingFeature"
     ]
 }

@@ -35,6 +35,7 @@
 ****************************************************************************/
 
 #include "qgeoserviceproviderpluginmapbox.h"
+#include "qgeocodingmanagerenginemapbox.h"
 #include "qgeotiledmappingmanagerenginemapbox.h"
 #include "qgeoroutingmanagerenginemapbox.h"
 #include "qplacemanagerenginemapbox.h"
@@ -43,20 +44,24 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoCodingManagerEngine *QGeoServiceProviderFactoryMapbox::createGeocodingManagerEngine(
-    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
-
-    return 0;
-}
-
 static inline QString msgAccessTokenParameter()
 {
     return QGeoServiceProviderFactoryMapbox::tr("Mapbox plugin requires a 'mapbox.access_token' parameter.\n"
                                                 "Please visit https://www.mapbox.com");
+}
+
+QGeoCodingManagerEngine *QGeoServiceProviderFactoryMapbox::createGeocodingManagerEngine(
+    const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    const QString accessToken = parameters.value(QStringLiteral("mapbox.access_token")).toString();
+
+    if (!accessToken.isEmpty()) {
+        return new QGeoCodingManagerEngineMapbox(parameters, error, errorString);
+    } else {
+        *error = QGeoServiceProvider::MissingRequiredParameterError;
+        *errorString = msgAccessTokenParameter();
+        return 0;
+    }
 }
 
 QGeoMappingManagerEngine *QGeoServiceProviderFactoryMapbox::createMappingManagerEngine(
