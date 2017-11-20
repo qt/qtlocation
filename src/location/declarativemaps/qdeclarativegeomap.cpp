@@ -1481,6 +1481,8 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
     If the Plugin used for the Map does not support bearing, or if the map is tilted and \a coordinate happens
     to be behind the camera, or if the map is not ready (see \l mapReady), calling this method will have no effect.
 
+    The release of this API with Qt 5.10 is a Technology Preview.
+
     \since 5.10
 */
 void QDeclarativeGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
@@ -1511,6 +1513,8 @@ void QDeclarativeGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordin
 
     If the map is tilted, and \a coordinate happens to be behind the camera, or if the map is not ready
     (see \l mapReady), calling this method will have no effect.
+
+    The release of this API with Qt 5.10 is a Technology Preview.
 
     \sa center
 
@@ -2267,7 +2271,7 @@ bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
 
     auto touchPointGrabberItem = [touchDevice, windowPriv](const QTouchEvent::TouchPoint &point) -> QQuickItem* {
         if (QQuickEventPoint *eventPointer = windowPriv->pointerEventInstance(touchDevice)->pointById(point.id()))
-            return eventPointer->grabber();
+            return eventPointer->grabberItem();
         return nullptr;
     };
 

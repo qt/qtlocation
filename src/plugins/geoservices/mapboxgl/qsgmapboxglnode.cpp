@@ -68,8 +68,10 @@ void QSGMapboxGLTextureNode::resize(const QSize &size, qreal pixelRatio)
     m_map->setFramebufferObject(m_fbo->handle());
 
     QSGPlainTexture *fboTexture = static_cast<QSGPlainTexture *>(texture());
-    if (!fboTexture)
+    if (!fboTexture) {
         fboTexture = new QSGPlainTexture;
+        fboTexture->setHasAlphaChannel(true);
+    }
 
     fboTexture->setTextureId(m_fbo->texture());
     fboTexture->setTextureSize(fbSize);
@@ -92,6 +94,11 @@ void QSGMapboxGLTextureNode::render(QQuickWindow *window)
     f->glGetIntegerv(GL_UNPACK_ALIGNMENT, &alignment);
 
     m_fbo->bind();
+
+    f->glClearColor(0.f, 0.f, 0.f, 0.f);
+    f->glColorMask(true, true, true, true);
+    f->glClear(GL_COLOR_BUFFER_BIT);
+
     m_map->render();
     m_fbo->release();
 
