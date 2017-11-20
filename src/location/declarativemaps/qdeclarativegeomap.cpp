@@ -2271,7 +2271,7 @@ bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
 
     auto touchPointGrabberItem = [touchDevice, windowPriv](const QTouchEvent::TouchPoint &point) -> QQuickItem* {
         if (QQuickEventPoint *eventPointer = windowPriv->pointerEventInstance(touchDevice)->pointById(point.id()))
-            return eventPointer->grabber();
+            return eventPointer->grabberItem();
         return nullptr;
     };
 

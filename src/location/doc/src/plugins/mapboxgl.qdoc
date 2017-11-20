@@ -60,7 +60,7 @@ and tiles hosted by Mapbox. To create a Mapbox account visit \l{https://www.mapb
 Qt Location Mapbox GL Plugin has the following support for platforms:
 
 \list
-    \li Microsoft Windows (win32) - Supported, requires MinGW 5.0+ and ANGLE as OpenGL backend
+    \li Microsoft Windows (win32) - Supported, requires MinGW 5.0+
     \li Linux X11 - Supported, requires GCC 4.9+
     \li macOS - Supported
     \li Android - Supported
@@ -109,6 +109,12 @@ The following table lists optional parameters that can be passed to the Mapbox p
     but the offline database must be populated using the \l {https://github.com/mapbox/mapbox-gl-native/blob/master/bin/offline.cpp}
     {offline tool}. The offline database will work alongside with the ambient cache in the same file.
     Make sure to comply with Mapbox Terms of Service before creating an offline database.
+
+    \b {Note:} The map tile cache file name must be "mapboxgl.db". When using the offline tool, the default
+    output is "offline.db". For using the generated output from the offline tool, you must move that to the
+    proper directory, and rename it as "mapboxgl.db". The offline tool also provides the "--output"
+    parameter for specifying the name of the generated output.
+
 \row
     \li mapboxgl.mapping.cache.memory
     \li Whether or not the cache should be in-memory only. Valid values are \b true and \b false. The default
