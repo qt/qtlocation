@@ -77,7 +77,7 @@ void QGeoRouteReplyOsm::networkReplyFinished()
     QGeoRouteReply::Error error = parser->parseReply(routes, errorString, reply->readAll());
 
     if (error == QGeoRouteReply::NoError) {
-        setRoutes(routes.mid(0,1)); // TODO QTBUG-56426
+        setRoutes(routes.mid(0, request().numberAlternativeRoutes() + 1));
         // setError(QGeoRouteReply::NoError, status);  // can't do this, or NoError is emitted and does damages
         setFinished(true);
     } else {
