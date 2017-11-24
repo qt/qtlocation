@@ -64,6 +64,7 @@ public:
     QGeoPositionInfo();
     QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &updateTime);
     QGeoPositionInfo(const QGeoPositionInfo &other);
+    QGeoPositionInfo(QGeoPositionInfoPrivate &dd);
     ~QGeoPositionInfo();
 
     QGeoPositionInfo &operator=(const QGeoPositionInfo &other);
@@ -95,6 +96,7 @@ private:
     friend Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
     QGeoPositionInfoPrivate *d;
+    friend class QGeoPositionInfoPrivate;
 };
 
 #ifndef QT_NO_DEBUG_STREAM

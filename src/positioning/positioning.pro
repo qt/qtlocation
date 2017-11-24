@@ -59,6 +59,7 @@ PRIVATE_HEADERS += \
                     qlocationdata_simulator_p.h \
                     qdoublematrix4x4_p.h \
                     qgeopath_p.h \
+                    qgeopositioninfo_p.h \
                     qclipperutils_p.h
 
 SOURCES += \

@@ -39,16 +39,92 @@
 **
 ****************************************************************************/
 #include "qnmeapositioninfosource_p.h"
+#include "qgeopositioninfo_p.h"
 #include "qlocationutils_p.h"
 
 #include <QIODevice>
 #include <QBasicTimer>
 #include <QTimerEvent>
 #include <QTimer>
+#include <array>
+#include <QDebug>
 #include <QtCore/QtNumeric>
 
 
 QT_BEGIN_NAMESPACE
+
+#define USE_NMEA_PIMPL 0
+
+#if USE_NMEA_PIMPL
+class QGeoPositionInfoPrivateNmea : public QGeoPositionInfoPrivate
+{
+public:
+    virtual ~QGeoPositionInfoPrivateNmea();
+    virtual QGeoPositionInfoPrivate *clone() const;
+
+    QList<QByteArray> nmeaSentences;
+};
+
+
+QGeoPositionInfoPrivateNmea::~QGeoPositionInfoPrivateNmea()
+{
+
+}
+
+QGeoPositionInfoPrivate *QGeoPositionInfoPrivateNmea::clone() const
+{
+    return new QGeoPositionInfoPrivateNmea(*this);
+}
+#else
+typedef QGeoPositionInfoPrivate QGeoPositionInfoPrivateNmea;
+#endif
+
+static void mergePositions(QGeoPositionInfo &dst, const QGeoPositionInfo &src, QByteArray nmeaSentence)
+{
+#if USE_NMEA_PIMPL
+    QGeoPositionInfoPrivateNmea *dstPimpl = static_cast<QGeoPositionInfoPrivateNmea *>(QGeoPositionInfoPrivate::getPimpl(dst));
+    dstPimpl->nmeaSentences.append(nmeaSentence);
+#else
+    Q_UNUSED(nmeaSentence)
+#endif
+
+    QGeoCoordinate c = dst.coordinate();
+    if (!qIsNaN(src.coordinate().latitude()))
+        c.setLatitude(src.coordinate().latitude());
+    if (!qIsNaN(src.coordinate().longitude()))
+        c.setLongitude(src.coordinate().longitude());
+    if (!qIsNaN(src.coordinate().altitude()))
+        c.setAltitude(src.coordinate().altitude());
+    dst.setCoordinate(c);
+
+    if (!dst.timestamp().date().isValid() && src.timestamp().isValid()) // time was supposed to be set/the same already. Date can be overwritten.
+        dst.setTimestamp(src.timestamp());
+
+    static Q_DECL_CONSTEXPR std::array<QGeoPositionInfo::Attribute, 6> attrs {
+                                                { QGeoPositionInfo::GroundSpeed
+                                                 ,QGeoPositionInfo::HorizontalAccuracy
+                                                 ,QGeoPositionInfo::VerticalAccuracy
+                                                 ,QGeoPositionInfo::Direction
+                                                 ,QGeoPositionInfo::VerticalSpeed
+                                                 ,QGeoPositionInfo::MagneticVariation} };
+    for (const auto a: attrs) {
+        if (src.hasAttribute(a))
+            dst.setAttribute(a, src.attribute(a));
+    }
+
+
+}
+
+static qint64 msecsTo(const QDateTime &from, const QDateTime &to)
+{
+    if (!from.time().isValid() || !to.time().isValid())
+        return 0;
+
+    if (!from.date().isValid() || !to.date().isValid()) // use only time
+        return from.time().msecsTo(to.time());
+
+    return from.msecsTo(to);
+}
 
 QNmeaRealTimeReader::QNmeaRealTimeReader(QNmeaPositionInfoSourcePrivate *sourcePrivate)
         : QNmeaReader(sourcePrivate)
@@ -107,24 +183,110 @@ void QNmeaSimulatedReader::readAvailableData()
     }
 }
 
+static int processSentence(QGeoPositionInfo &info,
+                           QByteArray &m_nextLine,
+                           QNmeaPositionInfoSourcePrivate *m_proxy,
+                           QQueue<QPendingGeoPositionInfo> &m_pendingUpdates,
+                           bool &hasFix)
+{
+    int timeToNextUpdate = -1;
+    QDateTime prevTs;
+    if (m_pendingUpdates.size() > 0)
+        prevTs = m_pendingUpdates.head().info.timestamp();
+
+    // find the next update with a valid time (as long as the time is valid,
+    // we can calculate when the update should be emitted)
+    while (m_nextLine.size() || (m_proxy->m_device && m_proxy->m_device->bytesAvailable() > 0)) {
+        char static_buf[1024];
+        char *buf = static_buf;
+        QByteArray nextLine;
+        qint64 size = 0;
+        if (m_nextLine.size()) {
+            // Read something in the previous call, but TS was later.
+            size = m_nextLine.size();
+            nextLine = m_nextLine;
+            m_nextLine.clear();
+            buf = nextLine.data();
+        } else {
+            size = m_proxy->m_device->readLine(buf, sizeof(static_buf));
+        }
+
+        if (size <= 0)
+            continue;
+
+        const QTime infoTime = info.timestamp().time(); // if info has been set, time must be valid.
+        const QDate infoDate = info.timestamp().date(); // this one might not be valid, as some sentences do not contain it
+
+        /*
+             Packets containing time information are GGA, RMC, ZDA, GLL:
+
+             GGA : GPS fix data                           - only time
+             GLL : geographic latitude and longitude      - only time
+             RMC : recommended minimum FPOS/transit data  - date/time
+             ZDA : only timestamp                         - date/time
+
+             QLocationUtils is currently also capable of parsing VTG and GSA sentences:
+
+             VTG: containing Track made good and ground speed
+             GSA: overall satellite data
+
+             Since these sentences contain no timestamp, their content will be merged with the content
+             from any prior sentence that had timestamp info, if any is available.
+         */
+
+        QGeoPositionInfoPrivateNmea *pimpl = new QGeoPositionInfoPrivateNmea;
+        QGeoPositionInfo pos(*pimpl);
+        if (m_proxy->parsePosInfoFromNmeaData(buf, size, &pos, &hasFix)) {
+            // Date may or may not be valid, as some packets do not have date.
+            // If date isn't valid, match is performed on time only.
+            // Hence, make sure that packet blocks are generated with
+            // the sentences containing the full timestamp (e.g., GPRMC) *first* !
+            if (infoTime.isValid()) {
+                if (pos.timestamp().time().isValid()) {
+                    if (infoTime != pos.timestamp().time() || infoDate != pos.timestamp().date()) {
+                        // Effectively read data for different update, so copy buf into m_nextLine
+                        m_nextLine = QByteArray(buf, size);
+                        break;
+                    } else {
+                        // timestamps match -- merge into info
+                        mergePositions(info, pos, QByteArray(buf, size));
+                    }
+                } else {
+                    // no timestamp available -- merge into info
+                    mergePositions(info, pos, QByteArray(buf, size));
+                }
+            } else {
+                // there was no info with valid TS. Overwrite with whatever is parsed.
+#if USE_NMEA_PIMPL
+                pimpl->nmeaSentences.append(QByteArray(buf, size));
+#endif
+                info = pos;
+            }
+
+            if (prevTs.time().isValid()) {
+                timeToNextUpdate = msecsTo(prevTs, info.timestamp());
+                if (timeToNextUpdate < 0) // Somehow parsing expired packets, reset info
+                    info = QGeoPositionInfo(*new QGeoPositionInfoPrivateNmea);
+            }
+        }
+    }
+
+    return timeToNextUpdate;
+}
+
 bool QNmeaSimulatedReader::setFirstDateTime()
 {
     // find the first update with valid date and time
-    QGeoPositionInfo update;
+    QGeoPositionInfo info(*new QGeoPositionInfoPrivateNmea);
     bool hasFix = false;
-    while (m_proxy->m_device->bytesAvailable() > 0) {
-        char buf[1024];
-        qint64 size = m_proxy->m_device->readLine(buf, sizeof(buf));
-        if (size <= 0)
-            continue;
-        bool ok = m_proxy->parsePosInfoFromNmeaData(buf, size, &update, &hasFix);
-        if (ok && update.timestamp().isValid()) {
-            QPendingGeoPositionInfo pending;
-            pending.info = update;
-            pending.hasFix = hasFix;
-            m_pendingUpdates.enqueue(pending);
-            return true;
-        }
+    processSentence(info, m_nextLine, m_proxy, m_pendingUpdates, hasFix);
+
+    if (info.timestamp().time().isValid()) { // NMEA may have sentences with only time and no date. These would generate invalid positions
+        QPendingGeoPositionInfo pending;
+        pending.info = info;
+        pending.hasFix = hasFix;
+        m_pendingUpdates.enqueue(pending);
+        return true;
     }
     return false;
 }
@@ -149,37 +311,10 @@ void QNmeaSimulatedReader::timerEvent(QTimerEvent *event)
 
 void QNmeaSimulatedReader::processNextSentence()
 {
-    QGeoPositionInfo info;
+    QGeoPositionInfo info(*new QGeoPositionInfoPrivateNmea);
     bool hasFix = false;
-    int timeToNextUpdate = -1;
-    QTime prevTime;
-    if (m_pendingUpdates.size() > 0)
-        prevTime = m_pendingUpdates.head().info.timestamp().time();
 
-    // find the next update with a valid time (as long as the time is valid,
-    // we can calculate when the update should be emitted)
-    while (m_proxy->m_device && m_proxy->m_device->bytesAvailable() > 0) {
-        char buf[1024];
-        qint64 size = m_proxy->m_device->readLine(buf, sizeof(buf));
-        if (size <= 0)
-            continue;
-        if (m_proxy->parsePosInfoFromNmeaData(buf, size, &info, &hasFix)) {
-            QTime time = info.timestamp().time();
-            if (time.isValid()) {
-                if (!prevTime.isValid()) {
-                    timeToNextUpdate = 0;
-                    break;
-                }
-                timeToNextUpdate = prevTime.msecsTo(time);
-                if (timeToNextUpdate >= 0)
-                    break;
-            } else {
-                timeToNextUpdate = 0;
-                break;
-            }
-        }
-    }
-
+    int timeToNextUpdate = processSentence(info, m_nextLine, m_proxy, m_pendingUpdates, hasFix);
     if (timeToNextUpdate < 0)
         return;
 
