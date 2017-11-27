@@ -169,8 +169,7 @@ Item {
             compare (emptyQuery.maneuverDetail, RouteQuery.BasicManeuvers)
             compare (emptyQuery.waypoints.length, 0, "Waypoints")
             compare (emptyQuery.excludedAreas.length, 0, "excluded areas")
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare (emptyQuery.featureTypes.length, 0, "Feature types")
+            compare (emptyQuery.featureTypes.length, 0, "Feature types")
         }
 
         SignalSpy {id: autoUpdateSpy; target: emptyModel; signalName: "autoUpdateChanged"}
@@ -323,8 +322,7 @@ Item {
 
             // Feature types and weights
             queryDetailsChangedSpy.clear()
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 0)
+            compare(emptyQuery.featureTypes.length, 0)
             compare(featureTypesSpy.count, 0)
             emptyQuery.setFeatureWeight(RouteQuery.TollFeature, RouteQuery.AvoidFeatureWeight);
             compare(featureTypesSpy.count, 1)
@@ -332,10 +330,9 @@ Item {
             emptyQuery.setFeatureWeight(RouteQuery.HighwayFeature, RouteQuery.PreferFeatureWeight);
             compare(featureTypesSpy.count, 2)
             compare(queryDetailsChangedSpy.count, 2)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 2)
-            //compare(emptyQuery.featureTypes[0], RouteQuery.TollFeature)
-            //compare(emptyQuery.featureTypes[1], RouteQuery.HighwayFeature)
+            compare(emptyQuery.featureTypes.length, 2)
+            compare(emptyQuery.featureTypes[0], RouteQuery.TollFeature)
+            compare(emptyQuery.featureTypes[1], RouteQuery.HighwayFeature)
             // Verify feature weights are as set
             compare(emptyQuery.featureWeight(RouteQuery.TollFeature), RouteQuery.AvoidFeatureWeight);
             compare(emptyQuery.featureWeight(RouteQuery.HighwayFeature), RouteQuery.PreferFeatureWeight);
@@ -343,30 +340,25 @@ Item {
             emptyQuery.setFeatureWeight(RouteQuery.TollFeature, RouteQuery.NeutralFeatureWeight);
             compare(featureTypesSpy.count, 3)
             compare(queryDetailsChangedSpy.count, 3)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 1)
+            compare(emptyQuery.featureTypes.length, 1)
             compare(emptyQuery.featureWeight(RouteQuery.TollFeature), RouteQuery.NeutralFeatureWeight);
             compare(emptyQuery.featureWeight(RouteQuery.HighwayFeature), RouteQuery.PreferFeatureWeight);
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes[0], RouteQuery.HighwayFeature)
-            //compare(emptyQuery.featureWeight(emptyQuery.featureTypes[0]), RouteQuery.PreferFeatureWeight)
+            compare(emptyQuery.featureTypes[0], RouteQuery.HighwayFeature)
+            compare(emptyQuery.featureWeight(emptyQuery.featureTypes[0]), RouteQuery.PreferFeatureWeight)
             compare(featureTypesSpy.count, 3)
             compare(queryDetailsChangedSpy.count, 3)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 1)
+            compare(emptyQuery.featureTypes.length, 1)
 
             // Put some feature weights and then reset them with NoFeature
             emptyQuery.setFeatureWeight(RouteQuery.FerryFeature, RouteQuery.RequireFeatureWeight);
             emptyQuery.setFeatureWeight(RouteQuery.MotorPoolLaneFeature, RouteQuery.DisallowFeatureWeight);
             compare(featureTypesSpy.count, 5)
             compare(queryDetailsChangedSpy.count, 5)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 3)
+            compare(emptyQuery.featureTypes.length, 3)
             emptyQuery.setFeatureWeight(RouteQuery.NoFeature, RouteQuery.NeutralFeatureWeight)
             compare(featureTypesSpy.count, 6)
             compare(queryDetailsChangedSpy.count, 6)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 0)
+            compare(emptyQuery.featureTypes.length, 0)
 
             // Segment details
             queryDetailsChangedSpy.clear()
