@@ -782,7 +782,7 @@ static QGeoManeuver::InstructionDirection instructionDirection(const QJsonObject
     else if (modifier == QLatin1String("slight right"))
         return QGeoManeuver::DirectionLightRight;
     else if (modifier == QLatin1String("uturn"))
-        return QGeoManeuver::DirectionUTurnRight;
+        return QGeoManeuver::DirectionUTurnLeft; // This should rather be country-specific. In UK, f.ex. one should rather UTurn Right
     else if (modifier == QLatin1String("left"))
         return QGeoManeuver::DirectionLeft;
     else if (modifier == QLatin1String("sharp left"))
