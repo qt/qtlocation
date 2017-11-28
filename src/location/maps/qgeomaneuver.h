@@ -39,6 +39,7 @@
 
 #include <QtCore/qshareddata.h>
 #include <QtLocation/qlocationglobal.h>
+#include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 
@@ -94,6 +95,9 @@ public:
 
     void setWaypoint(const QGeoCoordinate &coordinate);
     QGeoCoordinate waypoint() const;
+
+    void setExtendedAttributes(const QVariantMap &extendedAttributes);
+    QVariantMap extendedAttributes() const;
 
 private:
     QSharedDataPointer<QGeoManeuverPrivate> d_ptr;

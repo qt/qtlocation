@@ -185,6 +185,36 @@ QGeoCoordinate QDeclarativeGeoManeuver::waypoint() const
 }
 
 /*!
+    \qmlproperty Object RouteManeuver::extendedAttributes
+
+    This property holds the extended attributes of the maneuver and is a map.
+    These attributes are plugin specific, and can be empty.
+
+    Consult the \l {Qt Location#Plugin References and Parameters}{plugin documentation}
+    for what attributes are supported and how they should be used.
+
+    Note, due to limitations of the QQmlPropertyMap, it is not possible
+    to declaratively specify the attributes in QML, assignment of attributes keys
+    and values can only be accomplished by JavaScript.
+
+    \since QtLocation 5.11
+*/
+QQmlPropertyMap *QDeclarativeGeoManeuver::extendedAttributes() const
+{
+    if (!m_extendedAttributes) {
+        QDeclarativeGeoManeuver *self = const_cast<QDeclarativeGeoManeuver *>(this);
+        self->m_extendedAttributes = new QQmlPropertyMap(self);
+        // Fill it
+        const QStringList keys = maneuver_.extendedAttributes().keys();
+        for (const QString &key: keys) {
+            self->m_extendedAttributes->insert(key,
+                maneuver_.extendedAttributes().value(key));
+        }
+    }
+    return m_extendedAttributes;
+}
+
+/*!
     \qmlproperty bool RouteManeuver::waypointValid
 
     This read-only property holds whether this \l waypoint, associated with this

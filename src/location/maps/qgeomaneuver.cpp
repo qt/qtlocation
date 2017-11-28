@@ -283,6 +283,27 @@ QGeoCoordinate QGeoManeuver::waypoint() const
     return d_ptr->waypoint;
 }
 
+/*!
+    Sets the extended attributes associated with this maneuver.
+
+    \since QtLocation 5.11
+*/
+void QGeoManeuver::setExtendedAttributes(const QVariantMap &extendedAttributes)
+{
+    d_ptr->valid = true;
+    d_ptr->extendedAttributes = extendedAttributes;
+}
+
+/*!
+    Returns the extended attributes associated with this maneuver.
+
+    \since QtLocation 5.11
+*/
+QVariantMap QGeoManeuver::extendedAttributes() const
+{
+    return d_ptr->extendedAttributes;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 

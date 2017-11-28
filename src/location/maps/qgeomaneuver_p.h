@@ -73,6 +73,7 @@ public:
     int timeToNextInstruction;
     qreal distanceToNextInstruction;
     QGeoCoordinate waypoint;
+    QVariantMap extendedAttributes;
 };
 
 QT_END_NAMESPACE
