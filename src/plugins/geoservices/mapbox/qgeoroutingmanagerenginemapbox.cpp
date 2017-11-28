@@ -41,6 +41,7 @@
 #include "qgeoroutingmanagerenginemapbox.h"
 #include "qgeoroutereplymapbox.h"
 #include "qmapboxcommon.h"
+#include "QtLocation/private/qgeorouteparserosrmv5_p.h"
 
 #include <QtCore/QUrlQuery>
 #include <QtCore/QDebug>
@@ -62,6 +63,15 @@ QGeoRoutingManagerEngineMapbox::QGeoRoutingManagerEngineMapbox(const QVariantMap
         m_accessToken = parameters.value(QStringLiteral("mapbox.access_token")).toString();
     }
 
+    bool use_mapbox_text_instructions = true;
+    if (parameters.contains(QStringLiteral("mapbox.routing.use_mapbox_text_instructions"))) {
+        use_mapbox_text_instructions = parameters.value(QStringLiteral("mapbox.use_mapbox_text_instructions")).toBool();
+    }
+
+    QGeoRouteParserOsrmV5 *parser = new QGeoRouteParserOsrmV5(this, use_mapbox_text_instructions);
+    parser->setAccessToken(m_accessToken);
+    m_routeParser = parser;
+
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
 }
@@ -73,7 +83,7 @@ QGeoRoutingManagerEngineMapbox::~QGeoRoutingManagerEngineMapbox()
 QGeoRouteReply* QGeoRoutingManagerEngineMapbox::calculateRoute(const QGeoRouteRequest &request)
 {
     QNetworkRequest networkRequest;
-    networkRequest.setRawHeader("User-Agent", m_userAgent);
+    networkRequest.setHeader(QNetworkRequest::UserAgentHeader, m_userAgent);
 
     QString url = mapboxDirectionsApiPath;
 
@@ -94,24 +104,10 @@ QGeoRouteReply* QGeoRoutingManagerEngineMapbox::calculateRoute(const QGeoRouteRe
         }
     }
 
-    foreach (const QGeoCoordinate &c, request.waypoints()) {
-        url += QString("%1,%2;").arg(c.longitude()).arg(c.latitude());
-    }
-    if (url.right(1) == QLatin1Char(';'))
-        url.chop(1);
-
-    QUrlQuery query;
-    query.addQueryItem(QStringLiteral("steps"), QStringLiteral("true"));
-    query.addQueryItem(QStringLiteral("alternatives"), QStringLiteral("true"));
-    query.addQueryItem(QStringLiteral("overview"), QStringLiteral("full"));
-    query.addQueryItem(QStringLiteral("geometries"), QStringLiteral("geojson"));
-    query.addQueryItem(QStringLiteral("access_token"), m_accessToken);
-
-    QUrl u(url);
-    u.setQuery(query);
-    networkRequest.setUrl(u);
+    networkRequest.setUrl(m_routeParser->requestUrl(request, url));
 
     QNetworkReply *reply = m_networkManager->get(networkRequest);
+
     QGeoRouteReplyMapbox *routeReply = new QGeoRouteReplyMapbox(reply, request, this);
 
     connect(routeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
@@ -119,6 +115,11 @@ QGeoRouteReply* QGeoRoutingManagerEngineMapbox::calculateRoute(const QGeoRouteRe
             this, SLOT(replyError(QGeoRouteReply::Error,QString)));
 
     return routeReply;
+}
+
+const QGeoRouteParser *QGeoRoutingManagerEngineMapbox::routeParser() const
+{
+    return m_routeParser;
 }
 
 void QGeoRoutingManagerEngineMapbox::replyFinished()
