@@ -162,4 +162,10 @@ The following table lists optional parameters that can be passed to the Mapbox p
     it is possible to use the \l{Qt Linguist} to translate QtLocation to the desired language, and set this parameter to
     false in order to use the translated built-in instructions.
 \endtable
+
+\section1 Extra routing attributes
+
+When using this plugin, the RouteManeuver objects in the returned route may contain additional extended attributes (see \l RouteManeuver::extendedAttributes),
+where available.
+These attributes are described in detail in the official \l{https://www.mapbox.com/api-documentation/#stepmaneuver-object}{Mapbox direction API documentation}.
 */
