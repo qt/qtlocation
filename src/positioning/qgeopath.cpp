@@ -176,6 +176,9 @@ bool QGeoPath::operator!=(const QGeoPath &other) const
     return !(*d == *other.d_func());
 }
 
+/*!
+    Sets all the elements of the path.
+*/
 void QGeoPath::setPath(const QList<QGeoCoordinate> &path)
 {
     Q_D(QGeoPath);
@@ -183,13 +186,40 @@ void QGeoPath::setPath(const QList<QGeoCoordinate> &path)
 }
 
 /*!
-    Returns all the elements. Equivalent to QGeoShape::center().
-    The center coordinate, in case of a QGeoPath, is the center of its bounding box.
+    Returns all the elements of the path.
 */
 const QList<QGeoCoordinate> &QGeoPath::path() const
 {
     Q_D(const QGeoPath);
     return d->path();
+}
+/*!
+    Sets all the elements of the path.
+
+    \internal
+*/
+void QGeoPath::setVariantPath(const QVariantList &path)
+{
+    Q_D(QGeoPath);
+    QList<QGeoCoordinate> p;
+    for (const auto &c: path) {
+        if (c.canConvert<QGeoCoordinate>())
+            p << c.value<QGeoCoordinate>();
+    }
+    d->setPath(p);
+}
+/*!
+    Returns all the elements of the path.
+
+    \internal
+*/
+QVariantList QGeoPath::variantPath() const
+{
+    Q_D(const QGeoPath);
+    QVariantList p;
+    for (const auto &c: d->path())
+        p << QVariant::fromValue(c);
+    return p;
 }
 
 void QGeoPath::setWidth(const qreal &width)
