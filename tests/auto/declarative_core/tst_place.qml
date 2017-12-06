@@ -259,6 +259,7 @@ TestCase {
     }
 
     function test_emptyPlace() {
+        skip("QTBUG-64986")
         // basic properties
         compare(emptyPlace.plugin, null);
         compare(emptyPlace.categories.length, 0);
@@ -460,6 +461,7 @@ TestCase {
     }
 
     function test_saveload() {
+        skip("QTBUG-64986")
         // Save a place
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = savePlace;
