@@ -586,10 +586,8 @@ public:
             minor = 4;
             qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
 
-            // Register the 5.9 types
-            // Introduction of 5.9 version; existing 5.4 exports become automatically available under 5.9
-            minor = 9;
-            qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
+            // Register the latest Qt version as QML type version
+            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
         }
