@@ -11,13 +11,14 @@ SUBDIRS += positioning
 positioning.depends = clip2tri
 
 qtHaveModule(quick) {
-    SUBDIRS += location
+    SUBDIRS += positioningquick location
+    positioningquick.depends += positioning
     location.depends += positioning clip2tri
 
     plugins.depends += location
 
     SUBDIRS += imports
-    imports.depends += positioning location
+    imports.depends += positioningquick positioning location
 }
 
 plugins.depends += positioning

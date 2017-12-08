@@ -195,6 +195,11 @@ void QDeclarativePosition::setPosition(const QGeoPositionInfo &info)
         emit magneticVariationValidChanged();
 }
 
+const QGeoPositionInfo &QDeclarativePosition::position() const
+{
+    return m_info;
+}
+
 /*!
     \qmlproperty coordinate Position::coordinate
 

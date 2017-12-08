@@ -56,11 +56,12 @@
 #include <QtCore/QObject>
 #include <QtCore/QDateTime>
 #include <QtQml/qqml.h>
+#include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
 #include <QtPositioning/QGeoPositionInfo>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativePosition : public QObject
+class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePosition : public QObject
 {
     Q_OBJECT
 
@@ -114,6 +115,7 @@ public:
     double magneticVariation() const;
 
     void setPosition(const QGeoPositionInfo &info);
+    const QGeoPositionInfo &position() const;
 
 Q_SIGNALS:
     void latitudeValidChanged();

@@ -42,8 +42,8 @@
 #include <QtPositioning/private/qdeclarativegeolocation_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
 
-#include "qdeclarativepositionsource_p.h"
-#include "qdeclarativeposition_p.h"
+#include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>
+#include <QtPositioningQuick/private/qdeclarativeposition_p.h>
 
 #include "qquickgeocoordinateanimation_p.h"
 #include "locationsingleton.h"
