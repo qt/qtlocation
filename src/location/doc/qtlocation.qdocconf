@@ -43,6 +43,8 @@ sourcedirs  += .. \
 
 examplesinstallpath = location
 
+manifestmeta.highlighted.names = "QtLocation/Map Viewer (QML)"
+
 exampledirs += ../../../examples/location \
                snippets/
 
