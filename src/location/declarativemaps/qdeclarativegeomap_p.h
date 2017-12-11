@@ -61,6 +61,7 @@
 #include <QtGui/QColor>
 #include <QtPositioning/qgeorectangle.h>
 #include <QtLocation/private/qgeomap_p.h>
+#include <QtQuick/private/qquickitemchangelistener_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -183,6 +184,9 @@ public:
     QString errorString() const;
     QGeoServiceProvider::Error error() const;
 
+    // From QQuickItem
+    void itemChange(ItemChange, const ItemChangeData &) override;
+
 Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void zoomLevelChanged(qreal zoomLevel);
@@ -233,7 +237,6 @@ protected:
 private Q_SLOTS:
     void mappingManagerInitialized();
     void pluginReady();
-    void onMapChildrenChanged();
     void onSupportedMapTypesChanged();
     void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
     void onAttachedCopyrightNoticeVisibilityChanged();
@@ -285,6 +288,8 @@ private:
     qreal m_userMaximumFieldOfView;
 
     int m_copyNoticesVisible = 0;
+    qreal m_maxChildZ = 0;
+
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

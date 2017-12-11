@@ -70,7 +70,7 @@ public:
     QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent = Q_NULLPTR);
     ~QDeclarativeGeoMapCopyrightNotice();
 
-    void setCopyrightsZ(int copyrightsZ);
+    void setCopyrightsZ(qreal copyrightsZ);
 
     void setCopyrightsVisible(bool visible);
     bool copyrightsVisible() const;

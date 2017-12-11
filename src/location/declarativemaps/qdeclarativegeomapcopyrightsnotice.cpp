@@ -297,7 +297,7 @@ bool QDeclarativeGeoMapCopyrightNotice::copyrightsVisible() const
 /*!
     \internal
 */
-void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(int copyrightsZ)
+void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(qreal copyrightsZ)
 {
     setZ(copyrightsZ);
     update();

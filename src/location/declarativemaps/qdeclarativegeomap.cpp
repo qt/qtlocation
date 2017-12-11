@@ -50,6 +50,7 @@
 #include <QtQuick/QSGRectangleNode>
 #include <QtQuick/private/qquickwindow_p.h>
 #include <QtQml/qqmlinfo.h>
+#include <QtQuick/private/qquickitem_p.h>
 #include <cmath>
 
 #ifndef M_PI
@@ -186,8 +187,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
     setFiltersChildMouseEvents(true);
 
-    connect(this, SIGNAL(childrenChanged()), this, SLOT(onMapChildrenChanged()), Qt::QueuedConnection);
-
     m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
                                                              tr("No Map"),
                                                              tr("No Map"), false, false, 0, QByteArrayLiteral("")), this);
@@ -244,71 +243,6 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     m_copyrights.clear();
 
     delete m_map;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::onMapChildrenChanged()
-{
-    if (!m_componentCompleted || !m_initialized)
-        return;
-
-    int maxChildZ = 0;
-    QObjectList kids = children();
-    bool foundCopyrights = false;
-
-    for (int i = 0; i < kids.size(); ++i) {
-        QDeclarativeGeoMapCopyrightNotice *copyrights = qobject_cast<QDeclarativeGeoMapCopyrightNotice *>(kids.at(i));
-        if (copyrights) {
-            foundCopyrights = true;
-        } else {
-            QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(kids.at(i));
-            if (mapItem) {
-                if (mapItem->z() > maxChildZ)
-                    maxChildZ = mapItem->z();
-            }
-        }
-    }
-
-    QDeclarativeGeoMapCopyrightNotice *copyrights = m_copyrights.data();
-    // if copyrights object not found within the map's children
-    if (!foundCopyrights) {
-        // if copyrights object was deleted!
-        if (!copyrights) {
-            // create a new one and set its parent, re-assign it to the weak pointer, then connect the copyrights-change signal
-            m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
-            m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
-
-            copyrights = m_copyrights.data();
-
-            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
-                    copyrights, SLOT(copyrightsChanged(QImage)));
-            connect(m_map, SIGNAL(copyrightsChanged(QImage)),
-                    this,  SIGNAL(copyrightsChanged(QImage)));
-
-            connect(m_map, SIGNAL(copyrightsChanged(QString)),
-                    copyrights, SLOT(copyrightsChanged(QString)));
-            connect(m_map, SIGNAL(copyrightsChanged(QString)),
-                    this,  SIGNAL(copyrightsChanged(QString)));
-
-            connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
-                    copyrights, SLOT(onCopyrightsStyleSheetChanged(QString)));
-
-            connect(copyrights, SIGNAL(linkActivated(QString)),
-                    this, SIGNAL(copyrightLinkActivated(QString)));
-
-            // set visibility of copyright notice
-            copyrights->setCopyrightsVisible(m_copyrightsVisible);
-
-        } else {
-            // just re-set its parent.
-            copyrights->setParent(this);
-        }
-    }
-
-    // put the copyrights notice object at the highest z order
-    copyrights->setCopyrightsZ(maxChildZ + 1);
 }
 
 static QDeclarativeGeoMapType *findMapType(const QList<QDeclarativeGeoMapType *> &types, const QGeoMapType &type)
@@ -734,6 +668,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     /* COPY NOTICE SETUP */
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
+    m_copyrights->setCopyrightsZ(m_maxChildZ + 1);
     m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
     m_copyrights->setMapSource(this);
 
@@ -1561,6 +1496,27 @@ QString QDeclarativeGeoMap::errorString() const
 QGeoServiceProvider::Error QDeclarativeGeoMap::error() const
 {
     return m_error;
+}
+
+void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData &value)
+{
+    if (change == ItemChildAddedChange) {
+        QQuickItem *child = value.item;
+        QQuickItem *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(child);
+        if (!mapItem)
+            mapItem = qobject_cast<QDeclarativeGeoMapItemGroup *>(child);
+
+        if (mapItem) {
+            qreal z = mapItem->z();
+            if (z > m_maxChildZ) { // Ignore children removal
+                m_maxChildZ = z;
+                // put the copyrights notice object at the highest z order
+                if (m_copyrights)
+                    m_copyrights->setCopyrightsZ(m_maxChildZ + 1);
+            }
+        }
+    }
+    QQuickItem::itemChange(change, value);
 }
 
 /*!
