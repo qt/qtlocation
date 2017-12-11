@@ -143,6 +143,17 @@ void QGeoTiledMap::clearData()
     d->m_mapScene->clearTexturedTiles();
 }
 
+void QGeoTiledMap::setCopyrightVisible(bool visible)
+{
+    Q_D(QGeoTiledMap);
+    if (visible == d->m_copyrightVisible)
+        return;
+
+    QGeoMap::setCopyrightVisible(visible);
+    if (visible)
+        evaluateCopyrights(d->m_mapScene->visibleTiles());
+}
+
 void QGeoTiledMap::clearScene(int mapId)
 {
     Q_D(QGeoTiledMap);
@@ -319,7 +330,7 @@ void QGeoTiledMapPrivate::updateScene()
     bool newTilesIntroduced = !m_mapScene->visibleTiles().contains(tiles);
     m_mapScene->setVisibleTiles(tiles);
 
-    if (newTilesIntroduced)
+    if (newTilesIntroduced && m_copyrightVisible)
         q->evaluateCopyrights(tiles);
 
     // don't request tiles that are already built and textured
@@ -381,7 +392,8 @@ void QGeoTiledMapPrivate::changeViewportSize(const QSize& size)
         m_cache->setMinTextureUsage(newSize);
     }
 
-    q->evaluateCopyrights(m_visibleTiles->createTiles());
+    if (m_copyrightVisible)
+        q->evaluateCopyrights(m_mapScene->visibleTiles());
     updateScene();
 }
 

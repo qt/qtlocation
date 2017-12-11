@@ -236,6 +236,7 @@ private Q_SLOTS:
     void onMapChildrenChanged();
     void onSupportedMapTypesChanged();
     void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
+    void onAttachedCopyrightNoticeVisibilityChanged();
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
@@ -244,6 +245,8 @@ private:
     void fitViewportToMapItemsRefine(bool refine, bool onlyVisible);
     void fitViewportToGeoShape();
     bool isInteractive();
+    void attachCopyrightNotice(bool initialVisibility);
+    void detachCopyrightNotice(bool currentVisibility);
 
 private:
     QDeclarativeGeoServiceProvider *m_plugin;
@@ -280,6 +283,8 @@ private:
     qreal m_maximumFieldOfView;
     qreal m_userMinimumFieldOfView;
     qreal m_userMaximumFieldOfView;
+
+    int m_copyNoticesVisible = 0;
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

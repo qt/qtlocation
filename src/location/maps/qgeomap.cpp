@@ -230,6 +230,15 @@ QString QGeoMap::copyrightsStyleSheet() const
     return QStringLiteral("#copyright-root { background: rgba(255, 255, 255, 128) }");
 }
 
+void QGeoMap::setCopyrightVisible(bool visible)
+{
+    Q_D(QGeoMap);
+    if (d->m_copyrightVisible == visible)
+        return;
+
+    d->m_copyrightVisible = visible;
+}
+
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
     : QObjectPrivate(),
       m_geoProjection(geoProjection),
@@ -285,6 +294,16 @@ void QGeoMapPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
 void QGeoMapPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
     Q_UNUSED(item)
+}
+
+void QGeoMapPrivate::setCopyrightVisible(bool visible)
+{
+    m_copyrightVisible = visible;
+}
+
+bool QGeoMapPrivate::copyrightVisible() const
+{
+    return m_copyrightVisible;
 }
 
 QT_END_NAMESPACE

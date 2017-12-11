@@ -124,6 +124,8 @@ public:
 
     virtual QString copyrightsStyleSheet() const;
 
+    virtual void setCopyrightVisible(bool visible);
+
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);

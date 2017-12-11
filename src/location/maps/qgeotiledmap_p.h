@@ -87,6 +87,8 @@ public:
     void prefetchData() Q_DECL_OVERRIDE;
     void clearData() Q_DECL_OVERRIDE;
 
+    void setCopyrightVisible(bool visible) override;
+
 public Q_SLOTS:
     virtual void clearScene(int mapId);
 

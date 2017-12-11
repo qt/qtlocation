@@ -239,7 +239,8 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     }
     m_mapItemGroups.clear();
 
-    delete m_copyrights.data();
+    if (m_copyrights.data())
+        delete m_copyrights.data();
     m_copyrights.clear();
 
     delete m_map;
@@ -250,7 +251,7 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
 */
 void QDeclarativeGeoMap::onMapChildrenChanged()
 {
-    if (!m_componentCompleted || !m_map)
+    if (!m_componentCompleted || !m_initialized)
         return;
 
     int maxChildZ = 0;
@@ -423,7 +424,7 @@ void QDeclarativeGeoMap::initialize()
 
     emit mapReadyChanged(true);
 
-    if (m_copyrights)
+    if (m_copyrights) // To not update during initialize()
          update();
 }
 
@@ -720,7 +721,6 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     }
 }
 
-
 /*!
     \internal
     this function will only be ever called once
@@ -731,6 +731,11 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     if (!m_map)
         return;
+
+    /* COPY NOTICE SETUP */
+    m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
+    m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
+    m_copyrights->setMapSource(this);
 
     m_gestureArea->setMap(m_map);
 
@@ -775,39 +780,25 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
                         QOverload<const QImage &>::of(&QGeoMap::copyrightsChanged),
                         [&copyrightImage](const QImage &copy){ copyrightImage = copy; });
         m_map->setViewportSize(QSize(width(), height()));
-        initialize();
+        initialize(); // This emits the caught signals above
         QObject::disconnect(copyrightStringCatcherConnection);
         QObject::disconnect(copyrightImageCatcherConnection);
     }
 
-    m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
-    m_copyrights->onCopyrightsStyleSheetChanged(m_map->copyrightsStyleSheet());
 
-    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
-            m_copyrights.data(), SLOT(copyrightsChanged(QImage)));
+    /* COPYRIGHT SIGNALS REWIRING */
     connect(m_map, SIGNAL(copyrightsChanged(QImage)),
             this,  SIGNAL(copyrightsChanged(QImage)));
-
-    connect(m_map, SIGNAL(copyrightsChanged(QString)),
-            m_copyrights.data(), SLOT(copyrightsChanged(QString)));
     connect(m_map, SIGNAL(copyrightsChanged(QString)),
             this,  SIGNAL(copyrightsChanged(QString)));
-
     if (!copyrightString.isEmpty())
         emit m_map->copyrightsChanged(copyrightString);
     else if (!copyrightImage.isNull())
         emit m_map->copyrightsChanged(copyrightImage);
 
-    connect(m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
-            m_copyrights.data(), SLOT(onCopyrightsStyleSheetChanged(QString)));
 
-    connect(m_copyrights.data(), SIGNAL(linkActivated(QString)),
-            this, SIGNAL(copyrightLinkActivated(QString)));
     connect(m_map, &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
     connect(m_map, &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
-
-    // set visibility of copyright notice
-    m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
 
     // This prefetches a buffer around the map
     m_map->prefetchData();
@@ -1602,6 +1593,32 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 bool QDeclarativeGeoMap::isInteractive()
 {
     return (m_gestureArea->enabled() && m_gestureArea->acceptedGestures()) || m_gestureArea->isActive();
+}
+
+void QDeclarativeGeoMap::attachCopyrightNotice(bool initialVisibility)
+{
+    if (initialVisibility) {
+        ++m_copyNoticesVisible;
+        if (m_map)
+            m_map->setCopyrightVisible(m_copyNoticesVisible > 0);
+    }
+}
+
+void QDeclarativeGeoMap::detachCopyrightNotice(bool currentVisibility)
+{
+    if (currentVisibility) {
+        --m_copyNoticesVisible;
+        if (m_map)
+            m_map->setCopyrightVisible(m_copyNoticesVisible > 0);
+    }
+}
+
+void QDeclarativeGeoMap::onAttachedCopyrightNoticeVisibilityChanged()
+{
+    QDeclarativeGeoMapCopyrightNotice *copy = static_cast<QDeclarativeGeoMapCopyrightNotice *>(sender());
+    m_copyNoticesVisible += ( int(copy->copyrightsVisible()) * 2 - 1);
+    if (m_map)
+        m_map->setCopyrightVisible(m_copyNoticesVisible > 0);
 }
 
 /*!
