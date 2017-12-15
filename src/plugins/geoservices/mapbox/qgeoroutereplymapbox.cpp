@@ -188,7 +188,7 @@ void QGeoRouteReplyMapbox::networkReplyFinished()
 
         QList<QGeoRoute> list;
         QJsonArray routes = object.value(QStringLiteral("routes")).toArray();
-        for (int i = 0; i < routes.count(); i++) {
+        for (int i = 0; i < qMin(routes.count(), request().numberAlternativeRoutes() + 1); i++) {
             QGeoRoute route = constructRoute(routes.at(i).toObject());
             list.append(route);
         }
