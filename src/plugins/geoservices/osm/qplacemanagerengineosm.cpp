@@ -134,25 +134,7 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
 
     //queryItems.addQueryItem(QStringLiteral("accept-language"), QStringLiteral("en"));
 
-    QGeoRectangle boundingBox;
-    QGeoShape searchArea = request.searchArea();
-    switch (searchArea.type()) {
-    case QGeoShape::CircleType: {
-        QGeoCircle c(searchArea);
-        qreal radius = c.radius();
-        if (radius < 0)
-            radius = 50000;
-
-        boundingBox = QGeoRectangle(c.center().atDistanceAndAzimuth(radius, -45),
-                                    c.center().atDistanceAndAzimuth(radius, 135));
-        break;
-    }
-    case QGeoShape::RectangleType:
-        boundingBox = searchArea;
-        break;
-    default:
-        ;
-    }
+    QGeoRectangle boundingBox = request.searchArea().boundingGeoRectangle();
 
     if (!boundingBox.isEmpty()) {
         queryItems.addQueryItem(QStringLiteral("bounded"), QStringLiteral("1"));
