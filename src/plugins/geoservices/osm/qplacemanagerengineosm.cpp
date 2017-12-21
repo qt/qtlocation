@@ -112,6 +112,10 @@ QPlaceManagerEngineOsm::QPlaceManagerEngineOsm(const QVariantMap &parameters,
     if (parameters.contains(QStringLiteral("osm.places.debug_query")))
         m_debugQuery = parameters.value(QStringLiteral("osm.places.debug_query")).toBool();
 
+    if (parameters.contains(QStringLiteral("osm.places.page_size"))
+            && parameters.value(QStringLiteral("osm.places.page_size")).canConvert<int>())
+        m_pageSize = parameters.value(QStringLiteral("osm.places.page_size")).toInt();
+
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
 }
@@ -171,6 +175,8 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
         queryItems.addQueryItem(QStringLiteral("exclude_place_ids"), placeIds.join(QLatin1Char(',')));
 
     queryItems.addQueryItem(QStringLiteral("addressdetails"), QStringLiteral("1"));
+    queryItems.addQueryItem(QStringLiteral("limit"), (request.limit() > 0) ? QString::number(request.limit())
+                                                                           : QString::number(m_pageSize));
 
     QUrl requestUrl(m_urlPrefix);
     requestUrl.setQuery(queryItems);

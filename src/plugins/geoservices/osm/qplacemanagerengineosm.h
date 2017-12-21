@@ -84,6 +84,7 @@ private:
     QString m_urlPrefix;
     QList<QLocale> m_locales;
     bool m_debugQuery = false;
+    int m_pageSize = 50; // the default page size of the public nominatim server
 
     QNetworkReply *m_categoriesReply;
     QList<QPlaceCategoriesReplyOsm *> m_pendingCategoriesReply;
