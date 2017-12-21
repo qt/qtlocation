@@ -83,6 +83,7 @@ private:
     QByteArray m_userAgent;
     QString m_urlPrefix;
     QList<QLocale> m_locales;
+    bool m_debugQuery = false;
 
     QNetworkReply *m_categoriesReply;
     QList<QPlaceCategoriesReplyOsm *> m_pendingCategoriesReply;

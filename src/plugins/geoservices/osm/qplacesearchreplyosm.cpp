@@ -192,6 +192,13 @@ QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) con
 
     place.setName(title);
 
+    if (!requestUrl.isEmpty()) {
+        QPlaceAttribute attribute;
+        attribute.setLabel("requestUrl");
+        attribute.setText(requestUrl);
+        place.setExtendedAttribute("requestUrl", attribute);
+    }
+
     QGeoAddress address;
     address.setCity(addressDetails.value(QStringLiteral("city")).toString());
     address.setCountry(addressDetails.value(QStringLiteral("country")).toString());

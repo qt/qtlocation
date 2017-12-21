@@ -108,6 +108,10 @@ QPlaceManagerEngineOsm::QPlaceManagerEngineOsm(const QVariantMap &parameters,
     else
         m_urlPrefix = QStringLiteral("http://nominatim.openstreetmap.org/search");
 
+
+    if (parameters.contains(QStringLiteral("osm.places.debug_query")))
+        m_debugQuery = parameters.value(QStringLiteral("osm.places.debug_query")).toBool();
+
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
 }
@@ -177,6 +181,9 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
+
+    if (m_debugQuery)
+        reply->requestUrl = requestUrl.toString();
 
     return reply;
 }
