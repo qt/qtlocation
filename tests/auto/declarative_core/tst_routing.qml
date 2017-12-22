@@ -28,7 +28,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.10
+import QtLocation 5.11
 import QtPositioning 5.2
 
 Item {

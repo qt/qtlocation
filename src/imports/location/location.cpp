@@ -181,7 +181,7 @@ public:
                                                                              , QStringLiteral("CameraCapabilities is not intended instantiable by developer."));
 
             // Register the 5.11 types
-            minor = 3;
+            minor = 11;
             qmlRegisterType<QDeclarativeGeoWaypoint>(uri, major, minor, "Waypoint");
 
             // Register the latest Qt version as QML type version
