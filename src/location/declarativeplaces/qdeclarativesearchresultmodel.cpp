@@ -47,6 +47,7 @@
 #include <QtLocation/QPlaceMatchReply>
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceProposedSearchResult>
+#include <QtLocation/private/qplacesearchrequest_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -258,6 +259,18 @@ QT_BEGIN_NAMESPACE
             \li An error occurred when executing the previous search query.
     \endtable
 */
+
+/*!
+    \qmlproperty bool PlaceSearchModel::incremental
+
+    This property controls how paging will affect the PlaceSearchModel.
+    If true, calling \l previousPage or \l nextPage will not reset the model,
+    but new results will instead be appended to the model.
+    Default is false.
+
+    \since QtLocation 5.12
+*/
+
 
 /*!
     \qmlmethod void PlaceSearchModel::update()
@@ -733,6 +746,9 @@ void QDeclarativeSearchResultModel::queryFinished()
         return;
     QPlaceReply *reply = m_reply;
     m_reply = 0;
+    if (!m_incremental)
+        m_pages.clear();
+
     if (reply->error() != QPlaceReply::NoError) {
         m_resultsBuffer.clear();
         updateLayout();
@@ -745,7 +761,14 @@ void QDeclarativeSearchResultModel::queryFinished()
         QPlaceSearchReply *searchReply = qobject_cast<QPlaceSearchReply *>(reply);
         Q_ASSERT(searchReply);
 
+        const QPlaceSearchRequestPrivate *rpimpl = QPlaceSearchRequestPrivate::get(searchReply->request());
+        if (!rpimpl->related || !m_incremental)
+            m_pages.clear();
         m_resultsBuffer = searchReply->results();
+        bool alreadyLoaded = false;
+        if (m_pages.contains(rpimpl->page) && m_resultsBuffer == m_pages.value(rpimpl->page))
+            alreadyLoaded = true;
+        m_pages.insert(rpimpl->page, m_resultsBuffer);
         setPreviousPageRequest(searchReply->previousPageRequest());
         setNextPageRequest(searchReply->nextPageRequest());
 
@@ -785,6 +808,8 @@ void QDeclarativeSearchResultModel::queryFinished()
             }
 
             request.setResults(m_resultsBuffer);
+            if (alreadyLoaded)
+                m_resultsBuffer.clear();
             m_reply = favoritesManager->matchingPlaces(request);
             connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
         }
@@ -823,14 +848,24 @@ void QDeclarativeSearchResultModel::queryFinished()
 */
 void QDeclarativeSearchResultModel::updateLayout(const QList<QPlace> &favoritePlaces)
 {
-    int oldRowCount = rowCount();
+    const int oldRowCount = rowCount();
+    int start = 0;
 
-    beginResetModel();
-    clearData(true);
-    m_results = m_resultsBuffer;
+    if (m_incremental) {
+        if (!m_resultsBuffer.size())
+            return;
+
+        beginInsertRows(QModelIndex(), oldRowCount , oldRowCount + m_resultsBuffer.size() - 1);
+        m_results = resultsFromPages();
+        start = oldRowCount;
+    } else {
+        beginResetModel();
+        clearData(true);
+        m_results = m_resultsBuffer;
+    }
+
     m_resultsBuffer.clear();
-
-    for (int i = 0; i < m_results.count(); ++i) {
+    for (int i = start; i < m_results.count(); ++i) {
         const QPlaceSearchResult &result = m_results.at(i);
 
         if (result.type() == QPlaceSearchResult::PlaceResult) {
@@ -851,7 +886,10 @@ void QDeclarativeSearchResultModel::updateLayout(const QList<QPlace> &favoritePl
         m_icons.append(icon);
     }
 
-    endResetModel();
+    if (m_incremental)
+        endInsertRows();
+    else
+        endResetModel();
     if (m_results.count() != oldRowCount)
         emit rowCountChanged();
 }
@@ -882,9 +920,37 @@ void QDeclarativeSearchResultModel::placeRemoved(const QString &placeId)
     delete m_places.at(row);
     m_places.removeAt(row);
     m_results.removeAt(row);
+    removePageRow(row);
     endRemoveRows();
 
     emit rowCountChanged();
+}
+
+QList<QPlaceSearchResult> QDeclarativeSearchResultModel::resultsFromPages() const
+{
+    QList<QPlaceSearchResult> res;
+    QMapIterator<int, QList<QPlaceSearchResult>> i(m_pages);
+    while (i.hasNext()) {
+        i.next();
+        res.append(i.value());
+    }
+    return res;
+}
+
+void QDeclarativeSearchResultModel::removePageRow(int row)
+{
+    QMapIterator<int, QList<QPlaceSearchResult>> i(m_pages);
+    int scanned = 0;
+    while (i.hasNext()) {
+        i.next();
+        QList<QPlaceSearchResult> page = i.value();
+        scanned += page.size();
+        if (row >= scanned)
+            continue;
+        page.removeAt(row - scanned + page.size());
+        m_pages.insert(i.key(), page);
+        return;
+    }
 }
 
 /*!

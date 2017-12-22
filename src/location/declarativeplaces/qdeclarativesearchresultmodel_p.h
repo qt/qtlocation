@@ -72,6 +72,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSearchResultModel : public QDeclarat
     Q_PROPERTY(QDeclarativeGeoServiceProvider *favoritesPlugin READ favoritesPlugin WRITE setFavoritesPlugin NOTIFY favoritesPluginChanged)
     Q_PROPERTY(QVariantMap favoritesMatchParameters READ favoritesMatchParameters WRITE setFavoritesMatchParameters NOTIFY favoritesMatchParametersChanged)
 
+    Q_PROPERTY(bool incremental MEMBER m_incremental NOTIFY incrementalChanged REVISION 12)
+
     Q_ENUMS(SearchResultType RelevanceHint)
 
 public:
@@ -137,6 +139,7 @@ Q_SIGNALS:
     void favoritesPluginChanged();
     void favoritesMatchParametersChanged();
     void dataChanged();
+    void incrementalChanged();
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
@@ -162,9 +165,13 @@ private:
     };
 
     int getRow(const QString &placeId) const;
+    QList<QPlaceSearchResult> resultsFromPages() const;
+    void removePageRow(int row);
+
     QList<QDeclarativeCategory *> m_categories;
     QLocation::VisibilityScope m_visibilityScope;
 
+    QMap<int, QList<QPlaceSearchResult>> m_pages;
     QList<QPlaceSearchResult> m_results;
     QList<QPlaceSearchResult> m_resultsBuffer;
     QList<QDeclarativePlace *> m_places;
@@ -172,6 +179,7 @@ private:
 
     QDeclarativeGeoServiceProvider *m_favoritesPlugin;
     QVariantMap m_matchParameters;
+    bool m_incremental = false;
 };
 
 QT_END_NAMESPACE

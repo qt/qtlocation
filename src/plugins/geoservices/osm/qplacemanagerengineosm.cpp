@@ -191,7 +191,7 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
             this, SLOT(replyError(QPlaceReply::Error,QString)));
 
     if (m_debugQuery)
-        reply->requestUrl = requestUrl.toString();
+        reply->requestUrl = requestUrl.url(QUrl::None);
 
     return reply;
 }

@@ -48,6 +48,7 @@
 #include <QtPositioning/QGeoRectangle>
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceSearchRequest>
+#include <QtLocation/private/qplacesearchrequest_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -135,6 +136,9 @@ void QPlaceSearchReplyOsm::replyFinished()
 
         parameters.insert(QStringLiteral("ExcludePlaceIds"), epi);
         r.setSearchContext(parameters);
+        QPlaceSearchRequestPrivate *rpimpl = QPlaceSearchRequestPrivate::get(r);
+        rpimpl->related = true;
+        rpimpl->page--;
         setPreviousPageRequest(r);
     }
 
@@ -147,6 +151,9 @@ void QPlaceSearchReplyOsm::replyFinished()
 
         parameters.insert(QStringLiteral("ExcludePlaceIds"), epi);
         r.setSearchContext(parameters);
+        QPlaceSearchRequestPrivate *rpimpl = QPlaceSearchRequestPrivate::get(r);
+        rpimpl->related = true;
+        rpimpl->page++;
         setNextPageRequest(r);
     }
 
