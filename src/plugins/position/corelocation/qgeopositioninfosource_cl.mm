@@ -40,6 +40,7 @@
 #include <QTimerEvent>
 #include <QDebug>
 #include <QtCore/qglobal.h>
+#include <QtCore/private/qglobal_p.h>
 
 #include "qgeopositioninfosource_cl_p.h"
 
@@ -141,15 +142,17 @@ bool QGeoPositionInfoSourceCL::enableLocationManager()
     if (!m_locationManager) {
         m_locationManager = [[CLLocationManager alloc] init];
 
-#ifdef Q_OS_IOS
-        NSDictionary<NSString *, id> *infoDict = [[NSBundle mainBundle] infoDictionary];
-        if (id value = [infoDict objectForKey:@"UIBackgroundModes"]) {
-            if ([value isKindOfClass:[NSArray class]]) {
-                NSArray *modes = static_cast<NSArray *>(value);
-                for (id mode in modes) {
-                    if ([@"location" isEqualToString:mode]) {
-                        m_locationManager.allowsBackgroundLocationUpdates = YES;
-                        break;
+#if defined(Q_OS_IOS) || defined(Q_OS_WATCHOS)
+        if (__builtin_available(watchOS 4.0, *)) {
+            NSDictionary<NSString *, id> *infoDict = [[NSBundle mainBundle] infoDictionary];
+            if (id value = [infoDict objectForKey:@"UIBackgroundModes"]) {
+                if ([value isKindOfClass:[NSArray class]]) {
+                    NSArray *modes = static_cast<NSArray *>(value);
+                    for (id mode in modes) {
+                        if ([@"location" isEqualToString:mode]) {
+                            m_locationManager.allowsBackgroundLocationUpdates = YES;
+                            break;
+                        }
                     }
                 }
             }
@@ -162,10 +165,12 @@ bool QGeoPositionInfoSourceCL::enableLocationManager()
         // These two methods are new in iOS 8. They require NSLocationAlwaysUsageDescription
         // and NSLocationWhenInUseUsageDescription to be set in Info.plist to work (methods are
         // noop if there are no such entries in plist).
-        if ([m_locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
-            [m_locationManager performSelector:@selector(requestAlwaysAuthorization)];
-        if ([m_locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)])
-            [m_locationManager performSelector:@selector(requestWhenInUseAuthorization)];
+#ifndef Q_OS_MACOS
+#ifndef Q_OS_TVOS
+        [m_locationManager requestAlwaysAuthorization];
+#endif
+        [m_locationManager requestWhenInUseAuthorization];
+#endif
     }
 
     return (m_locationManager != 0);
