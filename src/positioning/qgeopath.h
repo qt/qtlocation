@@ -41,7 +41,7 @@
 #define QGEOPATH_H
 
 #include <QtPositioning/QGeoShape>
-#include <QVariantList>
+#include <QtCore/QVariantList>
 
 QT_BEGIN_NAMESPACE
 
