@@ -26,7 +26,6 @@ OTHER_FILES += doc/src/*.qdoc   # show .qdoc files in Qt Creator
 
 PUBLIC_HEADERS += \
                     qlocation.h \
-                    qlocationglobal_p.h \
                     qlocationglobal.h
 
 PRIVATE_HEADERS += \
