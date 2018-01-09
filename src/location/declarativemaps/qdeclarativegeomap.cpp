@@ -1132,7 +1132,7 @@ void QDeclarativeGeoMap::setMinimumFieldOfView(qreal minimumFieldOfView, bool us
 }
 
 /*!
-    \qmlproperty bool QtLocation::Map::minimumFieldOfView
+    \qmlproperty real QtLocation::Map::minimumFieldOfView
 
     This property holds the minimum valid field of view for the map, in degrees.
 
@@ -1169,7 +1169,7 @@ void QDeclarativeGeoMap::setMaximumFieldOfView(qreal maximumFieldOfView, bool us
 }
 
 /*!
-    \qmlproperty bool QtLocation::Map::maximumFieldOfView
+    \qmlproperty real QtLocation::Map::maximumFieldOfView
 
     This property holds the maximum valid field of view for the map, in degrees.
 
@@ -1187,7 +1187,7 @@ qreal QDeclarativeGeoMap::maximumFieldOfView() const
 }
 
 /*!
-    \qmlproperty bool QtLocation::Map::minimumTilt
+    \qmlproperty real QtLocation::Map::minimumTilt
 
     This property holds the minimum valid tilt for the map, in degrees.
 
@@ -1224,7 +1224,7 @@ void QDeclarativeGeoMap::setMaximumTilt(qreal maximumTilt, bool userSet)
 }
 
 /*!
-    \qmlproperty bool QtLocation::Map::maximumTilt
+    \qmlproperty real QtLocation::Map::maximumTilt
 
     This property holds the maximum valid tilt for the map, in degrees.
 
@@ -1392,7 +1392,7 @@ QColor QDeclarativeGeoMap::color() const
 }
 
 /*!
-    \qmlproperty color QtLocation::Map::mapReady
+    \qmlproperty bool QtLocation::Map::mapReady
 
     This property holds whether the map has been successfully initialized and is ready to be used.
     Some methods, such as \l fromCoordinate and \l toCoordinate, will not work before the map is ready.
