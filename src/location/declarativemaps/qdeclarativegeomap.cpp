@@ -2013,10 +2013,10 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine, bool onlyVisib
     if (m_mapItems.size() == 0)
         return;
 
-    double minX = 0;
-    double maxX = 0;
-    double minY = 0;
-    double maxY = 0;
+    double minX = qInf();
+    double maxX = -qInf();
+    double minY = qInf();
+    double maxY = -qInf();
     double topLeftX = 0;
     double topLeftY = 0;
     double bottomRightX = 0;
@@ -2033,13 +2033,11 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine, bool onlyVisib
             continue;
 
         // skip quick items in the first pass and refine the fit later
-        if (refine) {
-            QDeclarativeGeoMapQuickItem *quickItem =
-                    qobject_cast<QDeclarativeGeoMapQuickItem*>(item);
-            if (quickItem) {
+        QDeclarativeGeoMapQuickItem *quickItem =
+                qobject_cast<QDeclarativeGeoMapQuickItem*>(item);
+        if (refine && quickItem) {
                 haveQuickItem = true;
                 continue;
-            }
         }
         // Force map items to update immediately. Needed to ensure correct item size and positions
         // when recursively calling this function.
@@ -2047,25 +2045,35 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine, bool onlyVisib
         // in relation to
         // a) fitViewportToMapItems
         // b) presence of MouseArea
+        //
+        // This is also legacy code. It must be updated to not operate on screen sizes.
         if (item->isPolishScheduled())
            item->updatePolish();
 
-        topLeftX = item->position().x();
-        topLeftY = item->position().y();
-        bottomRightX = topLeftX + item->width();
-        bottomRightY = topLeftY + item->height();
+        if (quickItem && quickItem->matrix_ && !quickItem->matrix_->m_matrix.isIdentity()) {
+            // TODO: recalculate the center/zoom level so that the item becomes projectable again
+            if (quickItem->zoomLevel() == 0.0) // the item is unprojectable, should be skipped.
+                continue;
 
-        if (itemCount == 0) {
-            minX = topLeftX;
-            maxX = bottomRightX;
-            minY = topLeftY;
-            maxY = bottomRightY;
+            QRectF brect = item->boundingRect();
+            brect = quickItem->matrix_->m_matrix.mapRect(brect);
+            QPointF transformedPosition = quickItem->matrix_->m_matrix * item->position();
+            topLeftX = transformedPosition.x();
+            topLeftY = transformedPosition.y();
+            bottomRightX = topLeftX + brect.width();
+            bottomRightY = topLeftY + brect.height();
         } else {
-            minX = qMin(minX, topLeftX);
-            maxX = qMax(maxX, bottomRightX);
-            minY = qMin(minY, topLeftY);
-            maxY = qMax(maxY, bottomRightY);
+            topLeftX = item->position().x();
+            topLeftY = item->position().y();
+            bottomRightX = topLeftX + item->width();
+            bottomRightY = topLeftY + item->height();
         }
+
+        minX = qMin(minX, topLeftX);
+        maxX = qMax(maxX, bottomRightX);
+        minY = qMin(minY, topLeftY);
+        maxY = qMax(maxY, bottomRightY);
+
         ++itemCount;
     }
 
