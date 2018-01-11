@@ -49,11 +49,13 @@
 //
 
 #include <QJSValue>
+#include <QVariant>
 #include <QGeoCoordinate>
 #include <QGeoRectangle>
 #include <QGeoCircle>
 
-QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok);
+QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok = nullptr);
+QGeoCoordinate parseCoordinate(const QVariant &value, bool *ok = nullptr);
 QGeoRectangle parseRectangle(const QJSValue &value, bool *ok);
 QGeoCircle parseCircle(const QJSValue &value, bool *ok);
 

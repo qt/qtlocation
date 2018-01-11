@@ -56,6 +56,7 @@
 #include <QtCore/QObject>
 #include <QtNetwork/QAbstractSocket>
 #include <QtQml/QQmlParserStatus>
+#include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
 #include <QtPositioning/QGeoPositionInfoSource>
 
 QT_BEGIN_NAMESPACE
@@ -63,7 +64,7 @@ QT_BEGIN_NAMESPACE
 class QFile;
 class QTcpSocket;
 
-class QDeclarativePositionSource : public QObject, public QQmlParserStatus
+class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePositionSource : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -120,6 +121,7 @@ public:
     PositioningMethods supportedPositioningMethods() const;
     PositioningMethods preferredPositioningMethods() const;
     SourceError sourceError() const;
+    QGeoPositionInfoSource *positionSource() const;
 
     // Virtuals from QQmlParserStatus
     void classBegin() { }

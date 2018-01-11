@@ -35,11 +35,14 @@
 ****************************************************************************/
 
 #include "locationvaluetypehelper_p.h"
+#include <QVariantMap>
 
 
 QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 {
     QGeoCoordinate c;
+    if (ok)
+        *ok = false;
 
     if (value.isObject()) {
         if (value.hasProperty(QStringLiteral("latitude")))
@@ -51,6 +54,33 @@ QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 
         if (ok)
             *ok = true;
+    }
+
+    return c;
+}
+
+QGeoCoordinate parseCoordinate(const QVariant &value, bool *ok)
+{
+    QGeoCoordinate c;
+    if (ok)
+        *ok = false;
+
+    if (value.canConvert<QGeoCoordinate>()) {
+        c = value.value<QGeoCoordinate>();
+        if (ok)
+            *ok = true;
+    } else if (value.type() == QVariant::Map) {
+        const QVariantMap &map = value.toMap();
+
+        if (map.contains(QStringLiteral("latitude")))
+            c.setLatitude(map.value(QStringLiteral("latitude")).toDouble());
+        if (map.contains(QStringLiteral("longitude")))
+            c.setLongitude(map.value(QStringLiteral("longitude")).toDouble());
+        if (map.contains(QStringLiteral("altitude")))
+            c.setAltitude(map.value(QStringLiteral("altitude")).toDouble());
+
+        if (ok)
+            *ok = c.isValid(); // Not considering the case where the map is valid but containing NaNs.
     }
 
     return c;

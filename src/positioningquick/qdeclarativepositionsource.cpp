@@ -259,11 +259,11 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
         // ways: "file:///", "qrc:///", "/", "" in platform dependent manner.
         QString localFileName = nmeaSource.toString();
         if (!QFile::exists(localFileName)) {
-            if (localFileName.startsWith("qrc:///")) {
+            if (localFileName.startsWith(QStringLiteral("qrc:///"))) {
                 localFileName.remove(0, 7);
-            } else if (localFileName.startsWith("file:///")) {
+            } else if (localFileName.startsWith(QStringLiteral("file:///"))) {
                 localFileName.remove(0, 7);
-            } else if (localFileName.startsWith("qrc:/")) {
+            } else if (localFileName.startsWith(QStringLiteral("qrc:/"))) {
                 localFileName.remove(0, 5);
             }
             if (!QFile::exists(localFileName) && localFileName.startsWith('/')) {
@@ -289,7 +289,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
         delete m_nmeaFile;
         m_nmeaFile = new QFile(localFileName);
         if (!m_nmeaFile->exists()) {
-            localFileName.prepend(":");
+            localFileName.prepend(':');
             m_nmeaFile->setFileName(localFileName);
         }
         if (m_nmeaFile->exists()) {
@@ -697,6 +697,11 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
 QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError() const
 {
     return m_sourceError;
+}
+
+QGeoPositionInfoSource *QDeclarativePositionSource::positionSource() const
+{
+    return m_positionSource;
 }
 
 void QDeclarativePositionSource::componentComplete()

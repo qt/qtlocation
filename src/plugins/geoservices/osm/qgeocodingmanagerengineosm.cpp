@@ -111,8 +111,8 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int l
     query.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
     query.addQueryItem(QStringLiteral("accept-language"), locale().name().left(2));
     //query.addQueryItem(QStringLiteral("countrycodes"), QStringLiteral("au,jp"));
-    if (bounds.type() == QGeoShape::RectangleType) {
-        query.addQueryItem(QStringLiteral("viewbox"), boundingBoxToLtrb(bounds));
+    if (bounds.type() != QGeoShape::UnknownType) {
+        query.addQueryItem(QStringLiteral("viewbox"), boundingBoxToLtrb(bounds.boundingGeoRectangle()));
         query.addQueryItem(QStringLiteral("bounded"), QStringLiteral("1"));
     }
     query.addQueryItem(QStringLiteral("polygon_geojson"), QStringLiteral("1"));

@@ -28,10 +28,17 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.3
+import QtLocation 5.11
 import QtPositioning 5.2
 
 Item {
+    id: root
+    function cloneArray(a) {
+        var i = a.length
+        var arr = new Array(i)
+        while (i--) arr[i] = a[i];
+        return arr
+    }
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: errorPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true
         parameters: [
@@ -169,8 +176,7 @@ Item {
             compare (emptyQuery.maneuverDetail, RouteQuery.BasicManeuvers)
             compare (emptyQuery.waypoints.length, 0, "Waypoints")
             compare (emptyQuery.excludedAreas.length, 0, "excluded areas")
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare (emptyQuery.featureTypes.length, 0, "Feature types")
+            compare (emptyQuery.featureTypes.length, 0, "Feature types")
         }
 
         SignalSpy {id: autoUpdateSpy; target: emptyModel; signalName: "autoUpdateChanged"}
@@ -323,8 +329,7 @@ Item {
 
             // Feature types and weights
             queryDetailsChangedSpy.clear()
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 0)
+            compare(emptyQuery.featureTypes.length, 0)
             compare(featureTypesSpy.count, 0)
             emptyQuery.setFeatureWeight(RouteQuery.TollFeature, RouteQuery.AvoidFeatureWeight);
             compare(featureTypesSpy.count, 1)
@@ -332,10 +337,9 @@ Item {
             emptyQuery.setFeatureWeight(RouteQuery.HighwayFeature, RouteQuery.PreferFeatureWeight);
             compare(featureTypesSpy.count, 2)
             compare(queryDetailsChangedSpy.count, 2)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 2)
-            //compare(emptyQuery.featureTypes[0], RouteQuery.TollFeature)
-            //compare(emptyQuery.featureTypes[1], RouteQuery.HighwayFeature)
+            compare(emptyQuery.featureTypes.length, 2)
+            compare(emptyQuery.featureTypes[0], RouteQuery.TollFeature)
+            compare(emptyQuery.featureTypes[1], RouteQuery.HighwayFeature)
             // Verify feature weights are as set
             compare(emptyQuery.featureWeight(RouteQuery.TollFeature), RouteQuery.AvoidFeatureWeight);
             compare(emptyQuery.featureWeight(RouteQuery.HighwayFeature), RouteQuery.PreferFeatureWeight);
@@ -343,30 +347,25 @@ Item {
             emptyQuery.setFeatureWeight(RouteQuery.TollFeature, RouteQuery.NeutralFeatureWeight);
             compare(featureTypesSpy.count, 3)
             compare(queryDetailsChangedSpy.count, 3)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 1)
+            compare(emptyQuery.featureTypes.length, 1)
             compare(emptyQuery.featureWeight(RouteQuery.TollFeature), RouteQuery.NeutralFeatureWeight);
             compare(emptyQuery.featureWeight(RouteQuery.HighwayFeature), RouteQuery.PreferFeatureWeight);
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes[0], RouteQuery.HighwayFeature)
-            //compare(emptyQuery.featureWeight(emptyQuery.featureTypes[0]), RouteQuery.PreferFeatureWeight)
+            compare(emptyQuery.featureTypes[0], RouteQuery.HighwayFeature)
+            compare(emptyQuery.featureWeight(emptyQuery.featureTypes[0]), RouteQuery.PreferFeatureWeight)
             compare(featureTypesSpy.count, 3)
             compare(queryDetailsChangedSpy.count, 3)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 1)
+            compare(emptyQuery.featureTypes.length, 1)
 
             // Put some feature weights and then reset them with NoFeature
             emptyQuery.setFeatureWeight(RouteQuery.FerryFeature, RouteQuery.RequireFeatureWeight);
             emptyQuery.setFeatureWeight(RouteQuery.MotorPoolLaneFeature, RouteQuery.DisallowFeatureWeight);
             compare(featureTypesSpy.count, 5)
             compare(queryDetailsChangedSpy.count, 5)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 3)
+            compare(emptyQuery.featureTypes.length, 3)
             emptyQuery.setFeatureWeight(RouteQuery.NoFeature, RouteQuery.NeutralFeatureWeight)
             compare(featureTypesSpy.count, 6)
             compare(queryDetailsChangedSpy.count, 6)
-            // Bug in QtQml. Todo, enable when QList<int> support is done
-            //compare(emptyQuery.featureTypes.length, 0)
+            compare(emptyQuery.featureTypes.length, 0)
 
             // Segment details
             queryDetailsChangedSpy.clear()
@@ -511,7 +510,7 @@ Item {
     }
 
     Plugin {
-        id: bacicRoutingPlugin_slacker;
+        id: basicRoutingPlugin_slacker;
         name: "qmlgeo.test.plugin"
         allowExperimental: true
         parameters: [
@@ -535,6 +534,24 @@ Item {
     property variant f2coordinate1: QtPositioning.coordinate(60, 60)
     property variant f2coordinate2: QtPositioning.coordinate(61, 62)
     property variant f2coordinate3: QtPositioning.coordinate(63, 64)
+
+    Waypoint {
+        id: waypoint1
+        coordinate: QtPositioning.coordinate(70, 70)
+        bearing: 42
+    }
+
+    Waypoint {
+        id: waypoint2
+        coordinate: QtPositioning.coordinate(71, 71)
+        bearing: 43
+
+        MapParameter {
+            id: param1
+            type: "user_distance"
+            property real distance: 10
+        }
+    }
 
     RouteQuery {id: routeQuery}
     property var routeQueryDefaultWaypoints: [
@@ -583,7 +600,7 @@ Item {
     SignalSpy {id: testErrorSpy; target: routeModel; signalName: "errorChanged"}
     SignalSpy {id: testWaypointsSpy; target: routeQuery; signalName: "waypointsChanged"}
 
-    RouteModel {id: routeModelSlack; plugin: bacicRoutingPlugin_slacker; query: routeQuery }
+    RouteModel {id: routeModelSlack; plugin: basicRoutingPlugin_slacker; query: routeQuery }
     SignalSpy {id: testRoutesSlackSpy; target: routeModelSlack; signalName: "routesChanged"}
     SignalSpy {id: testCountSlackSpy; target: routeModelSlack; signalName: "countChanged" }
     SignalSpy {id: testStatusSlackSpy; target: routeModelSlack; signalName: "statusChanged"}
@@ -801,10 +818,95 @@ Item {
             tryCompare (spy, "count", 4)
             compare(model.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
 
+            // Extra parameter
+            var param = Qt.createQmlObject ('import QtLocation 5.9; MapParameter { type : "test-traveltime"; property var requestedTime : 42}', root)
+            var initialParams = cloneArray(filledRouteQuery.quickChildren)
+            var modifiedParams = cloneArray(initialParams)
+            modifiedParams.push(param)
+
+            filledRouteQuery.quickChildren = modifiedParams
+            tryCompare (spy, "count", 5)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 42)
+            param.requestedTime = 43
+            tryCompare (spy, "count", 6)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 43)
+            filledRouteQuery.quickChildren = initialParams
+            tryCompare (spy, "count", 7)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 0)
+            var secondParam = Qt.createQmlObject ('import QtLocation 5.9; MapParameter { type : "foo"; property var bar : 42}', root)
+            modifiedParams.push(secondParam)
+            param.requestedTime = 44
+            filledRouteQuery.quickChildren = modifiedParams
+            tryCompare (spy, "count", 8)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 44)
+            filledRouteQuery.quickChildren = initialParams
+            tryCompare (spy, "count", 9)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 0)
+
+            /* Test waypoints */
+            // Verify that bearing is NaN for coordinates
+            verify(isNaN(filledRouteQuery.waypointObjects()[0].bearing))
+            var numWaypoints = filledRouteQuery.waypoints.length
+            // Add a waypoint with bearing
+            filledRouteQuery.addWaypoint(waypoint1)
+            tryCompare (spy, "count", 10)
+            compare(filledRouteQuery.waypointObjects()[numWaypoints].bearing, 42)
+            // testing Waypoint to coordinate conversion
+            compare(filledRouteQuery.waypoints[numWaypoints], filledRouteQuery.waypointObjects()[numWaypoints].coordinate)
+            waypoint1.latitude += 0.1
+            compare(model.get(0).distance, 0)
+            tryCompare (spy, "count", 11)
+            numWaypoints++;
+            filledRouteQuery.addWaypoint(waypoint2) // waypoint2 contains a MapParameter with  user_distance
+            numWaypoints++;
+            tryCompare (spy, "count", 12)
+            compare(filledRouteQuery.waypointObjects()[numWaypoints-1].bearing, 43)
+            compare(model.get(0).distance, 10)
+            waypoint1.latitude += 0.1
+            tryCompare (spy, "count", 13)
+            waypoint2.latitude += 0.1
+            tryCompare (spy, "count", 14)
+            filledRouteQuery.removeWaypoint(waypoint1)
+            tryCompare (spy, "count", 15)
+            waypoint2.latitude += 0.1
+            tryCompare (spy, "count", 16)
+            waypoint1.latitude += 0.1
+            tryCompare (spy, "count", 16) // No effect, now disconnected
+            // test with other props
+            waypoint2.longitude += 0.1
+            tryCompare (spy, "count", 17)
+            waypoint2.altitude = 42
+            tryCompare (spy, "count", 18)
+            waypoint2.bearing += 1
+            tryCompare (spy, "count", 19)
+            compare(waypoint2.longitude, 71.1)
+            compare(waypoint2.altitude, 42)
+            compare(waypoint2.bearing, 44)
+            // test with map parameters
+            param1.distance = 42
+            tryCompare (spy, "count", 20)
+            compare(model.get(0).distance, 42)
+
+
             // Change query
             model.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
-            tryCompare (spy, "count", 5)
+            tryCompare (spy, "count", 21)
             compare (model.get(0).path.length, 3)
 
             // Verify that the old query is disconnected internally ie. does not trigger update
@@ -816,7 +918,7 @@ Item {
                 { latitude: 67, longitude: 68 }
             ];
             wait(800) // wait to hope no further updates comes through
-            compare (spy.count, 5)
+            compare (spy.count, 21)
             compare(model.get(0).path.length, 3);
 
             // ReSetting
@@ -824,6 +926,12 @@ Item {
             filledRouteQuery2.numberAlternativeRoutes = 0
             filledRouteQuery.waypoints = routeQueryDefaultWaypoints
             filledRouteQuery2.waypoints = routeQuery2DefaultWaypoints
+
+            waypoint1.coordinate = QtPositioning.coordinate(70, 70)
+            waypoint2.bearing = 42
+            waypoint2.coordinate = QtPositioning.coordinate(71, 71)
+            waypoint2.bearing = 43
+            param1.distance = 10
         }
 
 

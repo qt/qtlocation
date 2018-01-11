@@ -180,6 +180,13 @@ public:
             qmlRegisterUncreatableType<QDeclarativeGeoCameraCapabilities>(uri, major, minor, "CameraCapabilities"
                                                                              , QStringLiteral("CameraCapabilities is not intended instantiable by developer."));
 
+            // Register the 5.11 types
+            minor = 11;
+            qmlRegisterType<QDeclarativeGeoWaypoint>(uri, major, minor, "Waypoint");
+
+            // Register the latest Qt version as QML type version
+            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
+
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>();
             qRegisterMetaType<QPlace>();

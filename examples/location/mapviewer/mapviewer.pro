@@ -5,6 +5,11 @@ QT += qml network quick positioning location
 CONFIG += qtquickcompiler
 SOURCES += main.cpp
 
+# Workaround for QTBUG-38735
+QT_FOR_CONFIG += location-private
+qtConfig(geoservices_mapboxgl): QT += sql opengl
+qtConfig(geoservices_osm): QT += concurrent
+
 RESOURCES += \
     mapviewer.qrc
 

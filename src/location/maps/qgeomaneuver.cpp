@@ -293,6 +293,26 @@ QGeoCoordinate QGeoManeuver::waypoint() const
 QGeoManeuver::QGeoManeuver(const QSharedDataPointer<QGeoManeuverPrivate> &dd)
     : d_ptr(dd) {}
 
+/*!
+    Sets the extended attributes associated with this maneuver.
+
+    \since QtLocation 5.11
+*/
+void QGeoManeuver::setExtendedAttributes(const QVariantMap &extendedAttributes)
+{
+    d_ptr->setValid(true);
+    d_ptr->setExtendedAttributes(extendedAttributes);
+}
+
+/*!
+    Returns the extended attributes associated with this maneuver.
+
+    \since QtLocation 5.11
+*/
+QVariantMap QGeoManeuver::extendedAttributes() const
+{
+    return d_ptr->extendedAttributes();
+}
 
 /*******************************************************************************
 *******************************************************************************/
@@ -409,6 +429,16 @@ void QGeoManeuverPrivate::setWaypoint(const QGeoCoordinate &waypoint)
     Q_UNUSED(waypoint)
 }
 
+QVariantMap QGeoManeuverPrivate::extendedAttributes() const
+{
+    return QVariantMap();
+}
+
+void QGeoManeuverPrivate::setExtendedAttributes(const QVariantMap &extendedAttributes)
+{
+    Q_UNUSED(extendedAttributes)
+}
+
 
 
 /*******************************************************************************
@@ -515,6 +545,16 @@ QGeoCoordinate QGeoManeuverPrivateDefault::waypoint() const
 void QGeoManeuverPrivateDefault::setWaypoint(const QGeoCoordinate &waypoint)
 {
     m_waypoint = waypoint;
+}
+
+QVariantMap QGeoManeuverPrivateDefault::extendedAttributes() const
+{
+    return m_extendedAttributes;
+}
+
+void QGeoManeuverPrivateDefault::setExtendedAttributes(const QVariantMap &extendedAttributes)
+{
+    m_extendedAttributes = extendedAttributes;
 }
 
 QT_END_NAMESPACE

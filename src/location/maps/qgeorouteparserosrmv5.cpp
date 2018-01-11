@@ -782,7 +782,7 @@ static QGeoManeuver::InstructionDirection instructionDirection(const QJsonObject
     else if (modifier == QLatin1String("slight right"))
         return QGeoManeuver::DirectionLightRight;
     else if (modifier == QLatin1String("uturn"))
-        return QGeoManeuver::DirectionUTurnRight;
+        return QGeoManeuver::DirectionUTurnLeft; // This should rather be country-specific. In UK, f.ex. one should rather UTurn Right
     else if (modifier == QLatin1String("left"))
         return QGeoManeuver::DirectionLeft;
     else if (modifier == QLatin1String("sharp left"))
@@ -793,8 +793,10 @@ static QGeoManeuver::InstructionDirection instructionDirection(const QJsonObject
         return QGeoManeuver::NoDirection;
 }
 
-static QGeoRouteSegment parseStep(const QJsonObject &step) {
-    // OSRM Instructions documentation: https://github.com/Project-OSRM/osrm-text-instructions/blob/master/instructions.json
+static QGeoRouteSegment parseStep(const QJsonObject &step, bool useServerText) {
+    // OSRM Instructions documentation: https://github.com/Project-OSRM/osrm-text-instructions
+    // This goes on top of OSRM: https://github.com/Project-OSRM/osrm-backend/blob/master/docs/http.md
+    // Mapbox however, includes this in the reply, under "instruction".
     QGeoRouteSegment segment;
     if (!step.value(QLatin1String("maneuver")).isObject())
         return segment;
@@ -807,6 +809,10 @@ static QGeoRouteSegment parseStep(const QJsonObject &step) {
         return segment;
     if (!maneuver.value(QLatin1String("location")).isArray())
         return segment;
+
+    QString instruction_text;
+    if (maneuver.value(QLatin1String("instruction")).isString())
+        instruction_text = maneuver.value(QLatin1String("instruction")).toString();
 
     double time = step.value(QLatin1String("duration")).toDouble();
     double distance = step.value(QLatin1String("distance")).toDouble();
@@ -825,9 +831,17 @@ static QGeoRouteSegment parseStep(const QJsonObject &step) {
     geoManeuver.setDirection(instructionDirection(maneuver));
     geoManeuver.setDistanceToNextInstruction(distance);
     geoManeuver.setTimeToNextInstruction(time);
-    geoManeuver.setInstructionText(instructionText(step, maneuver, geoManeuver.direction()));
+    geoManeuver.setInstructionText((useServerText && !instruction_text.isEmpty()) ? instruction_text : instructionText(step, maneuver, geoManeuver.direction()));
     geoManeuver.setPosition(coord);
     geoManeuver.setWaypoint(coord);
+
+    QVariantMap extraAttributes;
+    static const QStringList extras { "bearing_before", "bearing_after", "instruction", "type", "modifier" };
+    for (const QString &e: extras) {
+        if (maneuver.find(e) != maneuver.end())
+            extraAttributes.insert(e, maneuver.value(e).toVariant());
+    }
+    geoManeuver.setExtendedAttributes(extraAttributes);
 
     segment.setDistance(distance);
     segment.setPath(path);
@@ -845,6 +859,9 @@ public:
 
     QGeoRouteReply::Error parseReply(QList<QGeoRoute> &routes, QString &errorString, const QByteArray &reply) const Q_DECL_OVERRIDE;
     QUrl requestUrl(const QGeoRouteRequest &request, const QString &prefix) const Q_DECL_OVERRIDE;
+
+    bool m_useServerText = false;
+    QString m_accessToken;
 };
 
 QGeoRouteParserOsrmV5Private::QGeoRouteParserOsrmV5Private() : QGeoRouteParserPrivate()
@@ -906,7 +923,7 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                         error = true;
                         break;
                     }
-                    QGeoRouteSegment segment = parseStep(s.toObject());
+                    QGeoRouteSegment segment = parseStep(s.toObject(), m_useServerText);
                     if (segment.isValid()) {
                         segments.append(segment);
                     } else {
@@ -950,10 +967,23 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
 {
     QString routingUrl = prefix;
     int notFirst = 0;
-    foreach (const QGeoCoordinate &c, request.waypoints()) {
-        if (notFirst)
+    QString bearings;
+    const QList<QVariantMap> metadata = request.waypointsMetadata();
+    const QList<QGeoCoordinate> waypoints = request.waypoints();
+    for (int i = 0; i < waypoints.size(); i++) {
+        const QGeoCoordinate &c = waypoints.at(i);
+        if (notFirst) {
             routingUrl.append(QLatin1Char(';'));
+            bearings.append(QLatin1Char(';'));
+        }
         routingUrl.append(QString::number(c.longitude())).append(QLatin1Char(',')).append(QString::number(c.latitude()));
+        if (metadata.size() > i) {
+            const QVariantMap &meta = metadata.at(i);
+            if (meta.contains(QStringLiteral("bearing"))) {
+                qreal bearing = meta.value(QStringLiteral("bearing")).toDouble();
+                bearings.append(QString::number(int(bearing))).append(QLatin1Char(',')).append(QStringLiteral("90")); // 90 is the angle of maneuver allowed.
+            }
+        }
         ++notFirst;
     }
 
@@ -963,16 +993,27 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
     query.addQueryItem(QStringLiteral("steps"), QStringLiteral("true"));
     query.addQueryItem(QStringLiteral("geometries"), QStringLiteral("polyline"));
     query.addQueryItem(QStringLiteral("alternatives"), QStringLiteral("true"));
+    query.addQueryItem(QStringLiteral("bearings"), bearings);
+    if (!m_accessToken.isEmpty())
+        query.addQueryItem(QStringLiteral("access_token"), m_accessToken);
     url.setQuery(query);
     return url;
 }
 
-QGeoRouteParserOsrmV5::QGeoRouteParserOsrmV5(QObject *parent) : QGeoRouteParser(*new QGeoRouteParserOsrmV5Private(), parent)
+QGeoRouteParserOsrmV5::QGeoRouteParserOsrmV5(QObject *parent, bool useServerText) : QGeoRouteParser(*new QGeoRouteParserOsrmV5Private(), parent)
 {
+    Q_D(QGeoRouteParserOsrmV5);
+    d->m_useServerText = useServerText;
 }
 
 QGeoRouteParserOsrmV5::~QGeoRouteParserOsrmV5()
 {
+}
+
+void QGeoRouteParserOsrmV5::setAccessToken(const QString &token)
+{
+    Q_D(QGeoRouteParserOsrmV5);
+    d->m_accessToken = token;
 }
 
 QT_END_NAMESPACE

@@ -91,6 +91,9 @@ public:
     virtual QGeoCoordinate waypoint() const;
     virtual void setWaypoint(const QGeoCoordinate &waypoint);
 
+    virtual QVariantMap extendedAttributes() const;
+    virtual void setExtendedAttributes(const QVariantMap &extendedAttributes);
+
 protected:
     virtual bool equals(const QGeoManeuverPrivate &other) const;
 };
@@ -127,6 +130,9 @@ public:
     virtual QGeoCoordinate waypoint() const override;
     virtual void setWaypoint(const QGeoCoordinate &waypoint) override;
 
+    virtual QVariantMap extendedAttributes() const override;
+    virtual void setExtendedAttributes(const QVariantMap &extendedAttributes) override;
+
     bool m_valid;
     QString m_id;
     QGeoCoordinate m_position;
@@ -135,6 +141,7 @@ public:
     int m_timeToNextInstruction;
     qreal m_distanceToNextInstruction;
     QGeoCoordinate m_waypoint;
+    QVariantMap m_extendedAttributes;
 };
 
 QT_END_NAMESPACE

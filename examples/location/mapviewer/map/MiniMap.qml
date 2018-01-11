@@ -1,12 +1,22 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2017 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
 **
 ** "Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are
@@ -39,12 +49,33 @@
 ****************************************************************************/
 
 import QtQuick 2.5
+import QtPositioning 5.3
 import QtLocation 5.6
 
 Rectangle{
+
+    function clamp(num, min, max)
+    {
+      return num < min ? min : num > max ? max : num;
+    }
+
+    function minimumScaleFactor()
+    {
+        var hscalefactor = (400.0 / Math.max(Math.min(map.width, 1000), 400)) * 0.5
+        var vscalefactor = (400.0 / Math.max(Math.min(map.height, 1000), 400)) * 0.5
+        return Math.min(hscalefactor,vscalefactor)
+    }
+
+    function avgScaleFactor()
+    {
+        var hscalefactor = (400.0 / Math.max(Math.min(map.width, 1000), 400)) * 0.5
+        var vscalefactor = (400.0 / Math.max(Math.min(map.height, 1000), 400)) * 0.5
+        return (hscalefactor+vscalefactor) * 0.5
+    }
+
     id: miniMapRect
-    width: 152
-    height: 152
+    width: Math.floor(map.width * avgScaleFactor()) + 2
+    height: Math.floor(map.height * avgScaleFactor()) + 2
     anchors.right: (parent) ? parent.right : undefined
     anchors.rightMargin: 10
     anchors.top: (parent) ? parent.top : undefined
@@ -56,25 +87,40 @@ Rectangle{
         anchors.topMargin: 1
         anchors.left: parent.left
         anchors.leftMargin: 1
-        width: 150
-        height: 150
-        zoomLevel: (map.zoomLevel > minimumZoomLevel + 3) ? minimumZoomLevel + 3 : 2.5
+        width: Math.floor(map.width * avgScaleFactor())
+        height: Math.floor(map.height * avgScaleFactor())
+        zoomLevel: clamp(map.zoomLevel - 4.5, 2.0, 5.0) //(map.zoomLevel > minimumZoomLevel + 3) ? minimumZoomLevel + 3 : 1.5
         center: map.center
         plugin: map.plugin
         gesture.enabled: false
         copyrightsVisible: false
+        property double mapZoomLevel : map.zoomLevel
+
+        // cannot use property bindings on map.visibleRegion in MapRectangle because it's non-NOTIFYable
+        onCenterChanged: miniMapRectangle.updateCoordinates()
+        onMapZoomLevelChanged: miniMapRectangle.updateCoordinates()
+        onWidthChanged: miniMapRectangle.updateCoordinates()
+        onHeightChanged: miniMapRectangle.updateCoordinates()
 
         MapRectangle {
+            id: miniMapRectangle
             color: "#44ff0000"
             border.width: 1
             border.color: "red"
-            topLeft {
-                latitude: miniMap.center.latitude + 5
-                longitude: miniMap.center.longitude - 5
+
+            function getMapVisibleRegion()
+            {
+                return QtPositioning.shapeToRectangle(map.visibleRegion)
             }
-            bottomRight {
-                latitude: miniMap.center.latitude - 5
-                longitude: miniMap.center.longitude + 5
+
+            function updateCoordinates()
+            {
+                topLeft.latitude =  getMapVisibleRegion().topLeft.latitude
+                topLeft.longitude=  getMapVisibleRegion().topLeft.longitude
+                bottomRight.latitude =  getMapVisibleRegion().bottomRight.latitude
+                bottomRight.longitude=  getMapVisibleRegion().bottomRight.longitude
+                console.log("TopLeft: " + topLeft)
+                console.log("BotRigh: " + bottomRight)
             }
         }
     }

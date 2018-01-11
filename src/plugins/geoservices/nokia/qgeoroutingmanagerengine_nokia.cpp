@@ -233,17 +233,28 @@ QStringList QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGe
         baseRequest += m_token;
     }
 
-    int numWaypoints = request.waypoints().size();
+    const QList<QVariantMap> metadata = request.waypointsMetadata();
+    const QList<QGeoCoordinate> waypoints = request.waypoints();
+    int numWaypoints = waypoints.size();
     if (numWaypoints < 2)
         return QStringList();
-
+    // Details: https://developer.here.com/documentation/routing/topics/resource-param-type-waypoint.html
     for (int i = 0;i < numWaypoints;++i) {
+        const QGeoCoordinate &c = waypoints.at(i);
         baseRequest += QStringLiteral("&waypoint");
         baseRequest += QString::number(i);
         baseRequest += QStringLiteral("=geo!");
-        baseRequest += trimDouble(request.waypoints().at(i).latitude());
+        baseRequest += trimDouble(c.latitude());
         baseRequest += ',';
-        baseRequest += trimDouble(request.waypoints().at(i).longitude());
+        baseRequest += trimDouble(c.longitude());
+        baseRequest += QStringLiteral(";;"); // ;<TransitRadius>;<UserLabel>
+        if (metadata.size() > i) {
+            const QVariantMap &meta = metadata.at(i);
+            if (meta.contains(QStringLiteral("bearing"))) {
+                qreal bearing = meta.value(QStringLiteral("bearing")).toDouble();
+                baseRequest += ';' + QString::number(int(bearing));
+            }
+        }
     }
 
     QGeoRouteRequest::RouteOptimizations optimization = request.routeOptimization();

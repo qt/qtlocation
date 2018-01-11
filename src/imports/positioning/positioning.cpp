@@ -42,8 +42,8 @@
 #include <QtPositioning/private/qdeclarativegeolocation_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
 
-#include "qdeclarativepositionsource_p.h"
-#include "qdeclarativeposition_p.h"
+#include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>
+#include <QtPositioningQuick/private/qdeclarativeposition_p.h>
 
 #include "qquickgeocoordinateanimation_p.h"
 #include "locationsingleton.h"
@@ -57,6 +57,7 @@
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoPath>
 #include <QtPositioning/QGeoLocation>
+#include <QtPositioning/private/qgeocoordinateobject_p.h>
 
 #include <QtCore/QDebug>
 
@@ -565,6 +566,7 @@ public:
             qRegisterMetaType<QGeoLocation>();
             qRegisterMetaType<QGeoShape>();
             QMetaType::registerEqualsComparator<QGeoShape>();
+            qRegisterMetaType<QGeoCoordinateObject *>();
 
             qRegisterAnimationInterpolator<QGeoCoordinate>(q_coordinateInterpolator);
 
@@ -586,10 +588,8 @@ public:
             minor = 4;
             qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
 
-            // Register the 5.9 types
-            // Introduction of 5.9 version; existing 5.4 exports become automatically available under 5.9
-            minor = 9;
-            qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
+            // Register the latest Qt version as QML type version
+            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
         }

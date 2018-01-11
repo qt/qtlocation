@@ -286,10 +286,10 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
         if (e.isMoveTo() || i == ppi.elementCount() - 1
                 || (qAbs(e.x - poly.front()[0]) < 0.1
                     && qAbs(e.y - poly.front()[1]) < 0.1)) {
-            Point p = { e.x, e.y };
+            Point p = {{ e.x, e.y }};
             poly.push_back( p );
         } else if (e.isLineTo()) {
-            Point p = { e.x, e.y };
+            Point p = {{ e.x, e.y }};
             poly.push_back( p );
         } else {
             qWarning("Unhandled element type in polygon painterpath");
@@ -374,6 +374,7 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
 
     This property holds the ordered list of coordinates which
     define the polygon.
+    Having less than 3 different coordinates in the path results in undefined behavior.
 
     \sa addCoordinate, removeCoordinate
 */

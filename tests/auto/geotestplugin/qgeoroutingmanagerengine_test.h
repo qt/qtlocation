@@ -46,14 +46,17 @@ QT_USE_NAMESPACE
 class QGeoRoutePrivateDefaultAlt : public QGeoRoutePrivateDefault
 {
 public:
-    QGeoRoutePrivateDefaultAlt() {}
+    QGeoRoutePrivateDefaultAlt() : QGeoRoutePrivateDefault()
+    {
+        m_travelTime = 123456; // To identify this is actually a QGeoRoutePrivateDefaultAlt
+    }
     QGeoRoutePrivateDefaultAlt(const QGeoRoutePrivateDefaultAlt &other)
         : QGeoRoutePrivateDefault(other) {}
     ~QGeoRoutePrivateDefaultAlt() {}
 
-    int travelTime() const override
+    void setTravelTime(int travelTime) override
     {
-        return 123456; // To identify this is actually a QGeoRoutePrivateDefaultAlt
+        Q_UNUSED(travelTime)
     }
 };
 
@@ -164,11 +167,26 @@ public:
     void setRoutes(const QGeoRouteRequest& request, RouteReplyTest* reply)
     {
         QList<QGeoRoute> routes;
+        int travelTime = 0;
+        if (request.extraParameters().contains("test-traveltime"))
+            travelTime = request.extraParameters().value("test-traveltime").value("requestedTime").toInt();
+
         for (int i = 0; i < request.numberAlternativeRoutes(); ++i) {
             QGeoRoute route;
             if (alternateGeoRouteImplementation_)
                 route = QGeoRouteAlt();
             route.setPath(request.waypoints());
+            route.setTravelTime(travelTime);
+
+            const QList<QVariantMap> metadata = request.waypointsMetadata();
+            for (const auto &meta: metadata) {
+                if (meta.contains("extra")) {
+                    QVariantMap extra = meta.value("extra").toMap();
+                    if (extra.contains("user_distance"))
+                        route.setDistance(meta.value("extra").toMap().value("user_distance").toMap().value("distance").toDouble());
+                }
+            }
+
             routes.append(route);
         }
         reply->callSetRoutes(routes);

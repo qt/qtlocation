@@ -552,7 +552,7 @@ QQuickGeoMapGestureArea::~QQuickGeoMapGestureArea()
     \qmlproperty enumeration QtLocation::MapGestureArea::acceptedGestures
 
     This property holds the gestures that will be active. By default
-    the zoom, pan and flick gestures are enabled.
+    all gestures are enabled.
 
     \list
     \li MapGestureArea.NoGesture - Don't support any additional gestures (value: 0x0000).

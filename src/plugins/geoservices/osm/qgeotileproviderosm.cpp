@@ -174,11 +174,11 @@ void QGeoTileProviderOsm::disableRedirection()
         if (p->isValid() && !found) {
             m_provider = p;
             m_providerId = m_providerList.indexOf(p);
-            m_status = Resolved;
             found = true;
         }
         p->disconnect(this);
     }
+    m_status = Resolved;
 }
 
 void QGeoTileProviderOsm::onResolutionFinished(TileProvider *provider)

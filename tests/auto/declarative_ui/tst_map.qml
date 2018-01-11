@@ -38,18 +38,6 @@ Item {
     // General-purpose elements for the test:
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: testPlugin2; name: "gmlgeo.test.plugin"; allowExperimental: true }
-    Plugin { id: herePlugin; name: "here";
-        parameters: [
-            PluginParameter {
-                name: "here.app_id"
-                value: "stub"
-            },
-            PluginParameter {
-                name: "here.token"
-                value: "stub"
-            }
-        ]
-    }
     Plugin {
         id: testPluginLazyParameter;
         name: "qmlgeo.test.plugin"
@@ -84,6 +72,7 @@ Item {
                                 && coordinateMap.mapReady
                                 && mapTiltBearing.mapReady
                                 && mapTiltBearingHere.mapReady
+                                && mapTestProjection.mapReady
 
     Map { id: mapZoomOnCompleted; width: 200; height: 200;
         zoomLevel: 3; center: coordinate1; plugin: testPlugin;
@@ -111,18 +100,25 @@ Item {
 
     Map {id: mapPar; plugin: testPlugin; center: coordinate1; width: 512; height: 512}
 
-    Map {id: coordinateMap; plugin: herePlugin; center: coordinate3;
+    Map {id: coordinateMap; plugin: testPlugin; center: coordinate3;
         width: 1000; height: 1000; zoomLevel: 15 }
 
     Map {id: mapTiltBearing; plugin: testPlugin; center: coordinate1;
         width: 1000; height: 1000; zoomLevel: 4; bearing: 45.0; tilt: 25.0 }
 
-    Map {id: mapTiltBearingHere; plugin: herePlugin; center: coordinate1;
+    Map {id: mapTiltBearingHere; plugin: testPlugin; center: coordinate1;
         width: 1000; height: 1000; zoomLevel: 4; bearing: 45.0; tilt: 25.0 }
 
     Map {
         id: mapWithLazyPlugin
         plugin: testPluginLazyParameter
+    }
+
+    Map {
+        id: mapTestProjection
+        plugin: testPlugin
+        width: 200
+        height: 200
     }
 
     MapParameter {
@@ -673,6 +669,20 @@ Item {
             coord = coordinateMap.toCoordinate(Qt.point(-5, -6))
             verify(isNaN(coord.latitude))
             verify(isNaN(coord.longitde))
+
+            // test with tilting
+            coord = QtPositioning.coordinate(45.6, 17.67)
+            var pos = mapTestProjection.fromCoordinate(coord, false)
+            compare(Math.floor(pos.x), 3339)
+            compare(Math.floor(pos.y), 1727)
+            mapTestProjection.tilt = 6
+            pos = mapTestProjection.fromCoordinate(coord, false)
+            compare(Math.floor(pos.x), 11066)
+            compare(Math.floor(pos.y), 5577)
+            mapTestProjection.tilt = 12
+            pos = mapTestProjection.fromCoordinate(coord, false)
+            verify(isNaN(pos.latitude))
+            verify(isNaN(pos.longitde))
         }
     }
 }

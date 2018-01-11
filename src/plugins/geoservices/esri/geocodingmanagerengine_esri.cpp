@@ -118,8 +118,8 @@ QGeoCodeReply *GeoCodingManagerEngineEsri::geocode(const QString &address, int l
     query.addQueryItem(QStringLiteral("f"), QStringLiteral("json"));
     query.addQueryItem(QStringLiteral("outFields"), "*");
 
-    if (bounds.type() == QGeoShape::RectangleType)
-        query.addQueryItem(QStringLiteral("searchExtent"), boundingBoxToLtrb(bounds));
+    if (bounds.type() != QGeoShape::UnknownType)
+        query.addQueryItem(QStringLiteral("searchExtent"), boundingBoxToLtrb(bounds.boundingGeoRectangle()));
 
     if (limit != -1)
         query.addQueryItem(QStringLiteral("maxLocations"), QString::number(limit));
