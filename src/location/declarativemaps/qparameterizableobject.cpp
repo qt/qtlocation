@@ -44,41 +44,45 @@ QParameterizableObject::QParameterizableObject(QObject *parent)
     : QObject(parent)
 {}
 
-QQmlListProperty<QDeclarativeGeoMapParameter> QParameterizableObject::declarativeParameters()
+void QParameterizableObject::appendChild(QObject *v)
 {
-    return QQmlListProperty<QDeclarativeGeoMapParameter>(this, nullptr,
-                                                         &QParameterizableObject::append,
-                                                         &QParameterizableObject::count,
-                                                         &QParameterizableObject::at,
-                                                         &QParameterizableObject::clear);
+    m_children.append(v);
 }
 
-QList<QGeoMapParameter*> QParameterizableObject::parameters() const
+void QParameterizableObject::clearChildren()
 {
-    QList<QGeoMapParameter*> params;
-    for (auto param : qAsConst(m_parameters))
-        params << param;
-    return params;
+    m_children.clear();
 }
 
-void QParameterizableObject::append(QQmlListProperty<QDeclarativeGeoMapParameter> *p, QDeclarativeGeoMapParameter *v)
+QQmlListProperty<QObject> QParameterizableObject::declarativeChildren()
 {
-    static_cast<QParameterizableObject*>(p->object)->m_parameters.append(v);
+    return QQmlListProperty<QObject>(this, nullptr,
+                                                   &QParameterizableObject::append,
+                                                   &QParameterizableObject::count,
+                                                   &QParameterizableObject::at,
+                                                   &QParameterizableObject::clear);
 }
 
-int QParameterizableObject::count(QQmlListProperty<QDeclarativeGeoMapParameter> *p)
+void QParameterizableObject::append(QQmlListProperty<QObject> *p, QObject *v)
 {
-    return static_cast<QParameterizableObject*>(p->object)->m_parameters.count();
+    QParameterizableObject *object = static_cast<QParameterizableObject*>(p->object);
+    object->appendChild(v);
 }
 
-QDeclarativeGeoMapParameter *QParameterizableObject::at(QQmlListProperty<QDeclarativeGeoMapParameter> *p, int idx)
+int QParameterizableObject::count(QQmlListProperty<QObject> *p)
 {
-    return static_cast<QParameterizableObject*>(p->object)->m_parameters.at(idx);
+    return static_cast<QParameterizableObject*>(p->object)->m_children.count();
 }
 
-void QParameterizableObject::clear(QQmlListProperty<QDeclarativeGeoMapParameter> *p)
+QObject *QParameterizableObject::at(QQmlListProperty<QObject> *p, int idx)
 {
-    static_cast<QParameterizableObject*>(p->object)->m_parameters.clear();
+    return static_cast<QParameterizableObject*>(p->object)->m_children.at(idx);
+}
+
+void QParameterizableObject::clear(QQmlListProperty<QObject> *p)
+{
+    QParameterizableObject *object = static_cast<QParameterizableObject*>(p->object);
+    object->clearChildren();
 }
 
 QT_END_NAMESPACE

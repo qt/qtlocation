@@ -54,26 +54,39 @@
 #include <QQmlParserStatus>
 
 QT_BEGIN_NAMESPACE
-class QDeclarativeGeoMapParameter;
 class QGeoMapParameter;
 class Q_LOCATION_PRIVATE_EXPORT QParameterizableObject : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapParameter> parameters READ declarativeParameters DESIGNABLE false)
-    Q_CLASSINFO("DefaultProperty", "parameters")
+    Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
+    Q_CLASSINFO("DefaultProperty", "quickChildren")
 
 public:
     explicit QParameterizableObject(QObject *parent = nullptr);
-    QList<QGeoMapParameter *> parameters() const;
+
+    template <typename T = QObject>
+    QList<T*> quickChildren() const
+    {
+        QList<T*> res;
+        for (auto kid : qAsConst(m_children)) {
+            auto val = qobject_cast<T*>(kid);
+            if (val)
+                res.push_back(val);
+        }
+        return res;
+    }
 
 protected:
-    static void append(QQmlListProperty<QDeclarativeGeoMapParameter> *p, QDeclarativeGeoMapParameter *v);
-    static int count(QQmlListProperty<QDeclarativeGeoMapParameter> *p);
-    static QDeclarativeGeoMapParameter *at(QQmlListProperty<QDeclarativeGeoMapParameter> *p, int idx);
-    static void clear(QQmlListProperty<QDeclarativeGeoMapParameter> *p);
+    virtual void appendChild(QObject *v);
+    virtual void clearChildren();
 
-    QQmlListProperty<QDeclarativeGeoMapParameter> declarativeParameters();
-    QList<QDeclarativeGeoMapParameter*> m_parameters;
+    static void append(QQmlListProperty<QObject> *p, QObject *v);
+    static int count(QQmlListProperty<QObject> *p);
+    static QObject *at(QQmlListProperty<QObject> *p, int idx);
+    static void clear(QQmlListProperty<QObject> *p);
+
+    QQmlListProperty<QObject> declarativeChildren();
+    QList<QObject*> m_children;
 };
 QT_END_NAMESPACE
 
