@@ -36,6 +36,8 @@
 
 #include "locationvaluetypehelper_p.h"
 #include <QVariantMap>
+#include <QtQml/QQmlInfo>
+#include <private/qqmlengine_p.h>
 
 
 QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
@@ -144,4 +146,43 @@ QGeoCircle parseCircle(const QJSValue &value, bool *ok)
     }
 
     return c;
+}
+
+QJSValue fromList(const QObject *object, const QList<QGeoCoordinate> &list)
+{
+    QQmlContext *context = QQmlEngine::contextForObject(object);
+    QQmlEngine *engine = context->engine();
+    QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
+
+    QV4::Scope scope(v4);
+    QV4::Scoped<QV4::ArrayObject> pathArray(scope, v4->newArrayObject(list.length()));
+    int i = 0;
+    for (const auto &val : list) {
+        QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(val)));
+        pathArray->putIndexed(i++, cv);
+    }
+
+    return QJSValue(v4, pathArray.asReturnedValue());
+}
+
+QList<QGeoCoordinate> toList(const QObject *object, const QJSValue &value)
+{
+    if (!value.isArray())
+        return {};
+
+    QList<QGeoCoordinate> pathList;
+    quint32 length = value.property(QStringLiteral("length")).toUInt();
+    for (quint32 i = 0; i < length; ++i) {
+        bool ok;
+        QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
+
+        if (!ok || !c.isValid()) {
+            qmlWarning(object) << "Unsupported path type";
+            return {};
+        }
+
+        pathList.append(c);
+    }
+
+    return pathList;
 }

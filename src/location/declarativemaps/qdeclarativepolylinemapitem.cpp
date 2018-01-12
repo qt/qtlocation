@@ -455,20 +455,7 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
 
 QJSValue QDeclarativePolylineMapItem::path() const
 {
-    QQmlContext *context = QQmlEngine::contextForObject(this);
-    QQmlEngine *engine = context->engine();
-    QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
-
-    QV4::Scope scope(v4);
-    QV4::Scoped<QV4::ArrayObject> pathArray(scope, v4->newArrayObject(geopath_.path().length()));
-    for (int i = 0; i < geopath_.path().length(); ++i) {
-        const QGeoCoordinate &c = geopath_.coordinateAt(i);
-
-        QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(c)));
-        pathArray->putIndexed(i, cv);
-    }
-
-    return QJSValue(v4, pathArray.asReturnedValue());
+    return fromList(this, geopath_.path());
 }
 
 void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
@@ -476,21 +463,7 @@ void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
     if (!value.isArray())
         return;
 
-    QList<QGeoCoordinate> pathList;
-    quint32 length = value.property(QStringLiteral("length")).toUInt();
-    for (quint32 i = 0; i < length; ++i) {
-        bool ok;
-        QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
-
-        if (!ok || !c.isValid()) {
-            qmlWarning(this) << "Unsupported path type";
-            return;
-        }
-
-        pathList.append(c);
-    }
-
-    setPathFromGeoList(pathList);
+    setPathFromGeoList(toList(this, value));
 }
 
 /*!

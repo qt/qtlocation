@@ -58,5 +58,6 @@ QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok = nullptr);
 QGeoCoordinate parseCoordinate(const QVariant &value, bool *ok = nullptr);
 QGeoRectangle parseRectangle(const QJSValue &value, bool *ok);
 QGeoCircle parseCircle(const QJSValue &value, bool *ok);
-
+QJSValue fromList(const QObject *object, const QList<QGeoCoordinate> &list);
+QList<QGeoCoordinate> toList(const QObject *object, const QJSValue &value);
 #endif
