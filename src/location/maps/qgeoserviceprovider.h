@@ -50,10 +50,12 @@ class QGeoCodingManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
 class QPlaceManager;
+class QNavigationManager;
 class QGeoCodingManagerEngine;
 class QGeoMappingManagerEngine;
 class QGeoRoutingManagerEngine;
 class QPlaceManagerEngine;
+class QNavigationManagerEngine;
 class QGeoServiceProviderPrivate;
 
 class Q_LOCATION_EXPORT QGeoServiceProvider : public QObject
@@ -113,6 +115,13 @@ public:
         AnyPlacesFeatures               = ~(0)
     };
 
+    enum NavigationFeature {
+        NoNavigationFeatures            = 0,
+        OnlineNavigationFeature         = (1<<0),
+        OfflineNavigationFeature        = (1<<1),
+        AnyNavigationFeatures           = ~(0)
+    };
+
     Q_DECLARE_FLAGS(RoutingFeatures, RoutingFeature)
     Q_FLAGS(RoutingFeatures)
 
@@ -125,6 +134,9 @@ public:
     Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)
     Q_FLAGS(PlacesFeatures)
 
+    Q_DECLARE_FLAGS(NavigationFeatures, NavigationFeature)
+    Q_FLAGS(NavigationFeatures)
+
     static QStringList availableServiceProviders();
     QGeoServiceProvider(const QString &providerName,
                         const QVariantMap &parameters = QVariantMap(),
@@ -136,11 +148,13 @@ public:
     GeocodingFeatures geocodingFeatures() const;
     MappingFeatures mappingFeatures() const;
     PlacesFeatures placesFeatures() const;
+    NavigationFeatures navigationFeatures() const;
 
     QGeoCodingManager *geocodingManager() const;
     QGeoMappingManager *mappingManager() const;
     QGeoRoutingManager *routingManager() const;
     QPlaceManager *placeManager() const;
+    QNavigationManager *navigationManager() const;
 
     Error error() const;
     QString errorString() const;
@@ -157,6 +171,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::RoutingFeatures)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::GeocodingFeatures)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::MappingFeatures)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::PlacesFeatures)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::NavigationFeatures)
 
 QT_END_NAMESPACE
 

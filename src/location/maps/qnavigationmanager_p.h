@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_P_H
-#define QGEOSERVICEPROVIDER_P_H
+#ifndef QNAVIGATIONMANAGER_P_H
+#define QNAVIGATIONMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -48,77 +48,46 @@
 // We mean it.
 //
 
-#include "qgeoserviceprovider.h"
-
-#include <QHash>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QLocale>
+#include <QObject>
+#include <QSize>
+#include <QPair>
+#include <QtLocation/private/qlocationglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCodingManager;
-class QGeoRoutingManager;
-class QGeoMappingManager;
-
-class QGeoServiceProviderFactory;
-
-class QGeoServiceProviderPrivate
+class QNavigationManagerEngine;
+class QNavigationManagerPrivate;
+class Q_LOCATION_PRIVATE_EXPORT QNavigationManager : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoServiceProviderPrivate();
-    ~QGeoServiceProviderPrivate();
+    ~QNavigationManager();
 
-    void loadMeta();
-    void loadPlugin(const QVariantMap &parameters);
-    void unload();
-    void filterParameterMap();
+    QString managerName() const;
+    int managerVersion() const;
 
-    /* helper templates for generating the feature and manager accessors */
-    template <class Manager, class Engine>
-    Manager *manager(QGeoServiceProvider::Error *error,
-                     QString *errorString, Manager **manager);
-    template <class Flags>
-    Flags features(const char *enumName);
+    QNavigationManagerEngine *engine();
 
-    QGeoServiceProviderFactory *factory;
-    QJsonObject metaData;
+    bool isInitialized() const;
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
 
-    QVariantMap parameterMap;
-    QVariantMap cleanedParameterMap;
+Q_SIGNALS:
+    void initialized();
 
-    bool experimental;
+protected:
+    QNavigationManager(QNavigationManagerEngine *engine, QObject *parent = 0);
 
-    QGeoCodingManager *geocodingManager;
-    QGeoRoutingManager *routingManager;
-    QGeoMappingManager *mappingManager;
-    QPlaceManager *placeManager;
-    QNavigationManager *navigationManager;
+private:
+    QNavigationManagerPrivate *d_ptr;
+    Q_DISABLE_COPY(QNavigationManager)
 
-    QGeoServiceProvider::Error geocodeError;
-    QGeoServiceProvider::Error routingError;
-    QGeoServiceProvider::Error mappingError;
-    QGeoServiceProvider::Error placeError;
-    QGeoServiceProvider::Error navigationError;
-
-    QString geocodeErrorString;
-    QString routingErrorString;
-    QString mappingErrorString;
-    QString placeErrorString;
-    QString navigationErrorString;
-
-    QGeoServiceProvider::Error error;
-    QString errorString;
-
-    QString providerName;
-
-    QLocale locale;
-    bool localeSet;
-
-    static QHash<QString, QJsonObject> plugins(bool reload = false);
-    static void loadPluginMetadata(QHash<QString, QJsonObject> &list);
+    friend class QGeoServiceProvider;
+    friend class QGeoServiceProviderPrivate;
 };
+
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QNAVIGATIONMANAGER_P_H

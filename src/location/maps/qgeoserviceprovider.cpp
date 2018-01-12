@@ -42,11 +42,13 @@
 #include "qgeomappingmanager_p.h"
 #include "qgeoroutingmanager.h"
 #include "qplacemanager.h"
+#include "qnavigationmanager_p.h"
 #include "qgeocodingmanagerengine.h"
 #include "qgeomappingmanagerengine_p.h"
 #include "qgeoroutingmanagerengine.h"
 #include "qplacemanagerengine.h"
 #include "qplacemanagerengine_p.h"
+#include "qnavigationmanagerengine_p.h"
 
 #include <QList>
 #include <QString>
@@ -202,6 +204,18 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 */
 
 /*!
+    \enum QGeoServiceProvider::NavigationFeature
+
+    Describes the navigation features supported by the geo service provider.
+
+    \value NoNavigationFeatures         No navigation features are supported.
+    \value OnlineNavigationFeature      Online navigation is supported.
+    \value OfflineNavigationFeature     Offline navigation is supported.
+    \value AnyNavigationFeatures        Matches a geo service provider that provides any navigation
+                                        features.
+*/
+
+/*!
     Returns a list of names of the available service providers, for use with
     the QGeoServiceProvider constructors.
 */
@@ -310,6 +324,16 @@ QGeoServiceProvider::PlacesFeatures QGeoServiceProvider::placesFeatures() const
     return d_ptr->features<PlacesFeatures>("PlacesFeatures");
 }
 
+/*!
+    Returns the navigation features supported by the geo service provider.
+
+    \since QtLocation 5.11
+*/
+QGeoServiceProvider::NavigationFeatures QGeoServiceProvider::navigationFeatures() const
+{
+    return d_ptr->features<NavigationFeatures>("NavigationFeatures");
+}
+
 /* Sadly, these are necessary to figure out which of the factory->createX
  * methods we need to call. Ideally it would be nice to find a way to embed
  * these into the manager() template. */
@@ -333,6 +357,10 @@ template <> QGeoMappingManagerEngine *createEngine<QGeoMappingManagerEngine>(QGe
 template <> QPlaceManagerEngine *createEngine<QPlaceManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
     return d_ptr->factory->createPlaceManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
+}
+template <> QNavigationManagerEngine *createEngine<QNavigationManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
+{
+    return d_ptr->factory->createNavigationManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
 }
 
 /* Template for generating the code for each of the geocodingManager(),
@@ -493,7 +521,20 @@ QPlaceManager *QGeoServiceProvider::placeManager() const
 {
     return d_ptr->manager<QPlaceManager, QPlaceManagerEngine>(
                &(d_ptr->placeError), &(d_ptr->placeErrorString),
-               &(d_ptr->placeManager));
+                &(d_ptr->placeManager));
+}
+
+/*!
+    Returns a new QNavigationManager made available by the service provider.
+
+    After this function has been called, error() and errorString() will
+    report any errors which occurred during the construction of the QNavigationManagerEngine.
+*/
+QNavigationManager *QGeoServiceProvider::navigationManager() const
+{
+    return d_ptr->manager<QNavigationManager, QNavigationManagerEngine>(
+               &(d_ptr->navigationError), &(d_ptr->navigationErrorString),
+                &(d_ptr->navigationManager));
 }
 
 /*!

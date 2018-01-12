@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_P_H
-#define QGEOSERVICEPROVIDER_P_H
+#ifndef QNAVIGATIONMANAGERENGINE_H
+#define QNAVIGATIONMANAGERENGINE_H
 
 //
 //  W A R N I N G
@@ -48,77 +48,57 @@
 // We mean it.
 //
 
-#include "qgeoserviceprovider.h"
-
-#include <QHash>
-#include <QJsonObject>
-#include <QJsonArray>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QObject>
 #include <QLocale>
+#include <QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCodingManager;
-class QGeoRoutingManager;
-class QGeoMappingManager;
+class QGeoMap;
+class QGeoMapParameter;
+class QMapRouteObject;
+class QNavigationManagerEnginePrivate;
 
-class QGeoServiceProviderFactory;
-
-class QGeoServiceProviderPrivate
+class Q_LOCATION_PRIVATE_EXPORT QNavigationManagerEngine : public QObject
 {
+    Q_OBJECT
 public:
-    QGeoServiceProviderPrivate();
-    ~QGeoServiceProviderPrivate();
+    explicit QNavigationManagerEngine(const QVariantMap &parameters, QObject *parent = Q_NULLPTR);
+    virtual ~QNavigationManagerEngine();
 
-    void loadMeta();
-    void loadPlugin(const QVariantMap &parameters);
-    void unload();
-    void filterParameterMap();
+    void setManagerName(const QString &name);
+    QString managerName() const;
+    void setManagerVersion(int version);
+    int managerVersion() const;
 
-    /* helper templates for generating the feature and manager accessors */
-    template <class Manager, class Engine>
-    Manager *manager(QGeoServiceProvider::Error *error,
-                     QString *errorString, Manager **manager);
-    template <class Flags>
-    Flags features(const char *enumName);
+    virtual void setLocale(const QLocale &locale);
+    virtual QLocale locale() const;
+    virtual void setMeasurementSystem(QLocale::MeasurementSystem system);
+    virtual QLocale::MeasurementSystem measurementSystem() const;
+    bool isInitialized() const;
 
-    QGeoServiceProviderFactory *factory;
-    QJsonObject metaData;
+signals:
+    void activeChanged(bool active);
+    void waypointReached(const QGeoCoordinate &pos);
+    void destinationReached();
+    void initialized();
 
-    QVariantMap parameterMap;
-    QVariantMap cleanedParameterMap;
+public slots:
+    virtual bool start(const QList<QGeoMapParameter*> &navigationParams, const QMapRouteObject &route);
+    virtual bool stop();
 
-    bool experimental;
+protected:
+    /*!
+        Marks the engine as initialized. Subclasses of QGeoMappingManagerEngine are to
+        call this method after performing implementation-specific initialization within
+        the constructor.
+    */
+    void engineInitialized();
 
-    QGeoCodingManager *geocodingManager;
-    QGeoRoutingManager *routingManager;
-    QGeoMappingManager *mappingManager;
-    QPlaceManager *placeManager;
-    QNavigationManager *navigationManager;
-
-    QGeoServiceProvider::Error geocodeError;
-    QGeoServiceProvider::Error routingError;
-    QGeoServiceProvider::Error mappingError;
-    QGeoServiceProvider::Error placeError;
-    QGeoServiceProvider::Error navigationError;
-
-    QString geocodeErrorString;
-    QString routingErrorString;
-    QString mappingErrorString;
-    QString placeErrorString;
-    QString navigationErrorString;
-
-    QGeoServiceProvider::Error error;
-    QString errorString;
-
-    QString providerName;
-
-    QLocale locale;
-    bool localeSet;
-
-    static QHash<QString, QJsonObject> plugins(bool reload = false);
-    static void loadPluginMetadata(QHash<QString, QJsonObject> &list);
+    QScopedPointer<QNavigationManagerEnginePrivate> d_ptr;
 };
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QNAVIGATIONMANAGERENGINE_H

@@ -57,8 +57,8 @@ QT_BEGIN_NAMESPACE
     Plugins recognized by the system have a \l name property, a simple string
     normally indicating the name of the service that the Plugin retrieves
     data from. They also have a variety of features, which can be test for using the
-    \l {supportsRouting()}, \l {supportsGeocoding()}, \l {supportsMapping()} and
-    \l {supportsPlaces()} methods.
+    \l {supportsRouting()}, \l {supportsGeocoding()}, \l {supportsMapping()},
+    \l {supportsPlaces()} and \l {supportsNavigation()} methods.
 
     When a Plugin object is created, it is "detached" and not associated with
     any actual service plugin. Once it has received information via setting
@@ -226,8 +226,8 @@ void QDeclarativeGeoServiceProvider::componentComplete()
     \qmlmethod bool Plugin::supportsGeocoding(GeocodingFeatures features)
 
     This method returns a boolean indicating whether the specified set of \a features are supported
-    by the geo service provider plugin.  True is returned if all specified \a features are
-    supported; otherwise false is returned.
+    by the geo service provider plugin. \c True is returned if all specified \a features are
+    supported; otherwise \c false is returned.
 
     The \a features parameter can be any flag combination of:
     \table
@@ -401,15 +401,52 @@ bool QDeclarativeGeoServiceProvider::supportsRouting(const RoutingFeatures &feat
             \li Matches a geo service provider that provides any places features.
     \endtable
 */
-bool QDeclarativeGeoServiceProvider::supportsPlaces(const PlacesFeatures &features) const
+bool QDeclarativeGeoServiceProvider::supportsPlaces(const PlacesFeatures &feature) const
 {
     QGeoServiceProvider *sp = sharedGeoServiceProvider();
     QGeoServiceProvider::PlacesFeatures f =
-            static_cast<QGeoServiceProvider::PlacesFeature>(int(features));
+            static_cast<QGeoServiceProvider::PlacesFeature>(int(feature));
     if (f == QGeoServiceProvider::AnyPlacesFeatures)
         return (sp && (sp->placesFeatures() != QGeoServiceProvider::NoPlacesFeatures));
     else
         return (sp && (sp->placesFeatures() & f) == f);
+}
+
+/*!
+    \qmlmethod bool Plugin::supportsNavigation(NavigationFeatures features)
+
+    This method returns a boolean indicating whether the specified set of \a features are supported
+    by the geo service provider plugin.  True is returned if all specified \a features are
+    supported; otherwise false is returned.
+
+    The \a features parameter can be any flag combination of:
+    \table
+        \header
+            \li Feature
+            \li Description
+        \row
+            \li Plugin.NoNavigationFeatures
+            \li No navigation features are supported.
+        \row
+            \li Plugin.OnlineNavigationFeature
+            \li Online navigation is supported.
+        \row
+            \li Plugin.OfflineNavigationFeature
+            \li Offline navigation is supported.
+        \row
+            \li Plugin.AnyNavigationFeatures
+            \li Matches a geo service provider that provides any navigation features.
+    \endtable
+*/
+bool QDeclarativeGeoServiceProvider::supportsNavigation(const QDeclarativeGeoServiceProvider::NavigationFeature &feature) const
+{
+    QGeoServiceProvider *sp = sharedGeoServiceProvider();
+    QGeoServiceProvider::NavigationFeatures f =
+            static_cast<QGeoServiceProvider::NavigationFeature>(int(feature));
+    if (f == QGeoServiceProvider::AnyNavigationFeatures)
+        return (sp && (sp->navigationFeatures() != QGeoServiceProvider::NoNavigationFeatures));
+    else
+        return (sp && (sp->navigationFeatures() & f) == f);
 }
 
 /*!
