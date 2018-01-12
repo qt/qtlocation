@@ -91,6 +91,7 @@ protected:
     QGeoRoute(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd);
     QExplicitlySharedDataPointer<QGeoRoutePrivate> d_ptr;
     friend class QDeclarativeGeoRoute;
+    friend class QGeoRoutePrivate;
 };
 
 QT_END_NAMESPACE

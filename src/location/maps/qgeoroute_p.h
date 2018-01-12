@@ -97,6 +97,8 @@ public:
     virtual QString engineName() const = 0;
     virtual int segmentsCount() const = 0;
 
+    static const QGeoRoutePrivate *routePrivateData(const QGeoRoute &route);
+
 protected:
     virtual bool equals(const QGeoRoutePrivate &other) const;
 };

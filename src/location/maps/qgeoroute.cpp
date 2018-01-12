@@ -414,6 +414,11 @@ QGeoRouteSegment QGeoRoutePrivate::firstSegment() const
     return QGeoRouteSegment();
 }
 
+const QGeoRoutePrivate *QGeoRoutePrivate::routePrivateData(const QGeoRoute &route)
+{
+    return route.d_ptr.data();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
