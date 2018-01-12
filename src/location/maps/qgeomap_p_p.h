@@ -89,6 +89,9 @@ protected:
     virtual void addMapItem(QDeclarativeGeoMapItemBase *item);
     virtual void removeMapItem(QDeclarativeGeoMapItemBase *item);
 
+    virtual bool createMapObjectImplementation(QGeoMapObject *obj);
+    virtual QList<QGeoMapObject *> mapObjects() const;
+
     virtual void changeViewportSize(const QSize &size) = 0; // called by QGeoMap::setSize()
     virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
     virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()

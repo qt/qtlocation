@@ -29,6 +29,8 @@ PRIVATE_HEADERS += \
            declarativemaps/qdeclarativegeomapitemgroup_p.h \
            declarativemaps/qparameterizableobject_p.h \
            declarativemaps/mapitemviewdelegateincubator_p.h \
+           declarativemaps/qgeomapobject_p.h \
+           declarativemaps/qgeomapobject_p_p.h \
            ../imports/positioning/qquickgeocoordinateanimation_p.h
 
 SOURCES += \
@@ -57,9 +59,8 @@ SOURCES += \
            declarativemaps/qparameterizableobject.cpp \
            declarativemaps/qdeclarativegeomapitemgroup.cpp \
            declarativemaps/mapitemviewdelegateincubator.cpp \
+           declarativemaps/qgeomapobject.cpp \
            ../imports/positioning/qquickgeocoordinateanimation.cpp
 
 load(qt_build_paths)
 LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lpoly2tri$$qtPlatformTargetSuffix() -lclip2tri$$qtPlatformTargetSuffix()
-
-

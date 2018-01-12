@@ -175,6 +175,12 @@ public:
     Q_INVOKABLE void clearMapParameters();
     QList<QObject *> mapParameters();
 
+    void addMapObject(QGeoMapObject *object);
+    void removeMapObject(QGeoMapObject *object);
+    void clearMapObjects();
+    QList<QGeoMapObject *> mapObjects();
+
+
     Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &position, bool clipToViewPort = true) const;
     Q_INVOKABLE QPointF fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort = true) const;
 
@@ -188,6 +194,7 @@ public:
 
     QString errorString() const;
     QGeoServiceProvider::Error error() const;
+    QGeoMap* map() const;
 
 Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
@@ -212,6 +219,7 @@ Q_SIGNALS:
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void mapReadyChanged(bool ready);
+    void mapObjectsChanged();
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
@@ -273,6 +281,7 @@ private:
     double m_maximumViewportLatitude;
     bool m_initialized;
     QList<QDeclarativeGeoMapParameter *> m_mapParameters;
+    QList<QGeoMapObject*> m_pendingMapObjects; // Used only in the initialization phase
     QGeoCameraCapabilities m_cameraCapabilities;
     qreal m_userMinimumZoomLevel;
     qreal m_userMaximumZoomLevel;

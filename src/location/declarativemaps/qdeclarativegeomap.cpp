@@ -43,6 +43,7 @@
 #include "qgeocameracapabilities_p.h"
 #include "qgeomap_p.h"
 #include "qdeclarativegeomapparameter_p.h"
+#include "qgeomapobject_p.h"
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/QGeoPath>
@@ -102,15 +103,17 @@ QT_BEGIN_NAMESPACE
     \section2 Map Objects
 
     Map related objects can be declared within the body of a Map object in Qt Quick and will
-    automatically appear on the Map. To add objects programmatically, first be
-    sure they are created with the Map as their parent (for example in an argument to
-    Component::createObject), and then call the \l addMapItem method on the Map.
+    automatically appear on the Map. To add an object programmatically, first be
+    sure it is created with the Map as its parent (for example in an argument to
+    Component::createObject).
+    Then call the \l addMapItem method on the Map, if the type of this object is one of
+    \l MapCircle, \l MapRectangle, \l MapPolyline, \l MapPolygon, \l MapRoute or \l MapQuickItem.
     A corresponding \l removeMapItem method also exists to do the opposite and
-    remove an object from the Map.
+    remove any of the above types of map objects from the Map.
 
     Moving Map objects around, resizing them or changing their shape normally
     does not involve any special interaction with Map itself -- changing these
-    details about a map object will automatically update the display.
+    properties in a map object will automatically update the display.
 
     \section2 Interaction
 
@@ -257,7 +260,7 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     delete m_copyrights.data();
     m_copyrights.clear();
 
-    delete m_map;
+    delete m_map; // map objects get reset here
 }
 
 /*!
@@ -422,6 +425,9 @@ void QDeclarativeGeoMap::initialize()
 
     m_map->setCameraData(m_cameraData);
 
+    for (auto obj : qAsConst(m_pendingMapObjects))
+        obj->setMap(m_map);
+
     m_initialized = true;
 
     if (centerHasChanged)
@@ -578,6 +584,10 @@ void QDeclarativeGeoMap::populateMap()
             addMapItemGroup(itemGroup);
             continue;
         }
+
+        QGeoMapObject *mapObject = qobject_cast<QGeoMapObject *>(k);
+        if (mapObject)
+            addMapObject(mapObject);
     }
 }
 
@@ -1647,6 +1657,11 @@ QGeoServiceProvider::Error QDeclarativeGeoMap::error() const
     return m_error;
 }
 
+QGeoMap *QDeclarativeGeoMap::map() const
+{
+    return m_map;
+}
+
 /*!
     \internal
 */
@@ -1843,6 +1858,75 @@ QList<QObject *> QDeclarativeGeoMap::mapParameters()
     for (QDeclarativeGeoMapParameter *p : qAsConst(m_mapParameters))
         ret << p;
     return ret;
+}
+
+/*
+    \internal
+*/
+void QDeclarativeGeoMap::addMapObject(QGeoMapObject *object)
+{
+    if (!object || object->map())
+        return;
+
+    if (!m_initialized) {
+        m_pendingMapObjects.append(object);
+        return;
+    }
+
+    int curObjects = m_map->mapObjects().size();
+    // object adds itself to the map
+    object->setMap(m_map);
+
+    if (curObjects != m_map->mapObjects().size())
+        emit mapObjectsChanged();
+}
+
+/*
+    \internal
+*/
+void QDeclarativeGeoMap::removeMapObject(QGeoMapObject *object)
+{
+    if (!object || object->map() != m_map) // if !initialized this is fine, since both object and m_map are supposed to be NULL
+        return;
+
+    if (!m_initialized) {
+        m_pendingMapObjects.removeOne(object);
+        return;
+    }
+
+    int curObjects = m_map->mapObjects().size();
+    // object adds itself to the map
+    object->setMap(nullptr);
+
+    if (curObjects != m_map->mapObjects().size())
+        emit mapObjectsChanged();
+}
+
+/*
+    \internal
+*/
+void QDeclarativeGeoMap::clearMapObjects()
+{
+    if (!m_initialized) {
+        m_pendingMapObjects.clear();
+    } else {
+        const QList<QGeoMapObject *> objs = m_map->mapObjects();
+        for (QGeoMapObject *o: objs)
+            o->setMap(nullptr);
+        if (objs.size())
+            emit mapObjectsChanged();
+    }
+}
+
+/*
+    \internal
+*/
+QList<QGeoMapObject *> QDeclarativeGeoMap::mapObjects()
+{
+    if (!m_initialized)
+        return m_pendingMapObjects;
+    else
+        return m_map->mapObjects();
 }
 
 /*!

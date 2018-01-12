@@ -54,6 +54,7 @@
 #include <QtCore/QObject>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
+#include <QtLocation/qgeoroute.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -65,6 +66,7 @@ class QSGNode;
 class QQuickWindow;
 class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
+class QGeoMapObject;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMap : public QObject
 {
@@ -121,6 +123,10 @@ public:
     void addMapItem(QDeclarativeGeoMapItemBase *item);
     void removeMapItem(QDeclarativeGeoMapItemBase *item);
     void clearMapItems();
+
+    bool createMapObjectImplementation(QGeoMapObject *obj);
+    QList<QGeoMapObject *> mapObjects() const;
+
 
     virtual QString copyrightsStyleSheet() const;
     virtual void setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate, bool tilt);

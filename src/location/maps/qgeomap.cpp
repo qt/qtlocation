@@ -39,6 +39,7 @@
 #include "qgeocameracapabilities_p.h"
 #include "qgeomappingmanagerengine_p.h"
 #include "qdeclarativegeomapitembase_p.h"
+#include "qgeomapobject_p.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -50,7 +51,10 @@ QGeoMap::QGeoMap(QGeoMapPrivate &dd, QObject *parent)
 
 QGeoMap::~QGeoMap()
 {
+    Q_D(QGeoMap);
     clearParameters();
+    for (QGeoMapObject *p : d->mapObjects())
+        p->setMap(nullptr); // forces replacing pimpls with the default ones.
 }
 
 void QGeoMap::setViewportSize(const QSize& size)
@@ -231,6 +235,21 @@ void QGeoMap::clearMapItems()
     d->m_mapItems.clear();
 }
 
+/*!
+    Fills obj with a backend-specific pimpl.
+*/
+bool QGeoMap::createMapObjectImplementation(QGeoMapObject *obj)
+{
+    Q_D(QGeoMap);
+    return d->createMapObjectImplementation(obj);
+}
+
+QList<QGeoMapObject *> QGeoMap::mapObjects() const
+{
+    Q_D(const QGeoMap);
+    return d->mapObjects();
+}
+
 QString QGeoMap::copyrightsStyleSheet() const
 {
     return QStringLiteral("#copyright-root { background: rgba(255, 255, 255, 128) }");
@@ -305,6 +324,17 @@ void QGeoMapPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
 void QGeoMapPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
     Q_UNUSED(item)
+}
+
+bool QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
+{
+    Q_UNUSED(obj)
+    return false;
+}
+
+QList<QGeoMapObject *> QGeoMapPrivate::mapObjects() const
+{
+    return QList<QGeoMapObject *>();
 }
 
 QT_END_NAMESPACE
