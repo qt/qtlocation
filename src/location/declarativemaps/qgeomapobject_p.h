@@ -73,7 +73,7 @@ public:
 
     enum Type {
         InvalidType = 0,
-        LayerType = 1,
+        ViewType = 1,
         RouteType = 2,
         RectangleType = 3,
         CircleType = 4,

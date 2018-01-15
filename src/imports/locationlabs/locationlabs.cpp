@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,69 +34,56 @@
 **
 ****************************************************************************/
 
-#include "qgeomapitemsoverlay.h"
-#include "qgeomappingmanagerengineitemsoverlay.h"
-#include <QtLocation/private/qgeomap_p_p.h>
-#include <QtQuick/qsgnode.h>
+//#include <QtLocationLabs/private/qmapiconobject_p.h>
+//#include <QtLocationLabs/private/qmapobjectview_p.h>
+//#include <QtLocationLabs/private/qmaprouteobject_p.h>
+//#include <QtLocationLabs/private/qdeclarativenavigator_p.h>
+
+#include <QtQml/qqmlextensionplugin.h>
+#include <QtQml/qqml.h>
+#include <QtCore/QDebug>
+
+static void initResources()
+{
+#ifdef QT_STATIC
+    Q_INIT_RESOURCE(qmake_QtLocationLabs);
+#endif
+}
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapItemsOverlayPrivate : public QGeoMapPrivate
+
+class QtLocationLabsDeclarativeModule: public QQmlExtensionPlugin
 {
-    Q_DECLARE_PUBLIC(QGeoMapItemsOverlay)
+    Q_OBJECT
+
+    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid
+                      FILE "plugin.json")
+
 public:
-    QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine);
+    QtLocationLabsDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { initResources(); }
+    virtual void registerTypes(const char *uri)
+    {
+        if (QLatin1String(uri) == QLatin1String("Qt.labs.location")) {
 
-    virtual ~QGeoMapItemsOverlayPrivate();
+            // @uri QtLocationLabs
+//            int major = 5;
+//            int minor = 11;
 
-protected:
-    void changeViewportSize(const QSize &size) Q_DECL_OVERRIDE;
-    void changeCameraData(const QGeoCameraData &oldCameraData) Q_DECL_OVERRIDE;
-    void changeActiveMapType(const QGeoMapType mapType) Q_DECL_OVERRIDE;
+            // Register the 5.11 types
+//            qmlRegisterType<QDeclarativeNavigator>(uri, major, minor, "Navigator");
+//            qmlRegisterType<QMapIconObject>(uri, major, minor, "MapIconObject");
+//            qmlRegisterType<QMapObjectView>(uri, major, minor, "MapObjectView");
+//            qmlRegisterType<QMapRouteObject>(uri, major, minor, "MapRouteObject");
+
+            // Register the latest Qt version as QML type version
+            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
+        } else {
+            qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
+        }
+    }
 };
 
-QGeoMapItemsOverlay::QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent)
-    : QGeoMap(*(new QGeoMapItemsOverlayPrivate(engine)), parent)
-{
-
-}
-
-QGeoMapItemsOverlay::~QGeoMapItemsOverlay()
-{
-}
-
-QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *window)
-{
-    Q_UNUSED(window)
-    return node;
-}
-
-QGeoMapItemsOverlayPrivate::QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine)
-    : QGeoMapPrivate(engine, new QGeoProjectionWebMercator)
-{
-}
-
-QGeoMapItemsOverlayPrivate::~QGeoMapItemsOverlayPrivate()
-{
-}
-
-void QGeoMapItemsOverlayPrivate::changeViewportSize(const QSize &size)
-{
-    Q_UNUSED(size)
-}
-
-void QGeoMapItemsOverlayPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
-{
-    Q_UNUSED(oldCameraData)
-}
-
-void QGeoMapItemsOverlayPrivate::changeActiveMapType(const QGeoMapType mapType)
-{
-    Q_UNUSED(mapType)
-}
+#include "locationlabs.moc"
 
 QT_END_NAMESPACE
-
-
-
-

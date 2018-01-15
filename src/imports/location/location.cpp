@@ -53,6 +53,7 @@
 #include <QtLocation/private/qdeclarativegeomapparameter_p.h>
 #include <QtLocation/private/qdeclarativegeomapcopyrightsnotice_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemgroup_p.h>
+#include <QtLocation/private/qgeomapobject_p.h>
 
 //Place includes
 #include <QtLocation/private/qdeclarativecategory_p.h>
