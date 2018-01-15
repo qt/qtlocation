@@ -301,4 +301,9 @@ int QDeclarativeGeoRoute::segmentsCount() const
     return qMax(route_.d_ptr->segmentsCount(), segments_.count());
 }
 
+const QGeoRoute &QDeclarativeGeoRoute::route() const
+{
+    return route_;
+}
+
 QT_END_NAMESPACE

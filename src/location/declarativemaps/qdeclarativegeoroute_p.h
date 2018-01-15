@@ -85,6 +85,7 @@ public:
     void clearSegments();
 
     int segmentsCount() const;
+    const QGeoRoute &route() const;
 
 Q_SIGNALS:
     void pathChanged();
