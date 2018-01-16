@@ -22,7 +22,7 @@ MODULE_PLUGIN_TYPES = \
     geoservices
 
 QMAKE_DOCS = $$PWD/doc/qtlocation.qdocconf
-OTHER_FILES += doc/src/*.qdoc   # show .qdoc files in Qt Creator
+OTHER_FILES += configure.json doc/src/*.qdoc   # show .qdoc files in Qt Creator
 
 PUBLIC_HEADERS += \
                     qlocation.h \
