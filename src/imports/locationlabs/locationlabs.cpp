@@ -40,6 +40,7 @@
 #include <QtLocation/private/qmapcircleobject_p.h>
 #include <QtLocation/private/qmappolygonobject_p.h>
 #include <QtLocation/private/qmappolylineobject_p.h>
+#include <QtLocation/private/qdeclarativenavigator_p.h>
 
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
@@ -69,16 +70,17 @@ public:
         if (QLatin1String(uri) == QLatin1String("Qt.labs.location")) {
 
             // @uri QtLocationLabs
-            int major = 5;
-            int minor = 11;
+            int major = 1;
+            int minor = 0;
 
-            // Register the 5.11 types
+            // Register the 1.0 labs types
             qmlRegisterType<QMapIconObject>(uri, major, minor, "MapIconObject");
             qmlRegisterType<QMapObjectView>(uri, major, minor, "MapObjectView");
             qmlRegisterType<QMapRouteObject>(uri, major, minor, "MapRouteObject");
             qmlRegisterType<QMapCircleObject>(uri, major, minor, "MapCircleObject");
             qmlRegisterType<QMapPolygonObject>(uri, major, minor, "MapPolygonObject");
             qmlRegisterType<QMapPolylineObject>(uri, major, minor, "MapPolylineObject");
+            qmlRegisterType<QDeclarativeNavigator>(uri, major, minor, "Navigator");
 
             // Register the latest Qt version as QML type version
             qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);

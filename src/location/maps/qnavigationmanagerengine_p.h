@@ -59,6 +59,7 @@ class QGeoMap;
 class QGeoMapParameter;
 class QMapRouteObject;
 class QNavigationManagerEnginePrivate;
+class QDeclarativeNavigatorPrivate;
 
 class Q_LOCATION_PRIVATE_EXPORT QNavigationManagerEngine : public QObject
 {
@@ -76,17 +77,16 @@ public:
     virtual QLocale locale() const;
     virtual void setMeasurementSystem(QLocale::MeasurementSystem system);
     virtual QLocale::MeasurementSystem measurementSystem() const;
-    bool isInitialized() const;
+    virtual bool isInitialized() const;
+    virtual bool ready(const QDeclarativeNavigatorPrivate &navigator, const QList<QGeoMapParameter*> &navigationParams) = 0;
+    virtual bool active(const QDeclarativeNavigatorPrivate &navigator) = 0;
 
 signals:
-    void activeChanged(bool active);
-    void waypointReached(const QGeoCoordinate &pos);
-    void destinationReached();
     void initialized();
 
 public slots:
-    virtual bool start(const QList<QGeoMapParameter*> &navigationParams, const QMapRouteObject &route);
-    virtual bool stop();
+    virtual bool start(QDeclarativeNavigatorPrivate &navigator, const QList<QGeoMapParameter*> &navigationParams);
+    virtual bool stop(QDeclarativeNavigatorPrivate &navigator);
 
 protected:
     /*!
@@ -94,7 +94,7 @@ protected:
         call this method after performing implementation-specific initialization within
         the constructor.
     */
-    void engineInitialized();
+    virtual void engineInitialized();
 
     QScopedPointer<QNavigationManagerEnginePrivate> d_ptr;
 };

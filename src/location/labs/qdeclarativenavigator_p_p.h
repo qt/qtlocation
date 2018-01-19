@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QNAVIGATIONMANAGER_P_H
-#define QNAVIGATIONMANAGER_P_H
+#ifndef QDECLARATIVENAVIGATOR_P_P_H
+#define QDECLARATIVENAVIGATOR_P_P_H
 
 //
 //  W A R N I N G
@@ -48,69 +48,35 @@
 // We mean it.
 //
 
-#include <QObject>
-#include <QSize>
-#include <QPair>
+#include <QtCore/qlist.h>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomapparameter_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QNavigationManagerEngine;
-class QNavigationManagerPrivate;
-class QDeclarativeNavigatorPrivate;
-class QDeclarativeGeoWaypoint;
-class QGeoRoute;
-class QGeoRouteSegment;
+class QDeclarativeGeoServiceProvider;
+class QDeclarativeGeoMap;
+class QNavigationManager;
+class QDeclarativeGeoRoute;
+class QDeclarativePositionSource;
+class QGeoMapParameter;
+class QDeclarativeGeoRouteSegment;
 
-class Q_LOCATION_PRIVATE_EXPORT QNavigationManager : public QObject
+class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigatorPrivate
 {
-    Q_OBJECT
-
 public:
-    ~QNavigationManager();
-
-    QString managerName() const;
-    int managerVersion() const;
-    QNavigationManagerEngine *engine();
-    bool isInitialized() const;
-
-    void setNavigator(QDeclarativeNavigatorPrivate *navigator);
-    QDeclarativeNavigatorPrivate *declarativeNavigator() const;
-
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-    void setParameters(const QList<QGeoMapParameter *> &parameters);
-    QList<QGeoMapParameter *> parameters() const;
-
-    bool ready() const;
-    bool start();
-    bool stop();
-    bool active() const;
-
-Q_SIGNALS:
-    void initialized();
-
-    // These must be emitted by the engine
-    void activeChanged(bool active);
-    void waypointReached(const QDeclarativeGeoWaypoint *pos);
-    void destinationReached();
-    void currentRouteChanged(const QGeoRoute &route);
-    void currentSegmentChanged(int segment);
-
-protected:
-    QNavigationManager(QNavigationManagerEngine *engine, QObject *parent = 0);
-
-private:
-    QNavigationManagerPrivate *d_ptr;
-    Q_DISABLE_COPY(QNavigationManager)
-
-    friend class QGeoServiceProvider;
-    friend class QGeoServiceProviderPrivate;
+    QNavigationManager *m_navigationManager = nullptr;
+    QDeclarativeGeoServiceProvider *m_plugin = nullptr;
+    QDeclarativeGeoMap *m_map = nullptr;
+    QDeclarativeGeoRoute *m_route = nullptr;
+    QDeclarativePositionSource *m_positionSource = nullptr;
+    QDeclarativeGeoRoute *m_currentRoute = nullptr;
+    QList<QGeoMapParameter *> m_parameters;
+    int m_currentSegment = 0;
+    bool m_active = false;
+    bool m_completed = false;
+    bool m_ready = false;
 };
-
 
 QT_END_NAMESPACE
 
-#endif // QNAVIGATIONMANAGER_P_H
+#endif // QDECLARATIVENAVIGATOR_P_P_H

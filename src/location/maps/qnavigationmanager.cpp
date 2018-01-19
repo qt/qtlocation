@@ -46,6 +46,8 @@ public:
     ~QNavigationManagerPrivate();
 
     QNavigationManagerEngine *engine = nullptr;
+    QDeclarativeNavigatorPrivate *navigator = nullptr;
+    QList<QGeoMapParameter *> parameters;
 
 private:
     Q_DISABLE_COPY(QNavigationManagerPrivate)
@@ -87,6 +89,16 @@ bool QNavigationManager::isInitialized() const
     return d_ptr->engine->isInitialized();
 }
 
+void QNavigationManager::setNavigator(QDeclarativeNavigatorPrivate *navigator)
+{
+    d_ptr->navigator = navigator;
+}
+
+QDeclarativeNavigatorPrivate *QNavigationManager::declarativeNavigator() const
+{
+    return d_ptr->navigator;
+}
+
 void QNavigationManager::setLocale(const QLocale &locale)
 {
     d_ptr->engine->setLocale(locale);
@@ -95,6 +107,36 @@ void QNavigationManager::setLocale(const QLocale &locale)
 QLocale QNavigationManager::locale() const
 {
     return d_ptr->engine->locale();
+}
+
+void QNavigationManager::setParameters(const QList<QGeoMapParameter *> &parameters)
+{
+    d_ptr->parameters = parameters;
+}
+
+QList<QGeoMapParameter *> QNavigationManager::parameters() const
+{
+    return d_ptr->parameters;
+}
+
+bool QNavigationManager::ready() const
+{
+    return d_ptr->engine->ready(*d_ptr->navigator, d_ptr->parameters);
+}
+
+bool QNavigationManager::start()
+{
+    return d_ptr->engine->start(*d_ptr->navigator, d_ptr->parameters);
+}
+
+bool QNavigationManager::stop()
+{
+    return d_ptr->engine->stop(*d_ptr->navigator);
+}
+
+bool QNavigationManager::active() const
+{
+    return d_ptr->engine->active(*d_ptr->navigator);
 }
 
 QNavigationManager::QNavigationManager(QNavigationManagerEngine *engine, QObject *parent) : QObject(parent),
