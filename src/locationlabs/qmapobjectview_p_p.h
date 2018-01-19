@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,56 +34,48 @@
 **
 ****************************************************************************/
 
-//#include <QtLocationLabs/private/qmapiconobject_p.h>
-#include <QtLocationLabs/private/qmapobjectview_p.h>
-#include <QtLocationLabs/private/qmaprouteobject_p.h>
-//#include <QtLocationLabs/private/qdeclarativenavigator_p.h>
+#ifndef QGEOMAPLAYER_P_P_H
+#define QGEOMAPLAYER_P_P_H
 
-#include <QtQml/qqmlextensionplugin.h>
-#include <QtQml/qqml.h>
-#include <QtCore/QDebug>
 
-static void initResources()
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtLocation/private/qgeomapobject_p_p.h>
+#include <QPointer>
+#include <QVector>
+#include <QQmlComponent>
+
+class QQmlDelegateModel;
+class QGeoMap;
+class Q_LOCATION_PRIVATE_EXPORT QMapObjectViewPrivate : public QGeoMapObjectPrivate
 {
-#ifdef QT_STATIC
-    Q_INIT_RESOURCE(qmake_QtLocationLabs);
-#endif
-}
-
-QT_BEGIN_NAMESPACE
-
-
-class QtLocationLabsDeclarativeModule: public QQmlExtensionPlugin
-{
-    Q_OBJECT
-
-    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid
-                      FILE "plugin.json")
-
 public:
-    QtLocationLabsDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { initResources(); }
-    virtual void registerTypes(const char *uri)
-    {
-        if (QLatin1String(uri) == QLatin1String("Qt.labs.location")) {
+    QMapObjectViewPrivate(QGeoMapObject *q);
+    ~QMapObjectViewPrivate() override;
 
-            // @uri QtLocationLabs
-            int major = 5;
-            int minor = 11;
-
-            // Register the 5.11 types
-//            qmlRegisterType<QDeclarativeNavigator>(uri, major, minor, "Navigator");
-//            qmlRegisterType<QMapIconObject>(uri, major, minor, "MapIconObject");
-            qmlRegisterType<QMapObjectView>(uri, major, minor, "MapObjectView");
-            qmlRegisterType<QMapRouteObject>(uri, major, minor, "MapRouteObject");
-
-            // Register the latest Qt version as QML type version
-            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
-        } else {
-            qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
-        }
-    }
+    virtual QGeoMapObject::Type type() const override final;
 };
 
-#include "locationlabs.moc"
+class Q_LOCATION_PRIVATE_EXPORT QMapObjectViewPrivateDefault : public QMapObjectViewPrivate
+{
+public:
+    QMapObjectViewPrivateDefault(QGeoMapObject *q);
+    QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other);
+    ~QMapObjectViewPrivateDefault() override;
 
-QT_END_NAMESPACE
+
+    // QGeoMapObjectPrivate interface
+public:
+    QGeoMapObjectPrivate *clone() override;
+};
+
+#endif // QGEOMAPLAYER_P_P_H
