@@ -982,6 +982,8 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
             if (meta.contains(QStringLiteral("bearing"))) {
                 qreal bearing = meta.value(QStringLiteral("bearing")).toDouble();
                 bearings.append(QString::number(int(bearing))).append(QLatin1Char(',')).append(QStringLiteral("90")); // 90 is the angle of maneuver allowed.
+            } else {
+                bearings.append(QStringLiteral("0,180")); // 180 here means anywhere
             }
         }
         ++notFirst;
