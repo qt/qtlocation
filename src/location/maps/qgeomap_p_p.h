@@ -77,6 +77,9 @@ public:
     const QGeoProjection *geoProjection() const;
     void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
     const QGeoCameraCapabilities &cameraCapabilities() const;
+
+    static const QGeoMapPrivate *get(const QGeoMap &map);
+
 protected:
     /* Hooks into the actual map implementations */
     virtual void addParameter(QGeoMapParameter *param);

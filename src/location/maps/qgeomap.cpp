@@ -277,6 +277,11 @@ const QGeoCameraCapabilities &QGeoMapPrivate::cameraCapabilities() const
     return m_cameraCapabilities;
 }
 
+const QGeoMapPrivate *QGeoMapPrivate::get(const QGeoMap &map)
+{
+    return map.d_func();
+}
+
 void QGeoMapPrivate::addParameter(QGeoMapParameter *param)
 {
     Q_UNUSED(param)
