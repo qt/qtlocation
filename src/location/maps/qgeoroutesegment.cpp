@@ -88,6 +88,14 @@ QGeoRouteSegment::QGeoRouteSegment(const QExplicitlySharedDataPointer<QGeoRouteS
     : d_ptr(dd) {}
 
 /*!
+    Returns the private implementation.
+*/
+QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &QGeoRouteSegment::d()
+{
+    return d_ptr;
+}
+
+/*!
     Destroys this route segment object.
 */
 QGeoRouteSegment::~QGeoRouteSegment() {}

@@ -87,6 +87,14 @@ QGeoRoute::QGeoRoute(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd): 
 }
 
 /*!
+    Returns the private implementation.
+*/
+QExplicitlySharedDataPointer<QGeoRoutePrivate> &QGeoRoute::d()
+{
+    return d_ptr;
+}
+
+/*!
     Constructs a route object from the contents of \a other.
 */
 QGeoRoute::QGeoRoute(const QGeoRoute &other)

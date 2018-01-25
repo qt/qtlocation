@@ -79,7 +79,9 @@ public:
 
 protected:
     QGeoRouteSegment(const QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &dd);
+    QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d();
 
+private:
     QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> d_ptr;
 };
 
