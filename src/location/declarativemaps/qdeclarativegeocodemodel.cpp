@@ -382,12 +382,13 @@ void QDeclarativeGeocodeModel::geocodeFinished(QGeoCodeReply *reply)
 {
     if (reply != reply_ || reply->error() != QGeoCodeReply::NoError)
         return;
+
+    reply->deleteLater();
+    reply_ = 0;
     int oldCount = declarativeLocations_.count();
     setLocations(reply->locations());
     setError(NoError, QString());
     setStatus(QDeclarativeGeocodeModel::Ready);
-    reply->deleteLater();
-    reply_ = 0;
     emit locationsChanged();
     if (oldCount != declarativeLocations_.count())
         emit countChanged();
@@ -402,7 +403,9 @@ void QDeclarativeGeocodeModel::geocodeError(QGeoCodeReply *reply,
 {
     if (reply != reply_)
         return;
-    Q_UNUSED(error);
+
+    reply->deleteLater();
+    reply_ = 0;
     int oldCount = declarativeLocations_.count();
     if (oldCount > 0) {
         // Reset the model
@@ -412,8 +415,6 @@ void QDeclarativeGeocodeModel::geocodeError(QGeoCodeReply *reply,
     }
     setError(static_cast<QDeclarativeGeocodeModel::GeocodeError>(error), errorString);
     setStatus(QDeclarativeGeocodeModel::Error);
-    reply->deleteLater();
-    reply_ = 0;
 }
 
 /*!

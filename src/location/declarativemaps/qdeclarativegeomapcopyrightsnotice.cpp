@@ -43,8 +43,16 @@
 #include <QtQuick/private/qquickanchors_p.h>
 #include <QtQuick/private/qquickanchors_p_p.h>
 #include <QtLocation/private/qdeclarativegeomap_p.h>
+#include <QtQuick/private/qquickpainteditem_p.h>
 
 QT_BEGIN_NAMESPACE
+
+class QDeclarativeGeoMapCopyrightNoticePrivate: public QQuickPaintedItemPrivate
+{
+    Q_DECLARE_PUBLIC(QDeclarativeGeoMapCopyrightNotice)
+public:
+    virtual void setVisible(bool visible);
+};
 
 /*!
     \qmltype MapCopyrightNotice
@@ -99,6 +107,7 @@ QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem 
 
 QDeclarativeGeoMapCopyrightNotice::~QDeclarativeGeoMapCopyrightNotice()
 {
+    setMapSource(nullptr);
 }
 
 void QDeclarativeGeoMapCopyrightNotice::anchorToBottomLeft()
@@ -112,35 +121,41 @@ void QDeclarativeGeoMapCopyrightNotice::anchorToBottomLeft()
     }
 }
 
-void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *mapSource)
+void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *map)
 {
-    if (m_mapSource == mapSource)
+    if (m_mapSource == map)
         return;
 
     if (m_mapSource) {
         // disconnect this object from current map source
+        m_mapSource->detachCopyrightNotice(copyrightsVisible());
         m_mapSource->disconnect(this);
         m_mapSource->m_map->disconnect(this);
-        m_copyrightsHtml->clear();
+        if (m_copyrightsHtml)
+            m_copyrightsHtml->clear();
         m_copyrightsImage = QImage();
         m_mapSource = Q_NULLPTR;
     }
 
-    if (mapSource) {
-        m_mapSource = mapSource;
-        // First update the copyright. Only Image will do here, no need to store HTML right away.
-        if (mapSource->m_copyrights && !mapSource->m_copyrights->m_copyrightsImage.isNull())
-            m_copyrightsImage = mapSource->m_copyrights->m_copyrightsImage;
+    if (map) {
+        m_mapSource = map;
+        m_mapSource->attachCopyrightNotice(copyrightsVisible());
+        connect(this, &QDeclarativeGeoMapCopyrightNotice::copyrightsVisibleChanged,
+                mapSource(), &QDeclarativeGeoMap::onAttachedCopyrightNoticeVisibilityChanged);
 
-        connect(m_mapSource, SIGNAL(copyrightsChanged(QImage)),
+        // First update the copyright. Only Image will do here, no need to store HTML right away.
+        if (m_mapSource->m_copyrights && !m_mapSource->m_copyrights->m_copyrightsImage.isNull())
+            m_copyrightsImage = m_mapSource->m_copyrights->m_copyrightsImage;
+
+        connect(mapSource(), SIGNAL(copyrightsChanged(QImage)),
                 this, SLOT(copyrightsChanged(QImage)));
-        connect(m_mapSource, SIGNAL(copyrightsChanged(QString)),
+        connect(mapSource(), SIGNAL(copyrightsChanged(QString)),
                 this, SLOT(copyrightsChanged(QString)));
 
         if (m_mapSource->m_map)
             connectMap();
         else
-            connect(m_mapSource, &QDeclarativeGeoMap::mapReadyChanged, this, &QDeclarativeGeoMapCopyrightNotice::connectMap);
+            connect(mapSource(), &QDeclarativeGeoMap::mapReadyChanged, this, &QDeclarativeGeoMapCopyrightNotice::connectMap);
     }
 }
 
@@ -149,7 +164,7 @@ void QDeclarativeGeoMapCopyrightNotice::connectMap()
     connect(m_mapSource->m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
             this, SLOT(onCopyrightsStyleSheetChanged(QString)));
     connect(this, SIGNAL(linkActivated(QString)),
-            m_mapSource, SIGNAL(copyrightLinkActivated(QString)));
+            mapSource(), SIGNAL(copyrightLinkActivated(QString)));
 
     onCopyrightsStyleSheetChanged(m_mapSource->m_map->copyrightsStyleSheet());
 
@@ -159,7 +174,7 @@ void QDeclarativeGeoMapCopyrightNotice::connectMap()
 
 QDeclarativeGeoMap *QDeclarativeGeoMapCopyrightNotice::mapSource()
 {
-    return m_mapSource;
+    return m_mapSource.data();
 }
 
 QString QDeclarativeGeoMapCopyrightNotice::styleSheet() const
@@ -253,20 +268,36 @@ void QDeclarativeGeoMapCopyrightNotice::createCopyright()
     m_copyrightsHtml->setDocumentMargin(0);
 }
 
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapCopyrightNotice::setCopyrightsVisible(bool visible)
+void QDeclarativeGeoMapCopyrightNoticePrivate::setVisible(bool visible)
 {
-    m_copyrightsVisible = visible;
-
-    setVisible(!m_copyrightsImage.isNull() && visible);
+    Q_Q(QDeclarativeGeoMapCopyrightNotice);
+    q->m_copyrightsVisible = visible;
+    QQuickItemPrivate::setVisible(visible);
 }
 
 /*!
     \internal
 */
-void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(int copyrightsZ)
+void QDeclarativeGeoMapCopyrightNotice::setCopyrightsVisible(bool visible)
+{
+    Q_D(QDeclarativeGeoMapCopyrightNotice);
+    if (visible == m_copyrightsVisible)
+        return;
+
+    m_copyrightsVisible = visible;
+    d->QQuickItemPrivate::setVisible(!m_copyrightsImage.isNull() && visible);
+    emit copyrightsVisibleChanged();
+}
+
+bool QDeclarativeGeoMapCopyrightNotice::copyrightsVisible() const
+{
+    return m_copyrightsVisible;
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(qreal copyrightsZ)
 {
     setZ(copyrightsZ);
     update();
@@ -277,6 +308,7 @@ void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(int copyrightsZ)
 */
 void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrightsImage)
 {
+    Q_D(QDeclarativeGeoMapCopyrightNotice);
     delete m_copyrightsHtml;
     m_copyrightsHtml = 0;
 
@@ -286,20 +318,19 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrigh
 
     setKeepMouseGrab(false);
     setAcceptedMouseButtons(Qt::NoButton);
-    setVisible(m_copyrightsVisible);
+    d->QQuickItemPrivate::setVisible(m_copyrightsVisible && !m_copyrightsImage.isNull());
 
     update();
 }
 
 void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QString &copyrightsHtml)
 {
+    Q_D(QDeclarativeGeoMapCopyrightNotice);
     if (copyrightsHtml.isEmpty()) {
-        setVisible(false);
+        d->QQuickItemPrivate::setVisible(false);
         return;
-    } else if (!m_copyrightsVisible) {
-        setVisible(false);
-    } else {
-        setVisible(true);
+    } else  {
+        d->QQuickItemPrivate::setVisible(m_copyrightsVisible);
     }
 
     // Divfy, so we can style the background. The extra <span> is a

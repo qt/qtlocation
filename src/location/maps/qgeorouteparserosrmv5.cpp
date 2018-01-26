@@ -953,7 +953,7 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
     foreach (const QGeoCoordinate &c, request.waypoints()) {
         if (notFirst)
             routingUrl.append(QLatin1Char(';'));
-        routingUrl.append(QString::number(c.longitude())).append(QLatin1Char(',')).append(QString::number(c.latitude()));
+        routingUrl.append(QString::number(c.longitude(), 'f', 7)).append(QLatin1Char(',')).append(QString::number(c.latitude(), 'f', 7));
         ++notFirst;
     }
 

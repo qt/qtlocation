@@ -212,7 +212,7 @@ void tst_QNmeaPositionInfoSource::beginWithBufferedData_data()
     QTest::newRow("requestUpdate(), 1 update in buffer") << dateTimes << RequestUpdatesMethod;
 
     for (int i=1; i<3; i++)
-        dateTimes << dateTimes[0].addDays(i);
+        dateTimes << dateTimes[0].addMSecs(i * 100);
     QTest::newRow("startUpdates(), multiple updates in buffer") << dateTimes << StartUpdatesMethod;
     QTest::newRow("requestUpdate(), multiple updates in buffer") << dateTimes << RequestUpdatesMethod;
 }
@@ -356,8 +356,10 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
 
     QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+    QObject::connect(proxy->source(), &QNmeaPositionInfoSource::positionUpdated, [](const QGeoPositionInfo &info) {
+                                                                            qDebug() << info.timestamp();
+                                                                        });
     proxy->source()->startUpdates();
-
     proxy->feedBytes(bytes);
     QTRY_COMPARE(spy.count(), dateTimes.count());
 
@@ -373,7 +375,7 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
         if (pInfo.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
             QVERIFY(qFuzzyCompare(pInfo.attribute(QGeoPositionInfo::HorizontalAccuracy), 35.7));
 
-        // Generate GSA sentences have hard coded VDOP of 4.0, which corrisponds to a vertical
+        // Generated GSA sentences have hard coded VDOP of 4.0, which corrisponds to a vertical
         // accuracy of 40.8, for the user equivalent range error of 5.1 set above.
         QCOMPARE(pInfo.hasAttribute(QGeoPositionInfo::VerticalAccuracy),
                  expectVerticalAccuracy[i]);
@@ -393,45 +395,54 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime_data()
     QByteArray bytes;
 
     // should only receive RMC sentence and the GGA sentence *after* it
-    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(1).time()).toLatin1();
-    bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1();
-    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addMSecs(100).time()).toLatin1();
+    bytes += QLocationTestUtils::createRmcSentence(dt.addMSecs(200)).toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addMSecs(300).time()).toLatin1();
     QTest::newRow("Feed GGA,RMC,GGA; expect RMC, second GGA only")
-            << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3))
-            << (QList<bool>() << true << true)
+            << bytes << (QList<QDateTime>() << dt.addMSecs(200) << dt.addMSecs(300))
+            << (QList<bool>() << true << true) // accuracies are currently cached and injected in QGeoPositionInfos that do not have it
             << (QList<bool>() << false << false);
 
     // should not receive ZDA (has no coordinates) but should get the GGA
     // sentence after it since it got the date/time from ZDA
     bytes.clear();
-    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(1).time()).toLatin1();
-    bytes += QLocationTestUtils::createZdaSentence(dt.addSecs(2)).toLatin1();
-    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addMSecs(100).time()).toLatin1();
+    bytes += QLocationTestUtils::createZdaSentence(dt.addMSecs(200)).toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addMSecs(300).time()).toLatin1();
     QTest::newRow("Feed GGA,ZDA,GGA; expect second GGA only")
-            << bytes << (QList<QDateTime>() << dt.addSecs(3))
+            << bytes << (QList<QDateTime>() << dt.addMSecs(300))
             << (QList<bool>() << true)
             << (QList<bool>() << false);
 
     // Feed ZDA,GGA,GSA,GGA; expect vertical accuracy from second GGA.
     bytes.clear();
-    bytes += QLocationTestUtils::createZdaSentence(dt.addSecs(1)).toLatin1();
-    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(2).time()).toLatin1();
+    bytes += QLocationTestUtils::createZdaSentence(dt.addMSecs(100)).toLatin1();
+    bytes += QLocationTestUtils::createGgaSentence(dt.addMSecs(200).time()).toLatin1();
     bytes += QLocationTestUtils::createGsaSentence().toLatin1();
-    bytes += QLocationTestUtils::createGgaSentence(dt.addSecs(3).time()).toLatin1();
-    QTest::newRow("Feed ZDA,GGA,GSA,GGA; expect vertical accuracy from second GGA")
-            << bytes << (QList<QDateTime>() << dt.addSecs(2) << dt.addSecs(3))
-            << (QList<bool>() << true << true)
-            << (QList<bool>() << false << true);
+    bytes += QLocationTestUtils::createGgaSentence(dt.addMSecs(300).time()).toLatin1();
+    if (m_mode == QNmeaPositionInfoSource::SimulationMode) {
+        QTest::newRow("Feed ZDA,GGA,GSA,GGA; expect vertical accuracy from second GGA")
+                << bytes << (QList<QDateTime>() << dt.addMSecs(200) << dt.addMSecs(300))
+                << (QList<bool>() << true << true)
+                << (QList<bool>() << true << true); // First GGA gets VDOP from GSA bundled into previous, as it has no timestamp, second GGA gets the cached value.
+    } else {
+        // FixMe: remove else block once NMEA realtime mode supports timestamp-based combination of nmea sentences
+        QTest::newRow("Feed ZDA,GGA,GSA,GGA; expect vertical accuracy from second GGA")
+                << bytes << (QList<QDateTime>() << dt.addMSecs(200) << dt.addMSecs(300))
+                << (QList<bool>() << true << true)
+                << (QList<bool>() << false << true);
+
+    }
 
     if (m_mode == QNmeaPositionInfoSource::SimulationMode) {
         // In sim m_mode, should ignore sentence with a date/time before the known date/time
         // (in real time m_mode, everything is passed on regardless)
         bytes.clear();
-        bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(1)).toLatin1();
-        bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(-2)).toLatin1();
-        bytes += QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1();
+        bytes += QLocationTestUtils::createRmcSentence(dt.addMSecs(100)).toLatin1();
+        bytes += QLocationTestUtils::createRmcSentence(dt.addMSecs(-200)).toLatin1();
+        bytes += QLocationTestUtils::createRmcSentence(dt.addMSecs(200)).toLatin1();
         QTest::newRow("Feed good RMC, RMC with bad date/time, good RMC; expect first and third RMC only")
-                << bytes << (QList<QDateTime>() << dt.addSecs(1) << dt.addSecs(2))
+                << bytes << (QList<QDateTime>() << dt.addMSecs(100) << dt.addMSecs(200))
                 << (QList<bool>() << false << false)
                 << (QList<bool>() << false << false);
     }

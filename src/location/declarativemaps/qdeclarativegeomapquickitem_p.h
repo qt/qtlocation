@@ -126,6 +126,8 @@ private:
     bool mapAndSourceItemSet_;
     bool updatingGeometry_;
     QMapQuickItemMatrix4x4 *matrix_;
+
+    friend class QDeclarativeGeoMap;
 };
 
 QT_END_NAMESPACE

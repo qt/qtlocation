@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-namespace mapbox {
+namespace qt_mapbox {
 
 namespace util {
 
@@ -771,7 +771,7 @@ void Earcut<N>::removeNode(Node* p) {
 
 template <typename N = uint32_t, typename Polygon>
 std::vector<N> earcut(const Polygon& poly) {
-    mapbox::detail::Earcut<N> earcut;
+    qt_mapbox::detail::Earcut<N> earcut;
     earcut(poly);
     return earcut.indices;
 }
