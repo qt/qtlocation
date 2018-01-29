@@ -210,9 +210,12 @@ void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, con
 
     QGeoCoordinate newCoordinate;
     // with zoomLevel set the anchorPoint has to be factored into the transformation to properly transform around it.
-    if (zoomLevel_ != 0.0) {
+    if (zoomLevel_ != 0.0
+            && map()->geoProjection().projectionType() == QGeoProjection::ProjectionWebMercator) {
+        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
+
         // When dragStartCoordinate_ can't be projected to screen, dragging must be disabled.
-        if (!map()->geoProjection().isProjectable(map()->geoProjection().geoToWrappedMapProjection(dragStartCoordinate_)))
+        if (!p.isProjectable(p.geoToWrappedMapProjection(dragStartCoordinate_)))
             return;
 
         QDoubleVector2D pos = map()->geoProjection().coordinateToItemPosition(dragStartCoordinate_, false);
@@ -392,27 +395,42 @@ void QDeclarativeGeoMapQuickItem::updatePolish()
 
     setWidth(sourceItem_.data()->width());
     setHeight(sourceItem_.data()->height());
-    if (zoomLevel_ != 0.0) { // zoom level initialized to 0.0. If it's different, it has been set explicitly.
+    if (zoomLevel_ != 0.0 // zoom level initialized to 0.0. If it's different, it has been set explicitly.
+            && map()->geoProjection().projectionType() == QGeoProjection::ProjectionWebMercator) { // Currently unsupported on any other projection
+        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
+
         if (!matrix_) {
             matrix_ = new QMapQuickItemMatrix4x4(this);
             matrix_->appendToItem(opacityContainer_);
         }
-        matrix_->setMatrix(map()->geoProjection().quickItemTransformation(coordinate(), anchorPoint_, zoomLevel_));
+        matrix_->setMatrix(p.quickItemTransformation(coordinate(), anchorPoint_, zoomLevel_));
         setPosition(QPointF(0,0));
     } else {
-        // if the coordinate is behind the camera, we use the transformation to get the item out of the way
-        if (map()->cameraData().tilt() > 0.0
-            && !map()->geoProjection().isProjectable(map()->geoProjection().geoToWrappedMapProjection(coordinate()))) {
-            if (!matrix_) {
-                matrix_ = new QMapQuickItemMatrix4x4(this);
-                matrix_->appendToItem(opacityContainer_);
+        if (map()->geoProjection().projectionType() == QGeoProjection::ProjectionWebMercator) {
+            const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
+            if (map()->cameraData().tilt() > 0.0
+                    && !p.isProjectable(p.geoToWrappedMapProjection(coordinate()))) {
+                // if the coordinate is behind the camera, we use the transformation to get the item out of the way
+                if (!matrix_) {
+                    matrix_ = new QMapQuickItemMatrix4x4(this);
+                    matrix_->appendToItem(opacityContainer_);
+                }
+                matrix_->setMatrix(p.quickItemTransformation(coordinate(), anchorPoint_, map()->cameraData().zoomLevel()));
+                setPosition(QPointF(0,0));
+            } else { // All good, rendering screen-aligned
+                if (matrix_)
+                    matrix_->setMatrix(QMatrix4x4());
+                setPositionOnMap(coordinate(), anchorPoint_);
             }
-            matrix_->setMatrix(map()->geoProjection().quickItemTransformation(coordinate(), anchorPoint_, map()->cameraData().zoomLevel()));
-            setPosition(QPointF(0,0));
-        } else {
-            if (matrix_)
-                matrix_->setMatrix(QMatrix4x4());
-            setPositionOnMap(coordinate(), anchorPoint_);
+        } else { // On other projections we can only currently test if coordinateToItemPosition returns a valid position
+            if (map()->cameraData().tilt() > 0.0
+                    && qIsNaN(map()->geoProjection().coordinateToItemPosition(coordinate(), false).x())) {
+                opacityContainer_->setVisible(false);
+            } else {
+                if (matrix_)
+                    matrix_->setMatrix(QMatrix4x4());
+                setPositionOnMap(coordinate(), anchorPoint_);
+            }
         }
     }
 }

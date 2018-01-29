@@ -27,7 +27,10 @@ PRIVATE_HEADERS += \
            declarativemaps/locationvaluetypehelper_p.h \
            declarativemaps/qquickgeomapgesturearea_p.h \
            declarativemaps/qdeclarativegeomapitemgroup_p.h \
+           declarativemaps/qparameterizableobject_p.h \
            declarativemaps/mapitemviewdelegateincubator_p.h \
+           declarativemaps/qgeomapobject_p.h \
+           declarativemaps/qgeomapobject_p_p.h \
            ../imports/positioning/qquickgeocoordinateanimation_p.h
 
 SOURCES += \
@@ -53,11 +56,11 @@ SOURCES += \
            declarativemaps/error_messages.cpp \
            declarativemaps/locationvaluetypehelper.cpp \
            declarativemaps/qquickgeomapgesturearea.cpp \
+           declarativemaps/qparameterizableobject.cpp \
            declarativemaps/qdeclarativegeomapitemgroup.cpp \
-           ../imports/positioning/qquickgeocoordinateanimation.cpp \
-           declarativemaps/mapitemviewdelegateincubator.cpp
+           declarativemaps/mapitemviewdelegateincubator.cpp \
+           declarativemaps/qgeomapobject.cpp \
+           ../imports/positioning/qquickgeocoordinateanimation.cpp
 
 load(qt_build_paths)
 LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lpoly2tri$$qtPlatformTargetSuffix() -lclip2tri$$qtPlatformTargetSuffix()
-
-

@@ -39,6 +39,7 @@
 #include "qgeocameracapabilities_p.h"
 #include "qgeomappingmanagerengine_p.h"
 #include "qdeclarativegeomapitembase_p.h"
+#include "qgeomapobject_p.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -50,7 +51,10 @@ QGeoMap::QGeoMap(QGeoMapPrivate &dd, QObject *parent)
 
 QGeoMap::~QGeoMap()
 {
+    Q_D(QGeoMap);
     clearParameters();
+    for (QGeoMapObject *p : d->mapObjects())
+        p->setMap(nullptr); // forces replacing pimpls with the default ones.
 }
 
 void QGeoMap::setViewportSize(const QSize& size)
@@ -87,7 +91,7 @@ void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
     if (cameraData == d->m_cameraData)
         return;
     d->m_cameraData = cameraData;
-    d->m_geoProjection->setCameraData(cameraData);
+    d->m_geoProjection->setCameraData(cameraData, false);
     d->changeCameraData(cameraData);
     emit cameraDataChanged(d->m_cameraData);
 }
@@ -96,6 +100,46 @@ void QGeoMap::setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabili
 {
     Q_D(QGeoMap);
     d->setCameraCapabilities(cameraCapabilities);
+}
+
+bool QGeoMap::handleEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+    return false;
+}
+
+bool QGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
+{
+    Q_D(QGeoMap);
+    bool res = d->m_geoProjection->setBearing(bearing, coordinate);
+    if (!res)
+        return false;
+
+    setCameraData(geoProjection().cameraData());
+    return true;
+}
+
+bool QGeoMap::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint)
+{
+    QGeoCoordinate newCenter = geoProjection().anchorCoordinateToPoint(coordinate, anchorPoint);
+    QGeoCameraData data = cameraData();
+    if (data.center() != newCenter) {
+        data.setCenter(newCenter);
+        setCameraData(data);
+        return true;
+    }
+    return false;
+}
+
+bool QGeoMap::fitViewportToGeoRectangle(const QGeoRectangle &rectangle)
+{
+    Q_UNUSED(rectangle)
+    return false;
+}
+
+QGeoShape QGeoMap::visibleRegion() const
+{
+    return geoProjection().visibleRegion();
 }
 
 QGeoCameraData QGeoMap::cameraData() const
@@ -136,13 +180,13 @@ double QGeoMap::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) co
 double QGeoMap::mapWidth() const
 {
     Q_D(const QGeoMap);
-    return d->m_geoProjection->mapWidth();
+    return d->mapWidth();
 }
 
 double QGeoMap::mapHeight() const
 {
     Q_D(const QGeoMap);
-    return d->m_geoProjection->mapHeight();
+    return d->mapHeight();
 }
 
 const QGeoProjection &QGeoMap::geoProjection() const
@@ -155,6 +199,11 @@ QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
     Q_D(const QGeoMap);
     return d->m_cameraCapabilities;
+}
+
+QGeoMap::Capabilities QGeoMap::capabilities() const
+{
+    return Capabilities(QGeoMap::SupportsNothing);
 }
 
 void QGeoMap::prefetchData()
@@ -225,9 +274,33 @@ void QGeoMap::clearMapItems()
     d->m_mapItems.clear();
 }
 
+/*!
+    Fills obj with a backend-specific pimpl.
+*/
+bool QGeoMap::createMapObjectImplementation(QGeoMapObject *obj)
+{
+    Q_D(QGeoMap);
+    return d->createMapObjectImplementation(obj);
+}
+
+QList<QGeoMapObject *> QGeoMap::mapObjects() const
+{
+    Q_D(const QGeoMap);
+    return d->mapObjects();
+}
+
 QString QGeoMap::copyrightsStyleSheet() const
 {
     return QStringLiteral("#copyright-root { background: rgba(255, 255, 255, 128) }");
+}
+
+void QGeoMap::setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate, bool tilt)
+{
+    Q_UNUSED(pan)
+    Q_UNUSED(flick)
+    Q_UNUSED(pinch)
+    Q_UNUSED(rotate)
+    Q_UNUSED(tilt)
 }
 
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
@@ -262,6 +335,11 @@ const QGeoCameraCapabilities &QGeoMapPrivate::cameraCapabilities() const
     return m_cameraCapabilities;
 }
 
+const QGeoMapPrivate *QGeoMapPrivate::get(const QGeoMap &map)
+{
+    return map.d_func();
+}
+
 void QGeoMapPrivate::addParameter(QGeoMapParameter *param)
 {
     Q_UNUSED(param)
@@ -285,6 +363,31 @@ void QGeoMapPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
 void QGeoMapPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
     Q_UNUSED(item)
+}
+
+bool QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
+{
+    Q_UNUSED(obj)
+    return false;
+}
+
+QList<QGeoMapObject *> QGeoMapPrivate::mapObjects() const
+{
+    return QList<QGeoMapObject *>();
+}
+
+double QGeoMapPrivate::mapWidth() const
+{
+    if (m_geoProjection->projectionType() == QGeoProjection::ProjectionWebMercator)
+        return static_cast<const QGeoProjectionWebMercator *>(m_geoProjection)->mapWidth();
+    return 0; // override this for maps supporting other projections
+}
+
+double QGeoMapPrivate::mapHeight() const
+{
+    if (m_geoProjection->projectionType() == QGeoProjection::ProjectionWebMercator)
+        return static_cast<const QGeoProjectionWebMercator *>(m_geoProjection)->mapHeight();
+    return 0; // override this for maps supporting other projections
 }
 
 QT_END_NAMESPACE

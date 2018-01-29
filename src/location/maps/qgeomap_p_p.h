@@ -77,6 +77,9 @@ public:
     const QGeoProjection *geoProjection() const;
     void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
     const QGeoCameraCapabilities &cameraCapabilities() const;
+
+    static const QGeoMapPrivate *get(const QGeoMap &map);
+
 protected:
     /* Hooks into the actual map implementations */
     virtual void addParameter(QGeoMapParameter *param);
@@ -86,9 +89,15 @@ protected:
     virtual void addMapItem(QDeclarativeGeoMapItemBase *item);
     virtual void removeMapItem(QDeclarativeGeoMapItemBase *item);
 
+    virtual bool createMapObjectImplementation(QGeoMapObject *obj);
+    virtual QList<QGeoMapObject *> mapObjects() const;
+
     virtual void changeViewportSize(const QSize &size) = 0; // called by QGeoMap::setSize()
     virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()
     virtual void changeActiveMapType(const QGeoMapType mapType) = 0; // called by QGeoMap::setActiveMapType()
+
+    virtual double mapWidth() const;
+    virtual double mapHeight() const;
 
 protected:
     QSize m_viewportSize;

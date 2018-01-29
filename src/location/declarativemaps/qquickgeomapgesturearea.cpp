@@ -509,6 +509,7 @@ void QQuickGeoMapGestureArea::setMap(QGeoMap *map)
     m_flick.m_animation->setProperty(QStringLiteral("center"));
     m_flick.m_animation->setEasing(QEasingCurve(QEasingCurve::OutQuad));
     connect(m_flick.m_animation, &QQuickAbstractAnimation::stopped, this, &QQuickGeoMapGestureArea::handleFlickAnimationStopped);
+    m_map->setAcceptedGestures(panEnabled(), flickEnabled(), pinchEnabled(), rotationEnabled(), tiltEnabled());
 }
 
 /*!
@@ -583,6 +584,9 @@ void QQuickGeoMapGestureArea::setAcceptedGestures(AcceptedGestures acceptedGestu
         setTiltEnabled(acceptedGestures & TiltGesture);
     }
 
+    if (m_map)
+        m_map->setAcceptedGestures(panEnabled(), flickEnabled(), pinchEnabled(), rotationEnabled(), tiltEnabled());
+
     emit acceptedGesturesChanged();
 }
 
@@ -648,6 +652,8 @@ void QQuickGeoMapGestureArea::setEnabled(bool enabled)
         setRotationEnabled(false);
         setTiltEnabled(false);
     }
+    if (m_map)
+        m_map->setAcceptedGestures(panEnabled(), flickEnabled(), pinchEnabled(), rotationEnabled(), tiltEnabled());
 
     emit enabledChanged();
 }
@@ -857,6 +863,11 @@ QTouchEvent::TouchPoint* createTouchPointFromMouseEvent(QMouseEvent *event, Qt::
 */
 void QQuickGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
 {
+    if (m_map && m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
     m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointPressed));
     if (m_touchPoints.isEmpty()) update();
     event->accept();
@@ -867,6 +878,11 @@ void QQuickGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
 */
 void QQuickGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
 {
+    if (m_map && m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
     m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointMoved));
     if (m_touchPoints.isEmpty()) update();
     event->accept();
@@ -877,6 +893,11 @@ void QQuickGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
 */
 void QQuickGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *event)
 {
+    if (m_map && m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
     if (!m_mousePoint.isNull()) {
         //this looks super ugly , however is required in case we do not get synthesized MouseReleaseEvent
         //and we reset the point already in handleTouchUngrabEvent
@@ -917,6 +938,11 @@ void QQuickGeoMapGestureArea::handleTouchUngrabEvent()
 */
 void QQuickGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
 {
+    if (m_map && m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
     m_touchPoints.clear();
     m_mousePoint.reset();
 
@@ -938,7 +964,12 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
     if (!m_map)
         return;
 
-    const QGeoCoordinate &wheelGeoPos = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(event->posF()), false);
+    if (m_map->handleEvent(event)) {
+        event->accept();
+        return;
+    }
+
+    const QGeoCoordinate &wheelGeoPos = m_declarativeMap->toCoordinate(event->posF(), false);
     const QPointF &preZoomPoint = event->posF();
 
     // Not using AltModifier as, for some reason, it causes angleDelta to be 0
@@ -946,9 +977,7 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
         emit rotationStarted(&m_pinch.m_event);
         // First set bearing
         const double bearingDelta = event->angleDelta().y() * qreal(0.05);
-        m_declarativeMap->setBearing(m_declarativeMap->bearing() + bearingDelta);
-        // then reanchor
-        m_declarativeMap->setCenter(m_map->geoProjection().anchorCoordinateToPoint(wheelGeoPos, preZoomPoint));
+        m_declarativeMap->setBearing(m_declarativeMap->bearing() + bearingDelta,  wheelGeoPos);
         emit rotationUpdated(&m_pinch.m_event);
         emit rotationFinished(&m_pinch.m_event);
     } else if (event->modifiers() & Qt::ControlModifier && tiltEnabled()) {
@@ -962,10 +991,10 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
         // Gesture area should always honor maxZL, but Map might not.
         m_declarativeMap->setZoomLevel(qMin<qreal>(m_declarativeMap->zoomLevel() + zoomLevelDelta, maximumZoomLevel()),
                                        false);
-        const QPointF &postZoomPoint = m_map->geoProjection().coordinateToItemPosition(wheelGeoPos, false).toPointF();
+        const QPointF &postZoomPoint = m_declarativeMap->fromCoordinate(wheelGeoPos, false);
 
         if (preZoomPoint != postZoomPoint) // need to re-anchor the wheel geoPos to the event position
-              m_declarativeMap->setCenter(m_map->geoProjection().anchorCoordinateToPoint(wheelGeoPos, preZoomPoint));
+            m_declarativeMap->alignCoordinateToPoint(wheelGeoPos, preZoomPoint);
     }
     event->accept();
 }
@@ -1103,7 +1132,7 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
         if (m_allPoints.count() == 0) {
             setTouchPointState(touchPoints0);
         } else if (m_allPoints.count() == 2) {
-            m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_touchPointsCentroid), false);
+            m_touchCenterCoord = m_declarativeMap->toCoordinate(m_touchPointsCentroid, false);
             startTwoTouchPoints();
             setTouchPointState(touchPoints2);
         }
@@ -1112,7 +1141,7 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
         if (m_allPoints.count() == 0) {
             setTouchPointState(touchPoints0);
         } else if (m_allPoints.count() == 1) {
-            m_touchCenterCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_touchPointsCentroid), false);
+            m_touchCenterCoord = m_declarativeMap->toCoordinate(m_touchPointsCentroid, false);
             startOneTouchPoint();
             setTouchPointState(touchPoints1);
         }
@@ -1140,7 +1169,7 @@ void QQuickGeoMapGestureArea::startOneTouchPoint()
     m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
     m_lastPos = m_sceneStartPoint1;
     m_lastPosTime.start();
-    QGeoCoordinate startCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_sceneStartPoint1), false);
+    QGeoCoordinate startCoord = m_declarativeMap->toCoordinate(m_sceneStartPoint1, false);
     // ensures a smooth transition for panning
     m_startCoord.setLongitude(m_startCoord.longitude() + startCoord.longitude() -
                              m_touchCenterCoord.longitude());
@@ -1167,7 +1196,7 @@ void QQuickGeoMapGestureArea::startTwoTouchPoints()
     QPointF startPos = (m_sceneStartPoint1 + m_sceneStartPoint2) * 0.5;
     m_lastPos = startPos;
     m_lastPosTime.start();
-    QGeoCoordinate startCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(startPos), false);
+    QGeoCoordinate startCoord = m_declarativeMap->toCoordinate(startPos, false);
     m_startCoord.setLongitude(m_startCoord.longitude() + startCoord.longitude() -
                              m_touchCenterCoord.longitude());
     m_startCoord.setLatitude(m_startCoord.latitude() + startCoord.latitude() -
@@ -1637,7 +1666,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
     case flickInactive:
         if (!isTiltActive() && canStartPan()) {
             // Update startCoord_ to ensure smooth start for panning when going over startDragDistance
-            QGeoCoordinate newStartCoord = m_map->geoProjection().itemPositionToCoordinate(QDoubleVector2D(m_touchPointsCentroid), false);
+            QGeoCoordinate newStartCoord = m_declarativeMap->toCoordinate(m_touchPointsCentroid, false);
             m_startCoord.setLongitude(newStartCoord.longitude());
             m_startCoord.setLatitude(newStartCoord.latitude());
             m_declarativeMap->setKeepMouseGrab(true);
@@ -1712,8 +1741,7 @@ bool QQuickGeoMapGestureArea::canStartPan()
 */
 void QQuickGeoMapGestureArea::updatePan()
 {
-    QGeoCoordinate animationStartCoordinate = m_map->geoProjection().anchorCoordinateToPoint(m_startCoord, m_touchPointsCentroid);
-    m_declarativeMap->setCenter(animationStartCoordinate);
+    m_declarativeMap->alignCoordinateToPoint(m_startCoord, m_touchPointsCentroid);
 }
 
 /*!

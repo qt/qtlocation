@@ -48,7 +48,10 @@
 // We mean it.
 //
 
-#include "qgeomaneuver.h"
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/qgeomaneuver.h>
+#include <QtLocation/qgeoroutesegment.h>
+
 
 #include <QSharedData>
 #include <QList>
@@ -58,23 +61,73 @@ QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 
-class QGeoRouteSegmentPrivate : public QSharedData
+class Q_LOCATION_PRIVATE_EXPORT QGeoRouteSegmentPrivate : public QSharedData
 {
 public:
     QGeoRouteSegmentPrivate();
     QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other);
-    ~QGeoRouteSegmentPrivate();
+    virtual ~QGeoRouteSegmentPrivate();
+    virtual QGeoRouteSegmentPrivate *clone() = 0;
 
     bool operator ==(const QGeoRouteSegmentPrivate &other) const;
 
-    bool valid;
+    virtual bool valid() const;
+    virtual void setValid(bool valid);
 
-    int travelTime;
-    qreal distance;
-    QList<QGeoCoordinate> path;
-    QGeoManeuver maneuver;
+    virtual int travelTime() const;
+    virtual void setTravelTime(int travelTime);
 
-    QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> nextSegment;
+    virtual qreal distance() const;
+    virtual void setDistance(qreal distance);
+
+    virtual QList<QGeoCoordinate> path() const;
+    virtual void setPath(const QList<QGeoCoordinate> &path);
+
+    virtual QGeoManeuver maneuver() const;
+    virtual void setManeuver(const QGeoManeuver &maneuver);
+
+    virtual QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> nextRouteSegment() const;
+    virtual void setNextRouteSegment(const QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &next);
+
+    QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> m_nextSegment;
+
+protected:
+    virtual bool equals(const QGeoRouteSegmentPrivate &other) const;
+};
+
+
+
+class Q_LOCATION_PRIVATE_EXPORT QGeoRouteSegmentPrivateDefault : public QGeoRouteSegmentPrivate
+{
+public:
+    QGeoRouteSegmentPrivateDefault();
+    QGeoRouteSegmentPrivateDefault(const QGeoRouteSegmentPrivateDefault &other);
+    ~QGeoRouteSegmentPrivateDefault();
+    virtual QGeoRouteSegmentPrivate *clone() override;
+
+    bool operator ==(const QGeoRouteSegmentPrivateDefault &other) const;
+
+    virtual bool valid() const override;
+    virtual void setValid(bool valid) override;
+
+    virtual int travelTime() const override;
+    virtual void setTravelTime(int travelTime) override;
+
+    virtual qreal distance() const override;
+    virtual void setDistance(qreal distance) override;
+
+    virtual QList<QGeoCoordinate> path() const override;
+    virtual void setPath(const QList<QGeoCoordinate> &path) override;
+
+    virtual QGeoManeuver maneuver() const override;
+    virtual void setManeuver(const QGeoManeuver &maneuver) override;
+
+
+    bool m_valid;
+    int m_travelTime;
+    qreal m_distance;
+    QList<QGeoCoordinate> m_path;
+    QGeoManeuver m_maneuver;
 };
 
 QT_END_NAMESPACE

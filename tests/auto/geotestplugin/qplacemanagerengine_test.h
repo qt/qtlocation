@@ -51,6 +51,7 @@
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlace>
 #include <QtLocation/QPlaceReview>
+#include <QtLocation/private/qplace_p.h>
 #include <QtTest/QTest>
 
 QT_BEGIN_NAMESPACE
@@ -63,6 +64,37 @@ inline uint qHash(const QPlaceCategory &category)
 QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
+
+class QPlacePrivateDefaultAlt : public QPlacePrivateDefault
+{
+public:
+    QPlacePrivateDefaultAlt() {}
+    QPlacePrivateDefaultAlt(const QPlacePrivateDefaultAlt &other)
+        : QPlacePrivateDefault(other)
+    {
+    }
+    ~QPlacePrivateDefaultAlt() {}
+
+    QPlaceAttribute extendedAttribute(const QString &attributeType) const override
+    {
+        if (attributeType == QStringLiteral("x_provider")) {
+            QPlaceAttribute a;
+            a.setLabel(QStringLiteral("x_provider"));
+            a.setText(QStringLiteral("QPlacePrivateDefaultAlt"));
+            return a;
+        } else {
+            return QPlacePrivateDefault::extendedAttribute(attributeType);
+        }
+    }
+};
+
+class QPlaceAlt : public QPlace
+{
+public:
+    QPlaceAlt() : QPlace(QSharedDataPointer<QPlacePrivate>(new QPlacePrivateDefaultAlt()))
+    {
+    }
+};
 
 class PlaceReply : public QPlaceReply
 {
@@ -233,6 +265,13 @@ public:
                             QJsonObject p = places.at(i).toObject();
 
                             QPlace place;
+                            if (p.value(QStringLiteral("alternateImplementation")).toBool(false)) {
+                                place = QPlaceAlt();
+                                QPlaceAttribute att;
+                                att.setLabel(QStringLiteral("x_provider"));
+                                att.setText(QStringLiteral("42")); // Doesn't matter, wont be used.
+                                place.setExtendedAttribute(QStringLiteral("x_provider"), att);
+                            }
 
                             place.setName(p.value(QStringLiteral("name")).toString());
                             place.setPlaceId(p.value(QStringLiteral("id")).toString());

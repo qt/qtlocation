@@ -93,16 +93,19 @@ public:
     QGeoRoutingManager *routingManager;
     QGeoMappingManager *mappingManager;
     QPlaceManager *placeManager;
+    QNavigationManager *navigationManager;
 
     QGeoServiceProvider::Error geocodeError;
     QGeoServiceProvider::Error routingError;
     QGeoServiceProvider::Error mappingError;
     QGeoServiceProvider::Error placeError;
+    QGeoServiceProvider::Error navigationError;
 
     QString geocodeErrorString;
     QString routingErrorString;
     QString mappingErrorString;
     QString placeErrorString;
+    QString navigationErrorString;
 
     QGeoServiceProvider::Error error;
     QString errorString;

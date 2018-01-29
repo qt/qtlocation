@@ -38,6 +38,7 @@
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qlocationutils_p.h>
 #include <QtPositioning/private/qclipperutils_p.h>
+#include <QtPositioning/QGeoPolygon>
 #include <QSize>
 #include <QtGui/QMatrix4x4>
 #include <cmath>
@@ -75,6 +76,30 @@ QGeoProjection::~QGeoProjection()
 
 QGeoCoordinate QGeoProjection::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint) const
 {
+    Q_UNUSED(coordinate)
+    Q_UNUSED(anchorPoint)
+    return QGeoCoordinate();
+}
+
+QGeoShape QGeoProjection::visibleRegion() const
+{
+    return QGeoShape();
+}
+
+bool QGeoProjection::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
+{
+    Q_UNUSED(bearing)
+    Q_UNUSED(coordinate)
+    return false;
+}
+
+
+/*
+ * QGeoProjectionWebMercator implementation
+*/
+
+QGeoCoordinate QGeoProjectionWebMercator::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint) const
+{
     // Approach: find the displacement in (wrapped) mercator space, and apply that to the center
     QDoubleVector2D centerProj = geoToWrappedMapProjection(cameraData().center());
     QDoubleVector2D coordProj  = geoToWrappedMapProjection(coordinate);
@@ -84,9 +109,25 @@ QGeoCoordinate QGeoProjection::anchorCoordinateToPoint(const QGeoCoordinate &coo
     return wrappedMapProjectionToGeo(centerProj + coordProj - anchorProj);
 }
 
-/*
- * QGeoProjectionWebMercator implementation
-*/
+bool QGeoProjectionWebMercator::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
+{
+    const QDoubleVector2D coordWrapped = geoToWrappedMapProjection(coordinate);
+    if (!isProjectable(coordWrapped))
+        return false;
+    const QPointF rotationPoint = wrappedMapProjectionToItemPosition(coordWrapped).toPointF();
+
+    QGeoCameraData camera = cameraData();
+    // first set bearing
+    camera.setBearing(bearing);
+    setCameraData(camera);
+    camera = cameraData();
+
+    // then reanchor
+    const QGeoCoordinate center = anchorCoordinateToPoint(coordinate, rotationPoint);
+    camera.setCenter(center);
+    setCameraData(camera);
+    return true;
+}
 
 QGeoProjectionWebMercator::QGeoProjectionWebMercator()
     : QGeoProjection(),
@@ -154,6 +195,9 @@ double QGeoProjectionWebMercator::mapHeight() const
 
 void QGeoProjectionWebMercator::setViewportSize(const QSize &size)
 {
+    if (int(m_viewportWidth) ==  size.width() && int(m_viewportHeight) == size.height())
+        return;
+
     m_viewportWidth = size.width();
     m_viewportHeight = size.height();
     m_1_viewportWidth = 1.0 / m_viewportWidth;
@@ -162,8 +206,11 @@ void QGeoProjectionWebMercator::setViewportSize(const QSize &size)
     setupCamera();
 }
 
-void QGeoProjectionWebMercator::setCameraData(const QGeoCameraData &cameraData)
+void QGeoProjectionWebMercator::setCameraData(const QGeoCameraData &cameraData, bool force)
 {
+    if (m_cameraData == cameraData && !force)
+        return;
+
     m_cameraData = cameraData;
     m_mapEdgeSize = std::pow(2.0, cameraData.zoomLevel()) * defaultTileSize;
     setupCamera();
@@ -331,18 +378,39 @@ bool QGeoProjectionWebMercator::isProjectable(const QDoubleVector2D &wrappedProj
     return true;
 }
 
-QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleRegion() const
+QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleGeometry() const
 {
     if (m_visibleRegionDirty)
         const_cast<QGeoProjectionWebMercator *>(this)->updateVisibleRegion();
     return m_visibleRegion;
 }
 
-QList<QDoubleVector2D> QGeoProjectionWebMercator::projectableRegion() const
+QList<QDoubleVector2D> QGeoProjectionWebMercator::projectableGeometry() const
 {
     if (m_visibleRegionDirty)
         const_cast<QGeoProjectionWebMercator *>(this)->updateVisibleRegion();
     return m_projectableRegion;
+}
+
+QGeoShape QGeoProjectionWebMercator::visibleRegion() const
+{
+    const QList<QDoubleVector2D> &visibleRegion = visibleGeometry();
+    QGeoPolygon poly;
+    for (int i = 0; i < visibleRegion.size(); ++i) {
+         const QDoubleVector2D &c = visibleRegion.at(i);
+        // If a segment spans more than half of the map longitudinally, split in 2.
+        if (i && qAbs(visibleRegion.at(i-1).x() - c.x()) >= 0.5) { // This assumes a segment is never >= 1.0 (whole map span)
+            QDoubleVector2D extraPoint = (visibleRegion.at(i-1) + c) * 0.5;
+            poly.addCoordinate(wrappedMapProjectionToGeo(extraPoint));
+        }
+        poly.addCoordinate(wrappedMapProjectionToGeo(c));
+    }
+    if (visibleRegion.size() >= 2 && qAbs(visibleRegion.last().x() - visibleRegion.first().x()) >= 0.5) {
+        QDoubleVector2D extraPoint = (visibleRegion.last() + visibleRegion.first()) * 0.5;
+        poly.addCoordinate(wrappedMapProjectionToGeo(extraPoint));
+    }
+
+    return poly;
 }
 
 QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const
@@ -367,6 +435,21 @@ QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const 
     ray.normalize();
 
     return (xyPlane.lineIntersection(m_eye, ray, s) / m_sideLength).toVector2D();
+}
+
+QGeoProjection::ProjectionGroup QGeoProjectionWebMercator::projectionGroup() const
+{
+    return QGeoProjection::ProjectionCylindrical;
+}
+
+QGeoProjection::Datum QGeoProjectionWebMercator::datum() const
+{
+    return QGeoProjection::DatumWGS84;
+}
+
+QGeoProjection::ProjectionType QGeoProjectionWebMercator::projectionType() const
+{
+    return QGeoProjection::ProjectionWebMercator;
 }
 
 void QGeoProjectionWebMercator::setupCamera()

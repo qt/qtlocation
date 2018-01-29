@@ -502,6 +502,14 @@ Item {
     }
 
     Plugin {
+        id: testPlugin_slacker_alt
+        name: "qmlgeo.test.plugin"
+        allowExperimental: true
+        PluginParameter { name: "gc_finishRequestImmediately"; value: false}
+        PluginParameter { name: "gc_alternateGeoRoute"; value: true}
+    }
+
+    Plugin {
         id: basicRoutingPlugin_slacker;
         name: "qmlgeo.test.plugin"
         allowExperimental: true
@@ -546,24 +554,27 @@ Item {
     }
 
     RouteQuery {id: routeQuery}
+    property var routeQueryDefaultWaypoints: [
+        { latitude: 60, longitude: 60 },
+        { latitude: 61, longitude: 62 },
+        { latitude: 63, longitude: 64 },
+        { latitude: 65, longitude: 66 },
+        { latitude: 67, longitude: 68 }
+    ]
+    property var routeQuery2DefaultWaypoints: [
+        f2coordinate1,
+        f2coordinate2,
+        f2coordinate3
+    ]
     RouteQuery {
         id: filledRouteQuery
         numberAlternativeRoutes: 0
-        waypoints: [
-            { latitude: 60, longitude: 60 },
-            { latitude: 61, longitude: 62 },
-            { latitude: 63, longitude: 64 },
-            { latitude: 65, longitude: 66 },
-            { latitude: 67, longitude: 68 }
-        ]
+        waypoints: routeQueryDefaultWaypoints
     }
     RouteQuery {
         id: filledRouteQuery2
-        waypoints: [
-            f2coordinate1,
-            f2coordinate2,
-            f2coordinate3
-        ]
+        numberAlternativeRoutes: 0
+        waypoints: routeQuery2DefaultWaypoints
     }
     RouteModel {
         id: routeModelAutomatic;
@@ -571,8 +582,15 @@ Item {
         query: filledRouteQuery;
         autoUpdate: true
     }
+    RouteModel {
+        id: routeModelAutomaticAltImpl;
+        plugin: testPlugin_slacker_alt;
+        query: filledRouteQuery;
+        autoUpdate: true
+    }
 
     SignalSpy {id: automaticRoutesSpy; target: routeModelAutomatic; signalName: "routesChanged" }
+    SignalSpy {id: automaticRoutesSpyAlt; target: routeModelAutomaticAltImpl; signalName: "routesChanged" }
 
     RouteModel {id: routeModel; plugin: testPlugin_immediate; query: routeQuery }
     SignalSpy {id: testRoutesSpy; target: routeModel; signalName: "routesChanged"}
@@ -757,26 +775,37 @@ Item {
             compare(testCountSlackSpy.count, 1)
             compare(routeModelSlack.count, 1)
 
+            test_basic_routing_automatic(routeModelAutomatic, automaticRoutesSpy, "routeModelAutomatic")
+            test_basic_routing_automatic(routeModelAutomaticAltImpl, automaticRoutesSpyAlt, "routeModelAutomaticAltImpl")
+        }
+
+        function test_basic_routing_automatic(model, spy, label) {
+            if (label === undefined)
+                return
+            console.log("testing",label)
             // Autoupdate
-            automaticRoutesSpy.clear();
+            spy.clear();
             filledRouteQuery.numberAlternativeRoutes = 1 // 'altroutes - 70' is the echoed errorcode
-            tryCompare (automaticRoutesSpy, "count", 1) // 5 sec
-            compare(routeModelAutomatic.count, 1) // There should be a route already
-            compare (routeModelAutomatic.get(0).path.length, 5)
-            compare (routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
+            tryCompare (spy, "count", 1) // 5 sec
+            compare(model.count, 1) // There should be a route already
+            compare (model.get(0).path.length, 5)
+            compare (model.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
+
+            if (label === "routeModelAutomaticAltImpl") // Test that it is an altImpl
+                compare(model.get(0).travelTime,  123456)
 
             // Remove a waypoint and check that autoupdate works
             filledRouteQuery.removeWaypoint(fcoordinate2)
-            tryCompare (automaticRoutesSpy, "count", 2)
-            compare (routeModelAutomatic.get(0).path.length, 4)
-            compare (routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude)
+            tryCompare (spy, "count", 2)
+            compare (model.get(0).path.length, 4)
+            compare (model.get(0).path[0].latitude, fcoordinate1.latitude)
 
             // Add a waypoint and check that autoupdate works
             filledRouteQuery.addWaypoint(fcoordinate2);
-            tryCompare (automaticRoutesSpy, "count", 3)
-            compare(routeModelAutomatic.count, 1);
-            compare(routeModelAutomatic.get(0).path.length, 5);
-            compare(routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude);
+            tryCompare (spy, "count", 3)
+            compare(model.count, 1);
+            compare(model.get(0).path.length, 5);
+            compare(model.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude);
 
             // Change contents of a coordinate and check that autoupdate works
             filledRouteQuery.waypoints = [
@@ -786,8 +815,8 @@ Item {
                 { latitude: 65, longitude: 66 },
                 { latitude: 67, longitude: 68 }
             ];
-            tryCompare (automaticRoutesSpy, "count", 4)
-            compare(routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
+            tryCompare (spy, "count", 4)
+            compare(model.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
 
             // Extra parameter
             var param = Qt.createQmlObject ('import QtLocation 5.9; MapParameter { type : "test-traveltime"; property var requestedTime : 42}', root)
@@ -796,23 +825,38 @@ Item {
             modifiedParams.push(param)
 
             filledRouteQuery.quickChildren = modifiedParams
-            tryCompare (automaticRoutesSpy, "count", 5)
-            compare(routeModelAutomatic.get(0).travelTime, 42)
+            tryCompare (spy, "count", 5)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 42)
             param.requestedTime = 43
-            tryCompare (automaticRoutesSpy, "count", 6)
-            compare(routeModelAutomatic.get(0).travelTime, 43)
+            tryCompare (spy, "count", 6)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 43)
             filledRouteQuery.quickChildren = initialParams
-            tryCompare (automaticRoutesSpy, "count", 7)
-            compare(routeModelAutomatic.get(0).travelTime, 0)
+            tryCompare (spy, "count", 7)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 0)
             var secondParam = Qt.createQmlObject ('import QtLocation 5.9; MapParameter { type : "foo"; property var bar : 42}', root)
             modifiedParams.push(secondParam)
             param.requestedTime = 44
             filledRouteQuery.quickChildren = modifiedParams
-            tryCompare (automaticRoutesSpy, "count", 8)
-            compare(routeModelAutomatic.get(0).travelTime, 44)
+            tryCompare (spy, "count", 8)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 44)
             filledRouteQuery.quickChildren = initialParams
-            tryCompare (automaticRoutesSpy, "count", 9)
-            compare(routeModelAutomatic.get(0).travelTime, 0)
+            tryCompare (spy, "count", 9)
+            if (label === "routeModelAutomaticAltImpl")
+                compare(model.get(0).travelTime,  123456)
+            else
+                compare(model.get(0).travelTime, 0)
 
             /* Test waypoints */
             // Verify that bearing is NaN for coordinates
@@ -820,50 +864,50 @@ Item {
             var numWaypoints = filledRouteQuery.waypoints.length
             // Add a waypoint with bearing
             filledRouteQuery.addWaypoint(waypoint1)
-            tryCompare (automaticRoutesSpy, "count", 10)
+            tryCompare (spy, "count", 10)
             compare(filledRouteQuery.waypointObjects()[numWaypoints].bearing, 42)
             // testing Waypoint to coordinate conversion
             compare(filledRouteQuery.waypoints[numWaypoints], filledRouteQuery.waypointObjects()[numWaypoints].coordinate)
             waypoint1.latitude += 0.1
-            compare(routeModelAutomatic.get(0).distance, 0)
-            tryCompare (automaticRoutesSpy, "count", 11)
+            compare(model.get(0).distance, 0)
+            tryCompare (spy, "count", 11)
             numWaypoints++;
-            filledRouteQuery.addWaypoint(waypoint2)
+            filledRouteQuery.addWaypoint(waypoint2) // waypoint2 contains a MapParameter with  user_distance
             numWaypoints++;
-            tryCompare (automaticRoutesSpy, "count", 12)
+            tryCompare (spy, "count", 12)
             compare(filledRouteQuery.waypointObjects()[numWaypoints-1].bearing, 43)
-            compare(routeModelAutomatic.get(0).distance, 10)
+            compare(model.get(0).distance, 10)
             waypoint1.latitude += 0.1
-            tryCompare (automaticRoutesSpy, "count", 13)
+            tryCompare (spy, "count", 13)
             waypoint2.latitude += 0.1
-            tryCompare (automaticRoutesSpy, "count", 14)
+            tryCompare (spy, "count", 14)
             filledRouteQuery.removeWaypoint(waypoint1)
-            tryCompare (automaticRoutesSpy, "count", 15)
+            tryCompare (spy, "count", 15)
             waypoint2.latitude += 0.1
-            tryCompare (automaticRoutesSpy, "count", 16)
+            tryCompare (spy, "count", 16)
             waypoint1.latitude += 0.1
-            tryCompare (automaticRoutesSpy, "count", 16) // No effect, now disconnected
+            tryCompare (spy, "count", 16) // No effect, now disconnected
             // test with other props
             waypoint2.longitude += 0.1
-            tryCompare (automaticRoutesSpy, "count", 17)
+            tryCompare (spy, "count", 17)
             waypoint2.altitude = 42
-            tryCompare (automaticRoutesSpy, "count", 18)
+            tryCompare (spy, "count", 18)
             waypoint2.bearing += 1
-            tryCompare (automaticRoutesSpy, "count", 19)
+            tryCompare (spy, "count", 19)
             compare(waypoint2.longitude, 71.1)
             compare(waypoint2.altitude, 42)
             compare(waypoint2.bearing, 44)
             // test with map parameters
             param1.distance = 42
-            tryCompare (automaticRoutesSpy, "count", 20)
-            compare(routeModelAutomatic.get(0).distance, 42)
+            tryCompare (spy, "count", 20)
+            compare(model.get(0).distance, 42)
 
 
             // Change query
-            routeModelAutomatic.query = filledRouteQuery2
+            model.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
-            tryCompare (automaticRoutesSpy, "count", 21)
-            compare (routeModelAutomatic.get(0).path.length, 3)
+            tryCompare (spy, "count", 21)
+            compare (model.get(0).path.length, 3)
 
             // Verify that the old query is disconnected internally ie. does not trigger update
             filledRouteQuery.waypoints = [
@@ -874,9 +918,23 @@ Item {
                 { latitude: 67, longitude: 68 }
             ];
             wait(800) // wait to hope no further updates comes through
-            compare (automaticRoutesSpy.count, 21)
-            compare(routeModelAutomatic.get(0).path.length, 3);
+            compare (spy.count, 21)
+            compare(model.get(0).path.length, 3);
+
+            // ReSetting
+            filledRouteQuery.numberAlternativeRoutes = 0
+            filledRouteQuery2.numberAlternativeRoutes = 0
+            filledRouteQuery.waypoints = routeQueryDefaultWaypoints
+            filledRouteQuery2.waypoints = routeQuery2DefaultWaypoints
+
+            waypoint1.coordinate = QtPositioning.coordinate(70, 70)
+            waypoint2.bearing = 42
+            waypoint2.coordinate = QtPositioning.coordinate(71, 71)
+            waypoint2.bearing = 43
+            param1.distance = 10
         }
+
+
 
         function test_route_query_handles_destroyed_qml_objects() {
             var coordinate = QtPositioning.coordinate(11, 52);

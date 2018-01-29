@@ -143,6 +143,13 @@ void QGeoTiledMap::clearData()
     d->m_mapScene->clearTexturedTiles();
 }
 
+QGeoMap::Capabilities QGeoTiledMap::capabilities() const
+{
+    return Capabilities(SupportsVisibleRegion
+                        | SupportsSetBearing
+                        | SupportsAnchoringCoordinate);
+}
+
 void QGeoTiledMap::clearScene(int mapId)
 {
     Q_D(QGeoTiledMap);

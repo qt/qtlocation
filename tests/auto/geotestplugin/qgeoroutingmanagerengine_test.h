@@ -34,6 +34,7 @@
 #include <QLocale>
 #include <qgeoaddress.h>
 #include <qgeoroutereply.h>
+#include <QtLocation/private/qgeoroute_p.h>
 
 #include <QDebug>
 #include <QTimer>
@@ -41,6 +42,32 @@
 
 QT_USE_NAMESPACE
 
+
+class QGeoRoutePrivateDefaultAlt : public QGeoRoutePrivateDefault
+{
+public:
+    QGeoRoutePrivateDefaultAlt() : QGeoRoutePrivateDefault()
+    {
+        m_travelTime = 123456; // To identify this is actually a QGeoRoutePrivateDefaultAlt
+    }
+    QGeoRoutePrivateDefaultAlt(const QGeoRoutePrivateDefaultAlt &other)
+        : QGeoRoutePrivateDefault(other) {}
+    ~QGeoRoutePrivateDefaultAlt() {}
+
+    void setTravelTime(int travelTime) override
+    {
+        Q_UNUSED(travelTime)
+    }
+};
+
+class QGeoRouteAlt : public QGeoRoute
+{
+public:
+    QGeoRouteAlt()
+    : QGeoRoute(QExplicitlySharedDataPointer<QGeoRoutePrivate>(new QGeoRoutePrivateDefaultAlt()))
+    {
+    }
+};
 
 class RouteReplyTest :public QGeoRouteReply
 {
@@ -62,6 +89,7 @@ class QGeoRoutingManagerEngineTest: public QGeoRoutingManagerEngine
     int timerId_;
     QGeoRouteReply::Error errorCode_;
     QString errorString_;
+    bool alternateGeoRouteImplementation_;
 
 public:
     QGeoRoutingManagerEngineTest(const QVariantMap &parameters,
@@ -70,13 +98,18 @@ public:
         routeReply_(0),
         finishRequestImmediately_(true),
         timerId_(0),
-        errorCode_(QGeoRouteReply::NoError)
+        errorCode_(QGeoRouteReply::NoError),
+        alternateGeoRouteImplementation_(false)
     {
         Q_UNUSED(error)
         Q_UNUSED(errorString)
 
         if (parameters.contains("gc_finishRequestImmediately")) {
             finishRequestImmediately_ = qvariant_cast<bool>(parameters.value("gc_finishRequestImmediately"));
+        }
+
+        if (parameters.contains("gc_alternateGeoRoute")) {
+            alternateGeoRouteImplementation_ = qvariant_cast<bool>(parameters.value("gc_alternateGeoRoute"));
         }
 
         setLocale(QLocale (QLocale::German, QLocale::Germany));
@@ -140,6 +173,8 @@ public:
 
         for (int i = 0; i < request.numberAlternativeRoutes(); ++i) {
             QGeoRoute route;
+            if (alternateGeoRouteImplementation_)
+                route = QGeoRouteAlt();
             route.setPath(request.waypoints());
             route.setTravelTime(travelTime);
 

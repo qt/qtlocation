@@ -43,7 +43,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoMapItemsOverlayPrivate : public QGeoMapPrivate
 {
-    Q_DECLARE_PUBLIC(QGeoMap)
+    Q_DECLARE_PUBLIC(QGeoMapItemsOverlay)
 public:
     QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine);
 

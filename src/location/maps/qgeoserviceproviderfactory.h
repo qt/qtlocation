@@ -62,6 +62,9 @@ public:
     virtual QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
+    virtual QNavigationManagerEngine *createNavigationManagerEngine(const QVariantMap &parameters,
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
 };
 
 Q_DECLARE_INTERFACE(QGeoServiceProviderFactory,
