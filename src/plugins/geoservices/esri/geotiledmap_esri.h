@@ -51,7 +51,7 @@ class GeoTiledMapEsri: public QGeoTiledMap
     Q_OBJECT
 
 public:
-    explicit GeoTiledMapEsri(GeoTiledMappingManagerEngineEsri *engine, QObject *parent = Q_NULLPTR);
+    explicit GeoTiledMapEsri(GeoTiledMappingManagerEngineEsri *engine, QObject *parent = nullptr);
     virtual ~GeoTiledMapEsri();
 
 protected:

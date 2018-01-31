@@ -64,7 +64,7 @@ class Q_LOCATION_PRIVATE_EXPORT QNavigationManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    explicit QNavigationManagerEngine(const QVariantMap &parameters, QObject *parent = Q_NULLPTR);
+    explicit QNavigationManagerEngine(const QVariantMap &parameters, QObject *parent = nullptr);
     virtual ~QNavigationManagerEngine();
 
     void setManagerName(const QString &name);

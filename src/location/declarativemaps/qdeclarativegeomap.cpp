@@ -342,7 +342,7 @@ static QDeclarativeGeoMapType *findMapType(const QList<QDeclarativeGeoMapType *>
     for (int i = 0; i < types.size(); ++i)
         if (types[i]->mapType() == type)
             return types[i];
-    return Q_NULLPTR;
+    return nullptr;
 }
 
 void QDeclarativeGeoMap::onSupportedMapTypesChanged()

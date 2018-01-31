@@ -298,7 +298,7 @@ GeoMapSource *GeoTiledMappingManagerEngineEsri::mapSource(int mapId) const
             return mapSource;
     }
 
-    return Q_NULLPTR;
+    return nullptr;
 }
 
 QT_END_NAMESPACE

@@ -113,7 +113,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoServiceProvider : public QObject,
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativeGeoServiceProvider(QObject *parent = Q_NULLPTR);
+    explicit QDeclarativeGeoServiceProvider(QObject *parent = nullptr);
     ~QDeclarativeGeoServiceProvider();
 
     enum RoutingFeature {

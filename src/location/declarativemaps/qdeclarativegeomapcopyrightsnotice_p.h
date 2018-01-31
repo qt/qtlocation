@@ -66,7 +66,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapCopyrightNotice : public QQuic
     Q_PROPERTY(QString styleSheet READ styleSheet WRITE setStyleSheet NOTIFY styleSheetChanged)
 
 public:
-    QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent = Q_NULLPTR);
+    QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent = nullptr);
     ~QDeclarativeGeoMapCopyrightNotice();
 
     void setCopyrightsZ(int copyrightsZ);

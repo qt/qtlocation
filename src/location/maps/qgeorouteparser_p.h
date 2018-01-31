@@ -68,7 +68,7 @@ public:
     QUrl requestUrl(const QGeoRouteRequest &request, const QString &prefix) const;
 
 protected:
-    QGeoRouteParser(QGeoRouteParserPrivate &dd, QObject *parent = Q_NULLPTR);
+    QGeoRouteParser(QGeoRouteParserPrivate &dd, QObject *parent = nullptr);
 
 private:
     Q_DISABLE_COPY(QGeoRouteParser)

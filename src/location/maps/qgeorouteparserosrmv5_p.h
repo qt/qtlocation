@@ -60,7 +60,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoRouteParserOsrmV5 : public QGeoRouteParser
     Q_DECLARE_PRIVATE(QGeoRouteParserOsrmV5)
 
 public:
-    QGeoRouteParserOsrmV5(QObject *parent = Q_NULLPTR, bool useServerText = false);
+    QGeoRouteParserOsrmV5(QObject *parent = nullptr, bool useServerText = false);
     virtual ~QGeoRouteParserOsrmV5();
 
     void setAccessToken(const QString &token);
