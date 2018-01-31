@@ -790,8 +790,8 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 */
 void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSet)
 {
-
     if (minimumZoomLevel >= 0) {
+        qreal oldUserMinimumZoomLevel = m_userMinimumZoomLevel;
         if (userSet)
             m_userMinimumZoomLevel = minimumZoomLevel;
         qreal oldMinimumZoomLevel = this->minimumZoomLevel();
@@ -800,12 +800,15 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSe
         if (m_map)
              minimumZoomLevel = qMax<qreal>(minimumZoomLevel, m_map->minimumZoom());
 
+        // minimumZoomLevel is, at this point, the implicit minimum zoom level
         m_gestureArea->setMinimumZoomLevel(minimumZoomLevel);
 
         if (zoomLevel() < minimumZoomLevel && (m_gestureArea->enabled() || !m_cameraCapabilities.overzoomEnabled()))
             setZoomLevel(minimumZoomLevel);
 
-        if (oldMinimumZoomLevel != minimumZoomLevel)
+        if (qIsNaN(m_userMinimumZoomLevel) && oldMinimumZoomLevel != minimumZoomLevel)
+            emit minimumZoomLevelChanged();
+        else if (userSet && oldUserMinimumZoomLevel != m_userMinimumZoomLevel)
             emit minimumZoomLevelChanged();
     }
 }
@@ -826,7 +829,26 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSe
 
 qreal QDeclarativeGeoMap::minimumZoomLevel() const
 {
+    if (!qIsNaN(m_userMinimumZoomLevel))
+        return m_userMinimumZoomLevel;
+    else
+        return m_gestureArea->minimumZoomLevel();
+}
+
+/*!
+    \internal
+*/
+qreal QDeclarativeGeoMap::implicitMinimumZoomLevel() const
+{
     return m_gestureArea->minimumZoomLevel();
+}
+
+/*!
+    \internal
+*/
+qreal QDeclarativeGeoMap::effectiveMinimumZoomLevel() const
+{
+    return qMax<qreal>(minimumZoomLevel(), implicitMinimumZoomLevel());
 }
 
 /*!
@@ -901,7 +923,7 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
     bool centerHasChanged = false;
 
     if (m_initialized) {
-        m_cameraData.setZoomLevel(qBound<qreal>(overzoom ? m_map->minimumZoom() : minimumZoomLevel(),
+        m_cameraData.setZoomLevel(qBound<qreal>(overzoom ? m_map->minimumZoom() : effectiveMinimumZoomLevel(),
                                                 zoomLevel,
                                                 overzoom ? 30 : maximumZoomLevel()));
         m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);

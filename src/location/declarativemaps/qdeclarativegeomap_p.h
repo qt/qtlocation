@@ -116,6 +116,8 @@ public:
 
     void setMinimumZoomLevel(qreal minimumZoomLevel, bool userSet = true);
     qreal minimumZoomLevel() const;
+    qreal implicitMinimumZoomLevel() const;
+    qreal effectiveMinimumZoomLevel() const;
 
     void setMaximumZoomLevel(qreal maximumZoomLevel, bool userSet = true);
     qreal maximumZoomLevel() const;
