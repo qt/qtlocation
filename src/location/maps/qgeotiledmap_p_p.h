@@ -83,9 +83,9 @@ public:
     void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
 
 protected:
-    void changeViewportSize(const QSize& size) Q_DECL_OVERRIDE;
-    void changeCameraData(const QGeoCameraData &cameraData) Q_DECL_OVERRIDE;
-    void changeActiveMapType(const QGeoMapType mapType) Q_DECL_OVERRIDE;
+    void changeViewportSize(const QSize& size) override;
+    void changeCameraData(const QGeoCameraData &cameraData) override;
+    void changeActiveMapType(const QGeoMapType mapType) override;
     void changeTileVersion(int version);
     void clearScene();
 

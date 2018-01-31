@@ -57,7 +57,7 @@ public:
                                      QGeoServiceProvider::Error *error, QString *errorString);
     virtual ~GeoTiledMappingManagerEngineEsri();
 
-    QGeoMap *createMap() Q_DECL_OVERRIDE;
+    QGeoMap *createMap() override;
 
     inline const QList<GeoMapSource *>& mapSources() const;
     GeoMapSource *mapSource(int mapId) const;

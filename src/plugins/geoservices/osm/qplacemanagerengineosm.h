@@ -58,17 +58,17 @@ public:
                            QString *errorString);
     ~QPlaceManagerEngineOsm();
 
-    QPlaceSearchReply *search(const QPlaceSearchRequest &request) Q_DECL_OVERRIDE;
+    QPlaceSearchReply *search(const QPlaceSearchRequest &request) override;
 
-    QPlaceReply *initializeCategories() Q_DECL_OVERRIDE;
-    QString parentCategoryId(const QString &categoryId) const Q_DECL_OVERRIDE;
-    QStringList childCategoryIds(const QString &categoryId) const Q_DECL_OVERRIDE;
-    QPlaceCategory category(const QString &categoryId) const Q_DECL_OVERRIDE;
+    QPlaceReply *initializeCategories() override;
+    QString parentCategoryId(const QString &categoryId) const override;
+    QStringList childCategoryIds(const QString &categoryId) const override;
+    QPlaceCategory category(const QString &categoryId) const override;
 
-    QList<QPlaceCategory> childCategories(const QString &parentId) const Q_DECL_OVERRIDE;
+    QList<QPlaceCategory> childCategories(const QString &parentId) const override;
 
-    QList<QLocale> locales() const Q_DECL_OVERRIDE;
-    void setLocales(const QList<QLocale> &locales) Q_DECL_OVERRIDE;
+    QList<QLocale> locales() const override;
+    void setLocales(const QList<QLocale> &locales) override;
 
 private slots:
     void categoryReplyFinished();

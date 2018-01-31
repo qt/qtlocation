@@ -62,7 +62,7 @@ public:
     MapItemViewDelegateIncubator(QDeclarativeGeoMapItemView *view, QDeclarativeGeoMapItemViewItemData *itemData, bool batched = true);
 
 protected:
-    void statusChanged(Status status) Q_DECL_OVERRIDE;
+    void statusChanged(Status status) override;
 
 private:
     QDeclarativeGeoMapItemView *m_view;

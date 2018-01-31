@@ -56,24 +56,24 @@ public:
                            QString *errorString);
     ~QPlaceManagerEngineMapbox();
 
-    QPlaceSearchReply *search(const QPlaceSearchRequest &) Q_DECL_OVERRIDE;
+    QPlaceSearchReply *search(const QPlaceSearchRequest &) override;
 
-    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &) Q_DECL_OVERRIDE;
+    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &) override;
 
-    QPlaceReply *initializeCategories() Q_DECL_OVERRIDE;
-    QString parentCategoryId(const QString &categoryId) const Q_DECL_OVERRIDE;
-    QStringList childCategoryIds(const QString &categoryId) const Q_DECL_OVERRIDE;
-    QPlaceCategory category(const QString &categoryId) const Q_DECL_OVERRIDE;
-    QList<QPlaceCategory> childCategories(const QString &parentId) const Q_DECL_OVERRIDE;
+    QPlaceReply *initializeCategories() override;
+    QString parentCategoryId(const QString &categoryId) const override;
+    QStringList childCategoryIds(const QString &categoryId) const override;
+    QPlaceCategory category(const QString &categoryId) const override;
+    QList<QPlaceCategory> childCategories(const QString &parentId) const override;
 
-    QList<QLocale> locales() const Q_DECL_OVERRIDE;
-    void setLocales(const QList<QLocale> &locales) Q_DECL_OVERRIDE;
+    QList<QLocale> locales() const override;
+    void setLocales(const QList<QLocale> &locales) override;
 
     // TODO: icon
     //QPlaceIcon icon(const QString &remotePath,
     //                const QList<QPlaceCategory> &categories = QList<QPlaceCategory>()) const;
 
-    //QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const Q_DECL_OVERRIDE;
+    //QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const override;
 
 private slots:
     void onReplyFinished();

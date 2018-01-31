@@ -54,7 +54,7 @@ public:
                                         QGeoServiceProvider::Error *error, QString *errorString);
     ~QGeoMappingManagerEngineMapboxGL();
 
-    QGeoMap *createMap() Q_DECL_OVERRIDE;
+    QGeoMap *createMap() override;
 
 private:
     QMapboxGLSettings m_settings;

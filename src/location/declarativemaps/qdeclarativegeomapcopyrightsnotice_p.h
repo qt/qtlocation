@@ -92,9 +92,9 @@ signals:
     void styleSheetChanged(const QString &styleSheet);
 
 protected:
-    void paint(QPainter *painter) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void rasterizeHtmlAndUpdate();
     void connectMap();
 

@@ -50,9 +50,9 @@ public:
     virtual ~QGeoMapItemsOverlayPrivate();
 
 protected:
-    void changeViewportSize(const QSize &size) Q_DECL_OVERRIDE;
-    void changeCameraData(const QGeoCameraData &oldCameraData) Q_DECL_OVERRIDE;
-    void changeActiveMapType(const QGeoMapType mapType) Q_DECL_OVERRIDE;
+    void changeViewportSize(const QSize &size) override;
+    void changeCameraData(const QGeoCameraData &oldCameraData) override;
+    void changeActiveMapType(const QGeoMapType mapType) override;
 };
 
 QGeoMapItemsOverlay::QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent)

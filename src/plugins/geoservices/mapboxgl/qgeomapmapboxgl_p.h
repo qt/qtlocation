@@ -60,12 +60,12 @@ public:
 
     QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
 
-    void addParameter(QGeoMapParameter *param) Q_DECL_OVERRIDE;
-    void removeParameter(QGeoMapParameter *param) Q_DECL_OVERRIDE;
+    void addParameter(QGeoMapParameter *param) override;
+    void removeParameter(QGeoMapParameter *param) override;
 
-    QGeoMap::ItemTypes supportedMapItemTypes() const Q_DECL_OVERRIDE;
-    void addMapItem(QDeclarativeGeoMapItemBase *item) Q_DECL_OVERRIDE;
-    void removeMapItem(QDeclarativeGeoMapItemBase *item) Q_DECL_OVERRIDE;
+    QGeoMap::ItemTypes supportedMapItemTypes() const override;
+    void addMapItem(QDeclarativeGeoMapItemBase *item) override;
+    void removeMapItem(QDeclarativeGeoMapItemBase *item) override;
 
     /* Data members */
     enum SyncState : int {
@@ -92,9 +92,9 @@ public:
     QList<QSharedPointer<QMapboxGLStyleChange>> m_styleChanges;
 
 protected:
-    void changeViewportSize(const QSize &size) Q_DECL_OVERRIDE;
-    void changeCameraData(const QGeoCameraData &oldCameraData) Q_DECL_OVERRIDE;
-    void changeActiveMapType(const QGeoMapType mapType) Q_DECL_OVERRIDE;
+    void changeViewportSize(const QSize &size) override;
+    void changeCameraData(const QGeoCameraData &oldCameraData) override;
+    void changeActiveMapType(const QGeoMapType mapType) override;
 
 private:
     Q_DISABLE_COPY(QGeoMapMapboxGLPrivate);

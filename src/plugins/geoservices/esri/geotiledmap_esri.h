@@ -55,7 +55,7 @@ public:
     virtual ~GeoTiledMapEsri();
 
 protected:
-    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
+    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) override;
 
     inline GeoTiledMappingManagerEngineEsri *engine() const;
 

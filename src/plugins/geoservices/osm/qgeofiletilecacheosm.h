@@ -55,7 +55,7 @@ public:
                          QObject *parent = 0);
     ~QGeoFileTileCacheOsm();
 
-    QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) Q_DECL_OVERRIDE;
+    QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) override;
 
 Q_SIGNALS:
     void mapDataUpdated(int mapId);
@@ -65,9 +65,9 @@ protected Q_SLOTS:
     void onProviderResolutionError(const QGeoTileProviderOsm *provider, QNetworkReply::NetworkError error);
 
 protected:
-    void init() Q_DECL_OVERRIDE;
-    QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const Q_DECL_OVERRIDE;
-    QGeoTileSpec filenameToTileSpec(const QString &filename) const Q_DECL_OVERRIDE;
+    void init() override;
+    QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const override;
+    QGeoTileSpec filenameToTileSpec(const QString &filename) const override;
     QSharedPointer<QGeoTileTexture> getFromOfflineStorage(const QGeoTileSpec &spec);
     void dropTiles(int mapId);
     void loadTiles(int mapId);

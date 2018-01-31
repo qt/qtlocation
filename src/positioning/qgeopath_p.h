@@ -68,20 +68,20 @@ public:
     QGeoPathPrivate(const QGeoPathPrivate &other);
     ~QGeoPathPrivate();
 
-    bool isValid() const Q_DECL_OVERRIDE;
-    bool isEmpty() const Q_DECL_OVERRIDE;
-    bool contains(const QGeoCoordinate &coordinate) const Q_DECL_OVERRIDE;
+    bool isValid() const override;
+    bool isEmpty() const override;
+    bool contains(const QGeoCoordinate &coordinate) const override;
     bool lineContains(const QGeoCoordinate &coordinate) const;
     bool polygonContains(const QGeoCoordinate &coordinate) const;
 
-    QGeoCoordinate center() const Q_DECL_OVERRIDE;
-    QGeoRectangle boundingGeoRectangle() const Q_DECL_OVERRIDE;
-    void extendShape(const QGeoCoordinate &coordinate) Q_DECL_OVERRIDE;
+    QGeoCoordinate center() const override;
+    QGeoRectangle boundingGeoRectangle() const override;
+    void extendShape(const QGeoCoordinate &coordinate) override;
     void translate(double degreesLatitude, double degreesLongitude);
 
-    QGeoShapePrivate *clone() const Q_DECL_OVERRIDE;
+    QGeoShapePrivate *clone() const override;
 
-    bool operator==(const QGeoShapePrivate &other) const Q_DECL_OVERRIDE;
+    bool operator==(const QGeoShapePrivate &other) const override;
 
     const QList<QGeoCoordinate> &path() const;
     void setPath(const QList<QGeoCoordinate> &path);

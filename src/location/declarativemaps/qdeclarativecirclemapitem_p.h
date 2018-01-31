@@ -78,8 +78,8 @@ public:
     explicit QDeclarativeCircleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeCircleMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) Q_DECL_OVERRIDE;
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_OVERRIDE;
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
+    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
 
     QGeoCoordinate center();
     void setCenter(const QGeoCoordinate &center);
@@ -92,9 +92,9 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
-    const QGeoShape &geoShape() const Q_DECL_OVERRIDE;
-    QGeoMap::ItemType itemType() const Q_DECL_OVERRIDE;
+    bool contains(const QPointF &point) const override;
+    const QGeoShape &geoShape() const override;
+    QGeoMap::ItemType itemType() const override;
 
     static bool crossEarthPole(const QGeoCoordinate &center, qreal distance);
     static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
@@ -108,12 +108,12 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected:
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
-    void updatePolish() Q_DECL_OVERRIDE;
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+    void updatePolish() override;
 
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
-    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
+    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 private:
     void updateCirclePath();

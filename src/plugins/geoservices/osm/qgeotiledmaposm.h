@@ -56,7 +56,7 @@ public:
     ~QGeoTiledMapOsm();
 
 protected:
-    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
+    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) override;
 
 protected Q_SLOTS:
     void onProviderDataUpdated(const QGeoTileProviderOsm *provider);
