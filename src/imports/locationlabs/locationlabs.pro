@@ -1,6 +1,7 @@
 QT += quick-private network positioning-private location-private locationlabs-private qml-private core-private gui-private
 
 TARGET = locationlabsplugin
+CXX_MODULE = $$TARGET
 TARGETPATH = Qt/labs/location
 IMPORT_VERSION = 5.11
 
