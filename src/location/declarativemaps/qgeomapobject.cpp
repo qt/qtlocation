@@ -121,14 +121,28 @@ bool QGeoMapObject::visible() const
 
 void QGeoMapObject::setVisible(bool visible)
 {
-    if (visible == d_ptr->visible())
+    if (visible == d_ptr->m_visible)
         return;
 
+    const bool oldVisible = QGeoMapObject::visible();
     d_ptr->setVisible(visible);
-
     if (d_ptr->m_componentCompleted)
         setChildrenVisibility();
-    emit visibleChanged();
+    if (QGeoMapObject::visible() != oldVisible)
+        emit visibleChanged();
+}
+
+void QGeoMapObject::setParentVisiblity(bool visible)
+{
+    if (visible == d_ptr->m_parentVisible)
+        return;
+
+    const bool oldVisible = QGeoMapObject::visible();
+    d_ptr->setParentVisibility(visible);
+    if (d_ptr->m_componentCompleted)
+        setChildrenVisibility();
+    if (QGeoMapObject::visible() != oldVisible)
+        emit visibleChanged();
 }
 
 QGeoMapObject::Type QGeoMapObject::type() const
@@ -151,7 +165,7 @@ void QGeoMapObject::setChildrenVisibility()
     const bool v = visible();
     const QList<QGeoMapObject *> kids = geoMapObjectChildren();
     for (auto kid : qAsConst(kids))
-        kid->setVisible(v);
+        kid->setParentVisiblity(v);
 }
 
 void QGeoMapObject::classBegin()
@@ -249,12 +263,17 @@ bool QGeoMapObjectPrivate::equals(const QGeoMapObjectPrivate &other) const
 
 bool QGeoMapObjectPrivate::visible() const
 {
-    return m_visible;
+    return m_visible && m_parentVisible;
 }
 
 void QGeoMapObjectPrivate::setVisible(bool visible)
 {
     m_visible = visible;
+}
+
+void QGeoMapObjectPrivate::setParentVisibility(bool visible)
+{
+    m_parentVisible = visible;
 }
 
 QT_END_NAMESPACE
