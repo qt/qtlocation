@@ -51,7 +51,7 @@ class GeoTiledMapReplyEsri : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    GeoTiledMapReplyEsri(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent = Q_NULLPTR);
+    GeoTiledMapReplyEsri(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent = nullptr);
     ~GeoTiledMapReplyEsri();
 
 private Q_SLOTS:

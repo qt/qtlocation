@@ -51,11 +51,11 @@ class GeoTiledMapEsri: public QGeoTiledMap
     Q_OBJECT
 
 public:
-    explicit GeoTiledMapEsri(GeoTiledMappingManagerEngineEsri *engine, QObject *parent = Q_NULLPTR);
+    explicit GeoTiledMapEsri(GeoTiledMappingManagerEngineEsri *engine, QObject *parent = nullptr);
     virtual ~GeoTiledMapEsri();
 
 protected:
-    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) Q_DECL_OVERRIDE;
+    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) override;
 
     inline GeoTiledMappingManagerEngineEsri *engine() const;
 

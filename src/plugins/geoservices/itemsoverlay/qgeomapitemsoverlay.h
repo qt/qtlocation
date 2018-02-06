@@ -54,7 +54,7 @@ public:
 
     virtual ~QGeoMapItemsOverlay();
 protected:
-    QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) Q_DECL_OVERRIDE;
+    QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) override;
 
 private:
     Q_DISABLE_COPY(QGeoMapItemsOverlay)

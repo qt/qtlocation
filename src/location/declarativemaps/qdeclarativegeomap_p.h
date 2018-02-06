@@ -222,23 +222,23 @@ Q_SIGNALS:
     void mapObjectsChanged();
 
 protected:
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
-    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE ;
-    void mouseUngrabEvent() Q_DECL_OVERRIDE ;
-    void touchUngrabEvent() Q_DECL_OVERRIDE;
-    void touchEvent(QTouchEvent *event) Q_DECL_OVERRIDE ;
+    void mousePressEvent(QMouseEvent *event) override ;
+    void mouseMoveEvent(QMouseEvent *event) override ;
+    void mouseReleaseEvent(QMouseEvent *event) override ;
+    void mouseUngrabEvent() override ;
+    void touchUngrabEvent() override;
+    void touchEvent(QTouchEvent *event) override ;
 #if QT_CONFIG(wheelevent)
-    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE ;
+    void wheelEvent(QWheelEvent *event) override ;
 #endif
 
-    bool childMouseEventFilter(QQuickItem *item, QEvent *event) Q_DECL_OVERRIDE;
+    bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
     bool sendMouseEvent(QMouseEvent *event);
     bool sendTouchEvent(QTouchEvent *event);
 
-    void componentComplete() Q_DECL_OVERRIDE;
-    QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_OVERRIDE;
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
+    void componentComplete() override;
+    QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
 
     void setError(QGeoServiceProvider::Error error, const QString &errorString);
     void initialize();

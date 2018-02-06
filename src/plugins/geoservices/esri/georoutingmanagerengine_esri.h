@@ -56,7 +56,7 @@ public:
                                 QString *errorString);
     virtual ~GeoRoutingManagerEngineEsri();
 
-    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request) Q_DECL_OVERRIDE;
+    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request) override;
 
 private Q_SLOTS:
     void replyFinished();

@@ -62,6 +62,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMapObject : public QParameterizableObject, p
 
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(Type type READ type CONSTANT)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     enum Feature {

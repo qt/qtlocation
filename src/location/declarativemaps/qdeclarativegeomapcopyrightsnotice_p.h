@@ -66,7 +66,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapCopyrightNotice : public QQuic
     Q_PROPERTY(QString styleSheet READ styleSheet WRITE setStyleSheet NOTIFY styleSheetChanged)
 
 public:
-    QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent = Q_NULLPTR);
+    QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent = nullptr);
     ~QDeclarativeGeoMapCopyrightNotice();
 
     void setCopyrightsZ(int copyrightsZ);
@@ -92,9 +92,9 @@ signals:
     void styleSheetChanged(const QString &styleSheet);
 
 protected:
-    void paint(QPainter *painter) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void rasterizeHtmlAndUpdate();
     void connectMap();
 

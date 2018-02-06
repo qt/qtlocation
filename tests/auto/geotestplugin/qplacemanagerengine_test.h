@@ -374,7 +374,7 @@ public:
         }
     }
 
-    QPlaceDetailsReply *getPlaceDetails(const QString &placeId) Q_DECL_OVERRIDE
+    QPlaceDetailsReply *getPlaceDetails(const QString &placeId) override
     {
         DetailsReply *reply = new DetailsReply(this);
 
@@ -390,7 +390,7 @@ public:
         return reply;
     }
 
-    QPlaceContentReply *getPlaceContent(const QPlaceContentRequest &query) Q_DECL_OVERRIDE
+    QPlaceContentReply *getPlaceContent(const QPlaceContentRequest &query) override
     {
         ContentReply *reply = new ContentReply(this);
         if (query.placeId().isEmpty() || !m_places.contains(query.placeId())) {
@@ -458,7 +458,7 @@ public:
         return reply;
     }
 
-    QPlaceSearchReply *search(const QPlaceSearchRequest &query) Q_DECL_OVERRIDE
+    QPlaceSearchReply *search(const QPlaceSearchRequest &query) override
     {
         QList<QPlaceSearchResult> results;
 
@@ -503,7 +503,7 @@ public:
         return reply;
     }
 
-    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query) Q_DECL_OVERRIDE
+    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query) override
     {
         QStringList suggestions;
         if (query.searchTerm() == QLatin1String("test")) {
@@ -519,7 +519,7 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *savePlace(const QPlace &place) Q_DECL_OVERRIDE
+    QPlaceIdReply *savePlace(const QPlace &place) override
     {
         IdReply *reply = new IdReply(QPlaceIdReply::SavePlace, this);
 
@@ -542,7 +542,7 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *removePlace(const QString &placeId) Q_DECL_OVERRIDE
+    QPlaceIdReply *removePlace(const QString &placeId) override
     {
         IdReply *reply = new IdReply(QPlaceIdReply::RemovePlace, this);
         reply->setId(placeId);
@@ -559,7 +559,7 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId) Q_DECL_OVERRIDE
+    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId) override
     {
         IdReply *reply = new IdReply(QPlaceIdReply::SaveCategory, this);
 
@@ -600,7 +600,7 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *removeCategory(const QString &categoryId) Q_DECL_OVERRIDE
+    QPlaceIdReply *removeCategory(const QString &categoryId) override
     {
         IdReply *reply = new IdReply(QPlaceIdReply::RemoveCategory, this);
         reply->setId(categoryId);
@@ -623,7 +623,7 @@ public:
         return reply;
     }
 
-    QPlaceReply *initializeCategories() Q_DECL_OVERRIDE
+    QPlaceReply *initializeCategories() override
     {
         QPlaceReply *reply = new PlaceReply(this);
 
@@ -632,7 +632,7 @@ public:
         return reply;
     }
 
-    QString parentCategoryId(const QString &categoryId) const Q_DECL_OVERRIDE
+    QString parentCategoryId(const QString &categoryId) const override
     {
         QHashIterator<QString, QStringList> i(m_childCategories);
         while (i.hasNext()) {
@@ -644,17 +644,17 @@ public:
         return QString();
     }
 
-    virtual QStringList childCategoryIds(const QString &categoryId) const Q_DECL_OVERRIDE
+    virtual QStringList childCategoryIds(const QString &categoryId) const override
     {
         return m_childCategories.value(categoryId);
     }
 
-    virtual QPlaceCategory category(const QString &categoryId) const Q_DECL_OVERRIDE
+    virtual QPlaceCategory category(const QString &categoryId) const override
     {
         return m_categories.value(categoryId);
     }
 
-    QList<QPlaceCategory> childCategories(const QString &parentId) const Q_DECL_OVERRIDE
+    QList<QPlaceCategory> childCategories(const QString &parentId) const override
     {
         QList<QPlaceCategory> categories;
 
@@ -664,17 +664,17 @@ public:
         return categories;
     }
 
-    QList<QLocale> locales() const Q_DECL_OVERRIDE
+    QList<QLocale> locales() const override
     {
         return m_locales;
     }
 
-    void setLocales(const QList<QLocale> &locales) Q_DECL_OVERRIDE
+    void setLocales(const QList<QLocale> &locales) override
     {
         m_locales = locales;
     }
 
-    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const Q_DECL_OVERRIDE
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const override
     {
         QList<QPair<int, QUrl> > candidates;
 
@@ -711,7 +711,7 @@ public:
         }
     }
 
-    QPlace compatiblePlace(const QPlace &original) const Q_DECL_OVERRIDE
+    QPlace compatiblePlace(const QPlace &original) const override
     {
         QPlace place;
         place.setName(original.name());

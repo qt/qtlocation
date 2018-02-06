@@ -126,9 +126,9 @@ public:
     explicit QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) Q_DECL_OVERRIDE;
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
        //from QuickItem
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) Q_DECL_OVERRIDE;
+    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
 
     Q_INVOKABLE int pathLength() const;
     Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
@@ -143,9 +143,9 @@ public:
     virtual void setPath(const QJSValue &value);
     Q_INVOKABLE void setPath(const QGeoPath &path);
 
-    bool contains(const QPointF &point) const Q_DECL_OVERRIDE;
-    const QGeoShape &geoShape() const Q_DECL_OVERRIDE;
-    QGeoMap::ItemType itemType() const Q_DECL_OVERRIDE;
+    bool contains(const QPointF &point) const override;
+    const QGeoShape &geoShape() const override;
+    QGeoMap::ItemType itemType() const override;
 
     QDeclarativeMapLineProperties *line();
 
@@ -153,14 +153,14 @@ Q_SIGNALS:
     void pathChanged();
 
 protected:
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) Q_DECL_OVERRIDE;
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     void setPathFromGeoList(const QList<QGeoCoordinate> &path);
-    void updatePolish() Q_DECL_OVERRIDE;
+    void updatePolish() override;
 
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
     void updateAfterLinePropertiesChanged();
-    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) Q_DECL_OVERRIDE;
+    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 private:
     void regenerateCache();

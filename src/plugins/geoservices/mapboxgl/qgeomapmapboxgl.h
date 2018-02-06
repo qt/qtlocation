@@ -53,7 +53,7 @@ public:
     QGeoMapMapboxGL(QGeoMappingManagerEngineMapboxGL *engine, QObject *parent);
     virtual ~QGeoMapMapboxGL();
 
-    QString copyrightsStyleSheet() const Q_DECL_OVERRIDE;
+    QString copyrightsStyleSheet() const override;
     void setMapboxGLSettings(const QMapboxGLSettings &);
     void setUseFBO(bool);
     void setMapItemsBefore(const QString &);
@@ -76,7 +76,7 @@ public Q_SLOTS:
     void copyrightsChanged(const QString &copyrightsHtml);
 
 private:
-    QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window) Q_DECL_OVERRIDE;
+    QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window) override;
 
     QGeoMappingManagerEngineMapboxGL *m_engine;
 };

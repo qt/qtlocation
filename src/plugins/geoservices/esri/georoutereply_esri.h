@@ -50,7 +50,7 @@ class GeoRouteReplyEsri : public QGeoRouteReply
     Q_OBJECT
 
 public:
-    GeoRouteReplyEsri(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = Q_NULLPTR);
+    GeoRouteReplyEsri(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = nullptr);
     ~GeoRouteReplyEsri();
 
 private Q_SLOTS:

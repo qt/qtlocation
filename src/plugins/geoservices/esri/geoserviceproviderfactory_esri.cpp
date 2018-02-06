@@ -80,7 +80,7 @@ QPlaceManagerEngine *GeoServiceProviderFactoryEsri::createPlaceManagerEngine(
     Q_UNUSED(error)
     Q_UNUSED(errorString)
 
-    return Q_NULLPTR;
+    return nullptr;
 }
 
 QT_END_NAMESPACE

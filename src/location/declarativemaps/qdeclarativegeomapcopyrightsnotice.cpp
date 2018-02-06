@@ -123,7 +123,7 @@ void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *mapSour
         m_mapSource->m_map->disconnect(this);
         m_copyrightsHtml->clear();
         m_copyrightsImage = QImage();
-        m_mapSource = Q_NULLPTR;
+        m_mapSource = nullptr;
     }
 
     if (mapSource) {

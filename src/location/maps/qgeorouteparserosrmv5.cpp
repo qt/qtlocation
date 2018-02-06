@@ -857,8 +857,8 @@ public:
     QGeoRouteParserOsrmV5Private();
     virtual ~QGeoRouteParserOsrmV5Private();
 
-    QGeoRouteReply::Error parseReply(QList<QGeoRoute> &routes, QString &errorString, const QByteArray &reply) const Q_DECL_OVERRIDE;
-    QUrl requestUrl(const QGeoRouteRequest &request, const QString &prefix) const Q_DECL_OVERRIDE;
+    QGeoRouteReply::Error parseReply(QList<QGeoRoute> &routes, QString &errorString, const QByteArray &reply) const override;
+    QUrl requestUrl(const QGeoRouteRequest &request, const QString &prefix) const override;
 
     bool m_useServerText = false;
     QString m_accessToken;

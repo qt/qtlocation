@@ -58,11 +58,11 @@ public:
                                QString *errorString);
     ~QGeoCodingManagerEngineMapbox();
 
-    QGeoCodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds) Q_DECL_OVERRIDE;
+    QGeoCodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds) override;
     QGeoCodeReply *geocode(const QString &address, int limit, int offset,
-                           const QGeoShape &bounds) Q_DECL_OVERRIDE;
+                           const QGeoShape &bounds) override;
     QGeoCodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
-                                  const QGeoShape &bounds) Q_DECL_OVERRIDE;
+                                  const QGeoShape &bounds) override;
 
 private slots:
     void onReplyFinished();

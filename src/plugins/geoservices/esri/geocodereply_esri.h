@@ -57,7 +57,7 @@ public:
     };
 
 public:
-    GeoCodeReplyEsri(QNetworkReply *reply, OperationType operationType, QObject *parent = Q_NULLPTR);
+    GeoCodeReplyEsri(QNetworkReply *reply, OperationType operationType, QObject *parent = nullptr);
     ~GeoCodeReplyEsri();
 
     inline OperationType operationType() const;
