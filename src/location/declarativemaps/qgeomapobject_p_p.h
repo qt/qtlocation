@@ -77,7 +77,7 @@ public:
     QGeoMapObject *q = nullptr;
     QPointer<QGeoMap> m_map;
     bool m_componentCompleted = false;
-    bool m_visible = false;
+    bool m_visible = true;
 
 protected:
     QGeoMapObjectPrivate(QGeoMapObject *q);
