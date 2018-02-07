@@ -66,6 +66,7 @@ class QGeoMap;
 class QGeoMapController;
 class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
+class QGeoMapObjectPrivate;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
 {
@@ -89,7 +90,7 @@ protected:
     virtual void addMapItem(QDeclarativeGeoMapItemBase *item);
     virtual void removeMapItem(QDeclarativeGeoMapItemBase *item);
 
-    virtual bool createMapObjectImplementation(QGeoMapObject *obj);
+    virtual QGeoMapObjectPrivate *createMapObjectImplementation(QGeoMapObject *obj);
     virtual QList<QGeoMapObject *> mapObjects() const;
 
     virtual void changeViewportSize(const QSize &size) = 0; // called by QGeoMap::setSize()

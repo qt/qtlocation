@@ -94,7 +94,7 @@ public:
 
     Features features() const;
     QGeoMapObjectPrivate *implementation() const;
-    bool setImplementation(QGeoMapObjectPrivate *pimpl);
+    bool setImplementation(const QExplicitlySharedDataPointer<QGeoMapObjectPrivate> &pimpl);
     bool implemented() const;
 
     bool visible() const;

@@ -101,11 +101,11 @@ QGeoMapObjectPrivate *QGeoMapObject::implementation() const
     return d_ptr.data();
 }
 
-bool QGeoMapObject::setImplementation(QGeoMapObjectPrivate *pimpl)
+bool QGeoMapObject::setImplementation(const QExplicitlySharedDataPointer<QGeoMapObjectPrivate> &pimpl)
 {
     if (d_ptr->type() != pimpl->type())
         return false;
-    d_ptr = QExplicitlySharedDataPointer<QGeoMapObjectPrivate>(pimpl);
+    d_ptr = pimpl;
     return true;
 }
 
