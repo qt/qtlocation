@@ -47,6 +47,7 @@ QT_BEGIN_NAMESPACE
 
 */
 
+static const QQmlIncubator::IncubationMode incubationMode = QQmlIncubator::Asynchronous;
 
 QMapObjectViewPrivate::QMapObjectViewPrivate(QGeoMapObject *q)
     : QGeoMapObjectPrivate(q)
@@ -281,7 +282,7 @@ void QMapObjectView::modelUpdated(const QQmlChangeSet &changeSet, bool reset)
     for (const QQmlChangeSet::Change &c: changeSet.inserts()) {
         for (int idx = c.start(); idx < c.end(); idx++) {
             m_instantiatedMapObjects.insert(idx, nullptr);
-            QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(idx, QQmlIncubator::Asynchronous));
+            QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(idx, incubationMode));
             if (mo) // if not, a createdItem signal will be emitted.
                 addMapObjectToMap(mo, idx);
         }
@@ -320,13 +321,15 @@ void QMapObjectView::removeMapObjectFromMap(int index)
 
 // See QObject *QQmlDelegateModel::object(int index, QQmlIncubator::IncubationMode incubationMode) doc
 // for explanation on when createdItem is emitted.
-void QMapObjectView::createdItem(int index, QObject *object)
+void QMapObjectView::createdItem(int index, QObject * /*object*/)
 {
-    // According to the documentation above, object() should be called again for index.
-    // However, this seem to result in too many references for index, which will prevent destruction with
-    // one single release()
-    // QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(index, QQmlIncubator::Asynchronous));
-    QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(object);
+    if (m_instantiatedMapObjects.at(index))
+        return; // The first call to object() apparently returned a valid item. Don't call it again.
+
+    // If here, according to the documentation above, object() should be called again for index,
+    // or else, it will be destroyed exiting this scope
+    QGeoMapObject *mo = nullptr;
+    mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(index, incubationMode));
     if (mo)
         addMapObjectToMap(mo, index);
 }
