@@ -154,8 +154,7 @@ void QMapRouteObject::setMap(QGeoMap *map)
     if (!map) {
         // Map was set, now it has ben re-set to NULL
         d_ptr = new QMapRouteObjectPrivate(*d);
-        // Destroy old pimpl
-        delete d;
+        // Old pimpl deleted implicitly by QExplicitlySharedDataPointer
     }
 }
 
