@@ -58,7 +58,6 @@ PRIVATE_HEADERS += \
                     qlocationdata_simulator_p.h \
                     qdoublematrix4x4_p.h \
                     qgeopath_p.h \
-                    qgeopolygon_p.h \
                     qgeocoordinateobject_p.h \
                     qclipperutils_p.h
 
