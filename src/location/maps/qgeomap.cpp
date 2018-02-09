@@ -290,6 +290,13 @@ bool QGeoMap::createMapObjectImplementation(QGeoMapObject *obj)
     return false;
 }
 
+/*!
+    To be called in ~QGeoMapObjectPrivate overrides, if needed
+*/
+void QGeoMap::removeMapObject(QGeoMapObject * /*obj*/)
+{
+}
+
 QList<QGeoMapObject *> QGeoMap::mapObjects() const
 {
     Q_D(const QGeoMap);
