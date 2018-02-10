@@ -176,16 +176,28 @@ void QGeoMapObject::setMap(QGeoMap *map)
     if (d_ptr->m_map == map)
         return;
 
-    d_ptr->m_map = map;
     if (map) {
+        bool oldVisible = d_ptr->m_visible;
+        bool oldCmponentCompleted = d_ptr->m_componentCompleted;
         if (!map->createMapObjectImplementation(this))
             qWarning() << "Unsupported type " << type();
         // old implementation gets destroyed if/when d_ptr gets replaced
+        d_ptr->m_componentCompleted = oldCmponentCompleted;
+        d_ptr->setVisible(oldVisible);
     }
+    d_ptr->m_map = map;
 
     const QList<QGeoMapObject *> kids = geoMapObjectChildren();
     for (auto kid : kids)
         kid->setMap(map);
+
+    // Each subclass is in charge to do the equivalent of
+    //    if (!map) {
+    //        // Map was set, now it has ben re-set to NULL
+    //        d_ptr = new QMapCircleObjectPrivateDefault(*d);
+    //        // Old pimpl deleted implicitly by QExplicitlySharedDataPointer
+    //    }
+    // After this method is called.
 }
 
 QGeoMap *QGeoMapObject::map() const
