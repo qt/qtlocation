@@ -238,7 +238,7 @@ void QGeoMap::removeParameter(QGeoMapParameter *param)
 void QGeoMap::clearParameters()
 {
     Q_D(QGeoMap);
-    for (QGeoMapParameter *p : d->m_mapParameters)
+    for (QGeoMapParameter *p : qAsConst(d->m_mapParameters))
         d->removeParameter(p);
     d->m_mapParameters.clear();
 }
