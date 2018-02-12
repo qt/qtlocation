@@ -148,7 +148,7 @@ public:
                 const QGeoMapItemGeometry *fillShape,
                 const QGeoMapItemGeometry *borderShape);
 
-    bool isSubtreeBlocked() const;
+    bool isSubtreeBlocked() const override;
 
 private:
     QSGFlatColorMaterial fill_material_;
