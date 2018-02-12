@@ -2006,9 +2006,10 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 */
 void QDeclarativeGeoMap::clearMapItems()
 {
-    m_map->clearMapItems();
     if (m_mapItems.isEmpty())
         return;
+    if (m_map)
+        m_map->clearMapItems();
     for (auto i : qAsConst(m_mapItems)) {
         if (i) {
             i->setMap(0, 0);
