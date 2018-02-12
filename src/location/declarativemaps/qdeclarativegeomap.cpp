@@ -916,7 +916,8 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
 */
 void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
 {
-    if (m_cameraData.zoomLevel() == zoomLevel || zoomLevel < 0)
+    const qreal oldZoom = m_cameraData.zoomLevel();
+    if (oldZoom == zoomLevel || zoomLevel < 0)
         return;
 
     //small optimization to avoid double setCameraData
@@ -940,7 +941,8 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
 
     if (centerHasChanged)
         emit centerChanged(m_cameraData.center());
-    emit zoomLevelChanged(m_cameraData.zoomLevel());
+    if (oldZoom != m_cameraData.zoomLevel())
+        emit zoomLevelChanged(m_cameraData.zoomLevel());
 }
 
 qreal QDeclarativeGeoMap::zoomLevel() const
