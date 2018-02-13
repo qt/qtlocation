@@ -116,7 +116,7 @@ private Q_SLOTS:
     void baseCameraDataChanged(const QGeoCameraData &camera);
 
 private:
-    QGeoMap *map_;
+    QPointer<QGeoMap> map_;
     QDeclarativeGeoMap *quickMap_;
 
     QSizeF lastSize_;
