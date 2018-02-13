@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPLAYER_P_H
-#define QGEOMAPLAYER_P_H
+#ifndef QMAPOBJECTVIEW_P_H
+#define QMAPOBJECTVIEW_P_H
 
 //
 //  W A R N I N G
@@ -51,6 +51,8 @@
 #include <QtLocation/private/qgeomapobject_p.h>
 #include <QQmlComponent>
 #include <QVector>
+
+QT_BEGIN_NAMESPACE
 
 class QQmlDelegateModel;
 class QMapObjectViewPrivate;
@@ -108,4 +110,6 @@ protected:
     QVector<QPointer<QGeoMapObject>> m_userAddedMapObjects; // A third list containing the objects dynamically added through addMapObject
 };
 
-#endif // QGEOMAPLAYER_P_H
+QT_END_NAMESPACE
+
+#endif // QMAPOBJECTVIEW_P_H

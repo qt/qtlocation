@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPLAYER_P_P_H
-#define QGEOMAPLAYER_P_P_H
+#ifndef QMAPOBJECTVIEW_P_P_H
+#define QMAPOBJECTVIEW_P_P_H
 
 
 //
@@ -53,6 +53,8 @@
 #include <QPointer>
 #include <QVector>
 #include <QQmlComponent>
+
+QT_BEGIN_NAMESPACE
 
 class QQmlDelegateModel;
 class QGeoMap;
@@ -78,4 +80,6 @@ public:
     QGeoMapObjectPrivate *clone() override;
 };
 
-#endif // QGEOMAPLAYER_P_P_H
+QT_END_NAMESPACE
+
+#endif // QMAPOBJECTVIEW_P_P_H
