@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,9 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECTBASE_P_H
-#define QGEOMAPOBJECTBASE_P_H
+#ifndef QMAPOBJECTVIEW_P_P_H
+#define QMAPOBJECTVIEW_P_P_H
+
 
 //
 //  W A R N I N G
@@ -48,45 +49,37 @@
 // We mean it.
 //
 
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-#include <QSharedData>
+#include <QtLocation/private/qgeomapobject_p_p.h>
 #include <QPointer>
-
-#include <QUrl>
-#include "qgeomapobject_p.h"
+#include <QVector>
+#include <QQmlComponent>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapObject;
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapObjectPrivate : public QSharedData
+class QQmlDelegateModel;
+class QGeoMap;
+class Q_LOCATION_PRIVATE_EXPORT QMapObjectViewPrivate : public QGeoMapObjectPrivate
 {
 public:
-    virtual ~QGeoMapObjectPrivate();
+    QMapObjectViewPrivate(QGeoMapObject *q);
+    ~QMapObjectViewPrivate() override;
 
-    bool operator == (const QGeoMapObjectPrivate &other) const;
+    virtual QGeoMapObject::Type type() const override final;
+};
 
-    virtual QByteArray engineName() const;
-    virtual QGeoMapObject::Features features() const;
-    virtual bool equals(const QGeoMapObjectPrivate &other) const;
-    virtual QGeoMapObject::Type type() const;
-    virtual bool visible() const;
-    virtual void setVisible(bool visible);
-    virtual QGeoMapObjectPrivate *clone() = 0; // to allow proper detaching
+class Q_LOCATION_PRIVATE_EXPORT QMapObjectViewPrivateDefault : public QMapObjectViewPrivate
+{
+public:
+    QMapObjectViewPrivateDefault(QGeoMapObject *q);
+    QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other);
+    ~QMapObjectViewPrivateDefault() override;
 
-    QGeoMapObject *q = nullptr;
-    QPointer<QGeoMap> m_map;
-    bool m_componentCompleted = false;
-    bool m_visible = true;
 
-protected:
-    QGeoMapObjectPrivate(QGeoMapObject *q);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
-
-private:
-    QGeoMapObjectPrivate();
+    // QGeoMapObjectPrivate interface
+public:
+    QGeoMapObjectPrivate *clone() override;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPOBJECTBASE_P_H
+#endif // QMAPOBJECTVIEW_P_P_H

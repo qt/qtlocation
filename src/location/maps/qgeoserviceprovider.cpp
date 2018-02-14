@@ -636,6 +636,7 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
     delete routingManager;
     delete mappingManager;
     delete placeManager;
+    delete navigationManager;
 }
 
 void QGeoServiceProviderPrivate::unload()
@@ -651,6 +652,9 @@ void QGeoServiceProviderPrivate::unload()
 
     delete placeManager;
     placeManager = 0;
+
+    delete navigationManager;
+    navigationManager = nullptr;
 
     factory = 0;
     error = QGeoServiceProvider::NoError;

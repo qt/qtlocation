@@ -40,6 +40,7 @@
 #include "qgeomappingmanagerengine_p.h"
 #include "qdeclarativegeomapitembase_p.h"
 #include "qgeomapobject_p.h"
+#include "qgeomapobject_p_p.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -237,7 +238,7 @@ void QGeoMap::removeParameter(QGeoMapParameter *param)
 void QGeoMap::clearParameters()
 {
     Q_D(QGeoMap);
-    for (QGeoMapParameter *p : d->m_mapParameters)
+    for (QGeoMapParameter *p : qAsConst(d->m_mapParameters))
         d->removeParameter(p);
     d->m_mapParameters.clear();
 }
@@ -280,7 +281,11 @@ void QGeoMap::clearMapItems()
 bool QGeoMap::createMapObjectImplementation(QGeoMapObject *obj)
 {
     Q_D(QGeoMap);
-    return d->createMapObjectImplementation(obj);
+    QExplicitlySharedDataPointer<QGeoMapObjectPrivate> pimpl =
+            QExplicitlySharedDataPointer<QGeoMapObjectPrivate>(d->createMapObjectImplementation(obj));
+    if (pimpl.constData())
+        return obj->setImplementation(pimpl);
+    return false;
 }
 
 QList<QGeoMapObject *> QGeoMap::mapObjects() const
@@ -365,10 +370,10 @@ void QGeoMapPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
     Q_UNUSED(item)
 }
 
-bool QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
+QGeoMapObjectPrivate *QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
 {
     Q_UNUSED(obj)
-    return false;
+    return nullptr;
 }
 
 QList<QGeoMapObject *> QGeoMapPrivate::mapObjects() const

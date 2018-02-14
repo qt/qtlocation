@@ -101,11 +101,11 @@ QGeoMapObjectPrivate *QGeoMapObject::implementation() const
     return d_ptr.data();
 }
 
-bool QGeoMapObject::setImplementation(QGeoMapObjectPrivate *pimpl)
+bool QGeoMapObject::setImplementation(const QExplicitlySharedDataPointer<QGeoMapObjectPrivate> &pimpl)
 {
     if (d_ptr->type() != pimpl->type())
         return false;
-    d_ptr = QExplicitlySharedDataPointer<QGeoMapObjectPrivate>(pimpl);
+    d_ptr = pimpl;
     return true;
 }
 
@@ -178,11 +178,9 @@ void QGeoMapObject::setMap(QGeoMap *map)
 
     d_ptr->m_map = map;
     if (map) {
-        QGeoMapObjectPrivate *pimpl = d_ptr.data();
         if (!map->createMapObjectImplementation(this))
             qWarning() << "Unsupported type " << type();
-        else
-            delete pimpl; // delete old implementation
+        // old implementation gets destroyed if/when d_ptr gets replaced
     }
 
     const QList<QGeoMapObject *> kids = geoMapObjectChildren();

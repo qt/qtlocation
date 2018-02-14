@@ -137,7 +137,7 @@ public:
     void removeMapItem(QDeclarativeGeoMapItemBase *item);
     void clearMapItems();
 
-    bool createMapObjectImplementation(QGeoMapObject *obj);
+    virtual bool createMapObjectImplementation(QGeoMapObject *obj);
     QList<QGeoMapObject *> mapObjects() const;
 
 

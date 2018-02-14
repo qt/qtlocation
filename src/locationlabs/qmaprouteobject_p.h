@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECTBASE_P_H
-#define QGEOMAPOBJECTBASE_P_H
+#ifndef QDECLARATIVEMAPROUTEDELEGATE_P_H
+#define QDECLARATIVEMAPROUTEDELEGATE_P_H
 
 //
 //  W A R N I N G
@@ -49,44 +49,42 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-#include <QSharedData>
-#include <QPointer>
+#include <QtQml/qqml.h>
 
-#include <QUrl>
-#include "qgeomapobject_p.h"
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qparameterizableobject_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapObject;
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapObjectPrivate : public QSharedData
+class QDeclarativeGeoRoute;
+class QGeoRoute;
+class QMapRouteObjectPrivate;
+class Q_LOCATION_PRIVATE_EXPORT QMapRouteObject : public QGeoMapObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
+
 public:
-    virtual ~QGeoMapObjectPrivate();
+    explicit QMapRouteObject(QObject *parent = nullptr);
+    ~QMapRouteObject() override;
 
-    bool operator == (const QGeoMapObjectPrivate &other) const;
+    QDeclarativeGeoRoute *route() const;
+    QGeoRoute geoRoute() const;
 
-    virtual QByteArray engineName() const;
-    virtual QGeoMapObject::Features features() const;
-    virtual bool equals(const QGeoMapObjectPrivate &other) const;
-    virtual QGeoMapObject::Type type() const;
-    virtual bool visible() const;
-    virtual void setVisible(bool visible);
-    virtual QGeoMapObjectPrivate *clone() = 0; // to allow proper detaching
+    void setMap(QGeoMap *map) override;
+    void setRoute(QDeclarativeGeoRoute * route);
 
-    QGeoMapObject *q = nullptr;
-    QPointer<QGeoMap> m_map;
-    bool m_componentCompleted = false;
-    bool m_visible = true;
+signals:
+    void routeChanged(QDeclarativeGeoRoute * route);
 
 protected:
-    QGeoMapObjectPrivate(QGeoMapObject *q);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
+    QDeclarativeGeoRoute *m_route = nullptr;
 
-private:
-    QGeoMapObjectPrivate();
+    friend class QMapRouteObjectPrivate;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPOBJECTBASE_P_H
+QML_DECLARE_TYPE(QMapRouteObject)
+
+#endif // QDECLARATIVEMAPROUTEDELEGATE_P_H

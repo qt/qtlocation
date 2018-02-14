@@ -269,6 +269,9 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     delete m_copyrights.data();
     m_copyrights.clear();
 
+    for (auto obj: qAsConst(m_pendingMapObjects))
+        obj->setMap(nullptr); // worst case: going to be setMap(nullptr)'d twice
+
     delete m_map; // map objects get reset here
 }
 

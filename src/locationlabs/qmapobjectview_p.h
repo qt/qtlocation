@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECTBASE_H
-#define QGEOMAPOBJECTBASE_H
+#ifndef QMAPOBJECTVIEW_P_H
+#define QMAPOBJECTVIEW_P_H
 
 //
 //  W A R N I N G
@@ -48,85 +48,68 @@
 // We mean it.
 //
 
-#include <QtLocation/private/qparameterizableobject_p.h>
-#include <QExplicitlySharedDataPointer>
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QQmlComponent>
+#include <QVector>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapObjectPrivate;
-class QGeoMap;
-
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapObject : public QParameterizableObject, public QQmlParserStatus
+class QQmlDelegateModel;
+class QMapObjectViewPrivate;
+class QQmlChangeSet;
+class Q_LOCATION_PRIVATE_EXPORT QMapObjectView : public QGeoMapObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
-    Q_PROPERTY(Type type READ type CONSTANT)
+    Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
+    Q_PROPERTY(QQmlComponent *delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
     Q_INTERFACES(QQmlParserStatus)
-
 public:
-    enum Feature {
-        NoFeature = 0x0,
-        Clickable = 0x01,
-        Draggable = 0x02,
-        AllFeatures = 0xFFFFFFFF
-    };
+    QMapObjectView(QObject *parent = nullptr);
+    ~QMapObjectView() override;
 
-    enum Type {
-        InvalidType = 0,
-        ViewType = 1,
-        RouteType = 2,
-        RectangleType = 3,
-        CircleType = 4,
-        PolylineType = 5,
-        PolygonType = 6,
-        IconType = 7,
-        UserType = 0x0100
-    };
-
-    Q_ENUM(Type)
-    Q_DECLARE_FLAGS(Features, Feature)
-
-    virtual ~QGeoMapObject();
-
-    bool operator == (const QGeoMapObject &other) const;
-    bool operator != (const QGeoMapObject &other) const;
-
-    Features features() const;
-    QGeoMapObjectPrivate *implementation() const;
-    bool setImplementation(const QExplicitlySharedDataPointer<QGeoMapObjectPrivate> &pimpl);
-    bool implemented() const;
-
-    bool visible() const;
-    void setVisible(bool visible);
-
-    Type type() const;
-
-    virtual QList<QGeoMapObject*> geoMapObjectChildren() const;
-    virtual void setMap(QGeoMap *map);
-    QGeoMap *map() const;
-
-Q_SIGNALS:
-    void visibleChanged();
-    void selected();
-    void completed();
-
-protected:
-    QGeoMapObject(const QExplicitlySharedDataPointer<QGeoMapObjectPrivate> &dd, QObject *parent = nullptr);
-    QExplicitlySharedDataPointer<QGeoMapObjectPrivate> d_ptr;
-
-    void setChildrenVisibility();
+    // QGeoMapObject interface
+    QList<QGeoMapObject *> geoMapObjectChildren() const override;
+    void setMap(QGeoMap *map) override;
 
     // QQmlParserStatus interface
     void classBegin() override;
     void componentComplete() override;
-    void completeComponent();
 
-    friend class QGeoMap;
-    friend class QDeclarativeGeoMap;
-    friend class QGeoMapLayer;
-    friend class QDeclarativeNavigator;
+    QVariant model() const;
+    void setModel(QVariant model);
+
+    QQmlComponent *delegate() const;
+    void setDelegate(QQmlComponent * delegate);
+
+public Q_SLOTS:
+    // The dynamic API that matches Map.add/remove MapItem
+    void addMapObject(QGeoMapObject *object);
+    void removeMapObject(QGeoMapObject *object);
+
+signals:
+    void modelChanged(QVariant model);
+    void delegateChanged(QQmlComponent * delegate);
+
+protected Q_SLOTS:
+    void destroyingItem(QObject *object);
+    void initItem(int index, QObject *object);
+    void createdItem(int index, QObject *object);
+    void modelUpdated(const QQmlChangeSet &changeSet, bool reset);
+
+protected:
+    void addMapObjectToMap(QGeoMapObject *object, int index);
+    void removeMapObjectFromMap(int index);
+    void flushDelegateModel();
+    void flushUserAddedMapObjects();
+
+    QVariant m_model;
+    QQmlComponent *m_delegate = nullptr;
+    QQmlDelegateModel *m_delegateModel = nullptr;
+    QVector<QPointer<QGeoMapObject>> m_instantiatedMapObjects;
+    QVector<QPointer<QGeoMapObject>> m_pendingMapObjects;
+    QVector<QPointer<QGeoMapObject>> m_userAddedMapObjects; // A third list containing the objects dynamically added through addMapObject
 };
+
 QT_END_NAMESPACE
 
-#endif // QGEOMAPOBJECTBASE_H
+#endif // QMAPOBJECTVIEW_P_H
