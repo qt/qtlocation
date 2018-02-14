@@ -122,7 +122,9 @@ bool QGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
 
 bool QGeoMap::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint)
 {
+    Q_D(QGeoMap);
     QGeoCoordinate newCenter = geoProjection().anchorCoordinateToPoint(coordinate, anchorPoint);
+    newCenter.setLatitude(qBound(-d->m_maximumViewportLatitude, newCenter.latitude(), d->m_maximumViewportLatitude));
     QGeoCameraData data = cameraData();
     if (data.center() != newCenter) {
         data.setCenter(newCenter);
@@ -175,7 +177,7 @@ double QGeoMap::minimumZoom() const
 double QGeoMap::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const
 {
     Q_D(const QGeoMap);
-    return d->m_geoProjection->maximumCenterLatitudeAtZoom(cameraData);
+    return d->maximumCenterLatitudeAtZoom(cameraData);
 }
 
 double QGeoMap::mapWidth() const
@@ -412,6 +414,12 @@ void QGeoMapPrivate::setCopyrightVisible(bool visible)
 bool QGeoMapPrivate::copyrightVisible() const
 {
     return m_copyrightVisible;
+}
+
+double QGeoMapPrivate::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const
+{
+    m_maximumViewportLatitude = m_geoProjection->maximumCenterLatitudeAtZoom(cameraData);
+    return m_maximumViewportLatitude;
 }
 
 QT_END_NAMESPACE
