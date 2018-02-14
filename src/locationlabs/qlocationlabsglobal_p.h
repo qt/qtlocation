@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -33,54 +33,26 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QLOCATIONLABSGLOBAL_P_H
+#define QLOCATIONLABSGLOBAL_P_H
 
-#ifndef QMAPOBJECTVIEW_P_P_H
-#define QMAPOBJECTVIEW_P_P_H
-
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtLocation/private/qgeomapobject_p_p.h>
-#include <QPointer>
-#include <QVector>
-#include <QQmlComponent>
+#include <QtCore/qglobal.h>
 
 QT_BEGIN_NAMESPACE
 
-class QQmlDelegateModel;
-class QGeoMap;
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectViewPrivate : public QGeoMapObjectPrivate
-{
-public:
-    QMapObjectViewPrivate(QGeoMapObject *q);
-    ~QMapObjectViewPrivate() override;
+#ifndef QT_STATIC
+#    if defined(QT_BUILD_LOCATIONLABS_LIB)
+#      define Q_LOCATIONLABS_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_LOCATIONLABS_EXPORT Q_DECL_IMPORT
+#    endif
+#else
+#    define Q_LOCATIONLABS_EXPORT
+#endif
 
-    virtual QGeoMapObject::Type type() const override final;
-};
-
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectViewPrivateDefault : public QMapObjectViewPrivate
-{
-public:
-    QMapObjectViewPrivateDefault(QGeoMapObject *q);
-    QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other);
-    ~QMapObjectViewPrivateDefault() override;
-
-
-    // QGeoMapObjectPrivate interface
-public:
-    QGeoMapObjectPrivate *clone() override;
-};
+#define Q_LOCATIONLABS_PRIVATE_EXPORT Q_LOCATIONLABS_EXPORT
 
 QT_END_NAMESPACE
 
-#endif // QMAPOBJECTVIEW_P_P_H
+#endif // QLOCATIONLABSGLOBAL_P_H
+

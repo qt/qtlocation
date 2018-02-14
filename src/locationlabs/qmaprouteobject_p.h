@@ -48,7 +48,7 @@
 // We mean it.
 //
 
-#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
 #include <QtQml/qqml.h>
 
 #include <QtLocation/private/qgeomapobject_p.h>
@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 class QDeclarativeGeoRoute;
 class QGeoRoute;
 class QMapRouteObjectPrivate;
-class Q_LOCATION_PRIVATE_EXPORT QMapRouteObject : public QGeoMapObject
+class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObject : public QGeoMapObject
 {
     Q_OBJECT
     Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)

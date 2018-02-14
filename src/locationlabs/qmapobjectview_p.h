@@ -48,6 +48,7 @@
 // We mean it.
 //
 
+#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p.h>
 #include <QQmlComponent>
 #include <QVector>
@@ -57,7 +58,7 @@ QT_BEGIN_NAMESPACE
 class QQmlDelegateModel;
 class QMapObjectViewPrivate;
 class QQmlChangeSet;
-class Q_LOCATION_PRIVATE_EXPORT QMapObjectView : public QGeoMapObject
+class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectView : public QGeoMapObject
 {
     Q_OBJECT
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
