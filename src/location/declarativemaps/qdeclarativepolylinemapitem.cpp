@@ -410,6 +410,12 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     this->translate( -1 * sourceBounds_.topLeft());
 }
 
+void QGeoMapPolylineGeometry::clearSource()
+{
+    srcPoints_.clear();
+    srcPointTypes_.clear();
+}
+
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), line_(this), dirtyMaterial_(true), updatingGeometry_(false)
 {

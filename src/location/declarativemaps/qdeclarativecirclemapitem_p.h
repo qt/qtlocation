@@ -58,7 +58,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
 {
 public:
     QGeoMapCircleGeometry();
@@ -99,8 +99,10 @@ public:
     static bool crossEarthPole(const QGeoCoordinate &center, qreal distance);
     static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
                                    qreal distance, int steps, QGeoCoordinate &leftBound);
-    bool preserveCircleGeometry(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
-                                qreal distance);
+    static bool preserveCircleGeometry(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
+                                qreal distance, const QGeoProjectionWebMercator &p);
+    static void updateCirclePathForRendering(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
+                                      qreal distance, const QGeoProjectionWebMercator &p);
 
 Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &center);
@@ -117,8 +119,6 @@ protected Q_SLOTS:
 
 private:
     void updateCirclePath();
-    void updateCirclePathForRendering(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
-                                      qreal distance);
 
 private:
     QGeoCircle circle_;

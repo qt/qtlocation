@@ -34,60 +34,66 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECTBASE_P_H
-#define QGEOMAPOBJECTBASE_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-#include <QSharedData>
-#include <QPointer>
-
-#include <QUrl>
-#include "qgeomapobject_p.h"
+#include "qmaprouteobjectqsg_p_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapObject;
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapObjectPrivate : public QSharedData
+QMapRouteObjectPrivateQSG::QMapRouteObjectPrivateQSG(QGeoMapObject *q)
+    : QMapRouteObjectPrivate(q)
 {
-public:
-    virtual ~QGeoMapObjectPrivate();
+    QScopedPointer<QMapPolylineObjectPrivateQSG> poly(new QMapPolylineObjectPrivateQSG(q));
+    m_polyline.swap(poly);
+    m_polyline->m_componentCompleted = true;
+}
 
-    bool operator == (const QGeoMapObjectPrivate &other) const;
+QMapRouteObjectPrivateQSG::QMapRouteObjectPrivateQSG(const QMapRouteObjectPrivate &other)
+    : QMapRouteObjectPrivate(other)
+{
+    QScopedPointer<QMapPolylineObjectPrivateQSG> poly(new QMapPolylineObjectPrivateQSG(other.q));
+    m_polyline.swap(poly);
+    m_polyline->m_componentCompleted = true;
+    setRoute(other.declarativeGeoRoute());
+}
 
-    virtual QByteArray engineName() const;
-    virtual QGeoMapObject::Features features() const;
-    virtual bool equals(const QGeoMapObjectPrivate &other) const;
-    virtual QGeoMapObject::Type type() const;
-    virtual bool visible() const;
-    virtual void setVisible(bool visible);
-    virtual void setMap(QGeoMap *map);
-    virtual QGeoMapObjectPrivate *clone() = 0; // to allow proper detaching
+QMapRouteObjectPrivateQSG::~QMapRouteObjectPrivateQSG()
+{
 
-    QGeoMapObject *q = nullptr;
-    QPointer<QGeoMap> m_map;
-    bool m_componentCompleted = false;
-    bool m_visible = true;
+}
 
-protected:
-    QGeoMapObjectPrivate(QGeoMapObject *q);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
+void QMapRouteObjectPrivateQSG::updateGeometry()
+{
+    m_polyline->updateGeometry();
+}
 
-private:
-    QGeoMapObjectPrivate();
-};
+QSGNode *QMapRouteObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow * window)
+{
+    return m_polyline->updateMapObjectNode(oldNode, root, window);
+}
+
+void QMapRouteObjectPrivateQSG::setRoute(const QDeclarativeGeoRoute *route)
+{
+    const QList<QGeoCoordinate> &path = route->route().path();
+    m_polyline->setColor(QColor("deepskyblue")); // ToDo: support MapParameters for this
+    m_polyline->setWidth(4);
+    m_polyline->setPath(path); // SGNodeChanged emitted by m_polyline
+}
+
+QGeoMapObjectPrivate *QMapRouteObjectPrivateQSG::clone()
+{
+    return new QMapRouteObjectPrivateQSG(static_cast<QMapRouteObjectPrivate &>(*this));
+}
+
+void QMapRouteObjectPrivateQSG::setMap(QGeoMap *map)
+{
+    QGeoMapObjectPrivate::setMap(map);
+    m_polyline->setMap(map);
+}
+
+
+void QMapRouteObjectPrivateQSG::setVisible(bool visible)
+{
+    m_visible = visible;
+    m_polyline->setVisible(visible);
+}
 
 QT_END_NAMESPACE
-
-#endif // QGEOMAPOBJECTBASE_P_H

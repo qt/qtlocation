@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
  \a geoMap and makes use of the functionality provided by \a engine.
  */
 QGeoTiledMapNokia::QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent /*= 0*/) :
-    QGeoTiledMap(engine, parent),
+    Map(engine, parent),
     m_logo(":/nokia/logo.png"), // HERE logo image
     m_engine(engine)
 {}

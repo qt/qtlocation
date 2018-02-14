@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,102 +34,60 @@
 **
 ****************************************************************************/
 
-#include "qgeomapitemsoverlay.h"
-#include "qgeomappingmanagerengineitemsoverlay.h"
-#include <QtLocation/private/qgeomap_p_p.h>
-#include <QtQuick/qsgnode.h>
-#include <QtQuick/qsgrectanglenode.h>
-#include <QtQuick/qquickwindow.h>
-
-#ifdef LOCATIONLABS
+#include "qgeotiledmaplabs_p.h"
+#include <QtLocation/private/qgeotiledmap_p_p.h>
+#include <QtLocation/private/qgeomapobject_p.h>
 #include <QtLocation/private/qmappolylineobjectqsg_p_p.h>
 #include <QtLocation/private/qmappolygonobjectqsg_p_p.h>
 #include <QtLocation/private/qmapcircleobjectqsg_p_p.h>
 #include <QtLocation/private/qmaprouteobjectqsg_p_p.h>
 #include <QtLocation/private/qmapiconobjectqsg_p_p.h>
+
+QT_BEGIN_NAMESPACE
+
 struct MapObject {
     MapObject(QPointer<QGeoMapObject> &o, QQSGMapObject *sgo)
         : object(o), sgObject(sgo) {}
     QPointer<QGeoMapObject> object;
     QQSGMapObject *sgObject = nullptr;
 };
-#endif
 
-QT_BEGIN_NAMESPACE
-
-class QGeoMapItemsOverlayPrivate : public QGeoMapPrivate
+class QGeoTiledMapLabsPrivate : public QGeoTiledMapPrivate
 {
-    Q_DECLARE_PUBLIC(QGeoMapItemsOverlay)
+    Q_DECLARE_PUBLIC(QGeoTiledMapLabs)
 public:
-    QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine);
-    virtual ~QGeoMapItemsOverlayPrivate();
+    QGeoTiledMapLabsPrivate(QGeoTiledMappingManagerEngine *engine);
+    virtual ~QGeoTiledMapLabsPrivate();
 
-#ifdef LOCATIONLABS
     QGeoMapObjectPrivate *createMapObjectImplementation(QGeoMapObject *obj) override;
     virtual QList<QGeoMapObject *> mapObjects() const override;
     static int findMapObject(QGeoMapObject *o, const QList<MapObject> &list);
     void removeMapObject(QGeoMapObject *obj);
+
     void updateMapObjects(QSGNode *root, QQuickWindow *window);
-
-    QList<MapObject> m_mapObjects;
-    QList<MapObject> m_pendingMapObjects;
-#endif
-
     void updateObjectsGeometry();
+
 protected:
     void changeViewportSize(const QSize &size) override;
     void changeCameraData(const QGeoCameraData &oldCameraData) override;
     void changeActiveMapType(const QGeoMapType mapType) override;
+
+    QList<MapObject> m_mapObjects;
+    QList<MapObject> m_pendingMapObjects;
 };
 
-QGeoMapItemsOverlay::QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent)
-    : QGeoMap(*(new QGeoMapItemsOverlayPrivate(engine)), parent)
+QGeoTiledMapLabsPrivate::QGeoTiledMapLabsPrivate(QGeoTiledMappingManagerEngine *engine)
+    : QGeoTiledMapPrivate(engine)
 {
 
 }
 
-QGeoMapItemsOverlay::~QGeoMapItemsOverlay()
+QGeoTiledMapLabsPrivate::~QGeoTiledMapLabsPrivate()
 {
+
 }
 
-QGeoMap::Capabilities QGeoMapItemsOverlay::capabilities() const
-{
-    return Capabilities(SupportsVisibleRegion
-                        | SupportsSetBearing
-                        | SupportsAnchoringCoordinate);
-}
-
-QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *window)
-{
-#ifndef LOCATIONLABS
-    Q_UNUSED(window)
-    return node;
-#else
-    Q_D(QGeoMapItemsOverlay);
-
-    QSGRectangleNode *mapRoot = static_cast<QSGRectangleNode *>(node);
-    if (!mapRoot)
-        mapRoot = window->createRectangleNode();
-
-    mapRoot->setRect(QRect(0, 0, viewportWidth(), viewportHeight()));
-    mapRoot->setColor(QColor(0,0,0,0));
-
-    d->updateMapObjects(mapRoot, window);
-    return mapRoot;
-#endif
-}
-
-QGeoMapItemsOverlayPrivate::QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine)
-    : QGeoMapPrivate(engine, new QGeoProjectionWebMercator)
-{
-}
-
-QGeoMapItemsOverlayPrivate::~QGeoMapItemsOverlayPrivate()
-{
-}
-
-#ifdef LOCATIONLABS
-QGeoMapObjectPrivate *QGeoMapItemsOverlayPrivate::createMapObjectImplementation(QGeoMapObject *obj)
+QGeoMapObjectPrivate *QGeoTiledMapLabsPrivate::createMapObjectImplementation(QGeoMapObject *obj)
 {
     switch (obj->type()) {
         case QGeoMapObject::PolylineType: {
@@ -184,12 +142,12 @@ QGeoMapObjectPrivate *QGeoMapItemsOverlayPrivate::createMapObjectImplementation(
     return nullptr;
 }
 
-QList<QGeoMapObject *> QGeoMapItemsOverlayPrivate::mapObjects() const
+QList<QGeoMapObject *> QGeoTiledMapLabsPrivate::mapObjects() const
 {
     return QList<QGeoMapObject *>();
 }
 
-int QGeoMapItemsOverlayPrivate::findMapObject(QGeoMapObject *o, const QList<MapObject> &list)
+int QGeoTiledMapLabsPrivate::findMapObject(QGeoMapObject *o, const QList<MapObject> &list)
 {
     for (int i = 0; i < list.size(); ++i)
     {
@@ -199,7 +157,7 @@ int QGeoMapItemsOverlayPrivate::findMapObject(QGeoMapObject *o, const QList<MapO
     return -1;
 }
 
-void QGeoMapItemsOverlayPrivate::removeMapObject(QGeoMapObject *obj)
+void QGeoTiledMapLabsPrivate::removeMapObject(QGeoMapObject *obj)
 {
     int idx = findMapObject(obj, m_mapObjects);
     if (idx >= 0) {
@@ -214,7 +172,7 @@ void QGeoMapItemsOverlayPrivate::removeMapObject(QGeoMapObject *obj)
     }
 }
 
-void QGeoMapItemsOverlayPrivate::updateMapObjects(QSGNode *root, QQuickWindow *window)
+void QGeoTiledMapLabsPrivate::updateMapObjects(QSGNode *root, QQuickWindow *window)
 {
     for (int i = 0; i < m_mapObjects.size(); ++i) {
         // already added as node
@@ -246,12 +204,10 @@ void QGeoMapItemsOverlayPrivate::updateMapObjects(QSGNode *root, QQuickWindow *w
     for (int i: qAsConst(toRemove))
         m_pendingMapObjects.removeAt(i);
 }
-#endif
 
-void QGeoMapItemsOverlayPrivate::updateObjectsGeometry()
+void QGeoTiledMapLabsPrivate::updateObjectsGeometry()
 {
-#ifdef LOCATIONLABS
-    Q_Q(QGeoMapItemsOverlay);
+    Q_Q(QGeoTiledMapLabs);
     for (int i = 0; i < m_mapObjects.size(); ++i) {
         // already added as node
         if (!m_mapObjects.at(i).object) {
@@ -263,26 +219,77 @@ void QGeoMapItemsOverlayPrivate::updateObjectsGeometry()
         sgo->updateGeometry();
     }
     emit q->sgNodeChanged();
-#endif
 }
 
-void QGeoMapItemsOverlayPrivate::changeViewportSize(const QSize &/*size*/)
+void QGeoTiledMapLabsPrivate::changeViewportSize(const QSize &size)
 {
     updateObjectsGeometry();
+    QGeoTiledMapPrivate::changeViewportSize(size);
 }
 
-void QGeoMapItemsOverlayPrivate::changeCameraData(const QGeoCameraData &/*oldCameraData*/)
+void QGeoTiledMapLabsPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
 {
     updateObjectsGeometry();
+    QGeoTiledMapPrivate::changeCameraData(oldCameraData);
 }
 
-void QGeoMapItemsOverlayPrivate::changeActiveMapType(const QGeoMapType /*mapType*/)
+void QGeoTiledMapLabsPrivate::changeActiveMapType(const QGeoMapType mapType)
 {
     updateObjectsGeometry();
+    QGeoTiledMapPrivate::changeActiveMapType(mapType);
+}
+
+
+/*
+    QGeoTiledMapLabs
+*/
+
+
+
+QGeoTiledMapLabs::QGeoTiledMapLabs(QGeoTiledMappingManagerEngine *engine, QObject *parent)
+    : QGeoTiledMap(*new QGeoTiledMapLabsPrivate(engine), engine, parent)
+{
+
+}
+
+QGeoTiledMapLabs::~QGeoTiledMapLabs()
+{
+
+}
+
+bool QGeoTiledMapLabs::createMapObjectImplementation(QGeoMapObject *obj)
+{
+    Q_D(QGeoTiledMapLabs);
+    QExplicitlySharedDataPointer<QGeoMapObjectPrivate> pimpl =
+            QExplicitlySharedDataPointer<QGeoMapObjectPrivate>(d->createMapObjectImplementation(obj));
+    if (pimpl.constData()) {
+        bool res = obj->setImplementation(pimpl);
+        if (res)
+            emit sgNodeChanged();
+        return res;
+    }
+    return false;
+}
+
+QSGNode *QGeoTiledMapLabs::updateSceneGraph(QSGNode *node, QQuickWindow *window)
+{
+    Q_D(QGeoTiledMapLabs);
+    QSGNode *root = QGeoTiledMap::updateSceneGraph(node, window);
+    d->updateMapObjects(root, window);
+    return root;
+}
+
+void QGeoTiledMapLabs::removeMapObject(QGeoMapObject *obj)
+{
+    Q_D(QGeoTiledMapLabs);
+    d->removeMapObject(obj);
+}
+
+QGeoTiledMapLabs::QGeoTiledMapLabs(QGeoTiledMapLabsPrivate &dd, QGeoTiledMappingManagerEngine *engine, QObject *parent)
+    : QGeoTiledMap(dd, engine, parent)
+{
+
 }
 
 QT_END_NAMESPACE
-
-
-
 

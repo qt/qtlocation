@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,34 +34,28 @@
 **
 ****************************************************************************/
 
+#ifndef QQSGMAPOBJECT_H
+#define QQSGMAPOBJECT_H
 
-#ifndef QGEOMAPITEMSOVERLAY_H
-#define QGEOMAPITEMSOVERLAY_H
-
-#include <QtLocation/private/qgeomap_p.h>
-#include <QtLocation/private/qgeoprojection_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtQuick/QSGOpacityNode>
+#include <QtLocation/private/qgeomapobject_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMappingManagerEngineItemsOverlay;
-class QGeoMapItemsOverlayPrivate;
-class QGeoMapItemsOverlay: public QGeoMap
+class QQuickWindow;
+class Q_LOCATION_PRIVATE_EXPORT QQSGMapObject
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QGeoMapItemsOverlay)
 public:
-    QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent);
-    virtual ~QGeoMapItemsOverlay();
+    QQSGMapObject();
+    virtual ~QQSGMapObject();
 
-    QGeoMap::Capabilities capabilities() const override;
+    virtual QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window);
+    virtual void updateGeometry();
 
-protected:
-    QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) override;
-
-private:
-    Q_DISABLE_COPY(QGeoMapItemsOverlay)
+    QSGNode *node = nullptr;
 };
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QQSGMAPOBJECT_H

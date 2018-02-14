@@ -185,7 +185,7 @@ void QGeoMapObject::setMap(QGeoMap *map)
         d_ptr->m_componentCompleted = oldCmponentCompleted;
         d_ptr->setVisible(oldVisible);
     }
-    d_ptr->m_map = map;
+    d_ptr->setMap(map);
 
     const QList<QGeoMapObject *> kids = geoMapObjectChildren();
     for (auto kid : kids)
@@ -267,6 +267,11 @@ bool QGeoMapObjectPrivate::visible() const
 void QGeoMapObjectPrivate::setVisible(bool visible)
 {
     m_visible = visible;
+}
+
+void QGeoMapObjectPrivate::setMap(QGeoMap *map)
+{
+    m_map = map;
 }
 
 QT_END_NAMESPACE

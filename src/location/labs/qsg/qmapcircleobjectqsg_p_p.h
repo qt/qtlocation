@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECTBASE_P_H
-#define QGEOMAPOBJECTBASE_P_H
+#ifndef QMAPCIRCLEOBJECTQSG_P_H
+#define QMAPCIRCLEOBJECTQSG_P_H
 
 //
 //  W A R N I N G
@@ -49,45 +49,50 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-#include <QSharedData>
-#include <QPointer>
-
-#include <QUrl>
-#include "qgeomapobject_p.h"
+#include <QtLocation/private/qgeomapobject_p_p.h>
+#include <QtLocation/private/qdeclarativecirclemapitem_p.h>
+#include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
+#include <QtLocation/private/qmapcircleobject_p.h>
+#include <QtLocation/private/qmapcircleobject_p_p.h>
+#include <QtLocation/private/qqsgmapobject_p.h>
+#include <QtCore/qscopedvaluerollback.h>
+#include <QGeoCoordinate>
+#include <QColor>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapObject;
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapObjectPrivate : public QSharedData
+class Q_LOCATION_PRIVATE_EXPORT QMapCircleObjectPrivateQSG : public QMapCircleObjectPrivateDefault, public QQSGMapObject
 {
 public:
-    virtual ~QGeoMapObjectPrivate();
+    QMapCircleObjectPrivateQSG(QGeoMapObject *q);
+    QMapCircleObjectPrivateQSG(const QMapCircleObjectPrivate &other);
+    ~QMapCircleObjectPrivateQSG() override;
 
-    bool operator == (const QGeoMapObjectPrivate &other) const;
+    void updateCirclePath();
 
-    virtual QByteArray engineName() const;
-    virtual QGeoMapObject::Features features() const;
-    virtual bool equals(const QGeoMapObjectPrivate &other) const;
-    virtual QGeoMapObject::Type type() const;
-    virtual bool visible() const;
-    virtual void setVisible(bool visible);
-    virtual void setMap(QGeoMap *map);
-    virtual QGeoMapObjectPrivate *clone() = 0; // to allow proper detaching
+    // QQSGMapObject
+    void updateGeometry() override;
+    QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window) override;
 
-    QGeoMapObject *q = nullptr;
-    QPointer<QGeoMap> m_map;
-    bool m_componentCompleted = false;
-    bool m_visible = true;
+    // QGeoMapCirclePrivate interface
+    void setCenter(const QGeoCoordinate &center) override;
+    void setRadius(qreal radius) override;
+    void setColor(const QColor &color) override;
+    void setBorderColor(const QColor &color) override;
+    void setBorderWidth(qreal width) override;
 
-protected:
-    QGeoMapObjectPrivate(QGeoMapObject *q);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
+    // QGeoMapObjectPrivate
+    QGeoMapObjectPrivate *clone() override;
 
-private:
-    QGeoMapObjectPrivate();
+public:
+    // Data Members
+    QList<QDoubleVector2D> m_circlePath;
+    QGeoCoordinate m_leftBound;
+    QGeoMapCircleGeometry m_geometry;
+    QGeoMapPolylineGeometry m_borderGeometry;
+    bool m_updatingGeometry = false;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPOBJECTBASE_P_H
+#endif // QMAPCIRCLEOBJECT_P_P_H

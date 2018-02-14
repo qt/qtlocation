@@ -73,6 +73,7 @@ public:
 
     Q_DECL_CONSTEXPR inline double manhattanLength() const;
     inline bool isNull() const;
+    inline bool isFinite() const;
 
     Q_DECL_CONSTEXPR inline double x() const;
     Q_DECL_CONSTEXPR inline double y() const;
@@ -134,6 +135,11 @@ Q_DECL_CONSTEXPR inline double QDoubleVector2D::manhattanLength() const
 inline bool QDoubleVector2D::isNull() const
 {
     return qIsNull(xp) && qIsNull(yp);
+}
+
+inline bool QDoubleVector2D::isFinite() const
+{
+    return qIsFinite(xp) && qIsFinite(yp);
 }
 
 Q_DECL_CONSTEXPR inline double QDoubleVector2D::x() const { return xp; }

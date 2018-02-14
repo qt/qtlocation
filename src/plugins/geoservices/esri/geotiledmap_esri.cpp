@@ -45,7 +45,7 @@
 QT_BEGIN_NAMESPACE
 
 GeoTiledMapEsri::GeoTiledMapEsri(GeoTiledMappingManagerEngineEsri *engine, QObject *parent) :
-    QGeoTiledMap(engine, parent), m_engine(engine), m_mapId(-1)
+    Map(engine, parent), m_engine(engine), m_mapId(-1)
 {
 }
 

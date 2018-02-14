@@ -97,7 +97,7 @@ QMapbox::Feature featureFromMapCircle(QDeclarativeCircleMapItem *mapItem)
     for (const QGeoCoordinate &c : qAsConst(path))
         pathProjected << p.geoToMapProjection(c);
     if (QDeclarativeCircleMapItem::crossEarthPole(mapItem->center(), mapItem->radius()))
-        mapItem->preserveCircleGeometry(pathProjected, mapItem->center(), mapItem->radius());
+        mapItem->preserveCircleGeometry(pathProjected, mapItem->center(), mapItem->radius(), p);
     path.clear();
     for (const QDoubleVector2D &c : qAsConst(pathProjected))
         path << p.mapProjectionToGeo(c);

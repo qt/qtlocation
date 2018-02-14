@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
 
 class MapPolygonNode;
 
-class QGeoMapPolygonGeometry : public QGeoMapItemGeometry
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolygonGeometry : public QGeoMapItemGeometry
 {
 public:
     QGeoMapPolygonGeometry();
@@ -137,7 +137,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class MapPolygonNode : public QSGGeometryNode
+class Q_LOCATION_PRIVATE_EXPORT MapPolygonNode : public QSGGeometryNode
 {
 
 public:

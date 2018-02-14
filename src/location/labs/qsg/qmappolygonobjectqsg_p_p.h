@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECTBASE_P_H
-#define QGEOMAPOBJECTBASE_P_H
+#ifndef QMAPPOLYGONOBJECTQSG_P_P_H
+#define QMAPPOLYGONOBJECTQSG_P_P_H
 
 //
 //  W A R N I N G
@@ -49,45 +49,52 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-#include <QSharedData>
-#include <QPointer>
-
-#include <QUrl>
-#include "qgeomapobject_p.h"
+#include <QtLocation/private/qmappolygonobject_p.h>
+#include <QtLocation/private/qmappolygonobject_p_p.h>
+#include <QtLocation/private/qqsgmapobject_p.h>
+#include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
+#include <QtCore/qscopedvaluerollback.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapObject;
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapObjectPrivate : public QSharedData
+class Q_LOCATION_PRIVATE_EXPORT QMapPolygonObjectPrivateQSG : public QMapPolygonObjectPrivate, public QQSGMapObject
 {
 public:
-    virtual ~QGeoMapObjectPrivate();
+    QMapPolygonObjectPrivateQSG(QGeoMapObject *q);
+    QMapPolygonObjectPrivateQSG(const QMapPolygonObjectPrivate &other);
+    ~QMapPolygonObjectPrivateQSG() override;
 
-    bool operator == (const QGeoMapObjectPrivate &other) const;
+    QList<QDoubleVector2D> projectPath();
 
-    virtual QByteArray engineName() const;
-    virtual QGeoMapObject::Features features() const;
-    virtual bool equals(const QGeoMapObjectPrivate &other) const;
-    virtual QGeoMapObject::Type type() const;
-    virtual bool visible() const;
-    virtual void setVisible(bool visible);
-    virtual void setMap(QGeoMap *map);
-    virtual QGeoMapObjectPrivate *clone() = 0; // to allow proper detaching
+    // QQSGMapObject
+    void updateGeometry() override;
+    QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window) override;
 
-    QGeoMapObject *q = nullptr;
-    QPointer<QGeoMap> m_map;
-    bool m_componentCompleted = false;
-    bool m_visible = true;
+    // QGeoMapPolylinePrivate interface
+    QList<QGeoCoordinate> path() const override;
+    QColor fillColor() const override;
+    QColor borderColor() const override;
+    qreal borderWidth() const override;
 
-protected:
-    QGeoMapObjectPrivate(QGeoMapObject *q);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
+    void setPath(const QList<QGeoCoordinate> &path) override;
+    void setFillColor(const QColor &color) override;
+    void setBorderColor(const QColor &color) override;
+    void setBorderWidth(qreal width) override;
 
-private:
-    QGeoMapObjectPrivate();
+    // QGeoMapObjectPrivate
+    QGeoMapObjectPrivate *clone() override;
+
+    // Data Members
+    QGeoMapPolygonGeometry m_geometry;
+    QGeoMapPolylineGeometry m_borderGeometry;
+    QGeoPath m_geoPath;
+
+    QColor m_fillColor;
+    QColor m_borderColor;
+    qreal m_borderWidth = 0;
+    bool m_updatingGeometry = false;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPOBJECTBASE_P_H
+#endif // QMAPPOLYGONOBJECTQSG_P_P_H

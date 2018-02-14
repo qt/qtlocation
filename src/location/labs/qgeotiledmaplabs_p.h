@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,34 +34,57 @@
 **
 ****************************************************************************/
 
+#ifndef QGEOTILEDMAPLABS_P_H
+#define QGEOTILEDMAPLABS_P_H
 
-#ifndef QGEOMAPITEMSOVERLAY_H
-#define QGEOMAPITEMSOVERLAY_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QtLocation/private/qgeomap_p.h>
-#include <QtLocation/private/qgeoprojection_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtQml/qqml.h>
+#include <QPointer>
+#include <QtLocation/private/qgeotiledmap_p.h>
+#include <QtQuick/qsgsimplerectnode.h>
+#include <QtLocation/private/qqsgmapobject_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMappingManagerEngineItemsOverlay;
-class QGeoMapItemsOverlayPrivate;
-class QGeoMapItemsOverlay: public QGeoMap
+class QDeclarativeGeoServiceProvider;
+class QDeclarativeGeoMap;
+class QMapRouteObject;
+class QNavigationManager;
+class QGeoTiledMapLabsPrivate;
+class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapLabs : public QGeoTiledMap
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGeoMapItemsOverlay)
+    Q_DECLARE_PRIVATE(QGeoTiledMapLabs)
 public:
-    QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent);
-    virtual ~QGeoMapItemsOverlay();
+    QGeoTiledMapLabs(QGeoTiledMappingManagerEngine *engine, QObject *parent);
+    virtual ~QGeoTiledMapLabs();
 
-    QGeoMap::Capabilities capabilities() const override;
+    bool createMapObjectImplementation(QGeoMapObject *obj) override;
 
 protected:
     QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) override;
+    void removeMapObject(QGeoMapObject *obj) override;
 
+    QSGClipNode *m_clip = nullptr;
+    QSGSimpleRectNode *m_simpleRectNode = nullptr;
+
+    // From QGeoTiledMap
+    QGeoTiledMapLabs(QGeoTiledMapLabsPrivate &dd, QGeoTiledMappingManagerEngine *engine, QObject *parent);
 private:
-    Q_DISABLE_COPY(QGeoMapItemsOverlay)
+    Q_DISABLE_COPY(QGeoTiledMapLabs)
 };
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QGEOTILEDMAPLABS_P_H
