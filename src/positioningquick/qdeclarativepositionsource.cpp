@@ -297,6 +297,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
             qDebug() << "QDeclarativePositionSource NMEA File was found: " << localFileName;
 #endif
             m_positionSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
+            (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setUserEquivalentRangeError(2.5); // it is internally multiplied by 2 in qlocationutils_readGga
             (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setDevice(m_nmeaFile);
             connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                     this, SLOT(positionUpdateReceived(QGeoPositionInfo)));

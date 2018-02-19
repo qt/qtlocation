@@ -100,6 +100,9 @@ protected:
     virtual double mapWidth() const;
     virtual double mapHeight() const;
 
+    virtual void setCopyrightVisible(bool visible);
+    virtual bool copyrightVisible() const;
+
 protected:
     QSize m_viewportSize;
     QGeoProjection *m_geoProjection;
@@ -109,6 +112,7 @@ protected:
     QList<QGeoMapParameter *> m_mapParameters;
     QList<QDeclarativeGeoMapItemBase *> m_mapItems;
     QGeoCameraCapabilities m_cameraCapabilities;
+    bool m_copyrightVisible = true;
 };
 
 QT_END_NAMESPACE

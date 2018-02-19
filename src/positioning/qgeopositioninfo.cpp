@@ -37,7 +37,7 @@
 **
 ****************************************************************************/
 #include "qgeopositioninfo.h"
-
+#include "qgeopositioninfo_p.h"
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
@@ -46,14 +46,6 @@
 #include <algorithm>
 
 QT_BEGIN_NAMESPACE
-
-class QGeoPositionInfoPrivate
-{
-public:
-    QDateTime timestamp;
-    QGeoCoordinate coord;
-    QHash<QGeoPositionInfo::Attribute, qreal> doubleAttribs;
-};
 
 /*!
     \class QGeoPositionInfo
@@ -106,9 +98,12 @@ QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDate
     Creates a QGeoPositionInfo with the values of \a other.
 */
 QGeoPositionInfo::QGeoPositionInfo(const QGeoPositionInfo &other)
-        : d(new QGeoPositionInfoPrivate)
+        : d(other.d->clone())
 {
-    operator=(other);
+}
+
+QGeoPositionInfo::QGeoPositionInfo(QGeoPositionInfoPrivate &dd) : d(&dd)
+{
 }
 
 /*!
@@ -127,9 +122,12 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo & other)
     if (this == &other)
         return *this;
 
-    d->timestamp = other.d->timestamp;
-    d->coord = other.d->coord;
-    d->doubleAttribs = other.d->doubleAttribs;
+    delete d;
+    d = other.d->clone();
+
+//    d->timestamp = other.d->timestamp;
+//    d->coord = other.d->coord;
+//    d->doubleAttribs = other.d->doubleAttribs;
 
     return *this;
 }
@@ -140,9 +138,7 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo & other)
 */
 bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 {
-    return d->timestamp == other.d->timestamp
-           && d->coord == other.d->coord
-           && d->doubleAttribs == other.d->doubleAttribs;
+    return *d == *other.d;
 }
 
 /*!
@@ -356,4 +352,27 @@ QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
 }
 #endif
 
+QGeoPositionInfoPrivate::~QGeoPositionInfoPrivate()
+{
+
+}
+
+QGeoPositionInfoPrivate *QGeoPositionInfoPrivate::clone() const
+{
+    return new QGeoPositionInfoPrivate(*this);
+}
+
+bool QGeoPositionInfoPrivate::operator==(const QGeoPositionInfoPrivate &other) const
+{
+    return timestamp == other.timestamp
+           && coord == other.coord
+            && doubleAttribs == other.doubleAttribs;
+}
+
+QGeoPositionInfoPrivate *QGeoPositionInfoPrivate::getPimpl(const QGeoPositionInfo &info)
+{
+    return info.d;
+}
+
 QT_END_NAMESPACE
+

@@ -66,7 +66,9 @@ Currently the API is supported on \l {Qt for Android}{Android}, \l {Qt for iOS}{
 \l {Qt for Linux/X11}{Linux} (using
 \l {http://www.freedesktop.org/wiki/Software/GeoClue}{GeoClue version 0.12.99}),
 \l {Qt for Windows}{Windows} (with GPS receivers exposed as a serial port providing NMEA sentences),
-and \l {Qt for WinRT}{WinRT} (using Windows.Devices.Geolocation).
+and \l {Qt for WinRT}{WinRT} (using Windows.Devices.Geolocation). Note that the \l {Qt for WinRT}{WinRT}
+implementation can also be used in Win32 Desktop uses cases if the underlying platform is Windows 10
+or later.
 
 \section1 Overview
 

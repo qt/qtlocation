@@ -308,6 +308,15 @@ void QGeoMap::setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate,
     Q_UNUSED(tilt)
 }
 
+void QGeoMap::setCopyrightVisible(bool visible)
+{
+    Q_D(QGeoMap);
+    if (d->m_copyrightVisible == visible)
+        return;
+
+    d->m_copyrightVisible = visible;
+}
+
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
     : QObjectPrivate(),
       m_geoProjection(geoProjection),
@@ -393,6 +402,16 @@ double QGeoMapPrivate::mapHeight() const
     if (m_geoProjection->projectionType() == QGeoProjection::ProjectionWebMercator)
         return static_cast<const QGeoProjectionWebMercator *>(m_geoProjection)->mapHeight();
     return 0; // override this for maps supporting other projections
+}
+
+void QGeoMapPrivate::setCopyrightVisible(bool visible)
+{
+    m_copyrightVisible = visible;
+}
+
+bool QGeoMapPrivate::copyrightVisible() const
+{
+    return m_copyrightVisible;
 }
 
 QT_END_NAMESPACE
