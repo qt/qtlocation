@@ -107,13 +107,12 @@ Item {
 
             preventStealing: true
 
-            // The following signal handlers use arguments[0] instead of mouse due to QTBUG-36560
-            onClicked: page.setMouseData(mouseUpper, arguments[0])
-            onDoubleClicked: page.setMouseData(mouseUpper, arguments[0])
-            onPressed: page.setMouseData(mouseUpper, arguments[0])
-            onReleased: page.setMouseData(mouseUpper, arguments[0])
-            onPositionChanged: page.setMouseData(mouseUpper, arguments[0])
-            onPressAndHold: page.setMouseData(mouseUpper, arguments[0])
+            onClicked: page.setMouseData(mouseUpper, mouse)
+            onDoubleClicked: page.setMouseData(mouseUpper, mouse)
+            onPressed: page.setMouseData(mouseUpper, mouse)
+            onReleased: page.setMouseData(mouseUpper, mouse)
+            onPositionChanged: page.setMouseData(mouseUpper, mouse)
+            onPressAndHold: page.setMouseData(mouseUpper, mouse)
         }
         MouseArea {
             id: mouseLower
@@ -128,13 +127,12 @@ Item {
             property bool lastIsClick: false
             property bool lastAccepted: false;
 
-            // The following signal handlers use arguments[0] instead of mouse due to QTBUG-36560
-            onClicked: page.setMouseData(mouseLower, arguments[0])
-            onDoubleClicked: page.setMouseData(mouseLower, arguments[0])
-            onPressed: page.setMouseData(mouseLower, arguments[0])
-            onReleased: page.setMouseData(mouseLower, arguments[0])
-            onPositionChanged: page.setMouseData(mouseLower, arguments[0])
-            onPressAndHold: page.setMouseData(mouseLower, arguments[0])
+            onClicked: page.setMouseData(mouseLower, mouse)
+            onDoubleClicked: page.setMouseData(mouseLower, mouse)
+            onPressed: page.setMouseData(mouseLower, mouse)
+            onReleased: page.setMouseData(mouseLower, mouse)
+            onPositionChanged: page.setMouseData(mouseLower, mouse)
+            onPressAndHold: page.setMouseData(mouseLower, mouse)
         }
         MouseArea {
             id: mouseOverlapper
@@ -149,13 +147,12 @@ Item {
             property bool lastIsClick: false
             property bool lastAccepted: false;
 
-            // The following signal handlers use arguments[0] instead of mouse due to QTBUG-36560
-            onClicked: page.setMouseData(mouseOverlapper, arguments[0])
-            onDoubleClicked: page.setMouseData(mouseOverlapper, arguments[0])
-            onPressed: page.setMouseData(mouseOverlapper, arguments[0])
-            onReleased: page.setMouseData(mouseOverlapper, arguments[0])
-            onPositionChanged: page.setMouseData(mouseOverlapper, arguments[0])
-            onPressAndHold: page.setMouseData(mouseOverlapper, arguments[0])
+            onClicked: page.setMouseData(mouseOverlapper, mouse)
+            onDoubleClicked: page.setMouseData(mouseOverlapper, mouse)
+            onPressed: page.setMouseData(mouseOverlapper, mouse)
+            onReleased: page.setMouseData(mouseOverlapper, mouse)
+            onPositionChanged: page.setMouseData(mouseOverlapper, mouse)
+            onPressAndHold: page.setMouseData(mouseOverlapper, mouse)
         }
     }
 
