@@ -523,7 +523,7 @@ Item {
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
 
-
+            skip("Makes other tests fail due to QTBUG-66534")
             compare(mouseOverlapperPressedSpy.count, 0)
             mousePress(map, 55, 75)
             compare(mouseUpperPressedSpy.count, 2)
