@@ -976,7 +976,7 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
             routingUrl.append(QLatin1Char(';'));
             bearings.append(QLatin1Char(';'));
         }
-        routingUrl.append(QString::number(c.longitude())).append(QLatin1Char(',')).append(QString::number(c.latitude()));
+        routingUrl.append(QString::number(c.longitude(), 'f', 7)).append(QLatin1Char(',')).append(QString::number(c.latitude(), 'f', 7));
         if (metadata.size() > i) {
             const QVariantMap &meta = metadata.at(i);
             if (meta.contains(QStringLiteral("bearing"))) {

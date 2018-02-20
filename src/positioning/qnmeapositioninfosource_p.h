@@ -168,6 +168,7 @@ private:
     void processNextSentence();
 
     QQueue<QPendingGeoPositionInfo> m_pendingUpdates;
+    QByteArray m_nextLine;
     int m_currTimerId;
     bool m_hasValidDateTime;
 };

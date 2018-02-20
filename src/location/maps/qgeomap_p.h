@@ -150,6 +150,8 @@ public:
     virtual bool anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint);
     virtual bool fitViewportToGeoRectangle(const QGeoRectangle &rectangle);
 
+    virtual void setCopyrightVisible(bool visible);
+
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);

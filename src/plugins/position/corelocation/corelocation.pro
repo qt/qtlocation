@@ -1,6 +1,6 @@
 TARGET = qtposition_cl
 
-QT = core positioning
+QT = core core-private positioning
 
 OBJECTIVE_SOURCES += \
     qgeopositioninfosource_cl.mm \

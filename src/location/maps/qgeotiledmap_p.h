@@ -88,6 +88,8 @@ public:
     void clearData() override;
     Capabilities capabilities() const override;
 
+    void setCopyrightVisible(bool visible) override;
+
 public Q_SLOTS:
     virtual void clearScene(int mapId);
 
