@@ -48,13 +48,14 @@
 // We mean it.
 //
 
+#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p_p.h>
 #include <QtLocation/private/qdeclarativegeoroute_p.h>
 QT_BEGIN_NAMESPACE
 
 class QGeoRoute;
 
-class Q_LOCATION_PRIVATE_EXPORT QMapRouteObjectPrivate : public QGeoMapObjectPrivate
+class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
     QMapRouteObjectPrivate(QGeoMapObject *q);

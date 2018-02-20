@@ -247,12 +247,12 @@ void QMapObjectView::removeMapObject(QGeoMapObject *object)
     }
 }
 
-void QMapObjectView::destroyingItem(QObject */*object*/)
+void QMapObjectView::destroyingItem(QObject * /*object*/)
 {
 
 }
 
-void QMapObjectView::initItem(int /*index*/, QObject */*object*/)
+void QMapObjectView::initItem(int /*index*/, QObject * /*object*/)
 {
 
 }
