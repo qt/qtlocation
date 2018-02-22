@@ -1,4 +1,4 @@
-QT += quick-private network positioning-private location-private locationlabs-private qml-private core-private gui-private
+QT += quick-private network positioning-private location-private qml-private core-private gui-private
 
 TARGET = locationlabsplugin
 CXX_MODULE = $$TARGET

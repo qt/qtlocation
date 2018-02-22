@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPPOLYGONOBJECT_P_H
-#define QMAPPOLYGONOBJECT_P_H
+#ifndef QDECLARATIVEMAPROUTEDELEGATE_P_H
+#define QDECLARATIVEMAPROUTEDELEGATE_P_H
 
 //
 //  W A R N I N G
@@ -48,43 +48,43 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtLocation/private/qgeomapobject_p.h>
-#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtQml/qqml.h>
 
-#include <QJSValue>
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qparameterizableobject_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapPolygonObject : public QGeoMapObject
+class QDeclarativeGeoRoute;
+class QGeoRoute;
+class QMapRouteObjectPrivate;
+class Q_LOCATION_PRIVATE_EXPORT QMapRouteObject : public QGeoMapObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(QVariantList path READ path WRITE setPath NOTIFY pathChanged)
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
+    Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
 
 public:
-    QMapPolygonObject(QObject *parent = nullptr);
-    ~QMapPolygonObject() override;
+    explicit QMapRouteObject(QObject *parent = nullptr);
+    ~QMapRouteObject() override;
 
-    QVariantList path() const;
-    void setPath(const QVariantList &path);
+    QDeclarativeGeoRoute *route() const;
+    QGeoRoute geoRoute() const;
 
-    QColor color() const;
-    void setColor(const QColor &color);
-
-    QDeclarativeMapLineProperties *border();
     void setMap(QGeoMap *map) override;
+    void setRoute(QDeclarativeGeoRoute * route);
 
 signals:
-    void pathChanged();
-    void colorChanged();
+    void routeChanged(QDeclarativeGeoRoute * route);
 
 protected:
-    QDeclarativeMapLineProperties *m_border;
+    QDeclarativeGeoRoute *m_route = nullptr;
+
+    friend class QMapRouteObjectPrivate;
 };
 
 QT_END_NAMESPACE
 
-#endif // QMAPPOLYGONOBJECT_P_H
+QML_DECLARE_TYPE(QMapRouteObject)
+
+#endif // QDECLARATIVEMAPROUTEDELEGATE_P_H

@@ -34,9 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPOBJECTVIEW_P_P_H
-#define QMAPOBJECTVIEW_P_P_H
-
+#ifndef QGEOMAPICON_P_H
+#define QGEOMAPICON_P_H
 
 //
 //  W A R N I N G
@@ -49,38 +48,41 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtLocation/private/qgeomapobject_p_p.h>
-#include <QPointer>
-#include <QVector>
-#include <QQmlComponent>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QtCore/QUrl>
+#include <QGeoCoordinate>
+#include <QtCore/qsize.h>
 
 QT_BEGIN_NAMESPACE
 
-class QQmlDelegateModel;
-class QGeoMap;
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectViewPrivate : public QGeoMapObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObject : public QGeoMapObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QVariant content READ content WRITE setContent NOTIFY contentChanged)
+    Q_PROPERTY(QSizeF size READ size WRITE setSize NOTIFY sizeChanged)
+
 public:
-    QMapObjectViewPrivate(QGeoMapObject *q);
-    ~QMapObjectViewPrivate() override;
+    QMapIconObject(QObject *parent = nullptr);
+    ~QMapIconObject() override;
 
-    virtual QGeoMapObject::Type type() const override final;
-};
+    QVariant content() const;
+    QGeoCoordinate coordinate() const;
+    QSizeF size() const;
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectViewPrivateDefault : public QMapObjectViewPrivate
-{
-public:
-    QMapObjectViewPrivateDefault(QGeoMapObject *q);
-    QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other);
-    ~QMapObjectViewPrivateDefault() override;
+    void setContent(QVariant content);
+    void setCoordinate(const QGeoCoordinate &coordinate);
+    void setSize(const QSizeF &size);
 
+    void setMap(QGeoMap *map) override;
 
-    // QGeoMapObjectPrivate interface
-public:
-    QGeoMapObjectPrivate *clone() override;
+signals:
+    void contentChanged(QVariant content);
+    void coordinateChanged(QGeoCoordinate coordinate);
+    void sizeChanged();
 };
 
 QT_END_NAMESPACE
 
-#endif // QMAPOBJECTVIEW_P_P_H
+#endif // QGEOMAPICON_P_H

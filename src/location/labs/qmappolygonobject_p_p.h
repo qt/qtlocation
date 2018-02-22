@@ -48,14 +48,14 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p_p.h>
 #include <QGeoCoordinate>
 #include <QColor>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapPolygonObjectPrivate : public QGeoMapObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapPolygonObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
     QMapPolygonObjectPrivate(QGeoMapObject *q);
@@ -76,7 +76,7 @@ public:
     bool equals(const QGeoMapObjectPrivate &other) const override;
 };
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapPolygonObjectPrivateDefault : public QMapPolygonObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapPolygonObjectPrivateDefault : public QMapPolygonObjectPrivate
 {
 public:
     QMapPolygonObjectPrivateDefault(QGeoMapObject *q);

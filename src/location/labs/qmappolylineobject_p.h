@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPPOLYLINEOBJECT_P_P_H
-#define QMAPPOLYLINEOBJECT_P_P_H
+#ifndef QMAPPOLYLINEOBJECT_P_H
+#define QMAPPOLYLINEOBJECT_P_H
 
 //
 //  W A R N I N G
@@ -48,60 +48,38 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtLocation/private/qgeomapobject_p_p.h>
-#include <QGeoCoordinate>
-#include <QColor>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+
+#include <QJSValue>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapPolylineObjectPrivate : public QGeoMapObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapPolylineObject : public QGeoMapObject
 {
-public:
-    QMapPolylineObjectPrivate(QGeoMapObject *q);
-    ~QMapPolylineObjectPrivate() override;
+    Q_OBJECT
 
-    virtual QGeoMapObject::Type type() const override final;
-
-    virtual QList<QGeoCoordinate> path() const = 0;
-    virtual void setPath(const QList<QGeoCoordinate> &path) = 0;
-    virtual QColor color() const = 0;
-    virtual void setColor(const QColor &color) = 0;
-    virtual qreal width() const = 0;
-    virtual void setWidth(qreal width) = 0;
-
-    // QGeoMapObjectPrivate interface
-    bool equals(const QGeoMapObjectPrivate &other) const override;
-};
-
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapPolylineObjectPrivateDefault : public QMapPolylineObjectPrivate
-{
-public:
-    QMapPolylineObjectPrivateDefault(QGeoMapObject *q);
-    QMapPolylineObjectPrivateDefault(const QMapPolylineObjectPrivate &other);
-    ~QMapPolylineObjectPrivateDefault() override;
-
-    // QGeoMapPolylinePrivate interface
-    QList<QGeoCoordinate> path() const override;
-    void setPath(const QList<QGeoCoordinate> &path) override;
-    QColor color() const override;
-    void setColor(const QColor &color) override;
-    qreal width() const override;
-    void setWidth(qreal width) override;
-
-    // QGeoMapObjectPrivate interface
-    QGeoMapObjectPrivate *clone() override;
+    Q_PROPERTY(QVariantList path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *line READ border CONSTANT)
 
 public:
-    QList<QGeoCoordinate> m_path;
-    QColor m_color;
-    qreal m_width = 0;
+    QMapPolylineObject(QObject *parent = nullptr);
+    ~QMapPolylineObject() override;
 
-private:
-    QMapPolylineObjectPrivateDefault(const QMapPolylineObjectPrivateDefault &other) = delete;
+    QVariantList path() const;
+    void setPath(const QVariantList &path);
+
+    QDeclarativeMapLineProperties *border();
+    void setMap(QGeoMap *map) override;
+
+signals:
+    void pathChanged();
+
+protected:
+    QDeclarativeMapLineProperties *m_border = nullptr;
 };
 
 QT_END_NAMESPACE
 
-
-#endif // QMAPPOLYLINEOBJECT_P_P_H
+#endif // QMAPPOLYLINEOBJECT_P_H

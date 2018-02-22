@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPCIRCLEOBJECT_P_H
-#define QMAPCIRCLEOBJECT_P_H
+#ifndef QMAPPOLYGONOBJECT_P_H
+#define QMAPPOLYGONOBJECT_P_H
 
 //
 //  W A R N I N G
@@ -48,46 +48,43 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
-#include <QtCore/QUrl>
-#include <QGeoCoordinate>
+
+#include <QJSValue>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapCircleObject : public QGeoMapObject
+class Q_LOCATION_PRIVATE_EXPORT QMapPolygonObject : public QGeoMapObject
 {
     Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
+
+    Q_PROPERTY(QVariantList path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
 
 public:
-    QMapCircleObject(QObject *parent = nullptr);
-    ~QMapCircleObject() override;
+    QMapPolygonObject(QObject *parent = nullptr);
+    ~QMapPolygonObject() override;
 
-    QGeoCoordinate center() const;
-    qreal radius() const;
+    QVariantList path() const;
+    void setPath(const QVariantList &path);
+
     QColor color() const;
-
-    void setCenter(const QGeoCoordinate &center);
-    void setRadius(qreal radius);
     void setColor(const QColor &color);
 
-    QDeclarativeMapLineProperties * border();
+    QDeclarativeMapLineProperties *border();
     void setMap(QGeoMap *map) override;
 
 signals:
-    void centerChanged();
-    void radiusChanged();
+    void pathChanged();
     void colorChanged();
 
 protected:
-    QDeclarativeMapLineProperties *m_border = nullptr;
+    QDeclarativeMapLineProperties *m_border;
 };
 
 QT_END_NAMESPACE
 
-#endif // QMAPCIRCLEOBJECT_P_H
+#endif // QMAPPOLYGONOBJECT_P_H

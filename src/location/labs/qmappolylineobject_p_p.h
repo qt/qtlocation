@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPICON_P_P_H
-#define QGEOMAPICON_P_P_H
+#ifndef QMAPPOLYLINEOBJECT_P_P_H
+#define QMAPPOLYLINEOBJECT_P_P_H
 
 //
 //  W A R N I N G
@@ -48,58 +48,60 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p_p.h>
 #include <QGeoCoordinate>
+#include <QColor>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapIconObjectPrivate : public QGeoMapObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapPolylineObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QMapIconObjectPrivate(QGeoMapObject *q);
-    ~QMapIconObjectPrivate() override;
+    QMapPolylineObjectPrivate(QGeoMapObject *q);
+    ~QMapPolylineObjectPrivate() override;
 
     virtual QGeoMapObject::Type type() const override final;
 
-    virtual QGeoCoordinate coordinate() const = 0;
-    virtual void setCoordinate(const QGeoCoordinate &coordinate) = 0;
-    virtual QVariant content() const = 0;
-    virtual void setContent(const QVariant &content) = 0;
-    virtual QSizeF size() const = 0;
-    virtual void setSize(const QSizeF &size) = 0;
+    virtual QList<QGeoCoordinate> path() const = 0;
+    virtual void setPath(const QList<QGeoCoordinate> &path) = 0;
+    virtual QColor color() const = 0;
+    virtual void setColor(const QColor &color) = 0;
+    virtual qreal width() const = 0;
+    virtual void setWidth(qreal width) = 0;
 
     // QGeoMapObjectPrivate interface
     bool equals(const QGeoMapObjectPrivate &other) const override;
 };
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapIconObjectPrivateDefault : public QMapIconObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapPolylineObjectPrivateDefault : public QMapPolylineObjectPrivate
 {
 public:
-    QMapIconObjectPrivateDefault(QGeoMapObject *q);
-    QMapIconObjectPrivateDefault(const QMapIconObjectPrivate &other);
-    ~QMapIconObjectPrivateDefault() override;
+    QMapPolylineObjectPrivateDefault(QGeoMapObject *q);
+    QMapPolylineObjectPrivateDefault(const QMapPolylineObjectPrivate &other);
+    ~QMapPolylineObjectPrivateDefault() override;
 
-    // QGeoMapIconPrivate interface
-    QGeoCoordinate coordinate() const override;
-    void setCoordinate(const QGeoCoordinate &coordinate) override;
-    QVariant content() const override;
-    void setContent(const QVariant &content) override;
-    virtual QSizeF size() const override;
-    virtual void setSize(const QSizeF &size) override;
+    // QGeoMapPolylinePrivate interface
+    QList<QGeoCoordinate> path() const override;
+    void setPath(const QList<QGeoCoordinate> &path) override;
+    QColor color() const override;
+    void setColor(const QColor &color) override;
+    qreal width() const override;
+    void setWidth(qreal width) override;
 
-    // QMapIconObjectPrivate interface
+    // QGeoMapObjectPrivate interface
     QGeoMapObjectPrivate *clone() override;
 
 public:
-    QVariant m_content;
-    QGeoCoordinate m_coordinate;
-    QSizeF m_size;
+    QList<QGeoCoordinate> m_path;
+    QColor m_color;
+    qreal m_width = 0;
 
 private:
-    QMapIconObjectPrivateDefault(const QMapIconObjectPrivateDefault &other) = delete;
+    QMapPolylineObjectPrivateDefault(const QMapPolylineObjectPrivateDefault &other) = delete;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPICON_P_P_H
+
+#endif // QMAPPOLYLINEOBJECT_P_P_H

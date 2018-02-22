@@ -48,14 +48,14 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p_p.h>
 #include <QGeoCoordinate>
 #include <QColor>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapCircleObjectPrivate : public QGeoMapObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapCircleObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
     QMapCircleObjectPrivate(QGeoMapObject *q);
@@ -79,7 +79,7 @@ public:
 };
 
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapCircleObjectPrivateDefault : public QMapCircleObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapCircleObjectPrivateDefault : public QMapCircleObjectPrivate
 {
 public:
     QMapCircleObjectPrivateDefault(QGeoMapObject *q);

@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEMAPROUTEDELEGATE_P_H
-#define QDECLARATIVEMAPROUTEDELEGATE_P_H
+#ifndef QMAPCIRCLEOBJECT_P_H
+#define QMAPCIRCLEOBJECT_P_H
 
 //
 //  W A R N I N G
@@ -48,43 +48,46 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtQml/qqml.h>
-
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p.h>
-#include <QtLocation/private/qparameterizableobject_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtCore/QUrl>
+#include <QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoRoute;
-class QGeoRoute;
-class QMapRouteObjectPrivate;
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObject : public QGeoMapObject
+class Q_LOCATION_PRIVATE_EXPORT QMapCircleObject : public QGeoMapObject
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
 
 public:
-    explicit QMapRouteObject(QObject *parent = nullptr);
-    ~QMapRouteObject() override;
+    QMapCircleObject(QObject *parent = nullptr);
+    ~QMapCircleObject() override;
 
-    QDeclarativeGeoRoute *route() const;
-    QGeoRoute geoRoute() const;
+    QGeoCoordinate center() const;
+    qreal radius() const;
+    QColor color() const;
 
+    void setCenter(const QGeoCoordinate &center);
+    void setRadius(qreal radius);
+    void setColor(const QColor &color);
+
+    QDeclarativeMapLineProperties * border();
     void setMap(QGeoMap *map) override;
-    void setRoute(QDeclarativeGeoRoute * route);
 
 signals:
-    void routeChanged(QDeclarativeGeoRoute * route);
+    void centerChanged();
+    void radiusChanged();
+    void colorChanged();
 
 protected:
-    QDeclarativeGeoRoute *m_route = nullptr;
-
-    friend class QMapRouteObjectPrivate;
+    QDeclarativeMapLineProperties *m_border = nullptr;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QMapRouteObject)
-
-#endif // QDECLARATIVEMAPROUTEDELEGATE_P_H
+#endif // QMAPCIRCLEOBJECT_P_H

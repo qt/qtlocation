@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,9 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPROUTE_P_P_H
-#define QGEOMAPROUTE_P_P_H
+#ifndef QMAPOBJECTVIEW_P_P_H
+#define QMAPOBJECTVIEW_P_P_H
+
 
 //
 //  W A R N I N G
@@ -48,32 +49,38 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p_p.h>
-#include <QtLocation/private/qdeclarativegeoroute_p.h>
+#include <QPointer>
+#include <QVector>
+#include <QQmlComponent>
+
 QT_BEGIN_NAMESPACE
 
-class QGeoRoute;
-
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObjectPrivate : public QGeoMapObjectPrivate
+class QQmlDelegateModel;
+class QGeoMap;
+class Q_LOCATION_PRIVATE_EXPORT QMapObjectViewPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QMapRouteObjectPrivate(QGeoMapObject *q);
-    QMapRouteObjectPrivate(const QMapRouteObjectPrivate &other);
-    ~QMapRouteObjectPrivate() override;
+    QMapObjectViewPrivate(QGeoMapObject *q);
+    ~QMapObjectViewPrivate() override;
 
     virtual QGeoMapObject::Type type() const override final;
+};
 
-    QDeclarativeGeoRoute *declarativeGeoRoute() const;
+class Q_LOCATION_PRIVATE_EXPORT QMapObjectViewPrivateDefault : public QMapObjectViewPrivate
+{
+public:
+    QMapObjectViewPrivateDefault(QGeoMapObject *q);
+    QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other);
+    ~QMapObjectViewPrivateDefault() override;
 
-    virtual QGeoRoute route() const;
-    virtual void setRoute(const QDeclarativeGeoRoute *route);
 
     // QGeoMapObjectPrivate interface
-    bool equals(const QGeoMapObjectPrivate &other) const override;
+public:
     QGeoMapObjectPrivate *clone() override;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPROUTE_P_P_H
+#endif // QMAPOBJECTVIEW_P_P_H

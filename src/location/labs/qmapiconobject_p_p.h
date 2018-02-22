@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPICON_P_H
-#define QGEOMAPICON_P_H
+#ifndef QGEOMAPICON_P_P_H
+#define QGEOMAPICON_P_P_H
 
 //
 //  W A R N I N G
@@ -48,41 +48,58 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtLocation/private/qgeomapobject_p.h>
-#include <QtCore/QUrl>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p_p.h>
 #include <QGeoCoordinate>
-#include <QtCore/qsize.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapIconObject : public QGeoMapObject
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObjectPrivate : public QGeoMapObjectPrivate
 {
-    Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QVariant content READ content WRITE setContent NOTIFY contentChanged)
-    Q_PROPERTY(QSizeF size READ size WRITE setSize NOTIFY sizeChanged)
+public:
+    QMapIconObjectPrivate(QGeoMapObject *q);
+    ~QMapIconObjectPrivate() override;
+
+    virtual QGeoMapObject::Type type() const override final;
+
+    virtual QGeoCoordinate coordinate() const = 0;
+    virtual void setCoordinate(const QGeoCoordinate &coordinate) = 0;
+    virtual QVariant content() const = 0;
+    virtual void setContent(const QVariant &content) = 0;
+    virtual QSizeF size() const = 0;
+    virtual void setSize(const QSizeF &size) = 0;
+
+    // QGeoMapObjectPrivate interface
+    bool equals(const QGeoMapObjectPrivate &other) const override;
+};
+
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObjectPrivateDefault : public QMapIconObjectPrivate
+{
+public:
+    QMapIconObjectPrivateDefault(QGeoMapObject *q);
+    QMapIconObjectPrivateDefault(const QMapIconObjectPrivate &other);
+    ~QMapIconObjectPrivateDefault() override;
+
+    // QGeoMapIconPrivate interface
+    QGeoCoordinate coordinate() const override;
+    void setCoordinate(const QGeoCoordinate &coordinate) override;
+    QVariant content() const override;
+    void setContent(const QVariant &content) override;
+    virtual QSizeF size() const override;
+    virtual void setSize(const QSizeF &size) override;
+
+    // QMapIconObjectPrivate interface
+    QGeoMapObjectPrivate *clone() override;
 
 public:
-    QMapIconObject(QObject *parent = nullptr);
-    ~QMapIconObject() override;
+    QVariant m_content;
+    QGeoCoordinate m_coordinate;
+    QSizeF m_size;
 
-    QVariant content() const;
-    QGeoCoordinate coordinate() const;
-    QSizeF size() const;
-
-    void setContent(QVariant content);
-    void setCoordinate(const QGeoCoordinate &coordinate);
-    void setSize(const QSizeF &size);
-
-    void setMap(QGeoMap *map) override;
-
-signals:
-    void contentChanged(QVariant content);
-    void coordinateChanged(QGeoCoordinate coordinate);
-    void sizeChanged();
+private:
+    QMapIconObjectPrivateDefault(const QMapIconObjectPrivateDefault &other) = delete;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPICON_P_H
+#endif // QGEOMAPICON_P_P_H
