@@ -138,7 +138,7 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
         if (m_useFBO) {
             static_cast<QSGMapboxGLTextureNode *>(node)->resize(m_viewportSize, window->devicePixelRatio());
         } else {
-            map->resize(m_viewportSize, m_viewportSize * window->devicePixelRatio());
+            map->resize(m_viewportSize);
         }
     }
 
