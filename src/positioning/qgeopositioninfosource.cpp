@@ -476,4 +476,12 @@ QStringList QGeoPositionInfoSource::availableSources()
     \value UnknownSourceError An unidentified error occurred.
  */
 
+/*!
+    \fn void QGeoPositionInfoSource::supportedPositioningMethodsChanged()
+
+    This signal is emitted after the supportedPositioningMethods change.
+
+    \since Qt 5.12
+*/
+
 QT_END_NAMESPACE

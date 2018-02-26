@@ -153,6 +153,7 @@ private Q_SLOTS:
 
 private:
     void setPosition(const QGeoPositionInfo &pi);
+    void setSource(QGeoPositionInfoSource *source);
 
     QGeoPositionInfoSource *m_positionSource;
     QDeclarativePosition m_position;

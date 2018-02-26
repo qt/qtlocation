@@ -177,11 +177,10 @@ void QDeclarativePositionSource::setName(const QString &newName)
     PositioningMethods previousPositioningMethods = supportedPositioningMethods();
     PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
 
-    delete m_positionSource;
     if (newName.isEmpty())
-        m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+        setSource(QGeoPositionInfoSource::createDefaultSource(this));
     else
-        m_positionSource = QGeoPositionInfoSource::createSource(newName, this);
+        setSource(QGeoPositionInfoSource::createSource(newName, this));
 
     if (m_positionSource) {
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
@@ -280,8 +279,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
         // because QNmeaPositionInfoSource can be bound only to a one file.
         delete m_nmeaSocket;
         m_nmeaSocket = 0;
-        delete m_positionSource;
-        m_positionSource = 0;
+        setSource(nullptr);
         setPosition(QGeoPositionInfo());
         // Create the NMEA source based on the given data. QML has automatically set QUrl
         // type to point to correct path. If the file is not found, check if the file actually
@@ -296,7 +294,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
 #ifdef QDECLARATIVE_POSITION_DEBUG
             qDebug() << "QDeclarativePositionSource NMEA File was found: " << localFileName;
 #endif
-            m_positionSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
+            setSource(new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode));
             (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setUserEquivalentRangeError(2.5); // it is internally multiplied by 2 in qlocationutils_readGga
             (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setDevice(m_nmeaFile);
             connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
@@ -345,9 +343,9 @@ void QDeclarativePositionSource::socketConnected()
     // because QNmeaPositionInfoSource can be bound only to a one file.
     delete m_nmeaFile;
     m_nmeaFile = 0;
-    delete m_positionSource;
+    setSource(nullptr);
 
-    m_positionSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::RealTimeMode);
+    setSource(new QNmeaPositionInfoSource(QNmeaPositionInfoSource::RealTimeMode));
     (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setDevice(m_nmeaSocket);
 
     connect(m_positionSource, &QNmeaPositionInfoSource::positionUpdated,
@@ -417,6 +415,20 @@ void QDeclarativePositionSource::setPosition(const QGeoPositionInfo &pi)
 {
     m_position.setPosition(pi);
     emit positionChanged();
+}
+
+void QDeclarativePositionSource::setSource(QGeoPositionInfoSource *source)
+{
+    if (m_positionSource)
+        delete m_positionSource;
+
+    if (!source) {
+        m_positionSource = nullptr;
+    } else {
+        m_positionSource = source;
+        connect(m_positionSource, &QGeoPositionInfoSource::supportedPositioningMethodsChanged,
+                this, &QDeclarativePositionSource::supportedPositioningMethodsChanged);
+    }
 }
 
 /*!
@@ -712,7 +724,7 @@ void QDeclarativePositionSource::componentComplete()
         PositioningMethods previousPositioningMethods = supportedPositioningMethods();
         PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
 
-        m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+        setSource(QGeoPositionInfoSource::createDefaultSource(this));
         if (m_positionSource) {
             connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                     this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
