@@ -40,6 +40,7 @@
 #include "qgeomappingmanagerengine_p.h"
 #include "qdeclarativegeomapitembase_p.h"
 #include "qgeomapobject_p.h"
+#include "qgeomapobject_p_p.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -121,7 +122,9 @@ bool QGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
 
 bool QGeoMap::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint)
 {
+    Q_D(QGeoMap);
     QGeoCoordinate newCenter = geoProjection().anchorCoordinateToPoint(coordinate, anchorPoint);
+    newCenter.setLatitude(qBound(-d->m_maximumViewportLatitude, newCenter.latitude(), d->m_maximumViewportLatitude));
     QGeoCameraData data = cameraData();
     if (data.center() != newCenter) {
         data.setCenter(newCenter);
@@ -174,7 +177,7 @@ double QGeoMap::minimumZoom() const
 double QGeoMap::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const
 {
     Q_D(const QGeoMap);
-    return d->m_geoProjection->maximumCenterLatitudeAtZoom(cameraData);
+    return d->maximumCenterLatitudeAtZoom(cameraData);
 }
 
 double QGeoMap::mapWidth() const
@@ -237,7 +240,7 @@ void QGeoMap::removeParameter(QGeoMapParameter *param)
 void QGeoMap::clearParameters()
 {
     Q_D(QGeoMap);
-    for (QGeoMapParameter *p : d->m_mapParameters)
+    for (QGeoMapParameter *p : qAsConst(d->m_mapParameters))
         d->removeParameter(p);
     d->m_mapParameters.clear();
 }
@@ -280,7 +283,11 @@ void QGeoMap::clearMapItems()
 bool QGeoMap::createMapObjectImplementation(QGeoMapObject *obj)
 {
     Q_D(QGeoMap);
-    return d->createMapObjectImplementation(obj);
+    QExplicitlySharedDataPointer<QGeoMapObjectPrivate> pimpl =
+            QExplicitlySharedDataPointer<QGeoMapObjectPrivate>(d->createMapObjectImplementation(obj));
+    if (pimpl.constData())
+        return obj->setImplementation(pimpl);
+    return false;
 }
 
 QList<QGeoMapObject *> QGeoMap::mapObjects() const
@@ -301,6 +308,15 @@ void QGeoMap::setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate,
     Q_UNUSED(pinch)
     Q_UNUSED(rotate)
     Q_UNUSED(tilt)
+}
+
+void QGeoMap::setCopyrightVisible(bool visible)
+{
+    Q_D(QGeoMap);
+    if (d->m_copyrightVisible == visible)
+        return;
+
+    d->m_copyrightVisible = visible;
 }
 
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
@@ -365,10 +381,10 @@ void QGeoMapPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
     Q_UNUSED(item)
 }
 
-bool QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
+QGeoMapObjectPrivate *QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
 {
     Q_UNUSED(obj)
-    return false;
+    return nullptr;
 }
 
 QList<QGeoMapObject *> QGeoMapPrivate::mapObjects() const
@@ -388,6 +404,22 @@ double QGeoMapPrivate::mapHeight() const
     if (m_geoProjection->projectionType() == QGeoProjection::ProjectionWebMercator)
         return static_cast<const QGeoProjectionWebMercator *>(m_geoProjection)->mapHeight();
     return 0; // override this for maps supporting other projections
+}
+
+void QGeoMapPrivate::setCopyrightVisible(bool visible)
+{
+    m_copyrightVisible = visible;
+}
+
+bool QGeoMapPrivate::copyrightVisible() const
+{
+    return m_copyrightVisible;
+}
+
+double QGeoMapPrivate::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const
+{
+    m_maximumViewportLatitude = m_geoProjection->maximumCenterLatitudeAtZoom(cameraData);
+    return m_maximumViewportLatitude;
 }
 
 QT_END_NAMESPACE

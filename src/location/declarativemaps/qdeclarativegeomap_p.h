@@ -61,6 +61,7 @@
 #include <QtGui/QColor>
 #include <QtPositioning/qgeorectangle.h>
 #include <QtLocation/private/qgeomap_p.h>
+#include <QtQuick/private/qquickitemchangelistener_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -115,6 +116,8 @@ public:
 
     void setMinimumZoomLevel(qreal minimumZoomLevel, bool userSet = true);
     qreal minimumZoomLevel() const;
+    qreal implicitMinimumZoomLevel() const;
+    qreal effectiveMinimumZoomLevel() const;
 
     void setMaximumZoomLevel(qreal maximumZoomLevel, bool userSet = true);
     qreal maximumZoomLevel() const;
@@ -196,6 +199,9 @@ public:
     QGeoServiceProvider::Error error() const;
     QGeoMap* map() const;
 
+    // From QQuickItem
+    void itemChange(ItemChange, const ItemChangeData &) override;
+
 Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void zoomLevelChanged(qreal zoomLevel);
@@ -247,9 +253,9 @@ protected:
 private Q_SLOTS:
     void mappingManagerInitialized();
     void pluginReady();
-    void onMapChildrenChanged();
     void onSupportedMapTypesChanged();
     void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
+    void onAttachedCopyrightNoticeVisibilityChanged();
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
@@ -258,6 +264,8 @@ private:
     void fitViewportToMapItemsRefine(bool refine, bool onlyVisible);
     void fitViewportToGeoShape();
     bool isInteractive();
+    void attachCopyrightNotice(bool initialVisibility);
+    void detachCopyrightNotice(bool currentVisibility);
 
 private:
     QDeclarativeGeoServiceProvider *m_plugin;
@@ -266,7 +274,7 @@ private:
     QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
     QQuickGeoMapGestureArea *m_gestureArea;
-    QGeoMap* m_map = nullptr;
+    QPointer<QGeoMap> m_map;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
     QList<QPointer<QDeclarativeGeoMapItemGroup> > m_mapItemGroups;
@@ -295,6 +303,10 @@ private:
     qreal m_maximumFieldOfView;
     qreal m_userMinimumFieldOfView;
     qreal m_userMaximumFieldOfView;
+
+    int m_copyNoticesVisible = 0;
+    qreal m_maxChildZ = 0;
+
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;

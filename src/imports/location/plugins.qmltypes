@@ -136,6 +136,7 @@ Module {
         Property { name: "distanceToNextInstruction"; type: "double"; isReadonly: true }
         Property { name: "waypoint"; type: "QGeoCoordinate"; isReadonly: true }
         Property { name: "waypointValid"; type: "bool"; isReadonly: true }
+        Property { name: "extendedAttributes"; type: "QObject"; isReadonly: true; isPointer: true }
     }
     Component {
         name: "QDeclarativeGeoMap"
@@ -235,6 +236,7 @@ Module {
             name: "mapReadyChanged"
             Parameter { name: "ready"; type: "bool" }
         }
+        Signal { name: "mapObjectsChanged" }
         Method {
             name: "setBearing"
             Parameter { name: "bearing"; type: "double" }
@@ -486,6 +488,7 @@ Module {
     }
     Component {
         name: "QDeclarativeGeoRouteQuery"
+        defaultProperty: "quickChildren"
         prototype: "QObject"
         exports: ["QtLocation/RouteQuery 5.0"]
         exportMetaObjectRevisions: [0]
@@ -585,17 +588,20 @@ Module {
         Property { name: "routeOptimizations"; type: "RouteOptimizations" }
         Property { name: "segmentDetail"; type: "SegmentDetail" }
         Property { name: "maneuverDetail"; type: "ManeuverDetail" }
-        Property { name: "waypoints"; type: "QJSValue" }
+        Property { name: "waypoints"; type: "QVariantList" }
         Property { name: "excludedAreas"; type: "QJSValue" }
         Property { name: "featureTypes"; type: "QList<int>"; isReadonly: true }
+        Property { name: "quickChildren"; type: "QObject"; isList: true; isReadonly: true }
         Signal { name: "queryDetailsChanged" }
+        Signal { name: "extraParametersChanged" }
+        Method { name: "waypointObjects"; type: "QVariantList" }
         Method {
             name: "addWaypoint"
-            Parameter { name: "waypoint"; type: "QGeoCoordinate" }
+            Parameter { name: "w"; type: "QVariant" }
         }
         Method {
             name: "removeWaypoint"
-            Parameter { name: "waypoint"; type: "QGeoCoordinate" }
+            Parameter { name: "waypoint"; type: "QVariant" }
         }
         Method { name: "clearWaypoints" }
         Method {
@@ -739,6 +745,15 @@ Module {
                 "AnyPlacesFeatures": -1
             }
         }
+        Enum {
+            name: "NavigationFeatures"
+            values: {
+                "NoNavigationFeatures": 0,
+                "OnlineNavigationFeature": 1,
+                "OfflineNavigationFeature": 2,
+                "AnyNavigationFeatures": -1
+            }
+        }
         Property { name: "name"; type: "string" }
         Property { name: "availableServiceProviders"; type: "QStringList"; isReadonly: true }
         Property {
@@ -793,6 +808,12 @@ Module {
             Parameter { name: "feature"; type: "PlacesFeatures" }
         }
         Method { name: "supportsPlaces"; type: "bool" }
+        Method {
+            name: "supportsNavigation"
+            type: "bool"
+            Parameter { name: "feature"; type: "NavigationFeature" }
+        }
+        Method { name: "supportsNavigation"; type: "bool" }
     }
     Component {
         name: "QDeclarativeGeoServiceProviderParameter"
@@ -843,6 +864,22 @@ Module {
             type: "bool"
             Parameter { name: "provider"; type: "const QGeoServiceProvider"; isPointer: true }
         }
+    }
+    Component {
+        name: "QDeclarativeGeoWaypoint"
+        defaultProperty: "quickChildren"
+        prototype: "QGeoCoordinateObject"
+        exports: ["QtLocation/Waypoint 5.11"]
+        exportMetaObjectRevisions: [0]
+        Property { name: "latitude"; type: "double" }
+        Property { name: "longitude"; type: "double" }
+        Property { name: "altitude"; type: "double" }
+        Property { name: "isValid"; type: "bool"; isReadonly: true }
+        Property { name: "bearing"; type: "double" }
+        Property { name: "quickChildren"; type: "QObject"; isList: true; isReadonly: true }
+        Signal { name: "completed" }
+        Signal { name: "waypointDetailsChanged" }
+        Signal { name: "extraParametersChanged" }
     }
     Component {
         name: "QDeclarativeGeocodeModel"
@@ -1286,6 +1323,11 @@ Module {
             Parameter { name: "role"; type: "int" }
         }
         Method { name: "errorString"; type: "string" }
+    }
+    Component {
+        name: "QGeoCoordinateObject"
+        prototype: "QObject"
+        Property { name: "coordinate"; type: "QGeoCoordinate" }
     }
     Component {
         name: "QGeoMapParameter"

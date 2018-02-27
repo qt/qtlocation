@@ -66,6 +66,7 @@ class QGeoMap;
 class QGeoMapController;
 class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
+class QGeoMapObjectPrivate;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
 {
@@ -89,7 +90,7 @@ protected:
     virtual void addMapItem(QDeclarativeGeoMapItemBase *item);
     virtual void removeMapItem(QDeclarativeGeoMapItemBase *item);
 
-    virtual bool createMapObjectImplementation(QGeoMapObject *obj);
+    virtual QGeoMapObjectPrivate *createMapObjectImplementation(QGeoMapObject *obj);
     virtual QList<QGeoMapObject *> mapObjects() const;
 
     virtual void changeViewportSize(const QSize &size) = 0; // called by QGeoMap::setSize()
@@ -98,6 +99,10 @@ protected:
 
     virtual double mapWidth() const;
     virtual double mapHeight() const;
+
+    virtual void setCopyrightVisible(bool visible);
+    virtual bool copyrightVisible() const;
+    virtual double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const;
 
 protected:
     QSize m_viewportSize;
@@ -108,6 +113,8 @@ protected:
     QList<QGeoMapParameter *> m_mapParameters;
     QList<QDeclarativeGeoMapItemBase *> m_mapItems;
     QGeoCameraCapabilities m_cameraCapabilities;
+    bool m_copyrightVisible = true;
+    mutable double m_maximumViewportLatitude = 0;
 };
 
 QT_END_NAMESPACE

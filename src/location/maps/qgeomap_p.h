@@ -137,7 +137,7 @@ public:
     void removeMapItem(QDeclarativeGeoMapItemBase *item);
     void clearMapItems();
 
-    bool createMapObjectImplementation(QGeoMapObject *obj);
+    virtual bool createMapObjectImplementation(QGeoMapObject *obj);
     QList<QGeoMapObject *> mapObjects() const;
 
 
@@ -149,6 +149,8 @@ public:
     virtual QGeoShape visibleRegion() const;
     virtual bool anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint);
     virtual bool fitViewportToGeoRectangle(const QGeoRectangle &rectangle);
+
+    virtual void setCopyrightVisible(bool visible);
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);

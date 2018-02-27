@@ -33,60 +33,26 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QLOCATIONLABSGLOBAL_P_H
+#define QLOCATIONLABSGLOBAL_P_H
 
-#ifndef QGEOMAPOBJECTBASE_P_H
-#define QGEOMAPOBJECTBASE_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-#include <QSharedData>
-#include <QPointer>
-
-#include <QUrl>
-#include "qgeomapobject_p.h"
+#include <QtCore/qglobal.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapObject;
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapObjectPrivate : public QSharedData
-{
-public:
-    virtual ~QGeoMapObjectPrivate();
+#ifndef QT_STATIC
+#    if defined(QT_BUILD_LOCATIONLABS_LIB)
+#      define Q_LOCATIONLABS_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_LOCATIONLABS_EXPORT Q_DECL_IMPORT
+#    endif
+#else
+#    define Q_LOCATIONLABS_EXPORT
+#endif
 
-    bool operator == (const QGeoMapObjectPrivate &other) const;
-
-    virtual QByteArray engineName() const;
-    virtual QGeoMapObject::Features features() const;
-    virtual bool equals(const QGeoMapObjectPrivate &other) const;
-    virtual QGeoMapObject::Type type() const;
-    virtual bool visible() const;
-    virtual void setVisible(bool visible);
-    virtual QGeoMapObjectPrivate *clone() = 0; // to allow proper detaching
-
-    QGeoMapObject *q = nullptr;
-    QPointer<QGeoMap> m_map;
-    bool m_componentCompleted = false;
-    bool m_visible = true;
-
-protected:
-    QGeoMapObjectPrivate(QGeoMapObject *q);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
-
-private:
-    QGeoMapObjectPrivate();
-};
+#define Q_LOCATIONLABS_PRIVATE_EXPORT Q_LOCATIONLABS_EXPORT
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPOBJECTBASE_P_H
+#endif // QLOCATIONLABSGLOBAL_P_H
+

@@ -185,7 +185,7 @@ public:
     ~MapPolylineNode();
 
     void update(const QColor &fillColor, const QGeoMapItemGeometry *shape);
-    bool isSubtreeBlocked() const;
+    bool isSubtreeBlocked() const override;
 
 private:
     QSGFlatColorMaterial fill_material_;

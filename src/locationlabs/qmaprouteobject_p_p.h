@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECTBASE_P_H
-#define QGEOMAPOBJECTBASE_P_H
+#ifndef QGEOMAPROUTE_P_P_H
+#define QGEOMAPROUTE_P_P_H
 
 //
 //  W A R N I N G
@@ -48,45 +48,32 @@
 // We mean it.
 //
 
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-#include <QSharedData>
-#include <QPointer>
-
-#include <QUrl>
-#include "qgeomapobject_p.h"
-
+#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p_p.h>
+#include <QtLocation/private/qdeclarativegeoroute_p.h>
 QT_BEGIN_NAMESPACE
 
-class QGeoMapObject;
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapObjectPrivate : public QSharedData
+class QGeoRoute;
+
+class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    virtual ~QGeoMapObjectPrivate();
+    QMapRouteObjectPrivate(QGeoMapObject *q);
+    QMapRouteObjectPrivate(const QMapRouteObjectPrivate &other);
+    ~QMapRouteObjectPrivate() override;
 
-    bool operator == (const QGeoMapObjectPrivate &other) const;
+    virtual QGeoMapObject::Type type() const override final;
 
-    virtual QByteArray engineName() const;
-    virtual QGeoMapObject::Features features() const;
-    virtual bool equals(const QGeoMapObjectPrivate &other) const;
-    virtual QGeoMapObject::Type type() const;
-    virtual bool visible() const;
-    virtual void setVisible(bool visible);
-    virtual QGeoMapObjectPrivate *clone() = 0; // to allow proper detaching
+    QDeclarativeGeoRoute *declarativeGeoRoute() const;
 
-    QGeoMapObject *q = nullptr;
-    QPointer<QGeoMap> m_map;
-    bool m_componentCompleted = false;
-    bool m_visible = true;
+    virtual QGeoRoute route() const;
+    virtual void setRoute(const QDeclarativeGeoRoute *route);
 
-protected:
-    QGeoMapObjectPrivate(QGeoMapObject *q);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
-
-private:
-    QGeoMapObjectPrivate();
+    // QGeoMapObjectPrivate interface
+    bool equals(const QGeoMapObjectPrivate &other) const override;
+    QGeoMapObjectPrivate *clone() override;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPOBJECTBASE_P_H
+#endif // QGEOMAPROUTE_P_P_H

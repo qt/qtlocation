@@ -5,11 +5,10 @@
     ],
 
     "features": {
-        "locationlabs_plugin": {
+        "location-labs-plugin": {
             "label": "Qt.labs.location experimental QML plugin",
             "purpose": "Provides experimental QtLocation QML types",
             "section": "Location",
-            "autoDetect": false,
             "output": [ "privateFeature" ]
         },
         "geoservices_osm": {
@@ -60,7 +59,7 @@
         {
             "section": "Qt Location",
             "entries": [
-                "locationlabs_plugin",
+                "location-labs-plugin",
                 {
                     "section": "Geoservice plugins",
                     "entries": [
