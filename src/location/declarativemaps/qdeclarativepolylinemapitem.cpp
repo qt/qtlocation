@@ -54,8 +54,188 @@
 #include <QtGui/private/qtriangulator_p.h>
 
 #include <QtPositioning/private/qclipperutils_p.h>
+#include <array>
 
 QT_BEGIN_NAMESPACE
+
+
+static const double kClipperScaleFactor = 281474976710656.0;  // 48 bits of precision
+static const double kClipperScaleFactorInv = 1.0 / kClipperScaleFactor;
+
+static inline IntPoint toIntPoint(const double x, const double y)
+{
+    return IntPoint(cInt(x * kClipperScaleFactor), cInt(y * kClipperScaleFactor));
+}
+
+static IntPoint toIntPoint(const QDoubleVector2D &p)
+{
+    return toIntPoint(p.x(), p.y());
+}
+
+static bool get_line_intersection(const double p0_x,
+                                 const double p0_y,
+                                 const double p1_x,
+                                 const double p1_y,
+                                 const double p2_x,
+                                 const double p2_y,
+                                 const double p3_x,
+                                 const double p3_y,
+                                 double *i_x,
+                                 double *i_y,
+                                 double *i_t)
+{
+    const double s10_x = p1_x - p0_x;
+    const double s10_y = p1_y - p0_y;
+    const double s32_x = p3_x - p2_x;
+    const double s32_y = p3_y - p2_y;
+
+    const double denom = s10_x * s32_y - s32_x * s10_y;
+    if (denom == 0.0)
+        return false; // Collinear
+    const bool denomPositive = denom > 0;
+
+    const double s02_x = p0_x - p2_x;
+    const double s02_y = p0_y - p2_y;
+    const double s_numer = s10_x * s02_y - s10_y * s02_x;
+    if ((s_numer < 0.0) == denomPositive)
+        return false; // No collision
+
+    const double t_numer = s32_x * s02_y - s32_y * s02_x;
+    if ((t_numer < 0.0) == denomPositive)
+        return false; // No collision
+
+    if (((s_numer > denom) == denomPositive) || ((t_numer > denom) == denomPositive))
+        return false; // No collision
+    // Collision detected
+    *i_t = t_numer / denom;
+    *i_x = p0_x + (*i_t * s10_x);
+    *i_y = p0_y + (*i_t * s10_y);
+
+    return true;
+}
+
+enum SegmentType {
+    NoIntersection,
+    OneIntersection,
+    TwoIntersections
+};
+
+static QList<QList<QDoubleVector2D> > clipLine(
+        const QList<QDoubleVector2D> &l,
+        const QList<QDoubleVector2D> &poly)
+{
+    QList<QList<QDoubleVector2D> > res;
+    if (poly.size() < 3 || l.size() < 2)
+        return res;
+
+    // Step 1: build edges
+    std::vector<std::array<double, 4> > edges;
+    for (int i = 1; i < poly.size(); i++)
+        edges.push_back({ { poly.at(i-1).x(), poly.at(i-1).y(), poly.at(i).x(), poly.at(i).y() } });
+    edges.push_back({ { poly.at(poly.size()-1).x(), poly.at(poly.size()-1).y(), poly.at(0).x(), poly.at(0).y() } });
+
+    // Build Path to check for containment, for edges not intersecting
+    // This step could be speeded up by forcing the orientation of the polygon, and testing the cross products in the step
+    // below, thus avoiding to resort to clipper.
+    Path clip;
+    for (const auto &v: poly)
+        clip.push_back(toIntPoint(v));
+
+    // Step 2: check each segment against each edge
+    QList<QDoubleVector2D> subLine;
+    std::array<double, 4> intersections = { { 0.0, 0.0, 0.0, 0.0 } };
+
+    for (int i = 0; i < l.size() - 1; ++i) {
+        SegmentType type = NoIntersection;
+        double t = -1; // valid values are in [0, 1]. Only written if intersects
+        double previousT = t;
+        double i_x, i_y;
+
+        const int firstContained = c2t::clip2tri::pointInPolygon(toIntPoint(l.at(i).x(), l.at(i).y()), clip);
+        const int secondContained = c2t::clip2tri::pointInPolygon(toIntPoint(l.at(i+1).x(), l.at(i+1).y()), clip);
+
+        if (firstContained && secondContained) { // Second most common condition, test early and skip inner loop if possible
+            if (!subLine.size())
+                subLine.push_back(l.at(i)); // the initial element has to be pushed now.
+            subLine.push_back(l.at(i+1));
+            continue;
+        }
+
+        for (unsigned int j = 0; j < edges.size(); ++j) {
+            const bool intersects = get_line_intersection(l.at(i).x(),
+                                                         l.at(i).y(),
+                                                         l.at(i+1).x(),
+                                                         l.at(i+1).y(),
+                                                         edges.at(j).at(0),
+                                                         edges.at(j).at(1),
+                                                         edges.at(j).at(2),
+                                                         edges.at(j).at(3),
+                                                         &i_x,
+                                                         &i_y,
+                                                         &t);
+            if (intersects) {
+                if (previousT >= 0.0) { //One intersection already hit
+                    if (t < previousT) { // Reorder
+                        intersections[2] = intersections[0];
+                        intersections[3] = intersections[1];
+                        intersections[0] = i_x;
+                        intersections[1] = i_y;
+                    } else {
+                        intersections[2] = i_x;
+                        intersections[3] = i_y;
+                    }
+
+                    type = TwoIntersections;
+                    break; // no need to check anything else
+                } else { // First intersection
+                    intersections[0] = i_x;
+                    intersections[1] = i_y;
+                    type = OneIntersection;
+                }
+                previousT = t;
+            }
+        }
+
+        if (type == NoIntersection) {
+            if (!firstContained && !secondContained) { // Both outside
+                subLine.clear();
+            } else if (firstContained && secondContained) {
+                // Handled above already.
+            } else { // Mismatch between PointInPolygon and get_line_intersection. Treat it as no intersection
+                if (subLine.size())
+                    res.push_back(subLine);
+                subLine.clear();
+            }
+        } else if (type == OneIntersection) { // Need to check the following cases to avoid mismatch with PointInPolygon result.
+            if (firstContained <= 0 && secondContained > 0) { // subLine MUST be empty
+                if (!subLine.size())
+                    subLine.push_back(QDoubleVector2D(intersections[0], intersections[1]));
+                subLine.push_back(l.at(i+1));
+            } else if (firstContained > 0 && secondContained <= 0) { // subLine MUST NOT be empty
+                if (!subLine.size())
+                    subLine.push_back(l.at(i));
+                subLine.push_back(QDoubleVector2D(intersections[0], intersections[1]));
+                res.push_back(subLine);
+                subLine.clear();
+            } else {
+                if (subLine.size())
+                    res.push_back(subLine);
+                subLine.clear();
+            }
+        } else { // Two
+            // restart strip
+            subLine.clear();
+            subLine.push_back(QDoubleVector2D(intersections[0], intersections[1]));
+            subLine.push_back(QDoubleVector2D(intersections[2], intersections[3]));
+            res.push_back(subLine);
+            subLine.clear();
+        }
+    }
+
+    if (subLine.size())
+        res.push_back(subLine);
+    return res;
+}
 
 /*!
     \qmltype MapPolyline
@@ -226,13 +406,9 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
 
     // 2)
     QList<QList<QDoubleVector2D> > clippedPaths;
-    const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
+    const QList<QDoubleVector2D> &visibleRegion = p.visibleGeometryExpanded();
     if (visibleRegion.size()) {
-        c2t::clip2tri clipper;
-        clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), false);
-        clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection);
-        clippedPaths = QClipperUtils::pathsToQList(res);
+        clippedPaths = clipLine(wrappedPath, visibleRegion);
 
         // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
         QDoubleVector2D lb(qInf(), qInf());

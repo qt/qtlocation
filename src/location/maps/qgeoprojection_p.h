@@ -152,6 +152,7 @@ public:
 
     bool isProjectable(const QDoubleVector2D &wrappedProjection) const;
     QList<QDoubleVector2D> visibleGeometry() const;
+    QList<QDoubleVector2D> visibleGeometryExpanded() const;
     QList<QDoubleVector2D> projectableGeometry() const;
 
     inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
@@ -230,6 +231,7 @@ private:
     Line2D           m_nearPlaneMapIntersection;
 
     QList<QDoubleVector2D> m_visibleRegion;
+    QList<QDoubleVector2D> m_visibleRegionExpanded;
     QList<QDoubleVector2D> m_projectableRegion;
     bool             m_visibleRegionDirty;
 
