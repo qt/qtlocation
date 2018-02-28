@@ -54,7 +54,6 @@ QT_BEGIN_NAMESPACE
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
     : QQuickItem(parent)
 {
-    setFiltersChildMouseEvents(true);
     connect(this, &QDeclarativeGeoMapItemBase::childrenChanged,
             this, &QDeclarativeGeoMapItemBase::afterChildrenChanged);
     // Changing opacity on a mapItemGroup should affect also the opacity on the children.
@@ -234,24 +233,6 @@ float QDeclarativeGeoMapItemBase::zoomLevelOpacity() const
         return quickMap_->zoomLevel() - opacityRampMin;
     else
         return 0.0;
-}
-
-bool QDeclarativeGeoMapItemBase::childMouseEventFilter(QQuickItem *item, QEvent *event)
-{
-    Q_UNUSED(item);
-    if (event->type() == QEvent::MouseButtonPress && !contains(static_cast<QMouseEvent*>(event)->pos())) {
-        // In case of items that are not rectangles, this filter is used to test if the event has landed
-        // inside the actual item shape.
-        // If so, the method returns true, meaning that it prevents the event delivery to child "*item" (for example,
-        // a mouse area that is on top of this map item).
-        // However, this method sets "accepted" to false, so that the event can still be passed further up,
-        // specifically to the parent Map, that is a sort of flickable.
-        // Otherwise, if the event is not contained within the map item, the method returns false, meaning the event
-        // is delivered to the child *item (like the mouse area associated).
-        event->setAccepted(false);
-        return true;
-    }
-    return false;
 }
 
 /*!

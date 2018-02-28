@@ -53,7 +53,6 @@
 
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemview_p.h>
-#include <QtLocation/private/qquickgeomapgesturearea_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemgroup_p.h>
 #include <QtLocation/qgeoserviceprovider.h>
 #include <QtLocation/private/qgeocameradata_p.h>
@@ -80,7 +79,6 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     QML_NAMED_ELEMENT(Map)
     QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(QGeoServiceProvider::Error)
-    Q_PROPERTY(QQuickGeoMapGestureArea *gesture READ gesture CONSTANT)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
@@ -183,7 +181,7 @@ public:
     Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &position, bool clipToViewPort = true) const;
     Q_INVOKABLE QPointF fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort = true) const;
 
-    QQuickGeoMapGestureArea *gesture();
+//    QQuickGeoMapGestureArea *gesture();
 
     Q_INVOKABLE void fitViewportToMapItems(const QVariantList &items = {});
     Q_INVOKABLE void fitViewportToVisibleMapItems();
@@ -227,19 +225,6 @@ Q_SIGNALS:
     Q_REVISION(14) void visibleRegionChanged();
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override ;
-    void mouseMoveEvent(QMouseEvent *event) override ;
-    void mouseReleaseEvent(QMouseEvent *event) override ;
-    void touchUngrabEvent() override;
-    void touchEvent(QTouchEvent *event) override ;
-#if QT_CONFIG(wheelevent)
-    void wheelEvent(QWheelEvent *event) override ;
-#endif
-
-    bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
-    bool sendMouseEvent(QMouseEvent *event);
-    bool sendTouchEvent(QPointerEvent *event);
-
     void componentComplete() override;
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
@@ -272,7 +257,6 @@ private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void populateMap();
     void fitViewportToMapItemsRefine(const QList<QPointer<QDeclarativeGeoMapItemBase> > &mapItems, bool refine, bool onlyVisible);
-    bool isInteractive() const;
     void attachCopyrightNotice(bool initialVisibility);
     void detachCopyrightNotice(bool currentVisibility);
     QMargins mapMargins() const;
@@ -284,7 +268,6 @@ private:
     QGeoMapType m_activeMapType;
     QList<QGeoMapType> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
-    QQuickGeoMapGestureArea *m_gestureArea = nullptr;
     QPointer<QGeoMap> m_map;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
@@ -322,7 +305,6 @@ private:
 
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;
-    friend class QQuickGeoMapGestureArea;
     friend class QDeclarativeGeoMapCopyrightNotice;
     Q_DISABLE_COPY(QDeclarativeGeoMap)
 };

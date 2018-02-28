@@ -144,7 +144,6 @@ qt_internal_add_qml_module(Location
         quickmapitems/qdeclarativecirclemapitem.cpp quickmapitems/qdeclarativecirclemapitem_p.h
         quickmapitems/qdeclarativecirclemapitem_p_p.h
         quickmapitems/qdeclarativeroutemapitem.cpp quickmapitems/qdeclarativeroutemapitem_p.h
-        quickmapitems/qquickgeomapgesturearea_p.h quickmapitems/qquickgeomapgesturearea.cpp
         quickmapitems/qdeclarativegeomapcopyrightsnotice_p.h
         quickmapitems/qdeclarativegeomapcopyrightsnotice.cpp
         quickmapitems/qdeclarativegeomapitemtransitionmanager_p.h
