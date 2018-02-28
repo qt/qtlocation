@@ -125,14 +125,6 @@ static qreal sanitizeBearing(qreal bearing)
     does not involve any special interaction with Map itself -- changing these
     properties in a map object will automatically update the display.
 
-    \section2 Interaction
-
-    The Map type includes support for pinch and flick gestures to control
-    zooming and panning. These are enabled by default, and available at any
-    time by using the \l gesture object. The actual GestureArea is constructed
-    specially at startup and cannot be replaced or destroyed. Its properties
-    can be altered, however, to control its behavior.
-
     \section2 Performance
 
     Maps are rendered using OpenGL (ES) and the Qt Scene Graph stack, and as
@@ -177,13 +169,7 @@ static qreal sanitizeBearing(qreal bearing)
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     : QQuickItem(parent)
 {
-    m_gestureArea = new QQuickGeoMapGestureArea(this);
-
-    setAcceptHoverEvents(false);
-    setAcceptTouchEvents(true);
-    setAcceptedMouseButtons(Qt::LeftButton);
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
-    setFiltersChildMouseEvents(true); // needed for childMouseEventFilter to work.
 
     m_activeMapType = QGeoMapType(QGeoMapType::NoMap,
                                   tr("No Map"),
@@ -391,19 +377,6 @@ void QDeclarativeGeoMap::componentComplete()
 }
 
 /*!
-    \qmlproperty MapGestureArea QtLocation::Map::gesture
-
-    Contains the MapGestureArea created with the Map. This covers pan, flick and pinch gestures.
-    Use \c{gesture.enabled: true} to enable basic gestures, or see \l{MapGestureArea} for
-    further details.
-*/
-
-QQuickGeoMapGestureArea *QDeclarativeGeoMap::gesture()
-{
-    return m_gestureArea;
-}
-
-/*!
     \internal
 
     This may happen before mappingManagerInitialized()
@@ -492,32 +465,21 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     //strict zoom level limit before initialization nothing is done here.
     //minimum zoom level might be changed to limit gray bundaries
     //This code assumes that plugins' maximum zoom level will never exceed 30.0
-    if (m_cameraCapabilities.maximumZoomLevelAt256() < m_gestureArea->maximumZoomLevel()) {
+    if (!qIsFinite(m_userMaximumZoomLevel)) {
+        // If the user didn't set anything
         setMaximumZoomLevel(m_cameraCapabilities.maximumZoomLevelAt256(), false);
-    } else if (m_cameraCapabilities.maximumZoomLevelAt256() > m_gestureArea->maximumZoomLevel()) {
-        if (!qIsFinite(m_userMaximumZoomLevel)) {
-            // If the user didn't set anything
-            setMaximumZoomLevel(m_cameraCapabilities.maximumZoomLevelAt256(), false);
-        } else {  // Try to set what the user requested
-            // Else if the user set something larger, but that got clamped by the previous camera caps
-            setMaximumZoomLevel(qMin<qreal>(m_cameraCapabilities.maximumZoomLevelAt256(),
-                                            m_userMaximumZoomLevel), false);
-        }
+    } else {  // Try to set what the user requested
+        // Else if the user set something larger, but that got clamped by the previous camera caps
+        setMaximumZoomLevel(qMin<qreal>(m_cameraCapabilities.maximumZoomLevelAt256(),
+                                        m_userMaximumZoomLevel), false);
     }
 
-    if (m_cameraCapabilities.minimumZoomLevelAt256() > m_gestureArea->minimumZoomLevel()) {
+    if (!qIsFinite(m_userMinimumZoomLevel)) {
+        // If the user didn't set anything, trying to set the new caps.
         setMinimumZoomLevel(m_cameraCapabilities.minimumZoomLevelAt256(), false);
-    } else if (m_cameraCapabilities.minimumZoomLevelAt256() < m_gestureArea->minimumZoomLevel()) {
-        if (!qIsFinite(m_userMinimumZoomLevel)) {
-            // If the user didn't set anything, trying to set the new caps.
-            setMinimumZoomLevel(m_cameraCapabilities.minimumZoomLevelAt256(), false);
-        } else {  // Try to set what the user requested
-            // Else if the user set a minimum, m_gestureArea->minimumZoomLevel() might be larger
-            // because of different reasons. Resetting it, as if it ends to be the same,
-            // no signal will be emitted.
-            setMinimumZoomLevel(qMax<qreal>(m_cameraCapabilities.minimumZoomLevelAt256(),
-                                            m_userMinimumZoomLevel), false);
-        }
+    } else {  // Try to set what the user requested
+        setMinimumZoomLevel(qMax<qreal>(m_cameraCapabilities.minimumZoomLevelAt256(),
+                                        m_userMinimumZoomLevel), false);
     }
 
     // Tilt
@@ -584,8 +546,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     m_copyrights->setCopyrightsZ(m_maxChildZ + 1);
     m_copyrights->setCopyrightsVisible(m_copyrightsVisible);
     m_copyrights->setMapSource(this);
-
-    m_gestureArea->setMap(m_map);
 
     m_supportedMapTypes = m_mappingManager->supportedMapTypes();
 
@@ -695,9 +655,8 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSe
              minimumZoomLevel = qMax<qreal>(minimumZoomLevel, m_map->minimumZoom());
 
         // minimumZoomLevel is, at this point, the implicit minimum zoom level
-        m_gestureArea->setMinimumZoomLevel(minimumZoomLevel);
 
-        if (zoomLevel() < minimumZoomLevel && (m_gestureArea->enabled() || !m_cameraCapabilities.overzoomEnabled()))
+        if (zoomLevel() < minimumZoomLevel)
             setZoomLevel(minimumZoomLevel);
 
         if (qIsNaN(m_userMinimumZoomLevel) && oldMinimumZoomLevel != minimumZoomLevel)
@@ -743,9 +702,7 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel, bool userSe
 
         maximumZoomLevel = qBound(minimumZoomLevel(), maximumZoomLevel, qreal(m_cameraCapabilities.maximumZoomLevelAt256()));
 
-        m_gestureArea->setMaximumZoomLevel(maximumZoomLevel);
-
-        if (zoomLevel() > maximumZoomLevel && (m_gestureArea->enabled() || !m_cameraCapabilities.overzoomEnabled()))
+        if (zoomLevel() > maximumZoomLevel)
             setZoomLevel(maximumZoomLevel);
 
         if (oldMaximumZoomLevel != maximumZoomLevel)
@@ -1659,11 +1616,6 @@ void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData &val
     QQuickItem::itemChange(change, value);
 }
 
-bool QDeclarativeGeoMap::isInteractive() const
-{
-    return (m_gestureArea->enabled() && m_gestureArea->acceptedGestures()) || m_gestureArea->isActive();
-}
-
 void QDeclarativeGeoMap::attachCopyrightNotice(bool initialVisibility)
 {
     if (initialVisibility) {
@@ -2042,7 +1994,6 @@ QGeoMapType QDeclarativeGeoMap::activeMapType() const
 */
 void QDeclarativeGeoMap::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    m_gestureArea->setSize(newGeometry.size());
     QQuickItem::geometryChange(newGeometry, oldGeometry);
 
     if (!m_map || newGeometry.size().isEmpty())
@@ -2244,162 +2195,6 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(const QList<QPointer<QDecla
     // we refine the viewport again to achieve better results
     if (refine)
         fitViewportToMapItemsRefine(mapItems, false, onlyVisible);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
-{
-    if (isInteractive() && event->source() == Qt::MouseEventNotSynthesized)
-        m_gestureArea->handleMousePressEvent(event);
-    else
-        QQuickItem::mousePressEvent(event);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
-{
-    if (isInteractive() && event->source() == Qt::MouseEventNotSynthesized)
-        m_gestureArea->handleMouseMoveEvent(event);
-    else
-        QQuickItem::mouseMoveEvent(event);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (isInteractive() && event->source() == Qt::MouseEventNotSynthesized)
-        m_gestureArea->handleMouseReleaseEvent(event);
-    else
-        QQuickItem::mouseReleaseEvent(event);
-}
-
-void QDeclarativeGeoMap::touchUngrabEvent()
-{
-    if (isInteractive())
-        m_gestureArea->handleTouchUngrabEvent();
-    else
-        QQuickItem::touchUngrabEvent();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
-{
-    if (isInteractive()) {
-        m_gestureArea->handleTouchEvent(event);
-    } else {
-        //ignore event so sythesized event is generated;
-        QQuickItem::touchEvent(event);
-    }
-}
-
-#if QT_CONFIG(wheelevent)
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
-{
-    if (isInteractive())
-        m_gestureArea->handleWheelEvent(event);
-    else
-        QQuickItem::wheelEvent(event);
-
-}
-#endif
-
-/*!
-    \internal
-*/
-bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
-{
-    Q_UNUSED(item);
-    if (!isVisible() || !isEnabled() || !isInteractive())
-        return QQuickItem::childMouseEventFilter(item, event);
-
-    switch (event->type()) {
-    case QEvent::TouchBegin:
-    case QEvent::TouchUpdate:
-    case QEvent::TouchEnd:
-    case QEvent::TouchCancel:
-        return sendTouchEvent(static_cast<QTouchEvent *>(event));
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseMove:
-    case QEvent::MouseButtonRelease:
-        {
-            auto mEvent = static_cast<QMouseEvent*>(event);
-            if (mEvent->source() == Qt::MouseEventNotSynthesized){
-                return sendTouchEvent(mEvent);
-            }
-        }
-        break;
-    case QEvent::UngrabMouse:
-        Q_ASSERT(event->isSinglePointEvent());
-        return sendTouchEvent(static_cast<QSinglePointEvent*>(event));
-    default:
-        break;
-    }
-    return QQuickItem::childMouseEventFilter(item, event);
-}
-
-bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
-{
-    bool stealEvent = m_gestureArea->isActive();
-
-    if ((stealEvent || contains(mapFromScene(event->scenePosition())))) {
-        switch (event->type()) {
-        case QEvent::MouseMove:
-            m_gestureArea->handleMouseMoveEvent(event);
-            break;
-        case QEvent::MouseButtonPress:
-            m_gestureArea->handleMousePressEvent(event);
-            break;
-        case QEvent::MouseButtonRelease:
-            m_gestureArea->handleMouseReleaseEvent(event);
-            break;
-        default:
-            break;
-        }
-
-        stealEvent = m_gestureArea->isActive();
-
-        if (stealEvent) {
-            //do not deliver
-            event->setAccepted(true);
-            return true;
-        } else {
-            return false;
-        }
-    }
-    return false;
-}
-
-bool QDeclarativeGeoMap::sendTouchEvent(QPointerEvent *event)
-{
-    const QTouchEvent::TouchPoint &point = event->points().first();
-
-    bool stealEvent = m_gestureArea->isActive();
-    bool containsPoint = contains(mapFromScene(point.scenePosition()));
-
-    if ((stealEvent || containsPoint)) {
-
-        m_gestureArea->handleTouchEvent(event);
-        stealEvent = m_gestureArea->isActive();
-
-        if (stealEvent) {
-            //event->setAccepted(true);
-            //return true;
-        } else {
-            return false;
-        }
-    }
-    return false;
 }
 
 QT_END_NAMESPACE

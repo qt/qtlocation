@@ -153,7 +153,6 @@ QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
     opacityContainer_ = new QQuickItem(this);
     opacityContainer_->setParentItem(this);
     opacityContainer_->setFlag(ItemHasContents, true);
-    setFiltersChildMouseEvents(true);
 }
 
 QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
@@ -196,20 +195,6 @@ void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
         polishAndUpdate();
     }
 }
-// See QQuickMultiPointTouchArea::childMouseEventFilter for reference
-bool QDeclarativeGeoMapQuickItem::childMouseEventFilter(QQuickItem *receiver, QEvent *event)
-{
-    if (isEnabled() && isVisible()) {
-        switch (event->type()) {
-        case QEvent::MouseButtonPress:
-        case QEvent::TouchBegin:
-            dragStartCoordinate_ = coordinate_;
-        default:
-            break;
-        }
-    }
-    return QQuickItem::childMouseEventFilter(receiver, event);
-}
 
 /*!
     \internal
@@ -222,24 +207,8 @@ void QDeclarativeGeoMapQuickItem::geometryChange(const QRectF &newGeometry, cons
         return;
     }
 
-    QGeoCoordinate newCoordinate;
-    // with zoomLevel set the anchorPoint has to be factored into the transformation to properly transform around it.
-    if (zoomLevel_ != 0.0
-            && map()->geoProjection().projectionType() == QGeoProjection::ProjectionWebMercator) {
-        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
-
-        // When dragStartCoordinate_ can't be projected to screen, dragging must be disabled.
-        if (!p.isProjectable(p.geoToWrappedMapProjection(dragStartCoordinate_)))
-            return;
-
-        QDoubleVector2D pos = map()->geoProjection().coordinateToItemPosition(dragStartCoordinate_, false);
-        // oldGeometry.topLeft() is always intended to be (0,0), even when for some reason it's not.
-        pos.setX(pos.x() + newGeometry.topLeft().x());
-        pos.setY(pos.y() + newGeometry.topLeft().y());
-        newCoordinate = map()->geoProjection().itemPositionToCoordinate(pos, false);
-    } else {
-        newCoordinate = map()->geoProjection().itemPositionToCoordinate(QDoubleVector2D(x(), y()) + QDoubleVector2D(anchorPoint_), false);
-    }
+    QGeoCoordinate newCoordinate = map()->geoProjection().
+            itemPositionToCoordinate(QDoubleVector2D(x(), y()) + QDoubleVector2D(anchorPoint_), false);
 
     if (newCoordinate.isValid())
         setCoordinate(newCoordinate);

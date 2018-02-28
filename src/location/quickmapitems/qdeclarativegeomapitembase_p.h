@@ -143,7 +143,6 @@ protected Q_SLOTS:
 
 protected:
     float zoomLevelOpacity() const;
-    bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
     bool isPolishScheduled() const;
     virtual void setMaterialDirty();
 
