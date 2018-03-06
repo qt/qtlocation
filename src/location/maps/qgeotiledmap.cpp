@@ -141,6 +141,8 @@ void QGeoTiledMap::clearData()
     Q_D(QGeoTiledMap);
     d->m_cache->clearAll();
     d->m_mapScene->clearTexturedTiles();
+    d->updateScene();
+    sgNodeChanged();
 }
 
 QGeoMap::Capabilities QGeoTiledMap::capabilities() const
