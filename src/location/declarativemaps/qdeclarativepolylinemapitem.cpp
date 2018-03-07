@@ -407,7 +407,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     }
 
     screenBounds_ = bb;
-    this->translate( -1 * sourceBounds_.topLeft());
+    this->translate( -1 * sourceBounds_.topLeft() + QPointF(strokeWidth, strokeWidth));
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
@@ -763,8 +763,8 @@ void QDeclarativePolylineMapItem::updatePolish()
     geometry_.updateSourcePoints(*map(), geopathProjected_, geopath_.boundingGeoRectangle().topLeft());
     geometry_.updateScreenPoints(*map(), line_.width());
 
-    setWidth(geometry_.sourceBoundingBox().width());
-    setHeight(geometry_.sourceBoundingBox().height());
+    setWidth(geometry_.sourceBoundingBox().width() + 2 * line_.width());
+    setHeight(geometry_.sourceBoundingBox().height() + 2 * line_.width());
 
     setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft());
 }
