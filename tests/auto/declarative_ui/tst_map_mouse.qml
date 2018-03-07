@@ -669,6 +669,16 @@ Item {
             compare(mouseOverlapperDoubleClickedSpy.count, 4)
         }
 
+        function test_release_does_not_block_clicked() { // QTBUG-66534
+            clear_data()
+            mousePress(map, 55, 75)
+            compare(mouseOverlapperPressedSpy.count, 1)
+            mouseRelease(map, 55, 25)
+            compare(mouseOverlapperReleasedSpy.count, 1)
+            mouseClick(map, 25, 25)
+            compare(mouseUpperClickedSpy.count, 1)
+        }
+
         function test_zzz_basic_press_and_hold() { // _zzz_ to ensure execution last (takes time)
             clear_data();
             wait(1000);

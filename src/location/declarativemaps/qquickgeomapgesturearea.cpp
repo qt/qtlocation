@@ -1722,7 +1722,8 @@ void QQuickGeoMapGestureArea::panStateMachine()
 */
 bool QQuickGeoMapGestureArea::canStartPan()
 {
-    if (m_allPoints.count() == 0 || (m_acceptedGestures & PanGesture) == 0)
+    if (m_allPoints.count() == 0 || (m_acceptedGestures & PanGesture) == 0
+            || m_mousePoint->state() == Qt::TouchPointReleased) // mouseReleaseEvent handling does not clear m_mousePoint, only ungrabMouse does -- QTBUG-66534
         return false;
 
     // Check if thresholds for normal panning are met.
