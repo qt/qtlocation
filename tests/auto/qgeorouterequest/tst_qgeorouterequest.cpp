@@ -321,25 +321,27 @@ void tst_QGeoRouteRequest::featureWeight()
 
 void tst_QGeoRouteRequest::extraParameters_data()
 {
-    QTest::addColumn<QMap<QString, QVariantMap>>("extraParameters");
+    QTest::addColumn<QVariantMap>("extraParameters");
 
-    QMap<QString, QVariantMap> params;
+    QVariantMap params;
     QTest::newRow("Empty") << params;
 
-    params["param1"] = {{"property1", QVariant(42)} , {"property2", QVariant("42")} , {"property3", QVariant("42.0")}};
+    const QVariantMap param1 = {{"property1", QVariant(42)} , {"property2", QVariant("42")} , {"property3", QVariant("42.0")}};
+    params["param1"] = param1;
 
     QTest::newRow("One param") << params;
 
-    params["param2"] = {{"property1", QVariant(43)} , {"property2", QVariant("43")} , {"property3", QVariant("43.0")}};
+    const QVariantMap param2 = {{"property1", QVariant(43)} , {"property2", QVariant("43")} , {"property3", QVariant("43.0")}};
+    params["param2"] = param2;
 
     QTest::newRow("Two params") << params;
 }
 
 void tst_QGeoRouteRequest::extraParameters()
 {
-    typedef QMap<QString, QVariantMap> ParameterType;
+    typedef QVariantMap ParameterType;
     QFETCH(ParameterType , extraParameters);
-    QMap<QString, QVariantMap> emptyParams;
+    QVariantMap emptyParams;
     qgeorouterequest->setExtraParameters(extraParameters);
     QCOMPARE(qgeorouterequest->extraParameters(), extraParameters);
     qgeorouterequest->setExtraParameters(emptyParams);

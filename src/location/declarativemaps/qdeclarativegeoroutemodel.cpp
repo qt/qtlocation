@@ -1442,7 +1442,7 @@ QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest()
         m_extraParametersChanged = false;
         // Update extra params into request
         const QList<QDeclarativeGeoMapParameter *> params = quickChildren<QDeclarativeGeoMapParameter>();
-        QMap<QString, QVariantMap> extraParameters;
+        QVariantMap extraParameters;
         for (const QDeclarativeGeoMapParameter *p: params)
             extraParameters[p->type()] = p->toVariantMap();
         request_.setExtraParameters(extraParameters);

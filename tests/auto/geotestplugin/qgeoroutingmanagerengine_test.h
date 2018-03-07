@@ -169,7 +169,7 @@ public:
         QList<QGeoRoute> routes;
         int travelTime = 0;
         if (request.extraParameters().contains("test-traveltime"))
-            travelTime = request.extraParameters().value("test-traveltime").value("requestedTime").toInt();
+            travelTime = request.extraParameters().value("test-traveltime").toMap().value("requestedTime").toInt();
 
         for (int i = 0; i < request.numberAlternativeRoutes(); ++i) {
             QGeoRoute route;
