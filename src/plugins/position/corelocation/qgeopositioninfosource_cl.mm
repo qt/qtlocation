@@ -47,16 +47,16 @@
 #define MINIMUM_UPDATE_INTERVAL 1000
 
 @interface PositionLocationDelegate : NSObject <CLLocationManagerDelegate>
-{
-    QGeoPositionInfoSourceCL *m_positionInfoSource;
-}
 @end
 
 @implementation PositionLocationDelegate
-- (id)initWithInfoSource:(QGeoPositionInfoSourceCL*) positionInfoSource
 {
-    self = [super init];
-    if (self) {
+    QGeoPositionInfoSourceCL *m_positionInfoSource;
+}
+
+- (instancetype)initWithInfoSource:(QGeoPositionInfoSourceCL*) positionInfoSource
+{
+    if ((self = [self init])) {
         m_positionInfoSource = positionInfoSource;
     }
     return self;
