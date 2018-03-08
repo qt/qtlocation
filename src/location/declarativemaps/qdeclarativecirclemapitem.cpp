@@ -484,9 +484,15 @@ QSGNode *QDeclarativeCircleMapItem::updateMapItemPaintNode(QSGNode *oldNode, Upd
 */
 void QDeclarativeCircleMapItem::updatePolish()
 {
-    if (!map() || !circle_.isValid()
-            || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
+    if (!map() || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
+    if (!circle_.isValid()) {
+        geometry_.clear();
+        borderGeometry_.clear();
+        setWidth(0);
+        setHeight(0);
+        return;
+    }
 
     const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
     QScopedValueRollback<bool> rollback(updatingGeometry_);

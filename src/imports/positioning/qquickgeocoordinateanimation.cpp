@@ -275,14 +275,14 @@ void QQuickGeoCoordinateAnimation::setDirection(QQuickGeoCoordinateAnimation::Di
     d->m_direction = direction;
     switch (direction) {
     case West:
-        d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(&q_coordinateWestInterpolator);
+        d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(reinterpret_cast<void *>(&q_coordinateWestInterpolator));
         break;
     case East:
-        d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(&q_coordinateEastInterpolator);
+        d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(reinterpret_cast<void *>(&q_coordinateEastInterpolator));
         break;
     case Shortest:
     default:
-        d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(&q_coordinateShortestInterpolator);
+        d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(reinterpret_cast<void *>(&q_coordinateShortestInterpolator));
         break;
     }
     emit directionChanged();

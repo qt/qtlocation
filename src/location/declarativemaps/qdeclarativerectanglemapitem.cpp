@@ -273,9 +273,15 @@ QSGNode *QDeclarativeRectangleMapItem::updateMapItemPaintNode(QSGNode *oldNode, 
 */
 void QDeclarativeRectangleMapItem::updatePolish()
 {
-    if (!map() || !topLeft().isValid() || !bottomRight().isValid()
-            || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
+    if (!map() || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
+    if (!topLeft().isValid() || !bottomRight().isValid()) {
+        geometry_.clear();
+        borderGeometry_.clear();
+        setWidth(0);
+        setHeight(0);
+        return;
+    }
 
     const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
 

@@ -370,7 +370,7 @@ QGeoRouteSegmentPrivate *QGeoRouteSegmentPrivateDefault::clone()
 
 bool QGeoRouteSegmentPrivateDefault::operator ==(const QGeoRouteSegmentPrivateDefault &other) const
 {
-    return QGeoRouteSegmentPrivateDefault::operator ==(other);
+    return QGeoRouteSegmentPrivate::operator ==(other);
 }
 
 bool QGeoRouteSegmentPrivateDefault::valid() const
