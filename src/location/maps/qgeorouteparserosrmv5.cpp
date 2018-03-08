@@ -836,7 +836,12 @@ static QGeoRouteSegment parseStep(const QJsonObject &step, bool useServerText) {
     geoManeuver.setWaypoint(coord);
 
     QVariantMap extraAttributes;
-    static const QStringList extras { "bearing_before", "bearing_after", "instruction", "type", "modifier" };
+    static const QStringList extras {
+        QLatin1String("bearing_before"),
+        QLatin1String("bearing_after"),
+        QLatin1String("instruction"),
+        QLatin1String("type"),
+        QLatin1String("modifier") };
     for (const QString &e: extras) {
         if (maneuver.find(e) != maneuver.end())
             extraAttributes.insert(e, maneuver.value(e).toVariant());
