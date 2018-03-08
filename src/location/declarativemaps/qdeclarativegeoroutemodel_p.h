@@ -200,6 +200,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoWaypoint : public QGeoCoordinateO
     Q_PROPERTY(bool isValid READ isValid STORED false)
 
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
+    Q_PROPERTY(QVariantMap metadata READ metadata)
     Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
     Q_CLASSINFO("DefaultProperty", "quickChildren")
 
@@ -236,6 +237,7 @@ public:
     }
 
     QVariantMap metadata();
+    void setMetadata(const QVariantMap &meta);
 
 Q_SIGNALS:
     void completed();
@@ -292,6 +294,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
     Q_PROPERTY(QVariantList waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
     Q_PROPERTY(QJSValue excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
+    Q_PROPERTY(QVariantMap extraParameters READ extraParameters)
     Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
     Q_CLASSINFO("DefaultProperty", "quickChildren")
     Q_INTERFACES(QQmlParserStatus)
@@ -299,6 +302,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
 public:
 
     explicit QDeclarativeGeoRouteQuery(QObject *parent = 0);
+    QDeclarativeGeoRouteQuery(const QGeoRouteRequest &request, QObject *parent = 0); // init from request. For instances intended to be read only
     ~QDeclarativeGeoRouteQuery();
 
     // From QQmlParserStatus
@@ -306,6 +310,7 @@ public:
     void componentComplete();
 
     QGeoRouteRequest routeRequest();
+    QVariantMap extraParameters();
 
     enum TravelMode {
         CarTravel = QGeoRouteRequest::CarTravel,

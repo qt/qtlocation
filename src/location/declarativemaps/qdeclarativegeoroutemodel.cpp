@@ -752,6 +752,21 @@ QDeclarativeGeoRouteQuery::QDeclarativeGeoRouteQuery(QObject *parent)
 {
 }
 
+QDeclarativeGeoRouteQuery::QDeclarativeGeoRouteQuery(const QGeoRouteRequest &request, QObject *parent)
+:   QObject(parent), request_(request), complete_(false), m_excludedAreaCoordinateChanged(false)
+{
+    // Extra params assumed to be already set in the request.
+    // Init waypoints
+    const QList<QGeoCoordinate> wpts = request_.waypoints();
+    const QList<QVariantMap> meta = request_.waypointsMetadata();
+    for (int i = 0; i < wpts.size(); ++i) {
+        QDeclarativeGeoWaypoint *w = new QDeclarativeGeoWaypoint(this);
+        w->setCoordinate(wpts.at(i));
+        w->setMetadata(meta.at(i));
+        m_waypoints << w;
+    }
+}
+
 QDeclarativeGeoRouteQuery::~QDeclarativeGeoRouteQuery()
 {
 }
@@ -1456,6 +1471,21 @@ QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest()
     return request_;
 }
 
+
+/*!
+    \qmlproperty VariantMap extraParameters
+
+    The route query extra parameters. This property is read only. If the query is
+    defined by the user, these can be set by using MapParameters.
+    If the route query comes from the engine via signals, the query is intended to be read-only.
+
+    \since 5.11
+*/
+QVariantMap QDeclarativeGeoRouteQuery::extraParameters()
+{
+    return routeRequest().extraParameters();
+}
+
 void QDeclarativeGeoRouteQuery::excludedAreaCoordinateChanged()
 {
     if (!m_excludedAreaCoordinateChanged) {
@@ -1771,6 +1801,16 @@ void QDeclarativeGeoWaypoint::setBearing(qreal bearing)
     }
 }
 
+/*!
+    \qmlproperty VariantMap metadata
+
+    The waypoint metadata. This property is read only. If the waypoint is
+    defined by the user, these can be set by using MapParameters.
+    If the waypoint comes from the engine via signals, or as part of a read-only route query,
+    the waypoint is intended to be read-only.
+
+    \since 5.11
+*/
 QVariantMap QDeclarativeGeoWaypoint::metadata()
 {
     if (m_metadataChanged) {
@@ -1785,6 +1825,15 @@ QVariantMap QDeclarativeGeoWaypoint::metadata()
         m_metadata[QStringLiteral("bearing")] = m_bearing;
     }
     return m_metadata;
+}
+
+// Used only by QDeclarativeGeoRouteRequest
+void QDeclarativeGeoWaypoint::setMetadata(const QVariantMap &meta)
+{
+    m_metadata = meta;
+    if (m_metadata.contains(QStringLiteral("bearing")) && m_metadata.value(QStringLiteral("bearing")).canConvert<double>())
+        m_bearing = m_metadata.value(QStringLiteral("bearing")).toDouble();
+    m_metadataChanged = false;
 }
 
 void QDeclarativeGeoWaypoint::extraParameterChanged()
