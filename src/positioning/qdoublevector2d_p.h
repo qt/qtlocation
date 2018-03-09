@@ -55,7 +55,7 @@
 #include <QVector2D>
 #endif
 
-#include "qpositioningglobal.h"
+#include "qpositioningglobal_p.h"
 #include <QtCore/qmetatype.h>
 #include <QPointF>
 
@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
 
 class QDoubleVector3D;
 
-class Q_POSITIONING_EXPORT QDoubleVector2D
+class Q_POSITIONING_PRIVATE_EXPORT QDoubleVector2D
 {
 public:
     Q_DECL_CONSTEXPR inline QDoubleVector2D();
