@@ -203,6 +203,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoWaypoint : public QGeoCoordinateO
     Q_PROPERTY(QVariantMap metadata READ metadata)
     Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
     Q_CLASSINFO("DefaultProperty", "quickChildren")
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     QDeclarativeGeoWaypoint(QObject *parent = 0);
