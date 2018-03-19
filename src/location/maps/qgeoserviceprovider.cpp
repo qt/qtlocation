@@ -610,6 +610,8 @@ void QGeoServiceProvider::setLocale(const QLocale &locale)
         d_ptr->mappingManager->setLocale(locale);
     if (d_ptr->placeManager)
         d_ptr->placeManager->setLocale(locale);
+    if (d_ptr->navigationManager)
+        d_ptr->navigationManager->setLocale(locale);
 }
 
 /*******************************************************************************
