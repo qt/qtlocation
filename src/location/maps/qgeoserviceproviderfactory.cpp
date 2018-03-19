@@ -43,6 +43,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-impl
     \since 5.6
+    \deprecated
 
     \brief The QGeoServiceProviderFactory class is a factory class used as the
     plugin interface for services related to geographical information.
@@ -52,6 +53,8 @@ QT_BEGIN_NAMESPACE
 
     The other functions should be overridden if the plugin supports the
     associated set of functionality.
+
+    \sa QGeoServiceProviderFactoryV2
 */
 
 /*!
@@ -161,6 +164,28 @@ QPlaceManagerEngine *QGeoServiceProviderFactory::createPlaceManagerEngine(const 
 }
 
 /*!
+    \class QGeoServiceProviderFactoryV2
+    \inmodule QtLocation
+    \ingroup QtLocation-impl
+    \since 5.11
+
+    \brief The QGeoServiceProviderFactoryV2 class is a factory class used as the
+    plugin interface for services related to geographical information.
+
+    Implementers must provide a unique combination of providerName() and
+    providerVersion() per plugin.
+
+    The other functions should be overridden if the plugin supports the
+    associated set of functionality.
+*/
+
+/*!
+\fn QGeoServiceProviderFactoryV2::~QGeoServiceProviderFactoryV2()
+
+Destroys this QGeoServiceProviderFactoryV2 instance.
+*/
+
+/*!
     Returns a new QNavigationManagerEngine instance, initialized with \a
     parameters, which implements navigation functionality.
 
@@ -173,7 +198,7 @@ QPlaceManagerEngine *QGeoServiceProviderFactory::createPlaceManagerEngine(const 
     The default implementation returns nullptr, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QNavigationManagerEngine *QGeoServiceProviderFactory::createNavigationManagerEngine(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+QNavigationManagerEngine *QGeoServiceProviderFactoryV2::createNavigationManagerEngine(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
     Q_UNUSED(parameters)
     Q_UNUSED(error)

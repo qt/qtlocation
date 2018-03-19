@@ -360,7 +360,9 @@ template <> QPlaceManagerEngine *createEngine<QPlaceManagerEngine>(QGeoServicePr
 }
 template <> QNavigationManagerEngine *createEngine<QNavigationManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
-    return d_ptr->factory->createNavigationManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
+    if (!d_ptr->factoryV2)
+        return nullptr;
+    return d_ptr->factoryV2->createNavigationManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
 }
 
 /* Template for generating the code for each of the geocodingManager(),
@@ -656,7 +658,7 @@ void QGeoServiceProviderPrivate::unload()
     delete navigationManager;
     navigationManager = nullptr;
 
-    factory = 0;
+    factory = factoryV2 = nullptr;
     error = QGeoServiceProvider::NoError;
     errorString = QLatin1String("");
     metaData = QJsonObject();
@@ -686,7 +688,7 @@ void QGeoServiceProviderPrivate::filterParameterMap()
 
 void QGeoServiceProviderPrivate::loadMeta()
 {
-    factory = 0;
+    factory = factoryV2 = nullptr;
     metaData = QJsonObject();
     metaData.insert(QStringLiteral("index"), -1);
     error = QGeoServiceProvider::NotSupportedError;
@@ -727,7 +729,7 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
     if (int(metaData.value(QStringLiteral("index")).toDouble()) < 0) {
         error = QGeoServiceProvider::NotSupportedError;
         errorString = QString(QLatin1String("The geoservices provider is not supported."));
-        factory = 0;
+        factory = factoryV2 = nullptr;
         return;
     }
 
@@ -737,7 +739,9 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
     int idx = int(metaData.value(QStringLiteral("index")).toDouble());
 
     // load the actual plugin
-    factory = qobject_cast<QGeoServiceProviderFactory *>(loader()->instance(idx));
+    QObject *instance = loader()->instance(idx);
+    factory = qobject_cast<QGeoServiceProviderFactory *>(instance);
+    factoryV2 = qobject_cast<QGeoServiceProviderFactoryV2 *>(instance);
 }
 
 QHash<QString, QJsonObject> QGeoServiceProviderPrivate::plugins(bool reload)
