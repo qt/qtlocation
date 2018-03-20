@@ -184,6 +184,7 @@ public:
             // Register the 5.11 types
             minor = 11;
             qmlRegisterType<QDeclarativeGeoWaypoint>(uri, major, minor, "Waypoint");
+            qmlRegisterType<QDeclarativeGeoMapParameter>(uri, major, minor, "DynamicParameter");
 
             // Register the latest Qt version as QML type version
             qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
