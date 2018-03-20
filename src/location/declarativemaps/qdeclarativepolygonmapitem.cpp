@@ -500,9 +500,15 @@ QSGNode *QDeclarativePolygonMapItem::updateMapItemPaintNode(QSGNode *oldNode, Up
 */
 void QDeclarativePolygonMapItem::updatePolish()
 {
-    if (!map() || geopath_.path().length() == 0
-            || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
+    if (!map() || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
+    if (geopath_.path().length() == 0) { // Possibly cleared
+        geometry_.clear();
+        borderGeometry_.clear();
+        setWidth(0);
+        setHeight(0);
+        return;
+    }
 
     const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
     QScopedValueRollback<bool> rollback(updatingGeometry_);

@@ -62,6 +62,7 @@ class QGeoRoutingManager;
 class QGeoMappingManager;
 
 class QGeoServiceProviderFactory;
+class QGeoServiceProviderFactoryV2;
 
 class QGeoServiceProviderPrivate
 {
@@ -82,6 +83,7 @@ public:
     Flags features(const char *enumName);
 
     QGeoServiceProviderFactory *factory;
+    QGeoServiceProviderFactoryV2 *factoryV2 = nullptr;
     QJsonObject metaData;
 
     QVariantMap parameterMap;

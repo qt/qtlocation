@@ -473,7 +473,7 @@ QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 
     \since 5.11
 */
-void QGeoRouteRequest::setExtraParameters(const QMap<QString, QVariantMap> &extraParameters)
+void QGeoRouteRequest::setExtraParameters(const QVariantMap &extraParameters)
 {
     d_ptr->extraParameters = extraParameters;
 }
@@ -483,7 +483,7 @@ void QGeoRouteRequest::setExtraParameters(const QMap<QString, QVariantMap> &extr
 
     \since 5.11
 */
-QMap<QString, QVariantMap> QGeoRouteRequest::extraParameters() const
+QVariantMap QGeoRouteRequest::extraParameters() const
 {
     return d_ptr->extraParameters;
 }

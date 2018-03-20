@@ -62,13 +62,25 @@ public:
     virtual QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
+};
+
+Q_DECLARE_INTERFACE(QGeoServiceProviderFactory,
+                    "org.qt-project.qt.geoservice.serviceproviderfactory/5.0")
+
+class Q_LOCATION_EXPORT QGeoServiceProviderFactoryV2 : public QGeoServiceProviderFactory
+{
+public:
+    virtual ~QGeoServiceProviderFactoryV2() {}
+
     virtual QNavigationManagerEngine *createNavigationManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
 };
 
-Q_DECLARE_INTERFACE(QGeoServiceProviderFactory,
-                    "org.qt-project.qt.geoservice.serviceproviderfactory/5.0")
+// Although not actually used for constructing a specialized loader, this is required for
+// casting a QObject * into QGeoServiceProviderFactoryV2 *
+Q_DECLARE_INTERFACE(QGeoServiceProviderFactoryV2,
+                    "org.qt-project.qt.geoservice.serviceproviderfactoryV2/5.0")
 
 QT_END_NAMESPACE
 

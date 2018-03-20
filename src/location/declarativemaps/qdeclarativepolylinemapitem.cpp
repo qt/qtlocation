@@ -748,9 +748,14 @@ void QDeclarativePolylineMapItem::updateCache()
 */
 void QDeclarativePolylineMapItem::updatePolish()
 {
-    if (!map() || geopath_.path().length() == 0
-            || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
+    if (!map() || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
+    if (geopath_.path().length() == 0) { // Possibly cleared
+        geometry_.clear();
+        setWidth(0);
+        setHeight(0);
+        return;
+    }
 
     QScopedValueRollback<bool> rollback(updatingGeometry_);
     updatingGeometry_ = true;

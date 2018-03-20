@@ -38,6 +38,7 @@
 #include "locationvaluetypehelper_p.h"
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeoroute_p.h>
+#include <QtLocation/private/qdeclarativegeoroutemodel_p.h>
 
 #include <QtQml/QQmlEngine>
 #include <QtQml/qqmlinfo.h>
@@ -304,6 +305,20 @@ int QDeclarativeGeoRoute::segmentsCount() const
 const QGeoRoute &QDeclarativeGeoRoute::route() const
 {
     return route_;
+}
+
+/*!
+    \qmlproperty RouteQuery routeQuery
+
+    Returns the route query associated with this route.
+
+    \since 5.11
+*/
+QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery()
+{
+    if (!routeQuery_)
+        routeQuery_ = new QDeclarativeGeoRouteQuery(route_.request(), this);
+    return routeQuery_;
 }
 
 QT_END_NAMESPACE

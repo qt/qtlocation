@@ -56,6 +56,7 @@
 #include <QtLocation/QGeoRoute>
 
 QT_BEGIN_NAMESPACE
+class QDeclarativeGeoRouteQuery;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
 {
@@ -66,6 +67,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
     Q_PROPERTY(qreal distance READ distance CONSTANT)
     Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoRouteSegment> segments READ segments CONSTANT)
+    Q_PROPERTY(QDeclarativeGeoRouteQuery *routeQuery READ routeQuery)
 
 public:
     explicit QDeclarativeGeoRoute(QObject *parent = 0);
@@ -86,6 +88,7 @@ public:
 
     int segmentsCount() const;
     const QGeoRoute &route() const;
+    QDeclarativeGeoRouteQuery *routeQuery();
 
 Q_SIGNALS:
     void pathChanged();
@@ -100,6 +103,7 @@ private:
     QList<QGeoCoordinate> routePath();
 
     QGeoRoute route_;
+    QDeclarativeGeoRouteQuery *routeQuery_ = nullptr;
     QList<QDeclarativeGeoRouteSegment *> segments_;
     bool segmentsDirty_;
     friend class QDeclarativeRouteMapItem;
