@@ -41,9 +41,26 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype MapObjectView
+    \instantiates QMapObjectView
+    \inqmlmodule Qt.labs.location
+    \ingroup qml-QtLocation5-maps
+    \inherits QGeoMapObject
+
+    \brief The MapObjectView is used to populate Map with map objects from a model.
+
+    The MapObjectView is used to populate Map with map objects, either from a model or via
+    \l addMapObject or \l removeMapObject.
+
+    The MapObjectView type only makes sense when contained in a Map, meaning that it will not work when added inside
+    other QML elements.
+    This can also be intended as an object layer on top of a Map.
+*/
+
 /*
 
-    QGeoMapLayerPrivate
+    QMapObjectViewPrivate
 
 */
 
@@ -67,7 +84,7 @@ QGeoMapObject::Type QMapObjectViewPrivate::type() const
 
 /*
 
-    QGeoMapLayerPrivateDefault
+    QMapObjectViewPrivateDefault
 
 */
 
@@ -181,11 +198,24 @@ void QMapObjectView::componentComplete()
     m_delegateModel->componentComplete();
 }
 
+/*!
+    \qmlproperty Variant Qt.labs.location::MapObjectView::model
+
+    This property holds the model that provides data used for creating the map items defined by the
+    delegate. Only QAbstractItemModel based models are supported.
+*/
 QVariant QMapObjectView::model() const
 {
     return m_model;
 }
 
+/*!
+    \qmlproperty Component Qt.labs.location::MapObjectView::delegate
+
+    This property holds the delegate which defines how each item in the
+    model should be displayed. The Component must contain exactly one
+    QGeoMapObject -derived object as the root object.
+*/
 QQmlComponent *QMapObjectView::delegate() const
 {
     return m_delegate;
