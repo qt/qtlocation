@@ -40,6 +40,19 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype MapIconObject
+    \instantiates QMapIconObject
+    \inqmlmodule Qt.labs.location
+    \ingroup qml-QtLocation5-maps
+    \inherits QGeoMapObject
+
+    \brief The MapIconObject displays an icon on a Map.
+
+    The MapIconObject displays an icon on a Map.
+    The MapIconObject type only makes sense when contained in a Map or in a \l MapObjectView.
+*/
+
 QMapIconObjectPrivate::~QMapIconObjectPrivate()
 {
 
@@ -138,12 +151,34 @@ QMapIconObject::~QMapIconObject()
 
 }
 
+/*!
+    \qmlproperty Variant Qt.labs.location::MapIconObject::content
+
+    This property holds the content to be used for the icon. The actual content of this property is somehow
+    backend-dependent. The implementation for the raster engine accepts local urls or paths.
+    Other implementations may accept additional content types.
+*/
 QVariant QMapIconObject::content() const
 {
     const QMapIconObjectPrivate *d = static_cast<const QMapIconObjectPrivate *>(d_ptr.data());
     return d->content();
 }
 
+/*!
+    \qmlproperty Variant Qt.labs.location::MapIconObject::coordinate
+
+    The coordinate where the icon is going to be shown.
+    What pixel of the icon matches the coordinate is somehow backend-dependent.
+    For example, due to limitations, some backends might associate the center of the icon with the
+    coordinate, others one of the corners.
+    If there is a choice, backend developers should use the center of the icon as the default anchor
+    point.
+
+    The behavior is also intended to be customizable with a \l DynamicParameter, when
+    using backends that support anchoring arbitrary points of the icon to the coordinate.
+    What kind of parameter to use and how to achieve this behavior is intended to be
+    documented per-backend.
+*/
 QGeoCoordinate QMapIconObject::coordinate() const
 {
     const QMapIconObjectPrivate *d = static_cast<const QMapIconObjectPrivate *>(d_ptr.data());
@@ -170,6 +205,11 @@ void QMapIconObject::setCoordinate(const QGeoCoordinate &center)
     emit coordinateChanged(center);
 }
 
+/*!
+    \qmlproperty Variant Qt.labs.location::MapIconObject::size
+
+    The size of the icon as it will be shown on the map.
+*/
 QSizeF QMapIconObject::size() const
 {
     const QMapIconObjectPrivate *d = static_cast<const QMapIconObjectPrivate *>(d_ptr.data());
