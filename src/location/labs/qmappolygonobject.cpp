@@ -40,6 +40,19 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype MapPolygonObject
+    \instantiates QMapPolygonObject
+    \inqmlmodule Qt.labs.location
+    \ingroup qml-QtLocation5-maps
+    \inherits QGeoMapObject
+
+    \brief The MapPolygonObject displays a polygon on a Map.
+
+    The MapPolygonObject displays a polygon on a Map.
+    The MapPolygonObject type only makes sense when contained in a Map or in a \l MapObjectView.
+*/
+
 QMapPolygonObjectPrivate::QMapPolygonObjectPrivate(QGeoMapObject *q) : QGeoMapObjectPrivate(q)
 {
 
@@ -145,6 +158,12 @@ QMapPolygonObject::QMapPolygonObject(QObject *parent)
 QMapPolygonObject::~QMapPolygonObject()
 {}
 
+/*!
+    \qmlproperty VariantList Qt.labs.location::MapPolygonObject::path
+
+    This property holds the ordered list of coordinates which
+    define the polygon border.
+*/
 QVariantList QMapPolygonObject::path() const
 {
     QVariantList p;
@@ -169,11 +188,30 @@ void QMapPolygonObject::setPath(const QVariantList &path)
     }
 }
 
+/*!
+    \qmlproperty color Qt.labs.location::MapPolygonObject::color
+
+    This property holds the fill color of the polygon when drawn. For no fill,
+    use a transparent color.
+*/
 QColor QMapPolygonObject::color() const
 {
     return static_cast<const QMapPolygonObjectPrivate*>(d_ptr.data())->fillColor();
 }
 
+/*!
+    \qmlpropertygroup Qt.labs.location::MapPolygonObject::border
+    \qmlproperty int MapPolygonObject::border.width
+    \qmlproperty color MapPolygonObject::border.color
+
+    This property is part of the border property group. The border
+    property group holds the width and color used to draw the border.
+
+    The width is in pixels and is independent of the zoom level of the map.
+    The default values correspond to a black border with a width of 1 pixel.
+
+    For no border, use a width of 0 or a transparent color.
+*/
 QDeclarativeMapLineProperties *QMapPolygonObject::border()
 {
     if (!m_border) {
