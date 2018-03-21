@@ -40,6 +40,19 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype MapCircleObject
+    \instantiates QMapCircleObject
+    \inqmlmodule Qt.labs.location
+    \ingroup qml-QtLocation5-maps
+    \inherits QGeoMapObject
+
+    \brief The MapCircleObject displays a circle on a Map.
+
+    The MapCircleObject displays a circle on a Map.
+    The MapIconObject type only makes sense when contained in a Map or in a \l MapObjectView.
+*/
+
 QMapCircleObjectPrivate::QMapCircleObjectPrivate(QGeoMapObject *q) : QGeoMapObjectPrivate(q)
 {
 
@@ -165,22 +178,53 @@ QMapCircleObject::~QMapCircleObject()
 
 }
 
+/*!
+    \qmlproperty coordinate Qt.labs.location::MapCircleObject::center
 
+    This property holds the central point about which the circle is defined.
+
+    \sa radius
+*/
 QGeoCoordinate QMapCircleObject::center() const
 {
     return static_cast<const QMapCircleObjectPrivate*>(d_ptr.data())->center();
 }
 
+/*!
+    \qmlproperty real Qt.labs.location::MapCircleObject::radius
+
+    This property holds the radius of the circle, in meters on the ground.
+
+    \sa center
+*/
 qreal QMapCircleObject::radius() const
 {
     return static_cast<const QMapCircleObjectPrivate*>(d_ptr.data())->radius();
 }
 
+/*!
+    \qmlproperty color Qt.labs.location::MapCircleObject::color
+
+    This property holds the fill color of the circle when drawn. For no fill,
+    use a transparent color.
+*/
 QColor QMapCircleObject::color() const
 {
     return static_cast<const QMapCircleObjectPrivate*>(d_ptr.data())->color();
 }
 
+/*!
+    \qmlpropertygroup Qt.labs.location::MapCircleObject::border
+    \qmlproperty int MapCircleObject::border.width
+    \qmlproperty color MapCircleObject::border.color
+
+    This property is part of the border group property.
+    The border property holds the width and color used to draw the border of the circle.
+    The width is in pixels and is independent of the zoom level of the map.
+
+    The default values correspond to a black border with a width of 1 pixel.
+    For no line, use a width of 0 or a transparent color.
+*/
 QDeclarativeMapLineProperties *QMapCircleObject::border()
 {
     if (!m_border) {
