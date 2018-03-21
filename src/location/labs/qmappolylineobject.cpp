@@ -40,6 +40,19 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype MapPolylineObject
+    \instantiates QMapPolylineObject
+    \inqmlmodule Qt.labs.location
+    \ingroup qml-QtLocation5-maps
+    \inherits QGeoMapObject
+
+    \brief The MapPolylineObject displays a polyline on a Map.
+
+    The MapPolylineObject displays a polyline on a Map.
+    The MapPolylineObject type only makes sense when contained in a Map or in a \l MapObjectView.
+*/
+
 QMapPolylineObjectPrivate::QMapPolylineObjectPrivate(QGeoMapObject *q) : QGeoMapObjectPrivate(q)
 {
 
@@ -130,6 +143,12 @@ QMapPolylineObject::QMapPolylineObject(QObject *parent)
 QMapPolylineObject::~QMapPolylineObject()
 {}
 
+/*!
+    \qmlproperty VariantList Qt.labs.location::MapPolylineObject::path
+
+    This property holds the ordered list of coordinates which
+    define the polyline.
+*/
 QVariantList QMapPolylineObject::path() const
 {
     QVariantList p;
@@ -138,6 +157,19 @@ QVariantList QMapPolylineObject::path() const
     return p;
 }
 
+/*!
+    \qmlpropertygroup Qt.labs.location::MapPolylineObject::line
+    \qmlproperty int MapPolylineObject::line.width
+    \qmlproperty color MapPolylineObject::line.color
+
+    This property is part of the line property group. The line
+    property group holds the width and color used to draw the line.
+
+    The width is in pixels and is independent of the zoom level of the map.
+    The default values correspond to a black border with a width of 1 pixel.
+
+    For no line, use a width of 0 or a transparent color.
+*/
 QDeclarativeMapLineProperties *QMapPolylineObject::border()
 {
     if (!m_border) {
