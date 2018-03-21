@@ -177,6 +177,7 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QObject *parent)
         : QObject(parent),
         d(new QGeoPositionInfoSourcePrivate)
 {
+    qRegisterMetaType<QGeoPositionInfo>();
     d->interval = 0;
     d->methods = 0;
 }

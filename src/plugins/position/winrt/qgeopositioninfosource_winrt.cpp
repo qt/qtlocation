@@ -60,8 +60,6 @@ typedef ITypedEventHandler<Geolocator *, StatusChangedEventArgs *> GeoLocatorSta
 typedef IAsyncOperationCompletedHandler<Geoposition*> PositionHandler;
 typedef IAsyncOperationCompletedHandler<GeolocationAccessStatus> AccessHandler;
 
-Q_DECLARE_METATYPE(QGeoPositionInfo)
-
 QT_BEGIN_NAMESPACE
 
 #ifndef Q_OS_WINRT
@@ -95,8 +93,6 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     Q_D(QGeoPositionInfoSourceWinRT);
     d->positionError = QGeoPositionInfoSource::NoError;
     d->updatesOngoing = false;
-
-    qRegisterMetaType<QGeoPositionInfo>();
 }
 
 QGeoPositionInfoSourceWinRT::~QGeoPositionInfoSourceWinRT()

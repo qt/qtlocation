@@ -70,7 +70,6 @@ tst_QNmeaPositionInfoSource::tst_QNmeaPositionInfoSource(QNmeaPositionInfoSource
 
 void tst_QNmeaPositionInfoSource::initTestCase()
 {
-    qRegisterMetaType<QGeoPositionInfo>();
     qRegisterMetaType<QNmeaPositionInfoSource::UpdateMode>();
 }
 

@@ -45,7 +45,6 @@
 
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethod)
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethods)
-Q_DECLARE_METATYPE(QGeoPositionInfo)
 
 #define MAX_WAITING_TIME 50000
 
@@ -141,7 +140,7 @@ void TestQGeoPositionInfoSource::test_slot2()
 
 void TestQGeoPositionInfoSource::base_initTestCase()
 {
-    qRegisterMetaType<QGeoPositionInfo>();
+
 }
 
 void TestQGeoPositionInfoSource::base_init()

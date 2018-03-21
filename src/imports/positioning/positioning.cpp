@@ -57,6 +57,7 @@
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoPath>
 #include <QtPositioning/QGeoLocation>
+#include <QtPositioning/QGeoPositionInfo>
 #include <QtPositioning/private/qgeocoordinateobject_p.h>
 
 #include <QtCore/QDebug>
@@ -567,6 +568,8 @@ public:
             qRegisterMetaType<QGeoShape>();
             QMetaType::registerEqualsComparator<QGeoShape>();
             qRegisterMetaType<QGeoCoordinateObject *>();
+            qRegisterMetaType<QGeoPositionInfo>();
+            QMetaType::registerEqualsComparator<QGeoPositionInfo>();
 
             qRegisterAnimationInterpolator<QGeoCoordinate>(q_coordinateInterpolator);
 
