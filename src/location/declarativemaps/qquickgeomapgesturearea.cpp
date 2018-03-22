@@ -869,7 +869,8 @@ void QQuickGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
     }
 
     m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointPressed));
-    if (m_touchPoints.isEmpty()) update();
+    if (m_touchPoints.isEmpty())
+        update();
     event->accept();
 }
 
@@ -884,7 +885,8 @@ void QQuickGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
     }
 
     m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointMoved));
-    if (m_touchPoints.isEmpty()) update();
+    if (m_touchPoints.isEmpty())
+        update();
     event->accept();
 }
 
@@ -902,7 +904,8 @@ void QQuickGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *event)
         //this looks super ugly , however is required in case we do not get synthesized MouseReleaseEvent
         //and we reset the point already in handleTouchUngrabEvent
         m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointReleased));
-        if (m_touchPoints.isEmpty()) update();
+        if (m_touchPoints.isEmpty())
+            update();
     }
     event->accept();
 }

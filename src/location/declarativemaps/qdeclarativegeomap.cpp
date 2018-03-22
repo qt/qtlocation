@@ -435,59 +435,6 @@ void QDeclarativeGeoMap::componentComplete()
 }
 
 /*!
-    \internal
-*/
-void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
-{
-    if (isInteractive())
-        m_gestureArea->handleMousePressEvent(event);
-    else
-        QQuickItem::mousePressEvent(event);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
-{
-    if (isInteractive())
-        m_gestureArea->handleMouseMoveEvent(event);
-    else
-        QQuickItem::mouseMoveEvent(event);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (isInteractive()) {
-        m_gestureArea->handleMouseReleaseEvent(event);
-    } else {
-        QQuickItem::mouseReleaseEvent(event);
-    }
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mouseUngrabEvent()
-{
-    if (isInteractive())
-        m_gestureArea->handleMouseUngrabEvent();
-    else
-        QQuickItem::mouseUngrabEvent();
-}
-
-void QDeclarativeGeoMap::touchUngrabEvent()
-{
-    if (isInteractive())
-        m_gestureArea->handleTouchUngrabEvent();
-    else
-        QQuickItem::touchUngrabEvent();
-}
-
-/*!
     \qmlproperty MapGestureArea QtLocation::Map::gesture
 
     Contains the MapGestureArea created with the Map. This covers pan, flick and pinch gestures.
@@ -1682,33 +1629,6 @@ void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData &val
     QQuickItem::itemChange(change, value);
 }
 
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
-{
-    if (isInteractive()) {
-        m_gestureArea->handleTouchEvent(event);
-    } else {
-        //ignore event so sythesized event is generated;
-        QQuickItem::touchEvent(event);
-    }
-}
-
-#if QT_CONFIG(wheelevent)
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
-{
-    if (isInteractive())
-        m_gestureArea->handleWheelEvent(event);
-    else
-        QQuickItem::wheelEvent(event);
-
-}
-#endif
-
 bool QDeclarativeGeoMap::isInteractive()
 {
     return (m_gestureArea->enabled() && m_gestureArea->acceptedGestures()) || m_gestureArea->isActive();
@@ -1738,50 +1658,6 @@ void QDeclarativeGeoMap::onAttachedCopyrightNoticeVisibilityChanged()
     m_copyNoticesVisible += ( int(copy->copyrightsVisible()) * 2 - 1);
     if (m_map)
         m_map->setCopyrightVisible(m_copyNoticesVisible > 0);
-}
-
-/*!
-    \internal
-*/
-bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
-{
-    Q_UNUSED(item)
-    if (!isVisible() || !isEnabled() || !isInteractive())
-        return QQuickItem::childMouseEventFilter(item, event);
-
-    switch (event->type()) {
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseMove:
-    case QEvent::MouseButtonRelease:
-        return sendMouseEvent(static_cast<QMouseEvent *>(event));
-    case QEvent::UngrabMouse: {
-        QQuickWindow *win = window();
-        if (!win) break;
-        if (!win->mouseGrabberItem() ||
-                (win->mouseGrabberItem() &&
-                 win->mouseGrabberItem() != this)) {
-            // child lost grab, we could even lost
-            // some events if grab already belongs for example
-            // in item in diffrent window , clear up states
-            mouseUngrabEvent();
-        }
-        break;
-    }
-    case QEvent::TouchBegin:
-    case QEvent::TouchUpdate:
-    case QEvent::TouchEnd:
-    case QEvent::TouchCancel:
-        if (static_cast<QTouchEvent *>(event)->touchPoints().count() >= 2) {
-            // 1 touch point = handle with MouseEvent (event is always synthesized)
-            // let the synthesized mouse event grab the mouse,
-            // note there is no mouse grabber at this point since
-            // touch event comes first (see Qt::AA_SynthesizeMouseForUnhandledTouchEvents)
-            return sendTouchEvent(static_cast<QTouchEvent *>(event));
-        }
-    default:
-        break;
-    }
-    return QQuickItem::childMouseEventFilter(item, event);
 }
 
 /*!
@@ -2357,6 +2233,129 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine, bool onlyVisib
     // we refine the viewport again to achieve better results
     if (refine)
         fitViewportToMapItemsRefine(false, onlyVisible);
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
+{
+    if (isInteractive())
+        m_gestureArea->handleMousePressEvent(event);
+    else
+        QQuickItem::mousePressEvent(event);
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
+{
+    if (isInteractive())
+        m_gestureArea->handleMouseMoveEvent(event);
+    else
+        QQuickItem::mouseMoveEvent(event);
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (isInteractive())
+        m_gestureArea->handleMouseReleaseEvent(event);
+    else
+        QQuickItem::mouseReleaseEvent(event);
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoMap::mouseUngrabEvent()
+{
+    if (isInteractive())
+        m_gestureArea->handleMouseUngrabEvent();
+    else
+        QQuickItem::mouseUngrabEvent();
+}
+
+void QDeclarativeGeoMap::touchUngrabEvent()
+{
+    if (isInteractive())
+        m_gestureArea->handleTouchUngrabEvent();
+    else
+        QQuickItem::touchUngrabEvent();
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
+{
+    if (isInteractive()) {
+        m_gestureArea->handleTouchEvent(event);
+    } else {
+        //ignore event so sythesized event is generated;
+        QQuickItem::touchEvent(event);
+    }
+}
+
+#if QT_CONFIG(wheelevent)
+/*!
+    \internal
+*/
+void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
+{
+    if (isInteractive())
+        m_gestureArea->handleWheelEvent(event);
+    else
+        QQuickItem::wheelEvent(event);
+
+}
+#endif
+
+/*!
+    \internal
+*/
+bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
+{
+    Q_UNUSED(item)
+    if (!isVisible() || !isEnabled() || !isInteractive())
+        return QQuickItem::childMouseEventFilter(item, event);
+
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseMove:
+    case QEvent::MouseButtonRelease:
+        return sendMouseEvent(static_cast<QMouseEvent *>(event));
+    case QEvent::UngrabMouse: {
+        QQuickWindow *win = window();
+        if (!win) break;
+        if (!win->mouseGrabberItem() ||
+                (win->mouseGrabberItem() &&
+                 win->mouseGrabberItem() != this)) {
+            // child lost grab, we could even lost
+            // some events if grab already belongs for example
+            // in item in diffrent window , clear up states
+            mouseUngrabEvent();
+        }
+        break;
+    }
+    case QEvent::TouchBegin:
+    case QEvent::TouchUpdate:
+    case QEvent::TouchEnd:
+    case QEvent::TouchCancel:
+        if (static_cast<QTouchEvent *>(event)->touchPoints().count() >= 2) {
+            // 1 touch point = handle with MouseEvent (event is always synthesized)
+            // let the synthesized mouse event grab the mouse,
+            // note there is no mouse grabber at this point since
+            // touch event comes first (see Qt::AA_SynthesizeMouseForUnhandledTouchEvents)
+            return sendTouchEvent(static_cast<QTouchEvent *>(event));
+        }
+    default:
+        break;
+    }
+    return QQuickItem::childMouseEventFilter(item, event);
 }
 
 bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
