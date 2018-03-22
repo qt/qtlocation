@@ -519,20 +519,21 @@ Item {
             compare(mouseUpperReleasedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
-
-            skip("Makes other tests fail due to QTBUG-66534")
             compare(mouseOverlapperPressedSpy.count, 0)
+
             mousePress(map, 55, 75)
             compare(mouseUpperPressedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseOverlapperPressedSpy.count, 1)
             compare(mouseOverlapperReleasedSpy.count, 0)
+
+            mouseMove(map, 55, 25)
             mouseRelease(map, 55, 25)
             compare(mouseUpperPressedSpy.count, 2)
             compare(mouseUpperReleasedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
-            //this should follow the same logic as Flickable
+            //this should follow the same logic as Flickable, after the gesture is detected, the map should steal events.
             compare(mouseOverlapperReleasedSpy.count, 0)
         }
 
