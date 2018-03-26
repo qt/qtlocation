@@ -47,13 +47,117 @@ QT_BEGIN_NAMESPACE
     \inqmlmodule Qt.labs.location
     \ingroup qml-QtLocation5-maps
 
-    \brief The Navigator type takes control of a \l Map to perform turn-by-turn navigation.
+    \brief The Navigator type offers functionalities to perform turn-by-turn navigation.
 
-    Its purpose is to include a plugin's turn-by-turn navigation implementation in a QML mapping application
-    in a seamless manner.
-    This may include controlling the map position, orientation, tilting and zoom, as well as changing
-    the map style, elements on the map such as direction information, as well as restricting interaction
-    with the Map and the items on it.
+    The Navigator purpose is to use a plugin's turn-by-turn navigation implementation in a QML
+    application in a seamless manner.
+    This object may take control of the map position, orientation, tilting and zoom, as well as changing
+    the map style, elements on the map such as direction information.
+    In certain cases, it may also restrict user interaction with the Map and with the items on it.
+*/
+
+/*!
+    \qmlproperty Plugin Qt.labs.location::Navigator::plugin
+
+    This property holds the plugin which provides the navigation functionality.
+
+    This is a write-once property. Once the Navigator has a plugin associated with
+    it, any attempted modifications of the plugin property will be ignored.
+
+    \sa Plugin
+*/
+
+/*!
+    \qmlproperty Map Qt.labs.location::Navigator::map
+
+    This property holds the Map that the navigator is in charge of controlling.
+
+    This is a write-once property. Once the Navigator has a Map associated with
+    it, any attempted modifications of the map property will be ignored.
+
+    \sa Map
+*/
+
+/*!
+    \qmlproperty Route Qt.labs.location::Navigator::route
+
+    This property holds the Route that the navigator is supposed to use
+    to perform the navigation.
+
+    \note
+    This property is not necessarily the same as \l currentRoute.
+    currentRoute may differ, during routing, for various reasons.
+    It is reasonable to assume, however, that currentRoute's destination
+    will be the same as route's destination.
+    Setting this property while a navigation session is ongoing will
+    stop the navigation.
+
+    \sa Route
+*/
+
+/*!
+    \qmlproperty PositionSource Qt.labs.location::Navigator::positionSource
+
+    This property holds the PositionSource that the navigator will receive position
+    updates from to perform the navigation.
+
+    This is a write-once property. Once the Navigator has a PositionSource associated with
+    it, any attempted modifications of the positionSource property will be ignored.
+
+    \sa PositionSource
+*/
+
+/*!
+    \qmlproperty bool Qt.labs.location::Navigator::active
+
+    This property tells whether the Navigator is navigating or not.
+    Set this property to \c true to start the navigation.
+    Set it to \c false to stop an active navigation session.
+*/
+
+/*!
+    \qmlproperty bool Qt.labs.location::Navigator::navigatorReady
+
+    This read-only property tells whether the navigator is ready
+    to start the navigation or not.
+    A Navigator becomes ready once the plugin is attached and a navigation engine has been
+    instantiated, and the other required properties are set to valid values.
+*/
+
+/*!
+    \qmlproperty Route Qt.labs.location::Navigator::currentRoute
+
+    This read-only property holds the current route the navigator following.
+    This can be the same as \l route, or can be different, if the navigator
+    cannot follow the user-specified route.
+    For example if the position coming from \l positionSource is considerably
+    off route, the navigation engine might recalculate and start following a
+    new route.
+
+    \sa Route
+*/
+
+/*!
+    \qmlproperty int Qt.labs.location::Navigator::currentSegment
+
+    This read-only property holds the index of the current RouteSegment in the \l currentRoute.
+
+    \sa RouteSegment
+*/
+
+/*!
+    \qmlsignal Qt.labs.location::Navigator::waypointReached(Waypoint waypoint)
+
+    This signal is emitted when the waypoint \e waypoint has been reached.
+
+    \sa Waypoint
+*/
+
+/*!
+    \qmlsignal Qt.labs.location::Navigator::destinationReached()
+
+    This signal is emitted when the last waypoint of the route, the destination,
+    has been reached.
 */
 
 
