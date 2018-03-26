@@ -107,7 +107,7 @@ static QList<QVariantMap> waypointMetadata(const QList<QDeclarativeGeoWaypoint *
     \instantiates QDeclarativeGeoRouteModel
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
-    \since Qt Location 5.5
+    \since QtLocation 5.5
 
     \brief The RouteModel type provides access to routes.
 
@@ -702,7 +702,7 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     \instantiates QDeclarativeGeoRouteQuery
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
-    \since Qt Location 5.5
+    \since QtLocation 5.5
 
     \brief The RouteQuery type is used to provide query parameters to a
            RouteModel.
@@ -1200,13 +1200,20 @@ void QDeclarativeGeoRouteQuery::flushWaypoints(QList<QDeclarativeGeoWaypoint *> 
 
     Following lists the possible feature weights:
 
-    \list
-    \li RouteQuery.NeutralFeatureWeight - The presence or absence of the feature will not affect the planning of the route
-    \li RouteQuery.PreferFeatureWeight - Routes which contain the feature will be preferred over those that do not
-    \li RouteQuery.RequireFeatureWeight - Only routes which contain the feature will be considered, otherwise no route will be returned
-    \li RouteQuery.AvoidFeatureWeight - Routes which do not contain the feature will be preferred over those that do
-    \li RouteQuery.DisallowFeatureWeight - Only routes which do not contain the feature will be considered, otherwise no route will be returned
-    \endlist
+    \value RouteQuery.NeutralFeatureWeight
+    The presence or absence of the feature will not affect the planning of the route
+
+    \value RouteQuery.PreferFeatureWeight
+    Routes which contain the feature will be preferred over those that do not
+
+    \value RouteQuery.RequireFeatureWeight
+    Only routes which contain the feature will be considered, otherwise no route will be returned
+
+    \value RouteQuery.AvoidFeatureWeight
+    Routes which do not contain the feature will be preferred over those that do
+
+    \value RouteQuery.DisallowFeatureWeight
+    Only routes which do not contain the feature will be considered, otherwise no route will be returned
 
     \sa featureTypes, resetFeatureWeights, featureWeight
 
@@ -1302,12 +1309,13 @@ void QDeclarativeGeoRouteQuery::setTravelModes(QDeclarativeGeoRouteQuery::Travel
 
     The level of detail which will be used in the representation of routing segments.
 
-    \list
-    \li RouteQuery.NoSegmentData - No segment data should be included with the route
-    \li RouteQuery.BasicSegmentData - Basic segment data will be included with the route
-    \endlist
+    \value RouteQuery.NoSegmentData
+    No segment data should be included with the route
 
-    The default value is RouteQuery.BasicSegmentData
+    \value RouteQuery.BasicSegmentData
+    Basic segment data will be included with the route
+
+    The default value is \c {RouteQuery.BasicSegmentData}.
 */
 
 void QDeclarativeGeoRouteQuery::setSegmentDetail(SegmentDetail segmentDetail)
@@ -1331,12 +1339,13 @@ QDeclarativeGeoRouteQuery::SegmentDetail QDeclarativeGeoRouteQuery::segmentDetai
 
     The level of detail which will be used in the representation of routing maneuvers.
 
-    \list
-    \li RouteQuery.NoManeuvers - No maneuvers should be included with the route
-    \li RouteQuery.BasicManeuvers - Basic maneuvers will be included with the route
-    \endlist
+    \value RouteQuery.NoManeuvers
+    No maneuvers should be included with the route
 
-    The default value is RouteQuery.BasicManeuvers
+    \value RouteQuery.BasicManeuvers
+    Basic maneuvers will be included with the route
+
+    The default value is \c {RouteQuery.BasicManeuvers}.
 */
 
 void QDeclarativeGeoRouteQuery::setManeuverDetail(ManeuverDetail maneuverDetail)
@@ -1361,15 +1370,22 @@ QDeclarativeGeoRouteQuery::ManeuverDetail QDeclarativeGeoRouteQuery::maneuverDet
     The travel modes which should be considered during the planning of the route.
     Values can be combined with OR ('|') -operator.
 
-    \list
-    \li RouteQuery.CarTravel - The route will be optimized for someone who is driving a car
-    \li RouteQuery.PedestrianTravel - The route will be optimized for someone who is walking
-    \li RouteQuery.BicycleTravel - The route will be optimized for someone who is riding a bicycle
-    \li RouteQuery.PublicTransitTravel - The route will be optimized for someone who is making use of public transit
-    \li RouteQuery.TruckTravel - The route will be optimized for someone who is driving a truck
-    \endlist
+    \value RouteQuery.CarTravel
+    The route will be optimized for someone who is driving a car
 
-    The default value is RouteQuery.CarTravel
+    \value RouteQuery.PedestrianTravel
+    The route will be optimized for someone who is walking
+
+    \value RouteQuery.BicycleTravel
+    The route will be optimized for someone who is riding a bicycle
+
+    \value RouteQuery.PublicTransit
+    Travel The route will be optimized for someone who is making use of public transit
+
+    \value RouteQuery.TruckTravel
+    The route will be optimized for someone who is driving a truck
+
+    The default value is \c {RouteQuery.CarTravel}.
 */
 
 QDeclarativeGeoRouteQuery::TravelModes QDeclarativeGeoRouteQuery::travelModes() const
@@ -1397,14 +1413,20 @@ QDeclarativeGeoRouteQuery::TravelModes QDeclarativeGeoRouteQuery::travelModes() 
     The route optimizations which should be considered during the planning of the route.
     Values can be combined with OR ('|') -operator.
 
-    \list
-    \li RouteQuery.ShortestRoute - Minimize the length of the journey
-    \li RouteQuery.FastestRoute - Minimize the traveling time for the journey
-    \li RouteQuery.MostEconomicRoute - Minimize the cost of the journey
-    \li RouteQuery.MostScenicRoute - Maximize the scenic potential of the journey
-    \endlist
 
-    The default value is RouteQuery.FastestRoute
+    \value RouteQuery.ShortestRoute
+    Minimize the length of the journey
+
+    \value RouteQuery.FastestRoute
+    Minimize the traveling time for the journey
+
+    \value RouteQuery.MostEconomicRoute
+    Minimize the cost of the journey
+
+    \value RouteQuery.MostScenicRoute
+    Maximize the scenic potential of the journey
+
+    The default value is \c {RouteQuery.FastestRoute}.
 */
 
 QDeclarativeGeoRouteQuery::RouteOptimizations QDeclarativeGeoRouteQuery::routeOptimizations() const
@@ -1473,7 +1495,8 @@ QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest()
 
 
 /*!
-    \qmlproperty VariantMap extraParameters
+    \qmlproperty VariantMap RouteQuery::extraParameters
+    \readonly
 
     The route query extra parameters. This property is read only. If the query is
     defined by the user, these can be set by using MapParameters.
@@ -1577,7 +1600,7 @@ void QDeclarativeGeoRouteQuery::doCoordinateChanged()
     \instantiates QDeclarativeGeoWaypoint
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
-    \since Qt Location 5.11
+    \since QtLocation 5.11
 
     \brief The Waypoint type provides a mean to specify a waypoint in a \l RouteQuery
     in a more detailed way than by using a simple \l coordinate.
@@ -1592,12 +1615,6 @@ void QDeclarativeGeoRouteQuery::doCoordinateChanged()
     \l RouteQuery to emit the queryDetailsChanged signal.
 
     \section2 Example Usage
-
-    The following snippet is two-part, showing firstly the declaration of
-    objects, and secondly a short piece of procedural code using it. We set
-    the routeModel's \l{autoUpdate} property to false, and call \l{update} once
-    the query is set up, to avoid useless extra requests halfway through the
-    set up of the query.
 
     \code
     Plugin {
@@ -1802,7 +1819,8 @@ void QDeclarativeGeoWaypoint::setBearing(qreal bearing)
 }
 
 /*!
-    \qmlproperty VariantMap metadata
+    \qmlproperty VariantMap Waypoint::metadata
+    \readonly
 
     The waypoint metadata. This property is read only. If the waypoint is
     defined by the user, these can be set by using MapParameters.

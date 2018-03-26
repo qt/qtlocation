@@ -273,6 +273,12 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
     return (*this);
 }
 
+/*!
+    \fn QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinateObject &coordinateoObject)
+    \fn QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinateObject *coordinateoObject)
+
+    Assigns \a coordinateoObject to this coordinate and returns a reference to this coordinate.
+*/
 QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinateObject &coordinateoObject)
 {
     d = coordinateoObject.coordinate().d;
@@ -314,7 +320,11 @@ bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 }
 
 /*!
+    \fn bool QGeoCoordinate::operator==(const QGeoCoordinateObject &other) const
+    \fn bool QGeoCoordinate::operator==(const QGeoCoordinateObject *other) const
 
+    Returns \c true if latitude, longitude, and altitude of this
+    coordinate are identical to \a other.
 */
 bool QGeoCoordinate::operator==(const QGeoCoordinateObject &other) const
 {
@@ -327,14 +337,16 @@ bool QGeoCoordinate::operator==(const QGeoCoordinateObject *other) const
 }
 
 /*!
-    \fn bool QGeoCoordinate::operator!=(const QGeoCoordinate &other) const;
+    \fn bool QGeoCoordinate::operator!=(const QGeoCoordinate &other) const
+    \fn bool QGeoCoordinate::operator!=(const QGeoCoordinateObject &other) const
+    \fn bool QGeoCoordinate::operator!=(const QGeoCoordinateObject *other) const
 
-    Returns true if the latitude, longitude or altitude of this
-    coordinate are not the same as those of \a other.
+    Returns \c true if latitude, longitude, or altitude of this
+    coordinate are not identical to \a other.
 */
 
 /*!
-    Returns true if the \l longitude and \l latitude are valid.
+    Returns \c true if the \l longitude and \l latitude are valid.
 */
 bool QGeoCoordinate::isValid() const
 {

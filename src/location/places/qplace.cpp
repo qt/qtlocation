@@ -127,7 +127,7 @@ QPlace::QPlace()
 }
 
 /*!
-    Constructs an place object using dd as private implementation.
+    Constructs an place object using \a dd as private implementation.
 */
 QPlace::QPlace(const QSharedDataPointer<QPlacePrivate> &dd): d_ptr(dd)
 {

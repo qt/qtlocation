@@ -76,7 +76,7 @@ static qreal sanitizeBearing(qreal bearing)
     \instantiates QDeclarativeGeoMap
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since QtLocation 5.0
 
     \brief The Map type displays a map.
 
@@ -947,7 +947,7 @@ qreal QDeclarativeGeoMap::zoomLevel() const
     If the Plugin used for the Map supports bearing, the valid range for this value is between 0 and 360.
     If the Plugin used for the Map does not support bearing, changing this property will have no effect.
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 void QDeclarativeGeoMap::setBearing(qreal bearing)
 {
@@ -1015,7 +1015,7 @@ qreal QDeclarativeGeoMap::bearing() const
 
     \sa minimumTilt, maximumTilt
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 void QDeclarativeGeoMap::setTilt(qreal tilt)
 {
@@ -1067,7 +1067,7 @@ void QDeclarativeGeoMap::setMinimumTilt(qreal minimumTilt, bool userSet)
 
     \sa minimumFieldOfView, maximumFieldOfView
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 void QDeclarativeGeoMap::setFieldOfView(qreal fieldOfView)
 {
@@ -1116,7 +1116,7 @@ void QDeclarativeGeoMap::setMinimumFieldOfView(qreal minimumFieldOfView, bool us
 
     \sa fieldOfView, maximumFieldOfView
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 qreal QDeclarativeGeoMap::minimumFieldOfView() const
 {
@@ -1153,7 +1153,7 @@ void QDeclarativeGeoMap::setMaximumFieldOfView(qreal maximumFieldOfView, bool us
 
     \sa fieldOfView, minimumFieldOfView
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 qreal QDeclarativeGeoMap::maximumFieldOfView() const
 {
@@ -1171,7 +1171,7 @@ qreal QDeclarativeGeoMap::maximumFieldOfView() const
 
     \sa tilt, maximumTilt
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 qreal QDeclarativeGeoMap::minimumTilt() const
 {
@@ -1208,7 +1208,7 @@ void QDeclarativeGeoMap::setMaximumTilt(qreal maximumTilt, bool userSet)
 
     \sa tilt, minimumTilt
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 qreal QDeclarativeGeoMap::maximumTilt() const
 {
@@ -2082,7 +2082,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
         }
     }
 
-    /*!
+    /*
         The fitViewportTo*() functions depend on a valid map geometry.
         If they were called prior to the first resize they cause
         the zoomlevel to jump to 0 (showing the world). Therefore the

@@ -294,7 +294,7 @@ QGeoManeuver::QGeoManeuver(const QSharedDataPointer<QGeoManeuverPrivate> &dd)
     : d_ptr(dd) {}
 
 /*!
-    Sets the extended attributes associated with this maneuver.
+    Sets the extended attributes \a extendedAttributes associated with this maneuver.
 
     \since QtLocation 5.11
 */

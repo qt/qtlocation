@@ -296,7 +296,7 @@ QList<QGeoCoordinate> QGeoRouteRequest::waypoints() const
 }
 
 /*!
-    Sets \a waypoint metadata as the metadata for the waypoints set in this request.
+    Sets \a waypointMetadata as the metadata for the waypoints set in this request.
     The metadata are intended as one QVariantMap per waypoint, given in the same order as
     the waypoints.
 
@@ -468,7 +468,7 @@ QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 }
 
 /*!
-    Sets the extra parameters for the route request.
+    Sets the extra parameters \a extraParameters for the route request.
     The format of the extra parameters is plugin specific, and documented per plugin.
 
     \since 5.11

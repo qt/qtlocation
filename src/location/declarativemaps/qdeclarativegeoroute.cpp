@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeoRoute
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
-    \since Qt Location 5.5
+    \since QtLocation 5.5
 
     \brief The Route type represents one geographical route.
 
@@ -308,7 +308,7 @@ const QGeoRoute &QDeclarativeGeoRoute::route() const
 }
 
 /*!
-    \qmlproperty RouteQuery routeQuery
+    \qmlproperty RouteQuery QtLocation::Route::routeQuery
 
     Returns the route query associated with this route.
 

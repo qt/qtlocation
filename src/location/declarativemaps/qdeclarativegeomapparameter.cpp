@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \qmltype MapParameter
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.9
+    \since QtLocation 5.9
     \deprecated
 
     Use \l DynamicParameter instead.

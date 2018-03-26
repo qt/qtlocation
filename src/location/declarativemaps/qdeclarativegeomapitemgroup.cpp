@@ -43,7 +43,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeoMapItemGroup
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 
     \brief The MapItemGroup type is a container for map items.
 
