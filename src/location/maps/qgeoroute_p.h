@@ -94,6 +94,8 @@ public:
     virtual void setFirstSegment(const QGeoRouteSegment &firstSegment);
     virtual QGeoRouteSegment firstSegment() const;
 
+    virtual QVariantMap metadata() const;
+
     virtual QString engineName() const = 0;
     virtual int segmentsCount() const = 0;
 

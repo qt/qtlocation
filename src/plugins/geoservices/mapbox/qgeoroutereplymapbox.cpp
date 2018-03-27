@@ -41,11 +41,54 @@
 #include "qgeoroutereplymapbox.h"
 #include "qgeoroutingmanagerenginemapbox.h"
 #include <QtLocation/private/qgeorouteparser_p.h>
+#include <QtLocation/private/qgeoroute_p.h>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
 #include <QtLocation/QGeoRouteSegment>
 #include <QtLocation/QGeoManeuver>
+
+namespace {
+
+class QGeoRouteMapbox : public QGeoRoute
+{
+public:
+    QGeoRouteMapbox(const QGeoRoute &other, const QVariantMap &metadata);
+};
+
+class QGeoRoutePrivateMapbox : public QGeoRoutePrivateDefault
+{
+public:
+    QGeoRoutePrivateMapbox(const QGeoRoutePrivateDefault &other, const QVariantMap &metadata);
+
+    virtual QString engineName() const override;
+    virtual QVariantMap metadata() const override;
+
+    QVariantMap m_metadata;
+};
+
+QGeoRouteMapbox::QGeoRouteMapbox(const QGeoRoute &other, const QVariantMap &metadata)
+    : QGeoRoute(QExplicitlySharedDataPointer<QGeoRoutePrivateMapbox>(new QGeoRoutePrivateMapbox(*static_cast<const QGeoRoutePrivateDefault *>(QGeoRoutePrivate::routePrivateData(other)), metadata)))
+{
+}
+
+QGeoRoutePrivateMapbox::QGeoRoutePrivateMapbox(const QGeoRoutePrivateDefault &other, const QVariantMap &metadata)
+    : QGeoRoutePrivateDefault(other)
+    , m_metadata(metadata)
+{
+}
+
+QString QGeoRoutePrivateMapbox::engineName() const
+{
+    return QStringLiteral("mapbox");
+}
+
+QVariantMap QGeoRoutePrivateMapbox::metadata() const
+{
+    return m_metadata;
+}
+
+} // namespace
 
 QT_BEGIN_NAMESPACE
 
@@ -81,10 +124,21 @@ void QGeoRouteReplyMapbox::networkReplyFinished()
 
     QList<QGeoRoute> routes;
     QString errorString;
-    QGeoRouteReply::Error error = parser->parseReply(routes, errorString, reply->readAll());
+
+    QByteArray routeReply = reply->readAll();
+    QGeoRouteReply::Error error = parser->parseReply(routes, errorString, routeReply);
+
+    QVariantMap metadata;
+    metadata["osrm.reply-json"] = routeReply;
+
+    QList<QGeoRoute> mapboxRoutes;
+    for (const QGeoRoute &route : routes.mid(0, request().numberAlternativeRoutes() + 1)) {
+        QGeoRouteMapbox mapboxRoute(route, metadata);
+        mapboxRoutes.append(mapboxRoute);
+    }
 
     if (error == QGeoRouteReply::NoError) {
-        setRoutes(routes.mid(0, request().numberAlternativeRoutes() + 1));
+        setRoutes(mapboxRoutes);
         // setError(QGeoRouteReply::NoError, status);  // can't do this, or NoError is emitted and does damages
         setFinished(true);
     } else {
