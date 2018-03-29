@@ -793,7 +793,7 @@ static QGeoManeuver::InstructionDirection instructionDirection(const QJsonObject
         return QGeoManeuver::NoDirection;
 }
 
-static QGeoRouteSegment parseStep(const QJsonObject &step, bool useServerText) {
+static QGeoRouteSegment parseStep(const QJsonObject &step, bool useServerText, int legIndex, int stepIndex) {
     // OSRM Instructions documentation: https://github.com/Project-OSRM/osrm-text-instructions
     // This goes on top of OSRM: https://github.com/Project-OSRM/osrm-backend/blob/master/docs/http.md
     // Mapbox however, includes this in the reply, under "instruction".
@@ -846,6 +846,10 @@ static QGeoRouteSegment parseStep(const QJsonObject &step, bool useServerText) {
         if (maneuver.find(e) != maneuver.end())
             extraAttributes.insert(e, maneuver.value(e).toVariant());
     }
+    // These should be removed as soon as route leg support is introduced.
+    // Ref: http://project-osrm.org/docs/v5.15.2/api/#routeleg-object
+    extraAttributes.insert(QLatin1String("leg_index"), legIndex);
+    extraAttributes.insert(QLatin1String("step_index"), stepIndex);
     geoManeuver.setExtendedAttributes(extraAttributes);
 
     segment.setDistance(distance);
@@ -912,7 +916,8 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
             QList<QGeoRouteSegment> segments;
 
             QJsonArray legs = route.value(QLatin1String("legs")).toArray();
-            foreach (const QJsonValue &l, legs) {
+            for (int legIndex = 0; legIndex < legs.size(); ++legIndex) {
+                const QJsonValue &l = legs.at(legIndex);
                 if (!l.isObject()) { // invalid leg record
                     error = true;
                     break;
@@ -923,12 +928,13 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                     break;
                 }
                 QJsonArray steps = leg.value(QLatin1String("steps")).toArray();
-                foreach (const QJsonValue &s, steps) {
+                for (int stepIndex = 0; stepIndex < steps.size(); ++stepIndex) {
+                    const QJsonValue &s = steps.at(stepIndex);
                     if (!s.isObject()) {
                         error = true;
                         break;
                     }
-                    QGeoRouteSegment segment = parseStep(s.toObject(), m_useServerText);
+                    QGeoRouteSegment segment = parseStep(s.toObject(), m_useServerText, legIndex, stepIndex);
                     if (segment.isValid()) {
                         segments.append(segment);
                     } else {
