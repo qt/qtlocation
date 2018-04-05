@@ -42,14 +42,12 @@
 //#include <QDebug>
 #include <QGeoPositionInfo>
 
-Q_DECLARE_METATYPE(QGeoPositionInfo)
 #define UPDATE_FROM_COLD_START 2*60*1000
 
 
 QGeoPositionInfoSourceAndroid::QGeoPositionInfoSourceAndroid(QObject *parent) :
     QGeoPositionInfoSource(parent), updatesRunning(false), m_error(NoError), m_requestTimer(this)
 {
-    qRegisterMetaType< QGeoPositionInfo >();
     androidClassKeyForUpdate = AndroidPositioning::registerPositionInfoSource(this);
     androidClassKeyForSingleRequest = AndroidPositioning::registerPositionInfoSource(this);
 

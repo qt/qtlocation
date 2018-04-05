@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativePolylineMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since QtLocation 5.0
 
     \brief The MapPolyline type displays a polyline on a map.
 
@@ -407,7 +407,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     }
 
     screenBounds_ = bb;
-    this->translate( -1 * sourceBounds_.topLeft());
+    this->translate( -1 * sourceBounds_.topLeft() + QPointF(strokeWidth, strokeWidth));
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
@@ -509,7 +509,7 @@ void QDeclarativePolylineMapItem::setPathFromGeoList(const QList<QGeoCoordinate>
 
     Returns the number of coordinates of the polyline.
 
-    \since Qt Location 5.6
+    \since QtLocation 5.6
 
     \sa path
 */
@@ -543,7 +543,7 @@ void QDeclarativePolylineMapItem::addCoordinate(const QGeoCoordinate &coordinate
 
     Inserts a \a coordinate to the path at the given \a index.
 
-    \since Qt Location 5.6
+    \since QtLocation 5.6
 
     \sa addCoordinate, removeCoordinate, path
 */
@@ -566,7 +566,7 @@ void QDeclarativePolylineMapItem::insertCoordinate(int index, const QGeoCoordina
     Replaces the coordinate in the current path at the given \a index
     with the new \a coordinate.
 
-    \since Qt Location 5.6
+    \since QtLocation 5.6
 
     \sa addCoordinate, insertCoordinate, removeCoordinate, path
 */
@@ -590,7 +590,7 @@ void QDeclarativePolylineMapItem::replaceCoordinate(int index, const QGeoCoordin
     If the index is outside the path's bounds then an invalid
     coordinate is returned.
 
-    \since Qt Location 5.6
+    \since QtLocation 5.6
 */
 QGeoCoordinate QDeclarativePolylineMapItem::coordinateAt(int index) const
 {
@@ -605,7 +605,7 @@ QGeoCoordinate QDeclarativePolylineMapItem::coordinateAt(int index) const
 
     Returns true if the given \a coordinate is part of the path.
 
-    \since Qt Location 5.6
+    \since QtLocation 5.6
 */
 bool QDeclarativePolylineMapItem::containsCoordinate(const QGeoCoordinate &coordinate)
 {
@@ -641,7 +641,7 @@ void QDeclarativePolylineMapItem::removeCoordinate(const QGeoCoordinate &coordin
 
     If \a index is invalid then this method does nothing.
 
-    \since Qt Location 5.6
+    \since QtLocation 5.6
 
     \sa addCoordinate, insertCoordinate, path
 */
@@ -763,8 +763,8 @@ void QDeclarativePolylineMapItem::updatePolish()
     geometry_.updateSourcePoints(*map(), geopathProjected_, geopath_.boundingGeoRectangle().topLeft());
     geometry_.updateScreenPoints(*map(), line_.width());
 
-    setWidth(geometry_.sourceBoundingBox().width());
-    setHeight(geometry_.sourceBoundingBox().height());
+    setWidth(geometry_.sourceBoundingBox().width() + 2 * line_.width());
+    setHeight(geometry_.sourceBoundingBox().height() + 2 * line_.width());
 
     setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft());
 }

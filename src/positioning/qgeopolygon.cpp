@@ -77,7 +77,7 @@ QT_BEGIN_NAMESPACE
     It can be \l{Cpp_value_integration_positioning}{directly used from C++ and QML}.
 */
 
-/*!
+/*
     \property QGeoPolygon::path
     \brief This property holds the list of coordinates for the geo polygon.
 
@@ -117,8 +117,7 @@ QGeoPolygon::QGeoPolygon()
 }
 
 /*!
-    Constructs a new geo path from a list of coordinates
-    (\a path and \a width).
+    Constructs a new geo \a path from a list of coordinates.
 */
 QGeoPolygon::QGeoPolygon(const QList<QGeoCoordinate> &path)
 :   QGeoShape(new QGeoPolygonPrivate(QGeoShape::PolygonType, path))
@@ -178,6 +177,9 @@ bool QGeoPolygon::operator!=(const QGeoPolygon &other) const
     return !(*d == *other.d_func());
 }
 
+/*!
+    Sets the \a path from a list of coordinates.
+*/
 void QGeoPolygon::setPath(const QList<QGeoCoordinate> &path)
 {
     Q_D(QGeoPolygon);

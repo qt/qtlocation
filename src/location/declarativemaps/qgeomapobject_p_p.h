@@ -72,12 +72,14 @@ public:
     virtual QGeoMapObject::Type type() const;
     virtual bool visible() const;
     virtual void setVisible(bool visible);
+    virtual void setParentVisibility(bool visible);
     virtual QGeoMapObjectPrivate *clone() = 0; // to allow proper detaching
 
     QGeoMapObject *q = nullptr;
     QPointer<QGeoMap> m_map;
     bool m_componentCompleted = false;
     bool m_visible = true;
+    bool m_parentVisible = true;
 
 protected:
     QGeoMapObjectPrivate(QGeoMapObject *q);

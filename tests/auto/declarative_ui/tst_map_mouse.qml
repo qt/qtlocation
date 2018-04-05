@@ -519,20 +519,21 @@ Item {
             compare(mouseUpperReleasedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
-
-            skip("Makes other tests fail due to QTBUG-66534")
             compare(mouseOverlapperPressedSpy.count, 0)
+
             mousePress(map, 55, 75)
             compare(mouseUpperPressedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseOverlapperPressedSpy.count, 1)
             compare(mouseOverlapperReleasedSpy.count, 0)
+
+            mouseMove(map, 55, 25)
             mouseRelease(map, 55, 25)
             compare(mouseUpperPressedSpy.count, 2)
             compare(mouseUpperReleasedSpy.count, 2)
             compare(mouseLowerPressedSpy.count, 1)
             compare(mouseLowerReleasedSpy.count, 1)
-            //this should follow the same logic as Flickable
+            //this should follow the same logic as Flickable, after the gesture is detected, the map should steal events.
             compare(mouseOverlapperReleasedSpy.count, 0)
         }
 
@@ -667,6 +668,16 @@ Item {
             tryCompare(mouseUpperDoubleClickedSpy, "count", 3)
             compare(mouseLowerDoubleClickedSpy.count, 3)
             compare(mouseOverlapperDoubleClickedSpy.count, 4)
+        }
+
+        function test_release_does_not_block_clicked() { // QTBUG-66534
+            clear_data()
+            mousePress(map, 55, 75)
+            compare(mouseOverlapperPressedSpy.count, 1)
+            mouseRelease(map, 55, 25)
+            compare(mouseOverlapperReleasedSpy.count, 1)
+            mouseClick(map, 25, 25)
+            compare(mouseUpperClickedSpy.count, 1)
         }
 
         function test_zzz_basic_press_and_hold() { // _zzz_ to ensure execution last (takes time)

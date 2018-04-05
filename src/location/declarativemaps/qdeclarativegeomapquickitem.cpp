@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeGeoMapQuickItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.5
+    \since QtLocation 5.5
 
     \brief The MapQuickItem type displays an arbitrary Qt Quick object
            on a Map.

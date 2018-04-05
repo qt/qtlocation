@@ -53,6 +53,7 @@ public:
     QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent);
 
     virtual ~QGeoMapItemsOverlay();
+    Capabilities capabilities() const override;
 protected:
     QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) override;
 

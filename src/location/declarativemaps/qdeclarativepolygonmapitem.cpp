@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativePolygonMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.5
+    \since QtLocation 5.5
 
     \brief The MapPolygon type displays a polygon on a Map
 

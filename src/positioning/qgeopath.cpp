@@ -177,7 +177,7 @@ bool QGeoPath::operator!=(const QGeoPath &other) const
 }
 
 /*!
-    Sets all the elements of the path.
+    Sets all the elements of the \a path.
 */
 void QGeoPath::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -222,6 +222,12 @@ QVariantList QGeoPath::variantPath() const
     return p;
 }
 
+
+/*!
+    \property QGeoPath::width
+
+    \brief the width of the path in meters.
+*/
 void QGeoPath::setWidth(const qreal &width)
 {
     Q_D(QGeoPath);
@@ -229,7 +235,7 @@ void QGeoPath::setWidth(const qreal &width)
 }
 
 /*!
-    Returns the width of the path, in meters. This information is used in the \l contains method
+    Returns the width of the path, in meters. This information is used in the \l contains method.
     The default value is 0.
 */
 qreal QGeoPath::width() const

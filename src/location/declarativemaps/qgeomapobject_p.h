@@ -99,6 +99,7 @@ public:
 
     bool visible() const;
     void setVisible(bool visible);
+    void setParentVisiblity(bool visible);
 
     Type type() const;
 

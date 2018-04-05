@@ -65,6 +65,13 @@ QGeoMapItemsOverlay::~QGeoMapItemsOverlay()
 {
 }
 
+QGeoMap::Capabilities QGeoMapItemsOverlay::capabilities() const
+{
+    return Capabilities(SupportsVisibleRegion
+                        | SupportsSetBearing
+                        | SupportsAnchoringCoordinate);
+}
+
 QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *window)
 {
     Q_UNUSED(window)

@@ -149,8 +149,8 @@ public:
     void setManeuverDetail(ManeuverDetail maneuverDetail);
     ManeuverDetail maneuverDetail() const;
 
-    void setExtraParameters(const QMap<QString, QVariantMap> &extraParameters);
-    QMap<QString, QVariantMap> extraParameters() const;
+    void setExtraParameters(const QVariantMap &extraParameters);
+    QVariantMap extraParameters() const;
 
 private:
     QExplicitlySharedDataPointer<QGeoRouteRequestPrivate> d_ptr;

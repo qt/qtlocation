@@ -41,6 +41,7 @@
 #include "qgeoroutesegment.h"
 
 #include <QDateTime>
+#include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 
@@ -80,7 +81,7 @@ QGeoRoute::QGeoRoute()
     : d_ptr(new QGeoRoutePrivateDefault()) {}
 
 /*!
-    Constructs a route object using dd as private implementation.
+    Constructs a route object using \a dd as private implementation.
 */
 QGeoRoute::QGeoRoute(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd): d_ptr(dd)
 {
@@ -339,7 +340,8 @@ bool QGeoRoutePrivate::equals(const QGeoRoutePrivate &other) const
             && (travelTime() == other.travelTime())
             && (distance() == other.distance())
             && (travelMode() == other.travelMode())
-            && (path() == other.path()));
+            && (path() == other.path()))
+            && (metadata() == other.metadata());
 }
 
 void QGeoRoutePrivate::setId(const QString &id)
@@ -425,6 +427,11 @@ QGeoRouteSegment QGeoRoutePrivate::firstSegment() const
 const QGeoRoutePrivate *QGeoRoutePrivate::routePrivateData(const QGeoRoute &route)
 {
     return route.d_ptr.data();
+}
+
+QVariantMap QGeoRoutePrivate::metadata() const
+{
+    return QVariantMap();
 }
 
 /*******************************************************************************

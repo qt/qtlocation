@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
     \instantiates QDeclarativeCircleMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.5
+    \since QtLocation 5.5
 
     \brief The MapCircle type displays a geographic circle on a Map.
 

@@ -236,7 +236,7 @@ QGeoPath LocationSingleton::path(const QJSValue &value, qreal width) const
 /*!
     \qmlmethod geopolygon QtPositioning::polygon() const
 
-    Constructs an empty geopolygon.
+    Constructs an empty polygon.
 
     \sa {geopolygon}
     \since 5.10
@@ -249,7 +249,7 @@ QGeoPath LocationSingleton::polygon() const
 /*!
     \qmlmethod geopolygon QtPositioning::polygon(list<coordinate> coordinates) const
 
-    Constructs a geopolygon from coordinates.
+    Constructs a polygon from coordinates.
 
     \sa {geopolygon}
     \since 5.10
@@ -304,9 +304,9 @@ QGeoPath LocationSingleton::shapeToPath(const QGeoShape &shape) const
 }
 
 /*!
-    \qmlmethod geopath QtPositioning::shapeToPolygon(geoshape shape) const
+    \qmlmethod geopolygon QtPositioning::shapeToPolygon(geoshape shape) const
 
-    Converts \a shape to a geopolygon.
+    Converts \a shape to a polygon.
 
     \sa {geopolygon}
     \since 5.10

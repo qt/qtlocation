@@ -190,7 +190,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since QtLocation 5.0
 */
 
 /*!
@@ -276,7 +276,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     \ingroup qml-QtLocation5-maps
-    \since Qt Location 5.0
+    \since QtLocation 5.0
 */
 
 /*!
@@ -304,7 +304,7 @@ QT_BEGIN_NAMESPACE
 
     This read-only property holds whether the two-finger rotation gesture is active.
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 
 /*!
@@ -312,7 +312,7 @@ QT_BEGIN_NAMESPACE
 
     This read-only property holds whether the two-finger tilt gesture is active.
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 
 /*!
@@ -415,7 +415,7 @@ QT_BEGIN_NAMESPACE
 
     \sa rotationUpdated, rotationFinished
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 
 /*!
@@ -428,7 +428,7 @@ QT_BEGIN_NAMESPACE
 
     \sa rotationStarted, rotationFinished
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 
 /*!
@@ -440,7 +440,7 @@ QT_BEGIN_NAMESPACE
 
     \sa rotationStarted, rotationUpdated
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 
 /*!
@@ -452,7 +452,7 @@ QT_BEGIN_NAMESPACE
 
     \sa tiltUpdated, tiltFinished
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 
 /*!
@@ -465,7 +465,7 @@ QT_BEGIN_NAMESPACE
 
     \sa tiltStarted, tiltFinished
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 
 /*!
@@ -477,7 +477,7 @@ QT_BEGIN_NAMESPACE
 
     \sa tiltStarted, tiltUpdated
 
-    \since Qt Location 5.9
+    \since QtLocation 5.9
 */
 
 QQuickGeoMapGestureArea::QQuickGeoMapGestureArea(QDeclarativeGeoMap *map)
@@ -869,7 +869,8 @@ void QQuickGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
     }
 
     m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointPressed));
-    if (m_touchPoints.isEmpty()) update();
+    if (m_touchPoints.isEmpty())
+        update();
     event->accept();
 }
 
@@ -884,7 +885,8 @@ void QQuickGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
     }
 
     m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointMoved));
-    if (m_touchPoints.isEmpty()) update();
+    if (m_touchPoints.isEmpty())
+        update();
     event->accept();
 }
 
@@ -902,7 +904,8 @@ void QQuickGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *event)
         //this looks super ugly , however is required in case we do not get synthesized MouseReleaseEvent
         //and we reset the point already in handleTouchUngrabEvent
         m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointReleased));
-        if (m_touchPoints.isEmpty()) update();
+        if (m_touchPoints.isEmpty())
+            update();
     }
     event->accept();
 }
@@ -1722,7 +1725,8 @@ void QQuickGeoMapGestureArea::panStateMachine()
 */
 bool QQuickGeoMapGestureArea::canStartPan()
 {
-    if (m_allPoints.count() == 0 || (m_acceptedGestures & PanGesture) == 0)
+    if (m_allPoints.count() == 0 || (m_acceptedGestures & PanGesture) == 0
+            || m_mousePoint->state() == Qt::TouchPointReleased) // mouseReleaseEvent handling does not clear m_mousePoint, only ungrabMouse does -- QTBUG-66534
         return false;
 
     // Check if thresholds for normal panning are met.
