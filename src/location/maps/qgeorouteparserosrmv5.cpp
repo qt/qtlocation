@@ -76,9 +76,9 @@ static QList<QGeoCoordinate> decodePolyline(const QString &polylineString)
         int diff = (value & 1) ? ~(value >> 1) : (value >> 1);
 
         if (parsingLatitude) {
-            coord.setLatitude(coord.latitude() + (double)diff/1e5);
+            coord.setLatitude(coord.latitude() + (double)diff/1e6);
         } else {
-            coord.setLongitude(coord.longitude() + (double)diff/1e5);
+            coord.setLongitude(coord.longitude() + (double)diff/1e6);
             path.append(coord);
         }
 
@@ -998,7 +998,7 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
     QUrlQuery query;
     query.addQueryItem(QStringLiteral("overview"), QStringLiteral("full"));
     query.addQueryItem(QStringLiteral("steps"), QStringLiteral("true"));
-    query.addQueryItem(QStringLiteral("geometries"), QStringLiteral("polyline"));
+    query.addQueryItem(QStringLiteral("geometries"), QStringLiteral("polyline6"));
     query.addQueryItem(QStringLiteral("alternatives"), QStringLiteral("true"));
     query.addQueryItem(QStringLiteral("bearings"), bearings);
     if (!m_accessToken.isEmpty())
