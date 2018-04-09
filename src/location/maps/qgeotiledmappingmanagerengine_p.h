@@ -91,7 +91,7 @@ public:
 
     QAbstractGeoTileCache::CacheAreas cacheHint() const;
 
-private Q_SLOTS:
+protected Q_SLOTS:
     virtual void engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
     virtual void engineTileError(const QGeoTileSpec &spec, const QString &errorString);
 
