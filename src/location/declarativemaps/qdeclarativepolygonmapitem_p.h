@@ -70,7 +70,7 @@ public:
     void updateSourcePoints(const QGeoMap &map,
                             const QList<QDoubleVector2D> &path);
 
-    void updateScreenPoints(const QGeoMap &map);
+    void updateScreenPoints(const QGeoMap &map, qreal strokeWidth = 0.0);
 
 protected:
     QPainterPath srcPath_;
