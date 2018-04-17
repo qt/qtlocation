@@ -532,20 +532,14 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
         return;
     }
 
-    // Create the viewport rect in the same coordinate system
-    // as the actual points
-    QRectF viewport(0, 0, map.viewportWidth(), map.viewportHeight());
-    viewport.adjust(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
-    viewport.translate(-1 * origin);
-
     // The geometry has already been clipped against the visible region projection in wrapped mercator space.
     QVector<qreal> points = srcPoints_;
     QVector<QPainterPath::ElementType> types = srcPointTypes_;
 
     QVectorPath vp(points.data(), types.size(), types.data());
     QTriangulatingStroker ts;
-    // viewport is not used in the call below.
-    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), viewport, QPainter::Qt4CompatiblePainting);
+    // As of Qt5.11, the clip argument is not actually used, in the call below.
+    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), QRectF(), QPainter::Qt4CompatiblePainting);
 
     clear();
 
