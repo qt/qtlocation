@@ -1562,7 +1562,8 @@ void QDeclarativeGeoMap::prefetchData()
 */
 void QDeclarativeGeoMap::clearData()
 {
-    m_map->clearData();
+    if (m_map)
+        m_map->clearData();
 }
 
 /*!
