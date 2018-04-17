@@ -60,10 +60,14 @@ class QDeclarativeGeoRoute;
 class QDeclarativePositionSource;
 class QGeoMapParameter;
 class QDeclarativeGeoRouteSegment;
+class QParameterizableObject;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigatorPrivate
 {
 public:
+    QDeclarativeNavigatorPrivate(QParameterizableObject *q_);
+
+    QParameterizableObject *q = nullptr;
     QNavigationManager *m_navigationManager = nullptr;
     QDeclarativeGeoServiceProvider *m_plugin = nullptr;
     QDeclarativeGeoMap *m_map = nullptr;

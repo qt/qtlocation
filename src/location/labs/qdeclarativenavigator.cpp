@@ -160,9 +160,14 @@ QT_BEGIN_NAMESPACE
     has been reached.
 */
 
+QDeclarativeNavigatorPrivate::QDeclarativeNavigatorPrivate(QParameterizableObject *q_)
+    : q(q_)
+{
+}
+
 
 QDeclarativeNavigator::QDeclarativeNavigator(QObject *parent)
-    : QParameterizableObject(parent), d_ptr(new QDeclarativeNavigatorPrivate)
+    : QParameterizableObject(parent), d_ptr(new QDeclarativeNavigatorPrivate(this))
 {
 }
 
