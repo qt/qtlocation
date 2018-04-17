@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEMAPROUTEDELEGATE_P_H
-#define QDECLARATIVEMAPROUTEDELEGATE_P_H
+#ifndef QGEOMAPICON_P_P_H
+#define QGEOMAPICON_P_P_H
 
 //
 //  W A R N I N G
@@ -48,43 +48,58 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtQml/qqml.h>
-
-#include <QtLocation/private/qgeomapobject_p.h>
-#include <QtLocation/private/qparameterizableobject_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p_p.h>
+#include <QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoRoute;
-class QGeoRoute;
-class QMapRouteObjectPrivate;
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObject : public QGeoMapObject
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObjectPrivate : public QGeoMapObjectPrivate
 {
-    Q_OBJECT
-    Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
+public:
+    QMapIconObjectPrivate(QGeoMapObject *q);
+    ~QMapIconObjectPrivate() override;
+
+    virtual QGeoMapObject::Type type() const override final;
+
+    virtual QGeoCoordinate coordinate() const = 0;
+    virtual void setCoordinate(const QGeoCoordinate &coordinate) = 0;
+    virtual QVariant content() const = 0;
+    virtual void setContent(const QVariant &content) = 0;
+    virtual QSizeF size() const = 0;
+    virtual void setSize(const QSizeF &size) = 0;
+
+    // QGeoMapObjectPrivate interface
+    bool equals(const QGeoMapObjectPrivate &other) const override;
+};
+
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObjectPrivateDefault : public QMapIconObjectPrivate
+{
+public:
+    QMapIconObjectPrivateDefault(QGeoMapObject *q);
+    QMapIconObjectPrivateDefault(const QMapIconObjectPrivate &other);
+    ~QMapIconObjectPrivateDefault() override;
+
+    // QGeoMapIconPrivate interface
+    QGeoCoordinate coordinate() const override;
+    void setCoordinate(const QGeoCoordinate &coordinate) override;
+    QVariant content() const override;
+    void setContent(const QVariant &content) override;
+    virtual QSizeF size() const override;
+    virtual void setSize(const QSizeF &size) override;
+
+    // QMapIconObjectPrivate interface
+    QGeoMapObjectPrivate *clone() override;
 
 public:
-    explicit QMapRouteObject(QObject *parent = nullptr);
-    ~QMapRouteObject() override;
+    QVariant m_content;
+    QGeoCoordinate m_coordinate;
+    QSizeF m_size;
 
-    QDeclarativeGeoRoute *route() const;
-    QGeoRoute geoRoute() const;
-
-    void setMap(QGeoMap *map) override;
-    void setRoute(QDeclarativeGeoRoute * route);
-
-signals:
-    void routeChanged(QDeclarativeGeoRoute * route);
-
-protected:
-    QDeclarativeGeoRoute *m_route = nullptr;
-
-    friend class QMapRouteObjectPrivate;
+private:
+    QMapIconObjectPrivateDefault(const QMapIconObjectPrivateDefault &other) = delete;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QMapRouteObject)
-
-#endif // QDECLARATIVEMAPROUTEDELEGATE_P_H
+#endif // QGEOMAPICON_P_P_H

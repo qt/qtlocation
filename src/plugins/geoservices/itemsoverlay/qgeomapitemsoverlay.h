@@ -51,9 +51,10 @@ class QGeoMapItemsOverlay: public QGeoMap
     Q_DECLARE_PRIVATE(QGeoMapItemsOverlay)
 public:
     QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent);
-
     virtual ~QGeoMapItemsOverlay();
-    Capabilities capabilities() const override;
+
+    QGeoMap::Capabilities capabilities() const override;
+
 protected:
     QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) override;
 

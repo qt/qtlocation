@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPOBJECTVIEW_P_H
-#define QMAPOBJECTVIEW_P_H
+#ifndef QGEOMAPICON_P_H
+#define QGEOMAPICON_P_H
 
 //
 //  W A R N I N G
@@ -48,69 +48,41 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p.h>
-#include <QQmlComponent>
-#include <QVector>
+#include <QtCore/QUrl>
+#include <QGeoCoordinate>
+#include <QtCore/qsize.h>
 
 QT_BEGIN_NAMESPACE
 
-class QQmlDelegateModel;
-class QMapObjectViewPrivate;
-class QQmlChangeSet;
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectView : public QGeoMapObject
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObject : public QGeoMapObject
 {
     Q_OBJECT
-    Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
-    Q_PROPERTY(QQmlComponent *delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
-    Q_INTERFACES(QQmlParserStatus)
-public:
-    QMapObjectView(QObject *parent = nullptr);
-    ~QMapObjectView() override;
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QVariant content READ content WRITE setContent NOTIFY contentChanged)
+    Q_PROPERTY(QSizeF size READ size WRITE setSize NOTIFY sizeChanged)
 
-    // QGeoMapObject interface
-    QList<QGeoMapObject *> geoMapObjectChildren() const override;
+public:
+    QMapIconObject(QObject *parent = nullptr);
+    ~QMapIconObject() override;
+
+    QVariant content() const;
+    QGeoCoordinate coordinate() const;
+    QSizeF size() const;
+
+    void setContent(QVariant content);
+    void setCoordinate(const QGeoCoordinate &coordinate);
+    void setSize(const QSizeF &size);
+
     void setMap(QGeoMap *map) override;
 
-    // QQmlParserStatus interface
-    void classBegin() override;
-    void componentComplete() override;
-
-    QVariant model() const;
-    void setModel(QVariant model);
-
-    QQmlComponent *delegate() const;
-    void setDelegate(QQmlComponent * delegate);
-
-public Q_SLOTS:
-    // The dynamic API that matches Map.add/remove MapItem
-    void addMapObject(QGeoMapObject *object);
-    void removeMapObject(QGeoMapObject *object);
-
 signals:
-    void modelChanged(QVariant model);
-    void delegateChanged(QQmlComponent * delegate);
-
-protected Q_SLOTS:
-    void destroyingItem(QObject *object);
-    void initItem(int index, QObject *object);
-    void createdItem(int index, QObject *object);
-    void modelUpdated(const QQmlChangeSet &changeSet, bool reset);
-
-protected:
-    void addMapObjectToMap(QGeoMapObject *object, int index);
-    void removeMapObjectFromMap(int index);
-    void flushDelegateModel();
-    void flushUserAddedMapObjects();
-
-    QVariant m_model;
-    QQmlComponent *m_delegate = nullptr;
-    QQmlDelegateModel *m_delegateModel = nullptr;
-    QVector<QPointer<QGeoMapObject>> m_instantiatedMapObjects;
-    QVector<QPointer<QGeoMapObject>> m_pendingMapObjects;
-    QVector<QPointer<QGeoMapObject>> m_userAddedMapObjects; // A third list containing the objects dynamically added through addMapObject
+    void contentChanged(QVariant content);
+    void coordinateChanged(QGeoCoordinate coordinate);
+    void sizeChanged();
 };
 
 QT_END_NAMESPACE
 
-#endif // QMAPOBJECTVIEW_P_H
+#endif // QGEOMAPICON_P_H

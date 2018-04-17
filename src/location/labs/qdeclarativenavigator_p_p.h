@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPROUTE_P_P_H
-#define QGEOMAPROUTE_P_P_H
+#ifndef QDECLARATIVENAVIGATOR_P_P_H
+#define QDECLARATIVENAVIGATOR_P_P_H
 
 //
 //  W A R N I N G
@@ -48,32 +48,39 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtLocation/private/qgeomapobject_p_p.h>
-#include <QtLocation/private/qdeclarativegeoroute_p.h>
+#include <QtCore/qlist.h>
+#include <QtLocation/private/qlocationglobal_p.h>
+
 QT_BEGIN_NAMESPACE
 
-class QGeoRoute;
+class QDeclarativeGeoServiceProvider;
+class QDeclarativeGeoMap;
+class QNavigationManager;
+class QDeclarativeGeoRoute;
+class QDeclarativePositionSource;
+class QGeoMapParameter;
+class QDeclarativeGeoRouteSegment;
+class QParameterizableObject;
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObjectPrivate : public QGeoMapObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigatorPrivate
 {
 public:
-    QMapRouteObjectPrivate(QGeoMapObject *q);
-    QMapRouteObjectPrivate(const QMapRouteObjectPrivate &other);
-    ~QMapRouteObjectPrivate() override;
+    QDeclarativeNavigatorPrivate(QParameterizableObject *q_);
 
-    virtual QGeoMapObject::Type type() const override final;
-
-    QDeclarativeGeoRoute *declarativeGeoRoute() const;
-
-    virtual QGeoRoute route() const;
-    virtual void setRoute(const QDeclarativeGeoRoute *route);
-
-    // QGeoMapObjectPrivate interface
-    bool equals(const QGeoMapObjectPrivate &other) const override;
-    QGeoMapObjectPrivate *clone() override;
+    QParameterizableObject *q = nullptr;
+    QNavigationManager *m_navigationManager = nullptr;
+    QDeclarativeGeoServiceProvider *m_plugin = nullptr;
+    QDeclarativeGeoMap *m_map = nullptr;
+    QDeclarativeGeoRoute *m_route = nullptr;
+    QDeclarativePositionSource *m_positionSource = nullptr;
+    QDeclarativeGeoRoute *m_currentRoute = nullptr;
+    QList<QGeoMapParameter *> m_parameters;
+    int m_currentSegment = 0;
+    bool m_active = false;
+    bool m_completed = false;
+    bool m_ready = false;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPROUTE_P_P_H
+#endif // QDECLARATIVENAVIGATOR_P_P_H

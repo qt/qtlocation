@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
 class QSGGeometry;
 class QGeoMap;
 
-class QGeoMapItemGeometry
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapItemGeometry
 {
 public:
     QGeoMapItemGeometry();
@@ -124,6 +124,9 @@ public:
 
     static QRectF translateToCommonOrigin(const QList<QGeoMapItemGeometry *> &geoms);
 
+private:
+    QGeoMapItemGeometry(const QGeoMapItemGeometry &other); // Or else it may crash on copy
+    QGeoMapItemGeometry &operator= (const QGeoMapItemGeometry & other); // Or else it may crash on copy
 
 protected:
     bool sourceDirty_;

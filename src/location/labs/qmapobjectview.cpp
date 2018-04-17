@@ -41,12 +41,30 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype MapObjectView
+    \instantiates QMapObjectView
+    \inqmlmodule Qt.labs.location
+    \ingroup qml-QtLocation5-maps
+    \inherits QGeoMapObject
+
+    \brief The MapObjectView is used to populate Map with map objects from a model.
+
+    The MapObjectView is used to populate Map with map objects, either from a model or via
+    \l addMapObject or \l removeMapObject.
+
+    The MapObjectView type only makes sense when contained in a Map, meaning that it will not work when added inside
+    other QML elements.
+    This can also be intended as an object layer on top of a Map.
+*/
+
 /*
 
-    QGeoMapLayerPrivate
+    QMapObjectViewPrivate
 
 */
 
+static const QQmlIncubator::IncubationMode incubationMode = QQmlIncubator::Asynchronous;
 
 QMapObjectViewPrivate::QMapObjectViewPrivate(QGeoMapObject *q)
     : QGeoMapObjectPrivate(q)
@@ -66,7 +84,7 @@ QGeoMapObject::Type QMapObjectViewPrivate::type() const
 
 /*
 
-    QGeoMapLayerPrivateDefault
+    QMapObjectViewPrivateDefault
 
 */
 
@@ -180,11 +198,24 @@ void QMapObjectView::componentComplete()
     m_delegateModel->componentComplete();
 }
 
+/*!
+    \qmlproperty Variant Qt.labs.location::MapObjectView::model
+
+    This property holds the model that provides data used for creating the map items defined by the
+    delegate. Only QAbstractItemModel based models are supported.
+*/
 QVariant QMapObjectView::model() const
 {
     return m_model;
 }
 
+/*!
+    \qmlproperty Component Qt.labs.location::MapObjectView::delegate
+
+    This property holds the delegate which defines how each item in the
+    model should be displayed. The Component must contain exactly one
+    QGeoMapObject -derived object as the root object.
+*/
 QQmlComponent *QMapObjectView::delegate() const
 {
     return m_delegate;
@@ -281,7 +312,7 @@ void QMapObjectView::modelUpdated(const QQmlChangeSet &changeSet, bool reset)
     for (const QQmlChangeSet::Change &c: changeSet.inserts()) {
         for (int idx = c.start(); idx < c.end(); idx++) {
             m_instantiatedMapObjects.insert(idx, nullptr);
-            QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(idx, QQmlIncubator::Asynchronous));
+            QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(idx, incubationMode));
             if (mo) // if not, a createdItem signal will be emitted.
                 addMapObjectToMap(mo, idx);
         }
@@ -320,13 +351,15 @@ void QMapObjectView::removeMapObjectFromMap(int index)
 
 // See QObject *QQmlDelegateModel::object(int index, QQmlIncubator::IncubationMode incubationMode) doc
 // for explanation on when createdItem is emitted.
-void QMapObjectView::createdItem(int index, QObject *object)
+void QMapObjectView::createdItem(int index, QObject * /*object*/)
 {
-    // According to the documentation above, object() should be called again for index.
-    // However, this seem to result in too many references for index, which will prevent destruction with
-    // one single release()
-    // QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(index, QQmlIncubator::Asynchronous));
-    QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(object);
+    if (m_instantiatedMapObjects.at(index))
+        return; // The first call to object() apparently returned a valid item. Don't call it again.
+
+    // If here, according to the documentation above, object() should be called again for index,
+    // or else, it will be destroyed exiting this scope
+    QGeoMapObject *mo = nullptr;
+    mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(index, incubationMode));
     if (mo)
         addMapObjectToMap(mo, index);
 }

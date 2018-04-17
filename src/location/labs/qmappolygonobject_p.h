@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,9 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPOBJECTVIEW_P_P_H
-#define QMAPOBJECTVIEW_P_P_H
-
+#ifndef QMAPPOLYGONOBJECT_P_H
+#define QMAPPOLYGONOBJECT_P_H
 
 //
 //  W A R N I N G
@@ -49,38 +48,43 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtLocation/private/qgeomapobject_p_p.h>
-#include <QPointer>
-#include <QVector>
-#include <QQmlComponent>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+
+#include <QJSValue>
 
 QT_BEGIN_NAMESPACE
 
-class QQmlDelegateModel;
-class QGeoMap;
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectViewPrivate : public QGeoMapObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapPolygonObject : public QGeoMapObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QVariantList path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
+
 public:
-    QMapObjectViewPrivate(QGeoMapObject *q);
-    ~QMapObjectViewPrivate() override;
+    QMapPolygonObject(QObject *parent = nullptr);
+    ~QMapPolygonObject() override;
 
-    virtual QGeoMapObject::Type type() const override final;
-};
+    QVariantList path() const;
+    void setPath(const QVariantList &path);
 
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectViewPrivateDefault : public QMapObjectViewPrivate
-{
-public:
-    QMapObjectViewPrivateDefault(QGeoMapObject *q);
-    QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other);
-    ~QMapObjectViewPrivateDefault() override;
+    QColor color() const;
+    void setColor(const QColor &color);
 
+    QDeclarativeMapLineProperties *border();
+    void setMap(QGeoMap *map) override;
 
-    // QGeoMapObjectPrivate interface
-public:
-    QGeoMapObjectPrivate *clone() override;
+signals:
+    void pathChanged();
+    void colorChanged();
+
+protected:
+    QDeclarativeMapLineProperties *m_border;
 };
 
 QT_END_NAMESPACE
 
-#endif // QMAPOBJECTVIEW_P_P_H
+#endif // QMAPPOLYGONOBJECT_P_H

@@ -105,14 +105,14 @@ bool QNavigationManagerEngine::isInitialized() const
     return d_ptr->initialized;
 }
 
-bool QNavigationManagerEngine::start(const QList<QGeoMapParameter*> &navigationParams, const QMapRouteObject &route)
+// Subclasses are supposed to emit activeChanged from here.
+bool QNavigationManagerEngine::start(QDeclarativeNavigatorPrivate & /*navigator*/, const QList<QGeoMapParameter*> & /*navigationParams*/)
 {
-    Q_UNUSED(navigationParams);
-    Q_UNUSED(route);
+
     return false;
 }
 
-bool QNavigationManagerEngine::stop()
+bool QNavigationManagerEngine::stop(QDeclarativeNavigatorPrivate & /*navigator*/) // navigator needed to find the right navi session to stop.
 {
     return false;
 }

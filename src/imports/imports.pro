@@ -1,5 +1,7 @@
 TEMPLATE = subdirs
 
-qtHaveModule(positioning): SUBDIRS += positioning
+QT_FOR_CONFIG += location-private
+
+qtHaveModule(positioningquick): SUBDIRS += positioning
 qtHaveModule(location): SUBDIRS += location
-qtHaveModule(locationlabs): SUBDIRS += locationlabs
+qtHaveModule(location):qtConfig(location-labs-plugin): SUBDIRS += locationlabs

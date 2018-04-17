@@ -41,12 +41,18 @@
 #define GEOTILEDMAPESRI_H
 
 #include <QtLocation/private/qgeotiledmap_p.h>
+#ifdef LOCATIONLABS
+#include <QtLocation/private/qgeotiledmaplabs_p.h>
+typedef QGeoTiledMapLabs Map;
+#else
+typedef QGeoTiledMap Map;
+#endif
 
 QT_BEGIN_NAMESPACE
 
 class GeoTiledMappingManagerEngineEsri;
 
-class GeoTiledMapEsri: public QGeoTiledMap
+class GeoTiledMapEsri: public Map
 {
     Q_OBJECT
 

@@ -157,6 +157,7 @@ protected:
     void setCameraData(const QGeoCameraData &cameraData);
     void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
     virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
+    virtual void removeMapObject(QGeoMapObject *obj);
 
 Q_SIGNALS:
     void cameraDataChanged(const QGeoCameraData &cameraData);
@@ -170,6 +171,7 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QGeoMap)
     friend class QDeclarativeGeoMap; //updateSceneGraph
+    friend class QGeoMapPrivate;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoMap::ItemTypes)
