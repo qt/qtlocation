@@ -91,6 +91,10 @@ public:
 
     inline const QGeoCoordinate &origin() const { return srcOrigin_; }
 
+    QPainterPath screenOutline() const {
+        return screenOutline_;
+    }
+
     inline bool contains(const QPointF &screenPoint) const {
         return screenOutline_.contains(screenPoint);
     }
