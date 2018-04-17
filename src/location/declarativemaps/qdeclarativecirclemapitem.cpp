@@ -513,7 +513,7 @@ void QDeclarativeCircleMapItem::updatePolish()
         invertedCircle = true;
     } else {
         geometry_.updateSourcePoints(*map(), circlePath);
-        geometry_.updateScreenPoints(*map());
+        geometry_.updateScreenPoints(*map(), border_.width());
     }
 
     borderGeometry_.clear();
@@ -552,9 +552,17 @@ void QDeclarativeCircleMapItem::updatePolish()
     }
 
     QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-    setWidth(combined.width());
-    setHeight(combined.height());
 
+    if (invertedCircle || !preserve) {
+        setWidth(combined.width());
+        setHeight(combined.height());
+        setPositionOnMap(geometry_.origin(), geometry_.firstPointOffset());
+    } else {
+        setWidth(combined.width() + 2 * border_.width());
+        setHeight(combined.height() + 2 * border_.width());
+    }
+
+    // No offsetting here, even in normal case, because first point offset is already translated
     setPositionOnMap(geometry_.origin(), geometry_.firstPointOffset());
 }
 
