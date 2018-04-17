@@ -38,6 +38,8 @@
 ****************************************************************************/
 
 #include "locationsingleton.h"
+#include <QtPositioning/private/qwebmercator_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
 
 static QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 {
@@ -314,4 +316,30 @@ QGeoPath LocationSingleton::shapeToPath(const QGeoShape &shape) const
 QGeoPolygon LocationSingleton::shapeToPolygon(const QGeoShape &shape) const
 {
     return QGeoPolygon(shape);
+}
+
+/*!
+    \qmlmethod coordinate QtPositioning::mercatorToCoord(point mercator) const
+
+    Converts a mercator coordinate into a latitude-longitude coordinate.
+
+    \sa {coordToMercator}
+    \since 5.12
+*/
+QGeoCoordinate LocationSingleton::mercatorToCoord(const QPointF &mercator) const
+{
+    return QWebMercator::mercatorToCoord(QDoubleVector2D(mercator.x(), mercator.y()));
+}
+
+/*!
+    \qmlmethod point QtPositioning::coordToMercator(coordinate coord) const
+
+    Converts a coordinate into a mercator coordinate.
+
+    \sa {mercatorToCoord}
+    \since 5.12
+*/
+QPointF LocationSingleton::coordToMercator(const QGeoCoordinate &coord) const
+{
+    return QWebMercator::coordToMercator(coord).toPointF();
 }

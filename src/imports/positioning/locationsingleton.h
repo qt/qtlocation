@@ -50,6 +50,7 @@
 #include <QtPositioning/QGeoPolygon>
 #include <QtQml/QJSValue>
 #include <QVariant>
+#include <QPointF>
 
 class LocationSingleton : public QObject
 {
@@ -84,6 +85,9 @@ public:
     Q_INVOKABLE QGeoRectangle shapeToRectangle(const QGeoShape &shape) const;
     Q_INVOKABLE QGeoPath shapeToPath(const QGeoShape &shape) const;
     Q_INVOKABLE QGeoPolygon shapeToPolygon(const QGeoShape &shape) const;
+
+    Q_REVISION(12) Q_INVOKABLE QGeoCoordinate mercatorToCoord(const QPointF &mercator) const;
+    Q_REVISION(12) Q_INVOKABLE QPointF coordToMercator(const QGeoCoordinate &coord) const;
 };
 
 #endif // LOCATIONSINGLETON_H
