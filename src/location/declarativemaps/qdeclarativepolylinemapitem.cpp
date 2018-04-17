@@ -519,7 +519,8 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     \internal
 */
 void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
-                                                 qreal strokeWidth)
+                                                 qreal strokeWidth,
+                                                 bool adjustTranslation)
 {
     if (!screenDirty_)
         return;
@@ -583,7 +584,8 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     }
 
     screenBounds_ = bb;
-    this->translate( -1 * sourceBounds_.topLeft() + QPointF(strokeWidth, strokeWidth));
+    const QPointF strokeOffset = (adjustTranslation) ? QPointF(strokeWidth, strokeWidth) : QPointF();
+    this->translate( -1 * sourceBounds_.topLeft() + strokeOffset);
 }
 
 void QGeoMapPolylineGeometry::clearSource()
@@ -948,7 +950,7 @@ void QDeclarativePolylineMapItem::updatePolish()
     setWidth(geometry_.sourceBoundingBox().width() + 2 * line_.width());
     setHeight(geometry_.sourceBoundingBox().height() + 2 * line_.width());
 
-    setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft());
+    setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft() + QPointF(line_.width(), line_.width()));
 }
 
 void QDeclarativePolylineMapItem::markSourceDirtyAndUpdate()

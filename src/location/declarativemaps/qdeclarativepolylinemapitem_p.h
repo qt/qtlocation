@@ -95,7 +95,8 @@ public:
                             const QGeoCoordinate geoLeftBound);
 
     void updateScreenPoints(const QGeoMap &map,
-                            qreal strokeWidth);
+                            qreal strokeWidth,
+                            bool adjustTranslation = true);
 
     void clearSource();
 
