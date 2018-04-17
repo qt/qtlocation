@@ -75,8 +75,8 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
-    : QObject(parent), componentCompleted_(false), delegate_(0),
-      itemModel_(0), map_(0), fitViewport_(false), m_metaObjectType(0),
+    : QObject(parent), m_componentCompleted(false), m_delegate(0),
+      m_itemModel(0), m_map(0), m_fitViewport(false), m_metaObjectType(0),
       m_readyIncubators(0), m_repopulating(false)
 {
 }
@@ -93,7 +93,7 @@ QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
 */
 void QDeclarativeGeoMapItemView::componentComplete()
 {
-    componentCompleted_ = true;
+    m_componentCompleted = true;
 }
 
 void QDeclarativeGeoMapItemView::incubatorStatusChanged(MapItemViewDelegateIncubator *incubator,
@@ -122,7 +122,7 @@ void QDeclarativeGeoMapItemView::incubatorStatusChanged(MapItemViewDelegateIncub
                 delete incubator->object();
             } else {
                 if (!batched) {
-                    map_->addMapItem(itemData->item);
+                    m_map->addMapItem(itemData->item);
                     fitViewport();
                 } else {
                     ++m_readyIncubators; // QSemaphore not needed as multiple threads not involved
@@ -136,7 +136,7 @@ void QDeclarativeGeoMapItemView::incubatorStatusChanged(MapItemViewDelegateIncub
 
                         // Adding everthing created after reset was issued
                         foreach (QDeclarativeGeoMapItemViewItemData *i, m_itemDataBatched) {
-                            map_->addMapItem(i->item);
+                            m_map->addMapItem(i->item);
                         }
                         m_itemData = m_itemDataBatched;
                         m_itemDataBatched.clear();
@@ -175,47 +175,47 @@ void QDeclarativeGeoMapItemView::incubatorStatusChanged(MapItemViewDelegateIncub
 */
 QVariant QDeclarativeGeoMapItemView::model() const
 {
-    return QVariant::fromValue(itemModel_);
+    return QVariant::fromValue(m_itemModel);
 }
 
 void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
 {
     QAbstractItemModel *itemModel = model.value<QAbstractItemModel *>();
-    if (itemModel == itemModel_)
+    if (itemModel == m_itemModel)
         return;
 
-    if (itemModel_) {
-        disconnect(itemModel_, SIGNAL(modelReset()), this, SLOT(itemModelReset()));
-        disconnect(itemModel_, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+    if (m_itemModel) {
+        disconnect(m_itemModel, SIGNAL(modelReset()), this, SLOT(itemModelReset()));
+        disconnect(m_itemModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
                    this, SLOT(itemModelRowsRemoved(QModelIndex,int,int)));
-        disconnect(itemModel_, SIGNAL(rowsInserted(QModelIndex,int,int)),
+        disconnect(m_itemModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
                    this, SLOT(itemModelRowsInserted(QModelIndex,int,int)));
-        disconnect(itemModel_, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+        disconnect(m_itemModel, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
                    this, SLOT(itemModelRowsMoved(QModelIndex,int,int,QModelIndex,int)));
-        disconnect(itemModel_, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
+        disconnect(m_itemModel, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
                    this, SLOT(itemModelDataChanged(QModelIndex,QModelIndex,QVector<int>)));
 
         removeInstantiatedItems(); // this also terminates ongong repopulations.
         m_metaObjectType->release();
         m_metaObjectType = 0;
 
-        itemModel_ = 0;
+        m_itemModel = 0;
     }
 
     if (itemModel) {
-        itemModel_ = itemModel;
-        connect(itemModel_, SIGNAL(modelReset()), this, SLOT(itemModelReset()));
-        connect(itemModel_, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+        m_itemModel = itemModel;
+        connect(m_itemModel, SIGNAL(modelReset()), this, SLOT(itemModelReset()));
+        connect(m_itemModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
                 this, SLOT(itemModelRowsRemoved(QModelIndex,int,int)));
-        connect(itemModel_, SIGNAL(rowsInserted(QModelIndex,int,int)),
+        connect(m_itemModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
                 this, SLOT(itemModelRowsInserted(QModelIndex,int,int)));
-        connect(itemModel_, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
+        connect(m_itemModel, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)),
                 this, SLOT(itemModelRowsMoved(QModelIndex,int,int,QModelIndex,int)));
-        connect(itemModel_, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
+        connect(m_itemModel, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
                 this, SLOT(itemModelDataChanged(QModelIndex,QModelIndex,QVector<int>)));
 
         m_metaObjectType = new QQmlOpenMetaObjectType(&QObject::staticMetaObject, 0);
-        foreach (const QByteArray &name, itemModel_->roleNames())
+        foreach (const QByteArray &name, m_itemModel->roleNames())
             m_metaObjectType->createProperty(name);
 
         instantiateAllItems();
@@ -239,11 +239,11 @@ void QDeclarativeGeoMapItemView::itemModelRowsInserted(const QModelIndex &index,
 {
     Q_UNUSED(index)
 
-    if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
+    if (!m_componentCompleted || !m_map || !m_delegate || !m_itemModel)
         return;
 
     for (int i = start; i <= end; ++i) {
-        const QModelIndex insertedIndex = itemModel_->index(i, 0, index);
+        const QModelIndex insertedIndex = m_itemModel->index(i, 0, index);
         // If ran inside a qquickwidget which forces incubators to be synchronous, this call won't happen
         // with m_repopulating == true while incubators from a model reset are still incubating.
         // Note that having the model in a different thread is not supported in general.
@@ -260,7 +260,7 @@ void QDeclarativeGeoMapItemView::itemModelRowsRemoved(const QModelIndex &index, 
 {
     Q_UNUSED(index)
 
-    if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
+    if (!m_componentCompleted || !m_map || !m_delegate || !m_itemModel)
         return;
 
     for (int i = end; i >= start; --i) {
@@ -307,18 +307,18 @@ void QDeclarativeGeoMapItemView::itemModelDataChanged(const QModelIndex &topLeft
         return;
 
     for (int i = topLeft.row(); i <= bottomRight.row(); ++i) {
-        const QModelIndex index = itemModel_->index(i, 0);
+        const QModelIndex index = m_itemModel->index(i, 0);
         QDeclarativeGeoMapItemViewItemData *itemData;
         if (m_repopulating)
             itemData= m_itemDataBatched.at(i);
         else
             itemData= m_itemData.at(i);
 
-        QHashIterator<int, QByteArray> iterator(itemModel_->roleNames());
+        QHashIterator<int, QByteArray> iterator(m_itemModel->roleNames());
         while (iterator.hasNext()) {
             iterator.next();
 
-            QVariant modelData = itemModel_->data(index, iterator.key());
+            QVariant modelData = m_itemModel->data(index, iterator.key());
             if (!modelData.isValid())
                 continue;
 
@@ -338,15 +338,15 @@ void QDeclarativeGeoMapItemView::itemModelDataChanged(const QModelIndex &topLeft
 */
 QQmlComponent *QDeclarativeGeoMapItemView::delegate() const
 {
-    return delegate_;
+    return m_delegate;
 }
 
 void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 {
-    if (delegate_ == delegate)
+    if (m_delegate == delegate)
         return;
 
-    delegate_ = delegate;
+    m_delegate = delegate;
 
     repopulate();
     emit delegateChanged();
@@ -362,14 +362,14 @@ void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 */
 bool QDeclarativeGeoMapItemView::autoFitViewport() const
 {
-    return fitViewport_;
+    return m_fitViewport;
 }
 
 void QDeclarativeGeoMapItemView::setAutoFitViewport(const bool &fitViewport)
 {
-    if (fitViewport == fitViewport_)
+    if (fitViewport == m_fitViewport)
         return;
-    fitViewport_ = fitViewport;
+    m_fitViewport = fitViewport;
     emit autoFitViewportChanged();
 }
 
@@ -378,11 +378,11 @@ void QDeclarativeGeoMapItemView::setAutoFitViewport(const bool &fitViewport)
 */
 void QDeclarativeGeoMapItemView::fitViewport()
 {
-    if (!map_ || !map_->mapReady() || !fitViewport_ || m_repopulating)
+    if (!m_map || !m_map->mapReady() || !m_fitViewport || m_repopulating)
         return;
 
-    if (map_->mapItems().size() > 0)
-        map_->fitViewportToMapItems();
+    if (m_map->mapItems().size() > 0)
+        m_map->fitViewportToMapItems();
 }
 
 /*!
@@ -390,9 +390,9 @@ void QDeclarativeGeoMapItemView::fitViewport()
 */
 void QDeclarativeGeoMapItemView::setMap(QDeclarativeGeoMap *map)
 {
-    if (!map || map_) // changing map on the fly not supported
+    if (!map || m_map) // changing map on the fly not supported
         return;
-    map_ = map;
+    m_map = map;
 }
 
 /*!
@@ -400,7 +400,7 @@ void QDeclarativeGeoMapItemView::setMap(QDeclarativeGeoMap *map)
 */
 void QDeclarativeGeoMapItemView::removeInstantiatedItems()
 {
-    if (!map_)
+    if (!m_map)
         return;
 
     terminateOngoingRepopulation();
@@ -416,15 +416,15 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems()
 */
 void QDeclarativeGeoMapItemView::instantiateAllItems()
 {
-    if (!componentCompleted_ || !map_ || !delegate_ || !itemModel_)
+    if (!m_componentCompleted || !m_map || !m_delegate || !m_itemModel)
         return;
     Q_ASSERT(!m_itemDataBatched.size());
     m_repopulating = true;
 
     // QQuickWidget forces incubators to synchronous mode. Thus itemDataChanged gets called during the for loop below.
-    m_itemDataBatched.resize(itemModel_->rowCount());
-    for (int i = 0; i < itemModel_->rowCount(); ++i) {
-        const QModelIndex index = itemModel_->index(i, 0);
+    m_itemDataBatched.resize(m_itemModel->rowCount());
+    for (int i = 0; i < m_itemModel->rowCount(); ++i) {
+        const QModelIndex index = m_itemModel->index(i, 0);
         createItemForIndex(index, true);
     }
 
@@ -441,7 +441,7 @@ void QDeclarativeGeoMapItemView::removeItemData(QDeclarativeGeoMapItemViewItemDa
     if (itemData->incubator) {
         if (itemData->incubator->isReady()) {
             if (itemData->incubator->object() == itemData->item) {
-                map_->removeMapItem(itemData->item); // removeMapItem checks whether the item is in the map, so it's safe to call.
+                m_map->removeMapItem(itemData->item); // removeMapItem checks whether the item is in the map, so it's safe to call.
                 itemData->item = 0;
             }
             delete itemData->incubator->object();
@@ -449,7 +449,7 @@ void QDeclarativeGeoMapItemView::removeItemData(QDeclarativeGeoMapItemViewItemDa
         itemData->incubator->clear(); // stops ongoing incubation
     }
     if (itemData->item)
-        map_->removeMapItem(itemData->item);
+        m_map->removeMapItem(itemData->item);
     delete itemData; // destroys the ->item too.
 }
 
@@ -476,7 +476,7 @@ void QDeclarativeGeoMapItemView::terminateOngoingRepopulation()
 */
 void QDeclarativeGeoMapItemView::repopulate()
 {
-    if (!itemModel_ || !itemModel_->rowCount()) {
+    if (!m_itemModel || !m_itemModel->rowCount()) {
         removeInstantiatedItems();
     } else {
         terminateOngoingRepopulation();
@@ -493,8 +493,8 @@ void QDeclarativeGeoMapItemView::repopulate()
 void QDeclarativeGeoMapItemView::createItemForIndex(const QModelIndex &index, bool batched)
 {
     // Expected to be already tested by caller.
-    Q_ASSERT(delegate_);
-    Q_ASSERT(itemModel_);
+    Q_ASSERT(m_delegate);
+    Q_ASSERT(m_itemModel);
 
     QDeclarativeGeoMapItemViewItemData *itemData = new QDeclarativeGeoMapItemViewItemData;
 
@@ -502,11 +502,11 @@ void QDeclarativeGeoMapItemView::createItemForIndex(const QModelIndex &index, bo
     itemData->modelDataMeta = new QQmlOpenMetaObject(itemData->modelData, m_metaObjectType, false);
     itemData->context = new QQmlContext(qmlContext(this));
 
-    QHashIterator<int, QByteArray> iterator(itemModel_->roleNames());
+    QHashIterator<int, QByteArray> iterator(m_itemModel->roleNames());
     while (iterator.hasNext()) {
         iterator.next();
 
-        QVariant modelData = itemModel_->data(index, iterator.key());
+        QVariant modelData = m_itemModel->data(index, iterator.key());
         if (!modelData.isValid())
             continue;
 
@@ -528,7 +528,7 @@ void QDeclarativeGeoMapItemView::createItemForIndex(const QModelIndex &index, bo
         m_itemData.insert(index.row(), itemData);
     itemData->incubator = new MapItemViewDelegateIncubator(this, itemData, batched || m_repopulating);
 
-    delegate_->create(*itemData->incubator, itemData->context);
+    m_delegate->create(*itemData->incubator, itemData->context);
 }
 
 QDeclarativeGeoMapItemViewItemData::~QDeclarativeGeoMapItemViewItemData()

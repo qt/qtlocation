@@ -129,13 +129,13 @@ private:
     void terminateOngoingRepopulation();
     void removeItemData(QDeclarativeGeoMapItemViewItemData *itemData);
 
-    bool componentCompleted_;
-    QQmlComponent *delegate_;
-    QAbstractItemModel *itemModel_;
-    QDeclarativeGeoMap *map_;
+    bool m_componentCompleted;
+    QQmlComponent *m_delegate;
+    QAbstractItemModel *m_itemModel;
+    QDeclarativeGeoMap *m_map;
     QVector<QDeclarativeGeoMapItemViewItemData *> m_itemData;
     QVector<QDeclarativeGeoMapItemViewItemData *> m_itemDataBatched;
-    bool fitViewport_;
+    bool m_fitViewport;
 
     QQmlOpenMetaObjectType *m_metaObjectType;
     int m_readyIncubators;
