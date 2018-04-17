@@ -100,6 +100,8 @@ public:
 
     void clearSource();
 
+    bool contains(const QPointF &point) const override;
+
     QList<QList<QDoubleVector2D> > clipPath(const QGeoMap &map,
                     const QList<QDoubleVector2D> &path,
                     QDoubleVector2D &leftBoundWrapped);

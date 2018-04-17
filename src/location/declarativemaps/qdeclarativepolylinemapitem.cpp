@@ -594,6 +594,24 @@ void QGeoMapPolylineGeometry::clearSource()
     srcPointTypes_.clear();
 }
 
+bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
+{
+    // screenOutline_.contains(screenPoint) doesn't work, as, it appears, that
+    // screenOutline_ for QGeoMapPolylineGeometry is empty (QRectF(0,0 0x0))
+    const QVector<QPointF> &verts = vertices();
+    QPolygonF tri;
+    for (int i = 0; i < verts.size(); ++i) {
+        tri << verts[i];
+        if (tri.size() == 3) {
+            if (tri.containsPoint(point,Qt::OddEvenFill))
+                return true;
+            tri.remove(0);
+        }
+    }
+
+    return false;
+}
+
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), line_(this), dirtyMaterial_(true), updatingGeometry_(false)
 {
@@ -984,18 +1002,7 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
 
 bool QDeclarativePolylineMapItem::contains(const QPointF &point) const
 {
-    QVector<QPointF> vertices = geometry_.vertices();
-    QPolygonF tri;
-    for (int i = 0; i < vertices.size(); ++i) {
-        tri << vertices[i];
-        if (tri.size() == 3) {
-            if (tri.containsPoint(point,Qt::OddEvenFill))
-                return true;
-            tri.remove(0);
-        }
-    }
-
-    return false;
+    return geometry_.contains(point);
 }
 
 const QGeoShape &QDeclarativePolylineMapItem::geoShape() const
