@@ -685,7 +685,7 @@ void QGeoProjectionWebMercator::updateVisibleRegion()
     m_visibleRegionExpanded.clear();
     for (const QDoubleVector2D &v: qAsConst(m_visibleRegion)) {
         const QDoubleVector2D vc = v - centroid;
-        m_visibleRegionExpanded.push_back(centroid + vc * 1.05); // fixing expansion factor to 1.05
+        m_visibleRegionExpanded.push_back(centroid + vc * 1.2); // fixing expansion factor to 1.2
     }
 
     c2t::clip2tri clipperExpanded;
