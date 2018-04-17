@@ -81,8 +81,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemView : public QObject, pub
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(QQmlComponent *delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
     Q_PROPERTY(bool autoFitViewport READ autoFitViewport WRITE setAutoFitViewport NOTIFY autoFitViewportChanged)
-//    Q_PROPERTY(QQuickTransition *enter MEMBER m_enter)
-//    Q_PROPERTY(QQuickTransition *exit MEMBER m_exit)
+    Q_PROPERTY(QQuickTransition *add MEMBER m_enter REVISION 12)
+    Q_PROPERTY(QQuickTransition *remove MEMBER m_exit REVISION 12)
 
 public:
     explicit QDeclarativeGeoMapItemView(QQuickItem *parent = 0);

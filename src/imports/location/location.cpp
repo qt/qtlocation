@@ -186,6 +186,10 @@ public:
             qmlRegisterType<QDeclarativeGeoServiceProvider, 11>(uri, major, minor, "Plugin");
             qmlRegisterType<QDeclarativeGeoWaypoint>(uri, major, minor, "Waypoint");
 
+            // Register the 5.12 types
+            minor = 12;
+            qmlRegisterType<QDeclarativeGeoMapItemView, 12>(uri, major, minor, "MapItemView");
+
             // Register the latest Qt version as QML type version
             qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
 

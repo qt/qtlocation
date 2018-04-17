@@ -75,6 +75,24 @@ QT_BEGIN_NAMESPACE
     \snippet declarative/maps.qml MapRoute
 */
 
+/*!
+    \qmlproperty Transition QtLocation::MapItemView::add
+
+    This property holds the transition that is applied to the map items created by the view
+    when they are instantiated and added to the map.
+
+    \since QtLocation 5.12
+*/
+
+/*!
+    \qmlproperty Transition QtLocation::MapItemView::remove
+
+    This property holds the transition that is applied to the map items created by the view
+    when they are removed.
+
+    \since QtLocation 5.12
+*/
+
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
     : QObject(parent), m_componentCompleted(false), m_delegate(0),
       m_map(0), m_fitViewport(false), m_delegateModel(0)
