@@ -198,8 +198,8 @@ void QGeoMapObject::setMap(QGeoMap *map)
         // old implementation gets destroyed if/when d_ptr gets replaced
         d_ptr->m_componentCompleted = oldCmponentCompleted;
         d_ptr->setVisible(oldVisible);
+        d_ptr->setMap(map);
     }
-    d_ptr->setMap(map);
 
     const QList<QGeoMapObject *> kids = geoMapObjectChildren();
     for (auto kid : kids)
@@ -207,7 +207,8 @@ void QGeoMapObject::setMap(QGeoMap *map)
 
     // Each subclass is in charge to do the equivalent of
     //    if (!map) {
-    //        // Map was set, now it has ben re-set to NULL
+    //        // Map was set, now it has ben re-set to NULL, but not inside d_ptr.
+    //        // so m_map inside d_ptr can still be used to remove itself, inside the destructor.
     //        d_ptr = new QMapCircleObjectPrivateDefault(*d);
     //        // Old pimpl deleted implicitly by QExplicitlySharedDataPointer
     //    }

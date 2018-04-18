@@ -151,13 +151,13 @@ public:
     virtual bool fitViewportToGeoRectangle(const QGeoRectangle &rectangle);
 
     virtual void setCopyrightVisible(bool visible);
+    virtual void removeMapObject(QGeoMapObject *obj);
 
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);
     void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
     virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;
-    virtual void removeMapObject(QGeoMapObject *obj);
 
 Q_SIGNALS:
     void cameraDataChanged(const QGeoCameraData &cameraData);

@@ -72,7 +72,10 @@ public:
 
     // QQSGMapObject
     void updateGeometry() override;
-    QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window) override;
+    QSGNode *updateMapObjectNode(QSGNode *oldNode,
+                                 VisibleNode **visibleNode,
+                                 QSGNode *root,
+                                 QQuickWindow *window) override;
 
     // QGeoMapCirclePrivate interface
     void setCenter(const QGeoCoordinate &center) override;

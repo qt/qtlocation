@@ -57,7 +57,8 @@ QMapPolygonObjectPrivateQSG::QMapPolygonObjectPrivateQSG(const QMapPolygonObject
 
 QMapPolygonObjectPrivateQSG::~QMapPolygonObjectPrivateQSG()
 {
-
+    if (m_map)
+        m_map->removeMapObject(q);
 }
 
 QList<QDoubleVector2D> QMapPolygonObjectPrivateQSG::projectPath()
@@ -74,13 +75,18 @@ QList<QDoubleVector2D> QMapPolygonObjectPrivateQSG::projectPath()
     return geopathProjected_;
 }
 
-QSGNode *QMapPolygonObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow * /*window*/)
+QSGNode *QMapPolygonObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
+                                                          VisibleNode **visibleNode,
+                                                          QSGNode *root,
+                                                          QQuickWindow */*window*/)
 {
+    Q_UNUSED(visibleNode)
     MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
 
     bool created = false;
     if (!node) {
         node = new MapPolygonNode();
+        *visibleNode = static_cast<VisibleNode *>(node);
         created = true;
     }
 

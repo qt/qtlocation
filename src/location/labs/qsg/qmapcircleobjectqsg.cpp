@@ -60,7 +60,8 @@ QMapCircleObjectPrivateQSG::QMapCircleObjectPrivateQSG(const QMapCircleObjectPri
 
 QMapCircleObjectPrivateQSG::~QMapCircleObjectPrivateQSG()
 {
-
+    if (m_map)
+        m_map->removeMapObject(q);
 }
 
 void QMapCircleObjectPrivateQSG::updateCirclePath()
@@ -147,13 +148,18 @@ QGeoMapObjectPrivate *QMapCircleObjectPrivateQSG::clone()
     return new QMapCircleObjectPrivateQSG(static_cast<QMapCircleObjectPrivate &>(*this));
 }
 
-QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow * /*window*/)
+QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
+                                                         VisibleNode **visibleNode,
+                                                         QSGNode *root,
+                                                         QQuickWindow * /*window*/)
 {
+//    Q_UNUSED(visibleNode) // coz of -Werror=unused-but-set-parameter
     MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
 
     bool created = false;
     if (!node) {
         node = new MapPolygonNode();
+        *visibleNode = static_cast<VisibleNode *>(node);
         created = true;
     }
 

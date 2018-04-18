@@ -43,26 +43,19 @@
 #include <QtQml/qqmlengine.h>
 #include <QtQml/qqml.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class RootNode : public QSGTransformNode
+class RootNode : public QSGTransformNode, public VisibleNode
 {
 public:
-    RootNode() : QSGTransformNode()
-    { }
+    RootNode() { }
 
     bool isSubtreeBlocked() const override
     {
-        return m_blocked;
+        return subtreeBlocked();
     }
-
-    void setSubtreeBlocked(bool blocked)
-    {
-        m_blocked = blocked;
-    }
-
-    bool m_blocked = false;
 };
 
 QMapIconObjectPrivateQSG::QMapIconObjectPrivateQSG(QGeoMapObject *q)
@@ -80,7 +73,8 @@ QMapIconObjectPrivateQSG::QMapIconObjectPrivateQSG(const QMapIconObjectPrivate &
 
 QMapIconObjectPrivateQSG::~QMapIconObjectPrivateQSG()
 {
-
+    if (m_map)
+        m_map->removeMapObject(q);
 }
 
 void QMapIconObjectPrivateQSG::updateGeometry()
@@ -100,8 +94,12 @@ void QMapIconObjectPrivateQSG::updateGeometry()
     // TODO: support and test for zoomLevel
 }
 
-QSGNode *QMapIconObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode, QSGNode * root, QQuickWindow *window)
+QSGNode *QMapIconObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
+                                                       VisibleNode **visibleNode,
+                                                       QSGNode *root,
+                                                       QQuickWindow *window)
 {
+    Q_UNUSED(visibleNode)
     bool created = false;
     RootNode *node = static_cast<RootNode *>(oldNode);
     if (!node) {
@@ -109,6 +107,7 @@ QSGNode *QMapIconObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode, QSGNode
         m_imageNode = window->createImageNode();
         m_imageNode->setOwnsTexture(true);
         node->appendChildNode(m_imageNode);
+        *visibleNode = static_cast<VisibleNode *>(node);
         created = true;
     }
 

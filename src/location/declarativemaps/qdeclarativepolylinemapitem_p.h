@@ -181,20 +181,39 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Q_LOCATION_PRIVATE_EXPORT MapPolylineNode : public QSGGeometryNode
+class Q_LOCATION_PRIVATE_EXPORT VisibleNode
 {
+public:
+    VisibleNode();
+    virtual ~VisibleNode();
 
+    bool subtreeBlocked() const;
+    void setSubtreeBlocked(bool blocked);
+    bool visible() const;
+    void setVisible(bool visible);
+
+    bool m_blocked : 1;
+    bool m_visible : 1;
+};
+
+class Q_LOCATION_PRIVATE_EXPORT MapItemGeometryNode : public QSGGeometryNode, public VisibleNode
+{
+public:
+    ~MapItemGeometryNode() override;
+    bool isSubtreeBlocked() const override;
+};
+
+class Q_LOCATION_PRIVATE_EXPORT MapPolylineNode : public MapItemGeometryNode
+{
 public:
     MapPolylineNode();
-    ~MapPolylineNode();
+    ~MapPolylineNode() override;
 
     void update(const QColor &fillColor, const QGeoMapItemGeometry *shape);
-    bool isSubtreeBlocked() const override;
 
 private:
     QSGFlatColorMaterial fill_material_;
     QSGGeometry geometry_;
-    bool blocked_;
 };
 
 QT_END_NAMESPACE
