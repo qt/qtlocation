@@ -213,7 +213,7 @@ Q_SIGNALS:
     void mapItemsChanged();
     void errorChanged();
     void copyrightLinkActivated(const QString &link);
-    void copyrightsVisibleChanged(bool visible);
+    Q_REVISION(11) void copyrightsVisibleChanged(bool visible);
     void colorChanged(const QColor &color);
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);
@@ -225,7 +225,7 @@ Q_SIGNALS:
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void mapReadyChanged(bool ready);
-    void mapObjectsChanged();
+    Q_REVISION(11) void mapObjectsChanged();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override ;
