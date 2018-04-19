@@ -591,6 +591,8 @@ public:
             QMetaType::registerEqualsComparator<QGeoCircle>();
             qRegisterMetaType<QGeoPath>();
             QMetaType::registerEqualsComparator<QGeoPath>();
+            qRegisterMetaType<QGeoPolygon>();
+            QMetaType::registerEqualsComparator<QGeoPolygon>();
             qRegisterMetaType<QGeoLocation>();
             qRegisterMetaType<QGeoShape>();
             QMetaType::registerEqualsComparator<QGeoShape>();
