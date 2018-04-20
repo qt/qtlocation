@@ -90,7 +90,7 @@ void QMapPolylineObjectPrivateQSG::updateGeometry()
     const QList<QDoubleVector2D> &geopathProjected = projectPath();
     m_geometry.setPreserveGeometry(true, m_geoPath.boundingGeoRectangle().topLeft());
     m_geometry.updateSourcePoints(*m_map.data(), geopathProjected, m_geoPath.boundingGeoRectangle().topLeft());
-    m_geometry.updateScreenPoints(*m_map.data(), width());
+    m_geometry.updateScreenPoints(*m_map.data(), width(), false);
 
     QPointF origin = m_map->geoProjection().coordinateToItemPosition(m_geometry.origin(), false).toPointF();
     m_geometry.translate(origin - m_geometry.firstPointOffset());

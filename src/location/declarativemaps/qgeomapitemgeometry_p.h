@@ -95,7 +95,7 @@ public:
         return screenOutline_;
     }
 
-    inline bool contains(const QPointF &screenPoint) const {
+    virtual bool contains(const QPointF &screenPoint) const {
         return screenOutline_.contains(screenPoint);
     }
 

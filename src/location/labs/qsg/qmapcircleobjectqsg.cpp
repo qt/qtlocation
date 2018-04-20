@@ -131,7 +131,7 @@ void QMapCircleObjectPrivateQSG::updateGeometry()
         if (clippedPaths.size()) {
             borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
             m_borderGeometry.pathToScreen(*m_map, clippedPaths, borderLeftBoundWrapped);
-            m_borderGeometry.updateScreenPoints(*m_map, borderWidth());
+            m_borderGeometry.updateScreenPoints(*m_map, borderWidth(), false);
         } else {
             m_borderGeometry.clear();
         }

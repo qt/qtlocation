@@ -198,7 +198,7 @@ void QMapPolygonObjectPrivateQSG::updateGeometry()
         if (clippedPaths.size()) {
             borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
             m_borderGeometry.pathToScreen(*m_map.data(), clippedPaths, borderLeftBoundWrapped);
-            m_borderGeometry.updateScreenPoints(*m_map.data(), borderWidth());
+            m_borderGeometry.updateScreenPoints(*m_map.data(), borderWidth(), false);
         } else {
             m_borderGeometry.clear();
         }

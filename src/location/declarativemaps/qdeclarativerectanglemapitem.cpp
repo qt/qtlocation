@@ -290,7 +290,7 @@ void QDeclarativeRectangleMapItem::updatePolish()
 
     geometry_.setPreserveGeometry(true, rectangle_.topLeft());
     geometry_.updateSourcePoints(*map(), pathMercator_);
-    geometry_.updateScreenPoints(*map());
+    geometry_.updateScreenPoints(*map(), border_.width());
 
     QList<QGeoMapItemGeometry *> geoms;
     geoms << &geometry_;
@@ -320,8 +320,8 @@ void QDeclarativeRectangleMapItem::updatePolish()
     }
 
     QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-    setWidth(combined.width());
-    setHeight(combined.height());
+    setWidth(combined.width()  + 2 * border_.width());
+    setHeight(combined.height()  + 2 * border_.width());
 
     setPositionOnMap(geometry_.origin(), geometry_.firstPointOffset());
 }

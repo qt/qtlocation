@@ -519,7 +519,8 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     \internal
 */
 void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
-                                                 qreal strokeWidth)
+                                                 qreal strokeWidth,
+                                                 bool adjustTranslation)
 {
     if (!screenDirty_)
         return;
@@ -531,20 +532,14 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
         return;
     }
 
-    // Create the viewport rect in the same coordinate system
-    // as the actual points
-    QRectF viewport(0, 0, map.viewportWidth(), map.viewportHeight());
-    viewport.adjust(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
-    viewport.translate(-1 * origin);
-
     // The geometry has already been clipped against the visible region projection in wrapped mercator space.
     QVector<qreal> points = srcPoints_;
     QVector<QPainterPath::ElementType> types = srcPointTypes_;
 
     QVectorPath vp(points.data(), types.size(), types.data());
     QTriangulatingStroker ts;
-    // viewport is not used in the call below.
-    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), viewport, QPainter::Qt4CompatiblePainting);
+    // As of Qt5.11, the clip argument is not actually used, in the call below.
+    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), QRectF(), QPainter::Qt4CompatiblePainting);
 
     clear();
 
@@ -583,13 +578,32 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     }
 
     screenBounds_ = bb;
-    this->translate( -1 * sourceBounds_.topLeft() + QPointF(strokeWidth, strokeWidth));
+    const QPointF strokeOffset = (adjustTranslation) ? QPointF(strokeWidth, strokeWidth) : QPointF();
+    this->translate( -1 * sourceBounds_.topLeft() + strokeOffset);
 }
 
 void QGeoMapPolylineGeometry::clearSource()
 {
     srcPoints_.clear();
     srcPointTypes_.clear();
+}
+
+bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
+{
+    // screenOutline_.contains(screenPoint) doesn't work, as, it appears, that
+    // screenOutline_ for QGeoMapPolylineGeometry is empty (QRectF(0,0 0x0))
+    const QVector<QPointF> &verts = vertices();
+    QPolygonF tri;
+    for (int i = 0; i < verts.size(); ++i) {
+        tri << verts[i];
+        if (tri.size() == 3) {
+            if (tri.containsPoint(point,Qt::OddEvenFill))
+                return true;
+            tri.remove(0);
+        }
+    }
+
+    return false;
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
@@ -948,7 +962,7 @@ void QDeclarativePolylineMapItem::updatePolish()
     setWidth(geometry_.sourceBoundingBox().width() + 2 * line_.width());
     setHeight(geometry_.sourceBoundingBox().height() + 2 * line_.width());
 
-    setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft());
+    setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft() + QPointF(line_.width(), line_.width()));
 }
 
 void QDeclarativePolylineMapItem::markSourceDirtyAndUpdate()
@@ -982,18 +996,7 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
 
 bool QDeclarativePolylineMapItem::contains(const QPointF &point) const
 {
-    QVector<QPointF> vertices = geometry_.vertices();
-    QPolygonF tri;
-    for (int i = 0; i < vertices.size(); ++i) {
-        tri << vertices[i];
-        if (tri.size() == 3) {
-            if (tri.containsPoint(point,Qt::OddEvenFill))
-                return true;
-            tri.remove(0);
-        }
-    }
-
-    return false;
+    return geometry_.contains(point);
 }
 
 const QGeoShape &QDeclarativePolylineMapItem::geoShape() const

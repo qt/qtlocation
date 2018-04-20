@@ -51,6 +51,8 @@
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceContactDetail>
 
+#include <algorithm>
+
 QT_BEGIN_NAMESPACE
 
 namespace {
@@ -204,11 +206,11 @@ void QPlaceSearchReplyMapbox::onReplyFinished()
     }
 
     if (request().relevanceHint() == QPlaceSearchRequest::DistanceHint) {
-        qSort(results.begin(), results.end(), [](const QPlaceResult &a, const QPlaceResult &b) -> bool {
+        std::sort(results.begin(), results.end(), [](const QPlaceResult &a, const QPlaceResult &b) -> bool {
                 return a.distance() < b.distance();
         });
     } else if (request().relevanceHint() == QPlaceSearchRequest::LexicalPlaceNameHint) {
-        qSort(results.begin(), results.end(), [](const QPlaceResult &a, const QPlaceResult &b) -> bool {
+        std::sort(results.begin(), results.end(), [](const QPlaceResult &a, const QPlaceResult &b) -> bool {
                 return a.place().name() < b.place().name();
         });
     }
