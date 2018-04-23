@@ -197,7 +197,6 @@ Module {
         }
         Signal {
             name: "copyrightsVisibleChanged"
-            revision: 11
             Parameter { name: "visible"; type: "bool" }
         }
         Signal {

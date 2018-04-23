@@ -213,7 +213,7 @@ Q_SIGNALS:
     void mapItemsChanged();
     void errorChanged();
     void copyrightLinkActivated(const QString &link);
-    Q_REVISION(11) void copyrightsVisibleChanged(bool visible);
+    void copyrightsVisibleChanged(bool visible);
     void colorChanged(const QColor &color);
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);
