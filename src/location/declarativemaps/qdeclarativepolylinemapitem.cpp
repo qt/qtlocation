@@ -60,7 +60,6 @@ QT_BEGIN_NAMESPACE
 
 
 static const double kClipperScaleFactor = 281474976710656.0;  // 48 bits of precision
-static const double kClipperScaleFactorInv = 1.0 / kClipperScaleFactor;
 
 static inline IntPoint toIntPoint(const double x, const double y)
 {
