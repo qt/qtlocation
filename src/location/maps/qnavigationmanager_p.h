@@ -52,11 +52,17 @@
 #include <QSize>
 #include <QPair>
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomapparameter_p.h>
 
 QT_BEGIN_NAMESPACE
 
 class QNavigationManagerEngine;
 class QNavigationManagerPrivate;
+class QDeclarativeNavigatorPrivate;
+class QDeclarativeGeoWaypoint;
+class QGeoRoute;
+class QGeoRouteSegment;
+
 class Q_LOCATION_PRIVATE_EXPORT QNavigationManager : public QObject
 {
     Q_OBJECT
@@ -66,15 +72,32 @@ public:
 
     QString managerName() const;
     int managerVersion() const;
-
     QNavigationManagerEngine *engine();
-
     bool isInitialized() const;
+
+    void setNavigator(QDeclarativeNavigatorPrivate *navigator);
+    QDeclarativeNavigatorPrivate *declarativeNavigator() const;
+
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
+    void setParameters(const QList<QGeoMapParameter *> &parameters);
+    QList<QGeoMapParameter *> parameters() const;
+
+    bool ready() const;
+    bool start();
+    bool stop();
+    bool active() const;
+
 Q_SIGNALS:
     void initialized();
+
+    // These must be emitted by the engine
+    void activeChanged(bool active);
+    void waypointReached(const QDeclarativeGeoWaypoint *pos);
+    void destinationReached();
+    void currentRouteChanged(const QGeoRoute &route);
+    void currentSegmentChanged(int segment);
 
 protected:
     QNavigationManager(QNavigationManagerEngine *engine, QObject *parent = 0);

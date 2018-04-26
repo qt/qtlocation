@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
 
 class MapPolygonNode;
 
-class QGeoMapPolygonGeometry : public QGeoMapItemGeometry
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolygonGeometry : public QGeoMapItemGeometry
 {
 public:
     QGeoMapPolygonGeometry();
@@ -70,7 +70,7 @@ public:
     void updateSourcePoints(const QGeoMap &map,
                             const QList<QDoubleVector2D> &path);
 
-    void updateScreenPoints(const QGeoMap &map);
+    void updateScreenPoints(const QGeoMap &map, qreal strokeWidth = 0.0);
 
 protected:
     QPainterPath srcPath_;
@@ -137,7 +137,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class MapPolygonNode : public QSGGeometryNode
+class Q_LOCATION_PRIVATE_EXPORT MapPolygonNode : public QSGGeometryNode
 {
 
 public:

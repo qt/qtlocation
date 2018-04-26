@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,9 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPOBJECTVIEW_P_P_H
-#define QMAPOBJECTVIEW_P_P_H
-
+#ifndef QDECLARATIVENAVIGATOR_P_P_H
+#define QDECLARATIVENAVIGATOR_P_P_H
 
 //
 //  W A R N I N G
@@ -49,38 +48,39 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtLocation/private/qgeomapobject_p_p.h>
-#include <QPointer>
-#include <QVector>
-#include <QQmlComponent>
+#include <QtCore/qlist.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QQmlDelegateModel;
-class QGeoMap;
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectViewPrivate : public QGeoMapObjectPrivate
+class QDeclarativeGeoServiceProvider;
+class QDeclarativeGeoMap;
+class QNavigationManager;
+class QDeclarativeGeoRoute;
+class QDeclarativePositionSource;
+class QGeoMapParameter;
+class QDeclarativeGeoRouteSegment;
+class QParameterizableObject;
+
+class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigatorPrivate
 {
 public:
-    QMapObjectViewPrivate(QGeoMapObject *q);
-    ~QMapObjectViewPrivate() override;
+    QDeclarativeNavigatorPrivate(QParameterizableObject *q_);
 
-    virtual QGeoMapObject::Type type() const override final;
-};
-
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapObjectViewPrivateDefault : public QMapObjectViewPrivate
-{
-public:
-    QMapObjectViewPrivateDefault(QGeoMapObject *q);
-    QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other);
-    ~QMapObjectViewPrivateDefault() override;
-
-
-    // QGeoMapObjectPrivate interface
-public:
-    QGeoMapObjectPrivate *clone() override;
+    QParameterizableObject *q = nullptr;
+    QNavigationManager *m_navigationManager = nullptr;
+    QDeclarativeGeoServiceProvider *m_plugin = nullptr;
+    QDeclarativeGeoMap *m_map = nullptr;
+    QDeclarativeGeoRoute *m_route = nullptr;
+    QDeclarativePositionSource *m_positionSource = nullptr;
+    QDeclarativeGeoRoute *m_currentRoute = nullptr;
+    QList<QGeoMapParameter *> m_parameters;
+    int m_currentSegment = 0;
+    bool m_active = false;
+    bool m_completed = false;
+    bool m_ready = false;
 };
 
 QT_END_NAMESPACE
 
-#endif // QMAPOBJECTVIEW_P_P_H
+#endif // QDECLARATIVENAVIGATOR_P_P_H

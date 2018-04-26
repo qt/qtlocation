@@ -21,14 +21,8 @@ qtHaveModule(quick) {
 
     plugins.depends += location
 
-    exists(locationlabs):qtConfig(location-labs-plugin) {
-        SUBDIRS += locationlabs
-        locationlabs.depends += location
-    }
-
     SUBDIRS += imports
     imports.depends += positioningquick positioning location
-    exists(locationlabs):qtConfig(location-labs-plugin): imports.depends += locationlabs
 }
 plugins.depends += positioning
 SUBDIRS += plugins

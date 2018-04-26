@@ -228,6 +228,10 @@ Item {
             ]
     }
 
+    MapPolyline {
+        id: mapPolylineGeopath
+    }
+
     TestCase {
         name: "MapPolyline path"
         function test_path_operations() {
@@ -272,6 +276,41 @@ Item {
             compare(mapPolyline.coordinateAt(2).longitude, 153.1)
             compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(35, 153.1)), true)
             compare(mapPolyline.path.length, mapPolyline.pathLength())
+        }
+    }
+
+    TestCase {
+        name: "GeoPath path"
+        function test_qgeopath_path_operations() {
+            var geopath = QtPositioning.path()
+
+            geopath.path = trace2
+            compare(geopath.path.length, trace2.length)
+
+            geopath.path = mapPolyline.path
+            compare(geopath.path.length, mapPolyline.pathLength())
+            compare(geopath.boundingGeoRectangle(), mapPolyline.geoShape.boundingGeoRectangle())
+
+            mapPolylineGeopath.path = mapPolyline.path
+            compare(mapPolylineGeopath.pathLength(), mapPolyline.pathLength())
+            compare(mapPolylineGeopath.geoShape.boundingGeoRectangle(), mapPolyline.geoShape.boundingGeoRectangle())
+
+            try {
+                var err = false;
+                mapPolylineGeopath.geoShape = geopath
+            } catch (e) {
+                if (e.message != 'Cannot assign to read-only property "geoShape"')
+                    fail('Expected  Cannot assign to read-only property "geoShape", got: ' + e.message);
+                err = true;
+            } finally {
+                verify(err, 'should throw Cannot assign to read-only property "geoShape"');
+            }
+
+            geopath.path = trace2
+            geopath.path[0].longitude = 11.0
+            compare(geopath.path.length, trace2.length)
+            compare(geopath.coordinateAt(0).latitude, trace2[0].latitude)
+            compare(geopath.coordinateAt(0).longitude, 11) // This fails
         }
     }
 }

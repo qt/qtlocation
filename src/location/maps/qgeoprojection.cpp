@@ -385,6 +385,13 @@ QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleGeometry() const
     return m_visibleRegion;
 }
 
+QList<QDoubleVector2D> QGeoProjectionWebMercator::visibleGeometryExpanded() const
+{
+    if (m_visibleRegionDirty)
+        const_cast<QGeoProjectionWebMercator *>(this)->updateVisibleRegion();
+    return m_visibleRegionExpanded;
+}
+
 QList<QDoubleVector2D> QGeoProjectionWebMercator::projectableGeometry() const
 {
     if (m_visibleRegionDirty)
@@ -668,6 +675,28 @@ void QGeoProjectionWebMercator::updateVisibleRegion()
         else
             m_projectableRegion = viewportRect;
     }
+
+    // Compute m_visibleRegionExpanded as a clipped expanded version of m_visibleRegion
+    QDoubleVector2D centroid;
+    for (const QDoubleVector2D &v: qAsConst(m_visibleRegion))
+        centroid += v;
+    centroid /= m_visibleRegion.size();
+
+    m_visibleRegionExpanded.clear();
+    for (const QDoubleVector2D &v: qAsConst(m_visibleRegion)) {
+        const QDoubleVector2D vc = v - centroid;
+        m_visibleRegionExpanded.push_back(centroid + vc * 1.2); // fixing expansion factor to 1.2
+    }
+
+    c2t::clip2tri clipperExpanded;
+    clipperExpanded.clearClipper();
+    clipperExpanded.addSubjectPath(QClipperUtils::qListToPath(m_visibleRegionExpanded), true);
+    clipperExpanded.addClipPolygon(QClipperUtils::qListToPath(m_projectableRegion));
+    Paths resVisibleExpanded = clipperExpanded.execute(c2t::clip2tri::Intersection);
+    if (resVisibleExpanded.size())
+        m_visibleRegionExpanded = QClipperUtils::pathToQList(resVisibleExpanded[0]); // Intersection between two convex quadrilaterals should always be a single polygon
+    else
+        m_visibleRegionExpanded = m_visibleRegion;
 }
 
 QGeoCameraData QGeoProjectionWebMercator::cameraData() const

@@ -39,7 +39,7 @@
 
 #include <QtCore/qshareddata.h>
 #include <QtLocation/qlocationglobal.h>
-#include <QVariantMap>
+#include <QtCore/qvariant.h>
 
 QT_BEGIN_NAMESPACE
 

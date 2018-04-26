@@ -5,7 +5,6 @@ INCLUDEPATH += declarativemaps
 PRIVATE_HEADERS += \
            declarativemaps/error_messages_p.h \
            declarativemaps/qdeclarativegeomapitemview_p.h \
-           declarativemaps/qdeclarativegeomapitemview_p_p.h \
            declarativemaps/qdeclarativegeoserviceprovider_p.h \
            declarativemaps/qdeclarativegeocodemodel_p.h \
            declarativemaps/qdeclarativegeoroutemodel_p.h \
@@ -28,7 +27,6 @@ PRIVATE_HEADERS += \
            declarativemaps/qquickgeomapgesturearea_p.h \
            declarativemaps/qdeclarativegeomapitemgroup_p.h \
            declarativemaps/qparameterizableobject_p.h \
-           declarativemaps/mapitemviewdelegateincubator_p.h \
            declarativemaps/qgeomapobject_p.h \
            declarativemaps/qgeomapobject_p_p.h \
            ../imports/positioning/qquickgeocoordinateanimation_p.h
@@ -58,7 +56,6 @@ SOURCES += \
            declarativemaps/qquickgeomapgesturearea.cpp \
            declarativemaps/qparameterizableobject.cpp \
            declarativemaps/qdeclarativegeomapitemgroup.cpp \
-           declarativemaps/mapitemviewdelegateincubator.cpp \
            declarativemaps/qgeomapobject.cpp \
            ../imports/positioning/qquickgeocoordinateanimation.cpp
 

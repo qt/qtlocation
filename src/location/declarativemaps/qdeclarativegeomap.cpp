@@ -503,9 +503,7 @@ void QDeclarativeGeoMap::populateParameters()
 */
 void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
 {
-    Q_UNUSED(view)
     view->setMap(this);
-    view->repopulate();
 }
 
 /*!
@@ -1562,7 +1560,8 @@ void QDeclarativeGeoMap::prefetchData()
 */
 void QDeclarativeGeoMap::clearData()
 {
-    m_map->clearData();
+    if (m_map)
+        m_map->clearData();
 }
 
 /*!
@@ -1988,11 +1987,11 @@ void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGro
 */
 void QDeclarativeGeoMap::removeMapItemView(QDeclarativeGeoMapItemView *itemView)
 {
-    if (!itemView || itemView->map_ != this) // can't remove a view that is already added to another map
+    if (!itemView || itemView->m_map != this) // can't remove a view that is already added to another map
         return;
 
     itemView->removeInstantiatedItems();
-    itemView->map_ = 0;
+    itemView->m_map = 0;
     // it can be removed from the list at this point, since no operations that require a Map have to be done
     // anymore on destruction.
     m_mapViews.removeOne(itemView);
@@ -2009,7 +2008,7 @@ void QDeclarativeGeoMap::removeMapItemView(QDeclarativeGeoMapItemView *itemView)
 */
 void QDeclarativeGeoMap::addMapItemView(QDeclarativeGeoMapItemView *itemView)
 {
-    if (!itemView || itemView->map_) // can't add a view twice
+    if (!itemView || itemView->m_map) // can't add a view twice
         return;
 
     // Not appending it to m_mapViews because it seems unnecessary even if the

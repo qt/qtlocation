@@ -41,12 +41,174 @@
 #include "qgeoroutingmanagerenginemapbox.h"
 #include "qgeoroutereplymapbox.h"
 #include "qmapboxcommon.h"
-#include "QtLocation/private/qgeorouteparserosrmv5_p.h"
+#include <QtLocation/private/qgeorouteparserosrmv5_p.h>
+#include <QtLocation/qgeoroutesegment.h>
+#include <QtLocation/qgeomaneuver.h>
 
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonArray>
 #include <QtCore/QUrlQuery>
 #include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
+
+class QGeoRouteParserOsrmV5ExtensionMapbox: public QGeoRouteParserOsrmV5Extension
+{
+public:
+    QGeoRouteParserOsrmV5ExtensionMapbox(const QString &accessToken, bool useMapboxTextInstructions);
+    void updateQuery(QUrlQuery &query) const override;
+    void updateSegment(QGeoRouteSegment &segment, const QJsonObject &step, const QJsonObject &maneuver) const override;
+
+    QString m_accessToken;
+    bool m_useMapboxTextInstructions = false;
+};
+
+QGeoRouteParserOsrmV5ExtensionMapbox::QGeoRouteParserOsrmV5ExtensionMapbox(const QString &accessToken, bool useMapboxTextInstructions)
+    : QGeoRouteParserOsrmV5Extension(), m_accessToken(accessToken), m_useMapboxTextInstructions(useMapboxTextInstructions)
+{
+
+}
+
+void QGeoRouteParserOsrmV5ExtensionMapbox::updateQuery(QUrlQuery &query) const
+{
+    if (!m_accessToken.isEmpty())
+        query.addQueryItem(QLatin1String("access_token"), m_accessToken);
+
+    query.addQueryItem(QLatin1String("voice_instructions"), QLatin1String("true"));
+    query.addQueryItem(QLatin1String("banner_instructions"), QLatin1String("true"));
+}
+
+static QVariantMap parseMapboxVoiceInstruction(const QJsonObject &voiceInstruction)
+{
+    QVariantMap map;
+
+    if (voiceInstruction.value(QLatin1String("distanceAlongGeometry")).isDouble())
+        map.insert(QLatin1String("distance_along_geometry"), voiceInstruction.value(QLatin1String("distanceAlongGeometry")).toDouble());
+
+    if (voiceInstruction.value(QLatin1String("announcement")).isString())
+        map.insert(QLatin1String("announcement"), voiceInstruction.value(QLatin1String("announcement")).toString());
+
+    if (voiceInstruction.value(QLatin1String("ssmlAnnouncement")).isString())
+        map.insert(QLatin1String("ssml_announcement"), voiceInstruction.value(QLatin1String("ssmlAnnouncement")).toString());
+
+    return map;
+}
+
+static QVariantList parseMapboxVoiceInstructions(const QJsonArray &voiceInstructions)
+{
+    QVariantList list;
+    for (const QJsonValue &voiceInstructionValue : voiceInstructions) {
+        if (voiceInstructionValue.isObject())
+            list << parseMapboxVoiceInstruction(voiceInstructionValue.toObject());
+    }
+    return list;
+}
+
+static QVariantMap parseMapboxBannerComponent(const QJsonObject &bannerComponent)
+{
+    QVariantMap map;
+
+    if (bannerComponent.value(QLatin1String("type")).isString())
+        map.insert(QLatin1String("type"), bannerComponent.value(QLatin1String("type")).toString());
+
+    if (bannerComponent.value(QLatin1String("text")).isString())
+        map.insert(QLatin1String("text"), bannerComponent.value(QLatin1String("text")).toString());
+
+    if (bannerComponent.value(QLatin1String("abbr")).isString())
+        map.insert(QLatin1String("abbr"), bannerComponent.value(QLatin1String("abbr")).toString());
+
+    if (bannerComponent.value(QLatin1String("abbr_priority")).isDouble())
+        map.insert(QLatin1String("abbr_priority"), bannerComponent.value(QLatin1String("abbr_priority")).toInt());
+
+    return map;
+}
+
+static QVariantList parseMapboxBannerComponents(const QJsonArray &bannerComponents)
+{
+    QVariantList list;
+    for (const QJsonValue &bannerComponentValue : bannerComponents) {
+        if (bannerComponentValue.isObject())
+            list << parseMapboxBannerComponent(bannerComponentValue.toObject());
+    }
+    return list;
+}
+
+static QVariantMap parseMapboxBanner(const QJsonObject &banner)
+{
+    QVariantMap map;
+
+    if (banner.value(QLatin1String("text")).isString())
+        map.insert(QLatin1String("text"), banner.value(QLatin1String("text")).toString());
+
+    if (banner.value(QLatin1String("components")).isArray())
+        map.insert(QLatin1String("components"), parseMapboxBannerComponents(banner.value(QLatin1String("components")).toArray()));
+
+    if (banner.value(QLatin1String("type")).isString())
+        map.insert(QLatin1String("type"), banner.value(QLatin1String("type")).toString());
+
+    if (banner.value(QLatin1String("modifier")).isString())
+        map.insert(QLatin1String("modifier"), banner.value(QLatin1String("modifier")).toString());
+
+    if (banner.value(QLatin1String("degrees")).isDouble())
+        map.insert(QLatin1String("degrees"), banner.value(QLatin1String("degrees")).toDouble());
+
+    if (banner.value(QLatin1String("driving_side")).isString())
+        map.insert(QLatin1String("driving_side"), banner.value(QLatin1String("driving_side")).toString());
+
+    return map;
+}
+
+static QVariantMap parseMapboxBannerInstruction(const QJsonObject &bannerInstruction)
+{
+    QVariantMap map;
+
+    if (bannerInstruction.value(QLatin1String("distanceAlongGeometry")).isDouble())
+        map.insert(QLatin1String("distance_along_geometry"), bannerInstruction.value(QLatin1String("distanceAlongGeometry")).toDouble());
+
+    if (bannerInstruction.value(QLatin1String("primary")).isObject())
+        map.insert(QLatin1String("primary"), parseMapboxBanner(bannerInstruction.value(QLatin1String("primary")).toObject()));
+
+    if (bannerInstruction.value(QLatin1String("secondary")).isObject())
+        map.insert(QLatin1String("secondary"), parseMapboxBanner(bannerInstruction.value(QLatin1String("secondary")).toObject()));
+
+    if (bannerInstruction.value(QLatin1String("then")).isObject())
+        map.insert(QLatin1String("then"), parseMapboxBanner(bannerInstruction.value(QLatin1String("then")).toObject()));
+
+    return map;
+}
+
+static QVariantList parseMapboxBannerInstructions(const QJsonArray &bannerInstructions)
+{
+    QVariantList list;
+    for (const QJsonValue &bannerInstructionValue : bannerInstructions) {
+        if (bannerInstructionValue.isObject())
+            list << parseMapboxBannerInstruction(bannerInstructionValue.toObject());
+    }
+    return list;
+}
+
+void QGeoRouteParserOsrmV5ExtensionMapbox::updateSegment(QGeoRouteSegment &segment, const QJsonObject &step, const QJsonObject &maneuver) const
+{
+    QGeoManeuver m = segment.maneuver();
+    QVariantMap extendedAttributes = m.extendedAttributes();
+    if (m_useMapboxTextInstructions && maneuver.value(QLatin1String("instruction")).isString()) {
+        QString maneuverInstructionText = maneuver.value(QLatin1String("instruction")).toString();
+        if (!maneuverInstructionText.isEmpty())
+            m.setInstructionText(maneuverInstructionText);
+    }
+
+    if (step.value(QLatin1String("voiceInstructions")).isArray())
+        extendedAttributes.insert(QLatin1String("mapbox.voice_instructions"),
+                                  parseMapboxVoiceInstructions(step.value(QLatin1String("voiceInstructions")).toArray()));
+    if (step.value(QLatin1String("bannerInstructions")).isArray())
+        extendedAttributes.insert(QLatin1String("mapbox.banner_instructions"),
+                                  parseMapboxBannerInstructions(step.value(QLatin1String("bannerInstructions")).toArray()));
+
+    m.setExtendedAttributes(extendedAttributes);
+    segment.setManeuver(m);
+}
+
 
 QGeoRoutingManagerEngineMapbox::QGeoRoutingManagerEngineMapbox(const QVariantMap &parameters,
                                                          QGeoServiceProvider::Error *error,
@@ -68,8 +230,9 @@ QGeoRoutingManagerEngineMapbox::QGeoRoutingManagerEngineMapbox(const QVariantMap
         use_mapbox_text_instructions = parameters.value(QStringLiteral("mapbox.use_mapbox_text_instructions")).toBool();
     }
 
-    QGeoRouteParserOsrmV5 *parser = new QGeoRouteParserOsrmV5(this, use_mapbox_text_instructions);
-    parser->setAccessToken(m_accessToken);
+    QGeoRouteParserOsrmV5 *parser = new QGeoRouteParserOsrmV5(this);
+    parser->setExtension(new QGeoRouteParserOsrmV5ExtensionMapbox(m_accessToken, use_mapbox_text_instructions));
+
     m_routeParser = parser;
 
     *error = QGeoServiceProvider::NoError;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPROUTE_P_P_H
-#define QGEOMAPROUTE_P_P_H
+#ifndef QGEOMAPICON_P_P_H
+#define QGEOMAPICON_P_P_H
 
 //
 //  W A R N I N G
@@ -48,32 +48,58 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p_p.h>
-#include <QtLocation/private/qdeclarativegeoroute_p.h>
+#include <QGeoCoordinate>
+
 QT_BEGIN_NAMESPACE
 
-class QGeoRoute;
-
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObjectPrivate : public QGeoMapObjectPrivate
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QMapRouteObjectPrivate(QGeoMapObject *q);
-    QMapRouteObjectPrivate(const QMapRouteObjectPrivate &other);
-    ~QMapRouteObjectPrivate() override;
+    QMapIconObjectPrivate(QGeoMapObject *q);
+    ~QMapIconObjectPrivate() override;
 
     virtual QGeoMapObject::Type type() const override final;
 
-    QDeclarativeGeoRoute *declarativeGeoRoute() const;
-
-    virtual QGeoRoute route() const;
-    virtual void setRoute(const QDeclarativeGeoRoute *route);
+    virtual QGeoCoordinate coordinate() const = 0;
+    virtual void setCoordinate(const QGeoCoordinate &coordinate) = 0;
+    virtual QVariant content() const = 0;
+    virtual void setContent(const QVariant &content) = 0;
+    virtual QSizeF size() const = 0;
+    virtual void setSize(const QSizeF &size) = 0;
 
     // QGeoMapObjectPrivate interface
     bool equals(const QGeoMapObjectPrivate &other) const override;
+};
+
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObjectPrivateDefault : public QMapIconObjectPrivate
+{
+public:
+    QMapIconObjectPrivateDefault(QGeoMapObject *q);
+    QMapIconObjectPrivateDefault(const QMapIconObjectPrivate &other);
+    ~QMapIconObjectPrivateDefault() override;
+
+    // QGeoMapIconPrivate interface
+    QGeoCoordinate coordinate() const override;
+    void setCoordinate(const QGeoCoordinate &coordinate) override;
+    QVariant content() const override;
+    void setContent(const QVariant &content) override;
+    virtual QSizeF size() const override;
+    virtual void setSize(const QSizeF &size) override;
+
+    // QMapIconObjectPrivate interface
     QGeoMapObjectPrivate *clone() override;
+
+public:
+    QVariant m_content;
+    QGeoCoordinate m_coordinate;
+    QSizeF m_size;
+
+private:
+    QMapIconObjectPrivateDefault(const QMapIconObjectPrivateDefault &other) = delete;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPROUTE_P_P_H
+#endif // QGEOMAPICON_P_P_H

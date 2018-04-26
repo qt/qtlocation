@@ -85,7 +85,7 @@ private:
     QColor color_;
 };
 
-class QGeoMapPolylineGeometry : public QGeoMapItemGeometry
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolylineGeometry : public QGeoMapItemGeometry
 {
 public:
     QGeoMapPolylineGeometry();
@@ -95,9 +95,13 @@ public:
                             const QGeoCoordinate geoLeftBound);
 
     void updateScreenPoints(const QGeoMap &map,
-                            qreal strokeWidth);
+                            qreal strokeWidth,
+                            bool adjustTranslation = true);
 
-protected:
+    void clearSource();
+
+    bool contains(const QPointF &point) const override;
+
     QList<QList<QDoubleVector2D> > clipPath(const QGeoMap &map,
                     const QList<QDoubleVector2D> &path,
                     QDoubleVector2D &leftBoundWrapped);
@@ -177,7 +181,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class MapPolylineNode : public QSGGeometryNode
+class Q_LOCATION_PRIVATE_EXPORT MapPolylineNode : public QSGGeometryNode
 {
 
 public:

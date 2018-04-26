@@ -1669,7 +1669,7 @@ void QDeclarativeGeoRouteQuery::doCoordinateChanged()
 
 static QGeoCoordinate convertWaypointToCoordinate(const QDeclarativeGeoWaypoint *value)
 {
-    return QGeoCoordinate(value);
+    return value->coordinate();
 }
 
 struct WaypointVariantConversions

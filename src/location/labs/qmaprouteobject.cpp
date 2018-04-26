@@ -40,6 +40,19 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype MapRouteObject
+    \instantiates QMapRouteObject
+    \inqmlmodule Qt.labs.location
+    \ingroup qml-QtLocation5-maps
+    \inherits QGeoMapObject
+
+    \brief The MapRouteObject displays a geographical route on a Map.
+
+    The MapRouteObject type displays a Route obtained through a RouteModel or
+    other means, on the Map as a Polyline following the path of the Route.
+*/
+
 /*
 
     QGeoMapRoutePrivate
@@ -72,6 +85,11 @@ QDeclarativeGeoRoute *QMapRouteObjectPrivate::declarativeGeoRoute() const
     return r->m_route;
 }
 
+/*!
+    \qmlproperty Route Qt.labs.location::MapRouteObject::route
+
+    This property holds the route to be drawn.
+*/
 QGeoRoute QMapRouteObjectPrivate::route() const
 {
     const QDeclarativeGeoRoute *r = declarativeGeoRoute();

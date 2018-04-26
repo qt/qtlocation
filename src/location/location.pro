@@ -6,6 +6,7 @@ android {
 }
 
 CONFIG += simd optimize_full
+QT_FOR_CONFIG += location-private
 
 # 3rdparty headers produce warnings with MSVC
 msvc: CONFIG -= warning_clean
@@ -38,6 +39,7 @@ include(maps/maps.pri)
 include(places/places.pri)
 include(declarativemaps/declarativemaps.pri)
 include(declarativeplaces/declarativeplaces.pri)
+qtConfig(location-labs-plugin):include(labs/labs.pri)
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

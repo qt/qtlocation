@@ -246,7 +246,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 /*!
     \internal
 */
-void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
+void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map, qreal strokeWidth)
 {
     if (!screenDirty_)
         return;
@@ -310,6 +310,8 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     }
 
     screenBounds_ = ppi.boundingRect();
+    if (strokeWidth != 0.0)
+        this->translate(QPointF(strokeWidth, strokeWidth));
 }
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
@@ -515,7 +517,7 @@ void QDeclarativePolygonMapItem::updatePolish()
     updatingGeometry_ = true;
 
     geometry_.updateSourcePoints(*map(), geopathProjected_);
-    geometry_.updateScreenPoints(*map());
+    geometry_.updateScreenPoints(*map(), border_.width());
 
     QList<QGeoMapItemGeometry *> geoms;
     geoms << &geometry_;
@@ -546,10 +548,11 @@ void QDeclarativePolygonMapItem::updatePolish()
     }
 
     QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-    setWidth(combined.width());
-    setHeight(combined.height());
+    setWidth(combined.width() + 2 * border_.width());
+    setHeight(combined.height() + 2 * border_.width());
 
-    setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft());
+    setPositionOnMap(geometry_.origin(), -1 * geometry_.sourceBoundingBox().topLeft()
+                                            + QPointF(border_.width(), border_.width()));
 }
 
 void QDeclarativePolygonMapItem::markSourceDirtyAndUpdate()

@@ -501,7 +501,7 @@ void QDeclarativeCircleMapItem::updatePolish()
     QList<QDoubleVector2D> circlePath = circlePath_;
 
     int pathCount = circlePath.size();
-    bool preserve = preserveCircleGeometry(circlePath, circle_.center(), circle_.radius());
+    bool preserve = preserveCircleGeometry(circlePath, circle_.center(), circle_.radius(), p);
     // using leftBound_ instead of the analytically calculated circle_.boundingGeoRectangle().topLeft());
     // to fix QTBUG-62154
     geometry_.setPreserveGeometry(true, leftBound_); // to set the geoLeftBound_
@@ -513,7 +513,7 @@ void QDeclarativeCircleMapItem::updatePolish()
         invertedCircle = true;
     } else {
         geometry_.updateSourcePoints(*map(), circlePath);
-        geometry_.updateScreenPoints(*map());
+        geometry_.updateScreenPoints(*map(), border_.width());
     }
 
     borderGeometry_.clear();
@@ -552,9 +552,17 @@ void QDeclarativeCircleMapItem::updatePolish()
     }
 
     QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-    setWidth(combined.width());
-    setHeight(combined.height());
 
+    if (invertedCircle || !preserve) {
+        setWidth(combined.width());
+        setHeight(combined.height());
+        setPositionOnMap(geometry_.origin(), geometry_.firstPointOffset());
+    } else {
+        setWidth(combined.width() + 2 * border_.width());
+        setHeight(combined.height() + 2 * border_.width());
+    }
+
+    // No offsetting here, even in normal case, because first point offset is already translated
     setPositionOnMap(geometry_.origin(), geometry_.firstPointOffset());
 }
 
@@ -623,11 +631,11 @@ void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const
 }
 
 bool QDeclarativeCircleMapItem::preserveCircleGeometry (QList<QDoubleVector2D> &path,
-                                    const QGeoCoordinate &center, qreal distance)
+                                    const QGeoCoordinate &center, qreal distance, const QGeoProjectionWebMercator &p)
 {
     // if circle crosses north/south pole, then don't preserve circular shape,
     if ( crossEarthPole(center, distance)) {
-        updateCirclePathForRendering(path, center, distance);
+        updateCirclePathForRendering(path, center, distance, p);
         return false;
     }
     return true;
@@ -653,9 +661,8 @@ bool QDeclarativeCircleMapItem::preserveCircleGeometry (QList<QDoubleVector2D> &
  */
 void QDeclarativeCircleMapItem::updateCirclePathForRendering(QList<QDoubleVector2D> &path,
                                                              const QGeoCoordinate &center,
-                                                             qreal distance)
+                                                             qreal distance, const QGeoProjectionWebMercator &p)
 {
-    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map()->geoProjection());
     const qreal poleLat = 90;
     const qreal distanceToNorthPole = center.distanceTo(QGeoCoordinate(poleLat, 0));
     const qreal distanceToSouthPole = center.distanceTo(QGeoCoordinate(-poleLat, 0));

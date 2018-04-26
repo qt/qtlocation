@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEMAPROUTEDELEGATE_P_H
-#define QDECLARATIVEMAPROUTEDELEGATE_P_H
+#ifndef QGEOMAPICON_P_H
+#define QGEOMAPICON_P_H
 
 //
 //  W A R N I N G
@@ -48,43 +48,41 @@
 // We mean it.
 //
 
-#include <QtLocationLabs/private/qlocationlabsglobal_p.h>
-#include <QtQml/qqml.h>
-
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p.h>
-#include <QtLocation/private/qparameterizableobject_p.h>
+#include <QtCore/QUrl>
+#include <QGeoCoordinate>
+#include <QtCore/qsize.h>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoRoute;
-class QGeoRoute;
-class QMapRouteObjectPrivate;
-class Q_LOCATIONLABS_PRIVATE_EXPORT QMapRouteObject : public QGeoMapObject
+class Q_LOCATION_PRIVATE_EXPORT QMapIconObject : public QGeoMapObject
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QVariant content READ content WRITE setContent NOTIFY contentChanged)
+    Q_PROPERTY(QSizeF size READ size WRITE setSize NOTIFY sizeChanged)
 
 public:
-    explicit QMapRouteObject(QObject *parent = nullptr);
-    ~QMapRouteObject() override;
+    QMapIconObject(QObject *parent = nullptr);
+    ~QMapIconObject() override;
 
-    QDeclarativeGeoRoute *route() const;
-    QGeoRoute geoRoute() const;
+    QVariant content() const;
+    QGeoCoordinate coordinate() const;
+    QSizeF size() const;
+
+    void setContent(QVariant content);
+    void setCoordinate(const QGeoCoordinate &coordinate);
+    void setSize(const QSizeF &size);
 
     void setMap(QGeoMap *map) override;
-    void setRoute(QDeclarativeGeoRoute * route);
 
 signals:
-    void routeChanged(QDeclarativeGeoRoute * route);
-
-protected:
-    QDeclarativeGeoRoute *m_route = nullptr;
-
-    friend class QMapRouteObjectPrivate;
+    void contentChanged(QVariant content);
+    void coordinateChanged(QGeoCoordinate coordinate);
+    void sizeChanged();
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QMapRouteObject)
-
-#endif // QDECLARATIVEMAPROUTEDELEGATE_P_H
+#endif // QGEOMAPICON_P_H

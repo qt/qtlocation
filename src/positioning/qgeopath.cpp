@@ -73,15 +73,19 @@ QT_BEGIN_NAMESPACE
 
     This class is a \l Q_GADGET.
     It can be \l{Cpp_value_integration_positioning}{directly used from C++ and QML}.
+
+    A QGeoPath is both invalid and empty if it contains no coordinate.
+
+    \note A default constructed QGeoPath is both invalid and empty as it does not contain any coordinates.
 */
 
 /*!
     \property QGeoPath::path
     \brief This property holds the list of coordinates for the geo path.
 
-    The path is both invalid and empty if it contains no coordinate.
-
-    A default constructed QGeoPath is therefore invalid.
+    \note The coordinates cannot be processed in place. To change the value
+    of this property, retrieve the complete list of coordinates, process them,
+    and assign the new value to the property.
 */
 
 inline QGeoPathPrivate *QGeoPath::d_func()

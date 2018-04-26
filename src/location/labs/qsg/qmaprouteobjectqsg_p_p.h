@@ -1,7 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
-** Copyright (C) 2015 Jolla Ltd, author: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -35,20 +34,54 @@
 **
 ****************************************************************************/
 
-#include "mapitemviewdelegateincubator_p.h"
-#include "qdeclarativegeomapitemview_p.h"
-#include "qdeclarativegeomapitemview_p_p.h"
+#ifndef QMAPROUTEOBJECTQSG_P_P_H
+#define QMAPROUTEOBJECTQSG_P_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qmappolylineobjectqsg_p_p.h>
+#include <QtLocation/private/qmaprouteobject_p_p.h>
+#include <QtLocation/private/qdeclarativegeoroute_p.h>
+#include <QtLocation/private/qmaprouteobject_p.h>
+#include <QtLocation/private/qqsgmapobject_p.h>
+#include <QtCore/qscopedvaluerollback.h>
+#include <QtCore/qscopedpointer.h>
 
 QT_BEGIN_NAMESPACE
 
-MapItemViewDelegateIncubator::MapItemViewDelegateIncubator(QDeclarativeGeoMapItemView *view, QDeclarativeGeoMapItemViewItemData *itemData, bool batched)
-:   m_view(view), m_itemData(itemData), m_batched(batched)
+class Q_LOCATION_PRIVATE_EXPORT QMapRouteObjectPrivateQSG : public QMapRouteObjectPrivate, public QQSGMapObject
 {
-}
+public:
+    QMapRouteObjectPrivateQSG(QGeoMapObject *q);
+    QMapRouteObjectPrivateQSG(const QMapRouteObjectPrivate &other);
+    ~QMapRouteObjectPrivateQSG() override;
 
-void MapItemViewDelegateIncubator::statusChanged(QQmlIncubator::Status status)
-{
-    m_view->incubatorStatusChanged(this, status, m_batched);
-}
+    // QQSGMapObject
+    void updateGeometry() override;
+    QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window) override;
+
+    // QMapRouteObjectPrivate interface
+    void setRoute(const QDeclarativeGeoRoute *route) override;
+
+    // QGeoMapObjectPrivate interface
+    QGeoMapObjectPrivate *clone() override;
+    void setMap(QGeoMap *map) override;
+    void setVisible(bool visible) override;
+
+    // Data Members
+    QScopedPointer<QMapPolylineObjectPrivateQSG> m_polyline;
+};
 
 QT_END_NAMESPACE
+
+#endif // QMAPROUTEOBJECTQSG_P_P_H

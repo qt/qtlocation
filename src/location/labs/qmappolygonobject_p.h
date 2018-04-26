@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPITEMVIEW_P_P_H
-#define QDECLARATIVEGEOMAPITEMVIEW_P_P_H
+#ifndef QMAPPOLYGONOBJECT_P_H
+#define QMAPPOLYGONOBJECT_P_H
 
 //
 //  W A R N I N G
@@ -48,40 +48,43 @@
 // We mean it.
 //
 
-#include <QtCore/QModelIndex>
-#include <QtQml/QQmlParserStatus>
-#include <QtQml/QQmlIncubator>
-#include <QtQml/qqml.h>
-#include <QtQml/private/qqmlopenmetaobject_p.h>
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+
+#include <QJSValue>
 
 QT_BEGIN_NAMESPACE
 
-class MapItemViewDelegateIncubator;
-class QDeclarativeGeoMapItemView;
-class QDeclarativeGeoMapItemBase;
-
-class QDeclarativeGeoMapItemViewItemData
+class Q_LOCATION_PRIVATE_EXPORT QMapPolygonObject : public QGeoMapObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QVariantList path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
+
 public:
-    QDeclarativeGeoMapItemViewItemData()
-    :   incubator(0), item(0), context(0), modelData(0), modelDataMeta(0)
-    {
-    }
+    QMapPolygonObject(QObject *parent = nullptr);
+    ~QMapPolygonObject() override;
 
-    ~QDeclarativeGeoMapItemViewItemData();
+    QVariantList path() const;
+    void setPath(const QVariantList &path);
 
-    MapItemViewDelegateIncubator *incubator;
-    QDeclarativeGeoMapItemBase *item;
-    QQmlContext *context;
-    QObject *modelData;
-    QQmlOpenMetaObject *modelDataMeta;
+    QColor color() const;
+    void setColor(const QColor &color);
 
-    friend class MapItemViewDelegateIncubator;
-    friend class QDeclarativeGeoMapItemView;
+    QDeclarativeMapLineProperties *border();
+    void setMap(QGeoMap *map) override;
+
+signals:
+    void pathChanged();
+    void colorChanged();
+
+protected:
+    QDeclarativeMapLineProperties *m_border;
 };
-
-Q_DECLARE_TYPEINFO(QDeclarativeGeoMapItemViewItemData, Q_MOVABLE_TYPE);
 
 QT_END_NAMESPACE
 
-#endif // QDECLARATIVEGEOMAPITEMVIEW_P_P_H
+#endif // QMAPPOLYGONOBJECT_P_H
