@@ -46,13 +46,6 @@
 #include <QtQml/qqml.h>
 #include <QtCore/QDebug>
 
-static void initResources()
-{
-#ifdef QT_STATIC
-    Q_INIT_RESOURCE(qmake_QtLocationLabs);
-#endif
-}
-
 QT_BEGIN_NAMESPACE
 
 
@@ -64,7 +57,7 @@ class QtLocationLabsDeclarativeModule: public QQmlExtensionPlugin
                       FILE "plugin.json")
 
 public:
-    QtLocationLabsDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { initResources(); }
+    QtLocationLabsDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
     virtual void registerTypes(const char *uri)
     {
         if (QLatin1String(uri) == QLatin1String("Qt.labs.location")) {

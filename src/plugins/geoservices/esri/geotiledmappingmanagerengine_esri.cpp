@@ -53,11 +53,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-static void initResources()
-{
-    Q_INIT_RESOURCE(esri);
-}
-
 QT_BEGIN_NAMESPACE
 
 static const QString kPrefixEsri(QStringLiteral("esri."));
@@ -241,7 +236,6 @@ bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider:
                                                             QString *errorString,
                                                             const QGeoCameraCapabilities &cameraCaps)
 {
-    initResources();
     QFile mapsFile(":/esri/maps.json");
 
     if (!mapsFile.open(QIODevice::ReadOnly)) {

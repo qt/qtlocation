@@ -62,13 +62,6 @@
 
 #include <QtCore/QDebug>
 
-static void initResources()
-{
-#ifdef QT_STATIC
-    Q_INIT_RESOURCE(qmake_QtPositioning);
-#endif
-}
-
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -572,7 +565,7 @@ class QtPositioningDeclarativeModule: public QQmlExtensionPlugin
                       FILE "plugin.json")
 
 public:
-    QtPositioningDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { initResources(); }
+    QtPositioningDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
     virtual void registerTypes(const char *uri)
     {
         if (QLatin1String(uri) == QStringLiteral("QtPositioning")) {
