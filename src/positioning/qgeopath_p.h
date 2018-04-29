@@ -85,6 +85,8 @@ public:
 
     const QList<QGeoCoordinate> &path() const;
     void setPath(const QList<QGeoCoordinate> &path);
+    void clearPath();
+
     qreal width() const;
     void setWidth(const qreal &width);
     double length(int indexFrom, int indexTo) const;

@@ -197,6 +197,18 @@ const QList<QGeoCoordinate> &QGeoPath::path() const
     Q_D(const QGeoPath);
     return d->path();
 }
+
+/*!
+    Clears the path.
+
+    \since 5.12
+*/
+void QGeoPath::clearPath()
+{
+    Q_D(QGeoPath);
+    d->clearPath();
+}
+
 /*!
     Sets all the elements of the path.
 
@@ -447,6 +459,12 @@ void QGeoPathPrivate::setPath(const QList<QGeoCoordinate> &path)
         if (!c.isValid())
             return;
     m_path = path;
+    computeBoundingBox();
+}
+
+void QGeoPathPrivate::clearPath()
+{
+    m_path.clear();
     computeBoundingBox();
 }
 

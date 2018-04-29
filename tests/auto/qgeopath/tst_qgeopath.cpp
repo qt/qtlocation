@@ -180,6 +180,10 @@ void tst_QGeoPath::path()
     for (const QGeoCoordinate &c : coords) {
         QCOMPARE(p.path().contains(c), true);
     }
+
+    p.clearPath();
+    QCOMPARE(p.path().size(), 0);
+    QVERIFY(p.boundingGeoRectangle().isEmpty());
 }
 
 void tst_QGeoPath::width()
