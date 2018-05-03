@@ -312,10 +312,8 @@ void QDeclarativeNavigator::start()
         return;
     }
 
-    if (d_ptr->m_active)
-        return;
-
-    d_ptr->m_active = d_ptr->m_navigationManager->start();
+    if (!d_ptr->m_navigationManager->active())
+        d_ptr->m_active = d_ptr->m_navigationManager->start();
 }
 
 void QDeclarativeNavigator::stop()
@@ -325,10 +323,8 @@ void QDeclarativeNavigator::stop()
         return;
     }
 
-    if (!d_ptr->m_active)
-        return;
-
-    d_ptr->m_active = d_ptr->m_navigationManager->stop();
+    if (d_ptr->m_navigationManager->active())
+        d_ptr->m_active = d_ptr->m_navigationManager->stop();
 }
 
 void QDeclarativeNavigator::pluginReady()
