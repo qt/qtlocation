@@ -742,8 +742,11 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
 
     // load the actual plugin
     QObject *instance = loader()->instance(idx);
-    factory = qobject_cast<QGeoServiceProviderFactory *>(instance);
     factoryV2 = qobject_cast<QGeoServiceProviderFactoryV2 *>(instance);
+    if (!factoryV2)
+        factory = qobject_cast<QGeoServiceProviderFactory *>(instance);
+    else
+        factory = factoryV2;
 }
 
 QHash<QString, QJsonObject> QGeoServiceProviderPrivate::plugins(bool reload)
