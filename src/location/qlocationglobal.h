@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 #endif
 
 #ifdef Q_CLANG_QDOC
-#include "qlocation.h"
+#include "QtLocation/qlocation.h"
 #endif
 
 QT_END_NAMESPACE
