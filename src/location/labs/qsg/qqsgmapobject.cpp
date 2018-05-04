@@ -35,6 +35,7 @@
 ****************************************************************************/
 
 #include "qqsgmapobject_p.h"
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -48,7 +49,10 @@ QQSGMapObject::~QQSGMapObject()
 
 }
 
-QSGNode *QQSGMapObject::updateMapObjectNode(QSGNode *oldNode, QSGNode * /*root*/, QQuickWindow * /*window*/)
+QSGNode *QQSGMapObject::updateMapObjectNode(QSGNode *oldNode,
+                                            VisibleNode **/*visibleNode*/,
+                                            QSGNode * /*root*/,
+                                            QQuickWindow * /*window*/)
 {
     delete oldNode;
     return 0;

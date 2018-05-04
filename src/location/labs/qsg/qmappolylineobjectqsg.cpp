@@ -61,7 +61,8 @@ QMapPolylineObjectPrivateQSG::QMapPolylineObjectPrivateQSG(const QMapPolylineObj
 
 QMapPolylineObjectPrivateQSG::~QMapPolylineObjectPrivateQSG()
 {
-
+    if (m_map)
+        m_map->removeMapObject(q);
 }
 
 QList<QDoubleVector2D> QMapPolylineObjectPrivateQSG::projectPath()
@@ -96,13 +97,18 @@ void QMapPolylineObjectPrivateQSG::updateGeometry()
     m_geometry.translate(origin - m_geometry.firstPointOffset());
 }
 
-QSGNode *QMapPolylineObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow * /*window*/)
+QSGNode *QMapPolylineObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
+                                                           VisibleNode **visibleNode,
+                                                           QSGNode *root,
+                                                           QQuickWindow */*window*/)
 {
+    Q_UNUSED(visibleNode)
     MapPolylineNode *node = static_cast<MapPolylineNode *>(oldNode);
 
     bool created = false;
     if (!node) {
         node = new MapPolylineNode();
+        *visibleNode = static_cast<VisibleNode *>(node);
         created = true;
     }
 

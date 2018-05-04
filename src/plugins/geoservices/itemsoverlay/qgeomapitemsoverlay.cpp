@@ -47,12 +47,8 @@
 #include <QtLocation/private/qmapcircleobjectqsg_p_p.h>
 #include <QtLocation/private/qmaprouteobjectqsg_p_p.h>
 #include <QtLocation/private/qmapiconobjectqsg_p_p.h>
-struct MapObject {
-    MapObject(QPointer<QGeoMapObject> &o, QQSGMapObject *sgo)
-        : object(o), sgObject(sgo) {}
-    QPointer<QGeoMapObject> object;
-    QQSGMapObject *sgObject = nullptr;
-};
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtLocation/private/qgeomapobjectqsgsupport_p.h>
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -61,18 +57,16 @@ class QGeoMapItemsOverlayPrivate : public QGeoMapPrivate
 {
     Q_DECLARE_PUBLIC(QGeoMapItemsOverlay)
 public:
-    QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine);
+    QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine, QGeoMapItemsOverlay *map);
     virtual ~QGeoMapItemsOverlayPrivate();
 
 #ifdef LOCATIONLABS
     QGeoMapObjectPrivate *createMapObjectImplementation(QGeoMapObject *obj) override;
     virtual QList<QGeoMapObject *> mapObjects() const override;
-    static int findMapObject(QGeoMapObject *o, const QList<MapObject> &list);
     void removeMapObject(QGeoMapObject *obj);
     void updateMapObjects(QSGNode *root, QQuickWindow *window);
 
-    QList<MapObject> m_mapObjects;
-    QList<MapObject> m_pendingMapObjects;
+    QGeoMapObjectQSGSupport m_qsgSupport;
 #endif
 
     void updateObjectsGeometry();
@@ -83,7 +77,7 @@ protected:
 };
 
 QGeoMapItemsOverlay::QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent)
-    : QGeoMap(*(new QGeoMapItemsOverlayPrivate(engine)), parent)
+    : QGeoMap(*(new QGeoMapItemsOverlayPrivate(engine, this)), parent)
 {
 
 }
@@ -97,6 +91,16 @@ QGeoMap::Capabilities QGeoMapItemsOverlay::capabilities() const
     return Capabilities(SupportsVisibleRegion
                         | SupportsSetBearing
                         | SupportsAnchoringCoordinate);
+}
+
+bool QGeoMapItemsOverlay::createMapObjectImplementation(QGeoMapObject *obj)
+{
+#ifndef LOCATIONLABS
+    return false;
+#else
+    Q_D(QGeoMapItemsOverlay);
+    return d->m_qsgSupport.createMapObjectImplementation(obj, d);
+#endif
 }
 
 QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *window)
@@ -119,9 +123,18 @@ QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *wind
 #endif
 }
 
-QGeoMapItemsOverlayPrivate::QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine)
+void QGeoMapItemsOverlay::removeMapObject(QGeoMapObject *obj)
+{
+#ifdef LOCATIONLABS
+    Q_D(QGeoMapItemsOverlay);
+    d->removeMapObject(obj);
+#endif
+}
+
+QGeoMapItemsOverlayPrivate::QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine, QGeoMapItemsOverlay *map)
     : QGeoMapPrivate(engine, new QGeoProjectionWebMercator)
 {
+    m_qsgSupport.m_map = map;
 }
 
 QGeoMapItemsOverlayPrivate::~QGeoMapItemsOverlayPrivate()
@@ -131,138 +144,29 @@ QGeoMapItemsOverlayPrivate::~QGeoMapItemsOverlayPrivate()
 #ifdef LOCATIONLABS
 QGeoMapObjectPrivate *QGeoMapItemsOverlayPrivate::createMapObjectImplementation(QGeoMapObject *obj)
 {
-    switch (obj->type()) {
-        case QGeoMapObject::PolylineType: {
-            QMapPolylineObjectPrivate &oldImpl = static_cast<QMapPolylineObjectPrivate &>(*obj->implementation());
-            QMapPolylineObjectPrivateQSG *pimpl =
-                    new QMapPolylineObjectPrivateQSG(oldImpl);
-            QPointer<QGeoMapObject> p(obj);
-            MapObject mo(p, pimpl);
-            m_pendingMapObjects << mo;
-            return pimpl;
-        }
-        case QGeoMapObject::PolygonType: {
-            QMapPolygonObjectPrivate &oldImpl = static_cast<QMapPolygonObjectPrivate &>(*obj->implementation());
-            QMapPolygonObjectPrivateQSG *pimpl =
-                    new QMapPolygonObjectPrivateQSG(oldImpl);
-            QPointer<QGeoMapObject> p(obj);
-            MapObject mo(p, pimpl);
-            m_pendingMapObjects << mo;
-            return pimpl;
-        }
-        case QGeoMapObject::CircleType: {
-            QMapCircleObjectPrivate &oldImpl = static_cast<QMapCircleObjectPrivate &>(*obj->implementation());
-            QMapCircleObjectPrivateQSG *pimpl =
-                    new QMapCircleObjectPrivateQSG(oldImpl);
-            QPointer<QGeoMapObject> p(obj);
-            MapObject mo(p, pimpl);
-            m_pendingMapObjects << mo;
-            return pimpl;
-        }
-        case QGeoMapObject::RouteType: {
-            QMapRouteObjectPrivate &oldImpl = static_cast<QMapRouteObjectPrivate &>(*obj->implementation());
-            QMapRouteObjectPrivateQSG *pimpl =
-                    new QMapRouteObjectPrivateQSG(oldImpl);
-            QPointer<QGeoMapObject> p(obj);
-            MapObject mo(p, pimpl);
-            m_pendingMapObjects << mo;
-            return pimpl;
-        }
-        case QGeoMapObject::IconType: {
-            QMapIconObjectPrivate &oldImpl = static_cast<QMapIconObjectPrivate &>(*obj->implementation());
-            QMapIconObjectPrivateQSG *pimpl =
-                    new QMapIconObjectPrivateQSG(oldImpl);
-            QPointer<QGeoMapObject> p(obj);
-            MapObject mo(p, pimpl);
-            m_pendingMapObjects << mo;
-            return pimpl;
-        }
-        default:
-            qWarning() << "Unsupported object type: " << obj->type();
-            break;
-    }
-    return nullptr;
+    return m_qsgSupport.createMapObjectImplementationPrivate(obj);
 }
 
 QList<QGeoMapObject *> QGeoMapItemsOverlayPrivate::mapObjects() const
 {
-    return QList<QGeoMapObject *>();
-}
-
-int QGeoMapItemsOverlayPrivate::findMapObject(QGeoMapObject *o, const QList<MapObject> &list)
-{
-    for (int i = 0; i < list.size(); ++i)
-    {
-        if (list.at(i).object.data() == o)
-            return i;
-    }
-    return -1;
+    return m_qsgSupport.mapObjects();
 }
 
 void QGeoMapItemsOverlayPrivate::removeMapObject(QGeoMapObject *obj)
 {
-    int idx = findMapObject(obj, m_mapObjects);
-    if (idx >= 0) {
-        m_mapObjects.removeAt(idx);
-    } else {
-        idx = findMapObject(obj, m_pendingMapObjects);
-        if (idx >= 0) {
-            m_pendingMapObjects.removeAt(idx);
-        } else {
-            // obj not here.
-        }
-    }
+    m_qsgSupport.removeMapObject(obj);
 }
 
 void QGeoMapItemsOverlayPrivate::updateMapObjects(QSGNode *root, QQuickWindow *window)
 {
-    for (int i = 0; i < m_mapObjects.size(); ++i) {
-        // already added as node
-        if (!m_mapObjects.at(i).object) {
-            qWarning() << "m_mapObjects at "<<i<< " NULLed!!";
-            continue;
-        }
-
-        QQSGMapObject *sgo = m_mapObjects.at(i).sgObject;
-        QSGNode *oldNode = sgo->node;
-        sgo->node = sgo->updateMapObjectNode(oldNode, root, window);
-    }
-
-    QList<int> toRemove;
-    for (int i = 0; i < m_pendingMapObjects.size(); ++i) {
-        // already added as node
-        QQSGMapObject *sgo = m_pendingMapObjects.at(i).sgObject;
-        QSGNode *oldNode = sgo->node;
-        sgo->updateGeometry(); // or subtree will be blocked
-        sgo->node = sgo->updateMapObjectNode(oldNode, root, window);
-        if (sgo->node) {
-            m_mapObjects << m_pendingMapObjects.at(i);
-            toRemove.push_front(i);
-        } else {
-            // leave it to be processed
-        }
-    }
-
-    for (int i: qAsConst(toRemove))
-        m_pendingMapObjects.removeAt(i);
+    m_qsgSupport.updateMapObjects(root, window);
 }
 #endif
 
 void QGeoMapItemsOverlayPrivate::updateObjectsGeometry()
 {
 #ifdef LOCATIONLABS
-    Q_Q(QGeoMapItemsOverlay);
-    for (int i = 0; i < m_mapObjects.size(); ++i) {
-        // already added as node
-        if (!m_mapObjects.at(i).object) {
-            qWarning() << "m_mapObjects at "<<i<< " NULLed!!";
-            continue;
-        }
-
-        QQSGMapObject *sgo = m_mapObjects.at(i).sgObject;
-        sgo->updateGeometry();
-    }
-    emit q->sgNodeChanged();
+    m_qsgSupport.updateObjectsGeometry();
 #endif
 }
 

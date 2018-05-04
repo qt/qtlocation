@@ -71,7 +71,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoManeuver : public QObject
     Q_PROPERTY(qreal distanceToNextInstruction READ distanceToNextInstruction CONSTANT)
     Q_PROPERTY(QGeoCoordinate waypoint READ waypoint CONSTANT)
     Q_PROPERTY(bool waypointValid READ waypointValid CONSTANT)
-    Q_PROPERTY(QObject *extendedAttributes READ extendedAttributes NOTIFY extendedAttributesChanged)
+    Q_PROPERTY(QObject *extendedAttributes READ extendedAttributes NOTIFY extendedAttributesChanged REVISION 11)
 
 public:
     enum Direction {

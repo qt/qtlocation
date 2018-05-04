@@ -1826,8 +1826,6 @@ void QDeclarativeGeoWaypoint::setBearing(qreal bearing)
     defined by the user, these can be set by using MapParameters.
     If the waypoint comes from the engine via signals, or as part of a read-only route query,
     the waypoint is intended to be read-only.
-
-    \since 5.11
 */
 QVariantMap QDeclarativeGeoWaypoint::metadata()
 {

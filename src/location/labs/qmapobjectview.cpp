@@ -144,37 +144,6 @@ QList<QGeoMapObject *> QMapObjectView::geoMapObjectChildren() const
     return kids;
 }
 
-void QMapObjectView::setMap(QGeoMap *map)
-{
-    QMapObjectViewPrivate *d = static_cast<QMapObjectViewPrivate *>(d_ptr.data());
-    if (d->m_map == map)
-        return;
-
-    QGeoMapObject::setMap(map); // This is where the specialized pimpl gets created and injected
-
-    for (int i = 0; i < m_userAddedMapObjects.size(); ++i) {
-        auto obj = m_userAddedMapObjects.at(i);
-        if (obj && obj->map() != map)
-            obj->setMap(map);
-    }
-
-    if (!map) {
-        // Map was set, now it has ben re-set to NULL
-        flushDelegateModel();
-        flushUserAddedMapObjects();
-        d_ptr = new QMapObjectViewPrivateDefault(*d);
-    } else if (d->m_componentCompleted) {
-        // Map was null, now it's set AND delegateModel is already complete.
-        // some delegates may have been incubated but not added to the map.
-        for (int i = 0; i < m_pendingMapObjects.size(); ++i) {
-            auto obj = m_pendingMapObjects.at(i);
-            if (obj && obj->map() != map)
-                obj->setMap(map);
-        }
-        m_pendingMapObjects.clear();
-    }
-}
-
 void QMapObjectView::classBegin()
 {
     QQmlContext *ctx = qmlContext(this);
@@ -378,6 +347,37 @@ void QMapObjectView::flushUserAddedMapObjects()
         auto obj = m_userAddedMapObjects.at(i);
         if (obj)
             obj->setMap(nullptr); // obj parent might not be this. If so, it would not be destroyed by destroying this view.
+    }
+}
+
+void QMapObjectView::setMap(QGeoMap *map)
+{
+    QMapObjectViewPrivate *d = static_cast<QMapObjectViewPrivate *>(d_ptr.data());
+    if (d->m_map == map)
+        return;
+
+    QGeoMapObject::setMap(map); // This is where the specialized pimpl gets created and injected
+
+    for (int i = 0; i < m_userAddedMapObjects.size(); ++i) {
+        auto obj = m_userAddedMapObjects.at(i);
+        if (obj && obj->map() != map)
+            obj->setMap(map);
+    }
+
+    if (!map) {
+        // Map was set, now it has ben re-set to NULL
+        flushDelegateModel();
+        flushUserAddedMapObjects();
+        d_ptr = new QMapObjectViewPrivateDefault(*d);
+    } else if (d->m_componentCompleted) {
+        // Map was null, now it's set AND delegateModel is already complete.
+        // some delegates may have been incubated but not added to the map.
+        for (int i = 0; i < m_pendingMapObjects.size(); ++i) {
+            auto obj = m_pendingMapObjects.at(i);
+            if (obj && obj->map() != map)
+                obj->setMap(map);
+        }
+        m_pendingMapObjects.clear();
     }
 }
 

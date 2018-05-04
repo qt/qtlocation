@@ -54,6 +54,8 @@ public:
     virtual ~QGeoMapItemsOverlay();
 
     QGeoMap::Capabilities capabilities() const override;
+    bool createMapObjectImplementation(QGeoMapObject *obj) override;
+    void removeMapObject(QGeoMapObject *obj) override;
 
 protected:
     QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) override;

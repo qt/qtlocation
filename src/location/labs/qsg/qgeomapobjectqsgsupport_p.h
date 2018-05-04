@@ -34,8 +34,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPROUTEOBJECTQSG_P_P_H
-#define QMAPROUTEOBJECTQSG_P_P_H
+#ifndef QGEOMAPOBJECTQSGSUPPORT_P_H
+#define QGEOMAPOBJECTQSGSUPPORT_P_H
 
 //
 //  W A R N I N G
@@ -49,42 +49,44 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qgeomapobject_p_p.h>
 #include <QtLocation/private/qmappolylineobjectqsg_p_p.h>
-#include <QtLocation/private/qmaprouteobject_p_p.h>
-#include <QtLocation/private/qdeclarativegeoroute_p.h>
-#include <QtLocation/private/qmaprouteobject_p.h>
-#include <QtLocation/private/qqsgmapobject_p.h>
-#include <QtCore/qscopedvaluerollback.h>
-#include <QtCore/qscopedpointer.h>
+#include <QtLocation/private/qmappolygonobjectqsg_p_p.h>
+#include <QtLocation/private/qmapcircleobjectqsg_p_p.h>
+#include <QtLocation/private/qmaprouteobjectqsg_p_p.h>
+#include <QtLocation/private/qmapiconobjectqsg_p_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtCore/qpointer.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QMapRouteObjectPrivateQSG : public QMapRouteObjectPrivate, public QQSGMapObject
+struct Q_LOCATION_PRIVATE_EXPORT MapObject {
+    MapObject(QPointer<QGeoMapObject> &o, QQSGMapObject *sgo)
+        : object(o), sgObject(sgo) {}
+
+    QPointer<QGeoMapObject> object;
+    QQSGMapObject *sgObject = nullptr; // this is a QMap*ObjectPrivateQSG. it becomes invalid when the pimpl is destroyed
+    VisibleNode *visibleNode = nullptr; // This is a Map*Node (like a MapPolygonNode) that is a QSGNode. This doesn't disappear by itself
+    QSGNode *qsgNode = nullptr;
+};
+
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapObjectQSGSupport
 {
 public:
-    QMapRouteObjectPrivateQSG(QGeoMapObject *q);
-    QMapRouteObjectPrivateQSG(const QMapRouteObjectPrivate &other);
-    ~QMapRouteObjectPrivateQSG() override;
+    bool createMapObjectImplementation(QGeoMapObject *obj, QGeoMapPrivate *d);
+    QGeoMapObjectPrivate *createMapObjectImplementationPrivate(QGeoMapObject *obj);
+    QList<QGeoMapObject *> mapObjects() const;
+    void removeMapObject(QGeoMapObject *obj);
+    void updateMapObjects(QSGNode *root, QQuickWindow *window);
+    void updateObjectsGeometry();
 
-    // QQSGMapObject
-    void updateGeometry() override;
-    QSGNode *updateMapObjectNode(QSGNode *oldNode,
-                                 VisibleNode **visibleNode,
-                                 QSGNode *root,
-                                 QQuickWindow *window) override;
-
-    // QMapRouteObjectPrivate interface
-    void setRoute(const QDeclarativeGeoRoute *route) override;
-
-    // QGeoMapObjectPrivate interface
-    QGeoMapObjectPrivate *clone() override;
-    void setMap(QGeoMap *map) override;
-    void setVisible(bool visible) override;
-
-    // Data Members
-    QScopedPointer<QMapPolylineObjectPrivateQSG> m_polyline;
+    QList<MapObject> m_mapObjects;
+    QList<MapObject> m_pendingMapObjects;
+    QList<MapObject> m_removedMapObjects;
+    QGeoMap *m_map = nullptr;
 };
 
 QT_END_NAMESPACE
 
-#endif // QMAPROUTEOBJECTQSG_P_P_H
+#endif // QGEOMAPOBJECTQSGSUPPORT_P_H

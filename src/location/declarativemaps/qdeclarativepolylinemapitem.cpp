@@ -1013,9 +1013,64 @@ QGeoMap::ItemType QDeclarativePolylineMapItem::itemType() const
 /*!
     \internal
 */
+VisibleNode::VisibleNode() : m_blocked{true}, m_visible{true}
+{
+
+}
+
+VisibleNode::~VisibleNode()
+{
+
+}
+
+/*!
+    \internal
+*/
+bool VisibleNode::subtreeBlocked() const
+{
+    return m_blocked || !m_visible;
+}
+
+/*!
+    \internal
+*/
+void VisibleNode::setSubtreeBlocked(bool blocked)
+{
+    m_blocked = blocked;
+}
+
+bool VisibleNode::visible() const
+{
+    return m_visible;
+}
+
+/*!
+    \internal
+*/
+void VisibleNode::setVisible(bool visible)
+{
+    m_visible = visible;
+}
+
+/*!
+    \internal
+*/
+MapItemGeometryNode::~MapItemGeometryNode()
+{
+
+}
+
+bool MapItemGeometryNode::isSubtreeBlocked() const
+{
+    return subtreeBlocked();
+}
+
+
+/*!
+    \internal
+*/
 MapPolylineNode::MapPolylineNode() :
-    geometry_(QSGGeometry::defaultAttributes_Point2D(),0),
-    blocked_(true)
+    geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
 {
     geometry_.setDrawingMode(QSGGeometry::DrawTriangleStrip);
     QSGGeometryNode::setMaterial(&fill_material_);
@@ -1033,22 +1088,14 @@ MapPolylineNode::~MapPolylineNode()
 /*!
     \internal
 */
-bool MapPolylineNode::isSubtreeBlocked() const
-{
-    return blocked_;
-}
-
-/*!
-    \internal
-*/
 void MapPolylineNode::update(const QColor &fillColor,
                              const QGeoMapItemGeometry *shape)
 {
     if (shape->size() == 0) {
-        blocked_ = true;
+        setSubtreeBlocked(true);
         return;
     } else {
-        blocked_ = false;
+        setSubtreeBlocked(false);
     }
 
     QSGGeometry *fill = QSGGeometryNode::geometry();

@@ -26,7 +26,7 @@
 ****************************************************************************/
 
 /*!
-    \qmlmodule QtLocation 5.3
+    \qmlmodule QtLocation 5.11
     \title Qt Location QML Types
     \ingroup qmlmodules
     \brief Provides QML types for mapping and location information

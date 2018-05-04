@@ -84,8 +84,8 @@ The Qt Location API enables you to:
 To load the Qt Location module, add the following statement to your .qml files
 
 \code
-    import QtPositioning 5.5
-    import QtLocation 5.6
+    import QtPositioning 5.11
+    import QtLocation 5.11
 \endcode
 
 The QtLocation QML module depends on the QtPositioning QML module.

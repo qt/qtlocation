@@ -57,7 +57,8 @@ QMapRouteObjectPrivateQSG::QMapRouteObjectPrivateQSG(const QMapRouteObjectPrivat
 
 QMapRouteObjectPrivateQSG::~QMapRouteObjectPrivateQSG()
 {
-
+    if (m_map)
+        m_map->removeMapObject(q);
 }
 
 void QMapRouteObjectPrivateQSG::updateGeometry()
@@ -65,9 +66,12 @@ void QMapRouteObjectPrivateQSG::updateGeometry()
     m_polyline->updateGeometry();
 }
 
-QSGNode *QMapRouteObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow * window)
+QSGNode *QMapRouteObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
+                                                        VisibleNode **visibleNode,
+                                                        QSGNode *root,
+                                                        QQuickWindow *window)
 {
-    return m_polyline->updateMapObjectNode(oldNode, root, window);
+    return m_polyline->updateMapObjectNode(oldNode, visibleNode, root, window);
 }
 
 void QMapRouteObjectPrivateQSG::setRoute(const QDeclarativeGeoRoute *route)

@@ -67,7 +67,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
     Q_PROPERTY(qreal distance READ distance CONSTANT)
     Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoRouteSegment> segments READ segments CONSTANT)
-    Q_PROPERTY(QDeclarativeGeoRouteQuery *routeQuery READ routeQuery)
+    Q_PROPERTY(QDeclarativeGeoRouteQuery *routeQuery READ routeQuery REVISION 11)
 
 public:
     explicit QDeclarativeGeoRoute(QObject *parent = 0);

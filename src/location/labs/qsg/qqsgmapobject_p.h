@@ -40,6 +40,7 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtQuick/QSGOpacityNode>
 #include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -50,10 +51,11 @@ public:
     QQSGMapObject();
     virtual ~QQSGMapObject();
 
-    virtual QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window);
+    virtual QSGNode *updateMapObjectNode(QSGNode *oldNode,
+                                         VisibleNode **visibleNode,
+                                         QSGNode *root,
+                                         QQuickWindow *window);
     virtual void updateGeometry();
-
-    QSGNode *node = nullptr;
 };
 
 QT_END_NAMESPACE
