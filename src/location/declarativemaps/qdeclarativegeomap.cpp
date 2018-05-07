@@ -240,10 +240,13 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
         for (QDeclarativeGeoMapItemView *v : qAsConst(m_mapViews)) {
             if (!v)
                 continue;
-            if (v->parent() == this)
+            if (v->parent() == this) {
                 delete v;
-            else
-                v->removeInstantiatedItems();
+            } else {
+                // FIXME: removeInstantiatedItems should abort, as well as exit transitions terminated
+                v->removeInstantiatedItems(false);
+                v->m_map = nullptr;
+            }
         }
     }
     // remove any map items associations
@@ -251,19 +254,12 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
         if (m_mapItems.at(i))
             m_mapItems.at(i).data()->setMap(0,0);
     }
-    m_mapItems.clear();
 
-    for (auto g: qAsConst(m_mapItemGroups)) {
-        if (!g)
-            continue;
-        const QList<QQuickItem *> quickKids = g->childItems();
-        for (auto c: quickKids) {
-            QDeclarativeGeoMapItemBase *itemBase = qobject_cast<QDeclarativeGeoMapItemBase *>(c);
-            if (itemBase)
-                itemBase->setMap(0,0);
-        }
+    // remove any map item groups associations
+    for (int i = 0; i < m_mapItemGroups.count(); ++i) {
+        if (m_mapItemGroups.at(i))
+            m_mapItemGroups.at(i).data()->setQuickMap(nullptr);
     }
-    m_mapItemGroups.clear();
 
     if (m_copyrights.data())
         delete m_copyrights.data();
@@ -470,28 +466,7 @@ void QDeclarativeGeoMap::populateMap()
         kids.insert(ite);
 
     for (QObject *k : qAsConst(kids)) {
-        // dispatch items appropriately
-        QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView *>(k);
-        if (mapView) {
-            m_mapViews.append(mapView);
-            setupMapView(mapView);
-            continue;
-        }
-        QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(k);
-        if (mapItem) {
-            addMapItem(mapItem);
-            continue;
-        }
-        // Allow to add to the map Map items contained inside a parent QQuickItem, but only those at one level of nesting.
-        QDeclarativeGeoMapItemGroup *itemGroup = qobject_cast<QDeclarativeGeoMapItemGroup *>(k);
-        if (itemGroup) {
-            addMapItemGroup(itemGroup);
-            continue;
-        }
-
-        QGeoMapObject *mapObject = qobject_cast<QGeoMapObject *>(k);
-        if (mapObject)
-            addMapObject(mapObject);
+        addMapChild(k);
     }
 }
 
@@ -751,15 +726,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     }
 
     // Any map item groups that were added before the plugin was ready
-    // need to have setMap called again on their children map items
-    for (auto g: qAsConst(m_mapItemGroups)) {
-        const QList<QQuickItem *> quickKids = g->childItems();
-        for (auto c: quickKids) {
-            QDeclarativeGeoMapItemBase *itemBase = qobject_cast<QDeclarativeGeoMapItemBase *>(c);
-            if (itemBase)
-                itemBase->setMap(this, m_map);
-        }
-    }
+    // DO NOT need to have setMap called again on their children map items
+    // because they have been added to m_mapItems, which is processed right above.
+
 
     // All map parameters that were added before the plugin was ready
     // need to be added to m_map
@@ -941,6 +910,58 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
         emit centerChanged(m_cameraData.center());
     if (oldZoom != m_cameraData.zoomLevel())
         emit zoomLevelChanged(m_cameraData.zoomLevel());
+}
+
+bool QDeclarativeGeoMap::addMapChild(QObject *child)
+{
+    // dispatch items appropriately
+    QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView *>(child);
+    if (mapView)
+        return addMapItemView_real(mapView);
+
+    QDeclarativeGeoMapItemGroup *itemGroup = qobject_cast<QDeclarativeGeoMapItemGroup *>(child);
+    if (itemGroup) // addMapItemView calls addMapItemGroup
+        return addMapItemGroup_real(itemGroup);
+
+    QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(child);
+    if (mapItem)
+        return addMapItem_real(mapItem);
+
+    QGeoMapObject *mapObject = qobject_cast<QGeoMapObject *>(child);
+    if (mapObject)
+        addMapObject(mapObject); // this emits mapObjectsChanged, != mapItemsChanged
+    return false;
+}
+
+bool QDeclarativeGeoMap::removeMapChild(QObject *child)
+{
+    // dispatch items appropriately
+    QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView *>(child);
+    if (mapView)
+        return removeMapItemView_real(mapView);
+
+    QDeclarativeGeoMapItemGroup *itemGroup = qobject_cast<QDeclarativeGeoMapItemGroup *>(child);
+    if (itemGroup) // removeMapItemView calls removeMapItemGroup for itself.
+        return removeMapItemGroup_real(itemGroup);
+
+    QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(child);
+    if (mapItem)
+        return removeMapItem_real(mapItem);
+
+    QGeoMapObject *mapObject = qobject_cast<QGeoMapObject *>(child);
+    if (mapObject)
+        removeMapObject(mapObject); // this emits mapObjectsChanged, != mapItemsChanged
+    return false;
+}
+
+bool QDeclarativeGeoMap::isGroupNested(QDeclarativeGeoMapItemGroup *group)
+{
+    QObject *parent = group->parent();
+    // Nested groups have parent set in parent's componentComplete()
+    // Those instantiated by MapItemView's delegateModel, however, do not,
+    // but have setParentItem set.
+    return qobject_cast<QDeclarativeGeoMapItemGroup *>(parent)
+            || qobject_cast<QDeclarativeGeoMapItemGroup *>(group->parentItem());
 }
 
 qreal QDeclarativeGeoMap::zoomLevel() const
@@ -1708,39 +1729,6 @@ void QDeclarativeGeoMap::onAttachedCopyrightNoticeVisibilityChanged()
 }
 
 /*!
-    \qmlmethod void QtLocation::Map::addMapItem(MapItem item)
-
-    Adds the given \a item to the Map (for example MapQuickItem, MapCircle). If the object
-    already is on the Map, it will not be added again.
-
-    As an example, consider the case where you have a MapCircle representing your current position:
-
-    \snippet declarative/maps.qml QtQuick import
-    \snippet declarative/maps.qml QtLocation import
-    \codeline
-    \snippet declarative/maps.qml Map addMapItem MapCircle at current position
-
-    \note MapItemViews cannot be added with this method.
-
-    \sa mapItems, removeMapItem, clearMapItems
-*/
-
-void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
-{
-    if (!item || item->quickMap())
-        return;
-    // If the item comes from a MapItemGroup, do not reparent it.
-    if (!qobject_cast<QDeclarativeGeoMapItemGroup *>(item->parentItem()))
-        item->setParentItem(this);
-    m_mapItems.append(item);
-    if (m_map) {
-        item->setMap(this, m_map);
-        m_map->addMapItem(item);
-    }
-    emit mapItemsChanged();
-}
-
-/*!
     \qmlmethod void QtLocation::Map::addMapParameter(MapParameter parameter)
 
     Adds a MapParameter object to the map. The effect of this call is dependent
@@ -1920,6 +1908,45 @@ QList<QObject *> QDeclarativeGeoMap::mapItems()
 }
 
 /*!
+    \qmlmethod void QtLocation::Map::addMapItem(MapItem item)
+
+    Adds the given \a item to the Map (for example MapQuickItem, MapCircle). If the object
+    already is on the Map, it will not be added again.
+
+    As an example, consider the case where you have a MapCircle representing your current position:
+
+    \snippet declarative/maps.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
+    \codeline
+    \snippet declarative/maps.qml Map addMapItem MapCircle at current position
+
+    \note MapItemViews cannot be added with this method.
+
+    \sa mapItems, removeMapItem, clearMapItems
+*/
+
+void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
+{
+    if (addMapItem_real(item))
+        emit mapItemsChanged();
+}
+
+bool QDeclarativeGeoMap::addMapItem_real(QDeclarativeGeoMapItemBase *item)
+{
+    if (!item || item->quickMap())
+        return false;
+    // If the item comes from a MapItemGroup, do not reparent it.
+    if (!qobject_cast<QDeclarativeGeoMapItemGroup *>(item->parentItem()))
+        item->setParentItem(this);
+    m_mapItems.append(item);
+    if (m_map) {
+        item->setMap(this, m_map);
+        m_map->addMapItem(item);
+    }
+    return true;
+}
+
+/*!
     \qmlmethod void QtLocation::Map::removeMapItem(MapItem item)
 
     Removes the given \a item from the Map (for example MapQuickItem, MapCircle). If
@@ -1930,18 +1957,25 @@ QList<QObject *> QDeclarativeGeoMap::mapItems()
 */
 void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 {
-    if (!ptr || !m_map)
-        return;
-    m_map->removeMapItem(ptr);
+    if (removeMapItem_real(ptr))
+        emit mapItemsChanged();
+}
+
+bool QDeclarativeGeoMap::removeMapItem_real(QDeclarativeGeoMapItemBase *ptr)
+{
+    if (!ptr)
+        return false;
     QPointer<QDeclarativeGeoMapItemBase> item(ptr);
     if (!m_mapItems.contains(item))
-        return;
+        return false;
+    if (m_map)
+        m_map->removeMapItem(ptr);
     if (item->parentItem() == this)
         item->setParentItem(0);
     item->setMap(0, 0);
     // these can be optimized for perf, as we already check the 'contains' above
     m_mapItems.removeOne(item);
-    emit mapItemsChanged();
+    return true;
 }
 
 /*!
@@ -1955,18 +1989,25 @@ void QDeclarativeGeoMap::clearMapItems()
 {
     if (m_mapItems.isEmpty())
         return;
-    if (m_map)
-        m_map->clearMapItems();
-    for (auto i : qAsConst(m_mapItems)) {
-        if (i) {
-            i->setMap(0, 0);
-            if (i->parentItem() == this)
-                i->setParentItem(0);
-        }
+
+    int removed = 0;
+    for (auto i : qAsConst(m_mapItemGroups)) {
+        // Processing only top-level groups (!views)
+        QDeclarativeGeoMapItemView *view = qobject_cast<QDeclarativeGeoMapItemView *>(i);
+        if (view)
+            continue;
+
+        if (i->parentItem() != this)
+            continue;
+
+        removed += removeMapItemGroup_real(i);
     }
-    m_mapItems.clear();
-    m_mapItemGroups.clear();
-    emit mapItemsChanged();
+
+    for (auto i : qAsConst(m_mapItems))
+        removed += removeMapItem_real(i);
+
+    if (removed)
+        emit mapItemsChanged();
 }
 
 /*!
@@ -1981,19 +2022,29 @@ void QDeclarativeGeoMap::clearMapItems()
 */
 void QDeclarativeGeoMap::addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 {
-    if (!itemGroup || itemGroup->quickMap()) // || Already added to some map
-        return;
+    if (addMapItemGroup_real(itemGroup))
+        emit mapItemsChanged();
+}
+
+bool QDeclarativeGeoMap::addMapItemGroup_real(QDeclarativeGeoMapItemGroup *itemGroup)
+{
+    if (!itemGroup || itemGroup->quickMap()) // Already added to some map
+        return false;
 
     itemGroup->setQuickMap(this);
+
+    if (!isGroupNested(itemGroup))
+        itemGroup->setParentItem(this);
+
     QPointer<QDeclarativeGeoMapItemGroup> g(itemGroup);
     m_mapItemGroups.append(g);
-    const QList<QQuickItem *> quickKids = g->childItems();
+
+    const QList<QQuickItem *> quickKids = itemGroup->childItems();
+    int count = 0;
     for (auto c: quickKids) {
-        QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(c);
-        if (mapItem)
-            addMapItem(mapItem);
+        count += addMapChild(c); // this calls addMapItemGroup recursively, if needed
     }
-    itemGroup->setParentItem(this);
+    return count;
 }
 
 /*!
@@ -2007,21 +2058,28 @@ void QDeclarativeGeoMap::addMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 */
 void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGroup)
 {
+    if (removeMapItemGroup_real(itemGroup))
+        emit mapItemsChanged();
+}
+
+bool QDeclarativeGeoMap::removeMapItemGroup_real(QDeclarativeGeoMapItemGroup *itemGroup)
+{
     if (!itemGroup || itemGroup->quickMap() != this) // cant remove an itemGroup added to another map
-        return;
+        return false;
 
     QPointer<QDeclarativeGeoMapItemGroup> g(itemGroup);
     if (!m_mapItemGroups.removeOne(g))
-        return;
+        return false;
 
     const QList<QQuickItem *> quickKids = itemGroup->childItems();
+    int count = 0;
     for (auto c: quickKids) {
-        QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(c);
-        if (mapItem)
-            removeMapItem(mapItem);
+        count += removeMapChild(c);
     }
     itemGroup->setQuickMap(nullptr);
-    itemGroup->setParentItem(0);
+    if (itemGroup->parentItem() == this)
+        itemGroup->setParentItem(0);
+    return count;
 }
 
 /*!
@@ -2035,14 +2093,23 @@ void QDeclarativeGeoMap::removeMapItemGroup(QDeclarativeGeoMapItemGroup *itemGro
 */
 void QDeclarativeGeoMap::removeMapItemView(QDeclarativeGeoMapItemView *itemView)
 {
-    if (!itemView || itemView->m_map != this) // can't remove a view that is already added to another map
-        return;
+    if (removeMapItemView_real(itemView))
+        emit mapItemsChanged();
+}
 
+bool QDeclarativeGeoMap::removeMapItemView_real(QDeclarativeGeoMapItemView *itemView)
+{
+    if (!itemView || itemView->m_map != this) // can't remove a view that is already added to another map
+        return false;
+
+    // Leaving this as void since the removal is async (potentially transitioned)
+    // && the delegates *could* be empty mapItemGroups.
     itemView->removeInstantiatedItems();
     itemView->m_map = 0;
     // it can be removed from the list at this point, since no operations that require a Map have to be done
     // anymore on destruction.
     m_mapViews.removeOne(itemView);
+    return removeMapItemGroup_real(itemView); // at this point, delegate instances have been removed.
 }
 
 /*!
@@ -2056,13 +2123,21 @@ void QDeclarativeGeoMap::removeMapItemView(QDeclarativeGeoMapItemView *itemView)
 */
 void QDeclarativeGeoMap::addMapItemView(QDeclarativeGeoMapItemView *itemView)
 {
-    if (!itemView || itemView->m_map) // can't add a view twice
-        return;
+    if (addMapItemView_real(itemView))
+        emit mapItemsChanged();
+}
 
+bool QDeclarativeGeoMap::addMapItemView_real(QDeclarativeGeoMapItemView *itemView)
+{
+    if (!itemView || itemView->m_map) // can't add a view twice
+        return false;
+
+    int count = addMapItemGroup_real(itemView); // at this point, delegates aren't yet incubated.
     // Not appending it to m_mapViews because it seems unnecessary even if the
     // itemView is a child of this (in which case it would be destroyed
     m_mapViews.append(itemView);
     setupMapView(itemView);
+    return count;
 }
 
 /*!

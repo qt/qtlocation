@@ -28,7 +28,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.6
+import QtLocation 5.12
 import QtPositioning 5.5
 import QtLocation.Test 5.5
 
@@ -49,6 +49,7 @@ Item {
     MapItemView {
         id: routeItemViewExtra
         model: routeModel
+        incubateDelegates: false
         delegate: Component {
             MapRoute {
                 route:  routeData
@@ -58,6 +59,10 @@ Item {
 
     MapItemView {
         id: listModelItemViewExtra
+        objectName: "listModelItemViewExtra"
+        incubateDelegates: false
+        add: null
+        remove: null
         model: ListModel {
             id: testingListModelExtra
             ListElement { lat: 11; lon: 31 }
@@ -252,6 +257,9 @@ Item {
 
         MapItemView {
             id: listModelItemView
+            incubateDelegates: false
+            add: null
+            remove: null
             model: ListModel {
                 id: testingListModel
                 ListElement { lat: 11; lon: 31 }
@@ -487,7 +495,7 @@ Item {
             testingListModelExtra.clear()
             tryCompare(mapForTestingListModel, "mapItemsLength", 0)
             mapForTestingListModel.removeMapItemView(listModelItemViewExtra)
-
+            tryCompare(mapForTestingListModel, "mapItemsLength", 0)
             mapForTestingListModel.addMapItemView(listModelItemView)
             tryCompare(mapForTestingListModel, "mapItemsLength", 3)
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: http://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -34,64 +34,48 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPITEMGROUP_P_H
-#define QDECLARATIVEGEOMAPITEMGROUP_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qdeclarativegeomapitemtransitionmanager_p.h>
-#include <QtQuick/QQuickItem>
+#include "qdeclarativegeomapitemtransitionmanager_p.h"
+#include "qdeclarativegeomapitemview_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMap;
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemGroup : public QQuickItem
+QDeclarativeGeoMapItemTransitionManager::QDeclarativeGeoMapItemTransitionManager(QObject *mapItem)
+    : QQuickTransitionManager(), m_mapItem(mapItem)
 {
-    Q_OBJECT
-public:
-    explicit QDeclarativeGeoMapItemGroup(QQuickItem *parent = 0);
-    virtual ~QDeclarativeGeoMapItemGroup();
+}
 
-    void setParentGroup(QDeclarativeGeoMapItemGroup &parentGroup);
-    void setQuickMap(QDeclarativeGeoMap *quickMap);
-    QDeclarativeGeoMap *quickMap() const;
+void QDeclarativeGeoMapItemTransitionManager::transitionEnter()
+{
+    if (m_transitionState == ExitTransition)
+        cancel();
 
-    qreal mapItemOpacity() const;
+    if (!prepareEnterTransition())
+        return;
 
-Q_SIGNALS:
-    void mapItemOpacityChanged();
-    void addTransitionFinished();
-    void removeTransitionFinished();
+    if (m_view && m_view->m_enter)
+        transition(enterActions, m_view->m_enter, m_mapItem);
+    else
+        finished();
+}
 
-protected:
-    // QQmlParserStatus interface
-    void classBegin() override;
-    void componentComplete() override;
+void QDeclarativeGeoMapItemTransitionManager::transitionExit()
+{
+    if (!prepareExitTransition())
+        return;
 
-protected slots:
-    void onMapSizeChanged();
+    if (m_view && m_view->m_exit)
+        transition(exitActions, m_view->m_exit, m_mapItem);
+    else
+        finished();
+}
 
-private:
-    QDeclarativeGeoMap *m_quickMap;
-    QDeclarativeGeoMapItemGroup *m_parentGroup = nullptr;
-    QScopedPointer<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
+void QDeclarativeGeoMapItemTransitionManager::finished()
+{
+    if (m_transitionState == EnterTransition)
+        finalizeEnterTransition();
+    else if (m_transitionState == ExitTransition)
+        finalizeExitTransition();
+}
 
-    friend class QDeclarativeGeoMapItemView;
-    friend class QDeclarativeGeoMapItemTransitionManager;
-};
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QDeclarativeGeoMapItemGroup)
-
-#endif // QDECLARATIVEGEOMAPITEMGROUP_P_H

@@ -94,7 +94,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
-    : QObject(parent), m_componentCompleted(false), m_delegate(0),
+    : QDeclarativeGeoMapItemGroup(parent), m_componentCompleted(false), m_delegate(0),
       m_map(0), m_fitViewport(false), m_delegateModel(0)
 {
         m_exit = new QQuickTransition(this);
@@ -116,6 +116,7 @@ QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
 */
 void QDeclarativeGeoMapItemView::componentComplete()
 {
+    QDeclarativeGeoMapItemGroup::componentComplete();
     m_componentCompleted = true;
     if (!m_itemModel.isNull())
         m_delegateModel->setModel(m_itemModel);
@@ -128,6 +129,7 @@ void QDeclarativeGeoMapItemView::componentComplete()
 
 void QDeclarativeGeoMapItemView::classBegin()
 {
+    QDeclarativeGeoMapItemGroup::classBegin();
     QQmlContext *ctx = qmlContext(this);
     m_delegateModel = new QQmlDelegateModel(ctx, this);
     m_delegateModel->classBegin();
@@ -154,10 +156,15 @@ void QDeclarativeGeoMapItemView::createdItem(int index, QObject */*object*/)
         return;
     // createdItem is emitted on asynchronous creation. In which case, object has to be invoked again.
     // See QQmlDelegateModel::object for further info.
-    QDeclarativeGeoMapItemBase *item =
-            qobject_cast<QDeclarativeGeoMapItemBase *>(m_delegateModel->object(index, QQmlIncubator::Asynchronous));
+
+    if (m_incubationMode == QQmlIncubator::Synchronous) {
+        qWarning() << "createdItem invoked on Synchronous incubation";
+        return;
+    }
+
+    QQuickItem *item = qobject_cast<QQuickItem *>(m_delegateModel->object(index, m_incubationMode));
     if (item)
-        addItemToMap(item, index);
+        addDelegateToMap(item, index);
     else
         qWarning() << "createdItem for " << index << " produced a null item";
 }
@@ -179,16 +186,13 @@ void QDeclarativeGeoMapItemView::modelUpdated(const QQmlChangeSet &changeSet, bo
         for (auto rit = mapRemoves.rbegin(); rit != mapRemoves.rend(); ++rit) {
             const QQmlChangeSet::Change &c = removes.at(rit->second);
             for (int idx = c.end() - 1; idx >= c.start(); --idx)
-                    removeItemFromMap(idx);
+                removeDelegateFromMap(idx);
         }
     }
 
     for (const QQmlChangeSet::Change &c: changeSet.inserts()) {
-        for (int idx = c.start(); idx < c.end(); idx++) {
-            QDeclarativeGeoMapItemBase *item =
-                    qobject_cast<QDeclarativeGeoMapItemBase *>(m_delegateModel->object(idx, QQmlIncubator::Asynchronous));
-            addItemToMap(item, idx); // if not item, a createdItem signal will be emitted.
-        }
+        for (int idx = c.start(); idx < c.end(); idx++)
+            addDelegateToMap(qobject_cast<QQuickItem *>(m_delegateModel->object(idx, m_incubationMode)), idx);
     }
 
     fitViewport();
@@ -290,14 +294,15 @@ void QDeclarativeGeoMapItemView::setMap(QDeclarativeGeoMap *map)
 /*!
     \internal
 */
-void QDeclarativeGeoMapItemView::removeInstantiatedItems()
+void QDeclarativeGeoMapItemView::removeInstantiatedItems(bool transition)
 {
     if (!m_map)
         return;
 
+    // FIXME: removeInstantiatedItems should abort, as well as exit transitions terminated QTBUG-69195
     // Backward as removeItemFromMap modifies m_instantiatedItems
     for (int i = m_instantiatedItems.size() -1; i >= 0 ; i--)
-        removeItemFromMap(i);
+        removeDelegateFromMap(i, transition);
 }
 
 /*!
@@ -312,19 +317,36 @@ void QDeclarativeGeoMapItemView::instantiateAllItems()
         return;
 
     // If here, m_delegateModel may contain data, but QQmlInstanceModel::object for each row hasn't been called yet.
-    for (int i = 0; i < m_delegateModel->count(); i++) {
-        QDeclarativeGeoMapItemBase *item =
-                qobject_cast<QDeclarativeGeoMapItemBase *>(m_delegateModel->object(i, QQmlIncubator::Asynchronous));
-        addItemToMap(item, i); // if not item, createdItem will be emitted.
-    }
+    for (int i = 0; i < m_delegateModel->count(); i++)
+        addDelegateToMap(qobject_cast<QQuickItem *>(m_delegateModel->object(i, m_incubationMode)), i);
 
     fitViewport();
 }
 
-void QDeclarativeGeoMapItemView::removeItemFromMap(int index)
+void QDeclarativeGeoMapItemView::setIncubateDelegates(bool useIncubators)
+{
+    const QQmlIncubator::IncubationMode incubationMode =
+            (useIncubators) ? QQmlIncubator::Asynchronous : QQmlIncubator::Synchronous;
+    if (m_incubationMode == incubationMode)
+        return;
+    m_incubationMode = incubationMode;
+    emit incubateDelegatesChanged();
+}
+
+bool QDeclarativeGeoMapItemView::incubateDelegates() const
+{
+    return m_incubationMode == QQmlIncubator::Asynchronous;
+}
+
+QList<QQuickItem *> QDeclarativeGeoMapItemView::mapItems()
+{
+    return m_instantiatedItems;
+}
+
+void QDeclarativeGeoMapItemView::removeDelegateFromMap(int index, bool transition)
 {
     if (index >= 0 && index < m_instantiatedItems.size()) {
-        QDeclarativeGeoMapItemBase *item = m_instantiatedItems.takeAt(index);
+        QQuickItem *item = m_instantiatedItems.takeAt(index);
         if (!item) {
             if (m_incubatingItems.contains(index)) {
                 // cancel request
@@ -333,50 +355,106 @@ void QDeclarativeGeoMapItemView::removeItemFromMap(int index)
             }
             return;
         }
-        if (m_exit && m_map) {
-            if (!item->m_transitionManager) {
-                QScopedPointer<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(item));
-                item->m_transitionManager.swap(manager);
-                item->m_transitionManager->m_view = this;
-            }
-            connect(item, &QDeclarativeGeoMapItemBase::exitTransitionFinished,
-                    this, &QDeclarativeGeoMapItemView::exitTransitionFinished);
-            item->m_transitionManager->transitionExit();
+        // item can be either a QDeclarativeGeoMapItemBase or a QDeclarativeGeoMapItemGroup
+        if (m_exit && m_map &&  transition) {
+            transitionItemOut(item);
         } else {
             disconnect(item, 0, this, 0);
-            if (m_map)
-                m_map->removeMapItem(item);
+            removeDelegateFromMap(item);
+            item->setParentItem(nullptr);   // Needed because
+            item->setParent(nullptr);       // m_delegateModel->release(item) does not destroy the item most of the times!!
             QQmlInstanceModel::ReleaseFlags releaseStatus = m_delegateModel->release(item);
+#ifdef QT_DEBUG
             if (releaseStatus == QQmlInstanceModel::Referenced)
-                qWarning() << "item "<< index << " still referenced";
+                qWarning() << "item "<< index << "(" << item << ") still referenced";
+#else
+            Q_UNUSED(releaseStatus)
+#endif
         }
+    }
+}
+
+void QDeclarativeGeoMapItemView::removeDelegateFromMap(QQuickItem *o)
+{
+    if (!m_map)
+        return;
+
+    QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(o);
+    if (item) {
+        m_map->removeMapItem(item);
+        return;
+    }
+    QDeclarativeGeoMapItemView *view = qobject_cast<QDeclarativeGeoMapItemView *>(o);
+    if (view) {
+        m_map->removeMapItemView(view);
+        return;
+    }
+    QDeclarativeGeoMapItemGroup *group = qobject_cast<QDeclarativeGeoMapItemGroup *>(o);
+    if (group) {
+        m_map->removeMapItemGroup(group);
+        return;
+    }
+}
+
+void QDeclarativeGeoMapItemView::transitionItemOut(QQuickItem *o)
+{
+    QDeclarativeGeoMapItemGroup *group = qobject_cast<QDeclarativeGeoMapItemGroup *>(o);
+    if (group) {
+        if (!group->m_transitionManager) {
+            QScopedPointer<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(group));
+            group->m_transitionManager.swap(manager);
+            group->m_transitionManager->m_view = this;
+        }
+        connect(group, SIGNAL(removeTransitionFinished()),
+                this, SLOT(exitTransitionFinished()));
+
+        group->m_transitionManager->transitionExit();
+        return;
+    }
+    QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(o);
+    if (item) {
+        if (!item->m_transitionManager) {
+            QScopedPointer<QDeclarativeGeoMapItemTransitionManager> manager(new QDeclarativeGeoMapItemTransitionManager(item));
+            item->m_transitionManager.swap(manager);
+            item->m_transitionManager->m_view = this;
+        }
+        connect(item, SIGNAL(removeTransitionFinished()),
+                this, SLOT(exitTransitionFinished()) );
+
+        item->m_transitionManager->transitionExit();
+        return;
     }
 }
 
 void QDeclarativeGeoMapItemView::exitTransitionFinished()
 {
-    QDeclarativeGeoMapItemBase *item = static_cast<QDeclarativeGeoMapItemBase *>(sender());
+    QQuickItem *item = qobject_cast<QQuickItem *>(sender());
+    if (!item)
+        return;
     disconnect(item, 0, this, 0);
-    if (m_map)
-        m_map->removeMapItem(item);
+    removeDelegateFromMap(item);
+    item->setParentItem(nullptr);
+    item->setParent(nullptr);
     QQmlInstanceModel::ReleaseFlags releaseStatus = m_delegateModel->release(item);
+#ifdef QT_DEBUG
     if (releaseStatus == QQmlInstanceModel::Referenced)
         qWarning() << "item "<<item<<" still referenced";
+#else
+    Q_UNUSED(releaseStatus)
+#endif
 }
 
 void QDeclarativeGeoMapItemView::addItemToMap(QDeclarativeGeoMapItemBase *item, int index)
 {
-    if (m_map && item && item->quickMap() == m_map) // belonging to another map??
-        return;
+
+    if (m_map && item) { // belonging to another map??
+        if (item->quickMap() == m_map)
+            return;
+    }
 
     if (m_map) {
-        if (!item) {
-            m_incubatingItems.insert(index);
-            m_instantiatedItems.insert(index, nullptr);
-            return;
-        }
-
         insertInstantiatedItem(index, item);
+        item->setParentItem(this);
         m_map->addMapItem(item);
         if (m_enter) {
             if (!item->m_transitionManager) {
@@ -389,13 +467,77 @@ void QDeclarativeGeoMapItemView::addItemToMap(QDeclarativeGeoMapItemBase *item, 
     }
 }
 
-void QDeclarativeGeoMapItemView::insertInstantiatedItem(int index, QDeclarativeGeoMapItemBase *o)
+void QDeclarativeGeoMapItemView::insertInstantiatedItem(int index, QQuickItem *o)
 {
     if (m_incubatingItems.contains(index)) {
         m_incubatingItems.remove(index);
         m_instantiatedItems.replace(index, o);
     } else {
         m_instantiatedItems.insert(index, o);
+    }
+}
+
+void QDeclarativeGeoMapItemView::addItemViewToMap(QDeclarativeGeoMapItemView *item, int index)
+{
+    if (!item || (m_map && item->quickMap() == m_map))
+        return;
+
+    if (m_map) {
+        insertInstantiatedItem(index, item);
+        item->setParentItem(this);
+        m_map->addMapItemView(item);
+        if (m_enter) {
+            if (!item->m_transitionManager) {
+                QScopedPointer<QDeclarativeGeoMapItemTransitionManager> manager(new QDeclarativeGeoMapItemTransitionManager(item));
+                item->m_transitionManager.swap(manager);
+            }
+            item->m_transitionManager->m_view = this;
+            item->m_transitionManager->transitionEnter();
+        }
+    }
+}
+
+void QDeclarativeGeoMapItemView::addItemGroupToMap(QDeclarativeGeoMapItemGroup *item, int index)
+{
+    if (!item || (m_map && item->quickMap() == m_map))
+        return;
+
+    if (m_map) {
+        insertInstantiatedItem(index, item);
+        item->setParentItem(this);
+        m_map->addMapItemGroup(item);
+        if (m_enter) {
+            if (!item->m_transitionManager) {
+                QScopedPointer<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(item));
+                item->m_transitionManager.swap(manager);
+            }
+            item->m_transitionManager->m_view = this;
+            item->m_transitionManager->transitionEnter();
+        }
+    }
+}
+
+void QDeclarativeGeoMapItemView::addDelegateToMap(QQuickItem *object, int index)
+{
+    if (!object) {
+        m_incubatingItems.insert(index);
+        m_instantiatedItems.insert(index, nullptr);
+        return;
+    }
+    QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(object);
+    if (item) { // else createdItem will be emitted.
+        addItemToMap(item, index);
+        return;
+    }
+    QDeclarativeGeoMapItemView *view = qobject_cast<QDeclarativeGeoMapItemView *>(object);
+    if (view) {
+        addItemViewToMap(view, index);
+        return;
+    }
+    QDeclarativeGeoMapItemGroup *group = qobject_cast<QDeclarativeGeoMapItemGroup *>(object);
+    if (group) {
+        addItemGroupToMap(group, index);
+        return;
     }
 }
 

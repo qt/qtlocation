@@ -254,6 +254,16 @@ protected:
     void setError(QGeoServiceProvider::Error error, const QString &errorString);
     void initialize();
     void setZoomLevel(qreal zoomLevel, bool overzoom);
+    bool addMapChild(QObject *child);
+    bool removeMapChild(QObject *child);
+    bool isGroupNested(QDeclarativeGeoMapItemGroup *group);
+
+    bool addMapItem_real(QDeclarativeGeoMapItemBase *item);
+    bool removeMapItem_real(QDeclarativeGeoMapItemBase *item);
+    bool addMapItemGroup_real(QDeclarativeGeoMapItemGroup *itemGroup);
+    bool removeMapItemGroup_real(QDeclarativeGeoMapItemGroup *itemGroup);
+    bool addMapItemView_real(QDeclarativeGeoMapItemView *itemView);
+    bool removeMapItemView_real(QDeclarativeGeoMapItemView *itemView);
 
 private Q_SLOTS:
     void mappingManagerInitialized();

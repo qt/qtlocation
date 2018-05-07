@@ -85,10 +85,6 @@ QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
     // Changing opacity on a mapItemGroup should affect also the opacity on the children.
     // This must be notified to plugins, if they are to render the item.
     connect(this, &QQuickItem::opacityChanged, this, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged);
-    parentGroup_ = qobject_cast<QDeclarativeGeoMapItemGroup *>(parent);
-    if (parentGroup_)
-        connect(qobject_cast<QDeclarativeGeoMapItemGroup *>(parent), &QQuickItem::opacityChanged,
-                this, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged);
 }
 
 QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
@@ -285,49 +281,26 @@ QSGNode *QDeclarativeGeoMapItemBase::updateMapItemPaintNode(QSGNode *oldNode, Up
     return 0;
 }
 
+/*!
+    \internal
+
+    The actual combined opacity of the item. Needed by custom renderer to look like
+    the scene-graph one.
+*/
 qreal QDeclarativeGeoMapItemBase::mapItemOpacity() const
 {
     if (parentGroup_)
-        return parentGroup_->opacity() * opacity();
+        return parentGroup_->mapItemOpacity() * opacity();
     return opacity();
 }
 
-bool QDeclarativeGeoMapItemBase::prepareEnterTransition()
+void QDeclarativeGeoMapItemBase::setParentGroup(QDeclarativeGeoMapItemGroup &parentGroup)
 {
-    if (m_transitionManager->m_transitionState == QDeclarativeGeoMapItemTransitionManager::EnterTransition
-            && m_transitionManager->isRunning())
-        return false;
-
-    if (m_transitionManager->m_transitionState != QDeclarativeGeoMapItemTransitionManager::EnterTransition) {
-        setVisible(true);
-        m_transitionManager->m_transitionState = QDeclarativeGeoMapItemTransitionManager::EnterTransition;
+    parentGroup_ = &parentGroup;
+    if (parentGroup_) {
+        connect(parentGroup_, &QDeclarativeGeoMapItemGroup::mapItemOpacityChanged,
+                this, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged);
     }
-    return true;
-}
-
-bool QDeclarativeGeoMapItemBase::prepareExitTransition()
-{
-    if (m_transitionManager->m_transitionState == QDeclarativeGeoMapItemTransitionManager::ExitTransition
-            && m_transitionManager->isRunning())
-        return false;
-
-    if (m_transitionManager->m_transitionState != QDeclarativeGeoMapItemTransitionManager::ExitTransition) {
-        m_transitionManager->m_transitionState = QDeclarativeGeoMapItemTransitionManager::ExitTransition;
-    }
-    return true;
-}
-
-void QDeclarativeGeoMapItemBase::finalizeEnterTransition()
-{
-    m_transitionManager->m_transitionState = QDeclarativeGeoMapItemTransitionManager::NoTransition;
-    emit enterTransitionFinished();
-}
-
-void QDeclarativeGeoMapItemBase::finalizeExitTransition()
-{
-    setVisible(false);
-    m_transitionManager->m_transitionState = QDeclarativeGeoMapItemTransitionManager::NoTransition;
-    emit exitTransitionFinished();
 }
 
 bool QDeclarativeGeoMapItemBase::isPolishScheduled() const
@@ -340,44 +313,5 @@ void QDeclarativeGeoMapItemBase::polishAndUpdate()
     polish();
     update();
 }
-
-QDeclarativeGeoMapItemTransitionManager::QDeclarativeGeoMapItemTransitionManager(QDeclarativeGeoMapItemBase *mapItem)
-    : QQuickTransitionManager(), m_mapItem(mapItem)
-{
-}
-
-void QDeclarativeGeoMapItemTransitionManager::transitionEnter()
-{
-    if (m_transitionState == ExitTransition)
-        cancel();
-
-    if (!m_mapItem->prepareEnterTransition())
-        return;
-
-    if (m_view && m_view->m_enter)
-        transition(enterActions, m_view->m_enter, m_mapItem);
-    else
-        finished();
-}
-
-void QDeclarativeGeoMapItemTransitionManager::transitionExit()
-{
-    if (!m_mapItem->prepareExitTransition())
-        return;
-
-    if (m_view && m_view->m_exit)
-        transition(exitActions, m_view->m_exit, m_mapItem);
-    else
-        finished();
-}
-
-void QDeclarativeGeoMapItemTransitionManager::finished()
-{
-    if (m_transitionState == EnterTransition)
-        m_mapItem->finalizeEnterTransition();
-    else if (m_transitionState == ExitTransition)
-        m_mapItem->finalizeExitTransition();
-}
-
 
 QT_END_NAMESPACE
