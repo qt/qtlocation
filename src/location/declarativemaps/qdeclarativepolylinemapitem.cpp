@@ -272,11 +272,6 @@ static QList<QList<QDoubleVector2D> > clipLine(
     appearance. Setting the \l {Item::opacity}{opacity} property will force the object to
     be blended, which decreases performance considerably depending on the hardware in use.
 
-    \note MapPolylines are implemented using the OpenGL GL_LINES
-    primitive. There have been occasional reports of issues and rendering
-    inconsistencies on some (particularly quite old) platforms. No workaround
-    is yet available for these issues.
-
     \section2 Example Usage
 
     The following snippet shows a MapPolyline with 4 points, making a shape
