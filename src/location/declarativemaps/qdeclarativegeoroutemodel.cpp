@@ -239,7 +239,7 @@ void QDeclarativeGeoRouteModel::cancel()
 }
 
 /*!
-    \qmlmethod void QtLocation::RouteModel::get(int)
+    \qmlmethod Route QtLocation::RouteModel::get(int)
 
     Returns the Route at given index. Use \l count property to check the
     amount of routes available. The routes are indexed from zero, so the accessible range
