@@ -681,16 +681,12 @@ void MapPolygonNode::update(const QColor &fillColor, const QColor &borderColor,
      * tree. We can't just block the fill without blocking the border too, so
      * we're a little conservative here (maybe at the expense of rendering
      * accuracy) */
-    if (fillShape->size() == 0) {
-        if (borderShape->size() == 0) {
+    if (fillShape->size() == 0 && borderShape->size() == 0) {
             setSubtreeBlocked(true);
             return;
-        } else {
-            setSubtreeBlocked(false);
-        }
-    } else {
-        setSubtreeBlocked(false);
     }
+    setSubtreeBlocked(false);
+
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
     fillShape->allocateAndFill(fill);

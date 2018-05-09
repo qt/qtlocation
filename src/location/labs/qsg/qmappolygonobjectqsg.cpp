@@ -85,6 +85,8 @@ QSGNode *QMapPolygonObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
 
     bool created = false;
     if (!node) {
+        if (!m_geometry.size() && !m_borderGeometry.size())
+            return nullptr;
         node = new MapPolygonNode();
         *visibleNode = static_cast<VisibleNode *>(node);
         created = true;

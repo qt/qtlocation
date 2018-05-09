@@ -107,6 +107,8 @@ QSGNode *QMapPolylineObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
 
     bool created = false;
     if (!node) {
+        if (!m_geometry.size()) // condition to block the subtree
+            return nullptr;
         node = new MapPolylineNode();
         *visibleNode = static_cast<VisibleNode *>(node);
         created = true;
