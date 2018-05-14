@@ -83,7 +83,7 @@ QGeoCodingManagerEngineOsm::QGeoCodingManagerEngineOsm(const QVariantMap &parame
     if (parameters.contains(QStringLiteral("osm.geocoding.host")))
         m_urlPrefix = parameters.value(QStringLiteral("osm.geocoding.host")).toString().toLatin1();
     else
-        m_urlPrefix = QStringLiteral("http://nominatim.openstreetmap.org");
+        m_urlPrefix = QStringLiteral("https://nominatim.openstreetmap.org");
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
