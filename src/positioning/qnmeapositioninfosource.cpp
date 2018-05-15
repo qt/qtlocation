@@ -243,7 +243,10 @@ static int processSentence(QGeoPositionInfo &info,
             // the sentences containing the full timestamp (e.g., GPRMC) *first* !
             if (infoTime.isValid()) {
                 if (pos.timestamp().time().isValid()) {
-                    if (infoTime != pos.timestamp().time() || infoDate != pos.timestamp().date()) {
+                    if (infoTime != pos.timestamp().time() ||
+                            (infoDate.isValid() // if time is valid but one date or both are not, match only on time
+                             && pos.timestamp().date().isValid()
+                             && infoDate != pos.timestamp().date())) {
                         // Effectively read data for different update, so copy buf into m_nextLine
                         m_nextLine = QByteArray(buf, size);
                         break;
