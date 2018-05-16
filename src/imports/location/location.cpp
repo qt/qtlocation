@@ -176,8 +176,15 @@ public:
 
             // Register the 5.11 types
             minor = 11;
-            qmlRegisterType<QDeclarativeGeoWaypoint>(uri, major, minor, "Waypoint");
+            qmlRegisterType<QDeclarativeGeoManeuver, 11>(uri, major, minor, "RouteManeuver");
+            qmlRegisterType<QDeclarativeGeoMap, 11>(uri, major, minor, "Map");
+            qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 11>(uri, major, minor, "GeoMapItemBase",
+                                        QStringLiteral("GeoMapItemBase is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeGeoMapParameter>(uri, major, minor, "DynamicParameter");
+            qmlRegisterType<QDeclarativeGeoRoute, 11>(uri, major, minor, "Route");
+            qmlRegisterType<QDeclarativeGeoRouteQuery, 11>(uri, major, minor, "RouteQuery");
+            qmlRegisterType<QDeclarativeGeoServiceProvider, 11>(uri, major, minor, "Plugin");
+            qmlRegisterType<QDeclarativeGeoWaypoint>(uri, major, minor, "Waypoint");
 
             // Register the latest Qt version as QML type version
             qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);

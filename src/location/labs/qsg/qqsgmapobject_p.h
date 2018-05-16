@@ -37,9 +37,21 @@
 #ifndef QQSGMAPOBJECT_H
 #define QQSGMAPOBJECT_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtQuick/QSGOpacityNode>
 #include <QtLocation/private/qgeomapobject_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -50,10 +62,11 @@ public:
     QQSGMapObject();
     virtual ~QQSGMapObject();
 
-    virtual QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window);
+    virtual QSGNode *updateMapObjectNode(QSGNode *oldNode,
+                                         VisibleNode **visibleNode,
+                                         QSGNode *root,
+                                         QQuickWindow *window);
     virtual void updateGeometry();
-
-    QSGNode *node = nullptr;
 };
 
 QT_END_NAMESPACE

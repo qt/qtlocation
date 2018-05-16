@@ -69,7 +69,10 @@ public:
 
     // QQSGMapObject
     void updateGeometry() override;
-    QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window) override;
+    QSGNode *updateMapObjectNode(QSGNode *oldNode,
+                                 VisibleNode **visibleNode,
+                                 QSGNode *root,
+                                 QQuickWindow *window) override;
 
     // QGeoMapIconPrivate interface
     void setCoordinate(const QGeoCoordinate &coordinate) override;

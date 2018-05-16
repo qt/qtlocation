@@ -246,7 +246,8 @@ void QMapPolygonObject::setMap(QGeoMap *map)
     QGeoMapObject::setMap(map); // This is where the specialized pimpl gets created and injected
 
     if (!map) {
-        // Map was set, now it has ben re-set to NULL
+        // Map was set, now it has ben re-set to NULL, but not inside d_ptr.
+        // so m_map inside d_ptr can still be used to remove itself, inside the destructor.
         d_ptr = new QMapPolygonObjectPrivateDefault(*d);
         // Old pimpl deleted implicitly by QExplicitlySharedDataPointer
     }

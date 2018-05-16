@@ -137,24 +137,20 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Q_LOCATION_PRIVATE_EXPORT MapPolygonNode : public QSGGeometryNode
+class Q_LOCATION_PRIVATE_EXPORT MapPolygonNode : public MapItemGeometryNode
 {
 
 public:
     MapPolygonNode();
-    ~MapPolygonNode();
+    ~MapPolygonNode() override;
 
     void update(const QColor &fillColor, const QColor &borderColor,
                 const QGeoMapItemGeometry *fillShape,
                 const QGeoMapItemGeometry *borderShape);
-
-    bool isSubtreeBlocked() const override;
-
 private:
     QSGFlatColorMaterial fill_material_;
     MapPolylineNode *border_;
     QSGGeometry geometry_;
-    bool blocked_;
 };
 
 QT_END_NAMESPACE

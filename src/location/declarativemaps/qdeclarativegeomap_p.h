@@ -225,7 +225,7 @@ Q_SIGNALS:
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void mapReadyChanged(bool ready);
-    void mapObjectsChanged();
+    Q_REVISION(11) void mapObjectsChanged();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override ;

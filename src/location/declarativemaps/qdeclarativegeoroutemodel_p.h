@@ -295,7 +295,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
     Q_PROPERTY(QVariantList waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
     Q_PROPERTY(QJSValue excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
-    Q_PROPERTY(QVariantMap extraParameters READ extraParameters)
+    Q_PROPERTY(QVariantMap extraParameters READ extraParameters REVISION 11)
     Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
     Q_CLASSINFO("DefaultProperty", "quickChildren")
     Q_INTERFACES(QQmlParserStatus)
@@ -434,7 +434,7 @@ Q_SIGNALS:
     void segmentDetailChanged();
 
     void queryDetailsChanged();
-    void extraParametersChanged();
+    Q_REVISION(11) void extraParametersChanged();
 
 private Q_SLOTS:
     void excludedAreaCoordinateChanged();

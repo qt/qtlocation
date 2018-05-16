@@ -68,7 +68,10 @@ public:
 
     // QQSGMapObject
     void updateGeometry() override;
-    QSGNode *updateMapObjectNode(QSGNode *oldNode, QSGNode *root, QQuickWindow *window) override;
+    QSGNode *updateMapObjectNode(QSGNode *oldNode,
+                                 VisibleNode **visibleNode,
+                                 QSGNode *root,
+                                 QQuickWindow *window) override;
 
     // QGeoMapPolylinePrivate interface
     QList<QGeoCoordinate> path() const override;

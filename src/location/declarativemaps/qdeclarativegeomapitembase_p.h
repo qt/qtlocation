@@ -132,8 +132,8 @@ public:
 
 Q_SIGNALS:
     void mapItemOpacityChanged();
-    void enterTransitionFinished();
-    void exitTransitionFinished();
+    Q_REVISION(11) void enterTransitionFinished();
+    Q_REVISION(11) void exitTransitionFinished();
 
 protected Q_SLOTS:
     virtual void afterChildrenChanged();

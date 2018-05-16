@@ -71,10 +71,10 @@ public:
     virtual ~QGeoTiledMapLabs();
 
     bool createMapObjectImplementation(QGeoMapObject *obj) override;
+    void removeMapObject(QGeoMapObject *obj) override;
 
 protected:
     QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) override;
-    void removeMapObject(QGeoMapObject *obj) override;
 
     QSGClipNode *m_clip = nullptr;
     QSGSimpleRectNode *m_simpleRectNode = nullptr;
