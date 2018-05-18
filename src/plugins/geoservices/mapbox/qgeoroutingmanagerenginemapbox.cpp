@@ -75,8 +75,14 @@ void QGeoRouteParserOsrmV5ExtensionMapbox::updateQuery(QUrlQuery &query) const
     if (!m_accessToken.isEmpty())
         query.addQueryItem(QLatin1String("access_token"), m_accessToken);
 
+    query.addQueryItem(QLatin1String("annotations"), QLatin1String("duration,distance,speed,congestion"));
+
     query.addQueryItem(QLatin1String("voice_instructions"), QLatin1String("true"));
     query.addQueryItem(QLatin1String("banner_instructions"), QLatin1String("true"));
+    query.addQueryItem(QLatin1String("roundabout_exits"), QLatin1String("true"));
+
+    QLocale::MeasurementSystem unit = QLocale::system().measurementSystem();
+    query.addQueryItem(QLatin1String("voice_units"), unit == QLocale::MetricSystem ? QLatin1String("metric") : QLatin1String("imperial"));
 }
 
 static QVariantMap parseMapboxVoiceInstruction(const QJsonObject &voiceInstruction)
