@@ -121,12 +121,14 @@ private:
     void fitViewport();
     void removeItemFromMap(int index);
     void addItemToMap(QDeclarativeGeoMapItemBase *item, int index);
+    void insertInstantiatedItem(int index, QDeclarativeGeoMapItemBase *o);
 
     bool m_componentCompleted;
     QQmlComponent *m_delegate;
     QVariant m_itemModel;
     QDeclarativeGeoMap *m_map;
     QList<QDeclarativeGeoMapItemBase *> m_instantiatedItems;
+    QSet<int> m_incubatingItems;
     bool m_fitViewport;
     QQmlDelegateModel *m_delegateModel;
     QQuickTransition *m_enter = nullptr;
