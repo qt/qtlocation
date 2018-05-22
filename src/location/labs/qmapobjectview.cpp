@@ -311,8 +311,10 @@ void QMapObjectView::removeMapObjectFromMap(int index)
 {
     if (index >= 0 && index < m_instantiatedMapObjects.size()) {
         QGeoMapObject *mo = m_instantiatedMapObjects.takeAt(index);
-        if (!mo)
+        if (!mo) {
+            m_delegateModel->cancel(index);
             return;
+        }
         mo->setMap(nullptr);
         m_delegateModel->release(mo);
     }
