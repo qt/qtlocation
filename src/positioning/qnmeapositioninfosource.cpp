@@ -243,13 +243,18 @@ static int processSentence(QGeoPositionInfo &info,
             // the sentences containing the full timestamp (e.g., GPRMC) *first* !
             if (infoTime.isValid()) {
                 if (pos.timestamp().time().isValid()) {
-                    if (infoTime != pos.timestamp().time() || infoDate != pos.timestamp().date()) {
-                        // Effectively read data for different update, so copy buf into m_nextLine
+                    if (infoTime < pos.timestamp().time() ||
+                            (infoDate.isValid() // if time is valid but one date or both are not,
+                             && pos.timestamp().date().isValid()
+                             && infoDate < pos.timestamp().date())) {
+                        // Effectively read data for different update, that is also newer, so copy buf into m_nextLine
                         m_nextLine = QByteArray(buf, size);
                         break;
                     } else {
-                        // timestamps match -- merge into info
-                        mergePositions(info, pos, QByteArray(buf, size));
+                        if (infoTime == pos.timestamp().time())
+                            // timestamps match -- merge into info
+                            mergePositions(info, pos, QByteArray(buf, size));
+                        // else discard out of order outdated info.
                     }
                 } else {
                     // no timestamp available -- merge into info

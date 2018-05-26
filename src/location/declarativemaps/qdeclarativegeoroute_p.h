@@ -99,7 +99,7 @@ private:
     static QDeclarativeGeoRouteSegment *segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, int index);
     static void segments_clear(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
 
-    void initSegments(unsigned int lastIndex = -1);
+    void initSegments(unsigned int lastIndex = ~0U);
     QList<QGeoCoordinate> routePath();
 
     QGeoRoute route_;
