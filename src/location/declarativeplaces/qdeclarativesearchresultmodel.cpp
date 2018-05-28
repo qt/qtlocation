@@ -801,7 +801,7 @@ void QDeclarativeSearchResultModel::queryFinished()
 }
 
 /*!
-    \qmlmethod void PlaceSearchModel::data(int index, string role)
+    \qmlmethod Variant PlaceSearchModel::data(int index, string role)
 
     Returns the data for a given \a role at the specified row \a index.
 */
