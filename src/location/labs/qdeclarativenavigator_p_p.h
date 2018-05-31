@@ -50,6 +50,8 @@
 
 #include <QtCore/qlist.h>
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtCore/qpointer.h>
+#include <QtLocation/qgeoroute.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -67,13 +69,16 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigatorPrivate
 public:
     QDeclarativeNavigatorPrivate(QParameterizableObject *q_);
 
+    void updateReadyState();
+
     QParameterizableObject *q = nullptr;
     QNavigationManager *m_navigationManager = nullptr;
     QDeclarativeGeoServiceProvider *m_plugin = nullptr;
-    QDeclarativeGeoMap *m_map = nullptr;
-    QDeclarativeGeoRoute *m_route = nullptr;
-    QDeclarativePositionSource *m_positionSource = nullptr;
-    QDeclarativeGeoRoute *m_currentRoute = nullptr;
+    QPointer<QDeclarativeGeoMap> m_map;
+    QPointer<QDeclarativeGeoRoute> m_route;
+    QGeoRoute m_geoRoute;
+    QPointer<QDeclarativePositionSource> m_positionSource;
+    QPointer<QDeclarativeGeoRoute> m_currentRoute;
     QList<QGeoMapParameter *> m_parameters;
     int m_currentSegment = 0;
     bool m_active = false;

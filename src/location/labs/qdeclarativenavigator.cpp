@@ -37,6 +37,7 @@
 #include <QtLocation/private/qdeclarativegeoroute_p.h>
 #include <QtLocation/private/qdeclarativegeoroutemodel_p.h>
 #include <QtLocation/private/qdeclarativegeoroutesegment_p.h>
+#include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>
 #include <QtQml/qqmlinfo.h>
 
 QT_BEGIN_NAMESPACE
@@ -165,6 +166,12 @@ QDeclarativeNavigatorPrivate::QDeclarativeNavigatorPrivate(QParameterizableObjec
 {
 }
 
+void QDeclarativeNavigatorPrivate::updateReadyState()
+{
+    qobject_cast<QDeclarativeNavigator *>(q)->updateReadyState();
+}
+
+
 
 QDeclarativeNavigator::QDeclarativeNavigator(QObject *parent)
     : QParameterizableObject(parent), d_ptr(new QDeclarativeNavigatorPrivate(this))
@@ -195,10 +202,16 @@ QDeclarativeGeoServiceProvider *QDeclarativeNavigator::plugin() const
 
 void QDeclarativeNavigator::setMap(QDeclarativeGeoMap *map)
 {
-    if (d_ptr->m_map) // set once prop
+    if (d_ptr->m_map || !map) // set once prop
         return;
 
     d_ptr->m_map = map;
+    QDeclarativeNavigatorPrivate *dptr = d_ptr.data();
+    connect(map, &QObject::destroyed,
+            [this, dptr]() {
+                this->mapChanged();
+                dptr->updateReadyState();
+            });
     emit mapChanged();
     updateReadyState();
 }
@@ -219,6 +232,15 @@ void QDeclarativeNavigator::setRoute(QDeclarativeGeoRoute *route)
         setActive(false); // Stop current session
 
     d_ptr->m_route = route;
+    d_ptr->m_geoRoute = route ? route->route() : QGeoRoute();
+    if (route) {
+        connect(route, &QObject::destroyed,
+                [this]() {
+                    // Do not stop navigation if route disappears. d_ptr->m_geoRoute will still be valid.
+                    // Engines can stop navigation if desired.
+                    this->routeChanged();
+                });
+    }
     emit routeChanged();
     updateReadyState();
 }
@@ -230,10 +252,17 @@ QDeclarativeGeoRoute *QDeclarativeNavigator::route() const
 
 void QDeclarativeNavigator::setPositionSource(QDeclarativePositionSource *positionSource)
 {
-    if (d_ptr->m_positionSource) // set once prop
+    if (d_ptr->m_positionSource || !positionSource) // set once prop
         return;
 
     d_ptr->m_positionSource = positionSource;
+    QDeclarativeNavigatorPrivate *dptr = d_ptr.data();
+    QObject::connect(positionSource, &QObject::destroyed,
+            [this, dptr]() {
+                this->positionSourceChanged();
+                dptr->updateReadyState();
+            }
+    );
     emit positionSourceChanged();
     updateReadyState();
 }
@@ -258,8 +287,8 @@ bool QDeclarativeNavigator::navigatorReady() const
 QDeclarativeGeoRoute *QDeclarativeNavigator::currentRoute() const
 {
     if (!d_ptr->m_ready || !d_ptr->m_navigationManager->active())
-        return d_ptr->m_route;
-    return d_ptr->m_currentRoute;
+        return d_ptr->m_route.data();
+    return d_ptr->m_currentRoute.data();
 }
 
 int QDeclarativeNavigator::currentSegment() const
