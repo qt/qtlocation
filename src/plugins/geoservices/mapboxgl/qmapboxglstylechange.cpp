@@ -45,14 +45,14 @@
 
 namespace {
 
-QString formatPropertyName(QString *name)
+QByteArray formatPropertyName(const QByteArray &name)
 {
+    QString nameAsString = QString::fromLatin1(name);
     static const QRegularExpression camelCaseRegex(QStringLiteral("([a-z0-9])([A-Z])"));
-
-    return name->replace(camelCaseRegex, QStringLiteral("\\1-\\2")).toLower();
+    return nameAsString.replace(camelCaseRegex, QStringLiteral("\\1-\\2")).toLower().toLatin1();
 }
 
-bool isImmutableProperty(const QString &name)
+bool isImmutableProperty(const QByteArray &name)
 {
     return name == QStringLiteral("type") || name == QStringLiteral("layer");
 }
@@ -167,6 +167,16 @@ QMapbox::Feature featureFromMapItem(QDeclarativeGeoMapItemBase *item)
     }
 }
 
+QList<QByteArray> getAllPropertyNamesList(QObject *object)
+{
+    const QMetaObject *metaObject = object->metaObject();
+    QList<QByteArray> propertyNames(object->dynamicPropertyNames());
+    for (int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i) {
+        propertyNames.append(metaObject->property(i).name());
+    }
+    return propertyNames;
+}
+
 } // namespace
 
 
@@ -261,22 +271,20 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetLayoutProperty::fro
 
     QList<QSharedPointer<QMapboxGLStyleChange>> changes;
 
-    // Offset objectName and type properties.
-    for (int i = 2; i < param->metaObject()->propertyCount(); ++i) {
-        QString name = param->metaObject()->property(i).name();
-
-        if (isImmutableProperty(name))
+    QList<QByteArray> propertyNames = getAllPropertyNamesList(param);
+    for (const QByteArray &propertyName : propertyNames) {
+        if (isImmutableProperty(propertyName))
             continue;
 
         auto layout = new QMapboxGLStyleSetLayoutProperty();
 
-        layout->m_value = param->property(name.toLatin1());
+        layout->m_value = param->property(propertyName);
         if (layout->m_value.canConvert<QJSValue>()) {
             layout->m_value = layout->m_value.value<QJSValue>().toVariant();
         }
 
         layout->m_layer = param->property("layer").toString();
-        layout->m_property = formatPropertyName(&name);
+        layout->m_property = formatPropertyName(propertyName);
 
         changes << QSharedPointer<QMapboxGLStyleChange>(layout);
     }
@@ -340,22 +348,20 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleSetPaintProperty::from
 
     QList<QSharedPointer<QMapboxGLStyleChange>> changes;
 
-    // Offset objectName and type properties.
-    for (int i = 2; i < param->metaObject()->propertyCount(); ++i) {
-        QString name = param->metaObject()->property(i).name();
-
-        if (isImmutableProperty(name))
+    QList<QByteArray> propertyNames = getAllPropertyNamesList(param);
+    for (const QByteArray &propertyName : propertyNames) {
+        if (isImmutableProperty(propertyName))
             continue;
 
         auto paint = new QMapboxGLStyleSetPaintProperty();
 
-        paint->m_value = param->property(name.toLatin1());
+        paint->m_value = param->property(propertyName);
         if (paint->m_value.canConvert<QJSValue>()) {
             paint->m_value = paint->m_value.value<QJSValue>().toVariant();
         }
 
         paint->m_layer = param->property("layer").toString();
-        paint->m_property = formatPropertyName(&name);
+        paint->m_property = formatPropertyName(propertyName);
 
         changes << QSharedPointer<QMapboxGLStyleChange>(paint);
     }
@@ -464,14 +470,16 @@ QSharedPointer<QMapboxGLStyleChange> QMapboxGLStyleAddLayer::fromMapParameter(QG
     static const QStringList layerProperties = QStringList()
         << QStringLiteral("name") << QStringLiteral("layerType") << QStringLiteral("before");
 
-    // Offset objectName and type properties.
-    for (int i = 2; i < param->metaObject()->propertyCount(); ++i) {
-        QString name = param->metaObject()->property(i).name();
-        QVariant value = param->property(name.toLatin1());
+    QList<QByteArray> propertyNames = getAllPropertyNamesList(param);
+    for (const QByteArray &propertyName : propertyNames) {
+        if (isImmutableProperty(propertyName))
+            continue;
 
-        switch (layerProperties.indexOf(name)) {
+        const QVariant value = param->property(propertyName);
+
+        switch (layerProperties.indexOf(propertyName)) {
         case -1:
-            layer->m_params[formatPropertyName(&name)] = value;
+            layer->m_params[formatPropertyName(propertyName)] = value;
             break;
         case 0: // name
             layer->m_params[QStringLiteral("id")] = value;
