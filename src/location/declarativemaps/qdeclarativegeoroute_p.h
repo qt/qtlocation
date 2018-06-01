@@ -90,6 +90,8 @@ public:
     const QGeoRoute &route() const;
     QDeclarativeGeoRouteQuery *routeQuery();
 
+    Q_INVOKABLE bool equals(QDeclarativeGeoRoute *other) const;
+
 Q_SIGNALS:
     void pathChanged();
 

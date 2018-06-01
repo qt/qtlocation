@@ -28,8 +28,8 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtLocation 5.11
-import QtPositioning 5.2
+import QtLocation 5.12
+import QtPositioning 5.12
 
 Item {
     id: root
@@ -608,6 +608,8 @@ Item {
     SignalSpy {id: testErrorSlackSpy; target: routeModelSlack; signalName: "errorChanged"}
     SignalSpy {id: testPluginSlackSpy; target: routeModelSlack; signalName: "pluginChanged"}
 
+    RouteModel {id: routeModelEquals; plugin: testPlugin_immediate; query: routeQuery }
+
     TestCase {
         name: "Routing"
         function clear_immediate_model() {
@@ -722,6 +724,7 @@ Item {
             compare (routeQuery.waypoints.length, 5)
             routeQuery.numberAlternativeRoutes = 1 // how many routes to get back, > 70 indicates error
             routeModel.update()
+            routeModelEquals.update()
             tryCompare (testRoutesSpy, "count", 1) // 5 sec
             tryCompare (testCountSpy, "count", 1)
             compare (routeModel.count, 1)
@@ -729,6 +732,11 @@ Item {
             compare (routeQuery.waypoints.length, 5)
             compare (routeModel.get(0).path.length, 5)
             compare (routeModel.get(0).path[0].latitude, routeQuery.waypoints[0].latitude)
+            // test Route.equals
+            var route1 = routeModel.get(0)
+            var route2 = routeModelEquals.get(0)
+            verify(route1 !== route2)
+            verify(route1.equals(route2))
             // check reset() functionality
             routeModel.reset()
             tryCompare (testRoutesSpy, "count", 2) // 5 sec

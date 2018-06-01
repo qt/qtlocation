@@ -321,4 +321,16 @@ QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery()
     return routeQuery_;
 }
 
+/*!
+    \qmlmethod bool QtLocation::Route::equals(Route other)
+
+    This method performs deep comparison.
+
+    \since 5.12
+*/
+bool QDeclarativeGeoRoute::equals(QDeclarativeGeoRoute *other) const
+{
+    return route_ == other->route_;
+}
+
 QT_END_NAMESPACE
