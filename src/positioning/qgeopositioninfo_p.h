@@ -70,7 +70,7 @@ public:
     QGeoCoordinate coord;
     QHash<QGeoPositionInfo::Attribute, qreal> doubleAttribs;
 
-    static QGeoPositionInfoPrivate *getPimpl(const QGeoPositionInfo &info);
+    static QGeoPositionInfoPrivate *get(const QGeoPositionInfo &info);
 };
 
 QT_END_NAMESPACE
