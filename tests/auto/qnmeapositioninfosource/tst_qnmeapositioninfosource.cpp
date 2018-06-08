@@ -90,7 +90,7 @@ void tst_QNmeaPositionInfoSource::supportedPositioningMethods()
 void tst_QNmeaPositionInfoSource::minimumUpdateInterval()
 {
     QNmeaPositionInfoSource source(m_mode);
-    QCOMPARE(source.minimumUpdateInterval(), 100);
+    QCOMPARE(source.minimumUpdateInterval(), 2);
 }
 
 void tst_QNmeaPositionInfoSource::userEquivalentRangeError()

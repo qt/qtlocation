@@ -797,7 +797,7 @@ QGeoPositionInfoSource::PositioningMethods QNmeaPositionInfoSource::supportedPos
 */
 int QNmeaPositionInfoSource::minimumUpdateInterval() const
 {
-    return 100;
+    return 2; // Some chips are capable of over 100 updates per seconds.
 }
 
 /*!
