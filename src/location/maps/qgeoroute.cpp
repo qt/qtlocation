@@ -340,8 +340,8 @@ bool QGeoRoutePrivate::equals(const QGeoRoutePrivate &other) const
             && (travelTime() == other.travelTime())
             && (distance() == other.distance())
             && (travelMode() == other.travelMode())
-            && (path() == other.path()))
-            && (metadata() == other.metadata());
+            && (path() == other.path())
+            && (metadata() == other.metadata()));
 }
 
 void QGeoRoutePrivate::setId(const QString &id)

@@ -1,3 +1,4 @@
+QT += positioningquick-private
 INCLUDEPATH += labs
 
 PRIVATE_HEADERS += $$files($$PWD/*.h) $$files($$PWD/qsg/*.h)

@@ -263,7 +263,8 @@ QGeoRouteRequest &QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 */
 bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
 {
-    return (d_ptr.constData() == other.d_ptr.constData());
+    return ( (d_ptr.constData() == other.d_ptr.constData())
+                        || (*d_ptr) == (*other.d_ptr));
 }
 
 /*!
@@ -271,7 +272,7 @@ bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
 */
 bool QGeoRouteRequest::operator !=(const QGeoRouteRequest &other) const
 {
-    return (d_ptr.constData() != other.d_ptr.constData());
+    return !(operator==(other));
 }
 
 /*!

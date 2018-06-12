@@ -136,6 +136,8 @@ private slots:
 
 private:
     QScopedPointer<QDeclarativeNavigatorPrivate> d_ptr;
+
+    friend class QDeclarativeNavigatorPrivate;
 };
 
 QT_END_NAMESPACE
