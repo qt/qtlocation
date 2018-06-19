@@ -190,6 +190,7 @@ public:
             minor = 12;
             qmlRegisterType<QDeclarativeGeoMapItemView, 12>(uri, major, minor, "MapItemView");
             qmlRegisterType<QDeclarativeSearchResultModel, 12>(uri, major, minor, "PlaceSearchModel");
+            qmlRegisterType<QDeclarativeGeoMap, 12>(uri, major, minor, "Map");
 
             // Register the latest Qt version as QML type version
             qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);

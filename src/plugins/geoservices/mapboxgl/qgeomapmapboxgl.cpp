@@ -106,12 +106,12 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
         if (m_useFBO) {
             QSGMapboxGLTextureNode *mbglNode = new QSGMapboxGLTextureNode(m_settings, m_viewportSize, window->devicePixelRatio(), q);
             QObject::connect(mbglNode->map(), &QMapboxGL::mapChanged, q, &QGeoMapMapboxGL::onMapChanged);
-            m_syncState = MapTypeSync | CameraDataSync | ViewportSync;
+            m_syncState = MapTypeSync | CameraDataSync | ViewportSync | VisibleAreaSync;
             node = mbglNode;
         } else {
             QSGMapboxGLRenderNode *mbglNode = new QSGMapboxGLRenderNode(m_settings, m_viewportSize, window->devicePixelRatio(), q);
             QObject::connect(mbglNode->map(), &QMapboxGL::mapChanged, q, &QGeoMapMapboxGL::onMapChanged);
-            m_syncState = MapTypeSync | CameraDataSync | ViewportSync;
+            m_syncState = MapTypeSync | CameraDataSync | ViewportSync | VisibleAreaSync;
             node = mbglNode;
         }
     }
@@ -125,7 +125,15 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
         map->setStyleUrl(m_activeMapType.name());
     }
 
-    if (m_syncState & CameraDataSync) {
+    if (m_syncState & VisibleAreaSync) {
+        QMargins margins(m_visibleArea.x(),                                                     // left
+                         m_visibleArea.y(),                                                     // top
+                         m_viewportSize.width() - m_visibleArea.width() - m_visibleArea.x(),    // right
+                         m_viewportSize.height() - m_visibleArea.height() - m_visibleArea.y()); // bottom
+        map->setMargins(margins);
+    }
+
+    if (m_syncState & CameraDataSync || m_syncState & VisibleAreaSync) {
         map->setZoom(zoomLevelFrom256(m_cameraData.zoomLevel() , MBGL_TILE_SIZE));
         map->setBearing(m_cameraData.bearing());
         map->setPitch(m_cameraData.tilt());
@@ -291,6 +299,25 @@ void QGeoMapMapboxGLPrivate::changeActiveMapType(const QGeoMapType)
     emit q->sgNodeChanged();
 }
 
+void QGeoMapMapboxGLPrivate::setVisibleArea(const QRectF &visibleArea)
+{
+    Q_Q(QGeoMapMapboxGL);
+    const QRectF va = clampVisibleArea(visibleArea);
+    if (va == m_visibleArea)
+        return;
+
+    m_visibleArea = va;
+    m_geoProjection->setVisibleArea(va);
+
+    m_syncState = m_syncState | VisibleAreaSync;
+    emit q->sgNodeChanged();
+}
+
+QRectF QGeoMapMapboxGLPrivate::visibleArea() const
+{
+    return m_visibleArea;
+}
+
 void QGeoMapMapboxGLPrivate::syncStyleChanges(QMapboxGL *map)
 {
     for (const auto& change : m_styleChanges) {
@@ -376,7 +403,8 @@ QGeoMap::Capabilities QGeoMapMapboxGL::capabilities() const
 {
     return Capabilities(SupportsVisibleRegion
                         | SupportsSetBearing
-                        | SupportsAnchoringCoordinate);
+                        | SupportsAnchoringCoordinate
+                        | SupportsVisibleArea );
 }
 
 QSGNode *QGeoMapMapboxGL::updateSceneGraph(QSGNode *oldNode, QQuickWindow *window)

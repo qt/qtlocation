@@ -147,6 +147,7 @@ protected:
 
 private Q_SLOTS:
     void baseCameraDataChanged(const QGeoCameraData &camera);
+    void visibleAreaChanged();
 
 private:
     QPointer<QGeoMap> map_;

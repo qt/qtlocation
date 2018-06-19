@@ -141,6 +141,8 @@ void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
     if (map_ && quickMap_) {
         connect(map_, SIGNAL(cameraDataChanged(QGeoCameraData)),
                 this, SLOT(baseCameraDataChanged(QGeoCameraData)));
+        connect(map_, SIGNAL(visibleAreaChanged()),
+                this, SLOT(visibleAreaChanged()));
         connect(quickMap, SIGNAL(heightChanged()), this, SLOT(polishAndUpdate()));
         connect(quickMap, SIGNAL(widthChanged()), this, SLOT(polishAndUpdate()));
         lastSize_ = QSizeF(quickMap_->width(), quickMap_->height());
@@ -174,6 +176,13 @@ void QDeclarativeGeoMapItemBase::baseCameraDataChanged(const QGeoCameraData &cam
     lastSize_ = evt.mapSize;
     lastCameraData_ = cameraData;
 
+    afterViewportChanged(evt);
+}
+
+void QDeclarativeGeoMapItemBase::visibleAreaChanged()
+{
+    QGeoMapViewportChangeEvent evt;
+    evt.mapSize = QSizeF(quickMap_->width(), quickMap_->height());
     afterViewportChanged(evt);
 }
 

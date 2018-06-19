@@ -93,7 +93,8 @@ public:
         SupportsVisibleRegion = 0x0001,
         SupportsSetBearing = 0x0002,
         SupportsAnchoringCoordinate = 0x0004,
-        SupportsFittingViewportToGeoRectangle = 0x0008
+        SupportsFittingViewportToGeoRectangle = 0x0008,
+        SupportsVisibleArea = 0x0010,
     };
 
     Q_DECLARE_FLAGS(Capabilities, Capability)
@@ -117,6 +118,7 @@ public:
     // returns the minimum zoom at the current viewport size
     double minimumZoom() const;
     double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const;
+    double minimumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const;
 
     // returns the size of the underlying map, at the current zoom level. Unrelated to width()/height()/size().
     double mapWidth() const;
@@ -153,6 +155,9 @@ public:
     virtual void setCopyrightVisible(bool visible);
     virtual void removeMapObject(QGeoMapObject *obj);
 
+    void setVisibleArea(const QRectF &visibleArea);
+    QRectF visibleArea() const;
+
 protected:
     QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
     void setCameraData(const QGeoCameraData &cameraData);
@@ -167,6 +172,7 @@ Q_SIGNALS:
     void copyrightsChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void copyrightsStyleSheetChanged(const QString &styleSheet);
+    void visibleAreaChanged();
 
 private:
     Q_DISABLE_COPY(QGeoMap)

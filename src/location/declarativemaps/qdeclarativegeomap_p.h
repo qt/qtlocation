@@ -101,6 +101,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(bool copyrightsVisible READ copyrightsVisible WRITE setCopyrightsVisible NOTIFY copyrightsVisibleChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(bool mapReady READ mapReady NOTIFY mapReadyChanged)
+    Q_PROPERTY(QRectF visibleArea READ visibleArea WRITE setVisibleArea NOTIFY visibleAreaChanged  REVISION 12)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -153,6 +154,9 @@ public:
 
     void setColor(const QColor &color);
     QColor color() const;
+
+    QRectF visibleArea() const;
+    void setVisibleArea(const QRectF &visibleArea);
 
     bool mapReady() const;
 
@@ -226,6 +230,7 @@ Q_SIGNALS:
     void copyrightsChanged(const QString &copyrightsHtml);
     void mapReadyChanged(bool ready);
     Q_REVISION(11) void mapObjectsChanged();
+    void visibleAreaChanged();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override ;
@@ -266,6 +271,7 @@ private:
     bool isInteractive();
     void attachCopyrightNotice(bool initialVisibility);
     void detachCopyrightNotice(bool currentVisibility);
+    QMargins mapMargins() const;
 
 private:
     QDeclarativeGeoServiceProvider *m_plugin;
@@ -287,6 +293,7 @@ private:
     bool m_pendingFitViewport;
     bool m_copyrightsVisible;
     double m_maximumViewportLatitude;
+    double m_minimumViewportLatitude = 0.0;
     bool m_initialized;
     QList<QDeclarativeGeoMapParameter *> m_mapParameters;
     QList<QGeoMapObject*> m_pendingMapObjects; // Used only in the initialization phase
@@ -306,6 +313,7 @@ private:
 
     int m_copyNoticesVisible = 0;
     qreal m_maxChildZ = 0;
+    QRectF m_visibleArea;
 
 
     friend class QDeclarativeGeoMapItem;

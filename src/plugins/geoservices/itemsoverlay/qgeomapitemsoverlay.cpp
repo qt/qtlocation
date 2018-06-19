@@ -70,10 +70,16 @@ public:
 #endif
 
     void updateObjectsGeometry();
+
+    void setVisibleArea(const QRectF &visibleArea) override;
+    QRectF visibleArea() const override;
+
 protected:
     void changeViewportSize(const QSize &size) override;
     void changeCameraData(const QGeoCameraData &oldCameraData) override;
     void changeActiveMapType(const QGeoMapType mapType) override;
+
+    QRectF m_visibleArea;
 };
 
 QGeoMapItemsOverlay::QGeoMapItemsOverlay(QGeoMappingManagerEngineItemsOverlay *engine, QObject *parent)
@@ -129,6 +135,24 @@ void QGeoMapItemsOverlay::removeMapObject(QGeoMapObject *obj)
     Q_D(QGeoMapItemsOverlay);
     d->removeMapObject(obj);
 #endif
+}
+
+void QGeoMapItemsOverlayPrivate::setVisibleArea(const QRectF &visibleArea)
+{
+    Q_Q(QGeoMapItemsOverlay);
+    const QRectF va = clampVisibleArea(visibleArea);
+    if (va == m_visibleArea)
+        return;
+
+    m_visibleArea = va;
+    m_geoProjection->setVisibleArea(va);
+
+    q->sgNodeChanged();
+}
+
+QRectF QGeoMapItemsOverlayPrivate::visibleArea() const
+{
+    return m_visibleArea;
 }
 
 QGeoMapItemsOverlayPrivate::QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine, QGeoMapItemsOverlay *map)

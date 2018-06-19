@@ -89,6 +89,7 @@ public:
     int m_mapVersion;
     QGeoCameraData m_camera;
     QSize m_screenSize;
+    QRectF m_visibleArea;
     int m_tileSize;
     QSet<QGeoTileSpec> m_tiles;
 
@@ -153,6 +154,15 @@ void QGeoCameraTiles::setCameraData(const QGeoCameraData &camera)
 QGeoCameraData QGeoCameraTiles::cameraData() const
 {
     return d_ptr->m_camera;
+}
+
+void QGeoCameraTiles::setVisibleArea(const QRectF &visibleArea)
+{
+    if (d_ptr->m_visibleArea == visibleArea)
+        return;
+
+    d_ptr->m_visibleArea = visibleArea;
+    d_ptr->m_dirtyGeometry = true;
 }
 
 void QGeoCameraTiles::setScreenSize(const QSize &size)
@@ -358,15 +368,32 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double viewExpansion) const
 
     frustum.apex = eye;
 
-    frustum.topLeftFar = cf - (up * hhf) - (right * hwf);
-    frustum.topRightFar = cf - (up * hhf) + (right * hwf);
-    frustum.bottomLeftFar = cf + (up * hhf) - (right * hwf);
-    frustum.bottomRightFar = cf + (up * hhf) + (right * hwf);
+    QRectF va = m_visibleArea;
+    if (va.isNull())
+        va = QRectF(0, 0, m_screenSize.width(), m_screenSize.height());
+    QRectF screen = QRectF(QPointF(0,0),m_screenSize);
+    QPointF vaCenter = va.center();
+    QPointF screenCenter = screen.center();
+    QPointF diff = screenCenter - vaCenter;
+    double xdiffpct = diff.x() / m_screenSize.width();
+    double ydiffpct = -(diff.y() / m_screenSize.height());
 
-    frustum.topLeftNear = cn - (up * hhn) - (right * hwn);
-    frustum.topRightNear = cn - (up * hhn) + (right * hwn);
-    frustum.bottomLeftNear = cn + (up * hhn) - (right * hwn);
-    frustum.bottomRightNear = cn + (up * hhn) + (right * hwn);
+    double wn = (2 * hwn) * xdiffpct;
+    double hn = (2 * hhn) * ydiffpct;
+    double wf = (2 * hwf) * xdiffpct;
+    double hf = (2 * hhf) * ydiffpct;
+
+    // TODO: fix eye
+
+    frustum.topLeftFar = cf - (up * (hhf + hf)) - (right * (hwf + wf));
+    frustum.topRightFar = cf - (up * (hhf + hf)) + (right * (hwf + wf));
+    frustum.bottomLeftFar = cf + (up * (hhf + hf)) - (right * (hwf + wf));
+    frustum.bottomRightFar = cf + (up * (hhf + hf)) + (right * (hwf + wf));
+
+    frustum.topLeftNear = cn - (up * (hhn + hn)) - (right * (hwn + wn));
+    frustum.topRightNear = cn - (up * (hhn + hn)) + (right * (hwn + wn));
+    frustum.bottomLeftNear = cn + (up * (hhn + hn)) - (right * (hwn + wn));
+    frustum.bottomRightNear = cn + (up * (hhn + hn)) + (right * (hwn + wn));
 
     return frustum;
 }

@@ -67,6 +67,7 @@ public:
     QSize m_screenSize; // in pixels
     int m_tileSize; // the pixel resolution for each tile
     QGeoCameraData m_cameraData;
+    QRectF m_visibleArea;
     QSet<QGeoTileSpec> m_visibleTiles;
 
     QDoubleVector3D m_cameraUp;
@@ -150,6 +151,15 @@ void QGeoTiledMapScene::setCameraData(const QGeoCameraData &cameraData)
 {
     Q_D(QGeoTiledMapScene);
     d->m_cameraData = cameraData;
+    updateSceneParameters();
+}
+
+void QGeoTiledMapScene::setVisibleArea(const QRectF &visibleArea)
+{
+    Q_D(QGeoTiledMapScene);
+    if (d->m_visibleArea == visibleArea)
+        return;
+    d->m_visibleArea = visibleArea;
     updateSceneParameters();
 }
 
@@ -465,8 +475,32 @@ void QGeoTiledMapScenePrivate::setupCamera()
     float halfHeight = 1 * apertureSize;
     halfWidth *= aspectRatio;
 
+//    m_projectionMatrix.setToIdentity();
+//    m_projectionMatrix.frustum(-halfWidth, halfWidth, -halfHeight, halfHeight, nearPlane, farPlane);
+
+    QRectF va = m_visibleArea;
+    if (va.isNull())
+        va = QRectF(0, 0, m_screenSize.width(), m_screenSize.height());
+
+    QRectF screen = QRectF(QPointF(0,0),m_screenSize);
+    QPointF vaCenter = va.center();
+
+    QPointF screenCenter = screen.center();
+    QPointF diff = screenCenter - vaCenter;
+    float xdiffpct = diff.x() / m_screenSize.width();
+    float ydiffpct = -(diff.y() / m_screenSize.height());
+
     m_projectionMatrix.setToIdentity();
-    m_projectionMatrix.frustum(-halfWidth, halfWidth, -halfHeight, halfHeight, nearPlane, farPlane);
+    float l = -halfWidth + (2 * halfWidth) * xdiffpct;
+    float r =  halfWidth + (2 * halfWidth) * xdiffpct;
+    float t =  halfHeight + (2 * halfHeight) * ydiffpct;
+    float b = -halfHeight + (2 * halfHeight) * ydiffpct;
+
+    m_projectionMatrix.frustum(l,
+                               r,
+                               b,
+                               t,
+                               nearPlane, farPlane);
 }
 
 class QGeoTiledMapTileContainerNode : public QSGTransformNode

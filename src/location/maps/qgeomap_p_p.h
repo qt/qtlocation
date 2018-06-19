@@ -103,6 +103,12 @@ protected:
     virtual void setCopyrightVisible(bool visible);
     virtual bool copyrightVisible() const;
     virtual double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const;
+    virtual double minimumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const;
+
+    virtual void setVisibleArea(const QRectF &visibleArea);
+    virtual QRectF visibleArea() const;
+
+    QRectF clampVisibleArea(const QRectF &visibleArea) const;
 
 protected:
     QSize m_viewportSize;
@@ -115,6 +121,7 @@ protected:
     QGeoCameraCapabilities m_cameraCapabilities;
     bool m_copyrightVisible = true;
     mutable double m_maximumViewportLatitude = 0;
+    mutable double m_minimumViewportLatitude = 0;
 };
 
 QT_END_NAMESPACE

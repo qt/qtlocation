@@ -85,6 +85,7 @@ public:
     QGeoProjection();
     virtual ~QGeoProjection();
 
+    virtual void setVisibleArea(const QRectF &visibleArea) = 0;
     virtual void setViewportSize(const QSize &size) = 0;
     virtual void setCameraData(const QGeoCameraData &cameraData, bool force = true) = 0;
     virtual QGeoCameraData cameraData() const = 0;
@@ -92,6 +93,7 @@ public:
     // returns the minimum zoom at the current viewport size
     virtual double minimumZoom() const = 0;
     virtual double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const = 0;
+    virtual double minimumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const = 0;
 
     virtual QGeoCoordinate itemPositionToCoordinate(const QDoubleVector2D &pos, bool clipToViewport = true) const = 0;
     virtual QDoubleVector2D coordinateToItemPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
@@ -116,7 +118,9 @@ public:
     // From QGeoProjection
     double minimumZoom() const override;
     double maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const override;
+    double minimumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const override;
 
+    void setVisibleArea(const QRectF &visibleArea) override;
     void setViewportSize(const QSize &size) override;
     void setCameraData(const QGeoCameraData &cameraData, bool force = true) override;
     QGeoCameraData cameraData() const override;
@@ -157,6 +161,9 @@ public:
 
     inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition) const;
     inline QDoubleVector2D viewportToWrappedMapProjection(const QDoubleVector2D &itemPosition, double &s) const;
+
+    QPair<QGeoCoordinate, qreal> fitViewportToGeoRectangle(const QGeoRectangle &rectangle,
+                                                           const QMargins &margins) const;
 
 private:
     void setupCamera();
@@ -234,6 +241,7 @@ private:
     QList<QDoubleVector2D> m_visibleRegionExpanded;
     QList<QDoubleVector2D> m_projectableRegion;
     bool             m_visibleRegionDirty;
+    QRectF           m_visibleArea;
 
     Q_DISABLE_COPY(QGeoProjectionWebMercator)
 };

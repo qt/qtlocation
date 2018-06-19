@@ -190,17 +190,4 @@ private:
     QImage m_sprite;
 };
 
-class QMapboxGLMapMargins : public QMapboxGLStyleChange
-{
-public:
-    static QSharedPointer<QMapboxGLStyleChange> fromMapParameter(QGeoMapParameter *);
-
-    void apply(QMapboxGL *map) override;
-
-private:
-    QMapboxGLMapMargins() = default;
-
-    QMargins m_margins;
-};
-
 #endif // QQMAPBOXGLSTYLECHANGE_P_H

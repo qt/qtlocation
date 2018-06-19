@@ -43,6 +43,7 @@
 #include <QtCore/QSharedPointer>
 #include <QtCore/QTimer>
 #include <QtCore/QVariant>
+#include <QtCore/QRectF>
 #include <QtLocation/private/qgeomap_p_p.h>
 #include <QtLocation/private/qgeomapparameter_p.h>
 
@@ -70,9 +71,10 @@ public:
     /* Data members */
     enum SyncState : int {
         NoSync = 0,
-        ViewportSync   = 1 << 0,
-        CameraDataSync = 1 << 1,
-        MapTypeSync    = 1 << 2
+        ViewportSync    = 1 << 0,
+        CameraDataSync  = 1 << 1,
+        MapTypeSync     = 1 << 2,
+        VisibleAreaSync = 1 << 3
     };
     Q_DECLARE_FLAGS(SyncStates, SyncState);
 
@@ -96,11 +98,16 @@ protected:
     void changeCameraData(const QGeoCameraData &oldCameraData) override;
     void changeActiveMapType(const QGeoMapType mapType) override;
 
+    void setVisibleArea(const QRectF &visibleArea) override;
+    QRectF visibleArea() const override;
+
 private:
     Q_DISABLE_COPY(QGeoMapMapboxGLPrivate);
 
     void syncStyleChanges(QMapboxGL *map);
     void threadedRenderingHack(QQuickWindow *window, QMapboxGL *map);
+
+    QRectF m_visibleArea;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoMapMapboxGLPrivate::SyncStates)

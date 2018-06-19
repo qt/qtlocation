@@ -186,8 +186,7 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapParamete
 {
     static const QStringList acceptedParameterTypes = QStringList()
         << QStringLiteral("paint") << QStringLiteral("layout") << QStringLiteral("filter")
-        << QStringLiteral("layer") << QStringLiteral("source") << QStringLiteral("image")
-        << QStringLiteral("margins");
+        << QStringLiteral("layer") << QStringLiteral("source") << QStringLiteral("image");
 
     QList<QSharedPointer<QMapboxGLStyleChange>> changes;
 
@@ -212,9 +211,6 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapParamete
         break;
     case 5: // image
         changes << QMapboxGLStyleAddImage::fromMapParameter(param);
-        break;
-    case 6: // margins
-        changes << QMapboxGLMapMargins::fromMapParameter(param);
         break;
     }
 
@@ -640,39 +636,4 @@ QSharedPointer<QMapboxGLStyleChange> QMapboxGLStyleAddImage::fromMapParameter(QG
     image->m_sprite = QImage(param->property("sprite").toString());
 
     return QSharedPointer<QMapboxGLStyleChange>(image);
-}
-
-// QMapboxGLMapMargins
-
-void QMapboxGLMapMargins::apply(QMapboxGL *map)
-{
-    // FIXME: Qt projection handlers are not yet aware of these margins,
-    // thus map items placement, {to,from}Coordinate, mouse area, etc.
-    // will require manual fixups.
-    map->setMargins(m_margins);
-}
-
-QSharedPointer<QMapboxGLStyleChange> QMapboxGLMapMargins::fromMapParameter(QGeoMapParameter *param)
-{
-    Q_ASSERT(param->type() == "margins");
-
-    auto mapMargins = new QMapboxGLMapMargins();
-
-    QVariant leftMargin = param->property("left");
-    if (leftMargin.isValid())
-        mapMargins->m_margins.setLeft(leftMargin.toInt());
-
-    QVariant topMargin = param->property("top");
-    if (topMargin.isValid())
-        mapMargins->m_margins.setTop(topMargin.toInt());
-
-    QVariant rightMargin = param->property("right");
-    if (rightMargin.isValid())
-        mapMargins->m_margins.setRight(rightMargin.toInt());
-
-    QVariant bottomMargin = param->property("bottom");
-    if (bottomMargin.isValid())
-        mapMargins->m_margins.setBottom(bottomMargin.toInt());
-
-    return QSharedPointer<QMapboxGLStyleChange>(mapMargins);
 }

@@ -42,6 +42,7 @@
 #include "qgeomapobject_p.h"
 #include "qgeomapobject_p_p.h"
 #include <QDebug>
+#include <QRectF>
 
 QT_BEGIN_NAMESPACE
 
@@ -109,7 +110,7 @@ bool QGeoMap::handleEvent(QEvent *event)
     return false;
 }
 
-bool QGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate)
+bool QGeoMap::setBearing(qreal bearing, const QGeoCoordinate &coordinate) //FIXME visibleArea
 {
     Q_D(QGeoMap);
     bool res = d->m_geoProjection->setBearing(bearing, coordinate);
@@ -124,7 +125,7 @@ bool QGeoMap::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QP
 {
     Q_D(QGeoMap);
     QGeoCoordinate newCenter = geoProjection().anchorCoordinateToPoint(coordinate, anchorPoint);
-    newCenter.setLatitude(qBound(-d->m_maximumViewportLatitude, newCenter.latitude(), d->m_maximumViewportLatitude));
+    newCenter.setLatitude(qBound(d->m_minimumViewportLatitude, newCenter.latitude(), d->m_maximumViewportLatitude));
     QGeoCameraData data = cameraData();
     if (data.center() != newCenter) {
         data.setCenter(newCenter);
@@ -178,6 +179,12 @@ double QGeoMap::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) co
 {
     Q_D(const QGeoMap);
     return d->maximumCenterLatitudeAtZoom(cameraData);
+}
+
+double QGeoMap::minimumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const
+{
+    Q_D(const QGeoMap);
+    return d->minimumCenterLatitudeAtZoom(cameraData);
 }
 
 double QGeoMap::mapWidth() const
@@ -295,6 +302,21 @@ bool QGeoMap::createMapObjectImplementation(QGeoMapObject *obj)
 */
 void QGeoMap::removeMapObject(QGeoMapObject * /*obj*/)
 {
+}
+
+void QGeoMap::setVisibleArea(const QRectF &visibleArea)
+{
+    Q_D(QGeoMap);
+    const QRectF &va = d->visibleArea();
+    d->setVisibleArea(visibleArea);
+    if (va != d->visibleArea())
+        emit visibleAreaChanged();
+}
+
+QRectF QGeoMap::visibleArea() const
+{
+    Q_D(const QGeoMap);
+    return d->visibleArea();
 }
 
 QList<QGeoMapObject *> QGeoMap::mapObjects() const
@@ -427,6 +449,31 @@ double QGeoMapPrivate::maximumCenterLatitudeAtZoom(const QGeoCameraData &cameraD
 {
     m_maximumViewportLatitude = m_geoProjection->maximumCenterLatitudeAtZoom(cameraData);
     return m_maximumViewportLatitude;
+}
+
+double QGeoMapPrivate::minimumCenterLatitudeAtZoom(const QGeoCameraData &cameraData) const
+{
+    m_minimumViewportLatitude = m_geoProjection->minimumCenterLatitudeAtZoom(cameraData);
+    return m_minimumViewportLatitude;
+}
+
+void QGeoMapPrivate::setVisibleArea(const QRectF &/*visibleArea*/)
+{
+
+}
+
+QRectF QGeoMapPrivate::visibleArea() const
+{
+    return QRectF();
+}
+
+QRectF QGeoMapPrivate::clampVisibleArea(const QRectF &visibleArea) const
+{
+    qreal xp = qMin<qreal>(visibleArea.x(), qMax(m_viewportSize.width() - 1, 0));
+    qreal yp = qMin<qreal>(visibleArea.y(), qMax(m_viewportSize.height() - 1, 0));
+    qreal w = qMin<qreal>(visibleArea.width(), qMax<qreal>(m_viewportSize.width() - xp, 0));
+    qreal h = qMin<qreal>(visibleArea.height(), qMax<qreal>(m_viewportSize.height() - yp, 0));
+    return QRectF(xp, yp, w, h);
 }
 
 QT_END_NAMESPACE

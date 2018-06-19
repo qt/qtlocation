@@ -52,6 +52,13 @@ Item {
             extraTypeName = "SomeString"
         }
     }
+    Plugin {
+        id: testPluginNoVisibleArea;
+        name: "qmlgeo.test.plugin";
+        allowExperimental: true
+        PluginParameter { name: "supportVisibleArea"; value: false}
+    }
+    Plugin { id: itemsOverlay; name: "itemsoverlay"; }
 
     property variant coordinate1: QtPositioning.coordinate(10, 11)
     property variant coordinate2: QtPositioning.coordinate(12, 13)
@@ -127,6 +134,16 @@ Item {
         property var center: QtPositioning.coordinate(-33.0, -47.0)
     }
 
+    Map {
+        id: mapVisibleArea
+        width: 256; height: 256;
+    }
+    Map {
+        id: mapVisibleAreaUnsupported
+        width: 256; height: 256;
+    }
+    SignalSpy { id: visibleAreaSpy; target: mapVisibleArea; signalName: 'visibleAreaChanged'}
+    SignalSpy { id: visibleAreaUnsupportedSpy; target: mapVisibleAreaUnsupported; signalName: 'visibleAreaChanged'}
 
     TestCase {
         when: windowShown && allMapsReady
@@ -683,6 +700,30 @@ Item {
             pos = mapTestProjection.fromCoordinate(coord, false)
             verify(isNaN(pos.latitude))
             verify(isNaN(pos.longitde))
+        }
+
+        function test_visible_area()
+        {
+            wait(1000)
+            visibleAreaSpy.clear();
+            visibleAreaUnsupportedSpy.clear();
+            var defaultRect = Qt.rect(0,0,0,0)
+
+            verify(mapVisibleAreaUnsupported.visibleArea, defaultRect)
+            mapVisibleAreaUnsupported.visibleArea = Qt.rect(0,0,256,256)
+            compare(visibleAreaUnsupportedSpy.count, 1)
+            verify(mapVisibleAreaUnsupported.visibleArea, Qt.rect(0,0,256,256))
+            mapVisibleAreaUnsupported.plugin = testPluginNoVisibleArea
+            tryCompare(visibleAreaUnsupportedSpy, "count", 2)
+            verify(mapVisibleAreaUnsupported.visibleArea, defaultRect)
+
+            verify(mapVisibleArea.visibleArea, defaultRect)
+            mapVisibleArea.visibleArea = Qt.rect(0,0,256,256)
+            compare(visibleAreaSpy.count, 1)
+            verify(mapVisibleArea.visibleArea, Qt.rect(0,0,256,256))
+            mapVisibleArea.plugin = testPlugin
+            tryCompare(visibleAreaSpy, "count", 1)
+            verify(mapVisibleAreaUnsupported.visibleArea, Qt.rect(0,0,256,256))
         }
     }
 }

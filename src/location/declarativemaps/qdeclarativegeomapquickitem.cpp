@@ -441,6 +441,10 @@ void QDeclarativeGeoMapQuickItem::updatePolish()
 void QDeclarativeGeoMapQuickItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
     Q_UNUSED(event);
+    if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
+        return;
+
+    polishAndUpdate();
 }
 
 /*!

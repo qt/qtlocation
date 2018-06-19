@@ -91,12 +91,16 @@ protected:
 
     void updateScene();
 
+    void setVisibleArea(const QRectF &visibleArea) override;
+    QRectF visibleArea() const override;
+
 protected:
     QAbstractGeoTileCache *m_cache;
     QGeoCameraTiles *m_visibleTiles;
     QGeoCameraTiles *m_prefetchTiles;
     QGeoTiledMapScene *m_mapScene;
     QGeoTileRequestManager *m_tileRequests;
+    QRectF m_visibleArea;
     int m_maxZoomLevel;
     int m_minZoomLevel;
     QGeoTiledMap::PrefetchStyle m_prefetchStyle;

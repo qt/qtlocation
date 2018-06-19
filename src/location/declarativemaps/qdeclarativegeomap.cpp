@@ -333,6 +333,7 @@ void QDeclarativeGeoMap::initialize()
     bool bearingHasChanged = false;
     bool tiltHasChanged = false;
     bool fovHasChanged = false;
+    bool visibleAreaHasChanged = false;
 
     QGeoCoordinate center = m_cameraData.center();
 
@@ -354,6 +355,10 @@ void QDeclarativeGeoMap::initialize()
         tiltHasChanged = true;
     }
 
+    m_map->setVisibleArea(m_visibleArea);
+    if (m_map->visibleArea() != m_visibleArea)
+        visibleAreaHasChanged = true;
+
     m_cameraData.setFieldOfView(qBound(m_cameraCapabilities.minimumFieldOfView(),
                                        fov,
                                        m_cameraCapabilities.maximumFieldOfView()));
@@ -362,8 +367,9 @@ void QDeclarativeGeoMap::initialize()
 
     // set latitude boundary check
     m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
+    m_minimumViewportLatitude = m_map->minimumCenterLatitudeAtZoom(m_cameraData);
 
-    center.setLatitude(qBound(-m_maximumViewportLatitude, center.latitude(), m_maximumViewportLatitude));
+    center.setLatitude(qBound(m_minimumViewportLatitude, center.latitude(), m_maximumViewportLatitude));
 
     if (center != m_cameraData.center()) {
         centerHasChanged = true;
@@ -388,6 +394,10 @@ void QDeclarativeGeoMap::initialize()
 
     if (fovHasChanged)
         emit fieldOfViewChanged(m_cameraData.fieldOfView());
+
+    if (visibleAreaHasChanged)
+        emit visibleAreaChanged();
+    connect(m_map, &QGeoMap::visibleAreaChanged, this, &QDeclarativeGeoMap::visibleAreaChanged);
 
     emit mapReadyChanged(true);
 
@@ -915,8 +925,9 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
                                                 zoomLevel,
                                                 overzoom ? 30 : maximumZoomLevel()));
         m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
+        m_minimumViewportLatitude = m_map->minimumCenterLatitudeAtZoom(m_cameraData);
         QGeoCoordinate coord = m_cameraData.center();
-        coord.setLatitude(qBound(-m_maximumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
+        coord.setLatitude(qBound(m_minimumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
         if (coord != m_cameraData.center()) {
             centerHasChanged = true;
             m_cameraData.setCenter(coord);
@@ -1231,7 +1242,7 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
 
     if (m_initialized) {
         QGeoCoordinate coord(center);
-        coord.setLatitude(qBound(-m_maximumViewportLatitude, center.latitude(), m_maximumViewportLatitude));
+        coord.setLatitude(qBound(m_minimumViewportLatitude, center.latitude(), m_maximumViewportLatitude));
         m_cameraData.setCenter(coord);
         m_map->setCameraData(m_cameraData);
     } else {
@@ -1364,6 +1375,42 @@ QColor QDeclarativeGeoMap::color() const
 }
 
 /*!
+    \qmlproperty rect QtLocation::Map::visibleArea
+
+    This property holds the visible area inside the Map QML element.
+    It is a rect whose coordinates are relative to the Map element.
+    Its size will be clamped to the size of the Map element.
+    A null visibleArea means that the whole Map is visible.
+
+    \since 5.12
+*/
+QRectF QDeclarativeGeoMap::visibleArea() const
+{
+    if (m_initialized)
+        return m_map->visibleArea();
+    return m_visibleArea;
+}
+
+void QDeclarativeGeoMap::setVisibleArea(const QRectF &visibleArea)
+{
+    const QRectF oldVisibleArea = QDeclarativeGeoMap::visibleArea();
+    if (visibleArea == oldVisibleArea)
+        return;
+
+    if (!visibleArea.isValid() && !visibleArea.isEmpty()) // values < 0
+        return;
+
+    if (m_initialized) {
+        m_map->setVisibleArea(visibleArea);
+    } else {
+        m_visibleArea = visibleArea;
+        const QRectF newVisibleArea = QDeclarativeGeoMap::visibleArea();
+        if (newVisibleArea != oldVisibleArea)
+            emit visibleAreaChanged();
+    }
+}
+
+/*!
     \qmlproperty bool QtLocation::Map::mapReady
 
     This property holds whether the map has been successfully initialized and is ready to be used.
@@ -1378,6 +1425,17 @@ bool QDeclarativeGeoMap::mapReady() const
     return m_initialized;
 }
 
+QMargins QDeclarativeGeoMap::mapMargins() const
+{
+    const QRectF va = m_map->visibleArea();
+    if (va.isEmpty())
+        return QMargins();
+    return QMargins( va.x()
+                    , va.y()
+                    , width() - va.width() - va.x()
+                    , height() - va.height() - va.y());
+}
+
 // TODO: offer the possibility to specify the margins.
 void QDeclarativeGeoMap::fitViewportToGeoShape()
 {
@@ -1385,34 +1443,24 @@ void QDeclarativeGeoMap::fitViewportToGeoShape()
         // This case remains handled here, and not inside QGeoMap*::fitViewportToGeoRectangle,
         // in order to honor animations on center and zoomLevel
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_map->geoProjection());
-        const int margins  = 10;
-        if (!m_map  || !m_visibleRegion.isValid() || width() <= margins || height() <= margins)
+        const int borderSize = 10;
+        const QMargins borders(borderSize, borderSize, borderSize, borderSize);
+
+        if (!m_map  || !m_visibleRegion.isValid())
             return;
 
-        QDoubleVector2D topLeftPoint = p.geoToMapProjection(m_visibleRegion.topLeft());
-        QDoubleVector2D bottomRightPoint = p.geoToMapProjection(m_visibleRegion.bottomRight());
-        if (bottomRightPoint.x() < topLeftPoint.x()) // crossing the dateline
-            bottomRightPoint.setX(bottomRightPoint.x() + 1.0);
-
-        // find center of the bounding box
-        QDoubleVector2D center = (topLeftPoint + bottomRightPoint) * 0.5;
-        center.setX(center.x() > 1.0 ? center.x() - 1.0 : center.x());
-        QGeoCoordinate centerCoordinate = p.mapProjectionToGeo(center);
+        const QMargins margins = borders + mapMargins();
+        const QPair<QGeoCoordinate, qreal> fitData = p.fitViewportToGeoRectangle(m_visibleRegion,
+                                                                                 margins);
+        if (!fitData.first.isValid())
+            return;
 
         // position camera to the center of bounding box
-        setProperty("center", QVariant::fromValue(centerCoordinate)); // not using setCenter(centerCoordinate) to honor a possible animation set on the center property
+        setProperty("center", QVariant::fromValue(fitData.first)); // not using setCenter(centerCoordinate) to honor a possible animation set on the center property
 
-        // if the shape is empty we just change center position, not zoom
-        double bboxWidth  = (bottomRightPoint.x() - topLeftPoint.x()) * m_map->mapWidth();
-        double bboxHeight = (bottomRightPoint.y() - topLeftPoint.y()) * m_map->mapHeight();
-
-        if (bboxHeight == 0.0 && bboxWidth == 0.0)
+        if (!qIsFinite(fitData.second))
             return;
-
-        double zoomRatio = qMax(bboxWidth / (width() - margins),
-                                bboxHeight / (height() - margins));
-        zoomRatio = std::log(zoomRatio) / std::log(2.0);
-        double newZoom = qMax<double>(minimumZoomLevel(), zoomLevel() - zoomRatio);
+        double newZoom = qMax<double>(minimumZoomLevel(), fitData.second);
         setProperty("zoomLevel", QVariant::fromValue(newZoom)); // not using setZoomLevel(newZoom)  to honor a possible animation set on the zoomLevel property
     } else if (m_map->capabilities() & QGeoMap::SupportsFittingViewportToGeoRectangle) {
         // Animations cannot be honored in this case, as m_map act as a black box
@@ -2067,11 +2115,14 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
         setMinimumZoomLevel(m_map->minimumZoom(), false);
 
         // Update the center latitudinal threshold
-        double maximumCenterLatitudeAtZoom = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
-        if (maximumCenterLatitudeAtZoom != m_maximumViewportLatitude) {
+        const double maximumCenterLatitudeAtZoom = m_map->maximumCenterLatitudeAtZoom(m_cameraData);
+        const double minimumCenterLatitudeAtZoom = m_map->minimumCenterLatitudeAtZoom(m_cameraData);
+        if (maximumCenterLatitudeAtZoom != m_maximumViewportLatitude
+                || minimumCenterLatitudeAtZoom != m_minimumViewportLatitude) {
             m_maximumViewportLatitude = maximumCenterLatitudeAtZoom;
+            m_minimumViewportLatitude = minimumCenterLatitudeAtZoom;
             QGeoCoordinate coord = m_cameraData.center();
-            coord.setLatitude(qBound(-m_maximumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
+            coord.setLatitude(qBound(m_minimumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
 
             if (coord != m_cameraData.center()) {
                 m_cameraData.setCenter(coord);
