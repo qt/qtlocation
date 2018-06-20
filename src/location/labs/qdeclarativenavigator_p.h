@@ -75,6 +75,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigator : public QParameterizableO
     Q_PROPERTY(QDeclarativePositionSource *positionSource READ positionSource WRITE setPositionSource NOTIFY positionSourceChanged)
     Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(bool navigatorReady READ navigatorReady NOTIFY navigatorReadyChanged)
+    Q_PROPERTY(bool trackPositionSource READ trackPositionSource WRITE setTrackPositionSource NOTIFY trackPositionSourceChanged)
     Q_PROPERTY(QDeclarativeGeoRoute *currentRoute READ currentRoute NOTIFY currentRouteChanged)
     Q_PROPERTY(int currentSegment READ currentSegment NOTIFY currentSegmentChanged)
     Q_INTERFACES(QQmlParserStatus)
@@ -109,11 +110,15 @@ public:
     QNavigationManager *navigationManager() const;
     bool navigatorReady() const;
 
+    void setTrackPositionSource(bool trackPositionSource);
+    bool trackPositionSource() const;
+
     QDeclarativeGeoRoute *currentRoute() const;
     int currentSegment() const;
 
 signals:
     void navigatorReadyChanged(bool ready);
+    void trackPositionSourceChanged(bool trackPositionSource);
     void activeChanged(bool active);
     void waypointReached(const QDeclarativeGeoWaypoint *pos);
     void destinationReached();

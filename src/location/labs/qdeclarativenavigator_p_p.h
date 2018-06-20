@@ -84,6 +84,7 @@ public:
     bool m_active = false;
     bool m_completed = false;
     bool m_ready = false;
+    bool m_trackPositionSource = true;
 };
 
 QT_END_NAMESPACE
