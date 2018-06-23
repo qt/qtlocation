@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.5
 
-    \brief The MapPolygon type displays a polygon on a Map
+    \brief The MapPolygon type displays a polygon on a Map.
 
     The MapPolygon type displays a polygon on a Map, specified in terms of an ordered list of
     \l {QtPositioning::coordinate}{coordinates}. For best appearance and results, polygons should be

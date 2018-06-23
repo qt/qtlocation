@@ -482,12 +482,12 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
 
     m_source->setUpdateInterval(0);
 
-    QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1) && (timeout.count() == 0), 7000);
+    QTRY_VERIFY_WITH_TIMEOUT((spy.count() > 0) && (timeout.count() == 0), 7000);
     spy.clear();
 
     m_source->setUpdateInterval(0);
 
-    QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1) && (timeout.count() == 0), 7000);
+    QTRY_VERIFY_WITH_TIMEOUT((spy.count() > 0) && (timeout.count() == 0), 7000);
     spy.clear();
 
     m_source->stopUpdates();
