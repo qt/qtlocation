@@ -1,3 +1,4 @@
+requires(!html5)
 load(configure)
 qtCompileTest(gypsy)
 qtCompileTest(winrt)
