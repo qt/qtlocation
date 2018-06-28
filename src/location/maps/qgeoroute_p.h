@@ -55,6 +55,7 @@
 #include "qgeoroutesegment.h"
 
 #include <QSharedData>
+#include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -96,8 +97,17 @@ public:
 
     virtual QVariantMap metadata() const;
 
+    virtual void setRouteLegs(const QList<QGeoRouteLeg> &legs);
+    virtual QList<QGeoRouteLeg> routeLegs() const;
+
     virtual QString engineName() const = 0;
     virtual int segmentsCount() const = 0;
+
+    // QGeoRouteLeg API
+    virtual void setLegIndex(int idx);
+    virtual int legIndex() const;
+    virtual void setContainingRoute(const QGeoRoute &route);
+    virtual QGeoRoute containingRoute() const;
 
     static const QGeoRoutePrivate *routePrivateData(const QGeoRoute &route);
 
@@ -110,7 +120,7 @@ class Q_LOCATION_PRIVATE_EXPORT  QGeoRoutePrivateDefault : public QGeoRoutePriva
 public:
     QGeoRoutePrivateDefault();
     QGeoRoutePrivateDefault(const QGeoRoutePrivateDefault &other);
-    ~QGeoRoutePrivateDefault();
+    ~QGeoRoutePrivateDefault() override;
     virtual QGeoRoutePrivate *clone() override;
 
     virtual void setId(const QString &id) override;
@@ -140,6 +150,14 @@ public:
     virtual QString engineName() const override;
     virtual int segmentsCount() const override;
 
+    virtual void setRouteLegs(const QList<QGeoRouteLeg> &legs) override;
+    virtual QList<QGeoRouteLeg> routeLegs() const override;
+
+    // QGeoRouteLeg API
+    virtual void setLegIndex(int idx) override;
+    virtual int legIndex() const override;
+    virtual void setContainingRoute(const QGeoRoute &route) override;
+    virtual QGeoRoute containingRoute() const override;
 
     QString m_id;
     QGeoRouteRequest m_request;
@@ -153,9 +171,11 @@ public:
     QGeoRouteRequest::TravelMode m_travelMode;
 
     QList<QGeoCoordinate> m_path;
-
+    QList<QGeoRouteLeg> m_legs;
     QGeoRouteSegment m_firstSegment;
     mutable int m_numSegments;
+    QScopedPointer<QGeoRoute> m_containingRoute;
+    int m_legIndex = 0;
 };
 
 QT_END_NAMESPACE

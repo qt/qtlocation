@@ -79,12 +79,12 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoRoute::QDeclarativeGeoRoute(QObject *parent)
-    : QObject(parent), segmentsDirty_(true)
+    : QObject(parent)
 {
 }
 
 QDeclarativeGeoRoute::QDeclarativeGeoRoute(const QGeoRoute &route, QObject *parent)
-    : QObject(parent), route_(route), segmentsDirty_(true)
+    : QObject(parent), route_(route)
 {
 }
 
@@ -95,6 +95,7 @@ void QDeclarativeGeoRoute::initSegments(unsigned int lastIndex) // -1  turns it 
     if (!segmentsDirty_)
         return;
 
+    const bool isLeg = qobject_cast<QDeclarativeGeoRoute *>(parent());
     QGeoRouteSegment segment = route_.firstRouteSegment();
     unsigned int idx = 0;
     unsigned int initialListSize = static_cast<unsigned int>(segments_.size());
@@ -103,6 +104,10 @@ void QDeclarativeGeoRoute::initSegments(unsigned int lastIndex) // -1  turns it 
             QDeclarativeGeoRouteSegment *routeSegment = new QDeclarativeGeoRouteSegment(segment, this);
             QQmlEngine::setContextForObject(routeSegment, QQmlEngine::contextForObject(this));
             segments_.append(routeSegment);
+        }
+        if (isLeg && segment.isLegLastSegment()) {
+            segmentsDirty_ = false;
+            return;
         }
         ++idx;
         segment = segment.nextRouteSegment();
@@ -322,6 +327,31 @@ QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery()
 }
 
 /*!
+    \qmlproperty list<Route> QtLocation::Route::legs
+
+    Returns the route legs associated with this route.
+    Route legs are the sub-routes between each two adjacent waypoints.
+    The result may be empty, if this level of detail is not supported by the
+    backend.
+
+    \since QtLocation 5.12
+*/
+QList<QObject *> QDeclarativeGeoRoute::legs()
+{
+    // route_.routeLegs() is expected not to change.
+    // The following if condition is expected to be run only once.
+    if (route_.routeLegs().size() != legs_.size()) {
+        legs_.clear();
+        QList<QGeoRouteLeg> rlegs = route_.routeLegs();
+        for (const QGeoRouteLeg &r: rlegs) {
+            QDeclarativeGeoRouteLeg *dr = new QDeclarativeGeoRouteLeg(r, this);
+            legs_.append(dr);
+        }
+    }
+    return legs_;
+}
+
+/*!
     \qmlmethod bool QtLocation::Route::equals(Route other)
 
     This method performs deep comparison.
@@ -331,6 +361,63 @@ QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery()
 bool QDeclarativeGeoRoute::equals(QDeclarativeGeoRoute *other) const
 {
     return route_ == other->route_;
+}
+
+/*!
+    \qmltype RouteLeg
+    \instantiates QDeclarativeGeoRouteLeg
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-routing
+    \since QtLocation 5.12
+
+    \brief The RouteLeg type represents a leg of a Route, that is the portion
+    of a route between one waypoint and the next.
+
+    \note Since RouteLeg is a subclass of Route, QtLocation::Route::legs will
+    return an empty list if accessed on a route leg.
+*/
+
+/*!
+    \qmlproperty int QtLocation::RouteLeg::legIndex
+
+    Read-only property which holds the index of the leg within the containing Route's list of QtLocation::Route::legs .
+*/
+
+/*!
+    \qmlproperty Route QtLocation::RouteLeg::overallRoute
+
+    Read-only property which holds the Route that contains this leg.
+*/
+
+
+QDeclarativeGeoRouteLeg::QDeclarativeGeoRouteLeg(QObject *parent)
+    : QDeclarativeGeoRoute(parent)
+{
+
+}
+
+QDeclarativeGeoRouteLeg::QDeclarativeGeoRouteLeg(const QGeoRouteLeg &routeLeg, QObject *parent)
+    : QDeclarativeGeoRoute(routeLeg, parent), m_routeLeg(routeLeg)
+{
+
+}
+
+QDeclarativeGeoRouteLeg::~QDeclarativeGeoRouteLeg()
+{
+
+}
+
+int QDeclarativeGeoRouteLeg::legIndex() const
+{
+    return m_routeLeg.legIndex();
+}
+
+QObject *QDeclarativeGeoRouteLeg::overallRoute() const
+{
+    QDeclarativeGeoRoute *containingRoute = qobject_cast<QDeclarativeGeoRoute *>(parent());
+    if (Q_UNLIKELY(!containingRoute))
+        return new QDeclarativeGeoRoute(m_routeLeg.overallRoute(), parent());
+    return containingRoute;
 }
 
 QT_END_NAMESPACE

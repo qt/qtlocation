@@ -35,8 +35,11 @@
 ****************************************************************************/
 
 #include "qgeorouteparserosrmv5_p.h"
+#include "qgeoroute.h"
+#include "qgeoroute_p.h"
 #include "qgeorouteparser_p_p.h"
 #include "qgeoroutesegment.h"
+#include "qgeoroutesegment_p.h"
 #include "qgeomaneuver.h"
 
 #include <QtCore/private/qobject_p.h>
@@ -912,22 +915,26 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
         foreach (const QJsonValue &r, osrmRoutes) {
             if (!r.isObject())
                 continue;
-            QJsonObject route = r.toObject();
-            if (!route.value(QLatin1String("legs")).isArray())
+            QJsonObject routeObject = r.toObject();
+            if (!routeObject.value(QLatin1String("legs")).isArray())
                 continue;
-            if (!route.value(QLatin1String("duration")).isDouble())
+            if (!routeObject.value(QLatin1String("duration")).isDouble())
                 continue;
-            if (!route.value(QLatin1String("distance")).isDouble())
+            if (!routeObject.value(QLatin1String("distance")).isDouble())
                 continue;
 
-            double distance = route.value(QLatin1String("distance")).toDouble();
-            double travelTime = route.value(QLatin1String("duration")).toDouble();
+            double distance = routeObject.value(QLatin1String("distance")).toDouble();
+            double travelTime = routeObject.value(QLatin1String("duration")).toDouble();
             bool error = false;
             QList<QGeoRouteSegment> segments;
 
-            QJsonArray legs = route.value(QLatin1String("legs")).toArray();
+            QJsonArray legs = routeObject.value(QLatin1String("legs")).toArray();
+            QList<QGeoRouteLeg> routeLegs;
+            QGeoRoute route;
             for (int legIndex = 0; legIndex < legs.size(); ++legIndex) {
                 const QJsonValue &l = legs.at(legIndex);
+                QGeoRouteLeg routeLeg;
+                QList<QGeoRouteSegment> legSegments;
                 if (!l.isObject()) { // invalid leg record
                     error = true;
                     break;
@@ -937,16 +944,20 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                     error = true;
                     break;
                 }
+                const double legDistance = leg.value(QLatin1String("distance")).toDouble();
+                const double legTravelTime = leg.value(QLatin1String("duration")).toDouble();
                 QJsonArray steps = leg.value(QLatin1String("steps")).toArray();
+                QGeoRouteSegment segment;
                 for (int stepIndex = 0; stepIndex < steps.size(); ++stepIndex) {
                     const QJsonValue &s = steps.at(stepIndex);
                     if (!s.isObject()) {
                         error = true;
                         break;
                     }
-                    QGeoRouteSegment segment = parseStep(s.toObject(), legIndex, stepIndex);
+                    segment = parseStep(s.toObject(), legIndex, stepIndex);
                     if (segment.isValid()) {
-                        segments.append(segment);
+                        // setNextRouteSegment done below for all segments in the route.
+                        legSegments.append(segment);
                     } else {
                         error = true;
                         break;
@@ -954,6 +965,23 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                 }
                 if (error)
                     break;
+
+                QGeoRouteSegmentPrivate *segmentPrivate = QGeoRouteSegmentPrivate::get(segment);
+                segmentPrivate->setLegLastSegment(true);
+                QList<QGeoCoordinate> path;
+                for (const QGeoRouteSegment &s: qAsConst(legSegments))
+                    path.append(s.path());
+                routeLeg.setLegIndex(legIndex);
+                routeLeg.setOverallRoute(route); // QGeoRoute::d_ptr is explicitlySharedDataPointer. Modifiers below won't detach it.
+                routeLeg.setDistance(legDistance);
+                routeLeg.setTravelTime(legTravelTime);
+                if (!path.isEmpty()) {
+                    routeLeg.setPath(path);
+                    routeLeg.setFirstRouteSegment(legSegments.first());
+                }
+                routeLegs << routeLeg;
+
+                segments.append(legSegments);
             }
 
             if (!error) {
@@ -964,15 +992,15 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                 for (int i = segments.size() - 1; i > 0; --i)
                     segments[i-1].setNextRouteSegment(segments[i]);
 
-                QGeoRoute r;
-                r.setDistance(distance);
-                r.setTravelTime(travelTime);
+                route.setDistance(distance);
+                route.setTravelTime(travelTime);
                 if (!path.isEmpty()) {
-                    r.setPath(path);
-                    r.setFirstRouteSegment(segments.first());
+                    route.setPath(path);
+                    route.setFirstRouteSegment(segments.first());
                 }
+                route.setRouteLegs(routeLegs);
                 //r.setTravelMode(QGeoRouteRequest::CarTravel); // The only one supported by OSRM demo service, but other OSRM servers might do cycle or pedestrian too
-                routes.append(r);
+                routes.append(route);
             }
         }
 

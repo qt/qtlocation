@@ -95,6 +95,11 @@ QExplicitlySharedDataPointer<QGeoRoutePrivate> &QGeoRoute::d()
     return d_ptr;
 }
 
+const QExplicitlySharedDataPointer<QGeoRoutePrivate> &QGeoRoute::const_d() const
+{
+    return d_ptr;
+}
+
 /*!
     Constructs a route object from the contents of \a other.
 */
@@ -294,6 +299,28 @@ QList<QGeoCoordinate> QGeoRoute::path() const
     return d_ptr->path();
 }
 
+/*!
+    Sets the route legs for a multi-waypoint route.
+
+    \sa QGeoRouteLeg
+    \since 5.12
+*/
+void QGeoRoute::setRouteLegs(const QList<QGeoRouteLeg> &legs)
+{
+    d_ptr->setRouteLegs(legs);
+}
+
+/*!
+    Returns the legs for the route.
+
+    \sa QGeoRouteLeg
+    \since 5.12
+*/
+QList<QGeoRouteLeg> QGeoRoute::routeLegs() const
+{
+    return d_ptr->routeLegs();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -341,7 +368,8 @@ bool QGeoRoutePrivate::equals(const QGeoRoutePrivate &other) const
             && (distance() == other.distance())
             && (travelMode() == other.travelMode())
             && (path() == other.path())
-            && (metadata() == other.metadata()));
+            && (metadata() == other.metadata())
+            && (routeLegs() == other.routeLegs()));
 }
 
 void QGeoRoutePrivate::setId(const QString &id)
@@ -434,6 +462,36 @@ QVariantMap QGeoRoutePrivate::metadata() const
     return QVariantMap();
 }
 
+void QGeoRoutePrivate::setRouteLegs(const QList<QGeoRouteLeg> &/*legs*/)
+{
+
+}
+
+QList<QGeoRouteLeg> QGeoRoutePrivate::routeLegs() const
+{
+    return QList<QGeoRouteLeg>();
+}
+
+void QGeoRoutePrivate::setLegIndex(int /*idx*/)
+{
+
+}
+
+int QGeoRoutePrivate::legIndex() const
+{
+    return 0;
+}
+
+void QGeoRoutePrivate::setContainingRoute(const QGeoRoute &/*route*/)
+{
+
+}
+
+QGeoRoute QGeoRoutePrivate::containingRoute() const
+{
+    return QGeoRoute();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -454,6 +512,7 @@ QGeoRoutePrivateDefault::QGeoRoutePrivateDefault(const QGeoRoutePrivateDefault &
       m_distance(other.m_distance),
       m_travelMode(other.m_travelMode),
       m_path(other.m_path),
+      m_legs(other.m_legs),
       m_firstSegment(other.m_firstSegment),
       m_numSegments(other.m_numSegments){}
 
@@ -559,10 +618,124 @@ int QGeoRoutePrivateDefault::segmentsCount() const
     QGeoRouteSegment segment = m_firstSegment;
     while (segment.isValid()) {
         ++count;
+        if (segment.isLegLastSegment() && m_containingRoute.data()) // if containing route, this is a leg
+            break;
         segment = segment.nextRouteSegment();
     }
     m_numSegments = count;
     return count;
+}
+
+void QGeoRoutePrivateDefault::setRouteLegs(const QList<QGeoRouteLeg> &legs)
+{
+    m_legs = legs;
+}
+
+QList<QGeoRouteLeg> QGeoRoutePrivateDefault::routeLegs() const
+{
+    return m_legs;
+}
+
+void QGeoRoutePrivateDefault::setLegIndex(int idx)
+{
+    if (idx >= 0)
+        m_legIndex = idx;
+}
+
+int QGeoRoutePrivateDefault::legIndex() const
+{
+    return m_legIndex;
+}
+
+void QGeoRoutePrivateDefault::setContainingRoute(const QGeoRoute &route)
+{
+    QScopedPointer<QGeoRoute> containingRoute(new QGeoRoute(route));
+    m_containingRoute.swap(containingRoute);
+}
+
+QGeoRoute QGeoRoutePrivateDefault::containingRoute() const
+{
+    if (m_containingRoute)
+        return *m_containingRoute;
+    return QGeoRoute();
+}
+
+/*!
+    \class QGeoRouteLeg
+    \inmodule QtLocation
+    \ingroup QtLocation-routing
+    \since 5.12
+
+    \brief The QGeoRouteLeg class represents a leg of a route, that is the portion
+    of a route between one waypoint and the next.
+    This is a subclass of QGeoRoute, exposing route leg specific API.
+
+    \note QGeoRoute::routeLegs will return an empty list if called on a route leg.
+
+    \sa QGeoRoute
+*/
+
+/*!
+    Constructs a route leg object.
+*/
+
+QGeoRouteLeg::QGeoRouteLeg() : QGeoRoute()
+{
+
+}
+
+/*!
+    Constructs a route leg object from the contents of \a other.
+*/
+QGeoRouteLeg::QGeoRouteLeg(const QGeoRouteLeg &other) : QGeoRoute(other)
+{
+
+}
+
+/*!
+    Destroys this route object.
+*/
+QGeoRouteLeg::~QGeoRouteLeg()
+{
+
+}
+
+/*!
+    Sets the route leg index to \a idx.
+*/
+void QGeoRouteLeg::setLegIndex(int idx)
+{
+    d()->setLegIndex(idx);
+}
+
+/*!
+    Returns the index of this route leg inside the containing QGeoRoute::routeLegs list.
+    Can be used to find the next legs.
+*/
+int QGeoRouteLeg::legIndex() const
+{
+    return const_d()->legIndex();
+}
+
+/*!
+    Sets the \a route that contains this route leg.
+*/
+void QGeoRouteLeg::setOverallRoute(const QGeoRoute &route)
+{
+    d()->setContainingRoute(route);
+}
+
+/*!
+    Returns the \a route that contains this route leg.
+*/
+QGeoRoute QGeoRouteLeg::overallRoute() const
+{
+    return const_d()->containingRoute();
+}
+
+QGeoRouteLeg::QGeoRouteLeg(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd) : QGeoRoute(dd)
+{
+
 }
 
 QT_END_NAMESPACE
