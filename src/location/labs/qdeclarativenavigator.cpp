@@ -126,6 +126,19 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
+    \qmlproperty bool Qt.labs.location::Navigator::trackPositionSource
+
+    This property tells whether the Navigator should control the Map camera to
+    keep track of position source updates. This property is enabled (\c true) by
+    default, and setting it to \c false is useful in cases where e.g. the user
+    starts gesturing over the map area.
+
+    Navigator plugins can also control this property directly e.g. user map
+    interaction could trigger the property change. Honoring the user-specified
+    value of this property is plugin dependent.
+*/
+
+/*!
     \qmlproperty Route Qt.labs.location::Navigator::currentRoute
 
     This read-only property holds the current route the navigator following.
@@ -282,6 +295,21 @@ bool QDeclarativeNavigator::navigatorReady() const
     if (d_ptr->m_navigationManager)
         return d_ptr->m_navigationManager->ready();
     return d_ptr->m_ready;
+}
+
+bool QDeclarativeNavigator::trackPositionSource() const
+{
+    return d_ptr->m_trackPositionSource;
+}
+
+void QDeclarativeNavigator::setTrackPositionSource(bool trackPositionSource)
+{
+    if (trackPositionSource == d_ptr->m_trackPositionSource)
+        return;
+
+    d_ptr->m_trackPositionSource = trackPositionSource;
+
+    emit trackPositionSourceChanged(trackPositionSource);
 }
 
 QDeclarativeGeoRoute *QDeclarativeNavigator::currentRoute() const

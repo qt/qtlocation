@@ -43,10 +43,14 @@ available under the \l {http://www.opendatacommons.org/licenses/odbl}{Open Datab
 
 The Open Street Map geo services plugin can be loaded by using the plugin key "osm".
 
-\note Since Qt 5.6.2, the available map types offered by this plugin may change without notice depending on the
-actual availability of each provider. To prevent these changes, either a different geo service plugin should be used, or the plugin
+\note Since Qt 5.6.2, the available map types offered by this plugin may change (or be removed)
+without notice depending on the actual availability of a viable openly accessible provider for each type.
+This also implies that providers serving tiles over HTTPS may be used.
+This becomes relevant when using the OSM plugin on platforms, such as Android, for which SSL support is not built into Qt by default.
+To prevent these changes, either a different geo service plugin should be used, or the plugin
 parameter \e osm.mapping.providersrepository.address should be set to a user-specified repository, in order to take full control over
 (and accept \b responsibility for) selecting the provider that is used for each map type.
+Since Qt 5.9.6 the default nominatim endpoint, used for geocoding and places, has also changed to HTTPS-only.
 
 \section1 Parameters
 
