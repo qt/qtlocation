@@ -105,53 +105,53 @@ struct PolygonVariantConversions
     }
 };
 
-Q_GLOBAL_STATIC(PolygonVariantConversions, initPathConversions)
+Q_GLOBAL_STATIC(PolygonVariantConversions, initPolygonConversions)
 
 /*!
-    Constructs a new, empty geo path.
+    Constructs a new, empty geo polygon.
 */
 QGeoPolygon::QGeoPolygon()
 :   QGeoShape(new QGeoPolygonPrivate(QGeoShape::PolygonType))
 {
-    initPathConversions();
+    initPolygonConversions();
 }
 
 /*!
-    Constructs a new geo \a path from a list of coordinates.
+    Constructs a new geo \a polygon from a list of coordinates.
 */
 QGeoPolygon::QGeoPolygon(const QList<QGeoCoordinate> &path)
 :   QGeoShape(new QGeoPolygonPrivate(QGeoShape::PolygonType, path))
 {
-    initPathConversions();
+    initPolygonConversions();
 }
 
 /*!
-    Constructs a new geo path from the contents of \a other.
+    Constructs a new geo polygon from the contents of \a other.
 */
 QGeoPolygon::QGeoPolygon(const QGeoPolygon &other)
 :   QGeoShape(other)
 {
-    initPathConversions();
+    initPolygonConversions();
 }
 
 /*!
-    Constructs a new geo path from the contents of \a other.
+    Constructs a new geo polygon from the contents of \a other.
 */
 QGeoPolygon::QGeoPolygon(const QGeoShape &other)
 :   QGeoShape(other)
 {
-    initPathConversions();
+    initPolygonConversions();
     if (type() != QGeoShape::PolygonType)
         d_ptr = new QGeoPolygonPrivate(QGeoShape::PolygonType);
 }
 
 /*!
-    Destroys this path.
+    Destroys this polygon.
 */
 QGeoPolygon::~QGeoPolygon() {}
 
 /*!
-    Assigns \a other to this geo path and returns a reference to this geo path.
+    Assigns \a other to this geo polygon and returns a reference to this geo polygon.
 */
 QGeoPolygon &QGeoPolygon::operator=(const QGeoPolygon &other)
 {
@@ -160,7 +160,7 @@ QGeoPolygon &QGeoPolygon::operator=(const QGeoPolygon &other)
 }
 
 /*!
-    Returns whether this geo path is equal to \a other.
+    Returns whether this geo polygon is equal to \a other.
 */
 bool QGeoPolygon::operator==(const QGeoPolygon &other) const
 {
@@ -169,7 +169,7 @@ bool QGeoPolygon::operator==(const QGeoPolygon &other) const
 }
 
 /*!
-    Returns whether this geo path is not equal to \a other.
+    Returns whether this geo polygon is not equal to \a other.
 */
 bool QGeoPolygon::operator!=(const QGeoPolygon &other) const
 {
@@ -178,7 +178,7 @@ bool QGeoPolygon::operator!=(const QGeoPolygon &other) const
 }
 
 /*!
-    Sets the \a path from a list of coordinates.
+    Sets the \a polygon from a list of coordinates.
 */
 void QGeoPolygon::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -187,8 +187,7 @@ void QGeoPolygon::setPath(const QList<QGeoCoordinate> &path)
 }
 
 /*!
-    Returns all the elements. Equivalent to QGeoShape::center().
-    The center coordinate, in case of a QGeoPolygon, is the center of its bounding box.
+    Returns all the elements.
 */
 const QList<QGeoCoordinate> &QGeoPolygon::path() const
 {
@@ -197,7 +196,7 @@ const QList<QGeoCoordinate> &QGeoPolygon::path() const
 }
 
 /*!
-    Translates this geo path by \a degreesLatitude northwards and \a degreesLongitude eastwards.
+    Translates this geo polygon by \a degreesLatitude northwards and \a degreesLongitude eastwards.
 
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
     southward and westward translation respectively.
@@ -309,7 +308,7 @@ void QGeoPolygon::removeCoordinate(int index)
 }
 
 /*!
-    Returns the geo path properties as a string.
+    Returns the geo polygon properties as a string.
 */
 QString QGeoPolygon::toString() const
 {
