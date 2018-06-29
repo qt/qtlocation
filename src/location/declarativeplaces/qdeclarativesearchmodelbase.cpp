@@ -216,6 +216,7 @@ void QDeclarativeSearchModelBase::update()
 
     m_reply->setParent(this);
     connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
+    connect(m_reply, SIGNAL(contentUpdated()), this, SLOT(onContentUpdated()));
 }
 
 /*!
@@ -331,6 +332,11 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
     }
 
     endResetModel();
+}
+
+void QDeclarativeSearchModelBase::onContentUpdated()
+{
+
 }
 
 /*!

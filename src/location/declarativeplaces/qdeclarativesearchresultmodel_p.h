@@ -147,6 +147,7 @@ protected:
 
 protected Q_SLOTS:
     virtual void queryFinished() override;
+    virtual void onContentUpdated() override;
 
 private Q_SLOTS:
     void updateLayout(const QList<QPlace> &favoritePlaces = QList<QPlace>());

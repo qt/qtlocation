@@ -86,6 +86,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void finished();
+    void contentUpdated();
     void aborted();
     void error(QPlaceReply::Error error, const QString &errorString = QString());
 

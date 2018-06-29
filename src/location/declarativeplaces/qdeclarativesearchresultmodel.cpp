@@ -746,6 +746,8 @@ void QDeclarativeSearchResultModel::queryFinished()
         return;
     QPlaceReply *reply = m_reply;
     m_reply = 0;
+    reply->deleteLater();
+
     if (!m_incremental)
         m_pages.clear();
 
@@ -753,7 +755,6 @@ void QDeclarativeSearchResultModel::queryFinished()
         m_resultsBuffer.clear();
         updateLayout();
         setStatus(Error, reply->errorString());
-        reply->deleteLater();
         return;
     }
 
@@ -772,8 +773,7 @@ void QDeclarativeSearchResultModel::queryFinished()
         setPreviousPageRequest(searchReply->previousPageRequest());
         setNextPageRequest(searchReply->nextPageRequest());
 
-        reply->deleteLater();
-
+        // Performing favorite matching only upon finished()
         if (!m_favoritesPlugin) {
             updateLayout();
             setStatus(Ready);
@@ -795,7 +795,6 @@ void QDeclarativeSearchResultModel::queryFinished()
             QPlaceMatchRequest request;
             if (m_matchParameters.isEmpty()) {
                 if (!m_plugin) {
-                    reply->deleteLater();
                     setStatus(Error, QStringLiteral("Plugin not assigned"));
                     return;
                 }
@@ -812,16 +811,51 @@ void QDeclarativeSearchResultModel::queryFinished()
                 m_resultsBuffer.clear();
             m_reply = favoritesManager->matchingPlaces(request);
             connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
+            connect(m_reply, SIGNAL(contentUpdated()), this, SLOT(onContentUpdated()));
         }
     } else if (reply->type() == QPlaceReply::MatchReply) {
         QPlaceMatchReply *matchReply = qobject_cast<QPlaceMatchReply *>(reply);
         Q_ASSERT(matchReply);
         updateLayout(matchReply->places());
         setStatus(Ready);
-        reply->deleteLater();
     } else {
         setStatus(Error, QStringLiteral("Unknown reply type"));
-        reply->deleteLater();
+    }
+}
+
+void QDeclarativeSearchResultModel::onContentUpdated()
+{
+    if (!m_reply)
+        return;
+
+    QPlaceReply *reply = m_reply; // not finished, don't delete.
+
+    if (!m_incremental)
+        m_pages.clear();
+
+    if (reply->error() != QPlaceReply::NoError) {
+        m_resultsBuffer.clear();
+        updateLayout();
+        setStatus(Error, reply->errorString());
+        return;
+    }
+
+    if (reply->type() == QPlaceReply::SearchReply) {
+        QPlaceSearchReply *searchReply = qobject_cast<QPlaceSearchReply *>(reply);
+        Q_ASSERT(searchReply);
+
+        const QPlaceSearchRequestPrivate *rpimpl = QPlaceSearchRequestPrivate::get(searchReply->request());
+        if (!rpimpl->related || !m_incremental)
+            m_pages.clear();
+        m_resultsBuffer = searchReply->results();
+        if (!(m_pages.contains(rpimpl->page) && m_resultsBuffer == m_pages.value(rpimpl->page))) {
+            m_pages.insert(rpimpl->page, m_resultsBuffer);
+            updateLayout();
+        }
+    } else if (reply->type() == QPlaceReply::MatchReply) {
+        // ToDo: handle incremental match replies
+    } else {
+        setStatus(Error, QStringLiteral("Unknown reply type"));
     }
 }
 
