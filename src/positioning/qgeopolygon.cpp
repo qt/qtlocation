@@ -178,7 +178,7 @@ bool QGeoPolygon::operator!=(const QGeoPolygon &other) const
 }
 
 /*!
-    Sets the \a polygon from a list of coordinates.
+    Sets the \a polygon's boundary from a list of coordinates.
 */
 void QGeoPolygon::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -187,12 +187,42 @@ void QGeoPolygon::setPath(const QList<QGeoCoordinate> &path)
 }
 
 /*!
-    Returns all the elements.
+    Returns all the elements of the polygon's boundary.
 */
 const QList<QGeoCoordinate> &QGeoPolygon::path() const
 {
     Q_D(const QGeoPolygon);
     return d->path();
+}
+
+/*!
+    Sets all the elements of the polygon's perimeter.
+
+    \since QtPositioning 5.12
+*/
+void QGeoPolygon::setPerimeter(const QVariantList &path)
+{
+    Q_D(QGeoPolygon);
+    QList<QGeoCoordinate> p;
+    for (const auto &c: path) {
+        if (c.canConvert<QGeoCoordinate>())
+            p << c.value<QGeoCoordinate>();
+    }
+    d->setPath(p);
+}
+
+/*!
+    Returns all the elements of the polygon's perimeter.
+
+    \since QtPositioning 5.12
+*/
+QVariantList QGeoPolygon::perimeter() const
+{
+    Q_D(const QGeoPolygon);
+    QVariantList p;
+    for (const auto &c: d->path())
+        p << QVariant::fromValue(c);
+    return p;
 }
 
 /*!
