@@ -952,7 +952,11 @@ QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
         const QGeoRectangle &r = request_.excludeAreas().at(i);
 
         QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(r)));
+#if Q_QML_PRIVATE_API_VERSION >= 2
+        excludedAreasArray->put(i, cv);
+#else
         excludedAreasArray->putIndexed(i, cv);
+#endif
     }
 
     return QJSValue(v4, excludedAreasArray.asReturnedValue());

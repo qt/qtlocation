@@ -182,7 +182,11 @@ QJSValue QDeclarativeGeoRoute::path() const
         const QGeoCoordinate &c = route_.path().at(i);
 
         QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(c)));
+#if Q_QML_PRIVATE_API_VERSION >= 2
+        pathArray->put(i, cv);
+#else
         pathArray->putIndexed(i, cv);
+#endif
     }
 
     return QJSValue(v4, pathArray.asReturnedValue());
