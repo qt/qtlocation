@@ -159,11 +159,7 @@ QJSValue fromList(const QObject *object, const QList<QGeoCoordinate> &list)
     int i = 0;
     for (const auto &val : list) {
         QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(val)));
-#if Q_QML_PRIVATE_API_VERSION >= 2
         pathArray->put(i++, cv);
-#else
-        pathArray->putIndexed(i++, cv);
-#endif
     }
 
     return QJSValue(v4, pathArray.asReturnedValue());
