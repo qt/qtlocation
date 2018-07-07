@@ -243,7 +243,7 @@ QGeoPath LocationSingleton::path(const QJSValue &value, qreal width) const
     \sa {geopolygon}
     \since 5.10
 */
-QGeoPath LocationSingleton::polygon() const
+QGeoPolygon LocationSingleton::polygon() const
 {
     return QGeoPolygon();
 }
@@ -256,7 +256,7 @@ QGeoPath LocationSingleton::polygon() const
     \sa {geopolygon}
     \since 5.10
 */
-QGeoPath LocationSingleton::polygon(const QVariantList &coordinates) const
+QGeoPolygon LocationSingleton::polygon(const QVariantList &coordinates) const
 {
     QList<QGeoCoordinate> internalCoordinates;
     for (int i = 0; i < coordinates.size(); i++) {
