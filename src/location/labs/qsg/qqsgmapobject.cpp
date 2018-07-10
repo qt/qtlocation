@@ -50,7 +50,7 @@ QQSGMapObject::~QQSGMapObject()
 }
 
 QSGNode *QQSGMapObject::updateMapObjectNode(QSGNode *oldNode,
-                                            VisibleNode **/*visibleNode*/,
+                                            VisibleNode ** /*visibleNode*/,
                                             QSGNode * /*root*/,
                                             QQuickWindow * /*window*/)
 {

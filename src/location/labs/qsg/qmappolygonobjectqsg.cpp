@@ -78,7 +78,7 @@ QList<QDoubleVector2D> QMapPolygonObjectPrivateQSG::projectPath()
 QSGNode *QMapPolygonObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
                                                           VisibleNode **visibleNode,
                                                           QSGNode *root,
-                                                          QQuickWindow */*window*/)
+                                                          QQuickWindow * /*window*/)
 {
     Q_UNUSED(visibleNode)
     MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
