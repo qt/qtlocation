@@ -1039,9 +1039,9 @@ void QDeclarativeGeoMap::setMinimumTilt(qreal minimumTilt, bool userSet)
             m_userMinimumTilt = minimumTilt;
         qreal oldMinimumTilt = this->minimumTilt();
 
-        m_minimumTilt = qBound(m_cameraCapabilities.minimumTilt(),
-                               minimumTilt,
-                               m_cameraCapabilities.maximumTilt());
+        m_minimumTilt = qBound<double>(m_cameraCapabilities.minimumTilt(),
+                                       minimumTilt,
+                                       m_cameraCapabilities.maximumTilt());
 
         if (tilt() < m_minimumTilt)
             setTilt(m_minimumTilt);
@@ -1091,9 +1091,9 @@ void QDeclarativeGeoMap::setMinimumFieldOfView(qreal minimumFieldOfView, bool us
             m_userMinimumFieldOfView = minimumFieldOfView;
         qreal oldMinimumFoV = this->minimumFieldOfView();
 
-        m_minimumFieldOfView = qBound(m_cameraCapabilities.minimumFieldOfView(),
-                                      minimumFieldOfView,
-                                      m_cameraCapabilities.maximumFieldOfView());
+        m_minimumFieldOfView = qBound<double>(m_cameraCapabilities.minimumFieldOfView(),
+                                              minimumFieldOfView,
+                                              m_cameraCapabilities.maximumFieldOfView());
 
         if (fieldOfView() < m_minimumFieldOfView)
             setFieldOfView(m_minimumFieldOfView);
@@ -1128,9 +1128,9 @@ void QDeclarativeGeoMap::setMaximumFieldOfView(qreal maximumFieldOfView, bool us
             m_userMaximumFieldOfView = maximumFieldOfView;
         qreal oldMaximumFoV = this->maximumFieldOfView();
 
-        m_maximumFieldOfView = qBound(m_cameraCapabilities.minimumFieldOfView(),
-                                      maximumFieldOfView,
-                                      m_cameraCapabilities.maximumFieldOfView());
+        m_maximumFieldOfView = qBound<double>(m_cameraCapabilities.minimumFieldOfView(),
+                                              maximumFieldOfView,
+                                              m_cameraCapabilities.maximumFieldOfView());
 
         if (fieldOfView() > m_maximumFieldOfView)
             setFieldOfView(m_maximumFieldOfView);
@@ -1183,9 +1183,9 @@ void QDeclarativeGeoMap::setMaximumTilt(qreal maximumTilt, bool userSet)
             m_userMaximumTilt = maximumTilt;
         qreal oldMaximumTilt = this->maximumTilt();
 
-        m_maximumTilt = qBound(m_cameraCapabilities.minimumTilt(),
-                               maximumTilt,
-                               m_cameraCapabilities.maximumTilt());
+        m_maximumTilt = qBound<double>(m_cameraCapabilities.minimumTilt(),
+                                       maximumTilt,
+                                       m_cameraCapabilities.maximumTilt());
 
         if (tilt() > m_maximumTilt)
             setTilt(m_maximumTilt);
