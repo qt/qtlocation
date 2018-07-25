@@ -39,7 +39,6 @@
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapitembase_p.h"
-#include "mapitemviewdelegateincubator_p.h"
 
 #include <QtCore/QAbstractItemModel>
 #include <QtQml/QQmlContext>

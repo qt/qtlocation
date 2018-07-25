@@ -5,7 +5,6 @@ INCLUDEPATH += declarativemaps
 PRIVATE_HEADERS += \
         declarativemaps/error_messages_p.h \
         declarativemaps/locationvaluetypehelper_p.h \
-        declarativemaps/mapitemviewdelegateincubator_p.h \
         declarativemaps/qdeclarativecirclemapitem_p.h \
         declarativemaps/qdeclarativegeocodemodel_p.h \
         declarativemaps/qdeclarativegeomaneuver_p.h \
