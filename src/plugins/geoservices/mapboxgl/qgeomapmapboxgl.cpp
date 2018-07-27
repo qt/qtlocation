@@ -126,11 +126,15 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
     }
 
     if (m_syncState & VisibleAreaSync) {
-        QMargins margins(m_visibleArea.x(),                                                     // left
-                         m_visibleArea.y(),                                                     // top
-                         m_viewportSize.width() - m_visibleArea.width() - m_visibleArea.x(),    // right
-                         m_viewportSize.height() - m_visibleArea.height() - m_visibleArea.y()); // bottom
-        map->setMargins(margins);
+        if (m_visibleArea.isEmpty()) {
+            map->setMargins(QMargins());
+        } else {
+            QMargins margins(m_visibleArea.x(),                                                     // left
+                             m_visibleArea.y(),                                                     // top
+                             m_viewportSize.width() - m_visibleArea.width() - m_visibleArea.x(),    // right
+                             m_viewportSize.height() - m_visibleArea.height() - m_visibleArea.y()); // bottom
+            map->setMargins(margins);
+        }
     }
 
     if (m_syncState & CameraDataSync || m_syncState & VisibleAreaSync) {
