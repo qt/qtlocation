@@ -354,4 +354,82 @@ QString QGeoPolygon::toString() const
     return QStringLiteral("QGeoPolygon([ %1 ])").arg(pathString);
 }
 
+/*!
+   Sets the \a path for a hole inside the polygon. The hole is a QVariant containing a QList<QGeoCoordinate>.
+
+   \since 5.12
+*/
+void QGeoPolygon::addHole(const QVariant &holePath)
+{
+    Q_D(QGeoPolygon);
+    QList<QGeoCoordinate> qgcHolePath;
+    if (holePath.canConvert<QVariantList>()) {
+        const QVariantList qvlHolePath = holePath.toList();
+        for (const QVariant &vertex : qvlHolePath) {
+            if (vertex.canConvert<QGeoCoordinate>())
+                qgcHolePath << vertex.value<QGeoCoordinate>();
+        }
+    }
+    //ToDo: add QGeoShape support
+    return d->addHole(qgcHolePath);
+}
+
+/*!
+   Overloaded method. Sets the \a path for a hole inside the polygon. The hole is a QList<QGeoCoordinate>.
+
+   \since 5.12
+*/
+void QGeoPolygon::addHole(const QList<QGeoCoordinate> &holePath)
+{
+    Q_D(QGeoPolygon);
+    return d->addHole(holePath);
+}
+
+/*!
+    Returns a QVariant containing a QVariant containing a QList<QGeoCoordinate> which represents the hole at index.
+
+    \since 5.12
+*/
+const QVariantList QGeoPolygon::hole(int index) const
+{
+    Q_D(const QGeoPolygon);
+    QVariantList holeCoordinates;
+    for (const QGeoCoordinate &coords: d->holePath(index))
+        holeCoordinates << QVariant::fromValue(coords);
+    return holeCoordinates;
+}
+
+/*!
+    Returns a QList<QGeoCoordinate> which represents the hole at \a index.
+
+    \since 5.12
+*/
+const QList<QGeoCoordinate> QGeoPolygon::holePath(int index) const
+{
+    Q_D(const QGeoPolygon);
+    return d->holePath(index);
+}
+
+/*!
+    Removes element at position \a index from the holes QList.
+
+    \since 5.12
+*/
+void QGeoPolygon::removeHole(int index)
+{
+    Q_D(QGeoPolygon);
+    return d->removeHole(index);
+}
+
+/*!
+    Returns the number of holes.
+
+    \since 5.12
+*/
+int QGeoPolygon::holesCount() const
+{
+    Q_D(const QGeoPolygon);
+    return d->holesCount();
+}
+
 QT_END_NAMESPACE

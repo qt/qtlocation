@@ -73,6 +73,12 @@ public:
     void setPath(const QList<QGeoCoordinate> &path); // ### Qt6: rename into setPerimeter
     const QList<QGeoCoordinate> &path() const;
 
+    Q_INVOKABLE void addHole(const QVariant &holePath);
+                void addHole(const QList<QGeoCoordinate> &holePath);
+    Q_INVOKABLE const QVariantList hole(int index) const;
+                const QList<QGeoCoordinate> holePath(int index) const;
+    Q_INVOKABLE void removeHole(int index);
+    Q_INVOKABLE int holesCount() const;
     Q_INVOKABLE void translate(double degreesLatitude, double degreesLongitude);
     Q_INVOKABLE QGeoPolygon translated(double degreesLatitude, double degreesLongitude) const;
     Q_INVOKABLE double length(int indexFrom = 0, int indexTo = -1) const;

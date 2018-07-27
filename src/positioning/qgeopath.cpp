@@ -38,6 +38,7 @@
 ****************************************************************************/
 
 #include "qgeopath.h"
+#include "qgeopolygon.h"
 #include "qgeopath_p.h"
 
 #include "qgeocoordinate.h"
@@ -580,10 +581,25 @@ bool QGeoPathPrivate::lineContains(const QGeoCoordinate &coordinate) const
     return (m_path[0].distanceTo(coordinate) <= lineRadius);
 }
 
+/*!
+    modified version of polygonContains with holes support.
+*/
 bool QGeoPathPrivate::polygonContains(const QGeoCoordinate &coordinate) const
 {
     if (m_clipperDirty)
         const_cast<QGeoPathPrivate *>(this)->updateClipperPath();
+
+    // iterates the holes List checking whether the point is contained inside the holes
+    for (const QList<QGeoCoordinate> &holePath : qAsConst(m_holesList)) {
+
+        QGeoPolygon holePolygon;
+        holePolygon.setPath(holePath);
+        QGeoPath holeBoundary;
+        holeBoundary.setPath(holePath);
+
+        if (holePolygon.contains(coordinate) && !(holeBoundary.contains(coordinate)))
+            return false;
+    }
 
     QDoubleVector2D coord = QWebMercator::coordToMercator(coordinate);
     double tlx = QWebMercator::coordToMercator(m_bbox.topLeft()).x();
@@ -620,6 +636,14 @@ void QGeoPathPrivate::translate(double degreesLatitude, double degreesLongitude)
     for (QGeoCoordinate &p: m_path) {
         p.setLatitude(p.latitude() + degreesLatitude);
         p.setLongitude(QLocationUtils::wrapLong(p.longitude() + degreesLongitude));
+    }
+    if (!m_holesList.isEmpty()){
+        for (QList<QGeoCoordinate> &hole: m_holesList){
+            for (QGeoCoordinate &holeVertex: hole){
+                holeVertex.setLatitude(holeVertex.latitude() + degreesLatitude);
+                holeVertex.setLongitude(QLocationUtils::wrapLong(holeVertex.longitude() + degreesLongitude));
+            }
+        }
     }
     m_bbox.translate(degreesLatitude, degreesLongitude);
     m_minLati += degreesLatitude;
@@ -800,4 +824,46 @@ void QGeoPathPrivate::updateClipperPath()
     m_clipperPath = QClipperUtils::qListToPath(preservedPath);
 }
 
+
+/*!
+    Sets the \a path for an Hole inside the polygon.The hole has QList<QGeoCoordinate> type
+*/
+void QGeoPathPrivate::addHole(const QList<QGeoCoordinate> &holePath)
+{
+    for (const QGeoCoordinate &holeVertex: holePath)
+        if (!holeVertex.isValid())
+            return;
+
+    m_holesList << holePath;
+}
+
+/*!
+    Returns a QVariant containing a QList<QGeoCoordinate> representing the hole at index
+*/
+const QList<QGeoCoordinate> QGeoPathPrivate::holePath(int index) const
+{
+    return m_holesList.at(index);
+}
+
+
+/*!
+    Removes element at position \a index from the holes QList.
+*/
+void QGeoPathPrivate::removeHole(int index)
+{
+    if (index < 0 || index >= m_holesList.size())
+        return;
+
+    m_holesList.removeAt(index);
+}
+
+/*!
+    Returns the number of holes.
+*/
+int QGeoPathPrivate::holesCount() const
+{
+    return m_holesList.size();
+}
+
 QT_END_NAMESPACE
+

@@ -101,8 +101,14 @@ public:
     void computeBoundingBox();
     void updateBoundingBox();
     void updateClipperPath();
+    void addHole(const QList<QGeoCoordinate> &holePath);
+    const QList<QGeoCoordinate> holePath(int index) const;
+    void removeHole(int index);
+    int holesCount() const;
+
 
     QList<QGeoCoordinate> m_path;
+    QList<QList<QGeoCoordinate>> m_holesList;
     QVector<double> m_deltaXs; // longitude deltas from m_path[0]
     double m_minX;             // minimum value inside deltaXs
     double m_maxX;             // maximum value inside deltaXs
