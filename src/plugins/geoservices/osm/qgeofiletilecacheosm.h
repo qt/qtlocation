@@ -66,20 +66,17 @@ protected Q_SLOTS:
 
 protected:
     void init() override;
+    inline QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, int providerId) const;
     QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const override;
     QGeoTileSpec filenameToTileSpec(const QString &filename) const override;
     QSharedPointer<QGeoTileTexture> getFromOfflineStorage(const QGeoTileSpec &spec);
     void dropTiles(int mapId);
     void loadTiles(int mapId);
 
-    void initOfflineRegistry(int mapId);
     void clearObsoleteTiles(const QGeoTileProviderOsm *p);
 
-    QString m_offlineDirectory;
-    QHash<QGeoTileSpec, QString> m_tilespecToOfflineFilepath;
-    QMap<int, QAtomicInt> m_requestCancel;
-    QMap<int, QFuture<void>> m_mapIdFutures;
-    QMutex storageLock;
+    QDir m_offlineDirectory;
+    bool m_offlineData;
     QVector<QGeoTileProviderOsm *> m_providers;
     QVector<bool> m_highDpi;
     QVector<QDateTime> m_maxMapIdTimestamps;
