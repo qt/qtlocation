@@ -82,4 +82,5 @@ SUBDIRS += \
            qgeopositioninfosource \
            qgeosatelliteinfo \
            qgeosatelliteinfosource \
+           qgeojson \
            qnmeapositioninfosource
