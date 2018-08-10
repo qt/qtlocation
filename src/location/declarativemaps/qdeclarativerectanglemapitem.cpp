@@ -352,6 +352,24 @@ const QGeoShape &QDeclarativeRectangleMapItem::geoShape() const
     return rectangle_;
 }
 
+void QDeclarativeRectangleMapItem::setGeoShape(const QGeoShape &shape)
+{
+    if (shape == rectangle_)
+        return;
+
+    const QGeoRectangle rectangle = rectangle_.boundingGeoRectangle();
+    const bool tlHasChanged = rectangle.topLeft() != rectangle_.topLeft();
+    const bool brHasChanged = rectangle.bottomRight() != rectangle_.bottomRight();
+    rectangle_ = rectangle;
+
+    updatePath();
+    markSourceDirtyAndUpdate();
+    if (tlHasChanged)
+        emit topLeftChanged(rectangle_.topLeft());
+    if (brHasChanged)
+        emit bottomRightChanged(rectangle_.bottomRight());
+}
+
 QGeoMap::ItemType QDeclarativeRectangleMapItem::itemType() const
 {
     return QGeoMap::MapRectangle;

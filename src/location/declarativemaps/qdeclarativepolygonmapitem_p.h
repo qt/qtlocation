@@ -52,6 +52,7 @@
 #include <QtLocation/private/qdeclarativegeomapitembase_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 #include <QtLocation/private/qgeomapitemgeometry_p.h>
+#include <QtPositioning/qgeopolygon.h>
 
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
@@ -106,6 +107,7 @@ public:
 
     bool contains(const QPointF &point) const override;
     const QGeoShape &geoShape() const override;
+    void setGeoShape(const QGeoShape &shape) override;
     QGeoMap::ItemType itemType() const override;
 
 Q_SIGNALS:
@@ -125,7 +127,7 @@ private:
     void regenerateCache();
     void updateCache();
 
-    QGeoPath geopath_;
+    QGeoPolygon geopath_;
     QList<QDoubleVector2D> geopathProjected_;
     QDeclarativeMapLineProperties border_;
     QColor color_;

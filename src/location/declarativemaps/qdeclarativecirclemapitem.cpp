@@ -606,6 +606,24 @@ const QGeoShape &QDeclarativeCircleMapItem::geoShape() const
     return circle_;
 }
 
+void QDeclarativeCircleMapItem::setGeoShape(const QGeoShape &shape)
+{
+    if (shape == circle_)
+        return;
+
+    const QGeoCircle circle(shape); // if shape isn't a circle, circle will be created as a default-constructed circle
+    const bool centerHasChanged = circle.center() != circle_.center();
+    const bool radiusHasChanged = circle.radius() != circle_.radius();
+    circle_ = circle;
+
+    updateCirclePath();
+    markSourceDirtyAndUpdate();
+    if (centerHasChanged)
+        emit centerChanged(circle_.center());
+    if (radiusHasChanged)
+        emit radiusChanged(circle_.radius());
+}
+
 QGeoMap::ItemType QDeclarativeCircleMapItem::itemType() const
 {
     return QGeoMap::MapCircle;

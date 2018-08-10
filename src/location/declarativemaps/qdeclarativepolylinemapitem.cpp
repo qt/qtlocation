@@ -998,6 +998,22 @@ const QGeoShape &QDeclarativePolylineMapItem::geoShape() const
     return geopath_;
 }
 
+void QDeclarativePolylineMapItem::setGeoShape(const QGeoShape &shape)
+{
+    if (shape == geopath_)
+        return;
+
+    const QGeoPath geopath(shape); // if shape isn't a path, path will be created as a default-constructed path
+    const bool pathHasChanged = geopath.path() != geopath_.path();
+    geopath_ = geopath;
+
+    regenerateCache();
+    geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markSourceDirtyAndUpdate();
+    if (pathHasChanged)
+        emit pathChanged();
+}
+
 QGeoMap::ItemType QDeclarativePolylineMapItem::itemType() const
 {
     return QGeoMap::MapPolyline;

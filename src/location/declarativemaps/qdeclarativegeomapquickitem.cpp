@@ -346,6 +346,21 @@ const QGeoShape &QDeclarativeGeoMapQuickItem::geoShape() const
     return geoshape_;
 }
 
+void QDeclarativeGeoMapQuickItem::setGeoShape(const QGeoShape &shape)
+{
+    if (shape == geoshape_)
+        return;
+
+    const QGeoRectangle rect = shape.boundingGeoRectangle();
+    geoshape_ = rect;
+    coordinate_ = rect.center();
+
+    // TODO: Handle zoomLevel != 0.0
+    polishAndUpdate();
+    emit coordinateChanged();
+
+}
+
 QGeoMap::ItemType QDeclarativeGeoMapQuickItem::itemType() const
 {
     return QGeoMap::MapQuickItem;

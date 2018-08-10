@@ -615,6 +615,19 @@ const QGeoShape &QDeclarativePolygonMapItem::geoShape() const
     return geopath_;
 }
 
+void QDeclarativePolygonMapItem::setGeoShape(const QGeoShape &shape)
+{
+    if (shape == geopath_)
+        return;
+
+    geopath_ = shape;
+    regenerateCache();
+    geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
+    markSourceDirtyAndUpdate();
+    emit pathChanged();
+}
+
 QGeoMap::ItemType QDeclarativePolygonMapItem::itemType() const
 {
     return QGeoMap::MapPolygon;

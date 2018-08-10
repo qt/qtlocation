@@ -83,7 +83,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QGeoShape geoShape READ geoShape STORED false )
+    Q_PROPERTY(QGeoShape geoShape READ geoShape WRITE setGeoShape STORED false )
 public:
     explicit QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
     virtual ~QDeclarativeGeoMapItemBase();
@@ -94,6 +94,7 @@ public:
     QDeclarativeGeoMap *quickMap() { return quickMap_; }
     QGeoMap *map() { return map_; }
     virtual const QGeoShape &geoShape() const = 0;
+    virtual void setGeoShape(const QGeoShape &shape) = 0;
 
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);

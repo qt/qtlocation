@@ -313,20 +313,9 @@ Item {
             compare(geopath.path.length, mapPolyline.pathLength())
             compare(geopath.boundingGeoRectangle(), mapPolyline.geoShape.boundingGeoRectangle())
 
-            mapPolylineGeopath.path = mapPolyline.path
+            mapPolylineGeopath.geoShape = geopath
             compare(mapPolylineGeopath.pathLength(), mapPolyline.pathLength())
             compare(mapPolylineGeopath.geoShape.boundingGeoRectangle(), mapPolyline.geoShape.boundingGeoRectangle())
-
-            try {
-                var err = false;
-                mapPolylineGeopath.geoShape = geopath
-            } catch (e) {
-                if (e.message != 'Cannot assign to read-only property "geoShape"')
-                    fail('Expected  Cannot assign to read-only property "geoShape", got: ' + e.message);
-                err = true;
-            } finally {
-                verify(err, 'should throw Cannot assign to read-only property "geoShape"');
-            }
 
             geopath.path = trace2
             geopath.path[0].longitude = 11.0
