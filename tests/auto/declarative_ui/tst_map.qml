@@ -239,6 +239,7 @@ Item {
 
             compare(mapPar.mapParameters.length, 1)
 
+            // Using toCoordinate, below, to verify the actual value of the center, and not what is in the map.center property
             center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
             fuzzyCompare(center.latitude, -33, 0.1)
             fuzzyCompare(center.longitude, -47, 0.1)
@@ -253,19 +254,21 @@ Item {
             fuzzyCompare(center.latitude, -33, 0.1)
             fuzzyCompare(center.longitude, -47, 0.1)
 
-            testParameter.center = mapPar.center  // map.center has not been affected as it lives in the Declarative Map
+            testParameter.center = mapPar.center  // map.center has been affected as the Declarative Map has received the QGeoMap::cameraDataChanged signal
             mapPar.addMapParameter(testParameter)
             compare(mapPar.mapParameters.length, 1)
 
             center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
-            fuzzyCompare(center.latitude, 10, 0.1)
-            fuzzyCompare(center.longitude, 11, 0.1)
-
-            testParameter.center = QtPositioning.coordinate(-33.0, -47.0)
-
-            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
             fuzzyCompare(center.latitude, -33, 0.1)
             fuzzyCompare(center.longitude, -47, 0.1)
+
+            testParameter.center = QtPositioning.coordinate(-30.0, -40.0)
+
+            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
+            fuzzyCompare(center.latitude, -30, 0.1)
+            fuzzyCompare(center.longitude, -40, 0.1)
+            fuzzyCompare(mapPar.center.latitude, -30, 0.1)
+            fuzzyCompare(mapPar.center.longitude, -40, 0.1)
 
             mapPar.removeMapParameter(testParameter)
             compare(mapPar.mapParameters.length, 0)

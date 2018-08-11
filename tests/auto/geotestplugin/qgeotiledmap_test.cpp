@@ -98,9 +98,8 @@ QGeoTiledMapTest::QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine,
 
 void QGeoTiledMapTest::onCameraCenter_testChanged(QGeoMapParameter *param, const char *propertyName)
 {
-    Q_D(QGeoTiledMapTest);
     if (strcmp(propertyName, "center") == 0) {
-        QGeoCameraData cameraData = d->m_cameraData;
+        QGeoCameraData cameraData = this->cameraData();
         // Not testing for propertyName as this param has only one allowed property
         QGeoCoordinate newCenter = param->property(propertyName).value<QGeoCoordinate>();
         cameraData.setCenter(newCenter);

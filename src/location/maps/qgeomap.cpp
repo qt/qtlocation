@@ -146,7 +146,7 @@ QGeoShape QGeoMap::visibleRegion() const
     return geoProjection().visibleRegion();
 }
 
-QGeoCameraData QGeoMap::cameraData() const
+const QGeoCameraData &QGeoMap::cameraData() const
 {
     Q_D(const QGeoMap);
     return d->m_cameraData;

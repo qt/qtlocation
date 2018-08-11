@@ -271,6 +271,7 @@ private Q_SLOTS:
     void onSupportedMapTypesChanged();
     void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
     void onAttachedCopyrightNoticeVisibilityChanged();
+    void onCameraDataChanged(const QGeoCameraData &cameraData);
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);

@@ -108,7 +108,7 @@ public:
     int viewportHeight() const;
 
 
-    QGeoCameraData cameraData() const;
+    const QGeoCameraData &cameraData() const;
     QGeoCameraCapabilities cameraCapabilities() const;
     virtual Capabilities capabilities() const;
 
