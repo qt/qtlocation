@@ -878,7 +878,10 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
         cameraData.setCenter(coord);
         m_map->setCameraData(cameraData);
     } else {
+        const bool zlHasChanged = zoomLevel != m_cameraData.zoomLevel();
         m_cameraData.setZoomLevel(zoomLevel);
+        if (zlHasChanged)
+            emit zoomLevelChanged(zoomLevel);
     }
 }
 
@@ -959,7 +962,10 @@ void QDeclarativeGeoMap::setBearing(qreal bearing)
         cameraData.setBearing(bearing);
         m_map->setCameraData(cameraData);
     } else {
+        const bool bearingHasChanged = bearing != m_cameraData.bearing();
         m_cameraData.setBearing(bearing);
+        if (bearingHasChanged)
+            emit bearingChanged(bearing);
     }
 }
 
@@ -1021,7 +1027,10 @@ void QDeclarativeGeoMap::setTilt(qreal tilt)
         cameraData.setTilt(tilt);
         m_map->setCameraData(cameraData);
     } else {
+        const bool tiltHasChanged = tilt != m_cameraData.tilt();
         m_cameraData.setTilt(tilt);
+        if (tiltHasChanged)
+            emit tiltChanged(tilt);
     }
 }
 
@@ -1076,7 +1085,10 @@ void QDeclarativeGeoMap::setFieldOfView(qreal fieldOfView)
         cameraData.setFieldOfView(fieldOfView);
         m_map->setCameraData(cameraData);
     } else {
+        const bool fovChanged = fieldOfView != m_cameraData.fieldOfView();
         m_cameraData.setFieldOfView(fieldOfView);
+        if (fovChanged)
+            emit fieldOfViewChanged(fieldOfView);
     }
 }
 
@@ -1240,7 +1252,10 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
         cameraData.setCenter(coord);
         m_map->setCameraData(cameraData);
     } else {
+        const bool centerHasChanged = center != m_cameraData.center();
         m_cameraData.setCenter(center);
+        if (centerHasChanged)
+            emit centerChanged(center);
     }
 }
 
