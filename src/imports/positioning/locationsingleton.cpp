@@ -40,6 +40,7 @@
 #include "locationsingleton.h"
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QDebug>
 
 static QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 {
@@ -264,6 +265,39 @@ QGeoPolygon LocationSingleton::polygon(const QVariantList &coordinates) const
             internalCoordinates << coordinates.at(i).value<QGeoCoordinate>();
     }
     return QGeoPolygon(internalCoordinates);
+}
+
+/*!
+    \qmlmethod geopolygon QtPositioning::polygon(list<coordinate> perimeter, list<list<coordinate>> holes) const
+
+    Constructs a polygon from coordinates for perimeter and inner holes.
+
+    \sa {geopolygon}
+    \since 5.12
+*/
+QGeoPolygon LocationSingleton::polygon(const QVariantList &perimeter, const QVariantList &holes) const
+{
+    QList<QGeoCoordinate> internalCoordinates;
+    for (int i = 0; i < perimeter.size(); i++) {
+        if (perimeter.at(i).canConvert<QGeoCoordinate>())
+            internalCoordinates << perimeter.at(i).value<QGeoCoordinate>();
+    }
+    QGeoPolygon poly(internalCoordinates);
+
+    for (int i = 0; i < holes.size(); i++) {
+        if (holes.at(i).type() == QVariant::List) {
+            QList<QGeoCoordinate> hole;
+            const QVariantList &holeData = holes.at(i).toList();
+            for (int j = 0; j < holeData.size(); j++) {
+                if (holeData.at(j).canConvert<QGeoCoordinate>())
+                    hole << holeData.at(j).value<QGeoCoordinate>();
+            }
+            if (hole.size())
+                poly.addHole(hole);
+        }
+    }
+
+    return poly;
 }
 
 /*!

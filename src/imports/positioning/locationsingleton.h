@@ -80,6 +80,7 @@ public:
 
     Q_INVOKABLE QGeoPolygon polygon() const;
     Q_INVOKABLE QGeoPolygon polygon(const QVariantList &value) const;
+    Q_INVOKABLE QGeoPolygon polygon(const QVariantList &perimeter, const QVariantList &holes) const;
 
     Q_INVOKABLE QGeoCircle shapeToCircle(const QGeoShape &shape) const;
     Q_INVOKABLE QGeoRectangle shapeToRectangle(const QGeoShape &shape) const;
