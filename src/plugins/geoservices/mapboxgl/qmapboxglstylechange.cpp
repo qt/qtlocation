@@ -41,6 +41,7 @@
 #include <QtCore/QRegularExpression>
 #include <QtCore/QStringList>
 #include <QtPositioning/QGeoPath>
+#include <QtPositioning/QGeoPolygon>
 #include <QtQml/QJSValue>
 
 namespace {
@@ -66,7 +67,7 @@ QString getId(QDeclarativeGeoMapItemBase *mapItem)
 // Mapbox GL supports geometry segments that spans above 180 degrees in
 // longitude. To keep visual expectations in parity with Qt, we need to adapt
 // the coordinates to always use the shortest path when in ambiguity.
-bool geoRectangleCrossesDateLine(const QGeoRectangle &rect) {
+static bool geoRectangleCrossesDateLine(const QGeoRectangle &rect) {
     return rect.topLeft().longitude() > rect.bottomRight().longitude();
 }
 
@@ -112,24 +113,35 @@ QMapbox::Feature featureFromMapCircle(QDeclarativeCircleMapItem *mapItem)
     return QMapbox::Feature(QMapbox::Feature::PolygonType, geometry, {}, getId(mapItem));
 }
 
-QMapbox::Feature featureFromMapPolygon(QDeclarativePolygonMapItem *mapItem)
+static QMapbox::Coordinates qgeocoordinate2mapboxcoordinate(const QList<QGeoCoordinate> &crds, const bool crossesDateline, bool closed = false)
 {
-    const QGeoPath *path = static_cast<const QGeoPath *>(&mapItem->geoShape());
     QMapbox::Coordinates coordinates;
-    const bool crossesDateline = geoRectangleCrossesDateLine(path->boundingGeoRectangle());
-    for (const QGeoCoordinate &coordinate : path->path()) {
+    for (const QGeoCoordinate &coordinate : crds) {
         if (!coordinates.empty() && crossesDateline && qAbs(coordinate.longitude() - coordinates.last().second) > 180.0) {
             coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() + (coordinate.longitude() >= 0 ? -360.0 : 360.0) };
         } else {
             coordinates << QMapbox::Coordinate { coordinate.latitude(), coordinate.longitude() };
         }
     }
+    if (closed && !coordinates.empty() && coordinates.last() != coordinates.first())
+        coordinates.append(coordinates.first());  // closing the path
+    return coordinates;
+}
 
-    if (!coordinates.empty())
-        coordinates.append(coordinates.first()); // closing the path
+QMapbox::Feature featureFromMapPolygon(QDeclarativePolygonMapItem *mapItem)
+{
+    const QGeoPolygon *polygon = static_cast<const QGeoPolygon *>(&mapItem->geoShape());
+    const bool crossesDateline = geoRectangleCrossesDateLine(polygon->boundingGeoRectangle());
+    QMapbox::CoordinatesCollections geometry;
+    QMapbox::CoordinatesCollection poly;
+    QMapbox::Coordinates coordinates = qgeocoordinate2mapboxcoordinate(polygon->path(), crossesDateline, true);
+    poly.push_back(coordinates);
+    for (int i = 0; i < polygon->holesCount(); ++i) {
+        coordinates = qgeocoordinate2mapboxcoordinate(polygon->holePath(i), crossesDateline, true);
+        poly.push_back(coordinates);
+    }
 
-    QMapbox::CoordinatesCollections geometry { { coordinates } };
-
+    geometry.push_back(poly);
     return QMapbox::Feature(QMapbox::Feature::PolygonType, geometry, {}, getId(mapItem));
 }
 
