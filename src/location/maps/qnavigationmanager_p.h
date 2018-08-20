@@ -51,6 +51,7 @@
 #include <QObject>
 #include <QSize>
 #include <QPair>
+#include <QLocale>
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapparameter_p.h>
 
@@ -58,11 +59,11 @@ QT_BEGIN_NAMESPACE
 
 class QNavigationManagerEngine;
 class QNavigationManagerPrivate;
-class QDeclarativeNavigatorPrivate;
+class QDeclarativeNavigatorParams;
 class QDeclarativeGeoWaypoint;
 class QGeoRoute;
 class QGeoRouteSegment;
-
+class QAbstractNavigator;
 class Q_LOCATION_PRIVATE_EXPORT QNavigationManager : public QObject
 {
     Q_OBJECT
@@ -75,32 +76,19 @@ public:
     QNavigationManagerEngine *engine();
     bool isInitialized() const;
 
-    void setNavigator(QDeclarativeNavigatorPrivate *navigator);
-    QDeclarativeNavigatorPrivate *declarativeNavigator() const;
-
     void setLocale(const QLocale &locale);
     QLocale locale() const;
+    void setMeasurementSystem(QLocale::MeasurementSystem system);
+    QLocale::MeasurementSystem measurementSystem() const;
 
-    void setParameters(const QList<QGeoMapParameter *> &parameters);
-    QList<QGeoMapParameter *> parameters() const;
-
-    bool ready() const;
-    bool start();
-    bool stop();
-    bool active() const;
+    QAbstractNavigator *createNavigator(const QSharedPointer<QDeclarativeNavigatorParams> &navigator);
 
 Q_SIGNALS:
     void initialized();
 
-    // These must be emitted by the engine
-    void activeChanged(bool active);
-    void waypointReached(const QDeclarativeGeoWaypoint *pos);
-    void destinationReached();
-    void currentRouteChanged(const QGeoRoute &route);
-    void currentSegmentChanged(int segment);
 
 protected:
-    QNavigationManager(QNavigationManagerEngine *engine, QObject *parent = 0);
+    QNavigationManager(QNavigationManagerEngine *engine, QObject *parent = nullptr);
 
 private:
     QNavigationManagerPrivate *d_ptr;

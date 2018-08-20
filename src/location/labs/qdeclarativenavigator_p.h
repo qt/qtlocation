@@ -107,7 +107,6 @@ public:
     void setPositionSource(QDeclarativePositionSource *positionSource);
     QDeclarativePositionSource *positionSource() const;
 
-    QNavigationManager *navigationManager() const;
     bool navigatorReady() const;
 
     void setTrackPositionSource(bool trackPositionSource);
