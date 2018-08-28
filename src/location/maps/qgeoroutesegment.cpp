@@ -147,6 +147,21 @@ bool QGeoRouteSegment::isValid() const
 }
 
 /*!
+    Returns whether this route segment is the last segment of a route leg.
+
+    \since 5.12
+*/
+bool QGeoRouteSegment::isLegLastSegment() const
+{
+    if (!d_ptr->valid())
+        return false;
+
+    if (!d_ptr->nextRouteSegment())
+        return true;
+    return d_ptr->isLegLastSegment();
+}
+
+/*!
     Sets the next route segment in the route to \a routeSegment.
 */
 void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
@@ -163,8 +178,8 @@ void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
 */
 QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
 {
-    if (d_ptr->valid() && d_ptr->m_nextSegment)
-        return QGeoRouteSegment(d_ptr->m_nextSegment);
+    if (d_ptr->valid() && d_ptr->nextRouteSegment())
+        return QGeoRouteSegment(d_ptr->nextRouteSegment());
 
     return QGeoRouteSegment();
 }
@@ -286,6 +301,16 @@ void QGeoRouteSegmentPrivate::setValid(bool valid)
     Q_UNUSED(valid)
 }
 
+bool QGeoRouteSegmentPrivate::isLegLastSegment() const
+{
+    return false;
+}
+
+void QGeoRouteSegmentPrivate::setLegLastSegment(bool lastSegment)
+{
+    Q_UNUSED(lastSegment)
+}
+
 int QGeoRouteSegmentPrivate::travelTime() const
 {
     return 0;
@@ -336,6 +361,11 @@ void QGeoRouteSegmentPrivate::setNextRouteSegment(const QExplicitlySharedDataPoi
     m_nextSegment = next;
 }
 
+QGeoRouteSegmentPrivate *QGeoRouteSegmentPrivate::get(QGeoRouteSegment &segment)
+{
+    return segment.d_ptr.data();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -381,6 +411,16 @@ bool QGeoRouteSegmentPrivateDefault::valid() const
 void QGeoRouteSegmentPrivateDefault::setValid(bool valid)
 {
     m_valid = valid;
+}
+
+bool QGeoRouteSegmentPrivateDefault::isLegLastSegment() const
+{
+    return m_legLastSegment;
+}
+
+void QGeoRouteSegmentPrivateDefault::setLegLastSegment(bool lastSegment)
+{
+    m_legLastSegment = lastSegment;
 }
 
 int QGeoRouteSegmentPrivateDefault::travelTime() const

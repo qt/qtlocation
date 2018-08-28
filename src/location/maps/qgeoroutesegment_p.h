@@ -74,6 +74,9 @@ public:
     virtual bool valid() const;
     virtual void setValid(bool valid);
 
+    virtual bool isLegLastSegment() const;
+    virtual void setLegLastSegment(bool lastSegment);
+
     virtual int travelTime() const;
     virtual void setTravelTime(int travelTime);
 
@@ -90,6 +93,7 @@ public:
     virtual void setNextRouteSegment(const QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &next);
 
     QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> m_nextSegment;
+    static QGeoRouteSegmentPrivate *get(QGeoRouteSegment &segment);
 
 protected:
     virtual bool equals(const QGeoRouteSegmentPrivate &other) const;
@@ -110,6 +114,9 @@ public:
     virtual bool valid() const override;
     virtual void setValid(bool valid) override;
 
+    virtual bool isLegLastSegment() const override;
+    virtual void setLegLastSegment(bool lastSegment) override;
+
     virtual int travelTime() const override;
     virtual void setTravelTime(int travelTime) override;
 
@@ -124,6 +131,7 @@ public:
 
 
     bool m_valid;
+    bool m_legLastSegment = false;
     int m_travelTime;
     qreal m_distance;
     QList<QGeoCoordinate> m_path;

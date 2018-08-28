@@ -127,6 +127,13 @@ void QGeoRouteReplyMapbox::networkReplyFinished()
 
     QByteArray routeReply = reply->readAll();
     QGeoRouteReply::Error error = parser->parseReply(routes, errorString, routeReply);
+    // Setting the request into the result
+    for (QGeoRoute &route : routes) {
+        route.setRequest(request());
+        for (QGeoRoute &leg: route.routeLegs()) {
+            leg.setRequest(request());
+        }
+    }
 
     QVariantMap metadata;
     metadata["osrm.reply-json"] = routeReply;
