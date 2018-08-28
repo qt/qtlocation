@@ -41,9 +41,10 @@
 #define QGEOPOSITIONINFOSOURCE_GEOCLUE2_P_H
 
 #include <QtPositioning/QGeoPositionInfoSource>
+#include <QtCore/QPointer>
+#include <manager_interface.h>
 
 class OrgFreedesktopGeoClue2ClientInterface;
-class OrgFreedesktopGeoClue2ManagerInterface;
 
 QT_BEGIN_NAMESPACE
 class QDBusObjectPath;
@@ -74,7 +75,7 @@ private:
     void setError(QGeoPositionInfoSource::Error error);
     void restoreLastPosition();
     void saveLastPosition();
-    void createClient(const QString &service);
+    void createClient();
     bool configureClient();
     void startClient();
     void stopClient();
@@ -83,8 +84,8 @@ private:
                            const QDBusObjectPath &newLocation);
 
     QTimer *m_requestTimer = nullptr;
-    OrgFreedesktopGeoClue2ManagerInterface *m_manager = nullptr;
-    OrgFreedesktopGeoClue2ClientInterface *m_client = nullptr;
+    OrgFreedesktopGeoClue2ManagerInterface m_manager;
+    QPointer<OrgFreedesktopGeoClue2ClientInterface> m_client;
     bool m_running = false;
     bool m_lastPositionFromSatellite = false;
     QGeoPositionInfoSource::Error m_error = NoError;

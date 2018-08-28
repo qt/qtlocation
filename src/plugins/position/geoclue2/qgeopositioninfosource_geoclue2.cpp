@@ -48,7 +48,6 @@
 // Auto-generated D-Bus files.
 #include <client_interface.h>
 #include <location_interface.h>
-#include <manager_interface.h>
 
 Q_DECLARE_LOGGING_CATEGORY(lcPositioningGeoclue2)
 
@@ -81,6 +80,10 @@ static QString lastPositionFilePath()
 QGeoPositionInfoSourceGeoclue2::QGeoPositionInfoSourceGeoclue2(QObject *parent)
     : QGeoPositionInfoSource(parent)
     , m_requestTimer(new QTimer(this))
+    , m_manager(QLatin1String(GEOCLUE2_SERVICE_NAME),
+                QStringLiteral("/org/freedesktop/GeoClue2/Manager"),
+                QDBusConnection::systemBus(),
+                this)
 {
     qDBusRegisterMetaType<Timestamp>();
 
@@ -89,25 +92,6 @@ QGeoPositionInfoSourceGeoclue2::QGeoPositionInfoSourceGeoclue2(QObject *parent)
     m_requestTimer->setSingleShot(true);
     connect(m_requestTimer, &QTimer::timeout,
             this, &QGeoPositionInfoSourceGeoclue2::requestUpdateTimeout);
-
-    const auto flags = QDBusServiceWatcher::WatchForRegistration;
-    const auto serviceWatcher = new QDBusServiceWatcher(
-                QLatin1String(GEOCLUE2_SERVICE_NAME),
-                QDBusConnection::systemBus(),
-                flags,
-                this);
-    connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered,
-            this, &QGeoPositionInfoSourceGeoclue2::createClient);
-
-    if (const auto iface = QDBusConnection::systemBus().interface()) {
-        if (iface->isServiceRegistered(QLatin1String(GEOCLUE2_SERVICE_NAME)))
-            createClient(QLatin1String(GEOCLUE2_SERVICE_NAME));
-        else
-            iface->startService(QLatin1String(GEOCLUE2_SERVICE_NAME));
-    } else {
-        qCCritical(lcPositioningGeoclue2) << "D-Bus connection interface is not exists";
-        setError(AccessError);
-    }
 }
 
 QGeoPositionInfoSourceGeoclue2::~QGeoPositionInfoSourceGeoclue2()
@@ -130,11 +114,25 @@ QGeoPositionInfo QGeoPositionInfoSourceGeoclue2::lastKnownPosition(bool fromSate
 
 QGeoPositionInfoSourceGeoclue2::PositioningMethods QGeoPositionInfoSourceGeoclue2::supportedPositioningMethods() const
 {
-    if (m_manager) {
-        return m_manager->availableAccuracyLevel() == GCLUE_ACCURACY_LEVEL_EXACT
-            ? AllPositioningMethods : NonSatellitePositioningMethods;
+    bool ok;
+    const auto accuracy = m_manager.property("AvailableAccuracyLevel").toUInt(&ok);
+    if (!ok) {
+        const_cast<QGeoPositionInfoSourceGeoclue2 *>(this)->setError(AccessError);
+        return NoPositioningMethods;
     }
-    return NoPositioningMethods;
+
+    switch (accuracy) {
+    case GCLUE_ACCURACY_LEVEL_COUNTRY:
+    case GCLUE_ACCURACY_LEVEL_CITY:
+    case GCLUE_ACCURACY_LEVEL_NEIGHBORHOOD:
+    case GCLUE_ACCURACY_LEVEL_STREET:
+        return NonSatellitePositioningMethods;
+    case GCLUE_ACCURACY_LEVEL_EXACT:
+        return AllPositioningMethods;
+    case GCLUE_ACCURACY_LEVEL_NONE:
+    default:
+        return NoPositioningMethods;
+    }
 }
 
 void QGeoPositionInfoSourceGeoclue2::setPreferredPositioningMethods(PositioningMethods methods)
@@ -163,6 +161,8 @@ void QGeoPositionInfoSourceGeoclue2::startUpdates()
     qCDebug(lcPositioningGeoclue2) << "Starting updates";
     m_running = true;
 
+    startClient();
+
     if (m_lastPosition.isValid()) {
         QMetaObject::invokeMethod(this, "positionUpdated", Qt::QueuedConnection,
                                   Q_ARG(QGeoPositionInfo, m_lastPosition));
@@ -179,9 +179,7 @@ void QGeoPositionInfoSourceGeoclue2::stopUpdates()
     qCDebug(lcPositioningGeoclue2) << "Stopping updates";
     m_running = false;
 
-    // Only stop positioning if single update not requested.
-    if (!m_requestTimer->isActive() && m_client)
-        stopClient();
+    stopClient();
 }
 
 void QGeoPositionInfoSourceGeoclue2::requestUpdate(int timeout)
@@ -197,8 +195,7 @@ void QGeoPositionInfoSourceGeoclue2::requestUpdate(int timeout)
     }
 
     m_requestTimer->start(timeout ? timeout : UPDATE_TIMEOUT_COLD_START);
-    if (!m_running)
-        startClient();
+    startClient();
 }
 
 void QGeoPositionInfoSourceGeoclue2::setError(QGeoPositionInfoSource::Error error)
@@ -236,35 +233,9 @@ void QGeoPositionInfoSourceGeoclue2::saveLastPosition()
 #endif
 }
 
-void QGeoPositionInfoSourceGeoclue2::createClient(const QString &service)
+void QGeoPositionInfoSourceGeoclue2::createClient()
 {
-    if (service != QLatin1String(GEOCLUE2_SERVICE_NAME)) {
-        qCCritical(lcPositioningGeoclue2) << "Registered unexpected service:"
-                                          << service << ", expected:"
-                                          << GEOCLUE2_SERVICE_NAME;
-        setError(UnknownSourceError);
-        return;
-    }
-
-    if (!m_manager) {
-        m_manager = new OrgFreedesktopGeoClue2ManagerInterface(
-                    QLatin1String(GEOCLUE2_SERVICE_NAME),
-                    QStringLiteral("/org/freedesktop/GeoClue2/Manager"),
-                    QDBusConnection::systemBus(),
-                    this);
-    }
-
-    if (!m_manager->isValid()) {
-        const auto error = m_manager->lastError();
-        qCCritical(lcPositioningGeoclue2) << "Unable to create the manager object:"
-                                          << error.name() << error.message();
-        setError(AccessError);
-        delete m_manager;
-        m_manager = nullptr;
-        return;
-    }
-
-    const QDBusPendingReply<QDBusObjectPath> reply = m_manager->GetClient();
+    const QDBusPendingReply<QDBusObjectPath> reply = m_manager.GetClient();
     const auto watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, &QDBusPendingCallWatcher::finished,
             [this](QDBusPendingCallWatcher *watcher) {
@@ -292,13 +263,11 @@ void QGeoPositionInfoSourceGeoclue2::createClient(const QString &service)
                                                   << error.name() << error.message();
                 setError(AccessError);
                 delete m_client;
-                m_client = nullptr;
             } else {
                 connect(m_client, &OrgFreedesktopGeoClue2ClientInterface::LocationUpdated,
                         this, &QGeoPositionInfoSourceGeoclue2::handleNewLocation);
 
-                // only start the client if someone asked for it already
-                if (configureClient() && (m_running || m_requestTimer->isActive()))
+                if (configureClient())
                     startClient();
             }
         }
@@ -307,9 +276,12 @@ void QGeoPositionInfoSourceGeoclue2::createClient(const QString &service)
 
 void QGeoPositionInfoSourceGeoclue2::startClient()
 {
+    // only start the client if someone asked for it already
+    if (!m_running && !m_requestTimer->isActive())
+        return;
+
     if (!m_client) {
-        qCWarning(lcPositioningGeoclue2) << "Unable to start the client "
-                                            "due to it is not created yet";
+        createClient();
         return;
     }
 
@@ -325,6 +297,7 @@ void QGeoPositionInfoSourceGeoclue2::startClient()
             qCCritical(lcPositioningGeoclue2) << "Unable to start the client:"
                                               << error.name() << error.message();
             setError(AccessError);
+            delete m_client;
         } else {
             qCDebug(lcPositioningGeoclue2) << "Client successfully started";
 
@@ -340,11 +313,9 @@ void QGeoPositionInfoSourceGeoclue2::startClient()
 
 void QGeoPositionInfoSourceGeoclue2::stopClient()
 {
-    if (!m_client) {
-        qCWarning(lcPositioningGeoclue2) << "Unable to stop the client "
-                                            "due to it is not created yet";
+    // Only stop client if updates are no longer wanted.
+    if (m_requestTimer->isActive() || m_running || !m_client)
         return;
-    }
 
     const QDBusPendingReply<> reply = m_client->Stop();
     const auto watcher = new QDBusPendingCallWatcher(reply, this);
@@ -361,16 +332,14 @@ void QGeoPositionInfoSourceGeoclue2::stopClient()
         } else {
             qCDebug(lcPositioningGeoclue2) << "Client successfully stopped";
         }
+        delete m_client;
     });
 }
 
 bool QGeoPositionInfoSourceGeoclue2::configureClient()
 {
-    if (!m_client) {
-        qCWarning(lcPositioningGeoclue2) << "Unable to configure the client "
-                                            "due to it is not created yet";
+    if (!m_client)
         return false;
-    }
 
     auto desktopId = QString::fromUtf8(qgetenv("QT_GEOCLUE_APP_DESKTOP_ID"));
     if (desktopId.isEmpty())
@@ -387,7 +356,7 @@ bool QGeoPositionInfoSourceGeoclue2::configureClient()
     m_client->setDesktopId(desktopId);
 
     const auto msecs = updateInterval();
-    const auto secs = msecs / 1000;
+    const uint secs = qMax(uint(msecs), 0u) / 1000u;
     m_client->setTimeThreshold(secs);
 
     const auto methods = preferredPositioningMethods();
@@ -415,8 +384,7 @@ void QGeoPositionInfoSourceGeoclue2::requestUpdateTimeout()
 
     emit updateTimeout();
 
-    if (!m_running)
-        stopClient();
+    stopClient();
 }
 
 void QGeoPositionInfoSourceGeoclue2::handleNewLocation(const QDBusObjectPath &oldLocation,
@@ -450,7 +418,7 @@ void QGeoPositionInfoSourceGeoclue2::handleNewLocation(const QDBusObjectPath &ol
             const auto dt = QDateTime::currentDateTime();
             m_lastPosition = QGeoPositionInfo(coordinate, dt);
         } else {
-            auto dt = QDateTime::fromSecsSinceEpoch(ts.m_seconds);
+            auto dt = QDateTime::fromSecsSinceEpoch(qint64(ts.m_seconds));
             dt = dt.addMSecs(ts.m_microseconds / 1000);
             m_lastPosition = QGeoPositionInfo(coordinate, dt);
         }
@@ -469,8 +437,7 @@ void QGeoPositionInfoSourceGeoclue2::handleNewLocation(const QDBusObjectPath &ol
         qCDebug(lcPositioningGeoclue2) << "New position:" << m_lastPosition;
     }
 
-    if (!m_running)
-        stopClient();
+    stopClient();
 }
 
 QT_END_NAMESPACE
