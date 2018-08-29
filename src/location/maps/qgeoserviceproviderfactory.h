@@ -44,6 +44,7 @@
 #include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
+class QQmlEngine;
 
 class Q_LOCATION_EXPORT QGeoServiceProviderFactory
 {
@@ -81,6 +82,19 @@ public:
 // casting a QObject * into QGeoServiceProviderFactoryV2 *
 Q_DECLARE_INTERFACE(QGeoServiceProviderFactoryV2,
                     "org.qt-project.qt.geoservice.serviceproviderfactoryV2/5.0")
+
+class Q_LOCATION_EXPORT QGeoServiceProviderFactoryV3 : public QGeoServiceProviderFactoryV2
+{
+public:
+    virtual ~QGeoServiceProviderFactoryV3() {}
+
+    virtual void setQmlEngine(QQmlEngine * engine);
+};
+
+// Although not actually used for constructing a specialized loader, this is required for
+// casting a QObject * into QGeoServiceProviderFactoryV3 *
+Q_DECLARE_INTERFACE(QGeoServiceProviderFactoryV3,
+                    "org.qt-project.qt.geoservice.serviceproviderfactoryV3/5.0")
 
 QT_END_NAMESPACE
 

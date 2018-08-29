@@ -63,6 +63,8 @@ class QGeoMappingManager;
 
 class QGeoServiceProviderFactory;
 class QGeoServiceProviderFactoryV2;
+class QGeoServiceProviderFactoryV3;
+class QQmlEngine;
 
 class QGeoServiceProviderPrivate
 {
@@ -84,6 +86,7 @@ public:
 
     QGeoServiceProviderFactory *factory;
     QGeoServiceProviderFactoryV2 *factoryV2 = nullptr;
+    QGeoServiceProviderFactoryV3 *factoryV3 = nullptr;
     QJsonObject metaData;
 
     QVariantMap parameterMap;
@@ -96,6 +99,7 @@ public:
     QGeoMappingManager *mappingManager;
     QPlaceManager *placeManager;
     QNavigationManager *navigationManager = nullptr;
+    QQmlEngine *qmlEngine = nullptr;
 
     QGeoServiceProvider::Error geocodeError;
     QGeoServiceProvider::Error routingError;
