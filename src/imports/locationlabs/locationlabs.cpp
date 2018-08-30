@@ -74,9 +74,6 @@ public:
             qmlRegisterType<QMapPolygonObject>(uri, major, minor, "MapPolygonObject");
             qmlRegisterType<QMapPolylineObject>(uri, major, minor, "MapPolylineObject");
             qmlRegisterType<QDeclarativeNavigator>(uri, major, minor, "Navigator");
-
-            // Register the latest Qt version as QML type version
-            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }
