@@ -59,7 +59,7 @@ QGeoRouteSegmentPrivate *QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate>::
     A QGeoRouteSegment instance has information about the physical layout
     of the route segment, the length of the route and estimated time required
     to traverse the route segment and an optional QGeoManeuver associated with
-    the end of the route segment.
+    the beginning of the route segment.
 
     QGeoRouteSegment instances can be thought of as edges on a routing
     graph, with QGeoManeuver instances as optional labels attached to the
@@ -257,7 +257,7 @@ void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
     Returns the maneuver for this route segment.
 
     Will return an invalid QGeoManeuver if no information has been attached
-    to the endpoint of this route segment.
+    to the starting point of this route segment.
 */
 QGeoManeuver QGeoRouteSegment::maneuver() const
 {
