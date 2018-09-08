@@ -146,6 +146,7 @@ void QDeclarativeGeoServiceProvider::tryAttach()
         return;
 
     sharedProvider_ = new QGeoServiceProvider(name_, parameterMap());
+    sharedProvider_->setQmlEngine(qmlEngine(this));
     sharedProvider_->setLocale(locales_.at(0));
     sharedProvider_->setAllowExperimental(experimental_);
 

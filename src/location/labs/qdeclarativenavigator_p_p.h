@@ -63,23 +63,29 @@ class QDeclarativePositionSource;
 class QGeoMapParameter;
 class QDeclarativeGeoRouteSegment;
 class QParameterizableObject;
+class QAbstractNavigator;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigatorPrivate
+class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigatorParams
+{
+public:
+    QPointer<QDeclarativeGeoMap> m_map;
+    QPointer<QDeclarativeGeoRoute> m_route;
+    QGeoRoute m_geoRoute;
+    QPointer<QDeclarativePositionSource> m_positionSource;
+    QList<QPointer<QGeoMapParameter>> m_parameters;
+};
+
+class QDeclarativeNavigatorPrivate
 {
 public:
     QDeclarativeNavigatorPrivate(QParameterizableObject *q_);
 
     void updateReadyState();
-
     QParameterizableObject *q = nullptr;
-    QNavigationManager *m_navigationManager = nullptr;
+    QSharedPointer<QDeclarativeNavigatorParams> m_params;
+    QScopedPointer<QAbstractNavigator> m_navigator;
     QDeclarativeGeoServiceProvider *m_plugin = nullptr;
-    QPointer<QDeclarativeGeoMap> m_map;
-    QPointer<QDeclarativeGeoRoute> m_route;
-    QGeoRoute m_geoRoute;
-    QPointer<QDeclarativePositionSource> m_positionSource;
     QPointer<QDeclarativeGeoRoute> m_currentRoute;
-    QList<QGeoMapParameter *> m_parameters;
     int m_currentSegment = 0;
     bool m_active = false;
     bool m_completed = false;

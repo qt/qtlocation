@@ -175,7 +175,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeNavigatorPrivate::QDeclarativeNavigatorPrivate(QParameterizableObject *q_)
-    : q(q_)
+    : q(q_), m_params(new QDeclarativeNavigatorParams)
 {
 }
 
@@ -203,7 +203,8 @@ void QDeclarativeNavigator::componentComplete()
 {
     d_ptr->m_completed = true;
     // Children have been completed
-    d_ptr->m_parameters = quickChildren<QGeoMapParameter>();
+    for (auto param : quickChildren<QGeoMapParameter>())
+        d_ptr->m_params->m_parameters.push_back(param);
     if (d_ptr->m_plugin && d_ptr->m_plugin->isAttached())
         pluginReady();
 }
@@ -215,12 +216,12 @@ QDeclarativeGeoServiceProvider *QDeclarativeNavigator::plugin() const
 
 void QDeclarativeNavigator::setMap(QDeclarativeGeoMap *map)
 {
-    if (d_ptr->m_map || !map) // set once prop
+    if (d_ptr->m_params->m_map || !map) // set once prop
         return;
 
-    d_ptr->m_map = map;
+    d_ptr->m_params->m_map = map;
     QDeclarativeNavigatorPrivate *dptr = d_ptr.data();
-    connect(map, &QObject::destroyed,
+    connect(map, &QObject::destroyed, this,
             [this, dptr]() {
                 this->mapChanged();
                 dptr->updateReadyState();
@@ -231,21 +232,21 @@ void QDeclarativeNavigator::setMap(QDeclarativeGeoMap *map)
 
 QDeclarativeGeoMap *QDeclarativeNavigator::map() const
 {
-    return d_ptr->m_map;
+    return d_ptr->m_params->m_map;
 }
 
 void QDeclarativeNavigator::setRoute(QDeclarativeGeoRoute *route)
 {
-    if (d_ptr->m_route == route) // This isn't set-once
+    if (d_ptr->m_params->m_route == route) // This isn't set-once
         return;
 
-    const bool isReady = d_ptr->m_navigationManager && d_ptr->m_navigationManager->ready();
+    const bool isReady = d_ptr->m_navigator && d_ptr->m_navigator->ready();
     const bool isActive = active();
     if (isReady && isActive)
         setActive(false); // Stop current session
 
-    d_ptr->m_route = route;
-    d_ptr->m_geoRoute = route ? route->route() : QGeoRoute();
+    d_ptr->m_params->m_route = route;
+    d_ptr->m_params->m_geoRoute = route ? route->route() : QGeoRoute();
     if (route) {
         connect(route, &QObject::destroyed,
                 [this]() {
@@ -260,15 +261,15 @@ void QDeclarativeNavigator::setRoute(QDeclarativeGeoRoute *route)
 
 QDeclarativeGeoRoute *QDeclarativeNavigator::route() const
 {
-    return d_ptr->m_route;
+    return d_ptr->m_params->m_route;
 }
 
 void QDeclarativeNavigator::setPositionSource(QDeclarativePositionSource *positionSource)
 {
-    if (d_ptr->m_positionSource || !positionSource) // set once prop
+    if (d_ptr->m_params->m_positionSource || !positionSource) // set once prop
         return;
 
-    d_ptr->m_positionSource = positionSource;
+    d_ptr->m_params->m_positionSource = positionSource;
     QDeclarativeNavigatorPrivate *dptr = d_ptr.data();
     QObject::connect(positionSource, &QObject::destroyed,
             [this, dptr]() {
@@ -282,18 +283,14 @@ void QDeclarativeNavigator::setPositionSource(QDeclarativePositionSource *positi
 
 QDeclarativePositionSource *QDeclarativeNavigator::positionSource() const
 {
-    return d_ptr->m_positionSource;
+    return d_ptr->m_params->m_positionSource;
 }
 
-QNavigationManager *QDeclarativeNavigator::navigationManager() const
-{
-    return d_ptr->m_navigationManager;
-}
 
 bool QDeclarativeNavigator::navigatorReady() const
 {
-    if (d_ptr->m_navigationManager)
-        return d_ptr->m_navigationManager->ready();
+    if (d_ptr->m_navigator)
+        return d_ptr->m_navigator->ready();
     return d_ptr->m_ready;
 }
 
@@ -314,14 +311,14 @@ void QDeclarativeNavigator::setTrackPositionSource(bool trackPositionSource)
 
 QDeclarativeGeoRoute *QDeclarativeNavigator::currentRoute() const
 {
-    if (!d_ptr->m_ready || !d_ptr->m_navigationManager->active())
-        return d_ptr->m_route.data();
+    if (!d_ptr->m_ready || !d_ptr->m_navigator->active())
+        return d_ptr->m_params->m_route.data();
     return d_ptr->m_currentRoute.data();
 }
 
 int QDeclarativeNavigator::currentSegment() const
 {
-    if (!d_ptr->m_ready || !d_ptr->m_navigationManager->active())
+    if (!d_ptr->m_ready || !d_ptr->m_navigator->active())
         return 0;
     return d_ptr->m_currentSegment;
 }
@@ -369,8 +366,8 @@ void QDeclarativeNavigator::start()
         return;
     }
 
-    if (!d_ptr->m_navigationManager->active())
-        d_ptr->m_active = d_ptr->m_navigationManager->start();
+    if (!d_ptr->m_navigator->active())
+        d_ptr->m_active = d_ptr->m_navigator->start();
 }
 
 void QDeclarativeNavigator::stop()
@@ -380,8 +377,8 @@ void QDeclarativeNavigator::stop()
         return;
     }
 
-    if (d_ptr->m_navigationManager->active())
-        d_ptr->m_active = d_ptr->m_navigationManager->stop();
+    if (d_ptr->m_navigator->active())
+        d_ptr->m_active = d_ptr->m_navigator->stop();
 }
 
 void QDeclarativeNavigator::pluginReady()
@@ -397,20 +394,23 @@ void QDeclarativeNavigator::pluginReady()
 
 bool QDeclarativeNavigator::ensureEngine()
 {
-    if (d_ptr->m_navigationManager)
+    if (d_ptr->m_navigator)
         return true;
     if (!d_ptr->m_completed || !d_ptr->m_plugin->isAttached())
         return false;
 
-    d_ptr->m_navigationManager = d_ptr->m_plugin->sharedGeoServiceProvider()->navigationManager();
-    if (d_ptr->m_navigationManager) {
-        d_ptr->m_navigationManager->setNavigator(d_ptr.data());
-        d_ptr->m_navigationManager->setParameters(d_ptr->m_parameters);
-        connect(d_ptr->m_navigationManager, &QNavigationManager::waypointReached, this, &QDeclarativeNavigator::waypointReached);
-        connect(d_ptr->m_navigationManager, &QNavigationManager::destinationReached, this, &QDeclarativeNavigator::destinationReached);
-        connect(d_ptr->m_navigationManager, &QNavigationManager::currentRouteChanged, this, &QDeclarativeNavigator::onCurrentRouteChanged);
-        connect(d_ptr->m_navigationManager, &QNavigationManager::currentSegmentChanged, this, &QDeclarativeNavigator::onCurrentSegmentChanged);
-        connect(d_ptr->m_navigationManager, &QNavigationManager::activeChanged, this, [this](bool active){
+    auto manager = d_ptr->m_plugin->sharedGeoServiceProvider()->navigationManager();
+    if (manager) {
+        d_ptr->m_navigator.reset(manager->createNavigator(d_ptr->m_params));
+        if (!d_ptr->m_navigator)
+            return false;
+        d_ptr->m_navigator->setLocale(manager->locale());
+        d_ptr->m_navigator->setMeasurementSystem(manager->measurementSystem());
+        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::waypointReached, this, &QDeclarativeNavigator::waypointReached);
+        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::destinationReached, this, &QDeclarativeNavigator::destinationReached);
+        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteChanged, this, &QDeclarativeNavigator::onCurrentRouteChanged);
+        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentSegmentChanged, this, &QDeclarativeNavigator::onCurrentSegmentChanged);
+        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::activeChanged, this, [this](bool active){
             d_ptr->m_active = active;
             emit activeChanged(active);
         });
@@ -422,10 +422,10 @@ bool QDeclarativeNavigator::ensureEngine()
 
 void QDeclarativeNavigator::updateReadyState() {
     const bool oldReady = d_ptr->m_ready;
-    if (!d_ptr->m_navigationManager)
+    if (!d_ptr->m_navigator)
         d_ptr->m_ready = false;
     else
-        d_ptr->m_ready = d_ptr->m_navigationManager->ready();
+        d_ptr->m_ready = d_ptr->m_navigator->ready();
 
     if (oldReady != d_ptr->m_ready)
         emit navigatorReadyChanged(d_ptr->m_ready);

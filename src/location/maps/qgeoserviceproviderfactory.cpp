@@ -207,4 +207,17 @@ QNavigationManagerEngine *QGeoServiceProviderFactoryV2::createNavigationManagerE
     return 0;
 }
 
+/*!
+    Notify the plugin when the qml engine is ready. In this moment the plugins can use it
+    to register Image Providers.
+
+    The default implementation does nothing.
+    \since 5.12
+*/
+void QGeoServiceProviderFactoryV3::setQmlEngine(QQmlEngine *engine)
+{
+    Q_UNUSED(engine)
+}
+
 QT_END_NAMESPACE
+

@@ -49,9 +49,47 @@ public:
     bool initialized = false;
 };
 
+class QAbstractNavigatorPrivate
+{
+public:
+    QLocale locale;
+    QLocale::MeasurementSystem measurementSystem;
+    bool initialized = false;
+};
+
+QAbstractNavigator::QAbstractNavigator(QObject *parent)
+    : QObject(parent)
+    , d(new QAbstractNavigatorPrivate)
+{
+}
+
+QAbstractNavigator::~QAbstractNavigator()
+{
+}
+
+void QAbstractNavigator::setLocale(const QLocale &locale)
+{
+    d->locale = locale;
+}
+
+QLocale QAbstractNavigator::locale() const
+{
+    return  d->locale;
+}
+
+void QAbstractNavigator::setMeasurementSystem(QLocale::MeasurementSystem system)
+{
+    d->measurementSystem = system;
+}
+
+QLocale::MeasurementSystem QAbstractNavigator::measurementSystem() const
+{
+    return d->measurementSystem;
+}
+
 QNavigationManagerEngine::QNavigationManagerEngine(const QVariantMap &parameters, QObject *parent)
     : QObject(parent)
-    , d_ptr(new QNavigationManagerEnginePrivate)
+    , d(new QNavigationManagerEnginePrivate)
 {
     Q_UNUSED(parameters)
 }
@@ -62,64 +100,52 @@ QNavigationManagerEngine::~QNavigationManagerEngine()
 
 void QNavigationManagerEngine::setManagerName(const QString &name)
 {
-    d_ptr->managerName = name;
+    d->managerName = name;
 }
 
 QString QNavigationManagerEngine::managerName() const
 {
-    return d_ptr->managerName;
+    return d->managerName;
 }
 
 void QNavigationManagerEngine::setManagerVersion(int version)
 {
-    d_ptr->managerVersion = version;
+    d->managerVersion = version;
 }
 
 int QNavigationManagerEngine::managerVersion() const
 {
-    return d_ptr->managerVersion;
+    return d->managerVersion;
 }
 
 void QNavigationManagerEngine::setLocale(const QLocale &locale)
 {
-    d_ptr->locale = locale;
+    d->locale = locale;
 }
 
 QLocale QNavigationManagerEngine::locale() const
 {
-    return d_ptr->locale;
+    return d->locale;
 }
 
 void QNavigationManagerEngine::setMeasurementSystem(QLocale::MeasurementSystem system)
 {
-    d_ptr->measurementSystem = system;
+    d->measurementSystem = system;
 }
 
 QLocale::MeasurementSystem QNavigationManagerEngine::measurementSystem() const
 {
-    return d_ptr->measurementSystem;
+    return d->measurementSystem;
 }
 
 bool QNavigationManagerEngine::isInitialized() const
 {
-    return d_ptr->initialized;
-}
-
-// Subclasses are supposed to emit activeChanged from here.
-bool QNavigationManagerEngine::start(QDeclarativeNavigatorPrivate & /*navigator*/, const QList<QGeoMapParameter*> & /*navigationParams*/)
-{
-
-    return false;
-}
-
-bool QNavigationManagerEngine::stop(QDeclarativeNavigatorPrivate & /*navigator*/) // navigator needed to find the right navi session to stop.
-{
-    return false;
+    return d->initialized;
 }
 
 void QNavigationManagerEngine::engineInitialized()
 {
-    d_ptr->initialized = true;
+    d->initialized = true;
     emit initialized();
 }
 

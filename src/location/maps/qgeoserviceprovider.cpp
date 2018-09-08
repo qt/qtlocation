@@ -572,6 +572,11 @@ void QGeoServiceProvider::setAllowExperimental(bool allow)
     d_ptr->loadMeta();
 }
 
+void QGeoServiceProvider::setQmlEngine(QQmlEngine *engine)
+{
+    d_ptr->qmlEngine = engine;
+}
+
 /*!
     Sets the parameters used to construct individual manager classes for
     this service provider to \a parameters.
@@ -660,7 +665,7 @@ void QGeoServiceProviderPrivate::unload()
     delete navigationManager;
     navigationManager = nullptr;
 
-    factory = factoryV2 = nullptr;
+    factory = factoryV2 = factoryV3 = nullptr;
     error = QGeoServiceProvider::NoError;
     errorString = QLatin1String("");
     metaData = QJsonObject();
@@ -690,7 +695,7 @@ void QGeoServiceProviderPrivate::filterParameterMap()
 
 void QGeoServiceProviderPrivate::loadMeta()
 {
-    factory = factoryV2 = nullptr;
+    factory = factoryV2 = factoryV3 = nullptr;
     metaData = QJsonObject();
     metaData.insert(QStringLiteral("index"), -1);
     error = QGeoServiceProvider::NotSupportedError;
@@ -731,7 +736,7 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
     if (int(metaData.value(QStringLiteral("index")).toDouble()) < 0) {
         error = QGeoServiceProvider::NotSupportedError;
         errorString = QString(QLatin1String("The geoservices provider is not supported."));
-        factory = factoryV2 = nullptr;
+        factory = factoryV2 = factoryV3 = nullptr;
         return;
     }
 
@@ -742,11 +747,17 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
 
     // load the actual plugin
     QObject *instance = loader()->instance(idx);
-    factoryV2 = qobject_cast<QGeoServiceProviderFactoryV2 *>(instance);
-    if (!factoryV2)
-        factory = qobject_cast<QGeoServiceProviderFactory *>(instance);
-    else
-        factory = factoryV2;
+    factoryV3 = qobject_cast<QGeoServiceProviderFactoryV3 *>(instance);
+    if (!factoryV3) {
+        factoryV2 = qobject_cast<QGeoServiceProviderFactoryV2 *>(instance);
+        if (!factoryV2)
+            factory = qobject_cast<QGeoServiceProviderFactory *>(instance);
+        else
+            factory = factoryV2;
+    } else {
+        factory = factoryV2 = factoryV3;
+        factoryV3->setQmlEngine(qmlEngine);
+    }
 }
 
 QHash<QString, QJsonObject> QGeoServiceProviderPrivate::plugins(bool reload)

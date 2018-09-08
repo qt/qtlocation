@@ -55,38 +55,66 @@
 
 QT_BEGIN_NAMESPACE
 
+class QAbstractNavigatorPrivate;
 class QGeoMap;
 class QGeoMapParameter;
 class QMapRouteObject;
+class QGeoRoute;
+class QNavigationManager;
 class QNavigationManagerEnginePrivate;
-class QDeclarativeNavigatorPrivate;
+class QDeclarativeNavigatorParams;
+class QDeclarativeGeoWaypoint;
+
+class Q_LOCATION_PRIVATE_EXPORT QAbstractNavigator: public QObject
+{
+    Q_OBJECT
+public:
+    QAbstractNavigator(QObject *parent = nullptr);
+    ~QAbstractNavigator() override;
+    virtual void setLocale(const QLocale &locale);
+    virtual QLocale locale() const;
+    virtual void setMeasurementSystem(QLocale::MeasurementSystem system);
+    virtual QLocale::MeasurementSystem measurementSystem() const;
+    virtual bool active() const = 0;
+    virtual bool ready() const = 0;
+
+public slots:
+    virtual bool start() = 0;
+    virtual bool stop() = 0;
+
+signals:
+    // These must be emitted by the engine
+    void activeChanged(bool active);
+    void waypointReached(const QDeclarativeGeoWaypoint *pos);
+    void destinationReached();
+    void currentRouteChanged(const QGeoRoute &route);
+    void currentSegmentChanged(int segment);
+
+private:
+    QScopedPointer<QAbstractNavigatorPrivate> d;
+};
 
 class Q_LOCATION_PRIVATE_EXPORT QNavigationManagerEngine : public QObject
 {
     Q_OBJECT
 public:
     explicit QNavigationManagerEngine(const QVariantMap &parameters, QObject *parent = nullptr);
-    virtual ~QNavigationManagerEngine();
+    ~QNavigationManagerEngine() override;
 
     void setManagerName(const QString &name);
     QString managerName() const;
     void setManagerVersion(int version);
     int managerVersion() const;
-
     virtual void setLocale(const QLocale &locale);
     virtual QLocale locale() const;
     virtual void setMeasurementSystem(QLocale::MeasurementSystem system);
     virtual QLocale::MeasurementSystem measurementSystem() const;
+
     virtual bool isInitialized() const;
-    virtual bool ready(const QDeclarativeNavigatorPrivate &navigator, const QList<QGeoMapParameter*> &navigationParams) = 0;
-    virtual bool active(const QDeclarativeNavigatorPrivate &navigator) = 0;
+    virtual QAbstractNavigator *createNavigator(const QSharedPointer<QDeclarativeNavigatorParams> &navigator) = 0;
 
 signals:
     void initialized();
-
-public slots:
-    virtual bool start(QDeclarativeNavigatorPrivate &navigator, const QList<QGeoMapParameter*> &navigationParams);
-    virtual bool stop(QDeclarativeNavigatorPrivate &navigator);
 
 protected:
     /*!
@@ -96,7 +124,7 @@ protected:
     */
     virtual void engineInitialized();
 
-    QScopedPointer<QNavigationManagerEnginePrivate> d_ptr;
+    QScopedPointer<QNavigationManagerEnginePrivate> d;
 };
 
 QT_END_NAMESPACE

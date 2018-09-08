@@ -57,6 +57,7 @@ class QGeoRoutingManagerEngine;
 class QPlaceManagerEngine;
 class QNavigationManagerEngine;
 class QGeoServiceProviderPrivate;
+class QQmlEngine;
 
 class Q_LOCATION_EXPORT QGeoServiceProvider : public QObject
 {
@@ -162,6 +163,7 @@ public:
     void setParameters(const QVariantMap &parameters);
     void setLocale(const QLocale &locale);
     void setAllowExperimental(bool allow);
+    void setQmlEngine(QQmlEngine *engine);
 
 private:
     QGeoServiceProviderPrivate *d_ptr;
