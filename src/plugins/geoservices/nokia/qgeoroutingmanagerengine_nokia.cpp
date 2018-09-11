@@ -399,46 +399,36 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
         requestString += trimDouble(area.bottomRight().longitude());
     }
 
-//    TODO: work out what was going on here
-//    - segment and instruction/maneuever functions are mixed and matched
-//    - tried to implement sensible equivalents below
-//    QStringList legAttributes;
-//    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
-//        requestString += "&linkattributes=sh,le"; //shape,length
-//        legAttributes.append("links");
-//    }
-//
-//    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
-//        legAttributes.append("maneuvers");
-//        requestString += "&maneuverattributes=po,tt,le,di"; //position,traveltime,length,direction
-//        if (!(request.instructionDetail() & QGeoRouteRequest::NoSegmentData))
-//            requestString += ",li"; //link
-//    }
-
     QStringList legAttributes;
-    if (request.segmentDetail() & QGeoRouteRequest::BasicSegmentData) {
+//    if (request.segmentDetail() & QGeoRouteRequest::BasicSegmentData)  // QTBUG-70501, this code expects to find links
+    {
         requestString += "&linkattributes=sh,le"; //shape,length
         legAttributes.append("links");
     }
 
-    if (request.maneuverDetail() & QGeoRouteRequest::BasicManeuvers) {
+//    if (request.maneuverDetail() & QGeoRouteRequest::BasicManeuvers) // QTBUG-70501, this code expects to find maneuvers
+    {
         legAttributes.append("maneuvers");
-        requestString += "&maneuverattributes=po,tt,le,di"; //position,traveltime,length,direction
+        //requestString += "&maneuverattributes=po,tt,le,di"; //position,traveltime,length,direction
+        requestString += "&maneuverattributes=all";
         if (!(request.segmentDetail() & QGeoRouteRequest::NoSegmentData))
             requestString += ",li"; //link
     }
 
+    // Handle QTBUG-70502, when API fixes it
     requestString += "&routeattributes=sm,sh,bb,lg"; //summary,shape,boundingBox,legs
     if (legAttributes.count() > 0) {
         requestString += "&legattributes=";
         requestString += legAttributes.join(",");
     }
 
+    // Handle QTBUG-70503, when API fixes it
     requestString += "&departure=";
     requestString += QDateTime::currentDateTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
 
     requestString += "&instructionformat=text";
 
+    // ToDo: make this request-able
     requestString += "&metricSystem=";
     if (QLocale::MetricSystem == measurementSystem())
         requestString  += "metric";
@@ -447,6 +437,7 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 
     const QLocale loc(locale());
 
+    // ToDo: make this request-able
     if (QLocale::C != loc.language() && QLocale::AnyLanguage != loc.language()) {
         requestString += "&language=";
         requestString += loc.name();
