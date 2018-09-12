@@ -98,5 +98,11 @@ QVariantMap QGeoMapParameter::toVariantMap() const
     return res;
 }
 
+bool QGeoMapParameter::hasProperty(const char *propertyName)
+{
+    return metaObject()->indexOfProperty(propertyName) != -1
+            || dynamicPropertyNames().indexOf(QByteArray(propertyName)) != -1;
+}
+
 QT_END_NAMESPACE
 
