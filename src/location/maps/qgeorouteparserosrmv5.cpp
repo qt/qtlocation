@@ -48,6 +48,7 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QUrlQuery>
 #include <QtPositioning/private/qlocationutils_p.h>
+#include <QtPositioning/qgeopath.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -996,6 +997,7 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                 route.setTravelTime(travelTime);
                 if (!path.isEmpty()) {
                     route.setPath(path);
+                    route.setBounds(QGeoPath(path).boundingGeoRectangle());
                     route.setFirstRouteSegment(segments.first());
                 }
                 route.setRouteLegs(routeLegs);
