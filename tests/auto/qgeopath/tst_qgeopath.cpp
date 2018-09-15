@@ -181,7 +181,7 @@ void tst_QGeoPath::path()
         QCOMPARE(p.path().contains(c), true);
     }
 
-    p.clearPath();
+    p.clear();
     QCOMPARE(p.path().size(), 0);
     QVERIFY(p.boundingGeoRectangle().isEmpty());
 }

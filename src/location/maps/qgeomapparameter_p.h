@@ -74,6 +74,7 @@ public:
     void updateProperty(const char *propertyName, QVariant value);
 
     QVariantMap toVariantMap() const;
+    bool hasProperty(const char *propertyName);
 
 Q_SIGNALS:
     void propertyUpdated(QGeoMapParameter *param, const char *propertyName);
