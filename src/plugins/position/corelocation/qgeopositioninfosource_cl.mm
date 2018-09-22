@@ -140,7 +140,39 @@ void QGeoPositionInfoSourceCL::setUpdateInterval(int msec)
 bool QGeoPositionInfoSourceCL::enableLocationManager()
 {
     if (!m_locationManager) {
-        m_locationManager = [[CLLocationManager alloc] init];
+        if ([CLLocationManager locationServicesEnabled]) {
+            // Location Services Are Enabled
+            switch ([CLLocationManager authorizationStatus]) {
+                case kCLAuthorizationStatusNotDetermined:
+                    // User has not yet made a choice with regards to this application
+                    break;
+                case kCLAuthorizationStatusRestricted:
+                    // This application is not authorized to use location services.  Due
+                    // to active restrictions on location services, the user cannot change
+                    // this status, and may not have personally denied authorization
+                    return false;
+                case kCLAuthorizationStatusDenied:
+                    // User has explicitly denied authorization for this application, or
+                    // location services are disabled in Settings
+                    return false;
+                case kCLAuthorizationStatusAuthorizedAlways:
+                    // This app is authorized to start location services at any time.
+                    break;
+#ifndef Q_OS_MACOS
+                case kCLAuthorizationStatusAuthorizedWhenInUse:
+                    // This app is authorized to start most location services while running in the foreground.
+                    break;
+#endif
+                default:
+                    // By default, try to enable it
+                    break;
+            }
+        } else {
+            // Location Services Disabled
+            return false;
+        }
+
+    m_locationManager = [[CLLocationManager alloc] init];
 
 #if defined(Q_OS_IOS) || defined(Q_OS_WATCHOS)
         if (__builtin_available(watchOS 4.0, *)) {
