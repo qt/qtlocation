@@ -49,7 +49,7 @@
 static void initResources()
 {
 #ifdef QT_STATIC
-    Q_INIT_RESOURCE(qmake_QtLocationLabs);
+    Q_INIT_RESOURCE(qmake_Qt_labs_location);
 #endif
 }
 
