@@ -621,6 +621,6 @@ public:
     }
 };
 
-#include "positioning.moc"
-
 QT_END_NAMESPACE
+
+#include "positioning.moc"

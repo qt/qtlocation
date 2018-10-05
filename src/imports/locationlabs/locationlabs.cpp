@@ -83,6 +83,6 @@ public:
     }
 };
 
-#include "locationlabs.moc"
-
 QT_END_NAMESPACE
+
+#include "locationlabs.moc"

@@ -212,6 +212,6 @@ public:
     }
 };
 
-#include "location.moc"
-
 QT_END_NAMESPACE
+
+#include "location.moc"

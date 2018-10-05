@@ -314,6 +314,6 @@ void QGeoPositionInfoSourceCL::setError(QGeoPositionInfoSource::Error positionEr
     emit QGeoPositionInfoSource::error(positionError);
 }
 
-#include "moc_qgeopositioninfosource_cl_p.cpp"
-
 QT_END_NAMESPACE
+
+#include "moc_qgeopositioninfosource_cl_p.cpp"
