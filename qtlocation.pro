@@ -1,4 +1,4 @@
-requires(!html5)
+requires(!wasm)
 load(configure)
 qtCompileTest(gypsy)
 qtCompileTest(winrt)

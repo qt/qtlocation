@@ -62,6 +62,7 @@ public:
     QString toLink; // Id of the link this maneuver brings into
     int legIndex = 0;
     int index = 0;
+    QList<QGeoCoordinate> path;
     bool first = false;
     bool last = false;
 };
@@ -129,7 +130,7 @@ private:
     QList<QGeoRoute> m_results;
     QList<QGeoRouteLeg> m_legs;
     QList<QList<QGeoManeuverContainer>> m_maneuvers;
-    QList<QList<QGeoRouteSegmentContainer>> m_segments;
+    //QList<QList<QGeoRouteSegmentContainer>> m_segments;
 };
 
 QT_END_NAMESPACE
