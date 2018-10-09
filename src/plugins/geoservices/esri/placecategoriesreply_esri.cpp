@@ -37,41 +37,29 @@
 **
 ****************************************************************************/
 
-#include "geotilefetcher_esri.h"
-#include "geotiledmappingmanagerengine_esri.h"
-#include "geotiledmapreply_esri.h"
-
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-
-#include <QtLocation/private/qgeotilespec_p.h>
+#include "placecategoriesreply_esri.h"
 
 QT_BEGIN_NAMESPACE
 
-GeoTileFetcherEsri::GeoTileFetcherEsri(QGeoTiledMappingManagerEngine *parent) :
-    QGeoTileFetcher(parent), m_networkManager(new QNetworkAccessManager(this)),
-    m_userAgent(QByteArrayLiteral("Qt Location based application"))
+PlaceCategoriesReplyEsri::PlaceCategoriesReplyEsri(QObject *parent) :
+    QPlaceReply(parent)
 {
 }
 
-QGeoTiledMapReply *GeoTileFetcherEsri::getTileImage(const QGeoTileSpec &spec)
+PlaceCategoriesReplyEsri::~PlaceCategoriesReplyEsri()
 {
-    QNetworkRequest request;
-    request.setHeader(QNetworkRequest::UserAgentHeader, userAgent());
+}
 
-    GeoTiledMappingManagerEngineEsri *engine = qobject_cast<GeoTiledMappingManagerEngineEsri *>(
-          parent());
+void PlaceCategoriesReplyEsri::emitFinished()
+{
+    setFinished(true);
+    emit finished();
+}
 
-    GeoMapSource *mapSource = engine->mapSource(spec.mapId());
-
-    if (!mapSource)
-        qWarning("Unknown mapId %d\n", spec.mapId());
-    else
-        request.setUrl(mapSource->url().arg(spec.zoom()).arg(spec.x()).arg(spec.y()));
-
-    QNetworkReply *reply = m_networkManager->get(request);
-
-    return new GeoTiledMapReplyEsri(reply, spec);
+void PlaceCategoriesReplyEsri::setError(QPlaceReply::Error errorCode, const QString &errorString)
+{
+    QPlaceReply::setError(errorCode, errorString);
+    emit error(errorCode, errorString);
 }
 
 QT_END_NAMESPACE

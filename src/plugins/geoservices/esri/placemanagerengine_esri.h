@@ -37,41 +37,73 @@
 **
 ****************************************************************************/
 
-#ifndef GEOCODINGMANAGERENGINEESRI_H
-#define GEOCODINGMANAGERENGINEESRI_H
+#ifndef PLACEMANAGERENGINEESRI_H
+#define PLACEMANAGERENGINEESRI_H
 
-#include <QGeoServiceProvider>
-#include <QGeoCodingManagerEngine>
-#include <QGeoCodeReply>
+#include <QtLocation/QPlaceManagerEngine>
+#include <QtLocation/QGeoServiceProvider>
 
 QT_BEGIN_NAMESPACE
 
+class PlaceCategoriesReplyEsri;
 class QNetworkAccessManager;
+class QNetworkReply;
 
-class GeoCodingManagerEngineEsri : public QGeoCodingManagerEngine
+class PlaceManagerEngineEsri : public QPlaceManagerEngine
 {
     Q_OBJECT
 
 public:
-    GeoCodingManagerEngineEsri(const QVariantMap &parameters, QGeoServiceProvider::Error *error,
-                               QString *errorString);
-    virtual ~GeoCodingManagerEngineEsri();
+    PlaceManagerEngineEsri(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString);
+    ~PlaceManagerEngineEsri();
 
-    QGeoCodeReply *geocode(const QGeoAddress &address, const QGeoShape &bounds) override;
-    QGeoCodeReply *geocode(const QString &address, int limit, int offset,
-                           const QGeoShape &bounds) override;
-    QGeoCodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
-                                  const QGeoShape &bounds) override;
+    QPlaceSearchReply *search(const QPlaceSearchRequest &request) override;
 
-private Q_SLOTS:
+    QPlaceReply *initializeCategories() override;
+    QString parentCategoryId(const QString &categoryId) const override;
+    QStringList childCategoryIds(const QString &categoryId) const override;
+    QPlaceCategory category(const QString &categoryId) const override;
+
+    QList<QPlaceCategory> childCategories(const QString &parentId) const override;
+
+    QList<QLocale> locales() const override;
+    void setLocales(const QList<QLocale> &locales) override;
+
+private slots:
+    void geocodeServerReplyFinished();
+    void geocodeServerReplyError();
     void replyFinished();
-    void replyError(QGeoCodeReply::Error errorCode, const QString &errorString);
+    void replyError(QPlaceReply::Error errorCode, const QString &errorString);
 
 private:
-    QNetworkAccessManager *m_networkManager;
-    QByteArray m_userAgent;
+    QNetworkAccessManager *m_networkManager = Q_NULLPTR;
+
+    // geocode serveur
+    void initializeGeocodeServer();
+
+    QNetworkReply *m_geocodeServerReply = Q_NULLPTR;
+
+    // categories
+    void finishCategories();
+    void errorCaterogies(const QString &error);
+    void parseCategories(const QJsonArray &jsonArray, const QString &parentCategoryId);
+
+    QList<PlaceCategoriesReplyEsri *> m_pendingCategoriesReply;
+    QHash<QString, QPlaceCategory> m_categories;
+    QHash<QString, QStringList> m_subcategories;
+    QHash<QString, QString> m_parentCategory;
+
+    // localized names
+    QString localizedName(const QJsonObject &jsonObject);
+    void parseCandidateFields(const QJsonArray &jsonArray);
+    void parseCountries(const QJsonArray &jsonArray);
+
+    QList<QLocale> m_locales;
+    QHash<QString, QString> m_candidateFieldsLocale;
+    QHash<QString, QString> m_countriesLocale;
+    void localizedName();
 };
 
 QT_END_NAMESPACE
 
-#endif // GEOCODINGMANAGERENGINEESRI_H
+#endif // PLACEMANAGERENGINEESRI_H
