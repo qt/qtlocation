@@ -62,6 +62,7 @@ class QDeclarativeGeoRoute;
 class QDeclarativePositionSource;
 class QDeclarativeGeoWaypoint;
 class QGeoRoute;
+class QGeoRouteLeg;
 class QGeoRouteSegment;
 class QDeclarativeNavigatorPrivate;
 class QDeclarativeGeoRouteSegment;
@@ -127,6 +128,7 @@ signals:
     void routeChanged();
     void positionSourceChanged();
     void currentRouteChanged();
+    void currentRouteLegChanged();
     void currentSegmentChanged();
 
 private:
@@ -136,6 +138,7 @@ private:
 
 private slots:
     void onCurrentRouteChanged(const QGeoRoute &route);
+    void onCurrentRouteLegChanged(const QGeoRouteLeg &routeLeg);
     void onCurrentSegmentChanged(int segment);
 
 private:

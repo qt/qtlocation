@@ -60,6 +60,7 @@ class QGeoMap;
 class QGeoMapParameter;
 class QMapRouteObject;
 class QGeoRoute;
+class QGeoRouteLeg;
 class QNavigationManager;
 class QNavigationManagerEnginePrivate;
 class QDeclarativeNavigatorParams;
@@ -88,6 +89,7 @@ signals:
     void waypointReached(const QDeclarativeGeoWaypoint *pos);
     void destinationReached();
     void currentRouteChanged(const QGeoRoute &route);
+    void currentRouteLegChanged(const QGeoRouteLeg &route);
     void currentSegmentChanged(int segment);
 
 private:

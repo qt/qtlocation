@@ -59,6 +59,7 @@ class QDeclarativeGeoServiceProvider;
 class QDeclarativeGeoMap;
 class QNavigationManager;
 class QDeclarativeGeoRoute;
+class QDeclarativeGeoRouteLeg;
 class QDeclarativePositionSource;
 class QGeoMapParameter;
 class QDeclarativeGeoRouteSegment;
@@ -86,6 +87,7 @@ public:
     QScopedPointer<QAbstractNavigator> m_navigator;
     QDeclarativeGeoServiceProvider *m_plugin = nullptr;
     QPointer<QDeclarativeGeoRoute> m_currentRoute;
+    QPointer<QDeclarativeGeoRouteLeg> m_currentRouteLeg;
     int m_currentSegment = 0;
     bool m_active = false;
     bool m_completed = false;

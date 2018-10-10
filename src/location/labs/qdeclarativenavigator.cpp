@@ -141,7 +141,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlproperty Route Qt.labs.location::Navigator::currentRoute
 
-    This read-only property holds the current route the navigator following.
+    This read-only property holds the current route the navigator is following.
     This can be the same as \l route, or can be different, if the navigator
     cannot follow the user-specified route.
     For example if the position coming from \l positionSource is considerably
@@ -149,6 +149,18 @@ QT_BEGIN_NAMESPACE
     new route.
 
     \sa Route
+*/
+
+/*!
+    \qmlproperty RouteLeg Qt.labs.location::Navigator::currentRouteLeg
+
+    This read-only property holds the current route leg the navigator is following.
+    This is always a part of \l currentRoute, and so the property \l RouteLeg::overallRoute
+    of currentRouteLeg will hold the same route as \l currentRoute.
+
+    \sa RouteLeg
+
+    \since 5.13
 */
 
 /*!
@@ -409,6 +421,7 @@ bool QDeclarativeNavigator::ensureEngine()
         connect(d_ptr->m_navigator.get(), &QAbstractNavigator::waypointReached, this, &QDeclarativeNavigator::waypointReached);
         connect(d_ptr->m_navigator.get(), &QAbstractNavigator::destinationReached, this, &QDeclarativeNavigator::destinationReached);
         connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteChanged, this, &QDeclarativeNavigator::onCurrentRouteChanged);
+        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteLegChanged, this, &QDeclarativeNavigator::onCurrentRouteLegChanged);
         connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentSegmentChanged, this, &QDeclarativeNavigator::onCurrentSegmentChanged);
         connect(d_ptr->m_navigator.get(), &QAbstractNavigator::activeChanged, this, [this](bool active){
             d_ptr->m_active = active;
@@ -437,6 +450,14 @@ void QDeclarativeNavigator::onCurrentRouteChanged(const QGeoRoute &route)
         d_ptr->m_currentRoute->deleteLater();
     d_ptr->m_currentRoute = new QDeclarativeGeoRoute(route, this);
     emit currentRouteChanged();
+}
+
+void QDeclarativeNavigator::onCurrentRouteLegChanged(const QGeoRouteLeg &routeLeg)
+{
+    if (d_ptr->m_currentRoute)
+        d_ptr->m_currentRouteLeg->deleteLater();
+    d_ptr->m_currentRouteLeg = new QDeclarativeGeoRouteLeg(routeLeg, this);
+    emit currentRouteLegChanged();
 }
 
 void QDeclarativeNavigator::onCurrentSegmentChanged(int segment)
