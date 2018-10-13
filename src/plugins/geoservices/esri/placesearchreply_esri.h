@@ -37,41 +37,42 @@
 **
 ****************************************************************************/
 
-#include "geotilefetcher_esri.h"
-#include "geotiledmappingmanagerengine_esri.h"
-#include "geotiledmapreply_esri.h"
+#ifndef PLACESEARCHREPLYESRI_H
+#define PLACESEARCHREPLYESRI_H
 
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-
-#include <QtLocation/private/qgeotilespec_p.h>
+#include <QtLocation/QPlaceSearchReply>
+#include <QNetworkReply>
 
 QT_BEGIN_NAMESPACE
 
-GeoTileFetcherEsri::GeoTileFetcherEsri(QGeoTiledMappingManagerEngine *parent) :
-    QGeoTileFetcher(parent), m_networkManager(new QNetworkAccessManager(this)),
-    m_userAgent(QByteArrayLiteral("Qt Location based application"))
+class PlaceManagerEngineEsri;
+class QNetworkReply;
+class QPlaceResult;
+
+class PlaceSearchReplyEsri : public QPlaceSearchReply
 {
-}
+    Q_OBJECT
 
-QGeoTiledMapReply *GeoTileFetcherEsri::getTileImage(const QGeoTileSpec &spec)
-{
-    QNetworkRequest request;
-    request.setHeader(QNetworkRequest::UserAgentHeader, userAgent());
+public:
+    PlaceSearchReplyEsri(const QPlaceSearchRequest &request, QNetworkReply *reply,
+                         const QHash<QString, QString> &candidateFields,
+                         const QHash<QString, QString> &countries, PlaceManagerEngineEsri *parent);
+    ~PlaceSearchReplyEsri();
 
-    GeoTiledMappingManagerEngineEsri *engine = qobject_cast<GeoTiledMappingManagerEngineEsri *>(
-          parent());
+    QString requestUrl;
 
-    GeoMapSource *mapSource = engine->mapSource(spec.mapId());
+private slots:
+    void setError(QPlaceReply::Error errorCode, const QString &errorString);
+    void replyFinished();
+    void networkError(QNetworkReply::NetworkError error);
 
-    if (!mapSource)
-        qWarning("Unknown mapId %d\n", spec.mapId());
-    else
-        request.setUrl(mapSource->url().arg(spec.zoom()).arg(spec.x()).arg(spec.y()));
+private:
+    QPlaceResult parsePlaceResult(const QJsonObject &item) const;
 
-    QNetworkReply *reply = m_networkManager->get(request);
-
-    return new GeoTiledMapReplyEsri(reply, spec);
-}
+    const QHash<QString, QString> &m_candidateFields;
+    const QHash<QString, QString> &m_countries;
+};
 
 QT_END_NAMESPACE
+
+#endif // PLACESEARCHREPLYESRI_H

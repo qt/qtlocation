@@ -16,7 +16,10 @@ HEADERS += \
     geotiledmap_esri.h \
     geotiledmappingmanagerengine_esri.h \
     geotiledmapreply_esri.h \
-    geotilefetcher_esri.h
+    geotilefetcher_esri.h \
+    placemanagerengine_esri.h \
+    placesearchreply_esri.h \
+    placecategoriesreply_esri.h
 
 SOURCES += \
     geocodereply_esri.cpp  \
@@ -29,7 +32,10 @@ SOURCES += \
     geotiledmap_esri.cpp \
     geotiledmappingmanagerengine_esri.cpp \
     geotiledmapreply_esri.cpp \
-    geotilefetcher_esri.cpp
+    geotilefetcher_esri.cpp \
+    placemanagerengine_esri.cpp \
+    placesearchreply_esri.cpp \
+    placecategoriesreply_esri.cpp
 
 RESOURCES += \
     esri.qrc

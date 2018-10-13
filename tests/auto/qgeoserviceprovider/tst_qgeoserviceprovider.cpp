@@ -138,7 +138,7 @@ void tst_QGeoServiceProvider::tst_features_data()
                             << QGeoServiceProvider::GeocodingFeatures(QGeoServiceProvider::OnlineGeocodingFeature
                                                                       | QGeoServiceProvider::ReverseGeocodingFeature)
                             << QGeoServiceProvider::RoutingFeatures(QGeoServiceProvider::OnlineRoutingFeature)
-                            << QGeoServiceProvider::PlacesFeatures(QGeoServiceProvider::NoPlacesFeatures);
+                            << QGeoServiceProvider::PlacesFeatures(QGeoServiceProvider::OnlinePlacesFeature);
 }
 
 void tst_QGeoServiceProvider::tst_features()
