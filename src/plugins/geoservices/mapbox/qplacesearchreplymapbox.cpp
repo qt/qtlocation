@@ -188,19 +188,18 @@ void QPlaceSearchReplyMapbox::onReplyFinished()
 
         if (!categories.isEmpty()) {
             const QList<QPlaceCategory> placeCategories = placeResult.place().categories();
+            bool categoryMatch = false;
             if (!placeCategories.isEmpty()) {
-                bool categoryMatch = false;
                 for (const QPlaceCategory &placeCategory : placeCategories) {
                     if (categories.contains(placeCategory)) {
                         categoryMatch = true;
                         break;
                     }
                 }
-                if (!categoryMatch)
-                    continue;
             }
+            if (!categoryMatch)
+                continue;
         }
-
         placeResult.setDistance(searchCenter.distanceTo(placeResult.place().location().coordinate()));
         results.append(placeResult);
     }
