@@ -194,18 +194,29 @@ bool QGeoPositionInfoSourceCL::enableLocationManager()
         m_locationManager.desiredAccuracy = kCLLocationAccuracyBest;
         m_locationManager.delegate = [[PositionLocationDelegate alloc] initWithInfoSource:this];
 
-        // These two methods are new in iOS 8. They require NSLocationAlwaysUsageDescription
-        // and NSLocationWhenInUseUsageDescription to be set in Info.plist to work (methods are
-        // noop if there are no such entries in plist).
+        // -requestAlwaysAuthorization is available on iOS (>= 8.0) and watchOS (>= 2.0).
+        // This method requires both NSLocationAlwaysAndWhenInUseUsageDescription and
+        // NSLocationWhenInUseUsageDescription entries present in Info.plist (otherwise,
+        // while probably a noop, the call generates a warning).
+        // -requestWhenInUseAuthorization only requires NSLocationWhenInUseUsageDescription
+        // entry in Info.plist (available on iOS (>= 8.0), tvOS (>= 9.0) and watchOS (>= 2.0).
+
 #ifndef Q_OS_MACOS
+        NSDictionary<NSString *, id> *infoDict = NSBundle.mainBundle.infoDictionary;
+        const bool hasAlwaysUseUsage = !![infoDict objectForKey:@"NSLocationAlwaysAndWhenInUseUsageDescription"];
+        const bool hasWhenInUseUsage = !![infoDict objectForKey:@"NSLocationWhenInUseUsageDescription"];
 #ifndef Q_OS_TVOS
-        [m_locationManager requestAlwaysAuthorization];
-#endif
-        [m_locationManager requestWhenInUseAuthorization];
-#endif
+        if (hasAlwaysUseUsage && hasWhenInUseUsage)
+            [m_locationManager requestAlwaysAuthorization];
+        else
+#endif // !Q_OS_TVOS
+        if (hasWhenInUseUsage)
+            [m_locationManager requestWhenInUseAuthorization];
+#endif // !Q_OS_MACOS
+
     }
 
-    return (m_locationManager != 0);
+    return (m_locationManager != nullptr);
 }
 
 void QGeoPositionInfoSourceCL::setTimeoutInterval(int msec)
