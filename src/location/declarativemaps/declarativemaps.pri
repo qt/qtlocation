@@ -1,4 +1,4 @@
-QT += quick-private network positioning-private qml-private core-private gui-private
+QT += quick-private network positioning-private positioningquick-private qml-private core-private gui-private
 
 INCLUDEPATH += declarativemaps
 
@@ -29,8 +29,7 @@ PRIVATE_HEADERS += \
         declarativemaps/qgeomapobject_p.h \
         declarativemaps/qgeomapobject_p_p.h \
         declarativemaps/qparameterizableobject_p.h \
-        declarativemaps/qquickgeomapgesturearea_p.h \
-        ../imports/positioning/qquickgeocoordinateanimation_p.h
+        declarativemaps/qquickgeomapgesturearea_p.h
 
 SOURCES += \
         declarativemaps/error_messages.cpp \
@@ -58,8 +57,7 @@ SOURCES += \
         declarativemaps/qgeomapitemgeometry.cpp \
         declarativemaps/qgeomapobject.cpp \
         declarativemaps/qparameterizableobject.cpp \
-        declarativemaps/qquickgeomapgesturearea.cpp \
-        ../imports/positioning/qquickgeocoordinateanimation.cpp
+        declarativemaps/qquickgeomapgesturearea.cpp
 
 load(qt_build_paths)
 LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lpoly2tri$$qtPlatformTargetSuffix() -lclip2tri$$qtPlatformTargetSuffix()

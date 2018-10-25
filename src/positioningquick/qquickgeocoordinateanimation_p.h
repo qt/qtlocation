@@ -51,6 +51,7 @@
 // We mean it.
 //
 
+#include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
 #include <QtQuick/private/qquickanimation_p.h>
 #include <QtPositioning/qgeocoordinate.h>
 
@@ -58,7 +59,7 @@ QT_BEGIN_NAMESPACE
 
 class QQuickGeoCoordinateAnimationPrivate;
 
-class QQuickGeoCoordinateAnimation : public QQuickPropertyAnimation
+class Q_POSITIONINGQUICK_PRIVATE_EXPORT QQuickGeoCoordinateAnimation : public QQuickPropertyAnimation
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QQuickGeoCoordinateAnimation)
@@ -90,7 +91,7 @@ Q_SIGNALS:
     void directionChanged();
 };
 
-QVariant q_coordinateInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress);
+QVariant Q_POSITIONINGQUICK_PRIVATE_EXPORT q_coordinateInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress);
 
 QT_END_NAMESPACE
 

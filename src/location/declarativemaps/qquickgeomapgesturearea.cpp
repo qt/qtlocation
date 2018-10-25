@@ -35,7 +35,7 @@
 ****************************************************************************/
 
 #include "qquickgeomapgesturearea_p.h"
-#include "qquickgeocoordinateanimation_p.h"
+#include <QtPositioningQuick/private/qquickgeocoordinateanimation_p.h>
 #include "qdeclarativegeomap_p.h"
 #include "error_messages_p.h"
 
