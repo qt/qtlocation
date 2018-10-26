@@ -534,9 +534,13 @@ QPlaceManager *QGeoServiceProvider::placeManager() const
 */
 QNavigationManager *QGeoServiceProvider::navigationManager() const
 {
-    return d_ptr->manager<QNavigationManager, QNavigationManagerEngine>(
+    QNavigationManager * mgr = d_ptr->manager<QNavigationManager, QNavigationManagerEngine>(
                &(d_ptr->navigationError), &(d_ptr->navigationErrorString),
                 &(d_ptr->navigationManager));
+    if (!mgr) {
+        qDebug() << d_ptr->navigationError << d_ptr->navigationErrorString;
+    }
+    return mgr;
 }
 
 /*!
@@ -747,6 +751,11 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
 
     // load the actual plugin
     QObject *instance = loader()->instance(idx);
+    if (!instance) {
+        error = QGeoServiceProvider::LoaderError;
+        errorString = QLatin1String("loader()->instance(idx) failed to return an instance");
+        return;
+    }
     factoryV3 = qobject_cast<QGeoServiceProviderFactoryV3 *>(instance);
     if (!factoryV3) {
         factoryV2 = qobject_cast<QGeoServiceProviderFactoryV2 *>(instance);

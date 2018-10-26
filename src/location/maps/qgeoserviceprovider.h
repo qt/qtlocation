@@ -69,7 +69,8 @@ public:
         NotSupportedError,
         UnknownParameterError,
         MissingRequiredParameterError,
-        ConnectionError
+        ConnectionError,
+        LoaderError
     };
 
     enum RoutingFeature {
