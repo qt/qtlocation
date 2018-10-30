@@ -176,6 +176,10 @@ bool QGeoPositionInfoSourceCL::enableLocationManager()
 
 #if defined(Q_OS_IOS) || defined(Q_OS_WATCHOS)
         if (__builtin_available(watchOS 4.0, *)) {
+            // enable Significant-Change Location (Significant Location Change or SLC)
+            if (([CLLocationManager authorizationStatus]) == kCLAuthorizationStatusAuthorizedAlways)
+                [m_locationManager startMonitoringSignificantLocationChanges];
+
             NSDictionary<NSString *, id> *infoDict = [[NSBundle mainBundle] infoDictionary];
             if (id value = [infoDict objectForKey:@"UIBackgroundModes"]) {
                 if ([value isKindOfClass:[NSArray class]]) {
