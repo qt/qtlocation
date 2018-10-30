@@ -88,6 +88,11 @@ The following table lists optional parameters that can be passed to the Mapbox p
     \l{https://www.mapbox.com/tos}{Terms of Services} and must not be used in production. This property has
     no effect on styles hosted outside the Mapbox servers.
 \row
+    \li mapboxgl.china
+    \li Use Mapbox China API base URLs and styles.
+    Please notice that Mapbox China requires a specific access token. Contact \l
+    {https://www.mapbox.com/contact/sales/} {Mapbox sales} for more information.
+\row
     \li mapboxgl.mapping.additional_style_urls
     \li Additional, comma separated, Mapbox \l{https://www.mapbox.com/help/define-style-url}
     {style URLs} to be added to the available style URLs. Additional styles will be prepended to

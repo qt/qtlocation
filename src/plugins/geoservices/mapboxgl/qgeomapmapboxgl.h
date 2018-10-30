@@ -54,7 +54,7 @@ public:
     virtual ~QGeoMapMapboxGL();
 
     QString copyrightsStyleSheet() const override;
-    void setMapboxGLSettings(const QMapboxGLSettings &);
+    void setMapboxGLSettings(const QMapboxGLSettings &, bool useChinaEndpoint);
     void setUseFBO(bool);
     void setMapItemsBefore(const QString &);
     Capabilities capabilities() const override;

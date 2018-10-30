@@ -378,7 +378,7 @@ QString QGeoMapMapboxGL::copyrightsStyleSheet() const
     return QStringLiteral("* { vertical-align: middle; font-weight: normal }");
 }
 
-void QGeoMapMapboxGL::setMapboxGLSettings(const QMapboxGLSettings& settings)
+void QGeoMapMapboxGL::setMapboxGLSettings(const QMapboxGLSettings& settings, bool useChinaEndpoint)
 {
     Q_D(QGeoMapMapboxGL);
 
@@ -386,8 +386,13 @@ void QGeoMapMapboxGL::setMapboxGLSettings(const QMapboxGLSettings& settings)
 
     // If the access token is not set, use the development access token.
     // This will only affect mapbox:// styles.
+    // Mapbox China requires a China-specific access token.
     if (d->m_settings.accessToken().isEmpty()) {
-        d->m_settings.setAccessToken(developmentToken);
+        if (useChinaEndpoint) {
+            qWarning("Mapbox China requires an access token: https://www.mapbox.com/contact/sales");
+        } else {
+            d->m_settings.setAccessToken(developmentToken);
+        }
     }
 }
 
