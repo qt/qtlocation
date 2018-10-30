@@ -483,6 +483,9 @@ void QGeoPathPrivate::setWidth(const qreal &width)
 
 double QGeoPathPrivate::length(int indexFrom, int indexTo) const
 {
+    if (path().isEmpty())
+        return 0.0;
+
     bool wrap = indexTo == -1;
     if (indexTo < 0 || indexTo >= path().size())
         indexTo = path().size() - 1;

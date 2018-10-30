@@ -70,6 +70,7 @@ void tst_QGeoPath::defaultConstructor()
     QGeoPath p;
     QVERIFY(!p.path().size());
     QCOMPARE(p.width(), qreal(0.0));
+    QCOMPARE(p.length(), double(0.0));
 }
 
 void tst_QGeoPath::listConstructor()
