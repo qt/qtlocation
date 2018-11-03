@@ -45,7 +45,7 @@
 #include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>
 #include <QtPositioningQuick/private/qdeclarativeposition_p.h>
 
-#include "qquickgeocoordinateanimation_p.h"
+#include <QtPositioningQuick/private/qquickgeocoordinateanimation_p.h>
 #include "locationsingleton.h"
 
 #include <QtCore/QVariantAnimation>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013-2016 Esri <contracts@esri.com>
+** Copyright (C) 2013-2018 Esri <contracts@esri.com>
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the documentation of the Qt Toolkit.
@@ -42,18 +42,14 @@ Data is provided by \l {http://www.esri.com/data/find-data}{many different conte
 
 The Esri geoservices plugin can be loaded by using the plugin key "esri".
 
-To use the services provided by the Esri platform, a subscription is required. There are two kinds of subscriptions:
-
-\list
-    \li \l {https://developers.arcgis.com/plans/}{Developer Subscription}
-    \li \l {http://www.arcgis.com/features/plans/pricing.html}{ArcGIS Online Subscription}
-\endlist
+You can use the services provided by Esri's ArcGIS Platform by subscribing to the ArcGIS Developer Program, at no charge. See the "Essentials" plan details here: {https://developers.arcgis.com/pricing/}{ArcGIS Developer Program Pricing}.
 
 The Developer subscription offers a free-of-charge option for developing and testing your applications.
 With this, your applications can go to production under the following conditions:
 
 \list
-    \li The app can request up to one million maps per month, and one million geocodes per month.
+    \li The app can request up to one million maps per month.
+    \li 50 credits are included with the Developer subscription. The costs are 40 credits for 1000 geocodes, and 0.5 credits per route generated. Place searches are free.
     \li The app does not directly generate revenue. That is, end users must be able to obtain it and to use it for free.
 \endlist
 
@@ -70,7 +66,7 @@ gives applications full access to the ArcGIS platform.
     \li Description
 \row
     \li esri.token
-    \li Security token for using routing services only. Mapping and geocoding services do not require a token.
+    \li Security token for using routing services only. Mapping, geocoding and place searches services do not require a token.
 \endtable
 
 To use the routing services hosted on ArcGIS Online with the Esri plugin, a token is required.

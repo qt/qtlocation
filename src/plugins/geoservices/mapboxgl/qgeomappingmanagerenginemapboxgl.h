@@ -59,6 +59,7 @@ public:
 private:
     QMapboxGLSettings m_settings;
     bool m_useFBO = true;
+    bool m_useChinaEndpoint = false;
     QString m_mapItemsBefore;
 };
 
