@@ -1087,6 +1087,7 @@ void QQuickGeoMapGestureArea::update()
     m_allPoints << m_touchPoints;
     if (m_allPoints.isEmpty() && !m_mousePoint.isNull())
         m_allPoints << *m_mousePoint.data();
+    std::sort(m_allPoints.begin(), m_allPoints.end(), [](const QTouchEvent::TouchPoint &tp1, const QTouchEvent::TouchPoint &tp2) { return tp1.id() < tp2.id(); });
 
     touchPointStateMachine();
 
