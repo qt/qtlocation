@@ -94,7 +94,11 @@ protected:
     void setVisibleArea(const QRectF &visibleArea) override;
     QRectF visibleArea() const override;
 
+#ifdef QT_LOCATION_DEBUG
+public:
+#else
 protected:
+#endif
     QAbstractGeoTileCache *m_cache;
     QGeoCameraTiles *m_visibleTiles;
     QGeoCameraTiles *m_prefetchTiles;

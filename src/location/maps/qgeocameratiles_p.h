@@ -79,6 +79,8 @@ public:
 
 protected:
     QScopedPointer<QGeoCameraTilesPrivate> d_ptr;
+
+    friend class QGeoCameraTilesPrivate;
     Q_DISABLE_COPY(QGeoCameraTiles)
 };
 
