@@ -624,7 +624,8 @@ void QGeoProjectionWebMercator::setupCamera()
 
     m_viewMercator = m_eyeMercator - m_centerMercator;
     m_upMercator = QDoubleVector3D::normal(m_viewMercator, m_sideMercator);
-    m_nearPlaneMercator = 1.0 / m_sideLength;
+    m_nearPlaneMercator = 0.000002; // this value works until ZL 18. Above that, a better progressive formula is needed, or
+                                    // else, this clips too much.
 
     double aspectRatio = 1.0 * m_viewportWidth / m_viewportHeight;
 
