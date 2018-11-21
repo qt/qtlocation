@@ -2,8 +2,8 @@ TEMPLATE = subdirs
 
 QT_FOR_CONFIG += positioning-private
 
-qtHaveModule(dbus):SUBDIRS += geoclue
-qtHaveModule(dbus):SUBDIRS += geoclue2
+linux:qtHaveModule(dbus):SUBDIRS += geoclue
+linux:qtHaveModule(dbus):SUBDIRS += geoclue2
 qtConfig(gypsy):SUBDIRS += gypsy
 qtConfig(winrt_geolocation):SUBDIRS += winrt
 qtHaveModule(simulator):SUBDIRS += simulator
