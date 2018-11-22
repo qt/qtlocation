@@ -37,6 +37,8 @@
 #include "qgeopositioninfosourcefactory_winrt.h"
 #include "qgeopositioninfosource_winrt_p.h"
 
+QT_BEGIN_NAMESPACE
+
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryWinRT::positionInfoSource(QObject *parent)
 {
     QGeoPositionInfoSourceWinRT *src = new QGeoPositionInfoSourceWinRT(parent);
@@ -58,3 +60,5 @@ QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryWinRT::areaMonitor(QObject *
     Q_UNUSED(parent);
     return nullptr;
 }
+
+QT_END_NAMESPACE
