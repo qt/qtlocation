@@ -81,6 +81,7 @@ public:
 public slots:
     virtual bool start() = 0;
     virtual bool stop() = 0;
+    virtual void setTrackPosition(bool trackPosition) = 0;
 
 signals:
     // These must be emitted by the engine

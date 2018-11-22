@@ -296,15 +296,15 @@ bool QDeclarativeNavigator::navigatorReady() const
 
 bool QDeclarativeNavigator::trackPositionSource() const
 {
-    return d_ptr->m_trackPositionSource;
+    return d_ptr->m_params->m_trackPositionSource;
 }
 
 void QDeclarativeNavigator::setTrackPositionSource(bool trackPositionSource)
 {
-    if (trackPositionSource == d_ptr->m_trackPositionSource)
+    if (trackPositionSource == d_ptr->m_params->m_trackPositionSource)
         return;
 
-    d_ptr->m_trackPositionSource = trackPositionSource;
+    d_ptr->m_params->m_trackPositionSource = trackPositionSource;
 
     emit trackPositionSourceChanged(trackPositionSource);
 }
@@ -414,6 +414,7 @@ bool QDeclarativeNavigator::ensureEngine()
             d_ptr->m_active = active;
             emit activeChanged(active);
         });
+        connect(this, &QDeclarativeNavigator::trackPositionSourceChanged, d_ptr->m_navigator.get(), &QAbstractNavigator::setTrackPosition);
         emit navigatorReadyChanged(true);
         return true;
     }
