@@ -436,38 +436,49 @@ HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPo
     Q_UNUSED(locator);
 
     HRESULT hr;
-    ComPtr<IGeoposition> pos;
-    hr = args->get_Position(&pos);
+    ComPtr<IGeoposition> position;
+    hr = args->get_Position(&position);
     RETURN_HR_IF_FAILED("Could not access position object.");
 
     QGeoPositionInfo currentInfo;
 
     ComPtr<IGeocoordinate> coord;
-    hr = pos->get_Coordinate(&coord);
+    hr = position->get_Coordinate(&coord);
     if (FAILED(hr))
         qErrnoWarning(hr, "Could not access coordinate");
 
-    DOUBLE lat;
-    hr = coord->get_Latitude(&lat);
+    ComPtr<IGeocoordinateWithPoint> pointCoordinate;
+    hr = coord.As(&pointCoordinate);
     if (FAILED(hr))
-        qErrnoWarning(hr, "Could not access latitude");
+        qErrnoWarning(hr, "Could not cast coordinate.");
 
-    DOUBLE lon;
-    hr = coord->get_Longitude(&lon);
+    ComPtr<IGeopoint> point;
+    hr = pointCoordinate->get_Point(&point);
     if (FAILED(hr))
-        qErrnoWarning(hr, "Could not access longitude");
+        qErrnoWarning(hr, "Could not obtain coordinate's point.");
 
-    // Depending on data source altitude can
-    // be identified or not
-    IReference<double> *alt;
-    hr = coord->get_Altitude(&alt);
-    if (SUCCEEDED(hr) && alt) {
-        double altd;
-        hr = alt->get_Value(&altd);
-        currentInfo.setCoordinate(QGeoCoordinate(lat, lon, altd));
-    } else {
-        currentInfo.setCoordinate(QGeoCoordinate(lat, lon));
+    BasicGeoposition pos;
+    hr = point->get_Position(&pos);
+    if (FAILED(hr))
+        qErrnoWarning(hr, "Could not obtain point's position.");
+
+    DOUBLE lat = pos.Latitude;
+    DOUBLE lon = pos.Longitude;
+    DOUBLE alt = pos.Altitude;
+
+    bool altitudeAvailable = false;
+    ComPtr<IGeoshape> shape;
+    hr = point.As(&shape);
+    if (SUCCEEDED(hr) && shape) {
+        AltitudeReferenceSystem altitudeSystem;
+        hr = shape->get_AltitudeReferenceSystem(&altitudeSystem);
+        if (SUCCEEDED(hr) && altitudeSystem == AltitudeReferenceSystem_Geoid)
+            altitudeAvailable = true;
     }
+    if (altitudeAvailable)
+        currentInfo.setCoordinate(QGeoCoordinate(lat, lon, alt));
+    else
+        currentInfo.setCoordinate(QGeoCoordinate(lat, lon));
 
     DOUBLE accuracy;
     hr = coord->get_Accuracy(&accuracy);
