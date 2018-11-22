@@ -478,7 +478,7 @@ HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPo
     hr = coord->get_AltitudeAccuracy(&altAccuracy);
     if (SUCCEEDED(hr) && altAccuracy) {
         double value;
-        hr = alt->get_Value(&value);
+        hr = altAccuracy->get_Value(&value);
         currentInfo.setAttribute(QGeoPositionInfo::VerticalAccuracy, value);
     }
 
