@@ -51,7 +51,7 @@
 #include "qgeopositioninfosource.h"
 #include "qgeopositioninfo.h"
 
-#include <QTimer>
+#include <QtCore/qtimer.h>
 
 #include <EventToken.h>
 #include <wrl.h>
@@ -76,7 +76,7 @@ class QGeoPositionInfoSourceWinRT : public QGeoPositionInfoSource
 {
     Q_OBJECT
 public:
-    QGeoPositionInfoSourceWinRT(QObject *parent = 0);
+    QGeoPositionInfoSourceWinRT(QObject *parent = nullptr);
     ~QGeoPositionInfoSourceWinRT();
     int init();
 

@@ -42,7 +42,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryWinRT::positionInfoSource(Q
     QGeoPositionInfoSourceWinRT *src = new QGeoPositionInfoSourceWinRT(parent);
     if (src->init() < 0) {
         delete src;
-        src = 0;
+        src = nullptr;
     }
     return src;
 }
@@ -50,11 +50,11 @@ QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryWinRT::positionInfoSource(Q
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryWinRT::satelliteInfoSource(QObject *parent)
 {
     Q_UNUSED(parent);
-    return 0;
+    return nullptr;
 }
 
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryWinRT::areaMonitor(QObject *parent)
 {
     Q_UNUSED(parent);
-    return 0;
+    return nullptr;
 }
