@@ -91,6 +91,7 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     : QGeoPositionInfoSource(parent)
     , d_ptr(new QGeoPositionInfoSourceWinRTPrivate)
 {
+    CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     Q_D(QGeoPositionInfoSourceWinRT);
     d->positionError = QGeoPositionInfoSource::NoError;
     d->updatesOngoing = false;
@@ -98,6 +99,7 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
 
 QGeoPositionInfoSourceWinRT::~QGeoPositionInfoSourceWinRT()
 {
+    CoUninitialize();
 }
 
 int QGeoPositionInfoSourceWinRT::init()
