@@ -73,7 +73,36 @@ HRESULT runOnXamlThread(const std::function<HRESULT ()> &delegate, bool waitForR
     return delegate();
 }
 }
-#endif
+
+static inline HRESULT await(const ComPtr<IAsyncOperation<GeolocationAccessStatus>> &asyncOp,
+                            GeolocationAccessStatus *result)
+{
+    ComPtr<IAsyncInfo> asyncInfo;
+    HRESULT hr = asyncOp.As(&asyncInfo);
+    if (FAILED(hr))
+        return hr;
+
+    AsyncStatus status;
+    while (SUCCEEDED(hr = asyncInfo->get_Status(&status)) && status == AsyncStatus::Started)
+        QThread::yieldCurrentThread();
+
+    if (FAILED(hr) || status != AsyncStatus::Completed) {
+        HRESULT ec;
+        hr = asyncInfo->get_ErrorCode(&ec);
+        if (FAILED(hr))
+            return hr;
+        hr = asyncInfo->Close();
+        if (FAILED(hr))
+            return hr;
+        return ec;
+    }
+
+    if (FAILED(hr))
+        return hr;
+
+    return asyncOp->GetResults(result);
+}
+#endif // !Q_OS_WINRT
 
 class QGeoPositionInfoSourceWinRTPrivate {
 public:
@@ -92,6 +121,7 @@ public:
 
 PositionStatus QGeoPositionInfoSourceWinRTPrivate::nativeStatus() const
 {
+#ifdef Q_OS_WINRT
     qCDebug(lcPositioningWinRT) << __FUNCTION__;
 
     PositionStatus status;
@@ -103,7 +133,11 @@ PositionStatus QGeoPositionInfoSourceWinRTPrivate::nativeStatus() const
         return PositionStatus_NotAvailable;
     }
     return status;
+#else
+    return PositionStatus_Ready;
+#endif
 }
+
 
 QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     : QGeoPositionInfoSource(parent)
@@ -570,7 +604,6 @@ HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator*, IStatusChange
 
 bool QGeoPositionInfoSourceWinRT::requestAccess() const
 {
-#ifdef Q_OS_WINRT
     qCDebug(lcPositioningWinRT) << __FUNCTION__;
     static GeolocationAccessStatus accessStatus = GeolocationAccessStatus_Unspecified;
     static ComPtr<IGeolocatorStatics> statics;
@@ -594,11 +627,12 @@ bool QGeoPositionInfoSourceWinRT::requestAccess() const
     Q_ASSERT_SUCCEEDED(hr);
 
     // We cannot wait inside the XamlThread as that would deadlock
+#ifdef Q_OS_WINRT
     QWinRTFunctions::await(op, &accessStatus);
+#else
+    await(op, &accessStatus);
+#endif
     return accessStatus == GeolocationAccessStatus_Allowed;
-#else // Q_OS_WINRT
-    return true;
-#endif // Q_OS_WINRT
 }
 
 QT_END_NAMESPACE
