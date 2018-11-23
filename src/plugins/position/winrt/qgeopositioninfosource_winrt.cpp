@@ -86,8 +86,24 @@ public:
     EventRegistrationToken positionToken;
     QMutex mutex;
     bool updatesOngoing;
+
+    PositionStatus nativeStatus() const;
 };
 
+PositionStatus QGeoPositionInfoSourceWinRTPrivate::nativeStatus() const
+{
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
+
+    PositionStatus status;
+    HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([this, &status]() {
+        return locator->get_LocationStatus(&status);
+    });
+    if (FAILED(hr)) {
+        qErrnoWarning(hr, "Could not query status");
+        return PositionStatus_NotAvailable;
+    }
+    return status;
+}
 
 QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     : QGeoPositionInfoSource(parent)
@@ -169,13 +185,7 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinRT::supporte
 {
     Q_D(const QGeoPositionInfoSourceWinRT);
 
-    PositionStatus status;
-    HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([d, &status]() {
-        HRESULT hr = d->locator->get_LocationStatus(&status);
-        return hr;
-    });
-    if (FAILED(hr))
-        return QGeoPositionInfoSource::NoPositioningMethods;
+    PositionStatus status = d->nativeStatus();
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << status;
 
     switch (status) {
@@ -427,13 +437,7 @@ bool QGeoPositionInfoSourceWinRT::checkNativeState()
     Q_D(QGeoPositionInfoSourceWinRT);
     qCDebug(lcPositioningWinRT) << __FUNCTION__;
 
-    PositionStatus status;
-    HRESULT hr = d->locator->get_LocationStatus(&status);
-    if (FAILED(hr)) {
-        setError(QGeoPositionInfoSource::UnknownSourceError);
-        qErrnoWarning(hr, "Could not query status");
-        return false;
-    }
+    PositionStatus status = d->nativeStatus();
 
     bool result = false;
     switch (status) {
