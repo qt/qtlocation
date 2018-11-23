@@ -61,6 +61,8 @@ typedef ITypedEventHandler<Geolocator *, StatusChangedEventArgs *> GeoLocatorSta
 typedef IAsyncOperationCompletedHandler<Geoposition*> PositionHandler;
 typedef IAsyncOperationCompletedHandler<GeolocationAccessStatus> AccessHandler;
 
+Q_DECLARE_LOGGING_CATEGORY(lcPositioningWinRT)
+
 QT_BEGIN_NAMESPACE
 
 #ifndef Q_OS_WINRT
@@ -91,6 +93,7 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     : QGeoPositionInfoSource(parent)
     , d_ptr(new QGeoPositionInfoSourceWinRTPrivate)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     Q_D(QGeoPositionInfoSourceWinRT);
     d->positionError = QGeoPositionInfoSource::NoError;
@@ -99,11 +102,13 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
 
 QGeoPositionInfoSourceWinRT::~QGeoPositionInfoSourceWinRT()
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     CoUninitialize();
 }
 
 int QGeoPositionInfoSourceWinRT::init()
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
     if (!requestAccess()) {
         qWarning ("Location access failed.");
@@ -154,6 +159,7 @@ int QGeoPositionInfoSourceWinRT::init()
 
 QGeoPositionInfo QGeoPositionInfoSourceWinRT::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(const QGeoPositionInfoSourceWinRT);
     Q_UNUSED(fromSatellitePositioningMethodsOnly)
     return d->lastPosition;
@@ -170,6 +176,7 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinRT::supporte
     });
     if (FAILED(hr))
         return QGeoPositionInfoSource::NoPositioningMethods;
+    qCDebug(lcPositioningWinRT) << __FUNCTION__ << status;
 
     switch (status) {
     case PositionStatus::PositionStatus_NoData:
@@ -183,6 +190,7 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinRT::supporte
 
 void QGeoPositionInfoSourceWinRT::setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__ << methods;
     Q_D(QGeoPositionInfoSourceWinRT);
 
     PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
@@ -210,6 +218,7 @@ void QGeoPositionInfoSourceWinRT::setPreferredPositioningMethods(QGeoPositionInf
 
 void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__ << msec;
     Q_D(QGeoPositionInfoSourceWinRT);
     // Windows Phone 8.1 and Windows 10 do not support 0 interval
 #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_PHONE_APP)
@@ -243,6 +252,7 @@ int QGeoPositionInfoSourceWinRT::minimumUpdateInterval() const
 
 void QGeoPositionInfoSourceWinRT::startUpdates()
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
 
     if (d->updatesOngoing)
@@ -256,6 +266,7 @@ void QGeoPositionInfoSourceWinRT::startUpdates()
 
 void QGeoPositionInfoSourceWinRT::stopUpdates()
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
 
     stopHandler();
@@ -265,6 +276,7 @@ void QGeoPositionInfoSourceWinRT::stopUpdates()
 
 bool QGeoPositionInfoSourceWinRT::startHandler()
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
 
     // Check if already attached
@@ -304,6 +316,7 @@ bool QGeoPositionInfoSourceWinRT::startHandler()
 
 void QGeoPositionInfoSourceWinRT::stopHandler()
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
 
     if (!d->positionToken.value)
@@ -317,6 +330,7 @@ void QGeoPositionInfoSourceWinRT::stopHandler()
 
 void QGeoPositionInfoSourceWinRT::requestUpdate(int timeout)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
 
     if (timeout != 0 && timeout < minimumUpdateInterval()) {
@@ -333,6 +347,7 @@ void QGeoPositionInfoSourceWinRT::requestUpdate(int timeout)
 
 void QGeoPositionInfoSourceWinRT::virtualPositionUpdate()
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
     QMutexLocker locker(&d->mutex);
 
@@ -370,6 +385,7 @@ void QGeoPositionInfoSourceWinRT::singleUpdateTimeOut()
 
 void QGeoPositionInfoSourceWinRT::updateSynchronized(QGeoPositionInfo currentInfo)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__ << currentInfo;
     Q_D(QGeoPositionInfoSourceWinRT);
     QMutexLocker locker(&d->mutex);
 
@@ -391,11 +407,13 @@ void QGeoPositionInfoSourceWinRT::updateSynchronized(QGeoPositionInfo currentInf
 QGeoPositionInfoSource::Error QGeoPositionInfoSourceWinRT::error() const
 {
     Q_D(const QGeoPositionInfoSourceWinRT);
+    qCDebug(lcPositioningWinRT) << __FUNCTION__ << d->positionError;
     return d->positionError;
 }
 
 void QGeoPositionInfoSourceWinRT::setError(QGeoPositionInfoSource::Error positionError)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__ << positionError;
     Q_D(QGeoPositionInfoSourceWinRT);
 
     if (positionError == d->positionError)
@@ -407,6 +425,7 @@ void QGeoPositionInfoSourceWinRT::setError(QGeoPositionInfoSource::Error positio
 bool QGeoPositionInfoSourceWinRT::checkNativeState()
 {
     Q_D(QGeoPositionInfoSourceWinRT);
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
 
     PositionStatus status;
     HRESULT hr = d->locator->get_LocationStatus(&status);
@@ -435,6 +454,7 @@ bool QGeoPositionInfoSourceWinRT::checkNativeState()
 
 HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPositionChangedEventArgs *args)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_UNUSED(locator);
 
     HRESULT hr;
@@ -543,12 +563,14 @@ HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator*, IStatusChange
 {
     PositionStatus st;
     args->get_Status(&st);
+    qCDebug(lcPositioningWinRT) << __FUNCTION__ << st;
     return S_OK;
 }
 
 bool QGeoPositionInfoSourceWinRT::requestAccess() const
 {
 #ifdef Q_OS_WINRT
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     static GeolocationAccessStatus accessStatus = GeolocationAccessStatus_Unspecified;
     static ComPtr<IGeolocatorStatics> statics;
 

@@ -37,26 +37,35 @@
 #include "qgeopositioninfosourcefactory_winrt.h"
 #include "qgeopositioninfosource_winrt_p.h"
 
+#include <QtCore/qloggingcategory.h>
+
+Q_LOGGING_CATEGORY(lcPositioningWinRT, "qt.positioning.winrt")
+
 QT_BEGIN_NAMESPACE
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryWinRT::positionInfoSource(QObject *parent)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     QGeoPositionInfoSourceWinRT *src = new QGeoPositionInfoSourceWinRT(parent);
     if (src->init() < 0) {
+        qCDebug(lcPositioningWinRT) << __FUNCTION__ << "Source initialization failed.";
         delete src;
-        src = nullptr;
+        return nullptr;
     }
+    qCDebug(lcPositioningWinRT) << __FUNCTION__ << "Created position info source.";
     return src;
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryWinRT::satelliteInfoSource(QObject *parent)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_UNUSED(parent);
     return nullptr;
 }
 
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryWinRT::areaMonitor(QObject *parent)
 {
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_UNUSED(parent);
     return nullptr;
 }
