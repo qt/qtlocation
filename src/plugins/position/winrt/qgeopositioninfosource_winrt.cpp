@@ -208,7 +208,7 @@ void QGeoPositionInfoSourceWinRT::setPreferredPositioningMethods(QGeoPositionInf
     if (previousPreferredPositioningMethods == preferredPositioningMethods())
         return;
 
-    bool needsRestart = d->positionToken.value != 0;
+    const bool needsRestart = d->positionToken.value != 0;
 
     if (needsRestart)
         stopHandler();
@@ -230,11 +230,8 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
 {
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << msec;
     Q_D(QGeoPositionInfoSourceWinRT);
-    // Windows Phone 8.1 and Windows 10 do not support 0 interval
-#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_PHONE_APP)
     if (msec == 0)
         msec = minimumUpdateInterval();
-#endif
 
     // If msec is 0 we send updates as data becomes available, otherwise we force msec to be equal
     // to or larger than the minimum update interval.
