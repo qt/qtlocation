@@ -114,6 +114,7 @@ public:
     EventRegistrationToken positionToken;
     QMutex mutex;
     bool updatesOngoing;
+    int minimumUpdateInterval;
 
     PositionStatus nativeStatus() const;
 };
@@ -168,8 +169,11 @@ int QGeoPositionInfoSourceWinRT::init()
                                         &d->locator);
         RETURN_HR_IF_FAILED("Could not initialize native location services.");
 
-        hr = d->locator->put_ReportInterval(1000);
-        RETURN_HR_IF_FAILED("Could not initialize report interval.");
+        UINT32 interval;
+        hr = d->locator->get_ReportInterval(&interval);
+        RETURN_HR_IF_FAILED("Could not retrieve report interval.");
+        d->minimumUpdateInterval = static_cast<int>(interval);
+        setUpdateInterval(d->minimumUpdateInterval);
 
         return hr;
     });
@@ -189,7 +193,6 @@ int QGeoPositionInfoSourceWinRT::init()
     d->positionToken.value = 0;
 
     d->periodicTimer.setSingleShot(true);
-    d->periodicTimer.setInterval(minimumUpdateInterval());
     connect(&d->periodicTimer, &QTimer::timeout, this, &QGeoPositionInfoSourceWinRT::virtualPositionUpdate);
 
     d->singleUpdateTimer.setSingleShot(true);
@@ -258,11 +261,9 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
 {
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << msec;
     Q_D(QGeoPositionInfoSourceWinRT);
-    if (msec == 0)
-        msec = minimumUpdateInterval();
-
-    // If msec is 0 we send updates as data becomes available, otherwise we force msec to be equal
-    // to or larger than the minimum update interval.
+    // minimumUpdateInterval is initialized to the lowest possible update interval in init().
+    // Passing 0 will cause an error on Windows 10.
+    // See https://docs.microsoft.com/en-us/uwp/api/windows.devices.geolocation.geolocator.reportinterval
     if (msec != 0 && msec < minimumUpdateInterval())
         msec = minimumUpdateInterval();
 
@@ -271,7 +272,7 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
     if (needsRestart)
         stopHandler();
 
-    HRESULT hr = d->locator->put_ReportInterval(msec);
+    HRESULT hr = d->locator->put_ReportInterval(static_cast<UINT32>(msec));
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
         qErrnoWarning(hr, "Failed to set update interval");
@@ -288,9 +289,8 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
 
 int QGeoPositionInfoSourceWinRT::minimumUpdateInterval() const
 {
-    // We use one second to reduce potential timer events
-    // in case the platform itself stops reporting
-    return 1000;
+    Q_D(const QGeoPositionInfoSourceWinRT);
+    return d->minimumUpdateInterval;
 }
 
 void QGeoPositionInfoSourceWinRT::startUpdates()
