@@ -266,6 +266,11 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
     if (msec != 0 && msec < minimumUpdateInterval())
         msec = minimumUpdateInterval();
 
+    const bool needsRestart = d->positionToken.value != 0;
+
+    if (needsRestart)
+        stopHandler();
+
     HRESULT hr = d->locator->put_ReportInterval(msec);
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
@@ -276,6 +281,9 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
     d->periodicTimer.setInterval(qMax(msec, minimumUpdateInterval()));
 
     QGeoPositionInfoSource::setUpdateInterval(msec);
+
+    if (needsRestart)
+        startHandler();
 }
 
 int QGeoPositionInfoSourceWinRT::minimumUpdateInterval() const
