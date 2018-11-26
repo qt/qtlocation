@@ -57,7 +57,6 @@ using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::Foundation::Collections;
 
 typedef ITypedEventHandler<Geolocator *, PositionChangedEventArgs *> GeoLocatorPositionHandler;
-typedef ITypedEventHandler<Geolocator *, StatusChangedEventArgs *> GeoLocatorStatusHandler;
 typedef IAsyncOperationCompletedHandler<Geoposition*> PositionHandler;
 typedef IAsyncOperationCompletedHandler<GeolocationAccessStatus> AccessHandler;
 
@@ -168,11 +167,6 @@ int QGeoPositionInfoSourceWinRT::init()
         HRESULT hr = RoActivateInstance(HString::MakeReference(RuntimeClass_Windows_Devices_Geolocation_Geolocator).Get(),
                                         &d->locator);
         RETURN_HR_IF_FAILED("Could not initialize native location services.");
-
-        hr = d->locator->add_StatusChanged(Callback<GeoLocatorStatusHandler>(this,
-                                                                             &QGeoPositionInfoSourceWinRT::onStatusChanged).Get(),
-                                           &d->statusToken);
-        RETURN_HR_IF_FAILED("Could not add status callback.");
 
         hr = d->locator->put_ReportInterval(1000);
         RETURN_HR_IF_FAILED("Could not initialize report interval.");
@@ -591,14 +585,6 @@ HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPo
 
     emit nativePositionUpdate(currentInfo);
 
-    return S_OK;
-}
-
-HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator*, IStatusChangedEventArgs *args)
-{
-    PositionStatus st;
-    args->get_Status(&st);
-    qCDebug(lcPositioningWinRT) << __FUNCTION__ << st;
     return S_OK;
 }
 
