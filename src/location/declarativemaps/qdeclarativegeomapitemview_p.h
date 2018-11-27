@@ -131,11 +131,11 @@ private:
     void removeDelegateFromMap(QQuickItem *o);
     void transitionItemOut(QQuickItem *o);
 
-    void insertInstantiatedItem(int index, QQuickItem *o);
-    void addItemToMap(QDeclarativeGeoMapItemBase *item, int index);
-    void addItemViewToMap(QDeclarativeGeoMapItemView *item, int index);
-    void addItemGroupToMap(QDeclarativeGeoMapItemGroup *item, int index);
-    void addDelegateToMap(QQuickItem *object, int index);
+    void insertInstantiatedItem(int index, QQuickItem *o, bool createdItem);
+    void addItemToMap(QDeclarativeGeoMapItemBase *item, int index, bool createdItem);
+    void addItemViewToMap(QDeclarativeGeoMapItemView *item, int index, bool createdItem);
+    void addItemGroupToMap(QDeclarativeGeoMapItemGroup *item, int index, bool createdItem);
+    void addDelegateToMap(QQuickItem *object, int index, bool createdItem = false);
 
     bool m_componentCompleted;
     QQmlIncubator::IncubationMode m_incubationMode = QQmlIncubator::Asynchronous;
@@ -143,8 +143,8 @@ private:
     QVariant m_itemModel;
     QDeclarativeGeoMap *m_map;
     QList<QQuickItem *> m_instantiatedItems;
-    QSet<int> m_incubatingItems;
     bool m_fitViewport;
+    bool m_creatingObject = false;
     QQmlDelegateModel *m_delegateModel;
     QQuickTransition *m_enter = nullptr;
     QQuickTransition *m_exit = nullptr;

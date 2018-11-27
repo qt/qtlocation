@@ -74,6 +74,7 @@ public:
     QGeoRoute m_geoRoute;
     QPointer<QDeclarativePositionSource> m_positionSource;
     QList<QPointer<QGeoMapParameter>> m_parameters;
+    bool m_trackPositionSource = true;
 };
 
 class QDeclarativeNavigatorPrivate
@@ -92,7 +93,6 @@ public:
     bool m_active = false;
     bool m_completed = false;
     bool m_ready = false;
-    bool m_trackPositionSource = true;
 };
 
 QT_END_NAMESPACE

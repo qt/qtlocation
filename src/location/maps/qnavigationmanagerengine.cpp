@@ -54,7 +54,6 @@ class QAbstractNavigatorPrivate
 public:
     QLocale locale;
     QLocale::MeasurementSystem measurementSystem;
-    bool initialized = false;
 };
 
 QAbstractNavigator::QAbstractNavigator(QObject *parent)

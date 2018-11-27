@@ -400,7 +400,7 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
 
     // 2)
     QList<QList<QDoubleVector2D> > clippedPaths;
-    const QList<QDoubleVector2D> &visibleRegion = p.visibleGeometryExpanded();
+    const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
     if (visibleRegion.size()) {
         clippedPaths = clipLine(wrappedPath, visibleRegion);
 
@@ -507,6 +507,120 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     pathToScreen(map, clippedPaths, leftBoundWrapped);
 }
 
+// ***  SCREEN CLIPPING *** //
+
+enum ClipPointType {
+    InsidePoint  = 0x00,
+    LeftPoint    = 0x01,
+    RightPoint   = 0x02,
+    BottomPoint  = 0x04,
+    TopPoint     = 0x08
+};
+
+static inline int clipPointType(qreal x, qreal y, const QRectF &rect)
+{
+    int type = InsidePoint;
+    if (x < rect.left())
+        type |= LeftPoint;
+    else if (x > rect.right())
+        type |= RightPoint;
+    if (y < rect.top())
+        type |= TopPoint;
+    else if (y > rect.bottom())
+        type |= BottomPoint;
+    return type;
+}
+
+static void clipSegmentToRect(qreal x0, qreal y0, qreal x1, qreal y1,
+                              const QRectF &clipRect,
+                              QVector<qreal> &outPoints,
+                              QVector<QPainterPath::ElementType> &outTypes)
+{
+    int type0 = clipPointType(x0, y0, clipRect);
+    int type1 = clipPointType(x1, y1, clipRect);
+    bool accept = false;
+
+    while (true) {
+        if (!(type0 | type1)) {
+            accept = true;
+            break;
+        } else if (type0 & type1) {
+            break;
+        } else {
+            qreal x = 0.0;
+            qreal y = 0.0;
+            int outsideType = type0 ? type0 : type1;
+
+            if (outsideType & BottomPoint) {
+                x = x0 + (x1 - x0) * (clipRect.bottom() - y0) / (y1 - y0);
+                y = clipRect.bottom() - 0.1;
+            } else if (outsideType & TopPoint) {
+                x = x0 + (x1 - x0) * (clipRect.top() - y0) / (y1 - y0);
+                y = clipRect.top() + 0.1;
+            } else if (outsideType & RightPoint) {
+                y = y0 + (y1 - y0) * (clipRect.right() - x0) / (x1 - x0);
+                x = clipRect.right() - 0.1;
+            } else if (outsideType & LeftPoint) {
+                y = y0 + (y1 - y0) * (clipRect.left() - x0) / (x1 - x0);
+                x = clipRect.left() + 0.1;
+            }
+
+            if (outsideType == type0) {
+                x0 = x;
+                y0 = y;
+                type0 = clipPointType(x0, y0, clipRect);
+            } else {
+                x1 = x;
+                y1 = y;
+                type1 = clipPointType(x1, y1, clipRect);
+            }
+        }
+    }
+
+    if (accept) {
+        if (outPoints.size() >= 2) {
+            qreal lastX, lastY;
+            lastY = outPoints.at(outPoints.size() - 1);
+            lastX = outPoints.at(outPoints.size() - 2);
+
+            if (!qFuzzyCompare(lastY, y0) || !qFuzzyCompare(lastX, x0)) {
+                outTypes << QPainterPath::MoveToElement;
+                outPoints << x0 << y0;
+            }
+        } else {
+            outTypes << QPainterPath::MoveToElement;
+            outPoints << x0 << y0;
+        }
+
+        outTypes << QPainterPath::LineToElement;
+        outPoints << x1 << y1;
+    }
+}
+
+static void clipPathToRect(const QVector<qreal> &points,
+                           const QVector<QPainterPath::ElementType> &types,
+                           const QRectF &clipRect,
+                           QVector<qreal> &outPoints,
+                           QVector<QPainterPath::ElementType> &outTypes)
+{
+    outPoints.clear();
+    outPoints.reserve(points.size());
+    outTypes.clear();
+    outTypes.reserve(types.size());
+
+    qreal lastX = 0;
+    qreal lastY = 0; // or else used uninitialized
+    for (int i = 0; i < types.size(); ++i) {
+        if (i > 0 && types[i] != QPainterPath::MoveToElement) {
+            qreal x = points[i * 2], y = points[i * 2 + 1];
+            clipSegmentToRect(lastX, lastY, x, y, clipRect, outPoints, outTypes);
+        }
+
+        lastX = points[i * 2];
+        lastY = points[i * 2 + 1];
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////
 
 /*!
@@ -526,9 +640,24 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
         return;
     }
 
-    // The geometry has already been clipped against the visible region projection in wrapped mercator space.
-    QVector<qreal> points = srcPoints_;
-    QVector<QPainterPath::ElementType> types = srcPointTypes_;
+    // Create the viewport rect in the same coordinate system
+    // as the actual points
+    QRectF viewport(0, 0, map.viewportWidth(), map.viewportHeight());
+    viewport.adjust(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
+    viewport.translate(-1 * origin);
+
+    QVector<qreal> points;
+    QVector<QPainterPath::ElementType> types;
+
+    if (clipToViewport_) {
+        // Although the geometry has already been clipped against the visible region in wrapped mercator space.
+        // This is currently still needed to prevent a number of artifacts deriving from QTriangulatingStroker processing
+        // very large lines (that is, polylines that span many pixels in screen space)
+        clipPathToRect(srcPoints_, srcPointTypes_, viewport, points, types);
+    } else {
+        points = srcPoints_;
+        types = srcPointTypes_;
+    }
 
     QVectorPath vp(points.data(), types.size(), types.data());
     QTriangulatingStroker ts;
