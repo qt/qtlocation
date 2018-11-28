@@ -42,6 +42,7 @@
 #include <QtPositioning/QGeoCircle>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QGeoCodingManager>
+#include <QtLocation/private/qgeocodereply_p.h>
 #include <QtPositioning/QGeoPolygon>
 
 QT_BEGIN_NAMESPACE
@@ -389,6 +390,7 @@ void QDeclarativeGeocodeModel::geocodeFinished(QGeoCodeReply *reply)
     reply->deleteLater();
     reply_ = 0;
     int oldCount = declarativeLocations_.count();
+    // const QVariantMap &extraData = QGeoCodeReplyPrivate::get(*reply)->extraData();
     setLocations(reply->locations());
     setError(NoError, QString());
     setStatus(QDeclarativeGeocodeModel::Ready);

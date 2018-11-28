@@ -42,6 +42,7 @@
 
 #include <QtNetwork/QNetworkReply>
 #include <QtLocation/QGeoCodeReply>
+#include <QtLocation/private/qgeocodereply_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -56,6 +57,17 @@ public:
 private Q_SLOTS:
     void networkReplyFinished();
     void networkReplyError(QNetworkReply::NetworkError error);
+};
+
+class QGeoCodeReplyOsmPrivate : public QGeoCodeReplyPrivate
+{
+public:
+    QGeoCodeReplyOsmPrivate();
+    ~QGeoCodeReplyOsmPrivate();
+    QVariantMap extraData() const override;
+
+    bool m_includeGeometry = false;
+    QVariantMap m_extraData;
 };
 
 QT_END_NAMESPACE

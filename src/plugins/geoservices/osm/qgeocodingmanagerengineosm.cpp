@@ -38,7 +38,6 @@
 ****************************************************************************/
 
 #include "qgeocodingmanagerengineosm.h"
-#include "qgeocodereplyosm.h"
 
 #include <QtCore/QVariantMap>
 #include <QtCore/QUrl>
@@ -50,6 +49,8 @@
 #include <QtPositioning/QGeoAddress>
 #include <QtPositioning/QGeoShape>
 #include <QtPositioning/QGeoRectangle>
+#include "qgeocodereplyosm.h"
+
 
 QT_BEGIN_NAMESPACE
 
@@ -84,6 +85,9 @@ QGeoCodingManagerEngineOsm::QGeoCodingManagerEngineOsm(const QVariantMap &parame
         m_urlPrefix = parameters.value(QStringLiteral("osm.geocoding.host")).toString().toLatin1();
     else
         m_urlPrefix = QStringLiteral("https://nominatim.openstreetmap.org");
+
+    if (parameters.contains(QStringLiteral("osm.geocoding.debug_query")))
+        m_debugQuery = parameters.value(QStringLiteral("osm.geocoding.debug_query")).toBool();
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
@@ -126,6 +130,11 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int l
     QNetworkReply *reply = m_networkManager->get(request);
 
     QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, this);
+    if (m_debugQuery) {
+        QGeoCodeReplyOsmPrivate *replyPrivate
+                = static_cast<QGeoCodeReplyOsmPrivate *>(QGeoCodeReplyPrivate::get(*geocodeReply));
+        replyPrivate->m_extraData["request_url"] = url;
+    }
 
     connect(geocodeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(geocodeReply, SIGNAL(error(QGeoCodeReply::Error,QString)),
@@ -157,6 +166,11 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &
     QNetworkReply *reply = m_networkManager->get(request);
 
     QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, this);
+    if (m_debugQuery) {
+        QGeoCodeReplyOsmPrivate *replyPrivate
+                = static_cast<QGeoCodeReplyOsmPrivate *>(QGeoCodeReplyPrivate::get(*geocodeReply));
+        replyPrivate->m_extraData["request_url"] = url;
+    }
 
     connect(geocodeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(geocodeReply, SIGNAL(error(QGeoCodeReply::Error,QString)),
