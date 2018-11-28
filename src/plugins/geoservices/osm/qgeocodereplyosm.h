@@ -51,12 +51,15 @@ class QGeoCodeReplyOsm : public QGeoCodeReply
     Q_OBJECT
 
 public:
-    explicit QGeoCodeReplyOsm(QNetworkReply *reply, QObject *parent = 0);
+    explicit QGeoCodeReplyOsm(QNetworkReply *reply, bool includeExtraData = false, QObject *parent = 0);
     ~QGeoCodeReplyOsm();
 
 private Q_SLOTS:
     void networkReplyFinished();
     void networkReplyError(QNetworkReply::NetworkError error);
+
+private:
+    bool m_includeExtraData = false;
 };
 
 class QGeoCodeReplyOsmPrivate : public QGeoCodeReplyPrivate
@@ -66,7 +69,6 @@ public:
     ~QGeoCodeReplyOsmPrivate();
     QVariantMap extraData() const override;
 
-    bool m_includeGeometry = false;
     QVariantMap m_extraData;
 };
 

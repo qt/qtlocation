@@ -75,15 +75,24 @@ QT_USE_NAMESPACE
     \endcode
 */
 
+/*!
+    \qmlproperty VariantMap QDeclarativeGeoLocation::extendedAttributes
+
+    This property holds the extended attributes for this Location.
+    Extended attributes are backend-dependent and can be location-dependent.
+
+    \since 5.13
+*/
+
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject *parent)
-:   QObject(parent), m_address(0)
+:   QObject(parent)
 
 {
     setLocation(QGeoLocation());
 }
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src, QObject *parent)
-:   QObject(parent), m_address(0)
+:   QObject(parent)
 {
     setLocation(src);
 }
@@ -109,6 +118,7 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 
     setCoordinate(src.coordinate());
     setBoundingBox(src.boundingBox());
+    setProperty("extendedAttributes", src.extendedAttributes());
 }
 
 QGeoLocation QDeclarativeGeoLocation::location() const
@@ -117,6 +127,7 @@ QGeoLocation QDeclarativeGeoLocation::location() const
     retValue.setAddress(m_address ? m_address->address() : QGeoAddress());
     retValue.setCoordinate(m_coordinate);
     retValue.setBoundingBox(m_boundingBox);
+    retValue.setExtendedAttributes(m_extendedAttributes);
     return retValue;
 }
 

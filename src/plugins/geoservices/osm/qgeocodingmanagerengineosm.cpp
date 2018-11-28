@@ -88,6 +88,8 @@ QGeoCodingManagerEngineOsm::QGeoCodingManagerEngineOsm(const QVariantMap &parame
 
     if (parameters.contains(QStringLiteral("osm.geocoding.debug_query")))
         m_debugQuery = parameters.value(QStringLiteral("osm.geocoding.debug_query")).toBool();
+    if (parameters.contains(QStringLiteral("osm.geocoding.include_extended_data")))
+        m_includeExtraData = parameters.value(QStringLiteral("osm.geocoding.include_extended_data")).toBool();
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
@@ -129,7 +131,7 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int l
 
     QNetworkReply *reply = m_networkManager->get(request);
 
-    QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, this);
+    QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, m_includeExtraData, this);
     if (m_debugQuery) {
         QGeoCodeReplyOsmPrivate *replyPrivate
                 = static_cast<QGeoCodeReplyOsmPrivate *>(QGeoCodeReplyPrivate::get(*geocodeReply));
@@ -165,7 +167,7 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &
 
     QNetworkReply *reply = m_networkManager->get(request);
 
-    QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, this);
+    QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, m_includeExtraData, this);
     if (m_debugQuery) {
         QGeoCodeReplyOsmPrivate *replyPrivate
                 = static_cast<QGeoCodeReplyOsmPrivate *>(QGeoCodeReplyPrivate::get(*geocodeReply));

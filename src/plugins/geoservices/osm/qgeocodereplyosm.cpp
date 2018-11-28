@@ -49,8 +49,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoCodeReplyOsm::QGeoCodeReplyOsm(QNetworkReply *reply, QObject *parent)
-:   QGeoCodeReply(*new QGeoCodeReplyOsmPrivate, parent)
+QGeoCodeReplyOsm::QGeoCodeReplyOsm(QNetworkReply *reply, bool includeExtraData, QObject *parent)
+:   QGeoCodeReply(*new QGeoCodeReplyOsmPrivate, parent), m_includeExtraData(includeExtraData)
 {
     if (!reply) {
         setError(UnknownError, QStringLiteral("Null reply"));
@@ -98,6 +98,20 @@ static QGeoAddress parseAddressObject(const QJsonObject &object)
     return address;
 }
 
+static void injectExtra(QGeoLocation &location, const QJsonObject &object)
+{
+    QVariantMap extra;
+    static const QList<QString> extraKeys = {  QStringLiteral("geojson"),
+                                               QStringLiteral("class")  };
+
+    for (const auto k: extraKeys) {
+        if (object.contains(k))
+            extra[k] = object.value(k).toVariant();
+    }
+
+    location.setExtendedAttributes(extra);
+}
+
 void QGeoCodeReplyOsm::networkReplyFinished()
 {
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
@@ -121,6 +135,8 @@ void QGeoCodeReplyOsm::networkReplyFinished()
         location.setCoordinate(coordinate);
         location.setAddress(parseAddressObject(object));
 
+        if (m_includeExtraData)
+            injectExtra(location, object);
         locations.append(location);
 
         setLocations(locations);
@@ -154,6 +170,8 @@ void QGeoCodeReplyOsm::networkReplyFinished()
             location.setCoordinate(coordinate);
             location.setBoundingBox(rectangle);
             location.setAddress(parseAddressObject(object));
+            if (m_includeExtraData)
+                injectExtra(location, object);
             locations.append(location);
         }
 

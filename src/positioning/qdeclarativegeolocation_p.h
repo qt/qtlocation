@@ -52,6 +52,7 @@
 //
 
 #include <QtCore/QObject>
+#include <QtCore/QVariantMap>
 #include <QtPositioning/QGeoLocation>
 #include <QtPositioning/qgeorectangle.h>
 #include <QtPositioning/private/qdeclarativegeoaddress_p.h>
@@ -66,6 +67,7 @@ class Q_POSITIONING_EXPORT QDeclarativeGeoLocation : public QObject
     Q_PROPERTY(QDeclarativeGeoAddress *address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
     Q_PROPERTY(QGeoRectangle boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
+    Q_PROPERTY(QVariantMap extendedAttributes MEMBER m_extendedAttributes NOTIFY extendedAttributesChanged REVISION 13)
 
 public:
     explicit QDeclarativeGeoLocation(QObject *parent = 0);
@@ -87,11 +89,13 @@ Q_SIGNALS:
     void addressChanged();
     void coordinateChanged();
     void boundingBoxChanged();
+    void extendedAttributesChanged();
 
 private:
-    QDeclarativeGeoAddress *m_address;
+    QDeclarativeGeoAddress *m_address = nullptr;
     QGeoRectangle m_boundingBox;
     QGeoCoordinate m_coordinate;
+    QVariantMap m_extendedAttributes;
 };
 
 QT_END_NAMESPACE
