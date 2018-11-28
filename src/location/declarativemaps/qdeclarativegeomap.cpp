@@ -694,11 +694,11 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     QImage copyrightImage;
     if (!m_initialized && width() > 0 && height() > 0) {
         QMetaObject::Connection copyrightStringCatcherConnection =
-                connect(m_map,
+                connect(m_map.data(),
                         QOverload<const QString &>::of(&QGeoMap::copyrightsChanged),
                         [&copyrightString](const QString &copy){ copyrightString = copy; });
         QMetaObject::Connection copyrightImageCatcherConnection =
-                connect(m_map,
+                connect(m_map.data(),
                         QOverload<const QImage &>::of(&QGeoMap::copyrightsChanged),
                         [&copyrightImage](const QImage &copy){ copyrightImage = copy; });
         m_map->setViewportSize(QSize(width(), height()));
@@ -709,9 +709,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
 
     /* COPYRIGHT SIGNALS REWIRING */
-    connect(m_map, SIGNAL(copyrightsChanged(QImage)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
             this,  SIGNAL(copyrightsChanged(QImage)));
-    connect(m_map, SIGNAL(copyrightsChanged(QString)),
+    connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
             this,  SIGNAL(copyrightsChanged(QString)));
     if (!copyrightString.isEmpty())
         emit m_map->copyrightsChanged(copyrightString);
@@ -719,8 +719,8 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         emit m_map->copyrightsChanged(copyrightImage);
 
 
-    connect(m_map, &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
-    connect(m_map, &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
+    connect(m_map.data(), &QGeoMap::sgNodeChanged, this, &QQuickItem::update);
+    connect(m_map.data(), &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
 
     // This prefetches a buffer around the map
     m_map->prefetchData();
