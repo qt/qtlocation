@@ -107,8 +107,9 @@ protected:
     QQmlComponent *m_delegate = nullptr;
     QQmlDelegateModel *m_delegateModel = nullptr;
     QVector<QPointer<QGeoMapObject>> m_instantiatedMapObjects;
-    QVector<QPointer<QGeoMapObject>> m_pendingMapObjects;
+    QVector<QPointer<QGeoMapObject>> m_pendingMapObjects; // for items instantiated before the map is set
     QVector<QPointer<QGeoMapObject>> m_userAddedMapObjects; // A third list containing the objects dynamically added through addMapObject
+    bool m_creatingObject = false;
 };
 
 QT_END_NAMESPACE

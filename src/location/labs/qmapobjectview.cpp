@@ -153,8 +153,8 @@ void QMapObjectView::classBegin()
     QQmlInstanceModel *model = m_delegateModel;
     connect(model, &QQmlInstanceModel::modelUpdated, this, &QMapObjectView::modelUpdated);
     connect(model, &QQmlInstanceModel::createdItem, this, &QMapObjectView::createdItem);
-    connect(model, &QQmlInstanceModel::destroyingItem, this, &QMapObjectView::destroyingItem);
-    connect(model, &QQmlInstanceModel::initItem, this, &QMapObjectView::initItem);
+//    connect(model, &QQmlInstanceModel::destroyingItem, this, &QMapObjectView::destroyingItem);
+//    connect(model, &QQmlInstanceModel::initItem, this, &QMapObjectView::initItem);
 }
 
 void QMapObjectView::componentComplete()
@@ -278,11 +278,12 @@ void QMapObjectView::modelUpdated(const QQmlChangeSet &changeSet, bool reset)
         }
     }
 
+    QBoolBlocker createBlocker(m_creatingObject, true);
     for (const QQmlChangeSet::Change &c: changeSet.inserts()) {
         for (int idx = c.start(); idx < c.end(); idx++) {
             m_instantiatedMapObjects.insert(idx, nullptr);
             QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(idx, incubationMode));
-            if (mo) // if not, a createdItem signal will be emitted.
+            if (mo) // if not, a createdItem signal will be emitted later, else it has been emitted already while createBlocker is in effect.
                 addMapObjectToMap(mo, idx);
         }
     }
@@ -311,12 +312,17 @@ void QMapObjectView::removeMapObjectFromMap(int index)
 {
     if (index >= 0 && index < m_instantiatedMapObjects.size()) {
         QGeoMapObject *mo = m_instantiatedMapObjects.takeAt(index);
-        if (!mo) {
-            m_delegateModel->cancel(index);
+        if (!mo)
             return;
-        }
+
         mo->setMap(nullptr);
-        m_delegateModel->release(mo);
+        QQmlInstanceModel::ReleaseFlags releaseStatus = m_delegateModel->release(mo);
+#ifdef QT_DEBUG
+    if (releaseStatus == QQmlInstanceModel::Referenced)
+        qWarning() << "object "<<mo<<" still referenced";
+#else
+    Q_UNUSED(releaseStatus)
+#endif
     }
 }
 
@@ -324,8 +330,10 @@ void QMapObjectView::removeMapObjectFromMap(int index)
 // for explanation on when createdItem is emitted.
 void QMapObjectView::createdItem(int index, QObject * /*object*/)
 {
-    if (m_instantiatedMapObjects.at(index))
-        return; // The first call to object() apparently returned a valid item. Don't call it again.
+    if (m_creatingObject) {
+        // see QDeclarativeGeoMapItemView::createdItem
+        return;
+    }
 
     // If here, according to the documentation above, object() should be called again for index,
     // or else, it will be destroyed exiting this scope
@@ -333,6 +341,8 @@ void QMapObjectView::createdItem(int index, QObject * /*object*/)
     mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(index, incubationMode));
     if (mo)
         addMapObjectToMap(mo, index);
+    else
+        qWarning() << "QQmlDelegateModel::object called in createdItem for " << index << " produced a null object";
 }
 
 
