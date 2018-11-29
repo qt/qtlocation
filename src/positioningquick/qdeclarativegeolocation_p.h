@@ -55,11 +55,12 @@
 #include <QtCore/QVariantMap>
 #include <QtPositioning/QGeoLocation>
 #include <QtPositioning/qgeorectangle.h>
-#include <QtPositioning/private/qdeclarativegeoaddress_p.h>
+#include <QtPositioningQuick/private/qdeclarativegeoaddress_p.h>
+#include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_POSITIONING_EXPORT QDeclarativeGeoLocation : public QObject
+class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativeGeoLocation : public QObject
 {
     Q_OBJECT
 

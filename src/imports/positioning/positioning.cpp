@@ -38,8 +38,8 @@
 ****************************************************************************/
 
 
-#include <QtPositioning/private/qdeclarativegeoaddress_p.h>
-#include <QtPositioning/private/qdeclarativegeolocation_p.h>
+#include <QtPositioningQuick/private/qdeclarativegeoaddress_p.h>
+#include <QtPositioningQuick/private/qdeclarativegeolocation_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
 
 #include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>

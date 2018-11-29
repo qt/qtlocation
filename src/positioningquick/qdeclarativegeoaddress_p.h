@@ -53,10 +53,11 @@
 
 #include <QtCore/QObject>
 #include <QtPositioning/QGeoAddress>
+#include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_POSITIONING_EXPORT QDeclarativeGeoAddress : public QObject
+class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativeGeoAddress : public QObject
 {
     Q_OBJECT
 
