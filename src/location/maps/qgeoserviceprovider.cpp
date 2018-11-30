@@ -381,7 +381,7 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
         this->loadPlugin(this->parameterMap);
     }
 
-    if (!this->factory || this->error != QGeoServiceProvider::NoError) {
+    if (!this->factory) {
         error = this->error;
         errorString = this->errorString;
         return 0;
