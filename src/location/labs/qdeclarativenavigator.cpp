@@ -37,6 +37,7 @@
 #include <QtLocation/private/qdeclarativegeoroute_p.h>
 #include <QtLocation/private/qdeclarativegeoroutemodel_p.h>
 #include <QtLocation/private/qdeclarativegeoroutesegment_p.h>
+#include <QtLocation/qgeoserviceprovider.h>
 #include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>
 #include <QtQml/qqmlinfo.h>
 
@@ -184,6 +185,23 @@ QT_BEGIN_NAMESPACE
 
     This signal is emitted when the last waypoint of the route, the destination,
     has been reached.
+*/
+
+/*!
+    \qmlproperty enumeration Qt.labs.location::Navigator::error
+
+    This read-only property holds the latest error value of the geocoding request.
+
+    \list
+    \li Navigator.NoError - No error has occurred.
+    \li GeocodeModel.NotSupportedError - Navigation is not supported by the service provider.
+    \li GeocodeModel.ConnectionError - An error occurred while communicating with the service provider.
+    \li GeocodeModel.LoaderError - The geoservice provider library could not be loaded. Setting QT_DEBUG_PLUGINS environment variable may help diagnosing the reason.
+    \li GeocodeModel.UnknownParameterError - An unknown parameter was specified
+    \li GeocodeModel.MissingRequiredParameterError -  required parameter was not specified.
+    \li GeocodeModel.UnknownError - An error occurred which does not fit into any of the other categories.
+
+    \endlist
 */
 
 QDeclarativeNavigatorPrivate::QDeclarativeNavigatorPrivate(QParameterizableObject *q_)
@@ -360,6 +378,16 @@ int QDeclarativeNavigator::currentSegment() const
     return d_ptr->m_currentSegment;
 }
 
+QDeclarativeNavigator::NavigationError QDeclarativeNavigator::error() const
+{
+    return d_ptr->m_error;
+}
+
+QString QDeclarativeNavigator::errorString() const
+{
+    return d_ptr->m_errorString;
+}
+
 bool QDeclarativeNavigator::active() const
 {
     return d_ptr->m_active;
@@ -439,27 +467,56 @@ bool QDeclarativeNavigator::ensureEngine()
     if (!d_ptr->m_completed || !d_ptr->m_plugin->isAttached())
         return false;
 
-    auto manager = d_ptr->m_plugin->sharedGeoServiceProvider()->navigationManager();
-    if (manager) {
-        d_ptr->m_navigator.reset(manager->createNavigator(d_ptr->m_params));
-        if (!d_ptr->m_navigator)
-            return false;
-        d_ptr->m_navigator->setLocale(manager->locale());
-        d_ptr->m_navigator->setMeasurementSystem(manager->measurementSystem());
-        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::waypointReached, this, &QDeclarativeNavigator::waypointReached);
-        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::destinationReached, this, &QDeclarativeNavigator::destinationReached);
-        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteChanged, this, &QDeclarativeNavigator::onCurrentRouteChanged);
-        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteLegChanged, this, &QDeclarativeNavigator::onCurrentRouteLegChanged);
-        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentSegmentChanged, this, &QDeclarativeNavigator::onCurrentSegmentChanged);
-        connect(d_ptr->m_navigator.get(), &QAbstractNavigator::activeChanged, this, [this](bool active){
-            d_ptr->m_active = active;
-            emit activeChanged(active);
-        });
-        connect(this, &QDeclarativeNavigator::trackPositionSourceChanged, d_ptr->m_navigator.get(), &QAbstractNavigator::setTrackPosition);
-        emit navigatorReadyChanged(true);
-        return true;
+    QGeoServiceProvider *serviceProvider = d_ptr->m_plugin->sharedGeoServiceProvider();
+    // if m_plugin->isAttached(), serviceProvider cannot be null
+    QNavigationManager *manager = serviceProvider->navigationManager();
+
+    if (serviceProvider->navigationError() != QGeoServiceProvider::NoError) {
+        QDeclarativeNavigator::NavigationError newError = UnknownError;
+        switch (serviceProvider->navigationError()) {
+        case QGeoServiceProvider::NotSupportedError:
+            newError = NotSupportedError; break;
+        case QGeoServiceProvider::UnknownParameterError:
+            newError = UnknownParameterError; break;
+        case QGeoServiceProvider::MissingRequiredParameterError:
+            newError = MissingRequiredParameterError; break;
+        case QGeoServiceProvider::ConnectionError:
+            newError = ConnectionError; break;
+        case QGeoServiceProvider::LoaderError:
+            newError = LoaderError; break;
+        default:
+            break;
+        }
+
+        setError(newError, serviceProvider->navigationErrorString());
+        return false;
     }
-    return false;
+
+    if (!manager) {
+        setError(NotSupportedError, tr("Plugin does not support navigation."));
+        return false;
+    }
+
+    d_ptr->m_navigator.reset(manager->createNavigator(d_ptr->m_params));
+    if (!d_ptr->m_navigator) {
+        setError(UnknownError, tr("Failed to create a navigator object."));
+        return false;
+    }
+
+    d_ptr->m_navigator->setLocale(manager->locale());
+    d_ptr->m_navigator->setMeasurementSystem(manager->measurementSystem());
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::waypointReached, this, &QDeclarativeNavigator::waypointReached);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::destinationReached, this, &QDeclarativeNavigator::destinationReached);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteChanged, this, &QDeclarativeNavigator::onCurrentRouteChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteLegChanged, this, &QDeclarativeNavigator::onCurrentRouteLegChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentSegmentChanged, this, &QDeclarativeNavigator::onCurrentSegmentChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::activeChanged, this, [this](bool active){
+        d_ptr->m_active = active;
+        emit activeChanged(active);
+    });
+    connect(this, &QDeclarativeNavigator::trackPositionSourceChanged, d_ptr->m_navigator.get(), &QAbstractNavigator::setTrackPosition);
+    emit navigatorReadyChanged(true);
+    return true;
 }
 
 void QDeclarativeNavigator::updateReadyState() {
@@ -471,6 +528,13 @@ void QDeclarativeNavigator::updateReadyState() {
 
     if (oldReady != d_ptr->m_ready)
         emit navigatorReadyChanged(d_ptr->m_ready);
+}
+
+void QDeclarativeNavigator::setError(QDeclarativeNavigator::NavigationError error, const QString &errorString)
+{
+    d_ptr->m_error = error;
+    d_ptr->m_errorString = errorString;
+    emit errorChanged();
 }
 
 void QDeclarativeNavigator::onCurrentRouteChanged(const QGeoRoute &route)

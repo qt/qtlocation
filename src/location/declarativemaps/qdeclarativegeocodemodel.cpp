@@ -293,9 +293,9 @@ void QDeclarativeGeocodeModel::pluginReady()
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoCodingManager *geocodingManager = serviceProvider->geocodingManager();
 
-    if (serviceProvider->error() != QGeoServiceProvider::NoError) {
+    if (serviceProvider->geocodingError() != QGeoServiceProvider::NoError) {
         QDeclarativeGeocodeModel::GeocodeError newError = UnknownError;
-        switch (serviceProvider->error()) {
+        switch (serviceProvider->geocodingError()) {
         case QGeoServiceProvider::NotSupportedError:
             newError = EngineNotSetError; break;
         case QGeoServiceProvider::UnknownParameterError:
@@ -308,7 +308,7 @@ void QDeclarativeGeocodeModel::pluginReady()
             break;
         }
 
-        setError(newError, serviceProvider->errorString());
+        setError(newError, serviceProvider->geocodingErrorString());
         return;
     }
 

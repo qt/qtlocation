@@ -52,6 +52,7 @@
 #include <QtQml/qqml.h>
 #include <QSharedPointer>
 #include <QtLocation/private/qparameterizableobject_p.h>
+#include <QtLocation/qgeoserviceprovider.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -81,9 +82,25 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigator : public QParameterizableO
     Q_PROPERTY(QDeclarativeGeoRoute *currentRoute READ currentRoute NOTIFY currentRouteChanged)
     Q_PROPERTY(QDeclarativeGeoRouteLeg *currentRouteLeg READ currentRouteLeg NOTIFY currentRouteChanged)
     Q_PROPERTY(int currentSegment READ currentSegment NOTIFY currentSegmentChanged)
+    Q_PROPERTY(NavigationError error READ error NOTIFY errorChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
+    enum NavigationError {
+        //QGeoServiceProvider related errors start here
+        NoError = QGeoServiceProvider::NoError,
+        NotSupportedError = QGeoServiceProvider::NotSupportedError, //TODO Qt6 consider merge with NotSupportedError
+        ConnectionError = QGeoServiceProvider::ConnectionError, //TODO Qt6 merge with Map's ConnectionError
+        LoaderError = QGeoServiceProvider::LoaderError,
+        UnknownParameterError = QGeoServiceProvider::UnknownParameterError, //TODO Qt6 consider rename UnsupportedOperationError
+        MissingRequiredParameterError = QGeoServiceProvider::MissingRequiredParameterError,
+        //we leave gap for future QGeoCodeReply errors
+
+        // Navigation-specific error should start at 100
+        UnknownError = 100
+    };
+
     explicit QDeclarativeNavigator(QObject *parent = nullptr);
     ~QDeclarativeNavigator();
 
@@ -119,6 +136,9 @@ public:
     QDeclarativeGeoRouteLeg *currentRouteLeg() const;
     int currentSegment() const;
 
+    NavigationError error() const;
+    QString errorString() const;
+
 signals:
     void navigatorReadyChanged(bool ready);
     void trackPositionSourceChanged(bool trackPositionSource);
@@ -133,13 +153,15 @@ signals:
     void currentRouteChanged();
     void currentRouteLegChanged();
     void currentSegmentChanged();
+    void errorChanged();
 
-private:
+protected:
     void pluginReady();
     bool ensureEngine();
     void updateReadyState();
+    void setError(NavigationError error, const QString &errorString);
 
-private slots:
+protected slots:
     void onCurrentRouteChanged(const QGeoRoute &route);
     void onCurrentRouteLegChanged(const QGeoRouteLeg &routeLeg);
     void onCurrentSegmentChanged(int segment);

@@ -345,9 +345,9 @@ void QDeclarativeGeoRouteModel::pluginReady()
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
 
-    if (serviceProvider->error() != QGeoServiceProvider::NoError) {
+    if (serviceProvider->routingError() != QGeoServiceProvider::NoError) {
         QDeclarativeGeoRouteModel::RouteError newError = UnknownError;
-        switch (serviceProvider->error()) {
+        switch (serviceProvider->routingError()) {
         case QGeoServiceProvider::NotSupportedError:
             newError = EngineNotSetError; break;
         case QGeoServiceProvider::UnknownParameterError:
@@ -360,7 +360,7 @@ void QDeclarativeGeoRouteModel::pluginReady()
             break;
         }
 
-        setError(newError, serviceProvider->errorString());
+        setError(newError, serviceProvider->routingErrorString());
         return;
     }
 

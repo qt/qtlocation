@@ -387,8 +387,8 @@ void QDeclarativeGeoMap::pluginReady()
     QGeoServiceProvider *provider = m_plugin->sharedGeoServiceProvider();
     m_mappingManager = provider->mappingManager();
 
-    if (provider->error() != QGeoServiceProvider::NoError) {
-        setError(provider->error(), provider->errorString());
+    if (provider->mappingError() != QGeoServiceProvider::NoError) {
+        setError(provider->mappingError(), provider->mappingErrorString());
         return;
     }
 

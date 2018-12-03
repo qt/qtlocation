@@ -52,6 +52,7 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtCore/qpointer.h>
 #include <QtLocation/qgeoroute.h>
+#include <QtLocation/private/qdeclarativenavigator_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -94,6 +95,8 @@ public:
     bool m_active = false;
     bool m_completed = false;
     bool m_ready = false;
+    QDeclarativeNavigator::NavigationError m_error = QDeclarativeNavigator::NoError;
+    QString m_errorString;
 };
 
 QT_END_NAMESPACE
