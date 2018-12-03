@@ -102,7 +102,14 @@ static void injectExtra(QGeoLocation &location, const QJsonObject &object)
 {
     QVariantMap extra;
     static const QList<QString> extraKeys = {  QStringLiteral("geojson"),
-                                               QStringLiteral("class")  };
+                                               QStringLiteral("icon"),
+                                               QStringLiteral("importance"),
+                                               QStringLiteral("type"),
+                                               QStringLiteral("osm_id"),
+                                               QStringLiteral("osm_type"),
+                                               QStringLiteral("licence"),
+                                               QStringLiteral("place_id"),
+                                               QStringLiteral("class") };
 
     for (const auto k: extraKeys) {
         if (object.contains(k))
