@@ -196,6 +196,31 @@ void QDeclarativeNavigatorPrivate::updateReadyState()
     qobject_cast<QDeclarativeNavigator *>(q)->updateReadyState();
 }
 
+void QDeclarativeNavigatorPrivate::clearCachedData()
+{
+    const bool routeChanged = !m_currentRoute.isNull();
+    const bool routeLegChanged = !m_currentRouteLeg.isNull();
+    const bool segmentChanged = m_currentSegment != 0;
+
+    if (m_currentRoute)
+        m_currentRoute->deleteLater();
+    m_currentRoute = nullptr;
+
+    if (m_currentRouteLeg)
+        m_currentRouteLeg->deleteLater();
+    m_currentRouteLeg = nullptr;
+
+    m_currentSegment = 0;
+
+    QDeclarativeNavigator *qq = qobject_cast<QDeclarativeNavigator *>(q);
+    if (routeChanged)
+        qq->currentRouteChanged();
+    if (routeLegChanged)
+        qq->currentRouteLegChanged();
+    if (segmentChanged)
+        qq->currentSegmentChanged();
+}
+
 
 
 QDeclarativeNavigator::QDeclarativeNavigator(QObject *parent)
@@ -398,6 +423,9 @@ void QDeclarativeNavigator::stop()
 
     if (d_ptr->m_navigator->active())
         d_ptr->m_active = d_ptr->m_navigator->stop();
+
+    // clear cached data
+    d_ptr->clearCachedData();
 }
 
 void QDeclarativeNavigator::pluginReady()

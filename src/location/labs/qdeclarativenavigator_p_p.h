@@ -83,6 +83,8 @@ public:
     QDeclarativeNavigatorPrivate(QParameterizableObject *q_);
 
     void updateReadyState();
+    void clearCachedData();
+
     QParameterizableObject *q = nullptr;
     QSharedPointer<QDeclarativeNavigatorParams> m_params;
     QScopedPointer<QAbstractNavigator> m_navigator;
