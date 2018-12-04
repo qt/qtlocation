@@ -328,6 +328,13 @@ QDeclarativeGeoRoute *QDeclarativeNavigator::currentRoute() const
     return d_ptr->m_currentRoute.data();
 }
 
+QDeclarativeGeoRouteLeg *QDeclarativeNavigator::currentRouteLeg() const
+{
+    if (!d_ptr->m_ready || !d_ptr->m_navigator->active())
+        return nullptr;
+    return d_ptr->m_currentRouteLeg.data();
+}
+
 int QDeclarativeNavigator::currentSegment() const
 {
     if (!d_ptr->m_ready || !d_ptr->m_navigator->active())

@@ -59,6 +59,7 @@ class QDeclarativeGeoServiceProvider;
 class QDeclarativeGeoMap;
 class QNavigationManager;
 class QDeclarativeGeoRoute;
+class QDeclarativeGeoRouteLeg;
 class QDeclarativePositionSource;
 class QDeclarativeGeoWaypoint;
 class QGeoRoute;
@@ -78,6 +79,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigator : public QParameterizableO
     Q_PROPERTY(bool navigatorReady READ navigatorReady NOTIFY navigatorReadyChanged)
     Q_PROPERTY(bool trackPositionSource READ trackPositionSource WRITE setTrackPositionSource NOTIFY trackPositionSourceChanged)
     Q_PROPERTY(QDeclarativeGeoRoute *currentRoute READ currentRoute NOTIFY currentRouteChanged)
+    Q_PROPERTY(QDeclarativeGeoRouteLeg *currentRouteLeg READ currentRouteLeg NOTIFY currentRouteChanged)
     Q_PROPERTY(int currentSegment READ currentSegment NOTIFY currentSegmentChanged)
     Q_INTERFACES(QQmlParserStatus)
 
@@ -114,6 +116,7 @@ public:
     bool trackPositionSource() const;
 
     QDeclarativeGeoRoute *currentRoute() const;
+    QDeclarativeGeoRouteLeg *currentRouteLeg() const;
     int currentSegment() const;
 
 signals:
