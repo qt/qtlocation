@@ -191,11 +191,6 @@ QDeclarativeNavigatorPrivate::QDeclarativeNavigatorPrivate(QParameterizableObjec
 {
 }
 
-void QDeclarativeNavigatorPrivate::updateReadyState()
-{
-    qobject_cast<QDeclarativeNavigator *>(q)->updateReadyState();
-}
-
 void QDeclarativeNavigatorPrivate::clearCachedData()
 {
     const bool routeChanged = !m_currentRoute.isNull();
@@ -257,11 +252,10 @@ void QDeclarativeNavigator::setMap(QDeclarativeGeoMap *map)
         return;
 
     d_ptr->m_params->m_map = map;
-    QDeclarativeNavigatorPrivate *dptr = d_ptr.data();
     connect(map, &QObject::destroyed, this,
-            [this, dptr]() {
+            [this]() {
                 this->mapChanged();
-                dptr->updateReadyState();
+                this->updateReadyState();
             });
     emit mapChanged();
     updateReadyState();
@@ -307,11 +301,10 @@ void QDeclarativeNavigator::setPositionSource(QDeclarativePositionSource *positi
         return;
 
     d_ptr->m_params->m_positionSource = positionSource;
-    QDeclarativeNavigatorPrivate *dptr = d_ptr.data();
     QObject::connect(positionSource, &QObject::destroyed,
-            [this, dptr]() {
+            [this]() {
                 this->positionSourceChanged();
-                dptr->updateReadyState();
+                this->updateReadyState();
             }
     );
     emit positionSourceChanged();

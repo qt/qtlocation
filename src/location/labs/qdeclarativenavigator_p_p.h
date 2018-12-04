@@ -82,7 +82,6 @@ class QDeclarativeNavigatorPrivate
 public:
     QDeclarativeNavigatorPrivate(QParameterizableObject *q_);
 
-    void updateReadyState();
     void clearCachedData();
 
     QParameterizableObject *q = nullptr;
