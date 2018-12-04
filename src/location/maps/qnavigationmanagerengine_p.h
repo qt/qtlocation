@@ -66,6 +66,12 @@ class QNavigationManagerEnginePrivate;
 class QDeclarativeNavigatorParams;
 class QDeclarativeGeoWaypoint;
 
+/*
+    This class is not supposed to react on QDeclarativeNavigator properties changes.
+    This class is meant to react only on start, stop and setTrackPosition.
+    Upon start(), it is supposed to fetch all info from the QDeclarativeNavigatorParams that the engine is supposed
+    to inject.
+*/
 class Q_LOCATION_PRIVATE_EXPORT QAbstractNavigator: public QObject
 {
     Q_OBJECT
