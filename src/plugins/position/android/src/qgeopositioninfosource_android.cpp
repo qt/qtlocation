@@ -232,7 +232,7 @@ void QGeoPositionInfoSourceAndroid::requestTimeout()
 
         //compare accuracy
         if (info.hasAttribute(QGeoPositionInfo::HorizontalAccuracy) &&
-                info.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
+                best.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
         {
             best = info.attribute(QGeoPositionInfo::HorizontalAccuracy) <
                     best.attribute(QGeoPositionInfo::HorizontalAccuracy) ? info : best;
