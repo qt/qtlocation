@@ -65,6 +65,8 @@ class QNavigationManager;
 class QNavigationManagerEnginePrivate;
 class QDeclarativeNavigatorParams;
 class QDeclarativeGeoWaypoint;
+class QDeclarativeGeoRouteLeg;
+class QDeclarativeGeoRoute;
 
 /*
     This class is not supposed to react on QDeclarativeNavigator properties changes.
@@ -85,6 +87,19 @@ public:
     virtual bool active() const = 0;
     virtual bool ready() const = 0;
 
+    virtual QVariant nextManeuverIcon() const;
+    virtual double distanceToNextManeuver() const;
+    virtual int timeToNextManeuver() const;
+    virtual int remainingTravelTime() const;
+    virtual double remainingTravelDistance() const;
+    virtual int remainingTravelTimeToNextWaypoint() const;
+    virtual double remainingTravelDistanceToNextWaypoint() const;
+    virtual double traveledDistance() const;
+    virtual int traveledTime() const;
+    virtual QGeoRoute currentRoute() const;
+    virtual QGeoRouteLeg currentRouteLeg() const;
+    virtual int currentSegment() const;
+
 public slots:
     virtual bool start() = 0;
     virtual bool stop() = 0;
@@ -95,9 +110,12 @@ signals:
     void activeChanged(bool active);
     void waypointReached(const QDeclarativeGeoWaypoint *pos);
     void destinationReached();
-    void currentRouteChanged(const QGeoRoute &route);
-    void currentRouteLegChanged(const QGeoRouteLeg &route);
-    void currentSegmentChanged(int segment);
+    void currentRouteChanged();
+    void currentRouteLegChanged();
+    void currentSegmentChanged();
+
+    void nextManeuverIconChanged();
+    void progressInformationChanged();
 
 private:
     QScopedPointer<QAbstractNavigatorPrivate> d;

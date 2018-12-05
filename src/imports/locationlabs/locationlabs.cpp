@@ -41,6 +41,7 @@
 #include <QtLocation/private/qmappolygonobject_p.h>
 #include <QtLocation/private/qmappolylineobject_p.h>
 #include <QtLocation/private/qdeclarativenavigator_p.h>
+#include <QtLocation/private/qdeclarativenavigator_p_p.h>
 
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
@@ -73,6 +74,7 @@ public:
             qmlRegisterType<QMapCircleObject>(uri, major, minor, "MapCircleObject");
             qmlRegisterType<QMapPolygonObject>(uri, major, minor, "MapPolygonObject");
             qmlRegisterType<QMapPolylineObject>(uri, major, minor, "MapPolylineObject");
+            qmlRegisterType<QDeclarativeNavigationBasicDirections>();
             qmlRegisterType<QDeclarativeNavigator>(uri, major, minor, "Navigator");
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
