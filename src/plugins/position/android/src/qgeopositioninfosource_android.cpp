@@ -223,7 +223,7 @@ void QGeoPositionInfoSourceAndroid::requestTimeout()
         const QGeoPositionInfo info = queuedSingleUpdates[i];
 
         //anything newer by 20s is always better
-        const int timeDelta = best.timestamp().secsTo(info.timestamp());
+        const qint64 timeDelta = best.timestamp().secsTo(info.timestamp());
         if (abs(timeDelta) > 20) {
             if (timeDelta > 0)
                 best = info;
