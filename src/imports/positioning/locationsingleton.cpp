@@ -214,6 +214,14 @@ QGeoPath LocationSingleton::path() const
     return QGeoPath();
 }
 
+/*!
+    \qmlmethod geopath QtPositioning::path(list<coordinate> coordinates, real width) const
+
+    Constructs a geopath from coordinates and width.
+
+    \sa {geopath}
+    \since 5.9
+*/
 QGeoPath LocationSingleton::path(const QJSValue &value, qreal width) const
 {
     QList<QGeoCoordinate> pathList;
