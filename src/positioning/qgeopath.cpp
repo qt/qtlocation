@@ -432,7 +432,7 @@ bool QGeoPathPrivate::operator==(const QGeoShapePrivate &other) const
     if (type == QGeoShape::PathType)
         return m_width == otherPath.m_width && m_path == otherPath.m_path;
     else
-        return m_path == otherPath.m_path;
+        return m_path == otherPath.m_path && m_holesList == otherPath.m_holesList;
 }
 
 bool QGeoPathPrivate::isValid() const
