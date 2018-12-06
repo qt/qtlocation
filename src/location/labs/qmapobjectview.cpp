@@ -89,13 +89,34 @@ QGeoMapObject::Type QMapObjectViewPrivate::type() const
 */
 
 
-QMapObjectViewPrivateDefault::QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other) : QMapObjectViewPrivate(other.q)
+QMapObjectViewPrivateDefault::QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other)
+:   QMapObjectViewPrivate(other.q), m_model(other.model()), m_delegate(other.delegate())
 {
 }
 
 QMapObjectViewPrivateDefault::~QMapObjectViewPrivateDefault()
 {
 
+}
+
+QVariant QMapObjectViewPrivateDefault::model() const
+{
+    return m_model;
+}
+
+void QMapObjectViewPrivateDefault::setModel(const QVariant &model)
+{
+    m_model = model;
+}
+
+QQmlComponent *QMapObjectViewPrivateDefault::delegate() const
+{
+    return m_delegate;
+}
+
+void QMapObjectViewPrivateDefault::setDelegate(QQmlComponent *delegate)
+{
+    m_delegate = delegate;
 }
 
 QMapObjectViewPrivateDefault::QMapObjectViewPrivateDefault(QGeoMapObject *q) : QMapObjectViewPrivate(q)
@@ -106,6 +127,17 @@ QMapObjectViewPrivateDefault::QMapObjectViewPrivateDefault(QGeoMapObject *q) : Q
 QGeoMapObjectPrivate *QMapObjectViewPrivateDefault::clone()
 {
     return new QMapObjectViewPrivateDefault(*this);
+}
+
+bool QMapObjectViewPrivateDefault::equals(const QGeoMapObjectPrivate &other) const
+{
+    if (other.type() != type())
+        return false;
+
+    const QMapObjectViewPrivate &o = static_cast<const QMapObjectViewPrivate &>(other);
+    return (QGeoMapObjectPrivate::equals(o)
+            && model() == o.model()
+            && delegate() == o.delegate());
 }
 
 /*
@@ -160,10 +192,11 @@ void QMapObjectView::classBegin()
 void QMapObjectView::componentComplete()
 {
     QGeoMapObject::componentComplete();
-    if (m_delegate)
-        m_delegateModel->setDelegate(m_delegate);
-    if (m_model.isValid())
-        m_delegateModel->setModel(m_model);
+    QMapObjectViewPrivate *d = static_cast<QMapObjectViewPrivate *>(d_ptr.data());
+    if (d->delegate())
+        m_delegateModel->setDelegate(d->delegate());
+    if (d->model().isValid())
+        m_delegateModel->setModel(d->model());
     m_delegateModel->componentComplete();
 }
 
@@ -175,7 +208,8 @@ void QMapObjectView::componentComplete()
 */
 QVariant QMapObjectView::model() const
 {
-    return m_model;
+    const QMapObjectViewPrivate *d = static_cast<const QMapObjectViewPrivate *>(d_ptr.data());
+    return d->model();
 }
 
 /*!
@@ -187,14 +221,16 @@ QVariant QMapObjectView::model() const
 */
 QQmlComponent *QMapObjectView::delegate() const
 {
-    return m_delegate;
+    const QMapObjectViewPrivate *d = static_cast<const QMapObjectViewPrivate *>(d_ptr.data());
+    return d->delegate();
 }
 
 void QMapObjectView::setModel(QVariant model)
 {
-    if (m_model == model)
+    QMapObjectViewPrivate *d = static_cast<QMapObjectViewPrivate *>(d_ptr.data());
+    if (d->model() == model)
         return;
-    m_model = model;
+    d->setModel(model);
 
     if (d_ptr->m_componentCompleted)
         m_delegateModel->setModel(model);
@@ -204,9 +240,10 @@ void QMapObjectView::setModel(QVariant model)
 
 void QMapObjectView::setDelegate(QQmlComponent *delegate)
 {
-    if (m_delegate == delegate)
+    QMapObjectViewPrivate *d = static_cast<QMapObjectViewPrivate *>(d_ptr.data());
+    if (d->delegate() == delegate)
         return;
-    m_delegate = delegate;
+    d->setDelegate(delegate);
 
     if (d_ptr->m_componentCompleted)
         m_delegateModel->setDelegate(delegate);
