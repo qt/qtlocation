@@ -1305,7 +1305,7 @@ void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
         return;
     }
 
-    fitViewportToGeoShape();
+    fitViewportToGeoShape(m_visibleRegion);
 }
 
 QGeoShape QDeclarativeGeoMap::visibleRegion() const
@@ -1445,39 +1445,6 @@ QMargins QDeclarativeGeoMap::mapMargins() const
                     , height() - va.height() - va.y());
 }
 
-// TODO: offer the possibility to specify the margins.
-void QDeclarativeGeoMap::fitViewportToGeoShape()
-{
-    if (m_map->geoProjection().projectionType() == QGeoProjection::ProjectionWebMercator) {
-        // This case remains handled here, and not inside QGeoMap*::fitViewportToGeoRectangle,
-        // in order to honor animations on center and zoomLevel
-        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_map->geoProjection());
-        const int borderSize = 10;
-        const QMargins borders(borderSize, borderSize, borderSize, borderSize);
-
-        if (!m_map  || !m_visibleRegion.isValid())
-            return;
-
-        const QMargins margins = borders + mapMargins();
-        const QPair<QGeoCoordinate, qreal> fitData = p.fitViewportToGeoRectangle(m_visibleRegion,
-                                                                                 margins);
-        if (!fitData.first.isValid())
-            return;
-
-        // position camera to the center of bounding box
-        setProperty("center", QVariant::fromValue(fitData.first)); // not using setCenter(centerCoordinate) to honor a possible animation set on the center property
-
-        if (!qIsFinite(fitData.second))
-            return;
-        double newZoom = qMax<double>(minimumZoomLevel(), fitData.second);
-        setProperty("zoomLevel", QVariant::fromValue(newZoom)); // not using setZoomLevel(newZoom)  to honor a possible animation set on the zoomLevel property
-    } else if (m_map->capabilities() & QGeoMap::SupportsFittingViewportToGeoRectangle) {
-        // Animations cannot be honored in this case, as m_map acts as a black box
-        m_map->fitViewportToGeoRectangle(m_visibleRegion);
-    }
-}
-
-
 /*!
     \qmlproperty list<MapType> QtLocation::Map::supportedMapTypes
 
@@ -1601,6 +1568,64 @@ void QDeclarativeGeoMap::clearData()
 {
     if (m_map)
         m_map->clearData();
+}
+
+/*!
+    \qmlmethod void QtLocation::Map::fitViewportToGeoShape(geoShape, margins)
+
+    Fits the viewport to a specific geo shape.
+    The margins are in screen pixels.
+
+    \note If the projection used by the plugin is not WebMercator, and the plugin does not have fitting to
+    shape capability, this method will do nothing.
+
+    \sa visibleRegion
+    \since 5.13
+*/
+void QDeclarativeGeoMap::fitViewportToGeoShape(const QGeoShape &shape, QVariant margins)
+{
+    QMargins m(10, 10, 10, 10); // lets defaults to 10 if margins is invalid
+    switch (margins.type()) {
+        case QMetaType::Int:
+        case QMetaType::Double: {
+            const int value = int(margins.toDouble());
+            m = QMargins(value, value, value, value);
+        }
+        break;
+        // ToDo: Support distinct margins in some QML form. Perhaps QRect?
+        default:
+            break;
+    }
+    fitViewportToGeoShape(shape, m);
+}
+
+void QDeclarativeGeoMap::fitViewportToGeoShape(const QGeoShape &shape, const QMargins &borders)
+{
+    if (!m_map  || !shape.isValid())
+        return;
+
+    if (m_map->geoProjection().projectionType() == QGeoProjection::ProjectionWebMercator) {
+        // This case remains handled here, and not inside QGeoMap*::fitViewportToGeoRectangle,
+        // in order to honor animations on center and zoomLevel
+        const QMargins margins = borders + mapMargins();
+        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_map->geoProjection());
+        const QPair<QGeoCoordinate, qreal> fitData = p.fitViewportToGeoRectangle(shape.boundingGeoRectangle(),
+                                                                                 margins);
+        if (!fitData.first.isValid())
+            return;
+
+        // position camera to the center of bounding box
+        setProperty("center", QVariant::fromValue(fitData.first)); // not using setCenter(centerCoordinate) to honor a possible animation set on the center property
+
+        if (!qIsFinite(fitData.second))
+            return;
+        double newZoom = qMax<double>(minimumZoomLevel(), fitData.second);
+        setProperty("zoomLevel", QVariant::fromValue(newZoom)); // not using setZoomLevel(newZoom)  to honor a possible animation set on the zoomLevel property
+    } else if (m_map->capabilities() & QGeoMap::SupportsFittingViewportToGeoRectangle) {
+        // Animations cannot be honored in this case, as m_map acts as a black box
+        m_map->fitViewportToGeoRectangle(m_visibleRegion, borders);
+    }
+    // else out of luck
 }
 
 /*!
@@ -2205,7 +2230,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
         Multiple fitViewportTo*() calls replace each other.
      */
     if (m_pendingFitViewport && width() && height()) {
-        fitViewportToGeoShape();
+        fitViewportToGeoShape(m_visibleRegion);
         m_pendingFitViewport = false;
     }
 

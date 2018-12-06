@@ -135,9 +135,10 @@ bool QGeoMap::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QP
     return false;
 }
 
-bool QGeoMap::fitViewportToGeoRectangle(const QGeoRectangle &rectangle)
+bool QGeoMap::fitViewportToGeoRectangle(const QGeoRectangle &rectangle, const QMargins &borders)
 {
     Q_UNUSED(rectangle)
+    Q_UNUSED(borders)
     return false;
 }
 

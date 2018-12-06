@@ -150,7 +150,7 @@ public:
     virtual bool setBearing(qreal bearing, const QGeoCoordinate &coordinate);
     virtual QGeoShape visibleRegion() const;
     virtual bool anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &anchorPoint);
-    virtual bool fitViewportToGeoRectangle(const QGeoRectangle &rectangle);
+    virtual bool fitViewportToGeoRectangle(const QGeoRectangle &rectangle, const QMargins &borders);
 
     virtual void setCopyrightVisible(bool visible);
     virtual void removeMapObject(QGeoMapObject *obj);
