@@ -50,6 +50,7 @@
 
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qclipperutils_p.h>
+#include <QtPositioning/private/qgeopolygon_p.h>
 
 /* poly2tri triangulator includes */
 #include <clip2tri.h>
@@ -318,6 +319,7 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), border_(this), color_(Qt::transparent), dirtyMaterial_(true),
     updatingGeometry_(false)
 {
+    geopath_ = QGeoPolygonEager();
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
                      this, SLOT(markSourceDirtyAndUpdate()));
@@ -611,7 +613,7 @@ void QDeclarativePolygonMapItem::setGeoShape(const QGeoShape &shape)
     if (shape == geopath_)
         return;
 
-    geopath_ = shape;
+    geopath_ = QGeoPathEager(shape);
     regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());

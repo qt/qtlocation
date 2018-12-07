@@ -54,6 +54,7 @@
 #include <QtGui/private/qtriangulator_p.h>
 
 #include <QtPositioning/private/qclipperutils_p.h>
+#include <QtPositioning/private/qgeopath_p.h>
 #include <array>
 
 QT_BEGIN_NAMESPACE
@@ -738,6 +739,7 @@ bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), line_(this), dirtyMaterial_(true), updatingGeometry_(false)
 {
+    geopath_ = QGeoPathEager();
     setFlag(ItemHasContents, true);
     QObject::connect(&line_, SIGNAL(colorChanged(QColor)),
                      this, SLOT(updateAfterLinePropertiesChanged()));
@@ -806,7 +808,7 @@ void QDeclarativePolylineMapItem::setPath(const QGeoPath &path)
     if (geopath_.path() == path.path())
         return;
 
-    geopath_ = path;
+    geopath_ = QGeoPathEager(path);
     regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
@@ -1135,18 +1137,8 @@ const QGeoShape &QDeclarativePolylineMapItem::geoShape() const
 
 void QDeclarativePolylineMapItem::setGeoShape(const QGeoShape &shape)
 {
-    if (shape == geopath_)
-        return;
-
     const QGeoPath geopath(shape); // if shape isn't a path, path will be created as a default-constructed path
-    const bool pathHasChanged = geopath.path() != geopath_.path();
-    geopath_ = geopath;
-
-    regenerateCache();
-    geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
-    markSourceDirtyAndUpdate();
-    if (pathHasChanged)
-        emit pathChanged();
+    setPath(geopath);
 }
 
 QGeoMap::ItemType QDeclarativePolylineMapItem::itemType() const
