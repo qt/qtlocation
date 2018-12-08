@@ -45,18 +45,19 @@ QT_BEGIN_NAMESPACE
 */
 
 QMapPolylineObjectPrivateQSG::QMapPolylineObjectPrivateQSG(QGeoMapObject *q)
-    : QMapPolylineObjectPrivate(q)
+    : QMapPolylineObjectPrivateDefault(q)
 {
 
 }
 
 QMapPolylineObjectPrivateQSG::QMapPolylineObjectPrivateQSG(const QMapPolylineObjectPrivate &other)
-    : QMapPolylineObjectPrivate(other.q)
+    : QMapPolylineObjectPrivateDefault(other)
 {
-    // do the appropriate internal update and trigger map repaint
-    setPath(other.path());
-    setColor(other.color());
-    setWidth(other.width());
+    // Data already cloned by the *Default copy constructor, but necessary
+    // update operations triggered only by setters overrides
+    updateGeometry();
+    if (m_map)
+        emit m_map->sgNodeChanged();
 }
 
 QMapPolylineObjectPrivateQSG::~QMapPolylineObjectPrivateQSG()
@@ -127,24 +128,22 @@ QSGNode *QMapPolylineObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
     return node;
 }
 
-QList<QGeoCoordinate> QMapPolylineObjectPrivateQSG::path() const { return m_geoPath.path(); }
-
-QColor QMapPolylineObjectPrivateQSG::color() const { return m_color; }
-
-qreal QMapPolylineObjectPrivateQSG::width() const { return m_width; }
+QList<QGeoCoordinate> QMapPolylineObjectPrivateQSG::path() const
+{
+    return m_geoPath.path();
+}
 
 void QMapPolylineObjectPrivateQSG::setPath(const QList<QGeoCoordinate> &path)
 {
     m_geoPath.setPath(path);
     updateGeometry();
-
     if (m_map)
         emit m_map->sgNodeChanged();
 }
 
 void QMapPolylineObjectPrivateQSG::setColor(const QColor &color)
 {
-    m_color = color;
+    QMapPolylineObjectPrivateDefault::setColor(color);
     updateGeometry();
 
     if (m_map)
@@ -153,7 +152,7 @@ void QMapPolylineObjectPrivateQSG::setColor(const QColor &color)
 
 void QMapPolylineObjectPrivateQSG::setWidth(qreal width)
 {
-    m_width = width;
+    QMapPolylineObjectPrivateDefault::setWidth(width);
     updateGeometry();
 
     if (m_map)
@@ -163,6 +162,11 @@ void QMapPolylineObjectPrivateQSG::setWidth(qreal width)
 QGeoMapObjectPrivate *QMapPolylineObjectPrivateQSG::clone()
 {
     return new QMapPolylineObjectPrivateQSG(static_cast<QMapPolylineObjectPrivate &>(*this));
+}
+
+QGeoShape QMapPolylineObjectPrivateQSG::geoShape() const
+{
+    return m_geoPath;
 }
 
 QT_END_NAMESPACE

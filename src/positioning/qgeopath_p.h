@@ -55,7 +55,6 @@
 #include "qgeoshape_p.h"
 #include "qgeocoordinate.h"
 #include "qlocationutils_p.h"
-#include <QtPositioning/private/qclipperutils_p.h>
 #include <QtPositioning/qgeopath.h>
 #include <QtCore/QVector>
 

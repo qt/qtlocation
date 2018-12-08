@@ -89,6 +89,8 @@ public:
 public:
     QGeoMapObjectPrivate *clone() override;
     bool equals(const QGeoMapObjectPrivate &other) const override;
+    virtual QGeoShape geoShape() const override;
+    virtual void setGeoShape(const QGeoShape &shape) override;
 
     QVariant m_model;
     QQmlComponent *m_delegate = nullptr;

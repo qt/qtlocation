@@ -37,6 +37,7 @@
 #include "qmapiconobject_p.h"
 #include "qmapiconobject_p_p.h"
 #include <QExplicitlySharedDataPointer>
+#include <QtPositioning/QGeoCircle>
 
 QT_BEGIN_NAMESPACE
 
@@ -92,6 +93,8 @@ QMapIconObjectPrivateDefault::QMapIconObjectPrivateDefault(const QMapIconObjectP
     m_coordinate = other.coordinate();
     m_content = other.content();
     m_iconSize = other.iconSize();
+    qreal radius = QGeoCircle(other.geoShape()).radius();
+    m_radius = (qIsFinite(radius)) ? radius : 100.0;
 }
 
 QMapIconObjectPrivateDefault::~QMapIconObjectPrivateDefault()
@@ -104,9 +107,9 @@ QGeoCoordinate QMapIconObjectPrivateDefault::coordinate() const
     return m_coordinate;
 }
 
-void QMapIconObjectPrivateDefault::setCoordinate(const QGeoCoordinate &center)
+void QMapIconObjectPrivateDefault::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    m_coordinate = center;
+    m_coordinate = coordinate;
 }
 
 QVariant QMapIconObjectPrivateDefault::content() const
@@ -132,6 +135,30 @@ void QMapIconObjectPrivateDefault::setIconSize(const QSizeF &size)
 QGeoMapObjectPrivate *QMapIconObjectPrivateDefault::clone()
 {
     return new QMapIconObjectPrivateDefault(static_cast<QMapIconObjectPrivate &>(*this));
+}
+
+QGeoShape QMapIconObjectPrivateDefault::geoShape() const
+{
+    return QGeoCircle(coordinate(), m_radius); // fixing the radius to 100 meters, as a meaningful size for
+                                          // fitting the viewport to this icon without losing context completely
+}
+
+void QMapIconObjectPrivateDefault::setGeoShape(const QGeoShape &shape)
+{
+    QGeoCoordinate crd;
+    const QGeoCircle circle(shape); // if shape isn't a circle, circle will be created as a default-constructed circle
+    if (circle.isValid()) {
+        crd = circle.center();
+        m_radius = circle.radius();
+    } else {
+        crd = shape.boundingGeoRectangle().center();
+    }
+
+    if (crd == coordinate())
+        return;
+
+    setCoordinate(crd);
+    emit static_cast<QMapIconObject *>(q)->coordinateChanged(crd);
 }
 
 
