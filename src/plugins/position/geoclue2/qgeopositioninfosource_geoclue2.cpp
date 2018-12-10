@@ -264,7 +264,7 @@ void QGeoPositionInfoSourceGeoclue2::createClient()
                 setError(AccessError);
                 delete m_client;
             } else {
-                connect(m_client, &OrgFreedesktopGeoClue2ClientInterface::LocationUpdated,
+                connect(m_client.data(), &OrgFreedesktopGeoClue2ClientInterface::LocationUpdated,
                         this, &QGeoPositionInfoSourceGeoclue2::handleNewLocation);
 
                 if (configureClient())

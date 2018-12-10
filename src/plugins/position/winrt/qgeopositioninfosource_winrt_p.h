@@ -51,7 +51,7 @@
 #include "qgeopositioninfosource.h"
 #include "qgeopositioninfo.h"
 
-#include <QTimer>
+#include <QtCore/qtimer.h>
 
 #include <EventToken.h>
 #include <wrl.h>
@@ -62,7 +62,6 @@ namespace ABI {
             namespace Geolocation{
                 struct IGeolocator;
                 struct IPositionChangedEventArgs;
-                struct IStatusChangedEventArgs;
             }
         }
     }
@@ -76,7 +75,7 @@ class QGeoPositionInfoSourceWinRT : public QGeoPositionInfoSource
 {
     Q_OBJECT
 public:
-    QGeoPositionInfoSourceWinRT(QObject *parent = 0);
+    QGeoPositionInfoSourceWinRT(QObject *parent = nullptr);
     ~QGeoPositionInfoSourceWinRT();
     int init();
 
@@ -91,9 +90,6 @@ public:
 
     HRESULT onPositionChanged(ABI::Windows::Devices::Geolocation::IGeolocator *locator,
                               ABI::Windows::Devices::Geolocation::IPositionChangedEventArgs *args);
-
-    HRESULT onStatusChanged(ABI::Windows::Devices::Geolocation::IGeolocator*,
-                            ABI::Windows::Devices::Geolocation::IStatusChangedEventArgs *args);
 
     bool requestAccess() const;
 Q_SIGNALS:

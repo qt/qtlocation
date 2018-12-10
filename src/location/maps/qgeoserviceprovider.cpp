@@ -362,7 +362,7 @@ template <> QNavigationManagerEngine *createEngine<QNavigationManagerEngine>(QGe
 {
     if (!d_ptr->factoryV2)
         return nullptr;
-    return d_ptr->factoryV2->createNavigationManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
+    return d_ptr->factoryV2->createNavigationManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->navigationError), &(d_ptr->navigationErrorString));
 }
 
 /* Template for generating the code for each of the geocodingManager(),
@@ -381,11 +381,15 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
         this->loadPlugin(this->parameterMap);
     }
 
-    if (!this->factory || error != QGeoServiceProvider::NoError)
+    if (!this->factory) {
+        error = this->error;
+        errorString = this->errorString;
         return 0;
+    }
 
     if (!manager) {
-        Engine *engine = createEngine<Engine>(this);
+        Engine *engine = createEngine<Engine>(this); // this sets the specific error variables directly,
+                                                     // from now on the local error, errorString refs should be set.
 
         if (engine) {
             engine->setManagerName(
@@ -753,7 +757,7 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
     QObject *instance = loader()->instance(idx);
     if (!instance) {
         error = QGeoServiceProvider::LoaderError;
-        errorString = QLatin1String("loader()->instance(idx) failed to return an instance");
+        errorString = QLatin1String("loader()->instance(idx) failed to return an instance. Set the environment variable QT_DEBUG_PLUGINS to see more details.");
         return;
     }
     factoryV3 = qobject_cast<QGeoServiceProviderFactoryV3 *>(instance);

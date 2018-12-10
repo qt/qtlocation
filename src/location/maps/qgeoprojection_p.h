@@ -195,7 +195,11 @@ public:
         QDoubleVector3D m_normal;
     };
 
-private:
+#ifdef QT_LOCATION_DEBUG
+public:
+#else
+protected:
+#endif
     QGeoCameraData m_cameraData;
     double m_mapEdgeSize;
     double m_minimumZoom;
@@ -218,7 +222,7 @@ private:
     QDoubleVector3D  m_viewNormalized;
     QDoubleVector3D  m_side;
     QDoubleVector3D  m_centerNearPlane;
-    double           m_sideLength; // map edge size at integer zoom level
+    double           m_sideLengthPixels; // map edge size at integer zoom level
     double           m_aperture;
     double           m_nearPlane;
     double           m_farPlane;

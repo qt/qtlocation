@@ -398,6 +398,10 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
         wrappedPath.append(wrappedProjection);
     }
 
+#ifdef QT_LOCATION_DEBUG
+    m_wrappedPath = wrappedPath;
+#endif
+
     // 2)
     QList<QList<QDoubleVector2D> > clippedPaths;
     const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
@@ -428,6 +432,10 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
         clippedPaths.append(wrappedPath);
     }
 
+#ifdef QT_LOCATION_DEBUG
+    m_clippedPaths = clippedPaths;
+#endif
+
     return clippedPaths;
 }
 
@@ -441,14 +449,12 @@ void QGeoMapPolylineGeometry::pathToScreen(const QGeoMap &map,
     double minY = qInf();
     double maxX = -qInf();
     double maxY = -qInf();
-
     srcOrigin_ = p.mapProjectionToGeo(p.unwrapMapProjection(leftBoundWrapped));
     QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(leftBoundWrapped);
     for (const QList<QDoubleVector2D> &path: clippedPaths) {
         QDoubleVector2D lastAddedPoint;
         for (int i = 0; i < path.size(); ++i) {
             QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
-
             point = point - origin; // (0,0) if point == geoLeftBound_
 
             minX = qMin(point.x(), minX);

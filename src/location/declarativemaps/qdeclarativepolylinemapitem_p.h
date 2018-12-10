@@ -48,6 +48,7 @@
 // We mean it.
 //
 
+#include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qdeclarativegeomapitembase_p.h>
 #include <QtLocation/private/qgeomapitemgeometry_p.h>
 
@@ -110,9 +111,14 @@ public:
                       const QList<QList<QDoubleVector2D> > &clippedPaths,
                       const QDoubleVector2D &leftBoundWrapped);
 
-private:
+public:
     QVector<qreal> srcPoints_;
     QVector<QPainterPath::ElementType> srcPointTypes_;
+
+#ifdef QT_LOCATION_DEBUG
+    QList<QDoubleVector2D> m_wrappedPath;
+    QList<QList<QDoubleVector2D>> m_clippedPaths;
+#endif
 
     friend class QDeclarativeCircleMapItem;
     friend class QDeclarativePolygonMapItem;
@@ -171,6 +177,9 @@ private:
     void regenerateCache();
     void updateCache();
 
+#ifdef QT_LOCATION_DEBUG
+public:
+#endif
     QGeoPath geopath_;
     QList<QDoubleVector2D> geopathProjected_;
     QDeclarativeMapLineProperties line_;

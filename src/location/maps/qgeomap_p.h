@@ -177,7 +177,6 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QGeoMap)
     friend class QDeclarativeGeoMap; //updateSceneGraph
-    friend class QGeoMapPrivate;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoMap::ItemTypes)

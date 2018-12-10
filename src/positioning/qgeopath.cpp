@@ -204,7 +204,7 @@ const QList<QGeoCoordinate> &QGeoPath::path() const
 
     \since 5.12
 */
-void QGeoPath::clear()
+void QGeoPath::clearPath()
 {
     Q_D(QGeoPath);
     d->clearPath();

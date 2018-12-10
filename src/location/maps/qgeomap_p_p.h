@@ -110,7 +110,11 @@ protected:
 
     QRectF clampVisibleArea(const QRectF &visibleArea) const;
 
+#ifdef QT_LOCATION_DEBUG
+public:
+#else
 protected:
+#endif
     QSize m_viewportSize;
     QGeoProjection *m_geoProjection;
     QPointer<QGeoMappingManagerEngine> m_engine;

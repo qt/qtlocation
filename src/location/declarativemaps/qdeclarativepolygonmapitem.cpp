@@ -320,18 +320,9 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(handleBorderUpdated()));
+                     this, SLOT(markSourceDirtyAndUpdate()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(handleBorderUpdated()));
-}
-
-/*!
-    \internal
-*/
-void QDeclarativePolygonMapItem::handleBorderUpdated()
-{
-    borderGeometry_.markSourceDirty();
-    polishAndUpdate();
+                     this, SLOT(markSourceDirtyAndUpdate()));
 }
 
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()

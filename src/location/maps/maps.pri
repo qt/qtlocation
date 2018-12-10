@@ -62,6 +62,8 @@ PRIVATE_HEADERS += \
                     maps/qgeoprojection_p.h \
                     maps/qnavigationmanagerengine_p.h \
                     maps/qnavigationmanager_p.h \
+                    maps/qgeocameratiles_p_p.h \
+                    maps/qgeotiledmapscene_p_p.h \
                     maps/qcache3q_p.h
 
 SOURCES += \
@@ -100,3 +102,4 @@ SOURCES += \
             maps/qnavigationmanagerengine.cpp \
             maps/qnavigationmanager.cpp \
             maps/qgeoprojection.cpp
+

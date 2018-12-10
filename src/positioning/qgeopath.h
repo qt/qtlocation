@@ -72,7 +72,7 @@ public:
 
     void setPath(const QList<QGeoCoordinate> &path);
     const QList<QGeoCoordinate> &path() const;
-    void clear();
+    void clearPath();
     void setVariantPath(const QVariantList &path);
     QVariantList variantPath() const;
 

@@ -164,7 +164,7 @@ QGeoProjectionWebMercator::QGeoProjectionWebMercator()
       m_viewportHeight(1),
       m_1_viewportWidth(0),
       m_1_viewportHeight(0),
-      m_sideLength(256),
+      m_sideLengthPixels(256),
       m_aperture(0.0),
       m_nearPlane(0.0),
       m_farPlane(0.0),
@@ -389,7 +389,7 @@ QMatrix4x4 QGeoProjectionWebMercator::quickItemTransformation(const QGeoCoordina
     const QDoubleVector2D anchorMercator = anchorScaled / mapWidth();
 
     const QDoubleVector2D coordAnchored = coordWrapped - anchorMercator;
-    const QDoubleVector2D coordAnchoredScaled = coordAnchored * m_sideLength;
+    const QDoubleVector2D coordAnchoredScaled = coordAnchored * m_sideLengthPixels;
     QDoubleMatrix4x4 matTranslateScale;
     matTranslateScale.translate(coordAnchoredScaled.x(), coordAnchoredScaled.y(), 0.0);
 
@@ -416,7 +416,7 @@ bool QGeoProjectionWebMercator::isProjectable(const QDoubleVector2D &wrappedProj
     if (m_cameraData.tilt() == 0.0)
         return true;
 
-    QDoubleVector3D pos = wrappedProjection * m_sideLength;
+    QDoubleVector3D pos = wrappedProjection * m_sideLengthPixels;
     // use m_centerNearPlane in order to add an offset to m_eye.
     QDoubleVector3D p = m_centerNearPlane - pos;
     double dot = QDoubleVector3D::dotProduct(p , m_viewNormalized);
@@ -491,7 +491,7 @@ QDoubleVector2D QGeoProjectionWebMercator::viewportToWrappedMapProjection(const 
     QDoubleVector3D ray = m_eye - p;
     ray.normalize();
 
-    return (xyPlane.lineIntersection(m_eye, ray, s) / m_sideLength).toVector2D();
+    return (xyPlane.lineIntersection(m_eye, ray, s) / m_sideLengthPixels).toVector2D();
 }
 
 /*
@@ -552,8 +552,8 @@ void QGeoProjectionWebMercator::setupCamera()
     m_cameraCenterYMercator = m_centerMercator.y();
 
     int intZoomLevel = static_cast<int>(std::floor(m_cameraData.zoomLevel()));
-    m_sideLength = (1 << intZoomLevel) * defaultTileSize;
-    m_center = m_centerMercator * m_sideLength;
+    m_sideLengthPixels = (1 << intZoomLevel) * defaultTileSize;
+    m_center = m_centerMercator * m_sideLengthPixels;
     //aperture(90 / 2) = 1
     m_aperture = tan(QLocationUtils::radians(m_cameraData.fieldOfView()) * 0.5);
 
@@ -658,7 +658,7 @@ void QGeoProjectionWebMercator::setupCamera()
 
     m_transformation = matScreenTransformation *  projectionMatrix * cameraMatrix;
     m_quickItemTransformation = m_transformation;
-    m_transformation.scale(m_sideLength, m_sideLength, 1.0);
+    m_transformation.scale(m_sideLengthPixels, m_sideLengthPixels, 1.0);
 
     m_centerNearPlane = m_eye - m_viewNormalized;
     m_centerNearPlaneMercator = m_eyeMercator - m_viewNormalized * m_nearPlaneMercator;
