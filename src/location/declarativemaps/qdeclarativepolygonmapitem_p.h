@@ -120,7 +120,6 @@ protected:
 
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
-    void handleBorderUpdated();
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 private:
