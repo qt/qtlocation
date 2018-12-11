@@ -30,8 +30,9 @@
 #include <QGeoPositionInfoSource>
 #include <QDebug>
 
-Widget::Widget(QWidget *parent) :
+Widget::Widget(LogWidget *logWidget, QWidget *parent) :
     QWidget(parent),
+    log(logWidget),
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
@@ -81,6 +82,8 @@ void Widget::positionUpdated(QGeoPositionInfo gpsPos)
         ui->labelSpeed->setText(QString::number(gpsPos.attribute(QGeoPositionInfo::GroundSpeed)));
     else
         ui->labelSpeed->setText(QStringLiteral("N/A"));
+
+    log->appendLog(coord.toString());
 }
 
 void Widget::positionTimedOut()
