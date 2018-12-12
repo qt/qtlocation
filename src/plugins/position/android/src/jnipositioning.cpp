@@ -234,7 +234,7 @@ namespace AndroidPositioning {
         jlong timestamp = jniEnv->CallLongMethod(location, mid);
         info.setTimestamp(QDateTime::fromMSecsSinceEpoch(timestamp, Qt::UTC));
 
-        //accuracy
+        //horizontal accuracy
         mid = getCachedMethodID(jniEnv, thisClass, "hasAccuracy", "()Z");
         attributeExists = jniEnv->CallBooleanMethod(location, mid);
         if (attributeExists) {
@@ -243,7 +243,21 @@ namespace AndroidPositioning {
             info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, qreal(accuracy));
         }
 
+        //vertical accuracy
+        mid = getCachedMethodID(jniEnv, thisClass, "hasVerticalAccuracy", "()Z");
+        if (mid) {
+            attributeExists = jniEnv->CallBooleanMethod(location, mid);
+            if (attributeExists) {
+                mid = getCachedMethodID(jniEnv, thisClass, "getVerticalAccuracyMeters", "()F");
+                if (mid) {
+                    jfloat accuracy = jniEnv->CallFloatMethod(location, mid);
+                    info.setAttribute(QGeoPositionInfo::VerticalAccuracy, qreal(accuracy));
+                }
+            }
+        }
 
+        if (!mid)
+            jniEnv->ExceptionClear();
 
         //ground speed
         mid = getCachedMethodID(jniEnv, thisClass, "hasSpeed", "()Z");
