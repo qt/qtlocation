@@ -50,16 +50,21 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QT_NO_DATASTREAM
+
 struct CoordinateStreamOperators
 {
     CoordinateStreamOperators()
     {
+#ifndef QT_NO_DATASTREAM
         qRegisterMetaTypeStreamOperators<QGeoCoordinate>();
+#endif
+#ifndef QT_NO_DEBUG_STREAM
+        QMetaType::registerDebugStreamOperator<QGeoCoordinate>();
+#endif
     }
 };
 Q_GLOBAL_STATIC(CoordinateStreamOperators, initStreamOperators);
-#endif
+
 
 static const double qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
