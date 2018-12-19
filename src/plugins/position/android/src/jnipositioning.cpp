@@ -528,6 +528,18 @@ static void locationProvidersDisabled(JNIEnv *env, jobject /*thiz*/, jint androi
     QMetaObject::invokeMethod(source, "locationProviderDisabled", Qt::AutoConnection);
 }
 
+static void locationProvidersChanged(JNIEnv *env, jobject /*thiz*/, jint androidClassKey)
+{
+    Q_UNUSED(env);
+    QObject *source = AndroidPositioning::idToPosSource()->value(androidClassKey);
+    if (!source) {
+        qWarning("locationProvidersChanged: source == 0");
+        return;
+    }
+
+    QMetaObject::invokeMethod(source, "locationProvidersChanged", Qt::AutoConnection);
+}
+
 static void satelliteUpdated(JNIEnv *env, jobject /*thiz*/, jobjectArray satellites, jint androidClassKey, jboolean isSingleUpdate)
 {
     QList<QGeoSatelliteInfo> inUse;
@@ -564,7 +576,8 @@ if (!VAR) { \
 static JNINativeMethod methods[] = {
     {"positionUpdated", "(Landroid/location/Location;IZ)V", (void *)positionUpdated},
     {"locationProvidersDisabled", "(I)V", (void *) locationProvidersDisabled},
-    {"satelliteUpdated", "([Landroid/location/GpsSatellite;IZ)V", (void *)satelliteUpdated}
+    {"satelliteUpdated", "([Landroid/location/GpsSatellite;IZ)V", (void *)satelliteUpdated},
+    {"locationProvidersChanged", "(I)V", (void *) locationProvidersChanged}
 };
 
 static bool registerNatives(JNIEnv *env)

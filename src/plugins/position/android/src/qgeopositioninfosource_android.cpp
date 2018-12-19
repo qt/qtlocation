@@ -206,6 +206,11 @@ void QGeoPositionInfoSourceAndroid::locationProviderDisabled()
     setError(QGeoPositionInfoSource::ClosedError);
 }
 
+void QGeoPositionInfoSourceAndroid::locationProvidersChanged()
+{
+    emit supportedPositioningMethodsChanged();
+}
+
 void QGeoPositionInfoSourceAndroid::requestTimeout()
 {
     AndroidPositioning::stopUpdates(androidClassKeyForSingleRequest);
