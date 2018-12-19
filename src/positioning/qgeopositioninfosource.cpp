@@ -241,8 +241,10 @@ int QGeoPositionInfoSource::updateInterval() const
     If \a methods includes a method that is not supported by the source, the
     unsupported method will be ignored.
 
-    If \a methods does not include any methods supported by the source, the
-    preferred methods will be set to the set of methods which the source supports.
+    If \a methods does not include a single method available/supported by the source, the
+    preferred methods will be set to the set of methods which the source has available.
+    If the source has no method availabe (e.g. because its Location service is turned off
+    or it does not offer a Location service), the passed \a methods are accepted as they are.
 
     \b {Note:} When reimplementing this method, subclasses must call the
     base method implementation to ensure preferredPositioningMethods() returns the correct value.
@@ -251,9 +253,13 @@ int QGeoPositionInfoSource::updateInterval() const
 */
 void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods methods)
 {
-    d->methods = methods & supportedPositioningMethods();
-    if (d->methods == 0) {
-        d->methods = supportedPositioningMethods();
+    if (supportedPositioningMethods() != QGeoPositionInfoSource::NoPositioningMethods) {
+        d->methods = methods & supportedPositioningMethods();
+        if (d->methods == 0) {
+            d->methods = supportedPositioningMethods();
+        }
+    } else { // avoid that turned of Location service blocks any changes to d->methods
+        d->methods = methods;
     }
 }
 
