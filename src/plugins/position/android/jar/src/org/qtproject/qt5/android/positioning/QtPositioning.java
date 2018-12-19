@@ -114,7 +114,7 @@ public class QtPositioning implements LocationListener
             Log.w(TAG, "No locationManager available in QtPositioning");
             return new int[0];
         }
-        List<String> providers = locationManager.getAllProviders();
+        List<String> providers = locationManager.getProviders(true);
         int retList[] = new int[providers.size()];
         for (int i = 0; i < providers.size();  i++) {
             if (providers.get(i).equals(LocationManager.GPS_PROVIDER)) {
