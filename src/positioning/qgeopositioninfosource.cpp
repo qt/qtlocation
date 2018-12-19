@@ -355,9 +355,40 @@ QStringList QGeoPositionInfoSource::availableSources()
 /*!
     \fn virtual PositioningMethods QGeoPositionInfoSource::supportedPositioningMethods() const = 0;
 
-    Returns the positioning methods available to this source.
+    Returns the positioning methods available to this source. Availability is defined as being usable
+    at the time of calling this function. Therefore user settings like turned off location service or
+    limitations to Satellite-based position providers are reflected by this function. Runtime notifications
+    when the status changes can be obtained via \l supportedPositioningMethodsChanged().
 
-    \sa setPreferredPositioningMethods()
+    Not all platforms distinguish the different positioning methods or communicate the current user
+    configuration of the device. The following table provides an overview of the current platform situation:
+
+    \table
+    \header
+        \li Platform
+        \li Brief Description
+    \row
+        \li Android
+        \li Individual provider status and general Location service state are known and communicated
+            when location service is active.
+    \row
+        \li GeoClue
+        \li Hardcoced to always return AllPositioningMethods.
+    \row
+        \li GeoClue2
+        \li Individual providers are not distinguishable but disabled Location services reflected.
+    \row
+        \li iOS/tvOS
+        \li Hardcoced to always return AllPositioningMethods.
+    \row
+        \li macOS
+        \li Hardcoced to always return AllPositioningMethods.
+    \row
+        \li Windows (UWP)
+        \li Individual providers are not distinguishable but disabled Location services reflected.
+    \endtable
+
+    \sa supportedPositioningMethodsChanged(), setPreferredPositioningMethods()
 */
 
 
@@ -479,7 +510,10 @@ QStringList QGeoPositionInfoSource::availableSources()
 /*!
     \fn void QGeoPositionInfoSource::supportedPositioningMethodsChanged()
 
-    This signal is emitted after the supportedPositioningMethods change.
+    This signal is emitted when the supported positioning methods changed. The cause for a change could be
+    a user turning Location services on/off or restricting Location services to certain types (e.g. GPS only).
+    Note that changes to the supported positioning methods cannot be detected on all platforms.
+    \l supportedPositioningMethods() provides an overview of the current platform support.
 
     \since Qt 5.12
 */
