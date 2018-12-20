@@ -54,6 +54,15 @@ Widget::Widget(LogWidget *logWidget, QWidget *parent) :
 
     connect(m_posSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
             this, SLOT(errorChanged(QGeoPositionInfoSource::Error)));
+    connect(m_posSource, &QGeoPositionInfoSource::supportedPositioningMethodsChanged,
+            this, [this]() {
+        auto methods = m_posSource->supportedPositioningMethods();
+        const QString status = QStringLiteral("Satellite: %1 ").arg(bool(methods & QGeoPositionInfoSource::SatellitePositioningMethods))
+                + QStringLiteral("Non-Satellite: %1").arg(bool(methods & QGeoPositionInfoSource::NonSatellitePositioningMethods));
+
+        qDebug() << "Available Positioning Methods Changed" << status;
+        log->appendLog(status);
+    });
 }
 
 void Widget::positionUpdated(QGeoPositionInfo gpsPos)
