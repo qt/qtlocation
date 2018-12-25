@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -25,27 +25,22 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "widget.h"
+
 #include "logwidget.h"
-#include <QLabel>
+#include <QVBoxLayout>
 
-#include <QApplication>
-#include <QtWidgets>
-int main(int argc, char *argv[])
+LogWidget::LogWidget(QWidget *parent) : QWidget(parent)
 {
-    QApplication a(argc, argv);
+    QVBoxLayout *verticalLayout = new QVBoxLayout(this);
+    verticalLayout->setSpacing(6);
+    verticalLayout->setContentsMargins(11, 11, 11, 11);
+    verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
 
-    LogWidget *log = new LogWidget;
-    Widget *w1 = new Widget(log);
-    Widget *w2 = new Widget(log);
+    editor = new QPlainTextEdit(this);
+    verticalLayout->addWidget(editor);
+}
 
-    QTabWidget tabWidget;
-    tabWidget.setTabPosition(QTabWidget::South);
-
-    tabWidget.addTab(w1, "Instance 1");
-    tabWidget.addTab(w2, "Instance 2");
-    tabWidget.addTab(log, "Logs");
-
-    tabWidget.show();
-    return a.exec();
+void LogWidget::appendLog(const QString &line)
+{
+    editor->appendPlainText(line);
 }

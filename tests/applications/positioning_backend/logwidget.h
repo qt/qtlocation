@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -25,27 +25,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "widget.h"
-#include "logwidget.h"
-#include <QLabel>
 
-#include <QApplication>
-#include <QtWidgets>
-int main(int argc, char *argv[])
+#ifndef LOGWIDGET_H
+#define LOGWIDGET_H
+
+#include <QtWidgets/qwidget.h>
+#include <QtWidgets/qplaintextedit.h>
+
+class LogWidget : public QWidget
 {
-    QApplication a(argc, argv);
+    Q_OBJECT
+public:
+    explicit LogWidget(QWidget *parent = nullptr);
 
-    LogWidget *log = new LogWidget;
-    Widget *w1 = new Widget(log);
-    Widget *w2 = new Widget(log);
+    void appendLog(const QString &line);
 
-    QTabWidget tabWidget;
-    tabWidget.setTabPosition(QTabWidget::South);
+private:
+    QPlainTextEdit *editor;
+};
 
-    tabWidget.addTab(w1, "Instance 1");
-    tabWidget.addTab(w2, "Instance 2");
-    tabWidget.addTab(log, "Logs");
-
-    tabWidget.show();
-    return a.exec();
-}
+#endif // LOGWIDGET_H

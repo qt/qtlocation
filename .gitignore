@@ -85,6 +85,9 @@ tst_*.log
 tst_*.debug
 tst_*~
 
+# Android temporary files
+*so-deployment-settings.json
+
 # xemacs temporary files
 *.flc
 
