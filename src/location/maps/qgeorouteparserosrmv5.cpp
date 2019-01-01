@@ -769,7 +769,7 @@ static QString instructionText(const QJsonObject &step, const QJsonObject &maneu
         return maneuverType + QLatin1String(" to/onto ") + wayName;
 }
 
-static QGeoManeuver::InstructionDirection instructionDirection(const QJsonObject &maneuver)
+static QGeoManeuver::InstructionDirection instructionDirection(const QJsonObject &maneuver, QGeoRouteParser::TrafficSide trafficSide)
 {
     QString modifier;
     if (maneuver.value(QLatin1String("modifier")).isString())
@@ -785,9 +785,15 @@ static QGeoManeuver::InstructionDirection instructionDirection(const QJsonObject
         return QGeoManeuver::DirectionHardRight;
     else if (modifier == QLatin1String("slight right"))
         return QGeoManeuver::DirectionLightRight;
-    else if (modifier == QLatin1String("uturn"))
-        return QGeoManeuver::DirectionUTurnLeft; // This should rather be country-specific. In UK, f.ex. one should rather UTurn Right
-    else if (modifier == QLatin1String("left"))
+    else if (modifier == QLatin1String("uturn")) {
+        switch (trafficSide) {
+        case QGeoRouteParser::RightHandTraffic:
+            return QGeoManeuver::DirectionUTurnLeft;
+        case QGeoRouteParser::LeftHandTraffic:
+            return QGeoManeuver::DirectionUTurnRight;
+        }
+        return QGeoManeuver::DirectionUTurnLeft;
+    } else if (modifier == QLatin1String("left"))
         return QGeoManeuver::DirectionLeft;
     else if (modifier == QLatin1String("sharp left"))
         return QGeoManeuver::DirectionHardLeft;
@@ -855,7 +861,7 @@ QGeoRouteSegment QGeoRouteParserOsrmV5Private::parseStep(const QJsonObject &step
     QString geometry = step.value(QLatin1String("geometry")).toString();
     QList<QGeoCoordinate> path = decodePolyline(geometry);
 
-    QGeoManeuver::InstructionDirection maneuverInstructionDirection = instructionDirection(maneuver);
+    QGeoManeuver::InstructionDirection maneuverInstructionDirection = instructionDirection(maneuver, trafficSide);
 
     QString maneuverInstructionText = instructionText(step, maneuver, maneuverInstructionDirection);
 
