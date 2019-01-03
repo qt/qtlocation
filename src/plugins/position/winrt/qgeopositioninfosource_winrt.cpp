@@ -179,7 +179,6 @@ int QGeoPositionInfoSourceWinRT::init()
     });
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
-        qErrnoWarning(hr, "Could not register status changed callback");
         return -1;
     }
 
@@ -342,15 +341,17 @@ bool QGeoPositionInfoSourceWinRT::startHandler()
         // registered. That could have helped in the single update case
         ComPtr<IAsyncOperation<Geoposition*>> op;
         hr = d->locator->GetGeopositionAsync(&op);
+        RETURN_HR_IF_FAILED("Could not start position operation");
 
         hr = d->locator->add_PositionChanged(Callback<GeoLocatorPositionHandler>(this,
                                                                                  &QGeoPositionInfoSourceWinRT::onPositionChanged).Get(),
                                              &d->positionToken);
+        RETURN_HR_IF_FAILED("Could not add position handler");
+
         return hr;
     });
     if (FAILED(hr)) {
         setError(QGeoPositionInfoSource::UnknownSourceError);
-        qErrnoWarning(hr, "Could not add position handler");
         return false;
     }
 
