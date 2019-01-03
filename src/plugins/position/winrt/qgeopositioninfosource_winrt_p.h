@@ -77,17 +77,17 @@ class QGeoPositionInfoSourceWinRT : public QGeoPositionInfoSource
     Q_OBJECT
 public:
     QGeoPositionInfoSourceWinRT(QObject *parent = nullptr);
-    ~QGeoPositionInfoSourceWinRT();
+    ~QGeoPositionInfoSourceWinRT() override;
     int init();
 
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
-    PositioningMethods supportedPositioningMethods() const;
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const override;
+    PositioningMethods supportedPositioningMethods() const override;
 
-    void setPreferredPositioningMethods(PositioningMethods methods);
+    void setPreferredPositioningMethods(PositioningMethods methods) override;
 
-    void setUpdateInterval(int msec);
-    int minimumUpdateInterval() const;
-    Error error() const;
+    void setUpdateInterval(int msec) override;
+    int minimumUpdateInterval() const override;
+    Error error() const override;
 
     HRESULT onPositionChanged(ABI::Windows::Devices::Geolocation::IGeolocator *locator,
                               ABI::Windows::Devices::Geolocation::IPositionChangedEventArgs *args);
@@ -98,10 +98,10 @@ public:
 Q_SIGNALS:
     void nativePositionUpdate(const QGeoPositionInfo);
 public slots:
-    void startUpdates();
-    void stopUpdates();
+    void startUpdates() override;
+    void stopUpdates() override;
 
-    void requestUpdate(int timeout = 0);
+    void requestUpdate(int timeout = 0) override;
 
 private slots:
     void stopHandler();

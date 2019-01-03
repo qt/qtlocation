@@ -112,12 +112,12 @@ public:
     QTimer periodicTimer;
     QTimer singleUpdateTimer;
     QGeoPositionInfo lastPosition;
-    QGeoPositionInfoSource::Error positionError;
+    QGeoPositionInfoSource::Error positionError = QGeoPositionInfoSource::NoError;
     EventRegistrationToken statusToken;
     EventRegistrationToken positionToken;
     QMutex mutex;
-    bool updatesOngoing;
-    int minimumUpdateInterval;
+    bool updatesOngoing = false;
+    int minimumUpdateInterval = -1;
 
     PositionStatus positionStatus = PositionStatus_NotInitialized;
 };
@@ -231,8 +231,7 @@ void QGeoPositionInfoSourceWinRT::setPreferredPositioningMethods(QGeoPositionInf
                 PositionAccuracy::PositionAccuracy_High :
                 PositionAccuracy::PositionAccuracy_Default;
     HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([d, acc]() {
-        HRESULT hr = d->locator->put_DesiredAccuracy(acc);
-        return hr;
+        return d->locator->put_DesiredAccuracy(acc);
     });
     RETURN_VOID_IF_FAILED("Could not set positioning accuracy.");
 
