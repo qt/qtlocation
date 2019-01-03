@@ -280,6 +280,7 @@ void QGeoPositionInfoSourceWinRT::startUpdates()
     qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
 
+    setError(QGeoPositionInfoSource::NoError);
     if (d->updatesOngoing)
         return;
 
@@ -368,6 +369,7 @@ void QGeoPositionInfoSourceWinRT::requestUpdate(int timeout)
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << timeout;
     Q_D(QGeoPositionInfoSourceWinRT);
 
+    setError(QGeoPositionInfoSource::NoError);
     if (timeout != 0 && timeout < minimumUpdateInterval()) {
         emit updateTimeout();
         return;
@@ -456,7 +458,8 @@ void QGeoPositionInfoSourceWinRT::setError(QGeoPositionInfoSource::Error positio
 
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << positionError;
     d->positionError = positionError;
-    emit QGeoPositionInfoSource::error(positionError);
+    if (positionError != QGeoPositionInfoSource::NoError)
+        emit QGeoPositionInfoSource::error(positionError);
 }
 
 void QGeoPositionInfoSourceWinRT::reactOnError(QGeoPositionInfoSource::Error positionError)
