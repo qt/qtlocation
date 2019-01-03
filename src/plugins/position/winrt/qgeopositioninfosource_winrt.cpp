@@ -574,10 +574,17 @@ HRESULT QGeoPositionInfoSourceWinRT::onPositionChanged(IGeolocator *locator, IPo
     return S_OK;
 }
 
+static inline bool isDisabledStatus(PositionStatus status)
+{
+    return status == PositionStatus_NoData || status == PositionStatus_Disabled
+            || status == PositionStatus_NotAvailable;
+}
+
 HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator *, IStatusChangedEventArgs *args)
 {
     Q_D(QGeoPositionInfoSourceWinRT);
 
+    const PositionStatus oldStatus = d->positionStatus;
     HRESULT hr = args->get_Status(&d->positionStatus);
     RETURN_HR_IF_FAILED("Could not obtain position status");
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << d->positionStatus;
@@ -598,6 +605,9 @@ HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator *, IStatusChang
                                   Q_ARG(QGeoPositionInfoSource::Error,
                                         QGeoPositionInfoSource::UnknownSourceError));
     }
+
+    if (isDisabledStatus(oldStatus) != isDisabledStatus(d->positionStatus))
+        emit supportedPositioningMethodsChanged();
 
     return S_OK;
 }
