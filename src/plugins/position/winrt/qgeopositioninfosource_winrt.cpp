@@ -132,6 +132,8 @@ QGeoPositionInfoSourceWinRT::QGeoPositionInfoSourceWinRT(QObject *parent)
     Q_D(QGeoPositionInfoSourceWinRT);
     d->positionError = QGeoPositionInfoSource::NoError;
     d->updatesOngoing = false;
+    d->positionToken.value = 0;
+    d->statusToken.value = 0;
 }
 
 QGeoPositionInfoSourceWinRT::~QGeoPositionInfoSourceWinRT()
@@ -172,9 +174,6 @@ int QGeoPositionInfoSourceWinRT::init()
         qErrnoWarning(hr, "Could not initialize desired accuracy.");
         return -1;
     }
-
-    d->positionToken.value = 0;
-    d->statusToken.value = 0;
 
     d->periodicTimer.setSingleShot(true);
     connect(&d->periodicTimer, &QTimer::timeout, this, &QGeoPositionInfoSourceWinRT::virtualPositionUpdate);
