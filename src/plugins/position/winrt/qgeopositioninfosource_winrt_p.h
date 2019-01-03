@@ -62,6 +62,7 @@ namespace ABI {
             namespace Geolocation{
                 struct IGeolocator;
                 struct IPositionChangedEventArgs;
+                struct IStatusChangedEventArgs;
             }
         }
     }
@@ -90,6 +91,8 @@ public:
 
     HRESULT onPositionChanged(ABI::Windows::Devices::Geolocation::IGeolocator *locator,
                               ABI::Windows::Devices::Geolocation::IPositionChangedEventArgs *args);
+    HRESULT onStatusChanged(ABI::Windows::Devices::Geolocation::IGeolocator *locator,
+                              ABI::Windows::Devices::Geolocation::IStatusChangedEventArgs *args);
 
     bool requestAccess() const;
 Q_SIGNALS:
@@ -105,12 +108,12 @@ private slots:
     void virtualPositionUpdate();
     void singleUpdateTimeOut();
     void updateSynchronized(const QGeoPositionInfo info);
+    void reactOnError(QGeoPositionInfoSource::Error positionError);
 private:
     bool startHandler();
 
     Q_DISABLE_COPY(QGeoPositionInfoSourceWinRT)
     void setError(QGeoPositionInfoSource::Error positionError);
-    bool checkNativeState();
 
     QScopedPointer<QGeoPositionInfoSourceWinRTPrivate> d_ptr;
     Q_DECLARE_PRIVATE(QGeoPositionInfoSourceWinRT)
