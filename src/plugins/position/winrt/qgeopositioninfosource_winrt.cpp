@@ -314,8 +314,10 @@ bool QGeoPositionInfoSourceWinRT::startHandler()
         return false;
     }
 
-    if (!requestAccess())
+    if (!requestAccess()) {
+        setError(QGeoPositionInfoSource::AccessError);
         return false;
+    }
 
     HRESULT hr = QEventDispatcherWinRT::runOnXamlThread([this, d]() {
         HRESULT hr;
@@ -436,6 +438,13 @@ QGeoPositionInfoSource::Error QGeoPositionInfoSourceWinRT::error() const
 {
     Q_D(const QGeoPositionInfoSourceWinRT);
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << d->positionError;
+
+    // If the last encountered error was "Access denied", it is possible that the location service
+    // has been enabled by now so that we are clear again.
+    if ((d->positionError == QGeoPositionInfoSource::AccessError
+         || d->positionError == QGeoPositionInfoSource::UnknownSourceError) && requestAccess())
+        return QGeoPositionInfoSource::NoError;
+
     return d->positionError;
 }
 
@@ -595,21 +604,18 @@ HRESULT QGeoPositionInfoSourceWinRT::onStatusChanged(IGeolocator *, IStatusChang
 bool QGeoPositionInfoSourceWinRT::requestAccess() const
 {
     qCDebug(lcPositioningWinRT) << __FUNCTION__;
-    static GeolocationAccessStatus accessStatus = GeolocationAccessStatus_Unspecified;
+    GeolocationAccessStatus accessStatus;
     static ComPtr<IGeolocatorStatics> statics;
-
-    if (accessStatus == GeolocationAccessStatus_Allowed)
-        return true;
-    else if (accessStatus == GeolocationAccessStatus_Denied)
-        return false;
 
     ComPtr<IAsyncOperation<GeolocationAccessStatus>> op;
     HRESULT hr;
     hr = QEventDispatcherWinRT::runOnXamlThread([&op]() {
         HRESULT hr;
-        hr = RoGetActivationFactory(HString::MakeReference(RuntimeClass_Windows_Devices_Geolocation_Geolocator).Get(),
-                                    IID_PPV_ARGS(&statics));
-        RETURN_HR_IF_FAILED("Could not access Geolocation Statics.");
+        if (!statics) {
+            hr = RoGetActivationFactory(HString::MakeReference(RuntimeClass_Windows_Devices_Geolocation_Geolocator).Get(),
+                                        IID_PPV_ARGS(&statics));
+            RETURN_HR_IF_FAILED("Could not access Geolocation Statics.");
+        }
 
         hr = statics->RequestAccessAsync(&op);
         return hr;
