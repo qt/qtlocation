@@ -59,6 +59,7 @@ private slots:
     void on_radioButton_4_clicked();
 
     void on_buttonUpdateSupported_clicked();
+    void on_buttonResetError_clicked();
 
 private:
     LogWidget *log = nullptr;
