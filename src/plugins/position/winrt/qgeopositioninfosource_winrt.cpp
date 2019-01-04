@@ -197,18 +197,8 @@ QGeoPositionInfo QGeoPositionInfoSourceWinRT::lastKnownPosition(bool fromSatelli
 
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinRT::supportedPositioningMethods() const
 {
-    Q_D(const QGeoPositionInfoSourceWinRT);
-
-    qCDebug(lcPositioningWinRT) << __FUNCTION__;
-
-    switch (d->positionStatus) {
-    case PositionStatus::PositionStatus_NoData:
-    case PositionStatus::PositionStatus_Disabled:
-    case PositionStatus::PositionStatus_NotAvailable:
-        return QGeoPositionInfoSource::NoPositioningMethods;
-    }
-
-    return QGeoPositionInfoSource::AllPositioningMethods;
+    return requestAccess() ? QGeoPositionInfoSource::AllPositioningMethods
+                           : QGeoPositionInfoSource::NoPositioningMethods;
 }
 
 void QGeoPositionInfoSourceWinRT::setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
