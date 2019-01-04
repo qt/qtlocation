@@ -47,12 +47,6 @@ QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryWinRT::positionInfoSource(Q
 {
     qCDebug(lcPositioningWinRT) << __FUNCTION__;
     QGeoPositionInfoSourceWinRT *src = new QGeoPositionInfoSourceWinRT(parent);
-    if (src->init() < 0) {
-        qCDebug(lcPositioningWinRT) << __FUNCTION__ << "Source initialization failed.";
-        delete src;
-        return nullptr;
-    }
-    qCDebug(lcPositioningWinRT) << __FUNCTION__ << "Created position info source.";
     return src;
 }
 

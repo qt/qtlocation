@@ -106,6 +106,12 @@ static inline HRESULT await(const ComPtr<IAsyncOperation<GeolocationAccessStatus
 }
 #endif // !Q_OS_WINRT
 
+enum class InitializationState {
+    Uninitialized,
+    Initializing,
+    Initialized
+};
+
 class QGeoPositionInfoSourceWinRTPrivate {
 public:
     ComPtr<IGeolocator> locator;
@@ -118,6 +124,8 @@ public:
     QMutex mutex;
     bool updatesOngoing = false;
     int minimumUpdateInterval = -1;
+    int updateInterval = -1;
+    InitializationState initState = InitializationState::Uninitialized;
 
     PositionStatus positionStatus = PositionStatus_NotInitialized;
 };
@@ -144,9 +152,16 @@ QGeoPositionInfoSourceWinRT::~QGeoPositionInfoSourceWinRT()
 
 int QGeoPositionInfoSourceWinRT::init()
 {
-    qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
+    Q_ASSERT(d->initState != InitializationState::Initializing);
+    if (d->initState == InitializationState::Initialized)
+        return 0;
+
+    qCDebug(lcPositioningWinRT) << __FUNCTION__;
+    d->initState = InitializationState::Initializing;
     if (!requestAccess()) {
+        d->initState = InitializationState::Uninitialized;
+        setError(QGeoPositionInfoSource::AccessError);
         qWarning ("Location access failed.");
         return -1;
     }
@@ -155,23 +170,21 @@ int QGeoPositionInfoSourceWinRT::init()
                                         &d->locator);
         RETURN_HR_IF_FAILED("Could not initialize native location services.");
 
-        UINT32 interval;
-        hr = d->locator->get_ReportInterval(&interval);
-        RETURN_HR_IF_FAILED("Could not retrieve report interval.");
-        d->minimumUpdateInterval = static_cast<int>(interval);
-        setUpdateInterval(d->minimumUpdateInterval);
+        if (d->minimumUpdateInterval == -1) {
+            UINT32 interval;
+            hr = d->locator->get_ReportInterval(&interval);
+            RETURN_HR_IF_FAILED("Could not retrieve report interval.");
+            d->minimumUpdateInterval = static_cast<int>(interval);
+        }
+        if (d->updateInterval == -1)
+            d->updateInterval = d->minimumUpdateInterval;
+        setUpdateInterval(d->updateInterval);
 
         return hr;
     });
     if (FAILED(hr)) {
+        d->initState = InitializationState::Uninitialized;
         setError(QGeoPositionInfoSource::UnknownSourceError);
-        return -1;
-    }
-
-    hr = d->locator->put_DesiredAccuracy(PositionAccuracy::PositionAccuracy_Default);
-    if (FAILED(hr)) {
-        setError(QGeoPositionInfoSource::UnknownSourceError);
-        qErrnoWarning(hr, "Could not initialize desired accuracy.");
         return -1;
     }
 
@@ -181,9 +194,13 @@ int QGeoPositionInfoSourceWinRT::init()
     d->singleUpdateTimer.setSingleShot(true);
     connect(&d->singleUpdateTimer, &QTimer::timeout, this, &QGeoPositionInfoSourceWinRT::singleUpdateTimeOut);
 
-    setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
+    QGeoPositionInfoSource::PositioningMethods preferredMethods = preferredPositioningMethods();
+    if (preferredMethods == QGeoPositionInfoSource::NoPositioningMethods)
+        preferredMethods = QGeoPositionInfoSource::AllPositioningMethods;
+    setPreferredPositioningMethods(preferredMethods);
 
     connect(this, &QGeoPositionInfoSourceWinRT::nativePositionUpdate, this, &QGeoPositionInfoSourceWinRT::updateSynchronized);
+    d->initState = InitializationState::Initialized;
     return 0;
 }
 
@@ -208,9 +225,12 @@ void QGeoPositionInfoSourceWinRT::setPreferredPositioningMethods(QGeoPositionInf
 
     PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
     QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
-    if (previousPreferredPositioningMethods == preferredPositioningMethods())
+    if (previousPreferredPositioningMethods == preferredPositioningMethods()
+            || d->initState != InitializationState::Uninitialized) {
         return;
+    }
 
+    Q_ASSERT(d->initState != InitializationState::Initializing);
     const bool needsRestart = d->positionToken.value != 0 || d->statusToken.value != 0;
 
     if (needsRestart)
@@ -232,6 +252,12 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
 {
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << msec;
     Q_D(QGeoPositionInfoSourceWinRT);
+    if (d->initState == InitializationState::Uninitialized) {
+        d->updateInterval = msec;
+        return;
+    }
+
+    Q_ASSERT(d->initState != InitializationState::Initializing);
     // minimumUpdateInterval is initialized to the lowest possible update interval in init().
     // Passing 0 will cause an error on Windows 10.
     // See https://docs.microsoft.com/en-us/uwp/api/windows.devices.geolocation.geolocator.reportinterval
@@ -250,9 +276,10 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
         return;
     }
 
-    d->periodicTimer.setInterval(qMax(msec, minimumUpdateInterval()));
+    d->updateInterval = msec;
+    d->periodicTimer.setInterval(d->updateInterval);
 
-    QGeoPositionInfoSource::setUpdateInterval(msec);
+    QGeoPositionInfoSource::setUpdateInterval(d->updateInterval);
 
     if (needsRestart)
         startHandler();
@@ -261,7 +288,7 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
 int QGeoPositionInfoSourceWinRT::minimumUpdateInterval() const
 {
     Q_D(const QGeoPositionInfoSourceWinRT);
-    return d->minimumUpdateInterval;
+    return d->minimumUpdateInterval == -1 ? 1000 : d->minimumUpdateInterval;
 }
 
 void QGeoPositionInfoSourceWinRT::startUpdates()
@@ -270,6 +297,9 @@ void QGeoPositionInfoSourceWinRT::startUpdates()
     Q_D(QGeoPositionInfoSourceWinRT);
 
     setError(QGeoPositionInfoSource::NoError);
+    if (init() < 0)
+        return;
+
     if (d->updatesOngoing)
         return;
 
@@ -283,6 +313,9 @@ void QGeoPositionInfoSourceWinRT::stopUpdates()
 {
     qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(QGeoPositionInfoSourceWinRT);
+
+    if (init() < 0)
+        return;
 
     stopHandler();
     d->updatesOngoing = false;
@@ -357,6 +390,9 @@ void QGeoPositionInfoSourceWinRT::requestUpdate(int timeout)
 {
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << timeout;
     Q_D(QGeoPositionInfoSourceWinRT);
+
+    if (init() < 0)
+        return;
 
     setError(QGeoPositionInfoSource::NoError);
     if (timeout != 0 && timeout < minimumUpdateInterval()) {
