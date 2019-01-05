@@ -613,7 +613,7 @@ void QDeclarativePolygonMapItem::setGeoShape(const QGeoShape &shape)
     if (shape == geopath_)
         return;
 
-    geopath_ = QGeoPathEager(shape);
+    geopath_ = QGeoPolygonEager(shape);
     regenerateCache();
     geometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
