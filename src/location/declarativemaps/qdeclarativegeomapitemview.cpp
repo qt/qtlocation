@@ -175,6 +175,9 @@ void QDeclarativeGeoMapItemView::createdItem(int index, QObject */*object*/)
 
 void QDeclarativeGeoMapItemView::modelUpdated(const QQmlChangeSet &changeSet, bool reset)
 {
+    if (!m_map) // everything will be done in instantiateAllItems. Removal is done by declarativegeomap.
+        return;
+
     // move changes are expressed as one remove + one insert, with the same moveId.
     // For simplicity, they will be treated as remove + insert.
     // Changes will be also ignored, as they represent only data changes, not layout changes
