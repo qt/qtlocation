@@ -238,7 +238,13 @@ QGeoRoutingManagerEngineMapbox::QGeoRoutingManagerEngineMapbox(const QVariantMap
 
     QGeoRouteParserOsrmV5 *parser = new QGeoRouteParserOsrmV5(this);
     parser->setExtension(new QGeoRouteParserOsrmV5ExtensionMapbox(m_accessToken, use_mapbox_text_instructions));
-
+    if (parameters.contains(QStringLiteral("mapbox.routing.traffic_side"))) {
+        QString trafficSide = parameters.value(QStringLiteral("mapbox.routing.traffic_side")).toString();
+        if (trafficSide == QStringLiteral("right"))
+            parser->setTrafficSide(QGeoRouteParser::RightHandTraffic);
+        else if (trafficSide == QStringLiteral("left"))
+            parser->setTrafficSide(QGeoRouteParser::LeftHandTraffic);
+    }
     m_routeParser = parser;
 
     *error = QGeoServiceProvider::NoError;

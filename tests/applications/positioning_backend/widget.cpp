@@ -30,8 +30,9 @@
 #include <QGeoPositionInfoSource>
 #include <QDebug>
 
-Widget::Widget(QWidget *parent) :
+Widget::Widget(LogWidget *logWidget, QWidget *parent) :
     QWidget(parent),
+    log(logWidget),
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
@@ -53,6 +54,15 @@ Widget::Widget(QWidget *parent) :
 
     connect(m_posSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
             this, SLOT(errorChanged(QGeoPositionInfoSource::Error)));
+    connect(m_posSource, &QGeoPositionInfoSource::supportedPositioningMethodsChanged,
+            this, [this]() {
+        auto methods = m_posSource->supportedPositioningMethods();
+        const QString status = QStringLiteral("Satellite: %1 ").arg(bool(methods & QGeoPositionInfoSource::SatellitePositioningMethods))
+                + QStringLiteral("Non-Satellite: %1").arg(bool(methods & QGeoPositionInfoSource::NonSatellitePositioningMethods));
+
+        qDebug() << "Available Positioning Methods Changed" << status;
+        log->appendLog(status);
+    });
 }
 
 void Widget::positionUpdated(QGeoPositionInfo gpsPos)
@@ -81,6 +91,8 @@ void Widget::positionUpdated(QGeoPositionInfo gpsPos)
         ui->labelSpeed->setText(QString::number(gpsPos.attribute(QGeoPositionInfo::GroundSpeed)));
     else
         ui->labelSpeed->setText(QStringLiteral("N/A"));
+
+    log->appendLog(coord.toString());
 }
 
 void Widget::positionTimedOut()
