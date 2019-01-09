@@ -249,9 +249,10 @@ QGeoCoordinate QDeclarativeGeoMapQuickItem::coordinate()
 */
 void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem *sourceItem)
 {
-    if (sourceItem_.data() == sourceItem)
+    QQuickItem *item = qobject_cast<QQuickItem *>(sourceItem); // Workaround for QTBUG-72930
+    if (sourceItem_.data() == item)
         return;
-    sourceItem_ = sourceItem;
+    sourceItem_ = item;
     polishAndUpdate();
     emit sourceItemChanged();
 }
