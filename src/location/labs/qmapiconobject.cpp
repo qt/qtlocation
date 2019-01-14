@@ -91,7 +91,7 @@ QMapIconObjectPrivateDefault::QMapIconObjectPrivateDefault(const QMapIconObjectP
 {
     m_coordinate = other.coordinate();
     m_content = other.content();
-    m_size = other.size();
+    m_iconSize = other.iconSize();
 }
 
 QMapIconObjectPrivateDefault::~QMapIconObjectPrivateDefault()
@@ -119,14 +119,14 @@ void QMapIconObjectPrivateDefault::setContent(const QVariant &content)
     m_content = content;
 }
 
-QSizeF QMapIconObjectPrivateDefault::size() const
+QSizeF QMapIconObjectPrivateDefault::iconSize() const
 {
-    return m_size;
+    return m_iconSize;
 }
 
-void QMapIconObjectPrivateDefault::setSize(const QSizeF &size)
+void QMapIconObjectPrivateDefault::setIconSize(const QSizeF &size)
 {
-    m_size = size;
+    m_iconSize = size;
 }
 
 QGeoMapObjectPrivate *QMapIconObjectPrivateDefault::clone()
@@ -206,25 +206,25 @@ void QMapIconObject::setCoordinate(const QGeoCoordinate &center)
 }
 
 /*!
-    \qmlproperty Variant Qt.labs.location::MapIconObject::size
+    \qmlproperty Variant Qt.labs.location::MapIconObject::iconSize
 
     The size of the icon as it will be shown on the map.
 */
-QSizeF QMapIconObject::size() const
+QSizeF QMapIconObject::iconSize() const
 {
     const QMapIconObjectPrivate *d = static_cast<const QMapIconObjectPrivate *>(d_ptr.data());
-    return d->size();
+    return d->iconSize();
 }
 
 
-void QMapIconObject::setSize(const QSizeF &size)
+void QMapIconObject::setIconSize(const QSizeF &size)
 {
     QMapIconObjectPrivate *d = static_cast<QMapIconObjectPrivate*>(d_ptr.data());
-    if (d->size() == size)
+    if (d->iconSize() == size)
         return;
 
-    d->setSize(size);
-    emit sizeChanged();
+    d->setIconSize(size);
+    emit iconSizeChanged();
 }
 
 void QMapIconObject::setMap(QGeoMap *map)

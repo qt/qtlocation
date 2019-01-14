@@ -116,7 +116,7 @@ QSGNode *QMapIconObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
         m_imageNode->setTexture(window->createTextureFromImage(m_image));
         QRect rect = m_image.rect();
         m_imageNode->setSourceRect(rect);
-        m_imageNode->setRect(QRectF(QPointF(0,0), m_size));
+        m_imageNode->setRect(QRectF(QPointF(0,0), iconSize()));
     }
 
     if (m_geometryDirty) {
@@ -211,9 +211,9 @@ void QMapIconObjectPrivateQSG::setContent(const QVariant &content)
         emit m_map->sgNodeChanged();
 }
 
-void QMapIconObjectPrivateQSG::setSize(const QSizeF &size)
+void QMapIconObjectPrivateQSG::setIconSize(const QSizeF &size)
 {
-    QMapIconObjectPrivateDefault::setSize(size);
+    QMapIconObjectPrivateDefault::setIconSize(size);
     updateGeometry();
 }
 
