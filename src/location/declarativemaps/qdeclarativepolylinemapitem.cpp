@@ -739,6 +739,7 @@ bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), line_(this), dirtyMaterial_(true), updatingGeometry_(false)
 {
+    m_itemType = QGeoMap::MapPolyline;
     geopath_ = QGeoPathEager();
     setFlag(ItemHasContents, true);
     QObject::connect(&line_, SIGNAL(colorChanged(QColor)),
@@ -1139,11 +1140,6 @@ void QDeclarativePolylineMapItem::setGeoShape(const QGeoShape &shape)
 {
     const QGeoPath geopath(shape); // if shape isn't a path, path will be created as a default-constructed path
     setPath(geopath);
-}
-
-QGeoMap::ItemType QDeclarativePolylineMapItem::itemType() const
-{
-    return QGeoMap::MapPolyline;
 }
 
 //////////////////////////////////////////////////////////////////////

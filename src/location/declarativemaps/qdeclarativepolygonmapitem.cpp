@@ -319,6 +319,7 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), border_(this), color_(Qt::transparent), dirtyMaterial_(true),
     updatingGeometry_(false)
 {
+    m_itemType = QGeoMap::MapPolygon;
     geopath_ = QGeoPolygonEager();
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
@@ -619,11 +620,6 @@ void QDeclarativePolygonMapItem::setGeoShape(const QGeoShape &shape)
     borderGeometry_.setPreserveGeometry(true, geopath_.boundingGeoRectangle().topLeft());
     markSourceDirtyAndUpdate();
     emit pathChanged();
-}
-
-QGeoMap::ItemType QDeclarativePolygonMapItem::itemType() const
-{
-    return QGeoMap::MapPolygon;
 }
 
 /*!
