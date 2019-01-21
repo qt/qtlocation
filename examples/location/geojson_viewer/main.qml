@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
-** Copyright (C) 2018 Julian Sherollari <jdotsh@gmail.com>
+** Copyright (C) 2019 Julian Sherollari <jdotsh@gmail.com>
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -50,9 +50,9 @@
 ****************************************************************************/
 
 import QtQuick 2.11
-import QtQuick.Controls 1.4
+import QtQuick.Controls 1.4 as C1
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.3
+import Qt.labs.platform 1.1
 import QtQuick.Layouts 1.11
 import QtQuick.Window 2.11
 import QtPositioning 5.12
@@ -60,7 +60,7 @@ import QtLocation 5.12
 import Qt.labs.qmlmodels 1.0
 import Qt.GeoJson 1.0
 
-ApplicationWindow {
+C1.ApplicationWindow {
     visible: true
     width: 1024
     height: 1024
@@ -70,71 +70,73 @@ ApplicationWindow {
     FileDialog {
         visible: false
         id: fileDialog
-        title: "Please choose a GeoJSON file"
-        folder: shortcuts.home
+        title: "Choose a GeoJSON file"
+        fileMode: FileDialog.OpenFile
+        folder: dataPath
         onAccepted: {
-            geoJsoner.load(fileDialog.fileUrl)
+            geoJsoner.load(fileDialog.file)
         }
     }
 
     FileDialog {
-        selectExisting : false
         visible: false
         id: fileWriteDialog
         title: "Write your geometry to a file"
-        folder: shortcuts.home
+        fileMode: FileDialog.SaveFile
+        folder: StandardPaths.writableLocation(StandardPaths.TempLocation)
         onAccepted: {
-            geoJsoner.dumpGeoJSON(geoJsoner.toGeoJson(miv), fileWriteDialog.fileUrl);
+            geoJsoner.dumpGeoJSON(geoJsoner.toGeoJson(miv), fileWriteDialog.file);
         }
     }
 
     FileDialog {
-        selectExisting : false
         visible: false
         id: debugWriteDialog
         title: "Write Qvariant debug view"
-        folder: shortcuts.home
+        fileMode: FileDialog.SaveFile
+        folder: StandardPaths.writableLocation(StandardPaths.TempLocation)
         onAccepted: {
-            geoJsoner.writeDebug(geoJsoner.toGeoJson(miv), debugWriteDialog.fileUrl);
+            geoJsoner.writeDebug(geoJsoner.toGeoJson(miv), debugWriteDialog.file);
         }
     }
 
-    MenuBar {
+    C1.MenuBar {
         id: mainMenu
 
-        Menu {
-            title: "GeoJSON"
+        C1.Menu {
+            title: "&File"
             id : geoJsonMenu
-            MenuItem {
-                text: "Import"
-                shortcut: "Ctrl+I"
-                id : geoJsonMenuOpen
+            C1.MenuItem {
+                text: "&Open"
+                shortcut: StandardKey.Open
                 onTriggered: {
                     fileDialog.open()
                 }
             }
-            MenuItem {
-                text: "Export"
-                shortcut: "Ctrl+E"
-                id : geoJsonWrite
-                 onTriggered: {
+            C1.MenuItem {
+                text: "&Export"
+                shortcut: StandardKey.Save
+                onTriggered: {
                     fileWriteDialog.open()
                 }
             }
+            C1.MenuItem {
+                text: "E&xit"
+                shortcut: StandardKey.Quit
+                onTriggered: Qt.quit()
+            }
         }
-        Menu {
-            title: "Debug"
+        C1.Menu {
+            title: "&Debug"
             id : debugMenu
-            MenuItem {
-                text: "Print debug data to file"
-                shortcut: "Ctrl+D"
-                id : debugMenuWrite
+            C1.MenuItem {
+                text: "Print debug data to &file"
                 onTriggered: {
                     debugWriteDialog.open()
                 }
             }
-            MenuItem {
-                text: "Print debug data"
+            C1.MenuItem {
+                text: "&Print debug data"
                 onTriggered: {
                     geoJsoner.print(miv)
                 }

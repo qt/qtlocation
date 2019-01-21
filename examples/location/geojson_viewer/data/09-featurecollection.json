@@ -1,5 +1,8 @@
 {
     "type" : "FeatureCollection",
+    "properties" : {
+        "color" : "crimson"
+    },
     "features" : [
         {
             "type" : "Feature",
@@ -30,7 +33,8 @@
            "type" : "Feature",
            "id" : "MultiLine",
            "properties" : {
-               "text" : "This is a Feature with a MultiLineString"
+               "text" : "This is a Feature with a MultiLineString",
+               "color" : "deepskyblue"
            },
            "geometry" : {
               "type" : "MultiLineString",

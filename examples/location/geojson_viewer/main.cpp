@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
-** Copyright (C) 2018 Julian Sherollari <jdotsh@gmail.com>
+** Copyright (C) 2019 Julian Sherollari <jdotsh@gmail.com>
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -49,7 +49,7 @@
 **
 ****************************************************************************/
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <QFile>
@@ -68,6 +68,8 @@
 #include <QtLocation/private/qdeclarativerectanglemapitem_p.h>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QFileInfo>
+#include <QtCore/qobjectdefs.h>
 
 class extractor
 {
@@ -193,7 +195,6 @@ public slots:
 
         // Import geographic data to a QVariantList
         QVariantList modelList = QGeoJson::importGeoJson(loadDoc);
-        qDebug() << "Testing instant export for bbox and id members: " << QGeoJson::exportGeoJson(modelList);
         m_importedGeoJson =  modelList;
         emit modelChanged();
         return true;
@@ -249,15 +250,24 @@ public:
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
-    // Switch to QML app
     QQmlApplicationEngine engine;
+    QUrl absoluteFilePath = argc > 1 ?
+                    QUrl(QStringLiteral("file://") + QFileInfo(argv[1]).absoluteFilePath()) :
+                    QUrl();
+    engine.rootContext()->setContextProperty("dataPath", QUrl(QStringLiteral("file://")
+                                                              + qPrintable(QT_STRINGIFY(SRC_PATH))
+                                                              + QStringLiteral("/data")));
     qmlRegisterType<GeoJsoner>("Qt.GeoJson", 1, 0, "GeoJsoner");
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty())
         return -1;
+    if (!absoluteFilePath.isEmpty()) {
+        GeoJsoner *geoJsoner = engine.rootObjects().first()->findChild<GeoJsoner*>();
+        QMetaObject::invokeMethod(geoJsoner, "load", Qt::QueuedConnection, Q_ARG(QUrl, absoluteFilePath));
+    }
 
     return app.exec();
 }

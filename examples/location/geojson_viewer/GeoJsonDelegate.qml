@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2019 Julian Sherollari <jdotsh@gmail.com>
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -57,7 +58,7 @@ DelegateChooser {
     id: dc
     role: "type"
     property color defaultColor: "grey"
-    property real defaultOpacity: 0.4
+    property real defaultOpacity: 0.7
 
     DelegateChoice {
         roleValue: "Point"
@@ -65,11 +66,14 @@ DelegateChooser {
             property string geojsonType: "Point"
             property var props: modelData.properties
             geoShape: modelData.data
-            radius: 100*100
+            radius: 20*1000
             border.width: 3
             opacity: dc.defaultOpacity
-            color: ((props !== undefined && props["color"] !== undefined) ? props["color"] :
-                   ((parent.props !== undefined && parent.props["color"] !== undefined) ? parent.props["color"]: dc.defaultColor))
+            /* The expression below is equivalent to:
+               ((props !== undefined && props["color"] !== undefined) ? props["color"] :
+               ((parent && parent.props !== undefined && parent.props["color"] !== undefined) ? parent.props["color"] : dc.defaultColor))
+            */
+            color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
         }
     }
 
@@ -79,10 +83,9 @@ DelegateChooser {
             property string geojsonType: "LineString"
             property var props: modelData.properties
             geoShape: modelData.data
-            line.width: 1
+            line.width: 3
             opacity: dc.defaultOpacity
-            line.color: ((props !== undefined && props["color"] !== undefined) ? props["color"] :
-                        ((parent.props !== undefined && parent.props["color"] !== undefined) ? parent.props["color"]: dc.defaultColor))
+            line.color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
         }
     }
 
@@ -93,8 +96,8 @@ DelegateChooser {
             property var props: modelData.properties
             geoShape: modelData.data
             opacity: dc.defaultOpacity
-            color: ((props !== undefined && props["color"] !== undefined) ? props["color"] :
-                   ((parent.props !== undefined && parent.props["color"] !== undefined) ? parent.props["color"]: dc.defaultColor))
+            color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
+            border.width: 0
         }
     }
 

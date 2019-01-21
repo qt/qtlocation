@@ -1,7 +1,7 @@
 TARGET = qml_location_geojsonviewer
 TEMPLATE = app
 
-QT += qml network quick positioning location-private
+QT += core qml network quick positioning location-private widgets
 SOURCES += main.cpp
 CONFIG += c++11
 CONFIG += install_ok
@@ -17,3 +17,4 @@ OTHER_FILES += \
 
 target.path = $$[QT_INSTALL_EXAMPLES]/location/geojsonviewer
 INSTALLS += target
+DEFINES += $$shell_quote(SRC_PATH=$$PWD)
