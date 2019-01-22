@@ -160,8 +160,6 @@ public:
 
     Error error() const;
     QString errorString() const;
-    Error loaderError() const;
-    QString loaderErrorString() const;
 
     Error mappingError() const;
     QString mappingErrorString() const;
