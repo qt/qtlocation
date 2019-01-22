@@ -90,7 +90,7 @@ QNavigationManagerEngine::QNavigationManagerEngine(const QVariantMap &parameters
     : QObject(parent)
     , d(new QNavigationManagerEnginePrivate)
 {
-    Q_UNUSED(parameters)
+    Q_UNUSED(parameters);
 }
 
 QNavigationManagerEngine::~QNavigationManagerEngine()

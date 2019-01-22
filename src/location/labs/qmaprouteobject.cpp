@@ -100,7 +100,7 @@ QGeoRoute QMapRouteObjectPrivate::route() const
 
 void QMapRouteObjectPrivate::setRoute(const QDeclarativeGeoRoute *route)
 {
-    Q_UNUSED(route)
+    Q_UNUSED(route);
 }
 
 bool QMapRouteObjectPrivate::equals(const QGeoMapObjectPrivate &other) const

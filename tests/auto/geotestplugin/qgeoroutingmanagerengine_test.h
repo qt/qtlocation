@@ -56,7 +56,7 @@ public:
 
     void setTravelTime(int travelTime) override
     {
-        Q_UNUSED(travelTime)
+        Q_UNUSED(travelTime);
     }
 };
 
@@ -101,8 +101,8 @@ public:
         errorCode_(QGeoRouteReply::NoError),
         alternateGeoRouteImplementation_(false)
     {
-        Q_UNUSED(error)
-        Q_UNUSED(errorString)
+        Q_UNUSED(error);
+        Q_UNUSED(errorString);
 
         if (parameters.contains("gc_finishRequestImmediately")) {
             finishRequestImmediately_ = qvariant_cast<bool>(parameters.value("gc_finishRequestImmediately"));

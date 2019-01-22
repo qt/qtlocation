@@ -208,7 +208,7 @@ QGeoPositionInfo QGeoPositionInfoSourceWinRT::lastKnownPosition(bool fromSatelli
 {
     qCDebug(lcPositioningWinRT) << __FUNCTION__;
     Q_D(const QGeoPositionInfoSourceWinRT);
-    Q_UNUSED(fromSatellitePositioningMethodsOnly)
+    Q_UNUSED(fromSatellitePositioningMethodsOnly);
     return d->lastPosition;
 }
 

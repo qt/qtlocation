@@ -93,8 +93,8 @@ public:
                                 timerId_(0),
                                 errorCode_(QGeoCodeReply::NoError)
     {
-        Q_UNUSED(error)
-        Q_UNUSED(errorString)
+        Q_UNUSED(error);
+        Q_UNUSED(errorString);
         if (parameters.contains("supported"))
             supported_ = qvariant_cast<bool>(parameters.value("supported"));
         if (parameters.contains("finishRequestImmediately"))

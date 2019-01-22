@@ -306,7 +306,7 @@ void QDeclarativeSearchModelBase::nextPage()
 */
 void QDeclarativeSearchModelBase::clearData(bool suppressSignal)
 {
-    Q_UNUSED(suppressSignal)
+    Q_UNUSED(suppressSignal);
 }
 
 /*!

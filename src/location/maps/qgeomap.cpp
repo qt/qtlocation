@@ -106,7 +106,7 @@ void QGeoMap::setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabili
 
 bool QGeoMap::handleEvent(QEvent *event)
 {
-    Q_UNUSED(event)
+    Q_UNUSED(event);
     return false;
 }
 
@@ -137,8 +137,8 @@ bool QGeoMap::anchorCoordinateToPoint(const QGeoCoordinate &coordinate, const QP
 
 bool QGeoMap::fitViewportToGeoRectangle(const QGeoRectangle &rectangle, const QMargins &borders)
 {
-    Q_UNUSED(rectangle)
-    Q_UNUSED(borders)
+    Q_UNUSED(rectangle);
+    Q_UNUSED(borders);
     return false;
 }
 
@@ -333,11 +333,11 @@ QString QGeoMap::copyrightsStyleSheet() const
 
 void QGeoMap::setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate, bool tilt)
 {
-    Q_UNUSED(pan)
-    Q_UNUSED(flick)
-    Q_UNUSED(pinch)
-    Q_UNUSED(rotate)
-    Q_UNUSED(tilt)
+    Q_UNUSED(pan);
+    Q_UNUSED(flick);
+    Q_UNUSED(pinch);
+    Q_UNUSED(rotate);
+    Q_UNUSED(tilt);
 }
 
 void QGeoMap::setCopyrightVisible(bool visible)
@@ -388,12 +388,12 @@ const QGeoMapPrivate *QGeoMapPrivate::get(const QGeoMap &map)
 
 void QGeoMapPrivate::addParameter(QGeoMapParameter *param)
 {
-    Q_UNUSED(param)
+    Q_UNUSED(param);
 }
 
 void QGeoMapPrivate::removeParameter(QGeoMapParameter *param)
 {
-    Q_UNUSED(param)
+    Q_UNUSED(param);
 }
 
 QGeoMap::ItemTypes QGeoMapPrivate::supportedMapItemTypes() const
@@ -403,17 +403,17 @@ QGeoMap::ItemTypes QGeoMapPrivate::supportedMapItemTypes() const
 
 void QGeoMapPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
 {
-    Q_UNUSED(item)
+    Q_UNUSED(item);
 }
 
 void QGeoMapPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
-    Q_UNUSED(item)
+    Q_UNUSED(item);
 }
 
 QGeoMapObjectPrivate *QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
 {
-    Q_UNUSED(obj)
+    Q_UNUSED(obj);
     return nullptr;
 }
 

@@ -99,7 +99,7 @@ QSGNode *QMapIconObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
                                                        QSGNode *root,
                                                        QQuickWindow *window)
 {
-    Q_UNUSED(visibleNode)
+    Q_UNUSED(visibleNode);
     bool created = false;
     RootNode *node = static_cast<RootNode *>(oldNode);
     if (!node) {

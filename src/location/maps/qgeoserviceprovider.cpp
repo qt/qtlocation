@@ -860,7 +860,7 @@ void QGeoServiceProviderPrivate::loadMeta()
 
 void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
 {
-    Q_UNUSED(parameters)
+    Q_UNUSED(parameters);
 
     if (int(metaData.value(QStringLiteral("index")).toDouble()) < 0) {
         error = QGeoServiceProvider::NotSupportedError;

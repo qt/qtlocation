@@ -106,7 +106,7 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QGeoAddress &address, c
 
 QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int limit, int offset, const QGeoShape &bounds)
 {
-    Q_UNUSED(offset)
+    Q_UNUSED(offset);
 
     QNetworkRequest request;
     request.setRawHeader("User-Agent", m_userAgent);
@@ -148,7 +148,7 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int l
 QGeoCodeReply *QGeoCodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &coordinate,
                                                           const QGeoShape &bounds)
 {
-    Q_UNUSED(bounds)
+    Q_UNUSED(bounds);
 
     QNetworkRequest request;
     request.setRawHeader("User-Agent", m_userAgent);

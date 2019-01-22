@@ -112,7 +112,7 @@ bool QGeoMapItemsOverlay::createMapObjectImplementation(QGeoMapObject *obj)
 QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *window)
 {
 #ifndef LOCATIONLABS
-    Q_UNUSED(window)
+    Q_UNUSED(window);
     return node;
 #else
     Q_D(QGeoMapItemsOverlay);

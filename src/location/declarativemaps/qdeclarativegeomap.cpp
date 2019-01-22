@@ -2458,7 +2458,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 */
 bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
 {
-    Q_UNUSED(item)
+    Q_UNUSED(item);
     if (!isVisible() || !isEnabled() || !isInteractive())
         return QQuickItem::childMouseEventFilter(item, event);
 

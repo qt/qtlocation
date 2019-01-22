@@ -153,7 +153,7 @@ QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
                                                          QSGNode *root,
                                                          QQuickWindow * /*window*/)
 {
-//    Q_UNUSED(visibleNode) // coz of -Werror=unused-but-set-parameter
+//    Q_UNUSED(visibleNode); // coz of -Werror=unused-but-set-parameter
     MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
 
     bool created = false;

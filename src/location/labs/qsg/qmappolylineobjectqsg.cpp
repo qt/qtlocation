@@ -102,7 +102,7 @@ QSGNode *QMapPolylineObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
                                                            QSGNode *root,
                                                            QQuickWindow * /*window*/)
 {
-    Q_UNUSED(visibleNode)
+    Q_UNUSED(visibleNode);
     MapPolylineNode *node = static_cast<MapPolylineNode *>(oldNode);
 
     bool created = false;

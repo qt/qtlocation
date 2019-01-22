@@ -80,7 +80,7 @@ QSGNode *QMapPolygonObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
                                                           QSGNode *root,
                                                           QQuickWindow * /*window*/)
 {
-    Q_UNUSED(visibleNode)
+    Q_UNUSED(visibleNode);
     MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
 
     bool created = false;

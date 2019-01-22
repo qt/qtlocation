@@ -233,7 +233,7 @@ void QDeclarativeGeocodeModel::queryContentChanged()
 */
 int QDeclarativeGeocodeModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
+    Q_UNUSED(parent);
     return declarativeLocations_.count();
 }
 

@@ -273,7 +273,7 @@ void QDeclarativeGeoRouteModel::componentComplete()
 */
 int QDeclarativeGeoRouteModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
+    Q_UNUSED(parent);
     return routes_.count();
 }
 

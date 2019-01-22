@@ -395,7 +395,7 @@ bool QGeoRoutePrivate::equals(const QGeoRoutePrivate &other) const
 
 void QGeoRoutePrivate::setId(const QString &id)
 {
-    Q_UNUSED(id)
+    Q_UNUSED(id);
 }
 
 QString QGeoRoutePrivate::id() const
@@ -405,7 +405,7 @@ QString QGeoRoutePrivate::id() const
 
 void QGeoRoutePrivate::setRequest(const QGeoRouteRequest &request)
 {
-    Q_UNUSED(request)
+    Q_UNUSED(request);
 }
 
 QGeoRouteRequest QGeoRoutePrivate::request() const
@@ -415,7 +415,7 @@ QGeoRouteRequest QGeoRoutePrivate::request() const
 
 void QGeoRoutePrivate::setBounds(const QGeoRectangle &bounds)
 {
-    Q_UNUSED(bounds)
+    Q_UNUSED(bounds);
 }
 
 QGeoRectangle QGeoRoutePrivate::bounds() const
@@ -425,7 +425,7 @@ QGeoRectangle QGeoRoutePrivate::bounds() const
 
 void QGeoRoutePrivate::setTravelTime(int travelTime)
 {
-    Q_UNUSED(travelTime)
+    Q_UNUSED(travelTime);
 }
 
 int QGeoRoutePrivate::travelTime() const
@@ -435,7 +435,7 @@ int QGeoRoutePrivate::travelTime() const
 
 void QGeoRoutePrivate::setDistance(qreal distance)
 {
-    Q_UNUSED(distance)
+    Q_UNUSED(distance);
 }
 
 qreal QGeoRoutePrivate::distance() const
@@ -445,7 +445,7 @@ qreal QGeoRoutePrivate::distance() const
 
 void QGeoRoutePrivate::setTravelMode(QGeoRouteRequest::TravelMode mode)
 {
-    Q_UNUSED(mode)
+    Q_UNUSED(mode);
 }
 
 QGeoRouteRequest::TravelMode QGeoRoutePrivate::travelMode() const
@@ -455,7 +455,7 @@ QGeoRouteRequest::TravelMode QGeoRoutePrivate::travelMode() const
 
 void QGeoRoutePrivate::setPath(const QList<QGeoCoordinate> &path)
 {
-    Q_UNUSED(path)
+    Q_UNUSED(path);
 }
 
 QList<QGeoCoordinate> QGeoRoutePrivate::path() const
@@ -465,7 +465,7 @@ QList<QGeoCoordinate> QGeoRoutePrivate::path() const
 
 void QGeoRoutePrivate::setFirstSegment(const QGeoRouteSegment &firstSegment)
 {
-    Q_UNUSED(firstSegment)
+    Q_UNUSED(firstSegment);
 }
 
 QGeoRouteSegment QGeoRoutePrivate::firstSegment() const
