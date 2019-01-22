@@ -226,11 +226,10 @@ void QGeoPositionInfoSourceWinRT::setPreferredPositioningMethods(QGeoPositionInf
     PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
     QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
     if (previousPreferredPositioningMethods == preferredPositioningMethods()
-            || d->initState != InitializationState::Uninitialized) {
+            || d->initState == InitializationState::Uninitialized) {
         return;
     }
 
-    Q_ASSERT(d->initState != InitializationState::Initializing);
     const bool needsRestart = d->positionToken.value != 0 || d->statusToken.value != 0;
 
     if (needsRestart)
@@ -257,7 +256,6 @@ void QGeoPositionInfoSourceWinRT::setUpdateInterval(int msec)
         return;
     }
 
-    Q_ASSERT(d->initState != InitializationState::Initializing);
     // minimumUpdateInterval is initialized to the lowest possible update interval in init().
     // Passing 0 will cause an error on Windows 10.
     // See https://docs.microsoft.com/en-us/uwp/api/windows.devices.geolocation.geolocator.reportinterval
