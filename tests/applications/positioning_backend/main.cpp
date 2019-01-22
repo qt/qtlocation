@@ -31,8 +31,11 @@
 
 #include <QApplication>
 #include <QtWidgets>
+#include <QLoggingCategory>
+
 int main(int argc, char *argv[])
 {
+    //QLoggingCategory::setFilterRules("qt.positioning.*=true");
     QApplication a(argc, argv);
 
     LogWidget *log = new LogWidget;

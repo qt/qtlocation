@@ -233,7 +233,7 @@ QGeoRoutingManagerEngineMapbox::QGeoRoutingManagerEngineMapbox(const QVariantMap
 
     bool use_mapbox_text_instructions = true;
     if (parameters.contains(QStringLiteral("mapbox.routing.use_mapbox_text_instructions"))) {
-        use_mapbox_text_instructions = parameters.value(QStringLiteral("mapbox.use_mapbox_text_instructions")).toBool();
+        use_mapbox_text_instructions = parameters.value(QStringLiteral("mapbox.routing.use_mapbox_text_instructions")).toBool();
     }
 
     QGeoRouteParserOsrmV5 *parser = new QGeoRouteParserOsrmV5(this);
