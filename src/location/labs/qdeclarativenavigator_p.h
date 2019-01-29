@@ -69,6 +69,7 @@ class QGeoRouteSegment;
 class QDeclarativeNavigatorPrivate;
 class QDeclarativeGeoRouteSegment;
 class QDeclarativeNavigationBasicDirections;
+class QAbstractNavigator;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigator : public QParameterizableObject, public QQmlParserStatus
 {
@@ -83,6 +84,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigator : public QParameterizableO
     Q_PROPERTY(QDeclarativeNavigationBasicDirections *directions READ directions CONSTANT)
     Q_PROPERTY(NavigationError error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
+    Q_PROPERTY(QAbstractNavigator *engineHandle READ abstractNavigator CONSTANT)
 
     Q_INTERFACES(QQmlParserStatus)
 
@@ -133,6 +135,7 @@ public:
     bool trackPositionSource() const;
 
     QDeclarativeNavigationBasicDirections *directions() const;
+    QAbstractNavigator *abstractNavigator() const;
 
     NavigationError error() const;
     QString errorString() const;

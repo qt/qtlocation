@@ -297,6 +297,21 @@ QString QDeclarativeNavigator::errorString() const
     return d_ptr->m_errorString;
 }
 
+/*  !NOT DOCUMENTED YET!
+    \qmlproperty QAbstractNavigator *Qt.labs.location::Navigator::engineHandle
+
+    This property returns a handle to the navigation object created by the engine.
+    This object can carry engine-specific properties, signals and methods, to expose
+    engine-specific features and data.
+
+    \note Using this property leads to writing code that won't work with different plugins.
+*/
+QAbstractNavigator *QDeclarativeNavigator::abstractNavigator() const
+{
+    return d_ptr->m_navigator.data();
+
+}
+
 bool QDeclarativeNavigator::active() const
 {
     return d_ptr->m_active;
