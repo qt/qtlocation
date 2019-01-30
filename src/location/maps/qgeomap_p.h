@@ -154,6 +154,7 @@ public:
 
     virtual void setCopyrightVisible(bool visible);
     virtual void removeMapObject(QGeoMapObject *obj);
+    virtual QList<QObject *> mapObjectsAt(const QGeoCoordinate &coordinate) const;
 
     void setVisibleArea(const QRectF &visibleArea);
     QRectF visibleArea() const;

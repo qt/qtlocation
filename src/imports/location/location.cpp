@@ -176,6 +176,7 @@ public:
 
             // Register the 5.11 types
             minor = 11;
+            qmlRegisterType<QGeoMapObject>();
             qmlRegisterType<QDeclarativeGeoManeuver, 11>(uri, major, minor, "RouteManeuver");
             qmlRegisterType<QDeclarativeGeoMap, 11>(uri, major, minor, "Map");
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 11>(uri, major, minor, "GeoMapItemBase",

@@ -43,13 +43,20 @@
 #include <QtLocation/private/qdeclarativenavigator_p.h>
 #include <QtLocation/private/qdeclarativenavigator_p_p.h>
 #include <QtLocation/private/qnavigationmanagerengine_p.h>
-
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
 #include <QtCore/QDebug>
+#include "locationlabssingleton_p.h"
 
 QT_BEGIN_NAMESPACE
 
+static QObject *singleton_type_factory(QQmlEngine *engine, QJSEngine *jsEngine)
+{
+    Q_UNUSED(engine);
+    Q_UNUSED(jsEngine);
+
+    return new LocationLabsSingleton;
+}
 
 class QtLocationLabsDeclarativeModule: public QQmlExtensionPlugin
 {
@@ -78,6 +85,7 @@ public:
             qmlRegisterType<QDeclarativeNavigationBasicDirections>();
             qmlRegisterType<QDeclarativeNavigator>(uri, major, minor, "Navigator");
             qmlRegisterType<QAbstractNavigator>();
+            qmlRegisterSingletonType<LocationLabsSingleton>(uri, major, minor, "QtLocationLabs", singleton_type_factory);
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

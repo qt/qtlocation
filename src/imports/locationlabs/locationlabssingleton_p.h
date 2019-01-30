@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2019 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -37,8 +37,8 @@
 **
 ****************************************************************************/
 
-#ifndef LOCATIONSINGLETON_H
-#define LOCATIONSINGLETON_H
+#ifndef LOCATIONLABSSINGLETON_P_H
+#define LOCATIONLABSSINGLETON_P_H
 
 //
 //  W A R N I N G
@@ -52,54 +52,17 @@
 //
 
 #include <QtCore/QObject>
-#include <QtCore/qnumeric.h>
 #include <QtPositioning/QGeoCoordinate>
-#include <QtPositioning/QGeoShape>
-#include <QtPositioning/QGeoRectangle>
-#include <QtPositioning/QGeoCircle>
-#include <QtPositioning/QGeoPath>
-#include <QtPositioning/QGeoPolygon>
-#include <QtQml/QJSValue>
-#include <QVariant>
-#include <QPointF>
+#include <QtLocation/private/qdeclarativegeomap_p.h>
 
-class LocationSingleton : public QObject
+class LocationLabsSingleton : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit LocationSingleton(QObject *parent = 0);
+    explicit LocationLabsSingleton(QObject *parent = 0);
 
-    Q_INVOKABLE QGeoCoordinate coordinate() const;
-    Q_INVOKABLE QGeoCoordinate coordinate(double latitude, double longitude,
-                                          double altitude = qQNaN()) const;
-
-    Q_INVOKABLE QGeoShape shape() const;
-
-    Q_INVOKABLE QGeoRectangle rectangle() const;
-    Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &center,
-                                        double width, double height) const;
-    Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &topLeft,
-                                        const QGeoCoordinate &bottomRight) const;
-    Q_INVOKABLE QGeoRectangle rectangle(const QVariantList &coordinates) const;
-
-    Q_INVOKABLE QGeoCircle circle() const;
-    Q_INVOKABLE QGeoCircle circle(const QGeoCoordinate &center, qreal radius = -1.0) const;
-
-    Q_INVOKABLE QGeoPath path() const;
-    Q_INVOKABLE QGeoPath path(const QJSValue &value, qreal width = 0.0) const;
-
-    Q_INVOKABLE QGeoPolygon polygon() const;
-    Q_INVOKABLE QGeoPolygon polygon(const QVariantList &value) const;
-    Q_INVOKABLE QGeoPolygon polygon(const QVariantList &perimeter, const QVariantList &holes) const;
-
-    Q_INVOKABLE QGeoCircle shapeToCircle(const QGeoShape &shape) const;
-    Q_INVOKABLE QGeoRectangle shapeToRectangle(const QGeoShape &shape) const;
-    Q_INVOKABLE QGeoPath shapeToPath(const QGeoShape &shape) const;
-    Q_INVOKABLE QGeoPolygon shapeToPolygon(const QGeoShape &shape) const;
-
-    Q_REVISION(12) Q_INVOKABLE QGeoCoordinate mercatorToCoord(const QPointF &mercator) const;
-    Q_REVISION(12) Q_INVOKABLE QPointF coordToMercator(const QGeoCoordinate &coord) const;
+    Q_INVOKABLE QList<QObject *> mapObjectsAt(const QGeoCoordinate &coordinate, QDeclarativeGeoMap *map) const;
 };
 
-#endif // LOCATIONSINGLETON_H
+#endif // LOCATIONLABSSINGLETON_P_H

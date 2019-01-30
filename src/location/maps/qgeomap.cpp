@@ -305,6 +305,11 @@ void QGeoMap::removeMapObject(QGeoMapObject * /*obj*/)
 {
 }
 
+QList<QObject *> QGeoMap::mapObjectsAt(const QGeoCoordinate &/*coordinate*/) const
+{
+    return QList<QObject *>();
+}
+
 void QGeoMap::setVisibleArea(const QRectF &visibleArea)
 {
     Q_D(QGeoMap);
