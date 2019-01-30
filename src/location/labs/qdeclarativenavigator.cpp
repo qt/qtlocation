@@ -43,6 +43,24 @@
 QT_BEGIN_NAMESPACE
 
 /*!
+    \qmlmodule Qt.labs.location 1.0
+    \title Qt Labs Location QML Types
+    \ingroup qmlmodules
+    \brief Provides experimental QtLocation QML types, such as \l Navigator and
+    various map objects types (not to be confused with map items).
+
+    To use this module, import the module with the following line:
+
+    \code
+    import Qt.labs.location 1.0
+    \endcode
+
+    \note These types are experimental and subject to source-incompatible changes from one
+    Qt minor release to the next, until they are ready to be moved to the stable QtLocation QML
+    module.
+*/
+
+/*!
     \qmltype Navigator
     \instantiates QDeclarativeNavigator
     \inqmlmodule Qt.labs.location
