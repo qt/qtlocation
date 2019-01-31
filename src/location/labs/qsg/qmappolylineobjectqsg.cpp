@@ -53,7 +53,8 @@ QMapPolylineObjectPrivateQSG::QMapPolylineObjectPrivateQSG(QGeoMapObject *q)
 QMapPolylineObjectPrivateQSG::QMapPolylineObjectPrivateQSG(const QMapPolylineObjectPrivate &other)
     : QMapPolylineObjectPrivateDefault(other)
 {
-    // Data already cloned by the *Default copy constructor, but necessary
+    m_geoPath.setPath(m_path);
+    // rest of the data already cloned by the *Default copy constructor, but necessary
     // update operations triggered only by setters overrides
     updateGeometry();
     if (m_map)
@@ -135,6 +136,7 @@ QList<QGeoCoordinate> QMapPolylineObjectPrivateQSG::path() const
 
 void QMapPolylineObjectPrivateQSG::setPath(const QList<QGeoCoordinate> &path)
 {
+    m_path = path;
     m_geoPath.setPath(path);
     updateGeometry();
     if (m_map)
