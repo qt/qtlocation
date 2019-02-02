@@ -88,13 +88,16 @@ public:
     virtual QSizeF iconSize() const override;
     virtual void setIconSize(const QSizeF &size) override;
 
-    // QMapIconObjectPrivate interface
+    // QGeoMapObjectPrivate interface
     QGeoMapObjectPrivate *clone() override;
+    QGeoShape geoShape() const override;
+    void setGeoShape(const QGeoShape &shape) override;
 
 public:
     QVariant m_content;
     QGeoCoordinate m_coordinate;
     QSizeF m_iconSize;
+    qreal m_radius = 100.0; // can be set only via setGeoShape, will be used only by
 
 private:
     QMapIconObjectPrivateDefault(const QMapIconObjectPrivateDefault &other) = delete;

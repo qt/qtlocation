@@ -67,8 +67,10 @@ QMapIconObjectPrivateQSG::QMapIconObjectPrivateQSG(QGeoMapObject *q)
 QMapIconObjectPrivateQSG::QMapIconObjectPrivateQSG(const QMapIconObjectPrivate &other)
     : QMapIconObjectPrivateDefault(other)
 {
+    // Data already cloned by the *Default copy constructor, but necessary
+    // update operations triggered only by setters overrides
     setContent(content());
-    setCoordinate(coordinate());
+//    setCoordinate(coordinate());
 }
 
 QMapIconObjectPrivateQSG::~QMapIconObjectPrivateQSG()

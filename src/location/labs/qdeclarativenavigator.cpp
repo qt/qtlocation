@@ -140,54 +140,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty Route Qt.labs.location::Navigator::currentRoute
-
-    This read-only property holds the current route the navigator is following.
-    This can be the same as \l route, or can be different, if the navigator
-    cannot follow the user-specified route.
-    For example if the position coming from \l positionSource is considerably
-    off route, the navigation engine might recalculate and start following a
-    new route.
-
-    \sa Route
-*/
-
-/*!
-    \qmlproperty RouteLeg Qt.labs.location::Navigator::currentRouteLeg
-
-    This read-only property holds the current route leg the navigator is following.
-    This is always a part of \l currentRoute, and so the property \l RouteLeg::overallRoute
-    of currentRouteLeg will hold the same route as \l currentRoute.
-
-    \sa RouteLeg
-
-    \since 5.13
-*/
-
-/*!
-    \qmlproperty int Qt.labs.location::Navigator::currentSegment
-
-    This read-only property holds the index of the current RouteSegment in the \l currentRoute.
-
-    \sa RouteSegment
-*/
-
-/*!
-    \qmlsignal Qt.labs.location::Navigator::waypointReached(Waypoint waypoint)
-
-    This signal is emitted when the waypoint \e waypoint has been reached.
-
-    \sa Waypoint
-*/
-
-/*!
-    \qmlsignal Qt.labs.location::Navigator::destinationReached()
-
-    This signal is emitted when the last waypoint of the route, the destination,
-    has been reached.
-*/
-
-/*!
     \qmlproperty enumeration Qt.labs.location::Navigator::error
 
     This read-only property holds the latest error value of the geocoding request.
@@ -205,36 +157,9 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeNavigatorPrivate::QDeclarativeNavigatorPrivate(QParameterizableObject *q_)
-    : q(q_), m_params(new QDeclarativeNavigatorParams)
+    : q(q_), m_params(new QDeclarativeNavigatorParams), m_basicDirections(static_cast<QDeclarativeNavigator *>(q_))
 {
 }
-
-void QDeclarativeNavigatorPrivate::clearCachedData()
-{
-    const bool routeChanged = !m_currentRoute.isNull();
-    const bool routeLegChanged = !m_currentRouteLeg.isNull();
-    const bool segmentChanged = m_currentSegment != 0;
-
-    if (m_currentRoute)
-        m_currentRoute->deleteLater();
-    m_currentRoute = nullptr;
-
-    if (m_currentRouteLeg)
-        m_currentRouteLeg->deleteLater();
-    m_currentRouteLeg = nullptr;
-
-    m_currentSegment = 0;
-
-    QDeclarativeNavigator *qq = qobject_cast<QDeclarativeNavigator *>(q);
-    if (routeChanged)
-        qq->currentRouteChanged();
-    if (routeLegChanged)
-        qq->currentRouteLegChanged();
-    if (segmentChanged)
-        qq->currentSegmentChanged();
-}
-
-
 
 QDeclarativeNavigator::QDeclarativeNavigator(QObject *parent)
     : QParameterizableObject(parent), d_ptr(new QDeclarativeNavigatorPrivate(this))
@@ -357,25 +282,9 @@ void QDeclarativeNavigator::setTrackPositionSource(bool trackPositionSource)
     emit trackPositionSourceChanged(trackPositionSource);
 }
 
-QDeclarativeGeoRoute *QDeclarativeNavigator::currentRoute() const
+QDeclarativeNavigationBasicDirections *QDeclarativeNavigator::directions() const
 {
-    if (!d_ptr->m_ready || !d_ptr->m_navigator->active())
-        return d_ptr->m_params->m_route.data();
-    return d_ptr->m_currentRoute.data();
-}
-
-QDeclarativeGeoRouteLeg *QDeclarativeNavigator::currentRouteLeg() const
-{
-    if (!d_ptr->m_ready || !d_ptr->m_navigator->active())
-        return nullptr;
-    return d_ptr->m_currentRouteLeg.data();
-}
-
-int QDeclarativeNavigator::currentSegment() const
-{
-    if (!d_ptr->m_ready || !d_ptr->m_navigator->active())
-        return 0;
-    return d_ptr->m_currentSegment;
+    return &d_ptr->m_basicDirections;
 }
 
 QDeclarativeNavigator::NavigationError QDeclarativeNavigator::error() const
@@ -386,6 +295,21 @@ QDeclarativeNavigator::NavigationError QDeclarativeNavigator::error() const
 QString QDeclarativeNavigator::errorString() const
 {
     return d_ptr->m_errorString;
+}
+
+/*  !NOT DOCUMENTED YET!
+    \qmlproperty QAbstractNavigator *Qt.labs.location::Navigator::engineHandle
+
+    This property returns a handle to the navigation object created by the engine.
+    This object can carry engine-specific properties, signals and methods, to expose
+    engine-specific features and data.
+
+    \note Using this property leads to writing code that won't work with different plugins.
+*/
+QAbstractNavigator *QDeclarativeNavigator::abstractNavigator() const
+{
+    return d_ptr->m_navigator.data();
+
 }
 
 bool QDeclarativeNavigator::active() const
@@ -445,8 +369,9 @@ void QDeclarativeNavigator::stop()
     if (d_ptr->m_navigator->active())
         d_ptr->m_active = d_ptr->m_navigator->stop();
 
-    // clear cached data
-    d_ptr->clearCachedData();
+    // Cached data are cleared in response to signals emitted by m_navigator upon stop().
+    // For example, m_navigator emits currentRouteChanged with an empty route,
+    // and QDeclarativeNavigationBasicDirections reacts by clearing the declarative route.
 }
 
 void QDeclarativeNavigator::pluginReady()
@@ -505,16 +430,29 @@ bool QDeclarativeNavigator::ensureEngine()
 
     d_ptr->m_navigator->setLocale(manager->locale());
     d_ptr->m_navigator->setMeasurementSystem(manager->measurementSystem());
-    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::waypointReached, this, &QDeclarativeNavigator::waypointReached);
-    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::destinationReached, this, &QDeclarativeNavigator::destinationReached);
-    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteChanged, this, &QDeclarativeNavigator::onCurrentRouteChanged);
-    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteLegChanged, this, &QDeclarativeNavigator::onCurrentRouteLegChanged);
-    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentSegmentChanged, this, &QDeclarativeNavigator::onCurrentSegmentChanged);
+
     connect(d_ptr->m_navigator.get(), &QAbstractNavigator::activeChanged, this, [this](bool active){
         d_ptr->m_active = active;
         emit activeChanged(active);
     });
     connect(this, &QDeclarativeNavigator::trackPositionSourceChanged, d_ptr->m_navigator.get(), &QAbstractNavigator::setTrackPosition);
+
+    // read-only progress info updates
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::waypointReached,
+            &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::waypointReached);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::destinationReached,
+            &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::destinationReached);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteChanged,
+            &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::onCurrentRouteChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentRouteLegChanged,
+            &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::onCurrentRouteLegChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::currentSegmentChanged,
+            &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::currentSegmentChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::nextManeuverIconChanged,
+            &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::nextManeuverIconChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::progressInformationChanged,
+            &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::progressInformationChanged);
+
     emit navigatorReadyChanged(true);
     return true;
 }
@@ -537,26 +475,168 @@ void QDeclarativeNavigator::setError(QDeclarativeNavigator::NavigationError erro
     emit errorChanged();
 }
 
-void QDeclarativeNavigator::onCurrentRouteChanged(const QGeoRoute &route)
+QDeclarativeNavigationBasicDirections::QDeclarativeNavigationBasicDirections(QDeclarativeNavigator *parent)
+:   QObject(parent), m_navigator(parent)
 {
-    if (d_ptr->m_currentRoute)
-        d_ptr->m_currentRoute->deleteLater();
-    d_ptr->m_currentRoute = new QDeclarativeGeoRoute(route, this);
+    if (m_navigator)
+        m_navigatorPrivate = m_navigator->d_ptr.data();
+}
+
+/*!
+    \qmlpropertygroup Qt.labs.location::Navigator::directions
+    \qmlproperty Variant Qt.labs.location::Navigator::directions.nextManeuverIcon
+    \qmlproperty real Qt.labs.location::Navigator::directions.distanceToNextManeuver
+    \qmlproperty real Qt.labs.location::Navigator::directions.remainingTravelDistance
+    \qmlproperty real Qt.labs.location::Navigator::directions.remainingTravelDistanceToNextWaypoint
+    \qmlproperty real Qt.labs.location::Navigator::directions.traveledDistance
+    \qmlproperty int Qt.labs.location::Navigator::directions.timeToNextManeuver
+    \qmlproperty int Qt.labs.location::Navigator::directions.remainingTravelTime
+    \qmlproperty int Qt.labs.location::Navigator::directions.remainingTravelTimeToNextWaypoint
+    \qmlproperty int Qt.labs.location::Navigator::directions.traveledTime
+    \qmlproperty Route Qt.labs.location::Navigator::directions.currentRoute
+    \qmlproperty RouteLeg Qt.labs.location::Navigator::directions.currentRouteLeg
+    \qmlproperty int Qt.labs.location::Navigator::directions.currentSegment
+
+    \qmlsignal Qt.labs.location::Navigator::directions.waypointReached(Waypoint waypoint)
+    \qmlsignal Qt.labs.location::Navigator::directions.destinationReached()
+
+    These read-only properties are part of the directions property group.
+    The directions property group holds the navigation progress information
+    that can be used to access the route data and to extract directions.
+
+    \note specific backends might not provide (some of) these information.
+
+    \list
+        \li The \l nextManeuverIcon property holds the next turn icon.
+        \li The \l distanceToNextManeuver property holds the distance to the next maneuver, in meters.
+        \li The \l remainingTravelDistance property holds the remaining travel distance, in meters.
+        \li The \l remainingTravelDistanceToNextWaypoint property holds the remaining travel distance to the next waypoint, in meters.
+        \li The \l traveledDistance property holds the traveled distance, in meters.
+        \li The \l timeToNextManeuver property holds the time to the next maneuver, in milliseconds.
+        \li The \l remainingTravelTime property holds the remaining travel time, in milliseconds.
+        \li The \l remainingTravelTimeToNextWaypoint property holds the remaining travel time to the next waypoint, in milliseconds.
+        \li The \l traveledTime property holds the traveled time, in milliseconds.
+        \li The \l currentRoute property olds the current route the navigator is following. This can be the same as \l route, or can be different, if the navigator
+        cannot follow the user-specified route. For example if the position coming from \l positionSource is considerably
+        off route, the navigation engine might recalculate and start following a
+        new route.
+        \li The \l currentRouteSegment property holds the current route leg the navigator is following.
+        This is always a part of \l currentRoute, and so the property \l RouteLeg::overallRoute
+        of currentRouteLeg will hold the same route as \l currentRoute.
+        \li The \l currentSegment property holds the index of the current RouteSegment in the \l currentRoute.
+        \li The \l waypointReached signal is emitted when the waypoint \e waypoint has been reached.
+        \li The \l destinationReached signal is emitted when the last waypoint of the route, the destination,
+        has been reached.
+    \endlist
+
+    \sa Route, RouteLeg, RouteSegment, Waypoint
+*/
+
+QVariant QDeclarativeNavigationBasicDirections::nextManeuverIcon() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->nextManeuverIcon();
+    return QVariant();
+}
+
+qreal QDeclarativeNavigationBasicDirections::distanceToNextManeuver() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->distanceToNextManeuver();
+    return qQNaN();
+}
+
+qreal QDeclarativeNavigationBasicDirections::remainingTravelDistance() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->remainingTravelDistance();
+    return qQNaN();
+}
+
+qreal QDeclarativeNavigationBasicDirections::remainingTravelDistanceToNextWaypoint() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->remainingTravelDistanceToNextWaypoint();
+    return qQNaN();
+}
+
+qreal QDeclarativeNavigationBasicDirections::traveledDistance() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->traveledDistance();
+    return 0;
+}
+
+int QDeclarativeNavigationBasicDirections::timeToNextManeuver() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->timeToNextManeuver();
+    return -1;
+}
+
+int QDeclarativeNavigationBasicDirections::remainingTravelTime() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->remainingTravelTime();
+    return -1;
+}
+
+int QDeclarativeNavigationBasicDirections::remainingTravelTimeToNextWaypoint() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->remainingTravelTimeToNextWaypoint();
+    return -1;
+}
+
+int QDeclarativeNavigationBasicDirections::traveledTime() const
+{
+    if (m_navigatorPrivate->m_navigator)
+        return m_navigatorPrivate->m_navigator->traveledTime();
+    return 0;
+}
+
+QDeclarativeGeoRoute *QDeclarativeNavigationBasicDirections::currentRoute() const
+{
+    if (!m_navigatorPrivate->m_ready
+            || !m_navigatorPrivate->m_navigator
+            || !m_navigatorPrivate->m_navigator->active())
+        return m_navigatorPrivate->m_params->m_route.data(); // the user-specified route, if any
+    return m_currentRoute;
+}
+
+QDeclarativeGeoRouteLeg *QDeclarativeNavigationBasicDirections::currentRouteLeg() const
+{
+    if (!m_navigatorPrivate->m_ready
+            || !m_navigatorPrivate->m_navigator
+            || !m_navigatorPrivate->m_navigator->active())
+        return nullptr;
+    return m_currentRouteLeg;
+}
+
+int QDeclarativeNavigationBasicDirections::currentSegment() const
+{
+    if (!m_navigatorPrivate->m_ready
+            || !m_navigatorPrivate->m_navigator
+            || !m_navigatorPrivate->m_navigator->active())
+        return 0;
+    return m_navigatorPrivate->m_navigator->currentSegment();
+}
+
+void QDeclarativeNavigationBasicDirections::onCurrentRouteChanged()
+{
+    if (m_currentRoute)
+        m_currentRoute->deleteLater();
+    m_currentRoute = new QDeclarativeGeoRoute(m_navigatorPrivate->m_navigator->currentRoute(), this);
     emit currentRouteChanged();
 }
 
-void QDeclarativeNavigator::onCurrentRouteLegChanged(const QGeoRouteLeg &routeLeg)
+void QDeclarativeNavigationBasicDirections::onCurrentRouteLegChanged()
 {
-    if (d_ptr->m_currentRoute)
-        d_ptr->m_currentRouteLeg->deleteLater();
-    d_ptr->m_currentRouteLeg = new QDeclarativeGeoRouteLeg(routeLeg, this);
+    if (m_currentRouteLeg)
+        m_currentRouteLeg->deleteLater();
+    m_currentRouteLeg = new QDeclarativeGeoRouteLeg(m_navigatorPrivate->m_navigator->currentRouteLeg(), this);
     emit currentRouteLegChanged();
 }
 
-void QDeclarativeNavigator::onCurrentSegmentChanged(int segment)
-{
-    d_ptr->m_currentSegment = segment;
-    emit currentSegmentChanged();
-}
-
 QT_END_NAMESPACE
+

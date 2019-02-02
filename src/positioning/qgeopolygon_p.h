@@ -53,6 +53,7 @@
 
 #include <QtPositioning/private/qgeopath_p.h>
 #include <QtPositioning/qgeopolygon.h>
+#include <QtPositioning/private/qclipperutils_p.h>
 
 QT_BEGIN_NAMESPACE
 

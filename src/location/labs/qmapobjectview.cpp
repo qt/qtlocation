@@ -140,6 +140,25 @@ bool QMapObjectViewPrivateDefault::equals(const QGeoMapObjectPrivate &other) con
             && delegate() == o.delegate());
 }
 
+QGeoShape QMapObjectViewPrivateDefault::geoShape() const
+{
+    const QMapObjectView *qq = static_cast<const QMapObjectView *>(q);
+    QGeoRectangle rect;
+    const QList<QGeoMapObject *> kids = qq->geoMapObjectChildren();
+    for (const auto &kid: kids) {
+        if (!rect.isValid())
+            rect = kid->geoShape().boundingGeoRectangle();
+        else
+            rect = rect.united(kid->geoShape().boundingGeoRectangle());
+    }
+    return rect;
+}
+
+void QMapObjectViewPrivateDefault::setGeoShape(const QGeoShape &/*shape*/)
+{
+    // MOV doesn't support setting the geoshape.
+}
+
 /*
 
     QMapObjectView
