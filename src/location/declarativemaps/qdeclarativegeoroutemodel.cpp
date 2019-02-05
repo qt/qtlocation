@@ -1446,6 +1446,31 @@ QDeclarativeGeoRouteQuery::RouteOptimizations QDeclarativeGeoRouteQuery::routeOp
     return optimization;
 }
 
+/*!
+    \qmlproperty date RouteQuery::departureTime
+
+    The departure time to be used when querying for the route.
+    The default value is an invalid date, meaning no departure time will be used in the query.
+
+    \since 5.13
+*/
+void QDeclarativeGeoRouteQuery::setDepartureTime(const QDateTime &departureTime)
+{
+    if (departureTime == request_.departureTime())
+        return;
+
+    request_.setDepartureTime(departureTime);
+    if (complete_) {
+        emit departureTimeChanged();
+        emit queryDetailsChanged();
+    }
+}
+
+QDateTime QDeclarativeGeoRouteQuery::departureTime() const
+{
+    return request_.departureTime();
+}
+
 void QDeclarativeGeoRouteQuery::setRouteOptimizations(QDeclarativeGeoRouteQuery::RouteOptimizations optimization)
 {
     QGeoRouteRequest::RouteOptimizations reqOptimizations;

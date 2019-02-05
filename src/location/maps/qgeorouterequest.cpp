@@ -469,6 +469,30 @@ QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 }
 
 /*!
+    Sets the departure time for the route calculation. This information can be used by
+    the backend to calculate a faster route, for example by avoiding blockages present at
+    given points in time.
+
+    The default value is an invalid \l QDateTime
+
+    \since 5.13
+*/
+void QGeoRouteRequest::setDepartureTime(const QDateTime &departureTime)
+{
+    d_ptr->departureTime = departureTime;
+}
+
+/*!
+    Returns the departure time in the request.
+
+    \since 5.13
+*/
+QDateTime QGeoRouteRequest::departureTime() const
+{
+    return d_ptr->departureTime;
+}
+
+/*!
     Sets the extra parameters \a extraParameters for the route request.
     The format of the extra parameters is plugin specific, and documented per plugin.
 

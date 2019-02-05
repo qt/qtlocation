@@ -187,6 +187,12 @@ public:
                 }
             }
 
+            if (request.departureTime().isValid()) {
+                QVariantMap extendedAttributes = route.extendedAttributes();
+                extendedAttributes["tst_departureTime"] = request.departureTime();
+                route.setExtendedAttributes(extendedAttributes);
+            }
+
             routes.append(route);
         }
         reply->callSetRoutes(routes);
