@@ -41,6 +41,7 @@
             "purpose": "Provides access to the Mapbox vector maps",
             "section": "Location",
             "condition": [
+                "features.gui",
                 "features.opengl",
                 "features.c++14",
                 "!config.intel_icc && (!config.win32 || config.mingw)"

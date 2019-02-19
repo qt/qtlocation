@@ -194,6 +194,9 @@ public:
             qmlRegisterType<QDeclarativeGeoRoute, 12>(uri, major, minor, "Route");
             qmlRegisterType<QDeclarativeGeoRouteLeg, 12>(uri, major, minor, "RouteLeg");
 
+            minor = 13;
+            qmlRegisterType<QDeclarativeGeoRouteQuery, 13>(uri, major, minor, "RouteQuery");
+
             // Register the latest Qt version as QML type version
             qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
 

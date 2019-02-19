@@ -102,7 +102,9 @@ void Widget::positionTimedOut()
 
 void Widget::errorChanged(QGeoPositionInfoSource::Error err)
 {
-    ui->labelErrorState->setText(err == 3 ? QStringLiteral("OK") : QString::number(err));
+    ui->labelErrorState->setText(QString::number(err));
+    m_posSource->stopUpdates();
+    ui->checkBox->setChecked(false);
 }
 
 Widget::~Widget()
@@ -126,11 +128,11 @@ void Widget::on_buttonStart_clicked()
     // Either start or stop the current position info source
     bool running = ui->checkBox->isChecked();
     if (running) {
-        m_posSource->stopUpdates();
         ui->checkBox->setChecked(false);
+        m_posSource->stopUpdates();
     } else {
-        m_posSource->startUpdates();
         ui->checkBox->setChecked(true);
+        m_posSource->startUpdates();
     }
 }
 
@@ -174,4 +176,9 @@ void Widget::on_buttonUpdateSupported_clicked()
     }
 
     ui->labelSupported->setText(text);
+}
+
+void Widget::on_buttonResetError_clicked()
+{
+    ui->labelErrorState->setText(QStringLiteral("N/A"));
 }
