@@ -257,6 +257,9 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoServiceProviderRequirements : pub
     Q_PROPERTY(QDeclarativeGeoServiceProvider::PlacesFeatures places
                READ placesRequirements WRITE setPlacesRequirements
                NOTIFY placesRequirementsChanged)
+    Q_PROPERTY(QDeclarativeGeoServiceProvider::NavigationFeatures navigation
+               READ navigationRequirements WRITE setNavigationRequirements
+               NOTIFY navigationRequirementsChanged)
 
 public:
     explicit QDeclarativeGeoServiceProviderRequirements(QObject *parent = 0);
@@ -274,6 +277,9 @@ public:
     QDeclarativeGeoServiceProvider::PlacesFeatures placesRequirements() const;
     void setPlacesRequirements(const QDeclarativeGeoServiceProvider::PlacesFeatures &features);
 
+    QDeclarativeGeoServiceProvider::NavigationFeatures navigationRequirements() const;
+    void setNavigationRequirements(const QDeclarativeGeoServiceProvider::NavigationFeatures &features);
+
     Q_INVOKABLE bool matches(const QGeoServiceProvider *provider) const;
 
     bool operator == (const QDeclarativeGeoServiceProviderRequirements &rhs) const;
@@ -283,6 +289,7 @@ Q_SIGNALS:
     void routingRequirementsChanged(const QDeclarativeGeoServiceProvider::RoutingFeatures &features);
     void geocodingRequirementsChanged(const QDeclarativeGeoServiceProvider::GeocodingFeatures &features);
     void placesRequirementsChanged(const QDeclarativeGeoServiceProvider::PlacesFeatures &features);
+    void navigationRequirementsChanged(const QDeclarativeGeoServiceProvider::NavigationFeatures &features);
 
     void requirementsChanged();
 
@@ -291,7 +298,7 @@ private:
     QDeclarativeGeoServiceProvider::RoutingFeatures routing_;
     QDeclarativeGeoServiceProvider::GeocodingFeatures geocoding_;
     QDeclarativeGeoServiceProvider::PlacesFeatures places_;
-
+    QDeclarativeGeoServiceProvider::NavigationFeatures navigation_;
 };
 
 QT_END_NAMESPACE

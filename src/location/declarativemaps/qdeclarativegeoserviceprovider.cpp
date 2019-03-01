@@ -192,7 +192,8 @@ void QDeclarativeGeoServiceProvider::componentComplete()
             || required_->mappingRequirements() != NoMappingFeatures
             || required_->routingRequirements() != NoRoutingFeatures
             || required_->geocodingRequirements() != NoGeocodingFeatures
-            || required_->placesRequirements() != NoPlacesFeatures) {
+            || required_->placesRequirements() != NoPlacesFeatures
+            || required_->navigationRequirements() != NoNavigationFeatures) {
 
         QStringList providers = QGeoServiceProvider::availableServiceProviders();
 
@@ -673,7 +674,8 @@ QDeclarativeGeoServiceProviderRequirements::QDeclarativeGeoServiceProviderRequir
       mapping_(QDeclarativeGeoServiceProvider::NoMappingFeatures),
       routing_(QDeclarativeGeoServiceProvider::NoRoutingFeatures),
       geocoding_(QDeclarativeGeoServiceProvider::NoGeocodingFeatures),
-      places_(QDeclarativeGeoServiceProvider::NoPlacesFeatures)
+      places_(QDeclarativeGeoServiceProvider::NoPlacesFeatures),
+      navigation_(QDeclarativeGeoServiceProvider::NoNavigationFeatures)
 {
 }
 
@@ -769,6 +771,27 @@ void QDeclarativeGeoServiceProviderRequirements::setPlacesRequirements(const QDe
 /*!
     \internal
 */
+QDeclarativeGeoServiceProvider::NavigationFeatures QDeclarativeGeoServiceProviderRequirements::navigationRequirements() const
+{
+    return navigation_;
+}
+
+/*!
+    \internal
+*/
+void QDeclarativeGeoServiceProviderRequirements::setNavigationRequirements(const QDeclarativeGeoServiceProvider::NavigationFeatures &features)
+{
+    if (navigation_ == features)
+        return;
+
+    navigation_ = features;
+    emit navigationRequirementsChanged(navigation_);
+    emit requirementsChanged();
+}
+
+/*!
+    \internal
+*/
 bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvider *provider) const
 {
     QGeoServiceProvider::MappingFeatures mapping =
@@ -817,13 +840,25 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
             return false;
     }
 
+    QGeoServiceProvider::NavigationFeatures navigation =
+            static_cast<QGeoServiceProvider::NavigationFeatures>(int(navigation_));
+
+    if (navigation == QGeoServiceProvider::AnyNavigationFeatures) {
+        if (provider->navigationFeatures() == QGeoServiceProvider::NoNavigationFeatures)
+            return false;
+    } else {
+        if ((provider->navigationFeatures() & navigation) != navigation)
+            return false;
+    }
+
     return true;
 }
 
 bool QDeclarativeGeoServiceProviderRequirements::operator == (const QDeclarativeGeoServiceProviderRequirements &rhs) const
 {
     return (mapping_ == rhs.mapping_ && routing_ == rhs.routing_
-            && geocoding_ == rhs.geocoding_ && places_ == rhs.places_);
+            && geocoding_ == rhs.geocoding_ && places_ == rhs.places_
+            && navigation_ == rhs.navigation_);
 }
 
 /*******************************************************************************
