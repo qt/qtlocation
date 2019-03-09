@@ -613,6 +613,9 @@ public:
             minor = 4;
             qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
 
+            minor = 13;
+            qmlRegisterType<QDeclarativeGeoLocation, 13>(uri, major, minor, "Location");
+
             // Register the latest Qt version as QML type version
             qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
         } else {

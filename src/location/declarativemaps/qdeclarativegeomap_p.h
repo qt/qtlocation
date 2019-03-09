@@ -198,7 +198,7 @@ public:
     Q_INVOKABLE void pan(int dx, int dy);
     Q_INVOKABLE void prefetchData(); // optional hint for prefetch
     Q_INVOKABLE void clearData();
-    Q_INVOKABLE void fitViewportToGeoShape(const QGeoShape &shape, QVariant margins);
+    Q_REVISION(13) Q_INVOKABLE void fitViewportToGeoShape(const QGeoShape &shape, QVariant margins);
     void fitViewportToGeoShape(const QGeoShape &shape, const QMargins &borders = QMargins(10, 10, 10, 10));
 
     QString errorString() const;
