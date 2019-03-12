@@ -234,32 +234,44 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
         m_map->clearMapItems();
     }
 
-    // This forces the destruction of the associated items now, not when QObject destructor is called, at which point
-    // QDeclarativeGeoMap is long gone
+    // Remove the items from the map, making them deletable.
+    // Go in the same order as in removeMapChild: views, groups, then items
     if (!m_mapViews.isEmpty()) {
-        for (QDeclarativeGeoMapItemView *v : qAsConst(m_mapViews)) {
+        const auto mapViews = m_mapViews;
+        for (QDeclarativeGeoMapItemView *v : mapViews) { // so that removeMapItemView_real can safely modify m_mapViews;
             if (!v)
                 continue;
-            if (v->parent() == this) {
-                delete v;
-            } else {
-                // FIXME: removeInstantiatedItems should abort, as well as exit transitions terminated
-                v->removeInstantiatedItems(false);
-                v->m_map = nullptr;
-            }
+
+            QQuickItem *parent = v->parentItem();
+            QDeclarativeGeoMapItemGroup *group = qobject_cast<QDeclarativeGeoMapItemGroup *>(parent);
+            if (group)
+                continue; // Ignore non-top-level MIVs. They will be recursively processed.
+                          // Identify them as being parented by a MapItemGroup.
+
+            removeMapItemView_real(v);
         }
     }
-    // remove any map items associations
-    for (int i = 0; i < m_mapItems.count(); ++i) {
-        if (m_mapItems.at(i))
-            m_mapItems.at(i).data()->setMap(0,0);
+
+    if (!m_mapItemGroups.isEmpty()) {
+        const auto mapGroups = m_mapItemGroups;
+        for (QDeclarativeGeoMapItemGroup *g : mapGroups) {
+            if (!g)
+                continue;
+
+            QQuickItem *parent =g->parentItem();
+            QDeclarativeGeoMapItemGroup *group = qobject_cast<QDeclarativeGeoMapItemGroup *>(parent);
+            if (group)
+                continue; // Ignore non-top-level Groups. They will be recursively processed.
+                          // Identify them as being parented by a MapItemGroup.
+
+            removeMapItemGroup_real(g);
+        }
     }
 
-    // remove any map item groups associations
-    for (int i = 0; i < m_mapItemGroups.count(); ++i) {
-        if (m_mapItemGroups.at(i))
-            m_mapItemGroups.at(i).data()->setQuickMap(nullptr);
-    }
+    // remove any remaining map items associations
+    const auto mapItems = m_mapItems;
+    for (auto mi: mapItems)
+        removeMapItem_real(mi.data());
 
     if (m_copyrights.data())
         delete m_copyrights.data();
@@ -2094,14 +2106,10 @@ bool QDeclarativeGeoMap::removeMapItemView_real(QDeclarativeGeoMapItemView *item
     if (!itemView || itemView->m_map != this) // can't remove a view that is already added to another map
         return false;
 
-    // Leaving this as void since the removal is async (potentially transitioned)
-    // && the delegates *could* be empty mapItemGroups.
-    itemView->removeInstantiatedItems();
+    itemView->removeInstantiatedItems(false); // remove the items without using transitions AND abort ongoing ones
     itemView->m_map = 0;
-    // it can be removed from the list at this point, since no operations that require a Map have to be done
-    // anymore on destruction.
     m_mapViews.removeOne(itemView);
-    return removeMapItemGroup_real(itemView); // at this point, delegate instances have been removed.
+    return removeMapItemGroup_real(itemView); // at this point, all delegate instances have been removed.
 }
 
 /*!
