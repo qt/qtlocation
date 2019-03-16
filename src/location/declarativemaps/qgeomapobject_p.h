@@ -51,6 +51,7 @@
 #include <QtLocation/private/qparameterizableobject_p.h>
 #include <QExplicitlySharedDataPointer>
 #include <QtPositioning/qgeoshape.h>
+#include <qqml.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -133,6 +134,9 @@ protected:
     friend class QGeoMapLayer;
     friend class QDeclarativeNavigator;
 };
+
 QT_END_NAMESPACE
+
+QML_DECLARE_TYPE(QGeoMapObject)
 
 #endif // QGEOMAPOBJECTBASE_H
