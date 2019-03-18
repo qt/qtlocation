@@ -46,6 +46,7 @@
 #include <QtPositioning/QGeoAddress>
 #include <QtPositioning/QGeoLocation>
 #include <QtPositioning/QGeoRectangle>
+#include <QtLocation/private/qgeojson_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -112,8 +113,12 @@ static void injectExtra(QGeoLocation &location, const QJsonObject &object)
                                                QStringLiteral("class") };
 
     for (const auto k: extraKeys) {
-        if (object.contains(k))
+        if (object.contains(k)) {
             extra[k] = object.value(k).toVariant();
+            if (k == QStringLiteral("geojson"))
+                extra[QStringLiteral("geojson_model")] =
+                        QGeoJson::importGeoJson(QJsonDocument::fromVariant(extra[k]));
+        }
     }
 
     location.setExtendedAttributes(extra);
