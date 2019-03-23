@@ -69,8 +69,10 @@ a prefix.
     \li Url string set when making network requests to the geocoding server.  This parameter should be set to a
         valid server url with the correct osm API. If not specified the default \l {http://nominatim.openstreetmap.org/}{url} will be used.
         \note The API documentation is available at \l {https://wiki.openstreetmap.org/wiki/Nominatim}{Project OSM Nominatim}.
+\row
     \li osm.geocoding.debug_query
     \li Instructs the plugin to inject the query url to nominatim into the geocode reply, for debugging purposes.
+\row
     \li osm.geocoding.include_extended_data
     \li Instructs the plugin to include Nominatim-specific information (such as geometry and class) into the returned Location
         objects, exposed as extendedAttributes.
