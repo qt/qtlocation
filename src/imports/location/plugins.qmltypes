@@ -152,9 +152,10 @@ Module {
         exports: [
             "QtLocation/Map 5.0",
             "QtLocation/Map 5.11",
-            "QtLocation/Map 5.12"
+            "QtLocation/Map 5.12",
+            "QtLocation/Map 5.13"
         ]
-        exportMetaObjectRevisions: [0, 11, 12]
+        exportMetaObjectRevisions: [0, 11, 12, 13]
         Property { name: "gesture"; type: "QQuickGeoMapGestureArea"; isReadonly: true; isPointer: true }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
         Property { name: "minimumZoomLevel"; type: "double" }
@@ -470,9 +471,10 @@ Module {
         exports: [
             "QtLocation/Route 5.0",
             "QtLocation/Route 5.11",
-            "QtLocation/Route 5.12"
+            "QtLocation/Route 5.12",
+            "QtLocation/Route 5.13"
         ]
-        exportMetaObjectRevisions: [0, 11, 12]
+        exportMetaObjectRevisions: [0, 11, 12, 13]
         Property { name: "bounds"; type: "QGeoRectangle"; isReadonly: true }
         Property { name: "travelTime"; type: "int"; isReadonly: true }
         Property { name: "distance"; type: "double"; isReadonly: true }
