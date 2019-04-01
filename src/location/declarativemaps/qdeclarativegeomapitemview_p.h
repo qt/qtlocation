@@ -130,6 +130,8 @@ private:
     void removeDelegateFromMap(int index, bool transition = true);
     void removeDelegateFromMap(QQuickItem *o);
     void transitionItemOut(QQuickItem *o);
+    void terminateExitTransition(QQuickItem *o);
+    QQmlInstanceModel::ReleaseFlags disposeDelegate(QQuickItem *item);
 
     void insertInstantiatedItem(int index, QQuickItem *o, bool createdItem);
     void addItemToMap(QDeclarativeGeoMapItemBase *item, int index, bool createdItem);

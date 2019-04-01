@@ -292,6 +292,10 @@ QGeoPath QGeoPath::translated(double degreesLatitude, double degreesLongitude) c
 /*!
     Returns the length of the path, in meters, from the element \a indexFrom to the element \a indexTo.
     The length is intended to be the sum of the shortest distances for each pair of adjacent points.
+
+    If \a indexTo is -1 (the default value), the length will be including the distance between last coordinate
+    and the first (closed loop).
+    To retrieve the length for the path, use 0 for \a indexFrom and \l QGeoPath::size() - 1 for \a indexTo.
 */
 double QGeoPath::length(int indexFrom, int indexTo) const
 {
