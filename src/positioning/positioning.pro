@@ -59,6 +59,8 @@ PRIVATE_HEADERS += \
                     qgeopolygon_p.h \
                     qgeocoordinateobject_p.h \
                     qgeopositioninfo_p.h \
+                    qgeosatelliteinfo_p.h \
+                    qgeosatelliteinfosource_p.h \
                     qclipperutils_p.h
 
 SOURCES += \
@@ -88,7 +90,6 @@ SOURCES += \
             qgeocoordinateobject.cpp
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
-
 
 load(qt_module)
 
