@@ -880,8 +880,10 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
     } else {
         const bool zlHasChanged = zoomLevel != m_cameraData.zoomLevel();
         m_cameraData.setZoomLevel(zoomLevel);
-        if (zlHasChanged)
+        if (zlHasChanged) {
             emit zoomLevelChanged(zoomLevel);
+            emit visibleRegionChanged();
+        }
     }
 }
 
@@ -964,8 +966,10 @@ void QDeclarativeGeoMap::setBearing(qreal bearing)
     } else {
         const bool bearingHasChanged = bearing != m_cameraData.bearing();
         m_cameraData.setBearing(bearing);
-        if (bearingHasChanged)
+        if (bearingHasChanged) {
             emit bearingChanged(bearing);
+            emit visibleRegionChanged();
+        }
     }
 }
 
@@ -1029,8 +1033,10 @@ void QDeclarativeGeoMap::setTilt(qreal tilt)
     } else {
         const bool tiltHasChanged = tilt != m_cameraData.tilt();
         m_cameraData.setTilt(tilt);
-        if (tiltHasChanged)
+        if (tiltHasChanged) {
             emit tiltChanged(tilt);
+            emit visibleRegionChanged();
+        }
     }
 }
 
@@ -1087,8 +1093,10 @@ void QDeclarativeGeoMap::setFieldOfView(qreal fieldOfView)
     } else {
         const bool fovChanged = fieldOfView != m_cameraData.fieldOfView();
         m_cameraData.setFieldOfView(fieldOfView);
-        if (fovChanged)
+        if (fovChanged) {
             emit fieldOfViewChanged(fieldOfView);
+            emit visibleRegionChanged();
+        }
     }
 }
 
@@ -1254,8 +1262,10 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
     } else {
         const bool centerHasChanged = center != m_cameraData.center();
         m_cameraData.setCenter(center);
-        if (centerHasChanged)
+        if (centerHasChanged) {
             emit centerChanged(center);
+            emit visibleRegionChanged();
+        }
     }
 }
 
@@ -1297,15 +1307,18 @@ void QDeclarativeGeoMap::setVisibleRegion(const QGeoShape &shape)
         // shape invalidated -> nothing to fit anymore
         m_visibleRegion = QGeoRectangle();
         m_pendingFitViewport = false;
+        emit visibleRegionChanged();
         return;
     }
 
     if (!m_map || !width() || !height()) {
         m_pendingFitViewport = true;
+        emit visibleRegionChanged();
         return;
     }
 
     fitViewportToGeoShape(m_visibleRegion);
+    emit visibleRegionChanged();
 }
 
 QGeoShape QDeclarativeGeoMap::visibleRegion() const
@@ -1743,6 +1756,9 @@ void QDeclarativeGeoMap::onCameraDataChanged(const QGeoCameraData &cameraData)
         emit tiltChanged(m_cameraData.tilt());
     if (fovHasChanged)
         emit fieldOfViewChanged(m_cameraData.fieldOfView());
+    if (centerHasChanged || zoomHasChanged || bearingHasChanged
+            || tiltHasChanged || fovHasChanged)
+        emit visibleRegionChanged();
 }
 
 /*!
