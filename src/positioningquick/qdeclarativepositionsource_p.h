@@ -51,12 +51,11 @@
 // We mean it.
 //
 
-#include "qdeclarativeposition_p.h"
-
+#include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
+#include <QtPositioningQuick/private/qdeclarativeposition_p.h>
 #include <QtCore/QObject>
 #include <QtNetwork/QAbstractSocket>
 #include <QtQml/QQmlParserStatus>
-#include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
 #include <QtPositioning/QGeoPositionInfoSource>
 
 QT_BEGIN_NAMESPACE

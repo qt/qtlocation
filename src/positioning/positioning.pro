@@ -7,7 +7,7 @@ INCLUDEPATH += ../3rdparty/clipper
 INCLUDEPATH += ../3rdparty/clip2tri
 
 QMAKE_DOCS = $$PWD/doc/qtpositioning.qdocconf
-OTHER_FILES += configure.json doc/src/*.qdoc   # show .qdoc files in Qt Creator
+OTHER_FILES += configure.json doc/src/*.qdoc doc/src/plugins/*.qdoc   # show .qdoc files in Qt Creator
 
 ANDROID_BUNDLED_JAR_DEPENDENCIES = \
     jar/QtPositioning.jar:org.qtproject.qt5.android.positioning.QtPositioning

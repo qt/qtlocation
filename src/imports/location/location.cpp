@@ -35,6 +35,7 @@
 ****************************************************************************/
 
 #include <QtLocation/private/qdeclarativegeoserviceprovider_p.h>
+#include <QtPositioningQuick/private/qdeclarativepluginparameter_p.h>
 #include <QtLocation/private/qdeclarativegeomap_p.h>
 
 #include <QtLocation/private/qdeclarativegeoroute_p.h>
@@ -97,7 +98,7 @@ public:
             // 5.0 is silent and not advertised
 
             qmlRegisterType<QDeclarativeGeoServiceProvider          >(uri, major, minor, "Plugin");
-            qmlRegisterType<QDeclarativeGeoServiceProviderParameter >(uri, major, minor, "PluginParameter");
+            qmlRegisterType<QDeclarativePluginParameter >(uri, major, minor, "PluginParameter");
             qmlRegisterUncreatableType<QDeclarativeGeoServiceProviderRequirements>(uri, major, minor, "PluginRequirements",
                                         QStringLiteral("PluginRequirements is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeGeoMap                      >(uri, major, minor, "Map");
