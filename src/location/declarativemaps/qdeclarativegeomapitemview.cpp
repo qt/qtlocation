@@ -107,7 +107,8 @@ QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
 
 QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
 {
-    removeInstantiatedItems();
+    // No need to remove instantiated items: if the MIV has instantiated items because it has been added
+    // to a Map (or is child of a Map), the Map destructor takes care of removing it and the instantiated items.
 }
 
 /*!
@@ -309,7 +310,7 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems(bool transition)
     if (!m_map)
         return;
 
-    // FIXME: removeInstantiatedItems should abort, as well as exit transitions terminated QTBUG-69195
+    // with transition = false removeInstantiatedItems aborts ongoing exit transitions //QTBUG-69195
     // Backward as removeItemFromMap modifies m_instantiatedItems
     for (int i = m_instantiatedItems.size() -1; i >= 0 ; i--)
         removeDelegateFromMap(i, transition);
@@ -356,24 +357,38 @@ QList<QQuickItem *> QDeclarativeGeoMapItemView::mapItems()
     return m_instantiatedItems;
 }
 
+QQmlInstanceModel::ReleaseFlags QDeclarativeGeoMapItemView::disposeDelegate(QQuickItem *item)
+{
+    disconnect(item, 0, this, 0);
+    removeDelegateFromMap(item);
+    item->setParentItem(nullptr);   // Needed because
+    item->setParent(nullptr);       // m_delegateModel->release(item) does not destroy the item most of the times!!
+    QQmlInstanceModel::ReleaseFlags releaseStatus = m_delegateModel->release(item);
+    return releaseStatus;
+}
+
 void QDeclarativeGeoMapItemView::removeDelegateFromMap(int index, bool transition)
 {
     if (index >= 0 && index < m_instantiatedItems.size()) {
         QQuickItem *item = m_instantiatedItems.takeAt(index);
         if (!item) { // not yet incubated
-            // Don't cancel incubation explicitly, as DelegateModel apparently takes care of incubating elements when the model
-            // remove those indices.
+            // Don't cancel incubation explicitly when model rows are removed, as DelegateModel
+            // apparently takes care of incubating elements when the model remove those indices.
+            // Cancel them explicitly only when a MIV is removed from a map.
+            if (!transition)
+                m_delegateModel->cancel(index);
             return;
         }
         // item can be either a QDeclarativeGeoMapItemBase or a QDeclarativeGeoMapItemGroup (subclass)
-        if (m_exit && m_map &&  transition) {
+        if (m_exit && m_map && transition) {
             transitionItemOut(item);
         } else {
-            disconnect(item, 0, this, 0);
-            removeDelegateFromMap(item);
-            item->setParentItem(nullptr);   // Needed because
-            item->setParent(nullptr);       // m_delegateModel->release(item) does not destroy the item most of the times!!
-            QQmlInstanceModel::ReleaseFlags releaseStatus = m_delegateModel->release(item);
+            if (m_exit && m_map && !transition) {
+                // check if the exit transition is still running, if so stop it.
+                // This can happen when explicitly calling Map.removeMapItemView, soon after adding it.
+                terminateExitTransition(item);
+            }
+            QQmlInstanceModel::ReleaseFlags releaseStatus = disposeDelegate(item);
 #ifdef QT_DEBUG
             if (releaseStatus == QQmlInstanceModel::Referenced)
                 qWarning() << "item "<< index << "(" << item << ") still referenced";
@@ -436,16 +451,26 @@ void QDeclarativeGeoMapItemView::transitionItemOut(QQuickItem *o)
     }
 }
 
+void QDeclarativeGeoMapItemView::terminateExitTransition(QQuickItem *o)
+{
+    QDeclarativeGeoMapItemGroup *group = qobject_cast<QDeclarativeGeoMapItemGroup *>(o);
+    if (group && group->m_transitionManager) {
+        group->m_transitionManager->cancel();
+        return;
+    }
+    QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(o);
+    if (item && item->m_transitionManager) {
+        item->m_transitionManager->cancel();
+        return;
+    }
+}
+
 void QDeclarativeGeoMapItemView::exitTransitionFinished()
 {
     QQuickItem *item = qobject_cast<QQuickItem *>(sender());
     if (!item)
         return;
-    disconnect(item, 0, this, 0);
-    removeDelegateFromMap(item);
-    item->setParentItem(nullptr);
-    item->setParent(nullptr);
-    QQmlInstanceModel::ReleaseFlags releaseStatus = m_delegateModel->release(item);
+    QQmlInstanceModel::ReleaseFlags releaseStatus = disposeDelegate(item);
 #ifdef QT_DEBUG
     if (releaseStatus == QQmlInstanceModel::Referenced)
         qWarning() << "item "<<item<<" still referenced";
