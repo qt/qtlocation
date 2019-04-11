@@ -36,6 +36,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QGEOPOSITIONINFOSOURCE_H
 #define QGEOPOSITIONINFOSOURCE_H
 
@@ -87,7 +88,9 @@ public:
     QString sourceName() const;
 
     static QGeoPositionInfoSource *createDefaultSource(QObject *parent);
+    static QGeoPositionInfoSource *createDefaultSource(const QVariantMap &parameters, QObject *parent);
     static QGeoPositionInfoSource *createSource(const QString &sourceName, QObject *parent);
+    static QGeoPositionInfoSource *createSource(const QString &sourceName, const QVariantMap &parameters, QObject *parent);
     static QStringList availableSources();
     virtual Error error() const = 0;
 
@@ -106,6 +109,8 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSource)
     QGeoPositionInfoSourcePrivate *d;
+
+    friend class QGeoPositionInfoSourcePrivate;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoPositionInfoSource::PositioningMethods)

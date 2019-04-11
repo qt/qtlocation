@@ -84,4 +84,8 @@ QT_BEGIN_NAMESPACE
 QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()
 {}
 
+QGeoPositionInfoSourceFactoryV2::~QGeoPositionInfoSourceFactoryV2()
+{}
+
 QT_END_NAMESPACE
+

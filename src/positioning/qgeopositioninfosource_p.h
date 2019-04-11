@@ -63,10 +63,13 @@ QT_BEGIN_NAMESPACE
 class QGeoPositionInfoSourcePrivate
 {
 public:
+    static QGeoPositionInfoSourcePrivate *get(const QGeoPositionInfoSource &source);
+
     int interval;
     QGeoPositionInfoSource::PositioningMethods methods;
     QJsonObject metaData;
-    QGeoPositionInfoSourceFactory *factory;
+    QGeoPositionInfoSourceFactory *factory = nullptr;
+    QGeoPositionInfoSourceFactoryV2 *factoryV2 = nullptr;
     QString providerName;
 
     void loadMeta();
