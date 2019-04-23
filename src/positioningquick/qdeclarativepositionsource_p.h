@@ -56,7 +56,8 @@
 #include <QtCore/QObject>
 #include <QtNetwork/QAbstractSocket>
 #include <QtQml/QQmlParserStatus>
-#include <QtPositioning/QGeoPositionInfoSource>
+#include <QtPositioning/qgeopositioninfosource.h>
+#include <QtPositioningQuick/private/qdeclarativepluginparameter_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -76,8 +77,10 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePositionSource : public QObj
     Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
     Q_PROPERTY(SourceError sourceError READ sourceError NOTIFY sourceErrorChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QQmlListProperty<QDeclarativePluginParameter> parameters READ parameters REVISION 14)
     Q_ENUMS(PositioningMethod)
 
+    Q_CLASSINFO("DefaultProperty", "parameters")
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -121,6 +124,8 @@ public:
     PositioningMethods preferredPositioningMethods() const;
     SourceError sourceError() const;
     QGeoPositionInfoSource *positionSource() const;
+    QQmlListProperty<QDeclarativePluginParameter> parameters();
+    QVariantMap parameterMap() const;
 
     // Virtuals from QQmlParserStatus
     void classBegin() { }
@@ -149,10 +154,18 @@ private Q_SLOTS:
     void socketConnected();
     void socketError(QAbstractSocket::SocketError error);
     void updateTimeoutReceived();
+    void onParameterInitialized();
 
 private:
     void setPosition(const QGeoPositionInfo &pi);
     void setSource(QGeoPositionInfoSource *source);
+    bool parametersReady();
+    void tryAttach(const QString &name, bool useFallback = true);
+
+    static void parameter_append(QQmlListProperty<QDeclarativePluginParameter> *prop, QDeclarativePluginParameter *mapObject);
+    static int parameter_count(QQmlListProperty<QDeclarativePluginParameter> *prop);
+    static QDeclarativePluginParameter *parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, int index);
+    static void parameter_clear(QQmlListProperty<QDeclarativePluginParameter> *prop);
 
     QGeoPositionInfoSource *m_positionSource;
     QDeclarativePosition m_position;
@@ -161,10 +174,14 @@ private:
     QTcpSocket *m_nmeaSocket;
     QString m_nmeaFileName;
     QUrl m_nmeaSource;
+    QString m_providerName;
     bool m_active;
     bool m_singleUpdate;
     int m_updateInterval;
     SourceError m_sourceError;
+    QList<QDeclarativePluginParameter *> m_parameters;
+    bool m_componentComplete = false;
+    bool m_parametersInitialized = false;
 };
 
 QT_END_NAMESPACE
