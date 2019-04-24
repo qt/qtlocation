@@ -115,8 +115,9 @@ static QList<QVariantMap> waypointMetadata(const QList<QDeclarativeGeoWaypoint *
     geographic routes from a backend provider. Routes include data about driving
     directions between two points, walking directions with multiple waypoints,
     and various other similar concepts. It functions much like other Model
-    types in QML (see for example \l {Models and Views in Qt Quick#Models}{ListModel}),
-    and interacts with views such as \l MapItemView, and \l{ListView}.
+    types in QML (see for example \l {Models and Views in Qt Quick#Models}{ListModel}
+    and \l {QtQuick.XmlListModel::XmlListModel}{XmlListModel}), and interacts with
+    views such as \l MapItemView, and \l{ListView}.
 
     Like \l Map and \l GeocodeModel, all the data for a RouteModel to work comes
     from a services plugin. This is contained in the \l{plugin} property, and
@@ -241,11 +242,12 @@ void QDeclarativeGeoRouteModel::cancel()
 /*!
     \qmlmethod Route QtLocation::RouteModel::get(int index)
 
-    Returns the Route at given \a index. Use \l count property to check the
-    amount of routes available. The routes are indexed from zero, so the accessible range
-    is 0...(count - 1).
+    Returns the Route at the specified index \a int. Use the \l count
+    property to check the amount of routes available. The routes
+    are indexed from zero, so the accessible range is 0...(count - 1).
 
-    If you access out of bounds, a zero (null object) is returned and a warning is issued.
+    If you access out of bounds, a zero (null object) is returned and
+    a warning is issued.
 */
 
 QDeclarativeGeoRoute *QDeclarativeGeoRouteModel::get(int index)
@@ -991,8 +993,9 @@ void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
 /*!
     \qmlmethod void QtLocation::RouteQuery::addExcludedArea(georectangle area)
 
-    Adds the given \a area to excluded areas (areas that the route must not cross).
-    Same area can only be added once.
+    Adds the specified \a georectangle from the excluded areas
+    (areas that the route must not cross).
+    The same area can only be added once.
 
     \sa removeExcludedArea, clearExcludedAreas
 */
@@ -1115,9 +1118,9 @@ void QDeclarativeGeoRouteQuery::addWaypoint(const QVariant &waypoint)
 /*!
     \qmlmethod void QtLocation::RouteQuery::removeWaypoint(coordinate)
 
-    Removes the given \a coordinate from the list of waypoints. If the same
-    coordinate appears multiple times, the most recently added coordinate
-    instance is removed.
+    Removes the given \a coordinate from the list of waypoints. If the
+    same coordinate appears multiple times, the most recently added
+    coordinate instance is removed.
 
     \sa addWaypoint, clearWaypoints
 */
@@ -1195,8 +1198,8 @@ void QDeclarativeGeoRouteQuery::flushWaypoints(QList<QDeclarativeGeoWaypoint *> 
 /*!
     \qmlmethod void QtLocation::RouteQuery::setFeatureWeight(FeatureType feature, FeatureWeight weight)
 
-    Defines the \a weight to associate with a \a feature during the planning of a
-    route.
+    Defines the weight (\a FeatureWeight) to associate with a feature
+    (\a FeatureType) during the planning of a route.
 
     Following lists the possible feature weights:
 

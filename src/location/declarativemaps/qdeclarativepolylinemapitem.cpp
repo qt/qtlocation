@@ -849,7 +849,7 @@ int QDeclarativePolylineMapItem::pathLength() const
 /*!
     \qmlmethod void MapPolyline::addCoordinate(coordinate)
 
-    Adds a \a coordinate to the end of the path.
+    Adds the specified \a coordinate to the end of the path.
 
     \sa insertCoordinate, removeCoordinate, path
 */
