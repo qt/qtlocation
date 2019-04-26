@@ -86,6 +86,7 @@ SUBDIRS += \
 
 !android: SUBDIRS += \
             positionplugin \
+            positionpluginV1 \
             positionplugintest \
             qgeoareamonitor \
             qgeopositioninfosource \
