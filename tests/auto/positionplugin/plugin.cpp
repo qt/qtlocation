@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 #include <QtPositioning/qgeopositioninfosource.h>
+#include <QtPositioning/private/qgeopositioninfosource_p.h>
 #include <QtPositioning/qgeopositioninfosourcefactory.h>
 #include <QObject>
 #include <QtPlugin>
@@ -65,15 +66,38 @@ private slots:
     void doTimeout();
 };
 
+class DummySourcePrivate : public QGeoPositionInfoSourcePrivate
+{
+public:
+    bool setBackendProperty(const QString &name, QVariant value) override
+    {
+        if (name == QStringLiteral("altitude")) {
+            m_altitude = value.toReal();
+            return true;
+        }
+        return false;
+    }
+    QVariant backendProperty(const QString &name) const override
+    {
+        if (name == QStringLiteral("altitude"))
+            return m_altitude;
+        return QVariant();
+    }
+
+    qreal m_altitude = 0.0;
+};
+
 DummySource::DummySource(const QVariantMap &parameters, QObject *parent) :
-    QGeoPositionInfoSource(parent),
+    QGeoPositionInfoSource(*new DummySourcePrivate, parent),
     timer(new QTimer(this)),
     timeoutTimer(new QTimer(this)),
     singleTimer(new QTimer(this)),
     lastPosition(QGeoCoordinate(0,0), QDateTime::currentDateTime())
 {
+    DummySourcePrivate *dd = static_cast<DummySourcePrivate *>(QGeoPositionInfoSourcePrivate::get(*this));
     if (parameters.contains(QStringLiteral("test.source.altitude"))) {
         const qreal alti = parameters.value(QStringLiteral("test.source.altitude")).toReal();
+        dd->m_altitude = alti;
         QGeoCoordinate crd = lastPosition.coordinate();
         crd.setAltitude(alti);
         lastPosition.setCoordinate(crd);
@@ -157,6 +181,7 @@ DummySource::~DummySource()
 
 void DummySource::updatePosition()
 {
+    DummySourcePrivate *dd = static_cast<DummySourcePrivate *>(QGeoPositionInfoSourcePrivate::get(*this));
     timeoutTimer->stop();
     singleTimer->stop();
 
@@ -164,7 +189,7 @@ void DummySource::updatePosition()
 
     QGeoCoordinate coord(lastPosition.coordinate().latitude() + 0.1,
                          lastPosition.coordinate().longitude() + 0.1,
-                         lastPosition.coordinate().altitude());
+                         dd->m_altitude);
 
     QGeoPositionInfo info(coord, now);
     info.setAttribute(QGeoPositionInfo::Direction, lastPosition.coordinate().azimuthTo(coord));

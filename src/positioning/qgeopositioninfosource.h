@@ -87,6 +87,9 @@ public:
 
     QString sourceName() const;
 
+    bool setBackendProperty(const QString &name, QVariant value);
+    QVariant backendProperty(const QString &name) const;
+
     static QGeoPositionInfoSource *createDefaultSource(QObject *parent);
     static QGeoPositionInfoSource *createDefaultSource(const QVariantMap &parameters, QObject *parent);
     static QGeoPositionInfoSource *createSource(const QString &sourceName, QObject *parent);
@@ -105,6 +108,9 @@ Q_SIGNALS:
     void updateTimeout();
     void error(QGeoPositionInfoSource::Error);
     void supportedPositioningMethodsChanged();
+
+protected:
+    QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd, QObject *parent);
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSource)

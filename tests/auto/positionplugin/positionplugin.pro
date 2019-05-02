@@ -1,5 +1,5 @@
 TARGET = qtposition_testplugin
-QT += positioning
+QT += positioning-private
 
 PLUGIN_TYPE = position
 PLUGIN_CLASS_NAME = QGeoPositionInfoSourceFactoryTest

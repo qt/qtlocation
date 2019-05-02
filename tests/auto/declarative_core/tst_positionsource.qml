@@ -187,7 +187,7 @@ TestCase {
 
         compare(directionValidSpyWParams.count, 0)
         compare(directionSpyWParams.count, 0)
-
+        compare(testingSourceWParams.backendProperty("altitude"), altitudeParameter.value)
         testingSourceWParams.active = true;
 
         tryCompare(updateSpyWParams, "count", 1, 1500);
@@ -199,23 +199,25 @@ TestCase {
         fuzzyCompare(testingSourceWParams.position.direction, 45, 0.1)
         verify(!testingSourceWParams.position.speedValid)
         verify(isNaN(testingSourceWParams.position.speed))
+        testingSourceWParams.setBackendProperty("altitude", 24.24)
 
         tryCompare(updateSpyWParams, "count", 2, 1500);
         compare(testingSourceWParams.position.coordinate.longitude, 0.2);
         compare(testingSourceWParams.position.coordinate.latitude, 0.2);
-        compare(testingSourceWParams.position.coordinate.altitude, altitudeParameter.value);
+        compare(testingSourceWParams.position.coordinate.altitude, 24.24);
         compare(directionValidSpyWParams.count, 1)
         compare(directionSpyWParams.count, 2)
         fuzzyCompare(testingSourceWParams.position.direction, 45, 0.1)
         verify(testingSourceWParams.position.speedValid)
         verify(testingSourceWParams.position.speed > 10000)
+        compare(testingSourceWParams.backendProperty("altitude"), 24.24)
 
         testingSourceWParams.active = false;
         wait(2500);
         compare(updateSpyWParams.count, 2);
         compare(testingSourceWParams.position.coordinate.longitude, 0.2);
         compare(testingSourceWParams.position.coordinate.latitude, 0.2);
-        compare(testingSourceWParams.position.coordinate.altitude, altitudeParameter.value);
+        compare(testingSourceWParams.position.coordinate.altitude, 24.24);
         compare(directionValidSpyWParams.count, 1)
         compare(directionSpyWParams.count, 2)
         fuzzyCompare(testingSourceWParams.position.direction, 45, 0.1)

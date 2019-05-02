@@ -862,6 +862,44 @@ void QDeclarativePositionSource::componentComplete()
 }
 
 /*!
+     \qmlmethod bool QtLocation::PositionSource::setBackendProperty(string name, Variant value)
+
+    Sets the backend-specific property named \a name to \a value.
+    Returns true on success, false otherwise, including if called on an uninitialized PositionSource.
+    Supported backend-specific properties are listed and described in
+    \l {Qt Positioning plugins#Default plugins}.
+
+    \since Qt Positioning 5.14
+
+    \sa backendProperty, QGeoPositionInfoSource::setBackendProperty
+*/
+bool QDeclarativePositionSource::setBackendProperty(const QString &name, QVariant value)
+{
+    if (m_positionSource)
+        return m_positionSource->setBackendProperty(name, value);
+    return false;
+}
+
+/*!
+     \qmlmethod Variant QtLocation::PositionSource::backendProperty(string name)
+
+    Returns the value of the backend-specific property named \a name, if present.
+    Otherwise, including if called on an uninitialized PositionSource, the return value will be invalid.
+    Supported backend-specific properties are listed and described in
+    \l {Qt Positioning plugins#Default plugins}.
+
+    \since Qt Positioning 5.14
+
+    \sa backendProperty, QGeoPositionInfoSource::setBackendProperty
+*/
+QVariant QDeclarativePositionSource::backendProperty(const QString &name) const
+{
+    if (m_positionSource)
+        return m_positionSource->backendProperty(name);
+    return QVariant();
+}
+
+/*!
     \internal
 */
 void QDeclarativePositionSource::sourceErrorReceived(const QGeoPositionInfoSource::Error error)
