@@ -102,6 +102,7 @@ public:
     virtual void setAutomaticReroutingEnabled(bool autoRerouting) = 0;
     virtual bool automaticReroutingEnabled() const = 0; // configured via navigation params at construction time
     virtual bool isOnRoute() = 0;
+    virtual void recalculateRoutes() = 0;
 
 public slots:
     virtual bool start() = 0;

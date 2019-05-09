@@ -352,6 +352,12 @@ QString QDeclarativeNavigator::errorString() const
     return d_ptr->m_errorString;
 }
 
+void QDeclarativeNavigator::recalculateRoutes()
+{
+    if (d_ptr->m_navigator)
+        d_ptr->m_navigator->recalculateRoutes();
+}
+
 /*  !NOT DOCUMENTED YET!
     \qmlproperty QAbstractNavigator *Qt.labs.location::Navigator::engineHandle
 
