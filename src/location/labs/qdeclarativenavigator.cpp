@@ -284,6 +284,27 @@ QDeclarativePositionSource *QDeclarativeNavigator::positionSource() const
     return d_ptr->m_params->m_positionSource;
 }
 
+// navigator automatically adjusts route when user leaves it
+bool QDeclarativeNavigator::automaticReroutingEnabled() const
+{
+    if (d_ptr->m_navigator)
+        return d_ptr->m_navigator->automaticReroutingEnabled();
+    return d_ptr->m_params->m_autoRerouting;
+}
+
+// Whether or not it has an effect while the navigator is active should be plugin-dependent
+void QDeclarativeNavigator::setAutomaticReroutingEnabled(bool autoRerouting)
+{
+    const bool autoReroutingOld = automaticReroutingEnabled();
+    d_ptr->m_params->m_autoRerouting = autoRerouting;
+    // Done this way, and not via signal like setTrackPositionSource because
+    // plugins might not support automatic rerouting.
+    if (d_ptr->m_navigator)
+        d_ptr->m_navigator->setAutomaticReroutingEnabled(autoRerouting);
+    if (autoRerouting != autoReroutingOld)
+        emit automaticReroutingEnabledChanged();
+}
+
 
 bool QDeclarativeNavigator::navigatorReady() const
 {
@@ -295,6 +316,15 @@ bool QDeclarativeNavigator::navigatorReady() const
 bool QDeclarativeNavigator::trackPositionSource() const
 {
     return d_ptr->m_params->m_trackPositionSource;
+}
+
+// Navigator is in active tracking mode and the route is being followed.
+// This may turn \c false if the user leaves the route.
+bool QDeclarativeNavigator::isOnRoute() const
+{
+    if (d_ptr->m_navigator)
+        return d_ptr->m_navigator->isOnRoute();
+    return false;
 }
 
 void QDeclarativeNavigator::setTrackPositionSource(bool trackPositionSource)
@@ -478,6 +508,8 @@ bool QDeclarativeNavigator::ensureEngine()
             &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::nextManeuverIconChanged);
     connect(d_ptr->m_navigator.get(), &QAbstractNavigator::progressInformationChanged,
             &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::progressInformationChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::isOnRouteChanged,
+            this, &QDeclarativeNavigator::isOnRouteChanged);
 
     emit navigatorReadyChanged(true);
     return true;

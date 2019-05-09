@@ -132,6 +132,7 @@ public:
     QPointer<QDeclarativePositionSource> m_positionSource;
     QList<QPointer<QGeoMapParameter>> m_parameters;
     bool m_trackPositionSource = true;
+    bool m_autoRerouting = true;
 };
 
 class QDeclarativeNavigatorPrivate
