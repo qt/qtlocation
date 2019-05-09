@@ -98,6 +98,7 @@ public:
     virtual int traveledTime() const;
     virtual QGeoRoute currentRoute() const;
     virtual QGeoRouteLeg currentRouteLeg() const;
+    virtual QList<QGeoRoute> alternativeRoutes() const = 0;
     virtual int currentSegment() const;
     virtual void setAutomaticReroutingEnabled(bool autoRerouting) = 0;
     virtual bool automaticReroutingEnabled() const = 0; // configured via navigation params at construction time
@@ -121,6 +122,7 @@ signals:
     void nextManeuverIconChanged();
     void progressInformationChanged();
     void isOnRouteChanged();
+    void alternativeRoutesChanged();
 
 private:
     QScopedPointer<QAbstractNavigatorPrivate> d;
