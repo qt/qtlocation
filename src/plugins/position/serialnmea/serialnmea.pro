@@ -3,10 +3,10 @@ TARGET = qtposition_serialnmea
 QT = core-private positioning-private serialport
 
 HEADERS += \
-    qgeopositioninfosourcefactory_serialnmea.h qiopipe_p.h
+    qgeopositioninfosourcefactory_serialnmea.h qnmeasatelliteinfosource_p.h qiopipe_p.h
 
 SOURCES += \
-    qgeopositioninfosourcefactory_serialnmea.cpp qiopipe.cpp
+    qgeopositioninfosourcefactory_serialnmea.cpp qnmeasatelliteinfosource.cpp qiopipe.cpp
 
 OTHER_FILES += \
     plugin.json

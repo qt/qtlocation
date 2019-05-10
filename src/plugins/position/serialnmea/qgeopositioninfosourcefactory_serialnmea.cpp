@@ -45,6 +45,7 @@
 #include <QSet>
 #include "qiopipe_p.h"
 #include <QSharedPointer>
+#include "qnmeasatelliteinfosource_p.h"
 
 Q_LOGGING_CATEGORY(lcSerial, "qt.positioning.serialnmea")
 
@@ -172,6 +173,67 @@ NmeaSource::~NmeaSource()
     deviceContainer->releaseSerial(m_portName, m_port);
 }
 
+
+
+class NmeaSatelliteSource : public QNmeaSatelliteInfoSource
+{
+public:
+    NmeaSatelliteSource(QObject *parent, const QVariantMap &parameters)
+        : QNmeaSatelliteInfoSource(parent)
+    {
+        QByteArray requestedPort;
+        if (parameters.contains(QStringLiteral("serialnmea.serial_port")))
+            requestedPort = parameters.value(QStringLiteral("serialnmea.serial_port")).toString().toLatin1();
+        else
+            requestedPort = qgetenv("QT_NMEA_SERIAL_PORT");
+        QString portName;
+        if (requestedPort.isEmpty()) {
+            const QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+            qCDebug(lcSerial) << "Found" << ports.count() << "serial ports";
+            if (ports.isEmpty()) {
+                qWarning("serialnmea: No serial ports found");
+                return;
+            }
+
+            // Try to find a well-known device.
+            QSet<int> supportedDevices;
+            supportedDevices << 0x67b; // GlobalSat (BU-353S4 and probably others)
+            supportedDevices << 0xe8d; // Qstarz MTK II
+            foreach (const QSerialPortInfo& port, ports) {
+                if (port.hasVendorIdentifier() && supportedDevices.contains(port.vendorIdentifier())) {
+                    portName = port.portName();
+                    break;
+                }
+            }
+
+            if (portName.isEmpty()) {
+                qWarning("serialnmea: No known GPS device found. Specify the COM port via QT_NMEA_SERIAL_PORT.");
+                return;
+            }
+            m_portName = portName;
+        } else {
+            m_portName = QString::fromUtf8(requestedPort);
+        }
+
+        m_port = deviceContainer->serial(m_portName);
+        if (!m_port)
+            return;
+
+        setDevice(m_port.data());
+    }
+
+    ~NmeaSatelliteSource()
+    {
+        deviceContainer->releaseSerial(m_portName, m_port);
+    }
+
+    bool isValid() const { return !m_port.isNull(); }
+
+private:
+    QSharedPointer<QIOPipe> m_port;
+    QString m_portName;
+};
+
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySerialNmea::positionInfoSource(QObject *parent)
 {
     return positionInfoSourceWithParameters(parent, QVariantMap());
@@ -195,9 +257,8 @@ QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySerialNmea::positionInfoSou
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySerialNmea::satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters)
 {
-    Q_UNUSED(parent);
-    Q_UNUSED(parameters)
-    return nullptr;
+    QScopedPointer<NmeaSatelliteSource> src(new NmeaSatelliteSource(parent, parameters));
+    return src->isValid() ? src.take() : nullptr;
 }
 
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySerialNmea::areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters)
