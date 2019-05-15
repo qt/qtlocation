@@ -131,6 +131,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
         The plugin did not find one of the parameters it was expecting.
     \value ConnectionError
         The plugin could not connect to its backend service or database.
+    \value LoaderError
+        The plugin failed to load.
 */
 
 /*!

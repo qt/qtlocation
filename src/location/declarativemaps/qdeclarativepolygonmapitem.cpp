@@ -402,7 +402,7 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
 /*!
     \qmlmethod void MapPolygon::addCoordinate(coordinate)
 
-    Adds a coordinate to the path.
+    Adds a \a coordinate to the path.
 
     \sa removeCoordinate, path
 */

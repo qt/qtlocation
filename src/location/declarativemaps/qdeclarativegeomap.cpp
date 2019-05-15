@@ -1505,7 +1505,7 @@ void QDeclarativeGeoMap::alignCoordinateToPoint(const QGeoCoordinate &coordinate
 
     Returns the coordinate which corresponds to the \a position relative to the map item.
 
-    If \a cliptoViewPort is \c true, or not supplied then returns an invalid coordinate if
+    If \a clipToViewPort is \c true, or not supplied then returns an invalid coordinate if
     \a position is not within the current viewport.
 */
 QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &position, bool clipToViewPort) const
@@ -1521,7 +1521,7 @@ QGeoCoordinate QDeclarativeGeoMap::toCoordinate(const QPointF &position, bool cl
 
     Returns the position relative to the map item which corresponds to the \a coordinate.
 
-    If \a cliptoViewPort is \c true, or not supplied then returns an invalid QPointF if
+    If \a clipToViewPort is \c true, or not supplied then returns an invalid QPointF if
     \a coordinate is not within the current viewport.
 */
 QPointF QDeclarativeGeoMap::fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort) const
@@ -1585,8 +1585,8 @@ void QDeclarativeGeoMap::clearData()
 /*!
     \qmlmethod void QtLocation::Map::fitViewportToGeoShape(geoShape, margins)
 
-    Fits the viewport to a specific geo shape.
-    The margins are in screen pixels.
+    Fits the viewport to a specific geo shape \a geoShape.
+    The \a margins are in screen pixels.
 
     \note If the projection used by the plugin is not WebMercator, and the plugin does not have fitting to
     shape capability, this method will do nothing.
@@ -1760,7 +1760,7 @@ void QDeclarativeGeoMap::onCameraDataChanged(const QGeoCameraData &cameraData)
 /*!
     \qmlmethod void QtLocation::Map::addMapParameter(MapParameter parameter)
 
-    Adds a MapParameter object to the map. The effect of this call is dependent
+    Adds the \a parameter object to the map. The effect of this call is dependent
     on the combination of the content of the MapParameter and the type of
     underlying QGeoMap. If a MapParameter that is not supported by the underlying
     QGeoMap gets added, the call has no effect.
@@ -1790,7 +1790,7 @@ void QDeclarativeGeoMap::addMapParameter(QDeclarativeGeoMapParameter *parameter)
 /*!
     \qmlmethod void QtLocation::Map::removeMapParameter(MapParameter parameter)
 
-    Removes the given MapParameter object from the map.
+    Removes the given \a parameter object from the map.
 
     The release of this API with Qt 5.9 is a Technology Preview.
 

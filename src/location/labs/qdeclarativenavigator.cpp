@@ -159,19 +159,26 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlproperty enumeration Qt.labs.location::Navigator::error
+    \readonly
 
     This read-only property holds the latest error value of the geocoding request.
 
-    \list
-    \li Navigator.NoError - No error has occurred.
-    \li GeocodeModel.NotSupportedError - Navigation is not supported by the service provider.
-    \li GeocodeModel.ConnectionError - An error occurred while communicating with the service provider.
-    \li GeocodeModel.LoaderError - The geoservice provider library could not be loaded. Setting QT_DEBUG_PLUGINS environment variable may help diagnosing the reason.
-    \li GeocodeModel.UnknownParameterError - An unknown parameter was specified
-    \li GeocodeModel.MissingRequiredParameterError -  required parameter was not specified.
-    \li GeocodeModel.UnknownError - An error occurred which does not fit into any of the other categories.
-
-    \endlist
+    \value Navigator.NoError
+           No error has occurred.
+    \value Navigator.NotSupportedError
+           Navigation is not supported by the service provider.
+    \value Navigator.ConnectionError
+           An error occurred while communicating with the service provider.
+    \value Navigator.LoaderError
+           The geoservice provider library could not be loaded. Setting
+           QT_DEBUG_PLUGINS environment variable may help diagnosing the
+           problem.
+    \value Navigator.UnknownParameterError
+           An unknown parameter was specified.
+    \value Navigator.MissingRequiredParameterError
+           Required parameter was not specified.
+    \value Navigator.UnknownError
+           Unknown error occurred.
 */
 
 QDeclarativeNavigatorPrivate::QDeclarativeNavigatorPrivate(QParameterizableObject *q_)
@@ -322,7 +329,8 @@ QString QDeclarativeNavigator::errorString() const
     This object can carry engine-specific properties, signals and methods, to expose
     engine-specific features and data.
 
-    \note Using this property leads to writing code that won't work with different plugins.
+    \warning Using this property leads to writing code that's likely to work
+             with only a single plugin.
 */
 QAbstractNavigator *QDeclarativeNavigator::abstractNavigator() const
 {
@@ -502,6 +510,7 @@ QDeclarativeNavigationBasicDirections::QDeclarativeNavigationBasicDirections(QDe
 
 /*!
     \qmlpropertygroup Qt.labs.location::Navigator::directions
+    \readonly
     \qmlproperty Variant Qt.labs.location::Navigator::directions.nextManeuverIcon
     \qmlproperty real Qt.labs.location::Navigator::directions.distanceToNextManeuver
     \qmlproperty real Qt.labs.location::Navigator::directions.remainingTravelDistance
@@ -515,41 +524,64 @@ QDeclarativeNavigationBasicDirections::QDeclarativeNavigationBasicDirections(QDe
     \qmlproperty RouteLeg Qt.labs.location::Navigator::directions.currentRouteLeg
     \qmlproperty int Qt.labs.location::Navigator::directions.currentSegment
 
-    \qmlsignal Qt.labs.location::Navigator::directions.waypointReached(Waypoint waypoint)
-    \qmlsignal Qt.labs.location::Navigator::directions.destinationReached()
+    These read-only properties are part of the \e directions property group.
+    This property group holds the navigation progress information that can be
+    used to access the route data and to extract directions.
 
-    These read-only properties are part of the directions property group.
-    The directions property group holds the navigation progress information
-    that can be used to access the route data and to extract directions.
-
-    \note specific backends might not provide (some of) these information.
+    \note Some backends might not provide a full set of navigation progress
+          information.
 
     \list
-        \li The \l nextManeuverIcon property holds the next turn icon.
-        \li The \l distanceToNextManeuver property holds the distance to the next maneuver, in meters.
-        \li The \l remainingTravelDistance property holds the remaining travel distance, in meters.
-        \li The \l remainingTravelDistanceToNextWaypoint property holds the remaining travel distance to the next waypoint, in meters.
-        \li The \l traveledDistance property holds the traveled distance, in meters.
-        \li The \l timeToNextManeuver property holds the time to the next maneuver, in milliseconds.
-        \li The \l remainingTravelTime property holds the remaining travel time, in milliseconds.
-        \li The \l remainingTravelTimeToNextWaypoint property holds the remaining travel time to the next waypoint, in milliseconds.
-        \li The \l traveledTime property holds the traveled time, in milliseconds.
-        \li The \l currentRoute property olds the current route the navigator is following. This can be the same as \l route, or can be different, if the navigator
-        cannot follow the user-specified route. For example if the position coming from \l positionSource is considerably
-        off route, the navigation engine might recalculate and start following a
-        new route.
-        \li The \l currentRouteSegment property holds the current route leg the navigator is following.
-        This is always a part of \l currentRoute, and so the property \l RouteLeg::overallRoute
-        of currentRouteLeg will hold the same route as \l currentRoute.
-        \li The \l currentSegment property holds the index of the current RouteSegment in the \l currentRoute.
-        \li The \l waypointReached signal is emitted when the waypoint \e waypoint has been reached.
-        \li The \l destinationReached signal is emitted when the last waypoint of the route, the destination,
-        has been reached.
+        \li The \c nextManeuverIcon property holds the next turn icon.
+        \li The \c distanceToNextManeuver property holds the distance to the
+            next maneuver, in meters.
+        \li The \c remainingTravelDistance property holds the remaining travel
+            distance, in meters.
+        \li The \c remainingTravelDistanceToNextWaypoint property holds the
+            remaining travel distance to the next waypoint, in meters.
+        \li The \c traveledDistance property holds the traveled distance, in
+            meters.
+        \li The \c timeToNextManeuver property holds the time to the next
+            maneuver, in milliseconds.
+        \li The \c remainingTravelTime property holds the remaining travel
+            time, in milliseconds.
+        \li The \c remainingTravelTimeToNextWaypoint property holds the
+            remaining travel time to the next waypoint, in milliseconds.
+        \li The \c traveledTime property holds the traveled time, in
+            milliseconds.
+        \li The \c currentRoute property holds the current route the navigator
+            is following. This can be the same as \l route, or can be
+            different, if the navigator cannot follow the user-specified route.
+            For example, if the position coming from \l positionSource is
+            considerably off route, the navigation engine may recalculate and
+            start to follow a new route.
+        \li The \c currentRouteLeg property holds the current route leg the
+            navigator is following. This is always a part of \c currentRoute,
+            so the \l {RouteLeg::}{overallRoute} property of \c currentRouteLeg
+            holds the same route as \c currentRoute.
+        \li The \c currentSegment property holds the index of the current
+            RouteSegment in the \c currentRoute.
     \endlist
 
-    \sa Route, RouteLeg, RouteSegment, Waypoint
+    \sa directions.waypointReached(), directions.destinationReached(), Route, RouteLeg, RouteSegment, Waypoint
 */
 
+/*!
+    \qmlsignal Qt.labs.location::Navigator::directions.waypointReached(Waypoint waypoint)
+
+    This signal is emitted when a \a waypoint has been reached.
+
+    \sa directions, directions.destinationReached()
+*/
+
+/*!
+    \qmlsignal Qt.labs.location::Navigator::directions.destinationReached()
+
+    This signal is emitted when the last waypoint of the route, the
+    destination, has been reached.
+
+    \sa directions, directions.waypointReached()
+*/
 QVariant QDeclarativeNavigationBasicDirections::nextManeuverIcon() const
 {
     if (m_navigatorPrivate->m_navigator)

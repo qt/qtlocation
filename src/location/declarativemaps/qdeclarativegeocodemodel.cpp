@@ -526,9 +526,9 @@ int QDeclarativeGeocodeModel::count() const
 }
 
 /*!
-    \qmlmethod Location QtLocation::GeocodeModel::get(int)
+    \qmlmethod Location QtLocation::GeocodeModel::get(int index)
 
-    Returns the \l [QML] {Location} at given index. Use \l count property to check the
+    Returns the \l [QML] {Location} at given \a index. Use \l count property to check the
     amount of locations available. The locations are indexed from zero, so the accessible range
     is 0...(count - 1).
 
