@@ -474,9 +474,12 @@ public:
                 results.append(r);
             }
         } else if (!query.categories().isEmpty()) {
-            QSet<QPlaceCategory> categories = query.categories().toSet();
-            foreach (const QPlace &place, m_places) {
-                if (place.categories().toSet().intersect(categories).isEmpty())
+            const auto &categoryList = query.categories();
+            const QSet<QPlaceCategory> categories(categoryList.cbegin(), categoryList.cend());
+            for (const QPlace &place : qAsConst(m_places)) {
+                const auto &placeCategoryList = place.categories();
+                const QSet<QPlaceCategory> placeCategories(placeCategoryList.cbegin(), placeCategoryList.cend());
+                if (!placeCategories.intersects(categories))
                     continue;
 
                 QPlaceResult r;

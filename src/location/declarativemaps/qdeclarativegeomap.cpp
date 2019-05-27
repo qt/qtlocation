@@ -450,7 +450,7 @@ QQuickGeoMapGestureArea *QDeclarativeGeoMap::gesture()
 */
 void QDeclarativeGeoMap::populateMap()
 {
-    QSet<QObject *> kids = children().toSet();
+    QSet<QObject *> kids(children().cbegin(), children().cend());
     const QList<QQuickItem *> quickKids = childItems();
     for (QQuickItem *ite: quickKids)
         kids.insert(ite);
