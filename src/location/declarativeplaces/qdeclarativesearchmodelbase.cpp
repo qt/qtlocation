@@ -112,7 +112,7 @@ void QDeclarativeSearchModelBase::setSearchArea(const QVariant &searchArea)
         s = searchArea.value<QGeoCircle>();
     else if (searchArea.userType() == qMetaTypeId<QGeoShape>())
         s = searchArea.value<QGeoShape>();
-    else if (searchArea.type() == qMetaTypeId<QObject *>()) {
+    else if (int(searchArea.type()) == qMetaTypeId<QObject *>()) {
         route = searchArea.value<QDeclarativeGeoRoute *>();
         if (!route)
             return;

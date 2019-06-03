@@ -300,7 +300,7 @@ QList<QGeoCoordinate> QGeoRoute::path() const
 }
 
 /*!
-    Sets the route legs for a multi-waypoint route.
+    Sets the route \a legs for a multi-waypoint route.
 
     \sa QGeoRouteLeg
     \since 5.12
@@ -768,7 +768,7 @@ void QGeoRouteLeg::setOverallRoute(const QGeoRoute &route)
 }
 
 /*!
-    Returns the \a route that contains this route leg.
+    Returns the route that contains this route leg.
 */
 QGeoRoute QGeoRouteLeg::overallRoute() const
 {

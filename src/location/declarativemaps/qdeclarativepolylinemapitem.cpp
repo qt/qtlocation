@@ -798,7 +798,7 @@ void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
 /*!
     \qmlmethod int MapPolyline::setPath(geopath path)
 
-    Sets the \l path using a \l QGeoPath type.
+    Sets the \a path using a geopath type.
 
     \since 5.10
 
@@ -849,7 +849,7 @@ int QDeclarativePolylineMapItem::pathLength() const
 /*!
     \qmlmethod void MapPolyline::addCoordinate(coordinate)
 
-    Adds a coordinate to the end of the path.
+    Adds a \a coordinate to the end of the path.
 
     \sa insertCoordinate, removeCoordinate, path
 */
