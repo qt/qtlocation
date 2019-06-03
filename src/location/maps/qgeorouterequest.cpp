@@ -469,11 +469,11 @@ QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 }
 
 /*!
-    Sets the departure time for the route calculation. This information can be used by
-    the backend to calculate a faster route, for example by avoiding blockages present at
-    given points in time.
+    Sets the departure time \a departureTime for the route calculation. This
+    information can be used by the backend to calculate a faster route, for
+    example, by avoiding traffic congestion during rush hour.
 
-    The default value is an invalid \l QDateTime
+    The default value is an invalid QDateTime.
 
     \since 5.13
 */
