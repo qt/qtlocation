@@ -68,10 +68,8 @@
     Q_UNUSED(oldLocation);
 
     // Convert location timestamp to QDateTime
-    QDateTime timeStamp;
     NSTimeInterval locationTimeStamp = [newLocation.timestamp timeIntervalSince1970];
-    timeStamp.setTime_t((uint) locationTimeStamp);
-    timeStamp.setTime(timeStamp.time().addMSecs((uint)(locationTimeStamp * 1000) % 1000));
+    const QDateTime timeStamp = QDateTime::fromMSecsSinceEpoch(qRound64(locationTimeStamp * 1000), Qt::UTC);
 
     // Construct position info from location data
     QGeoPositionInfo location(QGeoCoordinate(newLocation.coordinate.latitude,
