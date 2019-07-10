@@ -963,20 +963,15 @@ void QDeclarativeSearchResultModel::placeRemoved(const QString &placeId)
 QList<QPlaceSearchResult> QDeclarativeSearchResultModel::resultsFromPages() const
 {
     QList<QPlaceSearchResult> res;
-    QMapIterator<int, QList<QPlaceSearchResult>> i(m_pages);
-    while (i.hasNext()) {
-        i.next();
-        res.append(i.value());
-    }
+    for (const auto &e : m_pages)
+        res.append(e);
     return res;
 }
 
 void QDeclarativeSearchResultModel::removePageRow(int row)
 {
-    QMutableMapIterator<int, QList<QPlaceSearchResult>> i(m_pages);
     int scanned = 0;
-    while (i.hasNext()) {
-        i.next();
+    for (auto i = m_pages.begin(), end = m_pages.end(); i != end; ++i) {
         QList<QPlaceSearchResult> &page = i.value();
         scanned += page.size();
         if (row >= scanned)

@@ -574,11 +574,8 @@ public:
             m_categories.insert(category.categoryId(), category);
             QStringList children = m_childCategories.value(parentId);
 
-            QMutableHashIterator<QString, QStringList> i(m_childCategories);
-            while (i.hasNext()) {
-                i.next();
-                i.value().removeAll(category.categoryId());
-            }
+            for (QStringList &c : m_childCategories)
+                c.removeAll(category.categoryId());
 
             if (!children.contains(category.categoryId())) {
                 children.append(category.categoryId());
@@ -614,11 +611,8 @@ public:
         } else {
             m_categories.remove(categoryId);
 
-            QMutableHashIterator<QString, QStringList> i(m_childCategories);
-            while (i.hasNext()) {
-                i.next();
-                i.value().removeAll(categoryId);
-            }
+            for (auto &c : m_childCategories)
+                c.removeAll(categoryId);
         }
 
         QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
@@ -637,9 +631,7 @@ public:
 
     QString parentCategoryId(const QString &categoryId) const override
     {
-        QHashIterator<QString, QStringList> i(m_childCategories);
-        while (i.hasNext()) {
-            i.next();
+        for (auto i = m_childCategories.cbegin(), end = m_childCategories.cend(); i != end; ++i) {
             if (i.value().contains(categoryId))
                 return i.key();
         }
