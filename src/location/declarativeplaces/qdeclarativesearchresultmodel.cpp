@@ -973,16 +973,15 @@ QList<QPlaceSearchResult> QDeclarativeSearchResultModel::resultsFromPages() cons
 
 void QDeclarativeSearchResultModel::removePageRow(int row)
 {
-    QMapIterator<int, QList<QPlaceSearchResult>> i(m_pages);
+    QMutableMapIterator<int, QList<QPlaceSearchResult>> i(m_pages);
     int scanned = 0;
     while (i.hasNext()) {
         i.next();
-        QList<QPlaceSearchResult> page = i.value();
+        QList<QPlaceSearchResult> &page = i.value();
         scanned += page.size();
         if (row >= scanned)
             continue;
         page.removeAt(row - scanned + page.size());
-        m_pages.insert(i.key(), page);
         return;
     }
 }
