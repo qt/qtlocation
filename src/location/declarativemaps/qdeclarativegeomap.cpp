@@ -623,6 +623,15 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     if (!m_map)
         return;
 
+    // Any map items that were added before the plugin was ready
+    // need to have setMap called again
+    for (const QPointer<QDeclarativeGeoMapItemBase> &item : qAsConst(m_mapItems)) {
+        if (item) {
+            item->setMap(this, m_map);
+            m_map->addMapItem(item.data()); // m_map filters out what is not supported.
+        }
+    }
+
     /* COPY NOTICE SETUP */
     m_copyrights = new QDeclarativeGeoMapCopyrightNotice(this);
     m_copyrights->setCopyrightsZ(m_maxChildZ + 1);
@@ -705,15 +714,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     emit maximumZoomLevelChanged();
     emit supportedMapTypesChanged();
     emit activeMapTypeChanged();
-
-    // Any map items that were added before the plugin was ready
-    // need to have setMap called again
-    for (const QPointer<QDeclarativeGeoMapItemBase> &item : qAsConst(m_mapItems)) {
-        if (item) {
-            item->setMap(this, m_map);
-            m_map->addMapItem(item.data()); // m_map filters out what is not supported.
-        }
-    }
 
     // Any map item groups that were added before the plugin was ready
     // DO NOT need to have setMap called again on their children map items
@@ -1423,6 +1423,14 @@ void QDeclarativeGeoMap::setVisibleArea(const QRectF &visibleArea)
 
     if (m_initialized) {
         m_map->setVisibleArea(visibleArea);
+        const QRectF newVisibleArea = QDeclarativeGeoMap::visibleArea();
+        if (newVisibleArea != oldVisibleArea) {
+            // polish map items
+            for (const QPointer<QDeclarativeGeoMapItemBase> &i: qAsConst(m_mapItems)) {
+                if (i)
+                    i->visibleAreaChanged();
+            }
+        }
     } else {
         m_visibleArea = visibleArea;
         const QRectF newVisibleArea = QDeclarativeGeoMap::visibleArea();
@@ -1719,6 +1727,11 @@ void QDeclarativeGeoMap::onCameraDataChanged(const QGeoCameraData &cameraData)
     bool zoomHasChanged = cameraData.zoomLevel() != m_cameraData.zoomLevel();
 
     m_cameraData = cameraData;
+    // polish map items
+    for (const QPointer<QDeclarativeGeoMapItemBase> &i: qAsConst(m_mapItems)) {
+        if (i)
+            i->baseCameraDataChanged(m_cameraData); // Consider optimizing this further, removing the contained duplicate if conditions.
+    }
 
     if (centerHasChanged)
         emit centerChanged(m_cameraData.center());
@@ -2200,7 +2213,13 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
             QGeoCoordinate coord = cameraData.center();
             coord.setLatitude(qBound(m_minimumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
             cameraData.setCenter(coord);
-            m_map->setCameraData(cameraData);
+            m_map->setCameraData(cameraData); // this polishes map items
+        } else if (oldGeometry.size() != newGeometry.size()) {
+            // polish map items
+            for (const QPointer<QDeclarativeGeoMapItemBase> &i: qAsConst(m_mapItems)) {
+                if (i)
+                    i->polishAndUpdate();
+            }
         }
     }
 
