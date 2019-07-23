@@ -126,21 +126,14 @@ void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
         return;
     if (quickMap && quickMap_)
         return; // don't allow association to more than one map
-    if (quickMap_)
-        quickMap_->disconnect(this);
-    if (map_)
-        map_->disconnect(this);
 
     quickMap_ = quickMap;
     map_ = map;
 
     if (map_ && quickMap_) {
-        connect(map_, SIGNAL(cameraDataChanged(QGeoCameraData)),
-                this, SLOT(baseCameraDataChanged(QGeoCameraData)));
-        connect(map_, SIGNAL(visibleAreaChanged()),
-                this, SLOT(visibleAreaChanged()));
-        connect(quickMap, SIGNAL(heightChanged()), this, SLOT(polishAndUpdate()));
-        connect(quickMap, SIGNAL(widthChanged()), this, SLOT(polishAndUpdate()));
+        // For performance reasons we're not connecting map_'s and quickMap_'s signals to this.
+        // Rather, the handling of cameraDataChanged, visibleAreaChanged, heightChanged and widthChanged is done explicitly in QDeclarativeGeoMap by directly calling methods on the items.
+        // See QTBUG-76950
         lastSize_ = QSizeF(quickMap_->width(), quickMap_->height());
         lastCameraData_ = map_->cameraData();
     }
