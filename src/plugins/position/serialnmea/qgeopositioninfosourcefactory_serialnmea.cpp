@@ -49,18 +49,22 @@ Q_LOGGING_CATEGORY(lcSerial, "qt.positioning.serialnmea")
 class NmeaSource : public QNmeaPositionInfoSource
 {
 public:
-    NmeaSource(QObject *parent);
+    NmeaSource(QObject *parent, const QVariantMap &parameters);
     bool isValid() const { return !m_port.isNull(); }
 
 private:
     QScopedPointer<QSerialPort> m_port;
 };
 
-NmeaSource::NmeaSource(QObject *parent)
+NmeaSource::NmeaSource(QObject *parent, const QVariantMap &parameters)
     : QNmeaPositionInfoSource(RealTimeMode, parent),
       m_port(new QSerialPort)
 {
-    QByteArray requestedPort = qgetenv("QT_NMEA_SERIAL_PORT");
+    QByteArray requestedPort;
+    if (parameters.contains(QStringLiteral("serialnmea.serial_port")))
+        requestedPort = parameters.value(QStringLiteral("serialnmea.serial_port")).toString().toLatin1();
+    else
+        requestedPort = qgetenv("QT_NMEA_SERIAL_PORT");
     if (requestedPort.isEmpty()) {
         const QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
         qCDebug(lcSerial) << "Found" << ports.count() << "serial ports";
@@ -110,18 +114,35 @@ NmeaSource::NmeaSource(QObject *parent)
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySerialNmea::positionInfoSource(QObject *parent)
 {
-    QScopedPointer<NmeaSource> src(new NmeaSource(parent));
-    return src->isValid() ? src.take() : nullptr;
+    return positionInfoSourceWithParameters(parent, QVariantMap());
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySerialNmea::satelliteInfoSource(QObject *parent)
 {
-    Q_UNUSED(parent);
-    return nullptr;
+    return satelliteInfoSourceWithParameters(parent, QVariantMap());
 }
 
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySerialNmea::areaMonitor(QObject *parent)
 {
+    return areaMonitorWithParameters(parent, QVariantMap());
+}
+
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySerialNmea::positionInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters)
+{
+    QScopedPointer<NmeaSource> src(new NmeaSource(parent, parameters));
+    return src->isValid() ? src.take() : nullptr;
+}
+
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySerialNmea::satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters)
+{
     Q_UNUSED(parent);
+    Q_UNUSED(parameters)
+    return nullptr;
+}
+
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySerialNmea::areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(parameters)
     return nullptr;
 }

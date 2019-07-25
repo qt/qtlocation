@@ -108,6 +108,11 @@ QGeoPositionInfoSourcePrivate *QGeoPositionInfoSourcePrivate::get(const QGeoPosi
     return source.d;
 }
 
+QGeoPositionInfoSourcePrivate::~QGeoPositionInfoSourcePrivate()
+{
+
+}
+
 void QGeoPositionInfoSourcePrivate::loadMeta()
 {
     metaData = plugins().value(providerName);
@@ -126,6 +131,16 @@ void QGeoPositionInfoSourcePrivate::loadPlugin()
         factory = qobject_cast<QGeoPositionInfoSourceFactory *>(instance);
     else
         factory = factoryV2;
+}
+
+bool QGeoPositionInfoSourcePrivate::setBackendProperty(const QString &/*name*/, QVariant /*value*/)
+{
+    return false;
+}
+
+QVariant QGeoPositionInfoSourcePrivate::backendProperty(const QString &/*name*/) const
+{
+    return QVariant();
 }
 
 QHash<QString, QJsonObject> QGeoPositionInfoSourcePrivate::plugins(bool reload)
@@ -213,6 +228,36 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 QString QGeoPositionInfoSource::sourceName() const
 {
     return d->metaData.value(QStringLiteral("Provider")).toString();
+}
+
+/*!
+    Sets the backend-specific property named \a name to \a value.
+    Returns \c true on success, \c false otherwise.
+    Backend-specific properties can be used to configure the positioning subsystem behavior
+    at runtime.
+    Supported backend-specific properties are listed and described in
+    \l {Qt Positioning plugins#Default plugins}.
+
+    \sa backendProperty
+    \since Qt 5.14
+*/
+bool QGeoPositionInfoSource::setBackendProperty(const QString &name, QVariant value)
+{
+    return d->setBackendProperty(name, value);
+}
+
+/*!
+    Returns the value of the backend-specific property named \a name, if present.
+    Otherwise, the returned value will be invalid.
+    Supported backend-specific properties are listed and described in
+    \l {Qt Positioning plugins#Default plugins}.
+
+    \sa setBackendProperty
+    \since Qt 5.14
+*/
+QVariant QGeoPositionInfoSource::backendProperty(const QString &name) const
+{
+    return d->backendProperty(name);
 }
 
 /*!
@@ -380,6 +425,15 @@ QStringList QGeoPositionInfoSource::availableSources()
     }
 
     return plugins;
+}
+
+QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd, QObject *parent)
+:   QObject(parent),
+    d(&dd)
+{
+    qRegisterMetaType<QGeoPositionInfo>();
+    d->interval = 0;
+    d->methods = NoPositioningMethods;
 }
 
 /*!
