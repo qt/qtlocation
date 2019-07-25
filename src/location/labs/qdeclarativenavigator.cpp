@@ -352,6 +352,12 @@ QString QDeclarativeNavigator::errorString() const
     return d_ptr->m_errorString;
 }
 
+void QDeclarativeNavigator::recalculateRoutes()
+{
+    if (d_ptr->m_navigator)
+        d_ptr->m_navigator->recalculateRoutes();
+}
+
 /*  !NOT DOCUMENTED YET!
     \qmlproperty QAbstractNavigator *Qt.labs.location::Navigator::engineHandle
 
@@ -510,6 +516,8 @@ bool QDeclarativeNavigator::ensureEngine()
             &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::progressInformationChanged);
     connect(d_ptr->m_navigator.get(), &QAbstractNavigator::isOnRouteChanged,
             this, &QDeclarativeNavigator::isOnRouteChanged);
+    connect(d_ptr->m_navigator.get(), &QAbstractNavigator::alternativeRoutesChanged,
+            &d_ptr->m_basicDirections, &QDeclarativeNavigationBasicDirections::onAlternativeRoutesChanged);
 
     emit navigatorReadyChanged(true);
     return true;
@@ -534,7 +542,7 @@ void QDeclarativeNavigator::setError(QDeclarativeNavigator::NavigationError erro
 }
 
 QDeclarativeNavigationBasicDirections::QDeclarativeNavigationBasicDirections(QDeclarativeNavigator *parent)
-:   QObject(parent), m_navigator(parent)
+:   QObject(parent), m_navigator(parent), m_routes(QByteArrayLiteral("routeData"), this)
 {
     if (m_navigator)
         m_navigatorPrivate = m_navigator->d_ptr.data();
@@ -704,6 +712,11 @@ int QDeclarativeNavigationBasicDirections::currentSegment() const
     return m_navigatorPrivate->m_navigator->currentSegment();
 }
 
+QAbstractItemModel *QDeclarativeNavigationBasicDirections::alternativeRoutes()
+{
+    return &m_routes;
+}
+
 void QDeclarativeNavigationBasicDirections::onCurrentRouteChanged()
 {
     if (m_currentRoute)
@@ -718,6 +731,18 @@ void QDeclarativeNavigationBasicDirections::onCurrentRouteLegChanged()
         m_currentRouteLeg->deleteLater();
     m_currentRouteLeg = new QDeclarativeGeoRouteLeg(m_navigatorPrivate->m_navigator->currentRouteLeg(), this);
     emit currentRouteLegChanged();
+}
+
+void QDeclarativeNavigationBasicDirections::onAlternativeRoutesChanged()
+{
+    const QList<QGeoRoute> &routes = m_navigatorPrivate->m_navigator->alternativeRoutes();
+    QList<QDeclarativeGeoRoute *> declarativeRoutes;
+    for (int i = 0; i < routes.size(); ++i) {
+        QDeclarativeGeoRoute *route = new QDeclarativeGeoRoute(routes.at(i), &m_routes);
+        QQmlEngine::setContextForObject(route, QQmlEngine::contextForObject(this));
+        declarativeRoutes.append(route);
+    }
+    m_routes.updateData(declarativeRoutes);
 }
 
 QT_END_NAMESPACE

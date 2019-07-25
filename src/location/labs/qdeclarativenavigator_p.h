@@ -149,6 +149,8 @@ public:
     NavigationError error() const;
     QString errorString() const;
 
+    Q_INVOKABLE void recalculateRoutes();
+
 signals:
     void navigatorReadyChanged(bool ready);
     void trackPositionSourceChanged(bool trackPositionSource);

@@ -51,6 +51,7 @@
 // We mean it.
 //
 
+#include <QtPositioning/private/qpositioningglobal_p.h>
 #include "qgeopositioninfosource.h"
 #include "qgeopositioninfosourcefactory.h"
 #include <QJsonObject>
@@ -60,10 +61,11 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoPositionInfoSourcePrivate
+class Q_POSITIONING_PRIVATE_EXPORT QGeoPositionInfoSourcePrivate
 {
 public:
     static QGeoPositionInfoSourcePrivate *get(const QGeoPositionInfoSource &source);
+    virtual ~QGeoPositionInfoSourcePrivate();
 
     int interval;
     QGeoPositionInfoSource::PositioningMethods methods;
@@ -74,6 +76,8 @@ public:
 
     void loadMeta();
     void loadPlugin();
+    virtual bool setBackendProperty(const QString &name, QVariant value);
+    virtual QVariant backendProperty(const QString &name) const;
 
     static QHash<QString, QJsonObject> plugins(bool reload = false);
     static void loadPluginMetadata(QHash<QString, QJsonObject> &list);
