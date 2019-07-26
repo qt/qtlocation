@@ -39,9 +39,27 @@
 #include <QByteArray>
 #include <QMetaObject>
 #include <QMetaProperty>
-#include <QSignalMapper>
+#include <QObject>
 
 QT_BEGIN_NAMESPACE
+
+namespace {
+class SignalMapper : public QObject
+{
+    Q_OBJECT
+
+    int i;
+public:
+    explicit SignalMapper(int i, QObject *parent = nullptr)
+        : QObject(parent), i(i) {}
+
+public Q_SLOTS:
+    void map() { emit mapped(i); }
+
+Q_SIGNALS:
+    void mapped(int);
+};
+} // unnamed namespace
 
 /*!
     \qmltype MapParameter
@@ -114,8 +132,7 @@ void QDeclarativeGeoMapParameter::componentComplete()
             return;
         }
 
-        QSignalMapper *mapper = new QSignalMapper(this);
-        mapper->setMapping(this, i);
+        SignalMapper *mapper = new SignalMapper(i, this);
 
         const QByteArray signalName = '2' + property.notifySignal().methodSignature(); // TODO: explain why '2'
         QObject::connect(this, signalName, mapper, SLOT(map()));
@@ -131,3 +148,5 @@ void QDeclarativeGeoMapParameter::onPropertyUpdated(int index)
 }
 
 QT_END_NAMESPACE
+
+#include "qdeclarativegeomapparameter.moc"
