@@ -208,14 +208,31 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate &coordina
     setPosition(topLeft);
 }
 
+bool QDeclarativeGeoMapItemBase::autoFadeIn() const
+{
+    return m_autoFadeIn;
+}
+
 static const double opacityRampMin = 1.5;
 static const double opacityRampMax = 2.5;
+
+void QDeclarativeGeoMapItemBase::setAutoFadeIn(bool fadeIn)
+{
+    if (fadeIn == m_autoFadeIn)
+        return;
+    m_autoFadeIn = fadeIn;
+    if (quickMap_ && quickMap_->zoomLevel() < opacityRampMax)
+        polishAndUpdate();
+}
+
 /*!
     \internal
 */
 float QDeclarativeGeoMapItemBase::zoomLevelOpacity() const
 {
-    if (quickMap_->zoomLevel() > opacityRampMax)
+    if (!m_autoFadeIn) // Consider skipping the opacity node instead.
+        return 1.0;
+    else if (quickMap_->zoomLevel() > opacityRampMax)
         return 1.0;
     else if (quickMap_->zoomLevel() > opacityRampMin)
         return quickMap_->zoomLevel() - opacityRampMin;
