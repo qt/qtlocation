@@ -2261,17 +2261,31 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
 }
 
 /*!
-    \qmlmethod void QtLocation::Map::fitViewportToMapItems()
+    \qmlmethod void QtLocation::Map::fitViewportToMapItems(list<MapItems> items = {})
 
-    Fits the current viewport to the boundary of all map items. The camera is positioned
-    in the center of the map items, and at the largest integral zoom level possible which
-    allows all map items to be visible on screen.
+    If no argument is provided, fits the current viewport to the boundary of all map items.
+    The camera is positioned in the center of the map items, and at the largest integral zoom level
+    possible which allows all map items to be visible on screen.
+    If \a items is provided, fits the current viewport to the boundary of the specified map items only.
+
+    \note This method gained the optional \a items argument since Qt 5.15.
+    In previous releases, this method fitted the map to all map items.
 
     \sa fitViewportToVisibleMapItems
 */
-void QDeclarativeGeoMap::fitViewportToMapItems()
+void QDeclarativeGeoMap::fitViewportToMapItems(const QVariantList &items)
 {
-    fitViewportToMapItemsRefine(true, false);
+    if (items.size()) {
+        QList<QPointer<QDeclarativeGeoMapItemBase> > itms;
+        for (const QVariant &i: items) {
+            QDeclarativeGeoMapItemBase *itm = qobject_cast<QDeclarativeGeoMapItemBase *>(i.value<QObject *>());
+            if (itm)
+                itms.append(itm);
+        }
+        fitViewportToMapItemsRefine(itms, true, false);
+    } else {
+        fitViewportToMapItemsRefine(m_mapItems, true, false);
+    }
 }
 
 /*!
@@ -2285,18 +2299,20 @@ void QDeclarativeGeoMap::fitViewportToMapItems()
 */
 void QDeclarativeGeoMap::fitViewportToVisibleMapItems()
 {
-    fitViewportToMapItemsRefine(true, true);
+    fitViewportToMapItemsRefine(m_mapItems, true, true);
 }
 
 /*!
     \internal
 */
-void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine, bool onlyVisible)
+void QDeclarativeGeoMap::fitViewportToMapItemsRefine(const QList<QPointer<QDeclarativeGeoMapItemBase> > &mapItems,
+                                                     bool refine,
+                                                     bool onlyVisible)
 {
     if (!m_map)
         return;
 
-    if (m_mapItems.size() == 0)
+    if (mapItems.size() == 0)
         return;
 
     double minX = qInf();
@@ -2311,10 +2327,10 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine, bool onlyVisib
 
     // find bounds of all map items
     int itemCount = 0;
-    for (int i = 0; i < m_mapItems.count(); ++i) {
-        if (!m_mapItems.at(i))
+    for (int i = 0; i < mapItems.count(); ++i) {
+        if (!mapItems.at(i))
             continue;
-        QDeclarativeGeoMapItemBase *item = m_mapItems.at(i).data();
+        QDeclarativeGeoMapItemBase *item = mapItems.at(i).data();
         if (!item || (onlyVisible && (!item->isVisible() || item->mapItemOpacity() <= 0.0)))
             continue;
 
@@ -2365,7 +2381,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine, bool onlyVisib
 
     if (itemCount == 0) {
         if (haveQuickItem)
-            fitViewportToMapItemsRefine(false, onlyVisible);
+            fitViewportToMapItemsRefine(mapItems, false, onlyVisible);
         return;
     }
     double bboxWidth = maxX - minX;
@@ -2395,7 +2411,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine, bool onlyVisib
     // as map quick items retain the same screen size after the camera zooms in/out
     // we refine the viewport again to achieve better results
     if (refine)
-        fitViewportToMapItemsRefine(false, onlyVisible);
+        fitViewportToMapItemsRefine(mapItems, false, onlyVisible);
 }
 
 /*!
