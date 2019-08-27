@@ -133,7 +133,7 @@ void QGeoPositionInfoSourcePrivate::loadPlugin()
         factory = factoryV2;
 }
 
-bool QGeoPositionInfoSourcePrivate::setBackendProperty(const QString &/*name*/, QVariant /*value*/)
+bool QGeoPositionInfoSourcePrivate::setBackendProperty(const QString &/*name*/, const QVariant & /*value*/)
 {
     return false;
 }
@@ -241,7 +241,7 @@ QString QGeoPositionInfoSource::sourceName() const
     \sa backendProperty
     \since Qt 5.14
 */
-bool QGeoPositionInfoSource::setBackendProperty(const QString &name, QVariant value)
+bool QGeoPositionInfoSource::setBackendProperty(const QString &name, const QVariant &value)
 {
     return d->setBackendProperty(name, value);
 }

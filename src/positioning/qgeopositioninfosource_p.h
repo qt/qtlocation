@@ -76,7 +76,7 @@ public:
 
     void loadMeta();
     void loadPlugin();
-    virtual bool setBackendProperty(const QString &name, QVariant value);
+    virtual bool setBackendProperty(const QString &name, const QVariant &value);
     virtual QVariant backendProperty(const QString &name) const;
 
     static QHash<QString, QJsonObject> plugins(bool reload = false);

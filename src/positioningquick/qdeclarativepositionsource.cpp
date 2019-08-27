@@ -873,7 +873,7 @@ void QDeclarativePositionSource::componentComplete()
 
     \sa backendProperty, QGeoPositionInfoSource::setBackendProperty
 */
-bool QDeclarativePositionSource::setBackendProperty(const QString &name, QVariant value)
+bool QDeclarativePositionSource::setBackendProperty(const QString &name, const QVariant &value)
 {
     if (m_positionSource)
         return m_positionSource->setBackendProperty(name, value);
