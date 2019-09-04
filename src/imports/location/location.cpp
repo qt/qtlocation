@@ -203,6 +203,8 @@ public:
 
             minor = 14;
             qmlRegisterType<QDeclarativeGeoMap, 14>(uri, major, minor, "Map");
+            qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 14>(uri, major, minor, "GeoMapItemBase",
+                                        QStringLiteral("GeoMapItemBase is not intended instantiable by developer."));
 
             // Register the latest Qt version as QML type version
             qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);

@@ -999,8 +999,8 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
         return;
     }
 
-    const QGeoCoordinate &wheelGeoPos = m_declarativeMap->toCoordinate(event->posF(), false);
-    const QPointF &preZoomPoint = event->posF();
+    const QGeoCoordinate &wheelGeoPos = m_declarativeMap->toCoordinate(event->position(), false);
+    const QPointF &preZoomPoint = event->position();
 
     // Not using AltModifier as, for some reason, it causes angleDelta to be 0
     if (event->modifiers() & Qt::ShiftModifier && rotationEnabled()) {
