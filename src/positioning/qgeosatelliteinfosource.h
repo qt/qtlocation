@@ -91,7 +91,7 @@ Q_SIGNALS:
     void error(QGeoSatelliteInfoSource::Error);
 
 protected:
-    QGeoSatelliteInfoSource(QGeoSatelliteInfoSourcePrivate &dd, QObject *parent);
+    explicit QGeoSatelliteInfoSource(QGeoSatelliteInfoSourcePrivate &dd, QObject *parent);
 
 private:
     Q_DISABLE_COPY(QGeoSatelliteInfoSource)
