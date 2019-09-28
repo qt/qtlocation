@@ -69,7 +69,7 @@ private slots:
 class DummySourcePrivate : public QGeoPositionInfoSourcePrivate
 {
 public:
-    bool setBackendProperty(const QString &name, QVariant value) override
+    bool setBackendProperty(const QString &name, const QVariant &value) override
     {
         if (name == QStringLiteral("altitude")) {
             m_altitude = value.toReal();
