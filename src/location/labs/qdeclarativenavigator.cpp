@@ -590,6 +590,7 @@ QDeclarativeNavigationBasicDirections::QDeclarativeNavigationBasicDirections(QDe
     \qmlproperty Route Qt.labs.location::Navigator::directions.currentRoute
     \qmlproperty RouteLeg Qt.labs.location::Navigator::directions.currentRouteLeg
     \qmlproperty int Qt.labs.location::Navigator::directions.currentSegment
+    \qmlproperty model Qt.labs.location::Navigator::directions.alternativeRoutes
 
     These read-only properties are part of the \e directions property group.
     This property group holds the navigation progress information that can be
@@ -628,6 +629,8 @@ QDeclarativeNavigationBasicDirections::QDeclarativeNavigationBasicDirections(QDe
             holds the same route as \c currentRoute.
         \li The \c currentSegment property holds the index of the current
             RouteSegment in the \c currentRoute.
+        \li The \c alternativeRoutes property holds the list of alternative routes provided by
+            the engine. If no alternative routes are present, the model will be empty.
     \endlist
 
     \sa directions.waypointReached(), directions.destinationReached(), Route, RouteLeg, RouteSegment, Waypoint
