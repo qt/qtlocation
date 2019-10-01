@@ -206,7 +206,8 @@ QVariantMap QGeoLocation::extendedAttributes() const
 }
 
 /*!
-    Sets the extended attributes of the location.
+    Sets the extended attributes of the location with the
+    parameters specified in \a data.
 
     \since 5.13
 */

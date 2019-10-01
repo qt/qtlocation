@@ -43,7 +43,6 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype Address
-    \instantiates QDeclarativeGeoAddress
     \inqmlmodule QtPositioning
     \since 5.2
 
