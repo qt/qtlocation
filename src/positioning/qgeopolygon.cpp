@@ -117,7 +117,8 @@ QGeoPolygon::QGeoPolygon()
 }
 
 /*!
-    Constructs a new geo \a polygon from a list of coordinates.
+    Constructs a new geo \a polygon from the coordinates specified
+    in \a path.
 */
 QGeoPolygon::QGeoPolygon(const QList<QGeoCoordinate> &path)
 :   QGeoShape(new QGeoPolygonPrivate(path))
@@ -178,7 +179,7 @@ bool QGeoPolygon::operator!=(const QGeoPolygon &other) const
 }
 
 /*!
-    Sets the \a polygon's boundary from a list of coordinates.
+    Sets the \a path for the polygon.
 */
 void QGeoPolygon::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -196,7 +197,9 @@ const QList<QGeoCoordinate> &QGeoPolygon::path() const
 }
 
 /*!
-    Sets all the elements of the polygon's perimeter.
+    Sets all the elements of the polygon's perimeter
+    based on a list of coordinates (\a path).
+.
 
     \since QtPositioning 5.12
 */
@@ -355,7 +358,8 @@ QString QGeoPolygon::toString() const
 }
 
 /*!
-   Sets the \a path for a hole inside the polygon. The hole is a QVariant containing a QList<QGeoCoordinate>.
+   Sets the \a holePath for a hole inside the polygon. The hole is a
+   QVariant containing a QList<QGeoCoordinate>.
 
    \since 5.12
 */
@@ -375,7 +379,7 @@ void QGeoPolygon::addHole(const QVariant &holePath)
 }
 
 /*!
-   Overloaded method. Sets the \a path for a hole inside the polygon. The hole is a QList<QGeoCoordinate>.
+   Overloaded method. Sets the \a holePath for a hole inside the polygon. The hole is a QList<QGeoCoordinate>.
 
    \since 5.12
 */
@@ -386,7 +390,8 @@ void QGeoPolygon::addHole(const QList<QGeoCoordinate> &holePath)
 }
 
 /*!
-    Returns a QVariant containing a QVariant containing a QList<QGeoCoordinate> which represents the hole at index.
+    Returns a QVariant containing a QVariant containing a QList<QGeoCoordinate>
+    which represents the hole at \a index.
 
     \since 5.12
 */
