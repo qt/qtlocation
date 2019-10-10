@@ -619,8 +619,9 @@ public:
             minor = 14;
             qmlRegisterType<QDeclarativePluginParameter >(uri, major, minor, "PluginParameter");
 
-            // Register the latest Qt version as QML type version
-            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
+            // The minor version used to be the current Qt 5 minor. For compatibility it is the last
+            // Qt 5 release.
+            qmlRegisterModule(uri, 5, 15);
         } else {
             qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
         }

@@ -206,8 +206,9 @@ public:
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 14>(uri, major, minor, "GeoMapItemBase",
                                         QStringLiteral("GeoMapItemBase is not intended instantiable by developer."));
 
-            // Register the latest Qt version as QML type version
-            qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
+            // The minor version used to be the current Qt 5 minor. For compatibility it is the last
+            // Qt 5 release.
+            qmlRegisterModule(uri, 5, 15);
 
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>();
