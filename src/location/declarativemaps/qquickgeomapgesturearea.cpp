@@ -395,7 +395,7 @@ QT_BEGIN_NAMESPACE
     starts from the point where the mouse or touch was released,
     while still in motion.
 
-    The corresponding handler is \c onFlichStarted.
+    The corresponding handler is \c onFlickStarted.
 */
 
 /*!
