@@ -1,16 +1,16 @@
 dependencies:
   ../qtbase:
-    ref: 8b91c6831546f884437122ce243b8a08c328a13c
+    ref: 6e3b5801d26dc186066155202847342782bf653b
     required: true
   ../qtdeclarative:
-    ref: 7b2e90258c2e4719d41c5306c3d55a604ef1520b
+    ref: 28213a0d6aca38f7f3d2b65d2a5e6a52fa1a7256
     required: false
   ../qtquickcontrols:
-    ref: 30bebfb6f0332046b6a229c1995b92261d89d776
+    ref: 28fff373c22d3340de72206ab0b49ad80224b7c1
     required: false
   ../qtquickcontrols2:
-    ref: e499f73f8f6dc97712b26a596c9c6ea5e5c8bcea
+    ref: ad4d78fa8f21f7f8f2670a20a1521aad6a81876e
     required: false
   ../qtserialport:
-    ref: 038ce986abe379e169466347c0e29e9c268e8787
+    ref: f611685046a778c2d4f31f597b39c7e3dd029720
     required: false
