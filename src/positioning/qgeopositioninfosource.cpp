@@ -374,8 +374,11 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(const QVaria
     QList<QJsonObject> plugins = QGeoPositionInfoSourcePrivate::pluginsSorted();
     foreach (const QJsonObject &obj, plugins) {
         if (obj.value(QStringLiteral("Position")).isBool()
-                && obj.value(QStringLiteral("Position")).toBool())
-            return createSource_real(obj, parameters, parent);
+                && obj.value(QStringLiteral("Position")).toBool()) {
+            QGeoPositionInfoSource *source = createSource_real(obj, parameters, parent);
+            if (source)
+                return source;
+        }
     }
     return nullptr;
 }
