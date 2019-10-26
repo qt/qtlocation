@@ -158,6 +158,33 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
+    \qmlproperty bool Qt.labs.location::Navigator::automaticReroutingEnabled
+
+    This property tells whether the Navigator should automatically recalculate
+    the route when the position from \l positionSource ends too far from the route.
+    The operation performed in such case is equivalent to calling \l recalculateRoutes.
+    The default value is \c true.
+
+    \note Whether this property has any effect is plugin-dependent.
+    Also, whether or not it has an effect while the navigator is active is plugin-dependent.
+*/
+
+/*!
+    \qmlproperty bool Qt.labs.location::Navigator::isOnRoute
+
+    While the Navigator is in active tracking mode, this property tells
+    whether the position from \l positionSource is on the route or not.
+*/
+
+/*!
+    \qmlmethod void Qt.labs.location::Navigator::recalculateRoutes()
+
+    Calling this method forces the backend to trigger a routes recalculation.
+
+    \sa automaticReroutingEnabled
+*/
+
+/*!
     \qmlproperty enumeration Qt.labs.location::Navigator::error
     \readonly
 

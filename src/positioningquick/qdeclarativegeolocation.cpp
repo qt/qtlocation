@@ -43,7 +43,6 @@ QT_USE_NAMESPACE
 
 /*!
     \qmltype Location
-    \instantiates QDeclarativeGeoLocation
     \inqmlmodule QtPositioning
     \since 5.2
 

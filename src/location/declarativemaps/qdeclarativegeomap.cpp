@@ -1303,7 +1303,7 @@ QGeoCoordinate QDeclarativeGeoMap::center() const
     \l zoomLevel of the map. Any previously set value to those
     properties will be overridden.
 
-    This property does not provide any change notifications.
+    \note Since Qt 5.14 This property provides change notifications.
 
     \since 5.6
 */

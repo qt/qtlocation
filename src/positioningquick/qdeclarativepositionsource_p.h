@@ -131,8 +131,8 @@ public:
     void classBegin() { }
     void componentComplete();
 
-    Q_INVOKABLE bool setBackendProperty(const QString &name, const QVariant &value);
-    Q_INVOKABLE QVariant backendProperty(const QString &name) const;
+    Q_REVISION(14) Q_INVOKABLE bool setBackendProperty(const QString &name, const QVariant &value);
+    Q_REVISION(14) Q_INVOKABLE QVariant backendProperty(const QString &name) const;
 
 public Q_SLOTS:
     void update(); // TODO Qt 6 change to void update(int)
