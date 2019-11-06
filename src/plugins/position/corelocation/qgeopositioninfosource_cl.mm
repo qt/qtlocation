@@ -61,6 +61,12 @@
     }
     return self;
 }
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    Q_UNUSED(manager)
+    if (status == kCLAuthorizationStatusNotDetermined)
+        m_positionInfoSource->requestUpdate(MINIMUM_UPDATE_INTERVAL);
+}
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
@@ -198,21 +204,20 @@ bool QGeoPositionInfoSourceCL::enableLocationManager()
         // while probably a noop, the call generates a warning).
         // -requestWhenInUseAuthorization only requires NSLocationWhenInUseUsageDescription
         // entry in Info.plist (available on iOS (>= 8.0), tvOS (>= 9.0) and watchOS (>= 2.0).
+    }
 
 #ifndef Q_OS_MACOS
-        NSDictionary<NSString *, id> *infoDict = NSBundle.mainBundle.infoDictionary;
-        const bool hasAlwaysUseUsage = !![infoDict objectForKey:@"NSLocationAlwaysAndWhenInUseUsageDescription"];
-        const bool hasWhenInUseUsage = !![infoDict objectForKey:@"NSLocationWhenInUseUsageDescription"];
+    NSDictionary<NSString *, id> *infoDict = NSBundle.mainBundle.infoDictionary;
+    const bool hasAlwaysUseUsage = !![infoDict objectForKey:@"NSLocationAlwaysAndWhenInUseUsageDescription"];
+    const bool hasWhenInUseUsage = !![infoDict objectForKey:@"NSLocationWhenInUseUsageDescription"];
 #ifndef Q_OS_TVOS
-        if (hasAlwaysUseUsage && hasWhenInUseUsage)
-            [m_locationManager requestAlwaysAuthorization];
-        else
+    if (hasAlwaysUseUsage && hasWhenInUseUsage)
+        [m_locationManager requestAlwaysAuthorization];
+    else
 #endif // !Q_OS_TVOS
-        if (hasWhenInUseUsage)
-            [m_locationManager requestWhenInUseAuthorization];
+    if (hasWhenInUseUsage)
+        [m_locationManager requestWhenInUseAuthorization];
 #endif // !Q_OS_MACOS
-
-    }
 
     return (m_locationManager != nullptr);
 }
