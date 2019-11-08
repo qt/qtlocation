@@ -27,7 +27,7 @@
 
 /*!
 \page qtpositioning-plugins.html
-\title Qt Positioning plugins
+\title Qt Positioning Plugins
 \brief Default Plugins and Implementing Qt Positioning plugins
 
 Qt Positioning provides the majority of its functionality through plugins.

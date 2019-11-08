@@ -109,7 +109,7 @@ QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()
   \fn QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryV2::satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters)
 
   Returns a new QGeoSatelliteInfoSource associated with this plugin
-  with parent \a parent., and using \a parameters as configuration parameters.
+  with parent \a parent, and using \a parameters as configuration parameters.
   Can also return 0, in which case the plugin loader will use the factory with
   the next highest priority.
   */
