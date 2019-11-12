@@ -374,7 +374,10 @@ void QDeclarativeGeoMap::initialize()
 
     connect(m_map.data(), &QGeoMap::cameraDataChanged,
             this,  &QDeclarativeGeoMap::onCameraDataChanged);
-    m_map->setCameraData(cameraData);
+    m_map->setCameraData(cameraData); // This normally triggers property changed signals.
+                                      // BUT not in this case, since m_cameraData is already == cameraData.
+                                      // So, emit visibleRegionChanged() separately, as
+                                      // the effective visible region becomes available only now.
 
     for (auto obj : qAsConst(m_pendingMapObjects))
         obj->setMap(m_map);
@@ -386,6 +389,7 @@ void QDeclarativeGeoMap::initialize()
     connect(m_map.data(), &QGeoMap::visibleAreaChanged, this, &QDeclarativeGeoMap::visibleAreaChanged);
 
     emit mapReadyChanged(true);
+    emit visibleRegionChanged();
 
     if (m_copyrights) // To not update during initialize()
          update();
@@ -894,7 +898,8 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
         m_cameraData.setZoomLevel(zoomLevel);
         if (zlHasChanged) {
             emit zoomLevelChanged(zoomLevel);
-            emit visibleRegionChanged();
+            // do not emit visibleRegionChanged() here, because, if the map isn't initialized,
+            // the getter won't return anything updated
         }
     }
 }
@@ -980,7 +985,8 @@ void QDeclarativeGeoMap::setBearing(qreal bearing)
         m_cameraData.setBearing(bearing);
         if (bearingHasChanged) {
             emit bearingChanged(bearing);
-            emit visibleRegionChanged();
+            // do not emit visibleRegionChanged() here, because, if the map isn't initialized,
+            // the getter won't return anything updated
         }
     }
 }
@@ -1047,7 +1053,8 @@ void QDeclarativeGeoMap::setTilt(qreal tilt)
         m_cameraData.setTilt(tilt);
         if (tiltHasChanged) {
             emit tiltChanged(tilt);
-            emit visibleRegionChanged();
+            // do not emit visibleRegionChanged() here, because, if the map isn't initialized,
+            // the getter won't return anything updated
         }
     }
 }
@@ -1107,7 +1114,8 @@ void QDeclarativeGeoMap::setFieldOfView(qreal fieldOfView)
         m_cameraData.setFieldOfView(fieldOfView);
         if (fovChanged) {
             emit fieldOfViewChanged(fieldOfView);
-            emit visibleRegionChanged();
+            // do not emit visibleRegionChanged() here, because, if the map isn't initialized,
+            // the getter won't return anything updated
         }
     }
 }
@@ -1276,7 +1284,8 @@ void QDeclarativeGeoMap::setCenter(const QGeoCoordinate &center)
         m_cameraData.setCenter(center);
         if (centerHasChanged) {
             emit centerChanged(center);
-            emit visibleRegionChanged();
+            // do not emit visibleRegionChanged() here, because, if the map isn't initialized,
+            // the getter won't return anything updated
         }
     }
 }
