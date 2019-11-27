@@ -52,7 +52,7 @@
 #include <QtLocation/private/qmappolygonobject_p.h>
 #include <QtLocation/private/qmappolygonobject_p_p.h>
 #include <QtLocation/private/qqsgmapobject_p.h>
-#include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
+#include <QtLocation/private/qdeclarativepolygonmapitem_p_p.h>
 #include <QtCore/qscopedvaluerollback.h>
 
 QT_BEGIN_NAMESPACE

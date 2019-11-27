@@ -323,6 +323,8 @@ bool QDeclarativeGeoMapItemBase::isPolishScheduled() const
     return QQuickItemPrivate::get(this)->polishScheduled;
 }
 
+void QDeclarativeGeoMapItemBase::setMaterialDirty() {}
+
 void QDeclarativeGeoMapItemBase::polishAndUpdate()
 {
     polish();

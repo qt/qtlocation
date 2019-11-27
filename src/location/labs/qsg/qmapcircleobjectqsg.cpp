@@ -66,7 +66,7 @@ void QMapCircleObjectPrivateQSG::updateCirclePath()
 {
     const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_map->geoProjection());
     QList<QGeoCoordinate> path;
-    QDeclarativeCircleMapItem::calculatePeripheralPoints(path, center(), radius(), CircleSamples, m_leftBound);
+    QDeclarativeCircleMapItemPrivateCPU::calculatePeripheralPoints(path, center(), radius(), CircleSamples, m_leftBound);
     m_circlePath.clear();
     for (const QGeoCoordinate &c : path)
         m_circlePath << p.geoToMapProjection(c);
@@ -86,7 +86,7 @@ void QMapCircleObjectPrivateQSG::updateGeometry()
     QList<QDoubleVector2D> circlePath = m_circlePath;
 
     int pathCount = circlePath.size();
-    bool preserve = QDeclarativeCircleMapItem::preserveCircleGeometry(circlePath, center(), radius(), p);
+    bool preserve = QDeclarativeCircleMapItemPrivateCPU::preserveCircleGeometry(circlePath, center(), radius(), p);
     // using leftBound_ instead of the analytically calculated circle_.boundingGeoRectangle().topLeft());
     // to fix QTBUG-62154
     m_geometry.markSourceDirty();
@@ -94,7 +94,7 @@ void QMapCircleObjectPrivateQSG::updateGeometry()
     m_geometry.setPreserveGeometry(preserve, m_leftBound);
 
     bool invertedCircle = false;
-    if (QDeclarativeCircleMapItem::crossEarthPole(center(), radius()) && circlePath.size() == pathCount) {
+    if (QDeclarativeCircleMapItemPrivateCPU::crossEarthPole(center(), radius()) && circlePath.size() == pathCount) {
         m_geometry.updateScreenPointsInvert(circlePath, *m_map); // invert fill area for really huge circles
         invertedCircle = true;
     } else {

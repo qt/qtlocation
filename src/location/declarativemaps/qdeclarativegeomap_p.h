@@ -267,6 +267,8 @@ protected:
     bool removeMapItemGroup_real(QDeclarativeGeoMapItemGroup *itemGroup);
     bool addMapItemView_real(QDeclarativeGeoMapItemView *itemView);
     bool removeMapItemView_real(QDeclarativeGeoMapItemView *itemView);
+    void updateItemToWindowTransform();
+    void onSGNodeChanged();
 
 private Q_SLOTS:
     void mappingManagerInitialized();
@@ -308,6 +310,7 @@ private:
     double m_maximumViewportLatitude;
     double m_minimumViewportLatitude = 0.0;
     bool m_initialized;
+    bool m_sgNodeHasChanged = false;
     QList<QDeclarativeGeoMapParameter *> m_mapParameters;
     QList<QGeoMapObject*> m_pendingMapObjects; // Used only in the initialization phase
     QGeoCameraCapabilities m_cameraCapabilities;

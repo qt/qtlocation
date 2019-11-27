@@ -61,11 +61,13 @@ import Qt.labs.qmlmodels 1.0
 import Qt.GeoJson 1.0
 
 C1.ApplicationWindow {
+    id: win
     visible: true
     width: 1024
     height: 1024
     menuBar: mainMenu
     title: qsTr("GeoJSON Viewer")
+    property bool openGLBackends: glBackendSelector.checked
 
     FileDialog {
         visible: false
@@ -141,6 +143,12 @@ C1.ApplicationWindow {
                     geoJsoner.print(miv)
                 }
             }
+            C1.MenuItem {
+                text: "&OpenGL Item backends"
+                id: glBackendSelector
+                checkable: true
+                checked: false
+            }
         }
 
     }
@@ -149,17 +157,28 @@ C1.ApplicationWindow {
         id: geoJsoner
     }
 
+    Shortcut {
+        sequence: "Ctrl+P"
+        onActivated: {
+
+            console.log("Center : QtPositioning.coordinate(",map.center.latitude,",",map.center.longitude,")")
+            console.log("Zoom   : ",map.zoomLevel)
+        }
+    }
+
     Map {
         id: map
         anchors.fill: parent
         center: QtPositioning.coordinate(43.59, 13.50) // Starting coordinates: Ancona, the city where I am studying :)
-        plugin: Plugin { name: "mapboxgl" }
+        plugin: Plugin { name: "osm" }
         zoomLevel: 4
 
         MapItemView {
             id: miv
             model: geoJsoner.model
-            delegate: GeoJsonDelegate {}
+            delegate: GeoJsonDelegate {
+                openGLBackends: win.openGLBackends
+            }
         }
     }
 }

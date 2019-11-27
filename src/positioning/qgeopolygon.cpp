@@ -673,6 +673,7 @@ QGeoShapePrivate *QGeoPolygonPrivateEager::clone() const
 void QGeoPolygonPrivateEager::translate(double degreesLatitude, double degreesLongitude)
 {
     translatePoly(m_path, m_holesList, m_bbox, degreesLatitude, degreesLongitude, m_maxLati, m_minLati);
+    m_leftBoundWrapped = QWebMercator::coordToMercator(m_bbox.topLeft()).x();
     m_clipperDirty = true;
 }
 

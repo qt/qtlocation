@@ -92,8 +92,8 @@ public:
     virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
     virtual void setPositionOnMap(const QGeoCoordinate &coordinate, const QPointF &offset);
 
-    QDeclarativeGeoMap *quickMap() { return quickMap_; }
-    QGeoMap *map() { return map_; }
+    QDeclarativeGeoMap *quickMap() const { return quickMap_; }
+    QGeoMap *map() const { return map_; }
     virtual const QGeoShape &geoShape() const = 0;
     virtual void setGeoShape(const QGeoShape &shape) = 0;
 
@@ -107,6 +107,23 @@ public:
     qreal mapItemOpacity() const;
 
     void setParentGroup(QDeclarativeGeoMapItemGroup &parentGroup);
+
+    template <typename T = QObject>
+
+    QList<T*> quickChildren() const
+    {
+        QList<T*> res;
+        QObjectList kids = children();
+        QList<QQuickItem *> quickKids = childItems();
+        for (int i = 0; i < quickKids.count(); ++i)
+            kids.append(quickKids.at(i));
+        for (auto kid : qAsConst(kids)) {
+            auto val = qobject_cast<T*>(kid);
+            if (val)
+                res.push_back(val);
+        }
+        return res;
+    }
 
 Q_SIGNALS:
     void mapItemOpacityChanged();
@@ -122,6 +139,7 @@ protected:
     float zoomLevelOpacity() const;
     bool childMouseEventFilter(QQuickItem *item, QEvent *event);
     bool isPolishScheduled() const;
+    virtual void setMaterialDirty();
 
     QGeoMap::ItemType m_itemType = QGeoMap::NoItem;
 
