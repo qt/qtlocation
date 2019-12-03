@@ -131,7 +131,7 @@ public:
             qmlRegisterType<QDeclarativePlaceUser                   >(uri, major, minor, "User");
             qmlRegisterType<QDeclarativeRectangleMapItem            >(uri, major, minor, "MapRectangle");
             qmlRegisterType<QDeclarativeCircleMapItem               >(uri, major, minor, "MapCircle");
-            qmlRegisterType<QDeclarativeMapLineProperties>();
+            qmlRegisterAnonymousType<QDeclarativeMapLineProperties  >(uri, major);
             qmlRegisterType<QDeclarativePolylineMapItem             >(uri, major, minor, "MapPolyline");
             qmlRegisterType<QDeclarativePolygonMapItem              >(uri, major, minor, "MapPolygon");
             qmlRegisterType<QDeclarativeRouteMapItem                >(uri, major, minor, "MapRoute");
@@ -177,7 +177,7 @@ public:
 
             // Register the 5.11 types
             minor = 11;
-            qmlRegisterType<QGeoMapObject>();
+            qmlRegisterAnonymousType<QGeoMapObject>(uri, major);
             qmlRegisterType<QDeclarativeGeoManeuver, 11>(uri, major, minor, "RouteManeuver");
             qmlRegisterType<QDeclarativeGeoMap, 11>(uri, major, minor, "Map");
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 11>(uri, major, minor, "GeoMapItemBase",

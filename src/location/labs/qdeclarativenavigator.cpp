@@ -101,15 +101,10 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlproperty Route Qt.labs.location::Navigator::route
 
-    This property holds the Route that the navigator is supposed to use
+    This property holds the Route that the navigator is using
     to perform the navigation.
 
-    \note
-    This property is not necessarily the same as \l currentRoute.
-    currentRoute may differ, during routing, for various reasons.
-    It is reasonable to assume, however, that currentRoute's destination
-    will be the same as route's destination.
-    Setting this property while a navigation session is ongoing will
+    \note Setting this property while a navigation session is ongoing will
     stop the navigation.
 
     \sa Route

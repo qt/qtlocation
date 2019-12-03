@@ -206,7 +206,7 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QObject *parent)
 {
     qRegisterMetaType<QGeoPositionInfo>();
     d->interval = 0;
-    d->methods = 0;
+    d->methods = {};
 }
 
 /*!

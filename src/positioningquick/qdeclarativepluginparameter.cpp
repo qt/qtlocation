@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype PluginParameter
-    \instantiates QDeclarativePluginParameter
+    //! \instantiates QDeclarativePluginParameter
     \inqmlmodule QtPositioning
     \ingroup qml-QtPositioning5-common
     \since QtPositioning 5.14

@@ -42,7 +42,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype Plugin
-    \instantiates QDeclarativeGeoServiceProvider
+    //! \instantiates QDeclarativeGeoServiceProvider
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-common
     \since QtLocation 5.5
@@ -866,7 +866,7 @@ bool QDeclarativeGeoServiceProviderRequirements::operator == (const QDeclarative
 
 /*!
     \qmltype PluginParameter
-    \instantiates QDeclarativePluginParameter
+    //! \instantiates QDeclarativePluginParameter
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-common
     \since QtLocation 5.5
