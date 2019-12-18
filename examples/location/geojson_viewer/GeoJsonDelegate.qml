@@ -98,6 +98,17 @@ DelegateChooser {
             opacity: dc.defaultOpacity
             color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
             border.width: 0
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (props !== undefined)
+                        console.log(props.name)
+                    else if (parent.parent.geojsonType == "MultiPolygon")
+                        console.log(parent.parent.props.name)
+                    else
+                        console.log("NO NAME!", props)
+                }
+            }
         }
     }
 
