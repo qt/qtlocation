@@ -151,10 +151,10 @@ The following table lists optional parameters that can be passed to the Mapbox p
 
 \section2 Optional map parameters
 
-The \l{QtLocation::Map}{Map} item using this plugin, can also be customized using \l{QtLocation::MapParameter}{MapParameters},
+The \l{QtLocation::Map}{Map} item using this plugin, can also be customized using \l{QtLocation::DynamicParameter}{DynamicParameters},
 allowing runtime changes to the map style and data.
 
-Examples of what can be currently controlled using \l{QtLocation::MapParameter}{MapParameter} are:
+Examples of what can be currently controlled using \l{QtLocation::DynamicParameter}{DynamicParameter} are:
 
 \list
     \li Hide and show parts of the map, like roads and buildings.
@@ -167,7 +167,7 @@ Examples of what can be currently controlled using \l{QtLocation::MapParameter}{
 With the exception of extrusion and data driven style properties, every property described at the
 \l {https://www.mapbox.com/mapbox-gl-js/style-spec/}{Mapbox Style Specification} can be changed at runtime.
 
-The \l{QtLocation::MapParameter}{MapParameters}, used to control the style of the map at runtime, always
+The \l{QtLocation::DynamicParameter}{DynamicParameters}, used to control the style of the map at runtime, always
 have a \b type property, followed by user defined properties that try to match the
 \l {https://www.mapbox.com/mapbox-gl-js/style-spec/}{Mapbox Style Specification} naming as much as possible,
 replacing the dash with camel case for technical reasons (i.e. \b line-cap will be translated to \b lineCap).
@@ -222,7 +222,7 @@ Map {
     center: QtPositioning.coordinate(60.170448, 24.942046) // Helsinki
     zoomLevel: 12
 
-    MapParameter {
+    DynamicParameter {
         type: "source"
 
         property var name: "routeSource"
@@ -233,7 +233,7 @@ Map {
             60.16830257086771 ], [ 24.943315386772156, 60.16227776476442 ]]}}]}'
     }
 
-    MapParameter {
+    DynamicParameter {
         type: "layer"
 
         property var name: "route"
@@ -245,7 +245,7 @@ Map {
         property var before: "road-label-small"
     }
 
-    MapParameter {
+    DynamicParameter {
         type: "paint"
 
         property var layer: "route"
@@ -253,7 +253,7 @@ Map {
         property var lineWidth: 8.0
     }
 
-    MapParameter {
+    DynamicParameter {
         type: "layout"
 
         property var layer: "route"
