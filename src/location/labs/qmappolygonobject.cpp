@@ -250,7 +250,7 @@ QColor QMapPolygonObject::color() const
 QDeclarativeMapLineProperties *QMapPolygonObject::border()
 {
     if (!m_border) {
-        m_border = new QDeclarativeMapLineProperties;
+        m_border = new QDeclarativeMapLineProperties(this);
         connect(m_border, &QDeclarativeMapLineProperties::colorChanged, this, [this](const QColor &color){
             static_cast<QMapPolygonObjectPrivate*>(d_ptr.data())->setBorderColor(color);
         });
