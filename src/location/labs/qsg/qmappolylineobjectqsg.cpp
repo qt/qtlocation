@@ -107,25 +107,26 @@ QSGNode *QMapPolylineObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
     Q_UNUSED(visibleNode);
     MapPolylineNode *node = static_cast<MapPolylineNode *>(oldNode);
 
-    bool created = false;
     if (!node) {
         if (!m_geometry.size()) // condition to block the subtree
             return nullptr;
         node = new MapPolylineNode();
         *visibleNode = static_cast<VisibleNode *>(node);
-        created = true;
     }
 
     //TODO: update only material
-    if (m_geometry.isScreenDirty() || !oldNode || created) {
+    if (m_geometry.isScreenDirty() || !oldNode) {
         node->update(color(), &m_geometry);
         m_geometry.setPreserveGeometry(false);
         m_geometry.markClean();
     }
 
-    if (created)
+    if (m_geometry.size()) {
         root->appendChildNode(node);
-
+    } else {
+        delete node;
+        return nullptr;
+    }
     return node;
 }
 

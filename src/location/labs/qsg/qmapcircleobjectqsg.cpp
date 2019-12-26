@@ -154,15 +154,16 @@ QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
 //    Q_UNUSED(visibleNode); // coz of -Werror=unused-but-set-parameter
     MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
 
-    bool created = false;
     if (!node) {
+        if (!m_geometry.size() && !m_borderGeometry.size()) {
+            return nullptr;
+        }
         node = new MapPolygonNode();
         *visibleNode = static_cast<VisibleNode *>(node);
-        created = true;
     }
 
     //TODO: update only material
-    if (m_geometry.isScreenDirty() || !m_borderGeometry.isScreenDirty() || !oldNode || created) {
+    if (m_geometry.isScreenDirty() || !m_borderGeometry.isScreenDirty() || !oldNode) {
         //QMapPolygonObject *p = static_cast<QMapPolygonObject *>(q);
         node->update(color(), borderColor(), &m_geometry, &m_borderGeometry);
         m_geometry.setPreserveGeometry(false);
@@ -171,9 +172,12 @@ QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
         m_borderGeometry.markClean();
     }
 
-    if (created)
+    if (m_geometry.size() || m_borderGeometry.size()) {
         root->appendChildNode(node);
-
+    } else {
+        delete node;
+        return nullptr;
+    }
     return node;
 }
 
