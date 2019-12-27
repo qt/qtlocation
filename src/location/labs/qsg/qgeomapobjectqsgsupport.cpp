@@ -152,6 +152,7 @@ void QGeoMapObjectQSGSupport::removeMapObject(QGeoMapObject *obj)
     }
 }
 
+// called in the render thread
 void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *window)
 {
     if (!m_mapObjectsRootNode) {
@@ -216,6 +217,7 @@ void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *wind
     m_mapObjectsRootNode->setSubtreeBlocked(false);
 }
 
+// called in GUI thread
 void QGeoMapObjectQSGSupport::updateObjectsGeometry()
 {
     for (int i = 0; i < m_mapObjects.size(); ++i) {

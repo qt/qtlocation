@@ -182,7 +182,7 @@ public:
     Q_INVOKABLE void clearMapParameters();
     QList<QObject *> mapParameters();
 
-    void addMapObject(QGeoMapObject *object);
+    void addMapObject(QGeoMapObject *object); // Not invokable as currently meant to be used through a main MapObjectView
     void removeMapObject(QGeoMapObject *object);
     void clearMapObjects();
     QList<QGeoMapObject *> mapObjects();
