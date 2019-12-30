@@ -34,6 +34,7 @@ PRIVATE_HEADERS += \
         declarativemaps/qdeclarativepolygonmapitem_p_p.h \
         declarativemaps/qdeclarativerectanglemapitem_p_p.h \
         declarativemaps/qdeclarativecirclemapitem_p_p.h \
+        declarativemaps/qgeosimplify_p.h \
         declarativemaps/qquickgeomapgesturearea_p.h
 
 SOURCES += \
@@ -63,6 +64,7 @@ SOURCES += \
         declarativemaps/qgeomapobject.cpp \
         declarativemaps/qdeclarativegeomapitemutils.cpp \
         declarativemaps/qparameterizableobject.cpp \
+        declarativemaps/qgeosimplify.cpp \
         declarativemaps/qquickgeomapgesturearea.cpp
 
 load(qt_build_paths)

@@ -39,7 +39,7 @@ Window {
     visible: true
     width: 1440
     height: 720
-    title: qsTr("MapItems backends")
+    title: qsTr("MapObjects tester")
 
 
     property real initialZL: 5
@@ -365,6 +365,12 @@ Window {
                 }
             }
 
+            LongPolyline {
+                id: longPoly
+                backend: polylineBackend()
+                Component.onCompleted: longPolyPath = path
+            }
+
             MapCircle {
                 center: QtPositioning.coordinate(52, 0)
                 radius: sliRadius.value
@@ -391,8 +397,8 @@ Window {
                 center: QtPositioning.coordinate(17, 44);
                 radius: 200*1000
                 color: "firebrick"
-                layer.enabled: (backend == MapCircle.Software)
-                layer.samples: 4
+//                layer.enabled: (backend == MapCircle.Software)
+//                layer.samples: 4
             }
         }
     }
@@ -486,16 +492,26 @@ Window {
                 border.color: 'firebrick'
             }
 
-//            MapCircleObject {
-//                id: circle1
-//                border.color: 'deepskyblue'
-//                border.width: 26
-//                center: QtPositioning.coordinate(17, 44);
-//                radius: 200*1000
-//                color: "firebrick"
-//            }
+            MapPolylineObject {
+                id: longPolyline
+                line.color: "firebrick"
+                objectName: parent.objectName + "longPolyline"
+                line.width: 10
+                path: longPolyPath
+            }
+
+            MapCircleObject {
+                id: circle1
+                border.color: 'deepskyblue'
+                border.width: 26
+                center: QtPositioning.coordinate(17, 44);
+                radius: 200*1000
+                color: "firebrick"
+            }
         }
     }
+
+    property var longPolyPath
 
     C2.Slider {
         id: sliRadius

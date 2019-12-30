@@ -297,7 +297,7 @@ QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNodeGL(QSGNode *oldNode,
                                combinedMatrix,
                                cameraCenter,
                                Qt::SquareCap,
-                               true);
+                               true); // No LOD for circles ATM
         m_dataGL->m_borderGeometry.setPreserveGeometry(false);
         m_dataGL->m_borderGeometry.markClean();
     }

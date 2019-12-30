@@ -116,6 +116,8 @@ public:
 
     void allocateAndFillPolygon(QSGGeometry *geom) const
     {
+
+
         const QVector<QDeclarativeGeoMapItemUtils::vec2> &vx = m_screenVertices;
         const QVector<quint32> &ix = m_screenIndices;
 
@@ -613,7 +615,9 @@ public:
                                    combinedMatrix,
                                    cameraCenter,
                                    Qt::SquareCap,
-                                   true);
+                                   true,
+                                   30); // No LOD for polygons just yet.
+                                        // First figure out what to do with holes.
             m_borderGeometry.setPreserveGeometry(false);
             m_borderGeometry.markClean();
         } else {

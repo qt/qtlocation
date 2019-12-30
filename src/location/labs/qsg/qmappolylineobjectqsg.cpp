@@ -102,6 +102,18 @@ void QMapPolylineObjectPrivateQSG::updateGeometry()
     m_borderGeometry.m_wrapOffset = p.projectionWrapFactor(m_leftBoundMercator) + 1;
 }
 
+/*!
+  \internal
+*/
+unsigned int QMapPolylineObjectPrivateQSG::zoomForLOD(int zoom) const
+{
+    // LOD Threshold currently fixed to 12 for MapPolylineObject(QSG).
+    // ToDo: Consider allowing to change this via DynamicParameter.
+    if (zoom >= 12)
+        return 30;
+    return uint(zoom);
+}
+
 QSGNode *QMapPolylineObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
                                                            VisibleNode **visibleNode,
                                                            QSGNode *root,
@@ -127,7 +139,8 @@ QSGNode *QMapPolylineObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
                                combinedMatrix,
                                cameraCenter,
                                Qt::SquareCap,
-                               true);
+                               true,
+                               zoomForLOD(int(m_map->cameraData().zoomLevel())));
         m_borderGeometry.setPreserveGeometry(false);
         m_borderGeometry.markClean();
     }

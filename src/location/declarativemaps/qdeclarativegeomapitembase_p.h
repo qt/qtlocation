@@ -85,6 +85,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
 
     Q_PROPERTY(QGeoShape geoShape READ geoShape WRITE setGeoShape STORED false )
     Q_PROPERTY(bool autoFadeIn READ autoFadeIn WRITE setAutoFadeIn REVISION 14)
+    Q_PROPERTY(int lodThreshold READ lodThreshold WRITE setLodThreshold NOTIFY lodThresholdChanged REVISION 15)
+
 public:
     explicit QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
     virtual ~QDeclarativeGeoMapItemBase();
@@ -99,6 +101,10 @@ public:
 
     bool autoFadeIn() const;
     void setAutoFadeIn(bool fadeIn);
+
+    int lodThreshold() const;
+    void setLodThreshold(int lt);
+    unsigned int zoomForLOD(int zoom) const;
 
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
@@ -129,6 +135,7 @@ Q_SIGNALS:
     void mapItemOpacityChanged();
     Q_REVISION(12) void addTransitionFinished();
     Q_REVISION(12) void removeTransitionFinished();
+    void lodThresholdChanged();
 
 protected Q_SLOTS:
     virtual void afterChildrenChanged();
@@ -158,6 +165,7 @@ private:
 
     QScopedPointer<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
     bool m_autoFadeIn = true;
+    int m_lodThreshold = 0;
 
     friend class QDeclarativeGeoMap;
     friend class QDeclarativeGeoMapItemView;

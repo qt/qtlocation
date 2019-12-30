@@ -62,6 +62,8 @@
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtCore/QScopedValueRollback>
+#include <QSharedPointer>
+#include <array>
 
 QT_BEGIN_NAMESPACE
 
@@ -211,14 +213,93 @@ protected:
     QSGGeometry geometry_;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolylineGeometryOpenGL : public QGeoMapItemGeometry
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapItemLODGeometry
+{
+public:
+    mutable std::array<QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>, 7> m_verticesLOD; // fix it to 7,
+                                                                             // do not allow simplifications beyond ZL 20. This could actually be limited even further
+    mutable QVector<QDeclarativeGeoMapItemUtils::vec2> *m_screenVertices;
+    mutable QSharedPointer<unsigned int> m_working;
+
+    QGeoMapItemLODGeometry()
+    {
+        resetLOD();
+    }
+
+    void resetLOD()
+    {
+        // New pointer, some old LOD task might still be running and operating on the old pointers.
+        m_verticesLOD[0] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
+                            new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+        for (unsigned int i = 1; i < m_verticesLOD.size(); ++i)
+            m_verticesLOD[i] = nullptr; // allocate on first use
+        m_screenVertices = m_verticesLOD.front().data(); // resetting pointer to data to be LOD 0
+    }
+
+    static unsigned int zoomToLOD(unsigned int zoom);
+
+    static unsigned int zoomForLOD(unsigned int zoom);
+
+    bool isLODActive(unsigned int lod) const;
+
+    void selectLOD(unsigned int zoom, double leftBound, bool /*closed*/);
+
+    static QVector<QDeclarativeGeoMapItemUtils::vec2> getSimplified (
+            QVector<QDeclarativeGeoMapItemUtils::vec2> &wrappedPath,
+                              double leftBoundWrapped,
+                              unsigned int zoom);
+
+    static void enqueueSimplificationTask(QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input, // reference as it gets copied in the nested call
+                              QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
+                              double leftBound,
+                              unsigned int zoom,
+                              QSharedPointer<unsigned int> &working);
+
+    void selectLODOnDataChanged(unsigned int zoom, double leftBound) const
+    {
+        unsigned int lod = zoomToLOD(zoom);
+        if (lod > 0) {
+            // Generate ZL 1 as fallback for all cases != 0. Do not do if 0 is requested
+            // (= old behavior, LOD disabled)
+            m_verticesLOD[1] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
+                                new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+            *m_verticesLOD[1] = getSimplified( *m_verticesLOD[0],
+                                       leftBound,
+                                       zoomForLOD(0));
+        }
+        if (lod > 1) {
+            enqueueSimplificationTask(  m_verticesLOD.at(0),
+                                        m_verticesLOD[zoomToLOD(zoom)],
+                                        leftBound,
+                                        zoom,
+                                        m_working);
+        }
+        m_screenVertices = m_verticesLOD[qMin<unsigned int>(lod, 1)].data();
+    }
+
+    bool selectLODOnLODMismatch(unsigned int zoom, double leftBound, bool closed) const
+    {
+        if (*m_working > 0) {
+            return false;
+        }
+        const_cast<QGeoMapItemLODGeometry *>(this)->selectLOD(zoom,
+                 leftBound,
+                 closed);
+        return true;
+    }
+};
+
+class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolylineGeometryOpenGL : public QGeoMapItemGeometry, public QGeoMapItemLODGeometry
 {
 public:
     typedef struct {
         QList<QDoubleVector2D> wrappedBboxes;
     } WrappedPolyline;
 
-    QGeoMapPolylineGeometryOpenGL() {}
+    QGeoMapPolylineGeometryOpenGL()
+    {
+        m_working = QSharedPointer<unsigned int>(new unsigned int(0));
+    }
 
     void updateSourcePoints(const QGeoMap &map,
                             const QGeoPolygon &poly);
@@ -242,8 +323,11 @@ public:
 
     void updateQuickGeometry(const QGeoProjectionWebMercator &p, qreal strokeWidth = 0.0);
 
-    void allocateAndFillEntries(QSGGeometry *geom, bool closed = false) const;
-    void allocateAndFillLineStrip(QSGGeometry *geom) const;
+    bool allocateAndFillEntries(QSGGeometry *geom,
+                                bool closed = false,
+                                unsigned int zoom = 0) const;
+    void allocateAndFillLineStrip(QSGGeometry *geom,
+                                  int lod = 0) const;
 
     bool contains(const QPointF &point) const override
     {
@@ -270,16 +354,17 @@ public:
         const double lineHalfWidth = lineWidth * 0.5;
         const QDoubleVector2D pt(point);
         QDoubleVector2D a;
-        if (m_screenVertices.size()) a = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices.first().toDoubleVector2D()));
+        if (m_screenVertices->size())
+            a = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices->first().toDoubleVector2D()));
         QDoubleVector2D b;
-        for (int i = 1; i < m_screenVertices.size(); ++i)
+        for (int i = 1; i < m_screenVertices->size(); ++i)
         {
             if (!a.isFinite()) {
-                a = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices.at(i).toDoubleVector2D()));
+                a = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices->at(i).toDoubleVector2D()));
                 continue;
             }
 
-            b = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices.at(i).toDoubleVector2D()));
+            b = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices->at(i).toDoubleVector2D()));
             if (!b.isFinite()) {
                 a = b;
                 continue;
@@ -299,7 +384,6 @@ public:
     }
 
 public:
-    QVector<QDeclarativeGeoMapItemUtils::vec2> m_screenVertices;
     QDoubleVector2D m_bboxLeftBoundWrapped;
     QVector<WrappedPolyline> m_wrappedPolygons;
     int m_wrapOffset;
@@ -493,7 +577,8 @@ public:
                 const QMatrix4x4 geoProjection,
                 const QDoubleVector3D center,
                 const Qt::PenCapStyle capStyle = Qt::FlatCap,
-                bool closed = false);
+                bool closed = false,
+                unsigned int zoom = 30);
 
     static const QSGGeometry::AttributeSet &attributesMapPolylineTriangulated();
 
@@ -806,7 +891,9 @@ public:
                          &m_geometry,
                          combinedMatrix,
                          cameraCenter,
-                         m_penCapStyle);
+                         m_penCapStyle,
+                         false,
+                         m_poly.zoomForLOD(int(map->cameraData().zoomLevel())));
             m_geometry.setPreserveGeometry(false);
             m_geometry.markClean();
             m_poly.m_dirtyMaterial = false;

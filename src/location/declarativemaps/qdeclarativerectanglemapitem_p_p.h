@@ -364,7 +364,8 @@ public:
                                    combinedMatrix,
                                    cameraCenter,
                                    Qt::SquareCap,
-                                   true);
+                                   true,
+                                   30); // No LOD for rectangles
             m_borderGeometry.setPreserveGeometry(false);
             m_borderGeometry.markClean();
         } else {

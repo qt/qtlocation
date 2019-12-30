@@ -85,6 +85,8 @@ public:
     QGeoMapObjectPrivate *clone() override;
     virtual QGeoShape geoShape() const override;
 
+    unsigned int zoomForLOD(int zoom) const;
+
     // Data Members
     QDoubleVector2D m_leftBoundMercator;
     QGeoMapPolylineGeometryOpenGL m_borderGeometry;
