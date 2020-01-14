@@ -347,7 +347,7 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
         return;
     }
 
-    if (!networkReply->error()) {
+    if (!networkReply->networkError()) {
         d->nErrors = 0;
         if (!d->throttle.isValid())
             d->throttle.start();
@@ -403,7 +403,7 @@ void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply)
     if (!networkReply)
         return;
 
-    if (!networkReply->error()) {
+    if (!networkReply->networkError()) {
         foreach (WeatherData *inf, d->forecast)
             delete inf;
         d->forecast.clear();
@@ -455,7 +455,7 @@ void AppModel::handleForecastNetworkData(QNetworkReply *networkReply)
     if (!networkReply)
         return;
 
-    if (!networkReply->error()) {
+    if (!networkReply->networkError()) {
         QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
 
         QJsonObject jo;

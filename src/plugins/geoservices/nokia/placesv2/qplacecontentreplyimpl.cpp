@@ -81,7 +81,7 @@ void QPlaceContentReplyImpl::replyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->networkError() != QNetworkReply::NoError)
         return;
 
     QJsonDocument document = QJsonDocument::fromJson(reply->readAll());

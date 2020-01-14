@@ -83,7 +83,7 @@ void QGeoCodeReplyNokia::networkFinished()
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->networkError() != QNetworkReply::NoError)
         return;
 
     QGeoCodeJsonParser *parser = new QGeoCodeJsonParser; // QRunnable, autoDelete = true.

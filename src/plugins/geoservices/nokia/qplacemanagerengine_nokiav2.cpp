@@ -777,7 +777,7 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
 
     QString categoryId;
 
-    if (reply->error() == QNetworkReply::NoError) {
+    if (reply->networkError() == QNetworkReply::NoError) {
         QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
         if (!document.isObject()) {
             if (m_categoryReply) {
