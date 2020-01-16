@@ -404,8 +404,8 @@ void QDeclarativePositionSource::socketConnected()
 */
 void QDeclarativePositionSource::socketError(QAbstractSocket::SocketError error)
 {
-    delete m_nmeaSocket;
-    m_nmeaSocket = 0;
+    m_nmeaSocket->deleteLater();
+    m_nmeaSocket = nullptr;
 
     switch (error) {
     case QAbstractSocket::UnknownSocketError:
