@@ -2058,20 +2058,24 @@ void QDeclarativeGeoMap::clearMapItems()
         return;
 
     int removed = 0;
-    for (auto i : qAsConst(m_mapItemGroups)) {
+    for (int i = 0; i < m_mapItemGroups.count(); ++i) {
+        auto item = m_mapItemGroups.at(i);
         // Processing only top-level groups (!views)
-        QDeclarativeGeoMapItemView *view = qobject_cast<QDeclarativeGeoMapItemView *>(i);
-        if (view)
+        if (qobject_cast<QDeclarativeGeoMapItemView *>(item))
             continue;
 
-        if (i->parentItem() != this)
+
+        if (item->parentItem() != this)
             continue;
 
-        removed += removeMapItemGroup_real(i);
+        if (removeMapItemGroup_real(item)) {
+            removed++;
+            --i;
+        }
     }
 
-    for (auto i : qAsConst(m_mapItems))
-        removed += removeMapItem_real(i);
+    while (!m_mapItems.isEmpty())
+        removed += removeMapItem_real(m_mapItems.first());
 
     if (removed)
         emit mapItemsChanged();

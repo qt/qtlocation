@@ -97,8 +97,8 @@ function testConsecutiveFetch(testCase, model, place, expectedValues, data)
     signalSpy.target = model;
     signalSpy.signalName ="totalCountChanged";
 
-    var visDataModel = Qt.createQmlObject('import QtQuick 2.0; '
-                                       + 'VisualDataModel{ delegate: Text{} }',
+    var visDataModel = Qt.createQmlObject('import QtQuick 2.0; import QtQml.Models 2.14; '
+                                       + 'DelegateModel{ delegate: Text{} }',
                                        testCase, "dataModel");
     visDataModel.model = model;
 
@@ -140,8 +140,8 @@ function testConsecutiveFetch(testCase, model, place, expectedValues, data)
 
 function testReset(testCase, model, place)
 {
-    var dataModel = Qt.createQmlObject('import QtQuick 2.0; '
-                                       + 'VisualDataModel{ delegate: Text{} }',
+    var dataModel = Qt.createQmlObject('import QtQuick 2.0; import QtQml.Models 2.14; '
+                                       + 'DelegateModel{ delegate: Text{} }',
                                        testCase, "dataModel");
 
     dataModel.model = model;
@@ -160,8 +160,8 @@ function testReset(testCase, model, place)
 function testFetch(testCase, data)
 {
     var model = data.model;
-    var visDataModel = Qt.createQmlObject('import QtQuick 2.0; '
-                                       + 'VisualDataModel{ delegate: Text{} }',
+    var visDataModel = Qt.createQmlObject('import QtQuick 2.0; import QtQml.Models 2.14; '
+                                       + 'DelegateModel{ delegate: Text{} }',
                                        testCase, "dataModel");
     visDataModel.model = model
 
