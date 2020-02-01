@@ -11,8 +11,10 @@ OTHER_FILES += configure.json doc/src/*.qdoc doc/src/plugins/*.qdoc   # show .qd
 
 ANDROID_BUNDLED_JAR_DEPENDENCIES = \
     jar/QtPositioning.jar:org.qtproject.qt5.android.positioning.QtPositioning
-ANDROID_PERMISSIONS = \
+ANDROID_PERMISSIONS += \
     android.permission.ACCESS_FINE_LOCATION
+ANDROID_FEATURES += \
+    android.hardware.location.gps
 ANDROID_LIB_DEPENDENCIES = \
     plugins/position/libplugins_position_qtposition_android.so
 MODULE_WINRT_CAPABILITIES_DEVICE += \
