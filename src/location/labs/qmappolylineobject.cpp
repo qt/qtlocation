@@ -191,7 +191,7 @@ QVariantList QMapPolylineObject::path() const
 QDeclarativeMapLineProperties *QMapPolylineObject::border()
 {
     if (!m_border) {
-        m_border = new QDeclarativeMapLineProperties;
+        m_border = new QDeclarativeMapLineProperties(this);
         connect(m_border, &QDeclarativeMapLineProperties::colorChanged, this, [this](const QColor &color){
             static_cast<QMapPolylineObjectPrivate*>(d_ptr.data())->setColor(color);
         });

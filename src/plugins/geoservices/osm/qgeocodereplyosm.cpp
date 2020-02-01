@@ -129,7 +129,7 @@ void QGeoCodeReplyOsm::networkReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->networkError() != QNetworkReply::NoError)
         return;
 
     QList<QGeoLocation> locations;

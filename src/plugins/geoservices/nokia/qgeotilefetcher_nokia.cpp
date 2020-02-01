@@ -247,7 +247,7 @@ QString QGeoTileFetcherNokia::applicationId() const
 
 void QGeoTileFetcherNokia::copyrightsFetched()
 {
-    if (m_engineNokia && m_copyrightsReply->error() == QNetworkReply::NoError) {
+    if (m_engineNokia && m_copyrightsReply->networkError() == QNetworkReply::NoError) {
         QMetaObject::invokeMethod(m_engineNokia.data(),
                                   "loadCopyrightsDescriptorsFromJson",
                                   Qt::QueuedConnection,
@@ -259,7 +259,7 @@ void QGeoTileFetcherNokia::copyrightsFetched()
 
 void QGeoTileFetcherNokia::versionFetched()
 {
-    if (m_engineNokia && m_versionReply->error() == QNetworkReply::NoError) {
+    if (m_engineNokia && m_versionReply->networkError() == QNetworkReply::NoError) {
         QMetaObject::invokeMethod(m_engineNokia.data(),
                                   "parseNewVersionInfo",
                                   Qt::QueuedConnection,
@@ -288,7 +288,7 @@ void QGeoTileFetcherNokia::fetchCopyrightsData()
 
     QNetworkRequest netRequest((QUrl(copyrightUrl)));
     m_copyrightsReply = m_networkManager->get(netRequest);
-    if (m_copyrightsReply->error() != QNetworkReply::NoError) {
+    if (m_copyrightsReply->networkError() != QNetworkReply::NoError) {
         qWarning() << __FUNCTION__ << m_copyrightsReply->errorString();
         m_copyrightsReply->deleteLater();
         return;
@@ -321,7 +321,7 @@ void QGeoTileFetcherNokia::fetchVersionData()
     QNetworkRequest netRequest((QUrl(versionUrl)));
     m_versionReply = m_networkManager->get(netRequest);
 
-    if (m_versionReply->error() != QNetworkReply::NoError) {
+    if (m_versionReply->networkError() != QNetworkReply::NoError) {
         qWarning() << __FUNCTION__ << m_versionReply->errorString();
         m_versionReply->deleteLater();
         return;

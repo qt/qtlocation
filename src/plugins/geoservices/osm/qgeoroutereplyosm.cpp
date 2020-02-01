@@ -66,7 +66,7 @@ void QGeoRouteReplyOsm::networkReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->networkError() != QNetworkReply::NoError)
         return;
 
     QGeoRoutingManagerEngineOsm *engine = qobject_cast<QGeoRoutingManagerEngineOsm *>(parent());

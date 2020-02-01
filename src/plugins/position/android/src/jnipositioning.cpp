@@ -618,7 +618,7 @@ Q_DECL_EXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void * /*reserved*/)
     uenv.venv = nullptr;
     javaVM = nullptr;
 
-    if (vm->GetEnv(&uenv.venv, JNI_VERSION_1_4) != JNI_OK) {
+    if (vm->GetEnv(&uenv.venv, JNI_VERSION_1_6) != JNI_OK) {
         __android_log_print(ANDROID_LOG_FATAL, logTag, "GetEnv failed");
         return -1;
     }
@@ -629,6 +629,6 @@ Q_DECL_EXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void * /*reserved*/)
     }
 
     javaVM = vm;
-    return JNI_VERSION_1_4;
+    return JNI_VERSION_1_6;
 }
 

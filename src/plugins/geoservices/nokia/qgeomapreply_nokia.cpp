@@ -70,7 +70,7 @@ void QGeoMapReplyNokia::networkFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->networkError() != QNetworkReply::NoError)
         return;
 
     setMapImageData(reply->readAll());
