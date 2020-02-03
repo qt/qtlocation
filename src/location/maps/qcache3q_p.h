@@ -47,7 +47,6 @@
 //
 // We mean it.
 
-#include <QtCore/qlinkedlist.h>
 #include <QtCore/qhash.h>
 #include <QtCore/qcache.h>
 #include <QtCore/qsharedpointer.h>
