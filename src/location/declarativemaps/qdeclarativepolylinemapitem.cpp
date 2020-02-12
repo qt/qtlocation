@@ -1947,8 +1947,8 @@ bool QGeoMapItemLODGeometry::isLODActive(unsigned int lod) const
 class PolylineSimplifyTask : public QRunnable
 {
 public:
-    PolylineSimplifyTask(QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input, // reference as it gets copied in the nested call
-                         QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
+    PolylineSimplifyTask(const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input, // reference as it gets copied in the nested call
+                         const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
                          double leftBound,
                          unsigned int zoom,
                          QSharedPointer<unsigned int> &working)
@@ -1958,6 +1958,8 @@ public:
         , m_output(output)
         , m_working(working)
     {
+        Q_ASSERT(!input.isNull());
+        Q_ASSERT(!output.isNull());
     }
 
     ~PolylineSimplifyTask() override;
@@ -1967,9 +1969,11 @@ public:
         // Skip sending notifications for now. Updated data will be picked up eventually.
         // ToDo: figure out how to connect a signal from here to a slot in the item.
         *m_working = QGeoMapPolylineGeometryOpenGL::zoomToLOD(m_zoom);
-        *m_output = QGeoMapPolylineGeometryOpenGL::getSimplified( *m_input,
+        const QVector<QDeclarativeGeoMapItemUtils::vec2> res =
+                QGeoMapPolylineGeometryOpenGL::getSimplified( *m_input,
                                    m_leftBound,
                                    QGeoMapPolylineGeometryOpenGL::zoomForLOD(m_zoom));
+        *m_output = res;
         *m_working = 0;
     }
 
@@ -1979,12 +1983,14 @@ public:
     QSharedPointer<unsigned int> m_working;
 };
 
-void QGeoMapItemLODGeometry::enqueueSimplificationTask(QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input,
-                                                  QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
+void QGeoMapItemLODGeometry::enqueueSimplificationTask(const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input,
+                                                  const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
                                                   double leftBound,
                                                   unsigned int zoom,
                                                   QSharedPointer<unsigned int> &working)
 {
+    Q_ASSERT(!input.isNull());
+    Q_ASSERT(!output.isNull());
     PolylineSimplifyTask *task = new PolylineSimplifyTask(input,
                                                           output,
                                                           leftBound,
@@ -2030,6 +2036,31 @@ void QGeoMapItemLODGeometry::selectLOD(unsigned int zoom, double leftBound, bool
                                     m_working);
 
     }
+}
+
+void QGeoMapItemLODGeometry::selectLODOnDataChanged(unsigned int zoom, double leftBound) const
+{
+    unsigned int lod = zoomToLOD(zoom);
+    if (lod > 0) {
+        // Generate ZL 1 as fallback for all cases != 0. Do not do if 0 is requested
+        // (= old behavior, LOD disabled)
+        m_verticesLOD[1] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
+                                new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+        *m_verticesLOD[1] = getSimplified( *m_verticesLOD[0],
+                leftBound,
+                zoomForLOD(0));
+    }
+    if (lod > 1) {
+        if (!m_verticesLOD[lod])
+            m_verticesLOD[lod] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
+                                    new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+        enqueueSimplificationTask(  m_verticesLOD.at(0),
+                                    m_verticesLOD[lod],
+                leftBound,
+                zoom,
+                m_working);
+    }
+    m_screenVertices = m_verticesLOD[qMin<unsigned int>(lod, 1)].data(); // return only 0,1 synchronously
 }
 
 unsigned int QGeoMapItemLODGeometry::zoomToLOD(unsigned int zoom)

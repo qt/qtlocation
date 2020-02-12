@@ -249,33 +249,13 @@ public:
                               double leftBoundWrapped,
                               unsigned int zoom);
 
-    static void enqueueSimplificationTask(QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input, // reference as it gets copied in the nested call
-                              QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
+    static void enqueueSimplificationTask(const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input, // reference as it gets copied in the nested call
+                              const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
                               double leftBound,
                               unsigned int zoom,
                               QSharedPointer<unsigned int> &working);
 
-    void selectLODOnDataChanged(unsigned int zoom, double leftBound) const
-    {
-        unsigned int lod = zoomToLOD(zoom);
-        if (lod > 0) {
-            // Generate ZL 1 as fallback for all cases != 0. Do not do if 0 is requested
-            // (= old behavior, LOD disabled)
-            m_verticesLOD[1] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
-                                new QVector<QDeclarativeGeoMapItemUtils::vec2>);
-            *m_verticesLOD[1] = getSimplified( *m_verticesLOD[0],
-                                       leftBound,
-                                       zoomForLOD(0));
-        }
-        if (lod > 1) {
-            enqueueSimplificationTask(  m_verticesLOD.at(0),
-                                        m_verticesLOD[zoomToLOD(zoom)],
-                                        leftBound,
-                                        zoom,
-                                        m_working);
-        }
-        m_screenVertices = m_verticesLOD[qMin<unsigned int>(lod, 1)].data();
-    }
+    void selectLODOnDataChanged(unsigned int zoom, double leftBound) const;
 
     bool selectLODOnLODMismatch(unsigned int zoom, double leftBound, bool closed) const
     {
