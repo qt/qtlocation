@@ -155,6 +155,8 @@ void QGeoMapObjectQSGSupport::removeMapObject(QGeoMapObject *obj)
 // called in the render thread
 void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *window)
 {
+    if (!root)
+        return;
     if (!m_mapObjectsRootNode) {
         m_mapObjectsRootNode = new QDeclarativePolygonMapItemPrivateOpenGL::RootNode();
         root->appendChildNode(m_mapObjectsRootNode);
