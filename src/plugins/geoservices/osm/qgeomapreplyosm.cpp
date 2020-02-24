@@ -68,7 +68,7 @@ void QGeoMapReplyOsm::networkReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError) // Already handled in networkReplyError
+    if (reply->error() != QNetworkReply::NoError) // Already handled in networkReplyError
         return;
 
     QByteArray a = reply->readAll();

@@ -118,7 +118,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     QJsonDocument document = QJsonDocument::fromJson(reply->readAll());

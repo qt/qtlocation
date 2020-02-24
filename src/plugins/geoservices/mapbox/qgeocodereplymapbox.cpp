@@ -76,7 +76,7 @@ void QGeoCodeReplyMapbox::onNetworkReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     QList<QGeoLocation> locations;

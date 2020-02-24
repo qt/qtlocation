@@ -80,8 +80,8 @@ void QGeoRouteReplyNokia::networkFinished()
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError
-        && reply->networkError() != QNetworkReply::UnknownContentError) {
+    if (reply->error() != QNetworkReply::NoError
+        && reply->error() != QNetworkReply::UnknownContentError) {
         return;
     }
 
