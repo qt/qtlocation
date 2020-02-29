@@ -1010,7 +1010,7 @@ void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
 }
 
 /*!
-    \qmlmethod int MapPolyline::setPath(geopath path)
+    \qmlmethod void MapPolyline::setPath(geopath path)
 
     Sets the \a path using a geopath type.
 
