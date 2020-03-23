@@ -142,8 +142,7 @@ QPlaceSearchReplyMapbox::QPlaceSearchReplyMapbox(const QPlaceSearchRequest &requ
     setRequest(request);
 
     connect(reply, &QNetworkReply::finished, this, &QPlaceSearchReplyMapbox::onReplyFinished);
-    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
-            this, &QPlaceSearchReplyMapbox::onNetworkError);
+    connect(reply, &QNetworkReply::errorOccurred, this, &QPlaceSearchReplyMapbox::onNetworkError);
 
     connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
