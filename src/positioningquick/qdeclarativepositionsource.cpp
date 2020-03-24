@@ -280,7 +280,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
         delete m_nmeaSocket;
         m_nmeaSocket = new QTcpSocket();
 
-        connect(m_nmeaSocket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)> (&QAbstractSocket::error),
+        connect(m_nmeaSocket, &QAbstractSocket::errorOccurred,
                 this, &QDeclarativePositionSource::socketError);
         connect(m_nmeaSocket, &QTcpSocket::connected,
                 this, &QDeclarativePositionSource::socketConnected);
