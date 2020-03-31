@@ -76,7 +76,7 @@ QMapPolylineObjectPrivateDefault::QMapPolylineObjectPrivateDefault(QGeoMapObject
 
 QMapPolylineObjectPrivateDefault::QMapPolylineObjectPrivateDefault(const QMapPolylineObjectPrivate &other) : QMapPolylineObjectPrivate(other.q)
 {
-    m_path = other.path();
+    m_path.setPath(other.path());
     m_color = other.color();
     m_width = other.width();
 }
@@ -88,12 +88,12 @@ QMapPolylineObjectPrivateDefault::~QMapPolylineObjectPrivateDefault()
 
 QList<QGeoCoordinate> QMapPolylineObjectPrivateDefault::path() const
 {
-    return m_path;
+    return m_path.path();
 }
 
 void QMapPolylineObjectPrivateDefault::setPath(const QList<QGeoCoordinate> &path)
 {
-    m_path = path;
+    m_path.setPath(path);
 }
 
 QColor QMapPolylineObjectPrivateDefault::color() const

@@ -192,7 +192,7 @@ QJSValue QDeclarativeGeoRoute::path() const
         pathArray->put(i, cv);
     }
 
-    return QJSValue(v4, pathArray.asReturnedValue());
+    return QJSValuePrivate::fromReturnedValue(pathArray.asReturnedValue());
 }
 
 void QDeclarativeGeoRoute::setPath(const QJSValue &value)

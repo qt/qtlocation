@@ -60,7 +60,7 @@ QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request,
             continue;
         }
         connect(reply, SIGNAL(finished()), this, SLOT(networkFinished()));
-        connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+        connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
                 this, SLOT(networkError(QNetworkReply::NetworkError)));
         connect(this, &QGeoRouteReply::aborted, reply, &QNetworkReply::abort);
         connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
@@ -80,8 +80,8 @@ void QGeoRouteReplyNokia::networkFinished()
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError
-        && reply->networkError() != QNetworkReply::UnknownContentError) {
+    if (reply->error() != QNetworkReply::NoError
+        && reply->error() != QNetworkReply::UnknownContentError) {
         return;
     }
 

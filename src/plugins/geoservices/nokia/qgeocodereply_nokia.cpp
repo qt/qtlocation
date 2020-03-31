@@ -62,7 +62,7 @@ QGeoCodeReplyNokia::QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offs
     qRegisterMetaType<QList<QGeoLocation> >();
 
     connect(reply, SIGNAL(finished()), this, SLOT(networkFinished()));
-    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
             this, SLOT(networkError(QNetworkReply::NetworkError)));
     connect(this, &QGeoCodeReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QGeoCodeReply::aborted, [this](){ m_parsing = false; });
@@ -83,7 +83,7 @@ void QGeoCodeReplyNokia::networkFinished()
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     QGeoCodeJsonParser *parser = new QGeoCodeJsonParser; // QRunnable, autoDelete = true.

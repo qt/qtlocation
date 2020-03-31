@@ -63,6 +63,9 @@
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtQuick/private/qquickitemchangelistener_p.h>
 
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeomaptype_p.h>)
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoserviceprovider_p.h>)
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoServiceProvider;
@@ -182,7 +185,7 @@ public:
     Q_INVOKABLE void clearMapParameters();
     QList<QObject *> mapParameters();
 
-    void addMapObject(QGeoMapObject *object);
+    void addMapObject(QGeoMapObject *object); // Not invokable as currently meant to be used through a main MapObjectView
     void removeMapObject(QGeoMapObject *object);
     void clearMapObjects();
     QList<QGeoMapObject *> mapObjects();
@@ -267,6 +270,8 @@ protected:
     bool removeMapItemGroup_real(QDeclarativeGeoMapItemGroup *itemGroup);
     bool addMapItemView_real(QDeclarativeGeoMapItemView *itemView);
     bool removeMapItemView_real(QDeclarativeGeoMapItemView *itemView);
+    void updateItemToWindowTransform();
+    void onSGNodeChanged();
 
 private Q_SLOTS:
     void mappingManagerInitialized();
@@ -308,6 +313,7 @@ private:
     double m_maximumViewportLatitude;
     double m_minimumViewportLatitude = 0.0;
     bool m_initialized;
+    bool m_sgNodeHasChanged = false;
     QList<QDeclarativeGeoMapParameter *> m_mapParameters;
     QList<QGeoMapObject*> m_pendingMapObjects; // Used only in the initialization phase
     QGeoCameraCapabilities m_cameraCapabilities;

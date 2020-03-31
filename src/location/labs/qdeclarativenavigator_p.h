@@ -54,6 +54,13 @@
 #include <QtLocation/private/qparameterizableobject_p.h>
 #include <QtLocation/qgeoserviceprovider.h>
 
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativenavigator_p_p.h>)
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeomap_p.h>)
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoroute_p.h>)
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoserviceprovider_p.h>)
+Q_MOC_INCLUDE(<QtLocation/private/qnavigationmanagerengine_p.h>)
+Q_MOC_INCLUDE(<QtPositioningQuick/private/qdeclarativepositionsource_p.h>)
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoServiceProvider;

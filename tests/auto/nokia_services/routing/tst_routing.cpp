@@ -102,8 +102,8 @@ void MockGeoNetworkReply::setFile(QFile* file)
 
 void MockGeoNetworkReply::complete()
 {
-    if (networkError() != QNetworkReply::NoError)
-        emit error(networkError());
+    if (error() != QNetworkReply::NoError)
+        emit errorOccurred(error());
     setFinished(true);
     emit finished();
 }

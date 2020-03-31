@@ -55,6 +55,9 @@
 #include <QPointer>
 #include <QtQuick/QQuickPaintedItem>
 
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeomap_p.h>)
+
+
 QT_BEGIN_NAMESPACE
 
 class QTextDocument;

@@ -54,6 +54,8 @@
 #include <QtLocation/QPlaceContent>
 #include <QtLocation/QPlaceContentReply>
 
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativeplace_p.h>)
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativePlace;

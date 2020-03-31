@@ -158,7 +158,7 @@ QJSValue QDeclarativeGeoRouteSegment::path() const
         pathArray->put(i, cv);
     }
 
-    return QJSValue(v4, pathArray.asReturnedValue());
+    return QJSValuePrivate::fromReturnedValue(pathArray.asReturnedValue());
 }
 
 QT_END_NAMESPACE

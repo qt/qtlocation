@@ -60,8 +60,7 @@ QGeoCodeReplyMapbox::QGeoCodeReplyMapbox(QNetworkReply *reply, QObject *parent)
     }
 
     connect(reply, &QNetworkReply::finished, this, &QGeoCodeReplyMapbox::onNetworkReplyFinished);
-    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
-            this, &QGeoCodeReplyMapbox::onNetworkReplyError);
+    connect(reply, &QNetworkReply::errorOccurred, this, &QGeoCodeReplyMapbox::onNetworkReplyError);
 
     connect(this, &QGeoCodeReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
@@ -76,7 +75,7 @@ void QGeoCodeReplyMapbox::onNetworkReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     QList<QGeoLocation> locations;

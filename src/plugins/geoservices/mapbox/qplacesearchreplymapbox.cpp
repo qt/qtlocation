@@ -142,8 +142,7 @@ QPlaceSearchReplyMapbox::QPlaceSearchReplyMapbox(const QPlaceSearchRequest &requ
     setRequest(request);
 
     connect(reply, &QNetworkReply::finished, this, &QPlaceSearchReplyMapbox::onReplyFinished);
-    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
-            this, &QPlaceSearchReplyMapbox::onNetworkError);
+    connect(reply, &QNetworkReply::errorOccurred, this, &QPlaceSearchReplyMapbox::onNetworkError);
 
     connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
@@ -167,7 +166,7 @@ void QPlaceSearchReplyMapbox::onReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     const QJsonDocument document = QJsonDocument::fromJson(reply->readAll());

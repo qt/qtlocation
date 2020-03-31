@@ -58,7 +58,7 @@ QGeoCodeReplyOsm::QGeoCodeReplyOsm(QNetworkReply *reply, bool includeExtraData, 
         return;
     }
     connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
     connect(this, &QGeoCodeReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
@@ -129,7 +129,7 @@ void QGeoCodeReplyOsm::networkReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     QList<QGeoLocation> locations;

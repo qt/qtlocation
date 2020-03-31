@@ -54,7 +54,7 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &s
             SLOT(networkFinished()));
 
     connect(reply,
-            SIGNAL(error(QNetworkReply::NetworkError)),
+            SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
             this,
             SLOT(networkError(QNetworkReply::NetworkError)));
     connect(this, &QGeoTiledMapReply::aborted, reply, &QNetworkReply::abort);
@@ -70,7 +70,7 @@ void QGeoMapReplyNokia::networkFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     setMapImageData(reply->readAll());

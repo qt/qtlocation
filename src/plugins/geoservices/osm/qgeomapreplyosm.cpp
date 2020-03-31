@@ -52,7 +52,7 @@ QGeoMapReplyOsm::QGeoMapReplyOsm(QNetworkReply *reply,
         return;
     }
     connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
     connect(this, &QGeoTiledMapReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
@@ -68,7 +68,7 @@ void QGeoMapReplyOsm::networkReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError) // Already handled in networkReplyError
+    if (reply->error() != QNetworkReply::NoError) // Already handled in networkReplyError
         return;
 
     QByteArray a = reply->readAll();

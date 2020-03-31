@@ -57,6 +57,8 @@
 
 #include <QtLocation/private/qdeclarativegeoserviceprovider_p.h>
 
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativeplaceicon_p.h>)
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativePlaceIcon;

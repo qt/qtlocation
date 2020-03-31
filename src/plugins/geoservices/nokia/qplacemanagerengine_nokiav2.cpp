@@ -637,7 +637,7 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
                         QStringLiteral("/places/v1/categories/places/") + *it);
         QNetworkReply *networkReply = sendRequest(requestUrl);
         connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
-        connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),
+        connect(networkReply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
                 this, SLOT(categoryReplyError()));
 
         m_categoryRequests.insert(*it, networkReply);
@@ -777,7 +777,7 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
 
     QString categoryId;
 
-    if (reply->networkError() == QNetworkReply::NoError) {
+    if (reply->error() == QNetworkReply::NoError) {
         QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
         if (!document.isObject()) {
             if (m_categoryReply) {

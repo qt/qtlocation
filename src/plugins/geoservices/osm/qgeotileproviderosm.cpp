@@ -339,7 +339,7 @@ void TileProvider::resolveProvider()
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferNetwork);
     QNetworkReply *reply = m_nm->get(request);
     connect(reply, SIGNAL(finished()), this, SLOT(onNetworkReplyFinished()) );
-    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onNetworkReplyError(QNetworkReply::NetworkError)));
+    connect(reply, SIGNAL(errorOccured(QNetworkReply::NetworkError)), this, SLOT(onNetworkReplyError(QNetworkReply::NetworkError)));
 }
 
 void TileProvider::handleError(QNetworkReply::NetworkError error)
@@ -383,8 +383,8 @@ void TileProvider::onNetworkReplyFinished()
     QObject errorEmitter;
     QMetaObject::Connection errorEmitterConnection = connect(&errorEmitter, &QObject::destroyed, [this](){ this->resolutionError(this); });
 
-    if (reply->networkError() != QNetworkReply::NoError) {
-        handleError(reply->networkError());
+    if (reply->error() != QNetworkReply::NoError) {
+        handleError(reply->error());
         return;
     }
     m_status = Invalid;

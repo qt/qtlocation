@@ -145,10 +145,9 @@ void QMapPolygonObjectPrivateDefault::setGeoShape(const QGeoShape &shape)
         return;
 
     const QGeoPolygon poly(shape);
-    setPath(poly.path()); // to handle overrides
     for (int i = 0; i < poly.holesCount(); i++)
         m_path.addHole(poly.holePath(i));
-    emit static_cast<QMapPolygonObject *>(q)->pathChanged();
+    setPath(poly.path()); // to handle overrides. Last as it normally emits static_cast<QMapPolygonObject *>(q)->pathChanged();
 }
 
 bool QMapPolygonObjectPrivate::equals(const QGeoMapObjectPrivate &other) const

@@ -959,7 +959,7 @@ QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
         excludedAreasArray->put(i, cv);
     }
 
-    return QJSValue(v4, excludedAreasArray.asReturnedValue());
+    return QJSValuePrivate::fromReturnedValue(excludedAreasArray.asReturnedValue());
 }
 
 void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)

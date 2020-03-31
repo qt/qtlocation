@@ -55,6 +55,8 @@
 #include <QtQml/QQmlListProperty>
 #include <QtLocation/QGeoRoute>
 
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoroutemodel_p.h>)
+
 QT_BEGIN_NAMESPACE
 class QDeclarativeGeoRouteQuery;
 

@@ -206,6 +206,14 @@ public:
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 14>(uri, major, minor, "GeoMapItemBase",
                                         QStringLiteral("GeoMapItemBase is not intended instantiable by developer."));
 
+            minor = 15;
+            qmlRegisterType<QDeclarativePolylineMapItem,  15>(uri, major, minor, "MapPolyline");
+            qmlRegisterType<QDeclarativePolygonMapItem,   15>(uri, major, minor, "MapPolygon");
+            qmlRegisterType<QDeclarativeRectangleMapItem, 15>(uri, major, minor, "MapRectangle");
+            qmlRegisterType<QDeclarativeCircleMapItem,    15>(uri, major, minor, "MapCircle");
+            qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 15>(uri, major, minor, "GeoMapItemBase",
+                                        QStringLiteral("GeoMapItemBase is not intended instantiable by developer."));
+
             // The minor version used to be the current Qt 5 minor. For compatibility it is the last
             // Qt 5 release.
             qmlRegisterModule(uri, 5, 15);

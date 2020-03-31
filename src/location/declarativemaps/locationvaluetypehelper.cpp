@@ -164,7 +164,7 @@ QJSValue fromList(const QObject *object, const QList<QGeoCoordinate> &list)
         pathArray->put(i++, cv);
     }
 
-    return QJSValue(v4, pathArray.asReturnedValue());
+    return QJSValuePrivate::fromReturnedValue(pathArray.asReturnedValue());
 }
 
 QList<QGeoCoordinate> toList(const QObject *object, const QJSValue &value)

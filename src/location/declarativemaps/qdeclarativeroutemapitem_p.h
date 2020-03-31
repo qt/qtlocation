@@ -55,6 +55,8 @@
 #include <QPen>
 #include <QBrush>
 
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoroute_p.h>)
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoRoute;

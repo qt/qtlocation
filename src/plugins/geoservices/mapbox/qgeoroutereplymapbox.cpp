@@ -101,7 +101,7 @@ QGeoRouteReplyMapbox::QGeoRouteReplyMapbox(QNetworkReply *reply, const QGeoRoute
         return;
     }
     connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
     connect(this, &QGeoRouteReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
@@ -116,7 +116,7 @@ void QGeoRouteReplyMapbox::networkReplyFinished()
     QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
     reply->deleteLater();
 
-    if (reply->networkError() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError)
         return;
 
     QGeoRoutingManagerEngineMapbox *engine = qobject_cast<QGeoRoutingManagerEngineMapbox *>(parent());

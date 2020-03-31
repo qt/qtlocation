@@ -54,6 +54,8 @@
 #include <QtLocation/private/qgeomapobject_p.h>
 #include <QtLocation/private/qparameterizableobject_p.h>
 
+Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoroute_p.h>)
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoRoute;

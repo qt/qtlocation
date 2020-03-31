@@ -8,7 +8,8 @@ qtConfig(geoservices_esri): SUBDIRS += esri
 qtConfig(geoservices_itemsoverlay): SUBDIRS += itemsoverlay
 qtConfig(geoservices_osm): SUBDIRS += osm
 
-qtConfig(geoservices_mapboxgl) {
+# for now turned off in Qt 6
+false:qtConfig(geoservices_mapboxgl) {
     !exists(../../3rdparty/mapbox-gl-native/mapbox-gl-native.pro) {
         warning("Submodule mapbox-gl-native does not exist. Run 'git submodule update --init' on qtlocation.")
     } else {
