@@ -1497,7 +1497,7 @@ QMargins QDeclarativeGeoMap::mapMargins() const
 */
 QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 {
-    return QQmlListProperty<QDeclarativeGeoMapType>(this, m_supportedMapTypes);
+    return QQmlListProperty<QDeclarativeGeoMapType>(this, &m_supportedMapTypes);
 }
 
 /*!
