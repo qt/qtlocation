@@ -73,6 +73,11 @@ QGeoMappingManagerEngineMapboxGL::QGeoMappingManagerEngineMapboxGL(const QVarian
         m_useChinaEndpoint = parameters.value(QStringLiteral("mapboxgl.china")).toBool();
     }
 
+    if (parameters.contains(QStringLiteral("mapboxgl.api_base_url"))) {
+        const QString apiBaseUrl = parameters.value(QStringLiteral("mapboxgl.api_base_url")).toString();
+        m_settings.setApiBaseUrl(apiBaseUrl);
+    }
+
     QVariantMap metadata;
     metadata["isHTTPS"] = true;
 
