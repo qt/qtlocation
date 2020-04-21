@@ -104,7 +104,7 @@ QPlaceResult parsePlaceResult(const QJsonObject &response, const QString &attrib
         const QString categoryString = properties.value(QStringLiteral("category")).toString();
         if (!categoryString.isEmpty()) {
             QList<QPlaceCategory> categories;
-            for (const QString &categoryId : categoryString.split(QStringLiteral(", "), QString::SkipEmptyParts)) {
+            for (const QString &categoryId : categoryString.split(QStringLiteral(", "), Qt::SkipEmptyParts)) {
                 QPlaceCategory category;
                 category.setName(QMapboxCommon::mapboxNameForCategory(categoryId));
                 category.setCategoryId(categoryId);
