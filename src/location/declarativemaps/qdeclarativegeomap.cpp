@@ -1628,7 +1628,7 @@ void QDeclarativeGeoMap::clearData()
 void QDeclarativeGeoMap::fitViewportToGeoShape(const QGeoShape &shape, QVariant margins)
 {
     QMargins m(10, 10, 10, 10); // lets defaults to 10 if margins is invalid
-    switch (margins.type()) {
+    switch (static_cast<QMetaType::Type>(margins.type())) {
         case QMetaType::Int:
         case QMetaType::Double: {
             const int value = int(margins.toDouble());
