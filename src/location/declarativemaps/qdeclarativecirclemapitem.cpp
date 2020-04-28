@@ -140,8 +140,6 @@ QT_BEGIN_NAMESPACE
     \since 5.14
 */
 
-static const int CircleSamples = 128;
-
 struct Vertex
 {
     QVector2D position;
