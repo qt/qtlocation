@@ -394,7 +394,7 @@ public:
         "}";
     }
 
-    const char *fragmentShader() const {
+    const char *fragmentShader() const override {
         return
         "uniform lowp vec4 color;                   \n"
         "void main() {                              \n"
