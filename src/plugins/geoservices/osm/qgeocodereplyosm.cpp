@@ -112,7 +112,7 @@ static void injectExtra(QGeoLocation &location, const QJsonObject &object)
                                                QStringLiteral("place_id"),
                                                QStringLiteral("class") };
 
-    for (const auto k: extraKeys) {
+    for (const auto &k: extraKeys) {
         if (object.contains(k)) {
             extra[k] = object.value(k).toVariant();
             if (k == QStringLiteral("geojson"))
