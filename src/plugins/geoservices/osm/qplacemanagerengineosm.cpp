@@ -274,11 +274,11 @@ void QPlaceManagerEngineOsm::categoryReplyFinished()
             QRegularExpressionMatchIterator i = regex.globalMatch(page);
             while (i.hasNext()) {
                 QRegularExpressionMatch match = i.next();
-                QString name = match.capturedRef(1).toString();
-                QString tagKey = match.capturedRef(2).toString();
-                QString tagValue = match.capturedRef(3).toString();
-                QString op = match.capturedRef(4).toString();
-                QString plural = match.capturedRef(5).toString();
+                QString name = match.capturedView(1).toString();
+                QString tagKey = match.capturedView(2).toString();
+                QString tagValue = match.capturedView(3).toString();
+                QString op = match.capturedView(4).toString();
+                QString plural = match.capturedView(5).toString();
 
                 // Only interested in any operator plural forms
                 if (op != QLatin1String("-") || plural != QLatin1String("Y"))

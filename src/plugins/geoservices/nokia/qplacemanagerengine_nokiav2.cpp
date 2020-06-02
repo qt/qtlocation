@@ -696,7 +696,7 @@ QPlaceIcon QPlaceManagerEngineNokiaV2::icon(const QString &remotePath,
 
     QString iconPrefix;
     QString nokiaIcon;
-    if (match.hasMatch() && !match.capturedRef(1).isEmpty() && !match.capturedRef(2).isEmpty()) {
+    if (match.hasMatch() && !match.capturedView(1).isEmpty() && !match.capturedView(2).isEmpty()) {
             iconPrefix = match.captured(1);
             nokiaIcon = match.captured(2);
 
