@@ -116,13 +116,13 @@ public:
     virtual ~QDeclarativeGeocodeModel();
 
     // From QQmlParserStatus
-    virtual void classBegin() {}
-    virtual void componentComplete();
+    void classBegin() override {}
+    void componentComplete() override;
 
     // From QAbstractListModel
-    virtual int rowCount(const QModelIndex &parent) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual QHash<int,QByteArray> roleNames() const;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    QHash<int,QByteArray> roleNames() const override;
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;

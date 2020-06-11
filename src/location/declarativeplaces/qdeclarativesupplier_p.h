@@ -77,8 +77,8 @@ public:
     ~QDeclarativeSupplier();
 
     // From QQmlParserStatus
-    void classBegin() { }
-    void componentComplete();
+    void classBegin() override { }
+    void componentComplete() override;
 
     QPlaceSupplier supplier();
     void setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin = 0);

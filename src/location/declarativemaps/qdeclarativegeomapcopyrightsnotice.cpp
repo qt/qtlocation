@@ -51,7 +51,7 @@ class QDeclarativeGeoMapCopyrightNoticePrivate: public QQuickPaintedItemPrivate
 {
     Q_DECLARE_PUBLIC(QDeclarativeGeoMapCopyrightNotice)
 public:
-    virtual void setVisible(bool visible);
+    void setVisible(bool visible) override;
 };
 
 /*!

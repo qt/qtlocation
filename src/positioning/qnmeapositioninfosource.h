@@ -66,18 +66,18 @@ public:
     void setDevice(QIODevice *source);
     QIODevice *device() const;
 
-    void setUpdateInterval(int msec);
+    void setUpdateInterval(int msec) override;
 
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
-    PositioningMethods supportedPositioningMethods() const;
-    int minimumUpdateInterval() const;
-    Error error() const;
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const override;
+    PositioningMethods supportedPositioningMethods() const override;
+    int minimumUpdateInterval() const override;
+    Error error() const override;
 
 
 public Q_SLOTS:
-    void startUpdates();
-    void stopUpdates();
-    void requestUpdate(int timeout = 0);
+    void startUpdates() override;
+    void stopUpdates() override;
+    void requestUpdate(int timeout = 0) override;
 
 protected:
     virtual bool parsePosInfoFromNmeaData(const char *data,

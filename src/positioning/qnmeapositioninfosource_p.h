@@ -101,7 +101,7 @@ public Q_SLOTS:
     void readyRead();
 
 protected:
-    void timerEvent(QTimerEvent *event);
+    void timerEvent(QTimerEvent *event) override;
 
 private Q_SLOTS:
     void emitPendingUpdate();
@@ -146,7 +146,7 @@ class QNmeaRealTimeReader : public QNmeaReader
 {
 public:
     explicit QNmeaRealTimeReader(QNmeaPositionInfoSourcePrivate *sourcePrivate);
-    virtual void readAvailableData();
+    void readAvailableData() override;
     void notifyNewUpdate();
 
     // Data members
@@ -165,10 +165,10 @@ class QNmeaSimulatedReader : public QObject, public QNmeaReader
 public:
     explicit QNmeaSimulatedReader(QNmeaPositionInfoSourcePrivate *sourcePrivate);
     ~QNmeaSimulatedReader();
-    virtual void readAvailableData();
+    void readAvailableData() override;
 
 protected:
-    virtual void timerEvent(QTimerEvent *event);
+    void timerEvent(QTimerEvent *event) override;
 
 private Q_SLOTS:
     void simulatePendingUpdate();

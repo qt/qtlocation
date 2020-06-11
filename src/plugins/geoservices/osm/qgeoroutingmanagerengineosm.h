@@ -58,7 +58,7 @@ public:
                                 QString *errorString);
     ~QGeoRoutingManagerEngineOsm();
 
-    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request);
+    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request) override;
     const QGeoRouteParser *routeParser() const;
 
 private Q_SLOTS:

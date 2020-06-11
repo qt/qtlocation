@@ -52,7 +52,7 @@ public:
     explicit QPlaceContentReply(QObject *parent = nullptr);
     virtual ~QPlaceContentReply();
 
-    QPlaceReply::Type type() const;
+    QPlaceReply::Type type() const override;
 
     QPlaceContent::Collection content() const;
 

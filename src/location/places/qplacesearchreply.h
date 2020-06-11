@@ -52,7 +52,7 @@ public:
     explicit QPlaceSearchReply(QObject *parent = nullptr);
     ~QPlaceSearchReply();
 
-    QPlaceReply::Type type() const;
+    QPlaceReply::Type type() const override;
 
     QList<QPlaceSearchResult> results() const;
     QPlaceSearchRequest request() const;

@@ -101,7 +101,7 @@ public:
     ~QGeoRouteXmlParser();
 
     void parse(const QByteArray &data);
-    void run();
+    void run() override;
 
 signals:
     void results(const QList<QGeoRoute> &routes);

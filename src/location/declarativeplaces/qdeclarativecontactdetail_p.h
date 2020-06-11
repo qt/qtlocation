@@ -62,7 +62,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeContactDetails : public QQmlProperty
 
 public:
     explicit QDeclarativeContactDetails(QObject *parent = 0);
-    virtual QVariant updateValue(const QString &key, const QVariant &input);
+    QVariant updateValue(const QString &key, const QVariant &input) override;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeContactDetail : public QObject

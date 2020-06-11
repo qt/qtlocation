@@ -59,7 +59,7 @@ public:
     ~QGeoTiledMapNokia();
 
     QString getViewCopyright();
-    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) override;
 
 private:
     QImage m_logo;

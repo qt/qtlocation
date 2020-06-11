@@ -91,9 +91,9 @@ public:
     void initializeCollection(int totalCount, const QPlaceContent::Collection &collection);
 
     // from QAbstractListModel
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    QHash<int, QByteArray> roleNames() const;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
     enum Roles {
         SupplierRole = Qt::UserRole,
@@ -102,12 +102,12 @@ public:
         UserRole //indicator for next conten type specific role
     };
 
-    bool canFetchMore(const QModelIndex &parent) const;
-    void fetchMore(const QModelIndex &parent);
+    bool canFetchMore(const QModelIndex &parent) const override;
+    void fetchMore(const QModelIndex &parent) override;
 
     // from QQmlParserStatus
-    void classBegin();
-    void componentComplete();
+    void classBegin() override;
+    void componentComplete() override;
 
 Q_SIGNALS:
     void placeChanged();

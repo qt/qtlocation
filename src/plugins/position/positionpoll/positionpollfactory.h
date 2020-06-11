@@ -50,9 +50,9 @@ class QGeoPositionInfoSourceFactoryPoll : public QObject, public QGeoPositionInf
                       FILE "plugin.json")
     Q_INTERFACES(QGeoPositionInfoSourceFactory)
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent);
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent) override;
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) override;
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent) override;
 };
 
 #endif // POSITIONPOLLFACTORY_H

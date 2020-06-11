@@ -117,8 +117,8 @@ public:
     virtual void clearData(bool suppressSignal = false);
 
     // From QQmlParserStatus
-    virtual void classBegin();
-    virtual void componentComplete();
+    void classBegin() override;
+    void componentComplete() override;
 
 Q_SIGNALS:
     void pluginChanged();

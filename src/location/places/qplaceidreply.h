@@ -58,7 +58,7 @@ public:
     explicit QPlaceIdReply(OperationType operationType, QObject *parent = nullptr);
     virtual ~QPlaceIdReply();
 
-    QPlaceReply::Type type() const;
+    QPlaceReply::Type type() const override;
     OperationType operationType() const;
 
     QString id() const;

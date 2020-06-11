@@ -86,7 +86,7 @@ Q_SIGNALS:
 protected:
     QGeoTileFetcher(QGeoTileFetcherPrivate &dd, QGeoMappingManagerEngine *parent);
 
-    void timerEvent(QTimerEvent *event);
+    void timerEvent(QTimerEvent *event) override;
     QAbstractGeoTileCache::CacheAreas cacheHint() const;
     virtual bool initialized() const;
     virtual bool fetchingEnabled() const;

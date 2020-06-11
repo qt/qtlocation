@@ -63,7 +63,7 @@ public:
 
     ~QPlaceEditorialPrivate();
 
-    bool compare(const QPlaceContentPrivate *other) const;
+    bool compare(const QPlaceContentPrivate *other) const override;
 
     Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceEditorial, QPlaceContent::EditorialType)
 

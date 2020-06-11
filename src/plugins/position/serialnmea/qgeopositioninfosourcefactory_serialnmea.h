@@ -51,13 +51,13 @@ class QGeoPositionInfoSourceFactorySerialNmea : public QObject, public QGeoPosit
     Q_INTERFACES(QGeoPositionInfoSourceFactoryV2)
 
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent);
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent) override;
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) override;
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent) override;
 
-    QGeoPositionInfoSource *positionInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters);
-    QGeoSatelliteInfoSource *satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters);
-    QGeoAreaMonitorSource *areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters);
+    QGeoPositionInfoSource *positionInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters) override;
+    QGeoSatelliteInfoSource *satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters) override;
+    QGeoAreaMonitorSource *areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters) override;
 };
 
 #endif

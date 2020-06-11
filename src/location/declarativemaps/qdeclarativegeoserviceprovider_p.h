@@ -155,8 +155,8 @@ public:
     Q_FLAGS(NavigationFeatures)
 
     // From QQmlParserStatus
-    virtual void classBegin() {}
-    virtual void componentComplete();
+    void classBegin() override {}
+    void componentComplete() override;
 
     void setName(const QString &name);
     QString name() const;

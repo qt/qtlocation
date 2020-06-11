@@ -51,8 +51,8 @@ public:
     explicit QGeoIntrinsicNetworkAccessManager(QObject *parent = 0);
     QGeoIntrinsicNetworkAccessManager(const QVariantMap &parameters, const QString &token = QString(), QObject *parent = 0);
 
-    virtual QNetworkReply *get(const QNetworkRequest &request);
-    virtual QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data);
+    QNetworkReply *get(const QNetworkRequest &request) override;
+    QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data) override;
 
 private:
     void configure(const QVariantMap &parameters);

@@ -52,7 +52,7 @@ public:
                                         QGeoServiceProvider::Error *error, QString *errorString);
     ~QGeoTiledMappingManagerEngineMapbox();
 
-    QGeoMap *createMap();
+    QGeoMap *createMap() override;
 
 private:
     QString m_cacheDirectory;

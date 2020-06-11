@@ -50,7 +50,7 @@ public:
     explicit QPlaceDetailsReply(QObject *parent = nullptr);
     virtual ~QPlaceDetailsReply();
 
-    QPlaceReply::Type type() const;
+    QPlaceReply::Type type() const override;
 
     QPlace place() const;
 

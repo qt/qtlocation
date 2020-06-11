@@ -128,8 +128,8 @@ public:
     QVariantMap parameterMap() const;
 
     // Virtuals from QQmlParserStatus
-    void classBegin() { }
-    void componentComplete();
+    void classBegin() override { }
+    void componentComplete() override;
 
     Q_REVISION(14) Q_INVOKABLE bool setBackendProperty(const QString &name, const QVariant &value);
     Q_REVISION(14) Q_INVOKABLE QVariant backendProperty(const QString &name) const;

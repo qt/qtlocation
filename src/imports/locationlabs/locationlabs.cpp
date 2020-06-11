@@ -67,7 +67,7 @@ class QtLocationLabsDeclarativeModule: public QQmlExtensionPlugin
 
 public:
     QtLocationLabsDeclarativeModule(QObject *parent = nullptr) : QQmlExtensionPlugin(parent) { }
-    virtual void registerTypes(const char *uri)
+    void registerTypes(const char *uri) override
     {
         if (QLatin1String(uri) == QLatin1String("Qt.labs.location")) {
 

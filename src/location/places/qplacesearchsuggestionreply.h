@@ -53,7 +53,7 @@ public:
     ~QPlaceSearchSuggestionReply();
 
     QStringList suggestions() const;
-    Type type() const;
+    Type type() const override;
 
 protected:
     void setSuggestions(const QStringList &suggestions);

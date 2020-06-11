@@ -86,7 +86,7 @@ class QtLocationDeclarativeModule: public QQmlExtensionPlugin
 
 public:
     QtLocationDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
-    virtual void registerTypes(const char *uri)
+    void registerTypes(const char *uri) override
     {
         if (QLatin1String(uri) == QLatin1String("QtLocation")) {
 

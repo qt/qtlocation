@@ -119,13 +119,13 @@ public:
     ~QDeclarativeGeoRouteModel();
 
     // From QQmlParserStatus
-    void classBegin() {}
-    void componentComplete();
+    void classBegin() override {}
+    void componentComplete() override;
 
     // From QAbstractListModel
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    virtual QHash<int,QByteArray> roleNames() const;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    QHash<int,QByteArray> roleNames() const override;
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
@@ -308,8 +308,8 @@ public:
     ~QDeclarativeGeoRouteQuery();
 
     // From QQmlParserStatus
-    void classBegin() {}
-    void componentComplete();
+    void classBegin() override {}
+    void componentComplete() override;
 
     QGeoRouteRequest routeRequest();
     QVariantMap extraParameters();

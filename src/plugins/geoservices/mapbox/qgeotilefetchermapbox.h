@@ -58,7 +58,7 @@ public:
     void setAccessToken(const QString &accessToken);
 
 private:
-    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
+    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) override;
 
     QNetworkAccessManager *m_networkManager;
     QByteArray m_userAgent;

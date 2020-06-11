@@ -50,7 +50,7 @@ public:
     explicit QPlaceMatchReply(QObject *parent = nullptr);
     ~QPlaceMatchReply();
 
-    QPlaceReply::Type type() const;
+    QPlaceReply::Type type() const override;
 
     QList<QPlace> places() const;
     QPlaceMatchRequest request() const;

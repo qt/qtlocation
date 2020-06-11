@@ -56,7 +56,7 @@ class QGeoCodeJsonParser : public QObject, public QRunnable
 public:
     void setBounds(const QGeoShape &bounds);
     void parse(const QByteArray &data);
-    void run();
+    void run() override;
 
 signals:
     void results(const QList<QGeoLocation> &locations);

@@ -106,7 +106,7 @@ public:
     void setLodThreshold(int lt);
     unsigned int zoomForLOD(int zoom) const;
 
-    QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+    QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
     QGeoMap::ItemType itemType() const;
@@ -144,7 +144,7 @@ protected Q_SLOTS:
 
 protected:
     float zoomLevelOpacity() const;
-    bool childMouseEventFilter(QQuickItem *item, QEvent *event);
+    bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
     bool isPolishScheduled() const;
     virtual void setMaterialDirty();
 

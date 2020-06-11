@@ -60,7 +60,7 @@ public:
                          QGeoTiledMappingManagerEngineNokia *engine, const QSize &tileSize, int ppi);
     ~QGeoTileFetcherNokia();
 
-    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
+    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) override;
 
     QString token() const;
     QString applicationId() const;

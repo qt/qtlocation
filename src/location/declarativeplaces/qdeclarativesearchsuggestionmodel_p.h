@@ -74,26 +74,26 @@ public:
 
     QStringList suggestions() const;
 
-    void clearData(bool suppressSignal = false);
+    void clearData(bool suppressSignal = false) override;
 
     // From QAbstractListModel
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    QHash<int, QByteArray> roleNames() const;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
     enum Roles {
         SearchSuggestionRole = Qt::UserRole
     };
 
 protected Q_SLOTS:
-    virtual void queryFinished();
+    void queryFinished() override;
 
 Q_SIGNALS:
     void searchTermChanged();
     void suggestionsChanged();
 
 protected:
-    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
+    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request) override;
 
 private:
     QStringList m_suggestions;

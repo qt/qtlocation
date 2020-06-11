@@ -566,7 +566,7 @@ class QtPositioningDeclarativeModule: public QQmlExtensionPlugin
 
 public:
     QtPositioningDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
-    virtual void registerTypes(const char *uri)
+    void registerTypes(const char *uri) override
     {
         if (QLatin1String(uri) == QStringLiteral("QtPositioning")) {
 

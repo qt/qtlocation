@@ -63,7 +63,7 @@ public:
 
     ~QPlaceReviewPrivate();
 
-    bool compare(const QPlaceContentPrivate *other) const;
+    bool compare(const QPlaceContentPrivate *other) const override;
 
     Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceReview, QPlaceContent::ReviewType);
 

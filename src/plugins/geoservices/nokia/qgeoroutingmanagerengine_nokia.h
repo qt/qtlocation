@@ -57,8 +57,8 @@ public:
                                   QString *errorString);
     ~QGeoRoutingManagerEngineNokia();
 
-    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request);
-    QGeoRouteReply *updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
+    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request) override;
+    QGeoRouteReply *updateRoute(const QGeoRoute &route, const QGeoCoordinate &position) override;
 
 private Q_SLOTS:
     void routeFinished();

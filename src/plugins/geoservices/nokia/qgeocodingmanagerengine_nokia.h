@@ -60,14 +60,14 @@ public:
     ~QGeoCodingManagerEngineNokia();
 
     QGeoCodeReply *geocode(const QGeoAddress &address,
-                             const QGeoShape &bounds);
+                             const QGeoShape &bounds) override;
     QGeoCodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
-                                    const QGeoShape &bounds);
+                                  const QGeoShape &bounds) override;
 
     QGeoCodeReply *geocode(const QString &searchString,
                             int limit,
                             int offset,
-                            const QGeoShape &bounds);
+                            const QGeoShape &bounds) override;
 
 private Q_SLOTS:
     void placesFinished();
