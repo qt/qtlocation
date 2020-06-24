@@ -67,7 +67,7 @@
 #include <QtGui/QMatrix4x4>
 #include <QColor>
 #include <QList>
-#include <QVector>
+#include <QList>
 #include <QtCore/QScopedValueRollback>
 
 QT_BEGIN_NAMESPACE
@@ -117,9 +117,8 @@ public:
     void allocateAndFillPolygon(QSGGeometry *geom) const
     {
 
-
-        const QVector<QDeclarativeGeoMapItemUtils::vec2> &vx = m_screenVertices;
-        const QVector<quint32> &ix = m_screenIndices;
+        const QList<QDeclarativeGeoMapItemUtils::vec2> &vx = m_screenVertices;
+        const QList<quint32> &ix = m_screenIndices;
 
         geom->allocate(vx.size(), ix.size());
         if (geom->indexType() == QSGGeometry::UnsignedShortType) {
@@ -137,10 +136,10 @@ public:
             pts[i].set(vx[i].x, vx[i].y);
     }
 
-    QVector<QDeclarativeGeoMapItemUtils::vec2> m_screenVertices;
-    QVector<quint32> m_screenIndices;
+    QList<QDeclarativeGeoMapItemUtils::vec2> m_screenVertices;
+    QList<quint32> m_screenIndices;
     QDoubleVector2D m_bboxLeftBoundWrapped;
-    QVector<WrappedPolygon> m_wrappedPolygons;
+    QList<WrappedPolygon> m_wrappedPolygons;
     int m_wrapOffset;
 };
 

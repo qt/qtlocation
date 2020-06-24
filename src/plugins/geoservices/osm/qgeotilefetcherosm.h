@@ -42,7 +42,7 @@
 
 #include "qgeotileproviderosm.h"
 #include <QtLocation/private/qgeotilefetcher_p.h>
-#include <QVector>
+#include <QList>
 
 QT_BEGIN_NAMESPACE
 
@@ -57,8 +57,7 @@ class QGeoTileFetcherOsm : public QGeoTileFetcher
     friend class QGeoMapReplyOsm;
     friend class QGeoTiledMappingManagerEngineOsm;
 public:
-    QGeoTileFetcherOsm(const QVector<QGeoTileProviderOsm *> &providers,
-                       QNetworkAccessManager *nm,
+    QGeoTileFetcherOsm(const QList<QGeoTileProviderOsm *> &providers, QNetworkAccessManager *nm,
                        QGeoMappingManagerEngine *parent);
 
     void setUserAgent(const QByteArray &userAgent);
@@ -79,7 +78,7 @@ private:
     void readyUpdated();
 
     QByteArray m_userAgent;
-    QVector<QGeoTileProviderOsm *> m_providers;
+    QList<QGeoTileProviderOsm *> m_providers;
     QNetworkAccessManager *m_nm;
     bool m_ready;
 };

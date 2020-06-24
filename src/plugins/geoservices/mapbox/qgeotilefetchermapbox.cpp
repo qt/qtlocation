@@ -60,7 +60,7 @@ void QGeoTileFetcherMapbox::setUserAgent(const QByteArray &userAgent)
     m_userAgent = userAgent;
 }
 
-void QGeoTileFetcherMapbox::setMapIds(const QVector<QString> &mapIds)
+void QGeoTileFetcherMapbox::setMapIds(const QList<QString> &mapIds)
 {
     m_mapIds = mapIds;
 }

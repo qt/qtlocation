@@ -553,7 +553,7 @@ inline static void translatePoly(   QList<QGeoCoordinate> &m_path,
 void QGeoPolygonPrivate::translate(double degreesLatitude, double degreesLongitude)
 {
     // Need min/maxLati, so update bbox
-    QVector<double> m_deltaXs;
+    QList<double> m_deltaXs;
     double m_minX, m_maxX, m_minLati, m_maxLati;
     m_bboxDirty = false; // Updated in translatePoly
     computeBBox(m_path, m_deltaXs, m_minX, m_maxX, m_minLati, m_maxLati, m_bbox);

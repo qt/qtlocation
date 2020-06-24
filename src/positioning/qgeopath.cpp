@@ -587,7 +587,7 @@ bool QGeoPathPrivate::containsCoordinate(const QGeoCoordinate &coordinate) const
 void QGeoPathPrivate::translate(double degreesLatitude, double degreesLongitude)
 {
     // Need min/maxLati, so update bbox
-    QVector<double> m_deltaXs;
+    QList<double> m_deltaXs;
     double m_minX, m_maxX, m_minLati, m_maxLati;
     m_bboxDirty = false;
     computeBBox(m_path, m_deltaXs, m_minX, m_maxX, m_minLati, m_maxLati, m_bbox);
@@ -671,7 +671,7 @@ void QGeoPathPrivate::markDirty()
 
 void QGeoPathPrivate::computeBoundingBox()
 {
-    QVector<double> m_deltaXs;
+    QList<double> m_deltaXs;
     double m_minX, m_maxX, m_minLati, m_maxLati;
     m_bboxDirty = false;
     computeBBox(m_path, m_deltaXs, m_minX, m_maxX, m_minLati, m_maxLati, m_bbox);

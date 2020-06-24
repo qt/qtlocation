@@ -2672,7 +2672,7 @@ bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
         grabber = touchPointGrabberItem(point);
 
         if (grabber && stealEvent && !grabber->keepTouchGrab() && grabber != this) {
-            QVector<int> ids;
+            QList<int> ids;
             foreach (const QTouchEvent::TouchPoint &tp, event->touchPoints()) {
                 if (!(tp.state() & Qt::TouchPointReleased)) {
                     ids.append(tp.id());

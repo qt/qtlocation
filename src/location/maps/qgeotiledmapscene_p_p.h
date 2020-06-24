@@ -171,7 +171,7 @@ public:
     double m_mapEdgeSize;
 
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > m_textures;
-    QVector<QGeoTileSpec> m_updatedTextures;
+    QList<QGeoTileSpec> m_updatedTextures;
 
     // tilesToGrid transform
     int m_minTileX; // the minimum tile index, i.e. 0 to sideLength which is 1<< zoomLevel

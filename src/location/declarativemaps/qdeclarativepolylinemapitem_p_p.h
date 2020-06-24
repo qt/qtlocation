@@ -93,8 +93,8 @@ public:
                       const QDoubleVector2D &leftBoundWrapped);
 
 public:
-    QVector<qreal> srcPoints_;
-    QVector<QPainterPath::ElementType> srcPointTypes_;
+    QList<qreal> srcPoints_;
+    QList<QPainterPath::ElementType> srcPointTypes_;
 
 #ifdef QT_LOCATION_DEBUG
     QList<QDoubleVector2D> m_wrappedPath;
@@ -216,9 +216,11 @@ protected:
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapItemLODGeometry
 {
 public:
-    mutable std::array<QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>, 7> m_verticesLOD; // fix it to 7,
-                                                                             // do not allow simplifications beyond ZL 20. This could actually be limited even further
-    mutable QVector<QDeclarativeGeoMapItemUtils::vec2> *m_screenVertices;
+    mutable std::array<QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>>, 7>
+            m_verticesLOD; // fix it to 7,
+                           // do not allow simplifications beyond ZL 20. This could actually be
+                           // limited even further
+    mutable QList<QDeclarativeGeoMapItemUtils::vec2> *m_screenVertices;
     mutable QSharedPointer<unsigned int> m_working;
 
     QGeoMapItemLODGeometry()
@@ -229,8 +231,8 @@ public:
     void resetLOD()
     {
         // New pointer, some old LOD task might still be running and operating on the old pointers.
-        m_verticesLOD[0] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
-                            new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+        m_verticesLOD[0] = QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>>(
+                new QList<QDeclarativeGeoMapItemUtils::vec2>);
         for (unsigned int i = 1; i < m_verticesLOD.size(); ++i)
             m_verticesLOD[i] = nullptr; // allocate on first use
         m_screenVertices = m_verticesLOD.front().data(); // resetting pointer to data to be LOD 0
@@ -244,16 +246,15 @@ public:
 
     void selectLOD(unsigned int zoom, double leftBound, bool /*closed*/);
 
-    static QVector<QDeclarativeGeoMapItemUtils::vec2> getSimplified (
-            QVector<QDeclarativeGeoMapItemUtils::vec2> &wrappedPath,
-                              double leftBoundWrapped,
-                              unsigned int zoom);
+    static QList<QDeclarativeGeoMapItemUtils::vec2>
+    getSimplified(QList<QDeclarativeGeoMapItemUtils::vec2> &wrappedPath, double leftBoundWrapped,
+                  unsigned int zoom);
 
-    static void enqueueSimplificationTask(const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input, // reference as it gets copied in the nested call
-                              const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
-                              double leftBound,
-                              unsigned int zoom,
-                              QSharedPointer<unsigned int> &working);
+    static void enqueueSimplificationTask(
+            const QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>>
+                    &input, // reference as it gets copied in the nested call
+            const QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>> &output,
+            double leftBound, unsigned int zoom, QSharedPointer<unsigned int> &working);
 
     void selectLODOnDataChanged(unsigned int zoom, double leftBound) const;
 
@@ -365,7 +366,7 @@ public:
 
 public:
     QDoubleVector2D m_bboxLeftBoundWrapped;
-    QVector<WrappedPolyline> m_wrappedPolygons;
+    QList<WrappedPolyline> m_wrappedPolygons;
     int m_wrapOffset;
 
     friend class QDeclarativeCircleMapItem;

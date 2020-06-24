@@ -53,7 +53,7 @@
 #include <QPainterPath>
 #include <QPointF>
 #include <QRectF>
-#include <QVector>
+#include <QList>
 #include <QGeoCoordinate>
 #include <QVector2D>
 #include <QList>
@@ -106,8 +106,8 @@ public:
         return QVector2D(screenVertices_[index]);
     }
 
-    inline QVector<QPointF> vertices() const { return screenVertices_; }
-    inline QVector<quint32> indices() const { return screenIndices_; }
+    inline QList<QPointF> vertices() const { return screenVertices_; }
+    inline QList<quint32> indices() const { return screenIndices_; }
 
     inline bool isIndexed() const { return (!screenIndices_.isEmpty()); }
 
@@ -153,8 +153,8 @@ protected:
 
     QGeoCoordinate srcOrigin_;
 
-    QVector<QPointF> screenVertices_;
-    QVector<quint32> screenIndices_;
+    QList<QPointF> screenVertices_;
+    QList<quint32> screenIndices_;
 };
 
 QT_END_NAMESPACE

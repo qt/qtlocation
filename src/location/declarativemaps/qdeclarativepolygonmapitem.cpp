@@ -398,8 +398,8 @@ static void wrapPath(const QGeoPolygon &poly
 }
 
 static void cutPathEars(const QList<QList<QDoubleVector2D>> &wrappedPaths,
-                        QVector<QDeclarativeGeoMapItemUtils::vec2> &screenVertices,
-                        QVector<quint32> &screenIndices)
+                        QList<QDeclarativeGeoMapItemUtils::vec2> &screenVertices,
+                        QList<quint32> &screenIndices)
 {
     using Coord = double;
     using N = uint32_t;
@@ -427,8 +427,8 @@ static void cutPathEars(const QList<QList<QDoubleVector2D>> &wrappedPaths,
 }
 
 static void cutPathEars(const QList<QDoubleVector2D> &wrappedPath,
-                        QVector<QDeclarativeGeoMapItemUtils::vec2> &screenVertices,
-                        QVector<quint32> &screenIndices)
+                        QList<QDeclarativeGeoMapItemUtils::vec2> &screenVertices,
+                        QList<quint32> &screenIndices)
 {
     using Coord = double;
     using N = uint32_t;

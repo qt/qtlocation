@@ -105,7 +105,7 @@ public:
 
     bool m_proxying = false;
     QPointer<QIODevice> source;
-    QVector<QPointer<QIOPipe>> childPipes;
+    QList<QPointer<QIOPipe>> childPipes;
 };
 
 #endif // QIOPIPE_P_H

@@ -49,7 +49,7 @@
 #include <QtLocation/QPlaceSearchResult>
 
 #include <QtCore/QLocale>
-#include <QtCore/QVector>
+#include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QObject>
 #include <QtLocation/QPlaceIcon>

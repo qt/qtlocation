@@ -37,7 +37,7 @@
 #ifndef QGEOTILEFETCHERMAPBOX_H
 #define QGEOTILEFETCHERMAPBOX_H
 
-#include <qvector.h>
+#include <qlist.h>
 #include <QtLocation/private/qgeotilefetcher_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -53,7 +53,7 @@ public:
     QGeoTileFetcherMapbox(int scaleFactor, QGeoTiledMappingManagerEngine *parent);
 
     void setUserAgent(const QByteArray &userAgent);
-    void setMapIds(const QVector<QString> &mapIds);
+    void setMapIds(const QList<QString> &mapIds);
     void setFormat(const QString &format);
     void setAccessToken(const QString &accessToken);
 
@@ -65,7 +65,7 @@ private:
     QString m_format;
     QString m_replyFormat;
     QString m_accessToken;
-    QVector<QString> m_mapIds;
+    QList<QString> m_mapIds;
     int m_scaleFactor;
 };
 

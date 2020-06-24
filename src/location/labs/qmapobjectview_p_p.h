@@ -52,7 +52,7 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapobject_p_p.h>
 #include <QPointer>
-#include <QVector>
+#include <QList>
 #include <QQmlComponent>
 
 QT_BEGIN_NAMESPACE

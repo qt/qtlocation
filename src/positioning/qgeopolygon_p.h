@@ -111,7 +111,7 @@ public:
     void updateBoundingBox();
 
 // data members
-    QVector<double> m_deltaXs;      // longitude deltas from m_path[0]
+    QList<double> m_deltaXs; // longitude deltas from m_path[0]
     double m_minX = 0;              // minimum value inside deltaXs
     double m_maxX = 0;              // maximum value inside deltaXs
     double m_minLati = 0;           // minimum latitude. paths do not wrap around through the poles

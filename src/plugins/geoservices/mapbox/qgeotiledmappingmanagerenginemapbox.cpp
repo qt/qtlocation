@@ -119,7 +119,7 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
         }
     }
 
-    QVector<QString> mapIds;
+    QList<QString> mapIds;
     for (int i=0; i < mapTypes.size(); ++i)
          mapIds.push_back(mapTypes[i].name());
 

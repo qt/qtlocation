@@ -105,13 +105,13 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     }
 
     /* TileProviders setup */
-    QVector<TileProvider *> providers_street;
-    QVector<TileProvider *> providers_satellite;
-    QVector<TileProvider *> providers_cycle;
-    QVector<TileProvider *> providers_transit;
-    QVector<TileProvider *> providers_nighttransit;
-    QVector<TileProvider *> providers_terrain;
-    QVector<TileProvider *> providers_hiking;
+    QList<TileProvider *> providers_street;
+    QList<TileProvider *> providers_satellite;
+    QList<TileProvider *> providers_cycle;
+    QList<TileProvider *> providers_transit;
+    QList<TileProvider *> providers_nighttransit;
+    QList<TileProvider *> providers_terrain;
+    QList<TileProvider *> providers_hiking;
     if (highdpi) {
         providers_street.push_back(new TileProvider(domain + "street-hires", true));
         providers_satellite.push_back(new TileProvider(domain + "satellite-hires", true));
@@ -349,7 +349,7 @@ QGeoMap *QGeoTiledMappingManagerEngineOsm::createMap()
     return map;
 }
 
-const QVector<QGeoTileProviderOsm *> &QGeoTiledMappingManagerEngineOsm::providers()
+const QList<QGeoTileProviderOsm *> &QGeoTiledMappingManagerEngineOsm::providers()
 {
     return m_providers;
 }

@@ -55,7 +55,7 @@
 #include "qgeocameradata_p.h"
 #include "qgeotilespec_p.h"
 
-#include <QtCore/qvector.h>
+#include <QtCore/qlist.h>
 #include <QtCore/qset.h>
 
 QT_BEGIN_NAMESPACE
@@ -73,7 +73,7 @@ struct Q_LOCATION_PRIVATE_EXPORT Frustum
     QDoubleVector3D bottomRightFar;
 };
 
-typedef QVector<QDoubleVector3D> PolygonVector;
+typedef QList<QDoubleVector3D> PolygonVector;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoCameraTilesPrivate
 {

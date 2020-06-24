@@ -71,8 +71,8 @@ void QGeoMapItemGeometry::translate(const QPointF &offset)
 */
 void QGeoMapItemGeometry::allocateAndFill(QSGGeometry *geom) const
 {
-    const QVector<QPointF> &vx = screenVertices_;
-    const QVector<quint32> &ix = screenIndices_;
+    const QList<QPointF> &vx = screenVertices_;
+    const QList<quint32> &ix = screenIndices_;
 
     if (isIndexed()) {
         geom->allocate(vx.size(), ix.size());

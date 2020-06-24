@@ -55,11 +55,14 @@ static void setSSL(QGeoMapType &mapType, bool isHTTPS)
                           metadata);
 }
 
-QGeoTileProviderOsm::QGeoTileProviderOsm(QNetworkAccessManager *nm,
-                                         const QGeoMapType &mapType,
-                                         const QVector<TileProvider *> &providers,
+QGeoTileProviderOsm::QGeoTileProviderOsm(QNetworkAccessManager *nm, const QGeoMapType &mapType,
+                                         const QList<TileProvider *> &providers,
                                          const QGeoCameraCapabilities &cameraCapabilities)
-:   m_nm(nm), m_provider(nullptr), m_mapType(mapType), m_status(Idle), m_cameraCapabilities(cameraCapabilities)
+    : m_nm(nm),
+      m_provider(nullptr),
+      m_mapType(mapType),
+      m_status(Idle),
+      m_cameraCapabilities(cameraCapabilities)
 {
     for (int i = 0; i < providers.size(); ++i) {
         TileProvider *p = providers[i];

@@ -45,7 +45,7 @@
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
 
-#include <QVector>
+#include <QList>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,7 +60,7 @@ public:
     ~QGeoTiledMappingManagerEngineOsm();
 
     QGeoMap *createMap() override;
-    const QVector<QGeoTileProviderOsm *> &providers();
+    const QList<QGeoTileProviderOsm *> &providers();
     QString customCopyright() const;
 
 protected Q_SLOTS:
@@ -71,7 +71,7 @@ protected:
     void updateMapTypes();
 
 private:
-    QVector<QGeoTileProviderOsm *> m_providers;
+    QList<QGeoTileProviderOsm *> m_providers;
     QString m_customCopyright;
     QString m_cacheDirectory;
     QString m_offlineDirectory;

@@ -44,7 +44,7 @@
 #include <QtPositioning/private/qdoublevector3d_p.h>
 #include <QtPositioning/private/qlocationutils_p.h>
 #include <QtGui/QMatrix4x4>
-#include <QVector>
+#include <QList>
 #include <QMap>
 #include <QPair>
 #include <QSet>
@@ -346,10 +346,8 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double viewExpansion) const
     return frustum;
 }
 
-static bool appendZIntersects(const QDoubleVector3D &start,
-                                               const QDoubleVector3D &end,
-                                               double z,
-                                               QVector<QDoubleVector3D> &results)
+static bool appendZIntersects(const QDoubleVector3D &start, const QDoubleVector3D &end, double z,
+                              QList<QDoubleVector3D> &results)
 {
     if (start.z() == end.z()) {
         return false;
@@ -400,7 +398,7 @@ QPair<PolygonVector, PolygonVector> QGeoCameraTilesPrivate::splitPolygonAtAxisVa
         return QPair<PolygonVector, PolygonVector>(polygonBelow, polygonAbove);
     }
 
-    QVector<int> comparisons = QVector<int>(polygon.size());
+    QList<int> comparisons = QList<int>(polygon.size());
 
     for (int i = 0; i < size; ++i) {
         double v = polygon.at(i).get(axis);
@@ -664,8 +662,8 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
     if (numPoints == 0)
         return QSet<QGeoTileSpec>();
 
-    QVector<int> tilesX(polygon.size());
-    QVector<int> tilesY(polygon.size());
+    QList<int> tilesX(polygon.size());
+    QList<int> tilesY(polygon.size());
 
     // grab tiles at the corners of the polygon
     for (int i = 0; i < numPoints; ++i) {

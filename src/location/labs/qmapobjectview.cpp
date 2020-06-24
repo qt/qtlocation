@@ -322,7 +322,7 @@ void QMapObjectView::modelUpdated(const QQmlChangeSet &changeSet, bool reset)
         flushDelegateModel();
     } else {
         // Remove map objects from the back to the front to retain the mapping to what is received from the changesets
-        const QVector<QQmlChangeSet::Change> &removes = changeSet.removes();
+        const QList<QQmlChangeSet::Change> &removes = changeSet.removes();
         std::map<int, int> mapRemoves;
         for (int i = 0; i < removes.size(); i++)
             mapRemoves.insert(std::pair<int, int>(removes.at(i).start(), i));

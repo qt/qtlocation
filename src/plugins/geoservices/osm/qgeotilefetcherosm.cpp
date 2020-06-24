@@ -48,7 +48,7 @@
 
 QT_BEGIN_NAMESPACE
 
-static bool providersResolved(const QVector<QGeoTileProviderOsm *> &providers)
+static bool providersResolved(const QList<QGeoTileProviderOsm *> &providers)
 {
     foreach (const QGeoTileProviderOsm *provider, providers)
         if (!provider->isResolved())
@@ -75,12 +75,13 @@ QGeoTileFetcherOsmPrivate::~QGeoTileFetcherOsmPrivate()
 {
 }
 
-
-QGeoTileFetcherOsm::QGeoTileFetcherOsm(const QVector<QGeoTileProviderOsm *> &providers,
-                                       QNetworkAccessManager *nm,
-                                       QGeoMappingManagerEngine *parent)
-:   QGeoTileFetcher(*new QGeoTileFetcherOsmPrivate(), parent), m_userAgent("Qt Location based application"),
-    m_providers(providers), m_nm(nm), m_ready(true)
+QGeoTileFetcherOsm::QGeoTileFetcherOsm(const QList<QGeoTileProviderOsm *> &providers,
+                                       QNetworkAccessManager *nm, QGeoMappingManagerEngine *parent)
+    : QGeoTileFetcher(*new QGeoTileFetcherOsmPrivate(), parent),
+      m_userAgent("Qt Location based application"),
+      m_providers(providers),
+      m_nm(nm),
+      m_ready(true)
 {
     m_nm->setParent(this);
     foreach (QGeoTileProviderOsm *provider, m_providers) {

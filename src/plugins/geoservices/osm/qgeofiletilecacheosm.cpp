@@ -45,11 +45,13 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoFileTileCacheOsm::QGeoFileTileCacheOsm(const QVector<QGeoTileProviderOsm *> &providers,
+QGeoFileTileCacheOsm::QGeoFileTileCacheOsm(const QList<QGeoTileProviderOsm *> &providers,
                                            const QString &offlineDirectory,
-                                           const QString &directory,
-                                           QObject *parent)
-:   QGeoFileTileCache(directory, parent), m_offlineDirectory(offlineDirectory), m_offlineData(false), m_providers(providers)
+                                           const QString &directory, QObject *parent)
+    : QGeoFileTileCache(directory, parent),
+      m_offlineDirectory(offlineDirectory),
+      m_offlineData(false),
+      m_providers(providers)
 {
     m_highDpi.resize(providers.size());
     if (!offlineDirectory.isEmpty()) {

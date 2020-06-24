@@ -40,7 +40,7 @@
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtCore/QUrl>
-#include <QtCore/QVector>
+#include <QtCore/QList>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtCore/QPointer>
@@ -141,9 +141,8 @@ public:
                  Resolving,
                  Resolved };
 
-    QGeoTileProviderOsm(QNetworkAccessManager *nm,
-                        const QGeoMapType &mapType,
-                        const QVector<TileProvider *> &providers,
+    QGeoTileProviderOsm(QNetworkAccessManager *nm, const QGeoMapType &mapType,
+                        const QList<TileProvider *> &providers,
                         const QGeoCameraCapabilities &cameraCapabilities);
     ~QGeoTileProviderOsm();
 
@@ -181,7 +180,7 @@ protected:
 /* Data members */
 
     QNetworkAccessManager *m_nm;
-    QVector<TileProvider *> m_providerList;
+    QList<TileProvider *> m_providerList;
     TileProvider *m_provider;
     int m_providerId;
     QGeoMapType m_mapType;

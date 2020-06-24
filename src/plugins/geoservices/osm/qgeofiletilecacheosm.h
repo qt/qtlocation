@@ -49,10 +49,9 @@ class QGeoFileTileCacheOsm : public QGeoFileTileCache
 {
     Q_OBJECT
 public:
-    QGeoFileTileCacheOsm(const QVector<QGeoTileProviderOsm *> &providers,
+    QGeoFileTileCacheOsm(const QList<QGeoTileProviderOsm *> &providers,
                          const QString &offlineDirectory = QString(),
-                         const QString &directory = QString(),
-                         QObject *parent = 0);
+                         const QString &directory = QString(), QObject *parent = 0);
     ~QGeoFileTileCacheOsm();
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) override;
@@ -77,9 +76,9 @@ protected:
 
     QDir m_offlineDirectory;
     bool m_offlineData;
-    QVector<QGeoTileProviderOsm *> m_providers;
-    QVector<bool> m_highDpi;
-    QVector<QDateTime> m_maxMapIdTimestamps;
+    QList<QGeoTileProviderOsm *> m_providers;
+    QList<bool> m_highDpi;
+    QList<QDateTime> m_maxMapIdTimestamps;
 };
 
 QT_END_NAMESPACE

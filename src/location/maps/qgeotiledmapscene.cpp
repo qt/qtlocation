@@ -625,7 +625,7 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
 
     // Evicting loZL tiles temporarily used in place of hiZL ones
     if (d->m_updatedTextures.size()) {
-        const QVector<QGeoTileSpec> &toRemove = d->m_updatedTextures;
+        const QList<QGeoTileSpec> &toRemove = d->m_updatedTextures;
         for (const QGeoTileSpec &s : toRemove) {
             if (mapRoot->tiles->tiles.contains(s))
                 delete mapRoot->tiles->tiles.take(s);

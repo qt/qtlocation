@@ -82,7 +82,7 @@ bool QIOPipePrivate::readAvailableData() {
 void QIOPipePrivate::pumpData(const QByteArray &ba)
 {
     if (m_proxying) {
-        QVector<int> toRemove;
+        QList<int> toRemove;
         for (int i = 0; i < childPipes.size(); ++i) {
             const QPointer<QIOPipe> &cp = childPipes.at(i);
             if (!cp) {

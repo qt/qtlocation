@@ -56,17 +56,13 @@
 #include "qgeocoordinate.h"
 #include "qlocationutils_p.h"
 #include <QtPositioning/qgeopath.h>
-#include <QtCore/QVector>
+#include <QtCore/QList>
 
 QT_BEGIN_NAMESPACE
 
-inline static void computeBBox( const QList<QGeoCoordinate> &m_path,
-                                QVector<double> &m_deltaXs,
-                                double &m_minX,
-                                double &m_maxX,
-                                double &m_minLati,
-                                double &m_maxLati,
-                                QGeoRectangle &m_bbox)
+inline static void computeBBox(const QList<QGeoCoordinate> &m_path, QList<double> &m_deltaXs,
+                               double &m_minX, double &m_maxX, double &m_minLati, double &m_maxLati,
+                               QGeoRectangle &m_bbox)
 {
     if (m_path.isEmpty()) {
         m_deltaXs.clear();
@@ -116,13 +112,9 @@ inline static void computeBBox( const QList<QGeoCoordinate> &m_path,
                            QGeoCoordinate(m_minLati, m_path.at(maxId).longitude()));
 }
 
-inline static void updateBBox( const QList<QGeoCoordinate> &m_path,
-                                QVector<double> &m_deltaXs,
-                                double &m_minX,
-                                double &m_maxX,
-                                double &m_minLati,
-                                double &m_maxLati,
-                                QGeoRectangle &m_bbox)
+inline static void updateBBox(const QList<QGeoCoordinate> &m_path, QList<double> &m_deltaXs,
+                              double &m_minX, double &m_maxX, double &m_minLati, double &m_maxLati,
+                              QGeoRectangle &m_bbox)
 {
     if (m_path.isEmpty()) {
         m_deltaXs.clear();
@@ -244,7 +236,7 @@ public:
     void updateBoundingBox();
 
 // data members
-    QVector<double> m_deltaXs;      // longitude deltas from m_path[0]
+    QList<double> m_deltaXs; // longitude deltas from m_path[0]
     double m_minX = 0;              // minimum value inside deltaXs
     double m_maxX = 0;              // maximum value inside deltaXs
     double m_minLati = 0;           // minimum latitude. paths do not wrap around through the poles

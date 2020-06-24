@@ -571,10 +571,8 @@ static inline int clipPointType(qreal x, qreal y, const QRectF &rect)
     return type;
 }
 
-static void clipSegmentToRect(qreal x0, qreal y0, qreal x1, qreal y1,
-                              const QRectF &clipRect,
-                              QVector<qreal> &outPoints,
-                              QVector<QPainterPath::ElementType> &outTypes)
+static void clipSegmentToRect(qreal x0, qreal y0, qreal x1, qreal y1, const QRectF &clipRect,
+                              QList<qreal> &outPoints, QList<QPainterPath::ElementType> &outTypes)
 {
     int type0 = clipPointType(x0, y0, clipRect);
     int type1 = clipPointType(x1, y1, clipRect);
@@ -637,11 +635,9 @@ static void clipSegmentToRect(qreal x0, qreal y0, qreal x1, qreal y1,
     }
 }
 
-static void clipPathToRect(const QVector<qreal> &points,
-                           const QVector<QPainterPath::ElementType> &types,
-                           const QRectF &clipRect,
-                           QVector<qreal> &outPoints,
-                           QVector<QPainterPath::ElementType> &outTypes)
+static void clipPathToRect(const QList<qreal> &points,
+                           const QList<QPainterPath::ElementType> &types, const QRectF &clipRect,
+                           QList<qreal> &outPoints, QList<QPainterPath::ElementType> &outTypes)
 {
     outPoints.clear();
     outPoints.reserve(points.size());
@@ -686,8 +682,8 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     viewport.adjust(-strokeWidth, -strokeWidth, strokeWidth * 2, strokeWidth * 2);
     viewport.translate(-1 * origin);
 
-    QVector<qreal> points;
-    QVector<QPainterPath::ElementType> types;
+    QList<qreal> points;
+    QList<QPainterPath::ElementType> types;
 
     if (clipToViewport_) {
         // Although the geometry has already been clipped against the visible region in wrapped mercator space.
@@ -755,7 +751,7 @@ bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
 {
     // screenOutline_.contains(screenPoint) doesn't work, as, it appears, that
     // screenOutline_ for QGeoMapPolylineGeometry is empty (QRectF(0,0 0x0))
-    const QVector<QPointF> &verts = vertices();
+    const QList<QPointF> &verts = vertices();
     QPolygonF tri;
     for (int i = 0; i < verts.size(); ++i) {
         tri << verts[i];
@@ -1625,7 +1621,7 @@ bool QGeoMapPolylineGeometryOpenGL::allocateAndFillEntries(QSGGeometry *geom,
             return false;
     }
 
-    const QVector<QDeclarativeGeoMapItemUtils::vec2> &v = *m_screenVertices;
+    const QList<QDeclarativeGeoMapItemUtils::vec2> &v = *m_screenVertices;
     if (v.size() < 2) {
         geom->allocate(0, 0);
         return true;
@@ -1692,7 +1688,7 @@ void QGeoMapPolylineGeometryOpenGL::allocateAndFillLineStrip(QSGGeometry *geom,
     // Select LOD. Generate if not present. Assign it to m_screenVertices;
     Q_UNUSED(lod)
 
-    const QVector<QDeclarativeGeoMapItemUtils::vec2> &vx = *m_screenVertices;
+    const QList<QDeclarativeGeoMapItemUtils::vec2> &vx = *m_screenVertices;
     geom->allocate(vx.size());
 
     QSGGeometry::Point2D *pts = geom->vertexDataAsPoint2D();
@@ -1918,10 +1914,10 @@ const char *MapPolylineShaderExtruded::vertexShaderMiteredSegments() const
     "}\n";
 }
 
-QVector<QDeclarativeGeoMapItemUtils::vec2> QGeoMapItemLODGeometry::getSimplified(
-       QVector<QDeclarativeGeoMapItemUtils::vec2> &wrappedPath, // reference as it gets copied in the nested call
-                                                  double leftBoundWrapped,
-                                                  unsigned int zoom)
+QList<QDeclarativeGeoMapItemUtils::vec2> QGeoMapItemLODGeometry::getSimplified(
+        QList<QDeclarativeGeoMapItemUtils::vec2>
+                &wrappedPath, // reference as it gets copied in the nested call
+        double leftBoundWrapped, unsigned int zoom)
 {
     // Try a simplify step
     QList<QDoubleVector2D> data;
@@ -1932,7 +1928,7 @@ QVector<QDeclarativeGeoMapItemUtils::vec2> QGeoMapItemLODGeometry::getSimplified
                                                                 zoom);
 
     data.clear();
-    QVector<QDeclarativeGeoMapItemUtils::vec2> simple;
+    QList<QDeclarativeGeoMapItemUtils::vec2> simple;
     for (auto e: simplified)
         simple << e;
     return simple;
@@ -1947,16 +1943,11 @@ bool QGeoMapItemLODGeometry::isLODActive(unsigned int lod) const
 class PolylineSimplifyTask : public QRunnable
 {
 public:
-    PolylineSimplifyTask(const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input, // reference as it gets copied in the nested call
-                         const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
-                         double leftBound,
-                         unsigned int zoom,
-                         QSharedPointer<unsigned int> &working)
-        : m_zoom(zoom)
-        , m_leftBound(leftBound)
-        , m_input(input)
-        , m_output(output)
-        , m_working(working)
+    PolylineSimplifyTask(const QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>>
+                                 &input, // reference as it gets copied in the nested call
+                         const QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>> &output,
+                         double leftBound, unsigned int zoom, QSharedPointer<unsigned int> &working)
+        : m_zoom(zoom), m_leftBound(leftBound), m_input(input), m_output(output), m_working(working)
     {
         Q_ASSERT(!input.isNull());
         Q_ASSERT(!output.isNull());
@@ -1969,25 +1960,23 @@ public:
         // Skip sending notifications for now. Updated data will be picked up eventually.
         // ToDo: figure out how to connect a signal from here to a slot in the item.
         *m_working = QGeoMapPolylineGeometryOpenGL::zoomToLOD(m_zoom);
-        const QVector<QDeclarativeGeoMapItemUtils::vec2> res =
-                QGeoMapPolylineGeometryOpenGL::getSimplified( *m_input,
-                                   m_leftBound,
-                                   QGeoMapPolylineGeometryOpenGL::zoomForLOD(m_zoom));
+        const QList<QDeclarativeGeoMapItemUtils::vec2> res =
+                QGeoMapPolylineGeometryOpenGL::getSimplified(
+                        *m_input, m_leftBound, QGeoMapPolylineGeometryOpenGL::zoomForLOD(m_zoom));
         *m_output = res;
         *m_working = 0;
     }
 
     unsigned int m_zoom;
     double m_leftBound;
-    QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > m_input, m_output;
+    QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>> m_input, m_output;
     QSharedPointer<unsigned int> m_working;
 };
 
-void QGeoMapItemLODGeometry::enqueueSimplificationTask(const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &input,
-                                                  const QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2> > &output,
-                                                  double leftBound,
-                                                  unsigned int zoom,
-                                                  QSharedPointer<unsigned int> &working)
+void QGeoMapItemLODGeometry::enqueueSimplificationTask(
+        const QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>> &input,
+        const QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>> &output, double leftBound,
+        unsigned int zoom, QSharedPointer<unsigned int> &working)
 {
     Q_ASSERT(!input.isNull());
     Q_ASSERT(!output.isNull());
@@ -2010,8 +1999,8 @@ void QGeoMapItemLODGeometry::selectLOD(unsigned int zoom, double leftBound, bool
         // if here, zoomToLOD != 0 and no current working task.
         // So select the last filled LOD != m_working (lower-bounded by 1,
         // guaranteed to exist), and enqueue the right one
-        m_verticesLOD[requestedLod] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
-                            new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+        m_verticesLOD[requestedLod] = QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>>(
+                new QList<QDeclarativeGeoMapItemUtils::vec2>);
 
         for (unsigned int i = requestedLod - 1; i >= 1; i--) {
             if (*m_working != i && !m_verticesLOD[i].isNull()) {
@@ -2019,8 +2008,8 @@ void QGeoMapItemLODGeometry::selectLOD(unsigned int zoom, double leftBound, bool
                 break;
             } else if (i == 1) {
                 // get 1 synchronously if not computed already
-                m_verticesLOD[1] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
-                                    new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+                m_verticesLOD[1] = QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>>(
+                        new QList<QDeclarativeGeoMapItemUtils::vec2>);
                 *m_verticesLOD[1] = getSimplified( *m_verticesLOD[0],
                                                    leftBound,
                                                    zoomForLOD(0));
@@ -2044,16 +2033,16 @@ void QGeoMapItemLODGeometry::selectLODOnDataChanged(unsigned int zoom, double le
     if (lod > 0) {
         // Generate ZL 1 as fallback for all cases != 0. Do not do if 0 is requested
         // (= old behavior, LOD disabled)
-        m_verticesLOD[1] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
-                                new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+        m_verticesLOD[1] = QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>>(
+                new QList<QDeclarativeGeoMapItemUtils::vec2>);
         *m_verticesLOD[1] = getSimplified( *m_verticesLOD[0],
                 leftBound,
                 zoomForLOD(0));
     }
     if (lod > 1) {
         if (!m_verticesLOD[lod])
-            m_verticesLOD[lod] = QSharedPointer<QVector<QDeclarativeGeoMapItemUtils::vec2>>(
-                                    new QVector<QDeclarativeGeoMapItemUtils::vec2>);
+            m_verticesLOD[lod] = QSharedPointer<QList<QDeclarativeGeoMapItemUtils::vec2>>(
+                    new QList<QDeclarativeGeoMapItemUtils::vec2>);
         enqueueSimplificationTask(  m_verticesLOD.at(0),
                                     m_verticesLOD[lod],
                 leftBound,

@@ -331,8 +331,8 @@ private:
     QVector2D m_flickVector;
     QElapsedTimer m_lastPosTime;
     QPointF m_lastPos;
-    QVector<QTouchEvent::TouchPoint> m_allPoints;
-    QVector<QTouchEvent::TouchPoint> m_touchPoints;
+    QList<QTouchEvent::TouchPoint> m_allPoints;
+    QList<QTouchEvent::TouchPoint> m_touchPoints;
     QScopedPointer<QTouchEvent::TouchPoint> m_mousePoint;
     QPointF m_sceneStartPoint1;
 
