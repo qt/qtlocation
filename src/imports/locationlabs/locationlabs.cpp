@@ -52,8 +52,8 @@ QT_BEGIN_NAMESPACE
 
 static QObject *singleton_type_factory(QQmlEngine *engine, QJSEngine *jsEngine)
 {
-    Q_UNUSED(engine)
-    Q_UNUSED(jsEngine)
+    Q_UNUSED(engine);
+    Q_UNUSED(jsEngine);
 
     return new LocationLabsSingleton;
 }

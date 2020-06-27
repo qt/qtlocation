@@ -111,8 +111,8 @@ QParameterizableObject::QParameterizableObject(QObject *parent)
 
 void QParameterizableObjectData::parentChanged(QAbstractDeclarativeData *d, QObject *o, QObject *p)
 {
-    Q_UNUSED(p)
-    Q_UNUSED(d)
+    Q_UNUSED(p);
+    Q_UNUSED(d);
     QParameterizableObject *po = qobject_cast<QParameterizableObject *>(o);
     if (po)
         po->parentChanged();

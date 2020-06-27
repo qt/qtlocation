@@ -1686,7 +1686,7 @@ void QGeoMapPolylineGeometryOpenGL::allocateAndFillLineStrip(QSGGeometry *geom,
                                                              int lod) const
 {
     // Select LOD. Generate if not present. Assign it to m_screenVertices;
-    Q_UNUSED(lod)
+    Q_UNUSED(lod);
 
     const QList<QDeclarativeGeoMapItemUtils::vec2> &vx = *m_screenVertices;
     geom->allocate(vx.size());

@@ -251,14 +251,14 @@ QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryTest::positionInfoSourceWit
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryTest::satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters)
 {
     Q_UNUSED(parent);
-    Q_UNUSED(parameters)
+    Q_UNUSED(parameters);
     return nullptr;
 }
 
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryTest::areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters)
 {
     Q_UNUSED(parent);
-    Q_UNUSED(parameters)
+    Q_UNUSED(parameters);
     return nullptr;
 }
 

@@ -312,7 +312,7 @@ public:
 
     bool contains(const QPointF &point) const override
     {
-        Q_UNUSED(point)
+        Q_UNUSED(point);
         return false;
     }
 

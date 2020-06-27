@@ -379,7 +379,7 @@ void QMapObjectView::removeMapObjectFromMap(int index)
     if (releaseStatus == QQmlInstanceModel::Referenced)
         qWarning() << "object "<<mo<<" still referenced";
 #else
-    Q_UNUSED(releaseStatus)
+    Q_UNUSED(releaseStatus);
 #endif
     }
 }

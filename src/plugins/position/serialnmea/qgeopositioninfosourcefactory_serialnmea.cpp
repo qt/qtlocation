@@ -264,6 +264,6 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySerialNmea::satelliteInfoS
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySerialNmea::areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters)
 {
     Q_UNUSED(parent);
-    Q_UNUSED(parameters)
+    Q_UNUSED(parameters);
     return nullptr;
 }

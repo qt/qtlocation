@@ -63,7 +63,7 @@
 }
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    Q_UNUSED(manager)
+    Q_UNUSED(manager);
     if (status == kCLAuthorizationStatusNotDetermined)
         m_positionInfoSource->requestUpdate(MINIMUM_UPDATE_INTERVAL);
 }
