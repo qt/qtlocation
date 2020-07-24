@@ -877,7 +877,7 @@ QTouchEvent::TouchPoint* createTouchPointFromMouseEvent(QMouseEvent *event, Qt::
     // this is only partially filled. But since it is only partially used it works
     // more robust would be to store a list of QPointFs rather than TouchPoints
     QTouchEvent::TouchPoint* newPoint = new QTouchEvent::TouchPoint();
-    newPoint->setPos(event->localPos());
+    newPoint->setPos(event->position());
     newPoint->setScenePos(event->windowPos());
     newPoint->setScreenPos(event->screenPos());
     newPoint->setState(state);
@@ -895,7 +895,7 @@ void QQuickGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
         return;
     }
 
-    m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointPressed));
+    m_mousePoint.reset(createTouchPointFromMouseEvent(event, QEventPoint::State::Pressed));
     if (m_touchPoints.isEmpty())
         update();
     event->accept();
@@ -911,7 +911,7 @@ void QQuickGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
         return;
     }
 
-    m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointMoved));
+    m_mousePoint.reset(createTouchPointFromMouseEvent(event, QEventPoint::State::Updated));
     if (m_touchPoints.isEmpty())
         update();
     event->accept();
@@ -930,7 +930,7 @@ void QQuickGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *event)
     if (!m_mousePoint.isNull()) {
         //this looks super ugly , however is required in case we do not get synthesized MouseReleaseEvent
         //and we reset the point already in handleTouchUngrabEvent
-        m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointReleased));
+        m_mousePoint.reset(createTouchPointFromMouseEvent(event, QEventPoint::State::Released));
         if (m_touchPoints.isEmpty())
             update();
     }
@@ -978,7 +978,7 @@ void QQuickGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
 
     for (int i = 0; i < event->touchPoints().count(); ++i) {
         auto point = event->touchPoints().at(i);
-        if (point.state() != Qt::TouchPointReleased)
+        if (point.state() != QEventPoint::State::Released)
             m_touchPoints << point;
     }
     if (event->touchPoints().count() >= 2)
@@ -1197,7 +1197,7 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
 */
 void QQuickGeoMapGestureArea::startOneTouchPoint()
 {
-    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
+    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePosition());
     m_lastPos = m_sceneStartPoint1;
     m_lastPosTime.start();
     QGeoCoordinate startCoord = m_declarativeMap->toCoordinate(m_sceneStartPoint1, false);
@@ -1754,7 +1754,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
 bool QQuickGeoMapGestureArea::canStartPan()
 {
     if (m_allPoints.count() == 0 || (m_acceptedGestures & PanGesture) == 0
-            || (m_mousePoint && m_mousePoint->state() == Qt::TouchPointReleased)) // mouseReleaseEvent handling does not clear m_mousePoint, only ungrabMouse does -- QTBUG-66534
+            || (m_mousePoint && m_mousePoint->state() == QEventPoint::State::Released)) // mouseReleaseEvent handling does not clear m_mousePoint, only ungrabMouse does -- QTBUG-66534
         return false;
 
     // Check if thresholds for normal panning are met.
