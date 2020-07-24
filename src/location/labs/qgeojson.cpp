@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2020 The Qt Company Ltd.
 ** Copyright (C) 2018 Julian Sherollari <jdotsh@gmail.com>
 ** Contact: https://www.qt.io/licensing/
 **
@@ -1194,12 +1194,12 @@ QString printQvariant(const QVariant v, int tabs = 0) {
             // Handle type first, to easy reading
             if (map.contains(QStringLiteral("type"))) {
                 stream  << sTabs << sTab << QStringLiteral("type") << " : "
-                        << printQvariant(map[QStringLiteral("type")], tabs + 1).remove(QRegExp(QStringLiteral("^[ ]*")));;
+                        << printQvariant(map[QStringLiteral("type")], tabs + 1).remove(QRegularExpression(QStringLiteral("^[ ]*")));;
             }
             for (QVariantMap::const_iterator iter = map.begin(); iter != map.end(); ++iter) {
                 if (iter.key() == QStringLiteral("type"))
                     continue;
-                stream  << sTabs << sTab << iter.key() << " : " << printQvariant(iter.value(), tabs + 1).remove(QRegExp(QStringLiteral("^[ ]*")));;
+                stream  << sTabs << sTab << iter.key() << " : " << printQvariant(iter.value(), tabs + 1).remove(QRegularExpression(QStringLiteral("^[ ]*")));;
             }
         }
         for (int i  = 0; i < l.size(); ++i)
