@@ -249,7 +249,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(const QVar
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &sourceName, const QVariantMap &parameters, QObject *parent)
 {
-    QHash<QString, QJsonObject> plugins = QGeoPositionInfoSourcePrivate::plugins();
+    auto plugins = QGeoPositionInfoSourcePrivate::plugins();
     if (plugins.contains(sourceName))
         return createSource_real(plugins.value(sourceName), parameters, parent);
     return nullptr;
@@ -262,7 +262,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
 QStringList QGeoSatelliteInfoSource::availableSources()
 {
     QStringList plugins;
-    const QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
+    const auto meta = QGeoPositionInfoSourcePrivate::plugins();
     for (auto it = meta.cbegin(), end = meta.cend(); it != end; ++it) {
         if (it.value().value(QStringLiteral("Satellite")).isBool()
                 && it.value().value(QStringLiteral("Satellite")).toBool()) {

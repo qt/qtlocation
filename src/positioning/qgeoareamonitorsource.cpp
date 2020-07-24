@@ -173,7 +173,7 @@ QGeoAreaMonitorSource *QGeoAreaMonitorSource::createDefaultSource(QObject *paren
 */
 QGeoAreaMonitorSource *QGeoAreaMonitorSource::createSource(const QString &sourceName, QObject *parent)
 {
-    QHash<QString, QJsonObject> plugins = QGeoPositionInfoSourcePrivate::plugins();
+    auto plugins = QGeoPositionInfoSourcePrivate::plugins();
     if (plugins.contains(sourceName)) {
         QGeoPositionInfoSourcePrivate d;
         d.metaData = plugins.value(sourceName);
@@ -196,7 +196,7 @@ QGeoAreaMonitorSource *QGeoAreaMonitorSource::createSource(const QString &source
 QStringList QGeoAreaMonitorSource::availableSources()
 {
     QStringList plugins;
-    const QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
+    const auto meta = QGeoPositionInfoSourcePrivate::plugins();
     for (auto it = meta.cbegin(), end = meta.cend(); it != end; ++it) {
         if (it.value().value(QStringLiteral("Monitor")).isBool()
                 && it.value().value(QStringLiteral("Monitor")).toBool()) {
