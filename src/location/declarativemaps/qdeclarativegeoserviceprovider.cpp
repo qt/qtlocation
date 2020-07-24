@@ -147,7 +147,7 @@ void QDeclarativeGeoServiceProvider::tryAttach()
 
     sharedProvider_ = new QGeoServiceProvider(name_, parameterMap());
     sharedProvider_->setQmlEngine(qmlEngine(this));
-    sharedProvider_->setLocale(locales_.at(0));
+    sharedProvider_->setLocale(QLocale(locales_.at(0)));
     sharedProvider_->setAllowExperimental(experimental_);
 
     emit attached();
@@ -592,7 +592,7 @@ void QDeclarativeGeoServiceProvider::setLocales(const QStringList &locales)
         locales_.append(QLocale().name());
 
     if (sharedProvider_)
-        sharedProvider_->setLocale(locales_.at(0));
+        sharedProvider_->setLocale(QLocale(locales_.at(0)));
 
     emit localesChanged();
 }
