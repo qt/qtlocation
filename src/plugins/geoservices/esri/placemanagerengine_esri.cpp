@@ -144,7 +144,6 @@ QPlaceSearchReply *PlaceManagerEngineEsri::search(const QPlaceSearchRequest &req
     requestUrl.setQuery(queryItems);
 
     QNetworkRequest networkRequest(requestUrl);
-    networkRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     QNetworkReply *networkReply = m_networkManager->get(networkRequest);
 
     PlaceSearchReplyEsri *reply = new PlaceSearchReplyEsri(request, networkReply, m_candidateFieldsLocale, m_countriesLocale, this);
