@@ -65,11 +65,11 @@ Here is an example of a client that uses a \l{PositionSource}{position source}
 to center a \l{Map}{map} on the current position:
 
 \code
-    Rectangle {
+    import QtPositioning 5.2
+    import QtLocation 5.3
+    ...
 
-        import QtPositioning 5.2
-        import QtLocation 5.3
-        ...
+    Rectangle {
 
         Map {
             id: map
