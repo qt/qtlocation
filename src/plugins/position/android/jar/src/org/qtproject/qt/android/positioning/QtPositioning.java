@@ -37,7 +37,7 @@
 **
 ****************************************************************************/
 
-package org.qtproject.qt5.android.positioning;
+package org.qtproject.qt.android.positioning;
 
 import android.content.Context;
 import android.location.GpsSatellite;

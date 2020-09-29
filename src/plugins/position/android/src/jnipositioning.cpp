@@ -587,7 +587,7 @@ static JNINativeMethod methods[] = {
 static bool registerNatives(JNIEnv *env)
 {
     jclass clazz;
-    FIND_AND_CHECK_CLASS("org/qtproject/qt5/android/positioning/QtPositioning");
+    FIND_AND_CHECK_CLASS("org/qtproject/qt/android/positioning/QtPositioning");
     positioningClass = static_cast<jclass>(env->NewGlobalRef(clazz));
 
     if (env->RegisterNatives(positioningClass, methods, sizeof(methods) / sizeof(methods[0])) < 0) {

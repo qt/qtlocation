@@ -47,7 +47,7 @@ qt_add_module(Positioning
 
 if(ANDROID)
     set_property(TARGET Positioning APPEND PROPERTY QT_ANDROID_BUNDLED_JAR_DEPENDENCIES
-        jar/QtPositioning.jar:org.qtproject.qt5.android.positioning.QtPositioning
+        jar/Qt${QtLocation_VERSION_MAJOR}AndroidPositioning.jar:org.qtproject.qt.android.positioning.QtPositioning # special case
     )
     set_property(TARGET Positioning APPEND PROPERTY QT_ANDROID_LIB_DEPENDENCIES
         plugins/position/libplugins_position_qtposition_android.so

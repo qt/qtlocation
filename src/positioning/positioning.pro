@@ -10,7 +10,7 @@ QMAKE_DOCS = $$PWD/doc/qtpositioning.qdocconf
 OTHER_FILES += configure.json doc/src/*.qdoc doc/src/plugins/*.qdoc   # show .qdoc files in Qt Creator
 
 ANDROID_BUNDLED_JAR_DEPENDENCIES = \
-    jar/QtPositioning.jar:org.qtproject.qt5.android.positioning.QtPositioning
+    jar/Qt$${QT_MAJOR_VERSION}AndroidPositioning.jar:org.qtproject.qt.android.positioning.QtPositioning
 ANDROID_PERMISSIONS += \
     android.permission.ACCESS_FINE_LOCATION
 ANDROID_FEATURES += \
