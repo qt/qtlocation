@@ -48,7 +48,32 @@ static int findMapObject(QGeoMapObject *o, const QList<MapObject> &list)
     }
     return -1;
 }
+namespace  {
+bool findNodeInStructure(QSGNode *root, QSGNode *item)
+{
+    if (root == nullptr || item == nullptr)
+        return false;
+    if (root == item)
+        return true;
+    auto currentChild = root->firstChild();
+    // First check the direct child nodes and if not found let's dive deeper
+    bool bFound = (item == currentChild);
 
+    while (!bFound && currentChild) {
+        currentChild = currentChild->nextSibling();
+        bFound = (item == currentChild);
+    }
+
+    if (!bFound) {
+        currentChild = root->firstChild();
+        while (!bFound && currentChild) {
+            bFound = findNodeInStructure(currentChild, item);
+            currentChild = currentChild->nextSibling();
+        }
+    }
+    return bFound;
+}
+}
 bool QGeoMapObjectQSGSupport::createMapObjectImplementation(QGeoMapObject *obj, QGeoMapPrivate *d)
 {
     QExplicitlySharedDataPointer<QGeoMapObjectPrivate> pimpl =
@@ -157,9 +182,11 @@ void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *wind
 {
     if (!root)
         return;
+    if (!findNodeInStructure(root, m_mapObjectsRootNode))
+         m_mapObjectsRootNode = nullptr;
     if (!m_mapObjectsRootNode) {
         m_mapObjectsRootNode = new QDeclarativePolygonMapItemPrivateOpenGL::RootNode();
-        root->appendChildNode(m_mapObjectsRootNode);
+        root->appendChildNode(m_mapObjectsRootNode); // PASSING OWNERSHIP!
     }
 
     m_mapObjectsRootNode->removeAllChildNodes();
