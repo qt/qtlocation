@@ -108,7 +108,7 @@ void tst_QPlaceManager::testLocales()
     QCOMPARE(placeManager->locales().count(), 1);
     QCOMPARE(placeManager->locales().at(0), QLocale());
 
-    QLocale locale(QLocale::Norwegian, QLocale::Norway);
+    QLocale locale(QLocale::NorwegianBokmal, QLocale::Norway);
     placeManager->setLocale(locale);
 
     QCOMPARE(placeManager->locales().at(0), locale);
