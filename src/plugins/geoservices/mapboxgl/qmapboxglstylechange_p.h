@@ -59,6 +59,7 @@ public:
 
     static QList<QSharedPointer<QMapboxGLStyleChange>> addMapParameter(QGeoMapParameter *);
     static QList<QSharedPointer<QMapboxGLStyleChange>> addMapItem(QDeclarativeGeoMapItemBase *, const QString &before);
+    static QList<QSharedPointer<QMapboxGLStyleChange>> removeMapParameter(QGeoMapParameter *);
     static QList<QSharedPointer<QMapboxGLStyleChange>> removeMapItem(QDeclarativeGeoMapItemBase *);
 
     virtual void apply(QMapboxGL *map) = 0;

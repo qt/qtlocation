@@ -255,6 +255,35 @@ QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::addMapItem(QDe
     return changes;
 }
 
+QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::removeMapParameter(QGeoMapParameter *param)
+{
+    static const QStringList acceptedParameterTypes = QStringList()
+        << QStringLiteral("paint") << QStringLiteral("layout") << QStringLiteral("filter")
+        << QStringLiteral("layer") << QStringLiteral("source") << QStringLiteral("image");
+
+    QList<QSharedPointer<QMapboxGLStyleChange>> changes;
+
+    switch (acceptedParameterTypes.indexOf(param->type())) {
+    case -1:
+        qWarning() << "Invalid value for property 'type': " + param->type();
+        break;
+    case 0: // paint
+    case 1: // layout
+    case 2: // filter
+        break;
+    case 3: // layer
+        changes << QSharedPointer<QMapboxGLStyleChange>(new QMapboxGLStyleRemoveLayer(param->property("name").toString()));
+        break;
+    case 4: // source
+        changes << QSharedPointer<QMapboxGLStyleChange>(new QMapboxGLStyleRemoveSource(param->property("name").toString()));
+        break;
+    case 5: // image
+        break;
+    }
+
+    return changes;
+}
+
 QList<QSharedPointer<QMapboxGLStyleChange>> QMapboxGLStyleChange::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
     QList<QSharedPointer<QMapboxGLStyleChange>> changes;

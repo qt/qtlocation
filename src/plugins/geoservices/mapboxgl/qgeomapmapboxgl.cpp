@@ -193,6 +193,11 @@ void QGeoMapMapboxGLPrivate::removeParameter(QGeoMapParameter *param)
     Q_Q(QGeoMapMapboxGL);
 
     q->disconnect(param);
+
+    if (m_styleLoaded) {
+        m_styleChanges << QMapboxGLStyleChange::removeMapParameter(param);
+        emit q->sgNodeChanged();
+    }
 }
 
 QGeoMap::ItemTypes QGeoMapMapboxGLPrivate::supportedMapItemTypes() const
