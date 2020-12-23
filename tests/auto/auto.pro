@@ -37,8 +37,7 @@ qtHaveModule(location) {
         qplacemanager.depends = geotestplugin
     }
 
-    #misc tests
-    SUBDIRS +=   doublevectors
+    #qml interface tests
     !android: SUBDIRS += cmake qmlinterface # looks for .qmls locally
 
     #Map and Navigation tests
@@ -56,7 +55,8 @@ qtHaveModule(location) {
            qgeotilespec \
            qgeoroutexmlparser \
            maptype \
-           qgeocameratiles
+           qgeocameratiles \
+           qgeojson
 
     # These use plugins
     !android: {
@@ -81,8 +81,8 @@ qtHaveModule(location) {
     }
 }
 
-
 SUBDIRS += \
+           doublevectors \
            qgeoaddress \
            qgeoshape \
            qgeorectangle \
@@ -92,8 +92,7 @@ SUBDIRS += \
            qgeocoordinate \
            qgeolocation \
            qgeopositioninfo \
-           qgeosatelliteinfo \
-           qgeojson
+           qgeosatelliteinfo
 
 !android: SUBDIRS += \
             positionplugin \

@@ -293,7 +293,7 @@ QGeoPolygon LocationSingleton::polygon(const QVariantList &perimeter, const QVar
     QGeoPolygon poly(internalCoordinates);
 
     for (int i = 0; i < holes.size(); i++) {
-        if (holes.at(i).type() == QVariant::List) {
+        if (holes.at(i).metaType().id() == QMetaType::QVariantList) {
             QList<QGeoCoordinate> hole;
             const QVariantList &holeData = holes.at(i).toList();
             for (int j = 0; j < holeData.size(); j++) {

@@ -105,13 +105,13 @@ public:
       ~QGeoSatelliteInfoSourceGypsy();
       int init();
 
-      int minimumUpdateInterval() const;
-      Error error() const;
+      int minimumUpdateInterval() const override;
+      Error error() const override;
 
 public slots:
-      virtual void startUpdates();
-      void stopUpdates();
-      void requestUpdate(int timeout = 5000);
+      virtual void startUpdates() override;
+      void stopUpdates() override;
+      void requestUpdate(int timeout = 5000) override;
       void satellitesChanged(GypsySatellite *satellite, GPtrArray *satellites);
 
 signals:

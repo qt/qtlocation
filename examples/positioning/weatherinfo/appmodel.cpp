@@ -54,7 +54,7 @@
 #include <qgeosatelliteinfosource.h>
 #include <qnmeapositioninfosource.h>
 #include <qgeopositioninfo.h>
-#include <qnetworkconfigmanager.h>
+#include <qnetworkaccessmanager.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -185,13 +185,13 @@ static void forecastAppend(QQmlListProperty<WeatherData> *prop, WeatherData *val
     Q_UNUSED(prop);
 }
 
-static WeatherData *forecastAt(QQmlListProperty<WeatherData> *prop, int index)
+static WeatherData *forecastAt(QQmlListProperty<WeatherData> *prop, qsizetype index)
 {
     AppModelPrivate *d = static_cast<AppModelPrivate*>(prop->data);
     return d->forecast.at(index);
 }
 
-static int forecastCount(QQmlListProperty<WeatherData> *prop)
+static qsizetype forecastCount(QQmlListProperty<WeatherData> *prop)
 {
     AppModelPrivate *d = static_cast<AppModelPrivate*>(prop->data);
     return d->forecast.size();

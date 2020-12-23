@@ -117,7 +117,6 @@ struct Q_POSITIONING_PRIVATE_EXPORT QGeoSatelliteInfoData
     QList<SatelliteInfo> satellites;
 };
 
-Q_POSITIONING_PRIVATE_EXPORT void qt_registerLocationTypes();
 Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator<<(QDataStream &out, const QGeoPositionInfoData &s);
 Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator>>(QDataStream &in, QGeoPositionInfoData &s);
 Q_POSITIONING_PRIVATE_EXPORT QDataStream &operator<<(QDataStream &out, const QGeoSatelliteInfoData &s);

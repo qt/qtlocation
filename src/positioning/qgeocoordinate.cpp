@@ -51,21 +51,6 @@
 QT_BEGIN_NAMESPACE
 
 
-struct CoordinateStreamOperators
-{
-    CoordinateStreamOperators()
-    {
-#ifndef QT_NO_DATASTREAM
-        qRegisterMetaTypeStreamOperators<QGeoCoordinate>();
-#endif
-#ifndef QT_NO_DEBUG_STREAM
-        QMetaType::registerDebugStreamOperator<QGeoCoordinate>();
-#endif
-    }
-};
-Q_GLOBAL_STATIC(CoordinateStreamOperators, initStreamOperators);
-
-
 static const double qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
 
@@ -218,9 +203,6 @@ QGeoMercatorCoordinatePrivate::~QGeoMercatorCoordinatePrivate()
 QGeoCoordinate::QGeoCoordinate()
         : d(new QGeoCoordinatePrivate)
 {
-#ifndef QT_NO_DATASTREAM
-    initStreamOperators();
-#endif
 }
 
 /*!
@@ -235,10 +217,6 @@ QGeoCoordinate::QGeoCoordinate()
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
         : d(new QGeoCoordinatePrivate)
 {
-#ifndef QT_NO_DATASTREAM
-    initStreamOperators();
-#endif
-
     if (QLocationUtils::isValidLat(latitude) && QLocationUtils::isValidLong(longitude)) {
         d->lat = latitude;
         d->lng = longitude;
@@ -260,10 +238,6 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitude)
         : d(new QGeoCoordinatePrivate)
 {
-#ifndef QT_NO_DATASTREAM
-    initStreamOperators();
-#endif
-
     if (QLocationUtils::isValidLat(latitude) && QLocationUtils::isValidLong(longitude)) {
         d->lat = latitude;
         d->lng = longitude;

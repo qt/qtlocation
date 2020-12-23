@@ -156,13 +156,13 @@ void QGeoSatelliteInfoSourceGeoclueMaster::updateSatelliteInfo(int timestamp, in
             inUse.append(si);
 
     if (satInfos.length() != satellitesVisible) {
-        qWarning("QGeoSatelliteInfoSourceGeoclueMaster number of in view QGeoSatelliteInfos (%d) "
+        qWarning("QGeoSatelliteInfoSourceGeoclueMaster number of in view QGeoSatelliteInfos (%lld) "
                  "does not match expected number of in view satellites (%d).", satInfos.length(),
                  satellitesVisible);
     }
 
     if (inUse.length() != satellitesUsed) {
-        qWarning("QGeoSatelliteInfoSourceGeoclueMaster number of in use QGeoSatelliteInfos (%d) "
+        qWarning("QGeoSatelliteInfoSourceGeoclueMaster number of in use QGeoSatelliteInfos (%lld) "
                  "does not match expected number of in use satellites (%d).", inUse.length(),
                  satellitesUsed);
     }

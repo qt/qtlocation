@@ -62,7 +62,6 @@ namespace Simulator
     LocationConnection::LocationConnection()
         : mConnection(new Connection(Connection::Client, simulatorName, simulatorPort, Version(1,3,0,0)))
     {
-        qt_registerLocationTypes();
         mWorker = mConnection->connectToServer(Connection::simulatorHostName(true), simulatorPort);
         if (!mWorker)
             return;

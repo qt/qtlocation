@@ -298,7 +298,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
             } else if (localFileName.startsWith(QStringLiteral("qrc:/"))) {
                 localFileName.remove(0, 5);
             }
-            if (!QFile::exists(localFileName) && localFileName.startsWith('/')) {
+            if (!QFile::exists(localFileName) && localFileName.startsWith(QLatin1Char('/'))) {
                 localFileName.remove(0,1);
             }
         }
@@ -320,7 +320,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
         delete m_nmeaFile;
         m_nmeaFile = new QFile(localFileName);
         if (!m_nmeaFile->exists()) {
-            localFileName.prepend(':');
+            localFileName.prepend(QLatin1Char(':'));
             m_nmeaFile->setFileName(localFileName);
         }
         if (m_nmeaFile->exists()) {
@@ -822,7 +822,7 @@ void QDeclarativePositionSource::parameter_append(QQmlListProperty<QDeclarativeP
 /*!
     \internal
 */
-int QDeclarativePositionSource::parameter_count(QQmlListProperty<QDeclarativePluginParameter> *prop)
+qsizetype QDeclarativePositionSource::parameter_count(QQmlListProperty<QDeclarativePluginParameter> *prop)
 {
     return static_cast<QDeclarativePositionSource *>(prop->object)->m_parameters.count();
 }
@@ -830,7 +830,7 @@ int QDeclarativePositionSource::parameter_count(QQmlListProperty<QDeclarativePlu
 /*!
     \internal
 */
-QDeclarativePluginParameter *QDeclarativePositionSource::parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, int index)
+QDeclarativePluginParameter *QDeclarativePositionSource::parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, qsizetype index)
 {
     return static_cast<QDeclarativePositionSource *>(prop->object)->m_parameters[index];
 }

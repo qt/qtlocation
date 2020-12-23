@@ -576,29 +576,21 @@ public:
             int minor = 0;
 
             qRegisterMetaType<QGeoCoordinate>();
-            QMetaType::registerEqualsComparator<QGeoCoordinate>();
             qRegisterMetaType<QGeoAddress>();
             qRegisterMetaType<QGeoRectangle>();
-            QMetaType::registerEqualsComparator<QGeoRectangle>();
             qRegisterMetaType<QGeoCircle>();
-            QMetaType::registerEqualsComparator<QGeoCircle>();
             qRegisterMetaType<QGeoPath>();
-            QMetaType::registerEqualsComparator<QGeoPath>();
             qRegisterMetaType<QGeoPolygon>();
-            QMetaType::registerEqualsComparator<QGeoPolygon>();
             qRegisterMetaType<QGeoLocation>();
             qRegisterMetaType<QGeoShape>();
-            QMetaType::registerEqualsComparator<QGeoShape>();
             qRegisterMetaType<QGeoCoordinateObject *>();
             qRegisterMetaType<QGeoPositionInfo>();
-            QMetaType::registerEqualsComparator<QGeoPositionInfo>();
 
             qRegisterAnimationInterpolator<QGeoCoordinate>(q_coordinateInterpolator);
 
             // Register the 5.0 types
             // 5.0 is silent and not advertised
             qmlRegisterSingletonType<LocationSingleton  >(uri, major, minor, "QtPositioning", singleton_type_factory);
-            qmlRegisterValueTypeEnums<QGeoShape         >(uri, major, minor, "GeoShape");
             qmlRegisterType<QDeclarativePosition        >(uri, major, minor, "Position");
             qmlRegisterType<QDeclarativePositionSource  >(uri, major, minor, "PositionSource");
             qmlRegisterType<QDeclarativeGeoAddress      >(uri, major, minor, "Address");

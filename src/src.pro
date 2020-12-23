@@ -1,7 +1,12 @@
 TEMPLATE = subdirs
 
-QT_FOR_CONFIG += location-private
-include($$OUT_PWD/location/qtlocation-config.pri)
+# This variable is introduced to skip QtLocation build during migration to Qt6
+SKIP_QT_LOCATION = TRUE
+
+!defined(SKIP_QT_LOCATION, var) {
+    QT_FOR_CONFIG += location-private
+    include($$OUT_PWD/location/qtlocation-config.pri)
+}
 include($$OUT_PWD/positioning/qtpositioning-config.pri)
 
 clip2tri.subdir = 3rdparty/clip2tri
@@ -15,14 +20,27 @@ SUBDIRS += positioning
 positioning.depends = clip2tri
 
 qtHaveModule(quick) {
-    SUBDIRS += positioningquick location
-    positioningquick.depends += positioning
-    location.depends += positioningquick clip2tri
+    defined(SKIP_QT_LOCATION, var) {
+        SUBDIRS += positioningquick
+    } else {
+        SUBDIRS += positioningquick location
+    }
 
-    plugins.depends += location
+    positioningquick.depends += positioning
+
+    !defined(SKIP_QT_LOCATION, var) {
+        location.depends += positioningquick clip2tri
+
+        plugins.depends += location
+    }
 
     SUBDIRS += imports
-    imports.depends += positioningquick positioning location
+
+    defined(SKIP_QT_LOCATION, var) {
+        imports.depends += positioningquick positioning
+    } else {
+        imports.depends += positioningquick positioning location
+    }
 }
 plugins.depends += positioning
 SUBDIRS += plugins
@@ -34,11 +52,13 @@ SUBDIRS += plugins
     #plugin dependency required during static builds
     positioning_doc_snippets.depends = positioning plugins
 
-    qtHaveModule(quick) {
-        SUBDIRS += location_doc_snippets
-        location_doc_snippets.subdir = location/doc/snippets
+    !defined(SKIP_QT_LOCATION, var) {
+        qtHaveModule(quick) {
+            SUBDIRS += location_doc_snippets
+            location_doc_snippets.subdir = location/doc/snippets
 
-        #plugin dependency required during static builds
-        location_doc_snippets.depends = location plugins
+            #plugin dependency required during static builds
+            location_doc_snippets.depends = location plugins
+        }
     }
 }

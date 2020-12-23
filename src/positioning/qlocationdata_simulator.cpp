@@ -65,13 +65,6 @@ QGeoSatelliteInfoData::SatelliteInfo::SatelliteInfo()
       satelliteSystem(Undefined),
       satelliteIdentifier(0) {}
 
-void qt_registerLocationTypes()
-{
-    qRegisterMetaTypeStreamOperators<QGeoPositionInfoData>("QGeoPositionInfoData");
-    qRegisterMetaTypeStreamOperators<QGeoSatelliteInfoData>("QGeoSatelliteInfoData");
-    qRegisterMetaTypeStreamOperators<QGeoSatelliteInfoData::SatelliteInfo>("QGeoSatelliteInfoData::SatelliteInfo");
-}
-
 QDataStream &operator<<(QDataStream &out, const QGeoPositionInfoData &s)
 {
     out << s.latitude << s.longitude << s.altitude;

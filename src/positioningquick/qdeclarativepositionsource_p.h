@@ -166,8 +166,8 @@ private:
     void tryAttach(const QString &name, bool useFallback = true);
 
     static void parameter_append(QQmlListProperty<QDeclarativePluginParameter> *prop, QDeclarativePluginParameter *mapObject);
-    static int parameter_count(QQmlListProperty<QDeclarativePluginParameter> *prop);
-    static QDeclarativePluginParameter *parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, int index);
+    static qsizetype parameter_count(QQmlListProperty<QDeclarativePluginParameter> *prop);
+    static QDeclarativePluginParameter *parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, qsizetype index);
     static void parameter_clear(QQmlListProperty<QDeclarativePluginParameter> *prop);
 
     QGeoPositionInfoSource *m_positionSource;

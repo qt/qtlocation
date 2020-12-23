@@ -51,9 +51,9 @@ class QGeoPositionInfoSourceFactoryGypsy : public QObject, public QGeoPositionIn
     Q_INTERFACES(QGeoPositionInfoSourceFactory)
 
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent);
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent) override;
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) override;
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent) override;
 };
 
 #endif

@@ -42,16 +42,16 @@ public:
     DummySource(QObject *parent = nullptr);
     ~DummySource();
 
-    void startUpdates();
-    void stopUpdates();
-    void requestUpdate(int timeout=5000);
+    void startUpdates() override;
+    void stopUpdates() override;
+    void requestUpdate(int timeout = 5000) override;
 
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const;
-    PositioningMethods supportedPositioningMethods() const;
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const override;
+    PositioningMethods supportedPositioningMethods() const override;
 
-    void setUpdateInterval(int msec);
-    int minimumUpdateInterval() const;
-    Error error() const;
+    void setUpdateInterval(int msec) override;
+    int minimumUpdateInterval() const override;
+    Error error() const override;
 
 private:
     QTimer *timer;
@@ -187,9 +187,9 @@ class QGeoPositionInfoSourceFactoryTestV1 : public QObject, public QGeoPositionI
     Q_INTERFACES(QGeoPositionInfoSourceFactory)
 
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent);
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent) override;
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) override;
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent) override;
 };
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryTestV1::positionInfoSource(QObject *parent)

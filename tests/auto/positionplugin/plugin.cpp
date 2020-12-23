@@ -43,16 +43,16 @@ public:
     DummySource(const QVariantMap &parameters, QObject *parent=0);
     ~DummySource();
 
-    void startUpdates();
-    void stopUpdates();
-    void requestUpdate(int timeout=5000);
+    void startUpdates() override;
+    void stopUpdates() override;
+    void requestUpdate(int timeout = 5000) override;
 
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const;
-    PositioningMethods supportedPositioningMethods() const;
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const override;
+    PositioningMethods supportedPositioningMethods() const override;
 
-    void setUpdateInterval(int msec);
-    int minimumUpdateInterval() const;
-    Error error() const;
+    void setUpdateInterval(int msec) override;
+    int minimumUpdateInterval() const override;
+    Error error() const override;
 
 private:
     QTimer *timer;
@@ -219,13 +219,16 @@ class QGeoPositionInfoSourceFactoryTest : public QObject, public QGeoPositionInf
     Q_INTERFACES(QGeoPositionInfoSourceFactoryV2)
 
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent);
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent) override;
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) override;
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent) override;
 
-    QGeoPositionInfoSource *positionInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters);
-    QGeoSatelliteInfoSource *satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters);
-    QGeoAreaMonitorSource *areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters);
+    QGeoPositionInfoSource *positionInfoSourceWithParameters(QObject *parent,
+                                                             const QVariantMap &parameters) override;
+    QGeoSatelliteInfoSource *satelliteInfoSourceWithParameters(QObject *parent,
+                                                               const QVariantMap &parameters) override;
+    QGeoAreaMonitorSource *areaMonitorWithParameters(QObject *parent,
+                                                     const QVariantMap &parameters) override;
 };
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryTest::positionInfoSource(QObject *parent)

@@ -37,7 +37,7 @@
 #include "qgeopositioninfosource_winrt_p.h"
 
 #include <QtCore/qcoreapplication.h>
-#include <QtCore/qfunctions_winrt.h>
+#include <QtCore/private/qfunctions_winrt_p.h>
 #include <QtCore/qloggingcategory.h>
 #include <QtCore/qmutex.h>
 #ifdef Q_OS_WINRT
