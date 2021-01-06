@@ -34,6 +34,7 @@ Makefile*
 *.prl
 *.app
 *.pro.user
+CMakeLists.txt.user*
 *.qmlproject.user
 *.gcov
 config.log

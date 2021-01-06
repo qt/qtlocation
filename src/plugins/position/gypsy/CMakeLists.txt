@@ -1,0 +1,24 @@
+# Generated from gypsy.pro.
+
+#####################################################################
+## QGeoPositionInfoSourceFactoryGypsy Plugin:
+#####################################################################
+
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGypsy
+    OUTPUT_NAME qtposition_gypsy
+    TYPE position
+    SOURCES
+        qgeopositioninfosourcefactory_gypsy.cpp qgeopositioninfosourcefactory_gypsy.h
+        qgeosatelliteinfosource_gypsy.cpp qgeosatelliteinfosource_gypsy_p.h
+# special case begin
+    LIBRARIES
+        Gypsy::Gypsy
+        Gconf::Gconf
+        Qt::PositioningPrivate
+    PUBLIC_LIBRARIES
+        Qt::Core
+# special case end
+)
+
+#### Keys ignored in scope 1:.:.:gypsy.pro:<TRUE>:
+# OTHER_FILES = "plugin.json"

@@ -1,0 +1,16 @@
+# Generated from qgeopath.pro.
+
+#####################################################################
+## tst_qgeopath Test:
+#####################################################################
+
+qt_add_test(tst_qgeopath
+    SOURCES
+        tst_qgeopath.cpp
+    PUBLIC_LIBRARIES
+        Qt::Gui
+        Qt::Positioning
+)
+
+#### Keys ignored in scope 1:.:.:qgeopath.pro:<TRUE>:
+# TEMPLATE = "app"

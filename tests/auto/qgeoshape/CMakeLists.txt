@@ -1,0 +1,14 @@
+# Generated from qgeoshape.pro.
+
+#####################################################################
+## tst_qgeoshape Binary:
+#####################################################################
+
+qt_add_executable(tst_qgeoshape
+    SOURCES
+        tst_qgeoshape.cpp
+    PUBLIC_LIBRARIES
+        Qt::Gui
+        Qt::Positioning
+        Qt::Test
+)
