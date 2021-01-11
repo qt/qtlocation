@@ -213,6 +213,7 @@ protected:
     QSGGeometry geometry_;
 };
 
+#if QT_CONFIG(opengl)
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapItemLODGeometry
 {
 public:
@@ -566,6 +567,7 @@ protected:
     MapPolylineMaterialExtruded fill_material_;
     QSGGeometry m_geometryTriangulating;
 };
+#endif // QT_CONFIG(opengl)
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivate
 {
@@ -720,6 +722,7 @@ public:
     MapPolylineNode *m_node = nullptr;
 };
 
+#if QT_CONFIG(opengl)
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateOpenGLLineStrip: public QDeclarativePolylineMapItemPrivate
 {
 public:
@@ -884,7 +887,7 @@ public:
 
     MapPolylineNodeOpenGLExtruded *m_nodeTri = nullptr;
 };
-
+#endif // QT_CONFIG(opengl)
 QT_END_NAMESPACE
 
 #endif // QDECLARATIVEPOLYLINEMAPITEM_P_P_H

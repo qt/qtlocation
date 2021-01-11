@@ -769,6 +769,7 @@ bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
     return false;
 }
 
+#if QT_CONFIG(opengl)
 void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const QGeoPolygon &poly)
 {
     if (!sourceDirty_)
@@ -921,6 +922,7 @@ void QGeoMapPolylineGeometryOpenGL::updateQuickGeometry(const QGeoProjectionWebM
     sourceBounds_.setWidth(brect.width() + strokeWidth);
     sourceBounds_.setHeight(brect.height() + strokeWidth);
 }
+#endif // QT_CONFIG(opengl)
 
 /*
  * QDeclarativePolygonMapItem Private Implementations
@@ -928,12 +930,13 @@ void QGeoMapPolylineGeometryOpenGL::updateQuickGeometry(const QGeoProjectionWebM
 
 QDeclarativePolylineMapItemPrivate::~QDeclarativePolylineMapItemPrivate() {}
 
-
 QDeclarativePolylineMapItemPrivateCPU::~QDeclarativePolylineMapItemPrivateCPU() {}
 
+#if QT_CONFIG(opengl)
 QDeclarativePolylineMapItemPrivateOpenGLLineStrip::~QDeclarativePolylineMapItemPrivateOpenGLLineStrip() {}
 
 QDeclarativePolylineMapItemPrivateOpenGLExtruded::~QDeclarativePolylineMapItemPrivateOpenGLExtruded() {}
+#endif
 
 /*
  * QDeclarativePolygonMapItem Implementation
@@ -941,10 +944,12 @@ QDeclarativePolylineMapItemPrivateOpenGLExtruded::~QDeclarativePolylineMapItemPr
 
 struct PolylineBackendSelector
 {
+#if QT_CONFIG(opengl)
     PolylineBackendSelector()
     {
         backend = (qgetenv("QTLOCATION_OPENGL_ITEMS").toInt()) ? QDeclarativePolylineMapItem::OpenGLExtruded : QDeclarativePolylineMapItem::Software;
     }
+#endif
     QDeclarativePolylineMapItem::Backend backend = QDeclarativePolylineMapItem::Software;
 };
 
@@ -1236,11 +1241,22 @@ void QDeclarativePolylineMapItem::setBackend(QDeclarativePolylineMapItem::Backen
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativePolylineMapItemPrivate> d((m_backend == Software)
-                                                        ? static_cast<QDeclarativePolylineMapItemPrivate *>(new QDeclarativePolylineMapItemPrivateCPU(*this))
-                                                        : ((m_backend == OpenGLExtruded)
-                                                           ? static_cast<QDeclarativePolylineMapItemPrivate * >(new QDeclarativePolylineMapItemPrivateOpenGLExtruded(*this))
-                                                           : static_cast<QDeclarativePolylineMapItemPrivate * >(new QDeclarativePolylineMapItemPrivateOpenGLLineStrip(*this))));
+    QScopedPointer<QDeclarativePolylineMapItemPrivate> d(
+            (m_backend == Software)
+                    ? static_cast<QDeclarativePolylineMapItemPrivate *>(
+                            new QDeclarativePolylineMapItemPrivateCPU(*this))
+#if QT_CONFIG(opengl)
+                    : ((m_backend == OpenGLExtruded)
+                               ? static_cast<QDeclarativePolylineMapItemPrivate *>(
+                                       new QDeclarativePolylineMapItemPrivateOpenGLExtruded(*this))
+                               : static_cast<QDeclarativePolylineMapItemPrivate *>(
+                                       new QDeclarativePolylineMapItemPrivateOpenGLLineStrip(
+                                               *this))));
+#else
+                    : nullptr);
+    qFatal("Requested non software rendering backend, but source code is compiled wihtout opengl "
+           "support");
+#endif
     m_d.swap(d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
@@ -1477,6 +1493,7 @@ void MapPolylineNode::update(const QColor &fillColor,
     }
 }
 
+#if QT_CONFIG(opengl)
 MapPolylineNodeOpenGLLineStrip::MapPolylineNodeOpenGLLineStrip()
 : geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
 {
@@ -2080,5 +2097,6 @@ unsigned int QGeoMapItemLODGeometry::zoomForLOD(unsigned int zoom)
         return res;
     return res + 1; // give more resolution when closing in
 }
+#endif // QT_CONFIG(opengl)
 
 QT_END_NAMESPACE

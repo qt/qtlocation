@@ -334,6 +334,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map, qreal stroke
         this->translate(QPointF(strokeWidth, strokeWidth));
 }
 
+#if QT_CONFIG(opengl)
 QGeoMapPolygonGeometryOpenGL::QGeoMapPolygonGeometryOpenGL(){
 }
 
@@ -344,6 +345,7 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const 
         geopath.append(QWebMercator::mercatorToCoord(c));
     updateSourcePoints(map, geopath);
 }
+#endif
 
 // wrapPath always preserves the geometry
 // This one handles holes
@@ -452,6 +454,7 @@ static void cutPathEars(const QList<QDoubleVector2D> &wrappedPath,
         screenIndices << quint32(i);
 }
 
+#if QT_CONFIG(opengl)
 /*!
     \internal
 */
@@ -594,7 +597,7 @@ void QGeoMapPolygonGeometryOpenGL::updateQuickGeometry(const QGeoProjectionWebMe
     sourceBounds_.setWidth(brect.width());
     sourceBounds_.setHeight(brect.height());
 }
-
+#endif // QT_CONFIG(opengl)
 /*
  * QDeclarativePolygonMapItem Private Implementations
  */
@@ -603,8 +606,9 @@ QDeclarativePolygonMapItemPrivate::~QDeclarativePolygonMapItemPrivate() {}
 
 QDeclarativePolygonMapItemPrivateCPU::~QDeclarativePolygonMapItemPrivateCPU() {}
 
+#if QT_CONFIG(opengl)
 QDeclarativePolygonMapItemPrivateOpenGL::~QDeclarativePolygonMapItemPrivateOpenGL() {}
-
+#endif
 /*
  * QDeclarativePolygonMapItem Implementation
  */
@@ -689,9 +693,17 @@ void QDeclarativePolygonMapItem::setBackend(QDeclarativePolygonMapItem::Backend 
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativePolygonMapItemPrivate> d((m_backend == Software)
-                                                        ? static_cast<QDeclarativePolygonMapItemPrivate *>(new QDeclarativePolygonMapItemPrivateCPU(*this))
-                                                        : static_cast<QDeclarativePolygonMapItemPrivate * >(new QDeclarativePolygonMapItemPrivateOpenGL(*this)));
+    QScopedPointer<QDeclarativePolygonMapItemPrivate> d(
+            (m_backend == Software) ? static_cast<QDeclarativePolygonMapItemPrivate *>(
+                    new QDeclarativePolygonMapItemPrivateCPU(*this))
+#if QT_CONFIG(opengl)
+                                    : static_cast<QDeclarativePolygonMapItemPrivate *>(
+                                            new QDeclarativePolygonMapItemPrivateOpenGL(*this)));
+#else
+                                    : nullptr);
+    qFatal("Requested non software rendering backend, but source code is compiled wihtout opengl "
+           "support");
+#endif
     m_d.swap(d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
@@ -898,6 +910,7 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
 
 //////////////////////////////////////////////////////////////////////
 
+#if QT_CONFIG(opengl)
 QSGMaterialShader *MapPolygonMaterial::createShader() const
 {
     return new MapPolygonShader();
@@ -916,6 +929,7 @@ QSGMaterialType *MapPolygonMaterial::type() const
     static QSGMaterialType type;
     return &type;
 }
+#endif
 
 MapPolygonNode::MapPolygonNode() :
     border_(new MapPolylineNode()),
@@ -967,6 +981,7 @@ void MapPolygonNode::update(const QColor &fillColor, const QColor &borderColor,
     }
 }
 
+#if QT_CONFIG(opengl)
 MapPolygonNodeGL::MapPolygonNodeGL() :
     //fill_material_(this),
     fill_material_(),
@@ -1052,5 +1067,5 @@ void MapPolygonShader::updateState(const QSGMaterialShader::RenderState &state, 
     program()->setUniformValue(m_center_lowpart_id, vecCenter_lowpart);
     program()->setUniformValue(m_wrapOffset_id, float(newMaterial->wrapOffset()));
 }
-
+#endif // QT_CONFIG(opengl)
 QT_END_NAMESPACE
