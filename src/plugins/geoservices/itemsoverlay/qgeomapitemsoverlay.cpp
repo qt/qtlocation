@@ -103,6 +103,7 @@ QGeoMap::Capabilities QGeoMapItemsOverlay::capabilities() const
 bool QGeoMapItemsOverlay::createMapObjectImplementation(QGeoMapObject *obj)
 {
 #ifndef LOCATIONLABS
+    Q_UNUSED(obj);
     return false;
 #else
     Q_D(QGeoMapItemsOverlay);
@@ -132,7 +133,9 @@ QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *wind
 
 void QGeoMapItemsOverlay::removeMapObject(QGeoMapObject *obj)
 {
-#ifdef LOCATIONLABS
+#ifndef LOCATIONLABS
+    Q_UNUSED(obj);
+#else
     Q_D(QGeoMapItemsOverlay);
     d->removeMapObject(obj);
 #endif
@@ -169,7 +172,11 @@ QRectF QGeoMapItemsOverlayPrivate::visibleArea() const
 QGeoMapItemsOverlayPrivate::QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine, QGeoMapItemsOverlay *map)
     : QGeoMapPrivate(engine, new QGeoProjectionWebMercator)
 {
+#ifndef LOCATIONLABS
+    Q_UNUSED(map);
+#else
     m_qsgSupport.m_map = map;
+#endif
 }
 
 QGeoMapItemsOverlayPrivate::~QGeoMapItemsOverlayPrivate()

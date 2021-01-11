@@ -275,6 +275,7 @@ public:
     MapPolygonNode *m_node = nullptr;
 };
 
+#if QT_CONFIG(opengl)
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivateOpenGL: public QDeclarativeCircleMapItemPrivate
 {
 public:
@@ -443,6 +444,7 @@ public:
     MapPolygonNodeGL *m_node = nullptr;
     MapPolylineNodeOpenGLExtruded *m_polylinenode = nullptr;
 };
+#endif // QT_CONFIG(opengl)
 
 QT_END_NAMESPACE
 

@@ -39,7 +39,14 @@ include(maps/maps.pri)
 include(places/places.pri)
 include(declarativemaps/declarativemaps.pri)
 include(declarativeplaces/declarativeplaces.pri)
-qtConfig(location-labs-plugin):include(labs/labs.pri)
+qtConfig(location-labs-plugin) {
+   include(labs/labs.pri)
+} else {
+  # FIXME: this should be moved out of plugin source code, geojson is referenced from other places
+  # within codebase,however compilation of location-labs-plugin is optional
+  PRIVATE_HEADERS += labs/qgeojson_p.h
+  SOURCES += labs/qgeojson.cpp
+}
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
