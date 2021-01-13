@@ -4,3 +4,7 @@ osx
 # QTBUG-59074  flaky test
 [CoordinateAnimation::test_east_direction_coordinate_animation]
 osx
+# QTBUG-90244  flaky test
+[ReviewModel::test_reset]
+windows
+
