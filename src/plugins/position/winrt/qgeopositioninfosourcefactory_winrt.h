@@ -45,13 +45,13 @@ QT_BEGIN_NAMESPACE
 class QGeoPositionInfoSourceFactoryWinRT : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/5.0"
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/6.0"
                       FILE "plugin.json")
     Q_INTERFACES(QGeoPositionInfoSourceFactory)
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent);
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent);
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent, const QVariantMap &parameters) override;
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent, const QVariantMap &parameters) override;
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent, const QVariantMap &parameters) override;
 };
 
 QT_END_NAMESPACE

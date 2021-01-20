@@ -234,34 +234,19 @@ private:
     QString m_portName;
 };
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySerialNmea::positionInfoSource(QObject *parent)
-{
-    return positionInfoSourceWithParameters(parent, QVariantMap());
-}
-
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySerialNmea::satelliteInfoSource(QObject *parent)
-{
-    return satelliteInfoSourceWithParameters(parent, QVariantMap());
-}
-
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySerialNmea::areaMonitor(QObject *parent)
-{
-    return areaMonitorWithParameters(parent, QVariantMap());
-}
-
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySerialNmea::positionInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters)
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySerialNmea::positionInfoSource(QObject *parent, const QVariantMap &parameters)
 {
     QScopedPointer<NmeaSource> src(new NmeaSource(parent, parameters));
     return src->isValid() ? src.take() : nullptr;
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySerialNmea::satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters)
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySerialNmea::satelliteInfoSource(QObject *parent, const QVariantMap &parameters)
 {
     QScopedPointer<NmeaSatelliteSource> src(new NmeaSatelliteSource(parent, parameters));
     return src->isValid() ? src.take() : nullptr;
 }
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySerialNmea::areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySerialNmea::areaMonitor(QObject *parent, const QVariantMap &parameters)
 {
     Q_UNUSED(parent);
     Q_UNUSED(parameters);

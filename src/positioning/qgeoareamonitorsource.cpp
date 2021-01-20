@@ -155,7 +155,7 @@ QGeoAreaMonitorSource *QGeoAreaMonitorSource::createDefaultSource(QObject *paren
             d.loadPlugin();
             QGeoAreaMonitorSource *s = 0;
             if (d.factory)
-                s = d.factory->areaMonitor(parent);
+                s = d.factory->areaMonitor(parent, QVariantMap());
             if (s)
                 s->d->providerName = d.metaData.value(QStringLiteral("Provider")).toString();
             return s;
@@ -180,7 +180,7 @@ QGeoAreaMonitorSource *QGeoAreaMonitorSource::createSource(const QString &source
         d.loadPlugin();
         QGeoAreaMonitorSource *s = 0;
         if (d.factory)
-            s = d.factory->areaMonitor(parent);
+            s = d.factory->areaMonitor(parent, QVariantMap());
         if (s)
             s->d->providerName = d.metaData.value(QStringLiteral("Provider")).toString();
         return s;

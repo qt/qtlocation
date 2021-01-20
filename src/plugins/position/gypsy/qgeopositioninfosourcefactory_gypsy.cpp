@@ -40,24 +40,27 @@
 #include "qgeopositioninfosourcefactory_gypsy.h"
 #include "qgeosatelliteinfosource_gypsy_p.h"
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGypsy::positionInfoSource(QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGypsy::positionInfoSource(QObject *parent, const QVariantMap &parameters)
 {
-    Q_UNUSED(parent);
-    return 0;
+    Q_UNUSED(parent)
+    Q_UNUSED(parameters)
+    return nullptr;
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGypsy::satelliteInfoSource(QObject *parent)
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGypsy::satelliteInfoSource(QObject *parent, const QVariantMap &parameters)
 {
+    Q_UNUSED(parameters)
     QGeoSatelliteInfoSourceGypsy *src = new QGeoSatelliteInfoSourceGypsy(parent);
     if (src->init() < 0) {
         delete src;
-        src = 0;
+        src = nullptr;
     }
     return src;
 }
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryGypsy::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryGypsy::areaMonitor(QObject *parent, const QVariantMap &parameters)
 {
-    Q_UNUSED(parent);
-    return 0;
+    Q_UNUSED(parent)
+    Q_UNUSED(parameters)
+    return nullptr;
 }

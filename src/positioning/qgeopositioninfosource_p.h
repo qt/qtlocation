@@ -71,7 +71,6 @@ public:
     QGeoPositionInfoSource::PositioningMethods methods;
     QJsonObject metaData;
     QGeoPositionInfoSourceFactory *factory = nullptr;
-    QGeoPositionInfoSourceFactoryV2 *factoryV2 = nullptr;
     QString providerName;
 
     void loadMeta();

@@ -43,21 +43,17 @@
 #include <QObject>
 #include <qgeopositioninfosourcefactory.h>
 
-class QGeoPositionInfoSourceFactorySerialNmea : public QObject, public QGeoPositionInfoSourceFactoryV2
+class QGeoPositionInfoSourceFactorySerialNmea : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/5.0"
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/6.0"
                       FILE "plugin.json")
-    Q_INTERFACES(QGeoPositionInfoSourceFactoryV2)
+    Q_INTERFACES(QGeoPositionInfoSourceFactory)
 
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent) override;
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) override;
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent) override;
-
-    QGeoPositionInfoSource *positionInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters) override;
-    QGeoSatelliteInfoSource *satelliteInfoSourceWithParameters(QObject *parent, const QVariantMap &parameters) override;
-    QGeoAreaMonitorSource *areaMonitorWithParameters(QObject *parent, const QVariantMap &parameters) override;
+    QGeoPositionInfoSource *positionInfoSource(QObject *parent, const QVariantMap &parameters) override;
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent, const QVariantMap &parameters) override;
+    QGeoAreaMonitorSource *areaMonitor(QObject *parent, const QVariantMap &parameters) override;
 };
 
 #endif

@@ -49,20 +49,23 @@ Q_LOGGING_CATEGORY(lcPositioningGeoclue, "qt.positioning.geoclue")
 
 QT_BEGIN_NAMESPACE
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent, const QVariantMap &parameters)
 {
+    Q_UNUSED(parameters)
     return new QGeoPositionInfoSourceGeoclueMaster(parent);
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSource(QObject *parent)
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSource(QObject *parent, const QVariantMap &parameters)
 {
+    Q_UNUSED(parameters)
     return new QGeoSatelliteInfoSourceGeoclueMaster(parent);
 }
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryGeoclue::areaMonitor(QObject *parent, const QVariantMap &parameters)
 {
-    Q_UNUSED(parent);
-    return 0;
+    Q_UNUSED(parent)
+    Q_UNUSED(parameters)
+    return nullptr;
 }
 
 QT_END_NAMESPACE

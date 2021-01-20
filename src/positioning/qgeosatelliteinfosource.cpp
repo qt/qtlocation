@@ -171,10 +171,8 @@ static QGeoSatelliteInfoSource* createSource_real(const QJsonObject &meta, const
     d.metaData = meta;
     d.loadPlugin();
     QGeoSatelliteInfoSource *s = nullptr;
-    if (!parameters.isEmpty() && d.factoryV2)
-        s = d.factoryV2->satelliteInfoSourceWithParameters(parent, parameters);
-    else if (d.factory)
-        s = d.factory->satelliteInfoSource(parent);
+    if (d.factory)
+        s = d.factory->satelliteInfoSource(parent, parameters);
     if (s)
         QGeoSatelliteInfoSourcePrivate::get(*s)->providerName = d.metaData.value(QStringLiteral("Provider")).toString();
 

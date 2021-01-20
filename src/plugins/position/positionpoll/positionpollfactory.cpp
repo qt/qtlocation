@@ -40,23 +40,26 @@
 #include "positionpollfactory.h"
 #include "qgeoareamonitor_polling.h"
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryPoll::positionInfoSource(QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryPoll::positionInfoSource(QObject *parent, const QVariantMap &parameters)
 {
-    Q_UNUSED(parent);
-    return 0;
+    Q_UNUSED(parent)
+    Q_UNUSED(parameters)
+    return nullptr;
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryPoll::satelliteInfoSource(QObject *parent)
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryPoll::satelliteInfoSource(QObject *parent, const QVariantMap &parameters)
 {
-    Q_UNUSED(parent);
-    return 0;
+    Q_UNUSED(parent)
+    Q_UNUSED(parameters)
+    return nullptr;
 }
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryPoll::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryPoll::areaMonitor(QObject *parent, const QVariantMap &parameters)
 {
+    Q_UNUSED(parameters)
     QGeoAreaMonitorPolling *ret = new QGeoAreaMonitorPolling(parent);
     if (ret && ret->isValid())
         return ret;
     delete ret;
-    return 0;
+    return nullptr;
 }

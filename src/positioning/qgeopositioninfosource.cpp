@@ -52,7 +52,7 @@
 QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
-        ("org.qt-project.qt.position.sourcefactory/5.0",
+        ("org.qt-project.qt.position.sourcefactory/6.0",
          QLatin1String("/position")))
 
 /*!
@@ -126,11 +126,7 @@ void QGeoPositionInfoSourcePrivate::loadPlugin()
     QObject *instance = loader()->instance(idx);
     if (!instance)
         return;
-    factoryV2 = qobject_cast<QGeoPositionInfoSourceFactoryV2 *>(instance);
-    if (!factoryV2)
-        factory = qobject_cast<QGeoPositionInfoSourceFactory *>(instance);
-    else
-        factory = factoryV2;
+    factory = qobject_cast<QGeoPositionInfoSourceFactory *>(instance);
 }
 
 bool QGeoPositionInfoSourcePrivate::setBackendProperty(const QString &/*name*/, const QVariant & /*value*/)
@@ -334,10 +330,8 @@ static QGeoPositionInfoSource* createSource_real(const QJsonObject &meta, const 
     d.metaData = meta;
     d.loadPlugin();
     QGeoPositionInfoSource *s = nullptr;
-    if (!parameters.isEmpty() && d.factoryV2)
-        s = d.factoryV2->positionInfoSourceWithParameters(parent, parameters);
-    else if (d.factory)
-        s = d.factory->positionInfoSource(parent);
+    if (d.factory)
+        s = d.factory->positionInfoSource(parent, parameters);
     if (s)
         QGeoPositionInfoSourcePrivate::get(*s)->metaData = d.metaData;
 

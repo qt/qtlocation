@@ -39,23 +39,26 @@
 
 #include "qgeopositioninfosourcefactory_simulator.h"
 
-QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySimulator::positionInfoSource(QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySimulator::positionInfoSource(QObject *parent, const QVariantMap &parameters)
 {
+    Q_UNUSED(parameters)
     return new QGeoPositionInfoSourceSimulator(parent);
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySimulator::satelliteInfoSource(QObject *parent)
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySimulator::satelliteInfoSource(QObject *parent, const QVariantMap &parameters)
 {
+    Q_UNUSED(parameters)
     QGeoSatelliteInfoSourceSimulator *src = new QGeoSatelliteInfoSourceSimulator(parent);
     if (!src->isConnected()) {
         delete src;
-        src = 0;
+        src = nullptr;
     }
     return src;
 }
 
-QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySimulator::areaMonitor(QObject *parent)
+QGeoAreaMonitorSource *QGeoPositionInfoSourceFactorySimulator::areaMonitor(QObject *parent, const QVariantMap &parameters)
 {
-    Q_UNUSED(parent);
-    return 0;
+    Q_UNUSED(parent)
+    Q_UNUSED(parameters)
+    return nullptr;
 }
