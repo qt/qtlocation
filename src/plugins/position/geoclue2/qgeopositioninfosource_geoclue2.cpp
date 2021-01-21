@@ -201,7 +201,7 @@ void QGeoPositionInfoSourceGeoclue2::requestUpdate(int timeout)
 void QGeoPositionInfoSourceGeoclue2::setError(QGeoPositionInfoSource::Error error)
 {
     m_error = error;
-    emit QGeoPositionInfoSource::error(m_error);
+    emit QGeoPositionInfoSource::errorOccurred(m_error);
 }
 
 void QGeoPositionInfoSourceGeoclue2::restoreLastPosition()

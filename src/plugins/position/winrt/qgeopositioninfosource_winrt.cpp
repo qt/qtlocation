@@ -483,7 +483,7 @@ void QGeoPositionInfoSourceWinRT::setError(QGeoPositionInfoSource::Error positio
     qCDebug(lcPositioningWinRT) << __FUNCTION__ << positionError;
     d->positionError = positionError;
     if (positionError != QGeoPositionInfoSource::NoError)
-        emit QGeoPositionInfoSource::error(positionError);
+        emit QGeoPositionInfoSource::errorOccurred(positionError);
 }
 
 void QGeoPositionInfoSourceWinRT::reactOnError(QGeoPositionInfoSource::Error positionError)

@@ -325,7 +325,7 @@ QGeoPositionInfoSource::Error QGeoPositionInfoSourceCL::error() const
 void QGeoPositionInfoSourceCL::setError(QGeoPositionInfoSource::Error positionError)
 {
     m_positionError = positionError;
-    emit QGeoPositionInfoSource::error(positionError);
+    emit QGeoPositionInfoSource::errorOccurred(positionError);
 }
 
 QT_END_NAMESPACE

@@ -67,7 +67,7 @@ SatelliteModel::SatelliteModel(QObject *parent) :
                 this, SLOT(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)));
         connect(source, SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)),
                 this, SLOT(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
-        connect(source, SIGNAL(error(QGeoSatelliteInfoSource::Error)),
+        connect(source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)),
                 this, SLOT(error(QGeoSatelliteInfoSource::Error)));
     }
 

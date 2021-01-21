@@ -88,7 +88,7 @@ Q_SIGNALS:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void requestTimeout();
-    void error(QGeoSatelliteInfoSource::Error);
+    void errorOccurred(QGeoSatelliteInfoSource::Error);
 
 protected:
     explicit QGeoSatelliteInfoSource(QGeoSatelliteInfoSourcePrivate &dd, QObject *parent);

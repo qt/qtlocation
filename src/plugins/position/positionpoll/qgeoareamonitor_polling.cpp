@@ -163,7 +163,7 @@ public:
             disconnect(source, 0, 0, 0); //disconnect all
             connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
                     this, SLOT(positionUpdated(QGeoPositionInfo)));
-            connect(source, SIGNAL(error(QGeoPositionInfoSource::Error)),
+            connect(source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
                     this, SIGNAL(positionError(QGeoPositionInfoSource::Error)));
             checkStartStop();
         }
@@ -477,7 +477,7 @@ void QGeoAreaMonitorPolling::positionError(const QGeoPositionInfoSource::Error e
         return;
     }
 
-    emit QGeoAreaMonitorSource::error(lastError);
+    emit QGeoAreaMonitorSource::errorOccurred(lastError);
 }
 
 void QGeoAreaMonitorPolling::timeout(const QGeoAreaMonitorInfo& monitor)

@@ -576,7 +576,7 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
 */
 
 /*!
-    \fn void QGeoPositionInfoSource::error(QGeoPositionInfoSource::Error positioningError)
+    \fn void QGeoPositionInfoSource::errorOccurred(QGeoPositionInfoSource::Error positioningError)
 
     This signal is emitted after an error occurred. The \a positioningError
     parameter describes the type of error that occurred.

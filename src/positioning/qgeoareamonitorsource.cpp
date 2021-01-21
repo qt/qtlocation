@@ -379,7 +379,7 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
 */
 
 /*!
-    \fn void QGeoAreaMonitorSource::error(QGeoAreaMonitorSource::Error areaMonitoringError)
+    \fn void QGeoAreaMonitorSource::errorOccurred(QGeoAreaMonitorSource::Error areaMonitoringError)
 
     This signal is emitted after an error occurred. The \a areaMonitoringError
     parameter describes the type of error that occurred.

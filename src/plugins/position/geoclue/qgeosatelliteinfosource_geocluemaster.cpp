@@ -251,7 +251,7 @@ void QGeoSatelliteInfoSourceGeoclueMaster::positionProviderChanged(const QString
 
     if (providerService.isEmpty() || providerPath.isEmpty()) {
         m_error = AccessError;
-        emit QGeoSatelliteInfoSource::error(m_error);
+        emit QGeoSatelliteInfoSource::errorOccurred(m_error);
         return;
     }
 
@@ -293,7 +293,7 @@ void QGeoSatelliteInfoSourceGeoclueMaster::configureSatelliteSource()
 {
     if (!m_master->createMasterClient(Accuracy::Detailed, QGeoclueMaster::ResourceGps)) {
         m_error = UnknownSourceError;
-        emit QGeoSatelliteInfoSource::error(m_error);
+        emit QGeoSatelliteInfoSource::errorOccurred(m_error);
     }
 }
 

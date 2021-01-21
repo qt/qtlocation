@@ -82,7 +82,7 @@ position source; the method returns 0 if no default source is available for
 the platform.
 
 If a problem occurs with access to the information source then an
-\l {QGeoPositionInfoSource::error()}{error()} signal is emitted.
+\l {QGeoPositionInfoSource::errorOccurred()}{errorOccurred()} signal is emitted.
 
 The QGeoAreaMonitorSource class enables client applications to be notified when
 the receiving device has moved in or out of a particular area, as specified

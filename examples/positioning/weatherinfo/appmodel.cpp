@@ -229,7 +229,7 @@ AppModel::AppModel(QObject *parent) :
         d->useGps = true;
         connect(d->src, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
-        connect(d->src, SIGNAL(error(QGeoPositionInfoSource::Error)),
+        connect(d->src, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
                 this, SLOT(positionError(QGeoPositionInfoSource::Error)));
         d->src->startUpdates();
     } else {

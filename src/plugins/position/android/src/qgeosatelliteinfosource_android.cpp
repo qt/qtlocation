@@ -110,7 +110,7 @@ void QGeoSatelliteInfoSourceAndroid::startUpdates()
     if (error != QGeoSatelliteInfoSource::NoError) {
         updatesRunning = false;
         m_error = error;
-        emit QGeoSatelliteInfoSource::error(m_error);
+        emit QGeoSatelliteInfoSource::errorOccurred(m_error);
     }
 }
 
@@ -149,7 +149,7 @@ void QGeoSatelliteInfoSourceAndroid::requestUpdate(int timeout)
     if (error != QGeoSatelliteInfoSource::NoError) {
         requestTimer.stop();
         m_error = error;
-        emit QGeoSatelliteInfoSource::error(m_error);
+        emit QGeoSatelliteInfoSource::errorOccurred(m_error);
     }
 }
 
@@ -212,5 +212,5 @@ void QGeoSatelliteInfoSourceAndroid::reconfigureRunningSystem()
 void QGeoSatelliteInfoSourceAndroid::locationProviderDisabled()
 {
     m_error = QGeoSatelliteInfoSource::ClosedError;
-    emit QGeoSatelliteInfoSource::error(m_error);
+    emit QGeoSatelliteInfoSource::errorOccurred(m_error);
 }

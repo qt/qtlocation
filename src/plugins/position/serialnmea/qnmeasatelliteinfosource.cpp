@@ -549,7 +549,7 @@ void QNmeaSatelliteInfoSource::requestUpdate(int msec)
 void QNmeaSatelliteInfoSource::setError(QGeoSatelliteInfoSource::Error satelliteError)
 {
     d->m_satelliteError = satelliteError;
-    emit QGeoSatelliteInfoSource::error(satelliteError);
+    emit QGeoSatelliteInfoSource::errorOccurred(satelliteError);
 }
 
 

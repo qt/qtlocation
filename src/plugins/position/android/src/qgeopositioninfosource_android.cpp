@@ -123,7 +123,7 @@ void QGeoPositionInfoSourceAndroid::setError(Error error)
     if (error != QGeoPositionInfoSource::NoError)
     {
         m_error = error;
-        emit QGeoPositionInfoSource::error(m_error);
+        emit QGeoPositionInfoSource::errorOccurred(m_error);
     }
 }
 

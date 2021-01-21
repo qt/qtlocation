@@ -52,7 +52,7 @@ Widget::Widget(LogWidget *logWidget, QWidget *parent) :
     ui->horizontalSlider->setMinimum(m_posSource->minimumUpdateInterval());
     ui->labelTimeOut->setVisible(false);
 
-    connect(m_posSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
+    connect(m_posSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
             this, SLOT(errorChanged(QGeoPositionInfoSource::Error)));
     connect(m_posSource, &QGeoPositionInfoSource::supportedPositioningMethodsChanged,
             this, [this]() {

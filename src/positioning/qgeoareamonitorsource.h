@@ -95,7 +95,7 @@ Q_SIGNALS:
     void areaEntered(const QGeoAreaMonitorInfo &monitor, const QGeoPositionInfo &update);
     void areaExited(const QGeoAreaMonitorInfo &monitor, const QGeoPositionInfo &update);
     void monitorExpired(const QGeoAreaMonitorInfo &monitor);
-    void error(QGeoAreaMonitorSource::Error error);
+    void errorOccurred(QGeoAreaMonitorSource::Error error);
 
 private:
     Q_DISABLE_COPY(QGeoAreaMonitorSource)

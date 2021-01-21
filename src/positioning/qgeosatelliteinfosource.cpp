@@ -356,16 +356,15 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     \fn QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSource::error() const = 0
 
     Returns the last error that occurred.
-
-    This signal is not emitted when a requestTimeout() has occurred.
 */
 
 /*!
-    \fn void QGeoSatelliteInfoSource::error(QGeoSatelliteInfoSource::Error satelliteError)
+    \fn void QGeoSatelliteInfoSource::errorOccurred(QGeoSatelliteInfoSource::Error satelliteError)
 
     This signal is emitted after an error occurred. The \a satelliteError
     parameter describes the type of error that occurred.
 
+    This signal is not emitted when a requestTimeout() has occurred.
 */
 
 /*!

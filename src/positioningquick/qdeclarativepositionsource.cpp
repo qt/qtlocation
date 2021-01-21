@@ -212,7 +212,7 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
     if (m_positionSource) {
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
-        connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
+        connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
                 this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
         connect(m_positionSource, SIGNAL(updateTimeout()),
                 this, SLOT(updateTimeoutReceived()));
@@ -332,7 +332,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
             (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setDevice(m_nmeaFile);
             connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                     this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
-            connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
+            connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
                     this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
             connect(m_positionSource, SIGNAL(updateTimeout()),
                     this, SLOT(updateTimeoutReceived()));
@@ -383,7 +383,7 @@ void QDeclarativePositionSource::socketConnected()
 
     connect(m_positionSource, &QNmeaPositionInfoSource::positionUpdated,
             this, &QDeclarativePositionSource::positionUpdateReceived);
-    connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
+    connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
             this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
     connect(m_positionSource, SIGNAL(updateTimeout()),
             this, SLOT(updateTimeoutReceived()));

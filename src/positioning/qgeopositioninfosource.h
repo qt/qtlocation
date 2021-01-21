@@ -106,7 +106,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void positionUpdated(const QGeoPositionInfo &update);
     void updateTimeout();
-    void error(QGeoPositionInfoSource::Error);
+    void errorOccurred(QGeoPositionInfoSource::Error);
     void supportedPositioningMethodsChanged();
 
 protected:

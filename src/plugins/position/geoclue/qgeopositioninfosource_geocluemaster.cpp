@@ -477,13 +477,13 @@ void QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     default:
         qWarning("QGeoPositionInfoSourceGeoclueMaster unknown preferred method.");
         m_error = UnknownSourceError;
-        emit QGeoPositionInfoSource::error(m_error);
+        emit QGeoPositionInfoSource::errorOccurred(m_error);
         return;
     }
 
     if (!created) {
         m_error = UnknownSourceError;
-        emit QGeoPositionInfoSource::error(m_error);
+        emit QGeoPositionInfoSource::errorOccurred(m_error);
     }
 }
 
