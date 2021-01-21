@@ -58,7 +58,7 @@ public:
     }
 
 protected:
-    QGeoPositionInfoSource *createTestSource()
+    QGeoPositionInfoSource *createTestSource() override
     {
         QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::RealTimeMode);
         QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(m_factory->createProxy(source));

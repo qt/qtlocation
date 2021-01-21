@@ -68,7 +68,7 @@ public:
             : QGeoPositionInfoSource(parent) {
     }
 
-    QGeoPositionInfo lastKnownPosition(bool /*fromSatellitePositioningMethodsOnly = false*/) const {
+    QGeoPositionInfo lastKnownPosition(bool /*fromSatellitePositioningMethodsOnly = false*/) const override {
         return QGeoPositionInfo();
     }
 
@@ -76,19 +76,19 @@ public:
         m_methods = methods;
     }
 
-    virtual PositioningMethods supportedPositioningMethods() const {
+    virtual PositioningMethods supportedPositioningMethods() const override {
         return m_methods;
     }
-    virtual int minimumUpdateInterval() const {
+    virtual int minimumUpdateInterval() const override {
         return 0;
     }
 
-    virtual void startUpdates() {}
-    virtual void stopUpdates() {}
+    virtual void startUpdates() override {}
+    virtual void stopUpdates() override {}
 
-    virtual void requestUpdate(int) {}
+    virtual void requestUpdate(int) override {}
 
-    Error error() const { return QGeoPositionInfoSource::NoError; }
+    Error error() const override { return QGeoPositionInfoSource::NoError; }
 
 private:
     PositioningMethods m_methods;
@@ -98,7 +98,7 @@ class DefaultSourceTest : public TestQGeoPositionInfoSource
 {
     Q_OBJECT
 protected:
-    QGeoPositionInfoSource *createTestSource() {
+    QGeoPositionInfoSource *createTestSource() override {
         return QGeoPositionInfoSource::createSource(QStringLiteral("test.source"), 0);
     }
 };

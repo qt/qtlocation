@@ -63,15 +63,15 @@ public:
     ~QGeoSatelliteInfoSourceAndroid();
 
     //From QGeoSatelliteInfoSource
-    void setUpdateInterval(int msec);
-    int minimumUpdateInterval() const;
+    void setUpdateInterval(int msec) override;
+    int minimumUpdateInterval() const override;
 
-    Error error() const;
+    Error error() const override;
 
 public Q_SLOTS:
-    void startUpdates();
-    void stopUpdates();
-    void requestUpdate(int timeout = 0);
+    void startUpdates() override;
+    void stopUpdates() override;
+    void requestUpdate(int timeout = 0) override;
 
     void processSatelliteUpdateInView(const QList<QGeoSatelliteInfo> &satsInView, bool isSingleUpdate);
     void processSatelliteUpdateInUse(const QList<QGeoSatelliteInfo> &satsInUse, bool isSingleUpdate);

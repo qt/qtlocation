@@ -42,17 +42,17 @@ class LogFilePositionSource : public QGeoPositionInfoSource
 public:
     LogFilePositionSource(QObject *parent = 0);
 
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const override;
 
-    PositioningMethods supportedPositioningMethods() const;
-    int minimumUpdateInterval() const;
-    Error error() const;
+    PositioningMethods supportedPositioningMethods() const override;
+    int minimumUpdateInterval() const override;
+    Error error() const override;
 
 public slots:
-    virtual void startUpdates();
-    virtual void stopUpdates();
+    virtual void startUpdates() override;
+    virtual void stopUpdates() override;
 
-    virtual void requestUpdate(int timeout = 5000);
+    virtual void requestUpdate(int timeout = 5000) override;
 
 private slots:
     void readNextPosition();

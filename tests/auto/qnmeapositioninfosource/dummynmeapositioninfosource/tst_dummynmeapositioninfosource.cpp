@@ -46,10 +46,10 @@ public:
     DummyNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent = 0);
 
 protected:
-    virtual bool parsePosInfoFromNmeaData(const char *data,
-                                          int size,
-                                          QGeoPositionInfo *posInfo,
-                                          bool *hasFix);
+    bool parsePosInfoFromNmeaData(const char *data,
+                                  int size,
+                                  QGeoPositionInfo *posInfo,
+                                  bool *hasFix) override;
 
 private:
     int callCount;
@@ -70,7 +70,7 @@ bool DummyNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char* data,
     Q_UNUSED(size);
 
     posInfo->setCoordinate(QGeoCoordinate(callCount * 1.0, callCount * 1.0, callCount * 1.0));
-    posInfo->setTimestamp(QDateTime::currentDateTime().toUTC());
+    posInfo->setTimestamp(QDateTime::currentDateTimeUtc());
     *hasFix = true;
     ++callCount;
 

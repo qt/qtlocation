@@ -64,13 +64,13 @@ public:
     MySatelliteSource(QObject *parent = 0)
             : QGeoSatelliteInfoSource(parent) {
     }
-    virtual void startUpdates() {}
-    virtual void stopUpdates() {}
-    virtual void requestUpdate(int) {}
-    virtual int minimumUpdateInterval() const {
+    virtual void startUpdates() override {}
+    virtual void stopUpdates() override {}
+    virtual void requestUpdate(int) override {}
+    virtual int minimumUpdateInterval() const override {
         return 0;
     }
-    Error error() const { return QGeoSatelliteInfoSource::NoError; }
+    Error error() const override { return QGeoSatelliteInfoSource::NoError; }
 };
 
 
@@ -78,7 +78,7 @@ class DefaultSourceTest : public TestQGeoSatelliteInfoSource
 {
     Q_OBJECT
 protected:
-    QGeoSatelliteInfoSource *createTestSource() {
+    QGeoSatelliteInfoSource *createTestSource() override {
         return QGeoSatelliteInfoSource::createDefaultSource(0);
     }
 };

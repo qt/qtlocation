@@ -162,7 +162,7 @@ public:
     UnlimitedNmeaStream(QObject *parent) : QIODevice(parent) {}
 
 protected:
-    qint64 readData(char *data, qint64 maxSize)
+    qint64 readData(char *data, qint64 maxSize) override
     {
         QByteArray bytes = QLocationTestUtils::createRmcSentence(QDateTime::currentDateTime()).toLatin1();
         qint64 sz = qMin(qint64(bytes.size()), maxSize);
@@ -170,12 +170,12 @@ protected:
         return sz;
     }
 
-    qint64 writeData(const char *, qint64)
+    qint64 writeData(const char *, qint64) override
     {
         return -1;
     }
 
-    qint64 bytesAvailable() const
+    qint64 bytesAvailable() const override
     {
         return 1024 + QIODevice::bytesAvailable();
     }

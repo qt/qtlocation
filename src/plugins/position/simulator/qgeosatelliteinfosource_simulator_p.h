@@ -69,15 +69,15 @@ public:
 
     bool isConnected() const;
 
-    virtual void setUpdateInterval(int msec);
-    virtual int minimumUpdateInterval() const;
+    virtual void setUpdateInterval(int msec) override;
+    virtual int minimumUpdateInterval() const override;
 
     // Default implementation for error()
-    Error error() const { return QGeoSatelliteInfoSource::NoError; }
+    Error error() const override { return QGeoSatelliteInfoSource::NoError; }
 public slots:
-    virtual void startUpdates();
-    virtual void stopUpdates();
-    virtual void requestUpdate(int timeout = 5000);
+    virtual void startUpdates() override;
+    virtual void stopUpdates() override;
+    virtual void requestUpdate(int timeout = 5000) override;
 
 private slots:
     void updateData();

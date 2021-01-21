@@ -51,7 +51,7 @@ public:
     }
 
 protected:
-    QGeoPositionInfoSource *createTestSource()
+    QGeoPositionInfoSource *createTestSource() override
     {
         QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
         source->setDevice(new UnlimitedNmeaStream(source));

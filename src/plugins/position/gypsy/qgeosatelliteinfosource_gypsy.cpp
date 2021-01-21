@@ -218,7 +218,9 @@ int QGeoSatelliteInfoSourceGypsy::init()
     GConfClient *client;
     gchar *device_name;
 
-    g_type_init ();
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+    g_type_init (); // this function was deprecated in glib 2.36
+#endif
     createEngine();
 
     client = m_engine->eng_gconf_client_get_default();

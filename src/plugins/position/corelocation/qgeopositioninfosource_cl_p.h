@@ -65,12 +65,12 @@ public:
     QGeoPositionInfoSourceCL(QObject *parent = 0);
     ~QGeoPositionInfoSourceCL();
 
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
-    PositioningMethods supportedPositioningMethods() const;
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const override;
+    PositioningMethods supportedPositioningMethods() const override;
 
-    void setUpdateInterval(int msec);
-    int minimumUpdateInterval() const;
-    Error error() const;
+    void setUpdateInterval(int msec) override;
+    int minimumUpdateInterval() const override;
+    Error error() const override;
 
     void locationDataAvailable(QGeoPositionInfo location);
     void setError(QGeoPositionInfoSource::Error positionError);
@@ -80,10 +80,10 @@ private:
     void setTimeoutInterval(int msec);
 
 public Q_SLOTS:
-    void startUpdates();
-    void stopUpdates();
+    void startUpdates() override;
+    void stopUpdates() override;
 
-    void requestUpdate(int timeout = 0);
+    void requestUpdate(int timeout = 0) override;
 
 protected:
     virtual void timerEvent(QTimerEvent *event);
