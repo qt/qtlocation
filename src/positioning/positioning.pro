@@ -55,7 +55,6 @@ PRIVATE_HEADERS += \
                     qdoublevector3d_p.h \
                     qwebmercator_p.h \
                     qpositioningglobal_p.h \
-                    qlocationdata_simulator_p.h \
                     qdoublematrix4x4_p.h \
                     qgeopath_p.h \
                     qgeopolygon_p.h \
@@ -85,7 +84,6 @@ SOURCES += \
             qdoublevector3d.cpp \
             qgeopath.cpp \
             qgeopolygon.cpp \
-            qlocationdata_simulator.cpp \
             qwebmercator.cpp \
             qdoublematrix4x4.cpp \
             qclipperutils.cpp \

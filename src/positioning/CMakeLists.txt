@@ -27,7 +27,6 @@ qt_internal_add_module(Positioning
         qgeosatelliteinfo.cpp qgeosatelliteinfo.h qgeosatelliteinfo_p.h
         qgeosatelliteinfosource.cpp qgeosatelliteinfosource.h qgeosatelliteinfosource_p.h
         qgeoshape.cpp qgeoshape.h qgeoshape_p.h
-        qlocationdata_simulator.cpp qlocationdata_simulator_p.h
         qlocationutils.cpp qlocationutils_p.h
         qnmeapositioninfosource.cpp qnmeapositioninfosource.h qnmeapositioninfosource_p.h
         qpositioningglobal.h qpositioningglobal_p.h
