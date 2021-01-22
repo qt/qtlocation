@@ -108,7 +108,7 @@ public slots:
 
 
 public:
-    QGeoSatelliteInfoSource *m_source = nullptr;
+    QNmeaSatelliteInfoSource *m_source = nullptr;
     QGeoSatelliteInfoSource::Error m_satelliteError = QGeoSatelliteInfoSource::NoError;
     QPointer<QIODevice> m_device;
     struct Update {
@@ -321,7 +321,7 @@ void QNmeaSatelliteInfoSourcePrivate::requestUpdate(int msec)
         return;
 
     if (msec <= 0 || msec < m_source->minimumUpdateInterval()) {
-        emit m_source->requestTimeout();
+        m_source->setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
         return;
     }
 
@@ -332,7 +332,7 @@ void QNmeaSatelliteInfoSourcePrivate::requestUpdate(int msec)
 
     bool initialized = initialize();
     if (!initialized) {
-        emit m_source->requestTimeout();
+        m_source->setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
         return;
     }
 
@@ -356,7 +356,7 @@ void QNmeaSatelliteInfoSourcePrivate::emitPendingUpdate()
     } else { // invalid or not fresh update
         if (m_noUpdateLastInterval && !m_updateTimeoutSent) {
             m_updateTimeoutSent = true;
-            emit m_source->requestTimeout();
+            m_source->setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
         }
         m_noUpdateLastInterval = true;
     }
@@ -371,7 +371,7 @@ void QNmeaSatelliteInfoSourcePrivate::sourceDataClosed()
 void QNmeaSatelliteInfoSourcePrivate::updateRequestTimeout()
 {
     m_requestTimer->stop();
-    emit m_source->requestTimeout();
+    m_source->setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
 }
 
 void QNmeaSatelliteInfoSourcePrivate::readAvailableData()

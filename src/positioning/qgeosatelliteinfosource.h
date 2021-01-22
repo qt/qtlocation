@@ -58,9 +58,10 @@ public:
         AccessError = 0,
         ClosedError = 1,
         NoError = 2,
-        UnknownSourceError = -1
+        UnknownSourceError = -1,
+        UpdateTimeoutError = 3,
     };
-    Q_ENUMS(Error)
+    Q_ENUM(Error)
 
     explicit QGeoSatelliteInfoSource(QObject *parent);
     virtual ~QGeoSatelliteInfoSource();
@@ -87,7 +88,6 @@ public Q_SLOTS:
 Q_SIGNALS:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
     void errorOccurred(QGeoSatelliteInfoSource::Error);
 
 protected:

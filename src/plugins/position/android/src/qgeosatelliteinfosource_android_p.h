@@ -82,6 +82,7 @@ private Q_SLOTS:
 
 private:
     void reconfigureRunningSystem();
+    void setError(QGeoSatelliteInfoSource::Error error);
 
     Error m_error;
     int androidClassKeyForUpdate;

@@ -121,6 +121,9 @@ signals:
 private slots:
       void requestUpdateTimeout();
 
+private:
+      void setError(QGeoSatelliteInfoSource::Error error);
+
 protected:
       // Creates an engine which encapsulates all used symbols
       // that we want to be also able to mock.
@@ -134,6 +137,7 @@ private:
       QTimer m_requestTimer;
       bool m_updatesOngoing;
       bool m_requestOngoing;
+      QGeoSatelliteInfoSource::Error m_error = QGeoSatelliteInfoSource::NoError;
   };
 
 QT_END_NAMESPACE

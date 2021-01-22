@@ -87,6 +87,8 @@ private:
     void updateSatelliteInfo(int timestamp, int satellitesUsed, int satellitesVisible,
                               const QList<int> &usedPrn, const QList<QGeoSatelliteInfo> &satInfos);
 
+    void setError(QGeoSatelliteInfoSource::Error error);
+
     QGeoclueMaster *m_master;
 
     OrgFreedesktopGeoclueInterface *m_provider;

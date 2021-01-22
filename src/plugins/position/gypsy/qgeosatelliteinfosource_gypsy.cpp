@@ -140,8 +140,9 @@ gchar *SatelliteGypsyEngine::eng_gconf_client_get_string(GConfClient *client, co
     return ::gconf_client_get_string(client, key, err);
 }
 
-QGeoSatelliteInfoSourceGypsy::QGeoSatelliteInfoSourceGypsy(QObject *parent) : QGeoSatelliteInfoSource(parent),
-    m_engine(0), m_satellite(0), m_device(0), m_requestTimer(this), m_updatesOngoing(false), m_requestOngoing(false)
+QGeoSatelliteInfoSourceGypsy::QGeoSatelliteInfoSourceGypsy(QObject *parent)
+    : QGeoSatelliteInfoSource(parent), m_engine(0), m_satellite(0), m_device(0),
+      m_requestTimer(this), m_updatesOngoing(false), m_requestOngoing(false)
 {
     m_requestTimer.setSingleShot(true);
     QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(requestUpdateTimeout()));
@@ -290,7 +291,7 @@ int QGeoSatelliteInfoSourceGypsy::minimumUpdateInterval() const
 
 QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSourceGypsy::error() const
 {
-    return NoError;
+    return m_error;
 }
 
 void QGeoSatelliteInfoSourceGypsy::startUpdates()
@@ -322,7 +323,7 @@ void QGeoSatelliteInfoSourceGypsy::requestUpdate(int timeout)
     if (m_requestOngoing)
         return;
     if (timeout < 0) {
-        emit requestTimeout();
+        setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
         return;
     }
     m_requestOngoing = true;
@@ -369,7 +370,14 @@ void QGeoSatelliteInfoSourceGypsy::requestUpdateTimeout()
         m_engine->eng_g_signal_handlers_disconnect_by_func(G_OBJECT(m_satellite), (void *)satellites_changed, this);
     }
     m_requestOngoing = false;
-    emit requestTimeout();
+    setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
+}
+
+void QGeoSatelliteInfoSourceGypsy::setError(QGeoSatelliteInfoSource::Error error)
+{
+    m_error = error;
+    if (m_error != QGeoSatelliteInfoSource::NoError)
+        emit QGeoSatelliteInfoSource::errorOccurred(m_error);
 }
 
 QT_END_NAMESPACE

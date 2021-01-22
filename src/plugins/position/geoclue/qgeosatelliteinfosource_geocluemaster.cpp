@@ -121,7 +121,7 @@ void QGeoSatelliteInfoSourceGeoclueMaster::stopUpdates()
 void QGeoSatelliteInfoSourceGeoclueMaster::requestUpdate(int timeout)
 {
     if (timeout < minimumUpdateInterval() && timeout != 0) {
-        emit requestTimeout();
+        setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
         return;
     }
 
@@ -176,6 +176,13 @@ void QGeoSatelliteInfoSourceGeoclueMaster::updateSatelliteInfo(int timestamp, in
     m_requestTimer.start(qMax(updateInterval(), minimumUpdateInterval()));
 }
 
+void QGeoSatelliteInfoSourceGeoclueMaster::setError(QGeoSatelliteInfoSource::Error error)
+{
+    m_error = error;
+    if (m_error != QGeoSatelliteInfoSource::NoError)
+        emit QGeoSatelliteInfoSource::errorOccurred(m_error);
+}
+
 void QGeoSatelliteInfoSourceGeoclueMaster::requestUpdateTimeout()
 {
     // If we end up here, there has not been a valid satellite info update.
@@ -185,7 +192,7 @@ void QGeoSatelliteInfoSourceGeoclueMaster::requestUpdateTimeout()
         emit satellitesInViewUpdated(m_inView);
         emit satellitesInUseUpdated(m_inUse);
     } else {
-        emit requestTimeout();
+        setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
 
         // Only stop satellite info if regular updates not active.
         cleanupSatelliteSource();
@@ -250,8 +257,7 @@ void QGeoSatelliteInfoSourceGeoclueMaster::positionProviderChanged(const QString
     }
 
     if (providerService.isEmpty() || providerPath.isEmpty()) {
-        m_error = AccessError;
-        emit QGeoSatelliteInfoSource::errorOccurred(m_error);
+        setError(QGeoSatelliteInfoSource::AccessError);
         return;
     }
 
@@ -291,10 +297,8 @@ void QGeoSatelliteInfoSourceGeoclueMaster::satelliteChanged(const QDBusMessage &
 
 void QGeoSatelliteInfoSourceGeoclueMaster::configureSatelliteSource()
 {
-    if (!m_master->createMasterClient(Accuracy::Detailed, QGeoclueMaster::ResourceGps)) {
-        m_error = UnknownSourceError;
-        emit QGeoSatelliteInfoSource::errorOccurred(m_error);
-    }
+    if (!m_master->createMasterClient(Accuracy::Detailed, QGeoclueMaster::ResourceGps))
+        setError(QGeoSatelliteInfoSource::UnknownSourceError);
 }
 
 void QGeoSatelliteInfoSourceGeoclueMaster::cleanupSatelliteSource()

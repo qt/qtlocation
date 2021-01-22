@@ -329,9 +329,10 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     Attempts to get the current satellite information and emit
     satellitesInViewUpdated() and satellitesInUseUpdated() with this
     information. If the current satellite information cannot be found
-    within the given \a timeout (in milliseconds) or if \a timeout is less than the value returned by
-    minimumUpdateInterval(), requestTimeout() is
-    emitted.
+    within the given \a timeout (in milliseconds) or if \a timeout is less than
+    the value returned by minimumUpdateInterval(), an errorOccurred() signal
+    with \l {QGeoSatelliteInfoSource::Error::UpdateTimeoutError}
+    {UpdateTimeoutError} is emitted.
 
     If the timeout is zero, the timeout defaults to a reasonable timeout
     period as appropriate for the source.
@@ -339,17 +340,6 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     This does nothing if another update request is in progress. However
     it can be called even if startUpdates() has already been called and
     regular updates are in progress.
-*/
-
-/*!
-    \fn void QGeoSatelliteInfoSource::requestTimeout();
-
-    Emitted if requestUpdate() was called and the current satellite
-    information could not be retrieved within the specified timeout.
-
-    While the triggering of this signal may be considered an error condition,
-    it does not imply the emission of the \c error() signal. Only the emission of
-    \c requestTimeout() is required to indicate a timeout.
 */
 
 /*!
@@ -363,8 +353,6 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     This signal is emitted after an error occurred. The \a satelliteError
     parameter describes the type of error that occurred.
-
-    This signal is not emitted when a requestTimeout() has occurred.
 */
 
 /*!
@@ -379,6 +367,8 @@ QStringList QGeoSatelliteInfoSource::availableSources()
         A new satellite source can be created by calling createDefaultSource() later on.
     \value NoError No error has occurred.
     \value UnknownSourceError An unidentified error occurred.
+    \value UpdateTimeoutError The current satellite information could not be
+        retrieved within the specified timeout.
  */
 
 
