@@ -45,8 +45,6 @@ Widget::Widget(LogWidget *logWidget, QWidget *parent) :
 
     connect(ui->horizontalSlider, SIGNAL(valueChanged(int)),
             this, SLOT(setInterval(int)));
-    connect(m_posSource, SIGNAL(updateTimeout()),
-            this, SLOT(positionTimedOut()));
 
     ui->groupBox->setLayout(ui->gridLayout);
     ui->horizontalSlider->setMinimum(m_posSource->minimumUpdateInterval());
@@ -102,9 +100,15 @@ void Widget::positionTimedOut()
 
 void Widget::errorChanged(QGeoPositionInfoSource::Error err)
 {
-    ui->labelErrorState->setText(QString::number(err));
-    m_posSource->stopUpdates();
-    ui->checkBox->setChecked(false);
+    if (err == QGeoPositionInfoSource::UpdateTimeoutError) {
+        // handle timeout
+        positionTimedOut();
+    } else {
+        // handle other errors
+        ui->labelErrorState->setText(QString::number(err));
+        m_posSource->stopUpdates();
+        ui->checkBox->setChecked(false);
+    }
 }
 
 Widget::~Widget()

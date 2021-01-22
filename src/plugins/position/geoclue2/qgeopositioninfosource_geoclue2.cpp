@@ -185,7 +185,7 @@ void QGeoPositionInfoSourceGeoclue2::stopUpdates()
 void QGeoPositionInfoSourceGeoclue2::requestUpdate(int timeout)
 {
     if (timeout < minimumUpdateInterval() && timeout != 0) {
-        emit updateTimeout();
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
         return;
     }
 
@@ -382,7 +382,7 @@ void QGeoPositionInfoSourceGeoclue2::requestUpdateTimeout()
 {
     qCDebug(lcPositioningGeoclue2) << "Request update timeout occurred";
 
-    emit updateTimeout();
+    setError(QGeoPositionInfoSource::UpdateTimeoutError);
 
     stopClient();
 }

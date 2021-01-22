@@ -119,6 +119,8 @@ private:
                         double climb);
     void velocityUpdateFailed();
 
+    void setError(QGeoPositionInfoSource::Error error);
+
 private:
     QGeoclueMaster *m_master;
 

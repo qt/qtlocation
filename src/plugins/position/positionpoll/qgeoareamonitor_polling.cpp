@@ -471,6 +471,7 @@ void QGeoAreaMonitorPolling::positionError(const QGeoPositionInfoSource::Error e
         lastError = QGeoAreaMonitorSource::UnknownSourceError;
         break;
     case QGeoPositionInfoSource::ClosedError:
+    case QGeoPositionInfoSource::UpdateTimeoutError:
         lastError = QGeoAreaMonitorSource::InsufficientPositionInfo;
         break;
     case QGeoPositionInfoSource::NoError:

@@ -96,10 +96,12 @@ void LogFilePositionSource::requestUpdate(int /*timeout*/)
 {
     // For simplicity, ignore timeout - assume that if data is not available
     // now, no data will be added to the file later
-    if (logFile->canReadLine())
+    if (logFile->canReadLine()) {
         readNextPosition();
-    else
-        emit updateTimeout();
+    } else {
+        lastError = QGeoPositionInfoSource::UpdateTimeoutError;
+        emit QGeoPositionInfoSource::errorOccurred(lastError);
+    }
 }
 
 void LogFilePositionSource::readNextPosition()
@@ -128,5 +130,5 @@ void LogFilePositionSource::readNextPosition()
 
 QGeoPositionInfoSource::Error LogFilePositionSource::error() const
 {
-    return QGeoPositionInfoSource::NoError;
+    return lastError;
 }

@@ -61,6 +61,7 @@ private:
     QFile *logFile;
     QTimer *timer;
     QGeoPositionInfo lastPosition;
+    Error lastError = QGeoPositionInfoSource::NoError;
 };
 
 #endif

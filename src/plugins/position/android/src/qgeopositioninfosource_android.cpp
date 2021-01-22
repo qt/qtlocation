@@ -160,7 +160,7 @@ void QGeoPositionInfoSourceAndroid::requestUpdate(int timeout)
         return;
 
     if (timeout != 0 && timeout < minimumUpdateInterval()) {
-        emit updateTimeout();
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
         return;
     }
 
@@ -218,7 +218,7 @@ void QGeoPositionInfoSourceAndroid::requestTimeout()
     const int count = queuedSingleUpdates.count();
 
     if (!count) {
-        emit updateTimeout();
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
         return;
     }
 

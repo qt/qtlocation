@@ -114,21 +114,6 @@ QT_BEGIN_NAMESPACE
 
 */
 
-/*!
-    \qmlsignal PositionSource::updateTimeout()
-
-    If \l update() was called, this signal is emitted if the current position could not be
-    retrieved within a certain amount of time.
-
-    If \l start() was called, this signal is emitted if the position engine determines that
-    it is not able to provide further regular updates.
-
-    \since Qt Positioning 5.5
-
-    \sa QGeoPositionInfoSource::updateTimeout()
-*/
-
-
 QDeclarativePositionSource::QDeclarativePositionSource()
 :   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethods), m_nmeaFile(0),
     m_nmeaSocket(0), m_active(false), m_singleUpdate(false), m_updateInterval(0),
@@ -214,8 +199,6 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
         connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
                 this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
-        connect(m_positionSource, SIGNAL(updateTimeout()),
-                this, SLOT(updateTimeoutReceived()));
 
         m_positionSource->setUpdateInterval(m_updateInterval);
         m_positionSource->setPreferredPositioningMethods(
@@ -334,8 +317,6 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
                     this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
             connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
                     this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
-            connect(m_positionSource, SIGNAL(updateTimeout()),
-                    this, SLOT(updateTimeoutReceived()));
 
             setPosition(m_positionSource->lastKnownPosition());
             if (m_active && !m_singleUpdate) {
@@ -385,8 +366,6 @@ void QDeclarativePositionSource::socketConnected()
             this, &QDeclarativePositionSource::positionUpdateReceived);
     connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
             this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
-    connect(m_positionSource, SIGNAL(updateTimeout()),
-            this, SLOT(updateTimeoutReceived()));
 
     setPosition(m_positionSource->lastKnownPosition());
 
@@ -427,8 +406,10 @@ void QDeclarativePositionSource::socketError(QAbstractSocket::SocketError error)
 }
 
 
-void QDeclarativePositionSource::updateTimeoutReceived()
+void QDeclarativePositionSource::handleUpdateTimeout()
 {
+    m_sourceError = QDeclarativePositionSource::UpdateTimeoutError;
+
     if (!m_active)
         return;
 
@@ -440,8 +421,6 @@ void QDeclarativePositionSource::updateTimeoutReceived()
         m_active = false;
         emit activeChanged();
     }
-
-    emit updateTimeout();
 }
 
 /*!
@@ -777,6 +756,9 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
         regular updates will resume.
     \li PositionSource.NoError - No error has occurred.
     \li PositionSource.UnknownSourceError - An unidentified error occurred.
+    \li PositionSource.UpdateTimeoutError - The current position could not be
+        retrieved within the specified timeout, or this PositionSource determined
+        that it will not be able to provide further regular updates.
     \li PositionSource.SocketError - An error occurred while connecting to an nmea source using a socket.
     \endlist
 
@@ -908,6 +890,8 @@ void QDeclarativePositionSource::sourceErrorReceived(const QGeoPositionInfoSourc
         m_sourceError = QDeclarativePositionSource::AccessError;
     else if (error == QGeoPositionInfoSource::ClosedError)
         m_sourceError = QDeclarativePositionSource::ClosedError;
+    else if (error == QGeoPositionInfoSource::UpdateTimeoutError)
+        handleUpdateTimeout(); // also sets m_sourceError
     else if (error == QGeoPositionInfoSource::NoError)
         return; //nothing to do
     else

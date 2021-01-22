@@ -99,6 +99,7 @@ public:
         ClosedError = QGeoPositionInfoSource::ClosedError,
         UnknownSourceError = QGeoPositionInfoSource::UnknownSourceError,
         NoError = QGeoPositionInfoSource::NoError,
+        UpdateTimeoutError = QGeoPositionInfoSource::UpdateTimeoutError,
 
         //Leave a gap for future error enum values in QGeoPositionInfoSource::Error
         SocketError = 100
@@ -149,17 +150,16 @@ Q_SIGNALS:
     void sourceErrorChanged();
     void nameChanged();
     void validityChanged();
-    void updateTimeout();
 
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo &update);
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
     void socketConnected();
     void socketError(QAbstractSocket::SocketError error);
-    void updateTimeoutReceived();
     void onParameterInitialized();
 
 private:
+    void handleUpdateTimeout();
     void setPosition(const QGeoPositionInfo &pi);
     void setSource(QGeoPositionInfoSource *source);
     bool parametersReady();

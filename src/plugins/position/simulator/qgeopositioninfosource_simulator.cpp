@@ -138,7 +138,7 @@ void QGeoPositionInfoSourceSimulator::requestUpdate(int timeout)
     if (!requestTimer->isActive()) {
         // Get a single update within timeframe
         if (timeout < minimumUpdateInterval() && timeout != 0)
-            emit updateTimeout();
+            setError(QGeoPositionInfoSource::UpdateTimeoutError);
         else {
             requestTimer->start(timeout * qreal(0.75));
         }
@@ -151,7 +151,7 @@ void QGeoPositionInfoSourceSimulator::updatePosition()
         lastPosition = Simulator::toPositionInfo(*qtPositionInfo());
         emit positionUpdated(lastPosition);
     } else {
-        emit updateTimeout();
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
     }
 }
 

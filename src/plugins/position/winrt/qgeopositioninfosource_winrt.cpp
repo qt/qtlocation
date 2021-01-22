@@ -395,7 +395,8 @@ void QGeoPositionInfoSourceWinRT::requestUpdate(int timeout)
 
     setError(QGeoPositionInfoSource::NoError);
     if (timeout != 0 && timeout < minimumUpdateInterval()) {
-        emit updateTimeout();
+        d->positionError = QGeoPositionInfoSource::UpdateTimeoutError;
+        emit QGeoPositionInfoSource::errorOccurred(d->positionError);
         return;
     }
 
@@ -432,7 +433,8 @@ void QGeoPositionInfoSourceWinRT::singleUpdateTimeOut()
     QMutexLocker locker(&d->mutex);
 
     if (d->singleUpdateTimer.isActive()) {
-        emit updateTimeout();
+        d->positionError = QGeoPositionInfoSource::UpdateTimeoutError;
+        emit QGeoPositionInfoSource::errorOccurred(d->positionError);
         if (!d->updatesOngoing)
             stopHandler();
     }

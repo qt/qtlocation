@@ -60,6 +60,7 @@ private:
     QTimer *singleTimer;
     QGeoPositionInfo lastPosition;
     QDateTime lastUpdateTime;
+    Error lastError = QGeoPositionInfoSource::NoError;
 
 private slots:
     void updatePosition();
@@ -113,7 +114,7 @@ DummySource::DummySource(const QVariantMap &parameters, QObject *parent) :
 
 QGeoPositionInfoSource::Error DummySource::error() const
 {
-    return QGeoPositionInfoSource::NoError;
+    return lastError;
 }
 
 
@@ -207,7 +208,8 @@ void DummySource::doTimeout()
 {
     timeoutTimer->stop();
     singleTimer->stop();
-    emit updateTimeout();
+    lastError = QGeoPositionInfoSource::UpdateTimeoutError;
+    emit QGeoPositionInfoSource::errorOccurred(lastError);
 }
 
 

@@ -259,7 +259,7 @@ void QGeoPositionInfoSourceCL::requestUpdate(int timeout)
 {
     // Get a single update within timeframe
     if (timeout < minimumUpdateInterval() && timeout != 0)
-        emit updateTimeout();
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
     else if (enableLocationManager()) {
         // This will force LM to generate a new update
         [m_locationManager stopUpdatingLocation];
@@ -277,7 +277,7 @@ void QGeoPositionInfoSourceCL::timerEvent( QTimerEvent * event )
 {
     // Update timed out?
     if (event->timerId() == m_updateTimer) {
-        emit updateTimeout();
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
 
         // Only timeout once since last data
         setTimeoutInterval(0);

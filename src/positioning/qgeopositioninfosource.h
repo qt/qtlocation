@@ -59,9 +59,10 @@ public:
         AccessError = 0,
         ClosedError = 1,
         UnknownSourceError = 2,
-        NoError = 3
+        NoError = 3,
+        UpdateTimeoutError = 4
     };
-    Q_ENUMS(Error)
+    Q_ENUM(Error)
 
     enum PositioningMethod {
         NoPositioningMethods = 0x00000000,
@@ -105,7 +106,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void positionUpdated(const QGeoPositionInfo &update);
-    void updateTimeout();
     void errorOccurred(QGeoPositionInfoSource::Error);
     void supportedPositioningMethodsChanged();
 

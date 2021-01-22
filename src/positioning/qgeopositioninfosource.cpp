@@ -501,11 +501,13 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     If setUpdateInterval() has not been called, the source will emit updates
     as soon as they become available.
 
-    An updateTimeout() signal will be emitted if this QGeoPositionInfoSource subclass determines
-    that it will not be able to provide regular updates.  This could happen if a satellite fix is
-    lost or if a hardware error is detected.  Position updates will recommence if the data becomes
-    available later on.  The updateTimeout() signal will not be emitted again until after the
-    periodic updates resume.
+    An errorOccurred() signal with the \l {QGeoPositionInfoSource::Error::}
+    {UpdateTimeoutError} will be emitted if this QGeoPositionInfoSource subclass
+    determines that it will not be able to provide regular updates. This could
+    happen if a satellite fix is lost or if a hardware error is detected.
+    Position updates will recommence if the data becomes available later on.
+    The \l {QGeoPositionInfoSource::Error::}{UpdateTimeoutError} error will not
+    be emitted again until after the periodic updates resume.
 
     On iOS, starting from version 8, Core Location framework requires additional
     entries in the application's Info.plist with keys NSLocationAlwaysUsageDescription or
@@ -530,7 +532,8 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     Attempts to get the current position and emit positionUpdated() with
     this information. If the current position cannot be found within the given \a timeout
     (in milliseconds) or if \a timeout is less than the value returned by
-    minimumUpdateInterval(), updateTimeout() is emitted.
+    minimumUpdateInterval(), an errorOccurred() signal with the
+    \l {QGeoPositionInfoSource::Error::}{UpdateTimeoutError} is emitted.
 
     If the timeout is zero, the timeout defaults to a reasonable timeout
     period as appropriate for the source.
@@ -561,28 +564,10 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
 */
 
 /*!
-    \fn void QGeoPositionInfoSource::updateTimeout();
-
-    If requestUpdate() was called, this signal will be emitted if the current position could not
-    be retrieved within the specified timeout.
-
-    If startUpdates() has been called, this signal will be emitted if this QGeoPositionInfoSource
-    subclass determines that it will not be able to provide further regular updates.  This signal
-    will not be emitted again until after the regular updates resume.
-
-    While the triggering of this signal may be considered an error condition, it does not
-    imply the emission of the \c error() signal. Only the emission of \c updateTimeout() is required
-    to indicate a timeout.
-*/
-
-/*!
     \fn void QGeoPositionInfoSource::errorOccurred(QGeoPositionInfoSource::Error positioningError)
 
     This signal is emitted after an error occurred. The \a positioningError
     parameter describes the type of error that occurred.
-
-    This signal is not emitted when an updateTimeout() has occurred.
-
 */
 
 /*!
@@ -597,6 +582,13 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
         regular updates will resume.
     \value NoError No error has occurred.
     \value UnknownSourceError An unidentified error occurred.
+    \value [since 6.2] UpdateTimeoutError If requestUpdate() was called, this
+        error indicates that the current position could not be retrieved within
+        the specified timeout. If startUpdates() was called, this error
+        indicates that this QGeoPositionInfoSource subclass determined that it
+        will not be able to provide further regular updates. In the latter case
+        the error would not be emitted again until after the regular updates
+        resume.
  */
 
 /*!

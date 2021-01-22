@@ -127,7 +127,7 @@ void QGeoPositionInfoSourceGeoclueMaster::positionUpdateFailed()
     m_lastVelocityIsFresh = false;
     if (m_running && !m_regularUpdateTimedOut) {
         m_regularUpdateTimedOut = true;
-        emit updateTimeout();
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
     }
 }
 
@@ -180,6 +180,12 @@ void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateFailed()
 
     // Set the velocitydata non-fresh.
     m_lastVelocityIsFresh = false;
+}
+
+void QGeoPositionInfoSourceGeoclueMaster::setError(QGeoPositionInfoSource::Error error)
+{
+    m_error = error;
+    emit errorOccurred(m_error);
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::updateVelocity(VelocityFields fields, int timestamp,
@@ -329,7 +335,7 @@ void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
 {
     if (timeout < minimumUpdateInterval() && timeout != 0) {
-        emit updateTimeout();
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
         return;
     }
     if (m_requestTimer.isActive()) {
@@ -368,7 +374,7 @@ void QGeoPositionInfoSourceGeoclueMaster::positionProviderChanged(const QString 
     if (service.isEmpty() || path.isEmpty()) {
         if (!m_regularUpdateTimedOut) {
             m_regularUpdateTimedOut = true;
-            emit updateTimeout();
+            setError(QGeoPositionInfoSource::UpdateTimeoutError);
         }
         return;
     }
@@ -405,7 +411,7 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdateTimeout()
     qCDebug(lcPositioningGeoclue) << "request update timeout occurred.";
 
     // If we end up here, there has not been valid position update.
-    emit updateTimeout();
+    setError(QGeoPositionInfoSource::UpdateTimeoutError);
 
     // Only stop positioning if regular updates not active.
     if (!m_running) {
@@ -476,15 +482,12 @@ void QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
         break;
     default:
         qWarning("QGeoPositionInfoSourceGeoclueMaster unknown preferred method.");
-        m_error = UnknownSourceError;
-        emit QGeoPositionInfoSource::errorOccurred(m_error);
+        setError(QGeoPositionInfoSource::UnknownSourceError);
         return;
     }
 
-    if (!created) {
-        m_error = UnknownSourceError;
-        emit QGeoPositionInfoSource::errorOccurred(m_error);
-    }
+    if (!created)
+        setError(QGeoPositionInfoSource::UnknownSourceError);
 }
 
 QGeoPositionInfoSource::Error QGeoPositionInfoSourceGeoclueMaster::error() const

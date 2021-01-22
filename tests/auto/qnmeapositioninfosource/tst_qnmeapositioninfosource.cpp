@@ -137,13 +137,16 @@ void tst_QNmeaPositionInfoSource::lastKnownPosition()
 
     // source may need requestUpdate() or startUpdates() to be called to
     // trigger reading of data channel
-    QSignalSpy spyTimeout(proxy->source(), SIGNAL(updateTimeout()));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
     proxy->source()->requestUpdate(proxy->source()->minimumUpdateInterval());
     QTRY_COMPARE(spyTimeout.count(), 1);
+    const QList<QVariant> arguments = spyTimeout.takeFirst();
+    const auto error = arguments.at(0).value<QGeoPositionInfoSource::Error>();
+    QCOMPARE(error, QGeoPositionInfoSource::UpdateTimeoutError);
 
     // If an update is received and startUpdates() or requestUpdate() hasn't
     // been called, it should still be available through lastKnownPosition()
-    QDateTime dt = QDateTime::currentDateTime().toUTC();
+    QDateTime dt = QDateTime::currentDateTimeUtc();
     proxy->feedUpdate(dt);
     QTRY_COMPARE(proxy->source()->lastKnownPosition().timestamp(), dt);
 
@@ -251,12 +254,12 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-    QSignalSpy spyTimeout(proxy->source(), SIGNAL(updateTimeout()));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
 
     proxy->source()->setUpdateInterval(1000);
     proxy->source()->startUpdates();
 
-    QDateTime dt = QDateTime::currentDateTime().toUTC();
+    QDateTime dt = QDateTime::currentDateTimeUtc();
 
     if (m_mode == QNmeaPositionInfoSource::SimulationMode) {
         // the first sentence primes the simulation
@@ -279,6 +282,9 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
         spyUpdate.clear();
 
         QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() == 0) && (spyTimeout.count() == 1), 7500);
+        const QList<QVariant> arguments = spyTimeout.takeFirst();
+        const auto error = arguments.at(0).value<QGeoPositionInfoSource::Error>();
+        QCOMPARE(error, QGeoPositionInfoSource::UpdateTimeoutError);
         spyTimeout.clear();
 
         QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() == 1) && (spyTimeout.count() == 0), 7500);
@@ -310,6 +316,9 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
 
         // dt + 6900
         QTRY_VERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 1);
+        const QList<QVariant> arguments = spyTimeout.takeFirst();
+        const auto error = arguments.at(0).value<QGeoPositionInfoSource::Error>();
+        QCOMPARE(error, QGeoPositionInfoSource::UpdateTimeoutError);
         spyTimeout.clear();
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(7)).toLatin1());
 
@@ -475,14 +484,16 @@ void tst_QNmeaPositionInfoSource::requestUpdate()
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-    QSignalSpy spyTimeout(proxy->source(), SIGNAL(updateTimeout()));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
     QDateTime dt;
 
     proxy->source()->requestUpdate(100);
     QTRY_COMPARE(spyTimeout.count(), 1);
+    auto error = spyTimeout[0][0].value<QGeoPositionInfoSource::Error>();
+    QCOMPARE(error, QGeoPositionInfoSource::UpdateTimeoutError);
     spyTimeout.clear();
 
-    dt = QDateTime::currentDateTime().toUTC();
+    dt = QDateTime::currentDateTimeUtc();
     proxy->feedUpdate(dt);
     proxy->source()->requestUpdate();
     QTRY_COMPARE(spyUpdate.count(), 1);
@@ -491,7 +502,7 @@ void tst_QNmeaPositionInfoSource::requestUpdate()
     spyUpdate.clear();
 
     // delay the update and expect it to be emitted after 300ms
-    dt = QDateTime::currentDateTime().toUTC();
+    dt = QDateTime::currentDateTimeUtc();
     proxy->source()->requestUpdate(1000);
     QTest::qWait(300);
     proxy->feedUpdate(dt);
@@ -500,12 +511,14 @@ void tst_QNmeaPositionInfoSource::requestUpdate()
     QCOMPARE(spyTimeout.count(), 0);
     spyUpdate.clear();
 
-    // delay the update and expect updateTimeout() to be emitted
-    dt = QDateTime::currentDateTime().toUTC();
+    // delay the update and expect errorOccurred() to be emitted
+    dt = QDateTime::currentDateTimeUtc();
     proxy->source()->requestUpdate(500);
     QTest::qWait(1000);
     proxy->feedUpdate(dt);
     QCOMPARE(spyTimeout.count(), 1);
+    error = spyTimeout[0][0].value<QGeoPositionInfoSource::Error>();
+    QCOMPARE(error, QGeoPositionInfoSource::UpdateTimeoutError);
     QCOMPARE(spyUpdate.count(), 0);
     spyUpdate.clear();
 }
@@ -517,14 +530,14 @@ void tst_QNmeaPositionInfoSource::requestUpdate_after_start()
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-    QSignalSpy spyTimeout(proxy->source(), SIGNAL(updateTimeout()));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
 
     // Start updates with 500ms interval and requestUpdate() with 100ms
     // timeout. Feed an update, and it should be emitted immediately due to
     // the requestUpdate(). The update should not be emitted again after that
     // (i.e. the startUpdates() interval should not cause it to be re-emitted).
 
-    QDateTime dt = QDateTime::currentDateTime().toUTC();
+    QDateTime dt = QDateTime::currentDateTimeUtc();
     proxy->source()->setUpdateInterval(500);
     proxy->source()->startUpdates();
     proxy->source()->requestUpdate(100);
@@ -566,7 +579,7 @@ void tst_QNmeaPositionInfoSource::testWithBadNmea_data()
     QTest::addColumn<QList<QDateTime> >("dateTimes");
     QTest::addColumn<UpdateTriggerMethod>("trigger");
 
-    QDateTime firstDateTime = QDateTime::currentDateTime().toUTC();
+    QDateTime firstDateTime = QDateTime::currentDateTimeUtc();
     QByteArray bad = QLocationTestUtils::createRmcSentence(firstDateTime.addSecs(1)).toLatin1();
     bad = bad.mid(bad.length()/2);
     QDateTime lastDateTime = firstDateTime.addSecs(2);
