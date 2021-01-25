@@ -4,7 +4,7 @@
 ## tst_doublevectors Test:
 #####################################################################
 
-qt_add_test(tst_doublevectors
+qt_internal_add_test(tst_doublevectors
     SOURCES
         tst_doublevectors.cpp
     PUBLIC_LIBRARIES

@@ -4,7 +4,7 @@
 ## tst_qgeopositioninfosource Test:
 #####################################################################
 
-qt_add_test(tst_qgeopositioninfosource
+qt_internal_add_test(tst_qgeopositioninfosource
     SOURCES
         ../utils/qlocationtestutils.cpp ../utils/qlocationtestutils_p.h
         testqgeopositioninfosource.cpp testqgeopositioninfosource_p.h

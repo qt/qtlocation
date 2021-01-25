@@ -4,7 +4,7 @@
 ## mappolyline_tester Binary:
 #####################################################################
 
-qt_add_manual_test(mappolyline_tester
+qt_internal_add_manual_test(mappolyline_tester
     GUI
     SOURCES
         main.cpp
@@ -21,7 +21,7 @@ set(qml_resource_files
     "main.qml"
 )
 
-qt_add_resource(mappolyline_tester "qml"
+qt_internal_add_resource(mappolyline_tester "qml"
     PREFIX
         "/"
     FILES

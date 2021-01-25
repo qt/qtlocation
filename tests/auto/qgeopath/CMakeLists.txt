@@ -4,7 +4,7 @@
 ## tst_qgeopath Test:
 #####################################################################
 
-qt_add_test(tst_qgeopath
+qt_internal_add_test(tst_qgeopath
     SOURCES
         tst_qgeopath.cpp
     PUBLIC_LIBRARIES

@@ -4,7 +4,7 @@
 ## tst_dummynmeapositioninfosource Test:
 #####################################################################
 
-qt_add_test(tst_dummynmeapositioninfosource
+qt_internal_add_test(tst_dummynmeapositioninfosource
     SOURCES
         ../../qgeopositioninfosource/testqgeopositioninfosource.cpp ../../qgeopositioninfosource/testqgeopositioninfosource_p.h
         ../../utils/qlocationtestutils.cpp ../../utils/qlocationtestutils_p.h

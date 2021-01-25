@@ -4,7 +4,7 @@
 ## mapitems_backends Binary:
 #####################################################################
 
-qt_add_manual_test(mapitems_backends
+qt_internal_add_manual_test(mapitems_backends
     GUI
     SOURCES
         main.cpp
@@ -24,7 +24,7 @@ set(qml_resource_files
     "main.qml"
 )
 
-qt_add_resource(mapitems_backends "qml"
+qt_internal_add_resource(mapitems_backends "qml"
     PREFIX
         "/"
     FILES

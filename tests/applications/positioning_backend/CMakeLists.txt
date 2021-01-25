@@ -4,7 +4,7 @@
 ## posbackendtesting Binary:
 #####################################################################
 
-qt_add_executable(posbackendtesting
+qt_internal_add_executable(posbackendtesting
     GUI
     SOURCES
         logwidget.cpp logwidget.h

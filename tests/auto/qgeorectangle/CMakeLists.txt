@@ -4,7 +4,7 @@
 ## tst_qgeorectangle Test:
 #####################################################################
 
-qt_add_test(tst_qgeorectangle
+qt_internal_add_test(tst_qgeorectangle
     SOURCES
         tst_qgeorectangle.cpp
     PUBLIC_LIBRARIES

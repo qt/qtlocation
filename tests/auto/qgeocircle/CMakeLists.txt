@@ -4,7 +4,7 @@
 ## tst_qgeocircle Test:
 #####################################################################
 
-qt_add_test(tst_qgeocircle
+qt_internal_add_test(tst_qgeocircle
     SOURCES
         tst_qgeocircle.cpp
     PUBLIC_LIBRARIES

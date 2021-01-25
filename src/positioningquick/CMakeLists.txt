@@ -7,7 +7,7 @@
 file(GLOB SOURCES "*.cpp")
 file(GLOB HEADERS "*.h")
 
-qt_add_module(PositioningQuick
+qt_internal_add_module(PositioningQuick
     SOURCES
         ${SOURCES}
         ${HEADERS}

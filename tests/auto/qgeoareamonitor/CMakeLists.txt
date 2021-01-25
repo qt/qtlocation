@@ -4,7 +4,7 @@
 ## tst_qgeoareamonitor Test:
 #####################################################################
 
-qt_add_test(tst_qgeoareamonitor
+qt_internal_add_test(tst_qgeoareamonitor
     SOURCES
         logfilepositionsource.cpp logfilepositionsource.h
         tst_qgeoareamonitor.cpp

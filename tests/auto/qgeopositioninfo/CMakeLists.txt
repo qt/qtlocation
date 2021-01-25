@@ -4,7 +4,7 @@
 ## tst_qgeopositioninfo Test:
 #####################################################################
 
-qt_add_test(tst_qgeopositioninfo
+qt_internal_add_test(tst_qgeopositioninfo
     SOURCES
         tst_qgeopositioninfo.cpp
     PUBLIC_LIBRARIES

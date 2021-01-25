@@ -8,7 +8,7 @@
 
 # Renamed the target due to problems with the maximum full path on
 # Windows systems (which is 250 characters only)
-qt_add_test(tst_qnmeaposinfosource_sim_generic
+qt_internal_add_test(tst_qnmeaposinfosource_sim_generic
 # special case end
     SOURCES
         ../../qgeopositioninfosource/testqgeopositioninfosource.cpp ../../qgeopositioninfosource/testqgeopositioninfosource_p.h

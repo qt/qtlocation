@@ -4,7 +4,7 @@
 ## tst_qnmeapositioninfosource_simulation Test:
 #####################################################################
 
-qt_add_test(tst_qnmeapositioninfosource_simulation
+qt_internal_add_test(tst_qnmeapositioninfosource_simulation
     SOURCES
         ../../qgeopositioninfosource/testqgeopositioninfosource.cpp ../../qgeopositioninfosource/testqgeopositioninfosource_p.h
         ../../utils/qlocationtestutils.cpp ../../utils/qlocationtestutils_p.h

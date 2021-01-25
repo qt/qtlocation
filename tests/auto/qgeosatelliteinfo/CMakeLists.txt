@@ -4,7 +4,7 @@
 ## tst_qgeosatelliteinfo Test:
 #####################################################################
 
-qt_add_test(tst_qgeosatelliteinfo
+qt_internal_add_test(tst_qgeosatelliteinfo
     SOURCES
         tst_qgeosatelliteinfo.cpp
     PUBLIC_LIBRARIES

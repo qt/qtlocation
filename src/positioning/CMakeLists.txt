@@ -4,7 +4,7 @@
 ## Positioning Module:
 #####################################################################
 
-qt_add_module(Positioning
+qt_internal_add_module(Positioning
     PLUGIN_TYPES position
     SOURCES
         qclipperutils.cpp qclipperutils_p.h
@@ -61,7 +61,7 @@ endif()
 # ANDROID_FEATURES = "android.hardware.location.gps"
 # MODULE_WINRT_CAPABILITIES_DEVICE = "location"
 # OTHER_FILES = "configure.json" "doc/src/*.qdoc" "doc/src/plugins/*.qdoc"
-qt_add_docs(Positioning
+qt_internal_add_docs(Positioning
     doc/qtpositioning.qdocconf
 )
 

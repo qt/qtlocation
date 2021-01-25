@@ -4,7 +4,7 @@
 ## tst_positionplugin Test:
 #####################################################################
 
-qt_add_test(tst_positionplugin
+qt_internal_add_test(tst_positionplugin
     SOURCES
         tst_positionplugin.cpp
     PUBLIC_LIBRARIES

@@ -4,7 +4,7 @@
 ## tst_qgeoaddress Test:
 #####################################################################
 
-qt_add_test(tst_qgeoaddress
+qt_internal_add_test(tst_qgeoaddress
     SOURCES
         tst_qgeoaddress.cpp
     PUBLIC_LIBRARIES
