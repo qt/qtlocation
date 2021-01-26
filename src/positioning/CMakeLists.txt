@@ -5,6 +5,7 @@
 #####################################################################
 
 qt_internal_add_module(Positioning
+    GENERATE_METATYPES # special case
     PLUGIN_TYPES position
     SOURCES
         qclipperutils.cpp qclipperutils_p.h

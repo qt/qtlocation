@@ -37,7 +37,7 @@
 **
 ****************************************************************************/
 
-#include "locationsingleton.h"
+#include "locationsingleton_p.h"
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QDebug>

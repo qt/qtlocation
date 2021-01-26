@@ -51,7 +51,7 @@ class QGeoPolygonPrivate;
 class Q_POSITIONING_EXPORT QGeoPolygon : public QGeoShape
 {
     Q_GADGET
-    Q_PROPERTY(QVariantList perimeter READ perimeter WRITE setPerimeter REVISION 12)
+    Q_PROPERTY(QVariantList perimeter READ perimeter WRITE setPerimeter REVISION(5, 12))
 
 public:
     QGeoPolygon();

@@ -37,30 +37,11 @@
 **
 ****************************************************************************/
 
-
-#include <QtPositioningQuick/private/qdeclarativegeoaddress_p.h>
-#include <QtPositioningQuick/private/qdeclarativegeolocation_p.h>
-#include <QtPositioning/private/qwebmercator_p.h>
-#include <QtPositioningQuick/private/qdeclarativeposition_p.h>
-#include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>
-#include <QtPositioningQuick/private/qdeclarativepluginparameter_p.h>
-
+#include <private/qpositioningquickglobal_p.h>
 #include <QtPositioningQuick/private/qquickgeocoordinateanimation_p.h>
-#include "locationsingleton.h"
-
 #include <QtCore/QVariantAnimation>
-
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/private/qqmlvaluetype_p.h>
-
-#include <QtPositioning/QGeoRectangle>
-#include <QtPositioning/QGeoCircle>
-#include <QtPositioning/QGeoPath>
-#include <QtPositioning/QGeoLocation>
-#include <QtPositioning/QGeoPositionInfo>
-#include <QtPositioning/private/qgeocoordinateobject_p.h>
-
-#include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -549,15 +530,7 @@ QT_BEGIN_NAMESPACE
    This property holds the list of coordinates defining the polygon.
 */
 
-static QObject *singleton_type_factory(QQmlEngine *engine, QJSEngine *jsEngine)
-{
-    Q_UNUSED(engine);
-    Q_UNUSED(jsEngine);
-
-    return new LocationSingleton;
-}
-
-class QtPositioningDeclarativeModule: public QQmlExtensionPlugin
+class QtPositioningDeclarativeModule: public QQmlEngineExtensionPlugin
 {
     Q_OBJECT
 
@@ -565,60 +538,19 @@ class QtPositioningDeclarativeModule: public QQmlExtensionPlugin
                       FILE "plugin.json")
 
 public:
-    QtPositioningDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
-    void registerTypes(const char *uri) override
+    QtPositioningDeclarativeModule(QObject *parent = 0) : QQmlEngineExtensionPlugin(parent)
     {
-        if (QLatin1String(uri) == QStringLiteral("QtPositioning")) {
-
-            // @uri QtPositioning 5.0
-
-            int major = 5;
-            int minor = 0;
-
-            qRegisterMetaType<QGeoCoordinate>();
-            qRegisterMetaType<QGeoAddress>();
-            qRegisterMetaType<QGeoRectangle>();
-            qRegisterMetaType<QGeoCircle>();
-            qRegisterMetaType<QGeoPath>();
-            qRegisterMetaType<QGeoPolygon>();
-            qRegisterMetaType<QGeoLocation>();
-            qRegisterMetaType<QGeoShape>();
-            qRegisterMetaType<QGeoCoordinateObject *>();
-            qRegisterMetaType<QGeoPositionInfo>();
-
-            qRegisterAnimationInterpolator<QGeoCoordinate>(q_coordinateInterpolator);
-
-            // Register the 5.0 types
-            // 5.0 is silent and not advertised
-            qmlRegisterSingletonType<LocationSingleton  >(uri, major, minor, "QtPositioning", singleton_type_factory);
-            qmlRegisterType<QDeclarativePosition        >(uri, major, minor, "Position");
-            qmlRegisterType<QDeclarativePositionSource  >(uri, major, minor, "PositionSource");
-            qmlRegisterType<QDeclarativeGeoAddress      >(uri, major, minor, "Address");
-            qmlRegisterType<QDeclarativeGeoLocation     >(uri, major, minor, "Location");
-
-            // Register the 5.3 types
-            // Introduction of 5.3 version; existing 5.0 exports become automatically available under 5.3
-            minor = 3;
-            qmlRegisterType<QQuickGeoCoordinateAnimation  >(uri, major, minor, "CoordinateAnimation");
-            qmlRegisterType<QDeclarativePosition, 1>(uri, major, minor, "Position");
-
-            minor = 4;
-            qmlRegisterType<QDeclarativePosition, 2>(uri, major, minor, "Position");
-
-            minor = 13;
-            qmlRegisterType<QDeclarativeGeoLocation, 13>(uri, major, minor, "Location");
-
-            minor = 14;
-            qmlRegisterType<QDeclarativePluginParameter >(uri, major, minor, "PluginParameter");
-
-            // The minor version used to be the current Qt 5 minor. For compatibility it is the last
-            // Qt 5 release.
-            qmlRegisterModule(uri, 5, 15);
-        } else {
-            qDebug() << "Unsupported URI given to load positioning QML plugin: " << QLatin1String(uri);
-        }
+        volatile auto registration = &qml_register_types_QtPositioning;
+        Q_UNUSED(registration)
     }
 };
+
+void QtPositioningDeclarative_initializeModule()
+{
+    qRegisterAnimationInterpolator<QGeoCoordinate>(q_coordinateInterpolator);
+}
+
+Q_CONSTRUCTOR_FUNCTION(QtPositioningDeclarative_initializeModule)
 
 QT_END_NAMESPACE
 

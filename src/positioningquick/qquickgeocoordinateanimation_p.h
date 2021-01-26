@@ -62,6 +62,8 @@ class QQuickGeoCoordinateAnimationPrivate;
 class Q_POSITIONINGQUICK_PRIVATE_EXPORT QQuickGeoCoordinateAnimation : public QQuickPropertyAnimation
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(CoordinateAnimation)
+    QML_ADDED_IN_VERSION(5, 3)
     Q_DECLARE_PRIVATE(QQuickGeoCoordinateAnimation)
     Q_PROPERTY(QGeoCoordinate from READ from WRITE setFrom)
     Q_PROPERTY(QGeoCoordinate to READ to WRITE setTo)

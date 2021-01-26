@@ -67,6 +67,8 @@ class QTcpSocket;
 class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePositionSource : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(PositionSource)
+    QML_ADDED_IN_VERSION(5, 0)
 
     Q_PROPERTY(QDeclarativePosition *position READ position NOTIFY positionChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
@@ -77,7 +79,7 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePositionSource : public QObj
     Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
     Q_PROPERTY(SourceError sourceError READ sourceError NOTIFY sourceErrorChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QQmlListProperty<QDeclarativePluginParameter> parameters READ parameters REVISION 14)
+    Q_PROPERTY(QQmlListProperty<QDeclarativePluginParameter> parameters READ parameters REVISION(5, 14))
     Q_ENUMS(PositioningMethod)
 
     Q_CLASSINFO("DefaultProperty", "parameters")
@@ -132,8 +134,8 @@ public:
     void classBegin() override { }
     void componentComplete() override;
 
-    Q_REVISION(14) Q_INVOKABLE bool setBackendProperty(const QString &name, const QVariant &value);
-    Q_REVISION(14) Q_INVOKABLE QVariant backendProperty(const QString &name) const;
+    Q_REVISION(5, 14) Q_INVOKABLE bool setBackendProperty(const QString &name, const QVariant &value);
+    Q_REVISION(5, 14) Q_INVOKABLE QVariant backendProperty(const QString &name) const;
 
 public Q_SLOTS:
     void update(int timeout = 0);

@@ -60,6 +60,8 @@ QT_BEGIN_NAMESPACE
 class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePluginParameter : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(PluginParameter)
+    QML_ADDED_IN_VERSION(5, 14)
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)

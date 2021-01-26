@@ -4,12 +4,8 @@ qt_internal_add_qml_module(declarative_positioning
     VERSION "${CMAKE_PROJECT_VERSION}"
     CLASSNAME QtPositioningDeclarativeModule
     SKIP_TYPE_REGISTRATION
-    #GENERATE_QMLTYPES
-    INSTALL_QMLTYPES
     SOURCES
         positioning.cpp
-        locationsingleton.cpp
-        locationsingleton.h
     PUBLIC_LIBRARIES
         Qt::QuickPrivate
         Qt::PositioningPrivate

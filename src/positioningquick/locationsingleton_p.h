@@ -37,8 +37,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOLOCATION_P_H
-#define QDECLARATIVEGEOLOCATION_P_H
+#ifndef LOCATIONSINGLETON_H
+#define LOCATIONSINGLETON_H
 
 //
 //  W A R N I N G
@@ -52,55 +52,59 @@
 //
 
 #include <QtCore/QObject>
-#include <QtCore/QVariantMap>
-#include <QtPositioning/QGeoLocation>
-#include <QtPositioning/qgeorectangle.h>
-#include <QtPositioningQuick/private/qdeclarativegeoaddress_p.h>
+#include <QtCore/qnumeric.h>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoShape>
+#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoPath>
+#include <QtPositioning/QGeoPolygon>
+#include <QtQml/QJSValue>
+#include <QVariant>
+#include <QPointF>
+#include <QQmlEngine>
 #include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
 
-QT_BEGIN_NAMESPACE
-
-class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativeGeoLocation : public QObject
+class Q_POSITIONINGQUICK_PRIVATE_EXPORT LocationSingleton : public QObject
 {
     Q_OBJECT
-    QML_NAMED_ELEMENT(Location)
+    QML_NAMED_ELEMENT(QtPositioning)
+    QML_SINGLETON
     QML_ADDED_IN_VERSION(5, 0)
 
-    Q_PROPERTY(QGeoLocation location READ location WRITE setLocation)
-    Q_PROPERTY(QDeclarativeGeoAddress *address READ address WRITE setAddress NOTIFY addressChanged)
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QGeoRectangle boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
-    Q_PROPERTY(QVariantMap extendedAttributes MEMBER m_extendedAttributes NOTIFY extendedAttributesChanged REVISION(5, 13))
-
 public:
-    explicit QDeclarativeGeoLocation(QObject *parent = 0);
-    explicit QDeclarativeGeoLocation(const QGeoLocation &src, QObject *parent = 0);
-    ~QDeclarativeGeoLocation();
+    explicit LocationSingleton(QObject *parent = 0);
 
-    QGeoLocation location() const;
-    void setLocation(const QGeoLocation &src);
+    Q_INVOKABLE QGeoCoordinate coordinate() const;
+    Q_INVOKABLE QGeoCoordinate coordinate(double latitude, double longitude,
+                                          double altitude = qQNaN()) const;
 
-    QDeclarativeGeoAddress *address() const;
-    void setAddress(QDeclarativeGeoAddress *address);
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate coordinate);
+    Q_INVOKABLE QGeoShape shape() const;
 
-    QGeoRectangle boundingBox() const;
-    void setBoundingBox(const QGeoRectangle &boundingBox);
+    Q_INVOKABLE QGeoRectangle rectangle() const;
+    Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &center,
+                                        double width, double height) const;
+    Q_INVOKABLE QGeoRectangle rectangle(const QGeoCoordinate &topLeft,
+                                        const QGeoCoordinate &bottomRight) const;
+    Q_INVOKABLE QGeoRectangle rectangle(const QVariantList &coordinates) const;
 
-Q_SIGNALS:
-    void addressChanged();
-    void coordinateChanged();
-    void boundingBoxChanged();
-    void extendedAttributesChanged();
+    Q_INVOKABLE QGeoCircle circle() const;
+    Q_INVOKABLE QGeoCircle circle(const QGeoCoordinate &center, qreal radius = -1.0) const;
 
-private:
-    QDeclarativeGeoAddress *m_address = nullptr;
-    QGeoRectangle m_boundingBox;
-    QGeoCoordinate m_coordinate;
-    QVariantMap m_extendedAttributes;
+    Q_INVOKABLE QGeoPath path() const;
+    Q_INVOKABLE QGeoPath path(const QJSValue &value, qreal width = 0.0) const;
+
+    Q_INVOKABLE QGeoPolygon polygon() const;
+    Q_INVOKABLE QGeoPolygon polygon(const QVariantList &value) const;
+    Q_INVOKABLE QGeoPolygon polygon(const QVariantList &perimeter, const QVariantList &holes) const;
+
+    Q_INVOKABLE QGeoCircle shapeToCircle(const QGeoShape &shape) const;
+    Q_INVOKABLE QGeoRectangle shapeToRectangle(const QGeoShape &shape) const;
+    Q_INVOKABLE QGeoPath shapeToPath(const QGeoShape &shape) const;
+    Q_INVOKABLE QGeoPolygon shapeToPolygon(const QGeoShape &shape) const;
+
+    Q_REVISION(5, 12) Q_INVOKABLE QGeoCoordinate mercatorToCoord(const QPointF &mercator) const;
+    Q_REVISION(5, 12) Q_INVOKABLE QPointF coordToMercator(const QGeoCoordinate &coord) const;
 };
 
-QT_END_NAMESPACE
-
-#endif // QDECLARATIVELOCATION_P_H
+#endif // LOCATIONSINGLETON_H

@@ -64,6 +64,8 @@ QT_BEGIN_NAMESPACE
 class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePosition : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Position)
+    QML_ADDED_IN_VERSION(5, 0)
 
     Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged)
     Q_PROPERTY(bool longitudeValid READ isLongitudeValid NOTIFY longitudeValidChanged)
@@ -77,13 +79,13 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePosition : public QObject
     Q_PROPERTY(bool horizontalAccuracyValid READ isHorizontalAccuracyValid NOTIFY horizontalAccuracyValidChanged)
     Q_PROPERTY(bool verticalAccuracyValid READ isVerticalAccuracyValid NOTIFY verticalAccuracyValidChanged)
 
-    Q_PROPERTY(bool directionValid READ isDirectionValid NOTIFY directionValidChanged REVISION 1)
-    Q_PROPERTY(double direction READ direction NOTIFY directionChanged REVISION 1)
-    Q_PROPERTY(bool verticalSpeedValid READ isVerticalSpeedValid NOTIFY verticalSpeedValidChanged REVISION 1)
-    Q_PROPERTY(double verticalSpeed READ verticalSpeed NOTIFY verticalSpeedChanged REVISION 1)
+    Q_PROPERTY(bool directionValid READ isDirectionValid NOTIFY directionValidChanged REVISION(5, 1))
+    Q_PROPERTY(double direction READ direction NOTIFY directionChanged REVISION(5, 1))
+    Q_PROPERTY(bool verticalSpeedValid READ isVerticalSpeedValid NOTIFY verticalSpeedValidChanged REVISION(5, 1))
+    Q_PROPERTY(double verticalSpeed READ verticalSpeed NOTIFY verticalSpeedChanged REVISION(5, 1))
 
-    Q_PROPERTY(double magneticVariation READ magneticVariation NOTIFY magneticVariationChanged REVISION 2)
-    Q_PROPERTY(bool magneticVariationValid READ isMagneticVariationValid NOTIFY magneticVariationChanged REVISION 2)
+    Q_PROPERTY(double magneticVariation READ magneticVariation NOTIFY magneticVariationChanged REVISION(5, 2))
+    Q_PROPERTY(bool magneticVariationValid READ isMagneticVariationValid NOTIFY magneticVariationChanged REVISION(5, 2))
 
 public:
     explicit QDeclarativePosition(QObject *parent = 0);
@@ -130,13 +132,13 @@ Q_SIGNALS:
     void verticalAccuracyChanged();
     void verticalAccuracyValidChanged();
 
-    Q_REVISION(1) void directionValidChanged();
-    Q_REVISION(1) void directionChanged();
-    Q_REVISION(1) void verticalSpeedValidChanged();
-    Q_REVISION(1) void verticalSpeedChanged();
+    Q_REVISION(5, 1) void directionValidChanged();
+    Q_REVISION(5, 1) void directionChanged();
+    Q_REVISION(5, 1) void verticalSpeedValidChanged();
+    Q_REVISION(5, 1) void verticalSpeedChanged();
 
-    Q_REVISION(2) void magneticVariationChanged();
-    Q_REVISION(2) void magneticVariationValidChanged();
+    Q_REVISION(5, 2) void magneticVariationChanged();
+    Q_REVISION(5, 2) void magneticVariationValidChanged();
 
 private:
     QGeoPositionInfo m_info;

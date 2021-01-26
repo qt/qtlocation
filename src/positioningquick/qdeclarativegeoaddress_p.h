@@ -54,12 +54,15 @@
 #include <QtCore/QObject>
 #include <QtPositioning/QGeoAddress>
 #include <QtPositioningQuick/private/qpositioningquickglobal_p.h>
+#include <QQmlEngine>
 
 QT_BEGIN_NAMESPACE
 
 class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativeGeoAddress : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Address)
+    QML_ADDED_IN_VERSION(5, 0)
 
     Q_PROPERTY(QGeoAddress address READ address WRITE setAddress)
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)

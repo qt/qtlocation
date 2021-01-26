@@ -4,15 +4,20 @@
 ## PositioningQuick Module:
 #####################################################################
 
-file(GLOB SOURCES "*.cpp")
-file(GLOB HEADERS "*.h")
-
 qt_internal_add_module(PositioningQuick
+    GENERATE_METATYPES
     SOURCES
-        ${SOURCES}
-        ${HEADERS}
-    INCLUDE_DIRECTORIES
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        qdeclarativegeoaddress_p.h qdeclarativegeoaddress.cpp
+        qdeclarativegeolocation_p.h qdeclarativegeolocation.cpp
+        qdeclarativepluginparameter_p.h qdeclarativepluginparameter.cpp
+        qdeclarativeposition_p.h qdeclarativeposition.cpp
+        qdeclarativepositionsource_p.h qdeclarativepositionsource.cpp
+        qquickgeocoordinateanimation_p.h qquickgeocoordinateanimation.cpp
+        locationsingleton_p.h locationsingleton.cpp
+        qquickgeocoordinateanimation_p_p.h
+        qpositioningquickglobal.h
+        qpositioningquickglobal_p.h
+        qpositioningquickmodule_p.h
     LIBRARIES
         Qt::CorePrivate
         Qt::PositioningPrivate
@@ -29,3 +34,13 @@ qt_internal_add_module(PositioningQuick
         Qt::QmlPrivate
         Qt::QuickPrivate
 )
+
+set_target_properties(PositioningQuick PROPERTIES
+    QT_QML_MODULE_INSTALL_QMLTYPES TRUE
+    QT_QML_MODULE_VERSION ${CMAKE_PROJECT_VERSION}
+    QT_QML_MODULE_URI QtPositioning
+    QT_QMLTYPES_FILENAME plugins.qmltypes
+    QT_QML_MODULE_INSTALL_DIR "${INSTALL_QMLDIR}/QtPositioning"
+)
+
+qt6_qml_type_registration(PositioningQuick)
