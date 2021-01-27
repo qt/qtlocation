@@ -314,6 +314,10 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     and satellitesInUseUpdated() signals may be emitted with
     empty parameter lists.
 
+    \note Since Qt6 this method always resets the last error to
+    \l {QGeoSatelliteInfoSource::Error::}{NoError} before starting
+    the updates.
+
     \sa satellitesInViewUpdated(), satellitesInUseUpdated()
 */
 
@@ -340,12 +344,19 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     This does nothing if another update request is in progress. However
     it can be called even if startUpdates() has already been called and
     regular updates are in progress.
+
+    \note Since Qt6 this method always resets the last error to
+    \l {QGeoSatelliteInfoSource::Error::}{NoError} before requesting
+    the satellite information.
 */
 
 /*!
     \fn QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSource::error() const = 0
 
     Returns the last error that occurred.
+
+    \note Since Qt6 the last error is always reset when calling startUpdates()
+    or requestUpdate().
 */
 
 /*!

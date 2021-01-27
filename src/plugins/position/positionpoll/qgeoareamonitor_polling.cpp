@@ -321,7 +321,6 @@ QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent)
     : QGeoAreaMonitorSource(parent), signalsAreConnected(false)
 {
     d = pollingPrivate();
-    lastError = QGeoAreaMonitorSource::NoError;
     d->registerClient(this);
     //hookup to default source if existing
     if (!positionInfoSource())
@@ -361,6 +360,8 @@ bool QGeoAreaMonitorPolling::startMonitoring(const QGeoAreaMonitorInfo &monitor)
     //don't accept persistent monitor since we don't support it
     if (monitor.isPersistent())
         return false;
+
+    lastError = QGeoAreaMonitorSource::NoError;
 
     //update or insert
     d->startMonitoring(monitor);
@@ -402,6 +403,8 @@ bool QGeoAreaMonitorPolling::requestUpdate(const QGeoAreaMonitorInfo &monitor, c
     {
         return false;
     }
+
+    lastError = QGeoAreaMonitorSource::NoError;
 
     d->requestUpdate(monitor, signalId);
 

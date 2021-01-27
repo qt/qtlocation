@@ -150,6 +150,7 @@ QGeoPositionInfoSource::PositioningMethods DummySource::supportedPositioningMeth
 
 void DummySource::startUpdates()
 {
+    lastError = QGeoPositionInfoSource::NoError;
     timer->start();
 }
 
@@ -160,6 +161,7 @@ void DummySource::stopUpdates()
 
 void DummySource::requestUpdate(int timeout)
 {
+    lastError = QGeoPositionInfoSource::NoError;
     if (timeout == 0)
         timeout = 5000;
     if (timeout < 0)

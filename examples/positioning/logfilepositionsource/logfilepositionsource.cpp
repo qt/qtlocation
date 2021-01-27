@@ -80,6 +80,7 @@ int LogFilePositionSource::minimumUpdateInterval() const
 
 void LogFilePositionSource::startUpdates()
 {
+    lastError = QGeoPositionInfoSource::NoError;
     int interval = updateInterval();
     if (interval < minimumUpdateInterval())
         interval = minimumUpdateInterval();
@@ -96,6 +97,7 @@ void LogFilePositionSource::requestUpdate(int /*timeout*/)
 {
     // For simplicity, ignore timeout - assume that if data is not available
     // now, no data will be added to the file later
+    lastError = QGeoPositionInfoSource::NoError;
     if (logFile->canReadLine()) {
         readNextPosition();
     } else {

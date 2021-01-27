@@ -573,13 +573,17 @@ void QNmeaPositionInfoSourcePrivate::startUpdates()
     if (m_invokedStart)
         return;
 
+    m_positionError = QGeoPositionInfoSource::NoError;
+
     m_invokedStart = true;
     m_pendingUpdate = QGeoPositionInfo();
     m_noUpdateLastInterval = false;
 
     bool initialized = initialize();
-    if (!initialized)
+    if (!initialized) {
+        m_source->setError(QGeoPositionInfoSource::AccessError);
         return;
+    }
 
     if (m_updateMode == QNmeaPositionInfoSource::RealTimeMode) {
         // skip over any buffered data - we only want the newest data.
@@ -618,6 +622,8 @@ void QNmeaPositionInfoSourcePrivate::requestUpdate(int msec)
 {
     if (m_requestTimer && m_requestTimer->isActive())
         return;
+
+    m_positionError = QGeoPositionInfoSource::NoError;
 
     if (msec <= 0 || msec < m_source->minimumUpdateInterval()) {
         m_source->setError(QGeoPositionInfoSource::UpdateTimeoutError);
@@ -955,7 +961,8 @@ QGeoPositionInfoSource::Error QNmeaPositionInfoSource::error() const
 void QNmeaPositionInfoSource::setError(QGeoPositionInfoSource::Error positionError)
 {
     d->m_positionError = positionError;
-    emit QGeoPositionInfoSource::errorOccurred(positionError);
+    if (d->m_positionError != QGeoPositionInfoSource::NoError)
+        emit QGeoPositionInfoSource::errorOccurred(positionError);
 }
 
 QT_END_NAMESPACE

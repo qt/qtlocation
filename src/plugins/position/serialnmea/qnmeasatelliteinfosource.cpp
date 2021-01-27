@@ -272,6 +272,8 @@ void QNmeaSatelliteInfoSourcePrivate::startUpdates()
     if (m_invokedStart)
         return;
 
+    m_satelliteError = QGeoSatelliteInfoSource::NoError;
+
     m_invokedStart = true;
     m_pendingUpdate.clear();
     m_noUpdateLastInterval = false;
@@ -319,6 +321,8 @@ void QNmeaSatelliteInfoSourcePrivate::requestUpdate(int msec)
 {
     if (m_requestTimer && m_requestTimer->isActive())
         return;
+
+    m_satelliteError = QGeoSatelliteInfoSource::NoError;
 
     if (msec <= 0 || msec < m_source->minimumUpdateInterval()) {
         m_source->setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
@@ -549,7 +553,8 @@ void QNmeaSatelliteInfoSource::requestUpdate(int msec)
 void QNmeaSatelliteInfoSource::setError(QGeoSatelliteInfoSource::Error satelliteError)
 {
     d->m_satelliteError = satelliteError;
-    emit QGeoSatelliteInfoSource::errorOccurred(satelliteError);
+    if (d->m_satelliteError != QGeoSatelliteInfoSource::NoError)
+        emit QGeoSatelliteInfoSource::errorOccurred(satelliteError);
 }
 
 

@@ -117,6 +117,9 @@ public:
      \fn virtual QGeoAreaMonitorSource::Error QGeoAreaMonitorSource::error() const
 
      Returns the type of error that last occurred.
+
+    \note Since Qt6 the last error is always reset when calling
+    startMonitoring() or requestUpdate().
 */
 
 /*!
@@ -276,6 +279,9 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
     Requesting persistent monitoring on a QGeoAreaMonitorSource instance fails if the area monitoring
     backend doesn't support \l QGeoAreaMonitorSource::PersistentAreaMonitorFeature.
 
+    \note Since Qt6 this method always resets the last error to
+    \l {QGeoAreaMonitorSource::Error::}{NoError} before starting monitoring.
+
     \sa stopMonitoring()
 */
 
@@ -309,6 +315,9 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
 
     If \a monitor was already registered via \l startMonitoring() it is converted to a single
     shot behavior.
+
+    \note Since Qt6 this method always resets the last error to
+    \l {QGeoAreaMonitorSource::Error::}{NoError} before starting monitoring.
 
     \sa startMonitoring(), stopMonitoring()
  */

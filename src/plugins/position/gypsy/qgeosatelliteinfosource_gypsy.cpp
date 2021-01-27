@@ -298,6 +298,9 @@ void QGeoSatelliteInfoSourceGypsy::startUpdates()
 {
     if (m_updatesOngoing)
         return;
+
+    m_error = QGeoSatelliteInfoSource::NoError;
+
     // If there is a request timer ongoing, we've connected to the signal already
     if (!m_requestTimer.isActive()) {
         m_engine->eng_g_signal_connect (m_satellite, "satellites-changed",
@@ -322,6 +325,9 @@ void QGeoSatelliteInfoSourceGypsy::requestUpdate(int timeout)
 {
     if (m_requestOngoing)
         return;
+
+    m_error = QGeoSatelliteInfoSource::NoError;
+
     if (timeout < 0) {
         setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
         return;

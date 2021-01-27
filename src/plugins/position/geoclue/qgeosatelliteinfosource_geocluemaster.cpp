@@ -90,6 +90,8 @@ void QGeoSatelliteInfoSourceGeoclueMaster::startUpdates()
     if (m_running)
         return;
 
+    m_error = QGeoSatelliteInfoSource::NoError;
+
     m_running = true;
 
     // Start Geoclue provider.
@@ -120,13 +122,15 @@ void QGeoSatelliteInfoSourceGeoclueMaster::stopUpdates()
 
 void QGeoSatelliteInfoSourceGeoclueMaster::requestUpdate(int timeout)
 {
+    if (m_requestTimer.isActive())
+        return;
+
+    m_error = QGeoSatelliteInfoSource::NoError;
+
     if (timeout < minimumUpdateInterval() && timeout != 0) {
         setError(QGeoSatelliteInfoSource::UpdateTimeoutError);
         return;
     }
-
-    if (m_requestTimer.isActive())
-        return;
 
     if (!m_master->hasMasterClient())
         configureSatelliteSource();

@@ -185,7 +185,8 @@ void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateFailed()
 void QGeoPositionInfoSourceGeoclueMaster::setError(QGeoPositionInfoSource::Error error)
 {
     m_error = error;
-    emit errorOccurred(m_error);
+    if (m_error != QGeoPositionInfoSource::NoError)
+        emit errorOccurred(m_error);
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::updateVelocity(VelocityFields fields, int timestamp,
@@ -282,6 +283,8 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
         return;
     }
 
+    m_error = QGeoPositionInfoSource::NoError;
+
     m_running = true;
 
     qCDebug(lcPositioningGeoclue) << "starting updates";
@@ -334,12 +337,15 @@ void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 
 void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
 {
-    if (timeout < minimumUpdateInterval() && timeout != 0) {
-        setError(QGeoPositionInfoSource::UpdateTimeoutError);
-        return;
-    }
     if (m_requestTimer.isActive()) {
         qCDebug(lcPositioningGeoclue) << "request timer was active, ignoring startUpdates.";
+        return;
+    }
+
+    m_error = QGeoPositionInfoSource::NoError;
+
+    if (timeout < minimumUpdateInterval() && timeout != 0) {
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
         return;
     }
 

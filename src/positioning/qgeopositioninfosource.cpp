@@ -509,6 +509,9 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     The \l {QGeoPositionInfoSource::Error::}{UpdateTimeoutError} error will not
     be emitted again until after the periodic updates resume.
 
+    \note Since Qt6 this method always resets the last error to
+    \l {QGeoPositionInfoSource::Error::}{NoError} before starting the updates.
+
     On iOS, starting from version 8, Core Location framework requires additional
     entries in the application's Info.plist with keys NSLocationAlwaysUsageDescription or
     NSLocationWhenInUseUsageDescription and a string to be displayed in the authorization prompt.
@@ -545,6 +548,10 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     If the source uses multiple positioning methods, it tries to get the
     current position from the most accurate positioning method within the
     given timeout.
+
+    \note Since Qt6 this method always resets the last error to
+    \l {QGeoPositionInfoSource::Error::}{NoError} before requesting
+    the position.
 */
 
 /*!
@@ -552,6 +559,8 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
 
      Returns the type of error that last occurred.
 
+    \note Since Qt6 the last error is always reset when calling startUpdates()
+    or requestUpdate().
 */
 
 /*!

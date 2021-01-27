@@ -232,6 +232,7 @@ void QGeoPositionInfoSourceCL::setTimeoutInterval(int msec)
 
 void QGeoPositionInfoSourceCL::startUpdates()
 {
+    m_positionError = QGeoPositionInfoSource::NoError;
     if (enableLocationManager()) {
 #ifdef Q_OS_TVOS
         [m_locationManager requestLocation];    // service will run long enough for one location update
@@ -258,6 +259,7 @@ void QGeoPositionInfoSourceCL::stopUpdates()
 void QGeoPositionInfoSourceCL::requestUpdate(int timeout)
 {
     // Get a single update within timeframe
+    m_positionError = QGeoPositionInfoSource::NoError;
     if (timeout < minimumUpdateInterval() && timeout != 0)
         setError(QGeoPositionInfoSource::UpdateTimeoutError);
     else if (enableLocationManager()) {
@@ -325,7 +327,8 @@ QGeoPositionInfoSource::Error QGeoPositionInfoSourceCL::error() const
 void QGeoPositionInfoSourceCL::setError(QGeoPositionInfoSource::Error positionError)
 {
     m_positionError = positionError;
-    emit QGeoPositionInfoSource::errorOccurred(positionError);
+    if (m_positionError != QGeoPositionInfoSource::NoError)
+        emit QGeoPositionInfoSource::errorOccurred(positionError);
 }
 
 QT_END_NAMESPACE

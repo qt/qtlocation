@@ -105,6 +105,8 @@ void QGeoSatelliteInfoSourceAndroid::startUpdates()
 
     updatesRunning = true;
 
+    m_error = QGeoSatelliteInfoSource::NoError;
+
     QGeoSatelliteInfoSource::Error error = AndroidPositioning::startSatelliteUpdates(
                 androidClassKeyForUpdate, false, updateInterval());
     if (error != QGeoSatelliteInfoSource::NoError) {
@@ -126,6 +128,8 @@ void QGeoSatelliteInfoSourceAndroid::requestUpdate(int timeout)
 {
     if (requestTimer.isActive())
         return;
+
+    m_error = QGeoSatelliteInfoSource::NoError;
 
     if (timeout != 0 && timeout < minimumUpdateInterval()) {
         setError(QGeoSatelliteInfoSource::UpdateTimeoutError);

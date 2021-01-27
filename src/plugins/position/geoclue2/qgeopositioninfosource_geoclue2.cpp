@@ -159,6 +159,9 @@ void QGeoPositionInfoSourceGeoclue2::startUpdates()
     }
 
     qCDebug(lcPositioningGeoclue2) << "Starting updates";
+
+    m_error = QGeoPositionInfoSource::NoError;
+
     m_running = true;
 
     startClient();
@@ -184,13 +187,15 @@ void QGeoPositionInfoSourceGeoclue2::stopUpdates()
 
 void QGeoPositionInfoSourceGeoclue2::requestUpdate(int timeout)
 {
-    if (timeout < minimumUpdateInterval() && timeout != 0) {
-        setError(QGeoPositionInfoSource::UpdateTimeoutError);
+    if (m_requestTimer->isActive()) {
+        qCDebug(lcPositioningGeoclue2) << "Request timer was active, ignoring startUpdates";
         return;
     }
 
-    if (m_requestTimer->isActive()) {
-        qCDebug(lcPositioningGeoclue2) << "Request timer was active, ignoring startUpdates";
+    m_error = QGeoPositionInfoSource::NoError;
+
+    if (timeout < minimumUpdateInterval() && timeout != 0) {
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
         return;
     }
 
@@ -201,7 +206,8 @@ void QGeoPositionInfoSourceGeoclue2::requestUpdate(int timeout)
 void QGeoPositionInfoSourceGeoclue2::setError(QGeoPositionInfoSource::Error error)
 {
     m_error = error;
-    emit QGeoPositionInfoSource::errorOccurred(m_error);
+    if (m_error != QGeoPositionInfoSource::NoError)
+        emit QGeoPositionInfoSource::errorOccurred(m_error);
 }
 
 void QGeoPositionInfoSourceGeoclue2::restoreLastPosition()

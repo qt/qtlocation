@@ -83,7 +83,7 @@ private Q_SLOTS:
 
 private:
     QGeoAreaMonitorPollingPrivate* d;
-    QGeoAreaMonitorSource::Error lastError;
+    QGeoAreaMonitorSource::Error lastError = QGeoAreaMonitorSource::NoError;
 
     void connectNotify(const QMetaMethod &signal) override;
     void disconnectNotify(const QMetaMethod &signal) override;
