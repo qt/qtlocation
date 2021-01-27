@@ -136,7 +136,7 @@ public:
     Q_REVISION(14) Q_INVOKABLE QVariant backendProperty(const QString &name) const;
 
 public Q_SLOTS:
-    void update(); // TODO Qt 6 change to void update(int)
+    void update(int timeout = 0);
     void start();
     void stop();
 

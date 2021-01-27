@@ -636,7 +636,7 @@ void QDeclarativePositionSource::start()
 }
 
 /*!
-    \qmlmethod PositionSource::update()
+    \qmlmethod PositionSource::update(int timeout)
 
     A convenience method to request single update from the location source.
     If there is no source available, this method has no effect.
@@ -645,10 +645,14 @@ void QDeclarativePositionSource::start()
     long as it takes to receive an update, or until the request times
     out.  The request timeout period is source-specific.
 
+    The \a timeout is specified in milliseconds. If the \a timeout is zero
+    (the default value), it defaults to a reasonable timeout period as
+    appropriate for the source.
+
     \sa start, stop, active
 */
 
-void QDeclarativePositionSource::update()
+void QDeclarativePositionSource::update(int timeout)
 {
     if (m_positionSource) {
         if (!m_active) {
@@ -659,7 +663,7 @@ void QDeclarativePositionSource::update()
         // Use default timeout value. Set active before calling the
         // update request because on some platforms there may
         // be results immediately.
-        m_positionSource->requestUpdate();
+        m_positionSource->requestUpdate(timeout);
     }
 }
 
