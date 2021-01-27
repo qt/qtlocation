@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -33,20 +33,20 @@ import QtPositioning 5.5
 Item {
     id: item
 
-    property variant empty: QtPositioning.coordinate()
-    property variant base: QtPositioning.coordinate(1.0, 1.0, 5.0)
-    property variant zero: QtPositioning.coordinate(0, 0)
-    property variant plusone: QtPositioning.coordinate(0, 1)
-    property variant minusone: QtPositioning.coordinate(0, -1)
-    property variant north: QtPositioning.coordinate(3, 0)
+    property var empty: QtPositioning.coordinate()
+    property var base: QtPositioning.coordinate(1.0, 1.0, 5.0)
+    property var zero: QtPositioning.coordinate(0, 0)
+    property var plusone: QtPositioning.coordinate(0, 1)
+    property var minusone: QtPositioning.coordinate(0, -1)
+    property var north: QtPositioning.coordinate(3, 0)
 
     SignalSpy { id: coordSpy; target: item; signalName: "baseChanged" }
 
-    property variant inside: QtPositioning.coordinate(0.5, 0.5)
-    property variant outside: QtPositioning.coordinate(2, 2)
-    property variant tl: QtPositioning.coordinate(1, 0)
-    property variant br: QtPositioning.coordinate(0, 1)
-    property variant box: QtPositioning.rectangle(tl, br)
+    property var inside: QtPositioning.coordinate(0.5, 0.5)
+    property var outside: QtPositioning.coordinate(2, 2)
+    property var tl: QtPositioning.coordinate(1, 0)
+    property var br: QtPositioning.coordinate(0, 1)
+    property var box: QtPositioning.rectangle(tl, br)
 
 
     Address {
@@ -144,16 +144,25 @@ Item {
             compare(base.latitude, 1.0)
             compare(base.altitude, 5.0)
 
-            coordSpy.clear();
+            coordSpy.clear()
 
-            base.longitude = 2.0;
-            base.latitude = 3.0;
-            base.altitude = 6.0;
+            base.longitude = 2.0
+            base.latitude = 3.0
+            base.altitude = 6.0
 
             compare(base.longitude, 2.0)
             compare(base.latitude, 3.0)
             compare(base.altitude, 6.0)
-            compare(coordSpy.count, 3)
+            // changing individual properties does *not* trigger
+            // change notification
+            compare(coordSpy.count, 0)
+
+            // updating the whole object *does* trigger change notification
+            base = QtPositioning.coordinate(3.0, 4.0, 5.0)
+            compare(base.latitude, 3.0)
+            compare(base.longitude, 4.0)
+            compare(base.altitude, 5.0)
+            compare(coordSpy.count, 1)
         }
 
         function test_comparison_data()

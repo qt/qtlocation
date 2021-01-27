@@ -1,7 +1,7 @@
 # QML tests in this directory must not depend on an OpenGL context.
 
 TEMPLATE = app
-TARGET = tst_declarative_geoshape
+TARGET = tst_declarative_mappolyline
 CONFIG += qmltestcase
 SOURCES += main.cpp
 

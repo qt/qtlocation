@@ -2,7 +2,7 @@
 # QML tests that do require an OpenGL context must go in ../../declarative_ui.
 
 TEMPLATE = app
-TARGET = tst_declarative_core
+TARGET = tst_declarative_location_core
 CONFIG += qmltestcase
 SOURCES += main.cpp
 

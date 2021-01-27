@@ -70,8 +70,8 @@ qtHaveModule(location) {
         qgeotiledmap.depends = geotestplugin
     }
     qtHaveModule(quick):!android {
-        SUBDIRS += declarative_geoshape \
-                   declarative_core
+        SUBDIRS += declarative_mappolyline \
+                   declarative_location_core
         declarative_core.depends = geotestplugin
 
         !mac: {
@@ -79,6 +79,10 @@ qtHaveModule(location) {
             declarative_ui.depends = geotestplugin
         }
     }
+}
+
+qtHaveModule(quick):!android {
+    SUBDIRS += declarative_positioning_core
 }
 
 SUBDIRS += \

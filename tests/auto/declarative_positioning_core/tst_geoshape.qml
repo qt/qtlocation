@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -29,17 +29,17 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtPositioning 5.2
-import QtLocation 5.5
+import TestFactory 1.0
 
 Item {
     id: testCase
 
-    property variant coordinate1: QtPositioning.coordinate(1, 1)
-    property variant coordinate2: QtPositioning.coordinate(2, 2)
-    property variant coordinate3: QtPositioning.coordinate(80, 80)
+    property var coordinate1: QtPositioning.coordinate(1, 1)
+    property var coordinate2: QtPositioning.coordinate(2, 2)
+    property var coordinate3: QtPositioning.coordinate(80, 80)
 
-    property variant emptyCircle: QtPositioning.circle()
-    property variant circle1: QtPositioning.circle(coordinate1, 200000)
+    property var emptyCircle: QtPositioning.circle()
+    property var circle1: QtPositioning.circle(coordinate1, 200000)
 
     SignalSpy { id: circleChangedSpy; target: testCase; signalName: "emptyCircleChanged" }
 
@@ -51,19 +51,19 @@ Item {
             compare (circle1.radius, 200000)
 
             emptyCircle.radius = 200
-            compare(circleChangedSpy.count, 1);
-            emptyCircle.radius = 200;
-            compare(circleChangedSpy.count, 1);
+            compare(emptyCircle.radius, 200)
 
-            emptyCircle.center = coordinate1;
-            compare(circleChangedSpy.count, 2);
             emptyCircle.center = coordinate1
-            compare(circleChangedSpy.count, 2);
+            compare(emptyCircle.center, coordinate1)
+
             emptyCircle.center = coordinate2
-            compare(circleChangedSpy.count, 3);
+            compare(emptyCircle.center, coordinate2)
 
-            emptyCircle.center = coordinate1
-            emptyCircle.radius = 200000
+            emptyCircle = QtPositioning.circle(coordinate1, 200000)
+            compare(emptyCircle.center, coordinate1)
+            compare(emptyCircle.radius, 200000)
+            // signal is triggered only when we update the whole object
+            compare(circleChangedSpy.count, 1)
 
             compare(emptyCircle.contains(coordinate1), true);
             compare(emptyCircle.contains(coordinate2), true);
@@ -71,39 +71,39 @@ Item {
         }
     }
 
-    property variant trace1 : [     QtPositioning.coordinate(43.773175, 11.255386),
-                                    QtPositioning.coordinate(43.773546 , 11.255372) ]
-    property variant trace2 : [     QtPositioning.coordinate(43.773175, 11.255386),
-                                    QtPositioning.coordinate(43.773546 , 11.255372),
-                                    QtPositioning.coordinate(43.77453 , 11.255734)]
+    property var trace1 : [ QtPositioning.coordinate(43.773175, 11.255386),
+                            QtPositioning.coordinate(43.773546 , 11.255372) ]
+    property var trace2 : [ QtPositioning.coordinate(43.773175, 11.255386),
+                            QtPositioning.coordinate(43.773546 , 11.255372),
+                            QtPositioning.coordinate(43.77453 , 11.255734) ]
 
 
     // coordinate unit square
-    property variant bl: QtPositioning.coordinate(0, 0)
-    property variant tl: QtPositioning.coordinate(1, 0)
-    property variant tr: QtPositioning.coordinate(1, 1)
-    property variant br: QtPositioning.coordinate(0, 1)
-    property variant ntr: QtPositioning.coordinate(3, 3)
+    property var bl: QtPositioning.coordinate(0, 0)
+    property var tl: QtPositioning.coordinate(1, 0)
+    property var tr: QtPositioning.coordinate(1, 1)
+    property var br: QtPositioning.coordinate(0, 1)
+    property var ntr: QtPositioning.coordinate(3, 3)
 
-    property variant invalid: QtPositioning.coordinate(100, 190)
-    property variant inside: QtPositioning.coordinate(0.5, 0.5)
-    property variant outside: QtPositioning.coordinate(2, 2)
+    property var invalid: QtPositioning.coordinate(100, 190)
+    property var inside: QtPositioning.coordinate(0.5, 0.5)
+    property var outside: QtPositioning.coordinate(2, 2)
 
-    property variant box: QtPositioning.rectangle(tl, br)
+    property var box: QtPositioning.rectangle(tl, br)
 
-    property variant coordinates: [bl, tl, tr, br]
-    property variant coordinates2: [bl, tl, tr, br, ntr]
-    property variant coordinates3: [tr]
-    property variant coordinates4: [invalid]
-    property variant coordinates5: []
+    property var coordinates: [bl, tl, tr, br]
+    property var coordinates2: [bl, tl, tr, br, ntr]
+    property var coordinates3: [tr]
+    property var coordinates4: [invalid]
+    property var coordinates5: []
 
-    property variant listBox: QtPositioning.rectangle(coordinates)
-    property variant listBox2: QtPositioning.rectangle(coordinates2)
-    property variant listBox3: QtPositioning.rectangle(coordinates3)
-    property variant listBox4: QtPositioning.rectangle(coordinates4)
-    property variant listBox5: QtPositioning.rectangle(coordinates5)
+    property var listBox: QtPositioning.rectangle(coordinates)
+    property var listBox2: QtPositioning.rectangle(coordinates2)
+    property var listBox3: QtPositioning.rectangle(coordinates3)
+    property var listBox4: QtPositioning.rectangle(coordinates4)
+    property var listBox5: QtPositioning.rectangle(coordinates5)
 
-    property variant widthBox: QtPositioning.rectangle(inside, 1, 1);
+    property var widthBox: QtPositioning.rectangle(inside, 1, 1);
 
     // C++ auto test exists for basics of bounding box, testing here
     // only added functionality
@@ -239,68 +239,6 @@ Item {
         }
     }
 
-
-    MapPolyline {
-        id: mapPolyline
-        path: [
-                { latitude: -27, longitude: 153.0 },
-                { latitude: -27, longitude: 154.1 },
-                { latitude: -28, longitude: 153.5 },
-                { latitude: -29, longitude: 153.5 }
-            ]
-    }
-
-    MapPolyline {
-        id: mapPolylineGeopath
-    }
-
-    TestCase {
-        name: "MapPolyline path"
-        function test_path_operations() {
-            compare(mapPolyline.path[1].latitude, -27)
-            compare(mapPolyline.path[1].longitude, 154.1)
-            compare(mapPolyline.coordinateAt(1), QtPositioning.coordinate(-27, 154.1))
-            compare(mapPolyline.path.length, mapPolyline.pathLength())
-
-            mapPolyline.removeCoordinate(1);
-            compare(mapPolyline.path[1].latitude, -28)
-            compare(mapPolyline.path[1].longitude, 153.5)
-            compare(mapPolyline.coordinateAt(1), QtPositioning.coordinate(-28, 153.5))
-            compare(mapPolyline.path.length, mapPolyline.pathLength())
-
-            mapPolyline.addCoordinate(QtPositioning.coordinate(30, 153.1))
-            compare(mapPolyline.path[mapPolyline.path.length-1].latitude, 30)
-            compare(mapPolyline.path[mapPolyline.path.length-1].longitude, 153.1)
-            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(30, 153.1)), true)
-            compare(mapPolyline.path.length, mapPolyline.pathLength())
-
-            mapPolyline.removeCoordinate(QtPositioning.coordinate(30, 153.1))
-            compare(mapPolyline.path[mapPolyline.path.length-1].latitude, -29)
-            compare(mapPolyline.path[mapPolyline.path.length-1].longitude, 153.5)
-            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(30, 153.1)), false)
-            compare(mapPolyline.path.length, mapPolyline.pathLength())
-
-            mapPolyline.insertCoordinate(2, QtPositioning.coordinate(35, 153.1))
-            compare(mapPolyline.path[2].latitude, 35)
-            compare(mapPolyline.path[2].longitude, 153.1)
-            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(35, 153.1)), true)
-            compare(mapPolyline.path.length, mapPolyline.pathLength())
-
-            mapPolyline.replaceCoordinate(2, QtPositioning.coordinate(45, 150.1))
-            compare(mapPolyline.path[2].latitude, 45)
-            compare(mapPolyline.path[2].longitude, 150.1)
-            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(35, 153.1)), false)
-            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(45, 150.1)), true)
-            compare(mapPolyline.path.length, mapPolyline.pathLength())
-
-            mapPolyline.insertCoordinate(2, QtPositioning.coordinate(35, 153.1))
-            compare(mapPolyline.coordinateAt(2).latitude, 35)
-            compare(mapPolyline.coordinateAt(2).longitude, 153.1)
-            compare(mapPolyline.containsCoordinate(QtPositioning.coordinate(35, 153.1)), true)
-            compare(mapPolyline.path.length, mapPolyline.pathLength())
-        }
-    }
-
     TestCase {
         name: "GeoPath path"
         function test_qgeopath_path_operations() {
@@ -308,14 +246,6 @@ Item {
 
             geopath.path = trace2
             compare(geopath.path.length, trace2.length)
-
-            geopath.path = mapPolyline.path
-            compare(geopath.path.length, mapPolyline.pathLength())
-            compare(geopath.boundingGeoRectangle(), mapPolyline.geoShape.boundingGeoRectangle())
-
-            mapPolylineGeopath.geoShape = geopath
-            compare(mapPolylineGeopath.pathLength(), mapPolyline.pathLength())
-            compare(mapPolylineGeopath.geoShape.boundingGeoRectangle(), mapPolyline.geoShape.boundingGeoRectangle())
 
             geopath.path = trace2
             geopath.path[0].longitude = 11.0
@@ -334,14 +264,37 @@ Item {
             geopolygon.perimeter = trace2
             compare(geopolygon.perimeter.length, trace2.length)
 
-            geopolygon.perimeter = mapPolyline.path
-            compare(geopolygon.perimeter.length, mapPolyline.pathLength())
-            compare(geopolygon.boundingGeoRectangle(), mapPolyline.geoShape.boundingGeoRectangle())
-
             geopolygon.perimeter = trace2
             compare(geopolygon.perimeter.length, trace2.length)
             compare(geopolygon.coordinateAt(0).latitude, trace2[0].latitude)
             compare(geopolygon.coordinateAt(0).longitude, trace2[0].longitude)
+        }
+    }
+
+    Factory {
+        id: factory
+    }
+
+    TestCase {
+        name: "GeoShape factory"
+        function test_geoshape_factory_construction() {
+            // Both createShape() methods return QGeoShape. We check that
+            // invokable methods and properties are called for correct
+            // objects
+            var c0 = QtPositioning.coordinate(1.0, 1.0)
+            var c1 = QtPositioning.coordinate(1.0001, 1.0001)
+            var c2 = QtPositioning.coordinate(0.5, 0.5)
+            var circle = factory.createShape(c0, 100.0)
+            verify(circle.contains(c1))
+            verify(!circle.contains(c2))
+            compare(circle.center, c0)
+
+            var rectangle = factory.createShape(QtPositioning.coordinate(1.0, 0.0), QtPositioning.coordinate(0.0, 1.0))
+            verify(rectangle.contains(c2))
+            verify(!rectangle.contains(c1))
+            compare(rectangle.center, c2)
+
+            verify(rectangle.center !== circle.center)
         }
     }
 }

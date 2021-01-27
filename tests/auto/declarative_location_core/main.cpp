@@ -45,4 +45,4 @@ static void initializeLibraryPath()
 
 Q_COREAPP_STARTUP_FUNCTION(initializeLibraryPath)
 
-QUICK_TEST_MAIN(declarative_core)
+QUICK_TEST_MAIN(declarative_location_core)

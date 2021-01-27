@@ -55,6 +55,7 @@ class Q_POSITIONING_EXPORT QGeoShape
     Q_PROPERTY(ShapeType type READ type)
     Q_PROPERTY(bool isValid READ isValid)
     Q_PROPERTY(bool isEmpty READ isEmpty)
+    Q_PROPERTY(QGeoCoordinate center READ center)
     Q_ENUMS(ShapeType)
 
 public:
@@ -76,7 +77,7 @@ public:
     bool isEmpty() const;
     Q_INVOKABLE bool contains(const QGeoCoordinate &coordinate) const;
     Q_INVOKABLE QGeoRectangle boundingGeoRectangle() const;
-    Q_INVOKABLE QGeoCoordinate center() const;
+    QGeoCoordinate center() const;
 
     bool operator==(const QGeoShape &other) const;
     bool operator!=(const QGeoShape &other) const;

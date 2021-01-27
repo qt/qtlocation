@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -26,5 +26,25 @@
 **
 ****************************************************************************/
 
-#include <QtQuickTest/quicktest.h>
-QUICK_TEST_MAIN(declarative_geoshape)
+#include "factory.h"
+#include <QGeoRectangle>
+#include <QGeoCircle>
+
+QT_BEGIN_NAMESPACE
+
+Factory::Factory(QObject *parent) : QObject(parent)
+{
+
+}
+
+QGeoShape Factory::createShape(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
+{
+    return QGeoRectangle(topLeft, bottomRight);
+}
+
+QGeoShape Factory::createShape(const QGeoCoordinate &center, qreal radius) const
+{
+    return QGeoCircle(center, radius);
+}
+
+QT_END_NAMESPACE

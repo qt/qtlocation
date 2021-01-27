@@ -11,7 +11,7 @@ project(QtLocation
 )
 
 find_package(Qt6 ${PROJECT_VERSION} CONFIG REQUIRED COMPONENTS BuildInternals Core) # special case
-find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Quick Qml Gui Widgets Network Test DBus SerialPort) # special case
+find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Quick Qml Gui Widgets Network Test DBus SerialPort QuickTest) # special case
 # add simulator later. Probably smth else from QtLocation dependencies
 
 if(WASM)
