@@ -74,12 +74,8 @@ public:
 
     int interval;
     QGeoPositionInfoSource::PositioningMethods methods;
-    QJsonObject metaData;
-    QGeoPositionInfoSourceFactory *factory = nullptr;
-    QString providerName;
+    QString sourceName;
 
-    void loadMeta();
-    void loadPlugin();
     virtual bool setBackendProperty(const QString &name, const QVariant &value);
     virtual QVariant backendProperty(const QString &name) const;
 

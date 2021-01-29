@@ -120,18 +120,6 @@ QGeoPositionInfoSourceFactory *QGeoPositionInfoSourcePrivate::loadFactory(const 
     return qobject_cast<QGeoPositionInfoSourceFactory *>(instance);
 }
 
-void QGeoPositionInfoSourcePrivate::loadMeta()
-{
-    metaData = plugins().value(providerName);
-}
-
-void QGeoPositionInfoSourcePrivate::loadPlugin()
-{
-    auto f = loadFactory(metaData);
-    if (f)
-        factory = f;
-}
-
 bool QGeoPositionInfoSourcePrivate::setBackendProperty(const QString &/*name*/, const QVariant & /*value*/)
 {
     return false;
@@ -226,7 +214,7 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 QString QGeoPositionInfoSource::sourceName() const
 {
     Q_D(const QGeoPositionInfoSource);
-    return d->metaData.value(QStringLiteral("Provider")).toString();
+    return d->sourceName;
 }
 
 /*!
@@ -340,7 +328,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSourcePrivate::createSourceReal(const QJ
     if (factory)
         s = factory->positionInfoSource(parent, parameters);
     if (s)
-        s->d_func()->metaData = meta;
+        s->d_func()->sourceName = meta.value(QStringLiteral("Provider")).toString();
 
     return s;
 }
