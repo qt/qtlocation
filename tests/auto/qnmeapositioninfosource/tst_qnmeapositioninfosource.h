@@ -135,7 +135,7 @@ public:
     void start(QNmeaPositionInfoSourceProxy *proxy)
     {
         m_proxy = proxy;
-        QTimer *timer = new QTimer;
+        QTimer *timer = new QTimer(this);
         QObject::connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
         timer->setInterval(proxy->source()->minimumUpdateInterval()*2);
         timer->start();

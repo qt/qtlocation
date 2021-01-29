@@ -74,26 +74,26 @@ void tst_PositionPlugin::availableSources()
 
 void tst_PositionPlugin::create()
 {
-    QGeoPositionInfoSource *src = 0;
-    src = QGeoPositionInfoSource::createSource("test.source", 0);
-    QVERIFY(src != 0);
+    std::unique_ptr<QGeoPositionInfoSource> src = nullptr;
+    src.reset(QGeoPositionInfoSource::createSource("test.source", 0));
+    QVERIFY(src != nullptr);
 
     QVERIFY(src->minimumUpdateInterval() == 1000);
 
-    src = QGeoPositionInfoSource::createSource("invalid source that will never exist", 0);
+    src.reset(QGeoPositionInfoSource::createSource("invalid source that will never exist", 0));
     QVERIFY(src == 0);
 
-    QGeoSatelliteInfoSource *ssrc = 0;
-    ssrc = QGeoSatelliteInfoSource::createSource("test.source", 0);
-    QVERIFY(ssrc == 0);
+    std::unique_ptr<QGeoSatelliteInfoSource> ssrc = nullptr;
+    ssrc.reset(QGeoSatelliteInfoSource::createSource("test.source", 0));
+    QVERIFY(ssrc == nullptr);
 }
 
 void tst_PositionPlugin::getUpdates()
 {
-    QGeoPositionInfoSource *src = QGeoPositionInfoSource::createSource("test.source", 0);
+    std::unique_ptr<QGeoPositionInfoSource> src(QGeoPositionInfoSource::createSource("test.source", 0));
     src->setUpdateInterval(1000);
 
-    QSignalSpy spy(src, SIGNAL(positionUpdated(QGeoPositionInfo)));
+    QSignalSpy spy(src.get(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     src->startUpdates();
     QTest::qWait(1500);
     QCOMPARE(spy.count(), 1);

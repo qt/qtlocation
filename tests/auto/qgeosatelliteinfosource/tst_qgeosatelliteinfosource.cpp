@@ -32,6 +32,6 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
+    std::unique_ptr<TestQGeoSatelliteInfoSource> test(TestQGeoSatelliteInfoSource::createDefaultSourceTest());
+    return QTest::qExec(test.get(), argc, argv);
 }

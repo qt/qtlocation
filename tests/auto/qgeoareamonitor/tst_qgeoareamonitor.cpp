@@ -109,6 +109,7 @@ private slots:
             }
         }
         QVERIFY(obj->activeMonitors().count() == 0);
+        delete obj;
     }
 
     void cleanupTestCase()
@@ -705,7 +706,7 @@ private slots:
         QVERIFY(info.coordinate() == secondBorder);
 
 
-        //obj was deleted when setting new source
+        delete obj;
         delete obj2;
     }
 
