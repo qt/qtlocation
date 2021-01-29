@@ -99,7 +99,7 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QGeoAreaMonitorSource)
-    QGeoAreaMonitorSourcePrivate *d;
+    Q_DECLARE_PRIVATE(QGeoAreaMonitorSource)
 };
 
 

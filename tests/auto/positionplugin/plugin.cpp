@@ -35,6 +35,7 @@
 
 QT_USE_NAMESPACE
 
+class DummySourcePrivate;
 class DummySource : public QGeoPositionInfoSource
 {
     Q_OBJECT
@@ -61,6 +62,7 @@ private:
     QGeoPositionInfo lastPosition;
     QDateTime lastUpdateTime;
     Error lastError = QGeoPositionInfoSource::NoError;
+    Q_DECLARE_PRIVATE(DummySource)
 
 private slots:
     void updatePosition();
@@ -95,10 +97,10 @@ DummySource::DummySource(const QVariantMap &parameters, QObject *parent) :
     singleTimer(new QTimer(this)),
     lastPosition(QGeoCoordinate(0,0), QDateTime::currentDateTime())
 {
-    DummySourcePrivate *dd = static_cast<DummySourcePrivate *>(QGeoPositionInfoSourcePrivate::get(*this));
+    Q_D(DummySource);
     if (parameters.contains(QStringLiteral("test.source.altitude"))) {
         const qreal alti = parameters.value(QStringLiteral("test.source.altitude")).toReal();
-        dd->m_altitude = alti;
+        d->m_altitude = alti;
         QGeoCoordinate crd = lastPosition.coordinate();
         crd.setAltitude(alti);
         lastPosition.setCoordinate(crd);
@@ -184,7 +186,7 @@ DummySource::~DummySource()
 
 void DummySource::updatePosition()
 {
-    DummySourcePrivate *dd = static_cast<DummySourcePrivate *>(QGeoPositionInfoSourcePrivate::get(*this));
+    Q_D(const DummySource);
     timeoutTimer->stop();
     singleTimer->stop();
 
@@ -192,7 +194,7 @@ void DummySource::updatePosition()
 
     QGeoCoordinate coord(lastPosition.coordinate().latitude() + 0.1,
                          lastPosition.coordinate().longitude() + 0.1,
-                         dd->m_altitude);
+                         d->m_altitude);
 
     QGeoPositionInfo info(coord, now);
     info.setAttribute(QGeoPositionInfo::Direction, lastPosition.coordinate().azimuthTo(coord));

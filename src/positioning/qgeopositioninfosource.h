@@ -114,9 +114,7 @@ protected:
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSource)
-    QGeoPositionInfoSourcePrivate *d;
-
-    friend class QGeoPositionInfoSourcePrivate;
+    Q_DECLARE_PRIVATE(QGeoPositionInfoSource)
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoPositionInfoSource::PositioningMethods)

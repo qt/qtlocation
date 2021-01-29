@@ -46,6 +46,7 @@
 #include <QJsonObject>
 #include <QCryptographicHash>
 #include <QtCore/private/qfactoryloader_p.h>
+#include <QtCore/private/qthread_p.h>
 
 #include <algorithm>
 
@@ -103,14 +104,20 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     \value AllPositioningMethods Satellite-based positioning methods as soon as available. Otherwise non-satellite based methods.
 */
 
-QGeoPositionInfoSourcePrivate *QGeoPositionInfoSourcePrivate::get(const QGeoPositionInfoSource &source)
-{
-    return source.d;
-}
-
 QGeoPositionInfoSourcePrivate::~QGeoPositionInfoSourcePrivate()
 {
 
+}
+
+QGeoPositionInfoSourceFactory *QGeoPositionInfoSourcePrivate::loadFactory(const QJsonObject &meta)
+{
+    const int idx = static_cast<int>(meta.value(QStringLiteral("index")).toDouble());
+    if (idx < 0)
+        return nullptr;
+    QObject *instance = loader()->instance(idx);
+    if (!instance)
+        return nullptr;
+    return qobject_cast<QGeoPositionInfoSourceFactory *>(instance);
 }
 
 void QGeoPositionInfoSourcePrivate::loadMeta()
@@ -120,13 +127,9 @@ void QGeoPositionInfoSourcePrivate::loadMeta()
 
 void QGeoPositionInfoSourcePrivate::loadPlugin()
 {
-    int idx = int(metaData.value(QStringLiteral("index")).toDouble());
-    if (idx < 0)
-        return;
-    QObject *instance = loader()->instance(idx);
-    if (!instance)
-        return;
-    factory = qobject_cast<QGeoPositionInfoSourceFactory *>(instance);
+    auto f = loadFactory(metaData);
+    if (f)
+        factory = f;
 }
 
 bool QGeoPositionInfoSourcePrivate::setBackendProperty(const QString &/*name*/, const QVariant & /*value*/)
@@ -197,10 +200,10 @@ void QGeoPositionInfoSourcePrivate::loadPluginMetadata(QMultiHash<QString, QJson
 */
 
 QGeoPositionInfoSource::QGeoPositionInfoSource(QObject *parent)
-        : QObject(parent),
-        d(new QGeoPositionInfoSourcePrivate)
+        : QObject(*new QGeoPositionInfoSourcePrivate, parent)
 {
     qRegisterMetaType<QGeoPositionInfo>();
+    Q_D(QGeoPositionInfoSource);
     d->interval = 0;
     d->methods = {};
 }
@@ -210,7 +213,6 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QObject *parent)
 */
 QGeoPositionInfoSource::~QGeoPositionInfoSource()
 {
-    delete d;
 }
 
 /*!
@@ -223,6 +225,7 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 */
 QString QGeoPositionInfoSource::sourceName() const
 {
+    Q_D(const QGeoPositionInfoSource);
     return d->metaData.value(QStringLiteral("Provider")).toString();
 }
 
@@ -239,6 +242,7 @@ QString QGeoPositionInfoSource::sourceName() const
 */
 bool QGeoPositionInfoSource::setBackendProperty(const QString &name, const QVariant &value)
 {
+    Q_D(QGeoPositionInfoSource);
     return d->setBackendProperty(name, value);
 }
 
@@ -253,6 +257,7 @@ bool QGeoPositionInfoSource::setBackendProperty(const QString &name, const QVari
 */
 QVariant QGeoPositionInfoSource::backendProperty(const QString &name) const
 {
+    Q_D(const QGeoPositionInfoSource);
     return d->backendProperty(name);
 }
 
@@ -280,11 +285,13 @@ QVariant QGeoPositionInfoSource::backendProperty(const QString &name) const
 */
 void QGeoPositionInfoSource::setUpdateInterval(int msec)
 {
+    Q_D(QGeoPositionInfoSource);
     d->interval = msec;
 }
 
 int QGeoPositionInfoSource::updateInterval() const
 {
+    Q_D(const QGeoPositionInfoSource);
     return d->interval;
 }
 
@@ -306,6 +313,7 @@ int QGeoPositionInfoSource::updateInterval() const
 */
 void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods methods)
 {
+    Q_D(QGeoPositionInfoSource);
     if (supportedPositioningMethods() != QGeoPositionInfoSource::NoPositioningMethods) {
         d->methods = methods & supportedPositioningMethods();
         if (d->methods == 0) {
@@ -321,19 +329,18 @@ void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods m
 */
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPositioningMethods() const
 {
+    Q_D(const QGeoPositionInfoSource);
     return d->methods;
 }
 
-static QGeoPositionInfoSource* createSource_real(const QJsonObject &meta, const QVariantMap &parameters, QObject *parent)
+QGeoPositionInfoSource *QGeoPositionInfoSourcePrivate::createSourceReal(const QJsonObject &meta, const QVariantMap &parameters, QObject *parent)
 {
-    QGeoPositionInfoSourcePrivate d;
-    d.metaData = meta;
-    d.loadPlugin();
     QGeoPositionInfoSource *s = nullptr;
-    if (d.factory)
-        s = d.factory->positionInfoSource(parent, parameters);
+    auto factory = QGeoPositionInfoSourcePrivate::loadFactory(meta);
+    if (factory)
+        s = factory->positionInfoSource(parent, parameters);
     if (s)
-        QGeoPositionInfoSourcePrivate::get(*s)->metaData = d.metaData;
+        s->d_func()->metaData = meta;
 
     return s;
 }
@@ -343,8 +350,9 @@ static QGeoPositionInfoSource* createSource_real(const QJsonObject &meta, const 
     reads from the system's default sources of location data, or the plugin
     with the highest available priority.
 
-    Returns 0 if the system has no default position source, no valid plugins
-    could be found or the user does not have the permission to access the current position.
+    Returns \c nullptr if the system has no default position source, no valid
+    plugins could be found or the user does not have the permission to access
+    the current position.
 */
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
@@ -356,7 +364,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     reads from the system's default sources of location data, or the plugin
     with the highest available priority.
 
-    Returns nullptr if the system has no default position source, no valid plugins
+    Returns \c nullptr if the system has no default position source, no valid plugins
     could be found or the user does not have the permission to access the current position.
 
     This method passes \a parameters to the factory to configure the source.
@@ -369,7 +377,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(const QVaria
     foreach (const QJsonObject &obj, plugins) {
         if (obj.value(QStringLiteral("Position")).isBool()
                 && obj.value(QStringLiteral("Position")).toBool()) {
-            QGeoPositionInfoSource *source = createSource_real(obj, parameters, parent);
+            QGeoPositionInfoSource *source = QGeoPositionInfoSourcePrivate::createSourceReal(obj, parameters, parent);
             if (source)
                 return source;
         }
@@ -381,7 +389,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(const QVaria
     Creates and returns a position source with the given \a parent,
     by loading the plugin named \a sourceName.
 
-    Returns 0 if the plugin cannot be found.
+    Returns \c nullptr if the plugin cannot be found.
 */
 QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sourceName, QObject *parent)
 {
@@ -392,7 +400,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sour
     Creates and returns a position source with the given \a parent,
     by loading the plugin named \a sourceName.
 
-    Returns nullptr if the plugin cannot be found.
+    Returns \c nullptr if the plugin cannot be found.
 
     This method passes \a parameters to the factory to configure the source.
 
@@ -402,7 +410,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sour
 {
     auto plugins = QGeoPositionInfoSourcePrivate::plugins();
     if (plugins.contains(sourceName))
-        return createSource_real(plugins.value(sourceName), parameters, parent);
+        return QGeoPositionInfoSourcePrivate::createSourceReal(plugins.value(sourceName), parameters, parent);
     return nullptr;
 }
 
@@ -425,10 +433,10 @@ QStringList QGeoPositionInfoSource::availableSources()
 }
 
 QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd, QObject *parent)
-:   QObject(parent),
-    d(&dd)
+    : QObject(dd, parent)
 {
     qRegisterMetaType<QGeoPositionInfo>();
+    Q_D(QGeoPositionInfoSource);
     d->interval = 0;
     d->methods = NoPositioningMethods;
 }

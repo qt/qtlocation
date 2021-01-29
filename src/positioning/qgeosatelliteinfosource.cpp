@@ -94,21 +94,15 @@ QGeoSatelliteInfoSourcePrivate::~QGeoSatelliteInfoSourcePrivate()
 
 }
 
-QGeoSatelliteInfoSourcePrivate *QGeoSatelliteInfoSourcePrivate::get(QGeoSatelliteInfoSource &source)
-{
-    return source.d;
-}
-
 QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
-        : QObject(parent),
-        d(new QGeoSatelliteInfoSourcePrivate)
+        : QObject(*new QGeoSatelliteInfoSourcePrivate, parent)
 {
+    Q_D(QGeoSatelliteInfoSource);
     d->interval = 0;
 }
 
 QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QGeoSatelliteInfoSourcePrivate &dd, QObject *parent)
-:   QObject(parent),
-    d(&dd)
+    : QObject(dd, parent)
 {
 
 }
@@ -118,7 +112,6 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QGeoSatelliteInfoSourcePrivate 
 */
 QGeoSatelliteInfoSource::~QGeoSatelliteInfoSource()
 {
-    delete d;
 }
 
 /*!
@@ -129,6 +122,7 @@ QGeoSatelliteInfoSource::~QGeoSatelliteInfoSource()
 */
 QString QGeoSatelliteInfoSource::sourceName() const
 {
+    Q_D(const QGeoSatelliteInfoSource);
     return d->providerName;
 }
 
@@ -157,24 +151,24 @@ QString QGeoSatelliteInfoSource::sourceName() const
 */
 void QGeoSatelliteInfoSource::setUpdateInterval(int msec)
 {
+    Q_D(QGeoSatelliteInfoSource);
     d->interval = msec;
 }
 
 int QGeoSatelliteInfoSource::updateInterval() const
 {
+    Q_D(const QGeoSatelliteInfoSource);
     return d->interval;
 }
 
-static QGeoSatelliteInfoSource* createSource_real(const QJsonObject &meta, const QVariantMap &parameters, QObject *parent)
+QGeoSatelliteInfoSource *QGeoSatelliteInfoSourcePrivate::createSourceReal(const QJsonObject &meta, const QVariantMap &parameters, QObject *parent)
 {
-    QGeoPositionInfoSourcePrivate d;
-    d.metaData = meta;
-    d.loadPlugin();
     QGeoSatelliteInfoSource *s = nullptr;
-    if (d.factory)
-        s = d.factory->satelliteInfoSource(parent, parameters);
+    auto factory = QGeoPositionInfoSourcePrivate::loadFactory(meta);
+    if (factory)
+        s = factory->satelliteInfoSource(parent, parameters);
     if (s)
-        QGeoSatelliteInfoSourcePrivate::get(*s)->providerName = d.metaData.value(QStringLiteral("Provider")).toString();
+        s->d_func()->providerName = meta.value(QStringLiteral("Provider")).toString();
 
     return s;
 }
@@ -184,8 +178,9 @@ static QGeoSatelliteInfoSource* createSource_real(const QJsonObject &meta, const
     from the system's default source of satellite update information, or the
     highest priority available plugin.
 
-    Returns 0 if the system has no default satellite source, no valid plugins
-    could be found or the user does not have the permission to access the satellite data.
+    Returns \c nullptr if the system has no default satellite source, no valid
+    plugins could be found or the user does not have the permission to access
+    the satellite data.
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
@@ -196,7 +191,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     Creates and returns a source with the given \a parent,
     by loading the plugin named \a sourceName.
 
-    Returns 0 if the plugin cannot be found.
+    Returns \c nullptr if the plugin cannot be found.
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &sourceName, QObject *parent)
 {
@@ -208,8 +203,9 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
     reads from the system's default sources of satellite data, or the plugin
     with the highest available priority.
 
-    Returns nullptr if the system has no default satellite source, no valid plugins
-    could be found or the user does not have the permission to access the satellite information.
+    Returns \c nullptr if the system has no default satellite source, no valid
+    plugins could be found or the user does not have the permission to access
+    the satellite information.
 
     This method passes \a parameters to the factory to configure the source.
 
@@ -228,7 +224,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(const QVar
                 if (inTest)
                     continue;
             }
-            return createSource_real(obj, parameters, parent);
+            return QGeoSatelliteInfoSourcePrivate::createSourceReal(obj, parameters, parent);
         }
     }
 
@@ -239,7 +235,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(const QVar
     Creates and returns a satellite source with the given \a parent,
     by loading the plugin named \a sourceName.
 
-    Returns nullptr if the plugin cannot be found.
+    Returns \c nullptr if the plugin cannot be found.
 
     This method passes \a parameters to the factory to configure the source.
 
@@ -249,7 +245,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
 {
     auto plugins = QGeoPositionInfoSourcePrivate::plugins();
     if (plugins.contains(sourceName))
-        return createSource_real(plugins.value(sourceName), parameters, parent);
+        return QGeoSatelliteInfoSourcePrivate::createSourceReal(plugins.value(sourceName), parameters, parent);
     return nullptr;
 }
 

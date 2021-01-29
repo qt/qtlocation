@@ -95,8 +95,7 @@ protected:
 
 private:
     Q_DISABLE_COPY(QGeoSatelliteInfoSource)
-    QGeoSatelliteInfoSourcePrivate *d;
-    friend class QGeoSatelliteInfoSourcePrivate;
+    Q_DECLARE_PRIVATE(QGeoSatelliteInfoSource)
 };
 
 QT_END_NAMESPACE

@@ -88,7 +88,7 @@ QGeoSatelliteInfoPrivate *QGeoSatelliteInfoPrivateNmea::clone() const
 typedef QGeoSatelliteInfoPrivate QGeoSatelliteInfoPrivateNmea;
 #endif
 
-class QNmeaSatelliteInfoSourcePrivate : public QObject, public QGeoSatelliteInfoSourcePrivate
+class QNmeaSatelliteInfoSourcePrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -488,14 +488,14 @@ void QNmeaSatelliteInfoSourcePrivate::timerEvent(QTimerEvent * /*event*/)
 
 // currently supports only realtime
 QNmeaSatelliteInfoSource::QNmeaSatelliteInfoSource(QObject *parent)
-:   QGeoSatelliteInfoSource(*new QNmeaSatelliteInfoSourcePrivate(this), parent)
+    : QGeoSatelliteInfoSource(parent),
+      d(new QNmeaSatelliteInfoSourcePrivate(this))
 {
-    d = static_cast<QNmeaSatelliteInfoSourcePrivate *>(QGeoSatelliteInfoSourcePrivate::get(*this));
 }
 
 QNmeaSatelliteInfoSource::~QNmeaSatelliteInfoSource()
 {
-    // d deleted in superclass destructor
+    delete d;
 }
 
 void QNmeaSatelliteInfoSource::setDevice(QIODevice *device)

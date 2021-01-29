@@ -51,16 +51,19 @@
 // We mean it.
 //
 
+#include <QtCore/private/qobject_p.h>
 #include <QtPositioning/private/qpositioningglobal_p.h>
 #include <QString>
 
 QT_BEGIN_NAMESPACE
 class QGeoSatelliteInfoSource;
-class Q_POSITIONING_PRIVATE_EXPORT QGeoSatelliteInfoSourcePrivate
+class Q_POSITIONING_PRIVATE_EXPORT QGeoSatelliteInfoSourcePrivate : public QObjectPrivate
 {
 public:
     virtual ~QGeoSatelliteInfoSourcePrivate();
-    static QGeoSatelliteInfoSourcePrivate *get(QGeoSatelliteInfoSource &source);
+    static QGeoSatelliteInfoSource *createSourceReal(const QJsonObject &meta,
+                                                     const QVariantMap &parameters,
+                                                     QObject *parent);
     int interval;
     QString providerName;
 };

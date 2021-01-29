@@ -37,6 +37,7 @@
 **
 ****************************************************************************/
 
+#include <QtCore/private/qobject_p.h>
 #include <QGeoAreaMonitorSource>
 #include "qgeopositioninfosourcefactory.h"
 #include "qgeopositioninfosource_p.h"
@@ -76,7 +77,7 @@ QT_BEGIN_NAMESPACE
 
 
 
-class QGeoAreaMonitorSourcePrivate
+class QGeoAreaMonitorSourcePrivate : public QObjectPrivate
 {
 public:
     QGeoPositionInfoSource *source;
@@ -126,10 +127,10 @@ public:
     Creates a monitor with the given \a parent.
 */
 QGeoAreaMonitorSource::QGeoAreaMonitorSource(QObject *parent)
-        : QObject(parent),
-        d(new QGeoAreaMonitorSourcePrivate)
+        : QObject(*new QGeoAreaMonitorSourcePrivate, parent)
 {
-    d->source = 0;
+    Q_D(QGeoAreaMonitorSource);
+    d->source = nullptr;
 }
 
 /*!
@@ -137,14 +138,13 @@ QGeoAreaMonitorSource::QGeoAreaMonitorSource(QObject *parent)
 */
 QGeoAreaMonitorSource::~QGeoAreaMonitorSource()
 {
-    delete d;
 }
 
 /*!
     Creates and returns a monitor with the given \a parent that
     monitors areas using resources on the underlying system.
 
-    Returns 0 if the system has no support for position monitoring.
+    Returns \c nullptr if the system has no support for position monitoring.
 */
 QGeoAreaMonitorSource *QGeoAreaMonitorSource::createDefaultSource(QObject *parent)
 {
@@ -153,43 +153,40 @@ QGeoAreaMonitorSource *QGeoAreaMonitorSource::createDefaultSource(QObject *paren
         if (obj.value(QStringLiteral("Monitor")).isBool()
                 && obj.value(QStringLiteral("Monitor")).toBool())
         {
-            QGeoPositionInfoSourcePrivate d;
-            d.metaData = obj;
-            d.loadPlugin();
-            QGeoAreaMonitorSource *s = 0;
-            if (d.factory)
-                s = d.factory->areaMonitor(parent, QVariantMap());
+            QGeoAreaMonitorSource *s = nullptr;
+            auto factory = QGeoPositionInfoSourcePrivate::loadFactory(obj);
+            if (factory)
+                s = factory->areaMonitor(parent, QVariantMap());
             if (s)
-                s->d->providerName = d.metaData.value(QStringLiteral("Provider")).toString();
+                s->d_func()->providerName = obj.value(QStringLiteral("Provider")).toString();
             return s;
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 /*!
     Creates and returns a monitor with the given \a parent,
     by loading the plugin named \a sourceName.
 
-    Returns 0 if the plugin cannot be found.
+    Returns \c nullptr if the plugin cannot be found.
 */
 QGeoAreaMonitorSource *QGeoAreaMonitorSource::createSource(const QString &sourceName, QObject *parent)
 {
     auto plugins = QGeoPositionInfoSourcePrivate::plugins();
     if (plugins.contains(sourceName)) {
-        QGeoPositionInfoSourcePrivate d;
-        d.metaData = plugins.value(sourceName);
-        d.loadPlugin();
-        QGeoAreaMonitorSource *s = 0;
-        if (d.factory)
-            s = d.factory->areaMonitor(parent, QVariantMap());
+        const auto metaData = plugins.value(sourceName);
+        QGeoAreaMonitorSource *s = nullptr;
+        auto factory = QGeoPositionInfoSourcePrivate::loadFactory(metaData);
+        if (factory)
+            s = factory->areaMonitor(parent, QVariantMap());
         if (s)
-            s->d->providerName = d.metaData.value(QStringLiteral("Provider")).toString();
+            s->d_func()->providerName = metaData.value(QStringLiteral("Provider")).toString();
         return s;
     }
 
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -218,6 +215,7 @@ QStringList QGeoAreaMonitorSource::availableSources()
 */
 QString QGeoAreaMonitorSource::sourceName() const
 {
+    Q_D(const QGeoAreaMonitorSource);
     return d->providerName;
 }
 
@@ -226,7 +224,8 @@ QString QGeoAreaMonitorSource::sourceName() const
     object. The function will return \l QGeoPositionInfoSource::createDefaultSource()
     if no other object has been set.
 
-    The function returns 0 if not even a default QGeoPositionInfoSource exists.
+    The function returns \c nullptr if not even a default QGeoPositionInfoSource
+    exists.
 
     Any usage of the returned \l QGeoPositionInfoSource instance should account
     for the fact that it may reside in a different thread.
@@ -235,6 +234,7 @@ QString QGeoAreaMonitorSource::sourceName() const
 */
 QGeoPositionInfoSource* QGeoAreaMonitorSource::positionInfoSource() const
 {
+    Q_D(const QGeoAreaMonitorSource);
     return d->source;
 }
 
@@ -256,6 +256,7 @@ QGeoPositionInfoSource* QGeoAreaMonitorSource::positionInfoSource() const
  */
 void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSource)
 {
+    Q_D(QGeoAreaMonitorSource);
     d->source = newSource;
 }
 
