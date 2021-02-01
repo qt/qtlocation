@@ -28,7 +28,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import QtPositioning 5.5
+import QtPositioning 6.0
 
 Item {
     id: item
@@ -60,7 +60,7 @@ Item {
     Location {
         id: testLocation
         coordinate: inside
-        boundingBox: box
+        boundingShape: box
         address: validTestAddress
     }
 
@@ -103,12 +103,13 @@ Item {
             compare (testLocation.coordinate.longitude, inside.longitude)
             compare (testLocation.coordinate.latitude, inside.latitude)
 
-            compare (testLocation.boundingBox.contains(inside), true)
-            compare (testLocation.boundingBox.contains(outside), false)
-            compare (testLocation.boundingBox.bottomRight.longitude, br.longitude)
-            compare (testLocation.boundingBox.bottomRight.latitude, br.latitude)
-            compare (testLocation.boundingBox.topLeft.longitude, tl.longitude)
-            compare (testLocation.boundingBox.topLeft.latitude, tl.latitude)
+            compare (testLocation.boundingShape.contains(inside), true)
+            compare (testLocation.boundingShape.contains(outside), false)
+            var shapeRectangle = testLocation.boundingShape.boundingGeoRectangle()
+            compare (shapeRectangle.bottomRight.longitude, br.longitude)
+            compare (shapeRectangle.bottomRight.latitude, br.latitude)
+            compare (shapeRectangle.topLeft.longitude, tl.longitude)
+            compare (shapeRectangle.topLeft.latitude, tl.latitude)
 
             compare (testLocation.address.country, "Australia")
             compare (testLocation.address.countryCode, "AUS")
@@ -119,8 +120,8 @@ Item {
         function test_Location_invalid()
         {
             compare(invalidLocation.coordinate.isValid, false)
-            compare(invalidLocation.boundingBox.isEmpty, true)
-            compare(invalidLocation.boundingBox.isValid, false)
+            compare(invalidLocation.boundingShape.isEmpty, true)
+            compare(invalidLocation.boundingShape.isValid, false)
             compare(invalidLocation.address.city, "")
         }
     }

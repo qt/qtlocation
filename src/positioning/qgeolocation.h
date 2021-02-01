@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoAddress;
 class QGeoCoordinate;
-class QGeoRectangle;
+class QGeoShape;
 class QGeoLocationPrivate;
 
 class Q_POSITIONING_EXPORT QGeoLocation
@@ -70,8 +70,8 @@ public:
     void setAddress(const QGeoAddress &address);
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &position);
-    QGeoRectangle boundingBox() const; // ### Qt6: change this into QGeoShape geometry
-    void setBoundingBox(const QGeoRectangle &box);
+    QGeoShape boundingShape() const;
+    void setBoundingShape(const QGeoShape &shape);
     QVariantMap extendedAttributes() const;
     void setExtendedAttributes(const QVariantMap &data);
 

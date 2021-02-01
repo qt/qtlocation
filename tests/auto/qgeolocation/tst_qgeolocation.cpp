@@ -27,6 +27,8 @@
 ****************************************************************************/
 
 #include "tst_qgeolocation.h"
+#include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoPolygon>
 
 QT_USE_NAMESPACE
 
@@ -56,7 +58,7 @@ void tst_QGeoLocation::constructor()
 {
     QCOMPARE(m_location.address(), m_address);
     QCOMPARE(m_location.coordinate(), m_coordinate);
-    QCOMPARE(m_location.boundingBox(), m_viewport);
+    QCOMPARE(m_location.boundingShape(), m_viewport);
     QCOMPARE(m_location.extendedAttributes(), m_extendedAttributes);
 }
 
@@ -114,14 +116,46 @@ void tst_QGeoLocation::viewport()
     m_coordinate.setLatitude(13.3851);
     m_coordinate.setLongitude(52.5312);
 
+    // rectangle bounding box
     QGeoRectangle qgeoboundingboxcopy(m_coordinate, 0.4, 0.4);
-    m_location.setBoundingBox(qgeoboundingboxcopy);
+    m_location.setBoundingShape(qgeoboundingboxcopy);
 
-    QCOMPARE(m_location.boundingBox(),qgeoboundingboxcopy);
+    QCOMPARE(m_location.boundingShape(), qgeoboundingboxcopy);
+    // test that QGeoShape::boundingGeoRectangle() matches with
+    // the qgeoboundingboxcopy. It simplifies code porting
+    QCOMPARE(m_location.boundingShape().boundingGeoRectangle(), qgeoboundingboxcopy);
 
     qgeoboundingboxcopy.setHeight(1);
 
-    QVERIFY(m_location.boundingBox() != qgeoboundingboxcopy);
+    QVERIFY(m_location.boundingShape() != qgeoboundingboxcopy);
+
+    // circle bounding box
+    QGeoCircle circle(m_coordinate, 10);
+    m_location.setBoundingShape(circle);
+
+    QCOMPARE(m_location.boundingShape(), circle);
+
+    auto point = QGeoCoordinate(0.5, 0.5);
+    QVERIFY(!circle.contains(point));
+    circle.extendCircle(point);
+
+    QVERIFY(m_location.boundingShape() != circle);
+    QVERIFY(!m_location.boundingShape().contains(point));
+
+    // polygon bounding box
+    const QList<QGeoCoordinate> points = {QGeoCoordinate(1.0, 1.0), QGeoCoordinate(1.0, 2.0), QGeoCoordinate(2.0, 2.0)};
+    QGeoPolygon polygon(points);
+
+    point = QGeoCoordinate(1.75, 1.25);
+    QVERIFY(!polygon.contains(point));
+
+    m_location.setBoundingShape(polygon);
+    QCOMPARE(m_location.boundingShape(), polygon);
+
+    polygon.addCoordinate(QGeoCoordinate(2.0, 1.0));
+    QVERIFY(m_location.boundingShape() != polygon);
+    QVERIFY(polygon.contains(point));
+    QVERIFY(!m_location.boundingShape().contains(point));
 }
 
 void tst_QGeoLocation::extendedAttributes()
@@ -200,7 +234,7 @@ void tst_QGeoLocation::comparison()
     location.setCoordinate(QGeoCoordinate(5,10));
 
     //set viewport
-    location.setBoundingBox(QGeoRectangle(QGeoCoordinate(5,5),0.4,0.4));
+    location.setBoundingShape(QGeoRectangle(QGeoCoordinate(5,5),0.4,0.4));
 
     QGeoLocation otherLocation(location);
 
@@ -215,7 +249,7 @@ void tst_QGeoLocation::comparison()
         } else if (dataField == "coordinate") {
             otherLocation.setCoordinate(QGeoCoordinate(12,13));
         } else if (dataField == "viewport"){
-            otherLocation.setBoundingBox(QGeoRectangle(QGeoCoordinate(1,2), 0.5,0.5));
+            otherLocation.setBoundingShape(QGeoRectangle(QGeoCoordinate(1,2), 0.5,0.5));
         } else if (dataField == "extendedAttributes"){
             otherLocation.setExtendedAttributes(QVariantMap({{"foo", 44}}));
         } else {
@@ -265,9 +299,9 @@ void tst_QGeoLocation::isEmpty()
     QVERIFY(location.isEmpty());
 
     // bounding box
-    location.setBoundingBox(boundingBox);
+    location.setBoundingShape(boundingBox);
     QVERIFY(!location.isEmpty());
-    location.setBoundingBox(QGeoRectangle());
+    location.setBoundingShape(QGeoRectangle());
     QVERIFY(location.isEmpty());
 
     // extended attributes

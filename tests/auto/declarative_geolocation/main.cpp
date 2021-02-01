@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -26,61 +26,23 @@
 **
 ****************************************************************************/
 
-#ifndef TST_QGEOLOCATION_H
-#define TST_QGEOLOCATION_H
-
-#include <QtCore/QString>
-#include <QtTest/QtTest>
 #include <QtCore/QCoreApplication>
-#include <QMetaType>
+#include <QtQuickTest/quicktest.h>
 
-#include "../utils/qlocationtestutils_p.h"
-#include <QtPositioning/qgeoaddress.h>
-#include <QtPositioning/qgeocoordinate.h>
-#include <QtPositioning/qgeolocation.h>
-#include <QtPositioning/QGeoRectangle>
-
-QT_USE_NAMESPACE
-
-class tst_QGeoLocation : public QObject
+static void initializeLibraryPath()
 {
-    Q_OBJECT
-
-public:
-    tst_QGeoLocation();
-
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-
-   //Start Unit Tests for qgeolocation.h
-    void constructor();
-    void copy_constructor();
-    void destructor();
-    void address();
-    void coordinate();
-    void viewport();
-    void extendedAttributes();
-    void operators();
-    void comparison();
-    void comparison_data();
-    void isEmpty();
-    //End Unit Tests for qgeolocation.h
-
-private:
-    QGeoLocation m_location;
-
-    QGeoAddress m_address;
-    QGeoCoordinate m_coordinate;
-    QGeoShape m_viewport;
-    QVariantMap m_extendedAttributes;
-};
-
-Q_DECLARE_METATYPE( QGeoCoordinate::CoordinateFormat);
-Q_DECLARE_METATYPE( QGeoCoordinate::CoordinateType);
-Q_DECLARE_METATYPE( QList<double>);
-
+#if QT_CONFIG(library)
+    // Set custom path since CI doesn't install test plugins
+#ifdef Q_OS_WIN
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
+                                     QStringLiteral("/../../../../plugins"));
+#else
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +
+                                     QStringLiteral("/../../../plugins"));
 #endif
+#endif
+}
 
+Q_COREAPP_STARTUP_FUNCTION(initializeLibraryPath)
+
+QUICK_TEST_MAIN(declarative_geolocation)

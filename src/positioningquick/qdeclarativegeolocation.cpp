@@ -49,8 +49,9 @@ QT_USE_NAMESPACE
     \brief The Location type holds location data.
 
     Location types represent a geographic "location", in a human sense. This
-    consists of a specific \l {coordinate}, an \l {address} and a \l {boundingBox}{bounding box}.
-    The \l {boundingBox}{bounding box} represents the recommended region
+    consists of a specific \l {coordinate}, an \l {address} and a
+    \l {boundingShape}{bounding shape}.
+    The \l {boundingShape}{bounding shape} represents the recommended region
     to display when viewing this location.
 
     The Location type is most commonly seen as the contents of a search
@@ -116,7 +117,7 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
     }
 
     setCoordinate(src.coordinate());
-    setBoundingBox(src.boundingBox());
+    setBoundingShape(src.boundingShape());
     setProperty("extendedAttributes", src.extendedAttributes());
 }
 
@@ -125,7 +126,7 @@ QGeoLocation QDeclarativeGeoLocation::location() const
     QGeoLocation retValue;
     retValue.setAddress(m_address ? m_address->address() : QGeoAddress());
     retValue.setCoordinate(m_coordinate);
-    retValue.setBoundingBox(m_boundingBox);
+    retValue.setBoundingShape(m_boundingShape);
     retValue.setExtendedAttributes(m_extendedAttributes);
     return retValue;
 }
@@ -175,26 +176,38 @@ QGeoCoordinate QDeclarativeGeoLocation::coordinate() const
 }
 
 /*!
-    \qmlproperty georectangle QtPositioning::Location::boundingBox
+    \since QtPositioning 6.2
+
+    \qmlproperty geoshape QtPositioning::Location::boundingShape
 
     This property holds the recommended region to use when displaying the location.
     For example, a building's location may have a region centered around the building,
     but the region is large enough to show it's immediate surrounding geographical
     context.
 
-    Note: this property's changed() signal is currently emitted only if the
+    \note This property's changed() signal is currently emitted only if the
     whole object changes, not if only the contents of the object change.
+
+    \note This property was introduced in Qt6 instead of boundingBox property.
+    It returns a \l geoshape instead of a \l georectangle.
+    Use \l QGeoShape::boundingGeoRectangle() to obtain a bounding
+    \l georectangle for the shape.
+
+    If you need to convert the returned shape to a specific type, use the
+    \c {ShapeType type} property of \l geoshape together with convenience
+    methods from \l [QML]{QtPositioning} like
+    \l {QtPositioning::shapeToRectangle}{QtPositioning.shapeToRectangle()}.
 */
-void QDeclarativeGeoLocation::setBoundingBox(const QGeoRectangle &boundingBox)
+void QDeclarativeGeoLocation::setBoundingShape(const QGeoShape &boundingShape)
 {
-    if (m_boundingBox == boundingBox)
+    if (m_boundingShape == boundingShape)
         return;
 
-    m_boundingBox = boundingBox;
-    emit boundingBoxChanged();
+    m_boundingShape = boundingShape;
+    emit boundingShapeChanged();
 }
 
-QGeoRectangle QDeclarativeGeoLocation::boundingBox() const
+QGeoShape QDeclarativeGeoLocation::boundingShape() const
 {
-    return m_boundingBox;
+    return m_boundingShape;
 }

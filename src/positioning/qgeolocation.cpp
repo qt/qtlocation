@@ -174,24 +174,33 @@ void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 }
 
 /*!
-    Returns a bounding box which represents the recommended region
+    \since 6.2
+
+    Returns a bounding shape which represents the recommended region
     to display when viewing this location.
 
-    For example, a building's location may have a region centered around the building,
-    but the region is large enough to show it's immediate surrounding geographical
-    context.
+    For example, a building's location may have a region centered around the
+    building, but the region is large enough to show it's immediate surrounding
+    geographical context.
+
+    \note This method was introduced in Qt6 instead of boundingBox() method.
+    It returns a QGeoShape instead of a QGeoRectangle.
+    Use \l QGeoShape::boundingGeoRectangle() to obtain a bounding QGeoRectangle
+    for the shape.
 */
-QGeoRectangle QGeoLocation::boundingBox() const
+QGeoShape QGeoLocation::boundingShape() const
 {
     return d->viewport;
 }
 
 /*!
-    Sets the \a boundingBox of the location.
+    \since 6.2
+
+    Sets the \a boundingShape of the location.
 */
-void QGeoLocation::setBoundingBox(const QGeoRectangle &boundingBox)
+void QGeoLocation::setBoundingShape(const QGeoShape &boundingShape)
 {
-    d->viewport = boundingBox;
+    d->viewport = boundingShape;
 }
 
 /*!
