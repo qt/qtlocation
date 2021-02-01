@@ -51,7 +51,7 @@ class QGeoPolygonPrivate;
 class Q_POSITIONING_EXPORT QGeoPolygon : public QGeoShape
 {
     Q_GADGET
-    Q_PROPERTY(QVariantList perimeter READ perimeter WRITE setPerimeter REVISION(5, 12))
+    Q_PROPERTY(QList<QGeoCoordinate> perimeter READ perimeter WRITE setPerimeter REVISION(5, 12))
 
 public:
     QGeoPolygon();
@@ -69,8 +69,8 @@ public:
     using QGeoShape::operator!=;
     bool operator!=(const QGeoPolygon &other) const;
 
-    void setPath(const QList<QGeoCoordinate> &path); // ### Qt6: rename into setPerimeter
-    const QList<QGeoCoordinate> &path() const;
+    void setPerimeter(const QList<QGeoCoordinate> &path);
+    const QList<QGeoCoordinate> &perimeter() const;
 
     Q_INVOKABLE void addHole(const QVariant &holePath);
                 void addHole(const QList<QGeoCoordinate> &holePath);
@@ -91,10 +91,6 @@ public:
     Q_INVOKABLE void removeCoordinate(int index);
 
     Q_INVOKABLE QString toString() const;
-
-protected:
-    void setPerimeter(const QVariantList &path);
-    QVariantList perimeter() const;
 
 private:
     inline QGeoPolygonPrivate *d_func();

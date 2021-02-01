@@ -230,39 +230,14 @@ bool QGeoPolygon::operator!=(const QGeoPolygon &other) const
 }
 
 /*!
-    Sets the \a path for the polygon.
-*/
-void QGeoPolygon::setPath(const QList<QGeoCoordinate> &path)
-{
-    Q_D(QGeoPolygon);
-    return d->setPath(path);
-}
-
-/*!
-    Returns all the elements of the polygon's boundary.
-*/
-const QList<QGeoCoordinate> &QGeoPolygon::path() const
-{
-    Q_D(const QGeoPolygon);
-    return d->path();
-}
-
-/*!
-    Sets all the elements of the polygon's perimeter
-    based on a list of coordinates (\a path).
-.
+    Sets the perimeter of the polygon based on a list of coordinates \a path.
 
     \since QtPositioning 5.12
 */
-void QGeoPolygon::setPerimeter(const QVariantList &path)
+void QGeoPolygon::setPerimeter(const QList<QGeoCoordinate> &path)
 {
     Q_D(QGeoPolygon);
-    QList<QGeoCoordinate> p;
-    for (const auto &c: path) {
-        if (c.canConvert<QGeoCoordinate>())
-            p << c.value<QGeoCoordinate>();
-    }
-    d->setPath(p);
+    return d->setPath(path);
 }
 
 /*!
@@ -270,13 +245,10 @@ void QGeoPolygon::setPerimeter(const QVariantList &path)
 
     \since QtPositioning 5.12
 */
-QVariantList QGeoPolygon::perimeter() const
+const QList<QGeoCoordinate> &QGeoPolygon::perimeter() const
 {
     Q_D(const QGeoPolygon);
-    QVariantList p;
-    for (const auto &c: d->path())
-        p << QVariant::fromValue(c);
-    return p;
+    return d->path();
 }
 
 /*!
@@ -402,7 +374,7 @@ QString QGeoPolygon::toString() const
     }
 
     QString pathString;
-    for (const auto &p : path())
+    for (const auto &p : perimeter())
         pathString += p.toString() + QLatin1Char(',');
 
     return QStringLiteral("QGeoPolygon([ %1 ])").arg(pathString);
@@ -622,7 +594,7 @@ bool QGeoPolygonPrivate::polygonContains(const QGeoCoordinate &coordinate) const
     for (const QList<QGeoCoordinate> &holePath : qAsConst(m_holesList)) {
         // ToDo: cache these
         QGeoPolygon holePolygon;
-        holePolygon.setPath(holePath);
+        holePolygon.setPerimeter(holePath);
         if (holePolygon.contains(coordinate))
             return false;
     }
@@ -720,7 +692,7 @@ QGeoPolygonEager::QGeoPolygonEager(const QGeoPolygon &other) : QGeoPolygon()
     initPolygonConversions();
     // without being able to dynamic_cast the d_ptr, only way to be sure is to reconstruct a new QGeoPolygonPrivateEager
     d_ptr = new QGeoPolygonPrivateEager;
-    setPath(other.path());
+    setPerimeter(other.perimeter());
     for (int i = 0; i < other.holesCount(); i++)
         addHole(other.holePath(i));
 }

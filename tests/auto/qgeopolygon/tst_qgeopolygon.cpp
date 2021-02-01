@@ -67,7 +67,7 @@ private slots:
 void tst_QGeoPolygon::defaultConstructor()
 {
     QGeoPolygon p;
-    QVERIFY(!p.path().size());
+    QVERIFY(!p.perimeter().size());
     QVERIFY(!p.size());
     QVERIFY(!p.isValid());
     QVERIFY(p.isEmpty());
@@ -79,7 +79,7 @@ void tst_QGeoPolygon::listConstructor()
     coords.append(QGeoCoordinate(1,1));
     coords.append(QGeoCoordinate(2,2));
     QGeoPolygon p2(coords);
-    QCOMPARE(p2.path().size(), 2);
+    QCOMPARE(p2.perimeter().size(), 2);
     QCOMPARE(p2.size(), 2);
     QVERIFY(!p2.isValid()); // a polygon can't have only 2 coords
     QVERIFY(!p2.isEmpty());
@@ -87,14 +87,14 @@ void tst_QGeoPolygon::listConstructor()
     coords.append(QGeoCoordinate(3,0));
 
     QGeoPolygon p(coords);
-    QCOMPARE(p.path().size(), 3);
+    QCOMPARE(p.perimeter().size(), 3);
     QCOMPARE(p.size(), 3);
     QVERIFY(p.isValid());
     QVERIFY(!p.isEmpty());
 
 
     for (const QGeoCoordinate &c : coords) {
-        QCOMPARE(p.path().contains(c), true);
+        QCOMPARE(p.perimeter().contains(c), true);
         QCOMPARE(p.containsCoordinate(c), true);
     }
 }
@@ -111,7 +111,7 @@ void tst_QGeoPolygon::assignment()
     QVERIFY(p1 != p2);
 
     p1 = p2;
-    QCOMPARE(p1.path(), coords);
+    QCOMPARE(p1.perimeter(), coords);
     QCOMPARE(p1, p2);
 
     // Assign c1 to an area
@@ -121,7 +121,7 @@ void tst_QGeoPolygon::assignment()
 
     // Assign the area back to a polygon
     QGeoPolygon p3 = area;
-    QCOMPARE(p3.path(), coords);
+    QCOMPARE(p3.perimeter(), coords);
     QVERIFY(p3 == p1);
 
     // Check that the copy is not modified when modifying the original.
@@ -179,12 +179,12 @@ void tst_QGeoPolygon::path()
     coords.append(QGeoCoordinate(3,0));
 
     QGeoPolygon p;
-    p.setPath(coords);
-    QCOMPARE(p.path().size(), 3);
+    p.setPerimeter(coords);
+    QCOMPARE(p.perimeter().size(), 3);
     QCOMPARE(p.size(), 3);
 
     for (const QGeoCoordinate &c : coords) {
-        QCOMPARE(p.path().contains(c), true);
+        QCOMPARE(p.perimeter().contains(c), true);
         QCOMPARE(p.containsCoordinate(c), true);
     }
 }
@@ -245,9 +245,9 @@ void tst_QGeoPolygon::translate()
 
     p.translate(lat, lon);
 
-    for (int i = 0; i < p.path().size(); i++) {
-        QCOMPARE(coords[i].latitude(), p.path()[i].latitude() - lat );
-        QCOMPARE(coords[i].longitude(), p.path()[i].longitude() - lon );
+    for (int i = 0; i < p.perimeter().size(); i++) {
+        QCOMPARE(coords[i].latitude(), p.perimeter()[i].latitude() - lat );
+        QCOMPARE(coords[i].longitude(), p.perimeter()[i].longitude() - lon );
     }
 }
 

@@ -386,8 +386,8 @@ QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape)
     }
     case QGeoShape::PolygonType: {
         QGeoPolygon p = shape;
-        stream << p.path().size();
-        for (const auto &c: p.path())
+        stream << p.perimeter().size();
+        for (const auto &c: p.perimeter())
             stream << c;
         break;
     }
