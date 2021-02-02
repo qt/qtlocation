@@ -72,7 +72,7 @@ public:
 
     QGeoRectangle boundingGeoRectangle() const override;
 
-    void extendShape(const QGeoCoordinate &coordinate) override;
+    void extendRectangle(const QGeoCoordinate &coordinate);
 
     QGeoShapePrivate *clone() const override;
 

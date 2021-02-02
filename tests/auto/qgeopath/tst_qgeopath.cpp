@@ -60,9 +60,6 @@ private slots:
 
     void boundingGeoRectangle_data();
     void boundingGeoRectangle();
-
-    void extendShape();
-    void extendShape_data();
 };
 
 void tst_QGeoPath::defaultConstructor()
@@ -369,48 +366,6 @@ void tst_QGeoPath::boundingGeoRectangle()
 
     QGeoRectangle box = p.boundingGeoRectangle();
     QCOMPARE(box.contains(probe), result);
-}
-
-void tst_QGeoPath::extendShape()
-{
-    QFETCH(QGeoCoordinate, c1);
-    QFETCH(QGeoCoordinate, c2);
-    QFETCH(QGeoCoordinate, c3);
-    QFETCH(qreal, width);
-    QFETCH(QGeoCoordinate, probe);
-    QFETCH(bool, before);
-    QFETCH(bool, after);
-
-    QList<QGeoCoordinate> coords;
-    coords.append(c1);
-    coords.append(c2);
-    coords.append(c3);
-    QGeoPath p(coords, width);
-
-
-    QCOMPARE(p.contains(probe), before);
-    p.extendShape(probe);
-    QCOMPARE(p.contains(probe), after);
-}
-
-void tst_QGeoPath::extendShape_data()
-{
-    QTest::addColumn<QGeoCoordinate>("c1");
-    QTest::addColumn<QGeoCoordinate>("c2");
-    QTest::addColumn<QGeoCoordinate>("c3");
-    QTest::addColumn<qreal>("width");
-    QTest::addColumn<QGeoCoordinate>("probe");
-    QTest::addColumn<bool>("before");
-    QTest::addColumn<bool>("after");
-
-    QList<QGeoCoordinate> c;
-    c.append(QGeoCoordinate(1,1));
-    c.append(QGeoCoordinate(2,2));
-    c.append(QGeoCoordinate(3,0));
-
-    QTest::newRow("One of the points") << c[0] << c[1] << c[2] << 0.0 << QGeoCoordinate(2, 2) << true << true;
-    QTest::newRow("Not so far away") << c[0] << c[1] << c[2] << 0.0 << QGeoCoordinate(0, 0) << false << true;
-    QTest::newRow("Not so far away and large line") << c[0] << c[1] << c[2] << 100000.0 << QGeoCoordinate(0.8, 0.8) << true << true;
 }
 
 QTEST_MAIN(tst_QGeoPath)

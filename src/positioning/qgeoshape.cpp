@@ -263,28 +263,6 @@ QGeoCoordinate QGeoShape::center() const
 }
 
 /*!
-    \deprecated
-
-    This method used to extend the geo shape to also cover the coordinate \a coordinate.
-
-    It currently only works for \l QGeoCircle and \l QGeoRectangle, on which the functionality remains,
-    now also accessible through QGeoCircle::extendCircle and QGeoRectangle::extendRectangle.
-
-    This method should therefore not be called on a generic QGeoShape any longer, as the behavior for
-    other shape types is undefined.
-
-    \sa QGeoRectangle::extendRectangle, QGeoCircle::extendCircle
-*/
-void QGeoShape::extendShape(const QGeoCoordinate &coordinate)
-{
-    Q_D(QGeoShape);
-
-    if (d)
-        d->extendShape(coordinate);
-}
-
-
-/*!
     Returns true if the \a other geo shape is equivalent to this geo shape, otherwise returns
     false.
 */

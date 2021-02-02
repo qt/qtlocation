@@ -438,13 +438,6 @@ QGeoCoordinate QGeoPathPrivate::center() const
     return boundingGeoRectangle().center();
 }
 
-void QGeoPathPrivate::extendShape(const QGeoCoordinate &coordinate)
-{
-    if (!coordinate.isValid() || contains(coordinate))
-        return;
-    addCoordinate(coordinate);
-}
-
 bool QGeoPathPrivate::operator==(const QGeoShapePrivate &other) const
 {
     if (!QGeoShapePrivate::operator==(other))

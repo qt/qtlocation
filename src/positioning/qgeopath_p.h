@@ -185,8 +185,6 @@ public:
     virtual bool contains(const QGeoCoordinate &coordinate) const override;
     virtual QGeoRectangle boundingGeoRectangle() const override;
 
-    virtual void extendShape(const QGeoCoordinate &coordinate) override;
-
 // QGeoPathPrivate API
     virtual const QList<QGeoCoordinate> &path() const;
     virtual bool lineContains(const QGeoCoordinate &coordinate) const;

@@ -78,8 +78,6 @@ public:
     Q_INVOKABLE QGeoRectangle boundingGeoRectangle() const;
     Q_INVOKABLE QGeoCoordinate center() const;
 
-    Q_INVOKABLE void extendShape(const QGeoCoordinate &coordinate);
-
     bool operator==(const QGeoShape &other) const;
     bool operator!=(const QGeoShape &other) const;
 

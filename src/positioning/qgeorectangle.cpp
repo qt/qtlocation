@@ -251,7 +251,7 @@ QGeoRectangle::QGeoRectangle(const QList<QGeoCoordinate> &coordinates)
         d_ptr = new QGeoRectanglePrivate(startCoordinate, startCoordinate);
 
         foreach (const QGeoCoordinate &coordinate, coordinates) {
-            d_ptr->extendShape(coordinate);
+            d_func()->extendRectangle(coordinate);
         }
     }
 }
@@ -789,7 +789,7 @@ QGeoRectangle QGeoRectangle::translated(double degreesLatitude, double degreesLo
 void QGeoRectangle::extendRectangle(const QGeoCoordinate &coordinate)
 {
     Q_D(QGeoRectangle);
-    d->extendShape(coordinate);
+    d->extendRectangle(coordinate);
 }
 
 /*!
@@ -817,7 +817,7 @@ QGeoRectangle QGeoRectangle::united(const QGeoRectangle &rectangle) const
     the coordinate noting happens.
 
 */
-void QGeoRectanglePrivate::extendShape(const QGeoCoordinate &coordinate)
+void QGeoRectanglePrivate::extendRectangle(const QGeoCoordinate &coordinate)
 {
     if (!isValid() || !coordinate.isValid() || contains(coordinate))
         return;

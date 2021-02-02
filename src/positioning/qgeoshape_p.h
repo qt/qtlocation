@@ -71,8 +71,6 @@ public:
 
     virtual QGeoRectangle boundingGeoRectangle() const = 0;
 
-    virtual void extendShape(const QGeoCoordinate &coordinate) = 0;
-
     virtual QGeoShapePrivate *clone() const = 0;
 
     virtual bool operator==(const QGeoShapePrivate &other) const;

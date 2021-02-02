@@ -78,7 +78,7 @@ public:
     void setCenter(const QGeoCoordinate &c);
     void setRadius(const qreal r);
 
-    void extendShape(const QGeoCoordinate &coordinate) override;
+    void extendCircle(const QGeoCoordinate &coordinate);
 
     QGeoShapePrivate *clone() const override;
 

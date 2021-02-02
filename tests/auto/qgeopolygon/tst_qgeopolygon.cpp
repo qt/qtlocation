@@ -59,9 +59,6 @@ private slots:
 
     void boundingGeoRectangle_data();
     void boundingGeoRectangle();
-
-    void extendShape();
-    void extendShape_data();
 };
 
 void tst_QGeoPolygon::defaultConstructor()
@@ -356,46 +353,6 @@ void tst_QGeoPolygon::boundingGeoRectangle()
 
     QGeoRectangle box = p.boundingGeoRectangle();
     QCOMPARE(box.contains(probe), result);
-}
-
-void tst_QGeoPolygon::extendShape()
-{
-    QFETCH(QGeoCoordinate, c1);
-    QFETCH(QGeoCoordinate, c2);
-    QFETCH(QGeoCoordinate, c3);
-    QFETCH(QGeoCoordinate, probe);
-    QFETCH(bool, before);
-    QFETCH(bool, after);
-
-    QList<QGeoCoordinate> coords;
-    coords.append(c1);
-    coords.append(c2);
-    coords.append(c3);
-    QGeoPolygon p(coords);
-
-
-    QCOMPARE(p.contains(probe), before);
-    p.extendShape(probe);
-    QCOMPARE(p.contains(probe), after);
-}
-
-void tst_QGeoPolygon::extendShape_data()
-{
-    QTest::addColumn<QGeoCoordinate>("c1");
-    QTest::addColumn<QGeoCoordinate>("c2");
-    QTest::addColumn<QGeoCoordinate>("c3");
-    QTest::addColumn<QGeoCoordinate>("probe");
-    QTest::addColumn<bool>("before");
-    QTest::addColumn<bool>("after");
-
-    QList<QGeoCoordinate> c;
-    c.append(QGeoCoordinate(1,1));
-    c.append(QGeoCoordinate(2,2));
-    c.append(QGeoCoordinate(3,0));
-
-    QTest::newRow("One of the points") << c[0] << c[1] << c[2] <<  QGeoCoordinate(2, 2) << true << true;
-    QTest::newRow("Not so far away") << c[0] << c[1] << c[2] <<  QGeoCoordinate(0, 0) << false << true;
-    QTest::newRow("Contained point") << c[0] << c[1] << c[2] <<  QGeoCoordinate(2.0, 1.0) << true << true;
 }
 
 QTEST_MAIN(tst_QGeoPolygon)
