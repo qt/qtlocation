@@ -37,7 +37,7 @@
 **
 ****************************************************************************/
 #include "qgeopositioninfo.h"
-#include "qgeopositioninfo_p.h"
+#include "private/qgeopositioninfo_p.h"
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
@@ -51,6 +51,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoPositionInfo
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
+    \ingroup shared
     \since 5.2
 
     \brief The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time.
@@ -98,9 +99,20 @@ QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDate
     Creates a QGeoPositionInfo with the values of \a other.
 */
 QGeoPositionInfo::QGeoPositionInfo(const QGeoPositionInfo &other)
-        : d(other.d->clone())
+        : d(other.d)
 {
 }
+
+/*!
+    \fn QGeoPositionInfo::QGeoPositionInfo(QGeoPositionInfo &&other) noexcept
+    \since 6.2
+
+    Creates a QGeoPositionInfo object by moving from \a other.
+
+    Note that a moved-from QGeoPositionInfo can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
 
 QGeoPositionInfo::QGeoPositionInfo(QGeoPositionInfoPrivate &dd) : d(&dd)
 {
@@ -111,8 +123,9 @@ QGeoPositionInfo::QGeoPositionInfo(QGeoPositionInfoPrivate &dd) : d(&dd)
 */
 QGeoPositionInfo::~QGeoPositionInfo()
 {
-    delete d;
 }
+
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoPositionInfoPrivate)
 
 /*!
     Assigns the values from \a other to this QGeoPositionInfo.
@@ -122,15 +135,20 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo & other)
     if (this == &other)
         return *this;
 
-    delete d;
-    d = other.d->clone();
-
-//    d->timestamp = other.d->timestamp;
-//    d->coord = other.d->coord;
-//    d->doubleAttribs = other.d->doubleAttribs;
-
+    d = other.d;
     return *this;
 }
+
+/*!
+    \fn QGeoPositionInfo &QGeoPositionInfo::operator=(QGeoPositionInfo &&other) noexcept
+    \since 6.2
+
+    Move-assigns the values from \a other to this object.
+
+    Note that a moved-from QGeoPositionInfo can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
 
 /*!
     Returns true if all of this object's values are the same as those of
@@ -167,6 +185,7 @@ bool QGeoPositionInfo::isValid() const
 */
 void QGeoPositionInfo::setTimestamp(const QDateTime &timestamp)
 {
+    d.detach();
     d->timestamp = timestamp;
 }
 
@@ -189,6 +208,7 @@ QDateTime QGeoPositionInfo::timestamp() const
 */
 void QGeoPositionInfo::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    d.detach();
     d->coord = coordinate;
 }
 
@@ -211,6 +231,7 @@ QGeoCoordinate QGeoPositionInfo::coordinate() const
 */
 void QGeoPositionInfo::setAttribute(Attribute attribute, qreal value)
 {
+    d.detach();
     d->doubleAttribs[attribute] = value;
 }
 
@@ -236,6 +257,7 @@ qreal QGeoPositionInfo::attribute(Attribute attribute) const
 */
 void QGeoPositionInfo::removeAttribute(Attribute attribute)
 {
+    d.detach();
     d->doubleAttribs.remove(attribute);
 }
 
@@ -246,6 +268,17 @@ void QGeoPositionInfo::removeAttribute(Attribute attribute)
 bool QGeoPositionInfo::hasAttribute(Attribute attribute) const
 {
     return d->doubleAttribs.contains(attribute);
+}
+
+/*!
+    \internal
+*/
+void QGeoPositionInfo::detach()
+{
+    if (d)
+        d.detach();
+    else
+        d = new QGeoPositionInfoPrivate;
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -352,14 +385,21 @@ QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
 }
 #endif
 
+QGeoPositionInfoPrivate::QGeoPositionInfoPrivate() : QSharedData()
+{
+}
+
+QGeoPositionInfoPrivate::QGeoPositionInfoPrivate(const QGeoPositionInfoPrivate &other)
+    : QSharedData(other),
+      timestamp(other.timestamp),
+      coord(other.coord),
+      doubleAttribs(other.doubleAttribs)
+{
+}
+
 QGeoPositionInfoPrivate::~QGeoPositionInfoPrivate()
 {
 
-}
-
-QGeoPositionInfoPrivate *QGeoPositionInfoPrivate::clone() const
-{
-    return new QGeoPositionInfoPrivate(*this);
 }
 
 bool QGeoPositionInfoPrivate::operator==(const QGeoPositionInfoPrivate &other) const
@@ -371,8 +411,26 @@ bool QGeoPositionInfoPrivate::operator==(const QGeoPositionInfoPrivate &other) c
 
 QGeoPositionInfoPrivate *QGeoPositionInfoPrivate::get(const QGeoPositionInfo &info)
 {
-    return info.d;
+    return info.d.data();
 }
 
-QT_END_NAMESPACE
+size_t qHash(const QGeoPositionInfo &key, size_t seed) noexcept
+{
+    return qHashMulti(seed, key.d->coord);
+}
 
+namespace QTest
+{
+
+char *toString(const QGeoPositionInfo &info)
+{
+    QString result;
+    QDebug dbg(&result);
+    dbg << info;
+
+    return qstrdup(qPrintable(result));
+}
+
+} // namespace QTest
+
+QT_END_NAMESPACE

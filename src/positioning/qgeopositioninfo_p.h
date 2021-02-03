@@ -58,12 +58,12 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_POSITIONING_PRIVATE_EXPORT QGeoPositionInfoPrivate
+class Q_POSITIONING_PRIVATE_EXPORT QGeoPositionInfoPrivate : public QSharedData
 {
 public:
+    QGeoPositionInfoPrivate();
+    QGeoPositionInfoPrivate(const QGeoPositionInfoPrivate &other);
     virtual ~QGeoPositionInfoPrivate();
-    virtual QGeoPositionInfoPrivate *clone() const;
-
     virtual bool operator==(const QGeoPositionInfoPrivate &other) const;
 
     QDateTime timestamp;

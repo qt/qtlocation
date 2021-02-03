@@ -60,7 +60,6 @@ class QGeoPositionInfoPrivateNmea : public QGeoPositionInfoPrivate
 {
 public:
     virtual ~QGeoPositionInfoPrivateNmea();
-    virtual QGeoPositionInfoPrivate *clone() const;
 
     QList<QByteArray> nmeaSentences;
 };
@@ -69,11 +68,6 @@ public:
 QGeoPositionInfoPrivateNmea::~QGeoPositionInfoPrivateNmea()
 {
 
-}
-
-QGeoPositionInfoPrivate *QGeoPositionInfoPrivateNmea::clone() const
-{
-    return new QGeoPositionInfoPrivateNmea(*this);
 }
 #else
 typedef QGeoPositionInfoPrivate QGeoPositionInfoPrivateNmea;

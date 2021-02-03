@@ -165,15 +165,50 @@ private slots:
         addTestData_info();
     }
 
+    void constructor_move()
+    {
+        QFETCH(QGeoPositionInfo, info);
+        QGeoPositionInfo infoCopy = info;
+        QCOMPARE(QGeoPositionInfo(std::move(info)), infoCopy);
+        // The moved-from object will go out of scope and  will be destroyed
+        // here, so we also implicitly check that moved-from object's destructor
+        // is called without any issues.
+    }
+
+    void constructor_move_data()
+    {
+        addTestData_info();
+    }
+
     void operator_assign()
     {
         QFETCH(QGeoPositionInfo, info);
 
-        QGeoPositionInfo info2 = info;
+        QGeoPositionInfo info2;
+        info2 = info;
         QCOMPARE(info2, info);
     }
 
     void operator_assign_data()
+    {
+        addTestData_info();
+    }
+
+    void operator_move_assign()
+    {
+        QFETCH(QGeoPositionInfo, info);
+        QGeoPositionInfo infoCopy = info;
+
+        QGeoPositionInfo obj;
+        obj = std::move(info);
+        QCOMPARE(obj, infoCopy);
+
+        // check that (move)assigning to the moved-from object is ok
+        info = std::move(infoCopy);
+        QCOMPARE(info, obj);
+    }
+
+    void operator_move_assign_data()
     {
         addTestData_info();
     }

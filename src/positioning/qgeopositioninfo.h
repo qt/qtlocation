@@ -40,7 +40,8 @@
 #define QGEOPOSITIONINFO_H
 
 #include <QtPositioning/QGeoCoordinate>
-
+#include <QtCore/QExplicitlySharedDataPointer>
+#include <QtCore/QMetaType>
 #include <QtCore/QDateTime>
 
 QT_BEGIN_NAMESPACE
@@ -48,7 +49,18 @@ QT_BEGIN_NAMESPACE
 class QDebug;
 class QDataStream;
 
+class QGeoPositionInfo;
+Q_POSITIONING_EXPORT size_t qHash(const QGeoPositionInfo &key, size_t seed = 0) noexcept;
+namespace QTest
+{
+
+Q_POSITIONING_EXPORT char *toString(const QGeoPositionInfo &info);
+
+} // namespace QTest
+
 class QGeoPositionInfoPrivate;
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoPositionInfoPrivate, Q_POSITIONING_EXPORT)
+
 class Q_POSITIONING_EXPORT QGeoPositionInfo
 {
 public:
@@ -64,10 +76,14 @@ public:
     QGeoPositionInfo();
     QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &updateTime);
     QGeoPositionInfo(const QGeoPositionInfo &other);
+    QGeoPositionInfo(QGeoPositionInfo &&other) noexcept = default;
     QGeoPositionInfo(QGeoPositionInfoPrivate &dd);
     ~QGeoPositionInfo();
 
     QGeoPositionInfo &operator=(const QGeoPositionInfo &other);
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_PURE_SWAP(QGeoPositionInfo)
+
+    void swap(QGeoPositionInfo &other) noexcept { d.swap(other.d); }
 
     bool operator==(const QGeoPositionInfo &other) const;
     inline bool operator!=(const QGeoPositionInfo &other) const {
@@ -87,6 +103,8 @@ public:
     void removeAttribute(Attribute attribute);
     bool hasAttribute(Attribute attribute) const;
 
+    void detach();
+
 private:
 #ifndef QT_NO_DEBUG_STREAM
     friend Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
@@ -95,9 +113,14 @@ private:
     friend Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
     friend Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
-    QGeoPositionInfoPrivate *d;
+    QExplicitlySharedDataPointer<QGeoPositionInfoPrivate> d;
     friend class QGeoPositionInfoPrivate;
+
+    friend Q_POSITIONING_EXPORT size_t qHash(const QGeoPositionInfo &key, size_t seed) noexcept;
+    friend Q_POSITIONING_EXPORT char *QTest::toString(const QGeoPositionInfo &info);
 };
+
+Q_DECLARE_SHARED(QGeoPositionInfo)
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
@@ -114,4 +137,4 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoPositionInfo)
 
-#endif
+#endif // QGEOPOSITIONINFO_H
