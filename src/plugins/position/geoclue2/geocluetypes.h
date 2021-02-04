@@ -53,7 +53,7 @@ Q_DECLARE_METATYPE(Timestamp)
 
 QT_BEGIN_NAMESPACE
 
-Q_DECLARE_TYPEINFO(Timestamp, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(Timestamp, Q_RELOCATABLE_TYPE);
 
 QDBusArgument &operator<<(QDBusArgument &arg, const Timestamp &ts);
 const QDBusArgument &operator>>(const QDBusArgument &arg, Timestamp &ts);

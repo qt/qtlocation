@@ -119,7 +119,7 @@ private:
     friend class QDoubleVector3D;
 };
 
-Q_DECLARE_TYPEINFO(QDoubleVector2D, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QDoubleVector2D, Q_RELOCATABLE_TYPE);
 
 Q_DECL_CONSTEXPR inline QDoubleVector2D::QDoubleVector2D() : xp(0.0), yp(0.0) {}
 

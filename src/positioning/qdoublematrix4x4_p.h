@@ -186,7 +186,7 @@ private:
     void projectedRotate(double angle, double x, double y, double z);
 };
 
-Q_DECLARE_TYPEINFO(QDoubleMatrix4x4, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QDoubleMatrix4x4, Q_RELOCATABLE_TYPE);
 
 inline QDoubleMatrix4x4::QDoubleMatrix4x4
         (double m11, double m12, double m13, double m14,

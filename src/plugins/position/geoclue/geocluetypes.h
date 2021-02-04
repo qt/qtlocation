@@ -79,7 +79,7 @@ Q_DECLARE_METATYPE(QList<QGeoSatelliteInfo>)
 
 QT_BEGIN_NAMESPACE
 
-Q_DECLARE_TYPEINFO(Accuracy, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(Accuracy, Q_RELOCATABLE_TYPE);
 
 QDBusArgument &operator<<(QDBusArgument &arg, const Accuracy &accuracy);
 const QDBusArgument &operator>>(const QDBusArgument &arg, Accuracy &accuracy);

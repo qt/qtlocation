@@ -98,7 +98,7 @@ private:
     inline const QGeoPathPrivate *d_func() const;
 };
 
-Q_DECLARE_TYPEINFO(QGeoPath, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QGeoPath, Q_RELOCATABLE_TYPE);
 
 QT_END_NAMESPACE
 

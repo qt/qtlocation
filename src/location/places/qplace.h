@@ -131,7 +131,7 @@ private:
     friend class QDeclarativePlace;
 };
 
-Q_DECLARE_TYPEINFO(QPlace, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QPlace, Q_RELOCATABLE_TYPE);
 
 QT_END_NAMESPACE
 

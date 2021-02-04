@@ -97,7 +97,7 @@ private:
     QSharedDataPointer<QGeoAddressPrivate> d;
 };
 
-Q_DECLARE_TYPEINFO(QGeoAddress, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QGeoAddress, Q_RELOCATABLE_TYPE);
 
 QT_END_NAMESPACE
 

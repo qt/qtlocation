@@ -115,7 +115,7 @@ private:
     inline const QGeoRectanglePrivate *d_func() const;
 };
 
-Q_DECLARE_TYPEINFO(QGeoRectangle, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QGeoRectangle, Q_RELOCATABLE_TYPE);
 
 inline QGeoRectangle QGeoRectangle::operator|(const QGeoRectangle &rectangle) const
 {

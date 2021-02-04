@@ -94,7 +94,7 @@ private:
     inline const QGeoShapePrivate *d_func() const;
 };
 
-Q_DECLARE_TYPEINFO(QGeoShape, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QGeoShape, Q_RELOCATABLE_TYPE);
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoShape &);

@@ -117,7 +117,7 @@ private:
     friend class QQuickGeoCoordinateAnimation;
 };
 
-Q_DECLARE_TYPEINFO(QGeoCoordinate, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QGeoCoordinate, Q_RELOCATABLE_TYPE);
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoCoordinate &);

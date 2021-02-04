@@ -63,7 +63,7 @@ private:
     Q_DECLARE_SEARCHRESULT_D_FUNC(QPlaceProposedSearchResult)
 };
 
-Q_DECLARE_TYPEINFO(QPlaceProposedSearchResult, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QPlaceProposedSearchResult, Q_RELOCATABLE_TYPE);
 
 QT_END_NAMESPACE
 

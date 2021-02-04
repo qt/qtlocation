@@ -97,7 +97,7 @@ private:
     inline const QGeoPolygonPrivate *d_func() const;
 };
 
-Q_DECLARE_TYPEINFO(QGeoPolygon, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QGeoPolygon, Q_RELOCATABLE_TYPE);
 
 QT_END_NAMESPACE
 
