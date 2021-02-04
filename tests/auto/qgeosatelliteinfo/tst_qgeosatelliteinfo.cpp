@@ -39,7 +39,6 @@
 #include <limits.h>
 
 QT_USE_NAMESPACE
-Q_DECLARE_METATYPE(QGeoSatelliteInfo)
 Q_DECLARE_METATYPE(QGeoSatelliteInfo::Attribute)
 
 QByteArray tst_qgeosatelliteinfo_debug;
@@ -156,6 +155,21 @@ private slots:
         addTestData_update();
     }
 
+    void constructor_move()
+    {
+        QFETCH(QGeoSatelliteInfo, info);
+        QGeoSatelliteInfo infoCopy = info;
+        QCOMPARE(QGeoSatelliteInfo(std::move(info)), infoCopy);
+        // The moved-from object will go out of scope and  will be destroyed
+        // here, so we also implicitly check that moved-from object's destructor
+        // is called without any issues.
+    }
+
+    void constructor_move_data()
+    {
+        addTestData_update();
+    }
+
     void operator_comparison()
     {
         QFETCH(QGeoSatelliteInfo, info);
@@ -182,6 +196,25 @@ private slots:
     }
 
     void operator_assign_data()
+    {
+        addTestData_update();
+    }
+
+    void operator_move_assign()
+    {
+        QFETCH(QGeoSatelliteInfo, info);
+        QGeoSatelliteInfo infoCopy = info;
+
+        QGeoSatelliteInfo obj;
+        obj = std::move(info);
+        QCOMPARE(obj, infoCopy);
+
+        // check that (move)assigning to the moved-from object is ok
+        info = std::move(infoCopy);
+        QCOMPARE(info, obj);
+    }
+
+    void operator_move_assign_data()
     {
         addTestData_update();
     }

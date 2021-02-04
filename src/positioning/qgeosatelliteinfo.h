@@ -40,13 +40,26 @@
 #define QGEOSATELLITEINFO_H
 
 #include <QtPositioning/qpositioningglobal.h>
+#include <QtCore/QSharedData>
+#include <QtCore/QMetaType>
 
 QT_BEGIN_NAMESPACE
 
 class QDebug;
 class QDataStream;
 
+class QGeoSatelliteInfo;
+Q_POSITIONING_EXPORT size_t qHash(const QGeoSatelliteInfo &key, size_t seed = 0) noexcept;
+namespace QTest
+{
+
+Q_POSITIONING_EXPORT char *toString(const QGeoSatelliteInfo &info);
+
+} // namespace QTest
+
 class QGeoSatelliteInfoPrivate;
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoSatelliteInfoPrivate, Q_POSITIONING_EXPORT)
+
 class Q_POSITIONING_EXPORT QGeoSatelliteInfo
 {
 public:
@@ -64,9 +77,13 @@ public:
     QGeoSatelliteInfo();
     QGeoSatelliteInfo(const QGeoSatelliteInfo &other);
     QGeoSatelliteInfo(QGeoSatelliteInfoPrivate &dd);
+    QGeoSatelliteInfo(QGeoSatelliteInfo &&other) noexcept = default;
     ~QGeoSatelliteInfo();
 
     QGeoSatelliteInfo &operator=(const QGeoSatelliteInfo &other);
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_PURE_SWAP(QGeoSatelliteInfo)
+
+    void swap(QGeoSatelliteInfo &other) noexcept { d.swap(other.d); }
 
     bool operator==(const QGeoSatelliteInfo &other) const;
     inline bool operator!=(const QGeoSatelliteInfo &other) const {
@@ -88,6 +105,8 @@ public:
 
     bool hasAttribute(Attribute attribute) const;
 
+    void detach();
+
 private:
 #ifndef QT_NO_DEBUG_STREAM
     friend Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
@@ -96,9 +115,14 @@ private:
     friend Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
     friend Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
 #endif
-    QGeoSatelliteInfoPrivate *d;
+    QExplicitlySharedDataPointer<QGeoSatelliteInfoPrivate> d;
     friend class QGeoSatelliteInfoPrivate;
+
+    friend Q_POSITIONING_EXPORT size_t qHash(const QGeoSatelliteInfo &key, size_t seed) noexcept;
+    friend Q_POSITIONING_EXPORT char *QTest::toString(const QGeoSatelliteInfo &info);
 };
+
+Q_DECLARE_SHARED(QGeoSatelliteInfo)
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
@@ -110,5 +134,7 @@ Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteI
 #endif
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QGeoSatelliteInfo)
 
 #endif

@@ -57,13 +57,12 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_POSITIONING_PRIVATE_EXPORT QGeoSatelliteInfoPrivate
+class Q_POSITIONING_PRIVATE_EXPORT QGeoSatelliteInfoPrivate : public QSharedData
 {
 public:
     QGeoSatelliteInfoPrivate();
     QGeoSatelliteInfoPrivate(const QGeoSatelliteInfoPrivate &other);
     virtual ~QGeoSatelliteInfoPrivate();
-    virtual QGeoSatelliteInfoPrivate *clone() const;
     virtual bool operator==(const QGeoSatelliteInfoPrivate &other) const;
     static QGeoSatelliteInfoPrivate *get(const QGeoSatelliteInfo &info);
 

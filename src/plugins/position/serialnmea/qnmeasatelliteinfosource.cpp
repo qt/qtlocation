@@ -62,7 +62,6 @@ public:
     QGeoSatelliteInfoPrivateNmea(const QGeoSatelliteInfoPrivate &other);
     QGeoSatelliteInfoPrivateNmea(const QGeoSatelliteInfoPrivateNmea &other);
     virtual ~QGeoSatelliteInfoPrivateNmea();
-    QGeoSatelliteInfoPrivate *clone() const override;
 
     QList<QByteArray> nmeaSentences;
 };
@@ -79,11 +78,6 @@ QGeoSatelliteInfoPrivateNmea::QGeoSatelliteInfoPrivateNmea(const QGeoSatelliteIn
 }
 
 QGeoSatelliteInfoPrivateNmea::~QGeoSatelliteInfoPrivateNmea() {}
-
-QGeoSatelliteInfoPrivate *QGeoSatelliteInfoPrivateNmea::clone() const
-{
-    return new QGeoSatelliteInfoPrivateNmea(*this);
-}
 #else
 typedef QGeoSatelliteInfoPrivate QGeoSatelliteInfoPrivateNmea;
 #endif

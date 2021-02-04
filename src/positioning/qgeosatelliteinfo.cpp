@@ -37,7 +37,7 @@
 **
 ****************************************************************************/
 #include "qgeosatelliteinfo.h"
-#include "qgeosatelliteinfo_p.h"
+#include "private/qgeosatelliteinfo_p.h"
 
 #include <QHash>
 #include <QDebug>
@@ -49,6 +49,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoSatelliteInfo
     \inmodule QtPositioning
     \ingroup QtPositioning-positioning
+    \ingroup shared
     \since 5.2
 
     \brief The QGeoSatelliteInfo class contains basic information about a satellite.
@@ -89,9 +90,8 @@ QGeoSatelliteInfo::QGeoSatelliteInfo()
 */
 
 QGeoSatelliteInfo::QGeoSatelliteInfo(const QGeoSatelliteInfo &other)
-        : d(new QGeoSatelliteInfoPrivate)
+        : d(other.d)
 {
-    operator=(other);
 }
 
 QGeoSatelliteInfo::QGeoSatelliteInfo(QGeoSatelliteInfoPrivate &dd) : d(&dd)
@@ -99,12 +99,24 @@ QGeoSatelliteInfo::QGeoSatelliteInfo(QGeoSatelliteInfoPrivate &dd) : d(&dd)
 }
 
 /*!
+    \fn QGeoSatelliteInfo::QGeoSatelliteInfo(QGeoSatelliteInfo &&other) noexcept
+    \since 6.2
+
+    Creates a satellite information object by moving from \a other.
+
+    Note that a moved-from QGeoSatelliteInfo can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
+
+/*!
     Destroys a satellite information object.
 */
 QGeoSatelliteInfo::~QGeoSatelliteInfo()
 {
-    delete d;
 }
+
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoSatelliteInfoPrivate)
 
 /*!
     Assigns the values from \a other to this object.
@@ -114,11 +126,20 @@ QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo & other)
     if (this == &other)
         return *this;
 
-    delete d;
-    d = other.d->clone();
-
+    d = other.d;
     return *this;
 }
+
+/*!
+    \fn QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(QGeoSatelliteInfo &&other) noexcept
+    \since 6.2
+
+    Move-assigns the value from \a other to this object
+
+    Note that a moved-from QGeoSatelliteInfo can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
 
 /*!
     Returns true if all the information for this satellite
@@ -142,6 +163,7 @@ bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &other) const
 */
 void QGeoSatelliteInfo::setSatelliteSystem(SatelliteSystem system)
 {
+    d.detach();
     d->system = system;
 }
 
@@ -162,6 +184,7 @@ QGeoSatelliteInfo::SatelliteSystem QGeoSatelliteInfo::satelliteSystem() const
 */
 void QGeoSatelliteInfo::setSatelliteIdentifier(int satId)
 {
+    d.detach();
     d->satId = satId;
 }
 
@@ -182,6 +205,7 @@ int QGeoSatelliteInfo::satelliteIdentifier() const
 */
 void QGeoSatelliteInfo::setSignalStrength(int signalStrength)
 {
+    d.detach();
     d->signal = signalStrength;
 }
 
@@ -198,6 +222,7 @@ int QGeoSatelliteInfo::signalStrength() const
 */
 void QGeoSatelliteInfo::setAttribute(Attribute attribute, qreal value)
 {
+    d.detach();
     d->doubleAttribs[int(attribute)] = value;
 }
 
@@ -220,6 +245,7 @@ qreal QGeoSatelliteInfo::attribute(Attribute attribute) const
 */
 void QGeoSatelliteInfo::removeAttribute(Attribute attribute)
 {
+    d.detach();
     d->doubleAttribs.remove(int(attribute));
 }
 
@@ -229,6 +255,17 @@ void QGeoSatelliteInfo::removeAttribute(Attribute attribute)
 bool QGeoSatelliteInfo::hasAttribute(Attribute attribute) const
 {
     return d->doubleAttribs.contains(int(attribute));
+}
+
+/*!
+    \internal
+*/
+void QGeoSatelliteInfo::detach()
+{
+    if (d)
+        d.detach();
+    else
+        d = new QGeoSatelliteInfoPrivate;
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -256,7 +293,7 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
     dbg << ')';
     return dbg;
 }
-#endif
+#endif // QT_NO_DEBUG_STREAM
 
 #ifndef QT_NO_DATASTREAM
 /*!
@@ -277,7 +314,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
     stream << int(info.d->system);
     return stream;
 }
-#endif
+#endif // QT_NO_DATASTREAM
 
 #ifndef QT_NO_DATASTREAM
 /*!
@@ -300,13 +337,15 @@ QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
     info.d->system = (QGeoSatelliteInfo::SatelliteSystem)system;
     return stream;
 }
+#endif // QT_NO_DATASTREAM
 
-QGeoSatelliteInfoPrivate::QGeoSatelliteInfoPrivate()
+QGeoSatelliteInfoPrivate::QGeoSatelliteInfoPrivate() : QSharedData()
 {
 
 }
 
 QGeoSatelliteInfoPrivate::QGeoSatelliteInfoPrivate(const QGeoSatelliteInfoPrivate &other)
+    : QSharedData(other)
 {
     signal = other.signal;
     satId = other.satId;
@@ -315,11 +354,6 @@ QGeoSatelliteInfoPrivate::QGeoSatelliteInfoPrivate(const QGeoSatelliteInfoPrivat
 }
 
 QGeoSatelliteInfoPrivate::~QGeoSatelliteInfoPrivate() {}
-
-QGeoSatelliteInfoPrivate *QGeoSatelliteInfoPrivate::clone() const
-{
-    return new QGeoSatelliteInfoPrivate(*this);
-}
 
 bool QGeoSatelliteInfoPrivate::operator==(const QGeoSatelliteInfoPrivate &other) const
 {
@@ -331,9 +365,28 @@ bool QGeoSatelliteInfoPrivate::operator==(const QGeoSatelliteInfoPrivate &other)
 
 QGeoSatelliteInfoPrivate *QGeoSatelliteInfoPrivate::get(const QGeoSatelliteInfo &info)
 {
-    return info.d;
+    return info.d.data();
 }
 
-#endif
+size_t qHash(const QGeoSatelliteInfo &key, size_t seed) noexcept
+{
+    // Other properties and attributes might change
+    return qHashMulti(seed, key.d->satId, key.d->system);
+}
+
+namespace QTest
+{
+
+char *toString(const QGeoSatelliteInfo &info)
+{
+    QString result;
+    QDebug dbg(&result);
+    dbg << info;
+
+    return qstrdup(qPrintable(result));
+}
+
+}
+
 
 QT_END_NAMESPACE

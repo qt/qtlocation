@@ -42,7 +42,6 @@
 #include "qgeosatelliteinfosource_android_p.h"
 #include "jnipositioning.h"
 
-Q_DECLARE_METATYPE(QGeoSatelliteInfo)
 Q_DECLARE_METATYPE(QList<QGeoSatelliteInfo>)
 
 #define UPDATE_FROM_COLD_START 2*60*1000
