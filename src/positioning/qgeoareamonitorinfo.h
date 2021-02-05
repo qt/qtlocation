@@ -42,7 +42,8 @@
 
 #include <QtPositioning/QGeoCoordinate>
 #include <QtPositioning/QGeoShape>
-#include <QtCore/QSharedDataPointer>
+#include <QtCore/QExplicitlySharedDataPointer>
+#include <QtCore/QMetaType>
 #include <QtCore/QVariantMap>
 
 QT_BEGIN_NAMESPACE
@@ -55,15 +56,27 @@ Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &, const QGeoAreaMonito
 Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &, QGeoAreaMonitorInfo &);
 #endif
 
+Q_POSITIONING_EXPORT size_t qHash(const QGeoAreaMonitorInfo &key, size_t seed = 0) noexcept;
+namespace QTest
+{
+Q_POSITIONING_EXPORT char *toString(const QGeoAreaMonitorInfo &info);
+} // namespace QTest
+
 class QGeoAreaMonitorInfoPrivate;
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoAreaMonitorInfoPrivate, Q_POSITIONING_EXPORT)
+
 class Q_POSITIONING_EXPORT QGeoAreaMonitorInfo
 {
 public:
     explicit QGeoAreaMonitorInfo(const QString &name = QString());
     QGeoAreaMonitorInfo(const QGeoAreaMonitorInfo &other);
+    QGeoAreaMonitorInfo(QGeoAreaMonitorInfo &&other) noexcept = default;
     ~QGeoAreaMonitorInfo();
 
     QGeoAreaMonitorInfo &operator=(const QGeoAreaMonitorInfo &other);
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_PURE_SWAP(QGeoAreaMonitorInfo)
+
+    void swap(QGeoAreaMonitorInfo &other) noexcept { d.swap(other.d); }
 
     bool operator==(const QGeoAreaMonitorInfo &other) const;
     bool operator!=(const QGeoAreaMonitorInfo &other) const;
@@ -85,19 +98,29 @@ public:
 
     QVariantMap notificationParameters() const;
     void setNotificationParameters(const QVariantMap &parameters);
+
+    void detach();
+
 private:
-    QSharedDataPointer<QGeoAreaMonitorInfoPrivate> d;
+    QExplicitlySharedDataPointer<QGeoAreaMonitorInfoPrivate> d;
+    friend class QGeoAreaMonitorInfoPrivate;
 
 #ifndef QT_NO_DATASTREAM
     friend Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &, const QGeoAreaMonitorInfo &);
     friend Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &, QGeoAreaMonitorInfo &);
 #endif
+    friend Q_POSITIONING_EXPORT size_t qHash(const QGeoAreaMonitorInfo &key, size_t seed) noexcept;
+    friend Q_POSITIONING_EXPORT char *QTest::toString(const QGeoAreaMonitorInfo& info);
 };
+
+Q_DECLARE_SHARED(QGeoAreaMonitorInfo)
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoAreaMonitorInfo &);
 #endif
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QGeoAreaMonitorInfo)
 
 #endif // QGEOAREAMONITORINFO_H

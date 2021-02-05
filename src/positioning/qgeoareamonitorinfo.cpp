@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtPositioning
     \since 5.2
     \ingroup QtPositioning-positioning
+    \ingroup shared
 
     \brief The QGeoAreaMonitorInfo class describes the parameters of an area or region
     to be monitored for proximity.
@@ -128,11 +129,24 @@ QGeoAreaMonitorInfo::QGeoAreaMonitorInfo(const QGeoAreaMonitorInfo &other)
 }
 
 /*!
+    \fn QGeoAreaMonitorInfo::QGeoAreaMonitorInfo(QGeoAreaMonitorInfo &&other) noexcept
+    \since 6.2
+
+    Constructs a QGeoAreaMonitorInfo object by moving from \a other.
+
+    Note that a moved-from QGeoAreaMonitorInfo can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
+
+/*!
     Destructor
  */
 QGeoAreaMonitorInfo::~QGeoAreaMonitorInfo()
 {
 }
+
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoAreaMonitorInfoPrivate)
 
 /*!
     Assigns \a other to this QGeoAreaMonitorInfo object and returns a reference
@@ -143,6 +157,18 @@ QGeoAreaMonitorInfo &QGeoAreaMonitorInfo::operator=(const QGeoAreaMonitorInfo &o
     d = other.d;
     return *this;
 }
+
+/*!
+    \fn QGeoAreaMonitorInfo &QGeoAreaMonitorInfo::operator=(QGeoAreaMonitorInfo &&other) noexcept
+    \since 6.2
+
+    Move-assigns \a other to this QGeoAreaMonitorInfo object and returns a
+    reference to this QGeoAreaMonitorInfo object.
+
+    Note that a moved-from QGeoAreaMonitorInfo can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
 
 /*!
     Returns true if all of this object's values are the same as those of
@@ -181,8 +207,10 @@ QString QGeoAreaMonitorInfo::name() const
  */
 void QGeoAreaMonitorInfo::setName(const QString &name)
 {
-    if (d->name != name)
+    if (d->name != name) {
+        d.detach();
         d->name = name;
+    }
 }
 
 /*!
@@ -223,6 +251,7 @@ QGeoShape QGeoAreaMonitorInfo::area() const
  */
 void QGeoAreaMonitorInfo::setArea(const QGeoShape &newShape)
 {
+    d.detach();
     d->shape = newShape;
 }
 
@@ -249,6 +278,7 @@ QDateTime QGeoAreaMonitorInfo::expiration() const
  */
 void QGeoAreaMonitorInfo::setExpiration(const QDateTime &expiry)
 {
+    d.detach();
     d->expiry = expiry;
 }
 
@@ -281,6 +311,7 @@ bool QGeoAreaMonitorInfo::isPersistent() const
  */
 void QGeoAreaMonitorInfo::setPersistent(bool isPersistent)
 {
+    d.detach();
     d->persistent = isPersistent;
 }
 
@@ -302,7 +333,19 @@ QVariantMap QGeoAreaMonitorInfo::notificationParameters() const
  */
 void QGeoAreaMonitorInfo::setNotificationParameters(const QVariantMap &parameters)
 {
+    d.detach();
     d->notificationParameters = parameters;
+}
+
+/*!
+    \internal
+*/
+void QGeoAreaMonitorInfo::detach()
+{
+    if (d)
+        d.detach();
+    else
+        d = new QGeoAreaMonitorInfoPrivate;
 }
 
 #ifndef QT_NO_DATASTREAM
@@ -375,5 +418,23 @@ QDebug operator<<(QDebug dbg, const QGeoAreaMonitorInfo &monitor)
 }
 
 #endif
+
+size_t qHash(const QGeoAreaMonitorInfo &key, size_t seed) noexcept
+{
+    return qHashMulti(seed, key.d->uid);
+}
+
+namespace QTest
+{
+
+char *toString(const QGeoAreaMonitorInfo &info)
+{
+    QString result;
+    QDebug dbg(&result);
+    dbg << info;
+    return qstrdup(qPrintable(result));
+}
+
+} // namespace QTest
 
 QT_END_NAMESPACE

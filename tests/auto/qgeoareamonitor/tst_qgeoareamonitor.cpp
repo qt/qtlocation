@@ -52,8 +52,6 @@
 QT_USE_NAMESPACE
 #define UPDATE_INTERVAL 200
 
-Q_DECLARE_METATYPE(QGeoAreaMonitorInfo)
-
 QString tst_qgeoareamonitorinfo_debug;
 
 void tst_qgeoareamonitorinfo_messageHandler(QtMsgType type,
@@ -235,6 +233,31 @@ private slots:
         QCOMPARE(obj->activeMonitors().count(), 1);
 
         delete obj;
+    }
+
+    void tst_monitor_move_semantics()
+    {
+        QGeoAreaMonitorInfo info1("test");
+        info1.setArea(QGeoCircle(QGeoCoordinate(1.0, 1.0), 100));
+        info1.setExpiration(QDateTime::currentDateTimeUtc());
+        QGeoAreaMonitorInfo infoCopy(info1);
+
+        QGeoAreaMonitorInfo info2(std::move(info1));
+        QCOMPARE(info2, infoCopy);
+
+        QGeoAreaMonitorInfo info3;
+        info3.setName("name");
+        info3.setArea(QGeoRectangle(QGeoCoordinate(1, 2), QGeoCoordinate(2, 1)));
+        info3.setPersistent(true);
+        infoCopy = info3;
+
+        // check that (move)assigning to the moved-from object is ok
+        info1 = std::move(info3);
+        QCOMPARE(info1, infoCopy);
+
+        // The moved-from object info3 will go out of scope and  will be
+        // destroyed here, so we also implicitly check that moved-from object's
+        // destructor is called without any issues.
     }
 
     void tst_monitorValid()
