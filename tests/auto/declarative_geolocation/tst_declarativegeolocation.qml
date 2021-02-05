@@ -59,6 +59,7 @@ Item {
         country: "Germany"
         city: "Berlin"
         street: "Erich-Thilo-Str"
+        streetNumber: "10"
         postalCode: "12489"
     }
 

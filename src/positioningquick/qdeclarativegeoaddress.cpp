@@ -116,6 +116,7 @@ void QDeclarativeGeoAddress::setAddress(const QGeoAddress &address)
     setCity(address.city());
     setDistrict(address.district());
     setStreet(address.street());
+    setStreetNumber(address.streetNumber());
     setPostalCode(address.postalCode());
     m_address = address;
 }
@@ -292,10 +293,12 @@ void QDeclarativeGeoAddress::setDistrict(const QString &district)
 /*!
   \qmlproperty string QtPositioning::Address::street
 
-  This property holds the street of the address but
-  may also contain things like a unit number, a building
-  name, or anything else that might be used to
-  distinguish one address from another.
+  This property holds the street of the address.
+
+  \note Before Qt6 this property could also contain things like a unit number,
+  a building name, or anything else that might be used to distinguish one
+  address from another. Since Qt6 use \l{QtPositioning::Address::}{streetNumber}
+  property for such information.
 */
 QString QDeclarativeGeoAddress::street() const
 {
@@ -309,6 +312,31 @@ void QDeclarativeGeoAddress::setStreet(const QString &street)
     QString oldText = m_address.text();
     m_address.setStreet(street);
     emit streetChanged();
+
+    if (m_address.isTextGenerated() && oldText != m_address.text())
+        emit textChanged();
+}
+
+/*!
+    \qmlproperty string QtPositioning::Address::streetNumber
+    \since QtPositioning 6.2
+
+    This property holds the street number of the address like a unit number,
+    a building name, or anything else that might be used to distinguish one
+    address from another.
+*/
+QString QDeclarativeGeoAddress::streetNumber() const
+{
+    return m_address.streetNumber();
+}
+
+void QDeclarativeGeoAddress::setStreetNumber(const QString &streetNumber)
+{
+    if (m_address.streetNumber() == streetNumber)
+        return;
+    QString oldText = m_address.text();
+    m_address.setStreetNumber(streetNumber);
+    emit streetNumberChanged();
 
     if (m_address.isTextGenerated() && oldText != m_address.text())
         emit textChanged();

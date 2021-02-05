@@ -51,7 +51,8 @@ Item {
 
     Address {
         id: validTestAddress
-        street: "53 Brandl St"
+        street: "Brandl St"
+        streetNumber: "53"
         city: "Eight Mile Plains"
         country: "Australia"
         countryCode: "AUS"
@@ -114,7 +115,8 @@ Item {
             compare (testLocation.address.country, "Australia")
             compare (testLocation.address.countryCode, "AUS")
             compare (testLocation.address.city, "Eight Mile Plains")
-            compare (testLocation.address.street, "53 Brandl St")
+            compare (testLocation.address.street, "Brandl St")
+            compare (testLocation.address.streetNumber, "53")
         }
 
         function test_Location_invalid()

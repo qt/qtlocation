@@ -88,6 +88,9 @@ public:
     QString street() const;
     void setStreet(const QString &street);
 
+    QString streetNumber() const;
+    void setStreetNumber(const QString &streetNumber);
+
     bool isEmpty() const;
     void clear();
 

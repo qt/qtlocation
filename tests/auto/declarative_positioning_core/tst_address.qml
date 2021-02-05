@@ -27,7 +27,7 @@
 ****************************************************************************/
 
 import QtTest 1.0
-import QtPositioning 5.2
+import QtPositioning 6.1
 
 TestCase {
     id: testCase
@@ -37,7 +37,8 @@ TestCase {
     Address {
         id: address
 
-        street: "742 Evergreen Tce"
+        street: "Evergreen Tce"
+        streetNumber: "742"
         district: "Pressboard Estates"
         city: "Springfield"
         state: "Oregon"
@@ -59,6 +60,12 @@ TestCase {
 
         address.countryCode = "FRA";
         compare(address.text, "742 Evergreen Tce<br/>8900 Springfield<br/>United States");
+        compare(textChangedSpy.count, 1);
+        textChangedSpy.clear();
+        compare(isTextGeneratedSpy.count, 0);
+
+        address.countryCode = "DEU"; // the street number should go after the street name
+        compare(address.text, "Evergreen Tce 742<br/>8900 Springfield<br/>United States");
         compare(textChangedSpy.count, 1);
         textChangedSpy.clear();
         compare(isTextGeneratedSpy.count, 0);

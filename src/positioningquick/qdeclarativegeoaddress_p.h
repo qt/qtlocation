@@ -73,6 +73,8 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativeGeoAddress : public QObject
     Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged)
     Q_PROPERTY(QString district READ district WRITE setDistrict NOTIFY districtChanged)
     Q_PROPERTY(QString street READ street WRITE setStreet NOTIFY streetChanged)
+    Q_PROPERTY(QString streetNumber READ streetNumber WRITE setStreetNumber
+               NOTIFY streetNumberChanged REVISION(6, 0))
     Q_PROPERTY(QString postalCode READ postalCode WRITE setPostalCode NOTIFY postalCodeChanged)
     Q_PROPERTY(bool isTextGenerated READ isTextGenerated NOTIFY isTextGeneratedChanged)
 
@@ -99,6 +101,8 @@ public:
     void setDistrict(const QString &district);
     QString street() const;
     void setStreet(const QString &street);
+    QString streetNumber() const;
+    void setStreetNumber(const QString &streetNumber);
     QString postalCode() const;
     void setPostalCode(const QString &postalCode);
     bool isTextGenerated() const;
@@ -112,6 +116,7 @@ Q_SIGNALS:
     void cityChanged();
     void districtChanged();
     void streetChanged();
+    void streetNumberChanged();
     void postalCodeChanged();
     void isTextGeneratedChanged();
 
