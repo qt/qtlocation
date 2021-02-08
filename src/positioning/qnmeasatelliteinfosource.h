@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -36,24 +36,55 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QNMEASATELLITEINFOSOURCE_H
+#define QNMEASATELLITEINFOSOURCE_H
 
-#ifndef QGEOPOSITIONINFOSOURCEFACTORY_SERIALNMEA_H
-#define QGEOPOSITIONINFOSOURCEFACTORY_SERIALNMEA_H
+#include <QtPositioning/QGeoSatelliteInfoSource>
 
-#include <QObject>
-#include <QtPositioning/QGeoPositionInfoSourceFactory>
+QT_BEGIN_NAMESPACE
 
-class QGeoPositionInfoSourceFactorySerialNmea : public QObject, public QGeoPositionInfoSourceFactory
+class QIODevice;
+
+class QNmeaSatelliteInfoSourcePrivate;
+class Q_POSITIONING_EXPORT QNmeaSatelliteInfoSource : public QGeoSatelliteInfoSource
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/6.0"
-                      FILE "plugin.json")
-    Q_INTERFACES(QGeoPositionInfoSourceFactory)
-
 public:
-    QGeoPositionInfoSource *positionInfoSource(QObject *parent, const QVariantMap &parameters) override;
-    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent, const QVariantMap &parameters) override;
-    QGeoAreaMonitorSource *areaMonitor(QObject *parent, const QVariantMap &parameters) override;
+    explicit QNmeaSatelliteInfoSource(QObject *parent = nullptr);
+    ~QNmeaSatelliteInfoSource() override;
+
+    void setDevice(QIODevice *source);
+    QIODevice *device() const;
+
+    void setUpdateInterval(int msec) override;
+    int minimumUpdateInterval() const override;
+    Error error() const override;
+
+public Q_SLOTS:
+    void startUpdates() override;
+    void stopUpdates() override;
+    void requestUpdate(int timeout = 0) override;
+
+protected:
+    virtual bool parseSatellitesInUseFromNmea(const char *data, int size, QList<int> &pnrsInUse);
+    enum SatelliteInfoParseStatus {
+        NotParsed = 0,
+        PartiallyParsed,
+        FullyParsed
+    };
+    virtual SatelliteInfoParseStatus parseSatelliteInfoFromNmea(const char *data, int size,
+                                                                QList<QGeoSatelliteInfo> &infos);
+
+    QNmeaSatelliteInfoSourcePrivate *d;
+    void setError(QGeoSatelliteInfoSource::Error satelliteError);
+
+    friend class QNmeaSatelliteInfoSourcePrivate;
+    Q_DISABLE_COPY(QNmeaSatelliteInfoSource)
+
+    // for using the SatelliteInfoParseStatus enum
+    friend class QLocationUtils;
 };
 
-#endif
+QT_END_NAMESPACE
+
+#endif // QNMEASATELLITEINFOSOURCE_H

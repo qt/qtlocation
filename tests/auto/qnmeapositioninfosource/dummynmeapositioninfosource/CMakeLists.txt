@@ -8,7 +8,7 @@ qt_internal_add_test(tst_dummynmeapositioninfosource
     SOURCES
         ../../qgeopositioninfosource/testqgeopositioninfosource.cpp ../../qgeopositioninfosource/testqgeopositioninfosource_p.h
         ../../utils/qlocationtestutils.cpp ../../utils/qlocationtestutils_p.h
-        ../qnmeapositioninfosourceproxyfactory.cpp ../qnmeapositioninfosourceproxyfactory.h
+        ../../utils/qnmeaproxyfactory.cpp ../../utils/qnmeaproxyfactory.h
         tst_dummynmeapositioninfosource.cpp
     DEFINES
         QT_DISABLE_DEPRECATED_BEFORE=0

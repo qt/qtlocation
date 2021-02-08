@@ -8,12 +8,12 @@ INCLUDEPATH += ..
 
 HEADERS += ../../utils/qlocationtestutils_p.h \
            ../../qgeopositioninfosource/testqgeopositioninfosource_p.h \
-           ../qnmeapositioninfosourceproxyfactory.h \
+           ../../utils/qnmeaproxyfactory.h \
            ../tst_qnmeapositioninfosource.h
 
 SOURCES += ../../utils/qlocationtestutils.cpp \
            ../../qgeopositioninfosource/testqgeopositioninfosource.cpp \
-           ../qnmeapositioninfosourceproxyfactory.cpp \
+           ../../utils/qnmeaproxyfactory.cpp \
            ../tst_qnmeapositioninfosource.cpp \
            tst_qnmeapositioninfosource_realtime_generic.cpp
 

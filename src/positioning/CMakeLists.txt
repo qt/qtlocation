@@ -30,6 +30,7 @@ qt_internal_add_module(Positioning
         qgeoshape.cpp qgeoshape.h qgeoshape_p.h
         qlocationutils.cpp qlocationutils_p.h
         qnmeapositioninfosource.cpp qnmeapositioninfosource.h qnmeapositioninfosource_p.h
+        qnmeasatelliteinfosource.cpp qnmeasatelliteinfosource.h qnmeasatelliteinfosource_p.h
         qpositioningglobal.h qpositioningglobal_p.h
         qwebmercator.cpp qwebmercator_p.h
     INCLUDE_DIRECTORIES

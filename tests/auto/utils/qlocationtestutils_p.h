@@ -45,6 +45,9 @@ namespace QLocationTestUtils
     QString createGgaSentence(int lat, int lng, const QTime &time);
     QString createZdaSentence(const QDateTime &dt);
     QString createGsaSentence();
+    QString createGsvSentence();
+    QString createGsaLongSentence();
+    QString createGsvLongSentence();
 
     //The purpose of compareEquality() is to test equality
     //operators where it is expected that A == B.

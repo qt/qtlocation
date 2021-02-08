@@ -84,3 +84,19 @@ QString QLocationTestUtils::createGsaSentence()
 {
     return addNmeaChecksumAndBreaks(QStringLiteral("$GPGSA,A,3,,,,,,,,,,,,,3.0,3.5,4.0*"));
 }
+
+QString QLocationTestUtils::createGsvSentence()
+{
+    return addNmeaChecksumAndBreaks(QStringLiteral("$GPGSV,1,1,0,,,,,,,,,,,,,,,,*"));
+}
+
+QString QLocationTestUtils::createGsaLongSentence()
+{
+    return addNmeaChecksumAndBreaks(QStringLiteral("$GPGSA,A,3,16,25,,,,,,,,,,,2.3,1.3,1.9*"));
+}
+
+QString QLocationTestUtils::createGsvLongSentence()
+{
+    return addNmeaChecksumAndBreaks(
+            QStringLiteral("$GPGSV,1,1,4,16,49,115,42,25,39,269,36,23,58,176,29,20,72,335,35*"));
+}

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2019 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -51,7 +51,6 @@
 // We mean it.
 //
 
-//#include <QtPositioning/private/qpositioningglobal_p.h>
 #include <QtPositioning/qgeosatelliteinfosource.h>
 #include <QtPositioning/qgeosatelliteinfo.h>
 
@@ -61,36 +60,72 @@
 #include <QtCore/qiodevice.h>
 #include <QtCore/qtimer.h>
 
-//QT_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class QNmeaSatelliteInfoSourcePrivate;
-class /*Q_POSITIONING_PRIVATE_EXPORT*/ QNmeaSatelliteInfoSource : public QGeoSatelliteInfoSource
+#define USE_NMEA_PIMPL 1
+
+class QNmeaSatelliteInfoSource;
+class QNmeaSatelliteInfoSourcePrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit QNmeaSatelliteInfoSource( QObject *parent = nullptr);
-    ~QNmeaSatelliteInfoSource() override;
+    QNmeaSatelliteInfoSourcePrivate(QNmeaSatelliteInfoSource *parent);
+    ~QNmeaSatelliteInfoSourcePrivate();
 
-    void setDevice(QIODevice *source);
-    QIODevice *device() const;
+    void startUpdates();
+    void stopUpdates();
+    void requestUpdate(int msec);
+    void notifyNewUpdate();
 
-    void setUpdateInterval(int msec) override;
-    int minimumUpdateInterval() const override;
-    Error error() const override;
+public slots:
+    void readyRead();
+    void emitPendingUpdate();
+    void sourceDataClosed();
+    void updateRequestTimeout();
 
-public Q_SLOTS:
-    void startUpdates() override;
-    void stopUpdates() override;
-    void requestUpdate(int timeout = 0) override;
+public:
+    QNmeaSatelliteInfoSource *m_source = nullptr;
+    QGeoSatelliteInfoSource::Error m_satelliteError = QGeoSatelliteInfoSource::NoError;
+    QPointer<QIODevice> m_device;
+    struct Update
+    {
+        QList<QGeoSatelliteInfo> m_satellitesInView;
+        QList<QGeoSatelliteInfo> m_satellitesInUse;
+        QList<int> m_inUse; // temp buffer for GSA received before GSV
+        bool m_validInView = false;
+        bool m_validInUse = false;
+        bool m_fresh = false;
+        bool m_updatingGsv = false;
+#if USE_NMEA_PIMPL
+        QByteArray gsa;
+        QList<QByteArray> gsv;
+#endif
+        void setSatellitesInView(const QList<QGeoSatelliteInfo> &inView);
+        bool setSatellitesInUse(const QList<int> &inUse);
+        void consume();
+        bool isFresh() const;
+        QSet<int> inUse() const;
+        void clear();
+        bool isValid() const;
+    } m_pendingUpdate, m_lastUpdate;
+    bool m_fresh = false;
+    bool m_invokedStart = false;
+    bool m_noUpdateLastInterval = false;
+    bool m_updateTimeoutSent = false;
+    bool m_connectedReadyRead = false;
+    int m_pushDelay = 20;
+    QBasicTimer *m_updateTimer = nullptr; // the timer used in startUpdates()
+    QTimer *m_requestTimer = nullptr; // the timer used in requestUpdate()
 
 protected:
-    QNmeaSatelliteInfoSourcePrivate *d;
-    void setError(QGeoSatelliteInfoSource::Error satelliteError);
-
-    friend class QNmeaSatelliteInfoSourcePrivate;
-    Q_DISABLE_COPY(QNmeaSatelliteInfoSource)
+    void readAvailableData();
+    bool openSourceDevice();
+    bool initialize();
+    void prepareSourceDevice();
+    bool emitUpdated(Update &update, bool fromRequestUpdate);
+    void timerEvent(QTimerEvent *event) override;
 };
 
-//QT_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -8,7 +8,7 @@ qt_internal_add_test(tst_qnmeapositioninfosource_realtime_generic
     SOURCES
         ../../qgeopositioninfosource/testqgeopositioninfosource.cpp ../../qgeopositioninfosource/testqgeopositioninfosource_p.h
         ../../utils/qlocationtestutils.cpp ../../utils/qlocationtestutils_p.h
-        ../qnmeapositioninfosourceproxyfactory.cpp ../qnmeapositioninfosourceproxyfactory.h
+        ../../utils/qnmeaproxyfactory.cpp ../../utils/qnmeaproxyfactory.h
         ../tst_qnmeapositioninfosource.cpp ../tst_qnmeapositioninfosource.h
         tst_qnmeapositioninfosource_realtime_generic.cpp
     DEFINES

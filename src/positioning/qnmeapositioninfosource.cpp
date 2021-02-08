@@ -832,7 +832,7 @@ double QNmeaPositionInfoSource::userEquivalentRangeError() const
     \a hasFix.  If \a hasFix is set to false then \a posInfo may contain only the time or the date
     and the time.
 
-    Returns true if the sentence was succsesfully parsed, otherwise returns false and should not
+    Returns true if the sentence was successfully parsed, otherwise returns false and should not
     modifiy \a posInfo or \a hasFix.
 */
 bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int size,

@@ -26,17 +26,19 @@
 **
 ****************************************************************************/
 
-#ifndef QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
-#define QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
+#ifndef QNMEAPROXYFACTORY_H
+#define QNMEAPROXYFACTORY_H
 
 #include <QObject>
 
-#include <QtPositioning/qnmeapositioninfosource.h>
-
 QT_BEGIN_NAMESPACE
 class QTcpServer;
+class QTcpSocket;
 class QIODevice;
 class QNmeaPositionInfoSource;
+class QNmeaSatelliteInfoSource;
+class QGeoPositionInfoSource;
+class QGeoSatelliteInfoSource;
 QT_END_NAMESPACE
 
 class QNmeaPositionInfoSourceProxy : public QObject
@@ -59,16 +61,35 @@ private:
     QIODevice *m_outDevice;
 };
 
-class QNmeaPositionInfoSourceProxyFactory : public QObject
+class QNmeaSatelliteInfoSourceProxy : public QObject
 {
     Q_OBJECT
 public:
-    QNmeaPositionInfoSourceProxyFactory();
+    QNmeaSatelliteInfoSourceProxy(QNmeaSatelliteInfoSource *source, QIODevice *outDevice);
+    ~QNmeaSatelliteInfoSourceProxy();
 
-    // proxy is created as child of source
-    QNmeaPositionInfoSourceProxy *createProxy(QNmeaPositionInfoSource *source);
+    QGeoSatelliteInfoSource *source() const;
+
+    void feedBytes(const QByteArray &bytes);
 
 private:
+    QNmeaSatelliteInfoSource *m_source;
+    QIODevice *m_outDevice;
+};
+
+class QNmeaProxyFactory : public QObject
+{
+    Q_OBJECT
+public:
+    QNmeaProxyFactory();
+
+    // proxy is created as child of source
+    QNmeaPositionInfoSourceProxy *createPositionInfoSourceProxy(QNmeaPositionInfoSource *source);
+    QNmeaSatelliteInfoSourceProxy *createSatelliteInfoSourceProxy(QNmeaSatelliteInfoSource *source);
+
+private:
+    QIODevice *createServerConnection(QTcpSocket *client);
+
     QTcpServer *m_server;
 };
 

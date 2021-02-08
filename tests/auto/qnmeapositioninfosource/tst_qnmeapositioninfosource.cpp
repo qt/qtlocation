@@ -110,8 +110,9 @@ void tst_QNmeaPositionInfoSource::setUpdateInterval_delayedUpdate()
     // as it becomes available
 
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     proxy->source()->setUpdateInterval(500);
@@ -130,8 +131,9 @@ void tst_QNmeaPositionInfoSource::setUpdateInterval_delayedUpdate()
 void tst_QNmeaPositionInfoSource::lastKnownPosition()
 {
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QCOMPARE(proxy->source()->lastKnownPosition(), QGeoPositionInfo());
 
@@ -227,8 +229,9 @@ void tst_QNmeaPositionInfoSource::startUpdates()
     QFETCH(QList<QDateTime>, dateTimes);
 
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     proxy->source()->startUpdates();
@@ -250,8 +253,9 @@ void tst_QNmeaPositionInfoSource::startUpdates_data()
 void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
 {
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(proxy->source(), SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
@@ -334,8 +338,9 @@ void tst_QNmeaPositionInfoSource::startUpdates_expectLatestUpdateOnly()
     // updates are in the buffer, only the latest update should be emitted
 
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     proxy->source()->setUpdateInterval(500);
@@ -363,8 +368,9 @@ void tst_QNmeaPositionInfoSource::startUpdates_waitForValidDateTime()
 
     QNmeaPositionInfoSource source(m_mode);
     source.setUserEquivalentRangeError(5.1);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     QObject::connect(proxy->source(), &QNmeaPositionInfoSource::positionUpdated, [](const QGeoPositionInfo &info) {
@@ -461,8 +467,9 @@ void tst_QNmeaPositionInfoSource::requestUpdate_waitForValidDateTime()
     QFETCH(QList<QDateTime>, dateTimes);
 
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     proxy->source()->requestUpdate();
@@ -480,8 +487,9 @@ void tst_QNmeaPositionInfoSource::requestUpdate_waitForValidDateTime_data()
 void tst_QNmeaPositionInfoSource::requestUpdate()
 {
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(proxy->source(), SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
@@ -526,8 +534,9 @@ void tst_QNmeaPositionInfoSource::requestUpdate()
 void tst_QNmeaPositionInfoSource::requestUpdate_after_start()
 {
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(proxy->source(), SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
@@ -558,8 +567,9 @@ void tst_QNmeaPositionInfoSource::testWithBadNmea()
     QFETCH(UpdateTriggerMethod, trigger);
 
     QNmeaPositionInfoSource source(m_mode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     if (trigger == StartUpdatesMethod)

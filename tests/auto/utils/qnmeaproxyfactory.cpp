@@ -26,17 +26,18 @@
 **
 ****************************************************************************/
 
-#include "qnmeapositioninfosourceproxyfactory.h"
-#include "../utils/qlocationtestutils_p.h"
+#include "qnmeaproxyfactory.h"
+#include "qlocationtestutils_p.h"
+#include <QtPositioning/QNmeaPositionInfoSource>
+#include <QtPositioning/QNmeaSatelliteInfoSource>
 
 #include <QIODevice>
 #include <QTcpServer>
 #include <QTcpSocket>
 
-
-QNmeaPositionInfoSourceProxy::QNmeaPositionInfoSourceProxy(QNmeaPositionInfoSource *source, QIODevice *outDevice)
-    : m_source(source),
-        m_outDevice(outDevice)
+QNmeaPositionInfoSourceProxy::QNmeaPositionInfoSourceProxy(QNmeaPositionInfoSource *source,
+                                                           QIODevice *outDevice)
+    : m_source(source), m_outDevice(outDevice)
 {
 }
 
@@ -61,17 +62,38 @@ void QNmeaPositionInfoSourceProxy::feedBytes(const QByteArray &bytes)
     m_outDevice->write(bytes);
 }
 
-
-QNmeaPositionInfoSourceProxyFactory::QNmeaPositionInfoSourceProxyFactory()
-    : m_server(new QTcpServer(this))
+QNmeaProxyFactory::QNmeaProxyFactory() : m_server(new QTcpServer(this))
 {
     bool b = m_server->listen(QHostAddress::LocalHost);
     Q_ASSERT(b);
 }
 
-QNmeaPositionInfoSourceProxy *QNmeaPositionInfoSourceProxyFactory::createProxy(QNmeaPositionInfoSource *source)
+QNmeaPositionInfoSourceProxy *
+QNmeaProxyFactory::createPositionInfoSourceProxy(QNmeaPositionInfoSource *source)
 {
     QTcpSocket *client = new QTcpSocket;
+    QIODevice *device = createServerConnection(client);
+    source->setDevice(device);
+    Q_ASSERT(source->device() != 0);
+    QNmeaPositionInfoSourceProxy *proxy = new QNmeaPositionInfoSourceProxy(source, client);
+    proxy->setParent(source);
+    return proxy;
+}
+
+QNmeaSatelliteInfoSourceProxy *
+QNmeaProxyFactory::createSatelliteInfoSourceProxy(QNmeaSatelliteInfoSource *source)
+{
+    QTcpSocket *client = new QTcpSocket;
+    QIODevice *device = createServerConnection(client);
+    source->setDevice(device);
+    Q_ASSERT(source->device() != 0);
+    QNmeaSatelliteInfoSourceProxy *proxy = new QNmeaSatelliteInfoSourceProxy(source, client);
+    proxy->setParent(source);
+    return proxy;
+}
+
+QIODevice *QNmeaProxyFactory::createServerConnection(QTcpSocket *client)
+{
     client->connectToHost(m_server->serverAddress(), m_server->serverPort());
     qDebug() << "listening on" << m_server->serverAddress() << m_server->serverPort();
     bool b = m_server->waitForNewConnection(15000);
@@ -81,15 +103,28 @@ QNmeaPositionInfoSourceProxy *QNmeaPositionInfoSourceProxyFactory::createProxy(Q
     if (!b)
         qWarning() << "Client could not connect to server";
 
-    //QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(m_mode);
     QIODevice *device = m_server->nextPendingConnection();
-    if (!device)
-        qWarning() << "Missing pending connection. Test is going to fail.";
-    else
-        qWarning() << "Received pending connection:" << device << b;
-    source->setDevice(device);
-    Q_ASSERT(source->device() != 0);
-    QNmeaPositionInfoSourceProxy *proxy = new QNmeaPositionInfoSourceProxy(source, client);
-    proxy->setParent(source);
-    return proxy;
+    return device;
+}
+
+QNmeaSatelliteInfoSourceProxy::QNmeaSatelliteInfoSourceProxy(QNmeaSatelliteInfoSource *source,
+                                                             QIODevice *outDevice)
+    : m_source(source), m_outDevice(outDevice)
+{
+}
+
+QNmeaSatelliteInfoSourceProxy::~QNmeaSatelliteInfoSourceProxy()
+{
+    m_outDevice->close();
+    delete m_outDevice;
+}
+
+QGeoSatelliteInfoSource *QNmeaSatelliteInfoSourceProxy::source() const
+{
+    return m_source;
+}
+
+void QNmeaSatelliteInfoSourceProxy::feedBytes(const QByteArray &bytes)
+{
+    m_outDevice->write(bytes);
 }

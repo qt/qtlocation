@@ -10,10 +10,10 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactorySerialNmea
     SOURCES
         qgeopositioninfosourcefactory_serialnmea.cpp qgeopositioninfosourcefactory_serialnmea.h
         qiopipe.cpp qiopipe_p.h
-        qnmeasatelliteinfosource.cpp qnmeasatelliteinfosource_p.h
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::CorePrivate
-        Qt::PositioningPrivate
+    PUBLIC_LIBRARIES
+        Qt::Positioning
         Qt::SerialPort
 )
 

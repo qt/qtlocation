@@ -28,7 +28,7 @@
 
 //TESTED_COMPONENT=src/location
 
-#include "qnmeapositioninfosourceproxyfactory.h"
+#include "../utils/qnmeaproxyfactory.h"
 #include "../qgeopositioninfosource/testqgeopositioninfosource_p.h"
 #include "../utils/qlocationtestutils_p.h"
 
@@ -100,8 +100,9 @@ void tst_DummyNmeaPositionInfoSource::initTestCase()
 void tst_DummyNmeaPositionInfoSource::testOverloadedParseFunction()
 {
     DummyNmeaPositionInfoSource source(QNmeaPositionInfoSource::RealTimeMode);
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+    QNmeaProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+            factory.createPositionInfoSourceProxy(&source));
 
     QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
 

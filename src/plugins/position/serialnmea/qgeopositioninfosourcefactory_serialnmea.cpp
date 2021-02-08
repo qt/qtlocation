@@ -39,13 +39,13 @@
 
 #include "qgeopositioninfosourcefactory_serialnmea.h"
 #include <QtPositioning/qnmeapositioninfosource.h>
+#include <QtPositioning/qnmeasatelliteinfosource.h>
 #include <QtSerialPort/qserialport.h>
 #include <QtSerialPort/qserialportinfo.h>
 #include <QtCore/qloggingcategory.h>
 #include <QSet>
 #include "qiopipe_p.h"
 #include <QSharedPointer>
-#include "qnmeasatelliteinfosource_p.h"
 
 Q_LOGGING_CATEGORY(lcSerial, "qt.positioning.serialnmea")
 

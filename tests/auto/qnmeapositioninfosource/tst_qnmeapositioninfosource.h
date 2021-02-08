@@ -26,8 +26,8 @@
 **
 ****************************************************************************/
 
-#include "qnmeapositioninfosourceproxyfactory.h"
 #include "../qgeopositioninfosource/testqgeopositioninfosource_p.h"
+#include "../utils/qnmeaproxyfactory.h"
 #include "../utils/qlocationtestutils_p.h"
 
 #include <QtPositioning/qnmeapositioninfosource.h>

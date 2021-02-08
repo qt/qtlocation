@@ -54,6 +54,7 @@
 #include <math.h> // needed for non-std:: versions of functions
 #include <qmath.h>
 #include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QNmeaSatelliteInfoSource>
 #include <QtPositioning/private/qpositioningglobal_p.h>
 
 static const double offsetEpsilon = 1e-12; // = 0.000000000001
@@ -293,18 +294,13 @@ public:
     /*
         Retruns a list of QGeoSatelliteInfo in the view.
 
-        Note: this function has to be called repeatedly until it returns true.
-        Reason being that GSV sentences can be split into multiple samples, so getting the full data
-        requires parsing multiple sentences.
+        Note: this function has to be called repeatedly until it returns
+        QNmeaSatelliteInfoSource::FullyParsed.
+        Reason being that GSV sentences can be split into multiple samples, so
+        getting the full data requires parsing multiple sentences.
      */
-    enum GSVParseStatus {
-        GSVNotParsed,
-        GSVPartiallyParsed,
-        GSVFullyParsed
-    };
-    static GSVParseStatus getSatInfoFromNmea(const char *data,
-                                   int size,
-                                   QList<QGeoSatelliteInfo> &infos);
+    static QNmeaSatelliteInfoSource::SatelliteInfoParseStatus
+    getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelliteInfo> &infos);
 
     /*
         Parses GSA for satellites in use.

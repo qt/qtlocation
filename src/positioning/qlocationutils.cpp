@@ -352,38 +352,39 @@ bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPosition
     }
 }
 
-QLocationUtils::GSVParseStatus QLocationUtils::getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelliteInfo> &infos)
+QNmeaSatelliteInfoSource::SatelliteInfoParseStatus
+QLocationUtils::getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelliteInfo> &infos)
 {
     if (!data || !size)
-        return GSVNotParsed;
+        return QNmeaSatelliteInfoSource::NotParsed;
 
     NmeaSentence nmeaType = getNmeaSentenceType(data, size);
     if (nmeaType != NmeaSentenceGSV)
-        return GSVNotParsed;
+        return QNmeaSatelliteInfoSource::NotParsed;
 
     QList<QByteArray> parts = QByteArray::fromRawData(data, size).split(',');
 
     if (parts.count() <= 3) {
         infos.clear();
-        return GSVFullyParsed; // Malformed sentence.
+        return QNmeaSatelliteInfoSource::FullyParsed; // Malformed sentence.
     }
     bool ok;
     const int totalSentences = parts.at(1).toInt(&ok);
     if (!ok) {
         infos.clear();
-        return GSVFullyParsed; // Malformed sentence.
+        return QNmeaSatelliteInfoSource::FullyParsed; // Malformed sentence.
     }
 
     const int sentence = parts.at(2).toInt(&ok);
     if (!ok) {
         infos.clear();
-        return GSVFullyParsed; // Malformed sentence.
+        return QNmeaSatelliteInfoSource::FullyParsed; // Malformed sentence.
     }
 
     const int totalSats = parts.at(3).toInt(&ok);
     if (!ok) {
         infos.clear();
-        return GSVFullyParsed; // Malformed sentence.
+        return QNmeaSatelliteInfoSource::FullyParsed; // Malformed sentence.
     }
 
     if (sentence == 1)
@@ -406,8 +407,9 @@ QLocationUtils::GSVParseStatus QLocationUtils::getSatInfoFromNmea(const char *da
     }
 
     if (sentence == totalSentences)
-        return GSVFullyParsed;
-    return GSVPartiallyParsed;
+        return QNmeaSatelliteInfoSource::FullyParsed;
+
+    return QNmeaSatelliteInfoSource::PartiallyParsed;
 }
 
 bool QLocationUtils::getSatInUseFromNmea(const char *data, int size, QList<int> &pnrsInUse)

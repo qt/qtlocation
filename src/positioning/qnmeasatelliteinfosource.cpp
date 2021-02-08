@@ -37,7 +37,8 @@
 **
 ****************************************************************************/
 
-#include "qnmeasatelliteinfosource_p.h"
+#include "qnmeasatelliteinfosource.h"
+#include "private/qnmeasatelliteinfosource_p.h"
 #include <QtPositioning/private/qgeosatelliteinfo_p.h>
 #include <QtPositioning/private/qgeosatelliteinfosource_p.h>
 #include <QtPositioning/private/qlocationutils_p.h>
@@ -50,10 +51,7 @@
 #include <QDebug>
 #include <QtCore/QtNumeric>
 
-
-//QT_BEGIN_NAMESPACE
-
-#define USE_NMEA_PIMPL 1
+QT_BEGIN_NAMESPACE
 
 #if USE_NMEA_PIMPL
 class QGeoSatelliteInfoPrivateNmea : public QGeoSatelliteInfoPrivate
@@ -67,12 +65,12 @@ public:
 };
 
 QGeoSatelliteInfoPrivateNmea::QGeoSatelliteInfoPrivateNmea(const QGeoSatelliteInfoPrivate &other)
-:   QGeoSatelliteInfoPrivate(other)
+    : QGeoSatelliteInfoPrivate(other)
 {
 }
 
 QGeoSatelliteInfoPrivateNmea::QGeoSatelliteInfoPrivateNmea(const QGeoSatelliteInfoPrivateNmea &other)
-:   QGeoSatelliteInfoPrivate(other)
+    : QGeoSatelliteInfoPrivate(other)
 {
     nmeaSentences = other.nmeaSentences;
 }
@@ -82,156 +80,8 @@ QGeoSatelliteInfoPrivateNmea::~QGeoSatelliteInfoPrivateNmea() {}
 typedef QGeoSatelliteInfoPrivate QGeoSatelliteInfoPrivateNmea;
 #endif
 
-class QNmeaSatelliteInfoSourcePrivate : public QObject
-{
-    Q_OBJECT
-public:
-    QNmeaSatelliteInfoSourcePrivate(QNmeaSatelliteInfoSource *parent);
-    ~QNmeaSatelliteInfoSourcePrivate();
-
-    void startUpdates();
-    void stopUpdates();
-    void requestUpdate(int msec);
-    void notifyNewUpdate();
-
-public slots:
-    void readyRead();
-    void emitPendingUpdate();
-    void sourceDataClosed();
-    void updateRequestTimeout();
-
-
-public:
-    QNmeaSatelliteInfoSource *m_source = nullptr;
-    QGeoSatelliteInfoSource::Error m_satelliteError = QGeoSatelliteInfoSource::NoError;
-    QPointer<QIODevice> m_device;
-    struct Update {
-        QList<QGeoSatelliteInfo> m_satellitesInView;
-        QList<QGeoSatelliteInfo> m_satellitesInUse;
-        QList<int> m_inUse; // temp buffer for GSA received before GSV
-        bool m_validInView = false;
-        bool m_validInUse = false;
-        bool m_fresh = false;
-        bool m_updatingGsv = false;
-#if USE_NMEA_PIMPL
-        QByteArray gsa;
-        QList<QByteArray> gsv;
-#endif
-        void setSatellitesInView(const QList<QGeoSatelliteInfo> &inView)
-        {
-            m_updatingGsv = false;
-            m_satellitesInView = inView;
-            m_validInView = m_fresh = true;
-            if (m_inUse.size()) {
-                m_satellitesInUse.clear();
-                m_validInUse = false;
-                bool corrupt = false;
-                for (const auto i: m_inUse) {
-                    bool found = false;
-                    for (const auto &s: m_satellitesInView) {
-                        if (s.satelliteIdentifier() == i) {
-                            m_satellitesInUse.append(s);
-                            found = true;
-                        }
-                    }
-                    if (!found) { // received a GSA before a GSV, but it was incorrect or something. Unrelated to this GSV at least.
-                        m_satellitesInUse.clear();
-                        corrupt = true;
-                        break;
-                    }
-                }
-                m_validInUse = !corrupt;
-                m_inUse.clear();
-            }
-        }
-
-//        void setSatellitesInUse(const QList<QGeoSatelliteInfo> &inUse)
-//        {
-//            m_satellitesInUse = inUse;
-//            m_validInUse = true;
-//            m_inUse.clear();
-//        }
-
-        bool setSatellitesInUse(const QList<int> &inUse)
-        {
-            m_satellitesInUse.clear();
-            m_validInUse = false;
-            m_inUse = inUse;
-            if (m_updatingGsv) {
-                m_satellitesInUse.clear();
-                m_validInView =  false;
-                return false;
-            }
-            for (const auto i: inUse) {
-                bool found = false;
-                for (const auto &s: m_satellitesInView) {
-                    if (s.satelliteIdentifier() == i) {
-                        m_satellitesInUse.append(s);
-                        found = true;
-                    }
-                }
-                if (!found) {                       // if satellites in use aren't in view, the related GSV is still to be received.
-                    m_inUse = inUse;        // So clear outdated data, buffer the info, and set it later.
-                    m_satellitesInUse.clear();
-                    m_satellitesInView.clear();
-                    m_validInView =  false;
-                    return false;
-                }
-            }
-            m_validInUse = m_fresh = true;
-            return true;
-        }
-
-        void consume()
-        {
-            m_fresh = false;
-        }
-
-        bool isFresh()
-        {
-            return m_fresh;
-        }
-
-        QSet<int> inUse() const
-        {
-            QSet<int> res;
-            for (const auto &s: m_satellitesInUse)
-                res.insert(s.satelliteIdentifier());
-            return res;
-        }
-
-        void clear()
-        {
-            m_satellitesInView.clear();
-            m_satellitesInUse.clear();
-            m_validInView = m_validInUse = false;
-        }
-
-        bool isValid()
-        {
-            return m_validInView || m_validInUse; // GSV without GSA is valid. GSA with outdated but still matching GSV also valid.
-        }
-    } m_pendingUpdate, m_lastUpdate;
-    bool m_fresh = false;
-    bool m_invokedStart = false;
-    bool m_noUpdateLastInterval = false;
-    bool m_updateTimeoutSent = false;
-    bool m_connectedReadyRead = false;
-    int m_pushDelay = 20;
-    QBasicTimer *m_updateTimer = nullptr; // the timer used in startUpdates()
-    QTimer *m_requestTimer = nullptr; // the timer used in requestUpdate()
-
-protected:
-    void readAvailableData();
-    bool openSourceDevice();
-    bool initialize();
-    void prepareSourceDevice();
-    bool emitUpdated(Update &update);
-    void timerEvent(QTimerEvent *event) override;
-};
-
 QNmeaSatelliteInfoSourcePrivate::QNmeaSatelliteInfoSourcePrivate(QNmeaSatelliteInfoSource *parent)
-:   m_source(parent)
+    : m_source(parent)
 {
 }
 
@@ -240,7 +90,7 @@ void QNmeaSatelliteInfoSourcePrivate::notifyNewUpdate()
     if (m_pendingUpdate.isValid() && m_pendingUpdate.isFresh()) {
         if (m_requestTimer && m_requestTimer->isActive()) { // User called requestUpdate()
             m_requestTimer->stop();
-            emitUpdated(m_pendingUpdate);
+            emitUpdated(m_pendingUpdate, true);
         } else if (m_invokedStart) { // user called startUpdates()
             if (m_updateTimer && m_updateTimer->isActive()) { // update interval > 0
                 // for periodic updates, only want the most recent update
@@ -250,7 +100,7 @@ void QNmeaSatelliteInfoSourcePrivate::notifyNewUpdate()
                     emitPendingUpdate(); // m_noUpdateLastInterval handled in there.
                 }
             } else { // update interval <= 0, send anything new ASAP
-                m_noUpdateLastInterval = !emitUpdated(m_pendingUpdate);
+                m_noUpdateLastInterval = !emitUpdated(m_pendingUpdate, false);
             }
         }
     }
@@ -276,8 +126,6 @@ void QNmeaSatelliteInfoSourcePrivate::startUpdates()
     if (!initialized)
         return;
 
-    // Do not support simulation just yet
-//    if (m_updateMode == QNmeaPositionInfoSource::RealTimeMode)
     {
         // skip over any buffered data - we only want the newest data.
         // Don't do this in requestUpdate. In that case bufferedData is good to have/use.
@@ -348,9 +196,9 @@ void QNmeaSatelliteInfoSourcePrivate::emitPendingUpdate()
     if (m_pendingUpdate.isValid() && m_pendingUpdate.isFresh()) {
         m_updateTimeoutSent = false;
         m_noUpdateLastInterval = false;
-        if (!emitUpdated(m_pendingUpdate))
+        if (!emitUpdated(m_pendingUpdate, false))
             m_noUpdateLastInterval = true;
-//        m_pendingUpdate.clear(); // Do not clear, it will be incrementally updated
+        // m_pendingUpdate.clear(); // Do not clear, it will be incrementally updated
     } else { // invalid or not fresh update
         if (m_noUpdateLastInterval && !m_updateTimeoutSent) {
             m_updateTimeoutSent = true;
@@ -378,31 +226,37 @@ void QNmeaSatelliteInfoSourcePrivate::readAvailableData()
         char buf[1024];
         qint64 size = m_device->readLine(buf, sizeof(buf));
         QList<int> satInUse;
-        const bool satInUseParsed = QLocationUtils::getSatInUseFromNmea(buf, size, satInUse);
+        const bool satInUseParsed = m_source->parseSatellitesInUseFromNmea(buf, size, satInUse);
         if (satInUseParsed) {
             m_pendingUpdate.setSatellitesInUse(satInUse);
 #if USE_NMEA_PIMPL
             m_pendingUpdate.gsa = QByteArray(buf, size);
             if (m_pendingUpdate.m_satellitesInUse.size()) {
-                for (auto &s: m_pendingUpdate.m_satellitesInUse)
-                    static_cast<QGeoSatelliteInfoPrivateNmea *>(QGeoSatelliteInfoPrivate::get(s))->nmeaSentences.append(m_pendingUpdate.gsa);
-                for (auto &s: m_pendingUpdate.m_satellitesInView)
-                    static_cast<QGeoSatelliteInfoPrivateNmea *>(QGeoSatelliteInfoPrivate::get(s))->nmeaSentences.append(m_pendingUpdate.gsa);
+                for (auto &s : m_pendingUpdate.m_satellitesInUse) {
+                    static_cast<QGeoSatelliteInfoPrivateNmea *>(QGeoSatelliteInfoPrivate::get(s))
+                            ->nmeaSentences.append(m_pendingUpdate.gsa);
+                }
+                for (auto &s : m_pendingUpdate.m_satellitesInView) {
+                    static_cast<QGeoSatelliteInfoPrivateNmea *>(QGeoSatelliteInfoPrivate::get(s))
+                            ->nmeaSentences.append(m_pendingUpdate.gsa);
+                }
             }
 #endif
         } else {
-            const QLocationUtils::GSVParseStatus parserStatus = QLocationUtils::getSatInfoFromNmea(buf, size, m_pendingUpdate.m_satellitesInView);
-            if (parserStatus == QLocationUtils::GSVPartiallyParsed) {
+            const auto parserStatus = m_source->parseSatelliteInfoFromNmea(
+                    buf, size, m_pendingUpdate.m_satellitesInView);
+            if (parserStatus == QNmeaSatelliteInfoSource::PartiallyParsed) {
                 m_pendingUpdate.m_updatingGsv = true;
 #if USE_NMEA_PIMPL
                 m_pendingUpdate.gsv.append(QByteArray(buf, size));
 #endif
-            } else if (parserStatus == QLocationUtils::GSVFullyParsed) {
+            } else if (parserStatus == QNmeaSatelliteInfoSource::FullyParsed) {
 #if USE_NMEA_PIMPL
                 m_pendingUpdate.gsv.append(QByteArray(buf, size));
                 for (int i = 0; i < m_pendingUpdate.m_satellitesInView.size(); i++) {
                     const QGeoSatelliteInfo &s = m_pendingUpdate.m_satellitesInView.at(i);
-                    QGeoSatelliteInfoPrivateNmea *pimpl = new QGeoSatelliteInfoPrivateNmea(*QGeoSatelliteInfoPrivate::get(s));
+                    QGeoSatelliteInfoPrivateNmea *pimpl =
+                            new QGeoSatelliteInfoPrivateNmea(*QGeoSatelliteInfoPrivate::get(s));
                     pimpl->nmeaSentences.append(m_pendingUpdate.gsa);
                     pimpl->nmeaSentences.append(m_pendingUpdate.gsv);
                     m_pendingUpdate.m_satellitesInView.replace(i, QGeoSatelliteInfo(*pimpl));
@@ -451,7 +305,8 @@ void QNmeaSatelliteInfoSourcePrivate::prepareSourceDevice()
     }
 }
 
-bool QNmeaSatelliteInfoSourcePrivate::emitUpdated(QNmeaSatelliteInfoSourcePrivate::Update &update)
+bool QNmeaSatelliteInfoSourcePrivate::emitUpdated(QNmeaSatelliteInfoSourcePrivate::Update &update,
+                                                  bool fromRequestUpdate)
 {
     bool emitted = false;
     if (!update.isFresh())
@@ -461,13 +316,14 @@ bool QNmeaSatelliteInfoSourcePrivate::emitUpdated(QNmeaSatelliteInfoSourcePrivat
     const bool inUseUpdated = update.m_satellitesInUse != m_lastUpdate.m_satellitesInUse;
     const bool inViewUpdated = update.m_satellitesInView != m_lastUpdate.m_satellitesInView;
 
-
+    // if we come here from requestUpdate(), we need to emit, even if the data
+    // didn't really change
     m_lastUpdate = update;
-    if (update.m_validInUse && inUseUpdated) {
+    if (update.m_validInUse && (inUseUpdated || fromRequestUpdate)) {
         emit m_source->satellitesInUseUpdated(update.m_satellitesInUse);
         emitted = true;
     }
-    if (update.m_validInView && inViewUpdated) {
+    if (update.m_validInView && (inViewUpdated || fromRequestUpdate)) {
         emit m_source->satellitesInViewUpdated(update.m_satellitesInView);
         emitted = true;
     }
@@ -478,7 +334,6 @@ void QNmeaSatelliteInfoSourcePrivate::timerEvent(QTimerEvent * /*event*/)
 {
     emitPendingUpdate();
 }
-
 
 // currently supports only realtime
 QNmeaSatelliteInfoSource::QNmeaSatelliteInfoSource(QObject *parent)
@@ -544,6 +399,58 @@ void QNmeaSatelliteInfoSource::requestUpdate(int msec)
     d->requestUpdate(msec == 0 ? 60000 * 5 : msec); // 5min default timeout
 }
 
+/*!
+    Parses an NMEA sentence string to extract the IDs of satelites in use.
+
+    The default implementation will parse standard NMEA $GPGSA sentences.
+    This method should be reimplemented in a subclass whenever the need to deal
+    with non-standard NMEA sentences arises.
+
+    The parser reads \a size bytes from \a data and uses that information to
+    fill \a pnrsInUse list.
+
+    Returns \c true if the sentence was successfully parsed, otherwise returns
+    \c false and should not modifiy \a pnrsInUse.
+*/
+bool QNmeaSatelliteInfoSource::parseSatellitesInUseFromNmea(const char *data, int size,
+                                                            QList<int> &pnrsInUse)
+{
+    return QLocationUtils::getSatInUseFromNmea(data, size, pnrsInUse);
+}
+
+/*!
+    \enum QNmeaSatelliteInfoSource::SatelliteInfoParseStatus
+    Defines the parse status of satellite information. The satellite information
+    can be split into multiple sentences, and we need to parse all of them.
+    \value NotParsed The data does not contain information about satellites.
+    \value PartiallyParsed A valid satellite information is received and parsed,
+           but it's not complete, so we need to wait for another NMEA sentence.
+    \value FullyParsed Satellite information was fully collected and parsed.
+*/
+
+/*!
+    Parses an NMEA sentence string to extract the information about satellites
+    in view.
+
+    The default implementation will parse standard NMEA $GPGSV sentences.
+    This method should be reimplemented in a subclass whenever the need to deal
+    with non-standard NMEA sentences arises.
+
+    The parser reads \a size bytes from \a data and uses that information to
+    fill \a infos list.
+
+    Returns \l SatelliteInfoParseStatus with parse result.
+    Modifies \a infos list in case \l SatelliteInfoParseStatus::PartiallyParsed
+    or \l SatelliteInfoParseStatus::FullyParsed is returned.
+*/
+QNmeaSatelliteInfoSource::SatelliteInfoParseStatus
+QNmeaSatelliteInfoSource::parseSatelliteInfoFromNmea(const char *data, int size,
+                                                     QList<QGeoSatelliteInfo> &infos)
+{
+    return static_cast<SatelliteInfoParseStatus>(
+            QLocationUtils::getSatInfoFromNmea(data, size, infos));
+}
+
 void QNmeaSatelliteInfoSource::setError(QGeoSatelliteInfoSource::Error satelliteError)
 {
     d->m_satelliteError = satelliteError;
@@ -551,7 +458,96 @@ void QNmeaSatelliteInfoSource::setError(QGeoSatelliteInfoSource::Error satellite
         emit QGeoSatelliteInfoSource::errorOccurred(satelliteError);
 }
 
+void QNmeaSatelliteInfoSourcePrivate::Update::setSatellitesInView(const QList<QGeoSatelliteInfo> &inView)
+{
+    m_updatingGsv = false;
+    m_satellitesInView = inView;
+    m_validInView = m_fresh = true;
+    if (m_inUse.size()) {
+        m_satellitesInUse.clear();
+        m_validInUse = false;
+        bool corrupt = false;
+        for (const auto i : m_inUse) {
+            bool found = false;
+            for (const auto &s : m_satellitesInView) {
+                if (s.satelliteIdentifier() == i) {
+                    m_satellitesInUse.append(s);
+                    found = true;
+                }
+            }
+            if (!found) {
+                // received a GSA before a GSV, but it was incorrect or something.
+                // Unrelated to this GSV at least.
+                m_satellitesInUse.clear();
+                corrupt = true;
+                break;
+            }
+        }
+        m_validInUse = !corrupt;
+        m_inUse.clear();
+    }
+}
 
-//QT_END_NAMESPACE
+bool QNmeaSatelliteInfoSourcePrivate::Update::setSatellitesInUse(const QList<int> &inUse)
+{
+    m_satellitesInUse.clear();
+    m_validInUse = false;
+    m_inUse = inUse;
+    if (m_updatingGsv) {
+        m_satellitesInUse.clear();
+        m_validInView = false;
+        return false;
+    }
+    for (const auto i : inUse) {
+        bool found = false;
+        for (const auto &s : m_satellitesInView) {
+            if (s.satelliteIdentifier() == i) {
+                m_satellitesInUse.append(s);
+                found = true;
+            }
+        }
+        if (!found) {
+            // if satellites in use aren't in view, the related GSV is still to be received.
+            m_inUse = inUse; // So clear outdated data, buffer the info, and set it later.
+            m_satellitesInUse.clear();
+            m_satellitesInView.clear();
+            m_validInView = false;
+            return false;
+        }
+    }
+    m_validInUse = m_fresh = true;
+    return true;
+}
 
-#include "qnmeasatelliteinfosource.moc"
+void QNmeaSatelliteInfoSourcePrivate::Update::consume()
+{
+    m_fresh = false;
+}
+
+bool QNmeaSatelliteInfoSourcePrivate::Update::isFresh() const
+{
+    return m_fresh;
+}
+
+QSet<int> QNmeaSatelliteInfoSourcePrivate::Update::inUse() const
+{
+    QSet<int> res;
+    for (const auto &s : m_satellitesInUse)
+        res.insert(s.satelliteIdentifier());
+    return res;
+}
+
+void QNmeaSatelliteInfoSourcePrivate::Update::clear()
+{
+    m_satellitesInView.clear();
+    m_satellitesInUse.clear();
+    m_validInView = m_validInUse = false;
+}
+
+bool QNmeaSatelliteInfoSourcePrivate::Update::isValid() const
+{
+    // GSV without GSA is valid. GSA with outdated but still matching GSV also valid.
+    return m_validInView || m_validInUse;
+}
+
+QT_END_NAMESPACE

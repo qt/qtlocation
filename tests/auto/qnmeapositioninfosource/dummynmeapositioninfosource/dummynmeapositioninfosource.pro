@@ -7,11 +7,11 @@ INCLUDEPATH += ..
 
 HEADERS += ../../utils/qlocationtestutils_p.h \
            ../../qgeopositioninfosource/testqgeopositioninfosource_p.h \
-           ../qnmeapositioninfosourceproxyfactory.h
+           ../../utils/qnmeaproxyfactory.h
 
 SOURCES += ../../utils/qlocationtestutils.cpp \
            ../../qgeopositioninfosource/testqgeopositioninfosource.cpp \
-           ../qnmeapositioninfosourceproxyfactory.cpp \
+           ../../utils/qnmeaproxyfactory.cpp \
            tst_dummynmeapositioninfosource.cpp
 
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0

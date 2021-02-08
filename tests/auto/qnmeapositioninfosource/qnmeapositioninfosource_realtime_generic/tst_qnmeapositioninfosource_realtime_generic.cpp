@@ -37,7 +37,7 @@ class tst_QNmeaPositionInfoSource_RealTime_Generic : public TestQGeoPositionInfo
 public:
     tst_QNmeaPositionInfoSource_RealTime_Generic()
     {
-        m_factory = new QNmeaPositionInfoSourceProxyFactory;
+        m_factory = new QNmeaProxyFactory;
 #if QT_CONFIG(library)
         /*
          * Set custom path since CI doesn't install test plugins
@@ -61,14 +61,15 @@ protected:
     QGeoPositionInfoSource *createTestSource() override
     {
         QNmeaPositionInfoSource *source = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::RealTimeMode);
-        QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(m_factory->createProxy(source));
+        QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
+                m_factory->createPositionInfoSourceProxy(source));
         Feeder *feeder = new Feeder(source);
         feeder->start(proxy);
         return source;
     }
 
 private:
-    QNmeaPositionInfoSourceProxyFactory *m_factory;
+    QNmeaProxyFactory *m_factory;
 };
 
 #include "tst_qnmeapositioninfosource_realtime_generic.moc"
