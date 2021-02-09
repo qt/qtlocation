@@ -1,20 +1,21 @@
-# Generated from serialnmea.pro.
+# Generated from nmea.pro.
 
 #####################################################################
-## QGeoPositionInfoSourceFactorySerialNmea Plugin:
+## QGeoPositionInfoSourceFactoryNmea Plugin:
 #####################################################################
 
-qt_internal_add_plugin(QGeoPositionInfoSourceFactorySerialNmea
-    OUTPUT_NAME qtposition_serialnmea
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryNmea
+    OUTPUT_NAME qtposition_nmea
     TYPE position
     SOURCES
-        qgeopositioninfosourcefactory_serialnmea.cpp qgeopositioninfosourcefactory_serialnmea.h
+        qgeopositioninfosourcefactory_nmea.cpp qgeopositioninfosourcefactory_nmea.h
         qiopipe.cpp qiopipe_p.h
     LIBRARIES
         Qt::CorePrivate
     PUBLIC_LIBRARIES
         Qt::Positioning
         Qt::SerialPort
+        Qt::Network
 )
 
 #### Keys ignored in scope 1:.:.:serialnmea.pro:<TRUE>:

@@ -37,13 +37,15 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFOSOURCEFACTORY_SERIALNMEA_H
-#define QGEOPOSITIONINFOSOURCEFACTORY_SERIALNMEA_H
+#ifndef QGEOPOSITIONINFOSOURCEFACTORY_NMEA_H
+#define QGEOPOSITIONINFOSOURCEFACTORY_NMEA_H
 
 #include <QObject>
 #include <QtPositioning/QGeoPositionInfoSourceFactory>
 
-class QGeoPositionInfoSourceFactorySerialNmea : public QObject, public QGeoPositionInfoSourceFactory
+QT_BEGIN_NAMESPACE
+
+class QGeoPositionInfoSourceFactoryNmea : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/6.0"
@@ -55,5 +57,7 @@ public:
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent, const QVariantMap &parameters) override;
     QGeoAreaMonitorSource *areaMonitor(QObject *parent, const QVariantMap &parameters) override;
 };
+
+QT_END_NAMESPACE
 
 #endif

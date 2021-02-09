@@ -108,6 +108,7 @@ public:
     QList<QPointer<QIOPipe>> childPipes;
 };
 
+QT_END_NAMESPACE
+
 #endif // QIOPIPE_P_H
 
-QT_END_NAMESPACE

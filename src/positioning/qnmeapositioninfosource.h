@@ -84,12 +84,12 @@ protected:
                                           int size,
                                           QGeoPositionInfo *posInfo,
                                           bool *hasFix);
+    void setError(QGeoPositionInfoSource::Error positionError);
 
 private:
     Q_DISABLE_COPY(QNmeaPositionInfoSource)
     friend class QNmeaPositionInfoSourcePrivate;
     QNmeaPositionInfoSourcePrivate *d;
-    void setError(QGeoPositionInfoSource::Error positionError);
 };
 
 QT_END_NAMESPACE

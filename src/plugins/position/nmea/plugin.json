@@ -1,6 +1,6 @@
 {
-    "Keys": ["serialnmea"],
-    "Provider": "serialnmea",
+    "Keys": ["nmea"],
+    "Provider": "nmea",
     "Position": true,
     "Satellite": false,
     "Monitor" : false,
