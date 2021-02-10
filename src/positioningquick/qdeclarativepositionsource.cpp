@@ -43,7 +43,6 @@
 #include <QtCore/QCoreApplication>
 #include <QtQml/qqmlinfo.h>
 #include <QtQml/qqml.h>
-#include <QtPositioning/qnmeapositioninfosource.h>
 #include <qdeclarativepluginparameter_p.h>
 #include <QFile>
 #include <QtNetwork/QTcpSocket>
@@ -115,16 +114,13 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-:   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethods), m_nmeaFile(0),
-    m_nmeaSocket(0), m_active(false), m_singleUpdate(false), m_updateInterval(0),
-    m_sourceError(NoError)
+:   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethods),
+    m_active(false), m_singleUpdate(false), m_updateInterval(0), m_sourceError(NoError)
 {
 }
 
 QDeclarativePositionSource::~QDeclarativePositionSource()
 {
-    delete m_nmeaFile;
-    delete m_nmeaSocket;
     delete m_positionSource;
 }
 
@@ -251,161 +247,6 @@ bool QDeclarativePositionSource::isValid() const
     return (m_positionSource != 0);
 }
 
-void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
-{
-    if (nmeaSource.scheme() == QLatin1String("socket")) {
-        if (m_nmeaSocket
-                && nmeaSource.host() == m_nmeaSocket->peerName()
-                && nmeaSource.port() == m_nmeaSocket->peerPort()) {
-            return;
-        }
-
-        delete m_nmeaSocket;
-        m_nmeaSocket = new QTcpSocket();
-
-        connect(m_nmeaSocket, &QAbstractSocket::errorOccurred,
-                this, &QDeclarativePositionSource::socketError);
-        connect(m_nmeaSocket, &QTcpSocket::connected,
-                this, &QDeclarativePositionSource::socketConnected);
-
-        m_nmeaSocket->connectToHost(nmeaSource.host(), nmeaSource.port(), QTcpSocket::ReadOnly);
-    } else {
-        // Strip the filename. This is clumsy but the file may be prefixed in several
-        // ways: "file:///", "qrc:///", "/", "" in platform dependent manner.
-        QString localFileName = nmeaSource.toString();
-        if (!QFile::exists(localFileName)) {
-            if (localFileName.startsWith(QStringLiteral("qrc:///"))) {
-                localFileName.remove(0, 7);
-            } else if (localFileName.startsWith(QStringLiteral("file:///"))) {
-                localFileName.remove(0, 7);
-            } else if (localFileName.startsWith(QStringLiteral("qrc:/"))) {
-                localFileName.remove(0, 5);
-            }
-            if (!QFile::exists(localFileName) && localFileName.startsWith(QLatin1Char('/'))) {
-                localFileName.remove(0,1);
-            }
-        }
-        if (m_nmeaFileName == localFileName)
-            return;
-        m_nmeaFileName = localFileName;
-
-        PositioningMethods previousPositioningMethods = supportedPositioningMethods();
-
-        // The current position source needs to be deleted
-        // because QNmeaPositionInfoSource can be bound only to a one file.
-        delete m_nmeaSocket;
-        m_nmeaSocket = 0;
-        setSource(nullptr);
-        setPosition(QGeoPositionInfo());
-        // Create the NMEA source based on the given data. QML has automatically set QUrl
-        // type to point to correct path. If the file is not found, check if the file actually
-        // was an embedded resource file.
-        delete m_nmeaFile;
-        m_nmeaFile = new QFile(localFileName);
-        if (!m_nmeaFile->exists()) {
-            localFileName.prepend(QLatin1Char(':'));
-            m_nmeaFile->setFileName(localFileName);
-        }
-        if (m_nmeaFile->exists()) {
-#ifdef QDECLARATIVE_POSITION_DEBUG
-            qDebug() << "QDeclarativePositionSource NMEA File was found: " << localFileName;
-#endif
-            setSource(new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode));
-            (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setUserEquivalentRangeError(2.5); // it is internally multiplied by 2 in qlocationutils_readGga
-            (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setDevice(m_nmeaFile);
-            connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                    this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
-            connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
-                    this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
-
-            setPosition(m_positionSource->lastKnownPosition());
-            if (m_active && !m_singleUpdate) {
-                // Keep on updating even though source changed
-                QTimer::singleShot(0, this, SLOT(start()));
-            }
-        } else {
-            qmlWarning(this) << QStringLiteral("Nmea file not found") << localFileName;
-#ifdef QDECLARATIVE_POSITION_DEBUG
-            qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
-#endif
-            if (m_active) {
-                m_active = false;
-                m_singleUpdate = false;
-                emit activeChanged();
-            }
-        }
-
-        if (previousPositioningMethods != supportedPositioningMethods())
-            emit supportedPositioningMethodsChanged();
-    }
-
-    m_nmeaSource = nmeaSource;
-    emit nmeaSourceChanged();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativePositionSource::socketConnected()
-{
-#ifdef QDECLARATIVE_POSITION_DEBUG
-    qDebug() << "Socket connected: " << m_nmeaSocket->peerName();
-#endif
-    PositioningMethods previousPositioningMethods = supportedPositioningMethods();
-
-    // The current position source needs to be deleted
-    // because QNmeaPositionInfoSource can be bound only to a one file.
-    delete m_nmeaFile;
-    m_nmeaFile = 0;
-    setSource(nullptr);
-
-    setSource(new QNmeaPositionInfoSource(QNmeaPositionInfoSource::RealTimeMode));
-    (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setDevice(m_nmeaSocket);
-
-    connect(m_positionSource, &QNmeaPositionInfoSource::positionUpdated,
-            this, &QDeclarativePositionSource::positionUpdateReceived);
-    connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
-            this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
-
-    setPosition(m_positionSource->lastKnownPosition());
-
-    if (m_active && !m_singleUpdate) {
-        // Keep on updating even though source changed
-        QTimer::singleShot(0, this, SLOT(start()));
-    }
-
-    if (previousPositioningMethods != supportedPositioningMethods())
-        emit supportedPositioningMethodsChanged();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativePositionSource::socketError(QAbstractSocket::SocketError error)
-{
-    m_nmeaSocket->deleteLater();
-    m_nmeaSocket = nullptr;
-
-    switch (error) {
-    case QAbstractSocket::UnknownSocketError:
-        m_sourceError = QDeclarativePositionSource::UnknownSourceError;
-        break;
-    case QAbstractSocket::SocketAccessError:
-        m_sourceError = QDeclarativePositionSource::AccessError;
-        break;
-    case QAbstractSocket::RemoteHostClosedError:
-        m_sourceError = QDeclarativePositionSource::ClosedError;
-        break;
-    default:
-        qWarning() << "Connection failed! QAbstractSocket::SocketError" << error;
-        m_sourceError = QDeclarativePositionSource::SocketError;
-        break;
-    }
-
-    emit sourceErrorChanged();
-}
-
-
 void QDeclarativePositionSource::handleUpdateTimeout()
 {
     m_sourceError = QDeclarativePositionSource::UpdateTimeoutError;
@@ -506,27 +347,6 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
             emit updateIntervalChanged();
         }
     }
-}
-
-/*!
-    \qmlproperty url PositionSource::nmeaSource
-
-    This property holds the source for NMEA (National Marine Electronics Association)
-    position-specification data (file). One purpose of this property is to be of
-    development convenience.
-
-    Setting this property will override any other position source. Currently only
-    files local to the .qml -file are supported. The NMEA source is created in simulation mode,
-    meaning that the data and time information in the NMEA source data is used to provide
-    positional updates at the rate at which the data was originally recorded.
-
-    If nmeaSource has been set for a PositionSource object, there is no way to revert
-    back to non-file sources.
-*/
-
-QUrl QDeclarativePositionSource::nmeaSource() const
-{
-    return m_nmeaSource;
 }
 
 /*!
@@ -763,7 +583,6 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
     \li PositionSource.UpdateTimeoutError - The current position could not be
         retrieved within the specified timeout, or this PositionSource determined
         that it will not be able to provide further regular updates.
-    \li PositionSource.SocketError - An error occurred while connecting to an nmea source using a socket.
     \endlist
 
 */

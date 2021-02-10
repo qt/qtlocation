@@ -73,7 +73,6 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePositionSource : public QObj
     Q_PROPERTY(QDeclarativePosition *position READ position NOTIFY positionChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged)
-    Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource NOTIFY nmeaSourceChanged)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged)
     Q_PROPERTY(PositioningMethods supportedPositioningMethods READ supportedPositioningMethods NOTIFY supportedPositioningMethodsChanged)
     Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
@@ -102,15 +101,11 @@ public:
         UnknownSourceError = QGeoPositionInfoSource::UnknownSourceError,
         NoError = QGeoPositionInfoSource::NoError,
         UpdateTimeoutError = QGeoPositionInfoSource::UpdateTimeoutError,
-
-        //Leave a gap for future error enum values in QGeoPositionInfoSource::Error
-        SocketError = 100
     };
     Q_ENUMS(SourceError)
 
     QDeclarativePositionSource();
     ~QDeclarativePositionSource();
-    void setNmeaSource(const QUrl &nmeaSource);
     void setUpdateInterval(int updateInterval);
     void setActive(bool active);
     void setPreferredPositioningMethods(PositioningMethods methods);
@@ -118,7 +113,6 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    QUrl nmeaSource() const;
     int updateInterval() const;
     bool isActive() const;
     bool isValid() const;
@@ -145,7 +139,6 @@ public Q_SLOTS:
 Q_SIGNALS:
     void positionChanged();
     void activeChanged();
-    void nmeaSourceChanged();
     void updateIntervalChanged();
     void supportedPositioningMethodsChanged();
     void preferredPositioningMethodsChanged();
@@ -156,8 +149,6 @@ Q_SIGNALS:
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo &update);
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
-    void socketConnected();
-    void socketError(QAbstractSocket::SocketError error);
     void onParameterInitialized();
 
 private:
@@ -175,10 +166,6 @@ private:
     QGeoPositionInfoSource *m_positionSource;
     QDeclarativePosition m_position;
     PositioningMethods m_preferredPositioningMethods;
-    QFile *m_nmeaFile;
-    QTcpSocket *m_nmeaSocket;
-    QString m_nmeaFileName;
-    QUrl m_nmeaSource;
     QString m_providerName;
     bool m_active;
     bool m_singleUpdate;
