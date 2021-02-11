@@ -4,7 +4,7 @@
 ## tst_qgeosatelliteinfosource Binary:
 #####################################################################
 
-qt_internal_add_executable(tst_qgeosatelliteinfosource
+qt_internal_add_test(tst_qgeosatelliteinfosource
     SOURCES
         ../utils/qlocationtestutils.cpp ../utils/qlocationtestutils_p.h
         testqgeosatelliteinfosource.cpp testqgeosatelliteinfosource_p.h
