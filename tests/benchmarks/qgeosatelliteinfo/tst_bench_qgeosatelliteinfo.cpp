@@ -27,7 +27,6 @@
 ****************************************************************************/
 
 #include <QtPositioning/QGeoSatelliteInfo>
-#include <QtPositioning/private/qgeosatelliteinfo_p.h>
 #include <QTest>
 
 class tst_QGeoSatelliteInfoBenchmark : public QObject
@@ -37,7 +36,6 @@ private slots:
     void constructDefault();
     void constructCopy();
     void constructMove();
-    void constructFromPrivate();
 
     void assign();
     void assignMove();
@@ -99,17 +97,6 @@ void tst_QGeoSatelliteInfoBenchmark::constructMove()
         QGeoSatelliteInfo info;
         QGeoSatelliteInfo newInfo(std::move(info));
         Q_UNUSED(newInfo)
-    }
-}
-
-void tst_QGeoSatelliteInfoBenchmark::constructFromPrivate()
-{
-    QBENCHMARK {
-        // we need to recreate p at each iteration because QGeoSatelliteInfo
-        // takes ownership
-        QGeoSatelliteInfoPrivate *p = new QGeoSatelliteInfoPrivate;
-        QGeoSatelliteInfo info(*p);
-        Q_UNUSED(info)
     }
 }
 

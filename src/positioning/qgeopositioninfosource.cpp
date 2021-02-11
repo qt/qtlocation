@@ -120,16 +120,6 @@ QGeoPositionInfoSourceFactory *QGeoPositionInfoSourcePrivate::loadFactory(const 
     return qobject_cast<QGeoPositionInfoSourceFactory *>(instance);
 }
 
-bool QGeoPositionInfoSourcePrivate::setBackendProperty(const QString &/*name*/, const QVariant & /*value*/)
-{
-    return false;
-}
-
-QVariant QGeoPositionInfoSourcePrivate::backendProperty(const QString &/*name*/) const
-{
-    return QVariant();
-}
-
 QMultiHash<QString, QJsonObject> QGeoPositionInfoSourcePrivate::plugins(bool reload)
 {
     static QMultiHash<QString, QJsonObject> plugins;
@@ -230,8 +220,9 @@ QString QGeoPositionInfoSource::sourceName() const
 */
 bool QGeoPositionInfoSource::setBackendProperty(const QString &name, const QVariant &value)
 {
-    Q_D(QGeoPositionInfoSource);
-    return d->setBackendProperty(name, value);
+    Q_UNUSED(name)
+    Q_UNUSED(value)
+    return false;
 }
 
 /*!
@@ -245,8 +236,8 @@ bool QGeoPositionInfoSource::setBackendProperty(const QString &name, const QVari
 */
 QVariant QGeoPositionInfoSource::backendProperty(const QString &name) const
 {
-    Q_D(const QGeoPositionInfoSource);
-    return d->backendProperty(name);
+    Q_UNUSED(name)
+    return QVariant();
 }
 
 /*!

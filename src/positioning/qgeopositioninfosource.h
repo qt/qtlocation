@@ -88,8 +88,8 @@ public:
 
     QString sourceName() const;
 
-    bool setBackendProperty(const QString &name, const QVariant &value);
-    QVariant backendProperty(const QString &name) const;
+    virtual bool setBackendProperty(const QString &name, const QVariant &value);
+    virtual QVariant backendProperty(const QString &name) const;
 
     static QGeoPositionInfoSource *createDefaultSource(QObject *parent);
     static QGeoPositionInfoSource *createDefaultSource(const QVariantMap &parameters, QObject *parent);

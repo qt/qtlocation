@@ -12,8 +12,7 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryTest
         plugin.cpp
     PUBLIC_LIBRARIES
         Qt::Core
-        Qt::Gui
-        Qt::PositioningPrivate
+        Qt::Positioning
 )
 
 #### Keys ignored in scope 1:.:.:positionplugin.pro:<TRUE>:

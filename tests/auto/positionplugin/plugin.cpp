@@ -27,7 +27,6 @@
 ****************************************************************************/
 
 #include <QtPositioning/qgeopositioninfosource.h>
-#include <QtPositioning/private/qgeopositioninfosource_p.h>
 #include <QtPositioning/qgeopositioninfosourcefactory.h>
 #include <QObject>
 #include <QtPlugin>
@@ -55,6 +54,9 @@ public:
     int minimumUpdateInterval() const override;
     Error error() const override;
 
+    bool setBackendProperty(const QString &name, const QVariant &value) override;
+    QVariant backendProperty(const QString &name) const override;
+
 private:
     QTimer *timer;
     QTimer *timeoutTimer;
@@ -62,45 +64,23 @@ private:
     QGeoPositionInfo lastPosition;
     QDateTime lastUpdateTime;
     Error lastError = QGeoPositionInfoSource::NoError;
-    Q_DECLARE_PRIVATE(DummySource)
+    qreal altitude = 0.0;
 
 private slots:
     void updatePosition();
     void doTimeout();
 };
 
-class DummySourcePrivate : public QGeoPositionInfoSourcePrivate
-{
-public:
-    bool setBackendProperty(const QString &name, const QVariant &value) override
-    {
-        if (name == QStringLiteral("altitude")) {
-            m_altitude = value.toReal();
-            return true;
-        }
-        return false;
-    }
-    QVariant backendProperty(const QString &name) const override
-    {
-        if (name == QStringLiteral("altitude"))
-            return m_altitude;
-        return QVariant();
-    }
-
-    qreal m_altitude = 0.0;
-};
-
 DummySource::DummySource(const QVariantMap &parameters, QObject *parent) :
-    QGeoPositionInfoSource(*new DummySourcePrivate, parent),
+    QGeoPositionInfoSource(parent),
     timer(new QTimer(this)),
     timeoutTimer(new QTimer(this)),
     singleTimer(new QTimer(this)),
     lastPosition(QGeoCoordinate(0,0), QDateTime::currentDateTime())
 {
-    Q_D(DummySource);
     if (parameters.contains(QStringLiteral("test.source.altitude"))) {
         const qreal alti = parameters.value(QStringLiteral("test.source.altitude")).toReal();
-        d->m_altitude = alti;
+        altitude = alti;
         QGeoCoordinate crd = lastPosition.coordinate();
         crd.setAltitude(alti);
         lastPosition.setCoordinate(crd);
@@ -117,6 +97,22 @@ DummySource::DummySource(const QVariantMap &parameters, QObject *parent) :
 QGeoPositionInfoSource::Error DummySource::error() const
 {
     return lastError;
+}
+
+bool DummySource::setBackendProperty(const QString &name, const QVariant &value)
+{
+    if (name == QStringLiteral("altitude")) {
+        altitude = value.toReal();
+        return true;
+    }
+    return false;
+}
+
+QVariant DummySource::backendProperty(const QString &name) const
+{
+    if (name == QStringLiteral("altitude"))
+        return altitude;
+    return QVariant();
 }
 
 
@@ -186,7 +182,6 @@ DummySource::~DummySource()
 
 void DummySource::updatePosition()
 {
-    Q_D(const DummySource);
     timeoutTimer->stop();
     singleTimer->stop();
 
@@ -194,7 +189,7 @@ void DummySource::updatePosition()
 
     QGeoCoordinate coord(lastPosition.coordinate().latitude() + 0.1,
                          lastPosition.coordinate().longitude() + 0.1,
-                         d->m_altitude);
+                         altitude);
 
     QGeoPositionInfo info(coord, now);
     info.setAttribute(QGeoPositionInfo::Direction, lastPosition.coordinate().azimuthTo(coord));

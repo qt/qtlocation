@@ -62,7 +62,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_POSITIONING_PRIVATE_EXPORT QGeoPositionInfoSourcePrivate : public QObjectPrivate
+class QGeoPositionInfoSourcePrivate : public QObjectPrivate
 {
 public:
     virtual ~QGeoPositionInfoSourcePrivate();
@@ -75,9 +75,6 @@ public:
     int interval;
     QGeoPositionInfoSource::PositioningMethods methods;
     QString sourceName;
-
-    virtual bool setBackendProperty(const QString &name, const QVariant &value);
-    virtual QVariant backendProperty(const QString &name) const;
 
     static QMultiHash<QString, QJsonObject> plugins(bool reload = false);
     static void loadPluginMetadata(QMultiHash<QString, QJsonObject> &list);

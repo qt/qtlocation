@@ -19,9 +19,7 @@ qt_internal_add_module(PositioningQuick
         qpositioningquickglobal_p.h
         qpositioningquickmodule_p.h
     LIBRARIES
-        Qt::CorePrivate
         Qt::PositioningPrivate
-        Qt::QmlPrivate
         Qt::QuickPrivate
     PUBLIC_LIBRARIES
         Qt::Core
@@ -29,9 +27,7 @@ qt_internal_add_module(PositioningQuick
         Qt::Qml
         Qt::Quick
     PRIVATE_MODULE_INTERFACE
-        Qt::CorePrivate
         Qt::PositioningPrivate
-        Qt::QmlPrivate
         Qt::QuickPrivate
 )
 

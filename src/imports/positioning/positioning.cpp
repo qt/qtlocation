@@ -40,8 +40,7 @@
 #include <private/qpositioningquickglobal_p.h>
 #include <QtPositioningQuick/private/qquickgeocoordinateanimation_p.h>
 #include <QtCore/QVariantAnimation>
-#include <QtQml/qqmlextensionplugin.h>
-#include <QtQml/private/qqmlvaluetype_p.h>
+#include <QtQml/QQmlEngineExtensionPlugin>
 
 QT_BEGIN_NAMESPACE
 

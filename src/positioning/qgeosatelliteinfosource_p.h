@@ -57,7 +57,7 @@
 
 QT_BEGIN_NAMESPACE
 class QGeoSatelliteInfoSource;
-class Q_POSITIONING_PRIVATE_EXPORT QGeoSatelliteInfoSourcePrivate : public QObjectPrivate
+class QGeoSatelliteInfoSourcePrivate : public QObjectPrivate
 {
 public:
     virtual ~QGeoSatelliteInfoSourcePrivate();

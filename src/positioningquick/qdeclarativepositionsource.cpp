@@ -667,7 +667,7 @@ void QDeclarativePositionSource::componentComplete()
 }
 
 /*!
-     \qmlmethod bool QtLocation::PositionSource::setBackendProperty(string name, Variant value)
+     \qmlmethod bool PositionSource::setBackendProperty(string name, Variant value)
 
     Sets the backend-specific property named \a name to \a value.
     Returns true on success, false otherwise, including if called on an uninitialized PositionSource.
@@ -686,7 +686,7 @@ bool QDeclarativePositionSource::setBackendProperty(const QString &name, const Q
 }
 
 /*!
-     \qmlmethod Variant QtLocation::PositionSource::backendProperty(string name)
+     \qmlmethod Variant PositionSource::backendProperty(string name)
 
     Returns the value of the backend-specific property named \a name, if present.
     Otherwise, including if called on an uninitialized PositionSource, the return value will be invalid.

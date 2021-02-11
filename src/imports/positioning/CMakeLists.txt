@@ -6,11 +6,13 @@ qt_internal_add_qml_module(declarative_positioning
     SKIP_TYPE_REGISTRATION
     SOURCES
         positioning.cpp
-    PUBLIC_LIBRARIES
-        Qt::QuickPrivate
-        Qt::PositioningPrivate
+    LIBRARIES
         Qt::PositioningQuickPrivate
-        Qt::QmlPrivate
-        Qt::CorePrivate
+    PUBLIC_LIBRARIES
+        Qt::Quick
+        Qt::Positioning
+        Qt::PositioningQuick
+        Qt::Qml
+        Qt::Core
 )
 # special case end
