@@ -48,6 +48,8 @@ namespace QLocationTestUtils
     QString createGsvSentence();
     QString createGsaLongSentence();
     QString createGsvLongSentence();
+    QString createGsaVariableSentence(quint8 satId);
+    QString createGsvVariableSentence(quint8 satId);
 
     //The purpose of compareEquality() is to test equality
     //operators where it is expected that A == B.

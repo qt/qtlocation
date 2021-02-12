@@ -51,6 +51,10 @@ The following table lists parameters that \e can be passed to the nmea plugin.
 \row
     \li nmea.source
     \li The source that will be used to get NMEA data.
+\row
+    \li nmea.satellite_info_simulation_interval
+    \li The interval for reading satellite information data from the file in
+        simulation mode.
 \endtable
 
 Different sources require different ways of providing the data. The following
@@ -104,7 +108,7 @@ serial port and file inputs.
 locate one of the well-known serial devices (as if \c {nmea.source = serial:}
 was specified).
 
-\section1 Parameter Usage Example
+\section1 Position source usage example
 
 The following examples show how to create a \b nmea PositionSource
 using different data sources.
@@ -150,5 +154,48 @@ QGeoPositionInfoSource *serialPositionSource = QGeoPositionInfoSource::createSou
 
 \note Once a PositionSource is created, it can't be reconfigured to use other
 type of source data.
+
+\section1 Satellite information source usage example
+
+Apart from the position information, \b nmea plugin is also capable of providing
+satellite information. For now it does not have any QML object, but can be
+created directly from C++ code.
+
+\code
+// serial port
+QVariantMap parameters;
+parameters["nmea.source"] = "serial:/dev/ttyUSB0";
+QGeoSatelliteInfoSource *serialSource = QGeoSatelliteInfoSource::createSource("nmea", parameters, this);
+
+// socket
+parameters["nmea.source"] = "socket://localhost:22222";
+QGeoSatelliteInfoSource *socketSource = QGeoSatelliteInfoSource::createSource("nmea", parameters, this);
+\endcode
+
+If you want to use \l QGeoSatelliteInfoSource to read file with NMEA stream, you
+can also use additional parameter \c "nmea.satellite_info_simulation_interval".
+This parameter is used to specify the playback rate (in milliseconds) for the
+satellite info messages. The minimum allowed frequency is specified by
+\l {QGeoSatelliteInfoSource::}{minimumUpdateInterval()}. If you specify a
+smaller value, it will be ignored. If no value is specified, the default value
+is \c {qMax(100, minimumUpdateInterval())}.
+At runtime \l {QNmeaSatelliteInfoSource::setBackendProperty()} method can be
+used to update this parameter.
+
+\code
+// file
+QVariantMap parameters;
+parameters["nmea.source"] = "qrc:///nmealog.txt";
+parameters["nmea.satellite_info_simulation_interval"] = 1000;
+QGeoSatelliteInfoSource *fileSource = QGeoSatelliteInfoSource::createSource("nmea", parameters, this);
+\endcode
+
+This parameter is not applicable to position source because NMEA protocol
+already has timestamps in position messages. These timestamps are used to
+simulate the correct message rate while using \l QGeoPositionInfoSource with
+file as a data source.
+
+\note Once a \l QGeoSatelliteInfoSource is created, it can't be reconfigured to
+use other type of source data.
 
 */

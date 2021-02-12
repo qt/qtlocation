@@ -48,7 +48,7 @@ private:
 };
 
 DummyNmeaSatelliteInfoSource::DummyNmeaSatelliteInfoSource(QObject *parent)
-    : QNmeaSatelliteInfoSource(parent)
+    : QNmeaSatelliteInfoSource(QNmeaSatelliteInfoSource::UpdateMode::RealTimeMode, parent)
 {
 }
 

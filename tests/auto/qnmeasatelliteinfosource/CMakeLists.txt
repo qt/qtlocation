@@ -1,2 +1,3 @@
 add_subdirectory(dummy)
-add_subdirectory(generic)
+add_subdirectory(generic_realtime)
+add_subdirectory(generic_simulation)

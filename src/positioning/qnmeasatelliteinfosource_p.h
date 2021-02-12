@@ -51,7 +51,7 @@
 // We mean it.
 //
 
-#include <QtPositioning/qgeosatelliteinfosource.h>
+#include "qnmeasatelliteinfosource.h"
 #include <QtPositioning/qgeosatelliteinfo.h>
 
 #include <QObject>
@@ -64,18 +64,41 @@ QT_BEGIN_NAMESPACE
 
 #define USE_NMEA_PIMPL 1
 
-class QNmeaSatelliteInfoSource;
+struct QNmeaSatelliteInfoUpdate
+{
+    QList<QGeoSatelliteInfo> m_satellitesInView;
+    QList<QGeoSatelliteInfo> m_satellitesInUse;
+    QList<int> m_inUse; // temp buffer for GSA received before GSV
+    bool m_validInView = false;
+    bool m_validInUse = false;
+    bool m_fresh = false;
+    bool m_updatingGsv = false;
+#if USE_NMEA_PIMPL
+    QByteArray gsa;
+    QList<QByteArray> gsv;
+#endif
+    void setSatellitesInView(const QList<QGeoSatelliteInfo> &inView);
+    bool setSatellitesInUse(const QList<int> &inUse);
+    void consume();
+    bool isFresh() const;
+    QSet<int> inUse() const;
+    void clear();
+    bool isValid() const;
+};
+
+class QNmeaSatelliteReader;
 class QNmeaSatelliteInfoSourcePrivate : public QObject
 {
     Q_OBJECT
 public:
-    QNmeaSatelliteInfoSourcePrivate(QNmeaSatelliteInfoSource *parent);
+    QNmeaSatelliteInfoSourcePrivate(QNmeaSatelliteInfoSource *parent, QNmeaSatelliteInfoSource::UpdateMode updateMode);
     ~QNmeaSatelliteInfoSourcePrivate();
 
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int msec);
     void notifyNewUpdate();
+    void processNmeaData(QNmeaSatelliteInfoUpdate &updateInfo);
 
 public slots:
     void readyRead();
@@ -87,43 +110,56 @@ public:
     QNmeaSatelliteInfoSource *m_source = nullptr;
     QGeoSatelliteInfoSource::Error m_satelliteError = QGeoSatelliteInfoSource::NoError;
     QPointer<QIODevice> m_device;
-    struct Update
-    {
-        QList<QGeoSatelliteInfo> m_satellitesInView;
-        QList<QGeoSatelliteInfo> m_satellitesInUse;
-        QList<int> m_inUse; // temp buffer for GSA received before GSV
-        bool m_validInView = false;
-        bool m_validInUse = false;
-        bool m_fresh = false;
-        bool m_updatingGsv = false;
-#if USE_NMEA_PIMPL
-        QByteArray gsa;
-        QList<QByteArray> gsv;
-#endif
-        void setSatellitesInView(const QList<QGeoSatelliteInfo> &inView);
-        bool setSatellitesInUse(const QList<int> &inUse);
-        void consume();
-        bool isFresh() const;
-        QSet<int> inUse() const;
-        void clear();
-        bool isValid() const;
-    } m_pendingUpdate, m_lastUpdate;
-    bool m_fresh = false;
+    QNmeaSatelliteInfoUpdate m_pendingUpdate;
+    QNmeaSatelliteInfoUpdate m_lastUpdate;
     bool m_invokedStart = false;
     bool m_noUpdateLastInterval = false;
     bool m_updateTimeoutSent = false;
     bool m_connectedReadyRead = false;
-    int m_pushDelay = 20;
     QBasicTimer *m_updateTimer = nullptr; // the timer used in startUpdates()
     QTimer *m_requestTimer = nullptr; // the timer used in requestUpdate()
+    QScopedPointer<QNmeaSatelliteReader> m_nmeaReader;
+    QNmeaSatelliteInfoSource::UpdateMode m_updateMode;
+    int m_simulationUpdateInterval = 100;
 
 protected:
-    void readAvailableData();
     bool openSourceDevice();
     bool initialize();
     void prepareSourceDevice();
-    bool emitUpdated(Update &update, bool fromRequestUpdate);
+    bool emitUpdated(QNmeaSatelliteInfoUpdate &update, bool fromRequestUpdate);
     void timerEvent(QTimerEvent *event) override;
+};
+
+class QNmeaSatelliteReader
+{
+public:
+    QNmeaSatelliteReader(QNmeaSatelliteInfoSourcePrivate *sourcePrivate);
+    virtual ~QNmeaSatelliteReader();
+
+    virtual void readAvailableData() = 0;
+
+protected:
+    QNmeaSatelliteInfoSourcePrivate *m_proxy;
+};
+
+class QNmeaSatelliteRealTimeReader : public QNmeaSatelliteReader
+{
+public:
+    QNmeaSatelliteRealTimeReader(QNmeaSatelliteInfoSourcePrivate *sourcePrivate);
+    void readAvailableData() override;
+};
+
+class QNmeaSatelliteSimulationReader : public QNmeaSatelliteReader
+{
+public:
+    QNmeaSatelliteSimulationReader(QNmeaSatelliteInfoSourcePrivate *sourcePrivate);
+    void readAvailableData() override;
+    void setUpdateInterval(int msec);
+    int updateInterval() const;
+
+private:
+    QScopedPointer<QTimer> m_timer;
+    int m_updateInterval;
 };
 
 QT_END_NAMESPACE

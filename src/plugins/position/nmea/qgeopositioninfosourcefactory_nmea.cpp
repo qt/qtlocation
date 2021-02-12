@@ -55,6 +55,8 @@ Q_LOGGING_CATEGORY(lcNmea, "qt.positioning.nmea")
 QT_BEGIN_NAMESPACE
 
 static const auto sourceParameterName = QStringLiteral("nmea.source");
+static const auto socketScheme = QStringLiteral("socket:");
+static const auto serialScheme = QStringLiteral("serial:");
 
 // This class is used only for SerialPort devices, because we can't open the
 // same serial port twice.
@@ -206,7 +208,7 @@ void NmeaSource::onSocketError(QAbstractSocket::SocketError error)
 
 void NmeaSource::parseSourceParameter(const QString &source)
 {
-    if (source.startsWith(QStringLiteral("socket:"))) {
+    if (source.startsWith(socketScheme)) {
         // This is a socket
         connectSocket(source);
     } else {
@@ -243,7 +245,7 @@ static QString tryFindSerialDevice(const QString &requestedPort)
         }
     } else {
         portName = requestedPort;
-        if (portName.startsWith(QStringLiteral("serial:")))
+        if (portName.startsWith(serialScheme))
             portName.remove(0, 7);
     }
     return portName;
@@ -301,43 +303,139 @@ void NmeaSource::connectSocket(const QString &source)
 
 class NmeaSatelliteSource : public QNmeaSatelliteInfoSource
 {
+    Q_OBJECT
 public:
-    NmeaSatelliteSource(QObject *parent, const QVariantMap &parameters)
-        : QNmeaSatelliteInfoSource(parent)
-    {
-        const QString requestedPort = parameters.value(sourceParameterName).toString();
-        m_portName = tryFindSerialDevice(requestedPort);
-        if (m_portName.isEmpty())
+    NmeaSatelliteSource(QObject *parent, const QVariantMap &parameters);
+    NmeaSatelliteSource(QObject *parent, const QString &fileName, const QVariantMap &parameters);
+    ~NmeaSatelliteSource();
+
+    bool isValid() const { return !m_port.isNull() || !m_file.isNull() || !m_socket.isNull(); }
+
+private slots:
+    void onSocketError(QAbstractSocket::SocketError error);
+
+private:
+    void parseRealtimeSource(const QString &source);
+    void parseSimulationSource(const QString &localFileName);
+
+    QSharedPointer<QIOPipe> m_port;
+    QScopedPointer<QFile> m_file;
+    QScopedPointer<QTcpSocket> m_socket;
+    QString m_sourceName;
+};
+
+NmeaSatelliteSource::NmeaSatelliteSource(QObject *parent, const QVariantMap &parameters)
+    : QNmeaSatelliteInfoSource(QNmeaSatelliteInfoSource::UpdateMode::RealTimeMode, parent)
+{
+    const QString source = parameters.value(sourceParameterName).toString();
+    parseRealtimeSource(source);
+}
+
+// We can use a QNmeaSatelliteInfoSource::SimulationUpdateInterval parameter to
+// set the file read frequency in simulation mode. We use setBackendProperty()
+// for it. The value can't be smaller than minimumUpdateInterval().
+// This check is done on the QNmeaSatelliteInfoSource level
+NmeaSatelliteSource::NmeaSatelliteSource(QObject *parent, const QString &fileName,
+                                         const QVariantMap &parameters)
+    : QNmeaSatelliteInfoSource(QNmeaSatelliteInfoSource::UpdateMode::SimulationMode, parent)
+{
+    bool ok = false;
+    const int interval =
+            parameters.value(QNmeaSatelliteInfoSource::SimulationUpdateInterval).toInt(&ok);
+    if (ok)
+        setBackendProperty(QNmeaSatelliteInfoSource::SimulationUpdateInterval, interval);
+    parseSimulationSource(fileName);
+}
+
+NmeaSatelliteSource::~NmeaSatelliteSource()
+{
+    deviceContainer->releaseSerial(m_sourceName, m_port);
+}
+
+void NmeaSatelliteSource::onSocketError(QAbstractSocket::SocketError error)
+{
+    m_socket->close();
+
+    switch (error) {
+    case QAbstractSocket::UnknownSocketError:
+        setError(QGeoSatelliteInfoSource::UnknownSourceError);
+        break;
+    case QAbstractSocket::SocketAccessError:
+        setError(QGeoSatelliteInfoSource::AccessError);
+        break;
+    case QAbstractSocket::RemoteHostClosedError:
+        setError(QGeoSatelliteInfoSource::ClosedError);
+        break;
+    default:
+        qWarning() << "Connection failed! QAbstractSocket::SocketError" << error;
+        // TODO - introduce new type of error. TransportError?
+        setError(QGeoSatelliteInfoSource::UnknownSourceError);
+        break;
+    }
+}
+
+void NmeaSatelliteSource::parseRealtimeSource(const QString &source)
+{
+    if (source.startsWith(socketScheme)) {
+        // This is a socket.
+        const QUrl url(source);
+        const QString host = url.host();
+        const int port = url.port();
+        if (!host.isEmpty() && (port > 0)) {
+            m_socket.reset(new QTcpSocket);
+            // no need to explicitly connect to connected() signal
+            connect(m_socket.get(), &QTcpSocket::errorOccurred,
+                    this, &NmeaSatelliteSource::onSocketError);
+            m_socket->connectToHost(host, port, QTcpSocket::ReadOnly);
+            m_sourceName = source;
+
+            setDevice(m_socket.data());
+        } else {
+            qWarning("nmea: incorrect socket parameters %s:%d", qPrintable(host), port);
+        }
+    } else {
+        // Last chance - this can be serial device.
+        m_sourceName = tryFindSerialDevice(source);
+        if (m_sourceName.isEmpty())
             return;
 
-        m_port = deviceContainer->serial(m_portName);
+        m_port = deviceContainer->serial(m_sourceName);
         if (!m_port)
             return;
 
         setDevice(m_port.data());
     }
+}
 
-    ~NmeaSatelliteSource()
-    {
-        deviceContainer->releaseSerial(m_portName, m_port);
+void NmeaSatelliteSource::parseSimulationSource(const QString &localFileName)
+{
+    // This is a text file.
+    m_sourceName = localFileName;
+
+    qCDebug(lcNmea) << "Opening file" << localFileName;
+    m_file.reset(new QFile(localFileName));
+    if (!m_file->open(QIODevice::ReadOnly)) {
+        qWarning("nmea: failed to open file %s", qPrintable(localFileName));
+        m_file.reset();
+        return;
     }
+    qCDebug(lcNmea) << "Opened successfully";
 
-    bool isValid() const { return !m_port.isNull(); }
-
-private:
-    QSharedPointer<QIOPipe> m_port;
-    QString m_portName;
-};
+    setDevice(m_file.data());
+}
 
 /*!
     \internal
-    Returns a local file name if file exists, or an empty string otherwise
+    Returns a local file name if \a source represents it.
+    The returned value can be different from \a source, as the method tries to
+    modify the path
 */
-static QString extractLocalFileName(const QVariantMap &parameters)
+static QString checkSourceIsFile(const QString &source)
 {
-    QString localFileName = parameters.value(sourceParameterName).toString();
-    if (localFileName.isEmpty())
+    if (source.isEmpty())
         return QString();
+
+    QString localFileName = source;
 
     if (!QFile::exists(localFileName)) {
         if (localFileName.startsWith(QStringLiteral("qrc:///")))
@@ -357,6 +455,16 @@ static QString extractLocalFileName(const QVariantMap &parameters)
     return isLocalFile ? localFileName : QString();
 }
 
+/*!
+    \internal
+    Returns a local file name if file exists, or an empty string otherwise
+*/
+static QString extractLocalFileName(const QVariantMap &parameters)
+{
+    QString localFileName = parameters.value(sourceParameterName).toString();
+    return checkSourceIsFile(localFileName);
+}
+
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryNmea::positionInfoSource(QObject *parent, const QVariantMap &parameters)
 {
     std::unique_ptr<NmeaSource> src = nullptr;
@@ -372,8 +480,17 @@ QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryNmea::positionInfoSource(QO
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryNmea::satelliteInfoSource(QObject *parent, const QVariantMap &parameters)
 {
-    auto src = std::make_unique<NmeaSatelliteSource>(parent, parameters);
-    return src->isValid() ? src.release() : nullptr;
+    std::unique_ptr<NmeaSatelliteSource> src = nullptr;
+
+    const QString localFileName = extractLocalFileName(parameters);
+    if (localFileName.isEmpty()) {
+        // use RealTimeMode
+        src = std::make_unique<NmeaSatelliteSource>(parent, parameters);
+    } else {
+        // use SimulationMode
+        src = std::make_unique<NmeaSatelliteSource>(parent, localFileName, parameters);
+    }
+    return (src && src->isValid()) ? src.release() : nullptr;
 }
 
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryNmea::areaMonitor(QObject *parent, const QVariantMap &parameters)

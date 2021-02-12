@@ -100,3 +100,15 @@ QString QLocationTestUtils::createGsvLongSentence()
     return addNmeaChecksumAndBreaks(
             QStringLiteral("$GPGSV,1,1,4,16,49,115,42,25,39,269,36,23,58,176,29,20,72,335,35*"));
 }
+
+QString QLocationTestUtils::createGsaVariableSentence(quint8 satId)
+{
+    const QString nmea = QString("$GPGSA,A,3,%1,,,,,,,,,,,,2.3,1.3,1.9*").arg(static_cast<int>(satId));
+    return addNmeaChecksumAndBreaks(nmea);
+}
+
+QString QLocationTestUtils::createGsvVariableSentence(quint8 satId)
+{
+    const QString nmea = QString("$GPGSV,1,1,1,%1,49,115,42,,,,,,,,,,,,*").arg(static_cast<int>(satId));
+    return addNmeaChecksumAndBreaks(nmea);
+}

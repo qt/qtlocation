@@ -161,6 +161,35 @@ int QGeoSatelliteInfoSource::updateInterval() const
     return d->interval;
 }
 
+/*!
+    \since 6.2
+    Sets the backend-specific property named \a name to \a value.
+    Returns \c true on success, \c false otherwise.
+    Backend-specific properties can be used to configure the satellite info
+    subsystem behavior at runtime.
+
+    \sa backendProperty
+*/
+bool QGeoSatelliteInfoSource::setBackendProperty(const QString &name, const QVariant &value)
+{
+    Q_UNUSED(name)
+    Q_UNUSED(value)
+    return false;
+}
+
+/*!
+    \since 6.2
+    Returns the value of the backend-specific property named \a name,
+    if present. Otherwise the returned value will be invalid.
+
+    \sa setBackendProperty
+*/
+QVariant QGeoSatelliteInfoSource::backendProperty(const QString &name) const
+{
+    Q_UNUSED(name)
+    return QVariant();
+}
+
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSourcePrivate::createSourceReal(const QJsonObject &meta, const QVariantMap &parameters, QObject *parent)
 {
     QGeoSatelliteInfoSource *s = nullptr;

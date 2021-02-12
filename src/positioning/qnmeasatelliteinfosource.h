@@ -50,7 +50,14 @@ class Q_POSITIONING_EXPORT QNmeaSatelliteInfoSource : public QGeoSatelliteInfoSo
 {
     Q_OBJECT
 public:
-    explicit QNmeaSatelliteInfoSource(QObject *parent = nullptr);
+    enum class UpdateMode {
+        RealTimeMode = 1,
+        SimulationMode
+    };
+
+    static QString SimulationUpdateInterval;
+
+    explicit QNmeaSatelliteInfoSource(UpdateMode mode, QObject *parent = nullptr);
     ~QNmeaSatelliteInfoSource() override;
 
     void setDevice(QIODevice *source);
@@ -59,6 +66,9 @@ public:
     void setUpdateInterval(int msec) override;
     int minimumUpdateInterval() const override;
     Error error() const override;
+
+    bool setBackendProperty(const QString &name, const QVariant &value) override;
+    QVariant backendProperty(const QString &name) const override;
 
 public Q_SLOTS:
     void startUpdates() override;

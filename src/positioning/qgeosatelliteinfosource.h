@@ -79,6 +79,9 @@ public:
     virtual int minimumUpdateInterval() const = 0;
     virtual Error error() const = 0;
 
+    virtual bool setBackendProperty(const QString &name, const QVariant &value);
+    virtual QVariant backendProperty(const QString &name) const;
+
 public Q_SLOTS:
     virtual void startUpdates() = 0;
     virtual void stopUpdates() = 0;

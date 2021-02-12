@@ -27,66 +27,69 @@
 ****************************************************************************/
 
 #include <QTest>
-#include <QTimer>
 #include <QtPositioning/QNmeaSatelliteInfoSource>
 #include "../../qgeosatelliteinfosource/testqgeosatelliteinfosource_p.h"
-#include "../../utils/qnmeaproxyfactory.h"
 #include "../../utils/qlocationtestutils_p.h"
 
-class Feeder : public QObject
+class UnlimitedNmeaStream : public QIODevice
 {
     Q_OBJECT
+
 public:
-    Feeder(QObject *parent) : QObject(parent)
-    {
-    }
+    UnlimitedNmeaStream(QObject *parent) : QIODevice(parent) {}
 
-    void start(QNmeaSatelliteInfoSourceProxy *proxy)
+protected:
+    qint64 readData(char *data, qint64 maxSize) override
     {
-        m_proxy = proxy;
-        QTimer *timer = new QTimer(this);
-        QObject::connect(timer, &QTimer::timeout, this, &Feeder::timeout);
-        timer->setInterval(proxy->source()->minimumUpdateInterval() * 2);
-        timer->start();
-    }
-
-public slots:
-    void timeout()
-    {
-        // Here we need to provide different chunks of data, because the signals
-        // are emitted only when data changes.
-        if (has_data) {
-            m_proxy->feedBytes(QLocationTestUtils::createGsvLongSentence().toLatin1());
-            m_proxy->feedBytes(QLocationTestUtils::createGsaLongSentence().toLatin1());
+        if (maxSize == 0)
+            return 0;
+        QByteArray bytes;
+        if (genSatInView) {
+            increaseSatId();
+            bytes = QLocationTestUtils::createGsvVariableSentence(satId).toLatin1();
         } else {
-            m_proxy->feedBytes(QLocationTestUtils::createGsvSentence().toLatin1());
-            m_proxy->feedBytes(QLocationTestUtils::createGsaSentence().toLatin1());
+            bytes = QLocationTestUtils::createGsaVariableSentence(satId).toLatin1();
         }
-        has_data = !has_data;
+        genSatInView = !genSatInView;
+        qint64 sz = qMin(qint64(bytes.size()), maxSize);
+        memcpy(data, bytes.constData(), sz);
+        return sz;
+    }
+
+    qint64 writeData(const char *, qint64) override
+    {
+        return -1;
+    }
+
+    qint64 bytesAvailable() const override
+    {
+        return 1024 + QIODevice::bytesAvailable();
     }
 
 private:
-    QNmeaSatelliteInfoSourceProxy *m_proxy;
-    bool has_data = true;
+    void increaseSatId()
+    {
+        if (++satId == 0)
+            satId = 1;
+    }
+
+    quint8 satId = 0;
+    bool genSatInView = true;
 };
 
-class tst_QNmeaSatelliteInfoSource_Generic : public TestQGeoSatelliteInfoSource
+class tst_QNmeaSatelliteInfoSource_Generic_Simulation : public TestQGeoSatelliteInfoSource
 {
     Q_OBJECT
 protected:
     QGeoSatelliteInfoSource *createTestSource() override
     {
-        QNmeaSatelliteInfoSource *source = new QNmeaSatelliteInfoSource;
-        QNmeaSatelliteInfoSourceProxy *proxy = m_factory.createSatelliteInfoSourceProxy(source);
-        Feeder *feeder = new Feeder(source);
-        feeder->start(proxy);
+        QNmeaSatelliteInfoSource *source =
+                new QNmeaSatelliteInfoSource(QNmeaSatelliteInfoSource::UpdateMode::SimulationMode);
+        source->setDevice(new UnlimitedNmeaStream(source));
         return source;
     }
-
-private:
-    QNmeaProxyFactory m_factory;
 };
 
-#include "tst_nmeasatelliteinfosourcegeneric.moc"
+#include "tst_nmeasatelliteinfosource_generic_sim.moc"
 
-QTEST_GUILESS_MAIN(tst_QNmeaSatelliteInfoSource_Generic)
+QTEST_GUILESS_MAIN(tst_QNmeaSatelliteInfoSource_Generic_Simulation)
