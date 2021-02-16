@@ -9,6 +9,6 @@ qt_internal_add_test(tst_qgeocoordinate
         ../utils/qlocationtestutils.cpp ../utils/qlocationtestutils_p.h
         tst_qgeocoordinate.cpp
     PUBLIC_LIBRARIES
-        Qt::Gui
+        Qt::Core
         Qt::Positioning
 )

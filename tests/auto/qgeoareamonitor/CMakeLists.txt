@@ -9,7 +9,7 @@ qt_internal_add_test(tst_qgeoareamonitor
         logfilepositionsource.cpp logfilepositionsource.h
         tst_qgeoareamonitor.cpp
     PUBLIC_LIBRARIES
-        Qt::Gui
+        Qt::Core
         Qt::Positioning
 )
 

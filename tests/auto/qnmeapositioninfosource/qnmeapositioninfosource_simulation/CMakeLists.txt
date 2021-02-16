@@ -16,7 +16,7 @@ qt_internal_add_test(tst_qnmeapositioninfosource_simulation
     INCLUDE_DIRECTORIES
         ..
     PUBLIC_LIBRARIES
-        Qt::Gui
+        Qt::Core
         Qt::Network
         Qt::Positioning
 )

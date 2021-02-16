@@ -10,7 +10,7 @@ qt_internal_add_test(tst_qgeosatelliteinfosource
         testqgeosatelliteinfosource.cpp testqgeosatelliteinfosource_p.h
         tst_qgeosatelliteinfosource.cpp
     PUBLIC_LIBRARIES
-        Qt::Gui
+        Qt::Core
         Qt::Positioning
         Qt::Test
 )

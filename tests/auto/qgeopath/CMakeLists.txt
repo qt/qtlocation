@@ -8,7 +8,7 @@ qt_internal_add_test(tst_qgeopath
     SOURCES
         tst_qgeopath.cpp
     PUBLIC_LIBRARIES
-        Qt::Gui
+        Qt::Core
         Qt::Positioning
 )
 
