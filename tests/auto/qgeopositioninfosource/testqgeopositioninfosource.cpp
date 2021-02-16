@@ -182,9 +182,8 @@ void TestQGeoPositionInfoSource::cleanupTestCase()
 // TC_ID_3_x_1
 void TestQGeoPositionInfoSource::constructor_withParent()
 {
-    QObject *parent = new QObject();
-    new MyPositionSource(parent);
-    delete parent;
+    auto parent = std::make_unique<QObject>();
+    new MyPositionSource(parent.get());
 }
 
 // TC_ID_3_x_2
@@ -268,12 +267,12 @@ void TestQGeoPositionInfoSource::preferredPositioningMethods()
 // sources of location data
 void TestQGeoPositionInfoSource::createDefaultSource()
 {
-    QObject *parent = new QObject;
+    auto parent = std::make_unique<QObject>();
 
-    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(parent);
+    // source will be deleted when parent goes out of scope
+    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(parent.get());
     // now all platforms have the dummy plugin at least
-    QVERIFY(source != 0);
-    delete parent;
+    QVERIFY(source != nullptr);
 }
 
 void TestQGeoPositionInfoSource::setUpdateInterval()

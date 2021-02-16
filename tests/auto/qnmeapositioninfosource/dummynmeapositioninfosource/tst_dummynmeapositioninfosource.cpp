@@ -101,6 +101,7 @@ void tst_DummyNmeaPositionInfoSource::testOverloadedParseFunction()
 {
     DummyNmeaPositionInfoSource source(QNmeaPositionInfoSource::RealTimeMode);
     QNmeaProxyFactory factory;
+    // proxy is deleted by the source
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy *>(
             factory.createPositionInfoSourceProxy(&source));
 

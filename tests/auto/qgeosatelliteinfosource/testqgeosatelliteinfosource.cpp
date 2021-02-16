@@ -150,9 +150,8 @@ void TestQGeoSatelliteInfoSource::test_slot2()
 
 void TestQGeoSatelliteInfoSource::constructor_withParent()
 {
-    QObject *parent = new QObject();
-    new MySatelliteSource(parent);
-    delete parent;
+    auto parent = std::make_unique<QObject>();
+    new MySatelliteSource(parent.get());
 }
 
 void TestQGeoSatelliteInfoSource::constructor_noParent()
@@ -163,29 +162,27 @@ void TestQGeoSatelliteInfoSource::constructor_noParent()
 
 void TestQGeoSatelliteInfoSource::createDefaultSource()
 {
-    QObject *parent = new QObject;
-    QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(parent);
+    auto parent = std::make_unique<QObject>();
+    // source will be deleted by parent
+    QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(parent.get());
 
     // Check that default satellite source is successfully created.
     if (!QGeoSatelliteInfoSource::availableSources().isEmpty())
         QVERIFY(source);
     else
         QVERIFY(!source);
-
-    delete parent;
 }
 
 void TestQGeoSatelliteInfoSource::createDefaultSource_noParent()
 {
-    QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(0);
+    std::unique_ptr<QGeoSatelliteInfoSource> source(
+            QGeoSatelliteInfoSource::createDefaultSource(0));
 
     // Check that default satellite source is successfully created.
     if (!QGeoSatelliteInfoSource::availableSources().isEmpty())
         QVERIFY(source);
     else
         QVERIFY(!source);
-
-    delete source;
 }
 
 void TestQGeoSatelliteInfoSource::updateInterval()

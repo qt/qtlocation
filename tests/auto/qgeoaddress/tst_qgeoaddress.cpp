@@ -67,10 +67,9 @@ void tst_QGeoAddress::constructorTest()
     QGeoAddress testObj;
 
     testObj.setStreet("testId");
-    QGeoAddress *testObjPtr = new QGeoAddress(testObj);
+    auto testObjPtr = std::make_unique<QGeoAddress>(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
-    delete testObjPtr;
 }
 
 void tst_QGeoAddress::textTest()

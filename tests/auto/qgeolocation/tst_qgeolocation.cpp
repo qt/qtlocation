@@ -64,9 +64,8 @@ void tst_QGeoLocation::constructor()
 
 void tst_QGeoLocation::copy_constructor()
 {
-    QGeoLocation *qgeolocationcopy = new QGeoLocation (m_location);
+    auto qgeolocationcopy = std::make_unique<QGeoLocation>(m_location);
     QCOMPARE(m_location, *qgeolocationcopy);
-    delete qgeolocationcopy;
 }
 
 void tst_QGeoLocation::destructor()

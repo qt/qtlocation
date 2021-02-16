@@ -95,8 +95,9 @@ private slots:
 
     void cleanup()
     {
-        QGeoAreaMonitorSource *obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(obj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> obj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj != nullptr);
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
 
         QList<QGeoAreaMonitorInfo> list = obj->activeMonitors();
@@ -107,7 +108,6 @@ private slots:
             }
         }
         QVERIFY(obj->activeMonitors().count() == 0);
-        delete obj;
     }
 
     void cleanupTestCase()
@@ -125,14 +125,14 @@ private slots:
         QCOMPARE(defaultMonitor.expiration(), QDateTime());
         QCOMPARE(defaultMonitor.notificationParameters(), QVariantMap());
 
-        QGeoAreaMonitorSource *obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(obj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> obj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj != nullptr);
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
         QVERIFY(!obj->startMonitoring(defaultMonitor));
         QCOMPARE(obj->activeMonitors().count(), 0);
         QVERIFY(!obj->requestUpdate(defaultMonitor,
                                     SIGNAL(areaEntered(QGeoMonitorInfo,QGeoAreaPositionInfo))));
-        delete obj;
 
         //copy constructor based
         QGeoAreaMonitorInfo copy(defaultMonitor);
@@ -188,8 +188,8 @@ private slots:
         QCOMPARE(assignmentCopy.name(), QString("my name"));
 
         //validity checks for requestUpdate()
-        obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(obj != 0);
+        obj.reset(QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj != nullptr);
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
         QCOMPARE(obj->activeMonitors().count(), 0);
         //reference -> should work
@@ -231,8 +231,6 @@ private slots:
         //persistenceMonitor is copy of already added monitor
         //the last call was an update
         QCOMPARE(obj->activeMonitors().count(), 1);
-
-        delete obj;
     }
 
     void tst_monitor_move_semantics()
@@ -333,31 +331,37 @@ private slots:
 
     void tst_createDefaultSource()
     {
-        QObject* parent = new QObject;
-        QGeoAreaMonitorSource* obj = QGeoAreaMonitorSource::createDefaultSource(parent);
-        QVERIFY(obj != 0);
-        QVERIFY(obj->parent() == parent);
+        std::unique_ptr<QObject> parent(new QObject);
+
+        // Have to use a raw pointer here, because otherwise we'd end up
+        // deleting the obj twice when deleting the parent
+        QGeoAreaMonitorSource *obj = QGeoAreaMonitorSource::createDefaultSource(parent.get());
+        QVERIFY(obj != nullptr);
+        QVERIFY(obj->parent() == parent.get());
         delete obj;
 
         const QStringList monitors = QGeoAreaMonitorSource::availableSources();
         QVERIFY(!monitors.isEmpty());
         QVERIFY(monitors.contains(QStringLiteral("positionpoll")));
 
-        obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), parent);
-        QVERIFY(obj != 0);
+        obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), parent.get());
+        QVERIFY(obj != nullptr);
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
-        delete parent;
+        parent.reset();
 
+        // using a smart pointer will cause a double delete here
         obj = QGeoAreaMonitorSource::createSource(QStringLiteral("randomNonExistingName"), 0);
-        QVERIFY(obj == 0);
+        QVERIFY(obj == nullptr);
     }
 
     void tst_activeMonitors()
     {
-        QGeoAreaMonitorSource *obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(obj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> obj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj != nullptr);
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
 
+        // using this -> no need for smart pointer
         LogFilePositionSource *source = new LogFilePositionSource(this);
         source->setUpdateInterval(UPDATE_INTERVAL);
         obj->setPositionInfoSource(source);
@@ -409,8 +413,9 @@ private slots:
 
         //same as above except that we use a different monitor source object instance
         //all monitor objects of same type share same active monitors
-        QGeoAreaMonitorSource *secondObj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(secondObj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> secondObj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(secondObj != nullptr);
         QCOMPARE(secondObj->sourceName(), QStringLiteral("positionpoll"));
 
         results = secondObj->activeMonitors();
@@ -439,21 +444,21 @@ private slots:
         foreach (const QGeoAreaMonitorInfo& info, results) {
             QVERIFY(info == mon3);
         }
-
-        delete obj;
-        delete secondObj;
     }
 
     void tst_testExpiryTimeout()
     {
-        QGeoAreaMonitorSource *obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(obj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> obj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj != nullptr);
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
 
-        QGeoAreaMonitorSource *secondObj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(secondObj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> secondObj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(secondObj != nullptr);
         QCOMPARE(secondObj->sourceName(), QStringLiteral("positionpoll"));
 
+        // using this -> no need for smart pointer
         LogFilePositionSource *source = new LogFilePositionSource(this);
         source->setUpdateInterval(UPDATE_INTERVAL);
         obj->setPositionInfoSource(source);
@@ -462,8 +467,8 @@ private slots:
         QCOMPARE(obj->positionInfoSource(), source);
         QCOMPARE(secondObj->positionInfoSource(), source);
 
-        QSignalSpy expirySpy(obj, SIGNAL(monitorExpired(QGeoAreaMonitorInfo)));
-        QSignalSpy expirySpy2(secondObj, SIGNAL(monitorExpired(QGeoAreaMonitorInfo)));
+        QSignalSpy expirySpy(obj.get(), SIGNAL(monitorExpired(QGeoAreaMonitorInfo)));
+        QSignalSpy expirySpy2(secondObj.get(), SIGNAL(monitorExpired(QGeoAreaMonitorInfo)));
 
         QDateTime now = QDateTime::currentDateTime();
 
@@ -504,30 +509,33 @@ private slots:
             QGeoAreaMonitorInfo mon = expirySpy2.takeFirst().at(0).value<QGeoAreaMonitorInfo>();
             QCOMPARE(mon.name(), QString::number(i));
         }
-
-        delete obj;
-        delete secondObj;
     }
 
     void tst_enteredExitedSignal()
     {
-        QGeoAreaMonitorSource *obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(obj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> obj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj != nullptr);
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
         obj->setObjectName("firstObject");
-        QSignalSpy enteredSpy(obj, SIGNAL(areaEntered(QGeoAreaMonitorInfo,QGeoPositionInfo)));
-        QSignalSpy exitedSpy(obj, SIGNAL(areaExited(QGeoAreaMonitorInfo,QGeoPositionInfo)));
+        QSignalSpy enteredSpy(obj.get(),
+                              SIGNAL(areaEntered(QGeoAreaMonitorInfo, QGeoPositionInfo)));
+        QSignalSpy exitedSpy(obj.get(), SIGNAL(areaExited(QGeoAreaMonitorInfo, QGeoPositionInfo)));
 
+        // using this -> no need for smart pointer
         LogFilePositionSource *source = new LogFilePositionSource(this);
         source->setUpdateInterval(UPDATE_INTERVAL);
         obj->setPositionInfoSource(source);
         QCOMPARE(obj->positionInfoSource(), source);
 
-        QGeoAreaMonitorSource *secondObj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(secondObj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> secondObj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(secondObj != nullptr);
         QCOMPARE(secondObj->sourceName(), QStringLiteral("positionpoll"));
-        QSignalSpy enteredSpy2(secondObj, SIGNAL(areaEntered(QGeoAreaMonitorInfo,QGeoPositionInfo)));
-        QSignalSpy exitedSpy2(secondObj, SIGNAL(areaExited(QGeoAreaMonitorInfo,QGeoPositionInfo)));
+        QSignalSpy enteredSpy2(secondObj.get(),
+                               SIGNAL(areaEntered(QGeoAreaMonitorInfo, QGeoPositionInfo)));
+        QSignalSpy exitedSpy2(secondObj.get(),
+                              SIGNAL(areaExited(QGeoAreaMonitorInfo, QGeoPositionInfo)));
         secondObj->setObjectName("secondObject");
 
         QGeoAreaMonitorInfo infoRectangle("Rectangle");
@@ -637,31 +645,35 @@ private slots:
 
         QCOMPARE(obj->activeMonitors().count(), 2); //single shot monitors have been removed
         QCOMPARE(secondObj->activeMonitors().count(), 2);
-
-        delete obj;
-        delete secondObj;
     }
 
     void tst_swapOfPositionSource()
     {
-        QGeoAreaMonitorSource *obj = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(obj != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> obj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj != nullptr);
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
         obj->setObjectName("firstObject");
-        QSignalSpy enteredSpy(obj, SIGNAL(areaEntered(QGeoAreaMonitorInfo,QGeoPositionInfo)));
-        QSignalSpy exitedSpy(obj, SIGNAL(areaExited(QGeoAreaMonitorInfo,QGeoPositionInfo)));
+        QSignalSpy enteredSpy(obj.get(),
+                              SIGNAL(areaEntered(QGeoAreaMonitorInfo, QGeoPositionInfo)));
+        QSignalSpy exitedSpy(obj.get(), SIGNAL(areaExited(QGeoAreaMonitorInfo, QGeoPositionInfo)));
 
-        QGeoAreaMonitorSource *obj2 = QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0);
-        QVERIFY(obj2 != 0);
+        std::unique_ptr<QGeoAreaMonitorSource> obj2(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj2 != nullptr);
         QCOMPARE(obj2->sourceName(), QStringLiteral("positionpoll"));
         obj2->setObjectName("secondObject");
-        QSignalSpy enteredSpy2(obj2, SIGNAL(areaEntered(QGeoAreaMonitorInfo,QGeoPositionInfo)));
-        QSignalSpy exitedSpy2(obj2, SIGNAL(areaExited(QGeoAreaMonitorInfo,QGeoPositionInfo)));
+        QSignalSpy enteredSpy2(obj2.get(),
+                               SIGNAL(areaEntered(QGeoAreaMonitorInfo, QGeoPositionInfo)));
+        QSignalSpy exitedSpy2(obj2.get(),
+                              SIGNAL(areaExited(QGeoAreaMonitorInfo, QGeoPositionInfo)));
 
+        // using this -> no need for smart pointer
         LogFilePositionSource *source = new LogFilePositionSource(this);
         source->setUpdateInterval(UPDATE_INTERVAL);
         source->setObjectName("FirstLogFileSource");
 
+        // using this -> no need for smart pointer
         LogFilePositionSource *source2 = new LogFilePositionSource(this);
         source2->setUpdateInterval(UPDATE_INTERVAL);
         source2->setObjectName("SecondLogFileSource");
@@ -727,10 +739,6 @@ private slots:
         info = exitedSpy.takeFirst().at(1).value<QGeoPositionInfo>();
         QVERIFY(info == exitedSpy2.takeFirst().at(1).value<QGeoPositionInfo>());
         QVERIFY(info.coordinate() == secondBorder);
-
-
-        delete obj;
-        delete obj2;
     }
 
     void debug_data()
