@@ -278,6 +278,18 @@ public:
     static NmeaSentence getNmeaSentenceType(const char *data, int size);
 
     /*
+        Returns the satellite system type based on the message type.
+        See https://gpsd.gitlab.io/gpsd/NMEA.html#_talker_ids for reference
+    */
+    static QGeoSatelliteInfo::SatelliteSystem getSatelliteSystem(const char *data, int size);
+
+    /*
+        Returns the satellite system type based on the satellite id.
+        See https://gpsd.gitlab.io/gpsd/NMEA.html#_satellite_ids for reference
+    */
+    static QGeoSatelliteInfo::SatelliteSystem getSatelliteSystemBySatelliteId(int satId);
+
+    /*
         Creates a QGeoPositionInfo from a GGA, GLL, RMC, VTG or ZDA sentence.
 
         Note:
@@ -300,14 +312,16 @@ public:
         getting the full data requires parsing multiple sentences.
      */
     static QNmeaSatelliteInfoSource::SatelliteInfoParseStatus
-    getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelliteInfo> &infos);
+    getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelliteInfo> &infos, QGeoSatelliteInfo::SatelliteSystem &system);
 
     /*
         Parses GSA for satellites in use.
+
+        Returns satellite system type or QGeoSatelliteInfo::Undefined if parsing
+        failed
      */
-    static bool getSatInUseFromNmea(const char *data,
-                                    int size,
-                                    QList<int> &pnrsInUse);
+    static QGeoSatelliteInfo::SatelliteSystem getSatInUseFromNmea(const char *data, int size,
+                                                                  QList<int> &pnrsInUse);
 
     /*
         Returns true if the given NMEA sentence has a valid checksum.

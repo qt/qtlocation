@@ -307,6 +307,60 @@ QLocationUtils::NmeaSentence QLocationUtils::getNmeaSentenceType(const char *dat
     return NmeaSentenceInvalid;
 }
 
+QGeoSatelliteInfo::SatelliteSystem QLocationUtils::getSatelliteSystem(const char *data, int size)
+{
+    if (size < 6 || data[0] != '$' || !hasValidNmeaChecksum(data, size))
+        return QGeoSatelliteInfo::Undefined;
+
+    // GPS: GP
+    if (data[1] == 'G' && data[2] == 'P')
+        return QGeoSatelliteInfo::GPS;
+
+    // GLONASS: GL
+    if (data[1] == 'G' && data[2] == 'L')
+        return QGeoSatelliteInfo::GLONASS;
+
+    // GALILEO: GA
+    if (data[1] == 'G' && data[2] == 'A')
+        return QGeoSatelliteInfo::GALILEO;
+
+    // BeiDou: BD or GB
+    if ((data[1] == 'B' && data[2] == 'D') || (data[1] == 'G' && data[2] == 'B'))
+        return QGeoSatelliteInfo::BEIDOU;
+
+    // QZSS: GQ, PQ, QZ
+    if ((data[1] == 'G' && data[2] == 'Q') || (data[1] == 'P' && data[2] == 'Q')
+        || (data[1] == 'Q' && data[2] == 'Z')) {
+        return QGeoSatelliteInfo::QZSS;
+    }
+
+    // Multiple: GN
+    if (data[1] == 'G' && data[2] == 'N')
+        return QGeoSatelliteInfo::Multiple;
+
+    return QGeoSatelliteInfo::Undefined;
+}
+
+QGeoSatelliteInfo::SatelliteSystem QLocationUtils::getSatelliteSystemBySatelliteId(int satId)
+{
+    if (satId >= 1 && satId <= 32)
+        return QGeoSatelliteInfo::GPS;
+
+    if (satId >= 65 && satId <= 96) // including future extensions
+        return QGeoSatelliteInfo::GLONASS;
+
+    if (satId >= 193 && satId <= 200) // including future extensions
+        return QGeoSatelliteInfo::QZSS;
+
+    if ((satId >= 201 && satId <= 235) || (satId >= 401 && satId <= 437))
+        return QGeoSatelliteInfo::BEIDOU;
+
+    if (satId >= 301 && satId <= 336)
+        return QGeoSatelliteInfo::GALILEO;
+
+    return QGeoSatelliteInfo::Undefined;
+}
+
 bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info,
                                         double uere, bool *hasFix)
 {
@@ -353,7 +407,7 @@ bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPosition
 }
 
 QNmeaSatelliteInfoSource::SatelliteInfoParseStatus
-QLocationUtils::getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelliteInfo> &infos)
+QLocationUtils::getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelliteInfo> &infos, QGeoSatelliteInfo::SatelliteSystem &system)
 {
     if (!data || !size)
         return QNmeaSatelliteInfoSource::NotParsed;
@@ -361,6 +415,19 @@ QLocationUtils::getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelli
     NmeaSentence nmeaType = getNmeaSentenceType(data, size);
     if (nmeaType != NmeaSentenceGSV)
         return QNmeaSatelliteInfoSource::NotParsed;
+
+    // Standard forbids using $GN talker id for GSV messages, so the system
+    // type here will be uniquely identified.
+    system = getSatelliteSystem(data, size);
+
+    // Adjust size so that * and following characters are not parsed by the
+    // following code.
+    for (int i = 0; i < size; ++i) {
+        if (data[i] == '*') {
+            size = i;
+            break;
+        }
+    }
 
     QList<QByteArray> parts = QByteArray::fromRawData(data, size).split(',');
 
@@ -395,7 +462,21 @@ QLocationUtils::getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelli
     int field = 4;
     for (int i = 0; i < numSatInSentence; ++i) {
         QGeoSatelliteInfo info;
-        const int prn = parts.at(field++).toInt(&ok);
+        info.setSatelliteSystem(system);
+        int prn = parts.at(field++).toInt(&ok);
+        // Quote from: https://gpsd.gitlab.io/gpsd/NMEA.html#_satellite_ids
+        // GLONASS satellite numbers come in two flavors. If a sentence has a GL
+        // talker ID, expect the skyviews to be GLONASS-only and in the range
+        // 1-32; you must add 64 to get a globally-unique NMEA ID. If the
+        // sentence has a GN talker ID, the device emits a multi-constellation
+        // skyview with GLONASS IDs already in the 65-96 range.
+        //
+        // However I don't observe such behavior with my device. So implementing
+        // a safe scenario.
+        if (ok && (system == QGeoSatelliteInfo::GLONASS)) {
+            if (prn <= 64)
+                prn += 64;
+        }
         info.setSatelliteIdentifier((ok) ? prn : 0);
         const int elevation = parts.at(field++).toInt(&ok);
         info.setAttribute(QGeoSatelliteInfo::Elevation, (ok) ? elevation : 0);
@@ -412,15 +493,23 @@ QLocationUtils::getSatInfoFromNmea(const char *data, int size, QList<QGeoSatelli
     return QNmeaSatelliteInfoSource::PartiallyParsed;
 }
 
-bool QLocationUtils::getSatInUseFromNmea(const char *data, int size, QList<int> &pnrsInUse)
+QGeoSatelliteInfo::SatelliteSystem QLocationUtils::getSatInUseFromNmea(const char *data, int size,
+                                                                       QList<int> &pnrsInUse)
 {
-    pnrsInUse.clear();
     if (!data || !size)
-        return false;
+        return QGeoSatelliteInfo::Undefined;
 
     NmeaSentence nmeaType = getNmeaSentenceType(data, size);
     if (nmeaType != NmeaSentenceGSA)
-        return false;
+        return QGeoSatelliteInfo::Undefined;
+
+    auto systemType = getSatelliteSystem(data, size);
+    if (systemType == QGeoSatelliteInfo::Undefined)
+        return systemType;
+
+    // The documentation states that we do not modify pnrsInUse if we could not
+    // parse the data
+    pnrsInUse.clear();
 
     // Adjust size so that * and following characters are not parsed by the following functions.
     for (int i = 0; i < size; ++i) {
@@ -430,7 +519,33 @@ bool QLocationUtils::getSatInUseFromNmea(const char *data, int size, QList<int> 
         }
     }
     qlocationutils_readGsa(data, size, pnrsInUse);
-    return true;
+
+    // Quote from: https://gpsd.gitlab.io/gpsd/NMEA.html#_satellite_ids
+    // GLONASS satellite numbers come in two flavors. If a sentence has a GL
+    // talker ID, expect the skyviews to be GLONASS-only and in the range 1-32;
+    // you must add 64 to get a globally-unique NMEA ID. If the sentence has a
+    // GN talker ID, the device emits a multi-constellation skyview with
+    // GLONASS IDs already in the 65-96 range.
+    //
+    // However I don't observe such behavior with my device. So implementing a
+    // safe scenario.
+    if (systemType == QGeoSatelliteInfo::GLONASS) {
+        std::for_each(pnrsInUse.begin(), pnrsInUse.end(), [](int &id) {
+            if (id <= 64)
+                id += 64;
+        });
+    }
+
+    if ((systemType == QGeoSatelliteInfo::Multiple) && !pnrsInUse.isEmpty()) {
+        // Standard claims that in case of multiple system types we will receive
+        // several GSA messages, each containing data from only one satellite
+        // system, so we can pick the first id to determine the system type.
+        auto tempSystemType = getSatelliteSystemBySatelliteId(pnrsInUse.front());
+        if (tempSystemType != QGeoSatelliteInfo::Undefined)
+            systemType = tempSystemType;
+    }
+
+    return systemType;
 }
 
 bool QLocationUtils::hasValidNmeaChecksum(const char *data, int size)

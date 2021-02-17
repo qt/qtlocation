@@ -57,6 +57,7 @@
 #include <QObject>
 #include <QQueue>
 #include <QPointer>
+#include <QMap>
 #include <QtCore/qiodevice.h>
 #include <QtCore/qtimer.h>
 
@@ -64,26 +65,39 @@ QT_BEGIN_NAMESPACE
 
 #define USE_NMEA_PIMPL 1
 
+struct SatelliteInfo
+{
+    QList<QGeoSatelliteInfo> satellitesInView;
+    QList<QGeoSatelliteInfo> satellitesInUse;
+    QList<int> inUseIds; // temp buffer for GSA received before GSV
+    bool satellitesInUseReceived = false;
+    bool updatingGSV = false;
+    bool validInView = false;
+    bool validInUse = false;
+};
+
 struct QNmeaSatelliteInfoUpdate
 {
-    QList<QGeoSatelliteInfo> m_satellitesInView;
-    QList<QGeoSatelliteInfo> m_satellitesInUse;
-    QList<int> m_inUse; // temp buffer for GSA received before GSV
-    bool m_validInView = false;
-    bool m_validInUse = false;
+    QMap<QGeoSatelliteInfo::SatelliteSystem, SatelliteInfo> m_satellites;
+    QList<QGeoSatelliteInfo> m_satellitesInViewParsed;
+    bool m_validInView = false; // global state for all satellite systems
+    bool m_validInUse = false; // global state for all satellite systems
     bool m_fresh = false;
-    bool m_updatingGsv = false;
 #if USE_NMEA_PIMPL
     QByteArray gsa;
     QList<QByteArray> gsv;
 #endif
-    void setSatellitesInView(const QList<QGeoSatelliteInfo> &inView);
-    bool setSatellitesInUse(const QList<int> &inUse);
+    QList<QGeoSatelliteInfo> allSatellitesInUse() const;
+    QList<QGeoSatelliteInfo> allSatellitesInView() const;
+    void setSatellitesInView(QGeoSatelliteInfo::SatelliteSystem system,
+                             const QList<QGeoSatelliteInfo> &inView);
+    bool setSatellitesInUse(QGeoSatelliteInfo::SatelliteSystem system, const QList<int> &inUse);
     void consume();
     bool isFresh() const;
-    QSet<int> inUse() const;
     void clear();
     bool isValid() const;
+    bool calculateValidInUse() const;
+    bool calculateValidInView() const;
 };
 
 class QNmeaSatelliteReader;

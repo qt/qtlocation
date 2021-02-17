@@ -71,7 +71,12 @@ public:
     enum SatelliteSystem {
         Undefined = 0x00,
         GPS = 0x01,
-        GLONASS = 0x02
+        GLONASS = 0x02,
+        GALILEO = 0x03,
+        BEIDOU = 0x04,
+        QZSS = 0x05,
+        Multiple = 0xFF,
+        CustomType = 0x100
     };
 
     QGeoSatelliteInfo();

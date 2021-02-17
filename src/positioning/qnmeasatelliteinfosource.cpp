@@ -112,44 +112,52 @@ void QNmeaSatelliteInfoSourcePrivate::processNmeaData(QNmeaSatelliteInfoUpdate &
     char buf[1024];
     qint64 size = m_device->readLine(buf, sizeof(buf));
     QList<int> satInUse;
-    const bool satInUseParsed = m_source->parseSatellitesInUseFromNmea(buf, size, satInUse);
-    if (satInUseParsed) {
-        updateInfo.setSatellitesInUse(satInUse);
+    const auto satSystemType = m_source->parseSatellitesInUseFromNmea(buf, size, satInUse);
+    if (satSystemType != QGeoSatelliteInfo::Undefined) {
+        const bool res = updateInfo.setSatellitesInUse(satSystemType, satInUse);
 #if USE_NMEA_PIMPL
-        updateInfo.gsa = QByteArray(buf, size);
-        if (updateInfo.m_satellitesInUse.size()) {
-            for (auto &s : updateInfo.m_satellitesInUse) {
-                static_cast<QGeoSatelliteInfoPrivateNmea *>(QGeoSatelliteInfoPrivate::get(s))
-                        ->nmeaSentences.append(updateInfo.gsa);
-            }
-            for (auto &s : updateInfo.m_satellitesInView) {
-                static_cast<QGeoSatelliteInfoPrivateNmea *>(QGeoSatelliteInfoPrivate::get(s))
-                        ->nmeaSentences.append(updateInfo.gsa);
+        if (res) {
+            updateInfo.gsa = QByteArray(buf, size);
+            auto &info = updateInfo.m_satellites[satSystemType];
+            if (info.satellitesInUse.size()) {
+                for (auto &s : info.satellitesInUse) {
+                    static_cast<QGeoSatelliteInfoPrivateNmea *>(QGeoSatelliteInfoPrivate::get(s))
+                            ->nmeaSentences.append(updateInfo.gsa);
+                }
+                for (auto &s : info.satellitesInView) {
+                    static_cast<QGeoSatelliteInfoPrivateNmea *>(QGeoSatelliteInfoPrivate::get(s))
+                            ->nmeaSentences.append(updateInfo.gsa);
+                }
             }
         }
-#endif
+#else
+        Q_UNUSED(res)
+#endif // USE_NMEA_PIMPL
     } else {
+        // Here we have the assumption that multiple parts of GSV sentence
+        // come one after another. At least this is how it should be.
+        auto systemType = QGeoSatelliteInfo::Undefined;
         const auto parserStatus = m_source->parseSatelliteInfoFromNmea(
-                buf, size, updateInfo.m_satellitesInView);
+                buf, size, updateInfo.m_satellitesInViewParsed, systemType);
         if (parserStatus == QNmeaSatelliteInfoSource::PartiallyParsed) {
-            updateInfo.m_updatingGsv = true;
+            updateInfo.m_satellites[systemType].updatingGSV = true;
 #if USE_NMEA_PIMPL
             updateInfo.gsv.append(QByteArray(buf, size));
 #endif
         } else if (parserStatus == QNmeaSatelliteInfoSource::FullyParsed) {
 #if USE_NMEA_PIMPL
             updateInfo.gsv.append(QByteArray(buf, size));
-            for (int i = 0; i < updateInfo.m_satellitesInView.size(); i++) {
-                const QGeoSatelliteInfo &s = updateInfo.m_satellitesInView.at(i);
+            for (int i = 0; i < updateInfo.m_satellitesInViewParsed.size(); i++) {
+                const QGeoSatelliteInfo &s = updateInfo.m_satellitesInViewParsed.at(i);
                 QGeoSatelliteInfoPrivateNmea *pimpl =
                         new QGeoSatelliteInfoPrivateNmea(*QGeoSatelliteInfoPrivate::get(s));
                 pimpl->nmeaSentences.append(updateInfo.gsa);
                 pimpl->nmeaSentences.append(updateInfo.gsv);
-                updateInfo.m_satellitesInView.replace(i, QGeoSatelliteInfo(*pimpl));
+                updateInfo.m_satellitesInViewParsed.replace(i, QGeoSatelliteInfo(*pimpl));
             }
             updateInfo.gsv.clear();
 #endif
-            updateInfo.setSatellitesInView(updateInfo.m_satellitesInView);
+            updateInfo.setSatellitesInView(systemType, updateInfo.m_satellitesInViewParsed);
         }
     }
 }
@@ -326,18 +334,31 @@ bool QNmeaSatelliteInfoSourcePrivate::emitUpdated(QNmeaSatelliteInfoUpdate &upda
         return emitted;
 
     update.consume();
-    const bool inUseUpdated = update.m_satellitesInUse != m_lastUpdate.m_satellitesInUse;
-    const bool inViewUpdated = update.m_satellitesInView != m_lastUpdate.m_satellitesInView;
+    bool inUseUpdated = false;
+    bool inViewUpdated = false;
+    if (!fromRequestUpdate) {
+        // we need to send update if information from at least one satellite
+        // systems has changed
+        for (auto it = update.m_satellites.cbegin(); it != update.m_satellites.cend(); ++it) {
+            inUseUpdated |=
+                    it->satellitesInUse != m_lastUpdate.m_satellites[it.key()].satellitesInUse;
+            inViewUpdated |=
+                    it->satellitesInView != m_lastUpdate.m_satellites[it.key()].satellitesInView;
+        }
+    } else {
+        // if we come here from requestUpdate(), we need to emit, even if the data
+        // didn't really change
+        inUseUpdated = true;
+        inViewUpdated = true;
+    }
 
-    // if we come here from requestUpdate(), we need to emit, even if the data
-    // didn't really change
     m_lastUpdate = update;
-    if (update.m_validInUse && (inUseUpdated || fromRequestUpdate)) {
-        emit m_source->satellitesInUseUpdated(update.m_satellitesInUse);
+    if (update.m_validInUse && inUseUpdated) {
+        emit m_source->satellitesInUseUpdated(update.allSatellitesInUse());
         emitted = true;
     }
-    if (update.m_validInView && (inViewUpdated || fromRequestUpdate)) {
-        emit m_source->satellitesInViewUpdated(update.m_satellitesInView);
+    if (update.m_validInView && inViewUpdated) {
+        emit m_source->satellitesInViewUpdated(update.allSatellitesInView());
         emitted = true;
     }
     return emitted;
@@ -430,6 +451,14 @@ QNmeaSatelliteInfoSource::QNmeaSatelliteInfoSource(UpdateMode mode, QObject *par
 QNmeaSatelliteInfoSource::~QNmeaSatelliteInfoSource()
 {
     delete d;
+}
+
+/*!
+    Returns the update mode.
+*/
+QNmeaSatelliteInfoSource::UpdateMode QNmeaSatelliteInfoSource::updateMode() const
+{
+    return d->m_updateMode;
 }
 
 /*!
@@ -564,11 +593,12 @@ void QNmeaSatelliteInfoSource::requestUpdate(int msec)
     The parser reads \a size bytes from \a data and uses that information to
     fill \a pnrsInUse list.
 
-    Returns \c true if the sentence was successfully parsed, otherwise returns
-    \c false and should not modifiy \a pnrsInUse.
+    Returns system type if the sentence was successfully parsed, otherwise
+    returns \l QGeoSatelliteInfo::Undefined and should not modifiy \a pnrsInUse.
 */
-bool QNmeaSatelliteInfoSource::parseSatellitesInUseFromNmea(const char *data, int size,
-                                                            QList<int> &pnrsInUse)
+QGeoSatelliteInfo::SatelliteSystem
+QNmeaSatelliteInfoSource::parseSatellitesInUseFromNmea(const char *data, int size,
+                                                       QList<int> &pnrsInUse)
 {
     return QLocationUtils::getSatInUseFromNmea(data, size, pnrsInUse);
 }
@@ -597,13 +627,16 @@ bool QNmeaSatelliteInfoSource::parseSatellitesInUseFromNmea(const char *data, in
     Returns \l SatelliteInfoParseStatus with parse result.
     Modifies \a infos list in case \l SatelliteInfoParseStatus::PartiallyParsed
     or \l SatelliteInfoParseStatus::FullyParsed is returned.
+    Also sets the \a system to correct satellite system type. This is required
+    to determine the system type in case there are no satellites in view.
 */
 QNmeaSatelliteInfoSource::SatelliteInfoParseStatus
 QNmeaSatelliteInfoSource::parseSatelliteInfoFromNmea(const char *data, int size,
-                                                     QList<QGeoSatelliteInfo> &infos)
+                                                     QList<QGeoSatelliteInfo> &infos,
+                                                     QGeoSatelliteInfo::SatelliteSystem &system)
 {
     return static_cast<SatelliteInfoParseStatus>(
-            QLocationUtils::getSatInfoFromNmea(data, size, infos));
+            QLocationUtils::getSatInfoFromNmea(data, size, infos, system));
 }
 
 void QNmeaSatelliteInfoSource::setError(QGeoSatelliteInfoSource::Error satelliteError)
@@ -613,64 +646,128 @@ void QNmeaSatelliteInfoSource::setError(QGeoSatelliteInfoSource::Error satellite
         emit QGeoSatelliteInfoSource::errorOccurred(satelliteError);
 }
 
-void QNmeaSatelliteInfoUpdate::setSatellitesInView(const QList<QGeoSatelliteInfo> &inView)
+QList<QGeoSatelliteInfo> QNmeaSatelliteInfoUpdate::allSatellitesInUse() const
 {
-    m_updatingGsv = false;
-    m_satellitesInView = inView;
-    m_validInView = m_fresh = true;
-    if (m_inUse.size()) {
-        m_satellitesInUse.clear();
-        m_validInUse = false;
+    QList<QGeoSatelliteInfo> result;
+    for (const auto &s : m_satellites)
+        result.append(s.satellitesInUse);
+    return result;
+}
+
+QList<QGeoSatelliteInfo> QNmeaSatelliteInfoUpdate::allSatellitesInView() const
+{
+    QList<QGeoSatelliteInfo> result;
+    for (const auto &s : m_satellites)
+        result.append(s.satellitesInView);
+    return result;
+}
+
+void QNmeaSatelliteInfoUpdate::setSatellitesInView(QGeoSatelliteInfo::SatelliteSystem system,
+                                                   const QList<QGeoSatelliteInfo> &inView)
+{
+    auto &info = m_satellites[system];
+    info.updatingGSV = false;
+
+    info.satellitesInView = inView;
+    info.validInView = true;
+
+    if (!info.satellitesInUseReceived) {
+        // Normally a GSA message should come after a GSV message. If this flag
+        // is not set, we have received 2 consecutive GSV messages for this
+        // system without a GSA in between.
+        // This means that we could actually receive a $GNGSA empty message for
+        // this specific type. As it had no ids and GN talker id, we could not
+        // determine system type. This most probably means that we have no
+        // satellites in use for this system type.
+        // Clear satellites in use, if any.
+        info.satellitesInUse.clear();
+        info.inUseIds.clear();
+        info.validInUse = true;
+    }
+    info.satellitesInUseReceived = false;
+
+    if (info.satellitesInView.isEmpty()) {
+        // If we received an empty list of satellites in view, then the list of
+        // satellites in use will also be empty, so we would not be able to
+        // match it with correct system type in case of $GNGSA message. Clear
+        // the list in advance.
+        info.satellitesInUse.clear();
+        info.inUseIds.clear();
+        info.validInUse = true;
+    } else if (!info.inUseIds.isEmpty()) {
+        // We have some satellites in use cached. Check if we have received the
+        // proper GSV for them.
+        info.satellitesInUse.clear();
+        info.validInUse = false;
         bool corrupt = false;
-        for (const auto i : m_inUse) {
+        for (const auto id : info.inUseIds) {
             bool found = false;
-            for (const auto &s : m_satellitesInView) {
-                if (s.satelliteIdentifier() == i) {
-                    m_satellitesInUse.append(s);
+            for (const auto &s : info.satellitesInView) {
+                if (s.satelliteIdentifier() == id) {
+                    info.satellitesInUse.append(s);
                     found = true;
+                    break;
                 }
             }
             if (!found) {
-                // received a GSA before a GSV, but it was incorrect or something.
-                // Unrelated to this GSV at least.
-                m_satellitesInUse.clear();
+                // The previoulsy received GSA is incorrect or not related to
+                // this GSV
+                info.satellitesInUse.clear();
                 corrupt = true;
                 break;
             }
         }
-        m_validInUse = !corrupt;
-        m_inUse.clear();
+        info.validInUse = !corrupt;
+        info.inUseIds.clear();
     }
+
+    m_validInUse = calculateValidInUse();
+    m_validInView = calculateValidInView();
+    m_fresh = true;
 }
 
-bool QNmeaSatelliteInfoUpdate::setSatellitesInUse(const QList<int> &inUse)
+bool QNmeaSatelliteInfoUpdate::setSatellitesInUse(QGeoSatelliteInfo::SatelliteSystem system,
+                                                  const QList<int> &inUse)
 {
-    m_satellitesInUse.clear();
-    m_validInUse = false;
-    m_inUse = inUse;
-    if (m_updatingGsv) {
-        m_satellitesInUse.clear();
+    if (system == QGeoSatelliteInfo::Undefined || system == QGeoSatelliteInfo::Multiple)
+        return false; // No way to determine satellite system
+
+    SatelliteInfo &info = m_satellites[system];
+    info.satellitesInUse.clear();
+
+    info.satellitesInUseReceived = true;
+    info.inUseIds = inUse;
+
+    if (info.updatingGSV) {
+        info.validInView = false;
         m_validInView = false;
         return false;
     }
-    for (const auto i : inUse) {
+
+    for (const auto id : inUse) {
         bool found = false;
-        for (const auto &s : m_satellitesInView) {
-            if (s.satelliteIdentifier() == i) {
-                m_satellitesInUse.append(s);
+        for (const auto &s : info.satellitesInView) {
+            if (s.satelliteIdentifier() == id) {
+                info.satellitesInUse.append(s);
                 found = true;
+                break;
             }
         }
         if (!found) {
-            // if satellites in use aren't in view, the related GSV is still to be received.
-            m_inUse = inUse; // So clear outdated data, buffer the info, and set it later.
-            m_satellitesInUse.clear();
-            m_satellitesInView.clear();
+            // satellites in use are not in view -> related GSV is not yet received
+            info.satellitesInView.clear();
+            info.validInView = false;
             m_validInView = false;
             return false;
         }
     }
-    m_validInUse = m_fresh = true;
+
+    info.inUseIds.clear(); // make sure we remove all obsolete cache
+
+    info.validInUse = true;
+    m_fresh = true;
+    m_validInUse = calculateValidInUse();
+
     return true;
 }
 
@@ -684,25 +781,41 @@ bool QNmeaSatelliteInfoUpdate::isFresh() const
     return m_fresh;
 }
 
-QSet<int> QNmeaSatelliteInfoUpdate::inUse() const
-{
-    QSet<int> res;
-    for (const auto &s : m_satellitesInUse)
-        res.insert(s.satelliteIdentifier());
-    return res;
-}
-
 void QNmeaSatelliteInfoUpdate::clear()
 {
-    m_satellitesInView.clear();
-    m_satellitesInUse.clear();
-    m_validInView = m_validInUse = false;
+    m_satellites.clear();
+    m_satellitesInViewParsed.clear();
+    m_validInView = false;
+    m_validInUse = false;
+    m_fresh = false;
+#if USE_NMEA_PIMPL
+    gsa.clear();
+    gsv.clear();
+#endif
 }
 
 bool QNmeaSatelliteInfoUpdate::isValid() const
 {
     // GSV without GSA is valid. GSA with outdated but still matching GSV also valid.
     return m_validInView || m_validInUse;
+}
+
+bool QNmeaSatelliteInfoUpdate::calculateValidInUse() const
+{
+    for (const auto &s : m_satellites) {
+        if (!s.validInUse)
+            return false;
+    }
+    return true;
+}
+
+bool QNmeaSatelliteInfoUpdate::calculateValidInView() const
+{
+    for (const auto &s : m_satellites) {
+        if (!s.validInView)
+            return false;
+    }
+    return true;
 }
 
 QNmeaSatelliteReader::QNmeaSatelliteReader(QNmeaSatelliteInfoSourcePrivate *sourcePrivate)

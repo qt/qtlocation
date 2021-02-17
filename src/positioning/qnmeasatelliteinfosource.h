@@ -60,6 +60,8 @@ public:
     explicit QNmeaSatelliteInfoSource(UpdateMode mode, QObject *parent = nullptr);
     ~QNmeaSatelliteInfoSource() override;
 
+    UpdateMode updateMode() const;
+
     void setDevice(QIODevice *source);
     QIODevice *device() const;
 
@@ -76,14 +78,16 @@ public Q_SLOTS:
     void requestUpdate(int timeout = 0) override;
 
 protected:
-    virtual bool parseSatellitesInUseFromNmea(const char *data, int size, QList<int> &pnrsInUse);
+    virtual QGeoSatelliteInfo::SatelliteSystem
+    parseSatellitesInUseFromNmea(const char *data, int size, QList<int> &pnrsInUse);
     enum SatelliteInfoParseStatus {
         NotParsed = 0,
         PartiallyParsed,
         FullyParsed
     };
     virtual SatelliteInfoParseStatus parseSatelliteInfoFromNmea(const char *data, int size,
-                                                                QList<QGeoSatelliteInfo> &infos);
+                                                                QList<QGeoSatelliteInfo> &infos,
+                                                                QGeoSatelliteInfo::SatelliteSystem &system);
 
     QNmeaSatelliteInfoSourcePrivate *d;
     void setError(QGeoSatelliteInfoSource::Error satelliteError);

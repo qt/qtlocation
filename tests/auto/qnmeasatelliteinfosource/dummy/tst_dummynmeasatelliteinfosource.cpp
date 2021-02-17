@@ -39,9 +39,11 @@ public:
     DummyNmeaSatelliteInfoSource(QObject *parent = 0);
 
 protected:
-    bool parseSatellitesInUseFromNmea(const char *data, int size, QList<int> &pnrsInUse) override;
+    QGeoSatelliteInfo::SatelliteSystem parseSatellitesInUseFromNmea(const char *data, int size,
+                                                                    QList<int> &pnrsInUse) override;
     SatelliteInfoParseStatus parseSatelliteInfoFromNmea(const char *data, int size,
-                                                        QList<QGeoSatelliteInfo> &infos) override;
+                                                        QList<QGeoSatelliteInfo> &infos,
+                                                        QGeoSatelliteInfo::SatelliteSystem &system) override;
 
 private:
     int callCount;
@@ -52,22 +54,23 @@ DummyNmeaSatelliteInfoSource::DummyNmeaSatelliteInfoSource(QObject *parent)
 {
 }
 
-bool DummyNmeaSatelliteInfoSource::parseSatellitesInUseFromNmea(const char *data, int size,
-                                                                QList<int> &pnrsInUse)
+QGeoSatelliteInfo::SatelliteSystem
+DummyNmeaSatelliteInfoSource::parseSatellitesInUseFromNmea(const char *data, int size,
+                                                           QList<int> &pnrsInUse)
 {
     // expected format: "USE:num1;num2;num3\n"
     // example: "USE:1;3;4;7\n"
     if (!data || !size)
-        return false;
+        return QGeoSatelliteInfo::Undefined;
 
     QString str = QLatin1String(data, size).toString();
     if (!str.startsWith("USE:"))
-        return false;
+        return QGeoSatelliteInfo::Undefined;
 
     const QStringList sl = str.mid(4).split(";", Qt::SkipEmptyParts);
 
     if (sl.empty())
-        return false;
+        return QGeoSatelliteInfo::Undefined;
 
     for (const auto &str : sl) {
         bool ok = false;
@@ -76,15 +79,16 @@ bool DummyNmeaSatelliteInfoSource::parseSatellitesInUseFromNmea(const char *data
             pnrsInUse.push_back(value);
         }
     }
-    return true;
+    return QGeoSatelliteInfo::GPS;
 }
 
 QNmeaSatelliteInfoSource::SatelliteInfoParseStatus
 DummyNmeaSatelliteInfoSource::parseSatelliteInfoFromNmea(const char *data, int size,
-                                                         QList<QGeoSatelliteInfo> &infos)
+                                                         QList<QGeoSatelliteInfo> &infos,
+                                                         QGeoSatelliteInfo::SatelliteSystem &system)
 {
     // expected format: "INFO:system,identifier;system,identifier;system,identifier\n"
-    // example: "INFO:1,5;2,7;1,15\n"
+    // example: "INFO:1,5;1,7;1,15\n"
     if (!data || !size)
         return NotParsed;
 
@@ -107,6 +111,9 @@ DummyNmeaSatelliteInfoSource::parseSatelliteInfoFromNmea(const char *data, int s
             infos.push_back(info);
         }
     }
+
+    system = infos.isEmpty() ? QGeoSatelliteInfo::Undefined : infos.front().satelliteSystem();
+
     return FullyParsed;
 }
 
@@ -131,7 +138,7 @@ void tst_DummyNmeaSatelliteInfoSource::testOverloadedParseFunction()
     proxy->source()->startUpdates();
 
     // first we need to send all satellites
-    proxy->feedBytes("INFO:1,5;2,7;1,15\n");
+    proxy->feedBytes("INFO:1,5;1,7;1,15\n");
     // then - used ones
     proxy->feedBytes("USE:5;15\n");
 
@@ -142,15 +149,15 @@ void tst_DummyNmeaSatelliteInfoSource::testOverloadedParseFunction()
     info_1_5.setSatelliteSystem(QGeoSatelliteInfo::GPS);
     info_1_5.setSatelliteIdentifier(5);
 
-    QGeoSatelliteInfo info_2_7;
-    info_2_7.setSatelliteSystem(QGeoSatelliteInfo::GLONASS);
-    info_2_7.setSatelliteIdentifier(7);
+    QGeoSatelliteInfo info_1_7;
+    info_1_7.setSatelliteSystem(QGeoSatelliteInfo::GPS);
+    info_1_7.setSatelliteIdentifier(7);
 
     QGeoSatelliteInfo info_1_15;
     info_1_15.setSatelliteSystem(QGeoSatelliteInfo::GPS);
     info_1_15.setSatelliteIdentifier(15);
 
-    const QList<QGeoSatelliteInfo> desiredInView = { info_1_5, info_2_7, info_1_15 };
+    const QList<QGeoSatelliteInfo> desiredInView = { info_1_5, info_1_7, info_1_15 };
     const QList<QGeoSatelliteInfo> desiredInUse = { info_1_5, info_1_15 };
 
     const QList<QGeoSatelliteInfo> inViewList =

@@ -70,9 +70,21 @@ QT_BEGIN_NAMESPACE
     \value Undefined Not defined.
     \value GPS Global Positioning System (USA).
     \value GLONASS Global Positioning System (Russia).
-
+    \value GALILEO Global navigation satellite system (EU).
+    \value BEIDOU BeiDou navigation satellite system (China).
+    \value QZSS Quasi-Zenith Satellite System (Japan).
+    \value Multiple This type normally indicates that the information is
+           received from a device that supports multiple satellite systems, and
+           the satellite system is not explicitly specified. Depending on the
+           data source, you might use other information to determine the actual
+           system type. One example of the usage of this type is an NMEA $GNGSA
+           message, which contains the IDs of the satellites being used, but
+           does not explicitly mention their system types.
+    \value CustomType The first type that can be used for user purposes. For
+           example when reimplementing NMEA data parsing in
+           \l QNmeaSatelliteInfoSource. User can add more types using
+           \c {CustomType + 1}, \c {CustomType + 2} and so on.
 */
-
 
 /*!
     Creates a satellite information object.
@@ -194,6 +206,11 @@ void QGeoSatelliteInfo::setSatelliteIdentifier(int satId)
     The satellite identifier number can be used to identify a satellite inside the satellite system.
     For satellite system GPS the satellite identifier number represents the PRN (Pseudo-random noise) number.
     For satellite system GLONASS the satellite identifier number represents the slot number.
+
+    The satellite identifier can be used to determine the satellite system type
+    if it is not available from other sources. You can refer to
+    \l {https://gpsd.gitlab.io/gpsd/NMEA.html#_satellite_ids}
+    {satellite IDs list} to check the ID ranges for different satellite systems.
 */
 int QGeoSatelliteInfo::satelliteIdentifier() const
 {

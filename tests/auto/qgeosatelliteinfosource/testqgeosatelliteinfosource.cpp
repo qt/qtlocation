@@ -606,7 +606,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
 
     m_source->requestUpdate(7000);
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1)
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() >= 1) && (spyUse.count() >= 1)
                              && (errorSpy.count() == 0), 7000);
 
     spyView.clear();
