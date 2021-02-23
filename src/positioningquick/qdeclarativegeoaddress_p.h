@@ -74,7 +74,7 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativeGeoAddress : public QObject
     Q_PROPERTY(QString district READ district WRITE setDistrict NOTIFY districtChanged)
     Q_PROPERTY(QString street READ street WRITE setStreet NOTIFY streetChanged)
     Q_PROPERTY(QString streetNumber READ streetNumber WRITE setStreetNumber
-               NOTIFY streetNumberChanged REVISION(6, 0))
+               NOTIFY streetNumberChanged REVISION(6, 2))
     Q_PROPERTY(QString postalCode READ postalCode WRITE setPostalCode NOTIFY postalCodeChanged)
     Q_PROPERTY(bool isTextGenerated READ isTextGenerated NOTIFY isTextGeneratedChanged)
 

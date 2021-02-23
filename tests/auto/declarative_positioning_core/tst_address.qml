@@ -27,7 +27,7 @@
 ****************************************************************************/
 
 import QtTest 1.0
-import QtPositioning 6.1
+import QtPositioning 6.2
 
 TestCase {
     id: testCase

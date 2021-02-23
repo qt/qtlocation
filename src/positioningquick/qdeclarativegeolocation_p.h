@@ -69,7 +69,7 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativeGeoLocation : public QObject
     Q_PROPERTY(QGeoLocation location READ location WRITE setLocation)
     Q_PROPERTY(QDeclarativeGeoAddress *address READ address WRITE setAddress NOTIFY addressChanged)
     Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QGeoShape boundingShape READ boundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged REVISION(6, 0))
+    Q_PROPERTY(QGeoShape boundingShape READ boundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged REVISION(6, 2))
     Q_PROPERTY(QVariantMap extendedAttributes MEMBER m_extendedAttributes NOTIFY extendedAttributesChanged REVISION(5, 13))
 
 public:
