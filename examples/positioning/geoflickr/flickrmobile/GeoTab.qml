@@ -49,13 +49,13 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtPositioning 5.2
+import QtPositioning
 
 Rectangle {
     id: container
     property int maxX: parent.width; property int maxY: parent.height
 //! [props]
-    property variant coordinate
+    property var coordinate
 //! [props]
 
     Binding {
@@ -105,16 +105,17 @@ Rectangle {
         onPositionChanged: { planet.source = "images/sun.png"; }
 
         onSourceErrorChanged: {
+            if (sourceError == PositionSource.UpdateTimeoutError) {
+                activityText.fadeOut = true
+                return
+            }
+
             if (sourceError == PositionSource.NoError)
                 return
 
             console.log("Source error: " + sourceError)
             activityText.fadeOut = true
             stop()
-        }
-
-        onUpdateTimeout: {
-            activityText.fadeOut = true
         }
     }
 //! [possrc]

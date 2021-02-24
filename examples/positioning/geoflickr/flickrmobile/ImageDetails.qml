@@ -54,11 +54,11 @@ import "../flickrcommon" as Common
 Flipable {
     id: container
 
-    property variant frontContainer: containerFront
+    property var frontContainer: containerFront
     property string photoTitle: ""
     property string photoDate
     property string photoUrl
-    property variant prevScale: 1.0
+    property real prevScale: 1.0
 
     signal closed
 

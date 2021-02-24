@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -48,12 +48,11 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtQuick.XmlListModel 2.0
+import QtQml.XmlListModel
 
 //! [restmodel]
 XmlListModel {
-    property variant coordinate
+    property var coordinate
 
     source: "https://api.flickr.com/services/rest/?" +
             "min_taken_date=2000-01-01+0:00:00&" +
@@ -65,11 +64,11 @@ XmlListModel {
             "lat=" + coordinate.latitude + "&lon=" + coordinate.longitude;
     query: "/rsp/photos/photo"
 
-    XmlRole { name: "title"; query: "@title/string()" }
-    XmlRole { name: "datetaken"; query: "@datetaken/string()" }
-    XmlRole { name: "farm"; query: "@farm/string()" }
-    XmlRole { name: "server"; query: "@server/string()" }
-    XmlRole { name: "id"; query: "@id/string()" }
-    XmlRole { name: "secret"; query: "@secret/string()" }
+    XmlListModelRole { name: "title"; elementName: ""; attributeName: "title" }
+    XmlListModelRole { name: "datetaken"; elementName: ""; attributeName: "datetaken" }
+    XmlListModelRole { name: "farm"; elementName: ""; attributeName: "farm" }
+    XmlListModelRole { name: "server"; elementName: ""; attributeName: "server" }
+    XmlListModelRole { name: "id"; elementName: ""; attributeName: "id" }
+    XmlListModelRole { name: "secret"; elementName: ""; attributeName: "secret" }
 }
 //! [restmodel]

@@ -53,7 +53,7 @@ import QtQuick 2.0
 Item {
     id: container
 
-    property variant flickableArea
+    property var flickableArea
 
     Rectangle {
         radius: 5

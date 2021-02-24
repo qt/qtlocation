@@ -21,7 +21,6 @@ find_package(Qt6 COMPONENTS Qml)
 find_package(Qt6 COMPONENTS Quick)
 find_package(Qt6 COMPONENTS Network)
 find_package(Qt6 COMPONENTS Positioning)
-find_package(Qt6 COMPONENTS XmlPatterns)
 
 qt_add_executable(geoflickr
     qmllocationflickr.cpp
@@ -37,7 +36,6 @@ target_link_libraries(geoflickr PRIVATE
     Qt::Positioning
     Qt::Qml
     Qt::Quick
-    Qt::XmlPatterns
 )
 
 

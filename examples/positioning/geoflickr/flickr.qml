@@ -49,7 +49,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtQuick.XmlListModel 2.0
+import QtQml.XmlListModel
 import "flickrcommon" as Common
 import "flickrmobile" as Mobile
 
@@ -119,7 +119,7 @@ Item {
         }
         Connections {
             target: imageDetails
-            onClosed: {
+            function onClosed() {
                 if (background.state == "DetailedView") {
                     background.state = '';
                     imageDetails.photoUrl = "";

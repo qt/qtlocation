@@ -83,7 +83,9 @@
 
              Connections {
                  target: toolBar
-                 onButton2Clicked: if (scaleMe.state == 'Details' ) scaleMe.state = 'Show'
+                 function onButton2Clicked() {
+                     if (scaleMe.state == 'Details' ) scaleMe.state = 'Show'
+                 }
              }
 
              states: [

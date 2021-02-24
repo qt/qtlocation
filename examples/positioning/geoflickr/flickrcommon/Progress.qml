@@ -51,7 +51,7 @@
 import QtQuick 2.0
 
 Item {
-    property variant progress: 0
+    property real progress: 0
 
     Rectangle {
         anchors.fill: parent; smooth: true
