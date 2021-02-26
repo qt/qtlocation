@@ -163,6 +163,8 @@ QGeoSatelliteInfoSourceGypsy::~QGeoSatelliteInfoSourceGypsy()
     }
     if (m_satellite)
         g_object_unref(m_satellite);
+    if (m_control)
+        g_object_unref(m_control);
     if (error)
         g_error_free(error);
     delete m_engine;
@@ -240,17 +242,15 @@ int QGeoSatelliteInfoSourceGypsy::init()
         m_engine->eng_g_free(device_name);
         return -1;
     }
-    GypsyControl *control = NULL;
-    control = m_engine->eng_gypsy_control_get_default();
-    if (!control) {
+    m_control = m_engine->eng_gypsy_control_get_default();
+    if (!m_control) {
         qWarning("QGeoSatelliteInfoSourceGypsy unable to create Gypsy control.");
         m_engine->eng_g_free(device_name);
         return -1;
     }
     // (path is the DBus path)
-    path = m_engine->eng_gypsy_control_create (control, device_name, &error);
+    path = m_engine->eng_gypsy_control_create (m_control, device_name, &error);
     m_engine->eng_g_free(device_name);
-    g_object_unref(control);
     if (!path) {
         qWarning ("QGeoSatelliteInfoSourceGypsy error creating client.");
         if (error) {

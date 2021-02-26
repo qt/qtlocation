@@ -138,6 +138,7 @@ private:
       bool m_updatesOngoing;
       bool m_requestOngoing;
       QGeoSatelliteInfoSource::Error m_error = QGeoSatelliteInfoSource::NoError;
+      GypsyControl *m_control = nullptr;
   };
 
 QT_END_NAMESPACE
