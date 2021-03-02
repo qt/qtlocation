@@ -649,6 +649,10 @@ private slots:
 
     void tst_swapOfPositionSource()
     {
+#if defined(Q_CC_GNU) && defined(Q_PROCESSOR_ARM)
+        QSKIP("This test randomly times out on QEMU(gcc-armv7)");
+#endif
+
         std::unique_ptr<QGeoAreaMonitorSource> obj(
                 QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
         QVERIFY(obj != nullptr);
