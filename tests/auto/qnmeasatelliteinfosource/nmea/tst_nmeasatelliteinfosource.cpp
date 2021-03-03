@@ -186,7 +186,7 @@ void tst_QNmeaSatelliteInfoSource::parseDataStream()
     source.startUpdates();
     feeder->setMessages(messages);
 
-    QTRY_VERIFY_WITH_TIMEOUT(messageSentSpy.count() == messages.count(), 1000);
+    QTRY_VERIFY_WITH_TIMEOUT(messageSentSpy.count() == messages.count(), 2000);
     QVERIFY(!inViewSpy.isEmpty());
     QVERIFY(!inUseSpy.isEmpty());
 
@@ -450,6 +450,92 @@ void tst_QNmeaSatelliteInfoSource::parseDataStream_data()
                                    simpleGpsGsvMessage,   gnEmptyGpsGsaMessage,
                                    simpleGpsGsvMessage }
             << simpleGpsGlnsInView << simpleGlnsInUse;
+
+    // BEIDOU signals for below test cases are just synthesized based on the
+    // NMEA protocol description. They were NEVER checked on real hardware,
+    // as we do not have one.
+
+    // multi-line GPS, GLONASS & BEIDOU
+    const auto complexBduGsvMessage1 = QLocationTestUtils::addNmeaChecksumAndBreaks(
+                                               "$GBGSV,2,1,7,201,,,,202,,,,203,,,20,204,,,28*")
+                                               .toLatin1();
+    const auto complexBduGsvMessage2 =
+            QLocationTestUtils::addNmeaChecksumAndBreaks("$GBGSV,2,2,7,205,,,,206,,,,207,,,33,,,,*")
+                    .toLatin1();
+    const auto gnComplexBduGsaMessage = QLocationTestUtils::addNmeaChecksumAndBreaks(
+                                                "$GNGSA,A,3,203,204,207,,,,,,,,,,50.95,50.94,1.00*")
+                                                .toLatin1();
+    const auto complexBduInView =
+            QList<QGeoSatelliteInfo> { createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 201, -1),
+                                       createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 202, -1),
+                                       createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 203, 20),
+                                       createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 204, 28),
+                                       createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 205, -1),
+                                       createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 206, -1),
+                                       createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 207, 33) };
+    const auto complexBduInUse =
+            QList<QGeoSatelliteInfo> { createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 203, 20),
+                                       createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 204, 28),
+                                       createSatelliteInfo(QGeoSatelliteInfo::BEIDOU, 207, 33) };
+
+    const auto complexGpsGlnsBduInView = complexGpsInView + complexGlnsInView + complexBduInView;
+    const auto complexGpsGlnsBduInUse = complexGpsInUse + complexGlnsInUse + complexBduInUse;
+
+    QTest::newRow("realtime GPS, GLONASS & BEIDOU")
+            << QNmeaSatelliteInfoSource::UpdateMode::RealTimeMode
+            << QList<QByteArray> { complexGpsGsvMessage1,   complexGpsGsvMessage2,
+                                   complexGlnsGsvMessage1,  complexGlnsGsvMessage2,
+                                   complexGlnsGsvMessage3,  complexBduGsvMessage1,
+                                   complexBduGsvMessage2,   gnComplexGpsGsaMessage,
+                                   gnComplexGlnsGsaMessage, gnComplexBduGsaMessage }
+            << complexGpsGlnsBduInView << complexGpsGlnsBduInUse;
+
+    QTest::newRow("simulation GPS, GLONASS & BEIDOU")
+            << QNmeaSatelliteInfoSource::UpdateMode::SimulationMode
+            << QList<QByteArray> { complexGpsGsvMessage1,   complexGpsGsvMessage2,
+                                   complexGlnsGsvMessage1,  complexGlnsGsvMessage2,
+                                   complexGlnsGsvMessage3,  complexBduGsvMessage1,
+                                   complexBduGsvMessage2,   gnComplexGpsGsaMessage,
+                                   gnComplexGlnsGsaMessage, gnComplexBduGsaMessage }
+            << complexGpsGlnsBduInView << complexGpsGlnsBduInUse;
+
+    // multi-line GPS, GLONASS & BEIDOU: GSA before GSV
+    QTest::newRow("realtime GPS, GLONASS & BEIDOU reverse")
+            << QNmeaSatelliteInfoSource::UpdateMode::RealTimeMode
+            << QList<QByteArray> { gnComplexGpsGsaMessage, gnComplexGlnsGsaMessage,
+                                   gnComplexBduGsaMessage, complexGpsGsvMessage1,
+                                   complexGpsGsvMessage2,  complexGlnsGsvMessage1,
+                                   complexGlnsGsvMessage2, complexGlnsGsvMessage3,
+                                   complexBduGsvMessage1,  complexBduGsvMessage2 }
+            << complexGpsGlnsBduInView << complexGpsGlnsBduInUse;
+
+    QTest::newRow("simulation GPS, GLONASS & BEIDOU reverse")
+            << QNmeaSatelliteInfoSource::UpdateMode::SimulationMode
+            << QList<QByteArray> { gnComplexGpsGsaMessage, gnComplexGlnsGsaMessage,
+                                   gnComplexBduGsaMessage, complexGpsGsvMessage1,
+                                   complexGpsGsvMessage2,  complexGlnsGsvMessage1,
+                                   complexGlnsGsvMessage2, complexGlnsGsvMessage3,
+                                   complexBduGsvMessage1,  complexBduGsvMessage2 }
+            << complexGpsGlnsBduInView << complexGpsGlnsBduInUse;
+
+    // multi-line GPS, GLONASS & BEIDOU: mixed order
+    QTest::newRow("realtime GPS, GLONASS & BEIDOU mixed")
+            << QNmeaSatelliteInfoSource::UpdateMode::RealTimeMode
+            << QList<QByteArray> { gnComplexGpsGsaMessage,  complexGlnsGsvMessage1,
+                                   complexGlnsGsvMessage2,  complexGlnsGsvMessage3,
+                                   complexBduGsvMessage1,   complexBduGsvMessage2,
+                                   gnComplexGlnsGsaMessage, gnComplexBduGsaMessage,
+                                   complexGpsGsvMessage1,   complexGpsGsvMessage2 }
+            << complexGpsGlnsBduInView << complexGpsGlnsBduInUse;
+
+    QTest::newRow("simulation GPS, GLONASS & BEIDOU mixed")
+            << QNmeaSatelliteInfoSource::UpdateMode::SimulationMode
+            << QList<QByteArray> { gnComplexGpsGsaMessage,  complexGlnsGsvMessage1,
+                                   complexGlnsGsvMessage2,  complexGlnsGsvMessage3,
+                                   complexBduGsvMessage1,   complexBduGsvMessage2,
+                                   gnComplexGlnsGsaMessage, gnComplexBduGsaMessage,
+                                   complexGpsGsvMessage1,   complexGpsGsvMessage2 }
+            << complexGpsGlnsBduInView << complexGpsGlnsBduInUse;
 }
 
 QGeoSatelliteInfo
