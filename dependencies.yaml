@@ -5,9 +5,6 @@ dependencies:
   ../qtdeclarative:
     ref: e9ac81ab78bedd7618cce8ac051b209385038f48
     required: false
-  ../qtquickcontrols2:
-    ref: 0c41aefa6fb2f49066e2833ba1466d35585d2910
-    required: false
   ../qtserialport:
     ref: 12f5550967271d96256ebda437e8a3d2d502aab7
     required: false
