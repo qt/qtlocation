@@ -114,10 +114,6 @@ public slots:
       void requestUpdate(int timeout = 5000) override;
       void satellitesChanged(GypsySatellite *satellite, GPtrArray *satellites);
 
-signals:
-      void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-      void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-
 private slots:
       void requestUpdateTimeout();
 
