@@ -114,7 +114,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-:   m_positionSource(0), m_preferredPositioningMethods(NoPositioningMethods),
+:   m_positionSource(0), m_preferredPositioningMethods(AllPositioningMethods),
     m_active(false), m_singleUpdate(false), m_updateInterval(0), m_sourceError(NoError)
 {
 }
