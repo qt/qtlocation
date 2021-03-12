@@ -66,8 +66,7 @@ The Qt Positioning API provides positioning information via QML and C++ interfac
 
 Currently the API is supported on \l {Qt for Android}{Android}, \l {Qt for iOS}{iOS},
 \l {Qt for macOS}{\macos},
-\l {Qt for Linux/X11}{Linux} (using
-\l {http://www.freedesktop.org/wiki/Software/GeoClue}{GeoClue version 0.12.99}),
+\l {Qt for Linux/X11}{Linux},
 \l {Qt for Windows}{Windows} (with GPS receivers exposed as a serial port providing NMEA sentences),
 and \l {Qt for UWP}{UWP (Universal Windows Platform)} (using \c {Windows.Devices.Geolocation}).
 The Qt for UWP implementation can also be used in Win32 Desktop use cases if the underlying

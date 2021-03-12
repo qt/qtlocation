@@ -2,7 +2,6 @@
 
 add_subdirectory(positionpoll)
 if(FREEBSD OR LINUX OR OPENBSD OR (NETBSD AND TARGET Qt::DBus))
-    add_subdirectory(geoclue)
     add_subdirectory(geoclue2)
 endif()
 if(QT_FEATURE_gypsy)

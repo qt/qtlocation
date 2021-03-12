@@ -44,9 +44,6 @@ Some plugins already ship with Qt. These are:
         \li \b corelocation
         \li Wraps iOS and macOS positioning subsystems. Available only on Apple platforms supporting corelocation.
     \row
-        \li \b geoclue
-        \li Interfaces with \l{https://gitlab.freedesktop.org/geoclue/geoclue/-/wikis/home}{GeoClue} v0.12. Requires GeoClue 0.12 to be present to function.
-    \row
         \li \b geoclue2
         \li Interfaces with \l{https://gitlab.freedesktop.org/geoclue/geoclue/-/wikis/home}{GeoClue} v2. Requires GeoClue v2 to be present to function.
     \row
