@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -32,7 +32,6 @@
 #include <QtPositioning/qgeopositioninfosource.h>
 
 QT_BEGIN_NAMESPACE
-class QFile;
 class QTimer;
 QT_END_NAMESPACE
 
@@ -40,7 +39,13 @@ class LogFilePositionSource : public QGeoPositionInfoSource
 {
     Q_OBJECT
 public:
-    LogFilePositionSource(QObject *parent = 0);
+    // This class is optimized to reduce the file IO.
+    // Initially it was reading the file line-by-line.
+    // It does not modify the data, so it was optimized to just hold the
+    // const reference to the pre-existing data, that can now be read once
+    // for all the instances of this class (for example, during the
+    // initTestCase() call).
+    LogFilePositionSource(const QList<QByteArray> &data, QObject *parent = 0);
 
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const override;
 
@@ -58,10 +63,13 @@ private slots:
     void readNextPosition();
 
 private:
-    QFile *logFile;
+    bool canReadLine() const;
+
     QTimer *timer;
     QGeoPositionInfo lastPosition;
     Error lastError = QGeoPositionInfoSource::NoError;
+    const QList<QByteArray> &lines;
+    qsizetype index = -1;
 };
 
 #endif

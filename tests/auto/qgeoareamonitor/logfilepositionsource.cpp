@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -26,21 +26,20 @@
 **
 ****************************************************************************/
 
-#include <QtCore>
-#include <QtTest>
-
+#include <QTimer>
 #include "logfilepositionsource.h"
 
-LogFilePositionSource::LogFilePositionSource(QObject *parent)
+LogFilePositionSource::LogFilePositionSource(const QList<QByteArray> &data, QObject *parent)
     : QGeoPositionInfoSource(parent),
-      logFile(new QFile(this)),
-      timer(new QTimer(this))
+      timer(new QTimer(this)),
+      lines(data)
 {
     connect(timer, SIGNAL(timeout()), this, SLOT(readNextPosition()));
 
-    logFile->setFileName(QFINDTESTDATA("simplelog.txt"));
-    if (!logFile->open(QIODevice::ReadOnly))
-        qWarning() << "Error: cannot open source file" << logFile->fileName();
+    if (lines.isEmpty())
+        qWarning() << "Error: the input data is empty!";
+    else
+        index = 0; // ready to read
 }
 
 QGeoPositionInfo LogFilePositionSource::lastKnownPosition(bool /*fromSatellitePositioningMethodsOnly*/) const
@@ -55,7 +54,7 @@ LogFilePositionSource::PositioningMethods LogFilePositionSource::supportedPositi
 
 int LogFilePositionSource::minimumUpdateInterval() const
 {
-    return 200;
+    return 50;
 }
 
 void LogFilePositionSource::startUpdates()
@@ -78,7 +77,7 @@ void LogFilePositionSource::requestUpdate(int /*timeout*/)
     // For simplicity, ignore timeout - assume that if data is not available
     // now, no data will be added to the file later
     lastError = QGeoPositionInfoSource::NoError;
-    if (logFile->canReadLine()) {
+    if (canReadLine()) {
         readNextPosition();
     } else {
         lastError = QGeoPositionInfoSource::UpdateTimeoutError;
@@ -88,26 +87,34 @@ void LogFilePositionSource::requestUpdate(int /*timeout*/)
 
 void LogFilePositionSource::readNextPosition()
 {
-    QByteArray line = logFile->readLine().trimmed();
-    if (!line.isEmpty()) {
-        QList<QByteArray> data = line.split(' ');
-        double latitude;
-        double longitude;
-        bool hasLatitude = false;
-        bool hasLongitude = false;
-        QDateTime timestamp = QDateTime::fromString(QString(data.value(0)), Qt::ISODate);
-        latitude = data.value(1).toDouble(&hasLatitude);
-        longitude = data.value(2).toDouble(&hasLongitude);
+    if (canReadLine()) {
+        const QByteArray line = lines.at(index);
+        if (!line.isEmpty()) {
+            QList<QByteArray> data = line.split(' ');
+            double latitude;
+            double longitude;
+            bool hasLatitude = false;
+            bool hasLongitude = false;
+            QDateTime timestamp = QDateTime::fromString(QString(data.value(0)), Qt::ISODate);
+            latitude = data.value(1).toDouble(&hasLatitude);
+            longitude = data.value(2).toDouble(&hasLongitude);
 
-        if (hasLatitude && hasLongitude && timestamp.isValid()) {
-            QGeoCoordinate coordinate(latitude, longitude);
-            QGeoPositionInfo info(coordinate, timestamp);
-            if (info.isValid()) {
-                lastPosition = info;
-                emit positionUpdated(info);
+            if (hasLatitude && hasLongitude && timestamp.isValid()) {
+                QGeoCoordinate coordinate(latitude, longitude);
+                QGeoPositionInfo info(coordinate, timestamp);
+                if (info.isValid()) {
+                    lastPosition = info;
+                    emit positionUpdated(info);
+                }
             }
         }
+        index++;
     }
+}
+
+bool LogFilePositionSource::canReadLine() const
+{
+    return (index >= 0) && (index < lines.size());
 }
 
 QGeoPositionInfoSource::Error LogFilePositionSource::error() const

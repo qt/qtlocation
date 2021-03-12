@@ -37,6 +37,7 @@
 
 #include <QDebug>
 #include <QDataStream>
+#include <QFile>
 
 #include <QtPositioning/qgeoareamonitorinfo.h>
 #include <QtPositioning/qgeoareamonitorsource.h>
@@ -50,7 +51,7 @@
 
 
 QT_USE_NAMESPACE
-#define UPDATE_INTERVAL 200
+#define UPDATE_INTERVAL 50
 
 QString tst_qgeoareamonitorinfo_debug;
 
@@ -67,9 +68,25 @@ void tst_qgeoareamonitorinfo_messageHandler(QtMsgType type,
     }
 }
 
+static QList<QByteArray> readFileData(const QString &fileName)
+{
+    QList<QByteArray> data;
+    QFile logFile(fileName);
+    if (logFile.open(QIODevice::ReadOnly)) {
+        data = logFile.readAll().split('\n');
+        logFile.close();
+    } else {
+        qWarning() << "Error: cannot open source file" << logFile.fileName();
+    }
+    return data;
+}
+
 class tst_QGeoAreaMonitorSource : public QObject
 {
     Q_OBJECT
+
+private:
+    QList<QByteArray> m_fileData;
 
 private slots:
     void initTestCase()
@@ -87,6 +104,7 @@ private slots:
 #endif
 #endif
         qRegisterMetaType<QGeoAreaMonitorInfo>();
+        m_fileData = readFileData(QFINDTESTDATA("simplelog.txt"));
     }
 
     void init()
@@ -362,7 +380,7 @@ private slots:
         QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
 
         // using this -> no need for smart pointer
-        LogFilePositionSource *source = new LogFilePositionSource(this);
+        LogFilePositionSource *source = new LogFilePositionSource(m_fileData, this);
         source->setUpdateInterval(UPDATE_INTERVAL);
         obj->setPositionInfoSource(source);
         QCOMPARE(obj->positionInfoSource(), source);
@@ -459,7 +477,7 @@ private slots:
         QCOMPARE(secondObj->sourceName(), QStringLiteral("positionpoll"));
 
         // using this -> no need for smart pointer
-        LogFilePositionSource *source = new LogFilePositionSource(this);
+        LogFilePositionSource *source = new LogFilePositionSource(m_fileData, this);
         source->setUpdateInterval(UPDATE_INTERVAL);
         obj->setPositionInfoSource(source);
 
@@ -476,7 +494,7 @@ private slots:
         for (int i = 1; i <= monitorCount; i++) {
             QGeoAreaMonitorInfo mon(QString::number(i));
             mon.setArea(QGeoRectangle(QGeoCoordinate(i,i), i, i));
-            mon.setExpiration(now.addSecs(i*5));
+            mon.setExpiration(now.addSecs(i*2));
             QVERIFY(mon.isValid());
             QVERIFY(obj->startMonitoring(mon));
         }
@@ -497,7 +515,7 @@ private slots:
         QCOMPARE(obj->activeMonitors().count(), monitorCount);
 
         for (int i = 1; i <= monitorCount; i++) {
-            QTRY_VERIFY_WITH_TIMEOUT(expirySpy.count() == 1, 7000); //each expiry within 5 s
+            QTRY_VERIFY_WITH_TIMEOUT(expirySpy.count() == 1, 3000); //each expiry within 2 s
             QGeoAreaMonitorInfo mon = expirySpy.takeFirst().at(0).value<QGeoAreaMonitorInfo>();
             QCOMPARE(obj->activeMonitors().count(), monitorCount-i);
             QCOMPARE(mon.name(), QString::number(i));
@@ -523,7 +541,7 @@ private slots:
         QSignalSpy exitedSpy(obj.get(), SIGNAL(areaExited(QGeoAreaMonitorInfo, QGeoPositionInfo)));
 
         // using this -> no need for smart pointer
-        LogFilePositionSource *source = new LogFilePositionSource(this);
+        LogFilePositionSource *source = new LogFilePositionSource(m_fileData, this);
         source->setUpdateInterval(UPDATE_INTERVAL);
         obj->setPositionInfoSource(source);
         QCOMPARE(obj->positionInfoSource(), source);
@@ -565,9 +583,9 @@ private slots:
 
         static const int Number_Of_Entered_Events = 6;
         static const int Number_Of_Exited_Events = 5;
-        //takes 87 (lines)*200(timeout)/1000 seconds to finish
-        QTRY_VERIFY_WITH_TIMEOUT(enteredSpy.count() == Number_Of_Entered_Events, 20000);
-        QTRY_VERIFY_WITH_TIMEOUT(exitedSpy.count() == Number_Of_Exited_Events, 20000);
+        //takes 87 (lines)*50(timeout)/1000 seconds to finish
+        QTRY_VERIFY_WITH_TIMEOUT(enteredSpy.count() == Number_Of_Entered_Events, 5000);
+        QTRY_VERIFY_WITH_TIMEOUT(exitedSpy.count() == Number_Of_Exited_Events, 5000);
         QCOMPARE(enteredSpy.count(), Number_Of_Entered_Events);
         QCOMPARE(exitedSpy.count(), Number_Of_Exited_Events);
 
@@ -649,10 +667,6 @@ private slots:
 
     void tst_swapOfPositionSource()
     {
-#if defined(Q_CC_GNU) && defined(Q_PROCESSOR_ARM)
-        QSKIP("This test randomly times out on QEMU(gcc-armv7)");
-#endif
-
         std::unique_ptr<QGeoAreaMonitorSource> obj(
                 QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
         QVERIFY(obj != nullptr);
@@ -673,12 +687,12 @@ private slots:
                               SIGNAL(areaExited(QGeoAreaMonitorInfo, QGeoPositionInfo)));
 
         // using this -> no need for smart pointer
-        LogFilePositionSource *source = new LogFilePositionSource(this);
+        LogFilePositionSource *source = new LogFilePositionSource(m_fileData, this);
         source->setUpdateInterval(UPDATE_INTERVAL);
         source->setObjectName("FirstLogFileSource");
 
         // using this -> no need for smart pointer
-        LogFilePositionSource *source2 = new LogFilePositionSource(this);
+        LogFilePositionSource *source2 = new LogFilePositionSource(m_fileData, this);
         source2->setUpdateInterval(UPDATE_INTERVAL);
         source2->setObjectName("SecondLogFileSource");
 
@@ -699,7 +713,7 @@ private slots:
 
         /***********************************/
         //1. trigger events on source (until areaExit
-        QTRY_VERIFY_WITH_TIMEOUT(exitedSpy.count() == 1, 20000);
+        QTRY_VERIFY_WITH_TIMEOUT(exitedSpy.count() == 1, 5000);
         QCOMPARE(enteredSpy.count(), enteredSpy2.count());
         QCOMPARE(exitedSpy.count(), exitedSpy2.count());
 
@@ -727,7 +741,7 @@ private slots:
         QCOMPARE(obj->positionInfoSource(), obj2->positionInfoSource());
         QCOMPARE(obj2->positionInfoSource(), source2);
 
-        QTRY_VERIFY_WITH_TIMEOUT(exitedSpy.count() == 1, 20000);
+        QTRY_VERIFY_WITH_TIMEOUT(exitedSpy.count() == 1, 5000);
         QCOMPARE(enteredSpy.count(), enteredSpy2.count());
         QCOMPARE(exitedSpy.count(), exitedSpy2.count());
 
