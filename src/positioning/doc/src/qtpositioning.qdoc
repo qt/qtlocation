@@ -44,7 +44,14 @@
     #include <QGeoCoordinate>
     \endcode
 
-    The .pro file should have the \e positioning keyword added
+    \include module-use.qdocinc using qt module
+
+    \badcode
+    find_package(Qt6 COMPONENTS Positioning REQUIRED)
+    target_link_libraries(mytarget PRIVATE Qt6::Positioning)
+    \endcode
+
+    \include module-use.qdocinc building with qmake
 
     \badcode
     QT += positioning
@@ -64,13 +71,10 @@
 
 The Qt Positioning API provides positioning information via QML and C++ interfaces.
 
-Currently the API is supported on \l {Qt for Android}{Android}, \l {Qt for iOS}{iOS},
-\l {Qt for macOS}{\macos},
-\l {Qt for Linux/X11}{Linux},
-\l {Qt for Windows}{Windows} (with GPS receivers exposed as a serial port providing NMEA sentences),
-and \l {Qt for UWP}{UWP (Universal Windows Platform)} (using \c {Windows.Devices.Geolocation}).
-The Qt for UWP implementation can also be used in Win32 Desktop use cases if the underlying
-platform is Windows 10, or later.
+Currently the API is supported on \l {Qt for Android}{Android},
+\l {Qt for iOS}{iOS}, \l {Qt for macOS}{\macos}, \l {Qt for Linux/X11}{Linux},
+and \l {Qt for Windows}{Windows} (with GPS receivers exposed as a serial port
+providing NMEA sentences or using \c {Windows.Devices.Geolocation}).
 
 \section1 Overview
 
@@ -80,7 +84,22 @@ and so on. That information can then be used to for example determine a position
 on a map. In addition satellite information can be retrieved and area based monitoring
 can be performed.
 
-\section1 Getting Started
+\include module-use.qdocinc using qt module
+
+\badcode
+find_package(Qt6 COMPONENTS Positioning REQUIRED)
+target_link_libraries(mytarget PRIVATE Qt6::Positioning)
+\endcode
+
+See also the \l {Build with CMake} overview.
+
+\include module-use.qdocinc building with qmake
+
+\badcode
+QT += positioning
+\endcode
+
+\section2 Getting Started
 
 To load the Qt Positioning module, add the following statement to your .qml files
 
@@ -93,11 +112,10 @@ for example applications using routes may use
 #include <QGeoCoordinate>
 \endcode
 
-The .pro file should have the \e positioning keyword added
+\section1 Module Evolution
 
-\badcode
-QT += positioning
-\endcode
+\l {Changes to Qt Positioning} lists important changes in the module API and
+functionality that were done for the Qt 6 series of Qt.
 
 \section1 Licenses
 
@@ -108,35 +126,25 @@ these free software licenses are
 the \l{GNU General Public License, version 2}.
 See \l{Qt Licensing} for further details.
 
-\section1 Related Information
-\section2 Overview
-
-Positioning includes all the functionality necessary to find and work with geographic
-coordinates. It can use a variety of external sources of information, including GPS. This
-provides us with a coordinate and altitude for the device with additional features
-such as speed and direction. This provides the fundamental location information used in the API.
-
-\section2 References
-\table
-\row
-    \li Positioning introduction:
-    \li \l{Positioning (QML)}{for QML}
-    \li \l{Positioning (C++)}{for C++}
-\row
-    \li API references:
-    \li \l {Qt Positioning QML Types}{for QML}
-    \li \l {Qt Positioning C++ Classes}{for C++}
-\row
-    \li Position plugins:
-    \li \l {Qt Positioning Plugins}
-\endtable
-
-\section2 Examples
+\section1 Articles and Guides
 
 \list
-    \li \l {GeoFlickr (QML)}
-    \li \l {Log File Position Source (C++)}
-    \li \l {SatelliteInfo (C++/QML)}
-    \li \l {Weather Info (C++/QML)}
+    \li \l {Positioning (C++)} {Positioning introduction for C++}
+    \li \l {Positioning (QML)} {Positioning introduction for QML}
+    \li \l {Qt Positioning Plugins}
 \endlist
+
+\section1 Reference
+
+\list
+    \li \l {Qt Positioning C++ Classes}
+    \li \l {Qt Positioning QML Types}
+\endlist
+
+\section1 Examples
+
+\list
+    \li \l {Qt Positioning Examples}
+\endlist
+
 */
