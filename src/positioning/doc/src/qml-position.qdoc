@@ -90,30 +90,23 @@ Also it is a good idea to be able to indicate alternative sources.
 Perhaps instead of directly picking up GPS satellites it might be desirable to do
 some testing using a datafile.
 
-The \l PositionSource type provides the developer with control,
-within the limits allowed by the platform, of the source of the
-geographical data. Apart from tradtional sources such as GPS and cell data the positional data can be
-sourced from a logfile which is in NMEA format.
+The \l PositionSource type provides the developer with control, within the
+limits allowed by the platform, of the source of the geographical data.
+\l PositionSource supports multiple plugins, including an
+\l {Qt Positioning NMEA plugin}{NMEA} plugin.
 
 \l {http://en.wikipedia.org/wiki/NMEA}{NMEA} is a common text-based
-protocol for specifying navigational data. For convenience, the \l
-{PositionSource::nmeaSource}{nmeaSource} property is provided to enable
-QML applications to read NMEA data from a log file or a TCP socket, the
-source will emit updates according to the time stamp of each NMEA sentence
-to produce a "replay" of the recorded data. To use a TCP socket set the
-"socket" uri scheme.
+protocol for specifying navigational data. The \l PositionSource
+\l {Qt Positioning NMEA plugin}{NMEA} plugin supports multiple data sources,
+including raw file or TCP socket. The source will emit updates according to the
+time stamp of each NMEA sentence to produce a "replay" of the recorded data.
 
-\code
-PositionSource {
-    nmeaSource: "socket://127.0.0.1:12345"
-}
-\endcode
-
+See the \l {Qt Positioning NMEA plugin}{plugin description} for usage examples.
 
 
 \section2 GeoFlickr Example
 
-The \l{GeoFlickr (QML)}{GeoFlickr Example} uses the Location to download thumbnail
-images from Flickr relevant to the current location.
+The \l{GeoFlickr (QML)}{GeoFlickr Example} uses the \l PositionSource to
+download thumbnail images from Flickr relevant to the current location.
 
 */
