@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -340,7 +340,9 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
 
         const QString city = jv.toString();
         qCDebug(requestsLog) << "got city: " << city;
-        if (city != d->city) {
+        // The reply is asynchronous, so it can come also after we switched
+        // to the next city. In this case we should not handle it.
+        if (city != d->city && d->useGps) {
             d->city = city;
             emit cityChanged();
             refreshWeather();
@@ -535,6 +537,10 @@ void AppModel::setUseGps(bool value)
         d->throttle.invalidate();
         emit cityChanged();
         emit weatherChanged();
+        // if we already have a valid GPS position, do not wait until it
+        // updates, but query the city immediately
+        if (d->coord.isValid())
+            queryCity();
     }
     emit useGpsChanged();
 }

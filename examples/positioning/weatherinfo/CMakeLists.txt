@@ -72,3 +72,9 @@ install(TARGETS weatherinfo
     BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
     LIBRARY DESTINATION "${INSTALL_EXAMPLEDIR}"
 )
+
+set_target_properties(weatherinfo PROPERTIES
+    QT_QML_MODULE_VERSION 1.0
+    QT_QML_MODULE_URI WeatherInfo
+)
+qt6_qml_type_registration(weatherinfo)

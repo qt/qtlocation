@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -55,7 +55,6 @@
 #include <QtQuick/QQuickItem>
 #include <QLoggingCategory>
 
-//! [0]
 #include "appmodel.h"
 
 int main(int argc, char *argv[])
@@ -63,12 +62,6 @@ int main(int argc, char *argv[])
     QLoggingCategory::setFilterRules("wapp.*.debug=false");
     QGuiApplication application(argc, argv);
 
-    qmlRegisterType<WeatherData>("WeatherInfo", 1, 0, "WeatherData");
-    qmlRegisterType<AppModel>("WeatherInfo", 1, 0, "AppModel");
-
-//! [0]
-    qRegisterMetaType<WeatherData>();
-//! [1]
     const QString mainQmlApp = QStringLiteral("qrc:///weatherinfo.qml");
     QQuickView view;
     view.setSource(QUrl(mainQmlApp));
@@ -79,4 +72,3 @@ int main(int argc, char *argv[])
     view.show();
     return application.exec();
 }
-//! [1]

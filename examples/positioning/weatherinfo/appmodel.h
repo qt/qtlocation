@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -55,6 +55,7 @@
 #include <QtCore/QString>
 #include <QtNetwork/QNetworkReply>
 #include <QtQml/QQmlListProperty>
+#include <QtQml/qqml.h>
 
 #include <QtPositioning/QGeoPositionInfoSource>
 
@@ -73,6 +74,7 @@ class WeatherData : public QObject {
     Q_PROPERTY(QString temperature
                READ temperature WRITE setTemperature
                NOTIFY dataChanged)
+    QML_ANONYMOUS
 
 public:
     explicit WeatherData(QObject *parent = 0);
@@ -131,6 +133,7 @@ class AppModel : public QObject
     Q_PROPERTY(QQmlListProperty<WeatherData> forecast
                READ forecast
                NOTIFY weatherChanged)
+    QML_ELEMENT
 
 public:
     explicit AppModel(QObject *parent = 0);
