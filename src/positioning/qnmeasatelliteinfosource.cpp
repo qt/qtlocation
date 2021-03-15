@@ -625,8 +625,9 @@ QNmeaSatelliteInfoSource::parseSatellitesInUseFromNmea(const char *data, int siz
     fill \a infos list.
 
     Returns \l SatelliteInfoParseStatus with parse result.
-    Modifies \a infos list in case \l SatelliteInfoParseStatus::PartiallyParsed
-    or \l SatelliteInfoParseStatus::FullyParsed is returned.
+    Modifies \a infos list in case \l {QNmeaSatelliteInfoSource::}
+    {PartiallyParsed} or \l {QNmeaSatelliteInfoSource::}{FullyParsed} is
+    returned.
     Also sets the \a system to correct satellite system type. This is required
     to determine the system type in case there are no satellites in view.
 */

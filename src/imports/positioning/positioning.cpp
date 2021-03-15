@@ -82,7 +82,7 @@ QT_BEGIN_NAMESPACE
 
     \section1 Example Usage
 
-    Use properties of type \l variant to store a \c {coordinate}.  To create a \c coordinate use
+    Use properties of type \l var to store a \c {coordinate}.  To create a \c coordinate use
     one of the methods described below.  In all cases, specifying the \l altitude attribute is
     optional.
 
@@ -90,7 +90,7 @@ QT_BEGIN_NAMESPACE
     function:
 
     \qml
-    import QtPositioning 5.2
+    import QtPositioning
 
     Location { coordinate: QtPositioning.coordinate(-27.5, 153.1) }
     \endqml
@@ -224,7 +224,7 @@ QT_BEGIN_NAMESPACE
 
     \section1 Example Usage
 
-    Use properties of type \l variant to store a \c {geoshape}.  To create a \c geoshape use one
+    Use properties of type \l var to store a \c {geoshape}.  To create a \c geoshape use one
     of the methods described below.
 
     To create a \c geoshape value, specify it as a "shape()" string:
@@ -233,17 +233,17 @@ QT_BEGIN_NAMESPACE
     import QtPositioning
 
     Item {
-        property variant region: "shape()"
+        property var region: "shape()"
     }
     \endqml
 
     or with the \l {QtPositioning::shape}{QtPositioning.shape()} function:
 
     \qml
-    import QtPositioning 5.2
+    import QtPositioning
 
     Item {
-        property variant region: QtPositioning.shape()
+        property var region: QtPositioning.shape()
     }
     \endqml
 
@@ -337,14 +337,14 @@ QT_BEGIN_NAMESPACE
 
     \section1 Example Usage
 
-    Use properties of type \l variant to store a \c {georectangle}.  To create a \c georectangle
+    Use properties of type \l var to store a \c {georectangle}.  To create a \c georectangle
     value, use the \l {QtPositioning::rectangle}{QtPositioning.rectangle()} function:
 
     \qml
-    import QtPositioning 5.2
+    import QtPositioning
 
     Item {
-        property variant region: QtPositioning.rectangle(QtPositioning.coordinate(-27.5, 153.1), QtPositioning.coordinate(-27.6, 153.2))
+        property var region: QtPositioning.rectangle(QtPositioning.coordinate(-27.5, 153.1), QtPositioning.coordinate(-27.6, 153.2))
     }
     \endqml
 
@@ -437,14 +437,14 @@ QT_BEGIN_NAMESPACE
 
     \section1 Example Usage
 
-    Use properties of type \l variant to store a \c {geocircle}.  To create a \c geocircle value,
+    Use properties of type \l var to store a \c {geocircle}.  To create a \c geocircle value,
     use the \l {QtPositioning::circle}{QtPositioning.circle()} function:
 
     \qml
-    import QtPositioning 5.2
+    import QtPositioning
 
     Item {
-        property variant region: QtPositioning.circle(QtPositioning.coordinate(-27.5, 153.1), 1000)
+        property var region: QtPositioning.circle(QtPositioning.coordinate(-27.5, 153.1), 1000)
     }
     \endqml
 

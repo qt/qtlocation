@@ -281,7 +281,7 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
     backend doesn't support \l QGeoAreaMonitorSource::PersistentAreaMonitorFeature.
 
     \note Since Qt6 this method always resets the last error to
-    \l {QGeoAreaMonitorSource::Error::}{NoError} before starting monitoring.
+    \l {QGeoAreaMonitorSource::}{NoError} before starting monitoring.
 
     \sa stopMonitoring()
 */
@@ -318,7 +318,7 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
     shot behavior.
 
     \note Since Qt6 this method always resets the last error to
-    \l {QGeoAreaMonitorSource::Error::}{NoError} before starting monitoring.
+    \l {QGeoAreaMonitorSource::}{NoError} before starting monitoring.
 
     \sa startMonitoring(), stopMonitoring()
  */

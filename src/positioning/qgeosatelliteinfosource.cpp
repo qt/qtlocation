@@ -340,7 +340,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     empty parameter lists.
 
     \note Since Qt6 this method always resets the last error to
-    \l {QGeoSatelliteInfoSource::Error::}{NoError} before starting
+    \l {QGeoSatelliteInfoSource::}{NoError} before starting
     the updates.
 
     \sa satellitesInViewUpdated(), satellitesInUseUpdated()
@@ -360,7 +360,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     information. If the current satellite information cannot be found
     within the given \a timeout (in milliseconds) or if \a timeout is less than
     the value returned by minimumUpdateInterval(), an errorOccurred() signal
-    with \l {QGeoSatelliteInfoSource::Error::UpdateTimeoutError}
+    with \l {QGeoSatelliteInfoSource::UpdateTimeoutError}
     {UpdateTimeoutError} is emitted.
 
     If the timeout is zero, the timeout defaults to a reasonable timeout
@@ -371,7 +371,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     regular updates are in progress.
 
     \note Since Qt6 this method always resets the last error to
-    \l {QGeoSatelliteInfoSource::Error::}{NoError} before requesting
+    \l {QGeoSatelliteInfoSource::}{NoError} before requesting
     the satellite information.
 */
 

@@ -66,7 +66,6 @@ static QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 
 /*!
     \qmltype QtPositioning
-    \instantiates LocationSingleton
     \inqmlmodule QtPositioning
     \since 5.2
 
@@ -74,10 +73,10 @@ static QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
            types in QML.
 
     \qml
-    import QtPositioning 5.2
+    import QtPositioning
 
     Item {
-        property variant coordinate: QtPositioning.coordinate(-27.5, 153.1)
+        property var coordinate: QtPositioning.coordinate(-27.5, 153.1)
     }
     \endqml
 */

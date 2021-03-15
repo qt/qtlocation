@@ -488,16 +488,16 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     If setUpdateInterval() has not been called, the source will emit updates
     as soon as they become available.
 
-    An errorOccurred() signal with the \l {QGeoPositionInfoSource::Error::}
+    An errorOccurred() signal with the \l {QGeoPositionInfoSource::}
     {UpdateTimeoutError} will be emitted if this QGeoPositionInfoSource subclass
     determines that it will not be able to provide regular updates. This could
     happen if a satellite fix is lost or if a hardware error is detected.
     Position updates will recommence if the data becomes available later on.
-    The \l {QGeoPositionInfoSource::Error::}{UpdateTimeoutError} error will not
+    The \l {QGeoPositionInfoSource::}{UpdateTimeoutError} error will not
     be emitted again until after the periodic updates resume.
 
     \note Since Qt6 this method always resets the last error to
-    \l {QGeoPositionInfoSource::Error::}{NoError} before starting the updates.
+    \l {QGeoPositionInfoSource::}{NoError} before starting the updates.
 
     On iOS, starting from version 8, Core Location framework requires additional
     entries in the application's Info.plist with keys NSLocationAlwaysUsageDescription or
@@ -523,7 +523,7 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     this information. If the current position cannot be found within the given \a timeout
     (in milliseconds) or if \a timeout is less than the value returned by
     minimumUpdateInterval(), an errorOccurred() signal with the
-    \l {QGeoPositionInfoSource::Error::}{UpdateTimeoutError} is emitted.
+    \l {QGeoPositionInfoSource::}{UpdateTimeoutError} is emitted.
 
     If the timeout is zero, the timeout defaults to a reasonable timeout
     period as appropriate for the source.
@@ -537,7 +537,7 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     given timeout.
 
     \note Since Qt6 this method always resets the last error to
-    \l {QGeoPositionInfoSource::Error::}{NoError} before requesting
+    \l {QGeoPositionInfoSource::}{NoError} before requesting
     the position.
 */
 
