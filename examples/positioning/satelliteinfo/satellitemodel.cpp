@@ -52,6 +52,7 @@
 #include <QTimer>
 #include <QDebug>
 
+//! [0]
 SatelliteModel::SatelliteModel(QObject *parent) :
     QAbstractListModel(parent), source(0), m_componentCompleted(false), m_running(false),
     m_runningRequested(false), demo(false), isSingle(false), singleRequestServed(false)
@@ -77,6 +78,7 @@ SatelliteModel::SatelliteModel(QObject *parent) :
         timer->start(3000);
     }
 }
+//! [0]
 
 int SatelliteModel::rowCount(const QModelIndex &parent) const
 {
@@ -221,6 +223,7 @@ void SatelliteModel::clearModel()
     endResetModel();
 }
 
+//! [2]
 void SatelliteModel::updateDemoData()
 {
     static bool flag = true;
@@ -254,6 +257,7 @@ void SatelliteModel::updateDemoData()
         setRunning(false);
     }
 }
+//! [2]
 
 void SatelliteModel::error(QGeoSatelliteInfoSource::Error error)
 {
@@ -267,6 +271,7 @@ inline bool operator<(const QGeoSatelliteInfo& a, const QGeoSatelliteInfo& b)
 }
 QT_END_NAMESPACE
 
+//! [1]
 void SatelliteModel::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &infos)
 {
     if (!running())
@@ -316,4 +321,4 @@ void SatelliteModel::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &info
 
     endResetModel();
 }
-
+//! [1]

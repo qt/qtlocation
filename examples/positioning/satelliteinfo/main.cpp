@@ -57,7 +57,6 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    qmlRegisterType<SatelliteModel>("Local", 1, 0, "SatelliteModel");
 
     QQuickView view;
     view.setSource(QStringLiteral("qrc:///satelliteinfo.qml"));

@@ -53,3 +53,9 @@ install(TARGETS satelliteinfo
     BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
     LIBRARY DESTINATION "${INSTALL_EXAMPLEDIR}"
 )
+
+set_target_properties(satelliteinfo PROPERTIES
+    QT_QML_MODULE_VERSION 1.0
+    QT_QML_MODULE_URI Local
+)
+qt6_qml_type_registration(satelliteinfo)

@@ -60,6 +60,7 @@
 QT_FORWARD_DECLARE_CLASS(QTimer)
 QT_FORWARD_DECLARE_CLASS(QGeoSatelliteInfoSource)
 
+//! [0]
 class SatelliteModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
@@ -68,6 +69,7 @@ class SatelliteModel : public QAbstractListModel, public QQmlParserStatus
     Q_PROPERTY(int entryCount READ entryCount NOTIFY entryCountChanged)
     Q_PROPERTY(bool singleRequestMode READ isSingleRequest WRITE setSingleRequest NOTIFY singleRequestChanged)
     Q_INTERFACES(QQmlParserStatus)
+    QML_ELEMENT
 public:
     explicit SatelliteModel(QObject *parent = 0);
 
@@ -87,6 +89,7 @@ public:
     //From QQmlParserStatus
     void classBegin() override {}
     void componentComplete() override;
+//! [0]
 
     bool running() const;
     void setRunning(bool isActive);
@@ -98,6 +101,7 @@ public:
 
     bool canProvideSatelliteInfo() const;
 
+//! [1]
 signals:
     void runningChanged();
     void entryCountChanged();
@@ -108,6 +112,7 @@ signals:
 public slots:
     void clearModel();
     void updateDemoData();
+//! [1]
 
 private slots:
     void error(QGeoSatelliteInfoSource::Error);
@@ -126,8 +131,9 @@ private:
     QTimer *timer;
     bool isSingle;
     bool singleRequestServed;
-
+//! [2]
 };
+//! [2]
 
 QML_DECLARE_TYPE(SatelliteModel)
 

@@ -3,6 +3,10 @@ TARGET = satelliteinfo
 
 QT += quick positioning
 
+CONFIG += qmltypes
+QML_IMPORT_NAME = Local
+QML_IMPORT_MAJOR_VERSION = 1
+
 SOURCES += main.cpp \
     satellitemodel.cpp
 
