@@ -40,36 +40,46 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype PluginParameter
-    //! \instantiates QDeclarativePluginParameter
     \inqmlmodule QtPositioning
     \ingroup qml-QtPositioning5-common
     \since QtPositioning 5.14
 
-    \brief The PluginParameter type describes a parameter for a plugin, either
-    geoservice \l Plugin, or position plugin.
+    \brief The PluginParameter type describes a parameter for a
+    \omit
+    plugin, either geoservice \l Plugin, or
+    \endomit
+    position plugin.
 
     The PluginParameter object is used to provide a parameter of some kind
-    to a plugin. Typically these parameters contain details like an application
+    to a plugin. Typically, these parameters contain details like an application
     token for access to a service, or a proxy server to use for network access,
     or the serial port to which a serial GPS receiver is connected.
 
-    To set such a parameter, declare a PluginParameter inside an element that accepts
-    plugin parameters as configuration objects, such as a \l Plugin object, or a
-    \l PositionSource object, and give it \l{name} and \l{value} properties. A list of valid
-    parameter names for each plugin is available from the
-    \l {Qt Location#Plugin References and Parameters}{plugin reference pages} for geoservice plugins,
-    and \l {Qt Positioning plugins#Default plugins} for position plugins.
+    To set such a parameter, declare a PluginParameter inside an element that
+    accepts plugin parameters as configuration objects, such as a
+    \omit
+    \l Plugin object, or a
+    \endomit
+    \l PositionSource object, and set values for its \l{name} and \l{value}
+    properties. A list of valid parameter names for each plugin is available
+    from the
+    \omit
+    \l {Qt Location#Plugin References and Parameters}{plugin reference pages}
+    for geoservice plugins, and
+    \endomit
+    \l {Qt Positioning plugins#Default plugins}{default plugins page} for
+    position plugins.
 
     \section2 Example Usage
 
-    The following example shows an instantiation of the \l {Qt Location HERE Plugin}{HERE} plugin
-    with a mapping API \e app_id and \e token pair specific to the application.
+    The following example shows the instantiation of the
+    \l {Qt Positioning NMEA plugin}{NMEA} plugin with the \e nmea.source
+    parameter that specifies the data source.
 
     \code
-    Plugin {
-        name: "here"
-        PluginParameter { name: "here.app_id"; value: "EXAMPLE_API_ID" }
-        PluginParameter { name: "here.token"; value: "EXAMPLE_TOKEN_123" }
+    PositionSource {
+        name: "nmea"
+        PluginParameter { name: "nmea.source"; value: "serial:/dev/ttyACM0" }
     }
     \endcode
 */
