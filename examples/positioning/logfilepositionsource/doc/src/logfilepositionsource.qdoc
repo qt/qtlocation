@@ -30,17 +30,20 @@
 \title Log File Position Source (C++)
 \ingroup qtpositioning-examples
 
-\brief The Logfile Position Source shows how to create and work with a custom NMEA position source,
-       for platforms without GPS.
+\brief Logfile Position Source shows how to create and work with a custom
+       position source. It can be useful for simulating GPS data, or when the
+       data is received in some custom format.
 
-The data is read from a file which has positional data in NMEA format. The resulting time and
-position information is then displayed to the screen as simple text in date/time and
-latitude/longitude format.
+\include examples-run.qdocinc
 
-This example class reads position data from a text file, \e log.txt. The file specifies position
-data using a simple text format: it contains one position update per line, where each line contains
-a date/time, a latitude and a longitude, separated by spaces. The date/time is in ISO 8601 format
-and the latitude and longitude are in degrees decimal format. Here is an excerpt from \e log.txt:
+\section1 Creating custom Position Source
+
+In this example, the data is read from a text file, \e simplelog.txt. The file
+specifies position data using a simple text format: it contains one position
+update per line, where each line contains a date/time, a latitude and a
+longitude, separated by spaces. The date/time is in ISO 8601 format and the
+latitude and longitude are in degrees decimal format.
+Here is an excerpt from \e simplelog.txt:
 
 \code
 2009-08-24T22:25:01 -27.576082 153.092415
@@ -48,8 +51,12 @@ and the latitude and longitude are in degrees decimal format. Here is an excerpt
 2009-08-24T22:25:03 -27.576364 153.092648
 \endcode
 
-The class reads this data and distributes it via the
-\l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal.
+We create a custom \c LogFilePositionSource class, which derives from
+\l QGeoPositionInfoSource. It reads position data from the file and distributes
+it via the \l {QGeoPositionInfoSource::}{positionUpdated()} signal.
+
+The resulting time and position information is then displayed on the screen as
+simple text in date/time and latitude/longitude format.
 
 Here is the definition of the \c LogFilePositionSource class:
 
