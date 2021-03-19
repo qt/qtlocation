@@ -4,6 +4,7 @@ qt_internal_add_qml_module(declarative_positioning
     VERSION "${CMAKE_PROJECT_VERSION}"
     CLASSNAME QtPositioningDeclarativeModule
     SKIP_TYPE_REGISTRATION
+    PLUGIN_OPTIONAL
     SOURCES
         positioning.cpp
     LIBRARIES
