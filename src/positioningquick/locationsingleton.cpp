@@ -56,6 +56,8 @@ static QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 
         if (ok)
             *ok = true;
+    } else if (ok) {
+        *ok = false;
     }
 
     return c;
@@ -229,7 +231,7 @@ QGeoPath LocationSingleton::path(const QJSValue &value, qreal width) const
     if (value.isArray()) {
         quint32 length = value.property(QStringLiteral("length")).toUInt();
         for (quint32 i = 0; i < length; ++i) {
-            bool ok;
+            bool ok = false;
             QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
 
             if (!ok || !c.isValid()) {
