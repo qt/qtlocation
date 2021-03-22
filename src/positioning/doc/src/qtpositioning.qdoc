@@ -132,6 +132,7 @@ See \l{Qt Licensing} for further details.
     \li \l {Positioning (C++)} {Positioning introduction for C++}
     \li \l {Positioning (QML)} {Positioning introduction for QML}
     \li \l {Qt Positioning Plugins}
+    \li \l {Interfaces between C++ and QML Code in Qt Positioning}
 \endlist
 
 \section1 Reference
