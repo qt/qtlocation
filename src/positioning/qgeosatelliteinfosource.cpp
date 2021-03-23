@@ -146,7 +146,7 @@ QString QGeoSatelliteInfoSource::sourceName() const
 
     The default value for this property is 0.
 
-    Note: Subclass implementations must call the base implementation of
+    \note Subclass implementations must call the base implementation of
     setUpdateInterval() so that updateInterval() returns the correct value.
 */
 void QGeoSatelliteInfoSource::setUpdateInterval(int msec)

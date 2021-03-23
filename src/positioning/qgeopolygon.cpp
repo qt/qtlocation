@@ -61,7 +61,8 @@ QT_BEGIN_NAMESPACE
 
     \brief The QGeoPolygon class defines a geographic polygon.
 
-    The polygon is defined by an ordered list of QGeoCoordinates representing its perimeter.
+    The polygon is defined by an ordered list of \l QGeoCoordinate objects
+    representing its perimeter.
 
     Each two adjacent elements in this list are intended to be connected
     together by the shortest line segment of constant bearing passing
@@ -413,7 +414,7 @@ void QGeoPolygon::addHole(const QList<QGeoCoordinate> &holePath)
 }
 
 /*!
-    Returns a QVariant containing a QVariant containing a QList<QGeoCoordinate>
+    Returns a QVariant containing a QList<QGeoCoordinate>
     which represents the hole at \a index.
 
     \since 5.12
@@ -439,7 +440,7 @@ const QList<QGeoCoordinate> QGeoPolygon::holePath(int index) const
 }
 
 /*!
-    Removes element at position \a index from the holes QList.
+    Removes element at position \a index from the list of holes.
 
     \since 5.12
 */

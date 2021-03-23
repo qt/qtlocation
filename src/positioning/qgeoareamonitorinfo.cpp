@@ -194,7 +194,7 @@ bool QGeoAreaMonitorInfo::operator!=(const QGeoAreaMonitorInfo &other) const
 }
 
 /*!
-    Returns the name of the QGeoAreaMonitorInfo object. The name should be used to
+    Returns the name of the QGeoAreaMonitorInfo object. The name should be used
     for user-visibility purposes.
  */
 QString QGeoAreaMonitorInfo::name() const
@@ -301,10 +301,11 @@ bool QGeoAreaMonitorInfo::isPersistent() const
 }
 
 /*!
-    Sets the QGeoAreaMonitorInfo objects persistence to \a isPersistent.
+    Sets the QGeoAreaMonitorInfo object's persistence to \a isPersistent.
 
-    Note that setting this flag does not imply that QGeoAreaMonitorInfoSource supports persistent
-    monitoring. \l QGeoAreaMonitorSource::supportedAreaMonitorFeatures() can be used to
+    Note that setting this flag does not imply that \l QGeoAreaMonitorSource
+    supports persistent monitoring.
+    \l QGeoAreaMonitorSource::supportedAreaMonitorFeatures() can be used to
     check for this feature's availability.
 
     \sa isPersistent()
@@ -317,7 +318,8 @@ void QGeoAreaMonitorInfo::setPersistent(bool isPersistent)
 
 
 /*!
-    Returns the set of platform specific paraemters used by this QGeoAreaMonitorInfo.
+    Returns the set of platform specific parameters used by this
+    QGeoAreaMonitorInfo.
 
     \sa setNotificationParameters()
  */

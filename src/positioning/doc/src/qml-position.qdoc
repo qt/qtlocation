@@ -71,7 +71,7 @@ The \l {coordinate} is a basic unit of geographical information. The
 
 The three dimensional position of an object such as a mobile device can be specified by giving
 the latitude, longitude and altitude.  That is the values held in the
-l\ {coordinate} type.  Additionally for computation of future
+\l {coordinate} type.  Additionally for computation of future
 positions we would like to know if the object is moving, what \l [QML] {Position::}{speed} it is
 doing and what is the \l {Position::timestamp}{timestamp} of the last position data.  Position
 therefore includes values for the \l {Position::coordinate}{coordinate},
@@ -85,10 +85,10 @@ the \l {Position::latitudeValid}{latitudeValid}, \l {Position::longitudeValid}{l
 
 \section2 PositionSource Type
 
-We have a Position type, a \l {coordinate} type but where does the data come from?
-Also it is a good idea to be able to indicate alternative sources.
-Perhaps instead of directly picking up GPS satellites it might be desirable to do
-some testing using a datafile.
+We have a \l Position type, a \l {coordinate} type but where does the data come
+from? Also it is a good idea to be able to indicate alternative sources.
+Perhaps instead of directly picking up GPS satellites it might be desirable to
+do some testing using a datafile.
 
 The \l PositionSource type provides the developer with control, within the
 limits allowed by the platform, of the source of the geographical data.

@@ -88,7 +88,7 @@ bool QGeoLocationPrivate::isEmpty() const
     \brief The QGeoLocation class represents basic information about a location.
 
     A QGeoLocation consists of a coordinate and corresponding address, along with an optional
-    bounding box which is the recommended region to be displayed when viewing the location.
+    bounding shape, which is the recommended region to be displayed when viewing the location.
 */
 
 /*!
@@ -226,7 +226,9 @@ void QGeoLocation::setExtendedAttributes(const QVariantMap &data)
 }
 
 /*!
-    Returns true if all fields of the location are 0; otherwise returns false.
+    Returns \c true if the location coordinate is \l {QGeoCoordinate::isValid}
+    {invalid}, and all the other location fields are empty. Otherwise returns
+    \c false.
 */
 bool QGeoLocation::isEmpty() const
 {

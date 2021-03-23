@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The QGeoPath class defines a geographic path.
 
-    The path is defined by an ordered list of QGeoCoordinates.
+    The path is defined by an ordered list of \l QGeoCoordinate objects.
 
     Each two adjacent elements in the path are intended to be connected
     together by the shortest line segment of constant bearing passing

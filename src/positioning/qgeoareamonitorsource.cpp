@@ -124,7 +124,7 @@ public:
 */
 
 /*!
-    Creates a monitor with the given \a parent.
+    Creates a monitor source with the given \a parent.
 */
 QGeoAreaMonitorSource::QGeoAreaMonitorSource(QObject *parent)
         : QObject(*new QGeoAreaMonitorSourcePrivate, parent)
@@ -134,14 +134,14 @@ QGeoAreaMonitorSource::QGeoAreaMonitorSource(QObject *parent)
 }
 
 /*!
-    Destroys the monitor.
+    Destroys the monitor source.
 */
 QGeoAreaMonitorSource::~QGeoAreaMonitorSource()
 {
 }
 
 /*!
-    Creates and returns a monitor with the given \a parent that
+    Creates and returns a monitor source with the given \a parent that
     monitors areas using resources on the underlying system.
 
     Returns \c nullptr if the system has no support for position monitoring.
@@ -162,12 +162,11 @@ QGeoAreaMonitorSource *QGeoAreaMonitorSource::createDefaultSource(QObject *paren
             return s;
         }
     }
-
     return nullptr;
 }
 
 /*!
-    Creates and returns a monitor with the given \a parent,
+    Creates and returns a monitor source with the given \a parent,
     by loading the plugin named \a sourceName.
 
     Returns \c nullptr if the plugin cannot be found.
@@ -265,11 +264,11 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
     \fn virtual bool QGeoAreaMonitorSource::startMonitoring(const QGeoAreaMonitorInfo &monitor)
 
     Returns \c true if the monitoring of \a monitor could be successfully started; otherwise
-    returns false. A reason for not being able to start monitoring could be the unavailability
+    returns \c false. A reason for not being able to start monitoring could be the unavailability
     of an appropriate default position info source while no alternative QGeoPositionInfoSource
     has been set via \l setPositionInfoSource().
 
-    If \a monitor is already active the existing monitor object will be replaced by the new \a monitor reference.
+    If \a monitor is already active, the existing monitor object will be replaced by the new \a monitor reference.
     The identification of QGeoAreaMonitorInfo instances happens via \l QGeoAreaMonitorInfo::identifier().
     Therefore this function can also be used to update active monitors.
 
@@ -291,8 +290,9 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
 
     Enables single shot area monitoring. Area monitoring for \a monitor will be performed
     until this QGeoAreaMonitorSource instance emits \a signal for the first time. Once
-    the signal was emitted, \a monitor is automatically removed from the list of \l activeMonitors().
-    If \a monitor is invalid or has an expiry date that has been passed this function returns false.
+    the signal was emitted, \a monitor is automatically removed from the list of
+    \l activeMonitors(). If \a monitor is invalid or has an expiry date that has
+    been passed, this function returns \c false.
 
     \code
         QGeoAreaMonitor singleShotMonitor;
@@ -336,9 +336,10 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
 
     Returns the list of all active monitors known to the QGeoAreaMonitorSource object.
 
-    An active monitor was started via startMonitoring() the source object will emit
-    the required signals such as areaEntered() or areaExited(). Multiple \l QGeoAreaMonitorSource
-    instances within the same application share the same active monitor objects.
+    An active monitor was started via startMonitoring(). For every active
+    monitor the source object will emit the required signals, such as
+    areaEntered() or areaExited(). Multiple \l QGeoAreaMonitorSource instances
+    within the same application share the same active monitor objects.
 
     Unless an active QGeoAreaMonitorInfo \l {QGeoAreaMonitorInfo::isPersistent()}{isPersistent()} an active QGeoAreaMonitorInfo
     will be stopped once the current application terminates.
@@ -350,9 +351,10 @@ void QGeoAreaMonitorSource::setPositionInfoSource(QGeoPositionInfoSource *newSou
     Returns the list of all active monitors known to the QGeoAreaMonitorSource object whose
     center lies within \a lookupArea. If \a lookupArea is empty the returned list will be empty.
 
-    An active monitor was started via startMonitoring() and the source object will emit
-    the required signals such as areaEntered() or areaExited(). Multiple QGeoAreaMonitorSource
-    instances within the same application share the same monitor objects.
+    An active monitor was started via startMonitoring(). For every active
+    monitor the source object will emit the required signals, such as
+    areaEntered() or areaExited(). Multiple \l QGeoAreaMonitorSource instances
+    within the same application share the same active monitor objects.
 
     Unless an active QGeoAreaMonitorInfo \l {QGeoAreaMonitorInfo::isPersistent()}{isPersistent()} an active QGeoAreaMonitorInfo
     will be stopped once the current application terminates.

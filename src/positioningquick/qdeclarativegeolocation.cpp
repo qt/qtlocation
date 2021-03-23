@@ -194,7 +194,7 @@ QGeoCoordinate QDeclarativeGeoLocation::coordinate() const
     \l georectangle for the shape.
 
     If you need to convert the returned shape to a specific type, use the
-    \c {ShapeType type} property of \l geoshape together with convenience
+    \c type property of \l geoshape together with convenience
     methods from \l [QML]{QtPositioning} like
     \l {QtPositioning::shapeToRectangle}{QtPositioning.shapeToRectangle()}.
 */

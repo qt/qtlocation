@@ -599,7 +599,7 @@ QGeoPositionInfoSource *QDeclarativePositionSource::positionSource() const
 
 /*!
     \qmlproperty list<PluginParameter> PositionSource::parameters
-    \default
+    \qmldefault
 
     This property holds the list of plugin parameters.
 
