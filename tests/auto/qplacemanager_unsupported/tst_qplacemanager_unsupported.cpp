@@ -120,7 +120,7 @@ void tst_QPlaceManagerUnsupported::testLocales()
 {
     QVERIFY(m_manager->locales().isEmpty());
 
-    QLocale locale(QLocale::Norwegian, QLocale::Norway);
+    QLocale locale(QLocale::NorwegianBokmal, QLocale::Norway);
     m_manager->setLocale(locale);
 
     QVERIFY(m_manager->locales().isEmpty());

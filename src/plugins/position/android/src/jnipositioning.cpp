@@ -223,7 +223,10 @@ namespace AndroidPositioning {
         if (attributeExists) {
             mid = getCachedMethodID(jniEnv, thisClass, "getAltitude", "()D");
             jdouble value = jniEnv->CallDoubleMethod(location, mid);
-            coordinate.setAltitude(value);
+            if (value != 0.0)
+            {
+                coordinate.setAltitude(value);
+            }
         }
 
         info.setCoordinate(coordinate);
@@ -239,7 +242,10 @@ namespace AndroidPositioning {
         if (attributeExists) {
             mid = getCachedMethodID(jniEnv, thisClass, "getAccuracy", "()F");
             jfloat accuracy = jniEnv->CallFloatMethod(location, mid);
-            info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, qreal(accuracy));
+            if (accuracy != 0.0)
+            {
+                info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, qreal(accuracy));
+            }
         }
 
         //vertical accuracy
@@ -250,7 +256,10 @@ namespace AndroidPositioning {
                 mid = getCachedMethodID(jniEnv, thisClass, "getVerticalAccuracyMeters", "()F");
                 if (mid) {
                     jfloat accuracy = jniEnv->CallFloatMethod(location, mid);
-                    info.setAttribute(QGeoPositionInfo::VerticalAccuracy, qreal(accuracy));
+                    if (accuracy != 0.0)
+                    {
+                        info.setAttribute(QGeoPositionInfo::VerticalAccuracy, qreal(accuracy));
+                    }
                 }
             }
         }
@@ -264,7 +273,10 @@ namespace AndroidPositioning {
         if (attributeExists) {
             mid = getCachedMethodID(jniEnv, thisClass, "getSpeed", "()F");
             jfloat speed = jniEnv->CallFloatMethod(location, mid);
-            info.setAttribute(QGeoPositionInfo::GroundSpeed, qreal(speed));
+            if (speed != 0)
+            {
+                info.setAttribute(QGeoPositionInfo::GroundSpeed, qreal(speed));
+            }
         }
 
         //bearing
@@ -273,7 +285,10 @@ namespace AndroidPositioning {
         if (attributeExists) {
             mid = getCachedMethodID(jniEnv, thisClass, "getBearing", "()F");
             jfloat bearing = jniEnv->CallFloatMethod(location, mid);
-            info.setAttribute(QGeoPositionInfo::Direction, qreal(bearing));
+            if (bearing != 0.0)
+            {
+                info.setAttribute(QGeoPositionInfo::Direction, qreal(bearing));
+            }
         }
 
         jniEnv->DeleteLocalRef(thisClass);

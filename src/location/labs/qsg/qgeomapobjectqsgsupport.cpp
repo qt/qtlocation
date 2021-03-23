@@ -157,9 +157,14 @@ void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *wind
 {
     if (!root)
         return;
+
+    if (m_mapObjectsRootNode && m_mapObjectsRootNode->parent())
+        root->appendChildNode(m_mapObjectsRootNode.get());
+
     if (!m_mapObjectsRootNode) {
-        m_mapObjectsRootNode = new QDeclarativePolygonMapItemPrivateOpenGL::RootNode();
-        root->appendChildNode(m_mapObjectsRootNode);
+        m_mapObjectsRootNode = std::make_unique<QDeclarativePolygonMapItemPrivateOpenGL::RootNode>();
+        root->appendChildNode(m_mapObjectsRootNode.get());
+        m_mapObjectsRootNode->setFlag(QSGNode::OwnedByParent, false);
     }
 
     m_mapObjectsRootNode->removeAllChildNodes();
@@ -184,7 +189,7 @@ void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *wind
         MapObject &mo = m_mapObjects[i];
         QQSGMapObject *sgo = mo.sgObject;
         QSGNode *oldNode = mo.qsgNode;
-        mo.qsgNode = sgo->updateMapObjectNode(oldNode, &mo.visibleNode, m_mapObjectsRootNode, window);
+        mo.qsgNode = sgo->updateMapObjectNode(oldNode, &mo.visibleNode, m_mapObjectsRootNode.get(), window);
         if (Q_UNLIKELY(!mo.qsgNode)) {
             qWarning() << "updateMapObjectNode for "<<mo.object->type() << " returned NULL";
         } else if (mo.visibleNode && (mo.visibleNode->visible() != mo.object->visible())) {
@@ -200,7 +205,7 @@ void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *wind
         QQSGMapObject *sgo = mo.sgObject;
         QSGNode *oldNode = mo.qsgNode;
         sgo->updateGeometry(); // or subtree will be blocked
-        mo.qsgNode = sgo->updateMapObjectNode(oldNode, &mo.visibleNode, m_mapObjectsRootNode, window);
+        mo.qsgNode = sgo->updateMapObjectNode(oldNode, &mo.visibleNode, m_mapObjectsRootNode.get(), window);
         if (mo.qsgNode) {
             if (mo.visibleNode && (mo.visibleNode->visible() != mo.object->visible())) {
                 mo.visibleNode->setVisible(mo.object->visible());

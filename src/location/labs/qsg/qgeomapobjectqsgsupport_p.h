@@ -59,6 +59,7 @@
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 #include <QtLocation/private/qdeclarativepolygonmapitem_p_p.h>
 #include <QtCore/qpointer.h>
+#include <memory>
 
 QT_BEGIN_NAMESPACE
 struct Q_LOCATION_PRIVATE_EXPORT MapObject {
@@ -85,7 +86,7 @@ public:
     QList<MapObject> m_pendingMapObjects;
     QList<MapObject> m_removedMapObjects;
     QGeoMap *m_map = nullptr;
-    QDeclarativePolygonMapItemPrivateOpenGL::RootNode *m_mapObjectsRootNode = nullptr;
+    std::unique_ptr<QDeclarativePolygonMapItemPrivateOpenGL::RootNode> m_mapObjectsRootNode;
 };
 
 QT_END_NAMESPACE
