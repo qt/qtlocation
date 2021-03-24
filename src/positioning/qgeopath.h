@@ -81,15 +81,15 @@ public:
 
     Q_INVOKABLE void translate(double degreesLatitude, double degreesLongitude);
     Q_INVOKABLE QGeoPath translated(double degreesLatitude, double degreesLongitude) const;
-    Q_INVOKABLE double length(int indexFrom = 0, int indexTo = -1) const;
-    Q_INVOKABLE int size() const;
+    Q_INVOKABLE double length(qsizetype indexFrom = 0, qsizetype indexTo = -1) const;
+    Q_INVOKABLE qsizetype size() const;
     Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
-    Q_INVOKABLE void insertCoordinate(int index, const QGeoCoordinate &coordinate);
-    Q_INVOKABLE void replaceCoordinate(int index, const QGeoCoordinate &coordinate);
-    Q_INVOKABLE QGeoCoordinate coordinateAt(int index) const;
+    Q_INVOKABLE void insertCoordinate(qsizetype index, const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void replaceCoordinate(qsizetype index, const QGeoCoordinate &coordinate);
+    Q_INVOKABLE QGeoCoordinate coordinateAt(qsizetype index) const;
     Q_INVOKABLE bool containsCoordinate(const QGeoCoordinate &coordinate) const;
     Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
-    Q_INVOKABLE void removeCoordinate(int index);
+    Q_INVOKABLE void removeCoordinate(qsizetype index);
 
     Q_INVOKABLE QString toString() const;
 

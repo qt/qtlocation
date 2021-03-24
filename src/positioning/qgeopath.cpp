@@ -297,7 +297,7 @@ QGeoPath QGeoPath::translated(double degreesLatitude, double degreesLongitude) c
     and the first (closed loop).
     To retrieve the length for the path, use 0 for \a indexFrom and \l QGeoPath::size() - 1 for \a indexTo.
 */
-double QGeoPath::length(int indexFrom, int indexTo) const
+double QGeoPath::length(qsizetype indexFrom, qsizetype indexTo) const
 {
     Q_D(const QGeoPath);
     return d->length(indexFrom, indexTo);
@@ -308,7 +308,7 @@ double QGeoPath::length(int indexFrom, int indexTo) const
 
     \since 5.10
 */
-int QGeoPath::size() const
+qsizetype QGeoPath::size() const
 {
     Q_D(const QGeoPath);
     return d->size();
@@ -326,7 +326,7 @@ void QGeoPath::addCoordinate(const QGeoCoordinate &coordinate)
 /*!
     Inserts \a coordinate at the specified \a index.
 */
-void QGeoPath::insertCoordinate(int index, const QGeoCoordinate &coordinate)
+void QGeoPath::insertCoordinate(qsizetype index, const QGeoCoordinate &coordinate)
 {
     Q_D(QGeoPath);
     d->insertCoordinate(index, coordinate);
@@ -335,7 +335,7 @@ void QGeoPath::insertCoordinate(int index, const QGeoCoordinate &coordinate)
 /*!
     Replaces the path element at the specified \a index with \a coordinate.
 */
-void QGeoPath::replaceCoordinate(int index, const QGeoCoordinate &coordinate)
+void QGeoPath::replaceCoordinate(qsizetype index, const QGeoCoordinate &coordinate)
 {
     Q_D(QGeoPath);
     d->replaceCoordinate(index, coordinate);
@@ -344,7 +344,7 @@ void QGeoPath::replaceCoordinate(int index, const QGeoCoordinate &coordinate)
 /*!
     Returns the coordinate at \a index .
 */
-QGeoCoordinate QGeoPath::coordinateAt(int index) const
+QGeoCoordinate QGeoPath::coordinateAt(qsizetype index) const
 {
     Q_D(const QGeoPath);
     return d->coordinateAt(index);
@@ -371,7 +371,7 @@ void QGeoPath::removeCoordinate(const QGeoCoordinate &coordinate)
 /*!
     Removes element at position \a index from the path.
 */
-void QGeoPath::removeCoordinate(int index)
+void QGeoPath::removeCoordinate(qsizetype index)
 {
     Q_D(QGeoPath);
     d->removeCoordinate(index);
@@ -489,7 +489,7 @@ bool QGeoPathPrivate::lineContains(const QGeoCoordinate &coordinate) const
         if (a.x() < m_leftBoundWrapped)
             a.setX(a.x() + m_leftBoundWrapped);  // unwrap X
     }
-    for (int i = 1; i < m_path.size(); i++) {
+    for (qsizetype i = 1; i < m_path.size(); i++) {
         b = QWebMercator::coordToMercator(m_path[i]);
         if (b.x() < m_leftBoundWrapped)
             b.setX(b.x() + m_leftBoundWrapped);  // unwrap X
@@ -541,7 +541,7 @@ void QGeoPathPrivate::setWidth(const qreal &width)
     m_width = width;
 }
 
-double QGeoPathPrivate::length(int indexFrom, int indexTo) const
+double QGeoPathPrivate::length(qsizetype indexFrom, qsizetype indexTo) const
 {
     if (path().isEmpty())
         return 0.0;
@@ -552,19 +552,19 @@ double QGeoPathPrivate::length(int indexFrom, int indexTo) const
     double len = 0.0;
     // TODO: consider calculating the length of the actual rhumb line segments
     // instead of the shortest path from A to B.
-    for (int i = indexFrom; i < indexTo; i++)
+    for (qsizetype i = indexFrom; i < indexTo; i++)
         len += m_path[i].distanceTo(m_path[i+1]);
     if (wrap)
         len += m_path.last().distanceTo(m_path.first());
     return len;
 }
 
-int QGeoPathPrivate::size() const
+qsizetype QGeoPathPrivate::size() const
 {
     return m_path.size();
 }
 
-QGeoCoordinate QGeoPathPrivate::coordinateAt(int index) const
+QGeoCoordinate QGeoPathPrivate::coordinateAt(qsizetype index) const
 {
     if (index < 0 || index >= m_path.size())
         return QGeoCoordinate();
@@ -627,7 +627,7 @@ void QGeoPathPrivate::addCoordinate(const QGeoCoordinate &coordinate)
     markDirty();
 }
 
-void QGeoPathPrivate::insertCoordinate(int index, const QGeoCoordinate &coordinate)
+void QGeoPathPrivate::insertCoordinate(qsizetype index, const QGeoCoordinate &coordinate)
 {
     if (index < 0 || index > m_path.size() || !coordinate.isValid())
         return;
@@ -635,7 +635,7 @@ void QGeoPathPrivate::insertCoordinate(int index, const QGeoCoordinate &coordina
     markDirty();
 }
 
-void QGeoPathPrivate::replaceCoordinate(int index, const QGeoCoordinate &coordinate)
+void QGeoPathPrivate::replaceCoordinate(qsizetype index, const QGeoCoordinate &coordinate)
 {
     if (index < 0 || index >= m_path.size() || !coordinate.isValid())
         return;
@@ -645,11 +645,11 @@ void QGeoPathPrivate::replaceCoordinate(int index, const QGeoCoordinate &coordin
 
 void QGeoPathPrivate::removeCoordinate(const QGeoCoordinate &coordinate)
 {
-    int index = m_path.lastIndexOf(coordinate);
+    qsizetype index = m_path.lastIndexOf(coordinate);
     removeCoordinate(index);
 }
 
-void QGeoPathPrivate::removeCoordinate(int index)
+void QGeoPathPrivate::removeCoordinate(qsizetype index)
 {
     if (index < 0 || index >= m_path.size())
         return;

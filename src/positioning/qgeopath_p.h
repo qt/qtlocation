@@ -75,12 +75,12 @@ inline static void computeBBox(const QList<QGeoCoordinate> &m_path, QList<double
     }
 
     m_minLati = m_maxLati = m_path.at(0).latitude();
-    int minId = 0;
-    int maxId = 0;
+    qsizetype minId = 0;
+    qsizetype maxId = 0;
     m_deltaXs.resize(m_path.size());
     m_deltaXs[0] = m_minX = m_maxX = 0.0;
 
-    for (int i = 1; i < m_path.size(); i++) {
+    for (qsizetype i = 1; i < m_path.size(); i++) {
         const QGeoCoordinate &geoFrom = m_path.at(i-1);
         const QGeoCoordinate &geoTo   = m_path.at(i);
         double longiFrom    = geoFrom.longitude();
@@ -189,9 +189,9 @@ public:
     virtual const QList<QGeoCoordinate> &path() const;
     virtual bool lineContains(const QGeoCoordinate &coordinate) const;
     virtual qreal width() const;
-    virtual double length(int indexFrom, int indexTo) const;
-    virtual int size() const;
-    virtual QGeoCoordinate coordinateAt(int index) const;
+    virtual double length(qsizetype indexFrom, qsizetype indexTo) const;
+    virtual qsizetype size() const;
+    virtual QGeoCoordinate coordinateAt(qsizetype index) const;
     virtual bool containsCoordinate(const QGeoCoordinate &coordinate) const;
 
     virtual void setWidth(const qreal &width);
@@ -199,10 +199,10 @@ public:
     virtual void setPath(const QList<QGeoCoordinate> &path);
     virtual void clearPath();
     virtual void addCoordinate(const QGeoCoordinate &coordinate);
-    virtual void insertCoordinate(int index, const QGeoCoordinate &coordinate);
-    virtual void replaceCoordinate(int index, const QGeoCoordinate &coordinate);
+    virtual void insertCoordinate(qsizetype index, const QGeoCoordinate &coordinate);
+    virtual void replaceCoordinate(qsizetype index, const QGeoCoordinate &coordinate);
     virtual void removeCoordinate(const QGeoCoordinate &coordinate);
-    virtual void removeCoordinate(int index);
+    virtual void removeCoordinate(qsizetype index);
     virtual void computeBoundingBox();
     virtual void markDirty();
 
