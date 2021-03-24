@@ -284,7 +284,7 @@ QGeoPolygon QGeoPolygon::translated(double degreesLatitude, double degreesLongit
     Returns the length of the polygon's perimeter, in meters, from the element \a indexFrom to the element \a indexTo.
     The length is intended to be the sum of the shortest distances for each pair of adjacent points.
 */
-double QGeoPolygon::length(int indexFrom, int indexTo) const
+double QGeoPolygon::length(qsizetype indexFrom, qsizetype indexTo) const
 {
     Q_D(const QGeoPolygon);
     return d->length(indexFrom, indexTo);
@@ -295,7 +295,7 @@ double QGeoPolygon::length(int indexFrom, int indexTo) const
 
     \since 5.10
 */
-int QGeoPolygon::size() const
+qsizetype QGeoPolygon::size() const
 {
     Q_D(const QGeoPolygon);
     return d->size();
@@ -313,7 +313,7 @@ void QGeoPolygon::addCoordinate(const QGeoCoordinate &coordinate)
 /*!
     Inserts \a coordinate at the specified \a index.
 */
-void QGeoPolygon::insertCoordinate(int index, const QGeoCoordinate &coordinate)
+void QGeoPolygon::insertCoordinate(qsizetype index, const QGeoCoordinate &coordinate)
 {
     Q_D(QGeoPolygon);
     d->insertCoordinate(index, coordinate);
@@ -322,7 +322,7 @@ void QGeoPolygon::insertCoordinate(int index, const QGeoCoordinate &coordinate)
 /*!
     Replaces the path element at the specified \a index with \a coordinate.
 */
-void QGeoPolygon::replaceCoordinate(int index, const QGeoCoordinate &coordinate)
+void QGeoPolygon::replaceCoordinate(qsizetype index, const QGeoCoordinate &coordinate)
 {
     Q_D(QGeoPolygon);
     d->replaceCoordinate(index, coordinate);
@@ -331,7 +331,7 @@ void QGeoPolygon::replaceCoordinate(int index, const QGeoCoordinate &coordinate)
 /*!
     Returns the coordinate at \a index .
 */
-QGeoCoordinate QGeoPolygon::coordinateAt(int index) const
+QGeoCoordinate QGeoPolygon::coordinateAt(qsizetype index) const
 {
     Q_D(const QGeoPolygon);
     return d->coordinateAt(index);
@@ -358,7 +358,7 @@ void QGeoPolygon::removeCoordinate(const QGeoCoordinate &coordinate)
 /*!
     Removes element at position \a index from the polygon.
 */
-void QGeoPolygon::removeCoordinate(int index)
+void QGeoPolygon::removeCoordinate(qsizetype index)
 {
     Q_D(QGeoPolygon);
     d->removeCoordinate(index);
@@ -419,7 +419,7 @@ void QGeoPolygon::addHole(const QList<QGeoCoordinate> &holePath)
 
     \since 5.12
 */
-const QVariantList QGeoPolygon::hole(int index) const
+const QVariantList QGeoPolygon::hole(qsizetype index) const
 {
     Q_D(const QGeoPolygon);
     QVariantList holeCoordinates;
@@ -433,7 +433,7 @@ const QVariantList QGeoPolygon::hole(int index) const
 
     \since 5.12
 */
-const QList<QGeoCoordinate> QGeoPolygon::holePath(int index) const
+const QList<QGeoCoordinate> QGeoPolygon::holePath(qsizetype index) const
 {
     Q_D(const QGeoPolygon);
     return d->holePath(index);
@@ -444,7 +444,7 @@ const QList<QGeoCoordinate> QGeoPolygon::holePath(int index) const
 
     \since 5.12
 */
-void QGeoPolygon::removeHole(int index)
+void QGeoPolygon::removeHole(qsizetype index)
 {
     Q_D(QGeoPolygon);
     return d->removeHole(index);
@@ -455,7 +455,7 @@ void QGeoPolygon::removeHole(int index)
 
     \since 5.12
 */
-int QGeoPolygon::holesCount() const
+qsizetype QGeoPolygon::holesCount() const
 {
     Q_D(const QGeoPolygon);
     return d->holesCount();
@@ -557,12 +557,12 @@ void QGeoPolygonPrivate::addHole(const QList<QGeoCoordinate> &holePath)
     // ToDo: mark clipper dirty when hole caching gets added
 }
 
-const QList<QGeoCoordinate> QGeoPolygonPrivate::holePath(int index) const
+const QList<QGeoCoordinate> QGeoPolygonPrivate::holePath(qsizetype index) const
 {
     return m_holesList.at(index);
 }
 
-void QGeoPolygonPrivate::removeHole(int index)
+void QGeoPolygonPrivate::removeHole(qsizetype index)
 {
     if (index < 0 || index >= m_holesList.size())
         return;
@@ -571,7 +571,7 @@ void QGeoPolygonPrivate::removeHole(int index)
     // ToDo: mark clipper dirty when hole caching gets added
 }
 
-int QGeoPolygonPrivate::holesCount() const
+qsizetype QGeoPolygonPrivate::holesCount() const
 {
     return m_holesList.size();
 }
@@ -694,7 +694,7 @@ QGeoPolygonEager::QGeoPolygonEager(const QGeoPolygon &other) : QGeoPolygon()
     // without being able to dynamic_cast the d_ptr, only way to be sure is to reconstruct a new QGeoPolygonPrivateEager
     d_ptr = new QGeoPolygonPrivateEager;
     setPerimeter(other.perimeter());
-    for (int i = 0; i < other.holesCount(); i++)
+    for (qsizetype i = 0; i < other.holesCount(); i++)
         addHole(other.holePath(i));
 }
 

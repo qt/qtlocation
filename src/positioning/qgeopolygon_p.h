@@ -75,12 +75,12 @@ public:
     virtual void markDirty() override;
 
 // QGeoPolygonPrivate API
-    int holesCount() const;
+    qsizetype holesCount() const;
     bool polygonContains(const QGeoCoordinate &coordinate) const;
-    const QList<QGeoCoordinate> holePath(int index) const;
+    const QList<QGeoCoordinate> holePath(qsizetype index) const;
 
     virtual void addHole(const QList<QGeoCoordinate> &holePath);
-    virtual void removeHole(int index);
+    virtual void removeHole(qsizetype index);
     virtual void updateClipperPath();
 
 // data members
