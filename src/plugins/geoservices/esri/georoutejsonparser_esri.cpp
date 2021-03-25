@@ -46,7 +46,8 @@
 
 QT_BEGIN_NAMESPACE
 
-// JSON reference: http://resources.arcgis.com/en/help/arcgis-rest-api/#/Route_service_with_synchronous_execution/02r300000036000000/
+// JSON reference:
+// https://resources.arcgis.com/en/help/arcgis-rest-api/#/Route_service_with_synchronous_execution/02r300000036000000/
 
 static const QString kErrorMessage(QStringLiteral("Error %1: %2."));
 static const QString kErrorJson(QStringLiteral("Error: invalide JSON document."));

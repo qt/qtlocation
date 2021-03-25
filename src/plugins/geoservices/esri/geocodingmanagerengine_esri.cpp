@@ -59,8 +59,10 @@ QT_BEGIN_NAMESPACE
 static const QString kPrefixEsri(QStringLiteral("esri."));
 static const QString kParamUserAgent(kPrefixEsri + QStringLiteral("useragent"));
 
-static const QString kUrlGeocode(QStringLiteral("http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates"));
-static const QString kUrlReverseGeocode(QStringLiteral("http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode"));
+static const QString kUrlGeocode(QStringLiteral("https://geocode.arcgis.com/arcgis/rest/services/"
+                                                "World/GeocodeServer/findAddressCandidates"));
+static const QString kUrlReverseGeocode(QStringLiteral(
+        "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode"));
 
 static QString addressToQuery(const QGeoAddress &address)
 {

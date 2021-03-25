@@ -63,8 +63,10 @@ static const QString kCountriesKey(QStringLiteral("detailedCountries"));
 static const QString kLocalizedNamesKey(QStringLiteral("localizedNames"));
 static const QString kMaxLocationsKey(QStringLiteral("maxLocations"));
 
-static const QUrl kUrlGeocodeServer("http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer?f=pjson");
-static const QUrl kUrlFindAddressCandidates("http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates");
+static const QUrl kUrlGeocodeServer(
+        "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer?f=pjson");
+static const QUrl kUrlFindAddressCandidates("https://geocode.arcgis.com/arcgis/rest/services/World/"
+                                            "GeocodeServer/findAddressCandidates");
 
 PlaceManagerEngineEsri::PlaceManagerEngineEsri(const QVariantMap &parameters, QGeoServiceProvider::Error *error,
                                                QString *errorString) :
