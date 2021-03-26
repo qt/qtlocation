@@ -67,7 +67,8 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QQuickGeoCoordinateAnimation : public QQ
     Q_DECLARE_PRIVATE(QQuickGeoCoordinateAnimation)
     Q_PROPERTY(QGeoCoordinate from READ from WRITE setFrom)
     Q_PROPERTY(QGeoCoordinate to READ to WRITE setTo)
-    Q_PROPERTY(Direction direction READ direction WRITE setDirection NOTIFY directionChanged)
+    Q_PROPERTY(Direction direction READ direction WRITE setDirection NOTIFY directionChanged
+                       BINDABLE bindableDirection)
 
 public:
     enum Direction {
@@ -88,6 +89,7 @@ public:
 
     Direction direction() const;
     void setDirection(Direction direction);
+    QBindable<Direction> bindableDirection();
 
 Q_SIGNALS:
     void directionChanged();

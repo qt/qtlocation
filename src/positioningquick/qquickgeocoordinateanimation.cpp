@@ -262,16 +262,17 @@ void QQuickGeoCoordinateAnimation::setTo(const QGeoCoordinate &t)
 QQuickGeoCoordinateAnimation::Direction QQuickGeoCoordinateAnimation::direction() const
 {
     Q_D(const QQuickGeoCoordinateAnimation);
-    return d->m_direction;
+    return d->m_direction.value();
 }
 
 void QQuickGeoCoordinateAnimation::setDirection(QQuickGeoCoordinateAnimation::Direction direction)
 {
     Q_D( QQuickGeoCoordinateAnimation);
-    if (d->m_direction == direction)
+    d->m_direction.removeBindingUnlessInWrapper();
+    if (d->m_direction.value() == direction)
         return;
 
-    d->m_direction = direction;
+    d->m_direction.setValueBypassingBindings(direction);
     switch (direction) {
     case West:
         d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(reinterpret_cast<void *>(&q_coordinateWestInterpolator));
@@ -284,13 +285,13 @@ void QQuickGeoCoordinateAnimation::setDirection(QQuickGeoCoordinateAnimation::Di
         d->interpolator = reinterpret_cast<QVariantAnimation::Interpolator>(reinterpret_cast<void *>(&q_coordinateShortestInterpolator));
         break;
     }
-    emit directionChanged();
-
+    d->m_direction.notify();
 }
 
-QQuickGeoCoordinateAnimationPrivate::QQuickGeoCoordinateAnimationPrivate():
-    m_direction(QQuickGeoCoordinateAnimation::Shortest)
+QBindable<QQuickGeoCoordinateAnimation::Direction> QQuickGeoCoordinateAnimation::bindableDirection()
 {
+    Q_D(QQuickGeoCoordinateAnimation);
+    return QBindable<Direction>(&d->m_direction);
 }
 
 QT_END_NAMESPACE

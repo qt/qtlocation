@@ -53,6 +53,7 @@
 
 #include "qquickgeocoordinateanimation_p.h"
 #include <QtQuick/private/qquickanimation_p_p.h>
+#include <QtCore/private/qproperty_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,8 +61,20 @@ class QQuickGeoCoordinateAnimationPrivate : public QQuickPropertyAnimationPrivat
 {
     Q_DECLARE_PUBLIC(QQuickGeoCoordinateAnimation)
 public:
-    QQuickGeoCoordinateAnimationPrivate();
-    QQuickGeoCoordinateAnimation::Direction m_direction;
+    void setDirection(QQuickGeoCoordinateAnimation::Direction direction)
+    {
+        q_func()->setDirection(direction);
+    }
+    void directionChanged()
+    {
+        Q_EMIT q_func()->directionChanged();
+    }
+
+    Q_OBJECT_COMPAT_PROPERTY_WITH_ARGS(QQuickGeoCoordinateAnimationPrivate,
+                                       QQuickGeoCoordinateAnimation::Direction, m_direction,
+                                       &QQuickGeoCoordinateAnimationPrivate::setDirection,
+                                       &QQuickGeoCoordinateAnimationPrivate::directionChanged,
+                                       QQuickGeoCoordinateAnimation::Shortest)
 };
 
 QT_END_NAMESPACE
