@@ -29,7 +29,6 @@
 //TESTED_COMPONENT=src/location
 
 #include "../utils/qnmeaproxyfactory.h"
-#include "../qgeopositioninfosource/testqgeopositioninfosource_p.h"
 #include "../utils/qlocationtestutils_p.h"
 
 #include <QtPositioning/qnmeapositioninfosource.h>

@@ -52,6 +52,7 @@
 //
 
 #include <QtCore/private/qobject_p.h>
+#include <QtCore/private/qproperty_p.h>
 #include <QtPositioning/private/qpositioningglobal_p.h>
 #include "qgeopositioninfosource.h"
 #include "qgeopositioninfosourcefactory.h"
@@ -64,6 +65,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoPositionInfoSourcePrivate : public QObjectPrivate
 {
+    Q_DECLARE_PUBLIC(QGeoPositionInfoSource)
 public:
     virtual ~QGeoPositionInfoSourcePrivate();
 
@@ -72,8 +74,16 @@ public:
                                                     const QVariantMap &parameters,
                                                     QObject *parent);
 
-    int interval;
-    QGeoPositionInfoSource::PositioningMethods methods;
+    void setPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
+    {
+        q_func()->setPreferredPositioningMethods(methods);
+    }
+
+    Q_OBJECT_BINDABLE_PROPERTY_WITH_ARGS(QGeoPositionInfoSourcePrivate, int, interval, 0)
+    Q_OBJECT_COMPAT_PROPERTY_WITH_ARGS(QGeoPositionInfoSourcePrivate,
+                                       QGeoPositionInfoSource::PositioningMethods, methods,
+                                       &QGeoPositionInfoSourcePrivate::setPositioningMethods,
+                                       QGeoPositionInfoSource::NoPositioningMethods)
     QString sourceName;
 
     static QMultiHash<QString, QJsonObject> plugins(bool reload = false);

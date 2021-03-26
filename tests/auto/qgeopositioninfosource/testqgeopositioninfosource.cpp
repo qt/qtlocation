@@ -26,9 +26,6 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=src/location
-
-#include <QTest>
 #include <QMetaType>
 #include <QSignalSpy>
 #include <QDebug>
@@ -781,6 +778,30 @@ void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
     m_source->requestUpdate(7000);
 
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 7000);
+}
+
+void TestQGeoPositionInfoSource::updateIntervalBinding()
+{
+    auto parent = std::make_unique<QObject>();
+    // source will be deleted when parent goes out of scope
+    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(parent.get());
+    QVERIFY(source != nullptr);
+
+    QTestPrivate::testReadWritePropertyBasics<QGeoPositionInfoSource, int>(*source, 1000, 2000,
+                                                                           "updateInterval");
+}
+
+void TestQGeoPositionInfoSource::preferredMethodsBinding()
+{
+    auto parent = std::make_unique<QObject>();
+    // source will be deleted when parent goes out of scope
+    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(parent.get());
+    QVERIFY(source != nullptr);
+
+    QTestPrivate::testReadWritePropertyBasics<QGeoPositionInfoSource,
+                                              QGeoPositionInfoSource::PositioningMethods>(
+            *source, QGeoPositionInfoSource::SatellitePositioningMethods,
+            QGeoPositionInfoSource::AllPositioningMethods, "preferredPositioningMethods");
 }
 
 #include "testqgeopositioninfosource.moc"

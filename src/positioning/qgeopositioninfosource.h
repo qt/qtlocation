@@ -50,9 +50,12 @@ class QGeoPositionInfoSourcePrivate;
 class Q_POSITIONING_EXPORT QGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
+    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval BINDABLE
+                       bindableUpdateInterval)
     Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
     Q_PROPERTY(QString sourceName READ sourceName)
+    Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE
+                       setPreferredPositioningMethods BINDABLE bindablePreferredPositioningMethods)
 
 public:
     enum Error {
@@ -77,9 +80,11 @@ public:
 
     virtual void setUpdateInterval(int msec);
     int updateInterval() const;
+    QBindable<int> bindableUpdateInterval();
 
     virtual void setPreferredPositioningMethods(PositioningMethods methods);
     PositioningMethods preferredPositioningMethods() const;
+    QBindable<PositioningMethods> bindablePreferredPositioningMethods();
 
     virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const = 0;
 

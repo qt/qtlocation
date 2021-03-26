@@ -181,9 +181,6 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QObject *parent)
         : QObject(*new QGeoPositionInfoSourcePrivate, parent)
 {
     qRegisterMetaType<QGeoPositionInfo>();
-    Q_D(QGeoPositionInfoSource);
-    d->interval = 0;
-    d->methods = {};
 }
 
 /*!
@@ -259,8 +256,9 @@ QVariant QGeoPositionInfoSource::backendProperty(const QString &name) const
 
     The default value for this property is 0.
 
-    Note: Subclass implementations must call the base implementation of
-    setUpdateInterval() so that updateInterval() returns the correct value.
+    \note Subclass implementations must call the base implementation of
+    \c {setUpdateInterval()} so that \c {updateInterval()} returns the correct
+    value.
 */
 void QGeoPositionInfoSource::setUpdateInterval(int msec)
 {
@@ -271,45 +269,71 @@ void QGeoPositionInfoSource::setUpdateInterval(int msec)
 int QGeoPositionInfoSource::updateInterval() const
 {
     Q_D(const QGeoPositionInfoSource);
-    return d->interval;
+    return d->interval.value();
+}
+
+QBindable<int> QGeoPositionInfoSource::bindableUpdateInterval()
+{
+    Q_D(QGeoPositionInfoSource);
+    return QBindable<int>(&d->interval);
 }
 
 /*!
-    Sets the preferred positioning methods for this source to \a methods.
+    \property QGeoPositionInfoSource::preferredPositioningMethods
 
-    If \a methods includes a method that is not supported by the source, the
+    \brief Sets the preferred positioning methods for this source.
+
+    If new methods include a method that is not supported by the source, the
     unsupported method will be ignored.
 
-    If \a methods does not include a single method available/supported by the source, the
-    preferred methods will be set to the set of methods which the source has available.
-    If the source has no method availabe (e.g. because its Location service is turned off
-    or it does not offer a Location service), the passed \a methods are accepted as they are.
+    If new methods do not include a single method available/supported by the
+    source, the preferred methods will be set to the set of methods which the
+    source has available. If the source has no method availabe (e.g. because its
+    Location service is turned off or it does not offer a Location service),
+    the passed methods are accepted as they are.
 
-    \b {Note:} When reimplementing this method, subclasses must call the
-    base method implementation to ensure preferredPositioningMethods() returns the correct value.
+    The default value for this property is \l {QGeoPositionInfoSource::}
+    {NoPositioningMethods}.
+
+    \note Subclass implementations must call the base implementation of
+    \c {setPreferredPositioningMethods()} to ensure
+    \c {preferredPositioningMethods()} returns the correct value.
 
     \sa supportedPositioningMethods()
 */
 void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods methods)
 {
     Q_D(QGeoPositionInfoSource);
+    d->methods.removeBindingUnlessInWrapper();
+    // The supported positioning methods can change during the calls to this
+    // method, so we can't have a simple check like:
+    // if (currentMethods == methods) return;
+    // Instead we need to save the current value and compare it afterwards
+    const auto prevMethods = d->methods.value();
+
     if (supportedPositioningMethods() != QGeoPositionInfoSource::NoPositioningMethods) {
-        d->methods = methods & supportedPositioningMethods();
-        if (d->methods == 0) {
-            d->methods = supportedPositioningMethods();
+        d->methods.setValueBypassingBindings(methods & supportedPositioningMethods());
+        if (d->methods.value() == 0) {
+            d->methods.setValueBypassingBindings(supportedPositioningMethods());
         }
     } else { // avoid that turned of Location service blocks any changes to d->methods
-        d->methods = methods;
+        d->methods.setValueBypassingBindings(methods);
     }
+    if (prevMethods != d->methods.value())
+        d->methods.notify();
 }
 
-/*!
-    Returns the positioning methods set by setPreferredPositioningMethods().
-*/
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPositioningMethods() const
 {
     Q_D(const QGeoPositionInfoSource);
-    return d->methods;
+    return d->methods.value();
+}
+
+QBindable<QGeoPositionInfoSource::PositioningMethods>
+QGeoPositionInfoSource::bindablePreferredPositioningMethods()
+{
+    Q_D(QGeoPositionInfoSource);
+    return QBindable<PositioningMethods>(&d->methods);
 }
 
 QGeoPositionInfoSource *QGeoPositionInfoSourcePrivate::createSourceReal(const QJsonObject &meta, const QVariantMap &parameters, QObject *parent)
@@ -416,8 +440,8 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
 {
     qRegisterMetaType<QGeoPositionInfo>();
     Q_D(QGeoPositionInfoSource);
-    d->interval = 0;
-    d->methods = NoPositioningMethods;
+    d->interval.setValueBypassingBindings(0);
+    d->methods.setValueBypassingBindings(NoPositioningMethods);
 }
 
 /*!

@@ -15,10 +15,11 @@ qt_internal_add_test(tst_qnmeapositioninfosource_realtime_generic
         QT_DISABLE_DEPRECATED_BEFORE=0
     INCLUDE_DIRECTORIES
         ..
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Core
         Qt::Network
         Qt::Positioning
+        Qt::TestPrivate
 )
 
 #### Keys ignored in scope 1:.:.:qnmeapositioninfosource_realtime_generic.pro:<TRUE>:

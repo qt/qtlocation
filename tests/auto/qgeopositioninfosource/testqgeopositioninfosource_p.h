@@ -29,14 +29,13 @@
 #ifndef TESTQGEOPOSITIONINFOSOURCE_P_H
 #define TESTQGEOPOSITIONINFOSOURCE_P_H
 
-#include <QtPositioning/qgeopositioninfosource.h>
-
 #ifdef TST_GEOCLUEMOCK_ENABLED
 #include "geocluemock.h"
 #include <QThread>
 #endif
 
 #include <QTest>
+#include <QtTest/private/qpropertytesthelper_p.h>
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
@@ -117,6 +116,9 @@ private slots:
 
     void removeSlotForRequestTimeout();
     void removeSlotForPositionUpdated();
+
+    void updateIntervalBinding();
+    void preferredMethodsBinding();
 
 private:
     QGeoPositionInfoSource *m_source;
