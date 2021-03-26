@@ -97,8 +97,6 @@ QGeoSatelliteInfoSourcePrivate::~QGeoSatelliteInfoSourcePrivate()
 QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
         : QObject(*new QGeoSatelliteInfoSourcePrivate, parent)
 {
-    Q_D(QGeoSatelliteInfoSource);
-    d->interval = 0;
 }
 
 QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QGeoSatelliteInfoSourcePrivate &dd, QObject *parent)
@@ -158,7 +156,13 @@ void QGeoSatelliteInfoSource::setUpdateInterval(int msec)
 int QGeoSatelliteInfoSource::updateInterval() const
 {
     Q_D(const QGeoSatelliteInfoSource);
-    return d->interval;
+    return d->interval.value();
+}
+
+QBindable<int> QGeoSatelliteInfoSource::bindableUpdateInterval()
+{
+    Q_D(QGeoSatelliteInfoSource);
+    return QBindable<int>(&d->interval);
 }
 
 /*!

@@ -29,8 +29,9 @@
 #ifndef TESTQGEOSATELLITEINFOSOURCE_H
 #define TESTQGEOSATELLITEINFOSOURCE_H
 
-#include <QTest>
 #include <QObject>
+#include <QtTest/QtTest>
+#include <QtTest/private/qpropertytesthelper_p.h>
 
 QT_BEGIN_NAMESPACE
 class QGeoSatelliteInfoSource;
@@ -104,6 +105,8 @@ private slots:
     void removeSlotForRequestTimeout();
     void removeSlotForSatellitesInUseUpdated();
     void removeSlotForSatellitesInViewUpdated();
+
+    void bindings();
 
 private:
     QGeoSatelliteInfoSource *m_source;

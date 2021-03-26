@@ -9,9 +9,10 @@ qt_internal_add_test(tst_nmeasatelliteinfosource_generic_rt
         QT_DISABLE_DEPRECATED_BEFORE=0
     INCLUDE_DIRECTORIES
         ..
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Core
         Qt::Network
         Qt::Positioning
+        Qt::TestPrivate
 )
 # special case end

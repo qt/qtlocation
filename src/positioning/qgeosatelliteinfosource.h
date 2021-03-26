@@ -50,7 +50,8 @@ class QGeoSatelliteInfoSourcePrivate;
 class Q_POSITIONING_EXPORT QGeoSatelliteInfoSource : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
+    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval BINDABLE
+                       bindableUpdateInterval)
     Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
 
 public:
@@ -76,6 +77,8 @@ public:
 
     virtual void setUpdateInterval(int msec);
     int updateInterval() const;
+    QBindable<int> bindableUpdateInterval();
+
     virtual int minimumUpdateInterval() const = 0;
     virtual Error error() const = 0;
 

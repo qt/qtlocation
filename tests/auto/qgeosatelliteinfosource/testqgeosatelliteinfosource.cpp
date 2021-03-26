@@ -1,4 +1,4 @@
-/*********************f*******************************************************
+/*****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -26,9 +26,6 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=src/location
-
-#include <QTest>
 #include <QMetaType>
 #include <QSignalSpy>
 #include <QDebug>
@@ -756,6 +753,14 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
         QSKIP("Error starting satellite updates.");
 
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 7000);
+}
+
+void TestQGeoSatelliteInfoSource::bindings()
+{
+    CHECK_SOURCE_VALID;
+
+    QTestPrivate::testReadWritePropertyBasics<QGeoSatelliteInfoSource, int>(*m_source, 1000, 2000,
+                                                                            "updateInterval");
 }
 
 #include "testqgeosatelliteinfosource.moc"

@@ -9,10 +9,10 @@ qt_internal_add_test(tst_qgeosatelliteinfosource
         ../utils/qlocationtestutils.cpp ../utils/qlocationtestutils_p.h
         testqgeosatelliteinfosource.cpp testqgeosatelliteinfosource_p.h
         tst_qgeosatelliteinfosource.cpp
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Core
         Qt::Positioning
-        Qt::Test
+        Qt::TestPrivate
 )
 
 #### Keys ignored in scope 1:.:.:qgeosatelliteinfosource.pro:<TRUE>:

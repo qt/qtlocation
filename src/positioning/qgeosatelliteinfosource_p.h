@@ -64,7 +64,7 @@ public:
     static QGeoSatelliteInfoSource *createSourceReal(const QJsonObject &meta,
                                                      const QVariantMap &parameters,
                                                      QObject *parent);
-    int interval;
+    Q_OBJECT_BINDABLE_PROPERTY_WITH_ARGS(QGeoSatelliteInfoSourcePrivate, int, interval, 0)
     QString providerName;
 };
 
