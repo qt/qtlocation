@@ -61,7 +61,8 @@ QT_BEGIN_NAMESPACE
 class Q_POSITIONING_PRIVATE_EXPORT QGeoCoordinateObject : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY
+                       coordinateChanged BINDABLE bindableCoordinate)
 
 public:
     QGeoCoordinateObject(QObject *parent = 0);
@@ -79,12 +80,14 @@ public:
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &c);
+    QBindable<QGeoCoordinate> bindableCoordinate();
 
 Q_SIGNALS:
     void coordinateChanged();
 
 protected:
-    QGeoCoordinate m_coordinate;
+    Q_OBJECT_BINDABLE_PROPERTY(QGeoCoordinateObject, QGeoCoordinate, m_coordinate,
+                               &QGeoCoordinateObject::coordinateChanged)
 };
 
 QT_END_NAMESPACE

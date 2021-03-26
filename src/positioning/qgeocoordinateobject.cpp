@@ -65,12 +65,12 @@ QGeoCoordinateObject::~QGeoCoordinateObject()
 
 bool QGeoCoordinateObject::operator==(const QGeoCoordinateObject &other) const
 {
-    return m_coordinate == other.m_coordinate;
+    return m_coordinate.value() == other.m_coordinate.value();
 }
 
 bool QGeoCoordinateObject::operator==(const QGeoCoordinate &other) const
 {
-    return m_coordinate == other;
+    return m_coordinate.value() == other;
 }
 
 QGeoCoordinate QGeoCoordinateObject::coordinate() const
@@ -80,11 +80,12 @@ QGeoCoordinate QGeoCoordinateObject::coordinate() const
 
 void QGeoCoordinateObject::setCoordinate(const QGeoCoordinate &c)
 {
-    if (c == m_coordinate)
-        return;
+    m_coordinate = c; // The signal is emitted automatically if needed
+}
 
-    m_coordinate = c;
-    emit coordinateChanged();
+QBindable<QGeoCoordinate> QGeoCoordinateObject::bindableCoordinate()
+{
+    return QBindable<QGeoCoordinate>(&m_coordinate);
 }
 
 QT_END_NAMESPACE
