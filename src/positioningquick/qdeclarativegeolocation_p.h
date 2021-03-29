@@ -53,6 +53,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QVariantMap>
+#include <QtCore/private/qproperty_p.h>
 #include <QtPositioning/QGeoLocation>
 #include <QtPositioning/QGeoShape>
 #include <QtPositioningQuick/private/qdeclarativegeoaddress_p.h>
@@ -67,10 +68,14 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativeGeoLocation : public QObject
     QML_ADDED_IN_VERSION(5, 0)
 
     Q_PROPERTY(QGeoLocation location READ location WRITE setLocation)
-    Q_PROPERTY(QDeclarativeGeoAddress *address READ address WRITE setAddress NOTIFY addressChanged)
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QGeoShape boundingShape READ boundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged REVISION(6, 2))
-    Q_PROPERTY(QVariantMap extendedAttributes MEMBER m_extendedAttributes NOTIFY extendedAttributesChanged REVISION(5, 13))
+    Q_PROPERTY(QDeclarativeGeoAddress *address READ address WRITE setAddress BINDABLE
+                       bindableAddress)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate BINDABLE
+                       bindableCoordinate)
+    Q_PROPERTY(QGeoShape boundingShape READ boundingShape WRITE setBoundingShape BINDABLE
+                       bindableBoundingShape REVISION(6, 2))
+    Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes WRITE setExtendedAttributes
+                       BINDABLE bindableExtendedAttributes REVISION(5, 13))
 
 public:
     explicit QDeclarativeGeoLocation(QObject *parent = 0);
@@ -82,23 +87,26 @@ public:
 
     QDeclarativeGeoAddress *address() const;
     void setAddress(QDeclarativeGeoAddress *address);
+    QBindable<QDeclarativeGeoAddress *> bindableAddress();
+
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate coordinate);
+    QBindable<QGeoCoordinate> bindableCoordinate();
 
     QGeoShape boundingShape() const;
     void setBoundingShape(const QGeoShape &boundingShape);
+    QBindable<QGeoShape> bindableBoundingShape();
 
-Q_SIGNALS:
-    void addressChanged();
-    void coordinateChanged();
-    void boundingShapeChanged();
-    void extendedAttributesChanged();
+    QVariantMap extendedAttributes() const;
+    void setExtendedAttributes(const QVariantMap &attributes);
+    QBindable<QVariantMap> bindableExtendedAttributes();
 
 private:
-    QDeclarativeGeoAddress *m_address = nullptr;
-    QGeoShape m_boundingShape;
-    QGeoCoordinate m_coordinate;
-    QVariantMap m_extendedAttributes;
+    Q_OBJECT_COMPAT_PROPERTY_WITH_ARGS(QDeclarativeGeoLocation, QDeclarativeGeoAddress *, m_address,
+                                       &QDeclarativeGeoLocation::setAddress, nullptr)
+    Q_OBJECT_BINDABLE_PROPERTY(QDeclarativeGeoLocation, QGeoShape, m_boundingShape)
+    Q_OBJECT_BINDABLE_PROPERTY(QDeclarativeGeoLocation, QGeoCoordinate, m_coordinate)
+    Q_OBJECT_BINDABLE_PROPERTY(QDeclarativeGeoLocation, QVariantMap, m_extendedAttributes)
 };
 
 QT_END_NAMESPACE

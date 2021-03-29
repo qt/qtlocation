@@ -106,19 +106,22 @@ QDeclarativeGeoLocation::~QDeclarativeGeoLocation()
 
     For details on how to use this property to interface between C++ and QML see
     "\l {Location - QGeoLocation} {Interfaces between C++ and QML Code}".
+
+    \note This property updates the whole geo location information, so using it
+    will result in breaking of all the bindings for all other properties.
 */
 void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 {
     if (m_address && m_address->parent() == this) {
         m_address->setAddress(src.address());
     } else if (!m_address || m_address->parent() != this) {
-        m_address = new QDeclarativeGeoAddress(src.address(), this);
-        emit addressChanged();
+        m_address.setValue(new QDeclarativeGeoAddress(src.address(), this));
+        m_address.notify();
     }
 
     setCoordinate(src.coordinate());
     setBoundingShape(src.boundingShape());
-    setProperty("extendedAttributes", src.extendedAttributes());
+    setExtendedAttributes(src.extendedAttributes());
 }
 
 QGeoLocation QDeclarativeGeoLocation::location() const
@@ -138,14 +141,25 @@ QGeoLocation QDeclarativeGeoLocation::location() const
 */
 void QDeclarativeGeoLocation::setAddress(QDeclarativeGeoAddress *address)
 {
+    m_address.removeBindingUnlessInWrapper();
     if (m_address == address)
         return;
 
+    // implicitly deleting m_address.value() will force the QML bindings to
+    // be reevaluated by the QML engine. So we defer the deletion of the old
+    // address until a new value is assigned to the m_address.
+    QDeclarativeGeoAddress *oldAddress = nullptr;
     if (m_address && m_address->parent() == this)
-        delete m_address;
+        oldAddress = m_address.value();
 
-    m_address = address;
-    emit addressChanged();
+    m_address.setValueBypassingBindings(address);
+    m_address.notify();
+    delete oldAddress;
+}
+
+QBindable<QDeclarativeGeoAddress *> QDeclarativeGeoLocation::bindableAddress()
+{
+    return QBindable<QDeclarativeGeoAddress *>(&m_address);
 }
 
 QDeclarativeGeoAddress *QDeclarativeGeoLocation::address() const
@@ -163,11 +177,12 @@ QDeclarativeGeoAddress *QDeclarativeGeoLocation::address() const
 */
 void QDeclarativeGeoLocation::setCoordinate(const QGeoCoordinate coordinate)
 {
-    if (m_coordinate == coordinate)
-        return;
-
     m_coordinate = coordinate;
-    emit coordinateChanged();
+}
+
+QBindable<QGeoCoordinate> QDeclarativeGeoLocation::bindableCoordinate()
+{
+    return QBindable<QGeoCoordinate>(&m_coordinate);
 }
 
 QGeoCoordinate QDeclarativeGeoLocation::coordinate() const
@@ -200,11 +215,27 @@ QGeoCoordinate QDeclarativeGeoLocation::coordinate() const
 */
 void QDeclarativeGeoLocation::setBoundingShape(const QGeoShape &boundingShape)
 {
-    if (m_boundingShape == boundingShape)
-        return;
-
     m_boundingShape = boundingShape;
-    emit boundingShapeChanged();
+}
+
+QBindable<QGeoShape> QDeclarativeGeoLocation::bindableBoundingShape()
+{
+    return QBindable<QGeoShape>(&m_boundingShape);
+}
+
+QVariantMap QDeclarativeGeoLocation::extendedAttributes() const
+{
+    return m_extendedAttributes;
+}
+
+void QDeclarativeGeoLocation::setExtendedAttributes(const QVariantMap &attributes)
+{
+    m_extendedAttributes = attributes;
+}
+
+QBindable<QVariantMap> QDeclarativeGeoLocation::bindableExtendedAttributes()
+{
+    return QBindable<QVariantMap>(&m_extendedAttributes);
 }
 
 QGeoShape QDeclarativeGeoLocation::boundingShape() const

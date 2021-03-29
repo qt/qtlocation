@@ -1,0 +1,9 @@
+qt_internal_add_test(tst_qdeclarativegeolocation
+    SOURCES
+        tst_qdeclarativegeolocation.cpp
+    LIBRARIES
+        Qt::Core
+        Qt::Positioning
+        Qt::PositioningQuickPrivate
+        Qt::TestPrivate
+)

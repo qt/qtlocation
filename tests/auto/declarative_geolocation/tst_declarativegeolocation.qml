@@ -45,10 +45,30 @@ Item {
         id: location
     }
 
-    SignalSpy { id: addressSpy; target: location; signalName: "addressChanged" }
-    SignalSpy { id: coordinateSpy; target: location; signalName: "coordinateChanged" }
-    SignalSpy { id: boundingShapeSpy; target: location; signalName: "boundingShapeChanged" }
-    SignalSpy { id: attributesSpy; target: location; signalName: "extendedAttributesChanged" }
+    // Use property bindings insetead of signal spies
+    property var addressObserver: location.address
+    property int addressChangedCount: 0
+    onAddressObserverChanged: {
+        ++addressChangedCount
+    }
+
+    property var coordObserver: location.coordinate
+    property int coordChangedCount: 0
+    onCoordObserverChanged: {
+        ++coordChangedCount
+    }
+
+    property var shapeObserver: location.boundingShape
+    property int shapeChangedCount: 0
+    onShapeObserverChanged: {
+        ++shapeChangedCount
+    }
+
+    property var attrsObserver: location.extendedAttributes
+    property int attrsChangedCount: 0
+    onAttrsObserverChanged: {
+        ++attrsChangedCount
+    }
 
     Address {
         id: emptyAddress
@@ -84,40 +104,37 @@ Item {
         }
 
         function test_address_changed() {
-            verify(addressSpy.valid)
-            addressSpy.clear()
+            addressChangedCount = 0
             location.address = addr1
-            compare(addressSpy.count, 1)
+            compare(addressChangedCount, 1)
             compare(location.address.address, addr1.address)
         }
 
         function test_coordinate_changed() {
             var coord1 = QtPositioning.coordinate(1.0, 2.0)
             var emptyCoord = QtPositioning.coordinate()
-            verify(coordinateSpy.valid)
-            coordinateSpy.clear()
+            coordChangedCount = 0
             compare(location.coordinate, emptyCoord)
             location.coordinate = coord1
-            compare(coordinateSpy.count, 1)
+            compare(coordChangedCount, 1)
             compare(location.coordinate, coord1)
         }
 
         function test_bounding_box_changed() {
             var emptyShape = QtPositioning.shape()
-            verify(boundingShapeSpy.valid)
-            boundingShapeSpy.clear()
+            shapeChangedCount = 0
             compare(location.boundingShape, emptyShape)
 
             var box = QtPositioning.rectangle(topLeft, bottomRight)
             location.boundingShape = box
-            compare(boundingShapeSpy.count, 1)
+            compare(shapeChangedCount, 1)
             compare(QtPositioning.shapeToRectangle(location.boundingShape), box)
             // verify that shape's boundingGeoRectangle() matches the box.
             compare(location.boundingShape.boundingGeoRectangle(), box)
 
             var circle = QtPositioning.circle(centerPoint, 100)
             location.boundingShape = circle
-            compare(boundingShapeSpy.count, 2)
+            compare(shapeChangedCount, 2)
             compare(QtPositioning.shapeToCircle(location.boundingShape), circle)
         }
 
@@ -130,13 +147,12 @@ Item {
         }
 
         function test_extended_attributes() {
-            verify(attributesSpy.valid)
-            attributesSpy.clear()
+            attrsChangedCount = 0
 
             var attributes = { "foo" : 42 }
             location.extendedAttributes = attributes;
             compare(location.extendedAttributes, attributes)
-            compare(attributesSpy.count, 1)
+            compare(attrsChangedCount, 1)
 
             attributes["bar"] = 41
             verify(location.extendedAttributes !== attributes)
