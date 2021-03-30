@@ -222,8 +222,11 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
         m_sourceName.setValueBypassingBindings(newName);
         m_defaultSourceUsed = false;
         if (m_active) {
-            m_active = false;
-            emit activeChanged();
+            // We do not want to break the binding here, because we just want to
+            // give the user an opportunity to select another plugin and keep
+            // working.
+            m_active.setValueBypassingBindings(false);
+            m_active.notify();
         }
     }
 
@@ -244,10 +247,13 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
 
     if (m_active) { // implies m_positionSource
         if (!sourceExisted) {
-            QTimer::singleShot(0, this, SLOT(start())); // delay ensures all properties have been set
+            // delay ensures all properties have been set
+            QTimer::singleShot(0, this, [this]() { executeStart(); });
         } else {
-            m_active = false;
-            emit activeChanged();
+            // New source is set. It should be inactive by default.
+            // But we do not want to break the binding.
+            m_active.setValueBypassingBindings(false);
+            m_active.notify();
         }
     }
 
@@ -295,8 +301,8 @@ void QDeclarativePositionSource::handleUpdateTimeout()
             // only singleUpdate based timeouts change activity
             // continuous updates may resume again
             // (see QGeoPositionInfoSource::startUpdates())
-            m_active = false;
-            emit activeChanged();
+            m_active.setValueBypassingBindings(false);
+            m_active.notify();
         }
     }
 }
@@ -498,19 +504,17 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::prefe
     Uses \l updateInterval if set, default interval otherwise.
     If there is no source available, this method has no effect.
 
+    \note Calling this method breaks the bindings of
+    \l {PositionSource::}{active} property.
+
     \sa stop, update, active
 */
 
 void QDeclarativePositionSource::start()
 {
     if (m_positionSource) {
-        m_positionSource->startUpdates();
-
-        m_regularUpdates = true;
-        if (!m_active) {
-            m_active = true;
-            emit activeChanged();
-        }
+        m_active.removeBindingUnlessInWrapper();
+        executeStart();
     }
 }
 
@@ -536,8 +540,11 @@ void QDeclarativePositionSource::update(int timeout)
     if (m_positionSource) {
         m_singleUpdate = true;
         if (!m_active) {
-            m_active = true;
-            emit activeChanged();
+            // Questionable: we do not want this method to break the binding.
+            // Mostly because it can be called while the updates are already
+            // running.
+            m_active.setValueBypassingBindings(true);
+            m_active.notify();
         }
         // Use default timeout value. Set active before calling the
         // update request because on some platforms there may
@@ -553,6 +560,9 @@ void QDeclarativePositionSource::update(int timeout)
     If there is no source available or it is not active,
     this method has no effect.
 
+    \note Calling this method breaks the bindings of
+    \l {PositionSource::}{active} property.
+
     \sa start, update, active
 */
 
@@ -561,9 +571,13 @@ void QDeclarativePositionSource::stop()
     if (m_positionSource) {
         m_positionSource->stopUpdates();
         m_regularUpdates = false;
+        // Try to break the binding even if we do not actually need to update
+        // the active state. The m_active can be updated later, when the
+        // single update request finishes.
+        m_active.removeBindingUnlessInWrapper();
         if (m_active && !m_singleUpdate) {
-            m_active = false;
-            emit activeChanged();
+            m_active.setValueBypassingBindings(false);
+            m_active.notify();
         }
     }
 }
@@ -579,13 +593,18 @@ void QDeclarativePositionSource::stop()
 */
 void QDeclarativePositionSource::setActive(bool active)
 {
+    // We need to remove binding, if this method is called explicitly.
+    // Other changes to m_active are done inside start() and stop() methods.
+    m_active.removeBindingUnlessInWrapper();
     if (active == m_active)
         return;
 
-    if (active)
-        QTimer::singleShot(0, this, SLOT(start())); // delay ensures all properties have been set
-    else
+    if (active) {
+        // delay ensures all properties have been set
+        QTimer::singleShot(0, this, [this]() { executeStart(); });
+    } else {
         stop();
+    }
 }
 
 bool QDeclarativePositionSource::isActive() const
@@ -625,8 +644,8 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
         if (!m_regularUpdates) {
             // but we change the active state only if the regular updates are
             // also stopped
-            m_active = false;
-            emit activeChanged();
+            m_active.setValueBypassingBindings(false);
+            m_active.notify();
         }
     }
 }
@@ -720,6 +739,25 @@ void QDeclarativePositionSource::parameter_clear(QQmlListProperty<QDeclarativePl
     p->m_parameters.clear();
 }
 
+void QDeclarativePositionSource::executeStart()
+{
+    if (m_positionSource) {
+        m_positionSource->startUpdates();
+
+        // If this method is called directly from start(), the binding is
+        // already broken there (for the consistency with stop()).
+        // If this method is called by a timer, started in setActive(), we do
+        // not need to break the binding, because it was already done (if
+        // needed).
+
+        m_regularUpdates = true;
+        if (!m_active) {
+            m_active.setValueBypassingBindings(true);
+            m_active.notify();
+        }
+    }
+}
+
 void QDeclarativePositionSource::componentComplete()
 {
     m_componentComplete = true;
@@ -772,6 +810,11 @@ QVariant QDeclarativePositionSource::backendProperty(const QString &name) const
     if (m_positionSource)
         return m_positionSource->backendProperty(name);
     return QVariant();
+}
+
+QBindable<bool> QDeclarativePositionSource::bindableActive()
+{
+    return QBindable<bool>(&m_active);
 }
 
 /*!

@@ -43,6 +43,9 @@ private slots:
     void sourceErrorBinding();
     void validBinding();
     void positionBinding();
+    void activeBinding();
+    void startBreaksActiveBinding();
+    void activeBindingBreak();
 
     void intervalOnSourceDependency();
     void preferredMethodsOnSourceDependency();
@@ -166,6 +169,140 @@ void tst_DeclarativePositionSource::positionBinding()
     m_positionSource->bindablePosition().setBinding(Qt::makePropertyBinding(prop));
     // We can't have bindings on read-only properties
     QCOMPARE(m_positionSource->bindablePosition().hasBinding(), false);
+}
+
+void tst_DeclarativePositionSource::activeBinding()
+{
+    // we can't use a common templated method to test active property, because
+    // setActive() uses QTimer::singleShot() to actually update the property
+    // state.
+    m_positionSource->setName("test.source");
+
+    QProperty<bool> activeObserver;
+    activeObserver.setBinding(m_positionSource->bindableActive().makeBinding());
+
+    QProperty<bool> activeLambdaObserver;
+    activeLambdaObserver.setBinding([&]() { return m_positionSource->isActive(); });
+
+    QSignalSpy activeSpy(m_positionSource.get(), &QDeclarativePositionSource::activeChanged);
+
+    QCOMPARE(activeSpy.count(), 0);
+    QCOMPARE(activeObserver.value(), false);
+    QCOMPARE(activeLambdaObserver.value(), false);
+
+    QProperty<bool> activeSetter(false);
+    m_positionSource->bindableActive().setBinding(Qt::makePropertyBinding(activeSetter));
+
+    activeSetter = true;
+    QTest::qWait(0); // to trigger singleShot timer in setActive
+
+    QCOMPARE(activeSpy.count(), 1);
+    QCOMPARE(activeObserver.value(), true);
+    QCOMPARE(activeLambdaObserver.value(), true);
+
+    activeSetter = false;
+
+    QCOMPARE(activeSpy.count(), 2);
+    QCOMPARE(activeObserver.value(), false);
+    QCOMPARE(activeLambdaObserver.value(), false);
+
+    // calling update() does not break the binding
+    m_positionSource->update(100);
+    QCOMPARE(activeSpy.count(), 3);
+    QCOMPARE(activeObserver.value(), true);
+    QCOMPARE(activeLambdaObserver.value(), true);
+
+    QTRY_COMPARE_WITH_TIMEOUT(m_positionSource->sourceError(),
+                              QDeclarativePositionSource::UpdateTimeoutError, 300);
+
+    QCOMPARE(activeSpy.count(), 4);
+    QCOMPARE(activeObserver.value(), false);
+    QCOMPARE(activeLambdaObserver.value(), false);
+
+    activeSetter = true;
+    QTest::qWait(0); // to trigger singleShot timer in setActive
+
+    QCOMPARE(activeSpy.count(), 5);
+    QCOMPARE(activeObserver.value(), true);
+    QCOMPARE(activeLambdaObserver.value(), true);
+
+    // calling stop() will break the binding
+    m_positionSource->stop();
+
+    QCOMPARE(activeSpy.count(), 6);
+    QCOMPARE(m_positionSource->isActive(), false);
+    QCOMPARE(activeObserver.value(), false);
+    QCOMPARE(activeLambdaObserver.value(), false);
+
+    activeSetter = false;
+    activeSetter = true;
+    QTest::qWait(0); // to trigger singleShot timer in setActive
+
+    // nothing changed, as the binding is broken
+    QCOMPARE(activeSpy.count(), 6);
+    QCOMPARE(m_positionSource->isActive(), false);
+    QCOMPARE(activeObserver.value(), false);
+    QCOMPARE(activeLambdaObserver.value(), false);
+}
+
+void tst_DeclarativePositionSource::startBreaksActiveBinding()
+{
+    m_positionSource->setName("test.source");
+    QSignalSpy activeSpy(m_positionSource.get(), &QDeclarativePositionSource::activeChanged);
+
+    QProperty<bool> activeSetter(true);
+    m_positionSource->bindableActive().setBinding(Qt::makePropertyBinding(activeSetter));
+
+    QTest::qWait(0); // to trigger singleShot timer in setActive
+
+    QCOMPARE(m_positionSource->isActive(), true);
+    QCOMPARE(activeSpy.count(), 1);
+    QVERIFY(m_positionSource->bindableActive().hasBinding());
+
+    // Call start() explicitly, which should break the binding for 'active'
+    // property.
+    m_positionSource->start();
+    activeSetter = false; // this should have no effect
+    QTest::qWait(0); // to trigger singleShot timer in setActive
+
+    QCOMPARE(m_positionSource->isActive(), true);
+    QCOMPARE(activeSpy.count(), 1);
+    QVERIFY(!m_positionSource->bindableActive().hasBinding());
+}
+
+void tst_DeclarativePositionSource::activeBindingBreak()
+{
+    // This test checks a tricky scenario of breaking the binding for
+    // 'active' property.
+    // 0. active has a binding to some property Prop.
+    // 1. Prop is set to true => active = true => start getting position info.
+    // 2. Calling update() for a single update => the binding of active is not
+    //    broken.
+    // 3. Calling stop() explicitly before the update() call is finished =>
+    //    the active binding is supposed to be broken, but the active state
+    //    should still be true, because we have a pending update.
+    // 4. The pending update finishes => the active is set to false.
+
+    m_positionSource->setName("test.source");
+
+    QProperty<bool> setter(false);
+    m_positionSource->bindableActive().setBinding(Qt::makePropertyBinding(setter));
+    QVERIFY(m_positionSource->bindableActive().hasBinding());
+
+    setter = true;
+    QTest::qWait(0); // to trigger singleShot timer in setActive
+    QCOMPARE(m_positionSource->isActive(), true);
+
+    m_positionSource->update(1100);
+
+    m_positionSource->stop();
+    QVERIFY(!m_positionSource->bindableActive().hasBinding());
+    QCOMPARE(m_positionSource->isActive(), true);
+
+    QTest::qWait(1500); // wait for the single update to complete
+
+    QCOMPARE(m_positionSource->isActive(), false);
+    QVERIFY(!m_positionSource->bindableActive().hasBinding());
 }
 
 void tst_DeclarativePositionSource::intervalOnSourceDependency()

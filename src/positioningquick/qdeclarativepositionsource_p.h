@@ -73,7 +73,8 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePositionSource : public QObj
 
     Q_PROPERTY(QDeclarativePosition *position READ position NOTIFY positionChanged
                BINDABLE bindablePosition)
-    Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged
+               BINDABLE bindableActive)
     Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged BINDABLE bindableIsValid)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval
                NOTIFY updateIntervalChanged)
@@ -143,6 +144,7 @@ public:
     QBindable<bool> bindableIsValid() const;
     QBindable<QString> bindableName();
     QBindable<QDeclarativePosition *> bindablePosition() const;
+    QBindable<bool> bindableActive();
 
 public Q_SLOTS:
     void update(int timeout = 0);
@@ -180,9 +182,10 @@ private:
     bool isValidActualComputation() const;
     PositioningMethods supportedMethodsActualComputation() const;
 
+    void executeStart();
+
     QGeoPositionInfoSource *m_positionSource = nullptr;
     PositioningMethods m_preferredPositioningMethods = AllPositioningMethods;
-    bool m_active = false;
     bool m_singleUpdate = false;
     bool m_regularUpdates = false;
     int m_updateInterval = 0;
@@ -194,6 +197,10 @@ private:
     Q_OBJECT_COMPAT_PROPERTY(QDeclarativePositionSource, QString, m_sourceName,
                              &QDeclarativePositionSource::setName,
                              &QDeclarativePositionSource::nameChanged)
+
+    Q_OBJECT_COMPAT_PROPERTY_WITH_ARGS(QDeclarativePositionSource, bool, m_active,
+                                       &QDeclarativePositionSource::setActive,
+                                       &QDeclarativePositionSource::activeChanged, false)
 
     Q_OBJECT_BINDABLE_PROPERTY(QDeclarativePositionSource, QDeclarativePosition *, m_position)
 
