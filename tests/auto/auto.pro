@@ -82,7 +82,8 @@ qtHaveModule(location) {
 }
 
 qtHaveModule(quick):!android {
-    SUBDIRS += declarative_positioning_core
+    SUBDIRS += declarative_positioning_core \
+               dummypositionplugin
 }
 
 SUBDIRS += \
