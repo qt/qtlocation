@@ -44,9 +44,6 @@ protected:
     SatelliteInfoParseStatus parseSatelliteInfoFromNmea(const char *data, int size,
                                                         QList<QGeoSatelliteInfo> &infos,
                                                         QGeoSatelliteInfo::SatelliteSystem &system) override;
-
-private:
-    int callCount;
 };
 
 DummyNmeaSatelliteInfoSource::DummyNmeaSatelliteInfoSource(QObject *parent)

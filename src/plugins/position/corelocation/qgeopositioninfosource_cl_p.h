@@ -86,7 +86,7 @@ public Q_SLOTS:
     void requestUpdate(int timeout = 0) override;
 
 protected:
-    virtual void timerEvent(QTimerEvent *event);
+    void timerEvent(QTimerEvent *event) override;
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSourceCL);
