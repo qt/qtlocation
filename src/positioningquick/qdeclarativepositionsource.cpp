@@ -114,8 +114,6 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-:   m_positionSource(0), m_preferredPositioningMethods(AllPositioningMethods),
-    m_active(false), m_singleUpdate(false), m_updateInterval(0), m_sourceError(NoError)
 {
 }
 
@@ -257,10 +255,13 @@ void QDeclarativePositionSource::handleUpdateTimeout()
     if (m_singleUpdate) {
         m_singleUpdate = false;
 
-        // only singleUpdate based timeouts change activity
-        // continuous updates may resume again (see QGeoPositionInfoSource::startUpdates())
-        m_active = false;
-        emit activeChanged();
+        if (!m_regularUpdates) {
+            // only singleUpdate based timeouts change activity
+            // continuous updates may resume again
+            // (see QGeoPositionInfoSource::startUpdates())
+            m_active = false;
+            emit activeChanged();
+        }
     }
 }
 
@@ -446,12 +447,14 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::prefe
 
 void QDeclarativePositionSource::start()
 {
-    if (m_positionSource)
+    if (m_positionSource) {
         m_positionSource->startUpdates();
 
-    if (!m_active) {
-        m_active = true;
-        emit activeChanged();
+        m_regularUpdates = true;
+        if (!m_active) {
+            m_active = true;
+            emit activeChanged();
+        }
     }
 }
 
@@ -475,9 +478,9 @@ void QDeclarativePositionSource::start()
 void QDeclarativePositionSource::update(int timeout)
 {
     if (m_positionSource) {
+        m_singleUpdate = true;
         if (!m_active) {
             m_active = true;
-            m_singleUpdate = true;
             emit activeChanged();
         }
         // Use default timeout value. Set active before calling the
@@ -501,7 +504,8 @@ void QDeclarativePositionSource::stop()
 {
     if (m_positionSource) {
         m_positionSource->stopUpdates();
-        if (m_active) {
+        m_regularUpdates = false;
+        if (m_active && !m_singleUpdate) {
             m_active = false;
             emit activeChanged();
         }
@@ -560,9 +564,14 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
     setPosition(update);
 
     if (m_singleUpdate && m_active) {
-        m_active = false;
+        // we need to reset m_singleUpdate because we got one
         m_singleUpdate = false;
-        emit activeChanged();
+        if (!m_regularUpdates) {
+            // but we change the active state only if the regular updates are
+            // also stopped
+            m_active = false;
+            emit activeChanged();
+        }
     }
 }
 

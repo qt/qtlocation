@@ -163,14 +163,15 @@ private:
     static QDeclarativePluginParameter *parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, qsizetype index);
     static void parameter_clear(QQmlListProperty<QDeclarativePluginParameter> *prop);
 
-    QGeoPositionInfoSource *m_positionSource;
+    QGeoPositionInfoSource *m_positionSource = nullptr;
     QDeclarativePosition m_position;
-    PositioningMethods m_preferredPositioningMethods;
+    PositioningMethods m_preferredPositioningMethods = AllPositioningMethods;
     QString m_providerName;
-    bool m_active;
-    bool m_singleUpdate;
-    int m_updateInterval;
-    SourceError m_sourceError;
+    bool m_active = false;
+    bool m_singleUpdate = false;
+    bool m_regularUpdates = false;
+    int m_updateInterval = 0;
+    SourceError m_sourceError = NoError;
     QList<QDeclarativePluginParameter *> m_parameters;
     bool m_componentComplete = false;
     bool m_parametersInitialized = false;
