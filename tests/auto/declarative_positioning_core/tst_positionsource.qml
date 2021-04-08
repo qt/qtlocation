@@ -102,9 +102,6 @@ TestCase {
     }
 
     PositionSource { id: testingSource; name: "test.source"; updateInterval: 1000 }
-    SignalSpy { id: updateSpy; target: testingSource; signalName: "positionChanged" }
-    SignalSpy { id: directionValidSpy; target: testingSource.position; signalName: "directionValidChanged" }
-    SignalSpy { id: directionSpy; target: testingSource.position; signalName: "directionChanged" }
 
     PositionSource {
         id: testingSourceWParams
@@ -117,14 +114,37 @@ TestCase {
         }
     }
 
+    // use property bindings instead of SignalSpy
+    property bool directionWParamsValid: testingSourceWParams.position.directionValid
+    property int directionWParamsValidChangedCount: 0
+    onDirectionWParamsValidChanged: {
+        ++directionWParamsValidChangedCount
+    }
+
+    property real directionWParams: testingSourceWParams.position.direction
+    property int directionWParamsChangedCount:  0
+    onDirectionWParamsChanged: {
+        ++directionWParamsChangedCount
+    }
+
     SignalSpy { id: updateSpyWParams; target: testingSourceWParams; signalName: "positionChanged" }
-    SignalSpy { id: directionValidSpyWParams; target: testingSourceWParams.position; signalName: "directionValidChanged" }
-    SignalSpy { id: directionSpyWParams; target: testingSourceWParams.position; signalName: "directionChanged" }
 
     PositionSource { id: testingSourceV1; name: "test.source"; updateInterval: 1000 }
+
+    // use property bindings instead of SignalSpy
+    property bool directionV1Valid: testingSourceV1.position.directionValid
+    property int directionV1ValidChangedCount: 0
+    onDirectionV1ValidChanged: {
+        ++directionV1ValidChangedCount
+    }
+
+    property real directionV1: testingSourceV1.position.direction
+    property int directionV1ChangedCount:  0
+    onDirectionV1Changed: {
+        ++directionV1ChangedCount
+    }
+
     SignalSpy { id: updateSpyV1; target: testingSourceV1; signalName: "positionChanged" }
-    SignalSpy { id: directionValidSpyV1; target: testingSourceV1.position; signalName: "directionValidChanged" }
-    SignalSpy { id: directionSpyV1; target: testingSourceV1.position; signalName: "directionChanged" }
 
     function test_updateInterval() {
         testingSource.updateInterval = 1000;
@@ -147,16 +167,16 @@ TestCase {
     function test_updates() {
         updateSpyV1.clear();
 
-        compare(directionValidSpyV1.count, 0)
-        compare(directionSpyV1.count, 0)
+        directionV1ChangedCount = 0
+        directionV1ValidChangedCount = 0
 
         testingSourceV1.active = true;
 
         tryCompare(updateSpyV1, "count", 1, 1500);
         compare(testingSourceV1.position.coordinate.longitude, 0.1);
         compare(testingSourceV1.position.coordinate.latitude, 0.1);
-        compare(directionValidSpyV1.count, 1)
-        compare(directionSpyV1.count, 1)
+        compare(directionV1ValidChangedCount, 1)
+        compare(directionV1ChangedCount, 1)
         fuzzyCompare(testingSourceV1.position.direction, 45, 0.1)
         verify(!testingSourceV1.position.speedValid)
         verify(isNaN(testingSourceV1.position.speed))
@@ -164,8 +184,8 @@ TestCase {
         tryCompare(updateSpyV1, "count", 2, 1500);
         compare(testingSourceV1.position.coordinate.longitude, 0.2);
         compare(testingSourceV1.position.coordinate.latitude, 0.2);
-        compare(directionValidSpyV1.count, 1)
-        compare(directionSpyV1.count, 2)
+        compare(directionV1ValidChangedCount, 1)
+        compare(directionV1ChangedCount, 2)
         fuzzyCompare(testingSourceV1.position.direction, 45, 0.1)
         verify(testingSourceV1.position.speedValid)
         verify(testingSourceV1.position.speed > 10000)
@@ -175,8 +195,8 @@ TestCase {
         compare(updateSpyV1.count, 2);
         compare(testingSourceV1.position.coordinate.longitude, 0.2);
         compare(testingSourceV1.position.coordinate.latitude, 0.2);
-        compare(directionValidSpyV1.count, 1)
-        compare(directionSpyV1.count, 2)
+        compare(directionV1ValidChangedCount, 1)
+        compare(directionV1ChangedCount, 2)
         fuzzyCompare(testingSourceV1.position.direction, 45, 0.1)
         verify(testingSourceV1.position.speedValid)
         verify(testingSourceV1.position.speed > 10000)
@@ -185,8 +205,8 @@ TestCase {
     function test_updates_w_params() {
         updateSpyWParams.clear();
 
-        compare(directionValidSpyWParams.count, 0)
-        compare(directionSpyWParams.count, 0)
+        directionWParamsChangedCount = 0
+        directionWParamsValidChangedCount = 0
         compare(testingSourceWParams.backendProperty("altitude"), altitudeParameter.value)
         testingSourceWParams.active = true;
 
@@ -194,8 +214,8 @@ TestCase {
         compare(testingSourceWParams.position.coordinate.longitude, 0.1);
         compare(testingSourceWParams.position.coordinate.latitude, 0.1);
         compare(testingSourceWParams.position.coordinate.altitude, altitudeParameter.value);
-        compare(directionValidSpyWParams.count, 1)
-        compare(directionSpyWParams.count, 1)
+        compare(directionWParamsValidChangedCount, 1)
+        compare(directionWParamsChangedCount, 1)
         fuzzyCompare(testingSourceWParams.position.direction, 45, 0.1)
         verify(!testingSourceWParams.position.speedValid)
         verify(isNaN(testingSourceWParams.position.speed))
@@ -205,8 +225,8 @@ TestCase {
         compare(testingSourceWParams.position.coordinate.longitude, 0.2);
         compare(testingSourceWParams.position.coordinate.latitude, 0.2);
         compare(testingSourceWParams.position.coordinate.altitude, 24.24);
-        compare(directionValidSpyWParams.count, 1)
-        compare(directionSpyWParams.count, 2)
+        compare(directionWParamsValidChangedCount, 1)
+        compare(directionWParamsChangedCount, 2)
         fuzzyCompare(testingSourceWParams.position.direction, 45, 0.1)
         verify(testingSourceWParams.position.speedValid)
         verify(testingSourceWParams.position.speed > 10000)
@@ -218,8 +238,8 @@ TestCase {
         compare(testingSourceWParams.position.coordinate.longitude, 0.2);
         compare(testingSourceWParams.position.coordinate.latitude, 0.2);
         compare(testingSourceWParams.position.coordinate.altitude, 24.24);
-        compare(directionValidSpyWParams.count, 1)
-        compare(directionSpyWParams.count, 2)
+        compare(directionWParamsValidChangedCount, 1)
+        compare(directionWParamsChangedCount, 2)
         fuzzyCompare(testingSourceWParams.position.direction, 45, 0.1)
         verify(testingSourceWParams.position.speedValid)
         verify(testingSourceWParams.position.speed > 10000)

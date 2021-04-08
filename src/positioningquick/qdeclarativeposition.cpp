@@ -111,93 +111,187 @@ void QDeclarativePosition::setPosition(const QGeoPositionInfo &info)
     // timestamp
     const QDateTime pTimestamp = m_info.timestamp();
     const QDateTime timestamp = info.timestamp();
-    bool emitTimestampChanged = pTimestamp != timestamp;
+    const bool timestampChanged = pTimestamp != timestamp;
 
     // coordinate
     const QGeoCoordinate pCoordinate = m_info.coordinate();
     const QGeoCoordinate coordinate = info.coordinate();
-    bool emitCoordinateChanged = pCoordinate != coordinate;
-    bool emitLatitudeValidChanged = exclusiveNaN(pCoordinate.latitude(), coordinate.latitude());
-    bool emitLongitudeValidChanged = exclusiveNaN(pCoordinate.longitude(), coordinate.longitude());
-    bool emitAltitudeValidChanged = exclusiveNaN(pCoordinate.altitude(), coordinate.altitude());
+    const bool coordinateChanged = pCoordinate != coordinate;
+    const bool latitudeValidChanged = exclusiveNaN(pCoordinate.latitude(), coordinate.latitude());
+    const bool longitudeValidChanged =
+            exclusiveNaN(pCoordinate.longitude(), coordinate.longitude());
+    const bool altitudeValidChanged = exclusiveNaN(pCoordinate.altitude(), coordinate.altitude());
 
     // direction
     const qreal pDirection = m_info.attribute(QGeoPositionInfo::Direction);
     const qreal direction = info.attribute(QGeoPositionInfo::Direction);
-    bool emitDirectionChanged = !equalOrNaN(pDirection, direction);
-    bool emitDirectionValidChanged = exclusiveNaN(pDirection, direction);
+    const bool directionChanged = !equalOrNaN(pDirection, direction);
+    const bool directionValidChanged = exclusiveNaN(pDirection, direction);
 
     // ground speed
     const qreal pSpeed = m_info.attribute(QGeoPositionInfo::GroundSpeed);
     const qreal speed = info.attribute(QGeoPositionInfo::GroundSpeed);
-    bool emitSpeedChanged = !equalOrNaN(pSpeed, speed);
-    bool emitSpeedValidChanged = exclusiveNaN(pSpeed, speed);
+    const bool speedChanged = !equalOrNaN(pSpeed, speed);
+    const bool speedValidChanged = exclusiveNaN(pSpeed, speed);
 
     // vertical speed
     const qreal pVerticalSpeed = m_info.attribute(QGeoPositionInfo::VerticalSpeed);
     const qreal verticalSpeed = info.attribute(QGeoPositionInfo::VerticalSpeed);
-    bool emitVerticalSpeedChanged = !equalOrNaN(pVerticalSpeed, verticalSpeed);
-    bool emitVerticalSpeedValidChanged = exclusiveNaN(pVerticalSpeed, verticalSpeed);
+    const bool verticalSpeedChanged = !equalOrNaN(pVerticalSpeed, verticalSpeed);
+    const bool verticalSpeedValidChanged = exclusiveNaN(pVerticalSpeed, verticalSpeed);
 
     // magnetic variation
     const qreal pMagneticVariation = m_info.attribute(QGeoPositionInfo::MagneticVariation);
     const qreal magneticVariation = info.attribute(QGeoPositionInfo::MagneticVariation);
-    bool emitMagneticVariationChanged = !equalOrNaN(pMagneticVariation, magneticVariation);
-    bool emitMagneticVariationValidChanged = exclusiveNaN(pMagneticVariation, magneticVariation);
+    const bool magneticVariationChanged = !equalOrNaN(pMagneticVariation, magneticVariation);
+    const bool magneticVariationValidChanged = exclusiveNaN(pMagneticVariation, magneticVariation);
 
     // horizontal accuracy
     const qreal pHorizontalAccuracy = m_info.attribute(QGeoPositionInfo::HorizontalAccuracy);
     const qreal horizontalAccuracy = info.attribute(QGeoPositionInfo::HorizontalAccuracy);
-    bool emitHorizontalAccuracyChanged = !equalOrNaN(pHorizontalAccuracy, horizontalAccuracy);
-    bool emitHorizontalAccuracyValidChanged = exclusiveNaN(pHorizontalAccuracy, horizontalAccuracy);
+    const bool horizontalAccuracyChanged = !equalOrNaN(pHorizontalAccuracy, horizontalAccuracy);
+    const bool horizontalAccuracyValidChanged =
+            exclusiveNaN(pHorizontalAccuracy, horizontalAccuracy);
 
     // vertical accuracy
     const qreal pVerticalAccuracy = m_info.attribute(QGeoPositionInfo::VerticalAccuracy);
     const qreal verticalAccuracy = info.attribute(QGeoPositionInfo::VerticalAccuracy);
-    bool emitVerticalAccuracyChanged = !equalOrNaN(pVerticalAccuracy, verticalAccuracy);
-    bool emitVerticalAccuracyValidChanged = exclusiveNaN(pVerticalAccuracy, verticalAccuracy);
+    const bool verticalAccuracyChanged = !equalOrNaN(pVerticalAccuracy, verticalAccuracy);
+    const bool verticalAccuracyValidChanged = exclusiveNaN(pVerticalAccuracy, verticalAccuracy);
 
     m_info = info;
 
-    if (emitTimestampChanged)
-        emit timestampChanged();
-    if (emitCoordinateChanged)
-        emit coordinateChanged();
-    if (emitLatitudeValidChanged)
-        emit latitudeValidChanged();
-    if (emitLongitudeValidChanged)
-        emit longitudeValidChanged();
-    if (emitAltitudeValidChanged)
-        emit altitudeValidChanged();
-    if (emitDirectionChanged)
-        emit directionChanged();
-    if (emitDirectionValidChanged)
-        emit directionValidChanged();
-    if (emitSpeedChanged)
-        emit speedChanged();
-    if (emitSpeedValidChanged)
-        emit speedValidChanged();
-    if (emitVerticalSpeedChanged)
-        emit verticalSpeedChanged();
-    if (emitVerticalSpeedValidChanged)
-        emit verticalSpeedValidChanged();
-    if (emitHorizontalAccuracyChanged)
-        emit horizontalAccuracyChanged();
-    if (emitHorizontalAccuracyValidChanged)
-        emit horizontalAccuracyValidChanged();
-    if (emitVerticalAccuracyChanged)
-        emit verticalAccuracyChanged();
-    if (emitVerticalAccuracyValidChanged)
-        emit verticalAccuracyValidChanged();
-    if (emitMagneticVariationChanged)
-        emit magneticVariationChanged();
-    if (emitMagneticVariationValidChanged)
-        emit magneticVariationValidChanged();
+    if (timestampChanged)
+        m_computedTimestamp.notify();
+
+    if (coordinateChanged)
+        m_computedCoordinate.notify();
+    if (latitudeValidChanged)
+        m_computedLatitudeValid.notify();
+    if (longitudeValidChanged)
+        m_computedLongitudeValid.notify();
+    if (altitudeValidChanged)
+        m_computedAltitudeValid.notify();
+
+    if (directionChanged)
+        m_computedDirection.notify();
+    if (directionValidChanged)
+        m_computedDirectionValid.notify();
+
+    if (speedChanged)
+        m_computedSpeed.notify();
+    if (speedValidChanged)
+        m_computedSpeedValid.notify();
+
+    if (verticalSpeedChanged)
+        m_computedVerticalSpeed.notify();
+    if (verticalSpeedValidChanged)
+        m_computedVerticalSpeedValid.notify();
+
+    if (horizontalAccuracyChanged)
+        m_computedHorizontalAccuracy.notify();
+    if (horizontalAccuracyValidChanged)
+        m_computedHorizontalAccuracyValid.notify();
+
+    if (verticalAccuracyChanged)
+        m_computedVerticalAccuracy.notify();
+    if (verticalAccuracyValidChanged)
+        m_computedVerticalAccuracyValid.notify();
+
+    if (magneticVariationChanged)
+        m_computedMagneticVariation.notify();
+    if (magneticVariationValidChanged)
+        m_computedMagneticVariationValid.notify();
 }
 
 const QGeoPositionInfo &QDeclarativePosition::position() const
 {
     return m_info;
+}
+
+QBindable<bool> QDeclarativePosition::bindableLatitudeValid() const
+{
+    return QBindable<bool>(&m_computedLatitudeValid);
+}
+
+QBindable<bool> QDeclarativePosition::bindableLongitudeValid() const
+{
+    return QBindable<bool>(&m_computedLongitudeValid);
+}
+
+QBindable<bool> QDeclarativePosition::bindableAltitudeValid() const
+{
+    return QBindable<bool>(&m_computedAltitudeValid);
+}
+
+QBindable<QGeoCoordinate> QDeclarativePosition::bindableCoordinate() const
+{
+    return QBindable<QGeoCoordinate>(&m_computedCoordinate);
+}
+
+QBindable<QDateTime> QDeclarativePosition::bindableTimestamp() const
+{
+    return QBindable<QDateTime>(&m_computedTimestamp);
+}
+
+QBindable<double> QDeclarativePosition::bindableSpeed() const
+{
+    return QBindable<double>(&m_computedSpeed);
+}
+
+QBindable<bool> QDeclarativePosition::bindableSpeedValid() const
+{
+    return QBindable<bool>(&m_computedSpeedValid);
+}
+
+QBindable<qreal> QDeclarativePosition::bindableHorizontalAccuracy() const
+{
+    return QBindable<qreal>(&m_computedHorizontalAccuracy);
+}
+
+QBindable<qreal> QDeclarativePosition::binableVerticalAccuracy() const
+{
+    return QBindable<qreal>(&m_computedVerticalAccuracy);
+}
+
+QBindable<bool> QDeclarativePosition::bindableHorizontalAccuracyValid() const
+{
+    return QBindable<bool>(&m_computedHorizontalAccuracyValid);
+}
+
+QBindable<bool> QDeclarativePosition::bindableVerticalAccuracyValid() const
+{
+    return QBindable<bool>(&m_computedVerticalAccuracyValid);
+}
+
+QBindable<bool> QDeclarativePosition::bindableDirectionValid() const
+{
+    return QBindable<bool>(&m_computedDirectionValid);
+}
+
+QBindable<double> QDeclarativePosition::bindableDirection() const
+{
+    return QBindable<double>(&m_computedDirection);
+}
+
+QBindable<bool> QDeclarativePosition::bindableVerticalSpeedValid() const
+{
+    return QBindable<bool>(&m_computedVerticalSpeedValid);
+}
+
+QBindable<double> QDeclarativePosition::bindableVerticalSpeed() const
+{
+    return QBindable<double>(&m_computedVerticalSpeed);
+}
+
+QBindable<double> QDeclarativePosition::bindableMagneticVariation() const
+{
+    return QBindable<double>(&m_computedMagneticVariation);
+}
+
+QBindable<bool> QDeclarativePosition::bindableMagneticVariationValid() const
+{
+    return QBindable<bool>(&m_computedMagneticVariationValid);
 }
 
 /*!
@@ -210,6 +304,11 @@ const QGeoPositionInfo &QDeclarativePosition::position() const
     \sa longitudeValid, latitudeValid, altitudeValid
 */
 QGeoCoordinate QDeclarativePosition::coordinate()
+{
+    return m_computedCoordinate.value();
+}
+
+QGeoCoordinate QDeclarativePosition::coordinateActualCalculation() const
 {
     return m_info.coordinate();
 }
@@ -225,9 +324,13 @@ QGeoCoordinate QDeclarativePosition::coordinate()
 */
 bool QDeclarativePosition::isLatitudeValid() const
 {
-    return !qIsNaN(m_info.coordinate().latitude());
+    return m_computedLatitudeValid.value();
 }
 
+bool QDeclarativePosition::isLatitudeValidActualCalculation() const
+{
+    return !qIsNaN(m_info.coordinate().latitude());
+}
 
 /*!
     \qmlproperty bool Position::longitudeValid
@@ -240,9 +343,13 @@ bool QDeclarativePosition::isLatitudeValid() const
 */
 bool QDeclarativePosition::isLongitudeValid() const
 {
-    return !qIsNaN(m_info.coordinate().longitude());
+    return m_computedLongitudeValid.value();
 }
 
+bool QDeclarativePosition::isLongitudeValidActualCalculation() const
+{
+    return !qIsNaN(m_info.coordinate().longitude());
+}
 
 /*!
     \qmlproperty bool Position::speedValid
@@ -254,6 +361,11 @@ bool QDeclarativePosition::isLongitudeValid() const
     \sa speed
 */
 bool QDeclarativePosition::isSpeedValid() const
+{
+    return m_computedSpeedValid.value();
+}
+
+bool QDeclarativePosition::isSpeedValidActualCalculation() const
 {
     return !qIsNaN(m_info.attribute(QGeoPositionInfo::GroundSpeed));
 }
@@ -269,6 +381,11 @@ bool QDeclarativePosition::isSpeedValid() const
 */
 bool QDeclarativePosition::isAltitudeValid() const
 {
+    return m_computedAltitudeValid.value();
+}
+
+bool QDeclarativePosition::isAltitudeValidActualCalculation() const
+{
     return !qIsNaN(m_info.coordinate().altitude());
 }
 
@@ -283,6 +400,11 @@ bool QDeclarativePosition::isAltitudeValid() const
 */
 double QDeclarativePosition::speed() const
 {
+    return m_computedSpeed.value();
+}
+
+double QDeclarativePosition::speedActualCalculation() const
+{
     return m_info.attribute(QGeoPositionInfo::GroundSpeed);
 }
 
@@ -293,22 +415,12 @@ double QDeclarativePosition::speed() const
 
     \sa horizontalAccuracyValid, coordinate
 */
-void QDeclarativePosition::setHorizontalAccuracy(qreal horizontalAccuracy)
+qreal QDeclarativePosition::horizontalAccuracy() const
 {
-    const qreal pHorizontalAccuracy = m_info.attribute(QGeoPositionInfo::HorizontalAccuracy);
-
-    if (equalOrNaN(pHorizontalAccuracy, horizontalAccuracy))
-        return;
-
-    bool validChanged = exclusiveNaN(pHorizontalAccuracy, horizontalAccuracy);
-
-    m_info.setAttribute(QGeoPositionInfo::HorizontalAccuracy, horizontalAccuracy);
-    emit horizontalAccuracyChanged();
-    if (validChanged)
-        emit horizontalAccuracyValidChanged();
+    return m_computedHorizontalAccuracy.value();
 }
 
-qreal QDeclarativePosition::horizontalAccuracy() const
+qreal QDeclarativePosition::horizontalAccuracyActualCalculation() const
 {
     return m_info.attribute(QGeoPositionInfo::HorizontalAccuracy);
 }
@@ -324,6 +436,11 @@ qreal QDeclarativePosition::horizontalAccuracy() const
 */
 bool QDeclarativePosition::isHorizontalAccuracyValid() const
 {
+    return m_computedHorizontalAccuracyValid.value();
+}
+
+bool QDeclarativePosition::isHorizontalAccuracyValidActualCalculation() const
+{
     return !qIsNaN(m_info.attribute(QGeoPositionInfo::HorizontalAccuracy));
 }
 
@@ -334,22 +451,12 @@ bool QDeclarativePosition::isHorizontalAccuracyValid() const
 
     \sa verticalAccuracyValid, coordinate
 */
-void QDeclarativePosition::setVerticalAccuracy(qreal verticalAccuracy)
+qreal QDeclarativePosition::verticalAccuracy() const
 {
-    const qreal pVerticalAccuracy = m_info.attribute(QGeoPositionInfo::VerticalAccuracy);
-
-    if (equalOrNaN(pVerticalAccuracy, verticalAccuracy))
-        return;
-
-    bool validChanged = exclusiveNaN(pVerticalAccuracy, verticalAccuracy);
-
-    m_info.setAttribute(QGeoPositionInfo::VerticalAccuracy, verticalAccuracy);
-    emit verticalAccuracyChanged();
-    if (validChanged)
-        emit verticalAccuracyValidChanged();
+    return m_computedVerticalAccuracy.value();
 }
 
-qreal QDeclarativePosition::verticalAccuracy() const
+qreal QDeclarativePosition::verticalAccuracyActualCalculation() const
 {
     return m_info.attribute(QGeoPositionInfo::VerticalAccuracy);
 }
@@ -365,6 +472,11 @@ qreal QDeclarativePosition::verticalAccuracy() const
 */
 bool QDeclarativePosition::isVerticalAccuracyValid() const
 {
+    return m_computedVerticalAccuracyValid.value();
+}
+
+bool QDeclarativePosition::isVerticalAccuracyValidActualCalculation() const
+{
     return !qIsNaN(m_info.attribute(QGeoPositionInfo::VerticalAccuracy));
 }
 
@@ -377,6 +489,11 @@ bool QDeclarativePosition::isVerticalAccuracyValid() const
     It is a read-only property.
 */
 QDateTime QDeclarativePosition::timestamp() const
+{
+    return m_computedTimestamp.value();
+}
+
+QDateTime QDeclarativePosition::timestampActualCalculation() const
 {
     return m_info.timestamp();
 }
@@ -391,6 +508,11 @@ QDateTime QDeclarativePosition::timestamp() const
     \sa direction
 */
 bool QDeclarativePosition::isDirectionValid() const
+{
+    return m_computedDirectionValid.value();
+}
+
+bool QDeclarativePosition::isDirectionValidActualCalculation() const
 {
     return !qIsNaN(m_info.attribute(QGeoPositionInfo::Direction));
 }
@@ -407,6 +529,11 @@ bool QDeclarativePosition::isDirectionValid() const
 */
 double QDeclarativePosition::direction() const
 {
+    return m_computedDirection.value();
+}
+
+double QDeclarativePosition::directionActualCalculation() const
+{
     return m_info.attribute(QGeoPositionInfo::Direction);
 }
 
@@ -420,6 +547,11 @@ double QDeclarativePosition::direction() const
     \sa verticalSpeed
 */
 bool QDeclarativePosition::isVerticalSpeedValid() const
+{
+    return m_computedVerticalSpeedValid.value();
+}
+
+bool QDeclarativePosition::isVerticalSpeedValidActualCalculation() const
 {
     return !qIsNaN(m_info.attribute(QGeoPositionInfo::VerticalSpeed));
 }
@@ -436,6 +568,11 @@ bool QDeclarativePosition::isVerticalSpeedValid() const
 */
 double QDeclarativePosition::verticalSpeed() const
 {
+    return m_computedVerticalSpeed.value();
+}
+
+double QDeclarativePosition::verticalSpeedActualCalculation() const
+{
     return m_info.attribute(QGeoPositionInfo::VerticalSpeed);
 }
 
@@ -449,6 +586,11 @@ double QDeclarativePosition::verticalSpeed() const
     \sa magneticVariation
 */
 bool QDeclarativePosition::isMagneticVariationValid() const
+{
+    return m_computedMagneticVariationValid.value();
+}
+
+bool QDeclarativePosition::isMagneticVariationValidActualCalculation() const
 {
     return !qIsNaN(m_info.attribute(QGeoPositionInfo::MagneticVariation));
 }
@@ -467,6 +609,11 @@ bool QDeclarativePosition::isMagneticVariationValid() const
     \sa magneticVariationValid
 */
 double QDeclarativePosition::magneticVariation() const
+{
+    return m_computedMagneticVariation.value();
+}
+
+double QDeclarativePosition::magneticVariationActualCalculation() const
 {
     return m_info.attribute(QGeoPositionInfo::MagneticVariation);
 }

@@ -67,25 +67,32 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePosition : public QObject
     QML_NAMED_ELEMENT(Position)
     QML_ADDED_IN_VERSION(5, 0)
 
-    Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged)
-    Q_PROPERTY(bool longitudeValid READ isLongitudeValid NOTIFY longitudeValidChanged)
-    Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged)
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
-    Q_PROPERTY(double speed READ speed NOTIFY speedChanged)
-    Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged)
-    Q_PROPERTY(qreal horizontalAccuracy READ horizontalAccuracy WRITE setHorizontalAccuracy NOTIFY horizontalAccuracyChanged)
-    Q_PROPERTY(qreal verticalAccuracy READ verticalAccuracy WRITE setVerticalAccuracy NOTIFY verticalAccuracyChanged)
-    Q_PROPERTY(bool horizontalAccuracyValid READ isHorizontalAccuracyValid NOTIFY horizontalAccuracyValidChanged)
-    Q_PROPERTY(bool verticalAccuracyValid READ isVerticalAccuracyValid NOTIFY verticalAccuracyValidChanged)
+    Q_PROPERTY(bool latitudeValid READ isLatitudeValid BINDABLE bindableLatitudeValid)
+    Q_PROPERTY(bool longitudeValid READ isLongitudeValid BINDABLE bindableLongitudeValid)
+    Q_PROPERTY(bool altitudeValid READ isAltitudeValid BINDABLE bindableAltitudeValid)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate BINDABLE bindableCoordinate)
+    Q_PROPERTY(QDateTime timestamp READ timestamp BINDABLE bindableTimestamp)
+    Q_PROPERTY(double speed READ speed BINDABLE bindableSpeed)
+    Q_PROPERTY(bool speedValid READ isSpeedValid BINDABLE bindableSpeedValid)
+    Q_PROPERTY(qreal horizontalAccuracy READ horizontalAccuracy BINDABLE bindableHorizontalAccuracy)
+    Q_PROPERTY(qreal verticalAccuracy READ verticalAccuracy BINDABLE binableVerticalAccuracy)
+    Q_PROPERTY(bool horizontalAccuracyValid READ isHorizontalAccuracyValid BINDABLE
+                       bindableHorizontalAccuracyValid)
+    Q_PROPERTY(bool verticalAccuracyValid READ isVerticalAccuracyValid BINDABLE
+                       bindableVerticalAccuracyValid)
 
-    Q_PROPERTY(bool directionValid READ isDirectionValid NOTIFY directionValidChanged REVISION(5, 1))
-    Q_PROPERTY(double direction READ direction NOTIFY directionChanged REVISION(5, 1))
-    Q_PROPERTY(bool verticalSpeedValid READ isVerticalSpeedValid NOTIFY verticalSpeedValidChanged REVISION(5, 1))
-    Q_PROPERTY(double verticalSpeed READ verticalSpeed NOTIFY verticalSpeedChanged REVISION(5, 1))
+    Q_PROPERTY(bool directionValid READ isDirectionValid BINDABLE bindableDirectionValid
+                       REVISION(5, 1))
+    Q_PROPERTY(double direction READ direction BINDABLE bindableDirection REVISION(5, 1))
+    Q_PROPERTY(bool verticalSpeedValid READ isVerticalSpeedValid BINDABLE bindableVerticalSpeedValid
+                       REVISION(5, 1))
+    Q_PROPERTY(double verticalSpeed READ verticalSpeed BINDABLE bindableVerticalSpeed
+                       REVISION(5, 1))
 
-    Q_PROPERTY(double magneticVariation READ magneticVariation NOTIFY magneticVariationChanged REVISION(5, 2))
-    Q_PROPERTY(bool magneticVariationValid READ isMagneticVariationValid NOTIFY magneticVariationChanged REVISION(5, 2))
+    Q_PROPERTY(double magneticVariation READ magneticVariation BINDABLE bindableMagneticVariation
+                       REVISION(5, 2))
+    Q_PROPERTY(bool magneticVariationValid READ isMagneticVariationValid BINDABLE
+                       bindableMagneticVariationValid REVISION(5, 2))
 
 public:
     explicit QDeclarativePosition(QObject *parent = 0);
@@ -100,18 +107,14 @@ public:
     QGeoCoordinate coordinate();
     bool isHorizontalAccuracyValid() const;
     qreal horizontalAccuracy() const;
-    void setHorizontalAccuracy(qreal horizontalAccuracy);
     bool isVerticalAccuracyValid() const;
     qreal verticalAccuracy() const;
-    void setVerticalAccuracy(qreal verticalAccuracy);
 
     bool isDirectionValid() const;
     double direction() const;
-    void setDirection(double direction);
 
     bool isVerticalSpeedValid() const;
     double verticalSpeed() const;
-    void setVerticalSpeed(double speed);
 
     bool isMagneticVariationValid() const;
     double magneticVariation() const;
@@ -119,29 +122,79 @@ public:
     void setPosition(const QGeoPositionInfo &info);
     const QGeoPositionInfo &position() const;
 
-Q_SIGNALS:
-    void latitudeValidChanged();
-    void longitudeValidChanged();
-    void altitudeValidChanged();
-    void timestampChanged();
-    void speedChanged();
-    void speedValidChanged();
-    void coordinateChanged();
-    void horizontalAccuracyChanged();
-    void horizontalAccuracyValidChanged();
-    void verticalAccuracyChanged();
-    void verticalAccuracyValidChanged();
-
-    Q_REVISION(5, 1) void directionValidChanged();
-    Q_REVISION(5, 1) void directionChanged();
-    Q_REVISION(5, 1) void verticalSpeedValidChanged();
-    Q_REVISION(5, 1) void verticalSpeedChanged();
-
-    Q_REVISION(5, 2) void magneticVariationChanged();
-    Q_REVISION(5, 2) void magneticVariationValidChanged();
+    QBindable<bool> bindableLatitudeValid() const;
+    QBindable<bool> bindableLongitudeValid() const;
+    QBindable<bool> bindableAltitudeValid() const;
+    QBindable<QGeoCoordinate> bindableCoordinate() const;
+    QBindable<QDateTime> bindableTimestamp() const;
+    QBindable<double> bindableSpeed() const;
+    QBindable<bool> bindableSpeedValid() const;
+    QBindable<qreal> bindableHorizontalAccuracy() const;
+    QBindable<qreal> binableVerticalAccuracy() const;
+    QBindable<bool> bindableHorizontalAccuracyValid() const;
+    QBindable<bool> bindableVerticalAccuracyValid() const;
+    QBindable<bool> bindableDirectionValid() const;
+    QBindable<double> bindableDirection() const;
+    QBindable<bool> bindableVerticalSpeedValid() const;
+    QBindable<double> bindableVerticalSpeed() const;
+    QBindable<double> bindableMagneticVariation() const;
+    QBindable<bool> bindableMagneticVariationValid() const;
 
 private:
+    bool isLatitudeValidActualCalculation() const;
+    bool isLongitudeValidActualCalculation() const;
+    bool isAltitudeValidActualCalculation() const;
+    QGeoCoordinate coordinateActualCalculation() const;
+    QDateTime timestampActualCalculation() const;
+    double speedActualCalculation() const;
+    bool isSpeedValidActualCalculation() const;
+    qreal horizontalAccuracyActualCalculation() const;
+    qreal verticalAccuracyActualCalculation() const;
+    bool isHorizontalAccuracyValidActualCalculation() const;
+    bool isVerticalAccuracyValidActualCalculation() const;
+    bool isDirectionValidActualCalculation() const;
+    double directionActualCalculation() const;
+    bool isVerticalSpeedValidActualCalculation() const;
+    double verticalSpeedActualCalculation() const;
+    double magneticVariationActualCalculation() const;
+    bool isMagneticVariationValidActualCalculation() const;
+
     QGeoPositionInfo m_info;
+
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedLatitudeValid,
+                               &QDeclarativePosition::isLatitudeValidActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedLongitudeValid,
+                               &QDeclarativePosition::isLongitudeValidActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedAltitudeValid,
+                               &QDeclarativePosition::isAltitudeValidActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, QGeoCoordinate, m_computedCoordinate,
+                               &QDeclarativePosition::coordinateActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, QDateTime, m_computedTimestamp,
+                               &QDeclarativePosition::timestampActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, double, m_computedSpeed,
+                               &QDeclarativePosition::speedActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedSpeedValid,
+                               &QDeclarativePosition::isSpeedValidActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, qreal, m_computedHorizontalAccuracy,
+                               &QDeclarativePosition::horizontalAccuracyActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, qreal, m_computedVerticalAccuracy,
+                               &QDeclarativePosition::verticalAccuracyActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedHorizontalAccuracyValid,
+                               &QDeclarativePosition::isHorizontalAccuracyValidActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedVerticalAccuracyValid,
+                               &QDeclarativePosition::isVerticalAccuracyValidActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedDirectionValid,
+                               &QDeclarativePosition::isDirectionValidActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, double, m_computedDirection,
+                               &QDeclarativePosition::directionActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedVerticalSpeedValid,
+                               &QDeclarativePosition::isVerticalSpeedValidActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, double, m_computedVerticalSpeed,
+                               &QDeclarativePosition::verticalSpeedActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, double, m_computedMagneticVariation,
+                               &QDeclarativePosition::magneticVariationActualCalculation)
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePosition, bool, m_computedMagneticVariationValid,
+                               &QDeclarativePosition::isMagneticVariationValidActualCalculation)
 };
 
 QT_END_NAMESPACE

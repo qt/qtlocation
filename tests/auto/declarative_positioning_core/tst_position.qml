@@ -37,20 +37,6 @@ TestCase {
 
     Position { id: defaultPosition }
 
-    SignalSpy { id: latitudeValidSpy; target: defaultPosition; signalName: "latitudeValidChanged" }
-    SignalSpy { id: longitudeValidSpy; target: defaultPosition; signalName: "longitudeValidChanged" }
-    SignalSpy { id: altitudeValidSpy; target: defaultPosition; signalName: "altitudeValidChanged" }
-    SignalSpy { id: timestampSpy; target: defaultPosition; signalName: "timestampChanged" }
-    SignalSpy { id: speedSpy; target: defaultPosition; signalName: "speedChanged" }
-    SignalSpy { id: speedValidSpy; target: defaultPosition; signalName: "speedValidChanged" }
-    SignalSpy { id: coordinateSpy; target: defaultPosition; signalName: "coordinateChanged" }
-    SignalSpy { id: horizontalAccuracySpy; target: defaultPosition; signalName: "horizontalAccuracyChanged" }
-    SignalSpy { id: horizontalAccuracyValidSpy; target: defaultPosition; signalName: "horizontalAccuracyValidChanged" }
-    SignalSpy { id: verticalAccuracySpy; target: defaultPosition; signalName: "verticalAccuracyChanged" }
-    SignalSpy { id: verticalAccuracyValidSpy; target: defaultPosition; signalName: "verticalAccuracyValidChanged" }
-    SignalSpy { id: directionSpy; target: defaultPosition; signalName: "directionChanged" }
-    SignalSpy { id: verticalSpeedSpy; target: defaultPosition; signalName: "verticalSpeedChanged" }
-
     function test_defaults() {
         compare(defaultPosition.latitudeValid, false);
         compare(defaultPosition.longitudeValid, false);
@@ -62,38 +48,5 @@ TestCase {
         verify(isNaN(defaultPosition.direction));
         verify(!defaultPosition.verticalSpeedValid);
         verify(isNaN(defaultPosition.verticalSpeed));
-    }
-
-    function test_modifiers() {
-        latitudeValidSpy.clear();
-        longitudeValidSpy.clear();
-        altitudeValidSpy.clear();
-        timestampSpy.clear();
-        speedSpy.clear();
-        speedValidSpy.clear();
-        coordinateSpy.clear();
-        horizontalAccuracySpy.clear();
-        horizontalAccuracyValidSpy.clear();
-        verticalAccuracySpy.clear();
-        verticalAccuracyValidSpy.clear();
-        directionSpy.clear();
-        verticalSpeedSpy.clear();
-
-        defaultPosition.horizontalAccuracy = 10;
-        compare(horizontalAccuracySpy.count, 1);
-        compare(horizontalAccuracyValidSpy.count, 1);
-        compare(defaultPosition.horizontalAccuracy, 10);
-        compare(defaultPosition.horizontalAccuracyValid, true);
-
-        defaultPosition.verticalAccuracy = 10;
-        compare(verticalAccuracySpy.count, 1);
-        compare(verticalAccuracyValidSpy.count, 1);
-        compare(defaultPosition.verticalAccuracy, 10);
-        compare(defaultPosition.verticalAccuracyValid, true);
-
-        // some extra precautions
-        compare(horizontalAccuracyValidSpy.count, 1);
-        compare(speedSpy.count, 0);
-        compare(speedValidSpy.count, 0);
     }
 }
