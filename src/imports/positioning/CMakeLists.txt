@@ -1,7 +1,7 @@
 # special case begin
 qt_internal_add_qml_module(declarative_positioning
     URI "QtPositioning"
-    VERSION "${CMAKE_PROJECT_VERSION}"
+    VERSION "${PROJECT_VERSION}"
     CLASSNAME QtPositioningDeclarativeModule
     SKIP_TYPE_REGISTRATION
     PLUGIN_OPTIONAL
