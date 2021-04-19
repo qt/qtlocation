@@ -44,6 +44,10 @@
 #include <QGeoPositionInfoSource>
 #include <QGeoSatelliteInfoSource>
 
+/*
+    Note: all the exception handling is done on the Java side, so we do not need
+    to care about Java exceptions on the C++ side.
+*/
 namespace AndroidPositioning
 {
     int registerPositionInfoSource(QObject *obj);
