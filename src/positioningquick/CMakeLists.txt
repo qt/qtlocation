@@ -5,7 +5,6 @@
 #####################################################################
 
 qt_internal_add_module(PositioningQuick
-    GENERATE_METATYPES
     SOURCES
         qdeclarativegeoaddress_p.h qdeclarativegeoaddress.cpp
         qdeclarativegeolocation_p.h qdeclarativegeolocation.cpp
