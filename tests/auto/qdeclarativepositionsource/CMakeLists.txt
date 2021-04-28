@@ -5,4 +5,5 @@ qt_internal_add_test(tst_qdeclarativepositionsource
         Qt::Core
         Qt::Positioning
         Qt::PositioningQuickPrivate
+        Qt::TestPrivate
 )

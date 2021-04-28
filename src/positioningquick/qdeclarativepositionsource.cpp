@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -115,6 +115,7 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativePositionSource::QDeclarativePositionSource()
 {
+    m_position.setValueBypassingBindings(new QDeclarativePosition(this));
 }
 
 QDeclarativePositionSource::~QDeclarativePositionSource()
@@ -141,30 +142,40 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
 
 QString QDeclarativePositionSource::name() const
 {
-    if (m_positionSource)
-        return m_positionSource->sourceName();
-    else
-        return m_providerName;
+    return m_sourceName;
 }
 
 void QDeclarativePositionSource::setName(const QString &newName)
 {
+    m_sourceName.removeBindingUnlessInWrapper();
     if (m_positionSource && m_positionSource->sourceName() == newName)
         return;
 
-    if (m_providerName == newName && m_providerName.isEmpty())
+    if (newName.isEmpty() && m_defaultSourceUsed)
         return; // previously attached to a default source, now requesting the same.
 
     const QString previousName = name();
-    m_providerName = newName;
 
     if (!m_componentComplete || !m_parametersInitialized) {
-        if (previousName != name())
-            emit nameChanged();
+        if (previousName != newName) {
+            m_sourceName.setValueBypassingBindings(newName);
+            m_sourceName.notify();
+        }
         return;
     }
 
+    // tryAttach() will update the m_sourceName correctly
     tryAttach(newName, false);
+}
+
+QBindable<QString> QDeclarativePositionSource::bindableName()
+{
+    return QBindable<QString>(&m_sourceName);
+}
+
+QBindable<QDeclarativePosition *> QDeclarativePositionSource::bindablePosition() const
+{
+    return QBindable<QDeclarativePosition *>(&m_position);
 }
 
 /*!
@@ -173,22 +184,28 @@ void QDeclarativePositionSource::setName(const QString &newName)
 void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallback)
 {
     const QString previousName = name();
-    const bool sourceExisted = m_positionSource;
-    m_providerName = newName;
+    const bool sourceExisted = (m_positionSource != nullptr);
 
     int previousUpdateInterval = updateInterval();
     PositioningMethods previousPositioningMethods = supportedPositioningMethods();
     PositioningMethods previousPreferredPositioningMethods = preferredPositioningMethods();
 
+    m_defaultSourceUsed = false;
+
     if (newName.isEmpty()) {
         setSource(QGeoPositionInfoSource::createDefaultSource(parameterMap(), this));
+        m_defaultSourceUsed = true;
     } else {
         setSource(QGeoPositionInfoSource::createSource(newName, parameterMap(), this));
-        if (!m_positionSource && useFallback)
+        if (!m_positionSource && useFallback) {
             setSource(QGeoPositionInfoSource::createDefaultSource(parameterMap(), this));
+            m_defaultSourceUsed = true;
+        }
     }
 
     if (m_positionSource) {
+        m_sourceName.setValueBypassingBindings(m_positionSource->sourceName());
+
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
         connect(m_positionSource, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)),
@@ -201,9 +218,13 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
         const QGeoPositionInfo &lastKnown = m_positionSource->lastKnownPosition();
         if (lastKnown.isValid())
             setPosition(lastKnown);
-    } else if (m_active) {
-        m_active = false;
-        emit activeChanged();
+    } else {
+        m_sourceName.setValueBypassingBindings(newName);
+        m_defaultSourceUsed = false;
+        if (m_active) {
+            m_active = false;
+            emit activeChanged();
+        }
     }
 
     if (previousUpdateInterval != updateInterval())
@@ -213,9 +234,13 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
         emit preferredPositioningMethodsChanged();
 
     if (previousPositioningMethods != supportedPositioningMethods())
-        emit supportedPositioningMethodsChanged();
+        notifySupportedPositioningMethodsChanged();
 
-    emit validityChanged();
+    const bool sourceCurrentlyExists = (m_positionSource != nullptr);
+    if (sourceExisted != sourceCurrentlyExists) {
+        m_isValid.notify();
+        emit validityChanged();
+    }
 
     if (m_active) { // implies m_positionSource
         if (!sourceExisted) {
@@ -226,8 +251,8 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
         }
     }
 
-    if (previousName != name())
-        emit nameChanged();
+    if (previousName != m_sourceName)
+        m_sourceName.notify();
 }
 
 /*!
@@ -242,12 +267,23 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
 */
 bool QDeclarativePositionSource::isValid() const
 {
-    return (m_positionSource != 0);
+    return m_isValid.value();
+}
+
+QBindable<bool> QDeclarativePositionSource::bindableIsValid() const
+{
+    return QBindable<bool>(&m_isValid);
+}
+
+bool QDeclarativePositionSource::isValidActualComputation() const
+{
+    return m_positionSource != nullptr;
 }
 
 void QDeclarativePositionSource::handleUpdateTimeout()
 {
-    m_sourceError = QDeclarativePositionSource::UpdateTimeoutError;
+    // notify will be called by the calling method
+    m_sourceError.setValueBypassingBindings(QDeclarativePositionSource::UpdateTimeoutError);
 
     if (!m_active)
         return;
@@ -280,12 +316,19 @@ void QDeclarativePositionSource::onParameterInitialized()
 
     // If here, componentComplete has been called.
     if (m_parametersInitialized)
-        tryAttach(m_providerName);
+        tryAttach(m_sourceName.value());
+}
+
+void QDeclarativePositionSource::notifySupportedPositioningMethodsChanged()
+{
+    m_supportedPositioningMethods.notify();
+    emit supportedPositioningMethodsChanged();
 }
 
 void QDeclarativePositionSource::setPosition(const QGeoPositionInfo &pi)
 {
-    m_position.setPosition(pi);
+    m_position.value()->setPosition(pi);
+    m_position.notify();
     emit positionChanged();
 }
 
@@ -299,7 +342,7 @@ void QDeclarativePositionSource::setSource(QGeoPositionInfoSource *source)
     } else {
         m_positionSource = source;
         connect(m_positionSource, &QGeoPositionInfoSource::supportedPositioningMethodsChanged,
-                this, &QDeclarativePositionSource::supportedPositioningMethodsChanged);
+                this, &QDeclarativePositionSource::notifySupportedPositioningMethodsChanged);
     }
 }
 
@@ -381,13 +424,26 @@ int QDeclarativePositionSource::updateInterval() const
 
 */
 
-QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::supportedPositioningMethods() const
+QDeclarativePositionSource::PositioningMethods
+QDeclarativePositionSource::supportedPositioningMethods() const
+{
+    return m_supportedPositioningMethods.value();
+}
+
+QDeclarativePositionSource::PositioningMethods
+QDeclarativePositionSource::supportedMethodsActualComputation() const
 {
     if (m_positionSource) {
         return static_cast<QDeclarativePositionSource::PositioningMethods>(
             int(m_positionSource->supportedPositioningMethods()));
     }
     return QDeclarativePositionSource::NoPositioningMethods;
+}
+
+QBindable<QDeclarativePositionSource::PositioningMethods>
+QDeclarativePositionSource::bindableSupportedPositioningMethods() const
+{
+    return QBindable<PositioningMethods>(&m_supportedPositioningMethods);
 }
 
 /*!
@@ -556,7 +612,7 @@ bool QDeclarativePositionSource::isActive() const
 
 QDeclarativePosition *QDeclarativePositionSource::position()
 {
-    return &m_position;
+    return m_position.value();
 }
 
 void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &update)
@@ -599,6 +655,12 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &
 QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError() const
 {
     return m_sourceError;
+}
+
+QBindable<QDeclarativePositionSource::SourceError>
+QDeclarativePositionSource::bindableSourceError() const
+{
+    return QBindable<QDeclarativePositionSource::SourceError>(&m_sourceError);
 }
 
 QGeoPositionInfoSource *QDeclarativePositionSource::positionSource() const
@@ -658,7 +720,6 @@ void QDeclarativePositionSource::parameter_clear(QQmlListProperty<QDeclarativePl
     p->m_parameters.clear();
 }
 
-
 void QDeclarativePositionSource::componentComplete()
 {
     m_componentComplete = true;
@@ -672,7 +733,7 @@ void QDeclarativePositionSource::componentComplete()
     }
 
     if (m_parametersInitialized)
-        tryAttach(m_providerName);
+        tryAttach(m_sourceName.value());
 }
 
 /*!
@@ -719,16 +780,17 @@ QVariant QDeclarativePositionSource::backendProperty(const QString &name) const
 void QDeclarativePositionSource::sourceErrorReceived(const QGeoPositionInfoSource::Error error)
 {
     if (error == QGeoPositionInfoSource::AccessError)
-        m_sourceError = QDeclarativePositionSource::AccessError;
+        m_sourceError.setValueBypassingBindings(QDeclarativePositionSource::AccessError);
     else if (error == QGeoPositionInfoSource::ClosedError)
-        m_sourceError = QDeclarativePositionSource::ClosedError;
+        m_sourceError.setValueBypassingBindings(QDeclarativePositionSource::ClosedError);
     else if (error == QGeoPositionInfoSource::UpdateTimeoutError)
         handleUpdateTimeout(); // also sets m_sourceError
     else if (error == QGeoPositionInfoSource::NoError)
         return; //nothing to do
     else
-        m_sourceError = QDeclarativePositionSource::UnknownSourceError;
+        m_sourceError.setValueBypassingBindings(QDeclarativePositionSource::UnknownSourceError);
 
+    m_sourceError.notify();
     emit sourceErrorChanged();
 }
 

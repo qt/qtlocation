@@ -104,7 +104,7 @@ public:
     QDateTime timestamp() const;
     double speed() const;
     bool isSpeedValid() const;
-    QGeoCoordinate coordinate();
+    QGeoCoordinate coordinate() const;
     bool isHorizontalAccuracyValid() const;
     qreal horizontalAccuracy() const;
     bool isVerticalAccuracyValid() const;

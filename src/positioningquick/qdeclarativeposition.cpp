@@ -303,7 +303,7 @@ QBindable<bool> QDeclarativePosition::bindableMagneticVariationValid() const
 
     \sa longitudeValid, latitudeValid, altitudeValid
 */
-QGeoCoordinate QDeclarativePosition::coordinate()
+QGeoCoordinate QDeclarativePosition::coordinate() const
 {
     return m_computedCoordinate.value();
 }

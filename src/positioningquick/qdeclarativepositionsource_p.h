@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -58,6 +58,7 @@
 #include <QtQml/QQmlParserStatus>
 #include <QtPositioning/qgeopositioninfosource.h>
 #include <QtPositioningQuick/private/qdeclarativepluginparameter_p.h>
+#include <QtCore/private/qproperty_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -70,14 +71,20 @@ class Q_POSITIONINGQUICK_PRIVATE_EXPORT QDeclarativePositionSource : public QObj
     QML_NAMED_ELEMENT(PositionSource)
     QML_ADDED_IN_VERSION(5, 0)
 
-    Q_PROPERTY(QDeclarativePosition *position READ position NOTIFY positionChanged)
+    Q_PROPERTY(QDeclarativePosition *position READ position NOTIFY positionChanged
+               BINDABLE bindablePosition)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
-    Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged)
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged)
-    Q_PROPERTY(PositioningMethods supportedPositioningMethods READ supportedPositioningMethods NOTIFY supportedPositioningMethodsChanged)
-    Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
-    Q_PROPERTY(SourceError sourceError READ sourceError NOTIFY sourceErrorChanged)
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged BINDABLE bindableIsValid)
+    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval
+               NOTIFY updateIntervalChanged)
+    Q_PROPERTY(PositioningMethods supportedPositioningMethods READ supportedPositioningMethods
+               NOTIFY supportedPositioningMethodsChanged
+               BINDABLE bindableSupportedPositioningMethods)
+    Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods
+               WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
+    Q_PROPERTY(SourceError sourceError READ sourceError NOTIFY sourceErrorChanged
+               BINDABLE bindableSourceError)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged BINDABLE bindableName)
     Q_PROPERTY(QQmlListProperty<QDeclarativePluginParameter> parameters READ parameters REVISION(5, 14))
     Q_ENUMS(PositioningMethod)
 
@@ -131,6 +138,12 @@ public:
     Q_REVISION(5, 14) Q_INVOKABLE bool setBackendProperty(const QString &name, const QVariant &value);
     Q_REVISION(5, 14) Q_INVOKABLE QVariant backendProperty(const QString &name) const;
 
+    QBindable<PositioningMethods> bindableSupportedPositioningMethods() const;
+    QBindable<SourceError> bindableSourceError() const;
+    QBindable<bool> bindableIsValid() const;
+    QBindable<QString> bindableName();
+    QBindable<QDeclarativePosition *> bindablePosition() const;
+
 public Q_SLOTS:
     void update(int timeout = 0);
     void start();
@@ -150,6 +163,7 @@ private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo &update);
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
     void onParameterInitialized();
+    void notifySupportedPositioningMethodsChanged();
 
 private:
     void handleUpdateTimeout();
@@ -163,18 +177,35 @@ private:
     static QDeclarativePluginParameter *parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, qsizetype index);
     static void parameter_clear(QQmlListProperty<QDeclarativePluginParameter> *prop);
 
+    bool isValidActualComputation() const;
+    PositioningMethods supportedMethodsActualComputation() const;
+
     QGeoPositionInfoSource *m_positionSource = nullptr;
-    QDeclarativePosition m_position;
     PositioningMethods m_preferredPositioningMethods = AllPositioningMethods;
-    QString m_providerName;
     bool m_active = false;
     bool m_singleUpdate = false;
     bool m_regularUpdates = false;
     int m_updateInterval = 0;
-    SourceError m_sourceError = NoError;
     QList<QDeclarativePluginParameter *> m_parameters;
     bool m_componentComplete = false;
     bool m_parametersInitialized = false;
+
+    bool m_defaultSourceUsed = false;
+    Q_OBJECT_COMPAT_PROPERTY(QDeclarativePositionSource, QString, m_sourceName,
+                             &QDeclarativePositionSource::setName,
+                             &QDeclarativePositionSource::nameChanged)
+
+    Q_OBJECT_BINDABLE_PROPERTY(QDeclarativePositionSource, QDeclarativePosition *, m_position)
+
+    Q_OBJECT_BINDABLE_PROPERTY_WITH_ARGS(QDeclarativePositionSource, SourceError, m_sourceError,
+                                         NoError)
+
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePositionSource, PositioningMethods,
+                               m_supportedPositioningMethods,
+                               &QDeclarativePositionSource::supportedMethodsActualComputation)
+
+    Q_OBJECT_COMPUTED_PROPERTY(QDeclarativePositionSource, bool, m_isValid,
+                               &QDeclarativePositionSource::isValidActualComputation)
 };
 
 QT_END_NAMESPACE

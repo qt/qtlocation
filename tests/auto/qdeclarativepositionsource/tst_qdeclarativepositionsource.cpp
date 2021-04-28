@@ -26,6 +26,7 @@
 **
 ****************************************************************************/
 #include <QtTest/QtTest>
+#include <QtTest/private/qpropertytesthelper_p.h>
 #include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>
 
 QT_USE_NAMESPACE
@@ -36,6 +37,15 @@ class tst_DeclarativePositionSource : public QObject
 
 private slots:
     void init();
+
+    void nameBinding();
+    void supportedMethodsBinding();
+    void sourceErrorBinding();
+    void validBinding();
+    void positionBinding();
+
+    void intervalOnSourceDependency();
+    void preferredMethodsOnSourceDependency();
 
     void updateAfterStart();
     void startAfterUpdate();
@@ -54,6 +64,160 @@ void tst_DeclarativePositionSource::init()
     // create a fresh instance of QDeclarativePositionSource before each test
     m_positionSource.reset(new QDeclarativePositionSource);
     m_positionSource->componentComplete(); // simulate QML loading
+}
+
+void tst_DeclarativePositionSource::nameBinding()
+{
+    m_positionSource->setName("test.source");
+    QTestPrivate::testReadWritePropertyBasics<QDeclarativePositionSource, QString>(
+            *m_positionSource.get(), "invalid source", "test.source", "name");
+}
+
+void tst_DeclarativePositionSource::supportedMethodsBinding()
+{
+    // Invalid source has no positioning methods.
+    // "test.source" has all positioning methods.
+    m_positionSource->setName("invalid name");
+    QTestPrivate::testReadOnlyPropertyBasics<QDeclarativePositionSource,
+                                             QDeclarativePositionSource::PositioningMethods>(
+            *m_positionSource.get(), QDeclarativePositionSource::NoPositioningMethods,
+            QDeclarativePositionSource::AllPositioningMethods, "supportedPositioningMethods",
+            [&]() { m_positionSource->setName("test.source"); });
+}
+
+void tst_DeclarativePositionSource::sourceErrorBinding()
+{
+    // "dummy.source" has a minimum update interval of 100, and calling
+    // update() with a smaller timeout immediately result in a timeout error
+    m_positionSource->setName("dummy.source");
+    QTestPrivate::testReadOnlyPropertyBasics<QDeclarativePositionSource,
+                                             QDeclarativePositionSource::SourceError>(
+            *m_positionSource.get(), QDeclarativePositionSource::NoError,
+            QDeclarativePositionSource::UpdateTimeoutError, "sourceError",
+            [&]() { m_positionSource->update(10); });
+    if (QTest::currentTestFailed())
+        return;
+
+    // Test that we can't bind sourceError to smth, as it's read-only
+    QProperty<QDeclarativePositionSource::SourceError> errorSetter;
+    m_positionSource->bindableSourceError().setBinding(Qt::makePropertyBinding(errorSetter));
+    QCOMPARE(m_positionSource->bindableSourceError().hasBinding(), false);
+}
+
+void tst_DeclarativePositionSource::validBinding()
+{
+    // Invalid source name results in no position source -> invalid object.
+    // Setting the name to "test.source" results in creating a new position
+    // source -> valid object
+    m_positionSource->setName("invalid name");
+    QTestPrivate::testReadOnlyPropertyBasics<QDeclarativePositionSource, bool>(
+            *m_positionSource.get(), false, true, "valid",
+            [&]() { m_positionSource->setName("test.source"); });
+}
+
+static char *printPosition(const QDeclarativePosition *position)
+{
+    // For this test we need to print only coordinate, so that we get a nice
+    // error message if the below test fails.
+    QString str;
+    QDebug dbg(&str);
+    dbg << position->coordinate();
+    const auto dataArray = str.toLatin1();
+    const auto msgSize = dataArray.size() + 1;
+    char *msg = new char[msgSize];
+    memset(msg, 0, msgSize);
+    qsnprintf(msg, msgSize, "%s", dataArray.constData());
+    return msg;
+}
+
+void tst_DeclarativePositionSource::positionBinding()
+{
+    // "test.source" udpates its position, starting from (0, 0) coordinate, and
+    // adding 0.1 lat and 0.1 log at every step
+    m_positionSource->setName("test.source");
+    m_positionSource->setUpdateInterval(1000);
+    const QGeoCoordinate c1(0, 0);
+    const QGeoCoordinate c2(0.1, 0.1, 0);
+    QCOMPARE(m_positionSource->position()->coordinate(), c1);
+
+    QGeoPositionInfo posInfo;
+    posInfo.setCoordinate(c1);
+    QDeclarativePosition pos1;
+    pos1.setPosition(posInfo);
+
+    posInfo.setCoordinate(c2);
+    QDeclarativePosition pos2;
+    pos2.setPosition(posInfo);
+
+    QTestPrivate::testReadOnlyPropertyBasics<QDeclarativePositionSource, QDeclarativePosition *>(
+            *m_positionSource.get(), &pos1, &pos2, "position",
+            [&]() {
+                m_positionSource->update();
+                QTest::qWait(1500); // the update will happen after 1000 ms
+            },
+            [](const QDeclarativePosition *p1, const QDeclarativePosition *p2) {
+                return p1->coordinate() == p2->coordinate();
+            },
+            printPosition);
+    if (QTest::currentTestFailed())
+        return;
+
+    QProperty<QDeclarativePosition *> prop(nullptr);
+    m_positionSource->bindablePosition().setBinding(Qt::makePropertyBinding(prop));
+    // We can't have bindings on read-only properties
+    QCOMPARE(m_positionSource->bindablePosition().hasBinding(), false);
+}
+
+void tst_DeclarativePositionSource::intervalOnSourceDependency()
+{
+    // updateInterval can be modified if the new source does not support that
+    // large one, or implements some calculation
+    m_positionSource->setName("invalid_source"); // reset the source
+
+    QSignalSpy intervalSpy(m_positionSource.get(),
+                           &QDeclarativePositionSource::updateIntervalChanged);
+
+    m_positionSource->setUpdateInterval(200);
+    QCOMPARE(m_positionSource->updateInterval(), 200);
+    QCOMPARE(intervalSpy.count(), 1);
+
+    // "test.source" has a minimum update interval of 1000
+    m_positionSource->setName("test.source");
+    QCOMPARE(m_positionSource->updateInterval(), 1000);
+    QCOMPARE(intervalSpy.count(), 2);
+
+    // "dummy.source" has a minimum update interval of 100, so we expect our
+    // desired interval to be applied
+    m_positionSource->setName("dummy.source");
+    QCOMPARE(m_positionSource->updateInterval(), 200);
+    QCOMPARE(intervalSpy.count(), 3);
+}
+
+void tst_DeclarativePositionSource::preferredMethodsOnSourceDependency()
+{
+    m_positionSource->setName("invalid_source"); // reset the source
+
+    QSignalSpy methodsSpy(m_positionSource.get(),
+                          &QDeclarativePositionSource::preferredPositioningMethodsChanged);
+
+    m_positionSource->setPreferredPositioningMethods(
+            QDeclarativePositionSource::SatellitePositioningMethods);
+    QCOMPARE(m_positionSource->preferredPositioningMethods(),
+             QDeclarativePositionSource::SatellitePositioningMethods);
+    QCOMPARE(methodsSpy.count(), 1);
+
+    // "dummy.source" has only non-satellite methods, so they will be used
+    m_positionSource->setName("dummy.source");
+    QCOMPARE(m_positionSource->preferredPositioningMethods(),
+             QDeclarativePositionSource::NonSatellitePositioningMethods);
+    QCOMPARE(methodsSpy.count(), 2);
+
+    // "test.source" has all positioning methods, so satellite will be used,
+    // as we initially wanted
+    m_positionSource->setName("test.source");
+    QCOMPARE(m_positionSource->preferredPositioningMethods(),
+             QDeclarativePositionSource::SatellitePositioningMethods);
+    QCOMPARE(methodsSpy.count(), 3);
 }
 
 void tst_DeclarativePositionSource::updateAfterStart()
