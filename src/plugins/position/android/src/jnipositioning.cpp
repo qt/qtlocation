@@ -58,25 +58,31 @@ public:
     GlobalClassRefWrapper() = default;
     ~GlobalClassRefWrapper()
     {
-        QJniEnvironment env;
-        if (env.jniEnv())
-            env->DeleteGlobalRef(m_classRef);
+        if (m_classRef) {
+            QJniEnvironment env;
+            if (env.jniEnv())
+                env->DeleteGlobalRef(m_classRef);
+        }
     }
 
-    bool init(jclass localRef)
+    bool init(const char *className)
     {
         QJniEnvironment env;
         if (env.jniEnv()) {
-            m_classRef = static_cast<jclass>(env->NewGlobalRef(localRef));
-            return true;
+            if (m_classRef) {
+                env->DeleteGlobalRef(m_classRef);
+                m_classRef = nullptr;
+            }
+
+            m_classRef = env.findClass(className); // it returns global ref!
         }
-        return false;
+        return m_classRef != nullptr;
     }
 
     jclass operator()() { return m_classRef; }
 
 private:
-    jclass m_classRef;
+    jclass m_classRef = nullptr;
 };
 
 static GlobalClassRefWrapper positioningClass;
@@ -89,7 +95,6 @@ static jmethodID requestUpdateMethodId;
 static jmethodID startSatelliteUpdatesMethodId;
 
 static const char logTag[] = "QtPositioning";
-static const char classErrorMsg[] = "Can't find class \"%s\"";
 static const char methodErrorMsg[] = "Can't find method \"%s%s\"";
 
 namespace AndroidPositioning {
@@ -149,8 +154,9 @@ namespace AndroidPositioning {
         QJniEnvironment env;
         if (!env.jniEnv())
             return ret;
-        jintArray jProviders = static_cast<jintArray>(
-                env->CallStaticObjectMethod(positioningClass(), providerListMethodId));
+        QJniObject jniProvidersObj =
+                QJniObject::callStaticObjectMethod(positioningClass(), providerListMethodId);
+        jintArray jProviders = jniProvidersObj.object<jintArray>();
         jint *providers = env->GetIntArrayElements(jProviders, nullptr);
         const int size = env->GetArrayLength(jProviders);
         for (int i = 0; i < size; i++) {
@@ -170,7 +176,6 @@ namespace AndroidPositioning {
         }
 
         env->ReleaseIntArrayElements(jProviders, providers, 0);
-        env->DeleteLocalRef(jProviders);
 
         return ret;
     }
@@ -313,13 +318,13 @@ namespace AndroidPositioning {
         if (!requestionPositioningPermissions(env.jniEnv()))
             return {};
 
-        jobject location = env->CallStaticObjectMethod(
+        QJniObject locationObj = QJniObject::callStaticObjectMethod(
                 positioningClass(), lastKnownPositionMethodId, fromSatellitePositioningMethodsOnly);
+        jobject location = locationObj.object();
         if (location == nullptr)
             return QGeoPositionInfo();
 
         const QGeoPositionInfo info = positionInfoFromJavaLocation(location);
-        env->DeleteLocalRef(location);
 
         return info;
     }
@@ -347,7 +352,7 @@ namespace AndroidPositioning {
             if (!requestionPositioningPermissions(env.jniEnv()))
                 return QGeoPositionInfoSource::AccessError;
 
-            int errorCode = env->CallStaticIntMethod(
+            int errorCode = QJniObject::callStaticMethod<jint>(
                     positioningClass(), startUpdatesMethodId, androidClassKey,
                     positioningMethodToInt(source->preferredPositioningMethods()),
                     source->updateInterval());
@@ -368,11 +373,8 @@ namespace AndroidPositioning {
     //used for stopping regular and single updates
     void stopUpdates(int androidClassKey)
     {
-        QJniEnvironment env;
-        if (!env.jniEnv())
-            return;
-
-        env->CallStaticVoidMethod(positioningClass(), stopUpdatesMethodId, androidClassKey);
+        QJniObject::callStaticMethod<void>(positioningClass(), stopUpdatesMethodId,
+                                           androidClassKey);
     }
 
     QGeoPositionInfoSource::Error requestUpdate(int androidClassKey)
@@ -387,7 +389,7 @@ namespace AndroidPositioning {
             if (!requestionPositioningPermissions(env.jniEnv()))
                 return QGeoPositionInfoSource::AccessError;
 
-            int errorCode = env->CallStaticIntMethod(
+            int errorCode = QJniObject::callStaticMethod<jint>(
                     positioningClass(), requestUpdateMethodId, androidClassKey,
                     positioningMethodToInt(source->preferredPositioningMethods()));
             switch (errorCode) {
@@ -418,9 +420,10 @@ namespace AndroidPositioning {
             int interval = source->updateInterval();
             if (isSingleRequest)
                 interval = requestTimeout;
-            int errorCode =
-                    env->CallStaticIntMethod(positioningClass(), startSatelliteUpdatesMethodId,
-                                             androidClassKey, interval, isSingleRequest);
+            int errorCode = QJniObject::callStaticMethod<jint>(positioningClass(),
+                                                               startSatelliteUpdatesMethodId,
+                                                               androidClassKey, interval,
+                                                               isSingleRequest);
             switch (errorCode) {
             case -1:
             case 0:
@@ -522,47 +525,35 @@ static void satelliteUpdated(JNIEnv *env, jobject /*thiz*/, jobjectArray satelli
                               Q_ARG(QList<QGeoSatelliteInfo>, inUse), Q_ARG(bool, isSingleUpdate));
 }
 
-#define FIND_AND_CHECK_CLASS(VAR, CLASS_NAME)                                                      \
-    VAR = env->FindClass(CLASS_NAME);                                                              \
-    if (!VAR) {                                                                                    \
-        __android_log_print(ANDROID_LOG_FATAL, logTag, classErrorMsg, CLASS_NAME);                 \
-        return false;                                                                              \
-    }
-
 #define GET_AND_CHECK_STATIC_METHOD(VAR, CLASS, METHOD_NAME, METHOD_SIGNATURE)                     \
-    VAR = env->GetStaticMethodID(CLASS, METHOD_NAME, METHOD_SIGNATURE);                            \
+    VAR = env.findStaticMethod(CLASS, METHOD_NAME, METHOD_SIGNATURE);                              \
     if (!VAR) {                                                                                    \
         __android_log_print(ANDROID_LOG_FATAL, logTag, methodErrorMsg, METHOD_NAME,                \
                             METHOD_SIGNATURE);                                                     \
         return false;                                                                              \
     }
 
-static JNINativeMethod methods[] = {
-    {"positionUpdated", "(Landroid/location/Location;IZ)V", (void *)positionUpdated},
-    {"locationProvidersDisabled", "(I)V", (void *) locationProvidersDisabled},
-    {"satelliteUpdated", "([Landroid/location/GpsSatellite;IZ)V", (void *)satelliteUpdated},
-    {"locationProvidersChanged", "(I)V", (void *) locationProvidersChanged}
-};
-
 static bool registerNatives()
 {
+     JNINativeMethod methods[] = {
+        {"positionUpdated", "(Landroid/location/Location;IZ)V", (void *)positionUpdated},
+        {"locationProvidersDisabled", "(I)V", (void *) locationProvidersDisabled},
+        {"satelliteUpdated", "([Landroid/location/GpsSatellite;IZ)V", (void *)satelliteUpdated},
+        {"locationProvidersChanged", "(I)V", (void *) locationProvidersChanged}
+    };
+
     QJniEnvironment env;
     if (!env.jniEnv()) {
         __android_log_print(ANDROID_LOG_FATAL, logTag, "Failed to create environment");
         return false;
     }
 
-    jclass clazz;
-    const QLatin1String className("org/qtproject/qt/android/positioning/QtPositioning");
-    FIND_AND_CHECK_CLASS(clazz, className.data());
-    const bool initialized = positioningClass.init(clazz);
-    env->DeleteLocalRef(clazz);
-    if (!initialized) {
-        __android_log_print(ANDROID_LOG_FATAL, logTag, "Failed to create global ref");
+    if (!positioningClass.init("org/qtproject/qt/android/positioning/QtPositioning")) {
+        __android_log_print(ANDROID_LOG_FATAL, logTag, "Failed to create global class ref");
         return false;
     }
 
-    if (!env.registerNativeMethods(className.data(), methods,
+    if (!env.registerNativeMethods(positioningClass(), methods,
                                    sizeof(methods) / sizeof(methods[0]))) {
         __android_log_print(ANDROID_LOG_FATAL, logTag, "Failed to register native methods");
         return false;
