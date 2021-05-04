@@ -193,6 +193,12 @@ void QDeclarativePositionSource::setName(const QString &newName)
 */
 void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallback)
 {
+    if (m_nmeaFile != nullptr || m_nmeaSocket != nullptr) {
+        if (!m_providerName.isEmpty())
+            qWarning("Both nmeaSource and name parameters are specified. nmeaSource will be used.");
+        return;
+    }
+
     const QString previousName = name();
     const bool sourceExisted = m_positionSource;
     m_providerName = newName;
