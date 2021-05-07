@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -40,14 +40,9 @@
 #ifndef JNIPOSITIONING_H
 #define JNIPOSITIONING_H
 
-#include <jni.h>
 #include <QGeoPositionInfoSource>
 #include <QGeoSatelliteInfoSource>
 
-/*
-    Note: all the exception handling is done on the Java side, so we do not need
-    to care about Java exceptions on the C++ side.
-*/
 namespace AndroidPositioning
 {
     int registerPositionInfoSource(QObject *obj);
@@ -63,7 +58,7 @@ namespace AndroidPositioning
     QGeoSatelliteInfoSource::Error startSatelliteUpdates(int androidClassKey,
                                                          bool isSingleRequest,
                                                          int updateRequestTimeout);
-    bool requestionPositioningPermissions(JNIEnv *env);
+    bool requestionPositioningPermissions();
 }
 
 #endif // JNIPOSITIONING_H

@@ -38,18 +38,15 @@
 ****************************************************************************/
 
 #include <QDateTime>
-#include <QDebug>
 #include <QMap>
 #include <QRandomGenerator>
-#include <QtGlobal>
-#include <QtCore/private/qjnihelpers_p.h>
-#include <android/log.h>
 #include <QGeoPositionInfo>
-#include "qgeopositioninfosource_android_p.h"
-#include "qgeosatelliteinfosource_android_p.h"
-
 #include <QJniEnvironment>
 #include <QJniObject>
+#include <QCoreApplication>
+#include <android/log.h>
+#include "qgeopositioninfosource_android_p.h"
+#include "qgeosatelliteinfosource_android_p.h"
 #include "jnipositioning.h"
 
 class GlobalClassRefWrapper
@@ -315,7 +312,7 @@ namespace AndroidPositioning {
         if (!env.jniEnv())
             return QGeoPositionInfo();
 
-        if (!requestionPositioningPermissions(env.jniEnv()))
+        if (!requestionPositioningPermissions())
             return {};
 
         QJniObject locationObj = QJniObject::callStaticObjectMethod(
@@ -349,7 +346,7 @@ namespace AndroidPositioning {
         QGeoPositionInfoSourceAndroid *source = AndroidPositioning::idToPosSource()->value(androidClassKey);
 
         if (source) {
-            if (!requestionPositioningPermissions(env.jniEnv()))
+            if (!requestionPositioningPermissions())
                 return QGeoPositionInfoSource::AccessError;
 
             int errorCode = QJniObject::callStaticMethod<jint>(
@@ -386,7 +383,7 @@ namespace AndroidPositioning {
         QGeoPositionInfoSourceAndroid *source = AndroidPositioning::idToPosSource()->value(androidClassKey);
 
         if (source) {
-            if (!requestionPositioningPermissions(env.jniEnv()))
+            if (!requestionPositioningPermissions())
                 return QGeoPositionInfoSource::AccessError;
 
             int errorCode = QJniObject::callStaticMethod<jint>(
@@ -414,7 +411,7 @@ namespace AndroidPositioning {
         QGeoSatelliteInfoSourceAndroid *source = AndroidPositioning::idToSatSource()->value(androidClassKey);
 
         if (source) {
-            if (!requestionPositioningPermissions(env.jniEnv()))
+            if (!requestionPositioningPermissions())
                 return QGeoSatelliteInfoSource::AccessError;
 
             int interval = source->updateInterval();
@@ -438,21 +435,15 @@ namespace AndroidPositioning {
         return QGeoSatelliteInfoSource::UnknownSourceError;
     }
 
-    bool requestionPositioningPermissions(JNIEnv *env)
+    bool requestionPositioningPermissions()
     {
-        using namespace QtAndroidPrivate;
-
-        if (androidSdkVersion() < 23)
-            return true;
-
         // Android v23+ requires runtime permission check and requests
-        QString permission(QLatin1String("android.permission.ACCESS_FINE_LOCATION"));
-
-        if (checkPermission(permission) == PermissionsResult::Denied) {
-            const QHash<QString, PermissionsResult> results =
-                    requestPermissionsSync(env, QStringList() << permission);
-            if (!results.contains(permission) || results[permission] == PermissionsResult::Denied) {
-                qWarning() << "Position data not available due to missing permission " << permission;
+        const auto permission = QPermission::PreciseLocation;
+        auto checkFuture = QCoreApplication::checkPermission(permission);
+        if (checkFuture.result() == QPermission::Denied) {
+            auto requestFuture = QCoreApplication::requestPermission(permission);
+            if (requestFuture.result() != QPermission::Authorized) {
+                qWarning() << "Position data not available due to missing permission" << permission;
                 return false;
             }
         }
