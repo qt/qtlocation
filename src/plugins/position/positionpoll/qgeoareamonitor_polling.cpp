@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -188,7 +188,7 @@ public:
 
         bool signalsConnected = false;
         foreach (const QGeoAreaMonitorPolling *client, registeredClients) {
-            if (client->signalsAreConnected) {
+            if (client->hasConnections()) {
                 signalsConnected = true;
                 break;
             }
@@ -316,9 +316,7 @@ private:
 
 Q_GLOBAL_STATIC(QGeoAreaMonitorPollingPrivate, pollingPrivate)
 
-
-QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent)
-    : QGeoAreaMonitorSource(parent), signalsAreConnected(false)
+QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent) : QGeoAreaMonitorSource(parent)
 {
     d = pollingPrivate();
     d->registerClient(this);
@@ -375,6 +373,12 @@ int QGeoAreaMonitorPolling::idForSignal(const char *signal)
     const QMetaObject * const mo = metaObject();
 
     return mo->indexOfSignal(sig.constData());
+}
+
+bool QGeoAreaMonitorPolling::hasConnections() const
+{
+    // This method is internal and requires the mutex to be already locked.
+    return signalConnections > 0;
 }
 
 bool QGeoAreaMonitorPolling::requestUpdate(const QGeoAreaMonitorInfo &monitor, const char *signal)
@@ -443,24 +447,25 @@ QGeoAreaMonitorSource::AreaMonitorFeatures QGeoAreaMonitorPolling::supportedArea
     return {};
 }
 
-void QGeoAreaMonitorPolling::connectNotify(const QMetaMethod &/*signal*/)
+void QGeoAreaMonitorPolling::connectNotify(const QMetaMethod &signal)
 {
-    if (!signalsAreConnected &&
-        (isSignalConnected(areaEnteredSignal()) ||
-         isSignalConnected(areaExitedSignal())) )
-    {
-        signalsAreConnected = true;
-        d->checkStartStop();
+    QMutexLocker locker(&connectionMutex);
+    if (signal == areaEnteredSignal() || signal == areaExitedSignal()) {
+        const bool alreadyConnected = hasConnections();
+        signalConnections++;
+        if (!alreadyConnected)
+            d->checkStartStop();
     }
 }
 
-void QGeoAreaMonitorPolling::disconnectNotify(const QMetaMethod &/*signal*/)
+void QGeoAreaMonitorPolling::disconnectNotify(const QMetaMethod &signal)
 {
-    if (!isSignalConnected(areaEnteredSignal()) &&
-        !isSignalConnected(areaExitedSignal()))
-    {
-        signalsAreConnected = false;
-        d->checkStartStop();
+    QMutexLocker locker(&connectionMutex);
+    if (signal == areaEnteredSignal() || signal == areaExitedSignal()) {
+        if (hasConnections())
+            signalConnections--;
+        if (!hasConnections())
+            d->checkStartStop();
     }
 }
 

@@ -64,12 +64,18 @@ void LogFilePositionSource::startUpdates()
     if (interval < minimumUpdateInterval())
         interval = minimumUpdateInterval();
 
-    timer->start(interval);
+    if (!timer->isActive()) {
+        if (QMetaObject::invokeMethod(timer, "start", Q_ARG(int, interval)))
+            emit updatesStarted();
+    }
 }
 
 void LogFilePositionSource::stopUpdates()
 {
-    timer->stop();
+    if (timer->isActive()) {
+        if (QMetaObject::invokeMethod(timer, "stop"))
+            emit updatesStopped();
+    }
 }
 
 void LogFilePositionSource::requestUpdate(int /*timeout*/)
@@ -109,6 +115,9 @@ void LogFilePositionSource::readNextPosition()
             }
         }
         index++;
+    } else if (!noDataEmitted) {
+        emit noDataLeft();
+        noDataEmitted = true;
     }
 }
 

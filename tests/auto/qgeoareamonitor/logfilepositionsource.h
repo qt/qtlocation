@@ -53,6 +53,11 @@ public:
     int minimumUpdateInterval() const override;
     Error error() const override;
 
+signals:
+    void noDataLeft();
+    void updatesStarted();
+    void updatesStopped();
+
 public slots:
     virtual void startUpdates() override;
     virtual void stopUpdates() override;
@@ -70,6 +75,7 @@ private:
     Error lastError = QGeoPositionInfoSource::NoError;
     const QList<QByteArray> &lines;
     qsizetype index = -1;
+    bool noDataEmitted = false;
 };
 
 #endif

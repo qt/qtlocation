@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtPositioning module of the Qt Toolkit.
@@ -42,7 +42,7 @@
 
 #include <QtPositioning/qgeoareamonitorsource.h>
 #include <QtPositioning/qgeopositioninfosource.h>
-
+#include <QtCore/qmutex.h>
 
 /**
  *  QGeoAreaMonitorPolling
@@ -74,8 +74,6 @@ public :
 
     inline bool isValid() { return positionInfoSource(); }
 
-    bool signalsAreConnected;
-
 private Q_SLOTS:
     void positionError(QGeoPositionInfoSource::Error error);
     void timeout(const QGeoAreaMonitorInfo &monitor);
@@ -84,11 +82,19 @@ private Q_SLOTS:
 private:
     QGeoAreaMonitorPollingPrivate* d;
     QGeoAreaMonitorSource::Error lastError = QGeoAreaMonitorSource::NoError;
+    friend class QGeoAreaMonitorPollingPrivate;
+
+    int signalConnections = 0;
+    // connectNotify() and disconnectNotify() can be called from a different
+    // thread, so we need to synchronize the access to signalConnections
+    QMutex connectionMutex;
 
     void connectNotify(const QMetaMethod &signal) override;
     void disconnectNotify(const QMetaMethod &signal) override;
 
     int idForSignal(const char *signal);
+
+    bool hasConnections() const;
 };
 
 #endif // QGEOAREAMONITORPOLLING_H

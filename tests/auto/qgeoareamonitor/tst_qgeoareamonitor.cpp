@@ -48,7 +48,7 @@
 #include <QtPositioning/qgeorectangle.h>
 
 #include "logfilepositionsource.h"
-
+#include "positionconsumerthread.h"
 
 QT_USE_NAMESPACE
 #define UPDATE_INTERVAL 50
@@ -802,6 +802,79 @@ private slots:
         qDebug() << info << nextValue;
         qInstallMessageHandler(0);
         QCOMPARE(tst_qgeoareamonitorinfo_debug, debugString);
+    }
+
+    void multipleThreads()
+    {
+        std::unique_ptr<QGeoAreaMonitorSource> obj(
+                QGeoAreaMonitorSource::createSource(QStringLiteral("positionpoll"), 0));
+        QVERIFY(obj != nullptr);
+        QCOMPARE(obj->sourceName(), QStringLiteral("positionpoll"));
+
+        QVERIFY(obj->activeMonitors().isEmpty());
+
+        LogFilePositionSource *source = new LogFilePositionSource(m_fileData, this);
+        source->setUpdateInterval(UPDATE_INTERVAL);
+        obj->setPositionInfoSource(source);
+        QCOMPARE(obj->positionInfoSource(), source);
+
+        QSignalSpy noDataSpy(source, &LogFilePositionSource::noDataLeft);
+        QSignalSpy updatesStartedSpy(source, &LogFilePositionSource::updatesStarted);
+        QSignalSpy updatesStoppedSpy(source, &LogFilePositionSource::updatesStopped);
+
+        // generate threads
+        const int threadCount = 10;
+        QList<PositionConsumerThread *> threads;
+        for (int i = 0; i < threadCount; ++i) {
+            auto threadObj = new PositionConsumerThread(obj.get(), this);
+            threadObj->start();
+            threads.push_back(threadObj);
+        }
+
+        // generate objects to monitor
+        QGeoAreaMonitorInfo infoRectangle("Rectangle");
+        infoRectangle.setArea(QGeoRectangle(QGeoCoordinate(-27.65, 153.093), 0.2, 0.2));
+        QVERIFY(infoRectangle.isValid());
+        QVERIFY(obj->startMonitoring(infoRectangle));
+
+        QGeoAreaMonitorInfo infoCircle("Circle");
+        infoCircle.setArea(QGeoCircle(QGeoCoordinate(-27.70, 153.093), 10000));
+        QVERIFY(infoCircle.isValid());
+        QVERIFY(obj->startMonitoring(infoCircle));
+
+        QGeoAreaMonitorInfo singleShot_enter("SingleShot_on_Entered");
+        singleShot_enter.setArea(QGeoRectangle(QGeoCoordinate(-27.67, 153.093), 0.2, 0.2));
+        QVERIFY(singleShot_enter.isValid());
+        QVERIFY(obj->requestUpdate(singleShot_enter,
+                                   SIGNAL(areaEntered(QGeoAreaMonitorInfo, QGeoPositionInfo))));
+
+        QGeoAreaMonitorInfo singleShot_exit("SingleShot_on_Exited");
+        singleShot_exit.setArea(QGeoRectangle(QGeoCoordinate(-27.70, 153.093), 0.2, 0.2));
+        QVERIFY(singleShot_exit.isValid());
+        QVERIFY(obj->requestUpdate(singleShot_exit,
+                                   SIGNAL(areaExited(QGeoAreaMonitorInfo, QGeoPositionInfo))));
+
+        // wait until we read all data
+        QTRY_COMPARE_WITH_TIMEOUT(noDataSpy.count(), 1, 5000);
+
+        // first request all the threads to terminate
+        for (int i = 0; i < threadCount; ++i)
+            threads[i]->stopProcessing();
+
+        static const int Number_Of_Entered_Events = 6;
+        static const int Number_Of_Exited_Events = 5;
+        // wait until each thread is stopped, and compare the result values
+        for (int i = 0; i < threadCount; ++i) {
+            threads[i]->wait();
+            QCOMPARE(threads[i]->detectedEnterCount(), Number_Of_Entered_Events);
+            QCOMPARE(threads[i]->detectedExitCount(), Number_Of_Exited_Events);
+        }
+
+        // Verify that the source started and stopped updates only once.
+        // This is needed to check that the connection tracking logic in
+        // connectNotify()/disconnectNotify() is working properly.
+        QCOMPARE(updatesStartedSpy.count(), 1);
+        QCOMPARE(updatesStoppedSpy.count(), 1);
     }
 };
 
