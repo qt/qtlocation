@@ -109,7 +109,80 @@ QT_BEGIN_NAMESPACE
     a PositionSource in your application to retrieve local data for users
     from a REST web service.
 
-    \sa {QtPositioning::Position}, {QGeoPositionInfoSource}, {PluginParameter}
+    \section2 Controlling Operation State
+
+    As it's mentioned above, PositionSource provides two ways to control its
+    operation state:
+
+    \list
+    \li By using the \l active \l {Qt Bindable Properties}{bindable} property.
+    \li By using \l start() and \l stop() methods.
+    \endlist
+
+    \note It's very important not to mix these approaches. If a bindable
+    \l active property is used to control the PositionSource object, but later
+    \l start() or \l stop() is called from the other part of the code, the
+    binding is broken, which may result in, for example, a UI element that is
+    not connected to any underlying object anymore.
+
+    Consider the following example of \b {bad code} where the \c active property
+    is bound to the CheckBox state, and calling \l stop() in the \c onClicked
+    signal handler breaks that binding.
+
+    \qml
+    Window {
+        width: 640
+        height: 480
+        visible: true
+
+        PositionSource {
+            id: posSource
+            name: "geoclue2"
+            active: cb.checked
+        }
+
+        Column {
+            anchors.centerIn: parent
+            spacing: 20
+            CheckBox {
+                id: cb
+            }
+            Button {
+                id: btn
+                text: "Stop"
+                onClicked: {
+                    posSource.stop()
+                }
+            }
+        }
+    }
+    \endqml
+
+    Once the \e Stop button is clicked, \l stop() is executed, and the binding
+    for the \l active property is broken. At this point the CheckBox UI element
+    is no longer controlling the PositionSource object.
+
+    A straightforward fix in this case is to update the CheckBox state from
+    the \c onClicked handler. As soon as the CheckBox is unchecked, the
+    \l active property will be notified, and the PositionSource object's state
+    will update accordingly. The UI will also be in a consistent state.
+
+    \qml
+    Button {
+        id: btn
+        text: "Stop"
+        onClicked: {
+            cb.checked = false
+        }
+    }
+    \endqml
+
+    \note Using \l update() to request a single position update \e {does not}
+    have any effect on the \l active property's bindings, so they can be used
+    together without any problems.
+
+    \sa {QtPositioning::Position}, {QGeoPositionInfoSource}, {PluginParameter},
+    {Qt Bindable Properties}
 
 */
 
