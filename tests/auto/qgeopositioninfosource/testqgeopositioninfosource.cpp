@@ -795,7 +795,8 @@ void TestQGeoPositionInfoSource::preferredMethodsBinding()
 {
     auto parent = std::make_unique<QObject>();
     // source will be deleted when parent goes out of scope
-    QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(parent.get());
+    QGeoPositionInfoSource *source =
+            QGeoPositionInfoSource::createSource("test.source", parent.get());
     QVERIFY(source != nullptr);
 
     QTestPrivate::testReadWritePropertyBasics<QGeoPositionInfoSource,
