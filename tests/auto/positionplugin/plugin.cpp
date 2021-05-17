@@ -85,7 +85,7 @@ DummySource::DummySource(const QVariantMap &parameters, QObject *parent) :
         crd.setAltitude(alti);
         lastPosition.setCoordinate(crd);
     }
-    timer->setInterval(1000);
+    timer->setInterval(200);
     connect(timer, SIGNAL(timeout()),
             this, SLOT(updatePosition()));
     connect(singleTimer, SIGNAL(timeout()),
@@ -118,10 +118,11 @@ QVariant DummySource::backendProperty(const QString &name) const
 
 void DummySource::setUpdateInterval(int msec)
 {
+    const int minInterval = minimumUpdateInterval();
     if (msec == 0) {
-        timer->setInterval(1000);
-    } else if (msec < 1000) {
-        msec = 1000;
+        timer->setInterval(minInterval);
+    } else if (msec < minInterval) {
+        msec = minInterval;
         timer->setInterval(msec);
     } else {
         timer->setInterval(msec);
@@ -132,7 +133,7 @@ void DummySource::setUpdateInterval(int msec)
 
 int DummySource::minimumUpdateInterval() const
 {
-    return 1000;
+    return 200;
 }
 
 QGeoPositionInfo DummySource::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
@@ -173,7 +174,7 @@ void DummySource::requestUpdate(int timeout)
         timer->start();
     }
 
-    singleTimer->setInterval(1000);
+    singleTimer->setInterval(minimumUpdateInterval());
     singleTimer->start();
 }
 

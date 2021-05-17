@@ -78,7 +78,7 @@ void tst_PositionPlugin::create()
     src.reset(QGeoPositionInfoSource::createSource("test.source", 0));
     QVERIFY(src != nullptr);
 
-    QVERIFY(src->minimumUpdateInterval() == 1000);
+    QVERIFY(src->minimumUpdateInterval() == 200);
 
     src.reset(QGeoPositionInfoSource::createSource("invalid source that will never exist", 0));
     QVERIFY(src == 0);
@@ -91,12 +91,11 @@ void tst_PositionPlugin::create()
 void tst_PositionPlugin::getUpdates()
 {
     std::unique_ptr<QGeoPositionInfoSource> src(QGeoPositionInfoSource::createSource("test.source", 0));
-    src->setUpdateInterval(1000);
+    src->setUpdateInterval(200);
 
     QSignalSpy spy(src.get(), SIGNAL(positionUpdated(QGeoPositionInfo)));
     src->startUpdates();
-    QTest::qWait(1500);
-    QCOMPARE(spy.count(), 1);
+    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 5000);
     QCOMPARE(spy[0].size(), 1);
 
     QGeoPositionInfo info = qvariant_cast<QGeoPositionInfo>(spy[0][0]);

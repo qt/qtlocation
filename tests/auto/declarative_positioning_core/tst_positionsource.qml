@@ -106,7 +106,7 @@ TestCase {
     PositionSource {
         id: testingSourceWParams
         name: "test.source"
-        updateInterval: 1000
+        updateInterval: 200
         PluginParameter {
             id: altitudeParameter
             name: "test.source.altitude"
@@ -129,7 +129,7 @@ TestCase {
 
     SignalSpy { id: updateSpyWParams; target: testingSourceWParams; signalName: "positionChanged" }
 
-    PositionSource { id: testingSourceV1; name: "test.source"; updateInterval: 1000 }
+    PositionSource { id: testingSourceV1; name: "test.source"; updateInterval: 200 }
 
     // use property bindings instead of SignalSpy
     property bool directionV1Valid: testingSourceV1.position.directionValid
@@ -147,12 +147,12 @@ TestCase {
     SignalSpy { id: updateSpyV1; target: testingSourceV1; signalName: "positionChanged" }
 
     function test_updateInterval() {
-        testingSource.updateInterval = 1000;
-        compare(testingSource.updateInterval, 1000);
-        testingSource.updateInterval = 1200;
-        compare(testingSource.updateInterval, 1200);
-        testingSource.updateInterval = 800;
-        compare(testingSource.updateInterval, 1000);
+        testingSource.updateInterval = 200;
+        compare(testingSource.updateInterval, 200);
+        testingSource.updateInterval = 300;
+        compare(testingSource.updateInterval, 300);
+        testingSource.updateInterval = 100;
+        compare(testingSource.updateInterval, 200);
     }
 
     function test_preferredPositioningMethods() {
@@ -172,7 +172,7 @@ TestCase {
 
         testingSourceV1.active = true;
 
-        tryCompare(updateSpyV1, "count", 1, 1500);
+        tryCompare(updateSpyV1, "count", 1, 300);
         compare(testingSourceV1.position.coordinate.longitude, 0.1);
         compare(testingSourceV1.position.coordinate.latitude, 0.1);
         compare(directionV1ValidChangedCount, 1)
@@ -181,7 +181,7 @@ TestCase {
         verify(!testingSourceV1.position.speedValid)
         verify(isNaN(testingSourceV1.position.speed))
 
-        tryCompare(updateSpyV1, "count", 2, 1500);
+        tryCompare(updateSpyV1, "count", 2, 300);
         compare(testingSourceV1.position.coordinate.longitude, 0.2);
         compare(testingSourceV1.position.coordinate.latitude, 0.2);
         compare(directionV1ValidChangedCount, 1)
@@ -191,7 +191,7 @@ TestCase {
         verify(testingSourceV1.position.speed > 10000)
 
         testingSourceV1.active = false;
-        wait(2500);
+        wait(300);
         compare(updateSpyV1.count, 2);
         compare(testingSourceV1.position.coordinate.longitude, 0.2);
         compare(testingSourceV1.position.coordinate.latitude, 0.2);
@@ -210,7 +210,7 @@ TestCase {
         compare(testingSourceWParams.backendProperty("altitude"), altitudeParameter.value)
         testingSourceWParams.active = true;
 
-        tryCompare(updateSpyWParams, "count", 1, 1500);
+        tryCompare(updateSpyWParams, "count", 1, 300);
         compare(testingSourceWParams.position.coordinate.longitude, 0.1);
         compare(testingSourceWParams.position.coordinate.latitude, 0.1);
         compare(testingSourceWParams.position.coordinate.altitude, altitudeParameter.value);
@@ -221,7 +221,7 @@ TestCase {
         verify(isNaN(testingSourceWParams.position.speed))
         testingSourceWParams.setBackendProperty("altitude", 24.24)
 
-        tryCompare(updateSpyWParams, "count", 2, 1500);
+        tryCompare(updateSpyWParams, "count", 2, 300);
         compare(testingSourceWParams.position.coordinate.longitude, 0.2);
         compare(testingSourceWParams.position.coordinate.latitude, 0.2);
         compare(testingSourceWParams.position.coordinate.altitude, 24.24);
@@ -233,7 +233,7 @@ TestCase {
         compare(testingSourceWParams.backendProperty("altitude"), 24.24)
 
         testingSourceWParams.active = false;
-        wait(2500);
+        wait(300);
         compare(updateSpyWParams.count, 2);
         compare(testingSourceWParams.position.coordinate.longitude, 0.2);
         compare(testingSourceWParams.position.coordinate.latitude, 0.2);
@@ -310,18 +310,18 @@ TestCase {
         compare(preferredMethodsObserver, PositionSource.SatellitePositioningMethods)
         compare(preferredMethodsObserverSpy.count, 1)
 
-        testSourceForBindings.updateInterval = 1100;
-        compare(updateIntervalObserver, 1100)
+        testSourceForBindings.updateInterval = 210;
+        compare(updateIntervalObserver, 210)
         compare(updateIntervalObserverSpy.count, 1)
 
         testSourceForBindings.start();
         compare(activeObserver, true)
         compare(activeObserverSpy.count, 1)
 
-        tryCompare(positionObserverSpy, "count", 1, 1500);
+        tryCompare(positionObserverSpy, "count", 1, 300);
         verify(testSourceForBindings.position.coordinate !== QtPositioning.coordinate())
 
-        testSourceForBindings.update(100) // small timeout will result in an error
+        testSourceForBindings.update(50) // small timeout will result in an error
         tryCompare(errorObserverSpy, "count", 1, 200)
         compare(errorObserver, PositionSource.UpdateTimeoutError)
 
@@ -340,7 +340,7 @@ TestCase {
 
     property bool activeSetter: false
     property string nameSetter: "test.source"
-    property int updateIntervalSetter: 1000
+    property int updateIntervalSetter: 200
     property int preferredMethodsSetter: PositionSource.NonSatellitePositioningMethods
 
     PositionSource {
@@ -354,17 +354,17 @@ TestCase {
     function test_bindPositionSourceProperties() {
         compare(sourceWithBindings.name, "test.source")
         compare(sourceWithBindings.active, false)
-        compare(sourceWithBindings.updateInterval, 1000)
+        compare(sourceWithBindings.updateInterval, 200)
         compare(sourceWithBindings.preferredPositioningMethods, PositionSource.NonSatellitePositioningMethods)
 
-        updateIntervalSetter = 1100;
+        updateIntervalSetter = 210;
         preferredMethodsSetter = PositionSource.AllPositioningMethods
         activeSetter = true
 
         wait(0) // to trigger event processing
 
         compare(sourceWithBindings.active, true)
-        compare(sourceWithBindings.updateInterval, 1100)
+        compare(sourceWithBindings.updateInterval, 210)
         compare(sourceWithBindings.preferredPositioningMethods, PositionSource.AllPositioningMethods)
 
         activeSetter = false;
@@ -375,7 +375,7 @@ TestCase {
         sourceWithBindings.update(updateIntervalSetter)
         compare(sourceWithBindings.active, true)
 
-        wait(1500)
+        wait(300)
         compare(sourceWithBindings.active, false)
 
         activeSetter = true;
@@ -391,24 +391,24 @@ TestCase {
         verify(updateIntervalSpy.valid)
 
         nameSetter = "invalid name"
-        updateIntervalSetter = 800;
-        compare(sourceWithBindings.updateInterval, 800)
+        updateIntervalSetter = 100;
+        compare(sourceWithBindings.updateInterval, 100)
         compare(updateIntervalSpy.count, 1)
 
         nameSetter = "test.source"
-        // "test.source" has a minimum update interval of 1000
-        compare(sourceWithBindings.updateInterval, 1000)
+        // "test.source" has a minimum update interval of 200
+        compare(sourceWithBindings.updateInterval, 200)
         compare(updateIntervalSpy.count, 2)
 
         nameSetter = "dummy.source"
         // "dummy.source" has a minimum udpate interval of 100, so we expect
-        // the updateInterval to be set to 800
-        compare(sourceWithBindings.updateInterval, 800)
+        // the updateInterval to be set to 100
+        compare(sourceWithBindings.updateInterval, 100)
         compare(updateIntervalSpy.count, 3)
 
         // The binding still works
-        updateIntervalSetter = 1100
-        compare(sourceWithBindings.updateInterval, 1100)
+        updateIntervalSetter = 110
+        compare(sourceWithBindings.updateInterval, 110)
         compare(updateIntervalSpy.count, 4)
     }
 
