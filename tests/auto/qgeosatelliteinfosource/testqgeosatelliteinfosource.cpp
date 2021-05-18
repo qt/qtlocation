@@ -242,17 +242,17 @@ void TestQGeoSatelliteInfoSource::startUpdates_testIntervals()
                       SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy errorSpy(m_source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)));
 
-    m_source->setUpdateInterval(7000);
-    int interval = m_source->updateInterval();
+    m_source->setUpdateInterval(1000);
+    const int interval = 10000;
 
     m_source->startUpdates();
 
     if (!errorSpy.isEmpty())
         QSKIP("Error starting satellite updates.");
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 9500);
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), interval);
     for (int i = 0; i < 6; i++) {
-        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1) && (errorSpy.count() == 0), (interval*2));
+        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1) && (errorSpy.count() == 0), interval);
         spyView.clear();
         spyUse.clear();
     }
@@ -288,25 +288,25 @@ void TestQGeoSatelliteInfoSource::startUpdates_testIntervalChangesWhileRunning()
     spyView.clear();
     spyUse.clear();
 
-    m_source->setUpdateInterval(5000);
+    m_source->setUpdateInterval(1000);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2) && (errorSpy.count() == 0), 15000);
     spyView.clear();
     spyUse.clear();
 
-    m_source->setUpdateInterval(10000);
+    m_source->setUpdateInterval(2000);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2) && (errorSpy.count() == 0), 30000);
     spyView.clear();
     spyUse.clear();
 
-    m_source->setUpdateInterval(5000);
+    m_source->setUpdateInterval(1000);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2) && (errorSpy.count() == 0), 15000);
     spyView.clear();
     spyUse.clear();
 
-    m_source->setUpdateInterval(5000);
+    m_source->setUpdateInterval(1000);
 
     QTRY_VERIFY_WITH_TIMEOUT( (spyView.count() == 2) && (spyUse.count() == 2) && (errorSpy.count() == 0), 15000);
     spyView.clear();
@@ -405,7 +405,7 @@ void TestQGeoSatelliteInfoSource::stopUpdates()
                       SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy errorSpy(m_source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)));
 
-    m_source->setUpdateInterval(10000);
+    m_source->setUpdateInterval(1000);
     m_source->startUpdates();
 
     if (!errorSpy.isEmpty())
@@ -473,7 +473,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
                       SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy errorSpy(m_source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     if (!errorSpy.isEmpty())
         QSKIP("Error starting satellite updates.");
@@ -525,7 +525,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
                       SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy errorSpy(m_source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     if (!errorSpy.isEmpty())
         QSKIP("Error starting satellite updates.");
@@ -534,7 +534,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
     spyView.clear();
     spyUse.clear();
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
 }
@@ -549,12 +549,12 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
                       SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy errorSpy(m_source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     if (!errorSpy.isEmpty())
         QSKIP("Error starting satellite updates.");
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
 }
@@ -601,7 +601,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
     spyView.clear();
     spyUse.clear();
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() >= 1) && (spyUse.count() >= 1)
                              && (errorSpy.count() == 0), 7000);
@@ -624,8 +624,8 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
                       SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy errorSpy(m_source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)));
 
-    m_source->setUpdateInterval(10000);
-    m_source->requestUpdate(7000);
+    m_source->setUpdateInterval(3000);
+    m_source->requestUpdate(1500);
 
     if (!errorSpy.isEmpty())
         QSKIP("Error starting satellite updates.");
@@ -652,7 +652,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
                       SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy errorSpy(m_source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     if (!errorSpy.isEmpty())
         QSKIP("Error starting satellite updates.");
@@ -664,7 +664,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
     spyView.clear();
     spyUse.clear();
 
-    QTest::qWait(7000);
+    QTest::qWait(1500);
 
     QCOMPARE(errorSpy.count(), 0);
 
@@ -680,12 +680,12 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates_SmallInterval(
                       SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)));
     QSignalSpy errorSpy(m_source, SIGNAL(errorOccurred(QGeoSatelliteInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     if (!errorSpy.isEmpty())
         QSKIP("Error starting satellite updates.");
 
-    m_source->setUpdateInterval(10000);
+    m_source->setUpdateInterval(2000);
     m_source->startUpdates();
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() > 0) && (spyUse.count() > 0) && (errorSpy.count() == 0), 7000);
@@ -728,7 +728,7 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
     i = disconnect(m_source, SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     if (m_source->error() != QGeoSatelliteInfoSource::NoError)
         QSKIP("Error starting satellite updates.");
@@ -747,7 +747,7 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
     i = disconnect(m_source, SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     if (m_source->error() != QGeoSatelliteInfoSource::NoError)
         QSKIP("Error starting satellite updates.");

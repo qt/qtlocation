@@ -323,8 +323,7 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
-    int time_out = 7000;
-    m_source->setUpdateInterval(time_out);
+    m_source->setUpdateInterval(1000);
     m_source->startUpdates();
 
     // Use QEventLoop instead of qWait() to ensure we stop as soon as a
@@ -420,14 +419,14 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervals()
     CHECK_SOURCE_VALID;
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
-    m_source->setUpdateInterval(7000);
-    int interval = m_source->updateInterval();
+    m_source->setUpdateInterval(1000);
+    const int interval = 15000;
 
     m_source->startUpdates();
 
-    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 9500);
+    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, interval);
     for (int i = 0; i < 6; i++) {
-        QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1) && (timeout.count() == 0), (interval*2));
+        QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1) && (timeout.count() == 0), interval);
         spy.clear();
     }
 
@@ -441,9 +440,6 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
     // The interval can be changed will running or after the next update.
     // WinCE uses the first method, S60 uses the second method.
 
-    // The minimum interval on the symbian emulator is 5000 msecs, which is why the times in
-    // this test are as high as they are.
-
     CHECK_SOURCE_VALID;
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
@@ -452,26 +448,26 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
     m_source->startUpdates();
     m_source->setUpdateInterval(0);
 
-    QTRY_VERIFY_WITH_TIMEOUT(spy.count() > 0, 7000);
+    QTRY_VERIFY_WITH_TIMEOUT(spy.count() > 0, 3000);
     QCOMPARE(timeout.count(), 0);
     spy.clear();
 
-    m_source->setUpdateInterval(5000);
+    m_source->setUpdateInterval(1000);
 
     QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 2) && (timeout.count() == 0), 15000);
     spy.clear();
 
-    m_source->setUpdateInterval(10000);
+    m_source->setUpdateInterval(2000);
 
     QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 2) && (timeout.count() == 0), 30000);
     spy.clear();
 
-    m_source->setUpdateInterval(5000);
+    m_source->setUpdateInterval(1000);
 
     QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 2) && (timeout.count() == 0), 15000);
     spy.clear();
 
-    m_source->setUpdateInterval(5000);
+    m_source->setUpdateInterval(1000);
 
     QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 2) && (timeout.count() == 0), 15000);
     spy.clear();
@@ -546,14 +542,14 @@ void TestQGeoPositionInfoSource::stopUpdates()
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy timeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
-    m_source->setUpdateInterval(7000);
+    m_source->setUpdateInterval(1000);
     m_source->startUpdates();
     for (int i = 0; i < 2; i++) {
         QTRY_VERIFY_WITH_TIMEOUT((spy.count() > 0) && (timeout.count() == 0), 9500);
         spy.clear();
     }
     m_source->stopUpdates();
-    QTest::qWait(9500);
+    QTest::qWait(2000);
     QCOMPARE(spy.count(), 0);
     spy.clear();
 
@@ -596,7 +592,8 @@ void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    // currently all the sources have a minimumUpdateInterval <= 1000
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() > 0) && (spyTimeout.count() == 0), 7000);
 }
@@ -635,11 +632,12 @@ void TestQGeoPositionInfoSource::requestUpdate_repeatedCalls()
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    // currently all the sources have a minimumUpdateInterval <= 1000
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() > 0) && (spyTimeout.count() == 0), 7000);
     spyUpdate.clear();
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() > 0) && (spyTimeout.count() == 0), 7000);
 }
@@ -651,8 +649,9 @@ void TestQGeoPositionInfoSource::requestUpdate_overlappingCalls()
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
-    m_source->requestUpdate(7000);
+    // currently all the sources have a minimumUpdateInterval <= 1000
+    m_source->requestUpdate(1500);
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() > 0) && (spyTimeout.count() == 0), 7000);
 }
@@ -671,7 +670,7 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() > 0) && (spyTimeout.count() == 0), 7000);
     spyUpdate.clear();
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
     QTest::qWait(7000);
 
     QVERIFY((spyUpdate.count() > 0) && (spyTimeout.count() == 0));
@@ -689,13 +688,13 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
 
-    m_source->setUpdateInterval(10000);
+    m_source->setUpdateInterval(2000);
     m_source->startUpdates();
 
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() == 1) && (spyTimeout.count() == 0), 20000);
     spyUpdate.clear();
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() == 1) && (spyTimeout.count() == 0), 7000);
     spyUpdate.clear();
@@ -712,7 +711,7 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
@@ -720,7 +719,7 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() >= 2) && (spyTimeout.count() == 0), 14000);
     spyUpdate.clear();
 
-    QTest::qWait(7000);
+    QTest::qWait(1500);
 
     QCOMPARE(spyTimeout.count(), 0);
 
@@ -733,9 +732,9 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)));
     QSignalSpy spyTimeout(m_source, SIGNAL(errorOccurred(QGeoPositionInfoSource::Error)));
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
-    m_source->setUpdateInterval(10000);
+    m_source->setUpdateInterval(3000);
     m_source->startUpdates();
 
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() > 0) && (spyTimeout.count() == 0), 7000);
@@ -775,7 +774,7 @@ void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
     i = disconnect(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
 
-    m_source->requestUpdate(7000);
+    m_source->requestUpdate(1500);
 
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 7000);
 }
