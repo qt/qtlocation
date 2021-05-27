@@ -123,7 +123,7 @@ Q_DECLARE_TYPEINFO(QGeoCoordinate, Q_RELOCATABLE_TYPE);
 Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoCoordinate &);
 #endif
 
-Q_POSITIONING_EXPORT uint qHash(const QGeoCoordinate &coordinate, uint seed = 0);
+Q_POSITIONING_EXPORT size_t qHash(const QGeoCoordinate &coordinate, size_t seed = 0);
 
 #ifndef QT_NO_DATASTREAM
 Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate);

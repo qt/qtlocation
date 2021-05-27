@@ -747,13 +747,12 @@ QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
 }
 #endif
 
-/*! \fn uint qHash(const QGeoCoordinate &coordinate, uint seed = 0)
+/*! \fn size_t qHash(const QGeoCoordinate &coordinate, size_t seed = 0)
     \relates QHash
-    \since Qt 5.7
 
     Returns a hash value for \a coordinate, using \a seed to seed the calculation.
 */
-uint qHash(const QGeoCoordinate &coordinate, uint seed)
+size_t qHash(const QGeoCoordinate &coordinate, size_t seed)
 {
     QtPrivate::QHashCombine hash;
     // north and south pole are geographically equivalent (no matter the longitude)
