@@ -6,6 +6,5 @@ add_subdirectory(positioning)
 add_subdirectory(plugins)
 if(TARGET Qt::Quick)
     add_subdirectory(positioningquick)
-    add_subdirectory(imports)
 endif()
 # special case end

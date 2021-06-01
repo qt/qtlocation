@@ -552,4 +552,4 @@ Q_CONSTRUCTOR_FUNCTION(QtPositioningDeclarative_initializeModule)
 
 QT_END_NAMESPACE
 
-#include "positioning.moc"
+#include "positioningplugin.moc"

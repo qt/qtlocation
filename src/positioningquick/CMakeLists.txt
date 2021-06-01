@@ -4,7 +4,12 @@
 ## PositioningQuick Module:
 #####################################################################
 
-qt_internal_add_module(PositioningQuick
+qt_internal_add_qml_module(PositioningQuick
+    URI QtPositioning
+    VERSION ${CMAKE_PROJECT_VERSION}
+    PLUGIN_TARGET positioningquickplugin
+    NO_GENERATE_PLUGIN_SOURCE
+    NO_PLUGIN_OPTIONAL
     SOURCES
         qdeclarativegeoaddress_p.h qdeclarativegeoaddress.cpp
         qdeclarativegeolocation_p.h qdeclarativegeolocation.cpp
@@ -30,12 +35,11 @@ qt_internal_add_module(PositioningQuick
         Qt::QuickPrivate
 )
 
-set_target_properties(PositioningQuick PROPERTIES
-    QT_QML_MODULE_INSTALL_QMLTYPES TRUE
-    QT_QML_MODULE_VERSION ${CMAKE_PROJECT_VERSION}
-    QT_QML_MODULE_URI QtPositioning
-    QT_QMLTYPES_FILENAME plugins.qmltypes
-    QT_QML_MODULE_INSTALL_DIR "${INSTALL_QMLDIR}/QtPositioning"
+qt_internal_extend_target(positioningquickplugin
+    SOURCES
+        positioningplugin.cpp
+    LIBRARIES
+        Qt::PositioningQuickPrivate
+        Qt::Quick
 )
 
-qt6_qml_type_registration(PositioningQuick)
