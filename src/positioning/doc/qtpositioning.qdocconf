@@ -36,11 +36,9 @@ tagfile                 = ../../../doc/qtpositioning/qtpositioning.tags
 depends += qtcore qtdoc qtquick qtqml qtnetwork qtqmlxmllistmodel qmake qtcmake
 
 headerdirs  += .. \
-                ../../imports/positioning \
                 ../../positioningquick
 
 sourcedirs  += .. \
-                ../../imports/positioning \
                 ../../positioningquick
 
 examplesinstallpath = positioning
