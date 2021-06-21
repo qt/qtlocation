@@ -90,8 +90,11 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     To remove an update interval that was previously set, call
     setUpdateInterval() with a value of 0.
 
-    Note that the position source may have a minimum value requirement for
+    \note The position source may have a minimum value requirement for
     update intervals, as returned by minimumUpdateInterval().
+
+    \note To use this class from Android service, see
+    \l {Qt Positioning on Android}.
 */
 
 /*!
@@ -523,6 +526,9 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     \note Since Qt6 this method always resets the last error to
     \l {QGeoPositionInfoSource::}{NoError} before starting the updates.
 
+    \note To understand how to use this method from an Android service, see
+    \l {Qt Positioning on Android}.
+
     On iOS, starting from version 8, Core Location framework requires additional
     entries in the application's Info.plist with keys NSLocationAlwaysUsageDescription or
     NSLocationWhenInUseUsageDescription and a string to be displayed in the authorization prompt.
@@ -563,6 +569,9 @@ QGeoPositionInfoSource::QGeoPositionInfoSource(QGeoPositionInfoSourcePrivate &dd
     \note Since Qt6 this method always resets the last error to
     \l {QGeoPositionInfoSource::}{NoError} before requesting
     the position.
+
+    \note To understand how to use this method from an Android service, see
+    \l {Qt Positioning on Android}.
 */
 
 /*!

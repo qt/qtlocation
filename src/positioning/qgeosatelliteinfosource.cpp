@@ -81,8 +81,11 @@ QT_BEGIN_NAMESPACE
     To remove an update interval that was previously set, call
     setUpdateInterval() with a value of 0.
 
-    Note that the satellite source may have a minimum value requirement for
+    \note The satellite source may have a minimum value requirement for
     update intervals, as returned by minimumUpdateInterval().
+
+    \note To use this class from Android service, see
+    \l {Qt Positioning on Android}.
 */
 
 /*!
@@ -347,6 +350,9 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     \l {QGeoSatelliteInfoSource::}{NoError} before starting
     the updates.
 
+    \note To understand how to use this method from an Android service, see
+    \l {Qt Positioning on Android}.
+
     \sa satellitesInViewUpdated(), satellitesInUseUpdated()
 */
 
@@ -377,6 +383,9 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     \note Since Qt6 this method always resets the last error to
     \l {QGeoSatelliteInfoSource::}{NoError} before requesting
     the satellite information.
+
+    \note To understand how to use this method from an Android service, see
+    \l {Qt Positioning on Android}.
 */
 
 /*!
