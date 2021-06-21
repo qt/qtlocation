@@ -437,18 +437,33 @@ namespace AndroidPositioning {
 
     bool requestionPositioningPermissions()
     {
-        // Android v23+ requires runtime permission check and requests
-        const auto permission = QPermission::PreciseLocation;
-        auto checkFuture = QCoreApplication::checkPermission(permission);
-        if (checkFuture.result() == QPermission::Denied) {
-            auto requestFuture = QCoreApplication::requestPermission(permission);
-            if (requestFuture.result() != QPermission::Authorized) {
+        // If the code is running as a service, we can't request permissions.
+        // We can only check if we have the needed permissions. Also make sure
+        // to request the background location permissions.
+        if (!QNativeInterface::QAndroidApplication::isActivityContext()) {
+            const auto permission = QPermission::PreciseBackgroundLocation;
+            const auto result = QCoreApplication::checkPermission(permission).result();
+            if (result != QPermission::Authorized)
                 qWarning() << "Position data not available due to missing permission" << permission;
-                return false;
-            }
-        }
+            return result == QPermission::Authorized;
+        } else {
+            // Running from a normal Activity. Checking and requesting the
+            // permissions if necessary.
 
-        return true;
+            // Android v23+ requires runtime permission check and requests
+            const auto permission = QPermission::PreciseLocation;
+            auto checkFuture = QCoreApplication::checkPermission(permission);
+            if (checkFuture.result() == QPermission::Denied) {
+                auto requestFuture = QCoreApplication::requestPermission(permission);
+                if (requestFuture.result() != QPermission::Authorized) {
+                    qWarning() << "Position data not available due to missing permission"
+                               << permission;
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }
 
