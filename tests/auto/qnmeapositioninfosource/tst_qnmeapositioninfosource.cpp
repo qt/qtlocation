@@ -125,7 +125,7 @@ void tst_QNmeaPositionInfoSource::setUpdateInterval_delayedUpdate()
 
     // should have gotten the update immediately, and not have needed to
     // wait until the next interval
-    QVERIFY(now.time().msecsTo(QDateTime::currentDateTime().time()) < 200);
+    QVERIFY(now.time().msecsTo(QDateTime::currentDateTime().time()) < 400);
 }
 
 void tst_QNmeaPositionInfoSource::lastKnownPosition()
