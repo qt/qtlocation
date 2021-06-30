@@ -181,6 +181,11 @@ void QGeoSatelliteInfo::setSatelliteSystem(SatelliteSystem system)
 
 /*!
     Returns the Satellite System (GPS, GLONASS, ...)
+
+    \note This value can be used together with \l satelliteIdentifier()
+    to uniquely identify a satellite.
+
+    \sa satelliteIdentifier()
 */
 QGeoSatelliteInfo::SatelliteSystem QGeoSatelliteInfo::satelliteSystem() const
 {
@@ -190,9 +195,16 @@ QGeoSatelliteInfo::SatelliteSystem QGeoSatelliteInfo::satelliteSystem() const
 /*!
     Sets the satellite identifier number to \a satId.
 
-    The satellite identifier number can be used to identify a satellite inside the satellite system.
-    For satellite system GPS the satellite identifier number represents the PRN (Pseudo-random noise) number.
-    For satellite system GLONASS the satellite identifier number represents the slot number.
+    The satellite identifier number can be used to identify a satellite within
+    the satellite system.
+
+    The actual value may vary, depending on the platform and the selected
+    backend.
+
+    For example, if \e nmea plugin is used, the satellite identifier for GPS
+    satellite system represents the PRN (Pseudo-random noise) number, and the
+    satellite identifier for GLONASS satellite system represents the slot
+    number.
 */
 void QGeoSatelliteInfo::setSatelliteIdentifier(int satId)
 {
@@ -203,14 +215,28 @@ void QGeoSatelliteInfo::setSatelliteIdentifier(int satId)
 /*!
     Returns the satellite identifier number.
 
-    The satellite identifier number can be used to identify a satellite inside the satellite system.
-    For satellite system GPS the satellite identifier number represents the PRN (Pseudo-random noise) number.
-    For satellite system GLONASS the satellite identifier number represents the slot number.
+    The satellite identifier number can be used to identify a satellite within
+    the satellite system.
 
-    The satellite identifier can be used to determine the satellite system type
-    if it is not available from other sources. You can refer to
-    \l {https://gpsd.gitlab.io/gpsd/NMEA.html#_satellite_ids}
+    The actual value may vary, depending on the platform and the selected
+    backend.
+
+    For example, if \e nmea plugin is used, the satellite identifier for GPS
+    satellite system represents the PRN (Pseudo-random noise) number, and the
+    satellite identifier for GLONASS satellite system represents the slot
+    number.
+
+    For NMEA-based backends the satellite identifier can be used to determine
+    the satellite system type if it is not available from other sources.
+    You can refer to \l {https://gpsd.gitlab.io/gpsd/NMEA.html#_satellite_ids}
     {satellite IDs list} to check the ID ranges for different satellite systems.
+
+    \note Depending on the platform and the selected backend, the satellite
+    identifier ranges for different satellite systems may intersect. To uniquely
+    identify a satellite, a combination of satelliteIndetifier() and
+    \l satelliteSystem() must be used.
+
+    \sa satelliteSystem()
 */
 int QGeoSatelliteInfo::satelliteIdentifier() const
 {
