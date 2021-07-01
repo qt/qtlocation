@@ -82,17 +82,21 @@ public Q_SLOTS:
     void locationProvidersChanged();
 private Q_SLOTS:
     void requestTimeout();
+    void regularUpdatesTimeout();
 
 private:
     void reconfigureRunningSystem();
     void setError(Error error);
 
-    bool updatesRunning;
+    bool updatesRunning = false;
     int androidClassKeyForUpdate;
     int androidClassKeyForSingleRequest;
     QList<QGeoPositionInfo> queuedSingleUpdates;
-    Error m_error;
+    Error m_error = NoError;
     QTimer m_requestTimer;
+    QTimer m_regularUpdatesTimer;
+    qint64 m_lastUpdateTime = 0;
+    bool m_regularUpdatesErrorRaised = false;
 };
 
 #endif // QGEOPOSITIONINFOSOURCE_ANDROID_P_H
