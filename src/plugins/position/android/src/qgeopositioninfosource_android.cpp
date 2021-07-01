@@ -39,24 +39,27 @@
 
 #include "qgeopositioninfosource_android_p.h"
 #include "jnipositioning.h"
-//#include <QDebug>
 #include <QGeoPositionInfo>
 
-#define UPDATE_FROM_COLD_START 2*60*1000
-
+static constexpr int kUpdateFromColdStart = 2 * 60 * 1000;
+static constexpr int kRegularUpdatesTimerInterval = 30 * 1000;
 
 QGeoPositionInfoSourceAndroid::QGeoPositionInfoSourceAndroid(QObject *parent) :
-    QGeoPositionInfoSource(parent), updatesRunning(false), m_error(NoError), m_requestTimer(this)
+    QGeoPositionInfoSource(parent)
 {
     androidClassKeyForUpdate = AndroidPositioning::registerPositionInfoSource(this);
     androidClassKeyForSingleRequest = AndroidPositioning::registerPositionInfoSource(this);
 
-    //qDebug() << "androidClassKey: "  << androidClassKeyForUpdate << androidClassKeyForSingleRequest;
     //by default use all methods
     setPreferredPositioningMethods(AllPositioningMethods);
 
     m_requestTimer.setSingleShot(true);
-    QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(requestTimeout()));
+    connect(&m_requestTimer, &QTimer::timeout, this,
+            &QGeoPositionInfoSourceAndroid::requestTimeout);
+
+    m_regularUpdatesTimer.setSingleShot(false);
+    connect(&m_regularUpdatesTimer, &QTimer::timeout, this,
+            &QGeoPositionInfoSourceAndroid::regularUpdatesTimeout);
 }
 
 QGeoPositionInfoSourceAndroid::~QGeoPositionInfoSourceAndroid()
@@ -137,10 +140,15 @@ void QGeoPositionInfoSourceAndroid::startUpdates()
     }
 
     updatesRunning = true;
+    // Start calculating updates from now.
+    m_lastUpdateTime = QDateTime::currentMSecsSinceEpoch();
+    m_regularUpdatesErrorRaised = false;
     QGeoPositionInfoSource::Error error = AndroidPositioning::startUpdates(androidClassKeyForUpdate);
     if (error != QGeoPositionInfoSource::NoError) {
         updatesRunning = false;
         setError(error);
+    } else {
+        m_regularUpdatesTimer.start(kRegularUpdatesTimerInterval);
     }
 }
 
@@ -150,6 +158,7 @@ void QGeoPositionInfoSourceAndroid::stopUpdates()
         return;
 
     updatesRunning = false;
+    m_regularUpdatesTimer.stop();
     AndroidPositioning::stopUpdates(androidClassKeyForUpdate);
 }
 
@@ -166,7 +175,7 @@ void QGeoPositionInfoSourceAndroid::requestUpdate(int timeout)
     }
 
     if (timeout == 0)
-        timeout = UPDATE_FROM_COLD_START;
+        timeout = kUpdateFromColdStart;
 
     m_requestTimer.start(timeout);
 
@@ -189,6 +198,9 @@ void QGeoPositionInfoSourceAndroid::processPositionUpdate(const QGeoPositionInfo
     if (m_requestTimer.isActive())
         m_requestTimer.stop();
 
+    m_lastUpdateTime = QDateTime::currentMSecsSinceEpoch();
+    m_regularUpdatesErrorRaised = false;
+
     emit positionUpdated(pInfo);
 }
 
@@ -204,6 +216,11 @@ void QGeoPositionInfoSourceAndroid::processSinglePositionUpdate(const QGeoPositi
 
 void QGeoPositionInfoSourceAndroid::locationProviderDisabled()
 {
+    if (updatesRunning && !m_regularUpdatesErrorRaised) {
+        m_regularUpdatesErrorRaised = true;
+        setError(QGeoPositionInfoSource::UpdateTimeoutError);
+    }
+
     setError(QGeoPositionInfoSource::ClosedError);
 }
 
@@ -252,6 +269,17 @@ void QGeoPositionInfoSourceAndroid::requestTimeout()
 
     queuedSingleUpdates.clear();
     emit positionUpdated(best);
+}
+
+void QGeoPositionInfoSourceAndroid::regularUpdatesTimeout()
+{
+    if (!m_regularUpdatesErrorRaised) {
+        const auto now = QDateTime::currentMSecsSinceEpoch();
+        if ((now - m_lastUpdateTime) > (updateInterval() + kUpdateFromColdStart)) {
+            m_regularUpdatesErrorRaised = true;
+            setError(QGeoPositionInfoSource::UpdateTimeoutError);
+        }
+    }
 }
 
 /*
