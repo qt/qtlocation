@@ -99,6 +99,8 @@ public class QtPositioning implements LocationListener
 
     private PositioningLooper looperThread;
 
+    private boolean isLocationProvidersDisabledInvoked = false;
+
     static public void setContext(Context context)
     {
         try {
@@ -255,8 +257,8 @@ public class QtPositioning implements LocationListener
                     Log.d(TAG, "Regular updates using GPS " + updateInterval);
                     try {
                         addActiveListener(positioningListener,
-                                        LocationManager.GPS_PROVIDER,
-                                        updateInterval, 0);
+                                          LocationManager.GPS_PROVIDER,
+                                          updateInterval, 0);
                     } catch (SecurityException se) {
                         se.printStackTrace();
                         exceptionOccurred = true;
@@ -267,8 +269,8 @@ public class QtPositioning implements LocationListener
                     Log.d(TAG, "Regular updates using network " + updateInterval);
                     try {
                         addActiveListener(positioningListener,
-                                            LocationManager.NETWORK_PROVIDER,
-                                            updateInterval, 0);
+                                          LocationManager.NETWORK_PROVIDER,
+                                          updateInterval, 0);
                    } catch (SecurityException se) {
                        se.printStackTrace();
                        exceptionOccurred = true;
@@ -376,7 +378,7 @@ public class QtPositioning implements LocationListener
                     Log.d(TAG, "Regular updates for Satellites " + updateInterval);
                 try {
                     addActiveListener(positioningListener, LocationManager.GPS_PROVIDER,
-                                        updateInterval, 0);
+                                      updateInterval, 0);
                 } catch (SecurityException se) {
                     se.printStackTrace();
                     exceptionOccurred = true;
@@ -578,13 +580,17 @@ public class QtPositioning implements LocationListener
     public void onProviderEnabled(String provider) {
         Log.d(TAG, "Enabled provider: " + provider);
         locationProvidersChanged(nativeClassReference);
+        if (isLocationProvidersDisabledInvoked && expectedProvidersAvailable(expectedProviders))
+            isLocationProvidersDisabledInvoked = false;
     }
 
     @Override
     public void onProviderDisabled(String provider) {
         Log.d(TAG, "Disabled provider: " + provider);
         locationProvidersChanged(nativeClassReference);
-        if (!expectedProvidersAvailable(expectedProviders))
+        if (!isLocationProvidersDisabledInvoked && !expectedProvidersAvailable(expectedProviders)) {
+            isLocationProvidersDisabledInvoked = true;
             locationProvidersDisabled(nativeClassReference);
+        }
     }
 }
