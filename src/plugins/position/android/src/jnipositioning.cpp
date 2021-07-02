@@ -104,11 +104,6 @@ namespace AndroidPositioning {
 
     int registerPositionInfoSource(QObject *obj)
     {
-        static bool firstInit = true;
-        if (firstInit) {
-            firstInit = false;
-        }
-
         int key = -1;
         if (obj->inherits("QGeoPositionInfoSource")) {
             QGeoPositionInfoSourceAndroid *src = qobject_cast<QGeoPositionInfoSourceAndroid *>(obj);
