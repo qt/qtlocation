@@ -2231,6 +2231,16 @@ void tst_QGeoRectangle::unite_data()
                                 QGeoCoordinate(-30.0, -80.0))
             <<  QGeoRectangle(QGeoCoordinate(30.0,  -180.0),
                                 QGeoCoordinate(-30.0, 180.0));
+
+    QTest::newRow("Small outer gap centered on dateline")
+            << QGeoRectangle(QGeoCoordinate(30, 160), QGeoCoordinate(-30, 170))
+            << QGeoRectangle(QGeoCoordinate(30, -170), QGeoCoordinate(-30, 160))
+            << QGeoRectangle(QGeoCoordinate(30, -170), QGeoCoordinate(-30, 170));
+
+    QTest::newRow("Overlapping over the dateline")
+            << QGeoRectangle(QGeoCoordinate(30, 160), QGeoCoordinate(-30, 170))
+            << QGeoRectangle(QGeoCoordinate(30, 160), QGeoCoordinate(-30, -170))
+            << QGeoRectangle(QGeoCoordinate(30, 160), QGeoCoordinate(-30, -170));
 }
 
 
