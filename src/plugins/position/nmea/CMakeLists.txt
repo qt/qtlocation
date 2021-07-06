@@ -12,7 +12,6 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryNmea
         qiopipe.cpp qiopipe_p.h
     LIBRARIES
         Qt::CorePrivate
-    PUBLIC_LIBRARIES
         Qt::Positioning
         Qt::SerialPort
         Qt::Network
