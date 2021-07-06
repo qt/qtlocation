@@ -10,7 +10,7 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryPoll
     SOURCES
         positionpollfactory.cpp positionpollfactory.h
         qgeoareamonitor_polling.cpp qgeoareamonitor_polling.h
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Core
         Qt::Positioning
 )

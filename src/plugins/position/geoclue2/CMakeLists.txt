@@ -20,7 +20,7 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGeoclue2
     INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_BINARY_DIR}
         core.location.includes
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Core
         Qt::DBus
         Qt::Positioning
