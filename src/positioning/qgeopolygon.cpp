@@ -53,6 +53,12 @@
 
 QT_BEGIN_NAMESPACE
 
+constexpr int kMaxInt = std::numeric_limits<int>::max();
+constexpr auto kTooManyHoles = u"The polygon has more holes than fit into an int. "
+                                "This can cause errors while querying holes from QML";
+constexpr auto kTooManyElements = u"The polygon has more elements than fit into an int. "
+                                   "This can cause errors while querying elements from QML";
+
 /*!
     \class QGeoPolygon
     \inmodule QtPositioning
@@ -298,7 +304,10 @@ double QGeoPolygon::length(qsizetype indexFrom, qsizetype indexTo) const
 qsizetype QGeoPolygon::size() const
 {
     Q_D(const QGeoPolygon);
-    return d->size();
+    const qsizetype result = d->size();
+    if (result > kMaxInt)
+        qWarning() << kTooManyElements;
+    return result;
 }
 
 /*!
@@ -308,6 +317,8 @@ void QGeoPolygon::addCoordinate(const QGeoCoordinate &coordinate)
 {
     Q_D(QGeoPolygon);
     d->addCoordinate(coordinate);
+    if (d->size() > kMaxInt)
+        qWarning() << kTooManyElements;
 }
 
 /*!
@@ -389,7 +400,6 @@ QString QGeoPolygon::toString() const
 */
 void QGeoPolygon::addHole(const QVariant &holePath)
 {
-    Q_D(QGeoPolygon);
     QList<QGeoCoordinate> qgcHolePath;
     if (holePath.canConvert<QVariantList>()) {
         const QVariantList qvlHolePath = holePath.toList();
@@ -399,7 +409,7 @@ void QGeoPolygon::addHole(const QVariant &holePath)
         }
     }
     //ToDo: add QGeoShape support
-    return d->addHole(qgcHolePath);
+    addHole(qgcHolePath);
 }
 
 /*!
@@ -410,7 +420,9 @@ void QGeoPolygon::addHole(const QVariant &holePath)
 void QGeoPolygon::addHole(const QList<QGeoCoordinate> &holePath)
 {
     Q_D(QGeoPolygon);
-    return d->addHole(holePath);
+    d->addHole(holePath);
+    if (d->holesCount() > kMaxInt)
+        qDebug() << kTooManyHoles;
 }
 
 /*!
@@ -458,7 +470,10 @@ void QGeoPolygon::removeHole(qsizetype index)
 qsizetype QGeoPolygon::holesCount() const
 {
     Q_D(const QGeoPolygon);
-    return d->holesCount();
+    const qsizetype result = d->holesCount();
+    if (result > kMaxInt)
+        qWarning() << kTooManyHoles;
+    return result;
 }
 
 /*******************************************************************************
