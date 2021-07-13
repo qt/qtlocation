@@ -61,7 +61,7 @@ class Q_POSITIONING_EXPORT QGeoShape
 public:
     QGeoShape();
     QGeoShape(const QGeoShape &other);
-    virtual ~QGeoShape();
+    ~QGeoShape();
 
     enum ShapeType {
         UnknownType,
