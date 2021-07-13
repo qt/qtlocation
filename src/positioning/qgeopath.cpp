@@ -50,6 +50,10 @@
 #include "qdoublevector3d_p.h"
 QT_BEGIN_NAMESPACE
 
+constexpr int kMaxInt = std::numeric_limits<int>::max();
+constexpr auto kWarningString = u"The path has more elements than fit into an int. "
+                                 "This can cause errors while querying elements from QML";
+
 /*!
     \class QGeoPath
     \inmodule QtPositioning
@@ -311,7 +315,10 @@ double QGeoPath::length(qsizetype indexFrom, qsizetype indexTo) const
 qsizetype QGeoPath::size() const
 {
     Q_D(const QGeoPath);
-    return d->size();
+    const qsizetype result = d->size();
+    if (result > kMaxInt)
+        qWarning() << kWarningString;
+    return result;
 }
 
 /*!
@@ -321,6 +328,8 @@ void QGeoPath::addCoordinate(const QGeoCoordinate &coordinate)
 {
     Q_D(QGeoPath);
     d->addCoordinate(coordinate);
+    if (d->size() > kMaxInt)
+        qWarning() << kWarningString;
 }
 
 /*!
