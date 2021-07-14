@@ -61,9 +61,13 @@ public:
 
     QGeoLocation &operator=(const QGeoLocation &other);
 
-    bool operator==(const QGeoLocation &other) const;
-    bool operator!=(const QGeoLocation &other) const {
-        return !(other == *this);
+    friend bool operator==(const QGeoLocation &lhs, const QGeoLocation &rhs)
+    {
+        return equals(lhs, rhs);
+    }
+    friend bool operator!=(const QGeoLocation &lhs, const QGeoLocation &rhs)
+    {
+        return !equals(lhs, rhs);
     }
 
     QGeoAddress address() const;
@@ -78,6 +82,7 @@ public:
     bool isEmpty() const;
 
 private:
+    static bool equals(const QGeoLocation &lhs, const QGeoLocation &rhs);
     QSharedDataPointer<QGeoLocationPrivate> d;
 };
 

@@ -90,9 +90,13 @@ public:
 
     void swap(QGeoSatelliteInfo &other) noexcept { d.swap(other.d); }
 
-    bool operator==(const QGeoSatelliteInfo &other) const;
-    inline bool operator!=(const QGeoSatelliteInfo &other) const {
-        return !operator==(other);
+    friend bool operator==(const QGeoSatelliteInfo &lhs, const QGeoSatelliteInfo &rhs)
+    {
+        return equals(lhs, rhs);
+    }
+    friend bool operator!=(const QGeoSatelliteInfo &lhs, const QGeoSatelliteInfo &rhs)
+    {
+        return !equals(lhs, rhs);
     }
 
     void setSatelliteSystem(SatelliteSystem system);
@@ -113,6 +117,7 @@ public:
     void detach();
 
 private:
+    static bool equals(const QGeoSatelliteInfo &lhs, const QGeoSatelliteInfo &rhs);
 #ifndef QT_NO_DEBUG_STREAM
     friend Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
 #endif

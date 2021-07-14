@@ -64,12 +64,6 @@ public:
 
     QGeoPath &operator=(const QGeoPath &other);
 
-    using QGeoShape::operator==;
-    bool operator==(const QGeoPath &other) const;
-
-    using QGeoShape::operator!=;
-    bool operator!=(const QGeoPath &other) const;
-
     void setPath(const QList<QGeoCoordinate> &path);
     const QList<QGeoCoordinate> &path() const;
     void clearPath();

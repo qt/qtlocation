@@ -86,9 +86,13 @@ public:
 
     QGeoCoordinate &operator=(const QGeoCoordinate &other);
 
-    bool operator==(const QGeoCoordinate &other) const;
-    inline bool operator!=(const QGeoCoordinate &other) const {
-        return !operator==(other);
+    friend bool operator==(const QGeoCoordinate &lhs, const QGeoCoordinate &rhs)
+    {
+        return equals(lhs, rhs);
+    }
+    friend bool operator!=(const QGeoCoordinate &lhs, const QGeoCoordinate &rhs)
+    {
+        return !equals(lhs, rhs);
     }
 
     bool isValid() const;
@@ -111,6 +115,7 @@ public:
     Q_INVOKABLE QString toString(CoordinateFormat format = DegreesMinutesSecondsWithHemisphere) const;
 
 private:
+    static bool equals(const QGeoCoordinate &lhs, const QGeoCoordinate &rhs);
     QGeoCoordinate(QGeoCoordinatePrivate &dd);
     QSharedDataPointer<QGeoCoordinatePrivate> d;
     friend class QGeoCoordinatePrivate;

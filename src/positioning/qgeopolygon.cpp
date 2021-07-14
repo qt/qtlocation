@@ -219,22 +219,18 @@ QGeoPolygon &QGeoPolygon::operator=(const QGeoPolygon &other)
 }
 
 /*!
-    Returns whether this geo polygon is equal to \a other.
+    \fn bool QGeoPolygon::operator!=(const QGeoPolygon &lhs, const QGeoPolygon &rhs)
+
+    Returns \c true if the \a lhs geo polygon is equal to the \a rhs geo
+    polygon, otherwise returns \c false.
 */
-bool QGeoPolygon::operator==(const QGeoPolygon &other) const
-{
-    Q_D(const QGeoPolygon);
-    return *d == *other.d_func();
-}
 
 /*!
-    Returns whether this geo polygon is not equal to \a other.
+    \fn bool QGeoPolygon::operator!=(const QGeoPolygon &lhs, const QGeoPolygon &rhs)
+
+    Returns \c true if the \a lhs geo polygon is not equal to the \a rhs geo
+    polygon, otherwise returns \c false.
 */
-bool QGeoPolygon::operator!=(const QGeoPolygon &other) const
-{
-    Q_D(const QGeoPolygon);
-    return !(*d == *other.d_func());
-}
 
 /*!
     Sets the perimeter of the polygon based on a list of coordinates \a path.

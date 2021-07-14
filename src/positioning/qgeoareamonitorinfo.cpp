@@ -171,27 +171,18 @@ QGeoAreaMonitorInfo &QGeoAreaMonitorInfo::operator=(const QGeoAreaMonitorInfo &o
 */
 
 /*!
-    Returns true if all of this object's values are the same as those of
-    \a other.
+    \fn bool QGeoAreaMonitorInfo::operator==(const QGeoAreaMonitorInfo &lhs, const QGeoAreaMonitorInfo &rhs)
+
+    Returns \c true if all of the \a lhs object's values are the same as those
+    of \a rhs object. Otherwise returns \c false.
 */
-bool QGeoAreaMonitorInfo::operator==(const QGeoAreaMonitorInfo &other) const
-{
-    return (d->name == other.d->name &&
-            d->uid == other.d->uid &&
-            d->shape == other.d->shape &&
-            d->persistent == other.d->persistent &&
-            d->expiry == other.d->expiry &&
-            d->notificationParameters == other.d->notificationParameters);
-}
 
 /*!
-    Returns true if any of this object's values are not the same as those of
-    \a other.
+    \fn bool QGeoAreaMonitorInfo::operator!=(const QGeoAreaMonitorInfo &lhs, const QGeoAreaMonitorInfo &rhs)
+
+    Returns \c true if any of the \a lhs object's values are not the same as
+    those of \a rhs object. Otherwise returns \c false.
 */
-bool QGeoAreaMonitorInfo::operator!=(const QGeoAreaMonitorInfo &other) const
-{
-    return !QGeoAreaMonitorInfo::operator ==(other);
-}
 
 /*!
     Returns the name of the QGeoAreaMonitorInfo object. The name should be used
@@ -348,6 +339,16 @@ void QGeoAreaMonitorInfo::detach()
         d.detach();
     else
         d = new QGeoAreaMonitorInfoPrivate;
+}
+
+bool QGeoAreaMonitorInfo::equals(const QGeoAreaMonitorInfo &lhs, const QGeoAreaMonitorInfo &rhs)
+{
+    return (lhs.d->name == rhs.d->name &&
+            lhs.d->uid == rhs.d->uid &&
+            lhs.d->shape == rhs.d->shape &&
+            lhs.d->persistent == rhs.d->persistent &&
+            lhs.d->expiry == rhs.d->expiry &&
+            lhs.d->notificationParameters == rhs.d->notificationParameters);
 }
 
 #ifndef QT_NO_DATASTREAM

@@ -272,31 +272,21 @@ QGeoCoordinate::~QGeoCoordinate()
 }
 
 /*!
-    Returns true if the latitude, longitude and altitude of this
-    coordinate are the same as those of \a other.
+    \fn bool QGeoCoordinate::operator==(const QGeoCoordinate &lhs, const QGeoCoordinate &rhs)
+
+    Returns \c true if the latitude, longitude and altitude of the \a lhs
+    coordinate are the same as those of the \a rhs coordinate. Otherwise
+    returns \c false.
 
     The longitude will be ignored if the latitude is +/- 90 degrees.
 */
-bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
-{
-    bool latEqual = (qIsNaN(d->lat) && qIsNaN(other.d->lat))
-                        || qFuzzyCompare(d->lat, other.d->lat);
-    bool lngEqual = (qIsNaN(d->lng) && qIsNaN(other.d->lng))
-                        || qFuzzyCompare(d->lng, other.d->lng);
-    bool altEqual = (qIsNaN(d->alt) && qIsNaN(other.d->alt))
-                        || qFuzzyCompare(d->alt, other.d->alt);
-
-    if (!qIsNaN(d->lat) && ((d->lat == 90.0) || (d->lat == -90.0)))
-        lngEqual = true;
-
-    return (latEqual && lngEqual && altEqual);
-}
 
 /*!
-    \fn bool QGeoCoordinate::operator!=(const QGeoCoordinate &other) const
+    \fn bool QGeoCoordinate::operator!=(const QGeoCoordinate &lhs, const QGeoCoordinate &rhs)
 
-    Returns \c true if latitude, longitude, or altitude of this
-    coordinate are not identical to \a other.
+    Returns \c true if latitude, longitude, or altitude of the \a lhs
+    coordinate are not identical to those of the \a rhs coordinate. Otherwise
+    returns \c false.
 */
 
 /*!
@@ -668,6 +658,21 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
     if (qIsNaN(d->alt))
         return QString::fromLatin1("%1, %2").arg(latStr, longStr);
     return QString::fromLatin1("%1, %2, %3m").arg(latStr, longStr, QString::number(d->alt));
+}
+
+bool QGeoCoordinate::equals(const QGeoCoordinate &lhs, const QGeoCoordinate &rhs)
+{
+    bool latEqual = (qIsNaN(lhs.d->lat) && qIsNaN(rhs.d->lat))
+                        || qFuzzyCompare(lhs.d->lat, rhs.d->lat);
+    bool lngEqual = (qIsNaN(lhs.d->lng) && qIsNaN(rhs.d->lng))
+                        || qFuzzyCompare(lhs.d->lng, rhs.d->lng);
+    bool altEqual = (qIsNaN(lhs.d->alt) && qIsNaN(rhs.d->alt))
+                        || qFuzzyCompare(lhs.d->alt, rhs.d->alt);
+
+    if (!qIsNaN(lhs.d->lat) && ((lhs.d->lat == 90.0) || (lhs.d->lat == -90.0)))
+        lngEqual = true;
+
+    return (latEqual && lngEqual && altEqual);
 }
 
 QGeoCoordinate::QGeoCoordinate(QGeoCoordinatePrivate &dd):

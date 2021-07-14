@@ -154,21 +154,18 @@ QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo & other)
 */
 
 /*!
-    Returns true if all the information for this satellite
-    are the same as those of \a other.
+    \fn bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &lhs, const QGeoSatelliteInfo &rhs)
+
+    Returns \c true if all the parameters of the \a lhs satellite are the same
+    as those of \a rhs. Otherwise returns \c false.
 */
-bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &other) const
-{
-    return *d == *other.d;
-}
 
 /*!
-    \fn bool QGeoSatelliteInfo::operator!=(const QGeoSatelliteInfo &other) const;
+    \fn bool QGeoSatelliteInfo::operator!=(const QGeoSatelliteInfo &lhs, const QGeoSatelliteInfo &rhs)
 
-    Returns true if any of the information for this satellite
-    are not the same as those of \a other.
+    Returns \c true if any of the parameters of the \a lhs satellite are not
+    the same as those of \a rhs. Otherwise returns \c false.
 */
-
 
 /*!
     Sets the Satellite System (GPS, GLONASS, ...) to \a system.
@@ -309,6 +306,11 @@ void QGeoSatelliteInfo::detach()
         d.detach();
     else
         d = new QGeoSatelliteInfoPrivate;
+}
+
+bool QGeoSatelliteInfo::equals(const QGeoSatelliteInfo &lhs, const QGeoSatelliteInfo &rhs)
+{
+    return *lhs.d == *rhs.d;
 }
 
 #ifndef QT_NO_DEBUG_STREAM

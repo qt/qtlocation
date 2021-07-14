@@ -78,8 +78,14 @@ public:
 
     void swap(QGeoAreaMonitorInfo &other) noexcept { d.swap(other.d); }
 
-    bool operator==(const QGeoAreaMonitorInfo &other) const;
-    bool operator!=(const QGeoAreaMonitorInfo &other) const;
+    friend bool operator==(const QGeoAreaMonitorInfo &lhs, const QGeoAreaMonitorInfo &rhs)
+    {
+        return equals(lhs, rhs);
+    }
+    friend bool operator!=(const QGeoAreaMonitorInfo &lhs, const QGeoAreaMonitorInfo &rhs)
+    {
+        return !equals(lhs, rhs);
+    }
 
     QString name() const;
     void setName(const QString &name);
@@ -102,6 +108,7 @@ public:
     void detach();
 
 private:
+    static bool equals(const QGeoAreaMonitorInfo &lhs, const QGeoAreaMonitorInfo &rhs);
     QExplicitlySharedDataPointer<QGeoAreaMonitorInfoPrivate> d;
     friend class QGeoAreaMonitorInfoPrivate;
 
