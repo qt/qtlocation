@@ -169,6 +169,17 @@ QGeoShape::QGeoShape(QGeoShapePrivate *d)
 {
 }
 
+bool QGeoShape::equals(const QGeoShape &lhs, const QGeoShape &rhs)
+{
+    if (lhs.d_func() == rhs.d_func())
+        return true;
+
+    if (!lhs.d_func() || !rhs.d_func())
+        return false;
+
+    return *lhs.d_func() == *rhs.d_func();
+}
+
 /*!
     Destroys this geo shape.
 */
@@ -263,30 +274,18 @@ QGeoCoordinate QGeoShape::center() const
 }
 
 /*!
-    Returns true if the \a other geo shape is equivalent to this geo shape, otherwise returns
-    false.
+    \fn bool QGeoShape::operator==(const QGeoShape &lhs, const QGeoShape &rhs)
+
+    Returns \c true if the \a lhs geo shape is equivalent to the \a rhs geo
+    shape, otherwise returns \c false.
 */
-bool QGeoShape::operator==(const QGeoShape &other) const
-{
-    Q_D(const QGeoShape);
-
-    if (d == other.d_func())
-        return true;
-
-    if (!d || !(other.d_func()))
-        return false;
-
-    return *d == *other.d_func();
-}
 
 /*!
-    Returns true if the \a other geo shape is not equivalent to this geo shape, otherwise returns
-    false.
+    \fn bool QGeoShape::operator!=(const QGeoShape &lhs, const QGeoShape &rhs)
+
+    Returns \c true if the \a lhs geo shape is not equivalent to the \a rhs geo
+    shape, otherwise returns \c false.
 */
-bool QGeoShape::operator!=(const QGeoShape &other) const
-{
-    return !(*this == other);
-}
 
 /*!
     Assigns \a other to this geo shape and returns a reference to this geo shape.

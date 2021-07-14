@@ -63,12 +63,6 @@ public:
 
     QGeoPolygon &operator=(const QGeoPolygon &other);
 
-    using QGeoShape::operator==;
-    bool operator==(const QGeoPolygon &other) const;
-
-    using QGeoShape::operator!=;
-    bool operator!=(const QGeoPolygon &other) const;
-
     void setPerimeter(const QList<QGeoCoordinate> &path);
     const QList<QGeoCoordinate> &perimeter() const;
 

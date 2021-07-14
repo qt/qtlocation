@@ -172,24 +172,18 @@ QGeoCircle &QGeoCircle::operator=(const QGeoCircle &other)
 }
 
 /*!
-    Returns whether this geo circle is equal to \a other.
-*/
-bool QGeoCircle::operator==(const QGeoCircle &other) const
-{
-    Q_D(const QGeoCircle);
+    \fn bool QGeoCircle::operator==(const QGeoCircle &lhs, const QGeoCircle &rhs)
 
-    return *d == *other.d_func();
-}
+    Returns \c true if the \a lhs geo circle is equal to the \a rhs geo
+    circle, otherwise returns \c false.
+*/
 
 /*!
-    Returns whether this geo circle is not equal to \a other.
-*/
-bool QGeoCircle::operator!=(const QGeoCircle &other) const
-{
-    Q_D(const QGeoCircle);
+    \fn bool QGeoCircle::operator!=(const QGeoCircle &lhs, const QGeoCircle &rhs)
 
-    return !(*d == *other.d_func());
-}
+    Returns \c true if the \a lhs geo circle is not equal to the \a rhs geo
+    circle, otherwise returns \c false.
+*/
 
 bool QGeoCirclePrivate::isValid() const
 {

@@ -168,22 +168,18 @@ QGeoPath &QGeoPath::operator=(const QGeoPath &other)
 }
 
 /*!
-    Returns whether this geo path is equal to \a other.
+    \fn bool QGeoPath::operator==(const QGeoPath &lhs, const QGeoPath &rhs)
+
+    Returns \c true if the \a lhs geo path is equal to the \a rhs geo path,
+    otherwise returns \c false.
 */
-bool QGeoPath::operator==(const QGeoPath &other) const
-{
-    Q_D(const QGeoPath);
-    return *d == *other.d_func();
-}
 
 /*!
-    Returns whether this geo path is not equal to \a other.
+    \fn bool QGeoPath::operator!=(const QGeoPath &lhs, const QGeoPath &rhs)
+
+    Returns \c true if the \a lhs geo path is not equal to the \a rhs geo path,
+    otherwise returns \c false.
 */
-bool QGeoPath::operator!=(const QGeoPath &other) const
-{
-    Q_D(const QGeoPath);
-    return !(*d == *other.d_func());
-}
 
 /*!
     Sets all the elements of the \a path.

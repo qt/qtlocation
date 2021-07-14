@@ -79,8 +79,14 @@ public:
     Q_INVOKABLE QGeoRectangle boundingGeoRectangle() const;
     QGeoCoordinate center() const;
 
-    bool operator==(const QGeoShape &other) const;
-    bool operator!=(const QGeoShape &other) const;
+    friend bool operator==(const QGeoShape &lhs, const QGeoShape &rhs)
+    {
+        return equals(lhs, rhs);
+    }
+    friend bool operator!=(const QGeoShape &lhs, const QGeoShape &rhs)
+    {
+        return !equals(lhs, rhs);
+    }
 
     QGeoShape &operator=(const QGeoShape &other);
 
@@ -91,6 +97,7 @@ protected:
     QSharedDataPointer<QGeoShapePrivate> d_ptr;
 
 private:
+    static bool equals(const QGeoShape &lhs, const QGeoShape &rhs);
     inline QGeoShapePrivate *d_func();
     inline const QGeoShapePrivate *d_func() const;
 };

@@ -92,12 +92,6 @@ bool QGeoLocationPrivate::isEmpty() const
 */
 
 /*!
-    \fn bool QGeoLocation::operator!=(const QGeoLocation &other) const
-
-    Returns true if this location is not equal to \a other, otherwise returns false.
-*/
-
-/*!
     Constructs an new location object.
 */
 QGeoLocation::QGeoLocation()
@@ -133,13 +127,18 @@ QGeoLocation &QGeoLocation::operator =(const QGeoLocation &other)
 }
 
 /*!
-    Returns true if this location is equal to \a other,
-    otherwise returns false.
+    \fn bool QGeoLocation::operator==(const QGeoLocation &lhs, const QGeoLocation &rhs)
+
+    Returns \c true if the \a lhs location is equal to \a rhs, otherwise
+    returns \c false.
 */
-bool QGeoLocation::operator==(const QGeoLocation &other) const
-{
-    return (*(d.constData()) == *(other.d.constData()));
-}
+
+/*!
+    \fn bool QGeoLocation::operator!=(const QGeoLocation &lhs, const QGeoLocation &rhs)
+
+    Returns \c true if the \a lhs location is not equal to \a rhs, otherwise
+    returns \c false.
+*/
 
 /*!
     Returns the address of the location.
@@ -233,4 +232,9 @@ void QGeoLocation::setExtendedAttributes(const QVariantMap &data)
 bool QGeoLocation::isEmpty() const
 {
     return d->isEmpty();
+}
+
+bool QGeoLocation::equals(const QGeoLocation &lhs, const QGeoLocation &rhs)
+{
+    return (*(lhs.d.constData()) == *(rhs.d.constData()));
 }

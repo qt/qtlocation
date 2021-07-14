@@ -429,41 +429,17 @@ QGeoAddress &QGeoAddress::operator=(const QGeoAddress & address)
 }
 
 /*!
-    Returns true if this address is equal to \a other,
-    otherwise returns false.
-*/
-bool QGeoAddress::operator==(const QGeoAddress &other) const
-{
-#ifdef QGEOADDRESS_DEBUG
-    qDebug() << "country" << (d->sCountry == other.country());
-    qDebug() << "countryCode" << (d->sCountryCode == other.countryCode());
-    qDebug() << "state:" <<  (d->sState == other.state());
-    qDebug() << "county:" << (d->sCounty == other.county());
-    qDebug() << "city:" << (d->sCity == other.city());
-    qDebug() << "district:" << (d->sDistrict == other.district());
-    qDebug() << "street:" << (d->sStreet == other.street());
-    qDebug() << "street number:" << (d->sStreetNumber == other.streetNumber());
-    qDebug() << "postalCode:" << (d->sPostalCode == other.postalCode());
-    qDebug() << "text:" << (text() == other.text());
-#endif
+    \fn bool QGeoAddress::operator==(const QGeoAddress &lhs, const QGeoAddress &rhs)
 
-    return d->sCountry == other.country() &&
-           d->sCountryCode == other.countryCode() &&
-           d->sState == other.state() &&
-           d->sCounty == other.county() &&
-           d->sCity == other.city() &&
-           d->sDistrict == other.district() &&
-           d->sStreet == other.street() &&
-           d->sStreetNumber == other.streetNumber() &&
-           d->sPostalCode == other.postalCode() &&
-           this->text() == other.text();
-}
+    Returns \c true if \a lhs address is equal to \a rhs, otherwise returns
+    \c false.
+*/
 
 /*!
-    \fn bool QGeoAddress::operator!=(const QGeoAddress &other) const
+    \fn bool QGeoAddress::operator!=(const QGeoAddress &lhs, const QGeoAddress &rhs)
 
-    Returns true if this address is not equal to \a other,
-    otherwise returns false.
+    Returns \c true if \a lhs address is not equal to \a rhs, otherwise returns
+    \c false.
 */
 
 /*!
@@ -723,6 +699,33 @@ void QGeoAddress::clear()
 bool QGeoAddress::isTextGenerated() const
 {
     return d->sText.isEmpty();
+}
+
+bool QGeoAddress::equals(const QGeoAddress &lhs, const QGeoAddress &rhs)
+{
+#ifdef QGEOADDRESS_DEBUG
+    qDebug() << "country" << (lhs.d->sCountry == rhs.d->sCountry);
+    qDebug() << "countryCode" << (lhs.d->sCountryCode == rhs.d->sCountryCode);
+    qDebug() << "state:" <<  (lhs.d->sState == rhs.d->sState);
+    qDebug() << "county:" << (lhs.d->sCounty == rhs.d->sCounty);
+    qDebug() << "city:" << (lhs.d->sCity == rhs.d->sCity);
+    qDebug() << "district:" << (lhs.d->sDistrict == rhs.d->sDistrict);
+    qDebug() << "street:" << (lhs.d->sStreet == rhs.d->sStreet);
+    qDebug() << "street number:" << (lhs.d->sStreetNumber == rhs.d->sStreetNumber);
+    qDebug() << "postalCode:" << (lhs.d->sPostalCode == rhs.d->sPostalCode);
+    qDebug() << "text:" << (lhs.text() == rhs.text());
+#endif
+
+    return lhs.d->sCountry == rhs.d->sCountry &&
+           lhs.d->sCountryCode == rhs.d->sCountryCode &&
+           lhs.d->sState == rhs.d->sState &&
+           lhs.d->sCounty == rhs.d->sCounty &&
+           lhs.d->sCity == rhs.d->sCity &&
+           lhs.d->sDistrict == rhs.d->sDistrict &&
+           lhs.d->sStreet == rhs.d->sStreet &&
+           lhs.d->sStreetNumber == rhs.d->sStreetNumber &&
+           lhs.d->sPostalCode == rhs.d->sPostalCode &&
+           lhs.text() == rhs.text();
 }
 
 QT_END_NAMESPACE

@@ -151,19 +151,17 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo & other)
 */
 
 /*!
-    Returns true if all of this object's values are the same as those of
-    \a other.
+    \fn bool QGeoPositionInfo::operator==(const QGeoPositionInfo &lhs, const QGeoPositionInfo &rhs)
+
+    Returns \c true if all of the \a lhs object's values are the same as those
+    of \a rhs. Otherwise returns \c false.
 */
-bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
-{
-    return *d == *other.d;
-}
 
 /*!
-    \fn bool QGeoPositionInfo::operator!=(const QGeoPositionInfo &other) const
+    \fn bool QGeoPositionInfo::operator!=(const QGeoPositionInfo &lhs, const QGeoPositionInfo &rhs)
 
-    Returns true if any of this object's values are not the same as those of
-    \a other.
+    Returns \c true if any of the \a lhs object's values are not the same as
+    those of \a rhs. Otherwise returns \c false.
 */
 
 /*!
@@ -279,6 +277,11 @@ void QGeoPositionInfo::detach()
         d.detach();
     else
         d = new QGeoPositionInfoPrivate;
+}
+
+bool QGeoPositionInfo::equals(const QGeoPositionInfo &lhs, const QGeoPositionInfo &rhs)
+{
+    return *lhs.d == *rhs.d;
 }
 
 #ifndef QT_NO_DEBUG_STREAM

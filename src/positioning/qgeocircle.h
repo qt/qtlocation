@@ -63,12 +63,6 @@ public:
 
     QGeoCircle &operator=(const QGeoCircle &other);
 
-    using QGeoShape::operator==;
-    bool operator==(const QGeoCircle &other) const;
-
-    using QGeoShape::operator!=;
-    bool operator!=(const QGeoCircle &other) const;
-
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 

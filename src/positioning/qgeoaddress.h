@@ -56,9 +56,13 @@ public:
     ~QGeoAddress();
 
     QGeoAddress &operator=(const QGeoAddress &other);
-    bool operator==(const QGeoAddress &other) const;
-    bool operator!=(const QGeoAddress &other) const {
-        return !(other == *this);
+    friend bool operator==(const QGeoAddress &lhs, const QGeoAddress &rhs)
+    {
+        return equals(lhs, rhs);
+    }
+    friend bool operator!=(const QGeoAddress &lhs, const QGeoAddress &rhs)
+    {
+        return !equals(lhs, rhs);
     }
 
     QString text() const;
@@ -97,6 +101,7 @@ public:
     bool isTextGenerated() const;
 
 private:
+    static bool equals(const QGeoAddress &lhs, const QGeoAddress &rhs);
     QSharedDataPointer<QGeoAddressPrivate> d;
 };
 

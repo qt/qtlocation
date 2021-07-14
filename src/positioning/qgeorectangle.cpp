@@ -293,24 +293,18 @@ QGeoRectangle &QGeoRectangle::operator=(const QGeoRectangle &other)
 }
 
 /*!
-    Returns whether this geo rectangle is equal to \a other.
-*/
-bool QGeoRectangle::operator==(const QGeoRectangle &other) const
-{
-    Q_D(const QGeoRectangle);
+    \fn bool QGeoRectangle::operator==(const QGeoRectangle &lhs, const QGeoRectangle &rhs)
 
-    return *d == *other.d_func();
-}
+    Returns \c true if the \a lhs geo rectangle is equal to the \a rhs geo
+    rectangle, otherwise returns \c false.
+*/
 
 /*!
-    Returns whether this geo rectangle is not equal to \a other.
-*/
-bool QGeoRectangle::operator!=(const QGeoRectangle &other) const
-{
-    Q_D(const QGeoRectangle);
+    \fn bool QGeoRectangle::operator!=(const QGeoRectangle &lhs, const QGeoRectangle &rhs)
 
-    return !(*d == *other.d_func());
-}
+    Returns \c true if the \a lhs geo rectangle is not equal to the \a rhs geo
+    rectangle, otherwise returns \c false.
+*/
 
 bool QGeoRectanglePrivate::isValid() const
 {

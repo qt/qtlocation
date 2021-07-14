@@ -69,12 +69,6 @@ public:
 
     QGeoRectangle &operator=(const QGeoRectangle &other);
 
-    using QGeoShape::operator==;
-    bool operator==(const QGeoRectangle &other) const;
-
-    using QGeoShape::operator!=;
-    bool operator!=(const QGeoRectangle &other) const;
-
     void setTopLeft(const QGeoCoordinate &topLeft);
     QGeoCoordinate topLeft() const;
 
