@@ -681,7 +681,7 @@ QGeoCoordinate::QGeoCoordinate(QGeoCoordinatePrivate &dd):
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
+QDebug QGeoCoordinate::debugStreaming(QDebug dbg, const QGeoCoordinate &coord)
 {
     QDebugStateSaver saver(dbg);
     double lat = coord.latitude();
@@ -719,7 +719,7 @@ QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
     \sa {Serializing Qt Data Types}
 */
 
-QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
+QDataStream &QGeoCoordinate::dataStreamOut(QDataStream &stream, const QGeoCoordinate &coordinate)
 {
     stream << coordinate.latitude();
     stream << coordinate.longitude();
@@ -739,7 +739,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
     \sa {Serializing Qt Data Types}
 */
 
-QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
+QDataStream &QGeoCoordinate::dataStreamIn(QDataStream &stream, QGeoCoordinate &coordinate)
 {
     double value;
     stream >> value;

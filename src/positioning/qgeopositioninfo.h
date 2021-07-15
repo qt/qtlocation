@@ -112,11 +112,34 @@ public:
 private:
     static bool equals(const QGeoPositionInfo &lhs, const QGeoPositionInfo &rhs);
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
+    friend QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
+    {
+        return debugStreaming(dbg, info);
+    }
+    static QDebug debugStreaming(QDebug dbg, const QGeoPositionInfo &info);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
-    friend Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
+    friend QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
+    {
+        return dataStreamOut(stream, info);
+    }
+    friend QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
+    {
+        return dataStreamIn(stream, info);
+    }
+    static QDataStream &dataStreamOut(QDataStream &stream, const QGeoPositionInfo &info);
+    static QDataStream &dataStreamIn(QDataStream &stream, QGeoPositionInfo &info);
+
+    friend QDataStream &operator<<(QDataStream &stream, QGeoPositionInfo::Attribute attr)
+    {
+        return dataStreamOut(stream, attr);
+    }
+    friend QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo::Attribute &attr)
+    {
+        return dataStreamIn(stream, attr);
+    }
+    static QDataStream &dataStreamOut(QDataStream &stream, QGeoPositionInfo::Attribute attr);
+    static QDataStream &dataStreamIn(QDataStream &stream, QGeoPositionInfo::Attribute &attr);
 #endif
     QExplicitlySharedDataPointer<QGeoPositionInfoPrivate> d;
     friend class QGeoPositionInfoPrivate;
@@ -126,17 +149,6 @@ private:
 };
 
 Q_DECLARE_SHARED(QGeoPositionInfo)
-
-#ifndef QT_NO_DEBUG_STREAM
-Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
-#endif
-
-#ifndef QT_NO_DATASTREAM
-Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, QGeoPositionInfo::Attribute attr);
-Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo::Attribute &attr);
-Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
-Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
-#endif
 
 QT_END_NAMESPACE
 

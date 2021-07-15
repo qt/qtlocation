@@ -310,7 +310,7 @@ QString QGeoShape::toString() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QGeoShape &shape)
+QDebug QGeoShape::debugStreaming(QDebug dbg, const QGeoShape &shape)
 {
     QDebugStateSaver saver(dbg);
     dbg.nospace() << "QGeoShape(";
@@ -338,7 +338,7 @@ QDebug operator<<(QDebug dbg, const QGeoShape &shape)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape)
+QDataStream &QGeoShape::dataStreamOut(QDataStream &stream, const QGeoShape &shape)
 {
     stream << quint32(shape.type());
     switch (shape.type()) {
@@ -374,7 +374,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape)
     return stream;
 }
 
-QDataStream &operator>>(QDataStream &stream, QGeoShape &shape)
+QDataStream &QGeoShape::dataStreamIn(QDataStream &stream, QGeoShape &shape)
 {
     quint32 type;
     stream >> type;

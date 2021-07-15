@@ -100,18 +100,28 @@ private:
     static bool equals(const QGeoShape &lhs, const QGeoShape &rhs);
     inline QGeoShapePrivate *d_func();
     inline const QGeoShapePrivate *d_func() const;
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const QGeoShape &shape)
+    {
+        return debugStreaming(dbg, shape);
+    }
+    static QDebug debugStreaming(QDebug dbg, const QGeoShape &shape);
+#endif
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape)
+    {
+        return dataStreamOut(stream, shape);
+    }
+    friend QDataStream &operator>>(QDataStream &stream, QGeoShape &shape)
+    {
+        return dataStreamIn(stream, shape);
+    }
+    static QDataStream &dataStreamOut(QDataStream &stream, const QGeoShape &shape);
+    static QDataStream &dataStreamIn(QDataStream &stream, QGeoShape &shape);
+#endif
 };
 
 Q_DECLARE_TYPEINFO(QGeoShape, Q_RELOCATABLE_TYPE);
-
-#ifndef QT_NO_DEBUG_STREAM
-Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoShape &);
-#endif
-
-#ifndef QT_NO_DATASTREAM
-Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape);
-Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoShape &shape);
-#endif
 
 QT_END_NAMESPACE
 

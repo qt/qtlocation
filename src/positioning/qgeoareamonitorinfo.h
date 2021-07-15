@@ -51,11 +51,6 @@ QT_BEGIN_NAMESPACE
 class QDataStream;
 class QGeoAreaMonitorInfo;
 
-#ifndef QT_NO_DATASTREAM
-Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &, const QGeoAreaMonitorInfo &);
-Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &, QGeoAreaMonitorInfo &);
-#endif
-
 Q_POSITIONING_EXPORT size_t qHash(const QGeoAreaMonitorInfo &key, size_t seed = 0) noexcept;
 namespace QTest
 {
@@ -113,18 +108,29 @@ private:
     friend class QGeoAreaMonitorInfoPrivate;
 
 #ifndef QT_NO_DATASTREAM
-    friend Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &, const QGeoAreaMonitorInfo &);
-    friend Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &, QGeoAreaMonitorInfo &);
+    friend QDataStream &operator<<(QDataStream &ds, const QGeoAreaMonitorInfo &monitor)
+    {
+        return dataStreamOut(ds, monitor);
+    }
+    friend QDataStream &operator>>(QDataStream &ds, QGeoAreaMonitorInfo &monitor)
+    {
+        return dataStreamIn(ds, monitor);
+    }
+    static QDataStream &dataStreamOut(QDataStream &ds, const QGeoAreaMonitorInfo &monitor);
+    static QDataStream &dataStreamIn(QDataStream &ds, QGeoAreaMonitorInfo &monitor);
 #endif
     friend Q_POSITIONING_EXPORT size_t qHash(const QGeoAreaMonitorInfo &key, size_t seed) noexcept;
     friend Q_POSITIONING_EXPORT char *QTest::toString(const QGeoAreaMonitorInfo& info);
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const QGeoAreaMonitorInfo &monitor)
+    {
+        return debugStreaming(dbg, monitor);
+    }
+    static QDebug debugStreaming(QDebug dbg, const QGeoAreaMonitorInfo &monitor);
+#endif
 };
 
 Q_DECLARE_SHARED(QGeoAreaMonitorInfo)
-
-#ifndef QT_NO_DEBUG_STREAM
-Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoAreaMonitorInfo &);
-#endif
 
 QT_END_NAMESPACE
 
