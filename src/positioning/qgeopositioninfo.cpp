@@ -285,7 +285,7 @@ bool QGeoPositionInfo::equals(const QGeoPositionInfo &lhs, const QGeoPositionInf
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
+QDebug QGeoPositionInfo::debugStreaming(QDebug dbg, const QGeoPositionInfo &info)
 {
     QDebugStateSaver saver(dbg);
     dbg.nospace() << "QGeoPositionInfo(" << info.d->timestamp;
@@ -326,25 +326,27 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
 
 #ifndef QT_NO_DATASTREAM
 /*!
+    \fn QDataStream &operator<<(QDataStream &stream, QGeoPositionInfo::Attribute attr)
     \relates QGeoPositionInfo
 
     Writes the given \a attr enumeration to the specified \a stream.
 
     \sa {Serializing Qt Data Types}
 */
-QDataStream &operator<<(QDataStream &stream, QGeoPositionInfo::Attribute attr)
+QDataStream &QGeoPositionInfo::dataStreamOut(QDataStream &stream, QGeoPositionInfo::Attribute attr)
 {
     return stream << int(attr);
 }
 
 /*!
+    \fn QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo::Attribute &attr)
     \relates QGeoPositionInfo
 
     Reads an attribute enumeration from the specified \a stream info the given \a attr.
 
     \sa {Serializing Qt Data Types}
 */
-QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo::Attribute &attr)
+QDataStream &QGeoPositionInfo::dataStreamIn(QDataStream &stream, QGeoPositionInfo::Attribute &attr)
 {
     int a;
     stream >> a;
@@ -361,7 +363,7 @@ QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo::Attribute &attr)
     \sa {Serializing Qt Data Types}
 */
 
-QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
+QDataStream &QGeoPositionInfo::dataStreamOut(QDataStream &stream, const QGeoPositionInfo &info)
 {
     stream << info.d->timestamp;
     stream << info.d->coord;
@@ -379,7 +381,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
     \sa {Serializing Qt Data Types}
 */
 
-QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
+QDataStream &QGeoPositionInfo::dataStreamIn(QDataStream &stream, QGeoPositionInfo &info)
 {
     stream >> info.d->timestamp;
     stream >> info.d->coord;

@@ -361,7 +361,7 @@ bool QGeoAreaMonitorInfo::equals(const QGeoAreaMonitorInfo &lhs, const QGeoAreaM
 
     \sa {Serializing Qt Data Types}
 */
-QDataStream &operator<<(QDataStream &ds, const QGeoAreaMonitorInfo &monitor)
+QDataStream &QGeoAreaMonitorInfo::dataStreamOut(QDataStream &ds, const QGeoAreaMonitorInfo &monitor)
 {
     ds << monitor.name() << monitor.d->uid << monitor.area()
        << monitor.isPersistent() << monitor.notificationParameters() << monitor.expiration();
@@ -377,8 +377,7 @@ QDataStream &operator<<(QDataStream &ds, const QGeoAreaMonitorInfo &monitor)
 
     \sa {Serializing Qt Data Types}
 */
-
-QDataStream &operator>>(QDataStream &ds, QGeoAreaMonitorInfo &monitor)
+QDataStream &QGeoAreaMonitorInfo::dataStreamIn(QDataStream &ds, QGeoAreaMonitorInfo &monitor)
 {
     QString s;
     ds >> s;
@@ -410,7 +409,7 @@ QDataStream &operator>>(QDataStream &ds, QGeoAreaMonitorInfo &monitor)
 #endif
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QGeoAreaMonitorInfo &monitor)
+QDebug QGeoAreaMonitorInfo::debugStreaming(QDebug dbg, const QGeoAreaMonitorInfo &monitor)
 {
     QDebugStateSaver saver(dbg);
     dbg.nospace() << "QGeoAreaMonitorInfo(\"" << qPrintable(monitor.name())

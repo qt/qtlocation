@@ -314,7 +314,7 @@ bool QGeoSatelliteInfo::equals(const QGeoSatelliteInfo &lhs, const QGeoSatellite
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
+QDebug QGeoSatelliteInfo::debugStreaming(QDebug dbg, const QGeoSatelliteInfo &info)
 {
     QDebugStateSaver saver(dbg);
     dbg.nospace() << "QGeoSatelliteInfo(system=" << info.d->system;
@@ -351,7 +351,7 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
 
 */
 
-QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
+QDataStream &QGeoSatelliteInfo::dataStreamOut(QDataStream &stream, const QGeoSatelliteInfo &info)
 {
     stream << info.d->signal;
     stream << info.d->doubleAttribs;
@@ -372,7 +372,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
     \sa {Serializing Qt Data Types}
 */
 
-QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
+QDataStream &QGeoSatelliteInfo::dataStreamIn(QDataStream &stream, QGeoSatelliteInfo &info)
 {
     int system;
     stream >> info.d->signal;

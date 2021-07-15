@@ -43,6 +43,7 @@
 #include <QtCore/QMetaType>
 #include <QtCore/QString>
 #include <QtCore/QSharedDataPointer>
+#include <QtCore/QDebug>
 #include <QtPositioning/qpositioningglobal.h>
 
 QT_BEGIN_NAMESPACE
@@ -120,20 +121,32 @@ private:
     QSharedDataPointer<QGeoCoordinatePrivate> d;
     friend class QGeoCoordinatePrivate;
     friend class QQuickGeoCoordinateAnimation;
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
+    {
+        return debugStreaming(dbg, coord);
+    }
+    static QDebug debugStreaming(QDebug dbg, const QGeoCoordinate &coord);
+#endif
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
+    {
+        return dataStreamOut(stream, coordinate);
+    }
+    friend QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
+    {
+        return dataStreamIn(stream, coordinate);
+    }
+    static QDataStream &dataStreamOut(QDataStream &stream, const QGeoCoordinate &coordinate);
+    static QDataStream &dataStreamIn(QDataStream &stream, QGeoCoordinate &coordinate);
+#endif
 };
 
 Q_DECLARE_TYPEINFO(QGeoCoordinate, Q_RELOCATABLE_TYPE);
 
-#ifndef QT_NO_DEBUG_STREAM
-Q_POSITIONING_EXPORT QDebug operator<<(QDebug, const QGeoCoordinate &);
-#endif
 
 Q_POSITIONING_EXPORT size_t qHash(const QGeoCoordinate &coordinate, size_t seed = 0);
 
-#ifndef QT_NO_DATASTREAM
-Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate);
-Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate);
-#endif
 
 QT_END_NAMESPACE
 

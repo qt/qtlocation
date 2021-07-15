@@ -394,8 +394,17 @@ private slots:
 
         QGeoAreaMonitorInfo monitor("someName");
         monitor.setArea(QGeoCircle(QGeoCoordinate(1,3), 5.4));
+        const QDateTime expirationTime = QDateTime::currentDateTime().addSecs(60);
+        monitor.setExpiration(expirationTime);
+        monitor.setPersistent(true);
+        const QVariantMap params { {"string_param", "some string"},
+                                   {"int_param", 1}, {"double_param", 3.5} };
+        monitor.setNotificationParameters(params);
         QVERIFY(monitor.isValid());
         QCOMPARE(monitor.name(), QString("someName"));
+        QCOMPARE(monitor.expiration(), expirationTime);
+        QVERIFY(monitor.isPersistent());
+        QCOMPARE(monitor.notificationParameters(), params);
 
         QGeoAreaMonitorInfo target;
         QVERIFY(!target.isValid());
@@ -411,6 +420,9 @@ private slots:
         QVERIFY(target.isValid());
         QCOMPARE(target.name(), QString("someName"));
         QVERIFY(target.area() == QGeoCircle(QGeoCoordinate(1,3), 5.4));
+        QCOMPARE(target.expiration(), expirationTime);
+        QVERIFY(target.isPersistent());
+        QCOMPARE(target.notificationParameters(), params);
     }
 
     void tst_createDefaultSource()

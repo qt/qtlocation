@@ -42,6 +42,7 @@
 #include <QtPositioning/qpositioningglobal.h>
 #include <QtCore/QSharedData>
 #include <QtCore/QMetaType>
+#include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -119,11 +120,23 @@ public:
 private:
     static bool equals(const QGeoSatelliteInfo &lhs, const QGeoSatelliteInfo &rhs);
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
+    friend QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
+    {
+        return debugStreaming(dbg, info);
+    }
+    static QDebug debugStreaming(QDebug dbg, const QGeoSatelliteInfo &info);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
-    friend Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
+    friend QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
+    {
+        return dataStreamOut(stream, info);
+    }
+    friend QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
+    {
+        return dataStreamIn(stream, info);
+    }
+    static QDataStream &dataStreamOut(QDataStream &stream, const QGeoSatelliteInfo &info);
+    static QDataStream &dataStreamIn(QDataStream &stream, QGeoSatelliteInfo &info);
 #endif
     QExplicitlySharedDataPointer<QGeoSatelliteInfoPrivate> d;
     friend class QGeoSatelliteInfoPrivate;
@@ -133,15 +146,6 @@ private:
 };
 
 Q_DECLARE_SHARED(QGeoSatelliteInfo)
-
-#ifndef QT_NO_DEBUG_STREAM
-Q_POSITIONING_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
-#endif
-
-#ifndef QT_NO_DATASTREAM
-Q_POSITIONING_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
-Q_POSITIONING_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
-#endif
 
 QT_END_NAMESPACE
 

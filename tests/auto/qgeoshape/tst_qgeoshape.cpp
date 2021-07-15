@@ -91,10 +91,14 @@ void tst_qgeoshape::debug_data()
 
     QTest::newRow("uninitialized") << QGeoShape() << 45
             << QString("QGeoShape(Unknown) 45");
-    QTest::newRow("uninitialized") << QGeoShape(QGeoRectangle()) << 45
+    QTest::newRow("rectangle") << QGeoShape(QGeoRectangle()) << 45
             << QString("QGeoShape(Rectangle) 45");
-    QTest::newRow("uninitialized") << QGeoShape(QGeoCircle()) << 45
+    QTest::newRow("circle") << QGeoShape(QGeoCircle()) << 45
             << QString("QGeoShape(Circle) 45");
+    QTest::newRow("polygon") << QGeoShape(QGeoPolygon()) << 45
+            << QString("QGeoShape(Polygon) 45");
+    QTest::newRow("path") << QGeoShape(QGeoPath()) << 45
+            << QString("QGeoShape(Path) 45");
 }
 
 
