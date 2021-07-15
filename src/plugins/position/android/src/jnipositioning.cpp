@@ -91,8 +91,10 @@ static jmethodID stopUpdatesMethodId;
 static jmethodID requestUpdateMethodId;
 static jmethodID startSatelliteUpdatesMethodId;
 
-static const char logTag[] = "QtPositioning";
+static const char logTag[] = "qt.positioning.android";
 static const char methodErrorMsg[] = "Can't find method \"%s%s\"";
+
+Q_LOGGING_CATEGORY(lcPositioning, logTag)
 
 namespace AndroidPositioning {
     typedef QMap<int, QGeoPositionInfoSourceAndroid * > PositionSourceMap;
@@ -246,7 +248,7 @@ namespace AndroidPositioning {
         for (int i = 0; i<length; i++) {
             jobject element = jniEnv->GetObjectArrayElement(satellites, i);
             if (QJniEnvironment::checkAndClearExceptions(jniEnv)) {
-                qWarning() << "Cannot process all satellite data due to exception.";
+                qCWarning(lcPositioning) << "Cannot process all satellite data due to exception.";
                 break;
             }
 
@@ -423,7 +425,8 @@ namespace AndroidPositioning {
             case 2:
                 return static_cast<QGeoSatelliteInfoSource::Error>(errorCode);
             default:
-                qWarning() << "startSatelliteUpdates: Unknown error code " << errorCode;
+                qCWarning(lcPositioning)
+                        << "startSatelliteUpdates: Unknown error code " << errorCode;
                 break;
             }
         }
@@ -438,8 +441,10 @@ namespace AndroidPositioning {
         if (!QNativeInterface::QAndroidApplication::isActivityContext()) {
             const auto permission = QPermission::PreciseBackgroundLocation;
             const auto result = QCoreApplication::checkPermission(permission).result();
-            if (result != QPermission::Authorized)
-                qWarning() << "Position data not available due to missing permission" << permission;
+            if (result != QPermission::Authorized) {
+                qCWarning(lcPositioning)
+                        << "Position data not available due to missing permission" << permission;
+            }
             return result == QPermission::Authorized;
         } else {
             // Running from a normal Activity. Checking and requesting the
@@ -451,8 +456,9 @@ namespace AndroidPositioning {
             if (checkFuture.result() == QPermission::Denied) {
                 auto requestFuture = QCoreApplication::requestPermission(permission);
                 if (requestFuture.result() != QPermission::Authorized) {
-                    qWarning() << "Position data not available due to missing permission"
-                               << permission;
+                    qCWarning(lcPositioning)
+                            << "Position data not available due to missing permission"
+                            << permission;
                     return false;
                 }
             }
@@ -469,7 +475,7 @@ static void positionUpdated(JNIEnv * /*env*/, jobject /*thiz*/, jobject location
 
     QGeoPositionInfoSourceAndroid *source = AndroidPositioning::idToPosSource()->value(androidClassKey);
     if (!source) {
-        qWarning("positionUpdated: source == 0");
+        qCWarning(lcPositioning) << "positionUpdated: source == 0";
         return;
     }
 
@@ -489,7 +495,7 @@ static void locationProvidersDisabled(JNIEnv *env, jobject /*thiz*/, jint androi
     if (!source)
         source = AndroidPositioning::idToSatSource()->value(androidClassKey);
     if (!source) {
-        qWarning("locationProvidersDisabled: source == 0");
+        qCWarning(lcPositioning) << "locationProvidersDisabled: source == 0";
         return;
     }
 
@@ -501,7 +507,7 @@ static void locationProvidersChanged(JNIEnv *env, jobject /*thiz*/, jint android
     Q_UNUSED(env);
     QObject *source = AndroidPositioning::idToPosSource()->value(androidClassKey);
     if (!source) {
-        qWarning("locationProvidersChanged: source == 0");
+        qCWarning(lcPositioning) << "locationProvidersChanged: source == 0";
         return;
     }
 
@@ -515,7 +521,7 @@ static void satelliteUpdated(JNIEnv *env, jobject /*thiz*/, jobjectArray satelli
 
     QGeoSatelliteInfoSourceAndroid *source = AndroidPositioning::idToSatSource()->value(androidClassKey);
     if (!source) {
-        qWarning("satelliteUpdated: source == 0");
+        qCWarning(lcPositioning) << "satelliteUpdated: source == 0";
         return;
     }
 

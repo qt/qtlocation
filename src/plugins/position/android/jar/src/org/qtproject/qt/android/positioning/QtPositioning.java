@@ -58,7 +58,7 @@ import android.util.Log;
 public class QtPositioning implements LocationListener
 {
 
-    private static final String TAG = "QtPositioning";
+    private static final String TAG = "qt.positioning.android";
     static LocationManager locationManager = null;
     static Object m_syncObject = new Object();
     static HashMap<Integer, QtPositioning> runningListeners = new HashMap<Integer, QtPositioning>();
