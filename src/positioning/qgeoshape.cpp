@@ -357,6 +357,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoShape &shape)
     }
     case QGeoShape::PathType: {
         QGeoPath p = shape;
+        stream << p.width();
         stream << p.path().size();
         for (const auto &c: p.path())
             stream << c;
@@ -400,21 +401,23 @@ QDataStream &operator>>(QDataStream &stream, QGeoShape &shape)
     case QGeoShape::PathType: {
         QList<QGeoCoordinate> l;
         QGeoCoordinate c;
-        int sz;
+        qreal width;
+        stream >> width;
+        qsizetype sz;
         stream >> sz;
-        for (int i = 0; i < sz; i++) {
+        for (qsizetype i = 0; i < sz; i++) {
             stream >> c;
             l.append(c);
         }
-        shape = QGeoPath(l);
+        shape = QGeoPath(l, width);
         break;
     }
     case QGeoShape::PolygonType: {
         QList<QGeoCoordinate> l;
         QGeoCoordinate c;
-        int sz;
+        qsizetype sz;
         stream >> sz;
-        for (int i = 0; i < sz; i++) {
+        for (qsizetype i = 0; i < sz; i++) {
             stream >> c;
             l.append(c);
         }

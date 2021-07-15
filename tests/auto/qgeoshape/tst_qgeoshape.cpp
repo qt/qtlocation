@@ -31,6 +31,8 @@
 #include <QtCore/QDebug>
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoPath>
+#include <QtPositioning/QGeoPolygon>
 
 QString tst_qgeoshape_debug;
 
@@ -55,6 +57,7 @@ private slots:
     void debug_data();
     void debug();
     void conversions();
+    void serialization();
 };
 
 void tst_qgeoshape::testArea()
@@ -124,6 +127,74 @@ void tst_qgeoshape::conversions()
     QVERIFY(varCircle.canConvert<QGeoCircle>());
     QVERIFY(!varCircle.canConvert<QGeoRectangle>());
     QVERIFY(varCircle.canConvert<QGeoShape>());
+}
+
+void tst_qgeoshape::serialization()
+{
+    QByteArray data;
+    // empty shape
+    {
+        QGeoShape shape;
+        QDataStream writeStream(&data, QDataStream::WriteOnly);
+        writeStream << shape;
+
+        QGeoShape otherShape;
+        QDataStream readStream(&data, QDataStream::ReadOnly);
+        readStream >> otherShape;
+
+        QCOMPARE(otherShape, shape);
+    }
+    // circle
+    {
+        QGeoCircle circle(QGeoCoordinate(1.1, 2.2), 10.5);
+        QDataStream writeStream(&data, QDataStream::WriteOnly);
+        writeStream << circle;
+
+        QGeoShape otherCircle;
+        QDataStream readStream(&data, QDataStream::ReadOnly);
+        readStream >> otherCircle;
+
+        QCOMPARE(otherCircle, circle);
+    }
+    // rectangle
+    {
+        QGeoRectangle rectangle(QGeoCoordinate(30, 160), QGeoCoordinate(-30, 170));
+        QDataStream writeStream(&data, QDataStream::WriteOnly);
+        writeStream << rectangle;
+
+        QGeoShape otherRectangle;
+        QDataStream readStream(&data, QDataStream::ReadOnly);
+        readStream >> otherRectangle;
+
+        QCOMPARE(otherRectangle, rectangle);
+    }
+    // polygon
+    {
+        QGeoPolygon polygon({ QGeoCoordinate(30, 160),
+                              QGeoCoordinate(0, 170),
+                              QGeoCoordinate(-30, 160) });
+        QDataStream writeStream(&data, QDataStream::WriteOnly);
+        writeStream << polygon;
+
+        QGeoShape otherPolygon;
+        QDataStream readStream(&data, QDataStream::ReadOnly);
+        readStream >> otherPolygon;
+
+        QCOMPARE(otherPolygon, polygon);
+    }
+    // path
+    {
+        QGeoPath path({ QGeoCoordinate(30, 160), QGeoCoordinate(0, 170),
+                        QGeoCoordinate(-30, 180) }, 0.5);
+        QDataStream writeStream(&data, QDataStream::WriteOnly);
+        writeStream << path;
+
+        QGeoShape otherPath;
+        QDataStream readStream(&data, QDataStream::ReadOnly);
+        readStream >> otherPath;
+
+        QCOMPARE(otherPath, path);
+    }
 }
 
 QTEST_MAIN(tst_qgeoshape)
