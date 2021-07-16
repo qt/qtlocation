@@ -42,6 +42,8 @@ public:
 
 private Q_SLOTS:
     void constructorTest();
+    void moveConstructTest();
+    void moveAssignTest();
     void textTest();
     void cityTest();
     void countryCodeTest();
@@ -70,6 +72,39 @@ void tst_QGeoAddress::constructorTest()
     auto testObjPtr = std::make_unique<QGeoAddress>(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
+}
+
+void tst_QGeoAddress::moveConstructTest()
+{
+    QGeoAddress address;
+    address.setCountry("country");
+    address.setCity("city");
+    address.setPostalCode("postcode");
+    address.setStreet("street");
+    address.setStreetNumber("number");
+
+    const QGeoAddress addressCopy = address;
+    QCOMPARE(QGeoAddress(std::move(address)), addressCopy);
+}
+
+void tst_QGeoAddress::moveAssignTest()
+{
+    QGeoAddress address;
+    address.setCountry("country");
+    address.setCity("city");
+    address.setPostalCode("postcode");
+    address.setStreet("street");
+    address.setStreetNumber("number");
+
+    QGeoAddress addressCopy = address;
+
+    QGeoAddress otherAddress;
+    otherAddress = std::move(address);
+    QCOMPARE(otherAddress, addressCopy);
+
+    // Check that (move)assigning to a moved-from object is fine
+    address = std::move(addressCopy);
+    QCOMPARE(address, otherAddress);
 }
 
 void tst_QGeoAddress::textTest()

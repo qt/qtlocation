@@ -409,11 +409,36 @@ QGeoAddress::QGeoAddress(const QGeoAddress &other)
 }
 
 /*!
+    \fn QGeoAddress::GeoAddress(QGeoAddress &&other)
+    \since 6.2
+
+    Constructs a geo address object by moving from \a other.
+
+    \note The moved-from QGeoAddress object can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
+
+/*!
+    \fn QGeoAddress &QGeoAddress::operator=(QGeoAddress &other)
+    \since 6.2
+
+    Move-assigns the \a other to this address and returns a reference to this
+    address.
+
+    \note The moved-from QGeoAddress object can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
+
+/*!
     Destroys this address.
 */
 QGeoAddress::~QGeoAddress()
 {
 }
+
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoAddressPrivate)
 
 /*!
     Assigns the given \a address to this address and
