@@ -81,6 +81,72 @@ static QList<QByteArray> readFileData(const QString &fileName)
     return data;
 }
 
+class DummyMonitorSource : public QGeoAreaMonitorSource
+{
+    Q_OBJECT
+public:
+    static const QString kTestProperty;
+
+    DummyMonitorSource(QObject *parent = nullptr) : QGeoAreaMonitorSource(parent)
+    {}
+
+    Error error() const override
+    {
+        return NoError;
+    }
+    AreaMonitorFeatures supportedAreaMonitorFeatures() const override
+    {
+        return AnyAreaMonitorFeature;
+    }
+
+    bool startMonitoring(const QGeoAreaMonitorInfo &monitor) override
+    {
+        Q_UNUSED(monitor);
+        return false;
+    }
+    bool stopMonitoring(const QGeoAreaMonitorInfo &monitor) override
+    {
+        Q_UNUSED(monitor);
+        return false;
+    }
+    bool requestUpdate(const QGeoAreaMonitorInfo &monitor, const char *signal) override
+    {
+        Q_UNUSED(monitor);
+        Q_UNUSED(signal);
+        return false;
+    }
+
+    QList<QGeoAreaMonitorInfo> activeMonitors() const override
+    {
+        return {};
+    }
+    QList<QGeoAreaMonitorInfo> activeMonitors(const QGeoShape &lookupArea) const override
+    {
+        Q_UNUSED(lookupArea);
+        return {};
+    }
+
+    bool setBackendProperty(const QString &name, const QVariant &value) override
+    {
+        if (name == kTestProperty) {
+            m_testPropertyValue = value.toInt();
+            return true;
+        }
+        return false;
+    }
+    QVariant backendProperty(const QString &name) const override
+    {
+        if (name == kTestProperty)
+            return m_testPropertyValue;
+        return QVariant();
+    }
+
+private:
+    int m_testPropertyValue = 0;
+};
+
+const QString DummyMonitorSource::kTestProperty = "TestProperty";
+
 class tst_QGeoAreaMonitorSource : public QObject
 {
     Q_OBJECT
@@ -875,6 +941,22 @@ private slots:
         // connectNotify()/disconnectNotify() is working properly.
         QCOMPARE(updatesStartedSpy.count(), 1);
         QCOMPARE(updatesStoppedSpy.count(), 1);
+    }
+
+    void backendProperties()
+    {
+        std::unique_ptr<QGeoAreaMonitorSource> obj = std::make_unique<DummyMonitorSource>();
+
+        const QString invalidProperty = "SomePropertyName";
+
+        QCOMPARE(obj->backendProperty(DummyMonitorSource::kTestProperty), 0);
+        QCOMPARE(obj->backendProperty(invalidProperty), QVariant());
+
+        QVERIFY(obj->setBackendProperty(DummyMonitorSource::kTestProperty, 10));
+        QVERIFY(!obj->setBackendProperty(invalidProperty, 15));
+
+        QCOMPARE(obj->backendProperty(DummyMonitorSource::kTestProperty), 10);
+        QCOMPARE(obj->backendProperty(invalidProperty), QVariant());
     }
 };
 

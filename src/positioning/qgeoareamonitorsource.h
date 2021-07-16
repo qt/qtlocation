@@ -91,6 +91,9 @@ public:
     virtual QList<QGeoAreaMonitorInfo> activeMonitors() const = 0;
     virtual QList<QGeoAreaMonitorInfo> activeMonitors(const QGeoShape &lookupArea) const = 0;
 
+    virtual bool setBackendProperty(const QString &name, const QVariant &value);
+    virtual QVariant backendProperty(const QString &name) const;
+
 Q_SIGNALS:
     void areaEntered(const QGeoAreaMonitorInfo &monitor, const QGeoPositionInfo &update);
     void areaExited(const QGeoAreaMonitorInfo &monitor, const QGeoPositionInfo &update);

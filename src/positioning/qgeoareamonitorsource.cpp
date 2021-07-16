@@ -219,6 +219,37 @@ QString QGeoAreaMonitorSource::sourceName() const
 }
 
 /*!
+    \since 6.2
+
+    Sets the backend-specific property named \a name to \a value.
+    Returns \c true on success, otherwise returns \c false.
+    Backend-specific properties can be used to configure the area monitoring
+    subsystem behavior at runtime.
+
+    \sa backendProperty()
+*/
+bool QGeoAreaMonitorSource::setBackendProperty(const QString &name, const QVariant &value)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(value);
+    return false;
+}
+
+/*!
+    \since 6.2
+
+    Returns the value of the backend-specific property named \a name,
+    if present. Otherwise the returned value will be invalid.
+
+    \sa setBackendProperty()
+*/
+QVariant QGeoAreaMonitorSource::backendProperty(const QString &name) const
+{
+    Q_UNUSED(name);
+    return QVariant();
+}
+
+/*!
     Returns the current QGeoPositionInfoSource used by this QGeoAreaMonitorSource
     object. The function will return \l QGeoPositionInfoSource::createDefaultSource()
     if no other object has been set.
