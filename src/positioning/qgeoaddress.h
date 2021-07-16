@@ -48,14 +48,21 @@ QT_BEGIN_NAMESPACE
 
 class QString;
 class QGeoAddressPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoAddressPrivate, Q_POSITIONING_EXPORT)
+
 class Q_POSITIONING_EXPORT QGeoAddress
 {
 public:
     QGeoAddress();
     QGeoAddress(const QGeoAddress &other);
+    QGeoAddress(QGeoAddress &&other) noexcept = default;
     ~QGeoAddress();
 
     QGeoAddress &operator=(const QGeoAddress &other);
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_PURE_SWAP(QGeoAddress)
+
+    void swap(QGeoAddress &other) noexcept { d.swap(other.d); }
+
     friend bool operator==(const QGeoAddress &lhs, const QGeoAddress &rhs)
     {
         return equals(lhs, rhs);
@@ -105,7 +112,7 @@ private:
     QSharedDataPointer<QGeoAddressPrivate> d;
 };
 
-Q_DECLARE_TYPEINFO(QGeoAddress, Q_RELOCATABLE_TYPE);
+Q_DECLARE_SHARED(QGeoAddress)
 
 QT_END_NAMESPACE
 
