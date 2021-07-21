@@ -217,6 +217,19 @@ private slots:
         QTest::newRow("latitude, longitude, altitude arguments too low latitude & longitude") << QGeoCoordinate(-90.1, -180.1, DBL_MAX);
     }
 
+    void move_constructor()
+    {
+        QFETCH(QGeoCoordinate, c);
+
+        const QGeoCoordinate coordinateCopy = c;
+        QCOMPARE(std::move(c), coordinateCopy);
+    }
+
+    void move_constructor_data()
+    {
+        copy_constructor_data();
+    }
+
     void destructor()
     {
         QGeoCoordinate *coordinate;
@@ -270,6 +283,26 @@ private slots:
     }
 
     void assign_data()
+    {
+        copy_constructor_data();
+    }
+
+    void move_assign()
+    {
+        QFETCH(QGeoCoordinate, c);
+
+        QGeoCoordinate copy = c;
+
+        QGeoCoordinate otherCoordinate;
+        otherCoordinate = std::move(c);
+        QCOMPARE(otherCoordinate, copy);
+
+        // check that (move)assinging to a moved-from object is fine
+        c = std::move(copy);
+        QCOMPARE(c, otherCoordinate);
+    }
+
+    void move_assign_data()
     {
         copy_constructor_data();
     }
