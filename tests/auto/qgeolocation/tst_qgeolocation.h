@@ -58,6 +58,8 @@ private Q_SLOTS:
    //Start Unit Tests for qgeolocation.h
     void constructor();
     void copy_constructor();
+    void move_constructor();
+    void move_assignment();
     void destructor();
     void address();
     void coordinate();

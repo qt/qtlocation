@@ -108,11 +108,24 @@ QGeoLocation::QGeoLocation(const QGeoLocation &other)
 }
 
 /*!
+    \fn QGeoLocation::QGeoLocation(QGeoLocation &&other)
+    \since 6.2
+
+    Constructs a geo location object by moving from \a other.
+
+    \note The moved-from QGeoLocation object can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
+
+/*!
     Destroys the location object.
 */
 QGeoLocation::~QGeoLocation()
 {
 }
+
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoLocationPrivate)
 
 /*!
     Assigns \a other to this location and returns a reference to this location.
@@ -125,6 +138,18 @@ QGeoLocation &QGeoLocation::operator =(const QGeoLocation &other)
     d = other.d;
     return *this;
 }
+
+/*!
+    \fn QGeoLocation &QGeoLocation::operator=(QGeoLocation &&other)
+    \since 6.2
+
+    Move-assings \a other to this location and returns a reference to this
+    location.
+
+    \note The moved-from QGeoLocation object can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
 
 /*!
     \fn bool QGeoLocation::operator==(const QGeoLocation &lhs, const QGeoLocation &rhs)

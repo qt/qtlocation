@@ -68,6 +68,51 @@ void tst_QGeoLocation::copy_constructor()
     QCOMPARE(m_location, *qgeolocationcopy);
 }
 
+void tst_QGeoLocation::move_constructor()
+{
+    QGeoAddress address;
+    address.setCity("Berlin");
+    address.setCountry("Germany");
+    address.setCountryCode("DEU");
+    address.setDistrict("Adlershof");
+    address.setPostalCode("12489");
+    address.setStreet("Erich-Thilo-Strasse");
+
+    QGeoLocation location;
+    location.setAddress(address);
+    location.setCoordinate(QGeoCoordinate(1.3, 2.4, 3.1));
+    location.setBoundingShape(QGeoCircle(QGeoCoordinate(1.3, 2.4), 100));
+
+    QGeoLocation locationCopy = location;
+    QCOMPARE(std::move(location), locationCopy);
+}
+
+void tst_QGeoLocation::move_assignment()
+{
+    QGeoAddress address;
+    address.setCity("Berlin");
+    address.setCountry("Germany");
+    address.setCountryCode("DEU");
+    address.setDistrict("Adlershof");
+    address.setPostalCode("12489");
+    address.setStreet("Erich-Thilo-Strasse");
+
+    QGeoLocation location;
+    location.setAddress(address);
+    location.setCoordinate(QGeoCoordinate(1.3, 2.4, 3.1));
+    location.setBoundingShape(QGeoCircle(QGeoCoordinate(1.3, 2.4), 100));
+
+    QGeoLocation locationCopy = location;
+
+    QGeoLocation otherLocation;
+    otherLocation = std::move(location);
+    QCOMPARE(otherLocation, locationCopy);
+
+    // Check that (move)assignment to a moved-from object is fine
+    location = std::move(locationCopy);
+    QCOMPARE(location, otherLocation);
+}
+
 void tst_QGeoLocation::destructor()
 {
     QGeoLocation *qgeolocationcopy;
