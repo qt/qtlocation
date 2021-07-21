@@ -52,6 +52,8 @@ class QDebug;
 class QDataStream;
 
 class QGeoCoordinatePrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoCoordinatePrivate, Q_POSITIONING_EXPORT)
+
 class Q_POSITIONING_EXPORT QGeoCoordinate
 {
     Q_GADGET
@@ -83,9 +85,13 @@ public:
     QGeoCoordinate(double latitude, double longitude);
     QGeoCoordinate(double latitude, double longitude, double altitude);
     QGeoCoordinate(const QGeoCoordinate &other);
+    QGeoCoordinate(QGeoCoordinate &&other) noexcept = default;
     ~QGeoCoordinate();
 
     QGeoCoordinate &operator=(const QGeoCoordinate &other);
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_PURE_SWAP(QGeoCoordinate)
+
+    void swap(QGeoCoordinate &other) noexcept { d.swap(other.d); }
 
     friend bool operator==(const QGeoCoordinate &lhs, const QGeoCoordinate &rhs)
     {
@@ -142,7 +148,7 @@ private:
 #endif
 };
 
-Q_DECLARE_TYPEINFO(QGeoCoordinate, Q_RELOCATABLE_TYPE);
+Q_DECLARE_SHARED(QGeoCoordinate)
 
 
 Q_POSITIONING_EXPORT size_t qHash(const QGeoCoordinate &coordinate, size_t seed = 0);

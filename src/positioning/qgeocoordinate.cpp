@@ -253,6 +253,17 @@ QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
 {}
 
 /*!
+    \fn QGeoCoordinate::QGeoCoordinate(QGeoCoordinate &&other)
+    \since 6.2
+
+    Constructs a coordinate by moving from \a other.
+
+    \note The moved-from QGeoCoordinate object can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
+
+/*!
     Assigns \a other to this coordinate and returns a reference to this coordinate.
 */
 QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
@@ -265,11 +276,25 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
 }
 
 /*!
+    \fn QGeoCoordinate &QGeoCoordinate::operator=(QGeoCoordinate &&other)
+    \since 6.2
+
+    Move-assigns \a other to this coordinate and returns a reference to this
+    coordinate.
+
+    \note The moved-from QGeoCoordinate object can only be destroyed or
+    assigned to. The effect of calling other functions than the destructor
+    or one of the assignment operators is undefined.
+*/
+
+/*!
     Destroys the coordinate object.
 */
 QGeoCoordinate::~QGeoCoordinate()
 {
 }
+
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoCoordinatePrivate)
 
 /*!
     \fn bool QGeoCoordinate::operator==(const QGeoCoordinate &lhs, const QGeoCoordinate &rhs)
