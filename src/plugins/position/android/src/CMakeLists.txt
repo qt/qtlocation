@@ -14,6 +14,7 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryAndroid
         qgeosatelliteinfosource_android.cpp qgeosatelliteinfosource_android_p.h
     PUBLIC_LIBRARIES
         Qt::Core
+        Qt::CorePrivate
         Qt::Positioning
 )
 
