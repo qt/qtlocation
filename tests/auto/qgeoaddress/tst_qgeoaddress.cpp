@@ -58,6 +58,8 @@ private Q_SLOTS:
     void generatedText_data();
     void operatorsTest();
     void emptyClearTest();
+    void hashingTest();
+    void hashingTest_data();
 };
 
 tst_QGeoAddress::tst_QGeoAddress()
@@ -557,6 +559,87 @@ void tst_QGeoAddress::emptyClearTest()
     testObj.clear();
 
     QVERIFY(testObj.isEmpty());
+}
+
+void tst_QGeoAddress::hashingTest()
+{
+    QFETCH(QGeoAddress, leftAddress);
+    QFETCH(QGeoAddress, rightAddress);
+    QFETCH(bool, result);
+
+    const size_t leftHash = qHash(leftAddress);
+    const size_t rightHash = qHash(rightAddress);
+    QCOMPARE(leftHash == rightHash, result);
+}
+
+void tst_QGeoAddress::hashingTest_data()
+{
+    QTest::addColumn<QGeoAddress>("leftAddress");
+    QTest::addColumn<QGeoAddress>("rightAddress");
+    QTest::addColumn<bool>("result");
+
+    QGeoAddress leftAddress;
+    QGeoAddress rightAddress;
+
+    QTest::newRow("empty") << leftAddress << rightAddress << true;
+    // country
+    leftAddress.setCountry("country");
+    QTest::newRow("different country") << leftAddress << rightAddress << false;
+    rightAddress.setCountry("country");
+    QTest::newRow("same country") << leftAddress << rightAddress << true;
+    // country code
+    leftAddress.setCountryCode("country code");
+    QTest::newRow("different code") << leftAddress << rightAddress << false;
+    rightAddress.setCountryCode("country code");
+    QTest::newRow("same code") << leftAddress << rightAddress << true;
+    // state
+    leftAddress.setState("state");
+    QTest::newRow("different state") << leftAddress << rightAddress << false;
+    rightAddress.setState("state");
+    QTest::newRow("same state") << leftAddress << rightAddress << true;
+    // county
+    leftAddress.setCounty("county");
+    QTest::newRow("different county") << leftAddress << rightAddress << false;
+    rightAddress.setCounty("county");
+    QTest::newRow("same county") << leftAddress << rightAddress << true;
+    // city
+    leftAddress.setCity("city");
+    QTest::newRow("different city") << leftAddress << rightAddress << false;
+    rightAddress.setCity("city");
+    QTest::newRow("same city") << leftAddress << rightAddress << true;
+    // district
+    leftAddress.setDistrict("district");
+    QTest::newRow("different district") << leftAddress << rightAddress << false;
+    rightAddress.setDistrict("district");
+    QTest::newRow("same district") << leftAddress << rightAddress << true;
+    // street
+    leftAddress.setStreet("street");
+    QTest::newRow("different street") << leftAddress << rightAddress << false;
+    rightAddress.setStreet("street");
+    QTest::newRow("same street") << leftAddress << rightAddress << true;
+    // street number
+    leftAddress.setStreetNumber("number");
+    QTest::newRow("different number") << leftAddress << rightAddress << false;
+    rightAddress.setStreetNumber("number");
+    QTest::newRow("same number") << leftAddress << rightAddress << true;
+    // postal code
+    leftAddress.setPostalCode("postal code");
+    QTest::newRow("different postcode") << leftAddress << rightAddress << false;
+    rightAddress.setPostalCode("postal code");
+    QTest::newRow("same postcode") << leftAddress << rightAddress << true;
+    // custom text
+    leftAddress.setText("some custom text");
+    QTest::newRow("different custom text") << leftAddress << rightAddress << false;
+    rightAddress.setText("some custom text");
+    QTest::newRow("same custom text") << leftAddress << rightAddress << true;
+
+    // empty with custom text
+    leftAddress.clear();
+    leftAddress.setText("some custom text");
+    rightAddress.clear();
+    QTest::newRow("empty with different custom text") << leftAddress << rightAddress << false;
+    rightAddress.setText("some custom text");
+    QTest::newRow("empty with same custom text") << leftAddress << rightAddress << true;
 }
 
 QTEST_APPLESS_MAIN(tst_QGeoAddress)
