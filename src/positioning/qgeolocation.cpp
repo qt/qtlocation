@@ -40,7 +40,7 @@
 #include "qgeolocation.h"
 #include "qgeolocation_p.h"
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoLocationPrivate::QGeoLocationPrivate()
     : QSharedData()
@@ -263,3 +263,20 @@ bool QGeoLocation::equals(const QGeoLocation &lhs, const QGeoLocation &rhs)
 {
     return (*(lhs.d.constData()) == *(rhs.d.constData()));
 }
+
+/*!
+    \relates QGeoLocation
+
+    Returns the hash value for the \a location, using \a seed for the
+    calculation.
+
+    \note The hash does not take extended attributes into account. This means
+    that two geo location objects that differ only in the extended attributes
+    will provide similar hashes.
+*/
+size_t qHash(const QGeoLocation &location, size_t seed) noexcept
+{
+    return qHashMulti(seed, location.coordinate(), location.boundingShape(), location.address());
+}
+
+QT_END_NAMESPACE
