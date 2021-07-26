@@ -355,5 +355,58 @@ void tst_QGeoLocation::isEmpty()
     QVERIFY(location.isEmpty());
 }
 
+void tst_QGeoLocation::hashing()
+{
+    QFETCH(QGeoLocation, leftLocation);
+    QFETCH(QGeoLocation, rightLocation);
+    QFETCH(bool, result);
+
+    const size_t leftHash = qHash(leftLocation);
+    const size_t rightHash = qHash(rightLocation);
+    QCOMPARE(leftHash == rightHash, result);
+}
+
+void tst_QGeoLocation::hashing_data()
+{
+    QTest::addColumn<QGeoLocation>("leftLocation");
+    QTest::addColumn<QGeoLocation>("rightLocation");
+    QTest::addColumn<bool>("result");
+
+    QTest::newRow("empty") << QGeoLocation() << QGeoLocation() << true;
+
+    QGeoAddress address;
+    address.setCity("city");
+    address.setPostalCode("1234");
+    address.setDistrict("district");
+    address.setStreet("street");
+    address.setStreetNumber("12");
+
+    QGeoLocation leftLocation;
+    leftLocation.setAddress(address);
+    leftLocation.setCoordinate(QGeoCoordinate(1, 1));
+    leftLocation.setBoundingShape(QGeoCircle(QGeoCoordinate(1, 1), 10));
+
+    // do not copy, so that they have different d_ptr's
+    QGeoLocation rightLocation;
+    rightLocation.setAddress(address);
+    rightLocation.setCoordinate(QGeoCoordinate(1, 1));
+    rightLocation.setBoundingShape(QGeoCircle(QGeoCoordinate(1, 1), 10));
+
+    QTest::newRow("same locations") << leftLocation << rightLocation << true;
+
+    QGeoLocation rightLocationCopy = rightLocation;
+    rightLocationCopy.setBoundingShape(QGeoRectangle(QGeoCoordinate(2, 0), QGeoCoordinate(0, 2)));
+    QTest::newRow("different shapes") << leftLocation << rightLocationCopy << false;
+
+    rightLocationCopy = rightLocation;
+    rightLocationCopy.setCoordinate(QGeoCoordinate(2, 1));
+    QTest::newRow("different coordinates") << leftLocation << rightLocationCopy << false;
+
+    rightLocationCopy = rightLocation;
+    address.setState("state");
+    rightLocationCopy.setAddress(address);
+    QTest::newRow("different addresses") << leftLocation << rightLocationCopy << false;
+}
+
 QTEST_APPLESS_MAIN(tst_QGeoLocation);
 

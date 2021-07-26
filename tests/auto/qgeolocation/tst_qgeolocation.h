@@ -69,6 +69,8 @@ private Q_SLOTS:
     void comparison();
     void comparison_data();
     void isEmpty();
+    void hashing();
+    void hashing_data();
     //End Unit Tests for qgeolocation.h
 
 private:

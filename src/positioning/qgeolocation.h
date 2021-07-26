@@ -90,6 +90,8 @@ private:
     QSharedDataPointer<QGeoLocationPrivate> d;
 };
 
+Q_POSITIONING_EXPORT size_t qHash(const QGeoLocation &location, size_t seed = 0) noexcept;
+
 Q_DECLARE_SHARED(QGeoLocation)
 
 QT_END_NAMESPACE
