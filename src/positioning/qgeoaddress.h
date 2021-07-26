@@ -112,6 +112,8 @@ private:
     QSharedDataPointer<QGeoAddressPrivate> d;
 };
 
+Q_POSITIONING_EXPORT size_t qHash(const QGeoAddress &address, size_t seed = 0) noexcept;
+
 Q_DECLARE_SHARED(QGeoAddress)
 
 QT_END_NAMESPACE

@@ -753,5 +753,24 @@ bool QGeoAddress::equals(const QGeoAddress &lhs, const QGeoAddress &rhs)
            lhs.text() == rhs.text();
 }
 
-QT_END_NAMESPACE
+/*!
+    \relates QGeoAddress
 
+    Returns the hash value for the \a address, using \a seed for the
+    calculation.
+*/
+size_t qHash(const QGeoAddress &address, size_t seed) noexcept
+{
+    size_t hash = qHashMulti(seed, address.country(), address.countryCode(), address.state(),
+                             address.county(), address.city(), address.district(),
+                             address.street(), address.streetNumber(), address.postalCode());
+
+    // If the text is generated from all fields, there is no need to use the
+    // resulting string in the hash. However, when the text is specified
+    // explicitly, we need to use it as well.
+    if (!address.isTextGenerated())
+        hash = qHashMulti(seed, hash, address.text());
+    return hash;
+}
+
+QT_END_NAMESPACE
