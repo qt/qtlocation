@@ -59,6 +59,8 @@ private slots:
 
     void boundingGeoRectangle_data();
     void boundingGeoRectangle();
+
+    void hashing();
 };
 
 void tst_QGeoPolygon::defaultConstructor()
@@ -353,6 +355,27 @@ void tst_QGeoPolygon::boundingGeoRectangle()
 
     QGeoRectangle box = p.boundingGeoRectangle();
     QCOMPARE(box.contains(probe), result);
+}
+
+void tst_QGeoPolygon::hashing()
+{
+    const QGeoPolygon polygon({ QGeoCoordinate(1, 1), QGeoCoordinate(2, 2),
+                                QGeoCoordinate(3, 0) });
+    const size_t polygonHash = qHash(polygon);
+
+    QGeoPolygon otherCoordsPolygon = polygon;
+    otherCoordsPolygon.addCoordinate(QGeoCoordinate(4, 1));
+    QVERIFY(qHash(otherCoordsPolygon) != polygonHash);
+
+    QGeoPolygon otherHolesPolygon = polygon;
+    otherHolesPolygon.addHole({ QGeoCoordinate(1.1, 1), QGeoCoordinate(2, 1.8),
+                                QGeoCoordinate(2, 1) });
+    QVERIFY(qHash(otherHolesPolygon) != polygonHash);
+
+    // Do not assign, so that they do not share same d_ptr
+    QGeoPolygon similarPolygon({ QGeoCoordinate(1, 1), QGeoCoordinate(2, 2),
+                                 QGeoCoordinate(3, 0) });
+    QCOMPARE(qHash(similarPolygon), polygonHash);
 }
 
 QTEST_MAIN(tst_QGeoPolygon)

@@ -78,6 +78,8 @@ public:
 
     bool operator==(const QGeoShapePrivate &other) const override;
 
+    size_t hash(size_t seed) const override;
+
     QGeoCoordinate topLeft;
     QGeoCoordinate bottomRight;
 };

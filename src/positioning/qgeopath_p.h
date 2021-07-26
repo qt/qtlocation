@@ -184,6 +184,7 @@ public:
     virtual bool operator==(const QGeoShapePrivate &other) const override;
     virtual bool contains(const QGeoCoordinate &coordinate) const override;
     virtual QGeoRectangle boundingGeoRectangle() const override;
+    size_t hash(size_t seed) const override;
 
 // QGeoPathPrivate API
     virtual const QList<QGeoCoordinate> &path() const;

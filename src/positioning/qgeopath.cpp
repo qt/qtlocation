@@ -609,6 +609,12 @@ QGeoRectangle QGeoPathPrivate::boundingGeoRectangle() const
     return m_bbox;
 }
 
+size_t QGeoPathPrivate::hash(size_t seed) const
+{
+    const size_t res = qHashRange(m_path.cbegin(), m_path.cend(), seed);
+    return qHashMulti(seed, res, m_width);
+}
+
 void QGeoPathPrivate::setPath(const QList<QGeoCoordinate> &path)
 {
     for (const QGeoCoordinate &c: path)

@@ -429,6 +429,21 @@ QDataStream &QGeoShape::dataStreamIn(QDataStream &stream, QGeoShape &shape)
 }
 #endif
 
+/*!
+    \relates QGeoShape
+
+    Returns the hash value for the \a shape, using \a seed for the
+    calculation.
+*/
+size_t qHash(const QGeoShape &shape, size_t seed) noexcept
+{
+    if (shape.d_ptr)
+        return shape.d_ptr->hash(seed);
+    else
+        return qHashMulti(seed, shape.type());
+}
+
 QT_END_NAMESPACE
 
 #include "moc_qgeoshape.cpp"
+

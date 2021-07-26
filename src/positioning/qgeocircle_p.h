@@ -84,6 +84,8 @@ public:
 
     bool operator==(const QGeoShapePrivate &other) const override;
 
+    size_t hash(size_t seed) const override;
+
     QGeoCoordinate m_center;
     qreal m_radius;
     QGeoRectangle m_bbox;

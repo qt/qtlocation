@@ -71,6 +71,8 @@ private slots:
 
     void boxComparison();
     void boxComparison_data();
+
+    void hashing();
 };
 
 void tst_QGeoCircle::defaultConstructor()
@@ -447,6 +449,24 @@ void tst_QGeoCircle::boxComparison()
 
     QCOMPARE((circle == box), equal);
     QCOMPARE((circle != box), !equal);
+}
+
+void tst_QGeoCircle::hashing()
+{
+    const QGeoCircle circle(QGeoCoordinate(1, 1), 10);
+    const size_t circleHash = qHash(circle);
+
+    QGeoCircle otherCenterCircle = circle;
+    otherCenterCircle.setCenter(QGeoCoordinate(1, 2));
+    QVERIFY(qHash(otherCenterCircle) != circleHash);
+
+    QGeoCircle otherRadiusCircle = circle;
+    otherRadiusCircle.setRadius(100);
+    QVERIFY(qHash(otherRadiusCircle) != circleHash);
+
+    // Do not assign, so that they do not share same d_ptr
+    QGeoCircle similarCircle(QGeoCoordinate(1, 1), 10);
+    QCOMPARE(qHash(similarCircle), circleHash);
 }
 
 QTEST_MAIN(tst_QGeoCircle)

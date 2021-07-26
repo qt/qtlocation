@@ -58,6 +58,7 @@ private slots:
     void debug();
     void conversions();
     void serialization();
+    void hashing();
 };
 
 void tst_qgeoshape::testArea()
@@ -199,6 +200,43 @@ void tst_qgeoshape::serialization()
 
         QCOMPARE(otherPath, path);
     }
+}
+
+void tst_qgeoshape::hashing()
+{
+    const size_t defaultShapeHash = qHash(QGeoShape());
+
+    const QGeoCircle circle(QGeoCoordinate(1, 2), 10);
+    const QGeoShape circleShape = circle;
+    const size_t circleShapeHash = qHash(circleShape);
+    QVERIFY(defaultShapeHash != circleShapeHash);
+    QCOMPARE(qHash(circle), circleShapeHash);
+
+    const QGeoRectangle rectangle(QGeoCoordinate(30, 160), QGeoCoordinate(-30, 170));
+    const QGeoShape rectangleShape = rectangle;
+    const size_t rectangleShapeHash = qHash(rectangleShape);
+    QVERIFY(defaultShapeHash != rectangleShapeHash);
+    QVERIFY(circleShapeHash != rectangleShapeHash);
+    QCOMPARE(qHash(rectangle), rectangleShapeHash);
+
+    const QGeoPolygon polygon({ QGeoCoordinate(30, 160), QGeoCoordinate(0, 170),
+                                QGeoCoordinate(-30, 160) });
+    const QGeoShape polygonShape = polygon;
+    const size_t polygonShapeHash = qHash(polygonShape);
+    QVERIFY(defaultShapeHash != polygonShapeHash);
+    QVERIFY(circleShapeHash != polygonShapeHash);
+    QVERIFY(rectangleShapeHash != polygonShapeHash);
+    QCOMPARE(qHash(polygon), polygonShapeHash);
+
+    const QGeoPath path({ QGeoCoordinate(30, 160), QGeoCoordinate(0, 170),
+                          QGeoCoordinate(-30, 180) }, 0.5);
+    const QGeoShape pathShape = path;
+    const size_t pathShapeHash = qHash(pathShape);
+    QVERIFY(defaultShapeHash != pathShapeHash);
+    QVERIFY(circleShapeHash != pathShapeHash);
+    QVERIFY(rectangleShapeHash != pathShapeHash);
+    QVERIFY(polygonShapeHash != pathShapeHash);
+    QCOMPARE(qHash(path), pathShapeHash);
 }
 
 QTEST_MAIN(tst_qgeoshape)

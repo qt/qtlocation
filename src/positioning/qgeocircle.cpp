@@ -483,4 +483,9 @@ bool QGeoCirclePrivate::operator==(const QGeoShapePrivate &other) const
     return m_radius == otherCircle.m_radius && m_center == otherCircle.m_center;
 }
 
+size_t QGeoCirclePrivate::hash(size_t seed) const
+{
+    return qHashMulti(seed, m_center, m_radius);
+}
+
 QT_END_NAMESPACE
