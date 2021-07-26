@@ -1036,5 +1036,10 @@ bool QGeoRectanglePrivate::operator==(const QGeoShapePrivate &other) const
     return topLeft == otherBox.topLeft && bottomRight == otherBox.bottomRight;
 }
 
+size_t QGeoRectanglePrivate::hash(size_t seed) const
+{
+    return qHashMulti(seed, topLeft, bottomRight);
+}
+
 QT_END_NAMESPACE
 

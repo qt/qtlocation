@@ -60,6 +60,8 @@ private slots:
 
     void boundingGeoRectangle_data();
     void boundingGeoRectangle();
+
+    void hashing();
 };
 
 void tst_QGeoPath::defaultConstructor()
@@ -366,6 +368,24 @@ void tst_QGeoPath::boundingGeoRectangle()
 
     QGeoRectangle box = p.boundingGeoRectangle();
     QCOMPARE(box.contains(probe), result);
+}
+
+void tst_QGeoPath::hashing()
+{
+    const QGeoPath path({ QGeoCoordinate(1, 1), QGeoCoordinate(1, 2), QGeoCoordinate(2, 5) }, 1.0);
+    const size_t pathHash = qHash(path);
+
+    QGeoPath otherCoordsPath = path;
+    otherCoordsPath.addCoordinate(QGeoCoordinate(3, 5));
+    QVERIFY(qHash(otherCoordsPath) != pathHash);
+
+    QGeoPath otherWidthPath = path;
+    otherWidthPath.setWidth(1.5);
+    QVERIFY(qHash(otherWidthPath) != pathHash);
+
+    // Do not assign, so that they do not share same d_ptr
+    QGeoPath similarPath({ QGeoCoordinate(1, 1), QGeoCoordinate(1, 2), QGeoCoordinate(2, 5) }, 1.0);
+    QCOMPARE(qHash(similarPath), pathHash);
 }
 
 QTEST_MAIN(tst_QGeoPath)

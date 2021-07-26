@@ -70,6 +70,7 @@ public:
     virtual bool contains(const QGeoCoordinate &coordinate) const override;
     virtual void translate(double degreesLatitude, double degreesLongitude) override;
     virtual bool operator==(const QGeoShapePrivate &other) const override;
+    size_t hash(size_t seed) const override;
 
 // QGeoPath API
     virtual void markDirty() override;

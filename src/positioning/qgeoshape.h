@@ -119,7 +119,10 @@ private:
     static QDataStream &dataStreamOut(QDataStream &stream, const QGeoShape &shape);
     static QDataStream &dataStreamIn(QDataStream &stream, QGeoShape &shape);
 #endif
+    friend Q_POSITIONING_EXPORT size_t qHash(const QGeoShape &key, size_t seed) noexcept;
 };
+
+Q_POSITIONING_EXPORT size_t qHash(const QGeoShape &shape, size_t seed = 0) noexcept;
 
 Q_DECLARE_TYPEINFO(QGeoShape, Q_RELOCATABLE_TYPE);
 

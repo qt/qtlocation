@@ -75,6 +75,8 @@ public:
 
     virtual bool operator==(const QGeoShapePrivate &other) const;
 
+    virtual size_t hash(size_t seed) const = 0;
+
     QGeoShape::ShapeType type;
 };
 

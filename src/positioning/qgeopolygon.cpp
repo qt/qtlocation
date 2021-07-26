@@ -558,6 +558,13 @@ bool QGeoPolygonPrivate::operator==(const QGeoShapePrivate &other) const
     return  m_path == otherPath.m_path && m_holesList == otherPath.m_holesList;
 }
 
+size_t QGeoPolygonPrivate::hash(size_t seed) const
+{
+    const size_t pointsHash = qHashRange(m_path.cbegin(), m_path.cend(), seed);
+    const size_t holesHash = qHashRange(m_holesList.cbegin(), m_holesList.cend(), seed);
+    return qHashMulti(seed, pointsHash, holesHash);
+}
+
 void QGeoPolygonPrivate::addHole(const QList<QGeoCoordinate> &holePath)
 {
     for (const QGeoCoordinate &holeVertex: holePath)

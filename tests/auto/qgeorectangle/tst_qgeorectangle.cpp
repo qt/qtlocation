@@ -94,6 +94,8 @@ private slots:
 
     void circleComparison();
     void circleComparison_data();
+
+    void hashing();
 };
 
 void tst_QGeoRectangle::default_constructor()
@@ -2387,6 +2389,24 @@ void tst_QGeoRectangle::circleComparison()
 
     QCOMPARE((box == circle), equal);
     QCOMPARE((box != circle), !equal);
+}
+
+void tst_QGeoRectangle::hashing()
+{
+    const QGeoRectangle rectangle(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+    const size_t rectangleHash = qHash(rectangle);
+
+    QGeoRectangle otherTopLeftRectangle = rectangle;
+    otherTopLeftRectangle.setTopLeft(QGeoCoordinate(20.0, 0.0));
+    QVERIFY(qHash(otherTopLeftRectangle) != rectangleHash);
+
+    QGeoRectangle otherBottomRightRectangle = rectangle;
+    otherBottomRightRectangle.setBottomRight(QGeoCoordinate(0.0, 5.0));
+    QVERIFY(qHash(otherBottomRightRectangle) != rectangleHash);
+
+    // Do not assign, so that they do not share same d_ptr
+    QGeoRectangle similarRectangle(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+    QCOMPARE(qHash(similarRectangle), rectangleHash);
 }
 
 QTEST_MAIN(tst_QGeoRectangle)
