@@ -73,6 +73,14 @@ QT_BEGIN_NAMESPACE
     \value MagneticVariation The angle between the horizontal component of the magnetic field and true north, in degrees. Also known as magnetic declination. A positive value indicates a clockwise direction from true north and a negative value indicates a counter-clockwise direction.
     \value HorizontalAccuracy The accuracy of the provided latitude-longitude value, in meters.
     \value VerticalAccuracy The accuracy of the provided altitude value, in meters.
+
+    NMEA protocol also suggests another type of accuracy - PositionAccuracy,
+    which is a 3D accuracy value. Qt does not provide a separate attribute for
+    it. If you need this value, you can calculate it based on the following
+    formula:
+
+    \c {PositionAccuracy} \sup 2 \c {= HorizontalAccuracy} \sup 2 \c { +
+    VerticalAccuracy} \sup 2
 */
 
 /*!
