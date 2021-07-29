@@ -68,6 +68,7 @@ enum GClueAccuracyLevel {
 const char GEOCLUE2_SERVICE_NAME[] = "org.freedesktop.GeoClue2";
 const int MINIMUM_UPDATE_INTERVAL = 1000;
 const int UPDATE_TIMEOUT_COLD_START = 120000;
+static const auto desktopIdParameter = "desktopId";
 
 static QString lastPositionFilePath()
 {
@@ -77,7 +78,8 @@ static QString lastPositionFilePath()
 
 } // namespace
 
-QGeoPositionInfoSourceGeoclue2::QGeoPositionInfoSourceGeoclue2(QObject *parent)
+QGeoPositionInfoSourceGeoclue2::QGeoPositionInfoSourceGeoclue2(const QVariantMap &parameters,
+                                                               QObject *parent)
     : QGeoPositionInfoSource(parent)
     , m_requestTimer(new QTimer(this))
     , m_manager(QLatin1String(GEOCLUE2_SERVICE_NAME),
@@ -85,6 +87,8 @@ QGeoPositionInfoSourceGeoclue2::QGeoPositionInfoSourceGeoclue2(QObject *parent)
                 QDBusConnection::systemBus(),
                 this)
 {
+    parseParameters(parameters);
+
     qDBusRegisterMetaType<Timestamp>();
 
     restoreLastPosition();
@@ -347,19 +351,15 @@ bool QGeoPositionInfoSourceGeoclue2::configureClient()
     if (!m_client)
         return false;
 
-    auto desktopId = QString::fromUtf8(qgetenv("QT_GEOCLUE_APP_DESKTOP_ID"));
-    if (desktopId.isEmpty())
-        desktopId = QCoreApplication::applicationName();
-    if (desktopId.isEmpty()) {
-        qCCritical(lcPositioningGeoclue2) << "Unable to configure the client "
-                                             "due to the application desktop id "
-                                             "is not set via QT_GEOCLUE_APP_DESKTOP_ID "
-                                             "envirorment variable or QCoreApplication::applicationName";
+    if (m_desktopId.isEmpty()) {
+        qCCritical(lcPositioningGeoclue2)
+                << "Unable to configure the client due to the desktop id is not set via"
+                << desktopIdParameter << "plugin parameter or QCoreApplication::applicationName";
         setError(AccessError);
         return false;
     }
 
-    m_client->setDesktopId(desktopId);
+    m_client->setDesktopId(m_desktopId);
 
     const auto msecs = updateInterval();
     const uint secs = qMax(uint(msecs), 0u) / 1000u;
@@ -444,6 +444,15 @@ void QGeoPositionInfoSourceGeoclue2::handleNewLocation(const QDBusObjectPath &ol
     }
 
     stopClient();
+}
+
+void QGeoPositionInfoSourceGeoclue2::parseParameters(const QVariantMap &parameters)
+{
+    if (parameters.contains(desktopIdParameter))
+        m_desktopId = parameters.value(desktopIdParameter).toString();
+
+    if (m_desktopId.isEmpty())
+        m_desktopId = QCoreApplication::applicationName();
 }
 
 QT_END_NAMESPACE

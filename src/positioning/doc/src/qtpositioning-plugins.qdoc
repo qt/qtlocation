@@ -45,7 +45,8 @@ Some plugins already ship with Qt. These are:
         \li Wraps iOS and macOS positioning subsystems. Available only on Apple platforms supporting corelocation.
     \row
         \li \b geoclue2
-        \li Interfaces with \l{https://gitlab.freedesktop.org/geoclue/geoclue/-/wikis/home}{GeoClue} v2. Requires GeoClue v2 to be present to function.
+        \li A \l {Qt Positioning GeoClue v2 plugin}{GeoClue v2} backend that
+        provides an interface to the GeoClue v2 D-Bus service.
     \row
         \li \b gypsy
         \li Interfaces with \l{https://gypsy.freedesktop.org/wiki/}{Gypsy} daemon. Requires Gypsy to be present to function.
@@ -54,7 +55,7 @@ Some plugins already ship with Qt. These are:
         \li Wraps WinRT positioning subsystem. Available only on WinRT and Windows10.
     \row
         \li \b nmea
-        \li A \l {Qt Positioning NMEA plugin}{NMEA} backend that parses NMEA
+        \li An \l {Qt Positioning NMEA plugin}{NMEA} backend that parses NMEA
         streams from a GPS receiver to provide position updates. This plugin can
         use serial port, socket or file as a source.
     \row

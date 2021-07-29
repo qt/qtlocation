@@ -55,7 +55,8 @@ class QGeoPositionInfoSourceGeoclue2 : public QGeoPositionInfoSource
     Q_OBJECT
 
 public:
-    explicit QGeoPositionInfoSourceGeoclue2(QObject *parent = nullptr);
+    explicit QGeoPositionInfoSourceGeoclue2(const QVariantMap &parameters,
+                                            QObject *parent = nullptr);
     ~QGeoPositionInfoSourceGeoclue2();
 
     // From QGeoPositionInfoSource
@@ -82,6 +83,7 @@ private:
     void requestUpdateTimeout();
     void handleNewLocation(const QDBusObjectPath &oldLocation,
                            const QDBusObjectPath &newLocation);
+    void parseParameters(const QVariantMap &parameters);
 
     QTimer *m_requestTimer = nullptr;
     OrgFreedesktopGeoClue2ManagerInterface m_manager;
@@ -90,6 +92,7 @@ private:
     bool m_lastPositionFromSatellite = false;
     QGeoPositionInfoSource::Error m_error = NoError;
     QGeoPositionInfo m_lastPosition;
+    QString m_desktopId;
 };
 
 QT_END_NAMESPACE
