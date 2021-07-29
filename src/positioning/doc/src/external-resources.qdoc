@@ -44,3 +44,13 @@
 \externalpage https://developer.android.com/training/location/background
 \title Access Location in the Background
 */
+
+/*!
+\externalpage https://gitlab.freedesktop.org/geoclue/geoclue/-/wikis/home
+\title GeoClue service
+*/
+
+/*!
+\externalpage https://www.freedesktop.org/software/geoclue/docs/gdbus-org.freedesktop.GeoClue2.Client.html#gdbus-property-org-freedesktop-GeoClue2-Client.DesktopId
+\title GeoClue DesktopId property
+*/

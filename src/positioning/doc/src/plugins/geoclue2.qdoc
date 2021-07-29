@@ -1,0 +1,86 @@
+/****************************************************************************
+**
+** Copyright (C) 2021 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Free Documentation License Usage
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file. Please review the following information to ensure
+** the GNU Free Documentation License version 1.3 requirements
+** will be met: https://www.gnu.org/licenses/fdl-1.3.html.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+\page position-plugin-geoclue2.html
+\title Qt Positioning GeoClue v2 plugin
+\ingroup QtPositioning-plugins
+
+\brief Uses the GeoClue v2 library to provide positioning updates
+
+\section1 Overview
+
+This plugin is an interface to the \l {GeoClue service}{GeoClue v2} library.
+It requires this library to be installed on the system to function.
+
+The plugin uses D-Bus to establish communication with the GeoClue v2 D-Bus
+service and to provide positioning information.
+
+The plugin can be used to receive only the positioning information.
+It \e {does not} provide satellite information.
+
+The plugin can be loaded by using the provider name \b geoclue2.
+
+\section1 Parameters
+
+The following table lists parameters that \e can be passed to the geoclue2
+plugin.
+
+\table
+\header
+    \li Parameter
+    \li Description
+\row
+    \li desktopId
+    \li The \l {GeoClue DesktopId property}{Desktop Id} property used by the
+        D-Bus service. If the parameter is not specified, the application name
+        provided by \l QCoreApplication::applicationName() is used.
+\endtable
+
+\section1 Usage example
+
+The following examples show how to create a \b geoclue2 PositionSource from
+C++ and QML.
+
+\section2 QML
+
+\code
+PositionSource {
+    name: "geoclue2"
+    PluginParameter { name: "desktopId"; value: "SomeIdentifierString" }
+}
+\endcode
+
+\section2 C++
+
+\code
+QVariantMap params;
+params["desktopId"] = "SomeIdentifierString";
+QGeoPositionInfoSource *positionSource = QGeoPositionInfoSource::createSource("geoclue2", params, this);
+\endcode
+
+*/

@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue2::positionInfoSource(QObject *parent, const QVariantMap &parameters)
 {
     Q_UNUSED(parameters)
-    return new QGeoPositionInfoSourceGeoclue2(parent);
+    return new QGeoPositionInfoSourceGeoclue2(parameters, parent);
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue2::satelliteInfoSource(QObject *parent, const QVariantMap &parameters)
