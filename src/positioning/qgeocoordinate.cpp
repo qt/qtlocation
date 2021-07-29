@@ -594,19 +594,18 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
             double latMin = (absLat - int(absLat)) * 60;
             double lngMin = (absLng - int(absLng)) * 60;
 
-            if (qRound(latMin) >= 60) {
+            // We use QString::number(val, 'f', 3) to represent minutes.
+            // It rounds up to the next integer in case the fraction > 0.9995.
+            // Such behavior should be handled specifically when the rounded
+            // value is 60, so that we overflow to degrees correctly.
+            // If we overflow, the minutes should unconditionally be 0.0.
+            if (latMin > 59.9995) {
                 absLat++;
-                latMin = qAbs(latMin - 60.0f);
-                //avoid invalid latitude due to latMin rounding below
-                if (qRound(absLat) >= 90)
-                    latMin = 0.0f;
+                latMin = 0.0f;
             }
-            if (qRound(lngMin) >= 60) {
+            if (lngMin > 59.9995) {
                 absLng++;
-                lngMin = qAbs(lngMin - 60.0f);
-                // avoid invalid longitude due to lngMin rounding below
-                if (qRound(absLng) >= 180)
-                    lngMin = 0.0f;
+                lngMin = 0.0f;
             }
 
             latStr = QString::fromLatin1("%1%2 %3'")
@@ -626,28 +625,28 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
             double latSec = (latMin - int(latMin)) * 60;
             double lngSec = (lngMin - int(lngMin)) * 60;
 
-            // overflow to full minutes
-            if (qRound(latSec) >= 60) {
+            // We use QString::number(val, 'f', 1) to represent seconds.
+            // It rounds up to the next integer in case the fraction >= 0.95.
+            // Such behavior should be handled specifically when the rounded
+            // value is 60, so that we overflow to minutes correctly.
+            // If we overflow, the seconds should unconditionally be 0.0.
+            if (latSec >= 59.95) {
                 latMin++;
-                latSec = qAbs(latSec - 60.0f);
-                // overflow to full degrees
+                latSec = 0.0f;
+                // We cast to int to represent minutes, so we can use qRound()
+                // to determine if we need to overflow to full degrees.
+                // If we overflow, the minutes will unconditionally be 0.0.
                 if (qRound(latMin) >= 60) {
                     absLat++;
-                    latMin = qAbs(latMin - 60.0f);
-                    // avoid invalid latitude due to latSec rounding below
-                    if (qRound(absLat) >= 90)
-                        latSec = 0.0f;
+                    latMin = 0.0f;
                 }
             }
-            if (qRound(lngSec) >= 60) {
+            if (lngSec >= 59.95) {
                 lngMin++;
-                lngSec = qAbs(lngSec - 60.0f);
+                lngSec = 0.0f;
                 if (qRound(lngMin) >= 60) {
                     absLng++;
-                    lngMin = qAbs(lngMin - 60.0f);
-                    // avoid invalid longitude due to lngSec rounding below
-                    if (qRound(absLng) >= 180)
-                        lngSec = 0.0f;
+                    lngMin = 0.0f;
                 }
             }
 
