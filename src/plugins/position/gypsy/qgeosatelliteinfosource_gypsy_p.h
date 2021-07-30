@@ -103,7 +103,7 @@ class QGeoSatelliteInfoSourceGypsy : public QGeoSatelliteInfoSource
 public:
       explicit QGeoSatelliteInfoSourceGypsy(QObject *parent = 0);
       ~QGeoSatelliteInfoSourceGypsy();
-      int init();
+      int init(const QVariantMap parameters);
 
       int minimumUpdateInterval() const override;
       Error error() const override;
@@ -119,6 +119,7 @@ private slots:
 
 private:
       void setError(QGeoSatelliteInfoSource::Error error);
+      QString extractDeviceNameFromParameters(const QVariantMap &parameters) const;
 
 protected:
       // Creates an engine which encapsulates all used symbols
