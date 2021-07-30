@@ -168,20 +168,6 @@ QGeoPath &QGeoPath::operator=(const QGeoPath &other)
 }
 
 /*!
-    \fn bool QGeoPath::operator==(const QGeoPath &lhs, const QGeoPath &rhs)
-
-    Returns \c true if the \a lhs geo path is equal to the \a rhs geo path,
-    otherwise returns \c false.
-*/
-
-/*!
-    \fn bool QGeoPath::operator!=(const QGeoPath &lhs, const QGeoPath &rhs)
-
-    Returns \c true if the \a lhs geo path is not equal to the \a rhs geo path,
-    otherwise returns \c false.
-*/
-
-/*!
     Sets all the elements of the \a path.
 */
 void QGeoPath::setPath(const QList<QGeoCoordinate> &path)

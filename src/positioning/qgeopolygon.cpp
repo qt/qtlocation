@@ -219,20 +219,6 @@ QGeoPolygon &QGeoPolygon::operator=(const QGeoPolygon &other)
 }
 
 /*!
-    \fn bool QGeoPolygon::operator!=(const QGeoPolygon &lhs, const QGeoPolygon &rhs)
-
-    Returns \c true if the \a lhs geo polygon is equal to the \a rhs geo
-    polygon, otherwise returns \c false.
-*/
-
-/*!
-    \fn bool QGeoPolygon::operator!=(const QGeoPolygon &lhs, const QGeoPolygon &rhs)
-
-    Returns \c true if the \a lhs geo polygon is not equal to the \a rhs geo
-    polygon, otherwise returns \c false.
-*/
-
-/*!
     Sets the perimeter of the polygon based on a list of coordinates \a path.
 
     \since QtPositioning 5.12

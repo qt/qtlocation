@@ -171,20 +171,6 @@ QGeoCircle &QGeoCircle::operator=(const QGeoCircle &other)
     return *this;
 }
 
-/*!
-    \fn bool QGeoCircle::operator==(const QGeoCircle &lhs, const QGeoCircle &rhs)
-
-    Returns \c true if the \a lhs geo circle is equal to the \a rhs geo
-    circle, otherwise returns \c false.
-*/
-
-/*!
-    \fn bool QGeoCircle::operator!=(const QGeoCircle &lhs, const QGeoCircle &rhs)
-
-    Returns \c true if the \a lhs geo circle is not equal to the \a rhs geo
-    circle, otherwise returns \c false.
-*/
-
 bool QGeoCirclePrivate::isValid() const
 {
     return m_center.isValid() && !qIsNaN(m_radius) && m_radius >= -1e-7;

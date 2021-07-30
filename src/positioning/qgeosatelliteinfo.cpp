@@ -342,8 +342,7 @@ QDebug QGeoSatelliteInfo::debugStreaming(QDebug dbg, const QGeoSatelliteInfo &in
 
 #ifndef QT_NO_DATASTREAM
 /*!
-    \fn QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
-    \relates QGeoSatelliteInfo
+    \fn QDataStream &QGeoSatelliteInfo::operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
 
     Writes the given \a info to the specified \a stream.
 
@@ -363,8 +362,7 @@ QDataStream &QGeoSatelliteInfo::dataStreamOut(QDataStream &stream, const QGeoSat
 
 #ifndef QT_NO_DATASTREAM
 /*!
-    \fn QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
-    \relates QGeoSatelliteInfo
+    \fn QDataStream &QGeoSatelliteInfo::operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
 
     Reads satellite information from the specified \a stream into the given
     \a info.

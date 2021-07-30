@@ -354,8 +354,7 @@ bool QGeoAreaMonitorInfo::equals(const QGeoAreaMonitorInfo &lhs, const QGeoAreaM
 #ifndef QT_NO_DATASTREAM
 
 /*!
-    \fn QDataStream &operator<<(QDataStream &stream, const QGeoAreaMonitorInfo &monitor)
-    \relates QGeoAreaMonitorInfo
+    \fn QDataStream &QGeoAreaMonitorInfo::operator<<(QDataStream &stream, const QGeoAreaMonitorInfo &monitor)
 
     Writes the given \a monitor to the specified \a stream.
 
@@ -369,8 +368,7 @@ QDataStream &QGeoAreaMonitorInfo::dataStreamOut(QDataStream &ds, const QGeoAreaM
 }
 
 /*!
-    \fn QDataStream &operator>>(QDataStream &stream, QGeoAreaMonitorInfo &monitor)
-    \relates QGeoAreaMonitorInfo
+    \fn QDataStream &QGeoAreaMonitorInfo::operator>>(QDataStream &stream, QGeoAreaMonitorInfo &monitor)
 
     Reads a area monitoring data from the specified \a stream into the given
     \a monitor.
