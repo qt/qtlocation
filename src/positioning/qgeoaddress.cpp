@@ -409,7 +409,7 @@ QGeoAddress::QGeoAddress(const QGeoAddress &other)
 }
 
 /*!
-    \fn QGeoAddress::GeoAddress(QGeoAddress &&other)
+    \fn QGeoAddress::QGeoAddress(QGeoAddress &&other) noexcept
     \since 6.2
 
     Constructs a geo address object by moving from \a other.

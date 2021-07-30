@@ -334,8 +334,7 @@ QDebug QGeoPositionInfo::debugStreaming(QDebug dbg, const QGeoPositionInfo &info
 
 #ifndef QT_NO_DATASTREAM
 /*!
-    \fn QDataStream &operator<<(QDataStream &stream, QGeoPositionInfo::Attribute attr)
-    \relates QGeoPositionInfo
+    \fn QDataStream &QGeoPositionInfo::operator<<(QDataStream &stream, QGeoPositionInfo::Attribute attr)
 
     Writes the given \a attr enumeration to the specified \a stream.
 
@@ -347,8 +346,7 @@ QDataStream &QGeoPositionInfo::dataStreamOut(QDataStream &stream, QGeoPositionIn
 }
 
 /*!
-    \fn QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo::Attribute &attr)
-    \relates QGeoPositionInfo
+    \fn QDataStream &QGeoPositionInfo::operator>>(QDataStream &stream, QGeoPositionInfo::Attribute &attr)
 
     Reads an attribute enumeration from the specified \a stream info the given \a attr.
 
@@ -363,8 +361,7 @@ QDataStream &QGeoPositionInfo::dataStreamIn(QDataStream &stream, QGeoPositionInf
 }
 
 /*!
-    \fn QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
-    \relates QGeoPositionInfo
+    \fn QDataStream &QGeoPositionInfo::operator<<(QDataStream &stream, const QGeoPositionInfo &info)
 
     Writes the given \a info to the specified \a stream.
 
@@ -380,8 +377,7 @@ QDataStream &QGeoPositionInfo::dataStreamOut(QDataStream &stream, const QGeoPosi
 }
 
 /*!
-    \fn QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
-    \relates QGeoPositionInfo
+    \fn QDataStream &QGeoPositionInfo::operator>>(QDataStream &stream, QGeoPositionInfo &info)
 
     Reads a coordinate from the specified \a stream into the given
     \a info.

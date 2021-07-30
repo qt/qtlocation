@@ -292,20 +292,6 @@ QGeoRectangle &QGeoRectangle::operator=(const QGeoRectangle &other)
     return *this;
 }
 
-/*!
-    \fn bool QGeoRectangle::operator==(const QGeoRectangle &lhs, const QGeoRectangle &rhs)
-
-    Returns \c true if the \a lhs geo rectangle is equal to the \a rhs geo
-    rectangle, otherwise returns \c false.
-*/
-
-/*!
-    \fn bool QGeoRectangle::operator!=(const QGeoRectangle &lhs, const QGeoRectangle &rhs)
-
-    Returns \c true if the \a lhs geo rectangle is not equal to the \a rhs geo
-    rectangle, otherwise returns \c false.
-*/
-
 bool QGeoRectanglePrivate::isValid() const
 {
     return topLeft.isValid() && bottomRight.isValid() &&
