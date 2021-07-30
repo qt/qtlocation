@@ -170,6 +170,21 @@ QGeoSatelliteInfoSourceGypsy::~QGeoSatelliteInfoSourceGypsy()
     delete m_engine;
 }
 
+static QGeoSatelliteInfo::SatelliteSystem idToSystem(int prn)
+{
+    if (prn >= 1 && prn <= 32)
+        return QGeoSatelliteInfo::GPS;
+    else if (prn >= 65 && prn <= 96)
+        return QGeoSatelliteInfo::GLONASS;
+    else if (prn >= 193 && prn <= 200)
+        return QGeoSatelliteInfo::QZSS;
+    else if ((prn >= 201 && prn <= 235) || (prn >= 401 && prn <= 437))
+        return QGeoSatelliteInfo::BEIDOU;
+    else if (prn >= 301 && prn <= 336)
+        return QGeoSatelliteInfo::GALILEO;
+    return QGeoSatelliteInfo::Undefined;
+}
+
 void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite *satellite,
                                                      GPtrArray *satellites)
 {
@@ -186,6 +201,8 @@ void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite *satellite,
     for (i = 0; i < satellites->len; i++) {
         GypsySatelliteDetails *details = (GypsySatelliteDetails *)satellites->pdata[i];
         QGeoSatelliteInfo info;
+        info.setSatelliteIdentifier(details->satellite_id);
+        info.setSatelliteSystem(idToSystem(details->satellite_id));
         info.setAttribute(QGeoSatelliteInfo::Elevation, details->elevation);
         info.setAttribute(QGeoSatelliteInfo::Azimuth, details->azimuth);
         info.setSignalStrength(details->snr);
