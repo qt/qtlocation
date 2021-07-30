@@ -54,3 +54,8 @@
 \externalpage https://www.freedesktop.org/software/geoclue/docs/gdbus-org.freedesktop.GeoClue2.Client.html#gdbus-property-org-freedesktop-GeoClue2-Client.DesktopId
 \title GeoClue DesktopId property
 */
+
+/*!
+\externalpage https://gypsy.freedesktop.org/wiki/
+\title Gypsy daemon
+*/

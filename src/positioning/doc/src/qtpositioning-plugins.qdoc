@@ -49,7 +49,8 @@ Some plugins already ship with Qt. These are:
         provides an interface to the GeoClue v2 D-Bus service.
     \row
         \li \b gypsy
-        \li Interfaces with \l{https://gypsy.freedesktop.org/wiki/}{Gypsy} daemon. Requires Gypsy to be present to function.
+        \li A \l {Qt Positioning Gypsy plugin}{Gypsy} backend that provides
+        an interface to the Gypsy daemon.
     \row
         \li \b winrt
         \li Wraps WinRT positioning subsystem. Available only on WinRT and Windows10.
