@@ -51,7 +51,7 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGypsy::satelliteInfoSource
 {
     Q_UNUSED(parameters)
     QGeoSatelliteInfoSourceGypsy *src = new QGeoSatelliteInfoSourceGypsy(parent);
-    if (src->init() < 0) {
+    if (src->init(parameters) < 0) {
         delete src;
         src = nullptr;
     }

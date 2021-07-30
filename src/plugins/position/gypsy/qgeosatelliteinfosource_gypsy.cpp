@@ -43,11 +43,15 @@
 #include <QDebug>
 #endif
 #include <QFile>
+#include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 
 #define UPDATE_TIMEOUT_COLD_START 120000
 
+static const auto deviceNameParameter = "deviceName";
+static const auto gconfKeyParameter = "gconfKey";
+static const auto defaultGconfKey = "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice";
 
 // Callback function for 'satellites-changed' -signal
 static void satellites_changed (GypsySatellite *satellite,
@@ -231,43 +235,70 @@ void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite *satellite,
     }
 }
 
-int QGeoSatelliteInfoSourceGypsy::init()
+QString QGeoSatelliteInfoSourceGypsy::extractDeviceNameFromParameters(const QVariantMap &parameters) const
+{
+    // The logic is as follows:
+    // 1. If the deviceNameParameter is specified, its value is used to get the
+    // device name.
+    // 2. If the gconfKeyParameter is specified, its value is used as a key to
+    // extract the device name from GConf.
+    // 3. If nothing is specified, defaultGconfKey is used as a key to extract
+    // the device name from GConf.
+    if (parameters.contains(deviceNameParameter))
+        return parameters.value(deviceNameParameter).toString();
+
+    QString gconfKey = parameters.value(gconfKeyParameter).toString();
+    if (gconfKey.isEmpty())
+        gconfKey = defaultGconfKey;
+
+    if (!m_engine)
+        return QString();
+
+    GConfClient *client = m_engine->eng_gconf_client_get_default();
+    if (!client)
+        return QString();
+
+    gchar *device_name = m_engine->eng_gconf_client_get_string(client,
+                                                               gconfKey.toLatin1().constData(),
+                                                               nullptr);
+    g_object_unref(client);
+
+    const QString deviceName = QString::fromLatin1(device_name);
+    m_engine->eng_g_free(device_name);
+
+    return deviceName;
+}
+
+int QGeoSatelliteInfoSourceGypsy::init(const QVariantMap parameters)
 {
     GError *error = NULL;
     char *path;
-    GConfClient *client;
-    gchar *device_name;
 
 #if !GLIB_CHECK_VERSION(2, 36, 0)
     g_type_init (); // this function was deprecated in glib 2.36
 #endif
     createEngine();
 
-    client = m_engine->eng_gconf_client_get_default();
-    if (!client) {
-        qWarning ("QGeoSatelliteInfoSourceGypsy client creation failed.");
-        return -1;
-    }
-    device_name = m_engine->eng_gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
-    g_object_unref(client);
-    QString deviceName(QString::fromLatin1(device_name));
+    const QString deviceName = extractDeviceNameFromParameters(parameters);
+
     if (deviceName.isEmpty() ||
             (deviceName.trimmed().at(0) == '/' && !QFile::exists(deviceName.trimmed()))) {
         qWarning ("QGeoSatelliteInfoSourceGypsy Empty/nonexistent GPS device name detected.");
-        qWarning ("Use gconftool-2 to set it, e.g. on terminal: ");
-        qWarning ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
-        m_engine->eng_g_free(device_name);
+        qWarning("Use '%s' plugin parameter to specify device name directly", deviceNameParameter);
+        qWarning("or use '%s' plugin parameter to specify a GConf key to extract the device name.",
+                 gconfKeyParameter);
+        qWarning ("If the GConf key is used, the gconftool-2 tool can be used to set device name "
+                  "for the selected key, e.g. on terminal:");
+        qWarning ("gconftool-2 -t string -s %s /dev/ttyUSB0", gconfKeyParameter);
         return -1;
     }
     m_control = m_engine->eng_gypsy_control_get_default();
     if (!m_control) {
         qWarning("QGeoSatelliteInfoSourceGypsy unable to create Gypsy control.");
-        m_engine->eng_g_free(device_name);
         return -1;
     }
     // (path is the DBus path)
-    path = m_engine->eng_gypsy_control_create (m_control, device_name, &error);
-    m_engine->eng_g_free(device_name);
+    path = m_engine->eng_gypsy_control_create(m_control, deviceName.toLatin1().constData(), &error);
     if (!path) {
         qWarning ("QGeoSatelliteInfoSourceGypsy error creating client.");
         if (error) {
@@ -281,8 +312,13 @@ int QGeoSatelliteInfoSourceGypsy::init()
     m_engine->eng_g_free(path);
     if (!m_device || !m_satellite) {
         qWarning ("QGeoSatelliteInfoSourceGypsy error creating satellite device.");
-        qWarning ("Is GPS device set correctly? If not, use gconftool-2 to set it, e.g.: ");
-        qWarning ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
+        qWarning ("Please check that the GPS device is specified correctly.");
+        qWarning("Use '%s' plugin parameter to specify device name directly", deviceNameParameter);
+        qWarning("or use '%s' plugin parameter to specify a GConf key to extract the device name.",
+                 gconfKeyParameter);
+        qWarning ("If the GConf key is used, the gconftool-2 tool can be used to set device name "
+                  "for the selected key, e.g. on terminal:");
+        qWarning ("gconftool-2 -t string -s %s /dev/ttyUSB0", gconfKeyParameter);
         if (m_device)
             g_object_unref(m_device);
         if (m_satellite)
