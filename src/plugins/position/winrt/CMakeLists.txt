@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(QGeoPositionInfoSourceFactoryWinRT
     OUTPUT_NAME qtposition_winrt
-    TYPE position
+    PLUGIN_TYPE position
     SOURCES
         qgeopositioninfosource_winrt.cpp qgeopositioninfosource_winrt_p.h
         qgeopositioninfosourcefactory_winrt.cpp qgeopositioninfosourcefactory_winrt.h

@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(QGeoPositionInfoSourceFactoryTest
     OUTPUT_NAME qtposition_testplugin
-    TYPE position
+    PLUGIN_TYPE position
     DEFAULT_IF FALSE
     SOURCES
         plugin.cpp

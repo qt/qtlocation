@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(QGeoPositionInfoSourceFactoryPoll
     OUTPUT_NAME qtposition_positionpoll
-    TYPE position
+    PLUGIN_TYPE position
     SOURCES
         positionpollfactory.cpp positionpollfactory.h
         qgeoareamonitor_polling.cpp qgeoareamonitor_polling.h

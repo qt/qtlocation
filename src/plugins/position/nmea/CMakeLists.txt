@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(QGeoPositionInfoSourceFactoryNmea
     OUTPUT_NAME qtposition_nmea
-    TYPE position
+    PLUGIN_TYPE position
     SOURCES
         qgeopositioninfosourcefactory_nmea.cpp qgeopositioninfosourcefactory_nmea.h
         qiopipe.cpp qiopipe_p.h

@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(QGeoPositionInfoSourceFactoryAndroid
     OUTPUT_NAME qtposition_android
-    TYPE position
+    PLUGIN_TYPE position
     SOURCES
         jnipositioning.cpp jnipositioning.h
         positionfactory_android.cpp positionfactory_android.h

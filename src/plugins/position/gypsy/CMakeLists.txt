@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGypsy
     OUTPUT_NAME qtposition_gypsy
-    TYPE position
+    PLUGIN_TYPE position
     SOURCES
         qgeopositioninfosourcefactory_gypsy.cpp qgeopositioninfosourcefactory_gypsy.h
         qgeosatelliteinfosource_gypsy.cpp qgeosatelliteinfosource_gypsy_p.h

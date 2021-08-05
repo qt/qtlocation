@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGeoclue2
     OUTPUT_NAME qtposition_geoclue2
-    TYPE position
+    PLUGIN_TYPE position
     SOURCES
         geocluetypes.cpp geocluetypes.h
         qgeopositioninfosource_geoclue2.cpp qgeopositioninfosource_geoclue2_p.h
