@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(DummyPluginForTests
     OUTPUT_NAME qtposition_testplugin2
-    TYPE position
+    PLUGIN_TYPE position
     DEFAULT_IF FALSE
     SOURCES
         plugin.cpp

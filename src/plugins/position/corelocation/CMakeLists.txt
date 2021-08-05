@@ -6,7 +6,7 @@
 
 qt_internal_add_plugin(QGeoPositionInfoSourceFactoryCL
     OUTPUT_NAME qtposition_cl
-    TYPE position
+    PLUGIN_TYPE position
     SOURCES
         qgeopositioninfosource_cl.mm qgeopositioninfosource_cl_p.h
         qgeopositioninfosourcefactory_cl.h qgeopositioninfosourcefactory_cl.mm
