@@ -14,7 +14,6 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGypsy
     LIBRARIES
         Gypsy::Gypsy
         Gconf::Gconf
-    PUBLIC_LIBRARIES
         Qt::Core
         Qt::Positioning
 # special case end

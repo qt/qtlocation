@@ -10,7 +10,7 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryCL
     SOURCES
         qgeopositioninfosource_cl.mm qgeopositioninfosource_cl_p.h
         qgeopositioninfosourcefactory_cl.h qgeopositioninfosourcefactory_cl.mm
-    PUBLIC_LIBRARIES
+    LIBRARIES
         ${FWCoreLocation}
         ${FWFoundation}
         Qt::Core
