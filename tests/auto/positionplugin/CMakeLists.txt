@@ -10,7 +10,7 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryTest
     DEFAULT_IF FALSE
     SOURCES
         plugin.cpp
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Core
         Qt::Positioning
 )

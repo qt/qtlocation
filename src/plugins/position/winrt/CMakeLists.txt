@@ -10,7 +10,7 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryWinRT
     SOURCES
         qgeopositioninfosource_winrt.cpp qgeopositioninfosource_winrt_p.h
         qgeopositioninfosourcefactory_winrt.cpp qgeopositioninfosourcefactory_winrt.h
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Core
         Qt::CorePrivate
         Qt::Positioning
@@ -23,6 +23,6 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryWinRT
 #####################################################################
 
 qt_internal_extend_target(QGeoPositionInfoSourceFactoryWinRT CONDITION MSVC AND NOT WINRT
-    PUBLIC_LIBRARIES
+    LIBRARIES
         runtimeobject.lib
 )
