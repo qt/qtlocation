@@ -4,8 +4,9 @@
 ## QGeoPositionInfoSourceFactoryAndroid Plugin:
 #####################################################################
 
-qt_internal_add_plugin(QGeoPositionInfoSourceFactoryAndroid
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryAndroidPlugin
     OUTPUT_NAME qtposition_android
+    CLASS_NAME QGeoPositionInfoSourceFactoryAndroid
     PLUGIN_TYPE position
     SOURCES
         jnipositioning.cpp jnipositioning.h

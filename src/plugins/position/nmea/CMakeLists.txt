@@ -4,8 +4,9 @@
 ## QGeoPositionInfoSourceFactoryNmea Plugin:
 #####################################################################
 
-qt_internal_add_plugin(QGeoPositionInfoSourceFactoryNmea
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryNmeaPlugin
     OUTPUT_NAME qtposition_nmea
+    CLASS_NAME QGeoPositionInfoSourceFactoryNmea
     PLUGIN_TYPE position
     SOURCES
         qgeopositioninfosourcefactory_nmea.cpp qgeopositioninfosourcefactory_nmea.h

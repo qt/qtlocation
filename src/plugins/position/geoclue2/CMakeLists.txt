@@ -4,8 +4,9 @@
 ## QGeoPositionInfoSourceFactoryGeoclue2 Plugin:
 #####################################################################
 
-qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGeoclue2
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGeoclue2Plugin
     OUTPUT_NAME qtposition_geoclue2
+    CLASS_NAME QGeoPositionInfoSourceFactoryGeoclue2
     PLUGIN_TYPE position
     SOURCES
         geocluetypes.cpp geocluetypes.h
