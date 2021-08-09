@@ -4,8 +4,9 @@
 ## QGeoPositionInfoSourceFactoryTest Plugin:
 #####################################################################
 
-qt_internal_add_plugin(QGeoPositionInfoSourceFactoryTest
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryTestPlugin
     OUTPUT_NAME qtposition_testplugin
+    CLASS_NAME QGeoPositionInfoSourceFactoryTest
     PLUGIN_TYPE position
     DEFAULT_IF FALSE
     SOURCES

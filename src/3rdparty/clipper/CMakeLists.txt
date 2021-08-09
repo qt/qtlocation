@@ -13,6 +13,7 @@ qt_internal_add_3rdparty_library(Bundled_Clipper
         clipper.cpp clipper.h
 )
 qt_disable_warnings(Bundled_Clipper)
+qt_set_symbol_visibility_hidden(Bundled_Clipper)
 
 ## Scopes:
 #####################################################################

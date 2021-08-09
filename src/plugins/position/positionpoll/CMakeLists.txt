@@ -4,8 +4,9 @@
 ## QGeoPositionInfoSourceFactoryPoll Plugin:
 #####################################################################
 
-qt_internal_add_plugin(QGeoPositionInfoSourceFactoryPoll
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryPollPlugin
     OUTPUT_NAME qtposition_positionpoll
+    CLASS_NAME QGeoPositionInfoSourceFactoryPoll
     PLUGIN_TYPE position
     SOURCES
         positionpollfactory.cpp positionpollfactory.h

@@ -4,8 +4,9 @@
 ## QGeoPositionInfoSourceFactoryCL Plugin:
 #####################################################################
 
-qt_internal_add_plugin(QGeoPositionInfoSourceFactoryCL
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryCLPlugin
     OUTPUT_NAME qtposition_cl
+    CLASS_NAME QGeoPositionInfoSourceFactoryCL
     PLUGIN_TYPE position
     SOURCES
         qgeopositioninfosource_cl.mm qgeopositioninfosource_cl_p.h
@@ -19,7 +20,7 @@ qt_internal_add_plugin(QGeoPositionInfoSourceFactoryCL
 )
 
 # special case begin
-set_target_properties(QGeoPositionInfoSourceFactoryCL
+set_target_properties(QGeoPositionInfoSourceFactoryCLPlugin
     PROPERTIES
         DISABLE_PRECOMPILE_HEADERS ON
 )

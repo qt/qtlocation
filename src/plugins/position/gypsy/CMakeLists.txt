@@ -4,8 +4,9 @@
 ## QGeoPositionInfoSourceFactoryGypsy Plugin:
 #####################################################################
 
-qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGypsy
+qt_internal_add_plugin(QGeoPositionInfoSourceFactoryGypsyPlugin
     OUTPUT_NAME qtposition_gypsy
+    CLASS_NAME QGeoPositionInfoSourceFactoryGypsy
     PLUGIN_TYPE position
     SOURCES
         qgeopositioninfosourcefactory_gypsy.cpp qgeopositioninfosourcefactory_gypsy.h

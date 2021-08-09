@@ -18,6 +18,7 @@ qt_internal_add_3rdparty_library(Bundled_Poly2Tri
         sweep/sweep_context.cpp sweep/sweep_context.h
 )
 qt_disable_warnings(Bundled_Poly2Tri)
+qt_set_symbol_visibility_hidden(Bundled_Poly2Tri)
 
 ## Scopes:
 #####################################################################

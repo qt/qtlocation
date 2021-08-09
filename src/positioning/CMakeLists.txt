@@ -36,9 +36,8 @@ qt_internal_add_module(Positioning
         ../3rdparty/clip2tri
         ../3rdparty/clipper
     LIBRARIES
-        # Remove: L/lib
         Qt::CorePrivate
-        Clip2Tri::Clip2Tri # special case
+        Qt::Bundled_Clip2Tri
     PUBLIC_LIBRARIES
         Qt::Core
     PRIVATE_MODULE_INTERFACE
