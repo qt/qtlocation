@@ -1,8 +1,8 @@
 {
     "Id": "clip2tri",
     "Name": "Clip2Tri Polygon Triangulation Library",
-    "QDocModule": "qtlocation",
-    "QtUsage": "Used in the QML plugin of Qt Location.",
+    "QDocModule": "qtpositioning",
+    "QtUsage": "Used in the QML plugin of Qt Location and in Qt Positioning.",
 
     "Description": "Clip2Tri can be used together with Clipper for robust triangulation.",
     "Homepage": "https://github.com/raptor/clip2tri",
