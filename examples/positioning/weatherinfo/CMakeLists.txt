@@ -24,6 +24,8 @@ find_package(Qt6 COMPONENTS Quick)
 
 qt_add_executable(weatherinfo
     appmodel.cpp appmodel.h
+    providerbackend.cpp providerbackend.h
+    openweathermapbackend.cpp openweathermapbackend.h
     main.cpp
 )
 set_target_properties(weatherinfo PROPERTIES

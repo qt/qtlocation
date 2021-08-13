@@ -59,6 +59,8 @@
 
 #include <QtPositioning/QGeoPositionInfoSource>
 
+#include "providerbackend.h"
+
 //! [0]
 class WeatherData : public QObject {
     Q_OBJECT
@@ -79,6 +81,7 @@ class WeatherData : public QObject {
 public:
     explicit WeatherData(QObject *parent = 0);
     WeatherData(const WeatherData &other);
+    WeatherData(const WeatherInfo &other);
 
     QString dayOfWeek() const;
     QString weatherIcon() const;
@@ -145,7 +148,6 @@ public:
     bool hasValidCity() const;
     bool hasValidWeather() const;
     void setUseGps(bool value);
-    void hadError(bool tryAgain);
 
     QString city() const;
     void setCity(const QString &value);
@@ -158,12 +160,9 @@ public slots:
 
 //! [2]
 private slots:
-    void queryCity();
     void positionUpdated(QGeoPositionInfo gpsPos);
     void positionError(QGeoPositionInfoSource::Error e);
-    void handleGeoNetworkData(QNetworkReply *networkReply);
-    void handleWeatherNetworkData(QNetworkReply *networkReply);
-    void handleForecastNetworkData(QNetworkReply *networkReply);
+    void handleWeatherData(const QString &city, const QList<WeatherInfo> &weatherDetails);
 
 //! [3]
 signals:
@@ -171,7 +170,6 @@ signals:
     void useGpsChanged();
     void cityChanged();
     void weatherChanged();
-
 //! [3]
 
 private:

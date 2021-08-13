@@ -8,7 +8,9 @@ QML_IMPORT_NAME = WeatherInfo
 QML_IMPORT_MAJOR_VERSION = 1
 
 SOURCES += main.cpp \
-    appmodel.cpp
+    appmodel.cpp \
+    openweathermapbackend.cpp \
+    providerbackend.cpp
 
 OTHER_FILES += weatherinfo.qml \
     components/WeatherIcon.qml \
@@ -19,7 +21,9 @@ OTHER_FILES += weatherinfo.qml \
 
 RESOURCES += weatherinfo.qrc
 
-HEADERS += appmodel.h
+HEADERS += appmodel.h \
+    openweathermapbackend.h \
+    providerbackend.h
 
 target.path = $$[QT_INSTALL_EXAMPLES]/positioning/weatherinfo
 INSTALLS += target
