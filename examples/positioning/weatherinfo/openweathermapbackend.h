@@ -70,13 +70,13 @@ public:
     void requestWeatherInfo(const QGeoCoordinate &coordinate) override;
 
 private slots:
-    void handleCurrentWeatherReply(QNetworkReply *reply);
-    void handleWeatherForecastReply(QNetworkReply *reply, const QString &city,
+    void handleCurrentWeatherReply(QNetworkReply *reply, const QGeoCoordinate &coordinate);
+    void handleWeatherForecastReply(QNetworkReply *reply, const LocationInfo &location,
                                     const WeatherInfo &currentWeather);
 
 private:
-    void requestCurrentWeather(QUrlQuery &query);
-    void requestWeatherForecast(const QString &city, const WeatherInfo &currentWeather);
+    void requestCurrentWeather(QUrlQuery &query, const QGeoCoordinate &coordinate);
+    void requestWeatherForecast(const LocationInfo &location, const WeatherInfo &currentWeather);
 
     QNetworkAccessManager *m_networkManager;
     const QString m_appId;

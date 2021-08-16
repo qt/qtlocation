@@ -94,7 +94,7 @@ void OpenWeatherMapBackend::requestWeatherInfo(const QString &city)
     QUrlQuery query;
     query.addQueryItem(QStringLiteral("q"), city);
 
-    requestCurrentWeather(query);
+    requestCurrentWeather(query, QGeoCoordinate());
 }
 
 void OpenWeatherMapBackend::requestWeatherInfo(const QGeoCoordinate &coordinate)
@@ -103,10 +103,11 @@ void OpenWeatherMapBackend::requestWeatherInfo(const QGeoCoordinate &coordinate)
     query.addQueryItem(QStringLiteral("lat"), QString::number(coordinate.latitude()));
     query.addQueryItem(QStringLiteral("lon"), QString::number(coordinate.longitude()));
 
-    requestCurrentWeather(query);
+    requestCurrentWeather(query, coordinate);
 }
 
-void OpenWeatherMapBackend::handleCurrentWeatherReply(QNetworkReply *reply)
+void OpenWeatherMapBackend::handleCurrentWeatherReply(QNetworkReply *reply,
+                                                      const QGeoCoordinate &coordinate)
 {
     if (!reply) {
         emit errorOccurred();
@@ -118,8 +119,11 @@ void OpenWeatherMapBackend::handleCurrentWeatherReply(QNetworkReply *reply)
         const QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
         const QJsonObject documentObject = document.object();
 
-        const QString city = documentObject.value(u"name").toString();
-        qCDebug(requestsLog) << "Got current weather for" << city;
+        LocationInfo currentLocation;
+        currentLocation.m_name = documentObject.value(u"name").toString();
+        if (coordinate.isValid())
+            currentLocation.m_coordinate = coordinate;
+        qCDebug(requestsLog) << "Got current weather for" << currentLocation.m_name;
 
         WeatherInfo currentWeather;
 
@@ -132,11 +136,11 @@ void OpenWeatherMapBackend::handleCurrentWeatherReply(QNetworkReply *reply)
         else
             qCDebug(requestsLog, "Failed to parse current temperature.");
 
-        parsed = !city.isEmpty() && !currentWeather.m_temperature.isEmpty();
+        parsed = !currentLocation.m_name.isEmpty() && !currentWeather.m_temperature.isEmpty();
 
         if (parsed) {
             // request forecast
-            requestWeatherForecast(city, currentWeather);
+            requestWeatherForecast(currentLocation, currentWeather);
         }
     }
     if (!parsed) {
@@ -150,7 +154,8 @@ void OpenWeatherMapBackend::handleCurrentWeatherReply(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-void OpenWeatherMapBackend::handleWeatherForecastReply(QNetworkReply *reply, const QString &city,
+void OpenWeatherMapBackend::handleWeatherForecastReply(QNetworkReply *reply,
+                                                       const LocationInfo &location,
                                                        const WeatherInfo &currentWeather)
 {
     if (!reply) {
@@ -191,7 +196,7 @@ void OpenWeatherMapBackend::handleWeatherForecastReply(QNetworkReply *reply, con
                 weatherDetails.push_back(info);
         }
 
-        emit weatherInformation(city, weatherDetails);
+        emit weatherInformation(location, weatherDetails);
     } else {
         emit errorOccurred();
         qCDebug(requestsLog) << reply->errorString();
@@ -200,7 +205,8 @@ void OpenWeatherMapBackend::handleWeatherForecastReply(QNetworkReply *reply, con
     reply->deleteLater();
 }
 
-void OpenWeatherMapBackend::requestCurrentWeather(QUrlQuery &query)
+void OpenWeatherMapBackend::requestCurrentWeather(QUrlQuery &query,
+                                                  const QGeoCoordinate &coordinate)
 {
     QUrl url("http://api.openweathermap.org/data/2.5/weather");
     query.addQueryItem(QStringLiteral("mode"), QStringLiteral("json"));
@@ -209,22 +215,22 @@ void OpenWeatherMapBackend::requestCurrentWeather(QUrlQuery &query)
 
     QNetworkReply *reply = m_networkManager->get(QNetworkRequest(url));
     connect(reply, &QNetworkReply::finished, this,
-            [this, reply]() { handleCurrentWeatherReply(reply); });
+            [this, reply, coordinate]() { handleCurrentWeatherReply(reply, coordinate); });
 }
 
-void OpenWeatherMapBackend::requestWeatherForecast(const QString &city,
+void OpenWeatherMapBackend::requestWeatherForecast(const LocationInfo &location,
                                                    const WeatherInfo &currentWeather)
 {
     QUrl url("http://api.openweathermap.org/data/2.5/forecast/daily");
     QUrlQuery query;
-    query.addQueryItem(QStringLiteral("q"), city);
+    query.addQueryItem(QStringLiteral("q"), location.m_name);
     query.addQueryItem(QStringLiteral("mode"), QStringLiteral("json"));
     query.addQueryItem(QStringLiteral("cnt"), QStringLiteral("4"));
     query.addQueryItem(QStringLiteral("APPID"), m_appId);
     url.setQuery(query);
 
     QNetworkReply *reply = m_networkManager->get(QNetworkRequest(url));
-    connect(reply, &QNetworkReply::finished, this, [this, reply, city, currentWeather]() {
-        handleWeatherForecastReply(reply, city, currentWeather);
+    connect(reply, &QNetworkReply::finished, this, [this, reply, location, currentWeather]() {
+        handleWeatherForecastReply(reply, location, currentWeather);
     });
 }

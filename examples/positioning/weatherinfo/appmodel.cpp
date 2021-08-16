@@ -53,6 +53,7 @@
 
 #include <QGeoPositionInfoSource>
 #include <QGeoPositionInfo>
+#include <QGeoCircle>
 #include <QLoggingCategory>
 
 Q_LOGGING_CATEGORY(requestsLog, "wapp.requests")
@@ -133,6 +134,92 @@ void WeatherData::setTemperature(const QString &value)
     emit dataChanged();
 }
 
+/*
+    The class is used as a cache for the weather information.
+    It contains a map to cache weather for cities.
+    The gps location is cached separately.
+
+    For the coordiante search we do not compare the coordinate directly, but
+    check if it's within a circle of 3 km radius (we assume that the weather
+    does not really change within that radius).
+
+    The cache returns a pair with empty location and weather data if no data
+    is found, or if the data is outdated.
+*/
+class WeatherDataCache
+{
+public:
+    WeatherDataCache() = default;
+
+    using WeatherDataPair = QPair<QString, QList<WeatherInfo>>;
+
+    WeatherDataPair getWeatherData(const QString &name) const;
+    WeatherDataPair getWeatherData(const QGeoCoordinate &coordinate) const;
+
+    void addCacheElement(const LocationInfo &location, const QList<WeatherInfo> &info);
+
+    static bool isCacheResultValid(const WeatherDataPair &result);
+
+private:
+    struct CacheItem
+    {
+        qint64 m_cacheTime;
+        QList<WeatherInfo> m_weatherData;
+    };
+
+    QMap<QString, CacheItem> m_cityCache;
+
+    QGeoCoordinate m_gpsLocation;
+    QString m_gpsName;
+    CacheItem m_gpsData;
+
+    static const qint64 kCacheTimeoutInterval = 3600; // 1 hour
+    static const int kCircleRadius = 3000; // 3 km
+};
+
+WeatherDataCache::WeatherDataPair WeatherDataCache::getWeatherData(const QString &name) const
+{
+    if (m_cityCache.contains(name)) {
+        const qint64 currentTime = QDateTime::currentSecsSinceEpoch();
+        const auto &item = m_cityCache.value(name);
+        if (currentTime - item.m_cacheTime < kCacheTimeoutInterval)
+            return qMakePair(name, item.m_weatherData);
+    }
+    return qMakePair(QString(), QList<WeatherInfo>());
+}
+
+WeatherDataCache::WeatherDataPair WeatherDataCache::getWeatherData(const QGeoCoordinate &coordinate) const
+{
+    if (m_gpsLocation.isValid() && !m_gpsName.isEmpty()) {
+        const QGeoCircle area(m_gpsLocation, kCircleRadius);
+        if (area.contains(coordinate)) {
+            const qint64 currentTime = QDateTime::currentSecsSinceEpoch();
+            if (currentTime - m_gpsData.m_cacheTime < kCacheTimeoutInterval)
+                return qMakePair(m_gpsName, m_gpsData.m_weatherData);
+        }
+    }
+    return qMakePair(QString(), QList<WeatherInfo>());
+}
+
+void WeatherDataCache::addCacheElement(const LocationInfo &location, const QList<WeatherInfo> &info)
+{
+    // It it expected that we have valid QGeoCoordinate only when the weather
+    // is received based on coordinates.
+    const qint64 currentTime = QDateTime::currentSecsSinceEpoch();
+    if (location.m_coordinate.isValid()) {
+        m_gpsLocation = location.m_coordinate;
+        m_gpsName = location.m_name;
+        m_gpsData = { currentTime, info };
+    } else {
+        m_cityCache[location.m_name] = { currentTime, info };
+    }
+}
+
+bool WeatherDataCache::isCacheResultValid(const WeatherDataCache::WeatherDataPair &result)
+{
+    return !result.first.isEmpty() && !result.second.isEmpty();
+}
+
 class AppModelPrivate
 {
 public:
@@ -144,23 +231,9 @@ public:
     QQmlListProperty<WeatherData> *fcProp = nullptr;
     bool ready = false;
     bool useGps = true;
+    WeatherDataCache m_dataCache;
     OpenWeatherMapBackend m_openWeatherBackend;
-
-    void requestWeatherByCoordinates();
-    void requestWeatherByCity();
 };
-
-void AppModelPrivate::requestWeatherByCoordinates()
-{
-    // TODO - add support for weather data cache
-    m_openWeatherBackend.requestWeatherInfo(coord);
-}
-
-void AppModelPrivate::requestWeatherByCity()
-{
-    // TODO - add support for weather data cache
-    m_openWeatherBackend.requestWeatherInfo(city);
-}
 
 static void forecastAppend(QQmlListProperty<WeatherData> *prop, WeatherData *val)
 {
@@ -213,7 +286,7 @@ AppModel::AppModel(QObject *parent) :
         d->useGps = false;
         d->city = "Brisbane";
         emit cityChanged();
-        d->requestWeatherByCity();
+        requestWeatherByCity();
     }
 }
 //! [1]
@@ -238,7 +311,7 @@ void AppModel::positionUpdated(QGeoPositionInfo gpsPos)
     if (!d->useGps)
         return;
 
-    d->requestWeatherByCoordinates();
+    requestWeatherByCoordinates();
 }
 //! [2]
 
@@ -255,7 +328,7 @@ void AppModel::positionError(QGeoPositionInfoSource::Error e)
     d->useGps = false;
     d->city = "Brisbane";
     emit cityChanged();
-    d->requestWeatherByCity();
+    requestWeatherByCity();
 }
 
 void AppModel::refreshWeather()
@@ -265,15 +338,22 @@ void AppModel::refreshWeather()
         return;
     }
     qCDebug(requestsLog) << "refreshing weather";
-    d->requestWeatherByCity();
+    requestWeatherByCity();
 }
 
-void AppModel::handleWeatherData(const QString &city, const QList<WeatherInfo> &weatherDetails)
+void AppModel::handleWeatherData(const LocationInfo &location,
+                                 const QList<WeatherInfo> &weatherDetails)
+{
+    if (applyWeatherData(location.m_name, weatherDetails))
+        d->m_dataCache.addCacheElement(location, weatherDetails);
+}
+
+bool AppModel::applyWeatherData(const QString &city, const QList<WeatherInfo> &weatherDetails)
 {
     // Check that we didn't get outdated weather data. The city should match,
     // if only we do not use GPS.
     if (city != d->city && !d->useGps)
-        return;
+        return false;
 
     if (city != d->city && d->useGps) {
         d->city = city;
@@ -305,6 +385,26 @@ void AppModel::handleWeatherData(const QString &city, const QList<WeatherInfo> &
     }
 
     emit weatherChanged();
+
+    return true;
+}
+
+void AppModel::requestWeatherByCoordinates()
+{
+    const auto cacheResult = d->m_dataCache.getWeatherData(d->coord);
+    if (WeatherDataCache::isCacheResultValid(cacheResult))
+        applyWeatherData(cacheResult.first, cacheResult.second);
+    else
+        d->m_openWeatherBackend.requestWeatherInfo(d->coord);
+}
+
+void AppModel::requestWeatherByCity()
+{
+    const auto cacheResult = d->m_dataCache.getWeatherData(d->city);
+    if (WeatherDataCache::isCacheResultValid(cacheResult))
+        applyWeatherData(cacheResult.first, cacheResult.second);
+    else
+        d->m_openWeatherBackend.requestWeatherInfo(d->city);
 }
 
 bool AppModel::hasValidCity() const
@@ -354,7 +454,7 @@ void AppModel::setUseGps(bool value)
         // if we already have a valid GPS position, do not wait until it
         // updates, but query the city immediately
         if (d->coord.isValid())
-            d->requestWeatherByCoordinates();
+            requestWeatherByCoordinates();
     }
     emit useGpsChanged();
 }
@@ -368,5 +468,5 @@ void AppModel::setCity(const QString &value)
 {
     d->city = value;
     emit cityChanged();
-    d->requestWeatherByCity();
+    requestWeatherByCity();
 }
