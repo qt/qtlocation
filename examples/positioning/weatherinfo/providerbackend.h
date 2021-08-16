@@ -52,10 +52,7 @@
 #define PROVIDERBACKEND_H
 
 #include <QObject>
-
-QT_BEGIN_NAMESPACE
-class QGeoCoordinate;
-QT_END_NAMESPACE
+#include <QGeoCoordinate>
 
 struct WeatherInfo
 {
@@ -63,6 +60,12 @@ struct WeatherInfo
     QString m_weatherIconId;
     QString m_weatherDescription;
     QString m_temperature;
+};
+
+struct LocationInfo
+{
+    QString m_name;
+    QGeoCoordinate m_coordinate;
 };
 
 class ProviderBackend : public QObject
@@ -77,7 +80,10 @@ public:
 signals:
     // The first element in weatherDetails represents current weather.
     // Next are the weather forecast, including the current day.
-    void weatherInformation(const QString &city, const QList<WeatherInfo> &weatherDetails);
+    // The LocationInfo object should contain valid coordinate only when it was
+    // initially used to request the weather. If the city name was used, an
+    // empty coordinate is expected to be transferred.
+    void weatherInformation(const LocationInfo &location, const QList<WeatherInfo> &weatherDetails);
     void errorOccurred();
 };
 
