@@ -23,6 +23,6 @@
 
         "License": "Public Domain",
         "Copyright": "Copyright Tango Project contributors",
-        "Files": "weather-few-clouds.png weather-overcast.png weather-showers.png weather-storm.png weather-snow.png"
+        "Files": "weather-few-clouds.png weather-overcast.png weather-showers.png weather-storm.png weather-snow.png weather-showers-scattered.png"
     }
 ]

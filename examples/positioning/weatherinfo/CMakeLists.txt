@@ -26,6 +26,7 @@ qt_add_executable(weatherinfo
     appmodel.cpp appmodel.h
     providerbackend.cpp providerbackend.h
     openweathermapbackend.cpp openweathermapbackend.h
+    weatherapibackend.cpp weatherapibackend.h
     main.cpp
 )
 set_target_properties(weatherinfo PROPERTIES
@@ -62,6 +63,7 @@ qt_add_qml_module(weatherinfo
         icons/weather-sunny-very-few-clouds.png
         icons/weather-sunny.png
         icons/weather-thundershower.png
+        icons/weather-showers-scattered.png
     NO_RESOURCE_TARGET_PATH
 )
 

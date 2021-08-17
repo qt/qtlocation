@@ -69,14 +69,43 @@ static QString niceTemperatureString(double t)
     return QString::number(qRound(t - kZeroKelvin)) + QChar(0xB0);
 }
 
+/*
+    Converts weather code to a string that will be used to show the icon.
+    The possible strings are based on the icon names. The icon name is built up
+    as follows:
+        weather-[mystring].png
+    where [mystring] is the value returned by this method.
+    Check resources for the full list of available icons.
+*/
+static QString weatherCodeToString(const QString &code)
+{
+    if (code == u"01d" || code == u"01n")
+        return "sunny";
+    else if (code == u"02d" || code == u"02n")
+        return "sunny-very-few-clouds";
+    else if (code == u"03d" || code == u"03n")
+        return "few-clouds";
+    else if (code == u"04d" || code == u"04n")
+        return "overcast";
+    else if (code == u"09d" || code == u"09n" || code == u"10d" || code == u"10n")
+        return "showers";
+    else if (code == u"11d" || code == u"11n")
+        return "thundershower";
+    else if (code == u"13d" || code == u"13n")
+        return "snow";
+    else if (code == u"50d" || code == u"50n")
+        return "fog";
+
+    return "sunny"; // default choice
+}
+
 static void parseWeatherDescription(const QJsonObject &object, WeatherInfo &info)
 {
     const QJsonArray weatherArray = object.value(u"weather").toArray();
     if (!weatherArray.isEmpty()) {
         const QJsonObject obj = weatherArray.first().toObject();
         info.m_weatherDescription = obj.value(u"description").toString();
-        // TODO - convert to some common string
-        info.m_weatherIconId = obj.value(u"icon").toString();
+        info.m_weatherIconId = weatherCodeToString(obj.value(u"icon").toString());
     } else {
         qCDebug(requestsLog, "An empty weather array is returned.");
     }

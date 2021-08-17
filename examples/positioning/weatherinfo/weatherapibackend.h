@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -48,17 +48,33 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
+#ifndef WEATHERAPIBACKEND_H
+#define WEATHERAPIBACKEND_H
 
-Item {
-    id: container
+#include "providerbackend.h"
 
-    property string weatherIcon: "sunny"
+QT_BEGIN_NAMESPACE
+class QNetworkAccessManager;
+class QNetworkReply;
+QT_END_NAMESPACE
 
-    Image {
-        id: img
-        source: "../icons/weather-" + container.weatherIcon + ".png"
-        smooth: true
-        anchors.fill: parent
-    }
-}
+class WeatherApiBackend : public ProviderBackend
+{
+    Q_OBJECT
+public:
+    explicit WeatherApiBackend(QObject *parent = nullptr);
+
+    void requestWeatherInfo(const QString &city) override;
+    void requestWeatherInfo(const QGeoCoordinate &coordinate) override;
+
+private slots:
+    void handleWeatherForecastReply(QNetworkReply *reply, const QGeoCoordinate &coordinate);
+
+private:
+    void generateWeatherRequest(const QString &locationString, const QGeoCoordinate &coordinate);
+
+    QNetworkAccessManager *m_networkManager;
+    const QString m_apiKey;
+};
+
+#endif // WEATHERAPIBACKEND_H
