@@ -50,6 +50,7 @@
 
 #include "appmodel.h"
 #include "openweathermapbackend.h"
+#include "weatherapibackend.h"
 
 #include <QGeoPositionInfoSource>
 #include <QGeoPositionInfo>
@@ -232,7 +233,9 @@ public:
     bool ready = false;
     bool useGps = true;
     WeatherDataCache m_dataCache;
-    OpenWeatherMapBackend m_openWeatherBackend;
+    ProviderBackend *m_currentBackend = nullptr;
+    QList<ProviderBackend*> m_supportedBackends;
+    qsizetype m_currentBackendIndex = 0;
 };
 
 static void forecastAppend(QQmlListProperty<WeatherData> *prop, WeatherData *val)
@@ -269,8 +272,9 @@ AppModel::AppModel(QObject *parent) :
                                                            forecastAt,
                                                            forecastClear);
 
-    connect(&d->m_openWeatherBackend, &ProviderBackend::weatherInformation,
-            this, &AppModel::handleWeatherData);
+    d->m_supportedBackends.push_back(new OpenWeatherMapBackend(this));
+    d->m_supportedBackends.push_back(new WeatherApiBackend(this));
+    registerBackend(0);
 
 //! [1]
     d->src = QGeoPositionInfoSource::createDefaultSource(this);
@@ -348,6 +352,23 @@ void AppModel::handleWeatherData(const LocationInfo &location,
         d->m_dataCache.addCacheElement(location, weatherDetails);
 }
 
+void AppModel::switchToNextBackend()
+{
+    deregisterCurrentBackend();
+    registerBackend(d->m_currentBackendIndex + 1);
+    if (d->m_currentBackend) {
+        // repeat the query
+        if (d->useGps)
+            requestWeatherByCoordinates();
+        else
+            requestWeatherByCity();
+    } else {
+        qWarning("The application has iterated through all of the weather backends, "
+                 "and none of them seems to respond now. Please wait until any of the "
+                 "backends becomes available again.");
+    }
+}
+
 bool AppModel::applyWeatherData(const QString &city, const QList<WeatherInfo> &weatherDetails)
 {
     // Check that we didn't get outdated weather data. The city should match,
@@ -394,8 +415,8 @@ void AppModel::requestWeatherByCoordinates()
     const auto cacheResult = d->m_dataCache.getWeatherData(d->coord);
     if (WeatherDataCache::isCacheResultValid(cacheResult))
         applyWeatherData(cacheResult.first, cacheResult.second);
-    else
-        d->m_openWeatherBackend.requestWeatherInfo(d->coord);
+    else if (d->m_currentBackend)
+        d->m_currentBackend->requestWeatherInfo(d->coord);
 }
 
 void AppModel::requestWeatherByCity()
@@ -403,8 +424,31 @@ void AppModel::requestWeatherByCity()
     const auto cacheResult = d->m_dataCache.getWeatherData(d->city);
     if (WeatherDataCache::isCacheResultValid(cacheResult))
         applyWeatherData(cacheResult.first, cacheResult.second);
-    else
-        d->m_openWeatherBackend.requestWeatherInfo(d->city);
+    else if (d->m_currentBackend)
+        d->m_currentBackend->requestWeatherInfo(d->city);
+}
+
+void AppModel::registerBackend(qsizetype index)
+{
+    if (index >= 0 && index < d->m_supportedBackends.size()) {
+        d->m_currentBackend = d->m_supportedBackends.at(index);
+        d->m_currentBackendIndex = index;
+        connect(d->m_currentBackend, &ProviderBackend::weatherInformation,
+                this, &AppModel::handleWeatherData);
+        connect(d->m_currentBackend, &ProviderBackend::errorOccurred,
+                this, &AppModel::switchToNextBackend);
+    }
+}
+
+void AppModel::deregisterCurrentBackend()
+{
+    if (d->m_currentBackend) {
+        disconnect(d->m_currentBackend, &ProviderBackend::weatherInformation,
+                   this, &AppModel::handleWeatherData);
+        disconnect(d->m_currentBackend, &ProviderBackend::errorOccurred,
+                   this, &AppModel::switchToNextBackend);
+        d->m_currentBackend = nullptr;
+    }
 }
 
 bool AppModel::hasValidCity() const

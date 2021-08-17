@@ -163,6 +163,7 @@ private slots:
     void positionUpdated(QGeoPositionInfo gpsPos);
     void positionError(QGeoPositionInfoSource::Error e);
     void handleWeatherData(const LocationInfo &location, const QList<WeatherInfo> &weatherDetails);
+    void switchToNextBackend();
 
 //! [3]
 signals:
@@ -176,6 +177,9 @@ private:
     bool applyWeatherData(const QString &city, const QList<WeatherInfo> &weatherDetails);
     void requestWeatherByCoordinates();
     void requestWeatherByCity();
+    void registerBackend(qsizetype index);
+    void deregisterCurrentBackend();
+
 
     AppModelPrivate *d;
 

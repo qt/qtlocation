@@ -54,7 +54,7 @@ Item {
     id: top
 
     property string topText: "Mon"
-    property string weatherIcon: "01d"
+    property string weatherIcon: "sunny"
     property string bottomText: "22*/23*"
 
     Text {

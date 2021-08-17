@@ -16,5 +16,6 @@
         <file>icons/weather-sunny-very-few-clouds.png</file>
         <file>icons/weather-sunny.png</file>
         <file>icons/weather-thundershower.png</file>
+        <file>icons/weather-showers-scattered.png</file>
     </qresource>
 </RCC>
