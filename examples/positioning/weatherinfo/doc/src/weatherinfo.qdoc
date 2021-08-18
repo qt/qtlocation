@@ -45,9 +45,27 @@
 
     \include examples-run.qdocinc
 
-    \section1 Application Data Models
+    \section1 Weather Data Providers
 
-    The example uses weather data provided by \l http://www.openweathermap.org.
+    The example uses two unrelated weather data providers:
+
+    \list
+    \li \l {http://www.openweathermap.org}{OpenWeather}
+    \li \l {https://www.weatherapi.com/}{WeatherAPI.com}
+    \endlist
+
+    The provider to be used is selected automatically at runtime and can be
+    changed if the selected provider is not available. However, it can't be
+    specified manually.
+
+    \note Free plans are used for both providers, which implies certain
+    limitations on the amount of weather requests. If the limits are exceeded,
+    the providers become temporary unavailable. When both providers are
+    unavailable, the application would not be able to show any weather
+    information. In this case it is required to wait until at least one of the
+    providers becomes available again.
+
+    \section1 Application Data Models
 
     The key part of this example is the application's data model, contained
     in the \c WeatherData and \c AppModel classes. \c WeatherData represents
@@ -60,7 +78,7 @@
 
     \c AppModel models the state of the entire application. At startup, we
     get the platform's default position source using
-    \l QGeoPositionInfoSource::createDefaultSource()
+    \l QGeoPositionInfoSource::createDefaultSource().
 
     \snippet weatherinfo/appmodel.cpp 0
     \snippet weatherinfo/appmodel.cpp 1
@@ -72,8 +90,8 @@
     begins regular updates of device position.
 
     When a position update is received, we use the longitude and latitude
-    of the returned coordinate to retrieve the current "city" name for use
-    in the weather lookup.
+    of the returned coordinate to retrieve weather data for the specified
+    location.
 
     \snippet weatherinfo/appmodel.cpp 2
 
@@ -88,8 +106,8 @@
     \snippet weatherinfo/appmodel.h 4
 
     We use a \l QQmlListProperty for the weather forecast information,
-    which contains the next 4 days of forecast weather. This makes it
-    easy to access from QML.
+    which contains the weather forecast for the next days (the number of days
+    is provider-specific). This makes it easy to access the forecast from QML.
 
     \section1 Expose Custom Models to QML
 
