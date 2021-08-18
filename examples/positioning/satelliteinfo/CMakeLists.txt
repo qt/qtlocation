@@ -35,17 +35,11 @@ target_link_libraries(satelliteinfo PRIVATE
     Qt::Quick
 )
 
-
-# Resources:
-set(satelliteinfo_resource_files
-    "satelliteinfo.qml"
-)
-
-qt6_add_resources(satelliteinfo "satelliteinfo"
-    PREFIX
-        "/"
-    FILES
-        ${satelliteinfo_resource_files}
+qt_add_qml_module(satelliteinfo
+    URI Local
+    VERSION 1.0
+    QML_FILES satelliteinfo.qml
+    NO_RESOURCE_TARGET_PATH
 )
 
 install(TARGETS satelliteinfo
@@ -53,9 +47,3 @@ install(TARGETS satelliteinfo
     BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
     LIBRARY DESTINATION "${INSTALL_EXAMPLEDIR}"
 )
-
-set_target_properties(satelliteinfo PROPERTIES
-    QT_QML_MODULE_VERSION 1.0
-    QT_QML_MODULE_URI Local
-)
-qt6_qml_type_registration(satelliteinfo)

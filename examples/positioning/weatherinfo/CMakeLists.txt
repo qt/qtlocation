@@ -39,32 +39,28 @@ target_link_libraries(weatherinfo PRIVATE
     Qt::Quick
 )
 
-
-# Resources:
-set(weatherinfo_resource_files
-    "components/BigForecastIcon.qml"
-    "components/ForecastIcon.qml"
-    "components/WeatherIcon.qml"
-    "icons/weather-few-clouds.png"
-    "icons/weather-fog.png"
-    "icons/weather-haze.png"
-    "icons/weather-icy.png"
-    "icons/weather-overcast.png"
-    "icons/weather-showers.png"
-    "icons/weather-sleet.png"
-    "icons/weather-snow.png"
-    "icons/weather-storm.png"
-    "icons/weather-sunny-very-few-clouds.png"
-    "icons/weather-sunny.png"
-    "icons/weather-thundershower.png"
-    "weatherinfo.qml"
-)
-
-qt6_add_resources(weatherinfo "weatherinfo"
-    PREFIX
-        "/"
-    FILES
-        ${weatherinfo_resource_files}
+qt_add_qml_module(weatherinfo
+    URI WeatherInfo
+    VERSION 1.0
+    QML_FILES
+        components/BigForecastIcon.qml
+        components/ForecastIcon.qml
+        components/WeatherIcon.qml
+        weatherinfo.qml
+    RESOURCES
+        icons/weather-few-clouds.png
+        icons/weather-fog.png
+        icons/weather-haze.png
+        icons/weather-icy.png
+        icons/weather-overcast.png
+        icons/weather-showers.png
+        icons/weather-sleet.png
+        icons/weather-snow.png
+        icons/weather-storm.png
+        icons/weather-sunny-very-few-clouds.png
+        icons/weather-sunny.png
+        icons/weather-thundershower.png
+    NO_RESOURCE_TARGET_PATH
 )
 
 install(TARGETS weatherinfo
@@ -72,9 +68,3 @@ install(TARGETS weatherinfo
     BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
     LIBRARY DESTINATION "${INSTALL_EXAMPLEDIR}"
 )
-
-set_target_properties(weatherinfo PROPERTIES
-    QT_QML_MODULE_VERSION 1.0
-    QT_QML_MODULE_URI WeatherInfo
-)
-qt6_qml_type_registration(weatherinfo)
