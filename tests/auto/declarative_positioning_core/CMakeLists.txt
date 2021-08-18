@@ -22,19 +22,14 @@ qt_internal_add_test(tst_declarative_positioning_core
     TESTDATA ${test_data}
 )
 
-# special case begin
-
-# These properties are required for the qt6_qml_type_registration()
-# to work properly
-set_target_properties(tst_declarative_positioning_core
-    PROPERTIES
-    QT_QML_MODULE_URI TestFactory
-    QT_QML_MODULE_VERSION 1.0
+qt_add_qml_module(tst_declarative_positioning_core
+    URI TestFactory
+    VERSION 1.0
+    QML_FILES
+        tst_address.qml
+        tst_coordinate.qml
+        tst_geoshape.qml
+        tst_position.qml
+        tst_positionsource.qml
+    NO_RESOURCE_TARGET_PATH
 )
-
-qt6_qml_type_registration(tst_declarative_positioning_core)
-
-# special case end
-
-#### Keys ignored in scope 1:.:.:declarative_positioning_core.pro:<TRUE>:
-# TEMPLATE = "app"
