@@ -15,9 +15,6 @@ qhp.QtPositioning.virtualFolder       = qtpositioning
 qhp.QtPositioning.indexTitle          = Qt Positioning
 qhp.QtPositioning.indexRoot           =
 
-qhp.QtPositioning.filterAttributes    = qtpositioning $QT_VERSION qtrefdoc
-qhp.QtPositioning.customFilters.Qt.name = QtPositioning $QT_VERSION
-qhp.QtPositioning.customFilters.Qt.filterAttributes = qtpositioning $QT_VERSION
 qhp.QtPositioning.subprojects         = classes qml examples
 qhp.QtPositioning.subprojects.classes.title = C++ Classes
 qhp.QtPositioning.subprojects.classes.indexTitle = Qt Positioning C++ Classes
