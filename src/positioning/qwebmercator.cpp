@@ -105,7 +105,7 @@ QGeoCoordinate QWebMercator::coordinateInterpolation(const QGeoCoordinate &from,
     QDoubleVector2D s = QWebMercator::coordToMercator(from);
     QDoubleVector2D e = QWebMercator::coordToMercator(to);
 
-    double x = s.x();
+    double x;
 
     if (0.5 < qAbs(e.x() - s.x())) {
         // handle dateline crossing
