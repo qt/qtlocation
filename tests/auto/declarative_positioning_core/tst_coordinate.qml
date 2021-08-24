@@ -307,15 +307,15 @@ Item {
                 if (lastLongitude) {
                     var errorMessage = "movingEast: " + movingEast + "; From: " + from + "; To: " + to + "; i: " + i + "; crdList: " + coordinateItem.coordinateList
                     if (movingEast) {
-                        if (coordinate.longitude > 0 && lastLongitude < 0)
-                            verify(coordinate.longitude < lastLongitude + 360, errorMessage)
-                        else
-                            verify(coordinate.longitude < lastLongitude, errorMessage)
-                    } else {
                         if (coordinate.longitude < 0 && lastLongitude > 0)
                             verify(coordinate.longitude + 360 > lastLongitude, errorMessage)
                         else
                             verify(coordinate.longitude > lastLongitude, errorMessage)
+                    } else {
+                        if (coordinate.longitude > 0 && lastLongitude < 0)
+                            verify(coordinate.longitude < lastLongitude + 360, errorMessage)
+                        else
+                            verify(coordinate.longitude < lastLongitude, errorMessage)
                     }
                 }
                 lastLongitude = coordinate.longitude
@@ -327,7 +327,7 @@ Item {
             //shortest
             coordinate_animation(QtPositioning.coordinate(58.0,12.0),
                                  QtPositioning.coordinate(62.0,24.0),
-                                 false)
+                                 true)
         }
 
         function test_east_direction_coordinate_animation(data)

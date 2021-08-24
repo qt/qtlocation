@@ -121,7 +121,7 @@ QVariant q_coordinateShortestInterpolator(const QGeoCoordinate &from, const QGeo
     return QVariant::fromValue(result);
 }
 
-QVariant q_coordinateWestInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
+QVariant q_coordinateEastInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
 {
     const QGeoMercatorCoordinatePrivate* fromMercator =
             static_cast<const QGeoMercatorCoordinatePrivate*>(QGeoCoordinatePrivate::get(&from));
@@ -151,7 +151,7 @@ QVariant q_coordinateWestInterpolator(const QGeoCoordinate &from, const QGeoCoor
     return QVariant::fromValue(result);
 }
 
-QVariant q_coordinateEastInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
+QVariant q_coordinateWestInterpolator(const QGeoCoordinate &from, const QGeoCoordinate &to, qreal progress)
 {
     const QGeoMercatorCoordinatePrivate* fromMercator =
             static_cast<const QGeoMercatorCoordinatePrivate*>(QGeoCoordinatePrivate::get(&from));
