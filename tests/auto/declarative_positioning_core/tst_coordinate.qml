@@ -322,12 +322,48 @@ Item {
             }
         }
 
-        function test_default_coordinate_animation()
+        function test_default_coordinate_animation(data)
         {
             //shortest
-            coordinate_animation(QtPositioning.coordinate(58.0,12.0),
-                                 QtPositioning.coordinate(62.0,24.0),
-                                 true)
+            coordinate_animation(data.from, data.to, data.east)
+        }
+
+        function test_default_coordinate_animation_data()
+        {
+            return [
+                {
+                    from: QtPositioning.coordinate(58.0, 12.0),
+                    to: QtPositioning.coordinate(62.0, 24.0),
+                    east: true
+                },
+                {
+                    from: QtPositioning.coordinate(58.0, 24.0),
+                    to: QtPositioning.coordinate(42.0, 12.0),
+                    east: false
+                },
+                // cross 0
+                {
+                    from: QtPositioning.coordinate(30, 10),
+                    to: QtPositioning.coordinate(20, -10),
+                    east: false
+                },
+                {
+                    from: QtPositioning.coordinate(30, -20),
+                    to: QtPositioning.coordinate(20, 10),
+                    east: true
+                },
+                // cross 180
+                {
+                    from: QtPositioning.coordinate(30, 170),
+                    to: QtPositioning.coordinate(30, -170),
+                    east: true
+                },
+                {
+                    from: QtPositioning.coordinate(30, -170),
+                    to: QtPositioning.coordinate(30, 170),
+                    east: false
+                },
+            ]
         }
 
         function test_east_direction_coordinate_animation(data)

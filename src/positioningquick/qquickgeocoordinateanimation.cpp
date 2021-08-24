@@ -105,7 +105,7 @@ QVariant q_coordinateShortestInterpolator(const QGeoCoordinate &from, const QGeo
         else if (sx < ex)
             ex -= 1.0;
 
-        x = fromX + (toX - fromX) * progress;
+        x = sx + (ex - sx) * progress;
 
         if (x < 0.0)
             x += 1.0;
