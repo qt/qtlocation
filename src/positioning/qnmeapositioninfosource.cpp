@@ -794,7 +794,7 @@ QNmeaPositionInfoSource::~QNmeaPositionInfoSource()
     The true UERE value is calculated from multiple error sources including errors introduced by
     the satellites and signal propogation delays through the atmosphere as well as errors
     introduced by the receiving GPS equipment. For details on GPS accuracy see
-    \l {http://edu-observatory.org/gps/gps_accuracy.html}.
+    \l {https://web.archive.org/web/20161212144906if_/http://edu-observatory.org/gps/gps_accuracy.html} {Sam J. Wormley, GPS Errors & Estimating Your Reveiver's Accuracy}.
 
     A typical value for UERE is approximately 5.1.
 
