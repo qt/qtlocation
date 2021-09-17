@@ -323,16 +323,14 @@ void AppModel::positionError(QGeoPositionInfoSource::Error e)
 {
     Q_UNUSED(e);
     qWarning() << "Position source error. Falling back to simulation mode.";
-    // cleanup insufficient QGeoPositionInfoSource instance
-    d->src->stopUpdates();
-    d->src->deleteLater();
-    d->src = nullptr;
 
     // activate simulation mode
-    d->useGps = false;
-    d->city = "Brisbane";
-    emit cityChanged();
-    requestWeatherByCity();
+    if (d->useGps) {
+        d->useGps = false;
+        d->city = "Brisbane";
+        emit cityChanged();
+        requestWeatherByCity();
+    }
 }
 
 void AppModel::refreshWeather()
