@@ -925,7 +925,7 @@ void QDeclarativePlace::category_append(QQmlListProperty<QDeclarativeCategory> *
 /*!
     \internal
 */
-int QDeclarativePlace::category_count(QQmlListProperty<QDeclarativeCategory> *prop)
+qsizetype QDeclarativePlace::category_count(QQmlListProperty<QDeclarativeCategory> *prop)
 {
     return static_cast<QDeclarativePlace *>(prop->object)->m_categories.count();
 }
@@ -934,7 +934,7 @@ int QDeclarativePlace::category_count(QQmlListProperty<QDeclarativeCategory> *pr
     \internal
 */
 QDeclarativeCategory *QDeclarativePlace::category_at(QQmlListProperty<QDeclarativeCategory> *prop,
-                                                                          int index)
+                                                     qsizetype index)
 {
     QDeclarativePlace *object = static_cast<QDeclarativePlace *>(prop->object);
     QDeclarativeCategory *res = NULL;

@@ -628,7 +628,7 @@ void QDeclarativeGeoServiceProvider::parameter_append(QQmlListProperty<QDeclarat
 /*!
     \internal
 */
-int QDeclarativeGeoServiceProvider::parameter_count(QQmlListProperty<QDeclarativePluginParameter> *prop)
+qsizetype QDeclarativeGeoServiceProvider::parameter_count(QQmlListProperty<QDeclarativePluginParameter> *prop)
 {
     return static_cast<QDeclarativeGeoServiceProvider *>(prop->object)->parameters_.count();
 }
@@ -636,7 +636,7 @@ int QDeclarativeGeoServiceProvider::parameter_count(QQmlListProperty<QDeclarativ
 /*!
     \internal
 */
-QDeclarativePluginParameter *QDeclarativeGeoServiceProvider::parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, int index)
+QDeclarativePluginParameter *QDeclarativeGeoServiceProvider::parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, qsizetype index)
 {
     return static_cast<QDeclarativeGeoServiceProvider *>(prop->object)->parameters_[index];
 }

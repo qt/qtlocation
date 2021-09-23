@@ -1586,12 +1586,12 @@ void QDeclarativeGeoRouteQuery::append(QQmlListProperty<QObject> *p, QObject *v)
     }
 }
 
-int QDeclarativeGeoRouteQuery::count(QQmlListProperty<QObject> *p)
+qsizetype QDeclarativeGeoRouteQuery::count(QQmlListProperty<QObject> *p)
 {
     return static_cast<QDeclarativeGeoRouteQuery*>(p->object)->m_children.count();
 }
 
-QObject *QDeclarativeGeoRouteQuery::at(QQmlListProperty<QObject> *p, int idx)
+QObject *QDeclarativeGeoRouteQuery::at(QQmlListProperty<QObject> *p, qsizetype idx)
 {
     return static_cast<QDeclarativeGeoRouteQuery*>(p->object)->m_children.at(idx);
 }
@@ -1908,12 +1908,12 @@ void QDeclarativeGeoWaypoint::append(QQmlListProperty<QObject> *p, QObject *v)
     }
 }
 
-int QDeclarativeGeoWaypoint::count(QQmlListProperty<QObject> *p)
+qsizetype QDeclarativeGeoWaypoint::count(QQmlListProperty<QObject> *p)
 {
     return static_cast<QDeclarativeGeoWaypoint*>(p->object)->m_children.count();
 }
 
-QObject *QDeclarativeGeoWaypoint::at(QQmlListProperty<QObject> *p, int idx)
+QObject *QDeclarativeGeoWaypoint::at(QQmlListProperty<QObject> *p, qsizetype idx)
 {
     return static_cast<QDeclarativeGeoWaypoint*>(p->object)->m_children.at(idx);
 }

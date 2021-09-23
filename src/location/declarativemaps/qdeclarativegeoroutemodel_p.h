@@ -256,8 +256,8 @@ protected:
 
     // For quickChildren
     static void append(QQmlListProperty<QObject> *p, QObject *v);
-    static int count(QQmlListProperty<QObject> *p);
-    static QObject *at(QQmlListProperty<QObject> *p, int idx);
+    static qsizetype count(QQmlListProperty<QObject> *p);
+    static QObject *at(QQmlListProperty<QObject> *p, qsizetype idx);
     static void clear(QQmlListProperty<QObject> *p);
     QQmlListProperty<QObject> declarativeChildren();
     QList<QObject*> m_children;
@@ -448,8 +448,8 @@ private Q_SLOTS:
 
 protected:
     static void append(QQmlListProperty<QObject> *p, QObject *v);
-    static int count(QQmlListProperty<QObject> *p);
-    static QObject *at(QQmlListProperty<QObject> *p, int idx);
+    static qsizetype count(QQmlListProperty<QObject> *p);
+    static QObject *at(QQmlListProperty<QObject> *p, qsizetype idx);
     static void clear(QQmlListProperty<QObject> *p);
 
     QQmlListProperty<QObject> declarativeChildren();

@@ -412,7 +412,7 @@ void QDeclarativeSearchResultModel::categories_append(QQmlListProperty<QDeclarat
     }
 }
 
-int QDeclarativeSearchResultModel::categories_count(QQmlListProperty<QDeclarativeCategory> *list)
+qsizetype QDeclarativeSearchResultModel::categories_count(QQmlListProperty<QDeclarativeCategory> *list)
 {
     QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel)
@@ -422,7 +422,7 @@ int QDeclarativeSearchResultModel::categories_count(QQmlListProperty<QDeclarativ
 }
 
 QDeclarativeCategory *QDeclarativeSearchResultModel::category_at(QQmlListProperty<QDeclarativeCategory> *list,
-                                                                          int index)
+                                                                 qsizetype index)
 {
     QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel && (searchModel->m_categories.count() > index) && (index > -1))

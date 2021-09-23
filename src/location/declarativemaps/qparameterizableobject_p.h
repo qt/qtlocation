@@ -87,8 +87,8 @@ protected:
     virtual void clearChildren();
 
     static void append(QQmlListProperty<QObject> *p, QObject *v);
-    static int count(QQmlListProperty<QObject> *p);
-    static QObject *at(QQmlListProperty<QObject> *p, int idx);
+    static qsizetype count(QQmlListProperty<QObject> *p);
+    static QObject *at(QQmlListProperty<QObject> *p, qsizetype idx);
     static void clear(QQmlListProperty<QObject> *p);
 
     QQmlListProperty<QObject> declarativeChildren();

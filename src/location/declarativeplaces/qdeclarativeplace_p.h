@@ -137,8 +137,8 @@ public:
     QQmlListProperty<QDeclarativeCategory> categories();
     static void category_append(QQmlListProperty<QDeclarativeCategory> *prop,
                                   QDeclarativeCategory *value);
-    static int category_count(QQmlListProperty<QDeclarativeCategory> *prop);
-    static QDeclarativeCategory *category_at(QQmlListProperty<QDeclarativeCategory> *prop, int index);
+    static qsizetype category_count(QQmlListProperty<QDeclarativeCategory> *prop);
+    static QDeclarativeCategory *category_at(QQmlListProperty<QDeclarativeCategory> *prop, qsizetype index);
     static void category_clear(QQmlListProperty<QDeclarativeCategory> *prop);
 
     QDeclarativeGeoLocation *location();

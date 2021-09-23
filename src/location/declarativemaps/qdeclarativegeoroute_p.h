@@ -103,8 +103,8 @@ Q_SIGNALS:
 
 private:
     static void segments_append(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, QDeclarativeGeoRouteSegment *segment);
-    static int segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
-    static QDeclarativeGeoRouteSegment *segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, int index);
+    static qsizetype segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
+    static QDeclarativeGeoRouteSegment *segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, qsizetype index);
     static void segments_clear(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
 
     void initSegments(unsigned int lastIndex = ~0U);

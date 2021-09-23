@@ -66,12 +66,12 @@ void QParameterizableObject::append(QQmlListProperty<QObject> *p, QObject *v)
     object->appendChild(v);
 }
 
-int QParameterizableObject::count(QQmlListProperty<QObject> *p)
+qsizetype QParameterizableObject::count(QQmlListProperty<QObject> *p)
 {
     return static_cast<QParameterizableObject*>(p->object)->m_children.count();
 }
 
-QObject *QParameterizableObject::at(QQmlListProperty<QObject> *p, int idx)
+QObject *QParameterizableObject::at(QQmlListProperty<QObject> *p, qsizetype idx)
 {
     return static_cast<QParameterizableObject*>(p->object)->m_children.at(idx);
 }

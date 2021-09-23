@@ -98,8 +98,8 @@ public:
     QQmlListProperty<QDeclarativeCategory> categories();
     static void categories_append(QQmlListProperty<QDeclarativeCategory> *list,
                                   QDeclarativeCategory *category);
-    static int categories_count(QQmlListProperty<QDeclarativeCategory> *list);
-    static QDeclarativeCategory *category_at(QQmlListProperty<QDeclarativeCategory> *list, int index);
+    static qsizetype categories_count(QQmlListProperty<QDeclarativeCategory> *list);
+    static QDeclarativeCategory *category_at(QQmlListProperty<QDeclarativeCategory> *list, qsizetype index);
     static void categories_clear(QQmlListProperty<QDeclarativeCategory> *list);
 
     QString recommendationId() const;

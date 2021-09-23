@@ -254,7 +254,7 @@ void QDeclarativeGeoRoute::segments_append(QQmlListProperty<QDeclarativeGeoRoute
 /*!
     \internal
 */
-int QDeclarativeGeoRoute::segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop)
+qsizetype QDeclarativeGeoRoute::segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop)
 {
     QDeclarativeGeoRoute *declRoute = static_cast<QDeclarativeGeoRoute *>(prop->object);
     return declRoute->segmentsCount();
@@ -263,7 +263,7 @@ int QDeclarativeGeoRoute::segments_count(QQmlListProperty<QDeclarativeGeoRouteSe
 /*!
     \internal
 */
-QDeclarativeGeoRouteSegment *QDeclarativeGeoRoute::segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, int index)
+QDeclarativeGeoRouteSegment *QDeclarativeGeoRoute::segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, qsizetype index)
 {
     QDeclarativeGeoRoute *declRoute = static_cast<QDeclarativeGeoRoute *>(prop->object);
     declRoute->initSegments(index); // init only what's needed.
