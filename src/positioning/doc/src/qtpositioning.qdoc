@@ -135,6 +135,7 @@ See \l{Qt Licensing} for further details.
     \li \l {Qt Positioning Plugins}
     \li \l {Interfaces between C++ and QML Code in Qt Positioning}
     \li \l {Qt Positioning on Android}
+    \li \l {Qt Positioning on iOS}
 \endlist
 
 \section1 Reference
