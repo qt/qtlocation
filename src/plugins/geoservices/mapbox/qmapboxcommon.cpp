@@ -131,7 +131,7 @@ QGeoLocation QMapboxCommon::parseGeoLocation(const QJsonObject &response)
     double left = bbox.at(0).toDouble();
     double bottom = bbox.at(1).toDouble();
     double right = bbox.at(2).toDouble();
-    location.setBoundingBox(QGeoRectangle(QGeoCoordinate(top, left), QGeoCoordinate(bottom, right)));
+    location.setBoundingShape(QGeoRectangle(QGeoCoordinate(top, left), QGeoCoordinate(bottom, right)));
 
     QJsonArray center = response.value(QStringLiteral("center")).toArray();
     location.setCoordinate(QGeoCoordinate(center.at(1).toDouble(), center.at(0).toDouble()));

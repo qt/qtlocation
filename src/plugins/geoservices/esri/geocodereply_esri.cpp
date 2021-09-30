@@ -197,7 +197,7 @@ QGeoLocation GeoCodeReplyEsri::parseCandidate(const QJsonObject& candidate)
     QGeoLocation location;
 
     location.setCoordinate(coordinate);
-    location.setBoundingBox(extent);
+    location.setBoundingShape(extent);
     location.setAddress(address);
 
     return location;

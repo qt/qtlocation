@@ -97,7 +97,7 @@ tst_qmlinterface::tst_qmlinterface()
     m_rectangle.setWidth(40.0);
 
     m_location.setAddress(m_address);
-    m_location.setBoundingBox(m_rectangle);
+    m_location.setBoundingShape(m_rectangle);
     m_location.setCoordinate(m_coordinate);
 
     m_category.setName(QStringLiteral("Test category"));

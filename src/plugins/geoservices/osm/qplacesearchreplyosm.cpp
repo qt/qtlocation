@@ -220,7 +220,7 @@ QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) con
     QGeoLocation location;
     location.setCoordinate(coordinate);
     location.setAddress(address);
-    location.setBoundingBox(parseBoundingBox(item.value(QStringLiteral("boundingbox")).toArray()));
+    location.setBoundingShape(parseBoundingBox(item.value(QStringLiteral("boundingbox")).toArray()));
 
     place.setLocation(location);
 

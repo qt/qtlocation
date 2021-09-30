@@ -163,7 +163,7 @@ QPlaceResult QPlaceSearchReplyHere::parsePlaceResult(const QJsonObject &item) co
         QJsonArray bbox = item.value(QStringLiteral("bbox")).toArray();
         QGeoRectangle box(QGeoCoordinate(bbox.at(3).toDouble(), bbox.at(0).toDouble()),
                             QGeoCoordinate(bbox.at(1).toDouble(), bbox.at(2).toDouble()));
-        location.setBoundingBox(box);
+        location.setBoundingShape(box);
     }
 
     place.setLocation(location);

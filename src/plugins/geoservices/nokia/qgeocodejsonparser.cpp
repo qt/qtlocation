@@ -358,7 +358,7 @@ bool parseLocation(const QJsonObject &obj, const QGeoShape &bounds, QGeoLocation
 
     loc->setAddress(address);
     loc->setCoordinate(coordinate);
-    loc->setBoundingBox(boundingBox);
+    loc->setBoundingShape(boundingBox);
 
     return true;
 }
