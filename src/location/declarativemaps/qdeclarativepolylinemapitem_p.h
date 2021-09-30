@@ -100,10 +100,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItem : public QDeclarativ
 public:
     enum Backend {
         Software = 0,
-#if QT_CONFIG(opengl)
         OpenGLLineStrip = 1,
         OpenGLExtruded = 2,
-#endif
     };
 
     explicit QDeclarativePolylineMapItem(QQuickItem *parent = 0);

@@ -191,14 +191,8 @@ void QDeclarativeRectangleMapItem::setBackend(QDeclarativeRectangleMapItem::Back
     QScopedPointer<QDeclarativeRectangleMapItemPrivate> d(
             (m_backend == Software) ? static_cast<QDeclarativeRectangleMapItemPrivate *>(
                     new QDeclarativeRectangleMapItemPrivateCPU(*this))
-#if QT_CONFIG(opengl)
                                     : static_cast<QDeclarativeRectangleMapItemPrivate *>(
                                             new QDeclarativeRectangleMapItemPrivateOpenGL(*this)));
-#else
-                                    : nullptr);
-    qFatal("Requested non software rendering backend, but source code is compiled wihtout opengl "
-           "support");
-#endif
 
     m_d.swap(d);
     m_d->onGeoGeometryChanged();
@@ -409,8 +403,6 @@ QDeclarativeRectangleMapItemPrivate::~QDeclarativeRectangleMapItemPrivate() {}
 
 QDeclarativeRectangleMapItemPrivateCPU::~QDeclarativeRectangleMapItemPrivateCPU() {}
 
-#if QT_CONFIG(opengl)
 QDeclarativeRectangleMapItemPrivateOpenGL::~QDeclarativeRectangleMapItemPrivateOpenGL() {}
-#endif
 
 QT_END_NAMESPACE

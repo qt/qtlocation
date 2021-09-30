@@ -109,8 +109,7 @@ public:
     void updateTiles(QGeoTiledMapTileContainerNode *root,
                      QGeoTiledMapScenePrivate *d,
                      double camAdjust,
-                     QQuickWindow *window,
-                     bool ogl);
+                     QQuickWindow *window);
 
     bool isTextureLinear;
 

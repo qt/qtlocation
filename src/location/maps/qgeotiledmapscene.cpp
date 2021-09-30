@@ -486,8 +486,7 @@ static bool qgeotiledmapscene_isTileInViewport(const QRectF &tileRect, const QMa
 void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                                        QGeoTiledMapScenePrivate *d,
                                        double camAdjust,
-                                       QQuickWindow *window,
-                                       bool ogl)
+                                       QQuickWindow *window)
 {
     // Set up the matrix...
     QDoubleVector3D eye = d->m_cameraEye;
@@ -534,12 +533,6 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                 } else {
                     node->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
                 }
-#if QT_CONFIG(opengl)
-                if (ogl)
-                    static_cast<QSGDefaultImageNode *>(node)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
-#else
-    Q_UNUSED(ogl);
-#endif
                 dirtyBits |= QSGNode::DirtyMaterial;
             }
             if (dirtyBits != 0)
@@ -567,10 +560,6 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
             } else {
                 tileNode->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
             }
-#if QT_CONFIG(opengl)
-            if (ogl)
-                static_cast<QSGDefaultImageNode *>(tileNode)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
-#endif
             root->addChild(s, tileNode);
         } else {
 #ifdef QT_LOCATION_DEBUG
@@ -595,7 +584,6 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
         return 0;
     }
 
-    bool isOpenGL = (window->rendererInterface()->graphicsApi() == QSGRendererInterface::OpenGL);
     QGeoTiledMapRootNode *mapRoot = static_cast<QGeoTiledMapRootNode *>(oldNode);
     if (!mapRoot)
         mapRoot = new QGeoTiledMapRootNode();
@@ -664,9 +652,9 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
 #ifdef QT_LOCATION_DEBUG
     d->m_sideLengthPixel = sideLength;
 #endif
-    mapRoot->updateTiles(mapRoot->tiles, d, 0, window, isOpenGL);
-    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength, window, isOpenGL);
-    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength, window, isOpenGL);
+    mapRoot->updateTiles(mapRoot->tiles, d, 0, window);
+    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength, window);
+    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength, window);
 
     mapRoot->isTextureLinear = d->m_linearScaling;
 

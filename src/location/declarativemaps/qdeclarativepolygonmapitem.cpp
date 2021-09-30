@@ -336,7 +336,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map, qreal stroke
         this->translate(QPointF(strokeWidth, strokeWidth));
 }
 
-#if QT_CONFIG(opengl)
 QGeoMapPolygonGeometryOpenGL::QGeoMapPolygonGeometryOpenGL(){
 }
 
@@ -347,7 +346,6 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const 
         geopath.append(QWebMercator::mercatorToCoord(c));
     updateSourcePoints(map, geopath);
 }
-#endif
 
 // wrapPath always preserves the geometry
 // This one handles holes
@@ -456,7 +454,6 @@ static void cutPathEars(const QList<QDoubleVector2D> &wrappedPath,
         screenIndices << quint32(i);
 }
 
-#if QT_CONFIG(opengl)
 /*!
     \internal
 */
@@ -599,7 +596,6 @@ void QGeoMapPolygonGeometryOpenGL::updateQuickGeometry(const QGeoProjectionWebMe
     sourceBounds_.setWidth(brect.width());
     sourceBounds_.setHeight(brect.height());
 }
-#endif // QT_CONFIG(opengl)
 /*
  * QDeclarativePolygonMapItem Private Implementations
  */
@@ -608,9 +604,7 @@ QDeclarativePolygonMapItemPrivate::~QDeclarativePolygonMapItemPrivate() {}
 
 QDeclarativePolygonMapItemPrivateCPU::~QDeclarativePolygonMapItemPrivateCPU() {}
 
-#if QT_CONFIG(opengl)
 QDeclarativePolygonMapItemPrivateOpenGL::~QDeclarativePolygonMapItemPrivateOpenGL() {}
-#endif
 /*
  * QDeclarativePolygonMapItem Implementation
  */
@@ -698,14 +692,8 @@ void QDeclarativePolygonMapItem::setBackend(QDeclarativePolygonMapItem::Backend 
     QScopedPointer<QDeclarativePolygonMapItemPrivate> d(
             (m_backend == Software) ? static_cast<QDeclarativePolygonMapItemPrivate *>(
                     new QDeclarativePolygonMapItemPrivateCPU(*this))
-#if QT_CONFIG(opengl)
                                     : static_cast<QDeclarativePolygonMapItemPrivate *>(
                                             new QDeclarativePolygonMapItemPrivateOpenGL(*this)));
-#else
-                                    : nullptr);
-    qFatal("Requested non software rendering backend, but source code is compiled wihtout opengl "
-           "support");
-#endif
     m_d.swap(d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
@@ -912,9 +900,9 @@ void QDeclarativePolygonMapItem::geometryChange(const QRectF &newGeometry, const
 
 //////////////////////////////////////////////////////////////////////
 
-#if QT_CONFIG(opengl)
-QSGMaterialShader *MapPolygonMaterial::createShader() const
+QSGMaterialShader *MapPolygonMaterial::createShader(QSGRendererInterface::RenderMode renderMode) const
 {
+    Q_UNUSED(renderMode);
     return new MapPolygonShader();
 }
 
@@ -931,7 +919,6 @@ QSGMaterialType *MapPolygonMaterial::type() const
     static QSGMaterialType type;
     return &type;
 }
-#endif
 
 MapPolygonNode::MapPolygonNode() :
     border_(new MapPolylineNode()),
@@ -983,7 +970,6 @@ void MapPolygonNode::update(const QColor &fillColor, const QColor &borderColor,
     }
 }
 
-#if QT_CONFIG(opengl)
 MapPolygonNodeGL::MapPolygonNodeGL() :
     //fill_material_(this),
     fill_material_(),
@@ -1030,12 +1016,13 @@ void MapPolygonNodeGL::update(const QColor &fillColor,
     }
 }
 
-MapPolygonShader::MapPolygonShader() : QSGMaterialShader(*new QSGMaterialShaderPrivate)
+MapPolygonShader::MapPolygonShader() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
 {
-
+    setShaderFileName(VertexStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polygon.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polygon.frag.qsb"));
 }
 
-void MapPolygonShader::updateState(const QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
+bool MapPolygonShader::updateUniformData(RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
 {
     Q_ASSERT(oldEffect == nullptr || newEffect->type() == oldEffect->type());
     MapPolygonMaterial *oldMaterial = static_cast<MapPolygonMaterial *>(oldEffect);
@@ -1045,9 +1032,33 @@ void MapPolygonShader::updateState(const QSGMaterialShader::RenderState &state, 
     const QMatrix4x4 &geoProjection = newMaterial->geoProjection();
     const QDoubleVector3D &center = newMaterial->center();
 
-    QVector3D vecCenter, vecCenter_lowpart;
+    // It is safer to use vec4 instead on vec3, as described in:
+    // https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)#Memory_layout
+    QVector4D vecCenter, vecCenter_lowpart;
     for (int i = 0; i < 3; i++)
         QLocationUtils::split_double(center.get(i), &vecCenter[i], &vecCenter_lowpart[i]);
+    vecCenter[3] = 0;
+    vecCenter_lowpart[3] = 0;
+
+    int offset = 0;
+    char *buf_p = state.uniformData()->data();
+
+    if (state.isMatrixDirty()) {
+        const QMatrix4x4 m = state.projectionMatrix();
+        memcpy(buf_p + offset, m.constData(), 4*4*4);
+    }
+    offset += 4*4*4;
+
+    memcpy(buf_p + offset, geoProjection.constData(), 4*4*4); offset+=4*4*4;
+
+    memcpy(buf_p + offset, &vecCenter, 4*4); offset += 4*4;
+
+    memcpy(buf_p + offset, &vecCenter_lowpart, 4*4); offset+=4*4;
+
+    const float wrapOffset = newMaterial->wrapOffset();
+    memcpy(buf_p + offset, &wrapOffset, 4); offset+=4;
+
+    offset += 4+4+4; // Padding
 
     if (oldMaterial == nullptr || c != oldMaterial->color() || state.isOpacityDirty()) {
         float opacity = state.opacity() * c.alphaF();
@@ -1055,19 +1066,10 @@ void MapPolygonShader::updateState(const QSGMaterialShader::RenderState &state, 
                     c.greenF() *  opacity,
                     c.blueF() * opacity,
                     opacity);
-        program()->setUniformValue(m_color_id, v);
+        memcpy(buf_p + offset, &v, 4*4);
     }
+    offset+=4*4;
 
-    if (state.isMatrixDirty())
-    {
-        program()->setUniformValue(m_matrix_id, state.projectionMatrix());
-    }
-
-    program()->setUniformValue(m_mapProjection_id, geoProjection);
-
-    program()->setUniformValue(m_center_id, vecCenter);
-    program()->setUniformValue(m_center_lowpart_id, vecCenter_lowpart);
-    program()->setUniformValue(m_wrapOffset_id, float(newMaterial->wrapOffset()));
+    return true;
 }
-#endif // QT_CONFIG(opengl)
 QT_END_NAMESPACE

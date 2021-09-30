@@ -446,7 +446,6 @@ void QDeclarativeCircleMapItem::updatePolish()
 */
 void QDeclarativeCircleMapItem::possiblySwitchBackend(const QGeoCoordinate &oldCenter, qreal oldRadius, const QGeoCoordinate &newCenter, qreal newRadius)
 {
-#if QT_CONFIG(opengl)
     if (m_backend != QDeclarativeCircleMapItem::OpenGL)
         return;
 
@@ -460,9 +459,6 @@ void QDeclarativeCircleMapItem::possiblySwitchBackend(const QGeoCoordinate &oldC
         QScopedPointer<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
         m_d.swap(d);
     }
-#else
-    return;
-#endif
 }
 
 /*!
@@ -541,14 +537,8 @@ void QDeclarativeCircleMapItem::setBackend(QDeclarativeCircleMapItem::Backend b)
     QScopedPointer<QDeclarativeCircleMapItemPrivate> d(
             (m_backend == Software) ? static_cast<QDeclarativeCircleMapItemPrivate *>(
                     new QDeclarativeCircleMapItemPrivateCPU(*this))
-#if QT_CONFIG(opengl)
                                     : static_cast<QDeclarativeCircleMapItemPrivate *>(
                                             new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
-#else
-                                    : nullptr);
-    qFatal("Requested non software rendering backend, but source code is compiled wihtout opengl "
-           "support");
-#endif
     m_d.swap(d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
@@ -577,9 +567,7 @@ QDeclarativeCircleMapItemPrivate::~QDeclarativeCircleMapItemPrivate() {}
 
 QDeclarativeCircleMapItemPrivateCPU::~QDeclarativeCircleMapItemPrivateCPU() {}
 
-#if QT_CONFIG(opengl)
 QDeclarativeCircleMapItemPrivateOpenGL::~QDeclarativeCircleMapItemPrivateOpenGL() {}
-#endif
 
 bool QDeclarativeCircleMapItemPrivate::preserveCircleGeometry (QList<QDoubleVector2D> &path,
                                     const QGeoCoordinate &center, qreal distance, const QGeoProjectionWebMercator &p)

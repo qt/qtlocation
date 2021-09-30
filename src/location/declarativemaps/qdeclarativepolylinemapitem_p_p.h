@@ -59,6 +59,7 @@
 #include <QtLocation/private/qgeomapitemgeometry_p.h>
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
+#include <QSGMaterialShader>
 #include <QtPositioning/QGeoPath>
 #include <QtPositioning/QGeoPolygon>
 #include <QtPositioning/QGeoRectangle>
@@ -142,10 +143,10 @@ public:
         // the vertex data. The shader will rely on the fact that
         // vertexCoord.xy is the Shape-space coordinate and so no modifications
         // are welcome.
-        setFlag(Blending | RequiresFullMatrix | CustomCompileStep);
+        setFlag(Blending | RequiresFullMatrix);
     }
 
-    QSGMaterialShader *createShader() const override;
+    QSGMaterialShader *createShader(QSGRendererInterface::RenderMode renderMode) const override;
 
     void setGeoProjection(const QMatrix4x4 &p)
     {
@@ -165,12 +166,6 @@ public:
     QDoubleVector3D center() const
     {
         return m_center;
-    }
-
-    void setColor(const QColor &color)
-    {
-        QSGFlatColorMaterial::setColor(color);
-        setFlag(Blending, true); // ToDo: Needed only temporarily, can be removed after debugging
     }
 
     int wrapOffset() const
@@ -216,7 +211,6 @@ protected:
     QSGGeometry geometry_;
 };
 
-#if QT_CONFIG(opengl)
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapItemLODGeometry
 {
 public:
@@ -383,49 +377,7 @@ class Q_LOCATION_PRIVATE_EXPORT MapPolylineShaderLineStrip : public QSGMaterialS
 public:
     MapPolylineShaderLineStrip();
 
-    const char *vertexShader() const override {
-        return
-        "attribute highp vec4 vertex;               \n"
-        "uniform highp mat4 qt_Matrix;              \n"
-        "uniform highp mat4 mapProjection;          \n"
-        "uniform highp vec3 center;                 \n"
-        "uniform highp vec3 center_lowpart;         \n"
-        "uniform lowp float wrapOffset;             \n"
-        "vec4 wrapped(in vec4 v) { return vec4(v.x + wrapOffset, v.y, 0.0, 1.0); }\n"
-        "void main() {                              \n"
-        "    vec4 vtx = wrapped(vertex) - vec4(center, 0.0);   \n"
-        "    vtx = vtx - vec4(center_lowpart, 0.0);   \n"
-        "    gl_Position = qt_Matrix * mapProjection * vtx;      \n"
-        "}";
-    }
-
-    const char *fragmentShader() const override {
-        return
-        "uniform lowp vec4 color;                   \n"
-        "void main() {                              \n"
-        "    gl_FragColor = color;                  \n"
-        "}";
-    }
-
-    void updateState(const RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect) override;
-    char const *const *attributeNames() const override;
-
-protected:
-    void initialize() override
-    {
-        m_matrix_id = program()->uniformLocation("qt_Matrix");
-        m_color_id = program()->uniformLocation("color");
-        m_mapProjection_id = program()->uniformLocation("mapProjection");
-        m_center_id = program()->uniformLocation("center");
-        m_center_lowpart_id = program()->uniformLocation("center_lowpart");
-        m_wrapOffset_id = program()->uniformLocation("wrapOffset");
-    }
-    int m_center_id;
-    int m_center_lowpart_id;
-    int m_mapProjection_id;
-    int m_matrix_id;
-    int m_color_id;
-    int m_wrapOffset_id;
+    bool updateUniformData(RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect) override;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT MapPolylineShaderExtruded : public QSGMaterialShader
@@ -433,49 +385,7 @@ class Q_LOCATION_PRIVATE_EXPORT MapPolylineShaderExtruded : public QSGMaterialSh
 public:
     MapPolylineShaderExtruded();
 
-    // Heavily adapted from https://github.com/mattdesl/webgl-lines/blob/master/projected/vert.glsl,
-    // that is (c) Matt DesLauriers, and released under the MIT license.
-    const char *vertexShaderMiteredSegments() const;
-
-    const char *vertexShader() const override
-    {
-        return vertexShaderMiteredSegments();
-    }
-
-    const char *fragmentShader() const override
-    {
-        return
-        "varying vec4 primitivecolor;           \n"
-        "void main() {                          \n"
-        "    gl_FragColor = primitivecolor;     \n"
-        "}";
-    }
-
-    void updateState(const RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect) override;
-    char const *const *attributeNames() const override;
-
-protected:
-    void initialize() override
-    {
-        m_matrix_id = program()->uniformLocation("qt_Matrix");
-        m_color_id = program()->uniformLocation("color");
-        m_mapProjection_id = program()->uniformLocation("mapProjection");
-        m_center_id = program()->uniformLocation("center");
-        m_center_lowpart_id = program()->uniformLocation("center_lowpart");
-        m_lineWidth_id = program()->uniformLocation("lineWidth");
-        m_aspect_id = program()->uniformLocation("aspect");
-        m_miter_id = program()->uniformLocation("miter");
-        m_wrapOffset_id = program()->uniformLocation("wrapOffset");
-    }
-    int m_center_id;
-    int m_center_lowpart_id;
-    int m_mapProjection_id;
-    int m_matrix_id;
-    int m_color_id;
-    int m_lineWidth_id;
-    int m_aspect_id;
-    int m_miter_id;
-    int m_wrapOffset_id;
+    bool updateUniformData(RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect) override;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT MapPolylineNodeOpenGLLineStrip : public MapItemGeometryNode
@@ -503,7 +413,7 @@ public:
     {
 
     }
-    QSGMaterialShader *createShader() const override;
+    QSGMaterialShader *createShader(QSGRendererInterface::RenderMode renderMode) const override;
 
     void setMiter(const int m)
     {
@@ -525,7 +435,7 @@ class Q_LOCATION_PRIVATE_EXPORT MapPolylineNodeOpenGLExtruded : public MapItemGe
 {
 public:
 
-    typedef struct {
+    typedef struct MapPolylineEntry {
          QDeclarativeGeoMapItemUtils::vec2 pos;
          QDeclarativeGeoMapItemUtils::vec2 prev;
          QDeclarativeGeoMapItemUtils::vec2 next;
@@ -533,11 +443,6 @@ public:
          float triangletype; // es2 does not support int attribs
          float vertextype;
 
-         static const char * const *attributeNames()
-         {
-             static char const *const attr[] = { "vertex", "previous", "next", "direction", "triangletype", "vertextype", nullptr };
-             return attr;
-         }
          static const QSGGeometry::AttributeSet &attributes()
          {
              static const QSGGeometry::Attribute dataTri[] = {
@@ -571,7 +476,6 @@ protected:
     MapPolylineMaterialExtruded fill_material_;
     QSGGeometry m_geometryTriangulating;
 };
-#endif // QT_CONFIG(opengl)
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivate
 {
@@ -726,7 +630,6 @@ public:
     MapPolylineNode *m_node = nullptr;
 };
 
-#if QT_CONFIG(opengl)
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateOpenGLLineStrip: public QDeclarativePolylineMapItemPrivate
 {
 public:
@@ -891,7 +794,6 @@ public:
 
     MapPolylineNodeOpenGLExtruded *m_nodeTri = nullptr;
 };
-#endif // QT_CONFIG(opengl)
 QT_END_NAMESPACE
 
 #endif // QDECLARATIVEPOLYLINEMAPITEM_P_P_H
