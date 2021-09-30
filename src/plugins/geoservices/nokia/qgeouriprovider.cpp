@@ -61,7 +61,7 @@ QGeoUriProvider::QGeoUriProvider(
 QString QGeoUriProvider::getCurrentHost() const
 {
     if (m_maxSubdomains) {
-        QString result(m_firstSubdomain.toLatin1() + QRandomGenerator::global()->bounded(m_maxSubdomains));
+        auto result = QString("%1%2").arg(m_firstSubdomain.toLatin1()).arg(QRandomGenerator::global()->bounded(m_maxSubdomains));
         result += '.' + m_currentHost;
         return result;
     }
