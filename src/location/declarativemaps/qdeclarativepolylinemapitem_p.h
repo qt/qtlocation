@@ -142,7 +142,7 @@ protected Q_SLOTS:
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 protected:
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+    void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     void setPathFromGeoList(const QList<QGeoCoordinate> &path);
     void updatePolish() override;
     void componentComplete() override;

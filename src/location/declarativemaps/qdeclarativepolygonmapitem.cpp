@@ -484,7 +484,7 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map,
     // 2) Store the triangulated polygon, and the wrapped bbox paths.
     //    the triangulations can be used as they are, as they "bypass" the QtQuick display chain
     //    the bbox wraps have to be however clipped, and then projected, in order to figure out the geometry.
-    //    Note that this might still cause the geometryChanged method to fail under some extreme conditions.
+    //    Note that this might still cause the geometryChange method to fail under some extreme conditions.
     cutPathEars(wrappedPath, m_screenVertices, m_screenIndices);
 
     m_wrappedPolygons.resize(3);
@@ -519,7 +519,7 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const 
     // 2) Store the triangulated polygon, and the wrapped bbox paths.
     //    the triangulations can be used as they are, as they "bypass" the QtQuick display chain
     //    the bbox wraps have to be however clipped, and then projected, in order to figure out the geometry.
-    //    Note that this might still cause the geometryChanged method to fail under some extreme conditions.
+    //    Note that this might still cause the geometryChange method to fail under some extreme conditions.
     cutPathEars(wrappedPath, m_screenVertices, m_screenIndices);
     m_wrappedPolygons.resize(3);
     m_wrappedPolygons[0].wrappedBboxes = wrappedBboxMinus1;
@@ -883,10 +883,10 @@ void QDeclarativePolygonMapItem::setGeoShape(const QGeoShape &shape)
 /*!
     \internal
 */
-void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativePolygonMapItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (newGeometry.topLeft() == oldGeometry.topLeft() || !map() || !m_geopoly.isValid() || m_updatingGeometry) {
-        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        QDeclarativeGeoMapItemBase::geometryChange(newGeometry, oldGeometry);
         return;
     }
     // TODO: change the algorithm to preserve the distances and size!
@@ -903,7 +903,7 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
     m_d->onGeoGeometryChanged();
     emit pathChanged();
 
-    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // Not calling QDeclarativeGeoMapItemBase::geometryChange() as it will be called from a nested
     // call to this function.
 }
 

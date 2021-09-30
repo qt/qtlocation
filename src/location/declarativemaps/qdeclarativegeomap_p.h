@@ -254,7 +254,7 @@ protected:
 
     void componentComplete() override;
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+    void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
 
     void setError(QGeoServiceProvider::Error error, const QString &errorString);
     void initialize();

@@ -2275,10 +2275,10 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 /*!
     \internal
 */
-void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativeGeoMap::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     m_gestureArea->setSize(newGeometry.size());
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickItem::geometryChange(newGeometry, oldGeometry);
 
     if (!m_map || newGeometry.size().isEmpty())
         return;

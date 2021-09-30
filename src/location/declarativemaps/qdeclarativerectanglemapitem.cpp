@@ -377,10 +377,10 @@ void QDeclarativeRectangleMapItem::setGeoShape(const QGeoShape &shape)
 /*!
     \internal
 */
-void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativeRectangleMapItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (!map() || !m_rectangle.isValid() || m_updatingGeometry || newGeometry.topLeft() == oldGeometry.topLeft()) {
-        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        QDeclarativeGeoMapItemBase::geometryChange(newGeometry, oldGeometry);
         return;
     }
     // TODO: change the algorithm to preserve the distances and size
@@ -398,7 +398,7 @@ void QDeclarativeRectangleMapItem::geometryChanged(const QRectF &newGeometry, co
     emit topLeftChanged(m_rectangle.topLeft());
     emit bottomRightChanged(m_rectangle.bottomRight());
 
-    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // Not calling QDeclarativeGeoMapItemBase::geometryChange() as it will be called from a nested
     // call to this function.
 }
 

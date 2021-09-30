@@ -554,10 +554,10 @@ void QDeclarativeCircleMapItem::setBackend(QDeclarativeCircleMapItem::Backend b)
 /*!
     \internal
 */
-void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativeCircleMapItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (!map() || !m_circle.isValid() || m_updatingGeometry || newGeometry == oldGeometry) {
-        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        QDeclarativeGeoMapItemBase::geometryChange(newGeometry, oldGeometry);
         return;
     }
 
@@ -566,7 +566,7 @@ void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const
     if (newCoordinate.isValid())
         setCenter(newCoordinate); // ToDo: this is incorrect. setting such center might yield to another geometry changed.
 
-    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // Not calling QDeclarativeGeoMapItemBase::geometryChange() as it will be called from a nested
     // call to this function.
 }
 

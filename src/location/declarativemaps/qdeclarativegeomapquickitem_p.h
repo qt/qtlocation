@@ -106,7 +106,7 @@ Q_SIGNALS:
     void zoomLevelChanged();
 
 protected:
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+    void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     void updatePolish() override;
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
 

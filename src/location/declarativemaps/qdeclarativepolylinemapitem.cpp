@@ -1242,10 +1242,10 @@ void QDeclarativePolylineMapItem::setBackend(QDeclarativePolylineMapItem::Backen
 /*!
     \internal
 */
-void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativePolylineMapItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (newGeometry.topLeft() == oldGeometry.topLeft() || !map() || !m_geopath.isValid() || m_updatingGeometry) {
-        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        QDeclarativeGeoMapItemBase::geometryChange(newGeometry, oldGeometry);
         return;
     }
     // TODO: change the algorithm to preserve the distances and size!
@@ -1262,7 +1262,7 @@ void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, con
     m_d->onGeoGeometryChanged();
     emit pathChanged();
 
-    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // Not calling QDeclarativeGeoMapItemBase::geometryChange() as it will be called from a nested
     // call to this function.
 }
 

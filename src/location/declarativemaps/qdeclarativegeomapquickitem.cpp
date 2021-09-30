@@ -212,11 +212,11 @@ bool QDeclarativeGeoMapQuickItem::childMouseEventFilter(QQuickItem *receiver, QE
 /*!
     \internal
 */
-void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativeGeoMapQuickItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (!mapAndSourceItemSet_ || updatingGeometry_ ||
         newGeometry.topLeft() == oldGeometry.topLeft()) {
-        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        QDeclarativeGeoMapItemBase::geometryChange(newGeometry, oldGeometry);
         return;
     }
 
@@ -242,7 +242,7 @@ void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, con
     if (newCoordinate.isValid())
         setCoordinate(newCoordinate);
 
-    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // Not calling QDeclarativeGeoMapItemBase::geometryChange() as it will be called from a nested
     // call to this function.
 }
 
