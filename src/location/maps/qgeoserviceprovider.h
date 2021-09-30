@@ -45,7 +45,6 @@
 QT_BEGIN_NAMESPACE
 
 class QLocale;
-class QStringList;
 class QGeoCodingManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;

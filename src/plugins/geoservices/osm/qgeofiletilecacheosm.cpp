@@ -40,8 +40,6 @@
 #include <QDirIterator>
 #include <QPair>
 #include <QDateTime>
-#include <QtConcurrent>
-#include <QThread>
 
 QT_BEGIN_NAMESPACE
 

@@ -37,6 +37,7 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 #include <QtQml/QQmlInfo>
 #include <QtQml/QQmlEngine>
+#include <QLocale>
 
 QT_BEGIN_NAMESPACE
 

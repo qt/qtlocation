@@ -40,8 +40,8 @@
 #include "qgeotileproviderosm.h"
 #include <QtLocation/private/qgeofiletilecache_p.h>
 #include <QHash>
-#include <QtConcurrent>
 #include <qatomic.h>
+#include <QDir>
 
 QT_BEGIN_NAMESPACE
 

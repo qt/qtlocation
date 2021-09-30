@@ -50,7 +50,6 @@ class QGeoRouteReplyOsm : public QGeoRouteReply
     Q_OBJECT
 
 public:
-    explicit QGeoRouteReplyOsm(QObject *parent = 0);
     QGeoRouteReplyOsm(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = 0);
     ~QGeoRouteReplyOsm();
 
