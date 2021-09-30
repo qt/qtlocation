@@ -242,7 +242,6 @@ protected:
     void mousePressEvent(QMouseEvent *event) override ;
     void mouseMoveEvent(QMouseEvent *event) override ;
     void mouseReleaseEvent(QMouseEvent *event) override ;
-    void mouseUngrabEvent() override ;
     void touchUngrabEvent() override;
     void touchEvent(QTouchEvent *event) override ;
 #if QT_CONFIG(wheelevent)
@@ -251,7 +250,7 @@ protected:
 
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
     bool sendMouseEvent(QMouseEvent *event);
-    bool sendTouchEvent(QTouchEvent *event);
+    bool sendTouchEvent(QPointerEvent *event);
 
     void componentComplete() override;
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;

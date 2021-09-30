@@ -162,14 +162,13 @@ public:
     qreal flickDeceleration() const;
     void setFlickDeceleration(qreal deceleration);
 
-    void handleTouchEvent(QTouchEvent *event);
+    void handleTouchEvent(QPointerEvent *event);
 #if QT_CONFIG(wheelevent)
     void handleWheelEvent(QWheelEvent *event);
 #endif
     void handleMousePressEvent(QMouseEvent *event);
     void handleMouseMoveEvent(QMouseEvent *event);
     void handleMouseReleaseEvent(QMouseEvent *event);
-    void handleMouseUngrabEvent();
     void handleTouchUngrabEvent();
 
     void setMinimumZoomLevel(qreal min);
@@ -333,7 +332,6 @@ private:
     QPointF m_lastPos;
     QList<QTouchEvent::TouchPoint> m_allPoints;
     QList<QTouchEvent::TouchPoint> m_touchPoints;
-    QScopedPointer<QTouchEvent::TouchPoint> m_mousePoint;
     QPointF m_sceneStartPoint1;
 
     // only set when two points in contact
