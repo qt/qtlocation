@@ -70,7 +70,7 @@ QMapPolygonObjectPrivateDefault::QMapPolygonObjectPrivateDefault(QGeoMapObject *
 
 QMapPolygonObjectPrivateDefault::QMapPolygonObjectPrivateDefault(const QMapPolygonObjectPrivate &other) : QMapPolygonObjectPrivate(other.q)
 {
-    m_path.setPath(other.path()); // to stay on the safe side
+    m_path.setPerimeter(other.path()); // to stay on the safe side
     QGeoPolygon poly(other.geoShape()); // to handle holes
     for (int i = 0; i < poly.holesCount(); i++)
         m_path.addHole(poly.holePath(i));
@@ -91,12 +91,12 @@ QGeoMapObject::Type QMapPolygonObjectPrivate::type() const
 
 QList<QGeoCoordinate> QMapPolygonObjectPrivateDefault::path() const
 {
-    return m_path.path();
+    return m_path.perimeter();
 }
 
 void QMapPolygonObjectPrivateDefault::setPath(const QList<QGeoCoordinate> &path)
 {
-    m_path.setPath(path);
+    m_path.setPerimeter(path);
 }
 
 QColor QMapPolygonObjectPrivateDefault::fillColor() const
@@ -147,7 +147,7 @@ void QMapPolygonObjectPrivateDefault::setGeoShape(const QGeoShape &shape)
     const QGeoPolygon poly(shape);
     for (int i = 0; i < poly.holesCount(); i++)
         m_path.addHole(poly.holePath(i));
-    setPath(poly.path()); // to handle overrides. Last as it normally emits static_cast<QMapPolygonObject *>(q)->pathChanged();
+    setPath(poly.perimeter()); // to handle overrides. Last as it normally emits static_cast<QMapPolygonObject *>(q)->pathChanged();
 }
 
 bool QMapPolygonObjectPrivate::equals(const QGeoMapObjectPrivate &other) const
@@ -174,7 +174,7 @@ void QMapPolygonObjectPrivate::setGeoShape(const QGeoShape &shape)
         return;
 
     const QGeoPolygon poly(shape);
-    setPath(poly.path()); // to handle overrides
+    setPath(poly.perimeter()); // to handle overrides
     emit static_cast<QMapPolygonObject *>(q)->pathChanged();
 }
 

@@ -751,9 +751,9 @@ void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const
 {
     if (!sourceDirty_)
         return;
-    QGeoPath p(poly.path());
-    if (poly.path().size() && poly.path().last() != poly.path().first())
-        p.addCoordinate(poly.path().first());
+    QGeoPath p(poly.perimeter());
+    if (poly.perimeter().size() && poly.perimeter().last() != poly.perimeter().first())
+        p.addCoordinate(poly.perimeter().first());
     updateSourcePoints(map, p);
 }
 
@@ -798,7 +798,7 @@ void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoProjectionWebMe
     }
     QGeoPolygon bbox(QGeoRectangle(topLeft, bottomRight));
     QList<QDoubleVector2D> wrappedBbox, wrappedBboxPlus1, wrappedBboxMinus1;
-    QDeclarativeGeoMapItemUtils::wrapPath(bbox.path(), bbox.boundingGeoRectangle().topLeft(), p,
+    QDeclarativeGeoMapItemUtils::wrapPath(bbox.perimeter(), bbox.boundingGeoRectangle().topLeft(), p,
              wrappedBbox, wrappedBboxMinus1, wrappedBboxPlus1, &m_bboxLeftBoundWrapped);
 
     // New pointers, some old LOD task might still be running and operating on the old pointers.

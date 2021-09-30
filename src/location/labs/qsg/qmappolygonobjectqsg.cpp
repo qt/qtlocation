@@ -126,7 +126,7 @@ void QMapPolygonObjectPrivateQSG::updateGeometry()
     if (!m_map || m_map->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
 
-    if (m_path.path().length() == 0) { // Possibly cleared
+    if (m_path.perimeter().length() == 0) { // Possibly cleared
         m_geometry.clear();
         m_borderGeometry.clear();
         return;

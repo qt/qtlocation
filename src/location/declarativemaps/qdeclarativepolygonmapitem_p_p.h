@@ -346,7 +346,7 @@ public:
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
         m_geopathProjected.clear();
         m_geopathProjected.reserve(m_poly.m_geopoly.size());
-        for (const QGeoCoordinate &c : m_poly.m_geopoly.path())
+        for (const QGeoCoordinate &c : m_poly.m_geopoly.perimeter())
             m_geopathProjected << p.geoToMapProjection(c);
     }
     void updateCache()
@@ -354,7 +354,7 @@ public:
         if (!m_poly.map() || m_poly.map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
             return;
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
-        m_geopathProjected << p.geoToMapProjection(m_poly.m_geopoly.path().last());
+        m_geopathProjected << p.geoToMapProjection(m_poly.m_geopoly.perimeter().last());
     }
     void preserveGeometry()
     {
@@ -390,7 +390,7 @@ public:
     }
     void updatePolish() override
     {
-        if (m_poly.m_geopoly.path().length() == 0) { // Possibly cleared
+        if (m_poly.m_geopoly.perimeter().length() == 0) { // Possibly cleared
             m_geometry.clear();
             m_borderGeometry.clear();
             m_poly.setWidth(0);
@@ -557,7 +557,7 @@ public:
     }
     void updatePolish() override
     {
-        if (m_poly.m_geopoly.path().length() == 0) { // Possibly cleared
+        if (m_poly.m_geopoly.perimeter().length() == 0) { // Possibly cleared
             m_geometry.clear();
             m_borderGeometry.clear();
             m_poly.setWidth(0);

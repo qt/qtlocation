@@ -135,7 +135,7 @@ QMapbox::Feature featureFromMapPolygon(QDeclarativePolygonMapItem *mapItem)
     const bool crossesDateline = geoRectangleCrossesDateLine(polygon->boundingGeoRectangle());
     QMapbox::CoordinatesCollections geometry;
     QMapbox::CoordinatesCollection poly;
-    QMapbox::Coordinates coordinates = qgeocoordinate2mapboxcoordinate(polygon->path(), crossesDateline, true);
+    QMapbox::Coordinates coordinates = qgeocoordinate2mapboxcoordinate(polygon->perimeter(), crossesDateline, true);
     poly.push_back(coordinates);
     for (int i = 0; i < polygon->holesCount(); ++i) {
         coordinates = qgeocoordinate2mapboxcoordinate(polygon->holePath(i), crossesDateline, true);

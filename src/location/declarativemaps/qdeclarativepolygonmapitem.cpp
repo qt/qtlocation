@@ -358,7 +358,7 @@ static void wrapPath(const QGeoPolygon &poly
     for (int i = 0; i < 1+poly.holesCount(); ++i) {
         QList<QDoubleVector2D> path;
         if (!i) {
-            for (const QGeoCoordinate &c : poly.path())
+            for (const QGeoCoordinate &c : poly.perimeter())
                 path << p.geoToMapProjection(c);
         } else {
             for (const QGeoCoordinate &c : poly.holePath(i-1))
@@ -478,7 +478,7 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map,
     // 1.1) do the same for the bbox
     QList<QDoubleVector2D> wrappedBbox, wrappedBboxPlus1, wrappedBboxMinus1;
     QGeoPolygon bbox(QGeoPath(perimeter).boundingGeoRectangle());
-    QDeclarativeGeoMapItemUtils::wrapPath(bbox.path(), bbox.boundingGeoRectangle().topLeft(), p,
+    QDeclarativeGeoMapItemUtils::wrapPath(bbox.perimeter(), bbox.boundingGeoRectangle().topLeft(), p,
              wrappedBbox, wrappedBboxMinus1, wrappedBboxPlus1, &m_bboxLeftBoundWrapped);
 
     // 2) Store the triangulated polygon, and the wrapped bbox paths.
@@ -513,7 +513,7 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const 
     // 1.1) do the same for the bbox
     QList<QDoubleVector2D> wrappedBbox, wrappedBboxPlus1, wrappedBboxMinus1;
     QGeoPolygon bbox(poly.boundingGeoRectangle());
-    QDeclarativeGeoMapItemUtils::wrapPath(bbox.path(), bbox.boundingGeoRectangle().topLeft(), p,
+    QDeclarativeGeoMapItemUtils::wrapPath(bbox.perimeter(), bbox.boundingGeoRectangle().topLeft(), p,
              wrappedBbox, wrappedBboxMinus1, wrappedBboxPlus1, &m_bboxLeftBoundWrapped);
 
     // 2) Store the triangulated polygon, and the wrapped bbox paths.
@@ -729,7 +729,7 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
 */
 QJSValue QDeclarativePolygonMapItem::path() const
 {
-    return fromList(this, m_geopoly.path());
+    return fromList(this, m_geopoly.perimeter());
 }
 
 void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
@@ -740,10 +740,10 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
     QList<QGeoCoordinate> pathList = toList(this, value);
 
     // Equivalent to QDeclarativePolylineMapItem::setPathFromGeoList
-    if (m_geopoly.path() == pathList)
+    if (m_geopoly.perimeter() == pathList)
         return;
 
-    m_geopoly.setPath(pathList);
+    m_geopoly.setPerimeter(pathList);
 
     m_d->onGeoGeometryChanged();
     emit pathChanged();
@@ -779,9 +779,9 @@ void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 */
 void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordinate)
 {
-    int length = m_geopoly.path().length();
+    int length = m_geopoly.perimeter().length();
     m_geopoly.removeCoordinate(coordinate);
-    if (m_geopoly.path().length() == length)
+    if (m_geopoly.perimeter().length() == length)
         return;
 
     m_d->onGeoGeometryChanged();
