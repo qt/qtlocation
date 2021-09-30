@@ -340,7 +340,7 @@ void QMapObjectView::modelUpdated(const QQmlChangeSet &changeSet, bool reset)
             m_instantiatedMapObjects.insert(idx, nullptr);
             QGeoMapObject *mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(idx, incubationMode));
             if (mo) {// if not, a createdItem signal will be emitted later, else it has been emitted already while createBlocker is in effect.
-                mo->setParent(this);
+                mo->setParentAndNotify(this);
                 addMapObjectToMap(mo, idx);
             }
         }
@@ -398,7 +398,7 @@ void QMapObjectView::createdItem(int index, QObject * /*object*/)
     QGeoMapObject *mo = nullptr;
     mo = qobject_cast<QGeoMapObject *>(m_delegateModel->object(index, incubationMode));
     if (mo) {
-        mo->setParent(this);
+        mo->setParentAndNotify(this);
         addMapObjectToMap(mo, index);
     } else {
         qWarning() << "QQmlDelegateModel::object called in createdItem for " << index << " produced a null object";

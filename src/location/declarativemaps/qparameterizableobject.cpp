@@ -94,11 +94,9 @@ public:
         static bool initialized = false;
         if (!initialized) {
             initialized = true;
-            QAbstractDeclarativeData::parentChanged = parentChanged;
         }
     }
 
-    static void parentChanged(QAbstractDeclarativeData *d, QObject *o, QObject *p);
 };
 
 Q_GLOBAL_STATIC(QParameterizableObjectData, parametrizableObjectData)
@@ -109,13 +107,12 @@ QParameterizableObject::QParameterizableObject(QObject *parent)
     QObjectPrivate::get(this)->declarativeData = parametrizableObjectData;
 }
 
-void QParameterizableObjectData::parentChanged(QAbstractDeclarativeData *d, QObject *o, QObject *p)
+void QParameterizableObject::setParentAndNotify(QObject *parent)
 {
-    Q_UNUSED(p);
-    Q_UNUSED(d);
-    QParameterizableObject *po = qobject_cast<QParameterizableObject *>(o);
-    if (po)
-        po->parentChanged();
+    QObject *oldParent = this->parent();
+    QObject::setParent(parent);
+    if (parent != oldParent)
+        emit parentChanged();
 }
 
 QT_END_NAMESPACE

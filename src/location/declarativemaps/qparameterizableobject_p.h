@@ -77,6 +77,8 @@ public:
         return res;
     }
 
+    void setParentAndNotify(QObject *parent);
+
 Q_SIGNALS:
     void parentChanged();
 
