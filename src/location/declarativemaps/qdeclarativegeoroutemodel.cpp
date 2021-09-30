@@ -1757,17 +1757,20 @@ bool QDeclarativeGeoWaypoint::operator==(const QDeclarativeGeoWaypoint &other) c
 */
 qreal QDeclarativeGeoWaypoint::latitude() const
 {
-    return m_coordinate.latitude();
+    return m_coordinate.value().latitude();
 }
 
 void QDeclarativeGeoWaypoint::setLatitude(qreal latitude)
 {
-    if (compareFloats(latitude, m_coordinate.latitude()))
+    if (compareFloats(latitude, m_coordinate.value().latitude()))
         return;
 
-    m_coordinate.setLatitude(latitude);
+    auto coord = m_coordinate.value();
+    coord.setLatitude(latitude);
+    m_coordinate.setValueBypassingBindings(coord); // set the value without notifying, yet
+
     if (m_complete) {
-        emit coordinateChanged();
+        m_coordinate.notify(); // it will also emit coordinateChanged()
         emit waypointDetailsChanged();
     }
 }
@@ -1780,17 +1783,20 @@ void QDeclarativeGeoWaypoint::setLatitude(qreal latitude)
 */
 qreal QDeclarativeGeoWaypoint::longitude() const
 {
-    return m_coordinate.longitude();
+    return m_coordinate.value().longitude();
 }
 
 void QDeclarativeGeoWaypoint::setLongitude(qreal longitude)
 {
-    if (compareFloats(longitude, m_coordinate.longitude()))
+    if (compareFloats(longitude, m_coordinate.value().longitude()))
         return;
 
-    m_coordinate.setLongitude(longitude);
+    auto coord = m_coordinate.value();
+    coord.setLongitude(longitude);
+    m_coordinate.setValueBypassingBindings(coord); // set the value without notifying, yet
+
     if (m_complete) {
-        emit coordinateChanged();
+        m_coordinate.notify(); // it will also emit coordinateChanged()
         emit waypointDetailsChanged();
     }
 }
@@ -1803,24 +1809,27 @@ void QDeclarativeGeoWaypoint::setLongitude(qreal longitude)
 */
 qreal QDeclarativeGeoWaypoint::altitude() const
 {
-    return m_coordinate.altitude();
+    return m_coordinate.value().altitude();
 }
 
 void QDeclarativeGeoWaypoint::setAltitude(qreal altitude)
 {
-    if (compareFloats(altitude, m_coordinate.altitude()))
+    if (compareFloats(altitude, m_coordinate.value().altitude()))
         return;
 
-    m_coordinate.setAltitude(altitude);
+    auto coord = m_coordinate.value();
+    coord.setAltitude(altitude);
+    m_coordinate.setValueBypassingBindings(coord); // set the value without notifying, yet
+
     if (m_complete) {
-        emit coordinateChanged();
+        m_coordinate.notify(); // it will also emit coordinateChanged()
         emit waypointDetailsChanged();
     }
 }
 
 bool QDeclarativeGeoWaypoint::isValid() const
 {
-    return m_coordinate.isValid();
+    return m_coordinate.value().isValid();
 }
 
 /*!
