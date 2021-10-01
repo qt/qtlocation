@@ -1826,9 +1826,9 @@ void QQuickGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
     double latitude = animationStartCoordinate.latitude() + (delta.y() / zoom);
 
     if (delta.x() > 0)
-        m_flick.m_animation->setDirection(QQuickGeoCoordinateAnimation::East);
-    else
         m_flick.m_animation->setDirection(QQuickGeoCoordinateAnimation::West);
+    else
+        m_flick.m_animation->setDirection(QQuickGeoCoordinateAnimation::East);
 
     //keep animation in correct bounds
     animationEndCoordinate.setLongitude(QLocationUtils::wrapLong(longitude));
