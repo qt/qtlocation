@@ -19,6 +19,9 @@ OTHER_FILES += weatherinfo.qml \
     components/BigForecastIcon.qml \
     icons/*
 
+ios {
+    QMAKE_INFO_PLIST = ios/Info.plist
+}
 
 RESOURCES += weatherinfo.qrc
 

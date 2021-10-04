@@ -67,6 +67,12 @@ qt_add_qml_module(weatherinfo
     NO_RESOURCE_TARGET_PATH
 )
 
+if(IOS)
+    set_target_properties(weatherinfo PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/ios/Info.plist"
+    )
+endif()
+
 install(TARGETS weatherinfo
     RUNTIME DESTINATION "${INSTALL_EXAMPLEDIR}"
     BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
