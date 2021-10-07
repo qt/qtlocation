@@ -73,78 +73,7 @@ QT_BEGIN_NAMESPACE
 
     A small example of the usage of QGeoRoutingManager and QGeoRouteRequests
     follows:
-
-    \code
-class MyRouteHandler : public QObject
-{
-    Q_OBJECT
-public:
-    MyRouteHandler(QGeoRoutingManager *routingManager,
-                   const QGeoCoordinate &origin,
-                   const QGeoCoordinate &destination) {
-
-        QGeoRouteRequest request(origin, destination);
-
-        // The request defaults to the fastest route by car, which is
-        // equivalent to:
-        // request.setTravelMode(QGeoRouteRequest::CarTravel);
-        // request.setRouteOptimization(QGeoRouteRequest::FastestRoute);
-
-        request.setAvoidFeatureTypes(QGeoRouteRequest::AvoidTolls);
-        request.setAvoidFeatureTypes(QGeoRouteRequest::AvoidMotorPoolLanes);
-
-        QGeoRouteRequest::AvoidFeaturesTypes avoidableFeatures = routingManager->supportedAvoidFeatureTypes();
-
-        if (!(avoidableFeatures & request.avoidFeatureTypes())) {
-            // ... inform the user that the routing manager does not
-            // provide support for avoiding tolls and/or motor pool lanes ...
-            return;
-        }
-
-        QGeoRouteReply *reply = routingManager->calculateRoute(request);
-
-        if (reply->isFinished()) {
-            if (reply->error() == QGeoRouteReply::NoError) {
-                routeCalculated(reply);
-            } else {
-                routeError(reply, reply->error(), reply->errorString());
-            }
-            return;
-        }
-
-        connect(routingManager,
-                SIGNAL(finished(QGeoRouteReply*)),
-                this,
-                SLOT(routeCalculated(QGeoRouteReply*)));
-
-        connect(routingManager,
-                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-                this,
-                SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
-    }
-
-private slots:
-    void routeCalculated(QGeoRouteReply *reply)
-    {
-        // A route request can ask for several alternative routes ...
-        if (reply->routes().size() != 0) {
-
-            // ... but by default it will only get a single route
-            QGeoRoute route = reply->routes().at(0);
-
-            //... now we have to make use of the route ...
-        }
-
-        reply->deleteLater();
-    }
-
-    void routeError(QGeoRouteReply *reply, QGeoRouteReply:Error error, const QString &errorString)
-    {
-        // ... inform the user that an error has occurred ...
-        reply->deleteLater();
-    }
-};
-    \endcode
+    \snippet maps/routehandler.h RouteHandler
 */
 
 /*!
