@@ -80,29 +80,3 @@ qtHaveModule(location) {
         }
     }
 }
-
-qtHaveModule(quick):!android {
-    SUBDIRS += declarative_positioning_core \
-               dummypositionplugin
-}
-
-SUBDIRS += \
-           doublevectors \
-           qgeoaddress \
-           qgeoshape \
-           qgeorectangle \
-           qgeocircle \
-           qgeopath \
-           qgeopolygon \
-           qgeocoordinate \
-           qgeolocation \
-           qgeopositioninfo \
-           qgeosatelliteinfo
-
-!android: SUBDIRS += \
-            positionplugin \
-            positionplugintest \
-            qgeoareamonitor \
-            qgeopositioninfosource \
-            qgeosatelliteinfosource \
-            qnmeapositioninfosource

@@ -47,36 +47,12 @@ qdbusxml2cpp_wrapper.sh
 qdoc_wrapper.sh
 qhelpgenerator_wrapper.sh
 target_wrapper.sh
-QtPositioning.version*
 QtLocation.version*
-src/positioning/doc/snippets/cpp/positioning_cppsnippet
 src/location/doc/snippets/cpp/cppsnippet
 src/location/doc/snippets/places/placescppsnippet
 examples/location/places_list/places_list
 examples/location/places_map/places_map
 examples/location/planespotter/planespotter
-examples/positioning/geoflickr/geoflickr
-examples/positioning/logfilepositionsource/logfilepositionsource
-examples/positioning/satelliteinfo/satelliteinfo
-examples/positioning/weatherinfo/weatherinfo
-
-config.tests/geoclue/geoclue
-config.tests/gypsy/gypsy
-
-# don't track qdbusxml2cpp generated files for geoclue plugin
-# they are no different than moc files
-geoclue_interface.cpp
-geoclue_interface.h
-master_interface.cpp
-master_interface.h
-masterclient_interface.cpp
-masterclient_interface.h
-position_interface.cpp
-position_interface.h
-satellite_interface.cpp
-satellite_interface.h
-velocity_interface.cpp
-velocity_interface.h
 
 # Test generated files
 

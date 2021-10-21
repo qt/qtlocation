@@ -1,9 +1,0 @@
-qt_internal_add_test(tst_qdeclarativepositionsource
-    SOURCES
-        tst_qdeclarativepositionsource.cpp
-    LIBRARIES
-        Qt::Core
-        Qt::Positioning
-        Qt::PositioningQuickPrivate
-        Qt::TestPrivate
-)

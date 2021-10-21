@@ -1,4 +1,0 @@
-add_subdirectory(dummy)
-add_subdirectory(generic_realtime)
-add_subdirectory(generic_simulation)
-add_subdirectory(nmea)

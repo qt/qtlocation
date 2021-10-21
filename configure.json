@@ -1,6 +1,5 @@
 {
     "subconfigs": [
-        "src/positioning",
         "src/location"
     ]
 }
