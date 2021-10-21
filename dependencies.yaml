@@ -2,9 +2,9 @@ dependencies:
   ../qtbase:
     ref: 2ab88d9ffbe271e717ffcf877fa1d72b23469a52
     required: true
+  ../qtpositioning:
+    ref: a403d3302bae2db926ad53e065e2819679d01661
+    required: true
   ../qtdeclarative:
     ref: c18e2fdc817e1cdb8e39675b8fca3f45e21b0577
-    required: false
-  ../qtserialport:
-    ref: 381860a10eaea18c5e3f6228cc48f8566e60fe6f
     required: false

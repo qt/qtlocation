@@ -1,9 +1,5 @@
 # Generated from plugins.pro.
 
-if(TARGET Qt::Positioning)
-    add_subdirectory(position)
+if(TARGET Qt::Location)
+    add_subdirectory(geoservices)
 endif()
-# TODO: enable location plugins later!
-# if(TARGET Qt::Location)
-#     add_subdirectory(geoservices)
-# endif()

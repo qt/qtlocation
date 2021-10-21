@@ -14,11 +14,15 @@ project(QtLocation
 set(QT_USE_FIXED_QT_ADD_RESOURCE_BASE TRUE)
 
 find_package(Qt6 ${PROJECT_VERSION} CONFIG REQUIRED COMPONENTS BuildInternals Core) # special case
-find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Quick Qml Gui Widgets Network Test DBus SerialPort QuickTest) # special case
-# add simulator later. Probably smth else from QtLocation dependencies
 
 if(WASM)
     message(NOTICE "Skipping the build as the condition \"NOT WASM\" is not met.")
     return()
 endif()
+
+# Need to search for positioning only after we make sure that it's not WASM.
+# Otherwise we'll get an "QtPositioning not found" error in WASM build.
+find_package(Qt6 ${PROJECT_VERSION} CONFIG REQUIRED COMPONENTS Positioning) # special case
+find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Quick Qml Gui Widgets Network Test QuickTest PositioningQuick) # special case
+
 qt_build_repo()
