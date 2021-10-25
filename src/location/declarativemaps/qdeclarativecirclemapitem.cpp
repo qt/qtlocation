@@ -37,7 +37,7 @@
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
 
-#include "qwebmercator_p.h"
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 
 #include <qmath.h>
@@ -48,13 +48,9 @@
 #include <QPainter>
 #include <QtGui/private/qtriangulator_p.h>
 
-#include "qdoublevector2d_p.h"
-#include "qlocationutils_p.h"
-#include "qgeocircle.h"
-
-/* poly2tri triangulator includes */
-#include <common/shapes.h>
-#include <sweep/cdt.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
+#include <qgeocircle.h>
 
 #include <QtPositioning/private/qclipperutils_p.h>
 #include "qdeclarativecirclemapitem_p_p.h"
@@ -189,10 +185,11 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     for (const QDoubleVector2D &c: circlePath)
         hole << p.wrapMapProjection(c);
 
-    c2t::clip2tri clipper;
-    clipper.addSubjectPath(QClipperUtils::qListToPath(fill), true);
-    clipper.addClipPolygon(QClipperUtils::qListToPath(hole));
-    Paths difference = clipper.execute(c2t::clip2tri::Difference, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
+    QClipperUtils clipper;
+    clipper.addSubjectPath(fill, true);
+    clipper.addClipPolygon(hole);
+    auto difference = clipper.execute(QClipperUtils::Difference, QClipperUtils::pftEvenOdd,
+                                      QClipperUtils::pftEvenOdd);
 
     // 2)
     QDoubleVector2D lb = p.geoToWrappedMapProjection(srcOrigin_);
@@ -200,11 +197,11 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     const QList<QDoubleVector2D> &visibleRegion = p.visibleGeometry();
     if (visibleRegion.size()) {
         clipper.clearClipper();
-        for (const Path &p: difference)
+        for (const auto &p: difference)
             clipper.addSubjectPath(p, true);
-        clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
-        clippedPaths = QClipperUtils::pathsToQList(res);
+        clipper.addClipPolygon(visibleRegion);
+        clippedPaths = clipper.execute(QClipperUtils::Intersection, QClipperUtils::pftEvenOdd,
+                                       QClipperUtils::pftEvenOdd);
 
         // 2.1) update srcOrigin_ with the point with minimum X/Y
         lb = QDoubleVector2D(qInf(), qInf());
@@ -223,7 +220,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
         lb.setX(qMax(tl.x(), lb.x()));
         srcOrigin_ = p.mapProjectionToGeo(p.unwrapMapProjection(lb));
     } else {
-        clippedPaths = QClipperUtils::pathsToQList(difference);
+        clippedPaths = difference;
     }
 
     //3)

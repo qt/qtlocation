@@ -39,7 +39,7 @@
 #include "qdeclarativepolylinemapitem_p_p.h"
 #include "qdeclarativepolygonmapitem_p_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
-#include "qlocationutils_p.h"
+#include <QtPositioning/private/qlocationutils_p.h>
 #include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
 #include <QtLocation/private/qgeomap_p.h>
@@ -61,7 +61,6 @@
 #include <QtQuick/qsgnode.h>
 
 /* poly2tri triangulator includes */
-#include <clip2tri.h>
 #include <earcut.hpp>
 #include <array>
 
@@ -209,11 +208,11 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     QList<QList<QDoubleVector2D> > clippedPaths;
     const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
     if (visibleRegion.size()) {
-        c2t::clip2tri clipper;
-        clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), true);
-        clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
-        clippedPaths = QClipperUtils::pathsToQList(res);
+        QClipperUtils clipper;
+        clipper.addSubjectPath(wrappedPath, true);
+        clipper.addClipPolygon(visibleRegion);
+        clippedPaths = clipper.execute(QClipperUtils::Intersection, QClipperUtils::pftEvenOdd,
+                                       QClipperUtils::pftEvenOdd);
 
         // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
         QDoubleVector2D lb(qInf(), qInf());

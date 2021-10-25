@@ -38,11 +38,11 @@
 #include "qdeclarativepolylinemapitem_p_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
 #include "qdeclarativecirclemapitem_p_p.h"
-#include "qlocationutils_p.h"
+#include <QtPositioning/private/qlocationutils_p.h>
 #include "qdeclarativegeomapitemutils_p.h"
 #include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
-#include "qdoublevector2d_p.h"
+#include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
 
@@ -86,18 +86,6 @@ struct ThreadPool // to have a thread pool with max 1 thread for geometry proces
 
 Q_GLOBAL_STATIC(ThreadPool, threadPool)
 
-
-static const double kClipperScaleFactor = 281474976710656.0;  // 48 bits of precision
-
-static inline IntPoint toIntPoint(const double x, const double y)
-{
-    return IntPoint(cInt(x * kClipperScaleFactor), cInt(y * kClipperScaleFactor));
-}
-
-static IntPoint toIntPoint(const QDoubleVector2D &p)
-{
-    return toIntPoint(p.x(), p.y());
-}
 
 static bool get_line_intersection(const double p0_x,
                                  const double p0_y,
@@ -161,13 +149,6 @@ static QList<QList<QDoubleVector2D> > clipLine(
         edges.push_back({ { poly.at(i-1).x(), poly.at(i-1).y(), poly.at(i).x(), poly.at(i).y() } });
     edges.push_back({ { poly.at(poly.size()-1).x(), poly.at(poly.size()-1).y(), poly.at(0).x(), poly.at(0).y() } });
 
-    // Build Path to check for containment, for edges not intersecting
-    // This step could be speeded up by forcing the orientation of the polygon, and testing the cross products in the step
-    // below, thus avoiding to resort to clipper.
-    Path clip;
-    for (const auto &v: poly)
-        clip.push_back(toIntPoint(v));
-
     // Step 2: check each segment against each edge
     QList<QDoubleVector2D> subLine;
     std::array<double, 4> intersections = { { 0.0, 0.0, 0.0, 0.0 } };
@@ -178,8 +159,8 @@ static QList<QList<QDoubleVector2D> > clipLine(
         double previousT = t;
         double i_x, i_y;
 
-        const int firstContained = c2t::clip2tri::pointInPolygon(toIntPoint(l.at(i).x(), l.at(i).y()), clip);
-        const int secondContained = c2t::clip2tri::pointInPolygon(toIntPoint(l.at(i+1).x(), l.at(i+1).y()), clip);
+        const int firstContained = QClipperUtils::pointInPolygon(l.at(i), poly);
+        const int secondContained = QClipperUtils::pointInPolygon(l.at(i+1), poly);
 
         if (firstContained && secondContained) { // Second most common condition, test early and skip inner loop if possible
             if (!subLine.size())

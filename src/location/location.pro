@@ -12,11 +12,6 @@ QT_FOR_CONFIG += location-private
 msvc: CONFIG -= warning_clean
 
 INCLUDEPATH += ../3rdparty/earcut
-INCLUDEPATH += ../3rdparty/poly2tri
-INCLUDEPATH += ../3rdparty/clipper
-INCLUDEPATH += ../3rdparty/clip2tri
-INCLUDEPATH += ../positioning
-INCLUDEPATH += ../imports/positioning
 INCLUDEPATH *= $$PWD
 
 MODULE_PLUGIN_TYPES = \
@@ -52,4 +47,4 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 load(qt_module)
 
-LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib -lqt_clip2tri$$qtPlatformTargetSuffix()
+LIBS_PRIVATE += -L$$MODULE_BASE_OUTDIR/lib

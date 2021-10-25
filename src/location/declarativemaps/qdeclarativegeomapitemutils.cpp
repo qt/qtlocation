@@ -134,11 +134,11 @@ void QDeclarativeGeoMapItemUtils::clipPolygon(const QList<QDoubleVector2D> &wrap
     clippedPaths.clear();
     const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
     if (visibleRegion.size()) {
-        c2t::clip2tri clipper;
-        clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), closed);
-        clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
-        clippedPaths = QClipperUtils::pathsToQList(res);
+        QClipperUtils clipper;
+        clipper.addSubjectPath(wrappedPath, closed);
+        clipper.addClipPolygon(visibleRegion);
+        clippedPaths = clipper.execute(QClipperUtils::Intersection, QClipperUtils::pftEvenOdd,
+                                       QClipperUtils::pftEvenOdd);
 
         if (leftBoundWrapped) {
             // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X

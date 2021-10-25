@@ -52,8 +52,8 @@
 #include "math.h"
 #include <cmath>
 #include "qgeomap_p.h"
-#include "qdoublevector2d_p.h"
-#include "qlocationutils_p.h"
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
 #include <QtGui/QMatrix4x4>
 
 

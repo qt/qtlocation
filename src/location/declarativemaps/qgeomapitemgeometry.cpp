@@ -36,9 +36,9 @@
 
 #include "qgeomapitemgeometry_p.h"
 #include "qdeclarativegeomap_p.h"
-#include "qlocationutils_p.h"
+#include <QtPositioning/private/qlocationutils_p.h>
 #include <QtQuick/QSGGeometry>
-#include "qdoublevector2d_p.h"
+#include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 
 QT_BEGIN_NAMESPACE
