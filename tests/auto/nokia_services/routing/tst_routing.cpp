@@ -48,7 +48,7 @@ class MockGeoNetworkReply : public QNetworkReply
 {
 public:
     MockGeoNetworkReply( QObject* parent = 0);
-    virtual void abort();
+    virtual void abort() override;
 
     void setFile(QFile* file);
     void complete();
@@ -57,8 +57,8 @@ public:
     using QNetworkReply::setError;
 
 protected:
-    virtual qint64 readData(char *data, qint64 maxlen);
-    virtual qint64 writeData(const char *data, qint64 len);
+    virtual qint64 readData(char *data, qint64 maxlen) override;
+    virtual qint64 writeData(const char *data, qint64 len) override;
 
 private:
     QFile* m_file;
@@ -112,8 +112,8 @@ class MockGeoNetworkAccessManager : public QGeoNetworkAccessManager
 {
 public:
     MockGeoNetworkAccessManager(QObject* parent = 0);
-    QNetworkReply* get(const QNetworkRequest& request);
-    QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data);
+    QNetworkReply *get(const QNetworkRequest& request) override;
+    QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data) override;
 
     void setReply(MockGeoNetworkReply* reply);
 

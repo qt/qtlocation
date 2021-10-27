@@ -1,0 +1,5 @@
+add_subdirectory(esri)
+add_subdirectory(itemsoverlay)
+add_subdirectory(mapbox)
+add_subdirectory(nokia)
+add_subdirectory(osm)

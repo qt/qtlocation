@@ -136,7 +136,7 @@ public:
                     QGeoRouteRequest::TruckTravel );
     }
 
-    virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request)
+    virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) override
     {
         routeReply_ = new RouteReplyTest();
         connect(routeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -210,7 +210,7 @@ public Q_SLOTS:
     }
 
 protected:
-     void timerEvent(QTimerEvent *event)
+     void timerEvent(QTimerEvent *event) override
      {
          Q_UNUSED(event);
          Q_ASSERT(timerId_ == event->timerId());

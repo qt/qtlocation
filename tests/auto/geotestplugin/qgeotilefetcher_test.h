@@ -56,7 +56,7 @@ public:
     void callSetCached(bool cached) { setFinished(cached);}
     void callSetMapImageData(const QByteArray &data) { setMapImageData(data); }
     void callSetMapImageFormat(const QString &format) { setMapImageFormat(format); }
-    void abort() { emit aborted(); }
+    void abort() override { emit aborted(); }
 
 Q_SIGNALS:
     void aborted();
@@ -76,7 +76,7 @@ public:
         return true;
     }
 
-    QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec)
+    QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec) override
     {
         TiledMapReplyTest* mappingReply =  new TiledMapReplyTest(spec, this);
 
@@ -155,7 +155,7 @@ protected:
         }
     }
 
-    void timerEvent(QTimerEvent *event)
+    void timerEvent(QTimerEvent *event) override
     {
         if (event->timerId() != timer_.timerId()) {
             QGeoTileFetcher::timerEvent(event);

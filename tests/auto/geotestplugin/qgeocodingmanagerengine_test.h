@@ -113,7 +113,7 @@ public:
     QGeoCodeReply* geocode(const QString &searchString,
                            int limit = -1,
                            int offset = 0,
-                           const QGeoShape &bounds = QGeoShape())
+                           const QGeoShape &bounds = QGeoShape()) override
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -147,7 +147,7 @@ public:
         return static_cast<QGeoCodeReply*>(geocodeReply_);
     }
 
-    QGeoCodeReply* geocode(const QGeoAddress & address, const QGeoShape &bounds)
+    QGeoCodeReply* geocode(const QGeoAddress & address, const QGeoShape &bounds) override
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -242,7 +242,7 @@ public:
         }
     }
 
-    QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coordinate, const QGeoShape &bounds)
+    QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coordinate, const QGeoShape &bounds) override
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -275,7 +275,7 @@ public:
     }
 
 protected:
-     void timerEvent(QTimerEvent *event)
+     void timerEvent(QTimerEvent *event) override
      {
          Q_UNUSED(event);
          Q_ASSERT(timerId_ == event->timerId());

@@ -29,7 +29,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include "qgeocameradata_p.h"
+#include <QtLocation/private/qgeocameradata_p.h>
 
 QT_USE_NAMESPACE
 

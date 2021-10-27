@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 
-qtHaveModule(location): SUBDIRS += location
+# TODO - enable examples later
+# qtHaveModule(location): SUBDIRS += location

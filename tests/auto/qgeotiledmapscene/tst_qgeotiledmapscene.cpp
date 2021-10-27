@@ -28,11 +28,11 @@
 
 //TESTED_COMPONENT=src/location/maps
 
-#include "qgeotilespec_p.h"
-#include "qgeotiledmapscene_p.h"
-#include "qgeocameratiles_p.h"
-#include "qgeocameradata_p.h"
-#include "qabstractgeotilecache_p.h"
+#include <QtLocation/private/qgeotilespec_p.h>
+#include <QtLocation/private/qgeotiledmapscene_p.h>
+#include <QtLocation/private/qgeocameratiles_p.h>
+#include <QtLocation/private/qgeocameradata_p.h>
+#include <QtLocation/private/qabstractgeotilecache_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>

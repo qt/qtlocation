@@ -23,6 +23,17 @@ endif()
 # Need to search for positioning only after we make sure that it's not WASM.
 # Otherwise we'll get an "QtPositioning not found" error in WASM build.
 find_package(Qt6 ${PROJECT_VERSION} CONFIG REQUIRED COMPONENTS Positioning) # special case
-find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Quick Qml Gui Widgets Network Test QuickTest PositioningQuick) # special case
+find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Quick Qml Network Test QuickTest PositioningQuick) # special case
+
+macro(assertTargets)
+    foreach(qtTarget IN ITEMS ${ARGN})
+        if(NOT TARGET Qt::${qtTarget})
+           message(NOTICE "Skipping the build as the condition \"TARGET Qt::${qtTarget}\" is not met.")
+           return()
+        endif()
+    endforeach()
+endmacro()
+
+assertTargets(Quick PositioningQuick)
 
 qt_build_repo()

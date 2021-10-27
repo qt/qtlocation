@@ -46,7 +46,8 @@ public:
     ~QGeoServiceProviderFactoryTest();
 
     QGeoRoutingManagerEngine* createRoutingManagerEngine(const QVariantMap &parameters,
-        QGeoServiceProvider::Error *error, QString *errorString) const;
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const override;
 
 };
 

@@ -69,7 +69,8 @@ public:
         setLocale(QLocale(QLocale::German, QLocale::Germany));
     }
 
-    QGeoCodeReply* geocode(const QString &searchString, int limit, int offset, const QGeoShape &bounds)
+    QGeoCodeReply* geocode(const QString &searchString, int limit, int offset,
+                           const QGeoShape &bounds) override
     {
         GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
         geocodereply->callSetLimit(limit);
@@ -82,7 +83,7 @@ public:
         return static_cast<QGeoCodeReply*>(geocodereply);
     }
 
-    QGeoCodeReply* geocode (const QGeoAddress &address, const QGeoShape &bounds)
+    QGeoCodeReply* geocode (const QGeoAddress &address, const QGeoShape &bounds) override
     {
         GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
         geocodereply->callSetViewport(bounds);
@@ -93,7 +94,8 @@ public:
         return static_cast<QGeoCodeReply*>(geocodereply);
     }
 
-    QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coordinate, const QGeoShape &bounds)
+    QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
+                                  const QGeoShape &bounds) override
     {
         GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
         geocodereply->callSetViewport(bounds);

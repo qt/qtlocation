@@ -45,9 +45,9 @@ public:
     QGeoServiceProviderFactoryTest();
     ~QGeoServiceProviderFactoryTest();
 
-    QGeoCodingManagerEngine* createGeocodingManagerEngine(
-                const QVariantMap &parameters,
-                QGeoServiceProvider::Error *error, QString *errorString) const;
+    QGeoCodingManagerEngine* createGeocodingManagerEngine(const QVariantMap &parameters,
+                                                          QGeoServiceProvider::Error *error,
+                                                          QString *errorString) const override;
 };
 
 #endif
