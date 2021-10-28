@@ -931,7 +931,8 @@ static QJsonObject exportFeature(const QVariantMap &featureMap)
     exportedFeature.insert(QStringLiteral("type"), QJsonValue(QStringLiteral("Feature")));
     exportedFeature.insert(QStringLiteral("geometry"), geometryNodeValue);
     exportedFeature.insert(QStringLiteral("properties"), propertiesNodeValue);
-    exportedFeature.insert(QStringLiteral("id"), idNodeValue);
+    if (!idNodeValue.isNull()) // this value is optional
+        exportedFeature.insert(QStringLiteral("id"), idNodeValue);
     return exportedFeature;
 }
 
@@ -1071,7 +1072,7 @@ QVariantList QGeoJson::importGeoJson(const QJsonDocument &geoJson)
                 break;
             }
             QVariant bboxNodeValue = rootGeoJsonObject.value(QStringLiteral("bbox"));
-            if (bboxNodeValue != QVariant::Invalid) {
+            if (bboxNodeValue.isValid()) {
                 parsedGeoJsonMap.insert(QStringLiteral("bbox"), bboxNodeValue);
             }
             returnedList.append(parsedGeoJsonMap);
