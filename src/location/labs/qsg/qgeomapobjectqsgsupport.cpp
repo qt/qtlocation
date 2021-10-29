@@ -161,7 +161,7 @@ void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *wind
     if (!root)
         return;
 
-    if (m_mapObjectsRootNode && m_mapObjectsRootNode->parent())
+    if (m_mapObjectsRootNode && !m_mapObjectsRootNode->parent())
         root->appendChildNode(m_mapObjectsRootNode.get());
 
     if (!m_mapObjectsRootNode) {
