@@ -2,6 +2,7 @@ TARGET = qml_location_geojsonviewer
 TEMPLATE = app
 
 QT += core qml network quick positioning location-private widgets
+android: QT += core-private
 
 SOURCES += main.cpp
 CONFIG += c++11

@@ -49,10 +49,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.12
-import QtPositioning 5.12
-import Qt.labs.location 1.0
+import QtQuick
+import QtPositioning
 import Qt.labs.qmlmodels 1.0
+import Qt.labs.location
 
 DelegateChooser {
     id: dc
