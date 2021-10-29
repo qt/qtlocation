@@ -11,3 +11,9 @@ qt_internal_add_plugin(QGeoServiceProviderFactoryItemsOverlayPlugin
         Qt::LocationPrivate
         Qt::PositioningPrivate
 )
+
+qt_internal_extend_target(QGeoServiceProviderFactoryItemsOverlayPlugin
+    CONDITION QT_FEATURE_location_labs_plugin
+    DEFINES
+        LOCATIONLABS
+)

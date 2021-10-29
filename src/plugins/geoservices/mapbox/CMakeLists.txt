@@ -30,3 +30,9 @@ qt_internal_extend_target(QGeoServiceProviderFactoryMapboxPlugin
     SOURCES
         ${plugin_resource_files}
 )
+
+qt_internal_extend_target(QGeoServiceProviderFactoryMapboxPlugin
+    CONDITION QT_FEATURE_location_labs_plugin
+    DEFINES
+        LOCATIONLABS
+)

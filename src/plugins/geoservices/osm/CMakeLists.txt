@@ -23,3 +23,9 @@ qt_internal_add_plugin(QGeoServiceProviderFactoryOsmPlugin
         Qt::LocationPrivate
         Qt::PositioningPrivate
 )
+
+qt_internal_extend_target(QGeoServiceProviderFactoryOsmPlugin
+    CONDITION QT_FEATURE_location_labs_plugin
+    DEFINES
+        LOCATIONLABS
+)
