@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2019 Julian Sherollari <jdotsh@gmail.com>
-** Copyright (C) 2019 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -49,19 +49,16 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.11
-import QtQuick.Controls 1.4 as C1
-import QtQuick.Controls.Styles 1.4
-import Qt.labs.platform 1.1
-import QtQuick.Layouts 1.11
-import QtQuick.Window 2.11
-import QtPositioning 5.12
-import QtLocation 5.12
-import Qt.labs.qmlmodels 1.0
-import Qt.labs.location 1.0
-import Qt.GeoJson 1.0
+import QtQuick
+import QtQuick.Dialogs
+import QtQuick.Controls
+import QtPositioning
+import QtLocation
+import Qt.labs.location
+import Qt.labs.platform as Platform
+import Qt.GeoJson
 
-C1.ApplicationWindow {
+ApplicationWindow {
     id: win
     visible: true
     width: 1024
@@ -75,9 +72,9 @@ C1.ApplicationWindow {
         id: fileDialog
         title: "Choose a GeoJSON file"
         fileMode: FileDialog.OpenFile
-        folder: dataPath
+        currentFolder: dataPath
         onAccepted: {
-            geoJsoner.load(fileDialog.file)
+            geoJsoner.load(fileDialog.selectedFile)
         }
     }
 
@@ -86,9 +83,9 @@ C1.ApplicationWindow {
         id: fileWriteDialog
         title: "Write your geometry to a file"
         fileMode: FileDialog.SaveFile
-        folder: StandardPaths.writableLocation(StandardPaths.TempLocation)
+        currentFolder: Platform.StandardPaths.writableLocation(Platform.StandardPaths.TempLocation)
         onAccepted: {
-            geoJsoner.dumpGeoJSON(geoJsoner.toGeoJson(miv), fileWriteDialog.file);
+            geoJsoner.dumpGeoJSON(geoJsoner.toGeoJson(miv), fileWriteDialog.selectedFile);
         }
     }
 
@@ -97,61 +94,58 @@ C1.ApplicationWindow {
         id: debugWriteDialog
         title: "Write Qvariant debug view"
         fileMode: FileDialog.SaveFile
-        folder: StandardPaths.writableLocation(StandardPaths.TempLocation)
+        currentFolder: Platform.StandardPaths.writableLocation(Platform.StandardPaths.TempLocation)
         onAccepted: {
-            geoJsoner.writeDebug(geoJsoner.toGeoJson(miv), debugWriteDialog.file);
+            geoJsoner.writeDebug(geoJsoner.toGeoJson(miv), debugWriteDialog.selectedFile);
         }
     }
 
-    C1.MenuBar {
+    MenuBar {
         id: mainMenu
 
-        C1.Menu {
+        Menu {
             title: "&File"
             id : geoJsonMenu
-            C1.MenuItem {
+            MenuItem {
                 text: "&Open"
-                shortcut: StandardKey.Open
                 onTriggered: {
                     fileDialog.open()
                 }
             }
-            C1.MenuItem {
+            MenuItem {
                 text: "&Export"
-                shortcut: StandardKey.Save
                 onTriggered: {
                     fileWriteDialog.open()
                 }
             }
-            C1.MenuItem {
+            MenuItem {
                 text: "E&xit"
-                shortcut: StandardKey.Quit
                 onTriggered: Qt.quit()
             }
         }
-        C1.Menu {
+        Menu {
             title: "&Debug"
             id : debugMenu
-            C1.MenuItem {
+            MenuItem {
                 text: "Print debug data to &file"
                 onTriggered: {
                     debugWriteDialog.open()
                 }
             }
-            C1.MenuItem {
+            MenuItem {
                 text: "&Print debug data"
                 onTriggered: {
                     geoJsoner.print(miv)
                 }
             }
-            C1.MenuItem {
+            MenuItem {
                 text: "OpenGL Item backends"
                 id: glBackendSelector
                 checkable: true
                 checked: false
             }
 
-            C1.MenuItem {
+            MenuItem {
                 text: "Map Object Delegates"
                 id: mapObjectsSelector
                 checkable: true
