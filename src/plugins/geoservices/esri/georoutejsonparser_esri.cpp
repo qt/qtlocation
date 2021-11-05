@@ -125,7 +125,7 @@ QString GeoRouteJsonParserEsri::errorString() const
 void GeoRouteJsonParserEsri::parseDirections()
 {
     QJsonArray directions = m_json.value(kDirectionsKey).toArray();
-    foreach (const QJsonValue &direction, directions)
+    for (const QJsonValue &direction : directions)
         parseDirection(direction.toObject());
 }
 
@@ -215,7 +215,7 @@ void GeoRouteJsonParserEsri::parseRoutes()
 {
     QJsonObject routes = m_json.value(kRoutesKey).toObject();
     QJsonArray features = routes.value(kRoutesFeaturesKey).toArray();
-    foreach (const QJsonValue &feature, features)
+    for (const QJsonValue &feature : features)
         parseRoute(feature.toObject());
 }
 
@@ -230,7 +230,7 @@ void GeoRouteJsonParserEsri::parseRoute(const QJsonObject &route)
     if (!paths.isEmpty())
     {
         QList<QGeoCoordinate> geoCoordinates;
-        foreach (const QJsonValue &value, paths.first().toArray()) // only first polyline?
+        for (const QJsonValue &value : paths.first().toArray()) // only first polyline?
         {
             QJsonArray geoCoordinate = value.toArray();
             if (geoCoordinate.size() == 2)  // ignore 3rd coordinate

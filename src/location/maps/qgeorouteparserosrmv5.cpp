@@ -919,7 +919,7 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
         }
 
         QJsonArray osrmRoutes = object.value(QLatin1String("routes")).toArray();
-        foreach (const QJsonValue &r, osrmRoutes) {
+        for (const QJsonValue &r : osrmRoutes) {
             if (!r.isObject())
                 continue;
             QJsonObject routeObject = r.toObject();

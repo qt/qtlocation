@@ -988,7 +988,7 @@ QVariantList QGeoJson::importGeoJson(const QJsonDocument &geoJson)
 
     // Checking whether the JSON object has a "type" member
     const QVariant keyVariant = rootGeoJsonObject.value(QStringLiteral("type"));
-    if (keyVariant == QVariant::Invalid) {
+    if (!keyVariant.isValid()) {
         // Type check failed
     }
     QString valueType = keyVariant.value<QString>();
@@ -1178,13 +1178,13 @@ QString printQvariant(const QVariant v, int tabs = 0) {
     for (int i  = 0; i< tabs; i++) {
         sTabs += sTab;
     }
-    if (v.type() == QVariant::List) {
+    if (v.typeId() == QMetaType::QVariantList) {
         stream << sTabs << "[\n";
         const QVariantList &l = v.toList();
         for (int i  = 0; i < l.size(); ++i)
             stream << printQvariant(l.at(i), tabs + 1);
         stream << sTabs << "]\n";
-    } else if (v.type() == QVariant::Map) {
+    } else if (v.typeId() == QMetaType::QVariantMap) {
         stream  << sTabs << "{\n";
         const QVariantList &l = v.toList();
         const QVariantMap &map = v.toMap();

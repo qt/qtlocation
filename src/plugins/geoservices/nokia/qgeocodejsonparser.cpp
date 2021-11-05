@@ -272,7 +272,7 @@ bool checkDocument(const QJsonDocument &doc, QString *errorString)
     }
 
     QJsonArray view = rit.value().toArray();
-    Q_FOREACH (const QJsonValue &viewElement, view) {
+    for (const QJsonValue &viewElement : view) {
         if (!viewElement.isObject()) {
             *errorString = QLatin1String("Expected View array element to be object");
             return false;
@@ -289,7 +289,7 @@ bool checkDocument(const QJsonDocument &doc, QString *errorString)
         }
 
         QJsonArray result = voit.value().toArray();
-        Q_FOREACH (const QJsonValue &resultElement, result) {
+        for (const QJsonValue &resultElement : result) {
             if (!resultElement.isObject()) {
                 *errorString = QLatin1String("Expected Result array element to be object");
                 return false;
@@ -340,7 +340,7 @@ bool parseLocation(const QJsonObject &obj, const QGeoShape &bounds, QGeoLocation
         address.setText(label);
     }
     QJsonArray additionalData = addr.value("AdditionalData").toArray();
-    Q_FOREACH (const QJsonValue &adv, additionalData) {
+    for (const QJsonValue &adv : additionalData) {
         if (adv.isObject()) {
             const QJsonObject &ado(adv.toObject());
             if (ado.value("key").toString() == QLatin1String("CountryName")) {
@@ -366,9 +366,9 @@ bool parseLocation(const QJsonObject &obj, const QGeoShape &bounds, QGeoLocation
 void parseDocument(const QJsonDocument &doc, const QGeoShape &bounds, QList<QGeoLocation> *locs)
 {
     QJsonArray view = doc.object().value("Response").toObject().value("View").toArray();
-    Q_FOREACH (const QJsonValue &viewElement, view) {
+    for (const QJsonValue &viewElement : view) {
         QJsonArray result = viewElement.toObject().value("Result").toArray();
-        Q_FOREACH (const QJsonValue &resultElement, result) {
+        for (const QJsonValue &resultElement : result) {
             QGeoLocation location;
             if (parseLocation(resultElement.toObject().value("Location").toObject(), bounds, &location)) {
                 locs->append(location);

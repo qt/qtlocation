@@ -432,13 +432,13 @@ QGeoTileSpec QGeoFileTileCache::filenameToTileSpecDefault(const QString &filenam
 {
     QGeoTileSpec emptySpec;
 
-    QStringList parts = filename.split('.');
+    QStringList parts = filename.split(QLatin1Char('.'));
 
     if (parts.length() != 2)
         return emptySpec;
 
     QString name = parts.at(0);
-    QStringList fields = name.split('-');
+    QStringList fields = name.split(QLatin1Char('-'));
 
     int length = fields.length();
     if (length != 5 && length != 6)

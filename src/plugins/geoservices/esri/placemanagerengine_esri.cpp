@@ -188,7 +188,7 @@ QPlaceReply *PlaceManagerEngineEsri::initializeCategories()
 
 void PlaceManagerEngineEsri::parseCategories(const QJsonArray &jsonArray, const QString &parentCategoryId)
 {
-    foreach (const QJsonValue &jsonValue, jsonArray)
+    for (const QJsonValue &jsonValue : jsonArray)
     {
         if (!jsonValue.isObject())
             continue;
@@ -288,7 +288,7 @@ QString PlaceManagerEngineEsri::localizedName(const QJsonObject &jsonObject)
 
 void PlaceManagerEngineEsri::parseCandidateFields(const QJsonArray &jsonArray)
 {
-    foreach (const QJsonValue &jsonValue, jsonArray)
+    for (const QJsonValue &jsonValue : jsonArray)
     {
         if (!jsonValue.isObject())
             continue;
@@ -304,7 +304,7 @@ void PlaceManagerEngineEsri::parseCandidateFields(const QJsonArray &jsonArray)
 
 void PlaceManagerEngineEsri::parseCountries(const QJsonArray &jsonArray)
 {
-    foreach (const QJsonValue &jsonValue, jsonArray)
+    for (const QJsonValue &jsonValue : jsonArray)
     {
         if (!jsonValue.isObject())
             continue;

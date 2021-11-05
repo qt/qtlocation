@@ -182,7 +182,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_gestureArea(new QQuickGeoMapGestureArea(this)),
         m_map(0),
         m_error(QGeoServiceProvider::NoError),
-        m_color(QColor::fromRgbF(0.9, 0.9, 0.9)),
+        m_color(QColor::fromRgbF(0.9f, 0.9f, 0.9f)),
         m_componentCompleted(false),
         m_pendingFitViewport(false),
         m_copyrightsVisible(true),
@@ -1628,7 +1628,7 @@ void QDeclarativeGeoMap::clearData()
 void QDeclarativeGeoMap::fitViewportToGeoShape(const QGeoShape &shape, QVariant margins)
 {
     QMargins m(10, 10, 10, 10); // lets defaults to 10 if margins is invalid
-    switch (static_cast<QMetaType::Type>(margins.type())) {
+    switch (margins.typeId()) {
         case QMetaType::Int:
         case QMetaType::Double: {
             const int value = int(margins.toDouble());
