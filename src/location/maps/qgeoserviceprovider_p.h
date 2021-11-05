@@ -51,8 +51,7 @@
 #include "qgeoserviceprovider.h"
 
 #include <QHash>
-#include <QJsonObject>
-#include <QJsonArray>
+#include <QCborMap>
 #include <QLocale>
 
 QT_BEGIN_NAMESPACE
@@ -87,7 +86,7 @@ public:
     QGeoServiceProviderFactory *factory;
     QGeoServiceProviderFactoryV2 *factoryV2 = nullptr;
     QGeoServiceProviderFactoryV3 *factoryV3 = nullptr;
-    QJsonObject metaData;
+    QCborMap metaData;
 
     QVariantMap parameterMap;
     QVariantMap cleanedParameterMap;
@@ -121,8 +120,8 @@ public:
     QLocale locale;
     bool localeSet;
 
-    static QMultiHash<QString, QJsonObject> plugins(bool reload = false);
-    static void loadPluginMetadata(QMultiHash<QString, QJsonObject> &list);
+    static QMultiHash<QString, QCborMap> plugins(bool reload = false);
+    static void loadPluginMetadata(QMultiHash<QString, QCborMap> &list);
 };
 
 QT_END_NAMESPACE
