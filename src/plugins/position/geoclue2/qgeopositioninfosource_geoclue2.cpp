@@ -410,7 +410,8 @@ void QGeoPositionInfoSourceGeoclue2::handleNewLocation(const QDBusObjectPath &ol
     } else {
         QGeoCoordinate coordinate(location.latitude(),
                                   location.longitude());
-        if (const auto altitude = location.altitude() > std::numeric_limits<double>::min())
+        const auto altitude = location.altitude();
+        if (altitude > std::numeric_limits<double>::lowest())
             coordinate.setAltitude(altitude);
 
         const Timestamp ts = location.timestamp();
@@ -428,9 +429,11 @@ void QGeoPositionInfoSourceGeoclue2::handleNewLocation(const QDBusObjectPath &ol
         m_lastPositionFromSatellite = qFuzzyCompare(accuracy, 0.0);
 
         m_lastPosition.setAttribute(QGeoPositionInfo::HorizontalAccuracy, accuracy);
-        if (const auto speed = location.speed() >= 0.0)
+        const auto speed = location.speed();
+        if (speed >= 0.0)
             m_lastPosition.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
-        if (const auto heading = location.heading() >= 0.0)
+        const auto heading = location.heading();
+        if (heading >= 0.0)
             m_lastPosition.setAttribute(QGeoPositionInfo::Direction, heading);
 
         emit positionUpdated(m_lastPosition);
