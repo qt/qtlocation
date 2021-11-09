@@ -168,13 +168,13 @@ void QMapIconObjectPrivateQSG::setContent(const QVariant &content)
 
     // Then pull the new content
     QMapIconObjectPrivateDefault::setContent(content);
-    switch (content.type()) {
-        case QVariant::UserType: {
+    switch (content.typeId()) {
+        case QMetaType::User: {
             // TODO: Handle QObject subclasses -- first decide which ones
             break;
         }
-        case QVariant::String:
-        case QVariant::Url: {
+        case QMetaType::QString:
+        case QMetaType::QUrl: {
             // URL, including image/texture providers
             // Supporting only image providers for now
             const QUrl url = content.toUrl();
@@ -200,12 +200,12 @@ void QMapIconObjectPrivateQSG::setContent(const QVariant &content)
 
             break;
         }
-        case QVariant::ByteArray: {
+        case QMetaType::QByteArray: {
             // ToDo: Build the image from bytearray
             break;
         }
         default:
-            qWarning() << "Unsupported parameter type: " << content.type();
+            qWarning() << "Unsupported parameter type: " << content.typeId();
             break;
     }
 

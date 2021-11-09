@@ -421,7 +421,7 @@ QPlace QDeclarativePlace::place()
     QList<QPlaceContactDetail> cppDetails;
     foreach (const QString &key, m_contactDetails->keys()) {
         cppDetails.clear();
-        if (m_contactDetails->value(key).type() == QVariant::List) {
+        if (m_contactDetails->value(key).typeId() == QMetaType::QVariantList) {
             QVariantList detailsVarList = m_contactDetails->value(key).toList();
             foreach (const QVariant &detailVar, detailsVarList) {
                 QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(detailVar.value<QObject *>());
@@ -1213,7 +1213,7 @@ QString QDeclarativePlace::primaryValue(const QString &contactType) const
     if (value.userType() == qMetaTypeId<QJSValue>())
         value = value.value<QJSValue>().toVariant();
 
-    if (value.userType() == QVariant::List) {
+    if (value.userType() == QMetaType::QVariantList) {
         QVariantList detailList = m_contactDetails->value(contactType).toList();
         if (!detailList.isEmpty()) {
             QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail *>(detailList.at(0).value<QObject *>());

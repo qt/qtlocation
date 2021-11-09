@@ -139,7 +139,7 @@ QGeoShape QMapPolylineObjectPrivate::geoShape() const
 void QMapPolylineObjectPrivate::setGeoShape(const QGeoShape &shape)
 {
     const QGeoPath p(shape);
-    if (p == path())
+    if (p.path() == path())
         return;
 
     setPath(p.path()); // to handle overrides

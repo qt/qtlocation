@@ -233,8 +233,9 @@ QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
 QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNodeCPU(QSGNode *oldNode,
                                                             VisibleNode **visibleNode,
                                                             QSGNode *root,
-                                                            QQuickWindow */*window*/)
+                                                            QQuickWindow *window)
 {
+    Q_UNUSED(window);
     if (!m_dataCPU->m_node || !oldNode) {
         m_dataCPU->m_node = new MapPolygonNode();
         *visibleNode = static_cast<VisibleNode *>(m_dataCPU->m_node);
@@ -273,8 +274,9 @@ QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNodeCPU(QSGNode *oldNode,
 QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNodeGL(QSGNode *oldNode,
                                                            VisibleNode **visibleNode,
                                                            QSGNode *root,
-                                                           QQuickWindow */*window*/)
+                                                           QQuickWindow *window)
 {
+    Q_UNUSED(window);
     if (!m_dataGL->m_rootNode || !oldNode) {
         m_dataGL->m_rootNode = new QDeclarativePolygonMapItemPrivateOpenGL::RootNode();
         m_dataGL->m_node = new MapPolygonNodeGL();

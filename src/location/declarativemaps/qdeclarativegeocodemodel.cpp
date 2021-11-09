@@ -667,7 +667,7 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
         searchString_.clear();
 
         coordinate_ = query.value<QGeoCoordinate>();
-    } else if (query.type() == QVariant::String) {
+    } else if (query.typeId() == QMetaType::QString) {
         searchString_ = query.toString();
         if (address_) {
             address_->disconnect(this);

@@ -76,7 +76,7 @@ QGeoCoordinate parseCoordinate(const QVariant &value, bool *ok)
         c = value.value<QGeoCoordinate>();
         if (ok)
             *ok = true;
-    } else if (value.type() == QVariant::Map) {
+    } else if (value.typeId() == QMetaType::QVariantMap) {
         const QVariantMap &map = value.toMap();
 
         if (map.contains(QStringLiteral("latitude")))
