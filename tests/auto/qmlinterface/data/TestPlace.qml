@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.6
+import QtLocation
 
 Place {
     name: "Test Place"

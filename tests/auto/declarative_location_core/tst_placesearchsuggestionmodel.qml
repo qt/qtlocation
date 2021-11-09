@@ -26,10 +26,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtTest 1.0
-import QtLocation 5.3
-import QtPositioning 5.2
+import QtQuick
+import QtTest
+import QtLocation
+import QtPositioning
 import "utils.js" as Utils
 
 TestCase {

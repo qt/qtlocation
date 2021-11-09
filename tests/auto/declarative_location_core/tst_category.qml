@@ -26,10 +26,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtQml.Models 2.14
-import QtTest 1.0
-import QtLocation 5.3
+import QtQuick
+import QtQml.Models
+import QtTest
+import QtLocation
 import "utils.js" as Utils
 
 TestCase {

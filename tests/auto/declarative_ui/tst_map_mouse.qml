@@ -237,11 +237,7 @@ Item {
             mouseRelease(target, x, y)
         }
         function real_double_click (target, x, y) {
-            mousePress(target, x,y)
-            mouseRelease(target, x, y)
-            mousePress(target, x, y)
-            mouseDoubleClick(target, x, y)
-            mouseRelease(target, x, y)
+            mouseDoubleClickSequence(target, x, y)
         }
         function real_press_and_hold(target, x,y) {
             mousePress(target,x,y)

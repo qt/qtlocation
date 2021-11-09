@@ -26,10 +26,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtTest 1.0
-import QtLocation 5.3
-import QtPositioning 5.2
+import QtQuick
+import QtTest
+import QtLocation
+import QtPositioning
 import "utils.js" as Utils
 
 TestCase {
@@ -79,11 +79,7 @@ TestCase {
                 altitude: 100
             }
 
-            boundingBox {
-                center: QtPositioning.coordinate(10, 10, 100)
-                width: 100
-                height: 100
-            }
+            boundingShape: QtPositioning.rectangle(QtPositioning.coordinate(10, 10, 100), 100, 100)
         }
 
         ratings: Ratings {
