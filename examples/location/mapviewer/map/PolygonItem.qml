@@ -47,8 +47,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-import QtQuick 2.5
-import QtLocation 5.6
+import QtQuick
+import QtLocation
 
 //TODO: remove me when items are integrated
 

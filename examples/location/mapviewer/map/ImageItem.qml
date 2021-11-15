@@ -47,8 +47,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-import QtQuick 2.5;
-import QtLocation 5.6
+import QtQuick
+import QtLocation
 
 MapQuickItem {  //to be used inside MapComponent only
     id: imageItem

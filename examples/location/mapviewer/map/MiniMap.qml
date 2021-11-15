@@ -48,9 +48,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtPositioning 5.3
-import QtLocation 5.6
+import QtQuick
+import QtPositioning
+import QtLocation
 
 Rectangle{
 

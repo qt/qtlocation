@@ -48,9 +48,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtLocation 5.6
+import QtQuick
+import QtQuick.Controls
+import QtLocation
 
 MenuBar {
     property variant  providerMenu: providerMenu
@@ -64,13 +64,19 @@ MenuBar {
     signal selectTool(string tool);
     signal toggleMapState(string state)
 
+    function clearMenu(menu)
+    {
+        while (menu.count)
+            menu.removeItem(menu.itemAt(0))
+    }
+
     Menu {
         id: providerMenu
         title: qsTr("Provider")
 
         function createMenu(plugins)
         {
-            clear()
+            clearMenu(providerMenu)
             for (var i = 0; i < plugins.length; i++) {
                 createProviderMenuItem(plugins[i]);
             }
@@ -78,9 +84,8 @@ MenuBar {
 
         function createProviderMenuItem(provider)
         {
-            var item = addItem(provider);
-            item.checkable = true;
-            item.triggered.connect(function(){selectProvider(provider)})
+            var action = Qt.createQmlObject('import QtQuick.Controls; Action{ text: "' + provider + '"; checkable: true; onTriggered: function(){selectProvider("' + provider + '")} }', providerMenu)
+            addAction(action)
         }
     }
 
@@ -88,21 +93,25 @@ MenuBar {
         id: mapTypeMenu
         title: qsTr("MapType")
 
+        Component {
+            id: mapTypeMenuActionComponent
+            Action {
+
+            }
+        }
         function createMenu(map)
         {
-            clear()
+            clearMenu(mapTypeMenu)
             for (var i = 0; i<map.supportedMapTypes.length; i++) {
-                createMapTypeMenuItem(map.supportedMapTypes[i]).checked =
-                        (map.activeMapType === map.supportedMapTypes[i]);
+                createMapTypeMenuItem(map.supportedMapTypes[i], map.activeMapType === map.supportedMapTypes[i]);
             }
         }
 
-        function createMapTypeMenuItem(mapType)
+        function createMapTypeMenuItem(mapType, checked)
         {
-            var item = addItem(mapType.name);
-            item.checkable = true;
-            item.triggered.connect(function(){selectMapType(mapType)})
-            return item;
+            var action = mapTypeMenuActionComponent.createObject(mapTypeMenu, { text: mapType.name, checkable: true, checked: checked })
+            action.triggered.connect(function(){selectMapType(mapType)})
+            addAction(action)
         }
     }
 
@@ -112,31 +121,47 @@ MenuBar {
         property bool isMiniMap: false;
         title: qsTr("Tools")
 
+        Component {
+            id: menuItem
+            MenuItem {
+
+            }
+        }
+
         function createMenu(map)
         {
-            clear()
+            clearMenu(toolsMenu)
             if (map.plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)) {
-                addItem(qsTr("Reverse geocode")).triggered.connect(function(){selectTool("RevGeocode")})
+                addItem(menuItem.createObject(toolsMenu, { text: qsTr("Reverse geocode") }))
+                itemAt(count-1).triggered.connect(function(){selectTool("RevGeocode")})
             }
             if (map.plugin.supportsGeocoding()) {
-                addItem(qsTr("Geocode")).triggered.connect(function(){selectTool("Geocode")})
+                addItem(menuItem.createObject(toolsMenu, { text: qsTr("Geocode") }))
+                itemAt(count-1).triggered.connect(function(){selectTool("Geocode")})
             }
             if (map.plugin.supportsRouting()) {
-                addItem(qsTr("Route with coordinates")).triggered.connect(function(){selectTool("CoordinateRoute")})
-                addItem(qsTr("Route with address")).triggered.connect(function(){selectTool("AddressRoute")})
+                addItem(menuItem.createObject(toolsMenu, { text: qsTr("Route with coordinates") }))
+                itemAt(count-1).triggered.connect(function(){selectTool("CoordinateRoute")})
+                addItem(menuItem.createObject(toolsMenu, { text: qsTr("Route with address") }))
+                itemAt(count-1).triggered.connect(function(){selectTool("AddressRoute")})
             }
 
-            var item = addItem("")
+            addItem(menuItem.createObject(toolsMenu, { text: "" }))
+            var item = itemAt(count-1)
             item.text = Qt.binding(function() { return isMiniMap ? qsTr("Hide minimap") : qsTr("Minimap") })
             item.triggered.connect(function() {toggleMapState("MiniMap")})
 
-            item = addItem("")
+            addItem(menuItem.createObject(toolsMenu, { text: "" }))
+            item = itemAt(count-1)
             item.text = Qt.binding(function() { return isFollowMe ? qsTr("Stop following") : qsTr("Follow me")})
             item.triggered.connect(function() {toggleMapState("FollowMe")})
 
-            addItem(qsTr("Language")).triggered.connect(function(){selectTool("Language")})
-            addItem(qsTr("Prefetch Map Data")).triggered.connect(function(){selectTool("Prefetch")})
-            addItem(qsTr("Clear Map Data")).triggered.connect(function(){selectTool("Clear")})
+            addItem(menuItem.createObject(toolsMenu, { text: qsTr("Language") }))
+            itemAt(count-1).triggered.connect(function(){selectTool("Language")})
+            addItem(menuItem.createObject(toolsMenu, { text: qsTr("Prefetch Map Data") }))
+            itemAt(count-1).triggered.connect(function(){selectTool("Prefetch")})
+            addItem(menuItem.createObject(toolsMenu, { text: qsTr("Clear Map Data") }))
+            itemAt(count-1).triggered.connect(function(){selectTool("Clear")})
         }
     }
 }
