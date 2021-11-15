@@ -48,9 +48,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.2
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 Item {
     property alias clearButton: clearButton
@@ -104,25 +104,25 @@ Item {
             columns: 2
             anchors.fill: parent
 
-            ExclusiveGroup { id: languageGroup }
+            ButtonGroup { id: languageGroup }
             RadioButton {
                 id: enRadioButton
                 text: qsTr("en")
-                exclusiveGroup: languageGroup
+                ButtonGroup.group: languageGroup
                 Layout.columnSpan: 2
             }
 
             RadioButton {
                 id: frRadioButton
                 text: qsTr("fr")
-                exclusiveGroup: languageGroup
+                ButtonGroup.group: languageGroup
                 Layout.columnSpan: 2
             }
 
             RadioButton {
                 id: otherRadioButton
                 text: qsTr("Other")
-                exclusiveGroup: languageGroup
+                ButtonGroup.group: languageGroup
             }
 
             TextField {

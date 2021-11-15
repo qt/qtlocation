@@ -48,10 +48,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.6
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Controls 2.0 as C2
+import QtQuick
+import QtQuick.Controls
 
 Row {
     id: containerRow
@@ -85,11 +83,15 @@ Row {
                         xScale: rightEdge() ? 1 : -1
                     }
 
-        style:  ButtonStyle {
-                    background: Rectangle {
-                        color: "transparent"
-                    }
-                }
+//        style:  ButtonStyle {
+//                    background: Rectangle {
+//                        color: "transparent"
+//                    }
+//                }
+        background: Rectangle {
+            color: "transparent"
+        }
+
 
         property real shear: 0.333
         property real buttonOpacity: 0.5
@@ -220,7 +222,7 @@ Row {
                 id: sliderRow
                 height: sliderContainer.slidersHeight
 
-                C2.Slider {
+                Slider {
                     id: zoomSlider
                     height: parent.height
                     orientation : Qt.Vertical
@@ -231,7 +233,7 @@ Row {
                             containerRow.mapSource.zoomLevel = value
                     }
                 }
-                C2.Slider {
+                Slider {
                     id: bearingSlider
                     height: parent.height
                     from: 0
@@ -242,7 +244,7 @@ Row {
                         containerRow.mapSource.bearing = value;
                     }
                 }
-                C2.Slider {
+                Slider {
                     id: tiltSlider
                     height: parent.height
                     orientation : Qt.Vertical
@@ -253,7 +255,7 @@ Row {
                         containerRow.mapSource.tilt = value;
                     }
                 }
-                C2.Slider {
+                Slider {
                     id: fovSlider
                     height: parent.height
                     orientation : Qt.Vertical

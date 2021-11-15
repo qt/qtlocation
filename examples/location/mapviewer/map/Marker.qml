@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5;
-import QtLocation 5.6
+import QtQuick
+import QtLocation
 
 //! [mqi-top]
 MapQuickItem {

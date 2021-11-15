@@ -48,10 +48,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtLocation 5.6
-import QtPositioning 5.5
+import QtQuick
+import QtQuick.Controls
+import QtLocation
+import QtPositioning
 import "map"
 import "menus"
 import "helper.js" as Helper
@@ -73,9 +73,9 @@ ApplicationWindow {
         var plugin
 
         if (parameters && parameters.length>0)
-            plugin = Qt.createQmlObject ('import QtLocation 5.6; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
+            plugin = Qt.createQmlObject ('import QtLocation; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
         else
-            plugin = Qt.createQmlObject ('import QtLocation 5.6; Plugin{ name:"' + provider + '"}', appWindow)
+            plugin = Qt.createQmlObject ('import QtLocation; Plugin{ name:"' + provider + '"}', appWindow)
 
         if (minimap) {
             minimap.destroy()
@@ -120,10 +120,10 @@ ApplicationWindow {
 
     function getPlugins()
     {
-        var plugin = Qt.createQmlObject ('import QtLocation 5.6; Plugin {}', appWindow)
+        var plugin = Qt.createQmlObject ('import QtLocation; Plugin {}', appWindow)
         var myArray = new Array()
         for (var i = 0; i<plugin.availableServiceProviders.length; i++) {
-            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.6; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
+            var tempPlugin = Qt.createQmlObject ('import QtLocation; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
             if (tempPlugin.supportsMapping())
                 myArray.push(tempPlugin.name)
         }
@@ -135,7 +135,7 @@ ApplicationWindow {
     {
         var parameters = new Array()
         for (var prop in pluginParameters){
-            var parameter = Qt.createQmlObject('import QtLocation 5.6; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',appWindow)
+            var parameter = Qt.createQmlObject('import QtLocation; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',appWindow)
             parameters.push(parameter)
         }
         appWindow.parameters = parameters
@@ -191,10 +191,10 @@ ApplicationWindow {
             stackView.pop(page)
         }
 
-        onSelectProvider: {
+        onSelectProvider: (providerName) => {
             stackView.pop()
-            for (var i = 0; i < providerMenu.items.length; i++) {
-                providerMenu.items[i].checked = providerMenu.items[i].text === providerName
+            for (var i = 0; i < providerMenu.count; i++) {
+                providerMenu.actionAt(i).checked = providerMenu.actionAt(i).text === providerName
             }
 
             createMap(providerName)
@@ -207,53 +207,53 @@ ApplicationWindow {
             }
         }
 
-        onSelectMapType: {
+        onSelectMapType: (mapType) => {
             stackView.pop(page)
-            for (var i = 0; i < mapTypeMenu.items.length; i++) {
-                mapTypeMenu.items[i].checked = mapTypeMenu.items[i].text === mapType.name
+            for (var i = 0; i < mapTypeMenu.count; i++) {
+                mapTypeMenu.actionAt(i).checked = mapTypeMenu.actionAt(i).text === mapType.name
             }
             map.activeMapType = mapType
         }
 
 
-        onSelectTool: {
+        onSelectTool: (tool) => {
             switch (tool) {
             case "AddressRoute":
                 stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/RouteAddress.qml") ,
-                                   properties: { "plugin": map.plugin,
+                stackView.push("forms/RouteAddress.qml" ,
+                                   { "plugin": map.plugin,
                                        "toAddress": toAddress,
-                                       "fromAddress": fromAddress}})
+                                       "fromAddress": fromAddress})
                 stackView.currentItem.showRoute.connect(map.calculateCoordinateRoute)
                 stackView.currentItem.showMessage.connect(stackView.showMessage)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "CoordinateRoute":
                 stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/RouteCoordinate.qml") ,
-                                   properties: { "toCoordinate": toCoordinate,
-                                       "fromCoordinate": fromCoordinate}})
+                stackView.push("forms/RouteCoordinate.qml" ,
+                                    { "toCoordinate": toCoordinate,
+                                       "fromCoordinate": fromCoordinate})
                 stackView.currentItem.showRoute.connect(map.calculateCoordinateRoute)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Geocode":
                 stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/Geocode.qml") ,
-                                   properties: { "address": fromAddress}})
+                stackView.push("forms/Geocode.qml",
+                                   { "address": fromAddress})
                 stackView.currentItem.showPlace.connect(map.geocode)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "RevGeocode":
                 stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/ReverseGeocode.qml") ,
-                                   properties: { "coordinate": fromCoordinate}})
+                stackView.push("forms/ReverseGeocode.qml",
+                                    { "coordinate": fromCoordinate })
                 stackView.currentItem.showPlace.connect(map.geocode)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Language":
                 stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/Locale.qml") ,
-                                   properties: { "locale":  map.plugin.locales[0]}})
+                stackView.push("forms/Locale.qml",
+                                   { "locale":  map.plugin.locales[0]})
                 stackView.currentItem.selectLanguage.connect(setLanguage)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
@@ -268,7 +268,7 @@ ApplicationWindow {
             }
         }
 
-        onToggleMapState: {
+        onToggleMapState: (state) => {
             stackView.pop(page)
             switch (state) {
             case "FollowMe":
@@ -334,9 +334,10 @@ ApplicationWindow {
 
         function askForCoordinate()
         {
-            stackView.push({ item: Qt.resolvedUrl("forms/ReverseGeocode.qml") ,
-                               properties: { "title": qsTr("New Coordinate"),
-                                   "coordinate":   map.markers[map.currentMarker].coordinate}})
+            console.log("askForCoordinate")
+            stackView.push("forms/ReverseGeocode.qml",
+                                { "title": qsTr("New Coordinate"),
+                                   "coordinate":   map.markers[map.currentMarker].coordinate})
             stackView.currentItem.showPlace.connect(moveMarker)
             stackView.currentItem.closeForm.connect(stackView.closeForm)
         }
@@ -446,12 +447,12 @@ support"
 
         function showMessage(title,message,backPage)
         {
-            push({ item: Qt.resolvedUrl("forms/Message.qml") ,
-                               properties: {
+            push("forms/Message.qml",
+                               {
                                    "title" : title,
                                    "message" : message,
                                    "backPage" : backPage
-                               }})
+                               })
             currentItem.closeForm.connect(closeMessage)
         }
 
@@ -467,10 +468,10 @@ support"
 
         function showRouteListPage()
         {
-            push({ item: Qt.resolvedUrl("forms/RouteList.qml") ,
-                               properties: {
+            push("forms/RouteList.qml",
+                               {
                                    "routeModel" : map.routeModel
-                               }})
+                               })
             currentItem.closeForm.connect(closeForm)
         }
     }

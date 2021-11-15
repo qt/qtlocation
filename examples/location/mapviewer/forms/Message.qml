@@ -48,7 +48,7 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
+import QtQuick
 
 MessageForm {
     property string title

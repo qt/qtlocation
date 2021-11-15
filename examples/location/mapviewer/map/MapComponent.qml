@@ -47,10 +47,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtLocation 5.9
-import QtPositioning 5.5
+import QtQuick
+import QtQuick.Controls
+import QtLocation
+import QtPositioning
 import "../helper.js" as Helper
 
 //! [top]
@@ -595,7 +595,7 @@ Map {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onPressed : {
+        onPressed: (mouse) => {
             map.lastX = mouse.x
             map.lastY = mouse.y
             map.pressX = mouse.x
@@ -603,7 +603,7 @@ Map {
             lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
         }
 
-        onPositionChanged: {
+        onPositionChanged: (mouse) => {
             if (mouse.button == Qt.LeftButton) {
                 map.lastX = mouse.x
                 map.lastY = mouse.y

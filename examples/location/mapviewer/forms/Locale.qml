@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtPositioning 5.5
+import QtQuick
+import QtPositioning
 
 LocaleForm {
     property string locale
@@ -58,12 +58,12 @@ LocaleForm {
 
     goButton.onClicked: {
 
-       if (!languageGroup.current) return
+       if (!languageGroup.checkedButton) return
 
        if (otherRadioButton.checked) {
            selectLanguage(language.text)
        } else {
-           selectLanguage(languageGroup.current.text)
+           selectLanguage(languageGroup.checkedButton.text)
        }
     }
 
