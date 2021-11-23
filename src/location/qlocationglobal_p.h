@@ -53,12 +53,6 @@
 
 #include "qlocationglobal.h"
 #include "private/qglobal_p.h"
-
-QT_BEGIN_NAMESPACE
-
-#define Q_LOCATION_PRIVATE_EXPORT Q_LOCATION_EXPORT
-
-QT_END_NAMESPACE
-
+#include <QtLocation/private/qtlocationexports_p.h>
 
 #endif // QLOCATIONGLOBAL_P_H

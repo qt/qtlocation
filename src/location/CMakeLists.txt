@@ -191,6 +191,8 @@ qt_internal_add_module(Location
         Qt::PositioningQuickPrivate
         Qt::QmlPrivate
         Qt::QmlModelsPrivate
+    GENERATE_CPP_EXPORTS
+    GENERATE_PRIVATE_CPP_EXPORTS
 )
 
 qt_internal_extend_target(Location CONDITION QT_FEATURE_location_labs_plugin

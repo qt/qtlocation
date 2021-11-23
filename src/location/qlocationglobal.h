@@ -40,24 +40,11 @@
 #define QLOCATIONGLOBAL_H
 
 #include <QtCore/qglobal.h>
-
-QT_BEGIN_NAMESPACE
-
-#ifndef QT_STATIC
-#    if defined(QT_BUILD_LOCATION_LIB)
-#      define Q_LOCATION_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_LOCATION_EXPORT Q_DECL_IMPORT
-#    endif
-#else
-#    define Q_LOCATION_EXPORT
-#endif
+#include <QtLocation/qtlocationexports.h>
 
 #ifdef Q_CLANG_QDOC
 #include "QtLocation/qlocation.h"
 #endif
-
-QT_END_NAMESPACE
 
 #endif // QLOCATIONGLOBAL_H
 
