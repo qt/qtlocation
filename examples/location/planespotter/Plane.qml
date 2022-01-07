@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.4
-import QtLocation 5.6
+import QtQuick
+import QtLocation
 
 //! [PlaneMapQuick1]
 // Plane.qml

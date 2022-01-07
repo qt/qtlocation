@@ -48,9 +48,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtLocation 5.6
-import QtQuick.Controls 1.4
+import QtQuick
+import QtLocation
+import QtQuick.Controls
 
 Item {
     id: root

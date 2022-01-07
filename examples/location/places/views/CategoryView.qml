@@ -48,9 +48,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtLocation 5.6
-import QtQml.Models 2.1
+import QtQuick
+import QtLocation
+import QtQml.Models
 
 
 //! [CategoryModel view]
