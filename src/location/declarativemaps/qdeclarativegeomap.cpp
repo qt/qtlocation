@@ -2575,6 +2575,7 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
                 return sendTouchEvent(mEvent);
             }
         }
+        break;
     case QEvent::UngrabMouse: {
         QQuickWindow *win = window();
         if (!win) break;
