@@ -258,8 +258,6 @@ static QGeoRoute constructRoute(const QByteArray &geometry, const QJsonArray &in
     QGeoRouteSegment firstSegment;
     int firstPosition = -1;
 
-    int segmentPathLengthCount = 0;
-
     for (int i = instructions.count() - 1; i >= 0; --i) {
         QJsonArray instruction = instructions.at(i).toArray();
 
@@ -293,8 +291,6 @@ static QGeoRoute constructRoute(const QByteArray &geometry, const QJsonArray &in
             segment.setPath(path.mid(position));
         else
             segment.setPath(path.mid(position, firstPosition - position));
-
-        segmentPathLengthCount += segment.path().length();
 
         segment.setTravelTime(time);
 
