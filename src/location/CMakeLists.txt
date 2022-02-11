@@ -121,6 +121,9 @@ qt_internal_add_module(Location
         Qt::PositioningQuickPrivate
     PUBLIC_LIBRARIES
         Qt::Core
+        Qt::Positioning
+        Qt::Network
+        Qt::PositioningQuick
     PRIVATE_MODULE_INTERFACE
         Qt::CorePrivate
         Qt::QuickPrivate
