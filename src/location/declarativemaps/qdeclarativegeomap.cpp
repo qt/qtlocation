@@ -582,15 +582,6 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     }
 
     // Tilt
-    if (m_cameraCapabilities.maximumTilt() < m_maximumTilt) {
-        setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
-    } else if (m_cameraCapabilities.maximumTilt() > m_maximumTilt) {
-        if (!qIsFinite(m_userMaximumTilt))
-            setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
-        else // Try to set what the user requested
-            setMaximumTilt(qMin<qreal>(m_cameraCapabilities.maximumTilt(), m_userMaximumTilt), false);
-    }
-
     if (m_cameraCapabilities.minimumTilt() > m_minimumTilt) {
         setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
     } else if (m_cameraCapabilities.minimumTilt() < m_minimumTilt) {
@@ -600,16 +591,16 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
             setMinimumTilt(qMax<qreal>(m_cameraCapabilities.minimumTilt(), m_userMinimumTilt), false);
     }
 
-    // FoV
-    if (m_cameraCapabilities.maximumFieldOfView() < m_maximumFieldOfView) {
-        setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
-    } else if (m_cameraCapabilities.maximumFieldOfView() > m_maximumFieldOfView) {
-        if (!qIsFinite(m_userMaximumFieldOfView))
-            setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
+    if (m_cameraCapabilities.maximumTilt() < m_maximumTilt) {
+        setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
+    } else if (m_cameraCapabilities.maximumTilt() > m_maximumTilt) {
+        if (!qIsFinite(m_userMaximumTilt))
+            setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
         else // Try to set what the user requested
-            setMaximumFieldOfView(qMin<qreal>(m_cameraCapabilities.maximumFieldOfView(), m_userMaximumFieldOfView), false);
+            setMaximumTilt(qMin<qreal>(m_cameraCapabilities.maximumTilt(), m_userMaximumTilt), false);
     }
 
+    // FoV
     if (m_cameraCapabilities.minimumFieldOfView() > m_minimumFieldOfView) {
         setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
     } else if (m_cameraCapabilities.minimumFieldOfView() < m_minimumFieldOfView) {
@@ -617,6 +608,15 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
             setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
         else // Try to set what the user requested
             setMinimumFieldOfView(qMax<qreal>(m_cameraCapabilities.minimumFieldOfView(), m_userMinimumFieldOfView), false);
+    }
+
+    if (m_cameraCapabilities.maximumFieldOfView() < m_maximumFieldOfView) {
+        setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
+    } else if (m_cameraCapabilities.maximumFieldOfView() > m_maximumFieldOfView) {
+        if (!qIsFinite(m_userMaximumFieldOfView))
+            setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
+        else // Try to set what the user requested
+            setMaximumFieldOfView(qMin<qreal>(m_cameraCapabilities.maximumFieldOfView(), m_userMaximumFieldOfView), false);
     }
 }
 
