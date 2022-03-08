@@ -82,15 +82,9 @@ qt6_add_resources(qml_location_mapviewer "mapviewer"
         ${mapviewer_resource_files}
 )
 
-if(QT_FEATURE_geoservices_mapboxgl)
+if(QT_FEATURE_geoservices_maplibregl)
     target_link_libraries(qml_location_mapviewer PUBLIC
         Qt::Sql
-    )
-endif()
-
-if(QT_FEATURE_geoservices_osm)
-    target_link_libraries(qml_location_mapviewer PUBLIC
-        Qt::Concurrent
     )
 endif()
 
