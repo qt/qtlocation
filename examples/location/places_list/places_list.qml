@@ -77,7 +77,7 @@ Rectangle {
         plugin: myPlugin
 
         searchTerm: "pizza"
-        searchArea: QtPositioning.circle(startCoordinate);
+        searchArea: QtPositioning.circle(startCoordinate, 500000 /* 5 km radius */);
 
         Component.onCompleted: update()
 
@@ -103,7 +103,7 @@ Rectangle {
 
     Connections {
         target: searchModel
-        onStatusChanged: {
+        function onStatusChanged() {
             if (searchModel.status == PlaceSearchModel.Error)
                 console.log(searchModel.errorString());
         }
