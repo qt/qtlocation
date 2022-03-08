@@ -29,6 +29,11 @@ endif()
 # Otherwise we'll get an "QtPositioning not found" error in WASM build.
 find_package(Qt6 ${PROJECT_VERSION} CONFIG REQUIRED COMPONENTS Positioning Network) # special case
 find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS Quick Qml Test QuickTest PositioningQuick ShaderTools) # special case
+find_package(Qt6 ${PROJECT_VERSION} CONFIG OPTIONAL_COMPONENTS
+    # Needed when building examples in-tree
+    Widgets
+    Sql
+)
 
 macro(assertTargets)
     foreach(qtTarget IN ITEMS ${ARGN})

@@ -7,5 +7,5 @@ qt_feature("location-labs-plugin" PRIVATE
 
 qt_feature("geoservices_osm" PRIVATE
     LABEL "Provides access to OpenStreetMap geoservices"
-    CONDITION QT_FEATURE_concurrent
+    CONDITION TRUE
 )
