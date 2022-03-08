@@ -72,7 +72,7 @@ Window {
         anchors.centerIn: parent;
         anchors.fill: parent
         plugin: Plugin {
-            name: "osm" // "mapboxgl", "esri", ...
+            name: "osm" // "maplibregl", "esri", ...
         }
 
         Plane {

@@ -48,10 +48,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtQuick.Window 2.14
-import QtLocation 5.6
-import QtPositioning 5.6
+import QtQuick
+import QtQuick.Window
+import QtLocation
+import QtPositioning
 
 Window {
     width: Qt.platform.os == "android" ? Screen.width : 512
@@ -60,7 +60,7 @@ Window {
 
     Plugin {
         id: mapPlugin
-        name: "osm" // "mapboxgl", "esri", ...
+        name: "osm" // "maplibregl", "esri", ...
         // specify plugin parameters if necessary
         // PluginParameter {
         //     name:

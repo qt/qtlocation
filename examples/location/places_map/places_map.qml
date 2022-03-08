@@ -60,7 +60,7 @@ Rectangle {
     //! [Initialize Plugin]
     Plugin {
         id: myPlugin
-        name: "osm" // "mapboxgl", "esri", ...
+        name: "osm" // "maplibregl", "esri", ...
         //specify plugin parameters if necessary
         //PluginParameter {...}
         //PluginParameter {...}
@@ -97,7 +97,7 @@ Rectangle {
         plugin: myPlugin
 
         searchTerm: "Pizza"
-        searchArea: QtPositioning.circle(locationOslo)
+        searchArea: QtPositioning.circle(locationOslo, 500000 /* 5 km radius */)
 
         Component.onCompleted: update()
     }
@@ -109,7 +109,7 @@ Rectangle {
         anchors.fill: parent
         plugin: myPlugin;
         center: locationOslo
-        zoomLevel: 13
+        zoomLevel: 5
 
         MapItemView {
             model: searchModel
@@ -130,7 +130,7 @@ Rectangle {
 
     Connections {
         target: searchModel
-        onStatusChanged: {
+        function onStatusChanged() {
             if (searchModel.status == PlaceSearchModel.Error)
                 console.log(searchModel.errorString());
         }
