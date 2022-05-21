@@ -1216,8 +1216,8 @@ void QQuickGeoMapGestureArea::updateOneTouchPoint()
 */
 void QQuickGeoMapGestureArea::startTwoTouchPoints()
 {
-    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePressPosition());
-    m_sceneStartPoint2 = mapFromScene(m_allPoints.at(1).scenePressPosition());
+    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePosition());
+    m_sceneStartPoint2 = mapFromScene(m_allPoints.at(1).scenePosition());
     QPointF startPos = (m_sceneStartPoint1 + m_sceneStartPoint2) * 0.5;
     m_lastPos = startPos;
     m_lastPosTime.start();
