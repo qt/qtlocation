@@ -2575,19 +2575,9 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
             }
         }
         break;
-    case QEvent::UngrabMouse: {
-        QQuickWindow *win = window();
-        if (!win) break;
-        if (!win->mouseGrabberItem() ||
-                (win->mouseGrabberItem() &&
-                 win->mouseGrabberItem() != this)) {
-            // child lost grab, we could even lost
-            // some events if grab already belongs for example
-            // in item in diffrent window , clear up states
-            mouseUngrabEvent();
-        }
-        break;
-    }
+    case QEvent::UngrabMouse:
+        Q_ASSERT(event->isSinglePointEvent());
+        return sendTouchEvent(static_cast<QSinglePointEvent*>(event));
     default:
         break;
     }
