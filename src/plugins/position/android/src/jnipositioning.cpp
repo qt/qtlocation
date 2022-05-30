@@ -127,8 +127,11 @@ namespace AndroidPositioning {
 
     void unregisterPositionInfoSource(int key)
     {
-        idToPosSource()->remove(key);
-        idToSatSource()->remove(key);
+        if (idToPosSource.exists())
+            idToPosSource->remove(key);
+
+        if (idToSatSource.exists())
+            idToSatSource->remove(key);
     }
 
     enum PositionProvider
