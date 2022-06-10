@@ -86,7 +86,7 @@ public:
     virtual QGeoShape geoShape() const override;
 
     // Data Members
-    QScopedPointer<QMapPolylineObjectPrivateQSG> m_polyline;
+    std::unique_ptr<QMapPolylineObjectPrivateQSG> m_polyline;
 };
 
 QT_END_NAMESPACE

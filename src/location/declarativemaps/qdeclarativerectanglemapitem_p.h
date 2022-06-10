@@ -130,7 +130,7 @@ private:
     bool m_updatingGeometry;
     Backend m_backend = Software;
 
-    QScopedPointer<QDeclarativeRectangleMapItemPrivate> m_d;
+    std::unique_ptr<QDeclarativeRectangleMapItemPrivate> m_d;
 
     friend class QDeclarativeRectangleMapItemPrivate;
     friend class QDeclarativeRectangleMapItemPrivateCPU;

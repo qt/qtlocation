@@ -160,7 +160,7 @@ public:
     bool m_dirtyMaterial;
     bool m_updatingGeometry;
 
-    QScopedPointer<QDeclarativePolylineMapItemPrivate> m_d;
+    std::unique_ptr<QDeclarativePolylineMapItemPrivate> m_d;
 
     friend class QDeclarativePolylineMapItemPrivate;
     friend class QDeclarativePolylineMapItemPrivateCPU;

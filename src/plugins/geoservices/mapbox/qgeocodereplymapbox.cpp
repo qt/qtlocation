@@ -86,7 +86,7 @@ void QGeoCodeReplyMapbox::onNetworkReplyFinished()
     }
 
     const QJsonArray features = document.object().value(QStringLiteral("features")).toArray();
-    for (const QJsonValue &value : features)
+    for (const QJsonValueConstRef value : features)
         locations.append(QMapboxCommon::parseGeoLocation(value.toObject()));
 
     setLocations(locations);

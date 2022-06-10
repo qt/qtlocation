@@ -181,7 +181,7 @@ protected:
     void setError(NavigationError error, const QString &errorString);
 
 private:
-    QScopedPointer<QDeclarativeNavigatorPrivate> d_ptr;
+    std::unique_ptr<QDeclarativeNavigatorPrivate> d_ptr;
 
     friend class QDeclarativeNavigatorPrivate;
     friend class QDeclarativeNavigationBasicDirections;

@@ -67,7 +67,7 @@ QGeoLocation QMapboxCommon::parseGeoLocation(const QJsonObject &response)
     // 'address'. The former provides the street name, and the latter provides
     // the street number in that case.
     if (response.value(QStringLiteral("place_type")).isArray()) {
-        for (const QJsonValue &value : response.value(QStringLiteral("place_type")).toArray()) {
+        for (const QJsonValueConstRef value : response.value(QStringLiteral("place_type")).toArray()) {
             if (!value.isString())
                 continue;
             if (value.toString() == QStringLiteral("address")) {
@@ -89,7 +89,7 @@ QGeoLocation QMapboxCommon::parseGeoLocation(const QJsonObject &response)
     address.setStreet(streetAddress);
 
     if (response.value(QStringLiteral("context")).isArray()) {
-        for (const QJsonValue &value : response.value(QStringLiteral("context")).toArray()) {
+        for (const QJsonValueConstRef value : response.value(QStringLiteral("context")).toArray()) {
             if (!value.isObject())
                 continue;
 

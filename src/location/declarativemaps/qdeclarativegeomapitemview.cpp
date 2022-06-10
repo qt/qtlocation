@@ -428,7 +428,7 @@ void QDeclarativeGeoMapItemView::transitionItemOut(QQuickItem *o)
     QDeclarativeGeoMapItemGroup *group = qobject_cast<QDeclarativeGeoMapItemGroup *>(o);
     if (group) {
         if (!group->m_transitionManager) {
-            QScopedPointer<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(group));
+            std::unique_ptr<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(group));
             group->m_transitionManager.swap(manager);
             group->m_transitionManager->m_view = this;
         }
@@ -441,7 +441,7 @@ void QDeclarativeGeoMapItemView::transitionItemOut(QQuickItem *o)
     QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(o);
     if (item) {
         if (!item->m_transitionManager) {
-            QScopedPointer<QDeclarativeGeoMapItemTransitionManager> manager(new QDeclarativeGeoMapItemTransitionManager(item));
+            std::unique_ptr<QDeclarativeGeoMapItemTransitionManager> manager(new QDeclarativeGeoMapItemTransitionManager(item));
             item->m_transitionManager.swap(manager);
             item->m_transitionManager->m_view = this;
         }
@@ -493,7 +493,7 @@ void QDeclarativeGeoMapItemView::addItemToMap(QDeclarativeGeoMapItemBase *item, 
         m_map->addMapItem(item);
         if (m_enter) {
             if (!item->m_transitionManager) {
-                QScopedPointer<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(item));
+                std::unique_ptr<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(item));
                 item->m_transitionManager.swap(manager);
             }
             item->m_transitionManager->m_view = this;
@@ -521,7 +521,7 @@ void QDeclarativeGeoMapItemView::addItemViewToMap(QDeclarativeGeoMapItemView *it
         m_map->addMapItemView(item);
         if (m_enter) {
             if (!item->m_transitionManager) {
-                QScopedPointer<QDeclarativeGeoMapItemTransitionManager> manager(new QDeclarativeGeoMapItemTransitionManager(item));
+                std::unique_ptr<QDeclarativeGeoMapItemTransitionManager> manager(new QDeclarativeGeoMapItemTransitionManager(item));
                 item->m_transitionManager.swap(manager);
             }
             item->m_transitionManager->m_view = this;
@@ -541,7 +541,7 @@ void QDeclarativeGeoMapItemView::addItemGroupToMap(QDeclarativeGeoMapItemGroup *
         m_map->addMapItemGroup(item);
         if (m_enter) {
             if (!item->m_transitionManager) {
-                QScopedPointer<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(item));
+                std::unique_ptr<QDeclarativeGeoMapItemTransitionManager>manager(new QDeclarativeGeoMapItemTransitionManager(item));
                 item->m_transitionManager.swap(manager);
             }
             item->m_transitionManager->m_view = this;

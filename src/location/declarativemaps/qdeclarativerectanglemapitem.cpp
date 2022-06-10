@@ -188,13 +188,13 @@ void QDeclarativeRectangleMapItem::setBackend(QDeclarativeRectangleMapItem::Back
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativeRectangleMapItemPrivate> d(
+    std::unique_ptr<QDeclarativeRectangleMapItemPrivate> d(
             (m_backend == Software) ? static_cast<QDeclarativeRectangleMapItemPrivate *>(
                     new QDeclarativeRectangleMapItemPrivateCPU(*this))
                                     : static_cast<QDeclarativeRectangleMapItemPrivate *>(
                                             new QDeclarativeRectangleMapItemPrivateOpenGL(*this)));
 
-    m_d.swap(d);
+    std::swap(m_d, d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
 }

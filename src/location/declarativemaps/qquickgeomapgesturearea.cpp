@@ -1819,7 +1819,7 @@ void QQuickGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
     QPointF delta(dx, dy);
     QMatrix4x4 matBearing;
     matBearing.rotate(m_map->cameraData().bearing(), 0, 0, 1);
-    delta = matBearing * delta;
+    delta = matBearing.map(delta);
 
     double zoom = pow(2.0, m_declarativeMap->zoomLevel());
     double longitude = animationStartCoordinate.longitude() - (delta.x() / zoom);

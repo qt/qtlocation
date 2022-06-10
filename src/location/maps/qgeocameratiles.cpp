@@ -271,13 +271,13 @@ Frustum QGeoCameraTilesPrivate::createFrustum(double viewExpansion) const
     // The rotation direction here is the opposite of QGeoTiledMapScene::setupCamera,
     // as this is basically rotating the map against a fixed view frustum.
     mBearing.rotate(1.0 * m_camera.bearing(), toVector3D(view));
-    up = toDoubleVector3D(mBearing * toVector3D(up));
+    up = toDoubleVector3D(mBearing.map(toVector3D(up)));
 
     // same for tilting
     QDoubleVector3D side2 = QDoubleVector3D::normal(up, view);
     QMatrix4x4 mTilt;
     mTilt.rotate(-1.0 * m_camera.tilt(), toVector3D(side2));
-    eye = toDoubleVector3D((mTilt * toVector3D(view)) + toVector3D(center));
+    eye = toDoubleVector3D((mTilt.map(toVector3D(view))) + toVector3D(center));
 
     view = eye - center;
     side = QDoubleVector3D::normal(view, QDoubleVector3D(0.0, 1.0, 0.0));

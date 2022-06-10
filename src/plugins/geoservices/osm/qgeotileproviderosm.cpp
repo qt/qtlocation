@@ -267,11 +267,11 @@ void QGeoTileProviderOsm::addProvider(TileProvider *provider)
 {
     if (!provider)
         return;
-    QScopedPointer<TileProvider> p(provider);
+    std::unique_ptr<TileProvider> p(provider);
     if (provider->status() == TileProvider::Invalid)
         return; // if the provider is already resolved and invalid, no point in adding it.
 
-    provider = p.take();
+    provider = p.release();
     provider->setNetworkManager(m_nm);
     provider->setParent(this);
     m_providerList.append(provider);

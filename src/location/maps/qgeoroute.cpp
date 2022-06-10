@@ -653,7 +653,7 @@ int QGeoRoutePrivateDefault::segmentsCount() const
     QGeoRouteSegment segment = m_firstSegment;
     while (segment.isValid()) {
         ++count;
-        if (segment.isLegLastSegment() && m_containingRoute.data()) // if containing route, this is a leg
+        if (segment.isLegLastSegment() && m_containingRoute) // if containing route, this is a leg
             break;
         segment = segment.nextRouteSegment();
     }
@@ -694,8 +694,7 @@ int QGeoRoutePrivateDefault::legIndex() const
 
 void QGeoRoutePrivateDefault::setContainingRoute(const QGeoRoute &route)
 {
-    QScopedPointer<QGeoRoute> containingRoute(new QGeoRoute(route));
-    m_containingRoute.swap(containingRoute);
+    m_containingRoute.reset(new QGeoRoute(route));
 }
 
 QGeoRoute QGeoRoutePrivateDefault::containingRoute() const

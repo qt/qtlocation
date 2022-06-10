@@ -44,7 +44,7 @@ QT_BEGIN_NAMESPACE
 QMapRouteObjectPrivateQSG::QMapRouteObjectPrivateQSG(QGeoMapObject *q)
     : QMapRouteObjectPrivate(q)
 {
-    QScopedPointer<QMapPolylineObjectPrivateQSG> poly(new QMapPolylineObjectPrivateQSG(q));
+    std::unique_ptr<QMapPolylineObjectPrivateQSG> poly(new QMapPolylineObjectPrivateQSG(q));
     m_polyline.swap(poly);
     m_polyline->m_componentCompleted = true;
 }
@@ -52,7 +52,7 @@ QMapRouteObjectPrivateQSG::QMapRouteObjectPrivateQSG(QGeoMapObject *q)
 QMapRouteObjectPrivateQSG::QMapRouteObjectPrivateQSG(const QMapRouteObjectPrivate &other)
     : QMapRouteObjectPrivate(other)
 {
-    QScopedPointer<QMapPolylineObjectPrivateQSG> poly(new QMapPolylineObjectPrivateQSG(other.q));
+    std::unique_ptr<QMapPolylineObjectPrivateQSG> poly(new QMapPolylineObjectPrivateQSG(other.q));
     m_polyline.swap(poly);
     m_polyline->m_componentCompleted = true;
     setRoute(other.declarativeGeoRoute());
@@ -80,7 +80,7 @@ QSGNode *QMapRouteObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
 void QMapRouteObjectPrivateQSG::setRoute(const QDeclarativeGeoRoute *route)
 {
     const QList<QGeoCoordinate> &path = route->route().path();
-    m_polyline->setColor(QColor("deepskyblue")); // ToDo: support MapParameters for this
+    m_polyline->setColor(QColor::fromString("deepskyblue")); // ToDo: support MapParameters for this
     m_polyline->setWidth(4);
     m_polyline->setPath(path); // SGNodeChanged emitted by m_polyline
 }

@@ -81,7 +81,7 @@ public:
         TiledMapReplyTest* mappingReply =  new TiledMapReplyTest(spec, this);
 
         QImage im(256, 256, QImage::Format_RGB888);
-        im.fill(QColor("lightgray"));
+        im.fill(QColor::fromString("lightgray"));
         QRectF rect;
         QString text("X: " + QString::number(spec.x()) + "\nY: " + QString::number(spec.y()) + "\nZ: " + QString::number(spec.zoom()));
         rect.setWidth(250);
@@ -89,14 +89,14 @@ public:
         rect.setLeft(3);
         rect.setTop(3);
         QPainter painter;
-        QPen pen(QColor("firebrick"));
+        QPen pen(QColor::fromString("firebrick"));
         painter.begin(&im);
         painter.setPen(pen);
         painter.setFont( QFont("Times", 35, 10, false));
         painter.drawText(rect, text);
         // different border color for vertically and horizontally adjacent frames
         if ((spec.x() + spec.y()) % 2 == 0)
-            pen.setColor(QColor("yellow"));
+            pen.setColor(QColor::fromString("yellow"));
         pen.setWidth(5);
         painter.setPen(pen);
         painter.drawRect(0,0,255,255);

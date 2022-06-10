@@ -129,7 +129,7 @@ private:
     bool m_updatingGeometry;
     Backend m_backend = Software;
 
-    QScopedPointer<QDeclarativeCircleMapItemPrivate> m_d;
+    std::unique_ptr<QDeclarativeCircleMapItemPrivate> m_d;
 
     friend class QDeclarativeCircleMapItemPrivate;
     friend class QDeclarativeCircleMapItemPrivateCPU;

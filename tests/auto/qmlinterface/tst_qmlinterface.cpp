@@ -339,7 +339,7 @@ void tst_qmlinterface::testPlace()
     QVERIFY(qmlObject->property("name").toString().isEmpty());
     QVERIFY(qmlObject->property("placeId").toString().isEmpty());
     QVERIFY(qmlObject->property("attribution").toString().isEmpty());
-    QQmlListReference categories(qmlObject, "categories", &engine);
+    QQmlListReference categories(qmlObject, "categories");
     QCOMPARE(categories.count(), 0);
     QCOMPARE(qmlObject->property("location").value<QGeoLocation>(), QGeoLocation());
     QCOMPARE(qmlObject->property("ratings").value<QPlaceRatings>(), QPlaceRatings());

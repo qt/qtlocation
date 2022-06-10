@@ -119,7 +119,7 @@ public:
     QSet<QGeoTileSpec> tilesFromPolygon(const PolygonVector &polygon) const;
 
     static QGeoCameraTilesPrivate *get(QGeoCameraTiles *o) {
-        return o->d_ptr.data();
+        return o->d_ptr.get();
     }
 
 public:

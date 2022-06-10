@@ -194,7 +194,7 @@ public:
 
     QParameterizableObject *q = nullptr;
     QSharedPointer<QDeclarativeNavigatorParams> m_params;
-    QScopedPointer<QAbstractNavigator> m_navigator;
+    std::unique_ptr<QAbstractNavigator> m_navigator;
     QDeclarativeGeoServiceProvider *m_plugin = nullptr;
     QDeclarativeNavigationBasicDirections m_basicDirections;
 

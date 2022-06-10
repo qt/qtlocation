@@ -184,7 +184,7 @@ public:
     QList<QGeoRouteLeg> m_legs;
     QGeoRouteSegment m_firstSegment;
     mutable int m_numSegments;
-    QScopedPointer<QGeoRoute> m_containingRoute;
+    std::unique_ptr<QGeoRoute> m_containingRoute;
     QVariantMap m_extendedAttributes;
     int m_legIndex = 0;
 };

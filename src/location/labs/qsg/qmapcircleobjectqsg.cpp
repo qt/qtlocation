@@ -70,7 +70,7 @@ QMapCircleObjectPrivateQSG::~QMapCircleObjectPrivateQSG()
 
 void QMapCircleObjectPrivateQSG::updateGeometry()
 {
-    if (!m_dataGL.isNull())
+    if (m_dataGL)
         updateGeometryGL();
     else
         updateGeometryCPU();
@@ -202,9 +202,9 @@ QGeoMapObjectPrivate *QMapCircleObjectPrivateQSG::clone()
 
 void QMapCircleObjectPrivateQSG::switchToGL()
 {
-    if (!m_dataGL.isNull())
+    if (m_dataGL)
         return;
-    QScopedPointer<CircleDataGL> data(new CircleDataGL);
+    std::unique_ptr<CircleDataGL> data(new CircleDataGL);
     m_dataGL.swap(data);
     m_dataGL->markSourceDirty();
     m_dataCPU.reset(nullptr);
@@ -212,9 +212,9 @@ void QMapCircleObjectPrivateQSG::switchToGL()
 
 void QMapCircleObjectPrivateQSG::switchToCPU()
 {
-    if (!m_dataCPU.isNull())
+    if (m_dataCPU)
         return;
-    QScopedPointer<CircleDataCPU> data(new CircleDataCPU);
+    std::unique_ptr<CircleDataCPU> data(new CircleDataCPU);
     m_dataCPU.swap(data);
     m_dataGL.reset(nullptr);
 }
@@ -224,7 +224,7 @@ QSGNode *QMapCircleObjectPrivateQSG::updateMapObjectNode(QSGNode *oldNode,
                                                          QSGNode *root,
                                                          QQuickWindow * window)
 {
-    if (!m_dataGL.isNull())
+    if (m_dataGL)
         return updateMapObjectNodeGL(oldNode, visibleNode, root, window);
     else
         return updateMapObjectNodeCPU(oldNode, visibleNode, root, window);
@@ -337,7 +337,7 @@ void QMapCircleObjectPrivateQSG::setCenter(const QGeoCoordinate &center)
     else
         switchToCPU();
 
-    if (!m_dataGL.isNull())
+    if (m_dataGL)
         m_dataGL->markSourceDirty();
 
     updateGeometry();
@@ -353,7 +353,7 @@ void QMapCircleObjectPrivateQSG::setRadius(qreal radius)
     else
         switchToCPU();
 
-    if (!m_dataGL.isNull())
+    if (m_dataGL)
         m_dataGL->markSourceDirty();
 
     updateGeometry();
@@ -364,7 +364,7 @@ void QMapCircleObjectPrivateQSG::setRadius(qreal radius)
 void QMapCircleObjectPrivateQSG::setColor(const QColor &color)
 {
     QMapCircleObjectPrivateDefault::setColor(color);
-    if (!m_dataCPU.isNull())
+    if (m_dataCPU)
         updateGeometry();
     if (m_map)
         emit m_map->sgNodeChanged();
@@ -373,7 +373,7 @@ void QMapCircleObjectPrivateQSG::setColor(const QColor &color)
 void QMapCircleObjectPrivateQSG::setBorderColor(const QColor &color)
 {
     QMapCircleObjectPrivateDefault::setBorderColor(color);
-    if (!m_dataCPU.isNull())
+    if (m_dataCPU)
         updateGeometry();
     if (m_map)
         emit m_map->sgNodeChanged();
@@ -382,7 +382,7 @@ void QMapCircleObjectPrivateQSG::setBorderColor(const QColor &color)
 void QMapCircleObjectPrivateQSG::setBorderWidth(qreal width)
 {
     QMapCircleObjectPrivateDefault::setBorderWidth(width);
-    if (!m_dataCPU.isNull())
+    if (m_dataCPU)
         updateGeometry();
     if (m_map)
         emit m_map->sgNodeChanged();

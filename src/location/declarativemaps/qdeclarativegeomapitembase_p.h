@@ -166,7 +166,7 @@ private:
 
     QDeclarativeGeoMapItemGroup *parentGroup_;
 
-    QScopedPointer<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
+    std::unique_ptr<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
     bool m_autoFadeIn = true;
     int m_lodThreshold = 0;
 

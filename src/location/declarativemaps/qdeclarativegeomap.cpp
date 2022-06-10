@@ -2428,7 +2428,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(const QList<QPointer<QDecla
 
             QRectF brect = item->boundingRect();
             brect = quickItem->matrix_->m_matrix.mapRect(brect);
-            QPointF transformedPosition = quickItem->matrix_->m_matrix * item->position();
+            QPointF transformedPosition = quickItem->matrix_->m_matrix.map(item->position());
             topLeftX = transformedPosition.x();
             topLeftY = transformedPosition.y();
             bottomRightX = topLeftX + brect.width();

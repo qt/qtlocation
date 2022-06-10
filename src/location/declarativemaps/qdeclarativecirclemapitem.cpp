@@ -452,12 +452,12 @@ void QDeclarativeCircleMapItem::possiblySwitchBackend(const QGeoCoordinate &oldC
     // if old does not cross and new crosses, move to CPU.
     if (!QDeclarativeCircleMapItemPrivate::crossEarthPole(oldCenter, oldRadius)
             && !QDeclarativeCircleMapItemPrivate::crossEarthPole(newCenter, newRadius)) {
-        QScopedPointer<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateCPU(*this)));
-        m_d.swap(d);
+        std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateCPU(*this)));
+        std::swap(m_d, d);
     } else if (QDeclarativeCircleMapItemPrivate::crossEarthPole(oldCenter, oldRadius)
                && !QDeclarativeCircleMapItemPrivate::crossEarthPole(newCenter, newRadius)) { // else if old crosses and new does not cross, move back to OpenGL
-        QScopedPointer<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
-        m_d.swap(d);
+        std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
+        std::swap(m_d, d);
     }
 }
 
@@ -534,12 +534,12 @@ void QDeclarativeCircleMapItem::setBackend(QDeclarativeCircleMapItem::Backend b)
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativeCircleMapItemPrivate> d(
+    std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(
             (m_backend == Software) ? static_cast<QDeclarativeCircleMapItemPrivate *>(
                     new QDeclarativeCircleMapItemPrivateCPU(*this))
                                     : static_cast<QDeclarativeCircleMapItemPrivate *>(
                                             new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
-    m_d.swap(d);
+    std::swap(m_d, d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
 }

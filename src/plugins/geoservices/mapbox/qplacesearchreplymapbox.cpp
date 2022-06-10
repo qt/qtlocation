@@ -182,7 +182,7 @@ void QPlaceSearchReplyMapbox::onReplyFinished()
     const QList<QPlaceCategory> categories = request().categories();
 
     QList<QPlaceSearchResult> results;
-    for (const QJsonValue &feature : features) {
+    for (const QJsonValue feature : features) {
         QPlaceResult placeResult = parsePlaceResult(feature.toObject(), attribution);
 
         if (!categories.isEmpty()) {

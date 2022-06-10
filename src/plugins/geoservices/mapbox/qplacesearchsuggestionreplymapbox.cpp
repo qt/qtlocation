@@ -97,7 +97,7 @@ void QPlaceSearchSuggestionReplyMapbox::onReplyFinished()
     const QJsonArray features = document.object().value(QStringLiteral("features")).toArray();
 
     QStringList suggestions;
-    for (const QJsonValue &feature : features) {
+    for (const QJsonValueConstRef feature : features) {
         if (feature.isObject())
             suggestions.append(feature.toObject().value(QStringLiteral("text")).toString());
     }

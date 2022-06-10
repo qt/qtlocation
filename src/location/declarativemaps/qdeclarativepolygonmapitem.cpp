@@ -689,12 +689,12 @@ void QDeclarativePolygonMapItem::setBackend(QDeclarativePolygonMapItem::Backend 
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativePolygonMapItemPrivate> d(
+    std::unique_ptr<QDeclarativePolygonMapItemPrivate> d(
             (m_backend == Software) ? static_cast<QDeclarativePolygonMapItemPrivate *>(
                     new QDeclarativePolygonMapItemPrivateCPU(*this))
                                     : static_cast<QDeclarativePolygonMapItemPrivate *>(
                                             new QDeclarativePolygonMapItemPrivateOpenGL(*this)));
-    m_d.swap(d);
+    std::swap(m_d, d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
 }

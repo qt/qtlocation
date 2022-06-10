@@ -274,8 +274,8 @@ bool checkDocument(const QJsonDocument &doc, QString *errorString)
         return false;
     }
 
-    QJsonArray view = rit.value().toArray();
-    for (const QJsonValue &viewElement : view) {
+    const QJsonArray view = rit.value().toArray();
+    for (const QJsonValueConstRef viewElement : view) {
         if (!viewElement.isObject()) {
             *errorString = QLatin1String("Expected View array element to be object");
             return false;
@@ -291,8 +291,8 @@ bool checkDocument(const QJsonDocument &doc, QString *errorString)
             return false;
         }
 
-        QJsonArray result = voit.value().toArray();
-        for (const QJsonValue &resultElement : result) {
+        const QJsonArray result = voit.value().toArray();
+        for (const QJsonValueConstRef resultElement : result) {
             if (!resultElement.isObject()) {
                 *errorString = QLatin1String("Expected Result array element to be object");
                 return false;
@@ -342,8 +342,8 @@ bool parseLocation(const QJsonObject &obj, const QGeoShape &bounds, QGeoLocation
     if (!label.isEmpty()) {
         address.setText(label);
     }
-    QJsonArray additionalData = addr.value("AdditionalData").toArray();
-    for (const QJsonValue &adv : additionalData) {
+    const QJsonArray additionalData = addr.value("AdditionalData").toArray();
+    for (const QJsonValueConstRef adv : additionalData) {
         if (adv.isObject()) {
             const QJsonObject &ado(adv.toObject());
             if (ado.value("key").toString() == QLatin1String("CountryName")) {
@@ -369,9 +369,9 @@ bool parseLocation(const QJsonObject &obj, const QGeoShape &bounds, QGeoLocation
 void parseDocument(const QJsonDocument &doc, const QGeoShape &bounds, QList<QGeoLocation> *locs)
 {
     QJsonArray view = doc.object().value("Response").toObject().value("View").toArray();
-    for (const QJsonValue &viewElement : view) {
+    for (const QJsonValueRef viewElement : view) {
         QJsonArray result = viewElement.toObject().value("Result").toArray();
-        for (const QJsonValue &resultElement : result) {
+        for (const QJsonValueRef resultElement : result) {
             QGeoLocation location;
             if (parseLocation(resultElement.toObject().value("Location").toObject(), bounds, &location)) {
                 locs->append(location);

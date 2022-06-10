@@ -247,7 +247,7 @@ void QDeclarativeGeoMapCopyrightNotice::rasterizeHtmlAndUpdate()
     m_copyrightsImage.fill(qPremultiply(QColor(Qt::transparent).rgba()));
     QPainter painter(&m_copyrightsImage);
     QAbstractTextDocumentLayout::PaintContext ctx;
-    ctx.palette.setColor(QPalette::Text, QStringLiteral("black"));
+    ctx.palette.setColor(QPalette::Text, QColor::fromString("black"));
     m_copyrightsHtml->documentLayout()->draw(&painter, ctx);
 
     setImplicitSize(m_copyrightsImage.width(), m_copyrightsImage.height());

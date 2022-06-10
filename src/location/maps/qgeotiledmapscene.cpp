@@ -456,17 +456,17 @@ void QGeoTiledMapScenePrivate::setupCamera()
 
 static bool qgeotiledmapscene_isTileInViewport_Straight(const QRectF &tileRect, const QMatrix4x4 &matrix)
 {
-    const QRectF boundingRect = QRectF(matrix * tileRect.topLeft(), matrix * tileRect.bottomRight());
+    const QRectF boundingRect = QRectF(matrix.map(tileRect.topLeft()), matrix.map(tileRect.bottomRight()));
     return QRectF(-1, -1, 2, 2).intersects(boundingRect);
 }
 
 static bool qgeotiledmapscene_isTileInViewport_rotationTilt(const QRectF &tileRect, const QMatrix4x4 &matrix)
 {
     // Transformed corners
-    const QPointF tlt = matrix * tileRect.topLeft();
-    const QPointF trt = matrix * tileRect.topRight();
-    const QPointF blt = matrix * tileRect.bottomLeft();
-    const QPointF brt = matrix * tileRect.bottomRight();
+    const QPointF tlt = matrix.map(tileRect.topLeft());
+    const QPointF trt = matrix.map(tileRect.topRight());
+    const QPointF blt = matrix.map(tileRect.bottomLeft());
+    const QPointF brt = matrix.map(tileRect.bottomRight());
 
     const QRectF boundingRect = QRectF(QPointF(qMin(qMin(qMin(tlt.x(), trt.x()), blt.x()), brt.x())
                                               ,qMax(qMax(qMax(tlt.y(), trt.y()), blt.y()), brt.y()))

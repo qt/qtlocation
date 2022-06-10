@@ -75,7 +75,7 @@ public:
     QSharedPointer<QGeoTileTexture> tileTexture(const QGeoTileSpec &spec);
 
 private:
-    QScopedPointer<QGeoTileRequestManagerPrivate> d_ptr;
+    std::unique_ptr<QGeoTileRequestManagerPrivate> d_ptr;
     Q_DISABLE_COPY(QGeoTileRequestManager)
 };
 

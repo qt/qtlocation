@@ -70,8 +70,8 @@ private Q_SLOTS:
     void fetchTiles_data();
 
 private:
-    QScopedPointer<QGeoTiledMapTest> m_map;
-    QScopedPointer<FetchTileCounter> m_tilesCounter;
+    std::unique_ptr<QGeoTiledMapTest> m_map;
+    std::unique_ptr<FetchTileCounter> m_tilesCounter;
     QGeoTileFetcherTest *m_fetcher;
 
 };
@@ -111,7 +111,7 @@ void tst_QGeoTiledMap::initTestCase()
       m_map->setActiveMapType(m_map->m_engine->supportedMapTypes().first());
       m_fetcher = static_cast<QGeoTileFetcherTest*>(m_map->m_engine->tileFetcher());
       m_tilesCounter.reset(new FetchTileCounter());
-      connect(m_fetcher, SIGNAL(tileFetched(const QGeoTileSpec&)), m_tilesCounter.data(), SLOT(tileFetched(const QGeoTileSpec&)));
+      connect(m_fetcher, SIGNAL(tileFetched(const QGeoTileSpec&)), m_tilesCounter.get(), SLOT(tileFetched(const QGeoTileSpec&)));
 }
 
 void tst_QGeoTiledMap::fetchTiles()

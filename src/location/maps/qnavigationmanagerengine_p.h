@@ -128,7 +128,7 @@ signals:
     void alternativeRoutesChanged();
 
 private:
-    QScopedPointer<QAbstractNavigatorPrivate> d;
+    std::unique_ptr<QAbstractNavigatorPrivate> d;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QNavigationManagerEngine : public QObject
@@ -161,7 +161,7 @@ protected:
     */
     virtual void engineInitialized();
 
-    QScopedPointer<QNavigationManagerEnginePrivate> d;
+    std::unique_ptr<QNavigationManagerEnginePrivate> d;
 };
 
 QT_END_NAMESPACE

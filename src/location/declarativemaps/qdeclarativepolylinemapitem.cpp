@@ -1215,7 +1215,7 @@ void QDeclarativePolylineMapItem::setBackend(QDeclarativePolylineMapItem::Backen
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativePolylineMapItemPrivate> d(
+    std::unique_ptr<QDeclarativePolylineMapItemPrivate> d(
             (m_backend == Software)
                     ? static_cast<QDeclarativePolylineMapItemPrivate *>(
                             new QDeclarativePolylineMapItemPrivateCPU(*this))

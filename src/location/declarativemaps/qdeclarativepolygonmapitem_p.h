@@ -126,7 +126,7 @@ public:
 //    bool m_dirtyGeometry = false;
     bool m_updatingGeometry;
 
-    QScopedPointer<QDeclarativePolygonMapItemPrivate> m_d;
+    std::unique_ptr<QDeclarativePolygonMapItemPrivate> m_d;
 
     friend class QDeclarativePolygonMapItemPrivate;
     friend class QDeclarativePolygonMapItemPrivateCPU;

@@ -130,8 +130,8 @@ struct CircleDataGL {
         m_borderGeometry.markSourceDirty();
     }
 };
-    QScopedPointer<CircleDataCPU> m_dataCPU;
-    QScopedPointer<CircleDataGL>  m_dataGL;
+    std::unique_ptr<CircleDataCPU> m_dataCPU;
+    std::unique_ptr<CircleDataGL>  m_dataGL;
 };
 
 QT_END_NAMESPACE

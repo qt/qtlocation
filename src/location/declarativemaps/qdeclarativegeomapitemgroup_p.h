@@ -87,7 +87,7 @@ protected slots:
 private:
     QDeclarativeGeoMap *m_quickMap;
     QDeclarativeGeoMapItemGroup *m_parentGroup = nullptr;
-    QScopedPointer<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
+    std::unique_ptr<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
 
     friend class QDeclarativeGeoMapItemView;
     friend class QDeclarativeGeoMapItemTransitionManager;
