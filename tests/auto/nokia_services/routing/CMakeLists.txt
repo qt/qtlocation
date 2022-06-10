@@ -2,7 +2,6 @@ set(plugin_path "../../../../src/plugins/geoservices/nokia")
 
 qt_internal_add_test(tst_nokia_routing
     SOURCES
-        ${plugin_path}/qgeonetworkaccessmanager.h
         tst_routing.cpp
     INCLUDE_DIRECTORIES
         ${plugin_path}
@@ -12,3 +11,10 @@ qt_internal_add_test(tst_nokia_routing
         Qt::Location
         Qt::Positioning
 )
+
+if(NOT QT_BUILD_MINIMAL_STATIC_TESTS)
+    qt_internal_extend_target(tst_nokia_routing
+        SOURCES
+            ${plugin_path}/qgeonetworkaccessmanager.h
+    )
+endif()
