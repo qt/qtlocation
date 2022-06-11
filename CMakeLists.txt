@@ -20,6 +20,11 @@ if(WASM)
     return()
 endif()
 
+if(INTEGRITY)
+    message(NOTICE "Skipping the build as the condition \"NOT INTEGRITY\" is not met.")
+    return()
+endif()
+
 # Need to search for positioning only after we make sure that it's not WASM.
 # Otherwise we'll get an "QtPositioning not found" error in WASM build.
 find_package(Qt6 ${PROJECT_VERSION} CONFIG REQUIRED COMPONENTS Positioning Network) # special case
