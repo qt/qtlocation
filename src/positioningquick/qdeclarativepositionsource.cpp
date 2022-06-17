@@ -227,9 +227,11 @@ void QDeclarativePositionSource::tryAttach(const QString &newName, bool useFallb
         m_positionSource->setPreferredPositioningMethods(
             static_cast<QGeoPositionInfoSource::PositioningMethods>(int(m_preferredPositioningMethods)));
 
-        const QGeoPositionInfo &lastKnown = m_positionSource->lastKnownPosition();
-        if (lastKnown.isValid())
-            setPosition(lastKnown);
+        if (m_active) {
+            const QGeoPositionInfo &lastKnown = m_positionSource->lastKnownPosition();
+            if (lastKnown.isValid())
+                setPosition(lastKnown);
+        }
     } else if (m_active) {
         m_active = false;
         emit activeChanged();
