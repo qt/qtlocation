@@ -180,7 +180,7 @@ void QGeoCodeReplyOsm::networkReplyFinished()
 
             QGeoLocation location;
             location.setCoordinate(coordinate);
-            location.setBoundingBox(rectangle);
+            location.setBoundingShape(rectangle);
             location.setAddress(parseAddressObject(object));
             if (m_includeExtraData)
                 injectExtra(location, object);

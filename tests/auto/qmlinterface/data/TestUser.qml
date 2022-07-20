@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.3
+import QtLocation
 
 User {
     name: "Test User"

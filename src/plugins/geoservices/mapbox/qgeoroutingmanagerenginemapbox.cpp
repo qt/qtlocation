@@ -104,7 +104,7 @@ static QVariantMap parseMapboxVoiceInstruction(const QJsonObject &voiceInstructi
 static QVariantList parseMapboxVoiceInstructions(const QJsonArray &voiceInstructions)
 {
     QVariantList list;
-    for (const QJsonValue &voiceInstructionValue : voiceInstructions) {
+    for (const QJsonValueRef voiceInstructionValue : voiceInstructions) {
         if (voiceInstructionValue.isObject())
             list << parseMapboxVoiceInstruction(voiceInstructionValue.toObject());
     }
@@ -133,7 +133,7 @@ static QVariantMap parseMapboxBannerComponent(const QJsonObject &bannerComponent
 static QVariantList parseMapboxBannerComponents(const QJsonArray &bannerComponents)
 {
     QVariantList list;
-    for (const QJsonValue &bannerComponentValue : bannerComponents) {
+    for (const QJsonValueRef bannerComponentValue : bannerComponents) {
         if (bannerComponentValue.isObject())
             list << parseMapboxBannerComponent(bannerComponentValue.toObject());
     }
@@ -187,7 +187,7 @@ static QVariantMap parseMapboxBannerInstruction(const QJsonObject &bannerInstruc
 static QVariantList parseMapboxBannerInstructions(const QJsonArray &bannerInstructions)
 {
     QVariantList list;
-    for (const QJsonValue &bannerInstructionValue : bannerInstructions) {
+    for (const QJsonValueRef bannerInstructionValue : bannerInstructions) {
         if (bannerInstructionValue.isObject())
             list << parseMapboxBannerInstruction(bannerInstructionValue.toObject());
     }

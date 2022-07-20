@@ -28,6 +28,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtQuickTest/quicktest.h>
+#include <QtQml/QQmlEngine>
 
 static void initializeLibraryPath()
 {
@@ -41,6 +42,9 @@ static void initializeLibraryPath()
                                      QStringLiteral("/../../../plugins"));
 #endif
 #endif
+    const QByteArray qmlPath = QCoreApplication::applicationDirPath().toLatin1() +
+            "/../../../qml";
+    qputenv("QML_IMPORT_PATH", qmlPath);
 }
 
 Q_COREAPP_STARTUP_FUNCTION(initializeLibraryPath)

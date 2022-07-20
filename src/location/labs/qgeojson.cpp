@@ -587,7 +587,7 @@ static QGeoPolygon importPolygon(const QVariantMap &inputMap)
     QList<QList<QGeoCoordinate>> perimeters = importArrayOfArrayOfPositions(valueCoordinates);
     for (int i  = 0; i < perimeters.size(); ++i) { // Import an array of QList<QGeocoordinates>
         if (i == 0)
-            returnedObject.setPath(perimeters.at(i)); // External perimeter
+            returnedObject.setPerimeter(perimeters.at(i)); // External perimeter
         else
             returnedObject.addHole(perimeters.at(i)); // Inner perimeters
     }
@@ -640,7 +640,7 @@ static QVariantList importMultiPolygon(const QVariantMap &inputMap)
 
         for (int j = 0; j < coordinatesList.size(); ++j) {
             if (j == 0)
-                singlePoly.setPath(coordinatesList.at(j));
+                singlePoly.setPerimeter(coordinatesList.at(j));
             else
                 singlePoly.addHole(coordinatesList.at(j));
         }
@@ -816,7 +816,7 @@ static QJsonObject exportPolygon(const QVariantMap &polygonMap)
     QJsonValue polyCoordinates;
     QList<QList<QGeoCoordinate>> obtainedCoordinatesPoly;
     QGeoPolygon parsedPoly = polygonVariant.value<QGeoPolygon>();
-    obtainedCoordinatesPoly << parsedPoly.path();
+    obtainedCoordinatesPoly << parsedPoly.perimeter();
     if (parsedPoly.holesCount()!=0)
         for (int i = 0; i < parsedPoly.holesCount(); ++i) {
             obtainedCoordinatesPoly << parsedPoly.holePath(i);
@@ -867,7 +867,7 @@ static QJsonObject exportMultiPolygon(const QVariantMap &multiPolygonMap)
     int polyHoles = 0;
     int currentHole;
     for (int i = 0; i < multiPolygonList.size(); ++i) { // Start parsing Polygon list
-        extractedCoordinatesValue << multiPolygonList.at(i).value<QVariantMap>().value(QStringLiteral("data")).value<QGeoPolygon>().path(); // Extract external polygon path
+        extractedCoordinatesValue << multiPolygonList.at(i).value<QVariantMap>().value(QStringLiteral("data")).value<QGeoPolygon>().perimeter(); // Extract external polygon path
         polyHoles = multiPolygonList.at(i).value<QVariantMap>().value(QStringLiteral("data")).value<QGeoPolygon>().holesCount();
         if (polyHoles) // Check if the polygon has holes
             for (currentHole = 0 ; currentHole < polyHoles; currentHole++)
@@ -931,7 +931,8 @@ static QJsonObject exportFeature(const QVariantMap &featureMap)
     exportedFeature.insert(QStringLiteral("type"), QJsonValue(QStringLiteral("Feature")));
     exportedFeature.insert(QStringLiteral("geometry"), geometryNodeValue);
     exportedFeature.insert(QStringLiteral("properties"), propertiesNodeValue);
-    exportedFeature.insert(QStringLiteral("id"), idNodeValue);
+    if (!idNodeValue.isNull()) // this value is optional
+        exportedFeature.insert(QStringLiteral("id"), idNodeValue);
     return exportedFeature;
 }
 
@@ -988,7 +989,7 @@ QVariantList QGeoJson::importGeoJson(const QJsonDocument &geoJson)
 
     // Checking whether the JSON object has a "type" member
     const QVariant keyVariant = rootGeoJsonObject.value(QStringLiteral("type"));
-    if (keyVariant == QVariant::Invalid) {
+    if (!keyVariant.isValid()) {
         // Type check failed
     }
     QString valueType = keyVariant.value<QString>();
@@ -1071,7 +1072,7 @@ QVariantList QGeoJson::importGeoJson(const QJsonDocument &geoJson)
                 break;
             }
             QVariant bboxNodeValue = rootGeoJsonObject.value(QStringLiteral("bbox"));
-            if (bboxNodeValue != QVariant::Invalid) {
+            if (bboxNodeValue.isValid()) {
                 parsedGeoJsonMap.insert(QStringLiteral("bbox"), bboxNodeValue);
             }
             returnedList.append(parsedGeoJsonMap);
@@ -1157,7 +1158,7 @@ QTextStream &operator << (QTextStream &stream, const QGeoShape &shape)
     case QGeoShape::PolygonType: {
             QGeoPolygon poly(shape);
             stream << "QGeoPolygon(";
-            for (auto c: poly.path())
+            for (auto c: poly.perimeter())
                 stream << c << ", ";
             stream << ")";
             break;
@@ -1178,13 +1179,13 @@ QString printQvariant(const QVariant v, int tabs = 0) {
     for (int i  = 0; i< tabs; i++) {
         sTabs += sTab;
     }
-    if (v.type() == QVariant::List) {
+    if (v.typeId() == QMetaType::QVariantList) {
         stream << sTabs << "[\n";
         const QVariantList &l = v.toList();
         for (int i  = 0; i < l.size(); ++i)
             stream << printQvariant(l.at(i), tabs + 1);
         stream << sTabs << "]\n";
-    } else if (v.type() == QVariant::Map) {
+    } else if (v.typeId() == QMetaType::QVariantMap) {
         stream  << sTabs << "{\n";
         const QVariantList &l = v.toList();
         const QVariantMap &map = v.toMap();

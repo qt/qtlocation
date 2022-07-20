@@ -2,34 +2,37 @@
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
 ** Copyright (C) 2014 Jolla Ltd, author: <gunnar.sletta@jollamobile.com>
-** Contact: http://www.qt.io/licensing/
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL3$
+** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
 ** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
@@ -453,17 +456,17 @@ void QGeoTiledMapScenePrivate::setupCamera()
 
 static bool qgeotiledmapscene_isTileInViewport_Straight(const QRectF &tileRect, const QMatrix4x4 &matrix)
 {
-    const QRectF boundingRect = QRectF(matrix * tileRect.topLeft(), matrix * tileRect.bottomRight());
+    const QRectF boundingRect = QRectF(matrix.map(tileRect.topLeft()), matrix.map(tileRect.bottomRight()));
     return QRectF(-1, -1, 2, 2).intersects(boundingRect);
 }
 
 static bool qgeotiledmapscene_isTileInViewport_rotationTilt(const QRectF &tileRect, const QMatrix4x4 &matrix)
 {
     // Transformed corners
-    const QPointF tlt = matrix * tileRect.topLeft();
-    const QPointF trt = matrix * tileRect.topRight();
-    const QPointF blt = matrix * tileRect.bottomLeft();
-    const QPointF brt = matrix * tileRect.bottomRight();
+    const QPointF tlt = matrix.map(tileRect.topLeft());
+    const QPointF trt = matrix.map(tileRect.topRight());
+    const QPointF blt = matrix.map(tileRect.bottomLeft());
+    const QPointF brt = matrix.map(tileRect.bottomRight());
 
     const QRectF boundingRect = QRectF(QPointF(qMin(qMin(qMin(tlt.x(), trt.x()), blt.x()), brt.x())
                                               ,qMax(qMax(qMax(tlt.y(), trt.y()), blt.y()), brt.y()))
@@ -483,8 +486,7 @@ static bool qgeotiledmapscene_isTileInViewport(const QRectF &tileRect, const QMa
 void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                                        QGeoTiledMapScenePrivate *d,
                                        double camAdjust,
-                                       QQuickWindow *window,
-                                       bool ogl)
+                                       QQuickWindow *window)
 {
     // Set up the matrix...
     QDoubleVector3D eye = d->m_cameraEye;
@@ -531,12 +533,6 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
                 } else {
                     node->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
                 }
-#if QT_CONFIG(opengl)
-                if (ogl)
-                    static_cast<QSGDefaultImageNode *>(node)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
-#else
-    Q_UNUSED(ogl);
-#endif
                 dirtyBits |= QSGNode::DirtyMaterial;
             }
             if (dirtyBits != 0)
@@ -564,10 +560,6 @@ void QGeoTiledMapRootNode::updateTiles(QGeoTiledMapTileContainerNode *root,
             } else {
                 tileNode->setFiltering((d->m_linearScaling || overzooming) ? QSGTexture::Linear : QSGTexture::Nearest);
             }
-#if QT_CONFIG(opengl)
-            if (ogl)
-                static_cast<QSGDefaultImageNode *>(tileNode)->setAnisotropyLevel(QSGTexture::Anisotropy16x);
-#endif
             root->addChild(s, tileNode);
         } else {
 #ifdef QT_LOCATION_DEBUG
@@ -592,7 +584,6 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
         return 0;
     }
 
-    bool isOpenGL = (window->rendererInterface()->graphicsApi() == QSGRendererInterface::OpenGL);
     QGeoTiledMapRootNode *mapRoot = static_cast<QGeoTiledMapRootNode *>(oldNode);
     if (!mapRoot)
         mapRoot = new QGeoTiledMapRootNode();
@@ -661,9 +652,9 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
 #ifdef QT_LOCATION_DEBUG
     d->m_sideLengthPixel = sideLength;
 #endif
-    mapRoot->updateTiles(mapRoot->tiles, d, 0, window, isOpenGL);
-    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength, window, isOpenGL);
-    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength, window, isOpenGL);
+    mapRoot->updateTiles(mapRoot->tiles, d, 0, window);
+    mapRoot->updateTiles(mapRoot->wrapLeft, d, +sideLength, window);
+    mapRoot->updateTiles(mapRoot->wrapRight, d, -sideLength, window);
 
     mapRoot->isTextureLinear = d->m_linearScaling;
 

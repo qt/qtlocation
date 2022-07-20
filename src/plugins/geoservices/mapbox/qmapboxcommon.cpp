@@ -67,7 +67,7 @@ QGeoLocation QMapboxCommon::parseGeoLocation(const QJsonObject &response)
     // 'address'. The former provides the street name, and the latter provides
     // the street number in that case.
     if (response.value(QStringLiteral("place_type")).isArray()) {
-        foreach (const QJsonValue &value, response.value(QStringLiteral("place_type")).toArray()) {
+        for (const QJsonValueRef value : response.value(QStringLiteral("place_type")).toArray()) {
             if (!value.isString())
                 continue;
             if (value.toString() == QStringLiteral("address")) {
@@ -89,7 +89,7 @@ QGeoLocation QMapboxCommon::parseGeoLocation(const QJsonObject &response)
     address.setStreet(streetAddress);
 
     if (response.value(QStringLiteral("context")).isArray()) {
-        foreach (const QJsonValue &value, response.value(QStringLiteral("context")).toArray()) {
+        for (const QJsonValueRef value : response.value(QStringLiteral("context")).toArray()) {
             if (!value.isObject())
                 continue;
 
@@ -131,7 +131,7 @@ QGeoLocation QMapboxCommon::parseGeoLocation(const QJsonObject &response)
     double left = bbox.at(0).toDouble();
     double bottom = bbox.at(1).toDouble();
     double right = bbox.at(2).toDouble();
-    location.setBoundingBox(QGeoRectangle(QGeoCoordinate(top, left), QGeoCoordinate(bottom, right)));
+    location.setBoundingShape(QGeoRectangle(QGeoCoordinate(top, left), QGeoCoordinate(bottom, right)));
 
     QJsonArray center = response.value(QStringLiteral("center")).toArray();
     location.setCoordinate(QGeoCoordinate(center.at(1).toDouble(), center.at(0).toDouble()));

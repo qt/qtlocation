@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtPositioning 5.5
+import QtQuick
+import QtPositioning
 
 SearchBoundingBoxForm {
     property variant searchRegion

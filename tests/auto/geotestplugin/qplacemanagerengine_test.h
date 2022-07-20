@@ -56,7 +56,7 @@
 
 QT_BEGIN_NAMESPACE
 
-inline uint qHash(const QPlaceCategory &category)
+inline size_t qHash(const QPlaceCategory &category)
 {
     return qHash(QUuid(category.categoryId().toLatin1()));
 }

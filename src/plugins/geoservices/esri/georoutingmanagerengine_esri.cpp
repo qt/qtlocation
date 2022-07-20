@@ -48,7 +48,8 @@ static const QString kPrefixEsri(QStringLiteral("esri."));
 static const QString kParamUserAgent(kPrefixEsri + QStringLiteral("useragent"));
 static const QString kParamToken(kPrefixEsri + QStringLiteral("token"));
 
-static const QString kUrlRouting(QStringLiteral("http://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve"));
+static const QString kUrlRouting(QStringLiteral(
+        "https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve"));
 
 GeoRoutingManagerEngineEsri::GeoRoutingManagerEngineEsri(const QVariantMap &parameters,
                                                          QGeoServiceProvider::Error *error,
@@ -70,7 +71,8 @@ GeoRoutingManagerEngineEsri::~GeoRoutingManagerEngineEsri()
 {
 }
 
-// REST reference: http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#//02r300000036000000
+// REST reference:
+// https://resources.arcgis.com/en/help/arcgis-rest-api/index.html#//02r300000036000000
 
 QGeoRouteReply *GeoRoutingManagerEngineEsri::calculateRoute(const QGeoRouteRequest &request)
 {
@@ -125,7 +127,7 @@ void GeoRoutingManagerEngineEsri::replyError(QGeoRouteReply::Error errorCode, co
 QString GeoRoutingManagerEngineEsri::preferedDirectionLangage()
 {
     // list of supported langages is defined in:
-    // http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#//02r300000036000000
+    // https://resources.arcgis.com/en/help/arcgis-rest-api/index.html#//02r300000036000000
     const QStringList supportedLanguages = {
         "ar", // Generate directions in Arabic
         "cs", // Generate directions in Czech

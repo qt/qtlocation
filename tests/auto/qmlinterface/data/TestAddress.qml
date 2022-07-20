@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-import QtPositioning 5.5
+import QtPositioning
 
 Address {
     city: "Brisbane"

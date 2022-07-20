@@ -230,7 +230,8 @@ QGeoMap *GeoTiledMappingManagerEngineEsri::createMap()
 // ${y} = Y
 // ${token} = Token
 
-// template = 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{{z}}/{{y}}/{{x}}.png'
+// template =
+// 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{{z}}/{{y}}/{{x}}.png'
 
 bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider::Error *error,
                                                             QString *errorString,
@@ -254,9 +255,11 @@ bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider:
 
     if (!mapsDocument.isObject()) {
         *error = QGeoServiceProvider::NotSupportedError;
-        *errorString = Q_FUNC_INFO + QStringLiteral("JSON error: ") + (int)parseError.error
-                + ", offset: " + parseError.offset
-                + ", details: " + parseError.errorString();
+        *errorString = QString("%1JSON error: %2, offset: %3, details: %4")
+                            .arg(Q_FUNC_INFO)
+                            .arg((int)parseError.error)
+                            .arg(parseError.offset)
+                            .arg(parseError.errorString());
         return false;
     }
 

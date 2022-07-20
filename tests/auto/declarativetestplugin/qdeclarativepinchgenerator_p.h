@@ -34,6 +34,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QTouchEvent>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QPointingDevice>
 #include <QtCore/QElapsedTimer>
 #include <QtCore/QList>
 #include <QtCore/QPoint>
@@ -104,17 +105,17 @@ public:
     };
 
     // from QQmlParserStatus
-    virtual void componentComplete();
+    virtual void componentComplete() override;
     // from QQuickItem
-    void itemChange(ItemChange change, const ItemChangeData & data);
+    void itemChange(ItemChange change, const ItemChangeData &data) override;
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void timerEvent(QTimerEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void timerEvent(QTimerEvent *event) override;
 
 private:
     void setState(GeneratorState state);
@@ -131,7 +132,7 @@ private:
     int masterSwipe_;
     qreal replaySpeedFactor_;
     bool enabled_;
-    QTouchDevice* device_;
+    QPointingDevice *device_;
 };
 
 QT_END_NAMESPACE

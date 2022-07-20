@@ -1,0 +1,7 @@
+add_subdirectory(esri)
+add_subdirectory(itemsoverlay)
+add_subdirectory(mapbox)
+add_subdirectory(nokia)
+if(QT_FEATURE_geoservices_osm)
+    add_subdirectory(osm)
+endif()

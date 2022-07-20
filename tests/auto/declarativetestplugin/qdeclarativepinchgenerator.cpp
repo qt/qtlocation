@@ -48,9 +48,10 @@ QDeclarativePinchGenerator::QDeclarativePinchGenerator():
 {
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MiddleButton | Qt::RightButton);
     swipeTimer_.invalidate();
-    device_ = new QTouchDevice;
-    device_->setType(QTouchDevice::TouchScreen);
-    QWindowSystemInterface::registerTouchDevice(device_);
+    device_ = new QPointingDevice("test", -1, QInputDevice::DeviceType::TouchScreen,
+                                  QPointingDevice::PointerType::Finger,
+                                  QInputDevice::Capability::Position, 1, 0);
+    QWindowSystemInterface::registerInputDevice(device_);
 }
 
 QDeclarativePinchGenerator::~QDeclarativePinchGenerator()

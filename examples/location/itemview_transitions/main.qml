@@ -48,11 +48,11 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtQuick.Window 2.0
-import QtLocation 5.12
-import QtPositioning 5.12
-import QtQuick.Shapes 1.1
+import QtQuick
+import QtQuick.Window
+import QtLocation
+import QtPositioning
+import QtQuick.Shapes
 
 Window {
     width: 512

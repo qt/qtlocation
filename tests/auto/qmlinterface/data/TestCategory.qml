@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.3
+import QtLocation
 
 Category {
     name: "Test category"

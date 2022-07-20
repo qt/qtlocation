@@ -26,11 +26,11 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtTest 1.0
-import QtLocation 5.9
-import QtPositioning 5.5
-import QtLocation.Test 5.6
+import QtQuick
+import QtTest
+import QtLocation
+import QtPositioning
+import QtLocation.Test
 
     /*
 
@@ -421,7 +421,7 @@ Item {
             verify(LocationTestHelper.waitForPolished(map))
             var i
             var point = map.fromCoordinate(preMapRect.topLeft)
-            var targetCoordinate = map.toCoordinate(51, 51)
+            var targetCoordinate = map.toCoordinate(Qt.point(51, 51))
             mousePress(map, point.x + 5, point.y + 5)
             for (i = 0; i < 50; i += 1) {
                 wait(1)
@@ -462,7 +462,7 @@ Item {
             map.center = preMapQuickItem.coordinate
             verify(LocationTestHelper.waitForPolished(map))
             point = map.fromCoordinate(preMapQuickItem.coordinate)
-            targetCoordinate = map.toCoordinate(51, 51)
+            targetCoordinate = map.toCoordinate(Qt.point(51, 51))
             mousePress(map, point.x + 5, point.y + 5)
             for (i = 0; i < 50; i += 1) {
                 wait(1)

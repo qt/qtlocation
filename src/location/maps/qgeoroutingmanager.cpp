@@ -1,34 +1,37 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL3$
+** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
 ** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
@@ -73,78 +76,7 @@ QT_BEGIN_NAMESPACE
 
     A small example of the usage of QGeoRoutingManager and QGeoRouteRequests
     follows:
-
-    \code
-class MyRouteHandler : public QObject
-{
-    Q_OBJECT
-public:
-    MyRouteHandler(QGeoRoutingManager *routingManager,
-                   const QGeoCoordinate &origin,
-                   const QGeoCoordinate &destination) {
-
-        QGeoRouteRequest request(origin, destination);
-
-        // The request defaults to the fastest route by car, which is
-        // equivalent to:
-        // request.setTravelMode(QGeoRouteRequest::CarTravel);
-        // request.setRouteOptimization(QGeoRouteRequest::FastestRoute);
-
-        request.setAvoidFeatureTypes(QGeoRouteRequest::AvoidTolls);
-        request.setAvoidFeatureTypes(QGeoRouteRequest::AvoidMotorPoolLanes);
-
-        QGeoRouteRequest::AvoidFeaturesTypes avoidableFeatures = routingManager->supportedAvoidFeatureTypes();
-
-        if (!(avoidableFeatures & request.avoidFeatureTypes())) {
-            // ... inform the user that the routing manager does not
-            // provide support for avoiding tolls and/or motor pool lanes ...
-            return;
-        }
-
-        QGeoRouteReply *reply = routingManager->calculateRoute(request);
-
-        if (reply->isFinished()) {
-            if (reply->error() == QGeoRouteReply::NoError) {
-                routeCalculated(reply);
-            } else {
-                routeError(reply, reply->error(), reply->errorString());
-            }
-            return;
-        }
-
-        connect(routingManager,
-                SIGNAL(finished(QGeoRouteReply*)),
-                this,
-                SLOT(routeCalculated(QGeoRouteReply*)));
-
-        connect(routingManager,
-                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-                this,
-                SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
-    }
-
-private slots:
-    void routeCalculated(QGeoRouteReply *reply)
-    {
-        // A route request can ask for several alternative routes ...
-        if (reply->routes().size() != 0) {
-
-            // ... but by default it will only get a single route
-            QGeoRoute route = reply->routes().at(0);
-
-            //... now we have to make use of the route ...
-        }
-
-        reply->deleteLater();
-    }
-
-    void routeError(QGeoRouteReply *reply, QGeoRouteReply:Error error, const QString &errorString)
-    {
-        // ... inform the user that an error has occurred ...
-        reply->deleteLater();
-    }
-};
-    \endcode
+    \snippet maps/routehandler.h RouteHandler
 */
 
 /*!

@@ -46,7 +46,7 @@ public:
 
     QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
                                                   QGeoServiceProvider::Error *error,
-                                                  QString *errorString) const;
+                                                  QString *errorString) const override;
 };
 
 #endif

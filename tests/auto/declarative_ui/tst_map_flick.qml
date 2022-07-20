@@ -26,11 +26,11 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtTest 1.0
-import QtLocation 5.6
-import QtPositioning 5.5
-import QtLocation.Test 5.6
+import QtQuick
+import QtTest
+import QtLocation
+import QtPositioning
+import QtLocation.Test
 
 Item {
     // General-purpose elements for the test:

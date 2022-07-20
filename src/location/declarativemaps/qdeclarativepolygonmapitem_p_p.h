@@ -2,34 +2,37 @@
 **
 ** Copyright (C) 2020 Paolo Angelelli <paolo.angelelli@gmail.com>
 ** Copyright (C) 2020 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL3$
+** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
 ** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
@@ -63,7 +66,6 @@
 #include <QtPositioning/QGeoPolygon>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QSGFlatColorMaterial>
-#include <QSGSimpleMaterial>
 #include <QtGui/QMatrix4x4>
 #include <QColor>
 #include <QList>
@@ -89,7 +91,6 @@ protected:
     bool assumeSimple_;
 };
 
-#if QT_CONFIG(opengl)
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolygonGeometryOpenGL : public QGeoMapItemGeometry
 {
 public:
@@ -149,55 +150,8 @@ class Q_LOCATION_PRIVATE_EXPORT MapPolygonShader : public QSGMaterialShader
 public:
     MapPolygonShader();
 
-    const char *vertexShader() const override {
-        return
-        "attribute highp vec4 vertex;               \n"
-        "uniform highp mat4 qt_Matrix;              \n"
-        "uniform highp mat4 mapProjection;          \n"
-        "uniform highp vec3 center;                 \n"
-        "uniform highp vec3 center_lowpart;         \n"
-        "uniform lowp float wrapOffset;             \n"
-        "vec4 wrapped(in vec4 v) { return vec4(v.x + wrapOffset, v.y, 0.0, 1.0); }\n"
-        "void main() {                              \n"
-        "    vec4 vtx = wrapped(vertex) - vec4(center, 0.0);   \n"
-        "    vtx = vtx - vec4(center_lowpart, 0.0);   \n"
-        "    gl_Position = qt_Matrix * mapProjection * vtx;      \n"
-        "}";
-    }
-
-    const char *fragmentShader() const override {
-        return
-        "uniform lowp vec4 color;                   \n"
-        "void main() {                              \n"
-        "    gl_FragColor = color;                  \n"
-        "}";
-    }
-
-    void updateState(const RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect) override;
-    char const *const *attributeNames() const override
-    {
-        static char const *const attr[] = { "vertex", nullptr };
-        return attr;
-    }
-
-private:
-    void initialize() override
-    {
-        m_matrix_id = program()->uniformLocation("qt_Matrix");
-        m_color_id = program()->uniformLocation("color");
-        m_mapProjection_id = program()->uniformLocation("mapProjection");
-        m_center_id = program()->uniformLocation("center");
-        m_center_lowpart_id = program()->uniformLocation("center_lowpart");
-        m_wrapOffset_id = program()->uniformLocation("wrapOffset");
-    }
-    int m_center_id;
-    int m_center_lowpart_id;
-    int m_mapProjection_id;
-    int m_matrix_id;
-    int m_color_id;
-    int m_wrapOffset_id;
+    bool updateUniformData(RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect) override;
 };
-#endif // QT_CONFIG(opengl)
 
 class Q_LOCATION_PRIVATE_EXPORT MapPolygonMaterial : public QSGFlatColorMaterial
 {
@@ -210,10 +164,10 @@ public:
         // the vertex data. The shader will rely on the fact that
         // vertexCoord.xy is the Shape-space coordinate and so no modifications
         // are welcome.
-        setFlag(Blending | RequiresFullMatrix | CustomCompileStep);
+        setFlag(Blending | RequiresFullMatrix);
     }
 
-    QSGMaterialShader *createShader() const override;
+    QSGMaterialShader *createShader(QSGRendererInterface::RenderMode renderMode) const override;
 
     void setGeoProjection(const QMatrix4x4 &p)
     {
@@ -270,7 +224,6 @@ private:
     QSGGeometry geometry_;
 };
 
-#if QT_CONFIG(opengl)
 class Q_LOCATION_PRIVATE_EXPORT MapPolygonNodeGL : public MapItemGeometryNode
 {
 
@@ -286,7 +239,6 @@ public:
     MapPolygonMaterial fill_material_;
     QSGGeometry geometry_;
 };
-#endif // QT_CONFIG(opengl)
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItemPrivate
 {
@@ -346,7 +298,7 @@ public:
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
         m_geopathProjected.clear();
         m_geopathProjected.reserve(m_poly.m_geopoly.size());
-        for (const QGeoCoordinate &c : m_poly.m_geopoly.path())
+        for (const QGeoCoordinate &c : m_poly.m_geopoly.perimeter())
             m_geopathProjected << p.geoToMapProjection(c);
     }
     void updateCache()
@@ -354,7 +306,7 @@ public:
         if (!m_poly.map() || m_poly.map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
             return;
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
-        m_geopathProjected << p.geoToMapProjection(m_poly.m_geopoly.path().last());
+        m_geopathProjected << p.geoToMapProjection(m_poly.m_geopoly.perimeter().last());
     }
     void preserveGeometry()
     {
@@ -390,7 +342,7 @@ public:
     }
     void updatePolish() override
     {
-        if (m_poly.m_geopoly.path().length() == 0) { // Possibly cleared
+        if (m_poly.m_geopoly.perimeter().length() == 0) { // Possibly cleared
             m_geometry.clear();
             m_borderGeometry.clear();
             m_poly.setWidth(0);
@@ -482,7 +434,6 @@ public:
     MapPolygonNode *m_node = nullptr;
 };
 
-#if QT_CONFIG(opengl)
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItemPrivateOpenGL: public QDeclarativePolygonMapItemPrivate
 {
 public:
@@ -557,7 +508,7 @@ public:
     }
     void updatePolish() override
     {
-        if (m_poly.m_geopoly.path().length() == 0) { // Possibly cleared
+        if (m_poly.m_geopoly.perimeter().length() == 0) { // Possibly cleared
             m_geometry.clear();
             m_borderGeometry.clear();
             m_poly.setWidth(0);
@@ -666,7 +617,6 @@ public:
     MapPolygonNodeGL *m_node = nullptr;
     MapPolylineNodeOpenGLExtruded *m_polylinenode = nullptr;
 };
-#endif // QT_CONFIG(opengl)
 
 QT_END_NAMESPACE
 

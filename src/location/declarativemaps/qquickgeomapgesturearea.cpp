@@ -1,34 +1,37 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL3$
+** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
 ** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
@@ -52,8 +55,8 @@
 #include "math.h"
 #include <cmath>
 #include "qgeomap_p.h"
-#include "qdoublevector2d_p.h"
-#include "qlocationutils_p.h"
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
 #include <QtGui/QMatrix4x4>
 
 
@@ -869,21 +872,6 @@ void QQuickGeoMapGestureArea::setFlickDeceleration(qreal deceleration)
     emit flickDecelerationChanged();
 }
 
-/*!
-    \internal
-*/
-QTouchEvent::TouchPoint* createTouchPointFromMouseEvent(QMouseEvent *event, Qt::TouchPointState state)
-{
-    // this is only partially filled. But since it is only partially used it works
-    // more robust would be to store a list of QPointFs rather than TouchPoints
-    QTouchEvent::TouchPoint* newPoint = new QTouchEvent::TouchPoint();
-    newPoint->setPos(event->localPos());
-    newPoint->setScenePos(event->windowPos());
-    newPoint->setScreenPos(event->screenPos());
-    newPoint->setState(state);
-    newPoint->setId(0);
-    return newPoint;
-}
 
 /*!
     \internal
@@ -895,10 +883,7 @@ void QQuickGeoMapGestureArea::handleMousePressEvent(QMouseEvent *event)
         return;
     }
 
-    m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointPressed));
-    if (m_touchPoints.isEmpty())
-        update();
-    event->accept();
+    handleTouchEvent(event);
 }
 
 /*!
@@ -911,10 +896,7 @@ void QQuickGeoMapGestureArea::handleMouseMoveEvent(QMouseEvent *event)
         return;
     }
 
-    m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointMoved));
-    if (m_touchPoints.isEmpty())
-        update();
-    event->accept();
+    handleTouchEvent(event);
 }
 
 /*!
@@ -927,28 +909,7 @@ void QQuickGeoMapGestureArea::handleMouseReleaseEvent(QMouseEvent *event)
         return;
     }
 
-    if (!m_mousePoint.isNull()) {
-        //this looks super ugly , however is required in case we do not get synthesized MouseReleaseEvent
-        //and we reset the point already in handleTouchUngrabEvent
-        m_mousePoint.reset(createTouchPointFromMouseEvent(event, Qt::TouchPointReleased));
-        if (m_touchPoints.isEmpty())
-            update();
-    }
-    event->accept();
-}
-
-/*!
-    \internal
-*/
-void QQuickGeoMapGestureArea::handleMouseUngrabEvent()
-{
-
-    if (m_touchPoints.isEmpty() && !m_mousePoint.isNull()) {
-        m_mousePoint.reset();
-        update();
-    } else {
-        m_mousePoint.reset();
-    }
+    handleTouchEvent(event);
 }
 
 /*!
@@ -957,35 +918,69 @@ void QQuickGeoMapGestureArea::handleMouseUngrabEvent()
 void QQuickGeoMapGestureArea::handleTouchUngrabEvent()
 {
         m_touchPoints.clear();
-        //this is needed since in some cases mouse release is not delivered
-        //(second touch point breaks mouse synthesized events)
-        m_mousePoint.reset();
         update();
 }
 
 /*!
     \internal
 */
-void QQuickGeoMapGestureArea::handleTouchEvent(QTouchEvent *event)
+void QQuickGeoMapGestureArea::handleTouchEvent(QPointerEvent *event)
 {
     if (m_map && m_map->handleEvent(event)) {
         event->accept();
         return;
     }
 
-    m_touchPoints.clear();
-    m_mousePoint.reset();
+    // m_touchPoints.clear();
 
-    for (int i = 0; i < event->touchPoints().count(); ++i) {
-        auto point = event->touchPoints().at(i);
-        if (point.state() != Qt::TouchPointReleased)
-            m_touchPoints << point;
+    // Update the points we are going to use ourselves.
+    for (const auto &point: event->points()){
+        auto grabber = qobject_cast<QQuickItem*>(event->exclusiveGrabber(point));
+        // qDebug() << event->type() << point.state() << point << grabber;
+
+        bool canBeGrabbed = grabber == nullptr || grabber == m_declarativeMap || (!grabber->keepTouchGrab() && !grabber->keepMouseGrab());
+        // if (canBeGrabbed) m_touchPoints << point;
+
+        //TODO: Testing shows that events are not always propagated with full set of points.
+        // Therefore, it can happen that our first point is a different point for a moment
+        // and that will trigger pan or pinch right away. So we keep track of points by their states
+        // an IDs but then testing shows that sometimes not all points are finished with Release.
+        // They just dissapear. Child MouseArea will 'eat up' second touch point if first point
+        // is grabbed by child ListView, for example. Maybe it's a bug in 6.2 RC?
+        if (point.state() == QEventPoint::Released || !canBeGrabbed){
+            for (int i = 0; i < m_touchPoints.count(); ++i) {
+                if (m_touchPoints.at(i).id() == point.id()){
+                    m_touchPoints.removeAt(i);
+                }
+            }
+        }else{
+            bool replaced = false;
+            for (int i = 0; i < m_touchPoints.count(); ++i) {
+                if (m_touchPoints.at(i).id() == point.id()){
+                    m_touchPoints.replace(i, point);
+                    replaced = true;
+                }
+            }
+            if (!replaced){
+                m_touchPoints << point;
+            }
+        }
+
     }
-    if (event->touchPoints().count() >= 2)
-        event->accept();
-    else
-        event->ignore();
+    // qDebug() << "m_touchPoints.count=" << m_touchPoints.count();
     update();
+
+    if (isPanActive()){
+        // In case we are pannin, we are using only the first point
+        // We let others to grab the second, if needed.
+        if (m_touchPoints.count() > 0){
+            event->setExclusiveGrabber(m_touchPoints.at(0), m_declarativeMap);
+        }
+    }else if (isActive()){
+        for (const auto &point: m_touchPoints) {
+            event->setExclusiveGrabber(point, m_declarativeMap);
+        }
+    }
 }
 
 #if QT_CONFIG(wheelevent)
@@ -1026,7 +1021,7 @@ void QQuickGeoMapGestureArea::handleWheelEvent(QWheelEvent *event)
         if (preZoomPoint != postZoomPoint) // need to re-anchor the wheel geoPos to the event position
             m_declarativeMap->alignCoordinateToPoint(wheelGeoPos, preZoomPoint);
     }
-    event->accept();
+    // event->accept();
 }
 #endif
 
@@ -1112,8 +1107,6 @@ void QQuickGeoMapGestureArea::update()
     //combine touch with mouse event
     m_allPoints.clear();
     m_allPoints << m_touchPoints;
-    if (m_allPoints.isEmpty() && !m_mousePoint.isNull())
-        m_allPoints << *m_mousePoint.data();
     std::sort(m_allPoints.begin(), m_allPoints.end(), [](const QTouchEvent::TouchPoint &tp1, const QTouchEvent::TouchPoint &tp2) { return tp1.id() < tp2.id(); });
 
     touchPointStateMachine();
@@ -1197,7 +1190,7 @@ void QQuickGeoMapGestureArea::touchPointStateMachine()
 */
 void QQuickGeoMapGestureArea::startOneTouchPoint()
 {
-    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
+    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePosition());
     m_lastPos = m_sceneStartPoint1;
     m_lastPosTime.start();
     QGeoCoordinate startCoord = m_declarativeMap->toCoordinate(m_sceneStartPoint1, false);
@@ -1213,7 +1206,8 @@ void QQuickGeoMapGestureArea::startOneTouchPoint()
 */
 void QQuickGeoMapGestureArea::updateOneTouchPoint()
 {
-    m_touchPointsCentroid = mapFromScene(m_allPoints.at(0).scenePos());
+    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePressPosition());
+    m_touchPointsCentroid = mapFromScene(m_allPoints.at(0).scenePosition());
     updateFlickParameters(m_touchPointsCentroid);
 }
 
@@ -1222,8 +1216,8 @@ void QQuickGeoMapGestureArea::updateOneTouchPoint()
 */
 void QQuickGeoMapGestureArea::startTwoTouchPoints()
 {
-    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
-    m_sceneStartPoint2 = mapFromScene(m_allPoints.at(1).scenePos());
+    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePressPosition());
+    m_sceneStartPoint2 = mapFromScene(m_allPoints.at(1).scenePressPosition());
     QPointF startPos = (m_sceneStartPoint1 + m_sceneStartPoint2) * 0.5;
     m_lastPos = startPos;
     m_lastPosTime.start();
@@ -1242,8 +1236,10 @@ void QQuickGeoMapGestureArea::startTwoTouchPoints()
 */
 void QQuickGeoMapGestureArea::updateTwoTouchPoints()
 {
-    QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
-    QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
+    m_sceneStartPoint1 = mapFromScene(m_allPoints.at(0).scenePressPosition());
+    QPointF p1 = mapFromScene(m_allPoints.at(0).scenePosition());
+    m_sceneStartPoint2 = mapFromScene(m_allPoints.at(1).scenePressPosition());
+    QPointF p2 = mapFromScene(m_allPoints.at(1).scenePosition());
     m_distanceBetweenTouchPoints = distanceBetweenTouchPoints(p1, p2);
     m_touchPointsCentroid = (p1 + p2) / 2;
     updateFlickParameters(m_touchPointsCentroid);
@@ -1262,7 +1258,6 @@ void QQuickGeoMapGestureArea::tiltStateMachine()
     case tiltInactive:
         if (m_allPoints.count() >= 2) {
             if (!isRotationActive() && !isPinchActive() && canStartTilt()) { // only gesture that can be overridden: pan/flick
-                m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startTilt();
                 setTiltState(tiltActive);
@@ -1276,7 +1271,6 @@ void QQuickGeoMapGestureArea::tiltStateMachine()
             setTiltState(tiltInactive);
         } else {
             if (!isRotationActive() && !isPinchActive() && canStartTilt()) { // only gesture that can be overridden: pan/flick
-                m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startTilt();
                 setTiltState(tiltActive);
@@ -1286,7 +1280,6 @@ void QQuickGeoMapGestureArea::tiltStateMachine()
     case tiltActive:
         if (m_allPoints.count() <= 1) {
             setTiltState(tiltInactive);
-            m_declarativeMap->setKeepMouseGrab(m_preventStealing);
             m_declarativeMap->setKeepTouchGrab(m_preventStealing);
             endTilt();
         }
@@ -1321,8 +1314,8 @@ bool validateTouchAngleForTilting(const qreal angle)
 bool QQuickGeoMapGestureArea::canStartTilt()
 {
     if (m_allPoints.count() >= 2) {
-        QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
-        QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
+        QPointF p1 = mapFromScene(m_allPoints.at(0).scenePosition());
+        QPointF p2 = mapFromScene(m_allPoints.at(1).scenePosition());
         if (validateTouchAngleForTilting(m_twoTouchAngle)
                 && movingParallelVertical(m_sceneStartPoint1, p1, m_sceneStartPoint2, p2)
                 && qAbs(m_twoTouchPointsCentroidStart.y() - m_touchPointsCentroid.y()) > MinimumPanToTiltDelta) {
@@ -1368,8 +1361,8 @@ void QQuickGeoMapGestureArea::updateTilt()
 
     m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
     m_pinch.m_event.setAngle(m_twoTouchAngle);
-    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
-    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePos());
+    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePosition());
+    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePosition());
     m_pinch.m_event.setPoint1(m_pinch.m_lastPoint1);
     m_pinch.m_event.setPoint2(m_pinch.m_lastPoint2);
     m_pinch.m_event.setPointCount(m_allPoints.count());
@@ -1405,7 +1398,6 @@ void QQuickGeoMapGestureArea::rotationStateMachine()
     case rotationInactive:
         if (m_allPoints.count() >= 2) {
             if (!isTiltActive() && canStartRotation()) {
-                m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startRotation();
                 setRotationState(rotationActive);
@@ -1419,7 +1411,6 @@ void QQuickGeoMapGestureArea::rotationStateMachine()
             setRotationState(rotationInactive);
         } else {
             if (!isTiltActive() && canStartRotation()) {
-                m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startRotation();
                 setRotationState(rotationActive);
@@ -1429,7 +1420,6 @@ void QQuickGeoMapGestureArea::rotationStateMachine()
     case rotationActive:
         if (m_allPoints.count() <= 1) {
             setRotationState(rotationInactive);
-            m_declarativeMap->setKeepMouseGrab(m_preventStealing);
             m_declarativeMap->setKeepTouchGrab(m_preventStealing);
             endRotation();
         }
@@ -1459,8 +1449,8 @@ void QQuickGeoMapGestureArea::rotationStateMachine()
 bool QQuickGeoMapGestureArea::canStartRotation()
 {
     if (m_allPoints.count() >= 2) {
-        QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
-        QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
+        QPointF p1 = mapFromScene(m_allPoints.at(0).scenePosition());
+        QPointF p2 = mapFromScene(m_allPoints.at(1).scenePosition());
         if (pointDragged(m_sceneStartPoint1, p1) || pointDragged(m_sceneStartPoint2, p2)) {
             qreal delta = angleDelta(m_twoTouchAngleStart, m_twoTouchAngle);
             if (qAbs(delta) < MinimumRotationStartingAngle) {
@@ -1506,8 +1496,8 @@ void QQuickGeoMapGestureArea::updateRotation()
 
     m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
     m_pinch.m_event.setAngle(m_twoTouchAngle);
-    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
-    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePos());
+    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePosition());
+    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePosition());
     m_pinch.m_event.setPoint1(m_pinch.m_lastPoint1);
     m_pinch.m_event.setPoint2(m_pinch.m_lastPoint2);
     m_pinch.m_event.setPointCount(m_allPoints.count());
@@ -1543,7 +1533,6 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
     case pinchInactive:
         if (m_allPoints.count() >= 2) {
             if (!isTiltActive() && canStartPinch()) {
-                m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startPinch();
                 setPinchState(pinchActive);
@@ -1557,7 +1546,6 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
             setPinchState(pinchInactive);
         } else {
             if (!isTiltActive() && canStartPinch()) {
-                m_declarativeMap->setKeepMouseGrab(true);
                 m_declarativeMap->setKeepTouchGrab(true);
                 startPinch();
                 setPinchState(pinchActive);
@@ -1567,7 +1555,6 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
     case pinchActive:
         if (m_allPoints.count() <= 1) { // Once started, pinch goes off only when finger(s) are release
             setPinchState(pinchInactive);
-            m_declarativeMap->setKeepMouseGrab(m_preventStealing);
             m_declarativeMap->setKeepTouchGrab(m_preventStealing);
             endPinch();
         }
@@ -1597,8 +1584,8 @@ void QQuickGeoMapGestureArea::pinchStateMachine()
 bool QQuickGeoMapGestureArea::canStartPinch()
 {
     if (m_allPoints.count() >= 2) {
-        QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
-        QPointF p2 = mapFromScene(m_allPoints.at(1).scenePos());
+        QPointF p1 = mapFromScene(m_allPoints.at(0).scenePosition());
+        QPointF p2 = mapFromScene(m_allPoints.at(1).scenePosition());
         if (qAbs(m_distanceBetweenTouchPoints - m_distanceBetweenTouchPointsStart) > MinimumPinchDelta) {
             m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
             m_pinch.m_event.setAngle(m_twoTouchAngle);
@@ -1622,8 +1609,8 @@ void QQuickGeoMapGestureArea::startPinch()
     m_pinch.m_zoom.m_previous = m_declarativeMap->zoomLevel();
     m_pinch.m_lastAngle = m_twoTouchAngle;
 
-    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
-    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePos());
+    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePosition());
+    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePosition());
 
     m_pinch.m_zoom.m_start = m_declarativeMap->zoomLevel();
 }
@@ -1648,8 +1635,8 @@ void QQuickGeoMapGestureArea::updatePinch()
     m_pinch.m_event.setCenter(mapFromScene(m_touchPointsCentroid));
     m_pinch.m_event.setAngle(m_twoTouchAngle);
 
-    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePos());
-    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePos());
+    m_pinch.m_lastPoint1 = mapFromScene(m_allPoints.at(0).scenePosition());
+    m_pinch.m_lastPoint2 = mapFromScene(m_allPoints.at(1).scenePosition());
     m_pinch.m_event.setPoint1(m_pinch.m_lastPoint1);
     m_pinch.m_event.setPoint2(m_pinch.m_lastPoint2);
     m_pinch.m_event.setPointCount(m_allPoints.count());
@@ -1701,6 +1688,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
             m_startCoord.setLongitude(newStartCoord.longitude());
             m_startCoord.setLatitude(newStartCoord.latitude());
             m_declarativeMap->setKeepMouseGrab(true);
+            m_declarativeMap->setKeepTouchGrab(true);
             setFlickState(panActive);
         }
         break;
@@ -1712,6 +1700,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
                 // mark as inactive for use by camera
                 if (m_pinchState == pinchInactive && m_rotationState == rotationInactive && m_tiltState == tiltInactive) {
                     m_declarativeMap->setKeepMouseGrab(m_preventStealing);
+                    m_declarativeMap->setKeepTouchGrab(m_preventStealing);
                     m_map->prefetchData();
                 }
                 emit panFinished();
@@ -1726,6 +1715,7 @@ void QQuickGeoMapGestureArea::panStateMachine()
         if (m_allPoints.count() > 0) { // re touched before movement ended
             stopFlick();
             m_declarativeMap->setKeepMouseGrab(true);
+            m_declarativeMap->setKeepTouchGrab(true);
             setFlickState(panActive);
         }
         break;
@@ -1753,18 +1743,18 @@ void QQuickGeoMapGestureArea::panStateMachine()
 */
 bool QQuickGeoMapGestureArea::canStartPan()
 {
-    if (m_allPoints.count() == 0 || (m_acceptedGestures & PanGesture) == 0
-            || (m_mousePoint && m_mousePoint->state() == Qt::TouchPointReleased)) // mouseReleaseEvent handling does not clear m_mousePoint, only ungrabMouse does -- QTBUG-66534
+    if (m_allPoints.count() == 0 || (m_acceptedGestures & PanGesture) == 0)
         return false;
 
     // Check if thresholds for normal panning are met.
     // (normal panning vs flicking: flicking will start from mouse release event).
     const int startDragDistance = qApp->styleHints()->startDragDistance() * 2;
-    QPointF p1 = mapFromScene(m_allPoints.at(0).scenePos());
+    QPointF p1 = mapFromScene(m_allPoints.at(0).scenePosition());
     int dyFromPress = int(p1.y() - m_sceneStartPoint1.y());
     int dxFromPress = int(p1.x() - m_sceneStartPoint1.x());
     if ((qAbs(dyFromPress) >= startDragDistance || qAbs(dxFromPress) >= startDragDistance))
         return true;
+
     return false;
 }
 
@@ -1829,16 +1819,16 @@ void QQuickGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
     QPointF delta(dx, dy);
     QMatrix4x4 matBearing;
     matBearing.rotate(m_map->cameraData().bearing(), 0, 0, 1);
-    delta = matBearing * delta;
+    delta = matBearing.map(delta);
 
     double zoom = pow(2.0, m_declarativeMap->zoomLevel());
     double longitude = animationStartCoordinate.longitude() - (delta.x() / zoom);
     double latitude = animationStartCoordinate.latitude() + (delta.y() / zoom);
 
     if (delta.x() > 0)
-        m_flick.m_animation->setDirection(QQuickGeoCoordinateAnimation::East);
-    else
         m_flick.m_animation->setDirection(QQuickGeoCoordinateAnimation::West);
+    else
+        m_flick.m_animation->setDirection(QQuickGeoCoordinateAnimation::East);
 
     //keep animation in correct bounds
     animationEndCoordinate.setLongitude(QLocationUtils::wrapLong(longitude));

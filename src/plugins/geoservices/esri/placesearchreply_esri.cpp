@@ -204,7 +204,7 @@ QPlaceResult PlaceSearchReplyEsri::parsePlaceResult(const QJsonObject &item) con
     QGeoLocation geoLocation;
     geoLocation.setCoordinate(coordinate);
     geoLocation.setAddress(geoAddress);
-    geoLocation.setBoundingBox(boundingBox);
+    geoLocation.setBoundingShape(boundingBox);
 
     // set place
     place.setName(keys.value(kLongLabelKey));

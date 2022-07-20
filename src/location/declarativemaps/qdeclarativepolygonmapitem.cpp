@@ -1,34 +1,37 @@
 /****************************************************************************
  **
  ** Copyright (C) 2015 The Qt Company Ltd.
- ** Contact: http://www.qt.io/licensing/
+ ** Contact: https://www.qt.io/licensing/
  **
  ** This file is part of the QtLocation module of the Qt Toolkit.
  **
- ** $QT_BEGIN_LICENSE:LGPL3$
+ ** $QT_BEGIN_LICENSE:LGPL$
  ** Commercial License Usage
  ** Licensees holding valid commercial Qt licenses may use this file in
  ** accordance with the commercial license agreement provided with the
  ** Software or, alternatively, in accordance with the terms contained in
  ** a written agreement between you and The Qt Company. For licensing terms
- ** and conditions see http://www.qt.io/terms-conditions. For further
- ** information use the contact form at http://www.qt.io/contact-us.
+ ** and conditions see https://www.qt.io/terms-conditions. For further
+ ** information use the contact form at https://www.qt.io/contact-us.
  **
  ** GNU Lesser General Public License Usage
  ** Alternatively, this file may be used under the terms of the GNU Lesser
  ** General Public License version 3 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+ ** Foundation and appearing in the file LICENSE.LGPL3 included in the
  ** packaging of this file. Please review the following information to
  ** ensure the GNU Lesser General Public License version 3 requirements
- ** will be met: https://www.gnu.org/licenses/lgpl.html.
+ ** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
  **
  ** GNU General Public License Usage
  ** Alternatively, this file may be used under the terms of the GNU
- ** General Public License version 2.0 or later as published by the Free
- ** Software Foundation and appearing in the file LICENSE.GPL included in
- ** the packaging of this file. Please review the following information to
- ** ensure the GNU General Public License version 2.0 requirements will be
- ** met: http://www.gnu.org/licenses/gpl-2.0.html.
+ ** General Public License version 2.0 or (at your option) the GNU General
+ ** Public license version 3 or any later version approved by the KDE Free
+ ** Qt Foundation. The licenses are as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+ ** included in the packaging of this file. Please review the following
+ ** information to ensure the GNU General Public License requirements will
+ ** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+ ** https://www.gnu.org/licenses/gpl-3.0.html.
  **
  ** $QT_END_LICENSE$
  **
@@ -39,7 +42,7 @@
 #include "qdeclarativepolylinemapitem_p_p.h"
 #include "qdeclarativepolygonmapitem_p_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
-#include "qlocationutils_p.h"
+#include <QtPositioning/private/qlocationutils_p.h>
 #include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
 #include <QtLocation/private/qgeomap_p.h>
@@ -61,7 +64,6 @@
 #include <QtQuick/qsgnode.h>
 
 /* poly2tri triangulator includes */
-#include <clip2tri.h>
 #include <earcut.hpp>
 #include <array>
 
@@ -209,11 +211,11 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     QList<QList<QDoubleVector2D> > clippedPaths;
     const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
     if (visibleRegion.size()) {
-        c2t::clip2tri clipper;
-        clipper.addSubjectPath(QClipperUtils::qListToPath(wrappedPath), true);
-        clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
-        clippedPaths = QClipperUtils::pathsToQList(res);
+        QClipperUtils clipper;
+        clipper.addSubjectPath(wrappedPath, true);
+        clipper.addClipPolygon(visibleRegion);
+        clippedPaths = clipper.execute(QClipperUtils::Intersection, QClipperUtils::pftEvenOdd,
+                                       QClipperUtils::pftEvenOdd);
 
         // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
         QDoubleVector2D lb(qInf(), qInf());
@@ -334,7 +336,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map, qreal stroke
         this->translate(QPointF(strokeWidth, strokeWidth));
 }
 
-#if QT_CONFIG(opengl)
 QGeoMapPolygonGeometryOpenGL::QGeoMapPolygonGeometryOpenGL(){
 }
 
@@ -345,7 +346,6 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const 
         geopath.append(QWebMercator::mercatorToCoord(c));
     updateSourcePoints(map, geopath);
 }
-#endif
 
 // wrapPath always preserves the geometry
 // This one handles holes
@@ -359,7 +359,7 @@ static void wrapPath(const QGeoPolygon &poly
     for (int i = 0; i < 1+poly.holesCount(); ++i) {
         QList<QDoubleVector2D> path;
         if (!i) {
-            for (const QGeoCoordinate &c : poly.path())
+            for (const QGeoCoordinate &c : poly.perimeter())
                 path << p.geoToMapProjection(c);
         } else {
             for (const QGeoCoordinate &c : poly.holePath(i-1))
@@ -454,7 +454,6 @@ static void cutPathEars(const QList<QDoubleVector2D> &wrappedPath,
         screenIndices << quint32(i);
 }
 
-#if QT_CONFIG(opengl)
 /*!
     \internal
 */
@@ -479,13 +478,13 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map,
     // 1.1) do the same for the bbox
     QList<QDoubleVector2D> wrappedBbox, wrappedBboxPlus1, wrappedBboxMinus1;
     QGeoPolygon bbox(QGeoPath(perimeter).boundingGeoRectangle());
-    QDeclarativeGeoMapItemUtils::wrapPath(bbox.path(), bbox.boundingGeoRectangle().topLeft(), p,
+    QDeclarativeGeoMapItemUtils::wrapPath(bbox.perimeter(), bbox.boundingGeoRectangle().topLeft(), p,
              wrappedBbox, wrappedBboxMinus1, wrappedBboxPlus1, &m_bboxLeftBoundWrapped);
 
     // 2) Store the triangulated polygon, and the wrapped bbox paths.
     //    the triangulations can be used as they are, as they "bypass" the QtQuick display chain
     //    the bbox wraps have to be however clipped, and then projected, in order to figure out the geometry.
-    //    Note that this might still cause the geometryChanged method to fail under some extreme conditions.
+    //    Note that this might still cause the geometryChange method to fail under some extreme conditions.
     cutPathEars(wrappedPath, m_screenVertices, m_screenIndices);
 
     m_wrappedPolygons.resize(3);
@@ -514,13 +513,13 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const 
     // 1.1) do the same for the bbox
     QList<QDoubleVector2D> wrappedBbox, wrappedBboxPlus1, wrappedBboxMinus1;
     QGeoPolygon bbox(poly.boundingGeoRectangle());
-    QDeclarativeGeoMapItemUtils::wrapPath(bbox.path(), bbox.boundingGeoRectangle().topLeft(), p,
+    QDeclarativeGeoMapItemUtils::wrapPath(bbox.perimeter(), bbox.boundingGeoRectangle().topLeft(), p,
              wrappedBbox, wrappedBboxMinus1, wrappedBboxPlus1, &m_bboxLeftBoundWrapped);
 
     // 2) Store the triangulated polygon, and the wrapped bbox paths.
     //    the triangulations can be used as they are, as they "bypass" the QtQuick display chain
     //    the bbox wraps have to be however clipped, and then projected, in order to figure out the geometry.
-    //    Note that this might still cause the geometryChanged method to fail under some extreme conditions.
+    //    Note that this might still cause the geometryChange method to fail under some extreme conditions.
     cutPathEars(wrappedPath, m_screenVertices, m_screenIndices);
     m_wrappedPolygons.resize(3);
     m_wrappedPolygons[0].wrappedBboxes = wrappedBboxMinus1;
@@ -597,7 +596,6 @@ void QGeoMapPolygonGeometryOpenGL::updateQuickGeometry(const QGeoProjectionWebMe
     sourceBounds_.setWidth(brect.width());
     sourceBounds_.setHeight(brect.height());
 }
-#endif // QT_CONFIG(opengl)
 /*
  * QDeclarativePolygonMapItem Private Implementations
  */
@@ -606,9 +604,7 @@ QDeclarativePolygonMapItemPrivate::~QDeclarativePolygonMapItemPrivate() {}
 
 QDeclarativePolygonMapItemPrivateCPU::~QDeclarativePolygonMapItemPrivateCPU() {}
 
-#if QT_CONFIG(opengl)
 QDeclarativePolygonMapItemPrivateOpenGL::~QDeclarativePolygonMapItemPrivateOpenGL() {}
-#endif
 /*
  * QDeclarativePolygonMapItem Implementation
  */
@@ -693,18 +689,12 @@ void QDeclarativePolygonMapItem::setBackend(QDeclarativePolygonMapItem::Backend 
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativePolygonMapItemPrivate> d(
+    std::unique_ptr<QDeclarativePolygonMapItemPrivate> d(
             (m_backend == Software) ? static_cast<QDeclarativePolygonMapItemPrivate *>(
                     new QDeclarativePolygonMapItemPrivateCPU(*this))
-#if QT_CONFIG(opengl)
                                     : static_cast<QDeclarativePolygonMapItemPrivate *>(
                                             new QDeclarativePolygonMapItemPrivateOpenGL(*this)));
-#else
-                                    : nullptr);
-    qFatal("Requested non software rendering backend, but source code is compiled wihtout opengl "
-           "support");
-#endif
-    m_d.swap(d);
+    std::swap(m_d, d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
 }
@@ -730,7 +720,7 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
 */
 QJSValue QDeclarativePolygonMapItem::path() const
 {
-    return fromList(this, m_geopoly.path());
+    return fromList(this, m_geopoly.perimeter());
 }
 
 void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
@@ -741,10 +731,10 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
     QList<QGeoCoordinate> pathList = toList(this, value);
 
     // Equivalent to QDeclarativePolylineMapItem::setPathFromGeoList
-    if (m_geopoly.path() == pathList)
+    if (m_geopoly.perimeter() == pathList)
         return;
 
-    m_geopoly.setPath(pathList);
+    m_geopoly.setPerimeter(pathList);
 
     m_d->onGeoGeometryChanged();
     emit pathChanged();
@@ -780,9 +770,9 @@ void QDeclarativePolygonMapItem::addCoordinate(const QGeoCoordinate &coordinate)
 */
 void QDeclarativePolygonMapItem::removeCoordinate(const QGeoCoordinate &coordinate)
 {
-    int length = m_geopoly.path().length();
+    int length = m_geopoly.perimeter().length();
     m_geopoly.removeCoordinate(coordinate);
-    if (m_geopoly.path().length() == length)
+    if (m_geopoly.perimeter().length() == length)
         return;
 
     m_d->onGeoGeometryChanged();
@@ -884,10 +874,10 @@ void QDeclarativePolygonMapItem::setGeoShape(const QGeoShape &shape)
 /*!
     \internal
 */
-void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativePolygonMapItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (newGeometry.topLeft() == oldGeometry.topLeft() || !map() || !m_geopoly.isValid() || m_updatingGeometry) {
-        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        QDeclarativeGeoMapItemBase::geometryChange(newGeometry, oldGeometry);
         return;
     }
     // TODO: change the algorithm to preserve the distances and size!
@@ -904,15 +894,15 @@ void QDeclarativePolygonMapItem::geometryChanged(const QRectF &newGeometry, cons
     m_d->onGeoGeometryChanged();
     emit pathChanged();
 
-    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // Not calling QDeclarativeGeoMapItemBase::geometryChange() as it will be called from a nested
     // call to this function.
 }
 
 //////////////////////////////////////////////////////////////////////
 
-#if QT_CONFIG(opengl)
-QSGMaterialShader *MapPolygonMaterial::createShader() const
+QSGMaterialShader *MapPolygonMaterial::createShader(QSGRendererInterface::RenderMode renderMode) const
 {
+    Q_UNUSED(renderMode);
     return new MapPolygonShader();
 }
 
@@ -929,7 +919,6 @@ QSGMaterialType *MapPolygonMaterial::type() const
     static QSGMaterialType type;
     return &type;
 }
-#endif
 
 MapPolygonNode::MapPolygonNode() :
     border_(new MapPolylineNode()),
@@ -981,7 +970,6 @@ void MapPolygonNode::update(const QColor &fillColor, const QColor &borderColor,
     }
 }
 
-#if QT_CONFIG(opengl)
 MapPolygonNodeGL::MapPolygonNodeGL() :
     //fill_material_(this),
     fill_material_(),
@@ -1028,12 +1016,13 @@ void MapPolygonNodeGL::update(const QColor &fillColor,
     }
 }
 
-MapPolygonShader::MapPolygonShader() : QSGMaterialShader(*new QSGMaterialShaderPrivate)
+MapPolygonShader::MapPolygonShader() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
 {
-
+    setShaderFileName(VertexStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polygon.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polygon.frag.qsb"));
 }
 
-void MapPolygonShader::updateState(const QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
+bool MapPolygonShader::updateUniformData(RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
 {
     Q_ASSERT(oldEffect == nullptr || newEffect->type() == oldEffect->type());
     MapPolygonMaterial *oldMaterial = static_cast<MapPolygonMaterial *>(oldEffect);
@@ -1043,9 +1032,33 @@ void MapPolygonShader::updateState(const QSGMaterialShader::RenderState &state, 
     const QMatrix4x4 &geoProjection = newMaterial->geoProjection();
     const QDoubleVector3D &center = newMaterial->center();
 
-    QVector3D vecCenter, vecCenter_lowpart;
+    // It is safer to use vec4 instead on vec3, as described in:
+    // https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)#Memory_layout
+    QVector4D vecCenter, vecCenter_lowpart;
     for (int i = 0; i < 3; i++)
         QLocationUtils::split_double(center.get(i), &vecCenter[i], &vecCenter_lowpart[i]);
+    vecCenter[3] = 0;
+    vecCenter_lowpart[3] = 0;
+
+    int offset = 0;
+    char *buf_p = state.uniformData()->data();
+
+    if (state.isMatrixDirty()) {
+        const QMatrix4x4 m = state.projectionMatrix();
+        memcpy(buf_p + offset, m.constData(), 4*4*4);
+    }
+    offset += 4*4*4;
+
+    memcpy(buf_p + offset, geoProjection.constData(), 4*4*4); offset+=4*4*4;
+
+    memcpy(buf_p + offset, &vecCenter, 4*4); offset += 4*4;
+
+    memcpy(buf_p + offset, &vecCenter_lowpart, 4*4); offset+=4*4;
+
+    const float wrapOffset = newMaterial->wrapOffset();
+    memcpy(buf_p + offset, &wrapOffset, 4); offset+=4;
+
+    offset += 4+4+4; // Padding
 
     if (oldMaterial == nullptr || c != oldMaterial->color() || state.isOpacityDirty()) {
         float opacity = state.opacity() * c.alphaF();
@@ -1053,19 +1066,10 @@ void MapPolygonShader::updateState(const QSGMaterialShader::RenderState &state, 
                     c.greenF() *  opacity,
                     c.blueF() * opacity,
                     opacity);
-        program()->setUniformValue(m_color_id, v);
+        memcpy(buf_p + offset, &v, 4*4);
     }
+    offset+=4*4;
 
-    if (state.isMatrixDirty())
-    {
-        program()->setUniformValue(m_matrix_id, state.projectionMatrix());
-    }
-
-    program()->setUniformValue(m_mapProjection_id, geoProjection);
-
-    program()->setUniformValue(m_center_id, vecCenter);
-    program()->setUniformValue(m_center_lowpart_id, vecCenter_lowpart);
-    program()->setUniformValue(m_wrapOffset_id, float(newMaterial->wrapOffset()));
+    return true;
 }
-#endif // QT_CONFIG(opengl)
 QT_END_NAMESPACE

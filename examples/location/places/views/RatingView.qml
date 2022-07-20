@@ -48,7 +48,7 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
+import QtQuick
 
 Row {
     property real rating: 0

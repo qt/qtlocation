@@ -46,7 +46,8 @@
 
 QT_BEGIN_NAMESPACE
 
-// JSON reference: http://resources.arcgis.com/en/help/arcgis-rest-api/#/Route_service_with_synchronous_execution/02r300000036000000/
+// JSON reference:
+// https://resources.arcgis.com/en/help/arcgis-rest-api/#/Route_service_with_synchronous_execution/02r300000036000000/
 
 static const QString kErrorMessage(QStringLiteral("Error %1: %2."));
 static const QString kErrorJson(QStringLiteral("Error: invalide JSON document."));
@@ -125,7 +126,7 @@ QString GeoRouteJsonParserEsri::errorString() const
 void GeoRouteJsonParserEsri::parseDirections()
 {
     QJsonArray directions = m_json.value(kDirectionsKey).toArray();
-    foreach (const QJsonValue &direction, directions)
+    for (const QJsonValueRef direction : directions)
         parseDirection(direction.toObject());
 }
 
@@ -215,7 +216,7 @@ void GeoRouteJsonParserEsri::parseRoutes()
 {
     QJsonObject routes = m_json.value(kRoutesKey).toObject();
     QJsonArray features = routes.value(kRoutesFeaturesKey).toArray();
-    foreach (const QJsonValue &feature, features)
+    for (const QJsonValueRef feature : features)
         parseRoute(feature.toObject());
 }
 
@@ -230,7 +231,7 @@ void GeoRouteJsonParserEsri::parseRoute(const QJsonObject &route)
     if (!paths.isEmpty())
     {
         QList<QGeoCoordinate> geoCoordinates;
-        foreach (const QJsonValue &value, paths.first().toArray()) // only first polyline?
+        for (const QJsonValueRef value : paths.first().toArray()) // only first polyline?
         {
             QJsonArray geoCoordinate = value.toArray();
             if (geoCoordinate.size() == 2)  // ignore 3rd coordinate

@@ -26,11 +26,11 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtTest 1.0
-import QtPositioning 5.5
-import QtLocation 5.10
-import QtLocation.Test 5.6
+import QtQuick
+import QtTest
+import QtPositioning
+import QtLocation
+import QtLocation.Test
 
 Item {
     width:100
@@ -49,6 +49,9 @@ Item {
         PluginParameter { name: "extraMapTypeName"; value: testPluginLazyParameter.extraTypeName}
 
         Component.onCompleted: {
+            // This can't work because onCompleted is called *after* the
+            // componentComplete() method is invoked and the plugin is
+            // initialized
             extraTypeName = "SomeString"
         }
     }
@@ -163,6 +166,8 @@ Item {
 
         function test_lazy_parameter() {
             compare(mapWithLazyPlugin.supportedMapTypes.length, 5)
+            expectFail("", "Component.onCompleted is called after componentComplete(), " +
+                            "so the plugin is already initialized and extraTypeName is empty")
             compare(mapWithLazyPlugin.supportedMapTypes[4].name, "SomeString")
         }
 
@@ -672,9 +677,6 @@ Item {
             //coordinateMap.zoomLevel = oldZoomLevel
             // invalid coordinates
             point = coordinateMap.fromCoordinate(invalidCoordinate)
-            verify(isNaN(point.x))
-            verify(isNaN(point.y))
-            point = coordinateMap.fromCoordinate(null)
             verify(isNaN(point.x))
             verify(isNaN(point.y))
             // valid point to coordinate

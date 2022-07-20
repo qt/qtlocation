@@ -1,34 +1,37 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL3$
+** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
 ** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
@@ -182,7 +185,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_gestureArea(new QQuickGeoMapGestureArea(this)),
         m_map(0),
         m_error(QGeoServiceProvider::NoError),
-        m_color(QColor::fromRgbF(0.9, 0.9, 0.9)),
+        m_color(QColor::fromRgbF(0.9f, 0.9f, 0.9f)),
         m_componentCompleted(false),
         m_pendingFitViewport(false),
         m_copyrightsVisible(true),
@@ -196,6 +199,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         m_userMaximumFieldOfView(qQNaN())
 {
     setAcceptHoverEvents(false);
+    setAcceptTouchEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
     setFiltersChildMouseEvents(true); // needed for childMouseEventFilter to work.
@@ -578,15 +582,6 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
     }
 
     // Tilt
-    if (m_cameraCapabilities.maximumTilt() < m_maximumTilt) {
-        setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
-    } else if (m_cameraCapabilities.maximumTilt() > m_maximumTilt) {
-        if (!qIsFinite(m_userMaximumTilt))
-            setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
-        else // Try to set what the user requested
-            setMaximumTilt(qMin<qreal>(m_cameraCapabilities.maximumTilt(), m_userMaximumTilt), false);
-    }
-
     if (m_cameraCapabilities.minimumTilt() > m_minimumTilt) {
         setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
     } else if (m_cameraCapabilities.minimumTilt() < m_minimumTilt) {
@@ -596,16 +591,16 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
             setMinimumTilt(qMax<qreal>(m_cameraCapabilities.minimumTilt(), m_userMinimumTilt), false);
     }
 
-    // FoV
-    if (m_cameraCapabilities.maximumFieldOfView() < m_maximumFieldOfView) {
-        setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
-    } else if (m_cameraCapabilities.maximumFieldOfView() > m_maximumFieldOfView) {
-        if (!qIsFinite(m_userMaximumFieldOfView))
-            setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
+    if (m_cameraCapabilities.maximumTilt() < m_maximumTilt) {
+        setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
+    } else if (m_cameraCapabilities.maximumTilt() > m_maximumTilt) {
+        if (!qIsFinite(m_userMaximumTilt))
+            setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
         else // Try to set what the user requested
-            setMaximumFieldOfView(qMin<qreal>(m_cameraCapabilities.maximumFieldOfView(), m_userMaximumFieldOfView), false);
+            setMaximumTilt(qMin<qreal>(m_cameraCapabilities.maximumTilt(), m_userMaximumTilt), false);
     }
 
+    // FoV
     if (m_cameraCapabilities.minimumFieldOfView() > m_minimumFieldOfView) {
         setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
     } else if (m_cameraCapabilities.minimumFieldOfView() < m_minimumFieldOfView) {
@@ -613,6 +608,15 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
             setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
         else // Try to set what the user requested
             setMinimumFieldOfView(qMax<qreal>(m_cameraCapabilities.minimumFieldOfView(), m_userMinimumFieldOfView), false);
+    }
+
+    if (m_cameraCapabilities.maximumFieldOfView() < m_maximumFieldOfView) {
+        setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
+    } else if (m_cameraCapabilities.maximumFieldOfView() > m_maximumFieldOfView) {
+        if (!qIsFinite(m_userMaximumFieldOfView))
+            setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
+        else // Try to set what the user requested
+            setMaximumFieldOfView(qMin<qreal>(m_cameraCapabilities.maximumFieldOfView(), m_userMaximumFieldOfView), false);
     }
 }
 
@@ -1628,7 +1632,7 @@ void QDeclarativeGeoMap::clearData()
 void QDeclarativeGeoMap::fitViewportToGeoShape(const QGeoShape &shape, QVariant margins)
 {
     QMargins m(10, 10, 10, 10); // lets defaults to 10 if margins is invalid
-    switch (static_cast<QMetaType::Type>(margins.type())) {
+    switch (margins.typeId()) {
         case QMetaType::Int:
         case QMetaType::Double: {
             const int value = int(margins.toDouble());
@@ -2274,10 +2278,10 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 /*!
     \internal
 */
-void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativeGeoMap::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     m_gestureArea->setSize(newGeometry.size());
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickItem::geometryChange(newGeometry, oldGeometry);
 
     if (!m_map || newGeometry.size().isEmpty())
         return;
@@ -2424,7 +2428,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(const QList<QPointer<QDecla
 
             QRectF brect = item->boundingRect();
             brect = quickItem->matrix_->m_matrix.mapRect(brect);
-            QPointF transformedPosition = quickItem->matrix_->m_matrix * item->position();
+            QPointF transformedPosition = quickItem->matrix_->m_matrix.map(item->position());
             topLeftX = transformedPosition.x();
             topLeftY = transformedPosition.y();
             bottomRightX = topLeftX + brect.width();
@@ -2484,7 +2488,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(const QList<QPointer<QDecla
 */
 void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 {
-    if (isInteractive())
+    if (isInteractive() && event->source() == Qt::MouseEventNotSynthesized)
         m_gestureArea->handleMousePressEvent(event);
     else
         QQuickItem::mousePressEvent(event);
@@ -2495,7 +2499,7 @@ void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
-    if (isInteractive())
+    if (isInteractive() && event->source() == Qt::MouseEventNotSynthesized)
         m_gestureArea->handleMouseMoveEvent(event);
     else
         QQuickItem::mouseMoveEvent(event);
@@ -2506,21 +2510,10 @@ void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (isInteractive())
+    if (isInteractive() && event->source() == Qt::MouseEventNotSynthesized)
         m_gestureArea->handleMouseReleaseEvent(event);
     else
         QQuickItem::mouseReleaseEvent(event);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMap::mouseUngrabEvent()
-{
-    if (isInteractive())
-        m_gestureArea->handleMouseUngrabEvent();
-    else
-        QQuickItem::mouseUngrabEvent();
 }
 
 void QDeclarativeGeoMap::touchUngrabEvent()
@@ -2568,10 +2561,21 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
         return QQuickItem::childMouseEventFilter(item, event);
 
     switch (event->type()) {
+    case QEvent::TouchBegin:
+    case QEvent::TouchUpdate:
+    case QEvent::TouchEnd:
+    case QEvent::TouchCancel:
+        return sendTouchEvent(static_cast<QTouchEvent *>(event));
     case QEvent::MouseButtonPress:
     case QEvent::MouseMove:
     case QEvent::MouseButtonRelease:
-        return sendMouseEvent(static_cast<QMouseEvent *>(event));
+        {
+            auto mEvent = static_cast<QMouseEvent*>(event);
+            if (mEvent->source() == Qt::MouseEventNotSynthesized){
+                return sendTouchEvent(mEvent);
+            }
+        }
+        break;
     case QEvent::UngrabMouse: {
         QQuickWindow *win = window();
         if (!win) break;
@@ -2585,17 +2589,6 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
         }
         break;
     }
-    case QEvent::TouchBegin:
-    case QEvent::TouchUpdate:
-    case QEvent::TouchEnd:
-    case QEvent::TouchCancel:
-        if (static_cast<QTouchEvent *>(event)->touchPoints().count() >= 2) {
-            // 1 touch point = handle with MouseEvent (event is always synthesized)
-            // let the synthesized mouse event grab the mouse,
-            // note there is no mouse grabber at this point since
-            // touch event comes first (see Qt::AA_SynthesizeMouseForUnhandledTouchEvents)
-            return sendTouchEvent(static_cast<QTouchEvent *>(event));
-        }
     default:
         break;
     }
@@ -2604,34 +2597,24 @@ bool QDeclarativeGeoMap::childMouseEventFilter(QQuickItem *item, QEvent *event)
 
 bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
 {
-    QPointF localPos = mapFromScene(event->windowPos());
-    QQuickWindow *win = window();
-    QQuickItem *grabber = win ? win->mouseGrabberItem() : 0;
     bool stealEvent = m_gestureArea->isActive();
 
-    if ((stealEvent || contains(localPos)) && (!grabber || (!grabber->keepMouseGrab() && !grabber->keepTouchGrab()))) {
-        QScopedPointer<QMouseEvent> mouseEvent(QQuickWindowPrivate::cloneMouseEvent(event, &localPos));
-        mouseEvent->setAccepted(false);
-
-        switch (mouseEvent->type()) {
+    if ((stealEvent || contains(mapFromScene(event->scenePosition())))) {
+        switch (event->type()) {
         case QEvent::MouseMove:
-            m_gestureArea->handleMouseMoveEvent(mouseEvent.data());
+            m_gestureArea->handleMouseMoveEvent(event);
             break;
         case QEvent::MouseButtonPress:
-            m_gestureArea->handleMousePressEvent(mouseEvent.data());
+            m_gestureArea->handleMousePressEvent(event);
             break;
         case QEvent::MouseButtonRelease:
-            m_gestureArea->handleMouseReleaseEvent(mouseEvent.data());
+            m_gestureArea->handleMouseReleaseEvent(event);
             break;
         default:
             break;
         }
 
         stealEvent = m_gestureArea->isActive();
-        grabber = win ? win->mouseGrabberItem() : 0;
-
-        if (grabber && stealEvent && !grabber->keepMouseGrab() && !grabber->keepTouchGrab() && grabber != this)
-            grabMouse();
 
         if (stealEvent) {
             //do not deliver
@@ -2641,55 +2624,28 @@ bool QDeclarativeGeoMap::sendMouseEvent(QMouseEvent *event)
             return false;
         }
     }
-
     return false;
 }
 
-bool QDeclarativeGeoMap::sendTouchEvent(QTouchEvent *event)
+bool QDeclarativeGeoMap::sendTouchEvent(QPointerEvent *event)
 {
-    QQuickPointerDevice *touchDevice = QQuickPointerDevice::touchDevice(event->device());
-    const QTouchEvent::TouchPoint &point = event->touchPoints().first();
-    QQuickWindowPrivate *windowPriv = QQuickWindowPrivate::get(window());
-
-    auto touchPointGrabberItem = [touchDevice, windowPriv](const QTouchEvent::TouchPoint &point) -> QQuickItem* {
-        if (QQuickEventPoint *eventPointer = windowPriv->pointerEventInstance(touchDevice)->pointById(point.id()))
-            return eventPointer->grabberItem();
-        return nullptr;
-    };
-
-    QQuickItem *grabber = touchPointGrabberItem(point);
+    const QTouchEvent::TouchPoint &point = event->points().first();
 
     bool stealEvent = m_gestureArea->isActive();
-    bool containsPoint = contains(mapFromScene(point.scenePos()));
+    bool containsPoint = contains(mapFromScene(point.scenePosition()));
 
-    if ((stealEvent || containsPoint) && (!grabber || !grabber->keepTouchGrab())) {
-        QScopedPointer<QTouchEvent> touchEvent(new QTouchEvent(event->type(), event->device(), event->modifiers(), event->touchPointStates(), event->touchPoints()));
-        touchEvent->setTimestamp(event->timestamp());
-        touchEvent->setAccepted(false);
+    if ((stealEvent || containsPoint)) {
 
-        m_gestureArea->handleTouchEvent(touchEvent.data());
+        m_gestureArea->handleTouchEvent(event);
         stealEvent = m_gestureArea->isActive();
-        grabber = touchPointGrabberItem(point);
-
-        if (grabber && stealEvent && !grabber->keepTouchGrab() && grabber != this) {
-            QList<int> ids;
-            foreach (const QTouchEvent::TouchPoint &tp, event->touchPoints()) {
-                if (!(tp.state() & Qt::TouchPointReleased)) {
-                    ids.append(tp.id());
-                }
-            }
-            grabTouchPoints(ids);
-        }
 
         if (stealEvent) {
-            //do not deliver
-            event->setAccepted(true);
-            return true;
+            //event->setAccepted(true);
+            //return true;
         } else {
             return false;
         }
     }
-
     return false;
 }
 

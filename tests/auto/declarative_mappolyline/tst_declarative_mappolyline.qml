@@ -26,10 +26,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtTest 1.0
-import QtPositioning 5.2
-import QtLocation 5.5
+import QtQuick
+import QtTest
+import QtPositioning
+import QtLocation
 
 Item {
     id: testCase

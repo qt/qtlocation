@@ -1,34 +1,37 @@
 /****************************************************************************
  **
  ** Copyright (C) 2015 The Qt Company Ltd.
- ** Contact: http://www.qt.io/licensing/
+ ** Contact: https://www.qt.io/licensing/
  **
  ** This file is part of the QtLocation module of the Qt Toolkit.
  **
- ** $QT_BEGIN_LICENSE:LGPL3$
+ ** $QT_BEGIN_LICENSE:LGPL$
  ** Commercial License Usage
  ** Licensees holding valid commercial Qt licenses may use this file in
  ** accordance with the commercial license agreement provided with the
  ** Software or, alternatively, in accordance with the terms contained in
  ** a written agreement between you and The Qt Company. For licensing terms
- ** and conditions see http://www.qt.io/terms-conditions. For further
- ** information use the contact form at http://www.qt.io/contact-us.
+ ** and conditions see https://www.qt.io/terms-conditions. For further
+ ** information use the contact form at https://www.qt.io/contact-us.
  **
  ** GNU Lesser General Public License Usage
  ** Alternatively, this file may be used under the terms of the GNU Lesser
  ** General Public License version 3 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+ ** Foundation and appearing in the file LICENSE.LGPL3 included in the
  ** packaging of this file. Please review the following information to
  ** ensure the GNU Lesser General Public License version 3 requirements
- ** will be met: https://www.gnu.org/licenses/lgpl.html.
+ ** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
  **
  ** GNU General Public License Usage
  ** Alternatively, this file may be used under the terms of the GNU
- ** General Public License version 2.0 or later as published by the Free
- ** Software Foundation and appearing in the file LICENSE.GPL included in
- ** the packaging of this file. Please review the following information to
- ** ensure the GNU General Public License version 2.0 requirements will be
- ** met: http://www.gnu.org/licenses/gpl-2.0.html.
+ ** General Public License version 2.0 or (at your option) the GNU General
+ ** Public license version 3 or any later version approved by the KDE Free
+ ** Qt Foundation. The licenses are as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+ ** included in the packaging of this file. Please review the following
+ ** information to ensure the GNU General Public License requirements will
+ ** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+ ** https://www.gnu.org/licenses/gpl-3.0.html.
  **
  ** $QT_END_LICENSE$
  **
@@ -38,11 +41,11 @@
 #include "qdeclarativepolylinemapitem_p_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
 #include "qdeclarativecirclemapitem_p_p.h"
-#include "qlocationutils_p.h"
+#include <QtPositioning/private/qlocationutils_p.h>
 #include "qdeclarativegeomapitemutils_p.h"
 #include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
-#include "qdoublevector2d_p.h"
+#include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
 
@@ -86,18 +89,6 @@ struct ThreadPool // to have a thread pool with max 1 thread for geometry proces
 
 Q_GLOBAL_STATIC(ThreadPool, threadPool)
 
-
-static const double kClipperScaleFactor = 281474976710656.0;  // 48 bits of precision
-
-static inline IntPoint toIntPoint(const double x, const double y)
-{
-    return IntPoint(cInt(x * kClipperScaleFactor), cInt(y * kClipperScaleFactor));
-}
-
-static IntPoint toIntPoint(const QDoubleVector2D &p)
-{
-    return toIntPoint(p.x(), p.y());
-}
 
 static bool get_line_intersection(const double p0_x,
                                  const double p0_y,
@@ -161,13 +152,6 @@ static QList<QList<QDoubleVector2D> > clipLine(
         edges.push_back({ { poly.at(i-1).x(), poly.at(i-1).y(), poly.at(i).x(), poly.at(i).y() } });
     edges.push_back({ { poly.at(poly.size()-1).x(), poly.at(poly.size()-1).y(), poly.at(0).x(), poly.at(0).y() } });
 
-    // Build Path to check for containment, for edges not intersecting
-    // This step could be speeded up by forcing the orientation of the polygon, and testing the cross products in the step
-    // below, thus avoiding to resort to clipper.
-    Path clip;
-    for (const auto &v: poly)
-        clip.push_back(toIntPoint(v));
-
     // Step 2: check each segment against each edge
     QList<QDoubleVector2D> subLine;
     std::array<double, 4> intersections = { { 0.0, 0.0, 0.0, 0.0 } };
@@ -178,8 +162,8 @@ static QList<QList<QDoubleVector2D> > clipLine(
         double previousT = t;
         double i_x, i_y;
 
-        const int firstContained = c2t::clip2tri::pointInPolygon(toIntPoint(l.at(i).x(), l.at(i).y()), clip);
-        const int secondContained = c2t::clip2tri::pointInPolygon(toIntPoint(l.at(i+1).x(), l.at(i+1).y()), clip);
+        const int firstContained = QClipperUtils::pointInPolygon(l.at(i), poly);
+        const int secondContained = QClipperUtils::pointInPolygon(l.at(i+1), poly);
 
         if (firstContained && secondContained) { // Second most common condition, test early and skip inner loop if possible
             if (!subLine.size())
@@ -698,7 +682,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     QVectorPath vp(points.data(), types.size(), types.data());
     QTriangulatingStroker ts;
     // As of Qt5.11, the clip argument is not actually used, in the call below.
-    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), QRectF(), QPainter::Qt4CompatiblePainting);
+    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), QRectF(), QPainter::Antialiasing);
 
     clear();
 
@@ -765,14 +749,13 @@ bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
     return false;
 }
 
-#if QT_CONFIG(opengl)
 void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const QGeoPolygon &poly)
 {
     if (!sourceDirty_)
         return;
-    QGeoPath p(poly.path());
-    if (poly.path().size() && poly.path().last() != poly.path().first())
-        p.addCoordinate(poly.path().first());
+    QGeoPath p(poly.perimeter());
+    if (poly.perimeter().size() && poly.perimeter().last() != poly.perimeter().first())
+        p.addCoordinate(poly.perimeter().first());
     updateSourcePoints(map, p);
 }
 
@@ -817,7 +800,7 @@ void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoProjectionWebMe
     }
     QGeoPolygon bbox(QGeoRectangle(topLeft, bottomRight));
     QList<QDoubleVector2D> wrappedBbox, wrappedBboxPlus1, wrappedBboxMinus1;
-    QDeclarativeGeoMapItemUtils::wrapPath(bbox.path(), bbox.boundingGeoRectangle().topLeft(), p,
+    QDeclarativeGeoMapItemUtils::wrapPath(bbox.perimeter(), bbox.boundingGeoRectangle().topLeft(), p,
              wrappedBbox, wrappedBboxMinus1, wrappedBboxPlus1, &m_bboxLeftBoundWrapped);
 
     // New pointers, some old LOD task might still be running and operating on the old pointers.
@@ -918,7 +901,6 @@ void QGeoMapPolylineGeometryOpenGL::updateQuickGeometry(const QGeoProjectionWebM
     sourceBounds_.setWidth(brect.width() + strokeWidth);
     sourceBounds_.setHeight(brect.height() + strokeWidth);
 }
-#endif // QT_CONFIG(opengl)
 
 /*
  * QDeclarativePolygonMapItem Private Implementations
@@ -928,11 +910,9 @@ QDeclarativePolylineMapItemPrivate::~QDeclarativePolylineMapItemPrivate() {}
 
 QDeclarativePolylineMapItemPrivateCPU::~QDeclarativePolylineMapItemPrivateCPU() {}
 
-#if QT_CONFIG(opengl)
 QDeclarativePolylineMapItemPrivateOpenGLLineStrip::~QDeclarativePolylineMapItemPrivateOpenGLLineStrip() {}
 
 QDeclarativePolylineMapItemPrivateOpenGLExtruded::~QDeclarativePolylineMapItemPrivateOpenGLExtruded() {}
-#endif
 
 /*
  * QDeclarativePolygonMapItem Implementation
@@ -940,12 +920,10 @@ QDeclarativePolylineMapItemPrivateOpenGLExtruded::~QDeclarativePolylineMapItemPr
 
 struct PolylineBackendSelector
 {
-#if QT_CONFIG(opengl)
     PolylineBackendSelector()
     {
         backend = (qgetenv("QTLOCATION_OPENGL_ITEMS").toInt()) ? QDeclarativePolylineMapItem::OpenGLExtruded : QDeclarativePolylineMapItem::Software;
     }
-#endif
     QDeclarativePolylineMapItem::Backend backend = QDeclarativePolylineMapItem::Software;
 };
 
@@ -1237,22 +1215,16 @@ void QDeclarativePolylineMapItem::setBackend(QDeclarativePolylineMapItem::Backen
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativePolylineMapItemPrivate> d(
+    std::unique_ptr<QDeclarativePolylineMapItemPrivate> d(
             (m_backend == Software)
                     ? static_cast<QDeclarativePolylineMapItemPrivate *>(
                             new QDeclarativePolylineMapItemPrivateCPU(*this))
-#if QT_CONFIG(opengl)
                     : ((m_backend == OpenGLExtruded)
                                ? static_cast<QDeclarativePolylineMapItemPrivate *>(
                                        new QDeclarativePolylineMapItemPrivateOpenGLExtruded(*this))
                                : static_cast<QDeclarativePolylineMapItemPrivate *>(
                                        new QDeclarativePolylineMapItemPrivateOpenGLLineStrip(
                                                *this))));
-#else
-                    : nullptr);
-    qFatal("Requested non software rendering backend, but source code is compiled wihtout opengl "
-           "support");
-#endif
     m_d.swap(d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
@@ -1261,10 +1233,10 @@ void QDeclarativePolylineMapItem::setBackend(QDeclarativePolylineMapItem::Backen
 /*!
     \internal
 */
-void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativePolylineMapItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (newGeometry.topLeft() == oldGeometry.topLeft() || !map() || !m_geopath.isValid() || m_updatingGeometry) {
-        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        QDeclarativeGeoMapItemBase::geometryChange(newGeometry, oldGeometry);
         return;
     }
     // TODO: change the algorithm to preserve the distances and size!
@@ -1281,7 +1253,7 @@ void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, con
     m_d->onGeoGeometryChanged();
     emit pathChanged();
 
-    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // Not calling QDeclarativeGeoMapItemBase::geometryChange() as it will be called from a nested
     // call to this function.
 }
 
@@ -1489,7 +1461,6 @@ void MapPolylineNode::update(const QColor &fillColor,
     }
 }
 
-#if QT_CONFIG(opengl)
 MapPolylineNodeOpenGLLineStrip::MapPolylineNodeOpenGLLineStrip()
 : geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
 {
@@ -1537,12 +1508,13 @@ void MapPolylineNodeOpenGLLineStrip::update(const QColor &fillColor,
     }
 }
 
-MapPolylineShaderLineStrip::MapPolylineShaderLineStrip() : QSGMaterialShader(*new QSGMaterialShaderPrivate)
+MapPolylineShaderLineStrip::MapPolylineShaderLineStrip() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
 {
-
+    setShaderFileName(VertexStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polyline_linestrip.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polyline_linestrip.frag.qsb"));
 }
 
-void MapPolylineShaderLineStrip::updateState(const QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
+bool MapPolylineShaderLineStrip::updateUniformData(QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
 {
     Q_ASSERT(oldEffect == nullptr || newEffect->type() == oldEffect->type());
     MapPolylineMaterial *oldMaterial = static_cast<MapPolylineMaterial *>(oldEffect);
@@ -1552,9 +1524,37 @@ void MapPolylineShaderLineStrip::updateState(const QSGMaterialShader::RenderStat
     const QMatrix4x4 &geoProjection = newMaterial->geoProjection();
     const QDoubleVector3D &center = newMaterial->center();
 
-    QVector3D vecCenter, vecCenter_lowpart;
+    QVector4D vecCenter, vecCenter_lowpart;
     for (int i = 0; i < 3; i++)
         QLocationUtils::split_double(center.get(i), &vecCenter[i], &vecCenter_lowpart[i]);
+    vecCenter[3] = 0;
+    vecCenter_lowpart[3] = 0;
+
+    int offset = 0;
+    char *buf_p = state.uniformData()->data();
+
+    if (state.isMatrixDirty()) {
+        const QMatrix4x4 m = state.projectionMatrix();
+        memcpy(buf_p + offset, m.constData(), 4*4*4);
+    }
+    offset += 4*4*4;
+
+    memcpy(buf_p + offset, geoProjection.constData(), 4*4*4); offset+=4*4*4;
+
+    memcpy(buf_p + offset, &vecCenter, 4*4); offset += 4*4;
+
+    memcpy(buf_p + offset, &vecCenter_lowpart, 4*4); offset+=4*4;
+
+    if (state.isOpacityDirty()) {
+        const float opacity = state.opacity();
+        memcpy(buf_p + offset, &opacity, 4);
+    }
+    offset += 4;
+
+    float wrapOffset = newMaterial->wrapOffset();
+    memcpy(buf_p + offset, &wrapOffset, 4); offset+=4;
+
+    offset+=8; // float padding
 
     if (oldMaterial == nullptr || c != oldMaterial->color() || state.isOpacityDirty()) {
         float opacity = state.opacity() * c.alphaF();
@@ -1562,29 +1562,16 @@ void MapPolylineShaderLineStrip::updateState(const QSGMaterialShader::RenderStat
                     c.greenF() *  opacity,
                     c.blueF() * opacity,
                     opacity);
-        program()->setUniformValue(m_color_id, v);
+        memcpy(buf_p + offset, &v, 4*4);
     }
+    offset+=4*4;
 
-    if (state.isMatrixDirty())
-    {
-        program()->setUniformValue(m_matrix_id, state.projectionMatrix());
-    }
-
-    program()->setUniformValue(m_mapProjection_id, geoProjection);
-
-    program()->setUniformValue(m_center_id, vecCenter);
-    program()->setUniformValue(m_center_lowpart_id, vecCenter_lowpart);
-    program()->setUniformValue(m_wrapOffset_id, float(newMaterial->wrapOffset()));
+    return true;
 }
 
-const char * const *MapPolylineShaderLineStrip::attributeNames() const
+QSGMaterialShader *MapPolylineMaterial::createShader(QSGRendererInterface::RenderMode renderMode) const
 {
-    static char const *const attr[] = { "vertex", nullptr };
-    return attr;
-}
-
-QSGMaterialShader *MapPolylineMaterial::createShader() const
-{
+    Q_UNUSED(renderMode);
     return new MapPolylineShaderLineStrip();
 }
 
@@ -1753,12 +1740,15 @@ void MapPolylineNodeOpenGLExtruded::update(const QColor &fillColor,
     }
 }
 
-MapPolylineShaderExtruded::MapPolylineShaderExtruded() : QSGMaterialShader(*new QSGMaterialShaderPrivate)
+MapPolylineShaderExtruded::MapPolylineShaderExtruded() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
 {
-
+    // Heavily adapted from https://github.com/mattdesl/webgl-lines/blob/master/projected/vert.glsl,
+    // that is (c) Matt DesLauriers, and released under the MIT license.
+    setShaderFileName(VertexStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polyline_extruded.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polyline_extruded.frag.qsb"));
 }
 
-void MapPolylineShaderExtruded::updateState(const QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
+bool MapPolylineShaderExtruded::updateUniformData(QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
 {
     Q_ASSERT(oldEffect == nullptr || newEffect->type() == oldEffect->type());
     MapPolylineMaterialExtruded *oldMaterial = static_cast<MapPolylineMaterialExtruded *>(oldEffect);
@@ -1768,9 +1758,40 @@ void MapPolylineShaderExtruded::updateState(const QSGMaterialShader::RenderState
     const QMatrix4x4 &geoProjection = newMaterial->geoProjection();
     const QDoubleVector3D &center = newMaterial->center();
 
-    QVector3D vecCenter, vecCenter_lowpart;
+    // It is safer to use vec4 instead on vec3, as described in:
+    // https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)#Memory_layout
+    QVector4D vecCenter, vecCenter_lowpart;
     for (int i = 0; i < 3; i++)
         QLocationUtils::split_double(center.get(i), &vecCenter[i], &vecCenter_lowpart[i]);
+    vecCenter[3] = 0;
+    vecCenter_lowpart[3] = 0;
+
+    int offset = 0;
+    char *buf_p = state.uniformData()->data();
+
+    if (state.isMatrixDirty()) {
+        const QMatrix4x4 m = state.projectionMatrix();
+        memcpy(buf_p + offset, m.constData(), 4*4*4);
+    }
+    offset += 4*4*4;
+
+    memcpy(buf_p + offset, geoProjection.constData(), 4*4*4); offset+=4*4*4;
+
+    memcpy(buf_p + offset, &vecCenter, 4*4); offset += 4*4;
+
+    memcpy(buf_p + offset, &vecCenter_lowpart, 4*4); offset+=4*4;
+
+    const float lineWidth = newMaterial->lineWidth();
+    memcpy(buf_p + offset, &lineWidth, 4); offset+=4;
+
+    const QRectF viewportRect = state.viewportRect();
+    const float aspect = float(viewportRect.width() / viewportRect.height());
+    memcpy(buf_p + offset, &aspect, 4); offset+=4;
+
+    offset += 4; // Padding
+
+    int miter = newMaterial->miter();
+    memcpy(buf_p + offset, &miter, 4); offset+=4;
 
     if (oldMaterial == nullptr || c != oldMaterial->color() || state.isOpacityDirty()) {
         float opacity = state.opacity() * c.alphaF();
@@ -1778,35 +1799,19 @@ void MapPolylineShaderExtruded::updateState(const QSGMaterialShader::RenderState
                     c.greenF() *  opacity,
                     c.blueF() * opacity,
                     opacity);
-        program()->setUniformValue(m_color_id, v);
+        memcpy(buf_p + offset, &v, 4*4);
     }
+    offset+=4*4;
 
-    if (state.isMatrixDirty())
-    {
-        program()->setUniformValue(m_matrix_id, state.projectionMatrix());
-    }
+    const float wrapOffset = newMaterial->wrapOffset();
+    memcpy(buf_p + offset, &wrapOffset, 4); offset+=4;
 
-    // ToDo: dirty-flag all this
-    program()->setUniformValue(m_mapProjection_id, geoProjection);
-
-    program()->setUniformValue(m_center_id, vecCenter);
-    program()->setUniformValue(m_center_lowpart_id, vecCenter_lowpart);
-    program()->setUniformValue(m_miter_id, newMaterial->miter());
-    program()->setUniformValue(m_lineWidth_id, newMaterial->lineWidth());
-    program()->setUniformValue(m_wrapOffset_id, float(newMaterial->wrapOffset()));
-
-    const QRectF viewportRect = state.viewportRect();
-    const float aspect = float(viewportRect.width() / viewportRect.height());
-    program()->setUniformValue(m_aspect_id, aspect);
+    return true;
 }
 
-const char * const *MapPolylineShaderExtruded::attributeNames() const
+QSGMaterialShader *MapPolylineMaterialExtruded::createShader(QSGRendererInterface::RenderMode renderMode) const
 {
-    return MapPolylineNodeOpenGLExtruded::MapPolylineEntry::attributeNames();
-}
-
-QSGMaterialShader *MapPolylineMaterialExtruded::createShader() const
-{
+    Q_UNUSED(renderMode);
     return new MapPolylineShaderExtruded();
 }
 
@@ -1822,113 +1827,6 @@ int MapPolylineMaterialExtruded::compare(const QSGMaterial *other) const
     if (o.m_miter == m_miter)
         return MapPolylineMaterial::compare(other);
     return -1;
-}
-
-const char *MapPolylineShaderExtruded::vertexShaderMiteredSegments() const
-{
-    return
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec4 previous;\n"
-    "attribute highp vec4 next;\n"
-    "attribute lowp float direction;\n"
-    "attribute lowp float triangletype;\n"
-    "attribute lowp float vertextype;\n" // -1.0 if it is the "left" end of the segment, 1.0 if it is the "right" end.
-    "\n"
-    "uniform highp mat4 qt_Matrix;\n"
-    "uniform highp mat4 mapProjection;\n"
-    "uniform highp vec3 center;\n"
-    "uniform highp vec3 center_lowpart;\n"
-    "uniform lowp float lineWidth;\n"
-    "uniform lowp float aspect;\n"
-    "uniform lowp int miter;\n" // currently unused
-    "uniform lowp vec4 color;\n"
-    "uniform lowp float wrapOffset;\n"
-    "\n"
-    "varying vec4 primitivecolor;\n"
-    "\n"
-    "  \n"
-    "vec4 wrapped(in vec4 v) { return vec4(v.x + wrapOffset, v.y, 0.0, 1.0); }\n"
-    "void main() {\n" // ln 22
-    "  primitivecolor = color;\n"
-    "  vec2 aspectVec = vec2(aspect, 1.0);\n"
-    "  mat4 projViewModel = qt_Matrix * mapProjection;\n"
-    "  vec4 cur = wrapped(vertex) - vec4(center, 0.0);\n"
-    "  cur = cur - vec4(center_lowpart, 0.0);\n"
-    "  vec4 prev = wrapped(previous) - vec4(center, 0.0);\n"
-    "  prev = prev - vec4(center_lowpart, 0.0);\n"
-    "  vec4 nex = wrapped(next) - vec4(center, 0.0);\n"
-    "  nex = nex - vec4(center_lowpart, 0.0);\n"
-    "\n"
-    "  vec4 centerProjected = projViewModel * vec4(center, 1.0);\n"
-    "  vec4 previousProjected = projViewModel * prev;\n"
-    "  vec4 currentProjected = projViewModel * cur;\n"
-    "  vec4 nextProjected = projViewModel * nex;\n"
-    "\n"
-    "  //get 2D screen space with W divide and aspect correction\n"
-    "  vec2 currentScreen = (currentProjected.xy / currentProjected.w) * aspectVec;\n"
-    "  vec2 previousScreen = (previousProjected.xy / previousProjected.w) * aspectVec;\n"
-    "  vec2 nextScreen = (nextProjected.xy / nextProjected.w) * aspectVec;\n"
-    "  float len = (lineWidth);\n"
-    "  float orientation = direction;\n"
-    "  bool clipped = false;\n"
-    "  bool otherEndBelowFrustum = false;\n"
-    "  //starting point uses (next - current)\n"
-    "  vec2 dir = vec2(0.0);\n"
-    "  if (vertextype < 0.0) {\n"
-    "    dir = normalize(nextScreen - currentScreen);\n"
-    "    if (nextProjected.z < 0.0) dir = -dir;\n"
-    "  } else { \n"
-    "    dir = normalize(currentScreen - previousScreen);\n"
-    "    if (previousProjected.z < 0.0) dir = -dir;\n"
-    "  }\n"
-    // first, clip current, and make sure currentProjected.z is > 0
-    "  if (currentProjected.z < 0.0) {\n"
-    "    if ((nextProjected.z > 0.0 && vertextype < 0.0) || (vertextype > 0.0 && previousProjected.z > 0.0)) {\n"
-    "      dir = -dir;\n"
-    "      clipped = true;\n"
-    "      if (vertextype < 0.0 && nextProjected.y / nextProjected.w < -1.0) otherEndBelowFrustum = true;\n"
-    "      else if (vertextype > 0.0 && previousProjected.y / previousProjected.w < -1.0) otherEndBelowFrustum = true;\n"
-    "    } else {\n"
-    "        primitivecolor = vec4(0.0,0.0,0.0,0.0);\n"
-    "        gl_Position = vec4(-10000000.0, -1000000000.0, -1000000000.0, 1);\n" // get the vertex out of the way if the segment is fully invisible
-    "        return;\n"
-    "    }\n"
-    "  } else if (triangletype < 2.0) {\n" // vertex in the view, try to miter
-    "    //get directions from (C - B) and (B - A)\n"
-    "    vec2 dirA = normalize((currentScreen - previousScreen));\n"
-    "    if (previousProjected.z < 0.0) dirA = -dirA;\n"
-    "    vec2 dirB = normalize((nextScreen - currentScreen));\n"
-    "    //now compute the miter join normal and length\n"
-    "    if (nextProjected.z < 0.0) dirB = -dirB;\n"
-    "    vec2 tangent = normalize(dirA + dirB);\n"
-    "    vec2 perp = vec2(-dirA.y, dirA.x);\n"
-    "    vec2 vmiter = vec2(-tangent.y, tangent.x);\n"
-    "    len = lineWidth / dot(vmiter, perp);\n"
-    // The following is an attempt to have a segment-length based miter threshold.
-    // A mediocre workaround until better mitering will be added.
-    "    float lenTreshold = clamp( min(length((currentProjected.xy - previousProjected.xy) / aspectVec),"
-    "                            length((nextProjected.xy - currentProjected.xy) / aspectVec)), 3.0, 6.0 ) * 0.5;\n"
-    "    if (len < lineWidth * lenTreshold && len > -lineWidth * lenTreshold \n"
-    "    ) {\n"
-    "       dir = tangent;\n"
-    "    } else {\n"
-    "       len = lineWidth;\n"
-    "    }\n"
-    "  }\n"
-    "  vec4 offset;\n"
-    "  if (!clipped) {\n"
-    "    vec2 normal = normalize(vec2(-dir.y, dir.x));\n"
-    "    normal *= len;\n" // fracZL apparently was needed before the (-2.0 / qt_Matrix[1][1]) factor was introduced
-    "    normal /= aspectVec;\n"  // straighten the normal up again
-    "    float scaleFactor =  currentProjected.w / centerProjected.w;\n"
-    "    offset = vec4(normal * orientation * scaleFactor * (centerProjected.w / (-2.0 / qt_Matrix[1][1])), 0.0, 0.0);\n" // ToDo: figure out why (-2.0 / qt_Matrix[1][1]), that is empirically what works
-    "    gl_Position = currentProjected + offset;\n"
-    "  } else {\n"
-    "     if (otherEndBelowFrustum) offset = vec4((dir * 1.0) / aspectVec, 0.0, 0.0);\n"  // the if is necessary otherwise it seems the direction vector still flips in some obscure cases.
-    "     else offset = vec4((dir * 500000000000.0) / aspectVec, 0.0, 0.0);\n" // Hack alert: just 1 triangle, long enough to look like a rectangle.
-    "     if (vertextype < 0.0) gl_Position = nextProjected - offset; else gl_Position = previousProjected + offset;\n"
-    "  }\n"
-    "}\n";
 }
 
 QList<QDeclarativeGeoMapItemUtils::vec2> QGeoMapItemLODGeometry::getSimplified(
@@ -2086,6 +1984,5 @@ unsigned int QGeoMapItemLODGeometry::zoomForLOD(unsigned int zoom)
         return res;
     return res + 1; // give more resolution when closing in
 }
-#endif // QT_CONFIG(opengl)
 
 QT_END_NAMESPACE

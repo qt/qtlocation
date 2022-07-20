@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.3
+import QtLocation
 
 ContactDetail {
     label: "Test Contact Detail"

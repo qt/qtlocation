@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick
+import QtQuick.Controls
 
 //! [PlaceSearchSuggestionModel view 1]
 ListView {

@@ -1,34 +1,37 @@
 /***************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL3$
+** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
 ** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
@@ -37,7 +40,7 @@
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
 
-#include "qwebmercator_p.h"
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 
 #include <qmath.h>
@@ -48,13 +51,9 @@
 #include <QPainter>
 #include <QtGui/private/qtriangulator_p.h>
 
-#include "qdoublevector2d_p.h"
-#include "qlocationutils_p.h"
-#include "qgeocircle.h"
-
-/* poly2tri triangulator includes */
-#include <common/shapes.h>
-#include <sweep/cdt.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
+#include <qgeocircle.h>
 
 #include <QtPositioning/private/qclipperutils_p.h>
 #include "qdeclarativecirclemapitem_p_p.h"
@@ -189,10 +188,11 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     for (const QDoubleVector2D &c: circlePath)
         hole << p.wrapMapProjection(c);
 
-    c2t::clip2tri clipper;
-    clipper.addSubjectPath(QClipperUtils::qListToPath(fill), true);
-    clipper.addClipPolygon(QClipperUtils::qListToPath(hole));
-    Paths difference = clipper.execute(c2t::clip2tri::Difference, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
+    QClipperUtils clipper;
+    clipper.addSubjectPath(fill, true);
+    clipper.addClipPolygon(hole);
+    auto difference = clipper.execute(QClipperUtils::Difference, QClipperUtils::pftEvenOdd,
+                                      QClipperUtils::pftEvenOdd);
 
     // 2)
     QDoubleVector2D lb = p.geoToWrappedMapProjection(srcOrigin_);
@@ -200,11 +200,11 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     const QList<QDoubleVector2D> &visibleRegion = p.visibleGeometry();
     if (visibleRegion.size()) {
         clipper.clearClipper();
-        for (const Path &p: difference)
+        for (const auto &p: difference)
             clipper.addSubjectPath(p, true);
-        clipper.addClipPolygon(QClipperUtils::qListToPath(visibleRegion));
-        Paths res = clipper.execute(c2t::clip2tri::Intersection, QtClipperLib::pftEvenOdd, QtClipperLib::pftEvenOdd);
-        clippedPaths = QClipperUtils::pathsToQList(res);
+        clipper.addClipPolygon(visibleRegion);
+        clippedPaths = clipper.execute(QClipperUtils::Intersection, QClipperUtils::pftEvenOdd,
+                                       QClipperUtils::pftEvenOdd);
 
         // 2.1) update srcOrigin_ with the point with minimum X/Y
         lb = QDoubleVector2D(qInf(), qInf());
@@ -223,7 +223,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
         lb.setX(qMax(tl.x(), lb.x()));
         srcOrigin_ = p.mapProjectionToGeo(p.unwrapMapProjection(lb));
     } else {
-        clippedPaths = QClipperUtils::pathsToQList(difference);
+        clippedPaths = difference;
     }
 
     //3)
@@ -446,23 +446,19 @@ void QDeclarativeCircleMapItem::updatePolish()
 */
 void QDeclarativeCircleMapItem::possiblySwitchBackend(const QGeoCoordinate &oldCenter, qreal oldRadius, const QGeoCoordinate &newCenter, qreal newRadius)
 {
-#if QT_CONFIG(opengl)
     if (m_backend != QDeclarativeCircleMapItem::OpenGL)
         return;
 
     // if old does not cross and new crosses, move to CPU.
     if (!QDeclarativeCircleMapItemPrivate::crossEarthPole(oldCenter, oldRadius)
             && !QDeclarativeCircleMapItemPrivate::crossEarthPole(newCenter, newRadius)) {
-        QScopedPointer<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateCPU(*this)));
-        m_d.swap(d);
+        std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateCPU(*this)));
+        std::swap(m_d, d);
     } else if (QDeclarativeCircleMapItemPrivate::crossEarthPole(oldCenter, oldRadius)
                && !QDeclarativeCircleMapItemPrivate::crossEarthPole(newCenter, newRadius)) { // else if old crosses and new does not cross, move back to OpenGL
-        QScopedPointer<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
-        m_d.swap(d);
+        std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
+        std::swap(m_d, d);
     }
-#else
-    return;
-#endif
 }
 
 /*!
@@ -538,18 +534,12 @@ void QDeclarativeCircleMapItem::setBackend(QDeclarativeCircleMapItem::Backend b)
     if (b == m_backend)
         return;
     m_backend = b;
-    QScopedPointer<QDeclarativeCircleMapItemPrivate> d(
+    std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(
             (m_backend == Software) ? static_cast<QDeclarativeCircleMapItemPrivate *>(
                     new QDeclarativeCircleMapItemPrivateCPU(*this))
-#if QT_CONFIG(opengl)
                                     : static_cast<QDeclarativeCircleMapItemPrivate *>(
                                             new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
-#else
-                                    : nullptr);
-    qFatal("Requested non software rendering backend, but source code is compiled wihtout opengl "
-           "support");
-#endif
-    m_d.swap(d);
+    std::swap(m_d, d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
 }
@@ -557,10 +547,10 @@ void QDeclarativeCircleMapItem::setBackend(QDeclarativeCircleMapItem::Backend b)
 /*!
     \internal
 */
-void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativeCircleMapItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (!map() || !m_circle.isValid() || m_updatingGeometry || newGeometry == oldGeometry) {
-        QDeclarativeGeoMapItemBase::geometryChanged(newGeometry, oldGeometry);
+        QDeclarativeGeoMapItemBase::geometryChange(newGeometry, oldGeometry);
         return;
     }
 
@@ -569,7 +559,7 @@ void QDeclarativeCircleMapItem::geometryChanged(const QRectF &newGeometry, const
     if (newCoordinate.isValid())
         setCenter(newCoordinate); // ToDo: this is incorrect. setting such center might yield to another geometry changed.
 
-    // Not calling QDeclarativeGeoMapItemBase::geometryChanged() as it will be called from a nested
+    // Not calling QDeclarativeGeoMapItemBase::geometryChange() as it will be called from a nested
     // call to this function.
 }
 
@@ -577,9 +567,7 @@ QDeclarativeCircleMapItemPrivate::~QDeclarativeCircleMapItemPrivate() {}
 
 QDeclarativeCircleMapItemPrivateCPU::~QDeclarativeCircleMapItemPrivateCPU() {}
 
-#if QT_CONFIG(opengl)
 QDeclarativeCircleMapItemPrivateOpenGL::~QDeclarativeCircleMapItemPrivateOpenGL() {}
-#endif
 
 bool QDeclarativeCircleMapItemPrivate::preserveCircleGeometry (QList<QDoubleVector2D> &path,
                                     const QGeoCoordinate &center, qreal distance, const QGeoProjectionWebMercator &p)

@@ -48,10 +48,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtPositioning 5.5
-import QtLocation 5.6
+import QtQuick
+import QtQuick.Controls
+import QtPositioning
+import QtLocation
 import "../helper.js" as Helper
 
 Map {

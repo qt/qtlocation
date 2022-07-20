@@ -26,21 +26,11 @@
 **
 ****************************************************************************/
 
-import QtPositioning 5.5
+import QtPositioning
 
 Location {
     address: TestAddress { }
-//  TODO:unsupported syntax for now
-//    boundingBox {
-//        center {
-//            longitude: 10.0
-//            latitude: 20.0
-//            altitude: 30.0
-//        }
-//        height: 30.0
-//        width: 40.0
-//    }
-    boundingBox : QtPositioning.rectangle(QtPositioning.coordinate(20,10, 30),40.0,30)
+    boundingShape : QtPositioning.rectangle(QtPositioning.coordinate(20, 10, 30), 40, 30)
     coordinate {
         longitude: 10.0
         latitude: 20.0

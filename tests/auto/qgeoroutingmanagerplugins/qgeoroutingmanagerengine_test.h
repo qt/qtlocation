@@ -56,13 +56,13 @@ public:
         setSupportedManeuverDetails(QGeoRouteRequest::BasicManeuvers);
     }
 
-    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request)
+    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) override
     {
         Q_UNUSED(request);
         return new QGeoRouteReply(QGeoRouteReply::NoError,"no error");
     }
 
-    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
+    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position) override
     {
         Q_UNUSED(route);
         Q_UNUSED(position);

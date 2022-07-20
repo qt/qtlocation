@@ -26,7 +26,7 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.3
+import QtLocation
 
 Supplier {
     name: "Test supplier"

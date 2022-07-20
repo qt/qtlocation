@@ -1,34 +1,37 @@
 /****************************************************************************
 **
 ** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL3$
+** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
 ** Licensees holding valid commercial Qt licenses may use this file in
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
 ** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
@@ -1586,12 +1589,12 @@ void QDeclarativeGeoRouteQuery::append(QQmlListProperty<QObject> *p, QObject *v)
     }
 }
 
-int QDeclarativeGeoRouteQuery::count(QQmlListProperty<QObject> *p)
+qsizetype QDeclarativeGeoRouteQuery::count(QQmlListProperty<QObject> *p)
 {
     return static_cast<QDeclarativeGeoRouteQuery*>(p->object)->m_children.count();
 }
 
-QObject *QDeclarativeGeoRouteQuery::at(QQmlListProperty<QObject> *p, int idx)
+QObject *QDeclarativeGeoRouteQuery::at(QQmlListProperty<QObject> *p, qsizetype idx)
 {
     return static_cast<QDeclarativeGeoRouteQuery*>(p->object)->m_children.at(idx);
 }
@@ -1754,17 +1757,20 @@ bool QDeclarativeGeoWaypoint::operator==(const QDeclarativeGeoWaypoint &other) c
 */
 qreal QDeclarativeGeoWaypoint::latitude() const
 {
-    return m_coordinate.latitude();
+    return m_coordinate.value().latitude();
 }
 
 void QDeclarativeGeoWaypoint::setLatitude(qreal latitude)
 {
-    if (compareFloats(latitude, m_coordinate.latitude()))
+    if (compareFloats(latitude, m_coordinate.value().latitude()))
         return;
 
-    m_coordinate.setLatitude(latitude);
+    auto coord = m_coordinate.value();
+    coord.setLatitude(latitude);
+    m_coordinate.setValueBypassingBindings(coord); // set the value without notifying, yet
+
     if (m_complete) {
-        emit coordinateChanged();
+        m_coordinate.notify(); // it will also emit coordinateChanged()
         emit waypointDetailsChanged();
     }
 }
@@ -1777,17 +1783,20 @@ void QDeclarativeGeoWaypoint::setLatitude(qreal latitude)
 */
 qreal QDeclarativeGeoWaypoint::longitude() const
 {
-    return m_coordinate.longitude();
+    return m_coordinate.value().longitude();
 }
 
 void QDeclarativeGeoWaypoint::setLongitude(qreal longitude)
 {
-    if (compareFloats(longitude, m_coordinate.longitude()))
+    if (compareFloats(longitude, m_coordinate.value().longitude()))
         return;
 
-    m_coordinate.setLongitude(longitude);
+    auto coord = m_coordinate.value();
+    coord.setLongitude(longitude);
+    m_coordinate.setValueBypassingBindings(coord); // set the value without notifying, yet
+
     if (m_complete) {
-        emit coordinateChanged();
+        m_coordinate.notify(); // it will also emit coordinateChanged()
         emit waypointDetailsChanged();
     }
 }
@@ -1800,24 +1809,27 @@ void QDeclarativeGeoWaypoint::setLongitude(qreal longitude)
 */
 qreal QDeclarativeGeoWaypoint::altitude() const
 {
-    return m_coordinate.altitude();
+    return m_coordinate.value().altitude();
 }
 
 void QDeclarativeGeoWaypoint::setAltitude(qreal altitude)
 {
-    if (compareFloats(altitude, m_coordinate.altitude()))
+    if (compareFloats(altitude, m_coordinate.value().altitude()))
         return;
 
-    m_coordinate.setAltitude(altitude);
+    auto coord = m_coordinate.value();
+    coord.setAltitude(altitude);
+    m_coordinate.setValueBypassingBindings(coord); // set the value without notifying, yet
+
     if (m_complete) {
-        emit coordinateChanged();
+        m_coordinate.notify(); // it will also emit coordinateChanged()
         emit waypointDetailsChanged();
     }
 }
 
 bool QDeclarativeGeoWaypoint::isValid() const
 {
-    return m_coordinate.isValid();
+    return m_coordinate.value().isValid();
 }
 
 /*!
@@ -1908,12 +1920,12 @@ void QDeclarativeGeoWaypoint::append(QQmlListProperty<QObject> *p, QObject *v)
     }
 }
 
-int QDeclarativeGeoWaypoint::count(QQmlListProperty<QObject> *p)
+qsizetype QDeclarativeGeoWaypoint::count(QQmlListProperty<QObject> *p)
 {
     return static_cast<QDeclarativeGeoWaypoint*>(p->object)->m_children.count();
 }
 
-QObject *QDeclarativeGeoWaypoint::at(QQmlListProperty<QObject> *p, int idx)
+QObject *QDeclarativeGeoWaypoint::at(QQmlListProperty<QObject> *p, qsizetype idx)
 {
     return static_cast<QDeclarativeGeoWaypoint*>(p->object)->m_children.at(idx);
 }

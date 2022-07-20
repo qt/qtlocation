@@ -392,8 +392,7 @@ void QDeclarativeNavigator::recalculateRoutes()
 */
 QAbstractNavigator *QDeclarativeNavigator::abstractNavigator() const
 {
-    return d_ptr->m_navigator.data();
-
+    return d_ptr->m_navigator.get();
 }
 
 bool QDeclarativeNavigator::active() const
@@ -567,7 +566,7 @@ QDeclarativeNavigationBasicDirections::QDeclarativeNavigationBasicDirections(QDe
 :   QObject(parent), m_navigator(parent), m_routes(QByteArrayLiteral("routeData"), this)
 {
     if (m_navigator)
-        m_navigatorPrivate = m_navigator->d_ptr.data();
+        m_navigatorPrivate = m_navigator->d_ptr.get();
 }
 
 /*!

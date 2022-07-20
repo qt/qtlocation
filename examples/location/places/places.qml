@@ -48,11 +48,11 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.2
-import QtPositioning 5.5
-import QtLocation 5.6
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtPositioning
+import QtLocation
 import "items"
 
 ApplicationWindow {
