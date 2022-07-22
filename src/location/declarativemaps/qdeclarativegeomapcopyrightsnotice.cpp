@@ -44,7 +44,6 @@
 #include <QtGui/QAbstractTextDocumentLayout>
 #include <QtGui/QPainter>
 #include <QtQuick/private/qquickanchors_p.h>
-#include <QtQuick/private/qquickanchors_p_p.h>
 #include <QtLocation/private/qdeclarativegeomap_p.h>
 #include <QtQuick/private/qquickpainteditem_p.h>
 

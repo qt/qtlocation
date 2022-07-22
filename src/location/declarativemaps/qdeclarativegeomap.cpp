@@ -53,7 +53,6 @@
 #include <QtPositioning/QGeoPolygon>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGRectangleNode>
-#include <QtQuick/private/qquickwindow_p.h>
 #include <QtQml/qqmlinfo.h>
 #include <QtQuick/private/qquickitem_p.h>
 #include <cmath>

@@ -52,7 +52,7 @@
 //
 
 
-#include <QtCore/private/qglobal_p.h>
+#include <QtCore/qglobal.h>
 
 QT_BEGIN_NAMESPACE
 

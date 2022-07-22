@@ -51,7 +51,6 @@
 #include <QPainter>
 #include <QtGui/private/qtriangulator_p.h>
 
-#include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qlocationutils_p.h>
 #include <qgeocircle.h>
 
