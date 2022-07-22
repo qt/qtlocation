@@ -41,8 +41,6 @@
 
 #include <QtQml/QQmlEngine>
 #include <QtQml/private/qqmlengine_p.h>
-#include <QtQml/private/qv4scopedvalue_p.h>
-#include <QtQml/private/qv4arrayobject_p.h>
 
 QT_BEGIN_NAMESPACE
 

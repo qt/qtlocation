@@ -63,7 +63,6 @@
 
 #include <QtQml/qqml.h>
 #include <QtQml/QQmlParserStatus>
-#include <QtQml/private/qv4engine_p.h>
 #include <QAbstractListModel>
 
 #include <QObject>

@@ -56,7 +56,6 @@
 #include <QUrl>
 
 #include "qplaceicon.h"
-#include "private/qglobal_p.h"
 
 QT_BEGIN_NAMESPACE
 

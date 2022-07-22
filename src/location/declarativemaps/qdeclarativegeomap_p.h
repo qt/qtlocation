@@ -64,7 +64,6 @@
 #include <QtGui/QColor>
 #include <QtPositioning/qgeorectangle.h>
 #include <QtLocation/private/qgeomap_p.h>
-#include <QtQuick/private/qquickitemchangelistener_p.h>
 
 Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeomaptype_p.h>)
 Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoserviceprovider_p.h>)

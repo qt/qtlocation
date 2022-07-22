@@ -48,7 +48,6 @@
 #include <QtLocation/private/qgeomap_p.h>
 
 #include <QtCore/QScopedValueRollback>
-#include <QtGui/private/qtriangulator_p.h>
 #include <QtQml/QQmlInfo>
 #include <QtQml/private/qqmlengine_p.h>
 #include <QPainter>
