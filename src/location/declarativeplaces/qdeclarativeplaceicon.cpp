@@ -118,7 +118,7 @@ QPlaceIcon QDeclarativePlaceIcon::icon() const
         result.setManager(0);
 
     QVariantMap params;
-    foreach (const QString &key, m_parameters->keys()) {
+    for (const QString &key : m_parameters->keys()) {
         const QVariant value = m_parameters->value(key);
         if (value.isValid()) {
             params.insert(key, value);
@@ -241,10 +241,10 @@ QPlaceManager *QDeclarativePlaceIcon::manager() const
 void QDeclarativePlaceIcon::initParameters(const QVariantMap &parameterMap)
 {
     //clear out old parameters
-    foreach (const QString &key, m_parameters->keys())
+    for (const QString &key : m_parameters->keys())
         m_parameters->clear(key);
 
-    foreach (const QString &key, parameterMap.keys()) {
+    for (const QString &key : parameterMap.keys()) {
         QVariant value = parameterMap.value(key);
         m_parameters->insert(key, value);
     }

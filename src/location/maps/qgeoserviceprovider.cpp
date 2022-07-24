@@ -286,8 +286,8 @@ Flags QGeoServiceProviderPrivate::features(const char *enumName)
     Flags ret = typename Flags::enum_type(0);
     if (this->metaData.contains(QStringLiteral("Features"))
             && this->metaData.value(QStringLiteral("Features")).isArray()) {
-        QCborArray features = this->metaData.value(QStringLiteral("Features")).toArray();
-        for (const QCborValueRef v : features) {
+        const QCborArray features = this->metaData.value(QStringLiteral("Features")).toArray();
+        for (const QCborValueConstRef v : features) {
             int val = en.keyToValue(v.toString().toLatin1().constData());
             if (v.isString() && val != -1) {
                 ret |= typename Flags::enum_type(val);

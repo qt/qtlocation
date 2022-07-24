@@ -10,6 +10,8 @@ qt_internal_add_plugin(QGeoServiceProviderFactoryItemsOverlayPlugin
         Qt::Core
         Qt::LocationPrivate
         Qt::PositioningPrivate
+    DEFINES
+        QT_NO_FOREACH
 )
 
 qt_internal_extend_target(QGeoServiceProviderFactoryItemsOverlayPlugin

@@ -314,7 +314,7 @@ public slots:
     //4) Have the slot appropriately process the results of the operation
     void processSearchReply() {
         if (searchReply->error() == QPlaceReply::NoError) {
-            foreach (const QPlaceSearchResult &result, searchReply->results()) {
+            for (const QPlaceSearchResult &result : searchReply->results()) {
                 if (result.type() == QPlaceSearchResult::PlaceResult)
                     qDebug() << "Title:" << result.title();
             }
@@ -329,7 +329,7 @@ public slots:
     //! [Search for places handler cpp]
     void handleSearchReply() {
         if (searchReply->error() == QPlaceReply::NoError) {
-            foreach (const QPlaceSearchResult &result, searchReply->results()) {
+            for (const QPlaceSearchResult &result : searchReply->results()) {
                 if (result.type() == QPlaceSearchResult::PlaceResult) {
                     QPlaceResult placeResult = result;
                     qDebug() << "Name: " << placeResult.place().name();
@@ -367,7 +367,7 @@ public slots:
             }
 
             //alternatively if indexes are irrelevant
-            foreach (const QPlaceImage &image, contentReply->content()) {
+            for (const QPlaceImage &image : contentReply->content()) {
                 qDebug() << image.url();
                 qDebug() << image.mimeType();
             }
@@ -387,7 +387,7 @@ public slots:
     //! [Suggestion handler]
     void handleSuggestionReply() {
         if (suggestionReply->error() == QPlaceReply::NoError) {
-            foreach (const QString &suggestion, suggestionReply->suggestions())
+            for (const QString &suggestion : suggestionReply->suggestions())
                 qDebug() << suggestion;
         }
 
@@ -433,8 +433,8 @@ public slots:
     void categories() {
         QPlaceCategory pizza;
         //! [Top level categories]
-        QList<QPlaceCategory> topLevelCategories = manager->childCategories();
-        foreach (const QPlaceCategory &category, topLevelCategories)
+        const QList<QPlaceCategory> topLevelCategories = manager->childCategories();
+        for (const QPlaceCategory &category : topLevelCategories)
             qDebug() << category.name();
         //! [Top level categories]
 
@@ -477,7 +477,7 @@ public slots:
     void phoneNumbers() {
         //! [Phone numbers]
         if (place.contactTypes().contains(QPlaceContactDetail::Phone)) {
-            foreach (const QPlaceContactDetail &number, place.contactDetails(QPlaceContactDetail::Phone))
+            for (const QPlaceContactDetail &number : place.contactDetails(QPlaceContactDetail::Phone))
                 qDebug() << number.label() << ":" << number.value();
         }
         //! [Phone numbers]
@@ -494,7 +494,7 @@ public slots:
     //! [Match places handler]
     void matchHandler() {
         if (matchReply->error() == QPlaceReply::NoError) {
-            foreach (const QPlace place, matchReply->places()) {
+            for (const QPlace place : matchReply->places()) {
                 if (place != QPlace())
                     qDebug() << "Place is a favorite with name" << place.name();
                 else

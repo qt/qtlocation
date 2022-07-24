@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 
 static bool providersResolved(const QList<QGeoTileProviderOsm *> &providers)
 {
-    foreach (const QGeoTileProviderOsm *provider, providers)
+    for (const QGeoTileProviderOsm *provider : providers)
         if (!provider->isResolved())
             return false;
     return true;
@@ -84,7 +84,7 @@ QGeoTileFetcherOsm::QGeoTileFetcherOsm(const QList<QGeoTileProviderOsm *> &provi
       m_ready(true)
 {
     m_nm->setParent(this);
-    foreach (QGeoTileProviderOsm *provider, m_providers) {
+    for (QGeoTileProviderOsm *provider : m_providers) {
         if (!provider->isResolved()) {
             m_ready = false;
             connect(provider, &QGeoTileProviderOsm::resolutionFinished,
@@ -108,7 +108,7 @@ void QGeoTileFetcherOsm::setUserAgent(const QByteArray &userAgent)
 bool QGeoTileFetcherOsm::initialized() const
 {
     if (!m_ready) {
-        foreach (QGeoTileProviderOsm *provider, m_providers)
+        for (QGeoTileProviderOsm *provider : m_providers)
             if (!provider->isResolved())
                 provider->resolveProvider();
     }

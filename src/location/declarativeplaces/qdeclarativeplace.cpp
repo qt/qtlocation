@@ -400,7 +400,7 @@ QPlace QDeclarativePlace::place()
 
     // Categories
     QList<QPlaceCategory> categories;
-    foreach (QDeclarativeCategory *value, m_categories)
+    for (QDeclarativeCategory *value : qAsConst(m_categories))
         categories.append(value->category());
 
     result.setCategories(categories);
@@ -419,11 +419,11 @@ QPlace QDeclarativePlace::place()
 
     //contact details
     QList<QPlaceContactDetail> cppDetails;
-    foreach (const QString &key, m_contactDetails->keys()) {
+    for (const QString &key : m_contactDetails->keys()) {
         cppDetails.clear();
         if (m_contactDetails->value(key).typeId() == QMetaType::QVariantList) {
-            QVariantList detailsVarList = m_contactDetails->value(key).toList();
-            foreach (const QVariant &detailVar, detailsVarList) {
+            const QVariantList detailsVarList = m_contactDetails->value(key).toList();
+            for (const QVariant &detailVar : detailsVarList) {
                 QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(detailVar.value<QObject *>());
                 if (detail)
                     cppDetails.append(detail->contactDetail());
@@ -724,7 +724,7 @@ void QDeclarativePlace::contactsModified(const QString &key, const QVariant &)
 */
 void QDeclarativePlace::cleanupDeletedCategories()
 {
-    foreach (QDeclarativeCategory * category, m_categoriesToBeDeleted) {
+    for (QDeclarativeCategory * category : m_categoriesToBeDeleted) {
         if (category->parent() == this)
             delete category;
     }
@@ -974,7 +974,7 @@ void QDeclarativePlace::synchronizeCategories()
 {
     qDeleteAll(m_categories);
     m_categories.clear();
-    foreach (const QPlaceCategory &value, m_src.categories()) {
+    for (const QPlaceCategory &value : m_src.categories()) {
         QDeclarativeCategory *declarativeValue = new QDeclarativeCategory(value, m_plugin, this);
         m_categories.append(declarativeValue);
     }
@@ -1081,12 +1081,12 @@ void QDeclarativePlace::initializeFavorite(QDeclarativeGeoServiceProvider *plugi
 */
 void QDeclarativePlace::pullExtendedAttributes()
 {
-    QStringList keys = m_extendedAttributes->keys();
-    foreach (const QString &key, keys)
+    const QStringList keys = m_extendedAttributes->keys();
+    for (const QString &key : keys)
         m_extendedAttributes->clear(key);
 
-    QStringList attributeTypes = m_src.extendedAttributeTypes();
-    foreach (const QString &attributeType, attributeTypes) {
+    const QStringList attributeTypes = m_src.extendedAttributeTypes();
+    for (const QString &attributeType : attributeTypes) {
         m_extendedAttributes->insert(attributeType,
             QVariant::fromValue(new QDeclarativePlaceAttribute(m_src.extendedAttribute(attributeType))));
     }
@@ -1100,9 +1100,9 @@ void QDeclarativePlace::pullExtendedAttributes()
 void QDeclarativePlace::synchronizeContacts()
 {
     //clear out contact data
-    foreach (const QString &contactType, m_contactDetails->keys()) {
-        QList<QVariant> contacts = m_contactDetails->value(contactType).toList();
-        foreach (const QVariant &var, contacts) {
+    for (const QString &contactType : m_contactDetails->keys()) {
+        const QList<QVariant> contacts = m_contactDetails->value(contactType).toList();
+        for (const QVariant &var : contacts) {
             QObject *obj = var.value<QObject *>();
             if (obj->parent() == this)
                 delete obj;
@@ -1111,10 +1111,10 @@ void QDeclarativePlace::synchronizeContacts()
     }
 
     //insert new contact data from source place
-    foreach (const QString &contactType, m_src.contactTypes()) {
-        QList<QPlaceContactDetail> sourceContacts = m_src.contactDetails(contactType);
+    for (const QString &contactType : m_src.contactTypes()) {
+        const QList<QPlaceContactDetail> sourceContacts = m_src.contactDetails(contactType);
         QVariantList declContacts;
-        foreach (const QPlaceContactDetail &sourceContact, sourceContacts) {
+        for (const QPlaceContactDetail &sourceContact : sourceContacts) {
             QDeclarativeContactDetail *declContact = new QDeclarativeContactDetail(this);
             declContact->setContactDetail(sourceContact);
             declContacts.append(QVariant::fromValue(qobject_cast<QObject *>(declContact)));

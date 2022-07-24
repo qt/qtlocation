@@ -261,7 +261,7 @@ void tst_nokia_routing::verifySaneRoute(const QGeoRoute& route)
     const QList<QGeoCoordinate> path = route.path();
     QVERIFY(path.size() >= 2);
 
-    foreach (const QGeoCoordinate& coord, path) {
+    for (const QGeoCoordinate& coord : path) {
         QVERIFY(coord.isValid());
         QVERIFY(bounds.contains(coord));
     }
@@ -278,7 +278,7 @@ void tst_nokia_routing::verifySaneRoute(const QGeoRoute& route)
         QVERIFY(segment.travelTime() >= 0); // times are rounded and thus may end up being zero
 
         const QList<QGeoCoordinate> path = segment.path();
-        foreach (const QGeoCoordinate& coord, path) {
+        for (const QGeoCoordinate& coord : path) {
             QVERIFY(coord.isValid());
             if (!first && !last) {
                 QVERIFY(bounds.contains(coord)); // on pt and pedestrian

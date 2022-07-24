@@ -311,7 +311,7 @@ void QDeclarativeGeoMap::onSupportedMapTypesChanged()
         m_map->setActiveMapType(QGeoMapType()); // no supported map types: setting an invalid one
     } else {
         bool hasMapType = false;
-        foreach (QDeclarativeGeoMapType *declarativeType, m_supportedMapTypes) {
+        for (auto *declarativeType : m_supportedMapTypes) {
             if (declarativeType->mapType() == m_map->activeMapType())
                 hasMapType = true;
         }
@@ -1972,7 +1972,7 @@ QList<QGeoMapObject *> QDeclarativeGeoMap::mapObjects()
 QList<QObject *> QDeclarativeGeoMap::mapItems()
 {
     QList<QObject *> ret;
-    foreach (const QPointer<QDeclarativeGeoMapItemBase> &ptr, m_mapItems) {
+    for (const auto &ptr : m_mapItems) {
         if (ptr)
             ret << ptr.data();
     }

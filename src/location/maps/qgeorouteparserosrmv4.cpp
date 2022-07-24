@@ -390,7 +390,7 @@ QUrl QGeoRouteParserOsrmV4Private::requestUrl(const QGeoRouteRequest &request, c
 
     query.addQueryItem(QStringLiteral("instructions"), QStringLiteral("true"));
 
-    foreach (const QGeoCoordinate &c, request.waypoints()) {
+    for (const QGeoCoordinate &c : request.waypoints()) {
         query.addQueryItem(QStringLiteral("loc"), QString::number(c.latitude()) + QLatin1Char(',') +
                                                  QString::number(c.longitude()));
     }

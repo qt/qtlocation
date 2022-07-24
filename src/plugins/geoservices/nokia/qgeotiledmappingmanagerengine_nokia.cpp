@@ -305,7 +305,7 @@ void QGeoTiledMappingManagerEngineNokia::parseNewVersionInfo(const QByteArray &v
 
     const QStringList versionLines =  versionString.split(QLatin1Char('\n'));
     QJsonObject newVersionData;
-    foreach (const QString &line, versionLines) {
+    for (const QString &line : versionLines) {
         const QStringList versionInfo = line.split(':');
         if (versionInfo.size() > 1) {
             const QString versionKey = versionInfo[0].trimmed();
@@ -436,7 +436,7 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
         }
     }
 
-    foreach (const QString &copyrightString, copyrightStrings) {
+    for (const QString &copyrightString : copyrightStrings) {
         if (copyrightsText.length())
             copyrightsText += QLatin1Char('\n');
         copyrightsText += copyrightSymbol;

@@ -83,8 +83,7 @@ QGeoRouteReply *GeoRoutingManagerEngineEsri::calculateRoute(const QGeoRouteReque
     QUrlQuery query;
     QString stops;
 
-    foreach (const QGeoCoordinate &coordinate, request.waypoints())
-    {
+    for (const QGeoCoordinate &coordinate : request.waypoints()) {
         if (!stops.isEmpty())
             stops += "; ";
 

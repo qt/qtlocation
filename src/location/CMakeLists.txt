@@ -191,6 +191,8 @@ qt_internal_add_module(Location
         Qt::PositioningQuickPrivate
         Qt::QmlPrivate
         Qt::QmlModelsPrivate
+    DEFINES
+        QT_NO_FOREACH
     GENERATE_CPP_EXPORTS
     GENERATE_PRIVATE_CPP_EXPORTS
 )

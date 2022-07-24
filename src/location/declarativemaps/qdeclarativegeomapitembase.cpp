@@ -102,10 +102,10 @@ QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
 */
 void QDeclarativeGeoMapItemBase::afterChildrenChanged()
 {
-    QList<QQuickItem *> kids = childItems();
+    const QList<QQuickItem *> kids = childItems();
     if (kids.size() > 0) {
         bool printedWarning = false;
-        foreach (QQuickItem *i, kids) {
+        for (auto *i : kids) {
             if (i->flags() & QQuickItem::ItemHasContents
                     && !qobject_cast<QQuickMouseArea *>(i)) {
                 if (!printedWarning) {
