@@ -158,7 +158,7 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
     if (!request.searchTerm().isEmpty())
         queryParts.append(request.searchTerm());
 
-    foreach (const QPlaceCategory &category, request.categories()) {
+    for (const QPlaceCategory &category : request.categories()) {
         QString id = category.categoryId();
         int index = id.indexOf(QLatin1Char('='));
         if (index != -1)
@@ -239,7 +239,7 @@ QPlaceCategory QPlaceManagerEngineOsm::category(const QString &categoryId) const
 QList<QPlaceCategory> QPlaceManagerEngineOsm::childCategories(const QString &parentId) const
 {
     QList<QPlaceCategory> categories;
-    foreach (const QString &id, m_subcategories.value(parentId))
+    for (const QString &id : m_subcategories.value(parentId))
         categories.append(m_categories.value(id));
     return categories;
 }
@@ -315,14 +315,14 @@ void QPlaceManagerEngineOsm::categoryReplyFinished()
         m_categoryLocales.clear();
     }
 
-    foreach (QPlaceCategoriesReplyOsm *reply, m_pendingCategoriesReply)
+    for (QPlaceCategoriesReplyOsm *reply : m_pendingCategoriesReply)
         reply->emitFinished();
     m_pendingCategoriesReply.clear();
 }
 
 void QPlaceManagerEngineOsm::categoryReplyError()
 {
-    foreach (QPlaceCategoriesReplyOsm *reply, m_pendingCategoriesReply)
+    for (QPlaceCategoriesReplyOsm *reply : m_pendingCategoriesReply)
         reply->setError(QPlaceReply::CommunicationError, tr("Network request error"));
 }
 

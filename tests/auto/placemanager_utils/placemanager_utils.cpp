@@ -72,7 +72,7 @@ void PlaceManagerUtils::doSavePlaces(QPlaceManager *manager, QList<QPlace> &plac
 {
     QPlaceIdReply *saveReply;
 
-    foreach (QPlace place, places) {
+    for (const auto &place : places) {
         saveReply = manager->savePlace(place);
         QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
         QTRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, Timeout);
@@ -86,7 +86,7 @@ void PlaceManagerUtils::doSavePlaces(QPlaceManager *manager, const QList<QPlace 
     QPlaceIdReply *saveReply;
 
     static int count= 0;
-    foreach (QPlace *place, places) {
+    for (QPlace *place : places) {
         count++;
         saveReply = manager->savePlace(*place);
         QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
@@ -116,7 +116,7 @@ bool PlaceManagerUtils::doSearch(QPlaceManager *manager,
     results->clear();
     QList<QPlaceSearchResult> searchResults;
     success = doSearch(manager, request, &searchResults, expectedError);
-    foreach (const QPlaceSearchResult &searchResult, searchResults) {
+    for (const QPlaceSearchResult &searchResult : searchResults) {
         if (searchResult.type() == QPlaceSearchResult::PlaceResult) {
             QPlaceResult placeResult = searchResult;
             results->append(placeResult.place());
@@ -351,11 +351,11 @@ bool PlaceManagerUtils::compare(const QList<QPlace> &actualResults,
                                       const QList<QPlace> &expectedResults)
 {
     QSet<QString> actualIds;
-    foreach (const QPlace &place, actualResults)
+    for (const QPlace &place : actualResults)
         actualIds.insert(place.placeId());
 
     QSet<QString> expectedIds;
-    foreach (const QPlace &place, expectedResults)
+    for (const QPlace &place : expectedResults)
         expectedIds.insert(place.placeId());
 
     bool isMatch = (actualIds == expectedIds);
@@ -371,6 +371,6 @@ bool PlaceManagerUtils::compare(const QList<QPlace> &actualResults,
 
 void PlaceManagerUtils::setVisibility(QList<QPlace *> places, QLocation::Visibility visibility)
 {
-    foreach (QPlace *place, places)
+    for (QPlace *place : places)
         place->setVisibility(visibility);
 }

@@ -400,9 +400,9 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         QUrl u = query.searchContext().value<QUrl>();
 
         typedef QPair<QString, QString> QueryItem;
-        QList<QueryItem> queryItemList = queryItems.queryItems(QUrl::FullyEncoded);
+        const QList<QueryItem> queryItemList = queryItems.queryItems(QUrl::FullyEncoded);
         queryItems = QUrlQuery(u);
-        foreach (const QueryItem &item, queryItemList)
+        for (const QueryItem &item : queryItemList)
             queryItems.addQueryItem(item.first, item.second);
 
         if (query.limit() > 0)
@@ -450,7 +450,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
              QStringLiteral("/places/v1/discover/explore"));
 
         QStringList ids;
-        foreach (const QPlaceCategory &category, query.categories())
+        for (const QPlaceCategory &category : query.categories())
             ids.append(category.categoryId());
 
         QUrlQuery queryItems;
@@ -673,7 +673,7 @@ QPlaceCategory QPlaceManagerEngineNokiaV2::category(const QString &categoryId) c
 QList<QPlaceCategory> QPlaceManagerEngineNokiaV2::childCategories(const QString &parentId) const
 {
     QList<QPlaceCategory> results;
-    foreach (const QString &childId, m_categoryTree.value(parentId).childIds)
+    for (const QString &childId : m_categoryTree.value(parentId).childIds)
         results.append(m_categoryTree.value(childId).category);
     return results;
 }
@@ -709,7 +709,7 @@ QPlaceIcon QPlaceManagerEngineNokiaV2::icon(const QString &remotePath,
         params.insert(NokiaIcon, nokiaIcon);
         params.insert(IconPrefix, iconPrefix);
 
-        foreach (const QPlaceCategory &category, categories) {
+        for (const QPlaceCategory &category : categories) {
             if (category.icon().parameters().value(NokiaIcon) == nokiaIcon) {
                 params.insert(NokiaIconGenerated, true);
                 break;
@@ -857,7 +857,7 @@ QByteArray QPlaceManagerEngineNokiaV2::createLanguageString() const
     if (locales.isEmpty())
         locales << QLocale();
 
-    foreach (const QLocale &loc, locales) {
+    for (const QLocale &loc : qAsConst(locales)) {
         language.append(loc.name().replace(2, 1, QLatin1Char('-')).toLatin1());
         language.append(", ");
     }

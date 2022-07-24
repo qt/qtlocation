@@ -541,7 +541,7 @@ void tst_Place::extendedAttributeTest()
     QCOMPARE(place.extendedAttribute(QStringLiteral("shelter")).text(), QStringLiteral("No"));
 
     //test clearing of attributes by setting them to the default attribute
-    foreach (const QString &attributeType, place.extendedAttributeTypes())
+    for (const QString &attributeType : place.extendedAttributeTypes())
         place.setExtendedAttribute(attributeType, QPlaceAttribute());
 
     QCOMPARE(place.extendedAttributeTypes().count(), 0);

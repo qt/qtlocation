@@ -996,7 +996,7 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
 
             if (!error) {
                 QList<QGeoCoordinate> path;
-                foreach (const QGeoRouteSegment &s, segments)
+                for (const QGeoRouteSegment &s : segments)
                     path.append(s.path());
 
                 for (int i = segments.size() - 1; i > 0; --i)

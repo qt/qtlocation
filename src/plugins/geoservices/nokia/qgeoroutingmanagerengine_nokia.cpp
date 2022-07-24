@@ -121,7 +121,7 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
     }
 
     QList<QNetworkReply*> replies;
-    foreach (const QString &reqString, reqStrings)
+    for (const QString &reqString : reqStrings)
         replies.append(m_networkManager->get(QNetworkRequest(QUrl(reqString))));
 
     QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(request, replies, this);
@@ -150,7 +150,7 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
     }
 
     QList<QNetworkReply*> replies;
-    foreach (const QString &reqString, reqStrings)
+    for (const QString &reqString : reqStrings)
         replies.append(m_networkManager->get(QNetworkRequest(QUrl(reqString))));
 
     QGeoRouteRequest updateRequest(route.request());
@@ -268,7 +268,7 @@ QStringList QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGe
     if (optimization.testFlag(QGeoRouteRequest::FastestRoute))
         types.append("fastest");
 
-    foreach (const QString &optimization, types) {
+    for (const QString &optimization : types) {
         QString requestString = baseRequest;
         requestString += modesRequestString(request, request.travelModes(), optimization);
         requestString += routeRequestString(request);
@@ -304,7 +304,7 @@ QStringList QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRo
     if (optimization.testFlag(QGeoRouteRequest::FastestRoute))
         types.append("fastest");
 
-    foreach (const QString &optimization, types) {
+    for (const QString &optimization : types) {
         QString requestString = baseRequest;
         requestString += modesRequestString(route.request(), route.travelMode(), optimization);
         requestString += routeRequestString(route.request());
@@ -391,7 +391,7 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 {
     QString requestString;
 
-    foreach (const QGeoRectangle &area, request.excludeAreas()) {
+    for (const QGeoRectangle &area : request.excludeAreas()) {
         requestString += QLatin1String("&avoidareas=");
         requestString += trimDouble(area.topLeft().latitude());
         requestString += QLatin1String(",");

@@ -62,7 +62,7 @@ namespace
         if (param.length() > 512)
             return false;
 
-        foreach (QChar c, param) {
+        for (const auto &c : param) {
             if (!c.isLetterOrNumber() && c.toLatin1() != '%' && c.toLatin1() != '-' &&
                 c.toLatin1() != '+' && c.toLatin1() != '_') {
                 return false;

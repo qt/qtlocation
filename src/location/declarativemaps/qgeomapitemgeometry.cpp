@@ -108,14 +108,14 @@ QRectF QGeoMapItemGeometry::translateToCommonOrigin(const QList<QGeoMapItemGeome
 
     // first get max offset
     QPointF maxOffset = geoms.at(0)->firstPointOffset();
-    foreach (QGeoMapItemGeometry *g, geoms) {
+    for (const QGeoMapItemGeometry *g : geoms) {
         QPointF o = g->firstPointOffset();
         maxOffset.setX(qMax(o.x(), maxOffset.x()));
         maxOffset.setY(qMax(o.y(), maxOffset.y()));
     }
 
     // then translate everything
-    foreach (QGeoMapItemGeometry *g, geoms) {
+    for (QGeoMapItemGeometry *g : geoms) {
         g->translate(maxOffset - g->firstPointOffset());
         brects.addRect(g->sourceBoundingBox());
     }

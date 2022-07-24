@@ -106,10 +106,10 @@ void QGeoFileTileCache::init()
     QDir baseDir(basePath);
     if (baseDir.exists()) {
         const QStringList oldCacheFiles = baseDir.entryList(QDir::Files);
-        foreach (const QString& file, oldCacheFiles)
+        for (const QString& file : oldCacheFiles)
             baseDir.remove(file);
         const QStringList oldCacheDirs = { QStringLiteral("osm"), QStringLiteral("mapbox"), QStringLiteral("here") };
-        foreach (const QString& d, oldCacheDirs) {
+        for (const QString& d : oldCacheDirs) {
             QDir oldCacheDir(basePath + QLatin1Char('/') + d);
             if (oldCacheDir.exists())
                 oldCacheDir.removeRecursively();
@@ -222,7 +222,7 @@ QGeoFileTileCache::~QGeoFileTileCache()
         }
         QList<QSharedPointer<QGeoCachedTileDisk> > queue;
         diskCache_.serializeQueue(i, queue);
-        foreach (const QSharedPointer<QGeoCachedTileDisk> &tile, queue) {
+        for (const QSharedPointer<QGeoCachedTileDisk> &tile : queue) {
             if (tile.isNull())
                 continue;
 
@@ -312,7 +312,7 @@ void QGeoFileTileCache::clearAll()
     QDir dir(directory_);
     dir.setNameFilters(QStringList() << QLatin1String("*-*-*-*.*"));
     dir.setFilter(QDir::Files);
-    foreach (QString dirFile, dir.entryList()) {
+    for (const QString &dirFile : dir.entryList()) {
         dir.remove(dirFile);
     }
 }

@@ -57,7 +57,7 @@ QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request,
     qRegisterMetaType<QList<QGeoRoute> >();
 
     bool failure = false;
-    foreach (QNetworkReply *reply, replies) {
+    for (QNetworkReply *reply : replies) {
         if (!reply) {
             failure = true;
             continue;

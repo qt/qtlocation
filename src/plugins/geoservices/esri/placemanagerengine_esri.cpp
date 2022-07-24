@@ -132,7 +132,7 @@ QPlaceSearchReply *PlaceManagerEngineEsri::search(const QPlaceSearchRequest &req
     QStringList categories;
     if (!request.categories().isEmpty())
     {
-        foreach (const QPlaceCategory &placeCategory, request.categories())
+        for (const QPlaceCategory &placeCategory : request.categories())
             categories.append(placeCategory.categoryId());
         queryItems.addQueryItem("category", categories.join(","));
     }
@@ -236,21 +236,21 @@ QPlaceCategory PlaceManagerEngineEsri::category(const QString &categoryId) const
 QList<QPlaceCategory> PlaceManagerEngineEsri::childCategories(const QString &parentId) const
 {
     QList<QPlaceCategory> categories;
-    foreach (const QString &id, m_subcategories.value(parentId))
+    for (const QString &id : m_subcategories.value(parentId))
         categories.append(m_categories.value(id));
     return categories;
 }
 
 void PlaceManagerEngineEsri::finishCategories()
 {
-    foreach (PlaceCategoriesReplyEsri *reply, m_pendingCategoriesReply)
+    for (PlaceCategoriesReplyEsri *reply : m_pendingCategoriesReply)
         reply->emitFinished();
     m_pendingCategoriesReply.clear();
 }
 
 void PlaceManagerEngineEsri::errorCaterogies(const QString &error)
 {
-    foreach (PlaceCategoriesReplyEsri *reply, m_pendingCategoriesReply)
+    for (PlaceCategoriesReplyEsri *reply : m_pendingCategoriesReply)
         reply->setError(QPlaceReply::CommunicationError, error);
 }
 
@@ -271,8 +271,7 @@ QString PlaceManagerEngineEsri::localizedName(const QJsonObject &jsonObject)
 {
     const QJsonObject localizedNames = jsonObject.value(kLocalizedNamesKey).toObject();
 
-    foreach (const QLocale &locale, m_locales)
-    {
+    for (const QLocale &locale : qAsConst(m_locales)) {
         const QString localeStr = locale.name();
         if (localizedNames.contains(localeStr))
         {

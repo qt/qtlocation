@@ -463,7 +463,7 @@ public:
         QList<QPlaceSearchResult> results;
 
         if (!query.searchTerm().isEmpty()) {
-            foreach (const QPlace &place, m_places) {
+            for (const QPlace &place : m_places) {
                 if (!place.name().contains(query.searchTerm(), Qt::CaseInsensitive))
                     continue;
 
@@ -489,8 +489,8 @@ public:
                 results.append(r);
             }
         } else if (!query.recommendationId().isEmpty()) {
-            QStringList recommendations = m_placeRecommendations.value(query.recommendationId());
-            foreach (const QString &id, recommendations) {
+            const QStringList recommendations = m_placeRecommendations.value(query.recommendationId());
+            for (const QString &id : recommendations) {
                 QPlaceResult r;
                 r.setPlace(m_places.value(id));
                 r.setTitle(r.place().name());
@@ -653,7 +653,7 @@ public:
     {
         QList<QPlaceCategory> categories;
 
-        foreach (const QString &id, m_childCategories.value(parentId))
+        for (const QString &id : m_childCategories.value(parentId))
             categories.append(m_categories.value(id));
 
         return categories;
@@ -678,11 +678,8 @@ public:
         sizeDictionary.insert(QStringLiteral("m"), 30);
         sizeDictionary.insert(QStringLiteral("l"), 50);
 
-        QStringList sizeKeys;
-        sizeKeys << QStringLiteral("s") << QStringLiteral("m") << QStringLiteral("l");
-
-        foreach (const QString &sizeKey, sizeKeys)
-        {
+        const QStringList sizeKeys = { QStringLiteral("s"), QStringLiteral("m"), QStringLiteral("l") };
+        for (const QString &sizeKey : sizeKeys) {
             if (icon.parameters().contains(sizeKey))
                 candidates.append(QPair<int, QUrl>(sizeDictionary.value(sizeKey),
                                   icon.parameters().value(sizeKey).toUrl()));

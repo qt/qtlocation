@@ -106,7 +106,7 @@ GeoTiledMappingManagerEngineEsri::GeoTiledMappingManagerEngineEsri(const QVarian
 
     QList<QGeoMapType> mapTypes;
 
-    foreach (GeoMapSource *mapSource, m_mapSources) {
+    for (GeoMapSource *mapSource : m_mapSources) {
         mapTypes << QGeoMapType(
                         mapSource->style(),
                         mapSource->name(),
@@ -267,7 +267,7 @@ bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider:
 
     QVariantList mapSources = maps["mapSources"].toList();
 
-    foreach (QVariant mapSourceElement, mapSources) {
+    for (const QVariant &mapSourceElement : mapSources) {
         QVariantMap mapSource = mapSourceElement.toMap();
 
         int mapId = m_mapSources.count() + 1;
@@ -290,7 +290,7 @@ bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider:
 
 GeoMapSource *GeoTiledMappingManagerEngineEsri::mapSource(int mapId) const
 {
-    foreach (GeoMapSource *mapSource, mapSources()) {
+    for (GeoMapSource *mapSource : mapSources()) {
         if (mapSource->mapId() == mapId)
             return mapSource;
     }

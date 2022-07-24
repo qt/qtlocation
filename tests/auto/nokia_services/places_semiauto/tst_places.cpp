@@ -380,12 +380,12 @@ void tst_QPlaceManagerNokia::details()
     QVERIFY(doFetchDetails(ValidKnownPlaceId, &place));
     QVERIFY(!place.name().isEmpty());
     QVERIFY(!place.icon().url().isEmpty());
-    QStringList contactTypes = place.contactTypes();
+    const QStringList contactTypes = place.contactTypes();
     QVERIFY(!contactTypes.isEmpty());
-    foreach (const QString &contactType, contactTypes) {
-        QList<QPlaceContactDetail> details = place.contactDetails(contactType);
+    for (const QString &contactType : contactTypes) {
+        const QList<QPlaceContactDetail> details = place.contactDetails(contactType);
         QVERIFY(details.count() > 0);
-        foreach (const QPlaceContactDetail &detail, details) {
+        for (const QPlaceContactDetail &detail : details) {
             QVERIFY(!detail.label().isEmpty());
             QVERIFY(!detail.value().isEmpty());
         }
@@ -401,7 +401,7 @@ void tst_QPlaceManagerNokia::details()
     QVERIFY(place.ratings().count() >  0);
 
     QVERIFY(place.categories().count() > 0);
-    foreach (const QPlaceCategory &category, place.categories()) {
+    for (const QPlaceCategory &category : place.categories()) {
         QVERIFY(!category.name().isEmpty());
         QVERIFY(!category.categoryId().isEmpty());
         QVERIFY(!category.icon().url().isEmpty());
@@ -424,7 +424,7 @@ void tst_QPlaceManagerNokia::categories()
 
     QList<QPlaceCategory> categories = placeManager->childCategories();
     QVERIFY(categories.count() > 0);
-    foreach (const QPlaceCategory &category, categories) {
+    for (const QPlaceCategory &category : categories) {
         //check that we have valid fields
         QVERIFY(!category.categoryId().isEmpty());
         QVERIFY(!category.name().isEmpty());
@@ -438,7 +438,7 @@ void tst_QPlaceManagerNokia::categories()
         const QList<QPlaceCategory> childCats =
                 placeManager->childCategories(category.categoryId());
         if (!childCats.isEmpty()) {
-            foreach (const QPlaceCategory &child, childCats) {
+            for (const QPlaceCategory &child : childCats) {
                 // only two levels of categories hence 2.nd level has no further children
                 QVERIFY(placeManager->childCategories(child.categoryId()).isEmpty());
                 QVERIFY(placeManager->parentCategoryId(child.categoryId()) == category.categoryId());
@@ -562,15 +562,15 @@ void tst_QPlaceManagerNokia::locale()
     //check that we can set different locales for the categories
     placeManager->setLocale(QLocale("en"));
     QVERIFY(doInitializeCategories());
-    QList<QPlaceCategory> enCategories = placeManager->childCategories();
+    const QList<QPlaceCategory> enCategories = placeManager->childCategories();
     QVERIFY(enCategories.count() > 0);
 
     placeManager->setLocale(QLocale("fi"));
     QVERIFY(doInitializeCategories());
-    QList<QPlaceCategory> fiCategories = placeManager->childCategories();
+    const QList<QPlaceCategory> fiCategories = placeManager->childCategories();
 
-    foreach (const QPlaceCategory enCat, enCategories) {
-        foreach (const QPlaceCategory fiCat, fiCategories) {
+    for (const QPlaceCategory &enCat : enCategories) {
+        for (const QPlaceCategory &fiCat : fiCategories) {
             if (enCat.categoryId() == fiCat.categoryId()) {
                 QVERIFY(fiCat.name() != enCat.name());
                 QVERIFY(fiCat == placeManager->category(fiCat.categoryId()));

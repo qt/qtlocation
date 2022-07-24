@@ -212,7 +212,7 @@ void QPlaceMatchRequest::setResults(const QList<QPlaceSearchResult> &results)
 {
     Q_D(QPlaceMatchRequest);
     QList<QPlace> places;
-    foreach (const QPlaceSearchResult &result, results) {
+    for (const QPlaceSearchResult &result : results) {
         if (result.type() == QPlaceSearchResult::PlaceResult) {
             QPlaceResult placeResult = result;
             places.append(placeResult.place());
