@@ -68,7 +68,7 @@
 QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
-        ("org.qt-project.qt.geoservice.serviceproviderfactory/5.0",
+        ("org.qt-project.qt.geoservice.serviceproviderfactory/6.0",
          QLatin1String("/geoservices")))
 
 /*!

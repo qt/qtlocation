@@ -38,7 +38,7 @@ class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProvider
 {
     Q_OBJECT
     Q_INTERFACES(QGeoServiceProviderFactory)
-    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/5.0"
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/6.0"
                       FILE "geocoding_plugin.json")
 
 public:
