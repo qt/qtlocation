@@ -1,7 +1,7 @@
 # Generated from location.pro.
 
 if(TARGET Qt::Quick)
-    #qt_internal_add_example(places) # Not ported yet
+    qt_internal_add_example(places)
     qt_internal_add_example(places_list)
     qt_internal_add_example(places_map)
     qt_internal_add_example(mapviewer)
