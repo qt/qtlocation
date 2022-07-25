@@ -49,7 +49,7 @@ class QGeoServiceProviderFactoryMapbox: public QObject, public QGeoServiceProvid
 {
     Q_OBJECT
     Q_INTERFACES(QGeoServiceProviderFactory)
-    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/5.0"
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/6.0"
                       FILE "mapbox_plugin.json")
 
 public:

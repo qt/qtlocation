@@ -69,7 +69,7 @@ public:
 };
 
 Q_DECLARE_INTERFACE(QGeoServiceProviderFactory,
-                    "org.qt-project.qt.geoservice.serviceproviderfactory/5.0")
+                    "org.qt-project.qt.geoservice.serviceproviderfactory/6.0")
 
 class Q_LOCATION_EXPORT QGeoServiceProviderFactoryV2 : public QGeoServiceProviderFactory
 {

@@ -50,7 +50,7 @@ class QGeoServiceProviderFactoryMapboxGL: public QObject, public QGeoServiceProv
 {
     Q_OBJECT
     Q_INTERFACES(QGeoServiceProviderFactory)
-    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/5.0"
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/6.0"
                       FILE "mapboxgl_plugin.json")
 
 public:

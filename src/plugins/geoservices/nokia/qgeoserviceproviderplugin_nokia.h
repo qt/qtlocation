@@ -51,7 +51,7 @@ class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProvid
 {
     Q_OBJECT
     Q_INTERFACES(QGeoServiceProviderFactory)
-    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/5.0"
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/6.0"
                       FILE "nokia_plugin.json")
 
 public:
