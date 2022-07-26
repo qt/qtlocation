@@ -113,15 +113,11 @@ Item {
             flick() //flick flickable
             tryCompare(flickStartedSpy,"count",1)
             pan() //pan map
-            expectFail("", "Changes in QtQuick break this test")
             tryCompare(flickStartedSpy,"count",2) // both directions
             tryCompare(flickEndedSpy,"count",1)
-            expectFail("", "Changes in QtQuick break this test")
             tryCompare(mapPanStartedSpy,"count", 0)
-            expectFail("", "Changes in QtQuick break this test")
             tryCompare(mapPanFinishedSpy,"count", 0)
             //map should not change
-            expectFail("", "Changes in QtQuick break this test")
             verify(center == map.center)
         }
 
