@@ -63,7 +63,7 @@ qt_internal_add_module(Location
         places/qplacesearchsuggestionreply.cpp places/qplaceresult.cpp
         places/qplacematchreply.cpp places/qplacecontent.cpp
         places/qplaceidreply.cpp
-        places/placemacro.h places/qplaceicon.h places/qplaceuser.h
+        places/qplaceicon.h places/qplaceuser.h
         places/qplaceattribute_p.h places/qplacematchrequest.h
         places/qplacecontentreply.h places/qplacereview.h
         places/qplacecategory.h places/qplacesearchrequest.h
