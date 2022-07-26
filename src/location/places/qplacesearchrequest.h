@@ -41,7 +41,6 @@
 #define QPLACESEARCHREQUEST_H
 
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/placemacro.h>
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QLocation>
 
