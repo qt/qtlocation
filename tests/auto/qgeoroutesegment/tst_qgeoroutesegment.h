@@ -47,15 +47,9 @@ public:
     tst_QGeoRouteSegment();
 
 private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-
     //Start unit test for QGeoRouteSegment
     void constructor();
     void copy_constructor();
-    void destructor();
     void travelTime();
     void travelTime_data();
     void distance();
@@ -67,13 +61,6 @@ private Q_SLOTS:
     void operators();
     void operators_data();
     //End Unit Test for QGeoRouteSegment
-
-private:
-
-    QGeoCoordinate *qgeocoordinate;
-    QGeoRouteSegment *qgeoroutesegment;
-    QGeoManeuver *qgeomaneuver;
-
 };
 
 Q_DECLARE_METATYPE( QList<double>);
