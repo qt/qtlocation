@@ -48,16 +48,10 @@ public:
     tst_QGeoRouteRequest();
 
 private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-
     //Start Unit Test for QGeoRouteRequest
     void constructor_waypoints();
     void constructor_orig_dest();
     void copy_constructor();
-    void destructor();
     void excludeAreas();
     void numberAlternativeRoutes();
     void routeOptimization();
@@ -77,12 +71,6 @@ private Q_SLOTS:
     void departureTime();
     void departureTime_data();
     //End Unit Test for QGeoRouteRequest
-
-private:
-    QGeoCoordinate *qgeocoordinate;
-    QGeoRectangle *qgeoboundingbox;
-    QGeoRouteRequest *qgeorouterequest;
-
 };
 
 Q_DECLARE_METATYPE( QList<double>);

@@ -36,138 +36,99 @@ tst_QGeoRouteRequest::tst_QGeoRouteRequest()
 {
 }
 
-void tst_QGeoRouteRequest::initTestCase()
-{
-}
-
-void tst_QGeoRouteRequest::cleanupTestCase()
-{
-}
-
-void tst_QGeoRouteRequest::init()
-{
-    qgeocoordinate = new QGeoCoordinate();
-    qgeoboundingbox = new QGeoRectangle();
-    qgeorouterequest = new QGeoRouteRequest();
-}
-
-void tst_QGeoRouteRequest::cleanup()
-{
-    delete qgeocoordinate;
-    delete qgeoboundingbox;
-    delete qgeorouterequest;
-}
-
 void tst_QGeoRouteRequest::constructor_waypoints()
 {
-    QGeoCoordinate *qgeocoord1 = new QGeoCoordinate(43.5435, 76.342);
-    QGeoCoordinate *qgeocoord2 = new QGeoCoordinate(-43.5435, 176.342);
-    QGeoCoordinate *qgeocoord3 = new QGeoCoordinate(-13.5435, +76.342);
+    QGeoCoordinate qgeocoord1(43.5435, 76.342);
+    QGeoCoordinate qgeocoord2(-43.5435, 176.342);
+    QGeoCoordinate qgeocoord3(-13.5435, +76.342);
 
     QList<QGeoCoordinate> waypoints;
-    waypoints.append(*qgeocoord1);
-    waypoints.append(*qgeocoord2);
-    waypoints.append(*qgeocoord3);
+    waypoints.append(qgeocoord1);
+    waypoints.append(qgeocoord2);
+    waypoints.append(qgeocoord3);
 
-    QGeoRouteRequest *copy = new QGeoRouteRequest(waypoints);
+    QGeoRouteRequest copy(waypoints);
 
-    QCOMPARE(copy->waypoints(), waypoints);
-    QCOMPARE(copy->numberAlternativeRoutes(), 0);
-    QCOMPARE(copy->routeOptimization(), QGeoRouteRequest::FastestRoute);
-    QCOMPARE(copy->segmentDetail(), QGeoRouteRequest::BasicSegmentData);
-    QCOMPARE(copy->travelModes(), QGeoRouteRequest::CarTravel);
-    QCOMPARE(copy->maneuverDetail(), QGeoRouteRequest::BasicManeuvers);
-
-    delete qgeocoord1;
-    delete qgeocoord2;
-    delete qgeocoord3;
-    delete copy;
+    QCOMPARE(copy.waypoints(), waypoints);
+    QCOMPARE(copy.numberAlternativeRoutes(), 0);
+    QCOMPARE(copy.routeOptimization(), QGeoRouteRequest::FastestRoute);
+    QCOMPARE(copy.segmentDetail(), QGeoRouteRequest::BasicSegmentData);
+    QCOMPARE(copy.travelModes(), QGeoRouteRequest::CarTravel);
+    QCOMPARE(copy.maneuverDetail(), QGeoRouteRequest::BasicManeuvers);
 }
 
 void tst_QGeoRouteRequest::constructor_orig_dest()
 {
-    QGeoCoordinate *qgeocoord1 = new QGeoCoordinate(43.5435, 76.342);
-    QGeoCoordinate *qgeocoord2 = new QGeoCoordinate(-43.5435, 176.342);
+    QGeoCoordinate qgeocoord1(43.5435, 76.342);
+    QGeoCoordinate qgeocoord2(-43.5435, 176.342);
 
-    QGeoRouteRequest *copy = new QGeoRouteRequest(*qgeocoord1, *qgeocoord2);
+    QGeoRouteRequest copy(qgeocoord1, qgeocoord2);
 
     QList<QGeoCoordinate> waypoints;
-    waypoints.append(*qgeocoord1);
-    waypoints.append(*qgeocoord2);
+    waypoints.append(qgeocoord1);
+    waypoints.append(qgeocoord2);
 
-    QCOMPARE(copy->waypoints(), waypoints);
-    QCOMPARE(copy->numberAlternativeRoutes(), 0);
-    QCOMPARE(copy->routeOptimization(), QGeoRouteRequest::FastestRoute);
-    QCOMPARE(copy->segmentDetail(), QGeoRouteRequest::BasicSegmentData);
-    QCOMPARE(copy->travelModes(), QGeoRouteRequest::CarTravel);
-    QCOMPARE(copy->maneuverDetail(), QGeoRouteRequest::BasicManeuvers);
+    QCOMPARE(copy.waypoints(), waypoints);
+    QCOMPARE(copy.numberAlternativeRoutes(), 0);
+    QCOMPARE(copy.routeOptimization(), QGeoRouteRequest::FastestRoute);
+    QCOMPARE(copy.segmentDetail(), QGeoRouteRequest::BasicSegmentData);
+    QCOMPARE(copy.travelModes(), QGeoRouteRequest::CarTravel);
+    QCOMPARE(copy.maneuverDetail(), QGeoRouteRequest::BasicManeuvers);
 
-    delete qgeocoord1;
-    delete qgeocoord2;
-    delete copy;
 }
 
 void tst_QGeoRouteRequest::copy_constructor()
 {
-    QGeoRouteRequest *qgeorouterequestcopy = new QGeoRouteRequest(*qgeorouterequest);
-    QCOMPARE(*qgeorouterequest, *qgeorouterequestcopy);
-    delete qgeorouterequestcopy;
-}
+    QGeoRouteRequest qgeorouterequest;
 
-void tst_QGeoRouteRequest::destructor()
-{
-    QGeoRouteRequest *qgeorouterequestcopy;
-
-    qgeorouterequestcopy = new QGeoRouteRequest();
-    delete qgeorouterequestcopy;
-
-    qgeorouterequestcopy = new QGeoRouteRequest(*qgeorouterequest);
-    delete qgeorouterequestcopy;
+    QGeoRouteRequest qgeorouterequestcopy(qgeorouterequest);
+    QCOMPARE(qgeorouterequest, qgeorouterequestcopy);
 }
 
 void tst_QGeoRouteRequest::excludeAreas()
 {
-    qgeocoordinate->setLatitude(13.3851);
-    qgeocoordinate->setLongitude(52.5312);
+    QGeoRouteRequest qgeorouterequest;
 
-    QGeoCoordinate *qgeocoordinatecopy = new QGeoCoordinate(34.324 , -110.32);
+    QGeoCoordinate qgeocoordinate;
+    qgeocoordinate.setLatitude(13.3851);
+    qgeocoordinate.setLongitude(52.5312);
 
-    QGeoRectangle *qgeoboundingboxcopy = new QGeoRectangle(*qgeocoordinate, 0.4, 0.4);
-    QGeoRectangle *qgeoboundingboxcopy2 = new QGeoRectangle(*qgeocoordinatecopy, 1.2, 0.9);
+    QGeoCoordinate qgeocoordinatecopy(34.324 , -110.32);
+
+    QGeoRectangle qgeoboundingboxcopy(qgeocoordinate, 0.4, 0.4);
+    QGeoRectangle qgeoboundingboxcopy2(qgeocoordinatecopy, 1.2, 0.9);
     QList<QGeoRectangle> areas;
-    areas.append(*qgeoboundingboxcopy);
-    areas.append(*qgeoboundingboxcopy2);
+    areas.append(qgeoboundingboxcopy);
+    areas.append(qgeoboundingboxcopy2);
 
-    qgeorouterequest->setExcludeAreas(areas);
+    qgeorouterequest.setExcludeAreas(areas);
 
-    QCOMPARE(qgeorouterequest->excludeAreas(), areas);
-
-    delete qgeoboundingboxcopy;
-    delete qgeoboundingboxcopy2;
-    delete qgeocoordinatecopy;
+    QCOMPARE(qgeorouterequest.excludeAreas(), areas);
 }
 
 void tst_QGeoRouteRequest::numberAlternativeRoutes()
 {
-    qgeorouterequest->setNumberAlternativeRoutes(0);
-    QCOMPARE(qgeorouterequest->numberAlternativeRoutes(), 0);
+    QGeoRouteRequest qgeorouterequest;
+    qgeorouterequest.setNumberAlternativeRoutes(0);
+    QCOMPARE(qgeorouterequest.numberAlternativeRoutes(), 0);
 
-    qgeorouterequest->setNumberAlternativeRoutes(24);
-    QCOMPARE(qgeorouterequest->numberAlternativeRoutes(), 24);
+    qgeorouterequest.setNumberAlternativeRoutes(24);
+    QCOMPARE(qgeorouterequest.numberAlternativeRoutes(), 24);
 
-    qgeorouterequest->setNumberAlternativeRoutes(-12);
+    qgeorouterequest.setNumberAlternativeRoutes(-12);
 
-    QCOMPARE(qgeorouterequest->numberAlternativeRoutes(), 0);
+    QCOMPARE(qgeorouterequest.numberAlternativeRoutes(), 0);
 }
 
 void tst_QGeoRouteRequest::routeOptimization()
 {
     QFETCH(QGeoRouteRequest::RouteOptimization, optimization);
 
-    QCOMPARE(qgeorouterequest->routeOptimization(),QGeoRouteRequest::FastestRoute);
+    QGeoRouteRequest qgeorouterequest;
+    QCOMPARE(qgeorouterequest.routeOptimization(),QGeoRouteRequest::FastestRoute);
 
-    qgeorouterequest->setRouteOptimization(optimization);
-    QCOMPARE(qgeorouterequest->routeOptimization(), optimization);
+    qgeorouterequest.setRouteOptimization(optimization);
+    QCOMPARE(qgeorouterequest.routeOptimization(), optimization);
 }
 
 void tst_QGeoRouteRequest::routeOptimization_data()
@@ -185,10 +146,11 @@ void tst_QGeoRouteRequest::segmentDetail()
 {
     QFETCH(QGeoRouteRequest::SegmentDetail, detail);
 
-    QCOMPARE(qgeorouterequest->segmentDetail(), QGeoRouteRequest::BasicSegmentData);
+    QGeoRouteRequest qgeorouterequest;
+    QCOMPARE(qgeorouterequest.segmentDetail(), QGeoRouteRequest::BasicSegmentData);
 
-    qgeorouterequest->setSegmentDetail(detail);
-    QCOMPARE(qgeorouterequest->segmentDetail(), detail);
+    qgeorouterequest.setSegmentDetail(detail);
+    QCOMPARE(qgeorouterequest.segmentDetail(), detail);
 }
 
 void tst_QGeoRouteRequest::segmentDetail_data()
@@ -203,10 +165,11 @@ void tst_QGeoRouteRequest::travelModes()
 {
     QFETCH(QGeoRouteRequest::TravelMode,mode);
 
-    QCOMPARE(qgeorouterequest->travelModes(), QGeoRouteRequest::CarTravel);
+    QGeoRouteRequest qgeorouterequest;
+    QCOMPARE(qgeorouterequest.travelModes(), QGeoRouteRequest::CarTravel);
 
-    qgeorouterequest->setTravelModes(mode);
-    QCOMPARE(qgeorouterequest->travelModes(), mode);
+    qgeorouterequest.setTravelModes(mode);
+    QCOMPARE(qgeorouterequest.travelModes(), mode);
 }
 
 void tst_QGeoRouteRequest::travelModes_data()
@@ -226,18 +189,14 @@ void tst_QGeoRouteRequest::waypoints()
 
     QList<QGeoCoordinate> waypoints;
 
-    for (int i = 0; i < coordinates.size(); i += 2) {
+    for (int i = 0; i < coordinates.size(); i += 2)
         waypoints.append(QGeoCoordinate(coordinates.at(i), coordinates.at(i+1)));
-    }
 
-    qgeorouterequest->setWaypoints(waypoints);
+    QGeoRouteRequest qgeorouterequest;
+    qgeorouterequest.setWaypoints(waypoints);
 
-    QList<QGeoCoordinate> waypointsRetrieved = qgeorouterequest->waypoints();
+    QList<QGeoCoordinate> waypointsRetrieved = qgeorouterequest.waypoints();
     QCOMPARE(waypointsRetrieved, waypoints);
-
-    for (int i=0; i < waypointsRetrieved.size(); i++) {
-        QCOMPARE(waypointsRetrieved.at(i), waypoints.at(i));
-    }
 }
 
 void tst_QGeoRouteRequest::waypoints_data()
@@ -266,10 +225,11 @@ void tst_QGeoRouteRequest::maneuverDetail()
 {
     QFETCH(QGeoRouteRequest::ManeuverDetail,maneuver);
 
-    QCOMPARE(qgeorouterequest->maneuverDetail(), QGeoRouteRequest::BasicManeuvers);
+    QGeoRouteRequest qgeorouterequest;
+    QCOMPARE(qgeorouterequest.maneuverDetail(), QGeoRouteRequest::BasicManeuvers);
 
-    qgeorouterequest->setManeuverDetail(maneuver);
-    QCOMPARE(qgeorouterequest->maneuverDetail(), maneuver);
+    qgeorouterequest.setManeuverDetail(maneuver);
+    QCOMPARE(qgeorouterequest.maneuverDetail(), maneuver);
 }
 
 void tst_QGeoRouteRequest::maneuverDetail_data()
@@ -311,12 +271,13 @@ void tst_QGeoRouteRequest::featureWeight()
     QFETCH(QGeoRouteRequest::FeatureWeight, newWeight);
     QFETCH(QGeoRouteRequest::FeatureWeight, expectWeight);
 
-    QCOMPARE(qgeorouterequest->featureWeight(type), initialWeight);
-    qgeorouterequest->setFeatureWeight(type, newWeight);
-    QCOMPARE(qgeorouterequest->featureWeight(type), expectWeight);
+    QGeoRouteRequest qgeorouterequest;
+    QCOMPARE(qgeorouterequest.featureWeight(type), initialWeight);
+    qgeorouterequest.setFeatureWeight(type, newWeight);
+    QCOMPARE(qgeorouterequest.featureWeight(type), expectWeight);
 
     if (checkTypes)
-        QVERIFY(qgeorouterequest->featureTypes().contains(type));
+        QVERIFY(qgeorouterequest.featureTypes().contains(type));
 }
 
 void tst_QGeoRouteRequest::extraParameters_data()
@@ -341,11 +302,14 @@ void tst_QGeoRouteRequest::extraParameters()
 {
     typedef QVariantMap ParameterType;
     QFETCH(ParameterType , extraParameters);
+
+    QGeoRouteRequest qgeorouterequest;
+
     QVariantMap emptyParams;
-    qgeorouterequest->setExtraParameters(extraParameters);
-    QCOMPARE(qgeorouterequest->extraParameters(), extraParameters);
-    qgeorouterequest->setExtraParameters(emptyParams);
-    QCOMPARE(qgeorouterequest->extraParameters(), emptyParams);
+    qgeorouterequest.setExtraParameters(extraParameters);
+    QCOMPARE(qgeorouterequest.extraParameters(), extraParameters);
+    qgeorouterequest.setExtraParameters(emptyParams);
+    QCOMPARE(qgeorouterequest.extraParameters(), emptyParams);
 }
 
 void tst_QGeoRouteRequest::departureTime_data()
@@ -359,9 +323,10 @@ void tst_QGeoRouteRequest::departureTime_data()
 
 void tst_QGeoRouteRequest::departureTime()
 {
+    QGeoRouteRequest qgeorouterequest;
     QFETCH(QDateTime , departureTime);
-    qgeorouterequest->setDepartureTime(departureTime);
-    QCOMPARE(qgeorouterequest->departureTime(), departureTime);
+    qgeorouterequest.setDepartureTime(departureTime);
+    QCOMPARE(qgeorouterequest.departureTime(), departureTime);
 }
 
 QTEST_APPLESS_MAIN(tst_QGeoRouteRequest);

@@ -49,15 +49,9 @@ public:
     tst_QGeoManeuver();
 
 private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-
     //Start unit test for QGeoRouteManeuver
     void constructor();
     void copy_constructor();
-    void destructor();
     void direction();
     void direction_data();
     void distanceToNextInstruction();
@@ -71,11 +65,6 @@ private Q_SLOTS:
     void operators();
     void alternateImplementation();
     //End Unit Test for QGeoRouteManeuver
-
-private:
-    QGeoManeuver *qgeomaneuver;
-    QGeoCoordinate *qgeocoordinate;
-
 };
 
 Q_DECLARE_METATYPE( QList<double>);
