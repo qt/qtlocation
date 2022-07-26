@@ -55,17 +55,25 @@ class QPlaceIcon;
 class QPlacePrivate;
 class QPlaceRatings;
 
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlacePrivate, Q_LOCATION_EXPORT)
+
 class Q_LOCATION_EXPORT QPlace
 {
 public:
     QPlace();
-    QPlace(const QPlace &other);
+    QPlace(const QPlace &other) noexcept;
+    QPlace(QPlace &&other) noexcept = default;
     ~QPlace();
 
-    QPlace &operator=(const QPlace &other);
+    QPlace &operator=(const QPlace &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlace)
 
-    bool operator==(const QPlace &other) const;
-    bool operator!=(const QPlace &other) const;
+    void swap(QPlace &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend bool operator==(const QPlace &lhs, const QPlace &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend bool operator!=(const QPlace &lhs, const QPlace &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     QList<QPlaceCategory> categories() const;
     void setCategory(const QPlaceCategory &category);
@@ -121,10 +129,11 @@ public:
 
 protected:
     QPlace(const QSharedDataPointer<QPlacePrivate> &dd);
-    QSharedDataPointer<QPlacePrivate> &d();
 
 private:
     QSharedDataPointer<QPlacePrivate> d_ptr;
+
+    bool isEqual(const QPlace &other) const noexcept;
 
     inline QPlacePrivate *d_func();
     inline const QPlacePrivate *d_func() const;

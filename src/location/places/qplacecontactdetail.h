@@ -49,6 +49,8 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceContactDetailPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceContactDetailPrivate, Q_LOCATION_EXPORT)
+
 class Q_LOCATION_EXPORT QPlaceContactDetail
 {
 public:
@@ -58,13 +60,19 @@ public:
     static const QString Fax;
 
     QPlaceContactDetail();
-    QPlaceContactDetail(const QPlaceContactDetail &other);
-    virtual ~QPlaceContactDetail();
+    QPlaceContactDetail(const QPlaceContactDetail &other) noexcept;
+    QPlaceContactDetail(QPlaceContactDetail &&other) noexcept = default;
+    ~QPlaceContactDetail();
 
-    QPlaceContactDetail &operator=(const QPlaceContactDetail &other);
+    QPlaceContactDetail &operator=(const QPlaceContactDetail &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlaceContactDetail)
 
-    bool operator==(const QPlaceContactDetail &other) const;
-    bool operator!=(const QPlaceContactDetail &other) const;
+    void swap(QPlaceContactDetail &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator==(const QPlaceContactDetail &lhs, const QPlaceContactDetail &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QPlaceContactDetail &lhs, const QPlaceContactDetail &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     QString label() const;
     void setLabel(const QString &label);
@@ -77,6 +85,7 @@ public:
 private:
     QSharedDataPointer<QPlaceContactDetailPrivate> d_ptr;
 
+    bool isEqual(const QPlaceContactDetail &other) const noexcept;
 };
 
 QT_END_NAMESPACE

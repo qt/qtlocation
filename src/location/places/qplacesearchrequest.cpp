@@ -51,6 +51,8 @@
 
 QT_BEGIN_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceSearchRequestPrivate)
+
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
 :   QSharedData(),
     visibilityScope(QLocation::UnspecifiedVisibility),
@@ -188,23 +190,18 @@ QPlaceSearchRequest::QPlaceSearchRequest()
 /*!
     Constructs a copy of \a other.
 */
-QPlaceSearchRequest::QPlaceSearchRequest(const QPlaceSearchRequest &other)
-    : d_ptr(other.d_ptr)
-{
-}
+QPlaceSearchRequest::QPlaceSearchRequest(const QPlaceSearchRequest &other) noexcept = default;
 
 /*!
     Destroys the request object.
 */
-QPlaceSearchRequest::~QPlaceSearchRequest()
-{
-}
+QPlaceSearchRequest::~QPlaceSearchRequest() = default;
 
 /*!
     Assigns \a other to this search request and returns a reference
     to this search request.
 */
-QPlaceSearchRequest &QPlaceSearchRequest::operator= (const QPlaceSearchRequest & other)
+QPlaceSearchRequest &QPlaceSearchRequest::operator=(const QPlaceSearchRequest & other) noexcept
 {
     if (this == &other)
         return *this;
@@ -214,23 +211,21 @@ QPlaceSearchRequest &QPlaceSearchRequest::operator= (const QPlaceSearchRequest &
 }
 
 /*!
-    Returns true if \a other is equal to this search request,
-    otherwise returns false.
+    \fn bool QPlaceSearchRequest::operator==(const QPlaceSearchRequest &lhs, const QPlaceSearchRequest &rhs) noexcept
+
+    Returns true if \a lhs is equal to \a rhs, otherwise returns false.
 */
-bool QPlaceSearchRequest::operator== (const QPlaceSearchRequest &other) const
+
+/*!
+    \fn bool QPlaceSearchRequest::operator!=(const QPlaceSearchRequest &lhs, const QPlaceSearchRequest &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs, otherwise returns false.
+*/
+
+bool QPlaceSearchRequest::isEqual(const QPlaceSearchRequest &other) const noexcept
 {
     Q_D(const QPlaceSearchRequest);
     return *d == *other.d_func();
-}
-
-/*!
-    Returns true if \a other is not equal to this search request,
-    otherwise returns false.
-*/
-bool QPlaceSearchRequest::operator!= (const QPlaceSearchRequest &other) const
-{
-    Q_D(const QPlaceSearchRequest);
-    return !(*d == *other.d_func());
 }
 
 /*!

@@ -49,6 +49,7 @@ QT_BEGIN_NAMESPACE
 class QGeoShape;
 class QPlaceCategory;
 class QPlaceSearchRequestPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceSearchRequestPrivate, Q_LOCATION_EXPORT)
 
 class Q_LOCATION_EXPORT QPlaceSearchRequest
 {
@@ -60,15 +61,21 @@ public:
     };
 
     QPlaceSearchRequest();
-    QPlaceSearchRequest(const QPlaceSearchRequest &other);
-
-
-    QPlaceSearchRequest &operator=(const QPlaceSearchRequest &other);
-
-    bool operator==(const QPlaceSearchRequest &other) const;
-    bool operator!=(const QPlaceSearchRequest &other) const;
-
+    QPlaceSearchRequest(const QPlaceSearchRequest &other) noexcept;
+    QPlaceSearchRequest(QPlaceSearchRequest &&other) noexcept = default;
     ~QPlaceSearchRequest();
+
+    QPlaceSearchRequest &operator=(const QPlaceSearchRequest &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlaceSearchRequest)
+
+    void swap(QPlaceSearchRequest &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator==(const QPlaceSearchRequest &lhs,
+                                  const QPlaceSearchRequest &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QPlaceSearchRequest &lhs,
+                                  const QPlaceSearchRequest &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     QString searchTerm() const;
     void setSearchTerm(const QString &term);
@@ -99,6 +106,9 @@ public:
 
 private:
     QSharedDataPointer<QPlaceSearchRequestPrivate> d_ptr;
+
+    bool isEqual(const QPlaceSearchRequest &other) const noexcept;
+
     inline QPlaceSearchRequestPrivate *d_func();
     inline const QPlaceSearchRequestPrivate *d_func() const;
 

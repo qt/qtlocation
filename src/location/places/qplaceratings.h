@@ -47,21 +47,25 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceRatingsPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceRatingsPrivate, Q_LOCATION_EXPORT)
 
 class Q_LOCATION_EXPORT QPlaceRatings
 {
 public:
     QPlaceRatings();
-    QPlaceRatings(const QPlaceRatings &other);
-
+    QPlaceRatings(const QPlaceRatings &other) noexcept;
+    QPlaceRatings(QPlaceRatings &&other) noexcept = default;
     ~QPlaceRatings();
 
-    QPlaceRatings &operator=(const QPlaceRatings &other);
+    QPlaceRatings &operator=(const QPlaceRatings &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlaceRatings)
 
-    bool operator==(const QPlaceRatings &other) const;
-    bool operator!=(const QPlaceRatings &other) const {
-        return !(other == *this);
-    }
+    void swap(QPlaceRatings &other) noexcept { d.swap(other.d); }
+
+    friend inline bool operator==(const QPlaceRatings &lhs, const QPlaceRatings &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QPlaceRatings &lhs, const QPlaceRatings &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     qreal average() const;
     void setAverage(qreal average);
@@ -76,6 +80,8 @@ public:
 
 private:
     QSharedDataPointer<QPlaceRatingsPrivate> d;
+
+    bool isEqual(const QPlaceRatings &other) const noexcept;
 };
 
 QT_END_NAMESPACE

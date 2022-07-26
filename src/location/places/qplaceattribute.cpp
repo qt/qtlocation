@@ -42,6 +42,8 @@
 
 QT_USE_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceAttributePrivate)
+
 template<> QPlaceAttributePrivate *QSharedDataPointer<QPlaceAttributePrivate>::clone()
 {
     return d->clone();
@@ -148,23 +150,18 @@ QPlaceAttribute::QPlaceAttribute()
 /*!
     Destroys the attribute.
 */
-QPlaceAttribute::~QPlaceAttribute()
-{
-}
+QPlaceAttribute::~QPlaceAttribute() = default;
 
 /*!
     Creates a copy of \a other.
 */
-QPlaceAttribute::QPlaceAttribute(const QPlaceAttribute &other)
-    :d_ptr(other.d_ptr)
-{
-}
+QPlaceAttribute::QPlaceAttribute(const QPlaceAttribute &other) noexcept = default;
 
 /*!
     Assigns \a other to this attribute and returns a reference to this
     attribute.
 */
-QPlaceAttribute &QPlaceAttribute::operator=(const QPlaceAttribute &other)
+QPlaceAttribute &QPlaceAttribute::operator=(const QPlaceAttribute &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -174,24 +171,26 @@ QPlaceAttribute &QPlaceAttribute::operator=(const QPlaceAttribute &other)
 }
 
 /*!
-    Returns true if \a other is equal to this attribute, otherwise
+    \fn bool QPlaceAttribute::operator==(const QPlaceAttribute &lhs, const QPlaceAttribute &rhs) noexcept
+
+    Returns true if \a lhs is equal to \a rhs, otherwise
     returns false.
 */
-bool QPlaceAttribute::operator== (const QPlaceAttribute &other) const
+
+/*!
+    \fn bool QPlaceAttribute::operator!=(const QPlaceAttribute &lhs, const QPlaceAttribute &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs,
+    otherwise returns false.
+*/
+
+bool QPlaceAttribute::isEqual(const QPlaceAttribute &other) const noexcept
 {
     if (d_ptr == other.d_ptr)
         return true;
     return ( *(d_ptr.constData()) == *(other.d_ptr.constData()));
 }
 
-/*!
-    Returns true if \a other is not equal to this attribute,
-    otherwise returns false.
-*/
-bool QPlaceAttribute::operator!= (const QPlaceAttribute &other) const
-{
-    return (!this->operator ==(other));
-}
 
 /*!
     Returns a localized label describing the attribute.

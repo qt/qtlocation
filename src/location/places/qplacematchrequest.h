@@ -48,6 +48,7 @@ QT_BEGIN_NAMESPACE
 class QPlace;
 class QPlaceSearchResult;
 class QPlaceMatchRequestPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceMatchRequestPrivate, Q_LOCATION_EXPORT)
 
 class Q_LOCATION_EXPORT QPlaceMatchRequest
 {
@@ -55,15 +56,19 @@ public:
     static const QString AlternativeId;
 
     QPlaceMatchRequest();
-    QPlaceMatchRequest(const QPlaceMatchRequest &other);
-
-
-    QPlaceMatchRequest &operator=(const QPlaceMatchRequest &other);
-
-    bool operator==(const QPlaceMatchRequest &other) const;
-    bool operator!=(const QPlaceMatchRequest &other) const;
-
+    QPlaceMatchRequest(const QPlaceMatchRequest &other) noexcept;
+    QPlaceMatchRequest(QPlaceMatchRequest &&other) noexcept = default;
     ~QPlaceMatchRequest();
+
+    QPlaceMatchRequest &operator=(const QPlaceMatchRequest &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlaceMatchRequest)
+
+    void swap(QPlaceMatchRequest &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator==(const QPlaceMatchRequest &lhs, const QPlaceMatchRequest &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QPlaceMatchRequest &lhs, const QPlaceMatchRequest &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     QList<QPlace> places() const;
     void setPlaces(const QList<QPlace> places);
@@ -77,6 +82,8 @@ public:
 
 private:
     QSharedDataPointer<QPlaceMatchRequestPrivate> d_ptr;
+
+    bool isEqual(const QPlaceMatchRequest &other) const noexcept;
     inline QPlaceMatchRequestPrivate *d_func();
     inline const QPlaceMatchRequestPrivate *d_func() const;
 };

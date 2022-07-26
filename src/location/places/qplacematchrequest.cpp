@@ -62,6 +62,8 @@ public:
     QVariantMap parameters;
 };
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceMatchRequestPrivate)
+
 QPlaceMatchRequestPrivate::QPlaceMatchRequestPrivate()
     :   QSharedData()
 {
@@ -138,23 +140,18 @@ QPlaceMatchRequest::QPlaceMatchRequest()
 /*!
     Constructs a copy of \a other.
 */
-QPlaceMatchRequest::QPlaceMatchRequest(const QPlaceMatchRequest &other)
-    : d_ptr(other.d_ptr)
-{
-}
+QPlaceMatchRequest::QPlaceMatchRequest(const QPlaceMatchRequest &other) noexcept = default;
 
 /*!
     Destroys the request object.
 */
-QPlaceMatchRequest::~QPlaceMatchRequest()
-{
-}
+QPlaceMatchRequest::~QPlaceMatchRequest() = default;
 
 /*!
     Assigns \a other to this search request and returns a reference
     to this match request.
 */
-QPlaceMatchRequest &QPlaceMatchRequest::operator= (const QPlaceMatchRequest & other)
+QPlaceMatchRequest &QPlaceMatchRequest::operator=(const QPlaceMatchRequest & other) noexcept
 {
     if (this == &other)
         return *this;
@@ -163,24 +160,23 @@ QPlaceMatchRequest &QPlaceMatchRequest::operator= (const QPlaceMatchRequest & ot
 }
 
 /*!
-    Returns true if \a other is equal to this match request,
-    otherwise returns false.
+    \fn bool QPlaceMatchRequest::operator==(const QPlaceMatchRequest &lhs, const QPlaceMatchRequest &rhs) noexcept
+
+    Returns true if \a lhs is equal to \a rhs, otherwise returns false.
 */
-bool QPlaceMatchRequest::operator== (const QPlaceMatchRequest &other) const
+
+/*!
+    \fn bool QPlaceMatchRequest::operator!=(const QPlaceMatchRequest &lhs, const QPlaceMatchRequest &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs, otherwise returns false.
+*/
+
+bool QPlaceMatchRequest::isEqual(const QPlaceMatchRequest &other) const noexcept
 {
     Q_D(const QPlaceMatchRequest);
     return *d == *other.d_func();
 }
 
-/*!
-    Returns true if \a other is not equal to this match request,
-    otherwise returns false.
-*/
-bool QPlaceMatchRequest::operator!= (const QPlaceMatchRequest &other) const
-{
-    Q_D(const QPlaceMatchRequest);
-    return !(*d == *other.d_func());
-}
 
 
 /*!

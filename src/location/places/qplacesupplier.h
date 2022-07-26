@@ -49,20 +49,27 @@ QT_BEGIN_NAMESPACE
 class QUrl;
 class QPlaceIcon;
 class QPlaceSupplierPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceSupplierPrivate, Q_LOCATION_EXPORT)
 
 class Q_LOCATION_EXPORT QPlaceSupplier
 {
 public:
     QPlaceSupplier();
-    QPlaceSupplier(const QPlaceSupplier &other);
+    QPlaceSupplier(const QPlaceSupplier &other) noexcept;
+    QPlaceSupplier(QPlaceSupplier &&other) noexcept = default;
     ~QPlaceSupplier();
 
-    QPlaceSupplier &operator=(const QPlaceSupplier &other);
+    QPlaceSupplier &operator=(const QPlaceSupplier &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlaceSupplier)
 
-    bool operator==(const QPlaceSupplier &other) const;
-    bool operator!=(const QPlaceSupplier &other) const {
-        return !(other == *this);
-    }
+    void swap(QPlaceSupplier &other) noexcept { d.swap(other.d); }
+
+    friend inline bool operator==(const QPlaceSupplier &lhs,
+                                  const QPlaceSupplier &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QPlaceSupplier &lhs,
+                                  const QPlaceSupplier &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     QString name() const;
     void setName(const QString &data);
@@ -80,6 +87,8 @@ public:
 
 private:
     QSharedDataPointer<QPlaceSupplierPrivate> d;
+
+    bool isEqual(const QPlaceSupplier &other) const noexcept;
 };
 
 QT_END_NAMESPACE
