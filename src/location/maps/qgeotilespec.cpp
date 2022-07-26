@@ -44,19 +44,19 @@
 
 QT_BEGIN_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoTileSpecPrivate)
+
 QGeoTileSpec::QGeoTileSpec()
     : d(QSharedDataPointer<QGeoTileSpecPrivate>(new QGeoTileSpecPrivate())) {}
 
 QGeoTileSpec::QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y, int version)
         : d(QSharedDataPointer<QGeoTileSpecPrivate>(new QGeoTileSpecPrivate(plugin, mapId, zoom, x, y, version))) {}
 
-QGeoTileSpec::QGeoTileSpec(const QGeoTileSpec &other)
-    : d(other.d) {}
+QGeoTileSpec::QGeoTileSpec(const QGeoTileSpec &other) noexcept = default;
 
-QGeoTileSpec::~QGeoTileSpec() {
-}
+QGeoTileSpec::~QGeoTileSpec() = default;
 
-QGeoTileSpec &QGeoTileSpec::operator = (const QGeoTileSpec &other)
+QGeoTileSpec &QGeoTileSpec::operator=(const QGeoTileSpec &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -120,12 +120,12 @@ int QGeoTileSpec::version() const
     return d->version_;
 }
 
-bool QGeoTileSpec::operator == (const QGeoTileSpec &rhs) const
+bool QGeoTileSpec::isEqual(const QGeoTileSpec &rhs) const noexcept
 {
     return (*(d.constData()) == *(rhs.d.constData()));
 }
 
-bool QGeoTileSpec::operator < (const QGeoTileSpec &rhs) const
+bool QGeoTileSpec::isLess(const QGeoTileSpec &rhs) const noexcept
 {
     return (*(d.constData()) < *(rhs.d.constData()));
 }

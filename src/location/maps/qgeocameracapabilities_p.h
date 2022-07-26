@@ -58,18 +58,31 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoCameraCapabilitiesPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoCameraCapabilitiesPrivate, Q_LOCATION_PRIVATE_EXPORT)
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoCameraCapabilities
 {
 public:
     QGeoCameraCapabilities();
-    QGeoCameraCapabilities(const QGeoCameraCapabilities &other);
+    QGeoCameraCapabilities(const QGeoCameraCapabilities &other) noexcept;
+    QGeoCameraCapabilities(QGeoCameraCapabilities &&other) noexcept = default;
     ~QGeoCameraCapabilities();
 
-    QGeoCameraCapabilities &operator = (const QGeoCameraCapabilities &other);
+    QGeoCameraCapabilities &operator=(const QGeoCameraCapabilities &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QGeoCameraCapabilities)
 
-    bool operator == (const QGeoCameraCapabilities &other) const;
-    bool operator != (const QGeoCameraCapabilities &other) const;
+    void swap(QGeoCameraCapabilities &other) noexcept { d.swap(other.d); }
+
+    friend inline bool operator==(const QGeoCameraCapabilities &lhs,
+                                  const QGeoCameraCapabilities &rhs) noexcept
+    {
+        return lhs.isEqual(rhs);
+    }
+    friend inline bool operator!=(const QGeoCameraCapabilities &lhs,
+                                  const QGeoCameraCapabilities &rhs) noexcept
+    {
+        return !lhs.isEqual(rhs);
+    }
 
     void setTileSize(int tileSize);
     int tileSize() const;
@@ -110,6 +123,8 @@ public:
 
 private:
     QSharedDataPointer<QGeoCameraCapabilitiesPrivate> d;
+
+    bool isEqual(const QGeoCameraCapabilities &other) const;
 };
 
 QT_END_NAMESPACE

@@ -53,13 +53,6 @@ Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
 
 QT_BEGIN_NAMESPACE
 
-QGeoTileTexture::QGeoTileTexture()
-    : textureBound(false) {}
-
-QGeoTileTexture::~QGeoTileTexture()
-{
-}
-
 QAbstractGeoTileCache::QAbstractGeoTileCache(QObject *parent)
     : QObject(parent)
 {

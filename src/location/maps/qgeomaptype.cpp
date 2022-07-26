@@ -42,11 +42,12 @@
 
 QT_BEGIN_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoMapTypePrivate)
+
 QGeoMapType::QGeoMapType()
     : d_ptr(new QGeoMapTypePrivate()) {}
 
-QGeoMapType::QGeoMapType(const QGeoMapType &other)
-    : d_ptr(other.d_ptr) {}
+QGeoMapType::QGeoMapType(const QGeoMapType &other) noexcept = default;
 
 QGeoMapType::QGeoMapType(QGeoMapType::MapStyle style, const QString &name,
                          const QString &description, bool mobile, bool night, int mapId,
@@ -57,9 +58,9 @@ QGeoMapType::QGeoMapType(QGeoMapType::MapStyle style, const QString &name,
 {
 }
 
-QGeoMapType::~QGeoMapType() {}
+QGeoMapType::~QGeoMapType() = default;
 
-QGeoMapType &QGeoMapType::operator = (const QGeoMapType &other)
+QGeoMapType &QGeoMapType::operator=(const QGeoMapType &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -68,14 +69,9 @@ QGeoMapType &QGeoMapType::operator = (const QGeoMapType &other)
     return *this;
 }
 
-bool QGeoMapType::operator == (const QGeoMapType &other) const
+bool QGeoMapType::isEqual(const QGeoMapType &other) const noexcept
 {
     return (*d_ptr.constData() == *other.d_ptr.constData());
-}
-
-bool QGeoMapType::operator != (const QGeoMapType &other) const
-{
-    return !(operator ==(other));
 }
 
 QGeoMapType::MapStyle QGeoMapType::style() const

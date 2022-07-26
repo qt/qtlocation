@@ -80,6 +80,8 @@ public:
     bool overzoomEnabled_;
 };
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoCameraCapabilitiesPrivate)
+
 QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
     : supportsBearing_(false),
       supportsRolling_(false),
@@ -175,19 +177,18 @@ QGeoCameraCapabilities::QGeoCameraCapabilities()
 /*!
     Constructs a camera capabilities object from the contents of \a other.
 */
-QGeoCameraCapabilities::QGeoCameraCapabilities(const QGeoCameraCapabilities &other)
-    : d(other.d) {}
+QGeoCameraCapabilities::QGeoCameraCapabilities(const QGeoCameraCapabilities &other) noexcept = default;
 
 /*!
     Destroys this camera capabilities object.
 */
-QGeoCameraCapabilities::~QGeoCameraCapabilities() {}
+QGeoCameraCapabilities::~QGeoCameraCapabilities() = default;
 
 /*!
     Assigns the contents of \a other to this camera capabilities object and
     returns a reference to this camera capabilities object.
 */
-QGeoCameraCapabilities &QGeoCameraCapabilities::operator = (const QGeoCameraCapabilities &other)
+QGeoCameraCapabilities &QGeoCameraCapabilities::operator=(const QGeoCameraCapabilities &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -196,14 +197,9 @@ QGeoCameraCapabilities &QGeoCameraCapabilities::operator = (const QGeoCameraCapa
     return *this;
 }
 
-bool QGeoCameraCapabilities::operator == (const QGeoCameraCapabilities &rhs) const
+bool QGeoCameraCapabilities::isEqual(const QGeoCameraCapabilities &other) const
 {
-    return (*(d.constData()) == *(rhs.d.constData()));
-}
-
-bool QGeoCameraCapabilities::operator != (const QGeoCameraCapabilities &other) const
-{
-    return !(operator==(other));
+    return (*(d.constData()) == *(other.d.constData()));
 }
 
 void QGeoCameraCapabilities::setTileSize(int tileSize)

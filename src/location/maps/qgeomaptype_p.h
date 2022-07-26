@@ -60,6 +60,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoMapTypePrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoMapTypePrivate, Q_LOCATION_PRIVATE_EXPORT)
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapType
 {
@@ -80,17 +81,23 @@ public:
     };
 
     QGeoMapType();
-    QGeoMapType(const QGeoMapType &other);
+    QGeoMapType(const QGeoMapType &other) noexcept;
+    QGeoMapType(QGeoMapType &&other) noexcept = default;
     QGeoMapType(MapStyle style, const QString &name, const QString &description, bool mobile,
                 bool night, int mapId, const QByteArray &pluginName,
                 const QGeoCameraCapabilities &cameraCapabilities,
                 const QVariantMap &metadata = QVariantMap());
     ~QGeoMapType();
 
-    QGeoMapType &operator = (const QGeoMapType &other);
+    QGeoMapType &operator=(const QGeoMapType &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QGeoMapType)
 
-    bool operator == (const QGeoMapType &other) const;
-    bool operator != (const QGeoMapType &other) const;
+    void swap(QGeoMapType &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator==(const QGeoMapType &lhs, const QGeoMapType &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QGeoMapType &lhs, const QGeoMapType &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     MapStyle style() const;
     QString name() const;
@@ -104,6 +111,8 @@ public:
 
 private:
     QSharedDataPointer<QGeoMapTypePrivate> d_ptr;
+
+    bool isEqual(const QGeoMapType &other) const noexcept;
 };
 
 QT_END_NAMESPACE

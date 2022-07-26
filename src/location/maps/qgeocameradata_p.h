@@ -60,18 +60,25 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoCameraDataPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoCameraDataPrivate, Q_LOCATION_PRIVATE_EXPORT)
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoCameraData
 {
 public:
     QGeoCameraData();
-    QGeoCameraData(const QGeoCameraData &other);
+    QGeoCameraData(const QGeoCameraData &other) noexcept;
+    QGeoCameraData(QGeoCameraData &&other) noexcept = default;
     ~QGeoCameraData();
 
-    QGeoCameraData &operator = (const QGeoCameraData &other);
+    QGeoCameraData &operator = (const QGeoCameraData &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QGeoCameraData)
 
-    bool operator == (const QGeoCameraData &other) const;
-    bool operator != (const QGeoCameraData &other) const;
+    void swap(QGeoCameraData &other) noexcept { d.swap(other.d); }
+
+    friend inline bool operator==(const QGeoCameraData &lhs, const QGeoCameraData &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QGeoCameraData &lhs, const QGeoCameraData &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     void setCenter(const QGeoCoordinate &coordinate);
     QGeoCoordinate center() const;
@@ -95,6 +102,8 @@ public:
 
 private:
     QSharedDataPointer<QGeoCameraDataPrivate> d;
+
+    bool isEqual(const QGeoCameraData &other) const;
 };
 
 QT_END_NAMESPACE

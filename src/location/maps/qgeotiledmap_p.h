@@ -62,7 +62,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoTileSpec;
-class QGeoTileTexture;
+struct QGeoTileTexture;
 class QAbstractGeoTileCache;
 class QGeoTiledMapPrivate;
 class QGeoTiledMappingManagerEngine;
