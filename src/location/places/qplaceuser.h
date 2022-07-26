@@ -47,20 +47,25 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceUserPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceUserPrivate, Q_LOCATION_EXPORT)
 
 class Q_LOCATION_EXPORT QPlaceUser
 {
 public:
     QPlaceUser();
-    QPlaceUser(const QPlaceUser &other);
+    QPlaceUser(const QPlaceUser &other) noexcept;
+    QPlaceUser(QPlaceUser &&other) noexcept = default;
     ~QPlaceUser();
 
-    QPlaceUser &operator=(const QPlaceUser &other);
+    QPlaceUser &operator=(const QPlaceUser &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlaceUser)
 
-    bool operator==(const QPlaceUser &other) const;
-    bool operator!=(const QPlaceUser &other) const {
-        return !(other == *this);
-    }
+    void swap(QPlaceUser &other) noexcept { d.swap(other.d); }
+
+    friend inline bool operator==(const QPlaceUser &lhs, const QPlaceUser &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QPlaceUser &lhs, const QPlaceUser &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     QString userId() const;
     void setUserId(const QString &identifier);
@@ -70,6 +75,8 @@ public:
 
 private:
     QSharedDataPointer<QPlaceUserPrivate> d;
+
+    bool isEqual(const QPlaceUser &other) const noexcept;
 };
 
 QT_END_NAMESPACE

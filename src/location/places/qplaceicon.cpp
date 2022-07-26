@@ -46,6 +46,8 @@
 
 QT_USE_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceIconPrivate)
+
 QPlaceIconPrivate::QPlaceIconPrivate()
     : QSharedData(), manager(0)
 {
@@ -127,22 +129,17 @@ QPlaceIcon::QPlaceIcon()
 /*!
     Constructs a copy of \a other.
 */
-QPlaceIcon::QPlaceIcon(const QPlaceIcon &other)
-    : d(other.d)
-{
-}
+QPlaceIcon::QPlaceIcon(const QPlaceIcon &other) noexcept = default;
 
 /*!
     Destroys the icon.
 */
-QPlaceIcon::~QPlaceIcon()
-{
-}
+QPlaceIcon::~QPlaceIcon() = default;
 
 /*!
     Assigns \a other to this icon and returns a reference to this icon.
 */
-QPlaceIcon &QPlaceIcon::operator=(const QPlaceIcon &other)
+QPlaceIcon &QPlaceIcon::operator=(const QPlaceIcon &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -152,18 +149,22 @@ QPlaceIcon &QPlaceIcon::operator=(const QPlaceIcon &other)
 }
 
 /*!
-    Returns true if this icon is equal to \a other, otherwise returns false.
+    \fn bool QPlaceIcon::operator==(const QPlaceIcon &lhs, const QPlaceIcon &rhs) noexcept
+
+    Returns true if \a lhs is equal to \a rhs, otherwise returns false.
 */
-bool QPlaceIcon::operator==(const QPlaceIcon &other) const
+
+/*!
+    \fn bool QPlaceIcon::operator!=(const QPlaceIcon &lhs, const QPlaceIcon &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs, otherwise returns false.
+*/
+
+bool QPlaceIcon::isEqual(const QPlaceIcon &other) const noexcept
 {
     return *d == *(other.d);
 }
 
-/*!
-    \fn QPlaceIcon::operator!=(const QPlaceIcon &other) const
-
-    Returns true if \a other is not equal to this icon, otherwise returns false.
-*/
 
 /*!
     Returns an icon URL according to the given \a size.

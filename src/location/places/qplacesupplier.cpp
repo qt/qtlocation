@@ -42,6 +42,8 @@
 
 QT_USE_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceSupplierPrivate)
+
 QPlaceSupplierPrivate::QPlaceSupplierPrivate() : QSharedData()
 {
 }
@@ -106,23 +108,18 @@ QPlaceSupplier::QPlaceSupplier()
 /*!
     Constructs a copy of \a other.
 */
-QPlaceSupplier::QPlaceSupplier(const QPlaceSupplier &other)
-    :d(other.d)
-{
-}
+QPlaceSupplier::QPlaceSupplier(const QPlaceSupplier &other) noexcept = default;
 
 /*!
     Destroys the supplier object.
 */
-QPlaceSupplier::~QPlaceSupplier()
-{
-}
+QPlaceSupplier::~QPlaceSupplier() = default;
 
 /*!
     Assigns \a other to this supplier and returns a reference to this
     supplier.
 */
-QPlaceSupplier &QPlaceSupplier::operator=(const QPlaceSupplier &other)
+QPlaceSupplier &QPlaceSupplier::operator=(const QPlaceSupplier &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -132,20 +129,21 @@ QPlaceSupplier &QPlaceSupplier::operator=(const QPlaceSupplier &other)
 }
 
 /*!
-    Returns true if this supplier is equal to \a other,
-    otherwise returns false.
+    \fn bool QPlaceSupplier::operator==(const QPlaceSupplier &lhs, const QPlaceSupplier &rhs) noexcept
+
+    Returns true if \a lhs is equal to \a rhs, otherwise returns false.
 */
-bool QPlaceSupplier::operator==(const QPlaceSupplier &other) const
+
+/*!
+    \fn bool QPlaceSupplier::operator!=(const QPlaceSupplier &lhs, const QPlaceSupplier &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs, otherwise returns false.
+*/
+
+bool QPlaceSupplier::isEqual(const QPlaceSupplier &other) const noexcept
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
-
-/*!
-    \fn QPlaceSupplier::operator!=(const QPlaceSupplier &other) const
-
-    Returns true if this supplier is not equal to \a other,
-    otherwise returns false.
-*/
 
 /*!
     Returns the name of the supplier which can be displayed to the user.

@@ -63,17 +63,12 @@ QT_BEGIN_NAMESPACE
 class QPlaceCategoryPrivate : public QSharedData
 {
 public:
-    QPlaceCategoryPrivate();
-    QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other);
-
-    ~QPlaceCategoryPrivate();
-    QPlaceCategoryPrivate &operator= (const QPlaceCategoryPrivate &other);
     bool operator==(const QPlaceCategoryPrivate &other) const;
     bool isEmpty() const;
 
     QString categoryId;
     QString name;
-    QLocation::Visibility visibility;
+    QLocation::Visibility visibility = QLocation::UnspecifiedVisibility;
     QPlaceIcon icon;
 };
 

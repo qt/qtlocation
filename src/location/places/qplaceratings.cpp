@@ -42,6 +42,8 @@
 
 QT_USE_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceRatingsPrivate)
+
 QPlaceRatingsPrivate::QPlaceRatingsPrivate()
     :   QSharedData(), average(0), maximum(0), count(0)
 {
@@ -94,23 +96,18 @@ QPlaceRatings::QPlaceRatings()
 /*!
     Constructs a copy of \a other.
 */
-QPlaceRatings::QPlaceRatings(const QPlaceRatings &other)
-    :d(other.d)
-{
-}
+QPlaceRatings::QPlaceRatings(const QPlaceRatings &other) noexcept = default;
 
 /*!
     Destroys the ratings object.
 */
-QPlaceRatings::~QPlaceRatings()
-{
-}
+QPlaceRatings::~QPlaceRatings() = default;
 
 /*!
     Assigns \a other to this ratings object and returns
     a reference to this ratings object.
 */
-QPlaceRatings &QPlaceRatings::operator=(const QPlaceRatings &other)
+QPlaceRatings &QPlaceRatings::operator=(const QPlaceRatings &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -120,20 +117,21 @@ QPlaceRatings &QPlaceRatings::operator=(const QPlaceRatings &other)
 }
 
 /*!
-    Returns true if \a other is equal to this ratings object,
-    otherwise returns false.
+    \fn bool QPlaceRatings::operator==(const QPlaceRatings &lhs, const QPlaceRatings &rhs) noexcept
+
+    Returns true if \a lhs is equal to \a rhs, otherwise returns false.
 */
-bool QPlaceRatings::operator==(const QPlaceRatings &other) const
+
+/*!
+    \fn bool QPlaceRatings::operator!=(const QPlaceRatings &lhs, const QPlaceRatings &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs, otherwise returns false.
+*/
+
+bool QPlaceRatings::isEqual(const QPlaceRatings &other) const noexcept
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
-
-/*!
-    \fn bool QPlaceRatings::operator!=(const QPlaceRatings &other) const
-
-    Returns true if \a other is not equal to this ratings object,
-    otherwise returns false.
-*/
 
 /*!
     Returns the average value of individual ratings.

@@ -56,6 +56,8 @@ QPlacePrivate *QSharedDataPointer<QPlacePrivate>::clone()
     return d->clone();
 }
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlacePrivate)
+
 /*!
     \class QPlace
     \inmodule QtLocation
@@ -138,34 +140,22 @@ QPlace::QPlace(const QSharedDataPointer<QPlacePrivate> &dd): d_ptr(dd)
 {
 }
 
-/*!
-    Returns the d-pointer.
-*/
-QSharedDataPointer<QPlacePrivate> &QPlace::d()
-{
-    return d_ptr;
-}
 
 /*!
     Constructs a copy of \a other.
 */
-QPlace::QPlace(const QPlace &other)
-        : d_ptr(other.d_ptr)
-{
-}
+QPlace::QPlace(const QPlace &other) noexcept = default;
 
 /*!
     Destroys this place.
 */
-QPlace::~QPlace()
-{
-}
+QPlace::~QPlace() = default;
 
 /*!
     Assigns \a other to this place and returns a reference
     to this place.
 */
-QPlace &QPlace::operator= (const QPlace & other)
+QPlace &QPlace::operator= (const QPlace & other) noexcept
 {
     if (this == &other)
         return *this;
@@ -185,22 +175,23 @@ inline const QPlacePrivate *QPlace::d_func() const
 }
 
 /*!
-    Returns true if \a other is equal to this place,
+    \fn bool QPlace::operator==(const QPlace &lhs, const QPlace &rhs) noexcept
+
+    Returns true if \a lhs is equal to \a rhs,
     otherwise returns false.
 */
-bool QPlace::operator== (const QPlace &other) const
+
+/*!
+    \fn bool QPlace::operator!=(const QPlace &lhs, const QPlace &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs,
+    otherwise returns false.
+*/
+
+bool QPlace::isEqual(const QPlace &other) const noexcept
 {
     return ( (d_ptr.constData() == other.d_ptr.constData())
              || (*d_ptr) == (*other.d_ptr));
-}
-
-/*!
-    Returns true if \a other is not equal to this place,
-    otherwise returns false.
-*/
-bool QPlace::operator!= (const QPlace &other) const
-{
-    return !(operator==(other));
 }
 
 /*!

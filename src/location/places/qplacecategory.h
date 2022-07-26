@@ -52,20 +52,25 @@ QT_BEGIN_NAMESPACE
 class QPlaceIcon;
 
 class QPlaceCategoryPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceCategoryPrivate, Q_LOCATION_EXPORT)
+
 class Q_LOCATION_EXPORT QPlaceCategory
 {
 public:
     QPlaceCategory();
-    QPlaceCategory(const QPlaceCategory &other);
+    QPlaceCategory(const QPlaceCategory &other) noexcept;
+    QPlaceCategory(QPlaceCategory &&other) noexcept = default;
+    ~QPlaceCategory();
 
-    virtual ~QPlaceCategory();
+    QPlaceCategory &operator=(const QPlaceCategory &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlaceCategory)
 
-    QPlaceCategory &operator=(const QPlaceCategory &other);
+    void swap(QPlaceCategory &other) noexcept { d.swap(other.d); }
 
-    bool operator==(const QPlaceCategory &other) const;
-    bool operator!=(const QPlaceCategory &other) const {
-        return !(other == *this);
-    }
+    friend inline bool operator==(const QPlaceCategory &lhs, const QPlaceCategory &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QPlaceCategory &lhs, const QPlaceCategory &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     QString categoryId() const;
     void setCategoryId(const QString &identifier);
@@ -83,6 +88,8 @@ public:
 
 private:
     QSharedDataPointer<QPlaceCategoryPrivate> d;
+
+    bool isEqual(const QPlaceCategory &other) const noexcept;
 };
 
 Q_DECLARE_TYPEINFO(QPlaceCategory, Q_RELOCATABLE_TYPE);

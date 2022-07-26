@@ -49,6 +49,8 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceAttributePrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceAttributePrivate, Q_LOCATION_EXPORT)
+
 class Q_LOCATION_EXPORT QPlaceAttribute
 {
 public:
@@ -57,13 +59,19 @@ public:
     static const QString Provider;
 
     QPlaceAttribute();
-    QPlaceAttribute(const QPlaceAttribute &other);
-    virtual ~QPlaceAttribute();
+    QPlaceAttribute(const QPlaceAttribute &other) noexcept;
+    QPlaceAttribute(QPlaceAttribute &&other) noexcept = default;
+    ~QPlaceAttribute();
 
-    QPlaceAttribute &operator=(const QPlaceAttribute &other);
+    QPlaceAttribute &operator=(const QPlaceAttribute &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QPlaceAttribute)
 
-    bool operator==(const QPlaceAttribute &other) const;
-    bool operator!=(const QPlaceAttribute &other) const;
+    void swap(QPlaceAttribute &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator==(const QPlaceAttribute &lhs, const QPlaceAttribute &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QPlaceAttribute &lhs, const QPlaceAttribute &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     QString label() const;
     void setLabel(const QString &label);
@@ -73,8 +81,9 @@ public:
 
     bool isEmpty() const;
 
-protected:
+private:
     QSharedDataPointer<QPlaceAttributePrivate> d_ptr;
+    bool isEqual(const QPlaceAttribute &other) const noexcept;
 };
 
 QT_END_NAMESPACE

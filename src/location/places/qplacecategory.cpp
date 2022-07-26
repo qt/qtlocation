@@ -42,31 +42,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QPlaceCategoryPrivate::QPlaceCategoryPrivate()
-:   visibility(QLocation::UnspecifiedVisibility)
-{
-}
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceCategoryPrivate)
 
-QPlaceCategoryPrivate::QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other)
-:   QSharedData(other), categoryId(other.categoryId), name(other.name), visibility(other.visibility),
-    icon(other.icon)
-{
-}
-
-QPlaceCategoryPrivate::~QPlaceCategoryPrivate()
-{
-}
-
-QPlaceCategoryPrivate &QPlaceCategoryPrivate::operator=(const QPlaceCategoryPrivate &other)
-{
-    if (this == &other)
-        return *this;
-
-    categoryId = other.categoryId;
-    name = other.name;
-    icon = other.icon;
-    return *this;
-}
 
 bool QPlaceCategoryPrivate::isEmpty() const
 {
@@ -95,12 +72,6 @@ bool QPlaceCategoryPrivate::isEmpty() const
 */
 
 /*!
-    \fn bool QPlaceCategory::operator!=(const QPlaceCategory &other) const
-
-    Returns true if \a other is not equal to this category; otherwise returns false.
-*/
-
-/*!
     Constructs a category.
 */
 QPlaceCategory::QPlaceCategory()
@@ -111,22 +82,17 @@ QPlaceCategory::QPlaceCategory()
 /*!
     Constructs a category which is a copy of \a other.
 */
-QPlaceCategory::QPlaceCategory(const QPlaceCategory &other)
-    :d(other.d)
-{
-}
+QPlaceCategory::QPlaceCategory(const QPlaceCategory &other) noexcept = default;
 
 /*!
     Destroys the category.
 */
-QPlaceCategory::~QPlaceCategory()
-{
-}
+QPlaceCategory::~QPlaceCategory() = default;
 
 /*!
     Assigns \a other to this category and returns a reference to this category.
 */
-QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other)
+QPlaceCategory &QPlaceCategory::operator=(const QPlaceCategory &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -136,9 +102,18 @@ QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other)
 }
 
 /*!
-    Returns true if \a other is equal to this category; otherwise returns false.
+    \fn bool QPlaceCategory::operator==(const QPlaceCategory &lhs, const QPlaceCategory &rhs) noexcept
+
+    Returns true if \a lhs is equal to \a rhs; otherwise returns false.
 */
-bool QPlaceCategory::operator==(const QPlaceCategory &other) const
+
+/*!
+    \fn bool QPlaceCategory::operator!=(const QPlaceCategory &lhs, const QPlaceCategory &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs; otherwise returns false.
+*/
+
+bool QPlaceCategory::isEqual(const QPlaceCategory &other) const noexcept
 {
     return d->categoryId == other.d->categoryId &&
            d->name == other.d->name &&

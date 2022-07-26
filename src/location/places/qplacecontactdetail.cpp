@@ -42,12 +42,7 @@
 
 QT_USE_NAMESPACE
 
-QPlaceContactDetailPrivate::QPlaceContactDetailPrivate(const QPlaceContactDetailPrivate &other)
-    : QSharedData(other),
-      label(other.label),
-      value(other.value)
-{
-}
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceContactDetailPrivate)
 
 bool QPlaceContactDetailPrivate::operator== (const QPlaceContactDetailPrivate &other) const
 {
@@ -123,23 +118,18 @@ QPlaceContactDetail::QPlaceContactDetail()
 /*!
     Destroys the contact detail.
 */
-QPlaceContactDetail::~QPlaceContactDetail()
-{
-}
+QPlaceContactDetail::~QPlaceContactDetail() = default;
 
 /*!
     Creates a copy of \a other.
 */
-QPlaceContactDetail::QPlaceContactDetail(const QPlaceContactDetail &other)
-    :d_ptr(other.d_ptr)
-{
-}
+QPlaceContactDetail::QPlaceContactDetail(const QPlaceContactDetail &other) noexcept = default;
 
 /*!
     Assigns \a other to this contact detail and returns a reference to this
     contact detail.
 */
-QPlaceContactDetail &QPlaceContactDetail::operator=(const QPlaceContactDetail &other)
+QPlaceContactDetail &QPlaceContactDetail::operator=(const QPlaceContactDetail &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -149,10 +139,12 @@ QPlaceContactDetail &QPlaceContactDetail::operator=(const QPlaceContactDetail &o
 }
 
 /*!
-    Returns true if \a other is equal to this contact detail, otherwise
-    returns false.
+    \fn bool QPlaceContactDetail::operator==(const QPlaceContactDetail &lhs, const QPlaceContactDetail &rhs) noexcept
+
+    Returns true if the contact detail \a lhs is equal to \a rhs,
+    otherwise returns false.
 */
-bool QPlaceContactDetail::operator== (const QPlaceContactDetail &other) const
+bool QPlaceContactDetail::isEqual(const QPlaceContactDetail &other) const noexcept
 {
     if (d_ptr == other.d_ptr)
         return true;
@@ -160,13 +152,11 @@ bool QPlaceContactDetail::operator== (const QPlaceContactDetail &other) const
 }
 
 /*!
-    Returns true if \a other is not equal to this contact detail,
+    \fn bool QPlaceContactDetail::operator!=(const QPlaceContactDetail &lhs, const QPlaceContactDetail &rhs) noexcept
+
+    Returns true if the contact detail \a lhs is not equal to \a rhs,
     otherwise returns false.
 */
-bool QPlaceContactDetail::operator!= (const QPlaceContactDetail &other) const
-{
-    return (!this->operator ==(other));
-}
 
 /*!
     Returns a label describing the contact detail.

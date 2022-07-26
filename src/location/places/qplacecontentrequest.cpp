@@ -43,6 +43,8 @@
 
 QT_BEGIN_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceContentRequestPrivate)
+
 QPlaceContentRequestPrivate::QPlaceContentRequestPrivate()
 :   QSharedData(), contentType(QPlaceContent::NoType), limit(-1)
 {
@@ -102,23 +104,18 @@ QPlaceContentRequest::QPlaceContentRequest()
 /*!
     Constructs a copy of \a other.
 */
-QPlaceContentRequest::QPlaceContentRequest(const QPlaceContentRequest &other)
-    : d_ptr(other.d_ptr)
-{
-}
+QPlaceContentRequest::QPlaceContentRequest(const QPlaceContentRequest &other) noexcept = default;
 
 /*!
     Destroys the request object
 */
-QPlaceContentRequest::~QPlaceContentRequest()
-{
-}
+QPlaceContentRequest::~QPlaceContentRequest() = default;
 
 /*!
     Assigns \a other to this content request and returns a reference
     to this content request.
 */
-QPlaceContentRequest &QPlaceContentRequest::operator= (const QPlaceContentRequest & other)
+QPlaceContentRequest &QPlaceContentRequest::operator=(const QPlaceContentRequest & other) noexcept
 {
     if (this == &other)
         return *this;
@@ -128,23 +125,19 @@ QPlaceContentRequest &QPlaceContentRequest::operator= (const QPlaceContentReques
 }
 
 /*!
-    Returns true if \a other is equal to this content request,
-    otherwise returns false.
+    \fn bool QPlaceContentRequest::operator==(const QPlaceContentRequest &lhs, const QPlaceContentRequest &rhs) noexcept
+    Returns true if \a lhs is equal to \a rhs, otherwise returns false.
 */
-bool QPlaceContentRequest::operator== (const QPlaceContentRequest &other) const
+
+/*!
+    \fn bool QPlaceContentRequest::operator!=(const QPlaceContentRequest &lhs, const QPlaceContentRequest &rhs) noexcept
+    Returns true if \a lhs is not equal to \a rhs, otherwise returns false.
+*/
+
+bool QPlaceContentRequest::isEqual(const QPlaceContentRequest &other) const noexcept
 {
     Q_D(const QPlaceContentRequest);
     return *d == *other.d_func();
-}
-
-/*!
-    Returns true if \a other is not equal to this content request,
-    otherwise returns false.
-*/
-bool QPlaceContentRequest::operator!= (const QPlaceContentRequest &other) const
-{
-    Q_D(const QPlaceContentRequest);
-    return !(*d == *other.d_func());
 }
 
 /*!

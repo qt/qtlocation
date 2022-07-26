@@ -61,10 +61,6 @@ QT_BEGIN_NAMESPACE
 class QPlaceContactDetailPrivate : public QSharedData
 {
 public:
-    QPlaceContactDetailPrivate(){}
-    QPlaceContactDetailPrivate(const QPlaceContactDetailPrivate &other);
-    virtual ~QPlaceContactDetailPrivate(){}
-
     bool operator== (const QPlaceContactDetailPrivate &other) const;
 
     QString label;

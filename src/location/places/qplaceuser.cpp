@@ -42,6 +42,8 @@
 
 QT_USE_NAMESPACE
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceUserPrivate)
+
 QPlaceUserPrivate::QPlaceUserPrivate()
     : QSharedData()
 {
@@ -82,22 +84,17 @@ QPlaceUser::QPlaceUser()
 /*!
     Constructs a copy of \a other.
 */
-QPlaceUser::QPlaceUser(const QPlaceUser &other)
-    :d(other.d)
-{
-}
+QPlaceUser::QPlaceUser(const QPlaceUser &other) noexcept = default;
 
 /*!
     Destroys the user object.
 */
-QPlaceUser::~QPlaceUser()
-{
-}
+QPlaceUser::~QPlaceUser() = default;
 
 /*!
     Assigns \a other to this user and returns a reference to this user.
 */
-QPlaceUser &QPlaceUser::operator=(const QPlaceUser &other)
+QPlaceUser &QPlaceUser::operator=(const QPlaceUser &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -107,17 +104,18 @@ QPlaceUser &QPlaceUser::operator=(const QPlaceUser &other)
 }
 
 /*!
-    \fn bool QPlaceUser::operator!=(const QPlaceUser &other) const
+    \fn bool QPlaceUser::operator==(const QPlaceUser &lhs, const QPlaceUser &rhs) noexcept
 
-    Returns true if \a other is not equal to this user,
-    otherwise returns false.
+    Returns true if \a lhs is equal to \a rhs, otherwise returns false.
 */
 
 /*!
-    Returns true if this user is equal to \a other.
-    Otherwise returns false.
+    \fn bool QPlaceUser::operator!=(const QPlaceUser &lhs, const QPlaceUser &rhs) noexcept
+
+    Returns true if \a lhs is not equal to \a rhs, otherwise returns false.
 */
-bool QPlaceUser::operator==(const QPlaceUser &other) const
+
+bool QPlaceUser::isEqual(const QPlaceUser &other) const noexcept
 {
     return (*d) == *(other.d);
 }
