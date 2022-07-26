@@ -50,10 +50,10 @@ class QString;
 
 class QGeoCoordinate;
 class QGeoManeuverPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoManeuverPrivate, Q_LOCATION_EXPORT)
 
 class Q_LOCATION_EXPORT QGeoManeuver
 {
-
 public:
     enum InstructionDirection {
         NoDirection,
@@ -71,13 +71,19 @@ public:
     };
 
     QGeoManeuver();
-    QGeoManeuver(const QGeoManeuver &other);
+    QGeoManeuver(const QGeoManeuver &other) noexcept;
+    QGeoManeuver(QGeoManeuver &&other) noexcept = default;
     ~QGeoManeuver();
 
     QGeoManeuver &operator= (const QGeoManeuver &other);
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QGeoManeuver)
 
-    bool operator== (const QGeoManeuver &other) const;
-    bool operator!= (const QGeoManeuver &other) const;
+    void swap(QGeoManeuver &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator==(const QGeoManeuver &lhs, const QGeoManeuver &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QGeoManeuver &lhs, const QGeoManeuver &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     bool isValid() const;
 
@@ -107,6 +113,8 @@ protected:
 
 private:
     QSharedDataPointer<QGeoManeuverPrivate> d_ptr;
+
+    bool isEqual(const QGeoManeuver &other) const;
 };
 
 QT_END_NAMESPACE

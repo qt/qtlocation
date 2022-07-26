@@ -51,6 +51,8 @@ QGeoRouteSegmentPrivate *QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate>::
     return d->clone();
 }
 
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoRouteSegmentPrivate)
+
 /*!
     \class QGeoRouteSegment
     \inmodule QtLocation
@@ -81,34 +83,25 @@ QGeoRouteSegment::QGeoRouteSegment()
 /*!
     Constructs a route segment object from the contents of \a other.
 */
-QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
-    : d_ptr(other.d_ptr) {}
+QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other) noexcept = default;
 
 /*!
     \internal
 */
-QGeoRouteSegment::QGeoRouteSegment(const QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &dd)
+QGeoRouteSegment::QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &&dd)
     : d_ptr(dd) {}
-
-/*!
-    Returns the private implementation.
-*/
-QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &QGeoRouteSegment::d()
-{
-    return d_ptr;
-}
 
 /*!
     Destroys this route segment object.
 */
-QGeoRouteSegment::~QGeoRouteSegment() {}
+QGeoRouteSegment::~QGeoRouteSegment() = default;
 
 
 /*!
     Assigns \a other to this route segment object and then returns a
     reference to this route segment object.
 */
-QGeoRouteSegment &QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
+QGeoRouteSegment &QGeoRouteSegment::operator=(const QGeoRouteSegment & other) noexcept
 {
     if (this == &other)
         return *this;
@@ -118,24 +111,24 @@ QGeoRouteSegment &QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
 }
 
 /*!
-    Returns whether this route segment and \a other are equal.
+    \fn bool QGeoRouteSegment::operator==(const QGeoRouteSegment &lhs, const QGeoRouteSegment &rhs) noexcept
+    Returns whether the route segments \a lhs and \a rhs are equal.
 
     The value of nextRouteSegment() is not considered in the comparison.
 */
-bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
+
+/*!
+    \fn bool QGeoRouteSegment::operator!=(const QGeoRouteSegment &lhs, const QGeoRouteSegment &rhs) noexcept
+
+    Returns whether the route segments \a lhs and \a rhs are not equal.
+
+    The value of nextRouteSegment() is not considered in the comparison.
+*/
+
+bool QGeoRouteSegment::isEqual(const QGeoRouteSegment &other) const noexcept
 {
     return ( (d_ptr.constData() == other.d_ptr.constData())
             || (*d_ptr) == (*other.d_ptr));
-}
-
-/*!
-    Returns whether this route segment and \a other are not equal.
-
-    The value of nextRouteSegment() is not considered in the comparison.
-*/
-bool QGeoRouteSegment::operator !=(const QGeoRouteSegment &other) const
-{
-    return !(operator==(other));
 }
 
 /*!

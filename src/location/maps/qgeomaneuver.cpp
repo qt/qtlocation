@@ -50,6 +50,8 @@ QGeoManeuverPrivate *QSharedDataPointer<QGeoManeuverPrivate>::clone()
     return d->clone();
 }
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoManeuverPrivate)
+
 /*!
     \class QGeoManeuver
     \inmodule QtLocation
@@ -129,13 +131,12 @@ QGeoManeuver::QGeoManeuver()
 /*!
     Constructs a maneuver object from the contents of \a other.
 */
-QGeoManeuver::QGeoManeuver(const QGeoManeuver &other)
-    : d_ptr(other.d_ptr) {}
+QGeoManeuver::QGeoManeuver(const QGeoManeuver &other) noexcept = default;
 
 /*!
     Destroys this maneuver object.
 */
-QGeoManeuver::~QGeoManeuver() {}
+QGeoManeuver::~QGeoManeuver() = default;
 
 /*!
     Assigns \a other to this maneuver object and then returns
@@ -151,20 +152,21 @@ QGeoManeuver &QGeoManeuver::operator= (const QGeoManeuver & other)
 }
 
 /*!
-    Returns whether this maneuver is equal to \a other.
+    \fn bool QGeoManeuver::operator==(const QGeoManeuver &lhs, const QGeoManeuver &rhs) noexcept
+
+    Returns whether the \a lhs maneuver is equal to \a rhs.
 */
-bool QGeoManeuver::operator== (const QGeoManeuver &other) const
+
+/*!
+    \fn bool QGeoManeuver::operator!= (const QGeoManeuver &lhs, const QGeoManeuver &rhs) noexcept
+
+    Returns whether the \a lhs maneuver is not equal to \a rhs.
+*/
+
+bool QGeoManeuver::isEqual(const QGeoManeuver &other) const
 {
     return ( (d_ptr.constData() == other.d_ptr.constData())
             ||  (*(d_ptr.constData()) == *(other.d_ptr.constData())) );
-}
-
-/*!
-    Returns whether this maneuver is not equal to \a other.
-*/
-bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
-{
-    return !(operator==(other));
 }
 
 /*!

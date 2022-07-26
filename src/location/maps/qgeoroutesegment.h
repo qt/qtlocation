@@ -50,18 +50,24 @@ class QGeoCoordinate;
 class QGeoManeuver;
 class QGeoRouteSegmentPrivate;
 
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRouteSegmentPrivate, Q_LOCATION_EXPORT)
 class Q_LOCATION_EXPORT QGeoRouteSegment
 {
-
 public:
     QGeoRouteSegment();
-    QGeoRouteSegment(const QGeoRouteSegment &other);
+    QGeoRouteSegment(const QGeoRouteSegment &other) noexcept;
+    QGeoRouteSegment(QGeoRouteSegment &&other) noexcept = default;
     ~QGeoRouteSegment();
 
-    QGeoRouteSegment &operator= (const QGeoRouteSegment &other);
+    QGeoRouteSegment &operator=(const QGeoRouteSegment &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QGeoRouteSegment)
 
-    bool operator ==(const QGeoRouteSegment &other) const;
-    bool operator !=(const QGeoRouteSegment &other) const;
+    void swap(QGeoRouteSegment &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator ==(const QGeoRouteSegment &lhs, const QGeoRouteSegment &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator !=(const QGeoRouteSegment &lhs, const QGeoRouteSegment &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     bool isValid() const;
     bool isLegLastSegment() const;
@@ -81,12 +87,11 @@ public:
     void setManeuver(const QGeoManeuver &maneuver);
     QGeoManeuver maneuver() const;
 
-protected:
-    QGeoRouteSegment(const QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &dd);
-    QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d();
-
 private:
     QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> d_ptr;
+    QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &&dd);
+
+    bool isEqual(const QGeoRouteSegment &other) const noexcept;
 
     friend class QGeoRouteSegmentPrivate;
 };

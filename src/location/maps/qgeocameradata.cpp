@@ -62,6 +62,8 @@ public:
     double m_zoomLevel;
 };
 
+QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoCameraDataPrivate)
+
 QGeoCameraDataPrivate::QGeoCameraDataPrivate()
     : QSharedData(),
       m_center(0, 0),
@@ -144,14 +146,11 @@ QGeoCameraData::QGeoCameraData()
     qRegisterAnimationInterpolator<QGeoCameraData>(cameraInterpolator);
 }
 
-QGeoCameraData::QGeoCameraData(const QGeoCameraData &other)
-    : d(other.d) {}
+QGeoCameraData::QGeoCameraData(const QGeoCameraData &other) noexcept = default;
 
-QGeoCameraData::~QGeoCameraData()
-{
-}
+QGeoCameraData::~QGeoCameraData() = default;
 
-QGeoCameraData &QGeoCameraData::operator = (const QGeoCameraData &other)
+QGeoCameraData &QGeoCameraData::operator=(const QGeoCameraData &other) noexcept
 {
     if (this == &other)
         return *this;
@@ -160,14 +159,9 @@ QGeoCameraData &QGeoCameraData::operator = (const QGeoCameraData &other)
     return *this;
 }
 
-bool QGeoCameraData::operator == (const QGeoCameraData &rhs) const
+bool QGeoCameraData::isEqual(const QGeoCameraData &other) const
 {
-    return (*(d.constData()) == *(rhs.d.constData()));
-}
-
-bool QGeoCameraData::operator != (const QGeoCameraData &other) const
-{
-    return !(operator==(other));
+    return (*(d.constData()) == *(other.d.constData()));
 }
 
 void QGeoCameraData::setCenter(const QGeoCoordinate &center)

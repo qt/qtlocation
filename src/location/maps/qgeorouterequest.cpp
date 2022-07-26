@@ -42,6 +42,8 @@
 
 QT_BEGIN_NAMESPACE
 
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoRouteRequestPrivate)
+
 /*!
     \class QGeoRouteRequest
     \inmodule QtLocation
@@ -240,19 +242,18 @@ QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoord
 /*!
     Constructs a route request object from the contents of \a other.
 */
-QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other)
-    : d_ptr(other.d_ptr) {}
+QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other) noexcept = default;
 
 /*!
     Destroys the request.
 */
-QGeoRouteRequest::~QGeoRouteRequest() {}
+QGeoRouteRequest::~QGeoRouteRequest() = default;
 
 /*!
     Assigns \a other to this route request object and then returns a reference
     to this route request object.
 */
-QGeoRouteRequest &QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
+QGeoRouteRequest &QGeoRouteRequest::operator=(const QGeoRouteRequest & other) noexcept
 {
     if (this == &other)
         return *this;
@@ -262,20 +263,21 @@ QGeoRouteRequest &QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 }
 
 /*!
-    Returns whether this route request and \a other are equal.
+    \fn bool QGeoRouteRequest::operator==(const QGeoRouteRequest &lhs, const QGeoRouteRequest &rhs) noexcept
+
+    Returns whether the route requests \a lhs and \a rhs are equal.
 */
-bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
-{
-    return ( (d_ptr.constData() == other.d_ptr.constData())
-                        || (*d_ptr) == (*other.d_ptr));
-}
 
 /*!
-    Returns whether this route request and \a other are equal.
+    \fn bool QGeoRouteRequest::operator!=(const QGeoRouteRequest &lhs, const QGeoRouteRequest &rhs) noexcept
+
+    Returns whether the route requests \a lhs and \a rhs are not equal.
 */
-bool QGeoRouteRequest::operator !=(const QGeoRouteRequest &other) const
+
+bool QGeoRouteRequest::isEqual(const QGeoRouteRequest &other) const noexcept
 {
-    return !(operator==(other));
+    return ((d_ptr.constData() == other.d_ptr.constData())
+                        || (*d_ptr) == (*other.d_ptr));
 }
 
 /*!

@@ -60,16 +60,21 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoTileSpecPrivate;
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoTileSpecPrivate, Q_LOCATION_PRIVATE_EXPORT)
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoTileSpec
 {
 public:
     QGeoTileSpec();
-    QGeoTileSpec(const QGeoTileSpec &other);
+    QGeoTileSpec(const QGeoTileSpec &other) noexcept;
+    QGeoTileSpec(QGeoTileSpec &&other) noexcept = default;
     QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y, int version = -1);
     ~QGeoTileSpec();
 
-    QGeoTileSpec &operator = (const QGeoTileSpec &other);
+    QGeoTileSpec &operator=(const QGeoTileSpec &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QGeoTileSpec)
+
+    void swap(QGeoTileSpec &other) noexcept { d.swap(other.d); }
 
     QString plugin() const;
 
@@ -88,11 +93,18 @@ public:
     void setVersion(int version);
     int version() const;
 
-    bool operator == (const QGeoTileSpec &rhs) const;
-    bool operator < (const QGeoTileSpec &rhs) const;
+    friend inline bool operator==(const QGeoTileSpec &lhs, const QGeoTileSpec &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QGeoTileSpec &lhs, const QGeoTileSpec &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
+    friend inline bool operator < (const QGeoTileSpec &lhs, const QGeoTileSpec &rhs) noexcept
+    { return lhs.isLess(rhs); }
 
 private:
     QSharedDataPointer<QGeoTileSpecPrivate> d;
+
+    bool isEqual(const QGeoTileSpec &rhs) const noexcept;
+    bool isLess(const QGeoTileSpec &rhs) const noexcept;
 };
 
 Q_LOCATION_PRIVATE_EXPORT unsigned int qHash(const QGeoTileSpec &spec);

@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 class QGeoCameraData;
 class QGeoTileSpec;
 class QDoubleVector2D;
-class QGeoTileTexture;
+struct QGeoTileTexture;
 class QSGNode;
 class QQuickWindow;
 class QGeoTiledMapScenePrivate;

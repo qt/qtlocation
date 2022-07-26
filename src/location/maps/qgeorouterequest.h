@@ -51,6 +51,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoRouteRequestPrivate;
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRouteRequestPrivate, Q_LOCATION_EXPORT)
 
 class Q_LOCATION_EXPORT QGeoRouteRequest
 {
@@ -110,14 +111,26 @@ public:
     explicit QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints = QList<QGeoCoordinate>());
     QGeoRouteRequest(const QGeoCoordinate &origin,
                      const QGeoCoordinate &destination);
-    QGeoRouteRequest(const QGeoRouteRequest &other);
+    QGeoRouteRequest(const QGeoRouteRequest &other) noexcept;
+    QGeoRouteRequest(QGeoRouteRequest &&other) noexcept = default;
 
     ~QGeoRouteRequest();
 
-    QGeoRouteRequest &operator= (const QGeoRouteRequest &other);
+    QGeoRouteRequest &operator= (const QGeoRouteRequest &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QGeoRouteRequest)
 
-    bool operator == (const QGeoRouteRequest &other) const;
-    bool operator != (const QGeoRouteRequest &other) const;
+    void swap(QGeoRouteRequest &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator==(const QGeoRouteRequest &lhs,
+                                  const QGeoRouteRequest &rhs) noexcept
+    {
+        return lhs.isEqual(rhs);
+    }
+    friend inline bool operator!=(const QGeoRouteRequest &lhs,
+                                  const QGeoRouteRequest &rhs) noexcept
+    {
+        return !lhs.isEqual(rhs);
+    }
 
     void setWaypoints(const QList<QGeoCoordinate> &waypoints);
     QList<QGeoCoordinate> waypoints() const;
@@ -161,6 +174,8 @@ public:
 
 private:
     QExplicitlySharedDataPointer<QGeoRouteRequestPrivate> d_ptr;
+
+    bool isEqual(const QGeoRouteRequest &other) const noexcept;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::TravelModes)

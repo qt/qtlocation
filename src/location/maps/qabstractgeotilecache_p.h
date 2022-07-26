@@ -74,16 +74,11 @@ class QAbstractGeoTileCache;
 class QThread;
 
 /* This is also used in the mapgeometry */
-class Q_LOCATION_PRIVATE_EXPORT QGeoTileTexture
+struct QGeoTileTexture
 {
-public:
-
-    QGeoTileTexture();
-    ~QGeoTileTexture();
-
     QGeoTileSpec spec;
     QImage image;
-    bool textureBound;
+    bool textureBound = false;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QAbstractGeoTileCache : public QObject
