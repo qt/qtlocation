@@ -10,7 +10,7 @@ qt_internal_add_manual_test(mapobjects_tester
         main.cpp
     DEFINES
         QT_DEPRECATED_WARNINGS
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Gui
         Qt::Quick
 )

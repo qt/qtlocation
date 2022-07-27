@@ -7,7 +7,7 @@ qt_internal_add_test(tst_declarative_mappolyline
     QMLTEST
     SOURCES
         main.cpp
-    PUBLIC_LIBRARIES
+    LIBRARIES
         Qt::Location
         Qt::Quick
     TESTDATA ${test_data}
