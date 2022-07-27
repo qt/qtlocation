@@ -41,12 +41,13 @@
 #define QPLACESEARCHREQUEST_H
 
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/QPlaceCategory>
+#include <QtCore/QMetaType>
 #include <QtLocation/QLocation>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoShape;
+class QPlaceCategory;
 class QPlaceSearchRequestPrivate;
 
 class Q_LOCATION_EXPORT QPlaceSearchRequest

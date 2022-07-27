@@ -56,6 +56,7 @@
 #include <QtQml/QQmlParserStatus>
 #include <QtLocation/QPlaceContent>
 #include <QtLocation/QPlaceContentReply>
+#include <QtLocation/QPlaceContentRequest>
 
 Q_MOC_INCLUDE(<QtLocation/private/qdeclarativeplace_p.h>)
 

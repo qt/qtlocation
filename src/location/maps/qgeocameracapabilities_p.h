@@ -51,9 +51,9 @@
 // We mean it.
 //
 
-#include <QSharedDataPointer>
-
 #include <QtLocation/private/qlocationglobal_p.h>
+
+#include <QtCore/QSharedDataPointer>
 
 QT_BEGIN_NAMESPACE
 

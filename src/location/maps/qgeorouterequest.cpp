@@ -40,6 +40,9 @@
 #include "qgeorouterequest.h"
 #include "qgeorouterequest_p.h"
 
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoRectangle>
+
 QT_BEGIN_NAMESPACE
 
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoRouteRequestPrivate)

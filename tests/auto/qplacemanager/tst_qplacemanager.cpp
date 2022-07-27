@@ -31,7 +31,10 @@
 #include <QtTest/QtTest>
 
 #include <qgeoserviceprovider.h>
+#include <qplace.h>
 #include <qplacemanager.h>
+#include <qplacematchrequest.h>
+#include <qplacematchreply.h>
 
 
 #ifndef WAIT_UNTIL

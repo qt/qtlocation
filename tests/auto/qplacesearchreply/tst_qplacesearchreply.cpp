@@ -30,6 +30,7 @@
 #include <QtTest/QtTest>
 
 #include <QtPositioning/QGeoCircle>
+#include <QtLocation/QPlace>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceSearchReply>
 #include <QtLocation/QPlaceResult>

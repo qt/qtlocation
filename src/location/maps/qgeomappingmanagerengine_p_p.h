@@ -51,18 +51,14 @@
 // We mean it.
 //
 
-#include <QSize>
 #include <QList>
-#include <QMap>
 #include <QLocale>
-#include <QTimer>
-#include <QHash>
-#include "qgeomaptype_p.h"
 #include "qgeomappingmanager_p.h"
 #include "qgeocameracapabilities_p.h"
 
 QT_BEGIN_NAMESPACE
 
+class QGeoMapType;
 class QGeoTileSpec;
 class QGeoTiledMapReply;
 

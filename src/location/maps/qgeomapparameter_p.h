@@ -55,7 +55,6 @@
 #include <QObject>
 #include <QString>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 

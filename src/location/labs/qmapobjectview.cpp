@@ -42,6 +42,8 @@
 #include <private/qqmldelegatemodel_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 
+#include <QtPositioning/QGeoRectangle>
+
 QT_BEGIN_NAMESPACE
 
 /*!

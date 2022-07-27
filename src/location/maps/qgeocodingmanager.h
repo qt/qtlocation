@@ -41,16 +41,15 @@
 #define QGEOCODINGMANAGER_H
 
 #include <QtLocation/QGeoCodeReply>
-#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoShape>
 
 #include <QtCore/QObject>
-#include <QtCore/QList>
-#include <QtCore/QMap>
 
 QT_BEGIN_NAMESPACE
 
 class QLocale;
 
+class QGeoAddress;
 class QGeoCodingManagerEngine;
 class QGeoCodingManagerPrivate;
 

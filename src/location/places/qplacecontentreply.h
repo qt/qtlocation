@@ -42,10 +42,10 @@
 
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceContent>
-#include <QtLocation/QPlaceContentRequest>
 
 QT_BEGIN_NAMESPACE
 
+class QPlaceContentRequest;
 class QPlaceContentReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
 {

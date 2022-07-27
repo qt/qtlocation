@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 #include <QtCore/QString>
+#include <QtLocation/QPlace>
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceIcon>
 #include <QtTest/QtTest>

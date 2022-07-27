@@ -40,6 +40,8 @@
 #include "qplacedetailsreply.h"
 #include "qplacereply_p.h"
 
+#include <QtLocation/QPlace>
+
 QT_BEGIN_NAMESPACE
 class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
 {

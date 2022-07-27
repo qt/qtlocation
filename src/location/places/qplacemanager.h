@@ -40,28 +40,29 @@
 #ifndef QPLACEMANAGER_H
 #define QPLACEMANAGER_H
 
-#include <QtLocation/QPlaceContentReply>
-#include <QtLocation/QPlaceContentRequest>
-#include <QtLocation/QPlaceIdReply>
 #include <QtLocation/QPlaceReply>
-#include <QtLocation/QPlaceDetailsReply>
-#include <QtLocation/QPlaceMatchReply>
-#include <QtLocation/QPlaceMatchRequest>
-#include <QtLocation/QPlaceSearchSuggestionReply>
-#include <QtLocation/QPlaceSearchRequest>
-#include <QtLocation/QPlaceSearchResult>
 
-#include <QtCore/QLocale>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QObject>
-#include <QtLocation/QPlaceIcon>
 
 QT_BEGIN_NAMESPACE
 
+class QLocale;
+class QPlace;
+class QPlaceCategory;
+class QPlaceContentReply;
+class QPlaceContentRequest;
+class QPlaceDetailsReply;
+class QPlaceIcon;
+class QPlaceIdReply;
 class QPlaceManagerEngine;
+class QPlaceMatchReply;
+class QPlaceMatchRequest;
 class QPlaceSearchRequest;
 class QPlaceSearchReply;
+class QPlaceSearchResult;
+class QPlaceSearchSuggestionReply;
 
 class Q_LOCATION_EXPORT QPlaceManager : public QObject
 {

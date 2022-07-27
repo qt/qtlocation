@@ -52,16 +52,13 @@
 
 #include <QtLocation/private/qlocationglobal_p.h>
 
-#include <QObject>
-#include <QCache>
-#include "qcache3q_p.h"
-#include <QSet>
-#include <QMutex>
-#include <QTimer>
+#include <QtCore/QSharedPointer>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtGui/QImage>
 
 #include "qgeotilespec_p.h"
 
-#include <QImage>
 
 QT_BEGIN_NAMESPACE
 

@@ -42,6 +42,8 @@
 #include "qgeocoordinate.h"
 #include "qgeoshape.h"
 
+#include <QtLocation/QPlaceCategory>
+
 #include <QtCore/QSharedData>
 #include <QtCore/QList>
 #include <QtCore/QVariant>

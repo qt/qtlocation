@@ -39,6 +39,8 @@
 
 #include "qplacematchreply.h"
 #include "qplacereply_p.h"
+#include "qplace.h"
+#include "qplacematchrequest.h"
 
 
 QT_BEGIN_NAMESPACE

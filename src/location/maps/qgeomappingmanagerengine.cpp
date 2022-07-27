@@ -41,8 +41,8 @@
 #include "qgeomappingmanagerengine_p_p.h"
 #include "qgeotiledmapreply_p.h"
 #include "qgeotilespec_p.h"
-
-#include <QThread>
+#include "qgeocameracapabilities_p.h"
+#include "qgeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
 

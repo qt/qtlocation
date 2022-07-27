@@ -32,10 +32,13 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 #include <QtTest/QSignalSpy>
+#include <QtPositioning/QGeoCoordinate>
 #include <QtPositioning/private/qwebmercator_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/private/qgeotiledmap_p.h>
 #include <QtLocation/private/qgeomappingmanager_p.h>
+#include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 
 QT_USE_NAMESPACE

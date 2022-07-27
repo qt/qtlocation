@@ -29,6 +29,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
+#include <qplaceicon.h>
 #include <qplacesupplier.h>
 
 QT_USE_NAMESPACE

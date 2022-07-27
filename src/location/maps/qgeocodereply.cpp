@@ -40,6 +40,9 @@
 #include "qgeocodereply.h"
 #include "qgeocodereply_p.h"
 
+#include <QtCore/QVariant>
+#include <QtPositioning/QGeoLocation>
+
 QT_BEGIN_NAMESPACE
 /*!
     \class QGeoCodeReply

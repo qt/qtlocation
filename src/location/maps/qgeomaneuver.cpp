@@ -40,6 +40,7 @@
 #include "qgeomaneuver.h"
 #include "qgeomaneuver_p.h"
 
+#include <QtCore/QVariant>
 #include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE

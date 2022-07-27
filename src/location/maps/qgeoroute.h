@@ -40,15 +40,14 @@
 #ifndef QGEOROUTE_H
 #define QGEOROUTE_H
 
-#include <QtPositioning/QGeoCoordinate>
 #include <QtLocation/QGeoRouteRequest>
 
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
-#include <QtCore/QHash>
 
 QT_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoRectangle;
 class QGeoRouteSegment;
 

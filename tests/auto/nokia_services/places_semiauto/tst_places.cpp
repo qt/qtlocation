@@ -33,14 +33,25 @@
 #if QT_CONFIG(process)
 #include <QtCore/QProcessEnvironment>
 #endif
+#include <QtPositioning/QGeoAddress>
 #include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoLocation>
 #include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceAttribute>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceContactDetail>
+#include <QtLocation/QPlaceContentReply>
+#include <QtLocation/QPlaceContentRequest>
 #include <QtLocation/QPlaceEditorial>
+#include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceRatings>
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceReview>
 #include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceSearchRequest>
 #include "../../placemanager_utils/placemanager_utils.h"
 
 QT_USE_NAMESPACE

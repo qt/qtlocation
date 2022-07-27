@@ -40,13 +40,14 @@
 #ifndef QPLACESUPPLIER_H
 #define QPLACESUPPLIER_H
 
+#include <QtLocation/qlocationglobal.h>
 #include <QtCore/QMetaType>
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/QPlaceIcon>
 
 QT_BEGIN_NAMESPACE
 
 class QUrl;
+class QPlaceIcon;
 class QPlaceSupplierPrivate;
 
 class Q_LOCATION_EXPORT QPlaceSupplier

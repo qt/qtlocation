@@ -54,11 +54,13 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtPositioning/private/qdoublematrix4x4_p.h>
-#include <QtPositioning/QGeoShape>
 #include <QMatrix4x4>
 #include <QTransform>
 
 QT_BEGIN_NAMESPACE
+
+class QGeoShape;
+class QGeoRectangle;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoProjection
 {

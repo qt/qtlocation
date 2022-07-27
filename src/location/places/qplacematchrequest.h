@@ -40,11 +40,13 @@
 #ifndef QPLACEMATCHREQUEST_H
 #define QPLACEMATCHREQUEST_H
 
+#include <QtLocation/qlocationglobal.h>
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/QPlaceSearchResult>
 
 QT_BEGIN_NAMESPACE
 
+class QPlace;
+class QPlaceSearchResult;
 class QPlaceMatchRequestPrivate;
 
 class Q_LOCATION_EXPORT QPlaceMatchRequest

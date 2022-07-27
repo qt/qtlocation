@@ -47,6 +47,7 @@
 #include "qgeomap_p.h"
 #include "qdeclarativegeomapparameter_p.h"
 #include "qgeomapobject_p.h"
+#include "qgeoprojection_p.h"
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/QGeoPath>

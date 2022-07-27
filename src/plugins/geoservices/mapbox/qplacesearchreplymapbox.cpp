@@ -47,6 +47,9 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceContactDetail>

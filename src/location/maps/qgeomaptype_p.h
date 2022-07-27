@@ -54,11 +54,11 @@
 #include <QtCore/QString>
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 
+class QGeoCameraCapabilities;
 class QGeoMapTypePrivate;
 QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoMapTypePrivate, Q_LOCATION_PRIVATE_EXPORT)
 

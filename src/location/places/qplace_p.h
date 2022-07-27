@@ -53,12 +53,17 @@
 
 #include <QSharedData>
 #include <QUrl>
+#include <QtPositioning/qgeoaddress.h>
+#include <QtPositioning/qgeocoordinate.h>
+#include <QtPositioning/qgeolocation.h>
+#include <QtPositioning/qgeorectangle.h>
 
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/qplace.h>
-#include <QtPositioning/qgeoaddress.h>
-#include <QtPositioning/qgeorectangle.h>
-#include <QtPositioning/qgeocoordinate.h>
+#include <QtLocation/qplaceattribute.h>
+#include <QtLocation/qplacecategory.h>
+#include <QtLocation/qplacecontactdetail.h>
+#include <QtLocation/qplaceratings.h>
 #include <QtLocation/qplacesupplier.h>
 #include <QtLocation/QPlaceIcon>
 

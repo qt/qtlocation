@@ -30,8 +30,14 @@
 
 #include <QtCore/QDebug>
 #include <QtLocation/QPlace>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceContentReply>
+#include <QtLocation/QPlaceDetailsReply>
+#include <QtLocation/QPlaceIdReply>
 #include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceMatchReply>
 #include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceSearchSuggestionReply>
 #include <QtLocation/QPlaceResult>
 #include <QtTest/QSignalSpy>
 #include <QtTest/QTest>

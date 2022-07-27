@@ -40,13 +40,14 @@
 #ifndef QGEOCODINGMANAGERENGINE_H
 #define QGEOCODINGMANAGERENGINE_H
 
-#include <QtCore/QObject>
 #include <QtLocation/qlocationglobal.h>
+#include <QtCore/QObject>
 #include <QtLocation/QGeoCodeReply>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoAddress;
+class QGeoCoordinate;
 class QGeoShape;
 class QGeoCodingManagerEnginePrivate;
 

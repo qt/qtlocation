@@ -54,7 +54,6 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QObject>
 #include <QLocale>
-#include <QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 

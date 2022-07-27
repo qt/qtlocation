@@ -40,6 +40,8 @@
 #include "qplace.h"
 #include "qplace_p.h"
 
+#include <QtPositioning/QGeoLocation>
+
 #ifdef QPLACE_DEBUG
 #include <QDebug>
 #endif

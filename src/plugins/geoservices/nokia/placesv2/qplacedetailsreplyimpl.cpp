@@ -47,10 +47,19 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
 #include <QtNetwork/QNetworkReply>
+#include <QtPositioning/QGeoAddress>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoLocation>
+#include <QtPositioning/QGeoRectangle>
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceAttribute>
+#include <QtLocation/QPlaceContactDetail>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceSupplier>
+#include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceEditorial>
+#include <QtLocation/QPlaceRatings>
 #include <QtLocation/QPlaceReview>
 #include <QtLocation/QPlaceUser>
 

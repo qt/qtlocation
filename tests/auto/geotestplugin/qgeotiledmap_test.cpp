@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 #include "qgeotiledmap_test.h"
+#include <QtPositioning/QGeoCoordinate>
 #include <QtLocation/private/qgeotiledmap_p_p.h>
 #include <QtLocation/private/qgeomapparameter_p.h>
 

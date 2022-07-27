@@ -31,8 +31,10 @@
 #include <QtLocation/private/qgeotilespec_p.h>
 #include <QtLocation/private/qgeocameratiles_p.h>
 #include <QtLocation/private/qgeocameradata_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
 
+#include <QtPositioning/QGeoCoordinate>
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtTest/QtTest>

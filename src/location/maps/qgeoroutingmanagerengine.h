@@ -41,13 +41,13 @@
 #define QGEOROUTINGMANAGERENGINE_H
 
 #include <QtCore/QObject>
-#include <QtCore/QMap>
 #include <QtCore/QLocale>
 #include <QtLocation/QGeoRouteRequest>
 #include <QtLocation/QGeoRouteReply>
 
 QT_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoRoutingManagerEnginePrivate;
 
 class Q_LOCATION_EXPORT QGeoRoutingManagerEngine : public QObject

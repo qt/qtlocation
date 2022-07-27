@@ -39,8 +39,10 @@
 
 #include "jsonparserhelpers.h"
 #include "qplacecontentreplyimpl.h"
+#include "qplacecontentrequest.h"
 #include "../qplacemanagerengine_nokiav2.h"
 #include "../qgeoerror_messages.h"
+
 
 #include <QCoreApplication>
 #include <QtCore/QJsonDocument>

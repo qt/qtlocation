@@ -51,14 +51,13 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtPositioning/qgeocoordinate.h>
 
-#include <QMetaType>
-
-#include <QSharedDataPointer>
+#include <QtCore/QSharedDataPointer>
+#include <QtCore/QMetaType>
 
 QT_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoCameraDataPrivate;
 QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoCameraDataPrivate, Q_LOCATION_PRIVATE_EXPORT)
 

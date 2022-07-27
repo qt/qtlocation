@@ -45,7 +45,7 @@
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtQuick/private/qquickmousearea_p.h>
 #include <QtLocation/private/qgeomap_p.h>
-
+#include <QtLocation/private/qgeoprojection_p.h>
 #include <QDebug>
 #include <cmath>
 
