@@ -74,7 +74,7 @@ public:
     virtual void setValid(bool valid);
 
     virtual QString id() const;
-    virtual void setId(const QString id);
+    virtual void setId(const QString &id);
 
     virtual QGeoCoordinate position() const;
     virtual void setPosition(const QGeoCoordinate &position);
@@ -113,7 +113,7 @@ public:
     virtual void setValid(bool valid) override;
 
     virtual QString id() const override;
-    virtual void setId(const QString id) override;
+    virtual void setId(const QString &id) override;
 
     virtual QGeoCoordinate position() const override;
     virtual void setPosition(const QGeoCoordinate &position) override;

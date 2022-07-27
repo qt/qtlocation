@@ -82,13 +82,13 @@ public:
 
     void updateTile(const QGeoTileSpec &spec);
     void prefetchTiles();
-    QGeoMapType activeMapType();
+    QGeoMapType activeMapType() const;
     void onCameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
 
 protected:
     void changeViewportSize(const QSize& size) override;
     void changeCameraData(const QGeoCameraData &cameraData) override;
-    void changeActiveMapType(const QGeoMapType mapType) override;
+    void changeActiveMapType(const QGeoMapType &mapType) override;
     void changeTileVersion(int version);
     void clearScene();
 

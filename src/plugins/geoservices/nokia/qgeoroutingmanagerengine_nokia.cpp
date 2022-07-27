@@ -214,7 +214,7 @@ bool QGeoRoutingManagerEngineNokia::checkEngineSupport(const QGeoRouteRequest &r
     return true;
 }
 
-QStringList QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRouteRequest &request)
+QStringList QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRouteRequest &request) const
 {
     bool supported = checkEngineSupport(request, request.travelModes());
 

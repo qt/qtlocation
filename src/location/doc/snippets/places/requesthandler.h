@@ -494,7 +494,8 @@ public slots:
     //! [Match places handler]
     void matchHandler() {
         if (matchReply->error() == QPlaceReply::NoError) {
-            for (const QPlace place : matchReply->places()) {
+            const auto places = matchReply->places();
+            for (const QPlace &place : places) {
                 if (place != QPlace())
                     qDebug() << "Place is a favorite with name" << place.name();
                 else

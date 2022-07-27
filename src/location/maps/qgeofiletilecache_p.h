@@ -110,7 +110,7 @@ public:
     int minTextureUsage() const override;
     int textureUsage() const override;
     void clearAll() override;
-    void clearMapId(const int mapId);
+    void clearMapId(int mapId);
     void setCostStrategyDisk(CostStrategy costStrategy) override;
     CostStrategy costStrategyDisk() const override;
     void setCostStrategyMemory(CostStrategy costStrategy) override;

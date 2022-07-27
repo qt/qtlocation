@@ -70,7 +70,7 @@ QMapPolylineObjectPrivateQSG::~QMapPolylineObjectPrivateQSG()
         m_map->removeMapObject(q);
 }
 
-QList<QDoubleVector2D> QMapPolylineObjectPrivateQSG::projectPath()
+QList<QDoubleVector2D> QMapPolylineObjectPrivateQSG::projectPath() const
 {
     QList<QDoubleVector2D> geopathProjected_;
     if (!m_map || m_map->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)

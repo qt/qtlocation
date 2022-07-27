@@ -275,7 +275,7 @@ QGeoServiceProvider::~QGeoServiceProvider()
  * Ideally, the enumName would be a template parameter, but strings
  * are not a valid const expr. :( */
 template <class Flags>
-Flags QGeoServiceProviderPrivate::features(const char *enumName)
+Flags QGeoServiceProviderPrivate::features(const char *enumName) const
 {
     const QMetaObject *mo = &QGeoServiceProvider::staticMetaObject;
     const QMetaEnum en = mo->enumerator(

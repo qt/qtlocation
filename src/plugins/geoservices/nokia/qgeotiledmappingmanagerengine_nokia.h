@@ -69,12 +69,12 @@ public:
     ~QGeoTiledMappingManagerEngineNokia();
 
     QGeoMap *createMap() override;
-    QString evaluateCopyrightsText(const QGeoMapType mapType,
-                                   const qreal zoomLevel,
+    QString evaluateCopyrightsText(const QGeoMapType &mapType,
+                                   qreal zoomLevel,
                                    const QSet<QGeoTileSpec> &tiles);
-    QString getScheme(int mapId);
-    QString getBaseScheme(int mapId);
-    int mapVersion();
+    QString getScheme(int mapId) const;
+    QString getBaseScheme(int mapId) const;
+    int mapVersion() const;
 
 public Q_SLOTS:
     void loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData);

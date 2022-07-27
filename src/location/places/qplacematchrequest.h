@@ -71,7 +71,7 @@ public:
     { return !lhs.isEqual(rhs); }
 
     QList<QPlace> places() const;
-    void setPlaces(const QList<QPlace> places);
+    void setPlaces(const QList<QPlace> &places);
 
     void setResults(const QList<QPlaceSearchResult> &results);
 

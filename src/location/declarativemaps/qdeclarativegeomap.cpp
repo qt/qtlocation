@@ -311,7 +311,7 @@ void QDeclarativeGeoMap::onSupportedMapTypesChanged()
         m_map->setActiveMapType(QGeoMapType()); // no supported map types: setting an invalid one
     } else {
         bool hasMapType = false;
-        for (auto *declarativeType : m_supportedMapTypes) {
+        for (const auto *declarativeType : qAsConst(m_supportedMapTypes)) {
             if (declarativeType->mapType() == m_map->activeMapType())
                 hasMapType = true;
         }
@@ -383,7 +383,7 @@ void QDeclarativeGeoMap::initialize()
                                       // So, emit visibleRegionChanged() separately, as
                                       // the effective visible region becomes available only now.
 
-    for (auto obj : qAsConst(m_pendingMapObjects))
+    for (const auto &obj : qAsConst(m_pendingMapObjects))
         obj->setMap(m_map);
 
     m_initialized = true;
@@ -951,7 +951,7 @@ bool QDeclarativeGeoMap::removeMapChild(QObject *child)
     return false;
 }
 
-bool QDeclarativeGeoMap::isGroupNested(QDeclarativeGeoMapItemGroup *group)
+bool QDeclarativeGeoMap::isGroupNested(QDeclarativeGeoMapItemGroup *group) const
 {
     QObject *parent = group->parent();
     // Nested groups have parent set in parent's componentComplete()
@@ -1739,7 +1739,7 @@ void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData &val
     QQuickItem::itemChange(change, value);
 }
 
-bool QDeclarativeGeoMap::isInteractive()
+bool QDeclarativeGeoMap::isInteractive() const
 {
     return (m_gestureArea->enabled() && m_gestureArea->acceptedGestures()) || m_gestureArea->isActive();
 }

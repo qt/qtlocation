@@ -114,7 +114,7 @@ public:
         CustomMap = 100
     };
 
-    QDeclarativeGeoMapType(const QGeoMapType mapType, QObject *parent = 0);
+    QDeclarativeGeoMapType(const QGeoMapType &mapType, QObject *parent = 0);
     ~QDeclarativeGeoMapType();
 
     MapStyle style() const;
@@ -125,7 +125,7 @@ public:
     QDeclarativeGeoCameraCapabilities *cameraCapabilities() const;
     QVariantMap metadata() const;
 
-    const QGeoMapType mapType() { return mapType_; }
+    QGeoMapType mapType() const { return mapType_; }
 
 private:
     QGeoMapType mapType_;

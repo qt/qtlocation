@@ -387,11 +387,11 @@ private:
         flickActive
     } m_flickState;
 
-    inline void setTouchPointState(const TouchPointState state);
-    inline void setFlickState(const FlickState state);
-    inline void setTiltState(const TiltState state);
-    inline void setRotationState(const RotationState state);
-    inline void setPinchState(const PinchState state);
+    inline void setTouchPointState(TouchPointState state);
+    inline void setFlickState(FlickState state);
+    inline void setTiltState(TiltState state);
+    inline void setRotationState(RotationState state);
+    inline void setPinchState(PinchState state);
 };
 
 QT_END_NAMESPACE

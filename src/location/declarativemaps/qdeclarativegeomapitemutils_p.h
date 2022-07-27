@@ -90,18 +90,18 @@ public:
     };
 
     static void wrapPath(const QList<QGeoCoordinate> &perimeter
-                         ,const QGeoCoordinate &geoLeftBound
-                         ,const QGeoProjectionWebMercator &p
-                         ,QList<QDoubleVector2D> &wrappedPath
-                         ,QList<QDoubleVector2D> &wrappedPathMinus1
-                         ,QList<QDoubleVector2D> &wrappedPathPlus1
-                         ,QDoubleVector2D *leftBoundWrapped = nullptr);
+                         , const QGeoCoordinate &geoLeftBound
+                         , const QGeoProjectionWebMercator &p
+                         , QList<QDoubleVector2D> &wrappedPath
+                         , QList<QDoubleVector2D> &wrappedPathMinus1
+                         , QList<QDoubleVector2D> &wrappedPathPlus1
+                         , QDoubleVector2D *leftBoundWrapped = nullptr);
 
     static void wrapPath(const QList<QGeoCoordinate> &perimeter
-                         ,const QGeoCoordinate &geoLeftBound
-                         ,const QGeoProjectionWebMercator &p
-                         ,QList<QDoubleVector2D> &wrappedPath
-                         ,QDoubleVector2D *leftBoundWrapped = nullptr);
+                         , const QGeoCoordinate &geoLeftBound
+                         , const QGeoProjectionWebMercator &p
+                         , QList<QDoubleVector2D> &wrappedPath
+                         , QDoubleVector2D *leftBoundWrapped = nullptr);
 
     static void wrapPath(const QList<QDoubleVector2D> &path
                          , const QDoubleVector2D &geoLeftBound
@@ -109,14 +109,14 @@ public:
 
 
     static void clipPolygon(const QList<QDoubleVector2D> &wrappedPath
-                            ,const QGeoProjectionWebMercator &p
-                            ,QList<QList<QDoubleVector2D> > &clippedPaths
-                            ,QDoubleVector2D *leftBoundWrapped = nullptr
-            ,const bool closed = true);
+                            , const QGeoProjectionWebMercator &p
+                            , QList<QList<QDoubleVector2D> > &clippedPaths
+                            , QDoubleVector2D *leftBoundWrapped = nullptr
+                            , bool closed = true);
 
     static void projectBbox(const QList<QDoubleVector2D> &clippedBbox
-                            ,const QGeoProjectionWebMercator &p
-                            ,QPainterPath &projectedBbox);
+                            , const QGeoProjectionWebMercator &p
+                            , QPainterPath &projectedBbox);
 
 };
 

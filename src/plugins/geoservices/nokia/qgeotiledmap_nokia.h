@@ -61,7 +61,7 @@ public:
     QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent = 0);
     ~QGeoTiledMapNokia();
 
-    QString getViewCopyright();
+    QString getViewCopyright() const;
     void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles) override;
 
 private:

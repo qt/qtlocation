@@ -863,7 +863,7 @@ void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternative
     \sa waypointObjects, addWaypoint, removeWaypoint, clearWaypoints
 */
 
-QVariantList QDeclarativeGeoRouteQuery::waypoints()
+QVariantList QDeclarativeGeoRouteQuery::waypoints() const
 {
     QVariantList res;
 
@@ -881,7 +881,7 @@ QVariantList QDeclarativeGeoRouteQuery::waypoints()
 
     \sa waypointObjects, addWaypoint, removeWaypoint, clearWaypoints
 */
-QVariantList QDeclarativeGeoRouteQuery::waypointObjects()
+QVariantList QDeclarativeGeoRouteQuery::waypointObjects() const
 {
     QVariantList res;
 

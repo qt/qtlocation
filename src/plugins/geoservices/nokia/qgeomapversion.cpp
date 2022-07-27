@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 QGeoMapVersion::QGeoMapVersion()
     : m_version(-1) {}
 
-bool QGeoMapVersion::isNewVersion(const QJsonObject &newVersionData)
+bool QGeoMapVersion::isNewVersion(const QJsonObject &newVersionData) const
 {
     return m_versionData != newVersionData;
 }

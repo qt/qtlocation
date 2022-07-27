@@ -335,7 +335,7 @@ void QGeoFileTileCache::clearMapId(const int mapId)
     QDir dir(directory_);
     QStringList formats;
     formats << QLatin1String("*.*");
-    QStringList files = dir.entryList(formats, QDir::Files);
+    const QStringList files = dir.entryList(formats, QDir::Files);
     qWarning() << "Old tile data detected. Cache eviction left out "<< files.size() << "tiles";
     for (const QString &tileFileName : files) {
         QGeoTileSpec spec = filenameToTileSpec(tileFileName);

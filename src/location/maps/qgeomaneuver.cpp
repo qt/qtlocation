@@ -370,7 +370,7 @@ QString QGeoManeuverPrivate::id() const
     return QString();
 }
 
-void QGeoManeuverPrivate::setId(const QString id)
+void QGeoManeuverPrivate::setId(const QString &id)
 {
     Q_UNUSED(id);
 }
@@ -488,7 +488,7 @@ QString QGeoManeuverPrivateDefault::id() const
     return m_id;
 }
 
-void QGeoManeuverPrivateDefault::setId(const QString id)
+void QGeoManeuverPrivateDefault::setId(const QString &id)
 {
     m_id = id;
 }

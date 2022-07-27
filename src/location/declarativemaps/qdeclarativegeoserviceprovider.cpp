@@ -202,7 +202,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
         QStringList providers = QGeoServiceProvider::availableServiceProviders();
 
         /* first check any preferred plugins */
-        for (const QString &name : prefer_) {
+        for (const QString &name : qAsConst(prefer_)) {
             if (providers.contains(name)) {
                 // so we don't try it again later
                 providers.removeAll(name);

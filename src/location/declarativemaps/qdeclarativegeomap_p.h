@@ -263,7 +263,7 @@ protected:
     void setZoomLevel(qreal zoomLevel, bool overzoom);
     bool addMapChild(QObject *child);
     bool removeMapChild(QObject *child);
-    bool isGroupNested(QDeclarativeGeoMapItemGroup *group);
+    bool isGroupNested(QDeclarativeGeoMapItemGroup *group) const;
 
     bool addMapItem_real(QDeclarativeGeoMapItemBase *item);
     bool removeMapItem_real(QDeclarativeGeoMapItemBase *item);
@@ -287,7 +287,7 @@ private:
     void populateMap();
     void populateParameters();
     void fitViewportToMapItemsRefine(const QList<QPointer<QDeclarativeGeoMapItemBase> > &mapItems, bool refine, bool onlyVisible);
-    bool isInteractive();
+    bool isInteractive() const;
     void attachCopyrightNotice(bool initialVisibility);
     void detachCopyrightNotice(bool currentVisibility);
     QMargins mapMargins() const;

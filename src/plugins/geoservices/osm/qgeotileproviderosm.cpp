@@ -143,7 +143,7 @@ bool QGeoTileProviderOsm::isHighDpi() const
     return m_provider->isHighDpi();
 }
 
-const QDateTime QGeoTileProviderOsm::timestamp() const
+QDateTime QGeoTileProviderOsm::timestamp() const
 {
     if (!m_provider)
         return QDateTime();

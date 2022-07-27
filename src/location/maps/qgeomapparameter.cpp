@@ -101,7 +101,7 @@ QVariantMap QGeoMapParameter::toVariantMap() const
     return res;
 }
 
-bool QGeoMapParameter::hasProperty(const char *propertyName)
+bool QGeoMapParameter::hasProperty(const char *propertyName) const
 {
     return metaObject()->indexOfProperty(propertyName) != -1
             || dynamicPropertyNames().indexOf(QByteArray(propertyName)) != -1;
