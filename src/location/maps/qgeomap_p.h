@@ -117,8 +117,8 @@ public:
     QGeoCameraCapabilities cameraCapabilities() const;
     virtual Capabilities capabilities() const;
 
-    void setActiveMapType(const QGeoMapType mapType);
-    const QGeoMapType activeMapType() const;
+    void setActiveMapType(const QGeoMapType &mapType);
+    QGeoMapType activeMapType() const;
 
     // returns the minimum zoom at the current viewport size
     double minimumZoom() const;

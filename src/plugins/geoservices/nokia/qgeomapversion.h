@@ -50,7 +50,7 @@ class QGeoMapVersion
 
 public:
     QGeoMapVersion();
-    bool isNewVersion(const QJsonObject &newVersionData);
+    bool isNewVersion(const QJsonObject &newVersionData) const;
     int version() const;
     void setVersion(const int);
     void setVersionData(const QJsonObject &versionData);

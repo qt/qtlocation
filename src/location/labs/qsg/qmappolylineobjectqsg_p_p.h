@@ -68,7 +68,7 @@ public:
     QMapPolylineObjectPrivateQSG(const QMapPolylineObjectPrivate &other);
     ~QMapPolylineObjectPrivateQSG() override;
 
-    QList<QDoubleVector2D> projectPath();
+    QList<QDoubleVector2D> projectPath() const;
 
     // QQSGMapObject
     void markSourceDirty();

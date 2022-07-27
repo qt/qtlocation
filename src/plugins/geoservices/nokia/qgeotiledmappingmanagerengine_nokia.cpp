@@ -239,19 +239,19 @@ void QGeoTiledMappingManagerEngineNokia::populateMapSchemes()
     m_mapSchemes[21] = QStringLiteral("carnav.day.grey");
 }
 
-QString QGeoTiledMappingManagerEngineNokia::getScheme(int mapId)
+QString QGeoTiledMappingManagerEngineNokia::getScheme(int mapId) const
 {
     return m_mapSchemes[mapId];
 }
 
-QString QGeoTiledMappingManagerEngineNokia::getBaseScheme(int mapId)
+QString QGeoTiledMappingManagerEngineNokia::getBaseScheme(int mapId) const
 {
-    QString fullScheme(m_mapSchemes[mapId]);
+    const QString fullScheme(m_mapSchemes[mapId]);
 
     return fullScheme.section(QLatin1Char('.'), 0, 0);
 }
 
-int QGeoTiledMappingManagerEngineNokia::mapVersion()
+int QGeoTiledMappingManagerEngineNokia::mapVersion() const
 {
     return m_mapVersion.version();
 }
@@ -367,8 +367,8 @@ void QGeoTiledMappingManagerEngineNokia::loadMapVersion()
     setTileVersion(m_mapVersion.version());
 }
 
-QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType mapType,
-                                                                   const qreal zoomLevel,
+QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMapType &mapType,
+                                                                   qreal zoomLevel,
                                                                    const QSet<QGeoTileSpec> &tiles)
 {
     static const QChar copyrightSymbol(0x00a9);

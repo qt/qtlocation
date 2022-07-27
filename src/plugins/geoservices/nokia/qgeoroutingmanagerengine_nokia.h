@@ -68,7 +68,7 @@ private Q_SLOTS:
     void routeError(QGeoRouteReply::Error error, const QString &errorString);
 
 private:
-    QStringList calculateRouteRequestString(const QGeoRouteRequest &request);
+    QStringList calculateRouteRequestString(const QGeoRouteRequest &request) const;
     QStringList updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
     QString routeRequestString(const QGeoRouteRequest &request) const;
     bool checkEngineSupport(const QGeoRouteRequest &request,

@@ -193,7 +193,7 @@ QList<QPlace> QPlaceMatchRequest::places() const
 
     \sa setResults()
 */
-void QPlaceMatchRequest::setPlaces(const QList<QPlace> places)
+void QPlaceMatchRequest::setPlaces(const QList<QPlace> &places)
 {
     Q_D(QPlaceMatchRequest);
     d->places = places;

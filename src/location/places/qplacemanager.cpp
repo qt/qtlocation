@@ -389,7 +389,7 @@ void QPlaceManager::setLocales(const QList<QLocale> &locales)
     present in the modified version.  Manager specific data such
     as the place id, is not copied over from the \a original.
 */
-QPlace QPlaceManager::compatiblePlace(const QPlace &original)
+QPlace QPlaceManager::compatiblePlace(const QPlace &original) const
 {
     return d->compatiblePlace(original);
 }

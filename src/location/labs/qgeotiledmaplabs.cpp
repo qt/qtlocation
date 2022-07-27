@@ -70,7 +70,7 @@ public:
 protected:
     void changeViewportSize(const QSize &size) override;
     void changeCameraData(const QGeoCameraData &oldCameraData) override;
-    void changeActiveMapType(const QGeoMapType mapType) override;
+    void changeActiveMapType(const QGeoMapType &mapType) override;
 
     QGeoMapObjectQSGSupport m_qsgSupport;
 };
@@ -151,7 +151,7 @@ void QGeoTiledMapLabsPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
     QGeoTiledMapPrivate::changeCameraData(oldCameraData);
 }
 
-void QGeoTiledMapLabsPrivate::changeActiveMapType(const QGeoMapType mapType)
+void QGeoTiledMapLabsPrivate::changeActiveMapType(const QGeoMapType &mapType)
 {
     updateObjectsGeometry();
     QGeoTiledMapPrivate::changeActiveMapType(mapType);

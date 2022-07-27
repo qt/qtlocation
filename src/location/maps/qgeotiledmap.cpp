@@ -277,7 +277,7 @@ void QGeoTiledMapPrivate::prefetchTiles()
     }
 }
 
-QGeoMapType QGeoTiledMapPrivate::activeMapType()
+QGeoMapType QGeoTiledMapPrivate::activeMapType() const
 {
     return m_visibleTiles->activeMapType();
 }
@@ -382,7 +382,7 @@ QRectF QGeoTiledMapPrivate::visibleArea() const
     return m_visibleArea;
 }
 
-void QGeoTiledMapPrivate::changeActiveMapType(const QGeoMapType mapType)
+void QGeoTiledMapPrivate::changeActiveMapType(const QGeoMapType &mapType)
 {
     m_visibleTiles->setTileSize(m_cameraCapabilities.tileSize());
     m_prefetchTiles->setTileSize(m_cameraCapabilities.tileSize());

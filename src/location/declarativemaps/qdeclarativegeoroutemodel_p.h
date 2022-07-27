@@ -375,8 +375,8 @@ public:
     QList<int> featureTypes();
 
 
-    QVariantList waypoints();
-    Q_INVOKABLE QVariantList waypointObjects();
+    QVariantList waypoints() const;
+    Q_INVOKABLE QVariantList waypointObjects() const;
     void setWaypoints(const QVariantList &value);
 
     // READ functions for list properties

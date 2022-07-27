@@ -86,7 +86,7 @@ public:
     Manager *manager(QGeoServiceProvider::Error *error,
                      QString *errorString, Manager **manager);
     template <class Flags>
-    Flags features(const char *enumName);
+    Flags features(const char *enumName) const;
 
     QGeoServiceProviderFactory *factory;
     QGeoServiceProviderFactoryV2 *factoryV2 = nullptr;

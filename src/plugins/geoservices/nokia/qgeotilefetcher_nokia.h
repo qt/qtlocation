@@ -77,7 +77,7 @@ public Q_SLOTS:
 private:
     Q_DISABLE_COPY(QGeoTileFetcherNokia)
 
-    QString getRequestString(const QGeoTileSpec &spec, int ppi=72);
+    QString getRequestString(const QGeoTileSpec &spec, int ppi=72) const;
 
     QString getLanguageString() const;
 

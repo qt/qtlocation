@@ -167,7 +167,7 @@ void QGeoMapObject::setChildrenVisibility()
 {
     const bool v = visible();
     const QList<QGeoMapObject *> kids = geoMapObjectChildren();
-    for (auto kid : qAsConst(kids))
+    for (auto kid : kids)
         kid->setParentVisiblity(v);
 }
 

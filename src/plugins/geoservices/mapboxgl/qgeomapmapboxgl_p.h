@@ -99,7 +99,7 @@ public:
 protected:
     void changeViewportSize(const QSize &size) override;
     void changeCameraData(const QGeoCameraData &oldCameraData) override;
-    void changeActiveMapType(const QGeoMapType mapType) override;
+    void changeActiveMapType(const QGeoMapType &mapType) override;
 
     void setVisibleArea(const QRectF &visibleArea) override;
     QRectF visibleArea() const override;

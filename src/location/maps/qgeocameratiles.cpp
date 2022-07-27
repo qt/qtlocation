@@ -506,22 +506,20 @@ QGeoCameraTilesPrivate::ClippedFootprint QGeoCameraTilesPrivate::clipFootprintTo
 
     PolygonVector results = footprint;
 
-    if (clipY0) {
+    if (clipY0)
         results = splitPolygonAtAxisValue(results, 1, 0.0).second;
-    }
 
-    if (clipY1) {
+    if (clipY1)
         results = splitPolygonAtAxisValue(results, 1, side).first;
-    }
 
-    for (const QDoubleVector3D &p: results) {
+    for (const QDoubleVector3D &p : qAsConst(results)) {
         if ((p.x() < 0.0) || (qFuzzyIsNull(p.x())))
             clipX0 = true;
         if ((p.x() > side) || (qFuzzyCompare(side, p.x())))
             clipX1 = true;
     }
 
-    for (const QDoubleVector3D &v : results) {
+    for (const QDoubleVector3D &v : qAsConst(results)) {
         minX = qMin(v.x(), minX);
         maxX = qMax(v.x(), maxX);
     }

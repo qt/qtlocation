@@ -144,7 +144,7 @@ public:
     bool buildGeometry(const QGeoTileSpec &spec, QSGImageNode *imageNode, bool &overzooming);
     void updateTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
-    inline bool isTiltedOrRotated() { return (m_cameraData.tilt() > 0.0) || (m_cameraData.bearing() > 0.0); }
+    inline bool isTiltedOrRotated() const { return (m_cameraData.tilt() > 0.0) || (m_cameraData.bearing() > 0.0); }
 
 public:
 

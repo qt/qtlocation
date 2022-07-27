@@ -157,7 +157,7 @@ const QGeoCameraData &QGeoMap::cameraData() const
     return d->m_cameraData;
 }
 
-void QGeoMap::setActiveMapType(const QGeoMapType type)
+void QGeoMap::setActiveMapType(const QGeoMapType &type)
 {
     Q_D(QGeoMap);
     if (type == d->m_activeMapType)
@@ -168,7 +168,7 @@ void QGeoMap::setActiveMapType(const QGeoMapType type)
     emit activeMapTypeChanged();
 }
 
-const QGeoMapType QGeoMap::activeMapType() const
+QGeoMapType QGeoMap::activeMapType() const
 {
     Q_D(const QGeoMap);
     return d->m_activeMapType;

@@ -160,7 +160,7 @@ public:
     const QGeoMapType &mapType() const;
     bool isValid() const;
     bool isResolved() const;
-    const QDateTime timestamp() const;
+    QDateTime timestamp() const;
     QGeoCameraCapabilities cameraCapabilities() const;
 
 Q_SIGNALS:

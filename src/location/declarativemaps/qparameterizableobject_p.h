@@ -72,7 +72,7 @@ public:
     QList<T*> quickChildren() const
     {
         QList<T*> res;
-        for (auto kid : qAsConst(m_children)) {
+        for (auto kid : m_children) {
             auto val = qobject_cast<T*>(kid);
             if (val)
                 res.push_back(val);

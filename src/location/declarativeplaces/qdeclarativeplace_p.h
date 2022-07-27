@@ -134,7 +134,7 @@ public:
     QDeclarativePlaceImageModel *imageModel();
     QDeclarativePlaceEditorialModel *editorialModel();
 
-    QPlace place();
+    QPlace place() const;
     void setPlace(const QPlace &src);
 
     QQmlListProperty<QDeclarativeCategory> categories();
@@ -144,9 +144,9 @@ public:
     static QDeclarativeCategory *category_at(QQmlListProperty<QDeclarativeCategory> *prop, qsizetype index);
     static void category_clear(QQmlListProperty<QDeclarativeCategory> *prop);
 
-    QDeclarativeGeoLocation *location();
+    QDeclarativeGeoLocation *location() const;
     void setLocation(QDeclarativeGeoLocation *location);
-    QDeclarativeRatings *ratings();
+    QDeclarativeRatings *ratings() const;
     void setRatings(QDeclarativeRatings *ratings);
     QDeclarativeSupplier *supplier() const;
     void setSupplier(QDeclarativeSupplier *supplier);

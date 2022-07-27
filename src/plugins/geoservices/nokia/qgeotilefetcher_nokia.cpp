@@ -125,7 +125,7 @@ QGeoTiledMapReply *QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
     return mapReply;
 }
 
-QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec, int ppi)
+QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec, int ppi) const
 {
     if (!m_engineNokia)
         return QString();

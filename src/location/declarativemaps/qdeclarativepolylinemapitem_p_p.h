@@ -178,7 +178,7 @@ public:
         m_wrapOffset = wrapOffset;
     }
 
-    void setLineWidth(const float lw)
+    void setLineWidth(float lw)
     {
         m_lineWidth = lw;
     }
@@ -415,7 +415,7 @@ public:
     }
     QSGMaterialShader *createShader(QSGRendererInterface::RenderMode renderMode) const override;
 
-    void setMiter(const int m)
+    void setMiter(int m)
     {
         m_miter = m;
     }
@@ -462,10 +462,10 @@ public:
     ~MapPolylineNodeOpenGLExtruded() override;
 
     void update(const QColor &fillColor,
-                const float lineWidth,
+                float lineWidth,
                 const QGeoMapPolylineGeometryOpenGL *shape,
-                const QMatrix4x4 geoProjection,
-                const QDoubleVector3D center,
+                const QMatrix4x4 &geoProjection,
+                const QDoubleVector3D &center,
                 const Qt::PenCapStyle capStyle = Qt::FlatCap,
                 bool closed = false,
                 unsigned int zoom = 30);

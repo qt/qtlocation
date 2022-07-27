@@ -1700,10 +1700,10 @@ void QGeoMapPolylineGeometryOpenGL::allocateAndFillLineStrip(QSGGeometry *geom,
 }
 
 void MapPolylineNodeOpenGLExtruded::update(const QColor &fillColor,
-                                   const float lineWidth,
+                                   float lineWidth,
                                    const QGeoMapPolylineGeometryOpenGL *shape,
-                                   const QMatrix4x4 geoProjection,
-                                   const QDoubleVector3D center,
+                                   const QMatrix4x4 &geoProjection,
+                                   const QDoubleVector3D &center,
                                    const Qt::PenCapStyle capStyle,
                                    bool closed,
                                    unsigned int zoom)

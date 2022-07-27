@@ -392,7 +392,7 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     synchronizeContacts();
 }
 
-QPlace QDeclarativePlace::place()
+QPlace QDeclarativePlace::place() const
 {
     // The following properties are not stored in m_src but instead stored in QDeclarative* objects
 
@@ -457,7 +457,7 @@ void QDeclarativePlace::setLocation(QDeclarativeGeoLocation *location)
     emit locationChanged();
 }
 
-QDeclarativeGeoLocation *QDeclarativePlace::location()
+QDeclarativeGeoLocation *QDeclarativePlace::location() const
 {
     return m_location;
 }
@@ -480,7 +480,7 @@ void QDeclarativePlace::setRatings(QDeclarativeRatings *rating)
     emit ratingsChanged();
 }
 
-QDeclarativeRatings *QDeclarativePlace::ratings()
+QDeclarativeRatings *QDeclarativePlace::ratings() const
 {
 
     return m_ratings;

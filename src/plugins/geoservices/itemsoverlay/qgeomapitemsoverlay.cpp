@@ -81,7 +81,7 @@ public:
 protected:
     void changeViewportSize(const QSize &size) override;
     void changeCameraData(const QGeoCameraData &oldCameraData) override;
-    void changeActiveMapType(const QGeoMapType mapType) override;
+    void changeActiveMapType(const QGeoMapType &mapType) override;
 
     QRectF m_visibleArea;
 };
@@ -253,7 +253,7 @@ void QGeoMapItemsOverlayPrivate::changeCameraData(const QGeoCameraData &/*oldCam
     updateObjectsGeometry();
 }
 
-void QGeoMapItemsOverlayPrivate::changeActiveMapType(const QGeoMapType /*mapType*/)
+void QGeoMapItemsOverlayPrivate::changeActiveMapType(const QGeoMapType &/*mapType*/)
 {
     updateObjectsGeometry();
 }

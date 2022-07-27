@@ -921,7 +921,7 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
             return QGeoRouteReply::ParseError;
         }
 
-        QJsonArray osrmRoutes = object.value(QLatin1String("routes")).toArray();
+        const QJsonArray osrmRoutes = object.value(QLatin1String("routes")).toArray();
         for (const QJsonValueRef r : osrmRoutes) {
             if (!r.isObject())
                 continue;
@@ -938,7 +938,7 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
             bool error = false;
             QList<QGeoRouteSegment> segments;
 
-            QJsonArray legs = routeObject.value(QLatin1String("legs")).toArray();
+            const QJsonArray legs = routeObject.value(QLatin1String("legs")).toArray();
             QList<QGeoRouteLeg> routeLegs;
             QGeoRoute route;
             for (int legIndex = 0; legIndex < legs.size(); ++legIndex) {
@@ -949,14 +949,14 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                     error = true;
                     break;
                 }
-                QJsonObject leg = l.toObject();
+                const QJsonObject leg = l.toObject();
                 if (!leg.value(QLatin1String("steps")).isArray()) { // Invalid steps field
                     error = true;
                     break;
                 }
                 const double legDistance = leg.value(QLatin1String("distance")).toDouble();
                 const double legTravelTime = leg.value(QLatin1String("duration")).toDouble();
-                QJsonArray steps = leg.value(QLatin1String("steps")).toArray();
+                const QJsonArray steps = leg.value(QLatin1String("steps")).toArray();
                 QGeoRouteSegment segment;
                 for (int stepIndex = 0; stepIndex < steps.size(); ++stepIndex) {
                     const QJsonValue &s = steps.at(stepIndex);

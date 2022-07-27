@@ -98,7 +98,7 @@ public:
     void setLocale(const QLocale &locale);
     void setLocales(const QList<QLocale> &locale);
 
-    QPlace compatiblePlace(const QPlace &place);
+    QPlace compatiblePlace(const QPlace &place) const;
 
     QPlaceMatchReply *matchingPlaces(const QPlaceMatchRequest &request) const;
 
