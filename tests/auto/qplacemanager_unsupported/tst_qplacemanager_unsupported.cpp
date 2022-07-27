@@ -31,9 +31,20 @@
 #include <QtCore/QString>
 #include <QtLocation/QGeoServiceProviderFactory>
 #include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceContentReply>
+#include <QtLocation/QPlaceContentRequest>
+#include <QtLocation/QPlaceMatchRequest>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceManagerEngine>
+#include <QtLocation/QPlaceReply>
+#include <QtLocation/QPlaceDetailsReply>
+#include <QtLocation/QPlaceIdReply>
+#include <QtLocation/QPlaceMatchReply>
 #include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceSearchRequest>
+#include <QtLocation/QPlaceSearchSuggestionReply>
 #include <QtTest/QtTest>
 
 QT_USE_NAMESPACE

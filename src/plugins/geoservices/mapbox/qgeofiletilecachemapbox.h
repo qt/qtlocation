@@ -41,6 +41,7 @@
 #define QGEOFILETILECACHEMAPBOX_H
 
 #include <QtLocation/private/qgeofiletilecache_p.h>
+#include <QtLocation/private/qgeomaptype_p.h>
 #include <QMap>
 
 QT_BEGIN_NAMESPACE

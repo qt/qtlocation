@@ -44,8 +44,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-
 #include <QtCore/QUrlQuery>
+
+#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoShape>
+
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceSearchRequest>
 
 QT_BEGIN_NAMESPACE
 

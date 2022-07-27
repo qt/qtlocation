@@ -44,8 +44,14 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
 #include <QtNetwork/QNetworkReply>
+#include <QtPositioning/QGeoAddress>
 #include <QtPositioning/QGeoCircle>
+#include <QtPositioning/QGeoLocation>
 #include <QtPositioning/QGeoRectangle>
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceAttribute>
+#include <QtLocation/QPlaceContactDetail>
+#include <QtLocation/QPlaceRatings>
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/private/qplacesearchrequest_p.h>

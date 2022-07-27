@@ -42,12 +42,10 @@
 
 #include <QtCore/qshareddata.h>
 #include <QtLocation/qlocationglobal.h>
-#include <QtCore/qvariant.h>
 
 QT_BEGIN_NAMESPACE
 
 class QString;
-
 class QGeoCoordinate;
 class QGeoManeuverPrivate;
 QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoManeuverPrivate, Q_LOCATION_EXPORT)

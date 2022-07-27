@@ -29,6 +29,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
+#include <QtLocation/QPlace>
 #include <QtLocation/QPlaceMatchRequest>
 #include <QtLocation/QPlaceResult>
 

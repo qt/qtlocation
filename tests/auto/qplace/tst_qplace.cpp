@@ -29,10 +29,19 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
+#include <QtPositioning/QGeoLocation>
+#include <QtPositioning/QGeoCoordinate>
+
 #include <qplace.h>
 #include <qplaceimage.h>
 #include <qplaceattribute.h>
-#include <QtLocation/QPlaceEditorial>
+#include <qplacecategory.h>
+#include <qplacecontactdetail.h>
+#include <qplaceicon.h>
+#include <qplaceratings.h>
+#include <qplacereview.h>
+#include <qplacesupplier.h>
+#include <qplaceeditorial.h>
 
 QT_USE_NAMESPACE
 

@@ -41,16 +41,21 @@
 #include "qplacesearchreplyosm.h"
 #include "qplacecategoriesreplyosm.h"
 
+#include <QtCore/QElapsedTimer>
+#include <QtCore/QLocale>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QUrlQuery>
 #include <QtCore/QXmlStreamReader>
-#include <QtCore/QRegularExpression>
+
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
-#include <QtPositioning/QGeoCircle>
-#include <QtLocation/private/unsupportedreplies_p.h>
 
-#include <QtCore/QElapsedTimer>
+#include <QtPositioning/QGeoCircle>
+
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceSearchRequest>
+#include <QtLocation/private/unsupportedreplies_p.h>
 
 namespace
 {

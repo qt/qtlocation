@@ -41,6 +41,8 @@
 #include "qmaprouteobject_p.h"
 #include "qmaprouteobject_p_p.h"
 
+#include <QtPositioning/QGeoRectangle>
+
 QT_BEGIN_NAMESPACE
 
 /*!

@@ -53,17 +53,9 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 
 #include <QObject>
-#include <QCache>
 #include "qcache3q_p.h"
-#include <QSet>
-#include <QMutex>
-#include <QTimer>
 
-#include "qgeotilespec_p.h"
-#include "qgeotiledmappingmanagerengine_p.h"
 #include "qabstractgeotilecache_p.h"
-
-#include <QImage>
 
 QT_BEGIN_NAMESPACE
 
@@ -73,8 +65,7 @@ class QGeoTile;
 class QGeoCachedTileMemory;
 class QGeoFileTileCache;
 
-class QPixmap;
-class QThread;
+class QImage;
 
 /* This would be internal to qgeofiletilecache.cpp except that the eviction
  * policy can't be defined without it being concrete here */

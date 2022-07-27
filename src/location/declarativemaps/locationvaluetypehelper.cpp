@@ -38,12 +38,20 @@
 ****************************************************************************/
 
 #include "locationvaluetypehelper_p.h"
+
+#include <QJSValue>
+#include <QVariant>
+#include <QGeoCoordinate>
+#include <QGeoRectangle>
+#include <QGeoCircle>
 #include <QVariantMap>
+
 #include <QtQml/QQmlInfo>
 #include <private/qqmlengine_p.h>
 #include <private/qv4scopedvalue_p.h>
 #include <private/qv4arrayobject_p.h>
 
+QT_BEGIN_NAMESPACE
 
 QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 {
@@ -191,3 +199,5 @@ QList<QGeoCoordinate> toList(const QObject *object, const QJSValue &value)
 
     return pathList;
 }
+
+QT_END_NAMESPACE

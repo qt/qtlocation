@@ -40,15 +40,14 @@
 #ifndef QGEOCODEREPLY_H
 #define QGEOCODEREPLY_H
 
+#include <QtLocation/qlocationglobal.h>
+#include <QtPositioning/QGeoShape>
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QtPositioning/QGeoLocation>
-
-#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoShape;
+class QGeoLocation;
 class QGeoCodeReplyPrivate;
 
 class Q_LOCATION_EXPORT QGeoCodeReply : public QObject

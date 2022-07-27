@@ -52,11 +52,17 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QJSValue>
-#include <QVariant>
-#include <QGeoCoordinate>
-#include <QGeoRectangle>
-#include <QGeoCircle>
+
+#include <QtCore/QList>
+
+QT_BEGIN_NAMESPACE
+
+class QJSValue;
+class QVariant;
+class QObject;
+class QGeoCoordinate;
+class QGeoRectangle;
+class QGeoCircle;
 
 QGeoCoordinate Q_LOCATION_PRIVATE_EXPORT parseCoordinate(const QJSValue &value, bool *ok = nullptr);
 QGeoCoordinate Q_LOCATION_PRIVATE_EXPORT parseCoordinate(const QVariant &value, bool *ok = nullptr);
@@ -64,4 +70,7 @@ QGeoRectangle Q_LOCATION_PRIVATE_EXPORT parseRectangle(const QJSValue &value, bo
 QGeoCircle Q_LOCATION_PRIVATE_EXPORT parseCircle(const QJSValue &value, bool *ok);
 QJSValue Q_LOCATION_PRIVATE_EXPORT fromList(const QObject *object, const QList<QGeoCoordinate> &list);
 QList<QGeoCoordinate> Q_LOCATION_PRIVATE_EXPORT toList(const QObject *object, const QJSValue &value);
+
+QT_END_NAMESPACE
+
 #endif

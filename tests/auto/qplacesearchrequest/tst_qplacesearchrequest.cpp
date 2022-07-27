@@ -28,6 +28,7 @@
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
+#include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>

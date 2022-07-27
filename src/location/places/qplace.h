@@ -41,22 +41,19 @@
 #define QPLACE_H
 
 #include <QtCore/QSharedDataPointer>
-#include <QtPositioning/QGeoAddress>
-#include <QtPositioning/QGeoRectangle>
-#include <QtPositioning/QGeoCoordinate>
-#include <QtPositioning/QGeoLocation>
-#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QLocation>
 #include <QtLocation/QPlaceContent>
-#include <QtLocation/QPlaceRatings>
-#include <QtLocation/QPlaceReview>
-#include <QtLocation/QPlaceAttribute>
-#include <QtLocation/QPlaceContactDetail>
 
 QT_BEGIN_NAMESPACE
 
 class QString;
+class QGeoLocation;
+class QPlaceAttribute;
+class QPlaceCategory;
+class QPlaceContactDetail;
 class QPlaceIcon;
 class QPlacePrivate;
+class QPlaceRatings;
 
 class Q_LOCATION_EXPORT QPlace
 {

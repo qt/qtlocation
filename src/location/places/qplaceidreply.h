@@ -41,7 +41,6 @@
 #define QPLACEIDREPLY_H
 
 #include <QtLocation/QPlaceReply>
-#include <QtLocation/QPlace>
 
 QT_BEGIN_NAMESPACE
 

@@ -45,6 +45,7 @@
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceIdReply>
 #include <QCoreApplication>
 
 QT_BEGIN_NAMESPACE

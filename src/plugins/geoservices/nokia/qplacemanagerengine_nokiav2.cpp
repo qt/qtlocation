@@ -61,7 +61,11 @@
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
 
+#include <QtLocation/QPlace>
 #include <QtLocation/QPlaceContentRequest>
+#include <QtLocation/QPlaceDetailsReply>
+#include <QtLocation/QPlaceIcon>
+#include <QtLocation/QPlaceSearchRequest>
 #include <QtPositioning/QGeoCircle>
 
 QT_BEGIN_NAMESPACE

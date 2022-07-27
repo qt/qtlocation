@@ -46,8 +46,11 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QVariantMap>
 #include <QtPositioning/QGeoCoordinate>
+#include <QtLocation/QPlaceContentRequest>
+#include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceReview>
+#include <QtLocation/QPlaceSupplier>
 #include <QtLocation/QPlaceEditorial>
 #include <QtLocation/QPlaceUser>
 #include <QtLocation/QPlaceContactDetail>

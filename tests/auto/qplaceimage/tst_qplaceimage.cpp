@@ -29,6 +29,7 @@
 #include <QtCore/QString>
 #include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceUser>
+#include <QtLocation/QPlaceSupplier>
 #include <QtTest/QtTest>
 
 #include "../utils/qlocationtestutils_p.h"

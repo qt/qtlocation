@@ -41,8 +41,14 @@
 #include "qplacemanagerengine_p.h"
 #include "unsupportedreplies_p.h"
 
+#include <QtCore/QLocale>
+#include <QtCore/QMap>
 #include <QtCore/QMetaType>
+#include <QtCore/QUrl>
+#include <QtCore/QVariant>
 
+#include "qplace.h"
+#include "qplacecategory.h"
 #include "qplaceicon.h"
 
 QT_BEGIN_NAMESPACE

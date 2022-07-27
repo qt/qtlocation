@@ -57,7 +57,6 @@
 #include "qgeoshape.h"
 
 #include <QList>
-#include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 

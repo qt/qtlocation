@@ -38,6 +38,7 @@
 #include <QtPositioning/QGeoCoordinate>
 #include <QtPositioning/QGeoLocation>
 #include <QtLocation/QPlaceContentReply>
+#include <QtLocation/QPlaceContentRequest>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceManagerEngine>
 #include <QtLocation/QPlaceReply>
@@ -47,6 +48,7 @@
 #include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceSearchSuggestionReply>
 #include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlace>

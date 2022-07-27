@@ -42,16 +42,14 @@
 
 #include <QtLocation/qlocationglobal.h>
 
-#include <QtCore/QUrl>
-#include <QtCore/QFlags>
 #include <QtCore/QMetaType>
 #include <QtCore/QSize>
 #include <QtCore/QSharedDataPointer>
 
 QT_BEGIN_NAMESPACE
 
+class QUrl;
 class QPlaceManager;
-
 class QPlaceIconPrivate;
 class Q_LOCATION_EXPORT QPlaceIcon
 {

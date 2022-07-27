@@ -50,11 +50,8 @@
 //
 // We mean it.
 
-#include <QtCore/qhash.h>
-#include <QtCore/qcache.h>
-#include <QtCore/qsharedpointer.h>
-#include <QDebug>
-#include <private/qglobal_p.h>
+#include <QtCore/QSharedPointer>
+#include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
 

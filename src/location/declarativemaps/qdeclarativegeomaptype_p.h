@@ -56,6 +56,7 @@
 #include <QtCore/QObject>
 #include <QtQml/qqml.h>
 #include <QtLocation/private/qgeomaptype_p.h>
+#include <QtLocation/private/qgeocameracapabilities_p.h>
 
 QT_BEGIN_NAMESPACE
 

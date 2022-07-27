@@ -34,6 +34,7 @@
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qabstractgeotilecache_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
+#include <QtPositioning/QGeoCoordinate>
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 

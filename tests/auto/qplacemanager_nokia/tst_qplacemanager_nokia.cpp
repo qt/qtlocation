@@ -31,7 +31,11 @@
 #include <QtTest/QtTest>
 
 #include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceIdReply>
+#include <QtLocation/QPlaceReply>
 
 #ifndef WAIT_UNTIL
 #define WAIT_UNTIL(__expr) \

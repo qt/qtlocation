@@ -43,7 +43,7 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QVariant>
 #include <QtCore/QString>
-#include <QtLocation/QPlace>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 

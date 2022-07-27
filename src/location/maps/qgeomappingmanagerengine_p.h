@@ -52,28 +52,23 @@
 //
 
 #include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QSet>
 #include <QList>
-#include <QMap>
-#include <QString>
-#include <QVariant>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include "qgeomaptype_p.h"
-#include "qgeomappingmanager_p.h"
 
 QT_BEGIN_NAMESPACE
 
 class QLocale;
+class QString;
 
 class QGeoRectangle;
 class QGeoCoordinate;
+class QGeoCameraCapabilities;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 
 class QGeoMappingManagerEnginePrivate;
 class QGeoMap;
+class QGeoMapType;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMappingManagerEngine : public QObject
 {

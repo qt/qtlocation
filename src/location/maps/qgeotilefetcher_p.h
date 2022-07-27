@@ -53,13 +53,11 @@
 
 #include <QObject>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include "qgeomaptype_p.h"
-#include "qgeotiledmappingmanagerengine_p.h"
+#include <QtLocation/private/qabstractgeotilecache_p.h>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoMapRequestOptions;
-
 class QGeoTileFetcherPrivate;
 class QGeoTiledMappingManagerEngine;
 class QGeoTiledMapReply;

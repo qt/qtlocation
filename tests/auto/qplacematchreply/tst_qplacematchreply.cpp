@@ -29,7 +29,9 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
+#include <QtLocation/QPlace>
 #include <QtLocation/QPlaceMatchReply>
+#include <QtLocation/QPlaceMatchRequest>
 
 QT_USE_NAMESPACE
 

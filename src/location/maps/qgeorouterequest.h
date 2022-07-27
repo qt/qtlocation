@@ -45,11 +45,11 @@
 #include <QtCore/QDateTime>
 
 #include <QtLocation/qlocationglobal.h>
-#include <QtPositioning/qgeocoordinate.h>
-#include <QtPositioning/qgeorectangle.h>
+#include <QtPositioning/QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 
+class QGeoRectangle;
 class QGeoRouteRequestPrivate;
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRouteRequestPrivate, Q_LOCATION_EXPORT)
 

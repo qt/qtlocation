@@ -52,11 +52,8 @@
 //
 
 #include <QObject>
-#include <QSize>
-#include <QPair>
 #include <QLocale>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomapparameter_p.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -53,6 +53,7 @@
 
 
 #include <QtLocation/private/qgeorouteparser_p.h>
+#include <QtCore/QUrlQuery>
 
 QT_BEGIN_NAMESPACE
 

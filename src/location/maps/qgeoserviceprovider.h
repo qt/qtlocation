@@ -40,7 +40,7 @@
 #ifndef QGEOSERVICEPROVIDER_H
 #define QGEOSERVICEPROVIDER_H
 
-#include <QtCore/QVariant>
+#include <QtCore/QVariantMap>
 #include <QtCore/QString>
 #include <QtCore/QObject>
 #include <QtLocation/qlocationglobal.h>

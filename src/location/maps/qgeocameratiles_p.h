@@ -52,7 +52,6 @@
 
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtCore/QScopedPointer>
-#include <QRectF>
 
 QT_BEGIN_NAMESPACE
 
@@ -61,6 +60,7 @@ class QGeoTileSpec;
 class QGeoMapType;
 class QGeoCameraTilesPrivate;
 class QSize;
+class QRectF;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoCameraTiles {
 public:

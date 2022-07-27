@@ -43,6 +43,8 @@
 
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
+#include <QtLocation/private/qgeotilefetcher_p.h>
+#include <QtLocation/private/qgeotiledmappingmanagerengine_p.h>
 #include <QtLocation/private/qgeotilespec_p.h>
 #include <QDebug>
 

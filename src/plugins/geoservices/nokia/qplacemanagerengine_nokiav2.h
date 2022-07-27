@@ -42,6 +42,7 @@
 
 #include <QtCore/QPointer>
 #include <QtNetwork/QNetworkReply>
+#include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlaceManagerEngine>
 #include <QtLocation/QGeoServiceProvider>
 

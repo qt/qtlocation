@@ -40,11 +40,11 @@
 #ifndef QPLACERESULT_H
 #define QPLACERESULT_H
 
-#include <QtLocation/QPlace>
 #include <QtLocation/QPlaceSearchResult>
 
 QT_BEGIN_NAMESPACE
 
+class QPlace;
 class QPlaceResultPrivate;
 
 class Q_LOCATION_EXPORT QPlaceResult : public QPlaceSearchResult

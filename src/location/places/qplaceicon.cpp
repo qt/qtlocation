@@ -42,6 +42,8 @@
 #include "qplacemanager.h"
 #include "qplacemanagerengine.h"
 
+#include <QtCore/QVariant>
+
 QT_USE_NAMESPACE
 
 QPlaceIconPrivate::QPlaceIconPrivate()

@@ -41,6 +41,7 @@
 
 #include <QtCore/QSharedData>
 #include <QtCore/QList>
+#include <QtLocation/QPlace>
 #include <QtLocation/QPlaceResult>
 
 QT_BEGIN_NAMESPACE

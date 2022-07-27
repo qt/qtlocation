@@ -47,6 +47,7 @@
 QT_BEGIN_NAMESPACE
 
 class QNetworkAccessManager;
+class QGeoMappingManagerEngine;
 class QGeoTileFetcherOsmPrivate;
 
 class QGeoTileFetcherOsm : public QGeoTileFetcher

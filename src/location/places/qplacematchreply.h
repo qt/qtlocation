@@ -41,10 +41,11 @@
 #define QPLACEMATCHREPLY_H
 
 #include <QtLocation/QPlaceReply>
-#include <QtLocation/QPlaceMatchRequest>
 
 QT_BEGIN_NAMESPACE
 
+class QPlace;
+class QPlaceMatchRequest;
 class QPlaceMatchReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceMatchReply : public QPlaceReply
 {

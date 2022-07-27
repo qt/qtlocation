@@ -30,6 +30,7 @@
 #include <QtTest/QtTest>
 
 #include <QtLocation/private/qgeocameradata_p.h>
+#include <QGeoCoordinate>
 
 QT_USE_NAMESPACE
 

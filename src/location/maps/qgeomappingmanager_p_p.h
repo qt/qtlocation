@@ -51,13 +51,6 @@
 // We mean it.
 //
 
-#include <QSize>
-#include <QList>
-#include <QHash>
-#include <QSet>
-#include <QThread>
-#include <private/qglobal_p.h>
-
 QT_BEGIN_NAMESPACE
 
 class QGeoMappingManagerPrivate

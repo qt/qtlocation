@@ -53,9 +53,7 @@
 
 #include "qgeocodingmanagerengine.h"
 
-#include <QList>
 #include <QLocale>
-#include <private/qglobal_p.h>
 
 QT_BEGIN_NAMESPACE
 

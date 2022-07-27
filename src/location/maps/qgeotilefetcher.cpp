@@ -39,6 +39,7 @@
 
 #include <QtCore/QTimerEvent>
 
+#include "qgeocameracapabilities_p.h"
 #include "qgeomappingmanagerengine_p.h"
 #include "qgeotilefetcher_p.h"
 #include "qgeotilefetcher_p_p.h"

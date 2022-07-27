@@ -52,6 +52,7 @@
 //
 
 #include "qplacesearchresult_p.h"
+#include "qplace.h"
 
 QT_BEGIN_NAMESPACE
 

@@ -53,12 +53,12 @@
 
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/qgeoroutereply.h>
-#include <QtLocation/qgeorouterequest.h>
-#include <QtCore/QByteArray>
-#include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
 
+class QByteArray;
+class QUrl;
+class QGeoRouteRequest;
 class QGeoRouteParserPrivate;
 class Q_LOCATION_PRIVATE_EXPORT QGeoRouteParser : public QObject
 {

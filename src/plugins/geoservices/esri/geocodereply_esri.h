@@ -45,9 +45,12 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGeoLocation;
+
 class GeoCodeReplyEsri : public QGeoCodeReply
 {
     Q_OBJECT
+    Q_MOC_INCLUDE(<QGeoLocation>)
 
 public:
     enum OperationType

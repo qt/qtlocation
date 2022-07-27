@@ -52,10 +52,7 @@
 //
 
 #include <QObject>
-#include <QSize>
-#include <QPair>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeomaptype_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -63,6 +60,7 @@ class QGeoMap;
 class QLocale;
 class QGeoRectangle;
 class QGeoCoordinate;
+class QGeoMapType;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 class QGeoMappingManagerEngine;

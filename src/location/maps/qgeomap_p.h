@@ -51,13 +51,8 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
-#include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtCore/QObject>
-#include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtLocation/private/qgeoprojection_p.h>
-#include <QtLocation/qgeoroute.h>
 #include <QTransform>
 
 QT_BEGIN_NAMESPACE
@@ -65,7 +60,12 @@ QT_BEGIN_NAMESPACE
 class QGeoMappingManagerEngine;
 class QGeoMapPrivate;
 class QGeoMapController;
+class QGeoCameraCapabilities;
+class QGeoCameraData;
 class QGeoCoordinate;
+class QGeoProjection;
+class QGeoShape;
+class QGeoRectangle;
 class QSGNode;
 class QQuickWindow;
 class QGeoMapParameter;

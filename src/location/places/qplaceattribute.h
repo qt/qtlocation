@@ -41,7 +41,7 @@
 #define QPLACEATTRIBUTE_H
 
 #include <QtCore/QString>
-#include <QtCore/QVariant>
+#include <QtCore/QMetaType>
 #include <QtCore/QSharedDataPointer>
 
 #include <QtLocation/qlocationglobal.h>

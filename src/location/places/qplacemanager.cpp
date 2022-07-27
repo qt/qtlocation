@@ -38,10 +38,27 @@
 ****************************************************************************/
 
 #include "qplacemanager.h"
+
 #include "qplacemanagerengine.h"
 #include "qplacemanagerengine_p.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QLocale>
+
+
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceContentReply>
+#include <QtLocation/QPlaceContentRequest>
+#include <QtLocation/QPlaceDetailsReply>
+#include <QtLocation/QPlaceIcon>
+#include <QtLocation/QPlaceIdReply>
+#include <QtLocation/QPlaceMatchReply>
+#include <QtLocation/QPlaceMatchRequest>
+#include <QtLocation/QPlaceReply>
+#include <QtLocation/QPlaceSearchSuggestionReply>
+#include <QtLocation/QPlaceSearchRequest>
+#include <QtLocation/QPlaceSearchResult>
 
 QT_BEGIN_NAMESPACE
 

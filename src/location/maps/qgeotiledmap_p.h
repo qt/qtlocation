@@ -54,10 +54,6 @@
 #include <QString>
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomap_p.h>
-#include <QtLocation/private/qgeocameradata_p.h>
-#include <QtLocation/private/qgeomaptype_p.h>
-
-#include <QtPositioning/private/qdoublevector2d_p.h>
 
 QT_BEGIN_NAMESPACE
 
