@@ -38,13 +38,16 @@
 ****************************************************************************/
 
 #include "qgeoprojection_p.h"
+
+#include <QSize>
+#include <QtGui/QMatrix4x4>
+#include <QtPositioning/QGeoPolygon>
+#include <QtPositioning/QGeoRectangle>
+
 #include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qlocationutils_p.h>
 #include <QtPositioning/private/qclipperutils_p.h>
-#include <QtPositioning/QGeoPolygon>
-#include <QtPositioning/QGeoRectangle>
-#include <QSize>
-#include <QtGui/QMatrix4x4>
+
 #include <cmath>
 
 namespace {

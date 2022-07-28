@@ -36,11 +36,14 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qgeocameradata_p.h"
-#include <QtPositioning/private/qgeocoordinate_p.h>
-#include <QtPositioning/private/qwebmercator_p.h>
+
 #include <QtCore/QVariant>
 #include <QtCore/QVariantAnimation>
+
+#include <QtPositioning/private/qgeocoordinate_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 
 QT_BEGIN_NAMESPACE
 

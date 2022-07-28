@@ -52,11 +52,8 @@
 // We mean it.
 //
 
-#include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
-#include <QtLocation/private/qdeclarativegeomapitemutils_p.h>
-#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
-#include <QtLocation/private/qgeomapitemgeometry_p.h>
+#include <QSharedPointer>
+#include <QtCore/QScopedValueRollback>
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 #include <QSGMaterialShader>
@@ -64,9 +61,15 @@
 #include <QtPositioning/QGeoPolygon>
 #include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/QGeoCircle>
+
+#include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtLocation/private/qdeclarativegeomapitemutils_p.h>
+#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtLocation/private/qgeomapitemgeometry_p.h>
+
 #include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtCore/QScopedValueRollback>
-#include <QSharedPointer>
+
 #include <array>
 
 QT_BEGIN_NAMESPACE

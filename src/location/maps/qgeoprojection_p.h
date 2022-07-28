@@ -51,11 +51,12 @@
 // We mean it.
 //
 
+#include <QMatrix4x4>
+#include <QTransform>
+
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtPositioning/private/qdoublematrix4x4_p.h>
-#include <QMatrix4x4>
-#include <QTransform>
 
 QT_BEGIN_NAMESPACE
 

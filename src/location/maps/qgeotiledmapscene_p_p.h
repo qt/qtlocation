@@ -51,13 +51,14 @@
 //
 
 #include "qgeotiledmapscene_p.h"
-#include <QtCore/private/qobject_p.h>
-#include <QtPositioning/private/qdoublevector3d_p.h>
-#include <QtQuick/QSGImageNode>
-#include <QtQuick/private/qsgdefaultimagenode_p.h>
-#include <QtQuick/QQuickWindow>
 #include "qgeocameradata_p.h"
 #include "qgeotilespec_p.h"
+
+#include <QtQuick/QSGImageNode>
+#include <QtQuick/QQuickWindow>
+
+#include <QtCore/private/qobject_p.h>
+#include <QtPositioning/private/qdoublevector3d_p.h>
 
 QT_BEGIN_NAMESPACE
 

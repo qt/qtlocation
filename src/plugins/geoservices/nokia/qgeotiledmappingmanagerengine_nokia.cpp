@@ -37,7 +37,6 @@
 **
 ****************************************************************************/
 
-#include <QtPositioning/private/qwebmercator_p.h>
 #include "qgeocameracapabilities_p.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qgeotiledmap_nokia.h"
@@ -53,6 +52,8 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/qmath.h>
 #include <QtCore/qstandardpaths.h>
+
+#include <QtPositioning/private/qwebmercator_p.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -38,27 +38,27 @@
 ****************************************************************************/
 
 #include "qquickgeomapgesturearea_p.h"
-#include <QtPositioningQuick/private/qquickgeocoordinateanimation_p.h>
 #include "qdeclarativegeomap_p.h"
 #include "error_messages_p.h"
 
+#include <QDebug>
+#include <QPropertyAnimation>
 #include <QtGui/QGuiApplication>
 #include <QtGui/qevent.h>
 #if QT_CONFIG(wheelevent)
 #include <QtGui/QWheelEvent>
 #endif
+#include <QtGui/QMatrix4x4>
 #include <QtGui/QStyleHints>
 #include <QtQml/qqmlinfo.h>
 #include <QtQuick/QQuickWindow>
-#include <QPropertyAnimation>
-#include <QDebug>
-#include "math.h"
-#include <cmath>
 #include "qgeomap_p.h"
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qlocationutils_p.h>
-#include <QtGui/QMatrix4x4>
+#include <QtPositioningQuick/private/qquickgeocoordinateanimation_p.h>
 
+#include "math.h"
+#include <cmath>
 
 #define QML_MAP_FLICK_DEFAULTMAXVELOCITY 2500
 #define QML_MAP_FLICK_MINIMUMDECELERATION 500

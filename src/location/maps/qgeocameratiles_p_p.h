@@ -51,15 +51,16 @@
 //
 
 #include "qgeocameratiles_p.h"
-#include <QtPositioning/private/qwebmercator_p.h>
-#include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtPositioning/private/qdoublevector3d_p.h>
 #include "qgeomaptype_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeotilespec_p.h"
 
 #include <QtCore/qlist.h>
 #include <QtCore/qset.h>
+
+#include <QtPositioning/private/qwebmercator_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qdoublevector3d_p.h>
 
 QT_BEGIN_NAMESPACE
 

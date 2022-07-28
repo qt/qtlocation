@@ -40,15 +40,17 @@
 #include "qdeclarativerectanglemapitem_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
-#include <QtPositioning/private/qlocationutils_p.h>
+
+#include <QtCore/QScopedValueRollback>
 #include <QPainterPath>
 #include <qnumeric.h>
 #include <QRectF>
 #include <QPointF>
-#include <QtPositioning/private/qwebmercator_p.h>
+
 #include <QtLocation/private/qgeomap_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtCore/QScopedValueRollback>
 
 QT_BEGIN_NAMESPACE
 

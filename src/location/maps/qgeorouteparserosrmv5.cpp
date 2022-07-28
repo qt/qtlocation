@@ -45,13 +45,14 @@
 #include "qgeoroutesegment_p.h"
 #include "qgeomaneuver.h"
 
-#include <QtCore/private/qobject_p.h>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
 #include <QtCore/QUrlQuery>
-#include <QtPositioning/private/qlocationutils_p.h>
 #include <QtPositioning/qgeopath.h>
+
+#include <QtCore/private/qobject_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
 
 QT_BEGIN_NAMESPACE
 

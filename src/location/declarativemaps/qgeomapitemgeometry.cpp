@@ -39,8 +39,9 @@
 
 #include "qgeomapitemgeometry_p.h"
 #include "qdeclarativegeomap_p.h"
-#include <QtPositioning/private/qlocationutils_p.h>
 #include <QtQuick/QSGGeometry>
+
+#include <QtPositioning/private/qlocationutils_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>

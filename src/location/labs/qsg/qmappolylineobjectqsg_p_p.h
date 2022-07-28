@@ -51,12 +51,13 @@
 // We mean it.
 //
 
+#include <QtCore/qscopedvaluerollback.h>
+
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qmappolylineobject_p_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 #include <QtLocation/private/qmappolylineobject_p.h>
 #include <QtLocation/private/qqsgmapobject_p.h>
-#include <QtCore/qscopedvaluerollback.h>
 #include <QtPositioning/private/qgeopath_p.h>
 
 QT_BEGIN_NAMESPACE
