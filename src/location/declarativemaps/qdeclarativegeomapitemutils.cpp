@@ -39,11 +39,13 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapitemutils_p.h"
-#include <QtPositioning/QGeoCoordinate>
+
 #include <QPointF>
 #include <QMatrix4x4>
 #include <QPainterPath>
 #include <QPainterPathStroker>
+#include <QtPositioning/QGeoCoordinate>
+
 #include <QtPositioning/private/qclipperutils_p.h>
 
 QT_BEGIN_NAMESPACE

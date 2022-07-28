@@ -37,20 +37,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qgeotiledmapscene_p.h"
 #include "qgeotiledmapscene_p_p.h"
 #include "qgeocameradata_p.h"
 #include "qabstractgeotilecache_p.h"
 #include "qgeotilespec_p.h"
-#include <QtPositioning/private/qdoublevector3d_p.h>
-#include <QtPositioning/private/qwebmercator_p.h>
-#include <QtCore/private/qobject_p.h>
+
 #include <QtQuick/QQuickWindow>
 #include <QtGui/QVector3D>
-#include <cmath>
+
+#include <QtCore/private/qobject_p.h>
+#include <QtPositioning/private/qdoublevector3d_p.h>
 #include <QtPositioning/private/qlocationutils_p.h>
 #include <QtPositioning/private/qdoublematrix4x4_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
+
+#include <cmath>
 
 static QVector3D toVector3D(const QDoubleVector3D& in)
 {

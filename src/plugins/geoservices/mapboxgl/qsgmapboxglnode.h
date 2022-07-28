@@ -44,7 +44,6 @@
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGRenderNode>
 #include <QtQuick/QSGSimpleTextureNode>
-#include <QtQuick/private/qsgtexture_p.h>
 #include <QtOpenGL/QOpenGLFramebufferObject>
 
 #include <QMapboxGL>

@@ -52,6 +52,18 @@
 // We mean it.
 //
 
+#include <QList>
+#include <QtCore/QScopedValueRollback>
+#include <QtGui/QMatrix4x4>
+#include <QColor>
+
+#include <QSGGeometryNode>
+#include <QSGFlatColorMaterial>
+
+#include <QtPositioning/QGeoPath>
+#include <QtPositioning/QGeoRectangle>
+#include <QtPositioning/QGeoPolygon>
+
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomapitemgeometry_p.h>
 #include <QtLocation/private/qdeclarativegeomapitembase_p.h>
@@ -59,18 +71,7 @@
 #include <QtLocation/private/qdeclarativegeomapitemutils_p.h>
 #include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p_p.h>
-#include <QSGGeometryNode>
-#include <QSGFlatColorMaterial>
-#include <QtPositioning/QGeoPath>
-#include <QtPositioning/QGeoRectangle>
-#include <QtPositioning/QGeoPolygon>
 #include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QSGFlatColorMaterial>
-#include <QtGui/QMatrix4x4>
-#include <QColor>
-#include <QList>
-#include <QList>
-#include <QtCore/QScopedValueRollback>
 
 QT_BEGIN_NAMESPACE
 

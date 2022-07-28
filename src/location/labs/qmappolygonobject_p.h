@@ -55,8 +55,6 @@
 #include <QtLocation/private/qgeomapobject_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 
-#include <QJSValue>
-
 QT_BEGIN_NAMESPACE
 
 class Q_LOCATION_PRIVATE_EXPORT QMapPolygonObject : public QGeoMapObject

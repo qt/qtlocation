@@ -42,16 +42,18 @@
 #include "qgeotilespec_p.h"
 #include "qgeomaptype_p.h"
 
-#include <QtPositioning/private/qwebmercator_p.h>
-#include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtPositioning/private/qdoublevector3d_p.h>
-#include <QtPositioning/private/qlocationutils_p.h>
 #include <QtGui/QMatrix4x4>
 #include <QList>
 #include <QMap>
 #include <QPair>
 #include <QSet>
 #include <QSize>
+
+#include <QtPositioning/private/qwebmercator_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qdoublevector3d_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
+
 #include <cmath>
 #include <limits>
 

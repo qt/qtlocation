@@ -51,14 +51,15 @@
 // We mean it.
 //
 
+#include <QSGGeometryNode>
+#include <QSGFlatColorMaterial>
+#include <QtPositioning/QGeoPath>
+
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qdeclarativegeomapitembase_p.h>
 #include <QtLocation/private/qgeomapitemgeometry_p.h>
 
-#include <QtPositioning/QGeoPath>
 #include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QSGGeometryNode>
-#include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
 

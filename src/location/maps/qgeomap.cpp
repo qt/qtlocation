@@ -44,7 +44,6 @@
 #include "qdeclarativegeomapitembase_p.h"
 #include "qgeomapobject_p.h"
 #include "qgeomapobject_p_p.h"
-#include <QtQuick/private/qquickitem_p.h>
 #include <QDebug>
 #include <QRectF>
 

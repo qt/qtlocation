@@ -56,7 +56,6 @@
 #include <QtLocation/private/qgeoprojection_p.h>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGImageNode>
-#include <QtQuick/private/qsgtexture_p.h>
 #include <QtQuick/private/qsgcontext_p.h> // for debugging the context name
 
 #include <QMapboxGL>

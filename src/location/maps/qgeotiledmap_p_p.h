@@ -50,13 +50,14 @@
 // We mean it.
 //
 
+#include <QtCore/QPointer>
+
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomap_p_p.h>
 #include <QtLocation/private/qgeocameradata_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
-#include <QtPositioning/private/qdoublevector3d_p.h>
+
 #include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtCore/QPointer>
 
 QT_BEGIN_NAMESPACE
 

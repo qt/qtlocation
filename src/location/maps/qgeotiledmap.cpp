@@ -38,7 +38,6 @@
 ****************************************************************************/
 #include "qgeotiledmap_p.h"
 #include "qgeotiledmap_p_p.h"
-#include <QtPositioning/private/qwebmercator_p.h>
 #include "qgeotiledmappingmanagerengine_p.h"
 #include "qabstractgeotilecache_p.h"
 #include "qgeotilespec_p.h"

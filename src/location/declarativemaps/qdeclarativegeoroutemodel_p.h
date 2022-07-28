@@ -51,21 +51,19 @@
 // We mean it.
 //
 
+#include <QObject>
+#include <QAbstractListModel>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoRectangle>
+#include <qgeorouterequest.h>
+#include <qgeoroutereply.h>
+#include <QtQml/qqml.h>
+#include <QtQml/QQmlParserStatus>
+
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qdeclarativegeoserviceprovider_p.h>
 
-#include <QtPositioning/QGeoCoordinate>
-#include <QtPositioning/QGeoRectangle>
 #include <QtPositioning/private/qgeocoordinateobject_p.h>
-
-#include <qgeorouterequest.h>
-#include <qgeoroutereply.h>
-
-#include <QtQml/qqml.h>
-#include <QtQml/QQmlParserStatus>
-#include <QAbstractListModel>
-
-#include <QObject>
 
 QT_BEGIN_NAMESPACE
 

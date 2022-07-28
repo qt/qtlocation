@@ -41,33 +41,31 @@
 #include "qdeclarativepolylinemapitem_p_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
 #include "qdeclarativecirclemapitem_p_p.h"
-#include <QtPositioning/private/qlocationutils_p.h>
 #include "qdeclarativegeomapitemutils_p.h"
 #include "error_messages_p.h"
 #include "locationvaluetypehelper_p.h"
-#include <QtPositioning/private/qdoublevector2d_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-#include <QtPositioning/private/qwebmercator_p.h>
+#include "qgeosimplify_p.h"
 
 #include <QtCore/QScopedValueRollback>
-#include <QtQml/QQmlInfo>
-#include <QtQml/private/qqmlengine_p.h>
+#include <qnumeric.h>
+#include <QThreadPool>
+#include <QRunnable>
 #include <QPainter>
 #include <QPainterPath>
-#include <QPainterPathStroker>
-#include <qnumeric.h>
+#include <QtQml/QQmlInfo>
 
 #include <QtGui/private/qtriangulatingstroker_p.h>
 #include <QtGui/private/qtriangulator_p.h>
-
+#include <QtQuick/private/qsgmaterialshader_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 #include <QtPositioning/private/qclipperutils_p.h>
 #include <QtPositioning/private/qgeopath_p.h>
-#include <QtQuick/private/qsgmaterialshader_p.h>
-#include <array>
-#include <QThreadPool>
-#include <QRunnable>
 #include <QtLocation/private/qgeomapparameter_p.h>
-#include "qgeosimplify_p.h"
+#include <QtLocation/private/qgeomap_p.h>
+
+#include <array>
 
 QT_BEGIN_NAMESPACE
 

@@ -39,23 +39,20 @@
 
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
-
-#include <QtPositioning/private/qwebmercator_p.h>
-#include <QtLocation/private/qgeomap_p.h>
-
-#include <qmath.h>
-#include <algorithm>
+#include "qdeclarativecirclemapitem_p_p.h"
 
 #include <QtCore/QScopedValueRollback>
 #include <QPen>
 #include <QPainter>
-#include <QtGui/private/qtriangulator_p.h>
-
-#include <QtPositioning/private/qlocationutils_p.h>
 #include <qgeocircle.h>
 
+#include <QtGui/private/qtriangulator_p.h>
+#include <QtLocation/private/qgeomap_p.h>
+#include <QtPositioning/private/qlocationutils_p.h>
 #include <QtPositioning/private/qclipperutils_p.h>
-#include "qdeclarativecirclemapitem_p_p.h"
+
+#include <qmath.h>
+#include <algorithm>
 
 QT_BEGIN_NAMESPACE
 

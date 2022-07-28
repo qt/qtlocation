@@ -40,7 +40,6 @@
 #include "qmapiconobjectqsg_p_p.h"
 #include <QtQuick/qsgimagenode.h>
 #include <QtQuick/qsgnode.h>
-#include <QtQuick/private/qquickimage_p.h>
 #include <QtQuick/qquickimageprovider.h>
 #include <QtQuick/qquickwindow.h>
 #include <QtQml/qqmlengine.h>
