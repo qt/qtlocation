@@ -53,6 +53,7 @@ QGeoRoutePrivate *QExplicitlySharedDataPointer<QGeoRoutePrivate>::clone()
 {
     return d->clone();
 }
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoRoutePrivate)
 
 /*!
     \class QGeoRoute
@@ -106,21 +107,18 @@ const QExplicitlySharedDataPointer<QGeoRoutePrivate> &QGeoRoute::const_d() const
 /*!
     Constructs a route object from the contents of \a other.
 */
-QGeoRoute::QGeoRoute(const QGeoRoute &other)
-    : d_ptr(other.d_ptr) {}
+QGeoRoute::QGeoRoute(const QGeoRoute &other) noexcept = default;
 
 /*!
     Destroys this route object.
 */
-QGeoRoute::~QGeoRoute()
-{
-}
+QGeoRoute::~QGeoRoute() = default;
 
 /*!
     Assigns the contents of \a other to this route and returns a reference to
     this route.
 */
-QGeoRoute &QGeoRoute::operator= (const QGeoRoute & other)
+QGeoRoute &QGeoRoute::operator=(const QGeoRoute & other) noexcept
 {
     if (this == &other)
         return *this;
@@ -130,21 +128,23 @@ QGeoRoute &QGeoRoute::operator= (const QGeoRoute & other)
 }
 
 /*!
-    Returns whether this route and \a other are equal.
+    \fn bool QGeoRoute::operator==(const QGeoRoute &lhs, const QGeoRoute &rhs) noexcept
+
+    Returns whether the routes \a lhs and \a rhs are equal.
 */
-bool QGeoRoute::operator ==(const QGeoRoute &other) const
+
+/*!
+    \fn bool QGeoRoute::operator!=(const QGeoRoute &lhs, const QGeoRoute &rhs) noexcept
+
+    Returns whether the routes \a lhs and \a rhs are not equal.
+*/
+
+bool QGeoRoute::isEqual(const QGeoRoute &other) const noexcept
 {
     return ( (d_ptr.constData() == other.d_ptr.constData())
             || (*d_ptr) == (*other.d_ptr));
 }
 
-/*!
-    Returns whether this route and \a other are not equal.
-*/
-bool QGeoRoute::operator !=(const QGeoRoute &other) const
-{
-    return !(operator==(other));
-}
 
 /*!
     Sets the identifier of this route to \a id.
@@ -720,31 +720,6 @@ QGeoRoute QGeoRoutePrivateDefault::containingRoute() const
 */
 
 /*!
-    Constructs a route leg object.
-*/
-
-QGeoRouteLeg::QGeoRouteLeg() : QGeoRoute()
-{
-
-}
-
-/*!
-    Constructs a route leg object from the contents of \a other.
-*/
-QGeoRouteLeg::QGeoRouteLeg(const QGeoRouteLeg &other) : QGeoRoute(other)
-{
-
-}
-
-/*!
-    Destroys this route object.
-*/
-QGeoRouteLeg::~QGeoRouteLeg()
-{
-
-}
-
-/*!
     Sets the route leg index to \a idx.
 */
 void QGeoRouteLeg::setLegIndex(int idx)
@@ -775,11 +750,6 @@ void QGeoRouteLeg::setOverallRoute(const QGeoRoute &route)
 QGeoRoute QGeoRouteLeg::overallRoute() const
 {
     return const_d()->containingRoute();
-}
-
-QGeoRouteLeg::QGeoRouteLeg(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd) : QGeoRoute(dd)
-{
-
 }
 
 QT_END_NAMESPACE

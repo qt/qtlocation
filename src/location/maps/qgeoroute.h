@@ -50,20 +50,27 @@ QT_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoRectangle;
 class QGeoRouteSegment;
+class QGeoRouteLeg;
 
 class QGeoRoutePrivate;
-class QGeoRouteLeg;
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRoutePrivate, Q_LOCATION_EXPORT)
 class Q_LOCATION_EXPORT QGeoRoute
 {
 public:
     QGeoRoute();
-    QGeoRoute(const QGeoRoute &other);
-    ~QGeoRoute(); // ### Qt6: make this virtual
+    QGeoRoute(const QGeoRoute &other) noexcept;
+    QGeoRoute(QGeoRoute &&other) noexcept = default;
+    ~QGeoRoute();
 
-    QGeoRoute &operator = (const QGeoRoute &other);
+    QGeoRoute &operator=(const QGeoRoute &other) noexcept;
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QGeoRoute)
 
-    bool operator == (const QGeoRoute &other) const;
-    bool operator != (const QGeoRoute &other) const;
+    void swap(QGeoRoute &other) noexcept { d_ptr.swap(other.d_ptr); }
+
+    friend inline bool operator==(const QGeoRoute &lhs, const QGeoRoute &rhs) noexcept
+    { return lhs.isEqual(rhs); }
+    friend inline bool operator!=(const QGeoRoute &lhs, const QGeoRoute &rhs) noexcept
+    { return !lhs.isEqual(rhs); }
 
     void setRouteId(const QString &id);
     QString routeId() const;
@@ -102,6 +109,8 @@ protected:
 
 private:
     QExplicitlySharedDataPointer<QGeoRoutePrivate> d_ptr;
+    bool isEqual(const QGeoRoute &other) const noexcept;
+
     friend class QDeclarativeGeoRoute;
     friend class QGeoRoutePrivate;
 };
@@ -109,20 +118,13 @@ private:
 class Q_LOCATION_EXPORT QGeoRouteLeg: public QGeoRoute
 {
 public:
-    QGeoRouteLeg();
-    QGeoRouteLeg(const QGeoRouteLeg &other);
-    QGeoRouteLeg &operator=(const QGeoRouteLeg &other) = default;
-    ~QGeoRouteLeg();
-
     void setLegIndex(int idx);
     int legIndex() const;
 
     void setOverallRoute(const QGeoRoute &route);
     QGeoRoute overallRoute() const;
 
-protected:
-    QGeoRouteLeg(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd);
-
+private:
     friend class QDeclarativeGeoRoute;
     friend class QGeoRoutePrivate;
 };
