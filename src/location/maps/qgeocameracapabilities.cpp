@@ -54,89 +54,29 @@ QT_BEGIN_NAMESPACE
 class QGeoCameraCapabilitiesPrivate : public QSharedData
 {
 public:
-    QGeoCameraCapabilitiesPrivate();
-    QGeoCameraCapabilitiesPrivate(const QGeoCameraCapabilitiesPrivate &other);
-    ~QGeoCameraCapabilitiesPrivate();
+    bool operator==(const QGeoCameraCapabilitiesPrivate &rhs) const noexcept;
 
-    QGeoCameraCapabilitiesPrivate &operator = (const QGeoCameraCapabilitiesPrivate &other);
-
-    bool operator == (const QGeoCameraCapabilitiesPrivate &rhs) const;
-
-    bool supportsBearing_;
-    bool supportsRolling_;
-    bool supportsTilting_;
+    bool supportsBearing_ = false;
+    bool supportsRolling_ = false;
+    bool supportsTilting_ = false;
 
     // this is mutable so that it can be set from accessor functions that are const
     // TODO: remove the mutable here
-    mutable bool valid_;
+    mutable bool valid_ = false;
 
-    double minZoom_;
-    double maxZoom_;
-    double minTilt_;
-    double maxTilt_;
-    int tileSize_;
-    double minimumFieldOfView_;
-    double maximumFieldOfView_;
-    bool overzoomEnabled_;
+    double minZoom_ = 0.0;
+    double maxZoom_ = 0.0;
+    double minTilt_ = 0.0;
+    double maxTilt_ = 0.0;
+    int tileSize_ = 256;
+    double minimumFieldOfView_ = 45.0; // Defaulting to a fixed FOV of 45 degrees.
+    double maximumFieldOfView_ = 45.0; // Too large FOVs cause the loading of too many tiles.
+    bool overzoomEnabled_ = false;
 };
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoCameraCapabilitiesPrivate)
 
-QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
-    : supportsBearing_(false),
-      supportsRolling_(false),
-      supportsTilting_(false),
-      valid_(false),
-      minZoom_(0.0),
-      maxZoom_(0.0),
-      minTilt_(0.0),
-      maxTilt_(0.0),
-      tileSize_(256),
-      minimumFieldOfView_(45.0),  // Defaulting to a fixed FOV of 45 degrees. Too large FOVs cause the loading of too many tiles
-      maximumFieldOfView_(45.0),
-      overzoomEnabled_(false) {}
-
-
-QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCapabilitiesPrivate &other)
-    : QSharedData(other),
-      supportsBearing_(other.supportsBearing_),
-      supportsRolling_(other.supportsRolling_),
-      supportsTilting_(other.supportsTilting_),
-      valid_(other.valid_),
-      minZoom_(other.minZoom_),
-      maxZoom_(other.maxZoom_),
-      minTilt_(other.minTilt_),
-      maxTilt_(other.maxTilt_),
-      tileSize_(other.tileSize_),
-      minimumFieldOfView_(other.minimumFieldOfView_),
-      maximumFieldOfView_(other.maximumFieldOfView_),
-      overzoomEnabled_(other.overzoomEnabled_){}
-
-
-QGeoCameraCapabilitiesPrivate::~QGeoCameraCapabilitiesPrivate() {}
-
-QGeoCameraCapabilitiesPrivate &QGeoCameraCapabilitiesPrivate::operator = (const QGeoCameraCapabilitiesPrivate &other)
-{
-    if (this == &other)
-        return *this;
-
-    supportsBearing_ = other.supportsBearing_;
-    supportsRolling_ = other.supportsRolling_;
-    supportsTilting_ = other.supportsTilting_;
-    valid_ = other.valid_;
-    minZoom_ = other.minZoom_;
-    maxZoom_ = other.maxZoom_;
-    minTilt_ = other.minTilt_;
-    maxTilt_ = other.maxTilt_;
-    tileSize_ = other.tileSize_;
-    minimumFieldOfView_ = other.minimumFieldOfView_;
-    maximumFieldOfView_ = other.maximumFieldOfView_;
-    overzoomEnabled_ = other.overzoomEnabled_;
-
-    return *this;
-}
-
-bool QGeoCameraCapabilitiesPrivate::operator == (const QGeoCameraCapabilitiesPrivate &rhs) const
+bool QGeoCameraCapabilitiesPrivate::operator==(const QGeoCameraCapabilitiesPrivate &rhs) const noexcept
 {
     return ((supportsBearing_ == rhs.supportsBearing_)
             && (supportsRolling_ == rhs.supportsRolling_)

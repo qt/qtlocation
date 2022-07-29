@@ -68,18 +68,18 @@ public:
     QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other);
     ~QGeoRouteRequestPrivate();
 
-    bool operator ==(const QGeoRouteRequestPrivate &other) const;
+    bool operator==(const QGeoRouteRequestPrivate &other) const;
 
     QList<QGeoCoordinate> waypoints;
     QList<QVariantMap> waypointMetadata;
     QList<QGeoRectangle> excludeAreas;
-    int numberAlternativeRoutes;
-    QGeoRouteRequest::TravelModes travelModes;
-    QMap < QGeoRouteRequest::FeatureType,
-         QGeoRouteRequest::FeatureWeight > featureWeights;
-    QGeoRouteRequest::RouteOptimizations routeOptimization;
-    QGeoRouteRequest::SegmentDetail segmentDetail;
-    QGeoRouteRequest::ManeuverDetail maneuverDetail;
+    int numberAlternativeRoutes = 0;
+    QGeoRouteRequest::TravelModes travelModes = QGeoRouteRequest::CarTravel;
+    QMap <QGeoRouteRequest::FeatureType,
+          QGeoRouteRequest::FeatureWeight> featureWeights;
+    QGeoRouteRequest::RouteOptimizations routeOptimization = QGeoRouteRequest::FastestRoute;
+    QGeoRouteRequest::SegmentDetail segmentDetail = QGeoRouteRequest::BasicSegmentData;
+    QGeoRouteRequest::ManeuverDetail maneuverDetail = QGeoRouteRequest::BasicManeuvers;
     QDateTime departureTime;
     QVariantMap extraParameters;
 };

@@ -65,7 +65,7 @@ public:
     QGeoCodingManagerPrivate();
     ~QGeoCodingManagerPrivate();
 
-    QGeoCodingManagerEngine *engine;
+    QGeoCodingManagerEngine *engine = nullptr;
 
 private:
     Q_DISABLE_COPY(QGeoCodingManagerPrivate)

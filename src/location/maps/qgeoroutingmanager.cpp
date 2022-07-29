@@ -332,9 +332,7 @@ Use deleteLater() instead.
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
-    : engine(0) {}
-
+QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate() = default;
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 {
     delete engine;

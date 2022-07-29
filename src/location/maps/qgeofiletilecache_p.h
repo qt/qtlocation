@@ -77,7 +77,7 @@ public:
     QGeoTileSpec spec;
     QString filename;
     QString format;
-    QGeoFileTileCache *cache;
+    QGeoFileTileCache *cache = nullptr;
 };
 
 /* Custom eviction policy for the disk cache, to avoid deleting all the files

@@ -62,12 +62,8 @@ QT_BEGIN_NAMESPACE
 class QGeoRoutingManagerEnginePrivate
 {
 public:
-    QGeoRoutingManagerEnginePrivate();
-    ~QGeoRoutingManagerEnginePrivate();
-
     QString managerName;
-    int managerVersion;
-
+    int managerVersion = -1;
     QGeoRouteRequest::TravelModes supportedTravelModes;
     QGeoRouteRequest::FeatureTypes supportedFeatureTypes;
     QGeoRouteRequest::FeatureWeights supportedFeatureWeights;
@@ -76,10 +72,7 @@ public:
     QGeoRouteRequest::ManeuverDetails supportedManeuverDetails;
 
     QLocale locale;
-    QLocale::MeasurementSystem measurementSystem;
-
-private:
-    Q_DISABLE_COPY(QGeoRoutingManagerEnginePrivate)
+    QLocale::MeasurementSystem measurementSystem = locale.measurementSystem();
 };
 
 QT_END_NAMESPACE

@@ -413,14 +413,4 @@ This signal and QGeoRouteReply::error() will be emitted at the same time.
 Use deleteLater() instead.
 */
 
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
-:   managerVersion(-1), measurementSystem(locale.measurementSystem())
-{
-}
-
-QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}
-
 QT_END_NAMESPACE

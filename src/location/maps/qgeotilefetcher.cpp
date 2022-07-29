@@ -219,13 +219,4 @@ void QGeoTileFetcher::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTileFetcherPrivate::QGeoTileFetcherPrivate()
-:   QObjectPrivate(), enabled_(false), engine_(0)
-{
-}
-
-QGeoTileFetcherPrivate::~QGeoTileFetcherPrivate()
-{
-}
-
 QT_END_NAMESPACE

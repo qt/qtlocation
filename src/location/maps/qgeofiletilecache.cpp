@@ -72,7 +72,7 @@ void QCache3QTileEvictionPolicy::aboutToBeRemoved(const QGeoTileSpec &key, QShar
 {
     Q_UNUSED(key);
     // set the cache pointer to zero so we can't call evictFromDiskCache
-    obj->cache = 0;
+    obj->cache = nullptr;
 }
 
 void QCache3QTileEvictionPolicy::aboutToBeEvicted(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj)

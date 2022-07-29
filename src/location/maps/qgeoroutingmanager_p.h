@@ -63,7 +63,7 @@ public:
     QGeoRoutingManagerPrivate();
     ~QGeoRoutingManagerPrivate();
 
-    QGeoRoutingManagerEngine *engine;
+    QGeoRoutingManagerEngine *engine = nullptr;
 
 private:
     Q_DISABLE_COPY(QGeoRoutingManagerPrivate)

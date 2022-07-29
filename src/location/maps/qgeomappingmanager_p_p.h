@@ -59,7 +59,7 @@ public:
     QGeoMappingManagerPrivate();
     ~QGeoMappingManagerPrivate();
 
-    QGeoMappingManagerEngine *engine;
+    QGeoMappingManagerEngine *engine = nullptr;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerPrivate)

@@ -207,10 +207,7 @@ QLocale QGeoMappingManagerEngine::locale() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
-    : managerVersion(-1),
-      initialized(false) {}
-
-QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
+QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate() = default;
+QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() = default;
 
 QT_END_NAMESPACE

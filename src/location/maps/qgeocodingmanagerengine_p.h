@@ -64,9 +64,8 @@ public:
     ~QGeoCodingManagerEnginePrivate();
 
     QString managerName;
-    int managerVersion;
-
     QLocale locale;
+    int managerVersion = -1;
 
 private:
     Q_DISABLE_COPY(QGeoCodingManagerEnginePrivate)

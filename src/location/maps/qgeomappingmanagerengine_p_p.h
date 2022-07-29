@@ -69,13 +69,12 @@ public:
     ~QGeoMappingManagerEnginePrivate();
 
     QString managerName;
-    int managerVersion;
-
     QList<QGeoMapType> supportedMapTypes;
+    QLocale locale;
     QGeoCameraCapabilities capabilities_;
 
-    QLocale locale;
-    bool initialized;
+    bool initialized = false;
+    int managerVersion = -1;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)

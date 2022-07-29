@@ -178,18 +178,6 @@ const QSet<QGeoTileSpec>& QGeoCameraTiles::createTiles()
     return d_ptr->m_tiles;
 }
 
-QGeoCameraTilesPrivate::QGeoCameraTilesPrivate()
-:   m_mapVersion(-1),
-    m_tileSize(0),
-    m_intZoomLevel(0),
-    m_sideLength(0),
-    m_dirtyGeometry(false),
-    m_dirtyMetadata(false),
-    m_viewExpansion(1.0)
-{
-}
-
-QGeoCameraTilesPrivate::~QGeoCameraTilesPrivate() {}
 
 void QGeoCameraTilesPrivate::updateMetadata()
 {

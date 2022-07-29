@@ -74,18 +74,12 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoTileFetcherPrivate : public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QGeoTileFetcher)
 public:
-    QGeoTileFetcherPrivate();
-    virtual ~QGeoTileFetcherPrivate();
-
-    bool enabled_;
     QBasicTimer timer_;
     QMutex queueMutex_;
     QList<QGeoTileSpec> queue_;
     QHash<QGeoTileSpec, QGeoTiledMapReply *> invmap_;
-    QGeoMappingManagerEngine *engine_;
-
-private:
-    Q_DISABLE_COPY(QGeoTileFetcherPrivate)
+    QGeoMappingManagerEngine *engine_ = nullptr;
+    bool enabled_ = false;
 };
 
 QT_END_NAMESPACE

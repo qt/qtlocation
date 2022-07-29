@@ -524,30 +524,11 @@ QVariantMap QGeoRouteRequest::extraParameters() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
-    : QSharedData(),
-      numberAlternativeRoutes(0),
-      travelModes(QGeoRouteRequest::CarTravel),
-      routeOptimization(QGeoRouteRequest::FastestRoute),
-      segmentDetail(QGeoRouteRequest::BasicSegmentData),
-      maneuverDetail(QGeoRouteRequest::BasicManeuvers) {}
+QGeoRouteRequestPrivate::QGeoRouteRequestPrivate() = default;
+QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other) = default;
+QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() = default;
 
-QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
-    : QSharedData(other),
-      waypoints(other.waypoints),
-      waypointMetadata(other.waypointMetadata),
-      excludeAreas(other.excludeAreas),
-      numberAlternativeRoutes(other.numberAlternativeRoutes),
-      travelModes(other.travelModes),
-      featureWeights(other.featureWeights),
-      routeOptimization(other.routeOptimization),
-      segmentDetail(other.segmentDetail),
-      maneuverDetail(other.maneuverDetail),
-      extraParameters(other.extraParameters) {}
-
-QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
-
-bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) const
+bool QGeoRouteRequestPrivate::operator==(const QGeoRouteRequestPrivate &other) const
 {
     return ((waypoints == other.waypoints)
             && (waypointMetadata == other.waypointMetadata)

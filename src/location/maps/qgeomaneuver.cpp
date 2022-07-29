@@ -167,7 +167,7 @@ QGeoManeuver &QGeoManeuver::operator= (const QGeoManeuver & other)
 bool QGeoManeuver::isEqual(const QGeoManeuver &other) const
 {
     return ( (d_ptr.constData() == other.d_ptr.constData())
-            ||  (*(d_ptr.constData()) == *(other.d_ptr.constData())) );
+            ||  (d_ptr->equals(*other.d_ptr)) );
 }
 
 /*!
@@ -320,27 +320,6 @@ QVariantMap QGeoManeuver::extendedAttributes() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoManeuverPrivate::QGeoManeuverPrivate()
-{
-
-}
-
-QGeoManeuverPrivate::QGeoManeuverPrivate(const QGeoManeuverPrivate &other)
-    : QSharedData(other)
-{
-
-}
-
-QGeoManeuverPrivate::~QGeoManeuverPrivate()
-{
-
-}
-
-bool QGeoManeuverPrivate::operator==(const QGeoManeuverPrivate &other) const
-{
-    return equals(other);
-}
-
 bool QGeoManeuverPrivate::equals(const QGeoManeuverPrivate &other) const
 {
     return ((valid() == other.valid())
@@ -447,23 +426,9 @@ void QGeoManeuverPrivate::setExtendedAttributes(const QVariantMap &extendedAttri
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoManeuverPrivateDefault::QGeoManeuverPrivateDefault()
-    : m_valid(false),
-      m_direction(QGeoManeuver::NoDirection),
-      m_timeToNextInstruction(0),
-      m_distanceToNextInstruction(0.0) {}
+QGeoManeuverPrivate::~QGeoManeuverPrivate() = default;
 
-QGeoManeuverPrivateDefault::QGeoManeuverPrivateDefault(const QGeoManeuverPrivateDefault &other)
-    : QGeoManeuverPrivate(other),
-      m_valid(other.m_valid),
-      m_position(other.m_position),
-      m_text(other.m_text),
-      m_direction(other.m_direction),
-      m_timeToNextInstruction(other.m_timeToNextInstruction),
-      m_distanceToNextInstruction(other.m_distanceToNextInstruction),
-      m_waypoint(other.m_waypoint) {}
-
-QGeoManeuverPrivateDefault::~QGeoManeuverPrivateDefault() {}
+QGeoManeuverPrivateDefault::~QGeoManeuverPrivateDefault() = default;
 
 QGeoManeuverPrivate *QGeoManeuverPrivateDefault::clone()
 {
