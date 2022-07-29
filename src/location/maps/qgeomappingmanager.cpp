@@ -180,13 +180,11 @@ QLocale QGeoMappingManager::locale() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
-    : engine(0) {}
+QGeoMappingManagerPrivate::QGeoMappingManagerPrivate() = default;
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {
     delete engine;
-    engine = 0;
 }
 
 QT_END_NAMESPACE

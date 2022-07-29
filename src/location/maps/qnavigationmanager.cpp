@@ -54,15 +54,10 @@ private:
     Q_DISABLE_COPY(QNavigationManagerPrivate)
 };
 
-QNavigationManagerPrivate::QNavigationManagerPrivate()
-{
-
-}
-
+QNavigationManagerPrivate::QNavigationManagerPrivate() = default;
 QNavigationManagerPrivate::~QNavigationManagerPrivate()
 {
     delete engine;
-    engine = nullptr;
 }
 
 QNavigationManager::~QNavigationManager()

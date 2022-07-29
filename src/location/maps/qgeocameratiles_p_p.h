@@ -103,10 +103,6 @@ public:
         QMap<int, QPair<int, int> > data;
     };
 
-    QGeoCameraTilesPrivate();
-    ~QGeoCameraTilesPrivate();
-
-
     void updateMetadata();
     void updateGeometry();
 
@@ -126,18 +122,18 @@ public:
 public:
     QString m_pluginString;
     QGeoMapType m_mapType;
-    int m_mapVersion;
+    int m_mapVersion = -1;
     QGeoCameraData m_camera;
     QSize m_screenSize;
     QRectF m_visibleArea;
-    int m_tileSize;
+    int m_tileSize = 0;
     QSet<QGeoTileSpec> m_tiles;
 
-    int m_intZoomLevel;
-    int m_sideLength;
-    bool m_dirtyGeometry;
-    bool m_dirtyMetadata;
-    double m_viewExpansion;
+    int m_intZoomLevel = 0;
+    int m_sideLength = 0;
+    bool m_dirtyGeometry = false;
+    bool m_dirtyMetadata = false;
+    double m_viewExpansion = 1.0;
 
 #ifdef QT_LOCATION_DEBUG
     // updateGeometry

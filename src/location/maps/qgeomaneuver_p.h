@@ -63,12 +63,8 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_PRIVATE_EXPORT QGeoManeuverPrivate : public QSharedData
 {
 public:
-    QGeoManeuverPrivate();
-    QGeoManeuverPrivate(const QGeoManeuverPrivate &other);
     virtual ~QGeoManeuverPrivate();
     virtual QGeoManeuverPrivate *clone() = 0;
-
-    bool operator== (const QGeoManeuverPrivate &other) const;
 
     virtual bool valid() const;
     virtual void setValid(bool valid);
@@ -97,15 +93,12 @@ public:
     virtual QVariantMap extendedAttributes() const;
     virtual void setExtendedAttributes(const QVariantMap &extendedAttributes);
 
-protected:
     virtual bool equals(const QGeoManeuverPrivate &other) const;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoManeuverPrivateDefault : public QGeoManeuverPrivate
 {
 public:
-    QGeoManeuverPrivateDefault();
-    QGeoManeuverPrivateDefault(const QGeoManeuverPrivateDefault &other);
     ~QGeoManeuverPrivateDefault();
     virtual QGeoManeuverPrivate *clone() override;
 
@@ -136,15 +129,15 @@ public:
     virtual QVariantMap extendedAttributes() const override;
     virtual void setExtendedAttributes(const QVariantMap &extendedAttributes) override;
 
-    bool m_valid;
     QString m_id;
     QGeoCoordinate m_position;
     QString m_text;
-    QGeoManeuver::InstructionDirection m_direction;
-    int m_timeToNextInstruction;
-    qreal m_distanceToNextInstruction;
     QGeoCoordinate m_waypoint;
     QVariantMap m_extendedAttributes;
+    qreal m_distanceToNextInstruction = 0.0;
+    QGeoManeuver::InstructionDirection m_direction = QGeoManeuver::NoDirection;
+    int m_timeToNextInstruction = 0;
+    bool m_valid = false;
 };
 
 QT_END_NAMESPACE

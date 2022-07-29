@@ -346,7 +346,7 @@ QGeoCodeReplyPrivate::QGeoCodeReplyPrivate(QGeoCodeReply::Error error, const QSt
       limit(-1),
       offset(0) {}
 
-QGeoCodeReplyPrivate::~QGeoCodeReplyPrivate() {}
+QGeoCodeReplyPrivate::~QGeoCodeReplyPrivate() = default;
 
 QVariantMap QGeoCodeReplyPrivate::extraData() const
 {

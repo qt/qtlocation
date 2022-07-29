@@ -119,29 +119,16 @@ QVariantMap QGeoMapType::metadata() const
     return d_ptr->metadata_;
 }
 
-QGeoMapTypePrivate::QGeoMapTypePrivate()
-:   style_(QGeoMapType::NoMap), mobile_(false), night_(false), mapId_(0)
-{
-}
-
-QGeoMapTypePrivate::QGeoMapTypePrivate(const QGeoMapTypePrivate &other)
-:   QSharedData(other), style_(other.style_), name_(other.name_), description_(other.description_),
-    mobile_(other.mobile_), night_(other.night_), mapId_(other.mapId_), pluginName_(other.pluginName_),
-    cameraCapabilities_(other.cameraCapabilities_), metadata_(other.metadata_)
-{
-}
+QGeoMapTypePrivate::QGeoMapTypePrivate() = default;
 
 QGeoMapTypePrivate::QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name,
                                        const QString &description, bool mobile, bool night,
                                        int mapId, const QByteArray &pluginName,
                                        const QGeoCameraCapabilities &cameraCapabilities,
                                        const QVariantMap &metadata)
-:   style_(style), name_(name), description_(description), mobile_(mobile), night_(night),
-    mapId_(mapId), pluginName_(pluginName), cameraCapabilities_(cameraCapabilities), metadata_(metadata)
-{
-}
-
-QGeoMapTypePrivate::~QGeoMapTypePrivate()
+:   name_(name), description_(description), pluginName_(pluginName),
+    cameraCapabilities_(cameraCapabilities), metadata_(metadata),
+    style_(style), mapId_(mapId), mobile_(mobile), night_(night)
 {
 }
 

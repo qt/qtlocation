@@ -50,57 +50,19 @@ QT_BEGIN_NAMESPACE
 class QGeoCameraDataPrivate : public QSharedData
 {
 public:
-    QGeoCameraDataPrivate();
-    QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs);
+    bool operator==(const QGeoCameraDataPrivate &rhs) const noexcept;
 
-    QGeoCameraDataPrivate &operator = (const QGeoCameraDataPrivate &rhs);
-
-    bool operator == (const QGeoCameraDataPrivate &rhs) const;
-
-    QGeoCoordinate m_center;
-    double m_bearing;
-    double m_tilt;
-    double m_roll;
-    double m_fieldOfView;
-    double m_zoomLevel;
+    QGeoCoordinate m_center = {0, 0};
+    double m_bearing = 0.0;
+    double m_tilt = 0.0;
+    double m_roll = 0.0;
+    double m_fieldOfView = 45.0;
+    double m_zoomLevel = 0.0;
 };
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoCameraDataPrivate)
 
-QGeoCameraDataPrivate::QGeoCameraDataPrivate()
-    : QSharedData(),
-      m_center(0, 0),
-      m_bearing(0.0),
-      m_tilt(0.0),
-      m_roll(0.0),
-      m_fieldOfView(45.0),
-      m_zoomLevel(0.0) {}
-
-QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
-    : QSharedData(rhs),
-      m_center(rhs.m_center),
-      m_bearing(rhs.m_bearing),
-      m_tilt(rhs.m_tilt),
-      m_roll(rhs.m_roll),
-      m_fieldOfView(rhs.m_fieldOfView),
-      m_zoomLevel(rhs.m_zoomLevel) {}
-
-QGeoCameraDataPrivate &QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
-{
-    if (this == &rhs)
-        return *this;
-
-    m_center = rhs.m_center;
-    m_bearing = rhs.m_bearing;
-    m_tilt = rhs.m_tilt;
-    m_roll = rhs.m_roll;
-    m_fieldOfView = rhs.m_fieldOfView;
-    m_zoomLevel = rhs.m_zoomLevel;
-
-    return *this;
-}
-
-bool QGeoCameraDataPrivate::operator == (const QGeoCameraDataPrivate &rhs) const
+bool QGeoCameraDataPrivate::operator==(const QGeoCameraDataPrivate &rhs) const noexcept
 {
     return ((m_center == rhs.m_center)
             && (m_bearing == rhs.m_bearing)

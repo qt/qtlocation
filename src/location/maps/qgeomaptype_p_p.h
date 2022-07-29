@@ -69,22 +69,18 @@ public:
                        bool night, int mapId, const QByteArray &pluginName,
                        const QGeoCameraCapabilities &cameraCapabilities,
                        const QVariantMap &metadata);
-    QGeoMapTypePrivate(const QGeoMapTypePrivate &other);
-    ~QGeoMapTypePrivate();
 
-    QGeoMapTypePrivate &operator = (const QGeoMapTypePrivate &other);
+    bool operator==(const QGeoMapTypePrivate &other) const;
 
-    bool operator == (const QGeoMapTypePrivate &other) const;
-
-    QGeoMapType::MapStyle style_;
     QString name_;
     QString description_;
-    bool mobile_;
-    bool night_;
-    int mapId_;
     QByteArray pluginName_;
     QGeoCameraCapabilities cameraCapabilities_;
     QVariantMap metadata_;
+    QGeoMapType::MapStyle style_ = QGeoMapType::NoMap;
+    int mapId_ = 0;
+    bool mobile_ = false;
+    bool night_ = false;
 };
 
 QT_END_NAMESPACE

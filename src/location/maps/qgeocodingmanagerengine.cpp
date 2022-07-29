@@ -326,12 +326,7 @@ QLocale QGeoCodingManagerEngine::locale() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoCodingManagerEnginePrivate::QGeoCodingManagerEnginePrivate()
-    : managerVersion(-1)
-{}
-
-QGeoCodingManagerEnginePrivate::~QGeoCodingManagerEnginePrivate()
-{
-}
+QGeoCodingManagerEnginePrivate::QGeoCodingManagerEnginePrivate() = default;
+QGeoCodingManagerEnginePrivate::~QGeoCodingManagerEnginePrivate() = default;
 
 QT_END_NAMESPACE

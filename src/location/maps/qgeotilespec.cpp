@@ -147,71 +147,7 @@ QDebug operator<< (QDebug dbg, const QGeoTileSpec &spec)
     return dbg;
 }
 
-QGeoTileSpecPrivate::QGeoTileSpecPrivate()
-    : mapId_(0),
-    zoom_(-1),
-    x_(-1),
-    y_(-1),
-    version_(-1) {}
-
-QGeoTileSpecPrivate::QGeoTileSpecPrivate(const QGeoTileSpecPrivate &other)
-    : QSharedData(other),
-      plugin_(other.plugin_),
-      mapId_(other.mapId_),
-      zoom_(other.zoom_),
-      x_(other.x_),
-      y_(other.y_),
-      version_(other.version_) {}
-
-QGeoTileSpecPrivate::QGeoTileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y, int version)
-    : plugin_(plugin),
-      mapId_(mapId),
-      zoom_(zoom),
-      x_(x),
-      y_(y),
-      version_(version) {}
-
-QGeoTileSpecPrivate::~QGeoTileSpecPrivate() {}
-
-QGeoTileSpecPrivate &QGeoTileSpecPrivate::operator = (const QGeoTileSpecPrivate &other)
-{
-    if (this == &other)
-        return *this;
-
-    plugin_ = other.plugin_;
-    mapId_ = other.mapId_;
-    zoom_ = other.zoom_;
-    x_ = other.x_;
-    y_ = other.y_;
-    version_ = other.version_;
-
-    return *this;
-}
-
-bool QGeoTileSpecPrivate::operator == (const QGeoTileSpecPrivate &rhs) const
-{
-    if (plugin_ != rhs.plugin_)
-        return false;
-
-    if (mapId_ != rhs.mapId_)
-        return false;
-
-    if (zoom_ != rhs.zoom_)
-        return false;
-
-    if (x_ != rhs.x_)
-        return false;
-
-    if (y_ != rhs.y_)
-        return false;
-
-    if (version_ != rhs.version_)
-        return false;
-
-    return true;
-}
-
-bool QGeoTileSpecPrivate::operator < (const QGeoTileSpecPrivate &rhs) const
+bool QGeoTileSpecPrivate::operator<(const QGeoTileSpecPrivate &rhs) const
 {
     if (plugin_ < rhs.plugin_)
         return true;

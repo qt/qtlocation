@@ -58,22 +58,29 @@ QT_BEGIN_NAMESPACE
 class QGeoTileSpecPrivate : public QSharedData
 {
 public:
-    QGeoTileSpecPrivate();
-    QGeoTileSpecPrivate(const QGeoTileSpecPrivate &other);
-    QGeoTileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y, int version);
-    ~QGeoTileSpecPrivate();
+    QGeoTileSpecPrivate(const QString &plugin = {}, int mapId = 0,
+                                  int zoom = -1, int x = -1, int y = -1, int version = -1)
+        : plugin_(plugin), mapId_(mapId), zoom_(zoom),
+          x_(x), y_(y), version_(version)
+    {}
 
-    QGeoTileSpecPrivate &operator = (const QGeoTileSpecPrivate &other);
-
-    bool operator == (const QGeoTileSpecPrivate &rhs) const;
-    bool operator < (const QGeoTileSpecPrivate &rhs) const;
+    inline bool operator==(const QGeoTileSpecPrivate &rhs) const
+    {
+        return mapId_ == rhs.mapId_
+            && zoom_ == rhs.zoom_
+            && x_ == rhs.x_
+            && y_ == rhs.y_
+            && version_ == rhs.version_
+            && plugin_ == rhs.plugin_;
+    }
+    bool operator<(const QGeoTileSpecPrivate &rhs) const;
 
     QString plugin_;
-    int mapId_;
-    int zoom_;
-    int x_;
-    int y_;
-    int version_;
+    int mapId_ = 0;
+    int zoom_ = -1;
+    int x_ = -1;
+    int y_ = -1;
+    int version_ = -1;
 };
 
 QT_END_NAMESPACE

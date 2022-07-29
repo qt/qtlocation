@@ -314,8 +314,7 @@ QLocale QGeoCodingManager::locale() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoCodingManagerPrivate::QGeoCodingManagerPrivate()
-    : engine(0) {}
+QGeoCodingManagerPrivate::QGeoCodingManagerPrivate() = default;
 
 QGeoCodingManagerPrivate::~QGeoCodingManagerPrivate()
 {
