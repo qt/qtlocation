@@ -106,9 +106,6 @@ public:
     void setExtendedAttributes(const QVariantMap &extendedAttributes);
     QVariantMap extendedAttributes() const;
 
-protected:
-    QGeoManeuver(const QSharedDataPointer<QGeoManeuverPrivate> &dd);
-
 private:
     QSharedDataPointer<QGeoManeuverPrivate> d_ptr;
 

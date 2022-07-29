@@ -296,9 +296,6 @@ QGeoCoordinate QGeoManeuver::waypoint() const
     return d_ptr->waypoint();
 }
 
-QGeoManeuver::QGeoManeuver(const QSharedDataPointer<QGeoManeuverPrivate> &dd)
-    : d_ptr(dd) {}
-
 /*!
     Sets the extended attributes \a extendedAttributes associated with this maneuver.
 
