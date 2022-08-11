@@ -390,6 +390,10 @@ QLocationUtils::GSVParseStatus QLocationUtils::getSatInfoFromNmea(const char *da
         infos.clear();
 
     const int numSatInSentence = qMin(sentence * 4, totalSats) - (sentence - 1) * 4;
+    if (parts.size() < (4 + numSatInSentence * 4)) {
+        infos.clear();
+        return GSVFullyParsed; // Malformed sentence.
+    }
 
     int field = 4;
     for (int i = 0; i < numSatInSentence; ++i) {
