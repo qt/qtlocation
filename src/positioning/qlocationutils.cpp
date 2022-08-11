@@ -134,7 +134,7 @@ static void qlocationutils_readGsa(const char *data,
     if (parts.count() <= 2)
         return;
     bool ok;
-    for (int i = 3; i <= qMin(14, parts.size()); ++i) {
+    for (int i = 3; i < qMin(15, parts.size()); ++i) {
         const QByteArray &pnrString = parts.at(i);
         if (pnrString.isEmpty())
             continue;
