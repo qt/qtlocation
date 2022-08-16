@@ -843,12 +843,28 @@ private slots:
                 << QString( "2%1 0.000', 2%1 0.000'").arg(DEGREES_SYMB);
 
         QTest::newRow("Wrap seconds to minutes to Degrees DM -> above valid long/lat values")
-                << QGeoCoordinate(89.9999, 179.9999) << QGeoCoordinate::DegreesMinutesSeconds
+                << QGeoCoordinate(89.999999, 179.999999) << QGeoCoordinate::DegreesMinutesSeconds
                 << QString( "90%1 0' 0.0\", 180%1 0' 0.0\"").arg(DEGREES_SYMB);
 
+        QTest::newRow("Seconds and minutes near valid long/lat values border")
+                << QGeoCoordinate(89.9999, 179.9999) << QGeoCoordinate::DegreesMinutesSeconds
+                << QString("89%1 59' 59.6\", 179%1 59' 59.6\"").arg(DEGREES_SYMB);
+
         QTest::newRow("Wrap minutes to Degrees DM ->above valid long/lat values")
-                << QGeoCoordinate(89.9999, 179.9999) << QGeoCoordinate::DegreesMinutes
+                << QGeoCoordinate(89.999999, 179.999999) << QGeoCoordinate::DegreesMinutes
                 << QString( "90%1 0.000', 180%1 0.000'").arg(DEGREES_SYMB);
+
+        QTest::newRow("Minutes near valid long/lat values border")
+                << QGeoCoordinate(89.9999, 179.9999) << QGeoCoordinate::DegreesMinutes
+                << QString("89%1 59.994', 179%1 59.994'").arg(DEGREES_SYMB);
+
+        QTest::newRow("Fix incorrect wrap minutes to degrees")
+                << QGeoCoordinate(0.995833, 0.995833) << QGeoCoordinate::DegreesMinutes
+                << QString("0%1 59.750', 0%1 59.750'").arg(DEGREES_SYMB);
+
+        QTest::newRow("Fix incorrect wrap seconds to minutes")
+                << QGeoCoordinate(0.9832222, 0.9832222) << QGeoCoordinate::DegreesMinutesSeconds
+                << QString("0%1 58' 59.6\", 0%1 58' 59.6\"").arg(DEGREES_SYMB);
 
     }
 
