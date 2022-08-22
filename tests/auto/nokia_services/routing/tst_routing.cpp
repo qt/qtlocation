@@ -336,7 +336,7 @@ void tst_nokia_routing::initTestCase()
 
     connect(m_routingManager, SIGNAL(finished(QGeoRouteReply*)),
             this, SLOT(routingFinished(QGeoRouteReply*)));
-    connect(m_routingManager, SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+    connect(m_routingManager, SIGNAL(errorOccurred(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
             this, SLOT(routingError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
 
     QList<QGeoCoordinate> waypoints;

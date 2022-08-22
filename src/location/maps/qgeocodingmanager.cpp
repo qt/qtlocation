@@ -88,15 +88,11 @@ QGeoCodingManager::QGeoCodingManager(QGeoCodingManagerEngine *engine, QObject *p
     if (d_ptr->engine) {
         d_ptr->engine->setParent(this);
 
-        connect(d_ptr->engine,
-                SIGNAL(finished(QGeoCodeReply*)),
-                this,
-                SIGNAL(finished(QGeoCodeReply*)));
+        connect(d_ptr->engine, &QGeoCodingManagerEngine::finished,
+                this, &QGeoCodingManager::finished);
 
-        connect(d_ptr->engine,
-                SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)),
-                this,
-                SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
+        connect(d_ptr->engine, &QGeoCodingManagerEngine::errorOccurred,
+                this, &QGeoCodingManager::errorOccurred);
     } else {
         qFatal("The geocoding manager engine that was set for this geocoding manager was NULL.");
     }
@@ -168,8 +164,8 @@ int QGeoCodingManager::managerVersion() const
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoCodingManager::finished(),
-    QGeoCodingManager::error(), QGeoCodeReply::finished() or
-    QGeoCodeReply::error() with deleteLater().
+    QGeoCodingManager::errorOccurred(), QGeoCodeReply::finished() or
+    QGeoCodeReply::errorOccurred() with deleteLater().
 */
 QGeoCodeReply *QGeoCodingManager::geocode(const QGeoAddress &address, const QGeoShape &bounds)
 {
@@ -210,8 +206,8 @@ QGeoCodeReply *QGeoCodingManager::geocode(const QGeoAddress &address, const QGeo
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoCodingManager::finished(),
-    QGeoCodingManager::error(), QGeoCodeReply::finished() or
-    QGeoCodeReply::error() with deleteLater().
+    QGeoCodingManager::errorOccurred(), QGeoCodeReply::finished() or
+    QGeoCodeReply::errorOccurred() with deleteLater().
 */
 QGeoCodeReply *QGeoCodingManager::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoShape &bounds)
 {
@@ -244,8 +240,8 @@ QGeoCodeReply *QGeoCodingManager::reverseGeocode(const QGeoCoordinate &coordinat
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoCodingManager::finished(),
-    QGeoCodingManager::error(), QGeoCodeReply::finished() or
-    QGeoCodeReply::error() with deleteLater().
+    QGeoCodingManager::errorOccurred(), QGeoCodeReply::finished() or
+    QGeoCodeReply::errorOccurred() with deleteLater().
 */
 QGeoCodeReply *QGeoCodingManager::geocode(const QString &address,
         int limit,
@@ -297,7 +293,7 @@ QLocale QGeoCodingManager::locale() const
 */
 
 /*!
-\fn void QGeoCodingManager::error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString errorString)
+\fn void QGeoCodingManager::errorOccurred(QGeoCodeReply *reply, QGeoCodeReply::Error error, const QString &errorString)
 
     This signal is emitted when an error has been detected in the processing of
     \a reply. The QGeoCodingManager::finished() signal will probably follow.
@@ -305,7 +301,7 @@ QLocale QGeoCodingManager::locale() const
     The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
-    This signal and QGeoCodeReply::error() will be emitted at the same time.
+    This signal and QGeoCodeReply::errorOccurred() will be emitted at the same time.
 
     \note Do not delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.

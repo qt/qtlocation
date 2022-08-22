@@ -62,9 +62,10 @@ QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request,
             failure = true;
             continue;
         }
-        connect(reply, SIGNAL(finished()), this, SLOT(networkFinished()));
-        connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-                this, SLOT(networkError(QNetworkReply::NetworkError)));
+        connect(reply, &QNetworkReply::finished,
+                this, &QGeoRouteReplyNokia::networkFinished);
+        connect(reply, &QNetworkReply::errorOccurred,
+                this, &QGeoRouteReplyNokia::networkError);
         connect(this, &QGeoRouteReply::aborted, reply, &QNetworkReply::abort);
         connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
     }
@@ -89,9 +90,10 @@ void QGeoRouteReplyNokia::networkFinished()
     }
 
     QGeoRouteXmlParser *parser = new QGeoRouteXmlParser(request());
-    connect(parser, SIGNAL(results(QList<QGeoRoute>)),
-            this, SLOT(appendResults(QList<QGeoRoute>)));
-    connect(parser, SIGNAL(error(QString)), this, SLOT(parserError(QString)));
+    connect(parser, &QGeoRouteXmlParser::results,
+            this, &QGeoRouteReplyNokia::appendResults);
+    connect(parser, &QGeoRouteXmlParser::errorOccurred,
+            this, &QGeoRouteReplyNokia::parserError);
 
     ++m_parsers;
     parser->parse(reply->readAll());

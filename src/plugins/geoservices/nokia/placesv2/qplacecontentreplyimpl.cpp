@@ -62,9 +62,10 @@ QPlaceContentReplyImpl::QPlaceContentReplyImpl(const QPlaceContentRequest &reque
     }
     setRequest(request);
 
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(replyError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QPlaceContentReplyImpl::replyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QPlaceContentReplyImpl::replyError);
     connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
@@ -76,7 +77,7 @@ QPlaceContentReplyImpl::~QPlaceContentReplyImpl()
 void QPlaceContentReplyImpl::setError(QPlaceReply::Error error_, const QString &errorString)
 {
     QPlaceContentReply::setError(error_, errorString);
-    emit error(error_, errorString);
+    emit errorOccurred(error_, errorString);
     setFinished(true);
     emit finished();
 }

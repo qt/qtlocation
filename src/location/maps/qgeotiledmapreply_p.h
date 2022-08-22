@@ -92,7 +92,7 @@ public:
 Q_SIGNALS:
     void finished();
     void aborted();
-    void error(QGeoTiledMapReply::Error error, const QString &errorString = QString());
+    void errorOccurred(QGeoTiledMapReply::Error error, const QString &errorString = QString());
 
 protected:
     void setError(Error error, const QString &errorString);

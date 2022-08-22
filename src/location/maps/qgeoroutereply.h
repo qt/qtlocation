@@ -78,7 +78,7 @@ public:
 Q_SIGNALS:
     void finished();
     void aborted();
-    void error(QGeoRouteReply::Error error, const QString &errorString = QString());
+    void errorOccurred(QGeoRouteReply::Error error, const QString &errorString = QString());
 
 protected:
     explicit QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent = nullptr);

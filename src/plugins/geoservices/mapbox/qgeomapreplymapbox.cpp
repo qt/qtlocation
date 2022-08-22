@@ -48,9 +48,10 @@ QGeoMapReplyMapbox::QGeoMapReplyMapbox(QNetworkReply *reply, const QGeoTileSpec 
         setError(UnknownError, QStringLiteral("Null reply"));
         return;
     }
-    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QGeoMapReplyMapbox::networkReplyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QGeoMapReplyMapbox::networkReplyError);
     connect(this, &QGeoTiledMapReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }

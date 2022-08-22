@@ -86,15 +86,11 @@ public:
             return;
         }
 
-        connect(routingManager,
-                SIGNAL(finished(QGeoRouteReply*)),
-                this,
-                SLOT(routeCalculated(QGeoRouteReply*)));
+        connect(routingManager, &QGeoRoutingManager::finished,
+                this, &RouteHandler::routeCalculated);
 
-        connect(routingManager,
-                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-                this,
-                SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+        connect(routingManager, &QGeoRoutingManager::errorOccurred,
+                this, &RouteHandler::routeError);
     }
 
 private slots:

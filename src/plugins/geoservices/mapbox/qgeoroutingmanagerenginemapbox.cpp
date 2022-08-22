@@ -285,9 +285,10 @@ QGeoRouteReply* QGeoRoutingManagerEngineMapbox::calculateRoute(const QGeoRouteRe
 
     QGeoRouteReplyMapbox *routeReply = new QGeoRouteReplyMapbox(reply, request, this);
 
-    connect(routeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(routeReply, SIGNAL(error(QGeoRouteReply::Error,QString)),
-            this, SLOT(replyError(QGeoRouteReply::Error,QString)));
+    connect(routeReply, &QGeoRouteReplyMapbox::finished,
+            this, &QGeoRoutingManagerEngineMapbox::replyFinished);
+    connect(routeReply, &QGeoRouteReplyMapbox::errorOccurred,
+            this, &QGeoRoutingManagerEngineMapbox::replyError);
 
     return routeReply;
 }
@@ -309,7 +310,7 @@ void QGeoRoutingManagerEngineMapbox::replyError(QGeoRouteReply::Error errorCode,
 {
     QGeoRouteReply *reply = qobject_cast<QGeoRouteReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }
 
 QT_END_NAMESPACE

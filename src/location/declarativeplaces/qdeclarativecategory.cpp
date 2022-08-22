@@ -132,8 +132,8 @@ void QDeclarativeCategory::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (m_plugin->isAttached()) {
         pluginReady();
     } else {
-        connect(m_plugin, SIGNAL(attached()),
-                this, SLOT(pluginReady()));
+        connect(m_plugin, &QDeclarativeGeoServiceProvider::attached,
+                this, &QDeclarativeCategory::pluginReady);
     }
 }
 
@@ -355,7 +355,8 @@ void QDeclarativeCategory::save(const QString &parentId)
         return;
 
     m_reply = placeManager->saveCategory(category(), parentId);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(m_reply, &QPlaceReply::finished,
+            this, &QDeclarativeCategory::replyFinished);
     setStatus(QDeclarativeCategory::Saving);
 }
 
@@ -371,7 +372,8 @@ void QDeclarativeCategory::remove()
         return;
 
     m_reply = placeManager->removeCategory(m_category.categoryId());
-    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(m_reply, &QPlaceReply::finished,
+            this, &QDeclarativeCategory::replyFinished);
     setStatus(QDeclarativeCategory::Removing);
 }
 

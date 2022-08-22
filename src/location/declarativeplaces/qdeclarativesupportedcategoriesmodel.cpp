@@ -275,14 +275,14 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                disconnect(placeManager, SIGNAL(categoryAdded(QPlaceCategory,QString)),
-                           this, SLOT(addedCategory(QPlaceCategory,QString)));
-                disconnect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory,QString)),
-                           this, SLOT(updatedCategory(QPlaceCategory,QString)));
-                disconnect(placeManager, SIGNAL(categoryRemoved(QString,QString)),
-                           this, SLOT(removedCategory(QString,QString)));
-                disconnect(placeManager, SIGNAL(dataChanged()),
-                           this, SIGNAL(dataChanged()));
+                disconnect(placeManager, &QPlaceManager::categoryAdded,
+                           this, &QDeclarativeSupportedCategoriesModel::addedCategory);
+                disconnect(placeManager, &QPlaceManager::categoryUpdated,
+                           this, &QDeclarativeSupportedCategoriesModel::updatedCategory);
+                disconnect(placeManager, &QPlaceManager::categoryRemoved,
+                           this, &QDeclarativeSupportedCategoriesModel::removedCategory);
+                disconnect(placeManager, &QPlaceManager::dataChanged,
+                           this, &QDeclarativeSupportedCategoriesModel::emitDataChanged);
             }
         }
     }
@@ -295,8 +295,10 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
             connectNotificationSignals();
             update();
         } else {
-            connect(m_plugin, &QDeclarativeGeoServiceProvider::attached, this, &QDeclarativeSupportedCategoriesModel::update);
-            connect(m_plugin, &QDeclarativeGeoServiceProvider::attached, this, &QDeclarativeSupportedCategoriesModel::connectNotificationSignals);
+            connect(m_plugin, &QDeclarativeGeoServiceProvider::attached,
+                    this, &QDeclarativeSupportedCategoriesModel::update);
+            connect(m_plugin, &QDeclarativeGeoServiceProvider::attached,
+                    this, &QDeclarativeSupportedCategoriesModel::connectNotificationSignals);
         }
     }
 
@@ -503,14 +505,14 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
 
     // listen for any category notifications so that we can reupdate the categories
     // model.
-    connect(placeManager, SIGNAL(categoryAdded(QPlaceCategory,QString)),
-            this, SLOT(addedCategory(QPlaceCategory,QString)));
-    connect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory,QString)),
-            this, SLOT(updatedCategory(QPlaceCategory,QString)));
-    connect(placeManager, SIGNAL(categoryRemoved(QString,QString)),
-            this, SLOT(removedCategory(QString,QString)));
-    connect(placeManager, SIGNAL(dataChanged()),
-            this, SIGNAL(dataChanged()));
+    connect(placeManager, &QPlaceManager::categoryAdded,
+            this, &QDeclarativeSupportedCategoriesModel::addedCategory);
+    connect(placeManager, &QPlaceManager::categoryUpdated,
+            this, &QDeclarativeSupportedCategoriesModel::updatedCategory);
+    connect(placeManager, &QPlaceManager::categoryRemoved,
+            this, &QDeclarativeSupportedCategoriesModel::removedCategory);
+    connect(placeManager, &QPlaceManager::dataChanged,
+            this, &QDeclarativeSupportedCategoriesModel::emitDataChanged);
 }
 
 /*!
@@ -550,7 +552,8 @@ void QDeclarativeSupportedCategoriesModel::update()
 
     m_response = placeManager->initializeCategories();
     if (m_response) {
-        connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
+        connect(m_response, &QPlaceReply::finished,
+                this, &QDeclarativeSupportedCategoriesModel::replyFinished);
     } else {
         updateLayout();
         setStatus(Error, QCoreApplication::translate(CONTEXT_NAME,

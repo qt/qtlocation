@@ -103,8 +103,10 @@ QGeoRouteReply *GeoRoutingManagerEngineEsri::calculateRoute(const QGeoRouteReque
     QNetworkReply *reply = m_networkManager->get(networkRequest);
     GeoRouteReplyEsri *routeReply = new GeoRouteReplyEsri(reply, request, this);
 
-    connect(routeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(routeReply, SIGNAL(error(QGeoRouteReply::Error,QString)), this, SLOT(replyError(QGeoRouteReply::Error,QString)));
+    connect(routeReply, &GeoRouteReplyEsri::finished,
+            this, &GeoRoutingManagerEngineEsri::replyFinished);
+    connect(routeReply, &GeoRouteReplyEsri::errorOccurred,
+            this, &GeoRoutingManagerEngineEsri::replyError);
 
     return routeReply;
 }
@@ -120,7 +122,7 @@ void GeoRoutingManagerEngineEsri::replyError(QGeoRouteReply::Error errorCode, co
 {
     QGeoRouteReply *reply = qobject_cast<QGeoRouteReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }
 
 QString GeoRoutingManagerEngineEsri::preferedDirectionLangage()

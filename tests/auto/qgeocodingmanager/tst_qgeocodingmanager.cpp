@@ -60,7 +60,7 @@ void tst_QGeoCodingManager::init()
     qRegisterMetaType<QGeoCodeReply::Error>();
     qRegisterMetaType<QGeoCodeReply*>();
 
-    signalerror = new QSignalSpy(qgeocodingmanager, SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
+    signalerror = new QSignalSpy(qgeocodingmanager, SIGNAL(errorOccurred(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
     signalfinished = new QSignalSpy(qgeocodingmanager, SIGNAL(finished(QGeoCodeReply*)));
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );

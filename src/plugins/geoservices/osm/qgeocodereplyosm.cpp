@@ -57,9 +57,10 @@ QGeoCodeReplyOsm::QGeoCodeReplyOsm(QNetworkReply *reply, bool includeExtraData, 
         setError(UnknownError, QStringLiteral("Null reply"));
         return;
     }
-    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QGeoCodeReplyOsm::networkReplyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QGeoCodeReplyOsm::networkReplyError);
     connect(this, &QGeoCodeReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
     setLimit(1);

@@ -138,11 +138,8 @@ void QGeoTileFetcher::requestNextTile()
     if (reply->isFinished()) {
         handleReply(reply, ts);
     } else {
-        connect(reply,
-                SIGNAL(finished()),
-                this,
-                SLOT(finished()),
-                Qt::QueuedConnection);
+        connect(reply, &QGeoTiledMapReply::finished,
+                this, &QGeoTileFetcher::finished, Qt::QueuedConnection);
 
         d->invmap_.insert(ts, reply);
     }

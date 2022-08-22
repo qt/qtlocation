@@ -55,9 +55,10 @@ QPlaceSearchSuggestionReplyImpl::QPlaceSearchSuggestionReplyImpl(QNetworkReply *
         setError(UnknownError, QStringLiteral("Null reply"));
         return;
     }
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(replyError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QPlaceSearchSuggestionReplyImpl::replyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QPlaceSearchSuggestionReplyImpl::replyError);
     connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
@@ -70,7 +71,7 @@ void QPlaceSearchSuggestionReplyImpl::setError(QPlaceReply::Error error_,
                                                const QString &errorString)
 {
     QPlaceReply::setError(error_, errorString);
-    emit error(error_, errorString);
+    emit errorOccurred(error_, errorString);
     setFinished(true);
     emit finished();
 }
@@ -86,7 +87,7 @@ void QPlaceSearchSuggestionReplyImpl::replyFinished()
     QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
     if (!document.isObject()) {
         setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
-        emit error(error(), errorString());
+        emit errorOccurred(error(), errorString());
         return;
     }
 

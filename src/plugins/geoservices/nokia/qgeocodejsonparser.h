@@ -63,7 +63,7 @@ public:
 
 signals:
     void results(const QList<QGeoLocation> &locations);
-    void error(const QString &errorString);
+    void errorOccurred(const QString &errorString);
 
 private:
     QJsonDocument m_document;

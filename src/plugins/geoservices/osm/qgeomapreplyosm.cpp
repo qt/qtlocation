@@ -51,9 +51,10 @@ QGeoMapReplyOsm::QGeoMapReplyOsm(QNetworkReply *reply,
         setError(UnknownError, QStringLiteral("Null reply"));
         return;
     }
-    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QGeoMapReplyOsm::networkReplyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QGeoMapReplyOsm::networkReplyError);
     connect(this, &QGeoTiledMapReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
     setMapImageFormat(imageFormat);

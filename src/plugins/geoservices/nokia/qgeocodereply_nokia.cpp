@@ -64,9 +64,10 @@ QGeoCodeReplyNokia::QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offs
     }
     qRegisterMetaType<QList<QGeoLocation> >();
 
-    connect(reply, SIGNAL(finished()), this, SLOT(networkFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(networkError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QGeoCodeReplyNokia::networkFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QGeoCodeReplyNokia::networkError);
     connect(this, &QGeoCodeReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QGeoCodeReply::aborted, [this](){ m_parsing = false; });
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
@@ -92,9 +93,8 @@ void QGeoCodeReplyNokia::networkFinished()
     QGeoCodeJsonParser *parser = new QGeoCodeJsonParser; // QRunnable, autoDelete = true.
     if (m_manualBoundsRequired)
         parser->setBounds(viewport());
-    connect(parser, SIGNAL(results(QList<QGeoLocation>)),
-            this, SLOT(appendResults(QList<QGeoLocation>)));
-    connect(parser, SIGNAL(error(QString)), this, SLOT(parseError(QString)));
+    connect(parser, &QGeoCodeJsonParser::results, this, &QGeoCodeReplyNokia::appendResults);
+    connect(parser, &QGeoCodeJsonParser::errorOccurred, this, &QGeoCodeReplyNokia::parseError);
 
     m_parsing = true;
     parser->parse(reply->readAll());

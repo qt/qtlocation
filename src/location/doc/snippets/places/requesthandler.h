@@ -84,7 +84,8 @@ public:
         QPlaceSearchReply * searchReply = manager->search(searchRequest);
 
         //3) Connect the reply object to a slot which is invoked upon operation completion
-        connect(searchReply, SIGNAL(finished()), this, SLOT(processSearchReply()));
+        connect(searchReply, &QPlaceSearchReply::finished,
+                this, &RequestHandler::processSearchReply);
         //! [Simple search]
     }
 
@@ -101,7 +102,7 @@ public:
         /*QPlaceSearchReply * */ searchReply = manager->search(searchRequest);
 
         //connect a slot to handle the reply
-        connect(searchReply, SIGNAL(finished()), this, SLOT(handleSearchReply()));
+        connect(searchReply, &QPlaceSearchReply::finished, this, &RequestHandler::handleSearchReply);
 
         //! [Search for places cpp]
     }
@@ -120,7 +121,7 @@ public:
         //! [Details check]
         if (!place.detailsFetched()) {
             /*QPlaceDetailsReply * */ detailsReply = manager->getPlaceDetails(place.placeId());
-            connect(detailsReply, SIGNAL(finished()), this, SLOT(handleDetailsReply()));
+            connect(detailsReply, &QPlaceDetailsReply::finished, this, &RequestHandler::handleDetailsReply);
         }
         //! [Details check]
     }
@@ -135,7 +136,7 @@ public:
         request.setPlaceId(place.placeId());
         request.setLimit(5);
         /*QPlaceContentReply * */ contentReply = manager->getPlaceContent(request);
-        connect(contentReply, SIGNAL(finished()), this, SLOT(handleImagesReply()));
+        connect(contentReply, &QPlaceContentReply::finished, this, &RequestHandler::handleImagesReply);
         //! [Image request]
     }
 
@@ -147,7 +148,7 @@ public:
         request.setSearchTerm("piz");
         request.setSearchArea(QGeoCircle(QGeoCoordinate(12.34, 56.78)));
         /* QPlaceSearchSuggestion * */suggestionReply = manager->searchSuggestions(request);
-        connect(suggestionReply, SIGNAL(finished()), this, SLOT(handleSuggestionReply()));
+        connect(suggestionReply, &QPlaceSearchSuggestion::finished, this, &RequestHandler::handleSuggestionReply);
         //! [Suggestion request]
     }
 
@@ -169,7 +170,7 @@ public:
         place.setLocation(location);
 
         /* QPlaceIdReply * */savePlaceReply = manager->savePlace(place);
-        connect(savePlaceReply, SIGNAL(finished()), this, SLOT(handleSavePlaceReply()));
+        connect(savePlaceReply, &QPlaceIdReply::finished, this, &RequestHandler::handleSavePlaceReply);
         //! [Save place pt2]
     }
 
@@ -178,7 +179,7 @@ public:
         QPlace place;
         //! [Remove place]
         /* QPlaceIdReply * */removePlaceReply = manager->removePlace(place.placeId());
-        connect(removePlaceReply, SIGNAL(finished()), this, SLOT(handleRemovePlaceReply()));
+        connect(removePlaceReply, &QPlaceIdReply::finished, this, &RequestHandler::handleRemovePlaceReply);
         //! [Remove place]
     }
 
@@ -186,7 +187,7 @@ public:
     {
         //! [Initialize categories]
         /* QPlaceReply * */initCatReply = manager->initializeCategories();
-        connect(initCatReply, SIGNAL(finished()), this, SLOT(handleInitCatReply()));
+        connect(initCatReply, &QPlaceReply::finished, this, &RequestHandler::handleInitCatReply);
         //! [Initialize categories]
     }
 
@@ -198,7 +199,7 @@ public:
         QPlaceCategory category;
         category.setName("pizza");
         /*QPlaceIdReply */ saveCategoryReply = manager->saveCategory(category);
-        connect(saveCategoryReply, SIGNAL(finished()), this, SLOT(handleSaveCategoryReply()));
+        connect(saveCategoryReply, &QPlaceIdReply::finished, this, &RequestHandler::handleSaveCategoryReply);
 
         //we could have saved a category as a child by supplying a parent identifier.
         saveCategoryReply = manager->saveCategory(category, fastFood.categoryId());
@@ -210,7 +211,7 @@ public:
         QPlaceCategory category;
         //! [Remove category]
         /* QPlaceIdReply * */removeCategoryReply = manager->removeCategory(place.placeId());
-        connect(removeCategoryReply, SIGNAL(finished()), this, SLOT(handleRemoveCategoryReply()));
+        connect(removeCategoryReply, &QPlaceIdReply::finished, this, &RequestHandler::handleRemoveCategoryReply);
         //! [Remove category]
     }
 
@@ -574,11 +575,11 @@ void SearchSuggestionReply::triggerDone(QPlaceReply::Error error,
 {
     if (error != QPlaceReply::NoError) {
         this->setError(error,errorString);
-        QMetaObject::invokeMethod(m_engine, "error", Qt::QueuedConnection,
+        QMetaObject::invokeMethod(m_engine, "errorOccurred", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply *,this),
                                   Q_ARG(QPlaceReply::Error, error),
                                   Q_ARG(QString, errorString));
-        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+        QMetaObject::invokeMethod(this, "errorOccurred", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error),
                                   Q_ARG(QString, errorString));
     }

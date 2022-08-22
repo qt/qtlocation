@@ -91,7 +91,7 @@ Q_SIGNALS:
     void finished();
     void contentUpdated();
     void aborted();
-    void error(QPlaceReply::Error error, const QString &errorString = QString());
+    void errorOccurred(QPlaceReply::Error error, const QString &errorString = QString());
 
 protected:
     explicit QPlaceReply(QPlaceReplyPrivate *, QObject *parent = nullptr);

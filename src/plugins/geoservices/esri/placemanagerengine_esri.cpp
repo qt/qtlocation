@@ -155,8 +155,10 @@ QPlaceSearchReply *PlaceManagerEngineEsri::search(const QPlaceSearchRequest &req
     QNetworkReply *networkReply = m_networkManager->get(networkRequest);
 
     PlaceSearchReplyEsri *reply = new PlaceSearchReplyEsri(request, networkReply, m_candidateFieldsLocale, m_countriesLocale, this);
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)), this, SLOT(replyError(QPlaceReply::Error,QString)));
+    connect(reply, &PlaceSearchReplyEsri::finished,
+            this, &PlaceManagerEngineEsri::replyFinished);
+    connect(reply, &PlaceSearchReplyEsri::errorOccurred,
+            this, &PlaceManagerEngineEsri::replyError);
 
     return reply;
 }
@@ -172,7 +174,7 @@ void PlaceManagerEngineEsri::replyError(QPlaceReply::Error errorCode, const QStr
 {
     QPlaceReply *reply = qobject_cast<QPlaceReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }
 
 /***** Categories *****/
@@ -182,8 +184,10 @@ QPlaceReply *PlaceManagerEngineEsri::initializeCategories()
     initializeGeocodeServer();
 
     PlaceCategoriesReplyEsri *reply = new PlaceCategoriesReplyEsri(this);
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)), this, SLOT(replyError(QPlaceReply::Error,QString)));
+    connect(reply, &PlaceCategoriesReplyEsri::finished,
+            this, &PlaceManagerEngineEsri::replyFinished);
+    connect(reply, &PlaceCategoriesReplyEsri::errorOccurred,
+            this, &PlaceManagerEngineEsri::replyError);
 
     // TODO delayed finished() emission
     if (!m_categories.isEmpty())
@@ -267,8 +271,10 @@ void PlaceManagerEngineEsri::initializeGeocodeServer()
     if (m_categories.isEmpty() && !m_geocodeServerReply)
     {
         m_geocodeServerReply = m_networkManager->get(QNetworkRequest(kUrlGeocodeServer));
-        connect(m_geocodeServerReply, SIGNAL(finished()), this, SLOT(geocodeServerReplyFinished()));
-        connect(m_geocodeServerReply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)), this, SLOT(geocodeServerReplyError()));
+        connect(m_geocodeServerReply, &QNetworkReply::finished,
+                this, &PlaceManagerEngineEsri::geocodeServerReplyFinished);
+        connect(m_geocodeServerReply, &QNetworkReply::errorOccurred,
+                this, &PlaceManagerEngineEsri::geocodeServerReplyError);
     }
 }
 

@@ -192,8 +192,8 @@ void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map && quickMap) {
-        connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)),
-                this, SLOT(polishAndUpdate()));
+        connect(map, &QGeoMap::cameraDataChanged,
+                this, &QDeclarativeGeoMapQuickItem::polishAndUpdate);
         polishAndUpdate();
     }
 }
@@ -397,14 +397,14 @@ void QDeclarativeGeoMapQuickItem::updatePolish()
         mapAndSourceItemSet_ = true;
         sourceItem_.data()->setParentItem(opacityContainer_);
         sourceItem_.data()->setTransformOrigin(QQuickItem::TopLeft);
-        connect(sourceItem_.data(), SIGNAL(xChanged()),
-                this, SLOT(polishAndUpdate()));
-        connect(sourceItem_.data(), SIGNAL(yChanged()),
-                this, SLOT(polishAndUpdate()));
-        connect(sourceItem_.data(), SIGNAL(widthChanged()),
-                this, SLOT(polishAndUpdate()));
-        connect(sourceItem_.data(), SIGNAL(heightChanged()),
-                this, SLOT(polishAndUpdate()));
+        connect(sourceItem_.data(), &QQuickItem::xChanged,
+                this, &QDeclarativeGeoMapQuickItem::polishAndUpdate);
+        connect(sourceItem_.data(), &QQuickItem::yChanged,
+                this, &QDeclarativeGeoMapQuickItem::polishAndUpdate);
+        connect(sourceItem_.data(), &QQuickItem::widthChanged,
+                this, &QDeclarativeGeoMapQuickItem::polishAndUpdate);
+        connect(sourceItem_.data(), &QQuickItem::heightChanged,
+                this, &QDeclarativeGeoMapQuickItem::polishAndUpdate);
     }
 
     if (!coordinate_.isValid()) {

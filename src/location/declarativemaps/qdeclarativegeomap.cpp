@@ -418,13 +418,16 @@ void QDeclarativeGeoMap::pluginReady()
         return;
     }
 
-    if (!m_mappingManager->isInitialized())
-        connect(m_mappingManager, SIGNAL(initialized()), this, SLOT(mappingManagerInitialized()));
-    else
+    if (!m_mappingManager->isInitialized()) {
+        connect(m_mappingManager, &QGeoMappingManager::initialized,
+                this, &QDeclarativeGeoMap::mappingManagerInitialized);
+    } else {
         mappingManagerInitialized();
+    }
 
     // make sure this is only called once
-    disconnect(this, SLOT(pluginReady()));
+    disconnect(m_plugin, &QDeclarativeGeoServiceProvider::attached,
+               this, &QDeclarativeGeoMap::pluginReady);
 }
 
 /*!
@@ -535,8 +538,8 @@ void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (m_plugin->isAttached()) {
         pluginReady();
     } else {
-        connect(m_plugin, SIGNAL(attached()),
-                this, SLOT(pluginReady()));
+        connect(m_plugin, &QDeclarativeGeoServiceProvider::attached,
+                this, &QDeclarativeGeoMap::pluginReady);
     }
 }
 
@@ -686,12 +689,10 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     QImage copyrightImage;
     if (!m_initialized && width() > 0 && height() > 0) {
         QMetaObject::Connection copyrightStringCatcherConnection =
-                connect(m_map.data(),
-                        QOverload<const QString &>::of(&QGeoMap::copyrightsChanged),
+                connect(m_map.data(), &QGeoMap::copyrightsChanged,
                         [&copyrightString](const QString &copy){ copyrightString = copy; });
         QMetaObject::Connection copyrightImageCatcherConnection =
-                connect(m_map.data(),
-                        QOverload<const QImage &>::of(&QGeoMap::copyrightsChanged),
+                connect(m_map.data(), &QGeoMap::copyrightsImageChanged,
                         [&copyrightImage](const QImage &copy){ copyrightImage = copy; });
         m_map->setViewportSize(QSize(width(), height()));
         initialize(); // This emits the caught signals above
@@ -701,14 +702,14 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
 
     /* COPYRIGHT SIGNALS REWIRING */
-    connect(m_map.data(), SIGNAL(copyrightsChanged(QImage)),
-            this,  SIGNAL(copyrightsChanged(QImage)));
-    connect(m_map.data(), SIGNAL(copyrightsChanged(QString)),
-            this,  SIGNAL(copyrightsChanged(QString)));
+    connect(m_map.data(), &QGeoMap::copyrightsImageChanged,
+            this, &QDeclarativeGeoMap::copyrightsImageChanged);
+    connect(m_map.data(), &QGeoMap::copyrightsChanged,
+            this, &QDeclarativeGeoMap::copyrightsChanged);
     if (!copyrightString.isEmpty())
         emit m_map->copyrightsChanged(copyrightString);
     else if (!copyrightImage.isNull())
-        emit m_map->copyrightsChanged(copyrightImage);
+        emit m_map->copyrightsImageChanged(copyrightImage);
 
 
     connect(window(), &QQuickWindow::beforeSynchronizing, this, &QDeclarativeGeoMap::updateItemToWindowTransform, Qt::DirectConnection);
@@ -718,7 +719,8 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     // This prefetches a buffer around the map
     m_map->prefetchData();
 
-    connect(m_mappingManager, SIGNAL(supportedMapTypesChanged()), this, SLOT(onSupportedMapTypesChanged()));
+    connect(m_mappingManager, &QGeoMappingManager::supportedMapTypesChanged,
+            this, &QDeclarativeGeoMap::onSupportedMapTypesChanged);
     emit minimumZoomLevelChanged();
     emit maximumZoomLevelChanged();
     emit supportedMapTypesChanged();

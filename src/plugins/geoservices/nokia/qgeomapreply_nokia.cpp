@@ -51,15 +51,10 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &s
         setError(UnknownError, QStringLiteral("Null reply"));
         return;
     }
-    connect(reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(networkFinished()));
-
-    connect(reply,
-            SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this,
-            SLOT(networkError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QGeoMapReplyNokia::networkFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QGeoMapReplyNokia::networkError);
     connect(this, &QGeoTiledMapReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }

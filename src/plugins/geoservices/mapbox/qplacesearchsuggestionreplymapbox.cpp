@@ -74,7 +74,7 @@ QPlaceSearchSuggestionReplyMapbox::~QPlaceSearchSuggestionReplyMapbox()
 void QPlaceSearchSuggestionReplyMapbox::setError(QPlaceReply::Error errorCode, const QString &errorString)
 {
     QPlaceReply::setError(errorCode, errorString);
-    emit error(errorCode, errorString);
+    emit errorOccurred(errorCode, errorString);
 
     setFinished(true);
     emit finished();

@@ -238,8 +238,10 @@ void QDeclarativeSearchModelBase::update()
     }
 
     m_reply->setParent(this);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
-    connect(m_reply, SIGNAL(contentUpdated()), this, SLOT(onContentUpdated()));
+    connect(m_reply, &QPlaceReply::finished,
+            this, &QDeclarativeSearchModelBase::queryFinished);
+    connect(m_reply, &QPlaceReply::contentUpdated,
+            this, &QDeclarativeSearchModelBase::onContentUpdated);
 }
 
 /*!
@@ -334,10 +336,14 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
 {
     beginResetModel();
     if (plugin != m_plugin) {
-        if (m_plugin)
-            disconnect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
-        if (plugin)
-            connect(plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
+        if (m_plugin) {
+            disconnect(m_plugin, &QDeclarativeGeoServiceProvider::nameChanged,
+                       this, &QDeclarativeSearchModelBase::pluginNameChanged);
+        }
+        if (plugin) {
+            connect(plugin, &QDeclarativeGeoServiceProvider::nameChanged,
+                    this, &QDeclarativeSearchModelBase::pluginNameChanged);
+        }
         m_plugin = plugin;
     }
 
@@ -348,7 +354,7 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
             if (placeManager) {
                 if (placeManager->childCategoryIds().isEmpty()) {
                     QPlaceReply *reply = placeManager->initializeCategories();
-                    connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
+                    connect(reply, &QPlaceReply::finished, reply, &QObject::deleteLater);
                 }
             }
         }

@@ -191,8 +191,8 @@ QDeclarativePlace::QDeclarativePlace(QObject *parent)
     m_contactDetails(new QDeclarativeContactDetails(this)), m_reply(0), m_plugin(0),
     m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
 {
-    connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)),
-            this, SLOT(contactsModified(QString,QVariant)));
+    connect(m_contactDetails, &QDeclarativeContactDetails::valueChanged,
+            this, &QDeclarativePlace::contactsModified);
 
     setPlace(QPlace());
 }
@@ -206,8 +206,8 @@ QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServicePr
 {
     Q_ASSERT(plugin);
 
-    connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)),
-            this, SLOT(contactsModified(QString,QVariant)));
+    connect(m_contactDetails, &QDeclarativeContactDetails::valueChanged,
+            this, &QDeclarativePlace::contactsModified);
 
     setPlace(src);
 }
@@ -239,8 +239,8 @@ void QDeclarativePlace::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (m_plugin->isAttached()) {
         pluginReady();
     } else {
-        connect(m_plugin, SIGNAL(attached()),
-                this, SLOT(pluginReady()));
+        connect(m_plugin, &QDeclarativeGeoServiceProvider::attached,
+                this, &QDeclarativePlace::pluginReady);
     }
 }
 
@@ -748,7 +748,7 @@ void QDeclarativePlace::getDetails()
         return;
 
     m_reply = placeManager->getPlaceDetails(placeId());
-    connect(m_reply, SIGNAL(finished()), this, SLOT(finished()));
+    connect(m_reply, &QPlaceReply::finished, this, &QDeclarativePlace::finished);
     setStatus(QDeclarativePlace::Fetching);
 }
 
@@ -777,7 +777,7 @@ void QDeclarativePlace::save()
         return;
 
     m_reply = placeManager->savePlace(place());
-    connect(m_reply, SIGNAL(finished()), this, SLOT(finished()));
+    connect(m_reply, &QPlaceReply::finished, this, &QDeclarativePlace::finished);
     setStatus(QDeclarativePlace::Saving);
 }
 
@@ -797,7 +797,7 @@ void QDeclarativePlace::remove()
         return;
 
     m_reply = placeManager->removePlace(place().placeId());
-    connect(m_reply, SIGNAL(finished()), this, SLOT(finished()));
+    connect(m_reply, &QPlaceReply::finished, this, &QDeclarativePlace::finished);
     setStatus(QDeclarativePlace::Removing);
 }
 

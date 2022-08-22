@@ -163,25 +163,26 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
 
         qRegisterMetaType<QPlaceCategory>();
 
-        connect(d, SIGNAL(finished(QPlaceReply*)), this, SIGNAL(finished(QPlaceReply*)));
-        connect(d, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
-                this, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
+        connect(d, &QPlaceManagerEngine::finished,
+                this, &QPlaceManager::finished);
+        connect(d, &QPlaceManagerEngine::errorOccurred,
+                this, &QPlaceManager::errorOccurred);
 
-        connect(d, SIGNAL(placeAdded(QString)),
-                this, SIGNAL(placeAdded(QString)), Qt::QueuedConnection);
-        connect(d, SIGNAL(placeUpdated(QString)),
-                this, SIGNAL(placeUpdated(QString)), Qt::QueuedConnection);
-        connect(d, SIGNAL(placeRemoved(QString)),
-                this, SIGNAL(placeRemoved(QString)), Qt::QueuedConnection);
+        connect(d, &QPlaceManagerEngine::placeAdded,
+                this, &QPlaceManager::placeAdded, Qt::QueuedConnection);
+        connect(d, &QPlaceManagerEngine::placeUpdated,
+                this, &QPlaceManager::placeUpdated, Qt::QueuedConnection);
+        connect(d, &QPlaceManagerEngine::placeRemoved,
+                this, &QPlaceManager::placeRemoved, Qt::QueuedConnection);
 
-        connect(d, SIGNAL(categoryAdded(QPlaceCategory,QString)),
-                this, SIGNAL(categoryAdded(QPlaceCategory,QString)));
-        connect(d, SIGNAL(categoryUpdated(QPlaceCategory,QString)),
-                this, SIGNAL(categoryUpdated(QPlaceCategory,QString)));
-        connect(d, SIGNAL(categoryRemoved(QString,QString)),
-                this, SIGNAL(categoryRemoved(QString,QString)));
-        connect(d, SIGNAL(dataChanged()),
-                this, SIGNAL(dataChanged()), Qt::QueuedConnection);
+        connect(d, &QPlaceManagerEngine::categoryAdded,
+                this, &QPlaceManager::categoryAdded);
+        connect(d, &QPlaceManagerEngine::categoryUpdated,
+                this, &QPlaceManager::categoryUpdated);
+        connect(d, &QPlaceManagerEngine::categoryRemoved,
+                this, &QPlaceManager::categoryRemoved);
+        connect(d, &QPlaceManagerEngine::dataChanged,
+                this, &QPlaceManager::dataChanged, Qt::QueuedConnection);
     } else {
         qFatal("The place manager engine that was set for this place manager was NULL.");
     }
@@ -419,7 +420,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
 */
 
 /*!
-    \fn void QPlaceManager::error(QPlaceReply *reply, QPlaceReply::Error error, const QString &errorString)
+    \fn void QPlaceManager::errorOccurred(QPlaceReply *reply, QPlaceReply::Error error, const QString &errorString)
 
     This signal is emitted when an error has been detected in the processing of
     \a reply.  The QPlaceManager::finished() signal will probably follow.
@@ -428,7 +429,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
     not empty it will contain a textual description of the error meant for developers
     and not end users.
 
-    This signal and QPlaceReply::error() will be emitted at the same time.
+    This signal and QPlaceReply::errorOccurred() will be emitted at the same time.
 
     \note Do not delete the \a reply object in the slot connected to this signal.
     Use deleteLater() instead.

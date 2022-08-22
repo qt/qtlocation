@@ -116,7 +116,7 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 
     if (reqStrings.isEmpty()) {
         QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
-        emit error(reply, reply->error(), reply->errorString());
+        emit errorOccurred(reply, reply->error(), reply->errorString());
         return reply;
     }
 
@@ -126,15 +126,10 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 
     QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(request, replies, this);
 
-    connect(reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(routeFinished()));
-
-    connect(reply,
-            SIGNAL(error(QGeoRouteReply::Error,QString)),
-            this,
-            SLOT(routeError(QGeoRouteReply::Error,QString)));
+    connect(reply, &QGeoRouteReplyNokia::finished,
+            this, &QGeoRoutingManagerEngineNokia::routeFinished);
+    connect(reply, &QGeoRouteReplyNokia::errorOccurred,
+            this, &QGeoRoutingManagerEngineNokia::routeError);
 
     return reply;
 }
@@ -145,7 +140,7 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
 
     if (reqStrings.isEmpty()) {
         QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
-        emit error(reply, reply->error(), reply->errorString());
+        emit errorOccurred(reply, reply->error(), reply->errorString());
         return reply;
     }
 
@@ -157,15 +152,10 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
     updateRequest.setTravelModes(route.travelMode());
     QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(updateRequest, replies, this);
 
-    connect(reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(routeFinished()));
-
-    connect(reply,
-            SIGNAL(error(QGeoRouteReply::Error,QString)),
-            this,
-            SLOT(routeError(QGeoRouteReply::Error,QString)));
+    connect(reply, &QGeoRouteReplyNokia::finished,
+            this, &QGeoRoutingManagerEngineNokia::routeFinished);
+    connect(reply, &QGeoRouteReplyNokia::errorOccurred,
+            this, &QGeoRoutingManagerEngineNokia::routeError);
 
     return reply;
 }
@@ -486,12 +476,12 @@ void QGeoRoutingManagerEngineNokia::routeError(QGeoRouteReply::Error error, cons
     if (!reply)
         return;
 
-    if (receivers(SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString))) == 0) {
+    if (receivers(SIGNAL(errorOccurred(QGeoRouteReply*,QGeoRouteReply::Error,QString))) == 0) {
         reply->deleteLater();
         return;
     }
 
-    emit this->error(reply, error, errorString);
+    emit errorOccurred(reply, error, errorString);
 }
 
 QT_END_NAMESPACE

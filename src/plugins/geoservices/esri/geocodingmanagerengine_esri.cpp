@@ -132,9 +132,10 @@ QGeoCodeReply *GeoCodingManagerEngineEsri::geocode(const QString &address, int l
     QNetworkReply *reply = m_networkManager->get(request);
     GeoCodeReplyEsri *geocodeReply = new GeoCodeReplyEsri(reply, GeoCodeReplyEsri::Geocode, this);
 
-    connect(geocodeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(geocodeReply, SIGNAL(error(QGeoCodeReply::Error,QString)),
-            this, SLOT(replyError(QGeoCodeReply::Error,QString)));
+    connect(geocodeReply, &GeoCodeReplyEsri::finished,
+            this, &GeoCodingManagerEngineEsri::replyFinished);
+    connect(geocodeReply, &GeoCodeReplyEsri::errorOccurred,
+            this, &GeoCodingManagerEngineEsri::replyError);
 
     return geocodeReply;
 }
@@ -163,9 +164,10 @@ QGeoCodeReply *GeoCodingManagerEngineEsri::reverseGeocode(const QGeoCoordinate &
     GeoCodeReplyEsri *geocodeReply = new GeoCodeReplyEsri(reply, GeoCodeReplyEsri::ReverseGeocode,
                                                           this);
 
-    connect(geocodeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(geocodeReply, SIGNAL(error(QGeoCodeReply::Error,QString)),
-            this, SLOT(replyError(QGeoCodeReply::Error,QString)));
+    connect(geocodeReply, &GeoCodeReplyEsri::finished,
+            this, &GeoCodingManagerEngineEsri::replyFinished);
+    connect(geocodeReply, &GeoCodeReplyEsri::errorOccurred,
+            this, &GeoCodingManagerEngineEsri::replyError);
 
     return geocodeReply;
 }
@@ -182,7 +184,7 @@ void GeoCodingManagerEngineEsri::replyError(QGeoCodeReply::Error errorCode,
 {
     QGeoCodeReply *reply = qobject_cast<QGeoCodeReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }
 
 QT_END_NAMESPACE

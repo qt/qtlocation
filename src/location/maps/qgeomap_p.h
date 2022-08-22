@@ -176,7 +176,7 @@ Q_SIGNALS:
     void sgNodeChanged();
     void activeMapTypeChanged();
     void cameraCapabilitiesChanged(const QGeoCameraCapabilities &oldCameraCapabilities);
-    void copyrightsChanged(const QImage &copyrightsImage);
+    void copyrightsImageChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void copyrightsStyleSheetChanged(const QString &styleSheet);
     void visibleAreaChanged();

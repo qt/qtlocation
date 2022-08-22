@@ -55,9 +55,10 @@ GeoTiledMapReplyEsri::GeoTiledMapReplyEsri(QNetworkReply *reply, const QGeoTileS
         setError(UnknownError, QStringLiteral("Null reply"));
         return;
     }
-    connect(reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &GeoTiledMapReplyEsri::networkReplyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &GeoTiledMapReplyEsri::networkReplyError);
     connect(this, &QGeoTiledMapReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }

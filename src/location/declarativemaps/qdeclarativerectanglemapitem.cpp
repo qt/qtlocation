@@ -150,10 +150,10 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
     // ToDo: handle envvar, and switch implementation.
     m_itemType = QGeoMap::MapRectangle;
     setFlag(ItemHasContents, true);
-    QObject::connect(&m_border, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(onLinePropertiesChanged()));
-    QObject::connect(&m_border, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(onLinePropertiesChanged()));
+    QObject::connect(&m_border, &QDeclarativeMapLineProperties::colorChanged,
+                     this, &QDeclarativeRectangleMapItem::onLinePropertiesChanged);
+    QObject::connect(&m_border, &QDeclarativeMapLineProperties::widthChanged,
+                     this, &QDeclarativeRectangleMapItem::onLinePropertiesChanged);
     setBackend(mapRectangleBackendSelector->backend);
 }
 

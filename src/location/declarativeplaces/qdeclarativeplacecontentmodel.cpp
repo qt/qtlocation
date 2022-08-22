@@ -276,7 +276,8 @@ void QDeclarativePlaceContentModel::fetchMore(const QModelIndex &parent)
         m_reply = placeManager->getPlaceContent(m_nextRequest);
     }
 
-    connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
+    connect(m_reply, &QPlaceReply::finished,
+            this, &QDeclarativePlaceContentModel::fetchFinished, Qt::QueuedConnection);
 }
 
 /*!

@@ -344,8 +344,10 @@ void TileProvider::resolveProvider()
     request.setAttribute(QNetworkRequest::BackgroundRequestAttribute, true);
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferNetwork);
     QNetworkReply *reply = m_nm->get(request);
-    connect(reply, SIGNAL(finished()), this, SLOT(onNetworkReplyFinished()) );
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)), this, SLOT(onNetworkReplyError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &TileProvider::onNetworkReplyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &TileProvider::onNetworkReplyError);
 }
 
 void TileProvider::handleError(QNetworkReply::NetworkError error)

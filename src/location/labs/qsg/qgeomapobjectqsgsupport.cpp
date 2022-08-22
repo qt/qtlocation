@@ -216,7 +216,8 @@ void QGeoMapObjectQSGSupport::updateMapObjects(QSGNode *root, QQuickWindow *wind
             }
             m_mapObjects << mo;
             toRemove.push_front(i);
-            QObject::connect(mo.object, SIGNAL(visibleChanged()), m_map, SIGNAL(sgNodeChanged()));
+            QObject::connect(mo.object, &QGeoMapObject::visibleChanged,
+                             m_map, &QGeoMap::sgNodeChanged);
         } else {
             // leave it to be processed, don't spit warnings
         }

@@ -273,9 +273,9 @@ bool PlaceManagerUtils::checkSignals(QPlaceReply *reply, QPlaceReply::Error expe
 {
     Q_ASSERT(reply);
     QSignalSpy finishedSpy(reply, SIGNAL(finished()));
-    QSignalSpy errorSpy(reply, SIGNAL(error(QPlaceReply::Error,QString)));
+    QSignalSpy errorSpy(reply, SIGNAL(errorOccurred(QPlaceReply::Error,QString)));
     QSignalSpy managerFinishedSpy(manager, SIGNAL(finished(QPlaceReply*)));
-    QSignalSpy managerErrorSpy(manager,SIGNAL(error(QPlaceReply*,QPlaceReply::Error,QString)));
+    QSignalSpy managerErrorSpy(manager,SIGNAL(errorOccurred(QPlaceReply*,QPlaceReply::Error,QString)));
 
     if (expectedError != QPlaceReply::NoError) {
         //check that we get an error signal from the reply

@@ -106,9 +106,10 @@ QPlaceDetailsReplyImpl::QPlaceDetailsReplyImpl(QNetworkReply *reply,
         setError(UnknownError, QStringLiteral("Null reply"));
         return;
     }
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(replyError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QPlaceDetailsReplyImpl::replyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QPlaceDetailsReplyImpl::replyError);
     connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
@@ -120,7 +121,7 @@ QPlaceDetailsReplyImpl::~QPlaceDetailsReplyImpl()
 void QPlaceDetailsReplyImpl::setError(QPlaceReply::Error error_, const QString &errorString)
 {
     QPlaceReply::setError(error_, errorString);
-    emit error(error_, errorString);
+    emit errorOccurred(error_, errorString);
     setFinished(true);
     emit finished();
 }
