@@ -59,7 +59,7 @@ void QPlaceIdReplyImpl::setError(QPlaceReply::Error error_, const QString &error
 {
     if (error_ != QPlaceReply::NoError) {
         QPlaceIdReply::setError(error_, errorString);
-        emit error(error_, errorString);
+        emit errorOccurred(error_, errorString);
     }
 
     setFinished(true);

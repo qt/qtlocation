@@ -181,8 +181,9 @@ QGeoCodeReply *QGeoCodingManagerEngineMapbox::doSearch(const QString &request, Q
     QNetworkReply *networkReply = m_networkManager->get(networkRequest);
     QGeoCodeReplyMapbox *reply = new QGeoCodeReplyMapbox(networkReply, this);
 
-    connect(reply, &QGeoCodeReplyMapbox::finished, this, &QGeoCodingManagerEngineMapbox::onReplyFinished);
-    connect(reply, QOverload<QGeoCodeReply::Error, const QString &>::of(&QGeoCodeReply::error),
+    connect(reply, &QGeoCodeReplyMapbox::finished,
+            this, &QGeoCodingManagerEngineMapbox::onReplyFinished);
+    connect(reply, &QGeoCodeReply::errorOccurred,
             this, &QGeoCodingManagerEngineMapbox::onReplyError);
 
     return reply;
@@ -199,7 +200,7 @@ void QGeoCodingManagerEngineMapbox::onReplyError(QGeoCodeReply::Error errorCode,
 {
     QGeoCodeReply *reply = qobject_cast<QGeoCodeReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }
 
 QT_END_NAMESPACE

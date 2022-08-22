@@ -288,10 +288,10 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
     // ToDo: handle envvar, and switch implementation.
     m_itemType = QGeoMap::MapCircle;
     setFlag(ItemHasContents, true);
-    QObject::connect(&m_border, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(onLinePropertiesChanged()));
-    QObject::connect(&m_border, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(onLinePropertiesChanged()));
+    QObject::connect(&m_border, &QDeclarativeMapLineProperties::colorChanged,
+                     this, &QDeclarativeCircleMapItem::onLinePropertiesChanged);
+    QObject::connect(&m_border, &QDeclarativeMapLineProperties::widthChanged,
+                     this, &QDeclarativeCircleMapItem::onLinePropertiesChanged);
 
     // assume that circles are not self-intersecting
     // to speed up processing

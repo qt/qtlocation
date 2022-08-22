@@ -77,7 +77,8 @@ public:
 
 Q_SIGNALS:
     void finished(QGeoCodeReply *reply);
-    void error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString errorString = QString());
+    void errorOccurred(QGeoCodeReply *reply, QGeoCodeReply::Error error,
+                       const QString &errorString = QString());
 
 private:
     explicit QGeoCodingManager(QGeoCodingManagerEngine *engine, QObject *parent = nullptr);

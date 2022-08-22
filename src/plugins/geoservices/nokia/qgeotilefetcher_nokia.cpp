@@ -300,7 +300,8 @@ void QGeoTileFetcherNokia::fetchCopyrightsData()
     if (m_copyrightsReply->isFinished()) {
         copyrightsFetched();
     } else {
-        connect(m_copyrightsReply, SIGNAL(finished()), this, SLOT(copyrightsFetched()));
+        connect(m_copyrightsReply, &QNetworkReply::finished,
+                this, &QGeoTileFetcherNokia::copyrightsFetched);
     }
 }
 
@@ -333,7 +334,8 @@ void QGeoTileFetcherNokia::fetchVersionData()
     if (m_versionReply->isFinished())
         versionFetched();
     else
-        connect(m_versionReply, SIGNAL(finished()), this, SLOT(versionFetched()));
+        connect(m_versionReply, &QNetworkReply::finished,
+                this, &QGeoTileFetcherNokia::versionFetched);
 }
 
 QT_END_NAMESPACE

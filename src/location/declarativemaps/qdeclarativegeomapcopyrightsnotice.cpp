@@ -43,6 +43,7 @@
 #include <QtGui/QTextDocument>
 #include <QtGui/QAbstractTextDocumentLayout>
 #include <QtGui/QPainter>
+#include <QtGui/QImage>
 #include <QtQuick/private/qquickanchors_p.h>
 #include <QtLocation/private/qdeclarativegeomap_p.h>
 #include <QtQuick/private/qquickpainteditem_p.h>
@@ -149,10 +150,10 @@ void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *map)
         if (m_mapSource->m_copyrights && !m_mapSource->m_copyrights->m_copyrightsImage.isNull())
             m_copyrightsImage = m_mapSource->m_copyrights->m_copyrightsImage;
 
-        connect(mapSource(), SIGNAL(copyrightsChanged(QImage)),
-                this, SLOT(copyrightsChanged(QImage)));
-        connect(mapSource(), SIGNAL(copyrightsChanged(QString)),
-                this, SLOT(copyrightsChanged(QString)));
+        connect(mapSource(), &QDeclarativeGeoMap::copyrightsImageChanged,
+                this, &QDeclarativeGeoMapCopyrightNotice::copyrightsImageChanged);
+        connect(mapSource(), &QDeclarativeGeoMap::copyrightsChanged,
+                this, &QDeclarativeGeoMapCopyrightNotice::copyrightsChanged);
 
         if (m_mapSource->m_map)
             connectMap();
@@ -163,10 +164,10 @@ void QDeclarativeGeoMapCopyrightNotice::setMapSource(QDeclarativeGeoMap *map)
 
 void QDeclarativeGeoMapCopyrightNotice::connectMap()
 {
-    connect(m_mapSource->m_map, SIGNAL(copyrightsStyleSheetChanged(QString)),
-            this, SLOT(onCopyrightsStyleSheetChanged(QString)));
-    connect(this, SIGNAL(linkActivated(QString)),
-            mapSource(), SIGNAL(copyrightLinkActivated(QString)));
+    connect(m_mapSource->m_map.data(), &QGeoMap::copyrightsStyleSheetChanged,
+            this, &QDeclarativeGeoMapCopyrightNotice::onCopyrightsStyleSheetChanged);
+    connect(this, &QDeclarativeGeoMapCopyrightNotice::linkActivated,
+            mapSource(), &QDeclarativeGeoMap::copyrightLinkActivated);
 
     onCopyrightsStyleSheetChanged(m_mapSource->m_map->copyrightsStyleSheet());
 
@@ -308,7 +309,7 @@ void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(qreal copyrightsZ)
 /*!
     \internal
 */
-void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrightsImage)
+void QDeclarativeGeoMapCopyrightNotice::copyrightsImageChanged(const QImage &copyrightsImage)
 {
     Q_D(QDeclarativeGeoMapCopyrightNotice);
     delete m_copyrightsHtml;

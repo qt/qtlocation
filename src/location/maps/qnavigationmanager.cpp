@@ -118,11 +118,8 @@ QNavigationManager::QNavigationManager(QNavigationManagerEngine *engine, QObject
         qFatal("The navigation manager engine that was set for this mapping manager was NULL.");
     }
 
-    connect(d_ptr->engine,
-            SIGNAL(initialized()),
-            this,
-            SIGNAL(initialized()),
-            Qt::QueuedConnection);
+    connect(d_ptr->engine, &QNavigationManagerEngine::initialized,
+            this, &QNavigationManager::initialized, Qt::QueuedConnection);
 }
 
 QT_END_NAMESPACE

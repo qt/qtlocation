@@ -119,9 +119,9 @@ void tst_QPlaceManagerNokia::unsupportedFunctions()
 bool tst_QPlaceManagerNokia::checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError)
 {
     QSignalSpy finishedSpy(reply, SIGNAL(finished()));
-    QSignalSpy errorSpy(reply, SIGNAL(error(QPlaceReply::Error,QString)));
+    QSignalSpy errorSpy(reply, SIGNAL(errorOccurred(QPlaceReply::Error,QString)));
     QSignalSpy managerFinishedSpy(placeManager, SIGNAL(finished(QPlaceReply*)));
-    QSignalSpy managerErrorSpy(placeManager,SIGNAL(error(QPlaceReply*,QPlaceReply::Error,QString)));
+    QSignalSpy managerErrorSpy(placeManager,SIGNAL(errorOccurred(QPlaceReply*,QPlaceReply::Error,QString)));
 
     if (expectedError != QPlaceReply::NoError) {
         //check that we get an error signal from the reply

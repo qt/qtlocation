@@ -83,7 +83,7 @@ void QGeoRouteXmlParser::run()
     m_reader = new QXmlStreamReader(m_data);
 
     if (!parseRootElement())
-        emit error(m_reader->errorString());
+        emit errorOccurred(m_reader->errorString());
     else
         emit results(m_results);
 

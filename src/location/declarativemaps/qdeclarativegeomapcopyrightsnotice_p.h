@@ -89,7 +89,7 @@ public:
     void setStyleSheet(const QString &styleSheet);
 
 public Q_SLOTS:
-    void copyrightsChanged(const QImage &copyrightsImage);
+    void copyrightsImageChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void onCopyrightsStyleSheetChanged(const QString &styleSheet);
 

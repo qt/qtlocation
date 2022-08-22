@@ -109,7 +109,7 @@ void QGeoTiledMapNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTile
         m_lastCopyrightsString = copyrightsString;
     }
 
-    emit copyrightsChanged(m_copyrightsSlab);
+    emit copyrightsImageChanged(m_copyrightsSlab);
 }
 
 QT_END_NAMESPACE

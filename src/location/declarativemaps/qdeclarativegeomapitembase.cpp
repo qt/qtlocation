@@ -87,8 +87,8 @@ QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
 :   QQuickItem(parent), map_(0), quickMap_(0), parentGroup_(0)
 {
     setFiltersChildMouseEvents(true);
-    connect(this, SIGNAL(childrenChanged()),
-            this, SLOT(afterChildrenChanged()));
+    connect(this, &QDeclarativeGeoMapItemBase::childrenChanged,
+            this, &QDeclarativeGeoMapItemBase::afterChildrenChanged);
     // Changing opacity on a mapItemGroup should affect also the opacity on the children.
     // This must be notified to plugins, if they are to render the item.
     connect(this, &QQuickItem::opacityChanged, this, &QDeclarativeGeoMapItemBase::mapItemOpacityChanged);
@@ -96,7 +96,8 @@ QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
 
 QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
 {
-    disconnect(this, SLOT(afterChildrenChanged()));
+    disconnect(this, &QDeclarativeGeoMapItemBase::childrenChanged,
+               this, &QDeclarativeGeoMapItemBase::afterChildrenChanged);
     if (quickMap_)
         quickMap_->removeMapItem(this);
 }

@@ -79,17 +79,11 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
         qFatal("The mapping manager engine that was set for this mapping manager was NULL.");
     }
 
-    connect(d_ptr->engine,
-            SIGNAL(initialized()),
-            this,
-            SIGNAL(initialized()),
-            Qt::QueuedConnection);
+    connect(d_ptr->engine, &QGeoMappingManagerEngine::initialized,
+            this, &QGeoMappingManager::initialized, Qt::QueuedConnection);
 
-    connect(d_ptr->engine,
-            SIGNAL(supportedMapTypesChanged()),
-            this,
-            SIGNAL(supportedMapTypesChanged()),
-            Qt::QueuedConnection);
+    connect(d_ptr->engine, &QGeoMappingManagerEngine::supportedMapTypesChanged,
+            this, &QGeoMappingManager::supportedMapTypesChanged, Qt::QueuedConnection);
 }
 
 /*!

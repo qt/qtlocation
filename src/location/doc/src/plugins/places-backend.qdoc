@@ -44,7 +44,7 @@ so implementers will also need to derive the appropriate \l {Places Reply Classe
 The reply objects are responsible for managing an asynchronous request; they are used to notify
 when a request is complete and hold the results of that request.  QPlaceManagerEngine provides a
 default implementation for all virtual functions.  The default implementations for the asynchronous
-functions return a reply that will emit the error() and finished() signals at the next iteration
+functions return a reply that will emit the errorOccurred() and finished() signals at the next iteration
 through the event loop.
 
 \section1 Implementing/Inheriting Reply Objects

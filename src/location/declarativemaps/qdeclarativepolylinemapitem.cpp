@@ -936,10 +936,10 @@ QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
     m_itemType = QGeoMap::MapPolyline;
     m_geopath = QGeoPathEager();
     setFlag(ItemHasContents, true);
-    QObject::connect(&m_line, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(updateAfterLinePropertiesChanged()));
-    QObject::connect(&m_line, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(updateAfterLinePropertiesChanged()));
+    QObject::connect(&m_line, &QDeclarativeMapLineProperties::colorChanged,
+                     this, &QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged);
+    QObject::connect(&m_line, &QDeclarativeMapLineProperties::widthChanged,
+                     this, &QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged);
     setBackend(mapPolylineBackendSelector->backend);
 }
 

@@ -321,10 +321,14 @@ void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin
 
     reset(); // reset the model
 
-    if (plugin_)
-        disconnect(plugin_, SIGNAL(localesChanged()), this, SIGNAL(measurementSystemChanged()));
-    if (plugin)
-        connect(plugin, SIGNAL(localesChanged()), this, SIGNAL(measurementSystemChanged()));
+    if (plugin_) {
+        disconnect(plugin_, &QDeclarativeGeoServiceProvider::localesChanged,
+                   this, &QDeclarativeGeoRouteModel::measurementSystemChanged);
+    }
+    if (plugin) {
+        connect(plugin, &QDeclarativeGeoServiceProvider::localesChanged,
+                this, &QDeclarativeGeoRouteModel::measurementSystemChanged);
+    }
 
     plugin_ = plugin;
 
@@ -337,8 +341,8 @@ void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin
     if (plugin_->isAttached()) {
         pluginReady();
     } else {
-        connect(plugin_, SIGNAL(attached()),
-                this, SLOT(pluginReady()));
+        connect(plugin_, &QDeclarativeGeoServiceProvider::attached,
+                this, &QDeclarativeGeoRouteModel::pluginReady);
     }
 }
 
@@ -374,10 +378,10 @@ void QDeclarativeGeoRouteModel::pluginReady()
         return;
     }
 
-    connect(routingManager, SIGNAL(finished(QGeoRouteReply*)),
-            this, SLOT(routingFinished(QGeoRouteReply*)));
-    connect(routingManager, SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-            this, SLOT(routingError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+    connect(routingManager, &QGeoRoutingManager::finished,
+            this, &QDeclarativeGeoRouteModel::routingFinished);
+    connect(routingManager, &QGeoRoutingManager::errorOccurred,
+            this, &QDeclarativeGeoRouteModel::routingError);
 }
 
 /*!
@@ -417,7 +421,8 @@ void QDeclarativeGeoRouteModel::setQuery(QDeclarativeGeoRouteQuery *query)
     if (routeQuery_)
         routeQuery_->disconnect(this);
     routeQuery_ = query;
-    connect(query, SIGNAL(queryDetailsChanged()), this, SLOT(queryDetailsChanged()));
+    connect(query, &QDeclarativeGeoRouteQuery::queryDetailsChanged,
+            this, &QDeclarativeGeoRouteModel::queryDetailsChanged);
     if (complete_) {
         emit queryChanged();
         if (autoUpdate_)

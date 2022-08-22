@@ -92,8 +92,8 @@ PlaceSearchReplyEsri::PlaceSearchReplyEsri(const QPlaceSearchRequest &request, Q
     }
     setRequest(request);
 
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)), this, SLOT(networkError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished, this, &PlaceSearchReplyEsri::replyFinished);
+    connect(reply, &QNetworkReply::errorOccurred, this, &PlaceSearchReplyEsri::networkError);
     connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
@@ -105,7 +105,7 @@ PlaceSearchReplyEsri::~PlaceSearchReplyEsri()
 void PlaceSearchReplyEsri::setError(QPlaceReply::Error errorCode, const QString &errorString)
 {
     QPlaceReply::setError(errorCode, errorString);
-    emit error(errorCode, errorString);
+    emit errorOccurred(errorCode, errorString);
     setFinished(true);
     emit finished();
 }

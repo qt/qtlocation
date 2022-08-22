@@ -568,7 +568,7 @@ void QDeclarativeSearchResultModel::setFavoritesPlugin(QDeclarativeGeoServicePro
             if (placeManager) {
                 if (placeManager->childCategoryIds().isEmpty()) {
                     QPlaceReply *reply = placeManager->initializeCategories();
-                    connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
+                    connect(reply, &QPlaceReply::finished, reply, &QObject::deleteLater);
                 }
             }
         }
@@ -718,9 +718,12 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                disconnect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(placeUpdated(QString)));
-                disconnect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(placeRemoved(QString)));
-                connect(placeManager, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
+                disconnect(placeManager, &QPlaceManager::placeUpdated,
+                           this, &QDeclarativeSearchResultModel::placeUpdated);
+                disconnect(placeManager, &QPlaceManager::placeRemoved,
+                           this, &QDeclarativeSearchResultModel::placeRemoved);
+                connect(placeManager, &QPlaceManager::dataChanged,
+                        this, &QDeclarativeSearchResultModel::dataChanged);
             }
         }
     }
@@ -731,9 +734,12 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                connect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(placeUpdated(QString)));
-                connect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(placeRemoved(QString)));
-                disconnect(placeManager, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
+                connect(placeManager, &QPlaceManager::placeUpdated,
+                        this, &QDeclarativeSearchResultModel::placeUpdated);
+                connect(placeManager, &QPlaceManager::placeRemoved,
+                        this, &QDeclarativeSearchResultModel::placeRemoved);
+                disconnect(placeManager, &QPlaceManager::dataChanged,
+                           this, &QDeclarativeSearchResultModel::dataChanged);
             }
         }
     }
@@ -813,8 +819,10 @@ void QDeclarativeSearchResultModel::queryFinished()
             if (alreadyLoaded)
                 m_resultsBuffer.clear();
             m_reply = favoritesManager->matchingPlaces(request);
-            connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
-            connect(m_reply, SIGNAL(contentUpdated()), this, SLOT(onContentUpdated()));
+            connect(m_reply, &QPlaceReply::finished,
+                    this, &QDeclarativeSearchResultModel::queryFinished);
+            connect(m_reply, &QPlaceReply::contentUpdated,
+                    this, &QDeclarativeSearchResultModel::onContentUpdated);
         }
     } else if (reply->type() == QPlaceReply::MatchReply) {
         QPlaceMatchReply *matchReply = qobject_cast<QPlaceMatchReply *>(reply);

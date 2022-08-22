@@ -148,8 +148,9 @@ QPlaceReply *QPlaceManagerEngineMapbox::doSearch(const QPlaceSearchRequest &requ
         else
             reply = new QPlaceSearchSuggestionReplyMapbox(0, this);
 
-        connect(reply, &QPlaceReply::finished, this, &QPlaceManagerEngineMapbox::onReplyFinished);
-        connect(reply, QOverload<QPlaceReply::Error, const QString &>::of(&QPlaceReply::error),
+        connect(reply, &QPlaceReply::finished,
+                this, &QPlaceManagerEngineMapbox::onReplyFinished);
+        connect(reply, &QPlaceReply::errorOccurred,
                 this, &QPlaceManagerEngineMapbox::onReplyError);
 
         QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
@@ -234,8 +235,9 @@ QPlaceReply *QPlaceManagerEngineMapbox::doSearch(const QPlaceSearchRequest &requ
     else
         reply = new QPlaceSearchSuggestionReplyMapbox(networkReply, this);
 
-    connect(reply, &QPlaceReply::finished, this, &QPlaceManagerEngineMapbox::onReplyFinished);
-    connect(reply, QOverload<QPlaceReply::Error, const QString &>::of(&QPlaceReply::error),
+    connect(reply, &QPlaceReply::finished,
+            this, &QPlaceManagerEngineMapbox::onReplyFinished);
+    connect(reply, &QPlaceReply::errorOccurred,
             this, &QPlaceManagerEngineMapbox::onReplyError);
 
     return reply;
@@ -254,8 +256,9 @@ QPlaceReply *QPlaceManagerEngineMapbox::initializeCategories()
     }
 
     QPlaceCategoriesReplyMapbox *reply = new QPlaceCategoriesReplyMapbox(this);
-    connect(reply, &QPlaceReply::finished, this, &QPlaceManagerEngineMapbox::onReplyFinished);
-    connect(reply, QOverload<QPlaceReply::Error, const QString &>::of(&QPlaceReply::error),
+    connect(reply, &QPlaceReply::finished,
+            this, &QPlaceManagerEngineMapbox::onReplyFinished);
+    connect(reply, &QPlaceReply::errorOccurred,
             this, &QPlaceManagerEngineMapbox::onReplyError);
 
     // Queue a future finished() emission from the reply.
@@ -316,5 +319,5 @@ void QPlaceManagerEngineMapbox::onReplyError(QPlaceReply::Error errorCode, const
 {
     QPlaceReply *reply = qobject_cast<QPlaceReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }

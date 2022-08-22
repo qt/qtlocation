@@ -83,15 +83,11 @@ void QGeoTiledMappingManagerEngine::setTileFetcher(QGeoTileFetcher *fetcher)
 
     qRegisterMetaType<QGeoTileSpec>();
 
-    connect(d->fetcher_,
-            SIGNAL(tileFinished(QGeoTileSpec,QByteArray,QString)),
-            this,
-            SLOT(engineTileFinished(QGeoTileSpec,QByteArray,QString)),
+    connect(d->fetcher_, &QGeoTileFetcher::tileFinished,
+            this, &QGeoTiledMappingManagerEngine::engineTileFinished,
             Qt::QueuedConnection);
-    connect(d->fetcher_,
-            SIGNAL(tileError(QGeoTileSpec,QString)),
-            this,
-            SLOT(engineTileError(QGeoTileSpec,QString)),
+    connect(d->fetcher_, &QGeoTileFetcher::tileError,
+            this, &QGeoTiledMappingManagerEngine::engineTileError,
             Qt::QueuedConnection);
 
     engineInitialized();

@@ -59,7 +59,7 @@ void QPlaceCategoriesReplyHere::emitFinished()
 void QPlaceCategoriesReplyHere::setError(QPlaceReply::Error error_, const QString &errorString)
 {
     QPlaceReply::setError(error_, errorString);
-    emit error(error_, errorString);
+    emit errorOccurred(error_, errorString);
 }
 
 QT_END_NAMESPACE

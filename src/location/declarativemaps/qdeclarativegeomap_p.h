@@ -233,7 +233,7 @@ Q_SIGNALS:
     void maximumTiltChanged(qreal maximumTilt);
     void minimumFieldOfViewChanged(qreal minimumFieldOfView);
     void maximumFieldOfViewChanged(qreal maximumFieldOfView);
-    void copyrightsChanged(const QImage &copyrightsImage);
+    void copyrightsImageChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void mapReadyChanged(bool ready);
     Q_REVISION(11) void mapObjectsChanged();

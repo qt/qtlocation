@@ -166,8 +166,8 @@ int QGeoRoutingManagerEngine::managerVersion() const
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoRoutingManagerEngine::finished(),
-    QGeoRoutingManagerEngine::error(), QGeoRouteReply::finished() or
-    QGeoRouteReply::error() with deleteLater().
+    QGeoRoutingManagerEngine::errorOccurred(), QGeoRouteReply::finished() or
+    QGeoRouteReply::errorOccurred() with deleteLater().
 */
 
 /*!
@@ -194,8 +194,8 @@ int QGeoRoutingManagerEngine::managerVersion() const
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoRoutingManagerEngine::finished(),
-    QGeoRoutingManagerEngine::error(), QGeoRouteReply::finished() or
-    QGeoRouteReply::error() with deleteLater().
+    QGeoRoutingManagerEngine::errorOccurred(), QGeoRouteReply::finished() or
+    QGeoRouteReply::errorOccurred() with deleteLater().
 */
 QGeoRouteReply *QGeoRoutingManagerEngine::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
@@ -399,7 +399,7 @@ Use deleteLater() instead.
 */
 
 /*!
-\fn void QGeoRoutingManagerEngine::error(QGeoRouteReply *reply, QGeoRouteReply::Error error, QString errorString)
+\fn void QGeoRoutingManagerEngine::errorOccurred(QGeoRouteReply *reply, QGeoRouteReply::Error error, const QString &errorString)
 
 This signal is emitted when an error has been detected in the processing of
 \a reply.  The QGeoRoutingManagerEngine::finished() signal will probably follow.
@@ -407,7 +407,7 @@ This signal is emitted when an error has been detected in the processing of
 The error will be described by the error code \a error.  If \a errorString is
 not empty it will contain a textual description of the error.
 
-This signal and QGeoRouteReply::error() will be emitted at the same time.
+This signal and QGeoRouteReply::errorOccurred() will be emitted at the same time.
 
 \note Do not delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.

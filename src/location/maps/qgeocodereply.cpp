@@ -59,13 +59,13 @@ QT_BEGIN_NAMESPACE
     The isFinished(), error() and errorString() methods provide information
     on whether the operation has completed and if it completed successfully.
 
-    The finished() and error(QGeoCodeReply::Error,QString)
+    The finished() and errorOccurred(QGeoCodeReply::Error,QString)
     signals can be used to monitor the progress of the operation.
 
     It is possible that a newly created QGeoCodeReply may be in a finished
     state, most commonly because an error has occurred. Since such an instance
     will never emit the finished() or
-    error(QGeoCodeReply::Error,QString) signals, it is
+    errorOccurred(QGeoCodeReply::Error,QString) signals, it is
     important to check the result of isFinished() before making the connections
     to the signals. The documentation for QGeoCodingManager demonstrates how
     this might be carried out.
@@ -155,14 +155,14 @@ bool QGeoCodeReply::isFinished() const
     Sets the error state of this reply to \a error and the textual
     representation of the error to \a errorString.
 
-    This will also cause error() and finished() signals to be emitted, in that
-    order.
+    This will also cause errorOccurred() and finished() signals to be
+    emitted, in that order.
 */
 void QGeoCodeReply::setError(QGeoCodeReply::Error error, const QString &errorString)
 {
     d_ptr->error = error;
     d_ptr->errorString = errorString;
-    emit this->error(error, errorString);
+    emit this->errorOccurred(error, errorString);
     setFinished(true);
 }
 
@@ -316,7 +316,7 @@ void QGeoCodeReply::setOffset(int offset)
     signal. Use deleteLater() instead.
 */
 /*!
-    \fn void QGeoCodeReply::error(QGeoCodeReply::Error error, const QString &errorString)
+    \fn void QGeoCodeReply::errorOccurred(QGeoCodeReply::Error error, const QString &errorString)
 
     This signal is emitted when an error has been detected in the processing of
     this reply. The finished() signal will probably follow.
@@ -324,7 +324,7 @@ void QGeoCodeReply::setOffset(int offset)
     The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
-    This signal and QGeoCodingManager::error() will be emitted at the same time.
+    This signal and QGeoCodingManager::errorOccurred() will be emitted at the same time.
 
     \note Do not delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.

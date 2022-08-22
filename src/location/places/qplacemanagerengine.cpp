@@ -380,7 +380,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 */
 
 /*!
-    \fn void QPlaceManagerEngine::error(QPlaceReply * reply, QPlaceReply::Error error, const QString &errorString = QString());
+    \fn void QPlaceManagerEngine::errorOccurred(QPlaceReply * reply, QPlaceReply::Error error, const QString &errorString = QString());
 
     This signal is emitted when an error has been detected in the processing of
     \a reply.  The QPlaceManager::finished() signal will probably follow.
@@ -389,7 +389,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     not empty it will contain a textual description of the error meant for developers
     and not end users.
 
-    This signal and QPlaceReply::error() will be emitted at the same time.
+    This signal and QPlaceReply::errorOccurred() will be emitted at the same time.
 
     \note Do not delete the \a reply object in the slot connected to this signal.
     Use deleteLater() instead.

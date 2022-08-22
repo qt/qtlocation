@@ -68,9 +68,10 @@ QPlaceSearchReplyOsm::QPlaceSearchReplyOsm(const QPlaceSearchRequest &request,
     }
     setRequest(request);
 
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(networkError(QNetworkReply::NetworkError)));
+    connect(reply, &QNetworkReply::finished,
+            this, &QPlaceSearchReplyOsm::replyFinished);
+    connect(reply, &QNetworkReply::errorOccurred,
+            this, &QPlaceSearchReplyOsm::networkError);
     connect(this, &QPlaceReply::aborted, reply, &QNetworkReply::abort);
     connect(this, &QObject::destroyed, reply, &QObject::deleteLater);
 }
@@ -82,7 +83,7 @@ QPlaceSearchReplyOsm::~QPlaceSearchReplyOsm()
 void QPlaceSearchReplyOsm::setError(QPlaceReply::Error errorCode, const QString &errorString)
 {
     QPlaceReply::setError(errorCode, errorString);
-    emit error(errorCode, errorString);
+    emit errorOccurred(errorCode, errorString);
     setFinished(true);
     emit finished();
 }

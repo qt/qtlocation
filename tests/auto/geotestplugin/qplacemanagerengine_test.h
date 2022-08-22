@@ -128,7 +128,7 @@ public:
 
     Q_INVOKABLE void emitError()
     {
-        emit error(error(), errorString());
+        emit errorOccurred(error(), errorString());
     }
 
     Q_INVOKABLE void emitFinished()
@@ -150,7 +150,7 @@ public:
 
     Q_INVOKABLE void emitError()
     {
-        emit error(error(), errorString());
+        emit errorOccurred(error(), errorString());
     }
 
     Q_INVOKABLE void emitFinished()
@@ -172,7 +172,7 @@ public:
 
     Q_INVOKABLE void emitError()
     {
-        emit error(error(), errorString());
+        emit errorOccurred(error(), errorString());
     }
 
     Q_INVOKABLE void emitFinished()
@@ -194,7 +194,7 @@ public:
 
     Q_INVOKABLE void emitError()
     {
-        emit error(error(), errorString());
+        emit errorOccurred(error(), errorString());
     }
 
     Q_INVOKABLE void emitFinished()
@@ -216,7 +216,7 @@ public:
 
     Q_INVOKABLE void emitError()
     {
-        emit error(error(), errorString());
+        emit errorOccurred(error(), errorString());
     }
 
     Q_INVOKABLE void emitFinished()

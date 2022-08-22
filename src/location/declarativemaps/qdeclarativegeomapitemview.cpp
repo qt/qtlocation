@@ -431,8 +431,8 @@ void QDeclarativeGeoMapItemView::transitionItemOut(QQuickItem *o)
             group->m_transitionManager.swap(manager);
             group->m_transitionManager->m_view = this;
         }
-        connect(group, SIGNAL(removeTransitionFinished()),
-                this, SLOT(exitTransitionFinished()));
+        connect(group, &QDeclarativeGeoMapItemGroup::removeTransitionFinished,
+                this, &QDeclarativeGeoMapItemView::exitTransitionFinished);
 
         group->m_transitionManager->transitionExit();
         return;
@@ -444,8 +444,8 @@ void QDeclarativeGeoMapItemView::transitionItemOut(QQuickItem *o)
             item->m_transitionManager.swap(manager);
             item->m_transitionManager->m_view = this;
         }
-        connect(item, SIGNAL(removeTransitionFinished()),
-                this, SLOT(exitTransitionFinished()) );
+        connect(item, &QDeclarativeGeoMapItemBase::removeTransitionFinished,
+                this, &QDeclarativeGeoMapItemView::exitTransitionFinished);
 
         item->m_transitionManager->transitionExit();
         return;

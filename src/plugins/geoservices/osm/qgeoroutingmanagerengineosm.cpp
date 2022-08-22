@@ -94,9 +94,10 @@ QGeoRouteReply* QGeoRoutingManagerEngineOsm::calculateRoute(const QGeoRouteReque
 
     QGeoRouteReplyOsm *routeReply = new QGeoRouteReplyOsm(reply, request, this);
 
-    connect(routeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(routeReply, SIGNAL(error(QGeoRouteReply::Error,QString)),
-            this, SLOT(replyError(QGeoRouteReply::Error,QString)));
+    connect(routeReply, &QGeoRouteReplyOsm::finished,
+            this, &QGeoRoutingManagerEngineOsm::replyFinished);
+    connect(routeReply, &QGeoRouteReplyOsm::errorOccurred,
+            this, &QGeoRoutingManagerEngineOsm::replyError);
 
     return routeReply;
 }
@@ -118,5 +119,5 @@ void QGeoRoutingManagerEngineOsm::replyError(QGeoRouteReply::Error errorCode,
 {
     QGeoRouteReply *reply = qobject_cast<QGeoRouteReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }

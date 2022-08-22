@@ -169,7 +169,8 @@ void QPlaceReply::setFinished(bool finished)
 
 /*!
     Sets the \a error and \a errorString of the reply.
-    This function does not cause the QPlaceReply::error(QPlaceReply::Error, const QString &errorString)
+    This function does not cause the
+    QPlaceReply::errorOccurred(QPlaceReply::Error, const QString &errorString)
     signal to be emitted.
 */
 void QPlaceReply::setError(QPlaceReply::Error error, const QString &errorString)
@@ -245,7 +246,7 @@ void QPlaceReply::abort()
 */
 
 /*!
-    \fn void QPlaceReply::error(QPlaceReply::Error error, const QString &errorString)
+    \fn void QPlaceReply::errorOccurred(QPlaceReply::Error error, const QString &errorString)
 
     This signal is emitted when an error has been detected in the processing of
     this reply. The finished() signal will probably follow.
@@ -254,7 +255,7 @@ void QPlaceReply::abort()
     not empty it will contain a textual description of the error meant for
     developers and not end users.
 
-    This signal and QPlaceManager::error() will be emitted at the same time.
+    This signal and QPlaceManager::errorOccurred() will be emitted at the same time.
 
     \note Do not delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.

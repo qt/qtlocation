@@ -261,7 +261,7 @@ QGeoCodeReply *QGeoCodingManagerEngineNokia::geocode(QString requestString,
     connect(reply, &QGeoCodeReplyNokia::finished,
             this, &QGeoCodingManagerEngineNokia::placesFinished);
 
-    connect(reply, static_cast<void (QGeoCodeReply::*)(QGeoCodeReply::Error, const QString &)>(&QGeoCodeReplyNokia::error),
+    connect(reply, &QGeoCodeReplyNokia::errorOccurred,
             this, &QGeoCodingManagerEngineNokia::placesError);
 
     return reply;
@@ -337,12 +337,12 @@ void QGeoCodingManagerEngineNokia::placesError(QGeoCodeReply::Error error, const
     if (!reply)
         return;
 
-    if (receivers(SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString))) == 0) {
+    if (receivers(SIGNAL(errorOccurred(QGeoCodeReply*,QGeoCodeReply::Error,QString))) == 0) {
         reply->deleteLater();
         return;
     }
 
-    emit this->error(reply, error, errorString);
+    emit errorOccurred(reply, error, errorString);
 }
 
 QString QGeoCodingManagerEngineNokia::languageToMarc(QLocale::Language language)

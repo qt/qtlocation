@@ -238,7 +238,7 @@ void QGeoTileRequestManagerPrivate::tileError(const QGeoTileSpec &tile, const QS
             QSharedPointer<RetryFuture> future(new RetryFuture(tile,m_map,m_engine));
             m_futures.insert(tile, future);
 
-            QTimer::singleShot(delay, future.data(), SLOT(retry()));
+            QTimer::singleShot(delay, future.data(), &RetryFuture::retry);
             // Passing .data() to singleShot is ok -- Qt will clean up the
             // connection if the target qobject is deleted
         }

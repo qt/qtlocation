@@ -236,9 +236,9 @@ void tst_QPlaceManagerUnsupported::checkSignals(QPlaceReply *reply,
     *failed = true;
 
     QSignalSpy finishedSpy(reply, SIGNAL(finished()));
-    QSignalSpy errorSpy(reply, SIGNAL(error(QPlaceReply::Error,QString)));
+    QSignalSpy errorSpy(reply, SIGNAL(errorOccurred(QPlaceReply::Error,QString)));
     QSignalSpy managerFinishedSpy(m_manager, SIGNAL(finished(QPlaceReply*)));
-    QSignalSpy managerErrorSpy(m_manager,SIGNAL(error(QPlaceReply*,QPlaceReply::Error,QString)));
+    QSignalSpy managerErrorSpy(m_manager,SIGNAL(errorOccurred(QPlaceReply*,QPlaceReply::Error,QString)));
 
     if (expectedError != QPlaceReply::NoError) {
         //check that we get an error signal from the reply

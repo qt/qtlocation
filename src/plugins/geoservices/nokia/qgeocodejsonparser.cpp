@@ -410,7 +410,7 @@ void QGeoCodeJsonParser::run()
         }
     }
 
-    emit error(m_errorString);
+    emit errorOccurred(m_errorString);
 }
 
 QT_END_NAMESPACE

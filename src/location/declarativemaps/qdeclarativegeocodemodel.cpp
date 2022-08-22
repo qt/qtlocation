@@ -283,8 +283,8 @@ void QDeclarativeGeocodeModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (plugin_->isAttached()) {
         pluginReady();
     } else {
-        connect(plugin_, SIGNAL(attached()),
-                this, SLOT(pluginReady()));
+        connect(plugin_, &QDeclarativeGeoServiceProvider::attached,
+                this, &QDeclarativeGeocodeModel::pluginReady);
     }
 }
 
@@ -320,10 +320,10 @@ void QDeclarativeGeocodeModel::pluginReady()
         return;
     }
 
-    connect(geocodingManager, SIGNAL(finished(QGeoCodeReply*)),
-            this, SLOT(geocodeFinished(QGeoCodeReply*)));
-    connect(geocodingManager, SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)),
-            this, SLOT(geocodeError(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
+    connect(geocodingManager, &QGeoCodingManager::finished,
+            this, &QDeclarativeGeocodeModel::geocodeFinished);
+    connect(geocodingManager, &QGeoCodingManager::errorOccurred,
+            this, &QDeclarativeGeocodeModel::geocodeError);
 
     if (complete_ && autoUpdate_)
         update();
@@ -682,14 +682,22 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
             searchString_.clear();
 
             address_ = address;
-            connect(address_, SIGNAL(countryChanged()), this, SLOT(queryContentChanged()));
-            connect(address_, SIGNAL(countryCodeChanged()), this, SLOT(queryContentChanged()));
-            connect(address_, SIGNAL(stateChanged()), this, SLOT(queryContentChanged()));
-            connect(address_, SIGNAL(countyChanged()), this, SLOT(queryContentChanged()));
-            connect(address_, SIGNAL(cityChanged()), this, SLOT(queryContentChanged()));
-            connect(address_, SIGNAL(districtChanged()), this, SLOT(queryContentChanged()));
-            connect(address_, SIGNAL(streetChanged()), this, SLOT(queryContentChanged()));
-            connect(address_, SIGNAL(postalCodeChanged()), this, SLOT(queryContentChanged()));
+            connect(address_, &QDeclarativeGeoAddress::countryChanged,
+                    this, &QDeclarativeGeocodeModel::queryContentChanged);
+            connect(address_, &QDeclarativeGeoAddress::countryCodeChanged,
+                    this, &QDeclarativeGeocodeModel::queryContentChanged);
+            connect(address_, &QDeclarativeGeoAddress::stateChanged,
+                    this, &QDeclarativeGeocodeModel::queryContentChanged);
+            connect(address_, &QDeclarativeGeoAddress::countyChanged,
+                    this, &QDeclarativeGeocodeModel::queryContentChanged);
+            connect(address_, &QDeclarativeGeoAddress::cityChanged,
+                    this, &QDeclarativeGeocodeModel::queryContentChanged);
+            connect(address_, &QDeclarativeGeoAddress::districtChanged,
+                    this, &QDeclarativeGeocodeModel::queryContentChanged);
+            connect(address_, &QDeclarativeGeoAddress::streetChanged,
+                    this, &QDeclarativeGeocodeModel::queryContentChanged);
+            connect(address_, &QDeclarativeGeoAddress::postalCodeChanged,
+                    this, &QDeclarativeGeocodeModel::queryContentChanged);
         } else {
             qmlWarning(this) << QStringLiteral("Unsupported query type for geocode model ")
                           << QStringLiteral("(coordinate, string and Address supported).");

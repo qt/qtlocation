@@ -150,6 +150,7 @@ private:
     QModelIndex index(const QString &categoryId) const;
     int rowToAddChild(PlaceCategoryNode *, const QPlaceCategory &category);
     void updateLayout();
+    void emitDataChanged() { Q_EMIT dataChanged(); }
 
     QPlaceReply *m_response;
 

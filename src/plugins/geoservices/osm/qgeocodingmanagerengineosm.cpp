@@ -138,9 +138,10 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int l
         replyPrivate->m_extraData["request_url"] = url;
     }
 
-    connect(geocodeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(geocodeReply, SIGNAL(error(QGeoCodeReply::Error,QString)),
-            this, SLOT(replyError(QGeoCodeReply::Error,QString)));
+    connect(geocodeReply, &QGeoCodeReplyOsm::finished,
+            this, &QGeoCodingManagerEngineOsm::replyFinished);
+    connect(geocodeReply, &QGeoCodeReplyOsm::errorOccurred,
+            this, &QGeoCodingManagerEngineOsm::replyError);
 
     return geocodeReply;
 }
@@ -174,9 +175,10 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &
         replyPrivate->m_extraData["request_url"] = url;
     }
 
-    connect(geocodeReply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(geocodeReply, SIGNAL(error(QGeoCodeReply::Error,QString)),
-            this, SLOT(replyError(QGeoCodeReply::Error,QString)));
+    connect(geocodeReply, &QGeoCodeReplyOsm::finished,
+            this, &QGeoCodingManagerEngineOsm::replyFinished);
+    connect(geocodeReply, &QGeoCodeReplyOsm::errorOccurred,
+            this, &QGeoCodingManagerEngineOsm::replyError);
 
     return geocodeReply;
 }
@@ -192,7 +194,7 @@ void QGeoCodingManagerEngineOsm::replyError(QGeoCodeReply::Error errorCode, cons
 {
     QGeoCodeReply *reply = qobject_cast<QGeoCodeReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }
 
 QT_END_NAMESPACE

@@ -108,7 +108,7 @@ public:
 
 signals:
     void results(const QList<QGeoRoute> &routes);
-    void error(const QString &errorString);
+    void errorOccurred(const QString &errorString);
 
 private:
     bool parseRootElement();

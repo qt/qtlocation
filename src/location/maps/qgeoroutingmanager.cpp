@@ -95,15 +95,11 @@ QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject
     if (d_ptr->engine) {
         d_ptr->engine->setParent(this);
 
-        connect(d_ptr->engine,
-                SIGNAL(finished(QGeoRouteReply*)),
-                this,
-                SIGNAL(finished(QGeoRouteReply*)));
+        connect(d_ptr->engine, &QGeoRoutingManagerEngine::finished,
+                this, &QGeoRoutingManager::finished);
 
-        connect(d_ptr->engine,
-                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-                this,
-                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+        connect(d_ptr->engine, &QGeoRoutingManagerEngine::errorOccurred,
+                this, &QGeoRoutingManager::errorOccurred);
     } else {
         qFatal("The routing manager engine that was set for this routing manager was NULL.");
     }
@@ -159,8 +155,8 @@ int QGeoRoutingManager::managerVersion() const
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoRoutingManager::finished(),
-    QGeoRoutingManager::error(), QGeoRouteReply::finished() or
-    QGeoRouteReply::error() with deleteLater().
+    QGeoRoutingManager::errorOccurred(), QGeoRouteReply::finished() or
+    QGeoRouteReply::errorOccurred() with deleteLater().
 */
 QGeoRouteReply *QGeoRoutingManager::calculateRoute(const QGeoRouteRequest &request)
 {
@@ -191,8 +187,8 @@ QGeoRouteReply *QGeoRoutingManager::calculateRoute(const QGeoRouteRequest &reque
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoRoutingManager::finished(),
-    QGeoRoutingManager::error(), QGeoRouteReply::finished() or
-    QGeoRouteReply::error() with deleteLater().
+    QGeoRoutingManager::errorOccurred(), QGeoRouteReply::finished() or
+    QGeoRouteReply::errorOccurred() with deleteLater().
 */
 QGeoRouteReply *QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
@@ -315,7 +311,7 @@ Use deleteLater() instead.
 */
 
 /*!
-\fn void QGeoRoutingManager::error(QGeoRouteReply *reply, QGeoRouteReply::Error error, QString errorString)
+\fn void QGeoRoutingManager::errorOccurred(QGeoRouteReply *reply, QGeoRouteReply::Error error, const QString &errorString)
 
 This signal is emitted when an error has been detected in the processing of
 \a reply.  The QGeoRoutingManager::finished() signal will probably follow.
@@ -323,7 +319,7 @@ This signal is emitted when an error has been detected in the processing of
 The error will be described by the error code \a error.  If \a errorString is
 not empty it will contain a textual description of the error.
 
-This signal and QGeoRouteReply::error() will be emitted at the same time.
+This signal and QGeoRouteReply::errorOccurred() will be emitted at the same time.
 
 \note Do not delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.

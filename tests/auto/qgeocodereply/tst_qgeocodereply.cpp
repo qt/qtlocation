@@ -46,7 +46,7 @@ void tst_QGeoCodeReply::cleanupTestCase()
 void tst_QGeoCodeReply::init()
 {
     qRegisterMetaType<QGeoCodeReply::Error>();
-    signalerror = new QSignalSpy(reply, SIGNAL(error(QGeoCodeReply::Error,QString)));
+    signalerror = new QSignalSpy(reply, SIGNAL(errorOccurred(QGeoCodeReply::Error,QString)));
     signalfinished = new QSignalSpy(reply, SIGNAL(finished()));
 }
 

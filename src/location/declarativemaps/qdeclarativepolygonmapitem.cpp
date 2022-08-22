@@ -627,10 +627,11 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
     m_itemType = QGeoMap::MapPolygon;
     m_geopoly = QGeoPolygonEager();
     setFlag(ItemHasContents, true);
-    QObject::connect(&m_border, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(onLinePropertiesChanged())); // ToDo: fix this, only flag material?
-    QObject::connect(&m_border, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(onLinePropertiesChanged()));
+    // ToDo: fix this, only flag material?
+    QObject::connect(&m_border, &QDeclarativeMapLineProperties::colorChanged,
+                     this, &QDeclarativePolygonMapItem::onLinePropertiesChanged);
+    QObject::connect(&m_border, &QDeclarativeMapLineProperties::widthChanged,
+                     this, &QDeclarativePolygonMapItem::onLinePropertiesChanged);
     setBackend(mapPolygonBackendSelector->backend);
 }
 

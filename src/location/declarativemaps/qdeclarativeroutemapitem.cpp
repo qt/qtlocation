@@ -123,7 +123,8 @@ void QDeclarativeRouteMapItem::setRoute(QDeclarativeGeoRoute *route)
 
     route_ = route;
 
-    connect(route_, SIGNAL(pathChanged()), this, SLOT(updateRoutePath()));
+    connect(route_, &QDeclarativeGeoRoute::pathChanged,
+            this, &QDeclarativeRouteMapItem::updateRoutePath);
 
     if (route_)
         setPathFromGeoList(route_->routePath());

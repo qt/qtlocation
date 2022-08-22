@@ -219,7 +219,7 @@ protected:
          timerId_ = 0;
          if (errorCode_) {
              routeReply_->callSetError(errorCode_, errorString_);
-             emit error(routeReply_, errorCode_, errorString_);
+             emit errorOccurred(routeReply_, errorCode_, errorString_);
          } else {
              routeReply_->callSetError(QGeoRouteReply::NoError, "no error");
              routeReply_->callSetFinished(true);

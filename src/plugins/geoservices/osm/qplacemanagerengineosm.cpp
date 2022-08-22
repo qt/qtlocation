@@ -191,9 +191,10 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
     QNetworkReply *networkReply = m_networkManager->get(rq);
 
     QPlaceSearchReplyOsm *reply = new QPlaceSearchReplyOsm(request, networkReply, this);
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
-            this, SLOT(replyError(QPlaceReply::Error,QString)));
+    connect(reply, &QPlaceSearchReplyOsm::finished,
+            this, &QPlaceManagerEngineOsm::replyFinished);
+    connect(reply, &QPlaceSearchReplyOsm::errorOccurred,
+            this, &QPlaceManagerEngineOsm::replyError);
 
     if (m_debugQuery)
         reply->requestUrl = requestUrl.url(QUrl::None);
@@ -211,9 +212,10 @@ QPlaceReply *QPlaceManagerEngineOsm::initializeCategories()
     }
 
     QPlaceCategoriesReplyOsm *reply = new QPlaceCategoriesReplyOsm(this);
-    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
-    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
-            this, SLOT(replyError(QPlaceReply::Error,QString)));
+    connect(reply, &QPlaceCategoriesReplyOsm::finished,
+            this, &QPlaceManagerEngineOsm::replyFinished);
+    connect(reply, &QPlaceCategoriesReplyOsm::errorOccurred,
+            this, &QPlaceManagerEngineOsm::replyError);
 
     // TODO delayed finished() emission
     if (!m_categories.isEmpty())
@@ -342,7 +344,7 @@ void QPlaceManagerEngineOsm::replyError(QPlaceReply::Error errorCode, const QStr
 {
     QPlaceReply *reply = qobject_cast<QPlaceReply *>(sender());
     if (reply)
-        emit error(reply, errorCode, errorString);
+        emit errorOccurred(reply, errorCode, errorString);
 }
 
 void QPlaceManagerEngineOsm::fetchNextCategoryLocale()
@@ -358,7 +360,8 @@ void QPlaceManagerEngineOsm::fetchNextCategoryLocale()
     QUrl requestUrl = QUrl(SpecialPhrasesBaseUrl + locale.name().left(2).toUpper());
 
     m_categoriesReply = m_networkManager->get(QNetworkRequest(requestUrl));
-    connect(m_categoriesReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
-    connect(m_categoriesReply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-            this, SLOT(categoryReplyError()));
+    connect(m_categoriesReply, &QNetworkReply::finished,
+            this, &QPlaceManagerEngineOsm::categoryReplyFinished);
+    connect(m_categoriesReply, &QNetworkReply::errorOccurred,
+            this, &QPlaceManagerEngineOsm::categoryReplyError);
 }

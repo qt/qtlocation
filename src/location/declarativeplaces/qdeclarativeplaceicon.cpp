@@ -193,8 +193,8 @@ void QDeclarativePlaceIcon::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (m_plugin->isAttached()) {
         pluginReady();
     } else {
-        connect(m_plugin, SIGNAL(attached()),
-                this, SLOT(pluginReady()));
+        connect(m_plugin, &QDeclarativeGeoServiceProvider::attached,
+                this, &QDeclarativePlaceIcon::pluginReady);
     }
 }
 

@@ -284,7 +284,7 @@ protected:
          timerId_ = 0;
          if (errorCode_) {
              geocodeReply_->callSetError(errorCode_, errorString_);
-             emit error(geocodeReply_, errorCode_, errorString_);
+             emit errorOccurred(geocodeReply_, errorCode_, errorString_);
         } else {
              geocodeReply_->callSetError(QGeoCodeReply::NoError, "no error");
              geocodeReply_->callSetFinished(true);
