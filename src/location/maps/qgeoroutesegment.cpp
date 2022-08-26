@@ -463,3 +463,5 @@ void QGeoRouteSegmentPrivateDefault::setManeuver(const QGeoManeuver &maneuver)
 *******************************************************************************/
 
 QT_END_NAMESPACE
+
+#include "moc_qgeoroutesegment.cpp"

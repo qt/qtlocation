@@ -405,3 +405,5 @@ bool QGeoCameraCapabilities::overzoomEnabled() const
 
 
 QT_END_NAMESPACE
+
+#include "moc_qgeocameracapabilities_p.cpp"

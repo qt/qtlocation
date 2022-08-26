@@ -42,6 +42,7 @@
 
 #include <QtLocation/QGeoRouteRequest>
 
+#include <QtCore/QObject>
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
 
@@ -56,6 +57,13 @@ class QGeoRoutePrivate;
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRoutePrivate, Q_LOCATION_EXPORT)
 class Q_LOCATION_EXPORT QGeoRoute
 {
+    Q_GADGET
+
+    Q_PROPERTY(QGeoRectangle bounds READ bounds CONSTANT)
+    Q_PROPERTY(int travelTime READ travelTime CONSTANT)
+    Q_PROPERTY(qreal distance READ distance CONSTANT)
+    Q_PROPERTY(QList<QGeoRouteLeg> routeLegs READ routeLegs CONSTANT)
+    Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes CONSTANT)
 public:
     QGeoRoute();
     QGeoRoute(const QGeoRoute &other) noexcept;
@@ -117,6 +125,10 @@ private:
 
 class Q_LOCATION_EXPORT QGeoRouteLeg: public QGeoRoute
 {
+    Q_GADGET
+
+    Q_PROPERTY(int legIndex READ legIndex CONSTANT)
+    Q_PROPERTY(QGeoRoute overallRoute READ overallRoute CONSTANT)
 public:
     void setLegIndex(int idx);
     int legIndex() const;

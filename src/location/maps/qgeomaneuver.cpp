@@ -526,3 +526,5 @@ void QGeoManeuverPrivateDefault::setExtendedAttributes(const QVariantMap &extend
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qgeomaneuver.cpp"
