@@ -51,6 +51,7 @@
 // We mean it.
 //
 
+#include <QtCore/QObject>
 #include <QtLocation/private/qlocationglobal_p.h>
 
 #include <QtCore/QSharedDataPointer>
@@ -62,6 +63,15 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoCameraCapabilitiesPrivate, Q
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoCameraCapabilities
 {
+    Q_GADGET
+
+    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevelAt256 CONSTANT)
+    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevelAt256 CONSTANT)
+    Q_PROPERTY(qreal minimumTilt READ minimumTilt CONSTANT)
+    Q_PROPERTY(qreal maximumTilt READ maximumTilt CONSTANT)
+    Q_PROPERTY(qreal minimumFieldOfView READ minimumFieldOfView CONSTANT)
+    Q_PROPERTY(qreal maximumFieldOfView READ maximumFieldOfView CONSTANT)
+
 public:
     QGeoCameraCapabilities();
     QGeoCameraCapabilities(const QGeoCameraCapabilities &other) noexcept;

@@ -141,3 +141,5 @@ bool QGeoMapTypePrivate::operator==(const QGeoMapTypePrivate &other) const
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qgeomaptype_p.cpp"

@@ -40,6 +40,7 @@
 #ifndef QGEOMANEUVER_H
 #define QGEOMANEUVER_H
 
+#include <QtCore/QObject>
 #include <QtCore/qshareddata.h>
 #include <QtLocation/qlocationglobal.h>
 
@@ -52,6 +53,17 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoManeuverPrivate, Q_LOCATION_
 
 class Q_LOCATION_EXPORT QGeoManeuver
 {
+    Q_GADGET
+    Q_ENUMS(InstructionDirection)
+
+    Q_PROPERTY(bool valid READ isValid CONSTANT)
+    Q_PROPERTY(QGeoCoordinate position READ position CONSTANT)
+    Q_PROPERTY(QString instructionText READ instructionText CONSTANT)
+    Q_PROPERTY(InstructionDirection direction READ direction CONSTANT)
+    Q_PROPERTY(int timeToNextInstruction READ timeToNextInstruction CONSTANT)
+    Q_PROPERTY(qreal distanceToNextInstruction READ distanceToNextInstruction CONSTANT)
+    Q_PROPERTY(QGeoCoordinate waypoint READ waypoint CONSTANT)
+    Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes CONSTANT)
 public:
     enum InstructionDirection {
         NoDirection,

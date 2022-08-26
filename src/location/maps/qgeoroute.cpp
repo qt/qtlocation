@@ -753,3 +753,5 @@ QGeoRoute QGeoRouteLeg::overallRoute() const
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qgeoroute.cpp"

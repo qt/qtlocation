@@ -40,6 +40,7 @@
 #ifndef QGEOROUTESEGMENT_H
 #define QGEOROUTESEGMENT_H
 
+#include <QtCore/QObject>
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
 #include <QtLocation/qlocationglobal.h>
@@ -53,6 +54,12 @@ class QGeoRouteSegmentPrivate;
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRouteSegmentPrivate, Q_LOCATION_EXPORT)
 class Q_LOCATION_EXPORT QGeoRouteSegment
 {
+    Q_GADGET
+
+    Q_PROPERTY(int travelTime READ travelTime CONSTANT)
+    Q_PROPERTY(qreal distance READ distance CONSTANT)
+    Q_PROPERTY(QList<QGeoCoordinate> path READ path CONSTANT)
+    Q_PROPERTY(QGeoManeuver maneuver READ maneuver CONSTANT)
 public:
     QGeoRouteSegment();
     QGeoRouteSegment(const QGeoRouteSegment &other) noexcept;
