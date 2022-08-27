@@ -173,11 +173,6 @@ public:
             qmlRegisterType<QDeclarativeGeoMapCopyrightNotice>(uri, major, minor, "MapCopyrightNotice");
             qmlRegisterType<QDeclarativeGeoMapItemGroup>(uri, major, minor, "MapItemGroup");
 
-            // Register the 5.10 types
-            minor = 10;
-            qmlRegisterUncreatableType<QDeclarativeGeoCameraCapabilities>(uri, major, minor, "CameraCapabilities"
-                                                                             , QStringLiteral("CameraCapabilities is not intended instantiable by developer."));
-
             // Register the 5.11 types
             minor = 11;
             qmlRegisterAnonymousType<QGeoMapObject>(uri, major);

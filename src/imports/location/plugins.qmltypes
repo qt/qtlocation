@@ -365,19 +365,6 @@ Module {
         exportMetaObjectRevisions: [0]
     }
     Component {
-        name: "QDeclarativeGeoCameraCapabilities"
-        prototype: "QObject"
-        exports: ["QtLocation/CameraCapabilities 5.10"]
-        isCreatable: false
-        exportMetaObjectRevisions: [0]
-        Property { name: "minimumZoomLevel"; type: "double"; isReadonly: true }
-        Property { name: "maximumZoomLevel"; type: "double"; isReadonly: true }
-        Property { name: "minimumTilt"; type: "double"; isReadonly: true }
-        Property { name: "maximumTilt"; type: "double"; isReadonly: true }
-        Property { name: "minimumFieldOfView"; type: "double"; isReadonly: true }
-        Property { name: "maximumFieldOfView"; type: "double"; isReadonly: true }
-    }
-    Component {
         name: "QDeclarativeGeoManeuver"
         prototype: "QObject"
         exports: [
@@ -737,7 +724,7 @@ Module {
         Property { name: "night"; revision: 1; type: "bool"; isReadonly: true }
         Property {
             name: "cameraCapabilities"
-            type: "QDeclarativeGeoCameraCapabilities"
+            type: "QGeoCameraCapabilities"
             isReadonly: true
             isPointer: true
         }
