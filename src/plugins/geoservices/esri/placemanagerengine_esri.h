@@ -76,12 +76,12 @@ private slots:
     void replyError(QPlaceReply::Error errorCode, const QString &errorString);
 
 private:
-    QNetworkAccessManager *m_networkManager = Q_NULLPTR;
+    QNetworkAccessManager *m_networkManager = nullptr;
 
     // geocode serveur
     void initializeGeocodeServer();
 
-    QNetworkReply *m_geocodeServerReply = Q_NULLPTR;
+    QNetworkReply *m_geocodeServerReply = nullptr;
 
     // categories
     void finishCategories();
