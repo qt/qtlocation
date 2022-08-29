@@ -107,12 +107,12 @@ Item {
 
             preventStealing: true
 
-            onClicked: page.setMouseData(mouseUpper, mouse)
-            onDoubleClicked: page.setMouseData(mouseUpper, mouse)
-            onPressed: page.setMouseData(mouseUpper, mouse)
-            onReleased: page.setMouseData(mouseUpper, mouse)
-            onPositionChanged: page.setMouseData(mouseUpper, mouse)
-            onPressAndHold: page.setMouseData(mouseUpper, mouse)
+            onClicked: (mouse) => page.setMouseData(mouseUpper, mouse)
+            onDoubleClicked: (mouse) => page.setMouseData(mouseUpper, mouse)
+            onPressed: (mouse) => page.setMouseData(mouseUpper, mouse)
+            onReleased: (mouse) => page.setMouseData(mouseUpper, mouse)
+            onPositionChanged: (mouse) => page.setMouseData(mouseUpper, mouse)
+            onPressAndHold: (mouse) => page.setMouseData(mouseUpper, mouse)
         }
         MouseArea {
             id: mouseLower
@@ -127,12 +127,12 @@ Item {
             property bool lastIsClick: false
             property bool lastAccepted: false;
 
-            onClicked: page.setMouseData(mouseLower, mouse)
-            onDoubleClicked: page.setMouseData(mouseLower, mouse)
-            onPressed: page.setMouseData(mouseLower, mouse)
-            onReleased: page.setMouseData(mouseLower, mouse)
-            onPositionChanged: page.setMouseData(mouseLower, mouse)
-            onPressAndHold: page.setMouseData(mouseLower, mouse)
+            onClicked: (mouse) => page.setMouseData(mouseLower, mouse)
+            onDoubleClicked: (mouse) => page.setMouseData(mouseLower, mouse)
+            onPressed: (mouse) => page.setMouseData(mouseLower, mouse)
+            onReleased: (mouse) => page.setMouseData(mouseLower, mouse)
+            onPositionChanged: (mouse) => page.setMouseData(mouseLower, mouse)
+            onPressAndHold: (mouse) => page.setMouseData(mouseLower, mouse)
         }
         MouseArea {
             id: mouseOverlapper
@@ -147,12 +147,12 @@ Item {
             property bool lastIsClick: false
             property bool lastAccepted: false;
 
-            onClicked: page.setMouseData(mouseOverlapper, mouse)
-            onDoubleClicked: page.setMouseData(mouseOverlapper, mouse)
-            onPressed: page.setMouseData(mouseOverlapper, mouse)
-            onReleased: page.setMouseData(mouseOverlapper, mouse)
-            onPositionChanged: page.setMouseData(mouseOverlapper, mouse)
-            onPressAndHold: page.setMouseData(mouseOverlapper, mouse)
+            onClicked: (mouse) => page.setMouseData(mouseOverlapper, mouse)
+            onDoubleClicked: (mouse) => page.setMouseData(mouseOverlapper, mouse)
+            onPressed: (mouse) => page.setMouseData(mouseOverlapper, mouse)
+            onReleased: (mouse) => page.setMouseData(mouseOverlapper, mouse)
+            onPositionChanged: (mouse) => page.setMouseData(mouseOverlapper, mouse)
+            onPressAndHold: (mouse) => page.setMouseData(mouseOverlapper, mouse)
         }
     }
 
