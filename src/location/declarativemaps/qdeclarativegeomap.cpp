@@ -711,10 +711,14 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     else if (!copyrightImage.isNull())
         emit m_map->copyrightsImageChanged(copyrightImage);
 
-
-    connect(window(), &QQuickWindow::beforeSynchronizing, this, &QDeclarativeGeoMap::updateItemToWindowTransform, Qt::DirectConnection);
+    m_window = window();
+    if (m_window) {
+        connect(m_window, &QQuickWindow::beforeSynchronizing,
+                this, &QDeclarativeGeoMap::updateItemToWindowTransform, Qt::DirectConnection);
+    }
     connect(m_map.data(), &QGeoMap::sgNodeChanged, this, &QDeclarativeGeoMap::onSGNodeChanged);
-    connect(m_map.data(), &QGeoMap::cameraCapabilitiesChanged, this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
+    connect(m_map.data(), &QGeoMap::cameraCapabilitiesChanged,
+            this, &QDeclarativeGeoMap::onCameraCapabilitiesChanged);
 
     // This prefetches a buffer around the map
     m_map->prefetchData();
@@ -1736,6 +1740,16 @@ void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData &val
                 if (m_copyrights)
                     m_copyrights->setCopyrightsZ(m_maxChildZ + 1);
             }
+        }
+    } else if (change == ItemSceneChange) {
+        if (m_window) {
+            disconnect(m_window, &QQuickWindow::beforeSynchronizing,
+                       this, &QDeclarativeGeoMap::updateItemToWindowTransform);
+        }
+        m_window = value.window;
+        if (m_window) {
+            connect(m_window, &QQuickWindow::beforeSynchronizing,
+                    this, &QDeclarativeGeoMap::updateItemToWindowTransform, Qt::DirectConnection);
         }
     }
     QQuickItem::itemChange(change, value);
