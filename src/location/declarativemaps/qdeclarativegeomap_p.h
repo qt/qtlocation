@@ -70,6 +70,7 @@ Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoserviceprovider_p.h>)
 
 QT_BEGIN_NAMESPACE
 
+class QQuickWindow;
 class QDeclarativeGeoServiceProvider;
 class QDeclarativeGeoMapType;
 class QDeclarativeGeoMapCopyrightNotice;
@@ -293,6 +294,7 @@ private:
     QMargins mapMargins() const;
 
 private:
+    QQuickWindow *m_window = nullptr;
     QDeclarativeGeoServiceProvider *m_plugin;
     QGeoMappingManager *m_mappingManager;
     QDeclarativeGeoMapType *m_activeMapType;
