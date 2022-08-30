@@ -1,5 +1,6 @@
 [MapKeepGrabAndPreventSteal::test_flick]
 macos arm ci
+opensuse-leap
 [MapFlick::test_flick_down]
 macos arm ci
 [MapFlick::test_flick_down_with_filtering]
@@ -8,3 +9,7 @@ macos arm ci
 macos arm ci
 [MapFlick::test_flick_up_with_filtering]
 macos arm ci
+[MapFlick::test_disable_onFlickStarted_with_disabled]
+opensuse-leap
+[MapItemDetails::test_dateline]
+opensuse-leap
