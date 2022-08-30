@@ -84,8 +84,7 @@ class QtLocationDeclarativeModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
 
-    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid
-                      FILE "plugin.json")
+    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
 public:
     QtLocationDeclarativeModule(QObject *parent = 0) : QQmlExtensionPlugin(parent) { }
