@@ -42,6 +42,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/qshareddata.h>
+#include <QtQml/qqml.h>
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
@@ -64,6 +65,9 @@ class Q_LOCATION_EXPORT QGeoManeuver
     Q_PROPERTY(qreal distanceToNextInstruction READ distanceToNextInstruction CONSTANT)
     Q_PROPERTY(QGeoCoordinate waypoint READ waypoint CONSTANT)
     Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes CONSTANT)
+
+    QML_NAMED_ELEMENT(RouteManeuver)
+
 public:
     enum InstructionDirection {
         NoDirection,
@@ -124,6 +128,11 @@ private:
     bool isEqual(const QGeoManeuver &other) const;
 };
 
+Q_DECLARE_SHARED(QGeoManeuver)
+
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QGeoManeuver)
+Q_DECLARE_METATYPE(QGeoManeuver::InstructionDirection)
 
 #endif

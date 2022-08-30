@@ -78,7 +78,6 @@ Item {
     TestCase {
         name: "RouteManeuver RouteSegment and MapRoute"
         RouteSegment {id: emptySegment}
-        RouteManeuver {id: emptyManeuver}
 
         // TODO enable when we have map route
         //MapRoute {id: emptyMapRoute}
@@ -136,14 +135,16 @@ Item {
         }
 
         function test_routesegment_defaults() {
+            let emptyManeuver = emptySegment.maneuver
             compare(emptySegment.travelTime, 0)
             compare(emptySegment.distance, 0)
             compare(emptySegment.path.length, 0)
             compare(emptySegment.maneuver.valid, emptyManeuver.valid)
             compare(emptySegment.maneuver.instructionText, emptyManeuver.instructionText)
-            compare(emptySegment.maneuver.waypointValid, emptyManeuver.waypointValid)
+            compare(emptySegment.maneuver.waypoint.valid, emptyManeuver.waypoint.valid)
         }
         function test_maneuver_defaults() {
+            let emptyManeuver = emptySegment.maneuver
             compare(emptyManeuver.valid, false)
             compare(emptyManeuver.instructionText, "")
             compare(emptyManeuver.direction, RouteManeuver.NoDirection)

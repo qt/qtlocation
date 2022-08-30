@@ -75,6 +75,34 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoManeuverPrivate)
 */
 
 /*!
+    \qmltype RouteManeuver
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-routing
+    \since QtLocation 5.5
+
+    \brief The RouteManeuver type represents the information relevant to the
+    point at which two RouteSegments meet.
+
+    RouteSegment instances can be thought of as edges on a routing
+    graph, with RouteManeuver instances as optional labels attached to the
+    vertices of the graph.
+
+    The most interesting information held in a RouteManeuver instance is
+    normally the textual navigation to provide and the position at which to
+    provide it, accessible by \l instructionText and \l position respectively.
+
+    \section1 Example
+
+    The following QML snippet demonstrates how to print information about a
+    route maneuver:
+
+    \snippet declarative/routing.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
+    \codeline
+    \snippet declarative/routing.qml RouteManeuver
+*/
+
+/*!
 \enum QGeoManeuver::InstructionDirection
 
 Describes the change in direction associated with the instruction text
@@ -171,7 +199,17 @@ bool QGeoManeuver::isEqual(const QGeoManeuver &other) const
 }
 
 /*!
-    Returns whether this maneuver is valid or not.
+    \qmlproperty bool RouteManeuver::valid
+
+    This read-only property holds whether this maneuver is valid or not.
+
+    Invalid maneuvers are used when there is no information
+    that needs to be attached to the endpoint of a QGeoRouteSegment instance.
+*/
+
+/*!
+    \property QGeoManeuver::valid
+    \brief whether this maneuver is valid or not.
 
     Invalid maneuvers are used when there is no information
     that needs to be attached to the endpoint of a QGeoRouteSegment instance.
@@ -182,8 +220,15 @@ bool QGeoManeuver::isValid() const
 }
 
 /*!
-    Sets the position where instructionText() should be displayed to \a
-    position.
+    \qmlproperty coordinate RouteManeuver::position
+
+    This read-only property holds where the \l instructionText should be displayed.
+
+*/
+
+/*!
+    \property QGeoManeuver::position
+    \brief the position where \l instructionText should be displayed.
 */
 void QGeoManeuver::setPosition(const QGeoCoordinate &position)
 {
@@ -191,16 +236,20 @@ void QGeoManeuver::setPosition(const QGeoCoordinate &position)
     d_ptr->setPosition(position);
 }
 
-/*!
-    Returns the position where instructionText() should be displayed.
-*/
 QGeoCoordinate QGeoManeuver::position() const
 {
     return d_ptr->position();
 }
 
 /*!
-    Sets the textual navigation instructions to \a instructionText.
+    \qmlproperty string RouteManeuver::instructionText
+
+    This read-only property holds textual navigation instruction.
+*/
+
+/*!
+    \property QGeoManeuver::instructionText
+    \brief the textual navigation instructions.
 */
 void QGeoManeuver::setInstructionText(const QString &instructionText)
 {
@@ -208,17 +257,36 @@ void QGeoManeuver::setInstructionText(const QString &instructionText)
     d_ptr->setText(instructionText);
 }
 
-/*!
-    Returns the textual navigation instructions.
-*/
 QString QGeoManeuver::instructionText() const
 {
     return d_ptr->text();
 }
 
 /*!
-    Sets the direction associated with the associated instruction to \a
-    direction.
+    \qmlproperty enumeration RouteManeuver::direction
+
+    Describes the change in direction associated with the instruction text
+    that is associated with a RouteManeuver.
+
+    \list
+    \li RouteManeuver.NoDirection - There is no direction associated with the instruction text
+    \li RouteManeuver.DirectionForward - The instruction indicates that the direction of travel does not need to change
+    \li RouteManeuver.DirectionBearRight - The instruction indicates that the direction of travel should bear to the right
+    \li RouteManeuver.DirectionLightRight - The instruction indicates that a light turn to the right is required
+    \li RouteManeuver.DirectionRight - The instruction indicates that a turn to the right is required
+    \li RouteManeuver.DirectionHardRight - The instruction indicates that a hard turn to the right is required
+    \li RouteManeuver.DirectionUTurnRight - The instruction indicates that a u-turn to the right is required
+    \li RouteManeuver.DirectionUTurnLeft - The instruction indicates that a u-turn to the left is required
+    \li RouteManeuver.DirectionHardLeft - The instruction indicates that a hard turn to the left is required
+    \li RouteManeuver.DirectionLeft - The instruction indicates that a turn to the left is required
+    \li RouteManeuver.DirectionLightLeft - The instruction indicates that a light turn to the left is required
+    \li RouteManeuver.DirectionBearLeft - The instruction indicates that the direction of travel should bear to the left
+    \endlist
+*/
+
+/*!
+    \property QGeoManeuver::direction
+    \brief the direction associated with the associated instruction.
 */
 void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
 {
@@ -226,18 +294,24 @@ void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
     d_ptr->setDirection(direction);
 }
 
-/*!
-    Returns the direction associated with the associated instruction.
-*/
 QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 {
     return d_ptr->direction();
 }
 
 /*!
-    Sets the estimated time it will take to travel from the point at which the
-    associated instruction was issued and the point that the next instruction
-    should be issued, in seconds, to \a secs.
+    \qmlproperty int RouteManeuver::timeToNextInstruction
+
+    This read-only property holds the estimated time, in seconds, that it will take
+    to travel from the point at which the associated instruction was issued
+    to the point at which the next instruction should be issued, in seconds.
+*/
+
+/*!
+    \property QGeoManeuver::timeToNextInstruction
+    \brief the estimated time, in seconds, that it will take to travel from the
+    point at which the associated instruction was issued to the point at which the
+    next instruction should be issued.
 */
 void QGeoManeuver::setTimeToNextInstruction(int secs)
 {
@@ -245,20 +319,23 @@ void QGeoManeuver::setTimeToNextInstruction(int secs)
     d_ptr->setTimeToNextInstruction(secs);
 }
 
-/*!
-    Returns the estimated time it will take to travel from the point at which
-    the associated instruction was issued and the point that the next
-    instruction should be issued, in seconds.
-*/
 int QGeoManeuver::timeToNextInstruction() const
 {
     return d_ptr->timeToNextInstruction();
 }
 
 /*!
-    Sets the distance, in meters, between the point at which the associated
-    instruction was issued and the point that the next instruction should be
-    issued to \a distance.
+    \qmlproperty real RouteManeuver::distanceToNextInstruction
+
+    This read-only property holds the distance, in meters, between the point at which
+    the associated instruction was issued and the point that the next instruction should
+    be issued.
+*/
+
+/*!
+    \property QGeoManeuver::distanceToNextInstruction
+    \brief the distance, in meters, between the point at which this instruction was
+    issued, and the point at which the next instruction should be issued.
 */
 void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
 {
@@ -266,18 +343,24 @@ void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
     d_ptr->setDistanceToNextInstruction(distance);
 }
 
-/*!
-    Returns the distance, in meters, between the point at which the associated
-    instruction was issued and the point that the next instruction should be
-    issued.
-*/
 qreal QGeoManeuver::distanceToNextInstruction() const
 {
     return d_ptr->distanceToNextInstruction();
 }
 
 /*!
-    Sets the waypoint associated with this maneuver to \a coordinate.
+    \qmlproperty coordinate RouteManeuver::waypoint
+
+    This property holds the waypoint associated with this maneuver.
+    Not all maneuvers have a waypoint associated with them.
+*/
+
+/*!
+    \property QGeoManeuver::waypoint
+    \brief the waypoint associated with this maneuver.
+
+    If there is not waypoint associated with this maneuver, then this
+    property holds an invalid QGeoCoordinate.
 */
 void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
 {
@@ -285,20 +368,30 @@ void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
     d_ptr->setWaypoint(coordinate);
 }
 
-/*!
-    Returns the waypoint associated with this maneuver.
-
-    If there is not waypoint associated with this maneuver an invalid
-    QGeoCoordinate will be returned.
-*/
 QGeoCoordinate QGeoManeuver::waypoint() const
 {
     return d_ptr->waypoint();
 }
 
 /*!
-    Sets the extended attributes \a extendedAttributes associated with this maneuver.
+    \qmlproperty Object RouteManeuver::extendedAttributes
 
+    This property holds the extended attributes of the maneuver and is a map.
+    These attributes are plugin specific, and can be empty.
+
+    Consult the \l {Qt Location#Plugin References and Parameters}{plugin documentation}
+    for what attributes are supported and how they should be used.
+
+    Note, due to limitations of the QQmlPropertyMap, it is not possible
+    to declaratively specify the attributes in QML, assignment of attributes keys
+    and values can only be accomplished by JavaScript.
+
+    \since QtLocation 5.11
+*/
+
+/*!
+    \property QGeoManeuver::extendedAttributes
+    \brief the extended attributes associated with this maneuver.
     \since QtLocation 5.11
 */
 void QGeoManeuver::setExtendedAttributes(const QVariantMap &extendedAttributes)
@@ -307,11 +400,6 @@ void QGeoManeuver::setExtendedAttributes(const QVariantMap &extendedAttributes)
     d_ptr->setExtendedAttributes(extendedAttributes);
 }
 
-/*!
-    Returns the extended attributes associated with this maneuver.
-
-    \since QtLocation 5.11
-*/
 QVariantMap QGeoManeuver::extendedAttributes() const
 {
     return d_ptr->extendedAttributes();

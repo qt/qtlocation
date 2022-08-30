@@ -56,6 +56,7 @@
 
 #include <QtCore/QObject>
 #include <QtQml/QQmlListProperty>
+#include <QtQml/QQmlPropertyMap>
 #include <QtLocation/QGeoRoute>
 
 Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoroutemodel_p.h>)

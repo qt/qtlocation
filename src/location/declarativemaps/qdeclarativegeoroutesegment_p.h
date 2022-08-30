@@ -52,11 +52,11 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qdeclarativegeomaneuver_p.h>
 
 #include <QtCore/QObject>
 #include <QtQml/qjsvalue.h>
 #include <QtLocation/QGeoRouteSegment>
+#include <QtLocation/QGeoManeuver>
 
 QT_BEGIN_NAMESPACE
 
@@ -67,7 +67,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteSegment : public QObject
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
     Q_PROPERTY(QJSValue path READ path CONSTANT)
-    Q_PROPERTY(QDeclarativeGeoManeuver *maneuver READ maneuver CONSTANT)
+    Q_PROPERTY(QGeoManeuver maneuver READ maneuver CONSTANT)
 
 public:
     explicit QDeclarativeGeoRouteSegment(QObject *parent = 0);
@@ -77,11 +77,10 @@ public:
     int travelTime() const;
     qreal distance() const;
     QJSValue path() const;
-    QDeclarativeGeoManeuver *maneuver() const;
+    QGeoManeuver maneuver() const;
 
 private:
     QGeoRouteSegment segment_;
-    QDeclarativeGeoManeuver *maneuver_;
 };
 
 QT_END_NAMESPACE

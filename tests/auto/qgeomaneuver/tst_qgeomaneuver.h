@@ -67,7 +67,6 @@ private Q_SLOTS:
 };
 
 Q_DECLARE_METATYPE( QList<double>);
-Q_DECLARE_METATYPE (QGeoManeuver::InstructionDirection);
 
 #endif // TST_QGEOMANEUVER_H
 

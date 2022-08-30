@@ -44,7 +44,6 @@
 #include <QtLocation/private/qdeclarativegeoroute_p.h>
 #include <QtLocation/private/qdeclarativegeoroutemodel_p.h>
 #include <QtLocation/private/qdeclarativegeocodemodel_p.h>
-#include <QtLocation/private/qdeclarativegeomaneuver_p.h>
 #include <QtLocation/private/qdeclarativegeomapitembase_p.h>
 #include <QtLocation/private/qdeclarativegeomapquickitem_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemview_p.h>
@@ -116,7 +115,8 @@ public:
             qmlRegisterType<QDeclarativeGeoRouteQuery               >(uri, major, minor, "RouteQuery");
             qmlRegisterType<QDeclarativeGeoRoute                    >(uri, major, minor, "Route"); // data type
             qmlRegisterType<QDeclarativeGeoRouteSegment             >(uri, major, minor, "RouteSegment");
-            qmlRegisterType<QDeclarativeGeoManeuver                 >(uri, major, minor, "RouteManeuver");
+            qmlRegisterUncreatableType<QGeoManeuver                 >(uri, major, minor, "RouteManeuver",
+                                        QStringLiteral("RouteManeuver is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QGeoMapPinchEvent >(uri, major, minor, "MapPinchEvent",
                                         QStringLiteral("(Map)PinchEvent is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QQuickGeoMapGestureArea>(uri, major, minor, "MapGestureArea",
@@ -164,8 +164,6 @@ public:
                                         QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));
 
             // Register the 5.8 types
-            minor = 8;
-            qmlRegisterType<QDeclarativeGeoManeuver>(uri, major, minor, "RouteManeuver");
 
             // Register the 5.9 types
             minor = 9;
@@ -176,7 +174,6 @@ public:
             // Register the 5.11 types
             minor = 11;
             qmlRegisterAnonymousType<QGeoMapObject>(uri, major);
-            qmlRegisterType<QDeclarativeGeoManeuver, 11>(uri, major, minor, "RouteManeuver");
             qmlRegisterType<QDeclarativeGeoMap, 11>(uri, major, minor, "Map");
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 11>(uri, major, minor, "GeoMapItemBase",
                                         QStringLiteral("GeoMapItemBase is not intended instantiable by developer."));
