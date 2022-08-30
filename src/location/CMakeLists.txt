@@ -126,7 +126,6 @@ qt_internal_add_module(Location
         declarativemaps/qdeclarativepolygonmapitem.cpp
         declarativemaps/qdeclarativepolygonmapitem_p.h
         declarativemaps/qdeclarativepolygonmapitem_p_p.h
-        declarativemaps/qdeclarativegeomaneuver.cpp declarativemaps/qdeclarativegeomaneuver_p.h
         declarativemaps/qdeclarativegeoroute.cpp declarativemaps/qdeclarativegeoroute_p.h
         declarativemaps/qdeclarativegeoroutemodel.cpp declarativemaps/qdeclarativegeoroutemodel_p.h
         declarativemaps/qgeosimplify.cpp declarativemaps/qgeosimplify_p.h

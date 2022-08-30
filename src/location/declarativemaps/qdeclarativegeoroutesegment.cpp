@@ -41,6 +41,7 @@
 
 #include <QtQml/QQmlEngine>
 #include <QtQml/private/qqmlengine_p.h>
+#include <QtPositioning/QGeoCoordinate>
 
 QT_BEGIN_NAMESPACE
 
@@ -78,7 +79,6 @@ QT_BEGIN_NAMESPACE
 QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(QObject *parent)
     : QObject(parent)
 {
-    maneuver_ = new QDeclarativeGeoManeuver(this);
 }
 
 QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(const QGeoRouteSegment &segment,
@@ -86,7 +86,6 @@ QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(const QGeoRouteSegment 
     : QObject(parent),
       segment_(segment)
 {
-    maneuver_ = new QDeclarativeGeoManeuver(segment_.maneuver(), this);
 }
 
 QDeclarativeGeoRouteSegment::~QDeclarativeGeoRouteSegment() {}
@@ -125,9 +124,9 @@ qreal QDeclarativeGeoRouteSegment::distance() const
     of this route segment.
 */
 
-QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
+QGeoManeuver QDeclarativeGeoRouteSegment::maneuver() const
 {
-    return maneuver_;
+    return segment_.maneuver();
 }
 
 /*!
