@@ -103,7 +103,6 @@ int main(int argc, char *argv[])
     for (const QByteArray &p : additionalLibraryPaths.split(':'))
         QCoreApplication::addLibraryPath(QString(p));
 #endif
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication application(argc, argv);
 
     QVariantMap parameters;
