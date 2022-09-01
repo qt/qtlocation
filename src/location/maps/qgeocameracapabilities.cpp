@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -109,6 +109,18 @@ bool QGeoCameraCapabilitiesPrivate::operator==(const QGeoCameraCapabilitiesPriva
 */
 
 /*!
+    \qmltype CameraCapabilities
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-maps
+    \since QtLocation 5.10
+
+    \brief The CameraCapabilities type holds information about the camera capabilities for a specific map type.
+
+    This includes the map minimum and maximum zoom level, minimum and maximum tilt angle and
+    minimum and maximum field of view.
+*/
+
+/*!
     Constructs a camera capabilities object.
 */
 QGeoCameraCapabilities::QGeoCameraCapabilities()
@@ -166,7 +178,14 @@ bool QGeoCameraCapabilities::isValid() const
 }
 
 /*!
-    Sets the minimum zoom level supported by the associated plugin to \a maximumZoomLevel.
+    \qmlproperty qreal CameraCapabilities::minimumZoomLevel
+
+    This read-only property holds the minimum available zoom level with this map type.
+*/
+
+/*!
+    \property QGeoCameraCapabilities::minimumZoomLevel
+    \brief the minimum zoom level supported by the associated plugin.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -177,12 +196,6 @@ void QGeoCameraCapabilities::setMinimumZoomLevel(double minimumZoomLevel)
     d->valid_ = true;
 }
 
-/*!
-    Returns the minimum zoom level supported by the associated plugin.
-
-    Larger values of the zoom level correspond to more detailed views of the
-    map.
-*/
 double QGeoCameraCapabilities::minimumZoomLevel() const
 {
     return d->minZoom_;
@@ -196,7 +209,14 @@ double QGeoCameraCapabilities::minimumZoomLevelAt256() const
 }
 
 /*!
-    Sets the maximum zoom level supported by the associated plugin to \a maximumZoomLevel.
+    \qmlproperty qreal CameraCapabilities::maximumZoomLevel
+
+    This read-only property holds the maximum available zoom level with this map type.
+*/
+
+/*!
+    \property QGeoCameraCapabilities::maximumZoomLevel
+    \brief the maximum zoom level supported by the associated plugin.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -207,12 +227,6 @@ void QGeoCameraCapabilities::setMaximumZoomLevel(double maximumZoomLevel)
     d->valid_ = true;
 }
 
-/*!
-    Returns the maximum zoom level supported by the associated plugin.
-
-    Larger values of the zoom level correspond to more detailed views of the
-    map.
-*/
 double QGeoCameraCapabilities::maximumZoomLevel() const
 {
     return d->maxZoom_;
@@ -283,7 +297,14 @@ bool QGeoCameraCapabilities::supportsTilting() const
 }
 
 /*!
-    Sets the minimum tilt supported by the associated plugin to \a minimumTilt.
+    \qmlproperty qreal CameraCapabilities::minimumTilt
+
+    This read-only property holds the minimum available tilt with this map type.
+*/
+
+/*!
+    \property QGeoCameraCapabilities::minimumTilt
+    \brief the minimum tilt supported by the associated plugin.
 
     The value is in degrees where 0 is equivalent to 90 degrees between
     the line of view and earth's surface, that is, looking straight down to earth.
@@ -294,19 +315,20 @@ void QGeoCameraCapabilities::setMinimumTilt(double minimumTilt)
     d->valid_ = true;
 }
 
-/*!
-    Returns the minimum tilt supported by the associated plugin.
-
-    The value is in degrees where 0 is equivalent to 90 degrees between
-    the line of view and earth's surface, that is, looking straight down to earth.
-*/
 double QGeoCameraCapabilities::minimumTilt() const
 {
     return d->minTilt_;
 }
 
 /*!
-    Sets the maximum tilt supported by the associated plugin to \a maximumTilt.
+    \qmlproperty qreal CameraCapabilities::maximumTilt
+
+    This read-only property holds the maximum available tilt with this map type.
+*/
+
+/*!
+    \property QGeoCameraCapabilities::maximumTilt
+    \brief the maximum tilt supported by the associated plugin.
 
     The value is in degrees where 0 is equivalent to 90 degrees between
     the line of view and earth's surface, that is, looking straight down to earth.
@@ -317,19 +339,21 @@ void QGeoCameraCapabilities::setMaximumTilt(double maximumTilt)
     d->valid_ = true;
 }
 
-/*!
-    Returns the maximum tilt supported by the associated plugin.
-
-    The value is in degrees where 0 is equivalent to 90 degrees between
-    the line of view and earth's surface, that is, looking straight down to earth.
-*/
 double QGeoCameraCapabilities::maximumTilt() const
 {
     return d->maxTilt_;
 }
 
 /*!
-    Sets the minimum field of view supported by the associated plugin to \a minimumFieldOfView.
+    \qmlproperty qreal CameraCapabilities::minimumFieldOfView
+
+    This read-only property holds the minimum available field of view with this map type.
+*/
+
+/*!
+    \property QGeoCameraCapabilities::minimumFieldOfView
+    \brief the minimum field of view supported by the associated plugin.
+
     The value is in degrees and is clamped against a [1, 179] range.
 
     \since 5.9
@@ -340,19 +364,21 @@ void QGeoCameraCapabilities::setMinimumFieldOfView(double minimumFieldOfView)
     d->valid_ = true;
 }
 
-/*!
-    Returns the minimum field of view supported by the associated plugin.
-    The value is in degrees.
-
-    \since 5.9
-*/
 double QGeoCameraCapabilities::minimumFieldOfView() const
 {
     return d->minimumFieldOfView_;
 }
 
 /*!
-    Sets the maximum field of view supported by the associated plugin to \a maximumFieldOfView.
+    \qmlproperty qreal CameraCapabilities::maximumFieldOfView
+
+    This read-only property holds the maximum available field of view with this map type.
+*/
+
+/*!
+    \property QGeoCameraCapabilities::maximumFieldOfView
+    \brief the maximum field of view supported by the associated plugin.
+
     The value is in degrees and is clamped against a [1, 179] range.
 
     \since 5.9
@@ -363,12 +389,6 @@ void QGeoCameraCapabilities::setMaximumFieldOfView(double maximumFieldOfView)
     d->valid_ = true;
 }
 
-/*!
-    Returns the maximum field of view supported by the associated plugin.
-    The value is in degrees.
-
-    \since 5.9
-*/
 double QGeoCameraCapabilities::maximumFieldOfView() const
 {
     return d->maximumFieldOfView_;
