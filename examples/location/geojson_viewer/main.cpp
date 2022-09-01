@@ -270,7 +270,6 @@ bool requestStoragePermissions()
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
 #ifdef Q_OS_ANDROID

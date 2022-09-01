@@ -38,8 +38,6 @@
 int main(int argc, char *argv[])
 {
 //    qputenv("QTLOCATION_OPENGL_ITEMS", "1");
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
