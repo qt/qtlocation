@@ -603,7 +603,7 @@ void QDeclarativeGeoServiceProvider::setLocales(const QStringList &locales)
 
 /*!
     \qmlproperty list<PluginParameter> Plugin::parameters
-    \default
+    \qmldefault
 
     This property holds the list of plugin parameters.
 */
