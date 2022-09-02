@@ -65,14 +65,13 @@
 #include <QtPositioning/qgeorectangle.h>
 #include <QtLocation/private/qgeomap_p.h>
 
-Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeomaptype_p.h>)
 Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoserviceprovider_p.h>)
 
 QT_BEGIN_NAMESPACE
 
 class QQuickWindow;
 class QDeclarativeGeoServiceProvider;
-class QDeclarativeGeoMapType;
+class QGeoMapType;
 class QDeclarativeGeoMapCopyrightNotice;
 class QDeclarativeGeoMapParameter;
 
@@ -96,8 +95,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(qreal minimumFieldOfView READ minimumFieldOfView WRITE setMinimumFieldOfView NOTIFY minimumFieldOfViewChanged)
     Q_PROPERTY(qreal maximumFieldOfView READ maximumFieldOfView WRITE setMaximumFieldOfView NOTIFY minimumFieldOfViewChanged)
 
-    Q_PROPERTY(QDeclarativeGeoMapType *activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
-    Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
+    Q_PROPERTY(QGeoMapType activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
+    Q_PROPERTY(QList<QGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(QList<QObject *> mapItems READ mapItems NOTIFY mapItemsChanged)
     Q_PROPERTY(QList<QObject *> mapParameters READ mapParameters)
@@ -118,8 +117,8 @@ public:
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
 
-    void setActiveMapType(QDeclarativeGeoMapType *mapType);
-    QDeclarativeGeoMapType *activeMapType() const;
+    void setActiveMapType(const QGeoMapType &mapType);
+    QGeoMapType activeMapType() const;
 
     void setMinimumZoomLevel(qreal minimumZoomLevel, bool userSet = true);
     qreal minimumZoomLevel() const;
@@ -166,7 +165,7 @@ public:
 
     bool mapReady() const;
 
-    QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
+    QList<QGeoMapType> supportedMapTypes();
 
     Q_INVOKABLE void setBearing(qreal bearing, const QGeoCoordinate &coordinate);
     Q_INVOKABLE void alignCoordinateToPoint(const QGeoCoordinate &coordinate, const QPointF &point);
@@ -297,8 +296,8 @@ private:
     QQuickWindow *m_window = nullptr;
     QDeclarativeGeoServiceProvider *m_plugin;
     QGeoMappingManager *m_mappingManager;
-    QDeclarativeGeoMapType *m_activeMapType;
-    QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
+    QGeoMapType m_activeMapType;
+    QList<QGeoMapType> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
     QQuickGeoMapGestureArea *m_gestureArea;
     QPointer<QGeoMap> m_map;

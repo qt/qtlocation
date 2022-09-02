@@ -47,7 +47,6 @@
 #include <QtLocation/private/qdeclarativegeomapitembase_p.h>
 #include <QtLocation/private/qdeclarativegeomapquickitem_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemview_p.h>
-#include <QtLocation/private/qdeclarativegeomaptype_p.h>
 #include <QtLocation/private/qdeclarativerectanglemapitem_p.h>
 #include <QtLocation/private/qdeclarativecirclemapitem_p.h>
 #include <QtLocation/private/qdeclarativeroutemapitem_p.h>
@@ -119,8 +118,6 @@ public:
                                         QStringLiteral("(Map)PinchEvent is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QQuickGeoMapGestureArea>(uri, major, minor, "MapGestureArea",
                                         QStringLiteral("(Map)GestureArea is not intended instantiable by developer."));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapType       >(uri, major, minor, "MapType",
-                                        QStringLiteral("MapType is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeCategory                    >(uri, major, minor, "Category");
             qmlRegisterType<QDeclarativePlaceEditorialModel         >(uri, major, minor, "EditorialModel");
             qmlRegisterType<QDeclarativePlaceImageModel             >(uri, major, minor, "ImageModel");
@@ -151,11 +148,6 @@ public:
 
             // Introduction of 5.3 version; existing 5.0 exports automatically become available under 5.3 as well
             // 5.3 is committed QML API despite missing release of QtLocation 5.3
-
-            minor = 5;
-            //TODO: this is broken QTBUG-50990
-            qmlRegisterUncreatableType<QDeclarativeGeoMapType, 1>(uri, major, minor, "MapType",
-                                                  QStringLiteral("MapType is not intended instantiable by developer."));
 
             minor = 6;
             //TODO: this is broken QTBUG-50990

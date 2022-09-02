@@ -124,19 +124,19 @@ a prefix.
     This value is the amount of cache to be used in addition to the bare minimum.
 \row
     \li osm.mapping.custom.datacopyright
-    \li Custom data copryright string is used when setting the \l{Map::activeMapType} to \l{MapType}.CustomMap via urlprefix parameter.
+    \li Custom data copryright string is used when setting the \l{Map::activeMapType} to \l{mapType::style}{MapType.CustomMap} via urlprefix parameter.
         This copyright will only be used when using the CustomMap from above. If empty no data copyright will be displayed for the custom map.
 \row
     \li osm.mapping.custom.host
     \li Url string of a custom tile server.  This parameter should be set to a valid server url offering the correct osm API.
         To use this server, the \l{Map::activeMapType} parameter of the \l Map should be set to the supported map type
-        whose type is \l{MapType}.CustomMap.
+        whose type is \l{mapType::style}{MapType.CustomMap}.
         This map type is only be available if this plugin parameter is set, in which case it is
         always \l{Map::supportedMapTypes}[supportedMapTypes.length - 1].
         \note Setting the mapping.custom.host parameter to a new server renders the map tile cache useless for the old custommap style.
 \row
     \li osm.mapping.custom.mapcopyright
-    \li Custom map copryright string is used when setting the \l{Map::activeMapType} to \l{MapType}.CustomMap via urlprefix parameter.
+    \li Custom map copryright string is used when setting the \l{Map::activeMapType} to \l{mapType::style}{MapType.CustomMap} via urlprefix parameter.
         This copyright will only be used when using the CustomMap from above. If empty no map copyright will be displayed for the custom map.
 \row
     \li osm.mapping.highdpi_tiles

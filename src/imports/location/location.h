@@ -81,6 +81,20 @@ struct QGeoRouteSegmentForeign
     QML_NAMED_ELEMENT(routeSegment)
 };
 
+struct QGeoMapTypeForeign
+{
+    Q_GADGET
+    QML_FOREIGN(QGeoMapType)
+    QML_NAMED_ELEMENT(mapType)
+};
+
+namespace QGeoMapTypeForeignNamespace
+{
+    Q_NAMESPACE
+    QML_FOREIGN_NAMESPACE(QGeoMapType)
+    QML_NAMED_ELEMENT(MapType)
+};
+
 QT_END_NAMESPACE
 
 #endif // QTLOCATION_QMLTYPES_H

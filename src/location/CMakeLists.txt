@@ -100,7 +100,6 @@ qt_internal_add_module(Location
         declarativemaps/qdeclarativegeomapcopyrightsnotice.cpp
         declarativemaps/qdeclarativegeoserviceprovider_p.h
         declarativemaps/qdeclarativegeoserviceprovider.cpp
-        declarativemaps/qdeclarativegeomaptype_p.h declarativemaps/qdeclarativegeomaptype.cpp
         declarativemaps/qdeclarativegeomapparameter_p.h
         declarativemaps/qdeclarativegeomapparameter.cpp
         declarativemaps/qdeclarativegeomapitemview_p.h

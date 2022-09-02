@@ -41,7 +41,6 @@
 #include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativegeomapcopyrightsnotice_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativegeomaptype_p.h"
 #include "qgeomappingmanager_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomap_p.h"
@@ -181,7 +180,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         : QQuickItem(parent),
         m_plugin(0),
         m_mappingManager(0),
-        m_activeMapType(0),
         m_gestureArea(new QQuickGeoMapGestureArea(this)),
         m_map(0),
         m_error(QGeoServiceProvider::NoError),
@@ -204,13 +202,13 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
     setFiltersChildMouseEvents(true); // needed for childMouseEventFilter to work.
 
-    m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
-                                                             tr("No Map"),
-                                                             tr("No Map"),
-                                                             false, false,
-                                                             0,
-                                                             QByteArrayLiteral(""),
-                                                             QGeoCameraCapabilities()), this);
+    m_activeMapType = QGeoMapType(QGeoMapType::NoMap,
+                                  tr("No Map"),
+                                  tr("No Map"),
+                                  false, false,
+                                  0,
+                                  QByteArrayLiteral(""),
+                                  QGeoCameraCapabilities());
     m_cameraData.setCenter(QGeoCoordinate(51.5073,-0.1277)); //London city center
     m_cameraData.setZoomLevel(8.0);
 
@@ -287,39 +285,15 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     delete m_map; // map objects get reset here
 }
 
-static QDeclarativeGeoMapType *findMapType(const QList<QDeclarativeGeoMapType *> &types, const QGeoMapType &type)
-{
-    for (int i = 0; i < types.size(); ++i)
-        if (types[i]->mapType() == type)
-            return types[i];
-    return nullptr;
-}
-
 void QDeclarativeGeoMap::onSupportedMapTypesChanged()
 {
-    QList<QDeclarativeGeoMapType *> supportedMapTypes;
-    QList<QGeoMapType> types = m_mappingManager->supportedMapTypes();
-    for (int i = 0; i < types.size(); ++i) {
-        // types that are present and get removed will be deleted at QObject destruction
-        QDeclarativeGeoMapType *type = findMapType(m_supportedMapTypes, types[i]);
-        if (!type)
-            type = new QDeclarativeGeoMapType(types[i], this);
-        supportedMapTypes.append(type);
-    }
-    m_supportedMapTypes.swap(supportedMapTypes);
+    m_supportedMapTypes = m_mappingManager->supportedMapTypes();
     if (m_supportedMapTypes.isEmpty()) {
         m_map->setActiveMapType(QGeoMapType()); // no supported map types: setting an invalid one
-    } else {
-        bool hasMapType = false;
-        for (const auto *declarativeType : qAsConst(m_supportedMapTypes)) {
-            if (declarativeType->mapType() == m_map->activeMapType())
-                hasMapType = true;
-        }
-        if (!hasMapType) {
-            QDeclarativeGeoMapType *type = m_supportedMapTypes.at(0);
-            m_activeMapType = type;
-            m_map->setActiveMapType(type->mapType());
-        }
+    } else if (!m_supportedMapTypes.contains(m_map->activeMapType())) {
+        QGeoMapType type = m_supportedMapTypes.at(0);
+        m_activeMapType = type;
+        m_map->setActiveMapType(type);
     }
 
     emit supportedMapTypesChanged();
@@ -651,30 +625,23 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     m_gestureArea->setMap(m_map);
 
-    QList<QGeoMapType> types = m_mappingManager->supportedMapTypes();
-    for (int i = 0; i < types.size(); ++i) {
-        QDeclarativeGeoMapType *type = new QDeclarativeGeoMapType(types[i], this);
-        m_supportedMapTypes.append(type);
-    }
+    m_supportedMapTypes = m_mappingManager->supportedMapTypes();
 
-    if (m_activeMapType && m_plugin->name().toLatin1() == m_activeMapType->mapType().pluginName()) {
-        m_map->setActiveMapType(m_activeMapType->mapType());
+    if (m_activeMapType != QGeoMapType() && m_plugin->name().toLatin1() == m_activeMapType.pluginName()) {
+        m_map->setActiveMapType(m_activeMapType);
     } else {
-        if (m_activeMapType)
-            m_activeMapType->deleteLater();
-
         if (!m_supportedMapTypes.isEmpty()) {
-                m_activeMapType = m_supportedMapTypes.at(0);
-                m_map->setActiveMapType(m_activeMapType->mapType());
+            m_activeMapType = m_supportedMapTypes.at(0);
+            m_map->setActiveMapType(m_activeMapType);
         } else {
-            m_activeMapType = new QDeclarativeGeoMapType(QGeoMapType(QGeoMapType::NoMap,
-                                                                     tr("No Map"),
-                                                                     tr("No Map"),
-                                                                     false,
-                                                                     false,
-                                                                     0,
-                                                                     QByteArrayLiteral(""),
-                                                                     QGeoCameraCapabilities()), this);
+            m_activeMapType = QGeoMapType(QGeoMapType::NoMap,
+                                          tr("No Map"),
+                                          tr("No Map"),
+                                          false,
+                                          false,
+                                          0,
+                                          QByteArrayLiteral(""),
+                                          QGeoCameraCapabilities());
         }
     }
 
@@ -1499,15 +1466,15 @@ QMargins QDeclarativeGeoMap::mapMargins() const
 }
 
 /*!
-    \qmlproperty list<MapType> QtLocation::Map::supportedMapTypes
+    \qmlproperty list<mapType> QtLocation::Map::supportedMapTypes
 
-    This read-only property holds the set of \l{MapType}{map types} supported by this map.
+    This read-only property holds the set of \l{mapType}{map types} supported by this map.
 
     \sa activeMapType
 */
-QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
+QList<QGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 {
-    return QQmlListProperty<QDeclarativeGeoMapType>(this, &m_supportedMapTypes);
+    return m_supportedMapTypes;
 }
 
 /*!
@@ -2261,21 +2228,21 @@ bool QDeclarativeGeoMap::addMapItemView_real(QDeclarativeGeoMapItemView *itemVie
 }
 
 /*!
-    \qmlproperty MapType QtLocation::Map::activeMapType
+    \qmlproperty mapType QtLocation::Map::activeMapType
 
-    \brief Access to the currently active \l{MapType}{map type}.
+    \brief Access to the currently active \l{mapType}{map type}.
 
-    This property can be set to change the active \l{MapType}{map type}.
+    This property can be set to change the active \l{mapType}{map type}.
     See the \l{Map::supportedMapTypes}{supportedMapTypes} property for possible values.
 
-    \sa MapType
+    \sa mapType
 */
-void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
+void QDeclarativeGeoMap::setActiveMapType(const QGeoMapType &mapType)
 {
-    if (m_activeMapType->mapType() != mapType->mapType()) {
+    if (m_activeMapType != mapType) {
         if (m_map) {
-            if (mapType->mapType().pluginName() == m_plugin->name().toLatin1()) {
-                m_map->setActiveMapType(mapType->mapType());
+            if (mapType.pluginName() == m_plugin->name().toLatin1()) {
+                m_map->setActiveMapType(mapType);
                 m_activeMapType = mapType;
                 emit activeMapTypeChanged();
             }
@@ -2286,7 +2253,7 @@ void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
     }
 }
 
-QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
+QGeoMapType QDeclarativeGeoMap::activeMapType() const
 {
     return m_activeMapType;
 }
