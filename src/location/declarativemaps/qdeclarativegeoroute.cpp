@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
     as the length the route, the estimated travel time for the route,
     and enough information to render a basic image of the route on a map.
 
-    The QGeoRoute object also contains a list of \l RouteSegment objects which
+    The QGeoRoute object also contains a list of \l routeSegment objects which
     describe subsections of the route in greater detail.
 
     The primary means of acquiring Route objects is \l RouteModel.
@@ -92,33 +92,6 @@ QDeclarativeGeoRoute::QDeclarativeGeoRoute(const QGeoRoute &route, QObject *pare
 }
 
 QDeclarativeGeoRoute::~QDeclarativeGeoRoute() {}
-
-void QDeclarativeGeoRoute::initSegments(unsigned int lastIndex) // -1  turns it into unsigned int max
-{
-    if (!segmentsDirty_)
-        return;
-
-    const bool isLeg = qobject_cast<QDeclarativeGeoRoute *>(parent());
-    QGeoRouteSegment segment = route_.firstRouteSegment();
-    unsigned int idx = 0;
-    unsigned int initialListSize = static_cast<unsigned int>(segments_.size());
-    while (segment.isValid()) {
-        if (idx >= initialListSize) {
-            QDeclarativeGeoRouteSegment *routeSegment = new QDeclarativeGeoRouteSegment(segment, this);
-            QQmlEngine::setContextForObject(routeSegment, QQmlEngine::contextForObject(this));
-            segments_.append(routeSegment);
-        }
-        if (isLeg && segment.isLegLastSegment()) {
-            segmentsDirty_ = false;
-            return;
-        }
-        ++idx;
-        segment = segment.nextRouteSegment();
-        if (idx > lastIndex && segment.isValid()) // Do not clean segmentsDirty_ if there are still segments to initialize
-            return;
-    }
-    segmentsDirty_ = false;
-}
 
 /*!
     \internal
@@ -224,65 +197,26 @@ void QDeclarativeGeoRoute::setPath(const QJSValue &value)
 }
 
 /*!
-    \qmlproperty list<RouteSegment> QtLocation::Route::segments
+    \qmlproperty list<routeSegment> QtLocation::Route::segments
 
-    Read-only property which holds the list of \l RouteSegment objects of this route.
+    Read-only property which holds the list of \l routeSegment objects of this route.
 
     To access individual segments you can use standard list accessors: 'segments.length'
     indicates the number of objects and 'segments[index starting from zero]' gives
     the actual objects.
 
-    \sa RouteSegment
+    \sa routeSegment
 */
 
-QQmlListProperty<QDeclarativeGeoRouteSegment> QDeclarativeGeoRoute::segments()
+QList<QGeoRouteSegment> QDeclarativeGeoRoute::segments()
 {
-    return QQmlListProperty<QDeclarativeGeoRouteSegment>(this, 0, segments_append, segments_count,
-                                                         segments_at, segments_clear);
+    return segments_;
 }
 
 /*!
     \internal
 */
-void QDeclarativeGeoRoute::segments_append(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop,
-                                           QDeclarativeGeoRouteSegment *segment)
-{
-    QDeclarativeGeoRoute *declRoute = static_cast<QDeclarativeGeoRoute *>(prop->object);
-    declRoute->initSegments();
-    declRoute->appendSegment(segment);
-}
-
-/*!
-    \internal
-*/
-qsizetype QDeclarativeGeoRoute::segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop)
-{
-    QDeclarativeGeoRoute *declRoute = static_cast<QDeclarativeGeoRoute *>(prop->object);
-    return declRoute->segmentsCount();
-}
-
-/*!
-    \internal
-*/
-QDeclarativeGeoRouteSegment *QDeclarativeGeoRoute::segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, qsizetype index)
-{
-    QDeclarativeGeoRoute *declRoute = static_cast<QDeclarativeGeoRoute *>(prop->object);
-    declRoute->initSegments(index); // init only what's needed.
-    return declRoute->segments_.at(index);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoRoute::segments_clear(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop)
-{
-    static_cast<QDeclarativeGeoRoute *>(prop->object)->clearSegments();
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoRoute::appendSegment(QDeclarativeGeoRouteSegment *segment)
+void QDeclarativeGeoRoute::appendSegment(const QGeoRouteSegment &segment)
 {
     segments_.append(segment);
 }
@@ -300,7 +234,7 @@ void QDeclarativeGeoRoute::clearSegments()
 
     Returns the number of segments in the route
 
-    \sa RouteSegment
+    \sa routeSegment
 
     \since 5.11
 */

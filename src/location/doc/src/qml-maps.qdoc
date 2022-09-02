@@ -129,7 +129,7 @@ a \e maneuver contains navigational information, for example "turn right now".
 
 To find a suitable route we will need to use a \l RouteQuery to define the
 selection criteria and adding any required waypoints.
-The \l RouteModel should return a list of \l {RouteSegment}s that defines the
+The \l RouteModel should return a list of \l {routeSegment}s that defines the
 route to the destination complete with navigation advice at the joins between
 segments, called \l {routeManeuver}s
 

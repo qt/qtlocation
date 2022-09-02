@@ -43,7 +43,7 @@
 
     To perform navigation we need \l {Route}s from start to destination.
     These routes are made up of segments, where each \l {QtLocation::}
-    {RouteSegment} can be considered a navigation subtask; for example,
+    {routeSegment} can be considered a navigation subtask; for example,
     "drive 100 meters", or "turn left". The beginning and end of each
     segment is a \e waypoint, that is, one part of the journey.
 
@@ -69,7 +69,7 @@
             and so on.
 
         \li The \l [QML] Route is be determined by a \e plugin, with each
-            \l [QML] RouteSegment holding the navigation instructions,
+            \l [QML] routeSegment holding the navigation instructions,
             guided by the continuously updated current \l [QML] Location.
 
     \endlist

@@ -100,7 +100,7 @@ Item {
             Text { text: hasManeuver ? modelData.maneuver.instructionText : "" }
     //! [Route Maneuver List2]
             property routeManeuver routeManeuver: modelData.maneuver
-            property RouteSegment routeSegment: modelData
+            property routeSegment routeSegment: modelData
 
             //! [routeManeuver]
             Text {
@@ -109,11 +109,11 @@ Item {
             }
             //! [routeManeuver]
 
-            //! [RouteSegment]
+            //! [routeSegment]
             Text {
                 text: "Segment distance " + routeSegment.distance + " meters, " + routeSegment.path.length + " points."
             }
-            //! [RouteSegment]
+            //! [routeSegment]
     //! [Route Maneuver List3]
         }
     }

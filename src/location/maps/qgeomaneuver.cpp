@@ -81,9 +81,9 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoManeuverPrivate)
     \since QtLocation 5.5
 
     \brief The routeManeuver type represents the information relevant to the
-    point at which two RouteSegments meet.
+    point at which two routeSegments meet.
 
-    RouteSegment instances can be thought of as edges on a routing
+    Instances of routeSegment can be thought of as edges on a routing
     graph, with routeManeuver instances as optional labels attached to the
     vertices of the graph.
 

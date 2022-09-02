@@ -52,6 +52,7 @@
 //
 
 #include <QGeoManeuver>
+#include <QGeoRouteSegment>
 
 #include <QtLocation/private/qgeomaptype_p.h>
 
@@ -71,6 +72,13 @@ namespace QGeoManeuverForeignNamespace
     Q_NAMESPACE
     QML_FOREIGN_NAMESPACE(QGeoManeuver)
     QML_NAMED_ELEMENT(RouteManeuver)
+};
+
+struct QGeoRouteSegmentForeign
+{
+    Q_GADGET
+    QML_FOREIGN(QGeoRouteSegment)
+    QML_NAMED_ELEMENT(routeSegment)
 };
 
 QT_END_NAMESPACE

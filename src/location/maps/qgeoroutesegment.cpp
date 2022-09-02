@@ -72,6 +72,36 @@ QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoRouteSegmentPrivate)
 */
 
 /*!
+    \qmltype routeSegment
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-routing
+    \since QtLocation 5.5
+
+    \brief The routeSegment type represents a segment of a Route.
+
+    A routeSegment instance has information about the physical layout
+    of the route segment, the length of the route and estimated time required
+    to traverse the route segment and optional \l {routeManeuver}s associated with
+    the end of the route segment.
+
+    Instances of routeSegment can be thought of as edges on a routing
+    graph, with routeManeuver instances as optional labels attached to the
+    vertices of the graph.
+
+    The primary means of acquiring Route objects is via Routes via \l RouteModel.
+
+    \section1 Example
+
+    The following QML snippet demonstrates how to print information about a
+    route segment:
+
+    \snippet declarative/routing.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
+    \codeline
+    \snippet declarative/routing.qml routeSegment
+*/
+
+/*!
     Constructs an invalid route segment object.
 
     The route segment will remain invalid until one of setNextRouteSegment(),
@@ -181,8 +211,17 @@ QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
 }
 
 /*!
-    Sets the estimated amount of time it will take to traverse this segment of
-    the route, in seconds, to \a secs.
+    \qmlproperty int QtLocation::routeSegment::travelTime
+
+    Read-only property which holds the estimated amount of time it will take to
+    traverse this segment, in seconds.
+
+*/
+
+/*!
+    \property QGeoRouteSegment::travelTime
+    \brief the estimated amount of time, in seconds, that it will take to
+    traverse this segment.
 */
 void QGeoRouteSegment::setTravelTime(int secs)
 {
@@ -190,17 +229,21 @@ void QGeoRouteSegment::setTravelTime(int secs)
     d_ptr->setTravelTime(secs);
 }
 
-/*!
-    Returns the estimated amount of time it will take to traverse this segment
-    of the route, in seconds.
-*/
 int QGeoRouteSegment::travelTime() const
 {
     return d_ptr->travelTime();
 }
 
 /*!
-    Sets the distance covered by this segment of the route, in meters, to \a distance.
+    \qmlproperty real QtLocation::routeSegment::distance
+
+    Read-only property which holds the distance covered by this segment of
+    the route, in meters.
+*/
+
+/*!
+    \property QGeoRouteSegment::distance
+    \brief the distance covered by this segment of the route, in meters.
 */
 void QGeoRouteSegment::setDistance(qreal distance)
 {
@@ -208,18 +251,30 @@ void QGeoRouteSegment::setDistance(qreal distance)
     d_ptr->setDistance(distance);
 }
 
-/*!
-    Returns the distance covered by this segment of the route, in meters.
-*/
 qreal QGeoRouteSegment::distance() const
 {
     return d_ptr->distance();
 }
 
 /*!
-    Sets the geometric shape of this segment of the route to \a path.
+    \qmlproperty list<coordinate> QtLocation::routeSegment::path
 
-    The coordinates in \a path should be listed in the order in which they
+    Read-only property which holds the geographical coordinates of this segment.
+    Coordinates are listed in the order in which they would be traversed by someone
+    traveling along this segment of the route.
+
+    To access individual segments you can use standard list accessors: 'path.length'
+    indicates the number of objects and 'path[index starting from zero]' gives
+    the actual object.
+
+    \sa QtPositioning::coordinate
+*/
+
+/*!
+    \property QGeoRouteSegment::path
+    \brief the geometric shape of this route segment of the route.
+
+    The coordinates should be listed in the order in which they
     would be traversed by someone traveling along this segment of the route.
 */
 void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
@@ -228,20 +283,26 @@ void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
     d_ptr->setPath(path);
 }
 
-/*!
-    Returns the geometric shape of this route segment of the route.
-
-    The coordinates should be listed in the order in which they
-    would be traversed by someone traveling along this segment of the route.
-*/
-
 QList<QGeoCoordinate> QGeoRouteSegment::path() const
 {
     return d_ptr->path();
 }
 
 /*!
-    Sets the maneuver for this route segment to \a maneuver.
+    \qmlproperty RouteManeuver QtLocation::routeSegment::maneuver
+
+    Read-only property which holds the maneuver for this route segment.
+
+    Will return invalid maneuver if no information has been attached to the endpoint
+    of this route segment.
+*/
+
+/*!
+    \property QGeoRouteSegment::maneuver
+    \brief the maneuver for this route segment.
+
+    Holds an invalid QGeoManeuver if no information has been attached
+    to the starting point of this route segment.
 */
 void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 {
@@ -249,12 +310,6 @@ void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
     d_ptr->setManeuver(maneuver);
 }
 
-/*!
-    Returns the maneuver for this route segment.
-
-    Will return an invalid QGeoManeuver if no information has been attached
-    to the starting point of this route segment.
-*/
 QGeoManeuver QGeoRouteSegment::maneuver() const
 {
     return d_ptr->maneuver();

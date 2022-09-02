@@ -36,7 +36,6 @@
 #include <QtLocation/private/qgeomapparameter_p.h>
 #include <QtLocation/private/qdeclarativegeoroute_p.h>
 #include <QtLocation/private/qdeclarativegeoroutemodel_p.h>
-#include <QtLocation/private/qdeclarativegeoroutesegment_p.h>
 #include <QtLocation/qgeoserviceprovider.h>
 #include <QtPositioningQuick/private/qdeclarativepositionsource_p.h>
 #include <QtQml/qqmlinfo.h>
@@ -622,12 +621,12 @@ QDeclarativeNavigationBasicDirections::QDeclarativeNavigationBasicDirections(QDe
             so the \l {RouteLeg::}{overallRoute} property of \c currentRouteLeg
             holds the same route as \c currentRoute.
         \li The \c currentSegment property holds the index of the current
-            RouteSegment in the \c currentRoute.
+            routeSegment in the \c currentRoute.
         \li The \c alternativeRoutes property holds the list of alternative routes provided by
             the engine. If no alternative routes are present, the model will be empty.
     \endlist
 
-    \sa directions.waypointReached(), directions.destinationReached(), Route, RouteLeg, RouteSegment, Waypoint
+    \sa directions.waypointReached(), directions.destinationReached(), Route, RouteLeg, routeSegment, Waypoint
 */
 
 /*!

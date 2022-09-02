@@ -73,11 +73,11 @@ Item {
     property variant ntr: QtPositioning.coordinate(3, 3)
 
     property variant unitBox: QtPositioning.rectangle(tl, br)
+    property routeSegment emptySegment
 
     Route {id: emptyRoute}
     TestCase {
         name: "RouteManeuver RouteSegment and MapRoute"
-        RouteSegment {id: emptySegment}
 
         // TODO enable when we have map route
         //MapRoute {id: emptyMapRoute}

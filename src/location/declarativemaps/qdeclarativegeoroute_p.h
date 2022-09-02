@@ -52,12 +52,13 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtLocation/private/qdeclarativegeoroutesegment_p.h>
 
 #include <QtCore/QObject>
-#include <QtQml/QQmlListProperty>
+#include <QtCore/QList>
 #include <QtQml/QQmlPropertyMap>
+#include <QtQml/QJSValue>
 #include <QtLocation/QGeoRoute>
+#include <QtLocation/QGeoRouteSegment>
 
 Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoroutemodel_p.h>)
 
@@ -72,7 +73,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
     Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
-    Q_PROPERTY(QQmlListProperty<QDeclarativeGeoRouteSegment> segments READ segments CONSTANT)
+    Q_PROPERTY(QList<QGeoRouteSegment> segments READ segments CONSTANT)
     Q_PROPERTY(QDeclarativeGeoRouteQuery *routeQuery READ routeQuery REVISION 11)
     Q_PROPERTY(QList<QObject *> legs READ legs CONSTANT REVISION 12)
     Q_PROPERTY(QObject *extendedAttributes READ extendedAttributes CONSTANT REVISION 13)
@@ -89,9 +90,9 @@ public:
     QJSValue path() const;
     void setPath(const QJSValue &value);
 
-    QQmlListProperty<QDeclarativeGeoRouteSegment> segments();
+    QList<QGeoRouteSegment> segments();
 
-    void appendSegment(QDeclarativeGeoRouteSegment *segment);
+    void appendSegment(const QGeoRouteSegment &segment);
     void clearSegments();
 
     int segmentsCount() const;
@@ -106,19 +107,12 @@ Q_SIGNALS:
     void pathChanged();
 
 private:
-    static void segments_append(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, QDeclarativeGeoRouteSegment *segment);
-    static qsizetype segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
-    static QDeclarativeGeoRouteSegment *segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, qsizetype index);
-    static void segments_clear(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
-
-    void initSegments(unsigned int lastIndex = ~0U);
     QList<QGeoCoordinate> routePath();
 
     QGeoRoute route_;
     QDeclarativeGeoRouteQuery *routeQuery_ = nullptr;
-    QList<QDeclarativeGeoRouteSegment *> segments_;
+    QList<QGeoRouteSegment> segments_;
     QList<QObject *> legs_;
-    bool segmentsDirty_ = true;
     QQmlPropertyMap *m_extendedAttributes = nullptr;
 
     friend class QDeclarativeRouteMapItem;
