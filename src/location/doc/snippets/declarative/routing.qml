@@ -99,15 +99,15 @@ Item {
             Text { text: (1 + index) + "." }
             Text { text: hasManeuver ? modelData.maneuver.instructionText : "" }
     //! [Route Maneuver List2]
-            property RouteManeuver routeManeuver: modelData.maneuver
+            property routeManeuver routeManeuver: modelData.maneuver
             property RouteSegment routeSegment: modelData
 
-            //! [RouteManeuver]
+            //! [routeManeuver]
             Text {
                 text: "Distance till next maneuver: " + routeManeuver.distanceToNextInstruction
                       + " meters, estimated time: " + routeManeuver.timeToNextInstruction + " seconds."
             }
-            //! [RouteManeuver]
+            //! [routeManeuver]
 
             //! [RouteSegment]
             Text {

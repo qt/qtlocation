@@ -6,7 +6,7 @@ qt_internal_add_qml_module(declarative_location
     NO_PLUGIN_OPTIONAL
     CLASS_NAME QtLocationDeclarativeModule
     SOURCES
-        location.cpp
+        location.h location.cpp
     LIBRARIES
         Qt::LocationPrivate
         Qt::Quick

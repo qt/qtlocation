@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -76,6 +76,8 @@
 
 #include <QtCore/QDebug>
 
+#include "location.h"
+
 QT_BEGIN_NAMESPACE
 
 
@@ -114,8 +116,6 @@ public:
             qmlRegisterType<QDeclarativeGeoRouteQuery               >(uri, major, minor, "RouteQuery");
             qmlRegisterType<QDeclarativeGeoRoute                    >(uri, major, minor, "Route"); // data type
             qmlRegisterType<QDeclarativeGeoRouteSegment             >(uri, major, minor, "RouteSegment");
-            qmlRegisterUncreatableType<QGeoManeuver                 >(uri, major, minor, "RouteManeuver",
-                                        QStringLiteral("RouteManeuver is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QGeoMapPinchEvent >(uri, major, minor, "MapPinchEvent",
                                         QStringLiteral("(Map)PinchEvent is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QQuickGeoMapGestureArea>(uri, major, minor, "MapGestureArea",
@@ -157,6 +157,7 @@ public:
             //TODO: this is broken QTBUG-50990
             qmlRegisterUncreatableType<QDeclarativeGeoMapType, 1>(uri, major, minor, "MapType",
                                                   QStringLiteral("MapType is not intended instantiable by developer."));
+
             minor = 6;
             //TODO: this is broken QTBUG-50990
             qmlRegisterUncreatableType<QQuickGeoMapGestureArea, 1>(uri, major, minor, "MapGestureArea",
@@ -230,3 +231,4 @@ public:
 QT_END_NAMESPACE
 
 #include "location.moc"
+#include "moc_location.cpp"

@@ -160,7 +160,7 @@ Routing is the determination of a navigable path from one point to another on
 a map. Given a map that is aware of features that aid or hinder navigation, such as
 bridges, waterways and so on, a series of segments that make
 up the journey can be constructed. If these \l {RouteSegment}s are simple then we can
-add navigation information at the connecting points, \l {RouteManeuver}s,
+add navigation information at the connecting points, \l {routeManeuver}s,
 between the segments.
 
 \b{Key Types}
@@ -172,7 +172,7 @@ between the segments.
         \li \l{QtLocation::RouteSegment}{RouteSegment}
         \li The individual components of a route.
     \row
-        \li \l{QtLocation::RouteManeuver}{RouteManeuver}
+        \li \l{QtLocation::routeManeuver}{routeManeuver}
         \li The navigation information that joins segments.
     \row
         \li \l{QtLocation::RouteModel}{RouteModel}

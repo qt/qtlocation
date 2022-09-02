@@ -75,19 +75,19 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoManeuverPrivate)
 */
 
 /*!
-    \qmltype RouteManeuver
+    \qmltype routeManeuver
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
     \since QtLocation 5.5
 
-    \brief The RouteManeuver type represents the information relevant to the
+    \brief The routeManeuver type represents the information relevant to the
     point at which two RouteSegments meet.
 
     RouteSegment instances can be thought of as edges on a routing
-    graph, with RouteManeuver instances as optional labels attached to the
+    graph, with routeManeuver instances as optional labels attached to the
     vertices of the graph.
 
-    The most interesting information held in a RouteManeuver instance is
+    The most interesting information held in a routeManeuver instance is
     normally the textual navigation to provide and the position at which to
     provide it, accessible by \l instructionText and \l position respectively.
 
@@ -99,7 +99,7 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoManeuverPrivate)
     \snippet declarative/routing.qml QtQuick import
     \snippet declarative/maps.qml QtLocation import
     \codeline
-    \snippet declarative/routing.qml RouteManeuver
+    \snippet declarative/routing.qml routeManeuver
 */
 
 /*!
@@ -199,7 +199,7 @@ bool QGeoManeuver::isEqual(const QGeoManeuver &other) const
 }
 
 /*!
-    \qmlproperty bool RouteManeuver::valid
+    \qmlproperty bool routeManeuver::valid
 
     This read-only property holds whether this maneuver is valid or not.
 
@@ -220,7 +220,7 @@ bool QGeoManeuver::isValid() const
 }
 
 /*!
-    \qmlproperty coordinate RouteManeuver::position
+    \qmlproperty coordinate routeManeuver::position
 
     This read-only property holds where the \l instructionText should be displayed.
 
@@ -242,7 +242,7 @@ QGeoCoordinate QGeoManeuver::position() const
 }
 
 /*!
-    \qmlproperty string RouteManeuver::instructionText
+    \qmlproperty string routeManeuver::instructionText
 
     This read-only property holds textual navigation instruction.
 */
@@ -263,10 +263,10 @@ QString QGeoManeuver::instructionText() const
 }
 
 /*!
-    \qmlproperty enumeration RouteManeuver::direction
+    \qmlproperty enumeration routeManeuver::direction
 
     Describes the change in direction associated with the instruction text
-    that is associated with a RouteManeuver.
+    that is associated with a routeManeuver.
 
     \list
     \li RouteManeuver.NoDirection - There is no direction associated with the instruction text
@@ -300,7 +300,7 @@ QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 }
 
 /*!
-    \qmlproperty int RouteManeuver::timeToNextInstruction
+    \qmlproperty int routeManeuver::timeToNextInstruction
 
     This read-only property holds the estimated time, in seconds, that it will take
     to travel from the point at which the associated instruction was issued
@@ -325,7 +325,7 @@ int QGeoManeuver::timeToNextInstruction() const
 }
 
 /*!
-    \qmlproperty real RouteManeuver::distanceToNextInstruction
+    \qmlproperty real routeManeuver::distanceToNextInstruction
 
     This read-only property holds the distance, in meters, between the point at which
     the associated instruction was issued and the point that the next instruction should
@@ -349,7 +349,7 @@ qreal QGeoManeuver::distanceToNextInstruction() const
 }
 
 /*!
-    \qmlproperty coordinate RouteManeuver::waypoint
+    \qmlproperty coordinate routeManeuver::waypoint
 
     This property holds the waypoint associated with this maneuver.
     Not all maneuvers have a waypoint associated with them.
@@ -374,7 +374,7 @@ QGeoCoordinate QGeoManeuver::waypoint() const
 }
 
 /*!
-    \qmlproperty Object RouteManeuver::extendedAttributes
+    \qmlproperty Object routeManeuver::extendedAttributes
 
     This property holds the extended attributes of the maneuver and is a map.
     These attributes are plugin specific, and can be empty.

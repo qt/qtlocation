@@ -165,7 +165,7 @@ The following table lists optional parameters that can be passed to the Mapbox p
 
 \section1 Extra routing attributes
 
-When using this plugin, the RouteManeuver objects in the returned route may contain additional extended attributes (see \l RouteManeuver::extendedAttributes),
+When using this plugin, the routeManeuver objects in the returned route may contain additional extended attributes (see \l routeManeuver::extendedAttributes),
 where available.
 These attributes are described in detail in the official \l{https://www.mapbox.com/api-documentation/#stepmaneuver-object}{Mapbox direction API documentation}.
 */

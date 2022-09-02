@@ -131,7 +131,7 @@ To find a suitable route we will need to use a \l RouteQuery to define the
 selection criteria and adding any required waypoints.
 The \l RouteModel should return a list of \l {RouteSegment}s that defines the
 route to the destination complete with navigation advice at the joins between
-segments, called \l {RouteManeuver}s
+segments, called \l {routeManeuver}s
 
 There are many options that you can add to the query to narrow the criteria.
 The \l RouteQuery properties can include
