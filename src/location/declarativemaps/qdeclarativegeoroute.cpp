@@ -273,7 +273,7 @@ QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery()
 
     \since QtLocation 5.12
 */
-QList<QObject *> QDeclarativeGeoRoute::legs()
+QList<QDeclarativeGeoRouteLeg *> QDeclarativeGeoRoute::legs()
 {
     // route_.routeLegs() is expected not to change.
     // The following if condition is expected to be run only once.
