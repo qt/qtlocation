@@ -39,13 +39,13 @@
 
 #include "qdeclarativegeoroute_p.h"
 #include "locationvaluetypehelper_p.h"
+
+#include <QtQml/QQmlEngine>
+
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeoroute_p.h>
 #include <QtLocation/private/qdeclarativegeoroutemodel_p.h>
 
-#include <QtQml/QQmlEngine>
-#include <QtQml/qqmlinfo.h>
-#include <QtQml/private/qqmlengine_p.h>
 #include <QtPositioning/QGeoRectangle>
 
 QT_BEGIN_NAMESPACE
@@ -180,20 +180,7 @@ qreal QDeclarativeGeoRoute::distance() const
 
 QJSValue QDeclarativeGeoRoute::path() const
 {
-    QQmlContext *context = QQmlEngine::contextForObject(parent());
-    QQmlEngine *engine = context->engine();
-    QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
-
-    QV4::Scope scope(v4);
-    QV4::Scoped<QV4::ArrayObject> pathArray(scope, v4->newArrayObject(route_.path().length()));
-    for (int i = 0; i < route_.path().length(); ++i) {
-        const QGeoCoordinate &c = route_.path().at(i);
-
-        QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(c)));
-        pathArray->put(i, cv);
-    }
-
-    return QJSValuePrivate::fromReturnedValue(pathArray.asReturnedValue());
+    return fromList(parent(), route_.path());
 }
 
 void QDeclarativeGeoRoute::setPath(const QJSValue &value)
@@ -201,25 +188,11 @@ void QDeclarativeGeoRoute::setPath(const QJSValue &value)
     if (!value.isArray())
         return;
 
-    QList<QGeoCoordinate> pathList;
-    quint32 length = value.property(QStringLiteral("length")).toUInt();
-    for (quint32 i = 0; i < length; ++i) {
-        bool ok;
-        QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
-
-        if (!ok || !c.isValid()) {
-            qmlWarning(this) << "Unsupported path type";
-            return;
-        }
-
-        pathList.append(c);
-    }
-
+    const QList<QGeoCoordinate> pathList = toList(this, value);
     if (route_.path() == pathList)
         return;
 
     route_.setPath(pathList);
-
     emit pathChanged();
 }
 
