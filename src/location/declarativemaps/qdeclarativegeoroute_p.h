@@ -63,6 +63,7 @@ Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoroutemodel_p.h>)
 
 QT_BEGIN_NAMESPACE
 class QDeclarativeGeoRouteQuery;
+class QDeclarativeGeoRouteLeg;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
 {
@@ -74,7 +75,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
     Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoRouteSegment> segments READ segments CONSTANT)
     Q_PROPERTY(QDeclarativeGeoRouteQuery *routeQuery READ routeQuery REVISION 11)
-    Q_PROPERTY(QList<QObject *> legs READ legs CONSTANT REVISION 12)
+    Q_PROPERTY(QList<QDeclarativeGeoRouteLeg *> legs READ legs CONSTANT REVISION 12)
     Q_PROPERTY(QObject *extendedAttributes READ extendedAttributes CONSTANT REVISION 13)
 
 public:
@@ -97,7 +98,7 @@ public:
     int segmentsCount() const;
     const QGeoRoute &route() const;
     QDeclarativeGeoRouteQuery *routeQuery();
-    QList<QObject *> legs();
+    QList<QDeclarativeGeoRouteLeg *> legs();
     QQmlPropertyMap *extendedAttributes() const;
 
     Q_INVOKABLE bool equals(QDeclarativeGeoRoute *other) const;
@@ -117,7 +118,7 @@ private:
     QGeoRoute route_;
     QDeclarativeGeoRouteQuery *routeQuery_ = nullptr;
     QList<QDeclarativeGeoRouteSegment *> segments_;
-    QList<QObject *> legs_;
+    QList<QDeclarativeGeoRouteLeg *> legs_;
     bool segmentsDirty_ = true;
     QQmlPropertyMap *m_extendedAttributes = nullptr;
 
