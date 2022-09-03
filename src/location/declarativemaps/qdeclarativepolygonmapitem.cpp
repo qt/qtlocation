@@ -724,7 +724,7 @@ void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
     if (!value.isArray())
         return;
 
-    QList<QGeoCoordinate> pathList = toList(this, value);
+    const QList<QGeoCoordinate> pathList = toList(this, value);
 
     // Equivalent to QDeclarativePolylineMapItem::setPathFromGeoList
     if (m_geopoly.perimeter() == pathList)

@@ -64,10 +64,8 @@ class QGeoCoordinate;
 class QGeoRectangle;
 class QGeoCircle;
 
-QGeoCoordinate Q_LOCATION_PRIVATE_EXPORT parseCoordinate(const QJSValue &value, bool *ok = nullptr);
 QGeoCoordinate Q_LOCATION_PRIVATE_EXPORT parseCoordinate(const QVariant &value, bool *ok = nullptr);
 QGeoRectangle Q_LOCATION_PRIVATE_EXPORT parseRectangle(const QJSValue &value, bool *ok);
-QGeoCircle Q_LOCATION_PRIVATE_EXPORT parseCircle(const QJSValue &value, bool *ok);
 QJSValue Q_LOCATION_PRIVATE_EXPORT fromList(const QObject *object, const QList<QGeoCoordinate> &list);
 QList<QGeoCoordinate> Q_LOCATION_PRIVATE_EXPORT toList(const QObject *object, const QJSValue &value);
 

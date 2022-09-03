@@ -53,6 +53,8 @@
 
 QT_BEGIN_NAMESPACE
 
+namespace {
+
 QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 {
     QGeoCoordinate c;
@@ -73,6 +75,8 @@ QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
 
     return c;
 }
+
+} // anonymous namespace
 
 QGeoCoordinate parseCoordinate(const QVariant &value, bool *ok)
 {
@@ -140,25 +144,6 @@ QGeoRectangle parseRectangle(const QJSValue &value, bool *ok)
     }
 
     return r;
-}
-
-QGeoCircle parseCircle(const QJSValue &value, bool *ok)
-{
-    QGeoCircle c;
-
-    *ok = false;
-
-    if (value.isObject()) {
-        if (value.hasProperty(QStringLiteral("center"))) {
-            QGeoCoordinate coord = parseCoordinate(value.property(QStringLiteral("center")), ok);
-            if (*ok)
-                c.setCenter(coord);
-        }
-        if (value.hasProperty(QStringLiteral("radius")))
-            c.setRadius(value.property(QStringLiteral("radius")).toNumber());
-    }
-
-    return c;
 }
 
 QJSValue fromList(const QObject *object, const QList<QGeoCoordinate> &list)
