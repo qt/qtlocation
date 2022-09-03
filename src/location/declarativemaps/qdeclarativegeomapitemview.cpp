@@ -258,7 +258,7 @@ void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 }
 
 /*!
-    \qmlproperty Component QtLocation::MapItemView::autoFitViewport
+    \qmlproperty bool QtLocation::MapItemView::autoFitViewport
 
     This property controls whether to automatically pan and zoom the viewport
     to display all map items when items are added or removed.
