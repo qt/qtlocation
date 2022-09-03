@@ -5,7 +5,7 @@
 ** See 3rdParty/geosimplify.js for the original license.
 **
 ** Copyright (C) 2020 Paolo Angelelli <paolo.angelelli@gmail.com>
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -44,182 +44,84 @@
 
 #include "qgeosimplify_p.h"
 #include <QtPositioning/private/qlocationutils_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 
 QT_BEGIN_NAMESPACE
 
-double QGeoSimplify::getDist(const QGeoCoordinate &p1, const QGeoCoordinate &p2)
-{
-    return p1.distanceTo(p2);
-}
+namespace {
 
-QDoubleVector2D QGeoSimplify::closestPoint(const QDoubleVector2D &p, const QDoubleVector2D &a, const QDoubleVector2D &b)
+// p, a and b are intended as "unwrapped" around the left bound
+inline QDoubleVector2D closestPoint(const QDoubleVector2D &p,
+                                    const QDoubleVector2D &a,
+                                    const QDoubleVector2D &b)
 {
     if (a == b)
         return a;
 
-    const double u = ((p.x() - a.x()) * (b.x() - a.x()) + (p.y() - a.y()) * (b.y() - a.y()) ) / (b - a).lengthSquared();
-    const QDoubleVector2D intersection(a.x() + u * (b.x() - a.x()) , a.y() + u * (b.y() - a.y()) );
-    QDoubleVector2D candidate = ( (p-a).length() < (p-b).length() ) ? a : b;
+    const double u = ((p.x() - a.x()) * (b.x() - a.x()) + (p.y() - a.y()) * (b.y() - a.y()))
+                   / (b - a).lengthSquared();
+    const QDoubleVector2D intersection(a.x() + u * (b.x() - a.x()) , a.y() + u * (b.y() - a.y()));
+    QDoubleVector2D candidate = ((p - a).length() < (p - b).length()) ? a : b;
     if (u > 0 && u < 1
-            && (p-intersection).length() < (p-candidate).length()  ) // And it falls in the segment
+        && (p - intersection).length() < (p - candidate).length()) { // And it falls in the segment
         candidate = intersection;
+    }
     return candidate;
 }
 
-QGeoCoordinate QGeoSimplify::closestPoint(const QGeoCoordinate &pc, const QGeoCoordinate &ac, const QGeoCoordinate &bc, const double &leftBound)
-{
-    QDoubleVector2D p = QWebMercator::coordToMercator(pc);
-    if (p.x() < leftBound)
-        p.setX(p.x() + leftBound); // unwrap X
-
-    QDoubleVector2D a = QWebMercator::coordToMercator(ac);
-    if (a.x() < leftBound)
-        a.setX(a.x() + leftBound);  // unwrap X
-
-    QDoubleVector2D b = QWebMercator::coordToMercator(bc);
-    if (b.x() < leftBound)
-        b.setX(b.x() + leftBound);  // unwrap X
-
-    QDoubleVector2D intersection = closestPoint(p, a, b);
-    if (intersection.x() > 1.0)
-        intersection.setX(intersection.x() - leftBound); // wrap X
-
-    const QGeoCoordinate closest = QWebMercator::mercatorToCoord(intersection);
-    return closest;
-}
-
-double QGeoSimplify::getSegDist(const QGeoCoordinate &pc, const QGeoCoordinate &ac, const QGeoCoordinate &bc, const double &leftBound)
-{
-    const QGeoCoordinate closest = closestPoint(pc, ac, bc, leftBound);
-    const double distanceMeters = pc.distanceTo(closest);
-    return distanceMeters;
-}
-
-double QGeoSimplify::getSegDist(const QDoubleVector2D &p, const QDoubleVector2D &a, const QDoubleVector2D &b, const double &leftBound)
-{
-    QDoubleVector2D intersection = closestPoint(p, a, b);
-    return getDist(intersection, p, leftBound);
-}
-
-void QGeoSimplify::simplifyDPStep(const QList<QGeoCoordinate> &points, const double &leftBound, int first, int last, double offsetTolerance, QList<QGeoCoordinate> &simplified)
-{
-    double maxDistanceFound = offsetTolerance;
-    int index = 0;
-
-    for (int i = first + 1; i < last; i++) {
-        const double distance = getSegDist(points.at(i),
-                                           points.at(first),
-                                           points.at(last),
-                                           leftBound);
-
-        if (distance > maxDistanceFound) {
-            index = i;
-            maxDistanceFound = distance;
-        }
-    }
-
-    if (index > 0) {
-        if (index - first > 1)
-            simplifyDPStep(points,
-                           leftBound,
-                           first,
-                           index,
-                           offsetTolerance,
-                           simplified);
-        simplified.append(points.at(index));
-        if (last - index > 1)
-            simplifyDPStep(points,
-                           leftBound,
-                           index,
-                           last,
-                           offsetTolerance,
-                           simplified);
-    }
-}
-
-double QGeoSimplify::getDist(QDoubleVector2D a, QDoubleVector2D b, const double &leftBound)
+inline double getDist(QDoubleVector2D a, QDoubleVector2D b, double leftBound)
 {
     if (a.x() > 1.0)
         a.setX(a.x() - leftBound); // wrap X
     if (b.x() > 1.0)
         b.setX(b.x() - leftBound); // wrap X
-    return QWebMercator::mercatorToCoord(a).distanceTo(
-                QWebMercator::mercatorToCoord(b));
+    return QWebMercator::mercatorToCoord(a).distanceTo(QWebMercator::mercatorToCoord(b));
 }
 
-void QGeoSimplify::simplifyDPStep(const QList<QDoubleVector2D> &points,
-                                  const double &leftBound,
-                                  int first,
-                                  int last,
-                                  double offsetTolerance,
-                                  QList<QDoubleVector2D> &simplified)
+// doublevectors Intended as wrapped
+inline double getSegDist(const QDoubleVector2D &p,
+                         const QDoubleVector2D &a,
+                         const QDoubleVector2D &b,
+                         double leftBound)
 {
-    double maxDistanceFound = offsetTolerance;
-    int index = 0;
-
-    for (int i = first + 1; i < last; i++) {
-        const double distance = getSegDist(points.at(i),
-                                           points.at(first),
-                                           points.at(last),
-                                           leftBound);
-
-        if (distance > maxDistanceFound) {
-            index = i;
-            maxDistanceFound = distance;
-        }
-    }
-
-    if (index > 0) {
-        if (index - first > 1)
-            simplifyDPStep(points,
-                           leftBound,
-                           first,
-                           index,
-                           offsetTolerance,
-                           simplified);
-        simplified.append(points.at(index));
-        if (last - index > 1)
-            simplifyDPStep(points,
-                           leftBound,
-                           index,
-                           last,
-                           offsetTolerance,
-                           simplified);
-    }
+    const QDoubleVector2D intersection = closestPoint(p, a, b);
+    return getDist(intersection, p, leftBound);
 }
 
-static double pixelDistanceAtZoomAndLatitude(int zoom, double latitude)
-{
-    const double den = double((1 << (zoom + 8)));
-    const double pixelDist = (QLocationUtils::earthMeanCircumference() *
-                                std::cos(QLocationUtils::radians(latitude))) / den;
-    return pixelDist;
-}
-
-static QGeoCoordinate unwrappedToGeo(QDoubleVector2D p, double leftBound)
+inline QGeoCoordinate unwrappedToGeo(QDoubleVector2D p, double leftBound)
 {
     if (p.x() > 1.0)
         p.setX(p.x() - leftBound);
     return QWebMercator::mercatorToCoord(p);
 }
 
-void QGeoSimplify::simplifyDPStepZL(const QList<QDoubleVector2D> &points,
-                                  const double &leftBound,
-                                  int first,
-                                  int last,
-                                  int zoomLevel,
+double pixelDistanceAtZoomAndLatitude(int zoom, double latitude)
+{
+    const double den = double((1 << (zoom + 8)));
+    const double pixelDist = (QLocationUtils::earthMeanCircumference()
+                            * std::cos(QLocationUtils::radians(latitude)))
+                            / den;
+    return pixelDist;
+}
+
+// simplification using Ramer-Douglas-Peucker algorithm
+void simplifyDouglasPeuckerStepZL(const QList<QDoubleVector2D> &points, double leftBound,
+                                  qsizetype first, qsizetype last, int zoomLevel,
                                   QList<QDoubleVector2D> &simplified)
 {
     const QGeoCoordinate firstC = unwrappedToGeo(points.at(first), leftBound);
     const QGeoCoordinate lastC = unwrappedToGeo(points.at(last), leftBound);
     double maxDistanceFound = (pixelDistanceAtZoomAndLatitude(zoomLevel, firstC.latitude())
-                        + pixelDistanceAtZoomAndLatitude(zoomLevel, lastC.latitude())) * 0.5;
-    int index = 0;
+                             + pixelDistanceAtZoomAndLatitude(zoomLevel, lastC.latitude())) * 0.5;
+    qsizetype index = -1;
 
-    for (int i = first + 1; i < last; i++) {
+    const auto &firstPoint = points.at(first);
+    const auto &lastPoint = points.at(last);
+    for (qsizetype i = first + 1; i < last; i++) {
         const double distance = getSegDist(points.at(i),
-                                           points.at(first),
-                                           points.at(last),
+                                           firstPoint,
+                                           lastPoint,
                                            leftBound);
 
         if (distance > maxDistanceFound) {
@@ -229,88 +131,37 @@ void QGeoSimplify::simplifyDPStepZL(const QList<QDoubleVector2D> &points,
     }
 
     if (index > 0) {
-        if (index - first > 1)
-            simplifyDPStepZL(points,
-                           leftBound,
-                           first,
-                           index,
-                           zoomLevel,
-                           simplified);
+        if (index - first > 1) {
+            simplifyDouglasPeuckerStepZL(points, leftBound,
+                                         first, index, zoomLevel,
+                                         simplified);
+        }
         simplified.append(points.at(index));
-        if (last - index > 1)
-            simplifyDPStepZL(points,
-                           leftBound,
-                           index,
-                           last,
-                           zoomLevel,
-                           simplified);
+        if (last - index > 1) {
+            simplifyDouglasPeuckerStepZL(points, leftBound,
+                                         index, last, zoomLevel,
+                                         simplified);
+        }
     }
 }
 
-QList<QGeoCoordinate> QGeoSimplify::simplifyDouglasPeucker(const QList<QGeoCoordinate> &points,
-                                                           const double &leftBound,
-                                                           double offsetTolerance) {
-    const int last = points.size() - 1;
-    QList<QGeoCoordinate> simplified { points.first() };
-    simplifyDPStep(points, leftBound, 0, last, offsetTolerance, simplified);
-    simplified.append(points.at(last));
-    return simplified;
-}
+} // anonymous namespace
 
-QList<QDoubleVector2D> QGeoSimplify::simplifyDouglasPeucker(const QList<QDoubleVector2D> &points,
-                                                            const double &leftBound,
-                                                            double offsetTolerance) {
-    const int last = points.size() - 1;
+namespace  QGeoSimplify {
+
+QList<QDoubleVector2D> geoSimplifyZL(const QList<QDoubleVector2D> &points,
+                                     double leftBound, int zoomLevel)
+{
+    if (points.size() <= 2)
+        return points;
+
+    const qsizetype last = points.size() - 1;
     QList<QDoubleVector2D> simplified { points.first() };
-    simplifyDPStep(points, leftBound, 0, last, offsetTolerance, simplified);
+    simplifyDouglasPeuckerStepZL(points, leftBound, 0, last, zoomLevel, simplified);
     simplified.append(points.at(last));
     return simplified;
 }
 
-QList<QDoubleVector2D> QGeoSimplify::simplifyDouglasPeuckerZL(const QList<QDoubleVector2D> &points,
-                                                            const double &leftBound,
-                                                            int zoomLevel)
-{
-    const int last = points.size() - 1;
-    QList<QDoubleVector2D> simplified { points.first() };
-    simplifyDPStepZL(points, leftBound, 0, last, zoomLevel, simplified);
-    simplified.append(points.at(last));
-    return simplified;
 }
-
-QList<QGeoCoordinate> QGeoSimplify::geoSimplify(const QList<QGeoCoordinate> &points,
-                                             const double &leftBound,
-                                             double offsetTolerance)    // also in meters
-{
-    if (points.size() <= 2)
-        return points;
-    return simplifyDouglasPeucker(points,
-                                  leftBound,
-                                  offsetTolerance);
-}
-
-QList<QDoubleVector2D> QGeoSimplify::geoSimplify(const QList<QDoubleVector2D> &points,
-                                              const double &leftBound,
-                                              double offsetTolerance)    // also in meters
-{
-    if (points.size() <= 2)
-        return points;
-    return simplifyDouglasPeucker(points,
-                                  leftBound,
-                                  offsetTolerance);
-}
-
-QList<QDoubleVector2D> QGeoSimplify::geoSimplifyZL(const QList<QDoubleVector2D> &points,
-                                                 const double &leftBound,
-                                                 int zoomLevel)
-{
-    if (points.size() <= 2)
-        return points;
-    return simplifyDouglasPeuckerZL(points,
-                                  leftBound,
-                                  zoomLevel);
-}
-
 
 QT_END_NAMESPACE
-
