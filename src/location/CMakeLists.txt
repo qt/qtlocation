@@ -113,7 +113,6 @@ qt_internal_add_module(Location
         declarativemaps/qdeclarativepolylinemapitem_p.h
         declarativemaps/qdeclarativepolylinemapitem_p_p.h
         declarativemaps/error_messages.cpp declarativemaps/error_messages_p.h
-        declarativemaps/locationvaluetypehelper.cpp declarativemaps/locationvaluetypehelper_p.h
         declarativemaps/qdeclarativerectanglemapitem.cpp
         declarativemaps/qdeclarativerectanglemapitem_p.h
         declarativemaps/qdeclarativerectanglemapitem_p_p.h

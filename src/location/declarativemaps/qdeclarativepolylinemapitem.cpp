@@ -43,7 +43,6 @@
 #include "qdeclarativecirclemapitem_p_p.h"
 #include "qdeclarativegeomapitemutils_p.h"
 #include "error_messages_p.h"
-#include "locationvaluetypehelper_p.h"
 #include "qgeosimplify_p.h"
 
 #include <QtCore/QScopedValueRollback>

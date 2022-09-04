@@ -40,7 +40,6 @@
 #include "qdeclarativegeoroutemodel_p.h"
 #include "qdeclarativegeoroute_p.h"
 #include "error_messages_p.h"
-#include "locationvaluetypehelper_p.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtQml/QQmlEngine>
@@ -909,7 +908,7 @@ void QDeclarativeGeoRouteQuery::setWaypoints(const QVariantList &value)
         // if here, w is not a Waypoint, so either a QGeoCoordinate or a variant map, so a waypoint has to be instantiated.
         allWaypoints = false;
 
-        QGeoCoordinate c = parseCoordinate(w);
+        const QGeoCoordinate c = w.value<QGeoCoordinate>();
         if (!c.isValid()) {
             qmlWarning(this) << QStringLiteral("Invalid waypoint");
             flushWaypoints(waypointList);
@@ -1073,7 +1072,7 @@ void QDeclarativeGeoRouteQuery::addWaypoint(const QVariant &waypoint)
 
     // if here, waypoint is not a Waypoint, so either a QGeoCoordinate or a variant map, so a waypoint has to be instantiated.
 
-    QGeoCoordinate c = parseCoordinate(waypoint);
+    const QGeoCoordinate c = waypoint.value<QGeoCoordinate>();
     if (!c.isValid()) {
         qmlWarning(this) << QStringLiteral("Invalid coordinate as waypoint");
         return;
@@ -1121,7 +1120,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(const QVariant &waypoint)
         return;
     }
 
-    QGeoCoordinate c = parseCoordinate(waypoint);
+    const QGeoCoordinate c = waypoint.value<QGeoCoordinate>();
     if (!c.isValid()) {
         qmlWarning(this) << QStringLiteral("Invalid coordinate as waypoint");
         return;

@@ -39,7 +39,6 @@
 
 #include "qmappolygonobject_p.h"
 #include "qmappolygonobject_p_p.h"
-#include <QtLocation/private/locationvaluetypehelper_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -212,10 +211,9 @@ QVariantList QMapPolygonObject::path() const
 void QMapPolygonObject::setPath(const QVariantList &path)
 {
     QList<QGeoCoordinate> p;
-    bool ok = false;
     for (const auto &c: path) {
-        const QGeoCoordinate coord = parseCoordinate(c, &ok);
-        if (ok)
+        const QGeoCoordinate coord = c.value<QGeoCoordinate>();
+        if (coord.isValid())
             p << coord;
     }
     auto pimpl = static_cast<QMapPolygonObjectPrivate *>(d_ptr.data());

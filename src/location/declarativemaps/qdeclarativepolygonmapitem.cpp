@@ -43,7 +43,6 @@
 #include "qdeclarativepolygonmapitem_p_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
 #include "error_messages_p.h"
-#include "locationvaluetypehelper_p.h"
 
 #include <QtCore/QScopedValueRollback>
 #include <qnumeric.h>

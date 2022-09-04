@@ -39,7 +39,6 @@
 
 #include "qmappolylineobject_p.h"
 #include "qmappolylineobject_p_p.h"
-#include <QtLocation/private/locationvaluetypehelper_p.h>
 #include <QtPositioning/QGeoPath>
 
 QT_BEGIN_NAMESPACE
@@ -208,10 +207,9 @@ QDeclarativeMapLineProperties *QMapPolylineObject::border()
 void QMapPolylineObject::setPath(const QVariantList &path)
 {
     QList<QGeoCoordinate> p;
-    bool ok = false;
     for (const auto &c: path) {
-        const QGeoCoordinate coord = parseCoordinate(c, &ok);
-        if (ok)
+        const QGeoCoordinate coord = c.value<QGeoCoordinate>();
+        if (coord.isValid())
             p << coord;
     }
     auto pimpl = static_cast<QMapPolylineObjectPrivate *>(d_ptr.data());

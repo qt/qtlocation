@@ -38,7 +38,6 @@
 ****************************************************************************/
 
 #include "qdeclarativegeoroute_p.h"
-#include "locationvaluetypehelper_p.h"
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeoroute_p.h>
 #include <QtLocation/private/qdeclarativegeoroutemodel_p.h>
