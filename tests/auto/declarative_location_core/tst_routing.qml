@@ -180,6 +180,32 @@ Item {
             compare (emptyQuery.featureTypes.length, 0, "Feature types")
         }
 
+        RouteQuery {
+            id: withExcludedAreas
+            excludedAreas: [
+                {
+                    bottomLeft: { latitude: 22.5, longitude: 22.5},
+                    topRight: { latitude: 23.5, longitude: 23.5}
+                },
+                {
+                    topLeft: { latitude: 23.5, longitude: 22.5},
+                    bottomRight: { latitude: 22.5, longitude: 23.5},
+                },
+                {
+                    center: { latitude: 0.0, longitude: 0.0},
+                    width: 1.0,
+                    height: 1.0
+                }
+            ]
+        }
+        function test_initialized_model() {
+            compare(withExcludedAreas.excludedAreas.length, 3)
+            compare(withExcludedAreas.excludedAreas[0].width, 1.0)
+            compare(withExcludedAreas.excludedAreas[1], withExcludedAreas.excludedAreas[0])
+            let topLeft = QtPositioning.coordinate(0.5, -0.5)
+            compare(withExcludedAreas.excludedAreas[2].topLeft, topLeft)
+        }
+
         SignalSpy {id: autoUpdateSpy; target: emptyModel; signalName: "autoUpdateChanged"}
         SignalSpy {id: pluginSpy; target: emptyModel ; signalName: "pluginChanged"}
 

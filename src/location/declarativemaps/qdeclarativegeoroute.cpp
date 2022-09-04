@@ -148,21 +148,17 @@ qreal QDeclarativeGeoRoute::distance() const
     \sa QtPositioning::coordinate
 */
 
-QJSValue QDeclarativeGeoRoute::path() const
+QList<QGeoCoordinate> QDeclarativeGeoRoute::path() const
 {
-    return fromList(parent(), route_.path());
+    return route_.path();
 }
 
-void QDeclarativeGeoRoute::setPath(const QJSValue &value)
+void QDeclarativeGeoRoute::setPath(const QList<QGeoCoordinate> &value)
 {
-    if (!value.isArray())
+    if (route_.path() == value)
         return;
 
-    const QList<QGeoCoordinate> pathList = toList(this, value);
-    if (route_.path() == pathList)
-        return;
-
-    route_.setPath(pathList);
+    route_.setPath(value);
     emit pathChanged();
 }
 

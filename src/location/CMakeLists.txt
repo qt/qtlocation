@@ -166,7 +166,6 @@ qt_internal_add_module(Location
         Qt::PositioningPrivate
         Qt::PositioningQuickPrivate
         Qt::Qml
-        Qt::QmlModelsPrivate
     PUBLIC_LIBRARIES
         Qt::Core
         Qt::Positioning
@@ -177,8 +176,6 @@ qt_internal_add_module(Location
         Qt::QuickPrivate
         Qt::PositioningPrivate
         Qt::PositioningQuickPrivate
-        Qt::QmlPrivate
-        Qt::QmlModelsPrivate
     DEFINES
         QT_NO_FOREACH
     GENERATE_CPP_EXPORTS

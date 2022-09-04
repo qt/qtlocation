@@ -84,7 +84,7 @@ private slots:
     void updateRoutePath();
 
 protected:
-    void setPath(const QJSValue &value) override;
+    void setPath(const QList<QGeoCoordinate> &value) override;
 
 private:
     QDeclarativeGeoRoute *route_ = nullptr;

@@ -56,7 +56,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtQml/QQmlPropertyMap>
-#include <QtQml/QJSValue>
 #include <QtLocation/QGeoRoute>
 #include <QtLocation/QGeoRouteSegment>
 
@@ -73,7 +72,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
     Q_PROPERTY(QGeoRectangle bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
-    Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QList<QGeoRouteSegment> segments READ segments CONSTANT)
     Q_PROPERTY(QDeclarativeGeoRouteQuery *routeQuery READ routeQuery REVISION 11)
     Q_PROPERTY(QList<QDeclarativeGeoRouteLeg *> legs READ legs CONSTANT REVISION 12)
@@ -88,8 +87,8 @@ public:
     int travelTime() const;
     qreal distance() const;
 
-    QJSValue path() const;
-    void setPath(const QJSValue &value);
+    QList<QGeoCoordinate> path() const;
+    void setPath(const QList<QGeoCoordinate> &value);
 
     QList<QGeoRouteSegment> segments();
 

@@ -45,7 +45,6 @@
 #include <QtCore/QCoreApplication>
 #include <QtQml/QQmlEngine>
 #include <QtQml/qqmlinfo.h>
-#include <QtQml/private/qqmlengine_p.h>
 #include <QtLocation/QGeoRoutingManager>
 #include <QtPositioning/QGeoRectangle>
 #include "qdeclarativegeomapparameter_p.h"
@@ -944,47 +943,17 @@ void QDeclarativeGeoRouteQuery::setWaypoints(const QVariantList &value)
 
     \sa addExcludedArea, removeExcludedArea, clearExcludedAreas
 */
-QJSValue QDeclarativeGeoRouteQuery::excludedAreas() const
+QList<QGeoRectangle> QDeclarativeGeoRouteQuery::excludedAreas() const
 {
-    QQmlContext *context = QQmlEngine::contextForObject(parent());
-    QQmlEngine *engine = context->engine();
-    QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
-
-    QV4::Scope scope(v4);
-    QV4::Scoped<QV4::ArrayObject> excludedAreasArray(scope, v4->newArrayObject(request_.excludeAreas().length()));
-    for (int i = 0; i < request_.excludeAreas().length(); ++i) {
-        const QGeoRectangle &r = request_.excludeAreas().at(i);
-
-        QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(r)));
-        excludedAreasArray->put(i, cv);
-    }
-
-    return QJSValuePrivate::fromReturnedValue(excludedAreasArray.asReturnedValue());
+    return request_.excludeAreas();
 }
 
-void QDeclarativeGeoRouteQuery::setExcludedAreas(const QJSValue &value)
+void QDeclarativeGeoRouteQuery::setExcludedAreas(const QList<QGeoRectangle> &value)
 {
-    if (!value.isArray())
+    if (request_.excludeAreas() == value)
         return;
 
-    QList<QGeoRectangle> excludedAreasList;
-    quint32 length = value.property(QStringLiteral("length")).toUInt();
-    for (quint32 i = 0; i < length; ++i) {
-        bool ok;
-        QGeoRectangle r = parseRectangle(value.property(i), &ok);
-
-        if (!ok || !r.isValid()) {
-            qmlWarning(this) << QStringLiteral("Unsupported area type");
-            return;
-        }
-
-        excludedAreasList.append(r);
-    }
-
-    if (request_.excludeAreas() == excludedAreasList)
-        return;
-
-    request_.setExcludeAreas(excludedAreasList);
+    request_.setExcludeAreas(value);
 
     if (complete_) {
         emit excludedAreasChanged();

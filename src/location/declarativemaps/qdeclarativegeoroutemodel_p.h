@@ -293,7 +293,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
     Q_PROPERTY(SegmentDetail segmentDetail READ segmentDetail WRITE setSegmentDetail NOTIFY segmentDetailChanged)
     Q_PROPERTY(ManeuverDetail maneuverDetail READ maneuverDetail WRITE setManeuverDetail NOTIFY maneuverDetailChanged)
     Q_PROPERTY(QVariantList waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
-    Q_PROPERTY(QJSValue excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
+    Q_PROPERTY(QList<QGeoRectangle> excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
     Q_PROPERTY(QVariantMap extraParameters READ extraParameters REVISION 11)
     Q_PROPERTY(QDateTime departureTime READ departureTime WRITE setDepartureTime NOTIFY departureTimeChanged REVISION 13)
@@ -377,9 +377,8 @@ public:
     Q_INVOKABLE QVariantList waypointObjects() const;
     void setWaypoints(const QVariantList &value);
 
-    // READ functions for list properties
-    QJSValue excludedAreas() const;
-    void setExcludedAreas(const QJSValue &value);
+    QList<QGeoRectangle> excludedAreas() const;
+    void setExcludedAreas(const QList<QGeoRectangle> &value);
 
     Q_INVOKABLE void addWaypoint(const QVariant &w);
     Q_INVOKABLE void removeWaypoint(const QVariant &waypoint);

@@ -568,12 +568,16 @@ Item {
             point = map.fromCoordinate(extMapPolygonDateline.path[2])
             verify(point.x > map.width / 2.0)
             var path = extMapPolygonDateline.path;
-            path[0].longitude = datelineCoordinate.longitude;
+            var path0 = path[0]
+            path0.longitude = datelineCoordinate.longitude;
+            path[0] = path0;
             extMapPolygonDateline.path = path;
             point = map.fromCoordinate(extMapPolygonDateline.path[0])
             compare(point.x, map.width / 2.0)
             path = extMapPolygonDateline.path;
-            path[3].longitude = datelineCoordinate.longitude;
+            var path3 = path[3]
+            path3.longitude = datelineCoordinate.longitude;
+            path[3] = path3
             extMapPolygonDateline.path = path;
             point = map.fromCoordinate(extMapPolygonDateline.path[3])
             compare(point.x, map.width / 2.0)
@@ -606,11 +610,16 @@ Item {
             verify(point.x < map.width / 2.0)
             point = map.fromCoordinate(extMapPolylineDateline.path[1])
             verify(point.x > map.width / 2.0)
-            extMapPolylineDateline.path[1].longitude = datelineCoordinateRight.longitude
+            var path = extMapPolylineDateline.path;
+            var path1 = path[1]
+            path1.longitude = datelineCoordinateRight.longitude
+            path[1] = path1
+            extMapPolylineDateline.path = path
             point = map.fromCoordinate(extMapPolylineDateline.path[1])
             verify(point.x > map.width / 2.0)
-            var path = extMapPolygonDateline.path;
-            path[0].longitude = datelineCoordinate.longitude;
+            path0 = path[0]
+            path0.longitude = datelineCoordinate.longitude;
+            path[0] = path0
             extMapPolylineDateline.path = path;
             point = map.fromCoordinate(extMapPolylineDateline.path[0])
             compare(point.x, map.width / 2.0)

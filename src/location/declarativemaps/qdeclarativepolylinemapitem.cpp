@@ -966,17 +966,14 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *
     define the polyline.
 */
 
-QJSValue QDeclarativePolylineMapItem::path() const
+QList<QGeoCoordinate> QDeclarativePolylineMapItem::path() const
 {
-    return fromList(this, m_geopath.path());
+    return m_geopath.path();
 }
 
-void QDeclarativePolylineMapItem::setPath(const QJSValue &value)
+void QDeclarativePolylineMapItem::setPath(const QList<QGeoCoordinate> &value)
 {
-    if (!value.isArray())
-        return;
-
-    setPathFromGeoList(toList(this, value));
+    setPathFromGeoList(value);
 }
 
 /*!

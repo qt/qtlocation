@@ -94,7 +94,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItem : public QDeclarativ
     Q_OBJECT
     Q_ENUMS(Backend)
 
-    Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
     Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION 15)
 
@@ -121,8 +121,8 @@ public:
     Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
     Q_INVOKABLE void removeCoordinate(int index);
 
-    QJSValue path() const;
-    virtual void setPath(const QJSValue &value);
+    QList<QGeoCoordinate> path() const;
+    virtual void setPath(const QList<QGeoCoordinate> &value);
     Q_INVOKABLE void setPath(const QGeoPath &path);
 
     bool contains(const QPointF &point) const override;

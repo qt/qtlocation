@@ -710,23 +710,18 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
 
     \sa addCoordinate, removeCoordinate
 */
-QJSValue QDeclarativePolygonMapItem::path() const
+QList<QGeoCoordinate> QDeclarativePolygonMapItem::path() const
 {
-    return fromList(this, m_geopoly.perimeter());
+    return m_geopoly.perimeter();
 }
 
-void QDeclarativePolygonMapItem::setPath(const QJSValue &value)
+void QDeclarativePolygonMapItem::setPath(const QList<QGeoCoordinate> &path)
 {
-    if (!value.isArray())
-        return;
-
-    const QList<QGeoCoordinate> pathList = toList(this, value);
-
     // Equivalent to QDeclarativePolylineMapItem::setPathFromGeoList
-    if (m_geopoly.perimeter() == pathList)
+    if (m_geopoly.perimeter() == path)
         return;
 
-    m_geopoly.setPerimeter(pathList);
+    m_geopoly.setPerimeter(path);
 
     m_d->onGeoGeometryChanged();
     emit pathChanged();

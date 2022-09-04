@@ -39,44 +39,11 @@
 
 #include "locationvaluetypehelper_p.h"
 
-#include <QJSValue>
-#include <QVariant>
 #include <QGeoCoordinate>
-#include <QGeoRectangle>
-#include <QGeoCircle>
+#include <QVariant>
 #include <QVariantMap>
 
-#include <QtQml/QQmlInfo>
-#include <private/qqmlengine_p.h>
-#include <private/qv4scopedvalue_p.h>
-#include <private/qv4arrayobject_p.h>
-
 QT_BEGIN_NAMESPACE
-
-namespace {
-
-QGeoCoordinate parseCoordinate(const QJSValue &value, bool *ok)
-{
-    QGeoCoordinate c;
-    if (ok)
-        *ok = false;
-
-    if (value.isObject()) {
-        if (value.hasProperty(QStringLiteral("latitude")))
-            c.setLatitude(value.property(QStringLiteral("latitude")).toNumber());
-        if (value.hasProperty(QStringLiteral("longitude")))
-            c.setLongitude(value.property(QStringLiteral("longitude")).toNumber());
-        if (value.hasProperty(QStringLiteral("altitude")))
-            c.setAltitude(value.property(QStringLiteral("altitude")).toNumber());
-
-        if (ok)
-            *ok = true;
-    }
-
-    return c;
-}
-
-} // anonymous namespace
 
 QGeoCoordinate parseCoordinate(const QVariant &value, bool *ok)
 {
@@ -103,86 +70,6 @@ QGeoCoordinate parseCoordinate(const QVariant &value, bool *ok)
     }
 
     return c;
-}
-
-QGeoRectangle parseRectangle(const QJSValue &value, bool *ok)
-{
-    QGeoRectangle r;
-
-    *ok = false;
-
-    if (value.isObject()) {
-        if (value.hasProperty(QStringLiteral("bottomLeft"))) {
-            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("bottomLeft")), ok);
-            if (*ok)
-                r.setBottomLeft(c);
-        }
-        if (value.hasProperty(QStringLiteral("bottomRight"))) {
-            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("bottomRight")), ok);
-            if (*ok)
-                r.setBottomRight(c);
-        }
-        if (value.hasProperty(QStringLiteral("topLeft"))) {
-            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("topLeft")), ok);
-            if (*ok)
-                r.setTopLeft(c);
-        }
-        if (value.hasProperty(QStringLiteral("topRight"))) {
-            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("topRight")), ok);
-            if (*ok)
-                r.setTopRight(c);
-        }
-        if (value.hasProperty(QStringLiteral("center"))) {
-            QGeoCoordinate c = parseCoordinate(value.property(QStringLiteral("center")), ok);
-            if (*ok)
-                r.setCenter(c);
-        }
-        if (value.hasProperty(QStringLiteral("height")))
-            r.setHeight(value.property(QStringLiteral("height")).toNumber());
-        if (value.hasProperty(QStringLiteral("width")))
-            r.setWidth(value.property(QStringLiteral("width")).toNumber());
-    }
-
-    return r;
-}
-
-QJSValue fromList(const QObject *object, const QList<QGeoCoordinate> &list)
-{
-    QQmlContext *context = QQmlEngine::contextForObject(object);
-    QQmlEngine *engine = context->engine();
-    QV4::ExecutionEngine *v4 = QQmlEnginePrivate::getV4Engine(engine);
-
-    QV4::Scope scope(v4);
-    QV4::Scoped<QV4::ArrayObject> pathArray(scope, v4->newArrayObject(list.length()));
-    int i = 0;
-    for (const auto &val : list) {
-        QV4::ScopedValue cv(scope, v4->fromVariant(QVariant::fromValue(val)));
-        pathArray->put(i++, cv);
-    }
-
-    return QJSValuePrivate::fromReturnedValue(pathArray.asReturnedValue());
-}
-
-QList<QGeoCoordinate> toList(const QObject *object, const QJSValue &value)
-{
-    if (!value.isArray())
-        return {};
-
-    QList<QGeoCoordinate> pathList;
-    quint32 length = value.property(QStringLiteral("length")).toUInt();
-    for (quint32 i = 0; i < length; ++i) {
-        bool ok;
-        QGeoCoordinate c = parseCoordinate(value.property(i), &ok);
-
-        if (!ok || !c.isValid()) {
-            qmlWarning(object) << "Unsupported path type";
-            return {};
-        }
-
-        pathList.append(c);
-    }
-
-    return pathList;
 }
 
 QT_END_NAMESPACE

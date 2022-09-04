@@ -64,7 +64,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItem : public QDeclarative
     Q_OBJECT
     Q_ENUMS(Backend)
 
-    Q_PROPERTY(QJSValue path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
     Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION 15)
@@ -85,8 +85,8 @@ public:
     Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
     Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
 
-    QJSValue path() const;
-    void setPath(const QJSValue &value);
+    QList<QGeoCoordinate> path() const;
+    void setPath(const QList<QGeoCoordinate> &value);
 
     QColor color() const;
     void setColor(const QColor &color);

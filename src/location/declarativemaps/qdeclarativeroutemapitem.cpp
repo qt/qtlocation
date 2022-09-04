@@ -138,11 +138,11 @@ void QDeclarativeRouteMapItem::updateRoutePath()
 }
 
 /*!
-   \internal void QDeclarativeRouteMapItem::setPath(const QJSValue &value)
+   \internal void QDeclarativeRouteMapItem::setPath(const QList<QGeoCoordinate> &value)
 
    Used to disable path property on the RouteMapItem
  */
-void QDeclarativeRouteMapItem::setPath(const QJSValue &value)
+void QDeclarativeRouteMapItem::setPath(const QList<QGeoCoordinate> &value)
 {
     Q_UNUSED(value);
     qWarning() << "Can not set the path on QDeclarativeRouteMapItem."
