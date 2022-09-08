@@ -144,8 +144,6 @@ qt_internal_add_module(Location
         declarativeplaces/qdeclarativeplaceimagemodel.cpp
         declarativeplaces/qdeclarativeplaceimagemodel_p.h
         declarativeplaces/qdeclarativeplace_p.h
-        declarativeplaces/qdeclarativeplaceuser.cpp
-        declarativeplaces/qdeclarativeplaceuser_p.h
         declarativeplaces/qdeclarativeratings.cpp
         declarativeplaces/qdeclarativeratings_p.h
         declarativeplaces/qdeclarativereviewmodel.cpp

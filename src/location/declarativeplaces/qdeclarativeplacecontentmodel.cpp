@@ -40,13 +40,13 @@
 #include "qdeclarativeplacecontentmodel_p.h"
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativeplaceuser_p.h"
 #include "error_messages_p.h"
 
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceContentRequest>
+#include <QtLocation/QPlaceUser>
 
 QT_BEGIN_NAMESPACE
 
@@ -122,7 +122,6 @@ int QDeclarativePlaceContentModel::totalCount() const
 */
 void QDeclarativePlaceContentModel::clearData()
 {
-    qDeleteAll(m_users);
     m_users.clear();
 
     qDeleteAll(m_suppliers);
@@ -161,10 +160,8 @@ void QDeclarativePlaceContentModel::initializeCollection(int totalCount, const Q
             m_suppliers.insert(content.supplier().supplierId(),
                                new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
         }
-        if (!m_users.contains(content.user().userId())) {
-            m_users.insert(content.user().userId(),
-                               new QDeclarativePlaceUser(content.user(), this));
-        }
+        if (!m_users.contains(content.user().userId()))
+            m_users.insert(content.user().userId(), content.user());
     }
 
     m_contentCount = totalCount;
@@ -203,7 +200,7 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
     case SupplierRole:
         return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(content.supplier().supplierId())));
     case PlaceUserRole:
-        return QVariant::fromValue(static_cast<QObject *>(m_users.value(content.user().userId())));
+        return QVariant::fromValue(m_users.value(content.user().userId()));
     case AttributionRole:
         return content.attribution();
     default:
@@ -345,10 +342,8 @@ void QDeclarativePlaceContentModel::fetchFinished()
                         m_suppliers.insert(content.supplier().supplierId(),
                                            new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
                     }
-                    if (!m_users.contains(content.user().userId())) {
-                        m_users.insert(content.user().userId(),
-                                           new QDeclarativePlaceUser(content.user(), this));
-                    }
+                    if (!m_users.contains(content.user().userId()))
+                        m_users.insert(content.user().userId(), content.user());
                 }
                 endInsertRows();
                 startIndex = -1;
@@ -372,10 +367,8 @@ void QDeclarativePlaceContentModel::fetchFinished()
                         m_suppliers.insert(content.supplier().supplierId(),
                                            new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
                     }
-                    if (!m_users.contains(content.user().userId())) {
-                        m_users.insert(content.user().userId(),
-                                           new QDeclarativePlaceUser(content.user(), this));
-                    }
+                    if (!m_users.contains(content.user().userId()))
+                        m_users.insert(content.user().userId(), content.user());
                 }
                 emit dataChanged(index(startIndex),index(currentIndex));
                 startIndex = -1;

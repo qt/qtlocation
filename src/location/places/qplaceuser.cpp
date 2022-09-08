@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -60,6 +60,31 @@ bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
 */
 
 /*!
+    \qmlvaluetype user
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
+    \since QtLocation 5.5
+
+    \brief The user type identifies a user who contributed a particular \l Place content item.
+
+    Each \l Place content item has an associated user who contributed the content.  This type
+    provides information about that user.
+
+    \sa ImageModel, ReviewModel, EditorialModel
+
+    \section1 Example
+
+    The following example shows how to display information about the user who
+    submitted an editorial:
+
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
+    \codeline
+    \snippet declarative/places.qml EditorialModel
+*/
+
+/*!
     Constructs a new user object.
 */
 QPlaceUser::QPlaceUser()
@@ -107,34 +132,43 @@ bool QPlaceUser::isEqual(const QPlaceUser &other) const noexcept
 }
 
 /*!
-    Returns the identifier of the user.
+    \qmlproperty string QtLocation::user::userId
+
+    This property holds the unique identifier of the user.
+*/
+
+/*!
+    \property QPlaceUser::userId
+    \brief the identifier of the user.
 */
 QString QPlaceUser::userId() const
 {
     return d->userId;
 }
 
-/*!
-    Sets the \a identifier of the user.
-*/
 void QPlaceUser::setUserId(const QString &identifier)
 {
     d->userId = identifier;
 }
 
 /*!
-    Returns the name of the user.
+    \qmlproperty string QtLocation::User::name
+
+    This property holds the name of a user.
+*/
+
+/*!
+    \property QPlaceUser::name
+    \brief the name of the user.
 */
 QString QPlaceUser::name() const
 {
     return d->name;
 }
 
-/*!
-    Sets the \a name of the user.
-*/
-
 void QPlaceUser::setName(const QString &name)
 {
     d->name = name;
 }
+
+#include "moc_qplaceuser.cpp"

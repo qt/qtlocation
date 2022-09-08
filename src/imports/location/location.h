@@ -53,6 +53,7 @@
 
 #include <QGeoManeuver>
 #include <QGeoRouteSegment>
+#include <QPlaceUser>
 
 #include <QtLocation/private/qgeomaptype_p.h>
 
@@ -93,6 +94,13 @@ namespace QGeoMapTypeForeignNamespace
     Q_NAMESPACE
     QML_FOREIGN_NAMESPACE(QGeoMapType)
     QML_NAMED_ELEMENT(MapType)
+};
+
+struct QPlaceUserForeign
+{
+    Q_GADGET
+    QML_FOREIGN(QPlaceUser)
+    QML_NAMED_ELEMENT(user)
 };
 
 QT_END_NAMESPACE

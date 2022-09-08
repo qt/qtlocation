@@ -28,23 +28,21 @@
 
 import QtTest
 import QtLocation
-import "utils.js" as Utils
 
 TestCase {
     id: testCase
 
     name: "User"
 
-    User { id: emptyUser }
+    property user emptyUser
 
     function test_empty() {
         compare(emptyUser.userId, "");
         compare(emptyUser.name, "");
     }
 
-    User {
-        id: qmlUser
-
+    property user qmlUser
+    qmlUser {
         userId: "testuser"
         name: "Test User"
     }
@@ -52,20 +50,5 @@ TestCase {
     function test_qmlConstructedUser() {
         compare(qmlUser.userId, "testuser");
         compare(qmlUser.name, "Test User");
-    }
-
-    User {
-        id: testUser
-    }
-
-    function test_setAndGet_data() {
-        return [
-            { tag: "userId", property: "userId", signal: "userIdChanged", value: "testuser", reset: "" },
-            { tag: "name", property: "name", signal: "nameChanged", value: "Test User", reset: "" },
-        ];
-    }
-
-    function test_setAndGet(data) {
-        Utils.testObjectProperties(testCase, testUser, data);
     }
 }

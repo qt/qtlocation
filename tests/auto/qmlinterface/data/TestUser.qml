@@ -26,9 +26,13 @@
 **
 ****************************************************************************/
 
+import QtQuick
 import QtLocation
 
-User {
-    name: "Test User"
-    userId: "test-user-id"
+Item {
+    property user user
+    user {
+        name: "Test User"
+        userId: "test-user-id"
+    }
 }

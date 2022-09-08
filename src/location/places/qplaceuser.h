@@ -51,6 +51,10 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceUserPrivate, Q_LOCATION_EX
 
 class Q_LOCATION_EXPORT QPlaceUser
 {
+    Q_GADGET
+    Q_PROPERTY(QString userId READ userId WRITE setUserId)
+    Q_PROPERTY(QString name READ name WRITE setName)
+
 public:
     QPlaceUser();
     QPlaceUser(const QPlaceUser &other) noexcept;

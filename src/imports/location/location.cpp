@@ -64,7 +64,6 @@
 #include <QtLocation/private/qdeclarativeplaceicon_p.h>
 #include <QtLocation/private/qdeclarativeratings_p.h>
 #include <QtLocation/private/qdeclarativesupplier_p.h>
-#include <QtLocation/private/qdeclarativeplaceuser_p.h>
 #include <QtLocation/private/qdeclarativecontactdetail_p.h>
 
 #include <QtLocation/private/qdeclarativesupportedcategoriesmodel_p.h>
@@ -195,7 +194,6 @@ public:
             qmlRegisterType<QDeclarativeRatings                     >(uri, major, minor, "Ratings");
             qmlRegisterType<QDeclarativeReviewModel                 >(uri, major, minor, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier                    >(uri, major, minor, "Supplier");
-            qmlRegisterType<QDeclarativePlaceUser                   >(uri, major, minor, "User");
             qmlRegisterType<QDeclarativeRectangleMapItem            >(uri, major, minor, "MapRectangle");
             qmlRegisterType<QDeclarativeCircleMapItem               >(uri, major, minor, "MapCircle");
             qmlRegisterAnonymousType<QDeclarativeMapLineProperties  >(uri, major);
@@ -279,7 +277,6 @@ public:
             qRegisterMetaType<QPlaceIcon>();
             qRegisterMetaType<QPlaceRatings>();
             qRegisterMetaType<QPlaceSupplier>();
-            qRegisterMetaType<QPlaceUser>();
             qRegisterMetaType<QPlaceAttribute>();
             qRegisterMetaType<QPlaceContactDetail>();
         } else {

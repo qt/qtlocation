@@ -66,7 +66,6 @@ class QDeclarativePlace;
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
 class QDeclarativeSupplier;
-class QDeclarativePlaceUser;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceContentModel : public QAbstractListModel, public QQmlParserStatus
 {
@@ -124,7 +123,7 @@ private Q_SLOTS:
 protected:
     QPlaceContent::Collection m_content;
     QMap<QString, QDeclarativeSupplier *> m_suppliers;
-    QMap<QString, QDeclarativePlaceUser *>m_users;
+    QMap<QString, QPlaceUser>m_users;
 
 private:
     QDeclarativePlace *m_place = nullptr;
