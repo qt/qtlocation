@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2020 Paolo Angelelli <paolo.angelelli@gmail.com>
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -59,9 +59,8 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemUtils
+namespace QDeclarativeGeoMapItemUtils
 {
-public:
     struct vec2 {
         float x;
         float y;
@@ -89,34 +88,33 @@ public:
         }
     };
 
-    static void wrapPath(const QList<QGeoCoordinate> &perimeter
-                         , const QGeoCoordinate &geoLeftBound
-                         , const QGeoProjectionWebMercator &p
-                         , QList<QDoubleVector2D> &wrappedPath
-                         , QList<QDoubleVector2D> &wrappedPathMinus1
-                         , QList<QDoubleVector2D> &wrappedPathPlus1
-                         , QDoubleVector2D *leftBoundWrapped = nullptr);
+    void wrapPath(const QList<QGeoCoordinate> &perimeter
+                , const QGeoCoordinate &geoLeftBound
+                , const QGeoProjectionWebMercator &p
+                , QList<QDoubleVector2D> &wrappedPath
+                , QList<QDoubleVector2D> &wrappedPathMinus1
+                , QList<QDoubleVector2D> &wrappedPathPlus1
+                , QDoubleVector2D *leftBoundWrapped = nullptr);
 
-    static void wrapPath(const QList<QGeoCoordinate> &perimeter
-                         , const QGeoCoordinate &geoLeftBound
-                         , const QGeoProjectionWebMercator &p
-                         , QList<QDoubleVector2D> &wrappedPath
-                         , QDoubleVector2D *leftBoundWrapped = nullptr);
+    void wrapPath(const QList<QGeoCoordinate> &perimeter
+                , const QGeoCoordinate &geoLeftBound
+                , const QGeoProjectionWebMercator &p
+                , QList<QDoubleVector2D> &wrappedPath
+                , QDoubleVector2D *leftBoundWrapped = nullptr);
 
-    static void wrapPath(const QList<QDoubleVector2D> &path
-                         , const QDoubleVector2D &geoLeftBound
-                         , QList<QDoubleVector2D> &wrappedPath);
+    void wrapPath(const QList<QDoubleVector2D> &path
+                , const QDoubleVector2D &geoLeftBound
+                , QList<QDoubleVector2D> &wrappedPath);
 
+    void clipPolygon(const QList<QDoubleVector2D> &wrappedPath
+                   , const QGeoProjectionWebMercator &p
+                   , QList<QList<QDoubleVector2D> > &clippedPaths
+                   , QDoubleVector2D *leftBoundWrapped = nullptr
+                   , bool closed = true);
 
-    static void clipPolygon(const QList<QDoubleVector2D> &wrappedPath
-                            , const QGeoProjectionWebMercator &p
-                            , QList<QList<QDoubleVector2D> > &clippedPaths
-                            , QDoubleVector2D *leftBoundWrapped = nullptr
-                            , bool closed = true);
-
-    static void projectBbox(const QList<QDoubleVector2D> &clippedBbox
-                            , const QGeoProjectionWebMercator &p
-                            , QPainterPath &projectedBbox);
+    void projectBbox(const QList<QDoubleVector2D> &clippedBbox
+                   , const QGeoProjectionWebMercator &p
+                   , QPainterPath &projectedBbox);
 
 };
 

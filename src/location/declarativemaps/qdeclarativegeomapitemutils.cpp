@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2020 Paolo Angelelli <paolo.angelelli@gmail.com>
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -50,13 +50,15 @@
 
 QT_BEGIN_NAMESPACE
 
-void QDeclarativeGeoMapItemUtils::wrapPath(const QList<QGeoCoordinate> &perimeter,
-                                           const QGeoCoordinate &geoLeftBound,
-                                           const QGeoProjectionWebMercator &p,
-                                           QList<QDoubleVector2D> &wrappedPath,
-                                           QList<QDoubleVector2D> &wrappedPathMinus1,
-                                           QList<QDoubleVector2D> &wrappedPathPlus1,
-                                           QDoubleVector2D *leftBoundWrapped)
+namespace QDeclarativeGeoMapItemUtils {
+
+void wrapPath(const QList<QGeoCoordinate> &perimeter,
+              const QGeoCoordinate &geoLeftBound,
+              const QGeoProjectionWebMercator &p,
+              QList<QDoubleVector2D> &wrappedPath,
+              QList<QDoubleVector2D> &wrappedPathMinus1,
+              QList<QDoubleVector2D> &wrappedPathPlus1,
+              QDoubleVector2D *leftBoundWrapped)
 {
     QList<QDoubleVector2D> path;
     for (const QGeoCoordinate &c : perimeter)
@@ -66,9 +68,7 @@ void QDeclarativeGeoMapItemUtils::wrapPath(const QList<QGeoCoordinate> &perimete
     wrappedPathPlus1.clear();
     wrappedPathMinus1.clear();
     // compute 3 sets of "wrapped" coordinates: one w regular mercator, one w regular mercator +- 1.0
-    for (int i = 0; i < path.size(); ++i) {
-        QDoubleVector2D coord = path.at(i);
-
+    for (QDoubleVector2D coord : path) {
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
         if (!qIsFinite(coord.x()) || !qIsFinite(coord.y()))
@@ -90,11 +90,11 @@ void QDeclarativeGeoMapItemUtils::wrapPath(const QList<QGeoCoordinate> &perimete
         *leftBoundWrapped = leftBound;
 }
 
-void QDeclarativeGeoMapItemUtils::wrapPath(const QList<QGeoCoordinate> &perimeter,
-                                           const QGeoCoordinate &geoLeftBound,
-                                           const QGeoProjectionWebMercator &p,
-                                           QList<QDoubleVector2D> &wrappedPath,
-                                           QDoubleVector2D *leftBoundWrapped)
+void wrapPath(const QList<QGeoCoordinate> &perimeter,
+              const QGeoCoordinate &geoLeftBound,
+              const QGeoProjectionWebMercator &p,
+              QList<QDoubleVector2D> &wrappedPath,
+              QDoubleVector2D *leftBoundWrapped)
 {
     QList<QDoubleVector2D> path;
     for (const QGeoCoordinate &c : perimeter)
@@ -105,15 +105,13 @@ void QDeclarativeGeoMapItemUtils::wrapPath(const QList<QGeoCoordinate> &perimete
         *leftBoundWrapped = leftBound;
 }
 
-void QDeclarativeGeoMapItemUtils::wrapPath(const QList<QDoubleVector2D> &path,
-                                           const QDoubleVector2D &geoLeftBound,
-                                           QList<QDoubleVector2D> &wrappedPath)
+void wrapPath(const QList<QDoubleVector2D> &path,
+              const QDoubleVector2D &geoLeftBound,
+              QList<QDoubleVector2D> &wrappedPath)
 {
     wrappedPath.clear();
     // compute 3 sets of "wrapped" coordinates: one w regular mercator, one w regular mercator +- 1.0
-    for (int i = 0; i < path.size(); ++i) {
-        QDoubleVector2D coord = path.at(i);
-
+    for (QDoubleVector2D coord : path) {
         // We can get NaN if the map isn't set up correctly, or the projection
         // is faulty -- probably best thing to do is abort
         if (!qIsFinite(coord.x()) || !qIsFinite(coord.y()))
@@ -128,7 +126,11 @@ void QDeclarativeGeoMapItemUtils::wrapPath(const QList<QDoubleVector2D> &path,
     }
 }
 
-void QDeclarativeGeoMapItemUtils::clipPolygon(const QList<QDoubleVector2D> &wrappedPath, const QGeoProjectionWebMercator &p, QList<QList<QDoubleVector2D> > &clippedPaths, QDoubleVector2D *leftBoundWrapped, const bool closed)
+void clipPolygon(const QList<QDoubleVector2D> &wrappedPath,
+                 const QGeoProjectionWebMercator &p,
+                 QList<QList<QDoubleVector2D>> &clippedPaths,
+                 QDoubleVector2D *leftBoundWrapped,
+                 bool closed)
 {
     // 2) Clip bounding box
     clippedPaths.clear();
@@ -143,11 +145,13 @@ void QDeclarativeGeoMapItemUtils::clipPolygon(const QList<QDoubleVector2D> &wrap
         if (leftBoundWrapped) {
             // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
             QDoubleVector2D lb(qInf(), qInf());
-            for (const QList<QDoubleVector2D> &path: clippedPaths)
-                for (const QDoubleVector2D &p: path)
+            for (const QList<QDoubleVector2D> &path : clippedPaths) {
+                for (const QDoubleVector2D &p : path) {
                     if (p.x() < lb.x() || (p.x() == lb.x() && p.y() < lb.y()))
                         // y-minimization needed to find the same point on polygon and border
                         lb = p;
+                }
+            }
 
             if (qIsInf(lb.x())) // e.g., when the polygon is clipped entirely
                 return;
@@ -164,17 +168,24 @@ void QDeclarativeGeoMapItemUtils::clipPolygon(const QList<QDoubleVector2D> &wrap
     }
 }
 
-void QDeclarativeGeoMapItemUtils::projectBbox(const QList<QDoubleVector2D> &clippedBbox, const QGeoProjectionWebMercator &p, QPainterPath &projectedBbox)
+void projectBbox(const QList<QDoubleVector2D> &clippedBbox,
+                 const QGeoProjectionWebMercator &p,
+                 QPainterPath &projectedBbox)
 {
-    projectedBbox = QPainterPath(); // clear() is added in 5.13..
-    for (int i = 0; i < clippedBbox.size(); ++i) {
-        QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(clippedBbox.at(i));
-        if (i == 0)
+    projectedBbox.clear();
+    bool first = true;
+    for (const auto &coord : clippedBbox) {
+        QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(coord);
+        if (first) {
+            first = false;
             projectedBbox.moveTo(point.toPointF());
-        else
+        } else {
             projectedBbox.lineTo(point.toPointF());
+        }
     }
     projectedBbox.closeSubpath();
 }
+
+} // namespace QDeclarativeGeoMapItemUtils
 
 QT_END_NAMESPACE
