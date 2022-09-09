@@ -557,67 +557,67 @@ TestCase {
         signalSpy.destroy();
     }
 
-     function test_copy() {
-         var place = Qt.createQmlObject('import QtLocation 5.3; Place { }', this);
-         place.plugin = testPlugin;
-         place.copyFrom(dummyPlace);
-         compare(place.placeId, "");
-         compare(place.name, "dummyPlace");
-         compare(place.visibility, Place.UnspecifiedVisibility);
-     }
+    function test_copy() {
+        var place = Qt.createQmlObject('import QtLocation 5.3; Place { }', this);
+        place.plugin = testPlugin;
+        place.copyFrom(dummyPlace);
+        compare(place.placeId, "");
+        compare(place.name, "dummyPlace");
+        compare(place.visibility, Place.UnspecifiedVisibility);
+    }
 
-     function test_contactDetails(data) {
-         var place = Qt.createQmlObject('import QtLocation 5.3; Place {}', this);
+    function test_contactDetails(data) {
+        var place = Qt.createQmlObject('import QtLocation 5.3; Place {}', this);
 
-         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-         signalSpy.target = place;
-         signalSpy.signalName = data.signalName;
+        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        signalSpy.target = place;
+        signalSpy.signalName = data.signalName;
 
-         var detail1 = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', this);
-         detail1.label = "Detail1";
-         detail1.value = "555-detail1";
+        var detail1 = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', this);
+        detail1.label = "Detail1";
+        detail1.value = "555-detail1";
 
-         place.contactDetails[data.contactType] = detail1;
-         compare(place.contactDetails[data.contactType].length, 1);
-         compare(place.contactDetails[data.contactType][0].label, "Detail1");
-         compare(place.contactDetails[data.contactType][0].value, "555-detail1");
+        place.contactDetails[data.contactType] = detail1;
+        compare(place.contactDetails[data.contactType].length, 1);
+        compare(place.contactDetails[data.contactType][0].label, "Detail1");
+        compare(place.contactDetails[data.contactType][0].value, "555-detail1");
 
-         compare(place[data.primaryValue], "555-detail1");
-         compare(signalSpy.count, 1);
-         signalSpy.clear();
+        compare(place[data.primaryValue], "555-detail1");
+        compare(signalSpy.count, 1);
+        signalSpy.clear();
 
-         var listView = Qt.createQmlObject('import QtQuick 2.0; ListView { delegate:Text{text:modelData.label + ":" + modelData.value } }', this);
-         listView.model = place.contactDetails[data.contactType];
-         compare(listView.count, 1);
+        var listView = Qt.createQmlObject('import QtQuick 2.0; ListView { delegate:Text{text:modelData.label + ":" + modelData.value } }', this);
+        listView.model = place.contactDetails[data.contactType];
+        compare(listView.count, 1);
 
-         var detail2 = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', this);
-         detail2.label = "Detail2";
-         detail2.value = "555-detail2";
+        var detail2 = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', this);
+        detail2.label = "Detail2";
+        detail2.value = "555-detail2";
 
-         var details = new Array();
-         details.push(detail2);
-         details.push(detail1);
+        var details = new Array();
+        details.push(detail2);
+        details.push(detail1);
 
-         place.contactDetails[data.contactType] = details;
-         compare(place.contactDetails[data.contactType].length, 2);
-         compare(place.contactDetails[data.contactType][0].label, "Detail2");
-         compare(place.contactDetails[data.contactType][0].value, "555-detail2");
-         compare(place.contactDetails[data.contactType][1].label, "Detail1");
-         compare(place.contactDetails[data.contactType][1].value, "555-detail1");
+        place.contactDetails[data.contactType] = details;
+        compare(place.contactDetails[data.contactType].length, 2);
+        compare(place.contactDetails[data.contactType][0].label, "Detail2");
+        compare(place.contactDetails[data.contactType][0].value, "555-detail2");
+        compare(place.contactDetails[data.contactType][1].label, "Detail1");
+        compare(place.contactDetails[data.contactType][1].value, "555-detail1");
 
-         compare(place[data.primaryValue], "555-detail2");
-         compare(signalSpy.count, 1);
-         signalSpy.clear();
-         listView.model = place.contactDetails[data.contactType];
-         compare(listView.count, 2);
-     }
+        compare(place[data.primaryValue], "555-detail2");
+        compare(signalSpy.count, 1);
+        signalSpy.clear();
+        listView.model = place.contactDetails[data.contactType];
+        compare(listView.count, 2);
+    }
 
-     function test_contactDetails_data() {
-         return [
-                     { tag: "phone", contactType: "phone", signalName: "primaryPhoneChanged", primaryValue: "primaryPhone"},
-                     { tag: "fax", contactType: "fax", signalName: "primaryFaxChanged", primaryValue: "primaryFax"},
-                     { tag: "email", contactType: "email", signalName: "primaryEmailChanged", primaryValue: "primaryEmail"},
-                     { tag: "website", contactType: "website", signalName: "primaryWebsiteChanged", primaryValue: "primaryWebsite"}
-         ];
-     }
+    function test_contactDetails_data() {
+        return [
+                    { tag: "phone", contactType: "phone", signalName: "primaryPhoneChanged", primaryValue: "primaryPhone"},
+                    { tag: "fax", contactType: "fax", signalName: "primaryFaxChanged", primaryValue: "primaryFax"},
+                    { tag: "email", contactType: "email", signalName: "primaryEmailChanged", primaryValue: "primaryEmail"},
+                    { tag: "website", contactType: "website", signalName: "primaryWebsiteChanged", primaryValue: "primaryWebsite"}
+        ];
+    }
 }
