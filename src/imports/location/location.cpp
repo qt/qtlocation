@@ -79,6 +79,75 @@
 
 QT_BEGIN_NAMESPACE
 
+namespace {
+
+bool convertToGadget(const QMetaObject &metaObject, const QVariantMap &map, void *gadget)
+{
+    for (auto &&[key, value] : map.asKeyValueRange()) {
+        const int propIndex = metaObject.indexOfProperty(key.toUtf8());
+        if (propIndex == -1) {
+            qCritical("No property %s in %s", qPrintable(key), metaObject.className());
+            return false;
+        }
+        const QMetaProperty prop = metaObject.property(propIndex);
+        bool successfulWrite = false;
+        if (value.metaType() != prop.metaType()) {
+            QVariant coercedValue = value;
+            if (!coercedValue.convert(prop.metaType())) {
+                qCritical("Could not convert value from %s to %s for property %s::%s",
+                          value.typeName(), prop.typeName(), metaObject.className(), qPrintable(key));
+                return false;
+            }
+            successfulWrite = prop.writeOnGadget(gadget, coercedValue);
+        } else {
+            successfulWrite = prop.writeOnGadget(gadget, value);
+        }
+        if (!successfulWrite) {
+            qCritical("Could not set property %s on %s", qPrintable(key), metaObject.className());
+            return false;
+        }
+    }
+    return true;
+}
+
+template<typename SourceType, typename GadgetType>
+bool converterToGadget(const void *src, void *gadget)
+{
+    const QMetaObject &metaObject = GadgetType::staticMetaObject;
+    QVariantMap variantMap;
+    if constexpr (std::is_same_v<SourceType, QJSValue>) {
+        const QJSValue &jsValue = *static_cast<const QJSValue *>(src);
+        const QVariant &variant = jsValue.toVariant();
+        if (variant.metaType() != QMetaType::fromType<QVariantMap>())
+            return false;
+        variantMap = variant.toMap();
+    } else {
+        static_assert(std::is_same_v<SourceType, QVariantMap>);
+        variantMap = *static_cast<const QVariantMap *>(src);
+    }
+    return convertToGadget(metaObject, variantMap, gadget);
+}
+
+template<typename GadgetType>
+bool registerConverterToGadget()
+{
+    if (!QMetaType::registerConverterFunction(converterToGadget<QJSValue, GadgetType>,
+                    QMetaType::fromType<QJSValue>(), QMetaType::fromType<GadgetType>())) {
+        qCritical("Failed to register conversion function from QJSValue to %s",
+                  GadgetType::staticMetaObject.className());
+        return false;
+    }
+    if (!QMetaType::registerConverterFunction(converterToGadget<QVariantMap, GadgetType>,
+                    QMetaType::fromType<QVariantMap>(), QMetaType::fromType<GadgetType>())) {
+        qCritical("Failed to register conversion function from QVariantMap to %s",
+                  GadgetType::staticMetaObject.className());
+        return false;
+    }
+
+    return true;
+}
+
+} // anonymous namespace
 
 class QtLocationDeclarativeModule: public QQmlExtensionPlugin
 {
