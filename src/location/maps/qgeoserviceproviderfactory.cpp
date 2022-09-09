@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -56,32 +56,31 @@ QT_BEGIN_NAMESPACE
 
     The other functions should be overridden if the plugin supports the
     associated set of functionality.
-
-    \sa QGeoServiceProviderFactoryV2
 */
 
 /*!
-\fn QGeoServiceProviderFactory::~QGeoServiceProviderFactory()
+    \fn QGeoServiceProviderFactory::~QGeoServiceProviderFactory()
 
-Destroys this QGeoServiceProviderFactory instance.
+    Destroys this QGeoServiceProviderFactory instance.
 */
 
 /*!
     Returns a new QGeoCodingManagerEngine instance, initialized with \a
     parameters, which implements the location geocoding functionality.
 
-    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
+    If \a error is not \nullptr it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
 
-    If \a errorString is not 0 it should be set to a string describing any
+    If \a errorString is not \nullptr it should be set to a string describing any
     error which occurred.
 
-    The default implementation returns 0, which causes a
+    The default implementation returns \nullptr, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoCodingManagerEngine *QGeoServiceProviderFactory::createGeocodingManagerEngine(const QVariantMap &parameters,
-                                                                                  QGeoServiceProvider::Error *error,
-                                                                                  QString *errorString) const
+QGeoCodingManagerEngine *
+QGeoServiceProviderFactory::createGeocodingManagerEngine(const QVariantMap &parameters,
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
@@ -94,20 +93,21 @@ QGeoCodingManagerEngine *QGeoServiceProviderFactory::createGeocodingManagerEngin
     Returns a new QGeoMappingManagerEngine instance, initialized with \a
     parameters, which implements mapping functionality.
 
-    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
+    If \a error is not \nullptr it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
 
-    If \a errorString is not 0 it should be set to a string describing any
+    If \a errorString is not \nullptr it should be set to a string describing any
     error which occurred.
 
-    The default implementation returns 0, which causes a
+    The default implementation returns \nullptr, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 
     \internal
 */
-QGeoMappingManagerEngine *QGeoServiceProviderFactory::createMappingManagerEngine(const QVariantMap &parameters,
-                                                                                 QGeoServiceProvider::Error *error,
-                                                                                 QString *errorString) const
+QGeoMappingManagerEngine *
+QGeoServiceProviderFactory::createMappingManagerEngine(const QVariantMap &parameters,
+                                                       QGeoServiceProvider::Error *error,
+                                                       QString *errorString) const
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
@@ -120,94 +120,76 @@ QGeoMappingManagerEngine *QGeoServiceProviderFactory::createMappingManagerEngine
     Returns a new QGeoRoutingManagerEngine instance, initialized with \a
     parameters, which implements routing functionality.
 
-    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
+    If \a error is not \nullptr it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
 
-    If \a errorString is not 0 it should be set to a string describing any
+    If \a errorString is not \nullptr it should be set to a string describing any
     error which occurred.
 
-    The default implementation returns 0, which causes a
+    The default implementation returns \nullptr, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoRoutingManagerEngine *QGeoServiceProviderFactory::createRoutingManagerEngine(const QVariantMap &parameters,
-                                                                                 QGeoServiceProvider::Error *error,
-                                                                                 QString *errorString) const
+QGeoRoutingManagerEngine *
+QGeoServiceProviderFactory::createRoutingManagerEngine(const QVariantMap &parameters,
+                                                       QGeoServiceProvider::Error *error,
+                                                       QString *errorString) const
 
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
-    return 0;
+    return nullptr;
 }
 
 /*!
     Returns a new QPlaceManagerEngine instance, initialized with \a
     parameters, which implements the place searching functionality.
 
-    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
+    If \a error is not \nullptr it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
 
-    If \a errorString is not 0 it should be set to a string describing any
+    If \a errorString is not \nullptr it should be set to a string describing any
     error which occurred.
 
-    The default implementation returns 0, which causes a
+    The default implementation returns \nullptr, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QPlaceManagerEngine *QGeoServiceProviderFactory::createPlaceManagerEngine(const QVariantMap &parameters,
-                                                                          QGeoServiceProvider::Error *error,
-                                                                          QString *errorString) const
-
+QPlaceManagerEngine *
+QGeoServiceProviderFactory::createPlaceManagerEngine(const QVariantMap &parameters,
+                                                     QGeoServiceProvider::Error *error,
+                                                     QString *errorString) const
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
-    return 0;
+    return nullptr;
 }
-
-/*!
-    \class QGeoServiceProviderFactoryV2
-    \inmodule QtLocation
-    \ingroup QtLocation-impl
-    \since 5.11
-
-    \brief The QGeoServiceProviderFactoryV2 class is a factory class used as the
-    plugin interface for services related to geographical information.
-
-    Implementers must provide a unique combination of providerName() and
-    providerVersion() per plugin.
-
-    The other functions should be overridden if the plugin supports the
-    associated set of functionality.
-*/
-
-/*!
-\fn QGeoServiceProviderFactoryV2::~QGeoServiceProviderFactoryV2()
-
-Destroys this QGeoServiceProviderFactoryV2 instance.
-*/
 
 /*!
     Returns a new QNavigationManagerEngine instance, initialized with \a
     parameters, which implements navigation functionality.
 
-    If \a error is not nullptr, it should be set to QGeoServiceProvider::NoError on
+    If \a error is not \nullptr, it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
 
-    If \a errorString is not nullptr, it should be set to a string describing any
+    If \a errorString is not \nullptr, it should be set to a string describing any
     error which occurred.
 
-    The default implementation returns nullptr, which causes a
+    The default implementation returns \nullptr, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QNavigationManagerEngine *QGeoServiceProviderFactoryV2::createNavigationManagerEngine(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+QNavigationManagerEngine *
+QGeoServiceProviderFactory::createNavigationManagerEngine(const QVariantMap &parameters,
+                                                          QGeoServiceProvider::Error *error,
+                                                          QString *errorString) const
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -217,10 +199,9 @@ QNavigationManagerEngine *QGeoServiceProviderFactoryV2::createNavigationManagerE
     The default implementation does nothing.
     \since 5.12
 */
-void QGeoServiceProviderFactoryV3::setQmlEngine(QQmlEngine *engine)
+void QGeoServiceProviderFactory::setQmlEngine(QQmlEngine *engine)
 {
     Q_UNUSED(engine);
 }
 
 QT_END_NAMESPACE
-
