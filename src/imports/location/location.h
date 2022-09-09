@@ -54,6 +54,7 @@
 #include <QGeoManeuver>
 #include <QGeoRouteSegment>
 #include <QPlaceUser>
+#include <QPlaceRatings>
 
 #include <QtLocation/private/qgeomaptype_p.h>
 
@@ -101,6 +102,13 @@ struct QPlaceUserForeign
     Q_GADGET
     QML_FOREIGN(QPlaceUser)
     QML_NAMED_ELEMENT(user)
+};
+
+struct QPlaceRatingsForeign
+{
+    Q_GADGET
+    QML_FOREIGN(QPlaceRatings)
+    QML_NAMED_ELEMENT(ratings)
 };
 
 QT_END_NAMESPACE

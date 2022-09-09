@@ -51,6 +51,11 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceRatingsPrivate, Q_LOCATION
 
 class Q_LOCATION_EXPORT QPlaceRatings
 {
+    Q_GADGET
+    Q_PROPERTY(qreal average READ average WRITE setAverage)
+    Q_PROPERTY(qreal maximum READ maximum WRITE setMaximum)
+    Q_PROPERTY(int count READ count WRITE setCount)
+
 public:
     QPlaceRatings();
     QPlaceRatings(const QPlaceRatings &other) noexcept;

@@ -72,6 +72,25 @@ bool QPlaceRatingsPrivate::isEmpty() const
 */
 
 /*!
+    \qmlvaluetype ratings
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
+    \since QtLocation 5.5
+
+    \brief The ratings type holds place rating information.
+
+    Rating information is used to describe how \e good a place is conceived to be.  Typically this
+    information is visualized as a number of stars.  The \l average property gives an aggregated
+    ratings value out of a possible maximum as given by the \l maximum property.
+
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
+    \codeline
+    \snippet declarative/places.qml ratings
+*/
+
+/*!
     Constructs a new ratings object.
 */
 QPlaceRatings::QPlaceRatings()
@@ -120,48 +139,63 @@ bool QPlaceRatings::isEqual(const QPlaceRatings &other) const noexcept
 }
 
 /*!
-    Returns the average value of individual ratings.
+    \qmlproperty real ratings::average
+
+    This property holds the average of the individual ratings.
+
+    \sa maximum
+*/
+
+/*!
+    \property QPlaceRatings::average
+    \brief the average value of individual ratings.
 */
 qreal QPlaceRatings::average() const
 {
     return d->average;
 }
 
-/*!
-    Sets the \a average value of the ratings.
-*/
 void QPlaceRatings::setAverage(qreal average)
 {
     d->average = average;
 }
 
 /*!
-    Returns the maximum possible rating value.
+    \qmlproperty real ratings::maximum
+
+    This property holds the maximum rating value.
+*/
+
+/*!
+    \property QPlaceRatings::maximum
+    \brief the maximum possible rating value.
 */
 qreal QPlaceRatings::maximum() const
 {
     return d->maximum;
 }
 
-/*!
-    Sets the maximum possible rating value to \a max.
-*/
 void QPlaceRatings::setMaximum(qreal max)
 {
     d->maximum = max;
 }
 
 /*!
-    Returns the total number of individual ratings.
+    \qmlproperty int ratings::count
+
+    This property holds the total number of individual user ratings
+    used in determining the overall ratings \l average.
+*/
+
+/*!
+    \property QPlaceRatings::count
+    \brief the total number of individual ratings.
 */
 int QPlaceRatings::count() const
 {
     return d->count;
 }
 
-/*!
-    Sets the total number of individual ratings to \a count.
-*/
 void QPlaceRatings::setCount(int count)
 {
     d->count = count;
@@ -174,3 +208,5 @@ bool QPlaceRatings::isEmpty() const
 {
     return d->isEmpty();
 }
+
+#include "moc_qplaceratings.cpp"

@@ -62,7 +62,6 @@
 #include <QtLocation/private/qdeclarativeplace_p.h>
 #include <QtLocation/private/qdeclarativeplaceattribute_p.h>
 #include <QtLocation/private/qdeclarativeplaceicon_p.h>
-#include <QtLocation/private/qdeclarativeratings_p.h>
 #include <QtLocation/private/qdeclarativesupplier_p.h>
 #include <QtLocation/private/qdeclarativecontactdetail_p.h>
 
@@ -191,7 +190,6 @@ public:
             qmlRegisterType<QDeclarativePlaceImageModel             >(uri, major, minor, "ImageModel");
             qmlRegisterType<QDeclarativePlace                       >(uri, major, minor, "Place");
             qmlRegisterType<QDeclarativePlaceIcon                   >(uri, major, minor, "Icon");
-            qmlRegisterType<QDeclarativeRatings                     >(uri, major, minor, "Ratings");
             qmlRegisterType<QDeclarativeReviewModel                 >(uri, major, minor, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier                    >(uri, major, minor, "Supplier");
             qmlRegisterType<QDeclarativeRectangleMapItem            >(uri, major, minor, "MapRectangle");
@@ -275,10 +273,11 @@ public:
             qRegisterMetaType<QPlaceCategory>();
             qRegisterMetaType<QPlace>();
             qRegisterMetaType<QPlaceIcon>();
-            qRegisterMetaType<QPlaceRatings>();
             qRegisterMetaType<QPlaceSupplier>();
             qRegisterMetaType<QPlaceAttribute>();
             qRegisterMetaType<QPlaceContactDetail>();
+
+            registerConverterToGadget<QPlaceRatings>();
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

@@ -35,7 +35,7 @@ TestCase {
 
     name: "Ratings"
 
-    Ratings { id: emptyRatings }
+    property ratings emptyRatings
 
     function test_empty() {
         compare(emptyRatings.average, 0.0);
@@ -43,33 +43,11 @@ TestCase {
         compare(emptyRatings.count, 0);
     }
 
-    Ratings {
-        id: qmlRatings
-
-        average: 3.5
-        maximum: 5.0
-        count: 7
-    }
+    property ratings qmlRatings: ({ average: 3.5, maximum: 5.0, count: 7 })
 
     function test_qmlConstructedRatings() {
         compare(qmlRatings.average, 3.5);
         compare(qmlRatings.maximum, 5.0);
         compare(qmlRatings.count, 7);
-    }
-
-    Ratings {
-        id: testRatings
-    }
-
-    function test_setAndGet_data() {
-        return [
-            { tag: "average", property: "average", signal: "averageChanged", value: 4.5, reset: 0.0 },
-            { tag: "maximum", property: "maximum", signal: "maximumChanged", value: 5.0, reset: 0.0 },
-            { tag: "count", property: "count", signal: "countChanged", value: 10, reset: 0 },
-        ];
-    }
-
-    function test_setAndGet(data) {
-        Utils.testObjectProperties(testCase, testRatings, data);
     }
 }

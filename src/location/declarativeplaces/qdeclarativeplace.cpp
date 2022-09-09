@@ -325,12 +325,7 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         emit locationChanged();
     }
 
-    if (m_ratings && m_ratings->parent() == this) {
-        m_ratings->setRatings(m_src.ratings());
-    } else if (!m_ratings || m_ratings->parent() != this) {
-        m_ratings = new QDeclarativeRatings(m_src.ratings(), this);
-        emit ratingsChanged();
-    }
+    setRatings(m_src.ratings());
 
     if (m_supplier && m_supplier->parent() == this) {
         m_supplier->setSupplier(m_src.supplier(), m_plugin);
@@ -406,7 +401,7 @@ QPlace QDeclarativePlace::place() const
     result.setLocation(m_location ? m_location->location() : QGeoLocation());
 
     // Rating
-    result.setRatings(m_ratings ? m_ratings->ratings() : QPlaceRatings());
+    result.setRatings(m_ratings);
 
     // Supplier
     result.setSupplier(m_supplier ? m_supplier->supplier() : QPlaceSupplier());
@@ -465,19 +460,16 @@ QDeclarativeGeoLocation *QDeclarativePlace::location() const
     This property holds ratings of the place.  The ratings provide an indication of the quality of a
     place.
 */
-void QDeclarativePlace::setRatings(QDeclarativeRatings *rating)
+void QDeclarativePlace::setRatings(const QPlaceRatings &rating)
 {
     if (m_ratings == rating)
         return;
-
-    if (m_ratings && m_ratings->parent() == this)
-        delete m_ratings;
 
     m_ratings = rating;
     emit ratingsChanged();
 }
 
-QDeclarativeRatings *QDeclarativePlace::ratings() const
+QPlaceRatings QDeclarativePlace::ratings() const
 {
 
     return m_ratings;

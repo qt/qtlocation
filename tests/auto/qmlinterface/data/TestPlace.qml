@@ -43,7 +43,7 @@ Place {
         }
     ]
     location: TestLocation { }
-    ratings: TestRatings { }
+    ratings: ({ average: 3.5, maximum: 5.0, count: 10 })
     icon: TestIcon { }
     supplier: TestSupplier { }
     visibility: Place.PrivateVisibility

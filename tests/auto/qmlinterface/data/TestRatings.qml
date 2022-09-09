@@ -27,9 +27,13 @@
 ****************************************************************************/
 
 import QtLocation
+import QtQuick
 
-Ratings {
-    average: 3.5
-    maximum: 5.0
-    count: 10
+Item {
+    property ratings ratings
+    ratings {
+        average: 3.5
+        maximum: 5.0
+        count: 10
+    }
 }
