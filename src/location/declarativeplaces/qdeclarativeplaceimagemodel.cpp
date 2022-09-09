@@ -38,7 +38,6 @@
 ****************************************************************************/
 
 #include "qdeclarativeplaceimagemodel_p.h"
-#include "qdeclarativesupplier_p.h"
 
 #include <QtCore/QUrl>
 #include <QtLocation/QPlaceImage>
@@ -133,7 +132,6 @@ QDeclarativePlaceImageModel::QDeclarativePlaceImageModel(QObject *parent)
 
 QDeclarativePlaceImageModel::~QDeclarativePlaceImageModel()
 {
-    qDeleteAll(m_suppliers);
 }
 
 /*!

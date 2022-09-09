@@ -38,7 +38,6 @@
 ****************************************************************************/
 
 #include "qdeclarativereviewmodel_p.h"
-#include "qdeclarativesupplier_p.h"
 
 #include <QtCore/QDateTime>
 #include <QtLocation/QPlaceReview>
@@ -137,7 +136,6 @@ QDeclarativeReviewModel::QDeclarativeReviewModel(QObject *parent)
 
 QDeclarativeReviewModel::~QDeclarativeReviewModel()
 {
-    qDeleteAll(m_suppliers);
 }
 
 /*!

@@ -325,14 +325,7 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     }
 
     setRatings(m_src.ratings());
-
-    if (m_supplier && m_supplier->parent() == this) {
-        m_supplier->setSupplier(m_src.supplier(), m_plugin);
-    } else if (!m_supplier || m_supplier->parent() != this) {
-        m_supplier = new QDeclarativeSupplier(m_src.supplier(), m_plugin, this);
-        emit supplierChanged();
-    }
-
+    setSupplier(m_src.supplier());
     setIcon(m_src.icon());
 
     if (previous.name() != m_src.name()) {
@@ -397,7 +390,7 @@ QPlace QDeclarativePlace::place() const
     result.setRatings(m_ratings);
 
     // Supplier
-    result.setSupplier(m_supplier ? m_supplier->supplier() : QPlaceSupplier());
+    result.setSupplier(m_supplier);
 
     // Icon
     result.setIcon(m_icon);
@@ -474,19 +467,16 @@ QPlaceRatings QDeclarativePlace::ratings() const
     This property holds the supplier of the place data.
     The supplier is typically a business or organization that collected the data about the place.
 */
-void QDeclarativePlace::setSupplier(QDeclarativeSupplier *supplier)
+void QDeclarativePlace::setSupplier(const QPlaceSupplier &supplier)
 {
     if (m_supplier == supplier)
         return;
-
-    if (m_supplier && m_supplier->parent() == this)
-        delete m_supplier;
 
     m_supplier = supplier;
     emit supplierChanged();
 }
 
-QDeclarativeSupplier *QDeclarativePlace::supplier() const
+QPlaceSupplier QDeclarativePlace::supplier() const
 {
     return m_supplier;
 }

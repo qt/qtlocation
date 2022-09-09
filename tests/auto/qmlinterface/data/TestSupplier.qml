@@ -27,10 +27,14 @@
 ****************************************************************************/
 
 import QtLocation
+import QtQuick
 
-Supplier {
-    name: "Test supplier"
-    supplierId: "test-supplier-id"
-    url: "http://www.example.com/test-supplier"
-    icon: ({ parameters: { singleUrl: "http://www.example.com/test-icon.png" }})
+Item {
+    property supplier supplier
+    supplier {
+        name: "Test supplier"
+        supplierId: "test-supplier-id"
+        url: "http://www.example.com/test-supplier"
+        icon: ({ parameters: { singleUrl: "http://www.example.com/test-icon.png" }})
+    }
 }

@@ -147,8 +147,6 @@ qt_internal_add_module(Location
         declarativeplaces/qdeclarativesearchresultmodel_p.h
         declarativeplaces/qdeclarativesearchsuggestionmodel.cpp
         declarativeplaces/qdeclarativesearchsuggestionmodel_p.h
-        declarativeplaces/qdeclarativesupplier.cpp
-        declarativeplaces/qdeclarativesupplier_p.h
         declarativeplaces/qdeclarativesupportedcategoriesmodel.cpp
         declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h
         labs/qgeojson_p.h labs/qgeojson.cpp

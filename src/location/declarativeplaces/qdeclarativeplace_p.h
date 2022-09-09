@@ -63,7 +63,6 @@
 #include <QtPositioningQuick/private/qdeclarativegeolocation_p.h>
 #include <QtLocation/private/qdeclarativecategory_p.h>
 #include <QtLocation/private/qdeclarativecontactdetail_p.h>
-#include <QtLocation/private/qdeclarativesupplier_p.h>
 #include <QtLocation/private/qdeclarativereviewmodel_p.h>
 #include <QtLocation/private/qdeclarativeplaceimagemodel_p.h>
 #include <QtLocation/private/qdeclarativeplaceeditorialmodel_p.h>
@@ -72,6 +71,7 @@ QT_BEGIN_NAMESPACE
 
 class QPlaceReply;
 class QPlaceManager;
+class QPlaceSupplier;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlParserStatus
 {
@@ -84,7 +84,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlP
     Q_PROPERTY(QQmlListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeGeoLocation *location READ location WRITE setLocation NOTIFY locationChanged)
     Q_PROPERTY(QPlaceRatings ratings READ ratings WRITE setRatings NOTIFY ratingsChanged)
-    Q_PROPERTY(QDeclarativeSupplier *supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
+    Q_PROPERTY(QPlaceSupplier supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
     Q_PROPERTY(QPlaceIcon icon READ icon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
@@ -147,8 +147,8 @@ public:
     void setLocation(QDeclarativeGeoLocation *location);
     QPlaceRatings ratings() const;
     void setRatings(const QPlaceRatings &ratings);
-    QDeclarativeSupplier *supplier() const;
-    void setSupplier(QDeclarativeSupplier *supplier);
+    QPlaceSupplier supplier() const;
+    void setSupplier(const QPlaceSupplier &supplier);
     QPlaceIcon icon() const;
     void setIcon(const QPlaceIcon &icon);
     QString name() const;
@@ -229,7 +229,7 @@ private:
     QList<QDeclarativeCategory *> m_categories;
     QDeclarativeGeoLocation *m_location = nullptr;
     QPlaceRatings m_ratings;
-    QDeclarativeSupplier *m_supplier = nullptr;
+    QPlaceSupplier m_supplier;
     QPlaceIcon m_icon;
     QDeclarativeReviewModel *m_reviewModel = nullptr;
     QDeclarativePlaceImageModel *m_imageModel = nullptr;

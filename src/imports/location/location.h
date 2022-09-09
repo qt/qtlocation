@@ -55,6 +55,7 @@
 #include <QGeoRouteSegment>
 #include <QPlaceAttribute>
 #include <QPlaceUser>
+#include <QPlaceSupplier>
 #include <QPlaceRatings>
 #include <QPlaceIcon>
 
@@ -125,6 +126,13 @@ struct QPlaceIconForeign
     Q_GADGET
     QML_FOREIGN(QPlaceIcon)
     QML_NAMED_ELEMENT(icon)
+};
+
+struct QPlaceSupplierForeign
+{
+    Q_GADGET
+    QML_FOREIGN(QPlaceSupplier)
+    QML_NAMED_ELEMENT(supplier)
 };
 
 QT_END_NAMESPACE

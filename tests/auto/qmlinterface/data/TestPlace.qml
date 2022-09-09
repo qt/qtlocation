@@ -45,6 +45,11 @@ Place {
     location: TestLocation { }
     ratings: ({ average: 3.5, maximum: 5.0, count: 10 })
     icon: ({ parameters: { singleUrl: "http://www.example.com/test-icon.png" }})
-    supplier: TestSupplier { }
+    supplier: ({
+        name: "Test supplier",
+        supplierId: "test-supplier-id",
+        url: "http://www.example.com/test-supplier",
+        icon: ({ parameters : { singleUrl: "http://www.example.com/test-icon.png" }})
+    })
     visibility: Place.PrivateVisibility
 }

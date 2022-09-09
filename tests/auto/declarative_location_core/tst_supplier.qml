@@ -29,14 +29,13 @@
 import QtQuick
 import QtTest
 import QtLocation
-import "utils.js" as Utils
 
 TestCase {
     id: testCase
 
     name: "Supplier"
 
-    Supplier { id: emptySupplier }
+    property supplier emptySupplier;
 
     function test_empty() {
         compare(emptySupplier.supplierId, "");
@@ -45,9 +44,8 @@ TestCase {
         verify(emptySupplier.icon);
     }
 
-    Supplier {
-        id: qmlSupplier
-
+    property supplier qmlSupplier
+    qmlSupplier {
         supplierId: "test-supplier-id"
         name: "Test Supplier"
         url: "http://example.com/test-supplier-id"
@@ -61,19 +59,5 @@ TestCase {
         compare(qmlSupplier.url, "http://example.com/test-supplier-id");
         verify(qmlSupplier.icon);
         compare(qmlSupplier.icon.parameters.singleUrl, "http://example.com/icons/test-supplier.png");
-    }
-
-    Supplier {
-        id: testSupplier
-    }
-
-    Plugin {
-        id: testPlugin
-        name: "qmlgeo.test.plugin"
-        allowExperimental: true
-    }
-
-    Plugin {
-        id: invalidPlugin
     }
 }

@@ -84,13 +84,12 @@ TestCase {
 
         ratings: ({ average: 3.5, count: 10 })
 
-        supplier: Supplier {
-            name: "Supplier 1"
-            supplierId: "supplier-id-1"
-            url: "http://www.example.com/supplier-id-1/"
-            icon: ({ parameters: { singleUrl: "http://www.example.com/supplier-id-1/icon" }})
-        }
-
+        supplier: ({
+            name: "Supplier 1",
+            supplierId: "supplier-id-1",
+            url: "http://www.example.com/supplier-id-1/",
+            icon: ({ parameters : { singleUrl: "http://www.example.com/supplier-id-1/icon" }})
+        })
         categories: [
             Category {
                 name: "Category 1"
@@ -136,22 +135,8 @@ TestCase {
         }
 
         // check supplier
-        if (place1.supplier === null && place2.supplier !== null)
+        if (place1.supplier !== place2.supplier) {
             return false;
-        if (place1.supplier !== null && place2.supplier === null)
-            return false;
-        if (place1.supplier !== null && place2.supplier !== null) {
-            if (place1.supplier.supplierId !== place2.supplier.supplierId)
-                return false;
-            if (place1.supplier.name !== place2.supplier.name)
-                return false;
-            if (place1.supplier.url !== place2.supplier.url)
-                return false;
-
-            // check supplier icon
-            if (place1.supplier.icon !== place2.supplier.icon) {
-                return false;
-            }
         }
 
         // check ratings
@@ -289,7 +274,7 @@ TestCase {
     }
 
     function test_supplier() {
-        var supplier = Qt.createQmlObject('import QtLocation 5.3; Supplier { supplierId: "sup-id-1"; name: "Category 1" }', testCase, "Supplier1");
+        var supplier = savePlace.supplier;
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
@@ -314,8 +299,8 @@ TestCase {
         compare(signalSpy.count, 1);
 
         // reset by assignment
-        testPlace.supplier = null;
-        compare(testPlace.supplier, null);
+        testPlace.supplier = emptyPlace.supplier;
+        compare(testPlace.supplier, emptyPlace.supplier);
         compare(signalSpy.count, 2);
 
         signalSpy.destroy();

@@ -57,6 +57,7 @@
 #include <QtLocation/QPlaceContent>
 #include <QtLocation/QPlaceContentReply>
 #include <QtLocation/QPlaceContentRequest>
+#include <QtLocation/QPlaceSupplier>
 
 Q_MOC_INCLUDE(<QtLocation/private/qdeclarativeplace_p.h>)
 
@@ -65,7 +66,6 @@ QT_BEGIN_NAMESPACE
 class QDeclarativePlace;
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
-class QDeclarativeSupplier;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceContentModel : public QAbstractListModel, public QQmlParserStatus
 {
@@ -122,7 +122,7 @@ private Q_SLOTS:
 
 protected:
     QPlaceContent::Collection m_content;
-    QMap<QString, QDeclarativeSupplier *> m_suppliers;
+    QMap<QString, QPlaceSupplier> m_suppliers;
     QMap<QString, QPlaceUser>m_users;
 
 private:

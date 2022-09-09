@@ -56,8 +56,6 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeSupplier;
-
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceImageModel : public QDeclarativePlaceContentModel
 {
     Q_OBJECT

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -81,6 +81,33 @@ bool QPlaceSupplierPrivate::isEmpty() const
 */
 
 /*!
+    \qmlvaluetype supplier
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
+    \since QtLocation 5.5
+
+    \brief Holds data regarding the supplier of a place, a place's image, review, or editorial.
+
+    Each instance represents a set of data about a supplier, which can include
+    supplier's name, url and icon.  The supplier is typically a business or organization.
+
+    Note: The Places API only supports suppliers as 'retrieve-only' objects.  Submitting
+    suppliers to a provider is not a supported use case.
+
+    \sa ImageModel, ReviewModel, EditorialModel
+
+    \section1 Example
+
+    The following example shows how to create and display a supplier in QML:
+
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
+    \codeline
+    \snippet declarative/places.qml Supplier
+*/
+
+/*!
     Constructs a new supplier object.
 */
 QPlaceSupplier::QPlaceSupplier()
@@ -129,7 +156,19 @@ bool QPlaceSupplier::isEqual(const QPlaceSupplier &other) const noexcept
 }
 
 /*!
-    Returns the name of the supplier which can be displayed to the user.
+    \qmlproperty string Supplier::name
+
+    This property holds the name of the supplier which can be displayed
+    to the user.
+
+    The name can potentially be localized.  The language is dependent on the
+    entity that sets it, typically this is the \l Plugin.  The \l {Plugin::locales}
+    property defines what language is used.
+*/
+
+/*!
+    \property QPlaceSupplier::name
+    \brief the name of the supplier which can be displayed to the user.
 
     The name can potentially be localized. The language is dependent on the
     entity that sets it, typically this is the QPlaceManager.
@@ -149,9 +188,19 @@ void QPlaceSupplier::setName(const QString &name)
 }
 
 /*!
-    Returns the identifier of the supplier. The identifier is unique
-    to the manager backend which provided the supplier and is generally
+    \qmlproperty string Supplier::supplierId
+
+    This property holds the identifier of the supplier.  The identifier is unique
+    to the Plugin backend which provided the supplier and is generally
     not suitable for displaying to the user.
+*/
+
+/*!
+    \property QPlaceSupplier::supplierId
+    \brief the identifier of the supplier.
+
+    The identifier is unique to the manager backend which provided the supplier
+    and is generally not suitable for displaying to the user.
 */
 QString QPlaceSupplier::supplierId() const
 {
@@ -167,7 +216,14 @@ void QPlaceSupplier::setSupplierId(const QString &identifier)
 }
 
 /*!
-    Returns the URL of the supplier's website.
+    \qmlproperty url Supplier::url
+
+    This property holds the URL of the supplier's website.
+*/
+
+/*!
+    \property QPlaceSupplier::url
+    \brief the URL of the supplier's website.
 */
 QUrl QPlaceSupplier::url() const
 {
@@ -183,7 +239,14 @@ void QPlaceSupplier::setUrl(const QUrl &url)
 }
 
 /*!
-    Returns the icon of the supplier.
+    \qmlproperty PlaceIcon Supplier::icon
+
+    This property holds the icon of the supplier.
+*/
+
+/*!
+    \property QPlaceSupplier::icon
+    \brief the icon of the supplier.
 */
 QPlaceIcon QPlaceSupplier::icon() const
 {
@@ -205,3 +268,5 @@ bool QPlaceSupplier::isEmpty() const
 {
     return d->isEmpty();
 }
+
+#include "moc_qplacesupplier.cpp"

@@ -123,10 +123,7 @@ int QDeclarativePlaceContentModel::totalCount() const
 void QDeclarativePlaceContentModel::clearData()
 {
     m_users.clear();
-
-    qDeleteAll(m_suppliers);
     m_suppliers.clear();
-
     m_content.clear();
 
     m_contentCount = -1;
@@ -156,10 +153,8 @@ void QDeclarativePlaceContentModel::initializeCollection(int totalCount, const Q
             continue;
 
         m_content.insert(i.key(), content);
-        if (!m_suppliers.contains(content.supplier().supplierId())) {
-            m_suppliers.insert(content.supplier().supplierId(),
-                               new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
-        }
+        if (!m_suppliers.contains(content.supplier().supplierId()))
+            m_suppliers.insert(content.supplier().supplierId(), content.supplier());
         if (!m_users.contains(content.user().userId()))
             m_users.insert(content.user().userId(), content.user());
     }
@@ -198,7 +193,7 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
 
     switch (role) {
     case SupplierRole:
-        return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(content.supplier().supplierId())));
+        return QVariant::fromValue(m_suppliers.value(content.supplier().supplierId()));
     case PlaceUserRole:
         return QVariant::fromValue(m_users.value(content.user().userId()));
     case AttributionRole:
@@ -338,10 +333,8 @@ void QDeclarativePlaceContentModel::fetchFinished()
                     const QPlaceContent &content = contents.value(i);
 
                     m_content.insert(i, content);
-                    if (!m_suppliers.contains(content.supplier().supplierId())) {
-                        m_suppliers.insert(content.supplier().supplierId(),
-                                           new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
-                    }
+                    if (!m_suppliers.contains(content.supplier().supplierId()))
+                        m_suppliers.insert(content.supplier().supplierId(), content.supplier());
                     if (!m_users.contains(content.user().userId()))
                         m_users.insert(content.user().userId(), content.user());
                 }
@@ -363,10 +356,8 @@ void QDeclarativePlaceContentModel::fetchFinished()
                 for (int i = startIndex; i <= currentIndex; ++i) {
                     const QPlaceContent &content = contents.value(i);
                     m_content.insert(i, content);
-                    if (!m_suppliers.contains(content.supplier().supplierId())) {
-                        m_suppliers.insert(content.supplier().supplierId(),
-                                           new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
-                    }
+                    if (!m_suppliers.contains(content.supplier().supplierId()))
+                        m_suppliers.insert(content.supplier().supplierId(), content.supplier());
                     if (!m_users.contains(content.user().userId()))
                         m_users.insert(content.user().userId(), content.user());
                 }

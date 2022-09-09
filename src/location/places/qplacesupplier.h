@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -53,6 +53,12 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceSupplierPrivate, Q_LOCATIO
 
 class Q_LOCATION_EXPORT QPlaceSupplier
 {
+    Q_GADGET
+    Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId)
+    Q_PROPERTY(QUrl url READ url WRITE setUrl)
+    Q_PROPERTY(QPlaceIcon icon READ icon WRITE setIcon)
+
 public:
     QPlaceSupplier();
     QPlaceSupplier(const QPlaceSupplier &other) noexcept;
