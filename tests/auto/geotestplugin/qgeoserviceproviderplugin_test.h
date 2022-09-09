@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -34,10 +34,10 @@
 
 QT_USE_NAMESPACE
 
-class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProviderFactoryV2
+class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QGeoServiceProviderFactoryV2)
+    Q_INTERFACES(QGeoServiceProviderFactory)
     Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/6.0"
                       FILE "geotestplugin.json")
 

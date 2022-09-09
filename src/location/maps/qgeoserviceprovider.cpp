@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -366,9 +366,7 @@ template <> QPlaceManagerEngine *createEngine<QPlaceManagerEngine>(QGeoServicePr
 }
 template <> QNavigationManagerEngine *createEngine<QNavigationManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
-    if (!d_ptr->factoryV2)
-        return nullptr;
-    return d_ptr->factoryV2->createNavigationManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->navigationError), &(d_ptr->navigationErrorString));
+    return d_ptr->factory->createNavigationManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->navigationError), &(d_ptr->navigationErrorString));
 }
 
 /* Template for generating the code for each of the geocodingManager(),
@@ -800,7 +798,7 @@ void QGeoServiceProviderPrivate::unload()
     delete navigationManager;
     navigationManager = nullptr;
 
-    factory = factoryV2 = factoryV3 = nullptr;
+    factory = nullptr;
     error = QGeoServiceProvider::NoError;
     errorString = QLatin1String("");
     metaData = QCborMap();
@@ -830,7 +828,7 @@ void QGeoServiceProviderPrivate::filterParameterMap()
 
 void QGeoServiceProviderPrivate::loadMeta()
 {
-    factory = factoryV2 = factoryV3 = nullptr;
+    factory = nullptr;
     metaData = QCborMap();
     metaData.insert(QStringLiteral("index"), -1);
     error = QGeoServiceProvider::NotSupportedError;
@@ -871,7 +869,7 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
     if (int(metaData.value(QStringLiteral("index")).toDouble()) < 0) {
         error = QGeoServiceProvider::NotSupportedError;
         errorString = QString(QLatin1String("The geoservices provider is not supported."));
-        factory = factoryV2 = factoryV3 = nullptr;
+        factory = nullptr;
         return;
     }
 
@@ -881,23 +879,13 @@ void QGeoServiceProviderPrivate::loadPlugin(const QVariantMap &parameters)
     int idx = int(metaData.value(QStringLiteral("index")).toDouble());
 
     // load the actual plugin
-    QObject *instance = loader()->instance(idx);
-    if (!instance) {
+    factory = qobject_cast<QGeoServiceProviderFactory *>(loader()->instance(idx));
+    if (!factory) {
         error = QGeoServiceProvider::LoaderError;
         errorString = QLatin1String("loader()->instance(idx) failed to return an instance. Set the environment variable QT_DEBUG_PLUGINS to see more details.");
         return;
     }
-    factoryV3 = qobject_cast<QGeoServiceProviderFactoryV3 *>(instance);
-    if (!factoryV3) {
-        factoryV2 = qobject_cast<QGeoServiceProviderFactoryV2 *>(instance);
-        if (!factoryV2)
-            factory = qobject_cast<QGeoServiceProviderFactory *>(instance);
-        else
-            factory = factoryV2;
-    } else {
-        factory = factoryV2 = factoryV3;
-        factoryV3->setQmlEngine(qmlEngine);
-    }
+    factory->setQmlEngine(qmlEngine);
 }
 
 QMultiHash<QString, QCborMap> QGeoServiceProviderPrivate::plugins(bool reload)

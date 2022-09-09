@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -65,8 +65,6 @@ class QGeoRoutingManager;
 class QGeoMappingManager;
 
 class QGeoServiceProviderFactory;
-class QGeoServiceProviderFactoryV2;
-class QGeoServiceProviderFactoryV3;
 class QQmlEngine;
 
 class QGeoServiceProviderPrivate
@@ -88,8 +86,6 @@ public:
     Flags features(const char *enumName) const;
 
     QGeoServiceProviderFactory *factory;
-    QGeoServiceProviderFactoryV2 *factoryV2 = nullptr;
-    QGeoServiceProviderFactoryV3 *factoryV3 = nullptr;
     QCborMap metaData;
 
     QVariantMap parameterMap;
