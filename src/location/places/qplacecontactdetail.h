@@ -53,6 +53,10 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceContactDetailPrivate, Q_LO
 
 class Q_LOCATION_EXPORT QPlaceContactDetail
 {
+    Q_GADGET
+    Q_PROPERTY(QString label READ label WRITE setLabel)
+    Q_PROPERTY(QString value READ value WRITE setValue)
+
 public:
     static const QString Phone;
     static const QString Email;

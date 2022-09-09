@@ -369,10 +369,15 @@ TestCase {
         verify(!testPlace.extendedAttributes.foo);
     }
 
+    property contactDetail testDetail
+    testDetail {
+        label: "Test Label"
+        value: "Detail Value"
+    }
     function test_contactDetailsProperty() {
         verify(testPlace.contactDetails);
 
-        testPlace.contactDetails["phone"] = Qt.createQmlObject('import QtLocation 5.3; ContactDetail { label: "Test Label"; value: "Detail Value" }', testCase, 'ContactDetail');
+        testPlace.contactDetails["phone"] = testDetail;
 
         verify(testPlace.contactDetails.phone);
         compare(testPlace.contactDetails.phone[0].label, "Test Label");
@@ -493,6 +498,17 @@ TestCase {
         compare(place.visibility, Place.UnspecifiedVisibility);
     }
 
+    property contactDetail detail1
+    detail1 {
+        label: "Detail1"
+        value: "555-detail1"
+    }
+    property contactDetail detail2
+    detail2 {
+        label: "Detail2"
+        value: "555-detail2"
+    }
+
     function test_contactDetails(data) {
         var place = Qt.createQmlObject('import QtLocation 5.3; Place {}', this);
 
@@ -500,14 +516,10 @@ TestCase {
         signalSpy.target = place;
         signalSpy.signalName = data.signalName;
 
-        var detail1 = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', this);
-        detail1.label = "Detail1";
-        detail1.value = "555-detail1";
-
         place.contactDetails[data.contactType] = detail1;
         compare(place.contactDetails[data.contactType].length, 1);
-        compare(place.contactDetails[data.contactType][0].label, "Detail1");
-        compare(place.contactDetails[data.contactType][0].value, "555-detail1");
+        compare(place.contactDetails[data.contactType][0].label, detail1.label);
+        compare(place.contactDetails[data.contactType][0].value, detail1.value);
 
         compare(place[data.primaryValue], "555-detail1");
         compare(signalSpy.count, 1);
@@ -517,22 +529,18 @@ TestCase {
         listView.model = place.contactDetails[data.contactType];
         compare(listView.count, 1);
 
-        var detail2 = Qt.createQmlObject('import QtLocation 5.3; ContactDetail {}', this);
-        detail2.label = "Detail2";
-        detail2.value = "555-detail2";
-
         var details = new Array();
         details.push(detail2);
         details.push(detail1);
 
         place.contactDetails[data.contactType] = details;
         compare(place.contactDetails[data.contactType].length, 2);
-        compare(place.contactDetails[data.contactType][0].label, "Detail2");
-        compare(place.contactDetails[data.contactType][0].value, "555-detail2");
-        compare(place.contactDetails[data.contactType][1].label, "Detail1");
-        compare(place.contactDetails[data.contactType][1].value, "555-detail1");
+        compare(place.contactDetails[data.contactType][0].label, detail2.label);
+        compare(place.contactDetails[data.contactType][0].value, detail2.value);
+        compare(place.contactDetails[data.contactType][1].label, detail1.label);
+        compare(place.contactDetails[data.contactType][1].value, detail1.value);
 
-        compare(place[data.primaryValue], "555-detail2");
+        compare(place[data.primaryValue], detail2.value);
         compare(signalSpy.count, 1);
         signalSpy.clear();
         listView.model = place.contactDetails[data.contactType];

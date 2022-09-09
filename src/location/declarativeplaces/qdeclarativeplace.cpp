@@ -38,7 +38,7 @@
 ****************************************************************************/
 
 #include "qdeclarativeplace_p.h"
-#include "qdeclarativecontactdetail_p.h"
+#include "qdeclarativecontactdetails_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "error_messages_p.h"
 
@@ -401,15 +401,10 @@ QPlace QDeclarativePlace::place() const
         cppDetails.clear();
         if (m_contactDetails->value(key).typeId() == QMetaType::QVariantList) {
             const QVariantList detailsVarList = m_contactDetails->value(key).toList();
-            for (const QVariant &detailVar : detailsVarList) {
-                QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(detailVar.value<QObject *>());
-                if (detail)
-                    cppDetails.append(detail->contactDetail());
-            }
+            for (const QVariant &detailVar : detailsVarList)
+                cppDetails.append(detailVar.value<QPlaceContactDetail>());
         } else {
-            QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(m_contactDetails->value(key).value<QObject *>());
-            if (detail)
-                cppDetails.append(detail->contactDetail());
+            cppDetails.append(m_contactDetails->value(key).value<QPlaceContactDetail>());
         }
         result.setContactDetails(key, cppDetails);
     }
@@ -1083,11 +1078,8 @@ void QDeclarativePlace::synchronizeContacts()
     for (const QString &contactType : m_src.contactTypes()) {
         const QList<QPlaceContactDetail> sourceContacts = m_src.contactDetails(contactType);
         QVariantList declContacts;
-        for (const QPlaceContactDetail &sourceContact : sourceContacts) {
-            QDeclarativeContactDetail *declContact = new QDeclarativeContactDetail(this);
-            declContact->setContactDetail(sourceContact);
-            declContacts.append(QVariant::fromValue(qobject_cast<QObject *>(declContact)));
-        }
+        for (const QPlaceContactDetail &sourceContact : sourceContacts)
+            declContacts.append(QVariant::fromValue(sourceContact));
         m_contactDetails->insert(contactType, declContacts);
     }
     primarySignalsEmission();
@@ -1184,15 +1176,10 @@ QString QDeclarativePlace::primaryValue(const QString &contactType) const
 
     if (value.userType() == QMetaType::QVariantList) {
         QVariantList detailList = m_contactDetails->value(contactType).toList();
-        if (!detailList.isEmpty()) {
-            QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail *>(detailList.at(0).value<QObject *>());
-            if (primaryDetail)
-                return primaryDetail->value();
-        }
-    } else if (value.userType() == QMetaType::QObjectStar) {
-        QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail *>(m_contactDetails->value(contactType).value<QObject *>());
-        if (primaryDetail)
-            return primaryDetail->value();
+        if (!detailList.isEmpty())
+            return detailList.at(0).value<QPlaceContactDetail>().value();
+    } else if (value.metaType() == QMetaType::fromType<QPlaceContactDetail>()) {
+        return value.value<QPlaceContactDetail>().value();
     }
 
     return QString();

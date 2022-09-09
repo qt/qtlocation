@@ -62,7 +62,6 @@
 
 #include <QtPositioningQuick/private/qdeclarativegeolocation_p.h>
 #include <QtLocation/private/qdeclarativecategory_p.h>
-#include <QtLocation/private/qdeclarativecontactdetail_p.h>
 #include <QtLocation/private/qdeclarativereviewmodel_p.h>
 #include <QtLocation/private/qdeclarativeplaceimagemodel_p.h>
 #include <QtLocation/private/qdeclarativeplaceeditorialmodel_p.h>
@@ -72,6 +71,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceReply;
 class QPlaceManager;
 class QPlaceSupplier;
+class QDeclarativeContactDetails;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlParserStatus
 {
@@ -95,7 +95,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlP
     Q_PROPERTY(QDeclarativePlaceEditorialModel *editorialModel READ editorialModel NOTIFY editorialModelChanged)
 
     Q_PROPERTY(QObject *extendedAttributes READ extendedAttributes NOTIFY extendedAttributesChanged)
-    Q_PROPERTY(QObject *contactDetails READ contactDetails NOTIFY contactDetailsChanged)
+    Q_PROPERTY(QDeclarativeContactDetails *contactDetails READ contactDetails NOTIFY contactDetailsChanged)
     Q_PROPERTY(bool detailsFetched READ detailsFetched NOTIFY detailsFetchedChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 

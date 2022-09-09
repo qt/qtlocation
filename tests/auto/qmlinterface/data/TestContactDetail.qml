@@ -27,8 +27,12 @@
 ****************************************************************************/
 
 import QtLocation
+import QtQuick
 
-ContactDetail {
-    label: "Test Contact Detail"
-    value: "Test contact detail value"
+Item {
+    property contactDetail contactDetail
+    contactDetail {
+        label: "Test Contact Detail"
+        value: "Test contact detail value"
+    }
 }

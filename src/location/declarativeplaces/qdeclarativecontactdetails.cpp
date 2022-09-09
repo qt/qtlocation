@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -37,7 +37,9 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativecontactdetail_p.h"
+#include "qdeclarativecontactdetails_p.h"
+
+#include <QPlaceContactDetail>
 
 QT_BEGIN_NAMESPACE
 
@@ -106,121 +108,13 @@ QDeclarativeContactDetails::QDeclarativeContactDetails(QObject *parent)
 
 QVariant QDeclarativeContactDetails::updateValue(const QString &, const QVariant &input)
 {
-    if (input.userType() == QMetaType::QObjectStar) {
-        QDeclarativeContactDetail *detail =
-                        qobject_cast<QDeclarativeContactDetail *>(input.value<QObject *>());
-        if (detail) {
-            QVariantList varList;
-            varList.append(input);
-            return varList;
-        }
+    if (input.metaType() == QMetaType::fromType<QPlaceContactDetail>()) {
+        QVariantList varList;
+        varList.append(input);
+        return varList;
     }
 
     return input;
-}
-
-/*!
-    \qmltype ContactDetail
-    \instantiates QDeclarativeContactDetail
-    \inqmlmodule QtLocation
-    \ingroup qml-QtLocation5-places
-    \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.5
-
-    \brief The ContactDetail type holds a contact detail such as a phone number or a website
-           address.
-
-    The ContactDetail provides a single detail on how one could contact a \l Place.  The
-    ContactDetail consists of a \l label, which is a localized string describing the contact
-    method, and a \l value representing the actual contact detail.
-
-    \section1 Examples
-
-    The following example demonstrates how to assign a single phone number to a place in JavaScript:
-    \snippet declarative/places.qml  ContactDetails write single
-
-    The following demonstrates how to assign multiple phone numbers to a place in JavaScript:
-    \snippet declarative/places.qml  ContactDetails write multiple
-
-    Note, due to limitations of the QQmlPropertyMap, it is not possible
-    to declaratively specify the contact details in QML, it can only be accomplished
-    via JavaScript.
-*/
-QDeclarativeContactDetail::QDeclarativeContactDetail(QObject *parent)
-    : QObject(parent)
-{
-}
-
-QDeclarativeContactDetail::QDeclarativeContactDetail(const QPlaceContactDetail &src, QObject *parent)
-    : QObject(parent), m_contactDetail(src)
-{
-}
-
-QDeclarativeContactDetail::~QDeclarativeContactDetail()
-{
-}
-
-/*!
-    \qmlproperty QPlaceContactDetail QtLocation::ContactDetail::contactDetail
-
-    For details on how to use this property to interface between C++ and QML see
-    "\l {ContactDetail - QDeclarativeContactDetail} {Interfaces between C++ and QML Code}".
-*/
-void QDeclarativeContactDetail::setContactDetail(const QPlaceContactDetail &src)
-{
-    QPlaceContactDetail prevContactDetail = m_contactDetail;
-    m_contactDetail = src;
-
-    if (m_contactDetail.label() != prevContactDetail.label())
-        emit labelChanged();
-    if (m_contactDetail.value() != prevContactDetail.value())
-        emit valueChanged();
-}
-
-QPlaceContactDetail QDeclarativeContactDetail::contactDetail() const
-{
-    return m_contactDetail;
-}
-
-/*!
-    \qmlproperty string QtLocation::ContactDetail::label
-
-    This property holds a label describing the contact detail.
-
-    The label can potentially be localized. The language is dependent on the entity that sets it,
-    typically this is the \l {Plugin}.  The \l {Plugin::locales} property defines
-    what language is used.
-*/
-QString QDeclarativeContactDetail::label() const
-{
-    return m_contactDetail.label();
-}
-
-void QDeclarativeContactDetail::setLabel(const QString &label)
-{
-    if (m_contactDetail.label() != label) {
-        m_contactDetail.setLabel(label);
-        emit labelChanged();
-    }
-}
-
-/*!
-    \qmlproperty string QtLocation::ContactDetail::value
-
-    This property holds the value of the contact detail which may be a phone number, an email
-    address, a website url and so on.
-*/
-QString QDeclarativeContactDetail::value() const
-{
-    return m_contactDetail.value();
-}
-
-void QDeclarativeContactDetail::setValue(const QString &value)
-{
-    if (m_contactDetail.value() != value) {
-        m_contactDetail.setValue(value);
-        emit valueChanged();
-    }
 }
 
 QT_END_NAMESPACE

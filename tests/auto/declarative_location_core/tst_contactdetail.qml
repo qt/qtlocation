@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the test suite of the Qt Toolkit.
@@ -28,23 +28,21 @@
 
 import QtTest
 import QtLocation
-import "utils.js" as Utils
 
 TestCase {
     id: testCase
 
     name: "ContactDetail"
 
-    ContactDetail { id: emptyContactDetail }
+    property contactDetail emptyContactDetail
 
     function test_empty() {
         compare(emptyContactDetail.label, "");
         compare(emptyContactDetail.value, "");
     }
 
-    ContactDetail {
-        id: qmlContactDetail
-
+    property contactDetail qmlContactDetail
+    qmlContactDetail {
         label: "Phone"
         value: "12345"
     }
@@ -52,20 +50,5 @@ TestCase {
     function test_qmlConstructedContactDetail() {
         compare(qmlContactDetail.label, "Phone");
         compare(qmlContactDetail.value, "12345");
-    }
-
-    ContactDetail {
-        id: testContactDetail
-    }
-
-    function test_setAndGet_data() {
-        return [
-            { tag: "label", property: "label", signal: "labelChanged", value: "Phone", reset: "" },
-            { tag: "value", property: "value", signal: "valueChanged", value: "12345", reset: "" },
-        ];
-    }
-
-    function test_setAndGet(data) {
-        Utils.testObjectProperties(testCase, testContactDetail, data);
     }
 }

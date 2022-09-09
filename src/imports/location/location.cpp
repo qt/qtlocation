@@ -60,7 +60,7 @@
 //Place includes
 #include <QtLocation/private/qdeclarativecategory_p.h>
 #include <QtLocation/private/qdeclarativeplace_p.h>
-#include <QtLocation/private/qdeclarativecontactdetail_p.h>
+#include <QtLocation/private/qdeclarativecontactdetails_p.h>
 
 #include <QtLocation/private/qdeclarativesupportedcategoriesmodel_p.h>
 #include <QtLocation/private/qdeclarativesearchresultmodel_p.h>
@@ -200,7 +200,6 @@ public:
             qmlRegisterUncreatableType<QQmlPropertyMap              >(uri, major, minor, "ExtendedAttributes", "ExtendedAttributes instances cannot be instantiated.  "
                                                                    "Only Place types have ExtendedAttributes and they cannot be re-assigned "
                                                                    "(but can be modified).");
-            qmlRegisterType<QDeclarativeContactDetail               >(uri, major, minor, "ContactDetail");
             qmlRegisterUncreatableType<QDeclarativeContactDetails   >(uri, major, minor, "ContactDetails", "ContactDetails instances cannot be instantiated.  "
                                                                                                 "Only Place types have ContactDetails and they cannot "
                                                                                                 "be re-assigned (but can be modified).");
@@ -266,7 +265,6 @@ public:
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>();
             qRegisterMetaType<QPlace>();
-            qRegisterMetaType<QPlaceContactDetail>();
 
             registerConverterToGadget<QPlaceRatings>();
             registerConverterToGadget<QPlaceIcon>();

@@ -129,8 +129,8 @@ qt_internal_add_module(Location
         declarativemaps/qgeosimplify.cpp declarativemaps/qgeosimplify_p.h
         declarativeplaces/qdeclarativecategory.cpp
         declarativeplaces/qdeclarativecategory_p.h
-        declarativeplaces/qdeclarativecontactdetail.cpp
-        declarativeplaces/qdeclarativecontactdetail_p.h
+        declarativeplaces/qdeclarativecontactdetails.cpp
+        declarativeplaces/qdeclarativecontactdetails_p.h
         declarativeplaces/qdeclarativeplacecontentmodel.cpp
         declarativeplaces/qdeclarativeplacecontentmodel_p.h
         declarativeplaces/qdeclarativeplace.cpp

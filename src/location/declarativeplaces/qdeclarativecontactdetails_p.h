@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -52,8 +52,6 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QtCore/QObject>
-#include <QtLocation/QPlaceContactDetail>
 #include <QtQml/QQmlPropertyMap>
 #include <QtQml/qqml.h>
 
@@ -68,40 +66,8 @@ public:
     QVariant updateValue(const QString &key, const QVariant &input) override;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeContactDetail : public QObject
-{
-    Q_OBJECT
-
-    Q_PROPERTY(QPlaceContactDetail contactDetail READ contactDetail WRITE setContactDetail)
-    Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
-    Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged)
-
-public:
-    explicit QDeclarativeContactDetail(QObject *parent = 0);
-    explicit QDeclarativeContactDetail(const QPlaceContactDetail &src, QObject *parent = 0);
-    ~QDeclarativeContactDetail();
-
-    QPlaceContactDetail contactDetail() const;
-    void setContactDetail(const QPlaceContactDetail &contactDetail);
-
-    QString label() const;
-    void setLabel(const QString &label);
-
-    QString value() const;
-    void setValue(const QString &value);
-
-Q_SIGNALS:
-    void labelChanged();
-    void valueChanged();
-
-private:
-    QPlaceContactDetail m_contactDetail;
-
-};
-
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QDeclarativeContactDetail)
 QML_DECLARE_TYPE(QDeclarativeContactDetails)
 
 #endif
