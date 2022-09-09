@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -53,6 +53,10 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceAttributePrivate, Q_LOCATI
 
 class Q_LOCATION_EXPORT QPlaceAttribute
 {
+    Q_GADGET
+    Q_PROPERTY(QString label READ label WRITE setLabel)
+    Q_PROPERTY(QString text READ text WRITE setText)
+
 public:
     static const QString OpeningHours;
     static const QString Payment;

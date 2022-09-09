@@ -29,25 +29,27 @@
 import QtQuick
 import QtTest
 import QtLocation
-import "utils.js" as Utils
 
 TestCase {
     id: testCase
 
     name: "PlaceAttribute"
 
-    PlaceAttribute {
-        id: testAttribute
+    property placeAttribute testAttribute
+
+    function test_default() {
+        compare(testAttribute.label, "")
+        compare(testAttribute.text, "")
     }
 
-    function test_setAndGet_data() {
-        return [
-            { tag: "label", property: "label", signal: "labelChanged", value: "Test Label", reset: "" },
-            { tag: "text", property: "text", signal: "textChanged", value: "Test Text", reset: "" },
-        ];
+    property placeAttribute qmlAttribute
+    qmlAttribute {
+        label: "Label"
+        text: "Text"
     }
 
-    function test_setAndGet(data) {
-        Utils.testObjectProperties(testCase, testAttribute, data);
+    function test_initialized() {
+        compare(qmlAttribute.label, "Label")
+        compare(qmlAttribute.text, "Text")
     }
 }

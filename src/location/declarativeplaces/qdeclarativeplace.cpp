@@ -40,7 +40,6 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativecontactdetail_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativeplaceicon_p.h"
 #include "error_messages_p.h"
 
@@ -49,6 +48,7 @@
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlaceAttribute>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceDetailsReply>
 #include <QtLocation/QPlaceReply>
@@ -1077,7 +1077,7 @@ void QDeclarativePlace::pullExtendedAttributes()
     const QStringList attributeTypes = m_src.extendedAttributeTypes();
     for (const QString &attributeType : attributeTypes) {
         m_extendedAttributes->insert(attributeType,
-            QVariant::fromValue(new QDeclarativePlaceAttribute(m_src.extendedAttribute(attributeType))));
+            QVariant::fromValue(m_src.extendedAttribute(attributeType)));
     }
 
     emit extendedAttributesChanged();

@@ -132,8 +132,6 @@ qt_internal_add_module(Location
         declarativeplaces/qdeclarativecategory_p.h
         declarativeplaces/qdeclarativecontactdetail.cpp
         declarativeplaces/qdeclarativecontactdetail_p.h
-        declarativeplaces/qdeclarativeplaceattribute.cpp
-        declarativeplaces/qdeclarativeplaceattribute_p.h
         declarativeplaces/qdeclarativeplacecontentmodel.cpp
         declarativeplaces/qdeclarativeplacecontentmodel_p.h
         declarativeplaces/qdeclarativeplace.cpp

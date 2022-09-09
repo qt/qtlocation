@@ -27,8 +27,12 @@
 ****************************************************************************/
 
 import QtLocation
+import QtQuick
 
-PlaceAttribute {
-    label: "Test Attribute"
-    text: "Test attribute text"
+Item {
+    property placeAttribute attribute
+    attribute {
+        label: "Test Attribute"
+        text: "Test attribute text"
+    }
 }

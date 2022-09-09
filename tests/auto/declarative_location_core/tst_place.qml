@@ -416,10 +416,15 @@ TestCase {
         signalSpy.destroy();
     }
 
+    property placeAttribute fooAttribute
+    fooAttribute {
+        label: "Foo label"
+        text: "Foo"
+    }
     function test_extendedAttributes() {
         verify(testPlace.extendedAttributes);
 
-        testPlace.extendedAttributes["foo"] = Qt.createQmlObject('import QtLocation 5.3; PlaceAttribute { text: "Foo"; label: "Foo label" }', testCase, 'PlaceAttribute');
+        testPlace.extendedAttributes["foo"] = fooAttribute;
 
         verify(testPlace.extendedAttributes.foo);
         compare(testPlace.extendedAttributes.foo.text, "Foo");
