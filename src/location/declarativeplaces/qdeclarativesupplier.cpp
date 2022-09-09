@@ -39,6 +39,7 @@
 
 #include "qdeclarativesupplier_p.h"
 
+#include <QtLocation/QPlaceIcon>
 #include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
@@ -94,9 +95,6 @@ QDeclarativeSupplier::~QDeclarativeSupplier()
 */
 void QDeclarativeSupplier::componentComplete()
 {
-    // delayed instantiation of QObject based properties.
-    if (!m_icon)
-        m_icon = new QDeclarativePlaceIcon(this);
 }
 
 /*!
@@ -105,7 +103,7 @@ void QDeclarativeSupplier::componentComplete()
     For details on how to use this property to interface between C++ and QML see
     "\l {Supplier - QPlaceSupplier} {Interfaces between C++ and QML Code}".
 */
-void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin)
+void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *)
 {
     QPlaceSupplier previous = m_src;
     m_src = src;
@@ -119,18 +117,12 @@ void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src, QDeclarativeGe
     if (previous.url() != m_src.url())
         emit urlChanged();
 
-    if (m_icon && m_icon->parent() == this) {
-        m_icon->setPlugin(plugin);
-        m_icon->setIcon(m_src.icon());
-    } else if (!m_icon || m_icon->parent() != this) {
-        m_icon = new QDeclarativePlaceIcon(m_src.icon(), plugin, this);
-        emit iconChanged();
-    }
+    setIcon(m_src.icon());
 }
 
 QPlaceSupplier QDeclarativeSupplier::supplier()
 {
-    m_src.setIcon(m_icon ? m_icon->icon() : QPlaceIcon());
+    m_src.setIcon(m_icon);
     return m_src;
 }
 
@@ -203,18 +195,15 @@ QUrl QDeclarativeSupplier::url() const
 
     This property holds the icon of the supplier.
 */
-QDeclarativePlaceIcon *QDeclarativeSupplier::icon() const
+QPlaceIcon QDeclarativeSupplier::icon() const
 {
     return m_icon;
 }
 
-void QDeclarativeSupplier::setIcon(QDeclarativePlaceIcon *icon)
+void QDeclarativeSupplier::setIcon(const QPlaceIcon &icon)
 {
     if (m_icon == icon)
         return;
-
-    if (m_icon && m_icon->parent() == this)
-        delete m_icon;
 
     m_icon = icon;
     emit iconChanged();

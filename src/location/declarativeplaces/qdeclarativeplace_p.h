@@ -58,6 +58,7 @@
 #include <QtQml/QQmlPropertyMap>
 #include <QtLocation/QPlace>
 #include <QtLocation/QPlaceRatings>
+#include <QtLocation/QPlaceIcon>
 
 #include <QtPositioningQuick/private/qdeclarativegeolocation_p.h>
 #include <QtLocation/private/qdeclarativecategory_p.h>
@@ -70,9 +71,7 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceReply;
-
 class QPlaceManager;
-class QDeclarativePlaceIcon;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlParserStatus
 {
@@ -86,7 +85,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlP
     Q_PROPERTY(QDeclarativeGeoLocation *location READ location WRITE setLocation NOTIFY locationChanged)
     Q_PROPERTY(QPlaceRatings ratings READ ratings WRITE setRatings NOTIFY ratingsChanged)
     Q_PROPERTY(QDeclarativeSupplier *supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
-    Q_PROPERTY(QDeclarativePlaceIcon *icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QPlaceIcon icon READ icon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
     Q_PROPERTY(QString attribution READ attribution WRITE setAttribution NOTIFY attributionChanged)
@@ -150,8 +149,8 @@ public:
     void setRatings(const QPlaceRatings &ratings);
     QDeclarativeSupplier *supplier() const;
     void setSupplier(QDeclarativeSupplier *supplier);
-    QDeclarativePlaceIcon *icon() const;
-    void setIcon(QDeclarativePlaceIcon *icon);
+    QPlaceIcon icon() const;
+    void setIcon(const QPlaceIcon &icon);
     QString name() const;
     void setName(const QString &name);
     QString placeId() const;
@@ -231,7 +230,7 @@ private:
     QDeclarativeGeoLocation *m_location = nullptr;
     QPlaceRatings m_ratings;
     QDeclarativeSupplier *m_supplier = nullptr;
-    QDeclarativePlaceIcon *m_icon = nullptr;
+    QPlaceIcon m_icon;
     QDeclarativeReviewModel *m_reviewModel = nullptr;
     QDeclarativePlaceImageModel *m_imageModel = nullptr;
     QDeclarativePlaceEditorialModel *m_editorialModel = nullptr;

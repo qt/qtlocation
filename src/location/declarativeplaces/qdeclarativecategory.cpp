@@ -38,12 +38,12 @@
 ****************************************************************************/
 
 #include "qdeclarativecategory_p.h"
-#include "qdeclarativeplaceicon_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "error_messages_p.h"
 
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceIdReply>
 #include <QCoreApplication>
@@ -99,12 +99,6 @@ QDeclarativeCategory::~QDeclarativeCategory() {}
 // From QQmlParserStatus
 void QDeclarativeCategory::componentComplete()
 {
-    // delayed instantiation of QObject based properties.
-    if (!m_icon) {
-        m_icon = new QDeclarativePlaceIcon(this);
-        m_icon->setPlugin(m_plugin);
-    }
-
     m_complete = true;
 }
 
@@ -121,9 +115,6 @@ void QDeclarativeCategory::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     m_plugin = plugin;
     if (m_complete)
         emit pluginChanged();
-
-    if (m_icon && m_icon->parent() == this && !m_icon->plugin())
-        m_icon->setPlugin(m_plugin);
 
     if (!m_plugin)
         return;
@@ -174,18 +165,12 @@ void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
     if (category.categoryId() != previous.categoryId())
         emit categoryIdChanged();
 
-    if (m_icon && m_icon->parent() == this) {
-        m_icon->setPlugin(m_plugin);
-        m_icon->setIcon(m_category.icon());
-    } else if (!m_icon || m_icon->parent() != this) {
-        m_icon = new QDeclarativePlaceIcon(m_category.icon(), m_plugin, this);
-        emit iconChanged();
-    }
+    setIcon(m_category.icon());
 }
 
 QPlaceCategory QDeclarativeCategory::category()
 {
-    m_category.setIcon(m_icon ? m_icon->icon() : QPlaceIcon());
+    m_category.setIcon(m_icon);
     return m_category;
 }
 
@@ -275,18 +260,15 @@ void QDeclarativeCategory::setVisibility(Visibility visibility)
     This property holds the image source associated with the category. To display the icon you can use 
     the \l Image type.
 */
-QDeclarativePlaceIcon *QDeclarativeCategory::icon() const
+QPlaceIcon QDeclarativeCategory::icon() const
 {
     return m_icon;
 }
 
-void QDeclarativeCategory::setIcon(QDeclarativePlaceIcon *icon)
+void QDeclarativeCategory::setIcon(const QPlaceIcon &icon)
 {
     if (m_icon == icon)
         return;
-
-    if (m_icon && m_icon->parent() == this)
-        delete m_icon;
 
     m_icon = icon;
     emit iconChanged();

@@ -56,11 +56,13 @@
 #include <QtCore/QUrl>
 #include <QtQml/qqml.h>
 #include <QtQml/QQmlParserStatus>
+#include <QtLocation/qplaceicon.h>
 #include <QtLocation/qplacesupplier.h>
 
-#include <QtLocation/private/qdeclarativeplaceicon_p.h>
 
 QT_BEGIN_NAMESPACE
+
+class QDeclarativeGeoServiceProvider;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSupplier : public QObject, public QQmlParserStatus
 {
@@ -70,7 +72,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSupplier : public QObject, public QQ
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId NOTIFY supplierIdChanged)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-    Q_PROPERTY(QDeclarativePlaceIcon *icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QPlaceIcon icon READ icon WRITE setIcon NOTIFY iconChanged)
 
     Q_INTERFACES(QQmlParserStatus)
 
@@ -93,8 +95,8 @@ public:
     QUrl url() const;
     void setUrl(const QUrl &data);
 
-    QDeclarativePlaceIcon *icon() const;
-    void setIcon(QDeclarativePlaceIcon *icon);
+    QPlaceIcon icon() const;
+    void setIcon(const QPlaceIcon &icon);
 
 Q_SIGNALS:
     void nameChanged();
@@ -104,7 +106,7 @@ Q_SIGNALS:
 
 private:
     QPlaceSupplier m_src;
-    QDeclarativePlaceIcon *m_icon = nullptr;
+    QPlaceIcon m_icon;
 };
 
 QT_END_NAMESPACE

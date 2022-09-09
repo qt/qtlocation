@@ -39,7 +39,6 @@
 ****************************************************************************/
 
 #include "qdeclarativesupportedcategoriesmodel_p.h"
-#include "qdeclarativeplaceicon_p.h"
 #include "qgeoserviceprovider.h"
 #include "error_messages_p.h"
 #include <QtCore/private/qobject_p.h>

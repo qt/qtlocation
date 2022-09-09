@@ -51,10 +51,15 @@ QT_BEGIN_NAMESPACE
 class QUrl;
 class QPlaceManager;
 class QPlaceIconPrivate;
+
 QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceIconPrivate, Q_LOCATION_EXPORT)
 
 class Q_LOCATION_EXPORT QPlaceIcon
 {
+    Q_GADGET
+    Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters)
+    Q_PROPERTY(QPlaceManager *manager READ manager WRITE setManager)
+
 public:
     static const QString SingleUrl;
 
@@ -73,7 +78,7 @@ public:
     friend inline bool operator!=(const QPlaceIcon &lhs, const QPlaceIcon &rhs) noexcept
     { return !lhs.isEqual(rhs); }
 
-    QUrl url(const QSize &size = QSize()) const;
+    Q_INVOKABLE QUrl url(const QSize &size = QSize()) const;
 
     QPlaceManager *manager() const;
     void setManager(QPlaceManager *manager);

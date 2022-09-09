@@ -39,7 +39,6 @@
 
 #include "qdeclarativesearchresultmodel_p.h"
 #include "qdeclarativeplace_p.h"
-#include "qdeclarativeplaceicon_p.h"
 
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlInfo>
@@ -612,7 +611,6 @@ void QDeclarativeSearchResultModel::clearData(bool suppressSignal)
 
     qDeleteAll(m_places);
     m_places.clear();
-    qDeleteAll(m_icons);
     m_icons.clear();
     if (!m_results.isEmpty()) {
         m_results.clear();
@@ -636,7 +634,7 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
     case TitleRole:
         return result.title();
     case IconRole:
-        return QVariant::fromValue(static_cast<QObject *>(m_icons.at(index.row())));
+        return QVariant::fromValue(m_icons.at(index.row()));
     case DistanceRole:
         if (result.type() == QPlaceSearchResult::PlaceResult) {
             QPlaceResult placeResult = result;
@@ -924,10 +922,8 @@ void QDeclarativeSearchResultModel::updateLayout(const QList<QPlace> &favoritePl
             m_places.append(0);
         }
 
-        QDeclarativePlaceIcon *icon = 0;
         if (!result.icon().isEmpty())
-            icon = new QDeclarativePlaceIcon(result.icon(), plugin(), this);
-        m_icons.append(icon);
+            m_icons.append(result.icon());
     }
 
     if (m_incremental)

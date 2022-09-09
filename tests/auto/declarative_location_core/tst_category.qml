@@ -57,11 +57,7 @@ TestCase {
         name: "Test Category"
         visibility: Category.DeviceVisibility
 
-        icon: Icon {
-            Component.onCompleted:  {
-                parameters.singleUrl = "http://example.com/icons/test-category.png"
-            }
-        }
+        icon: ({ parameters: { singleUrl: "http://example.com/icons/test-category.png" }})
     }
 
     function test_qmlConstructedCategory() {
@@ -73,7 +69,6 @@ TestCase {
         verify(qmlCategory.icon);
         compare(qmlCategory.icon.url(), "http://example.com/icons/test-category.png");
         compare(qmlCategory.icon.parameters.singleUrl, "http://example.com/icons/test-category.png");
-        compare(qmlCategory.icon.plugin, qmlCategory.plugin);
     }
 
     Category {
@@ -90,9 +85,7 @@ TestCase {
         id: invalidPlugin
     }
 
-    Icon {
-        id: testIcon
-    }
+    property icon testIcon: ({ parameters: { singleUrl: "example.com" } })
 
     Category {
         id: saveCategory
@@ -116,7 +109,6 @@ TestCase {
             { tag: "categoryId", property: "categoryId", signal: "categoryIdChanged", value: "test-category-id-1", reset: "" },
             { tag: "visibility", property: "visibility", signal: "visibilityChanged", value: Place.PublicVisibility, reset: Place.UnspecifiedVisibility },
             { tag: "plugin", property: "plugin", signal: "pluginChanged", value: testPlugin },
-            { tag: "icon", property: "icon", signal: "iconChanged", value: testIcon }
         ];
     }
 

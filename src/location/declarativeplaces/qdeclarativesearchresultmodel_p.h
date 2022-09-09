@@ -55,10 +55,10 @@
 #include <QtLocation/private/qdeclarativesearchmodelbase_p.h>
 #include <QtLocation/private/qdeclarativecategory_p.h>
 #include <QtLocation/private/qdeclarativeplace_p.h>
-#include <QtLocation/private/qdeclarativeplaceicon_p.h>
 
 QT_BEGIN_NAMESPACE
 
+class QPlaceIcon;
 class QDeclarativeGeoServiceProvider;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
@@ -179,7 +179,7 @@ private:
     QList<QPlaceSearchResult> m_results;
     QList<QPlaceSearchResult> m_resultsBuffer;
     QList<QDeclarativePlace *> m_places;
-    QList<QDeclarativePlaceIcon *> m_icons;
+    QList<QPlaceIcon> m_icons;
 
     QDeclarativeGeoServiceProvider *m_favoritesPlugin = nullptr;
     QVariantMap m_matchParameters;

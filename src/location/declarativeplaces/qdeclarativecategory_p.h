@@ -57,14 +57,12 @@
 #include <QObject>
 
 #include <QtLocation/qplacecategory.h>
+#include <QtLocation/qplaceicon.h>
 
 #include <QtLocation/private/qdeclarativegeoserviceprovider_p.h>
 
-Q_MOC_INCLUDE(<QtLocation/private/qdeclarativeplaceicon_p.h>)
-
 QT_BEGIN_NAMESPACE
 
-class QDeclarativePlaceIcon;
 class QPlaceReply;
 class QPlaceManager;
 
@@ -80,7 +78,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCategory : public QObject, public QQ
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
-    Q_PROPERTY(QDeclarativePlaceIcon *icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QPlaceIcon icon READ icon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
     Q_INTERFACES(QQmlParserStatus)
@@ -116,8 +114,8 @@ public:
     Visibility visibility() const;
     void setVisibility(Visibility visibility);
 
-    QDeclarativePlaceIcon *icon() const;
-    void setIcon(QDeclarativePlaceIcon *icon);
+    QPlaceIcon icon() const;
+    void setIcon(const QPlaceIcon &icon);
 
     Q_INVOKABLE QString errorString() const;
 
@@ -143,7 +141,7 @@ private:
     QPlaceManager *manager();
 
     QPlaceCategory m_category;
-    QDeclarativePlaceIcon *m_icon = nullptr;
+    QPlaceIcon m_icon;
     QDeclarativeGeoServiceProvider *m_plugin = nullptr;
     QPlaceReply *m_reply = nullptr;
     bool m_complete = false;

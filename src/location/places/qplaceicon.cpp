@@ -43,6 +43,7 @@
 #include "qplacemanagerengine.h"
 
 #include <QtCore/QVariant>
+#include <QtQml/QJSValue>
 
 QT_USE_NAMESPACE
 
@@ -138,6 +139,11 @@ bool QPlaceIcon::isEqual(const QPlaceIcon &other) const noexcept
     return *d == *(other.d);
 }
 
+/* ### Need to evaluate whether we need this at all (or perhaps only for tests)
+    \qmlproperty Plugin Icon::plugin
+
+    The property holds the plugin that is responsible for managing this icon.
+*/
 
 /*!
     Returns an icon URL according to the given \a size.
@@ -210,3 +216,5 @@ bool QPlaceIcon::isEmpty() const
     return (d->manager == 0
             && d->parameters.isEmpty());
 }
+
+#include "moc_qplaceicon.cpp"

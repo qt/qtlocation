@@ -29,8 +29,7 @@
 import QtQuick
 import QtLocation
 
-Icon {
-    Component.onCompleted: {
-        parameters.singleUrl = "http://www.example.com/test-icon.png"
-    }
+Item {
+    id: testIcon
+    property icon icon: ({ parameters: { singleUrl: "http://www.example.com/test-icon.png" }})
 }

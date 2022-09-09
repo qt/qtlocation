@@ -60,7 +60,6 @@
 //Place includes
 #include <QtLocation/private/qdeclarativecategory_p.h>
 #include <QtLocation/private/qdeclarativeplace_p.h>
-#include <QtLocation/private/qdeclarativeplaceicon_p.h>
 #include <QtLocation/private/qdeclarativesupplier_p.h>
 #include <QtLocation/private/qdeclarativecontactdetail_p.h>
 
@@ -188,7 +187,6 @@ public:
             qmlRegisterType<QDeclarativePlaceEditorialModel         >(uri, major, minor, "EditorialModel");
             qmlRegisterType<QDeclarativePlaceImageModel             >(uri, major, minor, "ImageModel");
             qmlRegisterType<QDeclarativePlace                       >(uri, major, minor, "Place");
-            qmlRegisterType<QDeclarativePlaceIcon                   >(uri, major, minor, "Icon");
             qmlRegisterType<QDeclarativeReviewModel                 >(uri, major, minor, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier                    >(uri, major, minor, "Supplier");
             qmlRegisterType<QDeclarativeRectangleMapItem            >(uri, major, minor, "MapRectangle");
@@ -270,11 +268,11 @@ public:
             //registrations below are version independent
             qRegisterMetaType<QPlaceCategory>();
             qRegisterMetaType<QPlace>();
-            qRegisterMetaType<QPlaceIcon>();
             qRegisterMetaType<QPlaceSupplier>();
             qRegisterMetaType<QPlaceContactDetail>();
 
             registerConverterToGadget<QPlaceRatings>();
+            registerConverterToGadget<QPlaceIcon>();
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

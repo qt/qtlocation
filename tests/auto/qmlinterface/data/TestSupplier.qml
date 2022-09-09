@@ -32,5 +32,5 @@ Supplier {
     name: "Test supplier"
     supplierId: "test-supplier-id"
     url: "http://www.example.com/test-supplier"
-    icon: TestIcon { }
+    icon: ({ parameters: { singleUrl: "http://www.example.com/test-icon.png" }})
 }

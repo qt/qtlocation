@@ -52,11 +52,7 @@ TestCase {
         name: "Test Supplier"
         url: "http://example.com/test-supplier-id"
 
-        icon: Icon {
-            Component.onCompleted:  {
-                parameters.singleUrl = "http://example.com/icons/test-supplier.png"
-            }
-        }
+        icon: ({ parameters: { singleUrl: "http://example.com/icons/test-supplier.png" }})
     }
 
     function test_qmlConstructedSupplier() {
@@ -79,22 +75,5 @@ TestCase {
 
     Plugin {
         id: invalidPlugin
-    }
-
-    Icon {
-        id: testIcon
-    }
-
-    function test_setAndGet_data() {
-        return [
-            { tag: "name", property: "name", signal: "nameChanged", value: "Test Supplier", reset: "" },
-            { tag: "supplierId", property: "supplierId", signal: "supplierIdChanged", value: "test-supplier-id-1", reset: "" },
-            { tag: "url", property: "url", signal: "urlChanged", value: "http://example.com/test-supplier-id-1", reset: "" },
-            { tag: "icon", property: "icon", signal: "iconChanged", value: testIcon }
-        ];
-    }
-
-    function test_setAndGet(data) {
-        Utils.testObjectProperties(testCase, testSupplier, data);
     }
 }

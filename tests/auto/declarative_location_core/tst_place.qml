@@ -88,12 +88,7 @@ TestCase {
             name: "Supplier 1"
             supplierId: "supplier-id-1"
             url: "http://www.example.com/supplier-id-1/"
-            icon: Icon{
-                plugin: testPlugin
-                Component.onCompleted:  {
-                    parameters.singleUrl = "http://www.example.com/supplier-id-1/icon"
-                }
-            }
+            icon: ({ parameters: { singleUrl: "http://www.example.com/supplier-id-1/icon" }})
         }
 
         categories: [
@@ -109,11 +104,7 @@ TestCase {
             }
         ]
 
-        icon: Icon {
-            Component.onCompleted: {
-                savePlace.icon.parameters.singleUrl = "http://example.com/test-place.png";
-            }
-        }
+        icon: ({ parameters: { singleUrl: "http://example.com/test-place.png" } })
     }
 
      Place {
@@ -158,24 +149,8 @@ TestCase {
                 return false;
 
             // check supplier icon
-            if (place1.supplier.icon === null && place2.supplier.icon !== null)
+            if (place1.supplier.icon !== place2.supplier.icon) {
                 return false;
-            if (place1.supplier.icon !== null && place2.supplier.icon === null)
-                return false;
-            if (place1.supplier.icon !== null && place2.supplier.icon !== null) {
-                if (place1.supplier.icon.parameters.keys().length !== place2.supplier.icon.parameters.keys().length) {
-                    return false;
-                }
-
-                var keys = place1.supplier.icon.parameters.keys() + place2.supplier.icon.parameters.keys();
-                for (var i = 0; i < keys.length; ++i) {
-                    if (place1.supplier.icon.parameters[keys[i]] != place2.supplier.icon.parameters[keys[i]]) {
-                        return false;
-                    }
-                }
-
-                if (place1.supplier.icon.plugin !== place2.supplier.icon.plugin)
-                    return false;
             }
         }
 
@@ -214,29 +189,8 @@ TestCase {
         }
 
         // check icon
-        if (place1.icon === null && place2.icon !== null) {
+        if (place1.icon !== place2.icon) {
             return false;
-        }
-        if (place1.icon !== null && place2.icon === null) {
-            return false;
-        }
-        if (place1.icon !== null && place2.icon !== null) {
-            if (place1.icon.plugin !== place2.icon.plugin) {
-                console.log(place1.icon.plugin + " " + place2.icon.plugin);
-                return false;
-            }
-
-            if (place1.icon.parameters.keys().length !== place2.icon.parameters.keys().length) {
-                return false;
-            }
-
-            var keys = place1.icon.parameters.keys() + place2.icon.parameters.keys();
-            for (var i = 0; i < keys.length; ++i) {
-                if (place1.icon.parameters[keys[i]]
-                        != place2.icon.parameters[keys[i]]) {
-                    return false;
-                }
-            }
         }
 
         // check extended attributes
@@ -268,13 +222,9 @@ TestCase {
         compare(emptyPlace.location.address.state, '');
         compare(emptyPlace.location.address.country, '');
 
-        compare(emptyPlace.icon.plugin, null);
-
         compare(emptyPlace.supplier.name, '');
         compare(emptyPlace.supplier.supplierId, '');
         compare(emptyPlace.supplier.url, '');
-
-        compare(emptyPlace.supplier.icon.plugin, null);
 
         compare(emptyPlace.reviewModel.totalCount, -1);
         compare(emptyPlace.imageModel.totalCount, -1);

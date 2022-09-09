@@ -44,6 +44,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceSearchReply>

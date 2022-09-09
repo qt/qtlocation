@@ -56,6 +56,7 @@
 #include <QPlaceAttribute>
 #include <QPlaceUser>
 #include <QPlaceRatings>
+#include <QPlaceIcon>
 
 #include <QtLocation/private/qgeomaptype_p.h>
 
@@ -117,6 +118,13 @@ struct QPlaceAttributeForeign
     Q_GADGET
     QML_FOREIGN(QPlaceAttribute)
     QML_NAMED_ELEMENT(placeAttribute)
+};
+
+struct QPlaceIconForeign
+{
+    Q_GADGET
+    QML_FOREIGN(QPlaceIcon)
+    QML_NAMED_ELEMENT(icon)
 };
 
 QT_END_NAMESPACE

@@ -40,7 +40,6 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativecontactdetail_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativeplaceicon_p.h"
 #include "error_messages_p.h"
 
 #include <QtCore/QCoreApplication>
@@ -334,13 +333,7 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         emit supplierChanged();
     }
 
-    if (m_icon && m_icon->parent() == this) {
-        m_icon->setPlugin(m_plugin);
-        m_icon->setIcon(m_src.icon());
-    } else if (!m_icon || m_icon->parent() != this) {
-        m_icon = new QDeclarativePlaceIcon(m_src.icon(), m_plugin, this);
-        emit iconChanged();
-    }
+    setIcon(m_src.icon());
 
     if (previous.name() != m_src.name()) {
         emit nameChanged();
@@ -407,7 +400,7 @@ QPlace QDeclarativePlace::place() const
     result.setSupplier(m_supplier ? m_supplier->supplier() : QPlaceSupplier());
 
     // Icon
-    result.setIcon(m_icon ? m_icon->icon() : QPlaceIcon());
+    result.setIcon(m_icon);
 
     //contact details
     QList<QPlaceContactDetail> cppDetails;
@@ -503,18 +496,15 @@ QDeclarativeSupplier *QDeclarativePlace::supplier() const
 
     This property holds a graphical icon which can be used to represent the place.
 */
-QDeclarativePlaceIcon *QDeclarativePlace::icon() const
+QPlaceIcon QDeclarativePlace::icon() const
 {
     return m_icon;
 }
 
-void QDeclarativePlace::setIcon(QDeclarativePlaceIcon *icon)
+void QDeclarativePlace::setIcon(const QPlaceIcon &icon)
 {
     if (m_icon == icon)
         return;
-
-    if (m_icon && m_icon->parent() == this)
-        delete m_icon;
 
     m_icon = icon;
     emit iconChanged();
