@@ -85,7 +85,7 @@ methods:
     \li \l QGeoServiceProviderFactory::createPlaceManagerEngine()
 \endlist
 
-If a plugin does not provide an engine the relevant function should return 0.
+If a plugin does not provide an engine the relevant function should return \nullptr.
 
 \annotatedlist QtLocation-impl
 

@@ -63,7 +63,7 @@ QGeoCodingManagerEngine *QGeoServiceProviderFactoryMapbox::createGeocodingManage
     } else {
         *error = QGeoServiceProvider::MissingRequiredParameterError;
         *errorString = msgAccessTokenParameter();
-        return 0;
+        return nullptr;
     }
 }
 
@@ -77,7 +77,7 @@ QGeoMappingManagerEngine *QGeoServiceProviderFactoryMapbox::createMappingManager
     } else {
         *error = QGeoServiceProvider::MissingRequiredParameterError;
         *errorString = msgAccessTokenParameter();
-        return 0;
+        return nullptr;
     }
 }
 
@@ -91,7 +91,7 @@ QGeoRoutingManagerEngine *QGeoServiceProviderFactoryMapbox::createRoutingManager
     } else {
         *error = QGeoServiceProvider::MissingRequiredParameterError;
         *errorString = msgAccessTokenParameter();
-        return 0;
+        return nullptr;
     }
 }
 
@@ -105,7 +105,7 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryMapbox::createPlaceManagerEngine(
     } else {
         *error = QGeoServiceProvider::MissingRequiredParameterError;
         *errorString = msgAccessTokenParameter();
-        return 0;
+        return nullptr;
     }
 }
 

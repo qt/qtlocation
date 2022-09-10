@@ -483,7 +483,7 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 {
     if (!m_map) {
         delete oldNode;
-        return 0;
+        return nullptr;
     }
 
     QSGRectangleNode *root = static_cast<QSGRectangleNode *>(oldNode);

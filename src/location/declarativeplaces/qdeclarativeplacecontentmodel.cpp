@@ -135,7 +135,7 @@ void QDeclarativePlaceContentModel::clearData()
     if (m_reply) {
         m_reply->abort();
         m_reply->deleteLater();
-        m_reply = 0;
+        m_reply = nullptr;
     }
 
     m_nextRequest.clear();
@@ -304,7 +304,7 @@ void QDeclarativePlaceContentModel::fetchFinished()
         return;
 
     QPlaceContentReply *reply = m_reply;
-    m_reply = 0;
+    m_reply = nullptr;
 
     m_nextRequest = reply->nextPageRequest();
 

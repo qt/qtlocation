@@ -129,7 +129,7 @@ MockGeoNetworkAccessManager::MockGeoNetworkAccessManager(QObject* parent)
 QNetworkReply* MockGeoNetworkAccessManager::get(const QNetworkRequest& request)
 {
     MockGeoNetworkReply* r = m_reply;
-    m_reply = 0;
+    m_reply = nullptr;
     if (r) {
         r->setRequest(request);
         r->setOperation(QNetworkAccessManager::GetOperation);
@@ -217,7 +217,7 @@ void tst_nokia_routing::loadReply(const QString& filename)
     QFile* file = new QFile(QFINDTESTDATA(filename));
     if (!file->open(QIODevice::ReadOnly)) {
         delete file;
-        file = 0;
+        file = nullptr;
         qDebug() << filename;
         QTest::qFail("Failed to open file", __FILE__, __LINE__);
     }
@@ -233,7 +233,7 @@ void tst_nokia_routing::calculateRoute()
     m_calculationDone = false;
     m_routingManager->calculateRoute(m_dummyRequest);
     m_replyUnowned->complete();
-    m_replyUnowned = 0;
+    m_replyUnowned = nullptr;
     // Timeout of 200ms is required for slow targets (e.g. Qemu)
     QTRY_VERIFY_WITH_TIMEOUT(m_calculationDone, 200);
 }
@@ -351,16 +351,16 @@ void tst_nokia_routing::cleanupTestCase()
 
     // network access manager will be deleted by plugin
 
-    m_geoServiceProvider = 0;
-    m_networkManager = 0;
-    m_routingManager = 0;
+    m_geoServiceProvider = nullptr;
+    m_networkManager = nullptr;
+    m_routingManager = nullptr;
 }
 
 void tst_nokia_routing::cleanup()
 {
     delete m_reply;
-    m_reply = 0;
-    m_replyUnowned = 0;
+    m_reply = nullptr;
+    m_replyUnowned = nullptr;
     m_expectError = false;
 }
 

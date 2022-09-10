@@ -262,8 +262,8 @@ QSGNode *QDeclarativeGeoMapItemBase::updatePaintNode(QSGNode *oldNode, UpdatePai
     if (!map_ || !quickMap_ || map_->supportedMapItemTypes() & itemType()) {
         if (oldNode)
             delete oldNode;
-        oldNode = 0;
-        return 0;
+        oldNode = nullptr;
+        return nullptr;
     }
 
     QSGOpacityNode *opn = static_cast<QSGOpacityNode *>(oldNode);
@@ -291,7 +291,7 @@ QSGNode *QDeclarativeGeoMapItemBase::updatePaintNode(QSGNode *oldNode, UpdatePai
 QSGNode *QDeclarativeGeoMapItemBase::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
     delete oldNode;
-    return 0;
+    return nullptr;
 }
 
 QGeoMap::ItemType QDeclarativeGeoMapItemBase::itemType() const

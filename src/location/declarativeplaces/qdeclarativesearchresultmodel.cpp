@@ -430,8 +430,7 @@ QDeclarativeCategory *QDeclarativeSearchResultModel::category_at(QQmlListPropert
     QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel && (searchModel->m_categories.count() > index) && (index > -1))
         return searchModel->m_categories.at(index);
-    else
-        return 0;
+    return nullptr;
 }
 
 void QDeclarativeSearchResultModel::categories_clear(QQmlListProperty<QDeclarativeCategory> *list)
@@ -754,7 +753,7 @@ void QDeclarativeSearchResultModel::queryFinished()
     if (!m_reply)
         return;
     QPlaceReply *reply = m_reply;
-    m_reply = 0;
+    m_reply = nullptr;
     reply->deleteLater();
 
     if (!m_incremental)

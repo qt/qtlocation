@@ -269,7 +269,7 @@ QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &p
 
 QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QPlaceContentRequest &request)
 {
-    QNetworkReply *networkReply = 0;
+    QNetworkReply *networkReply = nullptr;
 
     if (request.contentContext().userType() == qMetaTypeId<QUrl>()) {
         QUrl u = request.contentContext().value<QUrl>();
@@ -401,7 +401,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         }
     }
 
-    QNetworkReply *networkReply = 0;
+    QNetworkReply *networkReply = nullptr;
 
     if (query.searchContext().userType() == qMetaTypeId<QUrl>()) {
         // provided search context

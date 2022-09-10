@@ -86,7 +86,7 @@ QGeoServiceProviderFactory::createGeocodingManagerEngine(const QVariantMap &para
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -113,7 +113,7 @@ QGeoServiceProviderFactory::createMappingManagerEngine(const QVariantMap &parame
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
-    return 0;
+    return nullptr;
 }
 
 /*!

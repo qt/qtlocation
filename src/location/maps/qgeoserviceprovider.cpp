@@ -345,7 +345,7 @@ QGeoServiceProvider::NavigationFeatures QGeoServiceProvider::navigationFeatures(
 template <class Engine>
 Engine *createEngine(QGeoServiceProviderPrivate *)
 {
-    return 0;
+    return nullptr;
 }
 template <> QGeoCodingManagerEngine *createEngine<QGeoCodingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
 {
@@ -387,7 +387,7 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
     if (!this->factory) {
         error = this->error;
         errorString = this->errorString;
-        return 0;
+        return nullptr;
     }
 
     if (!manager) {
@@ -409,7 +409,7 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
 
         if (error != QGeoServiceProvider::NoError) {
             delete manager;
-            manager = 0;
+            manager = nullptr;
             this->error = error;
             this->errorString = errorString;
         }
@@ -430,7 +430,7 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
     Returns the QGeoCodingManager made available by the service
     provider.
 
-    This function will return 0 if the service provider does not provide
+    This function will return \nullptr if the service provider does not provide
     any geocoding services.
 
     This function will attempt to construct a QGeoCodingManager instance
@@ -460,7 +460,7 @@ QGeoCodingManager *QGeoServiceProvider::geocodingManager() const
 /*!
     Returns the QGeoMappingManager made available by the service provider.
 
-    This function will return 0 if the service provider does not provide
+    This function will return \nullptr if the service provider does not provide
     any mapping services.
 
     This function will attempt to construct a QGeoMappingManager instance
@@ -492,7 +492,7 @@ QGeoMappingManager *QGeoServiceProvider::mappingManager() const
 /*!
     Returns the QGeoRoutingManager made available by the service provider.
 
-    This function will return 0 if the service provider does not provide
+    This function will return \nullptr if the service provider does not provide
     any geographic routing services.
 
     This function will attempt to construct a QGeoRoutingManager instance
@@ -755,12 +755,12 @@ void QGeoServiceProvider::setLocale(const QLocale &locale)
 *******************************************************************************/
 
 QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
-    : factory(0),
+    : factory(nullptr),
       experimental(false),
-      geocodingManager(0),
-      routingManager(0),
-      mappingManager(0),
-      placeManager(0),
+      geocodingManager(nullptr),
+      routingManager(nullptr),
+      mappingManager(nullptr),
+      placeManager(nullptr),
       geocodeError(QGeoServiceProvider::NoError),
       routingError(QGeoServiceProvider::NoError),
       mappingError(QGeoServiceProvider::NoError),
@@ -783,16 +783,16 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 void QGeoServiceProviderPrivate::unload()
 {
     delete geocodingManager;
-    geocodingManager = 0;
+    geocodingManager = nullptr;
 
     delete routingManager;
-    routingManager = 0;
+    routingManager = nullptr;
 
     delete mappingManager;
-    mappingManager = 0;
+    mappingManager = nullptr;
 
     delete placeManager;
-    placeManager = 0;
+    placeManager = nullptr;
 
     delete navigationManager;
     navigationManager = nullptr;

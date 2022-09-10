@@ -87,7 +87,7 @@ void tst_QPlaceManager::initTestCase()
                                      + QStringLiteral("/../../../plugins"));
 #endif
 #endif
-    provider = 0;
+    provider = nullptr;
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     QVERIFY(providers.contains("qmlgeo.test.plugin"));

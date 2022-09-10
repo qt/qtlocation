@@ -93,7 +93,7 @@ QGeoTiledMap::~QGeoTiledMap()
 {
     Q_D(QGeoTiledMap);
     delete d->m_tileRequests;
-    d->m_tileRequests = 0;
+    d->m_tileRequests = nullptr;
 
     if (!d->m_engine.isNull()) {
         QGeoTiledMappingManagerEngine *engine = qobject_cast<QGeoTiledMappingManagerEngine*>(d->m_engine);
@@ -194,7 +194,7 @@ QGeoTiledMapPrivate::QGeoTiledMapPrivate(QGeoTiledMappingManagerEngine *engine)
       m_visibleTiles(new QGeoCameraTiles()),
       m_prefetchTiles(new QGeoCameraTiles()),
       m_mapScene(new QGeoTiledMapScene()),
-      m_tileRequests(0),
+      m_tileRequests(nullptr),
       m_maxZoomLevel(static_cast<int>(std::ceil(m_cameraCapabilities.maximumZoomLevel()))),
       m_minZoomLevel(static_cast<int>(std::ceil(m_cameraCapabilities.minimumZoomLevel()))),
       m_prefetchStyle(QGeoTiledMap::PrefetchTwoNeighbourLayers)

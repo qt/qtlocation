@@ -312,7 +312,7 @@ void QDeclarativeGeoMapCopyrightNotice::copyrightsImageChanged(const QImage &cop
 {
     Q_D(QDeclarativeGeoMapCopyrightNotice);
     delete m_copyrightsHtml;
-    m_copyrightsHtml = 0;
+    m_copyrightsHtml = nullptr;
 
     m_copyrightsImage = copyrightsImage;
 

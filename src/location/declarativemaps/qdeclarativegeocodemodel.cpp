@@ -540,7 +540,7 @@ QDeclarativeGeoLocation *QDeclarativeGeocodeModel::get(int index)
 {
     if (index < 0 || index >= declarativeLocations_.count()) {
         qmlWarning(this) << QStringLiteral("Index '%1' out of range").arg(index);
-        return 0;
+        return nullptr;
     }
     return declarativeLocations_.at(index);
 }

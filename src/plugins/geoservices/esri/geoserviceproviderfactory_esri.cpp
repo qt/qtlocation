@@ -70,7 +70,7 @@ QGeoRoutingManagerEngine *GeoServiceProviderFactoryEsri::createRoutingManagerEng
         *error = QGeoServiceProvider::MissingRequiredParameterError;
         *errorString = tr("Esri plugin requires a 'esri.token' parameter.\n"
                           "Please visit https://developers.arcgis.com/authentication/accessing-arcgis-online-services/");
-        return 0;
+        return nullptr;
     }
 }
 

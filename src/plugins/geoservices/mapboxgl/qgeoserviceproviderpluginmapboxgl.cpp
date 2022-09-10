@@ -56,7 +56,7 @@ QGeoCodingManagerEngine *QGeoServiceProviderFactoryMapboxGL::createGeocodingMana
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
-    return 0;
+    return nullptr;
 }
 
 QGeoMappingManagerEngine *QGeoServiceProviderFactoryMapboxGL::createMappingManagerEngine(
@@ -72,7 +72,7 @@ QGeoRoutingManagerEngine *QGeoServiceProviderFactoryMapboxGL::createRoutingManag
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
-    return 0;
+    return nullptr;
 }
 
 QPlaceManagerEngine *QGeoServiceProviderFactoryMapboxGL::createPlaceManagerEngine(
@@ -82,7 +82,7 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryMapboxGL::createPlaceManagerEngin
     Q_UNUSED(error);
     Q_UNUSED(errorString);
 
-    return 0;
+    return nullptr;
 }
 
 QT_END_NAMESPACE
