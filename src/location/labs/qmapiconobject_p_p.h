@@ -63,7 +63,7 @@ public:
     QMapIconObjectPrivate(QGeoMapObject *q);
     ~QMapIconObjectPrivate() override;
 
-    virtual QGeoMapObject::Type type() const override final;
+    QGeoMapObject::Type type() const override final;
 
     virtual QGeoCoordinate coordinate() const = 0;
     virtual void setCoordinate(const QGeoCoordinate &coordinate) = 0;
@@ -88,8 +88,8 @@ public:
     void setCoordinate(const QGeoCoordinate &coordinate) override;
     QVariant content() const override;
     void setContent(const QVariant &content) override;
-    virtual QSizeF iconSize() const override;
-    virtual void setIconSize(const QSizeF &size) override;
+    QSizeF iconSize() const override;
+    void setIconSize(const QSizeF &size) override;
 
     // QGeoMapObjectPrivate interface
     QGeoMapObjectPrivate *clone() override;

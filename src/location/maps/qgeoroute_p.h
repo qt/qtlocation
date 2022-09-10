@@ -128,46 +128,46 @@ public:
     QGeoRoutePrivateDefault();
     QGeoRoutePrivateDefault(const QGeoRoutePrivateDefault &other);
     ~QGeoRoutePrivateDefault() override;
-    virtual QGeoRoutePrivate *clone() override;
+    QGeoRoutePrivate *clone() override;
 
-    virtual void setId(const QString &id) override;
-    virtual QString id() const override;
+    void setId(const QString &id) override;
+    QString id() const override;
 
-    virtual void setRequest(const QGeoRouteRequest &request) override;
-    virtual QGeoRouteRequest request() const override;
+    void setRequest(const QGeoRouteRequest &request) override;
+    QGeoRouteRequest request() const override;
 
-    virtual void setBounds(const QGeoRectangle &bounds) override;
-    virtual QGeoRectangle bounds() const override;
+    void setBounds(const QGeoRectangle &bounds) override;
+    QGeoRectangle bounds() const override;
 
-    virtual void setTravelTime(int travelTime) override;
-    virtual int travelTime() const override;
+    void setTravelTime(int travelTime) override;
+    int travelTime() const override;
 
-    virtual void setDistance(qreal distance) override;
-    virtual qreal distance() const override;
+    void setDistance(qreal distance) override;
+    qreal distance() const override;
 
-    virtual void setTravelMode(QGeoRouteRequest::TravelMode mode) override;
-    virtual QGeoRouteRequest::TravelMode travelMode() const override;
+    void setTravelMode(QGeoRouteRequest::TravelMode mode) override;
+    QGeoRouteRequest::TravelMode travelMode() const override;
 
-    virtual void setPath(const QList<QGeoCoordinate> &path) override;
-    virtual QList<QGeoCoordinate> path() const override;
+    void setPath(const QList<QGeoCoordinate> &path) override;
+    QList<QGeoCoordinate> path() const override;
 
-    virtual void setFirstSegment(const QGeoRouteSegment &firstSegment) override;
-    virtual QGeoRouteSegment firstSegment() const override;
+    void setFirstSegment(const QGeoRouteSegment &firstSegment) override;
+    QGeoRouteSegment firstSegment() const override;
 
-    virtual QString engineName() const override;
-    virtual int segmentsCount() const override;
+    QString engineName() const override;
+    int segmentsCount() const override;
 
-    virtual void setRouteLegs(const QList<QGeoRouteLeg> &legs) override;
-    virtual QList<QGeoRouteLeg> routeLegs() const override;
+    void setRouteLegs(const QList<QGeoRouteLeg> &legs) override;
+    QList<QGeoRouteLeg> routeLegs() const override;
 
     void setExtendedAttributes(const QVariantMap &extendedAttributes) override;
     QVariantMap extendedAttributes() const override;
 
     // QGeoRouteLeg API
-    virtual void setLegIndex(int idx) override;
-    virtual int legIndex() const override;
-    virtual void setContainingRoute(const QGeoRoute &route) override;
-    virtual QGeoRoute containingRoute() const override;
+    void setLegIndex(int idx) override;
+    int legIndex() const override;
+    void setContainingRoute(const QGeoRoute &route) override;
+    QGeoRoute containingRoute() const override;
 
     QString m_id;
     QGeoRouteRequest m_request;

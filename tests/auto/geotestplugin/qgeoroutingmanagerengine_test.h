@@ -136,7 +136,7 @@ public:
                     QGeoRouteRequest::TruckTravel );
     }
 
-    virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) override
+    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) override
     {
         routeReply_ = new RouteReplyTest();
         connect(routeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));

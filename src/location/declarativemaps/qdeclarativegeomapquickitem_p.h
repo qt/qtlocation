@@ -85,7 +85,7 @@ public:
     explicit QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapQuickItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
+    void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
 
     void setCoordinate(const QGeoCoordinate &coordinate);
     QGeoCoordinate coordinate();
@@ -114,8 +114,8 @@ protected:
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;
 
 protected Q_SLOTS:
-    virtual void afterChildrenChanged() override;
-    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
+    void afterChildrenChanged() override;
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 private:
     qreal scaleFactor();

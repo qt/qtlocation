@@ -61,8 +61,8 @@ class QGeoRoutePrivateMapbox : public QGeoRoutePrivateDefault
 public:
     QGeoRoutePrivateMapbox(const QGeoRoutePrivateDefault &other, const QVariantMap &metadata);
 
-    virtual QString engineName() const override;
-    virtual QVariantMap metadata() const override;
+    QString engineName() const override;
+    QVariantMap metadata() const override;
 
     QVariantMap m_metadata;
 };

@@ -125,33 +125,33 @@ public:
     QPlacePrivateDefault();
     QPlacePrivateDefault(const QPlacePrivateDefault &other);
     virtual ~QPlacePrivateDefault();
-    virtual QPlacePrivate *clone() override;
+    QPlacePrivate *clone() override;
 
-    virtual QList<QPlaceCategory> categories() const override;
-    virtual void setCategories(const QList<QPlaceCategory> &categories) override;
-    virtual QGeoLocation location() const override;
-    virtual void setLocation(const QGeoLocation &location) override;
-    virtual QPlaceRatings ratings() const override;
-    virtual void setRatings(const QPlaceRatings &ratings) override;
-    virtual QPlaceSupplier supplier() const override;
-    virtual void setSupplier(const QPlaceSupplier &supplier) override;
-    virtual QString name() const override;
-    virtual void setName(const QString &name) override;
-    virtual QString placeId() const override;
-    virtual void setPlaceId(const QString &placeIdentifier) override;
-    virtual QString attribution() const override;
-    virtual void setAttribution(const QString &attribution) override;
-    virtual QLocation::Visibility visibility() const override;
-    virtual void setVisibility(QLocation::Visibility visibility) override;
-    virtual QPlaceIcon icon() const override;
-    virtual void setIcon(const QPlaceIcon &icon) override;
-    virtual bool detailsFetched() const override;
-    virtual void setDetailsFetched(bool fetched) override;
+    QList<QPlaceCategory> categories() const override;
+    void setCategories(const QList<QPlaceCategory> &categories) override;
+    QGeoLocation location() const override;
+    void setLocation(const QGeoLocation &location) override;
+    QPlaceRatings ratings() const override;
+    void setRatings(const QPlaceRatings &ratings) override;
+    QPlaceSupplier supplier() const override;
+    void setSupplier(const QPlaceSupplier &supplier) override;
+    QString name() const override;
+    void setName(const QString &name) override;
+    QString placeId() const override;
+    void setPlaceId(const QString &placeIdentifier) override;
+    QString attribution() const override;
+    void setAttribution(const QString &attribution) override;
+    QLocation::Visibility visibility() const override;
+    void setVisibility(QLocation::Visibility visibility) override;
+    QPlaceIcon icon() const override;
+    void setIcon(const QPlaceIcon &icon) override;
+    bool detailsFetched() const override;
+    void setDetailsFetched(bool fetched) override;
 
-    virtual QMap<QString, QPlaceAttribute> extendedAttributes() const override;
-    virtual QMap<QString, QPlaceAttribute> &extendedAttributes() override;
-    virtual QMap<QString, QList<QPlaceContactDetail> > contacts() const override;
-    virtual QMap<QString, QList<QPlaceContactDetail> > &contacts() override;
+    QMap<QString, QPlaceAttribute> extendedAttributes() const override;
+    QMap<QString, QPlaceAttribute> &extendedAttributes() override;
+    QMap<QString, QList<QPlaceContactDetail> > contacts() const override;
+    QMap<QString, QList<QPlaceContactDetail> > &contacts() override;
 
 
     // data members

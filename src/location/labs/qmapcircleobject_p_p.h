@@ -64,7 +64,7 @@ public:
     QMapCircleObjectPrivate(QGeoMapObject *q);
     ~QMapCircleObjectPrivate() override;
 
-    virtual QGeoMapObject::Type type() const override final;
+    QGeoMapObject::Type type() const override final;
 
     virtual QGeoCoordinate center() const = 0;
     virtual void setCenter(const QGeoCoordinate &center) = 0;
@@ -79,8 +79,8 @@ public:
 
     // QGeoMapObjectPrivate interface
     bool equals(const QGeoMapObjectPrivate &other) const override;
-    virtual QGeoShape geoShape() const override;
-    virtual void setGeoShape(const QGeoShape &shape) override;
+    QGeoShape geoShape() const override;
+    void setGeoShape(const QGeoShape &shape) override;
 };
 
 

@@ -60,7 +60,7 @@ public:
     virtual ~QGeoTiledMapLabsPrivate();
 
     QGeoMapObjectPrivate *createMapObjectImplementation(QGeoMapObject *obj) override;
-    virtual QList<QGeoMapObject *> mapObjects() const override;
+    QList<QGeoMapObject *> mapObjects() const override;
     void removeMapObject(QGeoMapObject *obj);
     QList<QObject *>mapObjectsAt(const QGeoCoordinate &coordinate) const;
 

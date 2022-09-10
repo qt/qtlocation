@@ -81,8 +81,8 @@ public:
     explicit QDeclarativeCircleMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativeCircleMapItem() override;
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
+    void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
+    QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
 
     QGeoCoordinate center();
     void setCenter(const QGeoCoordinate &center);
@@ -116,7 +116,7 @@ protected:
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
     void onLinePropertiesChanged();
-    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 private:
     void updateCirclePath();

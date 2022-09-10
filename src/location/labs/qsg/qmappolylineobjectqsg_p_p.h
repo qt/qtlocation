@@ -87,7 +87,7 @@ public:
 
     // QGeoMapObjectPrivate
     QGeoMapObjectPrivate *clone() override;
-    virtual QGeoShape geoShape() const override;
+    QGeoShape geoShape() const override;
 
     unsigned int zoomForLOD(int zoom) const;
 

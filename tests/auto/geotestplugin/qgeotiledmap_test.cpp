@@ -71,7 +71,7 @@ public:
         param->disconnect(q);
     }
 
-    virtual void setVisibleArea(const QRectF &visibleArea) override
+    void setVisibleArea(const QRectF &visibleArea) override
     {
         if (m_options.supportVisibleArea)
             return QGeoTiledMapPrivate::setVisibleArea(visibleArea);
@@ -79,7 +79,7 @@ public:
             return QGeoMapPrivate::setVisibleArea(visibleArea);
     }
 
-    virtual QRectF visibleArea() const override
+    QRectF visibleArea() const override
     {
         if (m_options.supportVisibleArea)
             return QGeoTiledMapPrivate::visibleArea();

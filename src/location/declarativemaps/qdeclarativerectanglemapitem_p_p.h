@@ -103,33 +103,33 @@ public:
         // mark dirty just in case we're a width change
         markSourceDirtyAndUpdate();
     }
-    virtual void markSourceDirtyAndUpdate() override
+    void markSourceDirtyAndUpdate() override
     {
         m_geometry.markSourceDirty();
         m_borderGeometry.markSourceDirty();
         m_rect.polishAndUpdate();
     }
-    virtual void onMapSet() override
+    void onMapSet() override
     {
         markSourceDirtyAndUpdate();
     }
-    virtual void onGeoGeometryChanged() override
+    void onGeoGeometryChanged() override
     {
         markSourceDirtyAndUpdate();
     }
-    virtual void onItemGeometryChanged() override
-    {
-        m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-        m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-        markSourceDirtyAndUpdate();
-    }
-    virtual void afterViewportChanged() override
+    void onItemGeometryChanged() override
     {
         m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
         m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
         markSourceDirtyAndUpdate();
     }
-    virtual void updatePolish() override
+    void afterViewportChanged() override
+    {
+        m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
+        m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
+        markSourceDirtyAndUpdate();
+    }
+    void updatePolish() override
     {
         if (!m_rect.topLeft().isValid() || !m_rect.bottomRight().isValid()) {
             m_geometry.clear();
@@ -184,7 +184,7 @@ public:
         m_rect.setPositionOnMap(m_geometry.origin(), m_geometry.firstPointOffset());
     }
 
-    virtual QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
+    QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
     {
         Q_UNUSED(data);
         if (!m_node || !oldNode) {
@@ -208,7 +208,7 @@ public:
         }
         return m_node;
     }
-    virtual bool contains(const QPointF &point) const override
+    bool contains(const QPointF &point) const override
     {
         return (m_geometry.contains(point) || m_borderGeometry.contains(point));
     }
@@ -273,7 +273,7 @@ public:
         m_rect.m_dirtyMaterial = true;
         afterViewportChanged();
     }
-    virtual void markSourceDirtyAndUpdate() override
+    void markSourceDirtyAndUpdate() override
     {
         m_geometry.markSourceDirty();
         m_borderGeometry.markSourceDirty();
@@ -284,25 +284,25 @@ public:
         m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
         m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
     }
-    virtual void onMapSet() override
+    void onMapSet() override
     {
         markSourceDirtyAndUpdate();
     }
-    virtual void onGeoGeometryChanged() override
+    void onGeoGeometryChanged() override
     {
         preserveGeometry();
         markSourceDirtyAndUpdate();
     }
-    virtual void onItemGeometryChanged() override
+    void onItemGeometryChanged() override
     {
         onGeoGeometryChanged();
     }
-    virtual void afterViewportChanged() override
+    void afterViewportChanged() override
     {
         preserveGeometry();
         markScreenDirtyAndUpdate();
     }
-    virtual void updatePolish() override
+    void updatePolish() override
     {
         if (!m_rect.topLeft().isValid() || !m_rect.bottomRight().isValid()) {
             m_geometry.clear();
@@ -338,7 +338,7 @@ public:
         m_rect.setPosition(1.0 * geom->firstPointOffset() - QPointF(lineWidth * 0.5,lineWidth * 0.5));
     }
 
-    virtual QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
+    QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
     {
         Q_UNUSED(data);
 
@@ -388,7 +388,7 @@ public:
         m_rootNode->setSubtreeBlocked(false);
         return m_rootNode;
     }
-    virtual bool contains(const QPointF &point) const override
+    bool contains(const QPointF &point) const override
     {
         const qreal lineWidth = m_rect.m_border.width();
         const QColor &lineColor = m_rect.m_border.color();

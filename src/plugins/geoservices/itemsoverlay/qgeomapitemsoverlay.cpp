@@ -65,7 +65,7 @@ public:
 
 #ifdef LOCATIONLABS
     QGeoMapObjectPrivate *createMapObjectImplementation(QGeoMapObject *obj) override;
-    virtual QList<QGeoMapObject *> mapObjects() const override;
+    QList<QGeoMapObject *> mapObjects() const override;
     void removeMapObject(QGeoMapObject *obj);
     void updateMapObjects(QSGNode *root, QQuickWindow *window);
     QList<QObject *>mapObjectsAt(const QGeoCoordinate &coordinate) const;
