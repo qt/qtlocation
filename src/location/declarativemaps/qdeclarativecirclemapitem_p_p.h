@@ -304,7 +304,7 @@ public:
         m_borderGeometry.markScreenDirty();
         m_circle.polishAndUpdate();
     }
-    virtual void markSourceDirtyAndUpdate() override
+    void markSourceDirtyAndUpdate() override
     {
         updateCirclePath();
         preserveGeometry();
@@ -317,25 +317,25 @@ public:
         m_geometry.setPreserveGeometry(true, m_leftBound);
         m_borderGeometry.setPreserveGeometry(true, m_leftBound);
     }
-    virtual void onMapSet() override
+    void onMapSet() override
     {
         markSourceDirtyAndUpdate();
     }
-    virtual void onGeoGeometryChanged() override
+    void onGeoGeometryChanged() override
     {
 
         markSourceDirtyAndUpdate();
     }
-    virtual void onItemGeometryChanged() override
+    void onItemGeometryChanged() override
     {
         onGeoGeometryChanged();
     }
-    virtual void afterViewportChanged() override
+    void afterViewportChanged() override
     {
         preserveGeometry();
         markScreenDirtyAndUpdate();
     }
-    virtual void updatePolish() override
+    void updatePolish() override
     {
         if (m_circle.m_circle.isEmpty()) {
             m_geometry.clear();
@@ -371,7 +371,7 @@ public:
         m_circle.setPosition(1.0 * geom->firstPointOffset() - QPointF(lineWidth * 0.5,lineWidth * 0.5));
     }
 
-    virtual QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
+    QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
     {
         Q_UNUSED(data);
 
@@ -421,7 +421,7 @@ public:
         m_rootNode->setSubtreeBlocked(false);
         return m_rootNode;
     }
-    virtual bool contains(const QPointF &point) const override
+    bool contains(const QPointF &point) const override
     {
         const qreal lineWidth = m_circle.m_border.width();
         const QColor &lineColor = m_circle.m_border.color();

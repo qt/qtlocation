@@ -641,12 +641,12 @@ public:
         return QString();
     }
 
-    virtual QStringList childCategoryIds(const QString &categoryId) const override
+    QStringList childCategoryIds(const QString &categoryId) const override
     {
         return m_childCategories.value(categoryId);
     }
 
-    virtual QPlaceCategory category(const QString &categoryId) const override
+    QPlaceCategory category(const QString &categoryId) const override
     {
         return m_categories.value(categoryId);
     }

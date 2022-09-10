@@ -73,7 +73,7 @@ public:
     virtual QQmlComponent *delegate() const = 0;
     virtual void setDelegate(QQmlComponent *delegate) = 0;
 
-    virtual QGeoMapObject::Type type() const override final;
+    QGeoMapObject::Type type() const override final;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QMapObjectViewPrivateDefault : public QMapObjectViewPrivate
@@ -83,17 +83,17 @@ public:
     QMapObjectViewPrivateDefault(const QMapObjectViewPrivate &other);
     ~QMapObjectViewPrivateDefault() override;
 
-    virtual QVariant model() const override;
-    virtual void setModel(const QVariant &model) override;
-    virtual QQmlComponent *delegate() const override;
-    virtual void setDelegate(QQmlComponent *delegate) override;
+    QVariant model() const override;
+    void setModel(const QVariant &model) override;
+    QQmlComponent *delegate() const override;
+    void setDelegate(QQmlComponent *delegate) override;
 
     // QGeoMapObjectPrivate interface
 public:
     QGeoMapObjectPrivate *clone() override;
     bool equals(const QGeoMapObjectPrivate &other) const override;
-    virtual QGeoShape geoShape() const override;
-    virtual void setGeoShape(const QGeoShape &shape) override;
+    QGeoShape geoShape() const override;
+    void setGeoShape(const QGeoShape &shape) override;
 
     QVariant m_model;
     QQmlComponent *m_delegate = nullptr;

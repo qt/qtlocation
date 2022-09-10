@@ -65,7 +65,7 @@ public:
     QMapPolylineObjectPrivate(QGeoMapObject *q);
     ~QMapPolylineObjectPrivate() override;
 
-    virtual QGeoMapObject::Type type() const override final;
+    QGeoMapObject::Type type() const override final;
 
     virtual QList<QGeoCoordinate> path() const = 0;
     virtual void setPath(const QList<QGeoCoordinate> &path) = 0;
@@ -76,8 +76,8 @@ public:
 
     // QGeoMapObjectPrivate interface
     bool equals(const QGeoMapObjectPrivate &other) const override;
-    virtual QGeoShape geoShape() const override;
-    virtual void setGeoShape(const QGeoShape &shape) override;
+    QGeoShape geoShape() const override;
+    void setGeoShape(const QGeoShape &shape) override;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QMapPolylineObjectPrivateDefault : public QMapPolylineObjectPrivate

@@ -108,9 +108,9 @@ public:
     explicit QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
+    void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
        //from QuickItem
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
+    QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
 
     Q_INVOKABLE int pathLength() const;
     Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
@@ -141,7 +141,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
     void updateAfterLinePropertiesChanged();
-    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 protected:
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;

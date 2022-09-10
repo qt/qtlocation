@@ -110,27 +110,27 @@ public:
     QGeoRouteSegmentPrivateDefault();
     QGeoRouteSegmentPrivateDefault(const QGeoRouteSegmentPrivateDefault &other);
     ~QGeoRouteSegmentPrivateDefault();
-    virtual QGeoRouteSegmentPrivate *clone() override;
+    QGeoRouteSegmentPrivate *clone() override;
 
     bool operator ==(const QGeoRouteSegmentPrivateDefault &other) const;
 
-    virtual bool valid() const override;
-    virtual void setValid(bool valid) override;
+    bool valid() const override;
+    void setValid(bool valid) override;
 
-    virtual bool isLegLastSegment() const override;
-    virtual void setLegLastSegment(bool lastSegment) override;
+    bool isLegLastSegment() const override;
+    void setLegLastSegment(bool lastSegment) override;
 
-    virtual int travelTime() const override;
-    virtual void setTravelTime(int travelTime) override;
+    int travelTime() const override;
+    void setTravelTime(int travelTime) override;
 
-    virtual qreal distance() const override;
-    virtual void setDistance(qreal distance) override;
+    qreal distance() const override;
+    void setDistance(qreal distance) override;
 
-    virtual QList<QGeoCoordinate> path() const override;
-    virtual void setPath(const QList<QGeoCoordinate> &path) override;
+    QList<QGeoCoordinate> path() const override;
+    void setPath(const QList<QGeoCoordinate> &path) override;
 
-    virtual QGeoManeuver maneuver() const override;
-    virtual void setManeuver(const QGeoManeuver &maneuver) override;
+    QGeoManeuver maneuver() const override;
+    void setManeuver(const QGeoManeuver &maneuver) override;
 
 
     bool m_valid;

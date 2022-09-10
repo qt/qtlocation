@@ -105,7 +105,7 @@ public:
     };
 
     // from QQmlParserStatus
-    virtual void componentComplete() override;
+    void componentComplete() override;
     // from QQuickItem
     void itemChange(ItemChange change, const ItemChangeData &data) override;
 

@@ -65,7 +65,7 @@ public:
     QMapRouteObjectPrivate(const QMapRouteObjectPrivate &other);
     ~QMapRouteObjectPrivate() override;
 
-    virtual QGeoMapObject::Type type() const override final;
+    QGeoMapObject::Type type() const override final;
 
     QDeclarativeGeoRoute *declarativeGeoRoute() const;
 
@@ -75,8 +75,8 @@ public:
     // QGeoMapObjectPrivate interface
     bool equals(const QGeoMapObjectPrivate &other) const override;
     QGeoMapObjectPrivate *clone() override;
-    virtual QGeoShape geoShape() const override;
-    virtual void setGeoShape(const QGeoShape &shape) override;
+    QGeoShape geoShape() const override;
+    void setGeoShape(const QGeoShape &shape) override;
 };
 
 QT_END_NAMESPACE

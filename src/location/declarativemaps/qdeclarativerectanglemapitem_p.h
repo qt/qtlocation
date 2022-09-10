@@ -84,9 +84,9 @@ public:
     explicit QDeclarativeRectangleMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativeRectangleMapItem() override;
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
+    void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
     //from QuickItem
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
+    QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
 
     QGeoCoordinate topLeft();
     void setTopLeft(const QGeoCoordinate &center);
@@ -119,7 +119,7 @@ protected:
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
     void onLinePropertiesChanged();
-    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 private:
     QGeoRectangle m_rectangle;

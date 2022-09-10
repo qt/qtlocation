@@ -85,7 +85,7 @@ public:
 
     // QGeoMapObjectPrivate
     QGeoMapObjectPrivate *clone() override;
-    virtual void setGeoShape(const QGeoShape &shape) override;
+    void setGeoShape(const QGeoShape &shape) override;
 
     // Data Members
     QDoubleVector2D m_leftBoundMercator;

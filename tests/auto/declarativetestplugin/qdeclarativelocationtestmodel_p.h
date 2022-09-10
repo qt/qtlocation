@@ -70,13 +70,13 @@ public:
     };
 
     // from QQmlParserStatus
-    virtual void componentComplete() override;
-    virtual void classBegin() override {}
+    void componentComplete() override;
+    void classBegin() override {}
 
     // From QAbstractListModel
-    virtual int rowCount(const QModelIndex &parent) const override;
-    virtual QVariant data(const QModelIndex &index, int role) const override;
-    virtual QHash<int, QByteArray> roleNames() const override;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
     int datacount() const;
     void setDatacount(int datacount);

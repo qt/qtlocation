@@ -68,8 +68,8 @@ QT_BEGIN_NAMESPACE
     Class::Class(const QPlaceSearchResult &other) : QPlaceSearchResult() { Class##Private::copyIfPossible(d_ptr, other); }
 
 #define Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(Class, ResultType) \
-    virtual QPlaceSearchResultPrivate *clone() const override { return new Class##Private(*this); } \
-    virtual QPlaceSearchResult::SearchResultType type() const override {return ResultType;} \
+    QPlaceSearchResultPrivate *clone() const override { return new Class##Private(*this); } \
+    QPlaceSearchResult::SearchResultType type() const override {return ResultType;} \
     static void copyIfPossible(QSharedDataPointer<QPlaceSearchResultPrivate> &d_ptr, const QPlaceSearchResult &other) \
     { \
         if (other.type() == ResultType) \

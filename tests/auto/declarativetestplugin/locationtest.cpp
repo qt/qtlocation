@@ -50,7 +50,7 @@ class QLocationDeclarativeTestModule: public QQmlExtensionPlugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 public:
-    virtual void registerTypes(const char* uri) override
+    void registerTypes(const char* uri) override
     {
         if (QLatin1String(uri) == QLatin1String("QtLocation.Test")) {
             qmlRegisterType<QDeclarativePinchGenerator>(uri, 5, 5, "PinchGenerator");

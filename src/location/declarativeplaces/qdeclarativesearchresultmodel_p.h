@@ -122,7 +122,7 @@ public:
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    virtual void clearData(bool suppressSignal = false) override;
+    void clearData(bool suppressSignal = false) override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
     QHash<int, QByteArray> roleNames() const override;
@@ -146,11 +146,11 @@ Q_SIGNALS:
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request) override;
-    virtual void initializePlugin(QDeclarativeGeoServiceProvider *plugin) override;
+    void initializePlugin(QDeclarativeGeoServiceProvider *plugin) override;
 
 protected Q_SLOTS:
-    virtual void queryFinished() override;
-    virtual void onContentUpdated() override;
+    void queryFinished() override;
+    void onContentUpdated() override;
 
 private Q_SLOTS:
     void updateLayout(const QList<QPlace> &favoritePlaces = QList<QPlace>());

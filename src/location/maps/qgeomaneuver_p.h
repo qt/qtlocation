@@ -100,34 +100,34 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoManeuverPrivateDefault : public QGeoManeuver
 {
 public:
     ~QGeoManeuverPrivateDefault();
-    virtual QGeoManeuverPrivate *clone() override;
+    QGeoManeuverPrivate *clone() override;
 
-    virtual bool valid() const override;
-    virtual void setValid(bool valid) override;
+    bool valid() const override;
+    void setValid(bool valid) override;
 
-    virtual QString id() const override;
-    virtual void setId(const QString &id) override;
+    QString id() const override;
+    void setId(const QString &id) override;
 
-    virtual QGeoCoordinate position() const override;
-    virtual void setPosition(const QGeoCoordinate &position) override;
+    QGeoCoordinate position() const override;
+    void setPosition(const QGeoCoordinate &position) override;
 
-    virtual QString text() const override;
-    virtual void setText(const QString &text) override;
+    QString text() const override;
+    void setText(const QString &text) override;
 
-    virtual QGeoManeuver::InstructionDirection direction() const override;
-    virtual void setDirection(QGeoManeuver::InstructionDirection direction) override;
+    QGeoManeuver::InstructionDirection direction() const override;
+    void setDirection(QGeoManeuver::InstructionDirection direction) override;
 
-    virtual int timeToNextInstruction() const override;
-    virtual void setTimeToNextInstruction(int timeToNextInstruction) override;
+    int timeToNextInstruction() const override;
+    void setTimeToNextInstruction(int timeToNextInstruction) override;
 
-    virtual qreal distanceToNextInstruction() const override;
-    virtual void setDistanceToNextInstruction(qreal distanceToNextInstruction) override;
+    qreal distanceToNextInstruction() const override;
+    void setDistanceToNextInstruction(qreal distanceToNextInstruction) override;
 
-    virtual QGeoCoordinate waypoint() const override;
-    virtual void setWaypoint(const QGeoCoordinate &waypoint) override;
+    QGeoCoordinate waypoint() const override;
+    void setWaypoint(const QGeoCoordinate &waypoint) override;
 
-    virtual QVariantMap extendedAttributes() const override;
-    virtual void setExtendedAttributes(const QVariantMap &extendedAttributes) override;
+    QVariantMap extendedAttributes() const override;
+    void setExtendedAttributes(const QVariantMap &extendedAttributes) override;
 
     QString m_id;
     QGeoCoordinate m_position;

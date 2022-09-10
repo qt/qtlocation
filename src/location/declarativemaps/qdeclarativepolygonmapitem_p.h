@@ -78,9 +78,9 @@ public:
     explicit QDeclarativePolygonMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativePolygonMapItem() override;
 
-    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
+    void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;
     //from QuickItem
-    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
+    QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *) override;
 
     Q_INVOKABLE void addCoordinate(const QGeoCoordinate &coordinate);
     Q_INVOKABLE void removeCoordinate(const QGeoCoordinate &coordinate);
@@ -108,7 +108,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
     void onLinePropertiesChanged();
-    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
 protected:
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
